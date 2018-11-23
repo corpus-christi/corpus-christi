@@ -1,0 +1,5 @@
+# Virtual environment
+venv/
+
+# Development files
+dev-db.sqlite
