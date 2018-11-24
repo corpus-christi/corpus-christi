@@ -1,5 +1,8 @@
-# Virtual environment
+# Development
 venv/
+node_modules/
+__pycache__/
+.idea/
 
-# Development files
+# Data
 dev-db.sqlite
