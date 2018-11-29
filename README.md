@@ -15,3 +15,7 @@ at
 1. `serve` - Tracking for various ministries
 1. `plan` - Planning and calendaring
 
+## More Documentation
+
+1. [Software Development Methodology](doc/sdm.md)
+1. [Development Environment](doc/develop.md)
