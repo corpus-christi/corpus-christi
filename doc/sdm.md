@@ -101,6 +101,8 @@ Implemented with the following technologies.
 ### RESTful API Server (Controller)
 
 1. [Flask](http://flask.pocoo.org/) - Python web microframework
+    - Flask Web Development, 2nd Edition, Miguel Grinberg, O'Reilly, 2018
+    - [Explore Flask](http://exploreflask.com/)
 1. [Flask Mail](https://pythonhosted.org/Flask-Mail/) - Flask email framework
 
 ### Data Persistence (Model)
