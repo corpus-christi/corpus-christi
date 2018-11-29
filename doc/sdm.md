@@ -9,6 +9,8 @@ that we use to build and maintain the Corpus Christi project
 Initial develoment is matrixed along two dimensions:
 _Features_ and _Functions_.
 
+### Features
+
 **Features**
 are the top-level modules implemented in CC.
 As of this writing, they are (with code names):
@@ -18,6 +20,8 @@ As of this writing, they are (with code names):
 1. `teach` - Teaching ministry management
 1. `serve` - Tracking for various ministries
 1. `plan` - Planning and calendaring
+
+### Functions
 
 **Functions**
 refers to the technology or management
@@ -31,179 +35,174 @@ They are:
 1.  Localization (I18N/L10N)
 1.  Dev Ops (CI/CD)
 
+### Teams and Leadership
+
+A team forms around a **feature**
+and is responsible for building that feature.
+A **feature owner** leads a feature team.
+He or she takes responsibility for the overall completion
+of the feature, ensuring that it meets customer requirements.
+
+Each team member
+has a particular **functional focus**
+(e.g., UI, testing, or dev ops).
+*All* functions must be covered within a team.
+
+A designated **functional expert**
+for each function
+supports team members having the
+corresponding functional focus.
+The functional expert works _across_ different feature team.
+
 ### Pair programming
 
-## Tool Chain
+We use **pair programming**
+to develop all production code.
+Every line of code is overseen
+by two developers working in tandem.
+Our goals are to have built-in quality review during develoment
+and to encourage developers to have greater courage
+in moving their feature forward.
 
-### Data persistence (Model)
+### Stand Up Meetings
 
-1.  [PostgreSQL](https://www.postgresql.org/) (RDBMS)
-2.  [SQL Alchemy](https://www.sqlalchemy.org/) (ORM)
+Most days we hold two [stand-up meetings](https://en.wikipedia.org/wiki/Stand-up_meeting):
+1. A *Feature Stand-Up* includes
+   all members of a feature team,
+   and is led by the feature owner.
+   The purpose of this meeting
+   is to communicate infomration
+   about the feature itself.
+1.  A *Function Stand-Up* includes
+   members from across feature teams
+   that have the same functional focus
+   (e.g., all those working on data persistence).
+   The purpose of this meeting
+   is to cross-pollinate information
+   on each layer of the tech stack
+   across functional teams.
 
+## Technology Stack
 
-### Application server (Controller)
-
-1.  [Flask](http://flask.pocoo.org/)
-
+This section details the technology on which CC is implemented.
+We consider the stack from "top to bottom."
 
 ### User interface (View)
 
-1.  [Jinja](http://jinja.pocoo.org/docs/2.10/) (template engine)
-2.  [Vue](https://vuejs.org/) (SPA framework)
+CC is a single-page application (SPA).
+Implemented with the following technologies.
+
+1. [Vue](https://vuejs.org/) - progressive JavaScript framework
+1. [Vue Router](https://router.vuejs.org/) - client-side router
+1. [Vuex](https://vuex.vuejs.org/) - state management
+1. [Vuetify](https://vuetifyjs.com/en/) - Material Design component framework
+1. [VueI18n](https://kazupon.github.io/vue-i18n/) - internationalization
+
+### RESTful API Server (Controller)
+
+1. [Flask](http://flask.pocoo.org/) - Python web microframework
+1. [Flask Mail](https://pythonhosted.org/Flask-Mail/) - Flask email framework
+
+### Data Persistence (Model)
+
+1. [PostgreSQL](https://www.postgresql.org/) - Relational Database Management System
+1. [SQL Alchemy](https://www.sqlalchemy.org/) - Python Object-Relational Mapper
+1. [Alembic](https://alembic.sqlalchemy.org/) - Database migration for SQL Alchemy
+
+### Other Key Technologies
+
+1. [JSON](http://json.org/) - Standard data interchange format
+1. [JWT](https://jwt.io/) - JavaScript Web Tokens
+
+## Tool Chain
+
+The following tools are in common use in CC development
+
+### General
+
+1. [Venv](https://docs.python.org/3/library/venv.html) - Python virtual environment
+1. [Vue CLI](https://cli.vuejs.org/) - Tooling for Vue development
+1. [Vue development tools](https://github.com/vuejs/vue-devtools) - Browser plugin for Vue
+
+### Revision Control
+
+1. [Git](https://git-scm.com/) - distributed revision control
+1. [GitHub](https://github.com) - Git hosting
 
 ### Testing
 
+#### User Interface
 
-#### Unit
+1. [Vue Test Utils](https://vue-test-utils.vuejs.org/) - Vue-specific test utilities
+1. [Jest](https://jestjs.io/en/) - Test runner
+1. [Mocha](https://mochajs.org/) - Test framework
+1. [Chai](https://www.chaijs.com/) - Assertion library
+1. [Sinon](https://sinonjs.org/) - Spies, stubs, and mocks for JavaScript
 
-1.  [Python `unittest`](https://docs.python.org/3.7/library/unittest.html)
-2.  [Pytest](https://docs.pytest.org/en/latest/contents.html#toc)
-    -   Used by Mozilla and Dropbox over `unittest` or `nose`
+#### RESTful API
 
-#### End to End (E2E)
+1. [Postman](https://www.getpostman.com/) - API test tool
+1. [Pytest](https://docs.pytest.org/en/latest/contents.html#toc) - Python testing
 
-1.  [Cypress](https://www.cypress.io/)
-    -   Shiny and new
-    -   Selenium free - *yay*
-    -   Dashboard service has an unlimited open-source plan
-2.  [Nightwatch](http://nightwatchjs.org/)
-    -   Selenium driven - *ick*
+#### End-to-End
 
+1. [Cypress](https://www.cypress.io/) - Cool new testing environment
 
-### Localization (I18N/L10N)
+### Dev Ops
 
-1.  [Python I18N](https://docs.python.org/3.7/library/gettext.html)
+1. [Linode](https://www.linode.com/) - Hosting provider
+1. [Circle CI](https://circleci.com/) - Continuous integration and deployment
+1. [Ansible](https://www.ansible.com/) - Automation
 
-### Continuous Integration and Deployment (CI/CD)
+### Development Environment
 
-#### Possible solutions
-
--   [Codeship](https://codeship.com/)
--   [Gitlab](https://about.gitlab.com/features/gitlab-ci-cd/)
--   [CircleCI](https://circleci.com/)
--   [Jenkins](https://jenkins.io/)
--   [Travis](https://travis-ci.org/)
-
-
-#### [Linode](https://www.linode.com/)
-
--   [CI/CD](https://www.linode.com/docs/development/ci/introduction-ci-cd/)
--   [Automated CI/CD with Jenkins](https://www.linode.com/docs/development/ci/automate-builds-with-jenkins-on-ubuntu/)
-
-#### Tools
-
--   [Ansible](https://www.ansible.com/)
+1. [PyCharm](https://www.jetbrains.com/pycharm/)
+1. [Visual Studio Code](https://code.visualstudio.com/)
 
 ## Daily Schedule
 
-Unless otherwise announced,
-this will be our work day schedule.
+- 08:30	Devotions (Church staff, team members)
+- 09:00	Stand-up (Feature teams)
+- 09:15	Work	 
+- 12:00	Lunch
+- 13:00	Stand-up (Functional teams)
+- 13:15	Work	 
+- 15:15	Break
+- 15:30	Work	 
+- 17:00	End of work day	 
 
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+## Process
 
+### User Stories
 
-<colgroup>
-<col  class="org-right" />
+We add capability to CC by implementing **user stories**
+from the customer.
+A user story is *not* a complete specification,
+but is, instead, a reminder to have a conversation
+with the feature owner about exactly how the system
+should behave when the story is implemented.
 
-<col  class="org-left" />
+### Tracking
 
-<col  class="org-left" />
-</colgroup>
-<thead>
-<tr>
-<th scope="col" class="org-right">Time</th>
-<th scope="col" class="org-left">Activity</th>
-<th scope="col" class="org-left">Notes</th>
-</tr>
-</thead>
+We will track the process of implementing user stories
+using [ZenHub](https://app.zenhub.com/).
+ZenHub is an online project tracking tool 
+similar to [Trello](https://trello.com/),
+but integrated with GitHub.
+It tracks tasks and progress
+using GitHub's standard _issue_
+feature, thus keeping all project
+updates with the repository itself.
 
-<tbody>
-<tr>
-<td class="org-right">8:30</td>
-<td class="org-left">Devotions</td>
-<td class="org-left">Church staff, team members</td>
-</tr>
+### Git
 
+The project will use 
+a Git branching model based on
+[Gitflow](https://nvie.com/posts/a-successful-git-branching-model/)
+and
+[Github Flow](https://guides.github.com/introduction/flow/).
 
-<tr>
-<td class="org-right">9:00</td>
-<td class="org-left">Stand-up</td>
-<td class="org-left">Module teams</td>
-</tr>
-
-
-<tr>
-<td class="org-right">9:15</td>
-<td class="org-left">Work</td>
-<td class="org-left">&#xa0;</td>
-</tr>
-
-
-<tr>
-<td class="org-right">12:00</td>
-<td class="org-left">Lunch</td>
-<td class="org-left">Catered in at Arco</td>
-</tr>
-
-
-<tr>
-<td class="org-right">1:00</td>
-<td class="org-left">Stand-up</td>
-<td class="org-left">Functional teams, Team leads</td>
-</tr>
-
-
-<tr>
-<td class="org-right">1:15</td>
-<td class="org-left">Work</td>
-<td class="org-left">&#xa0;</td>
-</tr>
-
-
-<tr>
-<td class="org-right">3:15</td>
-<td class="org-left">Afternoon break</td>
-<td class="org-left">Snackies</td>
-</tr>
-
-
-<tr>
-<td class="org-right">3:30</td>
-<td class="org-left">Work</td>
-<td class="org-left">&#xa0;</td>
-</tr>
-
-
-<tr>
-<td class="org-right">5:00</td>
-<td class="org-left">End of work day</td>
-<td class="org-left">&#xa0;</td>
-</tr>
-</tbody>
-</table>
-
-## Other Issues
-
-### TODO Revision Control
-
--   Git branching models
-    -   [Workflow descriptions at Atlassian](https://www.atlassian.com/git/tutorials/comparing-workflows)
-    -   [Gitflow (Dreissen@nvie)](https://nvie.com/posts/a-successful-git-branching-model/)
-    -   [Github Flow](https://guides.github.com/introduction/flow/)
-
-### TODO Progress tracking (Trello? Zenhub? Other?)
-
-### TODO Support requests (Trello? Something else?)
-
-### TODO Slack utilization?
-
-### TODO Seating arrangement for best team interaction
-
-### TODO Ask about increasing Internet bandwidth
-
--   Offer to pay overage during January
-
-### TODO Ask about WiFi
-
--   Offer to buy more WAPs if necessary
-
+We use
+[pull requests](https://help.github.com/categories/collaborating-with-issues-and-pull-requests/)
+on GitHub to submit updates to release branches.
+Pull requests are approved by feature owners.
