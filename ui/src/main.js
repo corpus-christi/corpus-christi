@@ -1,8 +1,27 @@
-import Vue from 'vue'
-import App from './App.vue'
+import Vue from "vue";
 
-Vue.config.productionTip = false
+import Vuetify from "vuetify";
+import "vuetify/dist/vuetify.min.css";
+import "material-design-icons-iconfont/dist/material-design-icons.css";
+
+import Locale from "./pages/Locale.vue";
+import Home from './pages/Home.vue';
+
+import VueRouter from "vue-router";
+import App from "./App.vue";
+
+Vue.use(Vuetify);
+Vue.use(VueRouter);
+const router = new VueRouter({
+    mode: "history",
+    routes: [
+        {name: 'home', path: '/', component: Home},
+        {name: "locale", path: "/locale", component: Locale}
+    ]
+});
 
 new Vue({
-  render: h => h(App),
-}).$mount('#app')
+    el: "#app",
+    router,
+    render: h => h(App)
+});
