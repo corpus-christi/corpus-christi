@@ -31,11 +31,6 @@ Implemented with the following technologies.
     - [Flask Web Development](https://www.safaribooksonline.com/library/view/flask-web-development/9781491991725/) book
     - [Explore Flask](http://exploreflask.com/)
 1. [Flask Mail](https://pythonhosted.org/Flask-Mail/) - Flask email framework
-1. [Flask SQLAlchemy](http://flask-sqlalchemy.pocoo.org/) - Integration with [SQL Alchemy](https://www.sqlalchemy.org/)
-    - [Main page](http://flask-sqlalchemy.pocoo.org/) has good documentation
-    - [Quickstart](http://flask-sqlalchemy.pocoo.org/2.3/quickstart/) guide for basics
-1. [Flask Migrate](https://flask-migrate.readthedocs.io) - Integration with [Alembic](https://alembic.sqlalchemy.org/)
-    - [Main page]((https://flask-migrate.readthedocs.io)) explains the package well 
 
 ## Data Persistence (Model)
 
@@ -43,8 +38,13 @@ Implemented with the following technologies.
 1. [SQL Alchemy](https://www.sqlalchemy.org/) - Python Object-Relational Mapper
     - [Object-Relational Tutorial](https://docs.sqlalchemy.org/en/latest/orm/tutorial.html)
     - [Essential SQLAlchemy](https://www.safaribooksonline.com/library/view/essential-sqlalchemy-2nd/9781491916544/) book
+1. [Flask SQLAlchemy](http://flask-sqlalchemy.pocoo.org/) - Integration with [SQL Alchemy](https://www.sqlalchemy.org/)
+    - [Main page](http://flask-sqlalchemy.pocoo.org/) has good documentation
+    - [Quickstart](http://flask-sqlalchemy.pocoo.org/2.3/quickstart/) guide for basics
 1. [Alembic](https://alembic.sqlalchemy.org/) - Database migration for SQL Alchemy
     - [Alembic Tutorial](https://alembic.sqlalchemy.org/en/latest/tutorial.html)
+1. [Flask Migrate](https://flask-migrate.readthedocs.io) - Integration with [Alembic](https://alembic.sqlalchemy.org/)
+    - [Main page]((https://flask-migrate.readthedocs.io)) explains the package well 
 
 ## Other Key Technologies
 

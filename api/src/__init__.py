@@ -7,6 +7,7 @@ from config import config
 db = SQLAlchemy()
 migrate = Migrate()
 
+
 def create_app(config_name):
     # Initialize application.
     app = Flask(__name__)
@@ -17,12 +18,11 @@ def create_app(config_name):
     db.init_app(app)
     migrate.init_app(app, db)
 
-
     # Attached CC modules
     from .gather import gather as gather_blueprint
     app.register_blueprint(gather_blueprint, url_prefix='/api/v1/gather')
 
-    from .common import common as common_blueprint
-    app.register_blueprint(common_blueprint, url_prefix='/api/v1/common')
+    from .i18n import i18n as i18n_blueprint
+    app.register_blueprint(i18n_blueprint, url_prefix='/api/v1/i18n')
 
     return app
