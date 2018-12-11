@@ -9,7 +9,7 @@ at
 
 ## Modules
 
-1. `lead` - Administration of the entire CC suite
+1. `manage` - Administration of the entire CC suite
 1. `gather` - Home Church management and tracking
 1. `teach` - Teaching ministry management
 1. `serve` - Tracking for various ministries
