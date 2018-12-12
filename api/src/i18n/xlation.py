@@ -1,27 +1,32 @@
-from flask import request
-from flask.json import jsonify
+from flask import request, jsonify
 
 from . import i18n
 from .. import db
-from ..models import I18NLocale
+from ..models import I18NLocale, I18NLocaleSchema
+
+i18n_locale_schema = I18NLocaleSchema()
 
 
-@i18n.route('/locales/')
+@i18n.route('/locales')
 @i18n.route('/locales/<locale_id>')
 def read_locales(locale_id=None):
     if locale_id is None:
-        return jsonify([locale.to_json() for locale in I18NLocale.query.all()])
+        locales = I18NLocale.query.all()
+        return i18n_locale_schema.jsonify(locales, True)
     else:
-        locale = I18NLocale.query.filter_by(id=locale_id)
-        return jsonify(locale[0].to_json())
+        locale = I18NLocale.query.filter_by(id=locale_id).first()
+        return i18n_locale_schema.jsonify(locale)
 
 
-@i18n.route('/locales/', methods=['POST'])
+@i18n.route('/locales', methods=['POST'])
 def create_locale():
-    new_locale = I18NLocale(id=request.json['id'], desc=request.json['desc'])
+    loaded = i18n_locale_schema.load(request.json)
+    print(loaded)
+
+    new_locale = I18NLocale(**request.json)     # FIXME What about validation?!
     db.session.add(new_locale)
     db.session.commit()
-    return 'ok'
+    return i18n_locale_schema.jsonify(new_locale)
 
 
 @i18n.route('/locales/<locale_id>', methods=['DELETE'])
