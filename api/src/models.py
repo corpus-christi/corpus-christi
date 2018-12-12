@@ -1,4 +1,9 @@
-from . import db, ma
+import re
+
+from flask_marshmallow import Schema
+from marshmallow import fields, ValidationError
+
+from . import db
 
 StringTypes = dict(
     SHORT_STRING=db.String(16),
@@ -18,9 +23,14 @@ class I18NLocale(db.Model):
         return "<I18NLocale(desc={})>".format(self.desc)
 
 
-class I18NLocaleSchema(ma.ModelSchema):
-    class Meta:
-        model = I18NLocale
+def validate_i18n_locale(id):
+    if not re.fullmatch(r'[a-z]{2,}(?:-[a-z]{2,})?', id, re.IGNORECASE):
+        raise ValidationError('Invalid locale code')
+
+
+class I18NLocaleSchema(Schema):
+    id = fields.String(required=True, validate=validate_i18n_locale)
+    desc = fields.String(required=True)
 
 
 class I18NKey(db.Model):
