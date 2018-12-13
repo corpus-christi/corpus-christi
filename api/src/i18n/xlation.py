@@ -3,25 +3,31 @@ from marshmallow import ValidationError
 
 from . import i18n
 from .. import db
-from ..models import I18NLocale, I18NLocaleSchema
+from ..models import I18NLocale, I18NLocaleSchema, I18NKeySchema, I18NKey
 
 i18n_locale_schema = I18NLocaleSchema()
+i18n_key_schema = I18NKeySchema()
 
+
+# ---- Locale
 
 @i18n.route('/locales')
-def read_locales():
+def read_all_locales():
     locales = I18NLocale.query.all()
     return i18n_locale_schema.jsonify(locales, many=True)
 
 
 @i18n.route('/locales/<locale_id>')
-def read_locale(locale_id):
+def read_one_locale(locale_id):
     locale = I18NLocale.query.filter_by(id=locale_id).first()
-    return i18n_locale_schema.jsonify(locale)
+    if locale is None:
+        return 'No such locale', 404
+    else:
+        return i18n_locale_schema.jsonify(locale)
 
 
 @i18n.route('/locales', methods=['POST'])
-def create_locale():
+def create_one_locale():
     try:
         loaded = i18n_locale_schema.load(request.json)
     except ValidationError as err:
@@ -34,8 +40,38 @@ def create_locale():
 
 
 @i18n.route('/locales/<locale_id>', methods=['DELETE'])
-def delete_locale(locale_id):
+def delete_one_locale(locale_id):
     locale = I18NLocale.query.get_or_404(locale_id)
     db.session.delete(locale)
     db.session.commit()
     return 'ok'
+
+
+# ---- Keys
+
+@i18n.route('/keys')
+def read_all_keys():
+    keys = I18NKey.query.all()
+    return i18n_key_schema.jsonify(keys, many=True)
+
+
+@i18n.route('/keys/<key_id>')
+def read_one_key(key_id):
+    key = I18NKey.query.filter_by(id=key_id).first()
+    if key is None:
+        return 'No such key', 404
+    else:
+        return i18n_key_schema.jsonify(key)
+
+
+@i18n.route('/keys', methods=['POST'])
+def create_one_key():
+    try:
+        loaded = i18n_key_schema.load(request.json)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+
+    new_key = I18NKey(**request.json)
+    db.session.add(new_key)
+    db.session.commit()
+    return i18n_key_schema.jsonify(new_key)
