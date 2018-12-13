@@ -11,6 +11,7 @@ migrate = Migrate()
 
 
 def create_app(config_name):
+    print("CREATE APP WITH {} CONFIGURATION".format(config_name))
     # Initialize application.
     app = Flask(__name__)
     app.config.from_object(config[config_name])
@@ -19,7 +20,7 @@ def create_app(config_name):
     # Initialize Python packages
     db.init_app(app)
     migrate.init_app(app, db)
-    ma.init_app(app)        # Must be AFTER db.init_app
+    ma.init_app(app)  # Must be AFTER db.init_app
 
     # Attached CC modules
     from .gather import gather as gather_blueprint
