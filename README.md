@@ -9,11 +9,11 @@ at
 
 ## Modules
 
-1. `manage` - Administration of the entire CC suite
-1. `gather` - Home Church management and tracking
-1. `teach` - Teaching ministry management
-1. `serve` - Tracking for various ministries
-1. `plan` - Planning and calendaring
+1. `admin` - Administration of the entire CC suite
+1. `groups` - Home Church management and tracking
+1. `courses` - Teaching ministry management
+1. `events` - Event planning and registration
+1. `calendar` - Planning and calendaring
 
 ## More Documentation
 
