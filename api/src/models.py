@@ -65,3 +65,12 @@ class I18NValue(db.Model):
 
     def __repr__(self):
         return "<I18NValue(gloss={})>".format(self.gloss)
+
+
+class I18NValueSchema(Schema):
+    key_id = fields.String(required=True)
+    locale_id = fields.String(required=True)
+    gloss = fields.String(required=True)
+
+    def __repr__(self):
+        return '<I18NValue(gloss={})>'.format(self.gloss)

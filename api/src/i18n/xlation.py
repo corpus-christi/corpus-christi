@@ -3,10 +3,11 @@ from marshmallow import ValidationError
 
 from . import i18n
 from .. import db
-from ..models import I18NLocale, I18NLocaleSchema, I18NKeySchema, I18NKey
+from ..models import I18NLocale, I18NLocaleSchema, I18NKeySchema, I18NKey, I18NValue, I18NValueSchema
 
 i18n_locale_schema = I18NLocaleSchema()
 i18n_key_schema = I18NKeySchema()
+i18n_value_schema = I18NValueSchema()
 
 
 # ---- Locale
@@ -75,3 +76,20 @@ def create_one_key():
     db.session.add(new_key)
     db.session.commit()
     return i18n_key_schema.jsonify(new_key)
+
+
+# ---- Values
+
+@i18n.route('/values')
+def read_all_values():
+    values = I18NValue.query.all()
+    return i18n_value_schema.jsonify(values, many=True)
+
+
+@i18n.route('/shutdown')
+def shutdown():
+    func = request.environ.get('werkzeug.server.shutdown')
+    if func is None:  # pragma: no cover
+        raise RuntimeError('Not running with the Werkzeug Server')
+    func()
+    return 'Server shutting down...'

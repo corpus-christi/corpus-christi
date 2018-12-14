@@ -1,9 +1,12 @@
 alembic==1.0.5
 atomicwrites==1.2.1
 attrs==18.2.0
+banal==0.4.0
 certifi==2018.11.29
 chardet==3.0.4
 Click==7.0
+coverage==4.5.2
+dataset==1.1.0
 Flask==1.0.2
 flask-marshmallow==0.9.0
 Flask-Migrate==2.3.1
@@ -16,11 +19,14 @@ MarkupSafe==1.1.0
 marshmallow==3.0.0rc1
 marshmallow-sqlalchemy==0.15.0
 more-itertools==4.3.0
+normality==0.6.1
 packaging==18.0
 pluggy==0.8.0
+psycopg2-binary==2.7.6.1
 py==1.7.0
 pyparsing==2.3.0
 pytest==4.0.1
+pytest-cov==2.6.0
 python-dateutil==2.7.5
 python-editor==1.0.3
 requests==2.21.0

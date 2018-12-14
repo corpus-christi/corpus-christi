@@ -3,6 +3,8 @@ venv/
 node_modules/
 __pycache__/
 .idea/
+.coverage
+htmlcov/
 
 # Data
 dev-db.sqlite
