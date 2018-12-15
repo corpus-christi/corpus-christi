@@ -3,24 +3,24 @@ import re
 from flask_marshmallow import Schema
 from marshmallow import fields, ValidationError, validates
 
-from . import db
+from . import sqla
 
 
 class StringTypes:
-    SHORT_STRING = db.String(16)
-    MEDIUM_STRING = db.String(64)
-    LONG_STRING = db.String(255)
-    I18N_KEY = db.String(32)
+    SHORT_STRING = sqla.String(16)
+    MEDIUM_STRING = sqla.String(64)
+    LONG_STRING = sqla.String(255)
+    I18N_KEY = sqla.String(32)
 
 
-class I18NLocale(db.Model):
+class I18NLocale(sqla.Model):
     """Translation locale (e.g., 'en-us', 'es')"""
     __tablename__ = 'i18n_locale'
-    id = db.Column(StringTypes.SHORT_STRING, primary_key=True)
-    desc = db.Column(StringTypes.MEDIUM_STRING, unique=True, nullable=False)
+    id = sqla.Column(StringTypes.SHORT_STRING, primary_key=True)
+    desc = sqla.Column(StringTypes.MEDIUM_STRING, unique=True, nullable=False)
 
     def __repr__(self):
-        return "<I18NLocale(desc={})>".format(self.desc)
+        return f"<I18NLocale(id={self.id},desc={self.desc})>"
 
 
 class I18NLocaleSchema(Schema):
@@ -33,11 +33,11 @@ class I18NLocaleSchema(Schema):
             raise ValidationError('Invalid locale code')
 
 
-class I18NKey(db.Model):
+class I18NKey(sqla.Model):
     """Key for a translatable string (e.g., 'gather.home_group')"""
     __tablename__ = 'i18n_key'
-    id = db.Column(StringTypes.I18N_KEY, primary_key=True)
-    desc = db.Column(StringTypes.LONG_STRING, unique=True, nullable=False)
+    id = sqla.Column(StringTypes.I18N_KEY, primary_key=True)
+    desc = sqla.Column(StringTypes.LONG_STRING, unique=True, nullable=False)
 
     def __repr__(self):
         return "<I18NKey(key={})>".format(self.id)
@@ -53,15 +53,15 @@ class I18NKeySchema(Schema):
             raise ValidationError("Invalid id; should be of form 'abc.def.xyz'")
 
 
-class I18NValue(db.Model):
+class I18NValue(sqla.Model):
     """Language-specific value for a given I18NKey."""
     __tablename__ = 'i18n_value'
-    key_id = db.Column(StringTypes.I18N_KEY, db.ForeignKey('i18n_key.id'), primary_key=True)
-    locale_id = db.Column(StringTypes.SHORT_STRING, db.ForeignKey('i18n_locale.id'), primary_key=True)
-    gloss = db.Column(db.Text(), nullable=False)
+    key_id = sqla.Column(StringTypes.I18N_KEY, sqla.ForeignKey('i18n_key.id'), primary_key=True)
+    locale_id = sqla.Column(StringTypes.SHORT_STRING, sqla.ForeignKey('i18n_locale.id'), primary_key=True)
+    gloss = sqla.Column(sqla.Text(), nullable=False)
 
-    key = db.relationship('I18NKey', backref='values', lazy=True)
-    locale = db.relationship('I18NLocale', backref='values', lazy=True)
+    key = sqla.relationship('I18NKey', backref='values', lazy=True)
+    locale = sqla.relationship('I18NLocale', backref='values', lazy=True)
 
     def __repr__(self):
         return "<I18NValue(gloss={})>".format(self.gloss)

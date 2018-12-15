@@ -2,7 +2,7 @@ import dataset
 import pytest
 import requests
 
-from config import config
+from .. import config
 
 DB_URI = config['test'].SQLALCHEMY_DATABASE_URI
 BASE_URL = 'http://localhost:5000/api/v1/i18n'
