@@ -5,19 +5,22 @@ from flask_sqlalchemy import SQLAlchemy
 
 from config import config
 
+# These constructors return otherwise unconfigured instances
+# that are then set up in the `create_app` function.
 db = SQLAlchemy()
-ma = Marshmallow()
 migrate = Migrate()
+ma = Marshmallow()
 
 
 def create_app(config_name):
-    print("CREATE APP WITH {} CONFIGURATION".format(config_name))
+    """Application factor for the API."""
+
     # Initialize application.
     app = Flask(__name__)
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
 
-    # Initialize Python packages
+    # Initialize previously constructed packages
     db.init_app(app)
     migrate.init_app(app, db)
     ma.init_app(app)  # Must be AFTER db.init_app
