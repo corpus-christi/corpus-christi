@@ -1,5 +1,5 @@
 from flask import Blueprint
 
-i18n = Blueprint('i18n', __name__)
+etc = Blueprint('etc', __name__)
 
 from . import api

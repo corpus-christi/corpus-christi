@@ -4,3 +4,5 @@ source ./venv/bin/activate
 
 export FLASK_APP=cc-api.py
 export FLASK_ENV=development
+
+PS1=$(fancy-prompt.py)

@@ -21,6 +21,8 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     TESTING = True
+    # SQLALCHEMY_ECHO = True        # Really chatty.
+
     if True:
         # SQLite
         SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DB_URL') or \

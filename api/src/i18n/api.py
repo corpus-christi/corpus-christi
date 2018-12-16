@@ -2,7 +2,7 @@ from flask import request, jsonify
 from marshmallow import ValidationError
 
 from . import i18n
-from .. import sqla
+from .. import orm
 from ..models import I18NLocale, I18NLocaleSchema, I18NKeySchema, I18NKey, I18NValue, I18NValueSchema
 
 i18n_locale_schema = I18NLocaleSchema()
@@ -28,23 +28,23 @@ def read_one_locale(locale_id):
 
 
 @i18n.route('/locales', methods=['POST'])
-def create_one_locale():
+def create_locale():
     try:
         loaded = i18n_locale_schema.load(request.json)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
     new_locale = I18NLocale(**request.json)
-    sqla.session.add(new_locale)
-    sqla.session.commit()
+    orm.session.add(new_locale)
+    orm.session.commit()
     return i18n_locale_schema.jsonify(new_locale)
 
 
 @i18n.route('/locales/<locale_id>', methods=['DELETE'])
 def delete_one_locale(locale_id):
     locale = I18NLocale.query.get_or_404(locale_id)
-    sqla.session.delete(locale)
-    sqla.session.commit()
+    orm.session.delete(locale)
+    orm.session.commit()
     return 'ok'
 
 
@@ -66,15 +66,15 @@ def read_one_key(key_id):
 
 
 @i18n.route('/keys', methods=['POST'])
-def create_one_key():
+def create_key():
     try:
         loaded = i18n_key_schema.load(request.json)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
     new_key = I18NKey(**request.json)
-    sqla.session.add(new_key)
-    sqla.session.commit()
+    orm.session.add(new_key)
+    orm.session.commit()
     return i18n_key_schema.jsonify(new_key)
 
 
@@ -84,12 +84,3 @@ def create_one_key():
 def read_all_values():
     values = I18NValue.query.all()
     return i18n_value_schema.jsonify(values, many=True)
-
-
-@i18n.route('/shutdown')
-def shutdown():
-    func = request.environ.get('werkzeug.server.shutdown')
-    if func is None:  # pragma: no cover
-        raise RuntimeError('Not running with the Werkzeug Server')
-    func()
-    return 'Server shutting down...'

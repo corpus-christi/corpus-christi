@@ -7,7 +7,7 @@ from config import config
 
 # These constructors return otherwise unconfigured instances
 # that are then set up in the `create_app` function.
-sqla = SQLAlchemy()
+orm = SQLAlchemy()
 migrate = Migrate()
 marm = Marshmallow()
 
@@ -21,8 +21,8 @@ def create_app(config_name):
     config[config_name].init_app(app)
 
     # Initialize previously constructed packages
-    sqla.init_app(app)
-    migrate.init_app(app, sqla)
+    orm.init_app(app)
+    migrate.init_app(app, orm)
     marm.init_app(app)  # Must be AFTER db.init_app
 
     # Attached CC modules
@@ -32,8 +32,7 @@ def create_app(config_name):
     from .i18n import i18n as i18n_blueprint
     app.register_blueprint(i18n_blueprint, url_prefix='/api/v1/i18n')
 
-    @app.route('/ping')
-    def ping():
-        return 'pong'
+    from .etc import etc as etc_blueprint
+    app.register_blueprint(etc_blueprint, url_prefix='/')
 
     return app

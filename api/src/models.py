@@ -2,30 +2,31 @@ import re
 
 from flask_marshmallow import Schema
 from marshmallow import fields, ValidationError, validates
+from marshmallow.validate import Length
 
-from . import sqla
+from . import orm
 
 
 class StringTypes:
-    SHORT_STRING = sqla.String(16)
-    MEDIUM_STRING = sqla.String(64)
-    LONG_STRING = sqla.String(255)
-    I18N_KEY = sqla.String(32)
+    SHORT_STRING = orm.String(16)
+    MEDIUM_STRING = orm.String(64)
+    LONG_STRING = orm.String(255)
+    I18N_KEY = orm.String(32)
 
 
-class I18NLocale(sqla.Model):
+class I18NLocale(orm.Model):
     """Translation locale (e.g., 'en-us', 'es')"""
     __tablename__ = 'i18n_locale'
-    id = sqla.Column(StringTypes.SHORT_STRING, primary_key=True)
-    desc = sqla.Column(StringTypes.MEDIUM_STRING, unique=True, nullable=False)
+    id = orm.Column(StringTypes.SHORT_STRING, primary_key=True)
+    desc = orm.Column(StringTypes.MEDIUM_STRING, unique=True, nullable=False)
 
     def __repr__(self):
         return f"<I18NLocale(id={self.id},desc={self.desc})>"
 
 
 class I18NLocaleSchema(Schema):
-    id = fields.String(required=True)
-    desc = fields.String(required=True)
+    id = fields.String(required=True, validate=[Length(min=2)])
+    desc = fields.String(required=True, validate=[Length(min=2)])
 
     @validates('id')
     def validate_id(self, id):
@@ -33,11 +34,11 @@ class I18NLocaleSchema(Schema):
             raise ValidationError('Invalid locale code')
 
 
-class I18NKey(sqla.Model):
+class I18NKey(orm.Model):
     """Key for a translatable string (e.g., 'gather.home_group')"""
     __tablename__ = 'i18n_key'
-    id = sqla.Column(StringTypes.I18N_KEY, primary_key=True)
-    desc = sqla.Column(StringTypes.LONG_STRING, unique=True, nullable=False)
+    id = orm.Column(StringTypes.I18N_KEY, primary_key=True)
+    desc = orm.Column(StringTypes.LONG_STRING, unique=True, nullable=False)
 
     def __repr__(self):
         return "<I18NKey(key={})>".format(self.id)
@@ -53,15 +54,15 @@ class I18NKeySchema(Schema):
             raise ValidationError("Invalid id; should be of form 'abc.def.xyz'")
 
 
-class I18NValue(sqla.Model):
+class I18NValue(orm.Model):
     """Language-specific value for a given I18NKey."""
     __tablename__ = 'i18n_value'
-    key_id = sqla.Column(StringTypes.I18N_KEY, sqla.ForeignKey('i18n_key.id'), primary_key=True)
-    locale_id = sqla.Column(StringTypes.SHORT_STRING, sqla.ForeignKey('i18n_locale.id'), primary_key=True)
-    gloss = sqla.Column(sqla.Text(), nullable=False)
+    key_id = orm.Column(StringTypes.I18N_KEY, orm.ForeignKey('i18n_key.id'), primary_key=True)
+    locale_id = orm.Column(StringTypes.SHORT_STRING, orm.ForeignKey('i18n_locale.id'), primary_key=True)
+    gloss = orm.Column(orm.Text(), nullable=False)
 
-    key = sqla.relationship('I18NKey', backref='values', lazy=True)
-    locale = sqla.relationship('I18NLocale', backref='values', lazy=True)
+    key = orm.relationship('I18NKey', backref='values', lazy=True)
+    locale = orm.relationship('I18NLocale', backref='values', lazy=True)
 
     def __repr__(self):
         return "<I18NValue(gloss={})>".format(self.gloss)
