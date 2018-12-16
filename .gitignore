@@ -1,11 +1,16 @@
-# Development
-venv/
-node_modules/
-__pycache__/
-.idea/
-.coverage
-htmlcov/
+# Files and directories that should not be committed to Git.
 
-# Data
+# API
+.coverage
+__pycache__/
 dev-db.sqlite
+htmlcov/
 test-db.sqlite
+venv/
+
+# UI
+node_modules/
+yarn-error.log
+
+# Other
+.idea/

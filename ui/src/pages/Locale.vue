@@ -28,7 +28,7 @@
             };
         },
         mounted: function () {
-            axios.get("/api/v1/i18n/locales/").then(response => {
+            axios.get("/api/v1/i18n/locales").then(response => {
                 this.locales = response.data.map(locale => ({
                     id: locale.id,
                     desc: locale.desc
