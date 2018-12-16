@@ -2,6 +2,8 @@
     <div>
         <h4 class="display-1">Locales</h4>
 
+        <SelectLocale v-bind:locales="locales"></SelectLocale>
+
         <v-data-table
                 v-bind:headers="headers"
                 v-bind:items="locales">
@@ -14,10 +16,12 @@
 </template>
 
 <script>
+    import SelectLocale from "../components/SelectLocale";
     const axios = require("axios");
 
     export default {
         name: "Locale",
+        components: {SelectLocale},
         data: function () {
             return {
                 headers: [
