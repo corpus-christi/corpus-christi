@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "he": "^1.2.0",
     "material-design-icons-iconfont": "^4.0.3",
     "vue": "^2.5.17",
     "vue-router": "^3.0.2",

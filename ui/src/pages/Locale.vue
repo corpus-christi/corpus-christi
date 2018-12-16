@@ -17,7 +17,9 @@
 
 <script>
     import SelectLocale from "../components/SelectLocale";
+
     const axios = require("axios");
+
 
     export default {
         name: "Locale",
