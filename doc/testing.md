@@ -8,6 +8,8 @@ API testing uses these packages:
 - [`pytest`](https://docs.pytest.org/en/latest/index.html) - test framework
 - [`pytest-cov`](https://pytest-cov.readthedocs.io/en/latest/) - coverage testing
 
+### Overview
+
 Each component of the API has its own dedicate test file(s).
 Here is an example from `i18n`.
 ```python
@@ -75,6 +77,53 @@ The API should use these status codes; **check** for them.
 - `500` - `Internal server error`: something on the server went horribly wrong.
   In general, API code should _not_ return this;
   it normally comes from the system or framework.
+  
+### Running Tests
+
+To run tests from bash: 
+```bash
+pytest
+```
+This will run all the test files in and under
+the current directory.
+To specific a specific directory use:
+```bash
+pytest <dirname>
+```
+To run just the tests in a specific file:
+```bash
+pytest <test-file>.py
+```
+To run just one test function:
+```bash
+pytest <test-file>.py::<function-name>
+```
+
+### Coverage Testing
+
+We are aiming for 100% test coverage.
+To generate a coverage report while testing:
+```bash
+pytest --cov=src --cov-report=html
+```
+The `--cov` flag tells `pytest`
+to look for tests _only_ within the given directory.
+Without this flag, `pytest` may recurse into
+unintended source directories (e.g., your virtual environment),
+which will take a _Long Time_ to complete.
+
+The `--cov-report` flag tells `pytest` to generate
+a report in one of various formats.
+Specifying `html` creates a nice report in 
+a directory called `htmlcov`.
+Open `htmlcov/index.html` to view the results.
+
+If you don't specify a report format,
+`pytest` outputs a nice text table to your terminal
+after the tests complete.
+
+These coverage flags can be used with any of the variants
+mentioned under _Running Tests_.
 
 ## UI Testing
 
