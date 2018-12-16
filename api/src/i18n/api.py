@@ -37,7 +37,7 @@ def create_locale():
     new_locale = I18NLocale(**request.json)
     orm.session.add(new_locale)
     orm.session.commit()
-    return i18n_locale_schema.jsonify(new_locale)
+    return i18n_locale_schema.jsonify(new_locale), 201
 
 
 @i18n.route('/locales/<locale_id>', methods=['DELETE'])
@@ -45,7 +45,7 @@ def delete_one_locale(locale_id):
     locale = I18NLocale.query.get_or_404(locale_id)
     orm.session.delete(locale)
     orm.session.commit()
-    return 'ok'
+    return 'ok', 204
 
 
 # ---- Keys
@@ -75,7 +75,7 @@ def create_key():
     new_key = I18NKey(**request.json)
     orm.session.add(new_key)
     orm.session.commit()
-    return i18n_key_schema.jsonify(new_key)
+    return i18n_key_schema.jsonify(new_key), 201
 
 
 # ---- Values

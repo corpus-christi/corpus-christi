@@ -30,15 +30,6 @@ def create_keys(dbs):
     dbs.commit()
 
 
-# value_data = []
-# for locale in locale_data:
-#     for key in key_data:
-#         value_data.append({
-#             'locale_id': locale['id'],
-#             'key_id': key['id'],
-#             'gloss': f"{key['desc']} in {locale['desc']}"
-#         })
-
 def create_values(dbs):
     for locale in locale_data:
         for key in key_data:
@@ -48,19 +39,30 @@ def create_values(dbs):
             dbs.add(val)
     dbs.commit()
 
+
 # ---- Locales
 
 def test_read_all_locales(client, dbs):
+    # GIVEN locales from static data
     create_locales(dbs)
+
+    # WHEN we request all locales
     resp = client.get(url_for('i18n.read_all_locales'))
+
+    # THEN result is "Ok" and we get back the same number of locales.
     assert resp.status_code == 200
     assert len(resp.json) == len(locale_data)
 
 
 @pytest.mark.parametrize('id, desc', locale_tuples)
 def test_read_one_locale(client, dbs, id, desc):
+    # GIVEN locales from static data
     create_locales(dbs)
+
+    # WHEN we read one of them
     resp = client.get(url_for('i18n.read_one_locale', locale_id=id))
+
+    # THEN result is "Ok" and we get back the expected locale
     assert resp.status_code == 200
     assert resp.json['id'] == id
     assert resp.json['desc'] == desc
@@ -68,23 +70,57 @@ def test_read_one_locale(client, dbs, id, desc):
 
 @pytest.mark.parametrize('id', ['', 'a', 'aa', 'aaa', 'aa-aa'])
 def test_read_nonexistent_locale(client, id):
+    # GIVEN any set of locales
+    # WHEN we try to fetch a locale with a bogus name
     resp = client.get(url_for('i18n.read_one_locale', locale_id=id))
+    # THEN result is "Not fount"
     assert resp.status_code == 404
 
 
 @pytest.mark.parametrize('id', ['', 'a', 'a-', '-a', 'aa-', 'aaa-', 'aa-a'])
 def test_create_bogus_locale(client, id):
+    # GIVEN any set of locales
+    # WHEN we try to create one with a bogus ID
     resp = client.post(url_for('i18n.create_locale'),
                        json={'id': id, 'desc': id * 2})
+    # THEN result is "Unprocessable"
     assert resp.status_code == 422
 
 
 @pytest.mark.usefixtures('orm')
 @pytest.mark.parametrize('id, desc', locale_tuples)
 def test_create_valid_locale(client, id, desc):
-    resp = client.post(url_for('i18n.create_locale'),
-                       json={'id': id, 'desc': desc})
-    assert resp.status_code == 200
+    # GIVEN empty locale table
+    # WHEN one local added
+    resp = client.post(url_for('i18n.create_locale'), json={'id': id, 'desc': desc})
+
+    # THEN result is "Created"
+    assert resp.status_code == 201
+
+    # AND there is one local in the DB and it matches the one created.
+    result = I18NLocale().query.all()
+    assert len(result) == 1
+    assert result[0].id == id
+    assert result[0].desc == desc
+
+
+@pytest.mark.parametrize('id, desc', locale_tuples)
+def test_delete_one_locale(client, dbs, id, desc):
+    # GIVEN locales from static data
+    create_locales(dbs)
+
+    # WHEN one locale deleted
+    resp = client.delete(url_for('i18n.delete_one_locale', locale_id=id))
+
+    # THEN result is "No content"
+    assert resp.status_code == 204
+
+    # AND the deleted locale doesn't exist in the database.
+    result = I18NLocale().query.all()
+    assert len(result) == len(locale_tuples) - 1
+    for loc in result:
+        assert loc.id != id
+        assert loc.desc != desc
 
 
 # ---- Keys
@@ -122,7 +158,7 @@ def test_create_bogus_key(client, id):
 def test_create_valid_key(client, id, desc):
     resp = client.post(url_for('i18n.create_key'),
                        json={'id': id, 'desc': desc})
-    assert resp.status_code == 200
+    assert resp.status_code == 201
 
 
 # ---- Values

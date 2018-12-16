@@ -7,7 +7,7 @@ from . import orm as _orm, create_app
 def app():
     """Create an app instance configured for testing."""
     app = create_app('test')
-    app.testing = True  # Just to be sure
+    app.testing = True      # Make sure exceptions percolate out
     return app
 
 
