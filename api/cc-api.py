@@ -4,7 +4,7 @@ from flask.cli import AppGroup
 
 from src import create_app, orm
 from src.i18n.models import I18NLocale, I18NKey, I18NValue
-from src.i18n.test_i18n import seed_database
+from src.i18n.test_i18n import seed_database, load_country_codes, load_language_codes
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 
@@ -42,6 +42,12 @@ def create_all():
 def clear():
     orm.drop_all()
     orm.create_all()
+
+
+@data_cli.command('load', help="Load fixed data (e.g., country codes)")
+def load():
+    load_country_codes(orm)
+    load_language_codes(orm)
 
 
 app.cli.add_command(data_cli)

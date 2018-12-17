@@ -14,6 +14,8 @@ class StringTypes:
     I18N_KEY = orm.String(32)
 
 
+# ---- Locale
+
 class I18NLocale(orm.Model):
     """Translation locale (e.g., 'en-us', 'es')"""
     __tablename__ = 'i18n_locale'
@@ -36,6 +38,8 @@ class I18NLocaleSchema(Schema):
             raise ValidationError('Invalid locale code')
 
 
+# ---- Key
+
 class I18NKey(orm.Model):
     """Key for a translatable string (e.g., 'groups.home_group')"""
     __tablename__ = 'i18n_key'
@@ -56,6 +60,8 @@ class I18NKeySchema(Schema):
             raise ValidationError("Invalid id; should be of form 'abc.def.xyz'")
 
 
+# ---- Value
+
 class I18NValue(orm.Model):
     """Language-specific value for a given I18NKey."""
     __tablename__ = 'i18n_value'
@@ -75,5 +81,34 @@ class I18NValueSchema(Schema):
     locale_id = fields.String(required=True)
     gloss = fields.String(required=True)
 
+
+# ---- Language and country - https://datahub.io
+
+class I18NLanguageCode(orm.Model):
+    """ISO 639-1 language codes"""
+    __tablename__ = 'i18n_language_code'
+    code = orm.Column(orm.String(2), primary_key=True)
+    name = orm.Column(StringTypes.SHORT_STRING, unique=True)
+
     def __repr__(self):
-        return f"<I18NValue(gloss='{self.gloss}')>"
+        return f"<I18NLanguageCode(code='{self.code}',name='{self.name}')>"
+
+
+class I18NLanguageCodeSchema(Schema):
+    code = fields.String(required=True, validate=[Length(equal=2)])
+    name = fields.String(required=True, validate=[Length(min=2)])
+
+
+class I18NCountryCode(orm.Model):
+    """ISO 3166-1 country codes"""
+    __tablename__ = 'i18n_country_code'
+    code = orm.Column(orm.String(2), primary_key=True)
+    name = orm.Column(StringTypes.SHORT_STRING, unique=True)
+
+    def __repr__(self):
+        return f"<I18NCountryCode(code='{self.code}',name='{self.name}')>"
+
+
+class I18NCountryCodeSchema(Schema):
+    code = fields.String(required=True, validate=[Length(equal=2)])
+    name = fields.String(required=True, validate=[Length(min=2)])

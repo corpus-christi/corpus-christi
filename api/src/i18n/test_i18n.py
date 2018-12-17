@@ -1,10 +1,11 @@
+import os
 from collections import defaultdict
 from functools import reduce
 
 import pytest
 from flask import url_for, json
 
-from src.i18n.models import I18NLocale, I18NKey, I18NValue
+from src.i18n.models import I18NLocale, I18NKey, I18NValue, I18NCountryCode, I18NLanguageCode
 
 locale_data = [
     {'id': 'en', 'desc': 'English', 'country': 'us'},
@@ -57,6 +58,33 @@ def create_values(dbs):
                             gloss=f"{key['desc']} in {locale['desc']}")
             dbs.add(val)
     dbs.commit()
+
+
+def data_file_path(file_name):
+    rtn = os.path.join(__file__, os.path.pardir, 'data', file_name)
+    return os.path.abspath(rtn)
+
+
+def load_country_codes(orm):
+    data = None
+    with open(data_file_path('country-codes.json'), 'r') as fp:
+        data = json.load(fp)
+
+    objs = [I18NCountryCode(code=code['Code'], name=code['Name']) for code in data]
+    orm.add_all(objs)
+    orm.commit()
+    return len(objs)
+
+
+def load_language_codes(orm):
+    data = None
+    with open(data_file_path('language-codes.json'), 'r') as fp:
+        data = json.load(fp)
+
+    objs = [I18NLanguageCode(code=code['alpha2'], name=code['English']) for code in data]
+    orm.add_all(objs)
+    orm.commit()
+    return len(objs)
 
 
 def seed_database(dbs):
@@ -250,4 +278,38 @@ def test_one_locale_as_tree(client, dbs, id):
     # AND should have values in nested dictionaries.
     assert resp.json['label']['name']['first'].startswith('Label for a first')
 
-    print("DUMP", json.dumps(resp.json, indent=4))
+
+# ---- Languages and countries
+
+@pytest.mark.parametrize('code, name', [('US', 'United States'),
+                                        ('EC', 'Ecuador'),
+                                        ('TH', 'Thailand')])
+def test_read_country(client, dbs, code, name):
+    load_country_codes(dbs)
+    resp = client.get(url_for('i18n.read_countries', country_code=code))
+    assert resp.status_code == 200
+    assert resp.json['name'] == name
+
+
+def test_read_all_countries(client, dbs):
+    count = load_country_codes(dbs)
+    resp = client.get(url_for('i18n.read_countries'))
+    assert resp.status_code == 200
+    assert len(resp.json) == count
+
+
+@pytest.mark.parametrize('code, name', [('en', 'English'),
+                                        ('th', 'Thai'),
+                                        ('es', 'Spanish; Castilian')])
+def test_read_language(client, dbs, code, name):
+    load_language_codes(dbs)
+    resp = client.get(url_for('i18n.read_languages', language_code=code))
+    print("RESP", resp.json)
+    assert resp.status_code == 200
+    assert resp.json['name'] == name
+
+def test_read_all_languages(client, dbs):
+    count = load_language_codes(dbs)
+    resp = client.get(url_for('i18n.read_languages'))
+    assert resp.status_code == 200
+    assert len(resp.json) == count
