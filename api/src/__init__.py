@@ -26,8 +26,8 @@ def create_app(config_name):
     marm.init_app(app)  # Must be AFTER db.init_app
 
     # Attached CC modules
-    from .gather import gather as gather_blueprint
-    app.register_blueprint(gather_blueprint, url_prefix='/api/v1/gather')
+    from .groups import gather as gather_blueprint
+    app.register_blueprint(gather_blueprint, url_prefix='/api/v1/groups')
 
     from .i18n import i18n as i18n_blueprint
     app.register_blueprint(i18n_blueprint, url_prefix='/api/v1/i18n')

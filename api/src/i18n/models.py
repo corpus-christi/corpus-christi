@@ -4,7 +4,7 @@ from flask_marshmallow import Schema
 from marshmallow import fields, ValidationError, validates
 from marshmallow.validate import Length
 
-from . import orm
+from src import orm
 
 
 class StringTypes:
@@ -37,7 +37,7 @@ class I18NLocaleSchema(Schema):
 
 
 class I18NKey(orm.Model):
-    """Key for a translatable string (e.g., 'gather.home_group')"""
+    """Key for a translatable string (e.g., 'groups.home_group')"""
     __tablename__ = 'i18n_key'
     id = orm.Column(StringTypes.I18N_KEY, primary_key=True)
     desc = orm.Column(StringTypes.LONG_STRING, unique=True, nullable=False)

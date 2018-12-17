@@ -1,5 +1,5 @@
 from flask import Blueprint
 
-gather = Blueprint('gather', __name__)
+gather = Blueprint('groups', __name__)
 
 from . import views

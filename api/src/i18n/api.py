@@ -3,7 +3,7 @@ from marshmallow import ValidationError
 
 from . import i18n
 from .. import orm
-from ..models import I18NLocale, I18NLocaleSchema, I18NKeySchema, I18NKey, I18NValue, I18NValueSchema
+from src.i18n.models import I18NLocale, I18NLocaleSchema, I18NKeySchema, I18NKey, I18NValue, I18NValueSchema
 
 i18n_locale_schema = I18NLocaleSchema()
 i18n_key_schema = I18NKeySchema()
@@ -84,3 +84,9 @@ def create_key():
 def read_all_values():
     values = I18NValue.query.all()
     return i18n_value_schema.jsonify(values, many=True)
+
+@i18n.route('/values/<locale_id>')
+def read_xlation(locale_id):
+    values = I18NKey.query.join(I18NValue).join(I18NLocale).filter(I18NLocale.id==locale_id).all()
+    print(values)
+    return 'ok'

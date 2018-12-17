@@ -11,6 +11,7 @@ venv/
 # UI
 node_modules/
 yarn-error.log
+videos/
 
 # Other
 .idea/

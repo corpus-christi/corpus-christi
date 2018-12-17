@@ -3,4 +3,4 @@ from . import gather
 
 @gather.route('/')
 def index():
-    return "It's gather"
+    return "It's groups"

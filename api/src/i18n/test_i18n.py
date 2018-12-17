@@ -1,7 +1,7 @@
 import pytest
 from flask import url_for
 
-from src.models import I18NLocale, I18NKey, I18NValue
+from src.i18n.models import I18NLocale, I18NKey, I18NValue
 
 locale_data = [
     {'id': 'en', 'desc': 'English', 'country': 'us'},
@@ -181,3 +181,11 @@ def test_read_all_values(client, dbs):
     resp = client.get(url_for('i18n.read_all_values'))
     assert resp.status_code == 200
     assert len(resp.json) == len(locale_data) * len(key_data)
+
+@pytest.mark.parametrize('id', [loc['id'] for loc in locale_data])
+def test_xlation_one_language(client, dbs, id):
+    create_locales(dbs)
+    create_keys(dbs)
+    create_values(dbs)
+    resp = client.get(url_for('i18n.read_xlation', locale_id=id))
+    assert resp.status_code == 200
