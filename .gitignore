@@ -14,3 +14,4 @@ yarn-error.log
 
 # Other
 .idea/
+dist/

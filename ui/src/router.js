@@ -1,3 +1,5 @@
+// Vue Router configuration
+
 import Vue from "vue";
 
 import Locale from "./pages/Locale.vue";

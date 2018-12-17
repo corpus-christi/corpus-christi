@@ -1,3 +1,5 @@
+// Vuex store; contains global state information for the entire UI.
+
 import Vue from 'vue'
 import Vuex from 'vuex'
 
@@ -8,7 +10,7 @@ export default new Vuex.Store({
         currentLocale: 'en'
     },
     mutations: {
-        setCurrentLocale (state, value) {
+        setCurrentLocale(state, value) {
             state.currentLocale = value;
         }
     },
