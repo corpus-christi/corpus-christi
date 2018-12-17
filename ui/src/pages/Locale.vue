@@ -37,6 +37,7 @@
             axios.get("/api/v1/i18n/locales").then(response => {
                 this.locales = response.data.map(locale => ({
                     id: locale.id,
+                    country: locale.country,
                     desc: locale.desc
                 }));
             });

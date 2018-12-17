@@ -18,6 +18,7 @@ class I18NLocale(orm.Model):
     """Translation locale (e.g., 'en-us', 'es')"""
     __tablename__ = 'i18n_locale'
     id = orm.Column(StringTypes.SHORT_STRING, primary_key=True)
+    country = orm.Column(StringTypes.SHORT_STRING, nullable=False, default='')
     desc = orm.Column(StringTypes.MEDIUM_STRING, unique=True, nullable=False)
 
     def __repr__(self):
@@ -27,6 +28,7 @@ class I18NLocale(orm.Model):
 class I18NLocaleSchema(Schema):
     id = fields.String(required=True, validate=[Length(min=2)])
     desc = fields.String(required=True, validate=[Length(min=2)])
+    country = fields.String(required=True, validate=[Length(min=2)])
 
     @validates('id')
     def validate_id(self, id):

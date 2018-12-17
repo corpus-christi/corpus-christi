@@ -4,16 +4,10 @@ from flask import url_for
 from src.models import I18NLocale, I18NKey, I18NValue
 
 locale_data = [
-    {'id': 'en', 'desc': 'English'},
-    {'id': 'es', 'desc': 'Español'}
+    {'id': 'en', 'desc': 'English', 'country': 'us'},
+    {'id': 'es', 'desc': 'Español', 'country': 'ec'}
 ]
-locale_tuples = [(loc['id'], loc['desc']) for loc in locale_data]
-
-
-def create_locales(dbs):
-    dbs.add_all([I18NLocale(**d) for d in locale_data])
-    dbs.commit()
-
+locale_tuples = [(loc['id'], loc['country'], loc['desc']) for loc in locale_data]
 
 key_data = [
     {'id': 'app.name', 'desc': 'Application name'},
@@ -23,6 +17,11 @@ key_data = [
     {'id': 'label.name.last', 'desc': 'Label for a last name prompt'}
 ]
 key_tuples = [(val['id'], val['desc']) for val in key_data]
+
+
+def create_locales(dbs):
+    dbs.add_all([I18NLocale(**d) for d in locale_data])
+    dbs.commit()
 
 
 def create_keys(dbs):
@@ -40,6 +39,13 @@ def create_values(dbs):
     dbs.commit()
 
 
+def seed_database(dbs):
+    """Utility function for seeding empty database."""
+    create_locales(dbs)
+    create_keys(dbs)
+    create_values(dbs)
+
+
 # ---- Locales
 
 def test_read_all_locales(client, dbs):
@@ -52,10 +58,14 @@ def test_read_all_locales(client, dbs):
     # THEN result is "Ok" and we get back the same number of locales.
     assert resp.status_code == 200
     assert len(resp.json) == len(locale_data)
+    for locale in resp.json:
+        assert locale['id']
+        assert locale['desc']
+        assert locale['country']
 
 
-@pytest.mark.parametrize('id, desc', locale_tuples)
-def test_read_one_locale(client, dbs, id, desc):
+@pytest.mark.parametrize('id, country, desc', locale_tuples)
+def test_read_one_locale(client, dbs, id, country, desc):
     # GIVEN locales from static data
     create_locales(dbs)
 
@@ -65,6 +75,7 @@ def test_read_one_locale(client, dbs, id, desc):
     # THEN result is "Ok" and we get back the expected locale
     assert resp.status_code == 200
     assert resp.json['id'] == id
+    assert resp.json['country'] == country
     assert resp.json['desc'] == desc
 
 
@@ -88,11 +99,12 @@ def test_create_bogus_locale(client, id):
 
 
 @pytest.mark.usefixtures('orm')
-@pytest.mark.parametrize('id, desc', locale_tuples)
-def test_create_valid_locale(client, id, desc):
+@pytest.mark.parametrize('id, country, desc', locale_tuples)
+def test_create_valid_locale(client, id, country, desc):
     # GIVEN empty locale table
     # WHEN one local added
-    resp = client.post(url_for('i18n.create_locale'), json={'id': id, 'desc': desc})
+    resp = client.post(url_for('i18n.create_locale'),
+                       json={'id': id, 'country': country, 'desc': desc})
 
     # THEN result is "Created"
     assert resp.status_code == 201
@@ -104,8 +116,8 @@ def test_create_valid_locale(client, id, desc):
     assert result[0].desc == desc
 
 
-@pytest.mark.parametrize('id, desc', locale_tuples)
-def test_delete_one_locale(client, dbs, id, desc):
+@pytest.mark.parametrize('id, country, desc', locale_tuples)
+def test_delete_one_locale(client, dbs, id, country, desc):
     # GIVEN locales from static data
     create_locales(dbs)
 
@@ -121,6 +133,7 @@ def test_delete_one_locale(client, dbs, id, desc):
     for loc in result:
         assert loc.id != id
         assert loc.desc != desc
+        assert loc.country != country
 
 
 # ---- Keys

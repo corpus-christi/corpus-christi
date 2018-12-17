@@ -17,7 +17,7 @@
             localesWithFlags: function () {
                 return this.locales.map(locale => ({
                     id: locale.id,
-                    desc: this.flag(locale.id) + ' ' + locale.desc
+                    desc: this.flag(locale.country) + ' ' + locale.desc
                 }));
             },
             ...mapState(['currentLocale'])

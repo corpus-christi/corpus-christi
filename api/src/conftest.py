@@ -1,3 +1,5 @@
+import os
+
 import pytest
 
 from . import orm as _orm, create_app
@@ -6,8 +8,8 @@ from . import orm as _orm, create_app
 @pytest.fixture()
 def app():
     """Create an app instance configured for testing."""
-    app = create_app('test')
-    app.testing = True      # Make sure exceptions percolate out
+    app = create_app(os.getenv('FLASK_CONFIG') or 'test')
+    app.testing = True  # Make sure exceptions percolate out
     return app
 
 
