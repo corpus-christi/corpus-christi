@@ -22,7 +22,7 @@ class I18NLocale(orm.Model):
     desc = orm.Column(StringTypes.MEDIUM_STRING, unique=True, nullable=False)
 
     def __repr__(self):
-        return f"<I18NLocale(id={self.id},desc={self.desc})>"
+        return f"<I18NLocale(id='{self.id}',desc='{self.desc}')>"
 
 
 class I18NLocaleSchema(Schema):
@@ -43,7 +43,7 @@ class I18NKey(orm.Model):
     desc = orm.Column(StringTypes.LONG_STRING, unique=True, nullable=False)
 
     def __repr__(self):
-        return "<I18NKey(key={})>".format(self.id)
+        return f"<I18NKey(key='{self.id}')>"
 
 
 class I18NKeySchema(Schema):
@@ -67,7 +67,7 @@ class I18NValue(orm.Model):
     locale = orm.relationship('I18NLocale', backref='values', lazy=True)
 
     def __repr__(self):
-        return "<I18NValue(gloss={})>".format(self.gloss)
+        return f"<I18NValue(gloss='{self.gloss}')>"
 
 
 class I18NValueSchema(Schema):
@@ -76,4 +76,4 @@ class I18NValueSchema(Schema):
     gloss = fields.String(required=True)
 
     def __repr__(self):
-        return '<I18NValue(gloss={})>'.format(self.gloss)
+        return f"<I18NValue(gloss='{self.gloss}')>"

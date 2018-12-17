@@ -3,14 +3,21 @@ import os
 from flask.cli import AppGroup
 
 from src import create_app, orm
+from src.i18n.models import I18NLocale, I18NKey, I18NValue
 from src.i18n.test_i18n import seed_database
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 
 
+class I18NModels:
+    locale = I18NLocale
+    key = I18NKey
+    value = I18NValue
+
+
 @app.shell_context_processor
 def make_shell_context():
-    return dict(orm=orm)
+    return dict(orm=orm, i18n=I18NModels)
 
 
 data_cli = AppGroup('data', help="Manipulate application data")

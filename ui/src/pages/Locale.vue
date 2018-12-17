@@ -4,6 +4,8 @@
 
         <SelectLocale v-bind:locales="locales"></SelectLocale>
 
+        <p>FOO {{ $t("message.foo") }}</p>
+
         <v-data-table
                 v-bind:headers="headers"
                 v-bind:items="locales">
@@ -19,7 +21,6 @@
     import SelectLocale from "../components/SelectLocale";
 
     const axios = require("axios");
-
 
     export default {
         name: "Locale",

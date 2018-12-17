@@ -1,5 +1,8 @@
+from collections import defaultdict
+from functools import reduce
+
 import pytest
-from flask import url_for
+from flask import url_for, json
 
 from src.i18n.models import I18NLocale, I18NKey, I18NValue
 
@@ -8,15 +11,32 @@ locale_data = [
     {'id': 'es', 'desc': 'Español', 'country': 'ec'}
 ]
 locale_tuples = [(loc['id'], loc['country'], loc['desc']) for loc in locale_data]
+locale_ids = [loc['id'] for loc in locale_data]
 
 key_data = [
+    {'id': 'alt.logo', 'desc': 'Alt text for logo'},
     {'id': 'app.name', 'desc': 'Application name'},
+    {'id': 'app.desc', 'desc': 'This is a test application'},
     {'id': 'courses.name', 'desc': 'Name of the courses module'},
+    {'id': 'courses.date.start', 'desc': 'Start date of course'},
+    {'id': 'courses.date.end', 'desc': 'End date of course'},
     {'id': 'btn.ok', 'desc': 'Label on an OK button'},
+    {'id': 'btn.cancel', 'desc': 'Label on a Cancel button'},
     {'id': 'label.name.first', 'desc': 'Label for a first name prompt'},
     {'id': 'label.name.last', 'desc': 'Label for a last name prompt'}
 ]
 key_tuples = [(val['id'], val['desc']) for val in key_data]
+
+
+def count_unique_top_level_ids(key_data_list):
+    """Count the number of top-level keys that should result from
+    converting key_data to a nested tree structure.
+    """
+    unique = defaultdict(int)
+    for id in (key['id'] for key in key_data_list):
+        unique[id.split('.')[0]] += 1
+    print("UNIQUE", unique)
+    return len(unique)
 
 
 def create_locales(dbs):
@@ -182,10 +202,52 @@ def test_read_all_values(client, dbs):
     assert resp.status_code == 200
     assert len(resp.json) == len(locale_data) * len(key_data)
 
-@pytest.mark.parametrize('id', [loc['id'] for loc in locale_data])
-def test_xlation_one_language(client, dbs, id):
-    create_locales(dbs)
-    create_keys(dbs)
-    create_values(dbs)
-    resp = client.get(url_for('i18n.read_xlation', locale_id=id))
+
+@pytest.mark.parametrize('format', [None, 'list'])
+@pytest.mark.parametrize('id', locale_ids)
+def test_one_locale_as_list(client, format, dbs, id):
+    if format is None:
+        # Default format
+        url = url_for('i18n.read_xlation', locale_id=id)
+    elif format == 'list':
+        # Format `list`
+        url = url_for('i18n.read_xlation', locale_id=id, format=format)
+    else:
+        # Something went terribly wrong.
+        assert False
+
+    # GIVEN i18n test data
+    seed_database(dbs)
+    # WHEN asking for translations for a given locale
+    resp = client.get(url)
+    # THEN response should be "Ok"
     assert resp.status_code == 200
+    # AND there should be as many rows as there are keys.
+    assert len(resp.json) == len(key_data)
+
+
+def count_leaf_nodes(node):
+    """Count the number of leaf nodes in a tree of nested dictionaries."""
+    if not isinstance(node, dict):
+        return 1
+    else:
+        return reduce(lambda x, y: x + y,
+                      [count_leaf_nodes(node) for node in node.values()], 0)
+
+
+@pytest.mark.parametrize('id', locale_ids)
+def test_one_locale_as_tree(client, dbs, id):
+    # GIVEN i18n test data
+    seed_database(dbs)
+    # WHEN asking for a tree of translation information
+    resp = client.get(url_for('i18n.read_xlation', locale_id=id, format='tree'))
+    # THEN response should be 'Ok'
+    assert resp.status_code == 200
+    # AND tree should have proper number of top-level entries
+    assert len(resp.json) == count_unique_top_level_ids(key_data)
+    # AND should have the proper number of leaf nodes
+    assert count_leaf_nodes(resp.json) == len(key_data)
+    # AND should have values in nested dictionaries.
+    assert resp.json['label']['name']['first'].startswith('Label for a first')
+
+    print("DUMP", json.dumps(resp.json, indent=4))

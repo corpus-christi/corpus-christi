@@ -9,8 +9,8 @@ smoke-test:
 coverage-test:
 	pytest --cov=src --cov-report=html
 
-seed-dev-data:
-	FLASK_CONFIG=dev pytest src/seed-db.py
+run-api:
+	./run-dev-server.sh	
 
 .PHONY: clean-all
 
