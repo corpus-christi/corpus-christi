@@ -240,9 +240,6 @@ def test_one_locale_as_list(client, format, dbs, id):
     elif format == 'list':
         # Format `list`
         url = url_for('i18n.read_xlation', locale_id=id, format=format)
-    else:
-        # Something went terribly wrong.
-        assert False
 
     # GIVEN i18n test data
     seed_database(dbs)
@@ -252,6 +249,38 @@ def test_one_locale_as_list(client, format, dbs, id):
     assert resp.status_code == 200
     # AND there should be as many rows as there are keys.
     assert len(resp.json) == len(key_data)
+
+
+def test_bogus_xlation_locale(client):
+    resp = client.get(url_for('i18n.read_xlation', locale_id='not-a-real-locale'))
+    assert resp.status_code == 404
+
+
+def test_bogus_xlation_format(client):
+    resp = client.get(url_for('i18n.read_xlation',
+                              locale_id=locale_ids[0],
+                              format='not-a-valid-format'))
+    assert resp.status_code == 400
+
+
+def test_goofy_tree_structure(client, dbs):
+    # We're about to put this entry in the database
+    # {'id': 'btn.cancel', 'desc': 'Label on a Cancel button'},
+    seed_database(dbs)
+
+    # Now add a child of a string, which makes no sense.
+    bogus_key_id = 'btn.cancel.bogus'
+    dbs.add(I18NKey(id=bogus_key_id, desc='Invalid key'))
+    dbs.add(I18NValue(locale_id=locale_data[0]['id'],
+                      key_id=bogus_key_id,
+                      gloss="Bogus Gloss"))
+    dbs.commit()
+
+    # Ask the API for a valid tree. It shouldn't comply.
+    resp = client.get(url_for('i18n.read_xlation',
+                              locale_id=locale_ids[0],
+                              format='tree'))
+    assert resp.status_code == 400
 
 
 def count_leaf_nodes(node):
@@ -307,6 +336,7 @@ def test_read_language(client, dbs, code, name):
     print("RESP", resp.json)
     assert resp.status_code == 200
     assert resp.json['name'] == name
+
 
 def test_read_all_languages(client, dbs):
     count = load_language_codes(dbs)

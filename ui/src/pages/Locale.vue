@@ -6,14 +6,13 @@
 
         <p>FOO {{ $t("message.foo") }}</p>
 
-        <v-data-table
-                v-bind:headers="headers"
-                v-bind:items="locales">
-            <template slot="items" slot-scope="props">
-                <td>{{ props.item.id }}</td>
-                <td>{{ props.item.desc }}</td>
-            </template>
-        </v-data-table>
+        <ol>
+            <li v-for="country in countries">
+                {{ flag(country.code )}}
+                {{ country.name }}
+            </li>
+        </ol>
+
     </div>
 </template>
 
@@ -27,12 +26,22 @@
         components: {SelectLocale},
         data: function () {
             return {
-                headers: [
-                    {text: "ID", value: "id"},
-                    {text: "Description", value: "desc"},
-                ],
-                locales: []
+                locales: [],
+                countries: [],
+                languages: []
             };
+        },
+        methods: {
+            flag(country) {
+                const regionalIndicatorA = 0x1F1e6;
+                country = country.toUpperCase();
+                if (/^[A-Z]{2}$/.test(country)) {
+                    let vals = country.split('').map(ch => ch.charCodeAt(0) - 'A'.charCodeAt(0) + regionalIndicatorA);
+                    return String.fromCodePoint.apply(null, vals);
+                } else {
+                    return 'XX';
+                }
+            }
         },
         mounted: function () {
             axios.get("/api/v1/i18n/locales").then(response => {
@@ -41,6 +50,14 @@
                     country: locale.country,
                     desc: locale.desc
                 }));
+            });
+
+            axios.get("/api/v1/i18n/countries").then(response => {
+                this.countries = response.data;
+            });
+
+            axios.get("/api/v1/i18n/languages").then(response => {
+                this.languages = response.data;
             });
         }
     };
