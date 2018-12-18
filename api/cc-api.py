@@ -26,6 +26,8 @@ data_cli = AppGroup('data', help="Manipulate application data")
 @data_cli.command('seed', help="Seed the database with sample data")
 def seed():
     seed_database(orm.session)
+    load_country_codes(orm.session)
+    load_language_codes(orm.session)
 
 
 @data_cli.command('drop-all', help="Drop all database tables")
@@ -42,12 +44,6 @@ def create_all():
 def clear():
     orm.drop_all()
     orm.create_all()
-
-
-@data_cli.command('load', help="Load fixed data (e.g., country codes)")
-def load():
-    load_country_codes(orm)
-    load_language_codes(orm)
 
 
 app.cli.add_command(data_cli)

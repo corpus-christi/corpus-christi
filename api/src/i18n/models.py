@@ -12,6 +12,7 @@ class StringTypes:
     MEDIUM_STRING = orm.String(64)
     LONG_STRING = orm.String(255)
     I18N_KEY = orm.String(32)
+    LOCALE_KEY = orm.String(5)
 
 
 # ---- Locale
@@ -19,8 +20,7 @@ class StringTypes:
 class I18NLocale(orm.Model):
     """Translation locale (e.g., 'en-us', 'es')"""
     __tablename__ = 'i18n_locale'
-    id = orm.Column(StringTypes.SHORT_STRING, primary_key=True)
-    country = orm.Column(StringTypes.SHORT_STRING, nullable=False, default='')
+    id = orm.Column(StringTypes.LOCALE_KEY, primary_key=True)
     desc = orm.Column(StringTypes.MEDIUM_STRING, unique=True, nullable=False)
 
     def __repr__(self):
@@ -28,13 +28,12 @@ class I18NLocale(orm.Model):
 
 
 class I18NLocaleSchema(Schema):
-    id = fields.String(required=True, validate=[Length(min=2)])
+    id = fields.String(required=True, validate=[Length(min=2, max=5)])
     desc = fields.String(required=True, validate=[Length(min=2)])
-    country = fields.String(required=True, validate=[Length(min=2)])
 
     @validates('id')
     def validate_id(self, id):
-        if not re.fullmatch(r'[a-z]{2,}(?:-[a-z]{2,})?', id, re.IGNORECASE):
+        if not re.fullmatch(r'[a-z]{2}(?:-[A-Z]{2})?', id, re.IGNORECASE):
             raise ValidationError('Invalid locale code')
 
 
@@ -66,7 +65,7 @@ class I18NValue(orm.Model):
     """Language-specific value for a given I18NKey."""
     __tablename__ = 'i18n_value'
     key_id = orm.Column(StringTypes.I18N_KEY, orm.ForeignKey('i18n_key.id'), primary_key=True)
-    locale_id = orm.Column(StringTypes.SHORT_STRING, orm.ForeignKey('i18n_locale.id'), primary_key=True)
+    locale_id = orm.Column(StringTypes.LOCALE_KEY, orm.ForeignKey('i18n_locale.id'), primary_key=True)
     gloss = orm.Column(orm.Text(), nullable=False)
 
     key = orm.relationship('I18NKey', backref='values', lazy=True)
