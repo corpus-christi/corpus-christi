@@ -7,8 +7,8 @@
         <p>FOO {{ $t("message.foo") }}</p>
 
         <ol>
-            <li v-for="country in countries">
-                {{ flag(country.code )}}
+            <li v-for="country in countries" v-bind:key="country.code">
+                {{ flag_unicode(country.code) }}
                 {{ country.name }}
             </li>
         </ol>
@@ -18,6 +18,7 @@
 
 <script>
     import SelectLocale from "../components/SelectLocale";
+    import {flagForCountry} from "../helpers";
 
     const axios = require("axios");
 
@@ -32,24 +33,11 @@
             };
         },
         methods: {
-            flag(country) {
-                const regionalIndicatorA = 0x1F1e6;
-                country = country.toUpperCase();
-                if (/^[A-Z]{2}$/.test(country)) {
-                    let vals = country.split('').map(ch => ch.charCodeAt(0) - 'A'.charCodeAt(0) + regionalIndicatorA);
-                    return String.fromCodePoint.apply(null, vals);
-                } else {
-                    return 'XX';
-                }
-            }
+            flag_unicode: (country_code) => flagForCountry(country_code)
         },
         mounted: function () {
             axios.get("/api/v1/i18n/locales").then(response => {
-                this.locales = response.data.map(locale => ({
-                    id: locale.id,
-                    country: locale.country,
-                    desc: locale.desc
-                }));
+                this.locales = response.data;
             });
 
             axios.get("/api/v1/i18n/countries").then(response => {
