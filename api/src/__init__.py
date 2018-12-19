@@ -35,6 +35,9 @@ def create_app(config_name):
     from .people import people as people_blueprint
     app.register_blueprint(people_blueprint, url_prefix='/api/v1/people')
 
+    from .places import places as places_blueprint
+    app.register_blueprint(places_blueprint, url_prefix='/api/v1/places')
+
     from .etc import etc as etc_blueprint
     app.register_blueprint(etc_blueprint, url_prefix='/')
 

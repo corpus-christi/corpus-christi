@@ -3,8 +3,8 @@ import os
 from flask.cli import AppGroup
 
 from src import create_app, orm
-from src.i18n.models import I18NLocale, I18NKey, I18NValue
-from src.i18n.test_i18n import seed_database, load_language_codes
+from src.i18n.models import I18NLocale, I18NKey, I18NValue, Language
+from src.i18n.test_i18n import seed_database
 from src.places.models import Country
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
@@ -36,7 +36,7 @@ def load_countries():
 
 @data_cli.command('load-languages', help='Load language codes')
 def load_languages():
-    load_language_codes(orm.session)
+    Language.load_from_file()
 
 
 @data_cli.command('drop-all', help="Drop all database tables")

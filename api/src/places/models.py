@@ -5,7 +5,7 @@ from flask_marshmallow import Schema
 from marshmallow import fields
 from marshmallow.validate import Length, Range
 
-from src.i18n.models import i18n_create, I18NLocale
+from src.i18n.models import i18n_create, I18NLocale, i18n_read
 from .. import orm
 from ..shared.models import StringTypes
 
@@ -20,14 +20,28 @@ class Country(orm.Model):
     key = orm.relationship('I18NKey', backref='countries', lazy=True)
 
     def __repr__(self):
-        return f"<Country(id={self.id},i18n_key='{self.name_i18n}')>"
+        return f"<Country(code={self.code},i18n_key='{self.name_i18n}')>"
+
+    @classmethod
+    def name(cls):
+        cls.query\
+            .join(I18NKey, I18NValue)\
+            .filter(Country.code == 'US',
+                                                      I18NValue.locale_code == 'en-US').with_entities(Country.code,
+                                                                                                      I18NValue.gloss).all()
+
+
+
+    def namey(self, locale_code):
+        return i18n_read(self.name_i18n, locale_code).gloss
 
     @classmethod
     def load_from_file(cls, file_name='country-codes.json', locale_code='en-US'):
         count = 0
         file_path = os.path.abspath(os.path.join(__file__, os.path.pardir, 'data', file_name))
 
-        orm.session.add(I18NLocale(code=locale_code, desc='English US'))
+        if not I18NLocale.query.get(locale_code):
+            orm.session.add(I18NLocale(code=locale_code, desc='English US'))
 
         with open(file_path, 'r') as fp:
             countries = json.load(fp)
@@ -38,7 +52,7 @@ class Country(orm.Model):
 
                 name_i18n = f'country.name.{country_code}'
                 i18n_create(name_i18n, locale_code,
-                            country_name, description=f"Name of {country_name}")
+                            country_name, description=f"Country {country_name}")
 
                 orm.session.add(cls(code=country_code, name_i18n=name_i18n))
                 count += 1

@@ -1,15 +1,15 @@
 from flask import request, jsonify
 from marshmallow import ValidationError
 
-from src.i18n.models import I18NLocale, I18NLocaleSchema, I18NKeySchema, I18NKey, I18NValue, I18NValueSchema, \
-    I18NLanguageCodeSchema, I18NLanguageCode
 from . import i18n
+from .models import I18NLocale, I18NLocaleSchema, I18NKeySchema, I18NKey, I18NValue, I18NValueSchema, \
+    LanguageSchema, Language
 from .. import orm
 
 i18n_locale_schema = I18NLocaleSchema()
 i18n_key_schema = I18NKeySchema()
 i18n_value_schema = I18NValueSchema()
-i18n_language_code_schema = I18NLanguageCodeSchema()
+i18n_language_code_schema = LanguageSchema()
 
 
 # ---- Locale
@@ -127,25 +127,14 @@ def read_xlation(locale_code):
         return 'Invalid format', 400
 
 
-# ---- Countries and languages
-
-@i18n.route('/countries')
-@i18n.route('/countries/<country_code>')
-def read_countries(country_code=None):
-    if country_code is None:
-        result = I18NCountryCode.query.all()
-        return i18n_country_code_schema.jsonify(result, many=True)
-    else:
-        result = I18NCountryCode.query.filter_by(code=country_code).first()
-        return i18n_country_code_schema.jsonify(result)
-
+# ---- Languages
 
 @i18n.route('/languages')
 @i18n.route('/languages/<language_code>')
 def read_languages(language_code=None):
     if language_code is None:
-        result = I18NLanguageCode.query.all()
+        result = Language.query.all()
         return i18n_language_code_schema.jsonify(result, many=True)
     else:
-        result = I18NLanguageCode.query.filter_by(code=language_code).first()
+        result = Language.query.filter_by(code=language_code).first()
         return i18n_language_code_schema.jsonify(result)
