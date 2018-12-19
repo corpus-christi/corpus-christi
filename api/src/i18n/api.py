@@ -21,9 +21,9 @@ def read_all_locales():
     return i18n_locale_schema.jsonify(locales, many=True)
 
 
-@i18n.route('/locales/<locale_id>')
-def read_one_locale(locale_id):
-    locale = I18NLocale.query.filter_by(id=locale_id).first()
+@i18n.route('/locales/<locale_code>')
+def read_one_locale(locale_code):
+    locale = I18NLocale.query.filter_by(code=locale_code).first()
     if locale is None:
         return 'No such locale', 404
     else:
@@ -43,9 +43,9 @@ def create_locale():
     return i18n_locale_schema.jsonify(new_locale), 201
 
 
-@i18n.route('/locales/<locale_id>', methods=['DELETE'])
-def delete_one_locale(locale_id):
-    locale = I18NLocale.query.get_or_404(locale_id)
+@i18n.route('/locales/<locale_code>', methods=['DELETE'])
+def delete_one_locale(locale_code):
+    locale = I18NLocale.query.get_or_404(locale_code)
     orm.session.delete(locale)
     orm.session.commit()
     return 'ok', 204
@@ -89,15 +89,15 @@ def read_all_values():
     return i18n_value_schema.jsonify(values, many=True)
 
 
-@i18n.route('/values/<locale_id>')
-def read_xlation(locale_id):
+@i18n.route('/values/<locale_code>')
+def read_xlation(locale_code):
     # Check that the locale exists.
-    locale = I18NLocale.query.filter_by(id=locale_id).first()
+    locale = I18NLocale.query.filter_by(code=locale_code).first()
     if locale is None:
         return 'Invalid locale', 404
 
     # Fetch the values for this locale
-    values = I18NValue.query.filter_by(locale_id=locale_id)
+    values = I18NValue.query.filter_by(locale_code=locale_code)
 
     # Format the response.
     format = request.args.get('format', 'list')

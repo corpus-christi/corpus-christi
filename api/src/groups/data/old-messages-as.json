@@ -1,0 +1,1634 @@
+[
+  {
+    "id": "",
+    "desc": "",
+    "en": "",
+    "es": ""
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Name",
+    "es": "Nombre"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Email Address",
+    "es": "Correo Electrónico"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Message",
+    "es": "Mensaje"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Send Email",
+    "es": "Enviar Correo Electrónico"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Message Received",
+    "es": "Mensaje Recibido"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Email Sent!",
+    "es": "Correo Electrónico Enviado"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "User does not have sufficient privileges",
+    "es": "El usuario no tiene este privilegio"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Temporary Password",
+    "es": "Contraseña Temporal"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Change Role",
+    "es": "Cambiar el Rol"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Choose Homegroup",
+    "es": "Elegir Iglesia de Hogar"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Create User",
+    "es": "Crear Usuario"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "New Role",
+    "es": "Nuevo Rol"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "User already has account",
+    "es": "El usuario ya tiene una cuenta"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "User account created for Verbo Velocity",
+    "es": "Cuenta de usuario creada para Iglesia Arco"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "User Created",
+    "es": "Usuario Creado"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "You cannot edit your own role - please contact a system administrator",
+    "es": "No puede editar su propia función. Póngase en contacto con un administrador de sistema."
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Role Created",
+    "es": "Rol Creado"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Current Password",
+    "es": "Contraseña Actual"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "New Password",
+    "es": "Nueva Contraseña"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Confirm Password",
+    "es": "Confirmar Contraseña"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Update Password",
+    "es": "Actualizar Contraseña"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Password updated",
+    "es": "Contraseña Actualizada"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "New password and confirmation password do not match",
+    "es": "La nueva contraseña y la contraseña de confirmación no coinciden"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Entered wrong current password",
+    "es": "Introdujo la contraseña actual incorrecta"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Password",
+    "es": "Contraseña"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Log In",
+    "es": "Iniciar"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Invalid email address or password",
+    "es": "Dirección de correo electrónico o contraseña no válidos"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "No attendance data for this Home Group",
+    "es": "No hay datos de asistencia para este iglesia de hogar"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Attendance",
+    "es": "Asistencia"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Submit",
+    "es": "Enviar"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "System Reminder: Missing meetings",
+    "es": "Recordatorio del sistema: reuniones faltantes"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "attendance",
+    "es": "Asistencia"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Save",
+    "es": "Guardar"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Home Group updated",
+    "es": "Iglesia de Hogar actualizada"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "First Name",
+    "es": "Nombre"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "First name is a required field",
+    "es": "El nombre es un campo obligatorio"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Last Name",
+    "es": "Apellido"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Last name is a required field",
+    "es": "El apellido es un campo obligatorio"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Email",
+    "es": "Correo Electrónico"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Please enter valid email",
+    "es": "Por favor introduzca un correo electrónico válido"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Phone Number",
+    "es": "Número de Teléfono"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Please enter valid phone number",
+    "es": "Por favor ingrese un número de teléfono válido"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Gender",
+    "es": "Género"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Male",
+    "es": "Masculino"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Female",
+    "es": "Feminino"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Baptized?",
+    "es": "¿Bautizado?"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Yes",
+    "es": "Sí"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "No",
+    "es": "No"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Do you have children?",
+    "es": "¿Tiene hijos?"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "How did you find out about the homegroup?",
+    "es": "¿Cómo se enteró sobre la iglesia de hogar?"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Marital Status",
+    "es": "Estado Civil"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Save Member",
+    "es": "Guardar Miembro"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Member {} added to homegroup",
+    "es": "Miembro {} agregado a la iglesia de hogar"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Person with this email already exists",
+    "es": "La persona con este correo electrónico ya existe"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Member {} Created",
+    "es": "Miembro {} Creado"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Edit My Info",
+    "es": "Editar mi Información"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Edit Member",
+    "es": "Editar Miembro"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Member {} Updated",
+    "es": "Miembro {} Actualizado"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Member Removed",
+    "es": "Miembro Eliminado"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Name is a required field",
+    "es": "El nombre es un campo obligatorio"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Description",
+    "es": "Descripción"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Please enter a description",
+    "es": "Por favor ingrese una descripción"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Address",
+    "es": "Dirección"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Please enter valid Address",
+    "es": "Por favor ingrese una dirección válida"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Latitude",
+    "es": "Latitud"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Longitude",
+    "es": "Longitud"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Save Home Group",
+    "es": "Guardar Iglesia de Hogar"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Create Home Groups",
+    "es": "Crear Iglesias de Hogar"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "month",
+    "es": "mes"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Homegroup {} Created",
+    "es": "Iglesia de Hogar {} Creado"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Homegroup Deactivated",
+    "es": "Iglesia de Hogar Desactivado"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Homegroup Reactivated",
+    "es": "Iglesia de Hogar Reactivado"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Member Deactivated",
+    "es": "Miembro Desactivado"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Member Reactivated",
+    "es": "Miembro Reactivado"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Home",
+    "es": "Inicio"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Admin Dashboard",
+    "es": "Tablero de Administración"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "HOME GROUPS",
+    "es": "IGLESIA DE HOGAR"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "TOTAL NUMBER",
+    "es": "NUMERO TOTAL"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "ACTIVE GROUPS",
+    "es": "GRUPOS ACTIVOS"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "ARCO MEMBERS",
+    "es": "MIEMBROS DE ARCO"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "ATTENDING HOME GROUPS",
+    "es": "ASISTIENDO IGLESIA DE HOGAR"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "ATTENDANCE RATE",
+    "es": "TASA DE ASISTENCIA"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "IN THE MONTH OF",
+    "es": "EN EL MES DE"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "GROUP LEADERS",
+    "es": "LÍDERES DE GRUPO"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Download Attendance Data",
+    "es": "Descargar los datos de asistencia"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Home Group",
+    "es": "Iglesia de Hogar"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Total People",
+    "es": "Total de Personas"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Top 5 Home Groups",
+    "es": "Los 5 Mejores Iglesia de Hogar"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Member Count",
+    "es": "Cuenta de Miembro"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Total Attendance Report",
+    "es": "Informe de Asistencia Total"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Monthly",
+    "es": "Mensual"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "# of people",
+    "es": "# de gente"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Home Group Gender Report",
+    "es": "Informe de Género de la Iglesia de Hogar"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Home Groups",
+    "es": "Iglesias de Hogar"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Admin Profiles",
+    "es": "Perfiles de Administrador"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Search",
+    "es": "Buscar"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Show Inactive Members",
+    "es": "Mostrar Miembros Inactivos"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Add Admin",
+    "es": "Agregar Administrador"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Contact",
+    "es": "Contacto"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Inactive?",
+    "es": "¿Inactivo?"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Remove",
+    "es": "Retirar"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Demote",
+    "es": "Eliminar"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Edit",
+    "es": "Editar"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Reactivate",
+    "es": "Reactivar"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Advanced Search",
+    "es": "Búsqueda Avanzada"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Age",
+    "es": "Edad"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Children",
+    "es": "Niños"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Youth",
+    "es": "Joven"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Teen",
+    "es": "Adolescente"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Young Adult",
+    "es": "Adulto Joven"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Adult",
+    "es": "Adulto"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Senior",
+    "es": "Tercera Edad"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Married",
+    "es": "Casado"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Not Married",
+    "es": "No Casado"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Baptism Status",
+    "es": "Estado de Bautismo"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Baptized",
+    "es": "Bautizado"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Not Baptized",
+    "es": "No Bautizado"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Search Results",
+    "es": "Resultados de Búsqueda"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Active?",
+    "es": "¿Activo?"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "All Members",
+    "es": "Todos los Miembros"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Add Member",
+    "es": "Añadir Miembro"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Add",
+    "es": "Añadir"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Contact All Members",
+    "es": "Contactar a Todos"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Confirm",
+    "es": "Confirmar"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Close",
+    "es": "Cerca"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Assign New Role",
+    "es": "Asignar un Nuevo Rol"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Assign Role",
+    "es": "Asignar Rol"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Attendance Report",
+    "es": "Reporte de Asistencia"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "View Attendance History",
+    "es": "Ver el Historial de Asistencia"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Date",
+    "es": "Fecha"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Time",
+    "es": "Hora"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Take Attendance",
+    "es": "Tomar Asistencia"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Attendance Reports",
+    "es": "Informes de Asistencia"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "New Attendance Report",
+    "es": "Nuevo Informe de Asistencia"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Action",
+    "es": "Acción"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "No Information",
+    "es": "Sin Información"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Jan",
+    "es": "Enero"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Feb",
+    "es": "Feb"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Mar",
+    "es": "Marzo"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Apr",
+    "es": "Abr"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "May",
+    "es": "Mayo"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Jun",
+    "es": "Jun"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Jul",
+    "es": "Jul"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Aug",
+    "es": "Agosto"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Sep",
+    "es": "Set"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Oct",
+    "es": "Oct"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Nov",
+    "es": "Nov"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Dec",
+    "es": "Dic"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Welcome,",
+    "es": "Bienvenido,"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Dashboard",
+    "es": "Tablero"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Profile Settings",
+    "es": "Configuración de Perfil"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Members",
+    "es": "Miembros"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "System Roles",
+    "es": "Roles del Sistema"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Analytics",
+    "es": "Analítica"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Edit Home Group",
+    "es": "Editar Iglesia de Hogar"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "FAQ",
+    "es": "Preguntas Mas Frequentes"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Log Out",
+    "es": "Cerrar Sesión"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Copyright 2018, Arco Church",
+    "es": "Derechos de Autor 2018, Iglesia Arco"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Contact Our Team",
+    "es": "Contacta a Nuestro Equipo"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Please enter first and last name",
+    "es": "Por favor, introduzca su nombre y apellido"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Email address is invalid",
+    "es": "Dirección de correo electrónico es inválida"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Invalid Email Address",
+    "es": "Dirección de correo electrónico no válida"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Please enter message",
+    "es": "Por favor ingrese el mensaje"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "You received an email from",
+    "es": "Has recibido un correo electrónico de"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Create New Home Group",
+    "es": "Crear Nuevo Iglesia de Hogar"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Enter a Name",
+    "es": "Ingresa un Nombre"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Add a Description",
+    "es": "Agregar una Descripción"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Add a Location",
+    "es": "Agrega Ubicacion"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Find Location",
+    "es": "Encontrar Ubicacion"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Add a Latitude",
+    "es": "Agregar una Latitud"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Add a Longitude",
+    "es": "Agregar una Longitud"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Create New Member",
+    "es": "Crear Nuevo Miembro"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Invalid First Name",
+    "es": "Nombre Inválido"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Invalid Last Name",
+    "es": "Apellido Invalido"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "ex: email@gmail.com",
+    "es": "ex: email@gmail.com"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Invalid email address",
+    "es": "Dirección de Correo Electrónico no Válida"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "ex: 224-656-8205",
+    "es": "ex: 099-656-8205"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Invalid Phone Number",
+    "es": "Numero de telefono invalido"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Birthday",
+    "es": "Fecha de Nacimiento"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Join Date",
+    "es": "Fecha de Ingreso"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Create User Account",
+    "es": "Crear Cuenta de Usuario"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Must Enter Valid Password",
+    "es": "Debe Ingresar una Contraseña Válida"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "No Info",
+    "es": "Sin Información"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Birthdays",
+    "es": "Fechas de Nacimiento"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Other questions?",
+    "es": "¿Otras preguntas?"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Frequently Asked Questions",
+    "es": "Preguntas Mas Frequentes"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "MEMBERS",
+    "es": "MIEMBROS"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "ATTENDING HOME GROUP",
+    "es": "ASISTIENDO A IGLESIA DE HOGAR"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Number of Meetings",
+    "es": "Cantidad de Reuniones"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "ATTENDING",
+    "es": "ASISTIENDO"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "DESCRIPTION",
+    "es": "DESCRIPCIÓN"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "LOCATION",
+    "es": "UBICACIÓN"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "3 Most Recent Meetings",
+    "es": "3 Reuniones Más Recientes"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Home Group Attendance",
+    "es": "Asistencia de Iglesia de Hogar"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Analytics for",
+    "es": "Analítica para"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "January",
+    "es": "Enero"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "February",
+    "es": "Febrero"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "March",
+    "es": "Marzo"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "April",
+    "es": "Abril"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "June",
+    "es": "Junio"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "July",
+    "es": "Julio"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "August",
+    "es": "Agosto"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "September",
+    "es": "Septiembre"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "October",
+    "es": "Octubre"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "November",
+    "es": "Noviembre"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "December",
+    "es": "Diciembre"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Total Members",
+    "es": "Miembros Totales"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Members Attending a Home Group",
+    "es": "Miembros que Asisten a una Iglesia de Hogar"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": " Total New Members",
+    "es": "Total de nuevos miembros"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Adult Members",
+    "es": "Miembros Adultos"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Minor Members",
+    "es": "Miembros Menores"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Transfers",
+    "es": "Transferencias"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "All Home Groups",
+    "es": "Todos los Iglesias de Hogar"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Add Home Group",
+    "es": "Agregar Iglesia de Hogar"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Show Inactive Home Groups",
+    "es": "Mostrar Iglesias de Hogar inactivos"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Location",
+    "es": "Ubicación"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Split",
+    "es": "Multiplicar"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Home Group Members",
+    "es": "Miembros de Iglesia de Hogar"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Email Group",
+    "es": "Contactar a Todos"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Leader",
+    "es": "Líder"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "First Home Group",
+    "es": "Primer Iglesia de Hogar"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Second Home Group",
+    "es": "Segundo Iglesia de Hogar"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Split Members",
+    "es": "Multiplicar Miembros"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Finish",
+    "es": "Terminar"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "ARCO IGLESIA",
+    "es": "IGLESIA ARCO"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "HOME GROUP FINDER",
+    "es": "ENCUENTRA UNA IGLESIA DE HOGAR"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "FIND A HOME GROUP",
+    "es": "BUSCA UNA IGLESIA DE HOGAR"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Find a Home Group",
+    "es": "Encuentra una Iglesia de Hogar"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Enter Zip Code or Address",
+    "es": "Ingrese la dirección"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Please enter a valid email",
+    "es": "Por favor introduzca una dirección de correo electrónico válida"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Please enter a valid Password",
+    "es": "Por favor introduce una contraseña válida"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Info windows",
+    "es": "Ventanas de información"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Add Home Group Member",
+    "es": "Agregar Miembro del Iglesia de Hogar"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Add to Home Group",
+    "es": "Agregar al Iglesia de Hogar"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Hello from Arco",
+    "es": "Hola desde Arco"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "We miss you!",
+    "es": "¡Te extrañamos!"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "We have noticed you have missed",
+    "es": "Hemos notado que te has perdido"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "consecutive meetings",
+    "es": "reuniones consecutivas"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Would you like to contact your home group leader?",
+    "es": "¿Le gustaría contactar al líder de su iglesia de hogar?"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Home Group Leader Info",
+    "es": "Iglesia de Hogar Líder Información"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Phone",
+    "es": "Teléfono"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "We hope to see you again!",
+    "es": "Esperamos verte de nuevo!"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Account Type",
+    "es": "Tipo de Cuenta"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Admin",
+    "es": "Administración"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Deactivate Role",
+    "es": "Desactivar Rol"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Home Group Leader",
+    "es": "Líder de Iglesia de Hogar"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Assign new role",
+    "es": "Asignar un nuevo rol"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Inactive User",
+    "es": "Usuario Inactivo"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Create Account",
+    "es": "Crear una Cuenta"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Geocoding service",
+    "es": "Servicio de geocodificación"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "User account created",
+    "es": "Cuenta de usuario creada"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Temporary password",
+    "es": "Contraseña temporal"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Click here to change your password",
+    "es": "Presione aquí para cambiar su contraseña"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Attendees",
+    "es": "Asistentes"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "View",
+    "es": "Ver"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Back",
+    "es": "Atras"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Married?",
+    "es": "¿Casado?"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "ARCO",
+    "es": "ARCO"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "role",
+    "es": "rol"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Jan",
+    "es": "Enero"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Feb",
+    "es": "Feb"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Mar",
+    "es": "Marzo"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Apr",
+    "es": "Abr"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Jun",
+    "es": "Jun"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Jul",
+    "es": "Jul"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Aug",
+    "es": "Agosto"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Sep",
+    "es": "Set"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Oct",
+    "es": "Oct"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Nov",
+    "es": "Nov"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "Dec",
+    "es": "Dic"
+  },
+  {
+    "id": "",
+    "desc": "",
+    "en": "{{ year }}",
+    "es": ""
+  }
+]

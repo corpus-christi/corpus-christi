@@ -1,15 +1,6 @@
 <template>
     <v-app>
-        <v-toolbar app>
-            <v-toolbar-title class="headline text-uppercase">
-                <span>Corpus</span>
-                <span class="font-weight-light">Christi</span>
-            </v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-btn flat v-bind:to="{ name: 'locale' }">Locale</v-btn>
-            <v-btn flat v-bind:to="{ name: 'home' }">Home</v-btn>
-        </v-toolbar>
-
+        <Toolbar></Toolbar>
         <v-content>
             <v-container>
                 <router-view></router-view>
@@ -19,7 +10,16 @@
 </template>
 
 <script>
+    import Toolbar from "./components/Toolbar";
+    import {mapActions} from 'vuex';
+
     export default {
-        name: 'App'
+        name: 'App',
+        components: {Toolbar},
+        methods: mapActions(['initApp']),
+        created: function () {
+            // Initialize early application stuff (e.g., async requests to server).
+            this.initApp();
+        }
     }
 </script>

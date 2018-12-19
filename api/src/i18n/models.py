@@ -12,7 +12,7 @@ class StringTypes:
     MEDIUM_STRING = orm.String(64)
     LONG_STRING = orm.String(255)
     I18N_KEY = orm.String(32)
-    LOCALE_KEY = orm.String(5)
+    LOCALE_CODE = orm.String(5)
 
 
 # ---- Locale
@@ -20,7 +20,7 @@ class StringTypes:
 class I18NLocale(orm.Model):
     """Translation locale (e.g., 'en-us', 'es')"""
     __tablename__ = 'i18n_locale'
-    id = orm.Column(StringTypes.LOCALE_KEY, primary_key=True)
+    code = orm.Column(StringTypes.LOCALE_CODE, primary_key=True)
     desc = orm.Column(StringTypes.MEDIUM_STRING, unique=True, nullable=False)
 
     def __repr__(self):
@@ -28,12 +28,12 @@ class I18NLocale(orm.Model):
 
 
 class I18NLocaleSchema(Schema):
-    id = fields.String(required=True, validate=[Length(min=2, max=5)])
+    code = fields.String(required=True, validate=[Length(min=2, max=5)])
     desc = fields.String(required=True, validate=[Length(min=2)])
 
-    @validates('id')
-    def validate_id(self, id):
-        if not re.fullmatch(r'[a-z]{2}(?:-[A-Z]{2})?', id, re.IGNORECASE):
+    @validates('code')
+    def validate_id(self, code):
+        if not re.fullmatch(r'[a-z]{2}-[A-Z]{2}', code, re.IGNORECASE):
             raise ValidationError('Invalid locale code')
 
 
@@ -65,7 +65,7 @@ class I18NValue(orm.Model):
     """Language-specific value for a given I18NKey."""
     __tablename__ = 'i18n_value'
     key_id = orm.Column(StringTypes.I18N_KEY, orm.ForeignKey('i18n_key.id'), primary_key=True)
-    locale_id = orm.Column(StringTypes.LOCALE_KEY, orm.ForeignKey('i18n_locale.id'), primary_key=True)
+    locale_code = orm.Column(StringTypes.LOCALE_CODE, orm.ForeignKey('i18n_locale.code'), primary_key=True)
     gloss = orm.Column(orm.Text(), nullable=False)
 
     key = orm.relationship('I18NKey', backref='values', lazy=True)
@@ -77,7 +77,7 @@ class I18NValue(orm.Model):
 
 class I18NValueSchema(Schema):
     key_id = fields.String(required=True)
-    locale_id = fields.String(required=True)
+    locale_code = fields.String(required=True)
     gloss = fields.String(required=True)
 
 

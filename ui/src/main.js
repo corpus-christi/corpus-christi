@@ -10,8 +10,8 @@ import App from "./App.vue";
 
 new Vue({
     el: "#app",
-    router: router,
     store: store,
+    router: router,
     i18n: i18n,
     render: h => h(App)
 });

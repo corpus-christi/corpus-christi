@@ -2,7 +2,6 @@
     <div>
         <h4 class="display-1">Locales</h4>
 
-        <SelectLocale v-bind:locales="locales"></SelectLocale>
 
         <p>FOO {{ $t("message.foo") }}</p>
 
@@ -17,14 +16,12 @@
 </template>
 
 <script>
-    import SelectLocale from "../components/SelectLocale";
     import {flagForCountry} from "../helpers";
 
     const axios = require("axios");
 
     export default {
         name: "Locale",
-        components: {SelectLocale},
         data: function () {
             return {
                 locales: [],
