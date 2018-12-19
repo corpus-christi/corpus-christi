@@ -2,7 +2,8 @@ import os
 
 import pytest
 
-from . import orm as _orm, create_app
+from src.db import Base
+from . import db as _db, create_app
 
 
 @pytest.fixture()
@@ -22,18 +23,7 @@ def client(app):
 
 
 @pytest.fixture()
-def orm(app):
-    """Inject the ORM (SQLAlchemy)"""
-    _orm.app = app
-    _orm.drop_all()
-    _orm.create_all()
-    return _orm
-
-
-@pytest.fixture()
-def dbs(orm):
+def dbs(app):
     """Inject a database session."""
-    session = orm.create_scoped_session()
-    orm.session = session
-    yield session
-    session.remove()
+    return _db.session
+

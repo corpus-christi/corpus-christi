@@ -2,21 +2,24 @@ import os
 import re
 
 from flask import json
-from flask_marshmallow import Schema
+from marshmallow import Schema
 from marshmallow import fields, ValidationError, validates
 from marshmallow.validate import Length
+from sqlalchemy import Column, String, ForeignKey, Text
+from sqlalchemy.orm import relationship
 
-from .. import orm
-from ..shared.models import StringTypes
+from src.db import Base
+from src import db  
+from src.shared.models import StringTypes
 
 
 # ---- Locale
 
-class I18NLocale(orm.Model):
+class I18NLocale(Base):
     """Translation locale (e.g., 'en-us', 'es')"""
     __tablename__ = 'i18n_locale'
-    code = orm.Column(StringTypes.LOCALE_CODE, primary_key=True)
-    desc = orm.Column(StringTypes.MEDIUM_STRING, nullable=False)
+    code = Column(StringTypes.LOCALE_CODE, primary_key=True)
+    desc = Column(StringTypes.MEDIUM_STRING, nullable=False)
 
     def __repr__(self):
         return f"<I18NLocale(id='{self.id}',desc='{self.desc}')>"
@@ -34,11 +37,11 @@ class I18NLocaleSchema(Schema):
 
 # ---- Key
 
-class I18NKey(orm.Model):
+class I18NKey(Base):
     """Key for a translatable string (e.g., 'groups.home_group')"""
     __tablename__ = 'i18n_key'
-    id = orm.Column(StringTypes.I18N_KEY, primary_key=True)
-    desc = orm.Column(StringTypes.LONG_STRING, nullable=False)
+    id = Column(StringTypes.I18N_KEY, primary_key=True)
+    desc = Column(StringTypes.LONG_STRING, nullable=False)
 
     def __repr__(self):
         return f"<I18NKey(key='{self.id}')>"
@@ -56,15 +59,15 @@ class I18NKeySchema(Schema):
 
 # ---- Value
 
-class I18NValue(orm.Model):
+class I18NValue(Base):
     """Language-specific value for a given I18NKey."""
     __tablename__ = 'i18n_value'
-    key_id = orm.Column(StringTypes.I18N_KEY, orm.ForeignKey('i18n_key.id'), primary_key=True)
-    locale_code = orm.Column(StringTypes.LOCALE_CODE, orm.ForeignKey('i18n_locale.code'), primary_key=True)
-    gloss = orm.Column(orm.Text(), nullable=False)
+    key_id = Column(StringTypes.I18N_KEY, ForeignKey('i18n_key.id'), primary_key=True)
+    locale_code = Column(StringTypes.LOCALE_CODE, ForeignKey('i18n_locale.code'), primary_key=True)
+    gloss = Column(Text(), nullable=False)
 
-    key = orm.relationship('I18NKey', backref='values', lazy=True)
-    locale = orm.relationship('I18NLocale', backref='values', lazy=True)
+    key = relationship('I18NKey', backref='values', lazy=True)
+    locale = relationship('I18NLocale', backref='values', lazy=True)
 
     def __repr__(self):
         return f"<I18NValue(gloss='{self.gloss}')>"
@@ -78,12 +81,12 @@ class I18NValueSchema(Schema):
 
 # ---- Language
 
-class Language(orm.Model):
+class Language(Base):
     """Language by ISO 639-1 language code"""
     __tablename__ = 'i18n_language'
-    code = orm.Column(orm.String(2), primary_key=True)
-    name_i18n = orm.Column(StringTypes.I18N_KEY, orm.ForeignKey('i18n_key.id'), nullable=False)
-    key = orm.relationship('I18NKey', backref='languages', lazy=True)
+    code = Column(String(2), primary_key=True)
+    name_i18n = Column(StringTypes.I18N_KEY, ForeignKey('i18n_key.id'), nullable=False)
+    key = relationship('I18NKey', backref='languages', lazy=True)
 
     def __repr__(self):
         return f"<Language(code='{self.code}',name='{self.name_i18n}')>"
@@ -94,7 +97,7 @@ class Language(orm.Model):
         file_path = os.path.abspath(os.path.join(__file__, os.path.pardir, 'data', file_name))
 
         if not I18NLocale.query.get(locale_code):
-            orm.session.add(I18NLocale(code=locale_code, desc='English US'))
+            db.session.add(I18NLocale(code=locale_code, desc='English US'))
 
         with open(file_path, 'r') as fp:
             languages = json.load(fp)
@@ -107,9 +110,9 @@ class Language(orm.Model):
                 i18n_create(name_i18n, locale_code,
                             language_name, description=f"Language {language_name}")
 
-                orm.session.add(cls(code=language_code, name_i18n=name_i18n))
+                db.session.add(cls(code=language_code, name_i18n=name_i18n))
                 count += 1
-            orm.session.commit()
+            db.session.commit()
         return count
 
 
@@ -132,24 +135,24 @@ def i18n_create(key_id, locale_code, gloss, description=None):
         # Already in the DB, so we can't create it.
         raise RuntimeError(f"Value {key_id}/{locale_code} already exists")
 
-    if I18NLocale.query.get(locale_code) is None:
+    if db.session.query(I18NLocale).get(locale_code) is None:
         # The locale isn't present; something must be horribly wrong.
         raise RuntimeError(f"No locale {locale_code}")
 
     try:
         # Create the key if necessary.
-        key = I18NKey.query.get(key_id)
+        key = db.session.query(I18NKey).get(key_id)
         if key is None:
             if description is None:
                 raise RuntimeError(f"Won't create key {key_id} without description")
-            orm.session.add(I18NKey(id=key_id, desc=description))
+            db.session.add(I18NKey(id=key_id, desc=description))
 
         # Add the value
-        orm.session.add(I18NValue(key_id=key_id, locale_code=locale_code, gloss=gloss))
+        db.session.add(I18NValue(key_id=key_id, locale_code=locale_code, gloss=gloss))
 
-        orm.session.commit()
+        db.session.commit()
     except Exception:
-        orm.session.rollback()
+        db.session.rollback()
         raise
 
 
@@ -168,7 +171,7 @@ def i18n_update(key_id, locale_code, gloss):
         # Not in the DB; bail.
         raise RuntimeError(f"Value {key_id}/{locale_code} doesn't exist")
     result.gloss = gloss
-    orm.session.commit()
+    db.session.commit()
 
 
 def i18n_delete(key_id, locale_code):
@@ -176,10 +179,10 @@ def i18n_delete(key_id, locale_code):
     result = i18n_check(key_id, locale_code)
     if result is None:
         raise RuntimeError(f"Value {key_id}/{locale_code} doesn't exist")
-    orm.session.delete(result)
-    orm.session.commit()
+    db.session.delete(result)
+    db.session.commit()
 
 
 def i18n_check(key_id, locale_code):
     """Check whether there's a value with the given key and locale."""
-    return I18NValue.query.filter_by(key_id=key_id, locale_code=locale_code).first()
+    return db.session.query(I18NValue).filter_by(key_id=key_id, locale_code=locale_code).first()

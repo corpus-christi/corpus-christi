@@ -1,26 +1,27 @@
-from flask_marshmallow import Schema
-from marshmallow import fields
+from marshmallow import fields, Schema
 from marshmallow.validate import Length, Range, OneOf
+from sqlalchemy import Column, Integer, String, Date, ForeignKey
+from sqlalchemy.orm import relationship
 
-from .. import orm
+from src.db import Base
 from ..places.models import Location
 from ..shared.models import StringTypes
 
 
 # ---- Person
 
-class Person(orm.Model):
+class Person(Base):
     __tablename__ = 'people_person'
-    id = orm.Column(orm.Integer, primary_key=True)
-    first_name = orm.Column(StringTypes.MEDIUM_STRING, nullable=False)
-    last_name = orm.Column(StringTypes.MEDIUM_STRING, nullable=False)
-    gender = orm.Column(orm.String(1))
-    birthday = orm.Column(orm.Date)
-    phone = orm.Column(StringTypes.MEDIUM_STRING)
-    email = orm.Column(StringTypes.MEDIUM_STRING)
-    location_id = orm.Column(orm.Integer, orm.ForeignKey('places_location.id'))
+    id = Column(Integer, primary_key=True)
+    first_name = Column(StringTypes.MEDIUM_STRING, nullable=False)
+    last_name = Column(StringTypes.MEDIUM_STRING, nullable=False)
+    gender = Column(String(1))
+    birthday = Column(Date)
+    phone = Column(StringTypes.MEDIUM_STRING)
+    email = Column(StringTypes.MEDIUM_STRING)
+    location_id = Column(Integer, ForeignKey('places_location.id'))
 
-    address = orm.relationship(Location, backref='people', lazy=True)
+    address = relationship(Location, backref='people', lazy=True)
 
     def __repr__(self):
         return f"<Person(id={self.id},name='{self.first_name} {self.last_name}')>"

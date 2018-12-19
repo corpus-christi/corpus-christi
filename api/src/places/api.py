@@ -1,9 +1,19 @@
-from flask import request
+from flask import request, jsonify
+from marshmallow import Schema, fields
+from marshmallow.validate import Length
 
+from src import db
+from src.i18n.models import I18NValue, I18NKey
 from . import places
-from .models import CountrySchema, Country
+from .models import Country
 
-country_schema = CountrySchema()
+
+class CountryListSchema(Schema):
+    code = fields.String(required=True, validate=Length(min=1))
+    gloss = fields.String(required=True, validate=Length(min=1))
+
+
+country_list_schema = CountryListSchema()
 
 
 @places.route('/countries')
@@ -12,8 +22,8 @@ def read_countries(country_code=None):
     locale_id = request.args['locale-id']
 
     if country_code is None:
-        result = Country.query.all()
-        return country_schema.jsonify(result, many=True)
+        result = db.session.query(Country.code, I18NValue.gloss).join(I18NKey, I18NValue).all()
+        return jsonify(country_list_schema.dump(result, many=True))
     else:
         result = Country.query.filter_by(code=country_code).first()
-        return country_schema.jsonify(result)
+        return country_list_schema.jsonify(result)

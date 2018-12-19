@@ -1,9 +1,9 @@
-from .. import orm
+from sqlalchemy import String
 
 
 class StringTypes:
-    SHORT_STRING = orm.String(16)
-    MEDIUM_STRING = orm.String(64)
-    LONG_STRING = orm.String(255)
-    I18N_KEY = orm.String(32)
-    LOCALE_CODE = orm.String(5)
+    SHORT_STRING = String(16)
+    MEDIUM_STRING = String(64)
+    LONG_STRING = String(255)
+    I18N_KEY = String(32)
+    LOCALE_CODE = String(5)

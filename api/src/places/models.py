@@ -1,47 +1,36 @@
 import os
 
 from flask import json
-from flask_marshmallow import Schema
-from marshmallow import fields
+from marshmallow import Schema, fields
 from marshmallow.validate import Length, Range
+from sqlalchemy import Column, String, ForeignKey, Integer, Float
+from sqlalchemy.orm import relationship
 
-from src.i18n.models import i18n_create, I18NLocale, i18n_read
-from .. import orm
+from src.db import Base
+from src.i18n.models import i18n_create, I18NLocale
+from .. import db
 from ..shared.models import StringTypes
 
 
 # ---- Country
 
-class Country(orm.Model):
+class Country(Base):
     """Country; uses ISO 3166-1 country codes"""
     __tablename__ = 'places_country'
-    code = orm.Column(orm.String(2), primary_key=True)
-    name_i18n = orm.Column(StringTypes.I18N_KEY, orm.ForeignKey('i18n_key.id'), nullable=False)
-    key = orm.relationship('I18NKey', backref='countries', lazy=True)
+    code = Column(String(2), primary_key=True)
+    name_i18n = Column(StringTypes.I18N_KEY, ForeignKey('i18n_key.id'), nullable=False)
+    key = relationship('I18NKey', backref='countries', lazy=True)
 
     def __repr__(self):
         return f"<Country(code={self.code},i18n_key='{self.name_i18n}')>"
-
-    @classmethod
-    def name(cls):
-        cls.query\
-            .join(I18NKey, I18NValue)\
-            .filter(Country.code == 'US',
-                                                      I18NValue.locale_code == 'en-US').with_entities(Country.code,
-                                                                                                      I18NValue.gloss).all()
-
-
-
-    def namey(self, locale_code):
-        return i18n_read(self.name_i18n, locale_code).gloss
 
     @classmethod
     def load_from_file(cls, file_name='country-codes.json', locale_code='en-US'):
         count = 0
         file_path = os.path.abspath(os.path.join(__file__, os.path.pardir, 'data', file_name))
 
-        if not I18NLocale.query.get(locale_code):
-            orm.session.add(I18NLocale(code=locale_code, desc='English US'))
+        if not db.session.query(I18NLocale).get(locale_code):
+            db.session.add(I18NLocale(code=locale_code, desc='English US'))
 
         with open(file_path, 'r') as fp:
             countries = json.load(fp)
@@ -54,9 +43,9 @@ class Country(orm.Model):
                 i18n_create(name_i18n, locale_code,
                             country_name, description=f"Country {country_name}")
 
-                orm.session.add(cls(code=country_code, name_i18n=name_i18n))
+                db.session.add(cls(code=country_code, name_i18n=name_i18n))
                 count += 1
-            orm.session.commit()
+            db.session.commit()
         return count
 
 
@@ -67,14 +56,14 @@ class CountrySchema(Schema):
 
 # ---- Area
 
-class Area(orm.Model):
+class Area(Base):
     """Generic area within country (e.g., state, province)"""
     __tablename__ = 'places_area'
-    id = orm.Column(orm.Integer, primary_key=True)
-    name = orm.Column(StringTypes.MEDIUM_STRING, nullable=False)
-    country_code = orm.Column(orm.String(2), orm.ForeignKey('places_country.code'), nullable=False)
+    id = Column(Integer, primary_key=True)
+    name = Column(StringTypes.MEDIUM_STRING, nullable=False)
+    country_code = Column(String(2), ForeignKey('places_country.code'), nullable=False)
 
-    country = orm.relationship(Country, backref='areas', lazy=True)
+    country = relationship(Country, backref='areas', lazy=True)
 
 
 class AreaSchema(Schema):
@@ -85,18 +74,18 @@ class AreaSchema(Schema):
 
 # ---- Location
 
-class Location(orm.Model):
+class Location(Base):
     __tablename__ = 'places_location'
-    id = orm.Column(orm.Integer, primary_key=True)
-    address = orm.Column(StringTypes.LONG_STRING)
-    city = orm.Column(StringTypes.MEDIUM_STRING)
-    area_id = orm.Column(orm.Integer, orm.ForeignKey('places_area.id'))
-    country_id = orm.Column(orm.Integer, orm.ForeignKey('places_country.code'))
-    latitude = orm.Column(orm.Float)
-    longitude = orm.Column(orm.Float)
+    id = Column(Integer, primary_key=True)
+    address = Column(StringTypes.LONG_STRING)
+    city = Column(StringTypes.MEDIUM_STRING)
+    area_id = Column(Integer, ForeignKey('places_area.id'))
+    country_id = Column(Integer, ForeignKey('places_country.code'))
+    latitude = Column(Float)
+    longitude = Column(Float)
 
-    area = orm.relationship(Area, backref='locations', lazy=True)
-    country = orm.relationship(Country, backref='locations', lazy=True)
+    area = relationship(Area, backref='locations', lazy=True)
+    country = relationship(Country, backref='locations', lazy=True)
 
     def __repr__(self):
         attributes = [f"id='{self.id}'"]

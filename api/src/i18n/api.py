@@ -1,10 +1,10 @@
 from flask import request, jsonify
 from marshmallow import ValidationError
 
+from src import db
 from . import i18n
 from .models import I18NLocale, I18NLocaleSchema, I18NKeySchema, I18NKey, I18NValue, I18NValueSchema, \
     LanguageSchema, Language
-from .. import orm
 
 i18n_locale_schema = I18NLocaleSchema()
 i18n_key_schema = I18NKeySchema()
@@ -37,16 +37,16 @@ def create_locale():
         return jsonify(err.messages), 422
 
     new_locale = I18NLocale(**request.json)
-    orm.session.add(new_locale)
-    orm.session.commit()
+    db.session.add(new_locale)
+    db.session.commit()
     return i18n_locale_schema.jsonify(new_locale), 201
 
 
 @i18n.route('/locales/<locale_code>', methods=['DELETE'])
 def delete_one_locale(locale_code):
     locale = I18NLocale.query.get_or_404(locale_code)
-    orm.session.delete(locale)
-    orm.session.commit()
+    db.session.delete(locale)
+    db.session.commit()
     return 'ok', 204
 
 
@@ -75,8 +75,8 @@ def create_key():
         return jsonify(err.messages), 422
 
     new_key = I18NKey(**request.json)
-    orm.session.add(new_key)
-    orm.session.commit()
+    db.session.add(new_key)
+    db.session.commit()
     return i18n_key_schema.jsonify(new_key), 201
 
 
