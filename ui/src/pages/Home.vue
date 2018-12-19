@@ -1,5 +1,5 @@
 <template>
-    <h1>Our Home Page</h1>
+    <h1>{{ $t('page.title') }}</h1>
 </template>
 
 <script>
@@ -7,7 +7,3 @@
         name: "Home"
     }
 </script>
-
-<style scoped>
-
-</style>

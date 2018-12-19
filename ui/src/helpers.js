@@ -37,3 +37,12 @@ export function flagForLocale(localeCode) {
         return String.fromCodePoint(genericFlag);
     }
 }
+
+// Split locale code into language and country codes.
+export function splitLocaleCode(locale_code) {
+    const [languageCode, countryCode] = locale_code.split('-');
+    return {
+        languageCode,
+        countryCode
+    };
+}

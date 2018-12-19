@@ -7,12 +7,12 @@
         <v-spacer></v-spacer>
 
         <v-menu>
-            <v-btn flat slot="activator">{{ currentLocaleCode }}</v-btn>
+            <v-btn flat slot="activator">{{ displayLocale(currentLocale) }}</v-btn>
             <v-list>
                 <v-list-tile v-for="locale in locales"
-                             v-bind:key="locale.id"
-                             v-on:click="setCurrentLocale(locale.id)">
-                    <v-list-tile-title>{{ locale.desc }}</v-list-tile-title>
+                             v-bind:key="locale.code"
+                             v-on:click="setCurrentLocale(locale)">
+                    <v-list-tile-title>{{ displayLocale(locale) }}</v-list-tile-title>
                 </v-list-tile>
             </v-list>
         </v-menu>
@@ -22,13 +22,27 @@
 </template>
 
 <script>
-    import {mapMutations, mapState} from 'vuex';
+    import {mapGetters, mapMutations, mapState} from 'vuex';
+    import {flagForLocale, splitLocaleCode} from '../helpers';
 
     export default {
         name: "Toolbar",
         computed: {
-            ...mapState(['currentLocaleCode', 'locales']),
+            ...mapState(['locales']),
+            ...mapGetters(['currentLocale'])
         },
-        methods: mapMutations(['setCurrentLocale'])
+        methods: {
+            ...mapMutations(['setCurrentLocaleCode']),
+            setCurrentLocale(locale) {
+                this.setCurrentLocaleCode(locale.code);
+                this.$i18n.locale = splitLocaleCode(locale.code).languageCode;
+            },
+            displayLocale(locale) {
+                if (!locale) {
+                    return '';
+                }
+                return flagForLocale(locale.code) + locale.desc;
+            }
+        }
     }
 </script>

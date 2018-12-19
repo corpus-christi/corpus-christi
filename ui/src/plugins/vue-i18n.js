@@ -5,13 +5,13 @@ Vue.use(VueI18n);
 
 const messages = {
     en: {
-        message: {
-            foo: 'Foo, my friend!'
+        page: {
+            title: 'Our Home Page'
         }
     },
     es: {
-        message: {
-            foo: 'Foo, mi amigo!'
+        page: {
+            title: 'Nuestra Pagina de Inicio'
         }
     }
 };
