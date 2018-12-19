@@ -4,15 +4,8 @@ from flask_marshmallow import Schema
 from marshmallow import fields, ValidationError, validates
 from marshmallow.validate import Length
 
-from src import orm
-
-
-class StringTypes:
-    SHORT_STRING = orm.String(16)
-    MEDIUM_STRING = orm.String(64)
-    LONG_STRING = orm.String(255)
-    I18N_KEY = orm.String(32)
-    LOCALE_CODE = orm.String(5)
+from .. import orm
+from ..shared.models import StringTypes
 
 
 # ---- Locale
@@ -81,7 +74,7 @@ class I18NValueSchema(Schema):
     gloss = fields.String(required=True)
 
 
-# ---- Language and country - https://datahub.io
+# ---- Language
 
 class I18NLanguageCode(orm.Model):
     """ISO 639-1 language codes"""
@@ -98,16 +91,65 @@ class I18NLanguageCodeSchema(Schema):
     name = fields.String(required=True, validate=[Length(min=2)])
 
 
-class I18NCountryCode(orm.Model):
-    """ISO 3166-1 country codes"""
-    __tablename__ = 'i18n_country_code'
-    code = orm.Column(orm.String(2), primary_key=True)
-    name = orm.Column(StringTypes.SHORT_STRING, unique=True)
+# ---- CRUD
 
-    def __repr__(self):
-        return f"<I18NCountryCode(code='{self.code}',name='{self.name}')>"
+def i18n_create(key_id, locale_code, gloss, description=None):
+    """Create a new value in the I18N database.
+
+    In most cases, `description` can be omitted. It's only required
+    if the I18NKey doesn't already exist.
+    """
+    result = I18NValue.query.filter_by(key_id=key_id, locale_code=locale_code).first()
+    if result is not None:
+        # Already in the DB, so we can't create it.
+        raise RuntimeError(f"Value {key_id}/{locale_code} already exists")
+
+    if I18NLocale.query.get(locale_code) is None:
+        # The locale isn't present; something must be horribly wrong.
+        raise RuntimeError(f"No locale {locale_code}")
+
+    try:
+        # Create the key if necessary.
+        key = I18NKey.query.get(key_id)
+        if key is None:
+            if description is None:
+                raise RuntimeError(f"Won't create key {key_id} without description")
+            orm.session.add(I18NKey(id=key_id, desc=description))
+
+        # Add the value
+        orm.session.add(I18NValue(key_id=key_id, locale_code=locale_code, gloss=gloss))
+
+        orm.session.commit()
+    except Exception:
+        orm.session.rollback()
+        raise
 
 
-class I18NCountryCodeSchema(Schema):
-    code = fields.String(required=True, validate=[Length(equal=2)])
-    name = fields.String(required=True, validate=[Length(min=2)])
+def i18n_read(key_id, locale_code):
+    """Read an existing value from the database."""
+    result = I18NValue.query.filter_by(key_id=key_id, locale_code=locale_code)
+    if result is None:
+        raise RuntimeError(f"No value for {key_id}/{locale_code}")
+    return result
+
+
+def i18n_update(key_id, locale_code, gloss):
+    """Update an existing value in the I18N database."""
+    result = I18NValue.query.filter_by(key_id=key_id, locale_code=locale_code).first()
+    if result is None:
+        # Not in the DB. Bail. TODO: Should this upsert?
+        raise RuntimeError(f"Value {key_id}/{locale_code} doesn't exist")
+
+    result.gloss = gloss
+    orm.session.commit()
+
+
+def i18n_delete(key_id, locale_code):
+    """Delete an existing value."""
+    result = I18NValue.query.filter_by(key_id=key_id, locale_code=locale_code).first()
+    if result is None:
+        # Not in the DB. Bail. TODO: Should this upsert?
+        raise RuntimeError(f"Value {key_id}/{locale_code} doesn't exist")
+
+    orm.session.delete(result)
+    orm.session.commit()

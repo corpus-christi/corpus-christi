@@ -1,5 +1,5 @@
 from flask import Blueprint
 
-groups = Blueprint('groups', __name__)
+people = Blueprint('people', __name__)
 
 from . import api

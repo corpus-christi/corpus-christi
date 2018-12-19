@@ -4,7 +4,8 @@ from flask.cli import AppGroup
 
 from src import create_app, orm
 from src.i18n.models import I18NLocale, I18NKey, I18NValue
-from src.i18n.test_i18n import seed_database, load_country_codes, load_language_codes
+from src.i18n.test_i18n import seed_database, load_language_codes
+from src.places.models import Country
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 
@@ -23,10 +24,18 @@ def make_shell_context():
 data_cli = AppGroup('data', help="Manipulate application data")
 
 
-@data_cli.command('seed', help="Seed the database with sample data")
+@data_cli.command('load-seed', help="Load sample data")
 def seed():
     seed_database(orm.session)
-    load_country_codes(orm.session)
+
+
+@data_cli.command('load-countries', help='Load country codes')
+def load_countries():
+    Country.load_from_file()
+
+
+@data_cli.command('load-languages', help='Load language codes')
+def load_languages():
     load_language_codes(orm.session)
 
 

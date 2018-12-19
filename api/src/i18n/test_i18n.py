@@ -5,7 +5,7 @@ from functools import reduce
 import pytest
 from flask import url_for, json
 
-from src.i18n.models import I18NLocale, I18NKey, I18NValue, I18NCountryCode, I18NLanguageCode
+from src.i18n.models import I18NLocale, I18NKey, I18NValue, I18NLanguageCode
 
 locale_data = [
     {'code': 'en-US', 'desc': 'English US'},
@@ -60,25 +60,11 @@ def create_values(dbs):
     dbs.commit()
 
 
-def data_file_path(file_name):
-    rtn = os.path.join(__file__, os.path.pardir, 'data', file_name)
-    return os.path.abspath(rtn)
-
-
-def load_country_codes(orm):
-    data = None
-    with open(data_file_path('country-codes.json'), 'r') as fp:
-        data = json.load(fp)
-
-    objs = [I18NCountryCode(code=code['Code'], name=code['Name']) for code in data]
-    orm.add_all(objs)
-    orm.commit()
-    return len(objs)
-
 
 def load_language_codes(orm):
     data = None
-    with open(data_file_path('language-codes.json'), 'r') as fp:
+    file_path = os.path.join(__file__, os.path.pardir, 'data', 'language-codes.json')
+    with open(file_path, 'r') as fp:
         data = json.load(fp)
 
     objs = [I18NLanguageCode(code=code['alpha2'], name=code['English']) for code in data]

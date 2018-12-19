@@ -26,11 +26,14 @@ def create_app(config_name):
     marm.init_app(app)  # Must be AFTER db.init_app
 
     # Attached CC modules
-    from .groups import gather as gather_blueprint
-    app.register_blueprint(gather_blueprint, url_prefix='/api/v1/groups')
+    from .groups import groups as groups_blueprint
+    app.register_blueprint(groups_blueprint, url_prefix='/api/v1/groups')
 
     from .i18n import i18n as i18n_blueprint
     app.register_blueprint(i18n_blueprint, url_prefix='/api/v1/i18n')
+
+    from .people import people as people_blueprint
+    app.register_blueprint(people_blueprint, url_prefix='/api/v1/people')
 
     from .etc import etc as etc_blueprint
     app.register_blueprint(etc_blueprint, url_prefix='/')
