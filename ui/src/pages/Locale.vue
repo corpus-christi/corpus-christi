@@ -32,11 +32,19 @@
             flag_unicode: (country_code) => flagForCountry(country_code)
         },
         mounted: function () {
-            axios.get("/api/v1/places/countries").then(response => {
+            axios.get("/api/v1/places/countries", {
+                params: {
+                    locale: 'en-US'
+                }
+            }).then(response => {
                 this.countries = response.data;
             });
 
-            axios.get("/api/v1/i18n/languages").then(response => {
+            axios.get("/api/v1/i18n/languages", {
+                params: {
+                    locale: 'en-US'
+                }
+            }).then(response => {
                 this.languages = response.data;
             });
         }
