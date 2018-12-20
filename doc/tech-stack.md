@@ -32,7 +32,6 @@ Implemented with the following technologies.
     - [Explore Flask](http://exploreflask.com/)
 1. [Flask Mail](https://pythonhosted.org/Flask-Mail/) - Flask email framework
 1. [Marshmallow](https://marshmallow.readthedocs.io/en/3.0/index.html) - API object serialization, deserialization, validation
-1. [Flask Marshmallow](https://flask-marshmallow.readthedocs.io/en/latest/) - integrate Marshmallow into Flask
 
 ## Data Persistence (Model)
 
@@ -41,10 +40,6 @@ Implemented with the following technologies.
     - [Object-Relational Tutorial](https://docs.sqlalchemy.org/en/latest/orm/tutorial.html)
     - [Essential SQLAlchemy](https://www.safaribooksonline.com/library/view/essential-sqlalchemy-2nd/9781491916544/) book
 1. [Flask SQLAlchemy](http://flask-sqlalchemy.pocoo.org/) - Integration with [SQL Alchemy](https://www.sqlalchemy.org/)
-    - [Main page](http://flask-sqlalchemy.pocoo.org/) has good documentation
-    - [Quickstart](http://flask-sqlalchemy.pocoo.org/2.3/quickstart/) guide for basics
-1. [Marshmallow SQL-Alchemy](https://marshmallow-sqlalchemy.readthedocs.io/en/latest/) - (de)serialization 
-   integrated into Flask 
 1. [Alembic](https://alembic.sqlalchemy.org/) - Database migration for SQL Alchemy
     - [Alembic Tutorial](https://alembic.sqlalchemy.org/en/latest/tutorial.html)
 1. [Flask Migrate](https://flask-migrate.readthedocs.io) - Integration with [Alembic](https://alembic.sqlalchemy.org/)

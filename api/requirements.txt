@@ -11,7 +11,9 @@ coverage==4.5.2
 dataset==1.1.0
 decorator==4.3.0
 Flask==1.0.2
+Flask-Migrate==2.3.1
 flask-shell-ipython==0.4.0
+Flask-SQLAlchemy==2.3.2
 idna==2.8
 ipython==7.2.0
 ipython-genutils==0.2.0
