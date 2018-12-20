@@ -39,7 +39,7 @@ def load_languages():
 
 @data_cli.command('load-all', help='Load everything')
 def load_languages():
-    seed_database(db.session)
+    seed_database(db)
     Country.load_from_file()
     Language.load_from_file()
 
