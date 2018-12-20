@@ -14,3 +14,11 @@ class DbConfig:
         self.engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
         Session = sessionmaker(bind=self.engine)
         self.session = Session()
+
+    def create_all(self):
+        """Create all tables."""
+        Base.metadata.create_all(self.engine)
+
+    def drop_all(self):
+        """Drop all tables"""
+        Base.metadata.drop_all(self.engine)

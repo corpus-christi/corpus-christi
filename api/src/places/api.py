@@ -9,8 +9,8 @@ from .models import Country
 
 
 class CountryListSchema(Schema):
-    code = fields.String(required=True, validate=Length(min=1))
-    gloss = fields.String(required=True, validate=Length(min=1))
+    code = fields.String(required=True, validate=Length(equal=2))
+    name = fields.String(attribute="gloss", required=True, validate=Length(min=1))
 
 
 country_list_schema = CountryListSchema()
@@ -19,11 +19,10 @@ country_list_schema = CountryListSchema()
 @places.route('/countries')
 @places.route('/countries/<country_code>')
 def read_countries(country_code=None):
-    locale_id = request.args['locale-id']
-
+    locale_id = request.args['locale']
     if country_code is None:
         result = db.session.query(Country.code, I18NValue.gloss).join(I18NKey, I18NValue).all()
         return jsonify(country_list_schema.dump(result, many=True))
     else:
-        result = Country.query.filter_by(code=country_code).first()
-        return country_list_schema.jsonify(result)
+        result = db.session.query(Country.code, I18NValue.gloss).filter_by(code=country_code).join(I18NKey, I18NValue).first()
+        return jsonify(country_list_schema.dump(result))

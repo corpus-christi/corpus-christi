@@ -2,7 +2,6 @@ import os
 
 import pytest
 
-from src.db import Base
 from . import db as _db, create_app
 
 
@@ -23,7 +22,12 @@ def client(app):
 
 
 @pytest.fixture()
-def dbs(app):
+def reset_db():
+    _db.drop_all()
+    _db.create_all()
+
+
+@pytest.fixture()
+def dbs(reset_db):
     """Inject a database session."""
     return _db.session
-

@@ -4,6 +4,7 @@ from functools import reduce
 import pytest
 from flask import url_for
 
+from src import db
 from src.i18n.models import I18NLocale, I18NKey, I18NValue, Language
 
 locale_data = [
@@ -116,7 +117,7 @@ def test_create_bogus_locale(client, code):
     assert resp.status_code == 422
 
 
-@pytest.mark.usefixtures('orm')
+@pytest.mark.usefixtures('reset_db')
 @pytest.mark.parametrize('code, desc', locale_tuples)
 def test_create_valid_locale(client, code, desc):
     # GIVEN empty locale table
@@ -127,7 +128,7 @@ def test_create_valid_locale(client, code, desc):
     assert resp.status_code == 201
 
     # AND there is one local in the DB and it matches the one created.
-    result = I18NLocale().query.all()
+    result = db.session.query(I18NLocale).all()
     assert len(result) == 1
     assert result[0].code == code
     assert result[0].desc == desc
@@ -145,7 +146,7 @@ def test_delete_one_locale(client, dbs, code, desc):
     assert resp.status_code == 204
 
     # AND the deleted locale doesn't exist in the database.
-    result = I18NLocale().query.all()
+    result = db.session.query(I18NLocale).all()
     assert len(result) == len(locale_tuples) - 1
     for loc in result:
         assert loc.code != code
@@ -182,7 +183,7 @@ def test_create_bogus_key(client, id):
     assert resp.status_code == 422
 
 
-@pytest.mark.usefixtures('orm')
+@pytest.mark.usefixtures('reset_db')
 @pytest.mark.parametrize('id,desc', key_tuples)
 def test_create_valid_key(client, id, desc):
     resp = client.post(url_for('i18n.create_key'),

@@ -1,6 +1,14 @@
 import os
 
-basedir = os.path.abspath(os.path.dirname(__file__))
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+
+SQLITE_TEST = 'sqlite:///' + os.path.join(BASE_DIR, 'test-db.sqlite')
+SQLITE_DEV = 'sqlite:///' + os.path.join(BASE_DIR, 'dev-db.sqlite')
+SQLITE_MEM = 'sqlite://'
+
+PSQL_TEST = 'postgresql://tom@localhost:5432/cc-test'
+PSQL_DEV = 'postgresql://tom@localhost:5432/cc-dev'
+PSQL_PROD = 'postgresql://tom@localhost:5432/cc-prod'
 
 
 class Config:
@@ -13,35 +21,24 @@ class Config:
         pass
 
 
-class DevelopmentConfig(Config):
-    DEBUG = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DB_URL') or \
-                              'sqlite:///' + os.path.join(basedir, 'dev-db.sqlite')
-
-
 class TestingConfig(Config):
     TESTING = True
     # SQLALCHEMY_ECHO = True        # Really chatty.
+    SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DB_URL') or SQLITE_TEST
 
-    if True:
-        # SQLite
-        SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DB_URL') or \
-                                  'sqlite:///' + os.path.join(basedir, 'test-db.sqlite')
-    else:
-        # PostgreSQL
-        SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DB_URL') or \
-                                  'postgresql://tom@localhost:5432/cc-test'
+
+class DevelopmentConfig(Config):
+    DEBUG = True
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DB_URL') or SQLITE_DEV
 
 
 class ProductionConfig(Config):
-    SQLALCHEMY_DATABASE_URI = os.environ.get('PROD_DB_URL') or \
-                              'sqlite:///' + os.path.join(basedir, 'data.sqlite')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('PROD_DB_URL') or PSQL_PROD
 
 
 config = {
     'dev': DevelopmentConfig,
     'test': TestingConfig,
     'prod': ProductionConfig,
-
     'default': DevelopmentConfig
 }

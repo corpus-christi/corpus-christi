@@ -8,8 +8,8 @@ from marshmallow.validate import Length
 from sqlalchemy import Column, String, ForeignKey, Text
 from sqlalchemy.orm import relationship
 
+from src import db
 from src.db import Base
-from src import db  
 from src.shared.models import StringTypes
 
 
@@ -96,7 +96,7 @@ class Language(Base):
         count = 0
         file_path = os.path.abspath(os.path.join(__file__, os.path.pardir, 'data', file_name))
 
-        if not I18NLocale.query.get(locale_code):
+        if not db.session.query(I18NLocale).get(locale_code):
             db.session.add(I18NLocale(code=locale_code, desc='English US'))
 
         with open(file_path, 'r') as fp:
@@ -114,11 +114,6 @@ class Language(Base):
                 count += 1
             db.session.commit()
         return count
-
-
-class LanguageSchema(Schema):
-    code = fields.String(required=True, validate=[Length(equal=2)])
-    name = fields.String(required=True, validate=[Length(min=2)])
 
 
 # ---- CRUD

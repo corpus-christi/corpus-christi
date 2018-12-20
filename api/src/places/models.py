@@ -49,11 +49,6 @@ class Country(Base):
         return count
 
 
-class CountrySchema(Schema):
-    code = fields.String(required=True, validate=Length(min=1))
-    name_i18n = fields.String(required=True, validate=Length(min=1))
-
-
 # ---- Area
 
 class Area(Base):
