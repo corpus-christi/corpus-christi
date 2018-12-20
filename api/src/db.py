@@ -1,3 +1,4 @@
+from flask_migrate import Migrate
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -14,6 +15,9 @@ class DbConfig:
         self.engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
         Session = sessionmaker(bind=self.engine)
         self.session = Session()
+
+        # We're only using this package to get the CLI command.
+        Migrate(app, Base)
 
     def create_all(self):
         """Create all tables."""
