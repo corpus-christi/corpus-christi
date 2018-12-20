@@ -98,6 +98,7 @@ def test_read_one_locale(client, db, code, desc):
     assert resp.json['desc'] == desc
 
 
+@pytest.mark.smoke
 @pytest.mark.parametrize('code', ['', 'a', 'aa', 'aaa', 'aa-aa'])
 def test_read_nonexistent_locale(client, code):
     # GIVEN any set of locales
@@ -107,6 +108,7 @@ def test_read_nonexistent_locale(client, code):
     assert resp.status_code == 404
 
 
+@pytest.mark.smoke
 @pytest.mark.parametrize('code', ['', 'a', 'a-', '-a', 'aa', 'aa-', 'aa-a'])
 def test_create_bogus_locale(client, code):
     # GIVEN any set of locales
@@ -162,6 +164,7 @@ def test_read_all_keys(client, db):
     assert len(resp.json) == len(key_data)
 
 
+@pytest.mark.smoke
 @pytest.mark.parametrize('id, desc', key_tuples)
 def test_read_existing_key(client, db, id, desc):
     create_keys(db)
@@ -220,12 +223,16 @@ def test_one_locale_as_list(client, format, db, code):
     assert len(resp.json) == len(key_data)
 
 
+@pytest.mark.smoke
+@pytest.mark.usefixtures('reset_db')
 def test_bogus_xlation_locale(client):
     resp = client.get(url_for('i18n.read_xlation', locale_code='not-a-real-locale'))
     assert resp.status_code == 404
 
 
-def test_bogus_xlation_format(client):
+@pytest.mark.smoke
+def test_bogus_xlation_format(client, db):
+    create_locales(db)
     resp = client.get(url_for('i18n.read_xlation',
                               locale_code=locale_codes[0],
                               format='not-a-valid-format'))
@@ -302,6 +309,7 @@ def test_read_all_languages(client, db):
 
 # ---- I18N CRUD
 
+@pytest.mark.smoke
 def test_good_crud_read(db):
     id = 'foo.bar'
     locale = 'xx-YY'
@@ -340,6 +348,7 @@ def test_good_crud_update(db):
     assert i18n_read(id, locale).gloss == new_gloss
 
 
+@pytest.mark.smoke
 @pytest.mark.usefixtures('reset_db')
 def test_bad_crud_update():
     with pytest.raises(RuntimeError):
@@ -352,6 +361,7 @@ def test_bad_crud_delete():
         i18n_read('bogus', 'bogus')
 
 
+@pytest.mark.smoke
 def test_good_crud_delete(db):
     id = 'foo.bar'
     locale = 'xx-YY'

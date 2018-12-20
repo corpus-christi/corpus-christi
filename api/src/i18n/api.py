@@ -4,15 +4,12 @@ from marshmallow.validate import Length
 
 from src import db
 from . import i18n
-from .models import I18NLocale, I18NLocaleSchema, I18NKeySchema, I18NKey, I18NValue, I18NValueSchema, \
-    Language
+from .models import I18NLocale, I18NLocaleSchema, I18NKeySchema, I18NKey, I18NValue, I18NValueSchema, Language
+
+# ---- I18N Locale
 
 i18n_locale_schema = I18NLocaleSchema()
-i18n_key_schema = I18NKeySchema()
-i18n_value_schema = I18NValueSchema()
 
-
-# ---- Locale
 
 @i18n.route('/locales')
 def read_all_locales():
@@ -50,7 +47,10 @@ def delete_one_locale(locale_code):
     return 'ok', 204
 
 
-# ---- Keys
+# ---- I18N Key
+
+i18n_key_schema = I18NKeySchema()
+
 
 @i18n.route('/keys')
 def read_all_keys():
@@ -80,7 +80,10 @@ def create_key():
     return jsonify(i18n_key_schema.dump(new_key)), 201
 
 
-# ---- Values
+# ---- I18N Value
+
+i18n_value_schema = I18NValueSchema()
+
 
 @i18n.route('/values')
 def read_all_values():
@@ -93,7 +96,7 @@ def read_xlation(locale_code):
     # Check that the locale exists.
     locale = db.session.query(I18NLocale).filter_by(code=locale_code).first()
     if locale is None:
-        return 'Invalid locale', 404
+        return 'Locale not found', 404
 
     # Fetch the values for this locale
     values = db.session.query(I18NValue).filter_by(locale_code=locale_code)
@@ -127,24 +130,36 @@ def read_xlation(locale_code):
         return 'Invalid format', 400
 
 
-# ---- Languages
+# ---- Language
 
 
-class LanguageListSchema(Schema):
+class LanguageSchema(Schema):
     code = fields.String(required=True, validate=Length(equal=2))
     name = fields.String(attribute="gloss", required=True, validate=Length(min=1))
 
 
-language_list_schema = LanguageListSchema()
+language_schema = LanguageSchema()
 
 
 @i18n.route('/languages')
 @i18n.route('/languages/<language_code>')
 def read_languages(language_code=None):
+    locale_code = request.args.get('locale')
+    if locale_code is None:
+        return 'Missing locale', 400
+
     if language_code is None:
-        result = db.session.query(Language.code, I18NValue.gloss).join(I18NKey, I18NValue).all()
-        return jsonify(language_list_schema.dump(result, many=True))
+        result = db.session \
+            .query(Language.code, I18NValue.gloss) \
+            .join(I18NKey, I18NValue) \
+            .filter_by(locale_code=locale_code) \
+            .all()
+        return jsonify(language_schema.dump(result, many=True))
     else:
-        result = db.session.query(Language.code, I18NValue.gloss). \
-            filter_by(code=language_code).join(I18NKey, I18NValue).first()
-        return jsonify(language_list_schema.dump(result))
+        result = db.session \
+            .query(Language.code, I18NValue.gloss) \
+            .filter_by(code=language_code) \
+            .join(I18NKey, I18NValue) \
+            .filter_by(locale_code=locale_code) \
+            .first()
+        return jsonify(language_schema.dump(result))

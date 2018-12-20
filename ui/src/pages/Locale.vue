@@ -24,7 +24,6 @@
         name: "Locale",
         data: function () {
             return {
-                locales: [],
                 countries: [],
                 languages: []
             };
@@ -33,11 +32,7 @@
             flag_unicode: (country_code) => flagForCountry(country_code)
         },
         mounted: function () {
-            axios.get("/api/v1/i18n/locales").then(response => {
-                this.locales = response.data;
-            });
-
-            axios.get("/api/v1/i18n/countries").then(response => {
+            axios.get("/api/v1/places/countries").then(response => {
                 this.countries = response.data;
             });
 

@@ -4,6 +4,9 @@ all:
 	echo "Pick a better target"
 
 smoke-test:
+	pytest -m 'smoke'
+
+quick-test:
 	pytest -m 'not slow'
 
 coverage-test:
