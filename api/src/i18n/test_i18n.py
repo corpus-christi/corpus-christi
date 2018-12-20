@@ -279,6 +279,7 @@ def test_one_locale_as_tree(client, dbs, code):
 
 # ---- Languages
 
+@pytest.mark.slow
 @pytest.mark.parametrize('code, name', [('en', 'English'),
                                         ('th', 'Thai'),
                                         ('es', 'Spanish; Castilian')])
@@ -288,7 +289,7 @@ def test_read_language(client, dbs, code, name):
     assert resp.status_code == 200
     assert resp.json['name'] == name
 
-
+@pytest.mark.slow
 def test_read_all_languages(client, dbs):
     count = Language.load_from_file()
     resp = client.get(url_for('i18n.read_languages', locale='en-US'))

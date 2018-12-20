@@ -4,7 +4,7 @@ all:
 	echo "Pick a better target"
 
 smoke-test:
-	pytest src/test_basics.py
+	pytest -m 'not slow'
 
 coverage-test:
 	pytest --cov=src --cov-report=html

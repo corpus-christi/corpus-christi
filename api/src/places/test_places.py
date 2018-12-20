@@ -4,6 +4,7 @@ from flask import url_for
 from src.places.models import Country
 
 
+@pytest.mark.slow
 @pytest.mark.parametrize('code, name', [('US', 'United States'),
                                         ('EC', 'Ecuador'),
                                         ('TH', 'Thailand')])
@@ -17,6 +18,7 @@ def test_read_country(client, dbs, code, name):
     assert resp.json['name'] == name
 
 
+@pytest.mark.slow
 def test_read_all_countries(client, dbs):
     count = Country.load_from_file()
     print(f"READ {count} COUNTRIES")
