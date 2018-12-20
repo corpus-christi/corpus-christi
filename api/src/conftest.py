@@ -22,12 +22,12 @@ def client(app):
 
 
 @pytest.fixture()
-def reset_db():
+def reset_db(app):
     _db.drop_all()
     _db.create_all()
 
 
 @pytest.fixture()
-def dbs(reset_db):
+def db(reset_db):
     """Inject a database session."""
-    return _db.session
+    return _db
