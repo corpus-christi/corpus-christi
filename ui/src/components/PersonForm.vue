@@ -6,16 +6,59 @@
         v-model="newAccount.firstName"
         v-bind:label="$t('label.name.first')"
         name="firstName"
-        v-validate="'required|max:3'"
+        v-validate="'required'"
         v-bind:error-messages="errors.collect('firstName')"
       ></v-text-field>
+
       <v-text-field
         v-model="newAccount.lastName"
         v-bind:label="$t('label.name.last')"
         name="lastName"
-        v-validate="'min:5'"
+        v-validate="'required'"
         v-bind:error-messages="errors.collect('lastName')"
       ></v-text-field>
+
+      <v-radio-group v-model="newAccount.gender" row>
+        <v-radio v-bind:label="$t('label.gender.male')" value="M"></v-radio>
+        <v-radio v-bind:label="$t('label.gender.female')" value="F"></v-radio>
+      </v-radio-group>
+
+      <v-menu
+        :close-on-content-click="false"
+        v-model="showBirthdayPicker"
+        :nudge-right="40"
+        lazy
+        transition="scale-transition"
+        offset-y
+        full-width
+        min-width="290px"
+      >
+        <v-text-field
+          slot="activator"
+          v-model="newAccount.birthday"
+          v-bind:label="$t('label.date.birthday')"
+          prepend-icon="event"
+          readonly
+        ></v-text-field>
+
+        <v-date-picker
+          v-model="newAccount.birthday"
+          @input="showBirthdayPicker = false"
+        ></v-date-picker>
+      </v-menu>
+
+      <v-text-field
+        v-model="newAccount.email"
+        v-bind:label="$t('label.email')"
+        prepend-icon="email"
+      ></v-text-field>
+
+      <v-text-field
+        v-model="newAccount.phone"
+        v-bind:label="$t('label.phone')"
+        prepend-icon="phone"
+      ></v-text-field>
+
       <v-btn v-bind:disabled="!valid" v-on:click="handleSubmit">Sign Up</v-btn>
     </v-form>
   </div>
@@ -28,10 +71,15 @@ export default {
     return {
       valid: false, // Are all the fields in the form valid?
 
+      showBirthdayPicker: false,
+
       newAccount: {
-        // Object to collect together account data
         firstName: "",
-        lastName: ""
+        lastName: "",
+        gender: "",
+        birthdate: "",
+        email: "",
+        phone: ""
       }
     };
   },

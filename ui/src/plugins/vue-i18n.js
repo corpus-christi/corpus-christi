@@ -10,9 +10,18 @@ const messages = {
       hello: "Enter a new person"
     },
     label: {
+      email: "Email",
+      phone: "Phone",
+      date: {
+        birthday: "Birthday"
+      },
       name: {
         first: "First Name",
         last: "Last Name"
+      },
+      gender: {
+        male: "Male",
+        female: "Female"
       }
     },
     common: {
@@ -30,9 +39,18 @@ const messages = {
       required: "Necesario"
     },
     label: {
+      email: "Correo electrónico",
+      phone: "Teléfono",
+      date: {
+        birthday: "Cumpleaños"
+      },
       name: {
         first: "Nombre de pila",
         last: "Apellido"
+      },
+      gender: {
+        female: "Mujer",
+        male: "Hombre"
       }
     },
     page: {
