@@ -25,6 +25,7 @@ The following tools are in common use in CC development
 ### User Interface
 
 1. [Vue Test Utils](https://vue-test-utils.vuejs.org/) - Vue-specific test utilities
+    - [Vue Testing Handbook](https://lmiller1990.github.io/vue-testing-handbook/) - Gentle intro to Vue Test Utils
 1. [Jest](https://jestjs.io/en/) - Test runner
 1. [Mocha](https://mochajs.org/) - Test framework
 1. [Chai](https://www.chaijs.com/) - Assertion library
