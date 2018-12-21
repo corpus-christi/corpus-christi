@@ -6,7 +6,9 @@
     <v-spacer></v-spacer>
 
     <v-menu>
-      <v-btn flat slot="activator">{{ displayLocale(currentLocale) }}</v-btn>
+      <v-btn id="cur-locale" flat slot="activator">
+        {{ displayLocale(currentLocale) }}
+      </v-btn>
       <v-list>
         <v-list-tile
           v-for="locale in locales"
