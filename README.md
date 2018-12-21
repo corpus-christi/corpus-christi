@@ -15,7 +15,7 @@ at
 1. `events` - Event planning and registration
 1. `calendar` - Planning and calendaring
 
-## More Documentation
+## Documentation
 
-1. [Software Development Methodology](doc/sdm.md)
-1. [Development Environment](doc/develop.md)
+- See the [doc directory](doc/README.md) for links to "official" documentation.
+- Find a boatload of great tutorial information on the [Project Wiki](https://github.com/corpus-christi/corpus-christi/wiki)
