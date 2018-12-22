@@ -11,8 +11,17 @@ export default new Vuex.Store({
     locales: [] // All available locales
   },
   getters: {
-    currentLocale(state) {
+    currentLocale: state => {
       return state.locales.find(loc => loc.code === state.currentLocaleCode);
+    },
+
+    currentLanguageCode: (state, getters) => {
+      const current = getters.currentLocale;
+      if (current) {
+        return current.code.split("-")[0];
+      } else {
+        return "";
+      }
     }
   },
   mutations: {
