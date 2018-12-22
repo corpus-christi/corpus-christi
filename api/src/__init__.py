@@ -1,7 +1,7 @@
 from flask import Flask
 
+from .db import DbConfig
 from config import config
-from src.db import DbConfig
 
 db = DbConfig()
 

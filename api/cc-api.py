@@ -1,23 +1,14 @@
 import os
 
 from flask.cli import AppGroup
-
-from src import create_app, db
+from src import create_app
+from src import db
 from src.i18n.models import Language
 from src.i18n.test_i18n import seed_database
+from src.people.test_people import create_multiple_people
 from src.places.models import Country
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
-
-# class I18NModels:
-#     locale = I18NLocale
-#     key = I18NKey
-#     value = I18NValue
-
-# @app.shell_context_processor
-# def make_shell_context():
-#     return dict(orm=orm, i18n=I18NModels)
-
 
 data_cli = AppGroup('data', help="Manipulate application data")
 
@@ -42,6 +33,7 @@ def load_languages():
     seed_database(db)
     Country.load_from_file()
     Language.load_from_file()
+    create_multiple_people(17)
 
 
 @data_cli.command('clear', help="Clear all data; drops and creates all tables")

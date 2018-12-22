@@ -3,7 +3,7 @@ from marshmallow.validate import Length, Range, OneOf
 from sqlalchemy import Column, Integer, String, Date, ForeignKey
 from sqlalchemy.orm import relationship
 
-from src.db import Base
+from ..db import Base
 from ..places.models import Location
 from ..shared.models import StringTypes
 
@@ -27,8 +27,8 @@ class Person(Base):
         return f"<Person(id={self.id},name='{self.first_name} {self.last_name}')>"
 
 
-class I18NLocaleSchema(Schema):
-    id = fields.Integer(required=True, validate=Range(min=1))
+class PersonSchema(Schema):
+    id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     first_name = fields.String(required=True, validate=Length(min=1))
     last_name = fields.String(required=True, validate=Length(min=1))
     gender = fields.String(validate=OneOf(['M', 'F']))

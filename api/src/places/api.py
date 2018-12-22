@@ -2,8 +2,8 @@ from flask import request, jsonify
 from marshmallow import Schema, fields
 from marshmallow.validate import Length
 
-from src import db
-from src.i18n.models import I18NValue, I18NKey
+from .. import db
+from ..i18n.models import I18NValue, I18NKey
 from . import places
 from .models import Country
 

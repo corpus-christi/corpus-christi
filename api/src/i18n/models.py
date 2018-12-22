@@ -8,9 +8,9 @@ from marshmallow.validate import Length
 from sqlalchemy import Column, String, ForeignKey, Text
 from sqlalchemy.orm import relationship
 
-from src import db
-from src.db import Base
-from src.shared.models import StringTypes
+from .. import db
+from ..db import Base
+from ..shared.models import StringTypes
 
 
 # ---- Locale

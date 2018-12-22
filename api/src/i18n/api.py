@@ -2,7 +2,7 @@ from flask import request, jsonify
 from marshmallow import ValidationError, Schema, fields
 from marshmallow.validate import Length
 
-from src import db
+from ..import db
 from . import i18n
 from .models import I18NLocale, I18NLocaleSchema, I18NKeySchema, I18NKey, I18NValue, I18NValueSchema, Language
 

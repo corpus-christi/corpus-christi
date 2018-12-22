@@ -1,6 +1,6 @@
 <template>
   <v-layout>
-      <v-flex d-flex xs12 sm6 md4>
+    <v-flex d-flex xs12 sm6 md4>
       <form>
         <v-text-field
           v-model="newAccount.firstName"
@@ -51,6 +51,9 @@
         <v-text-field
           v-model="newAccount.email"
           v-bind:label="$t('label.email')"
+          name="email"
+          v-validate="'email'"
+          v-bind:error-messages="errors.collect('email')"
           prepend-icon="email"
         ></v-text-field>
 
@@ -73,8 +76,6 @@ export default {
   name: "PersonForm",
   data: function() {
     return {
-      valid: false, // Are all the fields in the form valid?
-
       showBirthdayPicker: false,
 
       newAccount: {
@@ -91,15 +92,14 @@ export default {
   methods: {
     submit() {
       this.$validator.validateAll();
+      if (!this.errors.any()) {
+        console.log("WOW");
+      }
     },
     clear() {
-      this.firstName = "";
-      this.lastName = "";
-      this.gender = "";
-      this.birthdate = "";
-      this.email = "";
-      this.phone = "";
-
+      for (let key of Object.keys(this.newAccount)) {
+        this.newAccount[key] = "";
+      }
       this.$validator.reset();
     }
   }

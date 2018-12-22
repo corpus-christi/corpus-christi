@@ -1,7 +1,7 @@
 import pytest
 from flask import url_for
 
-from src.places.models import Country
+from .models import Country
 
 
 @pytest.mark.slow
@@ -26,6 +26,7 @@ def test_read_all_countries(client):
     resp = client.get(url_for('places.read_countries', locale='en-US'))
     assert resp.status_code == 200
     assert len(resp.json) == count
+
 
 @pytest.mark.smoke
 def test_missing_locale(client):
