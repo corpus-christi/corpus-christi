@@ -3,7 +3,11 @@
     <v-toolbar-title class="headline text-uppercase">
       <span>Corpus</span> <span class="font-weight-light">Christi</span>
     </v-toolbar-title>
+
     <v-spacer></v-spacer>
+
+    <v-btn flat v-bind:to="{ name: 'home' }">Home</v-btn>
+    <v-btn flat v-bind:to="{ name: 'people' }">People</v-btn>
 
     <v-menu>
       <v-btn id="cur-locale" flat slot="activator">
@@ -19,8 +23,6 @@
         </v-list-tile>
       </v-list>
     </v-menu>
-
-    <v-btn flat v-bind:to="{ name: 'home' }">Home</v-btn>
   </v-toolbar>
 </template>
 
