@@ -1,0 +1,26 @@
+person:
+  name:
+    first:
+      en: First Name
+      es: Nombre de pila
+    last:
+      en: Last Name
+      es: Apellido
+  gender:
+    es: Género
+    en: Gender
+  male:
+    en: Male
+    es: Hombre
+  female:
+    en: Female
+    es: Mujer
+  birthday:
+    en: Birthday
+    es: Cumpleaños
+  email:
+    en: Email
+    es: Correo electrónico
+  phone:
+    en: Phone
+    es: Teléfono

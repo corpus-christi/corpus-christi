@@ -4,66 +4,13 @@ import VueI18n from "vue-i18n";
 import enValidation from "vee-validate/dist/locale/en";
 import esValidation from "vee-validate/dist/locale/es";
 
-const messages = {
-  en: {
-    message: {
-      hello: "Enter a new person"
-    },
-    label: {
-      email: "Email",
-      phone: "Phone",
-      date: {
-        birthday: "Birthday"
-      },
-      name: {
-        first: "First Name",
-        last: "Last Name"
-      },
-      gender: {
-        male: "Male",
-        female: "Female"
-      }
-    },
-    common: {
-      required: "Required"
-    },
-    page: {
-      title: "Our Home Page"
-    }
-  },
-  es: {
-    message: {
-      hello: "Entrar nueva persona"
-    },
-    common: {
-      required: "Necesario"
-    },
-    label: {
-      email: "Correo electrónico",
-      phone: "Teléfono",
-      date: {
-        birthday: "Cumpleaños"
-      },
-      name: {
-        first: "Nombre de pila",
-        last: "Apellido"
-      },
-      gender: {
-        female: "Mujer",
-        male: "Hombre"
-      }
-    },
-    page: {
-      title: "Nuestra Pagina de Inicio"
-    }
-  }
-};
+import i18n_data from "../../i18n/cc-i18n.json";
 
 Vue.use(VueI18n);
 
 const i18n = new VueI18n({
   locale: "es",
-  messages
+  messages: i18n_data
 });
 
 Vue.use(VeeValidate, {

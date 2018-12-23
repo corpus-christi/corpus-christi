@@ -2,7 +2,7 @@
   <form>
     <v-text-field
       v-model="newAccount.firstName"
-      v-bind:label="$t('label.name.first')"
+      v-bind:label="$t('person.name.first')"
       name="firstName"
       v-validate="'required'"
       v-bind:error-messages="errors.collect('firstName')"
@@ -10,15 +10,15 @@
 
     <v-text-field
       v-model="newAccount.lastName"
-      v-bind:label="$t('label.name.last')"
+      v-bind:label="$t('person.name.last')"
       name="lastName"
       v-validate="'required'"
       v-bind:error-messages="errors.collect('lastName')"
     ></v-text-field>
 
     <v-radio-group v-model="newAccount.gender" row>
-      <v-radio v-bind:label="$t('label.gender.male')" value="M"></v-radio>
-      <v-radio v-bind:label="$t('label.gender.female')" value="F"></v-radio>
+      <v-radio v-bind:label="$t('person.gender.male')" value="M"></v-radio>
+      <v-radio v-bind:label="$t('person.gender.female')" value="F"></v-radio>
     </v-radio-group>
 
     <v-menu
@@ -34,7 +34,7 @@
       <v-text-field
         slot="activator"
         v-model="newAccount.birthday"
-        v-bind:label="$t('label.date.birthday')"
+        v-bind:label="$t('person.date.birthday')"
         prepend-icon="event"
         readonly
       ></v-text-field>
@@ -48,7 +48,7 @@
 
     <v-text-field
       v-model="newAccount.email"
-      v-bind:label="$t('label.email')"
+      v-bind:label="$t('person.email')"
       name="email"
       v-validate="'email'"
       v-bind:error-messages="errors.collect('email')"
@@ -57,7 +57,7 @@
 
     <v-text-field
       v-model="newAccount.phone"
-      v-bind:label="$t('label.phone')"
+      v-bind:label="$t('person.phone')"
       prepend-icon="phone"
     ></v-text-field>
 

@@ -1,0 +1,42 @@
+{
+  "en": {
+    "home": {
+      "title": "Our Home Page"
+    },
+    "person": {
+      "birthday": "Birthday",
+      "email": "Email",
+      "female": "Female",
+      "gender": "Gender",
+      "male": "Male",
+      "name": {
+        "first": "First Name",
+        "last": "Last Name"
+      },
+      "phone": "Phone"
+    },
+    "validation": {
+      "required": "Required"
+    }
+  },
+  "es": {
+    "home": {
+      "title": "Nuestra Pagina de Inicio"
+    },
+    "person": {
+      "birthday": "Cumplea\u00f1os",
+      "email": "Correo electr\u00f3nico",
+      "female": "Mujer",
+      "gender": "G\u00e9nero",
+      "male": "Hombre",
+      "name": {
+        "first": "Nombre de pila",
+        "last": "Apellido"
+      },
+      "phone": "Tel\u00e9fono"
+    },
+    "validation": {
+      "required": "Necesario"
+    }
+  }
+}
