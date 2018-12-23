@@ -1,7 +1,7 @@
 <template>
   <form>
     <v-text-field
-      v-model="newAccount.firstName"
+      v-model="newPerson.firstName"
       v-bind:label="$t('person.name.first')"
       name="firstName"
       v-validate="'required'"
@@ -9,16 +9,16 @@
     ></v-text-field>
 
     <v-text-field
-      v-model="newAccount.lastName"
+      v-model="newPerson.lastName"
       v-bind:label="$t('person.name.last')"
       name="lastName"
       v-validate="'required'"
       v-bind:error-messages="errors.collect('lastName')"
     ></v-text-field>
 
-    <v-radio-group v-model="newAccount.gender" row>
-      <v-radio v-bind:label="$t('person.gender.male')" value="M"></v-radio>
-      <v-radio v-bind:label="$t('person.gender.female')" value="F"></v-radio>
+    <v-radio-group v-model="newPerson.gender" row>
+      <v-radio v-bind:label="$t('person.male')" value="M"></v-radio>
+      <v-radio v-bind:label="$t('person.female')" value="F"></v-radio>
     </v-radio-group>
 
     <v-menu
@@ -33,7 +33,7 @@
     >
       <v-text-field
         slot="activator"
-        v-model="newAccount.birthday"
+        v-model="newPerson.birthday"
         v-bind:label="$t('person.date.birthday')"
         prepend-icon="event"
         readonly
@@ -41,13 +41,13 @@
 
       <v-date-picker
         v-bind:locale="currentLanguageCode"
-        v-model="newAccount.birthday"
+        v-model="newPerson.birthday"
         @input="showBirthdayPicker = false"
       ></v-date-picker>
     </v-menu>
 
     <v-text-field
-      v-model="newAccount.email"
+      v-model="newPerson.email"
       v-bind:label="$t('person.email')"
       name="email"
       v-validate="'email'"
@@ -56,7 +56,7 @@
     ></v-text-field>
 
     <v-text-field
-      v-model="newAccount.phone"
+      v-model="newPerson.phone"
       v-bind:label="$t('person.phone')"
       prepend-icon="phone"
     ></v-text-field>
@@ -68,6 +68,7 @@
 
 <script>
 import { mapGetters } from "vuex";
+import axios from "axios";
 
 export default {
   name: "PersonForm",
@@ -75,11 +76,11 @@ export default {
     return {
       showBirthdayPicker: false,
 
-      newAccount: {
+      newPerson: {
         firstName: "",
         lastName: "",
         gender: "",
-        birthdate: "",
+        birthday: "",
         email: "",
         phone: ""
       }
@@ -90,12 +91,15 @@ export default {
     submit() {
       this.$validator.validateAll();
       if (!this.errors.any()) {
-        console.log("WOW");
+        axios
+          .post("/api/v1/people/persons", this.newPerson)
+          .then(resp => console.log("SUCCESS", resp))
+          .catch(err => console.error("FAILURE", err.response));
       }
     },
     clear() {
-      for (let key of Object.keys(this.newAccount)) {
-        this.newAccount[key] = "";
+      for (let key of Object.keys(this.newPerson)) {
+        this.newPerson[key] = "";
       }
       this.$validator.reset();
     }

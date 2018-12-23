@@ -29,8 +29,8 @@ class Person(Base):
 
 class PersonSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
-    first_name = fields.String(required=True, validate=Length(min=1))
-    last_name = fields.String(required=True, validate=Length(min=1))
+    first_name = fields.String(data_key='firstName', required=True, validate=Length(min=1))
+    last_name = fields.String(data_key='lastName', required=True, validate=Length(min=1))
     gender = fields.String(validate=OneOf(['M', 'F']))
     birthday = fields.Date()
     phone = fields.String()

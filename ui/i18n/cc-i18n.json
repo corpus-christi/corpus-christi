@@ -1,10 +1,15 @@
 {
   "en": {
+    "forms": {
+      "search": "Search"
+    },
     "home": {
       "title": "Our Home Page"
     },
     "person": {
-      "birthday": "Birthday",
+      "date": {
+        "birthday": "Birthday"
+      },
       "email": "Email",
       "female": "Female",
       "gender": "Gender",
@@ -13,6 +18,7 @@
         "first": "First Name",
         "last": "Last Name"
       },
+      "people": "People",
       "phone": "Phone"
     },
     "validation": {
@@ -20,11 +26,16 @@
     }
   },
   "es": {
+    "forms": {
+      "search": "Buscar"
+    },
     "home": {
       "title": "Nuestra Pagina de Inicio"
     },
     "person": {
-      "birthday": "Cumplea\u00f1os",
+      "date": {
+        "birthday": "Cumplea\u00f1os"
+      },
       "email": "Correo electr\u00f3nico",
       "female": "Mujer",
       "gender": "G\u00e9nero",
@@ -33,6 +44,7 @@
         "first": "Nombre de pila",
         "last": "Apellido"
       },
+      "people": "Personas",
       "phone": "Tel\u00e9fono"
     },
     "validation": {

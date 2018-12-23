@@ -1,4 +1,7 @@
 person:
+  people:
+    en: People
+    es: Personas
   name:
     first:
       en: First Name
@@ -15,9 +18,10 @@ person:
   female:
     en: Female
     es: Mujer
-  birthday:
-    en: Birthday
-    es: Cumpleaños
+  date:
+    birthday:
+      en: Birthday
+      es: Cumpleaños
   email:
     en: Email
     es: Correo electrónico

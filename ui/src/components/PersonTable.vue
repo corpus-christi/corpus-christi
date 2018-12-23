@@ -1,12 +1,12 @@
 <template>
   <v-card>
     <v-card-title>
-      People
+      {{ $t("person.people") }}
       <v-spacer></v-spacer>
       <v-text-field
         v-model="search"
         append-icon="search"
-        label="Search"
+        v-bind:label="$t('forms.search')"
         single-line
         hide-details
       ></v-text-field>
@@ -28,8 +28,8 @@
             hide-details
           ></v-checkbox>
         </td>
-        <td>{{ props.item.first_name }}</td>
-        <td>{{ props.item.last_name }}</td>
+        <td>{{ props.item.firstName }}</td>
+        <td>{{ props.item.lastName }}</td>
         <td>{{ props.item.gender }}</td>
         <td>{{ props.item.birthday }}</td>
         <td>{{ props.item.email }}</td>
@@ -46,18 +46,23 @@ export default {
   name: "PersonTable",
   data() {
     return {
-      headers: [
-        { text: this.$t("person.name.first"), value: "first_name" },
-        { text: this.$t("person.name.last"), value: "last_name" },
-        { text: this.$t("person.gender"), value: "gender" },
-        { text: this.$t("person.birthday"), value: "birthday" },
-        { text: this.$t("person.email"), value: "email" },
-        { text: this.$t("person.phone"), value: "phone" }
-      ],
       selected: [],
       people: [],
       search: ""
     };
+  },
+  computed: {
+    // Put here so that the headers are reactive.
+    headers() {
+      return [
+        { text: this.$t("person.name.first"), value: "firstName" },
+        { text: this.$t("person.name.last"), value: "lastName" },
+        { text: this.$t("person.gender"), value: "gender" },
+        { text: this.$t("person.date.birthday"), value: "birthday" },
+        { text: this.$t("person.email"), value: "email" },
+        { text: this.$t("person.phone"), value: "phone" }
+      ];
+    }
   },
   mounted: function() {
     axios.get("/api/v1/people/persons").then(resp => (this.people = resp.data));
