@@ -1,4 +1,8 @@
 person:
+  actions:
+    new:
+      en: New Person
+      es: Persona Nueva
   people:
     en: People
     es: Personas

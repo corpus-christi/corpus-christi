@@ -35,11 +35,12 @@ def convert_to_vue_i18n_map(i10n_map, vue_i18n_map={}):
             if isinstance(val, dict):
                 convert_to_list_helper(val, dot_path + [key])
             else:
-                intermediate.append({
-                    'path': [key] + dot_path,
-                    'gloss': val
-                })
-                global_entry_count += 1
+                if not key.startswith('_'):
+                    intermediate.append({
+                        'path': [key] + dot_path,
+                        'gloss': val
+                    })
+                    global_entry_count += 1
 
     convert_to_list_helper(i10n_map)
 

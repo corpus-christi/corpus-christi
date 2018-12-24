@@ -1,0 +1,17 @@
+actions:
+  cancel:
+    _desc: Cancel a pending action
+    en: Cancel
+    es: Cancelar
+  clear:
+    _desc: Clear data (e.g., on a form)
+    en: Clear
+    es: Despejar
+  save:
+    _desc: Save a newly created item
+    en: Save
+    es: Salvar
+  search:
+    _desc: Search for something
+    en: Search
+    es: Buscar

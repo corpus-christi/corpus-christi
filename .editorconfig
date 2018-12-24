@@ -7,7 +7,11 @@ charset = utf-8
 end_of_line = lf
 insert_final_newline = true
 
-[{.*rc, *.json, *.js, package.json, *.styl}]
+[{.*rc, package.json, *.styl}]
+indent_style = space
+indent_size = 2
+
+[{*.js, *.json, *.vue}]
 indent_style = space
 indent_size = 2
 

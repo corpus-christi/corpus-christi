@@ -1,12 +1,18 @@
 {
   "en": {
-    "forms": {
+    "actions": {
+      "cancel": "Cancel",
+      "clear": "Clear",
+      "save": "Save",
       "search": "Search"
     },
     "home": {
       "title": "Our Home Page"
     },
     "person": {
+      "actions": {
+        "new": "New Person"
+      },
       "date": {
         "birthday": "Birthday"
       },
@@ -26,13 +32,19 @@
     }
   },
   "es": {
-    "forms": {
+    "actions": {
+      "cancel": "Cancelar",
+      "clear": "Despejar",
+      "save": "Salvar",
       "search": "Buscar"
     },
     "home": {
       "title": "Nuestra Pagina de Inicio"
     },
     "person": {
+      "actions": {
+        "new": "Persona Nueva"
+      },
       "date": {
         "birthday": "Cumplea\u00f1os"
       },
