@@ -3,6 +3,7 @@
     "actions": {
       "cancel": "Cancel",
       "clear": "Clear",
+      "header": "Actions",
       "save": "Save",
       "search": "Search"
     },
@@ -11,6 +12,7 @@
     },
     "person": {
       "actions": {
+        "edit": "Edit Person",
         "new": "New Person"
       },
       "date": {
@@ -20,6 +22,9 @@
       "female": "Female",
       "gender": "Gender",
       "male": "Male",
+      "messages": {
+        "canceled": "Canceled add new person"
+      },
       "name": {
         "first": "First Name",
         "last": "Last Name"
@@ -35,6 +40,7 @@
     "actions": {
       "cancel": "Cancelar",
       "clear": "Despejar",
+      "header": "Comportamiento",
       "save": "Salvar",
       "search": "Buscar"
     },
@@ -43,6 +49,7 @@
     },
     "person": {
       "actions": {
+        "edit": "Editar persona",
         "new": "Persona Nueva"
       },
       "date": {
@@ -52,6 +59,9 @@
       "female": "Mujer",
       "gender": "G\u00e9nero",
       "male": "Hombre",
+      "messages": {
+        "canceled": "Cancelado a\u00f1adir nueva persona"
+      },
       "name": {
         "first": "Nombre de pila",
         "last": "Apellido"

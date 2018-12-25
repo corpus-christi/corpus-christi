@@ -1,4 +1,8 @@
 actions:
+  header:
+    _desc: Header for a table, etc.
+    en: Actions
+    es: Comportamiento
   cancel:
     _desc: Cancel a pending action
     en: Cancel

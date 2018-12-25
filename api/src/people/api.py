@@ -36,6 +36,24 @@ def read_one_person(person_id):
     return jsonify(person_schema.dump(result))
 
 
+@people.route('/persons/<person_id>', methods=['PUT'])
+def update_person(person_id):
+    try:
+        valid_person = person_schema.load(request.json)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+
+    person = db.session.query(Person).filter_by(id=person_id).first()
+
+    for key, val in valid_person.items():
+        print("KEY", key, "VAL", val)
+        setattr(person, key, val)
+
+    db.session.commit()
+
+    return jsonify(person_schema.dump(person))
+
+
 # ---- Account
 
 account_schema = AccountSchema()

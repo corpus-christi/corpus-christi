@@ -3,6 +3,13 @@ person:
     new:
       en: New Person
       es: Persona Nueva
+    edit:
+      en: Edit Person
+      es: Editar persona
+  messages:
+    canceled:
+      en: Canceled add new person
+      es: Cancelado añadir nueva persona
   people:
     en: People
     es: Personas
