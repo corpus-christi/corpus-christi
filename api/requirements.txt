@@ -12,6 +12,7 @@ dataset==1.1.0
 decorator==4.3.0
 Faker==1.0.1
 Flask==1.0.2
+Flask-JWT-Extended==3.14.0
 Flask-Migrate==2.3.1
 flask-shell-ipython==0.4.0
 Flask-SQLAlchemy==2.3.2
@@ -36,6 +37,7 @@ psycopg2-binary==2.7.6.1
 ptyprocess==0.6.0
 py==1.7.0
 Pygments==2.3.1
+PyJWT==1.7.1
 pyparsing==2.3.0
 pytest==4.0.1
 pytest-cov==2.6.0

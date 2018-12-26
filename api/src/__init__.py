@@ -1,9 +1,11 @@
 from flask import Flask
+from flask_jwt_extended import JWTManager
 
-from .db import DbConfig
 from config import config
+from .db import DbConfig
 
 db = DbConfig()
+jwt = JWTManager()
 
 
 def create_app(config_name):
@@ -16,6 +18,9 @@ def create_app(config_name):
 
     # Set up the database.
     db.init_app(app)
+
+    # Configure JSON Web Tokens
+    jwt.init_app(app)
 
     # Attached CC modules
     from .etc import etc as etc_blueprint

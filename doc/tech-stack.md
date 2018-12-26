@@ -32,6 +32,8 @@ Implemented with the following technologies.
     - [Explore Flask](http://exploreflask.com/)
 1. [Flask Mail](https://pythonhosted.org/Flask-Mail/) - Flask email framework
 1. [Marshmallow](https://marshmallow.readthedocs.io/en/3.0/index.html) - API object serialization, deserialization, validation
+1. [Flask JWT](https://flask-jwt-extended.readthedocs.io/en/latest/) - Client authentication
+    - [JWT](https://jwt.io/) - All about JSON Web Tokens
 
 ## Data Persistence (Model)
 
@@ -48,4 +50,3 @@ Implemented with the following technologies.
 ## Other Key Technologies
 
 1. [JSON](http://json.org/) - Standard data interchange format
-1. [JWT](https://jwt.io/) - JavaScript Web Tokens

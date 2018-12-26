@@ -1,16 +1,22 @@
 import os
 
+import click
+from click import BadParameter
 from flask.cli import AppGroup
+
 from src import create_app
 from src import db
 from src.i18n.models import Language
 from src.i18n.test_i18n import seed_database
+from src.people.models import Person, Account
 from src.people.test_people import create_multiple_people, create_multiple_accounts
 from src.places.models import Country
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 
-data_cli = AppGroup('data', help="Manipulate application data")
+# ---- Data
+
+data_cli = AppGroup('data', help="Manipulate application data.")
 
 
 @data_cli.command('load-seeds', help="Load sample data")
@@ -44,3 +50,50 @@ def clear():
 
 
 app.cli.add_command(data_cli)
+
+# ---- Users and Accounts
+
+user_cli = AppGroup('account', help="Maintain account data.")
+
+
+@user_cli.command('new', help="Create new account")
+@click.argument('username')
+@click.argument('password')
+@click.option('--full-name', help="Full name (e.g., 'Fred Ziffle')")
+def create_account(username, password, full_name):
+    first_name = 'Test'
+    last_name = 'User'
+    if full_name is not None:
+        name_parts = full_name.split()
+        if len(name_parts) != 2:
+            raise BadParameter(f"Can't split {full_name} into first and last")
+        first_name, last_name = name_parts
+
+    # Make sure no existing user.
+    person = db.session.query(Account).filter_by(username=username).first()
+    if person is not None:
+        raise BadParameter(f"Already an account with username '{username}'")
+
+    # Create the Person; commit to DB so we get ID
+    person = Person(first_name=first_name, last_name=last_name)
+    account = Account(username=username, password=password, person=person)
+    db.session.add(account)
+    db.session.commit()
+    print(f"Created {person}")
+    print(f"Created {account}")
+
+
+@user_cli.command('password', help="Set password")
+@click.argument('username')
+@click.argument('password')
+def update_password(username, password):
+    person = db.session.query(Account).filter_by(username=username).first()
+    if person is None:
+        raise BadParameter(f"No account with username '{username}'")
+
+    person.password = password
+    db.session.commit()
+    print(f"Password for '{username}' updated")
+
+
+app.cli.add_command(user_cli)

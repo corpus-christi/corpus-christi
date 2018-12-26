@@ -27,6 +27,9 @@ class Person(Base):
     def __repr__(self):
         return f"<Person(id={self.id},name='{self.first_name} {self.last_name}')>"
 
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
+
 
 class PersonSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
@@ -43,7 +46,7 @@ class PersonSchema(Schema):
 class Account(Base):
     __tablename__ = 'people_account'
     id = Column(Integer, primary_key=True)
-    username = Column(StringTypes.MEDIUM_STRING, nullable=False)
+    username = Column(StringTypes.MEDIUM_STRING, nullable=False, unique=True)
     password_hash = Column(StringTypes.PASSWORD_HASH, nullable=False)
     active = Column(Boolean, nullable=False, default=True)
     person_id = Column(Integer, ForeignKey('people_person.id'), nullable=False)
@@ -52,8 +55,8 @@ class Account(Base):
     person = relationship("Person", backref=backref("account", uselist=False))
 
     def __repr__(self):
-        return "<Account(id={},person_id={},person='{} {}')>" \
-            .format(self.id, self.person.id, self.person.first_name, self.person.last_name)
+        return "<Account(id={},username='{}',person='{}:{}')>" \
+            .format(self.id, self.username, self.person.id, self.person.full_name())
 
     # From Flask Web Dev book
     @property

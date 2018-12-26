@@ -12,7 +12,8 @@ PSQL_PROD = 'postgresql://tom@localhost:5432/cc-prod'
 
 
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'super secret key'
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'flask super secret key'
+    JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY') or 'jwt super secret key'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_RECORD_QUERIES = True
 
