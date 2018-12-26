@@ -80,7 +80,15 @@ def read_all_accounts():
 
 @people.route('/accounts/<account_id>')
 def read_one_account(account_id):
+    """Read one account by ID."""
     result = db.session.query(Account).filter_by(id=account_id).first()
+    return jsonify(account_schema.dump(result))
+
+
+@people.route('/accounts/username/<username>')
+def read_one_account_by_username(username):
+    """Read one account by its (unique) user name."""
+    result = db.session.query(Account).filter_by(username=username).first()
     return jsonify(account_schema.dump(result))
 
 

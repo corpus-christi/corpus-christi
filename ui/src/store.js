@@ -8,7 +8,10 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     currentLocaleCode: "", // Current locale code
-    locales: [] // All available locales
+    locales: [], // All available locales
+
+    currentAccount: null,
+    currentJWT: null
   },
   getters: {
     currentLocale: state => {
@@ -28,8 +31,17 @@ export default new Vuex.Store({
     setCurrentLocaleCode(state, code) {
       state.currentLocaleCode = code;
     },
+
     setLocales(state, locales) {
       state.locales = locales;
+    },
+
+    setCurrentAccount(state, account) {
+      state.currentAccount = account;
+    },
+
+    setCurrentJWT(state, jwt) {
+      state.currentJWT = jwt;
     }
   }
 });

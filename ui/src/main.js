@@ -4,6 +4,7 @@ import router from "./router";
 import store from "./store";
 
 import "./plugins/vuetify";
+import "./plugins/axios";
 import i18n from "./plugins/vue-i18n";
 
 import App from "./App.vue";
