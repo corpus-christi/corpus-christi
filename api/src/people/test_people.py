@@ -53,7 +53,7 @@ def account_object_factory(person_id):
     account = {
         'username': f"{fake.pystr(min_chars=5, max_chars=15)}{fake.pyint()}",
         'password': fake.password(),
-        'person_id': person_id
+        'personId': person_id
     }
     return account
 
