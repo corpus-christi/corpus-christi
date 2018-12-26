@@ -4,6 +4,7 @@ import random
 import pytest
 from faker import Faker
 from flask import url_for
+from werkzeug.security import check_password_hash
 
 from .models import Person, PersonSchema, AccountSchema, Account
 
@@ -20,6 +21,7 @@ class RandomLocaleFaker:
 
 
 rl_fake = RandomLocaleFaker('en_US', 'es_MX')
+fake = Faker()  # Generic faker; random-locale ones don't implement everything.
 
 
 def flip():
@@ -47,11 +49,15 @@ def person_object_factory():
     return person
 
 
+def username_factory():
+    return f"{fake.pystr(min_chars=5, max_chars=15)}{fake.pyint()}"
+
+
 def account_object_factory(person_id):
     """Cook up a fake account."""
     fake = Faker()  # Use a generic one; others may not have all methods.
     account = {
-        'username': f"{fake.pystr(min_chars=5, max_chars=15)}{fake.pyint()}",
+        'username': username_factory(),
         'password': fake.password(),
         'personId': person_id
     }
@@ -138,21 +144,114 @@ def test_create_account(client, db):
         resp = client.post(url_for('people.create_account'), json=account)
         # THEN we expect them to be created
         assert resp.status_code == 201
+        # AND the account exists in the database
+        new_account = db.session.query(Account).filter_by(person_id=person.id).first()
+        assert new_account is not None
+        # And the password is properly hashed (refer to docs for generate_password_hash)
+        method, salt, hash = new_account.password_hash.split('$')
+        key_deriv, hash_func, iters = method.split(':')
+        assert key_deriv == 'pbkdf2'
+        assert hash_func == 'sha256'
+        assert int(iters) >= 50000
+        assert len(salt) == 8
+        assert len(hash) == 64  # SHA 256 / 4 bits per hex value
     # AND we end up with the proper number of accounts.
     assert db.session.query(Account).count() == count
+
+
+def prep_database(db):
+    """Prepare the database with a random number of people, some of which have accounts.
+    Returns list of IDs of the new accounts.
+    """
+    create_multiple_people(db, random.randint(5, 15))
+    create_multiple_accounts(db)
+    return [account.id for account in db.session.query(Account.id).all()]
 
 
 @pytest.mark.smoke
 def test_read_account(client, db):
     # GIVEN a collection of accounts
-    create_multiple_people(db, random.randint(5, 15))
-    create_multiple_accounts(db)
+    prep_database(db)
 
     for account in db.session.query(Account).all():
-        # WHEN we request each of them
+        # WHEN we request one
         resp = client.get(url_for('people.read_one_account', account_id=account.id))
         # THEN we find the matching account
         assert resp.status_code == 200
         assert resp.json['username'] == account.username
         assert 'password' not in resp.json  # Shouldn't be exposed by API
         assert resp.json['active'] == True
+
+
+def test_update_password(client, db):
+    # Seed the database and fetch the IDs for the new accounts.
+    account_ids = prep_database(db)
+
+    # Create different passwords for each account.
+    password_by_id = {}
+
+    # GIVEN a collection of accounts
+    for account_id in account_ids:
+        # WHEN we update the password via the API
+        new_password = password_by_id[account_id] = fake.password()
+        resp = client.patch(url_for('people.update_account', account_id=account_id),
+                            json={'password': new_password})
+        # THEN the update worked
+        assert resp.status_code == 200
+        # AND the password was not returned
+        assert 'password' not in resp.json
+
+    # GIVEN a collection of accounts
+    for account_id in account_ids:
+        # WHEN we retrieve account details from the database
+        updated_account = db.session.query(Account).filter_by(id=account_id).first()
+        assert updated_account is not None
+        # THEN the (account-specific) password is properly hashed
+        password_hash = updated_account.password_hash
+        assert check_password_hash(password_hash, password_by_id[account_id])
+
+
+def test_update_other_fields(client, db):
+    """Test that we can update fields _other_ than password."""
+    account_ids = prep_database(db)
+
+    # For each of the accounts, grab the current value of the "other" fields.
+    expected_by_id = {}
+    for account_id in account_ids:
+        current_account = db.session.query(Account).filter_by(id=account_id).first()
+        expected_by_id[account_id] = {
+            'username': current_account.username,
+            'active': current_account.active
+        }
+
+    for account_id in account_ids:
+        payload = {}
+
+        if flip():
+            # Randomly update the username.
+            new_username = username_factory()
+            expected_by_id[account_id]['username'] = new_username
+            payload['username'] = new_username
+        if flip():
+            # Randomly update the active flag.
+            new_active = flip()
+            expected_by_id[account_id]['active'] = new_active
+            payload['active'] = new_active
+
+        # At this point, we'll have constructed a payload that might have zero of more
+        # of the fields. This lets us test various combinations of update requests.
+        # The expected_by_id dictionary stores the values we expect to see in the database,
+        # whether the original value retrieve earlier or the newly updated on just
+        # created.
+
+        # It's possible that none of the fields will have been selected for update,
+        # which doesn't make much sense, but we'll still test for that possibility.
+
+        resp = client.patch(url_for('people.update_account', account_id=account_id), json=payload)
+        assert resp.status_code == 200
+
+    for account_id in account_ids:
+        updated_account = db.session.query(Account).filter_by(id=account_id).first()
+        assert updated_account is not None
+        assert updated_account.username == expected_by_id[account_id]['username']
+        assert updated_account.active == expected_by_id[account_id]['active']

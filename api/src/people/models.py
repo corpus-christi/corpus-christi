@@ -1,7 +1,8 @@
-from marshmallow import fields, Schema
+from marshmallow import fields, Schema, pre_load
 from marshmallow.validate import Length, Range, OneOf
 from sqlalchemy import Column, Integer, String, Date, ForeignKey, Boolean
 from sqlalchemy.orm import relationship, backref
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from ..db import Base
 from ..places.models import Location
@@ -43,7 +44,7 @@ class Account(Base):
     __tablename__ = 'people_account'
     id = Column(Integer, primary_key=True)
     username = Column(StringTypes.MEDIUM_STRING, nullable=False)
-    password = Column(StringTypes.PASSWORD_HASH, nullable=False)
+    password_hash = Column(StringTypes.PASSWORD_HASH, nullable=False)
     active = Column(Boolean, nullable=False, default=True)
     person_id = Column(Integer, ForeignKey('people_person.id'), nullable=False)
 
@@ -54,10 +55,32 @@ class Account(Base):
         return "<Account(id={},person_id={},person='{} {}')>" \
             .format(self.id, self.person.id, self.person.first_name, self.person.last_name)
 
+    # From Flask Web Dev book
+    @property
+    def password(self):
+        """Hashed passwords are 'write-only'."""
+        raise AttributeError("Can't read hashed password")
+
+    @password.setter
+    def password(self, password):
+        """Hash the plain-text password on the way into the database."""
+        self.password_hash = generate_password_hash(password)
+
+    def verify_password(self, password):
+        """Check that the hashed password matches a user-supplied plaint-text one."""
+        return check_password_hash(self.password_hash, password)
+
 
 class AccountSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     username = fields.String(required=True, validate=Length(min=1))
-    password = fields.String(load_only=True, required=True, validate=Length(min=6))
+    password = fields.String(attribute='password_hash', load_only=True,
+                             required=True, validate=Length(min=6))
     active = fields.Boolean()
     person_id = fields.Integer(required=True, data_key="personId", validate=Range(min=1))
+
+    @pre_load
+    def hash_password(self, data):
+        """Make sure the password is properly hashed when creating a new account."""
+        data['password'] = generate_password_hash(data['password'])
+        return data

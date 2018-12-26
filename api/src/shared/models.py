@@ -8,4 +8,4 @@ class StringTypes:
 
     I18N_KEY = String(32)
     LOCALE_CODE = String(5)
-    PASSWORD_HASH = String(512)
+    PASSWORD_HASH = String(128)

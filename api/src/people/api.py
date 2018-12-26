@@ -46,7 +46,6 @@ def update_person(person_id):
     person = db.session.query(Person).filter_by(id=person_id).first()
 
     for key, val in valid_person.items():
-        print("KEY", key, "VAL", val)
         setattr(person, key, val)
 
     db.session.commit()
@@ -64,6 +63,7 @@ def create_account():
     try:
         valid_account = account_schema.load(request.json)
     except ValidationError as err:
+        print("ERR", err)
         return jsonify(err.messages), 422
 
     new_account = Account(**valid_account)
@@ -95,7 +95,10 @@ def update_account(account_id):
     account = db.session.query(Account).filter_by(id=account_id).first()
     if account is None:
         return 'not found', 404
-    if request.json['password']:
-        account.password = request.json['password']
+
+    # Only these fields can be meaningfully updated.
+    for field in 'password', 'username', 'active':
+        if field in request.json:
+            setattr(account, field, request.json[field])
     db.session.commit()
     return jsonify(account_schema.dump(account))
