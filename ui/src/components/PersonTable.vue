@@ -12,24 +12,10 @@
         hide-details
       ></v-text-field>
 
-      <!-- New/Edit dialog and button -->
       <v-btn color="primary" v-on:click.stop="newPerson()">
         {{ $t("person.actions.new") }}
       </v-btn>
-
-      <v-dialog v-model="dialog.show" max-width="500px">
-        <PersonForm
-          v-bind:editMode="dialog.editMode"
-          v-bind:initialData="dialog.person"
-          v-on:cancel="cancel"
-          v-on:save="save"
-        />
-      </v-dialog>
     </v-toolbar>
-
-    <Snackbar v-if="snackbar.show" v-on:close="snackbar.show = false">
-      {{ snackbar.text }}
-    </Snackbar>
 
     <!-- Table of existing people -->
     <v-data-table
@@ -43,36 +29,99 @@
         <td>{{ props.item.lastName }}</td>
         <td>{{ props.item.email }}</td>
         <td>{{ props.item.phone }}</td>
-        <td class="justify-center layout px-0">
-          <v-icon small v-on:click="editPerson(props.item)" class="mr-3">
-            edit
-          </v-icon>
-          <v-icon small v-on:click="deletePerson(props.item)"> delete </v-icon>
+        <td>
+          <v-tooltip bottom>
+            <v-icon
+              small
+              slot="activator"
+              v-on:click="editPerson(props.item)"
+              class="mr-3"
+            >
+              edit
+            </v-icon>
+            <span>{{ $t("actions.edit") }}</span>
+          </v-tooltip>
+          <v-tooltip bottom>
+            <v-icon
+              small
+              slot="activator"
+              v-on:click="adminPerson(props.item)"
+              class="mr-3"
+            >
+              settings
+            </v-icon>
+            <span>{{ $t("actions.tooltips.settings") }}</span>
+          </v-tooltip>
+          <v-tooltip bottom>
+            <v-icon
+              small
+              slot="activator"
+              v-on:click="deletePerson(props.item)"
+              class="mr-3"
+            >
+              delete
+            </v-icon>
+            <span>{{ $t("actions.tooltips.deactivate") }}</span>
+          </v-tooltip>
         </td>
       </template>
     </v-data-table>
+
+    <v-snackbar v-model="snackbar.show">
+      {{ snackbar.text }}
+      <v-btn flat @click="snackbar.show = false">
+        {{ $t("actions.close") }}
+      </v-btn>
+    </v-snackbar>
+
+    <!-- New/Edit dialog -->
+    <v-dialog v-model="personDialog.show" max-width="500px">
+      <PersonForm
+        v-bind:editMode="personDialog.editMode"
+        v-bind:initialData="personDialog.person"
+        v-on:cancel="cancelPerson"
+        v-on:save="savePerson"
+      />
+    </v-dialog>
+
+    <!-- Person admin dialog -->
+    <v-dialog v-model="adminDialog.show" max-width="500px">
+      <PersonAdminForm
+        v-bind:person="adminDialog.person"
+        v-bind:account="adminDialog.account"
+        v-on:addAccount="addAccount"
+        v-on:updateAccount="updateAccount"
+        v-on:close="closeAdmin"
+      />
+    </v-dialog>
   </div>
 </template>
 
 <script>
 import axios from "axios";
 import PersonForm from "./PersonForm";
-import Snackbar from "./Snackbar";
+import PersonAdminForm from "./AccountForm";
 
 export default {
   name: "PersonTable",
-  components: { Snackbar, PersonForm },
+  components: { PersonAdminForm, PersonForm },
   data() {
     return {
-      dialog: {
+      personDialog: {
         show: false,
         editMode: false,
         person: {}
       },
 
+      adminDialog: {
+        show: false,
+        person: {},
+        account: {}
+      },
+
       snackbar: {
-        text: "",
-        show: false
+        show: false,
+        text: ""
       },
 
       selected: [],
@@ -93,32 +142,28 @@ export default {
     }
   },
   methods: {
-    activateDialog(person = {}, editMode = false) {
-      this.dialog.editMode = editMode;
-      this.dialog.person = person;
-      this.dialog.show = true;
+    // ---- Person Administration
+
+    activatePersonDialog(person = {}, editMode = false) {
+      this.personDialog.editMode = editMode;
+      this.personDialog.person = person;
+      this.personDialog.show = true;
     },
 
     editPerson(person) {
-      this.activateDialog({ ...person }, true);
+      this.activatePersonDialog({ ...person }, true);
     },
 
     newPerson() {
-      this.activateDialog();
+      this.activatePersonDialog();
     },
 
-    showSnackbar(text) {
-      this.snackbar.text = text;
-      this.snackbar.show = true;
+    cancelPerson() {
+      this.personDialog.show = false;
     },
 
-    cancel() {
-      this.dialog.show = false;
-      this.showSnackbar(this.$t("person.messages.canceled"));
-    },
-
-    save(person) {
-      if (this.dialog.editMode) {
+    savePerson(person) {
+      if (this.personDialog.editMode) {
         // Hang on to the ID of the person being updated.
         const person_id = person.id;
         // Locate the person we're updating in the table.
@@ -142,7 +187,49 @@ export default {
           })
           .catch(err => console.error("FAILURE", err.response));
       }
-      this.dialog.show = false;
+      this.personDialog.show = false;
+    },
+
+    // ---- Account Administration
+
+    adminPerson(person) {
+      // Pass along the current person.
+      this.adminDialog.person = person;
+
+      // Fetch the person's account information (if any) before activating the dialog.
+      axios
+        .get(`/api/v1/people/persons/${person.id}/account`)
+        .then(resp => {
+          console.log("FETCHED", resp);
+          this.adminDialog.account = resp.data;
+          this.adminDialog.show = true;
+        })
+        .catch(err => console.error("FAILURE", err.response));
+    },
+    closeAdmin() {
+      this.adminDialog.show = false;
+    },
+
+    addAccount(account) {
+      axios
+        .post("/api/v1/people/accounts", account)
+        .then(resp => {
+          console.log("ADDED", resp);
+          this.snackbar.text = this.$t("account.messages.added-ok");
+          this.snackbar.show = true;
+        })
+        .catch(err => console.error("FAILURE", err.response));
+    },
+
+    updateAccount(accountId, account) {
+      axios
+        .patch(`/api/v1/people/accounts/${accountId}`, account)
+        .then(resp => {
+          console.log("PATCHED", resp);
+          this.snackbar.text = this.$t("account.messages.updated-ok");
+          this.snackbar.show = true;
+        })
+        .catch(err => console.error("FAILURE", err.response));
     }
   },
 

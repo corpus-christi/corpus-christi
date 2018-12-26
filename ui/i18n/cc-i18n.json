@@ -1,19 +1,38 @@
 {
   "en": {
+    "account": {
+      "messages": {
+        "added-ok": "Account added successfully",
+        "updated-ok": "Account updated successfully"
+      }
+    },
     "actions": {
       "cancel": "Cancel",
       "clear": "Clear",
+      "close": "Close",
+      "confirm": "Confirm",
+      "edit": "Edit",
       "header": "Actions",
+      "login": "Log In",
       "save": "Save",
-      "search": "Search"
+      "search": "Search",
+      "tooltips": {
+        "deactivate": "Deactivate",
+        "settings": "Settings"
+      }
     },
     "home": {
+      "login": {
+        "header": "Log In"
+      },
       "title": "Our Home Page"
     },
     "person": {
       "actions": {
+        "add-account": "Add Account",
         "edit": "Edit Person",
-        "new": "New Person"
+        "new": "New Person",
+        "reset-password": "Reset Password"
       },
       "date": {
         "birthday": "Birthday"
@@ -29,28 +48,51 @@
         "first": "First Name",
         "last": "Last Name"
       },
+      "password": "Password",
       "people": "People",
-      "phone": "Phone"
+      "phone": "Phone",
+      "repeat-password": "Repeat Password",
+      "settings": "Settings for {person}",
+      "username": "Username"
     },
     "validation": {
       "required": "Required"
     }
   },
   "es": {
+    "account": {
+      "messages": {
+        "added-ok": "Cuenta agregada exitosamente",
+        "updated-ok": "Cuenta actualizada con \u00e9xito"
+      }
+    },
     "actions": {
       "cancel": "Cancelar",
       "clear": "Despejar",
+      "close": "Cerrar",
+      "confirm": "Confirmar",
+      "edit": "Editar",
       "header": "Comportamiento",
+      "login": "Acceder",
       "save": "Salvar",
-      "search": "Buscar"
+      "search": "Buscar",
+      "tooltips": {
+        "deactivate": "Desactivar",
+        "settings": "Ajustes"
+      }
     },
     "home": {
+      "login": {
+        "header": "Iniciar Sesi\u00f3n"
+      },
       "title": "Nuestra Pagina de Inicio"
     },
     "person": {
       "actions": {
+        "add-account": "A\u00f1adir cuenta",
         "edit": "Editar persona",
-        "new": "Persona Nueva"
+        "new": "Persona Nueva",
+        "reset-password": "Restablecer la contrase\u00f1a"
       },
       "date": {
         "birthday": "Cumplea\u00f1os"
@@ -66,8 +108,12 @@
         "first": "Nombre de pila",
         "last": "Apellido"
       },
+      "password": "Contrase\u00f1a",
       "people": "Personas",
-      "phone": "Tel\u00e9fono"
+      "phone": "Tel\u00e9fono",
+      "repeat-password": "Repite la contrase\u00f1a",
+      "settings": "Configuraci\u00f3n de la {person}",
+      "username": "Nombre de usuario"
     },
     "validation": {
       "required": "Necesario"

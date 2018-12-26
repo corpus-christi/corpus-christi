@@ -1,29 +1,41 @@
 <template>
-  <v-toolbar app>
-    <v-toolbar-title class="headline text-uppercase">
-      <span>Corpus</span> <span class="font-weight-light">Christi</span>
-    </v-toolbar-title>
+  <nav>
+    <v-toolbar app>
+      <v-toolbar-side-icon
+        v-on:click="showNavDrawer = !showNavDrawer"
+      ></v-toolbar-side-icon>
+      <v-toolbar-title class="headline text-uppercase">
+        <span>Corpus</span> <span class="font-weight-light">Christi</span>
+      </v-toolbar-title>
 
-    <v-spacer></v-spacer>
+      <v-spacer></v-spacer>
 
-    <v-btn flat v-bind:to="{ name: 'home' }">Home</v-btn>
-    <v-btn flat v-bind:to="{ name: 'people' }">People</v-btn>
+      <v-menu>
+        <v-btn id="cur-locale" flat slot="activator">
+          {{ displayLocale(currentLocale) }}
+        </v-btn>
+        <v-list>
+          <v-list-tile
+            v-for="locale in locales"
+            v-bind:key="locale.code"
+            v-on:click="setCurrentLocale(locale)"
+          >
+            <v-list-tile-title>{{ displayLocale(locale) }}</v-list-tile-title>
+          </v-list-tile>
+        </v-list>
+      </v-menu>
+    </v-toolbar>
 
-    <v-menu>
-      <v-btn id="cur-locale" flat slot="activator">
-        {{ displayLocale(currentLocale) }}
-      </v-btn>
+    <v-navigation-drawer app v-model="showNavDrawer">
       <v-list>
-        <v-list-tile
-          v-for="locale in locales"
-          v-bind:key="locale.code"
-          v-on:click="setCurrentLocale(locale)"
-        >
-          <v-list-tile-title>{{ displayLocale(locale) }}</v-list-tile-title>
+        <v-list-tile v-bind:to="{ name: 'home' }">
+          <v-list-tile-action> <v-icon>home</v-icon> </v-list-tile-action>
+          <v-list-tile-title>Home</v-list-tile-title>
         </v-list-tile>
+        <v-list-tile v-bind:to="{ name: 'people' }">People</v-list-tile>
       </v-list>
-    </v-menu>
-  </v-toolbar>
+    </v-navigation-drawer>
+  </nav>
 </template>
 
 <script>
@@ -32,6 +44,11 @@ import { flagForLocale, splitLocaleCode } from "../helpers";
 
 export default {
   name: "Toolbar",
+  data() {
+    return {
+      showNavDrawer: false
+    };
+  },
   computed: {
     ...mapState(["locales"]),
     ...mapGetters(["currentLocale"])

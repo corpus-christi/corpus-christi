@@ -11,6 +11,20 @@ actions:
     _desc: Clear data (e.g., on a form)
     en: Clear
     es: Despejar
+  close:
+    _desc: Close something (e.g., a dialog box)
+    en: Close
+    es: Cerrar
+  confirm:
+    _desc: Confirm some action (e.g., updating a password)
+    en: Confirm
+    es: Confirmar
+  edit:
+    en: Edit
+    es: Editar
+  login:
+    en: Log In
+    es: Acceder
   save:
     _desc: Save a newly created item
     en: Save
@@ -19,3 +33,11 @@ actions:
     _desc: Search for something
     en: Search
     es: Buscar
+  tooltips:
+    settings:
+      _desc: Change settings
+      en: Settings
+      es: Ajustes
+    deactivate:
+      en: Deactivate
+      es: Desactivar

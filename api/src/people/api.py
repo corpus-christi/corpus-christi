@@ -82,3 +82,20 @@ def read_all_accounts():
 def read_one_account(account_id):
     result = db.session.query(Account).filter_by(id=account_id).first()
     return jsonify(account_schema.dump(result))
+
+
+@people.route('/persons/<person_id>/account')
+def read_person_account(person_id):
+    account = db.session.query(Account).filter_by(person_id=person_id).first()
+    return jsonify(account_schema.dump(account))
+
+
+@people.route('/accounts/<account_id>', methods=['PATCH'])
+def update_account(account_id):
+    account = db.session.query(Account).filter_by(id=account_id).first()
+    if account is None:
+        return 'not found', 404
+    if request.json['password']:
+        account.password = request.json['password']
+    db.session.commit()
+    return jsonify(account_schema.dump(account))

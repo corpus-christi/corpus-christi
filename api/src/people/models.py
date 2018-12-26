@@ -60,4 +60,4 @@ class AccountSchema(Schema):
     username = fields.String(required=True, validate=Length(min=1))
     password = fields.String(load_only=True, required=True, validate=Length(min=6))
     active = fields.Boolean()
-    person_id = fields.Integer(required=True, validate=Range(min=1))
+    person_id = fields.Integer(required=True, data_key="personId", validate=Range(min=1))

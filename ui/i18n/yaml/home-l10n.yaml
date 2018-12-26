@@ -1,4 +1,8 @@
 home:
+  login:
+    header:
+      en: Log In
+      es: Iniciar Sesión
   title:
     en: Our Home Page
     es: Nuestra Pagina de Inicio

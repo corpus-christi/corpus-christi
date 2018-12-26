@@ -1,0 +1,8 @@
+account:
+  messages:
+    added-ok:
+      en: Account added successfully
+      es: Cuenta agregada exitosamente
+    updated-ok:
+      en: Account updated successfully
+      es: Cuenta actualizada con éxito
