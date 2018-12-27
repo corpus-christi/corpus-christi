@@ -5,15 +5,26 @@
       <v-toolbar-title> {{ $t("person.people") }}</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-text-field
+        class="mr-5"
         v-model="search"
         append-icon="search"
         v-bind:label="$t('actions.search')"
         single-line
         hide-details
       ></v-text-field>
+      <v-spacer></v-spacer>
 
-      <v-btn color="primary" v-on:click.stop="newPerson()">
-        {{ $t("person.actions.new") }}
+      <v-btn
+        small
+        fab
+        color="primary"
+        absolute
+        dark
+        bottom
+        right
+        v-on:click.stop="newPerson"
+      >
+        <v-icon>add</v-icon>
       </v-btn>
     </v-toolbar>
 
