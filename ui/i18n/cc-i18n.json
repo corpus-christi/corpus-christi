@@ -22,10 +22,14 @@
       }
     },
     "home": {
-      "login": {
-        "header": "Log In"
-      },
-      "title": "Our Home Page"
+      "headers": {
+        "home-church": "Find a Home Church",
+        "upcoming-classes": "Upcoming Clases",
+        "upcoming-events": "Upcoming Events"
+      }
+    },
+    "login": {
+      "header": "Log In"
     },
     "person": {
       "actions": {
@@ -82,10 +86,14 @@
       }
     },
     "home": {
-      "login": {
-        "header": "Iniciar Sesi\u00f3n"
-      },
-      "title": "Nuestra Pagina de Inicio"
+      "headers": {
+        "home-church": "Encontrar una Iglesia Hogar",
+        "upcoming-classes": "Pr\u00f3ximas Clases",
+        "upcoming-events": "Pr\u00f3ximos Eventos"
+      }
+    },
+    "login": {
+      "header": "Iniciar Sesi\u00f3n"
     },
     "person": {
       "actions": {

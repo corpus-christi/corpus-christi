@@ -1,8 +1,11 @@
 home:
-  login:
-    header:
-      en: Log In
-      es: Iniciar Sesión
-  title:
-    en: Our Home Page
-    es: Nuestra Pagina de Inicio
+  headers:
+    upcoming-classes:
+      en: Upcoming Clases
+      es: Próximas Clases
+    upcoming-events:
+      en: Upcoming Events
+      es: Próximos Eventos
+    home-church:
+      en: Find a Home Church
+      es: Encontrar una Iglesia Hogar

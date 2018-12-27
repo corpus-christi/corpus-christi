@@ -3,17 +3,32 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 
-import Locale from "./pages/Locale.vue";
-import Home from "./pages/Home.vue";
-import People from "./pages/People";
-
 Vue.use(VueRouter);
+
 const router = new VueRouter({
   mode: "history",
   routes: [
-    { name: "home", path: "/", component: Home },
-    { name: "people", path: "/people", component: People },
-    { name: "locale", path: "/locale", component: Locale }
+    {
+      name: "home",
+      path: "/",
+      meta: { layout: "arco" },
+      component: () => import("@/pages/Home.vue")
+    },
+    {
+      name: "login",
+      path: "/login",
+      component: () => import("@/pages/Login.vue")
+    },
+    {
+      name: "people",
+      path: "/people",
+      component: () => import("@/pages/People")
+    },
+    {
+      name: "locale",
+      path: "/locale",
+      component: () => import("@/pages/Locale.vue")
+    }
   ]
 });
 
