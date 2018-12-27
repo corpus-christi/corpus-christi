@@ -14,11 +14,15 @@ export default new Vuex.Store({
     currentJWT: null
   },
   getters: {
-    currentLocale: state => {
+    isLoggedIn(state) {
+      return state.currentJWT && state.currentAccount;
+    },
+
+    currentLocale(state) {
       return state.locales.find(loc => loc.code === state.currentLocaleCode);
     },
 
-    currentLanguageCode: (state, getters) => {
+    currentLanguageCode(state, getters) {
       const current = getters.currentLocale;
       if (current) {
         return current.code.split("-")[0];
@@ -28,20 +32,22 @@ export default new Vuex.Store({
     }
   },
   mutations: {
+    logIn(state, payload) {
+      state.currentAccount = payload.account;
+      state.currentJWT = payload.jwt;
+    },
+
+    logOut(state) {
+      state.currentAccount = null;
+      state.currentJWT = null;
+    },
+
     setCurrentLocaleCode(state, code) {
       state.currentLocaleCode = code;
     },
 
     setLocales(state, locales) {
       state.locales = locales;
-    },
-
-    setCurrentAccount(state, account) {
-      state.currentAccount = account;
-    },
-
-    setCurrentJWT(state, jwt) {
-      state.currentJWT = jwt;
     }
   }
 });

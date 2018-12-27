@@ -22,7 +22,7 @@ export default {
   name: "LocaleMenu",
 
   computed: {
-    ...mapState(['locales']),
+    ...mapState(["locales"]),
     ...mapGetters(["currentLocale"])
   },
 

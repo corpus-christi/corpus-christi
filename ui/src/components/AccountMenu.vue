@@ -1,0 +1,44 @@
+<template>
+  <div>
+    <v-menu offset-y v-if="isLoggedIn">
+      <v-btn id="cur-locale" flat slot="activator">
+        {{ currentAccount.fullName() }}
+      </v-btn>
+      <v-list>
+        <v-list-tile>
+          <v-list-tile-title v-on:click="logAccountOut">
+            {{ $t("actions.logout") }}
+          </v-list-tile-title>
+        </v-list-tile>
+      </v-list>
+    </v-menu>
+
+    <v-btn v-else flat icon v-bind:to="{ name: 'login' }">
+      <v-icon>account_circle</v-icon>
+    </v-btn>
+  </div>
+</template>
+
+<script>
+import { mapMutations, mapGetters, mapState } from "vuex";
+
+export default {
+  name: "AccountMenu",
+
+  computed: {
+    ...mapGetters(["isLoggedIn"]),
+    ...mapState(["currentAccount"])
+  },
+
+  methods: {
+    ...mapMutations(["logOut"]),
+
+    logAccountOut() {
+      this.logOut();
+      this.$router.push({ name: "home" });
+    }
+  }
+};
+</script>
+
+<style scoped></style>

@@ -4,11 +4,11 @@
 
     <v-spacer></v-spacer>
 
-    <LocaleMenu></LocaleMenu>
-
     <v-btn flat icon color="white" v-bind:to="{ name: 'login' }">
       <v-icon>account_circle</v-icon>
     </v-btn>
+
+    <LocaleMenu></LocaleMenu>
   </v-toolbar>
 </template>
 

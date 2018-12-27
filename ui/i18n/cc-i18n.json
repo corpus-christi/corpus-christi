@@ -14,6 +14,7 @@
       "edit": "Edit",
       "header": "Actions",
       "login": "Log In",
+      "logout": "Log Out",
       "save": "Save",
       "search": "Search",
       "tooltips": {
@@ -78,6 +79,7 @@
       "edit": "Editar",
       "header": "Comportamiento",
       "login": "Acceder",
+      "logout": "Cerrar sesi\u00f3n",
       "save": "Salvar",
       "search": "Buscar",
       "tooltips": {

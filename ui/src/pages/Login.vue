@@ -50,6 +50,8 @@ export default {
     };
   },
   methods: {
+    ...mapMutations(["logIn"]),
+
     async login() {
       const jwt_resp = await this.$http.post("/login", {
         username: this.username,
@@ -59,7 +61,6 @@ export default {
         console.error(`JWT STATUS ${jwt_resp.status}`);
         return;
       }
-      this.setCurrentJWT(jwt_resp.data.jwt);
 
       const account_resp = await this.$http.get(
         `/api/v1/people/accounts/username/${this.username}`
@@ -79,16 +80,20 @@ export default {
         return;
       }
 
-      this.setCurrentAccount(
-        new Account(
+      this.logIn({
+        account: new Account(
           this.username,
           person_resp.data.firstName,
           person_resp.data.lastName
-        )
-      );
-    },
+        ),
+        jwt: jwt_resp.data.jwt
+      });
 
-    ...mapMutations(["setCurrentAccount", "setCurrentJWT"])
+      // Normally want to use `push`, but unlikely that
+      // the user wants to return to the login page.
+      const routeName = this.$route.query.redirect || "admin";
+      this.$router.replace({ name: routeName });
+    }
   }
 };
 </script>

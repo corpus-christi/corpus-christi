@@ -9,6 +9,7 @@
 
       <v-spacer></v-spacer>
 
+      <AccountMenu></AccountMenu>
       <LocaleMenu></LocaleMenu>
     </v-toolbar>
 
@@ -26,9 +27,10 @@
 
 <script>
 import LocaleMenu from "../LocaleMenu";
+import AccountMenu from "../AccountMenu";
 export default {
   name: "StandardToolbar",
-  components: { LocaleMenu },
+  components: { AccountMenu, LocaleMenu },
   data() {
     return {
       showNavDrawer: false

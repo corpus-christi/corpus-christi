@@ -25,6 +25,9 @@ actions:
   login:
     en: Log In
     es: Acceder
+  logout:
+    en: Log Out
+    es: Cerrar sesión
   save:
     _desc: Save a newly created item
     en: Save
