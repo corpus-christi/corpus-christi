@@ -1,4 +1,5 @@
 from flask import request, jsonify
+from flask_jwt_extended import jwt_required
 from marshmallow import ValidationError, Schema, fields
 from marshmallow.validate import Length
 
@@ -27,6 +28,7 @@ def read_one_locale(locale_code):
 
 
 @i18n.route('/locales', methods=['POST'])
+@jwt_required
 def create_locale():
     try:
         loaded = i18n_locale_schema.load(request.json)
@@ -40,6 +42,7 @@ def create_locale():
 
 
 @i18n.route('/locales/<locale_code>', methods=['DELETE'])
+@jwt_required
 def delete_one_locale(locale_code):
     locale = db.session.query(I18NLocale).get(locale_code)
     db.session.delete(locale)
@@ -68,6 +71,7 @@ def read_one_key(key_id):
 
 
 @i18n.route('/keys', methods=['POST'])
+@jwt_required
 def create_key():
     try:
         loaded = i18n_key_schema.load(request.json)

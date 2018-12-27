@@ -26,16 +26,16 @@ const router = new VueRouter({
       component: () => import("@/pages/Login")
     },
     {
-      name: "people",
-      path: "/people",
-      meta: { authRequired: true },
-      component: () => import("@/pages/People")
-    },
-    {
       name: "admin",
       path: "/admin",
       meta: { authRequired: true },
       component: () => import("@/pages/Admin")
+    },
+    {
+      name: "people",
+      path: "/people",
+      meta: { authRequired: true },
+      component: () => import("@/pages/People")
     },
     {
       name: "locale",
@@ -46,19 +46,22 @@ const router = new VueRouter({
   ]
 });
 
-// TODO: Refactor to group routes under /admin.
-
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.authRequired)) {
+    // The destination requires authentication.
     if (store.getters.isLoggedIn) {
+      // But we're already logged in.
       next();
     } else {
+      // So redirect to the login page; retain
+      // the desired page for a later redirect.
       next({
         name: "login",
         query: { redirect: to.name }
       });
     }
   } else {
+    // The destination doesn't require authentication.
     next();
   }
 });

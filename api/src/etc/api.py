@@ -43,12 +43,21 @@ def login():
         # No point in going further without all credentials.
         return jsonify(err_messages), 400
 
+    # Standard vague response when credentials are wrong.
+    badCred = {'login': ['Invalid credentials']}
+
+    # Return to the caller all the account information needed.
     account = db.session.query(Account).filter_by(username=username).first()
     if account is None or not account.verify_password(password):
-        return jsonify({'login': ['Invalid credentials']}), 404
+        return jsonify(badCred), 404
+
+    person = db.session.query(Person).filter_by(id=account.person_id).first()
+    if person is None:
+        return jsonify(badCred), 404
 
     access_token = create_access_token(identity=username)
-    return jsonify(jwt=access_token)
+    return jsonify(jwt=access_token, username=account.username,
+                   firstName=person.first_name, lastName=person.last_name)
 
 
 @etc.route('/login/test')

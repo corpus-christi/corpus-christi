@@ -1,5 +1,6 @@
 from flask import request
 from flask.json import jsonify
+from flask_jwt_extended import jwt_required
 from marshmallow import ValidationError
 
 from . import people
@@ -12,6 +13,7 @@ person_schema = PersonSchema()
 
 
 @people.route('/persons', methods=['POST'])
+@jwt_required
 def create_person():
     try:
         valid_person = person_schema.load(request.json)
@@ -25,18 +27,21 @@ def create_person():
 
 
 @people.route('/persons')
+@jwt_required
 def read_all_persons():
     result = db.session.query(Person).all()
     return jsonify(person_schema.dump(result, many=True))
 
 
 @people.route('/persons/<person_id>')
+@jwt_required
 def read_one_person(person_id):
     result = db.session.query(Person).filter_by(id=person_id).first()
     return jsonify(person_schema.dump(result))
 
 
 @people.route('/persons/<person_id>', methods=['PUT'])
+@jwt_required
 def update_person(person_id):
     try:
         valid_person = person_schema.load(request.json)
@@ -59,6 +64,7 @@ account_schema = AccountSchema()
 
 
 @people.route('/accounts', methods=['POST'])
+@jwt_required
 def create_account():
     try:
         valid_account = account_schema.load(request.json)
@@ -73,12 +79,14 @@ def create_account():
 
 
 @people.route('/accounts')
+@jwt_required
 def read_all_accounts():
     result = db.session.query(Account).all()
     return jsonify(account_schema.dump(result, many=True))
 
 
 @people.route('/accounts/<account_id>')
+@jwt_required
 def read_one_account(account_id):
     """Read one account by ID."""
     result = db.session.query(Account).filter_by(id=account_id).first()
@@ -86,6 +94,7 @@ def read_one_account(account_id):
 
 
 @people.route('/accounts/username/<username>')
+@jwt_required
 def read_one_account_by_username(username):
     """Read one account by its (unique) user name."""
     result = db.session.query(Account).filter_by(username=username).first()
@@ -93,12 +102,14 @@ def read_one_account_by_username(username):
 
 
 @people.route('/persons/<person_id>/account')
+@jwt_required
 def read_person_account(person_id):
     account = db.session.query(Account).filter_by(person_id=person_id).first()
     return jsonify(account_schema.dump(account))
 
 
 @people.route('/accounts/<account_id>', methods=['PATCH'])
+@jwt_required
 def update_account(account_id):
     account = db.session.query(Account).filter_by(id=account_id).first()
     if account is None:

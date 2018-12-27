@@ -98,7 +98,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import PersonForm from "./PersonForm";
 import PersonAdminForm from "./AccountForm";
 
@@ -171,7 +170,7 @@ export default {
         // Get rid of the ID; not for consumption by endpoint.
         delete person.id;
 
-        axios
+        this.$http
           .put(`/api/v1/people/persons/${person_id}`, person)
           .then(resp => {
             console.log("EDITED", resp);
@@ -179,7 +178,7 @@ export default {
           })
           .catch(err => console.error("FALURE", err.response));
       } else {
-        axios
+        this.$http
           .post("/api/v1/people/persons", person)
           .then(resp => {
             console.log("ADDED", resp);
@@ -197,7 +196,7 @@ export default {
       this.adminDialog.person = person;
 
       // Fetch the person's account information (if any) before activating the dialog.
-      axios
+      this.$http
         .get(`/api/v1/people/persons/${person.id}/account`)
         .then(resp => {
           console.log("FETCHED", resp);
@@ -211,7 +210,7 @@ export default {
     },
 
     addAccount(account) {
-      axios
+      this.$http
         .post("/api/v1/people/accounts", account)
         .then(resp => {
           console.log("ADDED", resp);
@@ -222,7 +221,7 @@ export default {
     },
 
     updateAccount(accountId, account) {
-      axios
+      this.$http
         .patch(`/api/v1/people/accounts/${accountId}`, account)
         .then(resp => {
           console.log("PATCHED", resp);
@@ -234,7 +233,9 @@ export default {
   },
 
   mounted: function() {
-    axios.get("/api/v1/people/persons").then(resp => (this.people = resp.data));
+    this.$http
+      .get("/api/v1/people/persons")
+      .then(resp => (this.people = resp.data));
   }
 };
 </script>

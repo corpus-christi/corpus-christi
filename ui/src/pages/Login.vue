@@ -27,6 +27,9 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
+            <v-btn color="primary" v-on:click="cancel">
+              {{ $t("actions.cancel") }}
+            </v-btn>
             <v-btn color="primary" v-on:click="login">
               {{ $t("actions.login") }}
             </v-btn>
@@ -52,41 +55,27 @@ export default {
   methods: {
     ...mapMutations(["logIn"]),
 
+    cancel() {
+      this.$router.push({ name: "home" });
+    },
+
     async login() {
-      const jwt_resp = await this.$http.post("/login", {
+      const resp = await this.$http.post("/login", {
         username: this.username,
         password: this.password
       });
-      if (jwt_resp.status !== 200) {
-        console.error(`JWT STATUS ${jwt_resp.status}`);
-        return;
-      }
-
-      const account_resp = await this.$http.get(
-        `/api/v1/people/accounts/username/${this.username}`
-      );
-      if (account_resp.status !== 200) {
-        console.error(`ACCT STATUS ${account_resp.status}`);
-        return;
-      }
-
-      console.log("ACCT", account_resp);
-
-      const person_resp = await this.$http.get(
-        `/api/v1/people/persons/${account_resp.data.personId}`
-      );
-      if (person_resp.status !== 200) {
-        console.error(`PERSON STATUS ${person_resp.status}`);
+      if (resp.status !== 200) {
+        console.error(`JWT STATUS ${resp.status}`);
         return;
       }
 
       this.logIn({
         account: new Account(
-          this.username,
-          person_resp.data.firstName,
-          person_resp.data.lastName
+          resp.data.username,
+          resp.data.firstName,
+          resp.data.lastName
         ),
-        jwt: jwt_resp.data.jwt
+        jwt: resp.data.jwt
       });
 
       // Normally want to use `push`, but unlikely that

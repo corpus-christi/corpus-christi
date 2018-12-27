@@ -9,7 +9,6 @@
 import Toolbar from "./components/Toolbar";
 import { mapMutations } from "vuex";
 import { splitLocaleCode } from "./helpers";
-import axios from "axios";
 
 export default {
   name: "App",
@@ -17,7 +16,7 @@ export default {
   methods: mapMutations(["setLocales", "setCurrentLocaleCode"]),
   created: function() {
     // Initialize early application stuff
-    axios.get("/api/v1/i18n/locales").then(response => {
+    this.$http.get("/api/v1/i18n/locales").then(response => {
       const locales = response.data;
       this.setLocales(locales);
 

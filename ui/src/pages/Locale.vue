@@ -15,8 +15,6 @@
 <script>
 import { flagForCountry } from "../helpers";
 
-const axios = require("axios");
-
 export default {
   name: "Locale",
   data: function() {
@@ -29,7 +27,7 @@ export default {
     flag_unicode: country_code => flagForCountry(country_code)
   },
   mounted: function() {
-    axios
+    this.$http
       .get("/api/v1/places/countries", {
         params: {
           locale: "en-US"
@@ -39,7 +37,7 @@ export default {
         this.countries = response.data;
       });
 
-    axios
+    this.$http
       .get("/api/v1/i18n/languages", {
         params: {
           locale: "en-US"
