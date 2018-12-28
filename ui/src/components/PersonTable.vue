@@ -142,10 +142,14 @@ export default {
     // Put here so that the headers are reactive.
     headers() {
       return [
-        { text: this.$t("person.name.first"), value: "firstName" },
-        { text: this.$t("person.name.last"), value: "lastName" },
-        { text: this.$t("person.email"), value: "email" },
-        { text: this.$t("person.phone"), value: "phone" },
+        {
+          text: this.$t("person.name.first"),
+          value: "firstName",
+          width: "20%"
+        },
+        { text: this.$t("person.name.last"), value: "lastName", width: "20%" },
+        { text: this.$t("person.email"), value: "email", width: "15%" },
+        { text: this.$t("person.phone"), value: "phone", width: "15%" },
         { text: this.$t("actions.header"), sortable: false }
       ];
     }

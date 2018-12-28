@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer app v-model="drawerVisible">
+  <v-navigation-drawer app v-model="drawerVisible" width="200">
     <v-list>
       <template v-for="item in menuItems">
         <v-list-tile v-bind:key="item.route" v-bind:to="{ name: item.route }">
@@ -8,7 +8,10 @@
           </v-list-tile-action>
           <v-list-tile-title>{{ item.title }}</v-list-tile-title>
         </v-list-tile>
-        <v-divider v-if="item.divider" v-bind:key="item.route"></v-divider>
+        <v-divider
+          v-if="item.divider"
+          v-bind:key="'div-' + item.route"
+        ></v-divider>
       </template>
     </v-list>
   </v-navigation-drawer>

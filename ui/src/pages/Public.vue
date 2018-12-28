@@ -52,21 +52,24 @@
       </v-flex>
     </v-layout>
 
-    <v-layout>
+    <v-layout class="mt-3">
       <v-flex>
         <v-toolbar color="blue" dark>
           <v-toolbar-title>
             {{ $t("public.headers.home-church") }}
           </v-toolbar-title>
         </v-toolbar>
+        <GoogleMap></GoogleMap>
       </v-flex>
     </v-layout>
   </v-container>
 </template>
 
 <script>
+import GoogleMap from "../components/GoogleMap";
 export default {
   name: "Public",
+  components: { GoogleMap },
   data() {
     return {
       classes: [
@@ -80,11 +83,6 @@ export default {
           startDate: "2019-03-15",
           endDate: "2019-03-17",
           description: "Longer description of the men's retreat."
-        },
-        {
-          title: "Family Fun Day",
-          startDate: "2019-04-10",
-          description: "All the cool stuff happening on family fun day."
         }
       ]
     };

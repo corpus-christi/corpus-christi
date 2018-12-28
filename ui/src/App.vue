@@ -2,6 +2,7 @@
   <v-app>
     <Toolbar></Toolbar>
     <v-content> <router-view></router-view> </v-content>
+    <Footer></Footer>
   </v-app>
 </template>
 
@@ -9,10 +10,11 @@
 import Toolbar from "./components/Toolbar";
 import { mapMutations } from "vuex";
 import { splitLocaleCode } from "./helpers";
+import Footer from "./components/Footer";
 
 export default {
   name: "App",
-  components: { Toolbar },
+  components: { Footer, Toolbar },
   methods: mapMutations(["setLocales", "setCurrentLocaleCode"]),
   created: function() {
     // Initialize early application stuff

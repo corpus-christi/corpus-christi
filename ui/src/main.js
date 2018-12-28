@@ -6,6 +6,7 @@ import store from "./store";
 import "./plugins/vuetify";
 import "./plugins/axios";
 import i18n from "./plugins/vue-i18n";
+import "./plugins/google-maps";
 
 import App from "./App.vue";
 
