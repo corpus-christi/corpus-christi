@@ -13,7 +13,7 @@
       <v-text-field
         v-if="addingAccount"
         v-model="username"
-        v-bind:label="$t('person.username')"
+        v-bind:label="$t('account.username')"
         name="username"
         v-validate="'alpha_dash|min:6'"
         v-bind:error-messages="errors.collect('username')"
@@ -25,7 +25,7 @@
         v-model="password"
         type="password"
         ref="pwdField"
-        v-bind:label="$t('person.password')"
+        v-bind:label="$t('account.password')"
         name="password"
         v-validate="'min:8'"
         v-bind:error-messages="errors.collect('password')"
@@ -35,7 +35,7 @@
       <v-text-field
         v-model="repeat_password"
         type="password"
-        v-bind:label="$t('person.repeat-password')"
+        v-bind:label="$t('account.repeat-password')"
         name="repeat-password"
         v-validate="'confirmed:pwdField'"
         v-bind:error-messages="errors.collect('repeat-password')"

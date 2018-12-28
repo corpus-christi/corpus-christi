@@ -2,10 +2,9 @@
   <div>
     <!-- Header -->
     <v-toolbar>
-      <v-toolbar-title> {{ $t("person.people") }}</v-toolbar-title>
+      <v-toolbar-title> {{ $t("people.title") }}</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-text-field
-        class="mr-5"
         v-model="search"
         append-icon="search"
         v-bind:label="$t('actions.search')"

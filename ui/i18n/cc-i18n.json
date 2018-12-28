@@ -4,7 +4,10 @@
       "messages": {
         "added-ok": "Account added successfully",
         "updated-ok": "Account updated successfully"
-      }
+      },
+      "password": "Password",
+      "repeat-password": "Repeat Password",
+      "username": "Username"
     },
     "actions": {
       "cancel": "Cancel",
@@ -22,15 +25,14 @@
         "settings": "Settings"
       }
     },
-    "home": {
-      "headers": {
-        "home-church": "Find a Home Church",
-        "upcoming-classes": "Upcoming Clases",
-        "upcoming-events": "Upcoming Events"
-      }
+    "groups": {
+      "title": "Home Churches"
     },
     "login": {
       "header": "Log In"
+    },
+    "people": {
+      "title": "People"
     },
     "person": {
       "actions": {
@@ -53,12 +55,16 @@
         "first": "First Name",
         "last": "Last Name"
       },
-      "password": "Password",
-      "people": "People",
       "phone": "Phone",
-      "repeat-password": "Repeat Password",
-      "settings": "Settings for {person}",
-      "username": "Username"
+      "settings": "Settings for {person}"
+    },
+    "public": {
+      "headers": {
+        "home-church": "Find a Home Church",
+        "upcoming-classes": "Upcoming Clases",
+        "upcoming-events": "Upcoming Events"
+      },
+      "title": "Public"
     },
     "validation": {
       "required": "Required"
@@ -69,7 +75,10 @@
       "messages": {
         "added-ok": "Cuenta agregada exitosamente",
         "updated-ok": "Cuenta actualizada con \u00e9xito"
-      }
+      },
+      "password": "Contrase\u00f1a",
+      "repeat-password": "Repite la contrase\u00f1a",
+      "username": "Nombre de usuario"
     },
     "actions": {
       "cancel": "Cancelar",
@@ -87,15 +96,14 @@
         "settings": "Ajustes"
       }
     },
-    "home": {
-      "headers": {
-        "home-church": "Encontrar una Iglesia Hogar",
-        "upcoming-classes": "Pr\u00f3ximas Clases",
-        "upcoming-events": "Pr\u00f3ximos Eventos"
-      }
+    "groups": {
+      "title": "Iglesias Hogar"
     },
     "login": {
       "header": "Iniciar Sesi\u00f3n"
+    },
+    "people": {
+      "title": "Personas"
     },
     "person": {
       "actions": {
@@ -118,12 +126,16 @@
         "first": "Nombre de pila",
         "last": "Apellido"
       },
-      "password": "Contrase\u00f1a",
-      "people": "Personas",
       "phone": "Tel\u00e9fono",
-      "repeat-password": "Repite la contrase\u00f1a",
-      "settings": "Configuraci\u00f3n de la {person}",
-      "username": "Nombre de usuario"
+      "settings": "Configuraci\u00f3n de la {person}"
+    },
+    "public": {
+      "headers": {
+        "home-church": "Encontrar una Iglesia Hogar",
+        "upcoming-classes": "Pr\u00f3ximas Clases",
+        "upcoming-events": "Pr\u00f3ximos Eventos"
+      },
+      "title": "P\u00fablico"
     },
     "validation": {
       "required": "Necesario"

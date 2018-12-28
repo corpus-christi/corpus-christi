@@ -1,4 +1,7 @@
-home:
+public:
+  title:
+    en: Public
+    es: Público
   headers:
     upcoming-classes:
       en: Upcoming Clases

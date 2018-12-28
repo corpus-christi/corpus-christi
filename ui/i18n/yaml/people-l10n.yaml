@@ -1,4 +1,9 @@
-person:
+people:
+  title:
+    en: People
+    es: Personas
+
+account:
   username:
     en: Username
     es: Nombre de usuario
@@ -8,29 +13,8 @@ person:
   repeat-password:
     en: Repeat Password
     es: Repite la contraseña
-  settings:
-    en: Settings for {person}
-    es: Configuración de la {person}
-  actions:
-    new:
-      en: New Person
-      es: Persona Nueva
-    edit:
-      en: Edit Person
-      es: Editar persona
-    add-account:
-      en: Add Account
-      es: Añadir cuenta
-    reset-password:
-      en: Reset Password
-      es: Restablecer la contraseña
-  messages:
-    canceled:
-      en: Canceled add new person
-      es: Cancelado añadir nueva persona
-  people:
-    en: People
-    es: Personas
+
+person:
   name:
     first:
       en: First Name
@@ -57,3 +41,23 @@ person:
   phone:
     en: Phone
     es: Teléfono
+  settings:
+    en: Settings for {person}
+    es: Configuración de la {person}
+  actions:
+    new:
+      en: New Person
+      es: Persona Nueva
+    edit:
+      en: Edit Person
+      es: Editar persona
+    add-account:
+      en: Add Account
+      es: Añadir cuenta
+    reset-password:
+      en: Reset Password
+      es: Restablecer la contraseña
+  messages:
+    canceled:
+      en: Canceled add new person
+      es: Cancelado añadir nueva persona

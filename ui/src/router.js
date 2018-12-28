@@ -11,13 +11,13 @@ const router = new VueRouter({
   routes: [
     {
       path: "/",
-      redirect: { name: "home" }
+      redirect: { name: "public" }
     },
     {
-      name: "home",
+      name: "public",
       path: "/public",
       meta: { layout: "arco" },
-      component: () => import("@/pages/Home")
+      component: () => import("@/pages/Public")
     },
     {
       name: "login",
@@ -36,6 +36,12 @@ const router = new VueRouter({
       path: "/people",
       meta: { authRequired: true },
       component: () => import("@/pages/People")
+    },
+    {
+      name: "groups",
+      path: "/groups",
+      meta: { authRequired: true },
+      component: () => import("@/pages/Groups")
     },
     {
       name: "locale",

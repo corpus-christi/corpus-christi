@@ -1,6 +1,6 @@
 <template>
   <v-toolbar app color="rgb(241, 145, 37)">
-    <router-link v-bind:to="{ name: 'home' }">
+    <router-link v-bind:to="{ name: 'public' }">
       <img v-bind:src="arcoLogo" height="40px" alt="Arco Logo" />
     </router-link>
 

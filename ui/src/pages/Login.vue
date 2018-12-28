@@ -11,14 +11,14 @@
             <v-form>
               <v-text-field
                 v-model="username"
-                v-bind:label="$t('person.username')"
+                v-bind:label="$t('account.username')"
                 prepend-icon="person"
                 name="login"
                 type="text"
               ></v-text-field>
               <v-text-field
                 v-model="password"
-                v-bind:label="$t('person.password')"
+                v-bind:label="$t('account.password')"
                 prepend-icon="lock"
                 name="password"
                 type="password"
@@ -56,7 +56,7 @@ export default {
     ...mapMutations(["logIn"]),
 
     cancel() {
-      this.$router.push({ name: "home" });
+      this.$router.push({ name: "public" });
     },
 
     async login() {

@@ -13,32 +13,23 @@
       <LocaleMenu></LocaleMenu>
     </v-toolbar>
 
-    <v-navigation-drawer app v-model="showNavDrawer">
-      <v-list>
-        <v-list-tile v-bind:to="{ name: 'home' }">
-          <v-list-tile-action> <v-icon>home</v-icon> </v-list-tile-action>
-          <v-list-tile-title>Home</v-list-tile-title>
-        </v-list-tile>
-        <v-list-tile v-bind:to="{ name: 'people' }">People</v-list-tile>
-      </v-list>
-    </v-navigation-drawer>
+    <NavDrawer ref="drawer"></NavDrawer>
   </div>
 </template>
 
 <script>
 import LocaleMenu from "../LocaleMenu";
 import AccountMenu from "../AccountMenu";
+import NavDrawer from "../NavDrawer";
+
 export default {
   name: "StandardToolbar",
-  components: { AccountMenu, LocaleMenu },
-  data() {
-    return {
-      showNavDrawer: false
-    };
-  },
+  components: { NavDrawer, AccountMenu, LocaleMenu },
   methods: {
+    // Holding a reference to the navigation drawer is not good separation of concerns,
+    // but it greatly simplifies this interaction.
     toggleNavDrawer() {
-      this.showNavDrawer = !this.showNavDrawer;
+      this.$refs.drawer.toggle();
     }
   }
 };

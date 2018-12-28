@@ -32,7 +32,7 @@ export default {
 
     logAccountOut() {
       this.logOut();
-      this.$router.push({ name: "home" });
+      this.$router.push({ name: "public" });
     }
   }
 };

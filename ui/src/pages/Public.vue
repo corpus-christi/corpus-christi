@@ -5,7 +5,7 @@
         <v-card>
           <v-toolbar color="cyan" dark>
             <v-toolbar-title>
-              {{ $t("home.headers.upcoming-classes") }}
+              {{ $t("public.headers.upcoming-classes") }}
             </v-toolbar-title>
           </v-toolbar>
           <v-list>
@@ -31,7 +31,7 @@
       <v-flex xs12 sm6 md5 offset-md2>
         <v-toolbar color="blue" dark>
           <v-toolbar-title>
-            {{ $t("home.headers.upcoming-events") }}
+            {{ $t("public.headers.upcoming-events") }}
           </v-toolbar-title>
         </v-toolbar>
         <v-list>
@@ -56,7 +56,7 @@
       <v-flex>
         <v-toolbar color="blue" dark>
           <v-toolbar-title>
-            {{ $t("home.headers.home-church") }}
+            {{ $t("public.headers.home-church") }}
           </v-toolbar-title>
         </v-toolbar>
       </v-flex>
@@ -66,7 +66,7 @@
 
 <script>
 export default {
-  name: "Home",
+  name: "Public",
   data() {
     return {
       classes: [
