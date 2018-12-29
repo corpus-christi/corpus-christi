@@ -1,0 +1,102 @@
+module: groups
+entities:
+  - name: Group
+    singular: group
+    plural: groups
+    uri: /groups
+    table: groups_group
+    attributes:
+      - name: id
+        type: integer
+        primary-key: true
+        min: 1
+      - name: name
+        type: string
+        min-length: 1
+        length: medium
+        required: true
+      - name: description
+        type: string
+        min-length: 1
+        required: true
+        length: long
+      - name: active
+        type: boolean
+        required: true
+        default: true
+  - name: Meeting
+    singular: meeting
+    plural: meetings
+    uri: /meetings
+    table: groups_meeting
+    attributes:
+      - name: id
+        type: integer
+        primary-key: true
+        min: 1
+      - name: when
+        type: datetime
+        required: true
+      - name: group_id
+        type: integer
+        required: true
+        foreign-key: groups_group.id
+      - name: location_id
+        type: integer
+        foreign-key: places_location.id
+    relationships:
+      - name: group
+        related-model: Group
+        backref: meetings
+      - name: location
+        related-model: Location
+        backref: meetings
+  - name: Member
+    singular: member
+    plural: members
+    uri: /members
+    table: groups_member
+    attributes:
+      - name: id
+        type: integer
+        primary-key: true
+        min: 1
+      - name: joined
+        type: date
+        required: true
+      - name: active
+        type: boolean
+        required: true
+        default: true
+      - name: group_id
+        type: integer
+        required: true
+        foreign-key: groups_group.id
+      - name: person_id
+        type: integer
+        required: true
+        foreign-key: people_person.id
+      - name: role_id
+        type: integer
+        foreign-key: roles_role.id
+    relationships:
+      - name: group
+        related-model: Group
+        backref: members
+      - name: person
+        related-model: Person
+        backref: memberships
+  - name: Attendance
+    singular: attendance
+    plural: attendance
+    uri: /attendance
+    table: groups_attendance
+    attributes:
+      - name: meeting_id
+        type: integer
+        primary-key: true
+        foreign-key: group_meeting.id
+      - name: member_id
+        type: integer
+        primary-key: true
+        foreign-key: group_member.id

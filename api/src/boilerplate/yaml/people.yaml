@@ -62,8 +62,8 @@ entities:
         length: password
         min-length: 6
         required: true
-        attribute: password_hash
-        hide: true
+        model-attribute: password_hash
+        private: true
       - name: active
         type: boolean
         required: true

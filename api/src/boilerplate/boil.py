@@ -9,6 +9,7 @@ import re
 import sys
 
 import yaml
+from jsonschema import validate, ValidationError
 
 
 def read_yaml(file_name):
@@ -50,6 +51,10 @@ def banner(string, fat=False):
         print("\n" + string + "\n")
 
 
+def comment(s):
+    print(f"\n# ---- {s}\n")
+
+
 def model_string(attr):
     type_map = {'short': 'SHORT_STRING',
                 'medium': 'MEDIUM_STRING',
@@ -69,21 +74,25 @@ def model_string(attr):
 def generate_model(entity):
     print(f"class {entity['name']}(Base):")
     tab(f"__tablename__ = '{entity['table']}'")
+
+    primary_keys = []
     for attr in entity['attributes']:
         details = []
 
-        if attr['type'] in ('integer', 'date', 'boolean'):
+        if attr['type'] in ('integer', 'date', 'boolean', 'datetime'):
             details.append(attr['type'].capitalize())
-
         elif attr['type'] == 'string':
             details.append(model_string(attr))
-
-        if attr.get('primary-key'):
-            details.append('primary_key=True')
+        else:
+            raise ValidationError(f"Unknown type: {attr['type']}")
 
         fk = attr.get('foreign-key')
         if fk:
             details.append(f"ForeignKey('{fk}')")
+
+        if attr.get('primary-key'):
+            details.append('primary_key=True')
+            primary_keys.append(attr['name'])
 
         if attr.get('required'):
             details.append('nullable=False')
@@ -98,7 +107,13 @@ def generate_model(entity):
 
     if 'relationships' in entity:
         for rel in entity['relationships']:
-            tab(f"{rel['name']} = relationship('{rel['related-model']}', backref='{rel['backref']}', lazy=True")
+            tab(f"{rel['name']} = relationship('{rel['related-model']}', backref='{rel['backref']}', lazy=True)")
+
+    repr_fields = [f"{pk}={{self.{pk}}}" for pk in primary_keys]
+    print(f"""
+        def __repr__(self):
+            return f"<{entity['name']}({','.join(repr_fields)})>"
+    """)
 
 
 def generate_schema(entity):
@@ -118,14 +133,18 @@ def generate_schema(entity):
 
         if attr['type'] in ('integer', 'date', 'string', 'boolean'):
             type = attr['type'].capitalize()
+        elif attr['type'] == 'datetime':
+            type = 'DateTime'
+        else:
+            raise ValidationError(f"Unknown type: {attr['type']}")
 
         if attr.get('required'):
             required = True
 
-        if attr.get('attribute'):
-            details.append(f"attribute='{snake_case(attr['attribute'])}'")
+        if attr.get('model-attribute'):
+            details.append(f"attribute='{snake_case(attr['model-attribute'])}'")
 
-        if attr.get('hide'):
+        if attr.get('private'):
             details.append("load_only=True")
 
         if attr.get('min'):
@@ -150,20 +169,20 @@ def generate_schema(entity):
 
 
 def generate_api_create(module, entity):
-    variable = entity['singular']
+    name, singular = entity['name'], entity['singular']
     print(f"""
 @{module}.route('{entity["uri"]}', methods=['POST'])
 @jwt_required
-def create_{variable}():
+def create_{singular}():
     try:
-        valid_{variable} = {variable}_schema.load(request.json)
+        valid_{singular} = {singular}_schema.load(request.json)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    new_{variable} = {variable}(**valid_{variable})
-    db.session.add(new_{variable})
+    new_{singular} = {name}(**valid_{singular})
+    db.session.add(new_{singular})
     db.session.commit()
-    return jsonify({variable}_schema.dump(new_{variable})), 201
+    return jsonify({singular}_schema.dump(new_{singular})), 201
     """)
 
 
@@ -210,7 +229,6 @@ def update_{singular}({singular}_id):
 
 
 def generate_api(module, entity):
-    print(f"# ---- {entity['name']}")
     print(f"{entity['singular']}_schema = {entity['name']}Schema()")
     generate_api_create(module, entity)
     generate_api_read_all(module, entity)
@@ -218,15 +236,180 @@ def generate_api(module, entity):
     generate_api_update(module, entity)
 
 
+schema = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "CC Boilerplate",
+    "type": "object",
+    "properties": {
+        "module": {
+            "description": "Name of the CC module (e.g., `people`, `groups`)",
+            "type": "string"
+        },
+        "entities": {
+            "description": "Details of each entity (in the ERD sense)",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "description": "Name of this entity, capitalized",
+                        "type": "string"
+                    },
+                    "singular": {
+                        "description": "Lower-case singular form of the entity name",
+                        "type": "string"
+                    },
+                    "plural": {
+                        "description": "Lower-case plural form of the entity name",
+                        "type": "string"
+                    },
+                    "uri": {
+                        "description": "Partial URI of endpoints for this entity (e.g., `/accounts`)",
+                        "type": "string"
+                    },
+                    "table": {
+                        "description": "Database table name for this entity (e.g., `people_person`)",
+                        "type": "string"
+                    },
+                    "attributes": {
+                        "description": "All attributes for this entity",
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "description": "Name of this attribute",
+                                    "type": "string"
+                                },
+                                "type": {
+                                    "description": "Type of this attribute",
+                                    "type": "string"
+                                },
+                                "primary-key": {
+                                    "description": "Whether this attribute is part of the primary key",
+                                    "type": "boolean"
+                                },
+                                "min": {
+                                    "description": "Minimum allowed value (numeric types only)",
+                                    "type": "number"
+                                },
+                                "min-length": {
+                                    "description": "Minimum length for this attribute (string types only)",
+                                    "type": "integer"
+                                },
+                                "required": {
+                                    "description": "Whether this attribute is required",
+                                    "type": "boolean"
+                                },
+                                "default": {
+                                    "description": "Default value for this attribute",
+                                    "oneOf": [
+                                        {"type": "string"},
+                                        {"type": "number"},
+                                        {"type": "boolean"}
+                                    ]
+                                },
+                                "unique": {
+                                    "description": "Whether this attribute must have a unique value for all instances",
+                                    "type": "boolean"
+                                },
+                                "private": {
+                                    "description": "Whether this attribute should remain server-side only",
+                                    "type": "boolean"
+                                },
+                                "model-attribute": {
+                                    "description": "Model attribute to which this schema field maps",
+                                    "type": "string"
+                                },
+                                "length": {
+                                    "description": "Length (string types only)",
+                                    "oneOf": [
+                                        {
+                                            "type": "integer"
+                                        },
+                                        {
+                                            "enum": [
+                                                "short", "medium", "long",
+                                                "i18n", "locale", "password"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "one-of": {
+                                    "description": "List of valid values for this attributee",
+                                    "type": "array",
+                                    "items": {
+                                        "description": "One of the valid values",
+                                        "type": "string"
+                                    }
+                                },
+                                "foreign-key": {
+                                    "description": "The `table.column` referenced by this foreign key field",
+                                    "type": "string",
+                                    "pattern": "^\w+\.\w+"
+                                }
+                            },
+                            "required": ["name", "type"],
+                            "additionalProperties": False
+                        }
+
+                    },
+                    "relationships": {
+                        "description": "Relationships in which this entity participates",
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "description": "Relationship name",
+                                    "type": "string"
+                                },
+                                "related-model": {
+                                    "description": "Entity at the other end of the relationship (SQLA Model)",
+                                    "type": "string"
+                                },
+                                "backref": {
+                                    "description": "Name by which the other end refers to this one",
+                                    "type": "string"
+                                }
+                            },
+                            "required": ["name", "related-model", "backref"],
+                            "additionalProperties": False
+                        }
+                    }
+                },
+                "required": ["name", "singular", "plural", "uri", "table", "attributes"],
+                "additionalProperties": False
+            }
+        }
+    },
+    "required": ["module", "entities"],
+    "additionalProperties": False
+}
+
 for file_name in sys.argv[1:]:
     spec = read_yaml(file_name)
-    print(json.dumps(spec, indent=2))
+    if False:
+        # Output the raw spec.
+        print(json.dumps(spec, indent=2))
+
+    try:
+        validate(spec, schema)
+    except ValidationError as err:
+        print("Validation failed", err)
+        exit(1)
+
     module = spec['module']
-    banner(module, True)
-    for entity in spec['entities']:
-        banner('Model')
+    entities = spec['entities']
+
+    banner("Models and Schemata", True)
+    for entity in entities:
+        comment(entity['name'])
         generate_model(entity)
-        banner('Schema')
+        print()
         generate_schema(entity)
-        banner('API')
+
+    banner("APIs", True)
+    for entity in entities:
+        comment(entity['name'])
         generate_api(module, entity)
