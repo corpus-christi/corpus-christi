@@ -1,0 +1,75 @@
+module: people
+entities:
+  - name: Person
+    singular: person
+    plural: persons
+    uri: /persons
+    table: people_person
+    attributes:
+      - name: id
+        type: integer
+        primary-key: true
+        min: 1
+      - name: first-name
+        type: string
+        min-length: 1
+        length: medium
+        required: true
+      - name: last-name
+        type: string
+        min-length: 1
+        length: medium
+        required: true
+      - name: gender
+        type: string
+        length: 1
+        one-of:
+          - M
+          - F
+      - name: birthday
+        type: date
+      - name: phone
+        type: string
+        length: medium
+      - name: email
+        type: string
+        length: medium
+      - name: location-id
+        type: integer
+        foreign-key: places_location.id
+    relationships:
+      - name: address
+        related-model: Location
+        backref: people
+  - name: Account
+    singular: account
+    plural: accounts
+    uri: /accounts
+    table: people_account
+    attributes:
+      - name: id
+        type: integer
+        primary-key: true
+        min: 1
+      - name: username
+        type: string
+        length: medium
+        min-length: 1
+        required: true
+        unique: true
+      - name: password
+        type: string
+        length: password
+        min-length: 6
+        required: true
+        attribute: password_hash
+        hide: true
+      - name: active
+        type: boolean
+        required: true
+        default: true
+      - name: person_id
+        type: integer
+        min: 1
+        required: true
+        foreign-key: people_person.id
