@@ -62,4 +62,4 @@ Activate (for `bash`):
 
 Install the required Python packages.
 
-    pip intall -r requirements.txt
+    pip install -r requirements.txt
