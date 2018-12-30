@@ -3,12 +3,12 @@ from datetime import datetime
 from flask import jsonify, request
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_raw_jwt
 
-from . import etc
+from . import auth
 from .. import db
 from ..people.models import Account, AccountSchema, Person, PersonSchema
 
 
-@etc.route('/login', methods=['POST'])
+@auth.route('/login', methods=['POST'])
 def login():
     # Construct Marshmallow-compatible error response
     err_messages = {}
@@ -45,7 +45,7 @@ def login():
                    firstName=person.first_name, lastName=person.last_name)
 
 
-@etc.route('/login/test')
+@auth.route('/login/test')
 @jwt_required
 def login_test():
     token = get_raw_jwt()

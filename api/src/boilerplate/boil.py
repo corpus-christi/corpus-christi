@@ -207,6 +207,16 @@ def read_one_{singular}({singular}_id):
     """)
 
 
+def generate_api_replace(module, entity):
+    name, uri, singular, plural = entity['name'], entity['uri'], entity['singular'], entity['plural']
+    print(f"""
+@{module}.route('{uri}/<{singular}_id>', methods=['PUT'])
+@jwt_required
+def replace_{singular}({singular}_id):
+    pass
+    """)
+
+
 def generate_api_update(module, entity):
     name, uri, singular, plural = entity['name'], entity['uri'], entity['singular'], entity['plural']
     print(f"""
@@ -228,12 +238,45 @@ def update_{singular}({singular}_id):
     """)
 
 
+def generate_api_delete(module, entity):
+    name, uri, singular, plural = entity['name'], entity['uri'], entity['singular'], entity['plural']
+    print(f"""
+@{module}.route('{uri}/<{singular}_id>', methods=['DELETE'])
+@jwt_required
+def delete_{singular}({singular}_id):
+    pass
+    """)
+
+
 def generate_api(module, entity):
     print(f"{entity['singular']}_schema = {entity['name']}Schema()")
     generate_api_create(module, entity)
     generate_api_read_all(module, entity)
     generate_api_read_one(module, entity)
+    generate_api_replace(module, entity)
     generate_api_update(module, entity)
+    generate_api_delete(module, entity)
+
+
+def generate_test(name):
+    print(f"""
+@pytest.mark.xfail()
+def test_{name}(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+    """)
+
+
+def generate_tests(entity):
+    singular, plural = entity['singular'], entity['plural']
+    generate_test(f"create_{singular}")
+    generate_test(f"read_all_{plural}")
+    generate_test(f"read_one_{singular}")
+    generate_test(f"replace_{singular}")
+    generate_test(f"update_{singular}")
+    generate_test(f"delete_{singular}")
 
 
 schema = {
@@ -413,3 +456,8 @@ for file_name in sys.argv[1:]:
     for entity in entities:
         comment(entity['name'])
         generate_api(module, entity)
+
+    banner("Tests", True)
+    for entity in entities:
+        comment(entity['name'])
+        generate_tests(entity)

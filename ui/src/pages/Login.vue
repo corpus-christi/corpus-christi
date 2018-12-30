@@ -60,7 +60,7 @@ export default {
     },
 
     async login() {
-      const resp = await this.$http.post("/login", {
+      const resp = await this.$http.post("/api/v1/auth/login", {
         username: this.username,
         password: this.password
       });

@@ -3,6 +3,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import Account from "./models/Account";
+import { setJWT } from "./plugins/axios";
 
 Vue.use(Vuex);
 
@@ -66,6 +67,7 @@ export default new Vuex.Store({
     logIn(state, payload) {
       state._currentAccount = payload.account;
       state._currentJWT = payload.jwt;
+      setJWT(payload.jwt);
       localStorage.setItem(JWT_KEY, payload.jwt);
       localStorage.setItem(ACCOUNT_KEY, JSON.stringify(payload.account));
     },

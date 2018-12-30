@@ -95,8 +95,8 @@ entities:
       - name: meeting_id
         type: integer
         primary-key: true
-        foreign-key: group_meeting.id
+        foreign-key: groups_meeting.id
       - name: member_id
         type: integer
         primary-key: true
-        foreign-key: group_member.id
+        foreign-key: groups_member.id

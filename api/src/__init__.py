@@ -23,6 +23,9 @@ def create_app(config_name):
     jwt.init_app(app)
 
     # Attached CC modules
+    from .auth import auth as auth_blueprint
+    app.register_blueprint(auth_blueprint, url_prefix='/api/v1/auth')
+
     from .etc import etc as etc_blueprint
     app.register_blueprint(etc_blueprint, url_prefix='/')
 
@@ -37,5 +40,8 @@ def create_app(config_name):
 
     from .places import places as places_blueprint
     app.register_blueprint(places_blueprint, url_prefix='/api/v1/places')
+
+    from .roles import roles as roles_blueprint
+    app.register_blueprint(roles_blueprint, url_prefix='/api/v1/roles')
 
     return app

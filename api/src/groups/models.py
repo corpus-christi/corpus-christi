@@ -1,6 +1,6 @@
 from marshmallow import Schema, fields
 from marshmallow.validate import Range, Length
-from sqlalchemy import Column, Integer, Boolean, ForeignKey, Date
+from sqlalchemy import Column, Integer, Boolean, ForeignKey, Date, DateTime
 from sqlalchemy.orm import relationship
 
 from src.db import Base
@@ -32,7 +32,7 @@ class GroupSchema(Schema):
 class Meeting(Base):
     __tablename__ = 'groups_meeting'
     id = Column(Integer, primary_key=True)
-    when = Column(nullable=False)
+    when = Column(DateTime, nullable=False)
     group_id = Column(Integer, ForeignKey('groups_group.id'), nullable=False)
     location_id = Column(Integer, ForeignKey('places_location.id'))
 
@@ -81,8 +81,8 @@ class MemberSchema(Schema):
 
 class Attendance(Base):
     __tablename__ = 'groups_attendance'
-    meeting_id = Column(Integer, ForeignKey('group_meeting.id'), primary_key=True)
-    member_id = Column(Integer, ForeignKey('group_member.id'), primary_key=True)
+    meeting_id = Column(Integer, ForeignKey('groups_meeting.id'), primary_key=True)
+    member_id = Column(Integer, ForeignKey('groups_member.id'), primary_key=True)
 
     def __repr__(self):
         return f"<Attendance(meeting_id={self.meeting_id},member_id={self.member_id})>"
