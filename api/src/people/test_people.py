@@ -97,31 +97,31 @@ def create_multiple_accounts(sqla, fraction=0.75):
 # ---- Person
 
 @pytest.mark.smoke
-def test_create_person(client):
+def test_create_person(auth_client):
     # GIVEN an empty database
     count = random.randint(5, 15)
     # WHEN we create a random number of new people
     for i in range(count):
-        resp = client.post(url_for('people.create_person'), json=person_object_factory())
+        resp = auth_client.post(url_for('people.create_person'), json=person_object_factory())
         assert resp.status_code == 201
     # THEN we end up with the proper number of people in the database
-    assert client.sqla.query(Person).count() == count
+    assert auth_client.sqla.query(Person).count() == count
 
 
 @pytest.mark.smoke
-def test_read_person(client):
+def test_read_person(auth_client):
     # GIVEN a DB with a collection people.
     count = random.randint(3, 11)
-    create_multiple_people(client.sqla, count)
+    create_multiple_people(auth_client.sqla, count)
 
     # WHEN we ask for them all
-    people = client.sqla.query(Person).all()
+    people = auth_client.sqla.query(Person).all()
     # THEN we exepct the same number
     assert len(people) == count
 
     # WHEN we request each of them from the server
     for person in people:
-        resp = client.get(url_for('people.read_one_person', person_id=person.id))
+        resp = auth_client.get(url_for('people.read_one_person', person_id=person.id))
         # THEN we find a matching person
         assert resp.status_code == 200
         assert resp.json['firstName'] == person.first_name
@@ -130,24 +130,24 @@ def test_read_person(client):
 
 # ---- Account
 
-def test_create_account(client):
+def test_create_account(auth_client):
     # GIVEN some randomly created people
     count = random.randint(8, 19)
-    create_multiple_people(client.sqla, count)
+    create_multiple_people(auth_client.sqla, count)
 
     # WHEN we retrieve them all
-    people = client.sqla.query(Person).all()
+    people = auth_client.sqla.query(Person).all()
     # THEN we get the expected number
     assert len(people) == count
 
     # WHEN we create accounts for each person
     for person in people:
         account = account_object_factory(person.id)
-        resp = client.post(url_for('people.create_account'), json=account)
+        resp = auth_client.post(url_for('people.create_account'), json=account)
         # THEN we expect them to be created
         assert resp.status_code == 201
         # AND the account exists in the database
-        new_account = client.sqla.query(Account).filter_by(person_id=person.id).first()
+        new_account = auth_client.sqla.query(Account).filter_by(person_id=person.id).first()
         assert new_account is not None
         # And the password is properly hashed (refer to docs for generate_password_hash)
         method, salt, hash = new_account.password_hash.split('$')
@@ -158,7 +158,7 @@ def test_create_account(client):
         assert len(salt) == 8
         assert len(hash) == 64  # SHA 256 / 4 bits per hex value
     # AND we end up with the proper number of accounts.
-    assert client.sqla.query(Account).count() == count
+    assert auth_client.sqla.query(Account).count() == count
 
 
 def prep_database(sqla):
@@ -171,13 +171,13 @@ def prep_database(sqla):
 
 
 @pytest.mark.smoke
-def test_read_account(client):
+def test_read_account(auth_client):
     # GIVEN a collection of accounts
-    prep_database(client.sqla)
+    prep_database(auth_client.sqla)
 
-    for account in client.sqla.query(Account).all():
+    for account in auth_client.sqla.query(Account).all():
         # WHEN we request one
-        resp = client.get(url_for('people.read_one_account', account_id=account.id))
+        resp = auth_client.get(url_for('people.read_one_account', account_id=account.id))
         # THEN we find the matching account
         assert resp.status_code == 200
         assert resp.json['username'] == account.username
@@ -185,9 +185,9 @@ def test_read_account(client):
         assert resp.json['active'] == True
 
 
-def test_update_password(client):
+def test_update_password(auth_client):
     # Seed the database and fetch the IDs for the new accounts.
-    account_ids = prep_database(client.sqla)
+    account_ids = prep_database(auth_client.sqla)
 
     # Create different passwords for each account.
     password_by_id = {}
@@ -196,7 +196,7 @@ def test_update_password(client):
     for account_id in account_ids:
         # WHEN we update the password via the API
         new_password = password_by_id[account_id] = fake.password()
-        resp = client.patch(url_for('people.update_account', account_id=account_id),
+        resp = auth_client.patch(url_for('people.update_account', account_id=account_id),
                             json={'password': new_password})
         # THEN the update worked
         assert resp.status_code == 200
@@ -206,21 +206,21 @@ def test_update_password(client):
     # GIVEN a collection of accounts
     for account_id in account_ids:
         # WHEN we retrieve account details from the database
-        updated_account = client.sqla.query(Account).filter_by(id=account_id).first()
+        updated_account = auth_client.sqla.query(Account).filter_by(id=account_id).first()
         assert updated_account is not None
         # THEN the (account-specific) password is properly hashed
         password_hash = updated_account.password_hash
         assert check_password_hash(password_hash, password_by_id[account_id])
 
 
-def test_update_other_fields(client):
+def test_update_other_fields(auth_client):
     """Test that we can update fields _other_ than password."""
-    account_ids = prep_database(client.sqla)
+    account_ids = prep_database(auth_client.sqla)
 
     # For each of the accounts, grab the current value of the "other" fields.
     expected_by_id = {}
     for account_id in account_ids:
-        current_account = client.sqla.query(Account).filter_by(id=account_id).first()
+        current_account = auth_client.sqla.query(Account).filter_by(id=account_id).first()
         expected_by_id[account_id] = {
             'username': current_account.username,
             'active': current_account.active
@@ -249,11 +249,11 @@ def test_update_other_fields(client):
         # It's possible that none of the fields will have been selected for update,
         # which doesn't make much sense, but we'll still test for that possibility.
 
-        resp = client.patch(url_for('people.update_account', account_id=account_id), json=payload)
+        resp = auth_client.patch(url_for('people.update_account', account_id=account_id), json=payload)
         assert resp.status_code == 200
 
     for account_id in account_ids:
-        updated_account = client.sqla.query(Account).filter_by(id=account_id).first()
+        updated_account = auth_client.sqla.query(Account).filter_by(id=account_id).first()
         assert updated_account is not None
         assert updated_account.username == expected_by_id[account_id]['username']
         assert updated_account.active == expected_by_id[account_id]['active']

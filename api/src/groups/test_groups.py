@@ -4,7 +4,7 @@ import pytest
 # ---- Group
 
 @pytest.mark.xfail()
-def test_create_group(client, db):
+def test_create_group(auth_client, db):
     # GIVEN
     # WHEN
     # THEN
@@ -12,7 +12,7 @@ def test_create_group(client, db):
 
 
 @pytest.mark.xfail()
-def test_read_all_groups(client, db):
+def test_read_all_groups(auth_client, db):
     # GIVEN
     # WHEN
     # THEN
@@ -20,7 +20,7 @@ def test_read_all_groups(client, db):
 
 
 @pytest.mark.xfail()
-def test_read_one_group(client, db):
+def test_read_one_group(auth_client, db):
     # GIVEN
     # WHEN
     # THEN
@@ -28,7 +28,7 @@ def test_read_one_group(client, db):
 
 
 @pytest.mark.xfail()
-def test_replace_group(client, db):
+def test_replace_group(auth_client, db):
     # GIVEN
     # WHEN
     # THEN
@@ -36,7 +36,7 @@ def test_replace_group(client, db):
 
 
 @pytest.mark.xfail()
-def test_update_group(client, db):
+def test_update_group(auth_client, db):
     # GIVEN
     # WHEN
     # THEN
@@ -44,7 +44,7 @@ def test_update_group(client, db):
 
 
 @pytest.mark.xfail()
-def test_delete_group(client, db):
+def test_delete_group(auth_client, db):
     # GIVEN
     # WHEN
     # THEN
@@ -55,7 +55,7 @@ def test_delete_group(client, db):
 
 
 @pytest.mark.xfail()
-def test_create_meeting(client, db):
+def test_create_meeting(auth_client, db):
     # GIVEN
     # WHEN
     # THEN
@@ -63,7 +63,7 @@ def test_create_meeting(client, db):
 
 
 @pytest.mark.xfail()
-def test_read_all_meetings(client, db):
+def test_read_all_meetings(auth_client, db):
     # GIVEN
     # WHEN
     # THEN
@@ -71,7 +71,7 @@ def test_read_all_meetings(client, db):
 
 
 @pytest.mark.xfail()
-def test_read_one_meeting(client, db):
+def test_read_one_meeting(auth_client, db):
     # GIVEN
     # WHEN
     # THEN
@@ -79,7 +79,7 @@ def test_read_one_meeting(client, db):
 
 
 @pytest.mark.xfail()
-def test_replace_meeting(client, db):
+def test_replace_meeting(auth_client, db):
     # GIVEN
     # WHEN
     # THEN
@@ -87,7 +87,7 @@ def test_replace_meeting(client, db):
 
 
 @pytest.mark.xfail()
-def test_update_meeting(client, db):
+def test_update_meeting(auth_client, db):
     # GIVEN
     # WHEN
     # THEN
@@ -95,7 +95,7 @@ def test_update_meeting(client, db):
 
 
 @pytest.mark.xfail()
-def test_delete_meeting(client, db):
+def test_delete_meeting(auth_client, db):
     # GIVEN
     # WHEN
     # THEN
@@ -106,7 +106,7 @@ def test_delete_meeting(client, db):
 
 
 @pytest.mark.xfail()
-def test_create_member(client, db):
+def test_create_member(auth_client, db):
     # GIVEN
     # WHEN
     # THEN
@@ -114,7 +114,7 @@ def test_create_member(client, db):
 
 
 @pytest.mark.xfail()
-def test_read_all_members(client, db):
+def test_read_all_members(auth_client, db):
     # GIVEN
     # WHEN
     # THEN
@@ -122,7 +122,7 @@ def test_read_all_members(client, db):
 
 
 @pytest.mark.xfail()
-def test_read_one_member(client, db):
+def test_read_one_member(auth_client, db):
     # GIVEN
     # WHEN
     # THEN
@@ -130,7 +130,7 @@ def test_read_one_member(client, db):
 
 
 @pytest.mark.xfail()
-def test_replace_member(client, db):
+def test_replace_member(auth_client, db):
     # GIVEN
     # WHEN
     # THEN
@@ -138,7 +138,7 @@ def test_replace_member(client, db):
 
 
 @pytest.mark.xfail()
-def test_update_member(client, db):
+def test_update_member(auth_client, db):
     # GIVEN
     # WHEN
     # THEN
@@ -146,7 +146,7 @@ def test_update_member(client, db):
 
 
 @pytest.mark.xfail()
-def test_delete_member(client, db):
+def test_delete_member(auth_client, db):
     # GIVEN
     # WHEN
     # THEN
@@ -157,7 +157,7 @@ def test_delete_member(client, db):
 
 
 @pytest.mark.xfail()
-def test_create_attendance(client, db):
+def test_create_attendance(auth_client, db):
     # GIVEN
     # WHEN
     # THEN
@@ -165,7 +165,7 @@ def test_create_attendance(client, db):
 
 
 @pytest.mark.xfail()
-def test_read_all_attendance(client, db):
+def test_read_all_attendance(auth_client, db):
     # GIVEN
     # WHEN
     # THEN
@@ -173,7 +173,7 @@ def test_read_all_attendance(client, db):
 
 
 @pytest.mark.xfail()
-def test_read_one_attendance(client, db):
+def test_read_one_attendance(auth_client, db):
     # GIVEN
     # WHEN
     # THEN
@@ -181,7 +181,7 @@ def test_read_one_attendance(client, db):
 
 
 @pytest.mark.xfail()
-def test_replace_attendance(client, db):
+def test_replace_attendance(auth_client, db):
     # GIVEN
     # WHEN
     # THEN
@@ -189,7 +189,7 @@ def test_replace_attendance(client, db):
 
 
 @pytest.mark.xfail()
-def test_update_attendance(client, db):
+def test_update_attendance(auth_client, db):
     # GIVEN
     # WHEN
     # THEN
@@ -197,7 +197,7 @@ def test_update_attendance(client, db):
 
 
 @pytest.mark.xfail()
-def test_delete_attendance(client, db):
+def test_delete_attendance(auth_client, db):
     # GIVEN
     # WHEN
     # THEN

@@ -1,15 +1,16 @@
-import json
 from datetime import datetime
 
 from flask import jsonify, request, current_app
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_raw_jwt
 
 from . import auth
+from .utils import jwt_not_required
 from .. import db
 from ..people.models import Account, AccountSchema, Person, PersonSchema
 
 
 @auth.route('/login', methods=['POST'])
+@jwt_not_required
 def login():
     # Construct Marshmallow-compatible error response
     err_messages = {}
@@ -47,6 +48,7 @@ def login():
 
 
 @auth.route('/test/jwt')
+@jwt_not_required
 def get_test_jwt():
     if current_app.config['TESTING']:
         access_token = create_access_token(identity='test-user')

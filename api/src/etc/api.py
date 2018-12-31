@@ -3,10 +3,12 @@ from datetime import datetime
 
 from flask import jsonify
 
+from ..auth.utils import jwt_not_required
 from . import etc
 
 
 @etc.route('/ping')
+@jwt_not_required
 def ping():
     """Basic smoke test that application server is running."""
     return jsonify({
