@@ -389,3 +389,25 @@ reads this file at run-time.
 
 ## Authentication with JSON Web Tokens
 
+CC uses JSON Web Tokens for authentication. How it works:
+1. User clicks a Log In link.
+1. UI prompts for username and password
+1. UI sends username and password to API
+1. API validates username and password against database
+1. API returns a JSON Web Token (JWT) to UI
+1. UI stores JWT in memory and in browser local storage for later use
+1. Any time the UI wants to connect to a protected endpoint,
+   it includes the JWT as an HTTP header in the request
+1. API endpoint validates JWT before executing endpoint code.
+
+Most, but not all, CC endpoints are protected by JWT.
+UI requests to an authenticated endpoint
+use the `$http` object
+and those to an unauthenticated endpoint (e.g., log in)
+use the `$httpNoAuth` object.
+
+Similarly for testing the API,
+there are two Flask client objects:
+1. `auth_client` includes a JWT for testing authenticated endpoints
+1. `plain_client` does _not_ have a JWT and is used to test unauthenticated endpoints
+Using the wrong client results an an exception from the endpoint.
