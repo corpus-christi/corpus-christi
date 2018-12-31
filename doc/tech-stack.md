@@ -50,3 +50,5 @@ Implemented with the following technologies.
 ## Other Key Technologies
 
 1. [JSON](http://json.org/) - Standard data interchange format
+1. [YAML](https://yaml.org/) - Easy-to-read-and-write data format
+   - [YAML Getting Started](https://yaml.org/start.html)

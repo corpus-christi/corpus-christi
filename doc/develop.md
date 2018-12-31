@@ -267,7 +267,7 @@ the YAML input file.
 To process the YAML file, run:
 ```bash
 $ cd api/src/boilerplate
-$ ./boil.py yaml/<your-yaml-file>
+$ ./boil.py yaml/your-yaml-file
 ```
 The `boil.py` program simply prints to `stdout`.
 You can copy-paste the output into the appropirate
