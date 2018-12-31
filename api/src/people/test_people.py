@@ -4,6 +4,8 @@ import random
 import pytest
 from faker import Faker
 from flask import url_for
+from flask_jwt_extended import create_access_token
+from werkzeug.datastructures import Headers
 from werkzeug.security import check_password_hash
 
 from .models import Person, PersonSchema, AccountSchema, Account
@@ -64,23 +66,23 @@ def account_object_factory(person_id):
     return account
 
 
-def create_multiple_people(db, n):
+def create_multiple_people(sqla, n):
     """Commit `n` new people to the database. Return their IDs."""
     person_schema = PersonSchema()
     new_people = []
     for i in range(n):
         valid_person = person_schema.load(person_object_factory())
         new_people.append(Person(**valid_person))
-    db.session.add_all(new_people)
-    db.session.commit()
+    sqla.add_all(new_people)
+    sqla.commit()
 
 
-def create_multiple_accounts(db, fraction=0.75):
+def create_multiple_accounts(sqla, fraction=0.75):
     """Commit accounts for `fraction` of `people` in DB."""
     if fraction < 0.1 or fraction > 1.0:
         raise RuntimeError(f"Fraction ({fraction}) is out of bounds")
 
-    all_people = db.session.query(Person).all()
+    all_people = sqla.query(Person).all()
     sample_people = random.sample(all_people, math.floor(len(all_people) * fraction))
 
     account_schema = AccountSchema()
@@ -88,14 +90,14 @@ def create_multiple_accounts(db, fraction=0.75):
     for person in sample_people:
         valid_account = account_schema.load(account_object_factory(person.id))
         new_accounts.append(Account(**valid_account))
-    db.session.add_all(new_accounts)
-    db.session.commit()
+    sqla.add_all(new_accounts)
+    sqla.commit()
 
 
 # ---- Person
 
 @pytest.mark.smoke
-def test_create_person(client, db):
+def test_create_person(client):
     # GIVEN an empty database
     count = random.randint(5, 15)
     # WHEN we create a random number of new people
@@ -103,17 +105,17 @@ def test_create_person(client, db):
         resp = client.post(url_for('people.create_person'), json=person_object_factory())
         assert resp.status_code == 201
     # THEN we end up with the proper number of people in the database
-    assert db.session.query(Person).count() == count
+    assert client.sqla.query(Person).count() == count
 
 
 @pytest.mark.smoke
-def test_read_person(client, db):
+def test_read_person(client):
     # GIVEN a DB with a collection people.
     count = random.randint(3, 11)
-    create_multiple_people(db, count)
+    create_multiple_people(client.sqla, count)
 
     # WHEN we ask for them all
-    people = db.session.query(Person).all()
+    people = client.sqla.query(Person).all()
     # THEN we exepct the same number
     assert len(people) == count
 
@@ -128,13 +130,13 @@ def test_read_person(client, db):
 
 # ---- Account
 
-def test_create_account(client, db):
+def test_create_account(client):
     # GIVEN some randomly created people
     count = random.randint(8, 19)
-    create_multiple_people(db, count)
+    create_multiple_people(client.sqla, count)
 
     # WHEN we retrieve them all
-    people = db.session.query(Person).all()
+    people = client.sqla.query(Person).all()
     # THEN we get the expected number
     assert len(people) == count
 
@@ -145,7 +147,7 @@ def test_create_account(client, db):
         # THEN we expect them to be created
         assert resp.status_code == 201
         # AND the account exists in the database
-        new_account = db.session.query(Account).filter_by(person_id=person.id).first()
+        new_account = client.sqla.query(Account).filter_by(person_id=person.id).first()
         assert new_account is not None
         # And the password is properly hashed (refer to docs for generate_password_hash)
         method, salt, hash = new_account.password_hash.split('$')
@@ -156,24 +158,24 @@ def test_create_account(client, db):
         assert len(salt) == 8
         assert len(hash) == 64  # SHA 256 / 4 bits per hex value
     # AND we end up with the proper number of accounts.
-    assert db.session.query(Account).count() == count
+    assert client.sqla.query(Account).count() == count
 
 
-def prep_database(db):
+def prep_database(sqla):
     """Prepare the database with a random number of people, some of which have accounts.
     Returns list of IDs of the new accounts.
     """
-    create_multiple_people(db, random.randint(5, 15))
-    create_multiple_accounts(db)
-    return [account.id for account in db.session.query(Account.id).all()]
+    create_multiple_people(sqla, random.randint(5, 15))
+    create_multiple_accounts(sqla)
+    return [account.id for account in sqla.query(Account.id).all()]
 
 
 @pytest.mark.smoke
-def test_read_account(client, db):
+def test_read_account(client):
     # GIVEN a collection of accounts
-    prep_database(db)
+    prep_database(client.sqla)
 
-    for account in db.session.query(Account).all():
+    for account in client.sqla.query(Account).all():
         # WHEN we request one
         resp = client.get(url_for('people.read_one_account', account_id=account.id))
         # THEN we find the matching account
@@ -183,9 +185,9 @@ def test_read_account(client, db):
         assert resp.json['active'] == True
 
 
-def test_update_password(client, db):
+def test_update_password(client):
     # Seed the database and fetch the IDs for the new accounts.
-    account_ids = prep_database(db)
+    account_ids = prep_database(client.sqla)
 
     # Create different passwords for each account.
     password_by_id = {}
@@ -204,21 +206,21 @@ def test_update_password(client, db):
     # GIVEN a collection of accounts
     for account_id in account_ids:
         # WHEN we retrieve account details from the database
-        updated_account = db.session.query(Account).filter_by(id=account_id).first()
+        updated_account = client.sqla.query(Account).filter_by(id=account_id).first()
         assert updated_account is not None
         # THEN the (account-specific) password is properly hashed
         password_hash = updated_account.password_hash
         assert check_password_hash(password_hash, password_by_id[account_id])
 
 
-def test_update_other_fields(client, db):
+def test_update_other_fields(client):
     """Test that we can update fields _other_ than password."""
-    account_ids = prep_database(db)
+    account_ids = prep_database(client.sqla)
 
     # For each of the accounts, grab the current value of the "other" fields.
     expected_by_id = {}
     for account_id in account_ids:
-        current_account = db.session.query(Account).filter_by(id=account_id).first()
+        current_account = client.sqla.query(Account).filter_by(id=account_id).first()
         expected_by_id[account_id] = {
             'username': current_account.username,
             'active': current_account.active
@@ -251,7 +253,7 @@ def test_update_other_fields(client, db):
         assert resp.status_code == 200
 
     for account_id in account_ids:
-        updated_account = db.session.query(Account).filter_by(id=account_id).first()
+        updated_account = client.sqla.query(Account).filter_by(id=account_id).first()
         assert updated_account is not None
         assert updated_account.username == expected_by_id[account_id]['username']
         assert updated_account.active == expected_by_id[account_id]['active']

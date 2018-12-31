@@ -28,16 +28,18 @@ class Config:
 
 class TestingConfig(Config):
     TESTING = True
-    # SQLALCHEMY_ECHO = True        # Really chatty.
     SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DB_URL') or SQLITE_TEST
 
 
 class DevelopmentConfig(Config):
+    TESTING = True
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DB_URL') or SQLITE_DEV
 
 
 class ProductionConfig(Config):
+    TESTING = False
+    DEBUG = False
     SQLALCHEMY_DATABASE_URI = os.environ.get('PROD_DB_URL') or PSQL_PROD
 
 

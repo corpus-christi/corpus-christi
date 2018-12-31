@@ -1,6 +1,8 @@
+import json
+
 from flask import request
 from flask.json import jsonify
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_raw_jwt, jwt_optional
 from marshmallow import ValidationError
 
 from . import people

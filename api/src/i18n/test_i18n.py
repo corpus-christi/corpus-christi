@@ -5,7 +5,6 @@ import pytest
 from flask import url_for
 
 from .models import I18NLocale, I18NKey, I18NValue, Language, i18n_read, i18n_update, i18n_delete, i18n_check
-from .. import db
 
 locale_data = [
     {'code': 'en-US', 'desc': 'English US'},
@@ -40,38 +39,38 @@ def count_unique_top_level_ids(key_data_list):
     return len(unique)
 
 
-def create_locales(db):
-    db.session.add_all([I18NLocale(**d) for d in locale_data])
-    db.session.commit()
+def create_locales(sqla):
+    sqla.add_all([I18NLocale(**d) for d in locale_data])
+    sqla.commit()
 
 
-def create_keys(db):
-    db.session.add_all([I18NKey(**k) for k in key_data])
-    db.session.commit()
+def create_keys(sqla):
+    sqla.add_all([I18NKey(**k) for k in key_data])
+    sqla.commit()
 
 
-def create_values(db):
+def create_values(sqla):
     for locale in locale_data:
         for key in key_data:
             val = I18NValue(locale_code=locale['code'],
                             key_id=key['id'],
                             gloss=f"{key['desc']} in {locale['desc']}")
-            db.session.add(val)
-    db.session.commit()
+            sqla.add(val)
+    sqla.commit()
 
 
-def seed_database(db):
+def seed_database(sqla):
     """Utility function for seeding empty database."""
-    create_locales(db)
-    create_keys(db)
-    create_values(db)
+    create_locales(sqla)
+    create_keys(sqla)
+    create_values(sqla)
 
 
 # ---- Locales
 
-def test_read_all_locales(client, db):
+def test_read_all_locales(client):
     # GIVEN locales from static data
-    create_locales(db)
+    create_locales(client.sqla)
 
     # WHEN we request all locales
     resp = client.get(url_for('i18n.read_all_locales'))
@@ -85,9 +84,9 @@ def test_read_all_locales(client, db):
 
 
 @pytest.mark.parametrize('code, desc', locale_tuples)
-def test_read_one_locale(client, db, code, desc):
+def test_read_one_locale(client, code, desc):
     # GIVEN locales from static data
-    create_locales(db)
+    create_locales(client.sqla)
 
     # WHEN we read one of them
     resp = client.get(url_for('i18n.read_one_locale', locale_code=code))
@@ -119,7 +118,6 @@ def test_create_bogus_locale(client, code):
     assert resp.status_code == 422
 
 
-@pytest.mark.usefixtures('reset_db')
 @pytest.mark.parametrize('code, desc', locale_tuples)
 def test_create_valid_locale(client, code, desc):
     # GIVEN empty locale table
@@ -130,16 +128,16 @@ def test_create_valid_locale(client, code, desc):
     assert resp.status_code == 201
 
     # AND there is one local in the DB and it matches the one created.
-    result = db.session.query(I18NLocale).all()
+    result = client.sqla.query(I18NLocale).all()
     assert len(result) == 1
     assert result[0].code == code
     assert result[0].desc == desc
 
 
 @pytest.mark.parametrize('code, desc', locale_tuples)
-def test_delete_one_locale(client, db, code, desc):
+def test_delete_one_locale(client, code, desc):
     # GIVEN locales from static data
-    create_locales(db)
+    create_locales(client.sqla)
 
     # WHEN one locale deleted
     resp = client.delete(url_for('i18n.delete_one_locale', locale_code=code))
@@ -148,7 +146,7 @@ def test_delete_one_locale(client, db, code, desc):
     assert resp.status_code == 204
 
     # AND the deleted locale doesn't exist in the database.
-    result = db.session.query(I18NLocale).all()
+    result = client.sqla.query(I18NLocale).all()
     assert len(result) == len(locale_tuples) - 1
     for loc in result:
         assert loc.code != code
@@ -157,8 +155,8 @@ def test_delete_one_locale(client, db, code, desc):
 
 # ---- Keys
 
-def test_read_all_keys(client, db):
-    create_keys(db)
+def test_read_all_keys(client):
+    create_keys(client.sqla)
     resp = client.get(url_for('i18n.read_all_keys'))
     assert resp.status_code == 200
     assert len(resp.json) == len(key_data)
@@ -166,8 +164,8 @@ def test_read_all_keys(client, db):
 
 @pytest.mark.smoke
 @pytest.mark.parametrize('id, desc', key_tuples)
-def test_read_existing_key(client, db, id, desc):
-    create_keys(db)
+def test_read_existing_key(client, id, desc):
+    create_keys(client.sqla)
     resp = client.get(url_for('i18n.read_one_key', key_id=id))
     assert resp.status_code == 200
     assert resp.json['desc'] == desc
@@ -186,7 +184,6 @@ def test_create_bogus_key(client, id):
     assert resp.status_code == 422
 
 
-@pytest.mark.usefixtures('reset_db')
 @pytest.mark.parametrize('id,desc', key_tuples)
 def test_create_valid_key(client, id, desc):
     resp = client.post(url_for('i18n.create_key'),
@@ -196,8 +193,8 @@ def test_create_valid_key(client, id, desc):
 
 # ---- Values
 
-def test_read_all_values(client, db):
-    create_values(db)
+def test_read_all_values(client):
+    create_values(client.sqla)
     resp = client.get(url_for('i18n.read_all_values'))
     assert resp.status_code == 200
     assert len(resp.json) == len(locale_data) * len(key_data)
@@ -205,7 +202,7 @@ def test_read_all_values(client, db):
 
 @pytest.mark.parametrize('format', [None, 'list'])
 @pytest.mark.parametrize('code', locale_codes)
-def test_one_locale_as_list(client, format, db, code):
+def test_one_locale_as_list(client, format, code):
     if format is None:
         # Default format
         url = url_for('i18n.read_xlation', locale_code=code)
@@ -214,7 +211,7 @@ def test_one_locale_as_list(client, format, db, code):
         url = url_for('i18n.read_xlation', locale_code=code, format=format)
 
     # GIVEN i18n test data
-    seed_database(db)
+    seed_database(client.sqla)
     # WHEN asking for translations for a given locale
     resp = client.get(url)
     # THEN response should be "Ok"
@@ -224,33 +221,32 @@ def test_one_locale_as_list(client, format, db, code):
 
 
 @pytest.mark.smoke
-@pytest.mark.usefixtures('reset_db')
 def test_bogus_xlation_locale(client):
     resp = client.get(url_for('i18n.read_xlation', locale_code='not-a-real-locale'))
     assert resp.status_code == 404
 
 
 @pytest.mark.smoke
-def test_bogus_xlation_format(client, db):
-    create_locales(db)
+def test_bogus_xlation_format(client):
+    create_locales(client.sqla)
     resp = client.get(url_for('i18n.read_xlation',
                               locale_code=locale_codes[0],
                               format='not-a-valid-format'))
     assert resp.status_code == 400
 
 
-def test_goofy_tree_structure(client, db):
+def test_goofy_tree_structure(client):
     # We're about to put this entry in the database
     # {'id': 'btn.cancel', 'desc': 'Label on a Cancel button'},
-    seed_database(db)
+    seed_database(client.sqla)
 
     # Now add a child of a string, which makes no sense.
     bogus_key_id = 'btn.cancel.bogus'
-    db.session.add(I18NKey(id=bogus_key_id, desc='Invalid key'))
-    db.session.add(I18NValue(locale_code=locale_data[0]['code'],
+    client.sqla.add(I18NKey(id=bogus_key_id, desc='Invalid key'))
+    client.sqla.add(I18NValue(locale_code=locale_data[0]['code'],
                              key_id=bogus_key_id,
                              gloss="Bogus Gloss"))
-    db.session.commit()
+    client.sqla.commit()
 
     # Ask the API for a valid tree. It shouldn't comply.
     resp = client.get(url_for('i18n.read_xlation',
@@ -269,9 +265,9 @@ def count_leaf_nodes(node):
 
 
 @pytest.mark.parametrize('code', locale_codes)
-def test_one_locale_as_tree(client, db, code):
+def test_one_locale_as_tree(client, code):
     # GIVEN i18n test data
-    seed_database(db)
+    seed_database(client.sqla)
     # WHEN asking for a tree of translation information
     resp = client.get(url_for('i18n.read_xlation', locale_code=code, format='tree'))
     # THEN response should be 'Ok'
@@ -290,7 +286,7 @@ def test_one_locale_as_tree(client, db, code):
 @pytest.mark.parametrize('code, name', [('en', 'English'),
                                         ('th', 'Thai'),
                                         ('es', 'Spanish; Castilian')])
-def test_read_language(client, db, code, name):
+def test_read_language(client, code, name):
     count = Language.load_from_file()
     assert count > 0
     resp = client.get(url_for('i18n.read_languages', language_code=code, locale='en-US'))
@@ -299,7 +295,7 @@ def test_read_language(client, db, code, name):
 
 
 @pytest.mark.slow
-def test_read_all_languages(client, db):
+def test_read_all_languages(client):
     count = Language.load_from_file()
     assert count > 0
     resp = client.get(url_for('i18n.read_languages', locale='en-US'))
@@ -310,32 +306,31 @@ def test_read_all_languages(client, db):
 # ---- I18N CRUD
 
 @pytest.mark.smoke
-def test_good_crud_read(db):
+def test_good_crud_read(client):
     id = 'foo.bar'
     locale = 'xx-YY'
     gloss = 'Zippy'
 
-    db.session.add_all([
+    client.sqla.add_all([
         I18NKey(id=id, desc='Fake Description'),
         I18NValue(key_id=id, locale_code=locale, gloss=gloss)
     ])
-    db.session.commit()
+    client.sqla.commit()
     assert i18n_read(id, locale).gloss == gloss
 
 
-@pytest.mark.usefixtures('reset_db')
 def test_bad_crud_read():
     with pytest.raises(RuntimeError):
         i18n_read('bogus', 'bogus')
 
 
-def test_good_crud_update(db):
+def test_good_crud_update(client):
     id = 'foo.bar'
     locale = 'xx-YY'
     first_gloss = 'Zippy'
     new_gloss = 'Flippy'
 
-    db.session.add_all([
+    client.sqla.add_all([
         I18NKey(id=id, desc='Fake Description'),
         I18NValue(key_id=id, locale_code=locale, gloss=first_gloss)
     ])
@@ -349,25 +344,23 @@ def test_good_crud_update(db):
 
 
 @pytest.mark.smoke
-@pytest.mark.usefixtures('reset_db')
 def test_bad_crud_update():
     with pytest.raises(RuntimeError):
         i18n_read('bogus', 'bogus')
 
 
-@pytest.mark.usefixtures('reset_db')
 def test_bad_crud_delete():
     with pytest.raises(RuntimeError):
         i18n_read('bogus', 'bogus')
 
 
 @pytest.mark.smoke
-def test_good_crud_delete(db):
+def test_good_crud_delete(client):
     id = 'foo.bar'
     locale = 'xx-YY'
     gloss = 'Zippy'
 
-    db.session.add_all([
+    client.sqla.add_all([
         I18NKey(id=id, desc='Fake Description'),
         I18NValue(key_id=id, locale_code=locale, gloss=gloss)
     ])
