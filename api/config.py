@@ -9,6 +9,7 @@ SQLITE_MEM = 'sqlite://'
 
 PSQL_TEST = 'postgresql://tom@localhost:5432/cc-test'
 PSQL_DEV = 'postgresql://tom@localhost:5432/cc-dev'
+PSQL_STAGING = 'postgresql://tom@localhost:5432/cc-staging'
 PSQL_PROD = 'postgresql://tom@localhost:5432/cc-prod'
 
 
@@ -34,7 +35,13 @@ class TestingConfig(Config):
 class DevelopmentConfig(Config):
     TESTING = True
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DB_URL') or SQLITE_DEV
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DB_URL') or PSQL_DEV #SQLITE_DEV
+
+
+class StagingConfig(Config):
+    TESTING = False
+    DEBUG = False
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DB_URL') or PSQL_STAGING
 
 
 class ProductionConfig(Config):
@@ -46,6 +53,7 @@ class ProductionConfig(Config):
 config = {
     'dev': DevelopmentConfig,
     'test': TestingConfig,
+    'staging': StagingConfig,
     'prod': ProductionConfig,
     'default': DevelopmentConfig
 }

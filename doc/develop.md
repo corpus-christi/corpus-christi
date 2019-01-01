@@ -69,6 +69,14 @@ $ yarn install
     $ pip install -r requirements.txt
     ```
 
+Note that when you are done interacting with the API,
+you can _deactivate_ your virtual environment
+by entering this simple command
+```bash
+$ deactivate
+```
+This will remove the virtual environment from your shell.
+
 ### Bash Setup for Flask API
 
 Flask (on which the API is written)

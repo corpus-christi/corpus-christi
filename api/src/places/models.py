@@ -75,7 +75,7 @@ class Location(Base):
     address = Column(StringTypes.LONG_STRING)
     city = Column(StringTypes.MEDIUM_STRING)
     area_id = Column(Integer, ForeignKey('places_area.id'))
-    country_id = Column(Integer, ForeignKey('places_country.code'))
+    country_code = Column(String(2), ForeignKey('places_country.code'))
     latitude = Column(Float)
     longitude = Column(Float)
 
@@ -96,6 +96,6 @@ class LocationSchema(Schema):
     address = fields.String()
     city = fields.String()
     area_id = fields.Integer(validate=Range(min=1))
-    country_id = fields.Integer(validate=Range(min=1))
+    country_code = fields.String()
     latitude = fields.Float()
     longitude = fields.Float()

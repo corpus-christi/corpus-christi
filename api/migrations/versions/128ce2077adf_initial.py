@@ -1,8 +1,8 @@
 """initial
 
-Revision ID: cb8c24410b23
+Revision ID: 128ce2077adf
 Revises: 
-Create Date: 2018-12-29 21:32:00.629299
+Create Date: 2018-12-31 23:07:05.175326
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'cb8c24410b23'
+revision = '128ce2077adf'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -72,11 +72,11 @@ def upgrade():
     sa.Column('address', sa.String(length=255), nullable=True),
     sa.Column('city', sa.String(length=64), nullable=True),
     sa.Column('area_id', sa.Integer(), nullable=True),
-    sa.Column('country_id', sa.Integer(), nullable=True),
+    sa.Column('country_code', sa.String(length=2), nullable=True),
     sa.Column('latitude', sa.Float(), nullable=True),
     sa.Column('longitude', sa.Float(), nullable=True),
     sa.ForeignKeyConstraint(['area_id'], ['places_area.id'], ),
-    sa.ForeignKeyConstraint(['country_id'], ['places_country.code'], ),
+    sa.ForeignKeyConstraint(['country_code'], ['places_country.code'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('groups_meeting',
