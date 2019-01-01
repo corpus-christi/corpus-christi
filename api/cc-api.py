@@ -47,8 +47,8 @@ def load_languages():
     _load_locales()
     Country.load_from_file()
     Language.load_from_file()
-    create_multiple_people(db, 17)
-    create_multiple_accounts(db, 0.25)
+    create_multiple_people(db.session, 17)
+    create_multiple_accounts(db.session, 0.25)
 
 
 @data_cli.command('clear-all', help="Clear all data; drops and creates all tables")
