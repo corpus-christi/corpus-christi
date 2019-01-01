@@ -35,7 +35,7 @@ class TestingConfig(Config):
 class DevelopmentConfig(Config):
     TESTING = True
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DB_URL') or PSQL_DEV #SQLITE_DEV
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DB_URL') or SQLITE_DEV
 
 
 class StagingConfig(Config):
