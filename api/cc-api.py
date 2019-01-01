@@ -67,15 +67,11 @@ user_cli = AppGroup('account', help="Maintain account data.")
 @user_cli.command('new', help="Create new account")
 @click.argument('username')
 @click.argument('password')
-@click.option('--full-name', help="Full name (e.g., 'Fred Ziffle')")
-def create_account(username, password, full_name):
-    first_name = 'Test'
-    last_name = 'User'
-    if full_name is not None:
-        name_parts = full_name.split()
-        if len(name_parts) != 2:
-            raise BadParameter(f"Can't split {full_name} into first and last")
-        first_name, last_name = name_parts
+@click.option('--first', help="First name")
+@click.option('--last', help="Last name")
+def create_account(username, password, first, last):
+    first_name = first or 'Test'
+    last_name = last or 'User'
 
     # Make sure no existing user.
     person = db.session.query(Account).filter_by(username=username).first()
