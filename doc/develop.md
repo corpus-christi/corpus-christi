@@ -46,6 +46,16 @@ Installation takes several minutes.
 $ cd corpus-christi/ui
 $ yarn install 
 ```
+
+### Vue Dev Tools
+
+Install the [Vue Development Tools](https://github.com/vuejs/vue-devtools),
+an extension for your browser that helps with Vue debugging.
+Native extensions are available for Chrome and Firefox.
+There is a standalone Electron app,
+but you are _strongly_ encouraged to install Chrome or Firefox
+and the native extension.
+
 ### API Dependencies
 
 1. Create a Python virtual environment; you only need to do this once
