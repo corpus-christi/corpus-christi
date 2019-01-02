@@ -113,14 +113,20 @@ $ flask data load-all
 Once the database is initialized,
 create a test account for yourself.
 ```bash
-$ flask account new --full-name="Fred Ziffle" username password
+$ flask account new --first="Fred" --last="Ziffle" username password
 ```
 where
-- `full-name` is the full name for the user;
-  it assumes a two-word full name, split into first
-  and last name at whitespace
+- `--first` is the user's first name
+- `--last` is the user's last name
 - `username` is the user name of the account
 - `password` is the password to be associated with the account
+The `--first` and `--last` flags are _optional_.
+To include a first or last name with blanks or other
+characters special to the shell,
+enclose it in quotes. For example:
+```bash
+$ flask account new --first"Billy Bob" --last="Smith" bbob bob-pass
+```
 
 ## Run CC
 
