@@ -10,7 +10,7 @@ from ..people.models import Account, AccountSchema, Person, PersonSchema
 
 
 @auth.route('/login', methods=['POST'])
-@jwt_not_required
+# @jwt_not_required
 def login():
     # Construct Marshmallow-compatible error response
     err_messages = {}
