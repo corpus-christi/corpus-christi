@@ -15,11 +15,10 @@ _Features_ and _Functions_.
 are the top-level modules implemented in CC.
 As of this writing, they are (with code names):
 
-1. `lead` - Administration of the entire CC suite
-1. `gather` - Home Church management and tracking
-1. `teach` - Teaching ministry management
-1. `serve` - Tracking for various ministries
-1. `plan` - Planning and calendaring
+1. `groups` - Home Church management and tracking
+1. `courses` - Teaching ministry management
+1. `events` - Event planning and registration
+1. `calendar` - Planning and calendaring
 
 ### Functions
 
