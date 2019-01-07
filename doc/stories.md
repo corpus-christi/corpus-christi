@@ -6,15 +6,15 @@
   (or _SPA_). To avoid terminological confusion with the previous definition of
   _application_, we refer to the SPA portion of CC as either the **user
   interface** (commonly, the **UI**) or the **web app**.
-1. CC currently consists of several cooperating subsystems that address
-   a single, reasonably coherent aspect of church management.
+1. CC consists of several cooperating subsystems,
+   each of which addresses
+   a single coherent aspect of church management.
    We refer to these subsystems as **modules**.
    Initially, CC contains the following modules:
 
     1. `groups` - Home church/small group management and tracking
     1. `courses` - Teaching ministry management
     1. `events` - Event planning and registration
-    1. `calendars` - Planning and calendaring
 
    A _module_ is intended to encompass standalone functionality
    that can optionally be used by a particular church
@@ -30,19 +30,25 @@
 
 1. Although we use the term **user** informally throughout,
    CC's data model does _not_ include a user entity.
+   Instead:
+
    1. Any individual (human) tracked by the system we call a **Person**.
       The database includes a `Person` table.
-   1.  
+
+   1. A _Person_ may be associated with an _Account_,
+      which grants that _Person_ login access to CC.
+
+   Consequently, the combination of a _Person_ and an _Account_
+   can informally be considered a "user." 
 
 # Roles
 
 This section details the roles implemented in CC.
 
-## None
+## Public
 
-Portions of CC are available to completely unknown, unauthenticated users.
-Strictly speaking, such a user does not have a role
-and need not authenticate with CC.
+Portions of CC are available to completely unauthenticated users.
+Strictly speaking, such a user does not have a role.
 However, for convenience, we consider such users to have a **public** "role"
 that permits them access to _only_ the public content of the application.
 
@@ -51,15 +57,15 @@ or viewing the home church map to identify a home church.
 
 ## Infrastructure
 
-1. An **administrative** (or **admin**) user is someone who can access 
-   most of the "behind-the-scenes"
-   administrative functions of the application across different modules.
+1. An **infrastructure** user is someone who can access and update
+   the CC infrastructure data, including people and places.
    
-   _Example_: church office worker adding a new account to the system
-   or authorizing an existing account as having a particular role.
+   _Example_: church office worker adding a new _Account_ to the system
+   or authorizing an existing account as having a particular _Role_.
+
 1. A **superuser** is a user with essentially unlimited access to CC.
    
-   _Example_: info tech team member who wants to initialize portions of the database,
+   _Example_: IT team member who wants to initialize portions of the database,
    upgrade CC to a new version, etc.
    
 1. A **translator** is a user who can create or update localization
@@ -70,17 +76,12 @@ or viewing the home church map to identify a home church.
 
 ## Groups Module
 
-1. A **group leader** is a user who is responsible for a _single_ group.
+1. A **group admin** is user who manages the Groups module.
 
-   _Example_: home church leader wants to add a new member to a
-   home group or mark someone as having attended a meeting of the group. 
+   _Example_: user who wants to create a new group,
+   or assign a new leader to an existing group,
+   or split a large group into two new, smaller groups.
    
-1. A **group overseer** is a user who has oversight over _multiple_
-   groups.
-   
-   _Example_: user who wants to send a message to leaders of groups
-   for which the overseer is responsible.
-
 ## Courses Module
 
 1. A **registrar** is a user who manages the data in the `courses` module.
@@ -90,4 +91,7 @@ or viewing the home church map to identify a home church.
 
 ## Events Module
 
-## Calendars Module
+1. A **scheduler** is a user who manages data in the `events` module.
+
+   _Example_: An office worker wants to create add details for an upcoming
+   retreat or schedule a worship band for the next Sunday worship service. 
