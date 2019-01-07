@@ -7,24 +7,23 @@ that we use to build and maintain the Corpus Christi project
 ## Matrix Organization
 
 Initial develoment is matrixed along two dimensions:
-_Features_ and _Functions_.
+_Modules_ and _Functions_.
 
-### Features
+### Modules
 
-**Features**
-are the top-level modules implemented in CC.
+**Modules**
+are the top-level capabilities of CC.
 As of this writing, they are (with code names):
 
 1. `groups` - Home Church management and tracking
 1. `courses` - Teaching ministry management
 1. `events` - Event planning and registration
-1. `calendar` - Planning and calendaring
 
 ### Functions
 
 **Functions**
 refers to the technology or management
-elements that collectively implement **features**.
+elements that collectively implement **modules**.
 They are:
 
 1.  Data persistence (Model)
@@ -36,11 +35,11 @@ They are:
 
 ### Teams and Leadership
 
-A team forms around a **feature**
-and is responsible for building that feature.
-A **feature owner** leads a feature team.
+A team forms around a **module**
+and is responsible for building that module.
+A **module owner** leads a module team.
 He or she takes responsibility for the overall completion
-of the feature, ensuring that it meets customer requirements.
+of the module, ensuring that it meets customer requirements.
 
 Each team member
 has a particular **functional focus**
@@ -51,7 +50,7 @@ A designated **functional expert**
 for each function
 supports team members having the
 corresponding functional focus.
-The functional expert works _across_ different feature team.
+The functional expert works _across_ different module team.
 
 ### Pair programming
 
@@ -61,19 +60,19 @@ Every line of code is overseen
 by two developers working in tandem.
 Our goals are to have built-in quality review during develoment
 and to encourage developers to have greater courage
-in moving their feature forward.
+in moving their module forward.
 
 ### Stand Up Meetings
 
 Most days we hold two [stand-up meetings](https://en.wikipedia.org/wiki/Stand-up_meeting):
-1. A *Feature Stand-Up* includes
-   all members of a feature team,
-   and is led by the feature owner.
+1. A *Module Stand-Up* includes
+   all members of a module team,
+   and is led by the module owner.
    The purpose of this meeting
    is to communicate infomration
-   about the feature itself.
-1.  A *Function Stand-Up* includes
-   members from across feature teams
+   about the module itself.
+1. A *Functional Stand-Up* includes
+   members from across module teams
    that have the same functional focus
    (e.g., all those working on data persistence).
    The purpose of this meeting
@@ -84,14 +83,12 @@ Most days we hold two [stand-up meetings](https://en.wikipedia.org/wiki/Stand-up
 ## Daily Schedule
 
 - 08:30	Devotions (Church staff, team members)
-- 09:00	Stand-up (Feature teams)
+- 09:00	Stand-up (Module teams)
 - 09:15	Work	 
 - 12:00	Lunch
 - 13:00	Stand-up (Functional teams)
 - 13:15	Work	 
-- 15:15	Break
-- 15:30	Work	 
-- 17:00	End of work day	 
+- 16:00	End of work day	 
 
 ## Process
 
@@ -101,7 +98,7 @@ We add capability to CC by implementing **user stories**
 from the customer.
 A user story is *not* a complete specification,
 but is, instead, a reminder to have a conversation
-with the feature owner about exactly how the system
+with the module owner about exactly how the system
 should behave when the story is implemented.
 
 ### Tracking
@@ -113,8 +110,19 @@ similar to [Trello](https://trello.com/),
 but integrated with GitHub.
 It tracks tasks and progress
 using GitHub's standard _issue_
-feature, thus keeping all project
+module, thus keeping all project
 updates with the repository itself.
+
+These are the ZenHub swim lanes in use:
+
+1. _New_ - Newly added
+1. _On Hold_ - Waiting for some external event, resource, or information
+1. _Backlog_ - Ready to enter development
+1. _In Progress_ - Currently being developed
+1. _Pull Request Made_ - Pull request issued, under review, in discussion;
+   may return to _In Progress_ if rework required
+1. _Merged to Develoment_ - Pull request accepted, successfully merged into `development` branch
+1. _Closed_
 
 ### Git
 
@@ -127,4 +135,4 @@ and
 We use
 [pull requests](https://help.github.com/categories/collaborating-with-issues-and-pull-requests/)
 on GitHub to submit updates to release branches.
-Pull requests are approved by feature owners.
+Pull requests are approved by module owners.
