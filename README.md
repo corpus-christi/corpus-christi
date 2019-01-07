@@ -9,11 +9,9 @@ at
 
 ## Modules
 
-1. `admin` - Administration of the entire CC suite
 1. `groups` - Home Church management and tracking
 1. `courses` - Teaching ministry management
 1. `events` - Event planning and registration
-1. `calendar` - Planning and calendaring
 
 ## Documentation
 
