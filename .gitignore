@@ -16,3 +16,4 @@ videos/
 # Other
 .idea/
 dist/
+.vscode/
