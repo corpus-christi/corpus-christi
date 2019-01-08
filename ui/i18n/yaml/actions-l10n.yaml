@@ -3,6 +3,10 @@ actions:
     _desc: Header for a table, etc.
     en: Actions
     es: Comportamiento
+  addanother:
+    _desc: Save a newly created item; clear data (e.g., on a form)
+    en: Add Another
+    es: Agrega Otro
   cancel:
     _desc: Cancel a pending action
     en: Cancel

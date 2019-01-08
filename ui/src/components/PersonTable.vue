@@ -2,7 +2,7 @@
   <div>
     <!-- Header -->
     <v-toolbar>
-      <v-toolbar-title> {{ $t("people.title") }}</v-toolbar-title>
+      <v-toolbar-title>{{ $t("people.title") }}</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-text-field
         v-model="search"
@@ -46,9 +46,8 @@
               slot="activator"
               v-on:click="editPerson(props.item)"
               class="mr-3"
+              >edit</v-icon
             >
-              edit
-            </v-icon>
             <span>{{ $t("actions.edit") }}</span>
           </v-tooltip>
           <v-tooltip bottom>
@@ -57,9 +56,8 @@
               slot="activator"
               v-on:click="adminPerson(props.item)"
               class="mr-3"
+              >settings</v-icon
             >
-              settings
-            </v-icon>
             <span>{{ $t("actions.tooltips.settings") }}</span>
           </v-tooltip>
           <v-tooltip bottom>
@@ -68,9 +66,8 @@
               slot="activator"
               v-on:click="deletePerson(props.item)"
               class="mr-3"
+              >delete</v-icon
             >
-              delete
-            </v-icon>
             <span>{{ $t("actions.tooltips.deactivate") }}</span>
           </v-tooltip>
         </td>
@@ -79,9 +76,9 @@
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false">
-        {{ $t("actions.close") }}
-      </v-btn>
+      <v-btn flat @click="snackbar.show = false">{{
+        $t("actions.close")
+      }}</v-btn>
     </v-snackbar>
 
     <!-- New/Edit dialog -->
@@ -91,6 +88,7 @@
         v-bind:initialData="personDialog.person"
         v-on:cancel="cancelPerson"
         v-on:save="savePerson"
+        v-on:add-another="addAnother"
       />
     </v-dialog>
 
@@ -201,6 +199,17 @@ export default {
           .catch(err => console.error("FAILURE", err.response));
       }
       this.personDialog.show = false;
+    },
+
+    addAnother(person) {
+      this.$http
+        .post("/api/v1/people/persons", person)
+        .then(resp => {
+          console.log("ADDED", resp);
+          this.people.push(resp.data);
+          this.activatePersonDialog();
+        })
+        .catch(err => console.error("FAILURE", err.response));
     },
 
     // ---- Account Administration

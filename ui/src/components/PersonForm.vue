@@ -69,15 +69,18 @@
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn color="primary" flat v-on:click="cancel">
-        {{ $t("actions.cancel") }}
-      </v-btn>
-      <v-btn color="primary" flat v-on:click="clear">
-        {{ $t("actions.clear") }}
-      </v-btn>
-      <v-btn color="primary" flat v-on:click="save">
-        {{ $t("actions.save") }}
-      </v-btn>
+      <v-btn color="primary" flat v-on:click="cancel">{{
+        $t("actions.cancel")
+      }}</v-btn>
+      <v-btn color="primary" flat v-on:click="clear">{{
+        $t("actions.clear")
+      }}</v-btn>
+      <v-btn color="primary" flat v-on:click="save">{{
+        $t("actions.save")
+      }}</v-btn>
+      <v-btn color="primary" flat v-on:click="add_another">{{
+        $t("actions.addanother")
+      }}</v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -158,6 +161,13 @@ export default {
       this.$validator.validateAll();
       if (!this.errors.any()) {
         this.$emit("save", this.person);
+      }
+    },
+
+    add_another() {
+      this.$validator.validateAll();
+      if (!this.errors.any()) {
+        this.$emit("add-another", this.person);
       }
     }
   }

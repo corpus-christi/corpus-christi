@@ -10,6 +10,7 @@
       "username": "Username"
     },
     "actions": {
+      "addanother": "Add Another",
       "cancel": "Cancel",
       "clear": "Clear",
       "close": "Close",
@@ -81,6 +82,7 @@
       "username": "Nombre de usuario"
     },
     "actions": {
+      "addanother": "Agrega Otro",
       "cancel": "Cancelar",
       "clear": "Despejar",
       "close": "Cerrar",
