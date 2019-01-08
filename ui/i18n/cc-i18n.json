@@ -25,6 +25,9 @@
         "settings": "Settings"
       }
     },
+    "courses": {
+      "title": "Courses"
+    },
     "groups": {
       "title": "Home Churches"
     },
@@ -95,6 +98,9 @@
         "deactivate": "Desactivar",
         "settings": "Ajustes"
       }
+    },
+    "courses": {
+      "title": "Cursos"
     },
     "groups": {
       "title": "Iglesias Hogar"
