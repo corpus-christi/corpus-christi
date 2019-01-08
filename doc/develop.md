@@ -135,7 +135,7 @@ To include a first or last name with blanks or other
 characters special to the shell,
 enclose it in quotes. For example:
 ```bash
-$ flask account new --first"Billy Bob" --last="Smith" bbob bob-pass
+$ flask account new --first="Billy Bob" --last="Smith" bbob bob-pass
 ```
 
 ## Run CC
