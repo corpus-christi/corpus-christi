@@ -29,6 +29,9 @@ def create_app(config_name):
     from .etc import etc as etc_blueprint
     app.register_blueprint(etc_blueprint, url_prefix='/')
 
+    from .events import events as events_blueprint
+    app.register_blueprint(events_blueprint, url_prefix='/api/v1/events')
+
     from .groups import groups as groups_blueprint
     app.register_blueprint(groups_blueprint, url_prefix='/api/v1/groups')
 
