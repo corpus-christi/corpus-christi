@@ -13,7 +13,7 @@ from .. import db
 
 event_schema = EventSchema()
 
-@events.route('/events', methods=['POST'])
+@events.route('/', methods=['POST'])
 @jwt_required
 def create_event():
     try:
@@ -27,27 +27,27 @@ def create_event():
     return jsonify(event_schema.dump(new_event)), 201
     
 
-@events.route('/events')
+@events.route('/')
 @jwt_required
 def read_all_events():
     result = db.session.query(Event).all()
     return jsonify(event_schema.dump(result, many=True))
     
 
-@events.route('/events/<event_id>')
+@events.route('/<event_id>')
 @jwt_required
 def read_one_event(event_id):
     result = db.session.query(Event).filter_by(id=event_id).first()
     return jsonify(event_schema.dump(result))
     
 
-@events.route('/events/<event_id>', methods=['PUT'])
+@events.route('/<event_id>', methods=['PUT'])
 @jwt_required
 def replace_event(event_id):
     pass
     
 
-@events.route('/events/<event_id>', methods=['PATCH'])
+@events.route('/<event_id>', methods=['PATCH'])
 @jwt_required
 def update_event(event_id):
     try:
@@ -64,7 +64,7 @@ def update_event(event_id):
     return jsonify(event_schema.dump(event))
     
 
-@events.route('/events/<event_id>', methods=['DELETE'])
+@events.route('/<event_id>', methods=['DELETE'])
 @jwt_required
 def delete_event(event_id):
     pass
