@@ -51,7 +51,6 @@ class Asset(Base):
     id = Column(Integer, primary_key=True)
     description = Column(StringTypes.LONG_STRING, nullable=False)
     location_id = Column(Integer, ForeignKey('places_location.id'))
-    active = Column(Boolean, default=True)
 
     def __repr__(self):
         return f"<Asset(id={self.id})>"
