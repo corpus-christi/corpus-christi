@@ -229,14 +229,13 @@ Tables in this group record data about training courses.
 1. Several _Class Meetings_ will be part of any _Course Offering_.
    Each meeting takes places at a specific location and time.
    Different meetings may have different teachers.
-1. A _Student_ enrolls in a a _Course Offering_.
+1. A _Student_ enrolls in a _Course Offering_.
    Students may [self-register](#self-registration).
 1. _Class Attendance_ indicates that a _Student_ attended a _Class Meeting_.
    To receive credit for the course, a _Student_ must attend _all_ meetings.
 1. Completing multiple courses may lead to a _Diploma_.
 1. A _Diploma Course_ instance indicates that a _Course_ is required for a _Diploma_.
-1. CC creates a _Diploma Awarded_ instance   
-   when a _Student_ completes all the _Course_'s required for a _Diploma_,
+1. CC creates a _Diploma Awarded_ instance when a _Student_ completes all the _Course_'s required for a _Diploma_,
 
 ## Events
 
