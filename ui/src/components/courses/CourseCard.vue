@@ -1,22 +1,38 @@
 <template>
-  <v-card>
-    <v-card-title>{{courseTitle}}</v-card-title>
-    <v-card-text>{{description}}</v-card-text>
-    <v-card-action>
-      <v-btn flat>{{$t("actions.edit")}}</v-btn>
-    </v-card-action>
-  </v-card>
+    <v-container>
+      <v-layout>
+        <v-flex>
+          <v-toolbar color="cyan" dark>
+            <v-toolbar-title>
+              {{course.title}}
+            </v-toolbar-title>
+          </v-toolbar>
+          <v-card>
+            <v-card-text>{{course.description}}</v-card-text>
+            <v-card-text>{{$t("courses.enrolled")}}: {{course.enrolled}}</v-card-text>
+              <v-card-actions>
+                <v-layout align-center justify-end>
+                  <v-btn flat>{{$t("actions.edit")}}</v-btn>
+                </v-layout>
+              </v-card-actions>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-container>
 </template>
 
 <script>
 export default {
   name: "CourseCard",
-  data() {
-    return {
-      courseTitle: "test",
-      description: "extra test",
-      enrolled: 0
-    };
-  }
+  // data() {
+  //   return {
+  //     title: "New Testament",
+  //     description: "extra test",
+  //     enrolled: 0
+  //   };
+  // },
+  props: [
+    'course'
+  ]
 };
 </script>

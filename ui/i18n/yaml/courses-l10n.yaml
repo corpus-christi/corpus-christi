@@ -2,3 +2,7 @@ courses:
   title:
     en: Courses
     es: Cursos
+  enrolled:
+    en: Number Enrolled
+    es: Número Registrado
+    

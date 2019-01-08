@@ -26,6 +26,7 @@
       }
     },
     "courses": {
+      "enrolled": "Number Enrolled",
       "title": "Courses"
     },
     "groups": {
@@ -100,6 +101,7 @@
       }
     },
     "courses": {
+      "enrolled": "N\u00famero Registrado",
       "title": "Cursos"
     },
     "groups": {
