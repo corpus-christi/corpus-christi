@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-toolbar>
-      <v-toolbar-title>Events</v-toolbar-title>
+      <v-toolbar-title>Event Table</v-toolbar-title>
       <v-spacer></v-spacer>
       <!-- <v-text-field
         v-model="search"
@@ -19,7 +19,7 @@
 
     <v-data-table :headers="headers" :items="events" class="elevation-1">
       <template slot="items" slot-scope="props">
-        <td>{{ props.item.name }}</td>
+        <td>{{ props.item.title }}</td>
         <td>
           <v-icon small @click="editEvent(props.item)">edit</v-icon>
         </td>
@@ -46,7 +46,7 @@ export default {
   components: { "event-form": EventForm },
   data() {
     return {
-      events: [{ name: "event1" }, { name: "event2" }, { name: "event3" }],
+      events: [{ title: "event1" }, { title: "event2" }, { title: "event3" }],
       eventDialog: {
         show: false,
         editMode: false,
@@ -56,7 +56,7 @@ export default {
   },
   computed: {
     headers() {
-      return [{ text: "Event Name" }, { text: "Actions", sortable: false }];
+      return [{ text: "Event Title" }, { text: "Actions", sortable: false }];
     }
   },
   methods: {
@@ -64,7 +64,6 @@ export default {
       this.eventDialog.editMode = editMode;
       this.eventDialog.event = event;
       this.eventDialog.show = true;
-      console.log(event);
     },
 
     editEvent(event) {
@@ -80,7 +79,7 @@ export default {
     },
 
     saveEvent(event) {
-      console.log(event.name);
+      console.log(event);
       this.eventDialog.show = false;
     }
   }
