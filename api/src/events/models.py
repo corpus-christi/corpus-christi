@@ -6,6 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from ..db import Base
 from ..shared.models import StringTypes
+from ..people.models import Person
 
 # ---- Event
 
@@ -17,6 +18,7 @@ class Event(Base):
     start = Column(DateTime, nullable=False)
     end = Column(DateTime, nullable=False)
     location_id = Column(Integer, ForeignKey('places_location.id'))
+    participants = relationship('EventParticipant')
     active = Column(Boolean, default=True)
 
     assets = relationship("EventAsset", back_populates="event")
@@ -37,6 +39,15 @@ class EventSchema(Schema):
     end = fields.DateTime(required=True)
     location_id = fields.Integer(data_key='locationId')
     active = fields.Boolean()
+
+# ---- EventParticipant
+
+class EventParticipant(Base):
+    __tablename__ = 'events_event_participant'
+    person_id = Column(Integer, ForeignKey('people_person.id'), primary_key=True)
+    event_id = Column(Integer, ForeignKey('events_event.id'), primary_key=True)
+    confirmed = Column(Boolean, default=False)
+    person = relationship('Person')
 
 # ---- Asset
 
