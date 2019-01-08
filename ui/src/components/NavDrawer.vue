@@ -44,6 +44,11 @@ export default {
           title: this.$t("groups.title"),
           route: "groups",
           icon: "group"
+        },
+        {
+          title: this.$t("courses.title"),
+          route: "courses-admin",
+          icon: "school"
         }
       ];
     }

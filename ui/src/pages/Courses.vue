@@ -11,7 +11,7 @@ import CourseCard from "../components/courses/CourseCard";
 export default {
   name: "Courses",
   components: {
-      CourseCard
+    CourseCard
   }
 };
 </script>
