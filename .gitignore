@@ -17,3 +17,4 @@ videos/
 .idea/
 dist/
 .vscode/
+.DS_Store
