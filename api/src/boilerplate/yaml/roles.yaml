@@ -4,7 +4,7 @@ entities:
     singular: role
     plural: roles
     uri: /roles
-    table: roles_role
+    table: people_role
     attributes:
       - name: id
         type: integer
@@ -13,3 +13,22 @@ entities:
       - name: name_i18n
         type: string
         length: locale
+      - name: active
+        type: boolean
+  - name: Account Role
+    singular: people_account_role
+    plural: people_account_roles
+    uri: /people_account_roles
+    table: people_account_role
+    attributes:
+      - name: account_id
+        type: integer
+        primary-key: true
+        foreign-key: people_account.id
+        min: 1
+      - name: role_id
+        type: integer
+        primary-key: true
+        foreign-key: people_role.id
+        min: 1
+
