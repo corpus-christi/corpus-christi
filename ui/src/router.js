@@ -44,6 +44,12 @@ const router = new VueRouter({
       component: () => import("@/pages/Groups")
     },
     {
+      name: "events",
+      path: "/events",
+      meta: { authRequired: true },
+      component: () => import("@/pages/Events")
+    },
+    {
       name: "locale",
       path: "/locale",
       meta: { authRequired: true },
