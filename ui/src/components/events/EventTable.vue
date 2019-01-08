@@ -3,13 +3,13 @@
     <v-toolbar>
       <v-toolbar-title>Event Table</v-toolbar-title>
       <v-spacer></v-spacer>
-      <!-- <v-text-field
+      <v-text-field
         v-model="search"
         append-icon="search"
         v-bind:label="$t('actions.search')"
         single-line
         hide-details
-      ></v-text-field>-->
+      ></v-text-field>
       <v-spacer></v-spacer>
 
       <v-btn small fab color="primary" absolute dark bottom right v-on:click.stop="newEvent">
@@ -17,9 +17,11 @@
       </v-btn>
     </v-toolbar>
 
-    <v-data-table :headers="headers" :items="events" class="elevation-1">
+    <v-data-table :headers="headers" :items="events" :search="search" class="elevation-1">
       <template slot="items" slot-scope="props">
         <td>{{ props.item.title }}</td>
+        <td>{{ getDisplayDate(props.item.start) }}</td>
+        <td>{{ props.item.location_name }}</td>
         <td>
           <v-icon small @click="editEvent(props.item)">edit</v-icon>
         </td>
@@ -44,19 +46,31 @@ import EventForm from "./EventForm";
 export default {
   name: "EventTable",
   components: { "event-form": EventForm },
+  mounted() {
+    this.$http.get("http://localhost:3000/events").then(resp => {
+      this.events = resp.data;
+    });
+  },
+
   data() {
     return {
-      events: [{ title: "event1" }, { title: "event2" }, { title: "event3" }],
+      events: [],
       eventDialog: {
         show: false,
         editMode: false,
         event: {}
-      }
+      },
+      search: ""
     };
   },
   computed: {
     headers() {
-      return [{ text: "Event Title" }, { text: "Actions", sortable: false }];
+      return [
+        { text: "Event Title", value: "title" },
+        { text: "Start Time", value: "start" },
+        { text: "Location", value: "location_name" },
+        { text: "Actions", sortable: false }
+      ];
     }
   },
   methods: {
@@ -81,6 +95,14 @@ export default {
     saveEvent(event) {
       console.log(event);
       this.eventDialog.show = false;
+    },
+
+    getDisplayDate(dateString) {
+      let date = new Date(dateString);
+      return date.toLocaleString();
+      // let n = date.toDateString();
+      // let time = date.toLocaleTimeString();
+      // return `${n}, ${time}`;
     }
   }
 };
