@@ -66,6 +66,8 @@ We use ISO standard abbreviations for languages and country.
    - The `gloss` attribute stores the string for the given key
      in the given locale (e.g., `person.name.first` in `es_EC`
      might be `Nombre de pila`, but in `en_US` would be `First Name`).
+   - `verified` (initial value false) indicates that a native speaker of the target
+     language has verified the `gloss` is correct and appropriate.
      
 Where CC uses I18N, the _code_ specifies the _I18N Key_.
 The locale is determined by a browser-wide setting.
@@ -83,16 +85,32 @@ the gloss would be `German`, but in `de`, it would be `Deutsch`).
    The _majority_ of people in the system cannot log in or interact with the system
    in any way other than as a public user.
 1. In addition to the normal fields for a _Person_, each _Person_ can have additional
-   attributes (e.g., marital status). CC assumes such attributes have discrete values
-   (i.e., something shown with radio buttons or a drop-down list as opposed to free-form text input)
-   and that attributes and attribute values will change over time.
-   - The _Attribute_ table stores the name of an attribute (e.g., `Martial Status`).
-   - _Attribute_ has a one-to-many relationship with the _Attribute Value_ table,
-     which stores the possible values for that attribute (e.g., `Single`, `Married`, `Divorced`).
-   - _Person Attribute_ associates a _Person_ with specific _Attribute Values_'s
-     (e.g., this _Person_ is `Single`).
+   attributes (e.g., marital status or birth date).
+   CC allows attributes to take one of two forms:
+   1. An _enumerated attribute_ can take one of a discrete set of values.
+      For example, `Marital Status` may be `Single`, `Married`, `Divorced`, etc.
+      Instances of _Attribute Value_ store each possible value for an 
+      enumerated attribute.
+   1. A _string attribute_ stores an arbitrary text value.
+      For example, a `Birth Date` attribute should allow entry of a string containing a date.
+      The UI should constrain the values of string attributes to conform to a specific format
+      a appropriate.
+
+   The _Attribute_ table stores:
+   - `name_i18n`, the name of the attribute (e.g., `Martial Status`)
+   - `type_i18n`, the type of the attribute (e.g, enumerated type, date, number)
+   
+   The _Attribute Value_ entity stores the list of values that an enumerated attribute can take.
+   
+   A _Person Attribute_ associates a _Person_ with an attribute value.
+   - `enum_value` is used for enumerated attributes and contains the key 
+     of an _Attribute Value_.
+   - `string_value` stores string attributes directly.
+   Exactly one of `enum_value` and `string_value` should be set
+   in any instance of _Person Attribute_.
+
    All attribute names and values are stored as _I18N Key_'s,
-   so that they can be localized into various languages. 
+   so that they can be localized.
 1. An _Account_ grants a _Person_ the ability to log in and interact with CC.
    -  CC implements a `username` because not all people who will interact with the system
       will have an email address.
@@ -104,7 +122,25 @@ the gloss would be `German`, but in `de`, it would be `Deutsch`).
    Code in the system that needs to determine whether the current user
    can perform some action (e.g., create a new group, set up a training course)
    checks for a specific _Role_ among those associated with the current _Account_.
-
+1. CC supports hierarchical relationships between _Person_'s. 
+   The _Manager_ entity supports a simple tree structure of _Person_ instances.
+   - `person_id` refers to a specific person who is a _Manager_.
+   - `manager_id` is a self-referential attribute that indicates
+     this _Manager_'s _Manager_.
+   - `description` is a localizable field to describe each participant in the hierarchy.
+   
+   For example: each _Group_ has a group leader, 
+   and each group leader is supervised by a group overseer,
+   who is responsible for multiple group leaders and their groups.
+   This hierarchy could be represented as follows:
+   ```
+   Group -> Manager ("Group leader") -> Person
+                                     -> Manager ("Group overseer") -> Person
+   ```
+   where the `description` of each `Manager` appears in parentheses.
+   Multiple "Group leader" _Manager_ instances
+   may refer to the same "Group overseer" _Manager_.
+     
 ## Self Registration
 
 CC allows a _public_ user to create an instance of _Person_. For example, when:
@@ -169,8 +205,9 @@ These tables maintain data for home churches/small groups.
    - `description` should be a high-level description of the group,
      including its intended membership. This information will be visible
      on the public home group map.
-   - `leader` refers to the person who leads the group
-   - `overseer` refers to the person who oversees this and other groups.
+   - `manager_id` refers to the _Manager_ that refers to
+     the _Person_ who leads this group.
+     Refer to the discussion of the _Manager_ entity.
 1. A _Member_ is a _Person_ who is part of a _Group_. 
 1. A _Meeting_ is a single gathering of a _Group_ 
    at a particular time and place.
