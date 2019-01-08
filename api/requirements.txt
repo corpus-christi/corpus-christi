@@ -22,6 +22,7 @@ ipython-genutils==0.2.0
 itsdangerous==1.1.0
 jedi==0.13.2
 Jinja2==2.10
+jsonschema==2.6.0
 Mako==1.0.7
 MarkupSafe==1.1.0
 marshmallow==3.0.0rc1
