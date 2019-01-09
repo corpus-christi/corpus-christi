@@ -1,0 +1,75 @@
+module: attributes
+entities:
+  - name: Attribute
+    singular: attribute
+    plural: attributes
+    uri: /attributes
+    table: people_attributes
+    attributes:
+      - name: id
+        type: integer
+        primary-key: true
+        min: 1
+      - name: name_i18n
+        type: string
+        length: locale
+      - name: type_i18n
+        type: string
+        length: locale
+      - name: seq
+        type: integer
+        required: true
+        min: 0
+      - name: active
+        required: true
+        type: boolean
+  - name: Enumerated_Value
+    singular: enumerated_value
+    plural: enumerated_values
+    uri: /enumerated_values
+    table: people_enumerated_value
+    attributes:
+      - name: id
+        type: integer
+        primary-key: true
+        min: 1
+      - name: attribute_id
+        type: integer
+        foreign-key: people_attributes.id
+      - name: value_i18n
+        type: string
+        length: locale
+      - name: active
+        required: true
+        type: boolean
+  - name: Person_Attribute
+    singular: person_attribute
+    plural: person_attributes
+    uri: /person_attributes
+    table: people_person_attributes
+    attributes:
+      - name: person_id
+        type: integer
+        primary-key: true
+        foreign-key: people_person.id
+      - name: attribute_id
+        type: integer
+        primary-key: true
+        foreign-key: people_attributes.id
+      - name: enum_value_id
+        type: integer
+        foreign-key: people_enumerated_value.id
+      - name: string_value
+        type: string
+        length: locale
+    relationships:
+      - name: person
+        related-model: Person
+        backref: person_attributes
+      - name: attribute
+        related-model: Attribute
+        backref: person_attributes
+      - name: enumerated_values
+        related-model: Enumerated_Value
+        backref: person_attributes
+    
