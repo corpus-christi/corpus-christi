@@ -14,7 +14,7 @@
       ></v-text-field>
       <v-spacer></v-spacer>
       <v-switch
-        :label="$t('actions.viewinactive')"
+        :label="$t('actions.view-inactive')"
         color="primary"
         v-on:change="changeView"
         v-model="showingInactive"
@@ -24,7 +24,7 @@
 
       <v-btn color="primary" raised v-on:click.stop="newPerson" data-cy="">
         <v-icon dark left>person_add</v-icon>
-        {{ $t("actions.addperson") }}
+        {{ $t("actions.add-person") }}
       </v-btn>
     </v-toolbar>
 
@@ -96,6 +96,8 @@
       <PersonForm
         v-bind:editMode="personDialog.editMode"
         v-bind:initialData="personDialog.person"
+        v-bind:saveLoading="personDialog.saveLoading"
+        v-bind:addMoreLoading="personDialog.addMoreLoading"
         v-on:cancel="cancelPerson"
         v-on:save="savePerson"
         v-on:add-another="addAnother"
@@ -127,6 +129,8 @@ export default {
       personDialog: {
         show: false,
         editMode: false,
+        saveLoading: false,
+        addMoreLoading: false,
         person: {}
       },
 
@@ -187,6 +191,7 @@ export default {
     },
 
     savePerson(person) {
+      this.personDialog.saveLoading = true;
       if (this.personDialog.editMode) {
         // Hang on to the ID of the person being updated.
         const person_id = person.id;
@@ -200,29 +205,49 @@ export default {
           .then(resp => {
             console.log("EDITED", resp);
             Object.assign(this.people[idx], person);
+            this.personDialog.show = false;
+            this.personDialog.saveLoading = false;
+            this.showSnackbar(this.$t("person.messages.person-edit"));
           })
-          .catch(err => console.error("FALURE", err.response));
+          .catch(err => {
+            console.error("FALURE", err.response);
+            this.personDialog.saveLoading = false;
+            this.showSnackbar(this.$t("person.messages.person-save-error"));
+          });
       } else {
         this.$http
           .post("/api/v1/people/persons", person)
           .then(resp => {
             console.log("ADDED", resp);
             this.people.push(resp.data);
+            this.personDialog.show = false;
+            this.personDialog.saveLoading = false;
+            this.showSnackbar(this.$t("person.messages.person-add"));
           })
-          .catch(err => console.error("FAILURE", err.response));
+          .catch(err => {
+            console.error("FAILURE", err.response);
+            this.personDialog.saveLoading = false;
+            this.showSnackbar(this.$t("person.messages.person-save-error"));
+          });
       }
-      this.personDialog.show = false;
     },
 
     addAnother(person) {
+      this.personDialog.addMoreLoading = true;
       this.$http
         .post("/api/v1/people/persons", person)
         .then(resp => {
           console.log("ADDED", resp);
           this.people.push(resp.data);
           this.activatePersonDialog();
+          this.personDialog.addMoreLoading = false;
+          this.showSnackbar(this.$t("person.messages.person-add"));
         })
-        .catch(err => console.error("FAILURE", err.response));
+        .catch(err => {
+          console.error("FAILURE", err.response);
+          this.personDialog.addMoreLoading = false;
+          this.showSnackbar(this.$t("person.messages.person-save-error"));
+        });
     },
 
     changeView() {
@@ -239,6 +264,11 @@ export default {
 
     viewActive() {
       console.log(`viewing active`);
+    },
+
+    showSnackbar(message) {
+      this.snackbar.text = message;
+      this.snackbar.show = true;
     },
 
     // ---- Account Administration
@@ -266,8 +296,7 @@ export default {
         .post("/api/v1/people/accounts", account)
         .then(resp => {
           console.log("ADDED", resp);
-          this.snackbar.text = this.$t("account.messages.added-ok");
-          this.snackbar.show = true;
+          this.showSnackbar(this.$t("account.messages.added-ok"));
         })
         .catch(err => console.error("FAILURE", err.response));
     },
@@ -277,8 +306,7 @@ export default {
         .patch(`/api/v1/people/accounts/${accountId}`, account)
         .then(resp => {
           console.log("PATCHED", resp);
-          this.snackbar.text = this.$t("account.messages.updated-ok");
-          this.snackbar.show = true;
+          this.showSnackbar(this.$t("account.messages.updated-ok"));
         })
         .catch(err => console.error("FAILURE", err.response));
     }
