@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 
 from flask import request
 from flask.json import jsonify
@@ -49,9 +50,9 @@ def read_all_events():
     start_filter = request.args.get('start')
     end_filter = request.args.get('end')
     if start_filter:
-        query = query.filter(Event.start >= start_filter)
+        query = query.filter(Event.start >= datetime.strptime(start_filter, '%Y-%m-%d'))
     if end_filter:
-        query = query.filter(Event.end <= end_filter)
+        query = query.filter(Event.end <= datetime.strptime(end_filter, '%Y-%m-%d'))
 
     # -- title --
     # Filter events on a wildcard title string
@@ -59,14 +60,12 @@ def read_all_events():
     if title_filter:
         query = query.filter(Event.title.like(f"%{title_filter}%"))
 
-    print(query)
-
     # -- location --
     # Filter events on a wildcard location string?
-    # location_filter = request.args.get('location')
-    # if location_filter:
-    #     query = query.filter(Event.title.like(f"%{title_filter}%"))
-
+    location_filter = request.args.get('location')
+    if location_filter:
+        # TODO FIXME
+        pass
 
     result = query.all()
 
