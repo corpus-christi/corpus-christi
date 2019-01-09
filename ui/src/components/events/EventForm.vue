@@ -20,7 +20,9 @@
           v-bind:error-messages="errors.collect('description')"
         ></v-textarea>
 
-        <event-location
+        <entity-search
+        location
+        searchEndpoint="http://localhost:3000/locations"
         v-on:setLocation="setLocation"/>
 
         <v-layout>
@@ -145,9 +147,9 @@
 <script>
 import { isEmpty } from "lodash";
 import { mapGetters } from "vuex";
-import EventLocation from "./EventLocation";
+import EntitySearch from "../EntitySearch";
 export default {
-  components: { "event-location": EventLocation },
+  components: { "entity-search": EntitySearch },
   name: "EventForm",
   watch: {
     // Make sure data stays in sync with any changes to `initialData` from parent.
@@ -242,7 +244,6 @@ export default {
     },
 
     setLocation(locationId) {
-      console.log('Setting Location')
       console.log(locationId)
     }
 
