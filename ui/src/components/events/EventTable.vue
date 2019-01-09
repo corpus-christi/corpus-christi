@@ -79,10 +79,10 @@ export default {
   computed: {
     headers() {
       return [
-        { text: "Event Title", value: "title" },
-        { text: "Start Time", value: "start" },
-        { text: "Location", value: "location_name" },
-        { text: "Actions", sortable: false }
+        { text: this.$t("events.title"), value: "title" },
+        { text: this.$t("events.start-time"), value: "start" },
+        { text: this.$t("events.event-location"), value: "location_name" },
+        { text: this.$t("events.actions"), sortable: false }
       ];
     },
     ...mapGetters(["currentLanguageCode"])
