@@ -51,7 +51,7 @@
 
     <!-- New/Edit dialog -->
     <v-dialog v-model="courseDialog.show" max-width="500px">
-      <CourseForm
+      <CourseEditor
         v-bind:editMode="courseDialog.editMode"
         v-bind:initialData="courseDialog.course"
         v-on:cancel="cancelCourse"
@@ -62,13 +62,13 @@
 </template>
 
 <script>
-import CourseForm from "./CourseForm";
+import CourseEditor from "./CourseEditor";
 import CourseAdminActions from "./CourseAdminActions";
 
 export default {
   name: "CoursesTable",
   components: {
-    CourseForm,
+    CourseEditor,
     CourseAdminActions
   },
   data() {
