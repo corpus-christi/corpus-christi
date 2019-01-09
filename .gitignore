@@ -13,6 +13,7 @@ node_modules/
 yarn-error.log
 videos/
 proxy-config.js
+screenshots/
 
 # Other
 .idea/

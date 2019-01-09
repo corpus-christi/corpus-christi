@@ -1,0 +1,69 @@
+module: events
+entities:
+  - name: Event
+    singular: event
+    plural: events
+    uri: /events
+    table: events_event
+    attributes:
+      - name: id
+        type: integer
+        primary-key: true
+        min: 1
+      - name: title
+        type: string
+        min-length: 1
+        length: long
+        required: true
+      - name: description
+        type: string
+        length: long
+      - name: start
+        type: datetime
+        required: true
+      - name: end
+        type: datetime
+        required: true
+      - name: location_id
+        type: integer
+        foreign-key: places_location.id
+      - name: active
+        type: boolean
+        default: true
+  - name: Asset
+    singular: asset
+    plural: assets
+    uri: /assets
+    table: events_asset
+    attributes:
+      - name: id
+        type: integer
+        primary-key: true
+        min: 1
+      - name: description
+        type: string
+        length: long
+        required: true
+      - name: location_id
+        type: integer
+        foreign-key: locations_location.location_id
+      - name: active
+        type: boolean
+        default: true
+  - name: Team
+    singular: team
+    plural: teams
+    uri: /teams
+    table: events_teams
+    attributes:
+      - name: id
+        type: integer
+        primary-key: true
+        min: 1
+      - name: description
+        type: string
+        length: long
+        required: true
+      - name: active
+        type: boolean
+        default: true
