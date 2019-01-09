@@ -30,14 +30,14 @@
       </form>
     </v-card-text>
     <v-card-actions>
-      <v-spacer></v-spacer>
-      <v-btn color="primary" flat v-on:click="cancel">
+      <v-btn color="secondary" flat v-on:click="cancel">
         {{ $t("actions.cancel") }}
       </v-btn>
+      <v-spacer></v-spacer>
       <v-btn color="primary" flat v-on:click="clear">
         {{ $t("actions.clear") }}
       </v-btn>
-      <v-btn color="primary" flat v-on:click="save">
+      <v-btn color="primary" raised v-on:click="save">
         {{ $t("actions.save") }}
       </v-btn>
     </v-card-actions>

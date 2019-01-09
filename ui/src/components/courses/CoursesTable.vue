@@ -14,16 +14,12 @@
       <v-spacer></v-spacer>
 
       <v-btn
-        small
-        fab
         color="primary"
-        absolute
-        dark
-        bottom
-        right
+        raised
         v-on:click.stop="newCourse"
       >
-        <v-icon>add</v-icon>
+        <v-icon left>library_add</v-icon>
+        {{$t('courses.new')}}
       </v-btn>
     </v-toolbar>
 

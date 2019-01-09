@@ -1,7 +1,8 @@
 <template>
   <v-layout align-center justify-end>
     <v-tooltip bottom>
-      <v-btn flat icon
+      <v-btn flat icon outline
+        color="primary"
         slot="activator"
         v-bind:small="displayContext === 'compact'"
         @click="emitAction('edit')">
@@ -11,7 +12,8 @@
       <span>{{ $t("actions.edit") }}</span>
     </v-tooltip>
     <v-tooltip bottom>
-      <v-btn flat icon
+      <v-btn flat icon outline
+        color="primary"
         slot="activator"
         v-bind:small="displayContext === 'compact'"
         @click="emitAction('deactivate')">
