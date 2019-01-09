@@ -20,9 +20,10 @@
         ></v-text-field>
         <!-- translate prereq -->
         <v-combobox v-model="prereqs" :items="items" v-bind:label="$t('courses.prerequisites')" chips clearable solo multiple>
+          <template slot="item" slot-scope="data">{{data.item.title}}</template>
           <template slot="selection" slot-scope="data">
             <v-chip :selected="data.selected" close @input="remove(data.item)">
-              <strong>{{ data.item }}</strong>&nbsp;
+              <strong>{{ data.item.title }}</strong>&nbsp;
             </v-chip>
           </template>
         </v-combobox>
@@ -65,7 +66,7 @@ export default {
         title: "",
         description: ""
       },
-      items: ["Bible 101", "Bib Lit 10"],
+      courses: [],
       prereqs: []
     };
   },
@@ -80,7 +81,10 @@ export default {
         ? this.$t("actions.edit")
         : this.$t("courses.new");
     },
-
+    items() {
+      return this.courses.filter(item => item.id != this.course.id);
+    },
+    
     ...mapGetters(["currentLanguageCode"])
   },
 
@@ -122,6 +126,12 @@ export default {
       this.prereqs.splice(this.prereqs.indexOf(item), 1);
       this.prereqs = [...this.prereqs];
     }
+  },
+  
+  mounted() {
+    this.$http
+      .get("/api/v1/courses/courses")
+      .then(resp => (this.courses = resp.data));
   }
 };
 </script>

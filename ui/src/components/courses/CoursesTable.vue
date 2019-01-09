@@ -89,7 +89,7 @@ export default {
       },
 
       selected: [],
-      courses: [{title: "test", description: "test"}],
+      courses: [],
       search: "",
     };
   },
@@ -144,30 +144,30 @@ export default {
         // Get rid of the ID; not for consumption by endpoint.
         delete course.id;
 
-      //   this.$http
-      //     .put(`/api/v1/people/persons/${person_id}`, person)
-      //     .then(resp => {
-      //       console.log("EDITED", resp);
-      //       Object.assign(this.people[idx], person);
-      //     })
-      //     .catch(err => console.error("FALURE", err.response));
-      // } else {
-      //   this.$http
-      //     .post("/api/v1/people/persons", person)
-      //     .then(resp => {
-      //       console.log("ADDED", resp);
-      //       this.people.push(resp.data);
-      //     })
-      //     .catch(err => console.error("FAILURE", err.response));
+        this.$http
+          .put(`/api/v1/courses/courses/${course_id}`, course)
+          .then(resp => {
+            console.log("EDITED", resp);
+            Object.assign(this.courses[idx], course);
+          })
+          .catch(err => console.error("FALURE", err.response));
+      } else {
+        this.$http
+          .post("/api/v1/courses/courses", course)
+          .then(resp => {
+            console.log("ADDED", resp);
+            this.courses.push(resp.data);
+          })
+          .catch(err => console.error("FAILURE", err.response));
       }
       this.courseDialog.show = false;
     }
   },
 
   mounted: function() {
-    // this.$http
-    //   .get("/api/v1/people/persons")
-    //   .then(resp => (this.courses = resp.data));
+    this.$http
+      .get("/api/v1/courses/courses")
+      .then(resp => (this.courses = resp.data));
   }
 };
 </script>
