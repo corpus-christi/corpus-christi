@@ -30,48 +30,111 @@ def create_event():
 @events.route('/')
 @jwt_required
 def read_all_events():
-    result = db.session.query(Event).all()
+
+    query = db.session.query(Event)
+
+    # -- return_inactives --
+    # Filter events based on active status
+    # True - see all events, False or missing - see only active events
+    return_group = request.args.get('return_group')
+    if return_group == 'inactive':
+        query = query.filter_by(active=False)
+    elif return_group in ('all', 'both'):
+        pass # Don't filter
+    else:
+        query = query.filter_by(active=True)
+
+    # -- start, end --
+    # Filter events to be greater than the start date and/or earlier than the end date (inclusive)
+    start_filter = request.args.get('start')
+    end_filter = request.args.get('end')
+    if start_filter:
+        query = query.filter(Event.start >= start_filter)
+    if end_filter:
+        query = query.filter(Event.end <= end_filter)
+
+    # -- title --
+    # Filter events on a wildcard title string
+    title_filter = request.args.get('title')
+    if title_filter:
+        query = query.filter(Event.title.like(f"%{title_filter}%"))
+
+    print(query)
+
+    # -- location --
+    # Filter events on a wildcard location string?
+    # location_filter = request.args.get('location')
+    # if location_filter:
+    #     query = query.filter(Event.title.like(f"%{title_filter}%"))
+
+
+    result = query.all()
+
     return jsonify(event_schema.dump(result, many=True))
     
 
 @events.route('/<event_id>')
 @jwt_required
 def read_one_event(event_id):
-    result = db.session.query(Event).filter_by(id=event_id).first()
-    return jsonify(event_schema.dump(result))
+    event = db.session.query(Event).filter_by(id=event_id).first()
+
+    if not event:
+        return jsonify(f"Event with id #{event_id} does not exist."), 404
+
+    return jsonify(event_schema.dump(event))
     
 
 @events.route('/<event_id>', methods=['PUT'])
 @jwt_required
 def replace_event(event_id):
-    return modify_event(event_id, request.json)
-
-@events.route('/<event_id>', methods=['PATCH'])
-@jwt_required
-def update_event(event_id):
-    return modify_event(event_id, request.json)
-    
-def modify_event(event_id, json_object):
     try:
         valid_event = event_schema.load(request.json)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
+    return modify_event(event_id, valid_event)
+
+
+@events.route('/<event_id>', methods=['PATCH'])
+@jwt_required
+def update_event(event_id):
+    try: 
+        valid_attributes = event_schema.load(request.json, partial=True)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+                
+    return modify_event(event_id, valid_attributes)
+
+
+@events.route('/<event_id>', methods=['DELETE'])
+@jwt_required
+def delete_event(event_id):
     event = db.session.query(Event).filter_by(id=event_id).first()
 
-    for key, val in valid_event.items():
+    if not event:
+        return jsonify(f"Event with id #{event_id} does not exist."), 404
+        
+    setattr(event, 'active', False)
+    db.session.commit()
+    
+    # 204 doesn't actually respond with any content
+    return jsonify(event_schema.dump(event)), 204
+
+
+# Handles PUT and PATCH requests
+def modify_event(event_id, new_value_dict):
+    event = db.session.query(Event).filter_by(id=event_id).first()
+
+    if not event:
+        return jsonify(f"Event with id #{event_id} does not exist."), 404
+
+    for key, val in new_value_dict.items():
         setattr(event, key, val)
     
     db.session.commit()
 
     return jsonify(event_schema.dump(event)), 200
 
-@events.route('/<event_id>', methods=['DELETE'])
-@jwt_required
-def delete_event(event_id):
-    event = db.session.query(Event).filter_by(id=event_id).first()
-    setattr(event, 'active', False)
-    return jsonify(event_schema.dump(event)), 204
 
 # ---- Asset
 
