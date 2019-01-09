@@ -44,12 +44,14 @@ def read_one_event(event_id):
 @events.route('/<event_id>', methods=['PUT'])
 @jwt_required
 def replace_event(event_id):
-    pass
-    
+    return modify_event(event_id, request.json)
 
 @events.route('/<event_id>', methods=['PATCH'])
 @jwt_required
 def update_event(event_id):
+    return modify_event(event_id, request.json)
+    
+def modify_event(event_id, json_object):
     try:
         valid_event = event_schema.load(request.json)
     except ValidationError as err:
@@ -59,16 +61,17 @@ def update_event(event_id):
 
     for key, val in valid_event.items():
         setattr(event, key, val)
-
-    db.session.commit()
-    return jsonify(event_schema.dump(event))
     
+    db.session.commit()
+
+    return jsonify(event_schema.dump(event)), 200
 
 @events.route('/<event_id>', methods=['DELETE'])
 @jwt_required
 def delete_event(event_id):
-    pass
-    
+    event = db.session.query(Event).filter_by(id=event_id).first()
+    setattr(event, 'active', False)
+    return jsonify(event_schema.dump(event)), 204
 
 # ---- Asset
 
