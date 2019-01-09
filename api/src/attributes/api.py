@@ -65,7 +65,7 @@ def update_attribute(attribute_id):
     return jsonify(attribute_schema.dump(attribute))
     
 
-@attributes.route('/attributes/<attribute_id>', methods=['DELETE'])
+@attributes.route('/attributes/disable/<attribute_id>', methods=['PATCH'])
 @jwt_required
 def disable_attribute(attribute_id):
     attribute = db.session.query(Attribute).filter_by(id=attribute_id).first()
@@ -107,13 +107,7 @@ def read_all_enumerated_values():
 def read_one_enumerated_value(enumerated_value_id):
     result = db.session.query(Enumerated_Value).filter_by(id=enumerated_value_id).first()
     return jsonify(enumerated_value_schema.dump(result))
-    
-
-@attributes.route('/enumerated_values/<enumerated_value_id>', methods=['PUT'])
-@jwt_required
-def replace_enumerated_value(enumerated_value_id):
-    pass
-    
+        
 
 @attributes.route('/enumerated_values/<enumerated_value_id>', methods=['PATCH'])
 @jwt_required
@@ -132,10 +126,16 @@ def update_enumerated_value(enumerated_value_id):
     return jsonify(enumerated_value_schema.dump(enumerated_value))
     
 
-@attributes.route('/enumerated_values/<enumerated_value_id>', methods=['DELETE'])
+@attributes.route('/enumerated_values/disable/<enumerated_value_id>', methods=['PATCH'])
 @jwt_required
-def delete_enumerated_value(enumerated_value_id):
-    pass
+def disable_enumerated_value(enumerated_value_id):
+    enumerated_value = db.session.query(Enumerated_Value).filter_by(id=enumerated_value_id).first()
+   
+    setattr(enumerated_value, 'active', False)
+
+    db.session.commit()
+
+    return jsonify(attribute_schema.dump(attribute))
     
 
 # ---- Person_Attribute
