@@ -116,7 +116,7 @@ def delete_event(event_id):
     setattr(event, 'active', False)
     db.session.commit()
     
-    # 204 doesn't actually respond with any content
+    # 204 codes don't respond with any content
     return jsonify(event_schema.dump(event)), 204
 
 
