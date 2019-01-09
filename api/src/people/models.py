@@ -1,3 +1,6 @@
+import os
+
+from flask import json
 from marshmallow import fields, Schema, pre_load
 from marshmallow.validate import Length, Range, OneOf
 from sqlalchemy import Column, Integer, String, Date, ForeignKey, Boolean
@@ -5,6 +8,8 @@ from sqlalchemy.orm import relationship, backref
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from ..db import Base
+from src.i18n.models import i18n_create, I18NLocale
+from .. import db
 from ..places.models import Location
 from ..shared.models import StringTypes
 
@@ -97,6 +102,30 @@ class Role(Base):
 
     def __repr__(self):
         return f"<Role(id={self.id})>"
+
+    @classmethod
+    def load_from_file(cls, file_name='roles.json', locale_code='en-US'):
+        count = 0
+        file_path = os.path.abspath(os.path.join(__file__, os.path.pardir, 'data', file_name))
+
+        if not db.session.query(I18NLocale).get(locale_code):
+            db.session.add(I18NLocale(code=locale_code, desc='English US'))
+
+        with open(file_path, 'r') as fp:
+            roles = json.load(fp)
+
+            for role in roles:
+                role_id = role['id']
+                role_name = role['name']
+
+                name_i18n = f'role.{role_name}'
+                i18n_create(name_i18n, locale_code,
+                            role_name, description=f"Role {role_name}")
+
+                db.session.add(cls(id=role_id, name_i18n=name_i18n, active=True))
+                count += 1
+            db.session.commit()
+        return count
 
 
 class RoleSchema(Schema):
