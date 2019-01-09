@@ -1,12 +1,14 @@
 from datetime import datetime
 
 from flask import jsonify, request, current_app
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_raw_jwt
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_raw_jwt, get_jwt_claims
 
 from . import auth
 from .utils import jwt_not_required
 from .. import db
+from .. import jwt
 from ..people.models import Account, AccountSchema, Person, PersonSchema
+from ..roles.models import Role, RoleSchema
 
 
 @auth.route('/login', methods=['POST'])
@@ -47,6 +49,18 @@ def login():
                    firstName=person.first_name, lastName=person.last_name)
 
 
+@jwt.user_claims_loader
+def add_claims_to_access_token(identity):
+    roles = db.session.query(Role).join((Account, Role.accounts)).filter_by(
+        username=identity).filter_by(active=1).all()
+    role_schema = RoleSchema()
+    user_roles = []
+    for role in roles:
+        user_roles.append(role_schema.dump(role)['nameI18n'])
+
+    return {'roles': user_roles}
+
+
 @auth.route('/test/jwt')
 @jwt_not_required
 def get_test_jwt():
@@ -82,7 +96,8 @@ def login_test():
         account_schema = AccountSchema()
         response['account'] = account_schema.dump(account)
 
-        person = db.session.query(Person).filter_by(id=account.person_id).first()
+        person = db.session.query(Person).filter_by(
+            id=account.person_id).first()
         if person is None:
             success = False
             response['person'] = f"Can't fetch <Person(id={account.person_id})>"

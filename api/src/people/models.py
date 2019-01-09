@@ -1,12 +1,13 @@
 from marshmallow import fields, Schema, pre_load
 from marshmallow.validate import Length, Range, OneOf
-from sqlalchemy import Column, Integer, String, Date, ForeignKey, Boolean
+from sqlalchemy import Column, Integer, String, Date, ForeignKey, Boolean, Table
 from sqlalchemy.orm import relationship, backref
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from ..db import Base
 from ..places.models import Location
 from ..shared.models import StringTypes
+from ..roles.models import people_account_role
 
 
 # ---- Person
@@ -33,8 +34,10 @@ class Person(Base):
 
 class PersonSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
-    first_name = fields.String(data_key='firstName', required=True, validate=Length(min=1))
-    last_name = fields.String(data_key='lastName', required=True, validate=Length(min=1))
+    first_name = fields.String(
+        data_key='firstName', required=True, validate=Length(min=1))
+    last_name = fields.String(
+        data_key='lastName', required=True, validate=Length(min=1))
     gender = fields.String(validate=OneOf(['M', 'F']))
     birthday = fields.Date()
     phone = fields.String()
@@ -42,6 +45,7 @@ class PersonSchema(Schema):
 
 
 # ---- Account
+
 
 class Account(Base):
     __tablename__ = 'people_account'
@@ -53,6 +57,11 @@ class Account(Base):
 
     # One-to-one relationship; see https://docs.sqlalchemy.org/en/latest/orm/basic_relationships.html#one-to-one
     person = relationship("Person", backref=backref("account", uselist=False))
+
+    roles = relationship(
+        "Role",
+        secondary=people_account_role,
+        back_populates="accounts", lazy=True)
 
     def __repr__(self):
         return "<Account(id={},username='{}',person='{}:{}')>" \
@@ -80,7 +89,8 @@ class AccountSchema(Schema):
     password = fields.String(attribute='password_hash', load_only=True,
                              required=True, validate=Length(min=6))
     active = fields.Boolean()
-    person_id = fields.Integer(required=True, data_key="personId", validate=Range(min=1))
+    person_id = fields.Integer(
+        required=True, data_key="personId", validate=Range(min=1))
 
     @pre_load
     def hash_password(self, data):
