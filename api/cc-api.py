@@ -7,7 +7,7 @@ from flask.cli import AppGroup
 from src import create_app
 from src import db
 from src.i18n.models import Language, I18NLocale
-from src.people.models import Person, Account
+from src.people.models import Person, Account, Role
 from src.people.test_people import create_multiple_people, create_multiple_accounts
 from src.places.models import Country
 
@@ -43,7 +43,7 @@ def load_languages():
 
 @data_cli.command('load-roles', help='Load roles')
 def load_roles():
-    Roles.load_from_file()
+    Role.load_from_file()
 
 
 @data_cli.command('load-all', help='Load everything')
@@ -51,7 +51,7 @@ def load_languages():
     _load_locales()
     Country.load_from_file()
     Language.load_from_file()
-    Roles.load_from_file()
+    Role.load_from_file()
     create_multiple_people(db.session, 17)
     create_multiple_accounts(db.session, 0.25)
 

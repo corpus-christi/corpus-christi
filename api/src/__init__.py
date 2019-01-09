@@ -41,7 +41,5 @@ def create_app(config_name):
     from .places import places as places_blueprint
     app.register_blueprint(places_blueprint, url_prefix='/api/v1/places')
 
-    from .roles import roles as roles_blueprint
-    app.register_blueprint(roles_blueprint, url_prefix='/api/v1/roles')
 
     return app
