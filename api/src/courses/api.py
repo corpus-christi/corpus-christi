@@ -27,12 +27,20 @@ def create_course():
 @courses.route('/courses')
 @jwt_required
 def read_all_courses():
-    print('You found the courses page, good job', file=sys.stderr)
     result = db.session.query(Course).all()
     return jsonify(course_schema.dump(result, many=True))
 
-# read all active courses
-# read all inactive courses
+@courses.route()
+@jwt_require
+def read_all_active_courses():
+    result = db.session.query(Course).filter_by(active=True).all()
+    return jsonify(course_schema.dump(result, many=True))    
+
+@courses.route('/courses')
+@jwt_required
+def read_all_inactive_courses():
+    result = db.session.query(Course).filter_by(active=False).all()
+    return jsonify(course_schemadump(result, many=True))    
 
 @courses.route('/courses/<course_id>')
 @jwt_required
@@ -59,7 +67,35 @@ def update_course(course_id):
     return jsonify(course_schema.dump(course))
 
 # deactivate course
+@courses.route('/courses/<course_id>', methods=['PATCH'])
+@jwt_required
+def deactivate_course(course_id):
+    try:
+        valid_course = course_schema.load(request.json)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+
+    course = db.session.query(Course).filter_by(id=course_id).first()
+                        
+    if 'active' in request.json: #valid_course:
+        setattr(course, 'active', False)
+
+    db.session.commit()
+    return jsonify(course_schema.dump(course))
+
 # reactivate course
+@courses.route('/courses/<course_id>', methods=['PATCH'])
+@jwt_required
+def reactivate_course(course_id):
+    try:
+        valid_course = course_schema.load(request.json)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+
+    course = db.session.query(Course).filter_by(id=course_id).first()
+    
+    if "active" in request.json:
+        setattr(course, 'active', True"""request.json['active']""")
 
 
 # ---- Prerequisite
