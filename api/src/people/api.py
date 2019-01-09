@@ -14,6 +14,18 @@ from .. import db
 person_schema = PersonSchema()
 
 
+@people.route('/persons/fields', methods=['GET'])
+@jwt_required
+def read_person_fields():
+    response = {'person': [], 'person_attributes': []}
+
+    person_columns = Person.__table__.columns
+    for c in person_columns:
+        response['person'].append({c.name: c.type, 'required': not c.nullable})
+
+    return jsonify(response)
+
+
 @people.route('/persons', methods=['POST'])
 @jwt_required
 def create_person():
@@ -54,6 +66,33 @@ def update_person(person_id):
 
     for key, val in valid_person.items():
         setattr(person, key, val)
+
+    db.session.commit()
+
+    return jsonify(person_schema.dump(person))
+
+
+@people.route('/persons/deactivate/<person_id>', methods=['PUT'])
+@jwt_required
+def deactivate_person(person_id):
+    person = db.session.query(Person).filter_by(id=person_id).first()
+    account = db.session.query(Account).filter_by(id=person.account_id).first()
+
+    if account:
+        setattr(account, 'active', False)
+    setattr(person, 'active', False)
+
+    db.session.commit()
+
+    return jsonify(person_schema.dump(person))
+
+
+@people.route('/persons/activate/<person_id>', methods=['PUT'])
+@jwt_required
+def activate_person(person_id):
+    person = db.session.query(Person).filter_by(id=person_id).first()
+
+    setattr(person, 'active', True)
 
     db.session.commit()
 
@@ -122,4 +161,28 @@ def update_account(account_id):
         if field in request.json:
             setattr(account, field, request.json[field])
     db.session.commit()
+    return jsonify(account_schema.dump(account))
+
+
+@people.route('/accounts/deactivate/<account_id>', methods=['PUT'])
+@jwt_required
+def deactivate_account(account_id):
+    account = db.session.query(Account).filter_by(id=account_id).first()
+
+    setattr(account, 'active', False)
+
+    db.session.commit()
+
+    return jsonify(account_schema.dump(account))
+
+
+@people.route('/accounts/activate/<account_id>', methods=['PUT'])
+@jwt_required
+def activate_account(account_id):
+    account = db.session.query(Account).filter_by(id=account_id).first()
+
+    setattr(account, 'active', True)
+
+    db.session.commit()
+
     return jsonify(account_schema.dump(account))
