@@ -16,8 +16,8 @@ class Course(Base):
      description = Column(StringTypes.LONG_STRING, nullable=False)
      active = Column(Boolean, nullable=False, default=True)
 
-        def __repr__(self):
-            return f"<Course(id={self.id})>"
+     def __repr__(self):
+          return f"<Course(id={self.id})>"
     
 
 class CourseSchema(Schema):
@@ -33,8 +33,8 @@ class Prerequisite(Base):
      course_id = Column(Integer, ForeignKey('courses_course.id'), primary_key=True)
      prereq_id = Column(Integer, ForeignKey('courses_course.id'), primary_key=True)
 
-        def __repr__(self):
-            return f"<Prerequisite(course_id={self.course_id},prereq_id={self.prereq_id})>"
+     def __repr__(self):
+          return f"<Prerequisite(course_id={self.course_id},prereq_id={self.prereq_id})>"
     
 
 class PrerequisiteSchema(Schema):
@@ -51,8 +51,8 @@ class Course_Offering(Base):
      max_size = Column(Integer, nullable=False)
      active = Column(Boolean, nullable=False, default=True)
 
-        def __repr__(self):
-            return f"<Course_Offering(id={self.id})>"
+     def __repr__(self):
+          return f"<Course_Offering(id={self.id})>"
     
 
 class Course_OfferingSchema(Schema):

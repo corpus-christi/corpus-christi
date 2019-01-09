@@ -22,23 +22,25 @@ def create_course():
     db.session.add(new_course)
     db.session.commit()
     return jsonify(course_schema.dump(new_course)), 201
-    
+
 
 @courses.route('/courses')
 @jwt_required
 def read_all_courses():
+    print('You found the courses page, good job', file=sys.stderr)
     result = db.session.query(Course).all()
     return jsonify(course_schema.dump(result, many=True))
-    
+
 # read all active courses
 # read all inactive courses
 
 @courses.route('/courses/<course_id>')
 @jwt_required
 def read_one_course(course_id):
+    print('You found the page for course id %d. Congrats' % course_id)
     result = db.session.query(Course).filter_by(id=course_id).first()
     return jsonify(course_schema.dump(result))
-    
+
 
 @courses.route('/courses/<course_id>', methods=['PATCH'])
 @jwt_required
@@ -58,7 +60,7 @@ def update_course(course_id):
 
 # deactivate course
 # reactivate course
-    
+
 
 # ---- Prerequisite
 
@@ -76,14 +78,14 @@ def create_prerequisite():
     db.session.add(new_prerequisite)
     db.session.commit()
     return jsonify(prerequisite_schema.dump(new_prerequisite)), 201
-    
+
 
 @courses.route('/prerequisites')
 @jwt_required
 def read_all_prerequisites():
     result = db.session.query(Prerequisite).all()
     return jsonify(prerequisite_schema.dump(result, many=True))
-    
+
 # read all courses with prereq (?)
 
 @courses.route('/prerequisites/<prerequisite_id>', methods=['PATCH'])
@@ -101,7 +103,7 @@ def update_prerequisite(prerequisite_id):
 
     db.session.commit()
     return jsonify(prerequisite_schema.dump(prerequisite))
-    
+
 
 # ---- Course_Offering
 
@@ -119,7 +121,7 @@ def create_course_offering():
     db.session.add(new_course_offering)
     db.session.commit()
     return jsonify(course_offering_schema.dump(new_course_offering)), 201
-    
+
 
 @courses.route('/course_offerings')
 @jwt_required
@@ -128,14 +130,14 @@ def read_all_course_offerings():
     return jsonify(course_offering_schema.dump(result, many=True))
 
 # read all active course offerings
-# read all inactive course offerings  
+# read all inactive course offerings
 
 @courses.route('/course_offerings/<course_offering_id>')
 @jwt_required
 def read_one_course_offering(course_offering_id):
     result = db.session.query(Course_Offering).filter_by(id=course_offering_id).first()
     return jsonify(course_offering_schema.dump(result))
-    
+
 
 @courses.route('/course_offerings/<course_offering_id>', methods=['PATCH'])
 @jwt_required
