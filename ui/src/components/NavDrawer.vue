@@ -44,6 +44,11 @@ export default {
           title: this.$t("groups.title"),
           route: "groups",
           icon: "group"
+        },
+        {
+          title: this.$t("events.title"),
+          route: "events",
+          icon: "event"
         }
       ];
     }

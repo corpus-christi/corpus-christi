@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-toolbar>
-      <v-toolbar-title>Event Table</v-toolbar-title>
+      <v-toolbar-title>{{ $t("events.title") }}</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-text-field
         v-model="search"
@@ -42,6 +42,7 @@
 
 <script>
 import EventForm from "./EventForm";
+import { mapGetters } from "vuex";
 
 export default {
   name: "EventTable",
@@ -71,7 +72,8 @@ export default {
         { text: "Location", value: "location_name" },
         { text: "Actions", sortable: false }
       ];
-    }
+    },
+    ...mapGetters(["currentLanguageCode"])
   },
   methods: {
     activateEventDialog(event = {}, editMode = false) {
@@ -99,10 +101,13 @@ export default {
 
     getDisplayDate(dateString) {
       let date = new Date(dateString);
-      return date.toLocaleString();
-      // let n = date.toDateString();
-      // let time = date.toLocaleTimeString();
-      // return `${n}, ${time}`;
+      return date.toLocaleTimeString(this.currentLanguageCode, {
+          year:'numeric',
+          month:'numeric',
+          day:'numeric',
+          hour: '2-digit',
+          minute:'2-digit'
+      });
     }
   }
 };

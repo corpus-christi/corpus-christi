@@ -1,6 +1,5 @@
 <template>
   <v-container>
-    <h1>Events</h1>
     <event-table></event-table>
   </v-container>
 </template>
