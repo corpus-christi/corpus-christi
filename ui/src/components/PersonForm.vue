@@ -11,6 +11,7 @@
           name="firstName"
           v-validate="'required'"
           v-bind:error-messages="errors.collect('firstName')"
+          :readonly="formDisabled"
         ></v-text-field>
 
         <v-text-field
@@ -19,9 +20,10 @@
           name="lastName"
           v-validate="'required'"
           v-bind:error-messages="errors.collect('lastName')"
+          :readonly="formDisabled"
         ></v-text-field>
 
-        <v-radio-group v-model="person.gender" row>
+        <v-radio-group v-model="person.gender" :readonly="formDisabled" row>
           <v-radio v-bind:label="$t('person.male')" value="M"></v-radio>
           <v-radio v-bind:label="$t('person.female')" value="F"></v-radio>
         </v-radio-group>
@@ -35,6 +37,7 @@
           offset-y
           full-width
           min-width="290px"
+          :disabled="formDisabled"
         >
           <v-text-field
             slot="activator"
@@ -58,29 +61,45 @@
           v-validate="'email'"
           v-bind:error-messages="errors.collect('email')"
           prepend-icon="email"
+          :readonly="formDisabled"
         ></v-text-field>
 
         <v-text-field
           v-model="person.phone"
           v-bind:label="$t('person.phone')"
           prepend-icon="phone"
+          :readonly="formDisabled"
         ></v-text-field>
       </form>
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn color="primary" flat v-on:click="cancel">{{
-        $t("actions.cancel")
-      }}</v-btn>
-      <v-btn color="primary" flat v-on:click="clear">{{
+      <v-btn
+        color="primary"
+        flat
+        v-on:click="cancel"
+        :disabled="formDisabled"
+        >{{ $t("actions.cancel") }}</v-btn
+      >
+      <v-btn color="primary" flat v-on:click="clear" :disabled="formDisabled">{{
         $t("actions.clear")
       }}</v-btn>
-      <v-btn color="primary" flat v-on:click="save">{{
-        $t("actions.save")
-      }}</v-btn>
-      <v-btn color="primary" flat v-on:click="add_another">{{
-        $t("actions.addanother")
-      }}</v-btn>
+      <v-btn
+        color="primary"
+        flat
+        v-on:click="save"
+        :loading="save_loading"
+        :disabled="formDisabled"
+        >{{ $t("actions.save") }}</v-btn
+      >
+      <v-btn
+        color="primary"
+        flat
+        v-on:click="add_another"
+        :loading="add_more_loading"
+        :disabled="formDisabled"
+        >{{ $t("actions.addanother") }}</v-btn
+      >
     </v-card-actions>
   </v-card>
 </template>
@@ -103,6 +122,8 @@ export default {
   },
   data: function() {
     return {
+      save_loading: false,
+      add_more_loading: false,
       showBirthdayPicker: false,
 
       person: {
@@ -127,7 +148,11 @@ export default {
         : this.$t("person.actions.new");
     },
 
-    ...mapGetters(["currentLanguageCode"])
+    ...mapGetters(["currentLanguageCode"]),
+
+    formDisabled() {
+      return this.save_loading || this.add_more_loading;
+    }
   },
 
   watch: {
@@ -158,17 +183,23 @@ export default {
 
     // Trigger a save event, returning the update `Person`.
     save() {
-      this.$validator.validateAll();
-      if (!this.errors.any()) {
-        this.$emit("save", this.person);
-      }
+      this.save_loading = true;
+      this.$validator.validateAll().then(() => {
+        if (!this.errors.any()) {
+          this.$emit("save", this.person);
+        }
+        this.save_loading = false;
+      });
     },
 
     add_another() {
-      this.$validator.validateAll();
-      if (!this.errors.any()) {
-        this.$emit("add-another", this.person);
-      }
+      this.add_more_loading = true;
+      this.$validator.validateAll().then(() => {
+        if (!this.errors.any()) {
+          this.$emit("add-another", this.person);
+        }
+        this.add_more_loading = false;
+      });
     }
   }
 };
