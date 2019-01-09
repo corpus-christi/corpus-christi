@@ -208,30 +208,22 @@ export default {
     // Trigger a save event, returning the update `Person`.
     save() {
       this.save_loading = true;
-      setTimeout(
-        () =>
-          this.$validator.validateAll().then(() => {
-            if (!this.errors.any()) {
-              this.$emit("save", this.person);
-            }
-            this.save_loading = false;
-          }),
-        1000
-      );
+      this.$validator.validateAll().then(() => {
+        if (!this.errors.any()) {
+          this.$emit("save", this.person);
+        }
+        this.save_loading = false;
+      });
     },
 
     add_another() {
       this.add_more_loading = true;
-      setTimeout(
-        () =>
-          this.$validator.validateAll().then(() => {
-            if (!this.errors.any()) {
-              this.$emit("add-another", this.person);
-            }
-            this.add_more_loading = false;
-          }),
-        1000
-      );
+      this.$validator.validateAll().then(() => {
+        if (!this.errors.any()) {
+          this.$emit("add-another", this.person);
+        }
+        this.add_more_loading = false;
+      });
     }
   }
 };
