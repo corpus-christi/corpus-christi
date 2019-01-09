@@ -10,8 +10,8 @@
       "username": "Username"
     },
     "actions": {
-      "addanother": "Add Another",
-      "addperson": "Add Person",
+      "add-another": "Add Another",
+      "add-person": "Add Person",
       "cancel": "Cancel",
       "clear": "Clear",
       "close": "Close",
@@ -26,7 +26,7 @@
         "deactivate": "Deactivate",
         "settings": "Settings"
       },
-      "viewinactive": "View Inactive"
+      "view-inactive": "View Inactive"
     },
     "groups": {
       "title": "Home Churches"
@@ -52,7 +52,12 @@
       "gender": "Gender",
       "male": "Male",
       "messages": {
-        "canceled": "Canceled add new person"
+        "canceled": "Canceled add new person",
+        "person-activate": "Person activated",
+        "person-add": "New person added",
+        "person-deactivate": "Person deactivated",
+        "person-edit": "Person edited",
+        "person-save-error": "Person was not saved"
       },
       "name": {
         "first": "First Name",
@@ -84,8 +89,8 @@
       "username": "Nombre de usuario"
     },
     "actions": {
-      "addanother": "A\u00f1adir Otro",
-      "addperson": "A\u00f1adir Persona",
+      "add-another": "A\u00f1adir Otro",
+      "add-person": "A\u00f1adir Persona",
       "cancel": "Cancelar",
       "clear": "Despejar",
       "close": "Cerrar",
@@ -100,7 +105,7 @@
         "deactivate": "Desactivar",
         "settings": "Ajustes"
       },
-      "viewinactive": "Ver Inactivo"
+      "view-inactive": "Ver Inactivo"
     },
     "groups": {
       "title": "Iglesias Hogar"
@@ -126,7 +131,12 @@
       "gender": "G\u00e9nero",
       "male": "Hombre",
       "messages": {
-        "canceled": "Cancelado a\u00f1adir nueva persona"
+        "canceled": "Cancelado a\u00f1adir nueva persona",
+        "person-activate": "Persona activada",
+        "person-add": "Nueva persona agregada",
+        "person-deactivate": "Persona desactivada",
+        "person-edit": "Persona editada",
+        "person-save-error": "La persona no fue salvada"
       },
       "name": {
         "first": "Nombre de pila",

@@ -3,11 +3,11 @@ actions:
     _desc: Header for a table, etc.
     en: Actions
     es: Comportamiento
-  addanother:
+  add-another:
     _desc: Save a newly created item; clear data (e.g., on a form)
     en: Add Another
     es: Añadir Otro
-  addperson:
+  add-person:
     _desc: Add a person to the database
     en: Add Person
     es: Añadir Persona
@@ -44,7 +44,7 @@ actions:
     _desc: Search for something
     en: Search
     es: Buscar
-  viewinactive:
+  view-inactive:
     _desc: View all inactive people
     en: View Inactive
     es: Ver Inactivo

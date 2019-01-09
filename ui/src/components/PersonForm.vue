@@ -110,16 +110,16 @@
         outline
         v-on:click="add_another"
         v-if="editMode === false"
-        :loading="add_more_loading"
+        :loading="addMoreLoading"
         :disabled="formDisabled"
         data-cy=""
-        >{{ $t("actions.addanother") }}</v-btn
+        >{{ $t("actions.add-another") }}</v-btn
       >
       <v-btn
         color="primary"
         raised
         v-on:click="save"
-        :loading="save_loading"
+        :loading="saveLoading"
         :disabled="formDisabled"
         data-cy=""
         >{{ $t("actions.save") }}</v-btn
@@ -142,12 +142,18 @@ export default {
     initialData: {
       type: Object,
       required: true
+    },
+    addMoreLoading: {
+      type: Boolean,
+      required: true
+    },
+    saveLoading: {
+      type: Boolean,
+      required: true
     }
   },
   data: function() {
     return {
-      save_loading: false,
-      add_more_loading: false,
       showBirthdayPicker: false,
 
       person: {
@@ -175,7 +181,7 @@ export default {
     ...mapGetters(["currentLanguageCode"]),
 
     formDisabled() {
-      return this.save_loading || this.add_more_loading;
+      return this.saveLoading || this.addMoreLoading;
     }
   },
 
@@ -207,22 +213,18 @@ export default {
 
     // Trigger a save event, returning the update `Person`.
     save() {
-      this.save_loading = true;
       this.$validator.validateAll().then(() => {
         if (!this.errors.any()) {
           this.$emit("save", this.person);
         }
-        this.save_loading = false;
       });
     },
 
     add_another() {
-      this.add_more_loading = true;
       this.$validator.validateAll().then(() => {
         if (!this.errors.any()) {
           this.$emit("add-another", this.person);
         }
-        this.add_more_loading = false;
       });
     }
   }
