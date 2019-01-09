@@ -12,6 +12,7 @@ venv/
 node_modules/
 yarn-error.log
 videos/
+screenshots/
 
 # Other
 .idea/
