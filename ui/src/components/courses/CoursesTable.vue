@@ -46,7 +46,7 @@
         </td>
       </template>
     </v-data-table>
-
+ 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
       <v-btn flat @click="snackbar.show = false">
@@ -63,17 +63,6 @@
         v-on:save="saveCourse"
       />
     </v-dialog>
-
-    <!-- Person admin dialog -->
-    <!-- <v-dialog v-model="adminDialog.show" max-width="500px">
-      <PersonAdminForm
-        v-bind:person="adminDialog.person"
-        v-bind:account="adminDialog.account"
-        v-on:addAccount="addAccount"
-        v-on:updateAccount="updateAccount"
-        v-on:close="closeAdmin"
-      />
-    </v-dialog> -->
   </div>
 </template>
 
@@ -103,11 +92,6 @@ export default {
       selected: [],
       courses: [],
       search: "",
-      
-      courses: [
-        { title: "New Testament", description: "study of the new Testament", enrolled: 10 }, 
-        { title: "Old Testament", description: "study of the old Testament", enrolled: 2 }
-      ]
     };
   },
   computed: {
@@ -184,7 +168,7 @@ export default {
   mounted: function() {
     // this.$http
     //   .get("/api/v1/people/persons")
-    //   .then(resp => (this.people = resp.data));
+    //   .then(resp => (this.courses = resp.data));
   }
 };
 </script>

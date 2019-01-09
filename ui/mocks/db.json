@@ -1,5 +1,8 @@
 {
   "course": [
-    { "id": 1, "title": "Intro to New Testament", "decscription": "typicode", "enrolled": 0 }
+    { "id": 1, "title": "Intro to New Testament", "decscription": "typicode", "active": true },
+    { "id": 2, "title": "Intro to Old Testament", "decscription": "typicode", "active": true },
+    { "id": 3, "title": "New Testament", "decscription": "typicode", "active": true },
+    { "id": 4, "title": "Old Testament", "decscription": "typicode", "active": true }
   ]
 }

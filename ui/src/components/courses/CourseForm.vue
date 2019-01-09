@@ -19,7 +19,7 @@
           name="description"
         ></v-text-field>
         <!-- translate prereq -->
-        <v-combobox v-model="prereqs" :items="items" label="Prerequisites" chips clearable solo multiple>
+        <v-combobox v-model="prereqs" :items="items" v-bind:label="$t('courses.prerequisites')" chips clearable solo multiple>
           <template slot="selection" slot-scope="data">
             <v-chip :selected="data.selected" close @input="remove(data.item)">
               <strong>{{ data.item }}</strong>&nbsp;
