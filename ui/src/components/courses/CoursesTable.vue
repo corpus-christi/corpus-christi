@@ -37,7 +37,6 @@
       <template slot="items" slot-scope="props">
         <td>{{ props.item.title }}</td>
         <td>{{ props.item.description }}</td>
-        <td>{{ props.item.enrolled }}</td>
         <td>
           <CourseAdminActions
             v-bind:course="props.item"
@@ -90,7 +89,7 @@ export default {
       },
 
       selected: [],
-      courses: [],
+      courses: [{title: "test", description: "test"}],
       search: "",
     };
   },
@@ -98,9 +97,9 @@ export default {
     // Put here so that the headers are reactive.
     headers() {
       return [
-        { text: this.$t("courses.title"), value: "title", width: "20%" },
-        { text: this.$t("courses.description"), value: "description", width: "20%" },
-        { text: this.$t("courses.enrolled"), value: "enrolled", width: "15%" }
+        { text: this.$t("courses.title"), value: "title", width: "40%" },
+        { text: this.$t("courses.description"), value: "description", width: "60%" },
+        { text: this.$t("actions.header"), sortable: false }
       ];
     }
   },
