@@ -12,6 +12,7 @@
           v-validate="'required'"
           v-bind:error-messages="errors.collect('firstName')"
           :readonly="formDisabled"
+          data-cy=""
         ></v-text-field>
 
         <v-text-field
@@ -21,11 +22,25 @@
           v-validate="'required'"
           v-bind:error-messages="errors.collect('lastName')"
           :readonly="formDisabled"
+          data-cy=""
         ></v-text-field>
 
-        <v-radio-group v-model="person.gender" :readonly="formDisabled" row>
-          <v-radio v-bind:label="$t('person.male')" value="M"></v-radio>
-          <v-radio v-bind:label="$t('person.female')" value="F"></v-radio>
+        <v-radio-group
+          v-model="person.gender"
+          :readonly="formDisabled"
+          data-cy=""
+          row
+        >
+          <v-radio
+            v-bind:label="$t('person.male')"
+            value="M"
+            data-cy=""
+          ></v-radio>
+          <v-radio
+            v-bind:label="$t('person.female')"
+            value="F"
+            data-cy=""
+          ></v-radio>
         </v-radio-group>
 
         <v-menu
@@ -38,6 +53,7 @@
           full-width
           min-width="290px"
           :disabled="formDisabled"
+          data-cy=""
         >
           <v-text-field
             slot="activator"
@@ -45,12 +61,14 @@
             v-bind:label="$t('person.date.birthday')"
             prepend-icon="event"
             readonly
+            data-cy=""
           ></v-text-field>
 
           <v-date-picker
             v-bind:locale="currentLanguageCode"
             v-model="person.birthday"
             @input="showBirthdayPicker = false"
+            data-cy=""
           ></v-date-picker>
         </v-menu>
 
@@ -62,6 +80,7 @@
           v-bind:error-messages="errors.collect('email')"
           prepend-icon="email"
           :readonly="formDisabled"
+          data-cy=""
         ></v-text-field>
 
         <v-text-field
@@ -69,6 +88,7 @@
           v-bind:label="$t('person.phone')"
           prepend-icon="phone"
           :readonly="formDisabled"
+          data-cy=""
         ></v-text-field>
       </form>
     </v-card-text>
@@ -79,6 +99,7 @@
         flat
         v-on:click="cancel"
         :disabled="formDisabled"
+        data-cy=""
         >{{ $t("actions.cancel") }}</v-btn
       >
       <v-btn color="primary" flat v-on:click="clear" :disabled="formDisabled">{{
@@ -90,6 +111,7 @@
         v-on:click="save"
         :loading="save_loading"
         :disabled="formDisabled"
+        data-cy=""
         >{{ $t("actions.save") }}</v-btn
       >
       <v-btn
@@ -98,6 +120,7 @@
         v-on:click="add_another"
         :loading="add_more_loading"
         :disabled="formDisabled"
+        data-cy=""
         >{{ $t("actions.addanother") }}</v-btn
       >
     </v-card-actions>

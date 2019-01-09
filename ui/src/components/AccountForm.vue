@@ -18,6 +18,7 @@
         v-validate="'alpha_dash|min:6'"
         v-bind:error-messages="errors.collect('username')"
         prepend-icon="person"
+        data-cy=""
       ></v-text-field>
 
       <!-- Password (new or update) -->
@@ -30,6 +31,7 @@
         v-validate="'min:8'"
         v-bind:error-messages="errors.collect('password')"
         prepend-icon="lock"
+        data-cy=""
       ></v-text-field>
       <!-- Password confirmation (new or update) -->
       <v-text-field
@@ -40,15 +42,16 @@
         v-validate="'confirmed:pwdField'"
         v-bind:error-messages="errors.collect('repeat-password')"
         prepend-icon="lock"
+        data-cy=""
       ></v-text-field>
     </v-card-text>
 
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn color="primary" flat v-on:click="confirm">
+      <v-btn color="primary" flat v-on:click="confirm" data-cy="">
         {{ $t("actions.confirm") }}
       </v-btn>
-      <v-btn color="primary" flat v-on:click="close">
+      <v-btn color="primary" flat v-on:click="close" data-cy="">
         {{ $t("actions.cancel") }}
       </v-btn>
     </v-card-actions>

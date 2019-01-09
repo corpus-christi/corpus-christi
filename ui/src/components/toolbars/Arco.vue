@@ -6,7 +6,7 @@
 
     <v-spacer></v-spacer>
 
-    <v-btn flat icon color="white" v-bind:to="destination">
+    <v-btn flat icon color="white" v-bind:to="destination" data-cy="">
       <v-icon>account_circle</v-icon>
     </v-btn>
 
