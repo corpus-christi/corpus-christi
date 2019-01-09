@@ -18,6 +18,14 @@
           v-bind:label="$t('courses.description')"
           name="description"
         ></v-text-field>
+        <!-- translate prereq -->
+        <v-combobox v-model="prereqs" :items="items" label="Prerequisites" chips clearable solo multiple>
+          <template slot="selection" slot-scope="data">
+            <v-chip :selected="data.selected" close @input="remove(data.item)">
+              <strong>{{ data.item }}</strong>&nbsp;
+            </v-chip>
+          </template>
+        </v-combobox>
       </form>
     </v-card-text>
     <v-card-actions>
@@ -56,7 +64,9 @@ export default {
       course: {
         title: "",
         description: ""
-      }
+      },
+      items: ["Bible 101", "Bib Lit 10"],
+      prereqs: []
     };
   },
   computed: {
@@ -106,6 +116,11 @@ export default {
       if (!this.errors.any()) {
         this.$emit("save", this.course);
       }
+    },
+
+    remove(item) {
+      this.prereqs.splice(this.prereqs.indexOf(item), 1);
+      this.prereqs = [...this.prereqs];
     }
   }
 };
