@@ -1,0 +1,204 @@
+<template>
+  <div>
+    <!-- Header -->
+    <v-toolbar>
+      <v-toolbar-title> {{ $t("courses.course") }}</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-text-field
+        v-model="search"
+        append-icon="search"
+        v-bind:label="$t('actions.search')"
+        single-line
+        hide-details
+      ></v-text-field>
+      <v-spacer></v-spacer>
+
+      <v-btn
+        small
+        fab
+        color="primary"
+        absolute
+        dark
+        bottom
+        right
+        v-on:click.stop="newCourse"
+      >
+        <v-icon>add</v-icon>
+      </v-btn>
+    </v-toolbar>
+
+    <!-- Table of existing people -->
+    <v-data-table
+      :headers="headers"
+      :items="courses"
+      :search="search"
+      class="elevation-1"
+    >
+      <template slot="items" slot-scope="props">
+        <td>{{ props.item.title }}</td>
+        <td>{{ props.item.description }}</td>
+        <td>{{ props.item.enrolled }}</td>
+        <!-- <td> -->
+          <!-- <v-tooltip bottom>
+            <v-icon
+              small
+              slot="activator"
+              v-on:click="editPerson(props.item)"
+              class="mr-3"
+            >
+              edit
+            </v-icon>
+            <span>{{ $t("actions.edit") }}</span>
+          </v-tooltip>
+          <v-tooltip bottom>
+            <v-icon
+              small
+              slot="activator"
+              v-on:click="adminPerson(props.item)"
+              class="mr-3"
+            >
+              settings
+            </v-icon>
+            <span>{{ $t("actions.tooltips.settings") }}</span>
+          </v-tooltip>
+          <v-tooltip bottom>
+            <v-icon
+              small
+              slot="activator"
+              v-on:click="deletePerson(props.item)"
+              class="mr-3"
+            >
+              delete
+            </v-icon>
+            <span>{{ $t("actions.tooltips.deactivate") }}</span>
+          </v-tooltip> -->
+        <!-- </td> -->
+      </template>
+    </v-data-table>
+
+    <v-snackbar v-model="snackbar.show">
+      {{ snackbar.text }}
+      <v-btn flat @click="snackbar.show = false">
+        {{ $t("actions.close") }}
+      </v-btn>
+    </v-snackbar>
+
+    <!-- New/Edit dialog -->
+    <v-dialog v-model="courseDialog.show" max-width="500px">
+      <CourseForm
+        v-bind:editMode="courseDialog.editMode"
+        v-bind:initialData="courseDialog.course"
+        v-on:cancel="cancelCourse"
+        v-on:save="saveCourse"
+      />
+    </v-dialog>
+
+    <!-- Person admin dialog -->
+    <!-- <v-dialog v-model="adminDialog.show" max-width="500px">
+      <PersonAdminForm
+        v-bind:person="adminDialog.person"
+        v-bind:account="adminDialog.account"
+        v-on:addAccount="addAccount"
+        v-on:updateAccount="updateAccount"
+        v-on:close="closeAdmin"
+      />
+    </v-dialog> -->
+  </div>
+</template>
+
+<script>
+import CourseForm from "./CourseForm";
+
+export default {
+  name: "CoursesTable",
+  components: { CourseForm },
+  data() {
+    return {
+      courseDialog: {
+        show: false,
+        editMode: false,
+        course: {}
+      },
+
+      snackbar: {
+        show: false,
+        text: ""
+      },
+
+      selected: [],
+      courses: [],
+      search: "",
+      
+      courses: [
+        { title: "New Testament", description: "study of the new Testament", enrolled: 10 }, 
+        { title: "Old Testament", description: "study of the old Testament", enrolled: 2 }
+      ]
+    };
+  },
+  computed: {
+    // Put here so that the headers are reactive.
+    headers() {
+      return [
+        { text: this.$t("courses.title"), value: "title", width: "20%" },
+        { text: this.$t("courses.description"), value: "description", width: "20%" },
+        { text: this.$t("courses.enrolled"), value: "enrolled", width: "15%" }
+      ];
+    }
+  },
+  methods: {
+    // ---- Person Administration
+
+    activateCourseDialog(course = {}, editMode = false) {
+      this.courseDialog.editMode = editMode;
+      this.courseDialog.course = course;
+      this.courseDialog.show = true;
+    },
+
+    editCourse(course) {
+      this.activateCourseDialog({ ...course }, true);
+    },
+
+    newCourse() {
+      this.activateCourseDialog();
+    },
+
+    cancelCourse() {
+      this.courseDialog.show = false;
+    },
+
+    saveCourse(course) {
+      if (this.courseDialog.editMode) {
+        // Hang on to the ID of the person being updated.
+        const course_id = course.id;
+        // Locate the person we're updating in the table.
+        const idx = this.courses.findIndex(c => c.id === course.id);
+        // Get rid of the ID; not for consumption by endpoint.
+        delete course.id;
+
+      //   this.$http
+      //     .put(`/api/v1/people/persons/${person_id}`, person)
+      //     .then(resp => {
+      //       console.log("EDITED", resp);
+      //       Object.assign(this.people[idx], person);
+      //     })
+      //     .catch(err => console.error("FALURE", err.response));
+      // } else {
+      //   this.$http
+      //     .post("/api/v1/people/persons", person)
+      //     .then(resp => {
+      //       console.log("ADDED", resp);
+      //       this.people.push(resp.data);
+      //     })
+      //     .catch(err => console.error("FAILURE", err.response));
+      }
+      this.courseDialog.show = false;
+    }
+  },
+
+  mounted: function() {
+    // this.$http
+    //   .get("/api/v1/people/persons")
+    //   .then(resp => (this.people = resp.data));
+  }
+};
+</script>

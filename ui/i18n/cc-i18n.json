@@ -26,8 +26,11 @@
       }
     },
     "courses": {
+      "course": "Courses",
+      "description": "Description",
       "enrolled": "Number Enrolled",
-      "title": "Courses"
+      "new": "New Course",
+      "title": "Title"
     },
     "groups": {
       "title": "Home Churches"
@@ -101,8 +104,11 @@
       }
     },
     "courses": {
+      "course": "Cursos",
+      "description": "Descripci\u00f3n",
       "enrolled": "N\u00famero Registrado",
-      "title": "Cursos"
+      "new": "Nuevo Curso",
+      "title": "T\u00edtulo"
     },
     "groups": {
       "title": "Iglesias Hogar"

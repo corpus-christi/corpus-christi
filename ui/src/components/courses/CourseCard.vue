@@ -12,7 +12,7 @@
             <v-card-text>{{$t("courses.enrolled")}}: {{course.enrolled}}</v-card-text>
               <v-card-actions>
                 <v-layout align-center justify-end>
-                  <v-btn flat>{{$t("actions.edit")}}</v-btn>
+                  <v-btn flat @click="showForm">{{$t("actions.edit")}}</v-btn>
                 </v-layout>
               </v-card-actions>
           </v-card>
@@ -33,6 +33,11 @@ export default {
   // },
   props: [
     'course'
-  ]
+  ],
+  methods: {
+    showForm() {
+      
+    }
+  }
 };
 </script>
