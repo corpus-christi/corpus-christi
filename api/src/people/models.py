@@ -20,15 +20,12 @@ class Person(Base):
     birthday = Column(Date)
     phone = Column(StringTypes.MEDIUM_STRING)
     email = Column(StringTypes.MEDIUM_STRING)
+    active = Column(Boolean, nullable=False, default=True)
     location_id = Column(Integer, ForeignKey('places_location.id'))
-
-    address = relationship(Location, backref='people', lazy=True)
+    address = relationship('Location', backref='people', lazy=True)
 
     def __repr__(self):
-        return f"<Person(id={self.id},name='{self.first_name} {self.last_name}')>"
-
-    def full_name(self):
-        return f"{self.first_name} {self.last_name}"
+        return f"<Person(id={self.id})>"
 
 
 class PersonSchema(Schema):
@@ -39,7 +36,8 @@ class PersonSchema(Schema):
     birthday = fields.Date()
     phone = fields.String()
     email = fields.String()
-
+    active = fields.Boolean(required=True)
+    location_id = fields.Integer(data_key='locationId')
 
 # ---- Account
 
@@ -87,3 +85,37 @@ class AccountSchema(Schema):
         """Make sure the password is properly hashed when creating a new account."""
         data['password'] = generate_password_hash(data['password'])
         return data
+
+
+# ---- Role
+
+class Role(Base):
+    __tablename__ = 'people_role'
+    id = Column(Integer, primary_key=True)
+    name_i18n = Column(StringTypes.LOCALE_CODE)
+    active = Column(Boolean)
+
+    def __repr__(self):
+        return f"<Role(id={self.id})>"
+
+
+class RoleSchema(Schema):
+    id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
+    name_i18n = fields.String(data_key='nameI18n')
+    active = fields.Boolean()
+
+
+# ---- AccountRole
+
+class AccountRole(Base):
+    __tablename__ = 'people_account_role'
+    account_id = Column(Integer, ForeignKey('people_account.id'), primary_key=True)
+    role_id = Column(Integer, ForeignKey('people_role.id'), primary_key=True)
+
+    def __repr__(self):
+        return f"<AccountRole(account_id={self.account_id},role_id={self.role_id})>"
+
+
+class AccountRoleSchema(Schema):
+    account_id = fields.Integer(dump_only=True, data_key='accountId', required=True, validate=Range(min=1))
+    role_id = fields.Integer(dump_only=True, data_key='roleId', required=True, validate=Range(min=1))

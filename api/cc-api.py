@@ -41,12 +41,17 @@ def load_countries():
 def load_languages():
     Language.load_from_file()
 
+@data_cli.command('load-roles', help='Load roles')
+def load_roles():
+    Roles.load_from_file()
+
 
 @data_cli.command('load-all', help='Load everything')
 def load_languages():
     _load_locales()
     Country.load_from_file()
     Language.load_from_file()
+    Roles.load_from_file()
     create_multiple_people(db.session, 17)
     create_multiple_accounts(db.session, 0.25)
 
