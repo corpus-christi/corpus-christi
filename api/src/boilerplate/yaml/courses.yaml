@@ -38,15 +38,97 @@ entities:
         type: integer
         primary-key: true
         foreign-key: courses_course.id
-  # - name: Diploma_Course
-  # - name: Diploma
-  # - name: Diploma_Awarded
-  # - name: Student
-  # - name: Course_Offering
+  - name: Diploma_Course
+    singular: diploma_course
+    plural: diploma_courses
+    uri: /diploma_courses
+    table: courses_diploma_course
+    attributes:
+      - name: course_id
+        type: integer
+        primary-key: true
+        foreign-key: courses_course.id
+      - name: diploma_id
+        type: integer
+        primary-key: true
+        foreign-key: courses_diploma.id
+  - name: Diploma
+    singular: diploma
+    plural: diplomas
+    uri: /diplomas
+    table: courses_diploma
+    attributes:
+      - name: id
+        type: integer
+        primary-key: true
+        min: 1
+      - name: name
+        type: string
+        min-length: 1
+        length: medium
+        required: true
+      - name: description
+        type: string
+        min-length: 1
+        length: long
+        required: true
+      - name: active
+        type: boolean
+        required: true
+        default: true
+  - name: Diploma_Awarded
+    singular: diploma_awarded
+    plural: diplomas_awarded
+    uri: /diplomas_awarded
+    table: courses_diploma_awarded
+    attributes:
+      - name: student_id
+        type: integer
+        primary-key: true
+        foreign-key: courses_student.id
+        min: 1
+      - name: diploma_id
+        type: integer
+        primary-key: true
+        foreign-key: courses_diploma.id
+        min: 1
+      - name: when
+        type: date
+        required: true
+  - name: Student
+    singular: student
+    plural: students
+    uri: /students
+    table: courses_students
+    attributes:
+      - name: id
+        type: integer
+        primary-key: true
+        min: 1
+      - name: offering_id
+        type: integer
+        foreign-key: courses_course_offering.id
+        required: true
+      - name: student_id
+        type: integer
+        foreign-key: people_person.id
+        required: true
+      - name: confirmed
+        type: boolean
+        required: true
+        default: false
+    relationships:
+      - name: course_offering
+        related-model: Course_Offering
+        backref: offerings
+      - name: person
+        related-model: Person
+        backref: students
+  - name: Course_Offering
     singular: course_offering
     plural: course_offerings
     uri: /course_offerings
-    table: courses_offering
+    table: courses_course_offering
     attributes:
       - name: id
         type: integer
@@ -68,26 +150,56 @@ entities:
         type: boolean
         required: true
         default: true
-  # - name: Class_Attendance
-  #   singular: courses_class_attendance
-  #   plural: courses_class_attendances
-  #   uri: /courses_class_attendances
-  #   table: courses_class_attendance
-  #   attributes:
-  #     - name: class_id
-  #       type: integer
-  #       primary-key: true
-  #       foreign-key: courses_class_meeting.id
-  #       required: true
-  #     - name: student_id
-  #       type: integer
-  #       primary-key: true
-  #       foreign-key: courses_student.id
-  #       required: true
-  # - name: Class_Meeting
-  #   singular: courses_class_meeting
-  #   plural: courses_class_meetings
-  #   uri: /courses_class_meetings
-  #   table: courses_class_meeting
-  #   attributes:
-  #     - name:
+    relationships:
+      - name: course
+        related-model: Course
+        backref: courses_offered
+  - name: Class_Attendance
+    singular: class_attendance
+    plural: class_attendance
+    uri: /class_attendance
+    table: courses_class_attendance
+    attributes:
+      - name: class_id
+        type: integer
+        primary-key: true
+        foreign-key: courses_class_meeting.id
+      - name: student_id
+        type: integer
+        primary-key: true
+        foreign-key: courses_student.id
+  - name: Class_Meeting
+    singular: class_meeting
+    plural: class_meetings
+    uri: /class_meetings
+    table: courses_class_meeting
+    attributes:
+      - name: id
+        type: integer
+        primary-key: true
+        min: 1
+      - name: offering_id
+        type: integer
+        required: true
+        foreign-key: courses_course_offering.id
+      - name: location
+        type: integer
+        required: true
+        foreign-key: places_location.id
+      - name: teacher
+        type: integer
+        required: true
+        foreign-key: people_person.id
+      - name: when
+        type: datetime
+        required: true
+    relationships:
+      - name: course_offering
+        related-model: Course_Offering
+        backref: class_meeting
+      - name: location
+        related-model: Location
+        backref: meeting_location
+      - name: person
+        related-model: Person
+        backref: teacher
