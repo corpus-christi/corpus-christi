@@ -14,6 +14,16 @@ from .. import db
 person_schema = PersonSchema()
 
 
+@people.route('/persons/fields', methods=['GET'])
+@jwt_required
+def read_person_fields():
+    columns = Person.__table__.columns
+    response = {'person': []}
+    for c in columns:
+        response['person'].append({c.name: c.type, 'required': not c.nullable})
+    return jsonify(response)
+
+
 @people.route('/persons', methods=['POST'])
 @jwt_required
 def create_person():
