@@ -1,0 +1,32 @@
+events:
+  title:
+    en: Events
+    es: Eventos
+  event-description:
+    en: Event Description
+    es: Descripción del Evento
+  start-date:
+    en: Start Date
+    es: Fecha de Inicio
+  end-date:
+    en: End Date
+    es: Fecha Final
+  start-time:
+    en: Start Time
+    es: Hora de Inicio
+  end-time:
+    en: End Time
+    es: Hora de Finalización
+  event-location:
+    en: Event Location
+    es: Ubicación de Evento
+  actions:
+    en: Actions
+    es: Comportamiento
+  edit-event:
+    en: Edit Event
+    es: Editar Evento
+  create-event:
+    en: Create Event
+    es: Crear Evento
+  

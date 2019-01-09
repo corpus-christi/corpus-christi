@@ -25,6 +25,18 @@
         "settings": "Settings"
       }
     },
+    "events": {
+      "actions": "Actions",
+      "create-event": "Create Event",
+      "edit-event": "Edit Event",
+      "end-date": "End Date",
+      "end-time": "End Time",
+      "event-description": "Event Description",
+      "event-location": "Event Location",
+      "start-date": "Start Date",
+      "start-time": "Start Time",
+      "title": "Events"
+    },
     "groups": {
       "title": "Home Churches"
     },
@@ -95,6 +107,18 @@
         "deactivate": "Desactivar",
         "settings": "Ajustes"
       }
+    },
+    "events": {
+      "actions": "Comportamiento",
+      "create-event": "Crear Evento",
+      "edit-event": "Editar Evento",
+      "end-date": "Fecha Final",
+      "end-time": "Hora de Finalizaci\u00f3n",
+      "event-description": "Descripci\u00f3n del Evento",
+      "event-location": "Ubicaci\u00f3n de Evento",
+      "start-date": "Fecha de Inicio",
+      "start-time": "Hora de Inicio",
+      "title": "Eventos"
     },
     "groups": {
       "title": "Iglesias Hogar"
