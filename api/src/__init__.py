@@ -44,4 +44,7 @@ def create_app(config_name):
     from .roles import roles as roles_blueprint
     app.register_blueprint(roles_blueprint, url_prefix='/api/v1/roles')
 
+    from .events import events as events_blueprint 
+    app.register_blueprint(events_blueprint, url_prefix='/api/v1/events')
+
     return app
