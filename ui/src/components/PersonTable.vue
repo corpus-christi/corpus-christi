@@ -42,36 +42,42 @@
         <td>{{ props.item.phone }}</td>
         <td>
           <v-tooltip bottom>
-            <v-icon
+            <v-btn
+              icon
+              outline
               small
+              color="primary"
               slot="activator"
               v-on:click="editPerson(props.item)"
-              class="mr-3"
-              data-cy
-              >edit</v-icon
             >
+              <v-icon small>edit</v-icon>
+            </v-btn>
             <span>{{ $t("actions.edit") }}</span>
           </v-tooltip>
           <v-tooltip bottom>
-            <v-icon
+            <v-btn
+              icon
+              outline
               small
+              color="primary"
               slot="activator"
               v-on:click="adminPerson(props.item)"
-              class="mr-3"
-              data-cy
-              >settings</v-icon
             >
+              <v-icon small>settings</v-icon>
+            </v-btn>
             <span>{{ $t("actions.tooltips.settings") }}</span>
           </v-tooltip>
           <v-tooltip bottom>
-            <v-icon
+            <v-btn
+              icon
+              outline
               small
+              color="primary"
               slot="activator"
               v-on:click="deletePerson(props.item)"
-              class="mr-3"
-              data-cy
-              >delete</v-icon
             >
+              <v-icon small>delete</v-icon>
+            </v-btn>
             <span>{{ $t("actions.tooltips.deactivate") }}</span>
           </v-tooltip>
         </td>

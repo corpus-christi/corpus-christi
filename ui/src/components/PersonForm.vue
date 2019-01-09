@@ -94,7 +94,7 @@
     </v-card-text>
     <v-card-actions>
       <v-btn
-        color="error"
+        color="secondary"
         flat
         v-on:click="cancel"
         :disabled="formDisabled"
