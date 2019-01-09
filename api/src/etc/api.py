@@ -49,11 +49,11 @@ def delete_prerequisite(prerequisite_id):
     pass
 
 @courses.route('/course_offerings/<course_offering_id>', methods=['PUT'])
-@jwt_required
+@jwt_not_required
 def replace_course_offering(course_offering_id):
     pass
 
 @courses.route('/course_offerings/<course_offering_id>', methods=['DELETE'])
-@jwt_required
+@jwt_not_required
 def delete_course_offering(course_offering_id):
     pass
