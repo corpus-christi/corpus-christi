@@ -1,14 +1,22 @@
 <template>
   <v-layout align-center justify-end>
     <v-tooltip bottom>
-      <v-btn flat icon slot="activator" v-bind:small="displayContext === 'compact'">
-        <v-icon>edit</v-icon>
+      <v-btn flat icon
+        slot="activator"
+        v-bind:small="displayContext === 'compact'"
+        @click="emitAction('edit')">
+
+          <v-icon v-bind:small="displayContext === 'compact'">edit</v-icon>
       </v-btn>
       <span>{{ $t("actions.edit") }}</span>
     </v-tooltip>
     <v-tooltip bottom>
-      <v-btn flat icon slot="activator" v-bind:small="displayContext === 'compact'">
-        <v-icon>delete</v-icon>
+      <v-btn flat icon
+        slot="activator"
+        v-bind:small="displayContext === 'compact'"
+        @click="emitAction('deactivate')">
+
+          <v-icon v-bind:small="displayContext === 'compact'">delete</v-icon>
       </v-btn>
       <span>{{ $t("actions.tooltips.deactivate") }}</span>
     </v-tooltip>
@@ -20,6 +28,11 @@ export default {
   props: {
     course: Object,
     displayContext: String
+  },
+  methods: {
+    emitAction(actionName) {
+      this.$emit("action", actionName);
+    }
   }
 }
 </script>

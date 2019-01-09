@@ -38,41 +38,12 @@
         <td>{{ props.item.title }}</td>
         <td>{{ props.item.description }}</td>
         <td>{{ props.item.enrolled }}</td>
-        <!-- <td> -->
-          <!-- <v-tooltip bottom>
-            <v-icon
-              small
-              slot="activator"
-              v-on:click="editPerson(props.item)"
-              class="mr-3"
-            >
-              edit
-            </v-icon>
-            <span>{{ $t("actions.edit") }}</span>
-          </v-tooltip>
-          <v-tooltip bottom>
-            <v-icon
-              small
-              slot="activator"
-              v-on:click="adminPerson(props.item)"
-              class="mr-3"
-            >
-              settings
-            </v-icon>
-            <span>{{ $t("actions.tooltips.settings") }}</span>
-          </v-tooltip>
-          <v-tooltip bottom>
-            <v-icon
-              small
-              slot="activator"
-              v-on:click="deletePerson(props.item)"
-              class="mr-3"
-            >
-              delete
-            </v-icon>
-            <span>{{ $t("actions.tooltips.deactivate") }}</span>
-          </v-tooltip> -->
-        <!-- </td> -->
+        <td>
+          <CourseAdminActions
+            v-bind:course="props.item"
+            display-context="compact"
+            v-on:action="dispatchAction($event, props.item)"/>
+        </td>
       </template>
     </v-data-table>
 
@@ -108,10 +79,14 @@
 
 <script>
 import CourseForm from "./CourseForm";
+import CourseAdminActions from "./CourseAdminActions";
 
 export default {
   name: "CoursesTable",
-  components: { CourseForm },
+  components: {
+    CourseForm,
+    CourseAdminActions
+  },
   data() {
     return {
       courseDialog: {
@@ -146,7 +121,18 @@ export default {
     }
   },
   methods: {
-    // ---- Person Administration
+    dispatchAction(actionName, course) {
+      switch(actionName) {
+        case "edit":
+          this.editCourse(course);
+          break;
+        case "deactivate":
+          // todo: deactivate course
+          break;
+        default:
+          break;
+      }
+    },
 
     activateCourseDialog(course = {}, editMode = false) {
       this.courseDialog.editMode = editMode;

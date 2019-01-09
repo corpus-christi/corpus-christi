@@ -31,11 +31,6 @@ export default {
   // },
   props: [
     'course'
-  ],
-  methods: {
-    showForm() {
-      
-    }
-  }
+  ]
 };
 </script>
