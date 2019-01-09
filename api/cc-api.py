@@ -10,12 +10,8 @@ from src.i18n.models import Language, I18NLocale
 from src.people.models import Person, Account
 from src.people.test_people import create_multiple_people, create_multiple_accounts
 from src.places.models import Country
-<<<<<<< HEAD
-from src.events.models import Event, Asset, Team
-=======
 from src.courses.models import Course, Prerequisite
 from src.courses.test_courses import create_multiple_courses
->>>>>>> 19a5f2ab305246a49644e9b08695cabc921cc18d
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 
