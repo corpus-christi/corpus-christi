@@ -31,6 +31,8 @@ class Prerequisite(Base):
      __tablename__ = 'courses_prerequisite'
      course_id = Column(Integer, ForeignKey('courses_course.id'), primary_key=True)
      prereq_id = Column(Integer, ForeignKey('courses_course.id'), primary_key=True)
+     course = relationship('Course', foreign_keys=[course_id], backref='dependent', lazy=True)
+     prereq = relationship('Course', foreign_keys=[prereq_id], backref='prerequisites', lazy=True)
 
      def __repr__(self):
          return f"<Prerequisite(course_id={self.course_id},prereq_id={self.prereq_id})>"
@@ -39,6 +41,7 @@ class Prerequisite(Base):
 class PrerequisiteSchema(Schema):
      course_id = fields.Integer(dump_only=True, data_key='courseId', required=True)
      prereq_id = fields.Integer(dump_only=True, data_key='prereqId', required=True)
+
 
 # ---- Diploma_Course
 
