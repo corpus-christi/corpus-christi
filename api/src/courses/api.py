@@ -30,13 +30,13 @@ def read_all_courses():
     result = db.session.query(Course).all()
     return jsonify(course_schema.dump(result, many=True))
 
-@courses.route()
-@jwt_require
+@courses.route('/courses-active')
+@jwt_required
 def read_all_active_courses():
     result = db.session.query(Course).filter_by(active=True).all()
     return jsonify(course_schema.dump(result, many=True))    
 
-@courses.route('/courses')
+@courses.route('/courses-inactive')
 @jwt_required
 def read_all_inactive_courses():
     result = db.session.query(Course).filter_by(active=False).all()
@@ -95,7 +95,7 @@ def reactivate_course(course_id):
     course = db.session.query(Course).filter_by(id=course_id).first()
     
     if "active" in request.json:
-        setattr(course, 'active', True"""request.json['active']""")
+        setattr(course, 'active', True)
 
 
 # ---- Prerequisite
