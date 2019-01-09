@@ -12,9 +12,23 @@ def test_create_course(client, db):
 # Test getting all courses from the database
 @pytest.mark.xfail()
 def test_read_all_courses(client, db):
-    # GIVEN many courses in database
+    # GIVEN existing (active and inactive) courses in database
     # WHEN call to database
     # THEN assert all entries from database are called
+    assert True == False
+
+@pytest.mark.xfail()
+def test_read_all_active_courses(client, db):
+    # GIVEN existing and active courses
+    # WHEN call to database
+    # THEN assert all active courses are listed
+    assert True == False
+
+@pytest.mark.xfail()
+def test_read_all_inactive_courses(client, db):
+    # GIVEN existing and inactive courses
+    # WHEN call to database
+    # THEN assert all active courses are listed
     assert True == False
     
 # Test reading a single course from the database
@@ -52,19 +66,19 @@ def test_replace_course(client, db):
 
 @pytest.mark.xfail()
 def test_update_course(client, db):
-    # GIVEN outdated course in database
+    # GIVEN active or inactive course in database
     # WHEN course information updated
-    # THEN assert course reflects new details
+    # THEN assert course reflects new detail(s)
     assert True == False
     
-
+"""
 @pytest.mark.xfail()
 def test_delete_course(client, db):
     # GIVEN undesirable course in database
     # WHEN course is removed
     # THEN assert course and all associated information deleted
     assert True == False
-    
+"""  
 
 # ---- Prerequisite
 
@@ -92,37 +106,38 @@ def test_read_all_courses_with_prerequisite(client, db):
     assert True == False
 
 
-#PROBABLY DON'T NEED THESE TWO
-# @pytest.mark.xfail()
-# def test_read_one_prerequisite(client, db):
-#     # GIVEN
-#     # WHEN
-#     # THEN
-#     assert True == False
-    
-
-# @pytest.mark.xfail()
-# def test_replace_prerequisite(client, db):
-#     # GIVEN
-#     # WHEN
-#     # THEN
-#     assert True == False
-    
-
+""" PROBABLY DON'T NEED THESE TWO
 @pytest.mark.xfail()
-def test_update_prerequisite(client, db):
-    # GIVEN 
-    # WHEN
-    # THEN
-    assert True == False
-    
-
-@pytest.mark.xfail()
-def test_delete_prerequisite(client, db):
+def test_read_one_prerequisite(client, db):
     # GIVEN
     # WHEN
     # THEN
     assert True == False
+    
+
+@pytest.mark.xfail()
+def test_replace_prerequisite(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False """
+    
+
+@pytest.mark.xfail()
+def test_update_prerequisite(client, db):
+    # GIVEN an existing and available course with an existing prereq
+    # WHEN new prereq for existing course is required 
+    # THEN existing course has new prereq in place of existing prereq
+    assert True == False
+    
+"""
+@pytest.mark.xfail()
+def test_delete_prerequisite(client, db):
+    # GIVEN an existing prereq and related course
+    # WHEN prereq no longer needed from associated course
+    # THEN prereq row entry removed (along with associated course)
+    assert True == False
+"""
     
 
 # ---- Course_Offering
@@ -130,48 +145,63 @@ def test_delete_prerequisite(client, db):
 
 @pytest.mark.xfail()
 def test_create_course_offering(client, db):
-    # GIVEN
-    # WHEN
-    # THEN
+    # GIVEN an existing course
+    # WHEN one or more courses need a section to offer
+    # THEN create new course section
     assert True == False
     
 
 @pytest.mark.xfail()
 def test_read_all_course_offerings(client, db):
-    # GIVEN
-    # WHEN
-    # THEN
+    # GIVEN existing (active and inactive) course offerings
+    # WHEN all sections needed
+    # THEN list all course sections
+    assert True == False
+
+@pytest.mark.xfail()
+def test_read_all_active_course_offerings(client, db):
+    # GIVEN existing active course offerings
+    # WHEN all active course sections needed
+    # THEN list all sections of active courses
+    assert True == False
+
+@pytest.mark.xfail()
+def test_read_all_inactive_course_offerings(client, db):
+    # GIVEN existing inactive course offerings
+    # WHEN all inactive course sections needed
+    # THEN list all sections of inactive courses
     assert True == False
     
 
 @pytest.mark.xfail()
 def test_read_one_course_offering(client, db):
-    # GIVEN
-    # WHEN
-    # THEN
+    # GIVEN an existing course
+    # WHEN one course section needed
+    # THEN list one course section of course
     assert True == False
     
-
+"""
 @pytest.mark.xfail()
 def test_replace_course_offering(client, db):
     # GIVEN
     # WHEN
     # THEN
     assert True == False
-    
+"""
 
 @pytest.mark.xfail()
 def test_update_course_offering(client, db):
-    # GIVEN
-    # WHEN
-    # THEN
+    # GIVEN an existing (active or inactive) course offering 
+    # WHEN course offering needs to update existing information
+    # THEN assert changes to course offering reflect update
     assert True == False
     
-
+"""
 @pytest.mark.xfail()
 def test_delete_course_offering(client, db):
-    # GIVEN
-    # WHEN
-    # THEN
+    # GIVEN an existing (active or inactive) course and at least one section
+    # WHEN user desires to remove course offering 
+    # THEN 
     assert True == False
+"""
     
