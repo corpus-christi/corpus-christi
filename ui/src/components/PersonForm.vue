@@ -93,35 +93,36 @@
       </form>
     </v-card-text>
     <v-card-actions>
-      <v-spacer></v-spacer>
       <v-btn
-        color="primary"
+        color="error"
         flat
         v-on:click="cancel"
         :disabled="formDisabled"
         data-cy=""
         >{{ $t("actions.cancel") }}</v-btn
       >
+      <v-spacer></v-spacer>
       <v-btn color="primary" flat v-on:click="clear" :disabled="formDisabled">{{
         $t("actions.clear")
       }}</v-btn>
       <v-btn
         color="primary"
-        flat
+        outline
+        v-on:click="add_another"
+        v-if="editMode === false"
+        :loading="add_more_loading"
+        :disabled="formDisabled"
+        data-cy=""
+        >{{ $t("actions.addanother") }}</v-btn
+      >
+      <v-btn
+        color="primary"
+        raised
         v-on:click="save"
         :loading="save_loading"
         :disabled="formDisabled"
         data-cy=""
         >{{ $t("actions.save") }}</v-btn
-      >
-      <v-btn
-        color="primary"
-        flat
-        v-on:click="add_another"
-        :loading="add_more_loading"
-        :disabled="formDisabled"
-        data-cy=""
-        >{{ $t("actions.addanother") }}</v-btn
       >
     </v-card-actions>
   </v-card>
@@ -207,22 +208,30 @@ export default {
     // Trigger a save event, returning the update `Person`.
     save() {
       this.save_loading = true;
-      this.$validator.validateAll().then(() => {
-        if (!this.errors.any()) {
-          this.$emit("save", this.person);
-        }
-        this.save_loading = false;
-      });
+      setTimeout(
+        () =>
+          this.$validator.validateAll().then(() => {
+            if (!this.errors.any()) {
+              this.$emit("save", this.person);
+            }
+            this.save_loading = false;
+          }),
+        1000
+      );
     },
 
     add_another() {
       this.add_more_loading = true;
-      this.$validator.validateAll().then(() => {
-        if (!this.errors.any()) {
-          this.$emit("add-another", this.person);
-        }
-        this.add_more_loading = false;
-      });
+      setTimeout(
+        () =>
+          this.$validator.validateAll().then(() => {
+            if (!this.errors.any()) {
+              this.$emit("add-another", this.person);
+            }
+            this.add_more_loading = false;
+          }),
+        1000
+      );
     }
   }
 };
