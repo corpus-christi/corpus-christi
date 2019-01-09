@@ -14,3 +14,6 @@ courses:
   new:
     en: New Course
     es: Nuevo Curso
+  prerequisites:
+    en: Prerequisites
+    es: Prerrequisitos

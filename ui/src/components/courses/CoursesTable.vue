@@ -38,44 +38,11 @@
         <td>{{ props.item.title }}</td>
         <td>{{ props.item.description }}</td>
         <td>{{ props.item.enrolled }}</td>
-        <!-- <td> -->
-          <!-- <v-tooltip bottom>
-            <v-icon
-              small
-              slot="activator"
-              v-on:click="editPerson(props.item)"
-              class="mr-3"
-            >
-              edit
-            </v-icon>
-            <span>{{ $t("actions.edit") }}</span>
-          </v-tooltip>
-          <v-tooltip bottom>
-            <v-icon
-              small
-              slot="activator"
-              v-on:click="adminPerson(props.item)"
-              class="mr-3"
-            >
-              settings
-            </v-icon>
-            <span>{{ $t("actions.tooltips.settings") }}</span>
-          </v-tooltip>
-          <v-tooltip bottom>
-            <v-icon
-              small
-              slot="activator"
-              v-on:click="deletePerson(props.item)"
-              class="mr-3"
-            >
-              delete
-            </v-icon>
-            <span>{{ $t("actions.tooltips.deactivate") }}</span>
-          </v-tooltip> -->
-        <!-- </td> -->
-      </template>
+        
+        <!-- Add Buttons here -->
+      </template>      
     </v-data-table>
-
+ 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
       <v-btn flat @click="snackbar.show = false">
@@ -92,17 +59,6 @@
         v-on:save="saveCourse"
       />
     </v-dialog>
-
-    <!-- Person admin dialog -->
-    <!-- <v-dialog v-model="adminDialog.show" max-width="500px">
-      <PersonAdminForm
-        v-bind:person="adminDialog.person"
-        v-bind:account="adminDialog.account"
-        v-on:addAccount="addAccount"
-        v-on:updateAccount="updateAccount"
-        v-on:close="closeAdmin"
-      />
-    </v-dialog> -->
   </div>
 </template>
 
@@ -128,11 +84,6 @@ export default {
       selected: [],
       courses: [],
       search: "",
-      
-      courses: [
-        { title: "New Testament", description: "study of the new Testament", enrolled: 10 }, 
-        { title: "Old Testament", description: "study of the old Testament", enrolled: 2 }
-      ]
     };
   },
   computed: {
@@ -198,7 +149,7 @@ export default {
   mounted: function() {
     // this.$http
     //   .get("/api/v1/people/persons")
-    //   .then(resp => (this.people = resp.data));
+    //   .then(resp => (this.courses = resp.data));
   }
 };
 </script>
