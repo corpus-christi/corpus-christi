@@ -16,10 +16,4 @@ Vue.use(VeeValidate, {
   i18n
 });
 
-Vue.use(Vuetify, {
-  lang: {
-    t: (key, ...params) => i18n.t(key, params)
-  }
-});
-
 export default i18n;
