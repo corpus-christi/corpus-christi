@@ -67,8 +67,14 @@ def update_attribute(attribute_id):
 
 @attributes.route('/attributes/<attribute_id>', methods=['DELETE'])
 @jwt_required
-def delete_attribute(attribute_id):
-    pass
+def disable_attribute(attribute_id):
+    attribute = db.session.query(Attribute).filter_by(id=attribute_id).first()
+   
+    setattr(attribute, 'active', False)
+
+    db.session.commit()
+
+    return jsonify(attribute_schema.dump(attribute))
     
 
 # ---- Enumerated_Value
