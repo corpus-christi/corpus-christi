@@ -42,4 +42,7 @@ def create_app(config_name):
     app.register_blueprint(places_blueprint, url_prefix='/api/v1/places')
 
 
+    from .events import events as events_blueprint 
+    app.register_blueprint(events_blueprint, url_prefix='/api/v1/events')
+
     return app
