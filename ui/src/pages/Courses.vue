@@ -4,7 +4,11 @@
       <v-container grid-list-md>
         <v-layout row wrap>
           <v-flex md3 v-for="course in courses" :key="course">
-            <CourseCard v-bind:course="course"/>
+            <CourseCard v-bind:course="course">
+              <template slot="actions">
+                <CourseAdminActions v-bind:course="course"/>
+              </template>
+            </CourseCard>
           </v-flex>
         </v-layout>
       </v-container>
@@ -13,6 +17,7 @@
 
 <script>
 import CourseCard from "../components/courses/CourseCard";
+import CourseAdminActions from "../components/courses/CourseAdminActions";
 
 export default {
   name: "Courses",
@@ -25,7 +30,8 @@ export default {
     };
   },
   components: {
-    CourseCard
+    CourseCard,
+    CourseAdminActions
   }
 };
 </script>

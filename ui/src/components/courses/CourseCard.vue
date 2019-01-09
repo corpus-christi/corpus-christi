@@ -10,11 +10,9 @@
           <v-card>
             <v-card-text>{{course.description}}</v-card-text>
             <v-card-text>{{$t("courses.enrolled")}}: {{course.enrolled}}</v-card-text>
-              <v-card-actions>
-                <v-layout align-center justify-end>
-                  <v-btn flat>{{$t("actions.edit")}}</v-btn>
-                </v-layout>
-              </v-card-actions>
+            <v-card-actions>
+              <slot name="actions"></slot>
+            </v-card-actions>
           </v-card>
         </v-flex>
       </v-layout>
