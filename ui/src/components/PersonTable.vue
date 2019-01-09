@@ -16,16 +16,13 @@
       <v-switch
         :label="$t('actions.viewinactive')"
         color="primary"
+        v-on:change="changeView"
+        v-model="showingInactive"
         hide-details
         data-cy=""
       ></v-switch>
 
-      <v-btn
-        color="primary"
-        raised
-        v-on:click.stop="newPerson"
-        data-cy=""
-      >
+      <v-btn color="primary" raised v-on:click.stop="newPerson" data-cy="">
         <v-icon dark left>person_add</v-icon>
         {{ $t("actions.addperson") }}
       </v-btn>
@@ -138,9 +135,11 @@ export default {
         text: ""
       },
 
-      viewInactive: false,
+      showingInactive: false,
       selected: [],
       people: [],
+      activePeople: [],
+      inactivePeople: [],
       search: ""
     };
   },
@@ -220,6 +219,22 @@ export default {
         .catch(err => console.error("FAILURE", err.response));
     },
 
+    changeView() {
+      if (this.showingInactive) {
+        this.viewInactive();
+      } else {
+        this.viewActive();
+      }
+    },
+
+    viewInactive() {
+      console.log(`viewing inactive`);
+    },
+
+    viewActive() {
+      console.log(`viewing active`);
+    },
+
     // ---- Account Administration
 
     adminPerson(person) {
@@ -264,6 +279,9 @@ export default {
   },
 
   mounted: function() {
+    // TODO: set activePeople[] to all people who are active
+    // TODO: set inactivePeople[] to all people who are inactive
+    // TODO: set people[] = activePeople[]
     this.$http
       .get("/api/v1/people/persons")
       .then(resp => (this.people = resp.data));
