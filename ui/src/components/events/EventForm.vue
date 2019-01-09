@@ -254,6 +254,15 @@ export default {
       for (let key of this.eventKeys) {
         this.event[key] = "";
       }
+      this.startTime = "";
+      this.startDate = "";
+      this.endTime = "";
+      this.endDate = "";
+      this.showStartDatePicker = false;
+      this.showEndDatePicker = false;
+      this.startTimeModal = false;
+      this.endTimeModal = false;
+
       this.$validator.reset();
     },
     save() {
