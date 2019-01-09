@@ -26,10 +26,9 @@ class Event(Base):
     persons = relationship("EventPerson", back_populates="event")
     participants = relationship("EventParticipant", back_populates="event")
     location = relationship("Location", back_populates="events")
-    
+
     def __repr__(self):
         return f"<Event(id={self.id})>"
-    
 
 class EventSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
@@ -78,7 +77,6 @@ class Team(Base):
 
     def __repr__(self):
         return f"<Team(id={self.id})>"
-    
 
 class TeamSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
@@ -125,7 +123,7 @@ class EventPerson(Base):
 class EventPersonSchema(Schema):
     event_id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     person_id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
-    description = fields.String()
+    description = fields.String(required=True)
 
 # ---- TeamMember
 
@@ -135,6 +133,10 @@ class TeamMember(Base):
     member_id = Column(Integer, ForeignKey('people_person.id'), primary_key=True)
     team = relationship("Team", back_populates="members")
     member = relationship("Person", back_populates="teams")
+
+class TeamMemberSchema(Schema):
+    team_id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
+    member_id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
 
 # ---- EventParticipant
 
