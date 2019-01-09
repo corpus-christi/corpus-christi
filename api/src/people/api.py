@@ -17,10 +17,13 @@ person_schema = PersonSchema()
 @people.route('/persons/fields', methods=['GET'])
 @jwt_required
 def read_person_fields():
-    columns = Person.__table__.columns
-    response = {'person': []}
-    for c in columns:
+    response = {'person': [], 'person_attributes': []}
+
+    person_columns = Person.__table__.columns
+    for c in person_columns:
         response['person'].append({c.name: c.type, 'required': not c.nullable})
+
+    attribute_tables = 
     return jsonify(response)
 
 
