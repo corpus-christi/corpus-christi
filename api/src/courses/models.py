@@ -1,10 +1,27 @@
 from marshmallow import Schema, fields
 from marshmallow.validate import Range, Length
-from sqlalchemy import Column, Integer, Boolean, ForeignKey, Date, DateTime
+from sqlalchemy import Column, Integer, Boolean, ForeignKey, Date, DateTime, Table
 from sqlalchemy.orm import relationship
 
 from src.db import Base
 from src.shared.models import StringTypes
+
+# ---- Prerequisite
+
+class Prerequisite(Base):
+     __tablename__ = 'courses_prerequisite'
+     course_id = Column(Integer, ForeignKey('courses_course.id'), primary_key=True)
+     prereq_id = Column(Integer, ForeignKey('courses_course.id'), primary_key=True)
+     course = relationship('Course', backref='dependents', foreign_keys=[course_id], lazy=True)
+     prereq = relationship('Course', backref='prerequisites', foreign_keys=[prereq_id], lazy=True)
+
+     def __repr__(self):
+         return f"<Prerequisite(course_id={self.course_id},prereq_id={self.prereq_id})>"
+
+
+class PrerequisiteSchema(Schema):
+     course_id = fields.Integer(dump_only=True, data_key='courseId', required=True)
+     prereq_id = fields.Integer(dump_only=True, data_key='prereqId', required=True)
 
 # ---- Course
 
@@ -24,24 +41,6 @@ class CourseSchema(Schema):
      name = fields.String(required=True, validate=Length(min=1))
      description = fields.String(required=True, validate=Length(min=1))
      active = fields.Boolean(required=True)
-
-# ---- Prerequisite
-
-class Prerequisite(Base):
-     __tablename__ = 'courses_prerequisite'
-     course_id = Column(Integer, ForeignKey('courses_course.id'), primary_key=True)
-     prereq_id = Column(Integer, ForeignKey('courses_course.id'), primary_key=True)
-     course = relationship('Course', foreign_keys=[course_id], backref='dependent', lazy=True)
-     prereq = relationship('Course', foreign_keys=[prereq_id], backref='prerequisites', lazy=True)
-
-     def __repr__(self):
-         return f"<Prerequisite(course_id={self.course_id},prereq_id={self.prereq_id})>"
-
-
-class PrerequisiteSchema(Schema):
-     course_id = fields.Integer(dump_only=True, data_key='courseId', required=True)
-     prereq_id = fields.Integer(dump_only=True, data_key='prereqId', required=True)
-
 
 # ---- Diploma_Course
 

@@ -27,11 +27,10 @@ def create_multiple_courses(sqla, n=10):
     for i in range(n):
         valid_course = course_schema.load(course_object_factory())
         course_model = Course(**valid_course)
-        # course_model.
         new_courses.append(course_model)
     sqla.add_all(new_courses)
     sqla.commit()
-
+    print(new_courses)
 
 # ---- Course
 
