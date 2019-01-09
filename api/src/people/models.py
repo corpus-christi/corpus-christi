@@ -112,21 +112,24 @@ class Role(Base):
             db.session.add(I18NLocale(code=locale_code, desc='English US'))
 
         with open(file_path, 'r') as fp:
-            roles = json.load(fp)
+            if db.session.query(Role).count() == 0:
 
-            for role in roles:
-                role_id = role['id']
-                role_name = role['name']
+                roles = json.load(fp)
 
-                name_i18n = f'role.{role_name}'
-                i18n_create(name_i18n, locale_code,
-                            role_name, description=f"Role {role_name}")
+                for role in roles:
+                    role_id = role['id']
+                    role_name = role['name']
 
-                db.session.add(cls(id=role_id, name_i18n=name_i18n, active=True))
-                count += 1
-            db.session.commit()
-        return count
+                    name_i18n = f'role.{role_name}'
+                    i18n_create(name_i18n, locale_code,
+                                role_name, description=f"Role {role_name}")
 
+                    db.session.add(cls(id=role_id, name_i18n=name_i18n, active=True))
+                    count += 1
+                db.session.commit()
+            return count
+
+        return 0
 
 class RoleSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
