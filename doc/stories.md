@@ -117,7 +117,7 @@ or viewing the home church map to identify a home church.
    _Example_: An office worker wants to create add details for an upcoming
    retreat or schedule a worship band for the next Sunday worship service. 
 
-# CRUD Pattern 
+# CRUD Pattern
 
 Many stories apply one or more of the 
 standard **CRUD** operations 
@@ -128,11 +128,6 @@ to an entity. For example:
 1. Read the details of an existing course.
 1. Update an existing course.
 1. Delete an existing course.
-
-Such verbosity would quickly become tedious.
-Instead, we abbreviate CRUD operations as follows:
-
-1. CRUD course
 
 In some cases, we don't _delete_ data,
 which can lose useful historical information.
@@ -145,15 +140,6 @@ For example, when listing members of a group,
 a query should return only members
 whose `active` attribute is `true`.
 
-Note that there is not necessarily a one-to-one mapping
-between CRUD stories and application views.
-For example,
-rather than having separate views 
-for the _Course_ and the _Prerequisite_ entities,
-it may be much more convenient for the user 
-to implement a single UI view that allows the user to work with
-to _both_ the _Course_ and _Prerequisite_ entities.
-
 # User Stories
 
 Following are user stories for each of the roles
@@ -161,54 +147,190 @@ enumerated above.
 
 ## Infrastructure
 
-1. Manage people known to the system
-   (CRUD _Person_, _Person Attribute_).
-1. Manage attributes and values that can be associated with people 
-   (CRUD _Attribute_, _Attribute Value_).
-1. Manage user accounts and associated roles
-   (CRUD _Account_, _Account Role_).
+In this section, the term _people_ means
+one or more instances of the _Person_ entity.
+
+### People
+
+1. Add a new _Person_, including all active _Person Attributes_.
+   It should be easy to add multiple people.
+1. Update an existing _Person_ and associated _Person Attributes_.
+1. Deactivate or reactivate a _Person_.
+1. List all _people_
+1. Search for _people_ using query-by-example (QBE) 
+   on first name, last name, phone, email, or active status.
+1. List _people_ matching search criteria (including all _people_)
+1. Prepare a printable report of _people_ matching search criteria (including all _people_)
+1. Export _people_ matching search criteria (including all _people_) to a comma-separated value file
+   suitable for import into a spreadsheet (Excel, Numbers, Google Sheets).
+   
+### Accounts and Roles
+
+1. Add a new _Account_ for an existing _Person_.
+1. Add a new _Account_ as well as the _Person_ who will be associated with that _Account_.
+1. Change an _Account_'s username or password.
+1. Deactivate or reactivate an _Account_.
+1. Add or remove an association between an _Acocunt_ and a _Role_.
+1. List all roles. Optionally include the username and first and last names of _Account_'s that
+   have that role.
+1. Search for an _Account_ by username or by the _Person_ associated with the _Account_
+   using the same QBE criteria as for _people_.
+1. List accounts matching _Account_ search criteria,
+   including username, first and last name of the associated _Person_, and names of associated _Role_'s.
+   Such a list should allow the user to navigate to the associated _Person_ or _Role_'s.
+
+### Person Attributes
+
+1. Define a new string-valued _Person Attribute_; available types
+   should include `Date`, `Integer`, `Short Answer`
+1. Define a new enumerated _Person Attribute_ including _Enumerated Value_ instances
+   for the new attribute.
+1. Add a new _Enumerated Value_ for an existing enumerated attribute.
+1. Deactivate or reactivate an _Enumerated Value_   
+1. Deactivate or reactivate a _Person Attribute_.
+1. Rename a person attribute.
+1. Rename an _Enumerated Value_.
+
+### Managers
+
+1. Add a _Person_ as a _Manager_ with the appropriate `description`;
+   Valid `description`'s are determined by the module for which a manager is being defined
+   (e.g., "Group Leader" or "Group Overseer" for the Groups module.)
+   Allow an existing _Manager_ to be associated with the new _Manager_ as it is being added.
+1. Add a new _Manager_ for a _Manager_.
+1. Update the _Manager_ of an existing _Manager_.
+1. Show the hierarchy of _Manager_'s as a tree structure. Clicking on any node in the tree
+   should allow the selected _Manager_ to be updated.
+1. Replace the _Person_ associated with a _Manager_ (e.g., when a different _Person_ is taking
+   over as the leader of a group).
+   
+### Places
+
+1. Create a new _Address_ with a valid street address.
+   The user should be able to specify the _Area_ in the following ways:
+   - Choose an existing _Area_ using live search.
+   - Add a new _Area_ in the same view and associate it with the _Address_.
+   The `latitude` and `longitude` may be specified in the following ways:
+   - Enter the values directly
+   - Use integrated Google Maps geolocation to look up the address and 
+     store the resulting latitude and longitude in the instance.
+1. Create a new _Address_ without a street address.
+   The user should be able to specify the _Area_ in the following ways:
+   - Choose an existing _Area_ using live search.
+   - Add a new _Area_ in the same view and associate it with the _Address_.
+   The `latitude` and `longitude` must be specified in one of the following ways:
+   - Enter the values directly
+   - Use integrated Google Maps to pinpoint a location and 
+     store the resulting latitude and longitude in the instance.
+1. Update an existing _Address_ using the methods detailed above.
+1. Create a new _Area_.
+1. Update an existing _Area_.
+1. Create a new _Location_ for an existing _Address_.
+1. Update an existing _Location_.
+1. List all _Address_'s; allow live filtering by:
+   - `name`, `address`, `city`, _Area_, _Country_,
+   - range of both `latitude` and `longitude` values,
+   - specified distance from a specific `latitude` and `longitude`.
+   - specified distance from a selected _Address_.
+1. Show locations on an integrated Google Map,
+   using the same filters available for the list of _Addresses_.
+1. Show _Location_'s for an _Address_ that is selected by live search.
+
 
 ## Superuser
 
-Some data is tied directly to application code
-(e.g., an I18N key).
-Only the superuser can modify such data.
-
-1. Update available roles (CRUD _Role_).
-1. Update I18N keys (CRUD _I18N Key_). 
-
-Furthermore, a superuser has _no restrictions_ 
+A superuser has _no restrictions_ 
 on access to UI views or API endpoints.
-   
+
+Some data are tied directly to application code
+(e.g., a _Role_ or an _I18N key_).
+_Only_ a superuser can modify such data.
+
+### Roles
+
+1. Add a new _Role_.
+1. Update the name of an existing role.
+1. Deactivate or reactivate a role.
+
+### Attributes
+
+1. Add a new _Attribute_ type.
+
+### I18N
+
+1. Add a new _I18N Key_.
+1. Change an existing _I18N Key_.
+
 ## Translator
 
-1. Add new locales (CRUD _I18N Locale_)
-1. Manage localizations (CRUD _I18N Value_), including:
-1. Filter localizations by key, locale, or value
-1. Access a "to do" list of localizations not entered for a given locale
-   and add new localizations
+1. Update the `description` of an existing _I18N Key_.
+1. Add a new _I18N Locale_.
+1. Update the `description` of an existing _I18N Locale_.
+1. (Localization Status) List all _I18N_Locale_ instances;
+   for each locale, 
+   include the number of _I18N Value_'s that have been created for that locale
+   and the percentage of all _I18N Key_'s that have been localized.
+1. (Localization Workbench) List all localizations, including
+   _I18N Key_ `id` and `description`,
+   _I18N Locale_ `code`,
+   and
+   _I18N Value_ `gloss`.
+   Allow the user to live filter by `id`, `code`, `gloss`, entries without a gloss, or `verified`.
+   Regardless of the active filter,
+   the user should be able to update or add any visible `gloss`.
+   and set `verified` flag when checked by a native language speaker.
+   Allow the user to display one or more _existing_ glosses for other locales.
+1. Integrate Google Translate into the Localization Workbench:
+   allow the user to request a gloss from Google
+   based on any existing gloss (from another locale) into the target locale.
 
 ## Group Admin
 
-1. Manage groups (CRUD _Group_)
-1. View all groups; optionally include inactive groups
-1. View members of existing groups.
-1. Manage group members (CRUD _Member_, _Person_)
-1. Split a large group into two new, smaller groups
-1. Move a member from one group to another group
-1. Manage group leader (CRUD _Group_, _Person_)
-1. Manage group overseer (CRUD _Group_, _Person_)
-
+1. Add a new _Group_. As part of the process:
+   - Allow an existing _Person_ to be designated a _Manager_ with `description` "Group leader".
+   - Allow new _Person_ to be created as the _Manager_ of the group.
+1. Update the name, description, and leader of an existing _Group_.
+1. Assign a _Manager_ (and associated _Person_) as the "Group leader".
+1. Set the "Group overseer" _Manager_ for this _Group_.
+1. Deactivate and reactivate a _Group_.     
+1. Add _Person_'s as _Group Member_'s of an existing group.
+   It should be easy to add multiple _Group Member_ instances.
+   New _Group Member_'s may be:
+   - An existing _Person_ who should be easy to find using filtering
+   - A new _Person_ whose details should be easy to enter as part of adding the _Person_ 
+     as a _Group Member_ of the _Group_.
+1. Deactivate and reactivate a _Person_ as a _Group Member_ of the _Group_.
+1. Split a large group into two new, smaller groups.
+   Create the two new _Group_'s (as detailed above)
+   and choose the destination _Group_ for each of the members
+   of the existing group.
+   Deactivate the old group.
+1. Move a _Group Member_ from one _Group_ to another existing _Group_.
+1. List all groups, including group leader's name and number of members.
+   Optionally, include inactive groups.
+1. View report of group attendance (group name vs meeting date)
+1. View line graph of group attendance (attendees vs date).
+   One line per group, allow groups to be filtered by name
+   (e.g., check box per group).
+   Allow time scale to be changed (e.g., weekly, monthly, annually).
+   Allow time range to be changed (e.g., year-to-date, past 12 months, specific dates, all time)
+   
 ## Group Leader
 
 Group leaders work with exactly one group.
 
-1. Schedule meetings (CRUD _Group Meeting_)
-1. Take attendance for the current meeting (CRUD _Attendence_)
-1. Update attendane for past meetings (CRUD _Attendance_)
+1. Schedule a _Meeting_ (create a _Meeting_ instance).
+   Allow the meeting location to be chosen in the following ways:
+   - An existing _Location_ using a live search
+   - A past _Meeting_ location (e.g., from a drop-down list)
+   - A new location, which should be easy to enter on the same page.
+1. Update any of the above details of a previously scheduled (but not yet held) _Meeting_.
+1. Take attendance for the current meeting
+   by adding or removing instances of _Group Attendance_.
 1. List group meetings (past and scheduled).
 1. List group members.
-1. View member attendance report.
+1. View report of member attendance (member name vs. meeting dates)
+1. View line graph of number of attendees by meeting date.
 1. Send an email message to one, more than one, or all group members.
 
 ## Group Overseer
@@ -217,32 +339,159 @@ Group overseers work with more than one group.
 By _all_, we mean only the members/leaders/groups 
 that this user oversees.
 
-1. View a list of active/inactive groups.
-1. View a list of active/inactive groups and their active/inactive members.
+1. List all groups, including group leader's name and number of members.
+   Optionally, include inactive groups.
+1. List members by group.
+   Optionally include inactive groups. 
+   Optionally include inactive members.
+1. View report of group attendance (group name vs meeting date)
+1. View line graph of group attendance (attendees vs date).
+   One line per group, allow groups to be filtered by name
+   (e.g., check box per group).
+   Allow time scale to be changed (e.g., weekly, monthly, annually).
+   Allow time range to be changed (e.g., year-to-date, past 12 months, specific dates, all time)
 1. Send an email message to one, more than one, or all group _leaders_.
 1. Send an email message to all _members_ of one, more than one, or all groups.
 
 ## Registrar
 
-1. Manage courses (CRUD _Course_, _Prerequisite_)
-1. Manage course offerings (CRUD _Course Offering_)
-1. Manage diplomas (CRUD _Diploma_, _Diploma Course_)
-1. Award diplomas (CRUD _Diploma Awarded_)
+### Courses
+
+1. Create a new _Course_, including course _Prerequisites_.
+   If a _Prerequisite_ doesn't yet exist, it should be easy to add that course
+   and associated it as  _Prerequisite_.
+1. Update the details of a _Course_, including _Prerequisite_'s.
+1. Deactivate or reactivate a _Course_.
+
+### Course Offerings
+
+1. Create a _Course Offering_ for an existing _Course_.
+1. Update the details of an existing _Course Offering_.
+1. Deactivate or reactivate a _Course Offering_.
+
+### Diplomas
+
+1. Create a _Diploma_ and associate the _Courses_ necessary 
+   to earn the _Diploma_.
+1. Update the details of an existing _Diploma_,
+   including the required _Course_'s.
+1. Deactivate or reactivate a _Diploma_.
+1. Award a _Diploma_ to a _Student_.
 
 ## Teaching Assistant
 
+### Students
+
 1. Confirm self-registered students
-1. Schedule meetings (CRUD _Class Meeting_)
-1. Arrange teachers for class meetings (CRUD _Class Meeting_, _Person_)
-1. Take attendance (CRUD _Class Attendance_)
+1. Manually enter students.
+   Allow the student to be chosen in the following ways:
+   - An existing _Person_, using live search.
+   - A _Person_ who has taken any _Course_ before.
+   - A new _Person_, whose details should be easy to enter
+     in the context of adding a student to a _Course Offering_.
+1. Enter or update _Class Attendance_ for a _Class Meeting_.
+
+### Class Meetings
+
+1. Schedule _Class Meetings_ for existing _Course Offering_'s.
+   Allow the meeting location to be chosen in the following ways:
+   - An existing _Location_ using a live search
+   - A past _Class Meeting_ location (e.g., from a drop-down list)
+   - A new location, which should be easy to enter on the same page.
+1. Set the teacher for a _Class Meeting_.
+   Allow the teacher to be chosen in the following ways:
+   - An existing _Person_, using live search.
+   - A _Person_ who has taught this same course in the past (e.g., from a drop-down list)
+   - A _Person_ who has taught _any_ course
+   - A new _Person_, whose details should be easy to enter
+     in the context of assigning a teacher to a _Class Meeeting_.
+1. Update existing _Class Meetings_ scheduled in the future;
+   the same filtering/selection capabilities just described
+   should be available when updating _Class Meeting_'s.
 
 ## Event Planner
 
-1. Manage events (CRUD _Event_)
-1. Manage event assets (CRUD _Asset_, _Event Asset_)
-1. Manage event teams (CRUD _Team_, _Team Member_, _Event Team_, _Person_)
-1. Manage event individuals (CRUD _Event Person_, _Person_)
+### Events
+
+1. Create a new _Event_.
+   Allow the event location to be chosen in the following ways:
+   - An existing _Location_ using a live search
+   - A past _Event_ location.
+   - A new location, which should be easy to enter on the same page
+     on which the _Event_ is created.
+1. Update an existing _Event_; provide functionality similar
+   to creating an _Event_.
+1. Deactivate ("cancel") or reactivate an event.
+1. Duplicate an _Event_ (e.g., Sunday service).
+   Take the user to a view where the details
+   of the copy can be updated.
+   Ensure the copy doesn't overlap the original temporally.
+1. List _Event_'s by date. Show the _Event_ `title`
+   and the `start` and `end` dates/times.
+   Allow the user to specify the date range,
+   including: past 12 months, past 3 months, past month,
+   this month, next 3 months, next year,
+   arbitrary date range.
+1. Show _Event_'s in a calendar view;
+   allow the same date ranges as for the list view.
+1. Selectively export _Event_'s to Google Calendar.
+
+### Assets
+
+1. Add a new _Asset_. Allow the location to be set using the 
+   same criteria as for creating an _Event_.
+1. Update the details for an _Asset_.
+1. Deactivate or reactivate an _Asset_ (an inactive _Asset_ is
+   no longer available for future _Event_'s)
+1. Associate an _Asset_ with an _Event_
+   (add or remove _Event Asset_ instance).
+   Ensure that assets are not double-booked.
+1. List all available assets,
+   including the number of events in which they have been used.
+   Allow filtering by description (partial match) or location.
+
+### Teams
+   
+1. Add a new _Team_.
+1. Update an existing _Team_.
+1. Deactivate or reactivate a _Team_.
+1. Associate _Person_'s with a _Team_
+   (add or remove _Team Member_ instance)
+   Allow the _Person_ to be chosen in the following ways:
+   - An existing _Person_, using live search.
+   - A new _Person_, whose details should be easy to enter
+     in the context of assigning a _Team Member_.
+1. Associate a _Team_ with an _Event_
+   (add or remove an _Event Team_ instance).
+   Ensure that a team is not double booked.
+1. List all teams, including `description` and full name of each _Team Member_.
+   Optionally include inactive teams.
+1. List all _Person_'s who have been a team member in the past.
+   Include the team(s) of which they have been part.
+
+### Individuals
+
+1. Add a new _Event Person_ (e.g., keynote speaker)    
+   Allow the _Person_ to be chosen in the following ways:
+   - An existing _Person_, using live search.
+   - A new _Person_, whose details should be easy to enter
+     in the context of assigning an _Event Person_.
+   Ensure that an _Person_ is not double-booked.
+1. Update an _Event Person_; provide the same capabilities
+   as when creating a new _Event Person_.
+1. List all _Event Persons_ associated with an _Event_.
 
 ## Event Assistant
 
-1. Confirm self-registered participants (CRUD _Event Participant_, _Person_)
+1. Confirm self-registered participants.
+1. Manually enter participants.
+   Allow a participant to be chosen in the following ways:
+   - An existing _Person_, using live search.
+   - A new _Person_, whose details should be easy to enter
+     in the context of adding a participant.
+1. Send an email to all confirmed _Event Participants_ with a known email address
+   (e.g., news about the event).
+1. Send an email message to all members of a selected _Team_.
+1. Send an email to one or more _Event Person_'s
+   (choose from checkbox list).
+1. Send an email message to every _Event Team_ member and _Event Person_.
