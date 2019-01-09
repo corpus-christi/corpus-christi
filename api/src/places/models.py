@@ -81,6 +81,9 @@ class Location(Base):
 
     area = relationship(Area, backref='locations', lazy=True)
     country = relationship(Country, backref='locations', lazy=True)
+    events = relationship('Event', back_populates="location")
+    assets = relationship('Asset', back_populates="location")
+
 
     def __repr__(self):
         attributes = [f"id='{self.id}'"]

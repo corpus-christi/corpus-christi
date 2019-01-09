@@ -7,6 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from ..db import Base
 from ..places.models import Location
 from ..shared.models import StringTypes
+# from ..events.models import EventPerson, TeamMember, EventParticipant
 
 
 # ---- Person
@@ -23,6 +24,13 @@ class Person(Base):
     location_id = Column(Integer, ForeignKey('places_location.id'))
 
     address = relationship(Location, backref='people', lazy=True)
+    # events_per refers to the events led by the person (linked via events_eventperson table)
+    events_per = relationship("EventPerson", back_populates="person")
+    # events_par refers to the participated events (linked via events_eventparticipant table)
+    events_par = relationship("EventParticipant", back_populates="person")
+    teams = relationship("TeamMember", back_populates="member")
+	
+
 
     def __repr__(self):
         return f"<Person(id={self.id},name='{self.first_name} {self.last_name}')>"
