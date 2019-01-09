@@ -8,24 +8,26 @@
         v-model="search"
         append-icon="search"
         v-bind:label="$t('actions.search')"
-        single-line
         hide-details
+        single-line
         data-cy=""
       ></v-text-field>
       <v-spacer></v-spacer>
+      <v-switch
+        :label="$t('actions.viewinactive')"
+        color="primary"
+        hide-details
+        data-cy=""
+      ></v-switch>
 
       <v-btn
-        small
-        fab
         color="primary"
-        absolute
-        dark
-        bottom
-        right
+        raised
         v-on:click.stop="newPerson"
         data-cy=""
       >
-        <v-icon>add</v-icon>
+        <v-icon dark left>person_add</v-icon>
+        {{ $t("actions.addperson") }}
       </v-btn>
     </v-toolbar>
 
@@ -48,7 +50,7 @@
               slot="activator"
               v-on:click="editPerson(props.item)"
               class="mr-3"
-              data-cy=""
+              data-cy
               >edit</v-icon
             >
             <span>{{ $t("actions.edit") }}</span>
@@ -59,7 +61,7 @@
               slot="activator"
               v-on:click="adminPerson(props.item)"
               class="mr-3"
-              data-cy=""
+              data-cy
               >settings</v-icon
             >
             <span>{{ $t("actions.tooltips.settings") }}</span>
@@ -70,7 +72,7 @@
               slot="activator"
               v-on:click="deletePerson(props.item)"
               class="mr-3"
-              data-cy=""
+              data-cy
               >delete</v-icon
             >
             <span>{{ $t("actions.tooltips.deactivate") }}</span>
@@ -81,9 +83,9 @@
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false" data-cy="">{{
-        $t("actions.close")
-      }}</v-btn>
+      <v-btn flat @click="snackbar.show = false" data-cy>
+        {{ $t("actions.close") }}
+      </v-btn>
     </v-snackbar>
 
     <!-- New/Edit dialog -->
@@ -136,6 +138,7 @@ export default {
         text: ""
       },
 
+      viewInactive: false,
       selected: [],
       people: [],
       search: ""
