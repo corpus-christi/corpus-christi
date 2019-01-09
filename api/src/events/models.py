@@ -6,6 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from ..db import Base
 from ..shared.models import StringTypes
+from ..people.models import Person
 
 # ---- Event
 
@@ -22,7 +23,7 @@ class Event(Base):
     assets = relationship("EventAsset", back_populates="event")
     teams = relationship("EventTeam", back_populates="event")
     persons = relationship("EventPerson", back_populates="event")
-    participants = relationship("EventPerson", back_populates="event")
+    participants = relationship("EventParticipant", back_populates="event")
     location = relationship("Location", back_populates="events")
     
     def __repr__(self):
