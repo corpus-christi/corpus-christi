@@ -1,0 +1,93 @@
+module: courses
+entities:
+  - name: Course
+    singular: course
+    plural: courses
+    uri: /courses
+    table: courses_course
+    attributes:
+      - name: id
+        type: integer
+        primary-key: true
+        min: 1
+      - name: name
+        type: string
+        min-length: 1
+        length: medium
+        required: true
+      - name: description
+        type: string
+        min-length: 1
+        required: true
+        length: long
+      - name: active
+        type: boolean
+        required: true
+        default: true
+  - name: Prerequisite
+    singular: prerequisite
+    plural: prerequisites
+    uri: /prerequisites
+    table: courses_prerequisite
+    attributes:
+      - name: course_id
+        type: integer
+        primary-key: true
+        foreign-key: courses_course.id
+      - name: prereq_id
+        type: integer
+        primary-key: true
+        foreign-key: courses_course.id
+  # - name: Diploma_Course
+  # - name: Diploma
+  # - name: Diploma_Awarded
+  # - name: Student
+  # - name: Course_Offering
+    singular: course_offering
+    plural: course_offerings
+    uri: /course_offerings
+    table: courses_offering
+    attributes:
+      - name: id
+        type: integer
+        primary-key: true
+        min: 1
+      - name: course_id
+        type: integer
+        foreign-key: courses_course.id
+        required: true
+      - name: description
+        type: string
+        required: true
+        min-length: 1
+        length: long
+      - name: max_size
+        type: integer
+        required: true
+      - name: active
+        type: boolean
+        required: true
+        default: true
+  # - name: Class_Attendance
+  #   singular: courses_class_attendance
+  #   plural: courses_class_attendances
+  #   uri: /courses_class_attendances
+  #   table: courses_class_attendance
+  #   attributes:
+  #     - name: class_id
+  #       type: integer
+  #       primary-key: true
+  #       foreign-key: courses_class_meeting.id
+  #       required: true
+  #     - name: student_id
+  #       type: integer
+  #       primary-key: true
+  #       foreign-key: courses_student.id
+  #       required: true
+  # - name: Class_Meeting
+  #   singular: courses_class_meeting
+  #   plural: courses_class_meetings
+  #   uri: /courses_class_meetings
+  #   table: courses_class_meeting
+  #   attributes:
+  #     - name:
