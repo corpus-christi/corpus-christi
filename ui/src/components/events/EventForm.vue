@@ -284,11 +284,6 @@ export default {
     },
 
     getDateFromTimestamp(ts) {
-      // let ms = new Date(ts).getTime();
-      // ms -= 60000 * new Date().getTimezoneOffset();
-      // let date = new Date(ms);
-      // let str = date.toISOString()
-      // return str.split('T')[0];
       let date = new Date(ts);
       let yr = date.toLocaleDateString(this.currentLanguageCode, {
         year: "numeric"
@@ -303,13 +298,6 @@ export default {
     },
 
     getTimeFromTimestamp(ts) {
-      // let ms = new Date(ts).getTime();
-      // ms -= 60000 * new Date().getTimezoneOffset();
-      // let date = new Date(ms);
-      // let str = date.toISOString()
-      // str = str.split('T')[1];
-      // let timearr = str.split(':');
-      // return timearr[0] + ':' + timearr[1];
       let date = new Date(ts);
       let hr = String(date.getHours()).padStart(2, "0");
       let min = String(date.getMinutes()).padStart(2, "0");
