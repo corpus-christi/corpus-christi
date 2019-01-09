@@ -23,7 +23,6 @@ def read_person_fields():
     for c in person_columns:
         response['person'].append({c.name: c.type, 'required': not c.nullable})
 
-    attribute_tables = 
     return jsonify(response)
 
 
