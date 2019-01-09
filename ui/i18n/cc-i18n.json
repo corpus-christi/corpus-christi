@@ -1,5 +1,19 @@
 {
   "en": {
+    "$vuetify": {
+      "dataIterator": {
+        "nextPage": "Next page",
+        "noResultsText": "No matching records found",
+        "pageText": "{0}-{1} of {2}",
+        "prevPage": "Previous page",
+        "rowsPerPageAll": "All",
+        "rowsPerPageText": "Items per page:"
+      },
+      "dataTable": {
+        "rowsPerPageText": "Rows per page:"
+      },
+      "noDataText": "No data available"
+    },
     "account": {
       "messages": {
         "added-ok": "Account added successfully",
@@ -83,6 +97,20 @@
     }
   },
   "es": {
+    "$vuetify": {
+      "dataIterator": {
+        "nextPage": "Siguiente p\u00e1gina",
+        "noResultsText": "No se encontraron registros coincidentes",
+        "pageText": "{0}-{1} de {2}",
+        "prevPage": "Pagina anterior",
+        "rowsPerPageAll": "Todos",
+        "rowsPerPageText": "Art\u00edculos por p\u00e1gina:"
+      },
+      "dataTable": {
+        "rowsPerPageText": "Filas por p\u00e1gina:"
+      },
+      "noDataText": "Datos no disponibles"
+    },
     "account": {
       "messages": {
         "added-ok": "Cuenta agregada exitosamente",
