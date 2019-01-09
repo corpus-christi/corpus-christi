@@ -11,6 +11,7 @@
           name="title"
           v-validate="'required'"
           v-bind:error-messages="errors.collect('title')"
+          data-cy="title"
         ></v-text-field>
         <v-textarea
           rows="3"
@@ -18,10 +19,10 @@
           v-bind:label="$t('events.event-description')"
           name="description"
           v-bind:error-messages="errors.collect('description')"
+          data-cy="description"
         ></v-textarea>
 
-        <event-location
-        v-on:setLocation="setLocation"/>
+        <event-location v-on:setLocation="setLocation" />
 
         <v-layout>
           <v-flex xs12 md6>
@@ -35,6 +36,7 @@
               offset-y
               full-width
               min-width="290px"
+              data-cy="start-date-menu"
             >
               <v-text-field
                 slot="activator"
@@ -48,6 +50,7 @@
                 v-bind:locale="currentLanguageCode"
                 v-model="startDate"
                 @input="showStartDatePicker = false"
+                data-cy="start-date-picker"
               ></v-date-picker>
             </v-menu>
           </v-flex>
@@ -61,6 +64,7 @@
               full-width
               width="290px"
               persistent
+              data-cy="start-time-dialog"
             >
               <v-text-field
                 slot="activator"
@@ -69,10 +73,26 @@
                 prepend-icon="schedule"
                 readonly
               ></v-text-field>
-              <v-time-picker v-if="startTimeModal" format="24hr" v-model="startTime">
+              <v-time-picker
+                v-if="startTimeModal"
+                :format="timeFormat"
+                v-model="startTime"
+                data-cy="start-time-picker"
+              >
                 <v-spacer></v-spacer>
-                <v-btn flat color="primary" @click="startTimeModal = false">Cancel</v-btn>
-                <v-btn flat color="primary" @click="$refs.dialog1.save(startTime)">OK</v-btn>
+                <v-btn
+                  flat color="primary"
+                  @click="startTimeModal = false"
+                  data-cy="start-time-cancel"
+                  >{{ $t('actions.cancel') }}</v-btn
+                >
+                <v-btn
+                  flat
+                  color="primary"
+                  @click="$refs.dialog1.save(startTime)"
+                  data-cy="start-time-ok"
+                  >{{ $t('actions.confirm') }}</v-btn
+                >
               </v-time-picker>
             </v-dialog>
           </v-flex>
@@ -89,6 +109,7 @@
               offset-y
               full-width
               min-width="290px"
+              data-cy="end-date-menu"
             >
               <v-text-field
                 slot="activator"
@@ -102,6 +123,7 @@
                 v-bind:locale="currentLanguageCode"
                 v-model="endDate"
                 @input="showEndDatePicker = false"
+                data-cy="end-date-picker"
               ></v-date-picker>
             </v-menu>
           </v-flex>
@@ -115,6 +137,7 @@
               full-width
               width="290px"
               persistent
+              data-cy="end-time-dialog"
             >
               <v-text-field
                 slot="activator"
@@ -123,10 +146,27 @@
                 prepend-icon="update"
                 readonly
               ></v-text-field>
-              <v-time-picker v-if="endTimeModal" format="24hr" v-model="endTime">
+              <v-time-picker
+                v-if="endTimeModal"
+                :format="timeFormat"
+                v-model="endTime"
+                data-cy="end-time-picker"
+              >
                 <v-spacer></v-spacer>
-                <v-btn flat color="primary" @click="endTimeModal = false">Cancel</v-btn>
-                <v-btn flat color="primary" @click="$refs.dialog2.save(endTime)">OK</v-btn>
+                <v-btn
+                  flat
+                  color="primary"
+                  @click="endTimeModal = false"
+                  data-cy="end-time-cancel"
+                  >{{ $t('actions.cancel') }}</v-btn
+                >
+                <v-btn
+                  flat
+                  color="primary"
+                  @click="$refs.dialog2.save(endTime)"
+                  data-cy="end-time-ok"
+                  >{{ $t('actions.confirm') }}</v-btn
+                >
               </v-time-picker>
             </v-dialog>
           </v-flex>
@@ -135,9 +175,23 @@
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn color="primary" flat v-on:click="cancel">{{ $t("actions.cancel") }}</v-btn>
-      <v-btn color="primary" flat v-on:click="clear">{{ $t("actions.clear") }}</v-btn>
-      <v-btn color="primary" v-on:click="save">{{ $t("actions.save") }}</v-btn>
+      <v-btn
+        color="primary"
+        flat
+        v-on:click="cancel"
+        data-cy="form-cancel"
+        >{{ $t("actions.cancel") }}</v-btn
+      >
+      <v-btn
+        color="primary"
+        flat
+        v-on:click="clear"
+        data-cy="form-clear"
+      >{{ $t("actions.clear") }}</v-btn>
+      <v-btn color="primary"
+        v-on:click="save"
+        data-cy="form-save"
+      >{{ $t("actions.save") }}</v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -166,7 +220,6 @@ export default {
           this.endTime = this.getTimeFromTimestamp(this.event.end);
           this.endDate = this.getDateFromTimestamp(this.event.end);
         }
-        console.log(this.endTime, this.endDate, this.startTime, this.startDate)
       }
     }
   },
@@ -180,6 +233,13 @@ export default {
         ? this.$t("events.edit-event")
         : this.$t("events.create-event");
     },
+
+    timeFormat() {
+      if (this.currentLanguageCode == "en") {
+        return "ampm";
+      } else return "24hr";
+    },
+
     ...mapGetters(["currentLanguageCode"])
   },
 
@@ -201,15 +261,15 @@ export default {
       if (!this.errors.any()) {
         this.event.start = this.getTimestamp(this.startDate, this.startTime);
         this.event.end = this.getTimestamp(this.endDate, this.endTime);
-                
+
         this.$emit("save", this.event);
       }
     },
 
     getTimestamp(date, time) {
       let datems = new Date(date).getTime();
-      let timearr = time.split(':');
-      let timemin = (Number(timearr[0]) * 60) + Number(timearr[1]);
+      let timearr = time.split(":");
+      let timemin = Number(timearr[0]) * 60 + Number(timearr[1]);
       let timems = timemin * 60000;
       return new Date(datems + timems);
     },
@@ -221,9 +281,15 @@ export default {
       // let str = date.toISOString()
       // return str.split('T')[0];
       let date = new Date(ts);
-      let yr = date.toLocaleDateString(this.currentLanguageCode, {year: 'numeric'});
-      let mo = date.toLocaleDateString(this.currentLanguageCode, {month: '2-digit'});
-      let da = date.toLocaleDateString(this.currentLanguageCode, {day: '2-digit'});
+      let yr = date.toLocaleDateString(this.currentLanguageCode, {
+        year: "numeric"
+      });
+      let mo = date.toLocaleDateString(this.currentLanguageCode, {
+        month: "2-digit"
+      });
+      let da = date.toLocaleDateString(this.currentLanguageCode, {
+        day: "2-digit"
+      });
       return `${yr}-${mo}-${da}`;
     },
 
@@ -235,17 +301,16 @@ export default {
       // str = str.split('T')[1];
       // let timearr = str.split(':');
       // return timearr[0] + ':' + timearr[1];
-      return new Date(ts).toLocaleTimeString(this.currentLanguageCode, {
-        hour: '2-digit',
-        minute: '2-digit'
-      });
+      let date = new Date(ts);
+      let hr = String(date.getHours()).padStart(2, "0");
+      let min = String(date.getMinutes()).padStart(2, "0");
+      return `${hr}:${min}`;
     },
 
     setLocation(locationId) {
-      console.log('Setting Location')
-      console.log(locationId)
+      console.log("Setting Location");
+      console.log(locationId);
     }
-
   },
   props: {
     editMode: {
