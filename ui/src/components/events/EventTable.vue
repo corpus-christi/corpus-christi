@@ -28,6 +28,13 @@
       </template>
     </v-data-table>
 
+    <v-snackbar v-model="snackbar.show">
+      {{ snackbar.text }}
+      <v-btn flat @click="snackbar.show = false">
+        {{ $t("actions.close") }}
+      </v-btn>
+    </v-snackbar>
+
     <!-- New/Edit dialog -->
     <v-dialog v-model="eventDialog.show" max-width="500px">
       <event-form
@@ -61,7 +68,12 @@ export default {
         editMode: false,
         event: {}
       },
-      search: ""
+      search: "",
+
+      snackbar: {
+        show: false,
+        text: ""
+      }
     };
   },
   computed: {
@@ -96,6 +108,17 @@ export default {
 
     saveEvent(event) {
       console.log(event);
+      if (this.eventDialog.editMode) {
+        this.$http.put('http://localhost:3000/events', event).then(res => {
+          this.snackbar.show = true;
+          this.snackbar.text = 'saved?'
+        })
+      } else {
+        this.$http.post('http://localhost:3000/events', event).then(res => {
+          this.snackbar.show = true;
+          this.snackbar.text = 'posted?'
+        })
+      }
       this.eventDialog.show = false;
     },
 
