@@ -77,6 +77,7 @@
         v-bind:addMoreLoading="eventDialog.addMoreLoading"
         v-on:cancel="cancelEvent"
         v-on:save="saveEvent"
+        v-on:add-another="addAnotherEvent"
       />
     </v-dialog>
 
@@ -176,21 +177,79 @@ export default {
     },
 
     saveEvent(event) {
-      console.log(event);
+      // console.log(event);
+      // if (this.eventDialog.editMode) {
+      //   this.$http.put('http://localhost:3000/events', event).then(res => {
+      //     this.snackbar.show = true;
+      //     this.snackbar.text = 'saved?'
+      //   })
+      // } else {
+      //   this.$http.post('http://localhost:3000/events', event).then(res => {
+      //     this.snackbar.show = true;
+      //     this.snackbar.text = 'posted?'
+      //   })
+      // }
+      // this.eventDialog.show = false;
+
+      this.eventDialog.saveLoading = true;
       if (this.eventDialog.editMode) {
-        this.$http.put('http://localhost:3000/events', event).then(res => {
-          this.snackbar.show = true;
-          this.snackbar.text = 'saved?'
-        })
+        const event_id = event.id;
+        const idx = this.events.findIndex(ev => ev.id === event.id);
+        delete event.id;
+        this.$http
+          .put(`http://localhost:3000/events/${event_id}`, event)
+          .then(resp => {
+            console.log("EDITED", resp);
+            Object.assign(this.events[idx], event);
+            this.eventDialog.show = false;
+            this.eventDialog.saveLoading = false;
+            this.showSnackbar("Event Edited! (translate me)");
+          })
+          .catch(err => {
+            console.error("PUT FALURE", err.response);
+            this.eventDialog.saveLoading = false;
+            this.showSnackbar("Error while editing event! (translate me)");
+          });
       } else {
-        this.$http.post('http://localhost:3000/events', event).then(res => {
-          this.snackbar.show = true;
-          this.snackbar.text = 'posted?'
-        })
+        this.$http
+          .post("http://localhost:3000/events/", event)
+          .then(resp => {
+            console.log("ADDED", resp);
+            this.events.push(resp.data);
+            this.eventDialog.show = false;
+            this.eventDialog.saveLoading = false;
+            this.showSnackbar("Event Added! (translate me)");
+          })
+          .catch(err => {
+            console.error("POST FAILURE", err.response);
+            this.eventDialog.saveLoading = false;
+            this.showSnackbar("Error while adding event! (translate me)");
+          });
       }
-      this.eventDialog.show = false;
     },
 
+    addAnotherEvent(event) {
+      this.eventDialog.addMoreLoading = true;
+      this.$http
+          .post("http://localhost:3000/events/", event)
+          .then(resp => {
+            console.log("ADDED", resp);
+            this.events.push(resp.data);
+            this.eventDialog.show = false;
+            this.eventDialog.saveLoading = false;
+            this.showSnackbar("Event Added! (translate me)");
+          })
+          .catch(err => {
+            console.error("FAILURE", err.response);
+            this.eventDialog.saveLoading = false;
+            this.showSnackbar("Error while adding event! (translate me)");
+          });
+    },
+
+    showSnackbar(message) {
+      this.snackbar.text = message;
+      this.snackbar.show = true;
+    },
     getDisplayDate(dateString) {
       let date = new Date(dateString);
       return date.toLocaleTimeString(this.currentLanguageCode, {
