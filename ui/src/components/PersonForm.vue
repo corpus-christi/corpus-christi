@@ -12,7 +12,7 @@
           v-validate="'required'"
           v-bind:error-messages="errors.collect('firstName')"
           :readonly="formDisabled"
-          data-cy="first-name"
+          data-cy="firstName"
         ></v-text-field>
 
         <v-text-field
@@ -22,24 +22,23 @@
           v-validate="'required'"
           v-bind:error-messages="errors.collect('lastName')"
           :readonly="formDisabled"
-          data-cy="last-name"
+          data-cy="lastName"
         ></v-text-field>
 
         <v-radio-group
           v-model="person.gender"
           :readonly="formDisabled"
-          data-cy="gender-group"
           row
         >
           <v-radio
             v-bind:label="$t('person.male')"
             value="M"
-            data-cy="gender-male"
+            data-cy="radio-m"
           ></v-radio>
           <v-radio
             v-bind:label="$t('person.female')"
             value="F"
-            data-cy="gender-female"
+            data-cy="radio-f"
           ></v-radio>
         </v-radio-group>
 
@@ -68,7 +67,7 @@
             v-bind:locale="currentLanguageCode"
             v-model="person.birthday"
             @input="showBirthdayPicker = false"
-            data-cy="pick-birthday"
+            data-cy="birthday-picker"
           ></v-date-picker>
         </v-menu>
 
@@ -79,16 +78,16 @@
           v-validate="'email'"
           v-bind:error-messages="errors.collect('email')"
           prepend-icon="email"
-          :readonly="formDisabled"
           data-cy="email"
+          :readonly="formDisabled"
         ></v-text-field>
 
         <v-text-field
           v-model="person.phone"
           v-bind:label="$t('person.phone')"
           prepend-icon="phone"
-          :readonly="formDisabled"
           data-cy="phone"
+          :readonly="formDisabled"
         ></v-text-field>
       </form>
     </v-card-text>

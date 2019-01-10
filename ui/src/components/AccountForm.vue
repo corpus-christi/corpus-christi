@@ -18,7 +18,7 @@
         v-validate="'alpha_dash|min:6'"
         v-bind:error-messages="errors.collect('username')"
         prepend-icon="person"
-        data-cy="username"
+        data-cy="new-account-username"
       ></v-text-field>
 
       <!-- Password (new or update) -->
@@ -31,7 +31,7 @@
         v-validate="'min:8'"
         v-bind:error-messages="errors.collect('password')"
         prepend-icon="lock"
-        data-cy="password"
+        data-cy="new-update-password"
       ></v-text-field>
       <!-- Password confirmation (new or update) -->
       <v-text-field
@@ -42,7 +42,7 @@
         v-validate="'confirmed:pwdField'"
         v-bind:error-messages="errors.collect('repeat-password')"
         prepend-icon="lock"
-        data-cy="repeat-password"
+        data-cy="confirm-password"
       ></v-text-field>
     </v-card-text>
 
