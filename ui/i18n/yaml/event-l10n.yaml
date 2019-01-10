@@ -29,4 +29,7 @@ events:
   create-event:
     en: Create Event
     es: Crear Evento
+  confirm-deactivate:
+    en: Are you sure you want to deactivate this event?
+    es: ¿Seguro que quieres desactivar este evento?
   

@@ -12,9 +12,16 @@
       ></v-text-field>
       <v-spacer></v-spacer>
 
-      <v-btn small fab color="primary" absolute dark bottom right v-on:click.stop="newEvent">
-        <v-icon>add</v-icon>
+      <v-btn
+        color="primary"
+        raised
+        v-on:click.stop="newEvent"
+        data-cy="add-event"
+      >
+        <v-icon dark left>add</v-icon>
+        {{ $t("actions.addevent") }}
       </v-btn>
+
     </v-toolbar>
 
     <v-data-table :headers="headers" :items="events" :search="search" class="elevation-1">
@@ -44,7 +51,7 @@
               small
               color="primary"
               slot="activator"
-              v-on:click="deleteEvent(props.item)"
+              v-on:click="confirmDeactivate(props.item)"
             >
               <v-icon small>delete</v-icon>
             </v-btn>
@@ -72,6 +79,18 @@
         v-on:save="saveEvent"
       />
     </v-dialog>
+
+    <!-- Deactivate dialog -->
+    <v-dialog v-model="deactivateDialog.show" max-width="350px">
+      <v-card>
+        <v-card-text>{{ $t("events.confirm-deactivate") }}</v-card-text>
+          <v-card-actions>
+            <v-btn v-on:click="cancelDeactivate" color="secondary" flat data-cy="">{{ $t("actions.cancel") }}</v-btn>
+            <v-spacer></v-spacer>
+            <v-btn v-on:click="deactivateEvent" color="primary" raised data-cy="">{{ $t("actions.confirm") }}</v-btn>
+          </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -97,6 +116,9 @@ export default {
         saveLoading: false,
         addMoreLoading: false,
         event: {}
+      },
+      deactivateDialog: {
+        show: false
       },
       search: "",
 
@@ -128,8 +150,21 @@ export default {
       this.activateEventDialog({ ...event }, true);
     },
 
-    deleteEvent(event) {
-      console.log('delete!')
+    activateDeactivateDialog(event = {}) {
+      this.deactivateDialog.show = true;
+    },
+
+    confirmDeactivate(event) {
+      this.activateDeactivateDialog({ ...event });
+    },
+    
+    deactivateEvent(event) {
+      console.log("deactiavted event")
+      // this.deactivateDialog.show = false;
+    },
+
+    cancelDeactivate() {
+      this.deactivateDialog.show = false;
     },
 
     newEvent() {
