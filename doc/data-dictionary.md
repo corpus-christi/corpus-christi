@@ -140,39 +140,6 @@ the gloss would be `German`, but in `de`, it would be `Deutsch`).
    where the `description` of each `Manager` appears in parentheses.
    Multiple "Group leader" _Manager_ instances
    may refer to the same "Group overseer" _Manager_.
-     
-## Self Registration
-
-CC allows a _public_ user to create an instance of _Person_. For example, when:
-- Signing up for a _Course Offering_
-- Signing up for an _Event_
-In these cases, the public user clicks on the offering or event
-and enters his or her personal information.
-
-Data entered by public users is considered **unconfirmed**
-and must be validated by an authorized CC account holder.
-
-For example:
-1. Public user signs up for an upcoming course.
-1. CC creates a unconfirmed _Person_ instance for the public user.
-1. A CC user with the **registrar** role inspects the unconfirmed _Person_ instance.
-   The user may:
-   1. Reject the _Person_ instance, deleting it from the database.
-      For example, an empty, incomplete, or obviously bogus entry can simply be removed
-      (actually _deleted_, not just marked inactive).
-   1. Search for an existing _Person_ instance that matches this public user
-      (e.g., from a previous registration).
-      CC provides tools to identify an existing _Person_ instance (e.g., live search).
-      - If _no_ existing _Person_ is found, the **registrar**
-        associates the new _Person_ record with the course,
-        which also promotes the _Person_ from
-        _unconfirmed_ to _confirmed_.
-      - If an existing _Person_ _is_ found, the **registrar** 
-        associates the existing _Person_ with the course and deletes the 
-        duplicate _Person_ entred when the public user registered.
-
-The goal of this process is to vet data entering the system, 
-eliminate duplicate data, and generally avoid unquality.
 
 ## Places
 
