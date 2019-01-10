@@ -1,6 +1,8 @@
 <template>
     <div>
+        <v-card>
         details
+        </v-card>
     </div>
 </template>
 
