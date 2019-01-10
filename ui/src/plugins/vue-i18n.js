@@ -1,5 +1,4 @@
 import Vue from "vue";
-import Vuetify from 'vuetify'
 import VeeValidate from "vee-validate";	
 import VueI18n from "vue-i18n";
 
