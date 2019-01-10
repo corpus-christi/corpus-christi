@@ -35,6 +35,7 @@
       :items="people"
       :search="search"
       class="elevation-1"
+      data-cy="person-table"
     >
       <template slot="items" slot-scope="props">
         <td>{{ props.item.firstName }}</td>
