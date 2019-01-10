@@ -29,15 +29,21 @@ events:
   create-event:
     en: Create Event
     es: Crear Evento
-  confirm-deactivate:
-    en: Are you sure you want to deactivate this event?
-    es: ¿Seguro que quieres desactivar este evento?
-  event-deleted:
-    en: Event deleted
-    es: Evento eliminado
-  error-deleting-event:
-    en: Error while deleting event 
-    es: Error al eliminar el evento
+  confirm-archive:
+    en: Are you sure you want to archive this event?
+    es: ¿Seguro que quieres archivar este evento?
+  event-archived:
+    en: Event archived
+    es: Evento archivado
+  error-archiving-event:
+    en: Error while archiving event 
+    es: Error al archivar el evento
+  event-unarchived:
+    en: Event unarchived
+    es: Evento desarchivado   # probably not right
+  error-unarchiving-event:
+    en: Error while unarchiving event 
+    es: Error al desarchivar el evento
   event-edited:
     en: Event edited
     es: Evento editado
