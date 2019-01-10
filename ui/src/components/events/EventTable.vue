@@ -174,12 +174,12 @@ export default {
           this.events.splice(idx, 1);
           this.deactivateDialog.loading = false;
           this.deactivateDialog.show = false;
-          this.showSnackbar("Event Deleted (translate me)");
+          this.showSnackbar(this.$t("events.event-deleted"));
         })
         .catch(err => {
           console.error("DELETE FALURE", err.response);
           this.deactivateDialog.loading = false;
-          this.showSnackbar("Error while deleting event! (translate me)");
+          this.showSnackbar(this.$t("events.error-deleting-event"));
         });
 
       // this.deactivateDialog.show = false;
@@ -210,12 +210,12 @@ export default {
             Object.assign(this.events[idx], event);
             this.eventDialog.show = false;
             this.eventDialog.saveLoading = false;
-            this.showSnackbar("Event Edited! (translate me)");
+            this.showSnackbar(this.$t("events.event-edited"));
           })
           .catch(err => {
             console.error("PUT FALURE", err.response);
             this.eventDialog.saveLoading = false;
-            this.showSnackbar("Error while editing event! (translate me)");
+            this.showSnackbar(this.$t("events.error-editing-event"));
           });
       } else {
         this.$http
@@ -225,12 +225,12 @@ export default {
             this.events.push(resp.data);
             this.eventDialog.show = false;
             this.eventDialog.saveLoading = false;
-            this.showSnackbar("Event Added! (translate me)");
+            this.showSnackbar(this.$t("events.event-added"));
           })
           .catch(err => {
             console.error("POST FAILURE", err.response);
             this.eventDialog.saveLoading = false;
-            this.showSnackbar("Error while adding event! (translate me)");
+            this.showSnackbar(this.$t("events.error-adding-event"));
           });
       }
     },
@@ -244,12 +244,12 @@ export default {
             this.events.push(resp.data);
             this.eventDialog.show = false;
             this.eventDialog.saveLoading = false;
-            this.showSnackbar("Event Added! (translate me)");
+            this.showSnackbar(this.$t("events.event-added"));
           })
           .catch(err => {
             console.error("FAILURE", err.response);
             this.eventDialog.saveLoading = false;
-            this.showSnackbar("Error while adding event! (translate me)");
+            this.showSnackbar(this.$t("events.error-adding-event"));
           });
     },
 

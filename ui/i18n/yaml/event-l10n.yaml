@@ -32,4 +32,21 @@ events:
   confirm-deactivate:
     en: Are you sure you want to deactivate this event?
     es: ¿Seguro que quieres desactivar este evento?
-  
+  event-deleted:
+    en: Event deleted
+    es: Evento eliminado
+  error-deleting-event:
+    en: Error while deleting event 
+    es: Error al eliminar el evento
+  event-edited:
+    en: Event edited
+    es: Evento editado
+  error-editing-event:
+    en: Error while editing event
+    es: Error al editar evento
+  event-added:
+    en: Event added
+    es: Evento agregado
+  error-adding-event:
+    en: Error while adding event
+    es: Error al agregar evento
