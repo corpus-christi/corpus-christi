@@ -22,10 +22,14 @@
           data-cy="description"
         ></v-textarea>
 
+
+
         <entity-search
         location
         searchEndpoint="http://localhost:3000/locations"
-        v-on:setLocation="setLocation"/>
+        v-on:setSelected="setLocation"/>
+        
+
 
         <v-layout>
           <v-flex xs12 md6>
