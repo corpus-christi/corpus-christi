@@ -1,14 +1,12 @@
 <template>
   <v-container>
-    <event-table></event-table>
+    <router-view></router-view>
   </v-container>
 </template>
 
 <script>
-import EventTable from "../components/events/EventTable";
 
 export default {
   name: "Events",
-  components: { "event-table": EventTable }
 };
 </script>
