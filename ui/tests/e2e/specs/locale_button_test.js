@@ -31,7 +31,7 @@ describe("testing the language button", () => {
   });
   it("Checks to ensure the language is back so Spanish", () => {
      cy.get('[data-cy=church-sentence]')
-      //.contains("Church");
+      //.contains("Church");//something dumb
       .contains("Iglesia");
   });
 });
