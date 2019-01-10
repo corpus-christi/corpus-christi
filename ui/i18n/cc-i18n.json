@@ -38,26 +38,30 @@
       "save": "Save",
       "search": "Search",
       "tooltips": {
+        "archive": "Archive",
         "deactivate": "Deactivate",
-        "settings": "Settings"
+        "settings": "Settings",
+        "unarchive": "Unarchive"
       },
       "viewinactive": "View Inactive"
     },
     "events": {
       "actions": "Actions",
-      "confirm-deactivate": "Are you sure you want to deactivate this event?",
+      "confirm-archive": "Are you sure you want to archive this event?",
       "create-event": "Create Event",
       "edit-event": "Edit Event",
       "end-date": "End Date",
       "end-time": "End Time",
       "error-adding-event": "Error while adding event",
-      "error-deleting-event": "Error while deleting event",
+      "error-archiving-event": "Error while archiving event",
       "error-editing-event": "Error while editing event",
+      "error-unarchiving-event": "Error while unarchiving event",
       "event-added": "Event added",
-      "event-deleted": "Event deleted",
+      "event-archived": "Event archived",
       "event-description": "Event Description",
       "event-edited": "Event edited",
       "event-location": "Event Location",
+      "event-unarchived": "Event unarchived",
       "start-date": "Start Date",
       "start-time": "Start Time",
       "title": "Events"
@@ -146,26 +150,30 @@
       "save": "Salvar",
       "search": "Buscar",
       "tooltips": {
+        "archive": "Archivar",
         "deactivate": "Desactivar",
-        "settings": "Ajustes"
+        "settings": "Ajustes",
+        "unarchive": "Desarchivo"
       },
       "viewinactive": "Ver Inactivo"
     },
     "events": {
       "actions": "Comportamiento",
-      "confirm-deactivate": "\u00bfSeguro que quieres desactivar este evento?",
+      "confirm-archive": "\u00bfSeguro que quieres archivar este evento?",
       "create-event": "Crear Evento",
       "edit-event": "Editar Evento",
       "end-date": "Fecha Final",
       "end-time": "Hora de Finalizaci\u00f3n",
       "error-adding-event": "Error al agregar evento",
-      "error-deleting-event": "Error al eliminar el evento",
+      "error-archiving-event": "Error al archivar el evento",
       "error-editing-event": "Error al editar evento",
+      "error-unarchiving-event": "Error al desarchivar el evento",
       "event-added": "Evento agregado",
-      "event-deleted": "Evento eliminado",
+      "event-archived": "Evento archivado",
       "event-description": "Descripci\u00f3n del Evento",
       "event-edited": "Evento editado",
       "event-location": "Ubicaci\u00f3n de Evento",
+      "event-unarchived": "Evento desarchivado",
       "start-date": "Fecha de Inicio",
       "start-time": "Hora de Inicio",
       "title": "Eventos"
