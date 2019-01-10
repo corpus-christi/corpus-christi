@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-tabs color="white" slider-color="accent">
+        <v-tabs color="transparent" slider-color="accent">
             <v-tab ripple v-on:click="$router.push({path: '/events/' + $route.params.event + '/details'})">
                 <v-icon>list</v-icon>&nbsp;Details
             </v-tab>
@@ -14,7 +14,7 @@
                 <v-icon>devices_other</v-icon>&nbsp;Assets
             </v-tab>
         </v-tabs>
-        <hr/>
+        <hr class="vertical-spacer"/>
         <router-view></router-view>
     </div>
 </template>
@@ -24,3 +24,9 @@ export default {
     name: "Event"
 }
 </script>
+
+<style scoped>
+.vertical-spacer {
+    margin-bottom: 16px
+}
+</style>
