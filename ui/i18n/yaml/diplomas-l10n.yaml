@@ -1,0 +1,19 @@
+courses:
+  course:
+    en: Courses
+    es: Cursos
+  enrolled:
+    en: Number Enrolled
+    es: Número Registrado
+  title:
+    en: Title
+    es: Título
+  description:
+    en: Description
+    es: Descripción
+  new:
+    en: New Course
+    es: Nuevo Curso
+  prerequisites:
+    en: Prerequisites
+    es: Prerrequisitos
