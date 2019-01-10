@@ -181,7 +181,7 @@
         </v-layout>
       </form>
     </v-card-text>
-    <v-card-actions>
+    <!-- <v-card-actions>
       <v-spacer></v-spacer>
       <v-btn
         color="primary"
@@ -200,7 +200,41 @@
         v-on:click="save"
         data-cy="form-save"
       >{{ $t("actions.save") }}</v-btn>
+    </v-card-actions> -->
+    <v-card-actions>
+      <v-btn
+        color="secondary"
+        flat
+        v-on:click="cancel"
+        :disabled="formDisabled"
+        data-cy=""
+        >{{ $t("actions.cancel") }}</v-btn
+      >
+      <v-spacer></v-spacer>
+      <v-btn color="primary" flat v-on:click="clear" :disabled="formDisabled">{{
+        $t("actions.clear")
+      }}</v-btn>
+      <v-btn
+        color="primary"
+        outline
+        v-on:click="addAnother"
+        v-if="editMode === false"
+        :loading="addMoreLoading"
+        :disabled="formDisabled"
+        data-cy=""
+        >{{ $t("actions.addanother") }}</v-btn
+      >
+      <v-btn
+        color="primary"
+        raised
+        v-on:click="save"
+        :loading="saveLoading"
+        :disabled="formDisabled"
+        data-cy=""
+        >{{ $t("actions.save") }}</v-btn
+      >
     </v-card-actions>
+
   </v-card>
 </template>
 
@@ -248,6 +282,10 @@ export default {
       } else return "24hr";
     },
 
+    formDisabled() {
+      return this.saveLoading || this.addMoreLoading;
+    },
+
     ...mapGetters(["currentLanguageCode"])
   },
 
@@ -278,8 +316,16 @@ export default {
       if (!this.errors.any()) {
         this.event.start = this.getTimestamp(this.startDate, this.startTime);
         this.event.end = this.getTimestamp(this.endDate, this.endTime);
-
         this.$emit("save", this.event);
+      }
+    },
+
+    addAnother() {
+      this.$validator.validateAll();
+      if (!this.errors.any()) {
+        this.event.start = this.getTimestamp(this.startDate, this.startTime);
+        this.event.end = this.getTimestamp(this.endDate, this.endTime);
+        this.$emit("add-another", this.event);
       }
     },
 
@@ -324,6 +370,12 @@ export default {
     initialData: {
       type: Object,
       required: true
+    },
+    saveLoading: {
+      type: Boolean
+    },
+    addMoreLoading: {
+      type: Boolean
     }
   },
   data: function() {
@@ -336,7 +388,10 @@ export default {
       showStartDatePicker: false,
       showEndDatePicker: false,
       startTimeModal: false,
-      endTimeModal: false
+      endTimeModal: false,
+      save_loading: false,
+      add_more_loading: false,
+
     };
   }
 };

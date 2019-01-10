@@ -12,9 +12,16 @@
       ></v-text-field>
       <v-spacer></v-spacer>
 
-      <v-btn small fab color="primary" absolute dark bottom right v-on:click.stop="newEvent">
-        <v-icon>add</v-icon>
+      <v-btn
+        color="primary"
+        raised
+        v-on:click.stop="newEvent"
+        data-cy="add-event"
+      >
+        <v-icon dark left>add</v-icon>
+        {{ $t("actions.addevent") }}
       </v-btn>
+
     </v-toolbar>
 
     <v-data-table :headers="headers" :items="events" :search="search" class="elevation-1">
@@ -23,7 +30,33 @@
         <td>{{ getDisplayDate(props.item.start) }}</td>
         <td>{{ props.item.location_name }}</td>
         <td>
-          <v-icon small @click="editEvent(props.item)">edit</v-icon>
+          <!-- <v-icon small @click="editEvent(props.item)">edit</v-icon> -->
+          <v-tooltip bottom>
+            <v-btn
+              icon
+              outline
+              small
+              color="primary"
+              slot="activator"
+              v-on:click="editEvent(props.item)"
+            >
+              <v-icon small>edit</v-icon>
+            </v-btn>
+            <span>{{ $t("actions.edit") }}</span>
+          </v-tooltip>
+          <v-tooltip bottom>
+            <v-btn
+              icon
+              outline
+              small
+              color="primary"
+              slot="activator"
+              v-on:click="confirmDeactivate(props.item)"
+            >
+              <v-icon small>delete</v-icon>
+            </v-btn>
+            <span>{{ $t("actions.tooltips.deactivate") }}</span>
+          </v-tooltip>
         </td>
       </template>
     </v-data-table>
@@ -40,9 +73,24 @@
       <event-form
         v-bind:editMode="eventDialog.editMode"
         v-bind:initialData="eventDialog.event"
+        v-bind:saveLoading="eventDialog.saveLoading"
+        v-bind:addMoreLoading="eventDialog.addMoreLoading"
         v-on:cancel="cancelEvent"
         v-on:save="saveEvent"
+        v-on:add-another="addAnotherEvent"
       />
+    </v-dialog>
+
+    <!-- Deactivate dialog -->
+    <v-dialog v-model="deactivateDialog.show" max-width="350px">
+      <v-card>
+        <v-card-text>{{ $t("events.confirm-deactivate") }}</v-card-text>
+          <v-card-actions>
+            <v-btn v-on:click="cancelDeactivate" color="secondary" flat data-cy="">{{ $t("actions.cancel") }}</v-btn>
+            <v-spacer></v-spacer>
+            <v-btn v-on:click="deactivateEvent" color="primary" raised :loading="deactivateDialog.loading" data-cy="">{{ $t("actions.confirm") }}</v-btn>
+          </v-card-actions>
+      </v-card>
     </v-dialog>
   </div>
 </template>
@@ -66,7 +114,14 @@ export default {
       eventDialog: {
         show: false,
         editMode: false,
+        saveLoading: false,
+        addMoreLoading: false,
         event: {}
+      },
+      deactivateDialog: {
+        show: false,
+        eventId: -1,
+        loading: false
       },
       search: "",
 
@@ -98,6 +153,42 @@ export default {
       this.activateEventDialog({ ...event }, true);
     },
 
+    activateDeactivateDialog(eventId) {
+      this.deactivateDialog.show = true;
+      this.deactivateDialog.eventId = eventId;
+    },
+
+    confirmDeactivate(event) {
+      this.activateDeactivateDialog(event.id);
+    },
+    
+    deactivateEvent() {
+      console.log("deactivated event")
+      this.deactivateDialog.loading = true;
+      const eventId = this.deactivateDialog.eventId
+      const idx = this.events.findIndex(ev => ev.id === eventId);
+      this.$http
+        .delete(`http://localhost:3000/events/${eventId}`)
+        .then(resp => {
+          console.log("DELETED", resp);
+          this.events.splice(idx, 1);
+          this.deactivateDialog.loading = false;
+          this.deactivateDialog.show = false;
+          this.showSnackbar("Event Deleted (translate me)");
+        })
+        .catch(err => {
+          console.error("DELETE FALURE", err.response);
+          this.deactivateDialog.loading = false;
+          this.showSnackbar("Error while deleting event! (translate me)");
+        });
+
+      // this.deactivateDialog.show = false;
+    },
+
+    cancelDeactivate() {
+      this.deactivateDialog.show = false;
+    },
+
     newEvent() {
       this.activateEventDialog();
     },
@@ -107,21 +198,65 @@ export default {
     },
 
     saveEvent(event) {
-      console.log(event);
+      this.eventDialog.saveLoading = true;
       if (this.eventDialog.editMode) {
-        this.$http.put('http://localhost:3000/events', event).then(res => {
-          this.snackbar.show = true;
-          this.snackbar.text = 'saved?'
-        })
+        const eventId = event.id;
+        const idx = this.events.findIndex(ev => ev.id === event.id);
+        delete event.id;
+        this.$http
+          .put(`http://localhost:3000/events/${eventId}`, event)
+          .then(resp => {
+            console.log("EDITED", resp);
+            Object.assign(this.events[idx], event);
+            this.eventDialog.show = false;
+            this.eventDialog.saveLoading = false;
+            this.showSnackbar("Event Edited! (translate me)");
+          })
+          .catch(err => {
+            console.error("PUT FALURE", err.response);
+            this.eventDialog.saveLoading = false;
+            this.showSnackbar("Error while editing event! (translate me)");
+          });
       } else {
-        this.$http.post('http://localhost:3000/events', event).then(res => {
-          this.snackbar.show = true;
-          this.snackbar.text = 'posted?'
-        })
+        this.$http
+          .post("http://localhost:3000/events/", event)
+          .then(resp => {
+            console.log("ADDED", resp);
+            this.events.push(resp.data);
+            this.eventDialog.show = false;
+            this.eventDialog.saveLoading = false;
+            this.showSnackbar("Event Added! (translate me)");
+          })
+          .catch(err => {
+            console.error("POST FAILURE", err.response);
+            this.eventDialog.saveLoading = false;
+            this.showSnackbar("Error while adding event! (translate me)");
+          });
       }
-      this.eventDialog.show = false;
     },
 
+    addAnotherEvent(event) {
+      this.eventDialog.addMoreLoading = true;
+      this.$http
+          .post("http://localhost:3000/events/", event)
+          .then(resp => {
+            console.log("ADDED", resp);
+            this.events.push(resp.data);
+            this.eventDialog.show = false;
+            this.eventDialog.saveLoading = false;
+            this.showSnackbar("Event Added! (translate me)");
+          })
+          .catch(err => {
+            console.error("FAILURE", err.response);
+            this.eventDialog.saveLoading = false;
+            this.showSnackbar("Error while adding event! (translate me)");
+          });
+    },
+
+    showSnackbar(message) {
+      this.snackbar.text = message;
+      this.snackbar.show = true;
+    },
     getDisplayDate(dateString) {
       let date = new Date(dateString);
       return date.toLocaleTimeString(this.currentLanguageCode, {
