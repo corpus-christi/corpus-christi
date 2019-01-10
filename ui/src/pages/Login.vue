@@ -16,7 +16,7 @@
                 name="login"
                 type="text"
                 v-on:keyup.enter="login"
-                data-cy=""
+                data-cy="username"
               ></v-text-field>
               <v-text-field
                 v-model="password"
@@ -25,16 +25,16 @@
                 name="password"
                 type="password"
                 v-on:keyup.enter="login"
-                data-cy=""
+                data-cy="password"
               ></v-text-field>
             </v-form>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="primary" v-on:click="cancel" data-cy="">
+            <v-btn color="primary" v-on:click="cancel" data-cy="cancel">
               {{ $t("actions.cancel") }}
             </v-btn>
-            <v-btn color="primary" v-on:click="login" data-cy="">
+            <v-btn color="primary" v-on:click="login" data-cy="login">
               {{ $t("actions.login") }}
             </v-btn>
           </v-card-actions>

@@ -1,6 +1,6 @@
 <template>
   <v-menu>
-    <v-btn id="cur-locale" flat slot="activator" data-cy="">
+    <v-btn id="cur-locale" flat slot="activator" data-cy="cur-locale">
       {{ displayLocale(currentLocale) }}
     </v-btn>
     <v-list>
@@ -8,7 +8,6 @@
         v-for="locale in locales"
         v-bind:key="locale.code"
         v-on:click="setCurrentLocale(locale)"
-        data-cy=""
       >
         <v-list-tile-title>{{ displayLocale(locale) }}</v-list-tile-title>
       </v-list-tile>

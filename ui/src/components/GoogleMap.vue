@@ -3,7 +3,7 @@
     v-bind:center="center"
     v-bind:zoom="zoom"
     style="width:100%;  height: 400px;"
-    data-cy=""
+    data-cy="gmap"
   ></gmap-map>
 </template>
 

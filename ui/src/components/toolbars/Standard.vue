@@ -3,7 +3,7 @@
     <v-toolbar app>
       <v-toolbar-side-icon
         v-on:click="toggleNavDrawer"
-        data-cy=""
+        data-cy="open-navigation"
       ></v-toolbar-side-icon>
 
       <v-toolbar-title class="headline text-uppercase">

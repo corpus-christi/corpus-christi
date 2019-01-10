@@ -10,7 +10,7 @@
         v-bind:label="$t('actions.search')"
         hide-details
         single-line
-        data-cy=""
+        data-cy="search"
       ></v-text-field>
       <v-spacer></v-spacer>
       <v-switch
@@ -19,10 +19,10 @@
         v-on:change="changeView"
         v-model="showingInactive"
         hide-details
-        data-cy=""
+        data-cy="view-inactive"
       ></v-switch>
 
-      <v-btn color="primary" raised v-on:click.stop="newPerson" data-cy="">
+      <v-btn color="primary" raised v-on:click.stop="newPerson" data-cy="add-person">
         <v-icon dark left>person_add</v-icon>
         {{ $t("actions.add-person") }}
       </v-btn>
@@ -49,6 +49,7 @@
               color="primary"
               slot="activator"
               v-on:click="editPerson(props.item)"
+              data-cy="edit-person"
             >
               <v-icon small>edit</v-icon>
             </v-btn>
@@ -62,6 +63,7 @@
               color="primary"
               slot="activator"
               v-on:click="adminPerson(props.item)"
+              data-cy="add-account"
             >
               <v-icon small>settings</v-icon>
             </v-btn>
@@ -75,6 +77,7 @@
               color="primary"
               slot="activator"
               v-on:click="deletePerson(props.item)"
+              data-cy="deactivate-person"
             >
               <v-icon small>delete</v-icon>
             </v-btn>
