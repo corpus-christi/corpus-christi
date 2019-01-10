@@ -14,11 +14,13 @@
       <v-spacer></v-spacer>
       
  
-      <v-switch 
-        :label="$t('actions.view-inactive')"
-        color="primary"
-        v-model="showingInactive" 
-        hide-details></v-switch>
+      <v-select 
+        :label="$t('actions.view-Archived')"
+        v-model="viewStatus"
+        :items="options"
+        standard
+        hide-details>
+        </v-select>
     
       <v-btn
         color="primary"
@@ -33,8 +35,8 @@
     <!-- Table of existing people -->
     <v-data-table
       :headers="headers"
-      :items="displayCourses"
       :search="search"
+      :items="showCourses"
       :loading="!tableLoaded"
       class="elevation-1"
     >
@@ -93,12 +95,14 @@ export default {
         text: ""
       },
 
+      activeCourses: [],
+      archivedCourses: [],
+      courses: [],
+
       tableLoaded: false,
       selected: [],
-      courses: [],
-      filtered: [],
       search: "",
-      showingInactive: false
+      viewStatus: "active",
     };
   },
   computed: {
@@ -110,18 +114,37 @@ export default {
         { text: this.$t("actions.header"), sortable: false }
       ];
     },
-    inactiveCourses() {
-      return this.courses.filter(course => !course.active)
-    },
+    // archivedCourses() {
+    //   return this.courses.filter(course => !course.active)
+    // },
+    // activeCourses() {
+    //   return this.courses.filter(course => course.active)
+    // },
 
-    activeCourses() {
-      return this.courses.filter(course => course.active)
+    options() {
+      return [
+        {text: this.$t("actions.view-active"), value: "active"},
+        {text: this.$t("actions.view-archived"), value: "archived"},
+        {text: this.$t("actions.view-all"), value: "all"}
+      ]
     },
-
-    displayCourses() {
-      return this.showingInactive ? this.courses : this.courses.filter(course => course.active)
-    }
+    showCourses() {
+      // return this.showingArchived ? this.courses : this.courses.filter(course => course.active)
+      switch (this.viewStatus) {
+        case "active":
+          return this.activeCourses;
+          break;
+        case "archived":
+          return this.archivedCourses;
+          break;
+        case "all":
+          return this.courses;
+          break;
+      }
+  
+    },
   },
+
   methods: {
     dispatchAction(actionName, course) {
       switch(actionName) {
@@ -180,14 +203,6 @@ export default {
           .catch(err => console.error("FAILURE", err.response));
       }
       this.courseDialog.show = false;
-    },
-
-    changeView() {
-      if (this.showingInactive) {
-        this.viewInactive();
-      } else {
-        this.viewActive();
-      }
     }
   },
 
@@ -196,7 +211,10 @@ export default {
       .get("/api/v1/courses/courses")
       .then(resp => {
         this.courses = resp.data
+        this.activeCourses = this.courses.filter(course => course.active)
+        this.archivedCourses = this.courses.filter(course => !course.active)
         this.tableLoaded = true;
+        console.log(this.activeCourses, this.archivedCourses, this.courses)
       });
   }
 };

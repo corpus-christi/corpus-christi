@@ -12,13 +12,13 @@
       <span>{{ $t("actions.edit") }}</span>
     </v-tooltip>
     <v-tooltip bottom>
-      <v-btn flat icon outline
+      <v-btn flat icon
         color="primary"
         slot="activator"
         v-bind:small="displayContext === 'compact'"
         @click="emitAction('deactivate')">
 
-          <v-icon v-bind:small="displayContext === 'compact'">delete</v-icon>
+          <v-icon v-bind:small="displayContext === 'compact'">remove_circle</v-icon>
       </v-btn>
       <span>{{ $t("actions.tooltips.deactivate") }}</span>
     </v-tooltip>
