@@ -64,13 +64,13 @@ def prerequisite_object_factory(course_id, prereq_id):
     return prerequisites
 
 
-def create_multiple_prerequisites(sqla, n=3):
+def create_multiple_prerequisites(sqla):
     """Commits the number of prerequisites to the DB."""
     courses = sqla.query(Course).all()
     prerequisite_schema = PrerequisiteSchema()
     new_prerequisites = []
-    for i in range(courses.count()-1):
-        valid_prerequisites = prerequisites_schema.load(prerequisite_object_factory(courses[i].id, courses[i+1].id))
+    for i in range(len(courses)-1):
+        valid_prerequisites = prerequisite_schema.load(prerequisite_object_factory(courses[i].id, courses[i+1].id))
         new_prerequisites.append(Prerequisite(**valid_prerequisites))
     sqla.add_all(new_prerequisites)
     sqla.commit()
