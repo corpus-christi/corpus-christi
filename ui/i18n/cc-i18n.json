@@ -24,6 +24,9 @@
       "username": "Username"
     },
     "actions": {
+      "addanother": "Add Another",
+      "addevent": "Add Event",
+      "addperson": "Add Person",
       "cancel": "Cancel",
       "clear": "Clear",
       "close": "Close",
@@ -37,10 +40,12 @@
       "tooltips": {
         "deactivate": "Deactivate",
         "settings": "Settings"
-      }
+      },
+      "viewinactive": "View Inactive"
     },
     "events": {
       "actions": "Actions",
+      "confirm-deactivate": "Are you sure you want to deactivate this event?",
       "create-event": "Create Event",
       "edit-event": "Edit Event",
       "end-date": "End Date",
@@ -121,6 +126,9 @@
       "username": "Nombre de usuario"
     },
     "actions": {
+      "addanother": "A\u00f1adir Otro",
+      "addevent": "A\u00f1adir Evento",
+      "addperson": "A\u00f1adir Persona",
       "cancel": "Cancelar",
       "clear": "Despejar",
       "close": "Cerrar",
@@ -134,10 +142,12 @@
       "tooltips": {
         "deactivate": "Desactivar",
         "settings": "Ajustes"
-      }
+      },
+      "viewinactive": "Ver Inactivo"
     },
     "events": {
       "actions": "Comportamiento",
+      "confirm-deactivate": "\u00bfSeguro que quieres desactivar este evento?",
       "create-event": "Crear Evento",
       "edit-event": "Editar Evento",
       "end-date": "Fecha Final",
