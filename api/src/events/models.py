@@ -25,10 +25,9 @@ class Event(Base):
     persons = relationship("EventPerson", back_populates="event")
     participants = relationship("EventParticipant", back_populates="event")
     location = relationship("Location", back_populates="events")
-    
+
     def __repr__(self):
         return f"<Event(id={self.id})>"
-    
 
 class EventSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
@@ -72,7 +71,6 @@ class Team(Base):
 
     def __repr__(self):
         return f"<Team(id={self.id})>"
-    
 
 class TeamSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
@@ -89,6 +87,10 @@ class EventAsset(Base):
     event = relationship("Event", back_populates="assets")
     asset = relationship("Asset", back_populates="events")
 
+class EventAssetSchema(Schema):
+    event_id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
+    asset_id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
+
 # ---- EventTeam
 
 class EventTeam(Base):
@@ -97,6 +99,10 @@ class EventTeam(Base):
     team_id = Column(Integer, ForeignKey('events_team.id'), primary_key=True)
     event = relationship("Event", back_populates="teams")
     team = relationship("Team", back_populates="events")
+
+class EventTeamSchema(Schema):
+    event_id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
+    team_id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
 
 # ---- EventPerson
 
@@ -108,6 +114,11 @@ class EventPerson(Base):
     event = relationship("Event", back_populates="persons")
     person = relationship("Person", back_populates="events_per")
 
+class EventPersonSchema(Schema):
+    event_id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
+    person_id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
+    description = fields.String(required=True)
+
 # ---- TeamMember
 
 class TeamMember(Base):
@@ -116,6 +127,10 @@ class TeamMember(Base):
     member_id = Column(Integer, ForeignKey('people_person.id'), primary_key=True)
     team = relationship("Team", back_populates="members")
     member = relationship("Person", back_populates="teams")
+
+class TeamMemberSchema(Schema):
+    team_id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
+    member_id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
 
 # ---- EventParticipant
 
@@ -126,3 +141,8 @@ class EventParticipant(Base):
     confirmed = Column(Boolean, default=True)
     event = relationship("Event", back_populates="participants")
     person = relationship("Person", back_populates="events_par")
+
+class EventParticipantSchema(Schema):
+    event_id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
+    person_id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
+    confirmed = fields.Boolean()
