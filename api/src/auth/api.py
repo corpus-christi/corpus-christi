@@ -7,8 +7,7 @@ from . import auth
 from .utils import jwt_not_required
 from .. import db
 from .. import jwt
-from ..people.models import Account, AccountSchema, Person, PersonSchema
-from ..roles.models import Role, RoleSchema
+from ..people.models import Account, AccountSchema, Person, PersonSchema, Role, RoleSchema
 
 
 @auth.route('/login', methods=['POST'])
