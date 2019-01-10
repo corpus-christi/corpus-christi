@@ -4,7 +4,7 @@
       <span class="headline">{{ title }}</span>
     </v-card-title>
     <v-card-text>
-      <DiplomaForm ref="form" v-for="course in courses" :key="course.id" v-bind:course="course"/>
+      <DiplomaForm ref="form" v-for="diploma in diplomas" :key="diploma.id" v-bind:diploma="diploma"/>
     </v-card-text>
     <v-card-actions>
       <v-btn color="secondary" flat v-on:click="cancel">
@@ -41,23 +41,23 @@ export default {
   },
   data: function() {
     return {
-      courses: [{}]
+      diplomas: [{}]
     };
   },
   computed: {
     title() {
       return this.editMode
         ? this.$t("actions.edit")
-        : this.$t("courses.new");
+        : this.$t("diplomas.new");
     },
   },
   watch: {
     // Make sure data stays in sync with any changes to `initialData` from parent.
-    initialData(courseProp) {
-      if (isEmpty(courseProp)) {
+    initialData(diplomaProp) {
+      if (isEmpty(diplomaProp)) {
         this.clear();
       } else {
-        this.courses = [courseProp];
+        this.diplomas = [diplomaProp];
       }
     }
   },
@@ -69,13 +69,13 @@ export default {
     },
     // Clear the forms.
     clear() {
-      this.courses = [{}];
+      this.diplomas = [{}];
     },
-    // Trigger a save event, returning the update `Course`.
+    // Trigger a save event, returning the updated `Diploma`.
     save() {
       this.$refs.form[0].$validator.validateAll();
       if (!this.errors.any()) {
-        this.$emit("save", this.courses);
+        this.$emit("save", this.diplomas);
       }
     },
     remove(item) {

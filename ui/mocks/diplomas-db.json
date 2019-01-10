@@ -1,34 +1,44 @@
 {
-  "courses": [
+  "diplomas": [
     {
       "id": 1,
-      "title": "Intro to New Testament",
-      "description": "typicode",
-      "active": true
+      "title": "Survey of the Bible",
+      "description": "A survey of the entire Bible, through six courses.",
+      "active": true,
+      "courses": [
+        {
+          "id": 1,
+          "name": "Intro to the Old Testament"
+        },
+        {
+          "id": 2,
+          "name": "Intro to the New Testament"
+        },
+        {
+          "id": 3,
+          "name": "Survey of the Minor Prophets"
+        }
+      ]
     },
     {
       "id": 2,
-      "title": "Intro to Old Testament",
-      "description": "typicode",
-      "active": true
-    },
-    {
-      "id": 3,
-      "title": "New Testament",
-      "description": "typicode",
-      "active": true
-    },
-    {
-      "id": 4,
-      "title": "Old Testament",
-      "description": "typicode",
-      "active": true
-    },
-    {
-      "title": "test foo",
-      "description": "test",
-      "id": 5,
-      "active": true
+      "title": "Covenant Theology",
+      "description": "A comprehensive study of reformed doctrine, with applications.",
+      "active": true,
+      "courses": [
+        {
+          "id": 11,
+          "name": "Calvin's Institutes"
+        },
+        {
+          "id": 12,
+          "name": "Predestination and other cool topics"
+        },
+        {
+          "id": 13,
+          "name": "TULIP, the course"
+        }
+      ]
     }
   ]
 }

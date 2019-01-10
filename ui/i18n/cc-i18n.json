@@ -25,12 +25,11 @@
         "settings": "Settings"
       }
     },
-    "courses": {
-      "course": "Courses",
+    "diplomas": {
       "description": "Description",
-      "enrolled": "Number Enrolled",
-      "new": "New Course",
-      "prerequisites": "Prerequisites",
+      "diploma": "Diplomas",
+      "new": "New Diploma",
+      "prerequisites": "Courses",
       "title": "Title"
     },
     "groups": {
@@ -104,12 +103,11 @@
         "settings": "Ajustes"
       }
     },
-    "courses": {
-      "course": "Cursos",
+    "diplomas": {
       "description": "Descripci\u00f3n",
-      "enrolled": "N\u00famero Registrado",
-      "new": "Nuevo Curso",
-      "prerequisites": "Prerrequisitos",
+      "diploma": "Diplomas",
+      "new": "Nueva Diploma",
+      "prerequisites": "Cursos",
       "title": "T\u00edtulo"
     },
     "groups": {

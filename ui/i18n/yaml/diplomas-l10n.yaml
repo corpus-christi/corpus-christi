@@ -1,10 +1,7 @@
-courses:
-  course:
-    en: Courses
-    es: Cursos
-  enrolled:
-    en: Number Enrolled
-    es: Número Registrado
+diplomas:
+  diploma:
+    en: Diplomas
+    es: Diplomas
   title:
     en: Title
     es: Título
@@ -12,8 +9,8 @@ courses:
     en: Description
     es: Descripción
   new:
-    en: New Course
-    es: Nuevo Curso
+    en: New Diploma
+    es: Nueva Diploma
   prerequisites:
-    en: Prerequisites
-    es: Prerrequisitos
+    en: Courses
+    es: Cursos

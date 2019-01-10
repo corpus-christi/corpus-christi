@@ -1,23 +1,23 @@
 <template>
   <form>
     <v-text-field
-      v-model="course.title"
-      v-bind:label="$t('courses.title')"
+      v-model="diploma.title"
+      v-bind:label="$t('diplomas.title')"
       name="title"
       v-validate="'required'"
       v-bind:error-messages="errors.collect('title')"
     ></v-text-field>
 
     <v-text-field
-      v-model="course.description"
-      v-bind:label="$t('courses.description')"
+      v-model="diploma.description"
+      v-bind:label="$t('diplomas.description')"
       name="description"
     ></v-text-field>
     <!-- translate prereq -->
     <v-combobox
       v-model="prereqs"
       :items="items"
-      v-bind:label="$t('courses.prerequisites')"
+      v-bind:label="$t('diplomas.prerequisites')"
       chips
       clearable
       solo
@@ -38,17 +38,17 @@ export default {
   name: "DiplomaForm",
   data: function() {
     return {
-      allCourses: [],
+      allDiplomas: [],
       prereqs: []
     };
   },
   computed: {
     items() {
-      return this.allCourses.filter(item => item.id != this.course.id);
+      return this.allDiplomas.filter(item => item.id != this.diploma.id);
     }
   },
   props: {
-    course: Object
+    diploma: Object
 	},
 	methods: {
     remove(item) {
@@ -58,8 +58,8 @@ export default {
 	},
   mounted() {
     this.$http
-      .get("/api/v1/courses/courses")
-      .then(resp => (this.allCourses = resp.data));
+      .get("/api/v1/courses/diplomas")
+      .then(resp => (this.allDiplomas = resp.data));
   }
 };
 </script>
