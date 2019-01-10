@@ -1,3 +1,4 @@
+import json
 from marshmallow import fields, Schema, pre_load
 from marshmallow.validate import Length, Range, OneOf
 from sqlalchemy import Column, DateTime, Integer, String, Date, ForeignKey, Boolean
@@ -36,7 +37,9 @@ class EventSchema(Schema):
     description = fields.String()
     start = fields.DateTime(required=True)
     end = fields.DateTime(required=True)
-    location_id = fields.Integer(data_key='locationId')
+    #location_id = fields.Integer(data_key='locationId')
+    location = fields.Nested('LocationSchema')
+    participants = fields.Nested('EventParticipant')
     active = fields.Boolean()
 
 # ---- Asset
