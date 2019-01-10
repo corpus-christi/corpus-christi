@@ -55,6 +55,27 @@ def create_multiple_course_offerings(sqla, n=3):
     sqla.commit()
 
 
+def prerequisite_object_factory(course_id, prereq_id):
+    """Cook up a fake prerequisite."""
+    prerequisites = {
+    'courseId': course_id,
+    'prereqId': prereq_id
+    }
+    return prerequisites
+
+
+def create_multiple_prerequisites(sqla, n=3):
+    """Commits the number of prerequisites to the DB."""
+    courses = sqla.query(Course).all()
+    prerequisite_schema = PrerequisiteSchema()
+    new_prerequisites = []
+    for i in range(courses.count()-1):
+        valid_prerequisites = prerequisites_schema.load(prerequisite_object_factory(courses[i].id, courses[i+1].id))
+        new_prerequisites.append(Prerequisite(**valid_prerequisites))
+    sqla.add_all(new_prerequisites)
+    sqla.commit()
+
+
 # ---- Course
 
 # Test course creation
