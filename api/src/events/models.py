@@ -39,7 +39,10 @@ class EventSchema(Schema):
     end = fields.DateTime(required=True)
     #location_id = fields.Integer(data_key='locationId')
     location = fields.Nested('LocationSchema')
-    participants = fields.Nested('EventParticipant')
+    participants = fields.Nested('EventParticipantSchema', many=True)
+    persons = fields.Nested('EventPersonSchema', many=True)
+    teams = fields.Nested('EventTeamSchema', many=True)
+    assets = fields.Nested('EventAssetSchema', many=True)
     active = fields.Boolean()
 
 # ---- Asset
@@ -92,6 +95,10 @@ class EventAsset(Base):
     event = relationship("Event", back_populates="assets")
     asset = relationship("Asset", back_populates="events")
 
+class EventAssetSchema(Schema):
+    event_id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
+    asset_id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
+
 # ---- EventTeam
 
 class EventTeam(Base):
@@ -100,6 +107,10 @@ class EventTeam(Base):
     team_id = Column(Integer, ForeignKey('events_team.id'), primary_key=True)
     event = relationship("Event", back_populates="teams")
     team = relationship("Team", back_populates="events")
+
+class EventTeamSchema(Schema):
+    event_id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
+    team_id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
 
 # ---- EventPerson
 
@@ -110,6 +121,11 @@ class EventPerson(Base):
     description = Column(StringTypes.LONG_STRING, nullable=False)
     event = relationship("Event", back_populates="persons")
     person = relationship("Person", back_populates="events_per")
+
+class EventPersonSchema(Schema):
+    event_id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
+    person_id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
+    description = fields.String()
 
 # ---- TeamMember
 
@@ -129,3 +145,8 @@ class EventParticipant(Base):
     confirmed = Column(Boolean, default=True)
     event = relationship("Event", back_populates="participants")
     person = relationship("Person", back_populates="events_par")
+
+class EventParticipantSchema(Schema):
+    event_id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
+    person_id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
+    confirmed = fields.Boolean()
