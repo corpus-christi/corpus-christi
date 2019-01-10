@@ -5,9 +5,10 @@ from flask import request
 from flask.json import jsonify
 from flask_jwt_extended import jwt_required, get_raw_jwt, jwt_optional
 from marshmallow import ValidationError
+from sqlalchemy import func
 
 from . import events
-from .models import Event, Asset, Team, EventSchema, AssetSchema, TeamSchema
+from .models import Event, Asset, Team, EventAsset, EventSchema, AssetSchema, TeamSchema
 from .. import db
 
 def modify_entity(entity_type, id, new_value_dict):
@@ -160,7 +161,7 @@ def create_asset():
 @jwt_required
 def read_all_assets():
 
-    query = db.session.query(Asset)
+    query = db.session.query(Asset).add_columns(func.count(EventAsset.event_id).label('event_count'))
 
     # -- return_inactives --
     # Filter assets based on active status
@@ -185,10 +186,17 @@ def read_all_assets():
         # TODO FIXME
         pass
 
-    result = query.all()
+    result = query.join(EventAsset, isouter=True).group_by(Asset.id).all()
 
-    return jsonify(asset_schema.dump(result, many=True))
-    
+    temp_result = []
+    for item in result:
+        temp_result.append(asset_schema.dump(item[0]))
+        temp_result[-1]['event_count'] = item[1]
+
+    print(temp_result)
+    # return temp_result
+
+    return jsonify(asset_schema.dump(temp_result, many=True))
 
 @events.route('/assets/<asset_id>')
 @jwt_required
