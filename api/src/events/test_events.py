@@ -36,8 +36,8 @@ def event_object_factory(sqla):
     """Cook up a fake event."""
     event = {
         'title': rl_fake().word(),
-        'start': str(datetime.datetime(2019, 1, 3, 0, 30)),#rl_fake().future_datetime(end_date="+6h"),
-        'end': str(datetime.datetime(2019, 1, 3, 1, 0)),#rl_fake().future_datetime(end_date="+1d"),
+        'start': str(rl_fake().future_datetime(end_date="+6h")),
+        'end': str(rl_fake().date_time_between(start_date="+6h", end_date="+1d", tzinfo=None)),
         'active': flip()
     }
 
@@ -99,3 +99,167 @@ def create_multiple_assets(sqla, n):
         new_assets.append(Asset(**valid_assets))
     sqla.add_all(new_assets)
     sqla.commit()
+
+
+# ---- Event
+
+@pytest.mark.smoke
+def test_create_event(auth_client):
+    # GIVEN an empty database
+    # WHEN we add in some events
+    count = random.randint(5, 15)
+    create_multiple_events(auth_client.sqla, count)
+    # THEN we should get the same number of events in the database
+    result_count = auth_client.sqla.query(Event).count()
+    assert result_count == count
+    
+
+@pytest.mark.smoke
+def test_read_all_events(auth_client):
+    # GIVEN a database with some events
+    # WHEN we query them all
+    # THEN we should get the same number of events
+    # same as previous, looking for new way of testing it
+    assert True == True
+    
+
+@pytest.mark.xfail()
+def test_read_one_event(auth_client):
+    # GIVEN a database with a particular event
+    event_schema = EventSchema()
+    event = event_schema.load(event_object_factory(auth_client.sqla))
+    auth_client.sqla.add(event)
+    auth_client.sqla.commit()
+    # fixme
+    # WHEN we query that event
+    auth_client.sqla.query(Event)
+    # THEN we should get it
+    assert True == False
+    
+
+@pytest.mark.xfail()
+def test_replace_event(auth_client):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+    
+
+@pytest.mark.xfail()
+def test_update_event(auth_client):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+    
+
+@pytest.mark.xfail()
+def test_delete_event(auth_client):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+    
+
+# ---- Asset
+
+
+@pytest.mark.xfail()
+def test_create_asset(auth_client):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+    
+
+@pytest.mark.xfail()
+def test_read_all_assets(auth_client):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+    
+
+@pytest.mark.xfail()
+def test_read_one_asset(auth_client):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+    
+
+@pytest.mark.xfail()
+def test_replace_asset(auth_client):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+    
+
+@pytest.mark.xfail()
+def test_update_asset(auth_client):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+    
+
+@pytest.mark.xfail()
+def test_delete_asset(auth_client):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+    
+
+# ---- Team
+
+
+@pytest.mark.xfail()
+def test_create_team(auth_client):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+    
+
+@pytest.mark.xfail()
+def test_read_all_teams(auth_client):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+    
+
+@pytest.mark.xfail()
+def test_read_one_team(auth_client):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+    
+
+@pytest.mark.xfail()
+def test_replace_team(auth_client):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+    
+
+@pytest.mark.xfail()
+def test_update_team(auth_client):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+    
+
+@pytest.mark.xfail()
+def test_delete_team(auth_client):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+    
+
