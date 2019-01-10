@@ -156,16 +156,48 @@ def create_asset():
 @events.route('/assets')
 @jwt_required
 def read_all_assets():
-    result = db.session.query(Asset).all()
+
+query = db.session.query(Asset)
+
+    # -- return_inactives --
+    # Filter assets based on active status
+    # True - see all assets, False or missing - see only active assets
+    return_group = request.args.get('return_group')
+    if return_group == 'inactive':
+        query = query.filter_by(active=False)
+    elif return_group in ('all', 'both'):
+        pass # Don't filter
+    else:
+        query = query.filter_by(active=True)
+
+    # -- description --
+    # Filter events on a wildcard description string
+    desc_filter = request.args.get('desc')
+    if desc_filter:
+        query = query.filter(Asset.description.like(f"%{desc_filter}%"))
+
+    # -- location --
+    # Filter events on a wildcard location string?
+    location_filter = request.args.get('location')
+    if location_filter:
+        # TODO FIXME
+        pass
+
+    result = query.all()
+
     return jsonify(asset_schema.dump(result, many=True))
     
 
 @events.route('/assets/<asset_id>')
 @jwt_required
 def read_one_asset(asset_id):
-    result = db.session.query(Asset).filter_by(id=asset_id).first()
-    return jsonify(asset_schema.dump(result))
+    asset = db.session.query(Asset).filter_by(id=asset_id).first()
     
+    if not asset:
+        return jsonify(f"Asset with id #{asset_id} does not exist."), 404
+
+    return jsonify(asset_schema.dump(result))
+
 
 @events.route('/assets/<asset_id>', methods=['PUT'])
 @jwt_required
