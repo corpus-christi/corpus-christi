@@ -56,6 +56,7 @@
       <CourseEditor
         v-bind:editMode="courseDialog.editMode"
         v-bind:initialData="courseDialog.course"
+        v-bind:saving="courseDialog.saving"
         v-on:cancel="cancelCourse"
         v-on:save="saveCourse"
       />
@@ -78,6 +79,7 @@ export default {
       courseDialog: {
         show: false,
         editMode: false,
+        saving: false,
         course: {}
       },
 
@@ -135,6 +137,7 @@ export default {
     },
 
     saveCourse(course) {
+      this.courseDialog.saving = true;
       if (this.courseDialog.editMode) {
         // Hang on to the ID of the person being updated.
         const course_id = course.id;
@@ -149,7 +152,11 @@ export default {
             console.log("EDITED", resp);
             Object.assign(this.courses[idx], course);
           })
-          .catch(err => console.error("FALURE", err.response));
+          .catch(err => console.error("FALURE", err.response))
+          .finally(() => {
+            this.courseDialog.show = false;
+            this.courseDialog.saving = false;
+          });
       } else {
         this.$http
           .post("/api/v1/courses/courses", course)
@@ -157,9 +164,12 @@ export default {
             console.log("ADDED", resp);
             this.courses.push(resp.data);
           })
-          .catch(err => console.error("FAILURE", err.response));
+          .catch(err => console.error("FAILURE", err.response))
+          .finally(() => {
+            this.courseDialog.show = false;
+            this.courseDialog.saving = false;
+          });
       }
-      this.courseDialog.show = false;
     }
   },
 
