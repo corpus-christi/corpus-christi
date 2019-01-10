@@ -45,15 +45,89 @@
 
 This section details the roles implemented in CC.
 
-## Public
+## Visitor
 
 Portions of CC are available to completely unauthenticated users.
 Strictly speaking, such a user does not have a role.
-However, for convenience, we consider such users to have a **public** "role"
+However, for convenience, we consider such users to have a **visitor** "role"
 that permits them access to _only_ the public content of the application.
+
+A **visitor** cannot enroll in courses, sign up for events, etc.
+without first registering with CC and thereby becoming a **public user**.
 
 _Example_: someone browsing a list of upcoming events 
 or viewing the home church map to identify a home church.
+
+## Public
+
+A **visitor** can register for an account on the system,
+promoting the visitor to a **public** user.
+When registering as a **public** user,
+a church attendee submits personal data just once,
+simplifying course registration and event sign up in the future.
+Registration creates a _Person_ instance and an _Account_
+instance for the user.
+
+During registration, a **public** user provides a username and password
+that are stored in the _Account_ entity and are used later
+when the user wants to interact with the system.
+
+For example, 
+if a public user clicks through a link to register for an _Event_,
+he or she is prompted to enter their username and password,
+which is used to look up their _Person_ data and 
+complete the registration or sign-up.
+
+It is also possible for a **visitor** to click on a link
+for an _Event_ or _Course_.
+Consequently, the page that requests username and password
+should also include a link to the page where a visitor
+can sign up to become a **public** user.
+
+### Public User Validation
+
+Data entered during **public** user registration
+is considered **unconfirmed**
+and must be validated by an authorized CC account holder.
+The goal of this process is to vet data entering the system, 
+eliminate duplicate data, and generally avoid unquality.
+
+For example:
+1. A **visitor** registers to become a **public** user.
+1. CC creates an unconfirmed _Person_ and associated _Account_ instance.
+1. A CC user with the **infrastructure** role inspects the unconfirmed _Person_ instance.
+   The user may:
+   1. Reject the _Person_ instance, deleting it and the associated _Account_ from the database.
+      For example, an empty, incomplete, or obviously bogus entry can simply be removed
+      (actually _deleted_, not just marked inactive).
+   1. Search for an existing _Person_ instance that matches this public user
+      (e.g., from a previous registration).
+      CC provides tools to identify an existing _Person_ instance (e.g., live search).
+      - If _no_ existing _Person_ is found,
+        and the data submitted by the would-be **public** user is valid, 
+        the **infrastructure** user
+        marks the _Person_ record as `confirmed`.
+      - If an existing _Person_ _is_ found, the **infrastructure** user
+        reconciles the existing and new _Person_ instances into a single _Person_
+        instance (e.g., updating the older _Person_ with new data)
+        and marks the resulting _Person_ record as confirmed.
+        It should be easy for the **infrastructure** user to 
+        to see both the existing and new _Person_ details
+        and to choose the version that will "survive"
+        into the single, final _Person_ record.
+
+### Self Registration
+
+A **public** user may self register for:
+- A _Course Offering_
+- An _Event_
+The **public** user clicks on the offering or event
+then supplies his or her username and password.
+The system validates these login credentials
+and, if valid, adds the corresponding _Person_
+to the _Event_, _Course Offering_, etc.
+
+
 
 ## Infrastructure
 
@@ -145,6 +219,77 @@ whose `active` attribute is `true`.
 Following are user stories for each of the roles
 enumerated above.
 
+## Visitor
+
+1. A **visitor** should be able to create an _Account_ and the associated _Person_,
+   "promoting" the **visitor** to a **public** user.
+   This will allow a church attendee to enter personal data just once
+   and reuse it in the future without reentering it.
+
+   When a **visitor* creates an account,
+   be generous with the the `username`.
+   There must be one, but it:
+   - must be unique across all _Account_'s
+   - can be an email address
+   - can be a phone number
+   - can be a tax ID number (common identifier in Ecuador)
+   - can be an arbitrary string (user may not have an email address or username)
+   
+   Require a password with a minimum length of 8 characters
+   with at least one letter and one number.
+
+## Public
+
+1. Update existing _Person_ or _Account_ data.
+
+1. Authenticate with an existing _Account_
+   by providing a valid username and password
+   (e.g., when signing up for an _Event_). 
+   Follow this procedure:
+   1. If there is an _Account_ with the username,
+      try to validate with the _Account_ and its hashed_password.
+   1. If that fails,
+      search for a _Person_ with a phone number matching what the user entered as a username;
+      if such a _Person_ record exists and has an associated _Account_,
+      try validating with the phone number as the username and the hashed password
+      of the associated _Account_
+   1. If that fails,
+      search for a _Person_ with an email address matching what the user entered as a username;
+      if such a _Person_ record exists and has an associated _Account_,
+      try validating with the email address as the username and the hashed password
+      of the associated _Account_
+   1. If that fails,
+      offer the user the option of
+      - entering an email address to receive a password reset link
+      - creating a new _Account_ and _Person_ (as above)
+      If the email address doesn't exist in the _Person_ entity,
+      inform the user of that fact and allow them to enter a different one.
+      If the email address does exist,
+      indicate that the user should check for a new email to that address.
+      
+      The email sent to a known email address should include a password reset link.
+      The link should contain:
+      - A URL for the CC password reset page
+      - A freshly generated token (e.g., a SHA1 hash of the current date/time)
+        that is stored in the _Account_ table with the email address.
+
+      In addition, an expiration timestamp should be stored in the _Account_ entity,
+      set for four hours in the future.
+
+1. Handle a password reset email.
+   Upon clicking the link:
+   - If the link contains a valid, unexpired password reset token, the user should
+     be directed to a page on which the password for the account matching
+     the token may be changed (enter password, repeat)
+   - If the link contains a nonexistent password reset token, the user should
+     be directed to a page indicating that the link is invalid.
+   - If the link contains a valid password token with an expired timestamp,
+     the user should be informed that they waited to long to reset the password
+     and be given the opportunity to start over by submitting their email address.
+   If a token is found (whether expired or not),
+   it and the associated expiration timestamp should be deleted from the
+   the _Account_ entity. 
+
 ## Infrastructure
 
 In this section, the term _people_ means
@@ -235,7 +380,6 @@ one or more instances of the _Person_ entity.
 1. Show locations on an integrated Google Map,
    using the same filters available for the list of _Addresses_.
 1. Show _Location_'s for an _Address_ that is selected by live search.
-
 
 ## Superuser
 
