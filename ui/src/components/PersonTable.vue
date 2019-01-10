@@ -1,37 +1,46 @@
 <template>
   <div>
     <!-- Header -->
-    <v-toolbar>
-      <v-toolbar-title>{{ $t("people.title") }}</v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-text-field
-        v-model="search"
-        append-icon="search"
-        v-bind:label="$t('actions.search')"
-        hide-details
-        clearable
-        single-line
-        data-cy="search"
-      ></v-text-field>
-      <v-spacer></v-spacer>
-      <v-switch
-        :label="$t('actions.view-inactive')"
-        color="primary"
-        v-on:change="changeView"
-        v-model="showingInactive"
-        hide-details
-        data-cy="view-inactive"
-      ></v-switch>
-
-      <v-btn
-        color="primary"
-        raised
-        v-on:click.stop="newPerson"
-        data-cy="add-person"
-      >
-        <v-icon dark left>person_add</v-icon>
-        {{ $t("actions.add-person") }}
-      </v-btn>
+    <v-toolbar height="80px">
+      <v-layout align-center justify-space-between fill-height>
+        <v-flex xs2>
+          <v-toolbar-title>{{ $t("people.title") }}</v-toolbar-title>
+        </v-flex>
+        <v-flex xs2>
+          <v-text-field
+            v-model="search"
+            append-icon="search"
+            v-bind:label="$t('actions.search')"
+            hide-details
+            clearable
+            single-line
+            box
+            data-cy="search"
+          ></v-text-field>
+        </v-flex>
+        <v-flex xs2>
+          <v-switch
+            :label="$t('actions.view-inactive')"
+            color="primary"
+            v-on:change="changeView"
+            v-model="showingInactive"
+            hide-details
+            data-cy="view-inactive"
+          ></v-switch>
+        </v-flex>
+        <v-flex shrink justify-self-end>
+          <v-btn
+            class="mr-0"
+            color="primary"
+            raised
+            v-on:click.stop="newPerson"
+            data-cy="add-person"
+          >
+            <v-icon dark left>person_add</v-icon>
+            {{ $t("actions.add-person") }}
+          </v-btn>
+        </v-flex>
+      </v-layout>
     </v-toolbar>
 
     <!-- Table of existing people -->
