@@ -42,7 +42,7 @@ export default {
   },
   data: function() {
     return {
-      courses: [{ title: "", description: "", prerequisites: [] }]
+      courses: [{}]
     };
   },
   computed: {
@@ -51,10 +51,6 @@ export default {
         ? this.$t("actions.edit")
         : this.$t("courses.new");
     },
-    // List the keys in a course record.
-    courseKeys() {
-      return Object.keys(this.courses[0]);
-    }
   },
 
   watch: {
@@ -63,7 +59,7 @@ export default {
       if (isEmpty(courseProp)) {
         this.clear();
       } else {
-        this.courses[0] = courseProp;
+        this.courses = [courseProp];
       }
     }
   },
@@ -75,16 +71,12 @@ export default {
       this.$emit("cancel");
     },
 
-    // Clear the form and the validators.
+    // Clear the forms.
     clear() {
-      this.courses.length = 1;
-      for (let key of Object.keys(this.courses[0])) {
-        this.courses[0][key] = "";
-      }
-      this.$refs.form[0].$validator.reset();
+      this.courses = [{}];
     },
 
-    // Trigger a save event, returning the update `Person`.
+    // Trigger a save event, returning the update `Course`.
     save() {
       this.$refs.form[0].$validator.validateAll();
       if (!this.errors.any()) {
