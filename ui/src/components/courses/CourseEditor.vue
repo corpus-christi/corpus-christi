@@ -74,6 +74,7 @@ export default {
     // Clear the forms.
     clear() {
       this.course = {};
+      this.$refs.form.$validator.reset();
     },
 
     // Trigger a save event, returning the updated `Course`.
