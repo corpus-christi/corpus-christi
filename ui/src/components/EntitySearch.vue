@@ -21,7 +21,7 @@ export default {
     name: "EntitySearch",
     props: {
         location: Boolean,
-        people: Boolean,
+        person: Boolean,
         searchEndpoint: String
     },
     data() {
@@ -36,7 +36,7 @@ export default {
     watch: {
         searchInput(val) {
             this.isLoading = true
-            this.$http.get(this.searchEndpoint).then(resp => {
+            this.$http.get(this.searchEndpoint + '?q=' + val).then(resp => {
                 this.entities = resp.data;
                 this.isLoading = false
             })
@@ -52,24 +52,26 @@ export default {
 
     computed: { 
         items() {
-            if(this.location) {
-                var descriptionLimit = 60
-                return this.entities.map(entity => {
-                    var fullAddress = entity.name + ', ' + entity.address + ', ' + entity.city
-                    const Description = fullAddress.length > this.descriptionLimit
-                        ? fullAddress.slice(0, this.descriptionLimit) + '...'
-                        : fullAddress
-                    return Object.assign({}, entity, { Description })
-                })
-            }
+            var descriptionLimit = 60
+            return this.entities.map(entity => {
+                var entityDescriptor
+                if (this.location) entityDescriptor = entity.name + ', ' + entity.address + ', ' + entity.city
+                else if (this.person) entityDescriptor = entity.first_name + ' ' + entity.last_name
+
+                const Description = entityDescriptor.length > this.descriptionLimit
+                    ? entityDescriptor.slice(0, this.descriptionLimit) + '...'
+                    : entityDescriptor
+                return Object.assign({}, entity, { Description })
+            })
         }
     },
 
     methods: {
         setSelected(entity) {
-            this.$emit("setLocation", entity.id);
+            this.$emit("setSelected", entity.id);
         },
 
     }
 }
+
 </script>
