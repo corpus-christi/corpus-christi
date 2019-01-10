@@ -12,7 +12,14 @@
         hide-details
       ></v-text-field>
       <v-spacer></v-spacer>
-
+      
+ 
+      <v-switch 
+        :label="$t('actions.view-inactive')"
+        color="primary"
+        v-model="showingInactive" 
+        hide-details></v-switch>
+    
       <v-btn
         color="primary"
         raised
@@ -26,7 +33,7 @@
     <!-- Table of existing people -->
     <v-data-table
       :headers="headers"
-      :items="courses"
+      :items="displayCourses"
       :search="search"
       class="elevation-1"
     >
@@ -86,7 +93,9 @@ export default {
 
       selected: [],
       courses: [],
+      filtered: [],
       search: "",
+      showingInactive: false
     };
   },
   computed: {
@@ -97,6 +106,17 @@ export default {
         { text: this.$t("courses.description"), value: "description", width: "60%" },
         { text: this.$t("actions.header"), sortable: false }
       ];
+    },
+    inactiveCourses() {
+      return this.courses.filter(course => !course.active)
+    },
+
+    activeCourses() {
+      return this.courses.filter(course => course.active)
+    },
+
+    displayCourses() {
+      return this.showingInactive ? this.courses : this.courses.filter(course => course.active)
     }
   },
   methods: {
@@ -157,6 +177,14 @@ export default {
           .catch(err => console.error("FAILURE", err.response));
       }
       this.courseDialog.show = false;
+    },
+
+    changeView() {
+      if (this.showingInactive) {
+        this.viewInactive();
+      } else {
+        this.viewActive();
+      }
     }
   },
 

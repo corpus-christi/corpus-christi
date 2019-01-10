@@ -80,7 +80,7 @@ export default {
     save() {
       this.$refs.form[0].$validator.validateAll();
       if (!this.errors.any()) {
-        this.$emit("save", this.courses);
+        this.$emit("save", this.courses[0]);
       }
     },
 
