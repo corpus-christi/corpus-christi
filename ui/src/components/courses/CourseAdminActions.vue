@@ -24,7 +24,9 @@
         v-bind:small="displayContext === 'compact'"
         @click="emitAction('deactivate')"
       >
-        <v-icon v-bind:small="displayContext === 'compact'">delete</v-icon>
+        <v-icon v-bind:small="displayContext === 'compact'">
+          {{ course.active ? "archive" : "unarchive" }}
+        </v-icon>
       </v-btn>
       <span>{{ $t("actions.tooltips.deactivate") }}</span>
     </v-tooltip>
