@@ -82,11 +82,6 @@ export default {
       if (!this.$refs.form.errors.any()) {
         this.$emit("save", this.course);
       }
-    },
-
-    remove(item) {
-      this.prereqs.splice(this.prereqs.indexOf(item), 1);
-      this.prereqs = [...this.prereqs];
     }
   }
 };

@@ -49,7 +49,13 @@ export default {
   },
   props: {
     course: Object
-  },
+	},
+	methods: {
+    remove(item) {
+      this.prereqs.splice(this.prereqs.indexOf(item), 1);
+      this.prereqs = [...this.prereqs];
+    }
+	},
   mounted() {
     this.$http
       .get("/api/v1/courses/courses")
