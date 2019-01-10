@@ -19,14 +19,14 @@
           ></v-text-field>
         </v-flex>
         <v-flex xs2>
-          <v-switch
-            :label="$t('actions.view-inactive')"
-            color="primary"
-            v-on:change="changeView"
-            v-model="showingInactive"
+          v
+          <v-select
             hide-details
-            data-cy="view-inactive"
-          ></v-switch>
+            single-line
+            :items="viewOptions"
+            v-model="viewStatus"
+          >
+          </v-select>
         </v-flex>
         <v-flex shrink justify-self-end>
           <v-btn
@@ -46,7 +46,7 @@
     <!-- Table of existing people -->
     <v-data-table
       :headers="headers"
-      :items="people"
+      :items="peopleToDisplay"
       :search="search"
       class="elevation-1"
     >
@@ -94,7 +94,7 @@
               v-on:click="deletePerson(props.item)"
               data-cy="deactivate-person"
             >
-              <v-icon small>delete</v-icon>
+              <v-icon small>archive</v-icon>
             </v-btn>
             <span>{{ $t("actions.tooltips.deactivate") }}</span>
           </v-tooltip>
@@ -144,6 +144,7 @@ export default {
   components: { PersonAdminForm, PersonForm },
   data() {
     return {
+      viewStatus: "viewActive",
       personDialog: {
         show: false,
         editMode: false,
@@ -163,11 +164,11 @@ export default {
         text: ""
       },
 
-      showingInactive: false,
+      showingArchived: false,
       selected: [],
-      people: [],
+      allPeople: [],
       activePeople: [],
-      inactivePeople: [],
+      archivedPeople: [],
       search: ""
     };
   },
@@ -185,6 +186,25 @@ export default {
         { text: this.$t("person.phone"), value: "phone", width: "15%" },
         { text: this.$t("actions.header"), sortable: false }
       ];
+    },
+    viewOptions() {
+      return [
+        { text: this.$t("actions.view-active"), value: "viewActive" },
+        { text: this.$t("actions.view-archived"), value: "viewArchived" },
+        { text: this.$t("actions.view-all"), value: "viewAll" }
+      ];
+    },
+    peopleToDisplay() {
+      switch (this.viewStatus) {
+        case "viewActive":
+          return this.activePeople;
+        case "viewArchived":
+          return this.archivedPeople;
+        case "viewAll":
+          return this.allPeople;
+        default:
+          return this.activePeople;
+      }
     }
   },
   methods: {
@@ -268,22 +288,6 @@ export default {
         });
     },
 
-    changeView() {
-      if (this.showingInactive) {
-        this.viewInactive();
-      } else {
-        this.viewActive();
-      }
-    },
-
-    viewInactive() {
-      console.log(`viewing inactive`);
-    },
-
-    viewActive() {
-      console.log(`viewing active`);
-    },
-
     showSnackbar(message) {
       this.snackbar.text = message;
       this.snackbar.show = true;
@@ -331,12 +335,13 @@ export default {
   },
 
   mounted: function() {
-    // TODO: set activePeople[] to all people who are active
-    // TODO: set inactivePeople[] to all people who are inactive
-    // TODO: set people[] = activePeople[]
-    this.$http
-      .get("/api/v1/people/persons")
-      .then(resp => (this.people = resp.data));
+    this.$http.get("/api/v1/people/persons").then(resp => {
+      this.allPeople = resp.data;
+      this.activePeople = this.allPeople.filter(person => person.email != null);
+      this.archivedPeople = this.allPeople.filter(
+        person => person.email == null
+      );
+    });
   }
 };
 </script>
