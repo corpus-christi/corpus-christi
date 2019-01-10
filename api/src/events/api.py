@@ -157,11 +157,10 @@ def create_asset():
 @jwt_required
 def read_all_assets():
 
-query = db.session.query(Asset)
+    query = db.session.query(Asset)
 
     # -- return_inactives --
     # Filter assets based on active status
-    # True - see all assets, False or missing - see only active assets
     return_group = request.args.get('return_group')
     if return_group == 'inactive':
         query = query.filter_by(active=False)
@@ -196,36 +195,59 @@ def read_one_asset(asset_id):
     if not asset:
         return jsonify(f"Asset with id #{asset_id} does not exist."), 404
 
-    return jsonify(asset_schema.dump(result))
+    return jsonify(asset_schema.dump(asset))
 
 
 @events.route('/assets/<asset_id>', methods=['PUT'])
 @jwt_required
 def replace_asset(asset_id):
-    pass
-    
-
-@events.route('/assets/<asset_id>', methods=['PATCH'])
-@jwt_required
-def update_asset(asset_id):
     try:
         valid_asset = asset_schema.load(request.json)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    asset = db.session.query(Asset).filter_by(id=asset_id).first()
+    return modify_asset(asset_id, valid_asset)
+    
 
-    for key, val in valid_asset.items():
-        setattr(asset, key, val)
-
-    db.session.commit()
-    return jsonify(asset_schema.dump(asset))
+@events.route('/assets/<asset_id>', methods=['PATCH'])
+@jwt_required
+def update_asset(asset_id):
+    try: 
+        valid_attributes = asset_schema.load(request.json, partial=True)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+                
+    return modify_asset(asset_id, valid_attributes)
     
 
 @events.route('/assets/<asset_id>', methods=['DELETE'])
 @jwt_required
 def delete_asset(asset_id):
-    pass
+    asset = db.session.query(Asset).filter_by(id=asset_id).first()
+
+    if not asset:
+        return jsonify(f"Event with id #{asset_id} does not exist."), 404
+        
+    setattr(asset, 'active', False)
+    db.session.commit()
+    
+    # 204 codes don't respond with any content
+    return jsonify(asset_schema.dump(asset)), 204
+
+
+# Handles PUT and PATCH requests
+def modify_asset(asset_id, new_value_dict):
+    asset = db.session.query(Asset).filter_by(id=asset_id).first()
+
+    if not asset:
+        return jsonify(f"Asset with id #{asset_id} does not exist."), 404
+
+    for key, val in new_value_dict.items():
+        setattr(asset, key, val)
+    
+    db.session.commit()
+
+    return jsonify(asset_schema.dump(asset)), 200
     
 
 # ---- Team
