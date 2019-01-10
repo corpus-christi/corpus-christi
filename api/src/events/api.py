@@ -185,13 +185,10 @@ def read_all_assets():
 
     result = query.join(EventAsset, isouter=True).group_by(Asset.id).all()
 
-    temp_result = []
+    temp_result = list()
     for item in result:
         temp_result.append(asset_schema.dump(item[0]))
         temp_result[-1]['event_count'] = item[1]
-
-    print(temp_result)
-    # return temp_result
 
     return jsonify(asset_schema.dump(temp_result, many=True))
 
