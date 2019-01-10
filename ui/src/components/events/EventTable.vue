@@ -29,7 +29,7 @@
         <td class="hover-hand" v-on:click="$router.push({path: '/events/' + props.item.id})">{{ props.item.title }}</td>
         <td class="hover-hand" v-on:click="$router.push({path: '/events/' + props.item.id})">{{ getDisplayDate(props.item.start) }}</td>
         <td class="hover-hand" v-on:click="$router.push({path: '/events/' + props.item.id})">{{ props.item.location_name }}</td>
-        <td>
+        <td v-if="props.item.active">
           <!-- <v-icon small @click="editEvent(props.item)">edit</v-icon> -->
           <v-tooltip bottom>
             <v-btn
@@ -51,11 +51,26 @@
               small
               color="primary"
               slot="activator"
-              v-on:click="confirmDeactivate(props.item)"
+              v-on:click="confirmArchive(props.item)"
             >
-              <v-icon small>delete</v-icon>
+              <v-icon small>archive</v-icon>
             </v-btn>
-            <span>{{ $t("actions.tooltips.deactivate") }}</span>
+            <span>{{ $t("actions.tooltips.archive") }}</span>
+          </v-tooltip>
+        </td>
+        <td v-else>
+          <v-tooltip bottom>
+            <v-btn
+              icon
+              outline
+              small
+              color="primary"
+              slot="activator"
+              v-on:click="unarchive(props.item)"
+            >
+              <v-icon small>unarchive</v-icon>
+            </v-btn>
+            <span>{{ $t("actions.tooltips.unarchive") }}</span>
           </v-tooltip>
         </td>
       </template>
@@ -81,14 +96,14 @@
       />
     </v-dialog>
 
-    <!-- Deactivate dialog -->
-    <v-dialog v-model="deactivateDialog.show" max-width="350px">
+    <!-- Archive dialog -->
+    <v-dialog v-model="archiveDialog.show" max-width="350px">
       <v-card>
-        <v-card-text>{{ $t("events.confirm-deactivate") }}</v-card-text>
+        <v-card-text>{{ $t("events.confirm-archive") }}</v-card-text>
           <v-card-actions>
-            <v-btn v-on:click="cancelDeactivate" color="secondary" flat data-cy="">{{ $t("actions.cancel") }}</v-btn>
+            <v-btn v-on:click="cancelArchive" color="secondary" flat data-cy="">{{ $t("actions.cancel") }}</v-btn>
             <v-spacer></v-spacer>
-            <v-btn v-on:click="deactivateEvent" color="primary" raised :loading="deactivateDialog.loading" data-cy="">{{ $t("actions.confirm") }}</v-btn>
+            <v-btn v-on:click="archiveEvent" color="primary" raised :loading="archiveDialog.loading" data-cy="">{{ $t("actions.confirm") }}</v-btn>
           </v-card-actions>
       </v-card>
     </v-dialog>
@@ -118,7 +133,7 @@ export default {
         addMoreLoading: false,
         event: {}
       },
-      deactivateDialog: {
+      archiveDialog: {
         show: false,
         eventId: -1,
         loading: false
@@ -153,40 +168,58 @@ export default {
       this.activateEventDialog({ ...event }, true);
     },
 
-    activateDeactivateDialog(eventId) {
-      this.deactivateDialog.show = true;
-      this.deactivateDialog.eventId = eventId;
+    activateArchiveDialog(eventId) {
+      this.archiveDialog.show = true;
+      this.archiveDialog.eventId = eventId;
     },
 
-    confirmDeactivate(event) {
-      this.activateDeactivateDialog(event.id);
+    confirmArchive(event) {
+      this.activateArchiveDialog(event.id);
     },
     
-    deactivateEvent() {
-      console.log("deactivated event")
-      this.deactivateDialog.loading = true;
-      const eventId = this.deactivateDialog.eventId
+    archiveEvent() {
+      console.log("Archived event")
+      this.archiveDialog.loading = true;
+      const eventId = this.archiveDialog.eventId
       const idx = this.events.findIndex(ev => ev.id === eventId);
       this.$http
         .delete(`http://localhost:3000/events/${eventId}`)
         .then(resp => {
-          console.log("DELETED", resp);
-          this.events.splice(idx, 1);
-          this.deactivateDialog.loading = false;
-          this.deactivateDialog.show = false;
-          this.showSnackbar(this.$t("events.event-deleted"));
+          console.log("ARCHIVE", resp);
+          this.events[idx].active = false;
+          this.archiveDialog.loading = false;
+          this.archiveDialog.show = false;
+          this.showSnackbar(this.$t("events.event-archived"));
         })
         .catch(err => {
-          console.error("DELETE FALURE", err.response);
-          this.deactivateDialog.loading = false;
-          this.showSnackbar(this.$t("events.error-deleting-event"));
+          console.error("ARCHIVE FALURE", err.response);
+          this.archiveDialog.loading = false;
+          this.archiveDialog.show = false;
+          this.showSnackbar(this.$t("events.error-archiving-event"));
         });
 
-      // this.deactivateDialog.show = false;
+      // this.archiveDialog.show = false;
     },
 
-    cancelDeactivate() {
-      this.deactivateDialog.show = false;
+    unarchive(event) {
+      const copyEvent = JSON.parse(JSON.stringify(event));
+      copyEvent.active = true;
+
+      this.$http
+        .put(`http://localhost:3000/events/${copyEvent.id}`, copyEvent)
+        .then(resp => {
+          console.log("UNARCHIVED", resp);
+          event = resp.data;
+          this.showSnackbar(this.$t("events.event-unarchived"));
+        })
+        .catch(err => {
+          console.error("UNARCHIVE FALURE", err.response);
+          this.showSnackbar(this.$t("events.error-unarchiving-event"));
+        });
+    },
+
+    cancelArchive() {
+      this.archiveDialog.show = false;
     },
 
     newEvent() {
