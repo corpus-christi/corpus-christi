@@ -11,9 +11,7 @@
         single-line
         hide-details
       ></v-text-field>
-      <v-spacer></v-spacer>
-<<<<<<< HEAD
-      
+      <v-spacer></v-spacer>      
  
       <v-select 
         :label="$t('actions.view-Archived')"
@@ -28,17 +26,6 @@
         raised
         v-on:click.stop="newCourse"
       >
-=======
-
-      <v-switch
-        :label="$t('actions.view-inactive')"
-        color="primary"
-        v-model="showingInactive"
-        hide-details
-      ></v-switch>
-
-      <v-btn color="primary" raised v-on:click.stop="newCourse">
->>>>>>> c89e2f3398750f806c7deb60596fbb9b2814d9ee
         <v-icon left>library_add</v-icon>
         {{ $t("courses.new") }}
       </v-btn>
@@ -137,13 +124,6 @@ export default {
         { text: this.$t("actions.header"), sortable: false }
       ];
     },
-<<<<<<< HEAD
-    // archivedCourses() {
-    //   return this.courses.filter(course => !course.active)
-    // },
-    // activeCourses() {
-    //   return this.courses.filter(course => course.active)
-    // },
 
     options() {
       return [
@@ -167,21 +147,7 @@ export default {
       }
   
     },
-=======
-    inactiveCourses() {
-      return this.courses.filter(course => !course.active);
-    },
 
-    activeCourses() {
-      return this.courses.filter(course => course.active);
-    },
-
-    displayCourses() {
-      return this.showingInactive
-        ? this.courses
-        : this.courses.filter(course => course.active);
-    }
->>>>>>> c89e2f3398750f806c7deb60596fbb9b2814d9ee
   },
 
   methods: {
@@ -262,23 +228,13 @@ export default {
             this.courseDialog.saving = false;
           });
       }
-<<<<<<< HEAD
-      this.courseDialog.show = false;
-=======
-    },
 
-    changeView() {
-      if (this.showingInactive) {
-        this.viewInactive();
-      } else {
-        this.viewActive();
-      }
->>>>>>> c89e2f3398750f806c7deb60596fbb9b2814d9ee
+      this.courseDialog.show = false;
+
     }
   },
 
   mounted: function() {
-<<<<<<< HEAD
     this.$http
       .get("/api/v1/courses/courses")
       .then(resp => {
@@ -288,12 +244,7 @@ export default {
         this.tableLoaded = true;
         console.log(this.activeCourses, this.archivedCourses, this.courses)
       });
-=======
-    this.$http.get("/api/v1/courses/courses").then(resp => {
-      this.courses = resp.data;
-      this.tableLoaded = true;
-    });
->>>>>>> c89e2f3398750f806c7deb60596fbb9b2814d9ee
+
   }
 };
 </script>
