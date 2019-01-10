@@ -4,7 +4,7 @@
       <span class="headline">{{ title }}</span>
     </v-card-title>
     <v-card-text>
-      <CourseForm ref="form" v-for="course in courses" :key="course.id" v-bind:course="course"/>
+      <CourseForm ref="form" v-bind:course="course"/>
     </v-card-text>
     <v-card-actions>
       <v-btn color="secondary" flat v-on:click="cancel">
@@ -42,7 +42,7 @@ export default {
   },
   data: function() {
     return {
-      courses: [{}]
+      course: {}
     };
   },
   computed: {
@@ -59,7 +59,7 @@ export default {
       if (isEmpty(courseProp)) {
         this.clear();
       } else {
-        this.courses = [courseProp];
+        this.course = courseProp;
       }
     }
   },
@@ -73,20 +73,16 @@ export default {
 
     // Clear the forms.
     clear() {
-      this.courses = [{}];
+      this.course = {};
+      this.$refs.form.$validator.reset();
     },
 
-    // Trigger a save event, returning the update `Course`.
+    // Trigger a save event, returning the updated `Course`.
     save() {
-      this.$refs.form[0].$validator.validateAll();
-      if (!this.errors.any()) {
-        this.$emit("save", this.courses[0]);
+      this.$refs.form.$validator.validateAll();
+      if (!this.$refs.form.errors.any()) {
+        this.$emit("save", this.course);
       }
-    },
-
-    remove(item) {
-      this.prereqs.splice(this.prereqs.indexOf(item), 1);
-      this.prereqs = [...this.prereqs];
     }
   }
 };

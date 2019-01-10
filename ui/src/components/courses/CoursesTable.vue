@@ -35,8 +35,10 @@
       :headers="headers"
       :items="displayCourses"
       :search="search"
+      :loading="!tableLoaded"
       class="elevation-1"
     >
+      <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
       <template slot="items" slot-scope="props">
         <td>{{ props.item.title }}</td>
         <td>{{ props.item.description }}</td>
@@ -91,6 +93,7 @@ export default {
         text: ""
       },
 
+      tableLoaded: false,
       selected: [],
       courses: [],
       filtered: [],
@@ -191,7 +194,10 @@ export default {
   mounted: function() {
     this.$http
       .get("/api/v1/courses/courses")
-      .then(resp => (this.courses = resp.data));
+      .then(resp => {
+        this.courses = resp.data
+        this.tableLoaded = true;
+      });
   }
 };
 </script>
