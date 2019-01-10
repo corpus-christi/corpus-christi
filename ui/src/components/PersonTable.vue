@@ -9,6 +9,7 @@
         append-icon="search"
         v-bind:label="$t('actions.search')"
         hide-details
+        clearable
         single-line
         data-cy="search"
       ></v-text-field>
