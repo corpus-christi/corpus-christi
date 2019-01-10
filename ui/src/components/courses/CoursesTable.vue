@@ -12,6 +12,7 @@
         hide-details
       ></v-text-field>
       <v-spacer></v-spacer>
+<<<<<<< HEAD
       
  
       <v-select 
@@ -27,8 +28,19 @@
         raised
         v-on:click.stop="newCourse"
       >
+=======
+
+      <v-switch
+        :label="$t('actions.view-inactive')"
+        color="primary"
+        v-model="showingInactive"
+        hide-details
+      ></v-switch>
+
+      <v-btn color="primary" raised v-on:click.stop="newCourse">
+>>>>>>> c89e2f3398750f806c7deb60596fbb9b2814d9ee
         <v-icon left>library_add</v-icon>
-        {{$t('courses.new')}}
+        {{ $t("courses.new") }}
       </v-btn>
     </v-toolbar>
 
@@ -40,7 +52,11 @@
       :loading="!tableLoaded"
       class="elevation-1"
     >
-      <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
+      <v-progress-linear
+        slot="progress"
+        color="blue"
+        indeterminate
+      ></v-progress-linear>
       <template slot="items" slot-scope="props">
         <td>{{ props.item.title }}</td>
         <td>{{ props.item.description }}</td>
@@ -48,11 +64,12 @@
           <CourseAdminActions
             v-bind:course="props.item"
             display-context="compact"
-            v-on:action="dispatchAction($event, props.item)"/>
+            v-on:action="dispatchAction($event, props.item)"
+          />
         </td>
       </template>
     </v-data-table>
- 
+
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
       <v-btn flat @click="snackbar.show = false">
@@ -65,6 +82,7 @@
       <CourseEditor
         v-bind:editMode="courseDialog.editMode"
         v-bind:initialData="courseDialog.course"
+        v-bind:saving="courseDialog.saving"
         v-on:cancel="cancelCourse"
         v-on:save="saveCourse"
       />
@@ -87,6 +105,7 @@ export default {
       courseDialog: {
         show: false,
         editMode: false,
+        saving: false,
         course: {}
       },
 
@@ -110,10 +129,15 @@ export default {
     headers() {
       return [
         { text: this.$t("courses.title"), value: "title", width: "40%" },
-        { text: this.$t("courses.description"), value: "description", width: "60%" },
+        {
+          text: this.$t("courses.description"),
+          value: "description",
+          width: "60%"
+        },
         { text: this.$t("actions.header"), sortable: false }
       ];
     },
+<<<<<<< HEAD
     // archivedCourses() {
     //   return this.courses.filter(course => !course.active)
     // },
@@ -143,11 +167,26 @@ export default {
       }
   
     },
+=======
+    inactiveCourses() {
+      return this.courses.filter(course => !course.active);
+    },
+
+    activeCourses() {
+      return this.courses.filter(course => course.active);
+    },
+
+    displayCourses() {
+      return this.showingInactive
+        ? this.courses
+        : this.courses.filter(course => course.active);
+    }
+>>>>>>> c89e2f3398750f806c7deb60596fbb9b2814d9ee
   },
 
   methods: {
     dispatchAction(actionName, course) {
-      switch(actionName) {
+      switch (actionName) {
         case "edit":
           this.editCourse(course);
           break;
@@ -178,6 +217,7 @@ export default {
     },
 
     saveCourse(course) {
+      this.courseDialog.saving = true;
       if (this.courseDialog.editMode) {
         // Hang on to the ID of the person being updated.
         const course_id = course.id;
@@ -191,22 +231,54 @@ export default {
           .then(resp => {
             console.log("EDITED", resp);
             Object.assign(this.courses[idx], course);
+            this.snackbar.text = this.$t("courses.updated");
+            this.snackbar.show = true;
           })
-          .catch(err => console.error("FALURE", err.response));
+          .catch(err => {
+            console.error("FALURE", err.response);
+            this.snackbar.text = this.$t("courses.update-failed");
+            this.snackbar.show = true;
+          })
+          .finally(() => {
+            this.courseDialog.show = false;
+            this.courseDialog.saving = false;
+          });
       } else {
         this.$http
           .post("/api/v1/courses/courses", course)
           .then(resp => {
             console.log("ADDED", resp);
             this.courses.push(resp.data);
+            this.snackbar.text = this.$t("courses.added");
+            this.snackbar.show = true;
           })
-          .catch(err => console.error("FAILURE", err.response));
+          .catch(err => {
+            console.error("FAILURE", err.response);
+            this.snackbar.text = this.$t("courses.add-failed");
+            this.snackbar.show = true;
+          })
+          .finally(() => {
+            this.courseDialog.show = false;
+            this.courseDialog.saving = false;
+          });
       }
+<<<<<<< HEAD
       this.courseDialog.show = false;
+=======
+    },
+
+    changeView() {
+      if (this.showingInactive) {
+        this.viewInactive();
+      } else {
+        this.viewActive();
+      }
+>>>>>>> c89e2f3398750f806c7deb60596fbb9b2814d9ee
     }
   },
 
   mounted: function() {
+<<<<<<< HEAD
     this.$http
       .get("/api/v1/courses/courses")
       .then(resp => {
@@ -216,6 +288,12 @@ export default {
         this.tableLoaded = true;
         console.log(this.activeCourses, this.archivedCourses, this.courses)
       });
+=======
+    this.$http.get("/api/v1/courses/courses").then(resp => {
+      this.courses = resp.data;
+      this.tableLoaded = true;
+    });
+>>>>>>> c89e2f3398750f806c7deb60596fbb9b2814d9ee
   }
 };
 </script>

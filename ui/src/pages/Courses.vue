@@ -1,7 +1,5 @@
 <template>
-  <v-container>
-    <CoursesTable v-bind:course="course"/>
-  </v-container>
+  <v-container> <CoursesTable v-bind:course="course" /> </v-container>
 </template>
 
 <script>
@@ -12,9 +10,7 @@ export default {
   components: {
     CoursesTable
   },
-  props: [
-    'course'
-  ]
+  props: ["course"]
 };
 </script>
 

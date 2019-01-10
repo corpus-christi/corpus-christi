@@ -23,10 +23,11 @@
       solo
       multiple
     >
-      <template slot="item" slot-scope="data">{{data.item.title}}</template>
+      <template slot="item" slot-scope="data">{{ data.item.title }}</template>
       <template slot="selection" slot-scope="data">
         <v-chip :selected="data.selected" close @input="remove(data.item)">
-          <strong>{{ data.item.title }}</strong>&nbsp;
+          <strong>{{ data.item.title }}</strong
+          >&nbsp;
         </v-chip>
       </template>
     </v-combobox>
@@ -49,17 +50,19 @@ export default {
   },
   props: {
     course: Object
-	},
-	methods: {
+  },
+  methods: {
     remove(item) {
       this.prereqs.splice(this.prereqs.indexOf(item), 1);
       this.prereqs = [...this.prereqs];
     }
-	},
+  },
   mounted() {
     this.$http
       .get("/api/v1/courses/courses")
-      .then(resp => (this.availableCourses = resp.data.filter(item => item.active)));
+      .then(
+        resp => (this.availableCourses = resp.data.filter(item => item.active))
+      );
   }
 };
 </script>
