@@ -17,3 +17,16 @@ courses:
   prerequisites:
     en: Prerequisites
     es: Prerrequisitos
+  added:
+    en: Course added
+    es: Curso añadido
+  updated:
+    en: Course updated
+    es: Curso actualizado
+  add-failed:
+    en: Failed to add course
+    es: Se falló añadir el curso
+  update-failed:
+    en: Failed to update course
+    es: Se falló actualizar el curso
+  

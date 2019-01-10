@@ -26,12 +26,16 @@
       }
     },
     "courses": {
+      "add-failed": "Failed to add course",
+      "added": "Course added",
       "course": "Courses",
       "description": "Description",
       "enrolled": "Number Enrolled",
       "new": "New Course",
       "prerequisites": "Prerequisites",
-      "title": "Title"
+      "title": "Title",
+      "update-failed": "Failed to update course",
+      "updated": "Course updated"
     },
     "groups": {
       "title": "Home Churches"
@@ -105,12 +109,16 @@
       }
     },
     "courses": {
+      "add-failed": "Se fall\u00f3 a\u00f1adir el curso",
+      "added": "Curso a\u00f1adido",
       "course": "Cursos",
       "description": "Descripci\u00f3n",
       "enrolled": "N\u00famero Registrado",
       "new": "Nuevo Curso",
       "prerequisites": "Prerrequisitos",
-      "title": "T\u00edtulo"
+      "title": "T\u00edtulo",
+      "update-failed": "Se fall\u00f3 actualizar el curso",
+      "updated": "Curso actualizado"
     },
     "groups": {
       "title": "Iglesias Hogar"

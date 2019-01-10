@@ -171,8 +171,14 @@ export default {
           .then(resp => {
             console.log("EDITED", resp);
             Object.assign(this.courses[idx], course);
+            this.snackbar.text = this.$t("courses.updated");
+            this.snackbar.show = true;
           })
-          .catch(err => console.error("FALURE", err.response))
+          .catch(err => {
+            console.error("FALURE", err.response);
+            this.snackbar.text = this.$t("courses.update-failed");
+            this.snackbar.show = true;
+          })
           .finally(() => {
             this.courseDialog.show = false;
             this.courseDialog.saving = false;
@@ -183,8 +189,14 @@ export default {
           .then(resp => {
             console.log("ADDED", resp);
             this.courses.push(resp.data);
+            this.snackbar.text = this.$t("courses.added");
+            this.snackbar.show = true;
           })
-          .catch(err => console.error("FAILURE", err.response))
+          .catch(err => {
+            console.error("FAILURE", err.response);
+            this.snackbar.text = this.$t("courses.add-failed");
+            this.snackbar.show = true;
+          })
           .finally(() => {
             this.courseDialog.show = false;
             this.courseDialog.saving = false;
