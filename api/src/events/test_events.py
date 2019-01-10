@@ -36,8 +36,8 @@ def event_object_factory(sqla):
     """Cook up a fake event."""
     event = {
         'title': rl_fake().word(),
-        'start': datetime.datetime(2019, 1, 3, 0, 30),#rl_fake().future_datetime(end_date="+6h"),
-        'end': datetime.datetime(2019, 1, 3, 1, 0),#rl_fake().future_datetime(end_date="+1d"),
+        'start': str(datetime.datetime(2019, 1, 3, 0, 30)),#rl_fake().future_datetime(end_date="+6h"),
+        'end': str(datetime.datetime(2019, 1, 3, 1, 0)),#rl_fake().future_datetime(end_date="+1d"),
         'active': flip()
     }
 
@@ -64,7 +64,7 @@ def team_object_factory():
     """Cook up a fake asset."""
     fake = Faker()  # Use a generic one; others may not have all methods.
     team = {
-        'description': rl_fake().setences(nb=1)[0],
+        'description': rl_fake().sentences(nb=1)[0],
         'active': flip()
     }
     return team
@@ -85,14 +85,14 @@ def create_multiple_teams(sqla, n):
     team_schema = TeamSchema()
     new_teams = []
     for i in range(n):
-        valid_teams = team_schema.load(event_object_factory())
+        valid_teams = team_schema.load(team_object_factory())
         new_teams.append(Team(**valid_teams))
     sqla.add_all(new_teams)
     sqla.commit()
 
 def create_multiple_assets(sqla, n):
     """Commit `n` new assets to the database. Return their IDs."""
-    asset_schema = EventSchema()
+    asset_schema = AssetSchema()
     new_assets = []
     for i in range(n):
         valid_assets = asset_schema.load(asset_object_factory(sqla))
