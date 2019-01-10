@@ -6,7 +6,7 @@
         <v-flex xs2>
           <v-toolbar-title>{{ $t("people.title") }}</v-toolbar-title>
         </v-flex>
-        <v-flex xs2>
+        <v-flex xs3>
           <v-text-field
             v-model="search"
             append-icon="search"
@@ -18,10 +18,10 @@
             data-cy="search"
           ></v-text-field>
         </v-flex>
-        <v-flex xs2>
-          v
+        <v-flex xs3>
           <v-select
             hide-details
+            solo
             single-line
             :items="viewOptions"
             v-model="viewStatus"
@@ -30,7 +30,7 @@
         </v-flex>
         <v-flex shrink justify-self-end>
           <v-btn
-            class="mr-0"
+            class="mr-0 ml-0"
             color="primary"
             raised
             v-on:click.stop="newPerson"
