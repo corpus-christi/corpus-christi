@@ -337,10 +337,8 @@ export default {
   mounted: function() {
     this.$http.get("/api/v1/people/persons").then(resp => {
       this.allPeople = resp.data;
-      this.activePeople = this.allPeople.filter(person => person.email != null);
-      this.archivedPeople = this.allPeople.filter(
-        person => person.email == null
-      );
+      this.activePeople = this.allPeople.filter(person => person.active);
+      this.archivedPeople = this.allPeople.filter(person => !person.active);
     });
   }
 };
