@@ -92,7 +92,7 @@
     </v-snackbar>
 
     <!-- New/Edit dialog -->
-    <v-dialog v-model="personDialog.show" max-width="500px">
+    <v-dialog scrollable v-model="personDialog.show" max-width="500px">
       <PersonForm
         v-bind:editMode="personDialog.editMode"
         v-bind:initialData="personDialog.person"
@@ -105,7 +105,7 @@
     </v-dialog>
 
     <!-- Person admin dialog -->
-    <v-dialog v-model="adminDialog.show" max-width="500px">
+    <v-dialog scrollable v-model="adminDialog.show" max-width="500px">
       <PersonAdminForm
         v-bind:person="adminDialog.person"
         v-bind:account="adminDialog.account"
