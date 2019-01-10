@@ -4,7 +4,7 @@
       <span class="headline">{{ title }}</span>
     </v-card-title>
     <v-card-text>
-      <CourseForm ref="form" v-bind:course="course"/>
+      <CourseForm ref="form" v-bind:course="course" />
     </v-card-text>
     <v-card-actions>
       <v-btn color="secondary" flat :disabled="saving" v-on:click="cancel">
@@ -14,7 +14,13 @@
       <v-btn color="primary" flat :disabled="saving" v-on:click="clear">
         {{ $t("actions.clear") }}
       </v-btn>
-      <v-btn color="primary" raised :disabled="saving" :loading="saving" v-on:click="save">
+      <v-btn
+        color="primary"
+        raised
+        :disabled="saving"
+        :loading="saving"
+        v-on:click="save"
+      >
         {{ $t("actions.save") }}
       </v-btn>
     </v-card-actions>
@@ -51,10 +57,8 @@ export default {
   },
   computed: {
     title() {
-      return this.editMode
-        ? this.$t("actions.edit")
-        : this.$t("courses.new");
-    },
+      return this.editMode ? this.$t("actions.edit") : this.$t("courses.new");
+    }
   },
 
   watch: {

@@ -12,21 +12,17 @@
         hide-details
       ></v-text-field>
       <v-spacer></v-spacer>
-      
- 
-      <v-switch 
+
+      <v-switch
         :label="$t('actions.view-inactive')"
         color="primary"
-        v-model="showingInactive" 
-        hide-details></v-switch>
-    
-      <v-btn
-        color="primary"
-        raised
-        v-on:click.stop="newCourse"
-      >
+        v-model="showingInactive"
+        hide-details
+      ></v-switch>
+
+      <v-btn color="primary" raised v-on:click.stop="newCourse">
         <v-icon left>library_add</v-icon>
-        {{$t('courses.new')}}
+        {{ $t("courses.new") }}
       </v-btn>
     </v-toolbar>
 
@@ -38,7 +34,11 @@
       :loading="!tableLoaded"
       class="elevation-1"
     >
-      <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
+      <v-progress-linear
+        slot="progress"
+        color="blue"
+        indeterminate
+      ></v-progress-linear>
       <template slot="items" slot-scope="props">
         <td>{{ props.item.title }}</td>
         <td>{{ props.item.description }}</td>
@@ -46,11 +46,12 @@
           <CourseAdminActions
             v-bind:course="props.item"
             display-context="compact"
-            v-on:action="dispatchAction($event, props.item)"/>
+            v-on:action="dispatchAction($event, props.item)"
+          />
         </td>
       </template>
     </v-data-table>
- 
+
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
       <v-btn flat @click="snackbar.show = false">
@@ -108,25 +109,31 @@ export default {
     headers() {
       return [
         { text: this.$t("courses.title"), value: "title", width: "40%" },
-        { text: this.$t("courses.description"), value: "description", width: "60%" },
+        {
+          text: this.$t("courses.description"),
+          value: "description",
+          width: "60%"
+        },
         { text: this.$t("actions.header"), sortable: false }
       ];
     },
     inactiveCourses() {
-      return this.courses.filter(course => !course.active)
+      return this.courses.filter(course => !course.active);
     },
 
     activeCourses() {
-      return this.courses.filter(course => course.active)
+      return this.courses.filter(course => course.active);
     },
 
     displayCourses() {
-      return this.showingInactive ? this.courses : this.courses.filter(course => course.active)
+      return this.showingInactive
+        ? this.courses
+        : this.courses.filter(course => course.active);
     }
   },
   methods: {
     dispatchAction(actionName, course) {
-      switch(actionName) {
+      switch (actionName) {
         case "edit":
           this.editCourse(course);
           break;
@@ -214,12 +221,10 @@ export default {
   },
 
   mounted: function() {
-    this.$http
-      .get("/api/v1/courses/courses")
-      .then(resp => {
-        this.courses = resp.data
-        this.tableLoaded = true;
-      });
+    this.$http.get("/api/v1/courses/courses").then(resp => {
+      this.courses = resp.data;
+      this.tableLoaded = true;
+    });
   }
 };
 </script>
