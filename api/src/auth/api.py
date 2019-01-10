@@ -50,8 +50,8 @@ def login():
 
 @jwt.user_claims_loader
 def add_claims_to_access_token(identity):
-    roles = db.session.query(Role).join((Account, Role.accounts)).filter_by(
-        username=identity).filter_by(active=1).all()
+    roles = db.session.query(Role).join(Account, Role.accounts).filter_by(
+        username=identity).filter_by(active=True).all()
     role_schema = RoleSchema()
     user_roles = []
     for role in roles:

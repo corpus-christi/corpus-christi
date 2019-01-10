@@ -3,7 +3,7 @@ import os
 from flask import json
 from marshmallow import fields, Schema, pre_load
 from marshmallow.validate import Length, Range, OneOf
-from sqlalchemy import Column, Integer, String, Date, ForeignKey, Boolean
+from sqlalchemy import Column, Integer, String, Date, ForeignKey, Boolean, Table
 from sqlalchemy.orm import relationship, backref
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -44,6 +44,13 @@ class PersonSchema(Schema):
     active = fields.Boolean(required=True)
     location_id = fields.Integer(data_key='locationId')
 
+# Defines join table for people_account and people_role
+
+people_account_role = Table('account_role', Base.metadata,
+    Column('people_account_id', Integer, ForeignKey('people_account.id'), primary_key=True),
+    Column('people_role_id', Integer, ForeignKey('people_role.id'), primary_key=True)
+)
+
 # ---- Account
 
 class Account(Base):
@@ -56,6 +63,9 @@ class Account(Base):
 
     # One-to-one relationship; see https://docs.sqlalchemy.org/en/latest/orm/basic_relationships.html#one-to-one
     person = relationship("Person", backref=backref("account", uselist=False))
+    roles = relationship("Role",
+                    secondary=people_account_role, backref="accounts")
+
 
     def __repr__(self):
         return "<Account(id={},username='{}',person='{}:{}')>" \
@@ -137,17 +147,3 @@ class RoleSchema(Schema):
     active = fields.Boolean()
 
 
-# ---- AccountRole
-
-class AccountRole(Base):
-    __tablename__ = 'people_account_role'
-    account_id = Column(Integer, ForeignKey('people_account.id'), primary_key=True)
-    role_id = Column(Integer, ForeignKey('people_role.id'), primary_key=True)
-
-    def __repr__(self):
-        return f"<AccountRole(account_id={self.account_id},role_id={self.role_id})>"
-
-
-class AccountRoleSchema(Schema):
-    account_id = fields.Integer(dump_only=True, data_key='accountId', required=True, validate=Range(min=1))
-    role_id = fields.Integer(dump_only=True, data_key='roleId', required=True, validate=Range(min=1))

@@ -6,7 +6,7 @@ from flask_jwt_extended import jwt_required, get_raw_jwt, jwt_optional
 from marshmallow import ValidationError
 
 from . import people
-from .models import Person, Account, AccountSchema, PersonSchema
+from .models import Person, Account, Role, AccountSchema, PersonSchema, RoleSchema
 from .. import db
 
 # ---- Person
@@ -115,7 +115,7 @@ def read_person_account(person_id):
 def update_account(account_id):
     account = db.session.query(Account).filter_by(id=account_id).first()
     if account is None:
-        return 'not found', 404
+        return 'Account not found', 404
 
     # Only these fields can be meaningfully updated.
     for field in 'password', 'username', 'active':
@@ -123,3 +123,90 @@ def update_account(account_id):
             setattr(account, field, request.json[field])
     db.session.commit()
     return jsonify(account_schema.dump(account))
+
+# ---- Roles
+
+role_schema = RoleSchema()
+
+@people.route('/role', methods=['POST'])
+@jwt_required
+def create_role():
+    try:
+        valid_role = role_schema.load(request.json)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+
+    new_role = Role(**valid_role)
+    db.session.add(new_role)
+    db.session.commit()
+    return jsonify(role_schema.dump(new_role)), 201
+    
+
+@people.route('/role')
+@jwt_required
+def read_all_roles():
+    result = db.session.query(Role).all()
+    return jsonify(role_schema.dump(result, many=True))
+    
+
+@people.route('/role/<role_id>')
+@jwt_required
+def read_one_role(role_id):
+    result = db.session.query(Role).filter_by(id=role_id).first()
+    return jsonify(role_schema.dump(result))
+    
+
+@people.route('/role/<role_id>', methods=['PUT'])
+@jwt_required
+def replace_role(role_id):
+    pass
+    
+
+@people.route('/role/<role_id>', methods=['PATCH'])
+@jwt_required
+def update_role(role_id):
+    try:
+        valid_role = role_schema.load(request.json)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+
+    role = db.session.query(Role).filter_by(id=role_id).first()
+
+    for key, val in valid_role.items():
+        setattr(role, key, val)
+
+    db.session.commit()
+    return jsonify(role_schema.dump(role))
+    
+
+@people.route('/role/<role_id>', methods=['DELETE'])
+@jwt_required
+def delete_role(role_id):
+    pass
+
+@people.route('/role/<account_id>&<role_id>', methods=['POST'])
+@jwt_required
+def add_role_to_account(account_id, role_id):
+    
+    print("Account: " + account_id)
+    print("Role: " + role_id)
+
+    account = db.session.query(Account).filter_by(id=account_id).first()
+    
+    if account is None:
+        return 'Account not found', 404
+
+    role_to_add = db.session.query(Role).filter_by(id=role_id).first()
+
+    account.roles.append(role_to_add)
+    db.session.add(account)
+    db.session.commit()
+
+    user_roles = []
+    roles = db.session.query(Role).join(Account, Role.accounts).filter_by(id=account_id).filter_by(active=True).all()
+    for r in roles:
+        user_roles.append(role_schema.dump(r)['nameI18n'])
+
+    return jsonify(user_roles)
+
+    
