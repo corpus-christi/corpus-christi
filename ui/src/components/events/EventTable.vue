@@ -88,7 +88,7 @@
           <v-card-actions>
             <v-btn v-on:click="cancelDeactivate" color="secondary" flat data-cy="">{{ $t("actions.cancel") }}</v-btn>
             <v-spacer></v-spacer>
-            <v-btn v-on:click="deactivateEvent" color="primary" raised data-cy="">{{ $t("actions.confirm") }}</v-btn>
+            <v-btn v-on:click="deactivateEvent" color="primary" raised :loading="deactivateDialog.loading" data-cy="">{{ $t("actions.confirm") }}</v-btn>
           </v-card-actions>
       </v-card>
     </v-dialog>
@@ -119,7 +119,9 @@ export default {
         event: {}
       },
       deactivateDialog: {
-        show: false
+        show: false,
+        eventId: -1,
+        loading: false
       },
       search: "",
 
@@ -151,16 +153,35 @@ export default {
       this.activateEventDialog({ ...event }, true);
     },
 
-    activateDeactivateDialog(event = {}) {
+    activateDeactivateDialog(eventId) {
       this.deactivateDialog.show = true;
+      this.deactivateDialog.eventId = eventId;
     },
 
     confirmDeactivate(event) {
-      this.activateDeactivateDialog({ ...event });
+      this.activateDeactivateDialog(event.id);
     },
     
-    deactivateEvent(event) {
-      console.log("deactiavted event")
+    deactivateEvent() {
+      console.log("deactivated event")
+      this.deactivateDialog.loading = true;
+      const eventId = this.deactivateDialog.eventId
+      const idx = this.events.findIndex(ev => ev.id === eventId);
+      this.$http
+        .delete(`http://localhost:3000/events/${eventId}`)
+        .then(resp => {
+          console.log("DELETED", resp);
+          this.events.splice(idx, 1);
+          this.deactivateDialog.loading = false;
+          this.deactivateDialog.show = false;
+          this.showSnackbar("Event Deleted (translate me)");
+        })
+        .catch(err => {
+          console.error("DELETE FALURE", err.response);
+          this.deactivateDialog.loading = false;
+          this.showSnackbar("Error while deleting event! (translate me)");
+        });
+
       // this.deactivateDialog.show = false;
     },
 
@@ -177,27 +198,13 @@ export default {
     },
 
     saveEvent(event) {
-      // console.log(event);
-      // if (this.eventDialog.editMode) {
-      //   this.$http.put('http://localhost:3000/events', event).then(res => {
-      //     this.snackbar.show = true;
-      //     this.snackbar.text = 'saved?'
-      //   })
-      // } else {
-      //   this.$http.post('http://localhost:3000/events', event).then(res => {
-      //     this.snackbar.show = true;
-      //     this.snackbar.text = 'posted?'
-      //   })
-      // }
-      // this.eventDialog.show = false;
-
       this.eventDialog.saveLoading = true;
       if (this.eventDialog.editMode) {
-        const event_id = event.id;
+        const eventId = event.id;
         const idx = this.events.findIndex(ev => ev.id === event.id);
         delete event.id;
         this.$http
-          .put(`http://localhost:3000/events/${event_id}`, event)
+          .put(`http://localhost:3000/events/${eventId}`, event)
           .then(resp => {
             console.log("EDITED", resp);
             Object.assign(this.events[idx], event);
