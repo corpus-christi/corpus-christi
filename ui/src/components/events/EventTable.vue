@@ -67,6 +67,7 @@
               color="primary"
               slot="activator"
               v-on:click="unarchive(props.item)"
+              :loading="props.item.unarchiving"
             >
               <v-icon small>unarchive</v-icon>
             </v-btn>
@@ -202,17 +203,19 @@ export default {
     },
 
     unarchive(event) {
+      const idx = this.events.findIndex(ev => ev.id === event.id);
       const copyEvent = JSON.parse(JSON.stringify(event));
+      event.unarchiving = true;
       copyEvent.active = true;
-
       this.$http
         .put(`http://localhost:3000/events/${copyEvent.id}`, copyEvent)
         .then(resp => {
           console.log("UNARCHIVED", resp);
-          event = resp.data;
+          Object.assign(this.events[idx], resp.data);
           this.showSnackbar(this.$t("events.event-unarchived"));
         })
         .catch(err => {
+          delete event.unarchiving;
           console.error("UNARCHIVE FALURE", err.response);
           this.showSnackbar(this.$t("events.error-unarchiving-event"));
         });
