@@ -4,7 +4,7 @@
       <span class="headline">{{ title }}</span>
     </v-card-title>
     <v-card-text>
-      <CourseForm ref="form" v-bind:course="course"/>
+      <CourseForm ref="form" v-for="course in courses" :key="course.id" v-bind:course="course"/>
     </v-card-text>
     <v-card-actions>
       <v-btn color="secondary" flat v-on:click="cancel">
@@ -42,10 +42,7 @@ export default {
   },
   data: function() {
     return {
-      course: {
-        title: "",
-        description: ""
-      }
+      courses: [{ title: "", description: "", prerequisites: [] }]
     };
   },
   computed: {
@@ -56,7 +53,7 @@ export default {
     },
     // List the keys in a course record.
     courseKeys() {
-      return Object.keys(this.course);
+      return Object.keys(this.courses[0]);
     }
   },
 
@@ -66,7 +63,7 @@ export default {
       if (isEmpty(courseProp)) {
         this.clear();
       } else {
-        this.course = courseProp;
+        this.courses[0] = courseProp;
       }
     }
   },
@@ -80,17 +77,18 @@ export default {
 
     // Clear the form and the validators.
     clear() {
-      for (let key of this.courseKeys) {
-        this.course[key] = "";
+      this.courses.length = 1;
+      for (let key of Object.keys(this.courses[0])) {
+        this.courses[0][key] = "";
       }
-      this.$refs.form.$validator.reset();
+      this.$refs.form[0].$validator.reset();
     },
 
     // Trigger a save event, returning the update `Person`.
     save() {
-      this.$validator.validateAll();
+      this.$refs.form[0].$validator.validateAll();
       if (!this.errors.any()) {
-        this.$emit("save", this.course);
+        this.$emit("save", this.courses);
       }
     },
 
