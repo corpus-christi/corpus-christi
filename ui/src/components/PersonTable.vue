@@ -2,30 +2,29 @@
   <div>
     <!-- Header -->
     <v-toolbar>
-      <v-toolbar-title> {{ $t("people.title") }}</v-toolbar-title>
+      <v-toolbar-title>{{ $t("people.title") }}</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-text-field
         v-model="search"
         append-icon="search"
         v-bind:label="$t('actions.search')"
-        single-line
         hide-details
-        data-cy="search"
+        single-line
+        data-cy=""
       ></v-text-field>
       <v-spacer></v-spacer>
-
-      <v-btn
-        small
-        fab
+      <v-switch
+        :label="$t('actions.viewinactive')"
         color="primary"
-        absolute
-        dark
-        bottom
-        right
-        v-on:click.stop="newPerson"
-        data-cy="new-person"
-      >
-        <v-icon>add</v-icon>
+        v-on:change="changeView"
+        v-model="showingInactive"
+        hide-details
+        data-cy=""
+      ></v-switch>
+
+      <v-btn color="primary" raised v-on:click.stop="newPerson" data-cy="">
+        <v-icon dark left>person_add</v-icon>
+        {{ $t("actions.addperson") }}
       </v-btn>
     </v-toolbar>
 
@@ -43,39 +42,42 @@
         <td>{{ props.item.phone }}</td>
         <td>
           <v-tooltip bottom>
-            <v-icon
+            <v-btn
+              icon
+              outline
               small
+              color="primary"
               slot="activator"
               v-on:click="editPerson(props.item)"
-              class="mr-3"
-              data-cy="edit-person"
             >
-              edit
-            </v-icon>
+              <v-icon small>edit</v-icon>
+            </v-btn>
             <span>{{ $t("actions.edit") }}</span>
           </v-tooltip>
           <v-tooltip bottom>
-            <v-icon
+            <v-btn
+              icon
+              outline
               small
+              color="primary"
               slot="activator"
               v-on:click="adminPerson(props.item)"
-              class="mr-3"
-              data-cy="admin-person"
             >
-              settings
-            </v-icon>
+              <v-icon small>settings</v-icon>
+            </v-btn>
             <span>{{ $t("actions.tooltips.settings") }}</span>
           </v-tooltip>
           <v-tooltip bottom>
-            <v-icon
+            <v-btn
+              icon
+              outline
               small
+              color="primary"
               slot="activator"
               v-on:click="deletePerson(props.item)"
-              class="mr-3"
-              data-cy="delete-person"
             >
-              delete
-            </v-icon>
+              <v-icon small>delete</v-icon>
+            </v-btn>
             <span>{{ $t("actions.tooltips.deactivate") }}</span>
           </v-tooltip>
         </td>
@@ -84,7 +86,7 @@
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false" data-cy="snackbar-close">
+      <v-btn flat @click="snackbar.show = false" data-cy>
         {{ $t("actions.close") }}
       </v-btn>
     </v-snackbar>
@@ -96,6 +98,7 @@
         v-bind:initialData="personDialog.person"
         v-on:cancel="cancelPerson"
         v-on:save="savePerson"
+        v-on:add-another="addAnother"
       />
     </v-dialog>
 
@@ -138,8 +141,11 @@ export default {
         text: ""
       },
 
+      showingInactive: false,
       selected: [],
       people: [],
+      activePeople: [],
+      inactivePeople: [],
       search: ""
     };
   },
@@ -208,6 +214,33 @@ export default {
       this.personDialog.show = false;
     },
 
+    addAnother(person) {
+      this.$http
+        .post("/api/v1/people/persons", person)
+        .then(resp => {
+          console.log("ADDED", resp);
+          this.people.push(resp.data);
+          this.activatePersonDialog();
+        })
+        .catch(err => console.error("FAILURE", err.response));
+    },
+
+    changeView() {
+      if (this.showingInactive) {
+        this.viewInactive();
+      } else {
+        this.viewActive();
+      }
+    },
+
+    viewInactive() {
+      console.log(`viewing inactive`);
+    },
+
+    viewActive() {
+      console.log(`viewing active`);
+    },
+
     // ---- Account Administration
 
     adminPerson(person) {
@@ -252,6 +285,9 @@ export default {
   },
 
   mounted: function() {
+    // TODO: set activePeople[] to all people who are active
+    // TODO: set inactivePeople[] to all people who are inactive
+    // TODO: set people[] = activePeople[]
     this.$http
       .get("/api/v1/people/persons")
       .then(resp => (this.people = resp.data));

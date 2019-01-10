@@ -12,6 +12,7 @@
           v-validate="'required'"
           v-bind:error-messages="errors.collect('firstName')"
           data-cy="firstName"
+          :readonly="formDisabled"
         ></v-text-field>
 
         <v-text-field
@@ -21,9 +22,10 @@
           v-validate="'required'"
           v-bind:error-messages="errors.collect('lastName')"
           data-cy="lastName"
+          :readonly="formDisabled"
         ></v-text-field>
 
-        <v-radio-group v-model="person.gender" row>
+        <v-radio-group v-model="person.gender" :readonly="formDisabled" row>
           <v-radio v-bind:label="$t('person.male')" value="M" data-cy="radio-m"></v-radio>
           <v-radio v-bind:label="$t('person.female')" value="F" data-cy="radio-f"></v-radio>
         </v-radio-group>
@@ -37,6 +39,8 @@
           offset-y
           full-width
           min-width="290px"
+          :disabled="formDisabled"
+          data-cy=""
         >
           <v-text-field
             slot="activator"
@@ -44,6 +48,7 @@
             v-bind:label="$t('person.date.birthday')"
             prepend-icon="event"
             readonly
+            data-cy=""
           ></v-text-field>
 
           <v-date-picker
@@ -62,6 +67,7 @@
           v-bind:error-messages="errors.collect('email')"
           prepend-icon="email"
           data-cy="email"
+          :readonly="formDisabled"
         ></v-text-field>
 
         <v-text-field
@@ -69,20 +75,42 @@
           v-bind:label="$t('person.phone')"
           prepend-icon="phone"
           data-cy="phone"
+          :readonly="formDisabled"
         ></v-text-field>
       </form>
     </v-card-text>
     <v-card-actions>
+      <v-btn
+        color="secondary"
+        flat
+        v-on:click="cancel"
+        :disabled="formDisabled"
+        data-cy=""
+        >{{ $t("actions.cancel") }}</v-btn
+      >
       <v-spacer></v-spacer>
-      <v-btn color="primary" flat v-on:click="cancel" data-cy="cancel">
-        {{ $t("actions.cancel") }}
-      </v-btn>
-      <v-btn color="primary" flat v-on:click="clear" data-cy="clear">
-        {{ $t("actions.clear") }}
-      </v-btn>
-      <v-btn color="primary" flat v-on:click="save" data-cy="save">
-        {{ $t("actions.save") }}
-      </v-btn>
+      <v-btn color="primary" flat v-on:click="clear" :disabled="formDisabled" data-cy="clear">{{
+        $t("actions.clear")
+      }}</v-btn>
+      <v-btn
+        color="primary"
+        outline
+        v-on:click="add_another"
+        v-if="editMode === false"
+        :loading="add_more_loading"
+        :disabled="formDisabled"
+        data-cy=""
+        >{{ $t("actions.addanother") }}</v-btn
+      >
+      <v-btn
+        color="primary"
+        raised
+        v-on:click="save"
+        :loading="save_loading"
+        :disabled="formDisabled"
+        data-cy="save"
+        >{{ $t("actions.save") }}</v-btn
+      >
     </v-card-actions>
   </v-card>
 </template>
@@ -105,6 +133,8 @@ export default {
   },
   data: function() {
     return {
+      save_loading: false,
+      add_more_loading: false,
       showBirthdayPicker: false,
 
       person: {
@@ -129,7 +159,11 @@ export default {
         : this.$t("person.actions.new");
     },
 
-    ...mapGetters(["currentLanguageCode"])
+    ...mapGetters(["currentLanguageCode"]),
+
+    formDisabled() {
+      return this.save_loading || this.add_more_loading;
+    }
   },
 
   watch: {
@@ -160,10 +194,23 @@ export default {
 
     // Trigger a save event, returning the update `Person`.
     save() {
-      this.$validator.validateAll();
-      if (!this.errors.any()) {
-        this.$emit("save", this.person);
-      }
+      this.save_loading = true;
+      this.$validator.validateAll().then(() => {
+        if (!this.errors.any()) {
+          this.$emit("save", this.person);
+        }
+        this.save_loading = false;
+      });
+    },
+
+    add_another() {
+      this.add_more_loading = true;
+      this.$validator.validateAll().then(() => {
+        if (!this.errors.any()) {
+          this.$emit("add-another", this.person);
+        }
+        this.add_more_loading = false;
+      });
     }
   }
 };

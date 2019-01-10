@@ -10,6 +10,8 @@
       "username": "Username"
     },
     "actions": {
+      "addanother": "Add Another",
+      "addperson": "Add Person",
       "cancel": "Cancel",
       "clear": "Clear",
       "close": "Close",
@@ -23,7 +25,8 @@
       "tooltips": {
         "deactivate": "Deactivate",
         "settings": "Settings"
-      }
+      },
+      "viewinactive": "View Inactive"
     },
     "groups": {
       "title": "Home Churches"
@@ -81,6 +84,8 @@
       "username": "Nombre de usuario"
     },
     "actions": {
+      "addanother": "A\u00f1adir Otro",
+      "addperson": "A\u00f1adir Persona",
       "cancel": "Cancelar",
       "clear": "Despejar",
       "close": "Cerrar",
@@ -94,7 +99,8 @@
       "tooltips": {
         "deactivate": "Desactivar",
         "settings": "Ajustes"
-      }
+      },
+      "viewinactive": "Ver Inactivo"
     },
     "groups": {
       "title": "Iglesias Hogar"
