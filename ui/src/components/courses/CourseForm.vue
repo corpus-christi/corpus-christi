@@ -38,13 +38,13 @@ export default {
   name: "CourseForm",
   data: function() {
     return {
-      allCourses: [],
+      availableCourses: [],
       prereqs: []
     };
   },
   computed: {
     items() {
-      return this.allCourses.filter(item => item.id != this.course.id);
+      return this.availableCourses.filter(item => item.id != this.course.id);
     }
   },
   props: {
@@ -59,7 +59,7 @@ export default {
   mounted() {
     this.$http
       .get("/api/v1/courses/courses")
-      .then(resp => (this.allCourses = resp.data));
+      .then(resp => (this.availableCourses = resp.data.filter(item => item.active)));
   }
 };
 </script>
