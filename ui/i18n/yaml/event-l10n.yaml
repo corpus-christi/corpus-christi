@@ -56,3 +56,15 @@ events:
   error-adding-event:
     en: Error while adding event
     es: Error al agregar evento
+  details:
+    en: Details
+    es: Detalles
+  participants:
+    en: Participants
+    es: Participantes
+  teams:
+    en: Teams
+    es: Equipos
+  assets:
+    en: Assets
+    es: Bienes
