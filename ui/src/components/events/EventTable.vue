@@ -23,7 +23,33 @@
         <td>{{ getDisplayDate(props.item.start) }}</td>
         <td>{{ props.item.location_name }}</td>
         <td>
-          <v-icon small @click="editEvent(props.item)">edit</v-icon>
+          <!-- <v-icon small @click="editEvent(props.item)">edit</v-icon> -->
+          <v-tooltip bottom>
+            <v-btn
+              icon
+              outline
+              small
+              color="primary"
+              slot="activator"
+              v-on:click="editEvent(props.item)"
+            >
+              <v-icon small>edit</v-icon>
+            </v-btn>
+            <span>{{ $t("actions.edit") }}</span>
+          </v-tooltip>
+          <v-tooltip bottom>
+            <v-btn
+              icon
+              outline
+              small
+              color="primary"
+              slot="activator"
+              v-on:click="deleteEvent(props.item)"
+            >
+              <v-icon small>delete</v-icon>
+            </v-btn>
+            <span>{{ $t("actions.tooltips.deactivate") }}</span>
+          </v-tooltip>
         </td>
       </template>
     </v-data-table>
@@ -40,6 +66,8 @@
       <event-form
         v-bind:editMode="eventDialog.editMode"
         v-bind:initialData="eventDialog.event"
+        v-bind:saveLoading="eventDialog.saveLoading"
+        v-bind:addMoreLoading="eventDialog.addMoreLoading"
         v-on:cancel="cancelEvent"
         v-on:save="saveEvent"
       />
@@ -66,6 +94,8 @@ export default {
       eventDialog: {
         show: false,
         editMode: false,
+        saveLoading: false,
+        addMoreLoading: false,
         event: {}
       },
       search: "",
@@ -96,6 +126,10 @@ export default {
 
     editEvent(event) {
       this.activateEventDialog({ ...event }, true);
+    },
+
+    deleteEvent(event) {
+      console.log('delete!')
     },
 
     newEvent() {
