@@ -1,8 +1,10 @@
-#Completed by Ryan and Eliza 01/08/2019 2:45pm
+import json
 
-from flask import request, jsonify
+from flask import request
+from flask.json import jsonify
 from flask_jwt_extended import jwt_required
 from marshmallow import ValidationError
+import sys
 
 from . import courses
 from .models import Course, CourseSchema, Prerequisite, PrerequisiteSchema, Course_Offering, Course_OfferingSchema
@@ -13,6 +15,7 @@ course_schema = CourseSchema()
 @courses.route('/courses', methods=['POST'])
 @jwt_required
 def create_course():
+    """Create an active (by default) course"""
     try:
         valid_course = course_schema.load(request.json)
     except ValidationError as err:
@@ -23,36 +26,38 @@ def create_course():
     db.session.commit()
     return jsonify(course_schema.dump(new_course)), 201
 
-
 @courses.route('/courses')
 @jwt_required
 def read_all_courses():
+    """List all active and inactive courses"""
     result = db.session.query(Course).all()
     return jsonify(course_schema.dump(result, many=True))
 
 @courses.route('/courses-active')
 @jwt_required
 def read_all_active_courses():
+    """List all active courses"""
     result = db.session.query(Course).filter_by(active=True).all()
     return jsonify(course_schema.dump(result, many=True))    
 
 @courses.route('/courses-inactive')
 @jwt_required
 def read_all_inactive_courses():
+    """List all inactive courses"""
     result = db.session.query(Course).filter_by(active=False).all()
-    return jsonify(course_schemadump(result, many=True))    
+    return jsonify(course_schema.dump(result, many=True))    
 
 @courses.route('/courses/<course_id>')
 @jwt_required
 def read_one_course(course_id):
-    print('You found the page for course id %d. Congrats' % course_id)
+    """List only one course with given course_id"""
     result = db.session.query(Course).filter_by(id=course_id).first()
     return jsonify(course_schema.dump(result))
-
 
 @courses.route('/courses/<course_id>', methods=['PATCH'])
 @jwt_required
 def update_course(course_id):
+    """Update course with given course_id with appropriate details"""
     try:
         valid_course = course_schema.load(request.json)
     except ValidationError as err:
@@ -66,10 +71,10 @@ def update_course(course_id):
     db.session.commit()
     return jsonify(course_schema.dump(course))
 
-# deactivate course
 @courses.route('/courses/<course_id>', methods=['PATCH'])
 @jwt_required
 def deactivate_course(course_id):
+    """Set active course with given course_id to inactive (False)"""
     try:
         valid_course = course_schema.load(request.json)
     except ValidationError as err:
@@ -83,10 +88,10 @@ def deactivate_course(course_id):
     db.session.commit()
     return jsonify(course_schema.dump(course))
 
-# reactivate course
 @courses.route('/courses/<course_id>', methods=['PATCH'])
 @jwt_required
 def reactivate_course(course_id):
+    """Set inactive course with given course_id to active (True)"""
     try:
         valid_course = course_schema.load(request.json)
     except ValidationError as err:
@@ -105,6 +110,9 @@ prerequisite_schema = PrerequisiteSchema()
 @courses.route('/prerequisites', methods=['POST'])
 @jwt_required
 def create_prerequisite():
+    """Set given prerequisite to be associated with given course
+    
+    Note: Need to get two course ids"""
     try:
         valid_prerequisite = prerequisite_schema.load(request.json)
     except ValidationError as err:
