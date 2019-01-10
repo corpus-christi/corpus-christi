@@ -102,9 +102,14 @@
         >{{ $t("actions.cancel") }}</v-btn
       >
       <v-spacer></v-spacer>
-      <v-btn color="primary" flat v-on:click="clear" :disabled="formDisabled" data-cy="clear">{{
-        $t("actions.clear")
-      }}</v-btn>
+      <v-btn
+        color="primary"
+        flat
+        v-on:click="clear"
+        :disabled="formDisabled"
+        data-cy="clear"
+        >{{ $t("actions.clear") }}</v-btn
+      >
       <v-btn
         color="primary"
         outline

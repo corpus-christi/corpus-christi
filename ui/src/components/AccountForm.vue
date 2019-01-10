@@ -51,7 +51,12 @@
       <v-btn color="secondary" flat v-on:click="close" data-cy="cancel-button">
         {{ $t("actions.cancel") }}
       </v-btn>
-      <v-btn color="primary" raised v-on:click="confirm" data-cy="confirm-button">
+      <v-btn
+        color="primary"
+        raised
+        v-on:click="confirm"
+        data-cy="confirm-button"
+      >
         {{ $t("actions.confirm") }}
       </v-btn>
     </v-card-actions>

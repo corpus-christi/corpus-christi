@@ -22,7 +22,12 @@
         data-cy="view-inactive"
       ></v-switch>
 
-      <v-btn color="primary" raised v-on:click.stop="newPerson" data-cy="add-person">
+      <v-btn
+        color="primary"
+        raised
+        v-on:click.stop="newPerson"
+        data-cy="add-person"
+      >
         <v-icon dark left>person_add</v-icon>
         {{ $t("actions.add-person") }}
       </v-btn>
