@@ -26,9 +26,9 @@
 
     <v-data-table :headers="headers" :items="events" :search="search" class="elevation-1">
       <template slot="items" slot-scope="props">
-        <td>{{ props.item.title }}</td>
-        <td>{{ getDisplayDate(props.item.start) }}</td>
-        <td>{{ props.item.location_name }}</td>
+        <td class="hover-hand" v-on:click="$router.push({path: '/events/' + props.item.id})">{{ props.item.title }}</td>
+        <td class="hover-hand" v-on:click="$router.push({path: '/events/' + props.item.id})">{{ getDisplayDate(props.item.start) }}</td>
+        <td class="hover-hand" v-on:click="$router.push({path: '/events/' + props.item.id})">{{ props.item.location_name }}</td>
         <td v-if="props.item.active">
           <!-- <v-icon small @click="editEvent(props.item)">edit</v-icon> -->
           <v-tooltip bottom>
@@ -306,3 +306,9 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.hover-hand {
+  cursor: pointer;
+}
+</style>

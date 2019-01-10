@@ -47,7 +47,49 @@ const router = new VueRouter({
       name: "events",
       path: "/events",
       meta: { authRequired: true },
-      component: () => import("@/pages/Events")
+      component: () => import("@/pages/Events"),
+      redirect: { name: "all" },
+      children: [
+        {
+          name: "all",
+          path: "all",
+          meta: { authRequired: true },
+          component: () => import("@/components/events/EventTable")
+        },
+        {
+          name: "event",
+          path: ":event",
+          meta: { authRequired: true },
+          redirect: { name: "details" },
+          component: () => import("@/components/events/Event"),
+          children: [
+            {
+              name: "details",
+              path: "details",
+              meta: { authRequired: true },
+              component: () => import("@/components/events/EventDetails")
+            },
+            {
+              name: "participants",
+              path: "participants",
+              meta: { authRequired: true },
+              component: () => import("@/components/events/EventParticipants")
+            },
+            {
+              name: "teams",
+              path: "teams",
+              meta: { authRequired: true },
+              component: () => import("@/components/events/EventTeams")
+            },
+            {
+              name: "assets",
+              path: "assets",
+              meta: { authRequired: true },
+              component: () => import("@/components/events/EventAssets")
+            },
+          ]
+        },
+      ]
     },
     {
       name: "locale",
