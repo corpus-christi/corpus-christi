@@ -102,6 +102,7 @@ def test_read_all_courses(auth_client):
     # THEN assert all entries from database are called
     assert len(courses) == count
 
+#Test getting only active courses from the database
 def test_read_all_active_courses(auth_client):
     # GIVEN existing and active courses
     count_active = random.randint(3,11)
@@ -113,6 +114,7 @@ def test_read_all_active_courses(auth_client):
     # THEN assert all active courses are listed
     assert len(active_courses) == count_active
 
+#Test getting only inactive courses from the database
 def test_read_all_inactive_courses(auth_client):
     # GIVEN existing and inactive courses
     count_active = random.randint(3,11)
@@ -140,40 +142,33 @@ def test_read_one_course(auth_client):
         assert resp.json['description'] == course.description
         assert resp.json['active'] == course.active
 
-def create_course(sqla):
-    """Create single course into DB"""
-    course_schema = CourseSchema()
-    new_courses = []
-    valid_course = course_schema.load(course_object_factory(1))
-    new_courses.append(Course(**valid_course))
-    sqla.add_all(new_courses) #should only add one course tho
-    sqla.commit()
-
+#Test that active courses can be deactivated
 @pytest.mark.smoke
 def test_deactivate_course(auth_client):
-    """Test that an active course can be deactivated"""
     # GIVEN course to deactivate
-    create_course(auth_client.sqla)
-    course = auth_client.sqla.query(Course).first()
+    count = random.randint(3,11)
+    create_multiple_courses_active(auth_client.sqla, count)
+    courses = auth_client.sqla.query(Course).all()
     # WHEN course is changed to inactive
-    resp = auth_client.patch(url_for('courses.deactivate_course', course_id=course.id),
-                        json={'active': False})
-    # THEN assert course is inactive
-    assert resp.status_code == 200
-    assert resp.json['active'] == False
+    for course in courses:
+        resp = auth_client.patch(url_for('courses.deactivate_course', course_id=course.id), json={'active': False})
+        # THEN assert course is inactive
+        assert resp.status_code == 200
+        assert resp.json['active'] == False
 
+#Test that inactive courses can be reactivated
 @pytest.mark.smoke
 def test_reactivate_course(auth_client):
-    """Test that an active course can be deactivated"""
     # GIVEN course to activate
-    create_course(auth_client.sqla)
-    course = auth_client.sqla.query(Course).first()
+    count = random.randint(3,11)
+    create_multiple_courses_inactive(auth_client.sqla, count)
+    courses = auth_client.sqla.query(Course).all()
     # WHEN course is changed to active
-    resp = auth_client.patch(url_for('courses.reactivate_course', course_id=course.id),
-                        json={'active': True})
-    # THEN assert course is active
-    assert resp.status_code == 200
-    assert resp.json['active'] == True
+    for course in courses:
+        resp = auth_client.patch(url_for('courses.reactivate_course', course_id=course.id), json={'active': True})
+        # THEN assert course is active
+        assert resp.status_code == 200
+        assert resp.json['active'] == True
 
 """ 
 # Test 
@@ -203,13 +198,17 @@ def test_delete_course(auth_client):
 
 # ---- Prerequisite
 
-
-@pytest.mark.xfail()
+#Test that prerequisites can be added
 def test_create_prerequisite(auth_client):
     # GIVEN existing and available course in database
+    create_multiple_courses(auth_client.sqla, 2)
+    prereq = auth_client.sqla.query(Course).first()
+    course = auth_client.sqla.query(Course).all()[-1]
     # WHEN course requires previous attendance to another course
-    # THEN add course as prerequisite
-    assert True == False
+    resp = auth_client.patch(url_for('courses.create_prerequisite', course_id=course.id), json={'prerequisite':[prereq.id]})
+    # THEN asssert course is prerequisite
+    assert resp.status_code == 200
+    assert resp.json['prereq_id'] == prereq.id
     
 # This will test getting all prerequisites for a single course
 @pytest.mark.xfail()
@@ -309,3 +308,4 @@ def test_delete_course_offering(auth_client):
     assert True == False
 """
     
+open 
