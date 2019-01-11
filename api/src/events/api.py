@@ -10,6 +10,19 @@ from . import events
 from .models import Event, Asset, Team, EventSchema, AssetSchema, TeamSchema
 from .. import db
 
+def modify_entity(entity_type, id, new_value_dict):
+    item = db.session.query(entity_type).filter_by(id=id).first()
+
+    if not item:
+        return jsonify(f"Event with id #{id} does not exist."), 404
+
+    for key, val in new_value_dict.items():
+        setattr(item, key, val)
+    
+    db.session.commit()
+
+    return jsonify(event_schema.dump(item)), 200
+
 # ---- Event
 
 event_schema = EventSchema()
@@ -122,17 +135,7 @@ def delete_event(event_id):
 
 # Handles PUT and PATCH requests
 def modify_event(event_id, new_value_dict):
-    event = db.session.query(Event).filter_by(id=event_id).first()
-
-    if not event:
-        return jsonify(f"Event with id #{event_id} does not exist."), 404
-
-    for key, val in new_value_dict.items():
-        setattr(event, key, val)
-    
-    db.session.commit()
-
-    return jsonify(event_schema.dump(event)), 200
+    return modify_entity(Event, event_id, new_value_dict)
 
 
 # ---- Asset
@@ -194,7 +197,11 @@ def update_asset(asset_id):
 @jwt_required
 def delete_asset(asset_id):
     pass
-    
+
+# Handles PUT and PATCH requests
+def modify_asset(asset_id, new_value_dict):
+    return modify_entity(Asset, asset_id, new_value_dict)
+
 
 # ---- Team
 
