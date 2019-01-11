@@ -36,11 +36,23 @@ actions:
     _desc: Search for something
     en: Search
     es: Buscar
+  view-archived:
+    _desc: View all inactive
+    en: View Archived
+    es: Ver Archivado
+  view-active:
+    _desc: View all active
+    en: View Active
+    es: Ver Activo
+  view-all:
+    _desc: View all
+    en: View All
+    es: Ver Todo
   tooltips:
     settings:
       _desc: Change settings
       en: Settings
       es: Ajustes
     deactivate:
-      en: Deactivate
-      es: Desactivar
+      en: Archive
+      es: Archivo
