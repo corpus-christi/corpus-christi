@@ -39,7 +39,7 @@ actions:
   view-archived:
     _desc: View all inactive
     en: View Archived
-    es: Ver Archivo
+    es: Ver Archivado
   view-active:
     _desc: View all active
     en: View Active
