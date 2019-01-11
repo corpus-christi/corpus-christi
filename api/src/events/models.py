@@ -36,6 +36,7 @@ class EventSchema(Schema):
     description = fields.String()
     start = fields.DateTime(required=True)
     end = fields.DateTime(required=True)
+    location_id = fields.Integer()
     location = fields.Nested('LocationSchema')
     participants = fields.Nested('EventParticipantSchema', many=True, exclude=['event'])
     persons = fields.Nested('EventPersonSchema', many=True, exclude=['event'])
@@ -61,6 +62,7 @@ class Asset(Base):
 class AssetSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     description = fields.String(required=True)
+    location_id = fields.Integer();
     location = fields.Nested('LocationSchema')
     active = fields.Boolean()
     event_count = fields.Integer(dump_only=True)

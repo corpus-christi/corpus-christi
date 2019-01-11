@@ -49,7 +49,7 @@ def event_object_factory(sqla):
         event['description'] = rl_fake().sentences(nb=1)[0]
     if flip():
         all_locations = sqla.query(Location).all()
-        event['location_id'] = all_locations[math.floor(random.random()%len(all_locations))].id
+        event['location_id'] = all_locations[random.randint(0, len(all_locations)-1)].id
     return event
 
 
@@ -59,7 +59,7 @@ def asset_object_factory(sqla):
     all_locations = sqla.query(Location).all()
     asset = {
         'description': rl_fake().sentences(nb=1)[0],
-        'location_id': all_locations[math.floor(random.random()%len(all_locations))].id,
+        'location_id': all_locations[random.randint(0, len(all_locations)-1)].id,
         'active': flip()
     }
     return asset
