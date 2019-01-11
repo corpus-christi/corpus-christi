@@ -21,6 +21,26 @@ def course_object_factory(course_id):
     }
     return course
 
+def course_object_factory_active():
+    """Cook up a fake course."""
+    fake = Faker()  # Use a generic one; others may not have all methods.
+    course = {
+    'name': fake.sentence(nb_words=3),
+    'description': fake.paragraph(),
+    'active': True
+    }
+    return course
+
+def course_object_factory_inactive():
+    """Cook up a fake course."""
+    fake = Faker()  # Use a generic one; others may not have all methods.
+    course = {
+    'name': fake.sentence(nb_words=3),
+    'description': fake.paragraph(),
+    'active': False
+    }
+    return course
+
 def create_multiple_courses(sqla, n=10):
     """Commits the number of courses to the DB."""
     fake = Faker()  # Use a generic one; others may not have all methods.
@@ -34,15 +54,43 @@ def create_multiple_courses(sqla, n=10):
     sqla.commit()
     print(new_courses)
 
+def create_multiple_courses_active(sqla, n=10):
+    """Commits the number of courses to the DB."""
+    fake = Faker()  # Use a generic one; others may not have all methods.
+    course_schema = CourseSchema()
+    new_courses = []
+    for i in range(n):
+        valid_course = course_schema.load(course_object_factory_active())
+        course_model = Course(**valid_course)
+        new_courses.append(course_model)
+    sqla.add_all(new_courses)
+    sqla.commit()
+    print(new_courses)
+
+def create_multiple_courses_inactive(sqla, n=10):
+    """Commits the number of courses to the DB."""
+    fake = Faker()  # Use a generic one; others may not have all methods.
+    course_schema = CourseSchema()
+    new_courses = []
+    for i in range(n):
+        valid_course = course_schema.load(course_object_factory_inactive())
+        course_model = Course(**valid_course)
+        new_courses.append(course_model)
+    sqla.add_all(new_courses)
+    sqla.commit()
+    print(new_courses)
+
 # ---- Course
 
 # Test course creation
-@pytest.mark.xfail()
-def test_create_course(client, db):
+def test_create_course(auth_client):
     # GIVEN course entry to put in database
+    count = random.randint(8,19)
+    create_multiple_courses(auth_client.sqla, count)
     # WHEN database does not contain entry
+    courses = auth_client.sqla.query(Course).all()
     # THEN assert that entry is now in database
-    assert True == False
+    assert len(courses) == count
     
 # Test getting all courses from the database
 @pytest.mark.xfail()
