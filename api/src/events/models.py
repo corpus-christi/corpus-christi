@@ -99,6 +99,8 @@ class EventAsset(Base):
 class EventAssetSchema(Schema):
     event = fields.Nested('EventSchema')
     asset = fields.Nested('AssetSchema')
+    event_id = fields.Integer(required=True, min=1)
+    asset_id = fields.Integer(required=True, min=1)
 
 # ---- EventTeam
 
@@ -112,6 +114,8 @@ class EventTeam(Base):
 class EventTeamSchema(Schema):
     event = fields.Nested('EventSchema')
     team = fields.Nested('TeamSchema')
+    event_id = fields.Integer(required=True, min=1)
+    team_id = fields.Integer(required=True, min=1)
 
 # ---- EventPerson
 

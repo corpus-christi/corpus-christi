@@ -16,7 +16,7 @@
         color="primary"
         raised
         v-on:click.stop="newAsset"
-        data-cy="add-event"
+        data-cy="add-asset"
       >
         <v-icon dark left>add</v-icon>
         {{ $t("events.assets.new") }}
@@ -40,7 +40,7 @@
           class="hover-hand"
           v-on:click="$router.push({ path: '/events/' + props.item.id })"
         >
-          {{ props.item.location_name }}
+          {{ props.item.location }}
         </td>
         <td>
           <v-tooltip bottom v-if="props.item.active">
@@ -129,11 +129,12 @@ import AssetForm from "./AssetForm";
 export default {
   name: "EventAssets",
   components: { "asset-form": AssetForm },
-  // mounted() {
-  //   this.$http.get("http://localhost:3000/events").then(resp => {
-  //     this.events = resp.data;
-  //   });
-  // },
+  mounted() {
+    this.$http.get("http://localhost:3000/assets").then(resp => {
+      this.assets = resp.data;
+      console.log(resp);
+    });
+  },
 
   data() {
     return {
@@ -150,15 +151,16 @@ export default {
       snackbar: {
         show: false,
         text: ""
-      }
+      },
+      viewStatus: "viewAll"
     };
   },
   computed: {
     headers() {
       return [
-        { text: this.$t("events.assets.description"), value: "description" },
-        { text: this.$t("events.assets.location"), value: "location_name" },
-        { text: this.$t("events.actions"), sortable: false }
+        { text: this.$t("events.assets.description"), value: "description", width: "40%" },
+        { text: this.$t("events.assets.location"), value: "location", width: "40%" },
+        { text: this.$t("events.actions"), sortable: false, width: "20%" }
       ];
     }
     // ...mapGetters(["currentLanguageCode"])
@@ -184,7 +186,7 @@ export default {
     // },
 
     duplicate(asset) {
-      const copyAsset = JSON.parse(JSON.stringify(event));
+      const copyAsset = JSON.parse(JSON.stringify(asset));
       delete copyAsset.id;
       this.activateAssetDialog(copyAsset);
     },
