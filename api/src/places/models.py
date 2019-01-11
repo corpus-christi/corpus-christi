@@ -94,7 +94,7 @@ class Location(Base):
 class LocationSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     description = fields.String(validate=Length(min=1))
-    address_id = fields.Integer(data_key='addressId', required=True, validate=Range(min=1))
+    address_id = fields.Integer(required=True, validate=Range(min=1))
 
 
 # ---- Address
@@ -127,7 +127,7 @@ class AddressSchema(Schema):
     name = fields.String(required=True, validate=Length(min=1))
     address = fields.String(required=True, validate=Length(min=1))
     city = fields.String(required=True, validate=Length(min=1))
-    area_id = fields.Integer(data_key='areaId', required=True, validate=Range(min=1))
-    country_code = fields.String(data_key='countryCode', required=True)
+    area_id = fields.Integer(required=True, validate=Range(min=1))
+    country_code = fields.String(required=True)
     latitude = fields.Float()
     longitude = fields.Float()
