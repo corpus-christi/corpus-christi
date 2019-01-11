@@ -55,4 +55,7 @@ actions:
       es: Ajustes
     deactivate:
       en: Archive
-      es: Archivo
+      es: Archivar
+    reactivate:
+      en: Unarchive
+      es: Desarchivar

@@ -74,14 +74,14 @@
       />
     </v-dialog>
 
-    <!-- Archive confirmation -->
-    <v-dialog v-model="archiveDialog.show" max-width="350px">
+    <!-- Deactivate/archive confirmation -->
+    <v-dialog v-model="deactivateDialog.show" max-width="350px">
       <v-card>
         <v-card-text>{{ $t("courses.confirm-archive") }}</v-card-text>
         <v-card-actions>
-          <v-btn v-on:click="cancelArchive" color="secondary" flat data-cy="">{{ $t("actions.cancel") }}</v-btn>
+          <v-btn v-on:click="cancelDeactivate" color="secondary" flat :disabled="deactivateDialog.loading" data-cy="">{{ $t("actions.cancel") }}</v-btn>
           <v-spacer></v-spacer>
-          <v-btn v-on:click="archiveCourse" color="primary" raised :loading="archiveDialog.loading" data-cy="">{{ $t("actions.confirm") }}</v-btn>
+          <v-btn v-on:click="deactivate(deactivateDialog.course)" color="primary" raised :disabled="deactivateDialog.loading" :loading="deactivateDialog.loading" data-cy="">{{ $t("actions.confirm") }}</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -105,6 +105,12 @@ export default {
         editMode: false,
         saving: false,
         course: {}
+      },
+
+      deactivateDialog: {
+        show: false,
+        course: {},
+        loading: false
       },
 
       snackbar: {
@@ -168,7 +174,7 @@ export default {
           this.editCourse(course);
           break;
         case "deactivate":
-          this.deactivate(course);
+          this.confirmDeactivate(course);
           break;
         case "activate":
           this.activate(course);
@@ -196,7 +202,17 @@ export default {
       this.courseDialog.show = false;
     },
 
+    confirmDeactivate(course) {
+      this.deactivateDialog.show = true;
+      this.deactivateDialog.course = course;
+    },
+
+    cancelDeactivate() {
+      this.deactivateDialog.show = false;
+    },
+
     deactivate(course) {
+      this.deactivateDialog.loading = true;
       this.$http
           .patch(`/api/v1/courses/courses/${course.id}`, {active: false})
           .then(resp => {
@@ -204,7 +220,9 @@ export default {
             Object.assign(course, resp.data);
             this.snackbar.text = this.$t("courses.archived");
             this.snackbar.show = true;
-          })
+            this.deactivateDialog.loading = false;
+            this.deactivateDialog.show = false;
+          });
     },
 
     activate(course) {

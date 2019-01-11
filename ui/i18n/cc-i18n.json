@@ -22,6 +22,7 @@
       "search": "Search",
       "tooltips": {
         "deactivate": "Archive",
+        "reactivate": "Unarchive",
         "settings": "Settings"
       },
       "view-active": "View Active",
@@ -31,15 +32,16 @@
     "courses": {
       "add-failed": "Failed to Add Course",
       "added": "Course Added",
-      "archived": "Course Archived",
+      "archived": "Course archived",
+      "confirm-archive": "Are you sure you want to archive this course?",
       "course": "Courses",
       "description": "Description",
       "enrolled": "Number Enrolled",
       "new": "New Course",
       "prerequisites": "Prerequisites",
-      "reactivated": "Course Reactivated",
+      "reactivated": "Course reactivated",
       "title": "Title",
-      "update-failed": "Failed to Update Course",
+      "update-failed": "Failed to update course",
       "updated": "Course Updated"
     },
     "groups": {
@@ -109,7 +111,8 @@
       "save": "Salvar",
       "search": "Buscar",
       "tooltips": {
-        "deactivate": "Archivo",
+        "deactivate": "Archivar",
+        "reactivate": "Desarchivar",
         "settings": "Ajustes"
       },
       "view-active": "Ver Activo",
@@ -119,15 +122,16 @@
     "courses": {
       "add-failed": "Se Fall\u00f3 A\u00f1adir el Curso",
       "added": "Curso A\u00f1adido",
-      "archived": "Curso Archivado",
+      "archived": "Curso archivado",
+      "confirm-archive": "\u00bfSeguro que quieres archivar este curso?",
       "course": "Cursos",
       "description": "Descripci\u00f3n",
       "enrolled": "N\u00famero Registrado",
       "new": "Nuevo Curso",
       "prerequisites": "Prerrequisitos",
-      "reactivated": "Curso Reactivado",
+      "reactivated": "Curso reactivado",
       "title": "T\u00edtulo",
-      "update-failed": "Se Fall\u00f3 Actualizar el Curso",
+      "update-failed": "Se fall\u00f3 actualizar el curso",
       "updated": "Curso Actualizado"
     },
     "groups": {
