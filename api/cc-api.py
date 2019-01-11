@@ -68,6 +68,12 @@ def load_languages():
     create_multiple_assets(db.session, 12)
     create_multiple_teams(db.session, 5)
 
+@data_cli.command('test', help='Load everything')
+def test_random_data():
+    from src.events.test_events import event_object_factory
+    print(event_object_factory(db.session))
+
+
 
 @data_cli.command('clear-all', help="Clear all data; drops and creates all tables")
 def clear():

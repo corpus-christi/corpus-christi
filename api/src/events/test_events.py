@@ -10,6 +10,7 @@ from werkzeug.datastructures import Headers
 from werkzeug.security import check_password_hash
 
 from .models import Asset, AssetSchema, Event, EventSchema, Team, TeamSchema
+from ..places.models import Location
 
 from .models import EventAsset, EventAssetSchema, EventTeam, EventTeamSchema
 
@@ -46,17 +47,19 @@ def event_object_factory(sqla):
     # These are all optional in the DB. Over time, we'll try all possibilities.
     if flip():
         event['description'] = rl_fake().sentences(nb=1)[0]
-    #if flip():
-        #event['location_id'] = random()%len(sqla.query(Location).all())
+    if flip():
+        all_locations = sqla.query(Location).all()
+        event['location_id'] = all_locations[math.floor(random.random()%len(all_locations))].id
     return event
 
 
 def asset_object_factory(sqla):
     """Cook up a fake asset."""
     fake = Faker()  # Use a generic one; others may not have all methods.
+    all_locations = sqla.query(Location).all()
     asset = {
         'description': rl_fake().sentences(nb=1)[0],
-        #'location_id': random()%len(sqla.query(Location).all()),
+        'location_id': all_locations[math.floor(random.random()%len(all_locations))].id,
         'active': flip()
     }
     return asset
