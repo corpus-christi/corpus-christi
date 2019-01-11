@@ -51,6 +51,8 @@ def create_person():
 @jwt_required
 def read_all_persons():
     result = db.session.query(Person).all()
+    for r in result:
+        r.accountInfo = r.account
     return jsonify(person_schema.dump(result, many=True))
 
 
@@ -58,6 +60,7 @@ def read_all_persons():
 @jwt_required
 def read_one_person(person_id):
     result = db.session.query(Person).filter_by(id=person_id).first()
+    result.accountInfo = result.account
     return jsonify(person_schema.dump(result))
 
 
