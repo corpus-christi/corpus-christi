@@ -13,11 +13,11 @@
               </v-btn>
             </v-layout>
           </v-container>
-          <v-card-text>
+          <v-card-text class="pa-4">
             <div><b>Location: </b>{{ event.location_name }}</div>
             <div><b>Start: </b>{{ getDisplayDate(event.start) }}</div>
             <div><b>End: </b>{{ getDisplayDate(event.end) }}</div>
-            <div>{{ event.description }}</div>
+            <div class="mt-2">{{ event.description }}</div>
           </v-card-text>
           <v-card-actions>
             <v-btn
