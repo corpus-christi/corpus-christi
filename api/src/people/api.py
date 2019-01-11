@@ -29,11 +29,18 @@ def read_person_fields():
 @people.route('/persons', methods=['POST'])
 @jwt_required
 def create_person():
+    request.json["active"] = True
+
+    for key, value in request.json.items():
+        if request.json[key] is "":
+            request.json[key] = None
+
     try:
         valid_person = person_schema.load(request.json)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
+    # new_person.active = [True]
     new_person = Person(**valid_person)
     db.session.add(new_person)
     db.session.commit()
@@ -76,9 +83,9 @@ def update_person(person_id):
 @jwt_required
 def deactivate_person(person_id):
     person = db.session.query(Person).filter_by(id=person_id).first()
-    account = db.session.query(Account).filter_by(id=person.account_id).first()
 
-    if account:
+    if person.account:
+        account = db.session.query(Account).filter_by(id=person.account.id).first()
         setattr(account, 'active', False)
     setattr(person, 'active', False)
 
@@ -107,6 +114,7 @@ account_schema = AccountSchema()
 @people.route('/accounts', methods=['POST'])
 @jwt_required
 def create_account():
+    request.json["active"] = True
     try:
         valid_account = account_schema.load(request.json)
     except ValidationError as err:
@@ -114,6 +122,7 @@ def create_account():
         return jsonify(err.messages), 422
 
     new_account = Account(**valid_account)
+    new_account.active = True
     db.session.add(new_account)
     db.session.commit()
     return jsonify(account_schema.dump(new_account)), 201
@@ -211,6 +220,17 @@ def read_all_roles():
     return jsonify(role_schema.dump(result, many=True))
 
 
+@people.route('/role/<account_id>')
+@jwt_required
+def get_roles_for_account(account_id):
+    account = db.session.query(Account).filter_by(id=account_id).first()
+    result = []
+    for role in account.roles:
+        role = role_schema.dump(role)
+        result.append(role["nameI18n"])
+    return jsonify(result)
+
+
 @people.route('/role/<role_id>')
 @jwt_required
 def read_one_role(role_id):
@@ -249,10 +269,6 @@ def delete_role(role_id):
 @people.route('/role/<account_id>&<role_id>', methods=['POST'])
 @jwt_required
 def add_role_to_account(account_id, role_id):
-
-    print("Account: " + account_id)
-    print("Role: " + role_id)
-
     account = db.session.query(Account).filter_by(id=account_id).first()
 
     if account is None:
@@ -271,4 +287,29 @@ def add_role_to_account(account_id, role_id):
 
     return jsonify(user_roles)
 
+    
+@people.route('/role/<account_id>&<role_id>', methods=['DELETE'])
+@jwt_required
+def remove_role_from_account(account_id, role_id):
+    account = db.session.query(Account).filter_by(id=account_id).first()
+
+    if account is None:
+        return 'Account not found', 404
+
+    role_to_remove = db.session.query(Role).filter_by(id=role_id).first()
+
+    if role_to_remove not in account.roles:
+        return 'That accout does not have that role', 404
+
+
+    account.roles.remove(role_to_remove)
+    db.session.commit()
+
+    # user_roles = []
+    # roles = db.session.query(Role).join(Account, Role.accounts).filter_by(id=account_id).filter_by(active=True).all()
+    # for r in roles:
+    #     user_roles.append(role_schema.dump(r)['nameI18n'])
+
+    # return jsonify(user_roles)
+    return jsonify(role_to_remove)
 
