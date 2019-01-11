@@ -1,7 +1,7 @@
 // https://docs.cypress.io/api/introduction/api.html
 
 describe("Testing Editing User Information", () => {
-  it("Given: Visits the app root url, logs into an account, and navigates" +
+  it("Given: Visits the app root url, logs into an account, and navigates " +
     "to the people page", () => {
     cy.visit("/");
     //Clicks on the Account button
