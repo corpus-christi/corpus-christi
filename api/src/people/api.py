@@ -158,6 +158,13 @@ def read_person_account(person_id):
     return jsonify(account_schema.dump(account))
 
 
+@people.route('/role/<role_id>/accounts')
+@jwt_required
+def get_accounts_by_role(role_id):
+    role = db.session.query(Role).filter_by(id=role_id).first()
+    return jsonify(account_schema.dump(role.accounts, many=True))
+
+
 @people.route('/accounts/<account_id>', methods=['PATCH'])
 @jwt_required
 def update_account(account_id):
