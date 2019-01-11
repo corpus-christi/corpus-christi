@@ -34,6 +34,10 @@ entities:
       - name: email
         type: string
         length: medium
+      - name: active
+        type: boolean
+        required: true
+        default: true
       - name: location-id
         type: integer
         foreign-key: places_location.id
@@ -73,3 +77,34 @@ entities:
         min: 1
         required: true
         foreign-key: people_person.id
+  - name: Role
+    singular: role
+    plural: roles
+    uri: /role
+    table: people_role
+    attributes:
+      - name: id
+        type: integer
+        primary-key: true
+        min: 1
+      - name: name_i18n
+        type: string
+        length: locale
+      - name: active
+        type: boolean
+  - name: AccountRole
+    singular: people_account_role
+    plural: people_account_roles
+    uri: /people_account_roles
+    table: people_account_role
+    attributes:
+      - name: account_id
+        type: integer
+        primary-key: true
+        foreign-key: people_account.id
+        min: 1
+      - name: role_id
+        type: integer
+        primary-key: true
+        foreign-key: people_role.id
+        min: 1

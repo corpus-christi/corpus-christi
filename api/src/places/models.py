@@ -63,47 +63,71 @@ class Area(Base):
 
     country = relationship(Country, backref='areas', lazy=True)
 
+    def __repr__(self):
+        return f"<Area(name={self.name},Country Code='{self.country_code}')>"
+
 
 class AreaSchema(Schema):
-    id = fields.Integer(required=True, validate=Range(min=1))
+    id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     name = fields.String(required=True, validate=Length(min=1))
-    country_id = fields.Integer(required=True, validate=Range(min=1))
+    country_code = fields.String(required=True, validate=Length(min=1))
 
 
 # ---- Location
 
 class Location(Base):
     __tablename__ = 'places_location'
-    id = Column(Integer, primary_key=True)
-    address = Column(StringTypes.LONG_STRING)
-    city = Column(StringTypes.MEDIUM_STRING)
-    area_id = Column(Integer, ForeignKey('places_area.id'))
-    country_code = Column(String(2), ForeignKey('places_country.code'))
-    latitude = Column(Float)
-    longitude = Column(Float)
-
-    area = relationship(Area, backref='locations', lazy=True)
-    country = relationship(Country, backref='locations', lazy=True)
+    id = Column(Integer, primary_key=True, nullable=False)
+    description = Column(StringTypes.MEDIUM_STRING)
+    address_id = Column(Integer, ForeignKey('places_address.id'), nullable=False)
+    address = relationship('Address', backref='locations', lazy=True)
     events = relationship('Event', back_populates="location")
     assets = relationship('Asset', back_populates="location")
 
-
     def __repr__(self):
         attributes = [f"id='{self.id}'"]
-        for attr in ['address', 'city', 'area_id', 'country_id', 'latitude', 'longitude']:
+        for attr in ['description', "address_id"]:
             if hasattr(self, attr):
                 attributes.append(f"{attr}={self.attr}")
         as_string = ",".join(attributes)
         return f"<Location({as_string})>"
 
-
 class LocationSchema(Schema):
-    id = fields.Integer(required=True, validate=Range(min=1))
-    address = fields.String()
-    city = fields.String()
-    # area_id = fields.Integer(validate=Range(min=1))
-    # country_code = fields.String()
-    area = fields.Nested('AreaSchema')
-    country = fields.Nested('CountrySchema')
+    id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
+    description = fields.String(validate=Length(min=1))
+    address_id = fields.Integer(data_key='addressId', required=True, validate=Range(min=1))
+
+# ---- Address
+
+class Address(Base):
+    __tablename__ = 'places_address'
+    id = Column(Integer, primary_key=True, nullable=False)
+    name = Column(StringTypes.MEDIUM_STRING, nullable=False)
+    address = Column(StringTypes.LONG_STRING, nullable=False)
+    city = Column(StringTypes.MEDIUM_STRING, nullable=False)
+    area_id = Column(Integer, ForeignKey('places_area.id'), nullable=False)
+    country_code = Column(StringTypes.SHORT_STRING, ForeignKey('places_country.code'), nullable=False)
+    latitude = Column(Float)
+    longitude = Column(Float)
+    area = relationship('Area', backref='addresses', lazy=True)
+    country = relationship('Country', backref='addresses', lazy=True)
+
+    def __repr__(self):
+        attributes = [f"id='{self.id}'"]
+        for attr in ['name', 'address', 'city', 'area_id', 'country_code', 'latitude', 'longitude']:
+            if hasattr(self, attr):
+                attributes.append(f"{attr}={self.attr}")
+        as_string = ",".join(attributes)
+        return f"<Address({as_string})>"
+
+class AddressSchema(Schema):
+    id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
+    name = fields.String(required=True, validate=Length(min=1))
+    address = fields.String(required=True, validate=Length(min=1))
+    city = fields.String(required=True, validate=Length(min=1))
+    area_id = fields.Integer(data_key='areaId', required=True, validate=Range(min=1))
+    country_code = fields.String(data_key='countryCode', required=True)
     latitude = fields.Float()
     longitude = fields.Float()
+    area = fields.Nested('AreaSchema')
+    country = fields.Nested('CountrySchema')
