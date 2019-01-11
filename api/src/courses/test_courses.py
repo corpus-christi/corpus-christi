@@ -205,7 +205,7 @@ def test_create_prerequisite(auth_client):
     prereq = auth_client.sqla.query(Course).first()
     course = auth_client.sqla.query(Course).all()[-1]
     # WHEN course requires previous attendance to another course
-    resp = auth_client.patch(url_for('courses.create_prerequisite', course_id=course.id), json={'prerequisite':[prereq.id]})
+    resp = auth_client.patch(url_for('courses.create_prerequisite', course_idcd=course.id), json={'prerequisite':[prereq.id]})
     # THEN asssert course is prerequisite
     assert resp.status_code == 200
     assert resp.json['prereq_id'] == prereq.id
