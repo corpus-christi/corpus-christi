@@ -31,6 +31,7 @@
         class="elevation-1"
         >
             <template slot="items" slot-scope="props">
+              <tr @click="props.expanded = !props.expanded">
                 <td>{{ props.item.title }}</td>
                 <td>{{ props.item.description }}</td>
                 <td>
@@ -39,6 +40,22 @@
                     display-context="compact"
                     v-on:action="dispatchAction($event, props.item)"/>
                 </td>
+              </tr>
+            </template>
+            <template slot="expand" slot-scope="props">
+              <v-card flat>
+                <v-card-text>
+                  Courses:
+                  <ol>
+                    <li 
+                    v-for="course in props.item.courses"
+                    v-bind:key="course.id"
+                    >
+                      {{ course.name }}
+                    </li>
+                  </ol>
+                </v-card-text>
+              </v-card>
             </template>
         </v-data-table>
  
