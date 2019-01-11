@@ -7,7 +7,7 @@ from marshmallow import ValidationError
 import sys
 
 from . import courses
-from .models import Course, CourseSchema, Course_Offering, Course_OfferingSchema, PrerequisiteSchema  # Prerequisite
+from .models import Course, CourseSchema, Course_Offering, Course_OfferingSchema, PrerequisiteSchema
 from .. import db
 
 course_schema = CourseSchema()
@@ -64,16 +64,13 @@ def read_one_course(course_id):
 @jwt_required
 def update_course(course_id):
     """Update course with given course_id with appropriate details"""
-    try:
-        valid_course = course_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
 
     course = db.session.query(Course).filter_by(id=course_id).first()
-
-    for key, val in valid_course.items():
-        setattr(course, key, val)
-
+    if course is None:
+        return 'Not Found', 404
+    for attr in "description", "active", "name":
+        if attr in request.json:
+            setattr(course, attr, request.json[attr])
     db.session.commit()
     return jsonify(course_schema.dump(course))
 
@@ -85,10 +82,8 @@ def deactivate_course(course_id):
     valid_course = db.session.query(Course).filter_by(id=course_id).first()
     if valid_course is None:
         return 'Not Found', 404
-
-    if 'active' in request.json:  # valid_course:
+    else:
         setattr(valid_course, 'active', False)
-
     db.session.commit()
     return jsonify(course_schema.dump(valid_course))
 
@@ -100,10 +95,8 @@ def reactivate_course(course_id):
     valid_course = db.session.query(Course).filter_by(id=course_id).first()
     if valid_course is None:
         return 'Not Found', 404
-
-    if 'active' in request.json:
+    else:
         setattr(valid_course, 'active', True)
-
     db.session.commit()
     return jsonify(course_schema.dump(valid_course))
 
@@ -113,30 +106,51 @@ def reactivate_course(course_id):
 prerequisite_schema = PrerequisiteSchema()
 
 
-@courses.route('/prerequisites', methods=['POST'])
+@courses.route('/courses/<course_id>/prerequisites', methods=['POST'])
 @jwt_required
-def create_prerequisite():
+def create_prerequisite(course_id):
+    course = db.session.query(Course).filter_by(id=course_id).first()
+    if course is None:
+        return 'Course not found', 404
+    print("\n\n", request.json['prereq_id'], "\n\n")
+
+    course.prerequisite.append(db.session.query(Course).filter_by(id=request.json['prereq_id']).first())
+
+
     """Set given prerequisite to be associated with given course
 
     Note: Need to get two course ids"""
-    try:
-        valid_prerequisite = prerequisite_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
 
-    new_prerequisite = Prerequisite(**valid_prerequisite)
-    db.session.add(new_prerequisite)
+    # try:
+    #     valid_prerequisite = prerequisite_schema.load(request.json)
+    # except ValidationError as err:
+    #     return jsonify(err.messages), 422
+    #
+    # new_prerequisite = Prerequisite(**valid_prerequisite)
+    # db.session.add(new_prerequisite)
     db.session.commit()
-    return jsonify(prerequisite_schema.dump(new_prerequisite)), 201
+    return jsonify(course_schema.dump(course)), 201
 
 
 @courses.route('/prerequisites')
 @jwt_required
 def read_all_prerequisites():
-    result = db.session.query(Prerequisite).all()
-    return jsonify(prerequisite_schema.dump(result, many=True))
+    result = db.session.query(Course).all() #Get courses to get prereq's
+    results = [] # new list
+    for i in result:
+        for j in i.prerequisite: # Read through course prerequisites
+            results.append(j)
+    return jsonify(course_schema.dump(results, many=True))
 
 # read all courses with prereq (?)
+@courses.route('/prerequisites/<course_id>')
+def read_one_course_prerequisites(course_id):
+    result = db.session.query(Course).filter_by(id=course_id).first()
+    prereqs_to_return = []
+    for i in result.prerequisite:
+        prereqs_to_return.append(i)
+    return jsonify(course_schema.dump(prereqs_to_return, many=True))
+
 
 
 @courses.route('/prerequisites/<prerequisite_id>', methods=['PATCH'])
