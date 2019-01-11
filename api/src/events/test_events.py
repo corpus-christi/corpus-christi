@@ -11,6 +11,8 @@ from werkzeug.security import check_password_hash
 
 from .models import Asset, AssetSchema, Event, EventSchema, Team, TeamSchema
 
+from .models import EventAsset, EventAssetSchema
+
 
 class RandomLocaleFaker:
     """Generate multiple fakers for different locales."""
@@ -69,6 +71,13 @@ def team_object_factory():
     }
     return team
 
+def event_asset_object_factory(event_id, asset_id):
+    """Cook up a fake eventasset json object from given ids."""
+    eventasset = {
+        'event_id': event_id,
+        'asset_id': asset_id
+    }
+    return eventasset
 
 def create_multiple_events(sqla, n):
     """Commit `n` new events to the database. Return their IDs."""
@@ -100,6 +109,31 @@ def create_multiple_assets(sqla, n):
     sqla.add_all(new_assets)
     sqla.commit()
 
+def create_events_assets(sqla, fraction=0.75):
+    """Create data in the linking table between events and assets """
+    event_asset_schema = EventAssetSchema()
+    new_events_assets = []
+    all_events_assets = sqla.query(Event, Asset).all()
+    sample_events_assets = random.sample(all_events_assets, math.floor(len(all_events_assets) * fraction))
+    #print(sample_events_assets[0][0].id)
+    for events_assets in sample_events_assets:
+        valid_events_assets = event_asset_schema.load(event_asset_object_factory(events_assets[0].id,events_assets[1].id))
+        #print(valid_events_assets)
+        new_events_assets.append(EventAsset(**valid_events_assets))
+    #print(new_events_assets)
+    sqla.add_all(new_events_assets)
+    sqla.commit()
+
+
+
+
+def create_test_data(sqla):
+    """The function that creates test data in the correct order """
+    create_multiple_events(sqla, 10)
+    create_multiple_assets(sqla, 10)
+    create_multiple_teams(sqla, 10)
+    create_events_assets(sqla, 10)
+
 
 # ---- Event
 
@@ -112,7 +146,6 @@ def test_create_event(auth_client):
     # THEN we should get the same number of events in the database
     result_count = auth_client.sqla.query(Event).count()
     assert result_count == count
-    
 
 @pytest.mark.smoke
 def test_read_all_events(auth_client):
