@@ -351,7 +351,6 @@ export default {
     },
 
     activatePerson(person) {
-      console.log(person);
       this.$http
         .put(`/api/v1/people/persons/activate/${person.id}`)
         .then(resp => {
@@ -363,7 +362,6 @@ export default {
     },
 
     deactivatePerson(person) {
-      console.log(person);
       this.$http
         .put(`/api/v1/people/persons/deactivate/${person.id}`)
         .then(resp => {
@@ -378,7 +376,6 @@ export default {
       this.$http
         .get("/api/v1/people/persons")
         .then(resp => {
-          console.log(resp);
           this.allPeople = resp.data;
           this.activePeople = this.allPeople.filter(person => person.active);
           this.archivedPeople = this.allPeople.filter(person => !person.active);
