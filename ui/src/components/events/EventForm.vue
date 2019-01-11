@@ -298,22 +298,25 @@ export default {
       this.$validator.reset();
     },
     save() {
-      this.$validator.validateAll();
-      if (!this.errors.any()) {
-        this.event.start = this.getTimestamp(this.startDate, this.startTime);
-        this.event.end = this.getTimestamp(this.endDate, this.endTime);
-        this.event.active = true;
-        this.$emit("save", this.event);
-      }
+      this.$validator.validateAll().then(() => {
+        if (!this.errors.any()) {
+          this.event.start = this.getTimestamp(this.startDate, this.startTime);
+          this.event.end = this.getTimestamp(this.endDate, this.endTime);
+          this.event.active = true;
+          this.$emit("save", this.event);
+        }
+      });
     },
 
     addAnother() {
-      this.$validator.validateAll();
-      if (!this.errors.any()) {
-        this.event.start = this.getTimestamp(this.startDate, this.startTime);
-        this.event.end = this.getTimestamp(this.endDate, this.endTime);
-        this.$emit("add-another", this.event);
-      }
+      this.$validator.validateAll().then(() => {
+        if (!this.errors.any()) {
+          this.event.start = this.getTimestamp(this.startDate, this.startTime);
+          this.event.end = this.getTimestamp(this.endDate, this.endTime);
+          this.event.active = true;
+          this.$emit("add-another", this.event);
+        }
+      });
     },
 
     getTimestamp(date, time) {
@@ -321,7 +324,8 @@ export default {
       let timearr = time.split(":");
       let timemin = Number(timearr[0]) * 60 + Number(timearr[1]);
       let timems = timemin * 60000;
-      return new Date(datems + timems);
+      let tzoffset = new Date().getTimezoneOffset() * 60000;
+      return new Date(datems + timems + tzoffset);
     },
 
     getDateFromTimestamp(ts) {
@@ -379,9 +383,6 @@ export default {
       showEndDatePicker: false,
       startTimeModal: false,
       endTimeModal: false,
-      save_loading: false,
-      add_more_loading: false,
-
     };
   }
 };
