@@ -49,6 +49,8 @@ class CourseSchema(Schema):
 #      __tablename__ = 'courses_diploma_course'
 #      course_id = Column(Integer, ForeignKey('courses_course.id'), primary_key=True)
 #      diploma_id = Column(Integer, ForeignKey('courses_diploma.id'), primary_key=True)
+#      course = relationship('Course', backref='courses', foreign_keys=[course_id], lazy=True)
+#      diploma = relationship('Diploma', backref='diploma', foreign_keys=[diploma_id], lazy=True)
 #
 #      def __repr__(self):
 #          return f"<Diploma_Course(course_id={self.course_id},diploma_id={self.diploma_id})>"
@@ -81,9 +83,11 @@ class CourseSchema(Schema):
 
 # class Diploma_Awarded(Base):
 #      __tablename__ = 'courses_diploma_awarded'
-#      student_id = Column(Integer, ForeignKey('courses_student.id'), primary_key=True)
+#      student_id = Column(Integer, ForeignKey('courses_students.id'), primary_key=True)
 #      diploma_id = Column(Integer, ForeignKey('courses_diploma.id'), primary_key=True)
 #      when = Column(Date, nullable=False)
+#      student = relationship('Student', backref='students', foreign_keys=[student_id], lazy=True)
+#      diploma = relationship('Diploma', backref='diploma', foreign_keys=[diploma_id], lazy=True)
 #
 #      def __repr__(self):
 #          return f"<Diploma_Awarded(student_id={self.student_id},diploma_id={self.diploma_id})>"
@@ -137,21 +141,6 @@ class Course_OfferingSchema(Schema):
      max_size = fields.Integer(data_key='maxSize', required=True)
      active = fields.Boolean(required=True)
 
-# ---- Class_Attendance
-
-# class Class_Attendance(Base):
-#      __tablename__ = 'courses_class_attendance'
-#      class_id = Column(Integer, ForeignKey('courses_class_meeting.id'), primary_key=True)
-#      student_id = Column(Integer, ForeignKey('courses_student.id'), primary_key=True)
-#
-#      def __repr__(self):
-#          return f"<Class_Attendance(class_id={self.class_id},student_id={self.student_id})>"
-#
-#
-# class Class_AttendanceSchema(Schema):
-#      class_id = fields.Integer(dump_only=True, data_key='classId', required=True)
-#      student_id = fields.Integer(dump_only=True, data_key='studentId', required=True)
-
 # ---- Class_Meeting
 
 # class Class_Meeting(Base):
@@ -167,11 +156,28 @@ class Course_OfferingSchema(Schema):
 #
 #      def __repr__(self):
 #          return f"<Class_Meeting(id={self.id})>"
-#
-#
+
+
 # class Class_MeetingSchema(Schema):
-#      id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
-#      offering_id = fields.Integer(data_key='offeringId', required=True)
-#      location = fields.Integer(required=True)
-#      teacher = fields.Integer(required=True)
-#      when = fields.DateTime(required=True)
+#     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
+#     offering_id = fields.Integer(data_key='offeringId', required=True)
+#     location = fields.Integer(required=True)
+#     teacher = fields.Integer(required=True)
+#     when = fields.DateTime(required=True)
+
+# ---- Class_Attendance
+
+# class Class_Attendance(Base):
+#     __tablename__ = 'courses_class_attendance'
+#     class_id = Column(Integer, ForeignKey('courses_class_meeting.id'), primary_key=True)
+#     student_id = Column(Integer, ForeignKey('courses_students.id'), primary_key=True)
+#     lecture = relationship('Class_Meeting', backref='attendance', foreign_keys=[class_id], lazy=True)
+#     students = relationship('Student', backref='students', foreign_keys=[student_id], lazy=True)
+#
+#     def __repr__(self):
+#         return f"<Class_Attendance(class_id={self.class_id},student_id={self.student_id})>"
+#
+#
+# class Class_AttendanceSchema(Schema):
+#     class_id = fields.Integer(dump_only=True, data_key='classId', required=True)
+#     student_id = fields.Integer(dump_only=True, data_key='studentId', required=True)
