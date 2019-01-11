@@ -14,7 +14,6 @@
       <v-spacer></v-spacer>      
  
       <v-select 
-        :label="$t('actions.view-Archived')"
         v-model="viewStatus"
         :items="options"
         standard
