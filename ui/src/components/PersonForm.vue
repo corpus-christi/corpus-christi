@@ -72,6 +72,7 @@
           v-bind:label="$t('person.email')"
           name="email"
           v-validate="'email'"
+          data-vv-validate-on="change"
           v-bind:error-messages="errors.collect('email')"
           prepend-icon="email"
           data-cy="email"
