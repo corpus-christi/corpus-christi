@@ -17,6 +17,16 @@ class PrerequisiteSchema(Schema):
      course_id = fields.Integer(data_key='courseId', required=True)
      prereq_id = fields.Integer(data_key='prereqId', required=True)
 
+# ---- Diploma_Course
+
+Diploma_Course = Table('courses_diploma_course', Base.metadata,
+          Column('course_id', Integer, ForeignKey('courses_course.id'), primary_key=True),
+          Column('diploma_id', Integer, ForeignKey('courses_diploma.id'), primary_key=True))
+
+class Diploma_CourseSchema(Schema):
+     course_id = fields.Integer(dump_only=True, data_key='courseId', required=True)
+     diploma_id = fields.Integer(dump_only=True, data_key='diplomaId', required=True)
+
 # ---- Course
 
 class Course(Base):
@@ -35,6 +45,7 @@ class Course(Base):
                 secondaryjoin=Prerequisite.c.course_id==id,
                 foreign_keys=[Prerequisite.c.course_id, Prerequisite.c.prereq_id],
                 backref='depends', lazy=True)
+     diploma = relationship('Diploma', secondary=Diploma_Course, backref='depends', lazy=True)
 
      def __repr__(self):
          return f"<Course(id={self.id})>"
@@ -46,41 +57,28 @@ class CourseSchema(Schema):
      description = fields.String(required=True, validate=Length(min=1))
      active = fields.Boolean(required=True)
 
-# ---- Diploma_Course
-
-# class Diploma_Course(Base):
-#      __tablename__ = 'courses_diploma_course'
-#      course_id = Column(Integer, ForeignKey('courses_course.id'), primary_key=True)
-#      diploma_id = Column(Integer, ForeignKey('courses_diploma.id'), primary_key=True)
-#      course = relationship('Course', backref='courses', foreign_keys=[course_id], lazy=True)
-#      diploma = relationship('Diploma', backref='diploma', foreign_keys=[diploma_id], lazy=True)
-#
-#      def __repr__(self):
-#          return f"<Diploma_Course(course_id={self.course_id},diploma_id={self.diploma_id})>"
-#
-#
-# class Diploma_CourseSchema(Schema):
-#      course_id = fields.Integer(dump_only=True, data_key='courseId', required=True)
-#      diploma_id = fields.Integer(dump_only=True, data_key='diplomaId', required=True)
 
 # ---- Diploma
 
-# class Diploma(Base):
-#      __tablename__ = 'courses_diploma'
-#      id = Column(Integer, primary_key=True)
-#      name = Column(StringTypes.MEDIUM_STRING, nullable=False)
-#      description = Column(StringTypes.LONG_STRING, nullable=False)
-#      active = Column(Boolean, nullable=False, default=True)
-#
-#      def __repr__(self):
-#          return f"<Diploma(id={self.id})>"
-#
-#
-# class DiplomaSchema(Schema):
-#      id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
-#      name = fields.String(required=True, validate=Length(min=1))
-#      description = fields.String(required=True, validate=Length(min=1))
-#      active = fields.Boolean(required=True)
+class Diploma(Base):
+     __tablename__ = 'courses_diploma'
+     id = Column(Integer, primary_key=True)
+     name = Column(StringTypes.MEDIUM_STRING, nullable=False)
+     description = Column(StringTypes.LONG_STRING, nullable=False)
+     active = Column(Boolean, nullable=False, default=True)
+     course = relationship('Course', secondary=Diploma_Course, 
+               backref='diplomas', lazy=True)
+
+
+     def __repr__(self):
+         return f"<Diploma(id={self.id})>"
+
+
+class DiplomaSchema(Schema):
+     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
+     name = fields.String(required=True, validate=Length(min=1))
+     description = fields.String(required=True, validate=Length(min=1))
+     active = fields.Boolean(required=True)
 
 # ---- Diploma_Awarded
 
