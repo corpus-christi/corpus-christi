@@ -83,6 +83,7 @@ class TeamSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     description = fields.String(required=True)
     active = fields.Boolean()
+    members = fields.Nested('TeamMemberSchema', exclude=['team'], many=True)
 
 
 # ---- EventAsset
