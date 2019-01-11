@@ -1,34 +1,49 @@
 <template>
   <div>
-    <v-toolbar>
-      <v-toolbar-title>{{ $t("events.title") }}</v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-text-field
-        v-model="search"
-        append-icon="search"
-        v-bind:label="$t('actions.search')"
-        single-line
-        hide-details
-      ></v-text-field>
-      <v-spacer></v-spacer>
+    <v-toolbar class="pa-1">
+      <v-layout align-center justify-space-between fill-height>
+        <v-flex md2>
+          <v-toolbar-title>{{ $t("events.title") }}</v-toolbar-title>
+        </v-flex>
+        <v-flex md2>
+          <v-text-field
+            v-model="search"
+            append-icon="search"
+            v-bind:label="$t('actions.search')"
+            single-line
+            hide-details
+          ></v-text-field>
+        </v-flex>
+        <v-flex md3>
+          <v-select
+            hide-details
+            solo
+            single-line
+            :items="viewOptions"
+            v-model="viewStatus"
+          >
+          </v-select>
+        </v-flex>
+        <v-flex shrink justify-self-end>
 
-      <v-btn
-        color="primary"
-        raised
-        v-on:click.stop="newEvent"
-        data-cy="add-event"
-      >
-        <v-icon dark left>add</v-icon>
-        {{ $t("actions.addevent") }}
-      </v-btn>
-
+          <v-btn
+            color="primary"
+            raised
+            v-on:click.stop="newEvent"
+            data-cy="add-event"
+          >
+            <v-icon dark left>add</v-icon>
+            {{ $t("actions.addevent") }}
+          </v-btn>
+        </v-flex>
+      </v-layout>
     </v-toolbar>
 
-    <v-data-table :headers="headers" :items="events" :search="search" class="elevation-1">
+    <v-data-table :headers="headers" :items="visibleEvents" :search="search" class="elevation-1">
       <template slot="items" slot-scope="props">
         <td class="hover-hand" v-on:click="$router.push({path: '/events/' + props.item.id})">{{ props.item.title }}</td>
         <td class="hover-hand" v-on:click="$router.push({path: '/events/' + props.item.id})">{{ getDisplayDate(props.item.start) }}</td>
-        <td class="hover-hand" v-on:click="$router.push({path: '/events/' + props.item.id})">{{ props.item.location_name }}</td>
+        <td class="hover-hand" v-on:click="$router.push({path: '/events/' + props.item.id})">{{ getDisplayLocation(props.item.location_name) }}</td>
         <td>
           <template v-if="props.item.active">
             <v-tooltip bottom >
@@ -158,7 +173,8 @@ export default {
       snackbar: {
         show: false,
         text: ""
-      }
+      },
+      viewStatus: "viewAll"
     };
   },
   computed: {
@@ -170,6 +186,25 @@ export default {
         { text: this.$t("events.actions"), sortable: false }
       ];
     },
+
+    viewOptions() {
+      return [
+        { text: this.$t("actions.view-active"), value: "viewActive" },
+        { text: this.$t("actions.view-archived"), value: "viewArchived" },
+        { text: this.$t("actions.view-all"), value: "viewAll" }
+      ];
+    },
+
+    visibleEvents() {
+      if (this.viewStatus == "viewActive") {
+        return this.events.filter(ev => ev.active);
+      } else if (this.viewStatus == "viewArchived") {
+        return this.events.filter(ev => !ev.active);        
+      } else if (this.viewStatus == "viewAll") {
+        return this.events;        
+      }
+    },
+
     ...mapGetters(["currentLanguageCode"])
   },
   methods: {
@@ -324,6 +359,14 @@ export default {
           hour: '2-digit',
           minute:'2-digit'
       });
+    },
+    getDisplayLocation(name, length=20) {
+      if (name && name.length && name.length > 0) {
+        if (name.length > length) {
+          return `${name.substring(0, length-3)}...`;
+        }
+      }
+      return name;
     }
   }
 };
