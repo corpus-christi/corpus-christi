@@ -78,9 +78,9 @@ def update_person(person_id):
 @jwt_required
 def deactivate_person(person_id):
     person = db.session.query(Person).filter_by(id=person_id).first()
-    account = db.session.query(Account).filter_by(id=person.account_id).first()
 
-    if account:
+    if person.account:
+        account = db.session.query(Account).filter_by(id=person.account.id).first()
         setattr(account, 'active', False)
     setattr(person, 'active', False)
 

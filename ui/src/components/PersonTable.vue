@@ -1,12 +1,12 @@
 <template>
   <div>
     <!-- Header -->
-    <v-toolbar height="80px">
+    <v-toolbar class="pa-1">
       <v-layout align-center justify-space-between fill-height>
-        <v-flex xs2>
+        <v-flex md2>
           <v-toolbar-title>{{ $t("people.title") }}</v-toolbar-title>
         </v-flex>
-        <v-flex xs3>
+        <v-flex md3>
           <v-text-field
             v-model="search"
             append-icon="search"
@@ -18,7 +18,7 @@
             data-cy="search"
           ></v-text-field>
         </v-flex>
-        <v-flex xs3>
+        <v-flex md3>
           <v-select
             hide-details
             solo
@@ -36,7 +36,7 @@
             v-on:click.stop="newPerson"
             data-cy="add-person"
           >
-            <v-icon dark left>person_add</v-icon>
+            <v-icon left>person_add</v-icon>
             {{ $t("actions.add-person") }}
           </v-btn>
         </v-flex>
@@ -86,15 +86,31 @@
           </v-tooltip>
           <v-tooltip bottom>
             <v-btn
+              v-if="props.item.active === true"
               icon
               outline
               small
               color="primary"
               slot="activator"
-              v-on:click="deletePerson(props.item)"
+              v-on:click="deactivatePerson(props.item)"
               data-cy="deactivate-person"
             >
               <v-icon small>archive</v-icon>
+            </v-btn>
+            <span>{{ $t("actions.tooltips.deactivate") }}</span>
+          </v-tooltip>
+          <v-tooltip bottom>
+            <v-btn
+              v-if="props.item.active === false"
+              icon
+              outline
+              small
+              color="primary"
+              slot="activator"
+              v-on:click="activatePerson(props.item)"
+              data-cy="deactivate-person"
+            >
+              <v-icon small>undo</v-icon>
             </v-btn>
             <span>{{ $t("actions.tooltips.deactivate") }}</span>
           </v-tooltip>
@@ -257,7 +273,7 @@ export default {
           .post("/api/v1/people/persons", person)
           .then(resp => {
             console.log("ADDED", resp);
-            this.people.push(resp.data);
+            this.refreshPeopleList();
             this.personDialog.show = false;
             this.personDialog.saveLoading = false;
             this.showSnackbar(this.$t("person.messages.person-add"));
@@ -276,7 +292,7 @@ export default {
         .post("/api/v1/people/persons", person)
         .then(resp => {
           console.log("ADDED", resp);
-          this.people.push(resp.data);
+          this.refreshPeopleList();
           this.activatePersonDialog();
           this.personDialog.addMoreLoading = false;
           this.showSnackbar(this.$t("person.messages.person-add"));
@@ -328,18 +344,51 @@ export default {
         .patch(`/api/v1/people/accounts/${accountId}`, account)
         .then(resp => {
           console.log("PATCHED", resp);
+          this.refreshPeopleList();
           this.showSnackbar(this.$t("account.messages.updated-ok"));
+        })
+        .catch(err => console.error("FAILURE", err.response));
+    },
+
+    activatePerson(person) {
+      console.log(person);
+      this.$http
+        .put(`/api/v1/people/persons/activate/${person.id}`)
+        .then(resp => {
+          console.log("ACTIVATED", resp);
+          this.showSnackbar(this.$t("person.messages.person-activate"));
+        })
+        .then(() => this.refreshPeopleList())
+        .catch(err => console.error("FAILURE", err.response));
+    },
+
+    deactivatePerson(person) {
+      console.log(person);
+      this.$http
+        .put(`/api/v1/people/persons/deactivate/${person.id}`)
+        .then(resp => {
+          console.log("DEACTIVATED", resp);
+          this.showSnackbar(this.$t("person.messages.person-deactivate"));
+        })
+        .then(() => this.refreshPeopleList())
+        .catch(err => console.error("FAILURE", err.response));
+    },
+
+    refreshPeopleList() {
+      this.$http
+        .get("/api/v1/people/persons")
+        .then(resp => {
+          console.log(resp);
+          this.allPeople = resp.data;
+          this.activePeople = this.allPeople.filter(person => person.active);
+          this.archivedPeople = this.allPeople.filter(person => !person.active);
         })
         .catch(err => console.error("FAILURE", err.response));
     }
   },
 
   mounted: function() {
-    this.$http.get("/api/v1/people/persons").then(resp => {
-      this.allPeople = resp.data;
-      this.activePeople = this.allPeople.filter(person => person.active);
-      this.archivedPeople = this.allPeople.filter(person => !person.active);
-    });
+    this.refreshPeopleList();
   }
 };
 </script>
