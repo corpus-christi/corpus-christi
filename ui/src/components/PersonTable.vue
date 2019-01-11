@@ -51,10 +51,12 @@
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
-        <td><v-icon size="15" v-if="props.item.email">account_circle</v-icon></td>
+        <td>
+          <v-icon size="15" v-if="props.item.accountInfo">account_circle</v-icon>
+        </td>
         <td>{{ props.item.firstName }}</td>
         <td>{{ props.item.lastName }}</td>
-        <td>{{ props.item.email }}</td>
+        <td class="hidden-sm-and-down">{{ props.item.email }}</td>
         <td>{{ props.item.phone }}</td>
         <td class="text-no-wrap">
           <v-tooltip bottom>
@@ -193,14 +195,14 @@ export default {
     // Put here so that the headers are reactive.
     headers() {
       return [
-        { text: "", value: "person.email", width: "1%", sortable: false},
+        { text: "", value: "person.accountInfo", align: "right", sortable: false },
         {
           text: this.$t("person.name.first"),
           value: "firstName",
           width: "10%"
         },
         { text: this.$t("person.name.last"), value: "lastName", width: "20%" },
-        { text: this.$t("person.email"), value: "email", width: "15%" },
+        { text: this.$t("person.email"), value: "email", width: "15%", class: "hidden-sm-and-down" },
         { text: this.$t("person.phone"), value: "phone", width: "15%" },
         { text: this.$t("actions.header"), sortable: false }
       ];
@@ -379,7 +381,6 @@ export default {
         .get("/api/v1/people/persons")
         .then(resp => {
           this.allPeople = resp.data;
-          console.log(this.allPeople.filter(person => person.hasAccount));
           this.activePeople = this.allPeople.filter(person => person.active);
           this.archivedPeople = this.allPeople.filter(person => !person.active);
         })
