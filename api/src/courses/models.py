@@ -15,8 +15,8 @@ Prerequisite = Table('courses_prerequisite', Base.metadata,
 
 
 class PrerequisiteSchema(Schema):
-     course_id = fields.Integer(data_key='courseId', required=True)
-     prereq_id = fields.Integer(data_key='prereqId', required=True)
+     course_id = fields.Integer(dump_only=True, data_key='courseId', required=True)
+     prereq_id = fields.Integer(dump_only=True, data_key='prereqId', required=True)
 
 # ---- Diploma_Course
 
