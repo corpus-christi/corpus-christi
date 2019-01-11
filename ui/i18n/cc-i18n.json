@@ -23,7 +23,10 @@
       "tooltips": {
         "deactivate": "Deactivate",
         "settings": "Settings"
-      }
+      },
+      "view-active": "View Active",
+      "view-all": "View All",
+      "view-archived": "View Archived"
     },
     "courses": {
       "add-failed": "Failed to add course",
@@ -106,7 +109,10 @@
       "tooltips": {
         "deactivate": "Desactivar",
         "settings": "Ajustes"
-      }
+      },
+      "view-active": "Ver Activo",
+      "view-all": "Ver Todo",
+      "view-archived": "Ver Archivo"
     },
     "courses": {
       "add-failed": "Se fall\u00f3 a\u00f1adir el curso",
