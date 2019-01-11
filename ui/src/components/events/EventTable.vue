@@ -72,7 +72,7 @@
             </v-tooltip>
           </template>
           <template v-else>
-            <v-tooltip bottom  v-if="!props.item.active">
+            <v-tooltip bottom v-if="!props.item.active">
               <v-btn
                 icon
                 outline
@@ -99,7 +99,7 @@
     </v-snackbar>
 
     <!-- New/Edit dialog -->
-    <v-dialog v-model="eventDialog.show" max-width="500px">
+    <v-dialog v-model="eventDialog.show" max-width="500px" persistent>
       <event-form
         v-bind:editMode="eventDialog.editMode"
         v-bind:initialData="eventDialog.event"
@@ -222,8 +222,6 @@ export default {
           this.archiveDialog.show = false;
           this.showSnackbar(this.$t("events.error-archiving-event"));
         });
-
-      // this.archiveDialog.show = false;
     },
 
     unarchive(event) {
