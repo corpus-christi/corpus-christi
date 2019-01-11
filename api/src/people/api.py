@@ -51,11 +51,6 @@ def create_person():
 @jwt_required
 def read_all_persons():
     result = db.session.query(Person).all()
-    for person in result:
-        if person.account:
-            setattr(person, "hasAccount", True)
-        else:
-            setattr(person, "hasAccount", False)
     return jsonify(person_schema.dump(result, many=True))
 
 
