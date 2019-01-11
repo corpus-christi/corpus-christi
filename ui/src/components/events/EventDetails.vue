@@ -4,30 +4,56 @@
       <v-card>
         <template v-if="pageLoaded">
           <v-container fill-height fluid>
-              <v-flex xs9 sm9 align-end flexbox>
-                <span class="headline">{{ event.title }}</span>
-              </v-flex>
-              <v-layout xs3 sm3 align-end justify-end>
-                <v-btn flat color="primary" v-on:click="editEvent(event)">
-                  <v-icon>edit</v-icon>&nbsp;{{ $t('actions.edit') }}
-                </v-btn>
-              </v-layout>
+            <v-flex xs9 sm9 align-end flexbox>
+              <span class="headline">{{ event.title }}</span>
+            </v-flex>
+            <v-layout xs3 sm3 align-end justify-end>
+              <v-btn flat color="primary" v-on:click="editEvent(event)">
+                <v-icon>edit</v-icon>&nbsp;{{ $t("actions.edit") }}
+              </v-btn>
+            </v-layout>
           </v-container>
           <v-card-text>
             <div><b>Location: </b>{{ event.location_name }}</div>
-            <div><b>Start: </b>{{ getDisplayDate(event.start) }}</div>  
-            <div><b>End: </b>{{ getDisplayDate(event.end) }}</div> 
+            <div><b>Start: </b>{{ getDisplayDate(event.start) }}</div>
+            <div><b>End: </b>{{ getDisplayDate(event.end) }}</div>
             <div>{{ event.description }}</div>
           </v-card-text>
           <v-card-actions>
-            <v-btn flat color="primary" v-on:click="$router.push({path: '/events/' + $route.params.event + '/participants'})">
-              <v-icon>person</v-icon>&nbsp;{{ $t('events.participants.title') }}
+            <v-btn
+              flat
+              color="primary"
+              v-on:click="
+                $router.push({
+                  path: '/events/' + $route.params.event + '/participants'
+                })
+              "
+            >
+              <v-icon>person</v-icon>&nbsp;{{ $t("events.participants.title") }}
             </v-btn>
-            <v-btn flat color="primary" v-on:click="$router.push({path: '/events/' + $route.params.event + '/teams'})">
-              <v-icon>group</v-icon>&nbsp;{{ $t('events.teams.title') }}
+            <v-btn
+              flat
+              color="primary"
+              v-on:click="
+                $router.push({
+                  path: '/events/' + $route.params.event + '/teams'
+                })
+              "
+            >
+              <v-icon>group</v-icon>&nbsp;{{ $t("events.teams.title") }}
             </v-btn>
-            <v-btn flat color="primary" v-on:click="$router.push({path: '/events/' + $route.params.event + '/assets'})">
-              <v-icon>devices_other</v-icon>&nbsp;{{ $t('events.assets.title') }}
+            <v-btn
+              flat
+              color="primary"
+              v-on:click="
+                $router.push({
+                  path: '/events/' + $route.params.event + '/assets'
+                })
+              "
+            >
+              <v-icon>devices_other</v-icon>&nbsp;{{
+                $t("events.assets.title")
+              }}
             </v-btn>
           </v-card-actions>
         </template>
@@ -66,7 +92,7 @@ export default {
 
   mounted() {
     this.pageLoaded = false;
-    const id = this.$route.params.event
+    const id = this.$route.params.event;
     this.$http.get(`http://localhost:3000/events/${id}`).then(resp => {
       this.event = resp.data;
       this.pageLoaded = true;
@@ -76,7 +102,6 @@ export default {
   computed: {
     ...mapGetters(["currentLanguageCode"])
   },
-
 
   data() {
     return {
@@ -128,14 +153,13 @@ export default {
     getDisplayDate(ts) {
       let date = new Date(ts);
       return date.toLocaleTimeString(this.currentLanguageCode, {
-          year:'numeric',
-          month:'numeric',
-          day:'numeric',
-          hour: '2-digit',
-          minute:'2-digit'
+        year: "numeric",
+        month: "numeric",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
       });
     },
-
 
     showSnackbar(message) {
       this.snackbar.text = message;
