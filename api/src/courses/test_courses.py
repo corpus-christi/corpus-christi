@@ -3,7 +3,7 @@ import random
 
 from faker import Faker
 
-from .models import Course, CourseSchema, Prerequisite, PrerequisiteSchema, Course_Offering, Course_OfferingSchema
+from .models import Course, CourseSchema, Course_Offering, Course_OfferingSchema, Diploma, DiplomaSchema
 
 def flip():
     """Return true or false randomly."""
@@ -58,11 +58,21 @@ def create_multiple_course_offerings(sqla, n=3):
 def create_multiple_prerequisites(sqla):
     """Commits the number of prerequisites to the DB."""
     courses = sqla.query(Course).all()
-    prerequisite_schema = PrerequisiteSchema()
     new_prerequisites = []
     for i in range(len(courses)-1):
         courses[i].prerequisite = [courses[i+1]]
     sqla.add_all(new_prerequisites)
+    sqla.commit()
+
+def create_multiple_diplomas(sqla, n=3):
+    """Commits the number of course offering to the DB."""
+    courses = sqla.query(Course).all()
+    course_diploma_schema = DiplomaSchema()
+    new_course_diplomas = []
+    for i in range(n):
+        valid = course_diploma_schema.load(course_offerings_object_factory(courses[i].id))
+        new_course_diplomas.append(Course_Offering(**valid))
+    sqla.add_all(new_course_diplomas)
     sqla.commit()
 
 # ---- Course

@@ -45,7 +45,7 @@ class Course(Base):
                 secondaryjoin=Prerequisite.c.course_id==id,
                 foreign_keys=[Prerequisite.c.course_id, Prerequisite.c.prereq_id],
                 backref='depends', lazy=True)
-     diploma = relationship('Diploma', secondary=Diploma_Course, backref='depends', lazy=True)
+     diploma = relationship('Diploma', secondary=Diploma_Course, backref='courses', lazy=True)
 
      def __repr__(self):
          return f"<Course(id={self.id})>"
@@ -66,7 +66,7 @@ class Diploma(Base):
      name = Column(StringTypes.MEDIUM_STRING, nullable=False)
      description = Column(StringTypes.LONG_STRING, nullable=False)
      active = Column(Boolean, nullable=False, default=True)
-     course = relationship('Course', secondary=Diploma_Course, 
+     course = relationship('Course', secondary=Diploma_Course,
                backref='diplomas', lazy=True)
 
 
