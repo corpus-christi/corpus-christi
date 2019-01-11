@@ -109,6 +109,7 @@ account_schema = AccountSchema()
 @people.route('/accounts', methods=['POST'])
 @jwt_required
 def create_account():
+    request.json["active"] = True
     try:
         valid_account = account_schema.load(request.json)
     except ValidationError as err:
