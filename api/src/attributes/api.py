@@ -44,12 +44,6 @@ def read_one_attribute(attribute_id):
     return jsonify(attribute_schema.dump(result))
 
 
-@attributes.route('/attributes/<attribute_id>', methods=['PUT'])
-@jwt_required
-def replace_attribute(attribute_id):
-    pass
-
-
 @attributes.route('/attributes/<attribute_id>', methods=['PATCH'])
 @jwt_required
 def update_attribute(attribute_id):
@@ -67,12 +61,24 @@ def update_attribute(attribute_id):
     return jsonify(attribute_schema.dump(attribute))
 
 
-@attributes.route('/attributes/disable/<attribute_id>', methods=['PATCH'])
+@attributes.route('/attributes/deactivate/<attribute_id>', methods=['PATCH'])
 @jwt_required
-def disable_attribute(attribute_id):
+def deactivate_attribute(attribute_id):
     attribute = db.session.query(Attribute).filter_by(id=attribute_id).first()
 
     setattr(attribute, 'active', False)
+
+    db.session.commit()
+
+    return jsonify(attribute_schema.dump(attribute))
+
+
+@attributes.route('/attributes/activate/<attribute_id>', methods=['PATCH'])
+@jwt_required
+def activate_attribute(attribute_id):
+    attribute = db.session.query(Attribute).filter_by(id=attribute_id).first()
+
+    setattr(attribute, 'active', True)
 
     db.session.commit()
 
@@ -131,9 +137,9 @@ def update_enumerated_value(enumerated_value_id):
     return jsonify(enumerated_value_schema.dump(enumerated_value))
 
 
-@attributes.route('/enumerated_values/disable/<enumerated_value_id>', methods=['PATCH'])
+@attributes.route('/enumerated_values/deactivate/<enumerated_value_id>', methods=['PATCH'])
 @jwt_required
-def disable_enumerated_value(enumerated_value_id):
+def deactivate_enumerated_value(enumerated_value_id):
     enumerated_value = db.session.query(
         Enumerated_Value).filter_by(id=enumerated_value_id).first()
 
@@ -144,7 +150,20 @@ def disable_enumerated_value(enumerated_value_id):
     return jsonify(attribute_schema.dump(attribute))
 
 
+@attributes.route('/enumerated_values/activate/<enumerated_value_id>', methods=['PATCH'])
+@jwt_required
+def activate_enumerated_value(enumerated_value_id):
+    enumerated_value = db.session.query(
+        Enumerated_Value).filter_by(id=enumerated_value_id).first()
+
+    setattr(enumerated_value, 'active', True)
+
+    db.session.commit()
+
+    return jsonify(attribute_schema.dump(attribute))
+
 # ---- Person_Attribute
+
 
 person_attribute_schema = Person_AttributeSchema()
 
