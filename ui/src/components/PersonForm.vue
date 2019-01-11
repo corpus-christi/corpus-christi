@@ -11,6 +11,7 @@
           name="firstName"
           v-validate="'required'"
           v-bind:error-messages="errors.collect('firstName')"
+          data-cy="firstName"
         ></v-text-field>
 
         <v-text-field
@@ -19,11 +20,12 @@
           name="lastName"
           v-validate="'required'"
           v-bind:error-messages="errors.collect('lastName')"
+          data-cy="lastName"
         ></v-text-field>
 
         <v-radio-group v-model="person.gender" row>
-          <v-radio v-bind:label="$t('person.male')" value="M"></v-radio>
-          <v-radio v-bind:label="$t('person.female')" value="F"></v-radio>
+          <v-radio v-bind:label="$t('person.male')" value="M" data-cy="radio-m"></v-radio>
+          <v-radio v-bind:label="$t('person.female')" value="F" data-cy="radio-f"></v-radio>
         </v-radio-group>
 
         <v-menu
@@ -48,6 +50,7 @@
             v-bind:locale="currentLanguageCode"
             v-model="person.birthday"
             @input="showBirthdayPicker = false"
+            data-cy="birthday-picker"
           ></v-date-picker>
         </v-menu>
 
@@ -58,24 +61,26 @@
           v-validate="'email'"
           v-bind:error-messages="errors.collect('email')"
           prepend-icon="email"
+          data-cy="email"
         ></v-text-field>
 
         <v-text-field
           v-model="person.phone"
           v-bind:label="$t('person.phone')"
           prepend-icon="phone"
+          data-cy="phone"
         ></v-text-field>
       </form>
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn color="primary" flat v-on:click="cancel">
+      <v-btn color="primary" flat v-on:click="cancel" data-cy="cancel">
         {{ $t("actions.cancel") }}
       </v-btn>
-      <v-btn color="primary" flat v-on:click="clear">
+      <v-btn color="primary" flat v-on:click="clear" data-cy="clear">
         {{ $t("actions.clear") }}
       </v-btn>
-      <v-btn color="primary" flat v-on:click="save">
+      <v-btn color="primary" flat v-on:click="save" data-cy="save">
         {{ $t("actions.save") }}
       </v-btn>
     </v-card-actions>
