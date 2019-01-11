@@ -14,3 +14,7 @@ diplomas:
   prerequisites:
     en: Courses
     es: Cursos
+  courses-this-diploma:
+    _desc: List of courses for a given diploma
+    en: Courses for this Diploma
+    es: Cursos para esta Diploma

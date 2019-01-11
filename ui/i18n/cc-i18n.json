@@ -21,11 +21,15 @@
       "save": "Save",
       "search": "Search",
       "tooltips": {
-        "deactivate": "Deactivate",
+        "deactivate": "Archive",
         "settings": "Settings"
-      }
+      },
+      "view-active": "View Active",
+      "view-all": "View All",
+      "view-archived": "View Archived"
     },
     "diplomas": {
+      "courses-this-diploma": "Courses for this Diploma",
       "description": "Description",
       "diploma": "Diplomas",
       "new": "New Diploma",
@@ -99,11 +103,15 @@
       "save": "Salvar",
       "search": "Buscar",
       "tooltips": {
-        "deactivate": "Desactivar",
+        "deactivate": "Archivo",
         "settings": "Ajustes"
-      }
+      },
+      "view-active": "Ver Activo",
+      "view-all": "Ver Todo",
+      "view-archived": "Ver Archivado"
     },
     "diplomas": {
+      "courses-this-diploma": "Cursos para esta Diploma",
       "description": "Descripci\u00f3n",
       "diploma": "Diplomas",
       "new": "Nueva Diploma",

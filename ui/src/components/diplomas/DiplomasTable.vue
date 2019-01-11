@@ -45,15 +45,15 @@
             <template slot="expand" slot-scope="props">
               <v-card flat>
                 <v-card-text>
-                  Courses:
-                  <ol>
+                  <span class="font-weight-bold">{{$t("diplomas.courses-this-diploma")}}:</span>
+                  <ul>
                     <li 
                     v-for="course in props.item.courses"
                     v-bind:key="course.id"
                     >
-                      {{ course.name }}
+                      <span class="font-weight-bold">{{ course.title }}:</span> {{course.description}}
                     </li>
-                  </ol>
+                  </ul>
                 </v-card-text>
               </v-card>
             </template>
