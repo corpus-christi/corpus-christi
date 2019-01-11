@@ -29,11 +29,14 @@ def read_person_fields():
 @people.route('/persons', methods=['POST'])
 @jwt_required
 def create_person():
+    request.json["active"] = True
+    print(request.json)
     try:
         valid_person = person_schema.load(request.json)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
+    # new_person.active = [True]
     new_person = Person(**valid_person)
     db.session.add(new_person)
     db.session.commit()
@@ -114,6 +117,7 @@ def create_account():
         return jsonify(err.messages), 422
 
     new_account = Account(**valid_account)
+    new_account.active = True
     db.session.add(new_account)
     db.session.commit()
     return jsonify(account_schema.dump(new_account)), 201
@@ -275,7 +279,7 @@ def add_role_to_account(account_id, role_id):
 
     return jsonify(user_roles)
 
-
+    
 @people.route('/role/<account_id>&<role_id>', methods=['DELETE'])
 @jwt_required
 def remove_role_from_account(account_id, role_id):
@@ -300,3 +304,4 @@ def remove_role_from_account(account_id, role_id):
 
     # return jsonify(user_roles)
     return jsonify(role_to_remove)
+
