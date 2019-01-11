@@ -197,9 +197,17 @@ def read_all_course_offerings():
     result = db.session.query(Course_Offering).all()
     return jsonify(course_offering_schema.dump(result, many=True))
 
-# read all active course offerings
-# read all inactive course offerings
+@courses.route('/course_offerings/active')
+@jwt_required
+def read_all_active_course_offerings():
+    result = db.session.query(Course_Offering).filter_by(active=True).all()
+    return jsonify(course_offering_schema.dump(result, many=True))
 
+@courses.route('/course_offerings/inactive')
+@jwt_required
+def read_all_inactive_course_offerings():
+    result = db.session.query(Course_Offering).filter_by(active=False).all()
+    return jsonify(course_offering_schema.dump(result, many=True))
 
 @courses.route('/course_offerings/<course_offering_id>')
 @jwt_required
