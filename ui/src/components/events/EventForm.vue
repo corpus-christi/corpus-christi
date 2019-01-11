@@ -320,7 +320,8 @@ export default {
       let timearr = time.split(":");
       let timemin = Number(timearr[0]) * 60 + Number(timearr[1]);
       let timems = timemin * 60000;
-      return new Date(datems + timems);
+      let tzoffset = new Date().getTimezoneOffset() * 60000;
+      return new Date(datems + timems + tzoffset);
     },
 
     getDateFromTimestamp(ts) {
