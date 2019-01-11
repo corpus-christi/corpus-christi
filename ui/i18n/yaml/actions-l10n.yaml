@@ -54,5 +54,5 @@ actions:
       en: Settings
       es: Ajustes
     deactivate:
-      en: Deactivate
-      es: Desactivar
+      en: Archive
+      es: Archivo
