@@ -19,10 +19,10 @@
       "active": false
     },
     {
-      "id": 4,
       "title": "Old Testament",
-      "description": "typicode",
-      "active": true
+      "description": "typicod",
+      "active": true,
+      "id": 4
     },
     {
       "title": "test foo",

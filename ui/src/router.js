@@ -54,6 +54,12 @@ const router = new VueRouter({
       path: "/courses",
       meta: { authRequired: true },
       component: () => import("@/pages/Courses")
+    },
+    {
+      name: "course-offerings-admin",
+      path: "/course-offerings",
+      meta: { authRequired: true },
+      component: () => import("@/pages/CourseOfferings")
     }
   ]
 });
