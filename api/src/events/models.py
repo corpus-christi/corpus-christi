@@ -88,8 +88,8 @@ class EventAsset(Base):
     asset = relationship("Asset", back_populates="events")
 
 class EventAssetSchema(Schema):
-    event_id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
-    asset_id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
+    event_id = fields.Integer(required=True, validate=Range(min=1))
+    asset_id = fields.Integer(required=True, validate=Range(min=1))
 
 # ---- EventTeam
 
