@@ -362,13 +362,10 @@ def read_all_assets():
 
     result = query.join(EventAsset, isouter=True).group_by(Asset.id).all()
 
-    temp_result = []
+    temp_result = list()
     for item in result:
         temp_result.append(asset_schema.dump(item[0]))
         temp_result[-1]['event_count'] = item[1]
-
-    print(temp_result)
-    # return temp_result
 
     return jsonify(asset_schema.dump(temp_result, many=True))
 
@@ -684,31 +681,6 @@ team_schema = TeamSchema()
 def create_team():
     try:
         valid_team = team_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    new_team = Team(**valid_team)
-    db.session.add(new_team)
-    db.session.commit()
-    return jsonify(team_schema.dump(new_team)), 201
-    
-
-@events.route('/teams')
-@jwt_required
-def read_all_teams():
-
-    query = db.session.query(Team)
-
-    # -- return_inactives --
-    # Filter assets based on active status
-    return_group = request.args.get('return_group')
-    if return_group == 'inactive':
-        query = query.filter_by(active=False)
-    elif return_group in ('all', 'both'):
-        pass # Don't filter
-    else:
-        query = query.filter_by(active=True)
-
     # -- description --
     # Filter events on a wildcard description string
     desc_filter = request.args.get('desc')
@@ -722,13 +694,21 @@ def read_all_teams():
 @events.route('/teams/<team_id>')
 @jwt_required
 def read_one_team(team_id):
+=======
+@events.route('/teams/<team_id>', methods=['DELETE'])
+@jwt_required
+def delete_team(team_id):
+>>>>>>> dd23610db0472cb8f91cd97179d7de424dbdef96
     team = db.session.query(Team).filter_by(id=team_id).first()
 
     if not team:
         return jsonify(f"Team with id #{team_id} does not exist."), 404
-
-    return jsonify(team_schema.dump(team))
+        
+    setattr(team, 'active', False)
+    db.session.commit()
     
+    # 204 codes don't respond with any content
+    return 'Successfully deleted team', 204
 
 @events.route('/teams/<team_id>', methods=['PUT'])
 @jwt_required
