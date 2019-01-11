@@ -40,7 +40,7 @@
     >
       <v-progress-linear
         slot="progress"
-        color="blue"
+        color="primary"
         indeterminate
       ></v-progress-linear>
       <template slot="items" slot-scope="props">
