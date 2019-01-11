@@ -23,34 +23,14 @@
             <v-btn
               flat
               color="primary"
-              v-on:click="
-                $router.push({
-                  path: '/events/' + $route.params.event + '/participants'
-                })
-              "
+              v-on:click="navigateTo('/participants')"
             >
               <v-icon>person</v-icon>&nbsp;{{ $t("events.participants.title") }}
             </v-btn>
-            <v-btn
-              flat
-              color="primary"
-              v-on:click="
-                $router.push({
-                  path: '/events/' + $route.params.event + '/teams'
-                })
-              "
-            >
+            <v-btn flat color="primary" v-on:click="navigateTo('/teams')">
               <v-icon>group</v-icon>&nbsp;{{ $t("events.teams.title") }}
             </v-btn>
-            <v-btn
-              flat
-              color="primary"
-              v-on:click="
-                $router.push({
-                  path: '/events/' + $route.params.event + '/assets'
-                })
-              "
-            >
+            <v-btn flat color="primary" v-on:click="navigateTo('/assets')">
               <v-icon>devices_other</v-icon>&nbsp;{{
                 $t("events.assets.title")
               }}
@@ -158,6 +138,12 @@ export default {
         day: "numeric",
         hour: "2-digit",
         minute: "2-digit"
+      });
+    },
+
+    navigateTo(path) {
+      this.$router.push({
+        path: "/events/" + this.$route.params.event + path
       });
     },
 
