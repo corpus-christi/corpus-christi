@@ -46,7 +46,7 @@ entities:
         required: true
       - name: location_id
         type: integer
-        foreign-key: locations_location.location_id
+        foreign-key: places_location.id
       - name: active
         type: boolean
         default: true
@@ -67,3 +67,89 @@ entities:
       - name: active
         type: boolean
         default: true
+  - name: EventParticipant 
+    singular: eventParticipant
+    plural: eventParticipants
+    uri: /eventParticipants
+    table: events_eventParticipants
+    attributes:
+      - name: person_id
+        type: integer
+        primary-key: true
+        foreign-key: people_person.id
+        min: 1
+      - name: event_id
+        type: integer
+        primary-key: true
+        foreign-key: events_event.id
+        min: 1
+      - name: confirmed
+        type: boolean
+        default: true
+  - name: EventAsset
+    singular: eventAsset
+    plural: eventAssets
+    uri: /eventAsset
+    table: events_eventAsset
+    attributes:
+      - name: event_id
+        type: integer
+        primary-key: true
+        foreign-key: events_event.id
+        min: 1
+      - name: asset_id
+        type: integer
+        primary-key: true
+        foreign-key: events_asset.id
+        min: 1
+  - name: EventTeam
+    singular: eventTeam
+    plural: eventTeams
+    uri: /eventTeam
+    table: events_eventTeam
+    attributes:
+      - name: event_id
+        type: integer
+        primary-key: true
+        foreign-key: events_event.id
+        min: 1
+      - name: team_id
+        type: integer
+        primary-key: true
+        foreign-key: events_teams.id
+        min: 1
+  - name: TeamMember
+    singular: teamMember
+    plural: teamMembers
+    uri: /teamMembers
+    table: events_teamMembers
+    attributes:
+      - name: event_id
+        type: integer
+        primary-key: true
+        foreign-key: events_event.id
+        min: 1
+      - name: team_id
+        type: integer
+        primary-key: true
+        foreign-key: events_teams.id
+        min: 1
+  - name: EventPerson
+    singular: eventPerson
+    plural: eventPerson
+    uri: /eventPerson
+    table: events_eventPerson
+    attributes:
+      - name: event_id
+        type: integer
+        primary-key: true
+        foreign-key: events_event.id
+        min: 1
+      - name: person_id
+        type: integer
+        primary-key: true
+        foreign-key: people_person.id
+        min: 1
+      - name: description
+        type: string
+        length: long
