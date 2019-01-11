@@ -3,14 +3,14 @@
     {
       "title": "Intro to New Testament",
       "description": "typicode here",
-      "active": false,
+      "active": true,
       "id": 1
     },
     {
       "id": 2,
       "title": "Intro to Old Testament",
       "description": "typicode",
-      "active": true
+      "active": false
     },
     {
       "id": 3,

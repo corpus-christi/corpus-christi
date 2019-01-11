@@ -25,10 +25,10 @@ courses:
     es: Curso actualizado
   add-failed:
     en: Failed to add course
-    es: Se falló añadir el Curso
+    es: Se falló a añadir el curso
   update-failed:
     en: Failed to update course
-    es: Se falló actualizar el curso
+    es: Se falló a actualizar el curso
   archived:
     en: Course archived
     es: Curso archivado
@@ -37,4 +37,4 @@ courses:
     es: Curso desarchivado
   confirm-archive:
     en: Are you sure you want to archive this course?
-    es: ¿Seguro que quieres archivar este curso?
+    es: ¿Estás seguro que quieres archivar este curso?
