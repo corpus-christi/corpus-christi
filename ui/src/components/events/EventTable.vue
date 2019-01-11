@@ -12,6 +12,7 @@
             v-bind:label="$t('actions.search')"
             single-line
             hide-details
+            data-cy="form-search"
           ></v-text-field>
         </v-flex>
         <v-flex md3>
@@ -21,6 +22,7 @@
             single-line
             :items="viewOptions"
             v-model="viewStatus"
+            data-cy="view-status-select"
           >
           </v-select>
         </v-flex>
