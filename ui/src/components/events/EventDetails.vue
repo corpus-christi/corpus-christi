@@ -2,71 +2,60 @@
   <v-layout>
     <v-flex xs12 sm12>
       <v-card>
-        <v-container fill-height fluid>
-          <v-flex xs9 sm9 align-end flexbox>
-            <span class="headline">Youth Spaghetti Dinner</span>
-          </v-flex>
-          <v-layout xs3 sm3 align-end justify-end>
-            <v-btn flat color="primary" v-on:click="editEvent(event)">
-              <v-icon>edit</v-icon>&nbsp;{{ $t("actions.edit") }}
+        <template v-if="pageLoaded">
+          <v-container fill-height fluid>
+            <v-flex xs9 sm9 align-end flexbox>
+              <span class="headline">{{ event.title }}</span>
+            </v-flex>
+            <v-layout xs3 sm3 align-end justify-end>
+              <v-btn flat color="primary" v-on:click="editEvent(event)">
+                <v-icon>edit</v-icon>&nbsp;{{ $t("actions.edit") }}
+              </v-btn>
+            </v-layout>
+          </v-container>
+          <v-card-text>
+            <div><b>Location: </b>{{ event.location_name }}</div>
+            <div><b>Start: </b>{{ getDisplayDate(event.start) }}</div>
+            <div><b>End: </b>{{ getDisplayDate(event.end) }}</div>
+            <div>{{ event.description }}</div>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn
+              flat
+              ripple
+              color="primary"
+              v-on:click="navigateTo('/participants')"
+            >
+              <v-icon>person</v-icon>&nbsp;{{ $t("events.participants.title") }}
             </v-btn>
-          </v-layout>
-        </v-container>
-        <v-card-text>
-          <div>
-            <span><b>Location: </b>Coffee Dei</span><br />
-            <span><b>Date: </b>1/24/2019</span><br />
-            <span><b>Time: </b>6:00 PM - 7:30 PM</span><br /><br />
-            <span
-              >Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer
-              suscipit id turpis sed hendrerit. In hac habitasse platea
-              dictumst. Aenean ut scelerisque purus. Phasellus a pretium tortor.
-              Nunc et risus eu risus tempus placerat. Pellentesque habitant
-              morbi tristique senectus et netus et malesuada fames ac turpis
-              egestas. Sed pretium imperdiet aliquam. In cursus aliquet mi at
-              gravida. Integer mollis, odio in viverra imperdiet, libero tortor
-              bibendum dui, sit amet congue odio nisl a tortor. Sed suscipit
-              rutrum elit et tincidunt. In egestas sem a sapien pharetra
-              ullamcorper. Maecenas ut sagittis dui. Phasellus vitae tincidunt
-              neque, eu convallis ante. </span
-            ><br />
+            <v-btn
+              flat
+              ripple
+              color="primary"
+              v-on:click="navigateTo('/teams')"
+            >
+              <v-icon>group</v-icon>&nbsp;{{ $t("events.teams.title") }}
+            </v-btn>
+            <v-btn
+              flat
+              ripple
+              color="primary"
+              v-on:click="navigateTo('/assets')"
+            >
+              <v-icon>devices_other</v-icon>&nbsp;{{
+                $t("events.assets.title")
+              }}
+            </v-btn>
+          </v-card-actions>
+        </template>
+        <v-layout v-else justify-center height="500px">
+          <div class="ma-5 pa-5">
+            <v-progress-circular
+              indeterminate
+              color="primary"
+            ></v-progress-circular>
           </div>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn
-            flat
-            color="primary"
-            v-on:click="
-              $router.push({
-                path: '/events/' + $route.params.event + '/participants'
-              })
-            "
-          >
-            <v-icon>person</v-icon>&nbsp;{{ $t("events.participants.title") }}
-          </v-btn>
-          <v-btn
-            flat
-            color="primary"
-            v-on:click="
-              $router.push({
-                path: '/events/' + $route.params.event + '/teams'
-              })
-            "
-          >
-            <v-icon>group</v-icon>&nbsp;{{ $t("events.teams.title") }}
-          </v-btn>
-          <v-btn
-            flat
-            color="primary"
-            v-on:click="
-              $router.push({
-                path: '/events/' + $route.params.event + '/assets'
-              })
-            "
-          >
-            <v-icon>devices_other</v-icon>&nbsp;{{ $t("events.assets.title") }}
-          </v-btn>
-        </v-card-actions>
+        </v-layout>
       </v-card>
     </v-flex>
 
@@ -86,27 +75,28 @@
 
 <script>
 import EventForm from "./EventForm";
+import { mapGetters } from "vuex";
 
 export default {
   name: "EventDetails",
   components: { "event-form": EventForm },
+
   mounted() {
-    this.$http.get("http://localhost:3000/events").then(resp => {
-      this.events = resp.data;
+    this.pageLoaded = false;
+    const id = this.$route.params.event;
+    this.$http.get(`http://localhost:3000/events/${id}`).then(resp => {
+      this.event = resp.data;
+      this.pageLoaded = true;
     });
+  },
+
+  computed: {
+    ...mapGetters(["currentLanguageCode"])
   },
 
   data() {
     return {
-      event: {
-        id: 1,
-        title: "Youth Spaghetti Dinner",
-        description: "Come raise support for the youth trip!",
-        start: "2019-01-10T23:00:00.000Z",
-        end: "2019-01-11T02:00:00.000Z",
-        location_name: "Dining Hall",
-        active: true
-      },
+      event: {},
       eventDialog: {
         event: {},
         show: false,
@@ -116,7 +106,8 @@ export default {
       snackbar: {
         show: false,
         text: ""
-      }
+      },
+      pageLoaded: false
     };
   },
   methods: {
@@ -148,6 +139,23 @@ export default {
           this.eventDialog.saveLoading = false;
           this.showSnackbar(this.$t("events.error-editing-event"));
         });
+    },
+
+    getDisplayDate(ts) {
+      let date = new Date(ts);
+      return date.toLocaleTimeString(this.currentLanguageCode, {
+        year: "numeric",
+        month: "numeric",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    },
+
+    navigateTo(path) {
+      this.$router.push({
+        path: "/events/" + this.$route.params.event + path
+      });
     },
 
     showSnackbar(message) {

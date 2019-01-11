@@ -35,7 +35,8 @@ def person_object_factory():
     """Cook up a fake person."""
     person = {
         'lastName': rl_fake().last_name(),
-        'gender': random.choice(('M', 'F'))
+        'gender': random.choice(('M', 'F')),
+        'active': flip()
     }
 
     # Make the person's name match their gender.

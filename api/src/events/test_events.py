@@ -11,7 +11,7 @@ from werkzeug.security import check_password_hash
 
 from .models import Asset, AssetSchema, Event, EventSchema, Team, TeamSchema
 
-from .models import EventAsset, EventAssetSchema
+from .models import EventAsset, EventAssetSchema, EventTeam, EventTeamSchema
 
 
 class RandomLocaleFaker:
@@ -79,6 +79,14 @@ def event_asset_object_factory(event_id, asset_id):
     }
     return eventasset
 
+def event_team_object_factory(event_id, team_id):
+    """Cook up a fake eventteam json object from given ids."""
+    eventteam = {
+        'event_id': event_id,
+        'team_id': team_id
+    }
+    return eventteam
+
 def create_multiple_events(sqla, n):
     """Commit `n` new events to the database. Return their IDs."""
     event_schema = EventSchema()
@@ -125,6 +133,21 @@ def create_events_assets(sqla, fraction=0.75):
     sqla.commit()
 
 
+def create_events_teams(sqla, fraction=0.75):
+    """Create data in the linking table between events and teams """
+    event_team_schema = EventTeamSchema()
+    new_events_teams = []
+    all_events_teams = sqla.query(Event, Team).all()
+    sample_events_teams = random.sample(all_events_teams, math.floor(len(all_events_teams) * fraction))
+    #print(sample_events_teams[0][0].id)
+    for events_teams in sample_events_teams:
+        #print(events_teams)
+        valid_events_teams = event_team_schema.load(event_team_object_factory(events_teams[0].id,events_teams[1].id))
+        #print(valid_events_teams)
+        new_events_teams.append(EventTeam(**valid_events_teams))
+    #print(new_events_teams)
+    sqla.add_all(new_events_teams)
+    sqla.commit()
 
 
 def create_test_data(sqla):
