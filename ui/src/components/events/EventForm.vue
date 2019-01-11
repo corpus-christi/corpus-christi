@@ -22,15 +22,11 @@
           data-cy="description"
         ></v-textarea>
 
-
-
         <entity-search
-        location
-        v-model="event.location"
-        searchEndpoint="http://localhost:3000/locations"/>
-        
-
-
+          location
+          v-model="event.location"
+          searchEndpoint="http://localhost:3000/locations"
+        />
 
         <v-layout>
           <v-flex xs12 md6>
@@ -90,17 +86,18 @@
               >
                 <v-spacer></v-spacer>
                 <v-btn
-                  flat color="primary"
+                  flat
+                  color="primary"
                   @click="startTimeModal = false"
                   data-cy="start-time-cancel"
-                  >{{ $t('actions.cancel') }}</v-btn
+                  >{{ $t("actions.cancel") }}</v-btn
                 >
                 <v-btn
                   flat
                   color="primary"
                   @click="$refs.dialog1.save(startTime)"
                   data-cy="start-time-ok"
-                  >{{ $t('actions.confirm') }}</v-btn
+                  >{{ $t("actions.confirm") }}</v-btn
                 >
               </v-time-picker>
             </v-dialog>
@@ -168,14 +165,14 @@
                   color="primary"
                   @click="endTimeModal = false"
                   data-cy="end-time-cancel"
-                  >{{ $t('actions.cancel') }}</v-btn
+                  >{{ $t("actions.cancel") }}</v-btn
                 >
                 <v-btn
                   flat
                   color="primary"
                   @click="$refs.dialog2.save(endTime)"
                   data-cy="end-time-ok"
-                  >{{ $t('actions.confirm') }}</v-btn
+                  >{{ $t("actions.confirm") }}</v-btn
                 >
               </v-time-picker>
             </v-dialog>
@@ -216,7 +213,6 @@
         >{{ $t("actions.save") }}</v-btn
       >
     </v-card-actions>
-
   </v-card>
 </template>
 
@@ -269,7 +265,7 @@ export default {
     },
 
     today() {
-      return this.getDateFromTimestamp(Date.now())
+      return this.getDateFromTimestamp(Date.now());
     },
 
     ...mapGetters(["currentLanguageCode"])
@@ -330,7 +326,8 @@ export default {
 
     getDateFromTimestamp(ts) {
       let date = new Date(ts);
-      if (date.getTime() < 86400000) { //ms in a day
+      if (date.getTime() < 86400000) {
+        //ms in a day
         return "";
       }
       let yr = date.toLocaleDateString(this.currentLanguageCode, {
@@ -353,7 +350,7 @@ export default {
     },
 
     setLocation(locationId) {
-      console.log(locationId)
+      console.log(locationId);
     }
   },
   props: {
@@ -382,7 +379,7 @@ export default {
       showStartDatePicker: false,
       showEndDatePicker: false,
       startTimeModal: false,
-      endTimeModal: false,
+      endTimeModal: false
     };
   }
 };

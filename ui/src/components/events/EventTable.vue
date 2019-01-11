@@ -27,7 +27,6 @@
           </v-select>
         </v-flex>
         <v-flex shrink justify-self-end>
-
           <v-btn
             color="primary"
             raised
@@ -41,14 +40,34 @@
       </v-layout>
     </v-toolbar>
 
-    <v-data-table :headers="headers" :items="visibleEvents" :search="search" class="elevation-1">
+    <v-data-table
+      :headers="headers"
+      :items="visibleEvents"
+      :search="search"
+      class="elevation-1"
+    >
       <template slot="items" slot-scope="props">
-        <td class="hover-hand" v-on:click="$router.push({path: '/events/' + props.item.id})">{{ props.item.title }}</td>
-        <td class="hover-hand" v-on:click="$router.push({path: '/events/' + props.item.id})">{{ getDisplayDate(props.item.start) }}</td>
-        <td class="hover-hand" v-on:click="$router.push({path: '/events/' + props.item.id})">{{ getDisplayLocation(props.item.location_name) }}</td>
+        <td
+          class="hover-hand"
+          v-on:click="$router.push({ path: '/events/' + props.item.id })"
+        >
+          {{ props.item.title }}
+        </td>
+        <td
+          class="hover-hand"
+          v-on:click="$router.push({ path: '/events/' + props.item.id })"
+        >
+          {{ getDisplayDate(props.item.start) }}
+        </td>
+        <td
+          class="hover-hand"
+          v-on:click="$router.push({ path: '/events/' + props.item.id })"
+        >
+          {{ getDisplayLocation(props.item.location_name) }}
+        </td>
         <td>
           <template v-if="props.item.active">
-            <v-tooltip bottom >
+            <v-tooltip bottom>
               <v-btn
                 icon
                 outline
@@ -132,11 +151,20 @@
     <v-dialog v-model="archiveDialog.show" max-width="350px">
       <v-card>
         <v-card-text>{{ $t("events.confirm-archive") }}</v-card-text>
-          <v-card-actions>
-            <v-btn v-on:click="cancelArchive" color="secondary" flat data-cy="">{{ $t("actions.cancel") }}</v-btn>
-            <v-spacer></v-spacer>
-            <v-btn v-on:click="archiveEvent" color="primary" raised :loading="archiveDialog.loading" data-cy="">{{ $t("actions.confirm") }}</v-btn>
-          </v-card-actions>
+        <v-card-actions>
+          <v-btn v-on:click="cancelArchive" color="secondary" flat data-cy="">{{
+            $t("actions.cancel")
+          }}</v-btn>
+          <v-spacer></v-spacer>
+          <v-btn
+            v-on:click="archiveEvent"
+            color="primary"
+            raised
+            :loading="archiveDialog.loading"
+            data-cy=""
+            >{{ $t("actions.confirm") }}</v-btn
+          >
+        </v-card-actions>
       </v-card>
     </v-dialog>
   </div>
@@ -201,9 +229,9 @@ export default {
       if (this.viewStatus == "viewActive") {
         return this.events.filter(ev => ev.active);
       } else if (this.viewStatus == "viewArchived") {
-        return this.events.filter(ev => !ev.active);        
+        return this.events.filter(ev => !ev.active);
       } else if (this.viewStatus == "viewAll") {
-        return this.events;        
+        return this.events;
       }
     },
 
@@ -238,11 +266,11 @@ export default {
       delete copyEvent.id;
       this.activateEventDialog(copyEvent);
     },
-    
+
     archiveEvent() {
-      console.log("Archived event")
+      console.log("Archived event");
       this.archiveDialog.loading = true;
-      const eventId = this.archiveDialog.eventId
+      const eventId = this.archiveDialog.eventId;
       const idx = this.events.findIndex(ev => ev.id === eventId);
       this.$http
         .delete(`http://localhost:3000/events/${eventId}`)
@@ -333,19 +361,19 @@ export default {
     addAnotherEvent(event) {
       this.eventDialog.addMoreLoading = true;
       this.$http
-          .post("http://localhost:3000/events/", event)
-          .then(resp => {
-            console.log("ADDED", resp);
-            this.events.push(resp.data);
-            this.eventDialog.show = false;
-            this.eventDialog.saveLoading = false;
-            this.showSnackbar(this.$t("events.event-added"));
-          })
-          .catch(err => {
-            console.error("FAILURE", err.response);
-            this.eventDialog.saveLoading = false;
-            this.showSnackbar(this.$t("events.error-adding-event"));
-          });
+        .post("http://localhost:3000/events/", event)
+        .then(resp => {
+          console.log("ADDED", resp);
+          this.events.push(resp.data);
+          this.eventDialog.show = false;
+          this.eventDialog.saveLoading = false;
+          this.showSnackbar(this.$t("events.event-added"));
+        })
+        .catch(err => {
+          console.error("FAILURE", err.response);
+          this.eventDialog.saveLoading = false;
+          this.showSnackbar(this.$t("events.error-adding-event"));
+        });
     },
 
     showSnackbar(message) {
@@ -355,17 +383,17 @@ export default {
     getDisplayDate(dateString) {
       let date = new Date(dateString);
       return date.toLocaleTimeString(this.currentLanguageCode, {
-          year:'numeric',
-          month:'numeric',
-          day:'numeric',
-          hour: '2-digit',
-          minute:'2-digit'
+        year: "numeric",
+        month: "numeric",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
       });
     },
-    getDisplayLocation(name, length=20) {
+    getDisplayLocation(name, length = 20) {
       if (name && name.length && name.length > 0) {
         if (name.length > length) {
-          return `${name.substring(0, length-3)}...`;
+          return `${name.substring(0, length - 3)}...`;
         }
       }
       return name;

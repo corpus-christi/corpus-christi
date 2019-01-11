@@ -1,11 +1,9 @@
 <template>
-    <div>
-        teams
-    </div>
+  <div>teams</div>
 </template>
 
 <script>
 export default {
-    name: "EventTeams"
-}
+  name: "EventTeams"
+};
 </script>
