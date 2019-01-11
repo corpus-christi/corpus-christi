@@ -11,17 +11,14 @@ describe("testing the language button", () => {
     cy.visit("/");
   });
   it("Clicks the language button", () => {
-    cy.get('[data-cy=cur-locale]')
-      .click();
+    cy.get("[data-cy=cur-locale]").click();
   });
   it("Switches the language", () => {
-    cy.get('[data-cy=en-US]')
-      .click();
+    cy.get("[data-cy=en-US]").click();
   });
-  it("Checks the page to ensure the language changed",() => {
-    cy.get('[data-cy=church-sentence]')
-      .contains("Church");
-      //.contains("Iglesia");
+  it("Checks the page to ensure the language changed", () => {
+    cy.get("[data-cy=church-sentence]").contains("Church");
+    //.contains("Iglesia");
   });
   it("Switches the language back to Spanish", () =>{
     cy.get('[data-cy=cur-locale]')
@@ -35,4 +32,3 @@ describe("testing the language button", () => {
       .contains("Iglesia");
   });
 });
-
