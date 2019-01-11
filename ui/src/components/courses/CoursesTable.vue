@@ -12,7 +12,6 @@
         hide-details
       ></v-text-field>
       <v-spacer></v-spacer>
-<<<<<<< HEAD
       
  
       <v-select 
@@ -28,17 +27,6 @@
         raised
         v-on:click.stop="newCourse"
       >
-=======
-
-      <v-switch
-        :label="$t('actions.view-inactive')"
-        color="primary"
-        v-model="showingInactive"
-        hide-details
-      ></v-switch>
-
-      <v-btn color="primary" raised v-on:click.stop="newCourse">
->>>>>>> c89e2f3398750f806c7deb60596fbb9b2814d9ee
         <v-icon left>library_add</v-icon>
         {{ $t("courses.new") }}
       </v-btn>
