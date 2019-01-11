@@ -32,20 +32,20 @@ def flip():
 
 def area_factory(auth_client):
     """Create a fake area."""
+    countries = auth_client.sqla.query(Country).all()
     area = {
         #using last_name for testing purposes, will be area name
         'name': rl_fake().last_name(),
-        'country_code': random.choice(auth_client.sqla.query(Area).all())
+        'country_code': random.choice(countries).code
     }
 
     return area
+    areas = auth_client.sqla.query(Area).all()
 
-def address_factory():
+def address_factory(auth_client):
     """Create a fake address."""
     fake = Faker()  # Use a generic one; others may not have all methods.
     addresslines = fake.address.splitlines
-    areas = auth_client.sqla.query(Area).all()
-    print("Areas", areas)
     current_area = random.choice(areas)
 
     address = {
@@ -59,11 +59,11 @@ def address_factory():
     }
     return address
 
-def location_factory():
+def location_factory(auth_client):
     """Create a fake location"""
     fake = Faker()  # Use a generic one; others may not have all methods.
-    locations = auth_client.sqla.query(Location).all()
-    current_location = random.choice(locations)
+    addresses = auth_client.sqla.query(Address).all()
+    current_address = random.choice(addresses)
 
     location = {
         'description': fake.name(),
@@ -81,22 +81,22 @@ def create_multiple_areas(sqla, n, auth_client):
     sqla.add_all(new_areas)
     sqla.commit()
 
-def create_multiple_addresses(sqla, n):
+def create_multiple_addresses(sqla, n, auth_client):
     """Commit `n` new addresses to the database. Return their IDs."""
     address_schema = AddressSchema()
     new_address = []
     for i in range(n):
-        valid_address = address_schema.load(address_factory())
+        valid_address = address_schema.load(address_factory(auth_client))
         new_address.append(Area(**valid_address))
     sqla.add_all(new_address)
     sqla.commit()
 
-def create_multiple_locations(sqla, n):
+def create_multiple_locations(sqla, n, auth_client):
     """Commit `n` new locations to the database. Return their IDs."""
     location_schema = LocationSchema()
     new_locations = []
     for i in range(n):
-        valid_location = location_schema.load(location_factory())
+        valid_location = location_schema.load(location_factory(auth_client))
         new_locations.append(Area(**valid_location))
     sqla.add_all(new_locations)
     sqla.commit()
@@ -116,17 +116,19 @@ def prep_database(sqla):
 @pytest.mark.smoke
 def test_create_area(auth_client):
     # GIVEN an empty database
+    Country.load_from_file()
     count = random.randint(5, 15)
-    # WHEN we create a random number of new people
+    # WHEN we create a random number of new areas
     for i in range(count):
         resp = auth_client.post(url_for('places.create_area'), json=area_factory(auth_client))
         assert resp.status_code == 201
-    # THEN we end up with the proper number of people in the database
+    # THEN we end up with the proper number of areas in the database
     assert auth_client.sqla.query(Area).count() == count
 
 @pytest.mark.smoke
 def test_read_area(auth_client):
-    # GIVEN a DB with a collection people.
+    # GIVEN a DB with a collection areas.
+    Country.load_from_file()
     count = random.randint(3, 11)
     create_multiple_areas(auth_client.sqla, count, auth_client)
 
@@ -137,9 +139,9 @@ def test_read_area(auth_client):
 
     # WHEN we request each of them from the server
     for area in areas:
-        resp = auth_client.get(url_for('places.areas', area_id=area.id))
+        resp = auth_client.get(url_for('places.read_one_area', area_id=area.id))
         # THEN we find a matching person
         assert resp.status_code == 200
-        assert resp.json['areaName'] == area.name
-        assert resp.json['countryCode'] == area.country_code
+        assert resp.json['name'] == area.name
+        assert resp.json['country_code'] == area.country_code
 
