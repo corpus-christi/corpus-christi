@@ -32,11 +32,16 @@ class Person(Base):
     def __repr__(self):
         return f"<Person(id={self.id})>"
 
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
+
 
 class PersonSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
-    first_name = fields.String(data_key='firstName', required=True, validate=Length(min=1))
-    last_name = fields.String(data_key='lastName', required=True, validate=Length(min=1))
+    first_name = fields.String(
+        data_key='firstName', required=True, validate=Length(min=1))
+    last_name = fields.String(
+        data_key='lastName', required=True, validate=Length(min=1))
     gender = fields.String(validate=OneOf(['M', 'F']))
     birthday = fields.Date()
     phone = fields.String()
@@ -93,7 +98,8 @@ class AccountSchema(Schema):
     password = fields.String(attribute='password_hash', load_only=True,
                              required=True, validate=Length(min=6))
     active = fields.Boolean()
-    person_id = fields.Integer(required=True, data_key="personId", validate=Range(min=1))
+    person_id = fields.Integer(
+        required=True, data_key="personId", validate=Range(min=1))
 
     @pre_load
     def hash_password(self, data):
@@ -116,7 +122,8 @@ class Role(Base):
     @classmethod
     def load_from_file(cls, file_name='roles.json', locale_code='en-US'):
         count = 0
-        file_path = os.path.abspath(os.path.join(__file__, os.path.pardir, 'data', file_name))
+        file_path = os.path.abspath(os.path.join(
+            __file__, os.path.pardir, 'data', file_name))
 
         if not db.session.query(I18NLocale).get(locale_code):
             db.session.add(I18NLocale(code=locale_code, desc='English US'))
@@ -134,16 +141,17 @@ class Role(Base):
                     i18n_create(name_i18n, locale_code,
                                 role_name, description=f"Role {role_name}")
 
-                    db.session.add(cls(id=role_id, name_i18n=name_i18n, active=True))
+                    db.session.add(
+                        cls(id=role_id, name_i18n=name_i18n, active=True))
                     count += 1
                 db.session.commit()
             return count
 
         return 0
 
+
 class RoleSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     name_i18n = fields.String(data_key='nameI18n')
     active = fields.Boolean()
-
 

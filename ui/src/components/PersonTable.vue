@@ -2,30 +2,34 @@
   <div>
     <!-- Header -->
     <v-toolbar>
-      <v-toolbar-title> {{ $t("people.title") }}</v-toolbar-title>
+      <v-toolbar-title>{{ $t("people.title") }}</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-text-field
         v-model="search"
         append-icon="search"
         v-bind:label="$t('actions.search')"
-        single-line
         hide-details
+        single-line
         data-cy="search"
       ></v-text-field>
       <v-spacer></v-spacer>
+      <v-switch
+        :label="$t('actions.view-inactive')"
+        color="primary"
+        v-on:change="changeView"
+        v-model="showingInactive"
+        hide-details
+        data-cy="view-inactive"
+      ></v-switch>
 
       <v-btn
-        small
-        fab
         color="primary"
-        absolute
-        dark
-        bottom
-        right
+        raised
         v-on:click.stop="newPerson"
-        data-cy="new-person"
+        data-cy="add-person"
       >
-        <v-icon>add</v-icon>
+        <v-icon dark left>person_add</v-icon>
+        {{ $t("actions.add-person") }}
       </v-btn>
     </v-toolbar>
 
@@ -43,39 +47,45 @@
         <td>{{ props.item.phone }}</td>
         <td>
           <v-tooltip bottom>
-            <v-icon
+            <v-btn
+              icon
+              outline
               small
+              color="primary"
               slot="activator"
               v-on:click="editPerson(props.item)"
-              class="mr-3"
               data-cy="edit-person"
             >
-              edit
-            </v-icon>
+              <v-icon small>edit</v-icon>
+            </v-btn>
             <span>{{ $t("actions.edit") }}</span>
           </v-tooltip>
           <v-tooltip bottom>
-            <v-icon
+            <v-btn
+              icon
+              outline
               small
+              color="primary"
               slot="activator"
               v-on:click="adminPerson(props.item)"
-              class="mr-3"
-              data-cy="admin-person"
+              data-cy="add-account"
             >
-              settings
-            </v-icon>
+              <v-icon small>settings</v-icon>
+            </v-btn>
             <span>{{ $t("actions.tooltips.settings") }}</span>
           </v-tooltip>
           <v-tooltip bottom>
-            <v-icon
+            <v-btn
+              icon
+              outline
               small
+              color="primary"
               slot="activator"
               v-on:click="deletePerson(props.item)"
-              class="mr-3"
-              data-cy="delete-person"
+              data-cy="deactivate-person"
             >
-              delete
-            </v-icon>
+              <v-icon small>delete</v-icon>
+            </v-btn>
             <span>{{ $t("actions.tooltips.deactivate") }}</span>
           </v-tooltip>
         </td>
@@ -84,7 +94,7 @@
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false" data-cy="snackbar-close">
+      <v-btn flat @click="snackbar.show = false" data-cy>
         {{ $t("actions.close") }}
       </v-btn>
     </v-snackbar>
@@ -94,8 +104,11 @@
       <PersonForm
         v-bind:editMode="personDialog.editMode"
         v-bind:initialData="personDialog.person"
+        v-bind:saveLoading="personDialog.saveLoading"
+        v-bind:addMoreLoading="personDialog.addMoreLoading"
         v-on:cancel="cancelPerson"
         v-on:save="savePerson"
+        v-on:add-another="addAnother"
       />
     </v-dialog>
 
@@ -124,6 +137,8 @@ export default {
       personDialog: {
         show: false,
         editMode: false,
+        saveLoading: false,
+        addMoreLoading: false,
         person: {}
       },
 
@@ -138,8 +153,11 @@ export default {
         text: ""
       },
 
+      showingInactive: false,
       selected: [],
       people: [],
+      activePeople: [],
+      inactivePeople: [],
       search: ""
     };
   },
@@ -181,6 +199,7 @@ export default {
     },
 
     savePerson(person) {
+      this.personDialog.saveLoading = true;
       if (this.personDialog.editMode) {
         // Hang on to the ID of the person being updated.
         const person_id = person.id;
@@ -194,18 +213,70 @@ export default {
           .then(resp => {
             console.log("EDITED", resp);
             Object.assign(this.people[idx], person);
+            this.personDialog.show = false;
+            this.personDialog.saveLoading = false;
+            this.showSnackbar(this.$t("person.messages.person-edit"));
           })
-          .catch(err => console.error("FALURE", err.response));
+          .catch(err => {
+            console.error("FALURE", err.response);
+            this.personDialog.saveLoading = false;
+            this.showSnackbar(this.$t("person.messages.person-save-error"));
+          });
       } else {
         this.$http
           .post("/api/v1/people/persons", person)
           .then(resp => {
             console.log("ADDED", resp);
             this.people.push(resp.data);
+            this.personDialog.show = false;
+            this.personDialog.saveLoading = false;
+            this.showSnackbar(this.$t("person.messages.person-add"));
           })
-          .catch(err => console.error("FAILURE", err.response));
+          .catch(err => {
+            console.error("FAILURE", err.response);
+            this.personDialog.saveLoading = false;
+            this.showSnackbar(this.$t("person.messages.person-save-error"));
+          });
       }
-      this.personDialog.show = false;
+    },
+
+    addAnother(person) {
+      this.personDialog.addMoreLoading = true;
+      this.$http
+        .post("/api/v1/people/persons", person)
+        .then(resp => {
+          console.log("ADDED", resp);
+          this.people.push(resp.data);
+          this.activatePersonDialog();
+          this.personDialog.addMoreLoading = false;
+          this.showSnackbar(this.$t("person.messages.person-add"));
+        })
+        .catch(err => {
+          console.error("FAILURE", err.response);
+          this.personDialog.addMoreLoading = false;
+          this.showSnackbar(this.$t("person.messages.person-save-error"));
+        });
+    },
+
+    changeView() {
+      if (this.showingInactive) {
+        this.viewInactive();
+      } else {
+        this.viewActive();
+      }
+    },
+
+    viewInactive() {
+      console.log(`viewing inactive`);
+    },
+
+    viewActive() {
+      console.log(`viewing active`);
+    },
+
+    showSnackbar(message) {
+      this.snackbar.text = message;
+      this.snackbar.show = true;
     },
 
     // ---- Account Administration
@@ -233,8 +304,7 @@ export default {
         .post("/api/v1/people/accounts", account)
         .then(resp => {
           console.log("ADDED", resp);
-          this.snackbar.text = this.$t("account.messages.added-ok");
-          this.snackbar.show = true;
+          this.showSnackbar(this.$t("account.messages.added-ok"));
         })
         .catch(err => console.error("FAILURE", err.response));
     },
@@ -244,14 +314,16 @@ export default {
         .patch(`/api/v1/people/accounts/${accountId}`, account)
         .then(resp => {
           console.log("PATCHED", resp);
-          this.snackbar.text = this.$t("account.messages.updated-ok");
-          this.snackbar.show = true;
+          this.showSnackbar(this.$t("account.messages.updated-ok"));
         })
         .catch(err => console.error("FAILURE", err.response));
     }
   },
 
   mounted: function() {
+    // TODO: set activePeople[] to all people who are active
+    // TODO: set inactivePeople[] to all people who are inactive
+    // TODO: set people[] = activePeople[]
     this.$http
       .get("/api/v1/people/persons")
       .then(resp => (this.people = resp.data));
