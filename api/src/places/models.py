@@ -48,6 +48,9 @@ class Country(Base):
             db.session.commit()
         return count
 
+class CountrySchema(Schema):
+    code = fields.String()
+    name_i18n = fields.String()
 
 # ---- Area
 
@@ -98,7 +101,9 @@ class LocationSchema(Schema):
     id = fields.Integer(required=True, validate=Range(min=1))
     address = fields.String()
     city = fields.String()
-    area_id = fields.Integer(validate=Range(min=1))
-    country_code = fields.String()
+    # area_id = fields.Integer(validate=Range(min=1))
+    # country_code = fields.String()
+    area = fields.Nested('AreaSchema')
+    country = fields.Nested('CountrySchema')
     latitude = fields.Float()
     longitude = fields.Float()
