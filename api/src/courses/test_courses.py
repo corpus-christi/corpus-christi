@@ -64,16 +64,32 @@ def create_multiple_prerequisites(sqla):
     sqla.add_all(new_prerequisites)
     sqla.commit()
 
+
+def courses_diploma_object_factory():
+    """Cook up a fake course."""
+    fake = Faker()  # Use a generic one; others may not have all methods.
+    course_offerings = {
+    'maxSize': random.randint(1,100),
+    'description': fake.paragraph(),
+    'active': flip(),
+    'courseId': course_id
+    }
+    return course_offerings
+
+
 def create_multiple_diplomas(sqla, n=3):
     """Commits the number of course offering to the DB."""
     courses = sqla.query(Course).all()
     course_diploma_schema = DiplomaSchema()
-    new_course_diplomas = []
+    new_courses = []
     for i in range(n):
-        valid = course_diploma_schema.load(course_offerings_object_factory(courses[i].id))
-        new_course_diplomas.append(Course_Offering(**valid))
-    sqla.add_all(new_course_diplomas)
+        valid_course_diploma = course_diploma_schema.load(courses_diploma_object_factory())
+        diploma = Diploma(**valid_course_diploma)
+
+        new_courses.append()
+    sqla.add_all(new_courses)
     sqla.commit()
+
 
 # ---- Course
 
