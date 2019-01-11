@@ -171,7 +171,7 @@ export default {
     // },
 
     duplicate(asset) {
-      const copyAsset = JSON.parse(JSON.stringify(asset));
+      const copyAsset = JSON.parse(JSON.stringify(event));
       delete copyAsset.id;
       this.activateAssetDialog(copyAsset);
     },
