@@ -3,7 +3,7 @@
     <v-layout>
       <v-flex>
         <v-toolbar color="cyan" dark>
-          <v-toolbar-title> {{ course.title }} </v-toolbar-title>
+          <v-toolbar-title> {{ course.name }} </v-toolbar-title>
         </v-toolbar>
         <v-card>
           <v-card-text>{{ course.description }}</v-card-text>
@@ -20,13 +20,6 @@
 <script>
 export default {
   name: "CourseCard",
-  // data() {
-  //   return {
-  //     title: "New Testament",
-  //     description: "extra test",
-  //     enrolled: 0
-  //   };
-  // },
   props: ["course"]
 };
 </script>

@@ -1,11 +1,11 @@
 <template>
   <form>
     <v-text-field
-      v-model="course.title"
+      v-model="course.name"
       v-bind:label="$t('courses.title')"
-      name="title"
+      name="name"
       v-validate="'required'"
-      v-bind:error-messages="errors.collect('title')"
+      v-bind:error-messages="errors.collect('name')"
     ></v-text-field>
 
     <v-text-field
@@ -23,10 +23,10 @@
       solo
       multiple
     >
-      <template slot="item" slot-scope="data">{{ data.item.title }}</template>
+      <template slot="item" slot-scope="data">{{ data.item.name }}</template>
       <template slot="selection" slot-scope="data">
         <v-chip :selected="data.selected" close @input="remove(data.item)">
-          <strong>{{ data.item.title }}</strong
+          <strong>{{ data.item.name }}</strong
           >&nbsp;
         </v-chip>
       </template>

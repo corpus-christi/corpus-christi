@@ -1,37 +1,37 @@
 {
   "courses": [
     {
-      "title": "Intro to New Testament",
+      "name": "Intro to New Testament",
       "description": "typicode here",
       "active": true,
       "id": 1
     },
     {
       "id": 2,
-      "title": "Intro to Old Testament",
+      "name": "Intro to Old Testament",
       "description": "typicode",
       "active": false
     },
     {
       "id": 3,
-      "title": "New Testament",
+      "name": "New Testament",
       "description": "typicode",
       "active": false
     },
     {
       "id": 4,
-      "title": "Old Testament",
+      "name": "Old Testament",
       "description": "typicode",
       "active": true
     },
     {
-      "title": "test foo",
+      "name": "test foo",
       "description": "test",
       "id": 5,
       "active": true
     },
     {
-      "title": "testing ",
+      "name": "testing ",
       "description": "123",
       "id": 6,
       "active": false
