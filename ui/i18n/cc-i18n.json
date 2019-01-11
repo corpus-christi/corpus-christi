@@ -120,10 +120,10 @@
       "view-archived": "Ver Archivo"
     },
     "courses": {
-      "add-failed": "Se fall\u00f3 a\u00f1adir el Curso",
+      "add-failed": "Se fall\u00f3 a a\u00f1adir el curso",
       "added": "Curso a\u00f1adido",
       "archived": "Curso archivado",
-      "confirm-archive": "\u00bfSeguro que quieres archivar este curso?",
+      "confirm-archive": "\u00bfEst\u00e1s seguro que quieres archivar este curso?",
       "course": "Cursos",
       "description": "Descripci\u00f3n",
       "enrolled": "N\u00famero Registrado",
@@ -131,7 +131,7 @@
       "prerequisites": "Prerrequisitos",
       "reactivated": "Curso desarchivado",
       "title": "T\u00edtulo",
-      "update-failed": "Se fall\u00f3 actualizar el curso",
+      "update-failed": "Se fall\u00f3 a actualizar el curso",
       "updated": "Curso actualizado"
     },
     "groups": {
