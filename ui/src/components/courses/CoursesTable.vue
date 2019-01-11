@@ -157,7 +157,9 @@ export default {
           break;
         case "deactivate":
           this.deactivate(course);
-          console.log("deactivate course")
+          break;
+        case "activate":
+          this.activate(course);
           break;
         default:
           break;
@@ -185,6 +187,17 @@ export default {
     deactivate(course) {
       this.$http
           .patch(`/api/v1/courses/courses/${course.id}`, {active: false})
+          .then(resp => {
+            console.log("EDITED", resp);
+            Object.assign(course, resp.data);
+            this.snackbar.text = this.$t("courses.updated");
+            this.snackbar.show = true;
+          })
+    },
+
+    activate(course) {
+      this.$http
+          .patch(`/api/v1/courses/courses/${course.id}`, {active: true})
           .then(resp => {
             console.log("EDITED", resp);
             Object.assign(course, resp.data);
