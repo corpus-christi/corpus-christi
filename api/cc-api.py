@@ -11,7 +11,7 @@ from src.people.models import Person, Account
 from src.people.test_people import create_multiple_people, create_multiple_accounts
 from src.places.models import Country
 from src.courses.models import Course, Prerequisite
-from src.courses.test_courses import create_multiple_courses
+from src.courses.test_courses import create_multiple_courses, create_multiple_course_offerings, create_multiple_prerequisites
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 
@@ -52,6 +52,8 @@ def load_languages():
     create_multiple_people(db.session, 17)
     create_multiple_accounts(db.session, 0.25)
     create_multiple_courses(db.session, 12)
+    create_multiple_course_offerings(db.session, 6)
+    create_multiple_prerequisites(db.session)
 
 
 

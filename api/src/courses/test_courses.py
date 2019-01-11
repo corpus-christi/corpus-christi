@@ -4,7 +4,7 @@ import random
 from faker import Faker
 from flask import url_for
 
-from .models import Course, CourseSchema, Prerequisite, PrerequisiteSchema
+from .models import Course, CourseSchema, Prerequisite, PrerequisiteSchema, Course_Offering, Course_OfferingSchema
 
 def flip():
     """Return true or false randomly."""
@@ -28,11 +28,44 @@ def create_multiple_courses(sqla, n=10):
     new_courses = []
     for i in range(n):
         valid_course = course_schema.load(course_object_factory())
-        course_model = Course(**valid_course)
-        new_courses.append(course_model)
+        new_courses.append(Course(**valid_course))
     sqla.add_all(new_courses)
     sqla.commit()
-    print(new_courses)
+
+
+def course_offerings_object_factory(course_id):
+    """Cook up a fake course."""
+    fake = Faker()  # Use a generic one; others may not have all methods.
+    course_offerings = {
+    'maxSize': random.randint(1,100),
+    'description': fake.paragraph(),
+    'active': flip(),
+    'courseId': course_id
+    }
+    return course_offerings
+
+
+def create_multiple_course_offerings(sqla, n=3):
+    """Commits the number of course offering to the DB."""
+    courses = sqla.query(Course).all()
+    course_offerings_schema = Course_OfferingSchema()
+    new_course_offerings = []
+    for i in range(n):
+        valid_course_offering = course_offerings_schema.load(course_offerings_object_factory(courses[i].id))
+        new_course_offerings.append(Course_Offering(**valid_course_offering))
+    sqla.add_all(new_course_offerings)
+    sqla.commit()
+
+
+def create_multiple_prerequisites(sqla):
+    """Commits the number of prerequisites to the DB."""
+    courses = sqla.query(Course).all()
+    prerequisite_schema = PrerequisiteSchema()
+    new_prerequisites = []
+    for i in range(len(courses)-1):
+        courses[i].prerequisite = [courses[i+1]]
+    sqla.add_all(new_prerequisites)
+    sqla.commit()
 
 # ---- Course
 
@@ -43,7 +76,7 @@ def test_create_course(client, db):
     # WHEN database does not contain entry
     # THEN assert that entry is now in database
     assert True == False
-    
+
 # Test getting all courses from the database
 @pytest.mark.xfail()
 def test_read_all_courses(client, db):
@@ -65,13 +98,13 @@ def test_read_all_inactive_courses(client, db):
     # WHEN call to database
     # THEN assert all active courses are listed
     assert True == False
-    
+
 # Test reading a single course from the database
 @pytest.mark.xfail()
 def test_read_one_course(client, db):
     # GIVEN one course in the database
     # WHEN call to database
-    # THEN assert entry called is only entry returned 
+    # THEN assert entry called is only entry returned
     assert True == False
 
 def create_course(sqla):
@@ -109,12 +142,12 @@ def test_reactivate_course(auth_client):
     assert resp.status_code == 200
     assert resp.json['active'] == True
 
-""" 
-# Test 
+"""
+# Test
 @pytest.mark.xfail()
 def test_replace_course(client, db):
     # GIVEN a deactivated course in database
-    # WHEN 
+    # WHEN
     # THEN assert
     assert True == False
 """
@@ -125,7 +158,7 @@ def test_update_course(client, db):
     # WHEN course information updated
     # THEN assert course reflects new detail(s)
     assert True == False
-    
+
 """
 @pytest.mark.xfail()
 def test_delete_course(client, db):
@@ -133,7 +166,7 @@ def test_delete_course(client, db):
     # WHEN course is removed
     # THEN assert course and all associated information deleted
     assert True == False
-"""  
+"""
 
 # ---- Prerequisite
 
@@ -144,7 +177,7 @@ def test_create_prerequisite(client, db):
     # WHEN course requires previous attendance to another course
     # THEN add course as prerequisite
     assert True == False
-    
+
 # This will test getting all prerequisites for a single course
 @pytest.mark.xfail()
 def test_read_all_prerequisites(client, db):
@@ -164,10 +197,10 @@ def test_read_all_courses_with_prerequisite(client, db):
 @pytest.mark.xfail()
 def test_update_prerequisite(client, db):
     # GIVEN an existing and available course with an existing prereq
-    # WHEN new prereq for existing course is required 
+    # WHEN new prereq for existing course is required
     # THEN existing course has new prereq in place of existing prereq
     assert True == False
-    
+
 """
 @pytest.mark.xfail()
 def test_delete_prerequisite(client, db):
@@ -176,7 +209,7 @@ def test_delete_prerequisite(client, db):
     # THEN prereq row entry removed (along with associated course)
     assert True == False
 """
-    
+
 
 # ---- Course_Offering
 
@@ -187,7 +220,7 @@ def test_create_course_offering(client, db):
     # WHEN one or more courses need a section to offer
     # THEN create new course section
     assert True == False
-    
+
 
 @pytest.mark.xfail()
 def test_read_all_course_offerings(client, db):
@@ -209,7 +242,7 @@ def test_read_all_inactive_course_offerings(client, db):
     # WHEN all inactive course sections needed
     # THEN list all sections of inactive courses
     assert True == False
-    
+
 
 @pytest.mark.xfail()
 def test_read_one_course_offering(client, db):
@@ -217,7 +250,7 @@ def test_read_one_course_offering(client, db):
     # WHEN one course section needed
     # THEN list one course section of course
     assert True == False
-    
+
 """
 @pytest.mark.xfail()
 def test_replace_course_offering(client, db):
@@ -229,17 +262,16 @@ def test_replace_course_offering(client, db):
 
 @pytest.mark.xfail()
 def test_update_course_offering(client, db):
-    # GIVEN an existing (active or inactive) course offering 
+    # GIVEN an existing (active or inactive) course offering
     # WHEN course offering needs to update existing information
     # THEN assert changes to course offering reflect update
     assert True == False
-    
+
 """
 @pytest.mark.xfail()
 def test_delete_course_offering(client, db):
     # GIVEN an existing (active or inactive) course and at least one section
-    # WHEN user desires to remove course offering 
-    # THEN 
+    # WHEN user desires to remove course offering
+    # THEN
     assert True == False
 """
-    
