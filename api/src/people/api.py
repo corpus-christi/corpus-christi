@@ -6,12 +6,15 @@ from flask_jwt_extended import jwt_required, get_raw_jwt, jwt_optional
 from marshmallow import ValidationError
 
 from . import people
-from .models import Person, Account, Role, AccountSchema, PersonSchema, RoleSchema
+from .models import Person, Account, AccountSchema, Role, PersonSchema, RoleSchema
+from ..attributes.models import Attribute, AttributeSchema, Enumerated_Value, Enumerated_ValueSchema
 from .. import db
 
 # ---- Person
 
 person_schema = PersonSchema()
+attribute_schema = AttributeSchema(exclude=['active'])
+enumerated_value_schema = Enumerated_ValueSchema(exclude=['active'])
 
 
 @people.route('/persons/fields', methods=['GET'])
@@ -20,8 +23,20 @@ def read_person_fields():
     response = {'person': [], 'person_attributes': []}
 
     person_columns = Person.__table__.columns
+    attributes = db.session.query(Attribute).filter_by(active=True).all()
+    enumerated_values = db.session.query(
+        Enumerated_Value).filter_by(active=True).all()
+    attributes = attribute_schema.dump(attributes, many=True)
+    enumerated_values = enumerated_value_schema.dump(
+        enumerated_values, many=True)
+
     for c in person_columns:
-        response['person'].append({c.name: c.type, 'required': not c.nullable})
+        response['person'].append(
+            {c.name: str(c.type), 'required': not c.nullable})
+
+    for a in attributes:
+        a[a['nameI18n']] = [x for x in enumerated_values if x['attributeId'] == a['id']]
+        response['person_attributes'].append(a)
 
     return jsonify(response)
 
@@ -40,7 +55,6 @@ def create_person():
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    # new_person.active = [True]
     new_person = Person(**valid_person)
     db.session.add(new_person)
     db.session.commit()
@@ -50,6 +64,7 @@ def create_person():
 @people.route('/persons')
 @jwt_required
 def read_all_persons():
+    read_person_fields()
     result = db.session.query(Person).all()
     return jsonify(person_schema.dump(result, many=True))
 
@@ -83,6 +98,7 @@ def update_person(person_id):
 @jwt_required
 def deactivate_person(person_id):
     person = db.session.query(Person).filter_by(id=person_id).first()
+    account = db.session.query(Account).filter_by(id=person.account_id).first()
 
     if person.account:
         account = db.session.query(Account).filter_by(id=person.account.id).first()
@@ -195,9 +211,12 @@ def activate_account(account_id):
     db.session.commit()
 
     return jsonify(account_schema.dump(account))
+
 # ---- Roles
 
+
 role_schema = RoleSchema()
+
 
 @people.route('/role', methods=['POST'])
 @jwt_required
@@ -266,9 +285,14 @@ def update_role(role_id):
 def delete_role(role_id):
     pass
 
+
 @people.route('/role/<account_id>&<role_id>', methods=['POST'])
 @jwt_required
 def add_role_to_account(account_id, role_id):
+
+    print("Account: " + account_id)
+    print("Role: " + role_id)
+
     account = db.session.query(Account).filter_by(id=account_id).first()
 
     if account is None:
@@ -281,13 +305,14 @@ def add_role_to_account(account_id, role_id):
     db.session.commit()
 
     user_roles = []
-    roles = db.session.query(Role).join(Account, Role.accounts).filter_by(id=account_id).filter_by(active=True).all()
+    roles = db.session.query(Role).join(Account, Role.accounts).filter_by(
+        id=account_id).filter_by(active=True).all()
     for r in roles:
         user_roles.append(role_schema.dump(r)['nameI18n'])
 
     return jsonify(user_roles)
 
-    
+
 @people.route('/role/<account_id>&<role_id>', methods=['DELETE'])
 @jwt_required
 def remove_role_from_account(account_id, role_id):
