@@ -28,6 +28,7 @@ class Event(Base):
 
     def __repr__(self):
         return f"<Event(id={self.id})>"
+    
 
 class EventSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
@@ -35,7 +36,11 @@ class EventSchema(Schema):
     description = fields.String()
     start = fields.DateTime(required=True)
     end = fields.DateTime(required=True)
-    location_id = fields.Integer(data_key='locationId')
+    location = fields.Nested('LocationSchema')
+    participants = fields.Nested('EventParticipantSchema', many=True, exclude=['event'])
+    persons = fields.Nested('EventPersonSchema', many=True, exclude=['event'])
+    teams = fields.Nested('EventTeamSchema', many=True, exclude=['event'])
+    assets = fields.Nested('EventAssetSchema', many=True, exclude=['event'])
     active = fields.Boolean()
 
 # ---- Asset
@@ -56,8 +61,10 @@ class Asset(Base):
 class AssetSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     description = fields.String(required=True)
-    location_id = fields.Integer(data_key='locationId')
+    location = fields.Nested('LocationSchema')
     active = fields.Boolean()
+    event_count = fields.Integer(dump_only=True)
+
 
 # ---- Team
 
@@ -71,11 +78,13 @@ class Team(Base):
 
     def __repr__(self):
         return f"<Team(id={self.id})>"
+    
 
 class TeamSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     description = fields.String(required=True)
     active = fields.Boolean()
+    members = fields.Nested('TeamMemberSchema', exclude=['team'], many=True)
 
 
 # ---- EventAsset
@@ -88,8 +97,8 @@ class EventAsset(Base):
     asset = relationship("Asset", back_populates="events")
 
 class EventAssetSchema(Schema):
-    event_id = fields.Integer(required=True, validate=Range(min=1))
-    asset_id = fields.Integer(required=True, validate=Range(min=1))
+    event = fields.Nested('EventSchema')
+    asset = fields.Nested('AssetSchema')
 
 # ---- EventTeam
 
@@ -101,8 +110,8 @@ class EventTeam(Base):
     team = relationship("Team", back_populates="events")
 
 class EventTeamSchema(Schema):
-    event_id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
-    team_id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
+    event = fields.Nested('EventSchema')
+    team = fields.Nested('TeamSchema')
 
 # ---- EventPerson
 
@@ -115,8 +124,8 @@ class EventPerson(Base):
     person = relationship("Person", back_populates="events_per")
 
 class EventPersonSchema(Schema):
-    event_id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
-    person_id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
+    event = fields.Nested('EventSchema')
+    person = fields.Nested('PersonSchema')
     description = fields.String(required=True)
 
 # ---- TeamMember
@@ -129,8 +138,8 @@ class TeamMember(Base):
     member = relationship("Person", back_populates="teams")
 
 class TeamMemberSchema(Schema):
-    team_id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
-    member_id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
+    team = fields.Nested('TeamSchema')
+    member = fields.Nested('PersonSchema')
 
 # ---- EventParticipant
 
@@ -143,6 +152,6 @@ class EventParticipant(Base):
     person = relationship("Person", back_populates="events_par")
 
 class EventParticipantSchema(Schema):
-    event_id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
-    person_id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
+    event = fields.Nested('EventSchema')
+    person = fields.Nested('PersonSchema')
     confirmed = fields.Boolean()

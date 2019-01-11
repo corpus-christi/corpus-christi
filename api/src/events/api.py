@@ -5,10 +5,24 @@ from flask import request
 from flask.json import jsonify
 from flask_jwt_extended import jwt_required, get_raw_jwt, jwt_optional
 from marshmallow import ValidationError
+from sqlalchemy import func
 
 from . import events
-from .models import Event, Asset, Team, EventSchema, AssetSchema, TeamSchema
+from .models import Event, Asset, Team, EventAsset, EventSchema, AssetSchema, TeamSchema
 from .. import db
+
+def modify_entity(entity_type, schema, id, new_value_dict):
+    item = db.session.query(entity_type).filter_by(id=id).first()
+
+    if not item:
+        return jsonify(f"Event with id #{id} does not exist."), 404
+
+    for key, val in new_value_dict.items():
+        setattr(item, key, val)
+    
+    db.session.commit()
+
+    return jsonify(schema.dump(item)), 200
 
 # ---- Event
 
@@ -116,24 +130,58 @@ def delete_event(event_id):
     setattr(event, 'active', False)
     db.session.commit()
     
-    # 204 doesn't actually respond with any content
+    # 204 codes don't respond with any content
     return jsonify(event_schema.dump(event)), 204
 
 
 # Handles PUT and PATCH requests
 def modify_event(event_id, new_value_dict):
+    return modify_entity(Event, event_schema, event_id, new_value_dict)
+
+@events.route('/<event_id>/assets/<asset_id>', methods=['POST', 'PUT', 'PATCH'])
+@jwt_required
+def add_asset_to_event(event_id, asset_id):
     event = db.session.query(Event).filter_by(id=event_id).first()
+    asset_events = db.session.query(Event).join(EventAsset).filter_by(asset_id=asset_id).all()
 
     if not event:
         return jsonify(f"Event with id #{event_id} does not exist."), 404
 
-    for key, val in new_value_dict.items():
-        setattr(event, key, val)
-    
+    # Make sure asset isn't already booked in the current event
+    # Make sure asset isn't booked in another event during that time    
+    event_start = event.start
+    event_end = event.end
+
+    is_overlap = False
+
+    for asset_event in asset_events:
+        if event_start <= asset_event.start < event_end or event_start < asset_event.end <= event_end \
+          or asset_event.start <= event_start < asset_event.end or asset_event.start < event.end <= asset_event.end:
+            is_overlap = True
+            break
+
+    if is_overlap:
+        return jsonify(f"Asset with id #{asset_id} is unavailable for Event with id #{event_id}."), 422
+    else:
+        new_entry = EventAsset(**{'event_id': event_id, 'asset_id': asset_id})
+        db.session.add(new_entry)
+        db.session.commit()
+
+        return jsonify(f"Asset with id #{asset_id} successfully booked for Event with id #{event_id}.")
+
+@events.route('/<event_id>/assets/<asset_id>', methods=['DELETE'])
+@jwt_required
+def remove_asset_from_event(event_id, asset_id):
+    event_asset = db.session.query(EventAsset).filter_by(event_id=event_id).filter_by(asset_id=asset_id).first()
+
+    if not event_asset:
+        return jsonify(f"Asset with id #{asset_id} is not booked for Event with id #{event_id}."), 404
+
+    db.session.delete(event_asset)
     db.session.commit()
 
-    return jsonify(event_schema.dump(event)), 200
-
+    # 204 codes don't respond with any content
+    return 'Successfully un-booked', 204
 
 # ---- Asset
 
@@ -156,45 +204,95 @@ def create_asset():
 @events.route('/assets')
 @jwt_required
 def read_all_assets():
-    result = db.session.query(Asset).all()
-    return jsonify(asset_schema.dump(result, many=True))
-    
+
+    query = db.session.query(Asset).add_columns(func.count(EventAsset.event_id).label('event_count'))
+
+    # -- return_inactives --
+    # Filter assets based on active status
+    return_group = request.args.get('return_group')
+    if return_group == 'inactive':
+        query = query.filter_by(active=False)
+    elif return_group in ('all', 'both'):
+        pass # Don't filter
+    else:
+        query = query.filter_by(active=True)
+
+    # -- description --
+    # Filter events on a wildcard description string
+    desc_filter = request.args.get('desc')
+    if desc_filter:
+        query = query.filter(Asset.description.like(f"%{desc_filter}%"))
+
+    # -- location --
+    # Filter events on a wildcard location string?
+    location_filter = request.args.get('location')
+    if location_filter:
+        # TODO FIXME
+        pass
+
+    result = query.join(EventAsset, isouter=True).group_by(Asset.id).all()
+
+    temp_result = list()
+    for item in result:
+        temp_result.append(asset_schema.dump(item[0]))
+        temp_result[-1]['event_count'] = item[1]
+
+    return jsonify(asset_schema.dump(temp_result, many=True))
 
 @events.route('/assets/<asset_id>')
 @jwt_required
 def read_one_asset(asset_id):
-    result = db.session.query(Asset).filter_by(id=asset_id).first()
-    return jsonify(asset_schema.dump(result))
+    asset = db.session.query(Asset).filter_by(id=asset_id).add_columns(func.count(EventAsset.event_id).label('event_count')).join(EventAsset, isouter=True).group_by(Asset.id).first()
     
+    if not asset:
+        return jsonify(f"Asset with id #{asset_id} does not exist."), 404
+
+    result = asset_schema.dump(asset[0])
+    result['event_count'] = asset[1]
+
+    return jsonify(asset_schema.dump(result))
+
 
 @events.route('/assets/<asset_id>', methods=['PUT'])
 @jwt_required
 def replace_asset(asset_id):
-    pass
-    
-
-@events.route('/assets/<asset_id>', methods=['PATCH'])
-@jwt_required
-def update_asset(asset_id):
     try:
         valid_asset = asset_schema.load(request.json)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    asset = db.session.query(Asset).filter_by(id=asset_id).first()
+    return modify_asset(asset_id, valid_asset)
+    
 
-    for key, val in valid_asset.items():
-        setattr(asset, key, val)
-
-    db.session.commit()
-    return jsonify(asset_schema.dump(asset))
+@events.route('/assets/<asset_id>', methods=['PATCH'])
+@jwt_required
+def update_asset(asset_id):
+    try: 
+        valid_attributes = asset_schema.load(request.json, partial=True)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+                
+    return modify_asset(asset_id, valid_attributes)
     
 
 @events.route('/assets/<asset_id>', methods=['DELETE'])
 @jwt_required
 def delete_asset(asset_id):
-    pass
+    asset = db.session.query(Asset).filter_by(id=asset_id).first()
+
+    if not asset:
+        return jsonify(f"Event with id #{asset_id} does not exist."), 404
+        
+    setattr(asset, 'active', False)
+    db.session.commit()
     
+    # 204 codes don't respond with any content
+    return 'Successfully deleted asset', 204
+
+# Handles PUT and PATCH requests
+def modify_asset(asset_id, new_value_dict):
+    return modify_entity(Asset, asset_schema, asset_id, new_value_dict)
+
 
 # ---- Team
 
@@ -217,41 +315,76 @@ def create_team():
 @events.route('/teams')
 @jwt_required
 def read_all_teams():
-    result = db.session.query(Team).all()
+
+    query = db.session.query(Team)
+
+    # -- return_inactives --
+    # Filter assets based on active status
+    return_group = request.args.get('return_group')
+    if return_group == 'inactive':
+        query = query.filter_by(active=False)
+    elif return_group in ('all', 'both'):
+        pass # Don't filter
+    else:
+        query = query.filter_by(active=True)
+
+    # -- description --
+    # Filter events on a wildcard description string
+    desc_filter = request.args.get('desc')
+    if desc_filter:
+        query = query.filter(Team.description.like(f"%{desc_filter}%"))
+
+    result = query.all()
     return jsonify(team_schema.dump(result, many=True))
     
 
 @events.route('/teams/<team_id>')
 @jwt_required
 def read_one_team(team_id):
-    result = db.session.query(Team).filter_by(id=team_id).first()
-    return jsonify(team_schema.dump(result))
+    team = db.session.query(Team).filter_by(id=team_id).first()
+
+    if not team:
+        return jsonify(f"Team with id #{team_id} does not exist."), 404
+
+    return jsonify(team_schema.dump(team))
     
 
 @events.route('/teams/<team_id>', methods=['PUT'])
 @jwt_required
 def replace_team(team_id):
-    pass
-    
-
-@events.route('/teams/<team_id>', methods=['PATCH'])
-@jwt_required
-def update_team(team_id):
     try:
         valid_team = team_schema.load(request.json)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    team = db.session.query(Team).filter_by(id=team_id).first()
+    return modify_team(team_id, valid_team)
+    
 
-    for key, val in valid_team.items():
-        setattr(team, key, val)
-
-    db.session.commit()
-    return jsonify(team_schema.dump(team))
+@events.route('/teams/<team_id>', methods=['PATCH'])
+@jwt_required
+def update_team(team_id):
+    try: 
+        valid_attributes = team_schema.load(request.json, partial=True)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+                
+    return modify_team(team_id, valid_attributes)
     
 
 @events.route('/teams/<team_id>', methods=['DELETE'])
 @jwt_required
 def delete_team(team_id):
-    pass
+    team = db.session.query(Team).filter_by(id=team_id).first()
+
+    if not team:
+        return jsonify(f"Team with id #{team_id} does not exist."), 404
+        
+    setattr(team, 'active', False)
+    db.session.commit()
+    
+    # 204 codes don't respond with any content
+    return 'Successfully deleted team', 204
+
+# Handles PUT and PATCH requests
+def modify_team(team_id, new_value_dict):
+    return modify_entity(Team, team_schema, team_id, new_value_dict)
