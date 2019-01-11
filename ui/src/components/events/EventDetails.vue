@@ -22,15 +22,26 @@
           <v-card-actions>
             <v-btn
               flat
+              ripple
               color="primary"
               v-on:click="navigateTo('/participants')"
             >
               <v-icon>person</v-icon>&nbsp;{{ $t("events.participants.title") }}
             </v-btn>
-            <v-btn flat color="primary" v-on:click="navigateTo('/teams')">
+            <v-btn
+              flat
+              ripple
+              color="primary"
+              v-on:click="navigateTo('/teams')"
+            >
               <v-icon>group</v-icon>&nbsp;{{ $t("events.teams.title") }}
             </v-btn>
-            <v-btn flat color="primary" v-on:click="navigateTo('/assets')">
+            <v-btn
+              flat
+              ripple
+              color="primary"
+              v-on:click="navigateTo('/assets')"
+            >
               <v-icon>devices_other</v-icon>&nbsp;{{
                 $t("events.assets.title")
               }}
