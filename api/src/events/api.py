@@ -527,7 +527,25 @@ def get_team_members(team_id):
 
     return jsonify(team_member_schema.dump(team_members, many=True))
     
-@events.route('/teams/<team_id>/members/<member_id>', methods=['POST','PUT','PATCH'])
+@events.route('/teams/<team_id>/members/<member_id>', methods=['PATCH'])
+@jwt_required
+def modify_team_member(team_id, member_id):
+    try:
+        valid_attributes = team_member_schema.load(request.json)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+
+    team_member = db.session.query(TeamMember).filter_by(member_id=member_id).filter_by(team_id=team_id).first()
+
+    if not team_member:
+        return jsonify(f"Member with id #{member_id} is not associated with Team with id #{team_id}."), 404
+
+    setattr(team_member, 'active', valid_attributes['active'])
+    db.session.commit()
+
+    return jsonify(team_member_schema.dump(team_member))    
+
+@events.route('/teams/<team_id>/members/<member_id>', methods=['POST','PUT'])
 @jwt_required
 def add_team_member(team_id, member_id):
     team = db.session.query(Team).filter_by(id=team_id).first()
