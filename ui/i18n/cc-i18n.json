@@ -49,10 +49,19 @@
     },
     "events": {
       "actions": "Actions",
-      "assets": "Assets",
+      "assets": {
+        "create-asset": "Create Asset",
+        "description": "Description",
+        "edit-asset": "Edit Asset",
+        "location": "Location",
+        "new": "Add Asset",
+        "title": "Assets"
+      },
       "confirm-archive": "Are you sure you want to archive this event?",
       "create-event": "Create Event",
-      "details": "Details",
+      "details": {
+        "title": "Details"
+      },
       "edit-event": "Edit Event",
       "end-date": "End Date",
       "end-time": "End Time",
@@ -66,10 +75,14 @@
       "event-edited": "Event edited",
       "event-location": "Event Location",
       "event-unarchived": "Event unarchived",
-      "participants": "Participants",
+      "participants": {
+        "title": "Participants"
+      },
       "start-date": "Start Date",
       "start-time": "Start Time",
-      "teams": "Teams",
+      "teams": {
+        "title": "Teams"
+      },
       "title": "Events"
     },
     "groups": {
@@ -167,10 +180,19 @@
     },
     "events": {
       "actions": "Comportamiento",
-      "assets": "Bienes",
+      "assets": {
+        "create-asset": "Crear Bienes",
+        "description": "Descripci\u00f3n",
+        "edit-asset": "Editar Bienes",
+        "location": "Ubicaci\u00f3n",
+        "new": "A\u00f1adir Bienes",
+        "title": "Bienes"
+      },
       "confirm-archive": "\u00bfSeguro que quieres archivar este evento?",
       "create-event": "Crear Evento",
-      "details": "Detalles",
+      "details": {
+        "title": "Detalles"
+      },
       "edit-event": "Editar Evento",
       "end-date": "Fecha Final",
       "end-time": "Hora de Finalizaci\u00f3n",
@@ -184,10 +206,14 @@
       "event-edited": "Evento editado",
       "event-location": "Ubicaci\u00f3n de Evento",
       "event-unarchived": "Evento desarchivado",
-      "participants": "Participantes",
+      "participants": {
+        "title": "Participantes"
+      },
       "start-date": "Fecha de Inicio",
       "start-time": "Hora de Inicio",
-      "teams": "Equipos",
+      "teams": {
+        "title": "Equipos"
+      },
       "title": "Eventos"
     },
     "groups": {
