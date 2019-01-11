@@ -1,0 +1,11 @@
+[{"id": 1, "name": "public"},
+  {"id": 2, "name": "infrastructure"},
+  {"id": 3, "name": "superuser"},
+  {"id": 4, "name": "translator"},
+  {"id": 5, "name": "group-admin"},
+  {"id": 6, "name": "group-leader"},
+  {"id": 7, "name": "group-overseer"},
+  {"id": 8, "name": "registrar"},
+  {"id": 9, "name": "teaching-assistant"},
+  {"id": 10, "name": "event-planner"}
+]
