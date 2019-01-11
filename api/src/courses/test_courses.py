@@ -49,21 +49,10 @@ def create_multiple_course_offerings(sqla, n=3):
     course_offerings_schema = Course_OfferingSchema()
     new_course_offerings = []
     for i in range(n):
-        # valid_course_offering = course_offerings_schema.load(course_offerings_object_factory(courses[i].id))
-        # new_course_offerings.append(Course_Offering(**valid_course_offering))
-        courses[i].prereq = [courses[i+1]]
-        print(courses[i].depend,courses[i].prereq)
+        valid_course_offering = course_offerings_schema.load(course_offerings_object_factory(courses[i].id))
+        new_course_offerings.append(Course_Offering(**valid_course_offering))
     sqla.add_all(new_course_offerings)
     sqla.commit()
-
-
-def prerequisite_object_factory(course_id, prereq_id):
-    """Cook up a fake prerequisite."""
-    prerequisites = {
-    'courseId': course_id,
-    'prereqId': prereq_id
-    }
-    return prerequisites
 
 
 def create_multiple_prerequisites(sqla):
@@ -72,11 +61,9 @@ def create_multiple_prerequisites(sqla):
     prerequisite_schema = PrerequisiteSchema()
     new_prerequisites = []
     for i in range(len(courses)-1):
-        valid_prerequisites = prerequisite_schema.load(prerequisite_object_factory(courses[i].id, courses[i+1].id))
-        new_prerequisites.append(Prerequisite(**valid_prerequisites))
+        courses[i].prerequisite = [courses[i+1]]
     sqla.add_all(new_prerequisites)
     sqla.commit()
-
 
 # ---- Course
 

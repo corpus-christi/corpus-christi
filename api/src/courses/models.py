@@ -9,17 +9,9 @@ from src.shared.models import StringTypes
 
 # ---- Prerequisite
 
-# class Prerequisite(Base):
 Prerequisite = Table('courses_prerequisite', Base.metadata,
         Column('course_id', Integer, ForeignKey('courses_course.id'), primary_key=True),
         Column('prereq_id', Integer, ForeignKey('courses_course.id'), primary_key=True))
-     # __tablename__ = 'courses_prerequisite'
-     # course_id = Column(Integer, ForeignKey('courses_course.id'), primary_key=True)
-     # prereq_id = Column(Integer, ForeignKey('courses_course.id'), primary_key=True)
-     #
-     # def __repr__(self):
-     #     return f"<Prerequisite(course_id={self.course_id},prereq_id={self.prereq_id})>"
-
 
 class PrerequisiteSchema(Schema):
      course_id = fields.Integer(data_key='courseId', required=True)
@@ -37,8 +29,12 @@ class Course(Base):
                 primaryjoin=Prerequisite.c.course_id==id,
                 secondaryjoin=Prerequisite.c.prereq_id==id,
                 foreign_keys=[Prerequisite.c.course_id, Prerequisite.c.prereq_id],
-                backref='prerequisite',  lazy=True)
-     # prereq = relationship('Prerequisite', backref='prereq', lazy=True)
+                backref='prerequisites',  lazy=True)
+     prerequisite = relationship('Course', secondary=Prerequisite,
+                primaryjoin=Prerequisite.c.prereq_id==id,
+                secondaryjoin=Prerequisite.c.course_id==id,
+                foreign_keys=[Prerequisite.c.course_id, Prerequisite.c.prereq_id],
+                backref='depends', lazy=True)
 
      def __repr__(self):
          return f"<Course(id={self.id})>"
