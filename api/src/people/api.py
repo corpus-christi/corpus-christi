@@ -30,8 +30,11 @@ def read_person_fields():
 @jwt_required
 def create_person():
     request.json["active"] = True
-    if request.json["birthday"] is "":
-        request.json["birthday"] = None
+
+    for key, value in request.json.items():
+        if request.json[key] is "":
+            request.json[key] = None
+
     try:
         valid_person = person_schema.load(request.json)
     except ValidationError as err:
@@ -221,8 +224,11 @@ def read_all_roles():
 @jwt_required
 def get_roles_for_account(account_id):
     account = db.session.query(Account).filter_by(id=account_id).first()
-    result = account.roles
-    return jsonify(role_schema.dump(result, many=True))
+    result = []
+    for role in account.roles:
+        role = role_schema.dump(role)
+        result.append(role["nameI18n"])
+    return jsonify(result)
 
 
 @people.route('/role/<role_id>')

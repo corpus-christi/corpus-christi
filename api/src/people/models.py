@@ -42,10 +42,10 @@ class PersonSchema(Schema):
         data_key='firstName', required=True, validate=Length(min=1))
     last_name = fields.String(
         data_key='lastName', required=True, validate=Length(min=1))
-    gender = fields.String(validate=OneOf(['M', 'F', '']))
+    gender = fields.String(validate=OneOf(['M', 'F']), allow_none=True)
     birthday = fields.Date(allow_none=True)
-    phone = fields.String()
-    email = fields.String()
+    phone = fields.String(allow_none=True)
+    email = fields.String(allow_none=True)
     active = fields.Boolean(required=True)
     location_id = fields.Integer(data_key='locationId')
 
