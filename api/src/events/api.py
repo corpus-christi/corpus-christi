@@ -8,7 +8,7 @@ from marshmallow import ValidationError
 from sqlalchemy import func
 
 from . import events
-from .models import Event, Asset, Team, TeamMember, EventPerson, EventAsset, EventTeam, EventSchema, AssetSchema, TeamSchema, TeamMemberSchema, EventTeamSchema, EventPersonSchema
+from .models import Event, Asset, Team, TeamMember, EventPerson, EventAsset, EventParticipant, EventTeam, EventSchema, AssetSchema, TeamSchema, TeamMemberSchema, EventTeamSchema, EventPersonSchema, EventParticipantSchema
 from ..people.models import Person, PersonSchema
 from .. import db
 
@@ -259,8 +259,8 @@ def add_event_persons(event_id, person_id):
     if not event:
         return jsonify(f"Event with id #{event_id} does not exist."), 404
 
-    # Make sure asset isn't already booked in the current event
-    # Make sure asset isn't booked in another event during that time    
+    # Make sure individual isn't already booked in the current event
+    # Make sure individual isn't booked in another event during that time    
     event_start = event.start
     event_end = event.end
 
@@ -312,6 +312,69 @@ def delete_event_persons(event_id, person_id):
 
     # 204 codes don't respond with any content
     return 'Successfully removed individual', 204
+
+# ---- Participant
+
+event_participant_schema = EventParticipantSchema(exclude=['event'])
+
+@events.route('/<event_id>/participants')
+@jwt_required
+def get_event_participants(event_id):
+    participants = db.session.query(EventParticipant).filter_by(event_id=event_id).all()
+    
+    return jsonify(event_participant_schema.dump(participants, many=True))
+    
+@events.route('/<event_id>/participants/<person_id>', methods=['POST','PUT'])
+@jwt_required
+def add_event_participants(event_id, person_id):
+    try:
+        valid_confirmation = event_participant_schema.load(request.json, partial=('event_id', 'person_id'))
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+
+    event = db.session.query(Event).filter_by(id=event_id).first()
+    event_participants = db.session.query(Event).join(EventParticipant).filter_by(person_id=person_id).all()
+
+    if not event:
+        return jsonify(f"Event with id #{event_id} does not exist."), 404
+
+    new_entry = EventParticipant(**{'event_id': event_id, 'person_id': person_id, 'confirmed': valid_confirmation['confirmed']})
+    db.session.add(new_entry)
+    db.session.commit()
+
+    return jsonify(f"Person with id #{person_id} successfully booked for Event with id #{event_id}.")
+
+@events.route('/<event_id>/participants/<person_id>', methods=['PATCH'])
+@jwt_required
+def modify_event_participant(event_id, person_id):
+    try:
+        valid_confirmation = event_participant_schema.load(request.json, partial=('event_id', 'person_id'))
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+
+    event_participant = db.session.query(EventParticipant).filter_by(person_id=person_id).filter_by(event_id=event_id).first()
+
+    if not event_participant:
+        return jsonify(f"Person with id #{person_id} is not associated with Event with id #{event_id}."), 404
+
+    setattr(event_participant, 'confirmed', valid_confirmation['confirmed'])
+    db.session.commit()
+
+    return jsonify(event_person_schema.dump(event_participant))
+    
+@events.route('/<event_id>/participants/<person_id>', methods=['DELETE'])
+@jwt_required
+def delete_event_participant(event_id, person_id):
+    event_participant = db.session.query(EventParticipant).filter_by(person_id=person_id).filter_by(event_id=event_id).first()
+
+    if not event_participant:
+        return jsonify(f"Person with id #{person_id} is not assigned to Event with id #{event_id}."), 404
+
+    db.session.delete(event_participant)
+    db.session.commit()
+
+    # 204 codes don't respond with any content
+    return 'Successfully removed participant', 204
 
 # ---- Asset
 
