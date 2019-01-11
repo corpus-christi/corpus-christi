@@ -54,7 +54,7 @@
             >
               <v-icon small>filter_none</v-icon>
             </v-btn>
-            <span>Duplicate ($t me)</span>
+            <span>{{ $t("actions.duplicate") }}</span>
           </v-tooltip>
           <v-tooltip bottom  v-if="props.item.active">
             <v-btn
@@ -194,7 +194,7 @@ export default {
       copyEvent.start %= 86400000; //ms in a day
       copyEvent.end = new Date(copyEvent.end).getTime();
       copyEvent.end %= 86400000; //ms in a day
-      console.log(copyEvent.start)
+      delete copyEvent.id;
       this.activateEventDialog(copyEvent);
     },
     

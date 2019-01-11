@@ -238,7 +238,6 @@ export default {
           this.event.start = new Date(this.event.start);
           this.startTime = this.getTimeFromTimestamp(this.event.start);
           this.startDate = this.getDateFromTimestamp(this.event.start);
-          console.log(this.startDate)
         }
         if (this.event.end != null) {
           this.event.end = new Date(this.event.end);
