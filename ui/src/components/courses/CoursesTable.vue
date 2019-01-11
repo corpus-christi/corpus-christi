@@ -144,6 +144,8 @@ export default {
         case "all":
           return this.courses;
           break;
+        default:
+          break;
       }
   
     },
