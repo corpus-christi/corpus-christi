@@ -33,6 +33,8 @@ def create_course():
 def read_all_courses():
     """List all active and inactive courses"""
     result = db.session.query(Course).all()
+    #for i in range(0, len(result)):
+    print(result[0].prerequisites[0], "\n")
     return jsonify(course_schema.dump(result, many=True))
 
 
@@ -105,34 +107,24 @@ def reactivate_course(course_id):
 
 prerequisite_schema = PrerequisiteSchema()
 
-
-@courses.route('/courses/<course_id>/prerequisites', methods=['POST'])
+"""
+Route adds prerequisite for a specific course
+"""
+@courses.route('/courses/prerequisites/<course_id>', methods=['POST'])
 @jwt_required
 def create_prerequisite(course_id):
     course = db.session.query(Course).filter_by(id=course_id).first()
     if course is None:
         return 'Course not found', 404
-    print("\n\n", request.json['prereq_id'], "\n\n")
-
-    course.prerequisite.append(db.session.query(Course).filter_by(id=request.json['prereq_id']).first())
-
-
-    """Set given prerequisite to be associated with given course
-
-    Note: Need to get two course ids"""
-
-    # try:
-    #     valid_prerequisite = prerequisite_schema.load(request.json)
-    # except ValidationError as err:
-    #     return jsonify(err.messages), 422
-    #
-    # new_prerequisite = Prerequisite(**valid_prerequisite)
-    # db.session.add(new_prerequisite)
+    course.prerequisites.append(db.session.query(Course).filter_by(id=request.json['prereq_id']).first())
     db.session.commit()
     return jsonify(course_schema.dump(course)), 201
 
-
-@courses.route('/prerequisites')
+"""
+Route reads all prerequisites in database
+--Might not need later
+"""
+@courses.route('/courses/prerequisites')
 @jwt_required
 def read_all_prerequisites():
     result = db.session.query(Course).all() #Get courses to get prereq's
@@ -143,7 +135,9 @@ def read_all_prerequisites():
     return jsonify(course_schema.dump(results, many=True))
 
 # read all courses with prereq (?)
-@courses.route('/prerequisites/<course_id>')
+
+
+@courses.route('/courses/prerequisites/<course_id>')
 def read_one_course_prerequisites(course_id):
     result = db.session.query(Course).filter_by(id=course_id).first()
     prereqs_to_return = []
@@ -153,7 +147,7 @@ def read_one_course_prerequisites(course_id):
 
 
 
-@courses.route('/prerequisites/<prerequisite_id>', methods=['PATCH'])
+@courses.route('/courses/prerequisites/<prerequisite_id>', methods=['PATCH'])
 @jwt_required
 def update_prerequisite(prerequisite_id):
     try:
