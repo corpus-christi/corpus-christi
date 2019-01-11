@@ -28,7 +28,7 @@ describe("Testing Editing User Information", () => {
       .type('Quality');
   });
   it("When: Clicking on the gear button", () => {
-    cy.get('[data-cy=edit-password').click();
+    cy.get('[data-cy=admin-person').click();
   });
   it("Then: The person's password can be changed", () => {
     cy.get('[data-cy=new-update-password').type('foobar123');
@@ -36,7 +36,7 @@ describe("Testing Editing User Information", () => {
     cy.get('[data-cy=confirm-button]').click();
   });
   it("And: The password can be changed as many times as desired", () => {
-    cy.get('[data-cy=edit-password').click();
+    cy.get('[data-cy=admin-person').click();
     cy.get('[data-cy=new-update-password').type('password');
     cy.get('[data-cy=confirm-password').type('password');
     cy.get('[data-cy=confirm-button]').click();
