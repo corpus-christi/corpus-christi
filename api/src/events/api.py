@@ -242,11 +242,6 @@ def delete_asset(asset_id):
     # 204 codes don't respond with any content
     return jsonify(asset_schema.dump(asset)), 204
 
-@events.route('/assets/<asset_id>', methods=['DELETE'])
-@jwt_required
-def delete_asset(asset_id):
-    pass
-
 # Handles PUT and PATCH requests
 def modify_asset(asset_id, new_value_dict):
     return modify_entity(Asset, asset_id, new_value_dict)
