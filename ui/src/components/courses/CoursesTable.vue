@@ -220,6 +220,12 @@ export default {
             Object.assign(course, resp.data);
             this.snackbar.text = this.$t("courses.archived");
             this.snackbar.show = true;
+          })
+          .catch(err => {
+            this.snackbar.text = this.$t("courses.update-failed");
+            this.snackbar.show = true;
+          })
+          .finally(() => {
             this.deactivateDialog.loading = false;
             this.deactivateDialog.show = false;
           });
@@ -234,6 +240,10 @@ export default {
             this.snackbar.text = this.$t("courses.reactivated");
             this.snackbar.show = true;
           })
+          .catch(err => {
+            this.snackbar.text = this.$t("courses.update-failed");
+            this.snackbar.show = true;
+          });
     },
 
     saveCourse(course) {

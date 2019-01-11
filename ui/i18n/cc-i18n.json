@@ -30,8 +30,8 @@
       "view-archived": "View Archived"
     },
     "courses": {
-      "add-failed": "Failed to Add Course",
-      "added": "Course Added",
+      "add-failed": "Failed to add course",
+      "added": "Course added",
       "archived": "Course archived",
       "confirm-archive": "Are you sure you want to archive this course?",
       "course": "Courses",
@@ -39,10 +39,10 @@
       "enrolled": "Number Enrolled",
       "new": "New Course",
       "prerequisites": "Prerequisites",
-      "reactivated": "Course reactivated",
+      "reactivated": "Course unarchived",
       "title": "Title",
       "update-failed": "Failed to update course",
-      "updated": "Course Updated"
+      "updated": "Course updated"
     },
     "groups": {
       "title": "Home Churches"
@@ -120,8 +120,8 @@
       "view-archived": "Ver Archivo"
     },
     "courses": {
-      "add-failed": "Se Fall\u00f3 A\u00f1adir el Curso",
-      "added": "Curso A\u00f1adido",
+      "add-failed": "Se fall\u00f3 a\u00f1adir el Curso",
+      "added": "Curso a\u00f1adido",
       "archived": "Curso archivado",
       "confirm-archive": "\u00bfSeguro que quieres archivar este curso?",
       "course": "Cursos",
@@ -129,10 +129,10 @@
       "enrolled": "N\u00famero Registrado",
       "new": "Nuevo Curso",
       "prerequisites": "Prerrequisitos",
-      "reactivated": "Curso reactivado",
+      "reactivated": "Curso desarchivado",
       "title": "T\u00edtulo",
       "update-failed": "Se fall\u00f3 actualizar el curso",
-      "updated": "Curso Actualizado"
+      "updated": "Curso actualizado"
     },
     "groups": {
       "title": "Iglesias Hogar"
