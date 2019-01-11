@@ -55,7 +55,7 @@
         <td>{{ props.item.lastName }}</td>
         <td>{{ props.item.email }}</td>
         <td>{{ props.item.phone }}</td>
-        <td>
+        <td class="text-no-wrap">
           <v-tooltip bottom>
             <v-btn
               icon
