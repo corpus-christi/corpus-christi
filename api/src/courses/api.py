@@ -1,7 +1,7 @@
 import json
 
 from flask import request
-from flask.json import jsonify
+from flask.json import jsonify, dumps
 from flask_jwt_extended import jwt_required
 from marshmallow import ValidationError
 import sys
@@ -33,9 +33,16 @@ def create_course():
 def read_all_courses():
     """List all active and inactive courses"""
     result = db.session.query(Course).all()
-    #for i in range(0, len(result)):
-    print(result[0].prerequisites[0], "\n")
-    return jsonify(course_schema.dump(result, many=True))
+    results = course_schema.dump(result, many=True) # Courses are now JSON
+
+    # Runs through range of list values to access both lists at read_one_course
+    # (SQLAlchemy object and python dictionary)
+    for i in range(0, len(results)): # iterate through json results
+        results[i]['prerequisites'] = []
+        for j in result[i].prerequisites: # get list of prerequisites
+            j = course_schema.dump(j, many=False)
+            results[i]['prerequisites'].append(j)
+    return jsonify(results)
 
 
 @courses.route('/courses-active')
