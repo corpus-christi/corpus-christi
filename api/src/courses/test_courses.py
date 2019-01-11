@@ -49,8 +49,10 @@ def create_multiple_course_offerings(sqla, n=3):
     course_offerings_schema = Course_OfferingSchema()
     new_course_offerings = []
     for i in range(n):
-        valid_course_offering = course_offerings_schema.load(course_offerings_object_factory(courses[i].id))
-        new_course_offerings.append(Course_Offering(**valid_course_offering))
+        # valid_course_offering = course_offerings_schema.load(course_offerings_object_factory(courses[i].id))
+        # new_course_offerings.append(Course_Offering(**valid_course_offering))
+        courses[i].prereq = [courses[i+1]]
+        print(courses[i].depend,courses[i].prereq)
     sqla.add_all(new_course_offerings)
     sqla.commit()
 

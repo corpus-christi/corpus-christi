@@ -5,7 +5,7 @@ from flask_jwt_extended import jwt_required
 from marshmallow import ValidationError
 
 from . import courses
-from .models import Course, CourseSchema, Prerequisite, PrerequisiteSchema, Course_Offering, Course_OfferingSchema
+from .models import Course, CourseSchema, Course_Offering, Course_OfferingSchema, PrerequisiteSchema #Prerequisite
 from .. import db
 
 course_schema = CourseSchema()
@@ -34,13 +34,13 @@ def read_all_courses():
 @jwt_required
 def read_all_active_courses():
     result = db.session.query(Course).filter_by(active=True).all()
-    return jsonify(course_schema.dump(result, many=True))    
+    return jsonify(course_schema.dump(result, many=True))
 
 @courses.route('/courses-inactive')
 @jwt_required
 def read_all_inactive_courses():
     result = db.session.query(Course).filter_by(active=False).all()
-    return jsonify(course_schemadump(result, many=True))    
+    return jsonify(course_schemadump(result, many=True))
 
 @courses.route('/courses/<course_id>')
 @jwt_required
@@ -76,7 +76,7 @@ def deactivate_course(course_id):
         return jsonify(err.messages), 422
 
     course = db.session.query(Course).filter_by(id=course_id).first()
-                        
+
     if 'active' in request.json: #valid_course:
         setattr(course, 'active', False)
 
@@ -93,7 +93,7 @@ def reactivate_course(course_id):
         return jsonify(err.messages), 422
 
     course = db.session.query(Course).filter_by(id=course_id).first()
-    
+
     if "active" in request.json:
         setattr(course, 'active', True)
 
