@@ -31,6 +31,10 @@ actions:
     _desc: Confirm some action (e.g., updating a password)
     en: Confirm
     es: Confirmar
+  duplicate:
+    _desc: Duplicate some action (e.g., duplicating an event)
+    en: Duplicate
+    es: Duplicar
   edit:
     en: Edit
     es: Editar
@@ -48,6 +52,10 @@ actions:
     _desc: Search for something
     en: Search
     es: Buscar
+  search-people:
+    _desc: Search for people
+    en: Search People
+    es: Buscar Personas
   viewinactive:
     _desc: View all inactive people
     en: View Inactive
@@ -65,4 +73,4 @@ actions:
       es: Archivar
     unarchive:
       en: Unarchive
-      es: Desarchivo
+      es: Desarchivar

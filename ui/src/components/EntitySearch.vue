@@ -2,7 +2,7 @@
     <div>
         <v-autocomplete 
         data-cy="entity-search-field"
-        v-bind:label="$t('events.event-location')"
+        v-bind:label="location ? $t('events.event-location') : $t('actions.search-people')"
         prepend-icon="search"
         :items="items" 
         :loading="isLoading"
