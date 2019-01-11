@@ -1,19 +1,19 @@
 <template>
   <div>
     <v-menu offset-y v-if="isLoggedIn">
-      <v-btn id="cur-locale" flat slot="activator">
+      <v-btn id="cur-locale" flat slot="activator" data-cy="cur-locale">
         {{ currentAccount.fullName() }}
       </v-btn>
       <v-list>
         <v-list-tile>
-          <v-list-tile-title v-on:click="logAccountOut">
+          <v-list-tile-title v-on:click="logAccountOut" data-cy="logout">
             {{ $t("actions.logout") }}
           </v-list-tile-title>
         </v-list-tile>
       </v-list>
     </v-menu>
 
-    <v-btn v-else flat icon v-bind:to="{ name: 'login' }">
+    <v-btn v-else flat icon v-bind:to="{ name: 'login' }" data-cy="login">
       <v-icon>account_circle</v-icon>
     </v-btn>
   </div>

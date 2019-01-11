@@ -15,6 +15,7 @@
                 prepend-icon="person"
                 name="login"
                 type="text"
+                data-cy="username"
               ></v-text-field>
               <v-text-field
                 v-model="password"
@@ -22,15 +23,16 @@
                 prepend-icon="lock"
                 name="password"
                 type="password"
+                data-cy="password"
               ></v-text-field>
             </v-form>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="primary" v-on:click="cancel">
+            <v-btn color="primary" v-on:click="cancel" data-cy="cancel">
               {{ $t("actions.cancel") }}
             </v-btn>
-            <v-btn color="primary" v-on:click="login">
+            <v-btn color="primary" v-on:click="login" data-cy="login">
               {{ $t("actions.login") }}
             </v-btn>
           </v-card-actions>
