@@ -6,7 +6,8 @@ from flask_jwt_extended import jwt_required, get_raw_jwt, jwt_optional
 from marshmallow import ValidationError
 
 from . import people
-from .models import Person, Account, Role, AccountSchema, PersonSchema, RoleSchema
+from .models import Person, Account, AccountSchema, Role, PersonSchema, RoleSchema
+from ..attributes.models import Attribute, AttributeSchema
 from .. import db
 
 # ---- Person
@@ -186,9 +187,12 @@ def activate_account(account_id):
     db.session.commit()
 
     return jsonify(account_schema.dump(account))
+
 # ---- Roles
 
+
 role_schema = RoleSchema()
+
 
 @people.route('/role', methods=['POST'])
 @jwt_required
@@ -246,6 +250,7 @@ def update_role(role_id):
 def delete_role(role_id):
     pass
 
+
 @people.route('/role/<account_id>&<role_id>', methods=['POST'])
 @jwt_required
 def add_role_to_account(account_id, role_id):
@@ -265,10 +270,9 @@ def add_role_to_account(account_id, role_id):
     db.session.commit()
 
     user_roles = []
-    roles = db.session.query(Role).join(Account, Role.accounts).filter_by(id=account_id).filter_by(active=True).all()
+    roles = db.session.query(Role).join(Account, Role.accounts).filter_by(
+        id=account_id).filter_by(active=True).all()
     for r in roles:
         user_roles.append(role_schema.dump(r)['nameI18n'])
 
     return jsonify(user_roles)
-
-
