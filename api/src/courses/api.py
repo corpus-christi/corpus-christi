@@ -64,21 +64,13 @@ def read_one_course(course_id):
 @jwt_required
 def update_course(course_id):
     """Update course with given course_id with appropriate details"""
-    # try:
-    #     valid_course = course_schema.load(request.json)
-    # except ValidationError as err:
-    #     return jsonify(err.messages), 422
 
-    # course = db.session.query(Course).filter_by(id=course_id).first()
-    # #print(course_id)
-    # for i in request.json:
-    #     #print(request.json[i])
-    #     if(course[i] not None):
-    #         course[i] = request.json[i]
-
-    # for key, val in request.json:
-    #     setattr(course, key, val)
-
+    course = db.session.query(Course).filter_by(id=course_id).first()
+    if course is None:
+        return 'Not Found', 404
+    for attr in "description", "active", "name":
+        if attr in request.json:
+            setattr(course, attr, request.json[attr])
     db.session.commit()
     return jsonify(course_schema.dump(course))
 
@@ -120,8 +112,9 @@ def create_prerequisite(course_id):
     course = db.session.query(Course).filter_by(id=course_id).first()
     if course is None:
         return 'Course not found', 404
-    #print(prereq_id)
-    course.prerequisite.append(db.session.query(Course).filter_by(id=request.json[prereq_id]).first())
+    print("\n\n", request.json['prereq_id'], "\n\n")
+
+    course.prerequisite.append(db.session.query(Course).filter_by(id=request.json['prereq_id']).first())
 
 
     """Set given prerequisite to be associated with given course
@@ -136,7 +129,7 @@ def create_prerequisite(course_id):
     # new_prerequisite = Prerequisite(**valid_prerequisite)
     # db.session.add(new_prerequisite)
     db.session.commit()
-    return jsonify(prerequisite_schema.dump(new_prerequisite)), 201
+    return jsonify(course_schema.dump(course)), 201
 
 
 @courses.route('/prerequisites')
