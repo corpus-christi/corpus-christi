@@ -8,7 +8,7 @@ from marshmallow import ValidationError
 from sqlalchemy import func
 
 from . import events
-from .models import Event, Asset, Team, TeamMember, EventAsset, EventTeam, EventSchema, AssetSchema, TeamSchema, TeamMemberSchema, EventTeamSchema
+from .models import Event, Asset, Team, TeamMember, EventPerson, EventAsset, EventTeam, EventSchema, AssetSchema, TeamSchema, TeamMemberSchema, EventTeamSchema, EventPersonSchema
 from ..people.models import Person
 from .. import db
 
@@ -184,15 +184,10 @@ def remove_asset_from_event(event_id, asset_id):
     # 204 codes don't respond with any content
     return 'Successfully un-booked', 204
 
-event_team_schema = EventTeamSchema(exclude=['team'])
-
 @events.route('/<event_id>/teams')
 @jwt_required
 def get_event_teams(event_id):
     teams = db.session.query(Team).join(EventTeam).filter_by(event_id=event_id).all()
-
-    if not teams:
-        return jsonify(f"Event with id #{event_id} does not have any teams."), 404
 
     return jsonify(team_schema.dump(teams, many=True))
     
@@ -240,6 +235,83 @@ def delete_event_team(event_id, team_id):
 
     # 204 codes don't respond with any content
     return 'Successfully removed team member', 204
+
+event_person_schema = EventPersonSchema(exclude=['event'])
+
+@events.route('/<event_id>/individuals')
+@jwt_required
+def get_event_persons(event_id):
+    people = db.session.query(EventPerson).filter_by(event_id=event_id).all()
+    
+    return jsonify(event_person_schema.dump(people, many=True))
+    
+@events.route('/<event_id>/individuals/<person_id>', methods=['POST','PUT'])
+@jwt_required
+def add_event_persons(event_id, person_id):
+    try:
+        valid_description = event_person_schema.load(request.json, partial=('event_id', 'person_id'))
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+
+    event = db.session.query(Event).filter_by(id=event_id).first()
+    event_people = db.session.query(Event).join(EventPerson).filter_by(person_id=person_id).all()
+
+    if not event:
+        return jsonify(f"Event with id #{event_id} does not exist."), 404
+
+    # Make sure asset isn't already booked in the current event
+    # Make sure asset isn't booked in another event during that time    
+    event_start = event.start
+    event_end = event.end
+
+    is_overlap = False
+
+    for event_person in event_people:
+        if event_start <= event_person.start < event_end or event_start < event_person.end <= event_end \
+          or event_person.start <= event_start < event_person.end or event_person.start < event.end <= event_person.end:
+            is_overlap = True
+            break
+
+    if is_overlap:
+        return jsonify(f"Person with id #{person_id} is unavailable for Event with id #{event_id}."), 422
+    else:
+        new_entry = EventPerson(**{'event_id': event_id, 'person_id': person_id, 'description': valid_description['description']})
+        db.session.add(new_entry)
+        db.session.commit()
+
+        return jsonify(f"Person with id #{person_id} successfully booked for Event with id #{event_id}.")
+
+@events.route('/<event_id>/individuals/<person_id>', methods=['PATCH'])
+@jwt_required
+def modify_event_person(event_id, person_id):
+    try:
+        valid_description = event_person_schema.load(request.json, partial=('event_id', 'person_id'))
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+
+    event_person = db.session.query(EventPerson).filter_by(person_id=person_id).filter_by(event_id=event_id).first()
+
+    if not event_person:
+        return jsonify(f"Person with id #{person_id} is not associated with Event with id #{event_id}."), 404
+
+    setattr(event_person, 'description', valid_description['description'])
+    db.session.commit()
+
+    return jsonify(event_person_schema.dump(event_person))
+    
+@events.route('/<event_id>/individuals/<person_id>', methods=['DELETE'])
+@jwt_required
+def delete_event_persons(event_id, person_id):
+    event_person = db.session.query(EventPerson).filter_by(person_id=person_id).filter_by(event_id=event_id).first()
+
+    if not event_person:
+        return jsonify(f"Person with id #{person_id} is not assigned to Event with id #{event_id}."), 404
+
+    db.session.delete(event_person)
+    db.session.commit()
+
+    # 204 codes don't respond with any content
+    return 'Successfully removed individual', 204
 
 # ---- Asset
 
@@ -484,7 +556,7 @@ def delete_team_member(team_id, member_id):
     if not team_member:
         return jsonify(f"Member with id #{member_id} is not on Team with id #{team_id}."), 404
 
-    db.session.delete(team_member)
+    setattr(team_member, 'active', False)
     db.session.commit()
 
     # 204 codes don't respond with any content
