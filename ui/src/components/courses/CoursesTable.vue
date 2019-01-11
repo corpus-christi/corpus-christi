@@ -2,32 +2,34 @@
   <div>
     <!-- Header -->
     <v-toolbar>
-      <v-toolbar-title> {{ $t("courses.course") }}</v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-text-field
-        v-model="search"
-        append-icon="search"
-        v-bind:label="$t('actions.search')"
-        single-line
-        hide-details
-      ></v-text-field>
-      <v-spacer></v-spacer>      
- 
-      <v-select 
-        v-model="viewStatus"
-        :items="options"
-        standard
-        hide-details>
-        </v-select>
-    
-      <v-btn
-        color="primary"
-        raised
-        v-on:click.stop="newCourse"
-      >
-        <v-icon left>library_add</v-icon>
-        {{ $t("courses.new") }}
-      </v-btn>
+      <v-layout align-center justify-space-between fill-height>
+        <v-flex md2>
+          <v-toolbar-title>{{ $t("courses.course") }}</v-toolbar-title>
+        </v-flex>
+        <v-spacer></v-spacer>
+        <v-flex md3>
+          <v-text-field
+            v-model="search"
+            append-icon="search"
+            v-bind:label="$t('actions.search')"
+            single-line
+            box
+            hide-details
+          ></v-text-field>
+        </v-flex>
+        <v-spacer></v-spacer>
+
+        <v-flex md3>
+          <v-select v-model="viewStatus" :items="options" solo hide-details></v-select>
+        </v-flex>
+
+        <v-flex shrink justify-self-end>
+        <v-btn color="primary" raised v-on:click.stop="newCourse">
+          <v-icon left>library_add</v-icon>
+          {{ $t("courses.new") }}
+        </v-btn>
+        </v-flex>
+      </v-layout>
     </v-toolbar>
 
     <!-- Table of existing people -->
@@ -38,11 +40,7 @@
       :loading="!tableLoaded"
       class="elevation-1"
     >
-      <v-progress-linear
-        slot="progress"
-        color="primary"
-        indeterminate
-      ></v-progress-linear>
+      <v-progress-linear slot="progress" color="primary" indeterminate></v-progress-linear>
       <template slot="items" slot-scope="props">
         <td>{{ props.item.title }}</td>
         <td>{{ props.item.description }}</td>
@@ -58,9 +56,7 @@
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false">
-        {{ $t("actions.close") }}
-      </v-btn>
+      <v-btn flat @click="snackbar.show = false">{{ $t("actions.close") }}</v-btn>
     </v-snackbar>
 
     <!-- New/Edit dialog -->
@@ -79,9 +75,22 @@
       <v-card>
         <v-card-text>{{ $t("courses.confirm-archive") }}</v-card-text>
         <v-card-actions>
-          <v-btn v-on:click="cancelDeactivate" color="secondary" flat :disabled="deactivateDialog.loading" data-cy="">{{ $t("actions.cancel") }}</v-btn>
+          <v-btn
+            v-on:click="cancelDeactivate"
+            color="secondary"
+            flat
+            :disabled="deactivateDialog.loading"
+            data-cy
+          >{{ $t("actions.cancel") }}</v-btn>
           <v-spacer></v-spacer>
-          <v-btn v-on:click="deactivate(deactivateDialog.course)" color="primary" raised :disabled="deactivateDialog.loading" :loading="deactivateDialog.loading" data-cy="">{{ $t("actions.confirm") }}</v-btn>
+          <v-btn
+            v-on:click="deactivate(deactivateDialog.course)"
+            color="primary"
+            raised
+            :disabled="deactivateDialog.loading"
+            :loading="deactivateDialog.loading"
+            data-cy
+          >{{ $t("actions.confirm") }}</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -123,8 +132,7 @@ export default {
       tableLoaded: false,
       selected: [],
       search: "",
-      viewStatus: "active",
-
+      viewStatus: "active"
     };
   },
   computed: {
@@ -143,28 +151,23 @@ export default {
 
     options() {
       return [
-        {text: this.$t("actions.view-active"), value: "active"},
-        {text: this.$t("actions.view-archived"), value: "archived"},
-        {text: this.$t("actions.view-all"), value: "all"}
-      ]
+        { text: this.$t("actions.view-active"), value: "active" },
+        { text: this.$t("actions.view-archived"), value: "archived" },
+        { text: this.$t("actions.view-all"), value: "all" }
+      ];
     },
     showCourses() {
       switch (this.viewStatus) {
         case "active":
-          return  this.courses.filter(course => course.active);
-          break;
+          return this.courses.filter(course => course.active);
         case "archived":
           return this.courses.filter(course => !course.active);
-          break;
         case "all":
           return this.courses;
-          break;
         default:
           break;
       }
-  
-    },
-
+    }
   },
 
   methods: {
@@ -214,36 +217,36 @@ export default {
     deactivate(course) {
       this.deactivateDialog.loading = true;
       this.$http
-          .patch(`/api/v1/courses/courses/${course.id}`, {active: false})
-          .then(resp => {
-            console.log("EDITED", resp);
-            Object.assign(course, resp.data);
-            this.snackbar.text = this.$t("courses.archived");
-            this.snackbar.show = true;
-          })
-          .catch(err => {
-            this.snackbar.text = this.$t("courses.update-failed");
-            this.snackbar.show = true;
-          })
-          .finally(() => {
-            this.deactivateDialog.loading = false;
-            this.deactivateDialog.show = false;
-          });
+        .patch(`/api/v1/courses/courses/${course.id}`, { active: false })
+        .then(resp => {
+          console.log("EDITED", resp);
+          Object.assign(course, resp.data);
+          this.snackbar.text = this.$t("courses.archived");
+          this.snackbar.show = true;
+        })
+        .catch(() => {
+          this.snackbar.text = this.$t("courses.update-failed");
+          this.snackbar.show = true;
+        })
+        .finally(() => {
+          this.deactivateDialog.loading = false;
+          this.deactivateDialog.show = false;
+        });
     },
 
     activate(course) {
       this.$http
-          .patch(`/api/v1/courses/courses/${course.id}`, {active: true})
-          .then(resp => {
-            console.log("EDITED", resp);
-            Object.assign(course, resp.data);
-            this.snackbar.text = this.$t("courses.reactivated");
-            this.snackbar.show = true;
-          })
-          .catch(err => {
-            this.snackbar.text = this.$t("courses.update-failed");
-            this.snackbar.show = true;
-          });
+        .patch(`/api/v1/courses/courses/${course.id}`, { active: true })
+        .then(resp => {
+          console.log("EDITED", resp);
+          Object.assign(course, resp.data);
+          this.snackbar.text = this.$t("courses.reactivated");
+          this.snackbar.show = true;
+        })
+        .catch(() => {
+          this.snackbar.text = this.$t("courses.update-failed");
+          this.snackbar.show = true;
+        });
     },
 
     saveCourse(course) {
@@ -294,18 +297,14 @@ export default {
       }
 
       this.courseDialog.show = false;
-
     }
   },
 
   mounted: function() {
-    this.$http
-      .get("/api/v1/courses/courses")
-      .then(resp => {
-        this.courses = resp.data;
-        this.tableLoaded = true;
-      });
-
+    this.$http.get("/api/v1/courses/courses").then(resp => {
+      this.courses = resp.data;
+      this.tableLoaded = true;
+    });
   }
 };
 </script>
