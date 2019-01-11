@@ -21,9 +21,28 @@
       "save": "Save",
       "search": "Search",
       "tooltips": {
-        "deactivate": "Deactivate",
+        "deactivate": "Archive",
+        "reactivate": "Unarchive",
         "settings": "Settings"
-      }
+      },
+      "view-active": "View Active",
+      "view-all": "View All",
+      "view-archived": "View Archived"
+    },
+    "courses": {
+      "add-failed": "Failed to add course",
+      "added": "Course added",
+      "archived": "Course archived",
+      "confirm-archive": "Are you sure you want to archive this course?",
+      "course": "Courses",
+      "description": "Description",
+      "enrolled": "Number Enrolled",
+      "new": "New Course",
+      "prerequisites": "Prerequisites",
+      "reactivated": "Course unarchived",
+      "title": "Title",
+      "update-failed": "Failed to update course",
+      "updated": "Course updated"
     },
     "groups": {
       "title": "Home Churches"
@@ -67,6 +86,12 @@
       "title": "Public"
     },
     "validation": {
+      "attributes": {
+        "email": "email",
+        "firstName": "first name",
+        "lastName": "last name",
+        "title": "title"
+      },
       "required": "Required"
     }
   },
@@ -86,15 +111,34 @@
       "close": "Cerrar",
       "confirm": "Confirmar",
       "edit": "Editar",
-      "header": "Comportamiento",
+      "header": "Acciones",
       "login": "Acceder",
       "logout": "Cerrar sesi\u00f3n",
       "save": "Salvar",
       "search": "Buscar",
       "tooltips": {
-        "deactivate": "Desactivar",
+        "deactivate": "Archivar",
+        "reactivate": "Desarchivar",
         "settings": "Ajustes"
-      }
+      },
+      "view-active": "Ver Activo",
+      "view-all": "Ver Todo",
+      "view-archived": "Ver Archivado"
+    },
+    "courses": {
+      "add-failed": "Se fall\u00f3 a a\u00f1adir el curso",
+      "added": "Curso a\u00f1adido",
+      "archived": "Curso archivado",
+      "confirm-archive": "\u00bfEst\u00e1s seguro que quieres archivar este curso?",
+      "course": "Cursos",
+      "description": "Descripci\u00f3n",
+      "enrolled": "N\u00famero Registrado",
+      "new": "Nuevo Curso",
+      "prerequisites": "Prerrequisitos",
+      "reactivated": "Curso desarchivado",
+      "title": "T\u00edtulo",
+      "update-failed": "Se fall\u00f3 a actualizar el curso",
+      "updated": "Curso actualizado"
     },
     "groups": {
       "title": "Iglesias Hogar"
@@ -138,6 +182,12 @@
       "title": "P\u00fablico"
     },
     "validation": {
+      "attributes": {
+        "email": "correo electr\u00f3nico",
+        "firstName": "nombre de pila",
+        "lastName": "appellido",
+        "title": "t\u00edtulo"
+      },
       "required": "Necesario"
     }
   }
