@@ -2,6 +2,7 @@ import pytest
 import random
 
 from faker import Faker
+from flask import url_for
 
 from .models import Course, CourseSchema, Prerequisite, PrerequisiteSchema, Course_Offering, Course_OfferingSchema
 
@@ -9,13 +10,14 @@ def flip():
     """Return true or false randomly."""
     return random.choice((True, False))
 
-def course_object_factory():
+def course_object_factory(course_id):
     """Cook up a fake course."""
     fake = Faker()  # Use a generic one; others may not have all methods.
     course = {
-    'name': fake.sentence(nb_words=3),
-    'description': fake.paragraph(),
-    'active': flip()
+        #'id': course_id,
+        'name': fake.sentence(nb_words=3),
+        'description': fake.paragraph(),
+        'active': flip()
     }
     return course
 
@@ -116,20 +118,40 @@ def test_read_one_course(client, db):
     # THEN assert entry called is only entry returned
     assert True == False
 
+def create_course(sqla):
+    """Create single course into DB"""
+    course_schema = CourseSchema()
+    new_courses = []
+    valid_course = course_schema.load(course_object_factory(1))
+    new_courses.append(Course(**valid_course))
+    sqla.add_all(new_courses) #should only add one course tho
+    sqla.commit()
 
-@pytest.mark.xfail()
-def test_deactivate_course(client, db):
+@pytest.mark.smoke
+def test_deactivate_course(auth_client):
+    """Test that an active course can be deactivated"""
     # GIVEN course to deactivate
-    # WHEN course is deactivated
-    # THEN assert course is no longer active
-    assert True == False
+    create_course(auth_client.sqla)
+    course = auth_client.sqla.query(Course).first()
+    # WHEN course is changed to inactive
+    resp = auth_client.patch(url_for('courses.deactivate_course', course_id=course.id),
+                        json={'active': False})
+    # THEN assert course is inactive
+    assert resp.status_code == 200
+    assert resp.json['active'] == False
 
-@pytest.mark.xfail()
-def test_reactivate_course(client, db):
-    # GIVEN deactivated course
-    # WHEN course is reactivated
+@pytest.mark.smoke
+def test_reactivate_course(auth_client):
+    """Test that an active course can be deactivated"""
+    # GIVEN course to activate
+    create_course(auth_client.sqla)
+    course = auth_client.sqla.query(Course).first()
+    # WHEN course is changed to active
+    resp = auth_client.patch(url_for('courses.reactivate_course', course_id=course.id),
+                        json={'active': True})
     # THEN assert course is active
-    assert True == False
+    assert resp.status_code == 200
+    assert resp.json['active'] == True
 
 """
 # Test
@@ -176,14 +198,12 @@ def test_read_all_prerequisites(client, db):
     assert True == False
 
 #FIX NAME (Will test to see all courses that have given course as a prerequisite)
+@pytest.mark.xfail()
 def test_read_all_courses_with_prerequisite(client, db):
     #GIVEN prerequisite course in database
     #WHEN other courses have that course as a prerequisite
     #THEN list all courses with given prerequisite
     assert True == False
-
-
-
 
 @pytest.mark.xfail()
 def test_update_prerequisite(client, db):

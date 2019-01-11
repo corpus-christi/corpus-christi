@@ -71,36 +71,33 @@ def update_course(course_id):
     db.session.commit()
     return jsonify(course_schema.dump(course))
 
-@courses.route('/courses/<course_id>', methods=['PATCH'])
+@courses.route('/courses/deactivate/<course_id>', methods=['PATCH'])
 @jwt_required
 def deactivate_course(course_id):
     """Set active course with given course_id to inactive (False)"""
-    try:
-        valid_course = course_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    course = db.session.query(Course).filter_by(id=course_id).first()
-                        
+    valid_course = db.session.query(Course).filter_by(id=course_id).first()
+    if valid_course is None:
+        return 'Not Found', 404
+                            
     if 'active' in request.json: #valid_course:
-        setattr(course, 'active', False)
+        setattr(valid_course, 'active', False)
 
     db.session.commit()
-    return jsonify(course_schema.dump(course))
+    return jsonify(course_schema.dump(valid_course))
 
-@courses.route('/courses/<course_id>', methods=['PATCH'])
+@courses.route('/courses/reactivate/<course_id>', methods=['PATCH'])
 @jwt_required
 def reactivate_course(course_id):
     """Set inactive course with given course_id to active (True)"""
-    try:
-        valid_course = course_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    course = db.session.query(Course).filter_by(id=course_id).first()
+    valid_course = db.session.query(Course).filter_by(id=course_id).first()
+    if valid_course is None:
+        return 'Not Found', 404
     
-    if "active" in request.json:
-        setattr(course, 'active', True)
+    if 'active' in request.json:
+        setattr(valid_course, 'active', True)
+    
+    db.session.commit()
+    return jsonify(course_schema.dump(valid_course))
 
 
 # ---- Prerequisite
