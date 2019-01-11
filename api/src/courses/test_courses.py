@@ -27,7 +27,7 @@ def create_multiple_courses(sqla, n=10):
     course_schema = CourseSchema()
     new_courses = []
     for i in range(n):
-        valid_course = course_schema.load(course_object_factory())
+        valid_course = course_schema.load(course_object_factory(i))
         new_courses.append(Course(**valid_course))
     sqla.add_all(new_courses)
     sqla.commit()
