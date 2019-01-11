@@ -7,10 +7,11 @@ from marshmallow import ValidationError
 import sys
 
 from . import courses
-from .models import Course, CourseSchema, Course_Offering, Course_OfferingSchema, PrerequisiteSchema #Prerequisite
+from .models import Course, CourseSchema, Course_Offering, Course_OfferingSchema, PrerequisiteSchema  # Prerequisite
 from .. import db
 
 course_schema = CourseSchema()
+
 
 @courses.route('/courses', methods=['POST'])
 @jwt_required
@@ -26,12 +27,14 @@ def create_course():
     db.session.commit()
     return jsonify(course_schema.dump(new_course)), 201
 
+
 @courses.route('/courses')
 @jwt_required
 def read_all_courses():
     """List all active and inactive courses"""
     result = db.session.query(Course).all()
     return jsonify(course_schema.dump(result, many=True))
+
 
 @courses.route('/courses-active')
 @jwt_required
@@ -40,12 +43,14 @@ def read_all_active_courses():
     result = db.session.query(Course).filter_by(active=True).all()
     return jsonify(course_schema.dump(result, many=True))
 
+
 @courses.route('/courses-inactive')
 @jwt_required
 def read_all_inactive_courses():
     """List all inactive courses"""
     result = db.session.query(Course).filter_by(active=False).all()
-    return jsonify(course_schema.dump(result, many=True))    
+    return jsonify(course_schema.dump(result, many=True))
+
 
 @courses.route('/courses/<course_id>')
 @jwt_required
@@ -53,6 +58,7 @@ def read_one_course(course_id):
     """List only one course with given course_id"""
     result = db.session.query(Course).filter_by(id=course_id).first()
     return jsonify(course_schema.dump(result))
+
 
 @courses.route('/courses/<course_id>', methods=['PATCH'])
 @jwt_required
@@ -71,6 +77,7 @@ def update_course(course_id):
     db.session.commit()
     return jsonify(course_schema.dump(course))
 
+
 @courses.route('/courses/deactivate/<course_id>', methods=['PATCH'])
 @jwt_required
 def deactivate_course(course_id):
@@ -78,12 +85,13 @@ def deactivate_course(course_id):
     valid_course = db.session.query(Course).filter_by(id=course_id).first()
     if valid_course is None:
         return 'Not Found', 404
-                            
-    if 'active' in request.json: #valid_course:
+
+    if 'active' in request.json:  # valid_course:
         setattr(valid_course, 'active', False)
 
     db.session.commit()
     return jsonify(course_schema.dump(valid_course))
+
 
 @courses.route('/courses/reactivate/<course_id>', methods=['PATCH'])
 @jwt_required
@@ -92,10 +100,10 @@ def reactivate_course(course_id):
     valid_course = db.session.query(Course).filter_by(id=course_id).first()
     if valid_course is None:
         return 'Not Found', 404
-    
+
     if 'active' in request.json:
         setattr(valid_course, 'active', True)
-    
+
     db.session.commit()
     return jsonify(course_schema.dump(valid_course))
 
@@ -104,11 +112,12 @@ def reactivate_course(course_id):
 
 prerequisite_schema = PrerequisiteSchema()
 
+
 @courses.route('/prerequisites', methods=['POST'])
 @jwt_required
 def create_prerequisite():
     """Set given prerequisite to be associated with given course
-    
+
     Note: Need to get two course ids"""
     try:
         valid_prerequisite = prerequisite_schema.load(request.json)
@@ -129,6 +138,7 @@ def read_all_prerequisites():
 
 # read all courses with prereq (?)
 
+
 @courses.route('/prerequisites/<prerequisite_id>', methods=['PATCH'])
 @jwt_required
 def update_prerequisite(prerequisite_id):
@@ -137,7 +147,8 @@ def update_prerequisite(prerequisite_id):
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    prerequisite = db.session.query(Prerequisite).filter_by(id=prerequisite_id).first()
+    prerequisite = db.session.query(
+        Prerequisite).filter_by(id=prerequisite_id).first()
 
     for key, val in valid_prerequisite.items():
         setattr(prerequisite, key, val)
@@ -149,6 +160,7 @@ def update_prerequisite(prerequisite_id):
 # ---- Course_Offering
 
 course_offering_schema = Course_OfferingSchema()
+
 
 @courses.route('/course_offerings', methods=['POST'])
 @jwt_required
@@ -173,25 +185,31 @@ def read_all_course_offerings():
 # read all active course offerings
 # read all inactive course offerings
 
+
 @courses.route('/course_offerings/<course_offering_id>')
 @jwt_required
 def read_one_course_offering(course_offering_id):
-    result = db.session.query(Course_Offering).filter_by(id=course_offering_id).first()
+    result = db.session.query(Course_Offering).filter_by(
+        id=course_offering_id).first()
     return jsonify(course_offering_schema.dump(result))
 
 
 @courses.route('/course_offerings/<course_offering_id>', methods=['PATCH'])
 @jwt_required
 def update_course_offering(course_offering_id):
-    try:
-        valid_course_offering = course_offering_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
+    # try:
+    #     valid_course_offering = course_offering_schema.load(request.json)
+    # except ValidationError as err:
+    #     return jsonify(err.messages), 422
 
-    course_offering = db.session.query(Course_Offering).filter_by(id=course_offering_id).first()
+    course_offering = db.session.query(
+        Course_Offering).filter_by(id=course_offering_id).first()
+    if course_offering is None:
+        return "Course Offering NOT Found", 404
 
-    for key, val in valid_course_offering.items():
-        setattr(course_offering, key, val)
+    for attr in 'description', "active", "max_size":
+        if attr in request.json:
+            setattr(course_offering, attr, request.json[attr])
 
     db.session.commit()
     return jsonify(course_offering_schema.dump(course_offering))
