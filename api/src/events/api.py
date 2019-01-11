@@ -9,7 +9,7 @@ from sqlalchemy import func
 
 from . import events
 from .models import Event, Asset, Team, TeamMember, EventPerson, EventAsset, EventTeam, EventSchema, AssetSchema, TeamSchema, TeamMemberSchema, EventTeamSchema, EventPersonSchema
-from ..people.models import Person
+from ..people.models import Person, PersonSchema
 from .. import db
 
 def modify_entity(entity_type, schema, id, new_value_dict):
@@ -477,6 +477,25 @@ def read_one_team(team_id):
         return jsonify(f"Team with id #{team_id} does not exist."), 404
 
     return jsonify(team_schema.dump(team))
+
+team_schema_no_members = TeamSchema(exclude=['members'])
+person_schema = PersonSchema()
+@events.route('/teams/members')
+@jwt_required
+def read_all_team_members():
+    teams = db.session.query(Team).all()
+
+    constructed_dict = dict()
+    for team in teams:
+        for member in team.members:
+            member_id = member.member_id
+            if member_id not in constructed_dict:
+                constructed_dict[member_id] = person_schema.dump(member.member)
+                constructed_dict[member_id]['active'] = member.active
+                constructed_dict[member_id]['teams'] = list()
+            constructed_dict[member_id]['teams'].append(team_schema_no_members.dump(team))
+
+    return jsonify(constructed_dict)
     
 
 @events.route('/teams/<team_id>', methods=['PUT'])
@@ -543,7 +562,7 @@ def modify_team_member(team_id, member_id):
     setattr(team_member, 'active', valid_attributes['active'])
     db.session.commit()
 
-    return jsonify(team_member_schema.dump(team_member))    
+    return jsonify(team_member_schema.dump(team_member))
 
 @events.route('/teams/<team_id>/members/<member_id>', methods=['POST','PUT'])
 @jwt_required
