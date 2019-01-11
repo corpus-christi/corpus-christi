@@ -21,7 +21,7 @@
       "save": "Save",
       "search": "Search",
       "tooltips": {
-        "deactivate": "Deactivate",
+        "deactivate": "Archive",
         "settings": "Settings"
       },
       "view-active": "View Active",
@@ -29,16 +29,18 @@
       "view-archived": "View Archived"
     },
     "courses": {
-      "add-failed": "Failed to add course",
-      "added": "Course added",
+      "add-failed": "Failed to Add Course",
+      "added": "Course Added",
+      "archived": "Course Archived",
       "course": "Courses",
       "description": "Description",
       "enrolled": "Number Enrolled",
       "new": "New Course",
       "prerequisites": "Prerequisites",
+      "reactivated": "Course Reactivated",
       "title": "Title",
-      "update-failed": "Failed to update course",
-      "updated": "Course updated"
+      "update-failed": "Failed to Update Course",
+      "updated": "Course Updated"
     },
     "groups": {
       "title": "Home Churches"
@@ -107,7 +109,7 @@
       "save": "Salvar",
       "search": "Buscar",
       "tooltips": {
-        "deactivate": "Desactivar",
+        "deactivate": "Archivo",
         "settings": "Ajustes"
       },
       "view-active": "Ver Activo",
@@ -115,16 +117,18 @@
       "view-archived": "Ver Archivo"
     },
     "courses": {
-      "add-failed": "Se fall\u00f3 a\u00f1adir el curso",
-      "added": "Curso a\u00f1adido",
+      "add-failed": "Se Fall\u00f3 A\u00f1adir el Curso",
+      "added": "Curso A\u00f1adido",
+      "archived": "Curso Archivado",
       "course": "Cursos",
       "description": "Descripci\u00f3n",
       "enrolled": "N\u00famero Registrado",
       "new": "Nuevo Curso",
       "prerequisites": "Prerrequisitos",
+      "reactivated": "Curso Reactivado",
       "title": "T\u00edtulo",
-      "update-failed": "Se fall\u00f3 actualizar el curso",
-      "updated": "Curso actualizado"
+      "update-failed": "Se Fall\u00f3 Actualizar el Curso",
+      "updated": "Curso Actualizado"
     },
     "groups": {
       "title": "Iglesias Hogar"

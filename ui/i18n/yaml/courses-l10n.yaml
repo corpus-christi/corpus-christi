@@ -18,15 +18,21 @@ courses:
     en: Prerequisites
     es: Prerrequisitos
   added:
-    en: Course added
-    es: Curso añadido
+    en: Course Added
+    es: Curso Añadido
   updated:
-    en: Course updated
-    es: Curso actualizado
+    en: Course Updated
+    es: Curso Actualizado
   add-failed:
-    en: Failed to add course
-    es: Se falló añadir el curso
+    en: Failed to Add Course
+    es: Se Falló Añadir el Curso
   update-failed:
-    en: Failed to update course
-    es: Se falló actualizar el curso
+    en: Failed to Update Course
+    es: Se Falló Actualizar el Curso
+  archived:
+    en: Course Archived
+    es: Curso Archivado
+  reactivated:
+    en: Course Reactivated
+    es: Curso Reactivado
   

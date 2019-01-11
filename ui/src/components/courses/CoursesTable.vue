@@ -190,7 +190,7 @@ export default {
           .then(resp => {
             console.log("EDITED", resp);
             Object.assign(course, resp.data);
-            this.snackbar.text = this.$t("courses.updated");
+            this.snackbar.text = this.$t("courses.archived");
             this.snackbar.show = true;
           })
     },
@@ -201,7 +201,7 @@ export default {
           .then(resp => {
             console.log("EDITED", resp);
             Object.assign(course, resp.data);
-            this.snackbar.text = this.$t("courses.updated");
+            this.snackbar.text = this.$t("courses.reactivated");
             this.snackbar.show = true;
           })
     },
