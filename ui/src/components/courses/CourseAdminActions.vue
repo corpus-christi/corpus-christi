@@ -15,7 +15,6 @@
       <span>{{ $t("actions.edit") }}</span>
     </v-tooltip>
     <v-tooltip bottom>
-
       <v-btn
         flat
         icon
@@ -23,10 +22,10 @@
         color="primary"
         slot="activator"
         v-bind:small="displayContext === 'compact'"
-        @click="emitAction('deactivate')"
+        @click="emitAction(course.active ? 'deactivate' : 'activate')"
       >
         <v-icon v-bind:small="displayContext === 'compact'">
-          {{ course.active ? "archive" : "unarchive" }}
+          {{ course.active ? "archive" : "undo" }}
         </v-icon>
       </v-btn>
       <span>{{ $t("actions.tooltips.deactivate") }}</span>
