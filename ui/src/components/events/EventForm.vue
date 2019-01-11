@@ -59,6 +59,7 @@
                 v-model="startDate"
                 @input="showStartDatePicker = false"
                 data-cy="start-date-picker"
+                :min="today"
               ></v-date-picker>
             </v-menu>
           </v-flex>
@@ -132,6 +133,7 @@
                 v-model="endDate"
                 @input="showEndDatePicker = false"
                 data-cy="end-date-picker"
+                :min="startDate || today"
               ></v-date-picker>
             </v-menu>
           </v-flex>
@@ -181,33 +183,13 @@
         </v-layout>
       </form>
     </v-card-text>
-    <!-- <v-card-actions>
-      <v-spacer></v-spacer>
-      <v-btn
-        color="primary"
-        flat
-        v-on:click="cancel"
-        data-cy="form-cancel"
-        >{{ $t("actions.cancel") }}</v-btn
-      >
-      <v-btn
-        color="primary"
-        flat
-        v-on:click="clear"
-        data-cy="form-clear"
-      >{{ $t("actions.clear") }}</v-btn>
-      <v-btn color="primary"
-        v-on:click="save"
-        data-cy="form-save"
-      >{{ $t("actions.save") }}</v-btn>
-    </v-card-actions> -->
     <v-card-actions>
       <v-btn
         color="secondary"
         flat
         v-on:click="cancel"
         :disabled="formDisabled"
-        data-cy=""
+        data-cy="form-cancel"
         >{{ $t("actions.cancel") }}</v-btn
       >
       <v-spacer></v-spacer>
@@ -221,7 +203,7 @@
         v-if="editMode === false"
         :loading="addMoreLoading"
         :disabled="formDisabled"
-        data-cy=""
+        data-cy="form-addanother"
         >{{ $t("actions.addanother") }}</v-btn
       >
       <v-btn
@@ -230,7 +212,7 @@
         v-on:click="save"
         :loading="saveLoading"
         :disabled="formDisabled"
-        data-cy=""
+        data-cy="form-save"
         >{{ $t("actions.save") }}</v-btn
       >
     </v-card-actions>
@@ -252,12 +234,13 @@ export default {
         this.clear();
       } else {
         this.event = eventProp;
-        if (this.event.start && this.event.start.length > 0) {
+        if (this.event.start != null) {
           this.event.start = new Date(this.event.start);
           this.startTime = this.getTimeFromTimestamp(this.event.start);
           this.startDate = this.getDateFromTimestamp(this.event.start);
+          console.log(this.startDate)
         }
-        if (this.event.end && this.event.end.length > 0) {
+        if (this.event.end != null) {
           this.event.end = new Date(this.event.end);
           this.endTime = this.getTimeFromTimestamp(this.event.end);
           this.endDate = this.getDateFromTimestamp(this.event.end);
@@ -284,6 +267,10 @@ export default {
 
     formDisabled() {
       return this.saveLoading || this.addMoreLoading;
+    },
+
+    today() {
+      return this.getDateFromTimestamp(Date.now())
     },
 
     ...mapGetters(["currentLanguageCode"])
@@ -316,6 +303,7 @@ export default {
       if (!this.errors.any()) {
         this.event.start = this.getTimestamp(this.startDate, this.startTime);
         this.event.end = this.getTimestamp(this.endDate, this.endTime);
+        this.event.active = true;
         this.$emit("save", this.event);
       }
     },
@@ -339,6 +327,9 @@ export default {
 
     getDateFromTimestamp(ts) {
       let date = new Date(ts);
+      if (date.getTime() < 86400000) { //ms in a day
+        return "";
+      }
       let yr = date.toLocaleDateString(this.currentLanguageCode, {
         year: "numeric"
       });

@@ -29,9 +29,8 @@
         <td class="hover-hand" v-on:click="$router.push({path: '/events/' + props.item.id})">{{ props.item.title }}</td>
         <td class="hover-hand" v-on:click="$router.push({path: '/events/' + props.item.id})">{{ getDisplayDate(props.item.start) }}</td>
         <td class="hover-hand" v-on:click="$router.push({path: '/events/' + props.item.id})">{{ props.item.location_name }}</td>
-        <td v-if="props.item.active">
-          <!-- <v-icon small @click="editEvent(props.item)">edit</v-icon> -->
-          <v-tooltip bottom>
+        <td>
+          <v-tooltip bottom v-if="props.item.active">
             <v-btn
               icon
               outline
@@ -51,15 +50,26 @@
               small
               color="primary"
               slot="activator"
+              v-on:click="duplicate(props.item)"
+            >
+              <v-icon small>filter_none</v-icon>
+            </v-btn>
+            <span>Duplicate ($t me)</span>
+          </v-tooltip>
+          <v-tooltip bottom  v-if="props.item.active">
+            <v-btn
+              icon
+              outline
+              small
+              color="primary"
+              slot="activator"
               v-on:click="confirmArchive(props.item)"
             >
               <v-icon small>archive</v-icon>
             </v-btn>
             <span>{{ $t("actions.tooltips.archive") }}</span>
           </v-tooltip>
-        </td>
-        <td v-else>
-          <v-tooltip bottom>
+          <v-tooltip bottom  v-if="!props.item.active">
             <v-btn
               icon
               outline
@@ -176,6 +186,16 @@ export default {
 
     confirmArchive(event) {
       this.activateArchiveDialog(event.id);
+    },
+
+    duplicate(event) {
+      const copyEvent = JSON.parse(JSON.stringify(event));
+      copyEvent.start = new Date(copyEvent.start).getTime();
+      copyEvent.start %= 86400000; //ms in a day
+      copyEvent.end = new Date(copyEvent.end).getTime();
+      copyEvent.end %= 86400000; //ms in a day
+      console.log(copyEvent.start)
+      this.activateEventDialog(copyEvent);
     },
     
     archiveEvent() {
