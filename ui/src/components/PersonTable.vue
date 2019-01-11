@@ -61,7 +61,7 @@
               slot="activator"
               v-on:click="adminPerson(props.item)"
               class="mr-3"
-              data-cy="edit-password"
+              data-cy="admin-person"
             >
               settings
             </v-icon>
