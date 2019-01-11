@@ -27,12 +27,14 @@ courses:
     en: Failed to Add Course
     es: Se Falló Añadir el Curso
   update-failed:
-    en: Failed to Update Course
-    es: Se Falló Actualizar el Curso
+    en: Failed to update course
+    es: Se falló actualizar el curso
   archived:
-    en: Course Archived
-    es: Curso Archivado
+    en: Course archived
+    es: Curso archivado
   reactivated:
-    en: Course Reactivated
-    es: Curso Reactivado
-  
+    en: Course reactivated
+    es: Curso reactivado
+  confirm-archive:
+    en: Are you sure you want to archive this course?
+    es: ¿Seguro que quieres archivar este curso?

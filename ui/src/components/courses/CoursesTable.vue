@@ -73,6 +73,18 @@
         v-on:save="saveCourse"
       />
     </v-dialog>
+
+    <!-- Archive confirmation -->
+    <v-dialog v-model="archiveDialog.show" max-width="350px">
+      <v-card>
+        <v-card-text>{{ $t("courses.confirm-archive") }}</v-card-text>
+        <v-card-actions>
+          <v-btn v-on:click="cancelArchive" color="secondary" flat data-cy="">{{ $t("actions.cancel") }}</v-btn>
+          <v-spacer></v-spacer>
+          <v-btn v-on:click="archiveCourse" color="primary" raised :loading="archiveDialog.loading" data-cy="">{{ $t("actions.confirm") }}</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
