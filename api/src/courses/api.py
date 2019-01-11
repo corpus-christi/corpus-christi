@@ -7,7 +7,7 @@ from marshmallow import ValidationError
 import sys
 
 from . import courses
-from .models import Course, CourseSchema, Prerequisite, PrerequisiteSchema, Course_Offering, Course_OfferingSchema
+from .models import Course, CourseSchema, Course_Offering, Course_OfferingSchema, PrerequisiteSchema #Prerequisite
 from .. import db
 
 course_schema = CourseSchema()
@@ -38,7 +38,7 @@ def read_all_courses():
 def read_all_active_courses():
     """List all active courses"""
     result = db.session.query(Course).filter_by(active=True).all()
-    return jsonify(course_schema.dump(result, many=True))    
+    return jsonify(course_schema.dump(result, many=True))
 
 @courses.route('/courses-inactive')
 @jwt_required
