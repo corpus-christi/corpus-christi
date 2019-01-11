@@ -26,7 +26,6 @@
         location
         searchEndpoint="http://localhost:3000/locations"
         v-on:setSelected="setLocation"/> -->
-        
       </form>
     </v-card-text>
     <v-card-actions>
@@ -62,7 +61,6 @@
         >{{ $t("actions.save") }}</v-btn
       >
     </v-card-actions>
-
   </v-card>
 </template>
 
@@ -96,7 +94,7 @@ export default {
 
     formDisabled() {
       return this.saveLoading || this.addMoreLoading;
-    },
+    }
 
     // ...mapGetters(["currentLanguageCode"])
   },
@@ -112,14 +110,13 @@ export default {
       for (let key of this.assetKeys) {
         this.asset[key] = "";
       }
-      
+
       this.$validator.reset();
     },
 
     save() {
       this.$validator.validateAll();
       if (!this.errors.any()) {
-
         // this.asset.active = true;
         this.$emit("save", this.asset);
       }
@@ -130,7 +127,7 @@ export default {
       if (!this.errors.any()) {
         this.$emit("add-another", this.asset);
       }
-    },
+    }
 
     // setLocation(locationId) {
     //   console.log(locationId)
@@ -156,8 +153,7 @@ export default {
     return {
       asset: {},
       save_loading: false,
-      add_more_loading: false,
-
+      add_more_loading: false
     };
   }
 };

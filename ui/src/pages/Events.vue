@@ -1,12 +1,9 @@
 <template>
-  <v-container>
-    <router-view></router-view>
-  </v-container>
+  <v-container> <router-view></router-view> </v-container>
 </template>
 
 <script>
-
 export default {
-  name: "Events",
+  name: "Events"
 };
 </script>
