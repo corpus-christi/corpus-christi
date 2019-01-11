@@ -1,7 +1,10 @@
 <template>
   <div>
     <v-toolbar app>
-      <v-toolbar-side-icon v-on:click="toggleNavDrawer" data-cy="toggle-nav-drawer"></v-toolbar-side-icon>
+      <v-toolbar-side-icon
+        v-on:click="toggleNavDrawer"
+        data-cy="toggle-nav-drawer"
+      ></v-toolbar-side-icon>
 
       <v-toolbar-title class="headline text-uppercase">
         <span>Corpus</span> <span class="font-weight-light">Christi</span>
