@@ -8,7 +8,8 @@ from marshmallow import ValidationError
 from sqlalchemy import func
 
 from . import events
-from .models import Event, Asset, Team, EventAsset, EventSchema, AssetSchema, TeamSchema
+from .models import Event, Asset, Team, TeamMember, EventAsset, EventTeam, EventSchema, AssetSchema, TeamSchema, TeamMemberSchema, EventTeamSchema
+from ..people.models import Person
 from .. import db
 
 def modify_entity(entity_type, schema, id, new_value_dict):
@@ -182,6 +183,63 @@ def remove_asset_from_event(event_id, asset_id):
 
     # 204 codes don't respond with any content
     return 'Successfully un-booked', 204
+
+event_team_schema = EventTeamSchema(exclude=['team'])
+
+@events.route('/<event_id>/teams')
+@jwt_required
+def get_event_teams(event_id):
+    teams = db.session.query(Team).join(EventTeam).filter_by(event_id=event_id).all()
+
+    if not teams:
+        return jsonify(f"Event with id #{event_id} does not have any teams."), 404
+
+    return jsonify(team_schema.dump(teams, many=True))
+    
+@events.route('/<event_id>/teams/<team_id>', methods=['POST','PUT','PATCH'])
+@jwt_required
+def add_event_team(event_id, team_id):
+    event = db.session.query(Event).filter_by(id=event_id).first()
+    event_teams = db.session.query(Event).join(EventTeam).filter_by(team_id=team_id).all()
+
+    if not event:
+        return jsonify(f"Event with id #{event_id} does not exist."), 404
+
+    # Make sure asset isn't already booked in the current event
+    # Make sure asset isn't booked in another event during that time    
+    event_start = event.start
+    event_end = event.end
+
+    is_overlap = False
+
+    for event_team in event_teams:
+        if event_start <= event_team.start < event_end or event_start < event_team.end <= event_end \
+          or event_team.start <= event_start < event_team.end or event_team.start < event.end <= event_team.end:
+            is_overlap = True
+            break
+
+    if is_overlap:
+        return jsonify(f"Team with id #{team_id} is unavailable for Event with id #{event_id}."), 422
+    else:
+        new_entry = EventTeam(**{'event_id': event_id, 'team_id': team_id})
+        db.session.add(new_entry)
+        db.session.commit()
+
+        return jsonify(f"Team with id #{team_id} successfully booked for Event with id #{event_id}.")
+    
+@events.route('/<event_id>/teams/<team_id>', methods=['DELETE'])
+@jwt_required
+def delete_event_team(event_id, team_id):
+    event_team = db.session.query(EventTeam).filter_by(team_id=team_id).filter_by(event_id=event_id).first()
+
+    if not event_team:
+        return jsonify(f"Team with id #{team_id} is not assigned to Event with id #{event_id}."), 404
+
+    db.session.delete(event_team)
+    db.session.commit()
+
+    # 204 codes don't respond with any content
+    return 'Successfully removed team member', 204
 
 # ---- Asset
 
@@ -387,6 +445,53 @@ def delete_team(team_id):
     
     # 204 codes don't respond with any content
     return 'Successfully deleted team', 204
+
+team_member_schema = TeamMemberSchema(exclude=['team'])
+
+@events.route('/teams/<team_id>/members')
+@jwt_required
+def get_team_members(team_id):
+    team_members = db.session.query(TeamMember).filter_by(team_id=team_id).all()
+
+    if not team_members:
+        return jsonify(f"Team with id #{team_id} does not have any members."), 404
+
+    return jsonify(team_member_schema.dump(team_members, many=True))
+    
+@events.route('/teams/<team_id>/members/<member_id>', methods=['POST','PUT','PATCH'])
+@jwt_required
+def add_team_member(team_id, member_id):
+    team = db.session.query(Team).filter_by(id=team_id).first()
+    person = db.session.query(Person).filter_by(id=member_id).first()
+
+    if not team:
+        return jsonify(f"Team with id #{team_id} does not exist."), 404
+    if not person:
+        return jsonify(f"Person with id #{member_id} does not exist."), 404
+    
+    team_member = db.session.query(TeamMember).filter_by(team_id=team_id).filter_by(member_id=member_id).first()
+
+    if not team_member:
+        new_entry = TeamMember(**{'team_id': team_id, 'member_id': member_id})
+        db.session.add(new_entry)
+        db.session.commit()
+        return 'Team member successfully added.'
+    else:
+        return jsonify(f"Person with id #{member_id} is already on Team with id #{team_id}.")
+    
+@events.route('/teams/<team_id>/members/<member_id>', methods=['DELETE'])
+@jwt_required
+def delete_team_member(team_id, member_id):
+    team_member = db.session.query(TeamMember).filter_by(team_id=team_id).filter_by(member_id=member_id).first()
+
+    if not team_member:
+        return jsonify(f"Member with id #{member_id} is not on Team with id #{team_id}."), 404
+
+    db.session.delete(team_member)
+    db.session.commit()
+
+    # 204 codes don't respond with any content
+    return 'Successfully removed team member', 204
 
 # Handles PUT and PATCH requests
 def modify_team(team_id, new_value_dict):
