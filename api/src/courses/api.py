@@ -69,12 +69,15 @@ def update_course(course_id):
     # except ValidationError as err:
     #     return jsonify(err.messages), 422
 
-    print(course_id)
-    print(request.json)
-    course = db.session.query(Course).filter_by(id=course_id).first()
+    # course = db.session.query(Course).filter_by(id=course_id).first()
+    # #print(course_id)
+    # for i in request.json:
+    #     #print(request.json[i])
+    #     if(course[i] not None):
+    #         course[i] = request.json[i]
 
-    for key, val in request.json:
-        setattr(course, key, val)
+    # for key, val in request.json:
+    #     setattr(course, key, val)
 
     db.session.commit()
     return jsonify(course_schema.dump(course))
@@ -87,10 +90,8 @@ def deactivate_course(course_id):
     valid_course = db.session.query(Course).filter_by(id=course_id).first()
     if valid_course is None:
         return 'Not Found', 404
-
-    if 'active' in request.json:  # valid_course:
+    else:
         setattr(valid_course, 'active', False)
-
     db.session.commit()
     return jsonify(course_schema.dump(valid_course))
 
@@ -102,10 +103,8 @@ def reactivate_course(course_id):
     valid_course = db.session.query(Course).filter_by(id=course_id).first()
     if valid_course is None:
         return 'Not Found', 404
-
-    if 'active' in request.json:
+    else:
         setattr(valid_course, 'active', True)
-
     db.session.commit()
     return jsonify(course_schema.dump(valid_course))
 
@@ -115,24 +114,27 @@ def reactivate_course(course_id):
 prerequisite_schema = PrerequisiteSchema()
 
 
-@courses.route('/prerequisites', methods=['POST'])
+@courses.route('/courses/<course_id>/prerequisites', methods=['POST'])
 @jwt_required
-def create_prerequisite(course_id, prereq_id):
-    valid_course = db.session.query(Course).filter_by(id=course_id).first()
-    if valid_course is None:
+def create_prerequisite(course_id):
+    course = db.session.query(Course).filter_by(id=course_id).first()
+    if course is None:
         return 'Course not found', 404
+    #print(prereq_id)
+    course.prerequisite.append(db.session.query(Course).filter_by(id=request.json[prereq_id]).first())
+
 
     """Set given prerequisite to be associated with given course
 
     Note: Need to get two course ids"""
 
-    try:
-        valid_prerequisite = prerequisite_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    new_prerequisite = Prerequisite(**valid_prerequisite)
-    db.session.add(new_prerequisite)
+    # try:
+    #     valid_prerequisite = prerequisite_schema.load(request.json)
+    # except ValidationError as err:
+    #     return jsonify(err.messages), 422
+    #
+    # new_prerequisite = Prerequisite(**valid_prerequisite)
+    # db.session.add(new_prerequisite)
     db.session.commit()
     return jsonify(prerequisite_schema.dump(new_prerequisite)), 201
 
@@ -148,6 +150,14 @@ def read_all_prerequisites():
     return jsonify(course_schema.dump(results, many=True))
 
 # read all courses with prereq (?)
+@courses.route('/prerequisites/<course_id>')
+def read_one_course_prerequisites(course_id):
+    result = db.session.query(Course).filter_by(id=course_id).first()
+    prereqs_to_return = []
+    for i in result.prerequisite:
+        prereqs_to_return.append(i)
+    return jsonify(course_schema.dump(prereqs_to_return, many=True))
+
 
 
 @courses.route('/prerequisites/<prerequisite_id>', methods=['PATCH'])
