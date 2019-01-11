@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-toolbar>
-            <v-toolbar-title>{{ $t("events.title") }}</v-toolbar-title>
+            <v-toolbar-title>{{ $t('events.participants.title') }}</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-text-field
                 v-model="search"
@@ -44,7 +44,7 @@
         <v-card>
             <v-card-title primary-title>
                 <div>
-                    <h3 class="headline mb-0">Add a Person</h3>
+                    <h3 class="headline mb-0">{{ $t('person.actions.add-participant') }}</h3>
                 </div>
             </v-card-title>
             <v-card-text>
