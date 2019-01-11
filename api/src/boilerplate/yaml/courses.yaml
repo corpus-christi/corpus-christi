@@ -38,6 +38,13 @@ entities:
         type: integer
         primary-key: true
         foreign-key: courses_course.id
+    relationships:
+      - name: course
+        related-model: Course
+        backref: prerequisites
+      - name: prereq
+        related-model: Course
+        backref: prerequisites
   - name: Diploma_Course
     singular: diploma_course
     plural: diploma_courses

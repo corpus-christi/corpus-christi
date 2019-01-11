@@ -32,6 +32,9 @@ def create_app(config_name):
     from .groups import groups as groups_blueprint
     app.register_blueprint(groups_blueprint, url_prefix='/api/v1/groups')
 
+    from .courses import courses as courses_blueprint
+    app.register_blueprint(courses_blueprint, url_prefix='/api/v1/courses')
+
     from .i18n import i18n as i18n_blueprint
     app.register_blueprint(i18n_blueprint, url_prefix='/api/v1/i18n')
 
