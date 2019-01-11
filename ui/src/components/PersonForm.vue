@@ -11,7 +11,7 @@
           name="firstName"
           v-validate="'required'"
           v-bind:error-messages="errors.collect('firstName')"
-          data-cy="firstName"
+          data-cy="first-name"
         ></v-text-field>
 
         <v-text-field
@@ -20,10 +20,10 @@
           name="lastName"
           v-validate="'required'"
           v-bind:error-messages="errors.collect('lastName')"
-          data-cy="lastName"
+          data-cy="last-name"
         ></v-text-field>
 
-        <v-radio-group v-model="person.gender" row>
+        <v-radio-group v-model="person.gender" row data-cy="radio-gender">
           <v-radio v-bind:label="$t('person.male')" value="M" data-cy="radio-m"></v-radio>
           <v-radio v-bind:label="$t('person.female')" value="F" data-cy="radio-f"></v-radio>
         </v-radio-group>
@@ -37,6 +37,7 @@
           offset-y
           full-width
           min-width="290px"
+
         >
           <v-text-field
             slot="activator"
@@ -44,13 +45,14 @@
             v-bind:label="$t('person.date.birthday')"
             prepend-icon="event"
             readonly
+            data-cy="birthday"
           ></v-text-field>
 
           <v-date-picker
             v-bind:locale="currentLanguageCode"
             v-model="person.birthday"
             @input="showBirthdayPicker = false"
-            data-cy="birthday-picker"
+            v-bind:data-cy="birthday-picker"
           ></v-date-picker>
         </v-menu>
 
