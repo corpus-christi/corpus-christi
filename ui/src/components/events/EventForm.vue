@@ -298,22 +298,25 @@ export default {
       this.$validator.reset();
     },
     save() {
-      this.$validator.validateAll();
-      if (!this.errors.any()) {
-        this.event.start = this.getTimestamp(this.startDate, this.startTime);
-        this.event.end = this.getTimestamp(this.endDate, this.endTime);
-        this.event.active = true;
-        this.$emit("save", this.event);
-      }
+      this.$validator.validateAll().then(() => {
+        if (!this.errors.any()) {
+          this.event.start = this.getTimestamp(this.startDate, this.startTime);
+          this.event.end = this.getTimestamp(this.endDate, this.endTime);
+          this.event.active = true;
+          this.$emit("save", this.event);
+        }
+      });
     },
 
     addAnother() {
-      this.$validator.validateAll();
-      if (!this.errors.any()) {
-        this.event.start = this.getTimestamp(this.startDate, this.startTime);
-        this.event.end = this.getTimestamp(this.endDate, this.endTime);
-        this.$emit("add-another", this.event);
-      }
+      this.$validator.validateAll().then(() => {
+        if (!this.errors.any()) {
+          this.event.start = this.getTimestamp(this.startDate, this.startTime);
+          this.event.end = this.getTimestamp(this.endDate, this.endTime);
+          this.event.active = true;
+          this.$emit("add-another", this.event);
+        }
+      });
     },
 
     getTimestamp(date, time) {
@@ -380,9 +383,6 @@ export default {
       showEndDatePicker: false,
       startTimeModal: false,
       endTimeModal: false,
-      save_loading: false,
-      add_more_loading: false,
-
     };
   }
 };

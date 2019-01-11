@@ -56,15 +56,35 @@ events:
   error-adding-event:
     en: Error while adding event
     es: Error al agregar evento
+
   details:
-    en: Details
-    es: Detalles
+    title:
+      en: Details
+      es: Detalles
   participants:
-    en: Participants
-    es: Participantes
+    title:
+      en: Participants
+      es: Participantes
   teams:
-    en: Teams
-    es: Equipos
+    title:
+      en: Teams
+      es: Equipos
   assets:
-    en: Assets
-    es: Bienes
+    title: 
+      en: Assets
+      es: Bienes
+    description:
+      en: Description
+      es: Descripción
+    location:
+      en: Location
+      es: Ubicación
+    new:
+      en: Add Asset
+      es: Añadir Bienes
+    create-asset:
+      en: Create Asset
+      es: Crear Bienes
+    edit-asset:
+      en: Edit Asset
+      es: Editar Bienes

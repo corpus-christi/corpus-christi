@@ -28,13 +28,13 @@
         </v-card-text>
         <v-card-actions>
           <v-btn flat color="primary" v-on:click="$router.push({path: '/events/' + $route.params.event + '/participants'})">
-            <v-icon>person</v-icon>&nbsp;{{ $t('events.participants') }}
+            <v-icon>person</v-icon>&nbsp;{{ $t('events.participants.title') }}
           </v-btn>
           <v-btn flat color="primary" v-on:click="$router.push({path: '/events/' + $route.params.event + '/teams'})">
-            <v-icon>group</v-icon>&nbsp;{{ $t('events.teams') }}
+            <v-icon>group</v-icon>&nbsp;{{ $t('events.teams.title') }}
           </v-btn>
           <v-btn flat color="primary" v-on:click="$router.push({path: '/events/' + $route.params.event + '/assets'})">
-            <v-icon>devices_other</v-icon>&nbsp;{{ $t('events.assets') }}
+            <v-icon>devices_other</v-icon>&nbsp;{{ $t('events.assets.title') }}
           </v-btn>
         </v-card-actions>
       </v-card>
