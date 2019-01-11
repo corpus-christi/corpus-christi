@@ -1,4 +1,3 @@
-import json
 from marshmallow import fields, Schema, pre_load
 from marshmallow.validate import Length, Range, OneOf
 from sqlalchemy import Column, DateTime, Integer, String, Date, ForeignKey, Boolean
@@ -26,7 +25,7 @@ class Event(Base):
     persons = relationship("EventPerson", back_populates="event")
     participants = relationship("EventParticipant", back_populates="event")
     location = relationship("Location", back_populates="events")
-    
+
     def __repr__(self):
         return f"<Event(id={self.id})>"
     
@@ -85,6 +84,7 @@ class TeamSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     description = fields.String(required=True)
     active = fields.Boolean()
+    members = fields.Nested('TeamMemberSchema', exclude=['team'], many=True)
 
 
 # ---- EventAsset
@@ -126,7 +126,7 @@ class EventPerson(Base):
 class EventPersonSchema(Schema):
     event = fields.Nested('EventSchema')
     person = fields.Nested('PersonSchema')
-    description = fields.String()
+    description = fields.String(required=True)
 
 # ---- TeamMember
 

@@ -1,5 +1,19 @@
 {
   "en": {
+    "$vuetify": {
+      "dataIterator": {
+        "nextPage": "Next page",
+        "noResultsText": "No matching records found",
+        "pageText": "{0}-{1} of {2}",
+        "prevPage": "Previous page",
+        "rowsPerPageAll": "All",
+        "rowsPerPageText": "Items per page:"
+      },
+      "dataTable": {
+        "rowsPerPageText": "Rows per page:"
+      },
+      "noDataText": "No data available"
+    },
     "account": {
       "messages": {
         "added-ok": "Account added successfully",
@@ -10,20 +24,53 @@
       "username": "Username"
     },
     "actions": {
+      "addanother": "Add Another",
+      "addevent": "Add Event",
+      "addperson": "Add Person",
       "cancel": "Cancel",
       "clear": "Clear",
       "close": "Close",
       "confirm": "Confirm",
+      "duplicate": "Duplicate",
       "edit": "Edit",
       "header": "Actions",
       "login": "Log In",
       "logout": "Log Out",
       "save": "Save",
       "search": "Search",
+      "search-people": "Search People",
       "tooltips": {
+        "archive": "Archive",
         "deactivate": "Deactivate",
-        "settings": "Settings"
-      }
+        "settings": "Settings",
+        "unarchive": "Unarchive"
+      },
+      "viewinactive": "View Inactive"
+    },
+    "events": {
+      "actions": "Actions",
+      "assets": "Assets",
+      "confirm-archive": "Are you sure you want to archive this event?",
+      "create-event": "Create Event",
+      "details": "Details",
+      "edit-event": "Edit Event",
+      "end-date": "End Date",
+      "end-time": "End Time",
+      "error-adding-event": "Error while adding event",
+      "error-archiving-event": "Error while archiving event",
+      "error-editing-event": "Error while editing event",
+      "error-unarchiving-event": "Error while unarchiving event",
+      "event-added": "Event added",
+      "event-archived": "Event archived",
+      "event-description": "Event Description",
+      "event-edited": "Event edited",
+      "event-location": "Event Location",
+      "event-unarchived": "Event unarchived",
+      "participants": "Participants",
+      "start-date": "Start Date",
+      "start-time": "Start Time",
+      "teams": "Teams",
+      "title": "Events"
     },
     "groups": {
       "title": "Home Churches"
@@ -71,6 +118,20 @@
     }
   },
   "es": {
+    "$vuetify": {
+      "dataIterator": {
+        "nextPage": "Siguiente p\u00e1gina",
+        "noResultsText": "No se encontraron registros coincidentes",
+        "pageText": "{0}-{1} de {2}",
+        "prevPage": "Pagina anterior",
+        "rowsPerPageAll": "Todos",
+        "rowsPerPageText": "Art\u00edculos por p\u00e1gina:"
+      },
+      "dataTable": {
+        "rowsPerPageText": "Filas por p\u00e1gina:"
+      },
+      "noDataText": "Datos no disponibles"
+    },
     "account": {
       "messages": {
         "added-ok": "Cuenta agregada exitosamente",
@@ -81,20 +142,53 @@
       "username": "Nombre de usuario"
     },
     "actions": {
+      "addanother": "A\u00f1adir Otro",
+      "addevent": "A\u00f1adir Evento",
+      "addperson": "A\u00f1adir Persona",
       "cancel": "Cancelar",
       "clear": "Despejar",
       "close": "Cerrar",
       "confirm": "Confirmar",
+      "duplicate": "Duplicar",
       "edit": "Editar",
       "header": "Comportamiento",
       "login": "Acceder",
       "logout": "Cerrar sesi\u00f3n",
       "save": "Salvar",
       "search": "Buscar",
+      "search-people": "Buscar Personas",
       "tooltips": {
+        "archive": "Archivar",
         "deactivate": "Desactivar",
-        "settings": "Ajustes"
-      }
+        "settings": "Ajustes",
+        "unarchive": "Desarchivar"
+      },
+      "viewinactive": "Ver Inactivo"
+    },
+    "events": {
+      "actions": "Comportamiento",
+      "assets": "Bienes",
+      "confirm-archive": "\u00bfSeguro que quieres archivar este evento?",
+      "create-event": "Crear Evento",
+      "details": "Detalles",
+      "edit-event": "Editar Evento",
+      "end-date": "Fecha Final",
+      "end-time": "Hora de Finalizaci\u00f3n",
+      "error-adding-event": "Error al agregar evento",
+      "error-archiving-event": "Error al archivar el evento",
+      "error-editing-event": "Error al editar evento",
+      "error-unarchiving-event": "Error al desarchivar el evento",
+      "event-added": "Evento agregado",
+      "event-archived": "Evento archivado",
+      "event-description": "Descripci\u00f3n del Evento",
+      "event-edited": "Evento editado",
+      "event-location": "Ubicaci\u00f3n de Evento",
+      "event-unarchived": "Evento desarchivado",
+      "participants": "Participantes",
+      "start-date": "Fecha de Inicio",
+      "start-time": "Hora de Inicio",
+      "teams": "Equipos",
+      "title": "Eventos"
     },
     "groups": {
       "title": "Iglesias Hogar"
