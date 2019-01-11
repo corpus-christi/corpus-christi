@@ -48,6 +48,10 @@ actions:
     _desc: Search for something
     en: Search
     es: Buscar
+  search-people:
+    _desc: Search for people
+    en: Search People
+    es: Buscar Personas
   viewinactive:
     _desc: View all inactive people
     en: View Inactive
