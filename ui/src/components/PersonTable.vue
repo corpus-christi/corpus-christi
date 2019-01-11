@@ -10,6 +10,7 @@
         v-bind:label="$t('actions.search')"
         single-line
         hide-details
+        data-cy="search"
       ></v-text-field>
       <v-spacer></v-spacer>
 
@@ -22,6 +23,7 @@
         bottom
         right
         v-on:click.stop="newPerson"
+        data-cy="new-person"
       >
         <v-icon>add</v-icon>
       </v-btn>
@@ -46,6 +48,7 @@
               slot="activator"
               v-on:click="editPerson(props.item)"
               class="mr-3"
+              data-cy="edit-person"
             >
               edit
             </v-icon>
@@ -57,6 +60,7 @@
               slot="activator"
               v-on:click="adminPerson(props.item)"
               class="mr-3"
+              data-cy="admin-person"
             >
               settings
             </v-icon>
@@ -68,6 +72,7 @@
               slot="activator"
               v-on:click="deletePerson(props.item)"
               class="mr-3"
+              data-cy="delete-person"
             >
               delete
             </v-icon>
@@ -79,7 +84,7 @@
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false">
+      <v-btn flat @click="snackbar.show = false" data-cy="snackbar-close">
         {{ $t("actions.close") }}
       </v-btn>
     </v-snackbar>
