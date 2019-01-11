@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-btn outline color="primary" v-on:click="$router.push({path: '/events/all'})"><v-icon>arrow_back</v-icon>Back</v-btn>
-        <v-tabs color="transparent" slider-color="accent">
+        <v-tabs v-model="activeTab" color="transparent" slider-color="accent">
             <v-tab ripple v-on:click="$router.push({path: '/events/' + $route.params.event + '/details'})">
                 <v-icon>list</v-icon>&nbsp;{{ $t('events.details') }}
             </v-tab>
@@ -25,15 +25,29 @@ export default {
     name: "Event",
     data() {
         return {
+            activeTab: null,
             currentPath: this.$route.path,
-            currentComponent: 'details'
+            currentComponent: 'details',
+            tabs: {
+                details: 0,
+                participants: 1,
+                teams: 2,
+                assets: 3
+            }
         }
     },
+
+    created() {
+      var splitPath = this.$route.fullPath.split('/')
+      this.currentComponent = this.$route.fullPath.split('/')[splitPath.length-1]
+      this.activeTab = this.tabs[this.currentComponent]
+    },
+
     watch: {
-        
         $route: function(to, from){
             var splitPath = to.fullPath.split('/')
             this.currentComponent = to.fullPath.split('/')[splitPath.length-1]
+            this.activeTab = this.tabs[this.currentComponent]
         }
     }
 }
