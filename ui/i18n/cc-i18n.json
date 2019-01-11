@@ -31,6 +31,7 @@
       "clear": "Clear",
       "close": "Close",
       "confirm": "Confirm",
+      "duplicate": "Duplicate",
       "edit": "Edit",
       "header": "Actions",
       "login": "Log In",
@@ -148,6 +149,7 @@
       "clear": "Despejar",
       "close": "Cerrar",
       "confirm": "Confirmar",
+      "duplicate": "Duplicar",
       "edit": "Editar",
       "header": "Comportamiento",
       "login": "Acceder",
@@ -159,7 +161,7 @@
         "archive": "Archivar",
         "deactivate": "Desactivar",
         "settings": "Ajustes",
-        "unarchive": "Desarchivo"
+        "unarchive": "Desarchivar"
       },
       "viewinactive": "Ver Inactivo"
     },
