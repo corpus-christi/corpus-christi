@@ -18,9 +18,15 @@ class Attribute(Base):
     type_i18n = Column(StringTypes.LOCALE_CODE)
     seq = Column(Integer, nullable=False)
     active = Column(Boolean, nullable=False)
+    enumerated_types_list = ['attribute.radio', 'attribute.check', 'attribute.dropdown']
+    nonenumerated_types_list = ['attribute.float', 'attribute.integer', 'attribute.string', 'attribute.date']
 
     def __repr__(self):
         return f"<Attribute(id={self.id})>"
+
+    @staticmethod
+    def available_types():
+        return Attribute.enumerated_types_list + Attribute.nonenumerated_types_list
     
 
 class AttributeSchema(Schema):
@@ -32,7 +38,7 @@ class AttributeSchema(Schema):
 
 # ---- Enumerated_Value
 
-class Enumerated_Value(Base):
+class EnumeratedValue(Base):
     __tablename__ = 'people_enumerated_value'
     id = Column(Integer, primary_key=True)
     attribute_id = Column(Integer, ForeignKey('people_attributes.id'))
@@ -43,7 +49,7 @@ class Enumerated_Value(Base):
         return f"<Enumerated_Value(id={self.id})>"
     
 
-class Enumerated_ValueSchema(Schema):
+class EnumeratedValueSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     attribute_id = fields.Integer(data_key='attributeId')
     value_i18n = fields.String(data_key='valueI18n')
@@ -51,7 +57,7 @@ class Enumerated_ValueSchema(Schema):
 
 # ---- Person-Attribute
 
-class Person_Attribute(Base):
+class PersonAttribute(Base):
     __tablename__ = 'people_person_attributes'
     person_id = Column(Integer, ForeignKey('people_person.id'), primary_key=True)
     attribute_id = Column(Integer, ForeignKey('people_attributes.id'), primary_key=True)
@@ -65,7 +71,7 @@ class Person_Attribute(Base):
         return f"<Person-Attribute(person_id={self.person_id},attribute_id={self.attribute_id})>"
 
 
-class Person_AttributeSchema(Schema):
+class PersonAttributeSchema(Schema):
      person_id = fields.Integer(dump_only=True, data_key='personId', required=True)
      attribute_id = fields.Integer(dump_only=True, data_key='attributeId', required=True)
      enum_value_id = fields.Integer(data_key='enumValueId')

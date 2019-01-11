@@ -23,7 +23,7 @@ entities:
       - name: active
         required: true
         type: boolean
-  - name: Enumerated_Value
+  - name: EnumeratedValue
     singular: enumerated_value
     plural: enumerated_values
     uri: /enumerated_values
@@ -42,7 +42,7 @@ entities:
       - name: active
         required: true
         type: boolean
-  - name: Person_Attribute
+  - name: PersonAttribute
     singular: person_attribute
     plural: person_attributes
     uri: /person_attributes
