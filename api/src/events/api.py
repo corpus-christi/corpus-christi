@@ -5,9 +5,10 @@ from flask import request
 from flask.json import jsonify
 from flask_jwt_extended import jwt_required, get_raw_jwt, jwt_optional
 from marshmallow import ValidationError
+from sqlalchemy import func
 
 from . import events
-from .models import Event, Asset, Team, EventSchema, AssetSchema, TeamSchema
+from .models import Event, Asset, Team, EventAsset, EventSchema, AssetSchema, TeamSchema
 from .. import db
 
 def modify_entity(entity_type, id, new_value_dict):
@@ -129,7 +130,7 @@ def delete_event(event_id):
     setattr(event, 'active', False)
     db.session.commit()
     
-    # 204 doesn't actually respond with any content
+    # 204 codes don't respond with any content
     return jsonify(event_schema.dump(event)), 204
 
 
@@ -159,44 +160,87 @@ def create_asset():
 @events.route('/assets')
 @jwt_required
 def read_all_assets():
-    result = db.session.query(Asset).all()
-    return jsonify(asset_schema.dump(result, many=True))
-    
+
+    query = db.session.query(Asset).add_columns(func.count(EventAsset.event_id).label('event_count'))
+
+    # -- return_inactives --
+    # Filter assets based on active status
+    return_group = request.args.get('return_group')
+    if return_group == 'inactive':
+        query = query.filter_by(active=False)
+    elif return_group in ('all', 'both'):
+        pass # Don't filter
+    else:
+        query = query.filter_by(active=True)
+
+    # -- description --
+    # Filter events on a wildcard description string
+    desc_filter = request.args.get('desc')
+    if desc_filter:
+        query = query.filter(Asset.description.like(f"%{desc_filter}%"))
+
+    # -- location --
+    # Filter events on a wildcard location string?
+    location_filter = request.args.get('location')
+    if location_filter:
+        # TODO FIXME
+        pass
+
+    result = query.join(EventAsset, isouter=True).group_by(Asset.id).all()
+
+    temp_result = list()
+    for item in result:
+        temp_result.append(asset_schema.dump(item[0]))
+        temp_result[-1]['event_count'] = item[1]
+
+    return jsonify(asset_schema.dump(temp_result, many=True))
 
 @events.route('/assets/<asset_id>')
 @jwt_required
 def read_one_asset(asset_id):
-    result = db.session.query(Asset).filter_by(id=asset_id).first()
-    return jsonify(asset_schema.dump(result))
+    asset = db.session.query(Asset).filter_by(id=asset_id).first()
     
+    if not asset:
+        return jsonify(f"Asset with id #{asset_id} does not exist."), 404
+
+    return jsonify(asset_schema.dump(asset))
+
 
 @events.route('/assets/<asset_id>', methods=['PUT'])
 @jwt_required
 def replace_asset(asset_id):
-    pass
-    
-
-@events.route('/assets/<asset_id>', methods=['PATCH'])
-@jwt_required
-def update_asset(asset_id):
     try:
         valid_asset = asset_schema.load(request.json)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    asset = db.session.query(Asset).filter_by(id=asset_id).first()
+    return modify_asset(asset_id, valid_asset)
+    
 
-    for key, val in valid_asset.items():
-        setattr(asset, key, val)
-
-    db.session.commit()
-    return jsonify(asset_schema.dump(asset))
+@events.route('/assets/<asset_id>', methods=['PATCH'])
+@jwt_required
+def update_asset(asset_id):
+    try: 
+        valid_attributes = asset_schema.load(request.json, partial=True)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+                
+    return modify_asset(asset_id, valid_attributes)
     
 
 @events.route('/assets/<asset_id>', methods=['DELETE'])
 @jwt_required
 def delete_asset(asset_id):
-    pass
+    asset = db.session.query(Asset).filter_by(id=asset_id).first()
+
+    if not asset:
+        return jsonify(f"Event with id #{asset_id} does not exist."), 404
+        
+    setattr(asset, 'active', False)
+    db.session.commit()
+    
+    # 204 codes don't respond with any content
+    return jsonify(asset_schema.dump(asset)), 204
 
 # Handles PUT and PATCH requests
 def modify_asset(asset_id, new_value_dict):
