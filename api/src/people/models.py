@@ -29,6 +29,9 @@ class Person(Base):
     location_id = Column(Integer, ForeignKey('places_location.id'))
     address = relationship('Location', backref='people', lazy=True)
 
+    def _init(self, accountInfo):
+        self.accountInfo = accountInfo
+
     def __repr__(self):
         return f"<Person(id={self.id})>"
 
@@ -48,6 +51,8 @@ class PersonSchema(Schema):
     email = fields.String(allow_none=True)
     active = fields.Boolean(required=True)
     location_id = fields.Integer(data_key='locationId')
+
+    accountInfo = fields.Nested('AccountSchema')
 
 # Defines join table for people_account and people_role
 
