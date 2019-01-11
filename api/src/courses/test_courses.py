@@ -21,7 +21,7 @@ def course_object_factory(course_id):
     }
     return course
 
-def course_object_factory_active():
+def course_object_factory_active(course_id):
     """Cook up a fake course."""
     fake = Faker()  # Use a generic one; others may not have all methods.
     course = {
@@ -31,7 +31,7 @@ def course_object_factory_active():
     }
     return course
 
-def course_object_factory_inactive():
+def course_object_factory_inactive(course_id):
     """Cook up a fake course."""
     fake = Faker()  # Use a generic one; others may not have all methods.
     course = {
@@ -47,7 +47,7 @@ def create_multiple_courses(sqla, n=10):
     course_schema = CourseSchema()
     new_courses = []
     for i in range(n):
-        valid_course = course_schema.load(course_object_factory())
+        valid_course = course_schema.load(course_object_factory(i))
         course_model = Course(**valid_course)
         new_courses.append(course_model)
     sqla.add_all(new_courses)
@@ -60,7 +60,7 @@ def create_multiple_courses_active(sqla, n=10):
     course_schema = CourseSchema()
     new_courses = []
     for i in range(n):
-        valid_course = course_schema.load(course_object_factory_active())
+        valid_course = course_schema.load(course_object_factory_active(i))
         course_model = Course(**valid_course)
         new_courses.append(course_model)
     sqla.add_all(new_courses)
@@ -73,7 +73,7 @@ def create_multiple_courses_inactive(sqla, n=10):
     course_schema = CourseSchema()
     new_courses = []
     for i in range(n):
-        valid_course = course_schema.load(course_object_factory_inactive())
+        valid_course = course_schema.load(course_object_factory_inactive(i))
         course_model = Course(**valid_course)
         new_courses.append(course_model)
     sqla.add_all(new_courses)
@@ -93,34 +93,52 @@ def test_create_course(auth_client):
     assert len(courses) == count
     
 # Test getting all courses from the database
-@pytest.mark.xfail()
-def test_read_all_courses(client, db):
+def test_read_all_courses(auth_client):
     # GIVEN existing (active and inactive) courses in database
+    count = random.randint(3,11)
+    create_multiple_courses(auth_client.sqla, count)
     # WHEN call to database
+    courses = auth_client.sqla.query(Course).all()
     # THEN assert all entries from database are called
-    assert True == False
+    assert len(courses) == count
 
-@pytest.mark.xfail()
-def test_read_all_active_courses(client, db):
+def test_read_all_active_courses(auth_client):
     # GIVEN existing and active courses
+    count_active = random.randint(3,11)
+    create_multiple_courses_active(auth_client.sqla, count_active)
+    count_inactive = random.randint(3,11)
+    create_multiple_courses_inactive(auth_client.sqla, count_inactive)
     # WHEN call to database
+    active_courses = auth_client.sqla.query(Course).filter_by(active=True).all()
     # THEN assert all active courses are listed
-    assert True == False
+    assert len(active_courses) == count_active
 
-@pytest.mark.xfail()
-def test_read_all_inactive_courses(client, db):
+def test_read_all_inactive_courses(auth_client):
     # GIVEN existing and inactive courses
+    count_active = random.randint(3,11)
+    create_multiple_courses_active(auth_client.sqla, count_active)
+    count_inactive = random.randint(3,11)
+    create_multiple_courses_inactive(auth_client.sqla, count_inactive)
     # WHEN call to database
+    inactive_courses = auth_client.sqla.query(Course).filter_by(active=False).all()
     # THEN assert all active courses are listed
-    assert True == False
+    assert len(inactive_courses) == count_inactive
     
 # Test reading a single course from the database
-@pytest.mark.xfail()
-def test_read_one_course(client, db):
+def test_read_one_course(auth_client):
     # GIVEN one course in the database
+    count = random.randint(3,11)
+    create_multiple_courses(auth_client.sqla, count)
     # WHEN call to database
+    courses = auth_client.sqla.query(Course).all()
     # THEN assert entry called is only entry returned 
-    assert True == False
+    for course in courses:
+        resp = auth_client.get(url_for('courses.read_one_course', course_id=course.id)) 
+        # THEN we find a matching class
+        assert resp.status_code == 200
+        assert resp.json['name'] == course.name
+        assert resp.json['description'] == course.description
+        assert resp.json['active'] == course.active
 
 def create_course(sqla):
     """Create single course into DB"""
@@ -160,7 +178,7 @@ def test_reactivate_course(auth_client):
 """ 
 # Test 
 @pytest.mark.xfail()
-def test_replace_course(client, db):
+def test_replace_course(auth_client):
     # GIVEN a deactivated course in database
     # WHEN 
     # THEN assert
@@ -168,7 +186,7 @@ def test_replace_course(client, db):
 """
 
 @pytest.mark.xfail()
-def test_update_course(client, db):
+def test_update_course(auth_client):
     # GIVEN active or inactive course in database
     # WHEN course information updated
     # THEN assert course reflects new detail(s)
@@ -176,7 +194,7 @@ def test_update_course(client, db):
     
 """
 @pytest.mark.xfail()
-def test_delete_course(client, db):
+def test_delete_course(auth_client):
     # GIVEN undesirable course in database
     # WHEN course is removed
     # THEN assert course and all associated information deleted
@@ -187,7 +205,7 @@ def test_delete_course(client, db):
 
 
 @pytest.mark.xfail()
-def test_create_prerequisite(client, db):
+def test_create_prerequisite(auth_client):
     # GIVEN existing and available course in database
     # WHEN course requires previous attendance to another course
     # THEN add course as prerequisite
@@ -195,7 +213,7 @@ def test_create_prerequisite(client, db):
     
 # This will test getting all prerequisites for a single course
 @pytest.mark.xfail()
-def test_read_all_prerequisites(client, db):
+def test_read_all_prerequisites(auth_client):
     # GIVEN existing and available course in database
     # WHEN that course has prerequisites
     # THEN assert all prereq's are listed
@@ -203,14 +221,14 @@ def test_read_all_prerequisites(client, db):
 
 #FIX NAME (Will test to see all courses that have given course as a prerequisite)
 @pytest.mark.xfail()
-def test_read_all_courses_with_prerequisite(client, db):
+def test_read_all_courses_with_prerequisite(auth_client):
     #GIVEN prerequisite course in database
     #WHEN other courses have that course as a prerequisite
     #THEN list all courses with given prerequisite
     assert True == False
 
 @pytest.mark.xfail()
-def test_update_prerequisite(client, db):
+def test_update_prerequisite(auth_client):
     # GIVEN an existing and available course with an existing prereq
     # WHEN new prereq for existing course is required 
     # THEN existing course has new prereq in place of existing prereq
@@ -218,7 +236,7 @@ def test_update_prerequisite(client, db):
     
 """
 @pytest.mark.xfail()
-def test_delete_prerequisite(client, db):
+def test_delete_prerequisite(auth_client):
     # GIVEN an existing prereq and related course
     # WHEN prereq no longer needed from associated course
     # THEN prereq row entry removed (along with associated course)
@@ -230,7 +248,7 @@ def test_delete_prerequisite(client, db):
 
 
 @pytest.mark.xfail()
-def test_create_course_offering(client, db):
+def test_create_course_offering(auth_client):
     # GIVEN an existing course
     # WHEN one or more courses need a section to offer
     # THEN create new course section
@@ -238,21 +256,21 @@ def test_create_course_offering(client, db):
     
 
 @pytest.mark.xfail()
-def test_read_all_course_offerings(client, db):
+def test_read_all_course_offerings(auth_client):
     # GIVEN existing (active and inactive) course offerings
     # WHEN all sections needed
     # THEN list all course sections
     assert True == False
 
 @pytest.mark.xfail()
-def test_read_all_active_course_offerings(client, db):
+def test_read_all_active_course_offerings(auth_client):
     # GIVEN existing active course offerings
     # WHEN all active course sections needed
     # THEN list all sections of active courses
     assert True == False
 
 @pytest.mark.xfail()
-def test_read_all_inactive_course_offerings(client, db):
+def test_read_all_inactive_course_offerings(auth_client):
     # GIVEN existing inactive course offerings
     # WHEN all inactive course sections needed
     # THEN list all sections of inactive courses
@@ -260,7 +278,7 @@ def test_read_all_inactive_course_offerings(client, db):
     
 
 @pytest.mark.xfail()
-def test_read_one_course_offering(client, db):
+def test_read_one_course_offering(auth_client):
     # GIVEN an existing course
     # WHEN one course section needed
     # THEN list one course section of course
@@ -268,7 +286,7 @@ def test_read_one_course_offering(client, db):
     
 """
 @pytest.mark.xfail()
-def test_replace_course_offering(client, db):
+def test_replace_course_offering(auth_client):
     # GIVEN
     # WHEN
     # THEN
@@ -276,7 +294,7 @@ def test_replace_course_offering(client, db):
 """
 
 @pytest.mark.xfail()
-def test_update_course_offering(client, db):
+def test_update_course_offering(auth_client):
     # GIVEN an existing (active or inactive) course offering 
     # WHEN course offering needs to update existing information
     # THEN assert changes to course offering reflect update
@@ -284,7 +302,7 @@ def test_update_course_offering(client, db):
     
 """
 @pytest.mark.xfail()
-def test_delete_course_offering(client, db):
+def test_delete_course_offering(auth_client):
     # GIVEN an existing (active or inactive) course and at least one section
     # WHEN user desires to remove course offering 
     # THEN 
