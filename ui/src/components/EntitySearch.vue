@@ -2,7 +2,7 @@
     <div>
         <v-autocomplete 
         data-cy="entity-search-field"
-        v-bind:label="$t('events.event-location')"
+        v-bind:label="location ? $t('events.event-location') : $t('actions.search-people')"
         prepend-icon="search"
         :items="items" 
         :loading="isLoading"
@@ -22,6 +22,7 @@ export default {
     props: {
         location: Boolean,
         person: Boolean,
+        value: Object,
         searchEndpoint: String
     },
     data() {
@@ -32,7 +33,6 @@ export default {
             isLoading: false,
         };
     },
-
     watch: {
         searchInput(val) {
             this.isLoading = true
@@ -47,9 +47,13 @@ export default {
         },
         selected(entity) {
             this.setSelected(entity)
+        },
+
+        value(entity) {
+            this.selected =  entity
+            this.setSelected(entity)
         }
     },
-
     computed: { 
         items() {
             var descriptionLimit = 60
@@ -57,7 +61,6 @@ export default {
                 var entityDescriptor
                 if (this.location) entityDescriptor = entity.name + ', ' + entity.address + ', ' + entity.city
                 else if (this.person) entityDescriptor = entity.first_name + ' ' + entity.last_name
-
                 const Description = entityDescriptor.length > this.descriptionLimit
                     ? entityDescriptor.slice(0, this.descriptionLimit) + '...'
                     : entityDescriptor
@@ -65,13 +68,11 @@ export default {
             })
         }
     },
-
     methods: {
+        
         setSelected(entity) {
-            this.$emit("setSelected", entity.id);
+            this.$emit("input", entity);
         },
-
     }
 }
-
 </script>
