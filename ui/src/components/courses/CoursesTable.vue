@@ -42,7 +42,7 @@
     >
       <v-progress-linear slot="progress" color="primary" indeterminate></v-progress-linear>
       <template slot="items" slot-scope="props">
-        <td>{{ props.item.title }}</td>
+        <td>{{ props.item.name }}</td>
         <td>{{ props.item.description }}</td>
         <td>
           <CourseAdminActions
@@ -139,7 +139,7 @@ export default {
     // Put here so that the headers are reactive.
     headers() {
       return [
-        { text: this.$t("courses.title"), value: "title", width: "40%" },
+        { text: this.$t("courses.title"), value: "name", width: "40%" },
         {
           text: this.$t("courses.description"),
           value: "description",
@@ -260,7 +260,7 @@ export default {
         delete course.id;
 
         this.$http
-          .put(`/api/v1/courses/courses/${course_id}`, course)
+          .patch(`/api/v1/courses/courses/${course_id}`, course)
           .then(resp => {
             console.log("EDITED", resp);
             Object.assign(this.courses[idx], course);
