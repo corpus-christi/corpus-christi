@@ -1,3 +1,4 @@
+import json
 from marshmallow import fields, Schema, pre_load
 from marshmallow.validate import Length, Range, OneOf
 from sqlalchemy import Column, DateTime, Integer, String, Date, ForeignKey, Boolean
@@ -36,7 +37,11 @@ class EventSchema(Schema):
     description = fields.String()
     start = fields.DateTime(required=True)
     end = fields.DateTime(required=True)
-    location_id = fields.Integer(data_key='locationId')
+    location = fields.Nested('LocationSchema')
+    participants = fields.Nested('EventParticipantSchema', many=True, exclude=['event'])
+    persons = fields.Nested('EventPersonSchema', many=True, exclude=['event'])
+    teams = fields.Nested('EventTeamSchema', many=True, exclude=['event'])
+    assets = fields.Nested('EventAssetSchema', many=True, exclude=['event'])
     active = fields.Boolean()
 
 # ---- Asset
@@ -57,8 +62,10 @@ class Asset(Base):
 class AssetSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     description = fields.String(required=True)
-    location_id = fields.Integer(data_key='locationId')
+    location = fields.Nested('LocationSchema')
     active = fields.Boolean()
+    event_count = fields.Integer(dump_only=True)
+
 
 # ---- Team
 
@@ -89,6 +96,10 @@ class EventAsset(Base):
     event = relationship("Event", back_populates="assets")
     asset = relationship("Asset", back_populates="events")
 
+class EventAssetSchema(Schema):
+    event = fields.Nested('EventSchema')
+    asset = fields.Nested('AssetSchema')
+
 # ---- EventTeam
 
 class EventTeam(Base):
@@ -97,6 +108,10 @@ class EventTeam(Base):
     team_id = Column(Integer, ForeignKey('events_team.id'), primary_key=True)
     event = relationship("Event", back_populates="teams")
     team = relationship("Team", back_populates="events")
+
+class EventTeamSchema(Schema):
+    event = fields.Nested('EventSchema')
+    team = fields.Nested('TeamSchema')
 
 # ---- EventPerson
 
@@ -108,6 +123,11 @@ class EventPerson(Base):
     event = relationship("Event", back_populates="persons")
     person = relationship("Person", back_populates="events_per")
 
+class EventPersonSchema(Schema):
+    event = fields.Nested('EventSchema')
+    person = fields.Nested('PersonSchema')
+    description = fields.String()
+
 # ---- TeamMember
 
 class TeamMember(Base):
@@ -116,6 +136,10 @@ class TeamMember(Base):
     member_id = Column(Integer, ForeignKey('people_person.id'), primary_key=True)
     team = relationship("Team", back_populates="members")
     member = relationship("Person", back_populates="teams")
+
+class TeamMemberSchema(Schema):
+    team = fields.Nested('TeamSchema')
+    member = fields.Nested('PersonSchema')
 
 # ---- EventParticipant
 
@@ -126,3 +150,8 @@ class EventParticipant(Base):
     confirmed = Column(Boolean, default=True)
     event = relationship("Event", back_populates="participants")
     person = relationship("Person", back_populates="events_par")
+
+class EventParticipantSchema(Schema):
+    event = fields.Nested('EventSchema')
+    person = fields.Nested('PersonSchema')
+    confirmed = fields.Boolean()
