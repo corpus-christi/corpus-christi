@@ -7,7 +7,7 @@ from marshmallow import ValidationError
 import sys
 
 from . import courses
-from .models import Course, CourseSchema, Course_Offering, Course_OfferingSchema, PrerequisiteSchema  # Prerequisite
+from .models import Course, CourseSchema, Course_Offering, Course_OfferingSchema, PrerequisiteSchema
 from .. import db
 
 course_schema = CourseSchema()
@@ -64,14 +64,16 @@ def read_one_course(course_id):
 @jwt_required
 def update_course(course_id):
     """Update course with given course_id with appropriate details"""
-    try:
-        valid_course = course_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
+    # try:
+    #     valid_course = course_schema.load(request.json)
+    # except ValidationError as err:
+    #     return jsonify(err.messages), 422
 
+    print(course_id)
+    print(request.json)
     course = db.session.query(Course).filter_by(id=course_id).first()
 
-    for key, val in valid_course.items():
+    for key, val in request.json:
         setattr(course, key, val)
 
     db.session.commit()
@@ -115,10 +117,15 @@ prerequisite_schema = PrerequisiteSchema()
 
 @courses.route('/prerequisites', methods=['POST'])
 @jwt_required
-def create_prerequisite():
+def create_prerequisite(course_id, prereq_id):
+    valid_course = db.session.query(Course).filter_by(id=course_id).first()
+    if valid_course is None:
+        return 'Course not found', 404
+
     """Set given prerequisite to be associated with given course
 
     Note: Need to get two course ids"""
+
     try:
         valid_prerequisite = prerequisite_schema.load(request.json)
     except ValidationError as err:
@@ -133,8 +140,12 @@ def create_prerequisite():
 @courses.route('/prerequisites')
 @jwt_required
 def read_all_prerequisites():
-    result = db.session.query(Prerequisite).all()
-    return jsonify(prerequisite_schema.dump(result, many=True))
+    result = db.session.query(Course).all() #Get courses to get prereq's
+    results = [] # new list
+    for i in result:
+        for j in i.prerequisite: # Read through course prerequisites
+            results.append(j)
+    return jsonify(course_schema.dump(results, many=True))
 
 # read all courses with prereq (?)
 
