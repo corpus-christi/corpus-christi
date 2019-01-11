@@ -20,14 +20,19 @@
         <v-spacer></v-spacer>
 
         <v-flex md3>
-          <v-select v-model="viewStatus" :items="options" solo hide-details></v-select>
+          <v-select
+            v-model="viewStatus"
+            :items="options"
+            solo
+            hide-details
+          ></v-select>
         </v-flex>
 
         <v-flex shrink justify-self-end>
-        <v-btn color="primary" raised v-on:click.stop="newCourse">
-          <v-icon left>library_add</v-icon>
-          {{ $t("courses.new") }}
-        </v-btn>
+          <v-btn color="primary" raised v-on:click.stop="newCourse">
+            <v-icon left>library_add</v-icon>
+            {{ $t("courses.new") }}
+          </v-btn>
         </v-flex>
       </v-layout>
     </v-toolbar>
@@ -40,7 +45,11 @@
       :loading="!tableLoaded"
       class="elevation-1"
     >
-      <v-progress-linear slot="progress" color="primary" indeterminate></v-progress-linear>
+      <v-progress-linear
+        slot="progress"
+        color="primary"
+        indeterminate
+      ></v-progress-linear>
       <template slot="items" slot-scope="props">
         <td>{{ props.item.name }}</td>
         <td>{{ props.item.description }}</td>
@@ -56,7 +65,9 @@
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false">{{ $t("actions.close") }}</v-btn>
+      <v-btn flat @click="snackbar.show = false">{{
+        $t("actions.close")
+      }}</v-btn>
     </v-snackbar>
 
     <!-- New/Edit dialog -->
@@ -81,7 +92,8 @@
             flat
             :disabled="deactivateDialog.loading"
             data-cy
-          >{{ $t("actions.cancel") }}</v-btn>
+            >{{ $t("actions.cancel") }}</v-btn
+          >
           <v-spacer></v-spacer>
           <v-btn
             v-on:click="deactivate(deactivateDialog.course)"
@@ -90,7 +102,8 @@
             :disabled="deactivateDialog.loading"
             :loading="deactivateDialog.loading"
             data-cy
-          >{{ $t("actions.confirm") }}</v-btn>
+            >{{ $t("actions.confirm") }}</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -163,9 +176,8 @@ export default {
         case "archived":
           return this.courses.filter(course => !course.active);
         case "all":
-          return this.courses;
         default:
-          break;
+          return this.courses;
       }
     }
   },
