@@ -75,6 +75,7 @@
                 color="primary"
                 slot="activator"
                 v-on:click="editEvent(props.item)"
+                data-cy="edit"
               >
                 <v-icon small>edit</v-icon>
               </v-btn>
