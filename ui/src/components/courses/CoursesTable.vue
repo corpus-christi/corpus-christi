@@ -14,7 +14,6 @@
       <v-spacer></v-spacer>      
  
       <v-select 
-        :label="$t('actions.view-Archived')"
         v-model="viewStatus"
         :items="options"
         standard
@@ -101,14 +100,13 @@ export default {
         text: ""
       },
 
-      activeCourses: [],
-      archivedCourses: [],
       courses: [],
 
       tableLoaded: false,
       selected: [],
       search: "",
       viewStatus: "active",
+
     };
   },
   computed: {
@@ -133,13 +131,12 @@ export default {
       ]
     },
     showCourses() {
-      // return this.showingArchived ? this.courses : this.courses.filter(course => course.active)
       switch (this.viewStatus) {
         case "active":
-          return this.activeCourses;
+          return  this.courses.filter(course => course.active);
           break;
         case "archived":
-          return this.archivedCourses;
+          return this.courses.filter(course => !course.active);
           break;
         case "all":
           return this.courses;
@@ -159,7 +156,8 @@ export default {
           this.editCourse(course);
           break;
         case "deactivate":
-          // todo: deactivate course
+          this.deactivate(course);
+          console.log("deactivate course")
           break;
         default:
           break;
@@ -182,6 +180,17 @@ export default {
 
     cancelCourse() {
       this.courseDialog.show = false;
+    },
+
+    deactivate(course) {
+      this.$http
+          .patch(`/api/v1/courses/courses/${course.id}`, {active: false})
+          .then(resp => {
+            console.log("EDITED", resp);
+            Object.assign(course, resp.data);
+            this.snackbar.text = this.$t("courses.updated");
+            this.snackbar.show = true;
+          })
     },
 
     saveCourse(course) {
@@ -240,11 +249,8 @@ export default {
     this.$http
       .get("/api/v1/courses/courses")
       .then(resp => {
-        this.courses = resp.data
-        this.activeCourses = this.courses.filter(course => course.active)
-        this.archivedCourses = this.courses.filter(course => !course.active)
+        this.courses = resp.data;
         this.tableLoaded = true;
-        console.log(this.activeCourses, this.archivedCourses, this.courses)
       });
 
   }
