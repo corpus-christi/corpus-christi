@@ -42,8 +42,8 @@ class PersonSchema(Schema):
         data_key='firstName', required=True, validate=Length(min=1))
     last_name = fields.String(
         data_key='lastName', required=True, validate=Length(min=1))
-    gender = fields.String(validate=OneOf(['M', 'F']))
-    birthday = fields.Date()
+    gender = fields.String(validate=OneOf(['M', 'F', '']))
+    birthday = fields.Date(allow_none=True)
     phone = fields.String()
     email = fields.String()
     active = fields.Boolean(required=True)

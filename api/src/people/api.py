@@ -30,6 +30,8 @@ def read_person_fields():
 @jwt_required
 def create_person():
     request.json["active"] = True
+    if request.json["birthday"] is "":
+        request.json["birthday"] = None
     try:
         valid_person = person_schema.load(request.json)
     except ValidationError as err:
