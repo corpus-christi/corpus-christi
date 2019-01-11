@@ -26,8 +26,8 @@
 
         <entity-search
         location
-        searchEndpoint="http://localhost:3000/locations"
-        v-on:setSelected="setLocation"/>
+        v-model="event.location"
+        searchEndpoint="http://localhost:3000/locations"/>
         
 
 
