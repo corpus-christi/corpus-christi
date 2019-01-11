@@ -24,7 +24,7 @@
         </v-flex>
 
         <v-flex shrink justify-self-end>
-        <v-btn color="primary" raised v-on:click.stop="newCourse">
+        <v-btn color="primary" raised v-on:click.stop="newCourseOffering">
           <v-icon left>library_add</v-icon>
           {{ $t("courses.new") }}
         </v-btn>
@@ -36,7 +36,7 @@
     <v-data-table
       :headers="headers"
       :search="search"
-      :items="showCourses"
+      :items="showCourseOfferings"
       :loading="!tableLoaded"
       class="elevation-1"
     >
@@ -45,8 +45,8 @@
         <td>{{ props.item.name }}</td>
         <td>{{ props.item.description }}</td>
         <td>
-          <CourseAdminActions
-            v-bind:course="props.item"
+          <CourseOfferingAdminActions
+            v-bind:courseOffering="props.item"
             display-context="compact"
             v-on:action="dispatchAction($event, props.item)"
           />
@@ -60,13 +60,13 @@
     </v-snackbar>
 
     <!-- New/Edit dialog -->
-    <v-dialog v-model="courseDialog.show" max-width="500px">
+    <v-dialog v-model="courseOfferingDialog.show" max-width="500px">
       <CourseEditor
-        v-bind:editMode="courseDialog.editMode"
-        v-bind:initialData="courseDialog.course"
-        v-bind:saving="courseDialog.saving"
-        v-on:cancel="cancelCourse"
-        v-on:save="saveCourse"
+        v-bind:editMode="courseOfferingDialog.editMode"
+        v-bind:initialData="courseOfferingDialog.courseOffering"
+        v-bind:saving="courseOfferingDialog.saving"
+        v-on:cancel="cancelCourseOffering"
+        v-on:save="saveCourseOffering"
       />
     </v-dialog>
 
@@ -84,7 +84,7 @@
           >{{ $t("actions.cancel") }}</v-btn>
           <v-spacer></v-spacer>
           <v-btn
-            v-on:click="deactivate(deactivateDialog.course)"
+            v-on:click="deactivate(deactivateDialog.courseOffering)"
             color="primary"
             raised
             :disabled="deactivateDialog.loading"
@@ -99,26 +99,26 @@
 
 <script>
 import CourseEditor from "./CourseEditor";
-import CourseAdminActions from "./adminActions/CourseAdminActions";
+import CourseOfferingAdminActions from "./adminActions/CourseOfferingAdminActions";
 
 export default {
-  name: "CoursesTable",
+  name: "CourseOfferingsTable",
   components: {
     CourseEditor,
-    CourseAdminActions
+    CourseOfferingAdminActions
   },
   data() {
     return {
-      courseDialog: {
+      courseOfferingDialog: {
         show: false,
         editMode: false,
         saving: false,
-        course: {}
+        courseOffering: {}
       },
 
       deactivateDialog: {
         show: false,
-        course: {},
+        courseOffering: {},
         loading: false
       },
 
@@ -127,7 +127,7 @@ export default {
         text: ""
       },
 
-      courses: [],
+      courseOfferings: [],
 
       tableLoaded: false,
       selected: [],
@@ -156,14 +156,14 @@ export default {
         { text: this.$t("actions.view-all"), value: "all" }
       ];
     },
-    showCourses() {
+    showCourseOfferings() {
       switch (this.viewStatus) {
         case "active":
-          return this.courses.filter(course => course.active);
+          return this.courseOfferings.filter(courseOffering => courseOffering.active);
         case "archived":
-          return this.courses.filter(course => !course.active);
+          return this.courseOfferings.filter(courseOffering => !courseOffering.active);
         case "all":
-          return this.courses;
+          return this.courseOfferings;
         default:
           break;
       }
@@ -171,56 +171,56 @@ export default {
   },
 
   methods: {
-    dispatchAction(actionName, course) {
+    dispatchAction(actionName, courseOffering) {
       switch (actionName) {
         case "edit":
-          this.editCourse(course);
+          this.editCourseOffering(courseOffering);
           break;
         case "deactivate":
-          this.confirmDeactivate(course);
+          this.confirmDeactivate(courseOffering);
           break;
         case "activate":
-          this.activate(course);
+          this.activate(courseOffering);
           break;
         default:
           break;
       }
     },
 
-    activateCourseDialog(course = {}, editMode = false) {
-      this.courseDialog.editMode = editMode;
-      this.courseDialog.course = course;
-      this.courseDialog.show = true;
+    activateCourseOfferingDialog(courseOffering = {}, editMode = false) {
+      this.courseOfferingDialog.editMode = editMode;
+      this.courseOfferingDialog.courseOffering = courseOffering;
+      this.courseOfferingDialog.show = true;
     },
 
-    editCourse(course) {
-      this.activateCourseDialog({ ...course }, true);
+    editCourseOffering(courseOffering) {
+      this.activateCourseOfferingDialog({ ...courseOffering }, true);
     },
 
-    newCourse() {
-      this.activateCourseDialog();
+    newCourseOffering() {
+      this.activateCourseOfferingDialog();
     },
 
-    cancelCourse() {
-      this.courseDialog.show = false;
+    cancelCourseOffering() {
+      this.courseOfferingDialog.show = false;
     },
 
-    confirmDeactivate(course) {
+    confirmDeactivate(courseOffering) {
       this.deactivateDialog.show = true;
-      this.deactivateDialog.course = course;
+      this.deactivateDialog.courseOffering = courseOffering;
     },
 
     cancelDeactivate() {
       this.deactivateDialog.show = false;
     },
 
-    deactivate(course) {
+    deactivate(courseOffering) {
       this.deactivateDialog.loading = true;
       this.$http
         .patch(`/api/v1/courses/courses/${course.id}`, { active: false })
         .then(resp => {
           console.log("EDITED", resp);
-          Object.assign(course, resp.data);
+          Object.assign(courseOffering, resp.data);
           this.snackbar.text = this.$t("courses.archived");
           this.snackbar.show = true;
         })
@@ -234,12 +234,12 @@ export default {
         });
     },
 
-    activate(course) {
+    activate(courseOffering) {
       this.$http
         .patch(`/api/v1/courses/courses/${course.id}`, { active: true })
         .then(resp => {
           console.log("EDITED", resp);
-          Object.assign(course, resp.data);
+          Object.assign(courseOffering, resp.data);
           this.snackbar.text = this.$t("courses.reactivated");
           this.snackbar.show = true;
         })
@@ -249,21 +249,21 @@ export default {
         });
     },
 
-    saveCourse(course) {
-      this.courseDialog.saving = true;
-      if (this.courseDialog.editMode) {
+    saveCourseOffering(courseOffering) {
+      this.courseOfferingDialog.saving = true;
+      if (this.courseOfferingDialog.editMode) {
         // Hang on to the ID of the person being updated.
         const course_id = course.id;
         // Locate the person we're updating in the table.
-        const idx = this.courses.findIndex(c => c.id === course.id);
+        const idx = this.courseOfferings.findIndex(c => c.id === course.id);
         // Get rid of the ID; not for consumption by endpoint.
         delete course.id;
 
         this.$http
-          .patch(`/api/v1/courses/courses/${course_id}`, course)
+          .patch(`/api/v1/courses/courses/${course_id}`, courseOffering)
           .then(resp => {
             console.log("EDITED", resp);
-            Object.assign(this.courses[idx], course);
+            Object.assign(this.courseOfferings[idx], courseOffering);
             this.snackbar.text = this.$t("courses.updated");
             this.snackbar.show = true;
           })
@@ -273,15 +273,15 @@ export default {
             this.snackbar.show = true;
           })
           .finally(() => {
-            this.courseDialog.show = false;
-            this.courseDialog.saving = false;
+            this.courseOfferingDialog.show = false;
+            this.courseOfferingDialog.saving = false;
           });
       } else {
         this.$http
-          .post("/api/v1/courses/courses", course)
+          .post("/api/v1/courses/courses", courseOffering)
           .then(resp => {
             console.log("ADDED", resp);
-            this.courses.push(resp.data);
+            this.courseOfferings.push(resp.data);
             this.snackbar.text = this.$t("courses.added");
             this.snackbar.show = true;
           })
@@ -291,18 +291,18 @@ export default {
             this.snackbar.show = true;
           })
           .finally(() => {
-            this.courseDialog.show = false;
-            this.courseDialog.saving = false;
+            this.courseOfferingDialog.show = false;
+            this.courseOfferingDialog.saving = false;
           });
       }
 
-      this.courseDialog.show = false;
+      this.courseOfferingDialog.show = false;
     }
   },
 
   mounted: function() {
     this.$http.get("/api/v1/courses/courses").then(resp => {
-      this.courses = resp.data;
+      this.courseOfferings = resp.data;
       this.tableLoaded = true;
     });
   }

@@ -1,16 +1,16 @@
 <template>
-  <v-container> <CoursesTable v-bind:course="course" /> </v-container>
+  <v-container> <CourseOfferingsTable v-bind:course="courseOffering" /> </v-container>
 </template>
 
 <script>
-import CoursesTable from "../components/courses/CoursesTable";
+import CourseOfferingsTable from "../components/courses/CourseOfferingsTable";
 
 export default {
   name: "course-offerings-admin",
   components: {
-    CoursesTable
+    CourseOfferingsTable
   },
-  props: ["course"]
+  props: ["courseOffering"]
 };
 </script>
 
