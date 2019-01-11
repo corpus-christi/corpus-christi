@@ -59,7 +59,7 @@ class Member(Base):
     active = Column(Boolean, nullable=False, default=True)
     group_id = Column(Integer, ForeignKey('groups_group.id'), nullable=False)
     person_id = Column(Integer, ForeignKey('people_person.id'), nullable=False)
-    role_id = Column(Integer, ForeignKey('roles_role.id'))
+    role_id = Column(Integer, ForeignKey('people_role.id'))
     group = relationship('Group', backref='members', lazy=True)
     person = relationship('Person', backref='memberships', lazy=True)
 
