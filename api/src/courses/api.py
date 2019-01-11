@@ -27,22 +27,42 @@ def create_course():
     db.session.commit()
     return jsonify(course_schema.dump(new_course)), 201
 
+"""
+Function that takes a SQLAlchemy query of Courses and
+adds its prerequisites, returning as a jsonified object
+"""
+def add_prereqs_to_courses(query_result):
+    to_return = course_schema.dump(query_result, many=True) # Courses are now JSON
+
+    # Runs through range of list values to access both lists at read_one_course
+    # (SQLAlchemy object and python dictionary)
+    for i in range(0, len(to_return)): # iterate through json results
+        to_return[i]['prerequisites'] = [] #add list to dictionary
+        for j in query_result[i].prerequisites: # get list of prerequisites
+            j = course_schema.dump(j, many=False)
+            to_return[i]['prerequisites'].append(j)
+    return jsonify(to_return)
+
+"""
+Function that takes a SQLAlchemy query for a course and
+adds its prerequisites, returning as a jsonified object
+"""
+def add_prereqs_to_single_course(query_result):
+    to_return = course_schema.dump(query_result, many=False)
+    to_return['prerequisites'] = [] #add list to dictionary
+    #convert and add course objects to prereq list for each prereq
+    for i in query_result.prerequisites:
+        i = course_schema.dump(i, many=False)
+        to_return['prerequisites'].append(i)
+    return jsonify(to_return)
+
 
 @courses.route('/courses')
 @jwt_required
 def read_all_courses():
     """List all active and inactive courses"""
     result = db.session.query(Course).all()
-    results = course_schema.dump(result, many=True) # Courses are now JSON
-
-    # Runs through range of list values to access both lists at read_one_course
-    # (SQLAlchemy object and python dictionary)
-    for i in range(0, len(results)): # iterate through json results
-        results[i]['prerequisites'] = []
-        for j in result[i].prerequisites: # get list of prerequisites
-            j = course_schema.dump(j, many=False)
-            results[i]['prerequisites'].append(j)
-    return jsonify(results)
+    return add_prereqs_to_courses(result)
 
 
 @courses.route('/courses-active')
@@ -50,6 +70,7 @@ def read_all_courses():
 def read_all_active_courses():
     """List all active courses"""
     result = db.session.query(Course).filter_by(active=True).all()
+    # return add_prereqs_to_courses(result)
     return jsonify(course_schema.dump(result, many=True))
 
 
@@ -58,6 +79,7 @@ def read_all_active_courses():
 def read_all_inactive_courses():
     """List all inactive courses"""
     result = db.session.query(Course).filter_by(active=False).all()
+    # return add_prereqs_to_courses(result)
     return jsonify(course_schema.dump(result, many=True))
 
 
@@ -66,6 +88,7 @@ def read_all_inactive_courses():
 def read_one_course(course_id):
     """List only one course with given course_id"""
     result = db.session.query(Course).filter_by(id=course_id).first()
+    # return add_prereqs_to_single_course(result)
     return jsonify(course_schema.dump(result))
 
 
