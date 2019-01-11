@@ -60,6 +60,16 @@ actions:
     _desc: View all inactive people
     en: View Inactive
     es: Ver Inactivo
+  view-all:
+    en: View All
+    es: Ver Todos
+  view-archived:
+    en: View Archived
+    es: Ver Archivado
+  view-active:
+    en: View Active
+    es: Ver Activa
+  
   tooltips:
     settings:
       _desc: Change settings

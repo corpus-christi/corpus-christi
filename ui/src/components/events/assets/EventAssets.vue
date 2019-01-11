@@ -23,10 +23,25 @@
       </v-btn>
     </v-toolbar>
 
-    <v-data-table :headers="headers" :items="assets" :search="search" class="elevation-1">
+    <v-data-table
+      :headers="headers"
+      :items="assets"
+      :search="search"
+      class="elevation-1"
+    >
       <template slot="items" slot-scope="props">
-        <td class="hover-hand" v-on:click="$router.push({path: '/events/' + props.item.id})">{{ props.item.description }}</td>
-        <td class="hover-hand" v-on:click="$router.push({path: '/events/' + props.item.id})">{{ props.item.location_name }}</td>
+        <td
+          class="hover-hand"
+          v-on:click="$router.push({ path: '/events/' + props.item.id })"
+        >
+          {{ props.item.description }}
+        </td>
+        <td
+          class="hover-hand"
+          v-on:click="$router.push({ path: '/events/' + props.item.id })"
+        >
+          {{ props.item.location_name }}
+        </td>
         <td>
           <v-tooltip bottom v-if="props.item.active">
             <v-btn
@@ -54,7 +69,7 @@
             </v-btn>
             <span>{{ $t("actions.duplicate") }}</span>
           </v-tooltip>
-          <v-tooltip bottom  v-if="props.item.active">
+          <v-tooltip bottom v-if="props.item.active">
             <v-btn
               icon
               outline
@@ -67,7 +82,7 @@
             </v-btn>
             <span>{{ $t("actions.tooltips.archive") }}</span>
           </v-tooltip>
-          <v-tooltip bottom  v-if="!props.item.active">
+          <v-tooltip bottom v-if="!props.item.active">
             <v-btn
               icon
               outline
@@ -92,7 +107,7 @@
       </v-btn>
     </v-snackbar>
 
-     <!-- New/Edit dialog -->
+    <!-- New/Edit dialog -->
     <v-dialog v-model="assetDialog.show" max-width="500px">
       <asset-form
         v-bind:editMode="assetDialog.editMode"
@@ -105,8 +120,6 @@
     v-bind:addMoreLoading="assetDialog.addMoreLoading"
     v-on:add-another="addAnotherAsset"
     v-on:save="saveAsset" -->
-
-
   </div>
 </template>
 
@@ -147,7 +160,7 @@ export default {
         { text: this.$t("events.assets.location"), value: "location_name" },
         { text: this.$t("events.actions"), sortable: false }
       ];
-    },
+    }
     // ...mapGetters(["currentLanguageCode"])
   },
   methods: {
@@ -290,8 +303,7 @@ export default {
     showSnackbar(message) {
       this.snackbar.text = message;
       this.snackbar.show = true;
-    },
+    }
   }
 };
-
 </script>

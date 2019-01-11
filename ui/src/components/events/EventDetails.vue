@@ -84,7 +84,7 @@ export default {
       eventDialog: {
         event: {},
         show: false,
-        saveLoading: false,
+        saveLoading: false
       },
 
       snackbar: {
@@ -140,7 +140,7 @@ export default {
     showSnackbar(message) {
       this.snackbar.text = message;
       this.snackbar.show = true;
-    },
+    }
   }
-}
+};
 </script>
