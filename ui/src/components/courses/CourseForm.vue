@@ -8,11 +8,11 @@
       v-bind:error-messages="errors.collect('title')"
     ></v-text-field>
 
-    <v-text-field
+    <v-textarea
       v-model="course.description"
       v-bind:label="$t('courses.description')"
       name="description"
-    ></v-text-field>
+    ></v-textarea>
     <!-- translate prereq -->
     <v-combobox
       v-model="prereqs"
