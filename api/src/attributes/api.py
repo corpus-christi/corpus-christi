@@ -162,6 +162,7 @@ def activate_enumerated_value(enumerated_value_id):
 
     return jsonify(attribute_schema.dump(attribute))
 
+
 # ---- Person_Attribute
 
 
@@ -197,12 +198,6 @@ def read_one_person_attribute(person_attribute_id):
     return jsonify(person_attribute_schema.dump(result))
 
 
-@attributes.route('/person_attributes/<person_attribute_id>', methods=['PUT'])
-@jwt_required
-def replace_person_attribute(person_attribute_id):
-    pass
-
-
 @attributes.route('/person_attributes/<person_attribute_id>', methods=['PATCH'])
 @jwt_required
 def update_person_attribute(person_attribute_id):
@@ -219,9 +214,3 @@ def update_person_attribute(person_attribute_id):
 
     db.session.commit()
     return jsonify(person_attribute_schema.dump(person_attribute))
-
-
-@attributes.route('/person_attributes/<person_attribute_id>', methods=['DELETE'])
-@jwt_required
-def delete_person_attribute(person_attribute_id):
-    pass
