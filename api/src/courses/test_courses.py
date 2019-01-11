@@ -4,7 +4,9 @@ import random
 from faker import Faker
 from flask import url_for
 
-from .models import Course, CourseSchema, Course_Offering, Course_OfferingSchema, Diploma, DiplomaSchema, Person
+from .models import Course, CourseSchema, Course_Offering,\
+        Course_OfferingSchema, Diploma, DiplomaSchema, Student, StudentSchema
+from ..people.models import Person
 
 
 def flip():
@@ -116,7 +118,7 @@ def create_multiple_students(sqla, n=6):
         new_students.append(student)
     sqla.add_all(new_students)
     sqla.commit()
-        
+
 # ---- Course
 
 # Test course creation
