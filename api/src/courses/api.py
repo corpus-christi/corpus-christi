@@ -54,6 +54,8 @@ def add_prereqs(query_result):
 def read_all_courses():
     """List all active and inactive courses"""
     result = db.session.query(Course).all()
+    if(result is None):
+        return "Result NOT found", 404
     return add_prereqs(result)
 
 
@@ -62,6 +64,8 @@ def read_all_courses():
 def read_all_active_courses():
     """List all active courses"""
     result = db.session.query(Course).filter_by(active=True).all()
+    if(result is None):
+        return "Result NOT found", 404
     # return add_prereqs(result)
     return jsonify(course_schema.dump(result, many=True))
 
@@ -71,6 +75,8 @@ def read_all_active_courses():
 def read_all_inactive_courses():
     """List all inactive courses"""
     result = db.session.query(Course).filter_by(active=False).all()
+    if(result is None):
+        return "Result NOT found", 404
     # return add_prereqs(result)
     return jsonify(course_schema.dump(result, many=True))
 
@@ -80,6 +86,8 @@ def read_all_inactive_courses():
 def read_one_course(course_id):
     """List only one course with given course_id"""
     result = db.session.query(Course).filter_by(id=course_id).first()
+    if(result is None):
+        return "Result NOT found", 404
     # return add_prereqs(result)
     return jsonify(course_schema.dump(result))
 
