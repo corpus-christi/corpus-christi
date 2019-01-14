@@ -168,7 +168,7 @@ def create_diploma_awards(sqla, n):
     for i in range(n):
         student = students[i%len(students)]
         diploma = diplomas[i%len(diplomas)]
-        print(student)
+        # print(student.diplomas.when)
         print(diploma)
         student.diplomas.append(diploma)
         new_diploma_awards.append(student)
