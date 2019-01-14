@@ -4,14 +4,13 @@ from datetime import datetime
 from flask import request
 from flask.json import jsonify
 from flask_jwt_extended import jwt_required, get_raw_jwt, jwt_optional
-from flask_mail import Message
 from marshmallow import ValidationError
 from sqlalchemy import func
 
 from . import events
 from .models import Event, Asset, Team, TeamMember, EventPerson, EventAsset, EventParticipant, EventTeam, EventSchema, AssetSchema, TeamSchema, TeamMemberSchema, EventTeamSchema, EventPersonSchema, EventParticipantSchema
 from ..people.models import Person, PersonSchema
-from .. import db
+from .. import db, mail
 
 def modify_entity(entity_type, schema, id, new_value_dict):
     item = db.session.query(entity_type).filter_by(id=id).first()
@@ -665,20 +664,3 @@ def delete_team_member(team_id, member_id):
 # Handles PUT and PATCH requests
 def modify_team(team_id, new_value_dict):
     return modify_entity(Team, team_schema, team_id, new_value_dict)
-
-# 1. API is able to Send an email to all confirmed Event Participants with a known email address (e.g., news about the event).
-# 2. API is able to Send an email message to all members of a selected Team.
-# 3. API is able to Send an email to one or more Event_Person's (choose from checkbox list).
-# 4. API is able to Send an email message to every Event_Team member and Event_Person.
-
-@events.route('/email', methods=['POST'])
-@jwt_required
-def send_email():
-    # try:
-    #     valid_email = email_schema.load(request.json)
-    # except ValidationError as err:
-    #     return jsonify(err.messages), 422
-    msg = Message('Hello', sender='you@dgoogle.com', recipients=['recipient@recipient_domain.com'])
-    msg.body = "This is the email body"
-    mail.send(msg)
-    return "Sent"
