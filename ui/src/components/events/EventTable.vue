@@ -397,13 +397,17 @@ export default {
         minute: "2-digit"
       });
     },
-    getDisplayLocation(name, length = 20) {
-      if (name && name.length && name.length > 0) {
-        if (name.length > length) {
-          return `${name.substring(0, length - 3)}...`;
+    getDisplayLocation(location, length = 20) {
+      if (location && location.address && location.address.name) {
+        let name = location.address.name
+        if (name && name.length && name.length > 0) {
+          if (name.length > length) {
+            return `${name.substring(0, length - 3)}...`;
+          }
+          return name
         }
       }
-      return name;
+      return '';
     }
   }
 };
