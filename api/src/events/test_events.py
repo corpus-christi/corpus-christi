@@ -13,6 +13,7 @@ from ..places.models import Location
 from ..people.models import Person
 from .create_event_data import create_multiple_events, event_object_factory, create_multiple_teams
 
+fake = Faker()
 # ---- Event
 
 @pytest.mark.smoke
@@ -176,20 +177,45 @@ def test_read_one_team(auth_client):
     assert True == False
     
 
-@pytest.mark.xfail()
+@pytest.mark.smoke
 def test_replace_team(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
+    # GIVEN a database with some teams
+    count = random.randint(5, 15)
+    create_multiple_teams(auth_client.sqla, count)
+    # WHEN we replace one team
+    #new_team = 
+    team_id = auth_client.sqla.query(Team.id).first()[0]
+    dscrptn = fake.sentences(nb=1)[0]
+    resp = auth_client.put(url_for('events.update_team', team_id = team_id), json={
+        'description': dscrptn,
+        'active': False
+    })
+    # THEN we should have the correct status code
+    assert resp.status_code == 200 
+    # THEN the team should end up with the correct attribute
+    new_team = auth_client.sqla.query(Team).filter(Team.id == team_id).first()
+    assert new_team.description == dscrptn
+    assert new_team.active == False
     
 
-@pytest.mark.xfail()
+@pytest.mark.smoke
 def test_update_team(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
+    # GIVEN a database with some teams
+    count = random.randint(5, 15)
+    create_multiple_teams(auth_client.sqla, count)
+    # WHEN we update one team
+    team_id = auth_client.sqla.query(Team.id).first()[0]
+    dscrptn = fake.sentences(nb=1)[0]
+    resp = auth_client.patch(url_for('events.update_team', team_id = team_id), json={
+        'description': dscrptn,
+        'active': False
+    })
+    # THEN we should have the correct status code
+    assert resp.status_code == 200 
+    # THEN the team should end up with the correct attribute
+    new_team = auth_client.sqla.query(Team).filter(Team.id == team_id).first()
+    assert new_team.description == dscrptn
+    assert new_team.active == False
     
 
 @pytest.mark.smoke
