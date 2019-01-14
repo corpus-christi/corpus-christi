@@ -110,19 +110,40 @@
       <asset-form
         v-bind:editMode="assetDialog.editMode"
         v-bind:initialData="assetDialog.asset"
+        v-bind:saveLoading="assetDialog.saveLoading"
+        v-bind:addMoreLoading="assetDialog.addMoreLoading"
+        v-on:add-another="addAnotherAsset"
+        v-on:save="saveAsset"
         v-on:cancel="cancelAsset"
       />
     </v-dialog>
 
-    <!-- v-bind:saveLoading="assetDialog.saveLoading"
-    v-bind:addMoreLoading="assetDialog.addMoreLoading"
-    v-on:add-another="addAnotherAsset"
-    v-on:save="saveAsset" -->
+    <!-- Archive dialog -->
+    <v-dialog v-model="archiveDialog.show" max-width="350px">
+      <v-card>
+        <v-card-text>{{ $t("events.assets.confirm-archive") }}</v-card-text>
+        <v-card-actions>
+          <v-btn v-on:click="cancelArchive" color="secondary" flat data-cy="">{{
+            $t("actions.cancel")
+          }}</v-btn>
+          <v-spacer></v-spacer>
+          <v-btn
+            v-on:click="archiveAsset"
+            color="primary"
+            raised
+            :loading="archiveDialog.loading"
+            data-cy=""
+            >{{ $t("actions.confirm") }}</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script>
 import AssetForm from "./AssetForm";
+import { mapGetters } from "vuex";
 
 export default {
   name: "EventAssets",
@@ -140,9 +161,14 @@ export default {
       assetDialog: {
         show: false,
         editMode: false,
-        // saveLoading: false,
-        // addMoreLoading: false,
+        saveLoading: false,
+        addMoreLoading: false,
         asset: {}
+      },
+      archiveDialog: {
+        show: false,
+        assetId: -1,
+        loading: false
       },
       search: "",
 
@@ -160,8 +186,9 @@ export default {
         { text: this.$t("events.assets.location"), value: "location", width: "40%" },
         { text: this.$t("events.actions"), sortable: false, width: "20%" }
       ];
-    }
-    // ...mapGetters(["currentLanguageCode"])
+    },
+
+    ...mapGetters(["currentLanguageCode"])
   },
   methods: {
     activateAssetDialog(asset = {}, editMode = false) {
@@ -174,14 +201,14 @@ export default {
       this.activateAssetDialog({ ...asset }, true);
     },
 
-    // activateArchiveDialog(assetId) {
-    //   this.archiveDialog.show = true;
-    //   this.archiveDialog.assetId = assetId;
-    // },
+    activateArchiveDialog(assetId) {
+      this.archiveDialog.show = true;
+      this.archiveDialog.assetId = assetId;
+    },
 
-    // confirmArchive(asset) {
-    //   this.activateArchiveDialog(asset.id);
-    // },
+    confirmArchive(asset) {
+      this.activateArchiveDialog(asset.id);
+    },
 
     duplicate(asset) {
       const copyAsset = JSON.parse(JSON.stringify(asset));
@@ -189,48 +216,48 @@ export default {
       this.activateAssetDialog(copyAsset);
     },
 
-    // archiveAsset() {
-    //   console.log("Archived asset")
-    //   this.archiveDialog.loading = true;
-    //   const assetId = this.archiveDialog.assetId
-    //   const idx = this.assets.findIndex(ev => ev.id === assetId);
-    //   this.$http
-    //     .delete(`http://localhost:3000/events/${eventId}`)
-    //     .then(resp => {
-    //       console.log("ARCHIVE", resp);
-    //       this.assets[idx].active = false;
-    //       this.archiveDialog.loading = false;
-    //       this.archiveDialog.show = false;
-    //       this.showSnackbar(this.$t("events.assets.asset-archived"));
-    //     })
-    //     .catch(err => {
-    //       console.error("ARCHIVE FALURE", err.response);
-    //       this.archiveDialog.loading = false;
-    //       this.archiveDialog.show = false;
-    //       this.showSnackbar(this.$t("events.assets.error-archiving-asset"));
-    //     });
+    archiveAsset() {
+      console.log("Archived asset")
+      this.archiveDialog.loading = true;
+      const assetId = this.archiveDialog.assetId
+      const idx = this.assets.findIndex(as => as.id === assetId);
+      this.$http
+        .delete(`http://localhost:3000/assets/${assetId}`)
+        .then(resp => {
+          console.log("ARCHIVE", resp);
+          this.assets[idx].active = false;
+          this.archiveDialog.loading = false;
+          this.archiveDialog.show = false;
+          this.showSnackbar(this.$t("events.assets.asset-archived"));
+        })
+        .catch(err => {
+          console.error("ARCHIVE FALURE", err.response);
+          this.archiveDialog.loading = false;
+          this.archiveDialog.show = false;
+          this.showSnackbar(this.$t("events.assets.error-archiving-asset"));
+        });
 
-    //   // this.archiveDialog.show = false;
-    // },
+      // this.archiveDialog.show = false;
+    },
 
-    // unarchive(event) {
-    //   const idx = this.events.findIndex(ev => ev.id === event.id);
-    //   const copyEvent = JSON.parse(JSON.stringify(event));
-    //   event.unarchiving = true;
-    //   copyEvent.active = true;
-    //   this.$http
-    //     .put(`http://localhost:3000/events/${copyEvent.id}`, copyEvent)
-    //     .then(resp => {
-    //       console.log("UNARCHIVED", resp);
-    //       Object.assign(this.events[idx], resp.data);
-    //       this.showSnackbar(this.$t("events.event-unarchived"));
-    //     })
-    //     .catch(err => {
-    //       delete event.unarchiving;
-    //       console.error("UNARCHIVE FALURE", err.response);
-    //       this.showSnackbar(this.$t("events.error-unarchiving-event"));
-    //     });
-    // },
+    unarchive(asset) {
+      const idx = this.assets.findIndex(as => as.id === asset.id);
+      const copyAsset = JSON.parse(JSON.stringify(asset));
+      asset.unarchiving = true;
+      copyAsset.active = true;
+      this.$http
+        .put(`http://localhost:3000/assets/${copyAsset.id}`, copyAsset)
+        .then(resp => {
+          console.log("UNARCHIVED", resp);
+          Object.assign(this.assets[idx], resp.data);
+          this.showSnackbar(this.$t("events.assets.asset-unarchived"));
+        })
+        .catch(err => {
+          delete asset.unarchiving;
+          console.error("UNARCHIVE FALURE", err.response);
+          this.showSnackbar(this.$t("events.assets.error-unarchiving-asset"));
+        });
+    },
 
     cancelArchive() {
       this.archiveDialog.show = false;
@@ -244,61 +271,61 @@ export default {
       this.assetDialog.show = false;
     },
 
-    // saveEvent(event) {
-    //   this.eventDialog.saveLoading = true;
-    //   if (this.eventDialog.editMode) {
-    //     const eventId = event.id;
-    //     const idx = this.events.findIndex(ev => ev.id === event.id);
-    //     delete event.id;
-    //     this.$http
-    //       .put(`http://localhost:3000/events/${eventId}`, event)
-    //       .then(resp => {
-    //         console.log("EDITED", resp);
-    //         Object.assign(this.events[idx], event);
-    //         this.eventDialog.show = false;
-    //         this.eventDialog.saveLoading = false;
-    //         this.showSnackbar(this.$t("events.assets.asset-edited"));
-    //       })
-    //       .catch(err => {
-    //         console.error("PUT FALURE", err.response);
-    //         this.eventDialog.saveLoading = false;
-    //         this.showSnackbar(this.$t("events.assets.error-editing-asset"));
-    //       });
-    //   } else {
-    //     this.$http
-    //       .post("http://localhost:3000/events/", event)
-    //       .then(resp => {
-    //         console.log("ADDED", resp);
-    //         this.events.push(resp.data);
-    //         this.eventDialog.show = false;
-    //         this.eventDialog.saveLoading = false;
-    //         this.showSnackbar(this.$t("events.assets.asset-added"));
-    //       })
-    //       .catch(err => {
-    //         console.error("POST FAILURE", err.response);
-    //         this.eventDialog.saveLoading = false;
-    //         this.showSnackbar(this.$t("events.assets.error-adding-asset"));
-    //       });
-    //   }
-    // },
+    saveAsset(asset) {
+      this.assetDialog.saveLoading = true;
+      if (this.assetDialog.editMode) {
+        const assetId = asset.id;
+        const idx = this.assets.findIndex(as => as.id === asset.id);
+        delete asset.id;
+        this.$http
+          .put(`http://localhost:3000/assets/${assetId}`, asset)
+          .then(resp => {
+            console.log("EDITED", resp);
+            Object.assign(this.assets[idx], asset);
+            this.assetDialog.show = false;
+            this.assetDialog.saveLoading = false;
+            this.showSnackbar(this.$t("events.assets.asset-edited"));
+          })
+          .catch(err => {
+            console.error("PUT FALURE", err.response);
+            this.assetDialog.saveLoading = false;
+            this.showSnackbar(this.$t("events.assets.error-editing-asset"));
+          });
+      } else {
+        this.$http
+          .post("http://localhost:3000/assets/", asset)
+          .then(resp => {
+            console.log("ADDED", resp);
+            this.assets.push(resp.data);
+            this.assetDialog.show = false;
+            this.assetDialog.saveLoading = false;
+            this.showSnackbar(this.$t("events.assets.asset-added"));
+          })
+          .catch(err => {
+            console.error("POST FAILURE", err.response);
+            this.assetDialog.saveLoading = false;
+            this.showSnackbar(this.$t("events.assets.error-adding-asset"));
+          });
+      }
+    },
 
-    // addAnotherAsset(asset) {
-    //   this.assetDialog.addMoreLoading = true;
-    //   this.$http
-    //       .post("http://localhost:3000/events/", event)
-    //       .then(resp => {
-    //         console.log("ADDED", resp);
-    //         this.events.push(resp.data);
-    //         this.eventDialog.show = false;
-    //         this.eventDialog.saveLoading = false;
-    //         this.showSnackbar(this.$t("events.assets.asset-added"));
-    //       })
-    //       .catch(err => {
-    //         console.error("FAILURE", err.response);
-    //         this.eventDialog.saveLoading = false;
-    //         this.showSnackbar(this.$t("events.assets.error-adding-asset"));
-    //       });
-    // },
+    addAnotherAsset(asset) {
+      this.assetDialog.addMoreLoading = true;
+      this.$http
+          .post("http://localhost:3000/assets/", asset)
+          .then(resp => {
+            console.log("ADDED", resp);
+            this.assets.push(resp.data);
+            this.assetDialog.show = false;
+            this.assetDialog.saveLoading = false;
+            this.showSnackbar(this.$t("events.assets.asset-added"));
+          })
+          .catch(err => {
+            console.error("FAILURE", err.response);
+            this.assetDialog.saveLoading = false;
+            this.showSnackbar(this.$t("events.assets.error-adding-asset"));
+          });
+    },
 
     showSnackbar(message) {
       this.snackbar.text = message;
