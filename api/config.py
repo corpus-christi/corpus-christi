@@ -7,10 +7,10 @@ SQLITE_TEST = 'sqlite:///' + os.path.join(BASE_DIR, 'test-db.sqlite')
 SQLITE_DEV = 'sqlite:///' + os.path.join(BASE_DIR, 'dev-db.sqlite')
 SQLITE_MEM = 'sqlite://'
 
-PSQL_TEST = 'postgresql://tom@localhost:5432/cc-test'
-PSQL_DEV = 'postgresql://tom@localhost:5432/cc-dev'
-PSQL_STAGING = 'postgresql://tom@localhost:5432/cc-staging'
-PSQL_PROD = 'postgresql://tom@localhost:5432/cc-prod'
+PSQL_TEST = 'postgresql://arco@localhost:5432/cc-test'
+PSQL_DEV = 'postgresql://arco@localhost:5432/cc-dev'
+PSQL_STAGING = 'postgresql://arco:EOTe70UAg4YZ@localhost:5432/cc-staging'
+PSQL_PROD = 'postgresql://arco@localhost:5432/cc-prod'
 
 
 class Config:

@@ -20,3 +20,6 @@ screenshots/
 dist/
 .vscode/
 .DS_Store
+
+#ETC
+*.swp

@@ -10,12 +10,8 @@ const router = new VueRouter({
   mode: "history",
   routes: [
     {
-      path: "/",
-      redirect: { name: "public" }
-    },
-    {
       name: "public",
-      path: "/public",
+      path: "/",
       meta: { layout: "arco" },
       component: () => import("@/pages/Public")
     },
