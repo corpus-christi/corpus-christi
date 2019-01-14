@@ -89,6 +89,7 @@
         v-bind:editMode="courseDialog.editMode"
         v-bind:initialData="courseDialog.course"
         v-bind:saving="courseDialog.saving"
+        v-bind:coursesPool="courses"
         v-on:cancel="cancelCourse"
         v-on:save="saveCourse"
       />
@@ -282,7 +283,7 @@ export default {
       this.courseDialog.saving = true;
 
       // Hang onto the prereqs of the course
-      const prerequisites = course.prerequisites;
+      const prerequisites = course.prerequisites || [];
       // Get rid of the prereqs; not for consumption by the endpoint
       delete course.prerequisites;
 
@@ -348,7 +349,7 @@ export default {
             this.snackbar.show = true;
           })
           .catch(err => {
-            console.error("FAILURE", err.response);
+            console.error("FAILURE", err);
             this.snackbar.text = this.$t("courses.add-failed");
             this.snackbar.show = true;
           })
