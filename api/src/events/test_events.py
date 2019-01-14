@@ -10,7 +10,7 @@ from werkzeug.security import check_password_hash
 from .models import Asset, AssetSchema, Event, EventSchema, Team, TeamSchema, EventParticipant, EventParticipantSchema, EventPerson, EventPersonSchema, TeamMember, TeamMemberSchema, EventAsset, EventAssetSchema, EventTeam, EventTeamSchema
 from ..places.models import Location
 from ..people.models import Person
-from .create_event_data import create_multiple_events, event_object_factory
+from .create_event_data import create_multiple_events, event_object_factory, create_multiple_teams
 
 # ---- Event
 
@@ -182,11 +182,16 @@ def test_update_team(auth_client):
     assert True == False
     
 
-@pytest.mark.xfail()
+@pytest.mark.smoke
 def test_delete_team(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
-    
-
+    # GIVEN a database with some teams
+    count = random.randint(5, 15)
+    create_multiple_teams(auth_client.sqla, count)
+    # WHEN we delete one from it
+    deleting_id = auth_client.sqla.query(Team.id).first()[0]
+    resp = auth_client.delete(url_for('events.delete_team', team_id = deleting_id))
+    # THEN we should have the correct status code
+    assert resp.status_code == 204
+    # THEN we should have the team as inactive
+    isActive = auth_client.sqla.query(Team.active).filter(Team.id == deleting_id).first()[0]
+    assert isActive == False
