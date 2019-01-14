@@ -166,14 +166,16 @@ def create_diploma_awards(sqla, n):
     diplomas = sqla.query(Diploma).all()
     # diploma_award_schema = Diploma_AwardedSchema()
     new_diploma_awards = []
-    for student in students:
-        diploma = diplomas[random.randint(0, len(diplomas))]
-        # print(student.diplomas.when)
-        print(diploma)
+    for i in range(n):
+        diploma = diplomas[random.randint(0, len(diplomas)-1)]
+        student = students[random.randint(0, len(students)-1)]
+        # print(diploma.when)
         student.diplomas.append(diploma)
         new_diploma_awards.append(student)
     sqla.add_all(new_diploma_awards)
     sqla.commit()
+    for student in students:
+        print(student.diplomas)
 
 
 # ---- Course
