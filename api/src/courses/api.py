@@ -8,7 +8,10 @@ from marshmallow import ValidationError
 import sys
 
 from . import courses
-from .models import Course, CourseSchema, Course_Offering, Course_OfferingSchema, PrerequisiteSchema
+from .models import Course, CourseSchema, \
+                    Course_Offering, Course_OfferingSchema, \
+                    PrerequisiteSchema, \
+                    Student, StudentSchema
 from .. import db
 
 course_schema = CourseSchema()
