@@ -292,11 +292,24 @@ export default {
         // Get rid of the ID; not for consumption by endpoint.
         delete course.id;
 
-        this.$http
-          .patch(`/api/v1/courses/courses/${course_id}`, course)
-          .then(resp => {
-            console.log("EDITED", resp);
-            Object.assign(this.courses[idx], course);
+        let promises = [];
+        promises.push(
+          this.$http
+            .patch(`/api/v1/courses/courses/${course_id}`, course)
+            .then(resp => {
+              console.log("EDITED", resp);
+              Object.assign(this.courses[idx], course);
+            })
+        );
+        promises.push(
+          this.$http
+            .patch(`/api/v1/courses/courses/prerequisites/${course_id}`,
+              { prerequisites: prerequisites.map(prereq => prereq.id) }) // API expects array of IDs
+        )
+
+        Promise.all(promises)
+          .then(() => {
+            this.courses[idx].prerequisites = prerequisites;
             this.snackbar.text = this.$t("courses.updated");
             this.snackbar.show = true;
           })
