@@ -92,19 +92,3 @@ entities:
         length: locale
       - name: active
         type: boolean
-  - name: AccountRole
-    singular: people_account_role
-    plural: people_account_roles
-    uri: /people_account_roles
-    table: people_account_role
-    attributes:
-      - name: account_id
-        type: integer
-        primary-key: true
-        foreign-key: people_account.id
-        min: 1
-      - name: role_id
-        type: integer
-        primary-key: true
-        foreign-key: people_role.id
-        min: 1

@@ -13,6 +13,8 @@ describe('Create Event Test', function() {
 
     cy.get('[data-cy=description]').type('A neat description of something.');
 
+    // TODO: Test adding in a location
+
     cy.get('[data-cy=start-date-menu]').click();
     // Get cypress to click on a certain position on the calendar
     cy.get('tbody > :nth-child(5) > :nth-child(1) > .v-btn > .v-btn__content').click();

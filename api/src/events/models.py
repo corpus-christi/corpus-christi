@@ -17,7 +17,7 @@ class Event(Base):
     description = Column(StringTypes.LONG_STRING)
     start = Column(DateTime, nullable=False)
     end = Column(DateTime, nullable=False)
-    location_id = Column(Integer, ForeignKey('places_location.id'))
+    location_id = Column(Integer, ForeignKey('places_location.id'), nullable=True)
     active = Column(Boolean, default=True)
 
     assets = relationship("EventAsset", back_populates="event")
@@ -36,7 +36,8 @@ class EventSchema(Schema):
     description = fields.String()
     start = fields.DateTime(required=True)
     end = fields.DateTime(required=True)
-    location = fields.Nested('LocationSchema')
+    location_id = fields.Integer(load_only=True, allow_none=True)
+    location = fields.Nested('LocationSchema', allow_none=True)
     participants = fields.Nested('EventParticipantSchema', many=True, exclude=['event'])
     persons = fields.Nested('EventPersonSchema', many=True, exclude=['event'])
     teams = fields.Nested('EventTeamSchema', many=True, exclude=['event'])
@@ -48,7 +49,7 @@ class EventSchema(Schema):
 class Asset(Base):
     __tablename__ = 'events_asset'
     id = Column(Integer, primary_key=True)
-    description = Column(StringTypes.LONG_STRING, nullable=False)
+    description = Column(StringTypes.LONG_STRING)
     location_id = Column(Integer, ForeignKey('places_location.id'))
     active = Column(Boolean, default=True)
 
@@ -78,7 +79,6 @@ class Team(Base):
 
     def __repr__(self):
         return f"<Team(id={self.id})>"
-    
 
 class TeamSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))

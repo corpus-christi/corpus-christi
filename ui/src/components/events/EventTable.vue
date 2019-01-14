@@ -63,7 +63,7 @@
           class="hover-hand"
           v-on:click="$router.push({ path: '/events/' + props.item.id })"
         >
-          {{ getDisplayLocation(props.item.location_name) }}
+          {{ getDisplayLocation(props.item.location) }}
         </td>
         <td>
           <template v-if="props.item.active">
@@ -89,6 +89,7 @@
                 color="primary"
                 slot="activator"
                 v-on:click="duplicate(props.item)"
+                data-cy="duplicate"
               >
                 <v-icon small>filter_none</v-icon>
               </v-btn>
@@ -102,6 +103,7 @@
                 color="primary"
                 slot="activator"
                 v-on:click="confirmArchive(props.item)"
+                data-cy="archive"
               >
                 <v-icon small>archive</v-icon>
               </v-btn>
@@ -118,6 +120,7 @@
                 slot="activator"
                 v-on:click="unarchive(props.item)"
                 :loading="props.item.unarchiving"
+                data-cy="unarchive"
               >
                 <v-icon small>undo</v-icon>
               </v-btn>
@@ -153,7 +156,7 @@
       <v-card>
         <v-card-text>{{ $t("events.confirm-archive") }}</v-card-text>
         <v-card-actions>
-          <v-btn v-on:click="cancelArchive" color="secondary" flat data-cy="">{{
+          <v-btn v-on:click="cancelArchive" color="secondary" flat data-cy="cancel-archive">{{
             $t("actions.cancel")
           }}</v-btn>
           <v-spacer></v-spacer>
@@ -162,7 +165,7 @@
             color="primary"
             raised
             :loading="archiveDialog.loading"
-            data-cy=""
+            data-cy="confirm-archive"
             >{{ $t("actions.confirm") }}</v-btn
           >
         </v-card-actions>
@@ -179,7 +182,7 @@ export default {
   name: "EventTable",
   components: { "event-form": EventForm },
   mounted() {
-    this.$http.get("http://localhost:3000/events").then(resp => {
+    this.$http.get("/api/v1/events/?return_group=all").then(resp => {
       this.events = resp.data;
     });
     this.onResize()
@@ -281,7 +284,7 @@ export default {
       const eventId = this.archiveDialog.eventId;
       const idx = this.events.findIndex(ev => ev.id === eventId);
       this.$http
-        .delete(`http://localhost:3000/events/${eventId}`)
+        .delete(`/api/v1/events/${eventId}`)
         .then(resp => {
           console.log("ARCHIVE", resp);
           this.events[idx].active = false;
@@ -302,8 +305,11 @@ export default {
       const copyEvent = JSON.parse(JSON.stringify(event));
       event.unarchiving = true;
       copyEvent.active = true;
+      const putId = copyEvent.id;
+      delete copyEvent.id;
+      delete copyEvent.location; //Temporary delete
       this.$http
-        .put(`http://localhost:3000/events/${copyEvent.id}`, copyEvent)
+        .put(`/api/v1/events/${putId}`, copyEvent)
         .then(resp => {
           console.log("UNARCHIVED", resp);
           Object.assign(this.events[idx], resp.data);
@@ -335,7 +341,7 @@ export default {
         const idx = this.events.findIndex(ev => ev.id === event.id);
         delete event.id;
         this.$http
-          .put(`http://localhost:3000/events/${eventId}`, event)
+          .put(`/api/v1/events/${eventId}`, event)
           .then(resp => {
             console.log("EDITED", resp);
             Object.assign(this.events[idx], event);
@@ -350,7 +356,7 @@ export default {
           });
       } else {
         this.$http
-          .post("http://localhost:3000/events/", event)
+          .post("/api/v1/events/", event)
           .then(resp => {
             console.log("ADDED", resp);
             this.events.push(resp.data);
@@ -369,7 +375,7 @@ export default {
     addAnotherEvent(event) {
       this.eventDialog.addMoreLoading = true;
       this.$http
-        .post("http://localhost:3000/events/", event)
+        .post("/api/v1/events/", event)
         .then(resp => {
           console.log("ADDED", resp);
           this.events.push(resp.data);
@@ -398,10 +404,14 @@ export default {
         minute: "2-digit"
       });
     },
-    getDisplayLocation(name, length = 20) {
-      if (name && name.length && name.length > 0) {
-        if (name.length > length) {
-          return `${name.substring(0, length - 3)}...`;
+    getDisplayLocation(location, length = 20) {
+      if (location && location.address && location.address.name) {
+        let name = location.address.name
+        if (name && name.length && name.length > 0) {
+          if (name.length > length) {
+            return `${name.substring(0, length - 3)}...`;
+          }
+          return name
         }
       }
       return name;
@@ -414,6 +424,7 @@ export default {
       } else {
         this.windowSize.small = false
       }
+
     }
   },
 

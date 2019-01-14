@@ -10,3 +10,4 @@ flask db migrate
 flask db upgrade
 flask data load-all
 flask account new --first="Fred" --last="Ziffle" username password
+flask account new --first="Quality" --last="Assurance" Cytest password
