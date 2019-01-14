@@ -341,16 +341,17 @@ export default {
     saveEvent(event) {
       this.eventDialog.saveLoading = true;
       event.location_id = event.location.id;
-      delete event.location;
+      let newEvent = JSON.parse(JSON.stringify(event))
+      delete newEvent.location;
+      delete newEvent.id;
       if (this.eventDialog.editMode) {
         const eventId = event.id;
         const idx = this.events.findIndex(ev => ev.id === event.id);
-        delete event.id;
         this.$http
-          .put(`/api/v1/events/${eventId}`, event)
+          .put(`/api/v1/events/${eventId}`, newEvent)
           .then(resp => {
             console.log("EDITED", resp);
-            Object.assign(this.events[idx], event);
+            Object.assign(this.events[idx], newEvent);
             this.eventDialog.show = false;
             this.eventDialog.saveLoading = false;
             this.showSnackbar(this.$t("events.event-edited"));
@@ -362,7 +363,7 @@ export default {
           });
       } else {
         this.$http
-          .post("/api/v1/events/", event)
+          .post("/api/v1/events/", newEvent)
           .then(resp => {
             console.log("ADDED", resp);
             this.events.push(resp.data);
@@ -381,7 +382,8 @@ export default {
     addAnotherEvent(event) {
       this.eventDialog.addMoreLoading = true;
       event.location_id = event.location.id;
-      delete event.location;
+      let newEvent = JSON.parse(JSON.stringify(event))
+      delete newEvent.location;
       this.$http
         .post("/api/v1/events/", event)
         .then(resp => {
