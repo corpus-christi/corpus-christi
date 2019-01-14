@@ -17,7 +17,7 @@ from src.places.models import Country
 from src.courses.models import Course, Prerequisite
 from src.courses.test_courses import create_multiple_courses,\
     create_multiple_course_offerings, create_multiple_prerequisites,\
-    create_multiple_diplomas
+    create_multiple_diplomas, create_multiple_students, create_class_meetings
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 
@@ -65,7 +65,9 @@ def load_languages():
     create_multiple_courses(db.session, 12)
     create_multiple_course_offerings(db.session, 6)
     create_multiple_prerequisites(db.session)
-    create_multiple_diplomas(db.session)
+    create_multiple_diplomas(db.session, 30)
+    create_multiple_students(db.session, 30)
+    create_class_meetings(db.session, 30)
 
     access_token = create_access_token(identity='test-user')
 

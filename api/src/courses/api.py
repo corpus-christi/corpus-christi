@@ -28,22 +28,35 @@ def create_course():
     db.session.commit()
     return jsonify(course_schema.dump(new_course)), 201
 
+"""
+Function that takes a SQLAlchemy query of Courses and
+adds its prerequisites, returning as a jsonified object
+"""
+def add_prereqs(query_result):
+    if(hasattr(query_result, '__iter__')):
+        courses = course_schema.dump(query_result, many=True)
+        for i in range(0, len(courses)):
+            courses[i]['prerequisites'] = []
+            for j in query_result[i].prerequisites:
+                j = course_schema.dump(j, many=False)
+                courses[i]['prerequisites'].append(j)
+    else:
+        courses = course_schema.dump(query_result, many=False)
+        courses['prerequisites'] = []
+        for i in query_result.prerequisites:
+            i = course_schema.dump(i, many=False)
+            courses['prerequisites'].append(i)
+    return courses
+
 
 @courses.route('/courses')
 @jwt_required
 def read_all_courses():
     """List all active and inactive courses"""
     result = db.session.query(Course).all()
-    results = course_schema.dump(result, many=True) # Courses are now JSON
-
-    # Runs through range of list values to access both lists at read_one_course
-    # (SQLAlchemy object and python dictionary)
-    for i in range(0, len(results)): # iterate through json results
-        results[i]['prerequisites'] = []
-        for j in result[i].prerequisites: # get list of prerequisites
-            j = course_schema.dump(j, many=False)
-            results[i]['prerequisites'].append(j)
-    return jsonify(results)
+    if(result is None):
+        return "Result NOT found", 404
+    return jsonify(add_prereqs(result))
 
 
 @courses.route('/courses-active')
@@ -51,6 +64,9 @@ def read_all_courses():
 def read_all_active_courses():
     """List all active courses"""
     result = db.session.query(Course).filter_by(active=True).all()
+    if(result is None):
+        return "Result NOT found", 404
+    # return add_prereqs(result)
     return jsonify(course_schema.dump(result, many=True))
 
 
@@ -59,6 +75,9 @@ def read_all_active_courses():
 def read_all_inactive_courses():
     """List all inactive courses"""
     result = db.session.query(Course).filter_by(active=False).all()
+    if(result is None):
+        return "Result NOT found", 404
+    # return add_prereqs(result)
     return jsonify(course_schema.dump(result, many=True))
 
 
@@ -67,7 +86,10 @@ def read_all_inactive_courses():
 def read_one_course(course_id):
     """List only one course with given course_id"""
     result = db.session.query(Course).filter_by(id=course_id).first()
-    return jsonify(course_schema.dump(result))
+    if(result is None):
+        return "Result NOT found", 404
+    return jsonify(add_prereqs(result))
+    # return jsonify(course_schema.dump(result))
 
 
 @courses.route('/courses/<course_id>', methods=['PATCH'])
@@ -123,10 +145,12 @@ Route adds prerequisite for a specific course
 def create_prerequisite(course_id):
     course = db.session.query(Course).filter_by(id=course_id).first()
     if course is None:
-        return 'Course not found', 404
-    course.prerequisites.append(db.session.query(Course).filter_by(id=request.json['prereq_id']).first())
+        return 'Course to add prereqs not found', 404
+    for p in request.json['prerequisites']:
+        course.prerequisites.append(db.session.query(Course).filter_by(id=p).first())
     db.session.commit()
     return jsonify(course_schema.dump(course)), 201
+
 
 """
 Route reads all prerequisites in database
@@ -138,39 +162,36 @@ def read_all_prerequisites():
     result = db.session.query(Course).all() #Get courses to get prereq's
     results = [] # new list
     for i in result:
-        for j in i.prerequisite: # Read through course prerequisites
+        for j in i.prerequisites: # Read through course prerequisites
             results.append(j)
     return jsonify(course_schema.dump(results, many=True))
-
-# read all courses with prereq (?)
 
 
 @courses.route('/courses/prerequisites/<course_id>')
 def read_one_course_prerequisites(course_id):
     result = db.session.query(Course).filter_by(id=course_id).first()
     prereqs_to_return = []
-    for i in result.prerequisite:
+    for i in result.prerequisites:
         prereqs_to_return.append(i)
     return jsonify(course_schema.dump(prereqs_to_return, many=True))
 
 
 
-@courses.route('/courses/prerequisites/<prerequisite_id>', methods=['PATCH'])
+@courses.route('/courses/prerequisites/<course_id>', methods=['PATCH'])
 @jwt_required
-def update_prerequisite(prerequisite_id):
-    try:
-        valid_prerequisite = prerequisite_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    prerequisite = db.session.query(
-        Prerequisite).filter_by(id=prerequisite_id).first()
-
-    for key, val in valid_prerequisite.items():
-        setattr(prerequisite, key, val)
-
+def update_prerequisite(course_id):
+    course = db.session.query(Course).filter_by(id=course_id).first()
+    if course is None:
+        return 'Course to update prereqs not found', 404
+    for i in course.prerequisites:
+        lookup = i
+        lookup = course_schema.dump(i)['id']
+        if not (lookup in request.json['prerequisites']):
+            course.prerequisites.remove(i)
+    for i in request.json['prerequisites']:
+        course.prerequisites.append(db.session.query(Course).filter_by(id=i).first())
     db.session.commit()
-    return jsonify(prerequisite_schema.dump(prerequisite))
+    return jsonify(course_schema.dump(course))
 
 
 # ---- Course_Offering
