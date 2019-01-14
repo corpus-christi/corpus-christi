@@ -335,9 +335,12 @@ export default {
     },
 
     saveEvent(event) {
+      
       this.eventDialog.saveLoading = true;
       if (this.eventDialog.editMode) {
         const eventId = event.id;
+        event.location_id = event.location.id
+        delete event.location
         const idx = this.events.findIndex(ev => ev.id === event.id);
         delete event.id;
         this.$http

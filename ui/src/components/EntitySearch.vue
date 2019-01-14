@@ -8,7 +8,8 @@
       prepend-icon="search"
       :items="items"
       :loading="isLoading"
-      v-model="selected"
+      v-bind:value="value"
+      v-on:input="setSelected"
       :search-input.sync="searchInput"
       v-validate="'required'"
       v-bind:error-messages="errors.collect('location')"
@@ -31,34 +32,14 @@ export default {
   data() {
     return {
       entities: [],
-      selected: "",
       searchInput: "",
       isLoading: false
     };
   },
   watch: {
-    searchInput(val) {
-      this.isLoading = true;
-      var endpoint = (this.location) ? (this.searchEndpoint + "?q=" + val) : '/api/v1/people/persons'
-      this.$http
-        .get(endpoint)
-        .then(resp => {
-          this.entities = resp.data;
-          this.isLoading = false;
-        })
-        .catch(error => {
-          console.log(error);
-          this.isLoading = false;
-        });
-    },
-    selected(entity) {
-      this.setSelected(entity);
-    },
-
     value(entity) {
-      this.selected = entity;
-      this.setSelected(entity);
-    }
+      this.initializeSelected(entity)
+    },
   },
   computed: {
     items() {
@@ -66,7 +47,7 @@ export default {
       return this.entities.map(entity => {
         var entityDescriptor;
         if (this.location) {
-          entityDescriptor = entity.name + ", " + entity.address + ", " + entity.city
+          entityDescriptor = entity.description + ", " + entity.address.address + ", " + entity.address.city
         }
         else if (this.person) {
           entityDescriptor = entity.firstName + " " + entity.lastName;
@@ -77,12 +58,44 @@ export default {
             : entityDescriptor;
         return Object.assign({}, entity, { Description });
       });
-    }
+    },
   },
   methods: {
     setSelected(entity) {
       this.$emit("input", entity);
+    },
+
+    initializeSelected(entity) {
+      if (!entity) return
+      this.selected = entity
+      var entityDescriptor;
+      if (this.location) {
+        entityDescriptor = entity.description + ", " + entity.address.address + ", " + entity.address.city
+      }
+      else if (this.person) {
+        entityDescriptor = entity.firstName + " " + entity.lastName;
+      }
+      const Description =
+      entityDescriptor.length > this.descriptionLimit
+        ? entityDescriptor.slice(0, this.descriptionLimit) + "..."
+        : entityDescriptor;
+      this.selected['Description'] = Description
     }
+  },
+
+  mounted() {
+    this.isLoading = true;
+    var endpoint = (this.location) ? '/api/v1/places/locations' : '/api/v1/people/persons'
+    this.$http
+    .get(endpoint)
+    .then(resp => {
+      this.entities = resp.data;
+      this.isLoading = false;
+    })
+    .catch(error => {
+      console.log(error);
+      this.isLoading = false;
+    });
   }
 };
 </script>

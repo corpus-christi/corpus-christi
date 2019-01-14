@@ -24,9 +24,7 @@
 
         <entity-search
           location
-          v-model="event.location"
-          searchEndpoint="http://localhost:3000/locations"
-        />
+          v-model="event.location"/>
 
         <v-layout>
           <v-flex xs12 md6>
@@ -279,6 +277,7 @@ export default {
 
     // Clear the form and the validators.
     clear() {
+      delete this.event.location
       for (let key of this.eventKeys) {
         this.event[key] = "";
       }
@@ -348,10 +347,6 @@ export default {
       let min = String(date.getMinutes()).padStart(2, "0");
       return `${hr}:${min}`;
     },
-
-    setLocation(locationId) {
-      console.log(locationId);
-    }
   },
   props: {
     editMode: {
