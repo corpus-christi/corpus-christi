@@ -80,6 +80,6 @@ actions:
     archive:
       en: Archive
       es: Archivar
-    deactivate:
-      en: Archive
-      es: Archivo
+    activate:
+      en: Activate
+      es: Activar
