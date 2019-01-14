@@ -18,7 +18,7 @@
             data-cy="search"
           ></v-text-field>
         </v-flex>
-        <v-flex md3 :v-bind:data-cy="view-dropdown">
+        <v-flex md3>
           <v-select
             hide-details
             solo
