@@ -1,5 +1,6 @@
 import datetime
 import os
+from src.events.credentials import email_credentials
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
@@ -21,6 +22,12 @@ class Config:
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_RECORD_QUERIES = True
+
+    MAIL_SERVER='smtp.gmail.com',
+    MAIL_PORT=465,
+    MAIL_USE_SSL=True,
+    MAIL_USERNAME = email_credentials['username'],
+    MAIL_PASSWORD = email_credentials['password']
 
     @staticmethod
     def init_app(app):

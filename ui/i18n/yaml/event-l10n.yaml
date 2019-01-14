@@ -69,10 +69,11 @@ events:
     title:
       en: Teams
       es: Equipos
+  
   assets:
     title: 
       en: Assets
-      es: Bienes
+      es: Imudos
     description:
       en: Description
       es: Descripción
@@ -81,37 +82,37 @@ events:
       es: Ubicación
     new:
       en: Add Asset
-      es: Añadir Bienes
+      es: Añadir Imudos
     create-asset:
       en: Create Asset
-      es: Crear Bienes
+      es: Crear Imudos
     edit-asset:
       en: Edit Asset
-      es: Editar Bienes
+      es: Editar Imudos
     confirm-archive:
       en: Are you sure you want to archive this asset?
-      es: ¿Seguro que quieres archivar estes bienes?
+      es: ¿Seguro que quieres archivar este imudo?
     asset-archived:
       en: Asset archived
-      es: Bienes archivado
+      es: Imudos archivado
     error-archiving-asset:
       en: Error while archiving asset 
-      es: Error al archivar bienes
+      es: Error al archivar este imudo
     asset-unarchived:
       en: Asset unarchived
-      es: Bienes desarchivado   # probably not right
+      es: Imudo desarchivado   # probably not right
     error-unarchiving-asset:
       en: Error while unarchiving asset 
-      es: Error al desarchivar bienes
+      es: Error al desarchivar imudo
     asset-edited:
       en: Asset edited
-      es: Bienes editados   # ?
+      es: Imudo editados   # ?
     error-editing-asset:
       en: Error while editing asset
-      es: Error al editar bienes
+      es: Error al editar imudo
     asset-added:
       en: Asset added
-      es: Bienes agregado
+      es: Imudo agregado
     error-adding-asset:
       en: Error while adding asset
-      es: Error al agregar bienes
+      es: Error al agregar imudo

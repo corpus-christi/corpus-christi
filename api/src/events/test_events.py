@@ -1,6 +1,7 @@
 import pytest
 import random
 import datetime
+import random
 from faker import Faker
 from flask import url_for
 from flask_jwt_extended import create_access_token
