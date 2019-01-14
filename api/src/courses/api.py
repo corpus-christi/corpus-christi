@@ -276,6 +276,18 @@ def read_all_students():
     result = db.session.query(Student).all()
     return jsonify(student_schema.dump(result, many=True))
 
+@courses.route('/students/<active_state>')
+@jwt_required
+def read_active_state_student(active_state):
+    query = db.session.query(Student)
+    if active_state == 'active':
+        result = query.filter_by(active='True').all()
+    elif active_state == 'inactive':
+        result = query.filter_by(active='False').all()
+    else:
+        return 'Cannot filter course offerings with undefined state', 404
+    return jsonify(student_schema.dump(result))
+
 
 @courses.route('/students/<student_id>')
 @jwt_required
@@ -284,30 +296,19 @@ def read_one_student(student_id):
     return jsonify(student_schema.dump(result))
 
 
-@courses.route('/students/<student_id>', methods=['PUT'])
-@jwt_required
-def replace_student(student_id):
-    pass
-
-
+## We don't want to delete students (for record keeping) 
+## But we do want to be able to remove students from "self enroll" in a course offering
+## by toggling active/inactive state
 @courses.route('/students/<student_id>', methods=['PATCH'])
 @jwt_required
 def update_student(student_id):
-    try:
-        valid_student = student_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
+    valid_student = db.session.query(Student).filter_by(id=student_id).first()
+    if course_offering is None:
+        return "Course Offering NOT Found", 404
 
-    student = db.session.query(Student).filter_by(id=student_id).first()
-
-    for key, val in valid_student.items():
-        setattr(student, key, val)
+    for attr in 'confirmed', 'active':
+        if attr in request.json:
+            setattr(course_offering, attr, request.json[attr])
 
     db.session.commit()
     return jsonify(student_schema.dump(student))
-
-
-@courses.route('/students/<student_id>', methods=['DELETE'])
-@jwt_required
-def delete_student(student_id):
-    pass
