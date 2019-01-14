@@ -49,7 +49,7 @@
         :loading="addMoreLoading"
         :disabled="formDisabled"
         data-cy="form-addanother"
-        >{{ $t("actions.addanother") }}</v-btn
+        >{{ $t("actions.add-another") }}</v-btn
       >
       <v-btn
         color="primary"

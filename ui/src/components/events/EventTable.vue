@@ -405,8 +405,8 @@ export default {
       });
     },
     getDisplayLocation(location, length = 20) {
-      if (location && location.address && location.address.name) {
-        let name = location.address.name
+      if (location && location.description) {
+        let name = location.description
         if (name && name.length && name.length > 0) {
           if (name.length > length) {
             return `${name.substring(0, length - 3)}...`;
