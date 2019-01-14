@@ -248,3 +248,63 @@ def update_course_offering(course_offering_id):
 
     db.session.commit()
     return jsonify(course_offering_schema.dump(course_offering))
+
+# ---- Student
+
+student_schema = StudentSchema()
+
+@courses.route('/students', methods=['POST'])
+@jwt_required
+def create_student():
+    try:
+        valid_student = student_schema.load(request.json)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+
+    new_student = Student(**valid_student)
+    db.session.add(new_student)
+    db.session.commit()
+    return jsonify(student_schema.dump(new_student)), 201
+
+
+@courses.route('/students')
+@jwt_required
+def read_all_students():
+    result = db.session.query(Student).all()
+    return jsonify(student_schema.dump(result, many=True))
+
+
+@courses.route('/students/<student_id>')
+@jwt_required
+def read_one_student(student_id):
+    result = db.session.query(Student).filter_by(id=student_id).first()
+    return jsonify(student_schema.dump(result))
+
+
+@courses.route('/students/<student_id>', methods=['PUT'])
+@jwt_required
+def replace_student(student_id):
+    pass
+
+
+@courses.route('/students/<student_id>', methods=['PATCH'])
+@jwt_required
+def update_student(student_id):
+    try:
+        valid_student = student_schema.load(request.json)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+
+    student = db.session.query(Student).filter_by(id=student_id).first()
+
+    for key, val in valid_student.items():
+        setattr(student, key, val)
+
+    db.session.commit()
+    return jsonify(student_schema.dump(student))
+
+
+@courses.route('/students/<student_id>', methods=['DELETE'])
+@jwt_required
+def delete_student(student_id):
+    pass
