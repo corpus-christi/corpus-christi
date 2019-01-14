@@ -4,24 +4,29 @@ import random
 from faker import Faker
 from flask import url_for
 
-from .models import Course, CourseSchema, Prerequisite, PrerequisiteSchema, Course_Offering, Course_OfferingSchema
+from .models import Course, CourseSchema, Course_Offering,\
+        Course_OfferingSchema, Diploma, DiplomaSchema, Student, StudentSchema,\
+        Class_Meeting, Class_MeetingSchema, Diploma_Awarded, Diploma_AwardedSchema
+from ..people.models import Person
+from ..places.models import Location
+
 
 def flip():
     """Return true or false randomly."""
     return random.choice((True, False))
 
-def course_object_factory(course_id):
+
+def course_object_factory():
     """Cook up a fake course."""
     fake = Faker()  # Use a generic one; others may not have all methods.
     course = {
-        #'id': course_id,
         'name': fake.sentence(nb_words=3),
         'description': fake.paragraph(),
         'active': flip()
     }
     return course
 
-def course_object_factory_active(course_id):
+def course_object_factory_active():
     """Cook up a fake course."""
     fake = Faker()  # Use a generic one; others may not have all methods.
     course = {
@@ -31,7 +36,7 @@ def course_object_factory_active(course_id):
     }
     return course
 
-def course_object_factory_inactive(course_id):
+def course_object_factory_inactive():
     """Cook up a fake course."""
     fake = Faker()  # Use a generic one; others may not have all methods.
     course = {
@@ -47,7 +52,7 @@ def create_multiple_courses(sqla, n=10):
     course_schema = CourseSchema()
     new_courses = []
     for i in range(n):
-        valid_course = course_schema.load(course_object_factory(i))
+        valid_course = course_schema.load(course_object_factory())
         course_model = Course(**valid_course)
         new_courses.append(course_model)
     sqla.add_all(new_courses)
@@ -60,7 +65,7 @@ def create_multiple_courses_active(sqla, n=10):
     course_schema = CourseSchema()
     new_courses = []
     for i in range(n):
-        valid_course = course_schema.load(course_object_factory_active(i))
+        valid_course = course_schema.load(course_object_factory_active())
         course_model = Course(**valid_course)
         new_courses.append(course_model)
     sqla.add_all(new_courses)
@@ -73,7 +78,7 @@ def create_multiple_courses_inactive(sqla, n=10):
     course_schema = CourseSchema()
     new_courses = []
     for i in range(n):
-        valid_course = course_schema.load(course_object_factory_inactive(i))
+        valid_course = course_schema.load(course_object_factory_inactive())
         course_model = Course(**valid_course)
         new_courses.append(course_model)
     sqla.add_all(new_courses)
@@ -166,6 +171,107 @@ def create_multiple_prerequisites(sqla):
     sqla.add_all(new_prerequisites)
     sqla.commit()
 
+def courses_diploma_object_factory():
+    """Cook up a fake diploma."""
+    fake = Faker()  # Use a generic one; others may not have all methods.
+    course_diploma = {
+    'name': fake.sentence(nb_words=4),
+    'description': fake.paragraph(),
+    'active': flip()
+    }
+    return course_diploma
+
+def create_multiple_diplomas(sqla, n=20):
+    """Commits the number of diplomas to the DB."""
+    courses = sqla.query(Course).all()
+    course_diploma_schema = DiplomaSchema()
+    new_courses = []
+    for i in range(n):
+        valid_course_diploma = course_diploma_schema.load(courses_diploma_object_factory())
+        diploma = Diploma(**valid_course_diploma)
+        courses[i%len(courses)].diplomas.append(diploma)
+    sqla.add_all(new_courses)
+    sqla.commit()
+
+def student_object_factory(offering_id, student_id):
+    """Cook up a fake student"""
+    fake = Faker()
+    course_student = {
+    'studentId': student_id,
+    'offeringId': offering_id,
+    'confirmed': flip(),
+    'active': flip()
+    }
+    return course_student
+
+def create_multiple_students(sqla, n=6):
+    """Commits the number of students to the DB."""
+    students = sqla.query(Person).all()
+    course_offering = sqla.query(Course_Offering).all()
+    course_students_schema = StudentSchema()
+    new_students = []
+    for i in range(n):
+        valid_student = course_students_schema.load(student_object_factory(course_offering[i%len(course_offering)].id, students[i%len(students)].id))
+        student = Student(**valid_student)
+        new_students.append(student)
+    sqla.add_all(new_students)
+    sqla.commit()
+
+
+def class_meeting_object_factory(teacher, offering_id, location=1):
+    """Cook up a fake class meeting"""
+    fake = Faker()
+    class_meeting = {
+    'offeringId': offering_id,
+    'teacher': teacher,
+    'when': str(fake.future_datetime(end_date="+30d")),
+    'location': location,
+    }
+    return class_meeting
+
+def create_class_meetings(sqla, n=6):
+    """Commits the number of class meetings to the DB."""
+    people = sqla.query(Person).all()
+    course_offerings = sqla.query(Course_Offering).all()
+    locations = sqla.query(Location).all()
+    class_meeting_schema = Class_MeetingSchema()
+    new_class_meetings = []
+    for i in range(n):
+        teacher = people[random.randint(0,len(people)-1)].id
+        offering = course_offerings[i%len(course_offerings)].id
+        location = 1#locations[random.randint(0,len(locations)-1)].id
+
+        valid_class_meeting = class_meeting_schema.load(class_meeting_object_factory(teacher, offering, location))
+        class_meeting = Class_Meeting(**valid_class_meeting)
+        new_class_meetings.append(class_meeting)
+    sqla.add_all(new_class_meetings)
+    sqla.commit()
+
+def diploma_award_object_factory():
+    """Cook up a fake diploma award"""
+    fake = faker()
+    print(fake.past_date(start_date="-30d"))
+    diploma_award = {
+        'when': str(fake.past_date(start_date="-30d"))
+    }
+
+def create_diploma_awards(sqla, n):
+    """Commits the number of diploma awards to the DB."""
+    students = sqla.query(Student).all()
+    diplomas = sqla.query(Diploma).all()
+    # diploma_award_schema = Diploma_AwardedSchema()
+    new_diploma_awards = []
+    for i in range(n):
+        diploma = diplomas[random.randint(0, len(diplomas)-1)]
+        student = students[random.randint(0, len(students)-1)]
+        # print(diploma.when)
+        student.diplomas.append(diploma)
+        new_diploma_awards.append(student)
+    sqla.add_all(new_diploma_awards)
+    sqla.commit()
+    for student in students:
+        print(student.diplomas)
+
 
 # ---- Course
 
@@ -175,7 +281,7 @@ def test_create_course(auth_client):
     count = random.randint(8,19)
     # WHEN database does not contain entry
     for i in range(count):
-        resp = auth_client.post(url_for('courses.create_course'), json=course_object_factory(i))
+        resp = auth_client.post(url_for('courses.create_course'), json=course_object_factory())
         assert resp.status_code == 201
     # THEN assert that entry is now in database
     assert auth_client.sqla.query(Course).count() == count

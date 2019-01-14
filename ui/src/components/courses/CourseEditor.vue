@@ -1,12 +1,12 @@
 <template>
   <v-card>
-    <v-card-title>
+    <v-card-title data-cy="course-editor-title">
       <span class="headline">{{ title }}</span>
     </v-card-title>
     <v-card-text>
       <CourseForm ref="form" v-bind:course="course" />
     </v-card-text>
-    <v-card-actions>
+    <v-card-actions data-cy="course-editor-actions">
       <v-btn color="secondary" flat :disabled="saving" v-on:click="cancel">
         {{ $t("actions.cancel") }}
       </v-btn>
@@ -87,10 +87,11 @@ export default {
 
     // Trigger a save event, returning the updated `Course`.
     save() {
-      this.$refs.form.$validator.validateAll();
-      if (!this.$refs.form.errors.any()) {
-        this.$emit("save", this.course);
-      }
+      this.$refs.form.$validator.validateAll().then(() => {
+        if (!this.$refs.form.errors.any()) {
+          this.$emit("save", this.course);
+        }
+      });
     }
   }
 };

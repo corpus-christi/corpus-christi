@@ -3,34 +3,36 @@
     <v-text-field
       v-model="course.name"
       v-bind:label="$t('courses.title')"
-      name="name"
+      name="title"
       v-validate="'required'"
-      v-bind:error-messages="errors.collect('name')"
+      v-bind:error-messages="errors.collect('title')"
+      data-cy="course-form-name"
     ></v-text-field>
 
-    <v-text-field
+    <v-textarea
       v-model="course.description"
       v-bind:label="$t('courses.description')"
       name="description"
-    ></v-text-field>
-    <!-- translate prereq -->
-    <v-combobox
-      v-model="prereqs"
+      data-cy="course-form-description"
+    ></v-textarea>
+
+    <v-select
+      v-model="course.prerequisites"
       :items="items"
       v-bind:label="$t('courses.prerequisites')"
       chips
+      deletable-chips
       clearable
-      solo
+      outline
       multiple
+      hide-selected
+      return-object
+      item-value="id"
+      item-text="name"
+      :menu-props="{ closeOnContentClick: true }"
+      data-cy="course-form-prerequisites"
     >
-      <template slot="item" slot-scope="data">{{ data.item.name }}</template>
-      <template slot="selection" slot-scope="data">
-        <v-chip :selected="data.selected" close @input="remove(data.item)">
-          <strong>{{ data.item.name }}</strong
-          >&nbsp;
-        </v-chip>
-      </template>
-    </v-combobox>
+    </v-select>
   </form>
 </template>
 
@@ -39,8 +41,7 @@ export default {
   name: "CourseForm",
   data: function() {
     return {
-      availableCourses: [],
-      prereqs: []
+      availableCourses: []
     };
   },
   computed: {
@@ -50,12 +51,6 @@ export default {
   },
   props: {
     course: Object
-  },
-  methods: {
-    remove(item) {
-      this.prereqs.splice(this.prereqs.indexOf(item), 1);
-      this.prereqs = [...this.prereqs];
-    }
   },
   mounted() {
     this.$http
