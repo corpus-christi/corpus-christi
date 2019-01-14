@@ -44,6 +44,7 @@
       :headers="headers"
       :items="visibleEvents"
       :search="search"
+      :loading="tableLoading"
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
@@ -186,14 +187,17 @@ export default {
   name: "EventTable",
   components: { "event-form": EventForm },
   mounted() {
+    this.tableLoading = true;
     this.$http.get("/api/v1/events/?return_group=all").then(resp => {
       this.events = resp.data;
+      this.tableLoading = false;
     });
     this.onResize();
   },
 
   data() {
     return {
+      tableLoading: true,
       events: [],
       eventDialog: {
         show: false,
