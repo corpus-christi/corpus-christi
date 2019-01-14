@@ -44,6 +44,7 @@
       :headers="headers"
       :items="visibleEvents"
       :search="search"
+      :loading="tableLoading"
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
@@ -186,14 +187,17 @@ export default {
   name: "EventTable",
   components: { "event-form": EventForm },
   mounted() {
+    this.tableLoading = true;
     this.$http.get("/api/v1/events/?return_group=all").then(resp => {
       this.events = resp.data;
+      this.tableLoading = false;
     });
     this.onResize();
   },
 
   data() {
     return {
+      tableLoading: true,
       events: [],
       eventDialog: {
         show: false,
@@ -316,6 +320,7 @@ export default {
         .put(`/api/v1/events/${putId}`, copyEvent)
         .then(resp => {
           console.log("UNARCHIVED", resp);
+          delete event.unarchiving;
           Object.assign(this.events[idx], resp.data);
           this.showSnackbar(this.$t("events.event-unarchived"));
         })
@@ -341,7 +346,7 @@ export default {
     saveEvent(event) {
       this.eventDialog.saveLoading = true;
       event.location_id = event.location.id;
-      let newEvent = JSON.parse(JSON.stringify(event))
+      let newEvent = JSON.parse(JSON.stringify(event));
       delete newEvent.location;
       delete newEvent.id;
       if (this.eventDialog.editMode) {
@@ -382,7 +387,7 @@ export default {
     addAnotherEvent(event) {
       this.eventDialog.addMoreLoading = true;
       event.location_id = event.location.id;
-      let newEvent = JSON.parse(JSON.stringify(event))
+      let newEvent = JSON.parse(JSON.stringify(event));
       delete newEvent.location;
       this.$http
         .post("/api/v1/events/", event)

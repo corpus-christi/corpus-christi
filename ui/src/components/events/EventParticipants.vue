@@ -25,6 +25,7 @@
       :headers="headers"
       :items="people"
       :search="search"
+      :loading="tableLoading"
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
@@ -79,6 +80,7 @@ export default {
   name: "EventParticipants",
   data() {
     return {
+      tableLoading: false,
       selectedValue: null,
       search: "",
       people: [],
@@ -138,9 +140,13 @@ export default {
   },
 
   mounted: function() {
+    this.tableLoading = true;
     this.$http
       .get("/api/v1/people/persons")
-      .then(resp => (this.people = resp.data));
+      .then(resp => {
+        this.people = resp.data;
+        this.tableLoading = false;
+      });
   }
 };
 </script>
