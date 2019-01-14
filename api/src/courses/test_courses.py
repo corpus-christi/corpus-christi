@@ -91,18 +91,60 @@ def course_offerings_object_factory(course_id):
     }
     return course_offerings
 
+def course_offerings_object_factory_active(course_id):
+    """Cook up a fake course."""
+    fake = Faker()  # Use a generic one; others may not have all methods.
+    course_offerings = {
+    'maxSize': random.randint(1,100),
+    'description': fake.paragraph(),
+    'active': True,
+    'courseId': course_id
+    }
+    return course_offerings
+
+def course_offerings_object_factory_inactive(course_id):
+    """Cook up a fake course."""
+    fake = Faker()  # Use a generic one; others may not have all methods.
+    course_offerings = {
+    'maxSize': random.randint(1,100),
+    'description': fake.paragraph(),
+    'active': False,
+    'courseId': course_id
+    }
+    return course_offerings
 
 def create_multiple_course_offerings(sqla, n=3):
     """Commits the number of course offering to the DB."""
-    courses = sqla.query(Course).all()
+    course = sqla.query(Course).first()
     course_offerings_schema = Course_OfferingSchema()
     new_course_offerings = []
     for i in range(n):
-        valid_course_offering = course_offerings_schema.load(course_offerings_object_factory(courses[i].id))
+        valid_course_offering = course_offerings_schema.load(course_offerings_object_factory(course.id))
         new_course_offerings.append(Course_Offering(**valid_course_offering))
     sqla.add_all(new_course_offerings)
     sqla.commit()
 
+def create_multiple_course_offerings_active(sqla, n=3):
+    """Commits the number of course offering to the DB."""
+    course = sqla.query(Course).first()
+    course_offerings_schema = Course_OfferingSchema()
+    new_course_offerings = []
+    for i in range(n):
+        valid_course_offering = course_offerings_schema.load(course_offerings_object_factory_active(course.id))
+        new_course_offerings.append(Course_Offering(**valid_course_offering))
+    sqla.add_all(new_course_offerings)
+    sqla.commit()
+
+def create_multiple_course_offerings_inactive(sqla, n=3):
+    """Commits the number of course offering to the DB."""
+    course = sqla.query(Course).first()
+    course_offerings_schema = Course_OfferingSchema()
+    new_course_offerings = []
+    for i in range(n):
+        valid_course_offering = course_offerings_schema.load(course_offerings_object_factory_inactive(course.id))
+        new_course_offerings.append(Course_Offering(**valid_course_offering))
+    sqla.add_all(new_course_offerings)
+    sqla.commit()
 
 def prerequisite_object_factory(course_id, prereq_id):
     """Cook up a fake prerequisite."""
@@ -131,11 +173,12 @@ def create_multiple_prerequisites(sqla):
 def test_create_course(auth_client):
     # GIVEN course entry to put in database
     count = random.randint(8,19)
-    create_multiple_courses(auth_client.sqla, count)
     # WHEN database does not contain entry
-    courses = auth_client.sqla.query(Course).all()
+    for i in range(count):
+        resp = auth_client.post(url_for('courses.create_course'), json=course_object_factory(i))
+        assert resp.status_code == 201
     # THEN assert that entry is now in database
-    assert len(courses) == count
+    assert auth_client.sqla.query(Course).count() == count
     
 # Test getting all courses from the database
 def test_read_all_courses(auth_client):
@@ -188,7 +231,6 @@ def test_read_one_course(auth_client):
         assert resp.json['active'] == course.active
 
 #Test that active courses can be deactivated
-@pytest.mark.smoke
 def test_deactivate_course(auth_client):
     # GIVEN course to deactivate
     count = random.randint(3,11)
@@ -203,7 +245,6 @@ def test_deactivate_course(auth_client):
         assert resp.json['active'] == False
 
 #Test that inactive courses can be reactivated
-@pytest.mark.smoke
 def test_reactivate_course(auth_client):
     # GIVEN course to activate
     count = random.randint(3,11)
@@ -230,7 +271,7 @@ def test_replace_course(auth_client):
 def test_update_course(auth_client):
     # GIVEN active or inactive course in database
     count = random.randint(3,11)
-    create_multiple_courses_active(auth_client.sqla, count)
+    create_multiple_courses(auth_client.sqla, count)
     courses = auth_client.sqla.query(Course).all()
     # WHEN course information updated
     for course in courses:
@@ -254,6 +295,7 @@ def test_delete_course(auth_client):
 # ---- Prerequisite
 
 #Test that prerequisites can be added
+@pytest.mark.xfail()
 def test_create_prerequisite(auth_client):
     # GIVEN existing and available course in database
     create_multiple_courses(auth_client.sqla, 2)
@@ -301,43 +343,68 @@ def test_delete_prerequisite(auth_client):
 
 # ---- Course_Offering
 
-
-@pytest.mark.xfail()
 def test_create_course_offering(auth_client):
     # GIVEN an existing course
+    count = random.randint(8,19)
+    create_multiple_courses(auth_client.sqla, 1)
+    course = auth_client.sqla.query(Course).first()
     # WHEN one or more courses need a section to offer
+    for i in range(count):
+        resp = auth_client.post(url_for('courses.create_course_offering'), json = course_offerings_object_factory(course.id))
+        assert resp.status_code == 201
     # THEN create new course section
-    assert True == False
+    assert auth_client.sqla.query(Course_Offering).count() == count
 
-
-@pytest.mark.xfail()
 def test_read_all_course_offerings(auth_client):
     # GIVEN existing (active and inactive) course offerings
+    create_multiple_courses(auth_client.sqla,1)
+    count = random.randint(8,19)
+    create_multiple_course_offerings(auth_client.sqla, count)
     # WHEN all sections needed
+    course_offerings = auth_client.sqla.query(Course_Offering).all()
     # THEN list all course sections
-    assert True == False
+    assert len(course_offerings) == count
 
-@pytest.mark.xfail()
 def test_read_all_active_course_offerings(auth_client):
     # GIVEN existing active course offerings
+    create_multiple_courses(auth_client.sqla,1)
+    count_active = random.randint(3,11)
+    create_multiple_course_offerings_active(auth_client.sqla, count_active)
+    count_inactive = random.randint(3,11)
+    create_multiple_course_offerings_inactive(auth_client.sqla, count_inactive)
     # WHEN all active course sections needed
+    active_courses = auth_client.sqla.query(Course_Offering).filter_by(active=True).all()
     # THEN list all sections of active courses
-    assert True == False
+    assert len(active_courses) == count_active
 
-@pytest.mark.xfail()
 def test_read_all_inactive_course_offerings(auth_client):
     # GIVEN existing inactive course offerings
+    create_multiple_courses(auth_client.sqla,1)
+    count_active = random.randint(3,11)
+    create_multiple_course_offerings_active(auth_client.sqla, count_active)
+    count_inactive = random.randint(3,11)
+    create_multiple_course_offerings_inactive(auth_client.sqla, count_inactive)
     # WHEN all inactive course sections needed
+    inactive_courses = auth_client.sqla.query(Course_Offering).filter_by(active=False).all()
     # THEN list all sections of inactive courses
-    assert True == False
+    assert len(inactive_courses) == count_inactive
 
-
-@pytest.mark.xfail()
+@pytest.mark.smoke
 def test_read_one_course_offering(auth_client):
     # GIVEN an existing course
+    create_multiple_courses(auth_client.sqla,1)
+    count = random.randint(3,11)
+    create_multiple_course_offerings(auth_client.sqla, count)
     # WHEN one course section needed
+    course_offerings = auth_client.sqla.query(Course_Offering).all()
     # THEN list one course section of course
-    assert True == False
+    for course_offering in course_offerings:
+        resp = auth_client.get(url_for('courses.read_one_course_offering',course_offering_id=course_offering.id))
+        assert resp.status_code == 200
+        assert resp.json['maxSize'] == course_offering.max_size
+        assert resp.json['description'] == course_offering.description
+        assert resp.json['active'] == course_offering.active
+        assert resp.json['courseId'] == course_offering.course_id
 
 """
 @pytest.mark.xfail()
@@ -348,12 +415,22 @@ def test_replace_course_offering(auth_client):
     assert True == False
 """
 
-@pytest.mark.xfail()
+@pytest.mark.smoke
 def test_update_course_offering(auth_client):
     # GIVEN an existing (active or inactive) course offering 
+    create_multiple_courses(auth_client.sqla, 1)
+    count = random.randint(3,11)
+    create_multiple_course_offerings(auth_client.sqla, count)
+    course_offerings = auth_client.sqla.query(Course_Offering).all()
     # WHEN course offering needs to update existing information
-    # THEN assert changes to course offering reflect update
-    assert True == False
+    for course_offering in course_offerings:
+        resp = auth_client.patch(url_for('courses.update_course_offering', course_offering_id=course_offering.id),
+            json={'max_size': 1, 'description':'test_descr', 'active':False})
+        # THEN assert changes to course offering reflect update
+        assert resp.status_code == 200
+        assert resp.json['maxSize'] == 1
+        assert resp.json['description'] == 'test_descr'
+        assert resp.json['active'] == False
 
 """
 @pytest.mark.xfail()
