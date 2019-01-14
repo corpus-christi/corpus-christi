@@ -31,11 +31,15 @@ class Diploma_CourseSchema(Schema):
 
 # ---- Diploma_Awarded
 
-class Diploma_Awarded(Base):
-     __tablename__ = 'courses_diploma_awarded'
-     student_id = Column(Integer, ForeignKey('courses_students.id'), primary_key=True)
-     diploma_id = Column(Integer, ForeignKey('courses_diploma.id'), primary_key=True)
-     when = Column(Date, nullable=False)
+# class Diploma_Awarded(Base):
+#      __tablename__ = 'courses_diploma_awarded'
+#      student_id = Column(Integer, ForeignKey('courses_students.id'), primary_key=True)
+#      diploma_id = Column(Integer, ForeignKey('courses_diploma.id'), primary_key=True)
+#      when = Column(Date, nullable=False)
+Diploma_Awarded = Table('courses_diploma_awarded', Base.metadata,
+     Column('student_id', Integer, ForeignKey('courses_students.id'), primary_key=True),
+     Column('diploma_id', Integer, ForeignKey('courses_diploma.id'), primary_key=True),
+     Column('when', Date, nullable=False))
 
 
 class Diploma_AwardedSchema(Schema):
@@ -135,6 +139,7 @@ class StudentSchema(Schema):
      offering_id = fields.Integer(data_key='offeringId', required=True)
      student_id = fields.Integer(data_key='studentId', required=True)
      confirmed = fields.Boolean(required=True)
+     active = fields.Boolean(required=True)
 
 # ---- Course_Offering
 
