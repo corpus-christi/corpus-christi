@@ -76,10 +76,9 @@ def read_all_events():
 
     # -- location --
     # Filter events on a wildcard location string?
-    location_filter = request.args.get('location')
+    location_filter = request.args.get('location_id')
     if location_filter:
-        # TODO FIXME
-        pass
+        query = query.filter_by(location_id=location_filter)
 
     result = query.all()
 
@@ -384,7 +383,3 @@ def delete_team(team_id):
     
     # 204 codes don't respond with any content
     return 'Successfully deleted team', 204
-
-# Handles PUT and PATCH requests
-def modify_team(team_id, new_value_dict):
-    return modify_entity(Team, team_schema, team_id, new_value_dict)

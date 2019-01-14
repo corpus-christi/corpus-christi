@@ -32,13 +32,11 @@
       <template slot="items" slot-scope="props">
         <td
           class="hover-hand"
-          v-on:click="$router.push({ path: '/events/' + props.item.id })"
         >
           {{ props.item.description }}
         </td>
         <td
           class="hover-hand"
-          v-on:click="$router.push({ path: '/events/' + props.item.id })"
         >
           {{ props.item.location }}
         </td>
