@@ -3,6 +3,14 @@ actions:
     _desc: Header for a table, etc.
     en: Actions
     es: Acciones
+  add-another:
+    _desc: Save a newly created item; clear data (e.g., on a form)
+    en: Add Another
+    es: Añadir Otro
+  add-person:
+    _desc: Add a person to the database
+    en: Add Person
+    es: Añadir Persona
   cancel:
     _desc: Cancel a pending action
     en: Cancel
@@ -39,7 +47,7 @@ actions:
   view-archived:
     _desc: View all inactive
     en: View Archived
-    es: Ver Archivo
+    es: Ver Archivado
   view-active:
     _desc: View all active
     en: View Active

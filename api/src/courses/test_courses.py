@@ -82,15 +82,15 @@ def courses_diploma_object_factory():
     return course_diploma
 
 
-def create_multiple_diplomas(sqla, n=3):
+def create_multiple_diplomas(sqla, n=20):
     """Commits the number of course offering to the DB."""
     courses = sqla.query(Course).all()
     course_diploma_schema = DiplomaSchema()
     new_courses = []
-    for i in range(n):
+    for i in range(20):
         valid_course_diploma = course_diploma_schema.load(courses_diploma_object_factory())
-        diploma = Diploma(**valid_course_diploma)
-        courses[i].diploma = [diploma]
+        valid_diploma = Diploma(**valid_course_diploma)
+        courses[i%len(courses)].diploma.append(valid_diploma)
     sqla.add_all(new_courses)
     sqla.commit()
 

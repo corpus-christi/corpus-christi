@@ -1,4 +1,3 @@
-#Completed by Ryan and Eliza 01/08/2019 2:45pm
 from marshmallow import Schema, fields
 from marshmallow.validate import Range, Length
 from sqlalchemy import Column, Integer, Boolean, ForeignKey, Date, DateTime, Table
@@ -15,8 +14,8 @@ Prerequisite = Table('courses_prerequisite', Base.metadata,
 
 
 class PrerequisiteSchema(Schema):
-     course_id = fields.Integer(data_key='courseId', required=True)
-     prereq_id = fields.Integer(data_key='prereqId', required=True)
+     course_id = fields.Integer(dump_only=True, data_key='courseId', required=True)
+     prereq_id = fields.Integer(dump_only=True, data_key='prereqId', required=True)
 
 # ---- Diploma_Course
 

@@ -3,9 +3,9 @@
     <v-text-field
       v-model="course.name"
       v-bind:label="$t('courses.title')"
-      name="name"
+      name="title"
       v-validate="'required'"
-      v-bind:error-messages="errors.collect('name')"
+      v-bind:error-messages="errors.collect('title')"
     ></v-text-field>
 
     <v-text-field
