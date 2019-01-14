@@ -1,5 +1,19 @@
 {
   "en": {
+    "$vuetify": {
+      "dataIterator": {
+        "nextPage": "Next page",
+        "noResultsText": "No matching records found",
+        "pageText": "{0}-{1} of {2}",
+        "prevPage": "Previous page",
+        "rowsPerPageAll": "All",
+        "rowsPerPageText": "Items per page:"
+      },
+      "dataTable": {
+        "rowsPerPageText": "Rows per page:"
+      },
+      "noDataText": "No data available"
+    },
     "account": {
       "messages": {
         "added-ok": "Account added successfully",
@@ -16,20 +30,23 @@
       "clear": "Clear",
       "close": "Close",
       "confirm": "Confirm",
+      "duplicate": "Duplicate",
       "edit": "Edit",
       "header": "Actions",
       "login": "Log In",
       "logout": "Log Out",
       "save": "Save",
       "search": "Search",
+      "search-people": "Search People",
       "tooltips": {
-        "deactivate": "Archive",
-        "reactivate": "Unarchive",
-        "settings": "Settings"
+        "archive": "Archive",
+        "settings": "Settings",
+        "unarchive": "Unarchive"
       },
       "view-active": "View Active",
       "view-all": "View All",
-      "view-archived": "View Archived"
+      "view-archived": "View Archived",
+      "view-inactive": "View Inactive"
     },
     "courses": {
       "add-failed": "Failed to add course",
@@ -103,6 +120,20 @@
     }
   },
   "es": {
+    "$vuetify": {
+      "dataIterator": {
+        "nextPage": "Siguiente p\u00e1gina",
+        "noResultsText": "No se encontraron registros coincidentes",
+        "pageText": "{0}-{1} de {2}",
+        "prevPage": "Pagina anterior",
+        "rowsPerPageAll": "Todos",
+        "rowsPerPageText": "Art\u00edculos por p\u00e1gina:"
+      },
+      "dataTable": {
+        "rowsPerPageText": "Filas por p\u00e1gina:"
+      },
+      "noDataText": "Datos no disponibles"
+    },
     "account": {
       "messages": {
         "added-ok": "Cuenta agregada exitosamente",
@@ -119,19 +150,23 @@
       "clear": "Despejar",
       "close": "Cerrar",
       "confirm": "Confirmar",
+      "duplicate": "Duplicar",
       "edit": "Editar",
-      "header": "Acciones",
+      "header": "Comportamiento",
       "login": "Acceder",
       "logout": "Cerrar sesi\u00f3n",
       "save": "Salvar",
       "search": "Buscar",
+      "search-people": "Buscar Personas",
       "tooltips": {
-        "deactivate": "Archivo",
-        "settings": "Ajustes"
+        "archive": "Archivar",
+        "settings": "Ajustes",
+        "unarchive": "Desarchivar"
       },
       "view-active": "Ver Activo",
       "view-all": "Ver Todo",
-      "view-archived": "Ver Archivado"
+      "view-archived": "Ver Archivo",
+      "view-inactive": "Ver Inactivo"
     },
     "courses": {
       "add-failed": "Se fall\u00f3 a a\u00f1adir el curso",
