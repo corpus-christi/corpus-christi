@@ -30,16 +30,8 @@
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
-        <td
-          class="hover-hand"
-        >
-          {{ props.item.description }}
-        </td>
-        <td
-          class="hover-hand"
-        >
-          {{ props.item.location }}
-        </td>
+        <td class="hover-hand">{{ props.item.description }}</td>
+        <td class="hover-hand">{{ props.item.location }}</td>
         <td>
           <v-tooltip bottom v-if="props.item.active">
             <v-btn
@@ -182,8 +174,16 @@ export default {
   computed: {
     headers() {
       return [
-        { text: this.$t("events.assets.description"), value: "description", width: "40%" },
-        { text: this.$t("events.assets.location"), value: "location", width: "40%" },
+        {
+          text: this.$t("events.assets.description"),
+          value: "description",
+          width: "40%"
+        },
+        {
+          text: this.$t("events.assets.location"),
+          value: "location",
+          width: "40%"
+        },
         { text: this.$t("events.actions"), sortable: false, width: "20%" }
       ];
     },
@@ -217,9 +217,9 @@ export default {
     },
 
     archiveAsset() {
-      console.log("Archived asset")
+      console.log("Archived asset");
       this.archiveDialog.loading = true;
-      const assetId = this.archiveDialog.assetId
+      const assetId = this.archiveDialog.assetId;
       const idx = this.assets.findIndex(as => as.id === assetId);
       this.$http
         .delete(`http://localhost:3000/assets/${assetId}`)
@@ -312,19 +312,19 @@ export default {
     addAnotherAsset(asset) {
       this.assetDialog.addMoreLoading = true;
       this.$http
-          .post("http://localhost:3000/assets/", asset)
-          .then(resp => {
-            console.log("ADDED", resp);
-            this.assets.push(resp.data);
-            this.assetDialog.show = false;
-            this.assetDialog.saveLoading = false;
-            this.showSnackbar(this.$t("events.assets.asset-added"));
-          })
-          .catch(err => {
-            console.error("FAILURE", err.response);
-            this.assetDialog.saveLoading = false;
-            this.showSnackbar(this.$t("events.assets.error-adding-asset"));
-          });
+        .post("http://localhost:3000/assets/", asset)
+        .then(resp => {
+          console.log("ADDED", resp);
+          this.assets.push(resp.data);
+          this.assetDialog.show = false;
+          this.assetDialog.saveLoading = false;
+          this.showSnackbar(this.$t("events.assets.asset-added"));
+        })
+        .catch(err => {
+          console.error("FAILURE", err.response);
+          this.assetDialog.saveLoading = false;
+          this.showSnackbar(this.$t("events.assets.error-adding-asset"));
+        });
     },
 
     showSnackbar(message) {

@@ -22,9 +22,7 @@
           data-cy="description"
         ></v-textarea>
 
-        <entity-search
-          location
-          v-model="event.location"/>
+        <entity-search location v-model="event.location" />
 
         <v-layout>
           <v-flex xs12 md6>
@@ -277,7 +275,7 @@ export default {
 
     // Clear the form and the validators.
     clear() {
-      delete this.event.location
+      delete this.event.location;
       for (let key of this.eventKeys) {
         this.event[key] = "";
       }
@@ -346,7 +344,7 @@ export default {
       let hr = String(date.getHours()).padStart(2, "0");
       let min = String(date.getMinutes()).padStart(2, "0");
       return `${hr}:${min}`;
-    },
+    }
   },
   props: {
     editMode: {

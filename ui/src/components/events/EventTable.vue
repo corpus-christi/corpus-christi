@@ -51,7 +51,7 @@
           class="hover-hand"
           v-on:click="$router.push({ path: '/events/' + props.item.id })"
         >
-        {{ props.item.title }}
+          {{ props.item.title }}
         </td>
         <td
           class="hover-hand"
@@ -156,9 +156,13 @@
       <v-card>
         <v-card-text>{{ $t("events.confirm-archive") }}</v-card-text>
         <v-card-actions>
-          <v-btn v-on:click="cancelArchive" color="secondary" flat data-cy="cancel-archive">{{
-            $t("actions.cancel")
-          }}</v-btn>
+          <v-btn
+            v-on:click="cancelArchive"
+            color="secondary"
+            flat
+            data-cy="cancel-archive"
+            >{{ $t("actions.cancel") }}</v-btn
+          >
           <v-spacer></v-spacer>
           <v-btn
             v-on:click="archiveEvent"
@@ -185,7 +189,7 @@ export default {
     this.$http.get("/api/v1/events/?return_group=all").then(resp => {
       this.events = resp.data;
     });
-    this.onResize()
+    this.onResize();
   },
 
   data() {
@@ -241,7 +245,7 @@ export default {
         return this.events.filter(ev => ev.active);
       } else if (this.viewStatus == "viewArchived") {
         return this.events.filter(ev => !ev.active);
-      } else if (this.viewStatus == "viewAll") {
+      } else {
         return this.events;
       }
     },
@@ -335,12 +339,11 @@ export default {
     },
 
     saveEvent(event) {
-      
       this.eventDialog.saveLoading = true;
       if (this.eventDialog.editMode) {
         const eventId = event.id;
-        event.location_id = event.location.id
-        delete event.location
+        event.location_id = event.location.id;
+        delete event.location;
         const idx = this.events.findIndex(ev => ev.id === event.id);
         delete event.id;
         this.$http
@@ -409,30 +412,26 @@ export default {
     },
     getDisplayLocation(location, length = 20) {
       if (location && location.description) {
-        let name = location.description
+        let name = location.description;
         if (name && name.length && name.length > 0) {
           if (name.length > length) {
             return `${name.substring(0, length - 3)}...`;
           }
-          return name
+          return name;
         }
       }
       return name;
     },
 
-    onResize () {
-      this.windowSize = { x: window.innerWidth, y: window.innerHeight }
-      if(this.windowSize.x <= 960) {
-        this.windowSize.small = true
+    onResize() {
+      this.windowSize = { x: window.innerWidth, y: window.innerHeight };
+      if (this.windowSize.x <= 960) {
+        this.windowSize.small = true;
       } else {
-        this.windowSize.small = false
+        this.windowSize.small = false;
       }
-
     }
-  },
-
-
-
+  }
 };
 </script>
 

@@ -31,6 +31,7 @@ export default {
   },
   data() {
     return {
+      descriptionLimit: 60,
       entities: [],
       searchInput: "",
       isLoading: false
@@ -38,18 +39,21 @@ export default {
   },
   watch: {
     value(entity) {
-      this.initializeSelected(entity)
-    },
+      this.initializeSelected(entity);
+    }
   },
   computed: {
     items() {
-      var descriptionLimit = 60;
       return this.entities.map(entity => {
         var entityDescriptor;
         if (this.location) {
-          entityDescriptor = entity.description + ", " + entity.address.address + ", " + entity.address.city
-        }
-        else if (this.person) {
+          entityDescriptor =
+            entity.description +
+            ", " +
+            entity.address.address +
+            ", " +
+            entity.address.city;
+        } else if (this.person) {
           entityDescriptor = entity.firstName + " " + entity.lastName;
         }
         const Description =
@@ -58,7 +62,7 @@ export default {
             : entityDescriptor;
         return Object.assign({}, entity, { Description });
       });
-    },
+    }
   },
   methods: {
     setSelected(entity) {
@@ -66,36 +70,42 @@ export default {
     },
 
     initializeSelected(entity) {
-      if (!entity) return
-      this.selected = entity
+      if (!entity) return;
+      this.selected = entity;
       var entityDescriptor;
       if (this.location) {
-        entityDescriptor = entity.description + ", " + entity.address.address + ", " + entity.address.city
-      }
-      else if (this.person) {
+        entityDescriptor =
+          entity.description +
+          ", " +
+          entity.address.address +
+          ", " +
+          entity.address.city;
+      } else if (this.person) {
         entityDescriptor = entity.firstName + " " + entity.lastName;
       }
       const Description =
-      entityDescriptor.length > this.descriptionLimit
-        ? entityDescriptor.slice(0, this.descriptionLimit) + "..."
-        : entityDescriptor;
-      this.selected['Description'] = Description
+        entityDescriptor.length > this.descriptionLimit
+          ? entityDescriptor.slice(0, this.descriptionLimit) + "..."
+          : entityDescriptor;
+      this.selected["Description"] = Description;
     }
   },
 
   mounted() {
     this.isLoading = true;
-    var endpoint = (this.location) ? '/api/v1/places/locations' : '/api/v1/people/persons'
+    var endpoint = this.location
+      ? "/api/v1/places/locations"
+      : "/api/v1/people/persons";
     this.$http
-    .get(endpoint)
-    .then(resp => {
-      this.entities = resp.data;
-      this.isLoading = false;
-    })
-    .catch(error => {
-      console.log(error);
-      this.isLoading = false;
-    });
+      .get(endpoint)
+      .then(resp => {
+        this.entities = resp.data;
+        this.isLoading = false;
+      })
+      .catch(error => {
+        console.log(error);
+        this.isLoading = false;
+      });
   }
 };
 </script>

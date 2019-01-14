@@ -1,16 +1,16 @@
 <template>
-    <div>
-        <v-toolbar>
-            <v-toolbar-title>{{ $t('events.participants.title') }}</v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-text-field
-                v-model="search"
-                append-icon="search"
-                v-bind:label="$t('actions.search')"
-                single-line
-                hide-details
-            ></v-text-field>
-            <v-spacer></v-spacer>
+  <div>
+    <v-toolbar>
+      <v-toolbar-title>{{ $t("events.participants.title") }}</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-text-field
+        v-model="search"
+        append-icon="search"
+        v-bind:label="$t('actions.search')"
+        single-line
+        hide-details
+      ></v-text-field>
+      <v-spacer></v-spacer>
       <v-btn
         color="primary"
         raised
@@ -36,26 +36,40 @@
       </template>
     </v-data-table>
 
-      <v-dialog v-model="newParticipantDialog.show" max-width="350px">
-        <v-card>
-            <v-card-title primary-title>
-                <div>
-                    <h3 class="headline mb-0">{{ $t('person.actions.add-participant') }}</h3>
-                </div>
-            </v-card-title>
-            <v-card-text>
-                <entity-search
-                person
-                v-model="newParticipant"/>
-            </v-card-text>
-            <v-card-actions>
-                <v-btn v-on:click="cancelNewParticipantDialog" color="secondary" flat data-cy="">{{ $t("actions.cancel") }}</v-btn>
-                <v-spacer></v-spacer>
-                <v-btn v-on:click="addParticipant" :disabled="newParticipant == null" color="primary" raised :loading="newParticipantDialog.loading" data-cy="">Add Participant</v-btn>
-            </v-card-actions>
-        </v-card>
-      </v-dialog>
-    </div>
+    <v-dialog v-model="newParticipantDialog.show" max-width="350px">
+      <v-card>
+        <v-card-title primary-title>
+          <div>
+            <h3 class="headline mb-0">
+              {{ $t("person.actions.add-participant") }}
+            </h3>
+          </div>
+        </v-card-title>
+        <v-card-text>
+          <entity-search person v-model="newParticipant" />
+        </v-card-text>
+        <v-card-actions>
+          <v-btn
+            v-on:click="cancelNewParticipantDialog"
+            color="secondary"
+            flat
+            data-cy=""
+            >{{ $t("actions.cancel") }}</v-btn
+          >
+          <v-spacer></v-spacer>
+          <v-btn
+            v-on:click="addParticipant"
+            :disabled="newParticipant == null"
+            color="primary"
+            raised
+            :loading="newParticipantDialog.loading"
+            data-cy=""
+            >Add Participant</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </div>
 </template>
 
 <script>
@@ -105,13 +119,13 @@ export default {
       this.newParticipantDialog.show = false;
     },
     addParticipant() {
-      console.log(this.newParticipant)
-      this.newParticipantDialog.loading = true
+      console.log(this.newParticipant);
+      this.newParticipantDialog.loading = true;
       // loading true
       // axios post
       // success -> re-request participants all
       // loading false
-      this.newParticipantDialog.loading = false
+      this.newParticipantDialog.loading = false;
       this.newParticipantDialog.show = false;
       this.newParticipant = null;
     },

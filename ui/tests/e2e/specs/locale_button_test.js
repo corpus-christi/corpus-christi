@@ -20,14 +20,12 @@ describe("testing the language button", () => {
     cy.get("[data-cy=church-sentence]").contains("Church");
     //.contains("Iglesia");
   });
-  it("Switches the language back to Spanish", () =>{
-    cy.get('[data-cy=cur-locale]')
-      .click();
-    cy.get('[data-cy=es-EC]')
-      .click();
+  it("Switches the language back to Spanish", () => {
+    cy.get("[data-cy=cur-locale]").click();
+    cy.get("[data-cy=es-EC]").click();
   });
   it("Checks to ensure the language is back so Spanish", () => {
-     cy.get('[data-cy=church-sentence]')
+    cy.get("[data-cy=church-sentence]")
       //.contains("Church");//something dumb
       .contains("Iglesia");
   });
