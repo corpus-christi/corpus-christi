@@ -4,6 +4,7 @@ from flask import request
 from flask.json import jsonify, dumps
 from flask_jwt_extended import jwt_required
 from marshmallow import ValidationError
+from ..shared.utils import authorize
 import sys
 
 from . import courses
@@ -15,6 +16,7 @@ course_schema = CourseSchema()
 
 @courses.route('/courses', methods=['POST'])
 @jwt_required
+@authorize(["role.superuser", "role.public", ])
 def create_course():
     """Create an active (by default) course"""
     try:
@@ -58,26 +60,20 @@ def read_all_courses():
     return jsonify(add_prereqs(result))
 
 
-@courses.route('/courses/active')
+@courses.route('/courses/<active_state>')
 @jwt_required
-def read_all_active_courses():
+@authorize(["role.infrastructure"])
+def read_active_state_of_courses(active_state):
     """List all active courses"""
-    result = db.session.query(Course).filter_by(active=True).all()
-    if(result is None):
+    result = db.session.query(Course)
+    if(active_state == 'active'):
+        result = result.filter_by(active=True).all()
+    elif(active_state == 'inactive'):
+        result = result.filter_by(active=False).all()
+    else:
         return "Result NOT found", 404
-    return jsonify(add_prereqs(result))
-    # return jsonify(course_schema.dump(result, many=True))
-
-
-@courses.route('/courses/inactive')
-@jwt_required
-def read_all_inactive_courses():
-    """List all inactive courses"""
-    result = db.session.query(Course).filter_by(active=False).all()
-    if(result is None):
-        return "Result NOT found", 404
-    return jsonify(add_prereqs(result))
-    # return jsonify(course_schema.dump(result, many=True))
+    # return jsonify(add_prereqs(result))
+    return jsonify(course_schema.dump(result, many=True))
 
 
 @courses.route('/courses/<course_id>')
@@ -200,6 +196,7 @@ course_offering_schema = Course_OfferingSchema()
 
 @courses.route('/course_offerings', methods=['POST'])
 @jwt_required
+@authorize(["role.superuser", ])
 def create_course_offering():
     try:
         valid_course_offering = course_offering_schema.load(request.json)
