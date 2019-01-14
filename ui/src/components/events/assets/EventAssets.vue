@@ -92,7 +92,7 @@
             >
               <v-icon small>unarchive</v-icon>
             </v-btn>
-            <span>{{ $t("actions.tooltips.unarchive") }}</span>
+            <span>{{ $t("actions.tooltips.activate") }}</span>
           </v-tooltip>
         </td>
       </template>

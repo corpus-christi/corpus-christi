@@ -34,7 +34,7 @@
             data-cy="add-event"
           >
             <v-icon dark left>add</v-icon>
-            {{ $t("actions.addevent") }}
+            {{ $t("actions.add-event") }}
           </v-btn>
         </v-flex>
       </v-layout>
@@ -124,7 +124,7 @@
               >
                 <v-icon small>undo</v-icon>
               </v-btn>
-              <span>{{ $t("actions.tooltips.unarchive") }}</span>
+              <span>{{ $t("actions.tooltips.activate") }}</span>
             </v-tooltip>
           </template>
         </td>

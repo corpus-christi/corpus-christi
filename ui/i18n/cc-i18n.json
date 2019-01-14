@@ -40,8 +40,8 @@
       "search": "Search",
       "search-people": "Search People",
       "tooltips": {
+        "activate": "Activate",
         "archive": "Archive",
-        "deactivate": "Archive",
         "settings": "Settings"
       },
       "view-active": "View Active",
@@ -188,8 +188,8 @@
       "search": "Buscar",
       "search-people": "Buscar Personas",
       "tooltips": {
+        "activate": "Activar",
         "archive": "Archivar",
-        "deactivate": "Archivo",
         "settings": "Ajustes"
       },
       "view-active": "Ver Activo",
