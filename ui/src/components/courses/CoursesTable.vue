@@ -98,7 +98,8 @@
     <v-dialog
       v-model="deactivateDialog.show"
       max-width="350px"
-      data-cy="courses-table-confirmation">
+      data-cy="courses-table-confirmation"
+    >
       <v-card>
         <v-card-text>{{ $t("courses.confirm-archive") }}</v-card-text>
         <v-card-actions>
@@ -303,10 +304,11 @@ export default {
             })
         );
         promises.push(
-          this.$http
-            .patch(`/api/v1/courses/courses/prerequisites/${course_id}`,
-              { prerequisites: prerequisites.map(prereq => prereq.id) }) // API expects array of IDs
-        )
+          this.$http.patch(
+            `/api/v1/courses/courses/prerequisites/${course_id}`,
+            { prerequisites: prerequisites.map(prereq => prereq.id) }
+          ) // API expects array of IDs
+        );
 
         Promise.all(promises)
           .then(() => {
@@ -335,9 +337,10 @@ export default {
             this.courses.push(newCourse);
 
             // Now that course created, add prerequisites to it
-            return this.$http
-              .patch(`/api/v1/courses/courses/prerequisites/${newCourse.id}`,
-                { prerequisites: prerequisites.map(prereq => prereq.id) }); // API expects array of IDs
+            return this.$http.patch(
+              `/api/v1/courses/courses/prerequisites/${newCourse.id}`,
+              { prerequisites: prerequisites.map(prereq => prereq.id) }
+            ); // API expects array of IDs
           })
           .then(resp => {
             console.log("PREREQS", resp);
