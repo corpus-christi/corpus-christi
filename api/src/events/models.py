@@ -17,7 +17,7 @@ class Event(Base):
     description = Column(StringTypes.LONG_STRING)
     start = Column(DateTime, nullable=False)
     end = Column(DateTime, nullable=False)
-    location_id = Column(Integer, ForeignKey('places_location.id'))
+    location_id = Column(Integer, ForeignKey('places_location.id'), nullable=True)
     active = Column(Boolean, default=True)
 
     assets = relationship("EventAsset", back_populates="event")
