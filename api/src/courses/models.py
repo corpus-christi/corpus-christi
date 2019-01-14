@@ -93,8 +93,8 @@ class Diploma(Base):
      active = Column(Boolean, nullable=False, default=True)
      courses = relationship('Course', secondary=Diploma_Course,
                back_populates='diplomas', lazy=True)
-     student = relationship('Student', secondary=Diploma_Awarded,
-               backref='students', lazy=True)
+     students = relationship('Student', secondary=Diploma_Awarded,
+               back_populates='diplomas', lazy=True)
 
 
      def __repr__(self):
@@ -117,8 +117,8 @@ class Student(Base):
      confirmed = Column(Boolean, nullable=False)
      course_offering = relationship('Course_Offering', backref='offerings', lazy=True)
      person = relationship('Person', backref='students', lazy=True)
-     diploma = relationship('Student', secondary=Diploma_Awarded,
-               backref='diplomas', lazy=True)
+     diplomas = relationship('Diploma', secondary=Diploma_Awarded,
+               back_populates='students', lazy=True)
      class_meeting = relationship('Class_Meeting', secondary=Class_Attendance,
                backref='attendance', lazy=True)
 
