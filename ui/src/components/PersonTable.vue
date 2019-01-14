@@ -18,7 +18,7 @@
             data-cy="search"
           ></v-text-field>
         </v-flex>
-        <v-flex md3>
+        <v-flex md3 :v-bind:data-cy="view-dropdown">
           <v-select
             hide-details
             solo
@@ -34,7 +34,7 @@
             color="primary"
             raised
             v-on:click.stop="newPerson"
-            data-cy="add-person"
+            data-cy="new-person"
           >
             <v-icon left>person_add</v-icon>
             {{ $t("actions.add-person") }}
@@ -53,7 +53,9 @@
     >
       <template slot="items" slot-scope="props">
         <td>
-          <v-icon size="15" v-if="props.item.accountInfo">account_circle</v-icon>
+          <v-icon size="15" v-if="props.item.accountInfo"
+            >account_circle</v-icon
+          >
         </td>
         <td>{{ props.item.firstName }}</td>
         <td>{{ props.item.lastName }}</td>
@@ -196,14 +198,24 @@ export default {
     // Put here so that the headers are reactive.
     headers() {
       return [
-        { text: "", value: "person.accountInfo", align: "right", sortable: false },
+        {
+          text: "",
+          value: "person.accountInfo",
+          align: "right",
+          sortable: false
+        },
         {
           text: this.$t("person.name.first"),
           value: "firstName",
           width: "10%"
         },
         { text: this.$t("person.name.last"), value: "lastName", width: "20%" },
-        { text: this.$t("person.email"), value: "email", width: "15%", class: "hidden-sm-and-down" },
+        {
+          text: this.$t("person.email"),
+          value: "email",
+          width: "15%",
+          class: "hidden-sm-and-down"
+        },
         { text: this.$t("person.phone"), value: "phone", width: "15%" },
         { text: this.$t("actions.header"), sortable: false }
       ];
@@ -255,15 +267,16 @@ export default {
         // Hang on to the ID of the person being updated.
         const person_id = person.id;
         // Locate the person we're updating in the table.
-        const idx = this.people.findIndex(p => p.id === person.id);
+        const idx = this.allPeople.findIndex(p => p.id === person.id);
         // Get rid of the ID; not for consumption by endpoint.
         delete person.id;
 
+        console.log(person);
         this.$http
           .put(`/api/v1/people/persons/${person_id}`, person)
           .then(resp => {
             console.log("EDITED", resp);
-            Object.assign(this.people[idx], person);
+            Object.assign(this.allPeople[idx], person);
             this.personDialog.show = false;
             this.personDialog.saveLoading = false;
             this.showSnackbar(this.$t("person.messages.person-edit"));
