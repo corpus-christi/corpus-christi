@@ -288,6 +288,21 @@ def read_all_students():
     result = db.session.query(Student).all()
     return jsonify(student_schema.dump(result, many=True))
 
+@courses.route('/students/<confirm_state>')
+@jwt_required
+def read_confirm_state_student(active_state):
+    """
+    Note: There is no need to see active/inactive state of students 
+    because it doesn't matter if a student is unconfirmed. """
+    query = db.session.query(Student)
+    if active_state == 'confirmed':
+        result = query.filter_by(confirmed='True').all()
+    elif active_state == 'unconfirmed':
+        result = query.filter_by(confirmed='False').all()
+    else:
+        return 'Cannot filter course offerings with undefined state', 404
+    return jsonify(student_schema.dump(result))
+
 
 @courses.route('/students/<student_id>')
 @jwt_required
@@ -296,30 +311,19 @@ def read_one_student(student_id):
     return jsonify(student_schema.dump(result))
 
 
-@courses.route('/students/<student_id>', methods=['PUT'])
-@jwt_required
-def replace_student(student_id):
-    pass
-
-
+## We don't want to delete students (for record keeping) 
+## But we do want to be able to remove students from "self enroll" in a course offering
+## by toggling active/inactive state
 @courses.route('/students/<student_id>', methods=['PATCH'])
 @jwt_required
 def update_student(student_id):
-    try:
-        valid_student = student_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
+    valid_student = db.session.query(Student).filter_by(id=student_id).first()
+    if course_offering is None:
+        return "Course Offering NOT Found", 404
 
-    student = db.session.query(Student).filter_by(id=student_id).first()
-
-    for key, val in valid_student.items():
-        setattr(student, key, val)
+    for attr in 'confirmed', 'active':
+        if attr in request.json:
+            setattr(student, attr, request.json[attr])
 
     db.session.commit()
     return jsonify(student_schema.dump(student))
-
-
-@courses.route('/students/<student_id>', methods=['DELETE'])
-@jwt_required
-def delete_student(student_id):
-    pass
