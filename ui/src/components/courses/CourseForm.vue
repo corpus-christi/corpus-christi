@@ -6,12 +6,14 @@
       name="title"
       v-validate="'required'"
       v-bind:error-messages="errors.collect('title')"
+      data-cy="course-form-name"
     ></v-text-field>
 
     <v-textarea
       v-model="course.description"
       v-bind:label="$t('courses.description')"
       name="description"
+      data-cy="course-form-description"
     ></v-textarea>
     <!-- translate prereq -->
     <v-combobox
@@ -24,6 +26,7 @@
       multiple
       hide-selected
       item-value="id"
+      data-cy="course-form-prerequisites"
     >
       <template slot="item" slot-scope="data">{{ data.item.name }}</template>
       <template slot="selection" slot-scope="data">
