@@ -6,6 +6,7 @@ from sqlalchemy.orm import relationship
 from src.db import Base
 from src.shared.models import StringTypes
 
+
 # ---- Prerequisite
 
 Prerequisite = Table('courses_prerequisite', Base.metadata,
@@ -30,10 +31,18 @@ class Diploma_CourseSchema(Schema):
 
 # ---- Diploma_Awarded
 
+# class Diploma_Awarded(Base):
+#      __tablename__ = 'courses_diploma_awarded'
+#      student_id = Column(Integer, ForeignKey('courses_students.id'), primary_key=True)
+#      diploma_id = Column(Integer, ForeignKey('courses_diploma.id'), primary_key=True)
+#      when = Column(Date, nullable=False)
+#
+#      students = relationship('Student', backref='diplomas', lazy=True)
+
 Diploma_Awarded = Table('courses_diploma_awarded', Base.metadata,
-          Column('student_id', Integer, ForeignKey('courses_students.id'), primary_key=True),
-          Column('diploma_id', Integer, ForeignKey('courses_diploma.id'), primary_key=True),
-          Column('when', Date, nullable=False))
+     Column('student_id', Integer, ForeignKey('courses_students.id'), primary_key=True),
+     Column('diploma_id', Integer, ForeignKey('courses_diploma.id'), primary_key=True),
+     Column('when', Date, nullable=False))
 
 
 class Diploma_AwardedSchema(Schema):
@@ -70,7 +79,7 @@ class Course(Base):
                 secondaryjoin=Prerequisite.c.prereq_id==id,
                 foreign_keys=[Prerequisite.c.course_id, Prerequisite.c.prereq_id],
                 back_populates='depends', lazy=True)
-     diploma = relationship('Diploma', secondary=Diploma_Course, backref='courses', lazy=True)
+     diplomas = relationship('Diploma', secondary=Diploma_Course, back_populates='courses', lazy=True)
 
      def __repr__(self):
          return f"<Course(id={self.id})>"
@@ -91,10 +100,10 @@ class Diploma(Base):
      name = Column(StringTypes.MEDIUM_STRING, nullable=False)
      description = Column(StringTypes.LONG_STRING, nullable=False)
      active = Column(Boolean, nullable=False, default=True)
-     course = relationship('Course', secondary=Diploma_Course,
-               backref='diplomas', lazy=True)
-     student = relationship('Student', secondary=Diploma_Awarded,
-               backref='students', lazy=True)
+     courses = relationship('Course', secondary=Diploma_Course,
+               back_populates='diplomas', lazy=True)
+     # students = relationship('Student', secondary=Diploma_Awarded,
+     #           back_populates='diplomas', lazy=True)
 
 
      def __repr__(self):
@@ -115,10 +124,11 @@ class Student(Base):
      offering_id = Column(Integer, ForeignKey('courses_course_offering.id'), nullable=False)
      student_id = Column(Integer, ForeignKey('people_person.id'), nullable=False)
      confirmed = Column(Boolean, nullable=False)
+     active = Column(Boolean, default=True, nullable=False)
      course_offering = relationship('Course_Offering', backref='offerings', lazy=True)
      person = relationship('Person', backref='students', lazy=True)
-     diploma = relationship('Student', secondary=Diploma_Awarded,
-               backref='diplomas', lazy=True)
+     # diplomas = relationship('Diploma', secondary=Diploma_Awarded,
+     #           back_populates='students', lazy=True)
      class_meeting = relationship('Class_Meeting', secondary=Class_Attendance,
                backref='attendance', lazy=True)
 
@@ -132,6 +142,7 @@ class StudentSchema(Schema):
      offering_id = fields.Integer(data_key='offeringId', required=True)
      student_id = fields.Integer(data_key='studentId', required=True)
      confirmed = fields.Boolean(required=True)
+     active = fields.Boolean(required=True)
 
 # ---- Course_Offering
 
