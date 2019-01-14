@@ -6,22 +6,27 @@
       name="title"
       v-validate="'required'"
       v-bind:error-messages="errors.collect('title')"
+      data-cy="course-form-name"
     ></v-text-field>
 
     <v-textarea
       v-model="course.description"
       v-bind:label="$t('courses.description')"
       name="description"
+      data-cy="course-form-description"
     ></v-textarea>
     <!-- translate prereq -->
     <v-combobox
-      v-model="prereqs"
+      v-model="course.prerequisites"
       :items="items"
       v-bind:label="$t('courses.prerequisites')"
       chips
       clearable
       solo
       multiple
+      hide-selected
+      item-value="id"
+      data-cy="course-form-prerequisites"
     >
       <template slot="item" slot-scope="data">{{ data.item.name }}</template>
       <template slot="selection" slot-scope="data">
@@ -39,8 +44,7 @@ export default {
   name: "CourseForm",
   data: function() {
     return {
-      availableCourses: [],
-      prereqs: []
+      availableCourses: []
     };
   },
   computed: {
@@ -53,8 +57,8 @@ export default {
   },
   methods: {
     remove(item) {
-      this.prereqs.splice(this.prereqs.indexOf(item), 1);
-      this.prereqs = [...this.prereqs];
+      this.course.prerequisites.splice(this.course.prerequisites.indexOf(item), 1);
+      this.course.prerequisites = [...this.course.prerequisites];
     }
   },
   mounted() {

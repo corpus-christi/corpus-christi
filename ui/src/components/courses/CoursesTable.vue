@@ -15,6 +15,7 @@
             single-line
             box
             hide-details
+            data-cy="courses-table-search"
           ></v-text-field>
         </v-flex>
         <v-spacer></v-spacer>
@@ -25,11 +26,17 @@
             :items="options"
             solo
             hide-details
+            data-cy="courses-table-viewstatus"
           ></v-select>
         </v-flex>
 
         <v-flex shrink justify-self-end>
-          <v-btn color="primary" raised v-on:click.stop="newCourse">
+          <v-btn
+            color="primary"
+            raised
+            v-on:click.stop="newCourse"
+            data-cy="courses-table-new"
+          >
             <v-icon left>library_add</v-icon>
             {{ $t("courses.new") }}
           </v-btn>
@@ -44,6 +51,7 @@
       :items="showCourses"
       :loading="!tableLoaded"
       class="elevation-1"
+      data-cy="courses-table"
     >
       <v-progress-linear
         slot="progress"
@@ -63,7 +71,7 @@
       </template>
     </v-data-table>
 
-    <v-snackbar v-model="snackbar.show">
+    <v-snackbar v-model="snackbar.show" data-cy="courses-table-snackbar">
       {{ snackbar.text }}
       <v-btn flat @click="snackbar.show = false">{{
         $t("actions.close")
@@ -71,7 +79,11 @@
     </v-snackbar>
 
     <!-- New/Edit dialog -->
-    <v-dialog v-model="courseDialog.show" max-width="500px">
+    <v-dialog
+      v-model="courseDialog.show"
+      max-width="500px"
+      data-cy="courses-table-editor"
+    >
       <CourseEditor
         v-bind:editMode="courseDialog.editMode"
         v-bind:initialData="courseDialog.course"
@@ -82,7 +94,10 @@
     </v-dialog>
 
     <!-- Deactivate/archive confirmation -->
-    <v-dialog v-model="deactivateDialog.show" max-width="350px">
+    <v-dialog
+      v-model="deactivateDialog.show"
+      max-width="350px"
+      data-cy="courses-table-confirmation">
       <v-card>
         <v-card-text>{{ $t("courses.confirm-archive") }}</v-card-text>
         <v-card-actions>
@@ -91,9 +106,9 @@
             color="secondary"
             flat
             :disabled="deactivateDialog.loading"
-            data-cy
-            >{{ $t("actions.cancel") }}</v-btn
           >
+            {{ $t("actions.cancel") }}
+          </v-btn>
           <v-spacer></v-spacer>
           <v-btn
             v-on:click="deactivate(deactivateDialog.course)"
@@ -101,9 +116,9 @@
             raised
             :disabled="deactivateDialog.loading"
             :loading="deactivateDialog.loading"
-            data-cy
-            >{{ $t("actions.confirm") }}</v-btn
           >
+            {{ $t("actions.confirm") }}
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

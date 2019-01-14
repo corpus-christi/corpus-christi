@@ -15,10 +15,7 @@
                 prepend-icon="person"
                 name="login"
                 type="text"
-<<<<<<< HEAD
-=======
                 v-on:keyup.enter="login"
->>>>>>> app-courses
                 data-cy="username"
               ></v-text-field>
               <v-text-field
@@ -27,10 +24,7 @@
                 prepend-icon="lock"
                 name="password"
                 type="password"
-<<<<<<< HEAD
-=======
                 v-on:keyup.enter="login"
->>>>>>> app-courses
                 data-cy="password"
               ></v-text-field>
             </v-form>
