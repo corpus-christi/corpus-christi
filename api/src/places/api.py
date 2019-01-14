@@ -10,6 +10,20 @@ from . import places
 from .models import Country, Address, AddressSchema, Area, AreaSchema, Location, LocationSchema
 
 
+def modify_entity(entity_type, schema, id, new_value_dict):
+    item = db.session.query(entity_type).filter_by(id=id).first()
+
+    if not item:
+        return jsonify(f"Item with id #{id} does not exist."), 404
+
+    for key, val in new_value_dict.items():
+        setattr(item, key, val)
+    
+    db.session.commit()
+
+    return jsonify(schema.dump(item)), 200
+
+
 
 class CountryListSchema(Schema):
     code = fields.String(required=True, validate=Length(equal=2))
@@ -79,31 +93,42 @@ def read_one_area(area_id):
 @places.route('/areas/<area_id>', methods=['PUT'])
 @jwt_required
 def replace_area(area_id):
-    pass
+    try: 
+        valid_attributes = area_schema.load(request.json)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+                
+    return modify_area(area_id, valid_attributes)
 
 
 @places.route('/areas/<area_id>', methods=['PATCH'])
 @jwt_required
 def update_area(area_id):
-    try:
-        valid_area = area_schema.load(request.json)
+    try: 
+        valid_attributes = area_schema.load(request.json, partial=True)
     except ValidationError as err:
         return jsonify(err.messages), 422
-
-    area = db.session.query(Area).filter_by(id=area_id).first()
-
-    for key, val in valid_area.items():
-        setattr(area, key, val)
-
-    db.session.commit()
-    return jsonify(area_schema.dump(area))
+                
+    return modify_area(area_id, valid_attributes)
 
 
 @places.route('/areas/<area_id>', methods=['DELETE'])
 @jwt_required
 def delete_area(area_id):
-    pass
+    area = db.session.query(Area).filter_by(id=area_id).first()
 
+    if not area:
+        return jsonify(f"Area with id #{area_id} does not exist."), 404
+
+    db.session.delete(area)
+    db.session.commit()
+
+    # 204 codes don't respond with any content
+    return 'Successfully deleted', 204
+
+
+def modify_area(area_id, area_object):
+    return modify_entity(Area, area_schema, area_id, area_object)
 
 # ---- Address
 
@@ -141,30 +166,42 @@ def read_one_address(address_id):
 @places.route('/addresses/<address_id>', methods=['PUT'])
 @jwt_required
 def replace_address(address_id):
-    pass
+    try: 
+        valid_attributes = address_schema.load(request.json)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+                
+    return modify_address(address_id, valid_attributes)
 
 
 @places.route('/addresses/<address_id>', methods=['PATCH'])
 @jwt_required
 def update_address(address_id):
-    try:
-        valid_address = address_schema.load(request.json)
+    try: 
+        valid_attributes = address_schema.load(request.json, partial=True)
     except ValidationError as err:
         return jsonify(err.messages), 422
-
-    address = db.session.query(Address).filter_by(id=address_id).first()
-
-    for key, val in valid_address.items():
-        setattr(address, key, val)
-
-    db.session.commit()
-    return jsonify(address_schema.dump(address))
+                
+    return modify_address(address_id, valid_attributes)
 
 
 @places.route('/addresses/<address_id>', methods=['DELETE'])
 @jwt_required
 def delete_address(address_id):
-    pass
+    address = db.session.query(Address).filter_by(id=address_id).first()
+
+    if not address:
+        return jsonify(f"Address with id #{address_id} does not exist."), 404
+
+    db.session.delete(address)
+    db.session.commit()
+
+    # 204 codes don't respond with any content
+    return 'Successfully deleted', 204
+
+
+def modify_address(address_id, address_object):
+    return modify_entity(Address, address_schema, address_id, address_object)
 
 
 # ---- Location
@@ -203,28 +240,39 @@ def read_one_location(location_id):
 @places.route('/locations/<location_id>', methods=['PUT'])
 @jwt_required
 def replace_location(location_id):
-    pass
-
-
-@places.route('/locations/<location_id>', methods=['PATCH'])
-@jwt_required
-def update_location(location_id):
     try:
         valid_location = location_schema.load(request.json)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    location = db.session.query(Location).filter_by(id=location_id).first()
+    return modify_location(location_id, valid_location)
 
-    for key, val in valid_location.items():
-        setattr(location, key, val)
 
-    db.session.commit()
-    return jsonify(location_schema.dump(location))
+@places.route('/locations/<location_id>', methods=['PATCH'])
+@jwt_required
+def update_location(location_id):
+    try: 
+        valid_attributes = location_schema.load(request.json, partial=True)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+                
+    return modify_location(location_id, valid_attributes)
 
 
 @places.route('/locations/<location_id>', methods=['DELETE'])
 @jwt_required
 def delete_location(location_id):
-    pass
+    location = db.session.query(Location).filter_by(id=location_id).first()
 
+    if not location:
+        return jsonify(f"Location with id #{location_id} does not exist."), 404
+
+    db.session.delete(location)
+    db.session.commit()
+
+    # 204 codes don't respond with any content
+    return 'Successfully deleted', 204
+
+
+def modify_location(location_id, location_object):
+    return modify_entity(Location, location_schema, location_id, location_object)
