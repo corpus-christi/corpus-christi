@@ -46,8 +46,7 @@
             <v-card-text>
                 <entity-search
                 person
-                v-model="newParticipant"
-                searchEndpoint="http://localhost:3000/people"/>
+                v-model="newParticipant"/>
             </v-card-text>
             <v-card-actions>
                 <v-btn v-on:click="cancelNewParticipantDialog" color="secondary" flat data-cy="">{{ $t("actions.cancel") }}</v-btn>
