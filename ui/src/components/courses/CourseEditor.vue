@@ -87,10 +87,11 @@ export default {
 
     // Trigger a save event, returning the updated `Course`.
     save() {
-      this.$refs.form.$validator.validateAll();
-      if (!this.$refs.form.errors.any()) {
-        this.$emit("save", this.course);
-      }
+      this.$refs.form.$validator.validateAll().then(() => {
+        if (!this.$refs.form.errors.any()) {
+          this.$emit("save", this.course);
+        }
+      });
     }
   }
 };
