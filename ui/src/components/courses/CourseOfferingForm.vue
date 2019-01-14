@@ -37,13 +37,14 @@
               full-width
               min-width="290px"
             >
+              <!-- TODO: Replace translations -->
               <v-combobox
                 slot="activator"
                 v-model="dates"
                 multiple
                 chips
                 small-chips
-                label="Multiple picker in menu"
+                v-bind:label="$t('courses.title')"
                 prepend-icon="event"
                 readonly
               ></v-combobox>
@@ -57,18 +58,18 @@
         </v-layout>
 
         <!-- time -->
-        <v-text-field v-model="course.name" v-bind:label="time" name="time"></v-text-field>
+        <v-text-field v-model="course.name" v-bind:label="$t('courses.choose-time')" name="time"></v-text-field>
 
         <!-- teacher -->
-        <v-text-field v-model="course.name" v-bind:label="teacher" name="location"></v-text-field>
+        <v-text-field v-model="course.name" v-bind:label="$t('courses.choose-teacher')" name="location"></v-text-field>
 
         <!-- location -->
-        <v-text-field v-model="course.name" v-bind:label="location" name="location"></v-text-field>
+        <v-text-field v-model="course.name" v-bind:label="$t('courses.choose-location')" name="location"></v-text-field>
 
         <!-- max size -->
         <v-text-field
           v-model="course.description"
-          v-bind:label="$t('courses.description')"
+          v-bind:label="$t('courses.max-size')"
           name="description"
         ></v-text-field>
       </form>

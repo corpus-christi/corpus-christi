@@ -38,3 +38,18 @@ courses:
   confirm-archive:
     en: Are you sure you want to archive this course?
     es: ¿Estás seguro que quieres archivar este curso?
+  course-offering:
+    en: Course Offerings
+    es: Ofertas de Cursos
+  choose-time:
+    en: Choose Time
+    es: Elegir Tiempo
+  choose-teacher:
+    en: Choose Teacher
+    es: Elegir Maestro
+  choose-location:
+    en: Choose Location
+    es: Elegir Ubicación
+  max-size:
+    en: Max Number of Students
+    es: Número Máximo de Estudiantes
