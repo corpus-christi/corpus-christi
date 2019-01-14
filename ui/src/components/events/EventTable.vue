@@ -341,7 +341,7 @@ export default {
     saveEvent(event) {
       this.eventDialog.saveLoading = true;
       event.location_id = event.location.id;
-      let newEvent = JSON.parse(JSON.stringify(event))
+      let newEvent = JSON.parse(JSON.stringify(event));
       delete newEvent.location;
       delete newEvent.id;
       if (this.eventDialog.editMode) {
@@ -382,7 +382,7 @@ export default {
     addAnotherEvent(event) {
       this.eventDialog.addMoreLoading = true;
       event.location_id = event.location.id;
-      let newEvent = JSON.parse(JSON.stringify(event))
+      let newEvent = JSON.parse(JSON.stringify(event));
       delete newEvent.location;
       this.$http
         .post("/api/v1/events/", event)
