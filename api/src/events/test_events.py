@@ -9,7 +9,7 @@ from flask_jwt_extended import create_access_token
 from werkzeug.datastructures import Headers
 from werkzeug.security import check_password_hash
 
-from .models import Asset, AssetSchema, Event, EventSchema, Team, TeamSchema, EventParticipant, EventParticipantSchema
+from .models import Asset, AssetSchema, Event, EventSchema, Team, TeamSchema, EventParticipant, EventParticipantSchema, EventPerson, EventPersonSchema, TeamMember, TeamMemberSchema
 from ..places.models import Location
 from ..people.models import Person
 
@@ -93,11 +93,29 @@ def event_team_object_factory(event_id, team_id):
 
 def event_participant_object_factory(event_id, person_id):
     """Cook up a fake eventteam json object from given ids."""
-    eventteam = {
+    eventparticipant = {
         'event_id': event_id,
-        'person_id': person_id
+        'person_id': person_id,
+        'confirmed': flip()
     }
-    return eventteam
+    return eventparticipant
+
+def event_person_object_factory(event_id, person_id):
+    """Cook up a fake eventteam json object from given ids."""
+    eventperson = {
+        'event_id': event_id,
+        'person_id': person_id,
+        'description': rl_fake().sentences(nb=1)[0],
+    }
+    return eventperson
+
+def team_member_object_factory(team_id, member_id):
+    """Cook up a fake eventteam json object from given ids."""
+    teammember = {
+        'team_id': team_id,
+        'member_id': member_id
+    }
+    return teammember
 
 def create_multiple_events(sqla, n):
     """Commit `n` new events to the database. Return their IDs."""
@@ -177,6 +195,37 @@ def create_events_participants(sqla, fraction=0.75):
     sqla.add_all(new_events_participants)
     sqla.commit()
 
+def create_events_persons(sqla, fraction=0.75):
+    """Create data in the linking table between events and persons """
+    event_person_schema = EventPersonSchema()
+    new_events_persons = []
+    all_events_persons = sqla.query(Event, Person).all()
+    sample_events_persons = random.sample(all_events_persons, math.floor(len(all_events_persons) * fraction))
+    #print(sample_events_persons[0][0].id)
+    for events_persons in sample_events_persons:
+        #print(events_persons)
+        valid_events_persons = event_person_schema.load(event_person_object_factory(events_persons[0].id,events_persons[1].id))
+        #print(valid_events_persons)
+        new_events_persons.append(EventPerson(**valid_events_persons))
+    #print(new_events_persons)
+    sqla.add_all(new_events_persons)
+    sqla.commit()
+
+def create_teams_members(sqla, fraction=0.75):
+    """Create data in the linking table between teams and members """
+    team_member_schema = TeamMemberSchema()
+    new_teams_members = []
+    all_teams_members = sqla.query(Team, Person).all()
+    sample_teams_members = random.sample(all_teams_members, math.floor(len(all_teams_members) * fraction))
+    #print(sample_teams_members[0][0].id)
+    for teams_members in sample_teams_members:
+        #print(teams_members)
+        valid_teams_members = team_member_schema.load(team_member_object_factory(teams_members[0].id,teams_members[1].id))
+        #print(valid_teams_members)
+        new_teams_members.append(TeamMember(**valid_teams_members))
+    #print(new_teams_members)
+    sqla.add_all(new_teams_members)
+    sqla.commit()
 
 def create_events_test_data(sqla):
     """The function that creates test data in the correct order """
@@ -186,7 +235,8 @@ def create_events_test_data(sqla):
     create_events_assets(sqla, 0.75)
     create_events_teams(sqla, 0.75)
     create_events_participants(sqla, 0.75)
-
+    create_events_persons(sqla, 0.75)
+    create_teams_members(sqla, 0.75)
 
 # ---- Event
 
