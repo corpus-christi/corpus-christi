@@ -9,7 +9,7 @@ from werkzeug.security import check_password_hash
 from .models import Asset, AssetSchema, Event, EventSchema, Team, TeamSchema, EventParticipant, EventParticipantSchema, EventPerson, EventPersonSchema, TeamMember, TeamMemberSchema, EventAsset, EventAssetSchema, EventTeam, EventTeamSchema
 from ..places.models import Location
 from ..people.models import Person
-from .create_events_data import create_multiple_events, event_object_factory
+from .create_event_data import create_multiple_events, event_object_factory
 
 # ---- Event
 
