@@ -24,9 +24,9 @@
       "username": "Username"
     },
     "actions": {
-      "addanother": "Add Another",
-      "addevent": "Add Event",
-      "addperson": "Add Person",
+      "add-another": "Add Another",
+      "add-event": "Add Event",
+      "add-person": "Add Person",
       "cancel": "Cancel",
       "clear": "Clear",
       "close": "Close",
@@ -41,14 +41,13 @@
       "search-people": "Search People",
       "tooltips": {
         "archive": "Archive",
-        "deactivate": "Deactivate",
-        "settings": "Settings",
-        "unarchive": "Unarchive"
+        "deactivate": "Archive",
+        "settings": "Settings"
       },
       "view-active": "View Active",
       "view-all": "View All",
       "view-archived": "View Archived",
-      "viewinactive": "View Inactive"
+      "view-inactive": "View Inactive"
     },
     "events": {
       "actions": "Actions",
@@ -122,7 +121,12 @@
       "gender": "Gender",
       "male": "Male",
       "messages": {
-        "canceled": "Canceled add new person"
+        "canceled": "Canceled add new person",
+        "person-activate": "Person activated",
+        "person-add": "New person added",
+        "person-deactivate": "Person deactivated",
+        "person-edit": "Person edited",
+        "person-save-error": "Person was not saved"
       },
       "name": {
         "first": "First Name",
@@ -168,9 +172,9 @@
       "username": "Nombre de usuario"
     },
     "actions": {
-      "addanother": "A\u00f1adir Otro",
-      "addevent": "A\u00f1adir Evento",
-      "addperson": "A\u00f1adir Persona",
+      "add-another": "A\u00f1adir Otro",
+      "add-event": "A\u00f1adir Evento",
+      "add-person": "A\u00f1adir Persona",
       "cancel": "Cancelar",
       "clear": "Despejar",
       "close": "Cerrar",
@@ -185,14 +189,13 @@
       "search-people": "Buscar Personas",
       "tooltips": {
         "archive": "Archivar",
-        "deactivate": "Desactivar",
-        "settings": "Ajustes",
-        "unarchive": "Desarchivar"
+        "deactivate": "Archivo",
+        "settings": "Ajustes"
       },
-      "view-active": "Ver Activa",
-      "view-all": "Ver Todos",
-      "view-archived": "Ver Archivado",
-      "viewinactive": "Ver Inactivo"
+      "view-active": "Ver Activo",
+      "view-all": "Ver Todo",
+      "view-archived": "Ver Archivo",
+      "view-inactive": "Ver Inactivo"
     },
     "events": {
       "actions": "Comportamiento",
@@ -266,7 +269,12 @@
       "gender": "G\u00e9nero",
       "male": "Hombre",
       "messages": {
-        "canceled": "Cancelado a\u00f1adir nueva persona"
+        "canceled": "Cancelado a\u00f1adir nueva persona",
+        "person-activate": "Persona activada",
+        "person-add": "Nueva persona agregada",
+        "person-deactivate": "Persona desactivada",
+        "person-edit": "Persona editada",
+        "person-save-error": "La persona no fue salvada"
       },
       "name": {
         "first": "Nombre de pila",
