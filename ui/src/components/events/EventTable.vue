@@ -51,7 +51,7 @@
           class="hover-hand"
           v-on:click="$router.push({ path: '/events/' + props.item.id })"
         >
-          {{ props.item.title }}
+        {{ props.item.title }}
         </td>
         <td
           class="hover-hand"
@@ -182,6 +182,7 @@ export default {
     this.$http.get("http://localhost:3000/events").then(resp => {
       this.events = resp.data;
     });
+    this.onResize()
   },
 
   data() {
@@ -205,7 +206,13 @@ export default {
         show: false,
         text: ""
       },
-      viewStatus: "viewAll"
+      viewStatus: "viewAll",
+
+      windowSize: {
+        x: 0,
+        y: 0,
+        screen
+      }
     };
   },
   computed: {
@@ -398,8 +405,20 @@ export default {
         }
       }
       return name;
+    },
+
+    onResize () {
+      this.windowSize = { x: window.innerWidth, y: window.innerHeight }
+      if(this.windowSize.x <= 960) {
+        this.windowSize.small = true
+      } else {
+        this.windowSize.small = false
+      }
     }
-  }
+  },
+
+
+
 };
 </script>
 
