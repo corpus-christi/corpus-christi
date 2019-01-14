@@ -104,7 +104,8 @@ def student_object_factory(offering_id, student_id):
     course_student = {
     'studentId': student_id,
     'offeringId': offering_id,
-    'confirmed': flip()
+    'confirmed': flip(),
+    'active': flip()
     }
     return course_student
 
@@ -165,9 +166,8 @@ def create_diploma_awards(sqla, n):
     diplomas = sqla.query(Diploma).all()
     # diploma_award_schema = Diploma_AwardedSchema()
     new_diploma_awards = []
-    for i in range(n):
-        student = students[i%len(students)]
-        diploma = diplomas[i%len(diplomas)]
+    for student in students:
+        diploma = diplomas[random.randint(0, len(diplomas))]
         # print(student.diplomas.when)
         print(diploma)
         student.diplomas.append(diploma)

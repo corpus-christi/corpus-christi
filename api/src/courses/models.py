@@ -6,6 +6,7 @@ from sqlalchemy.orm import relationship
 from src.db import Base
 from src.shared.models import StringTypes
 
+
 # ---- Prerequisite
 
 Prerequisite = Table('courses_prerequisite', Base.metadata,
@@ -30,10 +31,11 @@ class Diploma_CourseSchema(Schema):
 
 # ---- Diploma_Awarded
 
-Diploma_Awarded = Table('courses_diploma_awarded', Base.metadata,
-          Column('student_id', Integer, ForeignKey('courses_students.id'), primary_key=True),
-          Column('diploma_id', Integer, ForeignKey('courses_diploma.id'), primary_key=True),
-          Column('when', Date, nullable=False))
+class Diploma_Awarded(Base):
+     __tablename__ = 'courses_diploma_awarded'
+     student_id = Column(Integer, ForeignKey('courses_students.id'), primary_key=True)
+     diploma_id = Column(Integer, ForeignKey('courses_diploma.id'), primary_key=True)
+     when = Column(Date, nullable=False)
 
 
 class Diploma_AwardedSchema(Schema):
@@ -115,6 +117,7 @@ class Student(Base):
      offering_id = Column(Integer, ForeignKey('courses_course_offering.id'), nullable=False)
      student_id = Column(Integer, ForeignKey('people_person.id'), nullable=False)
      confirmed = Column(Boolean, nullable=False)
+     active = Column(Boolean, default=True, nullable=False)
      course_offering = relationship('Course_Offering', backref='offerings', lazy=True)
      person = relationship('Person', backref='students', lazy=True)
      diplomas = relationship('Diploma', secondary=Diploma_Awarded,
