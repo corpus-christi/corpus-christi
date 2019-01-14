@@ -19,7 +19,7 @@ describe("Testing Editing User Information", () => {
     //Making sure we're in the right place
     cy.url().should('include', '/admin');
     //open nav drawer
-    cy.get('[data-cy=toggle-nav-drawer]')
+    cy.get('[data-cy=open-navigation]')
       .click();
     //goes to the people page
     cy.get('[data-cy=people]')

@@ -9,17 +9,17 @@ describe("Testing Editing User Information", () => {
       .click();
     //Enters the Username
     cy.get('[data-cy=username]')
-      .type('Cytest');
+      .type('lpratico');
     //Enters the password
     cy.get('[data-cy=password]')
-      .type('password');
+      .type('Qwerty1234');
     //Clicks the log in button
     cy.get('[data-cy=login]')
       .click();
     //Making sure we're in the right place
     cy.url().should('include', '/admin');
     //open nav drawer
-    cy.get('[data-cy=toggle-nav-drawer]')
+    cy.get('[data-cy=open-navigation]')
       .click();
     //goes to the people page
     cy.get('[data-cy=people]')
@@ -28,7 +28,7 @@ describe("Testing Editing User Information", () => {
       .type('Quality');
   });
   it("When: Clicking on the gear button", () => {
-    cy.get('[data-cy=admin-person').click();
+    cy.get('[data-cy=add-account]').click();
   });
   it("Then: The person's password can be changed", () => {
     cy.get('[data-cy=new-update-password').type('foobar123');
@@ -36,7 +36,7 @@ describe("Testing Editing User Information", () => {
     cy.get('[data-cy=confirm-button]').click();
   });
   it("And: The password can be changed as many times as desired", () => {
-    cy.get('[data-cy=admin-person').click();
+    cy.get('[data-cy=add-account]').click();
     cy.get('[data-cy=new-update-password').type('password');
     cy.get('[data-cy=confirm-password').type('password');
     cy.get('[data-cy=confirm-button]').click();

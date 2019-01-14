@@ -11,7 +11,7 @@ describe('PersonTable Test', function() {
       .click();
     cy.url().should('include', '/admin');
     //open nav drawer
-    cy.get('[data-cy=toggle-nav-drawer]')
+    cy.get('[data-cy=open-navigation]')
       .click();
     //goes to the people page
     cy.get('[data-cy=people]')

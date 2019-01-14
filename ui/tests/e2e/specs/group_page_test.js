@@ -8,7 +8,7 @@ describe('Clicking home after logging in', function (){
         cy.url().should('include', '/admin');
     });
     it('When: group tab is pressed', function(){
-        cy.get('[data-cy=toggle-nav-drawer]').click()
+        cy.get('[data-cy=open-navigation]').click()
         cy.get('[data-cy=groups]').click()
     });
     it('Then: url should have /groups', function (){

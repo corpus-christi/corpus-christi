@@ -19,7 +19,7 @@ describe("Testing Editing User Information", () => {
     //Making sure we're in the right place
     cy.url().should('include', '/admin');
     //open nav drawer
-    cy.get('[data-cy=toggle-nav-drawer]')
+    cy.get('[data-cy=open-navigation]')
       .click();
     //goes to the people page
     cy.get('[data-cy=people]')
@@ -36,7 +36,7 @@ describe("Testing Editing User Information", () => {
   it("And: When searching for something that does not exist, it should let the user know", () => {
     cy.get('[data-cy=search]').clear().type('foobar');
     cy.get('tbody')
-      .find('tr').contains('No matching records found');
+      .find('tr').contains('No se encontraron registros coincidentes');
   });
 });
 

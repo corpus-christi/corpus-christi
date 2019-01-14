@@ -7,13 +7,13 @@ describe("Get to Courses Page", () => {
       cy.get('[data-cy=login]').click()
     });
     
-//     it('When: clicking to course page', () => {
-//         cy.get('[data-cy=toggle-nav-drawer]').click()
-//         cy.get(':nth-child(5) > .v-list__tile').click()
-//     });
-//     it('Then: should be in course page', () =>{
-//         cy.url().should("include", "/courses");
-//     });
+    it('When: clicking to course page', () => {
+        cy.get('[data-cy=open-navigation]').click()
+        cy.get(':nth-child(5) > .v-list__tile').click()
+    });
+    it('Then: should be in course page', () =>{
+        cy.url().should("include", "/courses");
+    });
    });
  
 // describe('Add Course', ()=>{
