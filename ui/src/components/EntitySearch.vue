@@ -6,7 +6,7 @@
         location ? $t('events.event-location') : $t('actions.search-people')
       "
       prepend-icon="search"
-      :items="items"
+      :items="entities"
       :loading="isLoading"
       v-bind:value="value"
       v-on:input="setSelected"
@@ -14,8 +14,14 @@
       v-validate="'required'"
       v-bind:error-messages="errors.collect('location')"
       return-object
-      item-text="Description"
+      :filter="customFilter"
     >
+    <template slot="selection" slot-scope="data">
+      {{ getEntityDescription(data.item) }}
+    </template>
+    <template slot="item" slot-scope="data">
+      {{ getEntityDescription(data.item) }}
+    </template>
     </v-autocomplete>
   </div>
 </template>
@@ -37,42 +43,15 @@ export default {
       isLoading: false
     };
   },
-  watch: {
-    value(entity) {
-      this.initializeSelected(entity);
-    }
-  },
-  computed: {
-    items() {
-      return this.entities.map(entity => {
-        var entityDescriptor;
-        if (this.location) {
-          entityDescriptor =
-            entity.description +
-            ", " +
-            entity.address.address +
-            ", " +
-            entity.address.city;
-        } else if (this.person) {
-          entityDescriptor = entity.firstName + " " + entity.lastName;
-        }
-        const Description =
-          entityDescriptor.length > this.descriptionLimit
-            ? entityDescriptor.slice(0, this.descriptionLimit) + "..."
-            : entityDescriptor;
-        return Object.assign({}, entity, { Description });
-      });
-    }
-  },
+
   methods: {
     setSelected(entity) {
       this.$emit("input", entity);
     },
 
-    initializeSelected(entity) {
+    getEntityDescription(entity) {
       if (!entity) return;
-      this.selected = entity;
-      var entityDescriptor;
+      let entityDescriptor = "";
       if (this.location) {
         entityDescriptor =
           entity.description +
@@ -83,15 +62,23 @@ export default {
       } else if (this.person) {
         entityDescriptor = entity.firstName + " " + entity.lastName;
       }
-      const Description =
-        entityDescriptor.length > this.descriptionLimit
-          ? entityDescriptor.slice(0, this.descriptionLimit) + "..."
-          : entityDescriptor;
-      this.selected["Description"] = Description;
-    }
+
+      if (entityDescriptor.length > this.descriptionLimit) {
+        entityDescriptor = entityDescriptor.slice(0, this.descriptionLimit) + "...";
+      }
+      return entityDescriptor;
+    },
+
+    customFilter (item, queryText) {
+      const itemDesc = this.getEntityDescription(item).toLowerCase();
+      const searchText = queryText.toLowerCase();
+      return itemDesc.indexOf(searchText) > -1;
+    },
+
   },
 
   mounted() {
+    //TODO use search-input.sync to avoid making a huge request here
     this.isLoading = true;
     var endpoint = this.location
       ? "/api/v1/places/locations"
