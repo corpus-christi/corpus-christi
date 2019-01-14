@@ -18,15 +18,15 @@ describe('Getting to the people page', function (){
 
 //Adds people
 //NEED TO INCREASE testNum SO THAT THERE IS NO DUPLICATION OF PEOPLE
-var testNum = 6;
+var testNum = 12;
 testNum = testNum + 1;
 describe('Filling out form', function (){
     it('Given: gets to add people form', function(){
-        cy.get('[data-cy=new-person]').click()
+        cy.get('[data-cy=add-person]').click()
     });
     it('When: form is filled out', function(){
-        cy.get('[data-cy=firstName]').type('Test')//first name
-        cy.get('[data-cy=lastName]').type(testNum)//last name
+        cy.get('[data-cy=first-name]').type('Test')//first name
+        cy.get('[data-cy=last-name]').type(testNum)//last name
         cy.get(':nth-child(1) > .v-input--selection-controls__input > .v-input--selection-controls__ripple').click()//gender
         cy.get('.v-menu__activator > .v-input > .v-input__control > .v-input__slot > .v-text-field__slot > input').click()//birthday options
         cy.get(':nth-child(3) > :nth-child(5) > .v-btn > .v-btn__content').click()//select birthday
@@ -36,9 +36,8 @@ describe('Filling out form', function (){
     it('Then: check to see it saved or not', function(){
         cy.get('[data-cy=save]').click()
         cy.get('[data-cy=search]').type('Test')
-        cy.get('.v-select__slot > .v-input__append-inner > .v-input__icon > .v-icon').click()
-        cy.get('.v-select-list > .v-list > :nth-child(4) > .v-list__tile').click()
-        cy.get('.container').contains(testNum)
+        cy.contains(testNum)
+        
 
     });
 });
