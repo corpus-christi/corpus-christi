@@ -277,7 +277,7 @@ export default {
     clear() {
       delete this.event.location;
       for (let key of this.eventKeys) {
-        this.event[key] = "";
+        delete this.event[key];
       }
       this.startTime = "";
       this.startDate = "";

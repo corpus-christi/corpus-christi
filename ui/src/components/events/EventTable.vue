@@ -340,10 +340,10 @@ export default {
 
     saveEvent(event) {
       this.eventDialog.saveLoading = true;
+      event.location_id = event.location.id;
+      delete event.location;
       if (this.eventDialog.editMode) {
         const eventId = event.id;
-        event.location_id = event.location.id;
-        delete event.location;
         const idx = this.events.findIndex(ev => ev.id === event.id);
         delete event.id;
         this.$http
@@ -380,6 +380,8 @@ export default {
 
     addAnotherEvent(event) {
       this.eventDialog.addMoreLoading = true;
+      event.location_id = event.location.id;
+      delete event.location;
       this.$http
         .post("/api/v1/events/", event)
         .then(resp => {
