@@ -17,4 +17,6 @@ describe('Archive Event Test', function() {
   it('THEN: ', function() {
     cy.get('[data-cy=unarchive').should('exist');
   });
+
+  // TODO: Also test for unarchiving events
 });

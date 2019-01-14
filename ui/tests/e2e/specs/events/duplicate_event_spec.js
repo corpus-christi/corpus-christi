@@ -12,14 +12,10 @@ describe('Duplicate Event Test', function() {
   it('WHEN: Event planner duplicates an event', function() {
     cy.get('[data-cy=duplicate]').click();
 
-    cy.wait(1000);
     cy.get('[data-cy=start-date-menu').click();
-    cy.wait(1000);
     cy.get(':nth-child(5) > :nth-child(2) > .v-btn > .v-btn__content').click();
 
-    cy.wait(1000);
     cy.get('[data-cy=end-date-menu').click();
-    cy.wait(1000);
     cy.get('[data-cy=end-date-picker] > .v-picker__body > :nth-child(1) > .v-date-picker-table > table > tbody > :nth-child(5) > :nth-child(2)')
       .click();
 
