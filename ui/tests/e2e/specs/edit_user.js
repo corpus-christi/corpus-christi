@@ -28,30 +28,28 @@ describe("Testing Editing User Information", () => {
       .type('Quality');
   });
   it("When: Clicking on the edit button", () => {
-    cy.get('[data-cy=edit-person').click();
+    cy.get("[data-cy=edit-person").click();
   });
   it("Then: The person's information can be cleared", () => {
-    cy.get('[data-cy=clear').click();
+    cy.get("[data-cy=clear").click();
   });
   it("And: The person's Name can be entered", () => {
-    cy.get('[data-cy=first-name]').type("Quality");
-    cy.get('[data-cy=last-name]').type("Assurance");
+    cy.get("[data-cy=first-name]").type("Quality");
+    cy.get("[data-cy=last-name]").type("Assurance");
   });
   it("And: The person's gender can be checked", () => {
     //TODO:
     //cy.get('[data-cy=radio-gender]').find("[data-cy=radio-m]").check();
   });
   it("And: The person's birthday can be entered", () => {
-    cy.get('[data-cy=birthday]').click();
-    cy.contains('5').click();
+    cy.get("[data-cy=birthday]").click();
+    cy.contains("5").click();
   });
   it("And: The person's email & phone # can be entered", () => {
-    cy.get('[data-cy=email]').type('test@aol.com');
-    cy.get('[data-cy=phone]').type('1113334444');
+    cy.get("[data-cy=email]").type("test@aol.com");
+    cy.get("[data-cy=phone]").type("1113334444");
   });
   it("Finally: The person's new information can be saved", () => {
-    cy.get('[data-cy=save]').click();
+    cy.get("[data-cy=save]").click();
   });
-
 });
-

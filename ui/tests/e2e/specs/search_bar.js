@@ -26,12 +26,12 @@ describe("Testing Editing User Information", () => {
       .click();
   });
   it("When: Typing any user-related information into the search bar", () => {
-    cy.get('[data-cy=search]')
-      .type('Quality')
+    cy.get("[data-cy=search]").type("Quality");
   });
   it("Then: The table should list entries in which any category contains the searched keyword", () => {
-    cy.get('tbody')
-      .find('tr').contains('Quality');
+    cy.get("tbody")
+      .find("tr")
+      .contains("Quality");
   });
   it("And: When searching for something that does not exist, it should let the user know", () => {
     cy.get('[data-cy=search]').clear().type('foobar');
@@ -39,4 +39,3 @@ describe("Testing Editing User Information", () => {
       .find('tr').contains('No se encontraron registros coincidentes');
   });
 });
-

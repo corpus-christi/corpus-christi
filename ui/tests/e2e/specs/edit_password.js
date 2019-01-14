@@ -31,9 +31,9 @@ describe("Testing Editing User Information", () => {
     cy.get('[data-cy=add-account]').click();
   });
   it("Then: The person's password can be changed", () => {
-    cy.get('[data-cy=new-update-password').type('foobar123');
-    cy.get('[data-cy=confirm-password').type('foobar123');
-    cy.get('[data-cy=confirm-button]').click();
+    cy.get("[data-cy=new-update-password").type("foobar123");
+    cy.get("[data-cy=confirm-password").type("foobar123");
+    cy.get("[data-cy=confirm-button]").click();
   });
   it("And: The password can be changed as many times as desired", () => {
     cy.get('[data-cy=add-account]').click();
@@ -42,16 +42,12 @@ describe("Testing Editing User Information", () => {
     cy.get('[data-cy=confirm-button]').click();
   });
   it("Finally: The new password can be used to log the user in", () => {
-    cy.get('[data-cy=cur-locale').click({ multiple: true });
-    cy.get('[data-cy=logout]').click();
-    cy.get('[data-cy=account-button]').click();
-    cy.get('[data-cy=username]').type('Cytest');
-    cy.get('[data-cy=password]').type('password');
-    cy.get('[data-cy=login]').click();
-    cy.url().should('include', '/admin');
-
-  })
-
-
+    cy.get("[data-cy=cur-locale").click({ multiple: true });
+    cy.get("[data-cy=logout]").click();
+    cy.get("[data-cy=account-button]").click();
+    cy.get("[data-cy=username]").type("Cytest");
+    cy.get("[data-cy=password]").type("password");
+    cy.get("[data-cy=login]").click();
+    cy.url().should("include", "/admin");
+  });
 });
-

@@ -1,5 +1,5 @@
 import Vue from "vue";
-import VeeValidate from "vee-validate";    
+import VeeValidate from "vee-validate";
 import VueI18n from "vue-i18n";
 
 import i18n_data from "../../i18n/cc-i18n.json";
