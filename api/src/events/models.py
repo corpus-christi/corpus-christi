@@ -78,7 +78,6 @@ class Team(Base):
 
     def __repr__(self):
         return f"<Team(id={self.id})>"
-    
 
 class TeamSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
