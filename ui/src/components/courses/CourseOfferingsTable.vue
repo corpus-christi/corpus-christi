@@ -60,7 +60,7 @@
     </v-snackbar>
 
     <!-- New/Edit dialog -->
-    <v-dialog v-model="courseOfferingDialog.show" max-width="500px">
+    <v-dialog scrollable v-model="courseOfferingDialog.show" max-width="500px">
       <CourseEditor
         v-bind:editMode="courseOfferingDialog.editMode"
         v-bind:initialData="courseOfferingDialog.courseOffering"
@@ -217,7 +217,7 @@ export default {
     deactivate(courseOffering) {
       this.deactivateDialog.loading = true;
       this.$http
-        .patch(`/api/v1/courses/courses/${course.id}`, { active: false })
+        .patch(`/api/v1/courses/courses/${courseOffering.id}`, { active: false })
         .then(resp => {
           console.log("EDITED", resp);
           Object.assign(courseOffering, resp.data);
@@ -236,7 +236,7 @@ export default {
 
     activate(courseOffering) {
       this.$http
-        .patch(`/api/v1/courses/courses/${course.id}`, { active: true })
+        .patch(`/api/v1/courses/courses/${courseOffering.id}`, { active: true })
         .then(resp => {
           console.log("EDITED", resp);
           Object.assign(courseOffering, resp.data);
@@ -253,11 +253,11 @@ export default {
       this.courseOfferingDialog.saving = true;
       if (this.courseOfferingDialog.editMode) {
         // Hang on to the ID of the person being updated.
-        const course_id = course.id;
+        const course_id = courseOffering.id;
         // Locate the person we're updating in the table.
-        const idx = this.courseOfferings.findIndex(c => c.id === course.id);
+        const idx = this.courseOfferings.findIndex(c => c.id === courseOffering.id);
         // Get rid of the ID; not for consumption by endpoint.
-        delete course.id;
+        delete courseOffering.id;
 
         this.$http
           .patch(`/api/v1/courses/courses/${course_id}`, courseOffering)
