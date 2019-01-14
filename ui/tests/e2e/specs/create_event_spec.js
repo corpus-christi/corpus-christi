@@ -15,7 +15,7 @@ describe('Create Event Test', function() {
 
     cy.get('[data-cy=start-date-menu]').click();
     // Get cypress to click on a certain position on the calendar
-    cy.get('tbody > :nth-child(3) > :nth-child(1) > .v-btn > .v-btn__content').click();
+    cy.get('tbody > :nth-child(5) > :nth-child(1) > .v-btn > .v-btn__content').click();
 
     cy.get('[data-cy=start-time-dialog]').click();
     // Cypress clicks a style position for hour
@@ -26,7 +26,7 @@ describe('Create Event Test', function() {
     cy.get('[data-cy=start-time-ok]').click();
     cy.get('[data-cy=end-date-menu]').click();
     // Get cypress to click on a certain position on the calendar
-    cy.get('[data-cy=end-date-picker] > .v-picker__body > :nth-child(1) > .v-date-picker-table > table > tbody > :nth-child(3) > :nth-child(1) > .v-btn > .v-btn__content')
+    cy.get('[data-cy=end-date-picker] > .v-picker__body > :nth-child(1) > .v-date-picker-table > table > tbody > :nth-child(5) > :nth-child(1) > .v-btn > .v-btn__content')
       .click();
 
     cy.get('[data-cy=end-time-dialog]').click();
