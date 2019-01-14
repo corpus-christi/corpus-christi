@@ -16,9 +16,7 @@
           <v-card-text class="pa-4">
             <div>
               <b>Location: </b>
-              <div class="multi-line ml-2">
-                {{ getDisplayLocation(event.location) }}
-              </div>
+              <div class="multi-line ml-2">{{ displayLocation }}</div>
             </div>
             <div><b>Start: </b>{{ getDisplayDate(event.start) }}</div>
             <div><b>End: </b>{{ getDisplayDate(event.end) }}</div>
@@ -96,6 +94,20 @@ export default {
   },
 
   computed: {
+    displayLocation() {
+      let location = this.event.location;
+      let str = "";
+      if (location) {
+        str += `${location.description}`;
+        if (location.address) {
+          str += `\n${location.address.name}`;
+          str += `\n${location.address.address}`;
+          str += `\n${location.address.city}, ${location.address.country.code}`;
+        }
+      }
+      return str;
+    },
+
     ...mapGetters(["currentLanguageCode"])
   },
 
@@ -119,7 +131,6 @@ export default {
     editEvent(event) {
       this.eventDialog.event = JSON.parse(JSON.stringify(event));
       this.eventDialog.show = true;
-      console.log(event.location);
     },
 
     cancelEvent() {
@@ -156,19 +167,6 @@ export default {
         hour: "2-digit",
         minute: "2-digit"
       });
-    },
-
-    getDisplayLocation(location) {
-      let str = "";
-      if (location) {
-        str += `${location.description}`;
-        if (location.address) {
-          str += `\n${location.address.name}`;
-          str += `\n${location.address.address}`;
-          str += `\n${location.address.city}, ${location.address.country.code}`;
-        }
-      }
-      return str;
     },
 
     navigateTo(path) {
