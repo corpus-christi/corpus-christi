@@ -263,6 +263,11 @@ def test_update_other_fields(auth_client):
         assert updated_account.active == expected_by_id[account_id]['active']
 
 
+def test_role(auth_client):
+    
+
+
+
 @pytest.mark.smoke
 def test_repr_person(auth_client):
     person = Person()
