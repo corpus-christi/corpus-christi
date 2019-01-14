@@ -79,7 +79,7 @@ def generate_model(entity):
     for attr in entity['attributes']:
         details = []
 
-        if attr['type'] in ('integer', 'date', 'boolean', 'datetime'):
+        if attr['type'] in ('integer', 'date', 'boolean', 'datetime', 'float'):
             details.append(attr['type'].capitalize())
         elif attr['type'] == 'string':
             details.append(model_string(attr))
@@ -131,7 +131,7 @@ def generate_schema(entity):
         if '_' in attr['name'] or '-' in attr['name']:
             details.append(f"data_key='{camel_case(attr['name'])}'")
 
-        if attr['type'] in ('integer', 'date', 'string', 'boolean'):
+        if attr['type'] in ('integer', 'date', 'string', 'boolean', 'float'):
             type = attr['type'].capitalize()
         elif attr['type'] == 'datetime':
             type = 'DateTime'
