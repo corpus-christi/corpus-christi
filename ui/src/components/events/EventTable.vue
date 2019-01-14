@@ -63,7 +63,7 @@
           class="hover-hand"
           v-on:click="$router.push({ path: '/events/' + props.item.id })"
         >
-          {{ getDisplayLocation(props.item.location_name) }}
+          {{ getDisplayLocation(props.item.location) }}
         </td>
         <td>
           <template v-if="props.item.active">
@@ -179,7 +179,7 @@ export default {
   name: "EventTable",
   components: { "event-form": EventForm },
   mounted() {
-    this.$http.get("http://localhost:3000/events").then(resp => {
+    this.$http.get("/api/v1/events/?return_group=all").then(resp => {
       this.events = resp.data;
     });
   },
@@ -274,7 +274,7 @@ export default {
       const eventId = this.archiveDialog.eventId;
       const idx = this.events.findIndex(ev => ev.id === eventId);
       this.$http
-        .delete(`http://localhost:3000/events/${eventId}`)
+        .delete(`/api/v1/events/${eventId}`)
         .then(resp => {
           console.log("ARCHIVE", resp);
           this.events[idx].active = false;
@@ -295,8 +295,11 @@ export default {
       const copyEvent = JSON.parse(JSON.stringify(event));
       event.unarchiving = true;
       copyEvent.active = true;
+      const putId = copyEvent.id;
+      delete copyEvent.id;
+      delete copyEvent.location; //Temporary delete
       this.$http
-        .put(`http://localhost:3000/events/${copyEvent.id}`, copyEvent)
+        .put(`/api/v1/events/${putId}`, copyEvent)
         .then(resp => {
           console.log("UNARCHIVED", resp);
           Object.assign(this.events[idx], resp.data);
@@ -328,7 +331,7 @@ export default {
         const idx = this.events.findIndex(ev => ev.id === event.id);
         delete event.id;
         this.$http
-          .put(`http://localhost:3000/events/${eventId}`, event)
+          .put(`/api/v1/events/${eventId}`, event)
           .then(resp => {
             console.log("EDITED", resp);
             Object.assign(this.events[idx], event);
@@ -343,7 +346,7 @@ export default {
           });
       } else {
         this.$http
-          .post("http://localhost:3000/events/", event)
+          .post("/api/v1/events/", event)
           .then(resp => {
             console.log("ADDED", resp);
             this.events.push(resp.data);
@@ -362,7 +365,7 @@ export default {
     addAnotherEvent(event) {
       this.eventDialog.addMoreLoading = true;
       this.$http
-        .post("http://localhost:3000/events/", event)
+        .post("/api/v1/events/", event)
         .then(resp => {
           console.log("ADDED", resp);
           this.events.push(resp.data);
