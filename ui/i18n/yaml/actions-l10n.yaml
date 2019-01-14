@@ -11,6 +11,10 @@ actions:
     _desc: Add a person to the database
     en: Add Person
     es: Añadir Persona
+  add-event:
+    _desc: Add an event to the database
+    en: Add Event
+    es: Añadir Evento
   cancel:
     _desc: Cancel a pending action
     en: Cancel
@@ -27,6 +31,10 @@ actions:
     _desc: Confirm some action (e.g., updating a password)
     en: Confirm
     es: Confirmar
+  duplicate:
+    _desc: Duplicate some action (e.g., duplicating an event)
+    en: Duplicate
+    es: Duplicar
   edit:
     en: Edit
     es: Editar
@@ -44,6 +52,14 @@ actions:
     _desc: Search for something
     en: Search
     es: Buscar
+  search-people:
+    _desc: Search for people
+    en: Search People
+    es: Buscar Personas
+  view-inactive:
+    _desc: View all inactive people
+    en: View Inactive
+    es: Ver Inactivo
   view-archived:
     _desc: View all inactive
     en: View Archived
@@ -61,6 +77,9 @@ actions:
       _desc: Change settings
       en: Settings
       es: Ajustes
-    deactivate:
+    archive:
       en: Archive
-      es: Archivo
+      es: Archivar
+    activate:
+      en: Activate
+      es: Activar

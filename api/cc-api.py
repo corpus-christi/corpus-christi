@@ -12,6 +12,7 @@ from src import db
 from src.i18n.models import Language, I18NLocale
 from src.people.models import Person, Account, Role
 from src.people.test_people import create_multiple_people, create_multiple_accounts
+from src.events.create_event_data import create_events_test_data
 from src.places.test_places import create_multiple_areas, create_multiple_addresses, create_multiple_locations
 from src.places.models import Country
 from src.events.models import Event, Asset, Team
@@ -52,7 +53,7 @@ def load_roles():
 
 
 @data_cli.command('load-all', help='Load everything')
-def load_languages():
+def load_all():
     _load_locales()
     Country.load_from_file()
     Language.load_from_file()
@@ -60,10 +61,16 @@ def load_languages():
     create_multiple_people(db.session, 17)
     create_multiple_accounts(db.session, 0.25)
     access_token = create_access_token(identity='test-user')
-
     create_multiple_areas(db.session, 5)
     create_multiple_addresses(db.session, 10)
     create_multiple_locations(db.session, 20)
+    create_events_test_data(db.session)
+
+@data_cli.command('test', help='Load everything')
+def test_random_data():
+    from src.events.test_events import event_object_factory
+    print(event_object_factory(db.session))
+
 
 
 @data_cli.command('clear-all', help="Clear all data; drops and creates all tables")
