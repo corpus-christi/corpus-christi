@@ -1,3 +1,4 @@
+import json
 from marshmallow import fields, Schema, pre_load
 from marshmallow.validate import Length, Range, OneOf
 from sqlalchemy import Column, DateTime, Integer, String, Date, ForeignKey, Boolean
@@ -28,7 +29,6 @@ class Event(Base):
 
     def __repr__(self):
         return f"<Event(id={self.id})>"
-    
 
 class EventSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
@@ -80,7 +80,6 @@ class Team(Base):
 
     def __repr__(self):
         return f"<Team(id={self.id})>"
-    
 
 class TeamSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))

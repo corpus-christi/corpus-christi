@@ -31,7 +31,6 @@
         
 
 
-
         <v-layout>
           <v-flex xs12 md6>
             <!-- Start Date -->
@@ -326,6 +325,67 @@ export default {
     },
 
     getDateFromTimestamp(ts) {
+      let date = new Date(ts);
+      if (date.getTime() < 86400000) { //ms in a day
+        return "";
+      }
+      let yr = date.toLocaleDateString(this.currentLanguageCode, {
+        year: "numeric"
+      });
+      let mo = date.toLocaleDateString(this.currentLanguageCode, {
+        month: "2-digit"
+      });
+      let da = date.toLocaleDateString(this.currentLanguageCode, {
+        day: "2-digit"
+      });
+      return `${yr}-${mo}-${da}`;
+    },
+
+    getTimeFromTimestamp(ts) {
+      let date = new Date(ts);
+      let hr = String(date.getHours()).padStart(2, "0");
+      let min = String(date.getMinutes()).padStart(2, "0");
+      return `${hr}:${min}`;
+    },
+
+    setLocation(locationId) {
+      console.log(locationId)
+    }
+  },
+  props: {
+    editMode: {
+      type: Boolean,
+      required: true
+    },
+    initialData: {
+      type: Object,
+      required: true
+    },
+    saveLoading: {
+      type: Boolean
+    },
+    addMoreLoading: {
+      type: Boolean
+    }
+  },
+  data: function() {
+    return {
+      event: {},
+      startTime: "",
+      startDate: "",
+      endTime: "",
+      endDate: "",
+      showStartDatePicker: false,
+      showEndDatePicker: false,
+      startTimeModal: false,
+      endTimeModal: false,
+      save_loading: false,
+      add_more_loading: false,
+
+    };
+  }
+};
+</script>
       let date = new Date(ts);
       if (date.getTime() < 86400000) { //ms in a day
         return "";

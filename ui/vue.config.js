@@ -9,6 +9,6 @@ try {
 
 module.exports = {
   devServer: {
-    proxy: proxyConfig
+    proxy: "http://localhost:5000"
   }
 };
