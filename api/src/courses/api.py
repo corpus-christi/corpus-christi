@@ -58,26 +58,26 @@ def read_all_courses():
     return jsonify(add_prereqs(result))
 
 
-@courses.route('/courses-active')
+@courses.route('/courses/active')
 @jwt_required
 def read_all_active_courses():
     """List all active courses"""
     result = db.session.query(Course).filter_by(active=True).all()
     if(result is None):
         return "Result NOT found", 404
-    # return add_prereqs(result)
-    return jsonify(course_schema.dump(result, many=True))
+    return jsonify(add_prereqs(result))
+    # return jsonify(course_schema.dump(result, many=True))
 
 
-@courses.route('/courses-inactive')
+@courses.route('/courses/inactive')
 @jwt_required
 def read_all_inactive_courses():
     """List all inactive courses"""
     result = db.session.query(Course).filter_by(active=False).all()
     if(result is None):
         return "Result NOT found", 404
-    # return add_prereqs(result)
-    return jsonify(course_schema.dump(result, many=True))
+    return jsonify(add_prereqs(result))
+    # return jsonify(course_schema.dump(result, many=True))
 
 
 @courses.route('/courses/<course_id>')
