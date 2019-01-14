@@ -276,14 +276,17 @@ def read_all_students():
     result = db.session.query(Student).all()
     return jsonify(student_schema.dump(result, many=True))
 
-@courses.route('/students/<active_state>')
+@courses.route('/students/<confirm_state>')
 @jwt_required
-def read_active_state_student(active_state):
+def read_confirm_state_student(active_state):
+    """
+    Note: There is no need to see active/inactive state of students 
+    because it doesn't matter if a student is unconfirmed. """
     query = db.session.query(Student)
-    if active_state == 'active':
-        result = query.filter_by(active='True').all()
-    elif active_state == 'inactive':
-        result = query.filter_by(active='False').all()
+    if active_state == 'confirmed':
+        result = query.filter_by(confirmed='True').all()
+    elif active_state == 'unconfirmed':
+        result = query.filter_by(confirmed='False').all()
     else:
         return 'Cannot filter course offerings with undefined state', 404
     return jsonify(student_schema.dump(result))
@@ -308,7 +311,7 @@ def update_student(student_id):
 
     for attr in 'confirmed', 'active':
         if attr in request.json:
-            setattr(course_offering, attr, request.json[attr])
+            setattr(student, attr, request.json[attr])
 
     db.session.commit()
     return jsonify(student_schema.dump(student))
