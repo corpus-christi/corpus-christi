@@ -39,8 +39,9 @@ export default {
   watch: {
     searchInput(val) {
       this.isLoading = true;
+      var endpoint = (this.location) ? (this.searchEndpoint + "?q=" + val) : '/api/v1/people/persons'
       this.$http
-        .get(this.searchEndpoint + "?q=" + val)
+        .get(endpoint)
         .then(resp => {
           this.entities = resp.data;
           this.isLoading = false;
@@ -64,11 +65,12 @@ export default {
       var descriptionLimit = 60;
       return this.entities.map(entity => {
         var entityDescriptor;
-        if (this.location)
-          entityDescriptor =
-            entity.name + ", " + entity.address + ", " + entity.city;
-        else if (this.person)
-          entityDescriptor = entity.first_name + " " + entity.last_name;
+        if (this.location) {
+          entityDescriptor = entity.name + ", " + entity.address + ", " + entity.city
+        }
+        else if (this.person) {
+          entityDescriptor = entity.firstName + " " + entity.lastName;
+        }
         const Description =
           entityDescriptor.length > this.descriptionLimit
             ? entityDescriptor.slice(0, this.descriptionLimit) + "..."
