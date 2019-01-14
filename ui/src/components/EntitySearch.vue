@@ -16,12 +16,12 @@
       return-object
       :filter="customFilter"
     >
-    <template slot="selection" slot-scope="data">
-      {{ getEntityDescription(data.item) }}
-    </template>
-    <template slot="item" slot-scope="data">
-      {{ getEntityDescription(data.item) }}
-    </template>
+      <template slot="selection" slot-scope="data">
+        {{ getEntityDescription(data.item) }}
+      </template>
+      <template slot="item" slot-scope="data">
+        {{ getEntityDescription(data.item) }}
+      </template>
     </v-autocomplete>
   </div>
 </template>
@@ -64,17 +64,17 @@ export default {
       }
 
       if (entityDescriptor.length > this.descriptionLimit) {
-        entityDescriptor = entityDescriptor.slice(0, this.descriptionLimit) + "...";
+        entityDescriptor =
+          entityDescriptor.slice(0, this.descriptionLimit) + "...";
       }
       return entityDescriptor;
     },
 
-    customFilter (item, queryText) {
+    customFilter(item, queryText) {
       const itemDesc = this.getEntityDescription(item).toLowerCase();
       const searchText = queryText.toLowerCase();
       return itemDesc.indexOf(searchText) > -1;
-    },
-
+    }
   },
 
   mounted() {

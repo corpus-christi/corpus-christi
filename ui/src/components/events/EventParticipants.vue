@@ -141,12 +141,10 @@ export default {
 
   mounted: function() {
     this.tableLoading = true;
-    this.$http
-      .get("/api/v1/people/persons")
-      .then(resp => {
-        this.people = resp.data;
-        this.tableLoading = false;
-      });
+    this.$http.get("/api/v1/people/persons").then(resp => {
+      this.people = resp.data;
+      this.tableLoading = false;
+    });
   }
 };
 </script>
