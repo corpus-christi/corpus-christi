@@ -11,24 +11,25 @@ def flip():
     return random.choice((True, False))
 
 
-def attribute_object_factory():
+def attribute_object_factory(active=1):
     """Cook up a fake attribute."""
     attribute = {
         'nameI18n': 'attribute' + str(random.randint(0, 100)),
         'typeI18n': random.choice(('Dropdown', 'Select', 'String', 'Int')),
         'seq': random.randint(0, 100),
-        'active': 1
+        'active': active
     }
 
     return attribute
 
 
-def create_multiple_attributes(sqla, n):
+def create_multiple_attributes(sqla, n, active=1):
     """Commit `n` new attributes to the database. Return their IDs."""
     attribute_schema = AttributeSchema()
     new_attributes = []
     for i in range(n):
-        valid_attribute = attribute_schema.load(attribute_object_factory())
+        valid_attribute = attribute_schema.load(
+            attribute_object_factory(active))
         new_attributes.append(Attribute(**valid_attribute))
     sqla.add_all(new_attributes)
     sqla.commit()
@@ -91,25 +92,57 @@ def test_update_attribute(auth_client):
     assert updated_attribute.active == payload['active']
 
 
+def test_deactivate_attribute(auth_client):
+    # GIVEN a DB with an attribute.
+    create_multiple_attributes(auth_client.sqla, 1)
+    attribute_id = auth_client.sqla.query(Attribute.id).first().id
+
+    # WHEN we call deactivate
+    resp = auth_client.patch(url_for(
+        'attributes.deactivate_attribute', attribute_id=attribute_id))
+    assert resp.status_code == 200
+
+    updated_attribute = auth_client.sqla.query(
+        Attribute).filter_by(id=attribute_id).first()
+    assert updated_attribute is not None
+    assert updated_attribute.active == False
+
+
+def test_activate_attribute(auth_client):
+    # GIVEN a DB with an attribute.
+    create_multiple_attributes(auth_client.sqla, 1, 0)
+    attribute_id = auth_client.sqla.query(Attribute.id).first().id
+
+    # WHEN we call deactivate
+    resp = auth_client.patch(url_for(
+        'attributes.activate_attribute', attribute_id=attribute_id))
+    assert resp.status_code == 200
+
+    updated_attribute = auth_client.sqla.query(
+        Attribute).filter_by(id=attribute_id).first()
+    assert updated_attribute is not None
+    assert updated_attribute.active == True
+
+
 # ---- Enumerated_Value
 
-def enumerated_value_object_factory():
+def enumerated_value_object_factory(active=1):
     """Cook up a fake enumerated value."""
     enumerated_value = {
         'valueI18n': 'enumerated_value' + str(random.randint(0, 100)),
-        'active': 1
+        'active': active
     }
 
     return enumerated_value
 
 
-def create_multiple_enumerated_values(sqla, n):
+def create_multiple_enumerated_values(sqla, n, active=1):
     """Commit `n` new enumerated values to the database. Return their IDs."""
     enumerated_value_schema = Enumerated_ValueSchema()
     new_enumerated_values = []
     for i in range(n):
         valid_enumerated_values = enumerated_value_schema.load(
-            enumerated_value_object_factory())
+            enumerated_value_object_factory(active))
         new_enumerated_values.append(
             Enumerated_Value(**valid_enumerated_values))
     sqla.add_all(new_enumerated_values)
@@ -168,3 +201,37 @@ def test_update_enumerated_value(auth_client):
     assert updated_enumerated_value is not None
     assert updated_enumerated_value.value_i18n == payload['valueI18n']
     assert updated_enumerated_value.active == payload['active']
+
+
+def test_deactivate_enumerated_value(auth_client):
+    # GIVEN a DB with an enumerated_value.
+    create_multiple_enumerated_values(auth_client.sqla, 1)
+    enumerated_value_id = auth_client.sqla.query(
+        Enumerated_Value.id).first().id
+
+    # WHEN we call deactivate
+    resp = auth_client.patch(url_for(
+        'attributes.deactivate_enumerated_value', enumerated_value_id=enumerated_value_id))
+    assert resp.status_code == 200
+
+    updated_enumerated_value = auth_client.sqla.query(
+        Enumerated_Value).filter_by(id=enumerated_value_id).first()
+    assert updated_enumerated_value is not None
+    assert updated_enumerated_value.active == False
+
+
+def test_activate_enumerated_value(auth_client):
+    # GIVEN a DB with an enumerated_value.
+    create_multiple_enumerated_values(auth_client.sqla, 1, 0)
+    enumerated_value_id = auth_client.sqla.query(
+        Enumerated_Value.id).first().id
+
+    # WHEN we call deactivate
+    resp = auth_client.patch(url_for(
+        'attributes.activate_enumerated_value', enumerated_value_id=enumerated_value_id))
+    assert resp.status_code == 200
+
+    updated_enumerated_value = auth_client.sqla.query(
+        Enumerated_Value).filter_by(id=enumerated_value_id).first()
+    assert updated_enumerated_value is not None
+    assert updated_enumerated_value.active == True
