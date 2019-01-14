@@ -15,27 +15,24 @@
       name="description"
       data-cy="course-form-description"
     ></v-textarea>
-    <!-- translate prereq -->
-    <v-combobox
+
+    <v-select
       v-model="course.prerequisites"
       :items="items"
       v-bind:label="$t('courses.prerequisites')"
       chips
+      deletable-chips
       clearable
-      solo
+      outline
       multiple
       hide-selected
+      return-object
       item-value="id"
+      item-text="name"
+      :menu-props="{ closeOnContentClick: true }"
       data-cy="course-form-prerequisites"
     >
-      <template slot="item" slot-scope="data">{{ data.item.name }}</template>
-      <template slot="selection" slot-scope="data">
-        <v-chip :selected="data.selected" close @input="remove(data.item)">
-          <strong>{{ data.item.name }}</strong
-          >&nbsp;
-        </v-chip>
-      </template>
-    </v-combobox>
+    </v-select>
   </form>
 </template>
 
@@ -54,12 +51,6 @@ export default {
   },
   props: {
     course: Object
-  },
-  methods: {
-    remove(item) {
-      this.course.prerequisites.splice(this.course.prerequisites.indexOf(item), 1);
-      this.course.prerequisites = [...this.course.prerequisites];
-    }
   },
   mounted() {
     this.$http
