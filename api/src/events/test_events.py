@@ -23,7 +23,7 @@ def test_create_event(auth_client):
     
     # WHEN
     for i in range(count):
-        resp = auth_client.post(url_for('events.create_event'), json=event_object_factory())
+        resp = auth_client.post(url_for('events.create_event'), json=event_object_factory(auth_client.sqla))
         assert resp.status_code == 201
     
     # THEN
@@ -42,11 +42,19 @@ def test_read_all_events(auth_client):
     events = auth_client.sqla.query(Event).all()
 
     # THEN
-    assert len(events) == count
-    assert len(resp.json) == count
+    inactive = 0
+    for event in events:
+        if not event.active:
+            inactive += 1
 
-    for i in range(count):
-        assert resp.json[i]['title'] == events[i].title
+    assert len(events) == count
+    assert len(resp.json) == count - inactive
+
+    j = 0
+    for i in range(count - inactive):
+        if events[i].active:
+            assert resp.json[j]['title'] == events[i].title
+            j += 1
 
 
 @pytest.mark.smoke
@@ -59,11 +67,12 @@ def test_read_one_event(auth_client):
     events = auth_client.sqla.query(Event).all()
 
     for event in events:
-        resp = auth_client.get(url_for('events.read_one_event'), event_id = event.id)
+        resp = auth_client.get(url_for('events.read_one_event', event_id = event.id))
         assert resp.status_code == 200
         assert resp.json['title'] == event.title
         # Datetimes come back in a slightly different format, but information is the same.
         # assert resp.json['start'] == str(event.start)
+
 
 @pytest.mark.xfail()
 def test_replace_event(auth_client):
