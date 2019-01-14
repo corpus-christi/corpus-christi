@@ -14,7 +14,7 @@
             </v-layout>
           </v-container>
           <v-card-text class="pa-4">
-            <div><b>Location: </b>{{ event.location_name }}</div>
+            <div><b>Location: </b>{{ getDisplayLocation(event.location) }}</div>
             <div><b>Start: </b>{{ getDisplayDate(event.start) }}</div>
             <div><b>End: </b>{{ getDisplayDate(event.end) }}</div>
             <div class="mt-2">{{ event.description }}</div>
@@ -84,7 +84,7 @@ export default {
   mounted() {
     this.pageLoaded = false;
     const id = this.$route.params.event;
-    this.$http.get(`http://localhost:3000/events/${id}`).then(resp => {
+    this.$http.get(`/api/v1/events/${id}`).then(resp => {
       this.event = resp.data;
       this.pageLoaded = true;
     });
@@ -150,6 +150,13 @@ export default {
         hour: "2-digit",
         minute: "2-digit"
       });
+    },
+
+    getDisplayLocation(location) {
+      if (location && location.address) {
+        return location.address.name + '\n' + location.address.address
+      }
+      return '';
     },
 
     navigateTo(path) {
