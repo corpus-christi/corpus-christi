@@ -147,7 +147,7 @@ def deactivate_enumerated_value(enumerated_value_id):
 
     db.session.commit()
 
-    return jsonify(attribute_schema.dump(attribute))
+    return jsonify(enumerated_value_schema.dump(enumerated_value))
 
 
 @attributes.route('/enumerated_values/activate/<enumerated_value_id>', methods=['PATCH'])
@@ -160,57 +160,4 @@ def activate_enumerated_value(enumerated_value_id):
 
     db.session.commit()
 
-    return jsonify(attribute_schema.dump(attribute))
-
-
-# ---- Person_Attribute
-
-
-person_attribute_schema = Person_AttributeSchema()
-
-
-@attributes.route('/person_attributes', methods=['POST'])
-@jwt_required
-def create_person_attribute():
-    try:
-        valid_person_attribute = person_attribute_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    new_person_attribute = Person_Attribute(**valid_person_attribute)
-    db.session.add(new_person_attribute)
-    db.session.commit()
-    return jsonify(person_attribute_schema.dump(new_person_attribute)), 201
-
-
-@attributes.route('/person_attributes')
-@jwt_required
-def read_all_person_attributes():
-    result = db.session.query(Person_Attribute).all()
-    return jsonify(person_attribute_schema.dump(result, many=True))
-
-
-@attributes.route('/person_attributes/<person_attribute_id>')
-@jwt_required
-def read_one_person_attribute(person_attribute_id):
-    result = db.session.query(Person_Attribute).filter_by(
-        id=person_attribute_id).first()
-    return jsonify(person_attribute_schema.dump(result))
-
-
-@attributes.route('/person_attributes/<person_attribute_id>', methods=['PATCH'])
-@jwt_required
-def update_person_attribute(person_attribute_id):
-    try:
-        valid_person_attribute = person_attribute_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    person_attribute = db.session.query(
-        Person_Attribute).filter_by(id=person_attribute_id).first()
-
-    for key, val in valid_person_attribute.items():
-        setattr(person_attribute, key, val)
-
-    db.session.commit()
-    return jsonify(person_attribute_schema.dump(person_attribute))
+    return jsonify(enumerated_value_schema.dump(enumerated_value))
