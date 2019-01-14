@@ -88,3 +88,30 @@ events:
     edit-asset:
       en: Edit Asset
       es: Editar Bienes
+    confirm-archive:
+      en: Are you sure you want to archive this asset?
+      es: ¿Seguro que quieres archivar estes bienes?
+    asset-archived:
+      en: Asset archived
+      es: Bienes archivado
+    error-archiving-asset:
+      en: Error while archiving asset 
+      es: Error al archivar bienes
+    asset-unarchived:
+      en: Asset unarchived
+      es: Bienes desarchivado   # probably not right
+    error-unarchiving-asset:
+      en: Error while unarchiving asset 
+      es: Error al desarchivar bienes
+    asset-edited:
+      en: Asset edited
+      es: Bienes editados   # ?
+    error-editing-asset:
+      en: Error while editing asset
+      es: Error al editar bienes
+    asset-added:
+      en: Asset added
+      es: Bienes agregado
+    error-adding-asset:
+      en: Error while adding asset
+      es: Error al agregar bienes

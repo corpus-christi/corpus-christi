@@ -53,9 +53,18 @@
     "events": {
       "actions": "Actions",
       "assets": {
+        "asset-added": "Asset added",
+        "asset-archived": "Asset archived",
+        "asset-edited": "Asset edited",
+        "asset-unarchived": "Asset unarchived",
+        "confirm-archive": "Are you sure you want to archive this asset?",
         "create-asset": "Create Asset",
         "description": "Description",
         "edit-asset": "Edit Asset",
+        "error-adding-asset": "Error while adding asset",
+        "error-archiving-asset": "Error while archiving asset",
+        "error-editing-asset": "Error while editing asset",
+        "error-unarchiving-asset": "Error while unarchiving asset",
         "location": "Location",
         "new": "Add Asset",
         "title": "Assets"
@@ -188,9 +197,18 @@
     "events": {
       "actions": "Comportamiento",
       "assets": {
+        "asset-added": "Bienes agregado",
+        "asset-archived": "Bienes archivado",
+        "asset-edited": "Bienes editados",
+        "asset-unarchived": "Bienes desarchivado",
+        "confirm-archive": "\u00bfSeguro que quieres archivar estes bienes?",
         "create-asset": "Crear Bienes",
         "description": "Descripci\u00f3n",
         "edit-asset": "Editar Bienes",
+        "error-adding-asset": "Error al agregar bienes",
+        "error-archiving-asset": "Error al archivar bienes",
+        "error-editing-asset": "Error al editar bienes",
+        "error-unarchiving-asset": "Error al desarchivar bienes",
         "location": "Ubicaci\u00f3n",
         "new": "A\u00f1adir Bienes",
         "title": "Bienes"
