@@ -10,6 +10,20 @@ from . import places
 from .models import Country, Address, AddressSchema, Area, AreaSchema, Location, LocationSchema
 
 
+def modify_entity(entity_type, schema, id, new_value_dict):
+    item = db.session.query(entity_type).filter_by(id=id).first()
+
+    if not item:
+        return jsonify(f"Item with id #{id} does not exist."), 404
+
+    for key, val in new_value_dict.items():
+        setattr(item, key, val)
+    
+    db.session.commit()
+
+    return jsonify(schema.dump(item)), 200
+
+
 
 class CountryListSchema(Schema):
     code = fields.String(required=True, validate=Length(equal=2))
@@ -203,28 +217,39 @@ def read_one_location(location_id):
 @places.route('/locations/<location_id>', methods=['PUT'])
 @jwt_required
 def replace_location(location_id):
-    pass
-
-
-@places.route('/locations/<location_id>', methods=['PATCH'])
-@jwt_required
-def update_location(location_id):
     try:
         valid_location = location_schema.load(request.json)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    location = db.session.query(Location).filter_by(id=location_id).first()
+    return modify_location(location_id, valid_location)
 
-    for key, val in valid_location.items():
-        setattr(location, key, val)
 
-    db.session.commit()
-    return jsonify(location_schema.dump(location))
+@places.route('/locations/<location_id>', methods=['PATCH'])
+@jwt_required
+def update_location(location_id):
+    try: 
+        valid_attributes = location_schema.load(request.json, partial=True)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+                
+    return modify_location(location_id, valid_attributes)
 
 
 @places.route('/locations/<location_id>', methods=['DELETE'])
 @jwt_required
 def delete_location(location_id):
-    pass
+    location_asset = db.session.query(Location).filter_by(id=location_id).first()
 
+    if not location_asset:
+        return jsonify(f"Location with id #{location_id} does not exist."), 404
+
+    db.session.delete(location_asset)
+    db.session.commit()
+
+    # 204 codes don't respond with any content
+    return 'Successfully deleted', 204
+
+
+def modify_location(location_id, location_object):
+    return modify_entity(Location, location_schema, location_id, location_object)
