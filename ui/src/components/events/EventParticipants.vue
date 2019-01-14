@@ -18,7 +18,7 @@
         data-cy="add-participant"
       >
         <v-icon dark left>add</v-icon>
-        {{ $t("actions.addperson") }}
+        {{ $t("actions.add-person") }}
       </v-btn>
     </v-toolbar>
     <v-data-table
