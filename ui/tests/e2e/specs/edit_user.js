@@ -38,7 +38,7 @@ describe("Testing Editing User Information", () => {
     cy.get('[data-cy=last-name]').type("Assurance");
   });
   it("And: The person's gender can be checked", () => {
-    TODO:
+    //to do
     //cy.get('[data-cy=radio-gender]').find("[data-cy=radio-m]").check();
   });
   it("And: The person's birthday can be entered", () => {
