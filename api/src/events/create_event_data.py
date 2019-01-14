@@ -50,7 +50,8 @@ def event_object_factory(sqla):
         event['description'] = rl_fake().sentences(nb=1)[0]
     if flip():
         all_locations = sqla.query(Location).all()
-        event['location_id'] = all_locations[random.randint(0, len(all_locations)-1)].id
+        if len(all_locations) > 0:
+            event['location_id'] = all_locations[random.randint(0, len(all_locations)-1)].id
     return event
 
 
