@@ -35,6 +35,7 @@ def person_object_factory():
     """Cook up a fake person."""
     person = {
         'lastName': rl_fake().last_name(),
+        'secondLastName': rl_fake().last_name(),
         'gender': random.choice(('M', 'F')),
         'active': True
     }
@@ -128,6 +129,7 @@ def test_read_person(auth_client):
         assert resp.status_code == 200
         assert resp.json['firstName'] == person.first_name
         assert resp.json['lastName'] == person.last_name
+        assert resp.json['secondLastName'] == person.second_last_name
 
 
 # ---- Account
