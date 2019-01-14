@@ -52,7 +52,7 @@ class PersonSchema(Schema):
     active = fields.Boolean(required=True)
     location_id = fields.Integer(data_key='locationId')
 
-    accountInfo = fields.Nested('AccountSchema')
+    accountInfo = fields.Nested('AccountSchema', allow_none=True, only=['username','id'])
 
 # Defines join table for people_account and people_role
 
@@ -102,14 +102,15 @@ class AccountSchema(Schema):
     username = fields.String(required=True, validate=Length(min=1))
     password = fields.String(attribute='password_hash', load_only=True,
                              required=True, validate=Length(min=6))
-    active = fields.Boolean()
+    active = fields.Boolean(missing=None)
     person_id = fields.Integer(
         required=True, data_key="personId", validate=Range(min=1))
 
     @pre_load
     def hash_password(self, data):
         """Make sure the password is properly hashed when creating a new account."""
-        data['password'] = generate_password_hash(data['password'])
+        if 'password' in data.keys():
+            data['password'] = generate_password_hash(data['password'])
         return data
 
 
