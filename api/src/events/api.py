@@ -11,7 +11,7 @@ from sqlalchemy import func
 from . import events
 from .models import Event, Asset, Team, TeamMember, EventPerson, EventAsset, EventParticipant, EventTeam, EventSchema, AssetSchema, TeamSchema, TeamMemberSchema, EventTeamSchema, EventPersonSchema, EventParticipantSchema
 from ..people.models import Person, PersonSchema
-from .. import db, mail
+from .. import db
 
 def modify_entity(entity_type, schema, id, new_value_dict):
     item = db.session.query(entity_type).filter_by(id=id).first()
