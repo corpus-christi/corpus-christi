@@ -9,8 +9,9 @@ from flask_jwt_extended import create_access_token
 from werkzeug.datastructures import Headers
 from werkzeug.security import check_password_hash
 
-from .models import Asset, AssetSchema, Event, EventSchema, Team, TeamSchema
+from .models import Asset, AssetSchema, Event, EventSchema, Team, TeamSchema, EventParticipant, EventParticipantSchema
 from ..places.models import Location
+from ..people.models import Person
 
 from .models import EventAsset, EventAssetSchema, EventTeam, EventTeamSchema
 
@@ -90,6 +91,14 @@ def event_team_object_factory(event_id, team_id):
     }
     return eventteam
 
+def event_participant_object_factory(event_id, person_id):
+    """Cook up a fake eventteam json object from given ids."""
+    eventteam = {
+        'event_id': event_id,
+        'person_id': person_id
+    }
+    return eventteam
+
 def create_multiple_events(sqla, n):
     """Commit `n` new events to the database. Return their IDs."""
     event_schema = EventSchema()
@@ -152,13 +161,31 @@ def create_events_teams(sqla, fraction=0.75):
     sqla.add_all(new_events_teams)
     sqla.commit()
 
+def create_events_participants(sqla, fraction=0.75):
+    """Create data in the linking table between events and participants """
+    event_participant_schema = EventParticipantSchema()
+    new_events_participants = []
+    all_events_participants = sqla.query(Event, Person).all()
+    sample_events_participants = random.sample(all_events_participants, math.floor(len(all_events_participants) * fraction))
+    #print(sample_events_participants[0][0].id)
+    for events_participants in sample_events_participants:
+        #print(events_participants)
+        valid_events_participants = event_participant_schema.load(event_participant_object_factory(events_participants[0].id,events_participants[1].id))
+        #print(valid_events_participants)
+        new_events_participants.append(EventParticipant(**valid_events_participants))
+    #print(new_events_participants)
+    sqla.add_all(new_events_participants)
+    sqla.commit()
 
-def create_test_data(sqla):
+
+def create_events_test_data(sqla):
     """The function that creates test data in the correct order """
-    create_multiple_events(sqla, 10)
-    create_multiple_assets(sqla, 10)
-    create_multiple_teams(sqla, 10)
-    create_events_assets(sqla, 10)
+    create_multiple_events(sqla, 18)
+    create_multiple_assets(sqla, 12)
+    create_multiple_teams(sqla, 13)
+    create_events_assets(sqla, 0.75)
+    create_events_teams(sqla, 0.75)
+    create_events_participants(sqla, 0.75)
 
 
 # ---- Event

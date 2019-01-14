@@ -86,9 +86,9 @@ class Location(Base):
 
     def __repr__(self):
         attributes = [f"id='{self.id}'"]
-       # for attr in ['description', "address_id"]:
-       #     if hasattr(self, attr):
-       #         attributes.append(f"{attr}={self.attr}")
+        for attr in ['description', "address_id"]:
+            if hasattr(self, attr):
+                attributes.append(f"{attr}={self.attr}")
         as_string = ",".join(attributes)
         return f"<Location({as_string})>"
 
