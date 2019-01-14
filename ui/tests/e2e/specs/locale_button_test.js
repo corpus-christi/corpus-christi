@@ -20,8 +20,6 @@ describe("testing the language button", () => {
     cy.get("[data-cy=church-sentence]").contains("Church");
     //.contains("Iglesia");
   });
-<<<<<<< HEAD
-=======
   it("Switches the language back to Spanish", () =>{
     cy.get('[data-cy=cur-locale]')
       .click();
@@ -33,5 +31,4 @@ describe("testing the language button", () => {
       //.contains("Church");//something dumb
       .contains("Iglesia");
   });
->>>>>>> app-courses
 });
