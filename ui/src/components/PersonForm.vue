@@ -25,11 +25,7 @@
           data-cy="last-name"
         ></v-text-field>
 
-<<<<<<< HEAD
-        <v-radio-group v-model="person.gender" row>
-=======
         <v-radio-group v-model="person.gender" :readonly="formDisabled" row data-cy="radio-gender">
->>>>>>> app-courses
           <v-radio
             v-bind:label="$t('person.male')"
             value="M"
