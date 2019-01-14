@@ -1,6 +1,7 @@
 import json
 
 from flask import request
+#from flask_api import status
 from flask.json import jsonify, dumps
 from flask_jwt_extended import jwt_required
 from marshmallow import ValidationError
@@ -90,7 +91,7 @@ def deactivate_course(course_id):
     """Set active course with given course_id to inactive (False)"""
     valid_course = db.session.query(Course).filter_by(id=course_id).first()
     if valid_course is None:
-        return 'Not Found', 404
+        return 'Not Found', status.HTTP_404_NOT_FOUND
     else:
         setattr(valid_course, 'active', False)
     db.session.commit()
@@ -176,7 +177,6 @@ def update_prerequisite(prerequisite_id):
 
 course_offering_schema = Course_OfferingSchema()
 
-
 @courses.route('/course_offerings', methods=['POST'])
 @jwt_required
 def create_course_offering():
@@ -190,47 +190,38 @@ def create_course_offering():
     db.session.commit()
     return jsonify(course_offering_schema.dump(new_course_offering)), 201
 
-
 @courses.route('/course_offerings')
 @jwt_required
 def read_all_course_offerings():
     result = db.session.query(Course_Offering).all()
     return jsonify(course_offering_schema.dump(result, many=True))
 
-@courses.route('/course_offerings/active')
+@courses.route('/course_offerings/<active_state>')
 @jwt_required
-def read_all_active_course_offerings():
-    result = db.session.query(Course_Offering).filter_by(active=True).all()
-    return jsonify(course_offering_schema.dump(result, many=True))
-
-@courses.route('/course_offerings/inactive')
-@jwt_required
-def read_all_inactive_course_offerings():
-    result = db.session.query(Course_Offering).filter_by(active=False).all()
-    return jsonify(course_offering_schema.dump(result, many=True))
+def read_active_state_course_offerings(active_state):
+    result = db.session.query(Course_Offering)
+    if (active_state == 'active'):
+        query = result.filter_by(active=True).all()
+    elif (active_state == 'inactive'):
+        query = result.filter_by(active=False).all()
+    else: 
+        return 'Cannot filter course offerings with undefined state', 404
+    return jsonify(course_offering_schema.dump(query, many=True))
 
 @courses.route('/course_offerings/<course_offering_id>')
 @jwt_required
 def read_one_course_offering(course_offering_id):
-    result = db.session.query(Course_Offering).filter_by(
-        id=course_offering_id).first()
+    result = db.session.query(Course_Offering).filter_by(id=course_offering_id).first()
     return jsonify(course_offering_schema.dump(result))
-
 
 @courses.route('/course_offerings/<course_offering_id>', methods=['PATCH'])
 @jwt_required
 def update_course_offering(course_offering_id):
-    # try:
-    #     valid_course_offering = course_offering_schema.load(request.json)
-    # except ValidationError as err:
-    #     return jsonify(err.messages), 422
-
-    course_offering = db.session.query(
-        Course_Offering).filter_by(id=course_offering_id).first()
+    course_offering = db.session.query(Course_Offering).filter_by(id=course_offering_id).first()
     if course_offering is None:
         return "Course Offering NOT Found", 404
 
-    for attr in 'description', "active", "max_size":
+    for attr in 'description', 'active', 'max_size':
         if attr in request.json:
             setattr(course_offering, attr, request.json[attr])
 
