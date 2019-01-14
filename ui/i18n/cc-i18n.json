@@ -1,5 +1,19 @@
 {
   "en": {
+    "$vuetify": {
+      "dataIterator": {
+        "nextPage": "Next page",
+        "noResultsText": "No matching records found",
+        "pageText": "{0}-{1} of {2}",
+        "prevPage": "Previous page",
+        "rowsPerPageAll": "All",
+        "rowsPerPageText": "Items per page:"
+      },
+      "dataTable": {
+        "rowsPerPageText": "Rows per page:"
+      },
+      "noDataText": "No data available"
+    },
     "account": {
       "messages": {
         "added-ok": "Account added successfully",
@@ -16,19 +30,38 @@
       "clear": "Clear",
       "close": "Close",
       "confirm": "Confirm",
+      "duplicate": "Duplicate",
       "edit": "Edit",
       "header": "Actions",
       "login": "Log In",
       "logout": "Log Out",
       "save": "Save",
       "search": "Search",
+      "search-people": "Search People",
       "tooltips": {
-        "deactivate": "Archive",
-        "settings": "Settings"
+        "archive": "Archive",
+        "settings": "Settings",
+        "unarchive": "Unarchive"
       },
       "view-active": "View Active",
       "view-all": "View All",
-      "view-archived": "View Archived"
+      "view-archived": "View Archived",
+      "view-inactive": "View Inactive"
+    },
+    "courses": {
+      "add-failed": "Failed to add course",
+      "added": "Course added",
+      "archived": "Course archived",
+      "confirm-archive": "Are you sure you want to archive this course?",
+      "course": "Courses",
+      "description": "Description",
+      "enrolled": "Number Enrolled",
+      "new": "New Course",
+      "prerequisites": "Prerequisites",
+      "reactivated": "Course unarchived",
+      "title": "Title",
+      "update-failed": "Failed to update course",
+      "updated": "Course updated"
     },
     "groups": {
       "title": "Home Churches"
@@ -77,10 +110,30 @@
       "title": "Public"
     },
     "validation": {
+      "attributes": {
+        "email": "email",
+        "firstName": "first name",
+        "lastName": "last name",
+        "title": "title"
+      },
       "required": "Required"
     }
   },
   "es": {
+    "$vuetify": {
+      "dataIterator": {
+        "nextPage": "Siguiente p\u00e1gina",
+        "noResultsText": "No se encontraron registros coincidentes",
+        "pageText": "{0}-{1} de {2}",
+        "prevPage": "Pagina anterior",
+        "rowsPerPageAll": "Todos",
+        "rowsPerPageText": "Art\u00edculos por p\u00e1gina:"
+      },
+      "dataTable": {
+        "rowsPerPageText": "Filas por p\u00e1gina:"
+      },
+      "noDataText": "Datos no disponibles"
+    },
     "account": {
       "messages": {
         "added-ok": "Cuenta agregada exitosamente",
@@ -97,19 +150,38 @@
       "clear": "Despejar",
       "close": "Cerrar",
       "confirm": "Confirmar",
+      "duplicate": "Duplicar",
       "edit": "Editar",
       "header": "Comportamiento",
       "login": "Acceder",
       "logout": "Cerrar sesi\u00f3n",
       "save": "Salvar",
       "search": "Buscar",
+      "search-people": "Buscar Personas",
       "tooltips": {
-        "deactivate": "Archivo",
-        "settings": "Ajustes"
+        "archive": "Archivar",
+        "settings": "Ajustes",
+        "unarchive": "Desarchivar"
       },
       "view-active": "Ver Activo",
       "view-all": "Ver Todo",
-      "view-archived": "Ver Archivo"
+      "view-archived": "Ver Archivo",
+      "view-inactive": "Ver Inactivo"
+    },
+    "courses": {
+      "add-failed": "Se fall\u00f3 a a\u00f1adir el curso",
+      "added": "Curso a\u00f1adido",
+      "archived": "Curso archivado",
+      "confirm-archive": "\u00bfEst\u00e1s seguro que quieres archivar este curso?",
+      "course": "Cursos",
+      "description": "Descripci\u00f3n",
+      "enrolled": "N\u00famero Registrado",
+      "new": "Nuevo Curso",
+      "prerequisites": "Prerrequisitos",
+      "reactivated": "Curso desarchivado",
+      "title": "T\u00edtulo",
+      "update-failed": "Se fall\u00f3 a actualizar el curso",
+      "updated": "Curso actualizado"
     },
     "groups": {
       "title": "Iglesias Hogar"
@@ -158,6 +230,12 @@
       "title": "P\u00fablico"
     },
     "validation": {
+      "attributes": {
+        "email": "correo electr\u00f3nico",
+        "firstName": "nombre de pila",
+        "lastName": "appellido",
+        "title": "t\u00edtulo"
+      },
       "required": "Necesario"
     }
   }
