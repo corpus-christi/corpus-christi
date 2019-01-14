@@ -316,6 +316,7 @@ export default {
         .put(`/api/v1/events/${putId}`, copyEvent)
         .then(resp => {
           console.log("UNARCHIVED", resp);
+          delete event.unarchiving;
           Object.assign(this.events[idx], resp.data);
           this.showSnackbar(this.$t("events.event-unarchived"));
         })
@@ -341,7 +342,7 @@ export default {
     saveEvent(event) {
       this.eventDialog.saveLoading = true;
       event.location_id = event.location.id;
-      let newEvent = JSON.parse(JSON.stringify(event))
+      let newEvent = JSON.parse(JSON.stringify(event));
       delete newEvent.location;
       delete newEvent.id;
       if (this.eventDialog.editMode) {
@@ -382,7 +383,7 @@ export default {
     addAnotherEvent(event) {
       this.eventDialog.addMoreLoading = true;
       event.location_id = event.location.id;
-      let newEvent = JSON.parse(JSON.stringify(event))
+      let newEvent = JSON.parse(JSON.stringify(event));
       delete newEvent.location;
       this.$http
         .post("/api/v1/events/", event)
