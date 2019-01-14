@@ -2,7 +2,7 @@
   <v-navigation-drawer app v-model="drawerVisible" width="200">
     <v-list>
       <template v-for="item in menuItems">
-        <v-list-tile v-bind:key="item.route" v-bind:to="{ name: item.route }">
+        <v-list-tile v-bind:key="item.route" v-bind:to="{ name: item.route }" v-bind:data-cy=item.route>
           <v-list-tile-action>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-tile-action>
@@ -44,6 +44,11 @@ export default {
           title: this.$t("groups.title"),
           route: "groups",
           icon: "group"
+        },
+        {
+          title: this.$t("courses.course"),
+          route: "courses-admin",
+          icon: "school"
         }
       ];
     }
