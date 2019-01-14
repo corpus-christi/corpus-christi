@@ -105,14 +105,17 @@ export default {
       this.newParticipantDialog.show = false;
     },
     addParticipant() {
+      console.log(this.newParticipant)
+      this.newParticipantDialog.loading = true
       // loading true
       // axios post
       // success -> re-request participants all
       // loading false
+      this.newParticipantDialog.loading = false
       this.newParticipantDialog.show = false;
       this.newParticipant = null;
     },
-    deleteParticipant() {
+    archiveParticipant() {
       // loading true
       // axios post
       // success -> re-request participants all
