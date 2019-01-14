@@ -14,7 +14,7 @@
             </v-layout>
           </v-container>
           <v-card-text class="pa-4">
-            <div><b>Location: </b>{{ getDisplayLocation(event.location) }}</div>
+            <div><b>Location: </b><div class="multi-line ml-2">{{ getDisplayLocation(event.location) }}</div></div>
             <div><b>Start: </b>{{ getDisplayDate(event.start) }}</div>
             <div><b>End: </b>{{ getDisplayDate(event.end) }}</div>
             <div class="mt-2">{{ event.description }}</div>
@@ -114,6 +114,7 @@ export default {
     editEvent(event) {
       this.eventDialog.event = JSON.parse(JSON.stringify(event));
       this.eventDialog.show = true;
+      console.log(event.location)
     },
 
     cancelEvent() {
@@ -153,10 +154,16 @@ export default {
     },
 
     getDisplayLocation(location) {
-      if (location && location.address) {
-        return location.address.name + '\n' + location.address.address
+      let str = ''
+      if (location) {
+        str += `${location.description}`
+        if (location.address){
+          str += `\n${location.address.name}`
+          str += `\n${location.address.address}`
+          str += `\n${location.address.city}, ${location.address.country.code}`
+        }
       }
-      return '';
+      return str
     },
 
     navigateTo(path) {
@@ -172,3 +179,10 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.multi-line {
+  white-space: pre;
+}
+</style>
+
