@@ -11,7 +11,7 @@ from werkzeug.security import check_password_hash
 from .models import Asset, AssetSchema, Event, EventSchema, Team, TeamSchema, EventParticipant, EventParticipantSchema, EventPerson, EventPersonSchema, TeamMember, TeamMemberSchema, EventAsset, EventAssetSchema, EventTeam, EventTeamSchema
 from ..places.models import Location
 from ..people.models import Person
-from .create_event_data import create_multiple_events, event_object_factory, create_multiple_teams
+from .create_event_data import create_multiple_events, event_object_factory, create_multiple_teams, flip
 
 fake = Faker()
 # ---- Event
@@ -153,12 +153,21 @@ def test_delete_asset(auth_client):
 # ---- Team
 
 
-@pytest.mark.xfail()
+@pytest.mark.smoke
 def test_create_team(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
+    # GIVEN a database
+    # WHEN we create a team
+    new_team = {
+            'description': fake.sentences(nb=1)[0],
+            'active': flip()
+    }
+    resp = auth_client.post(url_for('events.create_team'), json=new_team)
+    # THEN we expect the right status code
+    assert resp.status_code == 201
+    # THEN we expect the correct attributes of the given team in the database
+    queried_team = auth_client.sqla.query(Team).filter(Team.id == resp.json["id"]).first()
+    for attr in new_team:
+        assert new_team[attr] == queried_team.__dict__[attr]
     
 
 @pytest.mark.smoke
