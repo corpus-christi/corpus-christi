@@ -15,9 +15,10 @@
       v-bind:error-messages="errors.collect('location')"
       return-object
       :filter="customFilter"
+      color="secondary"
     >
       <template slot="selection" slot-scope="data">
-        {{ getEntityDescription(data.item) }}
+        {{ getEntityDescription(data.item, 100) }}
       </template>
       <template slot="item" slot-scope="data">
         {{ getEntityDescription(data.item) }}
@@ -37,7 +38,7 @@ export default {
   },
   data() {
     return {
-      descriptionLimit: 60,
+      descriptionLimit: 50,
       entities: [],
       searchInput: "",
       isLoading: false
@@ -49,7 +50,7 @@ export default {
       this.$emit("input", entity);
     },
 
-    getEntityDescription(entity) {
+    getEntityDescription(entity, letterLimit=this.descriptionLimit) {
       if (!entity) return;
       let entityDescriptor = "";
       if (this.location) {
@@ -63,9 +64,8 @@ export default {
         entityDescriptor = entity.firstName + " " + entity.lastName;
       }
 
-      if (entityDescriptor.length > this.descriptionLimit) {
-        entityDescriptor =
-          entityDescriptor.slice(0, this.descriptionLimit) + "...";
+      if (entityDescriptor.length > letterLimit) {
+        entityDescriptor = entityDescriptor.substring(0, letterLimit) + "...";
       }
       return entityDescriptor;
     },
