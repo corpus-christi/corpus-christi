@@ -11,15 +11,19 @@ describe("Archive Event Test", function() {
 
   // TODO: Eventually get by ID
   it("WHEN: Event Planner wants to deactivate an event", function() {
-    cy.get("[data-cy=archive")
+    cy.get("[data-cy=archive]")
       .eq(0)
       .click();
-    cy.get("[data-cy=confirm-archive").click();
+    cy.get("[data-cy=confirm-archive]").click();
   });
 
-  it("THEN: ", function() {
-    cy.get("[data-cy=unarchive").should("exist");
+  it("THEN: Event is listed as archived", function() {
+    cy.get("[data-cy=unarchive]").should("exist");
   });
 
-  // TODO: Also test for unarchiving events
+  // TODO: Also test for unarchiving events, bad test data
+  it("AND: Event can be unarchived", function() {
+    cy.get("[data-cy=unarchive]").eq(0).click();
+    cy.get(":nth-child(1) > :nth-child(4)").find("[data-cy=archive]").should("exist");
+  });
 });

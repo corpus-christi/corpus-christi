@@ -4,16 +4,20 @@ describe("Create Event Test", function() {
     cy.get("[data-cy=username]").type("Cytest");
     cy.get("[data-cy=password]").type("password");
     cy.get("[data-cy=login]").click();
+    // cy.login();
     cy.visit("/events/all");
   });
 
-  it("WHEN: Event Planner adds a new event and fills out details", function() {
-    cy.get("[data-cy=add-event").click();
+  it("WHEN: Event Planner adds a new event and fills out details correctly", function() {
+    cy.get("[data-cy=add-event]").click();
     cy.get("[data-cy=title]").type("New Event");
 
     cy.get("[data-cy=description]").type("A neat description of something.");
 
-    // TODO: Test adding in a location
+    // Search a location and autocomplete
+    cy.get("[data-cy=entity-search-field]").click();
+    cy.get("[data-cy=entity-search-field]").type("Bryan");
+    cy.get("[data-cy=entity-search-field]").type("{enter}");
 
     cy.get("[data-cy=start-date-menu]").click();
     // Get cypress to click on a certain position on the calendar
@@ -48,7 +52,18 @@ describe("Create Event Test", function() {
     cy.get("[data-cy=form-save]").click();
   });
 
+  // TODO: Get new event by ID
   it("THEN: A new event is listed in the table", function() {
+    cy.get(".v-datatable__actions__select > .v-input > .v-input__control > .v-input__slot > .v-select__slot")
+      .click();
+    cy.contains("Todos").click();
     cy.get("tbody").contains("New Event");
+  });
+
+  it("WHEN: Event planner adds a new event and fills out the details incorrectly", function() {
+    // TODO: No title
+    // TODO: No location
+    // TODO: Pick end date first
+    // TODO: Pick end time first
   });
 });
