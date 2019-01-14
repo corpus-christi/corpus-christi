@@ -1,8 +1,10 @@
 //Log in
 describe("Seed for test", function() {
-  it("Given: seeding");
-  cy.exec("./reset-database.sh").then(console.log("script Done"));
+  it("Given: seeding", function() {
+    cy.exec("cd ../api && source ./set-up-bash.sh && ./reset-database.sh");
+  });
 });
+
 describe("Getting to the people page", function() {
   it("Given: logs in successfully", function() {
     cy.visit("/login");
