@@ -70,7 +70,7 @@ class Course(Base):
                 secondaryjoin=Prerequisite.c.prereq_id==id,
                 foreign_keys=[Prerequisite.c.course_id, Prerequisite.c.prereq_id],
                 back_populates='depends', lazy=True)
-     diploma = relationship('Diploma', secondary=Diploma_Course, backref='courses', lazy=True)
+     diplomas = relationship('Diploma', secondary=Diploma_Course, back_populates='courses', lazy=True)
 
      def __repr__(self):
          return f"<Course(id={self.id})>"
@@ -91,10 +91,10 @@ class Diploma(Base):
      name = Column(StringTypes.MEDIUM_STRING, nullable=False)
      description = Column(StringTypes.LONG_STRING, nullable=False)
      active = Column(Boolean, nullable=False, default=True)
-     course = relationship('Course', secondary=Diploma_Course,
-               backref='diplomas', lazy=True)
-     student = relationship('Student', secondary=Diploma_Awarded,
-               backref='students', lazy=True)
+     courses = relationship('Course', secondary=Diploma_Course,
+               back_populates='diplomas', lazy=True)
+     students = relationship('Student', secondary=Diploma_Awarded,
+               back_populates='diplomas', lazy=True)
 
 
      def __repr__(self):
@@ -117,8 +117,8 @@ class Student(Base):
      confirmed = Column(Boolean, nullable=False)
      course_offering = relationship('Course_Offering', backref='offerings', lazy=True)
      person = relationship('Person', backref='students', lazy=True)
-     diploma = relationship('Student', secondary=Diploma_Awarded,
-               backref='diplomas', lazy=True)
+     diplomas = relationship('Diploma', secondary=Diploma_Awarded,
+               back_populates='students', lazy=True)
      class_meeting = relationship('Class_Meeting', secondary=Class_Attendance,
                backref='attendance', lazy=True)
 

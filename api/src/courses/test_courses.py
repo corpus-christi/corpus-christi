@@ -6,7 +6,7 @@ from flask import url_for
 
 from .models import Course, CourseSchema, Course_Offering,\
         Course_OfferingSchema, Diploma, DiplomaSchema, Student, StudentSchema,\
-        Class_Meeting, Class_MeetingSchema
+        Class_Meeting, Class_MeetingSchema, Diploma_Awarded, Diploma_AwardedSchema
 from ..people.models import Person
 from ..places.models import Location
 
@@ -93,7 +93,7 @@ def create_multiple_diplomas(sqla, n=20):
     for i in range(n):
         valid_course_diploma = course_diploma_schema.load(courses_diploma_object_factory())
         diploma = Diploma(**valid_course_diploma)
-        courses[i%len(courses)].diploma.append(diploma)
+        courses[i%len(courses)].diplomas.append(diploma)
     sqla.add_all(new_courses)
     sqla.commit()
 
@@ -135,13 +135,13 @@ def class_meeting_object_factory(teacher, offering_id, location=1):
 
 def create_class_meetings(sqla, n=6):
     """Commits the number of class meetings to the DB."""
-    students = sqla.query(Person).all()
+    people = sqla.query(Person).all()
     course_offerings = sqla.query(Course_Offering).all()
     locations = sqla.query(Location).all()
     class_meeting_schema = Class_MeetingSchema()
     new_class_meetings = []
     for i in range(n):
-        teacher = students[random.randint(0,len(students)-1)].id
+        teacher = people[random.randint(0,len(people)-1)].id
         offering = course_offerings[i%len(course_offerings)].id
         location = 1#locations[random.randint(0,len(locations)-1)].id
 
@@ -150,6 +150,31 @@ def create_class_meetings(sqla, n=6):
         new_class_meetings.append(class_meeting)
     sqla.add_all(new_class_meetings)
     sqla.commit()
+
+def diploma_award_object_factory():
+    """Cook up a fake diploma award"""
+    fake = faker()
+    print(fake.past_date(start_date="-30d"))
+    diploma_award = {
+        'when': str(fake.past_date(start_date="-30d"))
+    }
+
+def create_diploma_awards(sqla, n):
+    """Commits the number of diploma awards to the DB."""
+    students = sqla.query(Student).all()
+    diplomas = sqla.query(Diploma).all()
+    # diploma_award_schema = Diploma_AwardedSchema()
+    new_diploma_awards = []
+    for i in range(n):
+        student = students[i%len(students)]
+        diploma = diplomas[i%len(diplomas)]
+        # print(student.diplomas.when)
+        print(diploma)
+        student.diplomas.append(diploma)
+        new_diploma_awards.append(student)
+    sqla.add_all(new_diploma_awards)
+    sqla.commit()
+
 
 # ---- Course
 
