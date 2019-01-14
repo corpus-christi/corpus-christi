@@ -30,12 +30,11 @@ class Diploma_CourseSchema(Schema):
 
 # ---- Diploma_Awarded
 
-class Diploma_Awarded(Base):
-     __tablename__ = 'courses_diploma_awarded'
-     student_id = Column(Integer, ForeignKey('courses_students.id'), primary_key=True)
-     diploma_id = Column(Integer, ForeignKey('courses_diploma.id'), primary_key=True)
-     when = Column(Date, nullable=False)
-     date = relationship('Diploma', backref='when', lazy=True)
+Diploma_Awarded = Table('courses_diploma_awarded', Base.metadata,
+          Column('student_id', Integer, ForeignKey('courses_students.id'), primary_key=True),
+          Column('diploma_id', Integer, ForeignKey('courses_diploma.id'), primary_key=True),
+          Column('when', Date, nullable=False))
+
 
 class Diploma_AwardedSchema(Schema):
      student_id = fields.Integer(dump_only=True, data_key='studentId', required=True, validate=Range(min=1))
@@ -71,7 +70,7 @@ class Course(Base):
                 secondaryjoin=Prerequisite.c.prereq_id==id,
                 foreign_keys=[Prerequisite.c.course_id, Prerequisite.c.prereq_id],
                 back_populates='depends', lazy=True)
-     diploma = relationship('Diploma', secondary=Diploma_Course, backref='courses', lazy=True)
+     diplomas = relationship('Diploma', secondary=Diploma_Course, back_populates='courses', lazy=True)
 
      def __repr__(self):
          return f"<Course(id={self.id})>"
@@ -92,8 +91,8 @@ class Diploma(Base):
      name = Column(StringTypes.MEDIUM_STRING, nullable=False)
      description = Column(StringTypes.LONG_STRING, nullable=False)
      active = Column(Boolean, nullable=False, default=True)
-     course = relationship('Course', secondary=Diploma_Course,
-               backref='diplomas', lazy=True)
+     courses = relationship('Course', secondary=Diploma_Course,
+               back_populates='diplomas', lazy=True)
      student = relationship('Student', secondary=Diploma_Awarded,
                backref='students', lazy=True)
 
