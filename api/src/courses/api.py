@@ -16,7 +16,7 @@ course_schema = CourseSchema()
 
 @courses.route('/courses', methods=['POST'])
 @jwt_required
-@authorize(["role.superuser", "role.registrar"])
+# @authorize(["role.superuser", "role.registrar"])
 def create_course():
     """Create an active (by default) course"""
     try:
@@ -52,7 +52,7 @@ def add_prereqs(query_result):
 
 @courses.route('/courses')
 @jwt_required
-@authorize(["role.superuser", "role.registrar", "role.public", ])
+# @authorize(["role.superuser", "role.registrar", "role.public", ])
 def read_all_courses():
     """List all active and inactive courses"""
     result = db.session.query(Course).all()
@@ -63,7 +63,7 @@ def read_all_courses():
 
 @courses.route('/courses/<active_state>')
 @jwt_required
-@authorize(["role.superuser", "role.registrar", "role.public"])
+# @authorize(["role.superuser", "role.registrar", "role.public"])
 def read_active_state_of_courses(active_state):
     """List all active courses"""
     result = db.session.query(Course)
@@ -79,7 +79,7 @@ def read_active_state_of_courses(active_state):
 
 @courses.route('/courses/<course_id>')
 @jwt_required
-@authorize(["role.superuser", "role.registrar", "role.public"])
+# @authorize(["role.superuser", "role.registrar", "role.public"])
 def read_one_course(course_id):
     """List only one course with given course_id"""
     result = db.session.query(Course).filter_by(id=course_id).first()
@@ -91,7 +91,7 @@ def read_one_course(course_id):
 
 @courses.route('/courses/<course_id>', methods=['PATCH'])
 @jwt_required
-@authorize(["role.superuser", "role.registrar"])
+# @authorize(["role.superuser", "role.registrar"])
 def update_course(course_id):
     """Update course with given course_id with appropriate details"""
 
@@ -107,7 +107,7 @@ def update_course(course_id):
 
 @courses.route('/courses/deactivate/<course_id>', methods=['PATCH'])
 @jwt_required
-@authorize(["role.superuser", "role.registrar"])
+# @authorize(["role.superuser", "role.registrar"])
 def deactivate_course(course_id):
     """Set active course with given course_id to inactive (False)"""
     valid_course = db.session.query(Course).filter_by(id=course_id).first()
@@ -121,7 +121,7 @@ def deactivate_course(course_id):
 
 @courses.route('/courses/reactivate/<course_id>', methods=['PATCH'])
 @jwt_required
-@authorize(["role.superuser", "role.registrar"])
+# @authorize(["role.superuser", "role.registrar"])
 def reactivate_course(course_id):
     """Set inactive course with given course_id to active (True)"""
     valid_course = db.session.query(Course).filter_by(id=course_id).first()
@@ -142,7 +142,7 @@ Route adds prerequisite for a specific course
 """
 @courses.route('/courses/prerequisites/<course_id>', methods=['POST'])
 @jwt_required
-@authorize(["role.superuser", "role.registrar"])
+# @authorize(["role.superuser", "role.registrar"])
 def create_prerequisite(course_id):
     course = db.session.query(Course).filter_by(id=course_id).first()
     if course is None:
@@ -159,7 +159,7 @@ Route reads all prerequisites in database
 """
 @courses.route('/courses/prerequisites')
 @jwt_required
-@authorize(["role.superuser", "role.registrar", "role.public"])
+# @authorize(["role.superuser", "role.registrar", "role.public"])
 def read_all_prerequisites():
     result = db.session.query(Course).all() #Get courses to get prereq's
     results = [] # new list
@@ -171,7 +171,7 @@ def read_all_prerequisites():
 
 @courses.route('/courses/prerequisites/<course_id>')
 @jwt_required
-@authorize(["role.superuser", "role.registrar", "role.public"])
+# @authorize(["role.superuser", "role.registrar", "role.public"])
 def read_one_course_prerequisites(course_id):
     result = db.session.query(Course).filter_by(id=course_id).first()
     prereqs_to_return = []
@@ -183,7 +183,7 @@ def read_one_course_prerequisites(course_id):
 
 @courses.route('/courses/prerequisites/<course_id>', methods=['PATCH'])
 @jwt_required
-@authorize(["role.superuser", "role.registrar"])
+# @authorize(["role.superuser", "role.registrar"])
 def update_prerequisite(course_id):
     course = db.session.query(Course).filter_by(id=course_id).first()
     if course is None:
@@ -206,7 +206,7 @@ course_offering_schema = Course_OfferingSchema()
 
 @courses.route('/course_offerings', methods=['POST'])
 @jwt_required
-@authorize(["role.superuser", "role.registrar"])
+# @authorize(["role.superuser", "role.registrar"])
 def create_course_offering():
     try:
         valid_course_offering = course_offering_schema.load(request.json)
@@ -221,7 +221,7 @@ def create_course_offering():
 
 @courses.route('/course_offerings')
 @jwt_required
-@authorize(["role.superuser", "role.registrar", "role.public"])
+# @authorize(["role.superuser", "role.registrar", "role.public"])
 def read_all_course_offerings():
     result = db.session.query(Course_Offering).all()
     return jsonify(course_offering_schema.dump(result, many=True))
@@ -232,7 +232,7 @@ def read_all_course_offerings():
 
 @courses.route('/course_offerings/<course_offering_id>')
 @jwt_required
-@authorize(["role.superuser", "role.public"])
+# @authorize(["role.superuser", "role.public"])
 def read_one_course_offering(course_offering_id):
     result = db.session.query(Course_Offering).filter_by(
         id=course_offering_id).first()
@@ -241,7 +241,7 @@ def read_one_course_offering(course_offering_id):
 
 @courses.route('/course_offerings/<course_offering_id>', methods=['PATCH'])
 @jwt_required
-@authorize(["role.superuser", "role.registrar"])
+# @authorize(["role.superuser", "role.registrar"])
 def update_course_offering(course_offering_id):
 
     course_offering = db.session.query(
