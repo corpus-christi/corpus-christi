@@ -155,30 +155,42 @@ def read_one_address(address_id):
 @places.route('/addresses/<address_id>', methods=['PUT'])
 @jwt_required
 def replace_address(address_id):
-    pass
+    try: 
+        valid_attributes = address_schema.load(request.json)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+                
+    return modify_address(address_id, valid_attributes)
 
 
 @places.route('/addresses/<address_id>', methods=['PATCH'])
 @jwt_required
 def update_address(address_id):
-    try:
-        valid_address = address_schema.load(request.json)
+    try: 
+        valid_attributes = address_schema.load(request.json, partial=True)
     except ValidationError as err:
         return jsonify(err.messages), 422
-
-    address = db.session.query(Address).filter_by(id=address_id).first()
-
-    for key, val in valid_address.items():
-        setattr(address, key, val)
-
-    db.session.commit()
-    return jsonify(address_schema.dump(address))
+                
+    return modify_address(address_id, valid_attributes)
 
 
 @places.route('/addresses/<address_id>', methods=['DELETE'])
 @jwt_required
 def delete_address(address_id):
-    pass
+    address_asset = db.session.query(Address).filter_by(id=address_id).first()
+
+    if not address_asset:
+        return jsonify(f"Address with id #{address_id} does not exist."), 404
+
+    db.session.delete(address_asset)
+    db.session.commit()
+
+    # 204 codes don't respond with any content
+    return 'Successfully deleted', 204
+
+
+def modify_address(address_id, address_object):
+    return modify_entity(Address, address_schema, address_id, address_object)
 
 
 # ---- Location
