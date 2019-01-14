@@ -9,8 +9,9 @@ describe('Archive Event Test', function() {
     cy.visit('/events/all');
   });
 
+  // TODO: Eventually get by ID
   it('WHEN: Event Planner wants to deactivate an event', function() {
-    cy.get('[data-cy=archive').click();
+    cy.get('[data-cy=archive').eq(0).click();
     cy.get('[data-cy=confirm-archive').click();
   });
 

@@ -1,11 +1,13 @@
 from flask import Flask
 from flask_jwt_extended import JWTManager
+from flask_mail import Mail
 
 from config import config
 from .db import DbConfig
 
 db = DbConfig()
 jwt = JWTManager()
+mail = Mail()
 
 
 def create_app(config_name):
@@ -15,6 +17,9 @@ def create_app(config_name):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
+
+    # Set up the mailing service.
+    mail.init_app(app)
 
     # Set up the database.
     db.init_app(app)
