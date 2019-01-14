@@ -3,15 +3,15 @@ actions:
     _desc: Header for a table, etc.
     en: Actions
     es: Comportamiento
-  addanother:
+  add-another:
     _desc: Save a newly created item; clear data (e.g., on a form)
     en: Add Another
     es: Añadir Otro
-  addperson:
+  add-person:
     _desc: Add a person to the database
     en: Add Person
     es: Añadir Persona
-  addevent:
+  add-event:
     _desc: Add an event to the database
     en: Add Event
     es: Añadir Evento
@@ -56,31 +56,30 @@ actions:
     _desc: Search for people
     en: Search People
     es: Buscar Personas
-  viewinactive:
+  view-inactive:
     _desc: View all inactive people
     en: View Inactive
     es: Ver Inactivo
-  view-all:
-    en: View All
-    es: Ver Todos
   view-archived:
+    _desc: View all inactive
     en: View Archived
-    es: Ver Archivado
+    es: Ver Archivo
   view-active:
+    _desc: View all active
     en: View Active
-    es: Ver Activa
-  
+    es: Ver Activo
+  view-all:
+    _desc: View all
+    en: View All
+    es: Ver Todo
   tooltips:
     settings:
       _desc: Change settings
       en: Settings
       es: Ajustes
-    deactivate:
-      en: Deactivate
-      es: Desactivar
     archive:
       en: Archive
       es: Archivar
-    unarchive:
-      en: Unarchive
-      es: Desarchivar
+    activate:
+      en: Activate
+      es: Activar

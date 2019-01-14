@@ -34,7 +34,7 @@
             data-cy="add-event"
           >
             <v-icon dark left>add</v-icon>
-            {{ $t("actions.addevent") }}
+            {{ $t("actions.add-event") }}
           </v-btn>
         </v-flex>
       </v-layout>
@@ -51,7 +51,7 @@
           class="hover-hand"
           v-on:click="$router.push({ path: '/events/' + props.item.id })"
         >
-          {{ props.item.title }}
+        {{ props.item.title }}
         </td>
         <td
           class="hover-hand"
@@ -63,7 +63,7 @@
           class="hover-hand"
           v-on:click="$router.push({ path: '/events/' + props.item.id })"
         >
-          {{ getDisplayLocation(props.item.location_name) }}
+          {{ getDisplayLocation(props.item.location) }}
         </td>
         <td>
           <template v-if="props.item.active">
@@ -124,7 +124,7 @@
               >
                 <v-icon small>undo</v-icon>
               </v-btn>
-              <span>{{ $t("actions.tooltips.unarchive") }}</span>
+              <span>{{ $t("actions.tooltips.activate") }}</span>
             </v-tooltip>
           </template>
         </td>
@@ -182,9 +182,10 @@ export default {
   name: "EventTable",
   components: { "event-form": EventForm },
   mounted() {
-    this.$http.get("http://localhost:3000/events").then(resp => {
+    this.$http.get("/api/v1/events/?return_group=all").then(resp => {
       this.events = resp.data;
     });
+    this.onResize()
   },
 
   data() {
@@ -208,7 +209,13 @@ export default {
         show: false,
         text: ""
       },
-      viewStatus: "viewAll"
+      viewStatus: "viewAll",
+
+      windowSize: {
+        x: 0,
+        y: 0,
+        screen
+      }
     };
   },
   computed: {
@@ -277,7 +284,7 @@ export default {
       const eventId = this.archiveDialog.eventId;
       const idx = this.events.findIndex(ev => ev.id === eventId);
       this.$http
-        .delete(`http://localhost:3000/events/${eventId}`)
+        .delete(`/api/v1/events/${eventId}`)
         .then(resp => {
           console.log("ARCHIVE", resp);
           this.events[idx].active = false;
@@ -298,8 +305,11 @@ export default {
       const copyEvent = JSON.parse(JSON.stringify(event));
       event.unarchiving = true;
       copyEvent.active = true;
+      const putId = copyEvent.id;
+      delete copyEvent.id;
+      delete copyEvent.location; //Temporary delete
       this.$http
-        .put(`http://localhost:3000/events/${copyEvent.id}`, copyEvent)
+        .put(`/api/v1/events/${putId}`, copyEvent)
         .then(resp => {
           console.log("UNARCHIVED", resp);
           Object.assign(this.events[idx], resp.data);
@@ -331,7 +341,7 @@ export default {
         const idx = this.events.findIndex(ev => ev.id === event.id);
         delete event.id;
         this.$http
-          .put(`http://localhost:3000/events/${eventId}`, event)
+          .put(`/api/v1/events/${eventId}`, event)
           .then(resp => {
             console.log("EDITED", resp);
             Object.assign(this.events[idx], event);
@@ -346,7 +356,7 @@ export default {
           });
       } else {
         this.$http
-          .post("http://localhost:3000/events/", event)
+          .post("/api/v1/events/", event)
           .then(resp => {
             console.log("ADDED", resp);
             this.events.push(resp.data);
@@ -365,7 +375,7 @@ export default {
     addAnotherEvent(event) {
       this.eventDialog.addMoreLoading = true;
       this.$http
-        .post("http://localhost:3000/events/", event)
+        .post("/api/v1/events/", event)
         .then(resp => {
           console.log("ADDED", resp);
           this.events.push(resp.data);
@@ -394,15 +404,32 @@ export default {
         minute: "2-digit"
       });
     },
-    getDisplayLocation(name, length = 20) {
-      if (name && name.length && name.length > 0) {
-        if (name.length > length) {
-          return `${name.substring(0, length - 3)}...`;
+    getDisplayLocation(location, length = 20) {
+      if (location && location.description) {
+        let name = location.description
+        if (name && name.length && name.length > 0) {
+          if (name.length > length) {
+            return `${name.substring(0, length - 3)}...`;
+          }
+          return name
         }
       }
       return name;
+    },
+
+    onResize () {
+      this.windowSize = { x: window.innerWidth, y: window.innerHeight }
+      if(this.windowSize.x <= 960) {
+        this.windowSize.small = true
+      } else {
+        this.windowSize.small = false
+      }
+
     }
-  }
+  },
+
+
+
 };
 </script>
 

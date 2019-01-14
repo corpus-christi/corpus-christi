@@ -14,7 +14,7 @@
             </v-layout>
           </v-container>
           <v-card-text class="pa-4">
-            <div><b>Location: </b>{{ event.location_name }}</div>
+            <div><b>Location: </b><div class="multi-line ml-2">{{ getDisplayLocation(event.location) }}</div></div>
             <div><b>Start: </b>{{ getDisplayDate(event.start) }}</div>
             <div><b>End: </b>{{ getDisplayDate(event.end) }}</div>
             <div class="mt-2">{{ event.description }}</div>
@@ -84,7 +84,7 @@ export default {
   mounted() {
     this.pageLoaded = false;
     const id = this.$route.params.event;
-    this.$http.get(`http://localhost:3000/events/${id}`).then(resp => {
+    this.$http.get(`/api/v1/events/${id}`).then(resp => {
       this.event = resp.data;
       this.pageLoaded = true;
     });
@@ -114,6 +114,7 @@ export default {
     editEvent(event) {
       this.eventDialog.event = JSON.parse(JSON.stringify(event));
       this.eventDialog.show = true;
+      console.log(event.location)
     },
 
     cancelEvent() {
@@ -152,6 +153,19 @@ export default {
       });
     },
 
+    getDisplayLocation(location) {
+      let str = ''
+      if (location) {
+        str += `${location.description}`
+        if (location.address){
+          str += `\n${location.address.name}`
+          str += `\n${location.address.address}`
+          str += `\n${location.address.city}, ${location.address.country.code}`
+        }
+      }
+      return str
+    },
+
     navigateTo(path) {
       this.$router.push({
         path: "/events/" + this.$route.params.event + path
@@ -165,3 +179,10 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.multi-line {
+  white-space: pre;
+}
+</style>
+

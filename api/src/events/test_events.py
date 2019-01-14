@@ -64,7 +64,6 @@ def test_read_one_event(auth_client):
         # Datetimes come back in a slightly different format, but information is the same.
         # assert resp.json['start'] == str(event.start)
 
-
 @pytest.mark.xfail()
 def test_replace_event(auth_client):
     # GIVEN
