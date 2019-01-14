@@ -67,7 +67,7 @@ def load_languages():
     create_multiple_prerequisites(db.session)
     create_multiple_diplomas(db.session, 30)
     create_multiple_students(db.session, 30)
-    # create_class_meetings(db.session, 30)
+    create_class_meetings(db.session, 30)
 
 
 

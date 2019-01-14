@@ -125,11 +125,10 @@ def create_multiple_students(sqla, n=6):
 def class_meeting_object_factory(teacher, offering_id, location=1):
     """Cook up a fake class meeting"""
     fake = Faker()
-    print(fake.datetime())
     class_meeting = {
     'offeringId': offering_id,
     'teacher': teacher,
-    'when': fake.datetime(),
+    'when': str(fake.future_datetime(end_date="+30d")),
     'location': location,
     }
     return class_meeting
@@ -139,13 +138,12 @@ def create_class_meetings(sqla, n=6):
     students = sqla.query(Person).all()
     course_offerings = sqla.query(Course_Offering).all()
     locations = sqla.query(Location).all()
-    print(locations)
     class_meeting_schema = Class_MeetingSchema()
     new_class_meetings = []
     for i in range(n):
-        teacher = students[random.randint(1,len(students))].id
+        teacher = students[random.randint(0,len(students)-1)].id
         offering = course_offerings[i%len(course_offerings)].id
-        location = 1#locations[random.randint(1,len(locations))].id
+        location = 1#locations[random.randint(0,len(locations)-1)].id
 
         valid_class_meeting = class_meeting_schema.load(class_meeting_object_factory(teacher, offering, location))
         class_meeting = Class_Meeting(**valid_class_meeting)
