@@ -52,7 +52,7 @@ def add_prereqs(query_result):
 
 @courses.route('/courses')
 @jwt_required
-@authorize(["role.superuser", "role.registrar"])
+@authorize(["role.superuser", "role.registrar", "role.public", ])
 def read_all_courses():
     """List all active and inactive courses"""
     result = db.session.query(Course).all()
@@ -63,7 +63,7 @@ def read_all_courses():
 
 @courses.route('/courses/<active_state>')
 @jwt_required
-@authorize(["role.superuser", "role.registrar"])
+@authorize(["role.superuser", "role.registrar", "role.public"])
 def read_active_state_of_courses(active_state):
     """List all active courses"""
     result = db.session.query(Course)
@@ -79,7 +79,7 @@ def read_active_state_of_courses(active_state):
 
 @courses.route('/courses/<course_id>')
 @jwt_required
-@authorize(["role.superuser", "role.registrar"])
+@authorize(["role.superuser", "role.registrar", "role.public"])
 def read_one_course(course_id):
     """List only one course with given course_id"""
     result = db.session.query(Course).filter_by(id=course_id).first()
@@ -159,7 +159,7 @@ Route reads all prerequisites in database
 """
 @courses.route('/courses/prerequisites')
 @jwt_required
-@authorize(["role.superuser", "role.registrar"])
+@authorize(["role.superuser", "role.registrar", "role.public"])
 def read_all_prerequisites():
     result = db.session.query(Course).all() #Get courses to get prereq's
     results = [] # new list
@@ -171,7 +171,7 @@ def read_all_prerequisites():
 
 @courses.route('/courses/prerequisites/<course_id>')
 @jwt_required
-@authorize(["role.superuser", "role.registrar"])
+@authorize(["role.superuser", "role.registrar", "role.public"])
 def read_one_course_prerequisites(course_id):
     result = db.session.query(Course).filter_by(id=course_id).first()
     prereqs_to_return = []
@@ -221,7 +221,7 @@ def create_course_offering():
 
 @courses.route('/course_offerings')
 @jwt_required
-@authorize(["role.superuser", "role.registrar"])
+@authorize(["role.superuser", "role.registrar", "role.public"])
 def read_all_course_offerings():
     result = db.session.query(Course_Offering).all()
     return jsonify(course_offering_schema.dump(result, many=True))
@@ -232,7 +232,7 @@ def read_all_course_offerings():
 
 @courses.route('/course_offerings/<course_offering_id>')
 @jwt_required
-@authorize(["role.superuser"])
+@authorize(["role.superuser", "role.public"])
 def read_one_course_offering(course_offering_id):
     result = db.session.query(Course_Offering).filter_by(
         id=course_offering_id).first()
@@ -243,10 +243,6 @@ def read_one_course_offering(course_offering_id):
 @jwt_required
 @authorize(["role.superuser", "role.registrar"])
 def update_course_offering(course_offering_id):
-    # try:
-    #     valid_course_offering = course_offering_schema.load(request.json)
-    # except ValidationError as err:
-    #     return jsonify(err.messages), 422
 
     course_offering = db.session.query(
         Course_Offering).filter_by(id=course_offering_id).first()
