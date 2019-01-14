@@ -82,6 +82,7 @@
     <v-dialog
       v-model="courseDialog.show"
       max-width="500px"
+      persistent
       data-cy="courses-table-editor"
     >
       <CourseEditor
