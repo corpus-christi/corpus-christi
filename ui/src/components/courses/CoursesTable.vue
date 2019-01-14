@@ -278,10 +278,16 @@ export default {
 
     saveCourse(course) {
       this.courseDialog.saving = true;
+
+      // Hang onto the prereqs of the course
+      const prerequisites = course.prerequisites;
+      // Get rid of the prereqs; not for consumption by the endpoint
+      delete course.prerequisites;
+
       if (this.courseDialog.editMode) {
-        // Hang on to the ID of the person being updated.
+        // Hang on to the ID of the course being updated.
         const course_id = course.id;
-        // Locate the person we're updating in the table.
+        // Locate the course we're updating in the table.
         const idx = this.courses.findIndex(c => c.id === course.id);
         // Get rid of the ID; not for consumption by endpoint.
         delete course.id;
@@ -304,11 +310,23 @@ export default {
             this.courseDialog.saving = false;
           });
       } else {
+        // All new courses are active
+        course.active = true;
         this.$http
           .post("/api/v1/courses/courses", course)
           .then(resp => {
             console.log("ADDED", resp);
-            this.courses.push(resp.data);
+            let newCourse = resp.data;
+            newCourse.prerequisites = prerequisites; // Re-attach prereqs so they show up in UI
+            this.courses.push(newCourse);
+
+            // Now that course created, add prerequisites to it
+            return this.$http
+              .patch(`/api/v1/courses/courses/prerequisites/${newCourse.id}`,
+                { prerequisites: prerequisites.map(prereq => prereq.id) }); // API expects array of IDs
+          })
+          .then(resp => {
+            console.log("PREREQS", resp);
             this.snackbar.text = this.$t("courses.added");
             this.snackbar.show = true;
           })
