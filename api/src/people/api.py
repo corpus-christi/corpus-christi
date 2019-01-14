@@ -69,6 +69,9 @@ def read_one_person(person_id):
 @jwt_required
 def update_person(person_id):
     try:
+        print(request.json)
+        del request.json['accountInfo'] 
+        print(request.json)
         valid_person = person_schema_no_id.load(request.json)
     except ValidationError as err:
         return jsonify(err.messages), 422
@@ -80,7 +83,7 @@ def update_person(person_id):
 
     db.session.commit()
 
-    return jsonify(person_schema.dump(person))
+    return jsonify(person_schema_no_id.dump(person))
 
 
 @people.route('/persons/deactivate/<person_id>', methods=['PUT'])
