@@ -156,6 +156,8 @@ export default {
           })
           .catch(err => console.error("FALURE", err.response));
       } else {
+        console.log('diploma: ', diploma);
+        /*
         this.$http
           .post("/api/v1/courses/diplomas", diploma)
           .then(resp => {
@@ -163,6 +165,7 @@ export default {
             this.diplomas.push(resp.data);
           })
           .catch(err => console.error("FAILURE", err.response));
+        */
       }
       this.diplomaDialog.show = false;
     }

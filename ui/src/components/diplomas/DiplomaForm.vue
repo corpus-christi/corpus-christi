@@ -46,24 +46,8 @@ export default {
     };
   },
 
-  created: function () {
-    // `this` points to the vm instance
-    console.log('CREATED!');
-    console.log('diploma is: ' + this.diploma);
-  },
-
   computed: {
     items() {
-      /*
-      console.log('this.diploma: ', this.diploma);
-      let idArray = [];
-      for (var i=0; i < this.diploma.courses.length; i++) {
-        console.log(this.diploma.courses);
-        idArray.push(this.diploma.courses[i].id);
-      }
-      console.log('idArray: ', idArray);
-      return this.allCourses.filter(item => !idArray.includes(item.id));
-      */
       return this.allCourses;
     }
 
@@ -79,18 +63,7 @@ export default {
       this.diplomaCourses = [...this.diplomaCourses];
     }
   },
-  watch: {
-    // Make sure data stays in sync with any changes to `initialData` from parent.
-    diploma(diplomaProp) {
-      console.log('WATCHED! diploma: ', this.diploma);
-      console.log('WATCHED! diplomaProp: ', diplomaProp);
-
-    }
-  },
-
   mounted() {
-    console.log('MOUNTED!');
-    console.log('diploma is: ' + this.diploma);
     this.$http
       .get("/api/v1/courses/courses")
       .then(resp => (this.allCourses = resp.data));
