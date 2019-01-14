@@ -1,5 +1,5 @@
 from flask import Blueprint
 
-roles = Blueprint('roles', __name__)
+courses = Blueprint('courses', __name__)
 
 from . import api
