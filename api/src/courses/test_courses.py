@@ -384,3 +384,52 @@ def test_delete_course_offering(client, db):
     # THEN
     assert True == False
 """
+# ---- Student
+
+
+@pytest.mark.xfail()
+def test_create_student(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_read_all_students(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_read_one_student(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_replace_student(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_update_student(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_delete_student(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
