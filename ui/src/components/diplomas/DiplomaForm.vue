@@ -1,11 +1,11 @@
 <template>
   <form>
     <v-text-field
-      v-model="diploma.title"
+      v-model="diploma.name"
       v-bind:label="$t('diplomas.title')"
-      name="title"
+      name="name"
       v-validate="'required'"
-      v-bind:error-messages="errors.collect('title')"
+      v-bind:error-messages="errors.collect('name')"
     ></v-text-field>
 
     <v-text-field
@@ -13,20 +13,22 @@
       v-bind:label="$t('diplomas.description')"
       name="description"
     ></v-text-field>
-    <!-- translate prereq -->
+    <!-- translate courses -->
     <v-combobox
-      v-model="prereqs"
+      v-model="diploma.courses"
       :items="items"
-      v-bind:label="$t('diplomas.prerequisites')"
+      v-bind:label="$t('diplomas.courses')"
+      hide-selected 
+      item-value = "id"
       chips
       clearable
       solo
       multiple
     >
-      <template slot="item" slot-scope="data">{{data.item.title}}</template>
+      <template slot="item" slot-scope="data">{{data.item.name}}</template>
       <template slot="selection" slot-scope="data">
         <v-chip :selected="data.selected" close @input="remove(data.item)">
-          <strong>{{ data.item.title }}</strong>&nbsp;
+          <strong>{{ data.item.name }}</strong>&nbsp;
         </v-chip>
       </template>
     </v-combobox>
@@ -38,28 +40,60 @@ export default {
   name: "DiplomaForm",
   data: function() {
     return {
-      allDiplomas: [],
-      prereqs: []
+      //allDiplomas: [],  // all diplomas
+      allCourses: [],   // all courses (the list from which courses can be chosen)
+      diplomaCourses: []  // courses for this diploma (the list of courses for this diploma)
     };
   },
+
+  created: function () {
+    // `this` points to the vm instance
+    console.log('CREATED!');
+    console.log('diploma is: ' + this.diploma);
+  },
+
   computed: {
     items() {
-      return this.allDiplomas.filter(item => item.id != this.diploma.id);
+      /*
+      console.log('this.diploma: ', this.diploma);
+      let idArray = [];
+      for (var i=0; i < this.diploma.courses.length; i++) {
+        console.log(this.diploma.courses);
+        idArray.push(this.diploma.courses[i].id);
+      }
+      console.log('idArray: ', idArray);
+      return this.allCourses.filter(item => !idArray.includes(item.id));
+      */
+      return this.allCourses;
     }
+
+
   },
   props: {
     diploma: Object
 	},
 	methods: {
     remove(item) {
-      this.prereqs.splice(this.prereqs.indexOf(item), 1);
-      this.prereqs = [...this.prereqs];
+      // remove a course from the list of courses for this diploma
+      this.diplomaCourses.splice(this.diplomaCourses.indexOf(item), 1);
+      this.diplomaCourses = [...this.diplomaCourses];
     }
-	},
+  },
+  watch: {
+    // Make sure data stays in sync with any changes to `initialData` from parent.
+    diploma(diplomaProp) {
+      console.log('WATCHED! diploma: ', this.diploma);
+      console.log('WATCHED! diplomaProp: ', diplomaProp);
+
+    }
+  },
+
   mounted() {
+    console.log('MOUNTED!');
+    console.log('diploma is: ' + this.diploma);
     this.$http
-      .get("/api/v1/courses/diplomas")
-      .then(resp => (this.allDiplomas = resp.data));
+      .get("/api/v1/courses/courses")
+      .then(resp => (this.allCourses = resp.data));
   }
 };
 </script>

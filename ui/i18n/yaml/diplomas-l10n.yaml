@@ -11,7 +11,7 @@ diplomas:
   new:
     en: New Diploma
     es: Nueva Diploma
-  prerequisites:
+  courses:
     en: Courses
     es: Cursos
   courses-this-diploma:

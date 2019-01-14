@@ -2,37 +2,37 @@
   "courses": [
     {
       "id": 1,
-      "title": "Intro to the Old Testament",
+      "name": "Intro to the Old Testament",
       "description": "A survey of the Old Testament",
       "active": true
     },
     {
       "id": 2,
-      "title": "Intro to New Testament",
+      "name": "Intro to New Testament",
       "description": "A survey of the New Testament",
       "active": true
     },
     {
       "id": 3,
-      "title": "Survey of the Minor Prophets",
+      "name": "Survey of the Minor Prophets",
       "description": "All you'd want to know and more!",
       "active": true
     },
     {
       "id": 4,
-      "title": "Calvin's Institutes",
+      "name": "Calvin's Institutes",
       "description": "Two large volumes...get reading :)",
       "active": true
     },
     {
       "id": 5,
-      "title": "Predestination and other cool topics",
+      "name": "Predestination and other cool topics",
       "description": "Not actually the P in TULIP...it's the U.",
       "active": true
     },
     {
       "id": 6,
-      "title": "TULIP, the course",
+      "name": "TULIP, the course",
       "description": "The whole shootin match....",
       "active": true
     }
@@ -40,25 +40,25 @@
   "diplomas": [
     {
       "id": 1,
-      "title": "Survey of the Bible",
+      "name": "Survey of the Bible",
       "description": "A survey of the entire Bible, through three courses.",
       "active": true,
       "courses": [
         {
           "id": 1,
-          "title": "Intro to the Old Testament",
+          "name": "Intro to the Old Testament",
           "description": "A survey of the Old Testament",
           "active": true
         },
         {
           "id": 2,
-          "title": "Intro to New Testament",
+          "name": "Intro to New Testament",
           "description": "A survey of the New Testament",
           "active": true
         },
         {
           "id": 3,
-          "title": "Survey of the Minor Prophets",
+          "name": "Survey of the Minor Prophets",
           "description": "All you'd want to know and more!",
           "active": true
         }
@@ -66,29 +66,34 @@
     },
     {
       "id": 2,
-      "title": "Covenant Theology",
+      "name": "Covenant Theology",
       "description": "A comprehensive study of reformed doctrine, with applications.",
       "active": true,
       "courses": [
         {
           "id": 4,
-          "title": "Calvin's Institutes",
+          "name": "Calvin's Institutes",
           "description": "Two large volumes...get reading :)",
           "active": true
         },
         {
           "id": 5,
-          "title": "Predestination",
+          "name": "Predestination",
           "description": "Not actually the P in TULIP...it's the U.",
           "active": true
         },
         {
           "id": 6,
-          "title": "TULIP, the course",
+          "name": "TULIP, the course",
           "description": "The whole shootin match....",
           "active": true
         }
       ]
+    },
+    {
+      "name": "lkjh",
+      "description": "lhlkjhlkjh",
+      "id": 3
     }
   ]
 }

@@ -29,11 +29,11 @@
       "view-archived": "View Archived"
     },
     "diplomas": {
+      "courses": "Courses",
       "courses-this-diploma": "Courses for this Diploma",
       "description": "Description",
       "diploma": "Diplomas",
       "new": "New Diploma",
-      "prerequisites": "Courses",
       "title": "Title"
     },
     "groups": {
@@ -111,11 +111,11 @@
       "view-archived": "Ver Archivado"
     },
     "diplomas": {
+      "courses": "Cursos",
       "courses-this-diploma": "Cursos para esta Diploma",
       "description": "Descripci\u00f3n",
       "diploma": "Diplomas",
       "new": "Nueva Diploma",
-      "prerequisites": "Cursos",
       "title": "T\u00edtulo"
     },
     "groups": {

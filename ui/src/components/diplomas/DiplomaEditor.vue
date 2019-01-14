@@ -1,10 +1,10 @@
 <template>
   <v-card>
     <v-card-title>
-      <span class="headline">{{ title }}</span>
+      <span class="headline">{{ name }}</span>
     </v-card-title>
     <v-card-text>
-      <DiplomaForm ref="form" v-for="diploma in diplomas" :key="diploma.id" v-bind:diploma="diploma"/>
+      <DiplomaForm ref="form" v-bind:diploma="diploma"/>
     </v-card-text>
     <v-card-actions>
       <v-btn color="secondary" flat v-on:click="cancel">
@@ -41,11 +41,11 @@ export default {
   },
   data: function() {
     return {
-      diplomas: [{}]
+      diploma: {}
     };
   },
   computed: {
-    title() {
+    name() {
       return this.editMode
         ? this.$t("actions.edit")
         : this.$t("diplomas.new");
@@ -57,7 +57,7 @@ export default {
       if (isEmpty(diplomaProp)) {
         this.clear();
       } else {
-        this.diplomas = [diplomaProp];
+        this.diploma = diplomaProp;
       }
     }
   },
@@ -69,19 +69,22 @@ export default {
     },
     // Clear the forms.
     clear() {
-      this.diplomas = [{}];
+      this.diploma = {};
+      this.$refs.form.$validator.reset();
     },
     // Trigger a save event, returning the updated `Diploma`.
     save() {
-      this.$refs.form[0].$validator.validateAll();
-      if (!this.errors.any()) {
-        this.$emit("save", this.diplomas);
+      this.$refs.form.$validator.validateAll();
+      if (!this.$refs.form.errors.any()) {
+        this.$emit("save", this.diploma);
       }
-    },
+    }
+    /*,
     remove(item) {
       this.prereqs.splice(this.prereqs.indexOf(item), 1);
       this.prereqs = [...this.prereqs];
     }
+    */
   }
 };
 </script>

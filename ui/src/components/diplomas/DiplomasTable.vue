@@ -32,7 +32,7 @@
         >
             <template slot="items" slot-scope="props">
               <tr @click="props.expanded = !props.expanded">
-                <td>{{ props.item.title }}</td>
+                <td>{{ props.item.name }}</td>
                 <td>{{ props.item.description }}</td>
                 <td>
                 <DiplomaAdminActions
@@ -51,7 +51,7 @@
                     v-for="course in props.item.courses"
                     v-bind:key="course.id"
                     >
-                      <span class="font-weight-bold">{{ course.title }}:</span> {{course.description}}
+                      <span class="font-weight-bold">{{ course.name }}:</span> {{course.description}}
                     </li>
                   </ul>
                 </v-card-text>
@@ -107,7 +107,7 @@ export default {
     // Put here so that the headers are reactive.
     headers() {
       return [
-        { text: this.$t("diplomas.title"), value: "title", width: "40%" },
+        { text: this.$t("diplomas.title"), value: "name", width: "40%" },
         { text: this.$t("diplomas.description"), value: "description", width: "60%" },
         { text: this.$t("actions.header"), sortable: false }
       ];
