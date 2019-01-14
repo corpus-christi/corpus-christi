@@ -22,7 +22,8 @@
       "title": "Old Testament",
       "description": "typicod",
       "active": true,
-      "id": 4
+      "id": 4,
+      "name": "hello"
     },
     {
       "name": "test foo",
@@ -35,9 +36,45 @@
       "description": "123",
       "id": 6,
       "active": false
+    }
+  ],
+  "course-offering": [
+    {
+      "name": "Intro to New Testament",
+      "description": "typicode here",
+      "active": true,
+      "id": 1
     },
     {
-      "id": 7
+      "id": 2,
+      "name": "Intro to Old Testament",
+      "description": "typicode",
+      "active": false
+    },
+    {
+      "id": 3,
+      "name": "New Testament",
+      "description": "typicode",
+      "active": false
+    },
+    {
+      "title": "Old Testament",
+      "description": "typicod",
+      "active": true,
+      "id": 4,
+      "name": "Old Testament"
+    },
+    {
+      "name": "test foo",
+      "description": "test",
+      "id": 5,
+      "active": true
+    },
+    {
+      "name": "testing ",
+      "description": "123",
+      "id": 6,
+      "active": false
     }
   ]
 }

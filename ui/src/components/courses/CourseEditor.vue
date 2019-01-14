@@ -4,7 +4,7 @@
       <span class="headline">{{ title }}</span>
     </v-card-title>
     <v-card-text>
-      <CourseOfferingForm ref="form" v-bind:course="course" />
+      <CourseForm ref="form" v-bind:course="course" />
     </v-card-text>
     <v-card-actions>
       <v-btn color="secondary" flat :disabled="saving" v-on:click="cancel">
@@ -29,12 +29,12 @@
 
 <script>
 import { isEmpty } from "lodash";
-import CourseOfferingForm from "./CourseOfferingForm";
+import CourseForm from "./CourseForm";
 
 export default {
   name: "CourseEditor",
   components: {
-    CourseOfferingForm
+    CourseForm
   },
   props: {
     editMode: {

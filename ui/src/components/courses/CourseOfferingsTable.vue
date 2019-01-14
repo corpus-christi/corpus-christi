@@ -4,7 +4,7 @@
     <v-toolbar>
       <v-layout align-center justify-space-between fill-height>
         <v-flex md2>
-          <v-toolbar-title>{{ $t("courses.course") }}</v-toolbar-title>
+          <v-toolbar-title>{{ $t("courses.course-offering") }}</v-toolbar-title>
         </v-flex>
         <v-spacer></v-spacer>
         <v-flex md3>
@@ -60,8 +60,8 @@
     </v-snackbar>
 
     <!-- New/Edit dialog -->
-    <v-dialog scrollable v-model="courseOfferingDialog.show" max-width="500px">
-      <CourseEditor
+    <v-dialog persistant scrollable v-model="courseOfferingDialog.show" max-width="500px">
+      <CourseOfferingForm
         v-bind:editMode="courseOfferingDialog.editMode"
         v-bind:initialData="courseOfferingDialog.courseOffering"
         v-bind:saving="courseOfferingDialog.saving"
@@ -98,13 +98,13 @@
 </template>
 
 <script>
-import CourseEditor from "./CourseEditor";
+import CourseOfferingForm from "./CourseOfferingForm";
 import CourseOfferingAdminActions from "./adminActions/CourseOfferingAdminActions";
 
 export default {
   name: "CourseOfferingsTable",
   components: {
-    CourseEditor,
+    CourseOfferingForm,
     CourseOfferingAdminActions
   },
   data() {
@@ -217,7 +217,7 @@ export default {
     deactivate(courseOffering) {
       this.deactivateDialog.loading = true;
       this.$http
-        .patch(`/api/v1/courses/courses/${courseOffering.id}`, { active: false })
+        .patch(`/api/v1/courses/course-offering/${courseOffering.id}`, { active: false })
         .then(resp => {
           console.log("EDITED", resp);
           Object.assign(courseOffering, resp.data);
@@ -236,7 +236,7 @@ export default {
 
     activate(courseOffering) {
       this.$http
-        .patch(`/api/v1/courses/courses/${courseOffering.id}`, { active: true })
+        .patch(`/api/v1/courses/course-offering/${courseOffering.id}`, { active: true })
         .then(resp => {
           console.log("EDITED", resp);
           Object.assign(courseOffering, resp.data);
@@ -260,7 +260,7 @@ export default {
         delete courseOffering.id;
 
         this.$http
-          .patch(`/api/v1/courses/courses/${course_id}`, courseOffering)
+          .patch(`/api/v1/courses/course-offering/${course_id}`, courseOffering)
           .then(resp => {
             console.log("EDITED", resp);
             Object.assign(this.courseOfferings[idx], courseOffering);
@@ -278,7 +278,7 @@ export default {
           });
       } else {
         this.$http
-          .post("/api/v1/courses/courses", courseOffering)
+          .post("/api/v1/courses/course-offering", courseOffering)
           .then(resp => {
             console.log("ADDED", resp);
             this.courseOfferings.push(resp.data);
@@ -301,7 +301,7 @@ export default {
   },
 
   mounted: function() {
-    this.$http.get("/api/v1/courses/courses").then(resp => {
+    this.$http.get("/api/v1/courses/course-offering").then(resp => {
       this.courseOfferings = resp.data;
       this.tableLoaded = true;
     });
