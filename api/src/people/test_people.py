@@ -8,7 +8,7 @@ from flask_jwt_extended import create_access_token
 from werkzeug.datastructures import Headers
 from werkzeug.security import check_password_hash
 
-from .models import Person, PersonSchema, AccountSchema, Account
+from .models import Person, PersonSchema, AccountSchema, Account, Role
 
 
 class RandomLocaleFaker:
@@ -261,3 +261,23 @@ def test_update_other_fields(auth_client):
         assert updated_account is not None
         assert updated_account.username == expected_by_id[account_id]['username']
         assert updated_account.active == expected_by_id[account_id]['active']
+
+
+@pytest.mark.smoke
+def test_repr_person(auth_client):
+    person = Person()
+    person.__repr__()
+
+
+@pytest.mark.smoke
+def test_repr_account(auth_client):
+    create_multiple_people(auth_client.sqla, 4)
+    create_multiple_accounts(auth_client.sqla, 1)
+    account = auth_client.sqla.query(Account).all()
+    account[0].__repr__()
+
+
+@pytest.mark.smoke
+def test_repr_role(auth_client):
+    role = Role()
+    role.__repr__()
