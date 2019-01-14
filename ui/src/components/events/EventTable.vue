@@ -89,6 +89,7 @@
                 color="primary"
                 slot="activator"
                 v-on:click="duplicate(props.item)"
+                data-cy="duplicate"
               >
                 <v-icon small>filter_none</v-icon>
               </v-btn>
@@ -102,6 +103,7 @@
                 color="primary"
                 slot="activator"
                 v-on:click="confirmArchive(props.item)"
+                data-cy="archive"
               >
                 <v-icon small>archive</v-icon>
               </v-btn>
@@ -118,6 +120,7 @@
                 slot="activator"
                 v-on:click="unarchive(props.item)"
                 :loading="props.item.unarchiving"
+                data-cy="unarchive"
               >
                 <v-icon small>undo</v-icon>
               </v-btn>
@@ -153,7 +156,7 @@
       <v-card>
         <v-card-text>{{ $t("events.confirm-archive") }}</v-card-text>
         <v-card-actions>
-          <v-btn v-on:click="cancelArchive" color="secondary" flat data-cy="">{{
+          <v-btn v-on:click="cancelArchive" color="secondary" flat data-cy="cancel-archive">{{
             $t("actions.cancel")
           }}</v-btn>
           <v-spacer></v-spacer>
@@ -162,7 +165,7 @@
             color="primary"
             raised
             :loading="archiveDialog.loading"
-            data-cy=""
+            data-cy="confirm-archive"
             >{{ $t("actions.confirm") }}</v-btn
           >
         </v-card-actions>
