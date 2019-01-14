@@ -34,7 +34,7 @@
             data-cy="add-event"
           >
             <v-icon dark left>add</v-icon>
-            {{ $t("actions.addevent") }}
+            {{ $t("actions.add-event") }}
           </v-btn>
         </v-flex>
       </v-layout>
@@ -51,7 +51,7 @@
           class="hover-hand"
           v-on:click="$router.push({ path: '/events/' + props.item.id })"
         >
-          {{ props.item.title }}
+        {{ props.item.title }}
         </td>
         <td
           class="hover-hand"
@@ -124,7 +124,7 @@
               >
                 <v-icon small>undo</v-icon>
               </v-btn>
-              <span>{{ $t("actions.tooltips.unarchive") }}</span>
+              <span>{{ $t("actions.tooltips.activate") }}</span>
             </v-tooltip>
           </template>
         </td>
@@ -185,6 +185,7 @@ export default {
     this.$http.get("/api/v1/events/?return_group=all").then(resp => {
       this.events = resp.data;
     });
+    this.onResize()
   },
 
   data() {
@@ -208,7 +209,13 @@ export default {
         show: false,
         text: ""
       },
-      viewStatus: "viewAll"
+      viewStatus: "viewAll",
+
+      windowSize: {
+        x: 0,
+        y: 0,
+        screen
+      }
     };
   },
   computed: {
@@ -398,8 +405,8 @@ export default {
       });
     },
     getDisplayLocation(location, length = 20) {
-      if (location && location.address && location.address.name) {
-        let name = location.address.name
+      if (location && location.description) {
+        let name = location.description
         if (name && name.length && name.length > 0) {
           if (name.length > length) {
             return `${name.substring(0, length - 3)}...`;
@@ -407,9 +414,22 @@ export default {
           return name
         }
       }
-      return '';
+      return name;
+    },
+
+    onResize () {
+      this.windowSize = { x: window.innerWidth, y: window.innerHeight }
+      if(this.windowSize.x <= 960) {
+        this.windowSize.small = true
+      } else {
+        this.windowSize.small = false
+      }
+
     }
-  }
+  },
+
+
+
 };
 </script>
 
