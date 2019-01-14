@@ -36,6 +36,9 @@ class Diploma_CourseSchema(Schema):
 #      student_id = Column(Integer, ForeignKey('courses_students.id'), primary_key=True)
 #      diploma_id = Column(Integer, ForeignKey('courses_diploma.id'), primary_key=True)
 #      when = Column(Date, nullable=False)
+#
+#      students = relationship('Student', backref='diplomas', lazy=True)
+
 Diploma_Awarded = Table('courses_diploma_awarded', Base.metadata,
      Column('student_id', Integer, ForeignKey('courses_students.id'), primary_key=True),
      Column('diploma_id', Integer, ForeignKey('courses_diploma.id'), primary_key=True),
@@ -99,8 +102,8 @@ class Diploma(Base):
      active = Column(Boolean, nullable=False, default=True)
      courses = relationship('Course', secondary=Diploma_Course,
                back_populates='diplomas', lazy=True)
-     students = relationship('Student', secondary=Diploma_Awarded,
-               back_populates='diplomas', lazy=True)
+     # students = relationship('Student', secondary=Diploma_Awarded,
+     #           back_populates='diplomas', lazy=True)
 
 
      def __repr__(self):
@@ -124,8 +127,8 @@ class Student(Base):
      active = Column(Boolean, default=True, nullable=False)
      course_offering = relationship('Course_Offering', backref='offerings', lazy=True)
      person = relationship('Person', backref='students', lazy=True)
-     diplomas = relationship('Diploma', secondary=Diploma_Awarded,
-               back_populates='students', lazy=True)
+     # diplomas = relationship('Diploma', secondary=Diploma_Awarded,
+     #           back_populates='students', lazy=True)
      class_meeting = relationship('Class_Meeting', secondary=Class_Attendance,
                backref='attendance', lazy=True)
 
