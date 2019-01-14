@@ -1,3 +1,4 @@
+// TODO: Skeleton done, needs more extensive testing
 describe('Archive Event Test', function() {
   it('GIVEN: Event Planner goes to Event page', function() {
     cy.visit('/login');
@@ -14,6 +15,6 @@ describe('Archive Event Test', function() {
   });
 
   it('THEN: ', function() {
-
+    cy.get('[data-cy=unarchive').should('exist');
   });
 });
