@@ -161,20 +161,46 @@ def test_create_team(auth_client):
     assert True == False
     
 
-@pytest.mark.xfail()
+@pytest.mark.smoke
 def test_read_all_teams(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
+    # GIVEN a database with some teams
+    count = random.randint(5, 15)
+    create_multiple_teams(auth_client.sqla, count)
+    # WHEN we read all active ones
+    active_teams = auth_client.get(url_for('events.read_all_teams')).json
+    queried_active_teams_count = auth_client.sqla.query(Team).filter(Team.active==True).count()
+    # THEN we should have the same amount as we do in the database
+    assert len(active_teams) == queried_active_teams_count
+    # THEN for each team, the attributes should match
+    for team in active_teams:
+        queried_team = auth_client.sqla.query(Team).filter(Team.id == team["id"]).first()
+        assert queried_team.description == team["description"]
+        assert queried_team.active == team["active"]
+    # WHEN we read all teams (active and inactive)
+    all_teams = auth_client.get(url_for('events.read_all_teams', return_group="all")).json
+    # THEN we should have the same number
+    assert len(all_teams) == count
+    # WHEN we ask for all inactive teams
+    inactive_teams = auth_client.get(url_for('events.read_all_teams', return_group="inactive")).json
+    queried_inactive_teams_count = auth_client.sqla.query(Team).filter(Team.active==False).count()
+    # THEN we should have the correct number of inactive teams
+    assert len(inactive_teams) == queried_inactive_teams_count
     
 
-@pytest.mark.xfail()
+@pytest.mark.smoke
 def test_read_one_team(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
+    # GIVEN a database with some teams
+    count = random.randint(5, 15)
+    create_multiple_teams(auth_client.sqla, count)
+    # WHEN we read one team
+    team_id = auth_client.sqla.query(Team.id).first()[0]
+    resp = auth_client.get(url_for('events.read_one_team', team_id = team_id))
+    # THEN we should have the correct status code
+    assert resp.status_code == 200
+    # THEN the team should end up with the correct attribute
+    team = auth_client.sqla.query(Team).filter(Team.id == team_id).first()
+    assert resp.json["description"] == team.description
+    assert resp.json["active"] == team.active
     
 
 @pytest.mark.smoke
