@@ -55,7 +55,11 @@
     <v-layout class="mt-3">
       <v-flex>
         <v-toolbar color="blue" dark>
+<<<<<<< HEAD
           <v-toolbar-title>
+=======
+          <v-toolbar-title data-cy="church-sentence">
+>>>>>>> app-courses
             {{ $t("public.headers.home-church") }}
           </v-toolbar-title>
         </v-toolbar>

@@ -27,22 +27,36 @@ def create_course():
     db.session.commit()
     return jsonify(course_schema.dump(new_course)), 201
 
+"""
+Function that takes a SQLAlchemy query of Courses and
+adds its prerequisites, returning as a jsonified object
+"""
+def add_prereqs(query_result):
+    if(hasattr(query_result, '__iter__')):
+        courses = course_schema.dump(query_result, many=True)
+        for i in range(0, len(courses)): # iterate through json results
+            courses[i]['prerequisites'] = [] #add list to dictionary
+            for j in query_result[i].prerequisites: # get list of prerequisites
+                j = course_schema.dump(j, many=False)
+                courses[i]['prerequisites'].append(j)
+    else:
+        courses = course_schema.dump(query_result, many=False)
+        courses['prerequisites'] = [] #add list to dictionary
+        #convert and add course objects to prereq list for each prereq
+        for i in query_result.prerequisites:
+            i = course_schema.dump(i, many=False)
+            courses['prerequisites'].append(i)
+    return jsonify(courses)
+
 
 @courses.route('/courses')
 @jwt_required
 def read_all_courses():
     """List all active and inactive courses"""
     result = db.session.query(Course).all()
-    results = course_schema.dump(result, many=True) # Courses are now JSON
-
-    # Runs through range of list values to access both lists at read_one_course
-    # (SQLAlchemy object and python dictionary)
-    for i in range(0, len(results)): # iterate through json results
-        results[i]['prerequisites'] = []
-        for j in result[i].prerequisites: # get list of prerequisites
-            j = course_schema.dump(j, many=False)
-            results[i]['prerequisites'].append(j)
-    return jsonify(results)
+    if(result is None):
+        return "Result NOT found", 404
+    return add_prereqs(result)
 
 
 @courses.route('/courses-active')
@@ -50,6 +64,9 @@ def read_all_courses():
 def read_all_active_courses():
     """List all active courses"""
     result = db.session.query(Course).filter_by(active=True).all()
+    if(result is None):
+        return "Result NOT found", 404
+    # return add_prereqs(result)
     return jsonify(course_schema.dump(result, many=True))
 
 
@@ -58,6 +75,9 @@ def read_all_active_courses():
 def read_all_inactive_courses():
     """List all inactive courses"""
     result = db.session.query(Course).filter_by(active=False).all()
+    if(result is None):
+        return "Result NOT found", 404
+    # return add_prereqs(result)
     return jsonify(course_schema.dump(result, many=True))
 
 
@@ -66,6 +86,9 @@ def read_all_inactive_courses():
 def read_one_course(course_id):
     """List only one course with given course_id"""
     result = db.session.query(Course).filter_by(id=course_id).first()
+    if(result is None):
+        return "Result NOT found", 404
+    # return add_prereqs(result)
     return jsonify(course_schema.dump(result))
 
 
@@ -222,7 +245,7 @@ def update_course_offering(course_offering_id):
     if course_offering is None:
         return "Course Offering NOT Found", 404
 
-    for attr in 'description', "active", "max_size":
+    for attr in ['description', "active", "max_size"]:
         if attr in request.json:
             setattr(course_offering, attr, request.json[attr])
 
