@@ -64,8 +64,9 @@ def create_person():
 @people.route('/persons')
 @jwt_required
 def read_all_persons():
-    read_person_fields()
     result = db.session.query(Person).all()
+    for r in result:
+        r.attributesInfo = r.person_attributes
     return jsonify(person_schema.dump(result, many=True))
 
 
@@ -73,6 +74,7 @@ def read_all_persons():
 @jwt_required
 def read_one_person(person_id):
     result = db.session.query(Person).filter_by(id=person_id).first()
+    result.attributesInfo = result.person_attributes
     return jsonify(person_schema.dump(result))
 
 
@@ -101,7 +103,8 @@ def deactivate_person(person_id):
     account = db.session.query(Account).filter_by(id=person.account_id).first()
 
     if person.account:
-        account = db.session.query(Account).filter_by(id=person.account.id).first()
+        account = db.session.query(Account).filter_by(
+            id=person.account.id).first()
         setattr(account, 'active', False)
     setattr(person, 'active', False)
 
@@ -326,7 +329,6 @@ def remove_role_from_account(account_id, role_id):
     if role_to_remove not in account.roles:
         return 'That accout does not have that role', 404
 
-
     account.roles.remove(role_to_remove)
     db.session.commit()
 
@@ -337,4 +339,3 @@ def remove_role_from_account(account_id, role_id):
 
     # return jsonify(user_roles)
     return jsonify(role_to_remove)
-
