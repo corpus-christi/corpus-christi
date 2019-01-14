@@ -65,12 +65,23 @@ def test_create_event(auth_client):
     assert auth_client.sqla.query(Event).count() == count
     
 
-@pytest.mark.xfail()
-def test_read_all_events(client, db):
+@pytest.mark.smoke
+def test_read_all_events(auth_client):
     # GIVEN
+    count = random.randint(3, 11)
+    create_multiple_events(auth_client.sqla, count)
+
     # WHEN
+    resp = auth_client.get(url_for('events.read_all_events'))
+    assert resp.status_code == 200
+    events = auth_client.sqla.query(Event).all()
+
     # THEN
-    assert True == False
+    assert len(events) == count
+    assert len(resp.json) == count
+
+    for i in range(count):
+        assert resp.json[i]['title'] == events[i].title
     
 
 @pytest.mark.smoke
@@ -90,6 +101,8 @@ def test_read_one_event(auth_client):
 
         assert resp.status_code == 200
         assert resp.json['title'] == event.title
+        # Datetimes come back in a slightly different format, but information is the same.
+        # assert resp.json['start'] == str(event.start)
     
 
 @pytest.mark.xfail()
