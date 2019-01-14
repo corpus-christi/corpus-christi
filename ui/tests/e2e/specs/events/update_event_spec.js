@@ -1,5 +1,5 @@
 // TODO: Skeleton done for now, should do more extensive testing later
-describe('Create Event Test', function() {
+describe('Update Event Test', function() {
   it('GIVEN: Event Planner goes to Event page', function() {
     cy.visit('/login');
     cy.get('[data-cy=username]').type('Cytest');
