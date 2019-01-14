@@ -5,8 +5,10 @@ from faker import Faker
 from flask import url_for
 
 from .models import Course, CourseSchema, Course_Offering,\
-        Course_OfferingSchema, Diploma, DiplomaSchema, Student, StudentSchema
+        Course_OfferingSchema, Diploma, DiplomaSchema, Student, StudentSchema,\
+        Class_Meeting, Class_MeetingSchema
 from ..people.models import Person
+from ..places.models import Location
 
 
 def flip():
@@ -117,6 +119,38 @@ def create_multiple_students(sqla, n=6):
         student = Student(**valid_student)
         new_students.append(student)
     sqla.add_all(new_students)
+    sqla.commit()
+
+
+def class_meeting_object_factory(teacher, offering_id, location=1):
+    """Cook up a fake class meeting"""
+    fake = Faker()
+    print(fake.datetime())
+    class_meeting = {
+    'offeringId': offering_id,
+    'teacher': teacher,
+    'when': fake.datetime(),
+    'location': location,
+    }
+    return class_meeting
+
+def create_class_meetings(sqla, n=6):
+    """Commits the number of class meetings to the DB."""
+    students = sqla.query(Person).all()
+    course_offerings = sqla.query(Course_Offering).all()
+    locations = sqla.query(Location).all()
+    print(locations)
+    class_meeting_schema = Class_MeetingSchema()
+    new_class_meetings = []
+    for i in range(n):
+        teacher = students[random.randint(1,len(students))].id
+        offering = course_offerings[i%len(course_offerings)].id
+        location = 1#locations[random.randint(1,len(locations))].id
+
+        valid_class_meeting = class_meeting_schema.load(class_meeting_object_factory(teacher, offering, location))
+        class_meeting = Class_Meeting(**valid_class_meeting)
+        new_class_meetings.append(class_meeting)
+    sqla.add_all(new_class_meetings)
     sqla.commit()
 
 # ---- Course

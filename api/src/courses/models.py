@@ -51,7 +51,7 @@ Class_Attendance = Table('courses_class_attendance', Base.metadata,
 class Class_AttendanceSchema(Schema):
     class_id = fields.Integer(dump_only=True, data_key='classId', required=True)
     student_id = fields.Integer(dump_only=True, data_key='studentId', required=True)
-     
+
 # ---- Course
 
 class Course(Base):
