@@ -16,8 +16,7 @@ from src.places.test_places import create_multiple_areas, create_multiple_addres
 from src.places.models import Country
 from src.courses.models import Course, Prerequisite
 from src.courses.test_courses import create_multiple_courses,\
-    create_multiple_course_offerings, create_multiple_prerequisites,\
-    create_multiple_diplomas
+    create_multiple_course_offerings, create_multiple_prerequisites
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 
@@ -62,19 +61,11 @@ def load_languages():
     Role.load_from_file()
     create_multiple_people(db.session, 17)
     create_multiple_accounts(db.session, 0.25)
-<<<<<<< HEAD
-    create_multiple_courses(db.session, 12)
-    create_multiple_course_offerings(db.session, 6)
-    create_multiple_prerequisites(db.session)
-    create_multiple_diplomas(db.session)
-
-=======
     access_token = create_access_token(identity='test-user')
 
     create_multiple_areas(db.session, 5)
     create_multiple_addresses(db.session, 10)
     create_multiple_locations(db.session, 20)
->>>>>>> development
 
 
 @data_cli.command('clear-all', help="Clear all data; drops and creates all tables")
