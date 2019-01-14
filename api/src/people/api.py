@@ -12,6 +12,7 @@ from .. import db
 # ---- Person
 
 person_schema = PersonSchema()
+person_schema_no_id = PersonSchema(exclude=['accountInfo.id'])
 
 
 @people.route('/persons/fields', methods=['GET'])
@@ -68,7 +69,7 @@ def read_one_person(person_id):
 @jwt_required
 def update_person(person_id):
     try:
-        valid_person = person_schema.load(request.json)
+        valid_person = person_schema_no_id.load(request.json)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
@@ -322,4 +323,3 @@ def remove_role_from_account(account_id, role_id):
 
     # return jsonify(user_roles)
     return jsonify(role_to_remove)
-

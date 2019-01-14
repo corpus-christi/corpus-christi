@@ -8,7 +8,7 @@ from flask_jwt_extended import create_access_token
 from werkzeug.datastructures import Headers
 from werkzeug.security import check_password_hash
 
-from .models import Person, PersonSchema, AccountSchema, Account
+from .models import Person, PersonSchema, AccountSchema, Account, RoleSchema, Role
 
 
 class RandomLocaleFaker:
@@ -36,7 +36,7 @@ def person_object_factory():
     person = {
         'lastName': rl_fake().last_name(),
         'gender': random.choice(('M', 'F')),
-        'active': True
+        'active': flip()
     }
 
     # Make the person's name match their gender.
@@ -259,3 +259,32 @@ def test_update_other_fields(auth_client):
         assert updated_account is not None
         assert updated_account.username == expected_by_id[account_id]['username']
         assert updated_account.active == expected_by_id[account_id]['active']
+
+
+    #   -----   Roles
+
+    def role_object_factory():
+        """Cook up a fake role."""
+        role = {
+            'name_i18n': 'role.test_role',
+            'active' : True
+        }
+    
+    def create_role(sqla, n):
+        """Commit `n` new roles to the database. Return their IDs."""
+        role_schema = RoleSchema()
+
+        valid_role = role_schema.load(role_object_factory())
+
+        sqla.add(valid_role)
+        sqla.commit()     
+
+
+    def test_create_role(auth_client):
+        # GIVEN some randomly created people
+        create_role(auth_client.sqla)
+
+        # WHEN we retrieve them all
+        role = auth_client.sqla.query(Role).all()
+        # THEN we get the expected number
+        assert len(role) == 1
