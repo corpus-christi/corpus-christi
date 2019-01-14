@@ -142,6 +142,8 @@ class TeamMemberSchema(Schema):
     team = fields.Nested('TeamSchema')
     member = fields.Nested('PersonSchema')
     active = fields.Boolean()
+    member = fields.Nested('PersonSchema')
+    active = fields.Boolean()
 
 # ---- EventParticipant
 

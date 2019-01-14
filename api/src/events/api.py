@@ -225,10 +225,9 @@ def read_all_assets():
 
     # -- location --
     # Filter events on a wildcard location string?
-    location_filter = request.args.get('location')
+    location_filter = request.args.get('location_id')
     if location_filter:
-        # TODO FIXME
-        pass
+        query = query.filter_by(location_id=location_filter)
 
     result = query.join(EventAsset, isouter=True).group_by(Asset.id).all()
 
