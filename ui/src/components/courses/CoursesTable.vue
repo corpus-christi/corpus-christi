@@ -340,8 +340,6 @@ export default {
             this.courseDialog.saving = false;
           });
       }
-
-      this.courseDialog.show = false;
     }
   },
 
