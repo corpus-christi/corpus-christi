@@ -10,39 +10,21 @@ Vue.use(VueI18n);
 
 const i18n = new VueI18n({
   locale: "es",
-  messages: i18n_data
+  messages: i18n_data,
+  silentTranslationWarn: true
 });
 
 Vue.use(VeeValidate, {
   i18n,
+  i18nRootKey: "i18n_data",
   dictionary: {
     en: {
       messages: enValidation.messages,
-      attributes: {
-        firstName: "FIRST NAME",
-        lastName: "LAST NAME"
-      },
-      custom: {
-        firstName: {
-          required: "You need a name here, boy.",
-          max: "Too many characters"
-        },
-        lastName: {
-          min: "Must be longer"
-        }
-      }
+      attributes: i18n_data.en.validation.attributes
     },
     es: {
       messages: esValidation.messages,
-      attributes: {
-        firstName: "SPANISH FIRST NAME",
-        lastName: "SPANISH LAST NAME"
-      },
-      custom: {
-        firstName: {
-          required: "Necesitas un nombre aquí, muchacho."
-        }
-      }
+      attributes: i18n_data.es.validation.attributes
     }
   }
 });

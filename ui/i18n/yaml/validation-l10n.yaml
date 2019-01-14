@@ -2,3 +2,13 @@ validation:
   required:
     en: Required
     es: Necesario
+  attributes:
+    firstName:
+      en: first name
+      es: nombre de pila
+    lastName:
+      en: last name
+      es: appellido
+    email:
+      en: email
+      es: correo electrónico
