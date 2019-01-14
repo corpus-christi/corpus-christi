@@ -251,7 +251,7 @@ export default {
     },
 
     timeFormat() {
-      if (this.currentLanguageCode == "en") {
+      if (this.currentLanguageCode.substring(0, 2) == "en") {
         return "ampm";
       } else return "24hr";
     },
