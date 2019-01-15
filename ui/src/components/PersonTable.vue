@@ -105,7 +105,7 @@
             >
               <v-icon small>archive</v-icon>
             </v-btn>
-            <span>{{ $t("actions.tooltips.deactivate") }}</span>
+            <span>{{ $t("actions.tooltips.archive") }}</span>
           </v-tooltip>
           <v-tooltip bottom>
             <v-btn
@@ -120,7 +120,7 @@
             >
               <v-icon small>undo</v-icon>
             </v-btn>
-            <span>{{ $t("actions.tooltips.deactivate") }}</span>
+            <span>{{ $t("actions.tooltips.activate") }}</span>
           </v-tooltip>
         </td>
       </template>
