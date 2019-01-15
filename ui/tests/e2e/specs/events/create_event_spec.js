@@ -53,8 +53,9 @@ describe("Create Event Test", function() {
 
   // TODO: Get new event by ID
   it("THEN: A new event is listed in the table", function() {
-    cy.get(".v-datatable__actions__select > .v-input > .v-input__control > .v-input__slot > .v-select__slot")
-      .click();
+    cy.get(
+      ".v-datatable__actions__select > .v-input > .v-input__control > .v-input__slot > .v-select__slot"
+    ).click();
     cy.contains("Todos").click();
     cy.get("tbody").contains("New Event");
   });
