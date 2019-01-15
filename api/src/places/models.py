@@ -16,8 +16,6 @@ from ..shared.models import StringTypes
 
 class Country(Base):
     """Country; uses ISO 3166-1 country codes"""
-
-
     __tablename__ = 'places_country'
     code = Column(String(2), primary_key=True)
     name_i18n = Column(StringTypes.I18N_KEY, ForeignKey('i18n_key.id'), nullable=False)
@@ -50,6 +48,9 @@ class Country(Base):
             db.session.commit()
         return count
 
+class CountrySchema(Schema):
+    code = fields.String()
+    name_i18n = fields.String()
 
 # ---- Area
 
@@ -80,6 +81,8 @@ class Location(Base):
     description = Column(StringTypes.MEDIUM_STRING)
     address_id = Column(Integer, ForeignKey('places_address.id'), nullable=False)
     address = relationship('Address', backref='locations', lazy=True)
+    events = relationship('Event', back_populates="location")
+    assets = relationship('Asset', back_populates="location")
 
     def __repr__(self):
         attributes = [f"id='{self.id}'"]
@@ -89,13 +92,11 @@ class Location(Base):
         as_string = ",".join(attributes)
         return f"<Location({as_string})>"
 
-
-
 class LocationSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     description = fields.String(validate=Length(min=1))
     address_id = fields.Integer(required=True, validate=Range(min=1))
-
+    address = fields.Nested('AddressSchema')
 
 # ---- Address
 
@@ -120,8 +121,6 @@ class Address(Base):
         as_string = ",".join(attributes)
         return f"<Address({as_string})>"
 
-
-
 class AddressSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     name = fields.String(required=True, validate=Length(min=1))
@@ -131,3 +130,5 @@ class AddressSchema(Schema):
     country_code = fields.String(required=True)
     latitude = fields.Float()
     longitude = fields.Float()
+    area = fields.Nested('AreaSchema')
+    country = fields.Nested('CountrySchema')
