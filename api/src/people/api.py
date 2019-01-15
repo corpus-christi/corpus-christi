@@ -94,9 +94,22 @@ def read_one_person(person_id):
 @jwt_required
 def update_person(person_id):
     try:
-        valid_person = person_schema.load(request.json)
+        valid_person = person_schema.load(request.json['person'])
+        valid_person_attributes = person_attribute_schema.load(
+            request.json['attributesInfo'], many=True)
     except ValidationError as err:
         return jsonify(err.messages), 422
+
+    for new_person_attribute in valid_person_attributes:
+        old_person_attribute = db.session.query(Person_Attribute).filter_by(
+            person_id=person_id, attribute_id=new_person_attribute['attribute_id']).first()
+        if old_person_attribute is not None:
+            setattr(old_person_attribute, 'string_value',
+                    new_person_attribute['string_value'])
+        else:
+            new_person_attribute = Person_Attribute(**new_person_attribute)
+            new_person_attribute.person_id = person_id
+            db.session.add(new_person_attribute)
 
     person = db.session.query(Person).filter_by(id=person_id).first()
 
@@ -105,7 +118,9 @@ def update_person(person_id):
 
     db.session.commit()
 
-    return jsonify(person_schema.dump(person))
+    result = db.session.query(Person).filter_by(id=person_id).first()
+    result.attributesInfo = result.person_attributes
+    return jsonify(person_schema.dump(result))
 
 
 @people.route('/persons/deactivate/<person_id>', methods=['PUT'])
