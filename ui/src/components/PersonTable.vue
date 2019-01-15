@@ -138,6 +138,7 @@
         v-bind:initialData="personDialog.person"
         v-bind:saveLoading="personDialog.saveLoading"
         v-bind:addMoreLoading="personDialog.addMoreLoading"
+        v-bind:attributes="personDialog.attributes"
         v-on:cancel="cancelPerson"
         v-on:save="savePerson"
         v-on:add-another="addAnother"
@@ -172,6 +173,7 @@ export default {
         editMode: false,
         saveLoading: false,
         addMoreLoading: false,
+        attributes: [],
         person: {}
       },
 
@@ -312,15 +314,15 @@ export default {
 
     constructPersonData(person) {
       var attributes = [];
-      if(person.attributesInfo) {
+      if (person.attributesInfo) {
         attributes = person.attributesInfo;
       }
       delete person["attributesInfo"];
       delete person["accountInfo"];
       return {
-        "person": person,
-        "attributesInfo": attributes
-      }
+        person: person,
+        attributesInfo: attributes
+      };
     },
 
     addAnother(person) {
@@ -424,7 +426,9 @@ export default {
       this.$http
         .get("/api/v1/people/persons/fields")
         .then(resp => {
-          console.log(resp);
+          if (resp.data.person_attributes) {
+            this.personDialog.attributes = resp.data.person_attributes;
+          }
         })
         .catch(err => console.error("FAILURE", err.response));
     }

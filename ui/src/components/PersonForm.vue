@@ -4,7 +4,7 @@
       <span class="headline">{{ title }}</span>
     </v-card-title>
     <v-card-text>
-      <form>
+      <form ref="container">
         <v-text-field
           v-model="person.firstName"
           v-bind:label="$t('person.name.first')"
@@ -137,6 +137,8 @@
 <script>
 import { mapGetters } from "vuex";
 import { isEmpty } from "lodash";
+import Vue from "vue/dist/vue.esm";
+import { VSelect } from "vuetify";
 
 export default {
   name: "PersonForm",
@@ -156,6 +158,10 @@ export default {
     saveLoading: {
       type: Boolean,
       required: true
+    },
+    attributes: {
+      type: Array,
+      required: true
     }
   },
   data: function() {
@@ -168,7 +174,8 @@ export default {
         gender: "",
         birthday: "",
         email: "",
-        phone: ""
+        phone: "",
+        attributesInfo: []
       }
     };
   },
@@ -199,6 +206,7 @@ export default {
       } else {
         this.person = personProp;
       }
+      this.constructAttributeForm(this.$props.attributes);
     }
   },
 
@@ -232,6 +240,20 @@ export default {
           this.$emit("add-another", this.person);
         }
       });
+    },
+
+    constructAttributeForm(attributes) {
+      for (let attr of attributes) {
+        switch (attr.typeI18n) {
+          case "type.drop":
+            console.log(VSelect);
+            var DropdownClass = Vue.extend(VSelect);
+            var dropdown = new DropdownClass();
+            dropdown.$mount();
+            this.$refs.container.appendChild(dropdown.$el);
+            break;
+        }
+      }
     }
   }
 };
