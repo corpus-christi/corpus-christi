@@ -911,3 +911,41 @@ def test_delete_event_participant(auth_client):
     resp = auth_client.delete(url_for('events.delete_event_participant', event_id=event_participant.event_id, person_id=event_participant.person_id))
     # THEN we expect an error
     assert resp.status_code == 404
+
+@pytest.mark.smoke
+def test_get_team_members(auth_client):
+    # GIVEN
+    count = random.randint(5, 15)
+    create_multiple_teams(auth_client.sqla, count)
+    person_count = random.randint(20, 30)
+    create_multiple_people(auth_client.sqla, count)
+    create_teams_members(auth_client.sqla)
+    
+    # WHEN
+    teams = auth_client.sqla.query(Team).all()
+    
+    for team in teams:
+        members = auth_client.sqla.query(TeamMember).filter(TeamMember.team_id == team.id).all()
+        
+        # THEN
+        resp = auth_client.get(url_for('events.get_team_members', team_id = team.id))
+
+        assert resp.status_code == 200
+        assert len(resp.json) == len(members)
+
+
+@pytest.mark.smoke
+def test_get_team_members_no_members(auth_client):
+    # GIVEN
+    count = random.randint(5, 15)
+    create_multiple_teams(auth_client.sqla, count)
+
+    # WHEN
+    teams = auth_client.sqla.query(Team).all()
+
+    for team in teams:
+        resp = auth_client.get(url_for('events.get_team_members', team_id = team.id))
+
+        assert resp.status_code == 404
+
+
