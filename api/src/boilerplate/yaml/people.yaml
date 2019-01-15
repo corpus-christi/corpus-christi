@@ -119,4 +119,10 @@ entities:
         foreign-key: people_manager.id
       - name: description_i18n
         type: string
-        length: locale
+        length: i18n
+        required: true
+        foreign-key: i18n_key.id
+    relationships:
+      - name: manager
+        related-model: Manager
+        backref: subordinate

@@ -169,8 +169,11 @@ def create_account():
         print("ERR", err)
         return jsonify(err.messages), 422
 
+    public_user_role = db.session.query(Role).filter_by(id=1).first()
+
     new_account = Account(**valid_account)
     new_account.active = True
+    new_account.roles.append(public_user_role)
     db.session.add(new_account)
     db.session.commit()
     return jsonify(account_schema.dump(new_account)), 201
@@ -296,12 +299,6 @@ def read_one_role(role_id):
     return jsonify(role_schema.dump(result))
 
 
-@people.route('/role/<role_id>', methods=['PUT'])
-@jwt_required
-def replace_role(role_id):
-    pass
-
-
 @people.route('/role/<role_id>', methods=['PATCH'])
 @jwt_required
 def update_role(role_id):
@@ -319,10 +316,25 @@ def update_role(role_id):
     return jsonify(role_schema.dump(role))
 
 
-@people.route('/role/<role_id>', methods=['DELETE'])
+@people.route('/role/activate/<role_id>', methods=['PUT'])
 @jwt_required
-def delete_role(role_id):
-    pass
+def activate_role(role_id):
+    role = db.session.query(Role).filter_by(id=role_id).first()
+    setattr(role, 'active', True)
+    db.session.commit()
+    return jsonify(role_schema.dump(role))
+
+
+@people.route('/role/deactivate/<role_id>', methods=['PUT'])
+@jwt_required
+def deactivate_role(role_id):
+    role = db.session.query(Role).filter_by(id=role_id).first()
+
+    setattr(role, 'active', False)
+
+    db.session.commit()
+
+    return jsonify(role_schema.dump(role))
 
 
 @people.route('/role/<account_id>&<role_id>', methods=['POST'])
@@ -406,12 +418,6 @@ def read_one_manager(manager_id):
     return jsonify(manager_schema.dump(result))
 
 
-@people.route('/manager/<manager_id>', methods=['PUT'])
-@jwt_required
-def replace_manager(manager_id):
-    pass
-
-
 @people.route('/manager/<manager_id>', methods=['PATCH'])
 @jwt_required
 def update_manager(manager_id):
@@ -432,5 +438,15 @@ def update_manager(manager_id):
 @people.route('/manager/<manager_id>', methods=['DELETE'])
 @jwt_required
 def delete_manager(manager_id):
-    pass
+    manager = db.session.query(Manager).filter_by(id=manager_id).first()
 
+    if manager is None:
+        return 'Manager not found', 404
+
+    for subordinate in manager.subordinates:
+        setattr(subordinate, 'manager_id', None)
+
+    db.session.delete(manager)
+    db.session.commit()
+
+    return jsonify(manager_schema.dump(manager))
