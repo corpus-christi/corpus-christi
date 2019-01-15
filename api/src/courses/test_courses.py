@@ -283,6 +283,9 @@ def test_create_course(auth_client):
         assert resp.status_code == 201
     # THEN assert that entry is now in database
     assert auth_client.sqla.query(Course).count() == count
+    broken_course = {}
+    resp = auth_client.post(url_for('courses.create_course'), json=broken_course)
+    assert resp.status_code == 422
 
 # Test getting all courses from the database
 def test_read_all_courses(auth_client):
@@ -290,9 +293,9 @@ def test_read_all_courses(auth_client):
     count = random.randint(3,11)
     create_multiple_courses(auth_client.sqla, count)
     # WHEN call to database
-    courses = auth_client.sqla.query(Course).all()
+    resp = auth_client.get(url_for('courses.read_all_courses'))
     # THEN assert all entries from database are called
-    assert len(courses) == count
+    assert len(resp.json) == count
 
 #Test getting only active courses from the database
 def test_read_all_active_courses(auth_client):
