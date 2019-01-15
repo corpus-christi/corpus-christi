@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from flask import request
 from flask.json import jsonify
@@ -72,9 +72,9 @@ def read_all_events():
     start_filter = request.args.get('start')
     end_filter = request.args.get('end')
     if start_filter:
-        query = query.filter(Event.start >= datetime.strptime(start_filter, '%Y-%m-%d'))
+        query = query.filter(Event.start > (datetime.strptime(start_filter, '%Y-%m-%d') - timedelta(days=1)))
     if end_filter:
-        query = query.filter(Event.end <= datetime.strptime(end_filter, '%Y-%m-%d'))
+        query = query.filter(Event.end < (datetime.strptime(end_filter, '%Y-%m-%d') + timedelta(days=1)))
 
     # -- title --
     # Filter events on a wildcard title string

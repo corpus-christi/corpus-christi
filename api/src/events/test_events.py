@@ -35,6 +35,30 @@ def test_create_event(auth_client):
     
 
 @pytest.mark.smoke
+def test_create_invalid_event(auth_client):
+    # GIVEN an empty database
+    # WHEN we attempt to add invalid events
+    count = random.randint(5, 15)
+
+    for i in range(count):
+        event = event_object_factory(auth_client.sqla)
+
+        if flip():
+            event['title'] = None
+        elif flip():
+            event['start'] = None
+        else:
+            event['end'] = None
+
+        resp = auth_client.post(url_for('events.create_event'), json=event)
+        
+        # THEN the response should have the correct code
+        assert resp.status_code == 422
+    
+    # AND the database should still be empty
+    assert auth_client.sqla.query(Event).count() == 0
+
+@pytest.mark.smoke
 def test_read_all_events(auth_client):
     # GIVEN
     count = random.randint(3, 11)
@@ -59,6 +83,55 @@ def test_read_all_events(auth_client):
         if events[i].active:
             assert resp.json[j]['title'] == events[i].title
             j += 1
+
+@pytest.mark.smoke
+def test_read_all_events_with_query(auth_client):
+    # GIVEN some existing events
+    count = random.randint(3, 11)
+    create_multiple_events(auth_client.sqla, count)
+    all_events = auth_client.sqla.query(Event).all()
+
+    for _ in range(random.randint(10, 15)):
+        # WHEN queried for all events matching a flag
+        query_string = dict()
+        if flip():
+            query_string['return_group'] = 'inactive'
+        elif flip():
+            query_string['return_group'] = 'both'
+
+        if flip():
+            query_string['start'] = datetime.datetime.now().strftime('%Y-%m-%d')
+        if flip():
+            query_string['end'] = datetime.datetime.now().strftime('%Y-%m-%d')
+        
+        if flip():
+            query_string['title'] = 'c'
+        
+        if flip():
+            query_string['location_id'] = 1
+
+        # THEN the response should match those flags
+        resp = auth_client.get(url_for('events.read_all_events'), query_string=query_string)
+        assert resp.status_code == 200
+        events = auth_client.sqla.query(Event).all()
+
+        for event in resp.json:
+            if 'return_group' in query_string:
+                if query_string['return_group'] == 'inactive':
+                    assert event['active'] == False
+            else:
+                assert event['active'] == True
+
+            if 'start' in query_string:
+                assert datetime.datetime.strptime(event['start'][:event['start'].index('T')], '%Y-%m-%d') >= datetime.datetime.strptime(query_string['start'], '%Y-%m-%d')
+            if 'end' in query_string:
+                assert datetime.datetime.strptime(event['end'][:event['end'].index('T')], '%Y-%m-%d') <= datetime.datetime.strptime(query_string['end'], '%Y-%m-%d')
+
+            if 'title' in query_string:
+                assert query_string['title'].lower() in event['title'].lower()
+
+            if 'location_id' in query_string:
+                assert event['location_id'] == query_string['location_id']
 
 
 @pytest.mark.smoke
