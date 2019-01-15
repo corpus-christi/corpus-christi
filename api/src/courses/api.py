@@ -225,9 +225,8 @@ def read_all_course_offerings():
     result = db.session.query(Course_Offering).all()
     results = course_offering_schema.dump(result, many=True)
     for r in results:
-        print("\n\n", r['courseId'], "\n\n")
         r['course'] = course_schema.dump(db.session.query(Course).filter_by(id=r['courseId']).first(), many=False)
-    return jsonify(results)#jsonify(course_offering_schema.dump(result, many=True))
+    return jsonify(results)
 
 @courses.route('/course_offerings/<active_state>')
 @jwt_required
