@@ -11,8 +11,8 @@ from werkzeug.security import check_password_hash
 from .models import Asset, AssetSchema, Event, EventSchema, Team, TeamSchema, EventParticipant, EventParticipantSchema, EventPerson, EventPersonSchema, TeamMember, TeamMemberSchema, EventAsset, EventAssetSchema, EventTeam, EventTeamSchema
 from ..places.models import Location, Country
 from ..people.models import Person
-from .create_event_data import flip, fake, create_multiple_events, event_object_factory, create_multiple_assets, create_multiple_teams, create_events_assets, create_events_teams, create_events_persons
-from ..places.test_places import create_multiple_locations, create_multiple_addresses, create_multiple_areas 
+from .create_event_data import flip, fake, create_multiple_events, event_object_factory, create_multiple_assets, create_multiple_teams, create_events_assets, create_events_teams, create_events_persons, create_teams_members, get_team_ids
+from ..places.test_places import create_multiple_locations, create_multiple_addresses, create_multiple_areas
 from ..people.test_people import create_multiple_people
 
 fake = Faker()
@@ -151,6 +151,14 @@ def test_read_one_event(auth_client):
         # Datetimes come back in a slightly different format, but information is the same.
         # assert resp.json['start'] == str(event.start)
 
+@pytest.mark.smoke
+def test_read_one_missing_event(auth_client):
+    # GIVEN an empty database
+    # WHEN a request for a specific event is made
+    resp = auth_client.get(url_for('events.read_one_event', event_id=1))
+
+    # THEN the response should have the appropriate error code
+    assert resp.status_code == 404
 
 @pytest.mark.smoke
 def test_replace_event(auth_client):
@@ -169,6 +177,33 @@ def test_replace_event(auth_client):
         assert resp.json['id'] == event.id
         assert resp.json['title'] != event.title
     
+
+@pytest.mark.smoke
+def test_replace_invalid_event(auth_client):
+    # GIVEN a database with events
+    count = random.randint(3, 11)
+    create_multiple_events(auth_client.sqla, count)
+
+    # WHEN we attempt to edit an invalid event
+    original_event = auth_client.sqla.query(Event).first()
+    modified_event = event_object_factory(auth_client.sqla)
+
+    if flip():
+        modified_event['title'] = None
+    elif flip():
+        modified_event['start'] = None
+    else:
+        modified_event['end'] = None
+
+    resp = auth_client.put(url_for('events.replace_event', event_id=original_event.id), json=modified_event)
+    
+    # THEN the response should have the correct code
+    assert resp.status_code == 422
+    # AND the event should be unchanged
+    new_event = auth_client.sqla.query(Event).filter(Event.id == original_event.id).first()
+    assert new_event.title == original_event.title
+    assert new_event.start == original_event.start
+    assert new_event.end == original_event.end
 
 @pytest.mark.smoke
 def test_update_event(auth_client):
@@ -442,6 +477,31 @@ def test_read_one_team(auth_client):
     assert resp.json["description"] == team.description
     assert resp.json["active"] == team.active
     
+
+@pytest.mark.smoke
+def test_read_all_team_members(auth_client):
+    # GIVEN
+    count = random.randint(5, 15)
+    create_multiple_teams(auth_client.sqla, count)
+    person_count = random.randint(20, 30)
+    create_multiple_people(auth_client.sqla, count)
+    
+    # WHEN
+    create_teams_members(auth_client.sqla)
+    teams = auth_client.sqla.query(Team).all()
+
+    for team in teams:
+        members = auth_client.sqla.query(TeamMember).filter(TeamMember.team_id == team.id).all()
+        
+        # THEN
+        resp = auth_client.get(url_for('events.read_all_team_members', team_id = team.id))
+        assert resp.status_code == 200
+
+        for member in members:
+            in_team = False
+            team_ids = get_team_ids(resp.json[str(member.member_id)]['teams'])
+            assert team.id in team_ids
+
 
 @pytest.mark.smoke
 def test_replace_team(auth_client):

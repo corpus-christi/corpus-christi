@@ -345,7 +345,7 @@ export default {
           .put(`/api/v1/events/assets/${assetId}`, newAsset)
           .then(resp => {
             console.log("EDITED", resp);
-            Object.assign(this.assets[idx], newAsset);
+            Object.assign(this.assets[idx], resp.data);
             this.assetDialog.show = false;
             this.assetDialog.saveLoading = false;
             this.showSnackbar(this.$t("events.assets.asset-edited"));

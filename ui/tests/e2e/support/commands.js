@@ -31,17 +31,20 @@ Cypress.Commands.add('login', function() {
   cy.get('[data-cy=login]').click();
 })
 
-// TODO: Auto login at some point??? check with Nurk
+// TODO: Eventually bypass logging in before each test
+// import store from "../../../src/store"
+// const getStore = () => cy.window().its('app.$store');
+
 // Cypress.Commands.add('login', () => { 
 //   cy.request({
 //     method: 'POST',
-//     url: 'localhost:8080/login',
+//     url: '/api/v1/auth/login',
 //     body: {
 //       username: 'Cytest',
-//       password: 'password',
+//       password: 'password'
 //     }
-//   })
-//   .then((resp) => {
-//     window.localStorage.setItem('jwt', resp.body.user.token)
+//   }).then(function() {
+//     console.log(getStore());
+//     getStore().mutations.logIn({});
 //   })
 // })
