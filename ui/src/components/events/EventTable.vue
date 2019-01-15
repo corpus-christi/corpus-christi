@@ -316,7 +316,7 @@ export default {
       const putId = copyEvent.id;
       delete copyEvent.id;
       delete copyEvent.location; //Temporary delete
-      this.$http
+      this.$http //TODO change to patch
         .put(`/api/v1/events/${putId}`, copyEvent)
         .then(resp => {
           console.log("UNARCHIVED", resp);

@@ -11,10 +11,11 @@ from werkzeug.security import check_password_hash
 from .models import Asset, AssetSchema, Event, EventSchema, Team, TeamSchema, EventParticipant, EventParticipantSchema, EventPerson, EventPersonSchema, TeamMember, TeamMemberSchema, EventAsset, EventAssetSchema, EventTeam, EventTeamSchema
 from ..places.models import Location, Country
 from ..people.models import Person
-from .create_event_data import create_multiple_events, event_object_factory, create_multiple_teams, flip
+from .create_event_data import create_multiple_events, event_object_factory, create_multiple_assets, create_multiple_teams, flip, fake
 from ..places.test_places import create_multiple_locations, create_multiple_addresses, create_multiple_areas 
 
 fake = Faker()
+
 # ---- Event
 
 @pytest.mark.smoke
@@ -69,6 +70,7 @@ def test_read_one_event(auth_client):
     events = auth_client.sqla.query(Event).all()
 
     for event in events:
+        # THEN
         resp = auth_client.get(url_for('events.read_one_event', event_id = event.id))
         assert resp.status_code == 200
         assert resp.json['title'] == event.title
@@ -76,153 +78,227 @@ def test_read_one_event(auth_client):
         # assert resp.json['start'] == str(event.start)
 
 
-@pytest.mark.xfail()
+@pytest.mark.smoke
 def test_replace_event(auth_client):
     # GIVEN
+    count = random.randint(3, 11)
+    create_multiple_events(auth_client.sqla, count)
+
     # WHEN
-    # THEN
-    assert True == False
+    events = auth_client.sqla.query(Event).all()
+
+    for event in events:
+        # THEN
+        resp = auth_client.patch(url_for('events.replace_event', event_id = event.id), json = event_object_factory(auth_client.sqla))
+        
+        assert resp.status_code == 200
+        assert resp.json['id'] == event.id
+        assert resp.json['title'] != event.title
     
 
-@pytest.mark.xfail()
+@pytest.mark.smoke
 def test_update_event(auth_client):
     # GIVEN
+    count = random.randint(3,11)
+    create_multiple_events(auth_client.sqla, count)
+
     # WHEN
-    # THEN
-    assert True == False
+    events = auth_client.sqla.query(Event).all()
+
+    for event in events:
+        # THEN
+        payload = {}
+        new_event = event_object_factory(auth_client.sqla)
+
+        flips = (flip(), flip(), flip(), flip(), flip(), flip())
+
+        print(new_event)
+        if flips[0]:
+            payload['title'] = new_event['title']
+        if flips[1]:
+            payload['start'] = new_event['start']
+        if flips[2]:
+            payload['end'] = new_event['end']
+        if flips[3]:
+            payload['active'] = new_event['active']
+        if flips[4] and 'description' in new_event.keys():
+            payload['description'] = new_event['description']
+        if flips[5] and 'location_id' in new_event.keys():
+            payload['location_id'] = new_event['location_id']
+
+        resp = auth_client.patch(url_for('events.update_event', event_id = event.id), json=payload)
+
+        assert resp.status_code == 200
+
+        if flips[0]:
+            assert resp.json['title'] == payload['title']
+        if flips[1]:
+            assert resp.json['start'] == payload['start'].replace(' ', 'T') + "+00:00"
+        if flips[2]:
+            assert resp.json['end'] == payload['end'].replace(' ', 'T') + "+00:00"
+        if flips[3]:
+            assert resp.json['active'] == payload['active']
+        if flips[4] and 'description' in new_event.keys():
+            assert resp.json['description'] == payload['description']
+        if flips[5] and 'location_id' in new_event.keys():
+            assert resp.json['location'] == payload['location_id']
     
 
-@pytest.mark.xfail()
+@pytest.mark.smoke
 def test_delete_event(auth_client):
     # GIVEN
+    count = random.randint(3, 11)
+    create_multiple_events(auth_client.sqla, count)
+
     # WHEN
-    # THEN
-    assert True == False
+    events = auth_client.sqla.query(Event).all()
+
+    deleted = 0
+    for event in events:
+        # THEN
+        if flip():
+            resp = auth_client.get(url_for('events.delete_event', event_id = event.id))
+            assert resp.status_code == 200
+            deleted += 1
+
+    new_events = auth_client.sqla.query(Event).filter(Event.active == True).all()
+    assert len(new_events) == count - deleted
     
 
 # ---- Asset
 
+# ---- Asset-related helper functions
+def generate_locations(auth_client):
+    Country.load_from_file()
+    create_multiple_areas(auth_client.sqla, 1)
+    create_multiple_addresses(auth_client.sqla, 1)
+    create_multiple_locations(auth_client.sqla, 2)
 
-#@pytest.mark.smoke
-#def test_create_asset(auth_client):
-#    # GIVEN a database with some locations
-#    Country.load_from_file()
-#    create_multiple_areas(auth_client.sqla, 1)
-#    create_multiple_addresses(auth_client.sqla, 1)
-#    create_multiple_locations(auth_client.sqla, 2)
-#    location_id = auth_client.sqla.query(Location.id).first()[0]
-#    print(location_id)
-#
-#    # WHEN we create an asset
-#    new_asset = {
-#            'description': fake.sentences(nb=1)[0],
-#            'active': flip()
-#    }
-#    resp = auth_client.post(url_for('events.create_asset'), json=new_asset)
-#    # THEN we expect the right status code
-#    assert resp.status_code == 201
-#    # THEN we expect the correct attributes of the given asset in the database
-#    queried_asset = auth_client.sqla.query(Asset).filter(Asset.id == resp.json["id"]).first()
-#    for attr in new_asset:
-#        assert new_asset[attr] == queried_asset.__dict__[attr]
-#    
-#
-#@pytest.mark.smoke
-#def test_read_all_assets(auth_client):
-#    # GIVEN a database with some assets
-#    count = random.randint(5, 15)
-#    create_multiple_assets(auth_client.sqla, count)
-#    # WHEN we read all active ones
-#    active_assets = auth_client.get(url_for('events.read_all_assets')).json
-#    queried_active_assets_count = auth_client.sqla.query(Asset).filter(Asset.active==True).count()
-#    # THEN we should have the same amount as we do in the database
-#    assert len(active_assets) == queried_active_assets_count
-#    # THEN for each asset, the attributes should match
-#    for asset in active_assets:
-#        queried_asset = auth_client.sqla.query(Asset).filter(Asset.id == asset["id"]).first()
-#        assert queried_asset.description == asset["description"]
-#        assert queried_asset.active == asset["active"]
-#    # WHEN we read all assets (active and inactive)
-#    all_assets = auth_client.get(url_for('events.read_all_assets', return_group="all")).json
-#    # THEN we should have the same number
-#    assert len(all_assets) == count
-#    # WHEN we ask for all inactive assets
-#    inactive_assets = auth_client.get(url_for('events.read_all_assets', return_group="inactive")).json
-#    queried_inactive_assets_count = auth_client.sqla.query(Asset).filter(Asset.active==False).count()
-#    # THEN we should have the correct number of inactive assets
-#    assert len(inactive_assets) == queried_inactive_assets_count
-#    
-#
-#@pytest.mark.smoke
-#def test_read_one_asset(auth_client):
-#    # GIVEN a database with some assets
-#    count = random.randint(5, 15)
-#    create_multiple_assets(auth_client.sqla, count)
-#    # WHEN we read one asset
-#    asset_id = auth_client.sqla.query(Asset.id).first()[0]
-#    resp = auth_client.get(url_for('events.read_one_asset', asset_id = asset_id))
-#    # THEN we should have the correct status code
-#    assert resp.status_code == 200
-#    # THEN the asset should end up with the correct attribute
-#    asset = auth_client.sqla.query(Asset).filter(Asset.id == asset_id).first()
-#    assert resp.json["description"] == asset.description
-#    assert resp.json["active"] == asset.active
-#    
-#
-#@pytest.mark.smoke
-#def test_replace_asset(auth_client):
-#    # GIVEN a database with some assets
-#    count = random.randint(5, 15)
-#    create_multiple_assets(auth_client.sqla, count)
-#    # WHEN we replace one asset
-#    #new_asset = 
-#    asset_id = auth_client.sqla.query(Asset.id).first()[0]
-#    dscrptn = fake.sentences(nb=1)[0]
-#    resp = auth_client.put(url_for('events.update_asset', asset_id = asset_id), json={
-#        'description': dscrptn,
-#        'active': False
-#    })
-#    # THEN we should have the correct status code
-#    assert resp.status_code == 200 
-#    # THEN the asset should end up with the correct attribute
-#    new_asset = auth_client.sqla.query(Asset).filter(Asset.id == asset_id).first()
-#    assert new_asset.description == dscrptn
-#    assert new_asset.active == False
-#    
-#
-#@pytest.mark.smoke
-#def test_update_asset(auth_client):
-#    # GIVEN a database with some assets
-#    count = random.randint(5, 15)
-#    create_multiple_assets(auth_client.sqla, count)
-#    # WHEN we update one asset
-#    asset_id = auth_client.sqla.query(Asset.id).first()[0]
-#    dscrptn = fake.sentences(nb=1)[0]
-#    resp = auth_client.patch(url_for('events.update_asset', asset_id = asset_id), json={
-#        'description': dscrptn,
-#        'active': False
-#    })
-#    # THEN we should have the correct status code
-#    assert resp.status_code == 200 
-#    # THEN the asset should end up with the correct attribute
-#    new_asset = auth_client.sqla.query(Asset).filter(Asset.id == asset_id).first()
-#    assert new_asset.description == dscrptn
-#    assert new_asset.active == False
-#    
-#
-#@pytest.mark.smoke
-#def test_delete_asset(auth_client):
-#    # GIVEN a database with some assets
-#    count = random.randint(5, 15)
-#    create_multiple_assets(auth_client.sqla, count)
-#    # WHEN we delete one from it
-#    deleting_id = auth_client.sqla.query(Asset.id).first()[0]
-#    resp = auth_client.delete(url_for('events.delete_asset', asset_id = deleting_id))
-#    # THEN we should have the correct status code
-#    assert resp.status_code == 204
-#    # THEN we should have the asset as inactive
-#    isActive = auth_client.sqla.query(Asset.active).filter(Asset.id == deleting_id).first()[0]
-#    assert isActive == False
+
+@pytest.mark.smoke
+def test_create_asset(auth_client):
+    # GIVEN a database with some locations
+    generate_locations(auth_client)
+    location_id = auth_client.sqla.query(Location.id).first()[0]
+    # WHEN we create an asset
+    new_asset = {
+            'description': fake.sentences(nb=1)[0],
+            'active': flip(),
+            'location_id': location_id
+    }
+    resp = auth_client.post(url_for('events.create_asset'), json=new_asset)
+    # THEN we expect the right status code
+    assert resp.status_code == 201
+    # THEN we expect the correct attributes of the given asset in the database
+    queried_asset = auth_client.sqla.query(Asset).filter(Asset.id == resp.json["id"]).first()
+    for attr in new_asset:
+        assert new_asset[attr] == queried_asset.__dict__[attr]
+    
+
+@pytest.mark.smoke
+def test_read_all_assets(auth_client):
+    # GIVEN a database with some assets
+    generate_locations(auth_client)
+    count = random.randint(5, 15)
+    create_multiple_assets(auth_client.sqla, count)
+    # WHEN we read all active ones
+    active_assets = auth_client.get(url_for('events.read_all_assets')).json
+    queried_active_assets_count = auth_client.sqla.query(Asset).filter(Asset.active==True).count()
+    # THEN we should have the same amount as we do in the database
+    assert len(active_assets) == queried_active_assets_count
+    # THEN for each asset, the attributes should match
+    for asset in active_assets:
+        queried_asset = auth_client.sqla.query(Asset).filter(Asset.id == asset["id"]).first()
+        assert queried_asset.description == asset["description"]
+        assert queried_asset.active == asset["active"]
+    # WHEN we read all assets (active and inactive)
+    all_assets = auth_client.get(url_for('events.read_all_assets', return_group="all")).json
+    # THEN we should have the same number
+    assert len(all_assets) == count
+    # WHEN we ask for all inactive assets
+    inactive_assets = auth_client.get(url_for('events.read_all_assets', return_group="inactive")).json
+    queried_inactive_assets_count = auth_client.sqla.query(Asset).filter(Asset.active==False).count()
+    # THEN we should have the correct number of inactive assets
+    assert len(inactive_assets) == queried_inactive_assets_count
+    
+
+@pytest.mark.smoke
+def test_read_one_asset(auth_client):
+    # GIVEN a database with some assets
+    generate_locations(auth_client)
+    count = random.randint(5, 15)
+    create_multiple_assets(auth_client.sqla, count)
+    # WHEN we read one asset
+    asset_id = auth_client.sqla.query(Asset.id).first()[0]
+    resp = auth_client.get(url_for('events.read_one_asset', asset_id = asset_id))
+    # THEN we should have the correct status code
+    assert resp.status_code == 200
+    # THEN the asset should end up with the correct attribute
+    asset = auth_client.sqla.query(Asset).filter(Asset.id == asset_id).first()
+    assert resp.json["description"] == asset.description
+    assert resp.json["active"] == asset.active
+    
+
+@pytest.mark.smoke
+def test_replace_asset(auth_client):
+    # GIVEN a database with some assets
+    generate_locations(auth_client)
+    count = random.randint(5, 15)
+    create_multiple_assets(auth_client.sqla, count)
+    # WHEN we replace one asset
+    asset_id = auth_client.sqla.query(Asset.id).first()[0]
+    dscrptn = fake.sentences(nb=1)[0]
+    location_id = auth_client.sqla.query(Location.id).first()[0]
+    resp = auth_client.put(url_for('events.update_asset', asset_id = asset_id), json={
+        'description': dscrptn,
+        'active': False,
+        'location_id': location_id
+    })
+    # THEN we should have the correct status code
+    assert resp.status_code == 200 
+    # THEN the asset should end up with the correct attribute
+    new_asset = auth_client.sqla.query(Asset).filter(Asset.id == asset_id).first()
+    assert new_asset.description == dscrptn
+    assert new_asset.active == False
+    
+
+@pytest.mark.smoke
+def test_update_asset(auth_client):
+    # GIVEN a database with some assets
+    generate_locations(auth_client)
+    count = random.randint(5, 15)
+    create_multiple_assets(auth_client.sqla, count)
+    # WHEN we update one asset
+    asset_id = auth_client.sqla.query(Asset.id).first()[0]
+    dscrptn = fake.sentences(nb=1)[0]
+    location_id = auth_client.sqla.query(Location.id).first()[0]
+    resp = auth_client.patch(url_for('events.update_asset', asset_id = asset_id), json={
+        'description': dscrptn,
+        'active': False,
+        'location_id': location_id
+    })
+    # THEN we should have the correct status code
+    assert resp.status_code == 200 
+    # THEN the asset should end up with the correct attribute
+    new_asset = auth_client.sqla.query(Asset).filter(Asset.id == asset_id).first()
+    assert new_asset.description == dscrptn
+    assert new_asset.active == False
+    
+
+@pytest.mark.smoke
+def test_delete_asset(auth_client):
+    # GIVEN a database with some assets
+    generate_locations(auth_client)
+    count = random.randint(5, 15)
+    create_multiple_assets(auth_client.sqla, count)
+    # WHEN we delete one from it
+    deleting_id = auth_client.sqla.query(Asset.id).first()[0]
+    resp = auth_client.delete(url_for('events.delete_asset', asset_id = deleting_id))
+    # THEN we should have the correct status code
+    assert resp.status_code == 204
+    # THEN we should have the asset as inactive
+    isActive = auth_client.sqla.query(Asset.active).filter(Asset.id == deleting_id).first()[0]
+    assert isActive == False
     
 
 # ---- Team
