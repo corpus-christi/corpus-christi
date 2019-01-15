@@ -35,10 +35,10 @@ before_script:
 script:
 
 notifications:
-   slack:
-       on_success: always
+    slack:
+        on_success: always
 deploy:
-        provider: linode
-        local-dir: public
+    provider: linode
+    local-dir: public
         on:
-                branch: staging
+            branch: corpus-cristi/development
