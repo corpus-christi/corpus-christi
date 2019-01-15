@@ -297,12 +297,6 @@ def read_one_role(role_id):
     return jsonify(role_schema.dump(result))
 
 
-@people.route('/role/<role_id>', methods=['PUT'])
-@jwt_required
-def replace_role(role_id):
-    pass
-
-
 @people.route('/role/<role_id>', methods=['PATCH'])
 @jwt_required
 def update_role(role_id):
@@ -320,10 +314,25 @@ def update_role(role_id):
     return jsonify(role_schema.dump(role))
 
 
-@people.route('/role/<role_id>', methods=['DELETE'])
+@people.route('/role/activate/<role_id>', methods=['PUT'])
 @jwt_required
-def delete_role(role_id):
-    pass
+def activate_role(role_id):
+    role = db.session.query(Role).filter_by(id=role_id).first()
+    setattr(role, 'active', True)
+    db.session.commit()
+    return jsonify(role_schema.dump(role))
+
+
+@people.route('/role/deactivate/<role_id>', methods=['PUT'])
+@jwt_required
+def deactivate_role(role_id):
+    role = db.session.query(Role).filter_by(id=role_id).first()
+
+    setattr(role, 'active', False)
+
+    db.session.commit()
+
+    return jsonify(role_schema.dump(role))
 
 
 @people.route('/role/<account_id>&<role_id>', methods=['POST'])
