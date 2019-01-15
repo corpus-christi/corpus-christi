@@ -55,7 +55,7 @@ export default {
           icon: "school"
         },
         {
-          title: this.$t("events.title"),
+          title: this.$t("events.header"),
           route: "events",
           icon: "event"
         }
