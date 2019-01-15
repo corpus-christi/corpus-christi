@@ -30,6 +30,9 @@ class Person(Base):
     location_id = Column(Integer, ForeignKey('places_location.id'))
     address = relationship('Location', backref='people', lazy=True)
 
+    def _init(self, accountInfo):
+        self.accountInfo = accountInfo
+
     def __repr__(self):
         return f"<Person(id={self.id})>"
 
@@ -51,7 +54,9 @@ class PersonSchema(Schema):
     email = fields.String(allow_none=True)
 
     active = fields.Boolean(required=True)
-    location_id = fields.Integer(data_key='locationId')
+    location_id = fields.Integer(data_key='locationId', allow_none=True)
+
+    accountInfo = fields.Nested('AccountSchema', allow_none=True, only=['username','id'])
 
     attributesInfo = fields.Nested('Person_AttributeSchema', many=True)
 
@@ -106,14 +111,15 @@ class AccountSchema(Schema):
     username = fields.String(required=True, validate=Length(min=1))
     password = fields.String(attribute='password_hash', load_only=True,
                              required=True, validate=Length(min=6))
-    active = fields.Boolean()
+    active = fields.Boolean(missing=None)
     person_id = fields.Integer(
         required=True, data_key="personId", validate=Range(min=1))
 
     @pre_load
     def hash_password(self, data):
         """Make sure the password is properly hashed when creating a new account."""
-        data['password'] = generate_password_hash(data['password'])
+        if 'password' in data.keys():
+            data['password'] = generate_password_hash(data['password'])
         return data
 
 
