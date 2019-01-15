@@ -79,7 +79,7 @@ const router = new VueRouter({
               name: "teams",
               path: "teams",
               meta: { authRequired: true },
-              component: () => import("@/components/events/EventTeams")
+              component: () => import("@/components/events/teams/EventTeams")
             },
             {
               name: "assets",

@@ -47,7 +47,7 @@
             >
               <v-icon small>delete</v-icon>
             </v-btn>
-            <span>{{ $t("actions.tooltips.archive") }}</span>
+            <span>{{ $t("actions.tooltips.remove") }}</span>
           </v-tooltip>
         </td>
       </template>
@@ -129,7 +129,12 @@ export default {
   name: "EventParticipants",
   data() {
     return {
-      rowsPerPageItem: [10, 15, 25, {"text":"$vuetify.dataIterator.rowsPerPageAll","value":-1}],
+      rowsPerPageItem: [
+        10,
+        15,
+        25,
+        { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 }
+      ],
       tableLoading: false,
       selectedValue: null,
       search: "",
@@ -147,7 +152,7 @@ export default {
       snackbar: {
         show: false,
         text: ""
-      },
+      }
     };
   },
 
@@ -181,13 +186,18 @@ export default {
       this.addParticipantDialog.loading = true;
       const id = this.$route.params.event;
       this.$http
-        .post(`/api/v1/events/${id}/participants/${this.addParticipantDialog.newParticipant.id}`, {confirmed: false})
+        .post(
+          `/api/v1/events/${id}/participants/${
+            this.addParticipantDialog.newParticipant.id
+          }`,
+          { confirmed: false }
+        )
         .then(resp => {
           this.showSnackbar(this.$t("events.event-added"));
           this.addParticipantDialog.loading = false;
           this.addParticipantDialog.show = false;
           this.addParticipantDialog.newParticipant = null;
-          this.getParticipants()
+          this.getParticipants();
         })
         .catch(err => {
           this.addParticipantDialog.loading = false;
@@ -241,7 +251,7 @@ export default {
   },
 
   mounted: function() {
-    this.getParticipants()
+    this.getParticipants();
   }
 };
 </script>

@@ -1,4 +1,7 @@
 events:
+  header:
+    en: Events
+    es: Eventos
   title:
     en: Event Title
     es: Título del Evento
@@ -65,10 +68,50 @@ events:
     title:
       en: Participants
       es: Participantes
+
   teams:
     title:
       en: Teams
       es: Equipos
+    description:
+      en: Description
+      es: Descripción
+    new:
+      en: Add Team
+      es: Añadir Equipo
+    create-team:
+      en: Create Team
+      es: Crear Equipo
+    edit-team:
+      en: Edit Team
+      es: Editar Equipo
+    confirm-archive:
+      en: Are you sure you want to archive this team?
+      es: ¿Seguro que quieres archivar este equipo?
+    team-archived:
+      en: Team archived
+      es: Equipo archivado
+    error-archiving-team:
+      en: Error while archiving team 
+      es: Error al archivar este equipo
+    team-unarchived:
+      en: Team unarchived
+      es: Equipo desarchivado   # probably not right
+    error-unarchiving-team:
+      en: Error while unarchiving team 
+      es: Error al desarchivar equipo
+    team-edited:
+      en: Team edited
+      es: Equipo editado   # ?
+    error-editing-team:
+      en: Error while editing team
+      es: Error al editar equipo
+    team-added:
+      en: Team added
+      es: Equipo agregado
+    error-adding-team:
+      en: Error while adding team
+      es: Error al agregar equipo
   
   assets:
     title: 

@@ -2,9 +2,7 @@
   <div>
     <v-autocomplete
       data-cy="entity-search-field"
-      v-bind:label="
-        location ? $t('events.event-location') : $t('actions.search-people')
-      "
+      v-bind:label="getLabel"
       prepend-icon="search"
       :items="entities"
       :loading="isLoading"
@@ -32,6 +30,7 @@ export default {
   props: {
     location: Boolean,
     person: Boolean,
+    course: Boolean,
     value: Object,
     searchEndpoint: String,
     errorMessages: String
@@ -46,6 +45,12 @@ export default {
   },
 
   methods: {
+    getLabel() {
+      if (this.location) return $t('events.event-location');
+      else if (this.person) return $t('actions.search-people')
+      else if (this.course) return $t('actions.search-courses')
+    },
+
     setSelected(entity) {
       this.$emit("input", entity);
     },
@@ -62,6 +67,8 @@ export default {
           entity.address.city;
       } else if (this.person) {
         entityDescriptor = entity.firstName + " " + entity.lastName;
+      } else if (this.course) {
+        entityDescriptor = entity.name;
       }
 
       if (entityDescriptor.length > letterLimit) {
@@ -80,13 +87,15 @@ export default {
   mounted() {
     //TODO use search-input.sync to avoid making a huge request here
     this.isLoading = true;
-    var endpoint = this.location
-      ? "/api/v1/places/locations"
-      : "/api/v1/people/persons";
+    var endpoint = ""
+    if (this.location) endpoint = "/api/v1/places/locations";
+    else if (this.person) endpoint = "/api/v1/people/persons";
+    else if (this.course) endpoint = "/api/v1/courses/courses";
     this.$http
       .get(endpoint)
       .then(resp => {
         this.entities = resp.data;
+        console.log(this.entities)
         this.isLoading = false;
       })
       .catch(error => {

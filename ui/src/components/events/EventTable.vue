@@ -3,7 +3,7 @@
     <v-toolbar class="pa-1">
       <v-layout align-center justify-space-between fill-height>
         <v-flex md2>
-          <v-toolbar-title>{{ $t("events.title") }}</v-toolbar-title>
+          <v-toolbar-title>{{ $t("events.header") }}</v-toolbar-title>
         </v-flex>
         <v-flex md2>
           <v-text-field
@@ -121,7 +121,7 @@
                 color="primary"
                 slot="activator"
                 v-on:click="unarchive(props.item)"
-                :loading="props.item.unarchiving"
+                :loading="props.item.id < 0"
                 data-cy="unarchive"
               >
                 <v-icon small>undo</v-icon>
@@ -199,7 +199,12 @@ export default {
 
   data() {
     return {
-      rowsPerPageItem: [10, 15, 25, {"text":"$vuetify.dataIterator.rowsPerPageAll","value":-1}],
+      rowsPerPageItem: [
+        10,
+        15,
+        25,
+        { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 }
+      ],
       tableLoading: true,
       events: [],
       eventDialog: {
@@ -313,22 +318,16 @@ export default {
 
     unarchive(event) {
       const idx = this.events.findIndex(ev => ev.id === event.id);
-      const copyEvent = JSON.parse(JSON.stringify(event));
-      event.unarchiving = true;
-      copyEvent.active = true;
-      const putId = copyEvent.id;
-      delete copyEvent.id;
-      delete copyEvent.location; //Temporary delete
-      this.$http //TODO change to patch
-        .put(`/api/v1/events/${putId}`, copyEvent)
+      const patchId = event.id;
+      event.id *= -1; // to show loading spinner
+      this.$http
+        .patch(`/api/v1/events/${patchId}`, { active: true })
         .then(resp => {
           console.log("UNARCHIVED", resp);
-          delete event.unarchiving;
           Object.assign(this.events[idx], resp.data);
           this.showSnackbar(this.$t("events.event-unarchived"));
         })
         .catch(err => {
-          delete event.unarchiving;
           console.error("UNARCHIVE FALURE", err.response);
           this.showSnackbar(this.$t("events.error-unarchiving-event"));
         });

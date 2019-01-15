@@ -42,6 +42,7 @@
       "tooltips": {
         "activate": "Activate",
         "archive": "Archive",
+        "remove": "Remove",
         "settings": "Settings"
       },
       "view-active": "View Active",
@@ -101,12 +102,26 @@
       "event-edited": "Event edited",
       "event-location": "Event Location",
       "event-unarchived": "Event unarchived",
+      "header": "Events",
       "participants": {
         "title": "Participants"
       },
       "start-date": "Start Date",
       "start-time": "Start Time",
       "teams": {
+        "confirm-archive": "Are you sure you want to archive this team?",
+        "create-team": "Create Team",
+        "description": "Description",
+        "edit-team": "Edit Team",
+        "error-adding-team": "Error while adding team",
+        "error-archiving-team": "Error while archiving team",
+        "error-editing-team": "Error while editing team",
+        "error-unarchiving-team": "Error while unarchiving team",
+        "new": "Add Team",
+        "team-added": "Team added",
+        "team-archived": "Team archived",
+        "team-edited": "Team edited",
+        "team-unarchived": "Team unarchived",
         "title": "Teams"
       },
       "title": "Event Title"
@@ -161,8 +176,11 @@
     "validation": {
       "attributes": {
         "email": "email",
+        "endDate": "end date",
         "firstName": "first name",
         "lastName": "last name",
+        "location": "location",
+        "startDate": "start date",
         "title": "title"
       },
       "messages": {
@@ -215,6 +233,7 @@
       "tooltips": {
         "activate": "Activar",
         "archive": "Archivar",
+        "remove": "Retirar",
         "settings": "Ajustes"
       },
       "view-active": "Ver Activo",
@@ -274,12 +293,26 @@
       "event-edited": "Evento editado",
       "event-location": "Ubicaci\u00f3n de Evento",
       "event-unarchived": "Evento desarchivado",
+      "header": "Eventos",
       "participants": {
         "title": "Participantes"
       },
       "start-date": "Fecha de Inicio",
       "start-time": "Hora de Inicio",
       "teams": {
+        "confirm-archive": "\u00bfSeguro que quieres archivar este equipo?",
+        "create-team": "Crear Equipo",
+        "description": "Descripci\u00f3n",
+        "edit-team": "Editar Equipo",
+        "error-adding-team": "Error al agregar equipo",
+        "error-archiving-team": "Error al archivar este equipo",
+        "error-editing-team": "Error al editar equipo",
+        "error-unarchiving-team": "Error al desarchivar equipo",
+        "new": "A\u00f1adir Equipo",
+        "team-added": "Equipo agregado",
+        "team-archived": "Equipo archivado",
+        "team-edited": "Equipo editado",
+        "team-unarchived": "Equipo desarchivado",
         "title": "Equipos"
       },
       "title": "T\u00edtulo del Evento"
@@ -334,8 +367,11 @@
     "validation": {
       "attributes": {
         "email": "correo electr\u00f3nico",
+        "endDate": "fecha final",
         "firstName": "nombre de pila",
         "lastName": "appellido",
+        "location": "ubicaci\u00f3n",
+        "startDate": "fecha de inicio",
         "title": "t\u00edtulo"
       },
       "messages": {

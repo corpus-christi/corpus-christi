@@ -91,3 +91,7 @@ actions:
     activate:
       en: Activate
       es: Activar
+    remove:
+      en: Remove
+      es: Retirar
+
