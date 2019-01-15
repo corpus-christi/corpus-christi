@@ -45,11 +45,14 @@ courses:
     en: Choose Time
     es: Elegir Tiempo
   choose-teacher:
-    en: Choose Teacher
-    es: Elegir Maestro
+    en: Teacher
+    es: Maestro
   choose-location:
-    en: Choose Location
-    es: Elegir Ubicación
+    en: Location
+    es: Ubicación
   max-size:
     en: Max Number of Students
     es: Número Máximo de Estudiantes
+  dates:
+    en: Choose Dates
+    es: Elegir Fechas

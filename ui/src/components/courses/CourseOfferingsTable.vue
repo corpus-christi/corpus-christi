@@ -60,7 +60,7 @@
     </v-snackbar>
 
     <!-- New/Edit dialog -->
-    <v-dialog persistant scrollable v-model="courseOfferingDialog.show" max-width="500px">
+    <v-dialog persistent scrollable v-model="courseOfferingDialog.show" max-width="500px">
       <CourseOfferingForm
         v-bind:editMode="courseOfferingDialog.editMode"
         v-bind:initialData="courseOfferingDialog.courseOffering"

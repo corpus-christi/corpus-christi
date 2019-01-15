@@ -35,7 +35,7 @@
                 multiple
                 chips
                 small-chips
-                v-bind:label="$t('courses.title')"
+                v-bind:label="$t('courses.dates')"
                 prepend-icon="event"
                 readonly
               ></v-combobox>
@@ -93,13 +93,13 @@
          </v-time-picker>
        </v-dialog>
         <!-- teacher -->
-        <v-text-field v-bind:label="$t('courses.choose-teacher')" name="teacher"></v-text-field>
+        <v-text-field v-model="teacher" v-bind:label="$t('courses.choose-teacher')" name="teacher"></v-text-field>
 
         <!-- location -->
-        <v-text-field v-bind:label="$t('courses.choose-location')" name="location"></v-text-field>
+        <v-text-field v-model="location" v-bind:label="$t('courses.choose-location')" name="location"></v-text-field>
 
-        <!-- max size -->
-        <v-text-field v-bind:label="$t('courses.max-size')" name="max-size"></v-text-field>
+        <!-- max size TODO: integer validation-->
+        <v-text-field v-model="course.max_size" v-bind:label="$t('courses.max-size')" name="max-size"></v-text-field>
       </form>
     </v-card-text>
     <v-card-actions>
@@ -137,11 +137,12 @@ export default {
     return {
       availableCourses: [],
       prereqs: [],
-      location: "location",
-      teacher: "teacher",
-      description: "description",
+      location: "",
+      teacher: "",
+      description: "",
+      maxSize: 0,
       time: "",
-      date: "",
+      course_id: 0,
       dates: [],
       menu: false,
       
@@ -221,11 +222,11 @@ export default {
       this.$validator.reset();
     },
 
-    // Trigger a save event, returning the updated `Course`.
+    // Trigger a save event, returning the updated `Course Offering`.
     save() {
       this.$validator.validateAll();
       if (!this.errors.any()) {
-        this.course.when = this.getTimestamp(this.date, this.time);
+        // this.course.when = this.getTimestamp(this.date, this.time);
         this.$emit("save", this.course);
       }
     },
