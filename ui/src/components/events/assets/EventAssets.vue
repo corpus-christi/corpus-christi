@@ -1,37 +1,59 @@
 <template>
   <div>
-    <v-toolbar>
-      <v-toolbar-title>{{ $t("events.assets.title") }}</v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-text-field
-        v-model="search"
-        append-icon="search"
-        v-bind:label="$t('actions.search')"
-        single-line
-        hide-details
-      ></v-text-field>
-      <v-spacer></v-spacer>
-
-      <v-btn
-        color="primary"
-        raised
-        v-on:click.stop="newAsset"
-        data-cy="add-asset"
-      >
-        <v-icon dark left>add</v-icon>
-        {{ $t("events.assets.new") }}
-      </v-btn>
+    <v-toolbar class="pa-1">
+      <v-layout align-center justify-space-between fill-height>
+        <v-flex md2>
+          <v-toolbar-title>{{ $t("events.assets.title") }}</v-toolbar-title>
+        </v-flex>
+        <v-flex md2>
+          <v-text-field
+            v-model="search"
+            append-icon="search"
+            v-bind:label="$t('actions.search')"
+            single-line
+            hide-details
+            data-cy="form-search"
+          ></v-text-field>
+        </v-flex>
+        <v-flex md3>
+          <v-select
+            hide-details
+            solo
+            single-line
+            :items="viewOptions"
+            v-model="viewStatus"
+            data-cy="view-status-select"
+          >
+          </v-select>
+        </v-flex>
+        <v-flex shrink justify-self-end>
+          <v-btn
+            color="primary"
+            raised
+            v-on:click.stop="newAsset"
+            data-cy="add-asset"
+          >
+            <v-icon dark left>add</v-icon>
+            {{ $t("events.assets.new") }}
+          </v-btn>
+        </v-flex>
+      </v-layout>
     </v-toolbar>
 
     <v-data-table
       :headers="headers"
-      :items="assets"
+      :items="visibleAssets"
       :search="search"
+      :loading="tableLoading"
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
-        <td class="hover-hand">{{ props.item.description }}</td>
-        <td class="hover-hand">{{ props.item.location }}</td>
+        <td class="hover-hand">
+          {{ props.item.description }}
+        </td>        
+        <td class="hover-hand">
+          {{ getDisplayLocation(props.item.location) }}
+        </td>        
         <td>
           <template v-if="props.item.active">
             <v-tooltip bottom v-if="props.item.active">
@@ -145,18 +167,22 @@ export default {
   name: "EventAssets",
   components: { "asset-form": AssetForm },
   mounted() {
+    this.tableLoading = true;
     let eventId = this.$route.params.event; 
-    this.$http.get(`/api/v1/events/${eventId}`).then(resp => {
+    this.$http.get(`/api/v1/events/${eventId}?include_assets=1`).then(resp => {
       this.event = resp.data;
+      
       if (this.event.assets) {
-        this.assets = this.event.assets;
+        this.assets = this.event.assets.map(ev_as => ev_as.asset);      
+        this.tableLoading = false;
       }
-      console.log(this.assets);
+      // console.log(this.assets);
     });
   },
 
   data() {
     return {
+      tableLoading: true,
       assets: [],
       assetDialog: {
         show: false,
@@ -176,7 +202,13 @@ export default {
         show: false,
         text: ""
       },
-      viewStatus: "viewAll"
+      viewStatus: "viewAll",
+
+      windowSize: {
+        x: 0,
+        y: 0,
+        screen
+      }
     };
   },
   computed: {
@@ -188,11 +220,29 @@ export default {
         },
         {
           text: this.$t("events.assets.location"),
-          value: "location",
+          value: "location_name",
           width: "40%"
         },
         { text: this.$t("events.actions"), sortable: false, width: "20%" }
       ];
+    },
+
+    viewOptions() {
+      return [
+        { text: this.$t("actions.view-active"), value: "viewActive" },
+        { text: this.$t("actions.view-archived"), value: "viewArchived" },
+        { text: this.$t("actions.view-all"), value: "viewAll" }
+      ];
+    },
+
+    visibleAssets() {
+      if (this.viewStatus == "viewActive") {
+        return this.assets.filter(as => as.active);
+      } else if (this.viewStatus == "viewArchived") {
+        return this.assets.filter(as => !as.active);
+      } else {
+        return this.assets;
+      }
     },
 
     ...mapGetters(["currentLanguageCode"])
@@ -258,6 +308,8 @@ export default {
         .put(`/api/v1/events/assets/${putId}`, copyAsset)
         .then(resp => {
           console.log("UNARCHIVED", resp);
+          delete asset.unarchiving;
+          console.log(idx);
           Object.assign(this.assets[idx], resp.data);
           this.showSnackbar(this.$t("events.assets.asset-unarchived"));
         })
@@ -346,6 +398,28 @@ export default {
     showSnackbar(message) {
       this.snackbar.text = message;
       this.snackbar.show = true;
+    },
+
+    getDisplayLocation(location, length = 20) {
+      if (location && location.description) {
+        let name = location.description;
+        if (name && name.length && name.length > 0) {
+          if (name.length > length) {
+            return `${name.substring(0, length - 3)}...`;
+          }
+          return name;
+        }
+      }
+      return name;
+    },
+
+    onResize() {
+      this.windowSize = { x: window.innerWidth, y: window.innerHeight };
+      if (this.windowSize.x <= 960) {
+        this.windowSize.small = true;
+      } else {
+        this.windowSize.small = false;
+      }
     }
   }
 };
