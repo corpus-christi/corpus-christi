@@ -1,11 +1,10 @@
 // TODO: Skeleton done, needs more extensive testing
 describe("Archive Event Test", function() {
+  before(() => {
+    cy.login();
+  })
+
   it("GIVEN: Event Planner goes to Event page", function() {
-    cy.visit("/login");
-    cy.get("[data-cy=username]").type("Cytest");
-    cy.get("[data-cy=password]").type("password");
-    cy.get("[data-cy=login]").click();
-    cy.url().should("include", "/admin");
     cy.visit("/events/all");
   });
 
