@@ -646,6 +646,27 @@ def test_add_asset_to_invalid_event(auth_client):
     assert queried_event_asset_count == 0
 
 @pytest.mark.smoke
+def test_add_booked_asset_to_event(auth_client):
+    # GIVEN a database with some events and assets linked
+    generate_locations(auth_client)
+    location_id = auth_client.sqla.query(Location.id).first()[0]
+    create_multiple_assets(auth_client.sqla, 1)
+    create_multiple_events(auth_client.sqla, 2)
+    create_events_assets(auth_client.sqla, 1)
+
+    event_id = auth_client.sqla.query(Event.id).first()[0]
+    asset_id = auth_client.sqla.query(Asset.id).first()[0]
+    queried_event_asset_count = auth_client.sqla.query(EventAsset).filter(EventAsset.event_id == event_id, EventAsset.asset_id == asset_id).count()
+    # WHEN we create an asset to an event
+    url = url_for('events.add_asset_to_event', event_id=event_id, asset_id=asset_id)
+    resp = auth_client.post(url)
+    # THEN we expect the right status code
+    assert resp.status_code == 422
+    # THEN we expect the entry not to be duplicated in the database's linking table
+    new_queried_event_asset_count = auth_client.sqla.query(EventAsset).filter(EventAsset.event_id == event_id, EventAsset.asset_id == asset_id).count()
+    assert queried_event_asset_count == new_queried_event_asset_count
+
+@pytest.mark.smoke
 def test_remove_asset_from_event(auth_client):
     # GIVEN a database with some linked events and assets
     generate_locations(auth_client)
@@ -1027,6 +1048,43 @@ def test_add_team_member(auth_client):
 
 
 @pytest.mark.smoke
+def test_modify_team_member(auth_client):
+    # GIVEN
+    count = random.randint(5, 15)
+    create_multiple_teams(auth_client.sqla, count)
+    person_count = random.randint(20, 30)
+    create_multiple_people(auth_client.sqla, count)
+    
+    # WHEN
+    create_teams_members(auth_client.sqla)
+    team_members = auth_client.sqla.query(TeamMember).all()
+
+    for team_member in team_members:
+        f = flip()
+        resp = auth_client.patch(url_for('events.modify_team_member', team_id = team_member.team_id, member_id = team_member.member_id), json = {'active':f})
+        
+        assert resp.status_code == 200
+        assert resp.json['active'] == f
+
+
+@pytest.mark.smoke
+def test_modify_team_member_invalid(auth_client):
+    # GIVEN
+    count = random.randint(5, 15)
+    create_multiple_teams(auth_client.sqla, count)
+    person_count = random.randint(20, 30)
+    create_multiple_people(auth_client.sqla, count)
+    
+    # WHEN
+    create_teams_members(auth_client.sqla)
+    team_members = auth_client.sqla.query(TeamMember).all()
+
+    for team_member in team_members:
+        resp = auth_client.patch(url_for('events.modify_team_member', team_id = team_member.team_id, member_id = team_member.member_id), json = {'team_id':10})
+
+        assert resp.status_code == 422
+
+
 def test_delete_team_member(auth_client):
     # GIVEN a database with some linked teams and members
     create_multiple_teams(auth_client.sqla, 5)
@@ -1047,3 +1105,5 @@ def test_delete_team_member(auth_client):
     resp = auth_client.delete(url_for('events.delete_team_member', team_id=team_member.team_id, member_id=team_member.member_id))
     # THEN we expect an error
     assert resp.status_code == 404
+
+

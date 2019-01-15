@@ -20,7 +20,8 @@ def modify_entity(entity_type, schema, id, new_value_dict):
         return jsonify(f"Item with id #{id} does not exist."), 404
 
     for key, val in new_value_dict.items():
-        setattr(item, key, val)
+        if key != 'id':
+            setattr(item, key, val)
     
     db.session.commit()
 
@@ -344,12 +345,18 @@ def add_event_participants(event_id, person_id):
     event = db.session.query(Event).filter_by(id=event_id).first()
     event_participants = db.session.query(Event).join(EventParticipant).filter_by(person_id=person_id).all()
 
+    event_participant = db.session.query(EventParticipant).filter_by(event_id=event_id,person_id=person_id).first()
+
     if not event:
         return jsonify(f"Event with id #{event_id} does not exist."), 404
 
-    new_entry = EventParticipant(**{'event_id': event_id, 'person_id': person_id, 'confirmed': valid_confirmation['confirmed']})
-    db.session.add(new_entry)
-    db.session.commit()
+    # If participant is already booked for the event
+    if event_participant:
+        return jsonify(f"Person with id#{person_id} is already booked for event with id#{event_id}."), 422
+    else:
+        new_entry = EventParticipant(**{'event_id': event_id, 'person_id': person_id, 'confirmed': valid_confirmation['confirmed']})
+        db.session.add(new_entry)
+        db.session.commit()
 
     return jsonify(f"Person with id #{person_id} successfully booked for Event with id #{event_id}.")
 
@@ -622,7 +629,7 @@ def get_team_members(team_id):
 @jwt_required
 def modify_team_member(team_id, member_id):
     try:
-        valid_attributes = team_member_schema.load(request.json)
+        valid_attributes = team_member_schema.load(request.json, partial=('team_id', 'member_id'))
     except ValidationError as err:
         return jsonify(err.messages), 422
 
@@ -639,6 +646,11 @@ def modify_team_member(team_id, member_id):
 @events.route('/teams/<team_id>/members/<member_id>', methods=['POST','PUT'])
 @jwt_required
 def add_team_member(team_id, member_id):
+    try:
+        valid_attributes = team_member_schema.load(request.json, partial=('team_id', 'member_id'))
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+
     team = db.session.query(Team).filter_by(id=team_id).first()
     person = db.session.query(Person).filter_by(id=member_id).first()
 
@@ -647,10 +659,10 @@ def add_team_member(team_id, member_id):
     if not person:
         return jsonify(f"Person with id #{member_id} does not exist."), 404
 
-    team_member = db.session.query(TeamMember).filter_by(team_id=team_id).filter_by(member_id=member_id).first()
+    team_member = db.session.query(TeamMember).filter_by(team_id=team_id,member_id=member_id).first()
 
     if not team_member:
-        new_entry = TeamMember(**{'team_id': team_id, 'member_id': member_id})
+        new_entry = TeamMember(**{'team_id': team_id, 'member_id': member_id, 'active': valid_attributes.active})
         db.session.add(new_entry)
         db.session.commit()
         return 'Team member successfully added.'
@@ -664,6 +676,9 @@ def delete_team_member(team_id, member_id):
 
     if not team_member:
         return jsonify(f"Member with id #{member_id} is not on Team with id #{team_id}."), 404
+
+    if not team_member.active:
+        return jsonify(f"Member with id #{member_id} is already set as INACTIVE on Team with id #{team_id}."), 422
 
     setattr(team_member, 'active', False)
     db.session.commit()

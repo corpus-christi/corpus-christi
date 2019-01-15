@@ -44,13 +44,16 @@ export default {
     };
   },
 
-  methods: {
+  computed: {
     getLabel() {
-      if (this.location) return $t('events.event-location');
-      else if (this.person) return $t('actions.search-people')
-      else if (this.course) return $t('actions.search-courses')
-    },
+      if (this.location) return this.$t("events.event-location");
+      else if (this.person) return this.$t("actions.search-people");
+      else if (this.course) return this.$t("actions.search-courses");
+      else return "";
+    }
+  },
 
+  methods: {
     setSelected(entity) {
       this.$emit("input", entity);
     },
@@ -87,7 +90,7 @@ export default {
   mounted() {
     //TODO use search-input.sync to avoid making a huge request here
     this.isLoading = true;
-    var endpoint = ""
+    var endpoint = "";
     if (this.location) endpoint = "/api/v1/places/locations";
     else if (this.person) endpoint = "/api/v1/people/persons";
     else if (this.course) endpoint = "/api/v1/courses/courses";
@@ -95,7 +98,7 @@ export default {
       .get(endpoint)
       .then(resp => {
         this.entities = resp.data;
-        console.log(this.entities)
+        console.log(this.entities);
         this.isLoading = false;
       })
       .catch(error => {

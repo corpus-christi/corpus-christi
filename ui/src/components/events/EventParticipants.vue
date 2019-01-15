@@ -129,7 +129,12 @@ export default {
   name: "EventParticipants",
   data() {
     return {
-      rowsPerPageItem: [10, 15, 25, {"text":"$vuetify.dataIterator.rowsPerPageAll","value":-1}],
+      rowsPerPageItem: [
+        10,
+        15,
+        25,
+        { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 }
+      ],
       tableLoading: false,
       selectedValue: null,
       search: "",
@@ -147,7 +152,7 @@ export default {
       snackbar: {
         show: false,
         text: ""
-      },
+      }
     };
   },
 
@@ -171,7 +176,7 @@ export default {
     activateNewParticipantDialog() {
       this.addParticipantDialog.show = true;
     },
-    openParticipantDialog(event) {
+    openParticipantDialog() {
       this.activateNewParticipantDialog();
     },
     cancelNewParticipantDialog() {
@@ -181,15 +186,21 @@ export default {
       this.addParticipantDialog.loading = true;
       const id = this.$route.params.event;
       this.$http
-        .post(`/api/v1/events/${id}/participants/${this.addParticipantDialog.newParticipant.id}`, {confirmed: false})
-        .then(resp => {
+        .post(
+          `/api/v1/events/${id}/participants/${
+            this.addParticipantDialog.newParticipant.id
+          }`,
+          { confirmed: false }
+        )
+        .then(() => {
           this.showSnackbar(this.$t("events.event-added"));
           this.addParticipantDialog.loading = false;
           this.addParticipantDialog.show = false;
           this.addParticipantDialog.newParticipant = null;
-          this.getParticipants()
+          this.getParticipants();
         })
         .catch(err => {
+          console.log(err);
           this.addParticipantDialog.loading = false;
           this.showSnackbar(this.$t("events.error-adding-event"));
         });
@@ -206,13 +217,14 @@ export default {
       const id = this.$route.params.event;
       this.$http
         .delete(`/api/v1/events/${id}/participants/${participantId}`)
-        .then(resp => {
+        .then(() => {
           this.deleteDialog.loading = false;
           this.deleteDialog.show = false;
           this.people.splice(idx, 1);
           this.showSnackbar(this.$t("events.event-archived"));
         })
         .catch(err => {
+          console.log(err);
           this.deleteDialog.loading = false;
           this.deleteDialog.show = false;
           this.showSnackbar(this.$t("events.error-archiving-event"));
@@ -241,7 +253,7 @@ export default {
   },
 
   mounted: function() {
-    this.getParticipants()
+    this.getParticipants();
   }
 };
 </script>

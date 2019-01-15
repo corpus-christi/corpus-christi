@@ -199,7 +199,12 @@ export default {
 
   data() {
     return {
-      rowsPerPageItem: [10, 15, 25, {"text":"$vuetify.dataIterator.rowsPerPageAll","value":-1}],
+      rowsPerPageItem: [
+        10,
+        15,
+        25,
+        { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 }
+      ],
       tableLoading: true,
       events: [],
       eventDialog: {
@@ -314,9 +319,9 @@ export default {
     unarchive(event) {
       const idx = this.events.findIndex(ev => ev.id === event.id);
       const patchId = event.id;
-      event.id *= -1 // to show loading spinner
-      this.$http //TODO change to patch
-        .patch(`/api/v1/events/${patchId}`, {active: true})
+      event.id *= -1; // to show loading spinner
+      this.$http
+        .patch(`/api/v1/events/${patchId}`, { active: true })
         .then(resp => {
           console.log("UNARCHIVED", resp);
           Object.assign(this.events[idx], resp.data);
