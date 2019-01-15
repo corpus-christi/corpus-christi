@@ -130,7 +130,7 @@
 
 <script>
 import CourseEditor from "./CourseEditor";
-import CourseAdminActions from "./adminActions/CourseAdminActions";
+import CourseAdminActions from "./actions/CourseAdminActions";
 
 export default {
   name: "CoursesTable",
