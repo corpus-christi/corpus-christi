@@ -99,6 +99,15 @@ def create_multiple_accounts(sqla, fraction=0.75):
 # ---- Person
 
 @pytest.mark.smoke
+def test_read_person_fields(auth_client):
+    # GIVEN a DB with a collection of people.
+    # WHEN
+    # THEN
+
+    # TODO FINISH
+    assert False
+
+@pytest.mark.smoke
 def test_create_person(auth_client):
     # GIVEN an empty database
     count = random.randint(5, 15)
@@ -111,14 +120,23 @@ def test_create_person(auth_client):
 
 
 @pytest.mark.smoke
-def test_read_person(auth_client):
+def test_read_all_persons(auth_client):
+    # GIVEN
+    # WHEN
+    # THEN
+
+    # TODO FINISH
+    assert False
+
+@pytest.mark.smoke
+def test_read_one_person(auth_client):
     # GIVEN a DB with a collection people.
     count = random.randint(3, 11)
     create_multiple_people(auth_client.sqla, count)
 
     # WHEN we ask for them all
     people = auth_client.sqla.query(Person).all()
-    # THEN we exepct the same number
+    # THEN we expect the same number
     assert len(people) == count
 
     # WHEN we request each of them from the server
@@ -128,6 +146,36 @@ def test_read_person(auth_client):
         assert resp.status_code == 200
         assert resp.json['firstName'] == person.first_name
         assert resp.json['lastName'] == person.last_name
+
+@pytest.mark.smoke
+def test_update_person(auth_client):
+    # GIVEN a DB with a collection of people.
+    count = random.randint(3, 11)
+    create_multiple_people(auth_client.sqla, count)
+
+    # WHEN we update a random person's details
+    randomId = random.randint(1,11)
+
+    people = auth_client.sqla.query(Person).get(randomId)
+    print(type(auth_client))
+    print(people.first_name)
+
+    # THEN those updates are made
+    # TODO FINISH
+    assert False
+
+@pytest.mark.smoke
+def test_deactivate_person(auth_client):
+    # GIVEN a DB with a collection of people
+    # WHEN we deactivate an account
+    # THEN the account is marked as deactivated
+    # TODO FINISH
+    assert False
+
+@pytest.mark.smoke
+def test_activate_person(auth_client):
+    # TODO FINISH
+    assert False
 
 
 # ---- Account
@@ -171,9 +219,22 @@ def prep_database(sqla):
     create_multiple_accounts(sqla)
     return [account.id for account in sqla.query(Account.id).all()]
 
+@pytest.mark.smoke
+def test_read_all_accounts(auth_client):
+    # GIVEN a collection of accounts
+    prep_database(auth_client.sqla)
+
+    # WHEN we request all accounts with the api
+    resp = auth_client.get(url_for('people.read_all_accounts'))
+    assert resp.status_code == 200 # Check Response
+
+    # THEN the number of results match the request from the database
+    sqlResp = auth_client.sqla.query(Account).all()
+    assert len(resp.json) == len(sqlResp)
+
 
 @pytest.mark.smoke
-def test_read_account(auth_client):
+def test_read_one_account(auth_client):
     # GIVEN a collection of accounts
     prep_database(auth_client.sqla)
 
@@ -259,3 +320,152 @@ def test_update_other_fields(auth_client):
         assert updated_account is not None
         assert updated_account.username == expected_by_id[account_id]['username']
         assert updated_account.active == expected_by_id[account_id]['active']
+
+@pytest.mark.smoke
+def test_read_one_account_by_username(auth_client):
+    # GIVEN an account from the database of accounts
+    account_ids = prep_database(auth_client.sqla)
+    random_id = account_ids[random.randint(0,len(account_ids)-1)] # Random account id to test
+    account = auth_client.sqla.query(Account).get(random_id)
+    # WHEN searched for by username
+    resp = auth_client.get(url_for('people.read_one_account_by_username', username=account.username))
+    assert resp.status_code == 200 # check response
+    # THEN the api response matches the database account
+    assert account.id == resp.json['id'] # check db id vs api id
+
+    # GIVEN an account name that doesn't exist in the database
+    impossible_account_name = "BigChungus&UgandianKnuckles4Lyfe"
+    # WHEN the api call is made for the non-existent username
+    resp = auth_client.get(url_for('people.read_one_account_by_username', username=impossible_account_name))
+    assert resp.status_code == 200  # check response
+    # THEN the api should respond with an empty json respnse
+    assert resp.json == {}
+
+@pytest.mark.smoke
+def test_read_person_account(auth_client):
+    # GIVEN a random person from the database
+    account_ids = prep_database(auth_client.sqla)
+    random_id = account_ids[random.randint(0, len(account_ids) - 1)]  # Random account id to test
+    account = auth_client.sqla.query(Account).get(random_id)
+    print(account) #FIXME GET A PERSON ID TO SEND TO THE READ PERSON ACCOUNT
+    # WHEN the api call for reading the person account is made
+    resp = auth_client.get(url_for('people.read_person_account', person_id=account.personId))
+    assert resp.status_code == 200  # check response
+    # THEN the details match those of the db
+    print(resp.json)
+
+    # TODO FINISH
+    assert False
+
+@pytest.mark.smoke
+def test_update_account(auth_client):
+    # GIVEN
+    # WHEN
+    # THEN
+
+    # TODO FINISH
+    assert False
+
+@pytest.mark.smoke
+def test_deactivate_account(auth_client):
+    # GIVEN
+    # WHEN
+    # THEN
+
+    # TODO FINISH
+    assert False
+
+@pytest.mark.smoke
+def test_activate_account(auth_client):
+    # GIVEN
+    # WHEN
+    # THEN
+
+    # TODO FINISH
+    assert False
+
+# ---- Role
+
+@pytest.mark.smoke
+def test_create_role(auth_client):
+    # GIVEN
+    # WHEN
+    # THEN
+
+    # TODO FINISH
+    assert False
+
+@pytest.mark.smoke
+def test_read_all_roles(auth_client):
+    # GIVEN
+    # WHEN
+    # THEN
+
+    # TODO FINISH
+    assert False
+
+@pytest.mark.smoke
+def test_get_roles_for_account(auth_client):
+    # GIVEN
+    # WHEN
+    # THEN
+
+    # TODO FINISH
+    assert False
+
+@pytest.mark.smoke
+def test_read_one_role(auth_client):
+    # GIVEN
+    # WHEN
+    # THEN
+
+    # TODO FINISH
+    assert False
+
+
+@pytest.mark.smoke
+def test_replace_role(auth_client):
+    # GIVEN
+    # WHEN
+    # THEN
+
+    # TODO FINISH
+    assert False
+
+
+@pytest.mark.smoke
+def test_update_role(auth_client):
+    # GIVEN
+    # WHEN
+    # THEN
+
+    # TODO FINISH
+    assert False
+
+
+@pytest.mark.smoke
+def test_delete_role(auth_client):
+    # GIVEN
+    # WHEN
+    # THEN
+
+    # TODO FINISH
+    assert False
+
+@pytest.mark.smoke
+def test_add_role_to_account(auth_client):
+    # GIVEN
+    # WHEN
+    # THEN
+
+    # TODO FINISH
+    assert False
+
+@pytest.mark.smoke
+def test_remove_role_from_account(auth_client):
+    # GIVEN
+    # WHEN
+    # THEN
+
+    # TODO FINISH
+    assert False
