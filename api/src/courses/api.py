@@ -290,18 +290,18 @@ def read_all_students():
 
 @courses.route('/students/<confirm_state>')
 @jwt_required
-def read_confirm_state_student(active_state):
+def read_confirm_state_student(confirm_state):
     """
     Note: There is no need to see active/inactive state of students 
     because it doesn't matter if a student is unconfirmed. """
     query = db.session.query(Student)
-    if active_state == 'confirmed':
-        result = query.filter_by(confirmed='True').all()
-    elif active_state == 'unconfirmed':
-        result = query.filter_by(confirmed='False').all()
+    if confirm_state == 'confirmed':
+        result = query.filter_by(confirmed=True).all()
+    elif confirm_state == 'unconfirmed':
+        result = query.filter_by(confirmed=False).all()
     else:
         return 'Cannot filter course offerings with undefined state', 404
-    return jsonify(student_schema.dump(result))
+    return jsonify(student_schema.dump(result, many=True))
 
 
 @courses.route('/students/<student_id>')
