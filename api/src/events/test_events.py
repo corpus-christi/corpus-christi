@@ -9,10 +9,12 @@ from werkzeug.datastructures import Headers
 from werkzeug.security import check_password_hash
 
 from .models import Asset, AssetSchema, Event, EventSchema, Team, TeamSchema, EventParticipant, EventParticipantSchema, EventPerson, EventPersonSchema, TeamMember, TeamMemberSchema, EventAsset, EventAssetSchema, EventTeam, EventTeamSchema
-from ..places.models import Location
+from ..places.models import Location, Country
 from ..people.models import Person
-from .create_event_data import create_multiple_events, event_object_factory, create_multiple_teams
+from .create_event_data import create_multiple_events, event_object_factory, create_multiple_teams, flip
+from ..places.test_places import create_multiple_locations, create_multiple_addresses, create_multiple_areas 
 
+fake = Faker()
 # ---- Event
 
 @pytest.mark.smoke
@@ -101,95 +103,229 @@ def test_delete_event(auth_client):
 # ---- Asset
 
 
-@pytest.mark.xfail()
-def test_create_asset(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
-    
-
-@pytest.mark.xfail()
-def test_read_all_assets(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
-    
-
-@pytest.mark.xfail()
-def test_read_one_asset(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
-    
-
-@pytest.mark.xfail()
-def test_replace_asset(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
-    
-
-@pytest.mark.xfail()
-def test_update_asset(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
-    
-
-@pytest.mark.xfail()
-def test_delete_asset(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
+#@pytest.mark.smoke
+#def test_create_asset(auth_client):
+#    # GIVEN a database with some locations
+#    Country.load_from_file()
+#    create_multiple_areas(auth_client.sqla, 1)
+#    create_multiple_addresses(auth_client.sqla, 1)
+#    create_multiple_locations(auth_client.sqla, 2)
+#    location_id = auth_client.sqla.query(Location.id).first()[0]
+#    print(location_id)
+#
+#    # WHEN we create an asset
+#    new_asset = {
+#            'description': fake.sentences(nb=1)[0],
+#            'active': flip()
+#    }
+#    resp = auth_client.post(url_for('events.create_asset'), json=new_asset)
+#    # THEN we expect the right status code
+#    assert resp.status_code == 201
+#    # THEN we expect the correct attributes of the given asset in the database
+#    queried_asset = auth_client.sqla.query(Asset).filter(Asset.id == resp.json["id"]).first()
+#    for attr in new_asset:
+#        assert new_asset[attr] == queried_asset.__dict__[attr]
+#    
+#
+#@pytest.mark.smoke
+#def test_read_all_assets(auth_client):
+#    # GIVEN a database with some assets
+#    count = random.randint(5, 15)
+#    create_multiple_assets(auth_client.sqla, count)
+#    # WHEN we read all active ones
+#    active_assets = auth_client.get(url_for('events.read_all_assets')).json
+#    queried_active_assets_count = auth_client.sqla.query(Asset).filter(Asset.active==True).count()
+#    # THEN we should have the same amount as we do in the database
+#    assert len(active_assets) == queried_active_assets_count
+#    # THEN for each asset, the attributes should match
+#    for asset in active_assets:
+#        queried_asset = auth_client.sqla.query(Asset).filter(Asset.id == asset["id"]).first()
+#        assert queried_asset.description == asset["description"]
+#        assert queried_asset.active == asset["active"]
+#    # WHEN we read all assets (active and inactive)
+#    all_assets = auth_client.get(url_for('events.read_all_assets', return_group="all")).json
+#    # THEN we should have the same number
+#    assert len(all_assets) == count
+#    # WHEN we ask for all inactive assets
+#    inactive_assets = auth_client.get(url_for('events.read_all_assets', return_group="inactive")).json
+#    queried_inactive_assets_count = auth_client.sqla.query(Asset).filter(Asset.active==False).count()
+#    # THEN we should have the correct number of inactive assets
+#    assert len(inactive_assets) == queried_inactive_assets_count
+#    
+#
+#@pytest.mark.smoke
+#def test_read_one_asset(auth_client):
+#    # GIVEN a database with some assets
+#    count = random.randint(5, 15)
+#    create_multiple_assets(auth_client.sqla, count)
+#    # WHEN we read one asset
+#    asset_id = auth_client.sqla.query(Asset.id).first()[0]
+#    resp = auth_client.get(url_for('events.read_one_asset', asset_id = asset_id))
+#    # THEN we should have the correct status code
+#    assert resp.status_code == 200
+#    # THEN the asset should end up with the correct attribute
+#    asset = auth_client.sqla.query(Asset).filter(Asset.id == asset_id).first()
+#    assert resp.json["description"] == asset.description
+#    assert resp.json["active"] == asset.active
+#    
+#
+#@pytest.mark.smoke
+#def test_replace_asset(auth_client):
+#    # GIVEN a database with some assets
+#    count = random.randint(5, 15)
+#    create_multiple_assets(auth_client.sqla, count)
+#    # WHEN we replace one asset
+#    #new_asset = 
+#    asset_id = auth_client.sqla.query(Asset.id).first()[0]
+#    dscrptn = fake.sentences(nb=1)[0]
+#    resp = auth_client.put(url_for('events.update_asset', asset_id = asset_id), json={
+#        'description': dscrptn,
+#        'active': False
+#    })
+#    # THEN we should have the correct status code
+#    assert resp.status_code == 200 
+#    # THEN the asset should end up with the correct attribute
+#    new_asset = auth_client.sqla.query(Asset).filter(Asset.id == asset_id).first()
+#    assert new_asset.description == dscrptn
+#    assert new_asset.active == False
+#    
+#
+#@pytest.mark.smoke
+#def test_update_asset(auth_client):
+#    # GIVEN a database with some assets
+#    count = random.randint(5, 15)
+#    create_multiple_assets(auth_client.sqla, count)
+#    # WHEN we update one asset
+#    asset_id = auth_client.sqla.query(Asset.id).first()[0]
+#    dscrptn = fake.sentences(nb=1)[0]
+#    resp = auth_client.patch(url_for('events.update_asset', asset_id = asset_id), json={
+#        'description': dscrptn,
+#        'active': False
+#    })
+#    # THEN we should have the correct status code
+#    assert resp.status_code == 200 
+#    # THEN the asset should end up with the correct attribute
+#    new_asset = auth_client.sqla.query(Asset).filter(Asset.id == asset_id).first()
+#    assert new_asset.description == dscrptn
+#    assert new_asset.active == False
+#    
+#
+#@pytest.mark.smoke
+#def test_delete_asset(auth_client):
+#    # GIVEN a database with some assets
+#    count = random.randint(5, 15)
+#    create_multiple_assets(auth_client.sqla, count)
+#    # WHEN we delete one from it
+#    deleting_id = auth_client.sqla.query(Asset.id).first()[0]
+#    resp = auth_client.delete(url_for('events.delete_asset', asset_id = deleting_id))
+#    # THEN we should have the correct status code
+#    assert resp.status_code == 204
+#    # THEN we should have the asset as inactive
+#    isActive = auth_client.sqla.query(Asset.active).filter(Asset.id == deleting_id).first()[0]
+#    assert isActive == False
     
 
 # ---- Team
 
 
-@pytest.mark.xfail()
+@pytest.mark.smoke
 def test_create_team(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
+    # GIVEN a database
+    # WHEN we create a team
+    new_team = {
+            'description': fake.sentences(nb=1)[0],
+            'active': flip()
+    }
+    resp = auth_client.post(url_for('events.create_team'), json=new_team)
+    # THEN we expect the right status code
+    assert resp.status_code == 201
+    # THEN we expect the correct attributes of the given team in the database
+    queried_team = auth_client.sqla.query(Team).filter(Team.id == resp.json["id"]).first()
+    for attr in new_team:
+        assert new_team[attr] == queried_team.__dict__[attr]
     
 
-@pytest.mark.xfail()
+@pytest.mark.smoke
 def test_read_all_teams(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
+    # GIVEN a database with some teams
+    count = random.randint(5, 15)
+    create_multiple_teams(auth_client.sqla, count)
+    # WHEN we read all active ones
+    active_teams = auth_client.get(url_for('events.read_all_teams')).json
+    queried_active_teams_count = auth_client.sqla.query(Team).filter(Team.active==True).count()
+    # THEN we should have the same amount as we do in the database
+    assert len(active_teams) == queried_active_teams_count
+    # THEN for each team, the attributes should match
+    for team in active_teams:
+        queried_team = auth_client.sqla.query(Team).filter(Team.id == team["id"]).first()
+        assert queried_team.description == team["description"]
+        assert queried_team.active == team["active"]
+    # WHEN we read all teams (active and inactive)
+    all_teams = auth_client.get(url_for('events.read_all_teams', return_group="all")).json
+    # THEN we should have the same number
+    assert len(all_teams) == count
+    # WHEN we ask for all inactive teams
+    inactive_teams = auth_client.get(url_for('events.read_all_teams', return_group="inactive")).json
+    queried_inactive_teams_count = auth_client.sqla.query(Team).filter(Team.active==False).count()
+    # THEN we should have the correct number of inactive teams
+    assert len(inactive_teams) == queried_inactive_teams_count
     
 
-@pytest.mark.xfail()
+@pytest.mark.smoke
 def test_read_one_team(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
+    # GIVEN a database with some teams
+    count = random.randint(5, 15)
+    create_multiple_teams(auth_client.sqla, count)
+    # WHEN we read one team
+    team_id = auth_client.sqla.query(Team.id).first()[0]
+    resp = auth_client.get(url_for('events.read_one_team', team_id = team_id))
+    # THEN we should have the correct status code
+    assert resp.status_code == 200
+    # THEN the team should end up with the correct attribute
+    team = auth_client.sqla.query(Team).filter(Team.id == team_id).first()
+    assert resp.json["description"] == team.description
+    assert resp.json["active"] == team.active
     
 
-@pytest.mark.xfail()
+@pytest.mark.smoke
 def test_replace_team(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
+    # GIVEN a database with some teams
+    count = random.randint(5, 15)
+    create_multiple_teams(auth_client.sqla, count)
+    # WHEN we replace one team
+    #new_team = 
+    team_id = auth_client.sqla.query(Team.id).first()[0]
+    dscrptn = fake.sentences(nb=1)[0]
+    resp = auth_client.put(url_for('events.update_team', team_id = team_id), json={
+        'description': dscrptn,
+        'active': False
+    })
+    # THEN we should have the correct status code
+    assert resp.status_code == 200 
+    # THEN the team should end up with the correct attribute
+    new_team = auth_client.sqla.query(Team).filter(Team.id == team_id).first()
+    assert new_team.description == dscrptn
+    assert new_team.active == False
     
 
-@pytest.mark.xfail()
+@pytest.mark.smoke
 def test_update_team(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
+    # GIVEN a database with some teams
+    count = random.randint(5, 15)
+    create_multiple_teams(auth_client.sqla, count)
+    # WHEN we update one team
+    team_id = auth_client.sqla.query(Team.id).first()[0]
+    dscrptn = fake.sentences(nb=1)[0]
+    resp = auth_client.patch(url_for('events.update_team', team_id = team_id), json={
+        'description': dscrptn,
+        'active': False
+    })
+    # THEN we should have the correct status code
+    assert resp.status_code == 200 
+    # THEN the team should end up with the correct attribute
+    new_team = auth_client.sqla.query(Team).filter(Team.id == team_id).first()
+    assert new_team.description == dscrptn
+    assert new_team.active == False
     
 
 @pytest.mark.smoke

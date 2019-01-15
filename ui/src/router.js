@@ -86,9 +86,9 @@ const router = new VueRouter({
               path: "assets",
               meta: { authRequired: true },
               component: () => import("@/components/events/assets/EventAssets")
-            },
+            }
           ]
-        },
+        }
       ]
     },
     {

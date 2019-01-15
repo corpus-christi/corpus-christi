@@ -22,11 +22,7 @@
           data-cy="description"
         ></v-textarea>
 
-        <entity-search
-          location
-          v-model="event.location"
-          searchEndpoint="http://localhost:3000/locations"
-        />
+        <entity-search location v-model="event.location" />
 
         <v-layout>
           <v-flex xs12 md6>
@@ -255,7 +251,7 @@ export default {
     },
 
     timeFormat() {
-      if (this.currentLanguageCode == "en") {
+      if (this.currentLanguageCode.substring(0, 2) == "en") {
         return "ampm";
       } else return "24hr";
     },
@@ -279,8 +275,9 @@ export default {
 
     // Clear the form and the validators.
     clear() {
+      delete this.event.location;
       for (let key of this.eventKeys) {
-        this.event[key] = "";
+        delete this.event[key];
       }
       this.startTime = "";
       this.startDate = "";
@@ -347,10 +344,6 @@ export default {
       let hr = String(date.getHours()).padStart(2, "0");
       let min = String(date.getMinutes()).padStart(2, "0");
       return `${hr}:${min}`;
-    },
-
-    setLocation(locationId) {
-      console.log(locationId);
     }
   },
   props: {
