@@ -59,7 +59,13 @@ def read_all_courses():
     result = db.session.query(Course).all()
     if(result is None):
         return "Result NOT found", 404
-    return jsonify(add_prereqs(result))
+    with_prereqs = add_prereqs(result)
+    for i in with_prereqs:
+        i['course_offerings'] = []
+        offerings = db.session.query(Course_Offering).filter_by(course_id=i['id']).all()
+        for j in offerings:
+            i['course_offerings'].append(course_offering_schema.dump(j))
+    return jsonify(with_prereqs)
 
 
 @courses.route('/courses/active/<active_state>')
@@ -86,7 +92,12 @@ def read_one_course(course_id):
     result = db.session.query(Course).filter_by(id=course_id).first()
     if(result is None):
         return "Result NOT found", 404
-    return jsonify(add_prereqs(result))
+    with_prereqs = add_prereqs(result)
+    with_prereqs['course_offerings'] = []
+    offerings = db.session.query(Course_Offering).filter_by(course_id=with_prereqs['id']).all()
+    for i in offerings:
+        with_prereqs['course_offerings'].append(course_offering_schema.dump(i))
+    return jsonify(with_prereqs)
     # return jsonify(course_schema.dump(result))
 
 
