@@ -2,6 +2,7 @@ from marshmallow import Schema, fields
 from marshmallow.validate import Range, Length
 from sqlalchemy import Column, Integer, Boolean, ForeignKey, Date, DateTime, Table
 from sqlalchemy.orm import relationship
+from datetime import date
 
 from src.db import Base
 from src.shared.models import StringTypes
@@ -42,7 +43,7 @@ class Diploma_CourseSchema(Schema):
 Diploma_Awarded = Table('courses_diploma_awarded', Base.metadata,
      Column('student_id', Integer, ForeignKey('courses_students.id'), primary_key=True),
      Column('diploma_id', Integer, ForeignKey('courses_diploma.id'), primary_key=True),
-     Column('when', Date, nullable=False))
+     Column('when', Date, nullable=False, default=date.today()))
 
 
 class Diploma_AwardedSchema(Schema):
@@ -102,8 +103,8 @@ class Diploma(Base):
      active = Column(Boolean, nullable=False, default=True)
      courses = relationship('Course', secondary=Diploma_Course,
                back_populates='diplomas', lazy=True)
-     # students = relationship('Student', secondary=Diploma_Awarded,
-     #           back_populates='diplomas', lazy=True)
+     students = relationship('Student', secondary=Diploma_Awarded,
+               back_populates='diplomas', lazy=True)
 
 
      def __repr__(self):
@@ -127,8 +128,8 @@ class Student(Base):
      active = Column(Boolean, default=True, nullable=False)
      course_offering = relationship('Course_Offering', backref='offerings', lazy=True)
      person = relationship('Person', backref='students', lazy=True)
-     # diplomas = relationship('Diploma', secondary=Diploma_Awarded,
-     #           back_populates='students', lazy=True)
+     diplomas = relationship('Diploma', secondary=Diploma_Awarded,
+               back_populates='students', lazy=True)
      attendance = relationship('Class_Meeting', secondary=Class_Attendance,
                back_populates='students', lazy=True)
 
