@@ -407,10 +407,10 @@ def test_create_prerequisite(auth_client):
     courses = auth_client.sqla.query(Course).all()
     course = courses[0]
     prereq_ids = []
-    for i in range(1, count-1):
+    for i in range(1,len(courses)-1):
         prereq_ids.append(courses[i].id)
     # WHEN course requires previous attendance to another course
-    resp = auth_client.post(url_for('courses.create_prerequisite', course_id=course.id),
+    resp = auth_client.post(url_for('courses.create_prerequisite', course_id=course.id), 
         json={ 'prerequisites': prereq_ids})
     assert resp.status_code == 201
     # THEN asssert course is prerequisite
@@ -420,7 +420,7 @@ def test_create_prerequisite(auth_client):
 # This will test getting all prerequisites for all courses
 def test_read_all_prerequisites(auth_client):
     # GIVEN existing and available course in database
-    count_courses = 2 #random.randint(3,15)
+    count_courses = random.randint(3,15)
     count_prereqs = count_courses - 1
     create_multiple_courses(auth_client.sqla, count_courses)
     # count_courses = auth_client.sqla.query(Course).count()
@@ -434,7 +434,7 @@ def test_read_all_prerequisites(auth_client):
             if prereq not in prereqs:
                 prereqs.append(prereq)
     # THEN assert all prereq's are listed
-    assert prereqs == count_prereqs
+    assert len(prereqs) == count_prereqs
 
 #This will test getting prerequistes for one course
 def test_read_one_course_prerequisites(auth_client):
@@ -462,7 +462,9 @@ def test_update_prerequisite(auth_client):
         assert resp.status_code == 200
     # THEN existing course has new prereq in place of existing prereq
     courses = auth_client.sqla.query(Course).all()
-    for course in courses:    
+    for course in courses:
+        if course.id == 1:
+            continue
         assert course.prerequisites[0].id == 1
 
 """
