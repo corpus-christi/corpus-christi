@@ -254,6 +254,33 @@ def test_update_event(auth_client):
     
 
 @pytest.mark.smoke
+def test_update_invalid_event(auth_client):
+    # GIVEN a database with events
+    count = random.randint(3, 11)
+    create_multiple_events(auth_client.sqla, count)
+
+    # WHEN we attempt to edit an invalid event
+    original_event = auth_client.sqla.query(Event).first()
+    modified_event = event_object_factory(auth_client.sqla)
+
+    if flip():
+        modified_event['title'] = None
+    elif flip():
+        modified_event['start'] = None
+    else:
+        modified_event['end'] = None
+
+    resp = auth_client.patch(url_for('events.update_event', event_id=original_event.id), json=modified_event)
+    
+    # THEN the response should have the correct code
+    assert resp.status_code == 422
+    # AND the event should be unchanged
+    new_event = auth_client.sqla.query(Event).filter(Event.id == original_event.id).first()
+    assert new_event.title == original_event.title
+    assert new_event.start == original_event.start
+    assert new_event.end == original_event.end
+
+@pytest.mark.smoke
 def test_delete_event(auth_client):
     # GIVEN
     count = random.randint(3, 11)
@@ -266,12 +293,8 @@ def test_delete_event(auth_client):
     for event in events:
         # THEN
         if flip() and event.active:
-            print("Delete with id:" + str(event.id))
             resp = auth_client.delete(url_for('events.delete_event', event_id = event.id))
-            print(event.active)
-            #print(resp.json['active'])
-            #print(resp.json)
-            #assert resp.status_code == 200
+            assert resp.status_code == 204
             deleted += 1
         elif not event.active:
             deleted += 1
@@ -279,6 +302,18 @@ def test_delete_event(auth_client):
     new_events = auth_client.sqla.query(Event).filter(Event.active == True).all()
     assert len(new_events) == count - deleted
     
+
+@pytest.mark.smoke
+def test_delete_invalid_event(auth_client):
+    # GIVEN an empty database
+    # WHEN a delete request is sent
+    resp = auth_client.delete(url_for('events.delete_event', event_id = 1))
+
+    # THEN the response code should be correct
+    assert resp.status_code == 404
+    # AND the database should still be empty
+    new_events = auth_client.sqla.query(Event).filter(Event.active == True).all()
+    assert len(new_events) == 0
 
 # ---- Asset
 
