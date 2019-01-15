@@ -270,8 +270,9 @@ def add_student_to_course_offering(student_id):
 
 
     new_student = Student(**valid_student)
-    new_student['student_id'] = student_id
     new_student['offering_id'] = request.json['offering_id']
+    new_student['student_id'] = student_id
+    print(new_student)
 
     db.session.add(new_student)
     db.session.commit()
