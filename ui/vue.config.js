@@ -1,4 +1,4 @@
-let proxyConfig = null;
+let proxyConfig = null; // eslint-disable-line
 
 try {
   proxyConfig = require("./mocks/proxy-config");

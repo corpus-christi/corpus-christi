@@ -73,7 +73,7 @@ export default {
   },
 
   watch: {
-    $route: function(to, from) {
+    $route: function(to) {
       var splitPath = to.fullPath.split("/");
       this.currentComponent = to.fullPath.split("/")[splitPath.length - 1];
       this.activeTab = this.tabs[this.currentComponent];

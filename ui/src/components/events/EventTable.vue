@@ -44,6 +44,7 @@
       :headers="headers"
       :items="visibleEvents"
       :search="search"
+      :loading="tableLoading"
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
@@ -51,7 +52,7 @@
           class="hover-hand"
           v-on:click="$router.push({ path: '/events/' + props.item.id })"
         >
-        {{ props.item.title }}
+          {{ props.item.title }}
         </td>
         <td
           class="hover-hand"
@@ -156,9 +157,13 @@
       <v-card>
         <v-card-text>{{ $t("events.confirm-archive") }}</v-card-text>
         <v-card-actions>
-          <v-btn v-on:click="cancelArchive" color="secondary" flat data-cy="cancel-archive">{{
-            $t("actions.cancel")
-          }}</v-btn>
+          <v-btn
+            v-on:click="cancelArchive"
+            color="secondary"
+            flat
+            data-cy="cancel-archive"
+            >{{ $t("actions.cancel") }}</v-btn
+          >
           <v-spacer></v-spacer>
           <v-btn
             v-on:click="archiveEvent"
@@ -182,14 +187,17 @@ export default {
   name: "EventTable",
   components: { "event-form": EventForm },
   mounted() {
+    this.tableLoading = true;
     this.$http.get("/api/v1/events/?return_group=all").then(resp => {
       this.events = resp.data;
+      this.tableLoading = false;
     });
-    this.onResize()
+    this.onResize();
   },
 
   data() {
     return {
+      tableLoading: true,
       events: [],
       eventDialog: {
         show: false,
@@ -241,7 +249,7 @@ export default {
         return this.events.filter(ev => ev.active);
       } else if (this.viewStatus == "viewArchived") {
         return this.events.filter(ev => !ev.active);
-      } else if (this.viewStatus == "viewAll") {
+      } else {
         return this.events;
       }
     },
@@ -312,6 +320,7 @@ export default {
         .put(`/api/v1/events/${putId}`, copyEvent)
         .then(resp => {
           console.log("UNARCHIVED", resp);
+          delete event.unarchiving;
           Object.assign(this.events[idx], resp.data);
           this.showSnackbar(this.$t("events.event-unarchived"));
         })
@@ -336,15 +345,18 @@ export default {
 
     saveEvent(event) {
       this.eventDialog.saveLoading = true;
+      event.location_id = event.location.id;
+      let newEvent = JSON.parse(JSON.stringify(event));
+      delete newEvent.location;
+      delete newEvent.id;
       if (this.eventDialog.editMode) {
         const eventId = event.id;
         const idx = this.events.findIndex(ev => ev.id === event.id);
-        delete event.id;
         this.$http
-          .put(`/api/v1/events/${eventId}`, event)
+          .put(`/api/v1/events/${eventId}`, newEvent)
           .then(resp => {
             console.log("EDITED", resp);
-            Object.assign(this.events[idx], event);
+            Object.assign(this.events[idx], newEvent);
             this.eventDialog.show = false;
             this.eventDialog.saveLoading = false;
             this.showSnackbar(this.$t("events.event-edited"));
@@ -356,7 +368,7 @@ export default {
           });
       } else {
         this.$http
-          .post("/api/v1/events/", event)
+          .post("/api/v1/events/", newEvent)
           .then(resp => {
             console.log("ADDED", resp);
             this.events.push(resp.data);
@@ -374,6 +386,9 @@ export default {
 
     addAnotherEvent(event) {
       this.eventDialog.addMoreLoading = true;
+      event.location_id = event.location.id;
+      let newEvent = JSON.parse(JSON.stringify(event));
+      delete newEvent.location;
       this.$http
         .post("/api/v1/events/", event)
         .then(resp => {
@@ -406,30 +421,26 @@ export default {
     },
     getDisplayLocation(location, length = 20) {
       if (location && location.description) {
-        let name = location.description
+        let name = location.description;
         if (name && name.length && name.length > 0) {
           if (name.length > length) {
             return `${name.substring(0, length - 3)}...`;
           }
-          return name
+          return name;
         }
       }
       return name;
     },
 
-    onResize () {
-      this.windowSize = { x: window.innerWidth, y: window.innerHeight }
-      if(this.windowSize.x <= 960) {
-        this.windowSize.small = true
+    onResize() {
+      this.windowSize = { x: window.innerWidth, y: window.innerHeight };
+      if (this.windowSize.x <= 960) {
+        this.windowSize.small = true;
       } else {
-        this.windowSize.small = false
+        this.windowSize.small = false;
       }
-
     }
-  },
-
-
-
+  }
 };
 </script>
 
