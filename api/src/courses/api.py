@@ -329,8 +329,8 @@ def read_one_student(student_id):
 @courses.route('/students/<student_id>', methods=['PATCH'])
 @jwt_required
 def update_student(student_id):
-    valid_student = db.session.query(Student).filter_by(id=student_id).first()
-    if valid_student is None:
+    student = db.session.query(Student).filter_by(id=student_id).first()
+    if student is None:
         return "Student not found", 404
 
     for attr in 'confirmed', 'active':
