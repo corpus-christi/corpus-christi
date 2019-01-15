@@ -963,6 +963,8 @@ def test_delete_event_participant(auth_client):
     # THEN we expect an error
     assert resp.status_code == 404
 
+# ---- Linking tables (team <-> member)
+
 @pytest.mark.smoke
 def test_get_team_members(auth_client):
     # GIVEN
@@ -999,4 +1001,49 @@ def test_get_team_members_no_members(auth_client):
 
         assert resp.status_code == 404
 
+@pytest.mark.smoke
+def test_add_team_member(auth_client):
+    # GIVEN a database with only some members
+    create_multiple_people(auth_client.sqla, 5)
+    member_id = auth_client.sqla.query(Person.id).first()[0]
+    # WHEN we try to link a non-existant team to a member
+    resp = auth_client.post(url_for('events.add_team_member', team_id=1, member_id=member_id))
+    # THEN we expect an error code
+    assert resp.status_code == 404
+    # GIVEN a database with some unlinked teams and members
+    create_multiple_teams(auth_client.sqla, 5)
+    team_id = auth_client.sqla.query(Team.id).first()[0]
+    # WHEN we link a member with an team
+    resp = auth_client.post(url_for('events.add_team_member', team_id=team_id, member_id=member_id))
+    # THEN we expect the right status code
+    assert resp.status_code == 200
+    # THEN we expect the correct count of linked team and member in the database
+    count = auth_client.sqla.query(TeamMember).filter(TeamMember.team_id == team_id, TeamMember.member_id == member_id).count()
+    assert count == 1
+    # WHEN we link the same member again
+    resp = auth_client.post(url_for('events.add_team_member', team_id=team_id, member_id=member_id))
+    # THEN we expect an error status code
+    assert resp.status_code == 422
 
+
+@pytest.mark.smoke
+def test_delete_team_member(auth_client):
+    # GIVEN a database with some linked teams and members
+    create_multiple_teams(auth_client.sqla, 5)
+    create_multiple_people(auth_client.sqla, 5)
+    create_teams_members(auth_client.sqla, 1)
+    team_member = auth_client.sqla.query(TeamMember).first()
+    count = auth_client.sqla.query(TeamMember).count()
+    # WHEN we unlink an assets from an team
+    resp = auth_client.delete(url_for('events.delete_team_member', team_id=team_member.team_id, member_id=team_member.member_id))
+    # THEN we expect the right status code
+    assert resp.status_code == 204
+    # THEN we expect the linkage to be inactive in the database
+    assert 1 == auth_client.sqla.query(TeamMember).filter(TeamMember.active == False, TeamMember.team_id == team_member.team_id, TeamMember.member_id == team_member.member_id).count()
+    # THEN We expect the correct count of link in the database
+    new_count = auth_client.sqla.query(TeamMember).filter(TeamMember.active == True).count()
+    assert count - 1 == new_count
+    # WHEN we unlink the same account again
+    resp = auth_client.delete(url_for('events.delete_team_member', team_id=team_member.team_id, member_id=team_member.member_id))
+    # THEN we expect an error
+    assert resp.status_code == 404
