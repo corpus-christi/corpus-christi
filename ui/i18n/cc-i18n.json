@@ -1,4 +1,4 @@
-s{
+{
   "en": {
     "$vuetify": {
       "dataIterator": {
@@ -48,6 +48,21 @@ s{
       "view-all": "View All",
       "view-archived": "View Archived",
       "view-inactive": "View Inactive"
+    },
+    "courses": {
+      "add-failed": "Failed to add course",
+      "added": "Course added",
+      "archived": "Course archived",
+      "confirm-archive": "Are you sure you want to archive this course?",
+      "course": "Courses",
+      "description": "Description",
+      "enrolled": "Number Enrolled",
+      "new": "New Course",
+      "prerequisites": "Prerequisites",
+      "reactivated": "Course unarchived",
+      "title": "Title",
+      "update-failed": "Failed to update course",
+      "updated": "Course updated"
     },
     "events": {
       "actions": "Actions",
@@ -202,6 +217,21 @@ s{
       "view-all": "Ver Todo",
       "view-archived": "Ver Archivo",
       "view-inactive": "Ver Inactivo"
+    },
+    "courses": {
+      "add-failed": "Se fall\u00f3 a a\u00f1adir el curso",
+      "added": "Curso a\u00f1adido",
+      "archived": "Curso archivado",
+      "confirm-archive": "\u00bfEst\u00e1s seguro que quieres archivar este curso?",
+      "course": "Cursos",
+      "description": "Descripci\u00f3n",
+      "enrolled": "N\u00famero Registrado",
+      "new": "Nuevo Curso",
+      "prerequisites": "Prerrequisitos",
+      "reactivated": "Curso desarchivado",
+      "title": "T\u00edtulo",
+      "update-failed": "Se fall\u00f3 a actualizar el curso",
+      "updated": "Curso actualizado"
     },
     "events": {
       "actions": "Comportamiento",
