@@ -4,11 +4,12 @@ from datetime import datetime
 from flask import request
 from flask.json import jsonify
 from flask_jwt_extended import jwt_required, get_raw_jwt, jwt_optional
+from flask_mail import Message
 from marshmallow import ValidationError
 from sqlalchemy import func
 
 from . import events
-from .models import Event, Asset, Team, TeamMember, EventPerson, EventAsset, EventParticipant, EventTeam, EventSchema, AssetSchema, TeamSchema, TeamMemberSchema, EventTeamSchema, EventPersonSchema, EventParticipantSchema
+from .models import Event, Asset, Team, TeamMember, EventPerson, EventAsset, EventParticipant, EventTeam, EventSchema, AssetSchema, TeamSchema, TeamMemberSchema, EventTeamSchema, EventPersonSchema, EventParticipantSchema, EmailSchema
 from ..people.models import Person, PersonSchema
 from .. import db, mail
 
@@ -25,13 +26,19 @@ def modify_entity(entity_type, schema, id, new_value_dict):
 
     return jsonify(schema.dump(item)), 200
 
-# ---- Event
+def get_exclusion_list(query_object, default_exclusion_list):
+    for exclusion in default_exclusion_list:
+        include_filter = request.args.get(f"include_{exclusion}")
+        if include_filter:
+            default_exclusion_list.remove(exclusion)
+    return default_exclusion_list
 
-event_schema = EventSchema()
+# ---- Event
 
 @events.route('/', methods=['POST'])
 @jwt_required
 def create_event():
+    event_schema = EventSchema(exclude=get_exclusion_list(request.args, ['assets', 'participants', 'persons', 'teams']))
     try:
         valid_event = event_schema.load(request.json)
     except ValidationError as err:
@@ -46,7 +53,7 @@ def create_event():
 @events.route('/')
 @jwt_required
 def read_all_events():
-
+    event_schema = EventSchema(exclude=get_exclusion_list(request.args, ['assets', 'participants', 'persons', 'teams']))
     query = db.session.query(Event)
 
     # -- return_inactives --
@@ -89,6 +96,7 @@ def read_all_events():
 @events.route('/<event_id>')
 @jwt_required
 def read_one_event(event_id):
+    event_schema = EventSchema(exclude=get_exclusion_list(request.args, ['assets', 'participants', 'persons', 'teams']))
     event = db.session.query(Event).filter_by(id=event_id).first()
 
     if not event:
@@ -100,23 +108,29 @@ def read_one_event(event_id):
 @events.route('/<event_id>', methods=['PUT'])
 @jwt_required
 def replace_event(event_id):
+    event_schema = EventSchema()
     try:
         valid_event = event_schema.load(request.json)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    return modify_event(event_id, valid_event)
+    event_schema = EventSchema(exclude=get_exclusion_list(request.args, ['assets', 'participants', 'persons', 'teams']))
+
+    return modify_entity(Event, event_schema, event_id, valid_event)
 
 
 @events.route('/<event_id>', methods=['PATCH'])
 @jwt_required
 def update_event(event_id):
+    event_schema = EventSchema()
     try: 
         valid_attributes = event_schema.load(request.json, partial=True)
     except ValidationError as err:
         return jsonify(err.messages), 422
+
+    event_schema = EventSchema(exclude=get_exclusion_list(request.args, ['assets', 'participants', 'persons', 'teams']))
                 
-    return modify_event(event_id, valid_attributes)
+    return modify_entity(Event, event_schema, event_id, valid_attributes)
 
 
 @events.route('/<event_id>', methods=['DELETE'])
@@ -131,12 +145,8 @@ def delete_event(event_id):
     db.session.commit()
     
     # 204 codes don't respond with any content
-    return jsonify(event_schema.dump(event)), 204
+    return "Deleted successfully", 204
 
-
-# Handles PUT and PATCH requests
-def modify_event(event_id, new_value_dict):
-    return modify_entity(Event, event_schema, event_id, new_value_dict)
 
 @events.route('/<event_id>/assets/<asset_id>', methods=['POST', 'PUT', 'PATCH'])
 @jwt_required
@@ -664,3 +674,21 @@ def delete_team_member(team_id, member_id):
 # Handles PUT and PATCH requests
 def modify_team(team_id, new_value_dict):
     return modify_entity(Team, team_schema, team_id, new_value_dict)
+
+# ---- Email
+
+email_schema = EmailSchema()
+
+@events.route('/email', methods=['POST'])
+@jwt_required
+def send_email():
+    try:
+        valid_email_request = email_schema.load(request.json)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+
+    msg = Message(valid_email_request['subject'], sender='tumissionscomputing@gmail.com', recipients=valid_email_request['recipients'])
+    msg.body = valid_email_request['body']
+    mail.send(msg)
+
+    return "Sent"
