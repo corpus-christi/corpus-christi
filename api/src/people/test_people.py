@@ -274,6 +274,7 @@ def test_update_other_fields(auth_client):
         assert updated_account.username == expected_by_id[account_id]['username']
         assert updated_account.active == expected_by_id[account_id]['active']
 
+
 #   -----   __repr__
 
 @pytest.mark.smoke
