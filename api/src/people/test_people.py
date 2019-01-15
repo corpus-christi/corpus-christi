@@ -318,7 +318,7 @@ def manager_object_factory(sqla, description, next_level = None, locale_code='en
     all_managers = sqla.query(Manager).all()
 
     if next_level is not None:
-        next_level_description_i18n = f'manager.description.{next_level}'
+        next_level_description_i18n = f'manager.description.{next_level.replace(" ","_")}'
         next_level_managers = sqla.query(Manager).filter(Manager.description_i18n==next_level_description_i18n).all()
         if (len(next_level_managers) > 0):
             manager['manager_id'] = random.choice(next_level_managers).id
