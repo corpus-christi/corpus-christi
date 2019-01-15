@@ -216,7 +216,7 @@
         >{{ $t("actions.cancel") }}</v-btn
       >
       <v-spacer></v-spacer>
-      <v-btn color="primary" flat v-on:click="clear" :disabled="formDisabled">{{
+      <v-btn color="primary" data-cy="form-clear" flat v-on:click="clear" :disabled="formDisabled">{{
         $t("actions.clear")
       }}</v-btn>
       <v-btn
@@ -270,10 +270,12 @@ export default {
     },
 
     startDate(date) {
+      if (new Date(this.endDate) > new Date(date)) return;
       this.endDate = date;
     },
 
-    endDate(date) {
+    endDate() {
+      //TODO don't clear if still valid
       this.endTime = "";
     }
   },
@@ -313,10 +315,10 @@ export default {
 
     // Clear the form and the validators.
     clear() {
-      delete this.event.location;
       for (let key of this.eventKeys) {
-        delete this.event[key];
+        this.event[key] = ""
       }
+      delete this.event.location
       this.startTime = "";
       this.startDate = "";
       this.endTime = "";

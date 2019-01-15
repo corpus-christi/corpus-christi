@@ -1,4 +1,7 @@
 events:
+  header:
+    en: Events
+    es: Eventos
   title:
     en: Event Title
     es: Título del Evento
