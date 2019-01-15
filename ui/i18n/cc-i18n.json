@@ -39,9 +39,9 @@
       "search": "Search",
       "search-people": "Search People",
       "tooltips": {
+        "activate": "Activate",
         "archive": "Archive",
-        "settings": "Settings",
-        "unarchive": "Unarchive"
+        "settings": "Settings"
       },
       "view-active": "View Active",
       "view-all": "View All",
@@ -81,7 +81,8 @@
       },
       "name": {
         "first": "First Name",
-        "last": "Last Name"
+        "last": "Last Name",
+        "second-last": "Second Last Name"
       },
       "phone": "Phone",
       "settings": "Settings for {person}"
@@ -143,9 +144,9 @@
       "search": "Buscar",
       "search-people": "Buscar Personas",
       "tooltips": {
+        "activate": "Activar",
         "archive": "Archivar",
-        "settings": "Ajustes",
-        "unarchive": "Desarchivar"
+        "settings": "Ajustes"
       },
       "view-active": "Ver Activo",
       "view-all": "Ver Todo",
@@ -185,7 +186,8 @@
       },
       "name": {
         "first": "Nombre de pila",
-        "last": "Apellido"
+        "last": "Apellido",
+        "second-last": "Segundo Apellido"
       },
       "phone": "Tel\u00e9fono",
       "settings": "Configuraci\u00f3n de la {person}"

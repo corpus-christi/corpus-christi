@@ -4,7 +4,7 @@
       <span class="headline">{{ title }}</span>
     </v-card-title>
     <v-card-text>
-      <form>
+      <form ref="container">
         <v-text-field
           v-model="person.firstName"
           v-bind:label="$t('person.name.first')"
@@ -25,22 +25,23 @@
           data-cy="last-name"
         ></v-text-field>
 
+        <v-text-field
+          v-model="person.secondLastName"
+          v-bind:label="$t('person.name.second-last')"
+          name="secondLastName"
+          v-bind:error-messages="errors.collect('secondLastName')"
+          :readonly="formDisabled"
+          data-cy="second-last-name"
+        ></v-text-field>
+
         <v-radio-group
           v-model="person.gender"
           :readonly="formDisabled"
           row
           data-cy="radio-gender"
         >
-          <v-radio
-            v-bind:label="$t('person.male')"
-            value="M"
-            data-cy="radio-m"
-          ></v-radio>
-          <v-radio
-            v-bind:label="$t('person.female')"
-            value="F"
-            data-cy="radio-f"
-          ></v-radio>
+          <v-radio v-bind:label="$t('person.male')" value="M"></v-radio>
+          <v-radio v-bind:label="$t('person.female')" value="F"></v-radio>
         </v-radio-group>
 
         <v-menu
@@ -137,6 +138,8 @@
 <script>
 import { mapGetters } from "vuex";
 import { isEmpty } from "lodash";
+import Vue from "vue/dist/vue.esm";
+import { VSelect } from "vuetify";
 
 export default {
   name: "PersonForm",
@@ -156,6 +159,10 @@ export default {
     saveLoading: {
       type: Boolean,
       required: true
+    },
+    attributes: {
+      type: Array,
+      required: true
     }
   },
   data: function() {
@@ -168,7 +175,8 @@ export default {
         gender: "",
         birthday: "",
         email: "",
-        phone: ""
+        phone: "",
+        attributesInfo: []
       }
     };
   },
@@ -199,6 +207,7 @@ export default {
       } else {
         this.person = personProp;
       }
+      this.constructAttributeForm(this.$props.attributes);
     }
   },
 
@@ -232,6 +241,20 @@ export default {
           this.$emit("add-another", this.person);
         }
       });
+    },
+
+    constructAttributeForm(attributes) {
+      for (let attr of attributes) {
+        switch (attr.typeI18n) {
+          case "type.drop":
+            console.log(VSelect);
+            var DropdownClass = Vue.extend(VSelect);
+            var dropdown = new DropdownClass();
+            dropdown.$mount();
+            this.$refs.container.appendChild(dropdown.$el);
+            break;
+        }
+      }
     }
   }
 };
