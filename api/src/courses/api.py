@@ -267,11 +267,11 @@ student_schema = StudentSchema()
 @courses.route('/course_offerings/<student_id>', methods=['POST'])
 @jwt_required
 def add_student_to_course_offering(student_id):
-
-
+    try:
+        valid_student = student_schema.load(request.json)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
     new_student = Student(**valid_student)
-    new_student['offering_id'] = request.json['offering_id']
-    new_student['student_id'] = student_id
     print(new_student)
 
     db.session.add(new_student)
@@ -287,7 +287,7 @@ def add_student_to_course_offering(student_id):
 #     return jsonify(student_schema.dump(result, many=True))
 
 
-@courses.route('/course_offering/<course_offering_id>/students')
+@courses.route('/course_offerings/<course_offering_id>/students')
 @jwt_required
 def read_all_course_offering_students(course_offering_id):
     """ This function lists all students by a specific course offering.
@@ -298,7 +298,7 @@ def read_all_course_offering_students(course_offering_id):
     return jsonify(student_schema.dump(result, many=True))
 
 
-@courses.route('/course_offering/<course_offering_id>/students/<confirm_state>')
+@courses.route('/course_offerings/<course_offering_id>/students/<confirm_state>')
 @jwt_required
 def read_all_confirmed_students(course_offering_id, confirm_state):
     """
