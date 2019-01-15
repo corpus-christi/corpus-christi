@@ -322,15 +322,15 @@ export default {
 
     constructPersonData(person) {
       var attributes = [];
-      if(person.attributesInfo) {
+      if (person.attributesInfo) {
         attributes = person.attributesInfo;
       }
       delete person["attributesInfo"];
       delete person["accountInfo"];
       return {
-        "person": person,
-        "attributesInfo": attributes
-      }
+        person: person,
+        attributesInfo: attributes
+      };
     },
 
     addAnother(person) {

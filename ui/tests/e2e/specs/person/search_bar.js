@@ -38,6 +38,6 @@ describe("Testing Editing User Information", () => {
     cy.get("[data-cy=search]")
       .clear()
       .type("foobar");
-      cy.get("tbody > :nth-child(1) > :nth-child(2)").should('not.exist');
+    cy.get("tbody > :nth-child(1) > :nth-child(2)").should("not.exist");
   });
 });

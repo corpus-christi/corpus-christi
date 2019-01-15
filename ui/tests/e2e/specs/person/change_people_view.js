@@ -36,8 +36,6 @@ describe("testing the change view dropdown on the person table", () => {
       .click(); // find and click child element in dropdown
   });
   it("Then: no archived users in the table", function() {
-    cy.get("tbody")
-      .find("tr")
-      .should("have.length", 1); // One row: no data
+    cy.get("tbody > :nth-child(1) > :nth-child(2)").should("not.exist");
   });
 });
