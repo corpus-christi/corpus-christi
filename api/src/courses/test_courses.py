@@ -3,6 +3,7 @@ import random
 
 from faker import Faker
 from flask import url_for
+from src.db import Base
 
 from .models import Course, CourseSchema, Course_Offering, Class_Meeting,\
         Course_OfferingSchema, Diploma, DiplomaSchema, Student, StudentSchema,\
@@ -159,10 +160,10 @@ def prerequisite_object_factory(course_id, prereq_id):
 
 
 def create_multiple_prerequisites(sqla):
-    """Commits the number of prerequisites to the DB."""
+    """Commits the courses - 1 number of prerequisites to the DB."""
     courses = sqla.query(Course).all()
     new_prerequisites = []
-    for i in range(len(courses)-2):
+    for i in range(len(courses)-1):
         courses[i].prerequisites.append(courses[i+1])
         new_prerequisites.append(courses[i])
     sqla.add_all(new_prerequisites)
@@ -413,27 +414,28 @@ def test_delete_course(auth_client):
 def test_create_prerequisite(auth_client):
     # GIVEN existing and available course in database
     create_multiple_courses(auth_client.sqla, 2)
-    course = auth_client.sqla.query(Course)[0]
-    prereq = auth_client.sqla.query(Course)[1]
+    course = auth_client.sqla.query(Course).all()[0]
+    prereq = auth_client.sqla.query(Course).all()[1]
     # WHEN course requires previous attendance to another course
     resp = auth_client.post(url_for('courses.create_prerequisite', course_id=course.id),
         json=prerequisite_object_factory(course.id,prereq.id))
     assert resp.status_code == 201
     # THEN asssert course is prerequisite
-    assert auth_client.sqla.query(Prerequisite).count() == 1
+    assert auth_client.sqla.query(Base.metadata.tables['courses_prerequisite']).count() == 1
 
 # This will test getting all prerequisites for a single course
 @pytest.mark.smoke
 def test_read_all_prerequisites(auth_client):
     # GIVEN existing and available course in database
     count_courses = random.randint(3,15)
-    count_prereqs = count_courses - 1
     create_multiple_courses(auth_client.sqla, count_courses)
+    # count_courses = auth_client.sqla.query(Course).count()
+    count_prereqs = count_courses -1
     create_multiple_prerequisites(auth_client.sqla)
     # WHEN that course has prerequisites
-    prereqs = auth_client.sqla.query(Prerequisite).all()
+    prereqs = auth_client.sqla.query(Base.metadata.tables['courses_prerequisite']).count()
     # THEN assert all prereq's are listed
-    assert len(prereqs) == count_prereqs
+    assert prereqs == count_prereqs
 
 #FIX NAME (Will test to see all courses that have given course as a prerequisite)
 #@pytest.mark.smoke
