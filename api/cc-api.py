@@ -67,10 +67,10 @@ def load_languages():
     create_multiple_addresses(db.session, 10)
     create_multiple_locations(db.session, 20)
 
-    create_multiple_attributes(db.session, 10)
-    create_multiple_enumerated_values(db.session, 10)
-    create_multiple_person_attribute_enumerated(db.session, 5)
-    create_multiple_person_attribute_strings(db.session, 5)
+    # create_multiple_attributes(db.session, 10)
+    # create_multiple_enumerated_values(db.session, 10)
+    # create_multiple_person_attribute_enumerated(db.session, 5)
+    # create_multiple_person_attribute_strings(db.session, 5)
     create_multiple_managers(db.session, 2, 'Group Overseer')
     create_multiple_managers(db.session, 5, 'Group Leader', 'Group Overseer')
 
