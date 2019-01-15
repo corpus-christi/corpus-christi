@@ -33,59 +33,63 @@
         <td class="hover-hand">{{ props.item.description }}</td>
         <td class="hover-hand">{{ props.item.location }}</td>
         <td>
-          <v-tooltip bottom v-if="props.item.active">
-            <v-btn
-              icon
-              outline
-              small
-              color="primary"
-              slot="activator"
-              v-on:click="editAsset(props.item)"
-            >
-              <v-icon small>edit</v-icon>
-            </v-btn>
-            <span>{{ $t("actions.edit") }}</span>
-          </v-tooltip>
-          <v-tooltip bottom>
-            <v-btn
-              icon
-              outline
-              small
-              color="primary"
-              slot="activator"
-              v-on:click="duplicate(props.item)"
-            >
-              <v-icon small>filter_none</v-icon>
-            </v-btn>
-            <span>{{ $t("actions.duplicate") }}</span>
-          </v-tooltip>
-          <v-tooltip bottom v-if="props.item.active">
-            <v-btn
-              icon
-              outline
-              small
-              color="primary"
-              slot="activator"
-              v-on:click="confirmArchive(props.item)"
-            >
-              <v-icon small>archive</v-icon>
-            </v-btn>
-            <span>{{ $t("actions.tooltips.archive") }}</span>
-          </v-tooltip>
-          <v-tooltip bottom v-if="!props.item.active">
-            <v-btn
-              icon
-              outline
-              small
-              color="primary"
-              slot="activator"
-              v-on:click="unarchive(props.item)"
-              :loading="props.item.unarchiving"
-            >
-              <v-icon small>unarchive</v-icon>
-            </v-btn>
-            <span>{{ $t("actions.tooltips.activate") }}</span>
-          </v-tooltip>
+          <template v-if="props.item.active">
+            <v-tooltip bottom v-if="props.item.active">
+              <v-btn
+                icon
+                outline
+                small
+                color="primary"
+                slot="activator"
+                v-on:click="editAsset(props.item)"
+              >
+                <v-icon small>edit</v-icon>
+              </v-btn>
+              <span>{{ $t("actions.edit") }}</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <v-btn
+                icon
+                outline
+                small
+                color="primary"
+                slot="activator"
+                v-on:click="duplicate(props.item)"
+              >
+                <v-icon small>filter_none</v-icon>
+              </v-btn>
+              <span>{{ $t("actions.duplicate") }}</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <v-btn
+                icon
+                outline
+                small
+                color="primary"
+                slot="activator"
+                v-on:click="confirmArchive(props.item)"
+              >
+                <v-icon small>archive</v-icon>
+              </v-btn>
+              <span>{{ $t("actions.tooltips.archive") }}</span>
+            </v-tooltip>
+          </template>
+          <template v-else>
+            <v-tooltip bottom v-if="!props.item.active">
+              <v-btn
+                icon
+                outline
+                small
+                color="primary"
+                slot="activator"
+                v-on:click="unarchive(props.item)"
+                :loading="props.item.unarchiving"
+              >
+                <v-icon small>undo</v-icon>
+              </v-btn>
+              <span>{{ $t("actions.tooltips.activate") }}</span>
+            </v-tooltip>
+          </template>
         </td>
       </template>
     </v-data-table>
@@ -141,9 +145,13 @@ export default {
   name: "EventAssets",
   components: { "asset-form": AssetForm },
   mounted() {
-    this.$http.get("http://localhost:3000/assets").then(resp => {
-      this.assets = resp.data;
-      console.log(resp);
+    let eventId = this.$route.params.event; 
+    this.$http.get(`/api/v1/events/${eventId}`).then(resp => {
+      this.event = resp.data;
+      if (this.event.assets) {
+        this.assets = this.event.assets;
+      }
+      console.log(this.assets);
     });
   },
 
@@ -174,8 +182,7 @@ export default {
   computed: {
     headers() {
       return [
-        {
-          text: this.$t("events.assets.description"),
+        { text: this.$t("events.assets.description"),
           value: "description",
           width: "40%"
         },
@@ -217,12 +224,11 @@ export default {
     },
 
     archiveAsset() {
-      console.log("Archived asset");
       this.archiveDialog.loading = true;
       const assetId = this.archiveDialog.assetId;
       const idx = this.assets.findIndex(as => as.id === assetId);
       this.$http
-        .delete(`http://localhost:3000/assets/${assetId}`)
+        .delete(`/api/v1/events/assets/${assetId}`)
         .then(resp => {
           console.log("ARCHIVE", resp);
           this.assets[idx].active = false;
@@ -245,8 +251,11 @@ export default {
       const copyAsset = JSON.parse(JSON.stringify(asset));
       asset.unarchiving = true;
       copyAsset.active = true;
+      const putId = copyAsset.id;
+      delete copyAsset.id;
+      delete copyAsset.location; //Temporary delete
       this.$http
-        .put(`http://localhost:3000/assets/${copyAsset.id}`, copyAsset)
+        .put(`/api/v1/events/assets/${putId}`, copyAsset)
         .then(resp => {
           console.log("UNARCHIVED", resp);
           Object.assign(this.assets[idx], resp.data);
@@ -273,15 +282,19 @@ export default {
 
     saveAsset(asset) {
       this.assetDialog.saveLoading = true;
+      asset.location_id = asset.location.id;
+      let newAsset = JSON.parse(JSON.stringify(asset));
+      delete newAsset.location;
+      delete newAsset.id;
       if (this.assetDialog.editMode) {
         const assetId = asset.id;
         const idx = this.assets.findIndex(as => as.id === asset.id);
         delete asset.id;
         this.$http
-          .put(`http://localhost:3000/assets/${assetId}`, asset)
+          .put(`/api/v1/events/assets/${assetId}`, newAsset)
           .then(resp => {
             console.log("EDITED", resp);
-            Object.assign(this.assets[idx], asset);
+            Object.assign(this.assets[idx], newAsset);
             this.assetDialog.show = false;
             this.assetDialog.saveLoading = false;
             this.showSnackbar(this.$t("events.assets.asset-edited"));
@@ -293,7 +306,7 @@ export default {
           });
       } else {
         this.$http
-          .post("http://localhost:3000/assets/", asset)
+          .post("/api/v1/events/assets", newAsset)
           .then(resp => {
             console.log("ADDED", resp);
             this.assets.push(resp.data);
@@ -311,8 +324,11 @@ export default {
 
     addAnotherAsset(asset) {
       this.assetDialog.addMoreLoading = true;
+      asset.location_id = asset.location.id;
+      let newAsset = JSON.parse(JSON.stringify(asset));
+      delete newAsset.location;
       this.$http
-        .post("http://localhost:3000/assets/", asset)
+        .post("/api/v1/events/assets", newAsset)
         .then(resp => {
           console.log("ADDED", resp);
           this.assets.push(resp.data);
@@ -334,3 +350,9 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.hover-hand {
+  cursor: pointer;
+}
+</style>

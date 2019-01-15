@@ -390,7 +390,7 @@ export default {
       let newEvent = JSON.parse(JSON.stringify(event));
       delete newEvent.location;
       this.$http
-        .post("/api/v1/events/", event)
+        .post("/api/v1/events/", newEvent)
         .then(resp => {
           console.log("ADDED", resp);
           this.events.push(resp.data);
