@@ -305,9 +305,9 @@ def read_all_confirmed_students(course_offering_id, confirm_state):
     because it doesn't matter if a student is unconfirmed. """
     query = db.session.query(Student)
     if confirm_state == 'confirmed':
-        result = query.filter_by(confirmed=True).all()
+        result = query.filter_by(offering_id=course_offering_id, confirmed=True).all()
     elif confirm_state == 'unconfirmed':
-        result = query.filter_by(confirmed=False).all()
+        result = query.filter_by(offering_id=course_offering_id, confirmed=False).all()
     else:
         return 'Cannot filter course offerings with undefined state', 404
     return jsonify(student_schema.dump(result, many=True))

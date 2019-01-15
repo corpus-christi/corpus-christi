@@ -89,7 +89,7 @@ class CourseSchema(Schema):
      id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
      name = fields.String(required=True, validate=Length(min=1))
      description = fields.String(required=True, validate=Length(min=1))
-     active = fields.Boolean(required=True)
+     active = fields.Boolean(required=True, default=True)
 
 
 # ---- Diploma
@@ -141,8 +141,8 @@ class StudentSchema(Schema):
      id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
      offering_id = fields.Integer(data_key='offeringId', required=True)
      student_id = fields.Integer(data_key='studentId', required=True)
-     confirmed = fields.Boolean(required=True)
-     active = fields.Boolean(required=True)
+     confirmed = fields.Boolean(required=True, default=False)
+     active = fields.Boolean(required=True, default=True)
 
 # ---- Course_Offering
 
@@ -162,8 +162,8 @@ class Course_OfferingSchema(Schema):
      id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
      course_id = fields.Integer(data_key='courseId', required=True)
      description = fields.String(required=True, validate=Length(min=1))
-     max_size = fields.Integer(data_key='maxSize', required=True)
-     active = fields.Boolean(required=True)
+     max_size = fields.Integer(data_key='maxSize', required=True, validate=Range(min=1))
+     active = fields.Boolean(required=True, default=True)
 
 # ---- Class_Meeting
 
