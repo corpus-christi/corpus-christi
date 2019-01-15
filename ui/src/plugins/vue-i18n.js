@@ -15,6 +15,7 @@ const i18n = new VueI18n({
 });
 
 Vue.use(VeeValidate, {
+<<<<<<< HEAD
   i18n,
   i18nRootKey: "i18n_data",
   dictionary: {
@@ -27,6 +28,9 @@ Vue.use(VeeValidate, {
       attributes: i18n_data.es.validation.attributes
     }
   }
+=======
+  i18n
+>>>>>>> feature/courses-36_create-a-course-offering
 });
 
 export default i18n;

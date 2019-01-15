@@ -15,19 +15,31 @@
             single-line
             box
             hide-details
+            data-cy="courses-table-search"
           ></v-text-field>
         </v-flex>
         <v-spacer></v-spacer>
 
         <v-flex md3>
-          <v-select v-model="viewStatus" :items="options" solo hide-details></v-select>
+          <v-select
+            v-model="viewStatus"
+            :items="options"
+            solo
+            hide-details
+            data-cy="courses-table-viewstatus"
+          ></v-select>
         </v-flex>
 
         <v-flex shrink justify-self-end>
-        <v-btn color="primary" raised v-on:click.stop="newCourse">
-          <v-icon left>library_add</v-icon>
-          {{ $t("courses.new") }}
-        </v-btn>
+          <v-btn
+            color="primary"
+            raised
+            v-on:click.stop="newCourse"
+            data-cy="courses-table-new"
+          >
+            <v-icon left>library_add</v-icon>
+            {{ $t("courses.new") }}
+          </v-btn>
         </v-flex>
       </v-layout>
     </v-toolbar>
@@ -39,8 +51,13 @@
       :items="showCourses"
       :loading="!tableLoaded"
       class="elevation-1"
+      data-cy="courses-table"
     >
-      <v-progress-linear slot="progress" color="primary" indeterminate></v-progress-linear>
+      <v-progress-linear
+        slot="progress"
+        color="primary"
+        indeterminate
+      ></v-progress-linear>
       <template slot="items" slot-scope="props">
         <td>{{ props.item.name }}</td>
         <td>{{ props.item.description }}</td>
@@ -54,24 +71,36 @@
       </template>
     </v-data-table>
 
-    <v-snackbar v-model="snackbar.show">
+    <v-snackbar v-model="snackbar.show" data-cy="courses-table-snackbar">
       {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false">{{ $t("actions.close") }}</v-btn>
+      <v-btn flat @click="snackbar.show = false">{{
+        $t("actions.close")
+      }}</v-btn>
     </v-snackbar>
 
     <!-- New/Edit dialog -->
-    <v-dialog v-model="courseDialog.show" max-width="500px">
+    <v-dialog
+      v-model="courseDialog.show"
+      max-width="500px"
+      persistent
+      data-cy="courses-table-editor"
+    >
       <CourseEditor
         v-bind:editMode="courseDialog.editMode"
         v-bind:initialData="courseDialog.course"
         v-bind:saving="courseDialog.saving"
+        v-bind:coursesPool="courses"
         v-on:cancel="cancelCourse"
         v-on:save="saveCourse"
       />
     </v-dialog>
 
     <!-- Deactivate/archive confirmation -->
-    <v-dialog v-model="deactivateDialog.show" max-width="350px">
+    <v-dialog
+      v-model="deactivateDialog.show"
+      max-width="350px"
+      data-cy="courses-table-confirmation"
+    >
       <v-card>
         <v-card-text>{{ $t("courses.confirm-archive") }}</v-card-text>
         <v-card-actions>
@@ -80,8 +109,9 @@
             color="secondary"
             flat
             :disabled="deactivateDialog.loading"
-            data-cy
-          >{{ $t("actions.cancel") }}</v-btn>
+          >
+            {{ $t("actions.cancel") }}
+          </v-btn>
           <v-spacer></v-spacer>
           <v-btn
             v-on:click="deactivate(deactivateDialog.course)"
@@ -89,8 +119,9 @@
             raised
             :disabled="deactivateDialog.loading"
             :loading="deactivateDialog.loading"
-            data-cy
-          >{{ $t("actions.confirm") }}</v-btn>
+          >
+            {{ $t("actions.confirm") }}
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -163,9 +194,8 @@ export default {
         case "archived":
           return this.courses.filter(course => !course.active);
         case "all":
-          return this.courses;
         default:
-          break;
+          return this.courses;
       }
     }
   },
@@ -251,19 +281,39 @@ export default {
 
     saveCourse(course) {
       this.courseDialog.saving = true;
+
+      // Hang onto the prereqs of the course
+      const prerequisites = course.prerequisites || [];
+      // Get rid of the prereqs; not for consumption by the endpoint
+      delete course.prerequisites;
+
       if (this.courseDialog.editMode) {
-        // Hang on to the ID of the person being updated.
+        // Hang on to the ID of the course being updated.
         const course_id = course.id;
-        // Locate the person we're updating in the table.
+        // Locate the course we're updating in the table.
         const idx = this.courses.findIndex(c => c.id === course.id);
         // Get rid of the ID; not for consumption by endpoint.
         delete course.id;
 
-        this.$http
-          .patch(`/api/v1/courses/courses/${course_id}`, course)
-          .then(resp => {
-            console.log("EDITED", resp);
-            Object.assign(this.courses[idx], course);
+        let promises = [];
+        promises.push(
+          this.$http
+            .patch(`/api/v1/courses/courses/${course_id}`, course)
+            .then(resp => {
+              console.log("EDITED", resp);
+              Object.assign(this.courses[idx], course);
+            })
+        );
+        promises.push(
+          this.$http.patch(
+            `/api/v1/courses/courses/prerequisites/${course_id}`,
+            { prerequisites: prerequisites.map(prereq => prereq.id) }
+          ) // API expects array of IDs
+        );
+
+        Promise.all(promises)
+          .then(() => {
+            this.courses[idx].prerequisites = prerequisites;
             this.snackbar.text = this.$t("courses.updated");
             this.snackbar.show = true;
           })
@@ -277,16 +327,29 @@ export default {
             this.courseDialog.saving = false;
           });
       } else {
+        // All new courses are active
+        course.active = true;
         this.$http
           .post("/api/v1/courses/courses", course)
           .then(resp => {
             console.log("ADDED", resp);
-            this.courses.push(resp.data);
+            let newCourse = resp.data;
+            newCourse.prerequisites = prerequisites; // Re-attach prereqs so they show up in UI
+            this.courses.push(newCourse);
+
+            // Now that course created, add prerequisites to it
+            return this.$http.patch(
+              `/api/v1/courses/courses/prerequisites/${newCourse.id}`,
+              { prerequisites: prerequisites.map(prereq => prereq.id) }
+            ); // API expects array of IDs
+          })
+          .then(resp => {
+            console.log("PREREQS", resp);
             this.snackbar.text = this.$t("courses.added");
             this.snackbar.show = true;
           })
           .catch(err => {
-            console.error("FAILURE", err.response);
+            console.error("FAILURE", err);
             this.snackbar.text = this.$t("courses.add-failed");
             this.snackbar.show = true;
           })
@@ -295,8 +358,6 @@ export default {
             this.courseDialog.saving = false;
           });
       }
-
-      this.courseDialog.show = false;
     }
   },
 

@@ -1,0 +1,118 @@
+events:
+  title:
+    en: Events
+    es: Eventos
+  event-description:
+    en: Event Description
+    es: Descripción del Evento
+  start-date:
+    en: Start Date
+    es: Fecha de Inicio
+  end-date:
+    en: End Date
+    es: Fecha Final
+  start-time:
+    en: Start Time
+    es: Hora de Inicio
+  end-time:
+    en: End Time
+    es: Hora de Finalización
+  event-location:
+    en: Event Location
+    es: Ubicación de Evento
+  actions:
+    en: Actions
+    es: Comportamiento
+  edit-event:
+    en: Edit Event
+    es: Editar Evento
+  create-event:
+    en: Create Event
+    es: Crear Evento
+  confirm-archive:
+    en: Are you sure you want to archive this event?
+    es: ¿Seguro que quieres archivar este evento?
+  event-archived:
+    en: Event archived
+    es: Evento archivado
+  error-archiving-event:
+    en: Error while archiving event 
+    es: Error al archivar el evento
+  event-unarchived:
+    en: Event unarchived
+    es: Evento desarchivado   # probably not right
+  error-unarchiving-event:
+    en: Error while unarchiving event 
+    es: Error al desarchivar el evento
+  event-edited:
+    en: Event edited
+    es: Evento editado
+  error-editing-event:
+    en: Error while editing event
+    es: Error al editar evento
+  event-added:
+    en: Event added
+    es: Evento agregado
+  error-adding-event:
+    en: Error while adding event
+    es: Error al agregar evento
+
+  details:
+    title:
+      en: Details
+      es: Detalles
+  participants:
+    title:
+      en: Participants
+      es: Participantes
+  teams:
+    title:
+      en: Teams
+      es: Equipos
+  
+  assets:
+    title: 
+      en: Assets
+      es: Imudos
+    description:
+      en: Description
+      es: Descripción
+    location:
+      en: Location
+      es: Ubicación
+    new:
+      en: Add Asset
+      es: Añadir Imudos
+    create-asset:
+      en: Create Asset
+      es: Crear Imudos
+    edit-asset:
+      en: Edit Asset
+      es: Editar Imudos
+    confirm-archive:
+      en: Are you sure you want to archive this asset?
+      es: ¿Seguro que quieres archivar este imudo?
+    asset-archived:
+      en: Asset archived
+      es: Imudos archivado
+    error-archiving-asset:
+      en: Error while archiving asset 
+      es: Error al archivar este imudo
+    asset-unarchived:
+      en: Asset unarchived
+      es: Imudo desarchivado   # probably not right
+    error-unarchiving-asset:
+      en: Error while unarchiving asset 
+      es: Error al desarchivar imudo
+    asset-edited:
+      en: Asset edited
+      es: Imudo editados   # ?
+    error-editing-asset:
+      en: Error while editing asset
+      es: Error al editar imudo
+    asset-added:
+      en: Asset added
+      es: Imudo agregado
+    error-adding-asset:
+      en: Error while adding asset
+      es: Error al agregar imudo
