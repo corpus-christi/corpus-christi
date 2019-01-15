@@ -89,6 +89,7 @@
         v-bind:editMode="courseDialog.editMode"
         v-bind:initialData="courseDialog.course"
         v-bind:saving="courseDialog.saving"
+        v-bind:coursesPool="courses"
         v-on:cancel="cancelCourse"
         v-on:save="saveCourse"
       />
@@ -98,7 +99,8 @@
     <v-dialog
       v-model="deactivateDialog.show"
       max-width="350px"
-      data-cy="courses-table-confirmation">
+      data-cy="courses-table-confirmation"
+    >
       <v-card>
         <v-card-text>{{ $t("courses.confirm-archive") }}</v-card-text>
         <v-card-actions>
@@ -281,7 +283,7 @@ export default {
       this.courseDialog.saving = true;
 
       // Hang onto the prereqs of the course
-      const prerequisites = course.prerequisites;
+      const prerequisites = course.prerequisites || [];
       // Get rid of the prereqs; not for consumption by the endpoint
       delete course.prerequisites;
 
@@ -303,10 +305,11 @@ export default {
             })
         );
         promises.push(
-          this.$http
-            .patch(`/api/v1/courses/courses/prerequisites/${course_id}`,
-              { prerequisites: prerequisites.map(prereq => prereq.id) }) // API expects array of IDs
-        )
+          this.$http.patch(
+            `/api/v1/courses/courses/prerequisites/${course_id}`,
+            { prerequisites: prerequisites.map(prereq => prereq.id) }
+          ) // API expects array of IDs
+        );
 
         Promise.all(promises)
           .then(() => {
@@ -335,9 +338,10 @@ export default {
             this.courses.push(newCourse);
 
             // Now that course created, add prerequisites to it
-            return this.$http
-              .patch(`/api/v1/courses/courses/prerequisites/${newCourse.id}`,
-                { prerequisites: prerequisites.map(prereq => prereq.id) }); // API expects array of IDs
+            return this.$http.patch(
+              `/api/v1/courses/courses/prerequisites/${newCourse.id}`,
+              { prerequisites: prerequisites.map(prereq => prereq.id) }
+            ); // API expects array of IDs
           })
           .then(resp => {
             console.log("PREREQS", resp);
@@ -345,7 +349,7 @@ export default {
             this.snackbar.show = true;
           })
           .catch(err => {
-            console.error("FAILURE", err.response);
+            console.error("FAILURE", err);
             this.snackbar.text = this.$t("courses.add-failed");
             this.snackbar.show = true;
           })
