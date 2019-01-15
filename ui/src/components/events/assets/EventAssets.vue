@@ -41,6 +41,7 @@
     </v-toolbar>
 
     <v-data-table
+      :rows-per-page-items="rowsPerPageItem"
       :headers="headers"
       :items="visibleAssets"
       :search="search"
@@ -180,6 +181,7 @@ export default {
 
   data() {
     return {
+      rowsPerPageItem: [10, 15, 25, {"text":"$vuetify.dataIterator.rowsPerPageAll","value":-1}],
       tableLoading: true,
       assets: [],
       assetDialog: {
@@ -215,14 +217,14 @@ export default {
         {
           text: this.$t("events.assets.description"),
           value: "description",
-          width: "40%"
+          width: "45%"
         },
         {
           text: this.$t("events.assets.location"),
           value: "location_name",
-          width: "40%"
+          width: "30%"
         },
-        { text: this.$t("events.actions"), sortable: false, width: "20%" }
+        { text: this.$t("events.actions"), sortable: false, width: "25%" }
       ];
     },
 
