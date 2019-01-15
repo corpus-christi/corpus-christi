@@ -11,7 +11,6 @@ import sys
 from . import courses
 from .models import Course, CourseSchema, \
                     Course_Offering, Course_OfferingSchema, \
-                    PrerequisiteSchema, \
                     Student, StudentSchema
 from .. import db
 
@@ -138,9 +137,6 @@ def reactivate_course(course_id):
 
 
 # ---- Prerequisite
-
-prerequisite_schema = PrerequisiteSchema()
-
 """
 Route adds prerequisite for a specific course
 """
