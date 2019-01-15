@@ -25,6 +25,7 @@
     },
     "actions": {
       "add-another": "Add Another",
+      "add-event": "Add Event",
       "add-person": "Add Person",
       "cancel": "Cancel",
       "clear": "Clear",
@@ -39,14 +40,76 @@
       "search": "Search",
       "search-people": "Search People",
       "tooltips": {
+        "activate": "Activate",
         "archive": "Archive",
-        "settings": "Settings",
-        "unarchive": "Unarchive"
+        "settings": "Settings"
       },
       "view-active": "View Active",
       "view-all": "View All",
       "view-archived": "View Archived",
       "view-inactive": "View Inactive"
+    },
+    "courses": {
+      "add-failed": "Failed to add course",
+      "added": "Course added",
+      "archived": "Course archived",
+      "confirm-archive": "Are you sure you want to archive this course?",
+      "course": "Courses",
+      "description": "Description",
+      "enrolled": "Number Enrolled",
+      "new": "New Course",
+      "prerequisites": "Prerequisites",
+      "reactivated": "Course unarchived",
+      "title": "Title",
+      "update-failed": "Failed to update course",
+      "updated": "Course updated"
+    },
+    "events": {
+      "actions": "Actions",
+      "assets": {
+        "asset-added": "Asset added",
+        "asset-archived": "Asset archived",
+        "asset-edited": "Asset edited",
+        "asset-unarchived": "Asset unarchived",
+        "confirm-archive": "Are you sure you want to archive this asset?",
+        "create-asset": "Create Asset",
+        "description": "Description",
+        "edit-asset": "Edit Asset",
+        "error-adding-asset": "Error while adding asset",
+        "error-archiving-asset": "Error while archiving asset",
+        "error-editing-asset": "Error while editing asset",
+        "error-unarchiving-asset": "Error while unarchiving asset",
+        "location": "Location",
+        "new": "Add Asset",
+        "title": "Assets"
+      },
+      "confirm-archive": "Are you sure you want to archive this event?",
+      "create-event": "Create Event",
+      "details": {
+        "title": "Details"
+      },
+      "edit-event": "Edit Event",
+      "end-date": "End Date",
+      "end-time": "End Time",
+      "error-adding-event": "Error while adding event",
+      "error-archiving-event": "Error while archiving event",
+      "error-editing-event": "Error while editing event",
+      "error-unarchiving-event": "Error while unarchiving event",
+      "event-added": "Event added",
+      "event-archived": "Event archived",
+      "event-description": "Event Description",
+      "event-edited": "Event edited",
+      "event-location": "Event Location",
+      "event-unarchived": "Event unarchived",
+      "participants": {
+        "title": "Participants"
+      },
+      "start-date": "Start Date",
+      "start-time": "Start Time",
+      "teams": {
+        "title": "Teams"
+      },
+      "title": "Events"
     },
     "groups": {
       "title": "Home Churches"
@@ -60,6 +123,7 @@
     "person": {
       "actions": {
         "add-account": "Add Account",
+        "add-participant": "Add a Participant",
         "edit": "Edit Person",
         "new": "New Person",
         "reset-password": "Reset Password"
@@ -98,7 +162,8 @@
       "attributes": {
         "email": "email",
         "firstName": "first name",
-        "lastName": "last name"
+        "lastName": "last name",
+        "title": "title"
       },
       "required": "Required"
     }
@@ -129,6 +194,7 @@
     },
     "actions": {
       "add-another": "A\u00f1adir Otro",
+      "add-event": "A\u00f1adir Evento",
       "add-person": "A\u00f1adir Persona",
       "cancel": "Cancelar",
       "clear": "Despejar",
@@ -136,21 +202,83 @@
       "confirm": "Confirmar",
       "duplicate": "Duplicar",
       "edit": "Editar",
-      "header": "Comportamiento",
+      "header": "Acciones",
       "login": "Acceder",
       "logout": "Cerrar sesi\u00f3n",
       "save": "Salvar",
       "search": "Buscar",
       "search-people": "Buscar Personas",
       "tooltips": {
+        "activate": "Activar",
         "archive": "Archivar",
-        "settings": "Ajustes",
-        "unarchive": "Desarchivar"
+        "settings": "Ajustes"
       },
       "view-active": "Ver Activo",
       "view-all": "Ver Todo",
       "view-archived": "Ver Archivo",
       "view-inactive": "Ver Inactivo"
+    },
+    "courses": {
+      "add-failed": "Se fall\u00f3 a a\u00f1adir el curso",
+      "added": "Curso a\u00f1adido",
+      "archived": "Curso archivado",
+      "confirm-archive": "\u00bfEst\u00e1s seguro que quieres archivar este curso?",
+      "course": "Cursos",
+      "description": "Descripci\u00f3n",
+      "enrolled": "N\u00famero Registrado",
+      "new": "Nuevo Curso",
+      "prerequisites": "Prerrequisitos",
+      "reactivated": "Curso desarchivado",
+      "title": "T\u00edtulo",
+      "update-failed": "Se fall\u00f3 a actualizar el curso",
+      "updated": "Curso actualizado"
+    },
+    "events": {
+      "actions": "Comportamiento",
+      "assets": {
+        "asset-added": "Imudo agregado",
+        "asset-archived": "Imudos archivado",
+        "asset-edited": "Imudo editados",
+        "asset-unarchived": "Imudo desarchivado",
+        "confirm-archive": "\u00bfSeguro que quieres archivar este imudo?",
+        "create-asset": "Crear Imudos",
+        "description": "Descripci\u00f3n",
+        "edit-asset": "Editar Imudos",
+        "error-adding-asset": "Error al agregar imudo",
+        "error-archiving-asset": "Error al archivar este imudo",
+        "error-editing-asset": "Error al editar imudo",
+        "error-unarchiving-asset": "Error al desarchivar imudo",
+        "location": "Ubicaci\u00f3n",
+        "new": "A\u00f1adir Imudos",
+        "title": "Imudos"
+      },
+      "confirm-archive": "\u00bfSeguro que quieres archivar este evento?",
+      "create-event": "Crear Evento",
+      "details": {
+        "title": "Detalles"
+      },
+      "edit-event": "Editar Evento",
+      "end-date": "Fecha Final",
+      "end-time": "Hora de Finalizaci\u00f3n",
+      "error-adding-event": "Error al agregar evento",
+      "error-archiving-event": "Error al archivar el evento",
+      "error-editing-event": "Error al editar evento",
+      "error-unarchiving-event": "Error al desarchivar el evento",
+      "event-added": "Evento agregado",
+      "event-archived": "Evento archivado",
+      "event-description": "Descripci\u00f3n del Evento",
+      "event-edited": "Evento editado",
+      "event-location": "Ubicaci\u00f3n de Evento",
+      "event-unarchived": "Evento desarchivado",
+      "participants": {
+        "title": "Participantes"
+      },
+      "start-date": "Fecha de Inicio",
+      "start-time": "Hora de Inicio",
+      "teams": {
+        "title": "Equipos"
+      },
+      "title": "Eventos"
     },
     "groups": {
       "title": "Iglesias Hogar"
@@ -164,6 +292,7 @@
     "person": {
       "actions": {
         "add-account": "A\u00f1adir cuenta",
+        "add-participant": "A\u00f1adir Part\u00edcipe",
         "edit": "Editar persona",
         "new": "Persona Nueva",
         "reset-password": "Restablecer la contrase\u00f1a"
@@ -202,7 +331,8 @@
       "attributes": {
         "email": "correo electr\u00f3nico",
         "firstName": "nombre de pila",
-        "lastName": "appellido"
+        "lastName": "appellido",
+        "title": "t\u00edtulo"
       },
       "required": "Necesario"
     }

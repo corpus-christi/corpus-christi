@@ -44,7 +44,6 @@ export default {
       isLoading: false
     };
   },
-
   methods: {
     setSelected(entity) {
       this.$emit("input", entity);
