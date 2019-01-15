@@ -8,6 +8,7 @@ htmlcov/
 test-db.sqlite
 venv/
 credentials.py
+credentials.sh
 
 # UI
 node_modules/
