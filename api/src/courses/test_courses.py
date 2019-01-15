@@ -410,7 +410,7 @@ def test_create_prerequisite(auth_client):
         prereq_ids.append(courses[i].id)
     # WHEN course requires previous attendance to another course
     resp = auth_client.post(url_for('courses.create_prerequisite', course_id=course.id),
-        json={ "prerequisites": prereq_ids})
+        json={ 'prerequisites': prereq_ids})
     assert resp.status_code == 201
     # THEN asssert course is prerequisite
     for i in range(len(prereq_ids)):
@@ -446,12 +446,22 @@ def test_read_one_course_prerequisites(auth_client):
         assert courses[i].prerequisites == [courses[i+1]]
     
 
-#@pytest.mark.smoke
+@pytest.mark.smoke
 def test_update_prerequisite(auth_client):
     # GIVEN an existing and available course with an existing prereq
+    count_courses = random.randint(3,13)
+    create_multiple_courses(auth_client.sqla, count_courses)
+    create_multiple_prerequisites(auth_client.sqla)
+    courses = auth_client.sqla.query(Course).all()
     # WHEN new prereq for existing course is required
+    for course in courses:
+        resp = auth_client.patch(url_for('courses.update_prerequisite', course_id=course.id), 
+            json={'prerequisites':[1]})
+        assert resp.status_code == 200
     # THEN existing course has new prereq in place of existing prereq
-    assert True == False
+    courses = auth_client.sqla.query(Course).all()
+    for course in courses:    
+        assert course.prerequisites[0].id == 1
 
 """
 @pytest.mark.xfail()
