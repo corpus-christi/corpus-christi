@@ -88,7 +88,7 @@ export default {
     const id = this.$route.params.event;
     this.$http.get(`/api/v1/events/${id}`).then(resp => {
       this.event = resp.data;
-      console.log(resp.data)
+      console.log(resp.data);
       this.pageLoaded = true;
     });
   },
@@ -144,19 +144,19 @@ export default {
       event.location_id = event.location.id;
       delete event.location;
       this.$http
-      .put(`/api/v1/events/${id}`, event)
-      .then(resp => {
-        console.log("EDITED", resp);
-        this.event = resp.data;
-        this.eventDialog.show = false;
-        this.eventDialog.saveLoading = false;
-        this.showSnackbar(this.$t("events.event-edited"));
-      })
-      .catch(err => {
-        console.error("PUT FALURE", err.response);
-        this.eventDialog.saveLoading = false;
-        this.showSnackbar(this.$t("events.error-editing-event"));
-      });
+        .put(`/api/v1/events/${id}`, event)
+        .then(resp => {
+          console.log("EDITED", resp);
+          this.event = resp.data;
+          this.eventDialog.show = false;
+          this.eventDialog.saveLoading = false;
+          this.showSnackbar(this.$t("events.event-edited"));
+        })
+        .catch(err => {
+          console.error("PUT FALURE", err.response);
+          this.eventDialog.saveLoading = false;
+          this.showSnackbar(this.$t("events.error-editing-event"));
+        });
     },
 
     getDisplayDate(ts) {
