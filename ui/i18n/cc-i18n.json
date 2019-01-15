@@ -40,23 +40,14 @@
       "search": "Search",
       "search-people": "Search People",
       "tooltips": {
-<<<<<<< HEAD
-        "deactivate": "Archive",
-        "reactivate": "Unarchive",
-=======
-        "activate": "Activate",
         "archive": "Archive",
->>>>>>> app-courses
+        "reactivate": "Unarchive",
         "settings": "Settings"
       },
       "view-active": "View Active",
       "view-all": "View All",
-<<<<<<< HEAD
-      "view-archived": "View Archived"
-=======
       "view-archived": "View Archived",
       "view-inactive": "View Inactive"
->>>>>>> app-courses
     },
     "courses": {
       "add-failed": "Failed to add course",
@@ -72,8 +63,6 @@
       "title": "Title",
       "update-failed": "Failed to update course",
       "updated": "Course updated"
-<<<<<<< HEAD
-=======
     },
     "events": {
       "actions": "Actions",
@@ -121,7 +110,6 @@
         "title": "Teams"
       },
       "title": "Events"
->>>>>>> app-courses
     },
     "groups": {
       "title": "Home Churches"
@@ -214,30 +202,21 @@
       "confirm": "Confirmar",
       "duplicate": "Duplicar",
       "edit": "Editar",
-      "header": "Comportamiento",
+      "header": "Acciones",
       "login": "Acceder",
       "logout": "Cerrar sesi\u00f3n",
       "save": "Salvar",
       "search": "Buscar",
       "search-people": "Buscar Personas",
       "tooltips": {
-<<<<<<< HEAD
-        "deactivate": "Archivar",
-        "reactivate": "Desarchivar",
-=======
-        "activate": "Activar",
         "archive": "Archivar",
->>>>>>> app-courses
+        "reactivate": "Desarchivar",
         "settings": "Ajustes"
       },
       "view-active": "Ver Activo",
       "view-all": "Ver Todo",
-<<<<<<< HEAD
-      "view-archived": "Ver Archivado"
-=======
-      "view-archived": "Ver Archivo",
+      "view-archived": "Ver Archivado",
       "view-inactive": "Ver Inactivo"
->>>>>>> app-courses
     },
     "courses": {
       "add-failed": "Se fall\u00f3 a a\u00f1adir el curso",
@@ -253,8 +232,6 @@
       "title": "T\u00edtulo",
       "update-failed": "Se fall\u00f3 a actualizar el curso",
       "updated": "Curso actualizado"
-<<<<<<< HEAD
-=======
     },
     "events": {
       "actions": "Comportamiento",
@@ -302,7 +279,6 @@
         "title": "Equipos"
       },
       "title": "Eventos"
->>>>>>> app-courses
     },
     "groups": {
       "title": "Iglesias Hogar"
