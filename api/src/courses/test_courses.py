@@ -336,6 +336,7 @@ def test_read_all_inactive_courses(auth_client):
     assert len(inactive_courses) == count_inactive
     
 # Test reading a single course from the database
+@pytest.mark.smoke
 def test_read_one_course(auth_client):
     # GIVEN one course in the database
     count = random.randint(3,11)
@@ -399,6 +400,7 @@ def test_update_course(auth_client):
         resp = auth_client.patch(url_for('courses.update_course', course_id=course.id),
             json={'name':'test_name', 'description':'test_descr', 'active': False})
         # THEN assert course reflects new detail(s)
+        print(resp)
         assert resp.status_code == 200
         assert resp.json['name'] == 'test_name'
         assert resp.json['description'] == 'test_descr'
