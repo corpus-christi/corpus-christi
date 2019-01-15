@@ -64,7 +64,7 @@ def read_all_courses():
     return jsonify(add_prereqs(result))
 
 
-@courses.route('/courses/active/<active_state>')
+@courses.route('/<active_state>/courses')
 @jwt_required
 # @authorize(["role.superuser", "role.registrar", "role.public"])
 def read_active_state_of_courses(active_state):
@@ -224,7 +224,7 @@ def read_all_course_offerings():
     result = db.session.query(Course_Offering).all()
     return jsonify(course_offering_schema.dump(result, many=True))
 
-@courses.route('/course_offerings/<active_state>')
+@courses.route('/<active_state>/course_offerings')
 @jwt_required
 def read_active_state_course_offerings(active_state):
     result = db.session.query(Course_Offering)
@@ -278,15 +278,28 @@ def add_student_to_course_offering(student_id):
     return jsonify(student_schema.dump(new_student)), 201
 
 
-@courses.route('/students')
+# May not need this route unless UI says so...
+# @courses.route('/students')
+# @jwt_required
+# def read_all_students():
+#     result = db.session.query(Student).all()
+#     return jsonify(student_schema.dump(result, many=True))
+
+
+@courses.route('/course_offering/<course_offering_id>/students')
 @jwt_required
-def read_all_students():
-    result = db.session.query(Student).all()
+def read_all_course_offering_students(course_offering_id):
+    """ This function lists all students by a specific course offering.
+        Active students are listed regardless of confirmed state. """
+    result = db.session.query(Student).filter_by(offering_id=course_offering_id, active=True).all()
+    if result is None:
+        return 'No active students are entrolled in the course offering', 404
     return jsonify(student_schema.dump(result, many=True))
 
-@courses.route('/students/<confirm_state>')
+
+@courses.route('/course_offering/<course_offering_id>/students/<confirm_state>')
 @jwt_required
-def read_confirm_state_student(confirm_state):
+def read_all_confirmed_students(course_offering_id, confirm_state):
     """
     Note: There is no need to see active/inactive state of students
     because it doesn't matter if a student is unconfirmed. """
