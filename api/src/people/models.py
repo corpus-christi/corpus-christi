@@ -37,6 +37,9 @@ class Person(Base):
 
 
 
+    def _init(self, accountInfo):
+        self.accountInfo = accountInfo
+
     def __repr__(self):
         return f"<Person(id={self.id},name='{self.first_name} {self.last_name}')>"
 
@@ -58,7 +61,9 @@ class PersonSchema(Schema):
     phone = fields.String(allow_none=True)
     email = fields.String(allow_none=True)
     active = fields.Boolean(required=True)
-    location_id = fields.Integer(data_key='locationId')
+    location_id = fields.Integer(data_key='locationId', allow_none=True)
+
+    accountInfo = fields.Nested('AccountSchema', allow_none=True, only=['username','id'])
 
 # Defines join table for people_account and people_role
 
@@ -75,6 +80,7 @@ class Account(Base):
     username = Column(StringTypes.MEDIUM_STRING, nullable=False, unique=True)
     password_hash = Column(StringTypes.PASSWORD_HASH, nullable=False)
     active = Column(Boolean, nullable=False, default=True)
+    confirmed = Column(Boolean, nullable=False, default=True)
     person_id = Column(Integer, ForeignKey('people_person.id'), nullable=False)
 
     # One-to-one relationship; see https://docs.sqlalchemy.org/en/latest/orm/basic_relationships.html#one-to-one
@@ -108,14 +114,16 @@ class AccountSchema(Schema):
     username = fields.String(required=True, validate=Length(min=1))
     password = fields.String(attribute='password_hash', load_only=True,
                              required=True, validate=Length(min=6))
-    active = fields.Boolean()
+    active = fields.Boolean(missing=None)
+    confirmed = fields.Boolean()
     person_id = fields.Integer(
         required=True, data_key="personId", validate=Range(min=1))
 
     @pre_load
     def hash_password(self, data):
         """Make sure the password is properly hashed when creating a new account."""
-        data['password'] = generate_password_hash(data['password'])
+        if 'password' in data.keys():
+            data['password'] = generate_password_hash(data['password'])
         return data
 
 
