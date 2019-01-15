@@ -42,6 +42,7 @@
 
     <v-data-table
       :headers="headers"
+      :rows-per-page-items="rowsPerPageItem"
       :items="visibleEvents"
       :search="search"
       :loading="tableLoading"
@@ -198,6 +199,7 @@ export default {
 
   data() {
     return {
+      rowsPerPageItem: [10, 15, 25, {"text":"$vuetify.dataIterator.rowsPerPageAll","value":-1}],
       tableLoading: true,
       events: [],
       eventDialog: {

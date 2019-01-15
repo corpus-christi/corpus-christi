@@ -78,6 +78,9 @@
               <v-text-field
                 slot="activator"
                 v-model="startTime"
+                name="startTime"
+                v-validate="'required'"
+                v-bind:error-messages="errors.first('startTime')"
                 v-bind:label="$t('events.start-time')"
                 prepend-icon="schedule"
                 readonly
@@ -160,6 +163,9 @@
               <v-text-field
                 slot="activator"
                 v-model="endTime"
+                name="endTime"
+                v-validate="'required'"
+                v-bind:error-messages="errors.first('endTime')"
                 v-bind:label="$t('events.end-time')"
                 prepend-icon="update"
                 readonly
@@ -329,8 +335,6 @@ export default {
           this.event.end = this.getTimestamp(this.endDate, this.endTime);
           this.event.active = true;
           this.$emit("save", this.event);
-        } else {
-          console.log(this.errors);
         }
       });
     },
