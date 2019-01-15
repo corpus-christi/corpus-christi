@@ -5,15 +5,7 @@
     </v-card-title>
     <v-card-text>
       <form>
-        <v-combobox
-          v-model="prereqs"
-          :items="items"
-          v-bind:label="$t('courses.title')"
-          chips
-          clearable
-          solo
-          multiple
-        ></v-combobox>
+        <entity-search course v-model="course.name" />
 
         <!-- description -->
         <v-textarea
@@ -27,8 +19,8 @@
           <v-flex>
             <v-menu
               ref="menu"
+              v-model="showDatePicker"
               :close-on-content-click="false"
-              v-model="menu"
               :nudge-right="40"
               :return-value.sync="dates"
               lazy
@@ -37,7 +29,6 @@
               full-width
               min-width="290px"
             >
-              <!-- TODO: Replace translations -->
               <v-combobox
                 slot="activator"
                 v-model="dates"
@@ -48,30 +39,67 @@
                 prepend-icon="event"
                 readonly
               ></v-combobox>
-              <v-date-picker v-model="dates" multiple no-title scrollable>
+              <v-date-picker 
+                v-model="dates" 
+                multiple no-title scrollable 
+                v-bind:locale="currentLanguageCode">
                 <v-spacer></v-spacer>
-                <v-btn flat color="primary" @click="menu = false">Cancel</v-btn>
-                <v-btn flat color="primary" @click="$refs.menu.save(dates)">OK</v-btn>
+                <v-btn flat color="primary" @click="menu = false">{{ $t("actions.cancel") }}</v-btn>
+                <v-btn flat color="primary" @click="$refs.menu.save(dates)">{{ $t("actions.confirm") }}</v-btn>
               </v-date-picker>
             </v-menu>
           </v-flex>
         </v-layout>
 
         <!-- time -->
-        <v-text-field v-model="course.name" v-bind:label="$t('courses.choose-time')" name="time"></v-text-field>
-
+       <v-dialog
+         ref="dialog1"
+         v-model="timeModal"
+         :return-value.sync="time"
+         lazy
+         full-width
+         width="290px"
+         persistent
+         data-cy="start-time-dialog"
+       >
+         <v-text-field
+           slot="activator"
+           v-model="time"
+           v-bind:label="$t('events.start-time')"
+           prepend-icon="schedule"
+           readonly
+         ></v-text-field>
+         <v-time-picker
+           v-if="timeModal"
+           :format="timeFormat"
+           v-model="time"
+           data-cy="start-time-picker"
+         >
+           <v-spacer></v-spacer>
+           <v-btn
+             flat
+             color="primary"
+             @click="timeModal = false"
+             data-cy="start-time-cancel"
+             >{{ $t("actions.cancel") }}</v-btn
+           >
+           <v-btn
+             flat
+             color="primary"
+             @click="$refs.dialog1.save(time)"
+             data-cy="start-time-ok"
+             >{{ $t("actions.confirm") }}</v-btn
+           >
+         </v-time-picker>
+       </v-dialog>
         <!-- teacher -->
-        <v-text-field v-model="course.name" v-bind:label="$t('courses.choose-teacher')" name="location"></v-text-field>
+        <v-text-field v-bind:label="$t('courses.choose-teacher')" name="teacher"></v-text-field>
 
         <!-- location -->
-        <v-text-field v-model="course.name" v-bind:label="$t('courses.choose-location')" name="location"></v-text-field>
+        <v-text-field v-bind:label="$t('courses.choose-location')" name="location"></v-text-field>
 
         <!-- max size -->
-        <v-text-field
-          v-model="course.description"
-          v-bind:label="$t('courses.max-size')"
-          name="description"
-        ></v-text-field>
+        <v-text-field v-bind:label="$t('courses.max-size')" name="max-size"></v-text-field>
       </form>
     </v-card-text>
     <v-card-actions>
@@ -97,9 +125,14 @@
 <script>
 
 import { isEmpty } from "lodash";
+import EntitySearch from "../EntitySearch";
+import { mapGetters } from "vuex";
 
 export default {
   name: "CourseOfferingForm",
+  components: {
+    EntitySearch
+  },
   data: function() {
     return {
       availableCourses: [],
@@ -107,10 +140,14 @@ export default {
       location: "location",
       teacher: "teacher",
       description: "description",
-      time: "time",
+      time: "",
+      date: "",
       dates: [],
       menu: false,
-
+      
+      showDatePicker: false,
+      timeModal: false,
+      
       course: {}
     };
   },
@@ -118,9 +155,22 @@ export default {
     items() {
       return this.availableCourses.filter(item => item.id != this.course.id);
     },
+    
     title() {
       return this.editMode ? this.$t("actions.edit") : this.$t("courses.new");
-    }
+    },
+    
+    timeFormat() {
+      if (this.currentLanguageCode == "en") {
+        return "ampm";
+      } else return "24hr";
+    },
+    
+    today() {
+      return this.getDateFromTimestamp(Date.now());
+    },
+    
+    ...mapGetters(["currentLanguageCode"])
   },
 
   watch: {
@@ -130,6 +180,11 @@ export default {
         this.clear();
       } else {
         this.course = courseProp;
+        if (this.course.when != null) {
+          this.course.when = new Date(this.course.when);
+          this.startTime = this.getTimeFromTimestamp(this.course.when);
+          this.startDate = this.getDateFromTimestamp(this.course.when);
+        }
       }
     }
   },
@@ -158,6 +213,11 @@ export default {
     // Clear the forms.
     clear() {
       this.course = {};
+      this.time = "";
+      this.date = "";
+      this.showDatePicker = false;
+      this.timeModal = false;
+      
       this.$validator.reset();
     },
 
@@ -165,6 +225,7 @@ export default {
     save() {
       this.$validator.validateAll();
       if (!this.errors.any()) {
+        this.course.when = this.getTimestamp(this.date, this.time);
         this.$emit("save", this.course);
       }
     },
@@ -172,6 +233,40 @@ export default {
     remove(item) {
       this.prereqs.splice(this.prereqs.indexOf(item), 1);
       this.prereqs = [...this.prereqs];
+    },
+    
+    getTimestamp(date, time) {
+      let datems = new Date(date).getTime();
+      let timearr = time.split(":");
+      let timemin = Number(timearr[0]) * 60 + Number(timearr[1]);
+      let timems = timemin * 60000;
+      let tzoffset = new Date().getTimezoneOffset() * 60000;
+      return new Date(datems + timems + tzoffset);
+    },
+    
+    getDateFromTimestamp(ts) {
+      let date = new Date(ts);
+      if (date.getTime() < 86400000) {
+        //ms in a day
+        return "";
+      }
+      let yr = date.toLocaleDateString(this.currentLanguageCode, {
+        year: "numeric"
+      });
+      let mo = date.toLocaleDateString(this.currentLanguageCode, {
+        month: "2-digit"
+      });
+      let da = date.toLocaleDateString(this.currentLanguageCode, {
+        day: "2-digit"
+      });
+      return `${yr}-${mo}-${da}`;
+    },
+    
+    getTimeFromTimestamp(ts) {
+      let date = new Date(ts);
+      let hr = String(date.getHours()).padStart(2, "0");
+      let min = String(date.getMinutes()).padStart(2, "0");
+      return `${hr}:${min}`;
     }
   },
   mounted() {

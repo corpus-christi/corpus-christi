@@ -15,7 +15,7 @@
             single-line
             box
             hide-details
-          ></v-text-field>
+          ></v-text-field>          
         </v-flex>
         <v-spacer></v-spacer>
 
@@ -42,7 +42,7 @@
     >
       <v-progress-linear slot="progress" color="primary" indeterminate></v-progress-linear>
       <template slot="items" slot-scope="props">
-        <td>{{ props.item.name }}</td>
+        <td>{{ props.item.course.name }}</td>
         <td>{{ props.item.description }}</td>
         <td>
           <CourseOfferingAdminActions
@@ -105,7 +105,7 @@ export default {
   name: "CourseOfferingsTable",
   components: {
     CourseOfferingForm,
-    CourseOfferingAdminActions
+    CourseOfferingAdminActions,
   },
   data() {
     return {
