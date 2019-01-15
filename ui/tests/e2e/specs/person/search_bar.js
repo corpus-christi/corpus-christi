@@ -20,6 +20,10 @@ describe("Testing Editing User Information", () => {
       cy.get("[data-cy=toggle-nav-drawer]").click();
       //goes to the people page
       cy.get("[data-cy=people]").click();
+      // Open the locale menu
+      cy.get("[data-cy=cur-locale]").click();
+      // Select English locale
+      cy.get("[data-cy=en-US]").click();
     }
   );
   it("When: Typing any user-related information into the search bar", () => {
@@ -34,8 +38,6 @@ describe("Testing Editing User Information", () => {
     cy.get("[data-cy=search]")
       .clear()
       .type("foobar");
-    cy.get("tbody")
-      .find("tr")
-      .contains("No matching records found");
+      cy.get("tbody > :nth-child(1) > :nth-child(2)").should('not.exist');
   });
 });
