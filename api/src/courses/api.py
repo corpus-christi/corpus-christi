@@ -108,34 +108,6 @@ def update_course(course_id):
     return jsonify(course_schema.dump(course))
 
 
-@courses.route('/courses/deactivate/<course_id>', methods=['PATCH'])
-@jwt_required
-# @authorize(["role.superuser", "role.registrar"])
-def deactivate_course(course_id):
-    """Set active course with given course_id to inactive (False)"""
-    valid_course = db.session.query(Course).filter_by(id=course_id).first()
-    if valid_course is None:
-        return 'Not Found', status.HTTP_404_NOT_FOUND
-    else:
-        setattr(valid_course, 'active', False)
-    db.session.commit()
-    return jsonify(course_schema.dump(valid_course))
-
-
-@courses.route('/courses/reactivate/<course_id>', methods=['PATCH'])
-@jwt_required
-# @authorize(["role.superuser", "role.registrar"])
-def reactivate_course(course_id):
-    """Set inactive course with given course_id to active (True)"""
-    valid_course = db.session.query(Course).filter_by(id=course_id).first()
-    if valid_course is None:
-        return 'Not Found', 404
-    else:
-        setattr(valid_course, 'active', True)
-    db.session.commit()
-    return jsonify(course_schema.dump(valid_course))
-
-
 # ---- Prerequisite
 """
 Route adds prerequisite for a specific course
