@@ -3,6 +3,7 @@ import random
 
 from faker import Faker
 from flask import url_for
+from src.db import Base
 
 from .models import Course, CourseSchema, Course_Offering, Class_Meeting,\
         Course_OfferingSchema, Diploma, DiplomaSchema, Student, StudentSchema,\
@@ -150,7 +151,7 @@ def create_multiple_course_offerings_inactive(sqla, n=3):
     sqla.commit()
 
 def create_multiple_prerequisites(sqla):
-    """Commits the number of prerequisites to the DB."""
+    """Commits the courses - 1 number of prerequisites to the DB."""
     courses = sqla.query(Course).all()
     new_prerequisites = []
     for i in range(len(courses)-1):
@@ -422,6 +423,8 @@ def test_read_all_prerequisites(auth_client):
     count_courses = 2 #random.randint(3,15)
     count_prereqs = count_courses - 1
     create_multiple_courses(auth_client.sqla, count_courses)
+    # count_courses = auth_client.sqla.query(Course).count()
+    count_prereqs = count_courses -1
     create_multiple_prerequisites(auth_client.sqla)
     # WHEN that course has prerequisites
     courses = auth_client.sqla.query(Course).all()
@@ -431,7 +434,7 @@ def test_read_all_prerequisites(auth_client):
             if prereq not in prereqs:
                 prereqs.append(prereq)
     # THEN assert all prereq's are listed
-    assert len(prereqs) == count_prereqs
+    assert prereqs == count_prereqs
 
 #This will test getting prerequistes for one course
 def test_read_one_course_prerequisites(auth_client):
