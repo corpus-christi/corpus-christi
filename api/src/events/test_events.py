@@ -156,9 +156,15 @@ def test_delete_event(auth_client):
     deleted = 0
     for event in events:
         # THEN
-        if flip():
-            resp = auth_client.get(url_for('events.delete_event', event_id = event.id))
-            assert resp.status_code == 200
+        if flip() and event.active:
+            print("Delete with id:" + str(event.id))
+            resp = auth_client.delete(url_for('events.delete_event', event_id = event.id))
+            print(event.active)
+            #print(resp.json['active'])
+            #print(resp.json)
+            #assert resp.status_code == 200
+            deleted += 1
+        elif not event.active:
             deleted += 1
 
     new_events = auth_client.sqla.query(Event).filter(Event.active == True).all()
