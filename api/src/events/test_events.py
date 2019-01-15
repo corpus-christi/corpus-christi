@@ -14,6 +14,8 @@ from ..people.models import Person
 from .create_event_data import flip, fake, create_multiple_events, event_object_factory, create_multiple_assets, create_multiple_teams, create_events_assets, create_events_teams
 from ..places.test_places import create_multiple_locations, create_multiple_addresses, create_multiple_areas 
 
+fake = Faker()
+
 # ---- Event
 
 @pytest.mark.smoke
@@ -68,6 +70,7 @@ def test_read_one_event(auth_client):
     events = auth_client.sqla.query(Event).all()
 
     for event in events:
+        # THEN
         resp = auth_client.get(url_for('events.read_one_event', event_id = event.id))
         assert resp.status_code == 200
         assert resp.json['title'] == event.title
@@ -75,28 +78,97 @@ def test_read_one_event(auth_client):
         # assert resp.json['start'] == str(event.start)
 
 
-@pytest.mark.xfail()
+@pytest.mark.smoke
 def test_replace_event(auth_client):
     # GIVEN
+    count = random.randint(3, 11)
+    create_multiple_events(auth_client.sqla, count)
+
     # WHEN
-    # THEN
-    assert True == False
+    events = auth_client.sqla.query(Event).all()
+
+    for event in events:
+        # THEN
+        resp = auth_client.put(url_for('events.replace_event', event_id = event.id), json = event_object_factory(auth_client.sqla))
+        
+        assert resp.status_code == 200
+        assert resp.json['id'] == event.id
+        assert resp.json['title'] != event.title
     
 
-@pytest.mark.xfail()
+@pytest.mark.smoke
 def test_update_event(auth_client):
     # GIVEN
+    count = random.randint(3,11)
+    create_multiple_events(auth_client.sqla, count)
+
     # WHEN
-    # THEN
-    assert True == False
+    events = auth_client.sqla.query(Event).all()
+
+    for event in events:
+        # THEN
+        payload = {}
+        new_event = event_object_factory(auth_client.sqla)
+
+        flips = (flip(), flip(), flip(), flip(), flip(), flip())
+
+        print(new_event)
+        if flips[0]:
+            payload['title'] = new_event['title']
+        if flips[1]:
+            payload['start'] = new_event['start']
+        if flips[2]:
+            payload['end'] = new_event['end']
+        if flips[3]:
+            payload['active'] = new_event['active']
+        if flips[4] and 'description' in new_event.keys():
+            payload['description'] = new_event['description']
+        if flips[5] and 'location_id' in new_event.keys():
+            payload['location_id'] = new_event['location_id']
+
+        resp = auth_client.patch(url_for('events.update_event', event_id = event.id), json=payload)
+
+        assert resp.status_code == 200
+
+        if flips[0]:
+            assert resp.json['title'] == payload['title']
+        if flips[1]:
+            assert resp.json['start'] == payload['start'].replace(' ', 'T') + "+00:00"
+        if flips[2]:
+            assert resp.json['end'] == payload['end'].replace(' ', 'T') + "+00:00"
+        if flips[3]:
+            assert resp.json['active'] == payload['active']
+        if flips[4] and 'description' in new_event.keys():
+            assert resp.json['description'] == payload['description']
+        if flips[5] and 'location_id' in new_event.keys():
+            assert resp.json['location'] == payload['location_id']
     
 
-@pytest.mark.xfail()
+@pytest.mark.smoke
 def test_delete_event(auth_client):
     # GIVEN
+    count = random.randint(3, 11)
+    create_multiple_events(auth_client.sqla, count)
+
     # WHEN
-    # THEN
-    assert True == False
+    events = auth_client.sqla.query(Event).all()
+
+    deleted = 0
+    for event in events:
+        # THEN
+        if flip() and event.active:
+            print("Delete with id:" + str(event.id))
+            resp = auth_client.delete(url_for('events.delete_event', event_id = event.id))
+            print(event.active)
+            #print(resp.json['active'])
+            #print(resp.json)
+            #assert resp.status_code == 200
+            deleted += 1
+        elif not event.active:
+            deleted += 1
+
+    new_events = auth_client.sqla.query(Event).filter(Event.active == True).all()
+    assert len(new_events) == count - deleted
     
 
 # ---- Asset

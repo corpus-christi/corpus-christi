@@ -1,10 +1,9 @@
 describe("Create Event Test", function() {
+  before(() => {
+    cy.login();
+  })
+
   it("GIVEN: Event Planner goes to Event page", function() {
-    cy.visit("/login");
-    cy.get("[data-cy=username]").type("Cytest");
-    cy.get("[data-cy=password]").type("password");
-    cy.get("[data-cy=login]").click();
-    // cy.login();
     cy.visit("/events/all");
   });
 
@@ -14,10 +13,10 @@ describe("Create Event Test", function() {
 
     cy.get("[data-cy=description]").type("A neat description of something.");
 
-    // Search a location and autocomplete
+    // TODO: Make API calls for test data???
+    // Get first location in the search
     cy.get("[data-cy=entity-search-field]").click();
-    cy.get("[data-cy=entity-search-field]").type("Bryan");
-    cy.get("[data-cy=entity-search-field]").type("{enter}");
+    cy.get(".menuable__content__active > .v-select-list > .v-list > :nth-child(1) > .v-list__tile").click();
 
     cy.get("[data-cy=start-date-menu]").click();
     // Get cypress to click on a certain position on the calendar
