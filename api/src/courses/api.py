@@ -223,7 +223,11 @@ def create_course_offering():
 # @authorize(["role.superuser", "role.registrar", "role.public"])
 def read_all_course_offerings():
     result = db.session.query(Course_Offering).all()
-    return jsonify(course_offering_schema.dump(result, many=True))
+    results = course_offering_schema.dump(result, many=True)
+    for r in results:
+        print("\n\n", r['courseId'], "\n\n")
+        r['course'] = course_schema.dump(db.session.query(Course).filter_by(id=r['courseId']).first(), many=False)
+    return jsonify(results)#jsonify(course_offering_schema.dump(result, many=True))
 
 @courses.route('/course_offerings/<active_state>')
 @jwt_required
@@ -233,7 +237,7 @@ def read_active_state_course_offerings(active_state):
         query = result.filter_by(active=True).all()
     elif (active_state == 'inactive'):
         query = result.filter_by(active=False).all()
-    else: 
+    else:
         return 'Cannot filter course offerings with undefined state', 404
     return jsonify(course_offering_schema.dump(query, many=True))
 
@@ -248,21 +252,11 @@ def read_one_course_offering(course_offering_id):
 @jwt_required
 # @authorize(["role.superuser", "role.registrar"])
 def update_course_offering(course_offering_id):
-<<<<<<< HEAD
     course_offering = db.session.query(Course_Offering).filter_by(id=course_offering_id).first()
     if course_offering is None:
         return "Course Offering NOT Found", 404
 
     for attr in 'description', 'active', 'max_size':
-=======
-
-    course_offering = db.session.query(
-        Course_Offering).filter_by(id=course_offering_id).first()
-    if course_offering is None:
-        return "Course Offering NOT Found", 404
-
-    for attr in ['description', "active", "max_size"]:
->>>>>>> app-courses
         if attr in request.json:
             setattr(course_offering, attr, request.json[attr])
 
