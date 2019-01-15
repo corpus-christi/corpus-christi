@@ -149,6 +149,14 @@ def create_multiple_course_offerings_inactive(sqla, n=3):
     sqla.add_all(new_course_offerings)
     sqla.commit()
 
+def prerequisite_object_factory(course_id, prereq_id):
+    """Cook up a fake prerequisite."""
+    prerequisites = {
+    'courseId': course_id,
+    'prereqId': prereq_id
+    }
+    return prerequisites
+
 
 def create_multiple_prerequisites(sqla):
     """Commits the number of prerequisites to the DB."""
@@ -252,7 +260,6 @@ def create_diploma_awards(sqla, n):
     for i in range(n):
         diploma = diplomas[random.randint(0, len(diplomas)-1)]
         student = students[random.randint(0, len(students)-1)]
-        # print(diploma.when)
         student.diplomas.append(diploma)
         new_diploma_awards.append(student)
     sqla.add_all(new_diploma_awards)
@@ -271,8 +278,6 @@ def create_class_attendance(sqla, n):
         new_class_attendance.append(student)
     sqla.add_all(new_class_attendance)
     sqla.commit()
-    # for student in students:
-        # print(student.diplomas)
 
 # ---- Course
 
