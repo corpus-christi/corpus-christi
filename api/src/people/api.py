@@ -6,7 +6,7 @@ from flask_jwt_extended import jwt_required, get_raw_jwt, jwt_optional
 from marshmallow import ValidationError
 
 from . import people
-from .models import Person, Account, AccountSchema, Role, PersonSchema, RoleSchema
+from .models import Person, Account, AccountSchema, Role, PersonSchema, RoleSchema, Manager, ManagerSchema
 from ..attributes.models import Attribute, AttributeSchema, Enumerated_Value, Enumerated_ValueSchema
 from .. import db
 
@@ -337,4 +337,66 @@ def remove_role_from_account(account_id, role_id):
 
     # return jsonify(user_roles)
     return jsonify(role_to_remove)
+
+
+# ---- Manager
+
+manager_schema = ManagerSchema()
+
+
+@people.route('/manager', methods=['POST'])
+@jwt_required
+def create_manager():
+    try:
+        valid_manager = manager_schema.load(request.json)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+
+    new_manager = Manager(**valid_manager)
+    db.session.add(new_manager)
+    db.session.commit()
+    return jsonify(manager_schema.dump(new_manager)), 201
+
+
+@people.route('/manager')
+@jwt_required
+def read_all_managers():
+    result = db.session.query(Manager).all()
+    return jsonify(manager_schema.dump(result, many=True))
+
+
+@people.route('/manager/<manager_id>')
+@jwt_required
+def read_one_manager(manager_id):
+    result = db.session.query(Manager).filter_by(id=manager_id).first()
+    return jsonify(manager_schema.dump(result))
+
+
+@people.route('/manager/<manager_id>', methods=['PUT'])
+@jwt_required
+def replace_manager(manager_id):
+    pass
+
+
+@people.route('/manager/<manager_id>', methods=['PATCH'])
+@jwt_required
+def update_manager(manager_id):
+    try:
+        valid_manager = manager_schema.load(request.json)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+
+    manager = db.session.query(Manager).filter_by(id=manager_id).first()
+
+    for key, val in valid_manager.items():
+        setattr(manager, key, val)
+
+    db.session.commit()
+    return jsonify(manager_schema.dump(manager))
+
+
+@people.route('/manager/<manager_id>', methods=['DELETE'])
+@jwt_required
+def delete_manager(manager_id):
+    pass
 
