@@ -1,5 +1,39 @@
-language: node_js
-node_js:
-  - "iojs"
-  - "7"
+sudo: true
+os: ubuntu
+   ubuntu: 18.04
+env:
+   - FLASK_CONFIG=staging
+before_install:
+   - apt-get update
+matrix:
+   include:
+       - language: node_js
+           node_js:
+               - "11.6.0"
+               - "10.15.0"
+           before_install:
+               - cd corpus_christi/ui
+               - yarn cache clean
+               - yarn install
+       - language: python
+           python:
+               - "3.7"
+           before_install:
+               - cd ../api
+               - python3 -m venv venv
+               - source venv/bin/activate
+           install:
+               - pip install -r requirements.txt
+               - deactivate
+before_script:
+   - sudo -u postgres ./bin/rebuild_db.sh | EOTe70UAg4YZ | EOTe70UAg4YZ
+   - source ./set-up-bash.sh
+   - flask data clear-all
+   - flask db upgrade
+   - flask data load-all
+   - deactivate
+script:
 
+notifications:
+   slack:
+       on_success: always
