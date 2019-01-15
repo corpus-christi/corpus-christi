@@ -11,7 +11,7 @@ from werkzeug.security import check_password_hash
 from .models import Asset, AssetSchema, Event, EventSchema, Team, TeamSchema, EventParticipant, EventParticipantSchema, EventPerson, EventPersonSchema, TeamMember, TeamMemberSchema, EventAsset, EventAssetSchema, EventTeam, EventTeamSchema
 from ..places.models import Location, Country
 from ..people.models import Person
-from .create_event_data import create_multiple_events, event_object_factory, create_multiple_assets, create_multiple_teams, flip, fake
+from .create_event_data import flip, fake, create_multiple_events, event_object_factory, create_multiple_assets, create_multiple_teams, create_events_assets, create_events_teams
 from ..places.test_places import create_multiple_locations, create_multiple_addresses, create_multiple_areas 
 
 # ---- Event
@@ -351,3 +351,104 @@ def test_delete_team(auth_client):
     # THEN we should have the team as inactive
     isActive = auth_client.sqla.query(Team.active).filter(Team.id == deleting_id).first()[0]
     assert isActive == False
+
+
+# ---- Linking tables
+
+@pytest.mark.smoke
+def test_add_asset_to_event(auth_client):
+    # GIVEN a database with some events and assets
+    generate_locations(auth_client)
+    location_id = auth_client.sqla.query(Location.id).first()[0]
+    create_multiple_assets(auth_client.sqla, 1)
+    create_multiple_events(auth_client.sqla, 1)
+    # WHEN we create an asset to an event
+    event_id = auth_client.sqla.query(Event.id).first()[0]
+    asset_id = auth_client.sqla.query(Asset.id).first()[0]
+    url = url_for('events.add_asset_to_event', event_id=event_id, asset_id=asset_id)
+    resp = auth_client.post(url)
+    # THEN we expect the right status code
+    assert resp.status_code == 200
+    # THEN we expect the entry in the database's linking table
+    queried_event_asset_count = auth_client.sqla.query(EventAsset).filter(EventAsset.event_id == event_id, EventAsset.asset_id == asset_id).count()
+    assert queried_event_asset_count == 1
+
+@pytest.mark.smoke
+def test_remove_asset_from_event(auth_client):
+    # GIVEN a database with some linked events and assets
+    generate_locations(auth_client)
+    location_id = auth_client.sqla.query(Location.id).first()[0]
+    create_multiple_assets(auth_client.sqla, 5)
+    create_multiple_events(auth_client.sqla, 5)
+    create_events_assets(auth_client.sqla, 1)
+    link_count = auth_client.sqla.query(EventAsset).count()
+    # WHEN we unlink an asset from an event
+    event_id = auth_client.sqla.query(Event.id).first()[0]
+    asset_id = auth_client.sqla.query(Asset.id).first()[0]
+    url = url_for('events.remove_asset_from_event', event_id=event_id, asset_id=asset_id)
+    resp = auth_client.delete(url)
+    # THEN we expect the right status code
+    assert resp.status_code == 204
+    # THEN we expect the number of entries in the database's linking table to be one less
+    new_link_count = auth_client.sqla.query(EventAsset).count()
+    assert new_link_count == link_count - 1
+
+
+@pytest.mark.smoke
+def test_get_event_teams(auth_client):
+    # GIVEN a database with some linked events and teams
+    create_multiple_events(auth_client.sqla, 5)
+    create_multiple_teams(auth_client.sqla, 5)
+    create_events_teams(auth_client.sqla, 1)
+    event_id = auth_client.sqla.query(Event.id).first()[0]
+    link_count = auth_client.sqla.query(EventTeam).filter(EventTeam.event_id == event_id).count()
+    # WHEN we get the assets associated with an event
+    resp = auth_client.get(url_for('events.get_event_teams', event_id=event_id))
+    # THEN we expect the right status code
+    assert resp.status_code == 200
+    # THEN we expect the correct count of teams
+    assert len(resp.json) == link_count
+    # THEN we expect each entry in the returned array to correspond to one entry in the database
+    for team in resp.json:
+        queried_event_team_count = auth_client.sqla.query(EventTeam).filter(EventTeam.event_id == event_id, EventTeam.team_id == team["id"]).count()
+        assert queried_event_team_count == 1
+
+
+@pytest.mark.smoke
+def test_add_event_team(auth_client):
+    # GIVEN a database with some unlinked events and teams
+    create_multiple_events(auth_client.sqla, 5)
+    create_multiple_teams(auth_client.sqla, 5)
+    event_id = auth_client.sqla.query(Event.id).first()[0]
+    team_id = auth_client.sqla.query(Team.id).first()[0]
+    # WHEN we link an assets with an event
+    resp = auth_client.post(url_for('events.add_event_team', event_id=event_id, team_id=team_id))
+    # THEN we expect the right status code
+    assert resp.status_code == 200
+    # THEN we expect the correct count of linked event and team in the database
+    count = auth_client.sqla.query(EventTeam).filter(EventTeam.event_id == event_id, EventTeam.team_id == team_id).count()
+    assert count == 1
+
+@pytest.mark.smoke
+def test_delete_event_team(auth_client):
+    # GIVEN a database with some linked events and teams
+    create_multiple_events(auth_client.sqla, 5)
+    create_multiple_teams(auth_client.sqla, 5)
+    create_events_teams(auth_client.sqla, 1)
+    event_team = auth_client.sqla.query(EventTeam).first()
+    count = auth_client.sqla.query(EventTeam).count()
+    # WHEN we unlink an assets from an event
+    resp = auth_client.delete(url_for('events.delete_event_team', event_id=event_team.event_id, team_id=event_team.team_id))
+    # THEN we expect the right status code
+    assert resp.status_code == 204
+    # THEN we expect the linkage to be absent in the database
+    assert 0 == auth_client.sqla.query(EventTeam).filter(EventTeam.event_id == event_team.event_id, EventTeam.team_id == event_team.team_id).count()
+    # THEN We expect the correct count of link in the database
+    new_count = auth_client.sqla.query(EventTeam).count()
+    assert count - 1 == new_count
+    # WHEN we unlink the same account again
+    resp = auth_client.delete(url_for('events.delete_event_team', event_id=event_team.event_id, team_id=event_team.team_id))
+    # THEN we expect an error
+    assert resp.status_code == 404
+
+
