@@ -273,7 +273,7 @@ export default {
       this.endDate = date;
     },
 
-    endDate(date) {
+    endDate() {
       this.endTime = "";
     }
   },
