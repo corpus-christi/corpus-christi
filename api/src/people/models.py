@@ -179,7 +179,8 @@ class Manager(Base):
     id = Column(Integer, primary_key=True)
     person_id = Column(Integer, ForeignKey('people_person.id'), nullable=False)
     manager_id = Column(Integer, ForeignKey('people_manager.id'))
-    description_i18n = Column(StringTypes.LOCALE_CODE)
+    description_i18n = Column(StringTypes.I18N_KEY,
+                              ForeignKey('i18n_key.id'), nullable=False)
     manager = relationship('Manager', backref='subordinates',
                            lazy=True, remote_side=[id])
 
@@ -193,4 +194,5 @@ class ManagerSchema(Schema):
     person_id = fields.Integer(
         data_key='person_id', required=True, validate=Range(min=1))
     manager_id = fields.Integer(data_key='manager_id', validate=Range(min=1))
-    description_i18n = fields.String(data_key='description_i18n')
+    description_i18n = fields.String(
+        data_key='description_i18n', required=True)
