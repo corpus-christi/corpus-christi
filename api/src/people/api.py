@@ -170,8 +170,11 @@ def create_account():
         print("ERR", err)
         return jsonify(err.messages), 422
 
+    public_user_role = db.session.query(Role).filter_by(id=1).first()
+
     new_account = Account(**valid_account)
     new_account.active = True
+    new_account.roles.append(public_user_role)
     db.session.add(new_account)
     db.session.commit()
     return jsonify(account_schema.dump(new_account)), 201
