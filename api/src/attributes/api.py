@@ -20,14 +20,25 @@ attribute_schema = AttributeSchema()
 @jwt_required
 def create_attribute():
     try:
-        valid_attribute = attribute_schema.load(request.json)
+        valid_attribute = attribute_schema.load(request.json['attribute'])
+        valid_enumerated_values = enumerated_value_schema.load(
+            request.json['enumeratedValues'], many=True)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
     new_attribute = Attribute(**valid_attribute)
     db.session.add(new_attribute)
     db.session.commit()
-    return jsonify(attribute_schema.dump(new_attribute)), 201
+
+    for enumerated_value in valid_enumerated_values:
+        enumerated_value = Enumerated_Value(**enumerated_value)
+        enumerated_value.attribute_id = new_attribute.id
+        db.session.add(enumerated_value)
+
+    db.session.commit()
+    result = db.session.query(Attribute).filter_by(id=new_attribute.id).first()
+    result.enumerated_values = result.enumerated_values
+    return jsonify(attribute_schema.dump(result)), 201
 
 
 @attributes.route('/attributes')
