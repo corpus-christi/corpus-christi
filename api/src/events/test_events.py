@@ -11,7 +11,7 @@ from werkzeug.security import check_password_hash
 from .models import Asset, AssetSchema, Event, EventSchema, Team, TeamSchema, EventParticipant, EventParticipantSchema, EventPerson, EventPersonSchema, TeamMember, TeamMemberSchema, EventAsset, EventAssetSchema, EventTeam, EventTeamSchema
 from ..places.models import Location
 from ..people.models import Person
-from .create_event_data import create_multiple_events, event_object_factory, create_multiple_teams
+from .create_event_data import create_multiple_events, event_object_factory, create_multiple_teams, flip
 
 # ---- Event
 
@@ -67,6 +67,7 @@ def test_read_one_event(auth_client):
     events = auth_client.sqla.query(Event).all()
 
     for event in events:
+        # THEN
         resp = auth_client.get(url_for('events.read_one_event', event_id = event.id))
         assert resp.status_code == 200
         assert resp.json['title'] == event.title
@@ -74,12 +75,28 @@ def test_read_one_event(auth_client):
         # assert resp.json['start'] == str(event.start)
 
 
-@pytest.mark.xfail()
+@pytest.mark.smoke
 def test_replace_event(auth_client):
     # GIVEN
+    count = random.randint(3, 11)
+    create_multiple_events(auth_client.sqla, count)
+
     # WHEN
-    # THEN
-    assert True == False
+    events = auth_client.sqla.query(Event).all()
+
+    for event in events:
+        # THEN
+        print(event.title)
+        new_event = event_object_factory(auth_client.sqla)
+        print(new_event)
+
+        resp = auth_client.get(url_for('events.replace_event', event_id = event.id), json = new_event)
+        
+        print(resp.status_code)
+        # print(resp.json['title'])
+        # print event = auth_client
+        assert resp.json['id'] == event.id
+        assert resp.json['title'] != event.title
     
 
 @pytest.mark.xfail()
@@ -90,12 +107,25 @@ def test_update_event(auth_client):
     assert True == False
     
 
-@pytest.mark.xfail()
+@pytest.mark.smoke
 def test_delete_event(auth_client):
     # GIVEN
+    count = random.randint(3, 11)
+    create_multiple_events(auth_client.sqla, count)
+
     # WHEN
-    # THEN
-    assert True == False
+    events = auth_client.sqla.query(Event).all()
+
+    deleted = 0
+    for event in events:
+        # THEN
+        if flip():
+            resp = auth_client.get(url_for('events.delete_event', event_id = event.id))
+            assert resp.status_code == 200
+            deleted += 1
+
+    new_events = auth_client.sqla.query(Event).filter(Event.active == True).all()
+    assert len(new_events) == count - deleted
     
 
 # ---- Asset
