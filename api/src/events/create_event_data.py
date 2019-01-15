@@ -114,7 +114,8 @@ def team_member_object_factory(team_id, member_id):
     """Cook up a fake eventteam json object from given ids."""
     teammember = {
         'team_id': team_id,
-        'member_id': member_id
+        'member_id': member_id,
+        'active': flip()
     }
     return teammember
 
