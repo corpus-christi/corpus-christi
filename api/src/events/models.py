@@ -14,7 +14,7 @@ class Event(Base):
     __tablename__ = 'events_event'
     id = Column(Integer, primary_key=True)
     title = Column(StringTypes.LONG_STRING, nullable=False)
-    description = Column(StringTypes.LONG_STRING)
+    description = Column(StringTypes.LONG_STRING, nullable=True)
     start = Column(DateTime, nullable=False)
     end = Column(DateTime, nullable=False)
     location_id = Column(Integer, ForeignKey('places_location.id'), nullable=True)
@@ -49,7 +49,7 @@ class EventSchema(Schema):
 class Asset(Base):
     __tablename__ = 'events_asset'
     id = Column(Integer, primary_key=True)
-    description = Column(StringTypes.LONG_STRING)
+    description = Column(StringTypes.LONG_STRING, nullable=False)
     location_id = Column(Integer, ForeignKey('places_location.id'))
     active = Column(Boolean, default=True)
 
