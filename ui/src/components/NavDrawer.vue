@@ -57,15 +57,14 @@ export default {
           icon: "school"
         },
         {
-<<<<<<< HEAD
           title: this.$t("courses.course-offering"),
           route: "course-offerings-admin",
           icon: "school"
-=======
+        },
+        {
           title: this.$t("events.title"),
           route: "events",
           icon: "event"
->>>>>>> feature/courses-36_create-a-course-offering
         }
       ];
     }

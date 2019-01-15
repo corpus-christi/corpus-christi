@@ -81,19 +81,11 @@ def load_all():
     # create_diploma_awards(db.session, 30)
     create_class_attendance(db.session, 30)
 
-<<<<<<< HEAD
-    access_token = create_access_token(identity='test-user')
-
-    create_multiple_areas(db.session, 5)
-    create_multiple_addresses(db.session, 10)
-    create_multiple_locations(db.session, 20)
-=======
 
 @data_cli.command('test', help='Load everything')
 def test_random_data():
     from src.events.test_events import event_object_factory
     print(event_object_factory(db.session))
->>>>>>> feature/courses-36_create-a-course-offering
 
 
 @data_cli.command('clear-all', help="Clear all data; drops and creates all tables")
