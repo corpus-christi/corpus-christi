@@ -614,22 +614,44 @@ def test_add_asset_to_event(auth_client):
     # GIVEN a database with some events and assets
     generate_locations(auth_client)
     location_id = auth_client.sqla.query(Location.id).first()[0]
-    create_multiple_assets(auth_client.sqla, 1)
-    create_multiple_events(auth_client.sqla, 1)
+    count_assets = random.randint(15, 20)
+    count_events = random.randint(3, 5)
+    create_multiple_assets(auth_client.sqla, count_assets)
+    create_multiple_events(auth_client.sqla, count_events)
     # WHEN we create an asset to an event
-    event_id = auth_client.sqla.query(Event.id).first()[0]
-    asset_id = auth_client.sqla.query(Asset.id).first()[0]
-    url = url_for('events.add_asset_to_event', event_id=event_id, asset_id=asset_id)
-    resp = auth_client.post(url)
+    for _ in range(count_assets):
+        test_asset_id = random.randint(1, count_assets)
+        test_event_id = random.randint(1, count_events + 1)
+        test_asset = auth_client.sqla.query(Asset).filter(Asset.id == test_asset_id).first()
+        test_event = auth_client.sqla.query(Event).filter(Event.id == test_event_id).first()
+        resp = auth_client.put(url_for('events.add_asset_to_event', asset_id = test_asset_id, event_id = test_event_id))
+        if not test_event:
+            assert resp.status_code == 404
+            continue
+
+        test_asset_events = auth_client.sqla.query(Event).join(EventAsset).filter_by(asset_id=test_asset_id).all()
+        for asset_event in test_asset_events:
+            # test for overlap with existing events
+            if test_event.start <= asset_event.start < test_event.end \
+            or asset_event.start <= test_event.start < asset_event.end \
+            or test_event.start < asset_event.end <= test_event.end \
+            or asset_event.start < test_event.end <= asset_event.end:
+                assert resp.status_code == 422
+                continue
+
     # THEN we expect the right status code
-    assert resp.status_code == 200
+        assert resp.status_code == 200
     # THEN we expect the entry in the database's linking table
+<<<<<<< Updated upstream
     queried_event_asset_count = auth_client.sqla.query(EventAsset).filter(EventAsset.event_id == event_id, EventAsset.asset_id == asset_id).count()
     assert queried_event_asset_count == 1
     # WHEN we create the eventAsset again
     resp = auth_client.post(url)
     # THEN we expect an error code
     assert resp.status_code == 422
+=======
+        assert 1 == auth_client.sqla.query(EventAsset).filter(EventAsset.event_id == event_id, EventAsset.asset_id == asset_id).count()
+>>>>>>> Stashed changes
 
 @pytest.mark.smoke
 def test_add_asset_to_invalid_event(auth_client):
