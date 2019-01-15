@@ -11,7 +11,7 @@ from werkzeug.security import check_password_hash
 from .models import Asset, AssetSchema, Event, EventSchema, Team, TeamSchema, EventParticipant, EventParticipantSchema, EventPerson, EventPersonSchema, TeamMember, TeamMemberSchema, EventAsset, EventAssetSchema, EventTeam, EventTeamSchema
 from ..places.models import Location, Country
 from ..people.models import Person
-from .create_event_data import flip, fake, create_multiple_events, event_object_factory, create_multiple_assets, create_multiple_teams, create_events_assets, create_events_teams, create_events_persons, create_events_participants, create_teams_members, get_team_ids
+from .create_event_data import flip, fake, create_multiple_events, event_object_factory, create_multiple_assets, create_multiple_teams, create_events_assets, create_events_teams, create_events_persons, create_events_participants, create_teams_members, get_team_ids, asset_object_factory
 from ..places.test_places import create_multiple_locations, create_multiple_addresses, create_multiple_areas
 from ..people.test_people import create_multiple_people
 
@@ -386,10 +386,25 @@ def test_create_invalid_asset(auth_client):
 
 @pytest.mark.smoke
 def test_read_all_assets(auth_client):
-    # GIVEN a database with some assets
     generate_locations(auth_client)
+    # GIVEN a database with a number of pre-defined assets
+    assets = []
     count = random.randint(5, 15)
-    create_multiple_assets(auth_client.sqla, count)
+    for i in range(count):
+        tmp_asset = asset_object_factory(auth_client.sqla)
+        if i == 0:
+            tmp_asset["description"] = "church drum"
+        else:
+            tmp_asset["description"] = "nothing to be filtered"
+        assets.append(Asset(**AssetSchema().load(tmp_asset)))
+    auth_client.sqla.add_all(assets)
+    auth_client.sqla.commit()
+    print(auth_client.sqla.query(Asset).filter(Asset.description.like('%drum%')).all())
+    # WHEN we try to read all assets with a filter 'drum'
+    filtered_assets = auth_client.get(url_for('events.read_all_assets', desc="drum")).json
+    # THEN we should have exactly one asset
+    assert len(filtered_assets) == 1
+    # GIVEN a database with some assets
     # WHEN we read all active ones
     active_assets = auth_client.get(url_for('events.read_all_assets')).json
     queried_active_assets_count = auth_client.sqla.query(Asset).filter(Asset.active==True).count()
@@ -431,6 +446,12 @@ def test_read_one_asset(auth_client):
     asset = auth_client.sqla.query(Asset).filter(Asset.id == asset_id).first()
     assert resp.json["description"] == asset.description
     assert resp.json["active"] == asset.active
+    # WHEN we try to read an asset that doesn't exist
+    asset_id = auth_client.sqla.query(Asset.id).first()[0]
+    resp = auth_client.get(url_for('events.read_one_asset', asset_id = -99))
+    # THEN we expect an error
+    assert resp.status_code == 404
+    
 
 
 @pytest.mark.smoke
@@ -440,7 +461,6 @@ def test_read_one_missing_asset(auth_client):
     resp = auth_client.get(url_for('events.read_one_asset', asset_id = 1))
     # THEN we should have the correct status code
     assert resp.status_code == 404
-
 
 @pytest.mark.smoke
 def test_replace_asset(auth_client):
