@@ -49,14 +49,14 @@
 
       </v-card-text>
       <v-card-actions>
-        <v-btn color="secondary" flat v-on:click="cancel">
+        <v-btn color="secondary" flat :disabled="saving" v-on:click="cancel">
           {{ $t("actions.cancel") }}
         </v-btn>
         <v-spacer></v-spacer>
-        <v-btn color="primary" flat v-on:click="clear">
+        <v-btn color="primary" flat :disabled="saving" v-on:click="clear">
           {{ $t("actions.clear") }}
         </v-btn>
-        <v-btn color="primary" raised :disabled="invalid || !validated" v-on:click="save">
+        <v-btn color="primary" raised :disabled="saving || invalid || !validated" :loading="saving" v-on:click="save">
           {{ $t("actions.save") }}
         </v-btn>
       </v-card-actions>
@@ -84,6 +84,10 @@ export default {
   
   props: {
     diploma: Object,
+    saving: {
+      type: Boolean,
+      default: false
+    },
     editMode: {
       type: Boolean,
       required: true
@@ -127,6 +131,10 @@ export default {
     },
     async save() {
       const result = await this.$refs.obs.validate();
+      console.log('result: ', result);
+      if (result) {
+        this.$emit("save", this.diploma);
+      }
     },
 
   

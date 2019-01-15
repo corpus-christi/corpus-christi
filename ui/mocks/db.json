@@ -42,7 +42,7 @@
       "id": 1,
       "name": "Survey of the Bible",
       "description": "A survey of the entire Bible, through three courses.",
-      "active": true,
+      "active": false,
       "courses": [
         {
           "id": 1,

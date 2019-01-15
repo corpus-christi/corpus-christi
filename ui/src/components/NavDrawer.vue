@@ -50,13 +50,13 @@ export default {
           icon: "group"
         },
         {
-          title: this.$t("diplomas.diploma"),
-          route: "diplomas-admin",
+          title: this.$t("courses.course"),
+          route: "courses-admin",
           icon: "school"
         },
         {
-          title: this.$t("courses.course"),
-          route: "courses-admin",
+          title: this.$t("diplomas.diploma"),
+          route: "diplomas-admin",
           icon: "school"
         },
         {

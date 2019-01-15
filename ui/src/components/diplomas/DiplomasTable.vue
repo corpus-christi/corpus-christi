@@ -2,33 +2,54 @@
     <div>
         <!-- Header -->
         <v-toolbar>
-            <v-toolbar-title> {{ $t("diplomas.diploma") }}</v-toolbar-title>
+          <v-layout align-center justify-space-between fill-height>
+            <v-flex md2>
+              <v-toolbar-title>{{ $t("diplomas.diploma") }}</v-toolbar-title>
+            </v-flex>
             <v-spacer></v-spacer>
-            <v-text-field
-                v-model="search"
-                append-icon="search"
-                v-bind:label="$t('actions.search')"
-                single-line
+            <v-flex md3>
+              <v-text-field
+                  v-model="search"
+                  append-icon="search"
+                  v-bind:label="$t('actions.search')"
+                  single-line
+                  hide-details
+                  data-cy="diplomas-table-search"
+              ></v-text-field>
+            </v-flex>
+            <v-spacer></v-spacer>
+            <v-flex md3>
+              <v-select
+                v-model="viewStatus"
+                :items="options"
+                solo
                 hide-details
-            ></v-text-field>
-            <v-spacer></v-spacer>
+                data-cy="diplomas-table-viewstatus"
+              ></v-select>
+            </v-flex>
 
-            <v-btn
+            <v-flex shrink justify-self-end>
+              <v-btn
                 color="primary"
                 raised
                 v-on:click.stop="newDiploma"
-            >
+                data-cy="diplomas-table-new"
+              >
                 <v-icon left>library_add</v-icon>
-                {{$t('diplomas.new')}}
-            </v-btn>
+                {{ $t("diplomas.new") }}
+              </v-btn>
+            </v-flex>
+          </v-layout>
         </v-toolbar>
 
         <!-- Table of existing people -->
         <v-data-table
-        :headers="headers"
-        :items="diplomas"
-        :search="search"
-        class="elevation-1"
+          :headers="headers"
+          :items="showDiplomas"
+          :loading="!tableLoaded"
+          :search="search"
+          class="elevation-1"
+          data-cy="diplomas-table"
         >
             <template slot="items" slot-scope="props">
               <tr @click="props.expanded = !props.expanded">
@@ -75,6 +96,7 @@
           <DiplomaEditor
               v-bind:editMode="diplomaDialog.editMode"
               v-bind:diploma="diplomaDialog.diploma"
+              v-bind:saving="diplomaDialog.saving"
               v-on:cancel="cancelDiploma"
               v-on:save="saveDiploma"
               v-on:clearForm="clearForm"
@@ -97,15 +119,18 @@ export default {
       diplomaDialog: {
         show: false,
         editMode: false,
+        saving: false,
         diploma: {}
       },
       snackbar: {
         show: false,
         text: ""
       },
+      tableLoaded: false,
       selected: [],
       diplomas: [],
       search: "",
+      viewStatus: "active"
     };
   },
   computed: {
@@ -116,6 +141,24 @@ export default {
         { text: this.$t("diplomas.description"), value: "description", width: "60%" },
         { text: this.$t("actions.header"), sortable: false }
       ];
+    },
+    options() {
+      return [
+        { text: this.$t("actions.view-active"), value: "active" },
+        { text: this.$t("actions.view-archived"), value: "archived" },
+        { text: this.$t("actions.view-all"), value: "all" }
+      ];
+    },
+    showDiplomas() {
+      switch (this.viewStatus) {
+        case "active":
+          return this.diplomas.filter(diploma => diploma.active);
+        case "archived":
+          return this.diplomas.filter(diploma => !diploma.active);
+        case "all":
+        default:
+          return this.diplomas;
+      }
     }
   },
   methods: {
@@ -149,40 +192,95 @@ export default {
       this.diplomaDialog.show = false;
     },
     saveDiploma(diploma) {
+      this.diplomaDialog.saving = true;
+
+      // Hang onto the prereqs of the course
+      const courses = diploma.courses || [];
+      // Get rid of the prereqs; not for consumption by the endpoint
+      delete diploma.prerequisites;
+
       if (this.diplomaDialog.editMode) {
-        // Hang on to the ID of the person being updated.
+        // Hang on to the ID of the diploma being updated.
         const diploma_id = diploma.id;
-        // Locate the person we're updating in the table.
-        const idx = this.diplomas.findIndex(c => c.id === diploma.id);
+        // Locate the diploma we're updating in the table.
+        const idx = this.diplomas.findIndex(d => d.id === diploma.id);
         // Get rid of the ID; not for consumption by endpoint.
         delete diploma.id;
-        this.$http
-          .put(`/api/v1/courses/diplomas/${diploma_id}`, diploma)
-          .then(resp => {
-            console.log("EDITED", resp);
-            Object.assign(this.diplomas[idx], diploma);
+
+        let promises = [];
+        promises.push(
+          this.$http
+            //.patch(`/api/v1/courses/diplomas/${diploma_id}`, course)
+            // FIX!!!
+            .patch(`http://localhost:3000/diplomas/${diploma_id}`, diploma)
+            .then(resp => {
+              console.log("EDITED", resp);
+              Object.assign(this.diplomas[idx], diploma);
+            })
+        );
+        promises.push(
+          this.$http.patch(
+            `/api/v1/courses/diplomas/courses/${diploma_id}`,
+            { courses: courses.map(course => course.id) }
+          ) // API expects array of IDs
+        );
+
+        Promise.all(promises)
+          .then(() => {
+            this.diplomas[idx].courses = courses;
+            this.snackbar.text = this.$t("diplomas.updated");
+            this.snackbar.show = true;
           })
-          .catch(err => console.error("FALURE", err.response));
+          .catch(err => {
+            console.error("FALURE", err.response);
+            this.snackbar.text = this.$t("diplomas.update-failed");
+            this.snackbar.show = true;
+          })
+          .finally(() => {
+            this.diplomaDialog.show = false;
+            this.diplomaDialog.saving = false;
+          });
       } else {
-        console.log('diploma: ', diploma);
-        /*
+        // All new diplomas are active
+        diploma.active = true;
         this.$http
           .post("/api/v1/courses/diplomas", diploma)
           .then(resp => {
             console.log("ADDED", resp);
-            this.diplomas.push(resp.data);
+            let newDiploma = resp.data;
+            newDiploma.courses = courses; // Re-attach courses so they show up in UI
+            this.diplomas.push(newDiploma);
+
+            // Now that diploma is created, add courses to it
+            return this.$http.patch(
+              `/api/v1/courses/diplomas/courses/${newDiploma.id}`,
+              { courses: courses.map(course => course.id) }
+            ); // API expects array of IDs
           })
-          .catch(err => console.error("FAILURE", err.response));
-        */
+          .then(resp => {
+            console.log("COURSES", resp);
+            this.snackbar.text = this.$t("diplomas.added");
+            this.snackbar.show = true;
+          })
+          .catch(err => {
+            console.error("FAILURE", err);
+            this.snackbar.text = this.$t("diplomas.add-failed");
+            this.snackbar.show = true;
+          })
+          .finally(() => {
+            this.diplomaDialog.show = false;
+            this.diplomaDialog.saving = false;
+          });
       }
-      this.diplomaDialog.show = false;
     }
   },
   mounted: function() {
     this.$http
       .get("/api/v1/courses/diplomas")
-      //.get("http://localhost:3000/diplomas")
-      .then(resp => (this.diplomas = resp.data));
+      .then(resp => {
+        this.diplomas = resp.data;
+        this.tableLoaded = true;
+      });
   }
 };
 
