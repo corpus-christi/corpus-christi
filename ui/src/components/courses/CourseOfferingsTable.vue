@@ -128,7 +128,7 @@ export default {
       },
 
       courseOfferings: [],
-
+      
       tableLoaded: false,
       selected: [],
       search: "",
@@ -217,7 +217,7 @@ export default {
     deactivate(courseOffering) {
       this.deactivateDialog.loading = true;
       this.$http
-        .patch(`/api/v1/courses/course-offering/${courseOffering.id}`, { active: false })
+        .patch(`/api/v1/courses/course_offerings/${courseOffering.id}`, { active: false })
         .then(resp => {
           console.log("EDITED", resp);
           Object.assign(courseOffering, resp.data);
@@ -236,7 +236,7 @@ export default {
 
     activate(courseOffering) {
       this.$http
-        .patch(`/api/v1/courses/course-offering/${courseOffering.id}`, { active: true })
+        .patch(`/api/v1/courses/course_offerings/${courseOffering.id}`, { active: true })
         .then(resp => {
           console.log("EDITED", resp);
           Object.assign(courseOffering, resp.data);
@@ -253,14 +253,15 @@ export default {
       this.courseOfferingDialog.saving = true;
       if (this.courseOfferingDialog.editMode) {
         // Hang on to the ID of the person being updated.
-        const course_id = courseOffering.id;
+        const courseOffering_id = courseOffering.id;
+
         // Locate the person we're updating in the table.
         const idx = this.courseOfferings.findIndex(c => c.id === courseOffering.id);
         // Get rid of the ID; not for consumption by endpoint.
         delete courseOffering.id;
 
         this.$http
-          .patch(`/api/v1/courses/course-offering/${course_id}`, courseOffering)
+          .patch(`/api/v1/courses/course_offerings/${courseOffering_id}`, courseOffering)
           .then(resp => {
             console.log("EDITED", resp);
             Object.assign(this.courseOfferings[idx], courseOffering);
@@ -278,7 +279,7 @@ export default {
           });
       } else {
         this.$http
-          .post("/api/v1/courses/course-offering", courseOffering)
+          .post("/api/v1/courses/course_offerings", courseOffering)
           .then(resp => {
             console.log("ADDED", resp);
             this.courseOfferings.push(resp.data);
@@ -301,9 +302,9 @@ export default {
   },
 
   mounted: function() {
-    this.$http.get("/api/v1/courses/course-offering").then(resp => {
+    this.$http.get("/api/v1/courses/course_offerings").then(resp => {
       this.courseOfferings = resp.data;
-      this.tableLoaded = true;
+      this.tableLoaded = true;             
     });
   }
 };

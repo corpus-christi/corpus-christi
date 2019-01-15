@@ -176,7 +176,7 @@ export default {
   },
   mounted() {
     this.$http
-      .get("/api/v1/courses/course-offering")
+      .get("/api/v1/courses/course_offerings")
       .then(
         resp => (this.availableCourses = resp.data.filter(item => item.active))
       );
