@@ -19,14 +19,16 @@
           ></v-text-field>
         </v-flex>
         <v-flex md3>
-          <v-select
-            hide-details
-            solo
-            single-line
-            :items="viewOptions"
-            v-model="viewStatus"
-          >
-          </v-select>
+          <div data-cy="view-dropdown">
+            <v-select
+              hide-details
+              solo
+              single-line
+              :items="viewOptions"
+              v-model="viewStatus"
+            >
+            </v-select>
+          </div>
         </v-flex>
         <v-flex shrink justify-self-end>
           <v-btn
@@ -84,7 +86,7 @@
               color="primary"
               slot="activator"
               v-on:click="adminPerson(props.item)"
-              data-cy="add-account"
+              data-cy="account-settings"
             >
               <v-icon small>settings</v-icon>
             </v-btn>
@@ -222,8 +224,16 @@ export default {
     },
     viewOptions() {
       return [
-        { text: this.$t("actions.view-active"), value: "viewActive" },
-        { text: this.$t("actions.view-archived"), value: "viewArchived" },
+        {
+          text: this.$t("actions.view-active"),
+          value: "viewActive",
+          class: "view-active"
+        },
+        {
+          text: this.$t("actions.view-archived"),
+          value: "viewArchived",
+          class: "view-archived"
+        },
         { text: this.$t("actions.view-all"), value: "viewAll" }
       ];
     },
