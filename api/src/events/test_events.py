@@ -11,8 +11,8 @@ from werkzeug.security import check_password_hash
 from .models import Asset, AssetSchema, Event, EventSchema, Team, TeamSchema, EventParticipant, EventParticipantSchema, EventPerson, EventPersonSchema, TeamMember, TeamMemberSchema, EventAsset, EventAssetSchema, EventTeam, EventTeamSchema
 from ..places.models import Location, Country
 from ..people.models import Person
-from .create_event_data import flip, fake, create_multiple_events, event_object_factory, create_multiple_assets, create_multiple_teams, create_events_assets, create_events_teams, create_events_persons
-from ..places.test_places import create_multiple_locations, create_multiple_addresses, create_multiple_areas 
+from .create_event_data import flip, fake, create_multiple_events, event_object_factory, create_multiple_assets, create_multiple_teams, create_events_assets, create_events_teams, create_events_persons, create_teams_members, get_team_ids
+from ..places.test_places import create_multiple_locations, create_multiple_addresses, create_multiple_areas
 from ..people.test_people import create_multiple_people
 
 fake = Faker()
@@ -442,6 +442,31 @@ def test_read_one_team(auth_client):
     assert resp.json["description"] == team.description
     assert resp.json["active"] == team.active
     
+
+@pytest.mark.smoke
+def test_read_all_team_members(auth_client):
+    # GIVEN
+    count = random.randint(5, 15)
+    create_multiple_teams(auth_client.sqla, count)
+    person_count = random.randint(20, 30)
+    create_multiple_people(auth_client.sqla, count)
+    
+    # WHEN
+    create_teams_members(auth_client.sqla)
+    teams = auth_client.sqla.query(Team).all()
+
+    for team in teams:
+        members = auth_client.sqla.query(TeamMember).filter(TeamMember.team_id == team.id).all()
+        
+        # THEN
+        resp = auth_client.get(url_for('events.read_all_team_members', team_id = team.id))
+        assert resp.status_code == 200
+
+        for member in members:
+            in_team = False
+            team_ids = get_team_ids(resp.json[str(member.member_id)]['teams'])
+            assert team.id in team_ids
+
 
 @pytest.mark.smoke
 def test_replace_team(auth_client):
