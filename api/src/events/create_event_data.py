@@ -238,3 +238,10 @@ def create_events_test_data(sqla):
     create_events_participants(sqla, 0.75)
     create_events_persons(sqla, 0.75)
     create_teams_members(sqla, 0.75)
+
+def get_team_ids(teams):
+    ids = []
+    for team in teams:
+        ids.append(team['id'])
+    return ids
+
