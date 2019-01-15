@@ -59,10 +59,10 @@
             >account_circle</v-icon
           >
         </td>
-        <td>{{ props.item.firstName }}</td>
-        <td>{{ props.item.lastName }}</td>
-        <td class="hidden-sm-and-down">{{ props.item.email }}</td>
-        <td>{{ props.item.phone }}</td>
+        <td :data-cy="'first-name-'+props.item.id">{{ props.item.firstName }}</td>
+        <td :data-cy="'last-name-'+props.item.id">{{ props.item.lastName }}</td>
+        <td class="hidden-sm-and-down" :data-cy="'email-'+props.item.id">{{ props.item.email }}</td>
+        <td :data-cy="'phone-'+props.item.id">{{ props.item.phone }}</td>
         <td class="text-no-wrap">
           <v-tooltip bottom>
             <v-btn

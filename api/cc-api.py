@@ -11,6 +11,8 @@ from src import create_app
 from src import db
 from src.i18n.models import Language, I18NLocale
 from src.people.models import Person, Account, Role
+from src.attributes.models import Attribute, PersonAttribute, EnumeratedValue
+from src.attributes.test_attributes import create_multiple_attributes, create_multiple_enumerated_values, create_multiple_person_attribute_enumerated, create_multiple_person_attribute_strings
 from src.people.test_people import create_multiple_people, create_multiple_accounts, create_multiple_managers
 from src.places.test_places import create_multiple_areas, create_multiple_addresses, create_multiple_locations
 from src.places.models import Country
@@ -65,8 +67,13 @@ def load_languages():
     create_multiple_addresses(db.session, 10)
     create_multiple_locations(db.session, 20)
 
+    create_multiple_attributes(db.session, 10)
+    create_multiple_enumerated_values(db.session, 10)
+    create_multiple_person_attribute_enumerated(db.session, 5)
+    create_multiple_person_attribute_strings(db.session, 5)
     create_multiple_managers(db.session, 2, 'Group Overseer')
     create_multiple_managers(db.session, 5, 'Group Leader', 'Group Overseer')
+
 
 
 @data_cli.command('clear-all', help="Clear all data; drops and creates all tables")
