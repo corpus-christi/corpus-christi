@@ -356,6 +356,16 @@ def test_create_asset(auth_client):
     queried_asset = auth_client.sqla.query(Asset).filter(Asset.id == resp.json["id"]).first()
     for attr in new_asset:
         assert new_asset[attr] == queried_asset.__dict__[attr]
+
+    # WHEN we create an invalid asset
+    invalid_asset = {
+            'invalid_field': fake.sentences(nb=1)[0],
+            'active': flip(),
+            'location_id': location_id
+    }
+    resp = auth_client.post(url_for('events.create_asset'), json=invalid_asset)
+    # THEN we expect an error code
+    assert resp.status_code == 422
     
 
 @pytest.mark.smoke
