@@ -446,7 +446,6 @@ def test_read_one_course_prerequisites(auth_client):
         assert courses[i].prerequisites == [courses[i+1]]
     
 
-@pytest.mark.smoke
 def test_update_prerequisite(auth_client):
     # GIVEN an existing and available course with an existing prereq
     count_courses = random.randint(3,13)
