@@ -2,9 +2,7 @@
   <div>
     <v-autocomplete
       data-cy="entity-search-field"
-      v-bind:label="
-        location ? $t('events.event-location') : $t('actions.search-people')
-      "
+      v-bind:label="getLabel"
       prepend-icon="search"
       :items="entities"
       :loading="isLoading"
@@ -47,6 +45,12 @@ export default {
   },
 
   methods: {
+    getLabel() {
+      if (this.location) return $t('events.event-location');
+      else if (this.person) return $t('actions.search-people')
+      else if (this.course) return $t('actions.search-courses')
+    },
+
     setSelected(entity) {
       this.$emit("input", entity);
     },
