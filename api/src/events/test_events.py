@@ -89,7 +89,7 @@ def test_replace_event(auth_client):
 
     for event in events:
         # THEN
-        resp = auth_client.patch(url_for('events.replace_event', event_id = event.id), json = event_object_factory(auth_client.sqla))
+        resp = auth_client.put(url_for('events.replace_event', event_id = event.id), json = event_object_factory(auth_client.sqla))
         
         assert resp.status_code == 200
         assert resp.json['id'] == event.id
