@@ -7,12 +7,13 @@ from marshmallow import ValidationError
 
 from . import people
 from .models import Person, Account, AccountSchema, Role, PersonSchema, RoleSchema
-from ..attributes.models import Attribute, AttributeSchema, Enumerated_Value, Enumerated_ValueSchema
+from ..attributes.models import Attribute, AttributeSchema, Enumerated_Value, Enumerated_ValueSchema, Person_Attribute, Person_AttributeSchema
 from .. import db
 
 # ---- Person
 
 person_schema = PersonSchema()
+person_attribute_schema = Person_AttributeSchema()
 attribute_schema = AttributeSchema(exclude=['active'])
 enumerated_value_schema = Enumerated_ValueSchema(exclude=['active'])
 
@@ -44,21 +45,32 @@ def read_person_fields():
 @people.route('/persons', methods=['POST'])
 @jwt_required
 def create_person():
-    request.json["active"] = True
+    request.json["person"]["active"] = True
 
     for key, value in request.json.items():
         if request.json[key] is "":
             request.json[key] = None
 
     try:
-        valid_person = person_schema.load(request.json)
+        valid_person = person_schema.load(request.json['person'])
+        valid_person_attributes = person_attribute_schema.load(
+            request.json['attributesInfo'], many=True)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
     new_person = Person(**valid_person)
     db.session.add(new_person)
     db.session.commit()
-    return jsonify(person_schema.dump(new_person)), 201
+
+    for person_attribute in valid_person_attributes:
+        person_attribute = Person_Attribute(**person_attribute)
+        person_attribute.person_id = new_person.id
+        db.session.add(person_attribute)
+
+    db.session.commit()
+    result = db.session.query(Person).filter_by(id=new_person.id).first()
+    result.attributesInfo = result.person_attributes
+    return jsonify(person_schema.dump(result)), 201
 
 
 @people.route('/persons')

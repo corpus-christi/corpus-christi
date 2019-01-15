@@ -30,9 +30,6 @@ class Person(Base):
     location_id = Column(Integer, ForeignKey('places_location.id'))
     address = relationship('Location', backref='people', lazy=True)
 
-    def __init__(self, attributesInfo):
-        self.attributesInfo = attributesInfo
-
     def __repr__(self):
         return f"<Person(id={self.id})>"
 
