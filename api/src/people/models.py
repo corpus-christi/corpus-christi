@@ -1,10 +1,15 @@
+import os
+
+from flask import json
 from marshmallow import fields, Schema, pre_load
 from marshmallow.validate import Length, Range, OneOf
-from sqlalchemy import Column, Integer, String, Date, ForeignKey, Boolean
+from sqlalchemy import Column, Integer, String, Date, ForeignKey, Boolean, Table
 from sqlalchemy.orm import relationship, backref
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from ..db import Base
+from src.i18n.models import i18n_create, I18NLocale
+from .. import db
 from ..places.models import Location
 from ..shared.models import StringTypes
 
@@ -20,9 +25,17 @@ class Person(Base):
     birthday = Column(Date)
     phone = Column(StringTypes.MEDIUM_STRING)
     email = Column(StringTypes.MEDIUM_STRING)
+    active = Column(Boolean, nullable=False, default=True)
     location_id = Column(Integer, ForeignKey('places_location.id'))
 
     address = relationship(Location, backref='people', lazy=True)
+    # events_per refers to the events led by the person (linked via events_eventperson table)
+    events_per = relationship("EventPerson", back_populates="person")
+    # events_par refers to the participated events (linked via events_eventparticipant table)
+    events_par = relationship("EventParticipant", back_populates="person")
+    teams = relationship("TeamMember", back_populates="member")
+
+
 
     def __repr__(self):
         return f"<Person(id={self.id},name='{self.first_name} {self.last_name}')>"
@@ -30,16 +43,29 @@ class Person(Base):
     def full_name(self):
         return f"{self.first_name} {self.last_name}"
 
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
+
 
 class PersonSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
-    first_name = fields.String(data_key='firstName', required=True, validate=Length(min=1))
-    last_name = fields.String(data_key='lastName', required=True, validate=Length(min=1))
-    gender = fields.String(validate=OneOf(['M', 'F']))
-    birthday = fields.Date()
-    phone = fields.String()
-    email = fields.String()
+    first_name = fields.String(
+        data_key='firstName', required=True, validate=Length(min=1))
+    last_name = fields.String(
+        data_key='lastName', required=True, validate=Length(min=1))
+    gender = fields.String(validate=OneOf(['M', 'F']), allow_none=True)
+    birthday = fields.Date(allow_none=True)
+    phone = fields.String(allow_none=True)
+    email = fields.String(allow_none=True)
+    active = fields.Boolean(required=True)
+    location_id = fields.Integer(data_key='locationId')
 
+# Defines join table for people_account and people_role
+
+people_account_role = Table('account_role', Base.metadata,
+    Column('people_account_id', Integer, ForeignKey('people_account.id'), primary_key=True),
+    Column('people_role_id', Integer, ForeignKey('people_role.id'), primary_key=True)
+)
 
 # ---- Account
 
@@ -53,6 +79,9 @@ class Account(Base):
 
     # One-to-one relationship; see https://docs.sqlalchemy.org/en/latest/orm/basic_relationships.html#one-to-one
     person = relationship("Person", backref=backref("account", uselist=False))
+    roles = relationship("Role",
+                    secondary=people_account_role, backref="accounts")
+
 
     def __repr__(self):
         return "<Account(id={},username='{}',person='{}:{}')>" \
@@ -80,10 +109,60 @@ class AccountSchema(Schema):
     password = fields.String(attribute='password_hash', load_only=True,
                              required=True, validate=Length(min=6))
     active = fields.Boolean()
-    person_id = fields.Integer(required=True, data_key="personId", validate=Range(min=1))
+    person_id = fields.Integer(
+        required=True, data_key="personId", validate=Range(min=1))
 
     @pre_load
     def hash_password(self, data):
         """Make sure the password is properly hashed when creating a new account."""
         data['password'] = generate_password_hash(data['password'])
         return data
+
+
+# ---- Role
+
+class Role(Base):
+    __tablename__ = 'people_role'
+    id = Column(Integer, primary_key=True)
+    name_i18n = Column(StringTypes.LOCALE_CODE)
+    active = Column(Boolean)
+
+    def __repr__(self):
+        return f"<Role(id={self.id})>"
+
+    @classmethod
+    def load_from_file(cls, file_name='roles.json', locale_code='en-US'):
+        count = 0
+        file_path = os.path.abspath(os.path.join(
+            __file__, os.path.pardir, 'data', file_name))
+
+        if not db.session.query(I18NLocale).get(locale_code):
+            db.session.add(I18NLocale(code=locale_code, desc='English US'))
+
+        with open(file_path, 'r') as fp:
+            if db.session.query(Role).count() == 0:
+
+                roles = json.load(fp)
+
+                for role in roles:
+                    role_id = role['id']
+                    role_name = role['name']
+
+                    name_i18n = f'role.{role_name}'
+                    i18n_create(name_i18n, locale_code,
+                                role_name, description=f"Role {role_name}")
+
+                    db.session.add(
+                        cls(id=role_id, name_i18n=name_i18n, active=True))
+                    count += 1
+                db.session.commit()
+            return count
+
+        return 0
+
+
+class RoleSchema(Schema):
+    id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
+    name_i18n = fields.String(data_key='nameI18n')
+    active = fields.Boolean()
+

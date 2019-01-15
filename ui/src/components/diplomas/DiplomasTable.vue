@@ -180,7 +180,8 @@ export default {
   },
   mounted: function() {
     this.$http
-      .get("/api/v1/courses/diplomas")
+      //.get("/api/v1/courses/diplomas")
+      .get("http://localhost:3000/diplomas")
       .then(resp => (this.diplomas = resp.data));
   }
 };

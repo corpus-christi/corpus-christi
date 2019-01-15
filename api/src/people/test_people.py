@@ -35,11 +35,13 @@ def person_object_factory():
     """Cook up a fake person."""
     person = {
         'lastName': rl_fake().last_name(),
-        'gender': random.choice(('M', 'F'))
+        'gender': random.choice(('M', 'F')),
+        'active': flip()
     }
 
     # Make the person's name match their gender.
     person['firstName'] = rl_fake().first_name_male() if person['gender'] == 'M' else rl_fake().first_name_female()
+    person['active'] = True;
 
     # These are all optional in the DB. Over time, we'll try all possibilities.
     if flip():

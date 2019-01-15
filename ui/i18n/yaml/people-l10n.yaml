@@ -51,6 +51,9 @@ person:
     edit:
       en: Edit Person
       es: Editar persona
+    add-participant:
+      en: Add a Participant
+      es: Añadir Partícipe
     add-account:
       en: Add Account
       es: Añadir cuenta
@@ -61,3 +64,18 @@ person:
     canceled:
       en: Canceled add new person
       es: Cancelado añadir nueva persona
+    person-add:
+      en: New person added
+      es: Nueva persona agregada
+    person-edit:
+      en: Person edited
+      es: Persona editada
+    person-deactivate:
+      en: Person deactivated
+      es: Persona desactivada
+    person-activate:
+      en: Person activated
+      es: Persona activada
+    person-save-error:
+      en: Person was not saved
+      es: La persona no fue salvada
