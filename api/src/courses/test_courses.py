@@ -158,7 +158,6 @@ def prerequisite_object_factory(course_id, prereq_id):
     return prerequisites
 
 
-<<<<<<< HEAD
 # def create_multiple_prerequisites(sqla):
 #     """Commits the number of prerequisites to the DB."""
 #     courses = sqla.query(Course).all()
@@ -169,17 +168,6 @@ def prerequisite_object_factory(course_id, prereq_id):
 #         new_prerequisites.append(Prerequisite(**valid_prerequisites))
 #     sqla.add_all(new_prerequisites)
 #     sqla.commit()
-=======
-def create_multiple_prerequisites(sqla):
-    """Commits the number of prerequisites to the DB."""
-    courses = sqla.query(Course).all()
-    new_prerequisites = []
-    for i in range(len(courses)-2):
-        courses[i].prerequisites.append(courses[i+1])
-        new_prerequisites.append(courses[i])
-    sqla.add_all(new_prerequisites)
-    sqla.commit()
->>>>>>> app-courses
 
 def courses_diploma_object_factory():
     """Cook up a fake diploma."""
