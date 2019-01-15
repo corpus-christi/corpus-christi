@@ -160,10 +160,10 @@ def prerequisite_object_factory(course_id, prereq_id):
 
 
 def create_multiple_prerequisites(sqla):
-    """Commits the number of prerequisites to the DB."""
+    """Commits the courses - 1 number of prerequisites to the DB."""
     courses = sqla.query(Course).all()
     new_prerequisites = []
-    for i in range(len(courses)-2):
+    for i in range(len(courses)-1):
         courses[i].prerequisites.append(courses[i+1])
         new_prerequisites.append(courses[i])
     sqla.add_all(new_prerequisites)
@@ -427,8 +427,8 @@ def test_read_all_prerequisites(auth_client):
     # GIVEN existing and available course in database
     count_courses = random.randint(3,15)
     create_multiple_courses(auth_client.sqla, count_courses)
-    count_courses = auth_client.sqla.query(Course).count()
-    count_prereqs = count_courses - 1
+    # count_courses = auth_client.sqla.query(Course).count()
+    count_prereqs = count_courses -1
     create_multiple_prerequisites(auth_client.sqla)
     # WHEN that course has prerequisites
     prereqs = auth_client.sqla.query(Base.metadata.tables['courses_prerequisite']).count()
