@@ -109,7 +109,7 @@
       "teams": {
         "title": "Teams"
       },
-      "title": "Events"
+      "title": "Event Title"
     },
     "groups": {
       "title": "Home Churches"
@@ -164,6 +164,10 @@
         "firstName": "first name",
         "lastName": "last name",
         "title": "title"
+      },
+      "messages": {
+        "_default": "Error",
+        "required": "Required"
       },
       "required": "Required"
     }
@@ -278,7 +282,7 @@
       "teams": {
         "title": "Equipos"
       },
-      "title": "Eventos"
+      "title": "T\u00edtulo del Evento"
     },
     "groups": {
       "title": "Iglesias Hogar"
@@ -333,6 +337,10 @@
         "firstName": "nombre de pila",
         "lastName": "appellido",
         "title": "t\u00edtulo"
+      },
+      "messages": {
+        "_default": "Error",
+        "required": "Necesario"
       },
       "required": "Necesario"
     }

@@ -1,7 +1,7 @@
 events:
   title:
-    en: Events
-    es: Eventos
+    en: Event Title
+    es: Título del Evento
   event-description:
     en: Event Description
     es: Descripción del Evento

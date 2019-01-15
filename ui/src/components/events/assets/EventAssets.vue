@@ -48,12 +48,10 @@
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
-        <td class="hover-hand">
-          {{ props.item.description }}
-        </td>        
+        <td class="hover-hand">{{ props.item.description }}</td>
         <td class="hover-hand">
           {{ getDisplayLocation(props.item.location) }}
-        </td>        
+        </td>
         <td>
           <template v-if="props.item.active">
             <v-tooltip bottom v-if="props.item.active">
@@ -168,12 +166,12 @@ export default {
   components: { "asset-form": AssetForm },
   mounted() {
     this.tableLoading = true;
-    let eventId = this.$route.params.event; 
+    let eventId = this.$route.params.event;
     this.$http.get(`/api/v1/events/${eventId}?include_assets=1`).then(resp => {
       this.event = resp.data;
-      
+
       if (this.event.assets) {
-        this.assets = this.event.assets.map(ev_as => ev_as.asset);      
+        this.assets = this.event.assets.map(ev_as => ev_as.asset);
         this.tableLoading = false;
       }
       // console.log(this.assets);
@@ -214,7 +212,8 @@ export default {
   computed: {
     headers() {
       return [
-        { text: this.$t("events.assets.description"),
+        {
+          text: this.$t("events.assets.description"),
           value: "description",
           width: "40%"
         },

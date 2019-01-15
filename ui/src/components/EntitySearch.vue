@@ -11,8 +11,7 @@
       v-bind:value="value"
       v-on:input="setSelected"
       :search-input.sync="searchInput"
-      v-validate="'required'"
-      v-bind:error-messages="errors.collect('location')"
+      v-bind:error-messages="errorMessages"
       return-object
       :filter="customFilter"
       color="secondary"
@@ -34,7 +33,8 @@ export default {
     location: Boolean,
     person: Boolean,
     value: Object,
-    searchEndpoint: String
+    searchEndpoint: String,
+    errorMessages: String
   },
   data() {
     return {
@@ -44,13 +44,13 @@ export default {
       isLoading: false
     };
   },
-  
+
   methods: {
     setSelected(entity) {
       this.$emit("input", entity);
     },
 
-    getEntityDescription(entity, letterLimit=this.descriptionLimit) {
+    getEntityDescription(entity, letterLimit = this.descriptionLimit) {
       if (!entity) return;
       let entityDescriptor = "";
       if (this.location) {

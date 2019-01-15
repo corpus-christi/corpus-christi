@@ -191,6 +191,7 @@ export default {
     this.$http.get("/api/v1/events/?return_group=all").then(resp => {
       this.events = resp.data;
       this.tableLoading = false;
+      console.log(this.events);
     });
     this.onResize();
   },
