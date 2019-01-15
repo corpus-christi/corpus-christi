@@ -80,6 +80,7 @@ class Account(Base):
     username = Column(StringTypes.MEDIUM_STRING, nullable=False, unique=True)
     password_hash = Column(StringTypes.PASSWORD_HASH, nullable=False)
     active = Column(Boolean, nullable=False, default=True)
+    confirmed = Column(Boolean, nullable=False, default=True)
     person_id = Column(Integer, ForeignKey('people_person.id'), nullable=False)
 
     # One-to-one relationship; see https://docs.sqlalchemy.org/en/latest/orm/basic_relationships.html#one-to-one
@@ -114,6 +115,7 @@ class AccountSchema(Schema):
     password = fields.String(attribute='password_hash', load_only=True,
                              required=True, validate=Length(min=6))
     active = fields.Boolean(missing=None)
+    confirmed = fields.Boolean()
     person_id = fields.Integer(
         required=True, data_key="personId", validate=Range(min=1))
 
