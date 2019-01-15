@@ -30,16 +30,7 @@ describe("Update Event Test", function() {
     cy.get("[data-cy=edit]")
       .eq(0)
       .click();
-<<<<<<< HEAD
     
       cy.get("[data-cy=description]").should("have.value", "A whole new description.");
   })
-=======
-
-    cy.get("[data-cy=description]").should(
-      "include",
-      "A whole new description."
-    );
-  });
->>>>>>> 14359218c4cf1bbfeccb4db88a02a64c51c56717
 });
