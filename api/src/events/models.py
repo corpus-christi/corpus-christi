@@ -150,7 +150,7 @@ class TeamMemberSchema(Schema):
     member = fields.Nested('PersonSchema')
     team_id = fields.Integer(required=True, min=1)
     member_id = fields.Integer(required=True, min=1)
-    active = fields.Boolean()
+    active = fields.Boolean(required=True)
 
 # ---- EventParticipant
 
