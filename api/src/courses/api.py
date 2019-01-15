@@ -241,34 +241,32 @@ def update_course_offering(course_offering_id):
 
 student_schema = StudentSchema()
 
-@courses.route('/course_offerings/<student_id>', methods=['POST'])
+@courses.route('/course_offerings/<s_id>', methods=['POST'])
 @jwt_required
-def add_student_to_course_offering(student_id):
+def add_student_to_course_offering(s_id):
     try:
         valid_student = student_schema.load(request.json)
     except ValidationError as err:
         return jsonify(err.messages), 422
-    new_student = Student(**valid_student)
-    print(new_student)
 
-    db.session.add(new_student)
-    db.session.commit()
-    return jsonify(student_schema.dump(new_student)), 201
+    course_offering = request.json['offering_id']
+    courseInDB = db.session.query(Student).filter_by(student_id=s_id, offering_id=course_offering).all()
+    if courseInDB is None:
+        new_student = Student(**valid_student)
+        print(new_student)
 
-
-# May not need this route unless UI says so...
-# @courses.route('/students')
-# @jwt_required
-# def read_all_students():
-#     result = db.session.query(Student).all()
-#     return jsonify(student_schema.dump(result, many=True))
+        db.session.add(new_student)
+        db.session.commit()
+        return jsonify(student_schema.dump(new_student)), 201
+    else:
+        return 'Student already enrolled in course offering', 208
 
 
 @courses.route('/course_offerings/<course_offering_id>/students')
 @jwt_required
 def read_all_course_offering_students(course_offering_id):
     """ This function lists all students by a specific course offering.
-        Active students are listed regardless of confirmed state. """
+        Students are listed regardless of confirmed or active state. """
     stu_result = db.session.query(Student).filter_by(offering_id=course_offering_id).all()
     co_result = db.session.query(Course_Offering).filter_by(id=course_offering_id).first()
     
@@ -287,19 +285,11 @@ def read_all_course_offering_students(course_offering_id):
     return jsonify(offering)
 
 
-# @courses.route('/course_offerings/<course_offering_id>/students/<confirm_state>')
+# May not need this route unless UI says so...
+# @courses.route('/students')
 # @jwt_required
-# def read_all_confirmed_students(course_offering_id, confirm_state):
-#     """
-#     Note: There is no need to see active/inactive state of students
-#     because it doesn't matter if a student is unconfirmed. """
-#     query = db.session.query(Student)
-#     if confirm_state == 'confirmed':
-#         result = query.filter_by(offering_id=course_offering_id, confirmed=True).all()
-#     elif confirm_state == 'unconfirmed':
-#         result = query.filter_by(offering_id=course_offering_id, confirmed=False).all()
-#     else:
-#         return 'Cannot filter course offerings with undefined state', 404
+# def read_all_students():
+#     result = db.session.query(Student).all()
 #     return jsonify(student_schema.dump(result, many=True))
 
 
@@ -312,9 +302,6 @@ def read_one_student(student_id):
     return jsonify(student_schema.dump(result))
 
 
-## We don't want to delete students (for record keeping)
-## But we do want to be able to remove students from "self enroll" in a course offering
-## by toggling active/inactive state
 @courses.route('/students/<student_id>', methods=['PATCH'])
 @jwt_required
 def update_student(student_id):
