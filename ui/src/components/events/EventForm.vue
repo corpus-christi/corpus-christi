@@ -263,13 +263,13 @@ export default {
         this.event = eventProp;
         if (this.event.start != null) {
           this.event.start = new Date(this.event.start);
-          this.startTime = this.getTimeFromTimestamp(this.event.start);
           this.startDate = this.getDateFromTimestamp(this.event.start);
+          this.startTime = this.getTimeFromTimestamp(this.event.start);
         }
         if (this.event.end != null) {
           this.event.end = new Date(this.event.end);
-          this.endTime = this.getTimeFromTimestamp(this.event.end);
           this.endDate = this.getDateFromTimestamp(this.event.end);
+          this.endTime = this.getTimeFromTimestamp(this.event.end);
         }
       }
     },
