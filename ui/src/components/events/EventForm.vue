@@ -10,7 +10,7 @@
           v-bind:label="$t('events.title')"
           name="title"
           v-validate="'required'"
-          v-bind:error-messages="errors.collect('title')"
+          v-bind:error-messages="errors.first('title')"
           data-cy="title"
         ></v-text-field>
         <v-textarea
@@ -18,11 +18,16 @@
           v-model="event.description"
           v-bind:label="$t('events.event-description')"
           name="description"
-          v-bind:error-messages="errors.collect('description')"
           data-cy="description"
         ></v-textarea>
 
-        <entity-search location v-model="event.location" />
+        <entity-search
+          location
+          v-model="event.location"
+          name="location"
+          v-validate="'required'"
+          v-bind:error-messages="errors.first('location')"
+        />
 
         <v-layout>
           <v-flex xs12 md6>
@@ -44,14 +49,17 @@
                 v-bind:label="$t('events.start-date')"
                 prepend-icon="event"
                 readonly
+                name="startDate"
+                ref="startDate"
+                v-validate="'required|date_format:YYYY-MM-DD|after:today,true'"
+                v-bind:error-messages="errors.first('startDate')"
               ></v-text-field>
-
               <v-date-picker
                 v-bind:locale="currentLanguageCode"
                 v-model="startDate"
                 @input="showStartDatePicker = false"
-                data-cy="start-date-picker"
                 :min="today"
+                data-cy="start-date-picker"
               ></v-date-picker>
             </v-menu>
           </v-flex>
@@ -70,6 +78,9 @@
               <v-text-field
                 slot="activator"
                 v-model="startTime"
+                name="startTime"
+                v-validate="'required'"
+                v-bind:error-messages="errors.first('startTime')"
                 v-bind:label="$t('events.start-time')"
                 prepend-icon="schedule"
                 readonly
@@ -78,6 +89,7 @@
                 v-if="startTimeModal"
                 :format="timeFormat"
                 v-model="startTime"
+                :max="startDate == endDate ? endTime : null"
                 data-cy="start-time-picker"
               >
                 <v-spacer></v-spacer>
@@ -118,6 +130,12 @@
                 v-model="endDate"
                 v-bind:label="$t('events.end-date')"
                 prepend-icon="event"
+                name="endDate"
+                ref="endDate"
+                v-validate="
+                  'required|date_format:YYYY-MM-DD|after:startDate,true'
+                "
+                v-bind:error-messages="errors.first('endDate')"
                 readonly
               ></v-text-field>
 
@@ -145,6 +163,9 @@
               <v-text-field
                 slot="activator"
                 v-model="endTime"
+                name="endTime"
+                v-validate="'required'"
+                v-bind:error-messages="errors.first('endTime')"
                 v-bind:label="$t('events.end-time')"
                 prepend-icon="update"
                 readonly
@@ -153,6 +174,7 @@
                 v-if="endTimeModal"
                 :format="timeFormat"
                 v-model="endTime"
+                :min="startDate == endDate ? startTime : null"
                 data-cy="end-time-picker"
               >
                 <v-spacer></v-spacer>
@@ -174,6 +196,14 @@
             </v-dialog>
           </v-flex>
         </v-layout>
+        <input
+          name="today"
+          type="text"
+          ref="today"
+          v-bind:value="today"
+          hidden
+          readonly
+        />
       </form>
     </v-card-text>
     <v-card-actions>
@@ -237,6 +267,14 @@ export default {
           this.endDate = this.getDateFromTimestamp(this.event.end);
         }
       }
+    },
+
+    startDate(date) {
+      this.endDate = date;
+    },
+
+    endDate(date) {
+      this.endTime = "";
     }
   },
   computed: {

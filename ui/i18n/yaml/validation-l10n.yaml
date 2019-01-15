@@ -2,3 +2,32 @@ validation:
   required:
     en: Required
     es: Necesario
+  attributes:
+    firstName:
+      en: first name
+      es: nombre de pila
+    lastName:
+      en: last name
+      es: appellido
+    email:
+      en: email
+      es: correo electrónico
+    title:
+      en: title
+      es: título
+    startDate:
+      en: start date
+      es: fecha de inicio
+    endDate:
+      en: end date
+      es: fecha final
+    location:
+      en: location
+      es: ubicación
+  messages:
+    _default:
+      en: Error
+      es: Error
+    required:
+      en: Required
+      es: Necesario

@@ -5,14 +5,6 @@
     </v-card-title>
     <v-card-text>
       <form>
-        <!-- <v-text-field
-          v-model="event.title"
-          v-bind:label="$t('events.title')"
-          name="title"
-          v-validate="'required'"
-          v-bind:error-messages="errors.collect('title')"
-          data-cy="title"
-        ></v-text-field> -->
         <v-textarea
           rows="3"
           v-model="asset.description"
@@ -22,10 +14,7 @@
           data-cy="description"
         ></v-textarea>
 
-        <!-- <entity-search
-        location
-        searchEndpoint="http://localhost:3000/locations"
-        v-on:setSelected="setLocation"/> -->
+        <entity-search location v-model="asset.location" />
       </form>
     </v-card-text>
     <v-card-actions>
@@ -67,7 +56,9 @@
 <script>
 import { isEmpty } from "lodash";
 // import { mapGetters } from "vuex";
+import EntitySearch from "../../EntitySearch";
 export default {
+  components: { "entity-search": EntitySearch },
   name: "AssetForm",
   watch: {
     // Make sure data stays in sync with any changes to `initialData` from parent.
@@ -105,6 +96,7 @@ export default {
 
     // Clear the form and the validators.
     clear() {
+      delete this.asset.location;
       for (let key of this.assetKeys) {
         this.asset[key] = "";
       }
@@ -126,10 +118,6 @@ export default {
         this.$emit("add-another", this.asset);
       }
     }
-
-    // setLocation(locationId) {
-    //   console.log(locationId)
-    // }
   },
   props: {
     editMode: {

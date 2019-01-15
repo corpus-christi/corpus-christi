@@ -1,11 +1,10 @@
 // TODO: Skeleton done for now, should do more extensive testing later
 describe("Update Event Test", function() {
+  before(() => {
+    cy.login();
+  })
+
   it("GIVEN: Event Planner goes to Event page", function() {
-    cy.visit("/login");
-    cy.get("[data-cy=username]").type("Cytest");
-    cy.get("[data-cy=password]").type("password");
-    cy.get("[data-cy=login]").click();
-    cy.url().should("include", "/admin");
     cy.visit("/events/all");
   });
 
@@ -23,6 +22,7 @@ describe("Update Event Test", function() {
     cy.get("[data-cy=form-save]").click();
   });
 
+  // TODO: Search table by ID
   it("THEN: Event details should be updated", function() {
     // Check for new title in table
     cy.get("tbody").contains(" V2");

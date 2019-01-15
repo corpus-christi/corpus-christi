@@ -1,11 +1,10 @@
 // TODO: Skeleton done, needs more extensive testing
 describe("Archive Event Test", function() {
+  before(() => {
+    cy.login();
+  })
+
   it("GIVEN: Event Planner goes to Event page", function() {
-    cy.visit("/login");
-    cy.get("[data-cy=username]").type("Cytest");
-    cy.get("[data-cy=password]").type("password");
-    cy.get("[data-cy=login]").click();
-    cy.url().should("include", "/admin");
     cy.visit("/events/all");
   });
 
@@ -23,7 +22,11 @@ describe("Archive Event Test", function() {
 
   // TODO: Also test for unarchiving events, bad test data
   it("AND: Event can be unarchived", function() {
-    cy.get("[data-cy=unarchive]").eq(0).click();
-    cy.get(":nth-child(1) > :nth-child(4)").find("[data-cy=archive]").should("exist");
+    cy.get("[data-cy=unarchive]")
+      .eq(0)
+      .click();
+    cy.get(":nth-child(1) > :nth-child(4)")
+      .find("[data-cy=archive]")
+      .should("exist");
   });
 });

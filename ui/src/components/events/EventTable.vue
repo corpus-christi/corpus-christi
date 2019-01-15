@@ -192,6 +192,7 @@ export default {
     this.$http.get("/api/v1/events/?return_group=all").then(resp => {
       this.events = resp.data;
       this.tableLoading = false;
+      console.log(this.events);
     });
     this.onResize();
   },
@@ -318,7 +319,7 @@ export default {
       const putId = copyEvent.id;
       delete copyEvent.id;
       delete copyEvent.location; //Temporary delete
-      this.$http
+      this.$http //TODO change to patch
         .put(`/api/v1/events/${putId}`, copyEvent)
         .then(resp => {
           console.log("UNARCHIVED", resp);
@@ -358,7 +359,7 @@ export default {
           .put(`/api/v1/events/${eventId}`, newEvent)
           .then(resp => {
             console.log("EDITED", resp);
-            Object.assign(this.events[idx], newEvent);
+            Object.assign(this.events[idx], resp.data);
             this.eventDialog.show = false;
             this.eventDialog.saveLoading = false;
             this.showSnackbar(this.$t("events.event-edited"));
@@ -392,7 +393,7 @@ export default {
       let newEvent = JSON.parse(JSON.stringify(event));
       delete newEvent.location;
       this.$http
-        .post("/api/v1/events/", event)
+        .post("/api/v1/events/", newEvent)
         .then(resp => {
           console.log("ADDED", resp);
           this.events.push(resp.data);

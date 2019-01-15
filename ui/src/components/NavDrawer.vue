@@ -50,6 +50,11 @@ export default {
           icon: "group"
         },
         {
+          title: this.$t("courses.course"),
+          route: "courses-admin",
+          icon: "school"
+        },
+        {
           title: this.$t("events.title"),
           route: "events",
           icon: "event"
