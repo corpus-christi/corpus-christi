@@ -42,6 +42,7 @@
       "tooltips": {
         "activate": "Activate",
         "archive": "Archive",
+        "remove": "Remove",
         "settings": "Settings"
       },
       "view-active": "View Active",
@@ -219,6 +220,7 @@
       "tooltips": {
         "activate": "Activar",
         "archive": "Archivar",
+        "remove": "Retirar",
         "settings": "Ajustes"
       },
       "view-active": "Ver Activo",
