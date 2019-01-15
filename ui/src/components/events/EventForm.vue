@@ -216,9 +216,14 @@
         >{{ $t("actions.cancel") }}</v-btn
       >
       <v-spacer></v-spacer>
-      <v-btn color="primary" data-cy="form-clear" flat v-on:click="clear" :disabled="formDisabled">{{
-        $t("actions.clear")
-      }}</v-btn>
+      <v-btn
+        color="primary"
+        data-cy="form-clear"
+        flat
+        v-on:click="clear"
+        :disabled="formDisabled"
+        >{{ $t("actions.clear") }}</v-btn
+      >
       <v-btn
         color="primary"
         outline
@@ -316,9 +321,9 @@ export default {
     // Clear the form and the validators.
     clear() {
       for (let key of this.eventKeys) {
-        this.event[key] = ""
+        this.event[key] = "";
       }
-      delete this.event.location
+      delete this.event.location;
       this.startTime = "";
       this.startDate = "";
       this.endTime = "";

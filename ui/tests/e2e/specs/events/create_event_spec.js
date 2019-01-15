@@ -1,7 +1,7 @@
 describe("Create Event Test", function() {
   before(() => {
     cy.login();
-  })
+  });
 
   it("GIVEN: Event Planner goes to Event page", function() {
     cy.visit("/events/all");
@@ -16,7 +16,9 @@ describe("Create Event Test", function() {
     // TODO: Make API calls for test data???
     // Get first location in the search
     cy.get("[data-cy=entity-search-field]").click();
-    cy.get(".menuable__content__active > .v-select-list > .v-list > :nth-child(1) > .v-list__tile").click();
+    cy.get(
+      ".menuable__content__active > .v-select-list > .v-list > :nth-child(1) > .v-list__tile"
+    ).click();
 
     cy.get("[data-cy=start-date-menu]").click();
     // Get cypress to click on a certain position on the calendar
