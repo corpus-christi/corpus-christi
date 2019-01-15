@@ -7,12 +7,13 @@ from marshmallow import ValidationError
 
 from . import people
 from .models import Person, Account, AccountSchema, Role, PersonSchema, RoleSchema, Manager, ManagerSchema
-from ..attributes.models import Attribute, AttributeSchema, Enumerated_Value, Enumerated_ValueSchema
+from ..attributes.models import Attribute, AttributeSchema, Enumerated_Value, Enumerated_ValueSchema, Person_Attribute, Person_AttributeSchema
 from .. import db
 
 # ---- Person
 
 person_schema = PersonSchema()
+person_attribute_schema = Person_AttributeSchema()
 attribute_schema = AttributeSchema(exclude=['active'])
 enumerated_value_schema = Enumerated_ValueSchema(exclude=['active'])
 
@@ -44,28 +45,40 @@ def read_person_fields():
 @people.route('/persons', methods=['POST'])
 @jwt_required
 def create_person():
-    request.json["active"] = True
+    request.json["person"]["active"] = True
 
     for key, value in request.json.items():
         if request.json[key] is "":
             request.json[key] = None
 
     try:
-        valid_person = person_schema.load(request.json)
+        valid_person = person_schema.load(request.json['person'])
+        valid_person_attributes = person_attribute_schema.load(
+            request.json['attributesInfo'], many=True)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
     new_person = Person(**valid_person)
     db.session.add(new_person)
     db.session.commit()
-    return jsonify(person_schema.dump(new_person)), 201
+
+    for person_attribute in valid_person_attributes:
+        person_attribute = Person_Attribute(**person_attribute)
+        person_attribute.person_id = new_person.id
+        db.session.add(person_attribute)
+
+    db.session.commit()
+    result = db.session.query(Person).filter_by(id=new_person.id).first()
+    result.attributesInfo = result.person_attributes
+    return jsonify(person_schema.dump(result)), 201
 
 
 @people.route('/persons')
 @jwt_required
 def read_all_persons():
-    read_person_fields()
     result = db.session.query(Person).all()
+    for r in result:
+        r.attributesInfo = r.person_attributes
     return jsonify(person_schema.dump(result, many=True))
 
 
@@ -73,6 +86,7 @@ def read_all_persons():
 @jwt_required
 def read_one_person(person_id):
     result = db.session.query(Person).filter_by(id=person_id).first()
+    result.attributesInfo = result.person_attributes
     return jsonify(person_schema.dump(result))
 
 
@@ -101,7 +115,8 @@ def deactivate_person(person_id):
     account = db.session.query(Account).filter_by(id=person.account_id).first()
 
     if person.account:
-        account = db.session.query(Account).filter_by(id=person.account.id).first()
+        account = db.session.query(Account).filter_by(
+            id=person.account.id).first()
         setattr(account, 'active', False)
     setattr(person, 'active', False)
 
@@ -325,7 +340,6 @@ def remove_role_from_account(account_id, role_id):
 
     if role_to_remove not in account.roles:
         return 'That accout does not have that role', 404
-
 
     account.roles.remove(role_to_remove)
     db.session.commit()
