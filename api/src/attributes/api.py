@@ -6,14 +6,15 @@ from flask_jwt_extended import jwt_required, get_raw_jwt, jwt_optional
 from marshmallow import ValidationError
 
 from . import attributes
-from ..people.models import Person, Account
-from .models import Attribute, AttributeSchema, Enumerated_Value, Enumerated_ValueSchema, Person_Attribute, Person_AttributeSchema
+from .models import Attribute, AttributeSchema, Enumerated_Value, Enumerated_ValueSchema
 from .. import db
 
 
 # ---- Attribute
 
 attribute_schema = AttributeSchema()
+enumerated_value_schema = Enumerated_ValueSchema(exclude=['id'])
+enumerated_value_schema_with_id = Enumerated_ValueSchema()
 
 
 @attributes.route('/attributes', methods=['POST'])
@@ -58,10 +59,32 @@ def read_one_attribute(attribute_id):
 @attributes.route('/attributes/<attribute_id>', methods=['PATCH'])
 @jwt_required
 def update_attribute(attribute_id):
+    update_enumerated_values = []
+    new_enumerated_values = []
+
     try:
-        valid_attribute = attribute_schema.load(request.json)
+        valid_attribute = attribute_schema.load(request.json['attribute'])
+        for enumerated_value in request.json['enumeratedValues']:
+            if 'id' in enumerated_value.keys():
+                update_enumerated_values.append(
+                    enumerated_value_schema_with_id.load(enumerated_value))
+            else:
+                new_enumerated_values.append(
+                    enumerated_value_schema.load(enumerated_value))
     except ValidationError as err:
         return jsonify(err.messages), 422
+
+    for new_enumerated_value in new_enumerated_values:
+        new_enumerated_value = Enumerated_Value(**new_enumerated_value)
+        new_enumerated_value.attribute_id = attribute_id
+        db.session.add(new_enumerated_value)
+
+    for update_enumerated_value in update_enumerated_values:
+        old_enumerated_value = db.session.query(Enumerated_Value).filter_by(
+            attribute_id=attribute_id, id=update_enumerated_value['id']).first()
+        if old_enumerated_value is not None:
+            setattr(old_enumerated_value, 'value_i18n',
+                    update_enumerated_value['value_i18n'])
 
     attribute = db.session.query(Attribute).filter_by(id=attribute_id).first()
 
@@ -69,6 +92,8 @@ def update_attribute(attribute_id):
         setattr(attribute, key, val)
 
     db.session.commit()
+    result = db.session.query(Attribute).filter_by(id=attribute.id).first()
+    result.enumerated_values = result.enumerated_values
     return jsonify(attribute_schema.dump(attribute))
 
 
@@ -97,8 +122,6 @@ def activate_attribute(attribute_id):
 
 
 # ---- Enumerated_Value
-
-enumerated_value_schema = Enumerated_ValueSchema()
 
 
 @attributes.route('/enumerated_values', methods=['POST'])

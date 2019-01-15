@@ -50,7 +50,7 @@ class Enumerated_Value(Base):
 
 
 class Enumerated_ValueSchema(Schema):
-    id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
+    id = fields.Integer(dump_only=False, required=True, validate=Range(min=1))
     attribute_id = fields.Integer(data_key='attributeId')
     value_i18n = fields.String(data_key='valueI18n')
     active = fields.Boolean(required=True)
