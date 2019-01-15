@@ -45,11 +45,11 @@ def read_person_fields():
 @people.route('/persons', methods=['POST'])
 @jwt_required
 def create_person():
-    request.json["person"]["active"] = True
+    request.json['person']['active'] = True
 
-    for key, value in request.json.items():
-        if request.json[key] is "":
-            request.json[key] = None
+    for key, value in request.json['person'].items():
+        if request.json['person'][key] is "":
+            request.json['person'][key] = None
 
     try:
         valid_person = person_schema.load(request.json['person'])
@@ -96,7 +96,6 @@ def read_one_person(person_id):
 @jwt_required
 def update_person(person_id):
     try:
-        del request.json['accountInfo']
         valid_person = person_schema.load(request.json['person'])
         valid_person_attributes = person_attribute_schema.load(
             request.json['attributesInfo'], many=True)
@@ -300,12 +299,6 @@ def read_one_role(role_id):
     return jsonify(role_schema.dump(result))
 
 
-@people.route('/role/<role_id>', methods=['PUT'])
-@jwt_required
-def replace_role(role_id):
-    pass
-
-
 @people.route('/role/<role_id>', methods=['PATCH'])
 @jwt_required
 def update_role(role_id):
@@ -323,10 +316,25 @@ def update_role(role_id):
     return jsonify(role_schema.dump(role))
 
 
-@people.route('/role/<role_id>', methods=['DELETE'])
+@people.route('/role/activate/<role_id>', methods=['PUT'])
 @jwt_required
-def delete_role(role_id):
-    pass
+def activate_role(role_id):
+    role = db.session.query(Role).filter_by(id=role_id).first()
+    setattr(role, 'active', True)
+    db.session.commit()
+    return jsonify(role_schema.dump(role))
+
+
+@people.route('/role/deactivate/<role_id>', methods=['PUT'])
+@jwt_required
+def deactivate_role(role_id):
+    role = db.session.query(Role).filter_by(id=role_id).first()
+
+    setattr(role, 'active', False)
+
+    db.session.commit()
+
+    return jsonify(role_schema.dump(role))
 
 
 @people.route('/role/<account_id>&<role_id>', methods=['POST'])

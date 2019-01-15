@@ -191,7 +191,8 @@ export default {
       allPeople: [],
       activePeople: [],
       archivedPeople: [],
-      search: ""
+      search: "",
+      data: {}
     };
   },
   computed: {
@@ -272,8 +273,10 @@ export default {
         delete person.id;
 
         console.log(person);
+        this.data = this.constructPersonData(person);
+        console.log(this.data);
         this.$http
-          .put(`/api/v1/people/persons/${person_id}`, person)
+          .put(`/api/v1/people/persons/${person_id}`, this.data)
           .then(resp => {
             console.log("EDITED", resp);
             Object.assign(this.allPeople[idx], person);
@@ -287,8 +290,11 @@ export default {
             this.showSnackbar(this.$t("person.messages.person-save-error"));
           });
       } else {
+        console.log(person);
+        this.data = this.constructPersonData(person);
+        console.log(this.data);
         this.$http
-          .post("/api/v1/people/persons", person)
+          .post("/api/v1/people/persons", this.data)
           .then(resp => {
             console.log("ADDED", resp);
             this.refreshPeopleList();
@@ -301,6 +307,19 @@ export default {
             this.personDialog.saveLoading = false;
             this.showSnackbar(this.$t("person.messages.person-save-error"));
           });
+      }
+    },
+
+    constructPersonData(person) {
+      var attributes = [];
+      if(person.attributesInfo) {
+        attributes = person.attributesInfo;
+      }
+      delete person["attributesInfo"];
+      delete person["accountInfo"];
+      return {
+        "person": person,
+        "attributesInfo": attributes
       }
     },
 
@@ -399,11 +418,21 @@ export default {
           this.archivedPeople = this.allPeople.filter(person => !person.active);
         })
         .catch(err => console.error("FAILURE", err.response));
+    },
+
+    getAttributesInfo() {
+      this.$http
+        .get("/api/v1/people/persons/fields")
+        .then(resp => {
+          console.log(resp);
+        })
+        .catch(err => console.error("FAILURE", err.response));
     }
   },
 
   mounted: function() {
     this.refreshPeopleList();
+    this.getAttributesInfo();
   }
 };
 </script>
