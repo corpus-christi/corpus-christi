@@ -19,6 +19,9 @@ class Attribute(Base):
     seq = Column(Integer, nullable=False)
     active = Column(Boolean, nullable=False)
 
+    enumerated_values = relationship(
+        'Enumerated_Value', backref='attribute', lazy=True)
+
     def __repr__(self):
         return f"<Attribute(id={self.id})>"
 
@@ -29,6 +32,8 @@ class AttributeSchema(Schema):
     type_i18n = fields.String(data_key='typeI18n')
     seq = fields.Integer(required=True)
     active = fields.Boolean(required=True)
+
+    enumerated_values = fields.Nested('Enumerated_ValueSchema', many=True)
 
 # ---- Enumerated_Value
 
