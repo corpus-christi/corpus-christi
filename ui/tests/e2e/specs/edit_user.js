@@ -3,7 +3,7 @@
 describe("Testing Editing User Information", () => {
   it(
     "Given: Visits the app root url, logs into an account, navigates" +
-    "to the people page, and filters the search to one person",
+      "to the people page, and filters the search to one person",
     () => {
       cy.visit("/");
       //Clicks on the Account button

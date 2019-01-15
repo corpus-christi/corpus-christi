@@ -2,7 +2,7 @@
 describe("Read Event Test", function() {
   before(() => {
     cy.login();
-  })
+  });
 
   it("GIVEN: Event Planner goes to a specific event", function() {
     cy.visit("/events/2/details");

@@ -2,7 +2,7 @@
 describe("Update Event Test", function() {
   before(() => {
     cy.login();
-  })
+  });
 
   it("GIVEN: Event Planner goes to Event page", function() {
     cy.visit("/events/all");
