@@ -689,6 +689,10 @@ def test_remove_asset_from_event(auth_client):
     # THEN we expect the number of entries in the database's linking table to be one less
     new_link_count = auth_client.sqla.query(EventAsset).count()
     assert new_link_count == link_count - 1
+    # WHEN we unlink the same asset
+    resp = auth_client.delete(url)
+    # THEN We expect an error
+    assert resp.status_code == 404
 
 @pytest.mark.smoke
 def test_remove_unbooked_asset_from_event(auth_client):
