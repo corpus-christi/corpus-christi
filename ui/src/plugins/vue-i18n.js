@@ -10,7 +10,8 @@ Vue.use(VueI18n);
 
 const i18n = new VueI18n({
   locale: "es",
-  messages: i18n_data
+  messages: i18n_data,
+  silentTranslationWarn: true
 });
 
 Vue.use(VeeValidate, {

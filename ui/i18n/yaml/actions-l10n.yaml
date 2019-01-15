@@ -3,6 +3,14 @@ actions:
     _desc: Header for a table, etc.
     en: Actions
     es: Acciones
+  add-another:
+    _desc: Save a newly created item; clear data (e.g., on a form)
+    en: Add Another
+    es: Añadir Otro
+  add-person:
+    _desc: Add a person to the database
+    en: Add Person
+    es: Añadir Persona
   cancel:
     _desc: Cancel a pending action
     en: Cancel
@@ -19,6 +27,10 @@ actions:
     _desc: Confirm some action (e.g., updating a password)
     en: Confirm
     es: Confirmar
+  duplicate:
+    _desc: Duplicate some action (e.g., duplicating an event)
+    en: Duplicate
+    es: Duplicar
   edit:
     en: Edit
     es: Editar
@@ -48,14 +60,22 @@ actions:
     _desc: View all
     en: View All
     es: Ver Todo
+  search-people:
+    _desc: Search for people
+    en: Search People
+    es: Buscar Personas
+  view-inactive:
+    _desc: View all inactive people
+    en: View Inactive
+    es: Ver Inactivo
   tooltips:
     settings:
       _desc: Change settings
       en: Settings
       es: Ajustes
-    deactivate:
+    archive:
       en: Archive
       es: Archivar
-    reactivate:
+    unarchive:
       en: Unarchive
       es: Desarchivar
