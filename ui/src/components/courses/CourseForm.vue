@@ -39,25 +39,16 @@
 <script>
 export default {
   name: "CourseForm",
-  data: function() {
-    return {
-      availableCourses: []
-    };
-  },
   computed: {
     items() {
-      return this.availableCourses.filter(item => item.id != this.course.id);
+      return this.coursesPool.filter(
+        item => item.active && item.id != this.course.id
+      );
     }
   },
   props: {
-    course: Object
-  },
-  mounted() {
-    this.$http
-      .get("/api/v1/courses/courses")
-      .then(
-        resp => (this.availableCourses = resp.data.filter(item => item.active))
-      );
+    course: Object,
+    coursesPool: Array
   }
 };
 </script>

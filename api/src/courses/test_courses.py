@@ -4,7 +4,7 @@ import random
 from faker import Faker
 from flask import url_for
 
-from .models import Course, CourseSchema, Course_Offering,\
+from .models import Course, CourseSchema, Course_Offering, Class_Meeting,\
         Course_OfferingSchema, Diploma, DiplomaSchema, Student, StudentSchema,\
         Class_Meeting, Class_MeetingSchema, Diploma_Awarded, Diploma_AwardedSchema
 from ..people.models import Person
@@ -272,6 +272,21 @@ def create_diploma_awards(sqla, n):
     for student in students:
         print(student.diplomas)
 
+
+def create_class_attendance(sqla, n):
+    """Commits the number of class attendances to the DB."""
+    students = sqla.query(Student).all()
+    class_meetings = sqla.query(Class_Meeting).all()
+    new_class_attendance = []
+    for i in range(n):
+        class_meeting = class_meetings[random.randint(0, len(class_meetings)-1)]
+        student = students[random.randint(0, len(students)-1)]
+        student.attendance.append(class_meeting)
+        new_class_attendance.append(student)
+    sqla.add_all(new_class_attendance)
+    sqla.commit()
+    # for student in students:
+        # print(student.diplomas)
 
 # ---- Course
 

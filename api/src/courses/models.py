@@ -129,8 +129,8 @@ class Student(Base):
      person = relationship('Person', backref='students', lazy=True)
      # diplomas = relationship('Diploma', secondary=Diploma_Awarded,
      #           back_populates='students', lazy=True)
-     class_meeting = relationship('Class_Meeting', secondary=Class_Attendance,
-               backref='attendance', lazy=True)
+     attendance = relationship('Class_Meeting', secondary=Class_Attendance,
+               back_populates='students', lazy=True)
 
 
      def __repr__(self):
@@ -177,8 +177,8 @@ class Class_Meeting(Base):
      course_offering = relationship('Course_Offering', backref='class_meeting', lazy=True)
      #location = relationship('Location', backref='meeting_location', lazy=True)
      person = relationship('Person', backref='teacher', lazy=True)
-     student = relationship('Student', secondary=Class_Attendance,
-               backref='Students', lazy=True)
+     students = relationship('Student', secondary=Class_Attendance,
+               back_populates='attendance', lazy=True)
 
      def __repr__(self):
          return f"<Class_Meeting(id={self.id})>"
