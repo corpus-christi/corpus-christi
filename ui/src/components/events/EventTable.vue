@@ -42,6 +42,7 @@
 
     <v-data-table
       :headers="headers"
+      :rows-per-page-items="rowsPerPageItem"
       :items="visibleEvents"
       :search="search"
       :loading="tableLoading"
@@ -191,12 +192,14 @@ export default {
     this.$http.get("/api/v1/events/?return_group=all").then(resp => {
       this.events = resp.data;
       this.tableLoading = false;
+      console.log(this.events);
     });
     this.onResize();
   },
 
   data() {
     return {
+      rowsPerPageItem: [10, 15, 25, {"text":"$vuetify.dataIterator.rowsPerPageAll","value":-1}],
       tableLoading: true,
       events: [],
       eventDialog: {
@@ -356,7 +359,7 @@ export default {
           .put(`/api/v1/events/${eventId}`, newEvent)
           .then(resp => {
             console.log("EDITED", resp);
-            Object.assign(this.events[idx], newEvent);
+            Object.assign(this.events[idx], resp.data);
             this.eventDialog.show = false;
             this.eventDialog.saveLoading = false;
             this.showSnackbar(this.$t("events.event-edited"));

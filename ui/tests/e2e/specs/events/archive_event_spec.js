@@ -22,7 +22,11 @@ describe("Archive Event Test", function() {
 
   // TODO: Also test for unarchiving events, bad test data
   it("AND: Event can be unarchived", function() {
-    cy.get("[data-cy=unarchive]").eq(0).click();
-    cy.get(":nth-child(1) > :nth-child(4)").find("[data-cy=archive]").should("exist");
+    cy.get("[data-cy=unarchive]")
+      .eq(0)
+      .click();
+    cy.get(":nth-child(1) > :nth-child(4)")
+      .find("[data-cy=archive]")
+      .should("exist");
   });
 });

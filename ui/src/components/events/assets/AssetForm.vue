@@ -14,7 +14,7 @@
           data-cy="description"
         ></v-textarea>
 
-        <entity-search location v-model="asset.location"/>
+        <entity-search location v-model="asset.location" />
       </form>
     </v-card-text>
     <v-card-actions>
