@@ -273,11 +273,7 @@ def test_update_other_fields(auth_client):
         assert updated_account.username == expected_by_id[account_id]['username']
         assert updated_account.active == expected_by_id[account_id]['active']
 
-
-def test_role(auth_client):
-    
-
-
+#   -----   __repr__
 
 @pytest.mark.smoke
 def test_repr_person(auth_client):
@@ -297,6 +293,33 @@ def test_repr_account(auth_client):
 def test_repr_role(auth_client):
     role = Role()
     role.__repr__()
+
+
+#   -----   _init
+
+@pytest.mark.smoke
+def test_init_person(auth_client):
+    person = Person()
+    person._init(auth_client.sqla)
+
+
+#   -----   Account Passwords
+@pytest.mark.smoke
+def test_password_account(auth_client):
+    account = Account()
+    try:
+        account.password()
+    except:
+        assert True
+
+
+@pytest.mark.smoke
+def test_verify_password_account(auth_client):
+    create_multiple_people(auth_client.sqla, 4)
+    create_multiple_accounts(auth_client.sqla, 1)
+    account = auth_client.sqla.query(Account).all()
+    account[0].password = "test"
+    account[0].verify_password("test")
 
 
 #   -----   Roles
@@ -319,7 +342,7 @@ def create_role(sqla, n):
 
 
 def test_create_role(auth_client):
-    # GIVEN some randomly created people
+    # GIVEN some randomly created role
     create_role(auth_client.sqla)
 
     # WHEN we retrieve them all
