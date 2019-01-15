@@ -318,6 +318,8 @@ def read_all_confirmed_students(course_offering_id, confirm_state):
 @jwt_required
 def read_one_student(student_id):
     result = db.session.query(Student).filter_by(id=student_id).first()
+    if result is None:
+        return 'Student not found', 404
     return jsonify(student_schema.dump(result))
 
 
@@ -328,8 +330,8 @@ def read_one_student(student_id):
 @jwt_required
 def update_student(student_id):
     valid_student = db.session.query(Student).filter_by(id=student_id).first()
-    if course_offering is None:
-        return "Course Offering NOT Found", 404
+    if valid_student is None:
+        return "Student not found", 404
 
     for attr in 'confirmed', 'active':
         if attr in request.json:
