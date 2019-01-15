@@ -153,6 +153,7 @@
                 v-if="endTimeModal"
                 :format="timeFormat"
                 v-model="endTime"
+                :min="startDate == endDate ? startTime : null"
                 data-cy="end-time-picker"
               >
                 <v-spacer></v-spacer>
