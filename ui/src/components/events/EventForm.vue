@@ -51,7 +51,7 @@
                 readonly
                 name="startDate"
                 ref="startDate"
-                v-validate="'required|date_format:YYYY-MM-DD|after:today,true'"
+                v-validate="startDateValidateString"
                 v-bind:error-messages="errors.first('startDate')"
               ></v-text-field>
               <v-date-picker
@@ -132,9 +132,7 @@
                 prepend-icon="event"
                 name="endDate"
                 ref="endDate"
-                v-validate="
-                  'required|date_format:YYYY-MM-DD|after:startDate,true'
-                "
+                v-validate="endDateValidateString"
                 v-bind:error-messages="errors.first('endDate')"
                 readonly
               ></v-text-field>
@@ -281,7 +279,7 @@ export default {
 
     endDate() {
       //TODO don't clear if still valid
-      this.endTime = "";
+      // this.endTime = "";
     }
   },
   computed: {
@@ -307,6 +305,14 @@ export default {
 
     today() {
       return this.getDateFromTimestamp(Date.now());
+    },
+
+    endDateValidateString() {
+      return 'required'
+    },
+
+    startDateValidateString() {
+      return 'required'
     },
 
     ...mapGetters(["currentLanguageCode"])
