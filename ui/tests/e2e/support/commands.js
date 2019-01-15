@@ -23,3 +23,25 @@
 //
 // -- This is will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+
+Cypress.Commands.add('login', function() {
+  cy.visit('/login');
+  cy.get('[data-cy=username]').type('Cytest');
+  cy.get('[data-cy=password]').type('password');
+  cy.get('[data-cy=login]').click();
+})
+
+// TODO: Auto login at some point??? check with Nurk
+// Cypress.Commands.add('login', () => { 
+//   cy.request({
+//     method: 'POST',
+//     url: 'localhost:8080/login',
+//     body: {
+//       username: 'Cytest',
+//       password: 'password',
+//     }
+//   })
+//   .then((resp) => {
+//     window.localStorage.setItem('jwt', resp.body.user.token)
+//   })
+// })
