@@ -320,7 +320,7 @@ export default {
       const idx = this.events.findIndex(ev => ev.id === event.id);
       const patchId = event.id;
       event.id *= -1; // to show loading spinner
-      this.$http //TODO change to patch
+      this.$http
         .patch(`/api/v1/events/${patchId}`, { active: true })
         .then(resp => {
           console.log("UNARCHIVED", resp);
