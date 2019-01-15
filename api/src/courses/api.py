@@ -147,7 +147,10 @@ def create_prerequisite(course_id):
     course = db.session.query(Course).filter_by(id=course_id).first()
     if course is None:
         return 'Course to add prereqs not found', 404
+    print(request.json)
     for p in request.json['prerequisites']:
+        if(p==course.id):
+            continue
         course.prerequisites.append(db.session.query(Course).filter_by(id=p).first())
     db.session.commit()
     return jsonify(course_schema.dump(course)), 201
@@ -194,6 +197,8 @@ def update_prerequisite(course_id):
         if not (lookup in request.json['prerequisites']):
             course.prerequisites.remove(i)
     for i in request.json['prerequisites']:
+        if(i==course.id):
+            continue
         course.prerequisites.append(db.session.query(Course).filter_by(id=i).first())
     db.session.commit()
     return jsonify(course_schema.dump(course))
