@@ -112,7 +112,7 @@ def update_course(course_id):
 """
 Route adds prerequisite for a specific course
 """
-@courses.route('/courses/prerequisites/<course_id>', methods=['POST'])
+@courses.route('/courses/<course_id>/prerequisites', methods=['POST'])
 @jwt_required
 # @authorize(["role.superuser", "role.registrar"])
 def create_prerequisite(course_id):
@@ -142,7 +142,7 @@ def read_all_prerequisites():
     return jsonify(course_schema.dump(results, many=True))
 
 
-@courses.route('/courses/prerequisites/<course_id>')
+@courses.route('/courses/<course_id>/prerequisites')
 @jwt_required
 # @authorize(["role.superuser", "role.registrar", "role.public"])
 def read_one_course_prerequisites(course_id):
@@ -190,12 +190,14 @@ def create_course_offering():
     db.session.commit()
     return jsonify(course_offering_schema.dump(new_course_offering)), 201
 
+
 @courses.route('/course_offerings')
 @jwt_required
 # @authorize(["role.superuser", "role.registrar", "role.public"])
 def read_all_course_offerings():
     result = db.session.query(Course_Offering).all()
     return jsonify(course_offering_schema.dump(result, many=True))
+
 
 @courses.route('/<active_state>/course_offerings')
 @jwt_required
@@ -209,12 +211,14 @@ def read_active_state_course_offerings(active_state):
         return 'Cannot filter course offerings with undefined state', 404
     return jsonify(course_offering_schema.dump(query, many=True))
 
+
 @courses.route('/course_offerings/<course_offering_id>')
 @jwt_required
 # @authorize(["role.superuser", "role.public"])
 def read_one_course_offering(course_offering_id):
     result = db.session.query(Course_Offering).filter_by(id=course_offering_id).first()
     return jsonify(course_offering_schema.dump(result))
+
 
 @courses.route('/course_offerings/<course_offering_id>', methods=['PATCH'])
 @jwt_required
