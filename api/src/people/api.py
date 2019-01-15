@@ -79,6 +79,7 @@ def read_all_persons():
     result = db.session.query(Person).all()
     for r in result:
         r.attributesInfo = r.person_attributes
+        r.accountInfo = r.account
     return jsonify(person_schema.dump(result, many=True))
 
 
@@ -87,6 +88,7 @@ def read_all_persons():
 def read_one_person(person_id):
     result = db.session.query(Person).filter_by(id=person_id).first()
     result.attributesInfo = result.person_attributes
+    result.accountInfo = result.account
     return jsonify(person_schema.dump(result))
 
 
@@ -94,6 +96,7 @@ def read_one_person(person_id):
 @jwt_required
 def update_person(person_id):
     try:
+        del request.json['accountInfo']
         valid_person = person_schema.load(request.json)
     except ValidationError as err:
         return jsonify(err.messages), 422
@@ -105,7 +108,7 @@ def update_person(person_id):
 
     db.session.commit()
 
-    return jsonify(person_schema.dump(person))
+    return jsonify(person_schema_no_id.dump(person))
 
 
 @people.route('/persons/deactivate/<person_id>', methods=['PUT'])
@@ -187,6 +190,13 @@ def read_one_account_by_username(username):
 def read_person_account(person_id):
     account = db.session.query(Account).filter_by(person_id=person_id).first()
     return jsonify(account_schema.dump(account))
+
+
+@people.route('/role/<role_id>/accounts')
+@jwt_required
+def get_accounts_by_role(role_id):
+    role = db.session.query(Role).filter_by(id=role_id).first()
+    return jsonify(account_schema.dump(role.accounts, many=True))
 
 
 @people.route('/accounts/<account_id>', methods=['PATCH'])
@@ -304,10 +314,6 @@ def delete_role(role_id):
 @people.route('/role/<account_id>&<role_id>', methods=['POST'])
 @jwt_required
 def add_role_to_account(account_id, role_id):
-
-    print("Account: " + account_id)
-    print("Role: " + role_id)
-
     account = db.session.query(Account).filter_by(id=account_id).first()
 
     if account is None:
