@@ -20,6 +20,10 @@ entities:
         min-length: 1
         length: medium
         required: true
+      - name: second-last-name
+        type: string
+        min-length: 1
+        length: medium
       - name: gender
         type: string
         length: 1

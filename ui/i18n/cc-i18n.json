@@ -23,10 +23,12 @@
       "save": "Save",
       "search": "Search",
       "tooltips": {
-        "deactivate": "Deactivate",
+        "deactivate": "Archive",
         "settings": "Settings"
       },
-      "view-inactive": "View Inactive"
+      "view-active": "View Active",
+      "view-all": "View All",
+      "view-archived": "View Archived"
     },
     "groups": {
       "title": "Home Churches"
@@ -102,10 +104,12 @@
       "save": "Salvar",
       "search": "Buscar",
       "tooltips": {
-        "deactivate": "Desactivar",
+        "deactivate": "Archivo",
         "settings": "Ajustes"
       },
-      "view-inactive": "Ver Inactivo"
+      "view-active": "Ver Activo",
+      "view-all": "Ver Todo",
+      "view-archived": "Ver Archivo"
     },
     "groups": {
       "title": "Iglesias Hogar"

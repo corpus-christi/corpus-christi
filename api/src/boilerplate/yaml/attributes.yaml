@@ -13,9 +13,11 @@ entities:
       - name: name_i18n
         type: string
         length: locale
+        foreign-key: i18n_key.id
       - name: type_i18n
         type: string
         length: locale
+        foreign-key: i18n_key.id
       - name: seq
         type: integer
         required: true
@@ -39,6 +41,7 @@ entities:
       - name: value_i18n
         type: string
         length: locale
+        foreign-key: i18n_key.id
       - name: active
         required: true
         type: boolean

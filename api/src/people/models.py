@@ -21,6 +21,7 @@ class Person(Base):
     id = Column(Integer, primary_key=True)
     first_name = Column(StringTypes.MEDIUM_STRING, nullable=False)
     last_name = Column(StringTypes.MEDIUM_STRING, nullable=False)
+    second_last_name = Column(StringTypes.MEDIUM_STRING, nullable=True)
     gender = Column(String(1))
     birthday = Column(Date)
     phone = Column(StringTypes.MEDIUM_STRING)
@@ -38,14 +39,14 @@ class Person(Base):
 
 class PersonSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
-    first_name = fields.String(
-        data_key='firstName', required=True, validate=Length(min=1))
-    last_name = fields.String(
-        data_key='lastName', required=True, validate=Length(min=1))
-    gender = fields.String(validate=OneOf(['M', 'F']))
-    birthday = fields.Date()
-    phone = fields.String()
-    email = fields.String()
+    first_name = fields.String(data_key='firstName', required=True, validate=Length(min=1))
+    last_name = fields.String(data_key='lastName', required=True, validate=Length(min=1))
+    second_last_name = fields.String(data_key='secondLastName', required=False, validate=Length(min=1))
+    gender = fields.String(validate=OneOf(['M', 'F']), allow_none=True)
+    birthday = fields.Date(allow_none=True)
+    phone = fields.String(allow_none=True)
+    email = fields.String(allow_none=True)
+
     active = fields.Boolean(required=True)
     location_id = fields.Integer(data_key='locationId')
 

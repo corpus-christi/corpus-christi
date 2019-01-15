@@ -14,8 +14,8 @@ from ..shared.models import StringTypes
 class Attribute(Base):
     __tablename__ = 'people_attributes'
     id = Column(Integer, primary_key=True)
-    name_i18n = Column(StringTypes.LOCALE_CODE)
-    type_i18n = Column(StringTypes.LOCALE_CODE)
+    name_i18n = Column(StringTypes.LOCALE_CODE, ForeignKey('i18n_key.id'))
+    type_i18n = Column(StringTypes.LOCALE_CODE, ForeignKey('i18n_key.id'))
     seq = Column(Integer, nullable=False)
     active = Column(Boolean, nullable=False)
     enumerated_types_list = ['attribute.radio', 'attribute.check', 'attribute.dropdown']
@@ -42,11 +42,11 @@ class EnumeratedValue(Base):
     __tablename__ = 'people_enumerated_value'
     id = Column(Integer, primary_key=True)
     attribute_id = Column(Integer, ForeignKey('people_attributes.id'))
-    value_i18n = Column(StringTypes.LOCALE_CODE)
+    value_i18n = Column(StringTypes.LOCALE_CODE, ForeignKey('i18n_key.id'))
     active = Column(Boolean, nullable=False)
 
     def __repr__(self):
-        return f"<Enumerated_Value(id={self.id})>"
+        return f"<EnumeratedValue(id={self.id})>"
     
 
 class EnumeratedValueSchema(Schema):
@@ -65,7 +65,7 @@ class PersonAttribute(Base):
     string_value = Column(StringTypes.LOCALE_CODE)
     person = relationship('Person', backref='person_attributes', lazy=True)
     attribute = relationship('Attribute', backref='person_attributes', lazy=True)
-    enumerated_values = relationship('Enumerated_Value', backref='person_attributes', lazy=True)
+    enumerated_values = relationship('EnumeratedValue', backref='person_attributes', lazy=True)
 
     def __repr__(self):
         return f"<Person-Attribute(person_id={self.person_id},attribute_id={self.attribute_id})>"
