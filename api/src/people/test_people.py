@@ -450,14 +450,6 @@ def test_read_one_manager(auth_client):
         assert resp.json['description_i18n'] == manager.description_i18n
 
 
-#@pytest.mark.xfail()
-#def test_replace_manager(client, db):
-#    # GIVEN a DB with a collection of managers.
-#    # WHEN
-#    # THEN
-#    assert True == False
-
-
 @pytest.mark.slow
 def test_update_manager(auth_client):
     # GIVEN a DB with a collection of managers.
@@ -492,12 +484,31 @@ def test_update_manager(auth_client):
     assert resp.json['manager_id'] == new_manager_id
 
 
-#@pytest.mark.xfail()
-#def test_delete_manager(client, db):
-#    # GIVEN
-#    # WHEN
-#    # THEN
-#    assert True == False
+def test_delete_manager(auth_client):
+    # GIVEN a DB with a collection of managers.
+    person_count = random.randint(10, 20)
+    manager_count = random.randint(5, person_count)
+    create_multiple_people(auth_client.sqla, person_count)
+    create_multiple_managers(auth_client.sqla, manager_count, 'test manager')
+
+    managers = auth_client.sqla.query(Manager).all()
+    persons = auth_client.sqla.query(Person).all()
+
+    delete_manager = managers[0]
+    subordinate = managers[1]
+
+    update_json = {
+        'manager_id': delete_manager.id
+    }
+    auth_client.patch(url_for('people.update_manager', manager_id=subordinate.id), json=update_json)
+
+    # WHEN we delete the manager
+    resp = auth_client.delete(url_for('people.delete_manager', manager_id=delete_manager.id))
+
+    # THEN the manager and all references to that manager are deleted
+    assert resp.status_code == 200
+    assert auth_client.sqla.query(Manager).filter_by(id=delete_manager.id).first() == None
+    assert auth_client.sqla.query(Manager).filter_by(id=subordinate.id).first().manager_id == None
 
 
 @pytest.mark.smoke

@@ -119,3 +119,7 @@ entities:
       - name: description_i18n
         type: string
         length: locale
+    relationships:
+      - name: manager
+        related-model: Manager
+        backref: subordinate

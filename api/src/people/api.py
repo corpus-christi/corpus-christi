@@ -407,12 +407,6 @@ def read_one_manager(manager_id):
     return jsonify(manager_schema.dump(result))
 
 
-@people.route('/manager/<manager_id>', methods=['PUT'])
-@jwt_required
-def replace_manager(manager_id):
-    pass
-
-
 @people.route('/manager/<manager_id>', methods=['PATCH'])
 @jwt_required
 def update_manager(manager_id):
@@ -433,5 +427,15 @@ def update_manager(manager_id):
 @people.route('/manager/<manager_id>', methods=['DELETE'])
 @jwt_required
 def delete_manager(manager_id):
-    pass
+    manager = db.session.query(Manager).filter_by(id=manager_id).first()
 
+    if manager is None:
+        return 'Manager not found', 404
+
+    for subordinate in manager.subordinates:
+        setattr(subordinate, 'manager_id', None)
+
+    db.session.delete(manager)
+    db.session.commit()
+
+    return jsonify(manager_schema.dump(manager))
