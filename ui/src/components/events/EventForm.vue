@@ -270,10 +270,12 @@ export default {
     },
 
     startDate(date) {
+      if (new Date(this.endDate) > new Date(date)) return;
       this.endDate = date;
     },
 
     endDate() {
+      //TODO don't clear if still valid
       this.endTime = "";
     }
   },
