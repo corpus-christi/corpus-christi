@@ -51,6 +51,18 @@ def add_prereqs(query_result):
     return courses
 
 
+"""
+Helper function applies course offerings to course
+inputted by the user
+"""
+def include_course_offerings(course):
+    course['course_offerings'] = []
+    offerings = db.session.query(Course_Offering).filter_by(course_id=course['id']).all()
+    for i in offerings:
+        course['course_offerings'].append(course_offering_schema.dump(i))
+    return course
+
+
 @courses.route('/courses')
 @jwt_required
 # @authorize(["role.superuser", "role.registrar", "role.public", ])
@@ -61,10 +73,7 @@ def read_all_courses():
         return "Result NOT found", 404
     with_prereqs = add_prereqs(result)
     for i in with_prereqs:
-        i['course_offerings'] = []
-        offerings = db.session.query(Course_Offering).filter_by(course_id=i['id']).all()
-        for j in offerings:
-            i['course_offerings'].append(course_offering_schema.dump(j))
+        include_course_offerings(i)
     return jsonify(with_prereqs)
 
 
@@ -93,11 +102,12 @@ def read_one_course(course_id):
     if(result is None):
         return "Result NOT found", 404
     with_prereqs = add_prereqs(result)
-    with_prereqs['course_offerings'] = []
-    offerings = db.session.query(Course_Offering).filter_by(course_id=with_prereqs['id']).all()
-    for i in offerings:
-        with_prereqs['course_offerings'].append(course_offering_schema.dump(i))
-    return jsonify(with_prereqs)
+    with_offerings = include_course_offerings(with_prereqs)
+    # with_prereqs['course_offerings'] = []
+    # offerings = db.session.query(Course_Offering).filter_by(course_id=with_prereqs['id']).all()
+    # for i in offerings:
+    #     with_prereqs['course_offerings'].append(course_offering_schema.dump(i))
+    return jsonify(with_offerings)
     # return jsonify(course_schema.dump(result))
 
 
