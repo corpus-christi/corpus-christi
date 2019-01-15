@@ -1027,6 +1027,43 @@ def test_add_team_member(auth_client):
 
 
 @pytest.mark.smoke
+def test_modify_team_member(auth_client):
+    # GIVEN
+    count = random.randint(5, 15)
+    create_multiple_teams(auth_client.sqla, count)
+    person_count = random.randint(20, 30)
+    create_multiple_people(auth_client.sqla, count)
+    
+    # WHEN
+    create_teams_members(auth_client.sqla)
+    team_members = auth_client.sqla.query(TeamMember).all()
+
+    for team_member in team_members:
+        f = flip()
+        resp = auth_client.patch(url_for('events.modify_team_member', team_id = team_member.team_id, member_id = team_member.member_id), json = {'active':f})
+        
+        assert resp.status_code == 200
+        assert resp.json['active'] == f
+
+
+@pytest.mark.smoke
+def test_modify_team_member_invalid(auth_client):
+    # GIVEN
+    count = random.randint(5, 15)
+    create_multiple_teams(auth_client.sqla, count)
+    person_count = random.randint(20, 30)
+    create_multiple_people(auth_client.sqla, count)
+    
+    # WHEN
+    create_teams_members(auth_client.sqla)
+    team_members = auth_client.sqla.query(TeamMember).all()
+
+    for team_member in team_members:
+        resp = auth_client.patch(url_for('events.modify_team_member', team_id = team_member.team_id, member_id = team_member.member_id), json = {'team_id':10})
+
+        assert resp.status_code == 422
+
+
 def test_delete_team_member(auth_client):
     # GIVEN a database with some linked teams and members
     create_multiple_teams(auth_client.sqla, 5)
@@ -1047,3 +1084,5 @@ def test_delete_team_member(auth_client):
     resp = auth_client.delete(url_for('events.delete_team_member', team_id=team_member.team_id, member_id=team_member.member_id))
     # THEN we expect an error
     assert resp.status_code == 404
+
+
