@@ -31,16 +31,8 @@
           row
           data-cy="radio-gender"
         >
-          <v-radio
-            v-bind:label="$t('person.male')"
-            value="M"
-            data-cy="radio-m"
-          ></v-radio>
-          <v-radio
-            v-bind:label="$t('person.female')"
-            value="F"
-            data-cy="radio-f"
-          ></v-radio>
+          <v-radio v-bind:label="$t('person.male')" value="M"></v-radio>
+          <v-radio v-bind:label="$t('person.female')" value="F"></v-radio>
         </v-radio-group>
 
         <v-menu

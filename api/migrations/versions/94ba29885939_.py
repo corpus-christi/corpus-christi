@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 939baa046cab
+Revision ID: 94ba29885939
 Revises: 
-Create Date: 2019-01-15 10:23:50.127154
+Create Date: 2019-01-15 14:02:35.310735
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '939baa046cab'
+revision = '94ba29885939'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -174,6 +174,16 @@ def upgrade():
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('username')
     )
+    op.create_table('people_manager',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('person_id', sa.Integer(), nullable=False),
+    sa.Column('manager_id', sa.Integer(), nullable=True),
+    sa.Column('description_i18n', sa.String(length=32), nullable=False),
+    sa.ForeignKeyConstraint(['description_i18n'], ['i18n_key.id'], ),
+    sa.ForeignKeyConstraint(['manager_id'], ['people_manager.id'], ),
+    sa.ForeignKeyConstraint(['person_id'], ['people_person.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('people_person_attributes',
     sa.Column('person_id', sa.Integer(), nullable=False),
     sa.Column('attribute_id', sa.Integer(), nullable=False),
@@ -206,6 +216,7 @@ def downgrade():
     op.drop_table('groups_attendance')
     op.drop_table('account_role')
     op.drop_table('people_person_attributes')
+    op.drop_table('people_manager')
     op.drop_table('people_account')
     op.drop_table('groups_member')
     op.drop_table('people_person')
