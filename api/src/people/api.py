@@ -45,11 +45,11 @@ def read_person_fields():
 @people.route('/persons', methods=['POST'])
 @jwt_required
 def create_person():
-    request.json["person"]["active"] = True
+    request.json['person']['active'] = True
 
-    for key, value in request.json.items():
-        if request.json[key] is "":
-            request.json[key] = None
+    for key, value in request.json['person'].items():
+        if request.json['person'][key] is "":
+            request.json['person'][key] = None
 
     try:
         valid_person = person_schema.load(request.json['person'])
@@ -96,7 +96,6 @@ def read_one_person(person_id):
 @jwt_required
 def update_person(person_id):
     try:
-        del request.json['accountInfo']
         valid_person = person_schema.load(request.json)
     except ValidationError as err:
         return jsonify(err.messages), 422

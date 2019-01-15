@@ -24,6 +24,8 @@ describe("Getting to the people page", function() {
 
 describe("testing the change view dropdown on the person table", () => {
   it("Given: dropdown opens", function() {
-    cy.get(".layout > :nth-child(3) > .v-input > .v-input__control > .v-input__slot").click();
+    cy.get(
+      ".layout > :nth-child(3) > .v-input > .v-input__control > .v-input__slot"
+    ).click();
   });
 });

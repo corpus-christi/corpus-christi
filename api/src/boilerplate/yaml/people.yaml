@@ -24,6 +24,7 @@ entities:
         type: string
         min-length: 1
         length: medium
+        required: false
       - name: gender
         type: string
         length: 1
