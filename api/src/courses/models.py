@@ -3,7 +3,7 @@ from marshmallow.validate import Range, Length
 from sqlalchemy import Column, Integer, Boolean, ForeignKey, Date, DateTime, Table
 from sqlalchemy.orm import relationship
 from datetime import date
-
+from src.places.models import Location
 from src.db import Base
 from src.shared.models import StringTypes
 
@@ -181,7 +181,7 @@ class Class_Meeting(Base):
      teacher = Column(Integer, ForeignKey('people_person.id'), nullable=False)
      when = Column(DateTime, nullable=False)
      course_offering = relationship('Course_Offering', backref='class_meeting', lazy=True)
-     #location = relationship('Location', backref='meeting_location', lazy=True)
+     locations = relationship('Location', backref='meeting_location', lazy=True)
      person = relationship('Person', backref='teacher', lazy=True)
      students = relationship('Student', secondary=Class_Attendance,
                back_populates='attendance', lazy=True)
