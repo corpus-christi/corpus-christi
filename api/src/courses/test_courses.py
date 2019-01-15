@@ -558,7 +558,6 @@ def test_delete_course_offering(auth_client):
     # THEN
     assert True == False
 """
-<<<<<<< HEAD
 # ---- Student
 
 
@@ -608,7 +607,3 @@ def test_delete_student(client, db):
     # WHEN
     # THEN
     assert True == False
-=======
-
-open
->>>>>>> app-courses
