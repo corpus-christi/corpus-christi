@@ -31,7 +31,7 @@ def create_attribute():
     db.session.commit()
 
     for enumerated_value in valid_enumerated_values:
-        enumerated_value = Enumerated_Value(**enumerated_value)
+        enumerated_value = EnumeratedValue(**enumerated_value)
         enumerated_value.attribute_id = new_attribute.id
         db.session.add(enumerated_value)
 
@@ -96,7 +96,7 @@ def activate_attribute(attribute_id):
     return jsonify(attribute_schema.dump(attribute))
 
 
-# ---- Enumerated_Value
+# ---- EnumeratedValue
 
 enumerated_value_schema = EnumeratedValueSchema()
 

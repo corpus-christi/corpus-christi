@@ -22,7 +22,7 @@ class Attribute(Base):
     nonenumerated_types_list = ['attribute.float', 'attribute.integer', 'attribute.string', 'attribute.date']
 
     enumerated_values = relationship(
-        'Enumerated_Value', backref='attribute', lazy=True)
+        'EnumeratedValue', backref='attribute', lazy=True)
 
     def __repr__(self):
         return f"<Attribute(id={self.id})>"
@@ -40,9 +40,9 @@ class AttributeSchema(Schema):
     seq = fields.Integer(required=True)
     active = fields.Boolean(required=True)
 
-    enumerated_values = fields.Nested('Enumerated_ValueSchema', many=True)
+    enumerated_values = fields.Nested('EnumeratedValueSchema', many=True)
 
-# ---- Enumerated_Value
+# ---- EnumeratedValue
 
 
 class EnumeratedValue(Base):

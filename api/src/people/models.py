@@ -59,7 +59,7 @@ class PersonSchema(Schema):
     accountInfo = fields.Nested(
         'AccountSchema', allow_none=True, only=['username', 'id'])
 
-    attributesInfo = fields.Nested('Person_AttributeSchema', many=True)
+    attributesInfo = fields.Nested('PersonAttributeSchema', many=True)
 
 # Defines join table for people_account and people_role
 
