@@ -37,3 +37,8 @@ script:
 notifications:
    slack:
        on_success: always
+deploy:
+        provider: linode
+        local-dir: public
+        on:
+                branch: staging
