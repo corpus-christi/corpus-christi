@@ -59,7 +59,7 @@
         </td>
         <td :data-cy="'first-name-'+props.item.id">{{ props.item.firstName }}</td>
         <td :data-cy="'last-name-'+props.item.id">{{ props.item.lastName }}</td>
-        <td :data-cy="'email-'+props.item.id">{{ props.item.email }}</td>
+        <td class="hidden-sm-and-down" :data-cy="'email-'+props.item.id">{{ props.item.email }}</td>
         <td :data-cy="'phone-'+props.item.id">{{ props.item.phone }}</td>
         <td class="text-no-wrap">
           <v-tooltip bottom>
