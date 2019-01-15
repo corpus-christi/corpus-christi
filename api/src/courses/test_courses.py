@@ -157,7 +157,17 @@ def prerequisite_object_factory(course_id, prereq_id):
     'prereqId': prereq_id
     }
     return prerequisites
-    
+
+
+def create_multiple_prerequisites(sqla):
+    """Commits the number of prerequisites to the DB."""
+    courses = sqla.query(Course).all()
+    new_prerequisites = []
+    for i in range(len(courses)-2):
+        courses[i].prerequisites.append(courses[i+1])
+        new_prerequisites.append(courses[i])
+    sqla.add_all(new_prerequisites)
+    sqla.commit()
 
 def courses_diploma_object_factory():
     """Cook up a fake diploma."""
@@ -549,52 +559,5 @@ def test_delete_course_offering(auth_client):
     # THEN
     assert True == False
 """
-# ---- Student
 
-
-@pytest.mark.xfail()
-def test_create_student(client, db):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
-
-
-@pytest.mark.xfail()
-def test_read_all_students(client, db):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
-
-
-@pytest.mark.xfail()
-def test_read_one_student(client, db):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
-
-
-@pytest.mark.xfail()
-def test_replace_student(client, db):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
-
-
-@pytest.mark.xfail()
-def test_update_student(client, db):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
-
-
-@pytest.mark.xfail()
-def test_delete_student(client, db):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
+open
