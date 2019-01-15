@@ -47,7 +47,7 @@ class PersonSchema(Schema):
     last_name = fields.String(
         data_key='lastName', required=True, validate=Length(min=1))
     second_last_name = fields.String(
-        data_key='secondLastName', required=False, validate=Length(min=1))
+        data_key='secondLastName', allow_none=True)
     gender = fields.String(validate=OneOf(['M', 'F']), allow_none=True)
     birthday = fields.Date(allow_none=True)
     phone = fields.String(allow_none=True)
@@ -59,7 +59,7 @@ class PersonSchema(Schema):
     accountInfo = fields.Nested(
         'AccountSchema', allow_none=True, only=['username', 'id'])
 
-    attributesInfo = fields.Nested('Person_AttributeSchema', many=True)
+    attributesInfo = fields.Nested('PersonAttributeSchema', many=True)
 
 # Defines join table for people_account and people_role
 

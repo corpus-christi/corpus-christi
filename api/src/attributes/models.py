@@ -18,15 +18,16 @@ class Attribute(Base):
     type_i18n = Column(StringTypes.LOCALE_CODE, ForeignKey('i18n_key.id'))
     seq = Column(Integer, nullable=False)
     active = Column(Boolean, nullable=False)
-    enumerated_types_list = ['attribute.radio', 'attribute.check', 'attribute.dropdown']
-    nonenumerated_types_list = ['attribute.float', 'attribute.integer', 'attribute.string', 'attribute.date']
+    enumerated_types_list = ['attribute.radio',
+                             'attribute.check', 'attribute.dropdown']
+    nonenumerated_types_list = [
+        'attribute.float', 'attribute.integer', 'attribute.string', 'attribute.date']
 
     enumerated_values = relationship(
         'EnumeratedValue', backref='attribute', lazy=True)
 
     def __repr__(self):
         return f"<Attribute(id={self.id})>"
-
 
     @staticmethod
     def available_types():
@@ -56,9 +57,8 @@ class EnumeratedValue(Base):
         return f"<EnumeratedValue(id={self.id})>"
 
 
-
 class EnumeratedValueSchema(Schema):
-    id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
+    id = fields.Integer(dump_only=False, required=True, validate=Range(min=1))
     attribute_id = fields.Integer(data_key='attributeId')
     value_i18n = fields.String(data_key='valueI18n')
     active = fields.Boolean(required=True)
@@ -75,8 +75,10 @@ class PersonAttribute(Base):
     enum_value_id = Column(Integer, ForeignKey('people_enumerated_value.id'))
     string_value = Column(StringTypes.LOCALE_CODE)
     person = relationship('Person', backref='person_attributes', lazy=True)
-    attribute = relationship('Attribute', backref='person_attributes', lazy=True)
-    enumerated_values = relationship('EnumeratedValue', backref='person_attributes', lazy=True)
+    attribute = relationship(
+        'Attribute', backref='person_attributes', lazy=True)
+    enumerated_values = relationship(
+        'EnumeratedValue', backref='person_attributes', lazy=True)
 
     def __repr__(self):
         return f"<Person-Attribute(person_id={self.person_id},attribute_id={self.attribute_id})>"
@@ -87,3 +89,4 @@ class PersonAttributeSchema(Schema):
      attribute_id = fields.Integer(data_key='attributeId', required=True)
      enum_value_id = fields.Integer(data_key='enumValueId')
      string_value = fields.String(data_key='stringValue')
+

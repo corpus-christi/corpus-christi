@@ -73,6 +73,6 @@ entities:
         related-model: Attribute
         backref: person_attributes
       - name: enumerated_values
-        related-model: Enumerated_Value
+        related-model: EnumeratedValue
         backref: person_attributes
     
