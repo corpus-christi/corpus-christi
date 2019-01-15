@@ -6,7 +6,7 @@ from flask_jwt_extended import jwt_required, get_raw_jwt, jwt_optional
 from marshmallow import ValidationError
 
 from . import people
-from .models import Person, Account, AccountSchema, Role, PersonSchema, RoleSchema
+from .models import Person, Account, AccountSchema, Role, PersonSchema, RoleSchema, Manager, ManagerSchema
 from ..attributes.models import Attribute, AttributeSchema, Enumerated_Value, Enumerated_ValueSchema, Person_Attribute, Person_AttributeSchema
 from .. import db
 
@@ -96,9 +96,22 @@ def read_one_person(person_id):
 @jwt_required
 def update_person(person_id):
     try:
-        valid_person = person_schema.load(request.json)
+        valid_person = person_schema.load(request.json['person'])
+        valid_person_attributes = person_attribute_schema.load(
+            request.json['attributesInfo'], many=True)
     except ValidationError as err:
         return jsonify(err.messages), 422
+
+    for new_person_attribute in valid_person_attributes:
+        old_person_attribute = db.session.query(Person_Attribute).filter_by(
+            person_id=person_id, attribute_id=new_person_attribute['attribute_id']).first()
+        if old_person_attribute is not None:
+            setattr(old_person_attribute, 'string_value',
+                    new_person_attribute['string_value'])
+        else:
+            new_person_attribute = Person_Attribute(**new_person_attribute)
+            new_person_attribute.person_id = person_id
+            db.session.add(new_person_attribute)
 
     person = db.session.query(Person).filter_by(id=person_id).first()
 
@@ -107,7 +120,9 @@ def update_person(person_id):
 
     db.session.commit()
 
-    return jsonify(person_schema_no_id.dump(person))
+    result = db.session.query(Person).filter_by(id=person_id).first()
+    result.attributesInfo = result.person_attributes
+    return jsonify(person_schema.dump(result))
 
 
 @people.route('/persons/deactivate/<person_id>', methods=['PUT'])
@@ -356,3 +371,66 @@ def remove_role_from_account(account_id, role_id):
 
     # return jsonify(user_roles)
     return jsonify(role_to_remove)
+
+
+# ---- Manager
+
+manager_schema = ManagerSchema()
+
+
+@people.route('/manager', methods=['POST'])
+@jwt_required
+def create_manager():
+    try:
+        valid_manager = manager_schema.load(request.json)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+
+    new_manager = Manager(**valid_manager)
+    db.session.add(new_manager)
+    db.session.commit()
+    return jsonify(manager_schema.dump(new_manager)), 201
+
+
+@people.route('/manager')
+@jwt_required
+def read_all_managers():
+    result = db.session.query(Manager).all()
+    return jsonify(manager_schema.dump(result, many=True))
+
+
+@people.route('/manager/<manager_id>')
+@jwt_required
+def read_one_manager(manager_id):
+    result = db.session.query(Manager).filter_by(id=manager_id).first()
+    return jsonify(manager_schema.dump(result))
+
+
+@people.route('/manager/<manager_id>', methods=['PUT'])
+@jwt_required
+def replace_manager(manager_id):
+    pass
+
+
+@people.route('/manager/<manager_id>', methods=['PATCH'])
+@jwt_required
+def update_manager(manager_id):
+    try:
+        valid_manager = manager_schema.load(request.json)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+
+    manager = db.session.query(Manager).filter_by(id=manager_id).first()
+
+    for key, val in valid_manager.items():
+        setattr(manager, key, val)
+
+    db.session.commit()
+    return jsonify(manager_schema.dump(manager))
+
+
+@people.route('/manager/<manager_id>', methods=['DELETE'])
+@jwt_required
+def delete_manager(manager_id):
+    pass
+
