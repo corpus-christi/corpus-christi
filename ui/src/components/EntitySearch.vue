@@ -49,12 +49,11 @@ export default {
       if (this.location) return this.$t("events.event-location");
       else if (this.person) return this.$t("actions.search-people");
       else if (this.course) return this.$t("actions.search-courses");
-    },
+      else return "";
+    }
   },
 
   methods: {
-
-
     setSelected(entity) {
       this.$emit("input", entity);
     },
