@@ -20,9 +20,9 @@ def course_object_factory():
     """Cook up a fake course."""
     fake = Faker()  # Use a generic one; others may not have all methods.
     course = {
-        'name': fake.sentence(nb_words=3),
-        'description': fake.paragraph(),
-        'active': flip()
+    'name': fake.sentence(nb_words=3),
+    'description': fake.paragraph(),
+    'active': flip()
     }
     return course
 
@@ -149,20 +149,11 @@ def create_multiple_course_offerings_inactive(sqla, n=3):
     sqla.add_all(new_course_offerings)
     sqla.commit()
 
-def prerequisite_object_factory(course_id, prereq_id):
-    """Cook up a fake prerequisite."""
-    prerequisites = {
-    'courseId': course_id,
-    'prereqId': prereq_id
-    }
-    return prerequisites
-
-
 def create_multiple_prerequisites(sqla):
     """Commits the number of prerequisites to the DB."""
     courses = sqla.query(Course).all()
     new_prerequisites = []
-    for i in range(len(courses)-2):
+    for i in range(len(courses)-1):
         courses[i].prerequisites.append(courses[i+1])
         new_prerequisites.append(courses[i])
     sqla.add_all(new_prerequisites)
@@ -327,7 +318,6 @@ def test_read_all_inactive_courses(auth_client):
     assert len(inactive_courses) == count_inactive
 
 # Test reading a single course from the database
-@pytest.mark.smoke
 def test_read_one_course(auth_client):
     # GIVEN one course in the database
     count = random.randint(3,11)
@@ -409,43 +399,54 @@ def test_delete_course(auth_client):
 # ---- Prerequisite
 
 #Test that prerequisites can be added
-@pytest.mark.smoke
 def test_create_prerequisite(auth_client):
     # GIVEN existing and available course in database
-    create_multiple_courses(auth_client.sqla, 2)
-    course = auth_client.sqla.query(Course)[0]
-    prereq = auth_client.sqla.query(Course)[1]
+    count = random.randint(2,13)
+    create_multiple_courses(auth_client.sqla, count)
+    courses = auth_client.sqla.query(Course).all()
+    course = courses[0]
+    prereq_ids = []
+    for i in range(1, count-1):
+        prereq_ids.append(courses[i].id)
     # WHEN course requires previous attendance to another course
     resp = auth_client.post(url_for('courses.create_prerequisite', course_id=course.id),
-        json=prerequisite_object_factory(course.id,prereq.id))
+        json={ "prerequisites": prereq_ids})
     assert resp.status_code == 201
     # THEN asssert course is prerequisite
-    assert auth_client.sqla.query(Prerequisite).count() == 1
+    for i in range(len(prereq_ids)):
+        assert auth_client.sqla.query(Course)[0].prerequisites[i].id == prereq_ids[i]
 
-# This will test getting all prerequisites for a single course
-@pytest.mark.smoke
+# This will test getting all prerequisites for all courses
 def test_read_all_prerequisites(auth_client):
     # GIVEN existing and available course in database
-    count_courses = random.randint(3,15)
+    count_courses = 2 #random.randint(3,15)
     count_prereqs = count_courses - 1
     create_multiple_courses(auth_client.sqla, count_courses)
     create_multiple_prerequisites(auth_client.sqla)
     # WHEN that course has prerequisites
-    prereqs = auth_client.sqla.query(Prerequisite).all()
+    courses = auth_client.sqla.query(Course).all()
+    prereqs = []
+    for course in courses:
+        for prereq in course.prerequisites:
+            if prereq not in prereqs:
+                prereqs.append(prereq)
     # THEN assert all prereq's are listed
     assert len(prereqs) == count_prereqs
 
-#FIX NAME (Will test to see all courses that have given course as a prerequisite)
-#@pytest.mark.smoke
-@pytest.mark.xfail()
-def test_read_all_courses_with_prerequisite(auth_client):
-    #GIVEN prerequisite course in database
-    #WHEN other courses have that course as a prerequisite
-    #THEN list all courses with given prerequisite
-    assert True == False
+#This will test getting prerequistes for one course
+def test_read_one_course_prerequisites(auth_client):
+    #GIVEN course in database
+    count_courses = random.randint(3,15)
+    create_multiple_courses(auth_client.sqla, count_courses)
+    create_multiple_prerequisites(auth_client.sqla)
+    #WHEN that course has prerequisites
+    courses = auth_client.sqla.query(Course).all()
+    #THEN list all prerequisites of given course
+    for i in range(len(courses)-1):
+        assert courses[i].prerequisites == [courses[i+1]]
+    
 
 #@pytest.mark.smoke
-@pytest.mark.xfail()
 def test_update_prerequisite(auth_client):
     # GIVEN an existing and available course with an existing prereq
     # WHEN new prereq for existing course is required

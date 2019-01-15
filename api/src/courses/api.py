@@ -61,7 +61,7 @@ def read_all_courses():
     return jsonify(add_prereqs(result))
 
 
-@courses.route('/courses/<active_state>')
+@courses.route('/courses/active/<active_state>')
 @jwt_required
 # @authorize(["role.superuser", "role.registrar", "role.public"])
 def read_active_state_of_courses(active_state):
