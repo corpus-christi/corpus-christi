@@ -67,13 +67,18 @@
         </v-snackbar>
 
         <!-- New/Edit dialog -->
-        <v-dialog v-model="diplomaDialog.show" max-width="500px">
-        <DiplomaEditor
-            v-bind:editMode="diplomaDialog.editMode"
-            v-bind:initialData="diplomaDialog.diploma"
-            v-on:cancel="cancelDiploma"
-            v-on:save="saveDiploma"
-        />
+        <v-dialog 
+          v-model="diplomaDialog.show" 
+          max-width="500px"
+          persistent
+        >
+          <DiplomaEditor
+              v-bind:editMode="diplomaDialog.editMode"
+              v-bind:diploma="diplomaDialog.diploma"
+              v-on:cancel="cancelDiploma"
+              v-on:save="saveDiploma"
+              v-on:clearForm="clearForm"
+          />
         </v-dialog>
     </div>
 </template>
@@ -125,6 +130,9 @@ export default {
         default:
           break;
       }
+    },
+    clearForm() {
+      this.diplomaDialog.diploma = {};
     },
     activateDiplomaDialog(diploma = {}, editMode = false) {
       this.diplomaDialog.editMode = editMode;

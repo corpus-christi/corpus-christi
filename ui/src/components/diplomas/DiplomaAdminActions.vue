@@ -5,7 +5,7 @@
         color="primary"
         slot="activator"
         v-bind:small="displayContext === 'compact'"
-        @click="emitAction('edit')">
+        v-on:click.stop="emitAction('edit')">
 
           <v-icon v-bind:small="displayContext === 'compact'">edit</v-icon>
       </v-btn>
@@ -16,7 +16,7 @@
         color="primary"
         slot="activator"
         v-bind:small="displayContext === 'compact'"
-        @click="emitAction('deactivate')">
+        v-on:click.stop="emitAction('deactivate')">
 
           <v-icon v-bind:small="displayContext === 'compact'">delete</v-icon>
       </v-btn>
