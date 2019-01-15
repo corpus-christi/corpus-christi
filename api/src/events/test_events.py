@@ -357,16 +357,32 @@ def test_create_asset(auth_client):
     for attr in new_asset:
         assert new_asset[attr] == queried_asset.__dict__[attr]
 
-    # WHEN we create an invalid asset
-    invalid_asset = {
-            'invalid_field': fake.sentences(nb=1)[0],
+@pytest.mark.smoke
+def test_create_invalid_asset(auth_client):
+    # GIVEN a database with some locations
+    generate_locations(auth_client)
+    location_id = auth_client.sqla.query(Location.id).first()[0]
+    # WHEN we create an asset
+    new_asset = {
+            'description': fake.sentences(nb=1)[0],
             'active': flip(),
             'location_id': location_id
     }
-    resp = auth_client.post(url_for('events.create_asset'), json=invalid_asset)
-    # THEN we expect an error code
+
+    if flip():
+        new_asset['description'] = None
+    elif flip():
+        new_asset['active'] = None
+    else:
+        new_asset['location_id'] = None
+
+    resp = auth_client.post(url_for('events.create_asset'), json=new_asset)
+    # THEN we expect the right status code
     assert resp.status_code == 422
-    
+    # THEN we expect the database to be unchanged
+    assets = auth_client.sqla.query(Asset).all()
+    assert len(assets) == 0
+
 
 @pytest.mark.smoke
 def test_read_all_assets(auth_client):
@@ -393,6 +409,11 @@ def test_read_all_assets(auth_client):
     queried_inactive_assets_count = auth_client.sqla.query(Asset).filter(Asset.active==False).count()
     # THEN we should have the correct number of inactive assets
     assert len(inactive_assets) == queried_inactive_assets_count
+    # WHEN we read all assets matching description
+    all_assets_matching_desc = auth_client.get(url_for('events.read_all_assets', desc='c')).json
+    # THEN all results should match that description
+    for asset in all_assets_matching_desc:
+        assert 'c' in asset['description'].lower()
     
 
 @pytest.mark.smoke
@@ -410,7 +431,16 @@ def test_read_one_asset(auth_client):
     asset = auth_client.sqla.query(Asset).filter(Asset.id == asset_id).first()
     assert resp.json["description"] == asset.description
     assert resp.json["active"] == asset.active
-    
+
+
+@pytest.mark.smoke
+def test_read_one_missing_asset(auth_client):
+    # GIVEN an empty database
+    # WHEN we read one asset
+    resp = auth_client.get(url_for('events.read_one_asset', asset_id = 1))
+    # THEN we should have the correct status code
+    assert resp.status_code == 404
+
 
 @pytest.mark.smoke
 def test_replace_asset(auth_client):
@@ -433,6 +463,32 @@ def test_replace_asset(auth_client):
     new_asset = auth_client.sqla.query(Asset).filter(Asset.id == asset_id).first()
     assert new_asset.description == dscrptn
     assert new_asset.active == False
+
+
+@pytest.mark.smoke
+def test_replace_invalid_asset(auth_client):
+    # GIVEN a database with some assets
+    generate_locations(auth_client)
+    count = random.randint(5, 15)
+    create_multiple_assets(auth_client.sqla, count)
+    # WHEN we replace one asset
+    asset_id = auth_client.sqla.query(Asset.id).first()[0]
+    dscrptn = fake.sentences(nb=1)[0]
+    location_id = auth_client.sqla.query(Location.id).first()[0]
+    json_request = {
+        'description': dscrptn,
+        'active': False,
+        'location_id': location_id
+    }
+    if flip():
+        json_request['description'] = None
+    elif flip():
+        json_request['active'] = None
+    else:
+        json_request['location_id'] = None
+    resp = auth_client.put(url_for('events.update_asset', asset_id = asset_id), json=json_request)
+    # THEN we should have the correct status code
+    assert resp.status_code == 422
     
 
 @pytest.mark.smoke
