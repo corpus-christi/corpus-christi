@@ -11,8 +11,9 @@ from werkzeug.security import check_password_hash
 from .models import Asset, AssetSchema, Event, EventSchema, Team, TeamSchema, EventParticipant, EventParticipantSchema, EventPerson, EventPersonSchema, TeamMember, TeamMemberSchema, EventAsset, EventAssetSchema, EventTeam, EventTeamSchema
 from ..places.models import Location, Country
 from ..people.models import Person
-from .create_event_data import flip, fake, create_multiple_events, event_object_factory, create_multiple_assets, create_multiple_teams, create_events_assets, create_events_teams
+from .create_event_data import flip, fake, create_multiple_events, event_object_factory, create_multiple_assets, create_multiple_teams, create_events_assets, create_events_teams, create_events_persons
 from ..places.test_places import create_multiple_locations, create_multiple_addresses, create_multiple_areas 
+from ..people.test_people import create_multiple_people
 
 fake = Faker()
 
@@ -474,7 +475,7 @@ def test_get_event_teams(auth_client):
     create_events_teams(auth_client.sqla, 1)
     event_id = auth_client.sqla.query(Event.id).first()[0]
     link_count = auth_client.sqla.query(EventTeam).filter(EventTeam.event_id == event_id).count()
-    # WHEN we get the assets associated with an event
+    # WHEN we get the teams associated with an event
     resp = auth_client.get(url_for('events.get_event_teams', event_id=event_id))
     # THEN we expect the right status code
     assert resp.status_code == 200
@@ -488,18 +489,28 @@ def test_get_event_teams(auth_client):
 
 @pytest.mark.smoke
 def test_add_event_team(auth_client):
+    # GIVEN a database with only some teams
+    create_multiple_teams(auth_client.sqla, 5)
+    team_id = auth_client.sqla.query(Team.id).first()[0]
+    # WHEN we try to link a non-existant event to a team
+    resp = auth_client.post(url_for('events.add_event_team', event_id=1, team_id=team_id))
+    # THEN we expect an error code
+    assert resp.status_code == 404
     # GIVEN a database with some unlinked events and teams
     create_multiple_events(auth_client.sqla, 5)
-    create_multiple_teams(auth_client.sqla, 5)
     event_id = auth_client.sqla.query(Event.id).first()[0]
-    team_id = auth_client.sqla.query(Team.id).first()[0]
-    # WHEN we link an assets with an event
+    # WHEN we link a team with an event
     resp = auth_client.post(url_for('events.add_event_team', event_id=event_id, team_id=team_id))
     # THEN we expect the right status code
     assert resp.status_code == 200
     # THEN we expect the correct count of linked event and team in the database
     count = auth_client.sqla.query(EventTeam).filter(EventTeam.event_id == event_id, EventTeam.team_id == team_id).count()
     assert count == 1
+    # WHEN we link the same team again
+    resp = auth_client.post(url_for('events.add_event_team', event_id=event_id, team_id=team_id))
+    # THEN we expect an error status code
+    assert resp.status_code == 422
+
 
 @pytest.mark.smoke
 def test_delete_event_team(auth_client):
@@ -523,4 +534,54 @@ def test_delete_event_team(auth_client):
     # THEN we expect an error
     assert resp.status_code == 404
 
+@pytest.mark.smoke
+def test_get_event_persons(auth_client):
+    # GIVEN a database with some linked events and persons
+    create_multiple_events(auth_client.sqla, 5)
+    create_multiple_people(auth_client.sqla, 5)
+    create_events_persons(auth_client.sqla, 1)
+    event_id = auth_client.sqla.query(Event.id).first()[0]
+    link_count = auth_client.sqla.query(EventPerson).filter(EventPerson.event_id == event_id).count()
+    # WHEN we get the persons associated with an event
+    resp = auth_client.get(url_for('events.get_event_persons', event_id=event_id))
+    # THEN we expect the right status code
+    assert resp.status_code == 200
+    # THEN we expect the correct count of persons
+    assert len(resp.json) == link_count
+    # THEN we expect each entry in the returned array to correspond to one entry in the database
+    for person in resp.json:
+        queried_event_person_count = auth_client.sqla.query(EventPerson).filter(EventPerson.event_id == event_id, EventPerson.person_id == person["person_id"]).count()
+        assert queried_event_person_count == 1
+
+@pytest.mark.smoke
+def test_add_event_persons(auth_client):
+    dscrptn = fake.sentences(nb=1)[0]
+    payload = {
+            'description': dscrptn
+    }
+    # GIVEN a database with only some persons
+    create_multiple_people(auth_client.sqla, 5)
+    person_id = auth_client.sqla.query(Person.id).first()[0]
+    # WHEN we try to link a non-existant event to a person
+    resp = auth_client.post(url_for('events.add_event_persons', event_id=1, person_id=person_id), json=payload)
+    # THEN we expect an error code
+    assert resp.status_code == 404
+    # GIVEN a database with some unlinked events and persons
+    create_multiple_events(auth_client.sqla, 5)
+    event_id = auth_client.sqla.query(Event.id).first()[0]
+    # WHEN we try to make a link without description
+    resp = auth_client.post(url_for('events.add_event_persons', event_id=1, person_id=person_id))
+    # THEN we expect an error code
+    assert resp.status_code == 422
+    # WHEN we link a person with an event
+    resp = auth_client.post(url_for('events.add_event_persons', event_id=event_id, person_id=person_id), json=payload)
+    # THEN we expect the right status code
+    assert resp.status_code == 200
+    # THEN we expect the correct count of linked event and person in the database
+    count = auth_client.sqla.query(EventPerson).filter(EventPerson.event_id == event_id, EventPerson.person_id == person_id).count()
+    assert count == 1
+    # WHEN we link the same person again
+    resp = auth_client.post(url_for('events.add_event_persons', event_id=event_id, person_id=person_id), json=payload)
+    # THEN we expect an error status code
+    assert resp.status_code == 422
 
