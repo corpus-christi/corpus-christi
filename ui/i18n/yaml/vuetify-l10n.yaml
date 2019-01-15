@@ -1,0 +1,27 @@
+$vuetify:
+  dataIterator:
+    rowsPerPageText: 
+      en: 'Items per page:'
+      es: 'Artículos por página:'
+    rowsPerPageAll:
+      en: 'All'
+      es: 'Todos'
+    pageText:
+      en: '{0}-{1} of {2}'
+      es: '{0}-{1} de {2}'
+    noResultsText:
+      en: 'No matching records found'
+      es: 'No se encontraron registros coincidentes'
+    nextPage:
+      en: 'Next page'
+      es: 'Siguiente página'
+    prevPage:
+      en: 'Previous page'
+      es: 'Pagina anterior'
+  dataTable:
+    rowsPerPageText:
+      en: 'Rows per page:'
+      es: 'Filas por página:'
+  noDataText:
+    en: 'No data available'
+    es: 'Datos no disponibles'

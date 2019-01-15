@@ -21,22 +21,29 @@ class Attribute(Base):
     enumerated_types_list = ['attribute.radio', 'attribute.check', 'attribute.dropdown']
     nonenumerated_types_list = ['attribute.float', 'attribute.integer', 'attribute.string', 'attribute.date']
 
+    enumerated_values = relationship(
+        'Enumerated_Value', backref='attribute', lazy=True)
+
     def __repr__(self):
         return f"<Attribute(id={self.id})>"
+
 
     @staticmethod
     def available_types():
         return Attribute.enumerated_types_list + Attribute.nonenumerated_types_list
-    
+
 
 class AttributeSchema(Schema):
-     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
-     name_i18n = fields.String(data_key='nameI18n')
-     type_i18n = fields.String(data_key='typeI18n')
-     seq = fields.Integer(required=True)
-     active = fields.Boolean(required=True)
+    id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
+    name_i18n = fields.String(data_key='nameI18n')
+    type_i18n = fields.String(data_key='typeI18n')
+    seq = fields.Integer(required=True)
+    active = fields.Boolean(required=True)
+
+    enumerated_values = fields.Nested('Enumerated_ValueSchema', many=True)
 
 # ---- Enumerated_Value
+
 
 class EnumeratedValue(Base):
     __tablename__ = 'people_enumerated_value'
@@ -47,7 +54,8 @@ class EnumeratedValue(Base):
 
     def __repr__(self):
         return f"<EnumeratedValue(id={self.id})>"
-    
+
+
 
 class EnumeratedValueSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
@@ -57,10 +65,13 @@ class EnumeratedValueSchema(Schema):
 
 # ---- Person-Attribute
 
+
 class PersonAttribute(Base):
     __tablename__ = 'people_person_attributes'
-    person_id = Column(Integer, ForeignKey('people_person.id'), primary_key=True)
-    attribute_id = Column(Integer, ForeignKey('people_attributes.id'), primary_key=True)
+    person_id = Column(Integer, ForeignKey(
+        'people_person.id'), primary_key=True)
+    attribute_id = Column(Integer, ForeignKey(
+        'people_attributes.id'), primary_key=True)
     enum_value_id = Column(Integer, ForeignKey('people_enumerated_value.id'))
     string_value = Column(StringTypes.LOCALE_CODE)
     person = relationship('Person', backref='person_attributes', lazy=True)

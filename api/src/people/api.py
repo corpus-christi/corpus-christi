@@ -6,13 +6,14 @@ from flask_jwt_extended import jwt_required, get_raw_jwt, jwt_optional
 from marshmallow import ValidationError
 
 from . import people
-from .models import Person, Account, AccountSchema, Role, PersonSchema, RoleSchema
-from ..attributes.models import Attribute, AttributeSchema, Enumerated_Value, Enumerated_ValueSchema
+from .models import Person, Account, AccountSchema, Role, PersonSchema, RoleSchema, Manager, ManagerSchema
+from ..attributes.models import Attribute, AttributeSchema, Enumerated_Value, Enumerated_ValueSchema, Person_Attribute, Person_AttributeSchema
 from .. import db
 
 # ---- Person
 
 person_schema = PersonSchema()
+person_attribute_schema = Person_AttributeSchema()
 attribute_schema = AttributeSchema(exclude=['active'])
 enumerated_value_schema = Enumerated_ValueSchema(exclude=['active'])
 
@@ -44,28 +45,41 @@ def read_person_fields():
 @people.route('/persons', methods=['POST'])
 @jwt_required
 def create_person():
-    request.json["active"] = True
+    request.json['person']['active'] = True
 
-    for key, value in request.json.items():
-        if request.json[key] is "":
-            request.json[key] = None
+    for key, value in request.json['person'].items():
+        if request.json['person'][key] is "":
+            request.json['person'][key] = None
 
     try:
-        valid_person = person_schema.load(request.json)
+        valid_person = person_schema.load(request.json['person'])
+        valid_person_attributes = person_attribute_schema.load(
+            request.json['attributesInfo'], many=True)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
     new_person = Person(**valid_person)
     db.session.add(new_person)
     db.session.commit()
-    return jsonify(person_schema.dump(new_person)), 201
+
+    for person_attribute in valid_person_attributes:
+        person_attribute = Person_Attribute(**person_attribute)
+        person_attribute.person_id = new_person.id
+        db.session.add(person_attribute)
+
+    db.session.commit()
+    result = db.session.query(Person).filter_by(id=new_person.id).first()
+    result.attributesInfo = result.person_attributes
+    return jsonify(person_schema.dump(result)), 201
 
 
 @people.route('/persons')
 @jwt_required
 def read_all_persons():
-    read_person_fields()
     result = db.session.query(Person).all()
+    for r in result:
+        r.attributesInfo = r.person_attributes
+        r.accountInfo = r.account
     return jsonify(person_schema.dump(result, many=True))
 
 
@@ -73,6 +87,8 @@ def read_all_persons():
 @jwt_required
 def read_one_person(person_id):
     result = db.session.query(Person).filter_by(id=person_id).first()
+    result.attributesInfo = result.person_attributes
+    result.accountInfo = result.account
     return jsonify(person_schema.dump(result))
 
 
@@ -80,9 +96,22 @@ def read_one_person(person_id):
 @jwt_required
 def update_person(person_id):
     try:
-        valid_person = person_schema.load(request.json)
+        valid_person = person_schema.load(request.json['person'])
+        valid_person_attributes = person_attribute_schema.load(
+            request.json['attributesInfo'], many=True)
     except ValidationError as err:
         return jsonify(err.messages), 422
+
+    for new_person_attribute in valid_person_attributes:
+        old_person_attribute = db.session.query(Person_Attribute).filter_by(
+            person_id=person_id, attribute_id=new_person_attribute['attribute_id']).first()
+        if old_person_attribute is not None:
+            setattr(old_person_attribute, 'string_value',
+                    new_person_attribute['string_value'])
+        else:
+            new_person_attribute = Person_Attribute(**new_person_attribute)
+            new_person_attribute.person_id = person_id
+            db.session.add(new_person_attribute)
 
     person = db.session.query(Person).filter_by(id=person_id).first()
 
@@ -91,17 +120,19 @@ def update_person(person_id):
 
     db.session.commit()
 
-    return jsonify(person_schema.dump(person))
+    result = db.session.query(Person).filter_by(id=person_id).first()
+    result.attributesInfo = result.person_attributes
+    return jsonify(person_schema.dump(result))
 
 
 @people.route('/persons/deactivate/<person_id>', methods=['PUT'])
 @jwt_required
 def deactivate_person(person_id):
     person = db.session.query(Person).filter_by(id=person_id).first()
-    account = db.session.query(Account).filter_by(id=person.account_id).first()
 
     if person.account:
-        account = db.session.query(Account).filter_by(id=person.account.id).first()
+        account = db.session.query(Account).filter_by(
+            id=person.account.id).first()
         setattr(account, 'active', False)
     setattr(person, 'active', False)
 
@@ -137,8 +168,11 @@ def create_account():
         print("ERR", err)
         return jsonify(err.messages), 422
 
+    public_user_role = db.session.query(Role).filter_by(id=1).first()
+
     new_account = Account(**valid_account)
     new_account.active = True
+    new_account.roles.append(public_user_role)
     db.session.add(new_account)
     db.session.commit()
     return jsonify(account_schema.dump(new_account)), 201
@@ -172,6 +206,13 @@ def read_one_account_by_username(username):
 def read_person_account(person_id):
     account = db.session.query(Account).filter_by(person_id=person_id).first()
     return jsonify(account_schema.dump(account))
+
+
+@people.route('/role/<role_id>/accounts')
+@jwt_required
+def get_accounts_by_role(role_id):
+    role = db.session.query(Role).filter_by(id=role_id).first()
+    return jsonify(account_schema.dump(role.accounts, many=True))
 
 
 @people.route('/accounts/<account_id>', methods=['PATCH'])
@@ -257,12 +298,6 @@ def read_one_role(role_id):
     return jsonify(role_schema.dump(result))
 
 
-@people.route('/role/<role_id>', methods=['PUT'])
-@jwt_required
-def replace_role(role_id):
-    pass
-
-
 @people.route('/role/<role_id>', methods=['PATCH'])
 @jwt_required
 def update_role(role_id):
@@ -280,19 +315,30 @@ def update_role(role_id):
     return jsonify(role_schema.dump(role))
 
 
-@people.route('/role/<role_id>', methods=['DELETE'])
+@people.route('/role/activate/<role_id>', methods=['PUT'])
 @jwt_required
-def delete_role(role_id):
-    pass
+def activate_role(role_id):
+    role = db.session.query(Role).filter_by(id=role_id).first()
+    setattr(role, 'active', True)
+    db.session.commit()
+    return jsonify(role_schema.dump(role))
+
+
+@people.route('/role/deactivate/<role_id>', methods=['PUT'])
+@jwt_required
+def deactivate_role(role_id):
+    role = db.session.query(Role).filter_by(id=role_id).first()
+
+    setattr(role, 'active', False)
+
+    db.session.commit()
+
+    return jsonify(role_schema.dump(role))
 
 
 @people.route('/role/<account_id>&<role_id>', methods=['POST'])
 @jwt_required
 def add_role_to_account(account_id, role_id):
-
-    print("Account: " + account_id)
-    print("Role: " + role_id)
-
     account = db.session.query(Account).filter_by(id=account_id).first()
 
     if account is None:
@@ -326,7 +372,6 @@ def remove_role_from_account(account_id, role_id):
     if role_to_remove not in account.roles:
         return 'That accout does not have that role', 404
 
-
     account.roles.remove(role_to_remove)
     db.session.commit()
 
@@ -338,3 +383,69 @@ def remove_role_from_account(account_id, role_id):
     # return jsonify(user_roles)
     return jsonify(role_to_remove)
 
+
+# ---- Manager
+
+manager_schema = ManagerSchema()
+
+
+@people.route('/manager', methods=['POST'])
+@jwt_required
+def create_manager():
+    try:
+        valid_manager = manager_schema.load(request.json)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+
+    new_manager = Manager(**valid_manager)
+    db.session.add(new_manager)
+    db.session.commit()
+    return jsonify(manager_schema.dump(new_manager)), 201
+
+
+@people.route('/manager')
+@jwt_required
+def read_all_managers():
+    result = db.session.query(Manager).all()
+    return jsonify(manager_schema.dump(result, many=True))
+
+
+@people.route('/manager/<manager_id>')
+@jwt_required
+def read_one_manager(manager_id):
+    result = db.session.query(Manager).filter_by(id=manager_id).first()
+    return jsonify(manager_schema.dump(result))
+
+
+@people.route('/manager/<manager_id>', methods=['PATCH'])
+@jwt_required
+def update_manager(manager_id):
+    try:
+        valid_manager = manager_schema.load(request.json)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+
+    manager = db.session.query(Manager).filter_by(id=manager_id).first()
+
+    for key, val in valid_manager.items():
+        setattr(manager, key, val)
+
+    db.session.commit()
+    return jsonify(manager_schema.dump(manager))
+
+
+@people.route('/manager/<manager_id>', methods=['DELETE'])
+@jwt_required
+def delete_manager(manager_id):
+    manager = db.session.query(Manager).filter_by(id=manager_id).first()
+
+    if manager is None:
+        return 'Manager not found', 404
+
+    for subordinate in manager.subordinates:
+        setattr(subordinate, 'manager_id', None)
+
+    db.session.delete(manager)
+    db.session.commit()
+
+    return jsonify(manager_schema.dump(manager))

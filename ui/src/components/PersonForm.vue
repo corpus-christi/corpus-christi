@@ -25,17 +25,14 @@
           data-cy="last-name"
         ></v-text-field>
 
-        <v-radio-group v-model="person.gender" :readonly="formDisabled" row data-cy="radio-gender">
-          <v-radio
-            v-bind:label="$t('person.male')"
-            value="M"
-            data-cy="radio-m"
-          ></v-radio>
-          <v-radio
-            v-bind:label="$t('person.female')"
-            value="F"
-            data-cy="radio-f"
-          ></v-radio>
+        <v-radio-group
+          v-model="person.gender"
+          :readonly="formDisabled"
+          row
+          data-cy="radio-gender"
+        >
+          <v-radio v-bind:label="$t('person.male')" value="M"></v-radio>
+          <v-radio v-bind:label="$t('person.female')" value="F"></v-radio>
         </v-radio-group>
 
         <v-menu
@@ -63,7 +60,7 @@
             v-bind:locale="currentLanguageCode"
             v-model="person.birthday"
             @input="showBirthdayPicker = false"
-            v-bind:data-cy="birthday-picker"
+            data-cy="birthday-picker"
           ></v-date-picker>
         </v-menu>
 
@@ -72,6 +69,7 @@
           v-bind:label="$t('person.email')"
           name="email"
           v-validate="'email'"
+          data-vv-validate-on="change"
           v-bind:error-messages="errors.collect('email')"
           prepend-icon="email"
           data-cy="email"
