@@ -4,12 +4,13 @@ import random
 import pytest
 from faker import Faker
 from flask import url_for
+from flask.json import jsonify
 from flask_jwt_extended import create_access_token
 from werkzeug.datastructures import Headers
 from werkzeug.security import check_password_hash
 
-from .models import Person, PersonSchema, AccountSchema, Account, RoleSchema, Role
-
+from .models import Person, PersonSchema, AccountSchema, Account, RoleSchema, Role, Manager, ManagerSchema
+from ..i18n.models import I18NKey, i18n_create, I18NLocale
 
 class RandomLocaleFaker:
     """Generate multiple fakers for different locales."""
@@ -294,6 +295,7 @@ def test_repr_role(auth_client):
     role.__repr__()
 
 
+
 #   -----   Roles
 
 def role_object_factory():
@@ -303,7 +305,7 @@ def role_object_factory():
         'active' : True
     }
 
-def create_role(sqla, n):
+def create_role(sqla):
     """Commit `n` new roles to the database. Return their IDs."""
     role_schema = RoleSchema()
 
@@ -321,3 +323,198 @@ def test_create_role(auth_client):
     role = auth_client.sqla.query(Role).all()
     # THEN we get the expected number
     assert len(role) == 1
+
+# ---- Manager
+
+def manager_object_factory(sqla, description, next_level = None, locale_code='en-US'):
+    """Cook up a fake person."""
+    description_i18n = f'manager.description.{description.replace(" ","_")}'
+
+    if not sqla.query(I18NLocale).get(locale_code):
+        sqla.add(I18NLocale(code=locale_code, desc='English US'))
+
+    if not sqla.query(I18NKey).get(description_i18n):
+        i18n_create(description_i18n, 'en-US',
+                    description, description=f"Manager {description}")
+
+    all_people = sqla.query(Person).all()
+
+    manager = {
+
+        'person_id': random.choice(all_people).id,
+        'description_i18n': description_i18n
+    }
+    all_managers = sqla.query(Manager).all()
+
+    if next_level is not None:
+        next_level_description_i18n = f'manager.description.{next_level.replace(" ","_")}'
+        next_level_managers = sqla.query(Manager).filter(Manager.description_i18n==next_level_description_i18n).all()
+        if (len(next_level_managers) > 0):
+            manager['manager_id'] = random.choice(next_level_managers).id
+
+    return manager
+
+
+def create_multiple_managers (sqla, n, description, next_level = None):
+    """Commit `n` new people to the database. Return their IDs."""
+    manager_schema = ManagerSchema()
+    new_managers = []
+    for i in range(n):
+        valid_manager = manager_schema.load(manager_object_factory(sqla, description, next_level))
+        new_managers.append(Manager(**valid_manager))
+    sqla.add_all(new_managers)
+    sqla.commit()
+
+
+@pytest.mark.smoke
+def test_create_manager(auth_client):
+    # GIVEN an empty databaseZ
+    person_count = random.randint(10,20)
+    manager_count = random.randint(5, person_count)
+
+    # WHEN we create a random number of new managers and managers in the database
+    create_multiple_people(auth_client.sqla, person_count)
+
+    for i in range(manager_count):
+        resp = auth_client.post(url_for('people.create_manager'), json=manager_object_factory(auth_client.sqla, 'first level'))
+        assert resp.status_code == 201
+
+    # THEN we end up with the proper number of managers in the database
+    assert auth_client.sqla.query(Manager).count() == manager_count
+
+@pytest.mark.slow
+def test_create_manager_with_manager(auth_client):
+    # GIVEN an empty databaseZ
+    person_count = random.randint(10,20)
+    manager_count = random.randint(5, person_count)
+
+    # WHEN we create a random number of new managers and managers in the database
+    create_multiple_people(auth_client.sqla, person_count)
+    create_multiple_managers(auth_client.sqla, manager_count, 'second level')
+
+    for i in range(manager_count):
+        resp = auth_client.post(url_for('people.create_manager'), json=manager_object_factory(auth_client.sqla, 'first level', next_level='second_level'))
+        assert resp.status_code == 201
+
+    # THEN we end up with the proper number of managers in the database
+    managers = auth_client.sqla.query(Manager).all()
+    level1_count = 0
+    level2_count = 0
+    for manager in managers:
+        if manager.description_i18n == 'manager.description.first_level':
+            level1_count = level1_count+1
+            assert manager.manager_id is not None
+        else:
+            level2_count = level2_count+1
+            assert manager.manager_id is None
+
+    assert level1_count == manager_count
+    assert level2_count == manager_count
+
+
+@pytest.mark.slow
+def test_read_all_managers(auth_client):
+    # GIVEN a DB with a collection of managers.
+    person_count = random.randint(10, 20)
+    manager_count = random.randint(5, person_count)
+    create_multiple_people(auth_client.sqla, person_count)
+    create_multiple_managers(auth_client.sqla, manager_count, 'test manager')
+    # WHEN we request all managers from the server
+    resp = auth_client.get(url_for('people.read_all_managers', locale='en-US'))
+    # THEN the count matches the number of entries in the database
+    assert resp.status_code == 200
+    assert len(resp.json) == manager_count
+
+
+@pytest.mark.slow
+def test_read_one_manager(auth_client):
+    # GIVEN a DB with a collection of managers.
+    person_count = random.randint(10, 20)
+    manager_count = random.randint(5, person_count)
+    create_multiple_people(auth_client.sqla, person_count)
+    create_multiple_managers(auth_client.sqla, manager_count, 'test manager')
+
+    # WHEN we ask for them all
+    managers = auth_client.sqla.query(Manager).all()
+
+    # THEN we expect the same number
+    assert len(managers) == manager_count
+
+    # WHEN we request each of them from the server
+    for manager in managers:
+        resp = auth_client.get(url_for('people.read_one_manager', manager_id=manager.id, locale='en-US'))
+        # THEN we find a matching manager
+        assert resp.status_code == 200
+        assert resp.json['person_id'] == manager.person_id
+        assert resp.json['manager_id'] == manager.manager_id
+        assert resp.json['description_i18n'] == manager.description_i18n
+
+
+@pytest.mark.slow
+def test_update_manager(auth_client):
+    # GIVEN a DB with a collection of managers.
+    person_count = random.randint(10, 20)
+    manager_count = random.randint(5, person_count)
+    create_multiple_people(auth_client.sqla, person_count)
+    create_multiple_managers(auth_client.sqla, manager_count, 'test manager')
+
+    managers = auth_client.sqla.query(Manager).all()
+    persons = auth_client.sqla.query(Person).all()
+
+    update_manager = random.choice(managers)
+
+    new_person_id = update_manager.person_id
+    while new_person_id == update_manager.person_id:
+        new_person_id = random.choice(persons).id
+
+    new_manager_id = update_manager.manager_id
+    while new_manager_id == update_manager.manager_id or new_manager_id == update_manager.id:
+        new_manager_id = random.choice(managers).id
+
+    update_json = {
+        'person_id': new_person_id,
+        'manager_id': new_manager_id
+    }
+
+    # WHEN
+    resp = auth_client.patch(url_for('people.update_manager', manager_id=update_manager.id), json=update_json)
+    # THEN
+    assert resp.status_code == 200
+    assert resp.json['person_id'] == new_person_id
+    assert resp.json['manager_id'] == new_manager_id
+
+
+def test_delete_manager(auth_client):
+    # GIVEN a DB with a collection of managers.
+    person_count = random.randint(10, 20)
+    manager_count = random.randint(5, person_count)
+    create_multiple_people(auth_client.sqla, person_count)
+    create_multiple_managers(auth_client.sqla, manager_count, 'test manager')
+
+    managers = auth_client.sqla.query(Manager).all()
+    persons = auth_client.sqla.query(Person).all()
+
+    delete_manager = managers[0]
+    subordinate = managers[1]
+
+    update_json = {
+        'manager_id': delete_manager.id
+    }
+    auth_client.patch(url_for('people.update_manager', manager_id=subordinate.id), json=update_json)
+
+    # WHEN we delete the manager
+    resp = auth_client.delete(url_for('people.delete_manager', manager_id=delete_manager.id))
+
+    # THEN the manager and all references to that manager are deleted
+    assert resp.status_code == 200
+    assert auth_client.sqla.query(Manager).filter_by(id=delete_manager.id).first() == None
+    assert auth_client.sqla.query(Manager).filter_by(id=subordinate.id).first().manager_id == None
+
+
+@pytest.mark.smoke
+def test_repr_manager(auth_client):
+    # GIVEN a DB with a manager
+    create_multiple_people(auth_client.sqla, 1)
+    create_multiple_managers(auth_client.sqla, 1, 'test manager')
+    managers = auth_client.sqla.query(Manager).all()
+    managers[0].__repr__()

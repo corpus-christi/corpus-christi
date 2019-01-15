@@ -96,3 +96,32 @@ entities:
         length: locale
       - name: active
         type: boolean
+  - name: Manager
+    singular: manager
+    plural: managers
+    uri: /manager
+    table: people_manager
+    attributes:
+      - name: id
+        type: integer
+        primary-key: true
+        min: 1
+      - name: person_id
+        type: integer
+        min: 1
+        required: true
+        foreign-key: people_person.id
+      - name: manager_id
+        type: integer
+        min: 1
+        required: false
+        foreign-key: people_manager.id
+      - name: description_i18n
+        type: string
+        length: i18n
+        required: true
+        foreign-key: i18n_key.id
+    relationships:
+      - name: manager
+        related-model: Manager
+        backref: subordinate
