@@ -248,13 +248,11 @@ def read_one_course_offering(course_offering_id):
 @jwt_required
 # @authorize(["role.superuser", "role.registrar"])
 def update_course_offering(course_offering_id):
-
-    course_offering = db.session.query(
-        Course_Offering).filter_by(id=course_offering_id).first()
+    course_offering = db.session.query(Course_Offering).filter_by(id=course_offering_id).first()
     if course_offering is None:
         return "Course Offering NOT Found", 404
 
-    for attr in ['description', "active", "max_size"]:
+    for attr in 'description', 'active', 'max_size':
         if attr in request.json:
             setattr(course_offering, attr, request.json[attr])
 
