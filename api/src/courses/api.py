@@ -61,7 +61,7 @@ def read_all_courses():
     return jsonify(add_prereqs(result))
 
 
-@courses.route('/courses/active/<active_state>')
+@courses.route('/courses/<active_state>')
 @jwt_required
 # @authorize(["role.superuser", "role.registrar", "role.public"])
 def read_active_state_of_courses(active_state):
@@ -147,8 +147,7 @@ def create_prerequisite(course_id):
     course = db.session.query(Course).filter_by(id=course_id).first()
     if course is None:
         return 'Course to add prereqs not found', 404
-    print(request.json)
-    for p in request.json:
+    for p in request.json['prerequisites']:
         course.prerequisites.append(db.session.query(Course).filter_by(id=p).first())
     db.session.commit()
     return jsonify(course_schema.dump(course)), 201

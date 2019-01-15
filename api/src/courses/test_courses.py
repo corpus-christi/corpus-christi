@@ -226,24 +226,26 @@ def create_multiple_students(sqla, n=6):
 
 # --- Diploma_Award
 
-def diploma_award_object_factory():
+def diploma_award_object_factory(diploma_id, student_id):
     """Cook up a fake diploma award"""
-    fake = faker()
+    fake = Faker()
     diploma_award = {
+        'studentId': student_id,
+        'diplomaId': diploma_id,
         'when': str(fake.past_date(start_date="-30d"))
     }
+    return diploma_award
 
 def create_diploma_awards(sqla, n):
     """Commits the number of diploma awards to the DB."""
     students = sqla.query(Student).all()
     diplomas = sqla.query(Diploma).all()
-    # diploma_award_schema = Diploma_AwardedSchema()
+    diploma_award_schema = Diploma_AwardedSchema()
     new_diploma_awards = []
-    for i in range(n):
-        diploma = diplomas[random.randint(0, len(diplomas)-1)]
-        student = students[random.randint(0, len(students)-1)]
-        student.diplomas.append(diploma)
-        new_diploma_awards.append(student)
+    for student in students:
+        diploma = diplomas[random.randint(0,len(diplomas)-1)]
+        valid_diploma_awarded = diploma_award_schema.load(diploma_award_object_factory(diploma.id,student.id))
+        new_diploma_awards.append(Diploma_Awarded(**valid_diploma_awarded))
     sqla.add_all(new_diploma_awards)
     sqla.commit()
 
@@ -270,7 +272,7 @@ def create_class_meetings(sqla, n=6):
     for i in range(n):
         teacher = people[random.randint(0,len(people)-1)].id
         offering = course_offerings[i%len(course_offerings)].id
-        location = 1#locations[random.randint(0,len(locations)-1)].id
+        location = locations[random.randint(0,len(locations)-1)].id
 
         valid_class_meeting = class_meeting_schema.load(class_meeting_object_factory(teacher, offering, location))
         class_meeting = Class_Meeting(**valid_class_meeting)

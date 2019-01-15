@@ -32,23 +32,28 @@ class Diploma_CourseSchema(Schema):
 
 # ---- Diploma_Awarded
 
-# class Diploma_Awarded(Base):
-#      __tablename__ = 'courses_diploma_awarded'
-#      student_id = Column(Integer, ForeignKey('courses_students.id'), primary_key=True)
-#      diploma_id = Column(Integer, ForeignKey('courses_diploma.id'), primary_key=True)
-#      when = Column(Date, nullable=False)
-#
-#      students = relationship('Student', backref='diplomas', lazy=True)
+class Diploma_Awarded(Base):
+     __tablename__ = 'courses_diploma_awarded'
+     student_id = Column(Integer, ForeignKey('courses_students.id'), primary_key=True)
+     diploma_id = Column(Integer, ForeignKey('courses_diploma.id'), primary_key=True)
+     when = Column(Date, nullable=False, default=date.today())
 
-Diploma_Awarded = Table('courses_diploma_awarded', Base.metadata,
-     Column('student_id', Integer, ForeignKey('courses_students.id'), primary_key=True),
-     Column('diploma_id', Integer, ForeignKey('courses_diploma.id'), primary_key=True),
-     Column('when', Date, nullable=False, default=date.today()))
+     students = relationship('Student', back_populates='diplomas_awarded', lazy=True)
+     diplomas = relationship('Diploma', back_populates='diplomas_awarded', lazy=True)
+
+
+     def __repr__(self):
+         return f"<Diploma_Awarded(student_id={self.student_id},diploma_id={self.diploma_id})>"
+
+# Diploma_Awarded = Table('courses_diploma_awarded', Base.metadata,
+#      Column('student_id', Integer, ForeignKey('courses_students.id'), primary_key=True),
+#      Column('diploma_id', Integer, ForeignKey('courses_diploma.id'), primary_key=True),
+#      Column('when', Date, nullable=False, default=date.today()))
 
 
 class Diploma_AwardedSchema(Schema):
-     student_id = fields.Integer(dump_only=True, data_key='studentId', required=True, validate=Range(min=1))
-     diploma_id = fields.Integer(dump_only=True, data_key='diplomaId', required=True, validate=Range(min=1))
+     student_id = fields.Integer(data_key='studentId', required=True, validate=Range(min=1))
+     diploma_id = fields.Integer(data_key='diplomaId', required=True, validate=Range(min=1))
      when = fields.Date(required=True)
 
 # ---- Class_Attendance
@@ -103,8 +108,8 @@ class Diploma(Base):
      active = Column(Boolean, nullable=False, default=True)
      courses = relationship('Course', secondary=Diploma_Course,
                back_populates='diplomas', lazy=True)
-     students = relationship('Student', secondary=Diploma_Awarded,
-               back_populates='diplomas', lazy=True)
+     diplomas_awarded = relationship('Diploma_Awarded',
+               back_populates='diplomas', lazy=True, uselist=False)
 
 
      def __repr__(self):
@@ -128,8 +133,8 @@ class Student(Base):
      active = Column(Boolean, default=True, nullable=False)
      course_offering = relationship('Course_Offering', backref='offerings', lazy=True)
      person = relationship('Person', backref='students', lazy=True)
-     diplomas = relationship('Diploma', secondary=Diploma_Awarded,
-               back_populates='students', lazy=True)
+     diplomas_awarded = relationship('Diploma_Awarded',
+               back_populates='students', lazy=True, uselist=False)
      attendance = relationship('Class_Meeting', secondary=Class_Attendance,
                back_populates='students', lazy=True)
 
