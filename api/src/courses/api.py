@@ -77,22 +77,6 @@ def read_all_courses():
     return jsonify(with_prereqs)
 
 
-@courses.route('/courses/active/<active_state>')
-@jwt_required
-# @authorize(["role.superuser", "role.registrar", "role.public"])
-def read_active_state_of_courses(active_state):
-    """List all active courses"""
-    result = db.session.query(Course)
-    if(active_state == 'active'):
-        result = result.filter_by(active=True).all()
-    elif(active_state == 'inactive'):
-        result = result.filter_by(active=False).all()
-    else:
-        return "Result NOT found", 404
-    # return jsonify(add_prereqs(result))
-    return jsonify(course_schema.dump(result, many=True))
-
-
 @courses.route('/courses/<course_id>')
 @jwt_required
 # @authorize(["role.superuser", "role.registrar", "role.public"])
@@ -103,12 +87,7 @@ def read_one_course(course_id):
         return "Result NOT found", 404
     with_prereqs = add_prereqs(result)
     with_offerings = include_course_offerings(with_prereqs)
-    # with_prereqs['course_offerings'] = []
-    # offerings = db.session.query(Course_Offering).filter_by(course_id=with_prereqs['id']).all()
-    # for i in offerings:
-    #     with_prereqs['course_offerings'].append(course_offering_schema.dump(i))
     return jsonify(with_offerings)
-    # return jsonify(course_schema.dump(result))
 
 
 @courses.route('/courses/<course_id>', methods=['PATCH'])
@@ -125,34 +104,6 @@ def update_course(course_id):
             setattr(course, attr, request.json[attr])
     db.session.commit()
     return jsonify(course_schema.dump(course))
-
-
-@courses.route('/courses/deactivate/<course_id>', methods=['PATCH'])
-@jwt_required
-# @authorize(["role.superuser", "role.registrar"])
-def deactivate_course(course_id):
-    """Set active course with given course_id to inactive (False)"""
-    valid_course = db.session.query(Course).filter_by(id=course_id).first()
-    if valid_course is None:
-        return 'Not Found', status.HTTP_404_NOT_FOUND
-    else:
-        setattr(valid_course, 'active', False)
-    db.session.commit()
-    return jsonify(course_schema.dump(valid_course))
-
-
-@courses.route('/courses/reactivate/<course_id>', methods=['PATCH'])
-@jwt_required
-# @authorize(["role.superuser", "role.registrar"])
-def reactivate_course(course_id):
-    """Set inactive course with given course_id to active (True)"""
-    valid_course = db.session.query(Course).filter_by(id=course_id).first()
-    if valid_course is None:
-        return 'Not Found', 404
-    else:
-        setattr(valid_course, 'active', True)
-    db.session.commit()
-    return jsonify(course_schema.dump(valid_course))
 
 
 # ---- Prerequisite
@@ -181,28 +132,27 @@ def create_prerequisite(course_id):
 Route reads all prerequisites in database
 --Might not need later
 """
-@courses.route('/courses/prerequisites')
-@jwt_required
-# @authorize(["role.superuser", "role.registrar", "role.public"])
-def read_all_prerequisites():
-    result = db.session.query(Course).all() #Get courses to get prereq's
-    results = [] # new list
-    for i in result:
-        for j in i.prerequisites: # Read through course prerequisites
-            results.append(j)
-    return jsonify(course_schema.dump(results, many=True))
+# @courses.route('/courses/prerequisites')
+# @jwt_required
+# # @authorize(["role.superuser", "role.registrar", "role.public"])
+# def read_all_prerequisites():
+#     result = db.session.query(Course).all() #Get courses to get prereq's
+#     results = [] # new list
+#     for i in result:
+#         for j in i.prerequisites: # Read through course prerequisites
+#             results.append(j)
+#     return jsonify(course_schema.dump(results, many=True))
 
 
-@courses.route('/courses/prerequisites/<course_id>')
-@jwt_required
-# @authorize(["role.superuser", "role.registrar", "role.public"])
-def read_one_course_prerequisites(course_id):
-    result = db.session.query(Course).filter_by(id=course_id).first()
-    prereqs_to_return = []
-    for i in result.prerequisites:
-        prereqs_to_return.append(i)
-    return jsonify(course_schema.dump(prereqs_to_return, many=True))
-
+# @courses.route('/courses/prerequisites/<course_id>')
+# @jwt_required
+# # @authorize(["role.superuser", "role.registrar", "role.public"])
+# def read_one_course_prerequisites(course_id):
+#     result = db.session.query(Course).filter_by(id=course_id).first()
+#     prereqs_to_return = []
+#     for i in result.prerequisites:
+#         prereqs_to_return.append(i)
+#     return jsonify(course_schema.dump(prereqs_to_return, many=True))
 
 
 @courses.route('/courses/prerequisites/<course_id>', methods=['PATCH'])
@@ -213,12 +163,10 @@ def update_prerequisite(course_id):
     if course is None:
         return 'Course to update prereqs not found', 404
     for i in course.prerequisites:
-        lookup = i
-        lookup = course_schema.dump(i)['id']
-        if not (lookup in request.json['prerequisites']):
+        if not (i.id in request.json['prerequisites']):
             course.prerequisites.remove(i)
     for i in request.json['prerequisites']:
-        if(i==course['id']):
+        if(i==course.id):
             continue # don't add course as it's own prerequisite
         course.prerequisites.append(db.session.query(Course).filter_by(id=i).first())
     db.session.commit()
@@ -253,24 +201,14 @@ def read_all_course_offerings():
         r['course'] = course_schema.dump(db.session.query(Course).filter_by(id=r['courseId']).first(), many=False)
     return jsonify(results)
 
-@courses.route('/course_offerings/<active_state>')
-@jwt_required
-def read_active_state_course_offerings(active_state):
-    result = db.session.query(Course_Offering)
-    if (active_state == 'active'):
-        query = result.filter_by(active=True).all()
-    elif (active_state == 'inactive'):
-        query = result.filter_by(active=False).all()
-    else:
-        return 'Cannot filter course offerings with undefined state', 404
-    return jsonify(course_offering_schema.dump(query, many=True))
 
-@courses.route('/course_offerings/<course_offering_id>')
-@jwt_required
-# @authorize(["role.superuser", "role.public"])
-def read_one_course_offering(course_offering_id):
-    result = db.session.query(Course_Offering).filter_by(id=course_offering_id).first()
-    return jsonify(course_offering_schema.dump(result))
+# @courses.route('/course_offerings/<course_offering_id>')
+# @jwt_required
+# # @authorize(["role.superuser", "role.public"])
+# def read_one_course_offering(course_offering_id):
+#     result = db.session.query(Course_Offering).filter_by(id=course_offering_id).first()
+#     return jsonify(course_offering_schema.dump(result))
+
 
 @courses.route('/course_offerings/<course_offering_id>', methods=['PATCH'])
 @jwt_required
