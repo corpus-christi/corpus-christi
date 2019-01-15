@@ -1,0 +1,252 @@
+{
+  "en": {
+    "$vuetify": {
+      "dataIterator": {
+        "nextPage": "Next page",
+        "noResultsText": "No matching records found",
+        "pageText": "{0}-{1} of {2}",
+        "prevPage": "Previous page",
+        "rowsPerPageAll": "All",
+        "rowsPerPageText": "Items per page:"
+      },
+      "dataTable": {
+        "rowsPerPageText": "Rows per page:"
+      },
+      "noDataText": "No data available"
+    },
+    "account": {
+      "messages": {
+        "added-ok": "Account added successfully",
+        "updated-ok": "Account updated successfully"
+      },
+      "password": "Password",
+      "repeat-password": "Repeat Password",
+      "username": "Username"
+    },
+    "actions": {
+      "add-another": "Add Another",
+      "add-person": "Add Person",
+      "cancel": "Cancel",
+      "clear": "Clear",
+      "close": "Close",
+      "confirm": "Confirm",
+      "duplicate": "Duplicate",
+      "edit": "Edit",
+      "header": "Actions",
+      "login": "Log In",
+      "logout": "Log Out",
+      "save": "Save",
+      "search": "Search",
+      "search-people": "Search People",
+      "tooltips": {
+        "archive": "Archive",
+        "settings": "Settings",
+        "unarchive": "Unarchive"
+      },
+      "view-active": "View Active",
+      "view-all": "View All",
+      "view-archived": "View Archived",
+      "view-inactive": "View Inactive"
+    },
+    "courses": {
+      "add-failed": "Failed to add course",
+      "added": "Course added",
+      "archived": "Course archived",
+      "choose-location": "Choose Location",
+      "choose-teacher": "Choose Teacher",
+      "choose-time": "Choose Time",
+      "confirm-archive": "Are you sure you want to archive this course?",
+      "course": "Courses",
+      "course-offering": "Course Offerings",
+      "description": "Description",
+      "enrolled": "Number Enrolled",
+      "max-size": "Max Number of Students",
+      "new": "New Course",
+      "prerequisites": "Prerequisites",
+      "reactivated": "Course unarchived",
+      "title": "Title",
+      "update-failed": "Failed to update course",
+      "updated": "Course updated"
+    },
+    "groups": {
+      "title": "Home Churches"
+    },
+    "login": {
+      "header": "Log In"
+    },
+    "people": {
+      "title": "People"
+    },
+    "person": {
+      "actions": {
+        "add-account": "Add Account",
+        "edit": "Edit Person",
+        "new": "New Person",
+        "reset-password": "Reset Password"
+      },
+      "date": {
+        "birthday": "Birthday"
+      },
+      "email": "Email",
+      "female": "Female",
+      "gender": "Gender",
+      "male": "Male",
+      "messages": {
+        "canceled": "Canceled add new person",
+        "person-activate": "Person activated",
+        "person-add": "New person added",
+        "person-deactivate": "Person deactivated",
+        "person-edit": "Person edited",
+        "person-save-error": "Person was not saved"
+      },
+      "name": {
+        "first": "First Name",
+        "last": "Last Name"
+      },
+      "phone": "Phone",
+      "settings": "Settings for {person}"
+    },
+    "public": {
+      "headers": {
+        "home-church": "Find a Home Church",
+        "upcoming-classes": "Upcoming Clases",
+        "upcoming-events": "Upcoming Events"
+      },
+      "title": "Public"
+    },
+    "validation": {
+      "attributes": {
+        "email": "email",
+        "firstName": "first name",
+        "lastName": "last name",
+        "title": "title"
+      },
+      "required": "Required"
+    }
+  },
+  "es": {
+    "$vuetify": {
+      "dataIterator": {
+        "nextPage": "Siguiente p\u00e1gina",
+        "noResultsText": "No se encontraron registros coincidentes",
+        "pageText": "{0}-{1} de {2}",
+        "prevPage": "Pagina anterior",
+        "rowsPerPageAll": "Todos",
+        "rowsPerPageText": "Art\u00edculos por p\u00e1gina:"
+      },
+      "dataTable": {
+        "rowsPerPageText": "Filas por p\u00e1gina:"
+      },
+      "noDataText": "Datos no disponibles"
+    },
+    "account": {
+      "messages": {
+        "added-ok": "Cuenta agregada exitosamente",
+        "updated-ok": "Cuenta actualizada con \u00e9xito"
+      },
+      "password": "Contrase\u00f1a",
+      "repeat-password": "Repite la contrase\u00f1a",
+      "username": "Nombre de usuario"
+    },
+    "actions": {
+      "add-another": "A\u00f1adir Otro",
+      "add-person": "A\u00f1adir Persona",
+      "cancel": "Cancelar",
+      "clear": "Despejar",
+      "close": "Cerrar",
+      "confirm": "Confirmar",
+      "duplicate": "Duplicar",
+      "edit": "Editar",
+      "header": "Acciones",
+      "login": "Acceder",
+      "logout": "Cerrar sesi\u00f3n",
+      "save": "Salvar",
+      "search": "Buscar",
+      "search-people": "Buscar Personas",
+      "tooltips": {
+        "archive": "Archivar",
+        "settings": "Ajustes",
+        "unarchive": "Desarchivar"
+      },
+      "view-active": "Ver Activo",
+      "view-all": "Ver Todo",
+      "view-archived": "Ver Archivado",
+      "view-inactive": "Ver Inactivo"
+    },
+    "courses": {
+      "add-failed": "Se fall\u00f3 a a\u00f1adir el curso",
+      "added": "Curso a\u00f1adido",
+      "archived": "Curso archivado",
+      "choose-location": "Elegir Ubicaci\u00f3n",
+      "choose-teacher": "Elegir Maestro",
+      "choose-time": "Elegir Tiempo",
+      "confirm-archive": "\u00bfEst\u00e1s seguro que quieres archivar este curso?",
+      "course": "Cursos",
+      "course-offering": "Ofertas de Cursos",
+      "description": "Descripci\u00f3n",
+      "enrolled": "N\u00famero Registrado",
+      "max-size": "N\u00famero M\u00e1ximo de Estudiantes",
+      "new": "Nuevo Curso",
+      "prerequisites": "Prerrequisitos",
+      "reactivated": "Curso desarchivado",
+      "title": "T\u00edtulo",
+      "update-failed": "Se fall\u00f3 a actualizar el curso",
+      "updated": "Curso actualizado"
+    },
+    "groups": {
+      "title": "Iglesias Hogar"
+    },
+    "login": {
+      "header": "Iniciar Sesi\u00f3n"
+    },
+    "people": {
+      "title": "Personas"
+    },
+    "person": {
+      "actions": {
+        "add-account": "A\u00f1adir cuenta",
+        "edit": "Editar persona",
+        "new": "Persona Nueva",
+        "reset-password": "Restablecer la contrase\u00f1a"
+      },
+      "date": {
+        "birthday": "Cumplea\u00f1os"
+      },
+      "email": "Correo electr\u00f3nico",
+      "female": "Mujer",
+      "gender": "G\u00e9nero",
+      "male": "Hombre",
+      "messages": {
+        "canceled": "Cancelado a\u00f1adir nueva persona",
+        "person-activate": "Persona activada",
+        "person-add": "Nueva persona agregada",
+        "person-deactivate": "Persona desactivada",
+        "person-edit": "Persona editada",
+        "person-save-error": "La persona no fue salvada"
+      },
+      "name": {
+        "first": "Nombre de pila",
+        "last": "Apellido"
+      },
+      "phone": "Tel\u00e9fono",
+      "settings": "Configuraci\u00f3n de la {person}"
+    },
+    "public": {
+      "headers": {
+        "home-church": "Encontrar una Iglesia Hogar",
+        "upcoming-classes": "Pr\u00f3ximas Clases",
+        "upcoming-events": "Pr\u00f3ximos Eventos"
+      },
+      "title": "P\u00fablico"
+    },
+    "validation": {
+      "attributes": {
+        "email": "correo electr\u00f3nico",
+        "firstName": "nombre de pila",
+        "lastName": "appellido",
+        "title": "t\u00edtulo"
+      },
+      "required": "Necesario"
+    }
+  }
+}
