@@ -33,7 +33,7 @@ class Event(Base):
 class EventSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     title = fields.String(required=True, validate=Length(min=1))
-    description = fields.String()
+    description = fields.String(allow_none=True)
     start = fields.DateTime(required=True)
     end = fields.DateTime(required=True)
     location_id = fields.Integer(load_only=True, allow_none=True)
