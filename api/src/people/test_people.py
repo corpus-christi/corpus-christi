@@ -8,7 +8,7 @@ from flask_jwt_extended import create_access_token
 from werkzeug.datastructures import Headers
 from werkzeug.security import check_password_hash
 
-from .models import Person, PersonSchema, AccountSchema, Account
+from .models import Person, PersonSchema, AccountSchema, Account, RoleSchema, Role
 
 
 class RandomLocaleFaker:
@@ -35,17 +35,20 @@ def person_object_factory():
     """Cook up a fake person."""
     person = {
         'lastName': rl_fake().last_name(),
+        'secondLastName': rl_fake().last_name(),
         'gender': random.choice(('M', 'F')),
-        'active': True
+        'active': flip()
     }
 
     # Make the person's name match their gender.
-    person['firstName'] = rl_fake().first_name_male() if person['gender'] == 'M' else rl_fake().first_name_female()
-    person['active'] = True;
+    person['firstName'] = rl_fake().first_name_male(
+    ) if person['gender'] == 'M' else rl_fake().first_name_female()
+    person['active'] = True
 
     # These are all optional in the DB. Over time, we'll try all possibilities.
     if flip():
-        person['birthday'] = rl_fake().date_of_birth(minimum_age=18).strftime('%Y-%m-%d')
+        person['birthday'] = rl_fake().date_of_birth(
+            minimum_age=18).strftime('%Y-%m-%d')
     if flip():
         person['phone'] = rl_fake().phone_number()
     if flip():
@@ -85,7 +88,8 @@ def create_multiple_accounts(sqla, fraction=0.75):
         raise RuntimeError(f"Fraction ({fraction}) is out of bounds")
 
     all_people = sqla.query(Person).all()
-    sample_people = random.sample(all_people, math.floor(len(all_people) * fraction))
+    sample_people = random.sample(
+        all_people, math.floor(len(all_people) * fraction))
 
     account_schema = AccountSchema()
     new_accounts = []
@@ -104,7 +108,8 @@ def test_create_person(auth_client):
     count = random.randint(5, 15)
     # WHEN we create a random number of new people
     for i in range(count):
-        resp = auth_client.post(url_for('people.create_person'), json=person_object_factory())
+        resp = auth_client.post(url_for('people.create_person'), json={
+                                'person': person_object_factory(), 'attributesInfo': []})
         assert resp.status_code == 201
     # THEN we end up with the proper number of people in the database
     assert auth_client.sqla.query(Person).count() == count
@@ -123,11 +128,13 @@ def test_read_person(auth_client):
 
     # WHEN we request each of them from the server
     for person in people:
-        resp = auth_client.get(url_for('people.read_one_person', person_id=person.id))
+        resp = auth_client.get(
+            url_for('people.read_one_person', person_id=person.id))
         # THEN we find a matching person
         assert resp.status_code == 200
         assert resp.json['firstName'] == person.first_name
         assert resp.json['lastName'] == person.last_name
+        assert resp.json['secondLastName'] == person.second_last_name
 
 
 # ---- Account
@@ -149,7 +156,8 @@ def test_create_account(auth_client):
         # THEN we expect them to be created
         assert resp.status_code == 201
         # AND the account exists in the database
-        new_account = auth_client.sqla.query(Account).filter_by(person_id=person.id).first()
+        new_account = auth_client.sqla.query(
+            Account).filter_by(person_id=person.id).first()
         assert new_account is not None
         # And the password is properly hashed (refer to docs for generate_password_hash)
         method, salt, hash = new_account.password_hash.split('$')
@@ -179,7 +187,8 @@ def test_read_account(auth_client):
 
     for account in auth_client.sqla.query(Account).all():
         # WHEN we request one
-        resp = auth_client.get(url_for('people.read_one_account', account_id=account.id))
+        resp = auth_client.get(
+            url_for('people.read_one_account', account_id=account.id))
         # THEN we find the matching account
         assert resp.status_code == 200
         assert resp.json['username'] == account.username
@@ -199,7 +208,7 @@ def test_update_password(auth_client):
         # WHEN we update the password via the API
         new_password = password_by_id[account_id] = fake.password()
         resp = auth_client.patch(url_for('people.update_account', account_id=account_id),
-                            json={'password': new_password})
+                                 json={'password': new_password})
         # THEN the update worked
         assert resp.status_code == 200
         # AND the password was not returned
@@ -208,7 +217,8 @@ def test_update_password(auth_client):
     # GIVEN a collection of accounts
     for account_id in account_ids:
         # WHEN we retrieve account details from the database
-        updated_account = auth_client.sqla.query(Account).filter_by(id=account_id).first()
+        updated_account = auth_client.sqla.query(
+            Account).filter_by(id=account_id).first()
         assert updated_account is not None
         # THEN the (account-specific) password is properly hashed
         password_hash = updated_account.password_hash
@@ -222,7 +232,8 @@ def test_update_other_fields(auth_client):
     # For each of the accounts, grab the current value of the "other" fields.
     expected_by_id = {}
     for account_id in account_ids:
-        current_account = auth_client.sqla.query(Account).filter_by(id=account_id).first()
+        current_account = auth_client.sqla.query(
+            Account).filter_by(id=account_id).first()
         expected_by_id[account_id] = {
             'username': current_account.username,
             'active': current_account.active
@@ -251,11 +262,62 @@ def test_update_other_fields(auth_client):
         # It's possible that none of the fields will have been selected for update,
         # which doesn't make much sense, but we'll still test for that possibility.
 
-        resp = auth_client.patch(url_for('people.update_account', account_id=account_id), json=payload)
+        resp = auth_client.patch(
+            url_for('people.update_account', account_id=account_id), json=payload)
         assert resp.status_code == 200
 
     for account_id in account_ids:
-        updated_account = auth_client.sqla.query(Account).filter_by(id=account_id).first()
+        updated_account = auth_client.sqla.query(
+            Account).filter_by(id=account_id).first()
         assert updated_account is not None
         assert updated_account.username == expected_by_id[account_id]['username']
         assert updated_account.active == expected_by_id[account_id]['active']
+
+
+@pytest.mark.smoke
+def test_repr_person(auth_client):
+    person = Person()
+    person.__repr__()
+
+
+@pytest.mark.smoke
+def test_repr_account(auth_client):
+    create_multiple_people(auth_client.sqla, 4)
+    create_multiple_accounts(auth_client.sqla, 1)
+    account = auth_client.sqla.query(Account).all()
+    account[0].__repr__()
+
+
+@pytest.mark.smoke
+def test_repr_role(auth_client):
+    role = Role()
+    role.__repr__()
+
+
+#   -----   Roles
+
+def role_object_factory():
+    """Cook up a fake role."""
+    role = {
+        'name_i18n': 'role.test_role',
+        'active' : True
+    }
+
+def create_role(sqla, n):
+    """Commit `n` new roles to the database. Return their IDs."""
+    role_schema = RoleSchema()
+
+    valid_role = role_schema.load(role_object_factory())
+
+    sqla.add(valid_role)
+    sqla.commit()
+
+
+def test_create_role(auth_client):
+    # GIVEN some randomly created people
+    create_role(auth_client.sqla)
+
+    # WHEN we retrieve them all
+    role = auth_client.sqla.query(Role).all()
+    # THEN we get the expected number
+    assert len(role) == 1

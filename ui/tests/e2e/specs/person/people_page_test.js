@@ -1,4 +1,4 @@
-//Tests logging in and going to the group page
+//Tests logging in and going to the people page
 describe("Clicking home after logging in", function() {
   it("Given: logs in successfully", function() {
     cy.visit("/login");
@@ -7,11 +7,11 @@ describe("Clicking home after logging in", function() {
     cy.get("[data-cy=login]").click();
     cy.url().should("include", "/admin");
   });
-  it("When: group tab is pressed", function() {
-    cy.get("[data-cy=toggle-nav-drawer]").click();
-    cy.get("[data-cy=groups]").click();
+  it("When: people tab is pressed", function() {
+    cy.get(".v-btn__content > .v-icon").click();
+    cy.get("[data-cy=people]").click();
   });
-  it("Then: url should have /groups", function() {
-    cy.url().should("include", "/groups");
+  it("Then: url should have /people", function() {
+    cy.url().should("include", "/people");
   });
 });

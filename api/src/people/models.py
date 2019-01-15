@@ -21,6 +21,7 @@ class Person(Base):
     id = Column(Integer, primary_key=True)
     first_name = Column(StringTypes.MEDIUM_STRING, nullable=False)
     last_name = Column(StringTypes.MEDIUM_STRING, nullable=False)
+    second_last_name = Column(StringTypes.MEDIUM_STRING, nullable=True)
     gender = Column(String(1))
     birthday = Column(Date)
     phone = Column(StringTypes.MEDIUM_STRING)
@@ -28,6 +29,9 @@ class Person(Base):
     active = Column(Boolean, nullable=False, default=True)
     location_id = Column(Integer, ForeignKey('places_location.id'))
     address = relationship('Location', backref='people', lazy=True)
+
+    def _init(self, accountInfo):
+        self.accountInfo = accountInfo
 
     def __repr__(self):
         return f"<Person(id={self.id})>"
@@ -42,21 +46,32 @@ class PersonSchema(Schema):
         data_key='firstName', required=True, validate=Length(min=1))
     last_name = fields.String(
         data_key='lastName', required=True, validate=Length(min=1))
+    second_last_name = fields.String(
+        data_key='secondLastName', required=False, validate=Length(min=1))
     gender = fields.String(validate=OneOf(['M', 'F']), allow_none=True)
     birthday = fields.Date(allow_none=True)
     phone = fields.String(allow_none=True)
     email = fields.String(allow_none=True)
+
     active = fields.Boolean(required=True)
-    location_id = fields.Integer(data_key='locationId')
+    location_id = fields.Integer(data_key='locationId', allow_none=True)
+
+    accountInfo = fields.Nested('AccountSchema', allow_none=True, only=['username','id'])
+
+    attributesInfo = fields.Nested('Person_AttributeSchema', many=True)
 
 # Defines join table for people_account and people_role
 
+
 people_account_role = Table('account_role', Base.metadata,
-    Column('people_account_id', Integer, ForeignKey('people_account.id'), primary_key=True),
-    Column('people_role_id', Integer, ForeignKey('people_role.id'), primary_key=True)
-)
+                            Column('people_account_id', Integer, ForeignKey(
+                                'people_account.id'), primary_key=True),
+                            Column('people_role_id', Integer, ForeignKey(
+                                'people_role.id'), primary_key=True)
+                            )
 
 # ---- Account
+
 
 class Account(Base):
     __tablename__ = 'people_account'
@@ -69,8 +84,7 @@ class Account(Base):
     # One-to-one relationship; see https://docs.sqlalchemy.org/en/latest/orm/basic_relationships.html#one-to-one
     person = relationship("Person", backref=backref("account", uselist=False))
     roles = relationship("Role",
-                    secondary=people_account_role, backref="accounts")
-
+                         secondary=people_account_role, backref="accounts")
 
     def __repr__(self):
         return "<Account(id={},username='{}',person='{}:{}')>" \
@@ -97,14 +111,15 @@ class AccountSchema(Schema):
     username = fields.String(required=True, validate=Length(min=1))
     password = fields.String(attribute='password_hash', load_only=True,
                              required=True, validate=Length(min=6))
-    active = fields.Boolean()
+    active = fields.Boolean(missing=None)
     person_id = fields.Integer(
         required=True, data_key="personId", validate=Range(min=1))
 
     @pre_load
     def hash_password(self, data):
         """Make sure the password is properly hashed when creating a new account."""
-        data['password'] = generate_password_hash(data['password'])
+        if 'password' in data.keys():
+            data['password'] = generate_password_hash(data['password'])
         return data
 
 
@@ -154,4 +169,3 @@ class RoleSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     name_i18n = fields.String(data_key='nameI18n')
     active = fields.Boolean()
-
