@@ -223,7 +223,10 @@ def create_course_offering():
 # @authorize(["role.superuser", "role.registrar", "role.public"])
 def read_all_course_offerings():
     result = db.session.query(Course_Offering).all()
-    return jsonify(course_offering_schema.dump(result, many=True))
+    results = course_offering_schema.dump(result, many=True)
+    for r in results:
+        r['course'] = course_schema.dump(db.session.query(Course).filter_by(id=r['courseId']).first(), many=False)
+    return jsonify(results)
 
 @courses.route('/course_offerings/<active_state>')
 @jwt_required
@@ -233,7 +236,7 @@ def read_active_state_course_offerings(active_state):
         query = result.filter_by(active=True).all()
     elif (active_state == 'inactive'):
         query = result.filter_by(active=False).all()
-    else: 
+    else:
         return 'Cannot filter course offerings with undefined state', 404
     return jsonify(course_offering_schema.dump(query, many=True))
 
