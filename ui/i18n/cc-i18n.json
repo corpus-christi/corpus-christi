@@ -39,9 +39,9 @@
       "search": "Search",
       "search-people": "Search People",
       "tooltips": {
+        "activate": "Activate",
         "archive": "Archive",
-        "settings": "Settings",
-        "unarchive": "Unarchive"
+        "settings": "Settings"
       },
       "view-active": "View Active",
       "view-all": "View All",
@@ -143,9 +143,9 @@
       "search": "Buscar",
       "search-people": "Buscar Personas",
       "tooltips": {
+        "activate": "Activar",
         "archive": "Archivar",
-        "settings": "Ajustes",
-        "unarchive": "Desarchivar"
+        "settings": "Ajustes"
       },
       "view-active": "Ver Activo",
       "view-all": "Ver Todo",

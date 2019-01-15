@@ -23,6 +23,7 @@ entities:
       - name: second-last-name
         type: string
         min-length: 1
+        required: false
         length: medium
         required: false
       - name: gender

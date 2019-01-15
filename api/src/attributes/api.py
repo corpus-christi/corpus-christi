@@ -7,7 +7,7 @@ from marshmallow import ValidationError
 
 from . import attributes
 from ..people.models import Person, Account
-from .models import Attribute, AttributeSchema, Enumerated_Value, Enumerated_ValueSchema, Person_Attribute, Person_AttributeSchema
+from .models import Attribute, AttributeSchema, EnumeratedValue, EnumeratedValueSchema, PersonAttribute, PersonAttributeSchema
 from .. import db
 
 
@@ -20,14 +20,25 @@ attribute_schema = AttributeSchema()
 @jwt_required
 def create_attribute():
     try:
-        valid_attribute = attribute_schema.load(request.json)
+        valid_attribute = attribute_schema.load(request.json['attribute'])
+        valid_enumerated_values = enumerated_value_schema.load(
+            request.json['enumeratedValues'], many=True)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
     new_attribute = Attribute(**valid_attribute)
     db.session.add(new_attribute)
     db.session.commit()
-    return jsonify(attribute_schema.dump(new_attribute)), 201
+
+    for enumerated_value in valid_enumerated_values:
+        enumerated_value = EnumeratedValue(**enumerated_value)
+        enumerated_value.attribute_id = new_attribute.id
+        db.session.add(enumerated_value)
+
+    db.session.commit()
+    result = db.session.query(Attribute).filter_by(id=new_attribute.id).first()
+    result.enumerated_values = result.enumerated_values
+    return jsonify(attribute_schema.dump(result)), 201
 
 
 @attributes.route('/attributes')
@@ -85,9 +96,9 @@ def activate_attribute(attribute_id):
     return jsonify(attribute_schema.dump(attribute))
 
 
-# ---- Enumerated_Value
+# ---- EnumeratedValue
 
-enumerated_value_schema = Enumerated_ValueSchema()
+enumerated_value_schema = EnumeratedValueSchema()
 
 
 @attributes.route('/enumerated_values', methods=['POST'])
@@ -98,7 +109,7 @@ def create_enumerated_value():
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    new_enumerated_value = Enumerated_Value(**valid_enumerated_value)
+    new_enumerated_value = EnumeratedValue(**valid_enumerated_value)
     db.session.add(new_enumerated_value)
     db.session.commit()
     return jsonify(enumerated_value_schema.dump(new_enumerated_value)), 201
@@ -107,14 +118,14 @@ def create_enumerated_value():
 @attributes.route('/enumerated_values')
 @jwt_required
 def read_all_enumerated_values():
-    result = db.session.query(Enumerated_Value).all()
+    result = db.session.query(EnumeratedValue).all()
     return jsonify(enumerated_value_schema.dump(result, many=True))
 
 
 @attributes.route('/enumerated_values/<enumerated_value_id>')
 @jwt_required
 def read_one_enumerated_value(enumerated_value_id):
-    result = db.session.query(Enumerated_Value).filter_by(
+    result = db.session.query(EnumeratedValue).filter_by(
         id=enumerated_value_id).first()
     return jsonify(enumerated_value_schema.dump(result))
 
@@ -128,7 +139,7 @@ def update_enumerated_value(enumerated_value_id):
         return jsonify(err.messages), 422
 
     enumerated_value = db.session.query(
-        Enumerated_Value).filter_by(id=enumerated_value_id).first()
+        EnumeratedValue).filter_by(id=enumerated_value_id).first()
 
     for key, val in valid_enumerated_value.items():
         setattr(enumerated_value, key, val)
@@ -141,7 +152,7 @@ def update_enumerated_value(enumerated_value_id):
 @jwt_required
 def deactivate_enumerated_value(enumerated_value_id):
     enumerated_value = db.session.query(
-        Enumerated_Value).filter_by(id=enumerated_value_id).first()
+        EnumeratedValue).filter_by(id=enumerated_value_id).first()
 
     setattr(enumerated_value, 'active', False)
 
@@ -154,10 +165,29 @@ def deactivate_enumerated_value(enumerated_value_id):
 @jwt_required
 def activate_enumerated_value(enumerated_value_id):
     enumerated_value = db.session.query(
-        Enumerated_Value).filter_by(id=enumerated_value_id).first()
+        EnumeratedValue).filter_by(id=enumerated_value_id).first()
 
     setattr(enumerated_value, 'active', True)
 
     db.session.commit()
 
     return jsonify(enumerated_value_schema.dump(enumerated_value))
+
+
+person_attribute_schema = PersonAttributeSchema()
+
+
+@attributes.route('/person_attributes', methods=['POST'])
+@jwt_required
+def create_person_attribute():
+    try:
+        valid_person_attribute = person_attribute_schema.load(request.json)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+
+    new_person_attribute = PersonAttribute(**valid_person_attribute)
+    db.session.add(new_person_attribute)
+    db.session.commit()
+    return jsonify(person_attribute_schema.dump(new_person_attribute)), 201
+
+
