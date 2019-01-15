@@ -110,6 +110,9 @@ def test_read_all_events_with_query(auth_client):
         if flip():
             query_string['location_id'] = 1
 
+        if flip():
+            query_string['include_assets'] = 1
+
         # THEN the response should match those flags
         resp = auth_client.get(url_for('events.read_all_events'), query_string=query_string)
         assert resp.status_code == 200
@@ -279,6 +282,16 @@ def test_update_invalid_event(auth_client):
     assert new_event.title == original_event.title
     assert new_event.start == original_event.start
     assert new_event.end == original_event.end
+
+@pytest.mark.smoke
+def test_update_missing_event(auth_client):
+    # GIVEN an empty database
+    # WHEN we attempt to edit an event
+    event = event_object_factory(auth_client.sqla)
+    resp = auth_client.patch(url_for('events.update_event', event_id=1), json=event)
+
+    # THEN the response code should be correct
+    assert resp.status_code == 404
 
 @pytest.mark.smoke
 def test_delete_event(auth_client):
@@ -615,6 +628,24 @@ def test_add_asset_to_event(auth_client):
     assert queried_event_asset_count == 1
 
 @pytest.mark.smoke
+def test_add_asset_to_invalid_event(auth_client):
+    # GIVEN a database with some events and assets
+    generate_locations(auth_client)
+    location_id = auth_client.sqla.query(Location.id).first()[0]
+    create_multiple_assets(auth_client.sqla, 1)
+    create_multiple_events(auth_client.sqla, 1)
+    # WHEN we create an asset to an event that doesn't exist
+    invalid_event_id = auth_client.sqla.query(Event.id).first()[0] + 1
+    asset_id = auth_client.sqla.query(Asset.id).first()[0]
+    url = url_for('events.add_asset_to_event', event_id=invalid_event_id, asset_id=asset_id)
+    resp = auth_client.post(url)
+    # THEN we expect the right status code
+    assert resp.status_code == 404
+    # THEN we don't expect the entry in the database's linking table
+    queried_event_asset_count = auth_client.sqla.query(EventAsset).filter(EventAsset.event_id == invalid_event_id, EventAsset.asset_id == asset_id).count()
+    assert queried_event_asset_count == 0
+
+@pytest.mark.smoke
 def test_remove_asset_from_event(auth_client):
     # GIVEN a database with some linked events and assets
     generate_locations(auth_client)
@@ -633,6 +664,26 @@ def test_remove_asset_from_event(auth_client):
     # THEN we expect the number of entries in the database's linking table to be one less
     new_link_count = auth_client.sqla.query(EventAsset).count()
     assert new_link_count == link_count - 1
+
+@pytest.mark.smoke
+def test_remove_unbooked_asset_from_event(auth_client):
+    # GIVEN a database with some linked events and assets
+    generate_locations(auth_client)
+    location_id = auth_client.sqla.query(Location.id).first()[0]
+    create_multiple_assets(auth_client.sqla, 5)
+    create_multiple_events(auth_client.sqla, 5)
+    create_events_assets(auth_client.sqla, 1)
+    link_count = auth_client.sqla.query(EventAsset).count()
+    # WHEN we unlink an asset from an event
+    invalid_event_id = 15000000000
+    asset_id = auth_client.sqla.query(Asset.id).first()[0]
+    url = url_for('events.remove_asset_from_event', event_id=invalid_event_id, asset_id=asset_id)
+    resp = auth_client.delete(url)
+    # THEN we expect the right status code
+    assert resp.status_code == 404
+    # THEN we expect the number of entries in the database's linking table to be one less
+    new_link_count = auth_client.sqla.query(EventAsset).count()
+    assert new_link_count == link_count
 
 
 # ---- Linking tables (event <-> team)

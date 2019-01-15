@@ -47,7 +47,7 @@
             >
               <v-icon small>delete</v-icon>
             </v-btn>
-            <span>{{ $t("actions.tooltips.archive") }}</span>
+            <span>{{ $t("actions.tooltips.remove") }}</span>
           </v-tooltip>
         </td>
       </template>

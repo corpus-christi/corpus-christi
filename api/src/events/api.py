@@ -17,7 +17,7 @@ def modify_entity(entity_type, schema, id, new_value_dict):
     item = db.session.query(entity_type).filter_by(id=id).first()
 
     if not item:
-        return jsonify(f"Event with id #{id} does not exist."), 404
+        return jsonify(f"Item with id #{id} does not exist."), 404
 
     for key, val in new_value_dict.items():
         setattr(item, key, val)
