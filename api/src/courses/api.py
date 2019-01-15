@@ -236,7 +236,7 @@ def read_active_state_course_offerings(active_state):
         query = result.filter_by(active=True).all()
     elif (active_state == 'inactive'):
         query = result.filter_by(active=False).all()
-    else: 
+    else:
         return 'Cannot filter course offerings with undefined state', 404
     return jsonify(course_offering_schema.dump(query, many=True))
 
@@ -268,15 +268,15 @@ def update_course_offering(course_offering_id):
 
 student_schema = StudentSchema()
 
-@courses.route('/students', methods=['POST'])
+@courses.route('/course_offerings/<student_id>', methods=['POST'])
 @jwt_required
-def create_student():
-    try:
-        valid_student = student_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
+def add_student_to_course_offering(student_id):
+
 
     new_student = Student(**valid_student)
+    new_student['student_id'] = student_id
+    new_student['offering_id'] = request.json['offering_id']
+
     db.session.add(new_student)
     db.session.commit()
     return jsonify(student_schema.dump(new_student)), 201
@@ -292,7 +292,7 @@ def read_all_students():
 @jwt_required
 def read_confirm_state_student(confirm_state):
     """
-    Note: There is no need to see active/inactive state of students 
+    Note: There is no need to see active/inactive state of students
     because it doesn't matter if a student is unconfirmed. """
     query = db.session.query(Student)
     if confirm_state == 'confirmed':
@@ -311,7 +311,7 @@ def read_one_student(student_id):
     return jsonify(student_schema.dump(result))
 
 
-## We don't want to delete students (for record keeping) 
+## We don't want to delete students (for record keeping)
 ## But we do want to be able to remove students from "self enroll" in a course offering
 ## by toggling active/inactive state
 @courses.route('/students/<student_id>', methods=['PATCH'])
