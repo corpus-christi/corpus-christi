@@ -326,31 +326,31 @@ def test_verify_password_account(auth_client):
 
 #   -----   Roles
 
-def role_object_factory():
-    """Cook up a fake role."""
-    role = {
-        'name_i18n': 'role.test_role',
-        'active' : True
-    }
-
-def create_role(sqla):
-    """Commit `n` new roles to the database. Return their IDs."""
-    role_schema = RoleSchema()
-
-    valid_role = role_schema.load(role_object_factory())
-
-    sqla.add(valid_role)
-    sqla.commit()
-
-
-def test_create_role(auth_client):
-    # GIVEN some randomly created role
-    create_role(auth_client.sqla)
-
-    # WHEN we retrieve them all
-    role = auth_client.sqla.query(Role).all()
-    # THEN we get the expected number
-    assert len(role) == 1
+# def role_object_factory():
+#     """Cook up a fake role."""
+#     role = {
+#         'name_i18n': 'role.test_role',
+#         'active' : True
+#     }
+#
+# def create_role(sqla):
+#     """Commit `n` new roles to the database. Return their IDs."""
+#     role_schema = RoleSchema()
+#
+#     valid_role = role_schema.load(role_object_factory())
+#
+#     sqla.add(valid_role)
+#     sqla.commit()
+#
+#
+# def test_create_role(auth_client):
+#     # GIVEN some randomly created role
+#     create_role(auth_client.sqla)
+#
+#     # WHEN we retrieve them all
+#     role = auth_client.sqla.query(Role).all()
+#     # THEN we get the expected number
+#     assert len(role) == 1
 
 # ---- Manager
 

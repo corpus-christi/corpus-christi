@@ -7,15 +7,15 @@ from marshmallow import ValidationError
 
 from . import people
 from .models import Person, Account, AccountSchema, Role, PersonSchema, RoleSchema, Manager, ManagerSchema
-from ..attributes.models import Attribute, AttributeSchema, Enumerated_Value, Enumerated_ValueSchema, Person_Attribute, Person_AttributeSchema
+from ..attributes.models import Attribute, AttributeSchema, EnumeratedValue, EnumeratedValueSchema, PersonAttribute, PersonAttributeSchema
 from .. import db
 
 # ---- Person
 
 person_schema = PersonSchema()
-person_attribute_schema = Person_AttributeSchema()
+person_attribute_schema = PersonAttributeSchema()
 attribute_schema = AttributeSchema(exclude=['active'])
-enumerated_value_schema = Enumerated_ValueSchema(exclude=['active'])
+enumerated_value_schema = EnumeratedValueSchema(exclude=['active'])
 
 
 @people.route('/persons/fields', methods=['GET'])
@@ -26,7 +26,7 @@ def read_person_fields():
     person_columns = Person.__table__.columns
     attributes = db.session.query(Attribute).filter_by(active=True).all()
     enumerated_values = db.session.query(
-        Enumerated_Value).filter_by(active=True).all()
+        EnumeratedValue).filter_by(active=True).all()
     attributes = attribute_schema.dump(attributes, many=True)
     enumerated_values = enumerated_value_schema.dump(
         enumerated_values, many=True)
@@ -63,7 +63,7 @@ def create_person():
     db.session.commit()
 
     for person_attribute in valid_person_attributes:
-        person_attribute = Person_Attribute(**person_attribute)
+        person_attribute = PersonAttribute(**person_attribute)
         person_attribute.person_id = new_person.id
         db.session.add(person_attribute)
 
@@ -103,13 +103,13 @@ def update_person(person_id):
         return jsonify(err.messages), 422
 
     for new_person_attribute in valid_person_attributes:
-        old_person_attribute = db.session.query(Person_Attribute).filter_by(
+        old_person_attribute = db.session.query(PersonAttribute).filter_by(
             person_id=person_id, attribute_id=new_person_attribute['attribute_id']).first()
         if old_person_attribute is not None:
             setattr(old_person_attribute, 'string_value',
                     new_person_attribute['string_value'])
         else:
-            new_person_attribute = Person_Attribute(**new_person_attribute)
+            new_person_attribute = PersonAttribute(**new_person_attribute)
             new_person_attribute.person_id = person_id
             db.session.add(new_person_attribute)
 
@@ -129,7 +129,6 @@ def update_person(person_id):
 @jwt_required
 def deactivate_person(person_id):
     person = db.session.query(Person).filter_by(id=person_id).first()
-    account = db.session.query(Account).filter_by(id=person.account_id).first()
 
     if person.account:
         account = db.session.query(Account).filter_by(

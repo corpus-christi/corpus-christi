@@ -13,9 +13,11 @@ entities:
       - name: name_i18n
         type: string
         length: locale
+        foreign-key: i18n_key.id
       - name: type_i18n
         type: string
         length: locale
+        foreign-key: i18n_key.id
       - name: seq
         type: integer
         required: true
@@ -23,7 +25,7 @@ entities:
       - name: active
         required: true
         type: boolean
-  - name: Enumerated_Value
+  - name: EnumeratedValue
     singular: enumerated_value
     plural: enumerated_values
     uri: /enumerated_values
@@ -39,10 +41,11 @@ entities:
       - name: value_i18n
         type: string
         length: locale
+        foreign-key: i18n_key.id
       - name: active
         required: true
         type: boolean
-  - name: Person_Attribute
+  - name: PersonAttribute
     singular: person_attribute
     plural: person_attributes
     uri: /person_attributes
@@ -70,6 +73,6 @@ entities:
         related-model: Attribute
         backref: person_attributes
       - name: enumerated_values
-        related-model: Enumerated_Value
+        related-model: EnumeratedValue
         backref: person_attributes
     

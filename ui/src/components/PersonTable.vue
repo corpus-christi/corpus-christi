@@ -19,14 +19,16 @@
           ></v-text-field>
         </v-flex>
         <v-flex md3>
-          <v-select
-            hide-details
-            solo
-            single-line
-            :items="viewOptions"
-            v-model="viewStatus"
-          >
-          </v-select>
+          <div data-cy="view-dropdown">
+            <v-select
+              hide-details
+              solo
+              single-line
+              :items="viewOptions"
+              v-model="viewStatus"
+            >
+            </v-select>
+          </div>
         </v-flex>
         <v-flex shrink justify-self-end>
           <v-btn
@@ -57,10 +59,10 @@
             >account_circle</v-icon
           >
         </td>
-        <td>{{ props.item.firstName }}</td>
-        <td>{{ props.item.lastName }}</td>
-        <td class="hidden-sm-and-down">{{ props.item.email }}</td>
-        <td>{{ props.item.phone }}</td>
+        <td :data-cy="'first-name-'+props.item.id">{{ props.item.firstName }}</td>
+        <td :data-cy="'last-name-'+props.item.id">{{ props.item.lastName }}</td>
+        <td class="hidden-sm-and-down" :data-cy="'email-'+props.item.id">{{ props.item.email }}</td>
+        <td :data-cy="'phone-'+props.item.id">{{ props.item.phone }}</td>
         <td class="text-no-wrap">
           <v-tooltip bottom>
             <v-btn
@@ -84,7 +86,7 @@
               color="primary"
               slot="activator"
               v-on:click="adminPerson(props.item)"
-              data-cy="add-account"
+              data-cy="account-settings"
             >
               <v-icon small>settings</v-icon>
             </v-btn>
@@ -103,7 +105,7 @@
             >
               <v-icon small>archive</v-icon>
             </v-btn>
-            <span>{{ $t("actions.tooltips.deactivate") }}</span>
+            <span>{{ $t("actions.tooltips.archive") }}</span>
           </v-tooltip>
           <v-tooltip bottom>
             <v-btn
@@ -118,7 +120,7 @@
             >
               <v-icon small>undo</v-icon>
             </v-btn>
-            <span>{{ $t("actions.tooltips.deactivate") }}</span>
+            <span>{{ $t("actions.tooltips.activate") }}</span>
           </v-tooltip>
         </td>
       </template>
@@ -138,6 +140,7 @@
         v-bind:initialData="personDialog.person"
         v-bind:saveLoading="personDialog.saveLoading"
         v-bind:addMoreLoading="personDialog.addMoreLoading"
+        v-bind:attributes="personDialog.attributes"
         v-on:cancel="cancelPerson"
         v-on:save="savePerson"
         v-on:add-another="addAnother"
@@ -172,6 +175,7 @@ export default {
         editMode: false,
         saveLoading: false,
         addMoreLoading: false,
+        attributes: [],
         person: {}
       },
 
@@ -223,8 +227,16 @@ export default {
     },
     viewOptions() {
       return [
-        { text: this.$t("actions.view-active"), value: "viewActive" },
-        { text: this.$t("actions.view-archived"), value: "viewArchived" },
+        {
+          text: this.$t("actions.view-active"),
+          value: "viewActive",
+          class: "view-active"
+        },
+        {
+          text: this.$t("actions.view-archived"),
+          value: "viewArchived",
+          class: "view-archived"
+        },
         { text: this.$t("actions.view-all"), value: "viewAll" }
       ];
     },
@@ -312,15 +324,15 @@ export default {
 
     constructPersonData(person) {
       var attributes = [];
-      if(person.attributesInfo) {
+      if (person.attributesInfo) {
         attributes = person.attributesInfo;
       }
       delete person["attributesInfo"];
       delete person["accountInfo"];
       return {
-        "person": person,
-        "attributesInfo": attributes
-      }
+        person: person,
+        attributesInfo: attributes
+      };
     },
 
     addAnother(person) {
@@ -424,7 +436,9 @@ export default {
       this.$http
         .get("/api/v1/people/persons/fields")
         .then(resp => {
-          console.log(resp);
+          if (resp.data.person_attributes) {
+            this.personDialog.attributes = resp.data.person_attributes;
+          }
         })
         .catch(err => console.error("FAILURE", err.response));
     }
