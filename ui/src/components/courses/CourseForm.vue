@@ -41,8 +41,10 @@ export default {
   name: "CourseForm",
   computed: {
     items() {
-      return this.coursesPool.filter(item => item.active && item.id != this.course.id);
-    },
+      return this.coursesPool.filter(
+        item => item.active && item.id != this.course.id
+      );
+    }
   },
   props: {
     course: Object,

@@ -51,7 +51,7 @@ export default {
     },
     coursesPool: {
       type: Array,
-      default: []
+      default: () => []
     }
   },
   data: function() {

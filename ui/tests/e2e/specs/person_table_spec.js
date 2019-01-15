@@ -8,8 +8,7 @@ describe("PersonTable Test", function() {
     cy.get("[data-cy=login]").click();
     cy.url().should("include", "/admin");
     //open nav drawer
-    cy.get('[data-cy=open-navigation]')
-      .click();
+    cy.get("[data-cy=open-navigation]").click();
     //goes to the people page
     cy.get("[data-cy=people]").click();
   });
