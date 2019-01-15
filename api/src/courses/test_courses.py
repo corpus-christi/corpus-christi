@@ -57,7 +57,6 @@ def create_multiple_courses(sqla, n=10):
         new_courses.append(course_model)
     sqla.add_all(new_courses)
     sqla.commit()
-    print(new_courses)
 
 def create_multiple_courses_active(sqla, n=10):
     """Commits the number of courses to the DB."""
@@ -70,7 +69,6 @@ def create_multiple_courses_active(sqla, n=10):
         new_courses.append(course_model)
     sqla.add_all(new_courses)
     sqla.commit()
-    print(new_courses)
 
 def create_multiple_courses_inactive(sqla, n=10):
     """Commits the number of courses to the DB."""
@@ -160,6 +158,7 @@ def prerequisite_object_factory(course_id, prereq_id):
     return prerequisites
 
 
+<<<<<<< HEAD
 # def create_multiple_prerequisites(sqla):
 #     """Commits the number of prerequisites to the DB."""
 #     courses = sqla.query(Course).all()
@@ -170,6 +169,17 @@ def prerequisite_object_factory(course_id, prereq_id):
 #         new_prerequisites.append(Prerequisite(**valid_prerequisites))
 #     sqla.add_all(new_prerequisites)
 #     sqla.commit()
+=======
+def create_multiple_prerequisites(sqla):
+    """Commits the number of prerequisites to the DB."""
+    courses = sqla.query(Course).all()
+    new_prerequisites = []
+    for i in range(len(courses)-2):
+        courses[i].prerequisites.append(courses[i+1])
+        new_prerequisites.append(courses[i])
+    sqla.add_all(new_prerequisites)
+    sqla.commit()
+>>>>>>> app-courses
 
 def courses_diploma_object_factory():
     """Cook up a fake diploma."""
@@ -250,7 +260,6 @@ def create_class_meetings(sqla, n=6):
 def diploma_award_object_factory():
     """Cook up a fake diploma award"""
     fake = faker()
-    print(fake.past_date(start_date="-30d"))
     diploma_award = {
         'when': str(fake.past_date(start_date="-30d"))
     }
@@ -264,13 +273,10 @@ def create_diploma_awards(sqla, n):
     for i in range(n):
         diploma = diplomas[random.randint(0, len(diplomas)-1)]
         student = students[random.randint(0, len(students)-1)]
-        # print(diploma.when)
         student.diplomas.append(diploma)
         new_diploma_awards.append(student)
     sqla.add_all(new_diploma_awards)
     sqla.commit()
-    for student in students:
-        print(student.diplomas)
 
 
 def create_class_attendance(sqla, n):
@@ -285,8 +291,6 @@ def create_class_attendance(sqla, n):
         new_class_attendance.append(student)
     sqla.add_all(new_class_attendance)
     sqla.commit()
-    # for student in students:
-        # print(student.diplomas)
 
 # ---- Course
 
@@ -300,7 +304,7 @@ def test_create_course(auth_client):
         assert resp.status_code == 201
     # THEN assert that entry is now in database
     assert auth_client.sqla.query(Course).count() == count
-    
+
 # Test getting all courses from the database
 def test_read_all_courses(auth_client):
     # GIVEN existing (active and inactive) courses in database
@@ -334,7 +338,7 @@ def test_read_all_inactive_courses(auth_client):
     inactive_courses = auth_client.sqla.query(Course).filter_by(active=False).all()
     # THEN assert all active courses are listed
     assert len(inactive_courses) == count_inactive
-    
+
 # Test reading a single course from the database
 def test_read_one_course(auth_client):
     # GIVEN one course in the database
@@ -342,9 +346,9 @@ def test_read_one_course(auth_client):
     create_multiple_courses(auth_client.sqla, count)
     # WHEN call to database
     courses = auth_client.sqla.query(Course).all()
-    # THEN assert entry called is only entry returned 
+    # THEN assert entry called is only entry returned
     for course in courses:
-        resp = auth_client.get(url_for('courses.read_one_course', course_id=course.id)) 
+        resp = auth_client.get(url_for('courses.read_one_course', course_id=course.id))
         # THEN we find a matching class
         assert resp.status_code == 200
         assert resp.json['name'] == course.name
@@ -359,7 +363,7 @@ def test_deactivate_course(auth_client):
     courses = auth_client.sqla.query(Course).all()
     # WHEN course is changed to inactive
     for course in courses:
-        resp = auth_client.patch(url_for('courses.deactivate_course', course_id=course.id), 
+        resp = auth_client.patch(url_for('courses.deactivate_course', course_id=course.id),
             json={'active': False})
         # THEN assert course is inactive
         assert resp.status_code == 200
@@ -373,7 +377,7 @@ def test_reactivate_course(auth_client):
     courses = auth_client.sqla.query(Course).all()
     # WHEN course is changed to active
     for course in courses:
-        resp = auth_client.patch(url_for('courses.reactivate_course', course_id=course.id), 
+        resp = auth_client.patch(url_for('courses.reactivate_course', course_id=course.id),
             json={'active': True})
         # THEN assert course is active
         assert resp.status_code == 200
@@ -423,7 +427,7 @@ def test_create_prerequisite(auth_client):
     course = auth_client.sqla.query(Course)[0]
     prereq = auth_client.sqla.query(Course)[1]
     # WHEN course requires previous attendance to another course
-    resp = auth_client.post(url_for('courses.create_prerequisite', course_id=course.id), 
+    resp = auth_client.post(url_for('courses.create_prerequisite', course_id=course.id),
         json=prerequisite_object_factory(course.id,prereq.id))
     assert resp.status_code == 201
     # THEN asssert course is prerequisite
@@ -543,7 +547,7 @@ def test_replace_course_offering(auth_client):
 """
 
 def test_update_course_offering(auth_client):
-    # GIVEN an existing (active or inactive) course offering 
+    # GIVEN an existing (active or inactive) course offering
     create_multiple_courses(auth_client.sqla, 1)
     count = random.randint(3,11)
     create_multiple_course_offerings(auth_client.sqla, count)
@@ -566,6 +570,7 @@ def test_delete_course_offering(auth_client):
     # THEN
     assert True == False
 """
+<<<<<<< HEAD
 # ---- Student
 
 
@@ -615,3 +620,7 @@ def test_delete_student(client, db):
     # WHEN
     # THEN
     assert True == False
+=======
+
+open
+>>>>>>> app-courses
