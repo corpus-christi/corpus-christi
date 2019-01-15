@@ -89,25 +89,59 @@ def test_replace_event(auth_client):
 
     for event in events:
         # THEN
-        print(event.title)
-        new_event = event_object_factory(auth_client.sqla)
-        print(new_event)
-
-        resp = auth_client.get(url_for('events.replace_event', event_id = event.id), json = new_event)
+        resp = auth_client.patch(url_for('events.replace_event', event_id = event.id), json = event_object_factory(auth_client.sqla))
         
-        print(resp.status_code)
-        # print(resp.json['title'])
-        # print event = auth_client
+        assert resp.status_code == 200
         assert resp.json['id'] == event.id
         assert resp.json['title'] != event.title
     
 
-@pytest.mark.xfail()
+@pytest.mark.smoke
 def test_update_event(auth_client):
     # GIVEN
+    count = random.randint(3,11)
+    create_multiple_events(auth_client.sqla, count)
+
     # WHEN
-    # THEN
-    assert True == False
+    events = auth_client.sqla.query(Event).all()
+
+    for event in events:
+        # THEN
+        payload = {}
+        new_event = event_object_factory(auth_client.sqla)
+
+        flips = (flip(), flip(), flip(), flip(), flip(), flip())
+
+        print(new_event)
+        if flips[0]:
+            payload['title'] = new_event['title']
+        if flips[1]:
+            payload['start'] = new_event['start']
+        if flips[2]:
+            payload['end'] = new_event['end']
+        if flips[3]:
+            payload['active'] = new_event['active']
+        if flips[4] and 'description' in new_event.keys():
+            payload['description'] = new_event['description']
+        if flips[5] and 'location_id' in new_event.keys():
+            payload['location_id'] = new_event['location_id']
+
+        resp = auth_client.patch(url_for('events.update_event', event_id = event.id), json=payload)
+
+        assert resp.status_code == 200
+
+        if flips[0]:
+            assert resp.json['title'] == payload['title']
+        if flips[1]:
+            assert resp.json['start'] == payload['start'].replace(' ', 'T') + "+00:00"
+        if flips[2]:
+            assert resp.json['end'] == payload['end'].replace(' ', 'T') + "+00:00"
+        if flips[3]:
+            assert resp.json['active'] == payload['active']
+        if flips[4] and 'description' in new_event.keys():
+            assert resp.json['description'] == payload['description']
+        if flips[5] and 'location_id' in new_event.keys():
+            assert resp.json['location'] == payload['location_id']
     
 
 @pytest.mark.smoke
