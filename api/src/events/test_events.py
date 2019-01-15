@@ -626,6 +626,10 @@ def test_add_asset_to_event(auth_client):
     # THEN we expect the entry in the database's linking table
     queried_event_asset_count = auth_client.sqla.query(EventAsset).filter(EventAsset.event_id == event_id, EventAsset.asset_id == asset_id).count()
     assert queried_event_asset_count == 1
+    # WHEN we create the eventAsset again
+    resp = auth_client.post(url)
+    # THEN we expect an error code
+    assert resp.status_code == 422
 
 @pytest.mark.smoke
 def test_add_asset_to_invalid_event(auth_client):
