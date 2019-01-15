@@ -99,7 +99,7 @@
 
 <script>
 import CourseOfferingForm from "./CourseOfferingForm";
-import CourseOfferingAdminActions from "./adminActions/CourseOfferingAdminActions";
+import CourseOfferingAdminActions from "./actions/CourseOfferingAdminActions";
 
 export default {
   name: "CourseOfferingsTable",
