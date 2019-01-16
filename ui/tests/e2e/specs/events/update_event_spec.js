@@ -22,8 +22,14 @@ describe("Update Event Test", function() {
   });
 
   it("THEN: Event title should be updated", function() {
+    // Switch to see all events on one page
+    cy.get(
+      ".v-datatable__actions__select > .v-input > .v-input__control > .v-input__slot > .v-select__slot"
+    ).click();
+    cy.contains("Todos").click();
+
     // Check for new title in table
-    cy.get("tbody > :nth-child(1) > :nth-child(1)").contains(" V2");
+    cy.get(":nth-child(1) > :nth-child(1)").contains(" V2");
   });
 
   it("AND: The event description should be updated", function() {

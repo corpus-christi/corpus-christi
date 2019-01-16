@@ -1,4 +1,3 @@
-// TODO: Skeleton done, needs more extensive tests
 describe("Duplicate Event Test", function() {
   before(() => {
     cy.login();
@@ -9,8 +8,9 @@ describe("Duplicate Event Test", function() {
   });
 
   it("WHEN: Event planner duplicates an event", function() {
-    cy.get("[data-cy=duplicate]").click();
+    cy.get("[data-cy=duplicate]").eq(0).click();
 
+    // Pick a new start and end date
     cy.get("[data-cy=start-date-menu").click();
     cy.get(":nth-child(5) > :nth-child(2) > .v-btn > .v-btn__content").click();
 
@@ -22,7 +22,13 @@ describe("Duplicate Event Test", function() {
     cy.get("[data-cy=form-save]").click();
   });
 
-  it("THEN: A new event is created with a different time", function() {
-    cy.get("tbody").contains("28/1/2019 14:45");
+  it("THEN: A new event is created with a different date", function() {
+    // Switch to see all events on one page
+    cy.get(
+      ".v-datatable__actions__select > .v-input > .v-input__control > .v-input__slot > .v-select__slot"
+    ).click();
+    cy.contains("Todos").click();
+
+    cy.get("tbody").eq(2).contains("28/1/2019");
   });
 });
