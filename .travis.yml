@@ -11,16 +11,16 @@ matrix:
         include:
                  language: node_js
                         node_js: "11"
-                                before_install:
-                                        - echo "hi"        
+                        #before_install:
+                        #               - echo "hi"        
                                         #yarn cache clean
                                   #- yarn install
                                   # - language: python
         inculde: 
                 language: python
                         python: "3.7"
-                                before_install:
-                                        - echo "chris"
+                        #       before_install:
+                        #               - echo "chris"
                                           #hello
 script:
         - echo "Hello World"
