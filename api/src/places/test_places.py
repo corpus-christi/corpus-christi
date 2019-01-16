@@ -362,12 +362,12 @@ def test_delete_location(auth_client):
     create_multiple_addresses(auth_client.sqla, count)
     create_multiple_locations(auth_client.sqla, count)
 
-    #WHEN
+    # WHEN
     locations = auth_client.sqla.query(Location).all()
     deleted = 0
 
     for location in locations:
-        #THEN
+        # THEN
         if flip():
             resp = auth_client.delete(url_for('places.delete_location', location_id = location.id))
             deleted += 1
@@ -375,5 +375,16 @@ def test_delete_location(auth_client):
 
     locations = auth_client.sqla.query(Location).all()
     assert len(locations) == count - deleted
+
+
+@pytest.mark.smoke
+def test_delete_location_invalid(auth_client):
+    # GIVEN
+    
+    # WHEN
+    
+    # THEN
+    resp = auth_client.delete(url_for('places.delete_location', location_id = 1))
+    assert resp.status_code == 404
 
 
