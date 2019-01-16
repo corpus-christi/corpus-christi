@@ -1207,7 +1207,20 @@ def test_add_team_member(auth_client):
     resp = auth_client.post(url_for('events.add_team_member', team_id=team_id, member_id=member_id), json={'active': flip()})
     # THEN we expect an error status code
     assert resp.status_code == 422
+    # WHEN we link an invalid person
+    resp = auth_client.post(url_for('events.add_team_member', team_id=team_id, member_id=999999999), json={'active': flip()})
+    # THEN we expect an error status code
+    assert resp.status_code == 404
 
+@pytest.mark.smoke
+def test_add_team_member_invalid(auth_client):
+    # GIVEN a database with only some members
+    create_multiple_people(auth_client.sqla, 5)
+    member_id = auth_client.sqla.query(Person.id).first()[0]
+    # WHEN we try to link a non-existant team to a member
+    resp = auth_client.post(url_for('events.add_team_member', team_id=1, member_id=member_id))
+    # THEN we expect an error code
+    assert resp.status_code == 422
 
 @pytest.mark.smoke
 def test_modify_team_member(auth_client):
@@ -1268,6 +1281,10 @@ def test_delete_team_member(auth_client):
     resp = auth_client.delete(url_for('events.delete_team_member', team_id=team_member.team_id, member_id=team_member.member_id))
     # THEN we expect an error
     assert resp.status_code == 422
+    # WHEN we unlink using an invalid person
+    resp = auth_client.delete(url_for('events.delete_team_member', team_id=9999999999, member_id=team_member.member_id))
+    # THEN we expect an error
+    assert resp.status_code == 404
 
 
 @pytest.mark.smoke
