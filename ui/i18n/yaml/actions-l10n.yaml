@@ -63,7 +63,7 @@ actions:
   view-archived:
     _desc: View all inactive
     en: View Archived
-    es: Ver Archivo
+    es: Ver Archivado
   view-active:
     _desc: View all active
     en: View Active
@@ -72,14 +72,6 @@ actions:
     _desc: View all
     en: View All
     es: Ver Todo
-  search-people:
-    _desc: Search for people
-    en: Search People
-    es: Buscar Personas
-  view-inactive:
-    _desc: View all inactive people
-    en: View Inactive
-    es: Ver Inactivo
   tooltips:
     settings:
       _desc: Change settings
@@ -88,6 +80,12 @@ actions:
     archive:
       en: Archive
       es: Archivar
+<<<<<<< HEAD
+    reactivate:
+      en: Unarchive
+      es: Desarchivar
+=======
     activate:
       en: Activate
       es: Activar
+>>>>>>> feature/courses-28_manually-enter-students

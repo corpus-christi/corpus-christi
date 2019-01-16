@@ -16,6 +16,9 @@ def flip():
     """Return true or false randomly."""
     return random.choice((True, False))
 
+# --- Population Data
+
+# --- Course
 
 def course_object_factory():
     """Cook up a fake course."""
@@ -83,6 +86,7 @@ def create_multiple_courses_inactive(sqla, n=10):
     sqla.add_all(new_courses)
     sqla.commit()
 
+# --- Course_Offering
 
 def course_offerings_object_factory(course_id):
     """Cook up a fake course."""
@@ -150,6 +154,16 @@ def create_multiple_course_offerings_inactive(sqla, n=3):
     sqla.add_all(new_course_offerings)
     sqla.commit()
 
+# --- Prerequisites
+
+def prerequisite_object_factory(course_id, prereq_id):
+    """Cook up a fake prerequisite."""
+    prerequisites = {
+    'courseId': course_id,
+    'prereqId': prereq_id
+    }
+    return prerequisites
+
 def create_multiple_prerequisites(sqla):
     """Commits the courses - 1 number of prerequisites to the DB."""
     courses = sqla.query(Course).all()
@@ -159,6 +173,8 @@ def create_multiple_prerequisites(sqla):
         new_prerequisites.append(courses[i])
     sqla.add_all(new_prerequisites)
     sqla.commit()
+
+# --- Diploma
 
 def courses_diploma_object_factory():
     """Cook up a fake diploma."""
@@ -181,6 +197,8 @@ def create_multiple_diplomas(sqla, n=20):
         courses[i%len(courses)].diplomas.append(diploma)
     sqla.add_all(new_courses)
     sqla.commit()
+
+# --- Student
 
 def student_object_factory(offering_id, student_id):
     """Cook up a fake student"""
@@ -206,6 +224,32 @@ def create_multiple_students(sqla, n=6):
     sqla.add_all(new_students)
     sqla.commit()
 
+# --- Diploma_Award
+
+def diploma_award_object_factory(diploma_id, student_id):
+    """Cook up a fake diploma award"""
+    fake = Faker()
+    diploma_award = {
+        'studentId': student_id,
+        'diplomaId': diploma_id,
+        'when': str(fake.past_date(start_date="-30d"))
+    }
+    return diploma_award
+
+def create_diploma_awards(sqla, n):
+    """Commits the number of diploma awards to the DB."""
+    students = sqla.query(Student).all()
+    diplomas = sqla.query(Diploma).all()
+    diploma_award_schema = Diploma_AwardedSchema()
+    new_diploma_awards = []
+    for student in students:
+        diploma = diplomas[random.randint(0,len(diplomas)-1)]
+        valid_diploma_awarded = diploma_award_schema.load(diploma_award_object_factory(diploma.id,student.id))
+        new_diploma_awards.append(Diploma_Awarded(**valid_diploma_awarded))
+    sqla.add_all(new_diploma_awards)
+    sqla.commit()
+
+# --- Class_Meeting
 
 def class_meeting_object_factory(teacher, offering_id, location=1):
     """Cook up a fake class meeting"""
@@ -228,7 +272,7 @@ def create_class_meetings(sqla, n=6):
     for i in range(n):
         teacher = people[random.randint(0,len(people)-1)].id
         offering = course_offerings[i%len(course_offerings)].id
-        location = 1#locations[random.randint(0,len(locations)-1)].id
+        location = locations[random.randint(0,len(locations)-1)].id
 
         valid_class_meeting = class_meeting_schema.load(class_meeting_object_factory(teacher, offering, location))
         class_meeting = Class_Meeting(**valid_class_meeting)
@@ -236,27 +280,7 @@ def create_class_meetings(sqla, n=6):
     sqla.add_all(new_class_meetings)
     sqla.commit()
 
-def diploma_award_object_factory():
-    """Cook up a fake diploma award"""
-    fake = faker()
-    diploma_award = {
-        'when': str(fake.past_date(start_date="-30d"))
-    }
-
-def create_diploma_awards(sqla, n):
-    """Commits the number of diploma awards to the DB."""
-    students = sqla.query(Student).all()
-    diplomas = sqla.query(Diploma).all()
-    # diploma_award_schema = Diploma_AwardedSchema()
-    new_diploma_awards = []
-    for i in range(n):
-        diploma = diplomas[random.randint(0, len(diplomas)-1)]
-        student = students[random.randint(0, len(students)-1)]
-        student.diplomas.append(diploma)
-        new_diploma_awards.append(student)
-    sqla.add_all(new_diploma_awards)
-    sqla.commit()
-
+# --- Class_Attendance
 
 def create_class_attendance(sqla, n):
     """Commits the number of class attendances to the DB."""
@@ -407,7 +431,7 @@ def test_create_prerequisite(auth_client):
     for i in range(1,len(courses)-1):
         prereq_ids.append(courses[i].id)
     # WHEN course requires previous attendance to another course
-    resp = auth_client.post(url_for('courses.create_prerequisite', course_id=course.id), 
+    resp = auth_client.post(url_for('courses.create_prerequisite', course_id=course.id),
         json={ 'prerequisites': prereq_ids})
     assert resp.status_code == 201
     # THEN asssert course is prerequisite
@@ -444,7 +468,7 @@ def test_read_one_course_prerequisites(auth_client):
     #THEN list all prerequisites of given course
     for i in range(len(courses)-1):
         assert courses[i].prerequisites == [courses[i+1]]
-    
+
 
 def test_update_prerequisite(auth_client):
     # GIVEN an existing and available course with an existing prereq
@@ -454,7 +478,7 @@ def test_update_prerequisite(auth_client):
     courses = auth_client.sqla.query(Course).all()
     # WHEN new prereq for existing course is required
     for course in courses:
-        resp = auth_client.patch(url_for('courses.update_prerequisite', course_id=course.id), 
+        resp = auth_client.patch(url_for('courses.update_prerequisite', course_id=course.id),
             json={'prerequisites':[1]})
         assert resp.status_code == 200
     # THEN existing course has new prereq in place of existing prereq
