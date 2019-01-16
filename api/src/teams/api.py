@@ -8,6 +8,8 @@ from flask_mail import Message
 from marshmallow import ValidationError
 from sqlalchemy import func
 
+from . import teams
+
 # ---- Team
 
 @teams.route('/', methods=['POST'])

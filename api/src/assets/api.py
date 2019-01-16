@@ -8,6 +8,8 @@ from flask_mail import Message
 from marshmallow import ValidationError
 from sqlalchemy import func
 
+from . import assets
+
 # ---- Asset
 
 @assets.route('/assets', methods=['POST'])

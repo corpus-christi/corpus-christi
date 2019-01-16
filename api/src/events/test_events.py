@@ -8,7 +8,10 @@ from flask_jwt_extended import create_access_token
 from werkzeug.datastructures import Headers
 from werkzeug.security import check_password_hash
 
-from .models import Asset, AssetSchema, Event, EventSchema, Team, TeamSchema, EventParticipant, EventParticipantSchema, EventPerson, EventPersonSchema, TeamMember, TeamMemberSchema, EventAsset, EventAssetSchema, EventTeam, EventTeamSchema
+from .models import Event, EventPerson, EventAsset, EventParticipant, EventTeam, EventSchema, EventTeamSchema, EventPersonSchema, EventParticipantSchema
+from ..assets.models import Asset, AssetSchema
+from ..teams.models import Team, TeamMember, TeamSchema, TeamMemberSchema
+from ..emails.models import EmailSchema
 from ..places.models import Location, Country
 from ..people.models import Person
 from .create_event_data import flip, fake, create_multiple_events, event_object_factory, email_object_factory, create_multiple_assets, create_multiple_teams, create_events_assets, create_events_teams, create_events_persons, create_events_participants, create_teams_members, get_team_ids, asset_object_factory, team_object_factory
@@ -18,6 +21,12 @@ from ..people.test_people import create_multiple_people
 fake = Faker()
 
 # ---- Event
+
+def generate_locations(auth_client):
+    Country.load_from_file()
+    create_multiple_areas(auth_client.sqla, 1)
+    create_multiple_addresses(auth_client.sqla, 1)
+    create_multiple_locations(auth_client.sqla, 2)
 
 @pytest.mark.smoke
 def test_create_event(auth_client):

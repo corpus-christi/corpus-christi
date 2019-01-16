@@ -8,6 +8,14 @@ from flask_mail import Message
 from marshmallow import ValidationError
 from sqlalchemy import func
 
+from . import events
+from .models import Event, EventPerson, EventAsset, EventParticipant, EventTeam, EventSchema, EventTeamSchema, EventPersonSchema, EventParticipantSchema
+from ..assets.models import Asset, AssetSchema
+from ..teams.models import Team, TeamMember, TeamSchema, TeamMemberSchema
+from ..emails.models import EmailSchema
+from ..people.models import Person, PersonSchema
+from .. import db, mail
+
 def modify_entity(entity_type, schema, id, new_value_dict):
     item = db.session.query(entity_type).filter_by(id=id).first()
 
