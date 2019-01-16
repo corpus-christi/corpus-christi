@@ -5,11 +5,16 @@
     </v-card-title>
     <v-card-text>
       <form>
-        <entity-search course v-model="course.name" />
-
+        <v-autocomplete 
+          v-model="courseOffering.course_id" 
+          :items="availableCourses" 
+          item-value="id" 
+          item-text="name"
+          v-bind:label="$t('courses.course')"
+          ></v-autocomplete>
         <!-- description -->
         <v-textarea
-          v-model="course.description"
+          v-model="courseOffering.description"
           v-bind:label="$t('courses.description')"
           name="description"
         ></v-textarea>
@@ -99,7 +104,7 @@
         <v-text-field v-model="location" v-bind:label="$t('courses.choose-location')" name="location"></v-text-field>
 
         <!-- max size TODO: integer validation-->
-        <v-text-field v-model="course.max_size" v-bind:label="$t('courses.max-size')" name="max-size"></v-text-field>
+        <v-text-field v-model="courseOffering.max_size" v-bind:label="$t('courses.max-size')" name="max-size"></v-text-field>
       </form>
     </v-card-text>
     <v-card-actions>
@@ -136,27 +141,19 @@ export default {
   data: function() {
     return {
       availableCourses: [],
-      prereqs: [],
       location: "",
       teacher: "",
-      description: "",
-      maxSize: 0,
       time: "",
-      course_id: 0,
       dates: [],
       menu: false,
       
       showDatePicker: false,
       timeModal: false,
       
-      course: {}
+      courseOffering: {},
     };
   },
   computed: {
-    items() {
-      return this.availableCourses.filter(item => item.id != this.course.id);
-    },
-    
     title() {
       return this.editMode ? this.$t("actions.edit") : this.$t("courses.new");
     },
@@ -180,11 +177,11 @@ export default {
       if (isEmpty(courseProp)) {
         this.clear();
       } else {
-        this.course = courseProp;
-        if (this.course.when != null) {
-          this.course.when = new Date(this.course.when);
-          this.startTime = this.getTimeFromTimestamp(this.course.when);
-          this.startDate = this.getDateFromTimestamp(this.course.when);
+        this.courseOffering = courseProp;
+        if (this.courseOffering.when != null) {
+          this.courseOffering.when = new Date(this.courseOffering.when);
+          this.startTime = this.getTimeFromTimestamp(this.courseOffering.when);
+          this.startDate = this.getDateFromTimestamp(this.courseOffering.when);
         }
       }
     }
@@ -213,7 +210,7 @@ export default {
 
     // Clear the forms.
     clear() {
-      this.course = {};
+      this.courseOffering = {};
       this.time = "";
       this.date = "";
       this.showDatePicker = false;
@@ -226,8 +223,9 @@ export default {
     save() {
       this.$validator.validateAll();
       if (!this.errors.any()) {
-        // this.course.when = this.getTimestamp(this.date, this.time);
-        this.$emit("save", this.course);
+        // this.courseOffering.when = this.getTimestamp(this.date, this.time);
+        console.log(this.courseOffering);
+        this.$emit("save", this.courseOffering);
       }
     },
   
@@ -272,7 +270,7 @@ export default {
   },
   mounted() {
     this.$http
-      .get("/api/v1/courses/course_offerings")
+      .get("/api/v1/courses/courses")
       .then(
         resp => (this.availableCourses = resp.data.filter(item => item.active))
       );
