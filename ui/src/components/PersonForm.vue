@@ -25,6 +25,15 @@
           data-cy="last-name"
         ></v-text-field>
 
+        <v-text-field
+          v-model="person.secondLastName"
+          v-bind:label="$t('person.name.second-last')"
+          name="secondLastName"
+          v-bind:error-messages="errors.collect('secondLastName')"
+          :readonly="formDisabled"
+          data-cy="second-last-name"
+        ></v-text-field>
+
         <v-radio-group
           v-model="person.gender"
           :readonly="formDisabled"

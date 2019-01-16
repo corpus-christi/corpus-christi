@@ -140,7 +140,12 @@
     </v-snackbar>
 
     <!-- New/Edit dialog -->
-    <v-dialog scrollable v-model="personDialog.show" max-width="500px">
+    <v-dialog
+      scrollable
+      persistent
+      v-model="personDialog.show"
+      max-width="500px"
+    >
       <PersonForm
         v-bind:editMode="personDialog.editMode"
         v-bind:initialData="personDialog.person"
@@ -154,7 +159,12 @@
     </v-dialog>
 
     <!-- Person admin dialog -->
-    <v-dialog scrollable v-model="adminDialog.show" max-width="500px">
+    <v-dialog
+      scrollable
+      persistent
+      v-model="adminDialog.show"
+      max-width="500px"
+    >
       <PersonAdminForm
         v-bind:person="adminDialog.person"
         v-bind:account="adminDialog.account"
@@ -369,7 +379,6 @@ export default {
     adminPerson(person) {
       // Pass along the current person.
       this.adminDialog.person = person;
-
       // Fetch the person's account information (if any) before activating the dialog.
       this.$http
         .get(`/api/v1/people/persons/${person.id}/account`)
