@@ -432,6 +432,10 @@ def test_read_all_assets(auth_client):
     # THEN all results should match that description
     for asset in all_assets_matching_desc:
         assert 'c' in asset['description'].lower()
+    all_assets_matching_loc_id = auth_client.get(url_for('events.read_all_assets', location_id=1)).json
+    # THEN all results should match that description
+    for asset in all_assets_matching_loc_id:
+        assert 1 == asset['location_id']
     
 
 @pytest.mark.smoke

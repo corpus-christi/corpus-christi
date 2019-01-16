@@ -114,7 +114,7 @@ class EventTeam(Base):
 
 class EventTeamSchema(Schema):
     event = fields.Nested('EventSchema', dump_only=True)
-    team = fields.Nested('TeamSchema', dump_only=True)
+    team = fields.Nested('TeamSchema', exclude=['events'], dump_only=True)
     event_id = fields.Integer(required=True, min=1)
     team_id = fields.Integer(required=True, min=1)
 
