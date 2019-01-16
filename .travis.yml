@@ -6,7 +6,7 @@ ubuntu:
 env:
         - FLASK_CONFIG=staging 
 before_install:
-        - python --version
+        #        - python --versdfddfsdon
         - sudo apt-get update
         - python --version
           #  igggg      - sudo apt-get install python3
