@@ -1,5 +1,11 @@
 <template>
-  <v-select v-bind:label="label" :items="options">
+  <v-select
+    :label="label"
+    :name="name"
+    :value="value"
+    @input="$emit('input', $event)"
+    :items="options"
+  >
   </v-select>
 </template>
 
@@ -13,6 +19,14 @@ export default {
     },
     options: {
       type: Array,
+      required: true
+    },
+    name: {
+      type: String,
+      required: true
+    },
+    value: {
+      type: Number,
       required: true
     }
   }

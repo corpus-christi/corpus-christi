@@ -92,11 +92,11 @@
           data-cy="phone"
           :readonly="formDisabled"
         ></v-text-field>
-        <span class="headline">{{ $t('people.attributes') }}</span>
-        <component v-for="(field, index) in attributeFields"
-               :key="index"
-               :is="field.fieldType"
-               v-bind="field"></component>
+        <span class="headline">{{ $t("people.attributes") }}</span>
+        <AttributeForm
+          :attributes="attributeFields"
+          v-model="formData"
+        ></AttributeForm>
       </form>
     </v-card-text>
     <v-card-actions>
@@ -143,13 +143,11 @@
 <script>
 import { mapGetters } from "vuex";
 import { isEmpty } from "lodash";
-import Vue from "vue/dist/vue.esm";
-import String from "./InputFields/String.vue";
-import Dropdown from "./InputFields/Dropdown.vue";
+import AttributeForm from "./InputFields/AttributeForm.vue";
 
 export default {
   name: "PersonForm",
-  components: { String, Dropdown },
+  components: { AttributeForm },
   props: {
     editMode: {
       type: Boolean,
@@ -185,11 +183,13 @@ export default {
         birthday: "",
         email: "",
         phone: "",
-        locationId: 0,
-        attributesInfo: []
+        locationId: 0
       },
 
-      attributeFields: []
+      personObject: {},
+
+      attributeFields: [],
+      formData: {}
     };
   },
   computed: {
@@ -245,7 +245,9 @@ export default {
     // Trigger a save event, returning the update `Person`.
     save() {
       this.$validator.validateAll().then(() => {
+        console.log(this.formData);
         if (!this.errors.any()) {
+          this.constructPersonObject(this.person);
           this.$emit("save", this.person);
         }
       });
@@ -257,6 +259,13 @@ export default {
           this.$emit("add-another", this.person);
         }
       });
+    },
+
+    constructPersonObject(person) {
+      this.personObject = {
+        person: person,
+        attributesInfo: []
+      };
     },
 
     constructAttributeForm(attributes) {
@@ -287,28 +296,30 @@ export default {
     },
 
     stringFieldConstructor(attr) {
+      this.$set(this.formData, attr.id.toString(), "");
       return {
         fieldType: "String",
-        name: attr.id,
-        label: attr.nameI18n,
-      }
+        name: attr.id.toString(),
+        label: attr.nameI18n
+      };
     },
 
     dropdownFieldConstructor(attr) {
       let options = [];
-      for(let item of attr.enumerated_values) {
+      for (let item of attr.enumerated_values) {
         options.push({
           text: item.valueI18n,
           value: item.id
         });
-      };
+      }
 
+      this.$set(this.formData, attr.id.toString(), 0);
       return {
         fieldType: "Dropdown",
-        name: attr.id,
+        name: attr.id.toString(),
         label: attr.nameI18n,
         options: options
-      }
+      };
     }
   }
 };

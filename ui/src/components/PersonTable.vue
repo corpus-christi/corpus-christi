@@ -273,7 +273,6 @@ export default {
     // ---- Person Administration
 
     activatePersonDialog(person = {}, editMode = false) {
-      console.log(person);
       this.personDialog.editMode = editMode;
       this.personDialog.person = person;
       this.personDialog.show = true;
@@ -301,13 +300,10 @@ export default {
         // Get rid of the ID; not for consumption by endpoint.
         delete person.id;
 
-        console.log(person);
         this.data = this.constructPersonData(person);
-        console.log(this.data);
         this.$http
           .put(`/api/v1/people/persons/${person_id}`, this.data)
-          .then(resp => {
-            console.log("EDITED", resp);
+          .then(() => {
             Object.assign(this.allPeople[idx], person);
             this.personDialog.show = false;
             this.personDialog.saveLoading = false;
@@ -319,9 +315,7 @@ export default {
             this.showSnackbar(this.$t("person.messages.person-save-error"));
           });
       } else {
-        console.log(person);
         this.data = this.constructPersonData(person);
-        console.log(this.data);
         this.$http
           .post("/api/v1/people/persons", this.data)
           .then(resp => {
