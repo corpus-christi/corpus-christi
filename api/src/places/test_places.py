@@ -378,7 +378,7 @@ def test_delete_location(auth_client):
 
 
 @pytest.mark.smoke
-def test_delete_location_invalid(auth_client):
+def test_delete_location_no_exist(auth_client):
     # GIVEN
     
     # WHEN
@@ -386,5 +386,75 @@ def test_delete_location_invalid(auth_client):
     # THEN
     resp = auth_client.delete(url_for('places.delete_location', location_id = 1))
     assert resp.status_code == 404
+
+
+@pytest.mark.smoke
+def test_update_location(auth_client):
+    # GIVEN
+    Country.load_from_file()
+    count = random.randint(3, 11)
+    create_multiple_areas(auth_client.sqla, count)
+    create_multiple_addresses(auth_client.sqla, count)
+    create_multiple_locations(auth_client.sqla, count)
+
+    # WHEN
+    locations = auth_client.sqla.query(Location).all()
+
+    for location in locations:
+        mod = {}
+        flips = (flip(), flip())
+        if flips[0]:
+            mod['description'] = fake.sentences(nb=1)[0]
+        if flips[1]:
+            mod['address_id'] = random.randint(1, count + 1)
+
+        resp = auth_client.patch(url_for('places.update_location', location_id = location.id), json = mod)
+        assert resp.status_code == 200
+
+        if flips[0]:
+            assert not resp.json['description'] == location.description
+        if flips[1]:
+            assert resp.json['address_id'] == mod['address_id']
+
+
+@pytest.mark.smoke
+def test_update_location_invalid(auth_client):
+    # GIVEN
+    Country.load_from_file()
+    count = random.randint(3, 11)
+    create_multiple_areas(auth_client.sqla, count)
+    create_multiple_addresses(auth_client.sqla, count)
+    create_multiple_locations(auth_client.sqla, count)
+
+    #WHEN
+    locations = auth_client.sqla.query(Location).all()
+
+    for location in locations:
+        resp = auth_client.patch(url_for('places.update_location', location_id = location.id), json = {fake.word(): fake.word()})
+        assert resp.status_code == 422
+
+
+@pytest.mark.smoke
+def test_update_location_no_exist(auth_client):
+    # GIVEN
+    Country.load_from_file()
+    count = random.randint(3, 11)
+    create_multiple_areas(auth_client.sqla, count)
+    create_multiple_addresses(auth_client.sqla, count)
+    create_multiple_locations(auth_client.sqla, count)
+
+    #WHEN
+    locations = auth_client.sqla.query(Location).all()
+
+    for location in locations:
+        mod = {}
+        flips = (flip(), flip())
+        if flips[0]:
+            mod['description'] = fake.sentences(nb=1)[0]
+        if flips[1]:
+            mod['address_id'] = random.randint(1, count + 1)
+        
+        resp = auth_client.patch(url_for('places.update_location', location_id = location.id + count), json = mod)
+        assert resp.status_code == 404
 
 
