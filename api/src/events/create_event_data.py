@@ -76,6 +76,17 @@ def team_object_factory():
     }
     return team
 
+
+def email_object_factory():
+    email = {
+        'subject': 'Test Email',
+        'body': rl_fake().sentences(nb=1)[0],
+        'recipients': ['tim_ours@taylor.edu']
+    }
+
+    return email
+
+
 def event_asset_object_factory(event_id, asset_id):
     """Cook up a fake eventasset json object from given ids."""
     eventasset = {
@@ -114,7 +125,8 @@ def team_member_object_factory(team_id, member_id):
     """Cook up a fake eventteam json object from given ids."""
     teammember = {
         'team_id': team_id,
-        'member_id': member_id
+        'member_id': member_id,
+        'active': flip()
     }
     return teammember
 

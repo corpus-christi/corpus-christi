@@ -662,7 +662,7 @@ def add_team_member(team_id, member_id):
     team_member = db.session.query(TeamMember).filter_by(team_id=team_id,member_id=member_id).first()
 
     if not team_member:
-        new_entry = TeamMember(**{'team_id': team_id, 'member_id': member_id, 'active': valid_attributes.active})
+        new_entry = TeamMember(**{'team_id': team_id, 'member_id': member_id, 'active': valid_attributes['active']})
         db.session.add(new_entry)
         db.session.commit()
         return 'Team member successfully added.'

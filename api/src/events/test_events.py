@@ -11,7 +11,7 @@ from werkzeug.security import check_password_hash
 from .models import Asset, AssetSchema, Event, EventSchema, Team, TeamSchema, EventParticipant, EventParticipantSchema, EventPerson, EventPersonSchema, TeamMember, TeamMemberSchema, EventAsset, EventAssetSchema, EventTeam, EventTeamSchema
 from ..places.models import Location, Country
 from ..people.models import Person
-from .create_event_data import flip, fake, create_multiple_events, event_object_factory, create_multiple_assets, create_multiple_teams, create_events_assets, create_events_teams, create_events_persons, create_events_participants, create_teams_members, get_team_ids, asset_object_factory
+from .create_event_data import flip, fake, create_multiple_events, event_object_factory, email_object_factory, create_multiple_assets, create_multiple_teams, create_events_assets, create_events_teams, create_events_persons, create_events_participants, create_teams_members, get_team_ids, asset_object_factory
 from ..places.test_places import create_multiple_locations, create_multiple_addresses, create_multiple_areas
 from ..people.test_people import create_multiple_people
 
@@ -401,7 +401,7 @@ def test_read_all_assets(auth_client):
     auth_client.sqla.commit()
     print(auth_client.sqla.query(Asset).filter(Asset.description.like('%drum%')).all())
     # WHEN we try to read all assets with a filter 'drum'
-    filtered_assets = auth_client.get(url_for('events.read_all_assets', desc="drum")).json
+    filtered_assets = auth_client.get(url_for('events.read_all_assets', return_group="all", desc="drum")).json
     # THEN we should have exactly one asset
     assert len(filtered_assets) == 1
     # GIVEN a database with some assets
@@ -506,7 +506,7 @@ def test_replace_invalid_asset(auth_client):
         json_request['active'] = None
     else:
         json_request['location_id'] = None
-    resp = auth_client.put(url_for('events.update_asset', asset_id = asset_id), json=json_request)
+    resp = auth_client.put(url_for('events.replace_asset', asset_id = asset_id), json=json_request)
     # THEN we should have the correct status code
     assert resp.status_code == 422
     
@@ -532,6 +532,32 @@ def test_update_asset(auth_client):
     new_asset = auth_client.sqla.query(Asset).filter(Asset.id == asset_id).first()
     assert new_asset.description == dscrptn
     assert new_asset.active == False
+
+
+@pytest.mark.smoke
+def test_update_invalid_asset(auth_client):
+    # GIVEN a database with some assets
+    generate_locations(auth_client)
+    count = random.randint(5, 15)
+    create_multiple_assets(auth_client.sqla, count)
+    # WHEN we update one asset
+    asset_id = auth_client.sqla.query(Asset.id).first()[0]
+    dscrptn = fake.sentences(nb=1)[0]
+    location_id = auth_client.sqla.query(Location.id).first()[0]
+    json_object = {
+        'description': dscrptn,
+        'active': False,
+        'location_id': location_id
+    }
+    if flip():
+        json_object['description'] = None
+    elif flip():
+        json_object['active'] = None
+    else:
+        json_object['location_id'] = None
+    resp = auth_client.patch(url_for('events.update_asset', asset_id = asset_id), json=json_object)
+    # THEN we should have the correct status code
+    assert resp.status_code == 422
     
 
 @pytest.mark.smoke
@@ -548,6 +574,10 @@ def test_delete_asset(auth_client):
     # THEN we should have the asset as inactive
     isActive = auth_client.sqla.query(Asset.active).filter(Asset.id == deleting_id).first()[0]
     assert isActive == False
+    # WHEN we delete an asset that doesn't exist
+    resp = auth_client.delete(url_for('events.delete_asset', asset_id = 15000000))
+    # THEN the response code should be accurate
+    assert resp.status_code == 404
     
 
 # ---- Team
@@ -568,6 +598,15 @@ def test_create_team(auth_client):
     queried_team = auth_client.sqla.query(Team).filter(Team.id == resp.json["id"]).first()
     for attr in new_team:
         assert new_team[attr] == queried_team.__dict__[attr]
+
+    # WHEN we create an invalid team
+    if flip():
+        new_team['description'] = None
+    else:
+        new_team['active'] = None
+    resp = auth_client.post(url_for('events.create_team'), json=new_team)
+    # THEN the response should have the correct code
+    assert resp.status_code == 422
     
 
 @pytest.mark.smoke
@@ -1140,21 +1179,21 @@ def test_add_team_member(auth_client):
     create_multiple_people(auth_client.sqla, 5)
     member_id = auth_client.sqla.query(Person.id).first()[0]
     # WHEN we try to link a non-existant team to a member
-    resp = auth_client.post(url_for('events.add_team_member', team_id=1, member_id=member_id))
+    resp = auth_client.post(url_for('events.add_team_member', team_id=1, member_id=member_id), json={'active': flip()})
     # THEN we expect an error code
     assert resp.status_code == 404
     # GIVEN a database with some unlinked teams and members
     create_multiple_teams(auth_client.sqla, 5)
     team_id = auth_client.sqla.query(Team.id).first()[0]
     # WHEN we link a member with an team
-    resp = auth_client.post(url_for('events.add_team_member', team_id=team_id, member_id=member_id))
+    resp = auth_client.post(url_for('events.add_team_member', team_id=team_id, member_id=member_id), json={'active': flip()})
     # THEN we expect the right status code
     assert resp.status_code == 200
     # THEN we expect the correct count of linked team and member in the database
     count = auth_client.sqla.query(TeamMember).filter(TeamMember.team_id == team_id, TeamMember.member_id == member_id).count()
     assert count == 1
     # WHEN we link the same member again
-    resp = auth_client.post(url_for('events.add_team_member', team_id=team_id, member_id=member_id))
+    resp = auth_client.post(url_for('events.add_team_member', team_id=team_id, member_id=member_id), json={'active': flip()})
     # THEN we expect an error status code
     assert resp.status_code == 422
 
@@ -1197,13 +1236,14 @@ def test_modify_team_member_invalid(auth_client):
         assert resp.status_code == 422
 
 
+@pytest.mark.smoke
 def test_delete_team_member(auth_client):
     # GIVEN a database with some linked teams and members
     create_multiple_teams(auth_client.sqla, 5)
     create_multiple_people(auth_client.sqla, 5)
     create_teams_members(auth_client.sqla, 1)
-    team_member = auth_client.sqla.query(TeamMember).first()
-    count = auth_client.sqla.query(TeamMember).count()
+    team_member = auth_client.sqla.query(TeamMember).filter(TeamMember.active == True).first()
+    count = auth_client.sqla.query(TeamMember).filter(TeamMember.active == True).count()
     # WHEN we unlink an assets from an team
     resp = auth_client.delete(url_for('events.delete_team_member', team_id=team_member.team_id, member_id=team_member.member_id))
     # THEN we expect the right status code
@@ -1216,6 +1256,30 @@ def test_delete_team_member(auth_client):
     # WHEN we unlink the same account again
     resp = auth_client.delete(url_for('events.delete_team_member', team_id=team_member.team_id, member_id=team_member.member_id))
     # THEN we expect an error
-    assert resp.status_code == 404
+    assert resp.status_code == 422
+
+
+@pytest.mark.smoke
+def test_send_email(auth_client):
+    # GIVEN
+
+    # WHEN
+
+    # THEN
+    resp = auth_client.post(url_for('events.send_email'), json = email_object_factory())
+    assert resp.status_code == 200
+
+
+@pytest.mark.smoke
+def test_send_email_invalid(auth_client):
+    # GIVEN
+
+    # WHEN
+    email = email_object_factory()
+    email[fake.word()] = fake.word()
+
+    # THEN
+    resp = auth_client.post(url_for('events.send_email'), json = email)
+    assert resp.status_code == 422
 
 
