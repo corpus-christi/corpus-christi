@@ -77,7 +77,7 @@ def include_course_offerings(course):
 def read_all_courses():
     """List all active and inactive courses"""
     result = db.session.query(Course).all()
-    if(result is None):
+    if(result == []):
         return "Result NOT found", 404
     with_prereqs = add_prereqs(result)
     for i in with_prereqs:
