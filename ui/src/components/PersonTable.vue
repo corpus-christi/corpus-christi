@@ -34,7 +34,7 @@
             color="primary"
             raised
             v-on:click.stop="newPerson"
-            data-cy="add-person"
+            data-cy="new-person"
           >
             <v-icon left>person_add</v-icon>
             {{ $t("actions.add-person") }}
@@ -52,9 +52,14 @@
       data-cy="person-table"
     >
       <template slot="items" slot-scope="props">
+        <td>
+          <v-icon size="15" v-if="props.item.accountInfo"
+            >account_circle</v-icon
+          >
+        </td>
         <td>{{ props.item.firstName }}</td>
         <td>{{ props.item.lastName }}</td>
-        <td>{{ props.item.email }}</td>
+        <td class="hidden-sm-and-down">{{ props.item.email }}</td>
         <td>{{ props.item.phone }}</td>
         <td class="text-no-wrap">
           <v-tooltip bottom>
@@ -194,12 +199,23 @@ export default {
     headers() {
       return [
         {
+          text: "",
+          value: "person.accountInfo",
+          align: "right",
+          sortable: false
+        },
+        {
           text: this.$t("person.name.first"),
           value: "firstName",
-          width: "20%"
+          width: "10%"
         },
         { text: this.$t("person.name.last"), value: "lastName", width: "20%" },
-        { text: this.$t("person.email"), value: "email", width: "15%" },
+        {
+          text: this.$t("person.email"),
+          value: "email",
+          width: "15%",
+          class: "hidden-sm-and-down"
+        },
         { text: this.$t("person.phone"), value: "phone", width: "15%" },
         { text: this.$t("actions.header"), sortable: false }
       ];
@@ -251,15 +267,16 @@ export default {
         // Hang on to the ID of the person being updated.
         const person_id = person.id;
         // Locate the person we're updating in the table.
-        const idx = this.people.findIndex(p => p.id === person.id);
+        const idx = this.allPeople.findIndex(p => p.id === person.id);
         // Get rid of the ID; not for consumption by endpoint.
         delete person.id;
 
+        console.log(person);
         this.$http
           .put(`/api/v1/people/persons/${person_id}`, person)
           .then(resp => {
             console.log("EDITED", resp);
-            Object.assign(this.people[idx], person);
+            Object.assign(this.allPeople[idx], person);
             this.personDialog.show = false;
             this.personDialog.saveLoading = false;
             this.showSnackbar(this.$t("person.messages.person-edit"));
@@ -352,7 +369,6 @@ export default {
     },
 
     activatePerson(person) {
-      console.log(person);
       this.$http
         .put(`/api/v1/people/persons/activate/${person.id}`)
         .then(resp => {
@@ -364,7 +380,6 @@ export default {
     },
 
     deactivatePerson(person) {
-      console.log(person);
       this.$http
         .put(`/api/v1/people/persons/deactivate/${person.id}`)
         .then(resp => {
@@ -379,7 +394,6 @@ export default {
       this.$http
         .get("/api/v1/people/persons")
         .then(resp => {
-          console.log(resp);
           this.allPeople = resp.data;
           this.activePeople = this.allPeople.filter(person => person.active);
           this.archivedPeople = this.allPeople.filter(person => !person.active);

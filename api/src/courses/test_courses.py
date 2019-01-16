@@ -16,14 +16,17 @@ def flip():
     """Return true or false randomly."""
     return random.choice((True, False))
 
+# --- Population Data
+
+# --- Course
 
 def course_object_factory():
     """Cook up a fake course."""
     fake = Faker()  # Use a generic one; others may not have all methods.
     course = {
-        'name': fake.sentence(nb_words=3),
-        'description': fake.paragraph(),
-        'active': flip()
+    'name': fake.sentence(nb_words=3),
+    'description': fake.paragraph(),
+    'active': flip()
     }
     return course
 
@@ -83,6 +86,7 @@ def create_multiple_courses_inactive(sqla, n=10):
     sqla.add_all(new_courses)
     sqla.commit()
 
+# --- Course_Offering
 
 def course_offerings_object_factory(course_id):
     """Cook up a fake course."""
@@ -150,6 +154,8 @@ def create_multiple_course_offerings_inactive(sqla, n=3):
     sqla.add_all(new_course_offerings)
     sqla.commit()
 
+# --- Prerequisites
+
 def prerequisite_object_factory(course_id, prereq_id):
     """Cook up a fake prerequisite."""
     prerequisites = {
@@ -158,16 +164,17 @@ def prerequisite_object_factory(course_id, prereq_id):
     }
     return prerequisites
 
-
 def create_multiple_prerequisites(sqla):
-    """Commits the number of prerequisites to the DB."""
+    """Commits the courses - 1 number of prerequisites to the DB."""
     courses = sqla.query(Course).all()
     new_prerequisites = []
-    for i in range(len(courses)-2):
+    for i in range(len(courses)-1):
         courses[i].prerequisites.append(courses[i+1])
         new_prerequisites.append(courses[i])
     sqla.add_all(new_prerequisites)
     sqla.commit()
+
+# --- Diploma
 
 def courses_diploma_object_factory():
     """Cook up a fake diploma."""
@@ -190,6 +197,8 @@ def create_multiple_diplomas(sqla, n=20):
         courses[i%len(courses)].diplomas.append(diploma)
     sqla.add_all(new_courses)
     sqla.commit()
+
+# --- Student
 
 def student_object_factory(offering_id, student_id):
     """Cook up a fake student"""
@@ -215,6 +224,32 @@ def create_multiple_students(sqla, n=6):
     sqla.add_all(new_students)
     sqla.commit()
 
+# --- Diploma_Award
+
+def diploma_award_object_factory(diploma_id, student_id):
+    """Cook up a fake diploma award"""
+    fake = Faker()
+    diploma_award = {
+        'studentId': student_id,
+        'diplomaId': diploma_id,
+        'when': str(fake.past_date(start_date="-30d"))
+    }
+    return diploma_award
+
+def create_diploma_awards(sqla, n):
+    """Commits the number of diploma awards to the DB."""
+    students = sqla.query(Student).all()
+    diplomas = sqla.query(Diploma).all()
+    diploma_award_schema = Diploma_AwardedSchema()
+    new_diploma_awards = []
+    for student in students:
+        diploma = diplomas[random.randint(0,len(diplomas)-1)]
+        valid_diploma_awarded = diploma_award_schema.load(diploma_award_object_factory(diploma.id,student.id))
+        new_diploma_awards.append(Diploma_Awarded(**valid_diploma_awarded))
+    sqla.add_all(new_diploma_awards)
+    sqla.commit()
+
+# --- Class_Meeting
 
 def class_meeting_object_factory(teacher, offering_id, location=1):
     """Cook up a fake class meeting"""
@@ -237,7 +272,7 @@ def create_class_meetings(sqla, n=6):
     for i in range(n):
         teacher = people[random.randint(0,len(people)-1)].id
         offering = course_offerings[i%len(course_offerings)].id
-        location = 1#locations[random.randint(0,len(locations)-1)].id
+        location = locations[random.randint(0,len(locations)-1)].id
 
         valid_class_meeting = class_meeting_schema.load(class_meeting_object_factory(teacher, offering, location))
         class_meeting = Class_Meeting(**valid_class_meeting)
@@ -245,27 +280,7 @@ def create_class_meetings(sqla, n=6):
     sqla.add_all(new_class_meetings)
     sqla.commit()
 
-def diploma_award_object_factory():
-    """Cook up a fake diploma award"""
-    fake = faker()
-    diploma_award = {
-        'when': str(fake.past_date(start_date="-30d"))
-    }
-
-def create_diploma_awards(sqla, n):
-    """Commits the number of diploma awards to the DB."""
-    students = sqla.query(Student).all()
-    diplomas = sqla.query(Diploma).all()
-    # diploma_award_schema = Diploma_AwardedSchema()
-    new_diploma_awards = []
-    for i in range(n):
-        diploma = diplomas[random.randint(0, len(diplomas)-1)]
-        student = students[random.randint(0, len(students)-1)]
-        student.diplomas.append(diploma)
-        new_diploma_awards.append(student)
-    sqla.add_all(new_diploma_awards)
-    sqla.commit()
-
+# --- Class_Attendance
 
 def create_class_attendance(sqla, n):
     """Commits the number of class attendances to the DB."""
@@ -284,6 +299,14 @@ def create_class_attendance(sqla, n):
 
 # Test course creation
 def test_create_course(auth_client):
+    """Test creating invalid course"""
+    # GIVEN invalid course to put in database
+    broken_course = {}
+    # WHEN database queried
+    resp = auth_client.post(url_for('courses.create_course'), json=broken_course)
+    # THEN assert exception thrown
+    assert resp.status_code == 422
+    """Test creating valid course"""
     # GIVEN course entry to put in database
     count = random.randint(8,19)
     # WHEN database does not contain entry
@@ -295,40 +318,57 @@ def test_create_course(auth_client):
 
 # Test getting all courses from the database
 def test_read_all_courses(auth_client):
+    """Test with empty database"""
+    # GIVEN empty database
+    # WHEN databse queried
+    resp = auth_client.get(url_for('courses.read_all_courses'))
+    # THEN assert error code
+    print(resp)
+    assert resp.status_code == 404
+    """Test with populated database"""
     # GIVEN existing (active and inactive) courses in database
     count = random.randint(3,11)
     create_multiple_courses(auth_client.sqla, count)
     # WHEN call to database
-    courses = auth_client.sqla.query(Course).all()
+    resp = auth_client.get(url_for('courses.read_all_courses'))
     # THEN assert all entries from database are called
-    assert len(courses) == count
+    assert resp.status_code == 200
+    assert len(resp.json) == count
 
-#Test getting only active courses from the database
-def test_read_all_active_courses(auth_client):
-    # GIVEN existing and active courses
+#Test getting courses by active state
+def test_read_active_state_of_courses(auth_client):
+    # GIVEN existing and active/inactive courses
     count_active = random.randint(3,11)
     create_multiple_courses_active(auth_client.sqla, count_active)
     count_inactive = random.randint(3,11)
     create_multiple_courses_inactive(auth_client.sqla, count_inactive)
+    """Test listing all active courses"""
     # WHEN call to database
-    active_courses = auth_client.sqla.query(Course).filter_by(active=True).all()
+    resp = auth_client.get(url_for('courses.read_active_state_of_courses', active_state='active'))
     # THEN assert all active courses are listed
-    assert len(active_courses) == count_active
-
-#Test getting only inactive courses from the database
-def test_read_all_inactive_courses(auth_client):
-    # GIVEN existing and inactive courses
-    count_active = random.randint(3,11)
-    create_multiple_courses_active(auth_client.sqla, count_active)
-    count_inactive = random.randint(3,11)
-    create_multiple_courses_inactive(auth_client.sqla, count_inactive)
+    assert resp.status_code == 200
+    assert len(resp.json) == count_active
+    """Test listing all inactive courses"""
     # WHEN call to database
-    inactive_courses = auth_client.sqla.query(Course).filter_by(active=False).all()
+    resp = auth_client.get(url_for('courses.read_active_state_of_courses', active_state='inactive'))
     # THEN assert all active courses are listed
-    assert len(inactive_courses) == count_inactive
+    assert resp.status_code == 200
+    assert len(resp.json) == count_inactive
+    """Test listing courses with invalid state"""
+    # WHEN call to database
+    resp = auth_client.get(url_for('courses.read_active_state_of_courses', active_state='garbage'))
+    # THEN assert error code
+    assert resp.status_code == 404
 
 # Test reading a single course from the database
 def test_read_one_course(auth_client):
+    """Test with empty database"""
+    # GIVEN empty database
+    # WHEN databse queried
+    resp = auth_client.get(url_for('courses.read_one_course', course_id = 1))
+    # THEN assert error code
+    assert resp.status_code == 404
+    """Test with populated database"""
     # GIVEN one course in the database
     count = random.randint(3,11)
     create_multiple_courses(auth_client.sqla, count)
@@ -342,34 +382,6 @@ def test_read_one_course(auth_client):
         assert resp.json['name'] == course.name
         assert resp.json['description'] == course.description
         assert resp.json['active'] == course.active
-
-#Test that active courses can be deactivated
-def test_deactivate_course(auth_client):
-    # GIVEN course to deactivate
-    count = random.randint(3,11)
-    create_multiple_courses_active(auth_client.sqla, count)
-    courses = auth_client.sqla.query(Course).all()
-    # WHEN course is changed to inactive
-    for course in courses:
-        resp = auth_client.patch(url_for('courses.deactivate_course', course_id=course.id),
-            json={'active': False})
-        # THEN assert course is inactive
-        assert resp.status_code == 200
-        assert resp.json['active'] == False
-
-#Test that inactive courses can be reactivated
-def test_reactivate_course(auth_client):
-    # GIVEN course to activate
-    count = random.randint(3,11)
-    create_multiple_courses_inactive(auth_client.sqla, count)
-    courses = auth_client.sqla.query(Course).all()
-    # WHEN course is changed to active
-    for course in courses:
-        resp = auth_client.patch(url_for('courses.reactivate_course', course_id=course.id),
-            json={'active': True})
-        # THEN assert course is active
-        assert resp.status_code == 200
-        assert resp.json['active'] == True
 
 """
 # Test
@@ -391,6 +403,7 @@ def test_update_course(auth_client):
         resp = auth_client.patch(url_for('courses.update_course', course_id=course.id),
             json={'name':'test_name', 'description':'test_descr', 'active': False})
         # THEN assert course reflects new detail(s)
+        print(resp)
         assert resp.status_code == 200
         assert resp.json['name'] == 'test_name'
         assert resp.json['description'] == 'test_descr'
@@ -408,49 +421,72 @@ def test_delete_course(auth_client):
 # ---- Prerequisite
 
 #Test that prerequisites can be added
-@pytest.mark.smoke
 def test_create_prerequisite(auth_client):
     # GIVEN existing and available course in database
-    create_multiple_courses(auth_client.sqla, 2)
-    course = auth_client.sqla.query(Course).all()[0]
-    prereq = auth_client.sqla.query(Course).all()[1]
+    count = random.randint(2,13)
+    create_multiple_courses(auth_client.sqla, count)
+    courses = auth_client.sqla.query(Course).all()
+    course = courses[0]
+    prereq_ids = []
+    for i in range(1,len(courses)-1):
+        prereq_ids.append(courses[i].id)
     # WHEN course requires previous attendance to another course
     resp = auth_client.post(url_for('courses.create_prerequisite', course_id=course.id),
-        json=prerequisite_object_factory(course.id,prereq.id))
+        json={ 'prerequisites': prereq_ids})
     assert resp.status_code == 201
     # THEN asssert course is prerequisite
-    assert auth_client.sqla.query(Base.metadata.tables['courses_prerequisite']).count() == 1
+    for i in range(len(prereq_ids)):
+        assert auth_client.sqla.query(Course)[0].prerequisites[i].id == prereq_ids[i]
 
-# This will test getting all prerequisites for a single course
-@pytest.mark.smoke
+# This will test getting all prerequisites for all courses
 def test_read_all_prerequisites(auth_client):
     # GIVEN existing and available course in database
     count_courses = random.randint(3,15)
-    create_multiple_courses(auth_client.sqla, count_courses)
-    count_courses = auth_client.sqla.query(Course).count()
     count_prereqs = count_courses - 1
+    create_multiple_courses(auth_client.sqla, count_courses)
+    # count_courses = auth_client.sqla.query(Course).count()
+    count_prereqs = count_courses -1
     create_multiple_prerequisites(auth_client.sqla)
     # WHEN that course has prerequisites
-    prereqs = auth_client.sqla.query(Base.metadata.tables['courses_prerequisite']).count()
+    courses = auth_client.sqla.query(Course).all()
+    prereqs = []
+    for course in courses:
+        for prereq in course.prerequisites:
+            if prereq not in prereqs:
+                prereqs.append(prereq)
     # THEN assert all prereq's are listed
-    assert prereqs == count_prereqs
+    assert len(prereqs) == count_prereqs
 
-#FIX NAME (Will test to see all courses that have given course as a prerequisite)
-#@pytest.mark.smoke
-@pytest.mark.xfail()
-def test_read_all_courses_with_prerequisite(auth_client):
-    #GIVEN prerequisite course in database
-    #WHEN other courses have that course as a prerequisite
-    #THEN list all courses with given prerequisite
-    assert True == False
+#This will test getting prerequistes for one course
+def test_read_one_course_prerequisites(auth_client):
+    #GIVEN course in database
+    count_courses = random.randint(3,15)
+    create_multiple_courses(auth_client.sqla, count_courses)
+    create_multiple_prerequisites(auth_client.sqla)
+    #WHEN that course has prerequisites
+    courses = auth_client.sqla.query(Course).all()
+    #THEN list all prerequisites of given course
+    for i in range(len(courses)-1):
+        assert courses[i].prerequisites == [courses[i+1]]
 
-#@pytest.mark.smoke
-@pytest.mark.xfail()
+
 def test_update_prerequisite(auth_client):
     # GIVEN an existing and available course with an existing prereq
+    count_courses = random.randint(3,13)
+    create_multiple_courses(auth_client.sqla, count_courses)
+    create_multiple_prerequisites(auth_client.sqla)
+    courses = auth_client.sqla.query(Course).all()
     # WHEN new prereq for existing course is required
+    for course in courses:
+        resp = auth_client.patch(url_for('courses.update_prerequisite', course_id=course.id),
+            json={'prerequisites':[1]})
+        assert resp.status_code == 200
     # THEN existing course has new prereq in place of existing prereq
-    assert True == False
+    courses = auth_client.sqla.query(Course).all()
+    for course in courses:
+        if course.id == 1:
+            continue
+        assert course.prerequisites[0].id == 1
 
 """
 @pytest.mark.xfail()
@@ -559,5 +595,362 @@ def test_delete_course_offering(auth_client):
     # THEN
     assert True == False
 """
+
+# ---- Prerequisite
+
+
+@pytest.mark.xfail()
+def test_create_prerequisite(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_read_all_prerequisites(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_read_one_prerequisite(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_replace_prerequisite(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_update_prerequisite(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_delete_prerequisite(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+# ---- Diploma_Course
+
+
+@pytest.mark.xfail()
+def test_create_diploma_course(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_read_all_diploma_courses(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_read_one_diploma_course(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_replace_diploma_course(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_update_diploma_course(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_delete_diploma_course(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+# ---- Diploma
+
+
+@pytest.mark.xfail()
+def test_create_diploma(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_read_all_diplomas(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_read_one_diploma(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_replace_diploma(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_update_diploma(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_delete_diploma(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+# ---- Diploma_Awarded
+
+
+@pytest.mark.xfail()
+def test_create_diploma_awarded(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_read_all_diplomas_awarded(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_read_one_diploma_awarded(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_replace_diploma_awarded(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_update_diploma_awarded(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_delete_diploma_awarded(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+# ---- Student
+
+
+@pytest.mark.xfail()
+def test_create_student(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_read_all_students(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_read_one_student(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_replace_student(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_update_student(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_delete_student(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+# ---- Class_Attendance
+
+
+@pytest.mark.xfail()
+def test_create_class_attendance(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_read_all_class_attendance(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_read_one_class_attendance(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_replace_class_attendance(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_update_class_attendance(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_delete_class_attendance(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+# ---- Class_Meeting
+
+
+@pytest.mark.xfail()
+def test_create_class_meeting(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_read_all_class_meetings(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_read_one_class_meeting(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_replace_class_meeting(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_update_class_meeting(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_delete_class_meeting(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
 
 open

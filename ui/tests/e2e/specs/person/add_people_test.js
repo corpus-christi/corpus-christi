@@ -16,10 +16,11 @@ describe("Getting to the people page", function() {
   });
 });
 
-//Fills in form then cancels out of it
-var testNum = 5;
-
-describe("Fills out form then clears it", function() {
+//Adds people
+//NEED TO INCREASE testNum SO THAT THERE IS NO DUPLICATION OF PEOPLE
+var testNum = 12;
+testNum = testNum + 1;
+describe("Filling out form", function() {
   it("Given: gets to add people form", function() {
     cy.get("[data-cy=new-person]").click();
   });
@@ -37,8 +38,12 @@ describe("Fills out form then clears it", function() {
     cy.get("[data-cy=phone]").type("123-456-7890"); //phone
   });
   it("Then: check to see it saved or not", function() {
-    cy.get("[data-cy=cancel]").click();
-    cy.url().should("include", "/people");
-    cy.get("[data-cy=search]").type(testNum);
+    cy.get("[data-cy=save]").click();
+    cy.get("[data-cy=search]").type("Test");
+    cy.get(
+      ".v-select__slot > .v-input__append-inner > .v-input__icon > .v-icon"
+    ).click();
+    cy.get(".v-select-list > .v-list > :nth-child(4) > .v-list__tile").click();
+    cy.get(".container").contains(testNum);
   });
 });
