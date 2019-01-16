@@ -4,7 +4,7 @@
       <v-btn
         outline
         color="primary"
-        v-on:click="$router.push({ path: '/courses/all' })"
+        v-on:click="$router.push({ name: 'all-courses' })"
       ><v-icon>arrow_back</v-icon>{{ $t("actions.back") }}</v-btn>
     </v-flex>
     <v-flex sm12 md3>

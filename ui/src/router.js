@@ -118,11 +118,21 @@ const router = new VueRouter({
           component: () => import("@/components/courses/CourseDetails")
         },
         {
-          name: "course-offering-details",
+          name: "course-offering",
           path: ":courseId/offering/:offeringId",
           meta: { authRequired: true },
           props: true,
-          component: () => import("@/components/courses/CourseOfferingDetails")
+          redirect: { name: "course-offering-details" },
+          component: () => import("@/components/courses/CourseOffering"),
+          children: [
+            {
+              name: "course-offering-details",
+              path: "details",
+              meta: { authRequired: true },
+              props: true,
+              component: () => import("@/components/courses/CourseOfferingDetails")
+            }
+          ]
         }
       ]
     }
