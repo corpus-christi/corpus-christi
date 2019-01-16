@@ -60,14 +60,22 @@
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
+        <!-- TODO: Add icons for past, upcoming, etc. -->
+        <td>
+          <v-icon
+            v-if="eventOngoing(props.item)"
+            slot="badge"
+            small
+            justify-space-around
+            color="secondary"
+            >autorenew</v-icon
+          >
+        </td>
         <td
           class="hover-hand"
           v-on:click="$router.push({ path: '/events/' + props.item.id })"
         >
-        <v-badge left color="secondary">
-          <span slot="badge" v-if="eventOngoing(props.item)">!</span>
-          <span>{{ props.item.title }}</span>
-        </v-badge>
+          <span> {{ props.item.title }}</span>
         </td>
         <td
           class="hover-hand"
@@ -220,9 +228,9 @@ export default {
         { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 }
       ],
       paginationInfo: {
-        sortBy: 'start', //default sorted column
+        sortBy: "start", //default sorted column
         rowsPerPage: 10,
-        page: 1,
+        page: 1
       },
       tableLoading: true,
       events: [],
@@ -256,6 +264,7 @@ export default {
   computed: {
     headers() {
       return [
+        { text: "", sortable: false, width: "5%" },
         { text: this.$t("events.title"), value: "title" },
         { text: this.$t("events.start-time"), value: "start" },
         { text: this.$t("events.event-location"), value: "location_name" },
@@ -371,7 +380,9 @@ export default {
 
     saveEvent(event) {
       this.eventDialog.saveLoading = true;
-      event.location_id = event.location.id;
+      if (event.location) {
+        event.location_id = event.location.id;
+      }
       let newEvent = JSON.parse(JSON.stringify(event));
       delete newEvent.location;
       delete newEvent.id;

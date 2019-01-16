@@ -25,7 +25,6 @@
           location
           v-model="event.location"
           name="location"
-          v-validate="'required'"
           v-bind:error-messages="errors.first('location')"
         />
 
@@ -277,13 +276,15 @@ export default {
     },
 
     startDate(date) {
-      if (new Date(this.endDate) > new Date(date)) return;
-      this.endDate = date;
+      this.clearEndTimeIfInvalid();
+      if (!this.endDate || new Date(this.endDate) < new Date(date)) {
+        this.endDate = date;
+      }
     },
 
-    endDate() {
-      //TODO don't clear if still valid
-      // this.endTime = "";
+    endDate(date) {
+      console.log(date);
+      this.clearEndTimeIfInvalid();
     }
   },
   computed: {
@@ -365,11 +366,16 @@ export default {
 
     getTimestamp(date, time) {
       let datems = new Date(date).getTime();
-      let timearr = time.split(":");
-      let timemin = Number(timearr[0]) * 60 + Number(timearr[1]);
+      let timemin = this.getMinutesFromTime(time);
       let timems = timemin * 60000;
       let tzoffset = new Date().getTimezoneOffset() * 60000;
       return new Date(datems + timems + tzoffset);
+    },
+
+    getMinutesFromTime(time) {
+      let timearr = time.split(":");
+      let mins = Number(timearr[0]) * 60 + Number(timearr[1]);
+      return mins;
     },
 
     getDateFromTimestamp(ts) {
@@ -395,6 +401,16 @@ export default {
       let hr = String(date.getHours()).padStart(2, "0");
       let min = String(date.getMinutes()).padStart(2, "0");
       return `${hr}:${min}`;
+    },
+
+    clearEndTimeIfInvalid() {
+      if (this.startDate == this.endDate) {
+        let endMins = this.getMinutesFromTime(this.endTime);
+        let startMins = this.getMinutesFromTime(this.startTime);
+        if (endMins < startMins) {
+          this.endTime = "";
+        }
+      }
     }
   },
   props: {

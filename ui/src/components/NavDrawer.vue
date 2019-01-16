@@ -63,6 +63,11 @@ export default {
           title: this.$t("events.teams.title"),
           route: "teams",
           icon: "group"
+        },
+        {
+          title: this.$t("assets.title"),
+          route: "assets",
+          icon: "devices_other"
         }
       ];
     }

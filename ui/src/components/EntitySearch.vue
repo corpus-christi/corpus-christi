@@ -12,15 +12,27 @@
       v-bind:error-messages="errorMessages"
       return-object
       :filter="customFilter"
+      :multiple="multiple"
+      menu-props="closeOnClick, closeOnContentClick"
       color="secondary"
     >
-      <template slot="selection" slot-scope="data">
+      <template v-if="!multiple" slot="selection" slot-scope="data">
         {{ getEntityDescription(data.item, 100) }}
       </template>
       <template slot="item" slot-scope="data">
+        <span v-if="multiple && selectionContains(data.item)">
+          <v-icon>clear</v-icon>
+        </span>
         {{ getEntityDescription(data.item) }}
       </template>
     </v-autocomplete>
+    <template v-if="multiple">
+      <div v-for="entity in value" v-bind:key="entity[idField]">
+        <v-chip close @input="remove(entity)">
+          {{ getEntityDescription(entity) }}
+        </v-chip>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -31,7 +43,8 @@ export default {
     location: Boolean,
     person: Boolean,
     course: Boolean,
-    value: Object,
+    multiple: { type: Boolean, default: false },
+    value: null,
     searchEndpoint: String,
     errorMessages: String
   },
@@ -50,10 +63,21 @@ export default {
       else if (this.person) return this.$t("actions.search-people");
       else if (this.course) return this.$t("actions.search-courses");
       else return "";
+    },
+    idField() {
+      return "id";
     }
   },
 
   methods: {
+    selectionContains(entity) {
+      if (!this.value || !this.value.length) return;
+      var idx = this.value.findIndex(
+        en => en[this.idField] === entity[this.idField]
+      );
+      return idx > -1;
+    },
+
     setSelected(entity) {
       this.$emit("input", entity);
     },
@@ -84,6 +108,16 @@ export default {
       const itemDesc = this.getEntityDescription(item).toLowerCase();
       const searchText = queryText.toLowerCase();
       return itemDesc.indexOf(searchText) > -1;
+    },
+
+    remove(entity) {
+      if (!this.multiple) return;
+      var idx = this.value.findIndex(
+        en => en[this.idField] === entity[this.idField]
+      );
+      if (idx > -1) {
+        this.value.splice(idx, 1);
+      }
     }
   },
 

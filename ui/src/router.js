@@ -98,6 +98,12 @@ const router = new VueRouter({
       component: () => import("@/pages/Teams")
     },
     {
+      name: "assets",
+      path: "/assets",
+      meta: { authRequired: true },
+      component: () => import("@/pages/Assets")
+    },
+    {
       name: "locale",
       path: "/locale",
       meta: { authRequired: true },
