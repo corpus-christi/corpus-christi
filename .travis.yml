@@ -1,3 +1,5 @@
 sudo: true
-language: python
-        - "3.7"
+language: node_js
+node_js:
+        - "iojs"
+        - "11"
