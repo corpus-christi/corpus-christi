@@ -209,23 +209,14 @@
             "search": "Buscar",
             "search-people": "Buscar Personas",
             "tooltips": {
-<<<<<<< HEAD
-        "archive": "Archivar",
-                "reactivate": "Desarchivar",
-=======
-        "activate": "Activar",
                 "archive": "Archivar",
->>>>>>> feature/courses-28_manually-enter-students
-        "settings": "Ajustes"
+                "reactivate": "Desarchivar",
+                "settings": "Ajustes"
             },
             "view-active": "Ver Activo",
             "view-all": "Ver Todo",
-<<<<<<< HEAD
-      "view-archived": "Ver Archivado",
-=======
-      "view-archived": "Ver Archivo",
->>>>>>> feature/courses-28_manually-enter-students
-      "view-inactive": "Ver Inactivo"
+            "view-archived": "Ver Archivado",
+            "view-inactive": "Ver Inactivo"
         },
         "courses": {
             "add-failed": "Se fall\u00f3 a a\u00f1adir el curso",
