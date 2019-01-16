@@ -401,7 +401,7 @@ def test_read_all_assets(auth_client):
     auth_client.sqla.commit()
     print(auth_client.sqla.query(Asset).filter(Asset.description.like('%drum%')).all())
     # WHEN we try to read all assets with a filter 'drum'
-    filtered_assets = auth_client.get(url_for('events.read_all_assets', desc="drum")).json
+    filtered_assets = auth_client.get(url_for('events.read_all_assets', return_group="all", desc="drum")).json
     # THEN we should have exactly one asset
     assert len(filtered_assets) == 1
     # GIVEN a database with some assets
