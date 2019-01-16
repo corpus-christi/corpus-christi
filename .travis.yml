@@ -31,10 +31,11 @@ matrix:
                   before_install:
                         - cd api/
                         - python -m venv venv
-                  script:
                         - which pip
+                  install:
                         - source venv/bin/activate
                         - pip install -r requirements.txt
+                  script:
                         - echo "Hello World"
                   after_script:
                         - deactivate
