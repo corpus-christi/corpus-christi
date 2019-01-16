@@ -598,10 +598,6 @@ def test_delete_course_offering(auth_client):
     assert True == False
 """
 
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
 
 # ---- Diploma_Course
 
@@ -609,7 +605,7 @@ def test_delete_course_offering(auth_client):
 @pytest.mark.xfail()
 def test_create_diploma_course(client, db):
     # GIVEN a diploma ionm a database
-    # WHEN 
+    # WHEN
     # THEN
     assert True == False
 
@@ -659,7 +655,7 @@ def test_delete_diploma_course(client, db):
 
 @pytest.mark.xfail()
 def test_create_diploma(client, db):
-    # GIVEN 
+    # GIVEN
     # WHEN
     # THEN
     assert True == False
@@ -819,7 +815,7 @@ def test_update_student(client, db):
     # WHEN that student needs to be updated
     student = auth_client.sqla.query(Student).one()
     # THEN assert these updates to the student
-    
+
     assert True == False
 
 
