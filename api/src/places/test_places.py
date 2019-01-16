@@ -253,6 +253,26 @@ def test_create_address(auth_client):
 
 
 @pytest.mark.smoke
+def test_create_address_invalid(auth_client):
+    # GIVEN a set of areas
+    Country.load_from_file()
+    count = random.randint(5, 15)
+    create_multiple_areas(auth_client.sqla, count)
+    
+    # WHEN a random number of addresses with bad data are requested to be created
+    for i in range(count):
+        new_address = address_factory(auth_client.sqla)
+        new_address[fake.word()] = fake.word()
+        resp = auth_client.post(url_for('places.create_address'), json = new_address)
+        
+        # THEN expect the requests to be unprocessable
+        assert resp.status_code == 422
+
+    # THEN expect there to be no addresses created
+    assert len(auth_client.sqla.query(Address).all()) == 0
+
+
+@pytest.mark.smoke
 def test_read_address(auth_client):
     # GIVEN a DB with a collection addresses.
     Country.load_from_file()
@@ -310,7 +330,7 @@ def test_replace_address(auth_client):
         new_address = address_factory(auth_client.sqla)
 
         # WHEN replace requests is made with new addresses
-        resp = auth_client.patch(url_for('places.replace_address', address_id = address.id), json = new_address)
+        resp = auth_client.put(url_for('places.replace_address', address_id = address.id), json = new_address)
 
         # THEN expect the requests to run OK
         assert resp.status_code == 200
@@ -362,7 +382,7 @@ def test_replace_address_invalid(auth_client):
         new_address[fake.word()] = fake.word()
 
         # WHEN replace requests is made with bad data
-        resp = auth_client.patch(url_for('places.replace_address', address_id = address.id), json = new_address)
+        resp = auth_client.put(url_for('places.replace_address', address_id = address.id), json = new_address)
 
         # THEN expect the requests to be unprocessable
         assert resp.status_code == 422
