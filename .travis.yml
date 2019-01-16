@@ -12,16 +12,18 @@ matrix:
                  language:
                         node_js:
                                 - "11"
-                                  # before_install:
-                                #- yarn cache clean
+                                before_install:
+                                        - echo "hi"        
+                                        #yarn cache clean
                                   #- yarn install
                                   # - language: python
         inculde: 
                 language:
                         python:
                                 - "3.7"
-                                  
-
+                                before_install:
+                                        - echo "chris"
+                                          #hello
 script:
         - echo "Hello World"
 deploy:
