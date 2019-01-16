@@ -5,25 +5,21 @@ ubuntu:
         - 18.04
 env:
         - FLASK_CONFIG=staging 
-language: node_js 
-node_js:
-        - "11"
-          #        - "10"
 before_install:
         - sudo apt-get update
-        - python3 --version
-        - python --version
-          # - sudo apt-get install python3.
 matrix:
         include:
-                - python: 3.7
-                  #        dist: xenial
-          #             - "3.7.2"
-          #        before_install:
-        before_install:
-                - yarn cache clean
-                - yarn install
-                  #   - python3 --version
+                - language: node_js
+                        node_js:
+                                - "11"
+                        before_install:
+                                - yarn cache clean
+                                - yarn install
+                - language: python
+                  python:
+                          - "3.7"
+
+
 script:
         - echo "Hello World"
 deploy:
