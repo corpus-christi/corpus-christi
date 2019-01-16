@@ -25,7 +25,7 @@ matrix:
                                   #- yarn install
                                   # - lajkdfkdjfnguage: python
                 - language: python
-                        - python: "2.7"
+                        - python: "3.7"
                           dist: xenial
                           sudo: true
                           before_install:
