@@ -11,7 +11,7 @@ from werkzeug.security import check_password_hash
 from .models import Asset, AssetSchema, Event, EventSchema, Team, TeamSchema, EventParticipant, EventParticipantSchema, EventPerson, EventPersonSchema, TeamMember, TeamMemberSchema, EventAsset, EventAssetSchema, EventTeam, EventTeamSchema
 from ..places.models import Location, Country
 from ..people.models import Person
-from .create_event_data import flip, fake, create_multiple_events, event_object_factory, create_multiple_assets, create_multiple_teams, create_events_assets, create_events_teams, create_events_persons, create_events_participants, create_teams_members, get_team_ids
+from .create_event_data import flip, fake, create_multiple_events, event_object_factory, email_object_factory, create_multiple_assets, create_multiple_teams, create_events_assets, create_events_teams, create_events_persons, create_events_participants, create_teams_members, get_team_ids
 from ..places.test_places import create_multiple_locations, create_multiple_addresses, create_multiple_areas
 from ..people.test_people import create_multiple_people
 
@@ -1177,6 +1177,7 @@ def test_modify_team_member_invalid(auth_client):
         assert resp.status_code == 422
 
 
+@pytest.mark.smoke
 def test_delete_team_member(auth_client):
     # GIVEN a database with some linked teams and members
     create_multiple_teams(auth_client.sqla, 5)
@@ -1197,5 +1198,29 @@ def test_delete_team_member(auth_client):
     resp = auth_client.delete(url_for('events.delete_team_member', team_id=team_member.team_id, member_id=team_member.member_id))
     # THEN we expect an error
     assert resp.status_code == 404
+
+
+@pytest.mark.smoke
+def test_send_email(auth_client):
+    # GIVEN
+
+    # WHEN
+
+    # THEN
+    resp = auth_client.post(url_for('events.send_email'), json = email_object_factory())
+    assert resp.status_code == 200
+
+
+@pytest.mark.smoke
+def test_send_email_invalid(auth_client):
+    # GIVEN
+
+    # WHEN
+    email = email_object_factory()
+    email[fake.word()] = fake.word()
+
+    # THEN
+    resp = auth_client.post(url_for('events.send_email'), json = email)
+    assert resp.status_code == 422
 
 
