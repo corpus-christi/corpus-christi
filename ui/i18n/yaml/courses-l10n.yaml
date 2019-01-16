@@ -1,0 +1,40 @@
+courses:
+  course:
+    en: Courses
+    es: Cursos
+  enrolled:
+    en: Number Enrolled
+    es: Número Registrado
+  title:
+    en: Title
+    es: Título
+  description:
+    en: Description
+    es: Descripción
+  new:
+    en: New Course
+    es: Nuevo Curso
+  prerequisites:
+    en: Prerequisites
+    es: Prerrequisitos
+  added:
+    en: Course added
+    es: Curso añadido
+  updated:
+    en: Course updated
+    es: Curso actualizado
+  add-failed:
+    en: Failed to add course
+    es: Se falló a añadir el curso
+  update-failed:
+    en: Failed to update course
+    es: Se falló a actualizar el curso
+  archived:
+    en: Course archived
+    es: Curso archivado
+  reactivated:
+    en: Course unarchived
+    es: Curso desarchivado
+  confirm-archive:
+    en: Are you sure you want to archive this course?
+    es: ¿Estás seguro que quieres archivar este curso?
