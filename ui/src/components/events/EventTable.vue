@@ -373,7 +373,9 @@ export default {
 
     saveEvent(event) {
       this.eventDialog.saveLoading = true;
-      event.location_id = event.location.id;
+      if (event.location) {
+        event.location_id = event.location.id;
+      }
       let newEvent = JSON.parse(JSON.stringify(event));
       delete newEvent.location;
       delete newEvent.id;
