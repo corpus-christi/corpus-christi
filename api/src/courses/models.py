@@ -131,7 +131,7 @@ class Student(Base):
      student_id = Column(Integer, ForeignKey('people_person.id'), nullable=False)
      confirmed = Column(Boolean, nullable=False)
      active = Column(Boolean, default=True, nullable=False)
-     course_offering = relationship('Course_Offering', backref='students', lazy=True)
+     courses_offered = relationship('Course_Offering', back_populates='students', lazy=True)
      person = relationship('Person', backref='students', lazy=True)
      diplomas_awarded = relationship('Diploma_Awarded',
                back_populates='students', lazy=True, uselist=False)
@@ -160,6 +160,7 @@ class Course_Offering(Base):
      description = Column(StringTypes.LONG_STRING, nullable=False)
      max_size = Column(Integer, nullable=False)
      active = Column(Boolean, nullable=False, default=True)
+     students = relationship('Student', back_populates='courses_offered', lazy=True)
      course = relationship('Course', backref='courses_offered', lazy=True)
 
      def __repr__(self):

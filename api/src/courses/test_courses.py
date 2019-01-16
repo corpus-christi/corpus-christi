@@ -8,6 +8,7 @@ from src.db import Base
 from .models import Course, CourseSchema, Course_Offering, Class_Meeting,\
         Course_OfferingSchema, Diploma, DiplomaSchema, Student, StudentSchema,\
         Class_Meeting, Class_MeetingSchema, Diploma_Awarded, Diploma_AwardedSchema
+from ..people.test_people import create_multiple_people
 from ..people.models import Person
 from ..places.models import Location
 from ..people.test_people import create_multiple_people
@@ -257,9 +258,9 @@ def class_meeting_object_factory(teacher, offering_id, location=1):
     fake = Faker()
     class_meeting = {
     'offeringId': offering_id,
-    'teacher': teacher,
+    'teacher_id': teacher,
     'when': str(fake.future_datetime(end_date="+30d")),
-    'location': location,
+    'location_id': location,
     }
     return class_meeting
 
@@ -597,7 +598,10 @@ def test_delete_course_offering(auth_client):
     assert True == False
 """
 
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 
 # ---- Diploma_Course
 
@@ -754,13 +758,28 @@ def test_delete_diploma_awarded(client, db):
 
 # ---- Student
 
+student_schema = StudentSchema()
 
-@pytest.mark.xfail()
-def test_create_student(client, db):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
+def setup_dependencies_of_student(auth_client, n):
+    create_multiple_people(auth_client.sqla, n)
+    create_multiple_courses_active(auth_client.sqla, n)
+    create_multiple_course_offerings_active(auth_client.sqla, n)
+
+
+def test_create_student(auth_client):
+    # GIVEN a course, course offering, and a person
+    setup_dependencies_of_student(auth_client,1)
+    person = auth_client.sqla.query(Person).one()
+    course_offering = auth_client.sqla.query(Course_Offering).one()
+    # WHEN a person wants to enroll in a course offering they become a student
+    student = student_object_factory(course_offering.id, person.id)#student_schema.dump()
+    resp = auth_client.post(url_for('courses.add_student_to_course_offering',
+        s_id=person.id), json=student)
+    print(student)
+    # THEN the person should be a student in that course
+    course_offering = auth_client.sqla.query(Course_Offering).one()
+    print(resp.status_code)
+    assert course_offering.students[0].id == person.id
 
 
 @pytest.mark.xfail()

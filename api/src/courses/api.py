@@ -298,10 +298,10 @@ def add_student_to_course_offering(s_id):
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    course_offering = request.json['offering_id']
+    course_offering = request.json['offeringId']
     courseInDB = db.session.query(Student).filter_by(
         student_id=s_id, offering_id=course_offering).all()
-    if courseInDB is []:
+    if courseInDB == []:
         new_student = Student(**valid_student)
 
         db.session.add(new_student)
