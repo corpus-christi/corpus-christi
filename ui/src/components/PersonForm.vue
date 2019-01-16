@@ -4,7 +4,7 @@
       <span class="headline">{{ title }}</span>
     </v-card-title>
     <v-card-text>
-      <form ref="container">
+      <form ref="form">
         <v-text-field
           v-model="person.firstName"
           v-bind:label="$t('person.name.first')"
@@ -93,6 +93,10 @@
           :readonly="formDisabled"
         ></v-text-field>
         <span class="headline">{{ $t('people.attributes') }}</span>
+        <component v-for="(field, index) in attributeFields"
+               :key="index"
+               :is="field.fieldType"
+               v-bind="field"></component>
       </form>
     </v-card-text>
     <v-card-actions>
@@ -140,11 +144,12 @@
 import { mapGetters } from "vuex";
 import { isEmpty } from "lodash";
 import Vue from "vue/dist/vue.esm";
-import TextField from "./InputFields/TextField.vue";
-import SelectField from "./InputFields/SelectField";
+import String from "./InputFields/String.vue";
+import Dropdown from "./InputFields/Dropdown.vue";
 
 export default {
   name: "PersonForm",
+  components: { String, Dropdown },
   props: {
     editMode: {
       type: Boolean,
@@ -172,14 +177,19 @@ export default {
       showBirthdayPicker: false,
 
       person: {
+        active: true,
         firstName: "",
         lastName: "",
+        secondLastName: "",
         gender: "",
         birthday: "",
         email: "",
         phone: "",
+        locationId: 0,
         attributesInfo: []
-      }
+      },
+
+      attributeFields: []
     };
   },
   computed: {
@@ -198,6 +208,10 @@ export default {
 
     formDisabled() {
       return this.saveLoading || this.addMoreLoading;
+    },
+
+    showAttributes() {
+      return true;
     }
   },
 
@@ -246,9 +260,10 @@ export default {
     },
 
     constructAttributeForm(attributes) {
-      console.log(attributes);
+      this.attributeFields = [];
+      // reference: https://blog.rangle.io/how-to-create-data-driven-user-interfaces-in-vue/
       for (let attr of attributes) {
-        let child;
+        let component;
         switch (attr.typeI18n) {
           case "attribute.float":
             break;
@@ -257,49 +272,42 @@ export default {
           case "attribute.date":
             break;
           case "attribute.string":
-            let TextFieldClass = Vue.extend({
-              template: `
-                <TextField v-bind:label='labelStr'/>
-              `,
-              components: { TextField },
-              data: () => {
-                return {
-                  labelStr: attr.nameI18n
-                };
-              }
-            });
-            child = new TextFieldClass().$mount();
+            component = this.stringFieldConstructor(attr);
             break;
           case "attribute.dropdown":
-            let options = [];
-            for(let item of attr.enumerated_values) {
-              console.log(item);
-              options.push({
-                text: item.valueI18n,
-                value: item.id
-              });
-            };
-            console.log(options);
-            let SelectFieldClass = Vue.extend({
-              template: `
-                <SelectField v-bind:label='labelStr' v-bind:options='items'/>
-              `,
-              components: { SelectField },
-              data: () => {
-                return {
-                  labelStr: attr.nameI18n,
-                  items: options
-                };
-              }
-            });
-            child = new SelectFieldClass().$mount();
+            component = this.dropdownFieldConstructor(attr);
             break;
           case "attribute.check":
             break;
           case "attribute.radio":
             break;
         }
-        this.$refs.container.appendChild(child.$el);
+        this.attributeFields.push(component);
+      }
+    },
+
+    stringFieldConstructor(attr) {
+      return {
+        fieldType: "String",
+        name: attr.id,
+        label: attr.nameI18n,
+      }
+    },
+
+    dropdownFieldConstructor(attr) {
+      let options = [];
+      for(let item of attr.enumerated_values) {
+        options.push({
+          text: item.valueI18n,
+          value: item.id
+        });
+      };
+
+      return {
+        fieldType: "Dropdown",
+        name: attr.id,
+        label: attr.nameI18n,
+        options: options
       }
     }
   }

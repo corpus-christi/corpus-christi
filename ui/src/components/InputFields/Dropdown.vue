@@ -5,7 +5,7 @@
 
 <script>
 export default {
-  name: "SelectField",
+  name: "Dropdown",
   props: {
     label: {
       type: String,

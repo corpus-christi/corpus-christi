@@ -273,6 +273,7 @@ export default {
     // ---- Person Administration
 
     activatePersonDialog(person = {}, editMode = false) {
+      console.log(person);
       this.personDialog.editMode = editMode;
       this.personDialog.person = person;
       this.personDialog.show = true;

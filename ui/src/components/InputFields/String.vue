@@ -4,7 +4,7 @@
 
 <script>
 export default {
-  name: "TextField",
+  name: "String",
   props: {
     label: {
       type: String,
