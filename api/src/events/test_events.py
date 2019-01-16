@@ -22,15 +22,13 @@ fake = Faker()
 @pytest.mark.smoke
 def test_create_event(auth_client):
     # GIVEN an empty database
-    # WHEN we add in some events
+    # WHEN we create a number of events
     count = random.randint(5, 15)
-    
-    # WHEN
     for i in range(count):
         resp = auth_client.post(url_for('events.create_event'), json=event_object_factory(auth_client.sqla))
         assert resp.status_code == 201
     
-    # THEN
+    # THEN we expect the same number of the events in the database as we created
     assert auth_client.sqla.query(Event).count() == count
     
 
@@ -60,25 +58,27 @@ def test_create_invalid_event(auth_client):
 
 @pytest.mark.smoke
 def test_read_all_events(auth_client):
-    # GIVEN
+    # GIVEN a database with some events
     count = random.randint(3, 11)
     create_multiple_events(auth_client.sqla, count)
 
-    # WHEN
+    # WHEN we read all active events
     resp = auth_client.get(url_for('events.read_all_events'))
+    # THEN we expect the right status code
     assert resp.status_code == 200
-    events = auth_client.sqla.query(Event).all()
-
-    # THEN
+    # THEN we expect the number of active 
+    events = auth_client.sqla.query(Event).all() # all queried events from database
     inactive = 0
     for event in events:
         if not event.active:
             inactive += 1
-
+    # THEN we expect the database has the same number of events as we created
     assert len(events) == count
+    # THEN we expect the number of active events we get from the request to be the same as the number in the database
     assert len(resp.json) == count - inactive
 
-    j = 0
+    # THEN we expect each active event's title to correspond to the queried event's title in the database
+    j = 0 # j is the index for the response array
     for i in range(count - inactive):
         if events[i].active:
             assert resp.json[j]['title'] == events[i].title
@@ -139,15 +139,15 @@ def test_read_all_events_with_query(auth_client):
 
 @pytest.mark.smoke
 def test_read_one_event(auth_client):
-    # GIVEN
+    # GIVEN a database with a number of events
     count = random.randint(3, 11)
     create_multiple_events(auth_client.sqla, count)
     
-    # WHEN
     events = auth_client.sqla.query(Event).all()
 
+    # WHEN we ask for the events one by one
     for event in events:
-        # THEN
+        # THEN we expect each of them to correspond to the event in the database
         resp = auth_client.get(url_for('events.read_one_event', event_id = event.id))
         assert resp.status_code == 200
         assert resp.json['title'] == event.title
@@ -165,20 +165,24 @@ def test_read_one_missing_event(auth_client):
 
 @pytest.mark.smoke
 def test_replace_event(auth_client):
-    # GIVEN
+    # GIVEN a database with a number of events
     count = random.randint(3, 11)
     create_multiple_events(auth_client.sqla, count)
-
-    # WHEN
-    events = auth_client.sqla.query(Event).all()
-
-    for event in events:
-        # THEN
-        resp = auth_client.put(url_for('events.replace_event', event_id = event.id), json = event_object_factory(auth_client.sqla))
-        
-        assert resp.status_code == 200
-        assert resp.json['id'] == event.id
-        assert resp.json['title'] != event.title
+    # WHEN we replace one event with a predefined content
+    event = auth_client.sqla.query(Event).first()
+    new_event = {
+        'title': fake.word(),
+        'start': str(fake.future_datetime(end_date="+6h")),
+        'end': str(fake.date_time_between(start_date="+6h", end_date="+1d", tzinfo=None)),
+        'active': flip()
+    }
+    resp = auth_client.put(url_for('events.replace_event', event_id = event.id), json = new_event)
+    # THEN we expect the right status code
+    assert resp.status_code == 200
+    # THEN we expect the event in the database to have the same content of the predefined content
+    assert resp.json['id'] == event.id
+    assert resp.json['title'] == new_event['title']
+    assert resp.json['active'] == new_event['active']
     
 
 @pytest.mark.smoke
