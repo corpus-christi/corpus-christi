@@ -11,7 +11,7 @@ from werkzeug.security import check_password_hash
 from .models import Asset, AssetSchema, Event, EventSchema, Team, TeamSchema, EventParticipant, EventParticipantSchema, EventPerson, EventPersonSchema, TeamMember, TeamMemberSchema, EventAsset, EventAssetSchema, EventTeam, EventTeamSchema
 from ..places.models import Location, Country
 from ..people.models import Person
-from .create_event_data import flip, fake, create_multiple_events, event_object_factory, email_object_factory, create_multiple_assets, create_multiple_teams, create_events_assets, create_events_teams, create_events_persons, create_events_participants, create_teams_members, get_team_ids, asset_object_factory
+from .create_event_data import flip, fake, create_multiple_events, event_object_factory, email_object_factory, create_multiple_assets, create_multiple_teams, create_events_assets, create_events_teams, create_events_persons, create_events_participants, create_teams_members, get_team_ids, asset_object_factory, team_object_factory
 from ..places.test_places import create_multiple_locations, create_multiple_addresses, create_multiple_areas
 from ..people.test_people import create_multiple_people
 
@@ -611,9 +611,24 @@ def test_create_team(auth_client):
 
 @pytest.mark.smoke
 def test_read_all_teams(auth_client):
-    # GIVEN a database with some teams
+    # GIVEN a database with a number of pre-defined teams
+    teams = []
     count = random.randint(5, 15)
-    create_multiple_teams(auth_client.sqla, count)
+    for i in range(count):
+        tmp_team = team_object_factory()
+        if i == 0:
+            tmp_team["description"] = "the most awesome team"
+            tmp_team['active'] = True
+        else:
+            tmp_team["description"] = "nothing to be filtered"
+        teams.append(Team(**TeamSchema().load(tmp_team)))
+    auth_client.sqla.add_all(teams)
+    auth_client.sqla.commit()
+    # WHEN we try to read all teams with a filter 'drum'
+    filtered_teams = auth_client.get(url_for('events.read_all_teams', return_group="all", desc="awesome")).json
+    # THEN we should have exactly one team
+    assert len(filtered_teams) == 1
+    # GIVEN a database with some teams
     # WHEN we read all active ones
     active_teams = auth_client.get(url_for('events.read_all_teams')).json
     queried_active_teams_count = auth_client.sqla.query(Team).filter(Team.active==True).count()
