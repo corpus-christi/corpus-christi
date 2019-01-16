@@ -190,6 +190,7 @@ def remove_asset_from_event(event_id, asset_id):
 @events.route('/<event_id>/teams')
 @jwt_required
 def get_event_teams(event_id):
+    team_schema = TeamSchema(exclude=get_exclusion_list(request.args, ['members', 'events']))
     teams = db.session.query(Team).join(EventTeam).filter_by(event_id=event_id).all()
 
     return jsonify(team_schema.dump(teams, many=True))
@@ -239,11 +240,10 @@ def delete_event_team(event_id, team_id):
     # 204 codes don't respond with any content
     return 'Successfully removed team member', 204
 
-event_person_schema = EventPersonSchema(exclude=['event'])
-
 @events.route('/<event_id>/individuals')
 @jwt_required
 def get_event_persons(event_id):
+    event_person_schema = EventPersonSchema(exclude=['event'])
     people = db.session.query(EventPerson).filter_by(event_id=event_id).all()
 
     return jsonify(event_person_schema.dump(people, many=True))
@@ -251,6 +251,7 @@ def get_event_persons(event_id):
 @events.route('/<event_id>/individuals/<person_id>', methods=['POST','PUT'])
 @jwt_required
 def add_event_persons(event_id, person_id):
+    event_person_schema = EventPersonSchema(exclude=['event'])
     try:
         valid_description = event_person_schema.load(request.json, partial=('event_id', 'person_id'))
     except ValidationError as err:
@@ -287,6 +288,7 @@ def add_event_persons(event_id, person_id):
 @events.route('/<event_id>/individuals/<person_id>', methods=['PATCH'])
 @jwt_required
 def modify_event_person(event_id, person_id):
+    event_person_schema = EventPersonSchema(exclude=['event'])
     try:
         valid_description = event_person_schema.load(request.json, partial=('event_id', 'person_id'))
     except ValidationError as err:
@@ -318,11 +320,10 @@ def delete_event_persons(event_id, person_id):
 
 # ---- Participant
 
-event_participant_schema = EventParticipantSchema(exclude=['event'])
-
 @events.route('/<event_id>/participants')
 @jwt_required
 def get_event_participants(event_id):
+    event_participant_schema = EventParticipantSchema(exclude=['event'])
     participants = db.session.query(EventParticipant).filter_by(event_id=event_id).all()
 
     return jsonify(event_participant_schema.dump(participants, many=True))
@@ -330,6 +331,7 @@ def get_event_participants(event_id):
 @events.route('/<event_id>/participants/<person_id>', methods=['POST','PUT'])
 @jwt_required
 def add_event_participants(event_id, person_id):
+    event_participant_schema = EventParticipantSchema(exclude=['event'])
     try:
         valid_confirmation = event_participant_schema.load(request.json, partial=('event_id', 'person_id'))
     except ValidationError as err:
@@ -356,6 +358,8 @@ def add_event_participants(event_id, person_id):
 @events.route('/<event_id>/participants/<person_id>', methods=['PATCH'])
 @jwt_required
 def modify_event_participant(event_id, person_id):
+    event_participant_schema = EventParticipantSchema(exclude=['event'])
+    event_person_schema = EventPersonSchema(exclude=['event'])
     try:
         valid_confirmation = event_participant_schema.load(request.json, partial=('event_id', 'person_id'))
     except ValidationError as err:
@@ -387,11 +391,10 @@ def delete_event_participant(event_id, person_id):
 
 # ---- Asset
 
-asset_schema = AssetSchema()
-
 @events.route('/assets', methods=['POST'])
 @jwt_required
 def create_asset():
+    asset_schema = AssetSchema(exclude=get_exclusion_list(request.args, ['location']))
     try:
         valid_asset = asset_schema.load(request.json)
     except ValidationError as err:
@@ -406,7 +409,7 @@ def create_asset():
 @events.route('/assets')
 @jwt_required
 def read_all_assets():
-
+    asset_schema = AssetSchema(exclude=get_exclusion_list(request.args, ['location']))
     query = db.session.query(Asset).add_columns(func.count(EventAsset.event_id).label('event_count'))
 
     # -- return_inactives --
@@ -444,6 +447,7 @@ def read_all_assets():
 @events.route('/assets/<asset_id>')
 @jwt_required
 def read_one_asset(asset_id):
+    asset_schema = AssetSchema(exclude=get_exclusion_list(request.args, ['location']))
     asset = db.session.query(Asset).filter_by(id=asset_id).add_columns(func.count(EventAsset.event_id).label('event_count')).join(EventAsset, isouter=True).group_by(Asset.id).first()
     
     if not asset:
@@ -458,23 +462,25 @@ def read_one_asset(asset_id):
 @events.route('/assets/<asset_id>', methods=['PUT'])
 @jwt_required
 def replace_asset(asset_id):
+    asset_schema = AssetSchema(exclude=get_exclusion_list(request.args, ['location']))
     try:
         valid_asset = asset_schema.load(request.json)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    return modify_asset(asset_id, valid_asset)
+    return modify_entity(Asset, asset_schema, asset_id, valid_asset)
     
 
 @events.route('/assets/<asset_id>', methods=['PATCH'])
 @jwt_required
 def update_asset(asset_id):
+    asset_schema = AssetSchema(exclude=get_exclusion_list(request.args, ['location']))
     try: 
         valid_attributes = asset_schema.load(request.json, partial=True)
     except ValidationError as err:
         return jsonify(err.messages), 422
                 
-    return modify_asset(asset_id, valid_attributes)
+    return modify_entity(Asset, asset_schema, asset_id, valid_attributes)
     
 
 @events.route('/assets/<asset_id>', methods=['DELETE'])
@@ -491,18 +497,13 @@ def delete_asset(asset_id):
     # 204 codes don't respond with any content
     return 'Successfully deleted asset', 204
 
-# Handles PUT and PATCH requests
-def modify_asset(asset_id, new_value_dict):
-    return modify_entity(Asset, asset_schema, asset_id, new_value_dict)
-
 
 # ---- Team
-
-team_schema = TeamSchema()
 
 @events.route('/teams', methods=['POST'])
 @jwt_required
 def create_team():
+    team_schema = TeamSchema(exclude=get_exclusion_list(request.args, ['members', 'events']))
     try:
         valid_team = team_schema.load(request.json)
     except ValidationError as err:
@@ -517,7 +518,7 @@ def create_team():
 @events.route('/teams')
 @jwt_required
 def read_all_teams():
-
+    team_schema = TeamSchema(exclude=get_exclusion_list(request.args, ['members', 'events']))
     query = db.session.query(Team)
 
     # -- return_inactives --
@@ -543,6 +544,7 @@ def read_all_teams():
 @events.route('/teams/<team_id>')
 @jwt_required
 def read_one_team(team_id):
+    team_schema = TeamSchema(exclude=get_exclusion_list(request.args, ['members', 'events']))
     team = db.session.query(Team).filter_by(id=team_id).first()
 
     if not team:
@@ -550,11 +552,12 @@ def read_one_team(team_id):
 
     return jsonify(team_schema.dump(team))
 
-team_schema_no_members = TeamSchema(exclude=['members'])
-person_schema = PersonSchema()
+
 @events.route('/teams/members')
 @jwt_required
 def read_all_team_members():
+    team_schema = TeamSchema(exclude=['members', 'events'])
+    person_schema = PersonSchema()
     teams = db.session.query(Team).all()
 
     constructed_dict = dict()
@@ -565,7 +568,7 @@ def read_all_team_members():
                 constructed_dict[member_id] = person_schema.dump(member.member)
                 constructed_dict[member_id]['active'] = member.active
                 constructed_dict[member_id]['teams'] = list()
-            constructed_dict[member_id]['teams'].append(team_schema_no_members.dump(team))
+            constructed_dict[member_id]['teams'].append(team_schema.dump(team))
 
     return jsonify(constructed_dict)
 
@@ -573,23 +576,25 @@ def read_all_team_members():
 @events.route('/teams/<team_id>', methods=['PUT'])
 @jwt_required
 def replace_team(team_id):
+    team_schema = TeamSchema(exclude=get_exclusion_list(request.args, ['members', 'events']))
     try:
         valid_team = team_schema.load(request.json)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    return modify_team(team_id, valid_team)
+    return modify_entity(Team, team_schema, team_id, valid_team)
     
 
 @events.route('/teams/<team_id>', methods=['PATCH'])
 @jwt_required
 def update_team(team_id):
+    team_schema = TeamSchema(exclude=get_exclusion_list(request.args, ['members', 'events']))
     try: 
         valid_attributes = team_schema.load(request.json, partial=True)
     except ValidationError as err:
         return jsonify(err.messages), 422
                 
-    return modify_team(team_id, valid_attributes)
+    return modify_entity(Team, team_schema, team_id, valid_attributes)
     
 
 @events.route('/teams/<team_id>', methods=['DELETE'])
@@ -606,11 +611,10 @@ def delete_team(team_id):
     # 204 codes don't respond with any content
     return 'Successfully deleted team', 204
 
-team_member_schema = TeamMemberSchema(exclude=['team'])
-
 @events.route('/teams/<team_id>/members')
 @jwt_required
 def get_team_members(team_id):
+    team_member_schema = TeamMemberSchema(exclude=get_exclusion_list(request.args, ['team']))
     team_members = db.session.query(TeamMember).filter_by(team_id=team_id).all()
 
     if not team_members:
@@ -621,6 +625,7 @@ def get_team_members(team_id):
 @events.route('/teams/<team_id>/members/<member_id>', methods=['PATCH'])
 @jwt_required
 def modify_team_member(team_id, member_id):
+    team_member_schema = TeamMemberSchema(exclude=get_exclusion_list(request.args, ['team']))
     try:
         valid_attributes = team_member_schema.load(request.json, partial=('team_id', 'member_id'))
     except ValidationError as err:
@@ -639,6 +644,7 @@ def modify_team_member(team_id, member_id):
 @events.route('/teams/<team_id>/members/<member_id>', methods=['POST','PUT'])
 @jwt_required
 def add_team_member(team_id, member_id):
+    team_member_schema = TeamMemberSchema(exclude=get_exclusion_list(request.args, ['team']))
     try:
         valid_attributes = team_member_schema.load(request.json, partial=('team_id', 'member_id'))
     except ValidationError as err:
@@ -679,17 +685,12 @@ def delete_team_member(team_id, member_id):
     # 204 codes don't respond with any content
     return 'Successfully removed team member', 204
 
-# Handles PUT and PATCH requests
-def modify_team(team_id, new_value_dict):
-    return modify_entity(Team, team_schema, team_id, new_value_dict)
-
 # ---- Email
-
-email_schema = EmailSchema()
 
 @events.route('/email', methods=['POST'])
 @jwt_required
 def send_email():
+    email_schema = EmailSchema()
     try:
         valid_email_request = email_schema.load(request.json)
     except ValidationError as err:
