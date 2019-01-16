@@ -19,14 +19,16 @@
           ></v-text-field>
         </v-flex>
         <v-flex md3>
-          <v-select
-            hide-details
-            solo
-            single-line
-            :items="viewOptions"
-            v-model="viewStatus"
-          >
-          </v-select>
+          <div data-cy="view-dropdown">
+            <v-select
+              hide-details
+              solo
+              single-line
+              :items="viewOptions"
+              v-model="viewStatus"
+            >
+            </v-select>
+          </div>
         </v-flex>
         <v-flex shrink justify-self-end>
           <v-btn
@@ -34,7 +36,7 @@
             color="primary"
             raised
             v-on:click.stop="newPerson"
-            data-cy="add-person"
+            data-cy="new-person"
           >
             <v-icon left>person_add</v-icon>
             {{ $t("actions.add-person") }}
@@ -52,10 +54,21 @@
       data-cy="person-table"
     >
       <template slot="items" slot-scope="props">
-        <td>{{ props.item.firstName }}</td>
-        <td>{{ props.item.lastName }}</td>
-        <td>{{ props.item.email }}</td>
-        <td>{{ props.item.phone }}</td>
+        <td>
+          <v-icon size="15" v-if="props.item.accountInfo"
+            >account_circle</v-icon
+          >
+        </td>
+        <td :data-cy="'first-name-' + props.item.id">
+          {{ props.item.firstName }}
+        </td>
+        <td :data-cy="'last-name-' + props.item.id">
+          {{ props.item.lastName }}
+        </td>
+        <td class="hidden-sm-and-down" :data-cy="'email-' + props.item.id">
+          {{ props.item.email }}
+        </td>
+        <td :data-cy="'phone-' + props.item.id">{{ props.item.phone }}</td>
         <td class="text-no-wrap">
           <v-tooltip bottom>
             <v-btn
@@ -79,7 +92,7 @@
               color="primary"
               slot="activator"
               v-on:click="adminPerson(props.item)"
-              data-cy="add-account"
+              data-cy="account-settings"
             >
               <v-icon small>settings</v-icon>
             </v-btn>
@@ -98,7 +111,7 @@
             >
               <v-icon small>archive</v-icon>
             </v-btn>
-            <span>{{ $t("actions.tooltips.deactivate") }}</span>
+            <span>{{ $t("actions.tooltips.archive") }}</span>
           </v-tooltip>
           <v-tooltip bottom>
             <v-btn
@@ -113,7 +126,7 @@
             >
               <v-icon small>undo</v-icon>
             </v-btn>
-            <span>{{ $t("actions.tooltips.deactivate") }}</span>
+            <span>{{ $t("actions.tooltips.activate") }}</span>
           </v-tooltip>
         </td>
       </template>
@@ -127,12 +140,18 @@
     </v-snackbar>
 
     <!-- New/Edit dialog -->
-    <v-dialog scrollable v-model="personDialog.show" max-width="500px">
+    <v-dialog
+      scrollable
+      persistent
+      v-model="personDialog.show"
+      max-width="500px"
+    >
       <PersonForm
         v-bind:editMode="personDialog.editMode"
         v-bind:initialData="personDialog.person"
         v-bind:saveLoading="personDialog.saveLoading"
         v-bind:addMoreLoading="personDialog.addMoreLoading"
+        v-bind:attributes="personDialog.attributes"
         v-on:cancel="cancelPerson"
         v-on:save="savePerson"
         v-on:add-another="addAnother"
@@ -140,7 +159,12 @@
     </v-dialog>
 
     <!-- Person admin dialog -->
-    <v-dialog scrollable v-model="adminDialog.show" max-width="500px">
+    <v-dialog
+      scrollable
+      persistent
+      v-model="adminDialog.show"
+      max-width="500px"
+    >
       <PersonAdminForm
         v-bind:person="adminDialog.person"
         v-bind:account="adminDialog.account"
@@ -167,6 +191,7 @@ export default {
         editMode: false,
         saveLoading: false,
         addMoreLoading: false,
+        attributes: [],
         person: {}
       },
 
@@ -186,7 +211,8 @@ export default {
       allPeople: [],
       activePeople: [],
       archivedPeople: [],
-      search: ""
+      search: "",
+      data: {}
     };
   },
   computed: {
@@ -194,20 +220,39 @@ export default {
     headers() {
       return [
         {
+          text: "",
+          value: "person.accountInfo",
+          align: "right",
+          sortable: false
+        },
+        {
           text: this.$t("person.name.first"),
           value: "firstName",
-          width: "20%"
+          width: "10%"
         },
         { text: this.$t("person.name.last"), value: "lastName", width: "20%" },
-        { text: this.$t("person.email"), value: "email", width: "15%" },
+        {
+          text: this.$t("person.email"),
+          value: "email",
+          width: "15%",
+          class: "hidden-sm-and-down"
+        },
         { text: this.$t("person.phone"), value: "phone", width: "15%" },
         { text: this.$t("actions.header"), sortable: false }
       ];
     },
     viewOptions() {
       return [
-        { text: this.$t("actions.view-active"), value: "viewActive" },
-        { text: this.$t("actions.view-archived"), value: "viewArchived" },
+        {
+          text: this.$t("actions.view-active"),
+          value: "viewActive",
+          class: "view-active"
+        },
+        {
+          text: this.$t("actions.view-archived"),
+          value: "viewArchived",
+          class: "view-archived"
+        },
         { text: this.$t("actions.view-all"), value: "viewAll" }
       ];
     },
@@ -251,15 +296,18 @@ export default {
         // Hang on to the ID of the person being updated.
         const person_id = person.id;
         // Locate the person we're updating in the table.
-        const idx = this.people.findIndex(p => p.id === person.id);
+        const idx = this.allPeople.findIndex(p => p.id === person.id);
         // Get rid of the ID; not for consumption by endpoint.
         delete person.id;
 
+        console.log(person);
+        this.data = this.constructPersonData(person);
+        console.log(this.data);
         this.$http
-          .put(`/api/v1/people/persons/${person_id}`, person)
+          .put(`/api/v1/people/persons/${person_id}`, this.data)
           .then(resp => {
             console.log("EDITED", resp);
-            Object.assign(this.people[idx], person);
+            Object.assign(this.allPeople[idx], person);
             this.personDialog.show = false;
             this.personDialog.saveLoading = false;
             this.showSnackbar(this.$t("person.messages.person-edit"));
@@ -270,8 +318,11 @@ export default {
             this.showSnackbar(this.$t("person.messages.person-save-error"));
           });
       } else {
+        console.log(person);
+        this.data = this.constructPersonData(person);
+        console.log(this.data);
         this.$http
-          .post("/api/v1/people/persons", person)
+          .post("/api/v1/people/persons", this.data)
           .then(resp => {
             console.log("ADDED", resp);
             this.refreshPeopleList();
@@ -287,10 +338,24 @@ export default {
       }
     },
 
+    constructPersonData(person) {
+      var attributes = [];
+      if (person.attributesInfo) {
+        attributes = person.attributesInfo;
+      }
+      delete person["attributesInfo"];
+      delete person["accountInfo"];
+      return {
+        person: person,
+        attributesInfo: attributes
+      };
+    },
+
     addAnother(person) {
       this.personDialog.addMoreLoading = true;
+      this.data = this.constructPersonData(person);
       this.$http
-        .post("/api/v1/people/persons", person)
+        .post("/api/v1/people/persons", this.data)
         .then(resp => {
           console.log("ADDED", resp);
           this.refreshPeopleList();
@@ -315,7 +380,6 @@ export default {
     adminPerson(person) {
       // Pass along the current person.
       this.adminDialog.person = person;
-
       // Fetch the person's account information (if any) before activating the dialog.
       this.$http
         .get(`/api/v1/people/persons/${person.id}/account`)
@@ -374,7 +438,6 @@ export default {
     },
 
     activatePerson(person) {
-      console.log(person);
       this.$http
         .put(`/api/v1/people/persons/activate/${person.id}`)
         .then(resp => {
@@ -386,7 +449,6 @@ export default {
     },
 
     deactivatePerson(person) {
-      console.log(person);
       this.$http
         .put(`/api/v1/people/persons/deactivate/${person.id}`)
         .then(resp => {
@@ -401,10 +463,20 @@ export default {
       this.$http
         .get("/api/v1/people/persons")
         .then(resp => {
-          console.log(resp);
           this.allPeople = resp.data;
           this.activePeople = this.allPeople.filter(person => person.active);
           this.archivedPeople = this.allPeople.filter(person => !person.active);
+        })
+        .catch(err => console.error("FAILURE", err.response));
+    },
+
+    getAttributesInfo() {
+      this.$http
+        .get("/api/v1/people/persons/fields")
+        .then(resp => {
+          if (resp.data.person_attributes) {
+            this.personDialog.attributes = resp.data.person_attributes;
+          }
         })
         .catch(err => console.error("FAILURE", err.response));
     }
@@ -412,6 +484,7 @@ export default {
 
   mounted: function() {
     this.refreshPeopleList();
+    this.getAttributesInfo();
   }
 };
 </script>
