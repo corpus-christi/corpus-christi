@@ -384,38 +384,34 @@ def create_class_meeting():
     return jsonify(class_meeting_schema.dump(new_class_meeting)), 201
 
 
-@courses.route('/class_meetings')
+@courses.route('/course_offerings/<course_offering_id>/class_meetings')
 @jwt_required
-def read_all_class_meetings():
-    result = db.session.query(Class_Meeting).all()
+def read_all_class_meetings(course_offering_id):
+    result = db.session.query(Class_Meeting).filter_by(offering_id=course_offering_id).all()
+    if result is None:
+        return 'No Class Meetings found for this course offering', 404
     return jsonify(class_meeting_schema.dump(result, many=True))
 
 
-@courses.route('/class_meetings/<class_meeting_id>')
+# @courses.route('/class_meetings/<class_meeting_id>')
+# @jwt_required
+# def read_one_class_meeting(class_meeting_id):
+#     result = db.session.query(Class_Meeting).filter_by(id=class_meeting_id).first()
+#     return jsonify(class_meeting_schema.dump(result))
+
+
+@courses.route('/course_offerings/<course_offering_id>/<class_meeting_id>', methods=['PATCH'])
 @jwt_required
-def read_one_class_meeting(class_meeting_id):
-    result = db.session.query(Class_Meeting).filter_by(id=class_meeting_id).first()
-    return jsonify(class_meeting_schema.dump(result))
-
-
-@courses.route('/class_meetings/<class_meeting_id>', methods=['PUT'])
-@jwt_required
-def replace_class_meeting(class_meeting_id):
-    pass
-
-
-@courses.route('/class_meetings/<class_meeting_id>', methods=['PATCH'])
-@jwt_required
-def update_class_meeting(class_meeting_id):
+def update_class_meeting(course_offering_id, class_meeting_id):
     try:
         valid_class_meeting = class_meeting_schema.load(request.json)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    class_meeting = db.session.query(Class_Meeting).filter_by(id=class_meeting_id).first()
+    class_meeting = db.session.query(Class_Meeting).filter_by(id=class_meeting_id, offering_id=course_offering_id).first()
 
-    for key, val in valid_class_meeting.items():
-        setattr(class_meeting, key, val)
+    if "when" in request.json:
+        setattr(class_meeting, "when", request.json['when'])
 
     db.session.commit()
     return jsonify(class_meeting_schema.dump(class_meeting))
