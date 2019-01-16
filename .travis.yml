@@ -12,7 +12,7 @@ node_js:
 before_install:
         - sudo apt-get update
         - python --version
-        - sudo apt-get install python3
+        - sudo apt-get install python3.6
         - python --version
           #matrix:
           #        include:
