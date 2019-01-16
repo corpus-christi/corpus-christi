@@ -39,6 +39,12 @@ export default {
   components: {
     CourseOfferingsTable
   },
+  props: {
+    courseId: {
+      type: String,
+      required: true
+    }
+  },
   data() {
     return {
       course: {},
@@ -47,8 +53,7 @@ export default {
     };
   },
   mounted() { 
-    let id = this.$route.params.course;
-    this.$http.get(`/api/v1/courses/courses/${id}`)
+    this.$http.get(`/api/v1/courses/courses/${this.courseId}`)
       .then(resp => {
         this.course = resp.data;
       })

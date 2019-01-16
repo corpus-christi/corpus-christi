@@ -206,7 +206,7 @@ export default {
 
   methods: {
     clickThrough(course) {
-      this.$router.push({ name: 'course-details', params: { course: course.id }})
+      this.$router.push({ name: 'course-details', params: { courseId: course.id }})
     },
 
     dispatchAction(actionName, course) {
