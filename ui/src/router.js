@@ -48,10 +48,10 @@ const router = new VueRouter({
       path: "/events",
       meta: { authRequired: true },
       component: () => import("@/pages/Events"),
-      redirect: { name: "all" },
+      redirect: { name: "all-events" },
       children: [
         {
-          name: "all",
+          name: "all-events",
           path: "all",
           meta: { authRequired: true },
           component: () => import("@/components/events/EventTable")
@@ -60,29 +60,29 @@ const router = new VueRouter({
           name: "event",
           path: ":event",
           meta: { authRequired: true },
-          redirect: { name: "details" },
+          redirect: { name: "event-details" },
           component: () => import("@/components/events/Event"),
           children: [
             {
-              name: "details",
+              name: "event-details",
               path: "details",
               meta: { authRequired: true },
               component: () => import("@/components/events/EventDetails")
             },
             {
-              name: "participants",
+              name: "event-participants",
               path: "participants",
               meta: { authRequired: true },
               component: () => import("@/components/events/EventParticipants")
             },
             {
-              name: "teams",
+              name: "event-teams",
               path: "teams",
               meta: { authRequired: true },
               component: () => import("@/components/events/teams/EventTeams")
             },
             {
-              name: "assets",
+              name: "event-assets",
               path: "assets",
               meta: { authRequired: true },
               component: () => import("@/components/events/assets/EventAssets")
