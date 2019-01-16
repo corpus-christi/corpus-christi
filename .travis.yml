@@ -15,7 +15,7 @@ matrix:
         include:
                  - language: python
                    python:
-                        - 3
+                        - "3"
         before_install:
                 - yarn cache clean
                 - yarn install
