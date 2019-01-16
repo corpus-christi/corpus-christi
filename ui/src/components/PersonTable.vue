@@ -19,14 +19,16 @@
           ></v-text-field>
         </v-flex>
         <v-flex md3>
-          <v-select
-            hide-details
-            solo
-            single-line
-            :items="viewOptions"
-            v-model="viewStatus"
-          >
-          </v-select>
+          <div data-cy="view-dropdown">
+            <v-select
+              hide-details
+              solo
+              single-line
+              :items="viewOptions"
+              v-model="viewStatus"
+            >
+            </v-select>
+          </div>
         </v-flex>
         <v-flex shrink justify-self-end>
           <v-btn
@@ -57,10 +59,16 @@
             >account_circle</v-icon
           >
         </td>
-        <td>{{ props.item.firstName }}</td>
-        <td>{{ props.item.lastName }}</td>
-        <td class="hidden-sm-and-down">{{ props.item.email }}</td>
-        <td>{{ props.item.phone }}</td>
+        <td :data-cy="'first-name-' + props.item.id">
+          {{ props.item.firstName }}
+        </td>
+        <td :data-cy="'last-name-' + props.item.id">
+          {{ props.item.lastName }}
+        </td>
+        <td class="hidden-sm-and-down" :data-cy="'email-' + props.item.id">
+          {{ props.item.email }}
+        </td>
+        <td :data-cy="'phone-' + props.item.id">{{ props.item.phone }}</td>
         <td class="text-no-wrap">
           <v-tooltip bottom>
             <v-btn
@@ -84,7 +92,7 @@
               color="primary"
               slot="activator"
               v-on:click="adminPerson(props.item)"
-              data-cy="add-account"
+              data-cy="account-settings"
             >
               <v-icon small>settings</v-icon>
             </v-btn>
@@ -103,7 +111,7 @@
             >
               <v-icon small>archive</v-icon>
             </v-btn>
-            <span>{{ $t("actions.tooltips.deactivate") }}</span>
+            <span>{{ $t("actions.tooltips.archive") }}</span>
           </v-tooltip>
           <v-tooltip bottom>
             <v-btn
@@ -118,7 +126,7 @@
             >
               <v-icon small>undo</v-icon>
             </v-btn>
-            <span>{{ $t("actions.tooltips.deactivate") }}</span>
+            <span>{{ $t("actions.tooltips.activate") }}</span>
           </v-tooltip>
         </td>
       </template>
@@ -132,12 +140,18 @@
     </v-snackbar>
 
     <!-- New/Edit dialog -->
-    <v-dialog scrollable v-model="personDialog.show" max-width="500px">
+    <v-dialog
+      scrollable
+      persistent
+      v-model="personDialog.show"
+      max-width="500px"
+    >
       <PersonForm
         v-bind:editMode="personDialog.editMode"
         v-bind:initialData="personDialog.person"
         v-bind:saveLoading="personDialog.saveLoading"
         v-bind:addMoreLoading="personDialog.addMoreLoading"
+        v-bind:attributes="personDialog.attributes"
         v-on:cancel="cancelPerson"
         v-on:save="savePerson"
         v-on:add-another="addAnother"
@@ -145,7 +159,12 @@
     </v-dialog>
 
     <!-- Person admin dialog -->
-    <v-dialog scrollable v-model="adminDialog.show" max-width="500px">
+    <v-dialog
+      scrollable
+      persistent
+      v-model="adminDialog.show"
+      max-width="500px"
+    >
       <PersonAdminForm
         v-bind:person="adminDialog.person"
         v-bind:account="adminDialog.account"
@@ -172,6 +191,7 @@ export default {
         editMode: false,
         saveLoading: false,
         addMoreLoading: false,
+        attributes: [],
         person: {}
       },
 
@@ -191,7 +211,8 @@ export default {
       allPeople: [],
       activePeople: [],
       archivedPeople: [],
-      search: ""
+      search: "",
+      data: {}
     };
   },
   computed: {
@@ -222,8 +243,16 @@ export default {
     },
     viewOptions() {
       return [
-        { text: this.$t("actions.view-active"), value: "viewActive" },
-        { text: this.$t("actions.view-archived"), value: "viewArchived" },
+        {
+          text: this.$t("actions.view-active"),
+          value: "viewActive",
+          class: "view-active"
+        },
+        {
+          text: this.$t("actions.view-archived"),
+          value: "viewArchived",
+          class: "view-archived"
+        },
         { text: this.$t("actions.view-all"), value: "viewAll" }
       ];
     },
@@ -272,8 +301,10 @@ export default {
         delete person.id;
 
         console.log(person);
+        this.data = this.constructPersonData(person);
+        console.log(this.data);
         this.$http
-          .put(`/api/v1/people/persons/${person_id}`, person)
+          .put(`/api/v1/people/persons/${person_id}`, this.data)
           .then(resp => {
             console.log("EDITED", resp);
             Object.assign(this.allPeople[idx], person);
@@ -287,8 +318,11 @@ export default {
             this.showSnackbar(this.$t("person.messages.person-save-error"));
           });
       } else {
+        console.log(person);
+        this.data = this.constructPersonData(person);
+        console.log(this.data);
         this.$http
-          .post("/api/v1/people/persons", person)
+          .post("/api/v1/people/persons", this.data)
           .then(resp => {
             console.log("ADDED", resp);
             this.refreshPeopleList();
@@ -302,6 +336,19 @@ export default {
             this.showSnackbar(this.$t("person.messages.person-save-error"));
           });
       }
+    },
+
+    constructPersonData(person) {
+      var attributes = [];
+      if (person.attributesInfo) {
+        attributes = person.attributesInfo;
+      }
+      delete person["attributesInfo"];
+      delete person["accountInfo"];
+      return {
+        person: person,
+        attributesInfo: attributes
+      };
     },
 
     addAnother(person) {
@@ -332,7 +379,6 @@ export default {
     adminPerson(person) {
       // Pass along the current person.
       this.adminDialog.person = person;
-
       // Fetch the person's account information (if any) before activating the dialog.
       this.$http
         .get(`/api/v1/people/persons/${person.id}/account`)
@@ -399,11 +445,23 @@ export default {
           this.archivedPeople = this.allPeople.filter(person => !person.active);
         })
         .catch(err => console.error("FAILURE", err.response));
+    },
+
+    getAttributesInfo() {
+      this.$http
+        .get("/api/v1/people/persons/fields")
+        .then(resp => {
+          if (resp.data.person_attributes) {
+            this.personDialog.attributes = resp.data.person_attributes;
+          }
+        })
+        .catch(err => console.error("FAILURE", err.response));
     }
   },
 
   mounted: function() {
     this.refreshPeopleList();
+    this.getAttributesInfo();
   }
 };
 </script>

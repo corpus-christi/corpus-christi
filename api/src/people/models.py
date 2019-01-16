@@ -21,6 +21,7 @@ class Person(Base):
     id = Column(Integer, primary_key=True)
     first_name = Column(StringTypes.MEDIUM_STRING, nullable=False)
     last_name = Column(StringTypes.MEDIUM_STRING, nullable=False)
+    second_last_name = Column(StringTypes.MEDIUM_STRING, nullable=True)
     gender = Column(String(1))
     birthday = Column(Date)
     phone = Column(StringTypes.MEDIUM_STRING)
@@ -56,23 +57,33 @@ class PersonSchema(Schema):
         data_key='firstName', required=True, validate=Length(min=1))
     last_name = fields.String(
         data_key='lastName', required=True, validate=Length(min=1))
+    second_last_name = fields.String(
+        data_key='secondLastName', allow_none=True)
     gender = fields.String(validate=OneOf(['M', 'F']), allow_none=True)
     birthday = fields.Date(allow_none=True)
     phone = fields.String(allow_none=True)
     email = fields.String(allow_none=True)
+
     active = fields.Boolean(required=True)
     location_id = fields.Integer(data_key='locationId', allow_none=True)
 
-    accountInfo = fields.Nested('AccountSchema', allow_none=True, only=['username','id'])
+    accountInfo = fields.Nested(
+        'AccountSchema', allow_none=True, only=['username', 'id'])
+
+    attributesInfo = fields.Nested('PersonAttributeSchema', many=True)
 
 # Defines join table for people_account and people_role
 
+
 people_account_role = Table('account_role', Base.metadata,
-    Column('people_account_id', Integer, ForeignKey('people_account.id'), primary_key=True),
-    Column('people_role_id', Integer, ForeignKey('people_role.id'), primary_key=True)
-)
+                            Column('people_account_id', Integer, ForeignKey(
+                                'people_account.id'), primary_key=True),
+                            Column('people_role_id', Integer, ForeignKey(
+                                'people_role.id'), primary_key=True)
+                            )
 
 # ---- Account
+
 
 class Account(Base):
     __tablename__ = 'people_account'
@@ -86,8 +97,7 @@ class Account(Base):
     # One-to-one relationship; see https://docs.sqlalchemy.org/en/latest/orm/basic_relationships.html#one-to-one
     person = relationship("Person", backref=backref("account", uselist=False))
     roles = relationship("Role",
-                    secondary=people_account_role, backref="accounts")
-
+                         secondary=people_account_role, backref="accounts")
 
     def __repr__(self):
         return "<Account(id={},username='{}',person='{}:{}')>" \
@@ -174,3 +184,28 @@ class RoleSchema(Schema):
     name_i18n = fields.String(data_key='nameI18n')
     active = fields.Boolean()
 
+
+# ---- Manager
+
+class Manager(Base):
+    __tablename__ = 'people_manager'
+    id = Column(Integer, primary_key=True)
+    person_id = Column(Integer, ForeignKey('people_person.id'), nullable=False)
+    manager_id = Column(Integer, ForeignKey('people_manager.id'))
+    description_i18n = Column(StringTypes.I18N_KEY,
+                              ForeignKey('i18n_key.id'), nullable=False)
+    manager = relationship('Manager', backref='subordinates',
+                           lazy=True, remote_side=[id])
+
+    def __repr__(self):
+        return f"<Manager(id={self.id})>"
+
+
+class ManagerSchema(Schema):
+    id = fields.Integer(dump_only=True, data_key='id',
+                        required=True, validate=Range(min=1))
+    person_id = fields.Integer(
+        data_key='person_id', required=True, validate=Range(min=1))
+    manager_id = fields.Integer(data_key='manager_id', validate=Range(min=1))
+    description_i18n = fields.String(
+        data_key='description_i18n', required=True)

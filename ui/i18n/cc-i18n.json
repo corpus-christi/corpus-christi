@@ -145,7 +145,8 @@
       },
       "name": {
         "first": "First Name",
-        "last": "Last Name"
+        "last": "Last Name",
+        "second-last": "Second Last Name"
       },
       "phone": "Phone",
       "settings": "Settings for {person}"
@@ -314,7 +315,8 @@
       },
       "name": {
         "first": "Nombre de pila",
-        "last": "Apellido"
+        "last": "Apellido",
+        "second-last": "Segundo Apellido"
       },
       "phone": "Tel\u00e9fono",
       "settings": "Configuraci\u00f3n de la {person}"

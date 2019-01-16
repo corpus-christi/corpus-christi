@@ -22,6 +22,9 @@ person:
     last:
       en: Last Name
       es: Apellido
+    second-last:
+      en: Second Last Name
+      es: Segundo Apellido
   gender:
     es: Género
     en: Gender
