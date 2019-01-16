@@ -30,9 +30,9 @@ matrix:
                   sudo: true
                   before_install:
                         - python -m venv venv
-                        - source venv/bin/activate
-                        - which pip
                   script:
+                        - which pip
+                        - source venv/bin/activate
                         - pip install -r requirements.txt
                         - echo "Hello World"
                   after_script:
