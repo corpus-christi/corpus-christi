@@ -131,12 +131,13 @@ class Student(Base):
      student_id = Column(Integer, ForeignKey('people_person.id'), nullable=False)
      confirmed = Column(Boolean, nullable=False)
      active = Column(Boolean, default=True, nullable=False)
-     course_offering = relationship('Course_Offering', backref='offerings', lazy=True)
+     course_offering = relationship('Course_Offering', backref='students', lazy=True)
      person = relationship('Person', backref='students', lazy=True)
      diplomas_awarded = relationship('Diploma_Awarded',
                back_populates='students', lazy=True, uselist=False)
      attendance = relationship('Class_Meeting', secondary=Class_Attendance,
                back_populates='students', lazy=True)
+
 
 
      def __repr__(self):
@@ -169,7 +170,7 @@ class Course_OfferingSchema(Schema):
      course_id = fields.Integer(data_key='courseId', required=True)
      description = fields.String(required=True, validate=Length(min=1))
      max_size = fields.Integer(data_key='maxSize', required=True, validate=Range(min=1))
-     active = fields.Boolean(required=True, default=True)
+     active = fields.Boolean(required=False, default=True)
 
 # ---- Class_Meeting
 
@@ -177,8 +178,8 @@ class Class_Meeting(Base):
      __tablename__ = 'courses_class_meeting'
      id = Column(Integer, primary_key=True)
      offering_id = Column(Integer, ForeignKey('courses_course_offering.id'), nullable=False)
-     location = Column(Integer, ForeignKey('places_location.id'), nullable=False)
-     teacher = Column(Integer, ForeignKey('people_person.id'), nullable=False)
+     location_id = Column(Integer, ForeignKey('places_location.id'), nullable=False)
+     teacher_id = Column(Integer, ForeignKey('people_person.id'), nullable=False)
      when = Column(DateTime, nullable=False)
      course_offering = relationship('Course_Offering', backref='class_meeting', lazy=True)
      locations = relationship('Location', backref='meeting_location', lazy=True)
@@ -193,6 +194,6 @@ class Class_Meeting(Base):
 class Class_MeetingSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     offering_id = fields.Integer(data_key='offeringId', required=True)
-    location = fields.Integer(required=True)
-    teacher = fields.Integer(required=True)
+    location_id = fields.Integer(required=True)
+    teacher_id = fields.Integer(required=True)
     when = fields.DateTime(required=True)
