@@ -164,6 +164,8 @@ Route reads all prerequisites in database
 # @authorize(["role.superuser", "role.registrar", "role.public"])
 def read_all_prerequisites():
     result = db.session.query(Course).all()  # Get courses to get prereq's
+    if result is []:
+        return 'No courses found', 404
     results = []  # new list
     for i in result:
         for j in i.prerequisites:  # Read through course prerequisites
@@ -176,6 +178,8 @@ def read_all_prerequisites():
 # @authorize(["role.superuser", "role.registrar", "role.public"])
 def read_one_course_prerequisites(course_id):
     result = db.session.query(Course).filter_by(id=course_id).first()
+    if result is None:
+        return 'Course not found', 404
     prereqs_to_return = []
     for i in result.prerequisites:
         prereqs_to_return.append(i)
@@ -226,6 +230,8 @@ def create_course_offering():
 # @authorize(["role.superuser", "role.registrar", "role.public"])
 def read_all_course_offerings():
     result = db.session.query(Course_Offering).all()
+    if result is []:
+        return 'No Course Offerings found', 404
     results = course_offering_schema.dump(result, many=True)
     for r in results:
         r['course'] = course_schema.dump(db.session.query(
@@ -296,7 +302,7 @@ def add_student_to_course_offering(s_id):
     course_offering = request.json['offering_id']
     courseInDB = db.session.query(Student).filter_by(
         student_id=s_id, offering_id=course_offering).all()
-    if courseInDB is None:
+    if courseInDB is []:
         new_student = Student(**valid_student)
         print(new_student)
 
@@ -317,7 +323,7 @@ def read_all_course_offering_students(course_offering_id):
     co_result = db.session.query(Course_Offering).filter_by(
         id=course_offering_id).first()
 
-    if stu_result is None or co_result is None:
+    if stu_result is [] or co_result is None:
         return 'The specified course offering does not exist \
                 or there are no students enrolled in the course offering ', 404
 
