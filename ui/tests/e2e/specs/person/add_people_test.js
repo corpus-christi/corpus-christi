@@ -18,7 +18,7 @@ describe("Getting to the people page", function() {
 
 //Adds people
 //NEED TO INCREASE testNum SO THAT THERE IS NO DUPLICATION OF PEOPLE
-var testNum = 6;
+var testNum = 12;
 testNum = testNum + 1;
 describe("Filling out form", function() {
   it("Given: gets to add people form", function() {

@@ -139,7 +139,7 @@
 import { mapGetters } from "vuex";
 import { isEmpty } from "lodash";
 import Vue from "vue/dist/vue.esm";
-import { VSelect } from "vuetify";
+import { VTextField } from "vuetify";
 
 export default {
   name: "PersonForm",
@@ -244,14 +244,16 @@ export default {
     },
 
     constructAttributeForm(attributes) {
+      console.log(attributes);
       for (let attr of attributes) {
         switch (attr.typeI18n) {
           case "type.drop":
-            console.log(VSelect);
-            var DropdownClass = Vue.extend(VSelect);
-            var dropdown = new DropdownClass();
-            dropdown.$mount();
-            this.$refs.container.appendChild(dropdown.$el);
+            console.log(VTextField);
+            // var DropdownClass = Vue.extend(VTextField);
+            var TextComponent = Vue.component("text-component", VTextField);
+            console.log(TextComponent);
+            TextComponent.$mount();
+            this.$refs.container.appendChild(TextComponent.$el);
             break;
         }
       }

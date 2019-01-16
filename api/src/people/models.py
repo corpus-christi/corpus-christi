@@ -28,13 +28,24 @@ class Person(Base):
     email = Column(StringTypes.MEDIUM_STRING)
     active = Column(Boolean, nullable=False, default=True)
     location_id = Column(Integer, ForeignKey('places_location.id'))
-    address = relationship('Location', backref='people', lazy=True)
+
+    address = relationship(Location, backref='people', lazy=True)
+    # events_per refers to the events led by the person (linked via events_eventperson table)
+    events_per = relationship("EventPerson", back_populates="person")
+    # events_par refers to the participated events (linked via events_eventparticipant table)
+    events_par = relationship("EventParticipant", back_populates="person")
+    teams = relationship("TeamMember", back_populates="member")
+
+
 
     def _init(self, accountInfo):
         self.accountInfo = accountInfo
 
     def __repr__(self):
-        return f"<Person(id={self.id})>"
+        return f"<Person(id={self.id},name='{self.first_name} {self.last_name}')>"
+
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
 
     def full_name(self):
         return f"{self.first_name} {self.last_name}"
@@ -80,6 +91,7 @@ class Account(Base):
     username = Column(StringTypes.MEDIUM_STRING, nullable=False, unique=True)
     password_hash = Column(StringTypes.PASSWORD_HASH, nullable=False)
     active = Column(Boolean, nullable=False, default=True)
+    confirmed = Column(Boolean, nullable=False, default=True)
     person_id = Column(Integer, ForeignKey('people_person.id'), nullable=False)
 
     # One-to-one relationship; see https://docs.sqlalchemy.org/en/latest/orm/basic_relationships.html#one-to-one
@@ -113,6 +125,7 @@ class AccountSchema(Schema):
     password = fields.String(attribute='password_hash', load_only=True,
                              required=True, validate=Length(min=6))
     active = fields.Boolean(missing=None)
+    confirmed = fields.Boolean()
     person_id = fields.Integer(
         required=True, data_key="personId", validate=Range(min=1))
 

@@ -54,6 +54,9 @@ person:
     edit:
       en: Edit Person
       es: Editar persona
+    add-participant:
+      en: Add a Participant
+      es: Añadir Partícipe
     add-account:
       en: Add Account
       es: Añadir cuenta

@@ -12,3 +12,6 @@ validation:
     email:
       en: email
       es: correo electrónico
+    title:
+      en: title
+      es: título
