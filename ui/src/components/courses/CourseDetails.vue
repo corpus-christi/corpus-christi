@@ -12,7 +12,7 @@
         <template v-if="loading">
           <v-container fill-height fluid>
             <v-layout xs12 align-center justify-center>
-              <v-progress-circular indeterminate/>
+              <v-progress-circular color="primary" indeterminate/>
             </v-layout>
           </v-container>
         </template>
