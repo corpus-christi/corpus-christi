@@ -12,13 +12,12 @@ node_js:
 before_install:
         - sudo apt-get update
         - python --version
-        - which python3
-          #        - sudo apt-get install python3.6
-        - python --version
-          #matrix:
-          #        include:
-          #      - language: python
-          #        python:
+          # - sudo apt-get install python3.
+matrix:
+        include:
+                python: 3.7
+                dist: xenial
+                sudo: true 
           #             - "3.7.2"
           #        before_install:
         - yarn cache clean
