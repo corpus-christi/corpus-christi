@@ -19,4 +19,4 @@ deploy:
         provider: linode
         local-dir: public
                 only: 
-                        - corpus-cristi/development
+                        -development
