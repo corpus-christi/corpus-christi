@@ -102,12 +102,15 @@ events:
     confirm-archive:
       en: Are you sure you want to archive this team?
       es: ¿Seguro que quieres archivar este equipo?
-    team-archived:
-      en: Team archived
-      es: Equipo archivado
-    error-archiving-team:
-      en: Error while archiving team 
-      es: Error al archivar este equipo
+    confirm-remove-from-event:
+      en: Are you sure you want to remove this team from this event?
+      es: ¿Estás seguro de que quieres eliminar a este equipo de este evento?
+    team-removed:
+      en: Team removed
+      es: Equipo eliminado
+    error-removing-team:
+      en: Error while removing team 
+      es: Error al eliminadar este equipo
     team-unarchived:
       en: Team unarchived
       es: Equipo desarchivado   # probably not right
@@ -126,3 +129,7 @@ events:
     error-adding-team:
       en: Error while adding team
       es: Error al agregar equipo
+    error-team-assigned:
+      en: That team is assigned to a conflicting event.
+      es: Ese equipo está asignado a un evento conflictivo.
+    

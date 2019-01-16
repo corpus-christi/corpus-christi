@@ -318,6 +318,7 @@ export default {
     },
 
     duplicate(event) {
+      //TODO maintain duration for date select
       const copyEvent = JSON.parse(JSON.stringify(event));
       copyEvent.start = new Date(copyEvent.start).getTime();
       copyEvent.start %= 86400000; //ms in a day

@@ -43,6 +43,7 @@ export default {
     location: Boolean,
     person: Boolean,
     course: Boolean,
+    team: Boolean,
     multiple: { type: Boolean, default: false },
     value: null,
     searchEndpoint: String,
@@ -62,6 +63,7 @@ export default {
       if (this.location) return this.$t("events.event-location");
       else if (this.person) return this.$t("actions.search-people");
       else if (this.course) return this.$t("actions.search-courses");
+      else if (this.team) return this.$t("events.teams.title");
       else return "";
     },
     idField() {
@@ -96,9 +98,12 @@ export default {
         entityDescriptor = entity.firstName + " " + entity.lastName;
       } else if (this.course) {
         entityDescriptor = entity.name;
+      } else if (this.team) {
+        entityDescriptor = entity.description;
       }
 
       if (entityDescriptor.length > letterLimit) {
+        //TODO don't do this here, it limits search functionality
         entityDescriptor = entityDescriptor.substring(0, letterLimit) + "...";
       }
       return entityDescriptor;
@@ -128,6 +133,7 @@ export default {
     if (this.location) endpoint = "/api/v1/places/locations";
     else if (this.person) endpoint = "/api/v1/people/persons";
     else if (this.course) endpoint = "/api/v1/courses/courses";
+    else if (this.team) endpoint = "/api/v1/events/teams";
     this.$http
       .get(endpoint)
       .then(resp => {
