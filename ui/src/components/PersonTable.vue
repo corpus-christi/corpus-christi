@@ -116,7 +116,7 @@
               color="primary"
               slot="activator"
               v-on:click="activatePerson(props.item)"
-              data-cy="deactivate-person"
+              data-cy="reactivate-person"
             >
               <v-icon small>undo</v-icon>
             </v-btn>
