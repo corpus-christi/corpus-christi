@@ -92,6 +92,12 @@ const router = new VueRouter({
       ]
     },
     {
+      name: "assets",
+      path: "/assets",
+      meta: { authRequired: true },
+      component: () => import("@/pages/Assets")
+    },
+    {
       name: "locale",
       path: "/locale",
       meta: { authRequired: true },

@@ -159,24 +159,20 @@
 </template>
 
 <script>
-import AssetForm from "../../assets/AssetForm";
+import AssetForm from "./AssetForm";
 import { mapGetters } from "vuex";
 
 export default {
-  name: "EventAssets",
+  name: "AssetTable",
   components: { "asset-form": AssetForm },
   mounted() {
     this.tableLoading = true;
-    let eventId = this.$route.params.event;
-    this.$http.get(`/api/v1/events/${eventId}?include_assets=1`).then(resp => {
-      this.event = resp.data;
-
-      if (this.event.assets) {
-        this.assets = this.event.assets.map(ev_as => ev_as.asset);
-        this.tableLoading = false;
-      }
-      // console.log(this.assets);
+    this.$http.get("/api/v1/events/assets").then(resp => {
+      this.assets = resp.data;
+      this.tableLoading = false;
+      console.log(this.assets);
     });
+    this.onResize();
   },
 
   data() {
