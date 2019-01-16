@@ -35,6 +35,7 @@ class Person(Base):
     # events_par refers to the participated events (linked via events_eventparticipant table)
     events_par = relationship("EventParticipant", back_populates="person")
     teams = relationship("TeamMember", back_populates="member")
+    members = relationship('Member', back_populates='person', lazy=True)
 
 
 
@@ -196,6 +197,7 @@ class Manager(Base):
                               ForeignKey('i18n_key.id'), nullable=False)
     manager = relationship('Manager', backref='subordinates',
                            lazy=True, remote_side=[id])
+    groups = relationship('Group', back_populates='manager', lazy=True)
 
     def __repr__(self):
         return f"<Manager(id={self.id})>"
