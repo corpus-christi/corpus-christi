@@ -808,15 +808,26 @@ def test_replace_student(client, db):
     assert True == False
 
 
-@pytest.mark.xfail()
-def test_update_student(client, db):
+def test_update_student(auth_client):
     # GIVEN a student in the database
+    setup_dependencies_of_student(auth_client, 1)
     create_multiple_students(auth_client.sqla, 1)
     # WHEN that student needs to be updated
     student = auth_client.sqla.query(Student).one()
+    attr = not student.confirmed
     # THEN assert these updates to the student
-
-    assert True == False
+    resp = auth_client.patch(url_for('courses.update_student', student_id=student.id),
+        json={"offering_id": 1, "student_id":student.id, "confirmed": attr, "active": False})
+    assert resp.json['confirmed'] == attr
+    student = auth_client.sqla.query(Student).one()
+    assert student.confirmed == attr
+    # GIVEN an invalid student_id
+    student_id = 42
+    # WHEN the id is updated to student
+    resp = auth_client.patch(url_for('courses.update_student', student_id=student_id),
+        json={"offering_id": 1, "student_id":student_id, "confirmed": True, "active": False})
+    # THEN there should be a 404 error
+    assert resp.status_code == 404
 
 
 @pytest.mark.xfail()
