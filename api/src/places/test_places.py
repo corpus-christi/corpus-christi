@@ -309,3 +309,29 @@ def test_read_all_locations(auth_client):
     # THEN the count matches the number of entries in the database
     assert resp.status_code == 200
     assert len(resp.json) == count
+
+
+@pytest.mark.smoke
+def test_delete_location(auth_client):
+    # GIVEN
+    Country.load_from_file()
+    count = random.randint(3, 11)
+    create_multiple_areas(auth_client.sqla, count)
+    create_multiple_addresses(auth_client.sqla, count)
+    create_multiple_locations(auth_client.sqla, count)
+
+    #WHEN
+    locations = auth_client.sqla.query(Location).all()
+    deleted = 0
+
+    for location in locations:
+        #THEN
+        if flip():
+            resp = auth_client.delete(url_for('places.delete_location', location_id = location.id))
+            deleted += 1
+            assert resp.status_code == 204
+
+    locations = auth_client.sqla.query(Location).all()
+    assert len(locations) == count - deleted
+
+
