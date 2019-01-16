@@ -86,7 +86,7 @@ class TeamSchema(Schema):
     description = fields.String(required=True)
     active = fields.Boolean()
     members = fields.Nested('TeamMemberSchema', exclude=['team'], many=True)
-
+    events = fields.Nested('TeamMemberSchema', exclude=['member'], many=True)
 
 # ---- EventAsset
 
