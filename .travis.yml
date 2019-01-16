@@ -15,18 +15,17 @@ matrix:
         include:
                 - language: node_js
                   node_js: "11"
+                  before_install:
+                          - echo "hi"        
                   script:
                           - echo "Hello chris"      
-                        before_install:
-                                - echo "hi"        
                                  #yarn cache clean
                                   #- yarn install
                                   # - lajkdfkdjfnguage: python
                 - language: python
                   python: "2.7"
-                        before_install:
-                                - echo "chris"
-                                          #hello
+                  before_install:
+                        - echo "chris"
                   script:
                         - echo "Hello World"
 deploy:
