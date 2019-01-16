@@ -46,7 +46,7 @@ def create_attribute():
 @attributes.route('/attributes')
 @jwt_required
 def read_all_attributes():
-    result = db.session.query(Attribute).all()
+    result = db.session.query(Attribute).filter_by(active=True).all()
     return jsonify(attribute_schema.dump(result, many=True))
 
 

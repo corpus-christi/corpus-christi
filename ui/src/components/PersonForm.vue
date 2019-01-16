@@ -92,6 +92,7 @@
           data-cy="phone"
           :readonly="formDisabled"
         ></v-text-field>
+        <span class="headline">{{ $t('people.attributes') }}</span>
       </form>
     </v-card-text>
     <v-card-actions>
@@ -139,7 +140,8 @@
 import { mapGetters } from "vuex";
 import { isEmpty } from "lodash";
 import Vue from "vue/dist/vue.esm";
-import { VTextField } from "vuetify";
+import TextField from "./InputFields/TextField.vue";
+import SelectField from "./InputFields/SelectField";
 
 export default {
   name: "PersonForm",
@@ -246,16 +248,58 @@ export default {
     constructAttributeForm(attributes) {
       console.log(attributes);
       for (let attr of attributes) {
+        let child;
         switch (attr.typeI18n) {
-          case "type.drop":
-            console.log(VTextField);
-            // var DropdownClass = Vue.extend(VTextField);
-            var TextComponent = Vue.component("text-component", VTextField);
-            console.log(TextComponent);
-            TextComponent.$mount();
-            this.$refs.container.appendChild(TextComponent.$el);
+          case "attribute.float":
+            break;
+          case "attribute.integer":
+            break;
+          case "attribute.date":
+            break;
+          case "attribute.string":
+            let TextFieldClass = Vue.extend({
+              template: `
+                <TextField v-bind:label='labelStr'/>
+              `,
+              components: { TextField },
+              data: () => {
+                return {
+                  labelStr: attr.nameI18n
+                };
+              }
+            });
+            child = new TextFieldClass().$mount();
+            break;
+          case "attribute.dropdown":
+            let options = [];
+            for(let item of attr.enumerated_values) {
+              console.log(item);
+              options.push({
+                text: item.valueI18n,
+                value: item.id
+              });
+            };
+            console.log(options);
+            let SelectFieldClass = Vue.extend({
+              template: `
+                <SelectField v-bind:label='labelStr' v-bind:options='items'/>
+              `,
+              components: { SelectField },
+              data: () => {
+                return {
+                  labelStr: attr.nameI18n,
+                  items: options
+                };
+              }
+            });
+            child = new SelectFieldClass().$mount();
+            break;
+          case "attribute.check":
+            break;
+          case "attribute.radio":
             break;
         }
+        this.$refs.container.appendChild(child.$el);
       }
     }
   }
