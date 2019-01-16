@@ -7,5 +7,6 @@
   {"id": 7, "name": "group-overseer"},
   {"id": 8, "name": "registrar"},
   {"id": 9, "name": "teaching-assistant"},
-  {"id": 10, "name": "event-planner"}
+  {"id": 10, "name": "event-planner"},
+  {"id": 11, "name": "visitor"}
 ]

@@ -144,6 +144,7 @@ def test_create_account(auth_client):
     # GIVEN some randomly created people
     count = random.randint(8, 19)
     create_multiple_people(auth_client.sqla, count)
+    create_role(auth_client.sqla)
 
     # WHEN we retrieve them all
     people = auth_client.sqla.query(Person).all()
@@ -326,22 +327,23 @@ def test_verify_password_account(auth_client):
 
 #   -----   Roles
 
-# def role_object_factory():
-#     """Cook up a fake role."""
-#     role = {
-#         'name_i18n': 'role.test_role',
-#         'active' : True
-#     }
-#
-# def create_role(sqla):
-#     """Commit `n` new roles to the database. Return their IDs."""
-#     role_schema = RoleSchema()
-#
-#     valid_role = role_schema.load(role_object_factory())
-#
-#     sqla.add(valid_role)
-#     sqla.commit()
-#
+def role_object_factory():
+    """Cook up a fake role."""
+    role = {
+        'nameI18n': 'role.test_role',
+        'active' : 1
+    }
+    return role
+
+def create_role(sqla):
+    """Commit `n` new roles to the database. Return their IDs."""
+    role_schema = RoleSchema()
+
+    valid_role = role_schema.load(role_object_factory())
+    valid_role = Role(**valid_role)
+    sqla.add(valid_role)
+    sqla.commit()
+
 #
 # def test_create_role(auth_client):
 #     # GIVEN some randomly created role
@@ -501,7 +503,8 @@ def test_update_manager(auth_client):
 
     update_json = {
         'person_id': new_person_id,
-        'manager_id': new_manager_id
+        'manager_id': new_manager_id,
+        'description_i18n': update_manager.description_i18n
     }
 
     # WHEN

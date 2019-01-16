@@ -78,6 +78,10 @@ entities:
         type: boolean
         required: true
         default: true
+      - name: confirmed
+        type: boolean
+        required: true
+        default: false
       - name: person_id
         type: integer
         min: 1
