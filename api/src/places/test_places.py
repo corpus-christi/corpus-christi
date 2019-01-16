@@ -309,3 +309,26 @@ def test_read_all_locations(auth_client):
     # THEN the count matches the number of entries in the database
     assert resp.status_code == 200
     assert len(resp.json) == count
+
+
+@pytest.mark.smoke
+def test_repr_country(auth_client):
+    country = Country()
+    country.__repr__()
+
+
+@pytest.mark.smoke
+def test_repr_area(auth_client):
+    area = Area()
+    area.__repr__()
+
+
+@pytest.mark.smoke
+def test_repr_location(auth_client):
+    location = Location()
+    location.__repr__()
+
+@pytest.mark.smoke
+def test_repr_address(auth_client):
+    address = Address()
+    address.__repr__()

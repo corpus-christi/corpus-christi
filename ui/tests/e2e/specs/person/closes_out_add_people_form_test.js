@@ -24,8 +24,8 @@ describe("Fills out form then clears it", function() {
     cy.get("[data-cy=new-person]").click();
   });
   it("When: form is filled out", function() {
-    cy.get("[data-cy=firstName]").type("Test"); //first name
-    cy.get("[data-cy=lastName]").type(testNum); //last name
+    cy.get("[data-cy=first-name]").type("Test"); //first name
+    cy.get("[data-cy=last-name]").type(testNum); //last name
     cy.get(
       ":nth-child(1) > .v-input--selection-controls__input > .v-input--selection-controls__ripple"
     ).click(); //gender
