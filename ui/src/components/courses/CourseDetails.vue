@@ -26,7 +26,7 @@
         </template>
       </v-card>
     </v-flex>
-    <v-flex sm12 md9 class="pl-1" v-if="!loading">
+    <v-flex sm12 md9 class="pl-2" v-if="!loading">
       <CourseOfferingsTable :course="course"/>
     </v-flex>
   </v-layout>
