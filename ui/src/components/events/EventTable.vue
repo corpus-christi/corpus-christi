@@ -3,7 +3,7 @@
     <v-toolbar class="pa-1">
       <v-layout align-center justify-space-between fill-height>
         <v-flex md2>
-          <v-toolbar-title>{{ $t("events.title") }}</v-toolbar-title>
+          <v-toolbar-title>{{ $t("events.header") }}</v-toolbar-title>
         </v-flex>
         <v-flex md2>
           <v-text-field
@@ -42,8 +42,10 @@
 
     <v-data-table
       :headers="headers"
+      :rows-per-page-items="rowsPerPageItem"
       :items="visibleEvents"
       :search="search"
+      :loading="tableLoading"
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
@@ -119,7 +121,7 @@
                 color="primary"
                 slot="activator"
                 v-on:click="unarchive(props.item)"
-                :loading="props.item.unarchiving"
+                :loading="props.item.id < 0"
                 data-cy="unarchive"
               >
                 <v-icon small>undo</v-icon>
@@ -186,14 +188,24 @@ export default {
   name: "EventTable",
   components: { "event-form": EventForm },
   mounted() {
+    this.tableLoading = true;
     this.$http.get("/api/v1/events/?return_group=all").then(resp => {
       this.events = resp.data;
+      this.tableLoading = false;
+      console.log(this.events);
     });
     this.onResize();
   },
 
   data() {
     return {
+      rowsPerPageItem: [
+        10,
+        15,
+        25,
+        { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 }
+      ],
+      tableLoading: true,
       events: [],
       eventDialog: {
         show: false,
@@ -306,22 +318,16 @@ export default {
 
     unarchive(event) {
       const idx = this.events.findIndex(ev => ev.id === event.id);
-      const copyEvent = JSON.parse(JSON.stringify(event));
-      event.unarchiving = true;
-      copyEvent.active = true;
-      const putId = copyEvent.id;
-      delete copyEvent.id;
-      delete copyEvent.location; //Temporary delete
+      const patchId = event.id;
+      event.id *= -1; // to show loading spinner
       this.$http
-        .put(`/api/v1/events/${putId}`, copyEvent)
+        .patch(`/api/v1/events/${patchId}`, { active: true })
         .then(resp => {
           console.log("UNARCHIVED", resp);
-          delete event.unarchiving;
           Object.assign(this.events[idx], resp.data);
           this.showSnackbar(this.$t("events.event-unarchived"));
         })
         .catch(err => {
-          delete event.unarchiving;
           console.error("UNARCHIVE FALURE", err.response);
           this.showSnackbar(this.$t("events.error-unarchiving-event"));
         });
@@ -352,7 +358,7 @@ export default {
           .put(`/api/v1/events/${eventId}`, newEvent)
           .then(resp => {
             console.log("EDITED", resp);
-            Object.assign(this.events[idx], newEvent);
+            Object.assign(this.events[idx], resp.data);
             this.eventDialog.show = false;
             this.eventDialog.saveLoading = false;
             this.showSnackbar(this.$t("events.event-edited"));
@@ -386,7 +392,7 @@ export default {
       let newEvent = JSON.parse(JSON.stringify(event));
       delete newEvent.location;
       this.$http
-        .post("/api/v1/events/", event)
+        .post("/api/v1/events/", newEvent)
         .then(resp => {
           console.log("ADDED", resp);
           this.events.push(resp.data);
