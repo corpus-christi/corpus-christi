@@ -299,6 +299,14 @@ def create_class_attendance(sqla, n):
 
 # Test course creation
 def test_create_course(auth_client):
+    """Test creating invalid course"""
+    # GIVEN invalid course to put in database
+    broken_course = {}
+    # WHEN database queried
+    resp = auth_client.post(url_for('courses.create_course'), json=broken_course)
+    # THEN assert exception thrown
+    assert resp.status_code == 422
+    """Test creating valid course"""
     # GIVEN course entry to put in database
     count = random.randint(8,19)
     # WHEN database does not contain entry
@@ -307,46 +315,60 @@ def test_create_course(auth_client):
         assert resp.status_code == 201
     # THEN assert that entry is now in database
     assert auth_client.sqla.query(Course).count() == count
-    broken_course = {}
-    resp = auth_client.post(url_for('courses.create_course'), json=broken_course)
-    assert resp.status_code == 422
 
 # Test getting all courses from the database
 def test_read_all_courses(auth_client):
+    """Test with empty database"""
+    # GIVEN empty database
+    # WHEN databse queried
+    resp = auth_client.get(url_for('courses.read_all_courses'))
+    # THEN assert error code
+    print(resp)
+    assert resp.status_code == 404
+    """Test with populated database"""
     # GIVEN existing (active and inactive) courses in database
     count = random.randint(3,11)
     create_multiple_courses(auth_client.sqla, count)
     # WHEN call to database
     resp = auth_client.get(url_for('courses.read_all_courses'))
     # THEN assert all entries from database are called
+    assert resp.status_code == 200
     assert len(resp.json) == count
 
-#Test getting only active courses from the database
-def test_read_all_active_courses(auth_client):
-    # GIVEN existing and active courses
+#Test getting courses by active state
+def test_read_active_state_of_courses(auth_client):
+    # GIVEN existing and active/inactive courses
     count_active = random.randint(3,11)
     create_multiple_courses_active(auth_client.sqla, count_active)
     count_inactive = random.randint(3,11)
     create_multiple_courses_inactive(auth_client.sqla, count_inactive)
+    """Test listing all active courses"""
     # WHEN call to database
-    active_courses = auth_client.sqla.query(Course).filter_by(active=True).all()
+    resp = auth_client.get(url_for('courses.read_active_state_of_courses', active_state='active'))
     # THEN assert all active courses are listed
-    assert len(active_courses) == count_active
-
-#Test getting only inactive courses from the database
-def test_read_all_inactive_courses(auth_client):
-    # GIVEN existing and inactive courses
-    count_active = random.randint(3,11)
-    create_multiple_courses_active(auth_client.sqla, count_active)
-    count_inactive = random.randint(3,11)
-    create_multiple_courses_inactive(auth_client.sqla, count_inactive)
+    assert resp.status_code == 200
+    assert len(resp.json) == count_active
+    """Test listing all inactive courses"""
     # WHEN call to database
-    inactive_courses = auth_client.sqla.query(Course).filter_by(active=False).all()
+    resp = auth_client.get(url_for('courses.read_active_state_of_courses', active_state='inactive'))
     # THEN assert all active courses are listed
-    assert len(inactive_courses) == count_inactive
+    assert resp.status_code == 200
+    assert len(resp.json) == count_inactive
+    """Test listing courses with invalid state"""
+    # WHEN call to database
+    resp = auth_client.get(url_for('courses.read_active_state_of_courses', active_state='garbage'))
+    # THEN assert error code
+    assert resp.status_code == 404
 
 # Test reading a single course from the database
 def test_read_one_course(auth_client):
+    """Test with empty database"""
+    # GIVEN empty database
+    # WHEN databse queried
+    resp = auth_client.get(url_for('courses.read_one_course', course_id = 1))
+    # THEN assert error code
+    assert resp.status_code == 404
+    """Test with populated database"""
     # GIVEN one course in the database
     count = random.randint(3,11)
     create_multiple_courses(auth_client.sqla, count)
@@ -360,34 +382,6 @@ def test_read_one_course(auth_client):
         assert resp.json['name'] == course.name
         assert resp.json['description'] == course.description
         assert resp.json['active'] == course.active
-
-#Test that active courses can be deactivated
-def test_deactivate_course(auth_client):
-    # GIVEN course to deactivate
-    count = random.randint(3,11)
-    create_multiple_courses_active(auth_client.sqla, count)
-    courses = auth_client.sqla.query(Course).all()
-    # WHEN course is changed to inactive
-    for course in courses:
-        resp = auth_client.patch(url_for('courses.deactivate_course', course_id=course.id),
-            json={'active': False})
-        # THEN assert course is inactive
-        assert resp.status_code == 200
-        assert resp.json['active'] == False
-
-#Test that inactive courses can be reactivated
-def test_reactivate_course(auth_client):
-    # GIVEN course to activate
-    count = random.randint(3,11)
-    create_multiple_courses_inactive(auth_client.sqla, count)
-    courses = auth_client.sqla.query(Course).all()
-    # WHEN course is changed to active
-    for course in courses:
-        resp = auth_client.patch(url_for('courses.reactivate_course', course_id=course.id),
-            json={'active': True})
-        # THEN assert course is active
-        assert resp.status_code == 200
-        assert resp.json['active'] == True
 
 """
 # Test
