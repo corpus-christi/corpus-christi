@@ -10,14 +10,14 @@ before_install:
 matrix:
         include:
                 #           - language: node_js
-                        node_js:
-                                - "11"
+                 node_js:
+                        - "11"
                                   # before_install:
                                 #- yarn cache clean
                                   #- yarn install
                                   # - language: python
-                  # python:
-                          #                          - "3.7"
+                  python:
+                        - "3.7"
 
 
 script:
