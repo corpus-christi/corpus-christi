@@ -240,12 +240,12 @@ def read_all_course_offerings():
     return jsonify(results)
 
 
-# @courses.route('/course_offerings/<course_offering_id>')
-# @jwt_required
-# # @authorize(["role.superuser", "role.public"])
-# def read_one_course_offering(course_offering_id):
-#     result = db.session.query(Course_Offering).filter_by(id=course_offering_id).first()
-#     return jsonify(course_offering_schema.dump(result))
+@courses.route('/course_offerings/<course_offering_id>')
+@jwt_required
+# @authorize(["role.superuser", "role.public"])
+def read_one_course_offering(course_offering_id):
+    result = db.session.query(Course_Offering).filter_by(id=course_offering_id).first()
+    return jsonify(course_offering_schema.dump(result))
 
 
 @courses.route('/<active_state>/course_offerings')
@@ -259,15 +259,6 @@ def read_active_state_course_offerings(active_state):
     else:
         return 'Cannot filter course offerings with undefined state', 404
     return jsonify(course_offering_schema.dump(query, many=True))
-
-
-@courses.route('/course_offerings/<course_offering_id>')
-@jwt_required
-# @authorize(["role.superuser", "role.public"])
-def read_one_course_offering(course_offering_id):
-    result = db.session.query(Course_Offering).filter_by(
-        id=course_offering_id).first()
-    return jsonify(course_offering_schema.dump(result))
 
 
 @courses.route('/course_offerings/<course_offering_id>', methods=['PATCH'])
@@ -374,9 +365,9 @@ def update_student(student_id):
 
 class_meeting_schema = Class_MeetingSchema()
 
-@courses.route('/course_offerings/class_meetings', methods=['POST'])
+@courses.route('/course_offerings/<int:course_offering_id>/class_meetings', methods=['POST'])
 @jwt_required
-def create_class_meeting():
+def create_class_meeting(course_offering_id):
     """ Create and add class meeting into course offering. """
     try:
         valid_class_meeting = class_meeting_schema.load(request.json)
@@ -384,7 +375,7 @@ def create_class_meeting():
         return jsonify(err.messages), 422
     
     meetingInDB = db.session.query(Class_Meeting).filter_by(
-        offering_id=request.json['offeringId'],
+        offering_id=course_offering_id,
         teacher_id=request.json['teacherId'],
         when=request.json['when'] ).first()
 
@@ -396,10 +387,12 @@ def create_class_meeting():
         db.session.commit()
         return jsonify(class_meeting_schema.dump(new_class_meeting)), 201
     else:
+        # If a class meeting has entry with same offering, teacher, and datetime
+        # then don't create new class meeting
         return 'Class meeting already exists in course offering', 208
 
 
-@courses.route('/course_offerings/<course_offering_id>/class_meetings')
+@courses.route('/course_offerings/<int:course_offering_id>/class_meetings')
 @jwt_required
 def read_all_class_meetings(course_offering_id):
     result = db.session.query(Class_Meeting).filter_by(offering_id=course_offering_id).all()
@@ -415,7 +408,7 @@ def read_all_class_meetings(course_offering_id):
 #     return jsonify(class_meeting_schema.dump(result))
 
 
-@courses.route('/course_offerings/<course_offering_id>/<class_meeting_id>', methods=['PATCH'])
+@courses.route('/course_offerings/<int:course_offering_id>/<int:class_meeting_id>', methods=['PATCH'])
 @jwt_required
 def update_class_meeting(course_offering_id, class_meeting_id):
     try:
@@ -425,12 +418,30 @@ def update_class_meeting(course_offering_id, class_meeting_id):
 
     class_meeting = db.session.query(Class_Meeting).filter_by(id=class_meeting_id, offering_id=course_offering_id).first()
 
-    if "when" in request.json:
-        setattr(class_meeting, "when", request.json['when'])
+    for attr in 'location_id', 'teacher_id', 'when':
+        if 'when' in request.json:
+            setattr(class_meeting, attr, request.json[attr])
 
     db.session.commit()
     return jsonify(class_meeting_schema.dump(class_meeting))
 
+@courses.route('/course_offerings/<int:course_offering_id>/<int:class_meeting_id>', methods=['DELETE'])
+@jwt_required
+def delete_class_meeting(course_offering_id, class_meeting_id):
+    class_meeting = db.session.query(Class_Meeting).filter_by(id=class_meeting_id, offering_id=course_offering_id).first()
+    class_attended = db.session.query(Class_Attendance).filter_by(class_id=class_meeting_id).first()
+    
+    # If class meeting exists with no class attendance, then delete meeting
+    if class_meeting is not None and class_attended is None: 
+        db.session.delete(class_meeting)
+        db.session.commit()
+        return 'Class meeting successfully deleted', 200
+    # If class meeting DNE
+    elif class_meeting is None:
+        return 'Course offering does not exist'
+    else:
+        return 'Students have attended the class meeting. Cannot delete class meeting.', 403
+    
 
 # ---- Class_Attendance
 
