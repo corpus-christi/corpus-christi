@@ -5,10 +5,10 @@ ubuntu:
         - 18.04
 env:
         - FLASK_CONFIG=staging 
-language: node_js
-node_js:
-        - "11"
-        - "10"
+          #language: node_js
+#node_js:
+        #        - "11"
+          #        - "10"
 before_install:
         - sudo apt-get update
 matrix:
