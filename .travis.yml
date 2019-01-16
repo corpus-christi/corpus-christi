@@ -5,17 +5,17 @@ ubuntu:
         - 18.04
 env:
         - FLASK_CONFIG=staging 
-          #language: node_js
-#node_js:
-        #        - "11"
+language: python
+node_js:
+        - "3.7.2"
           #        - "10"
 before_install:
         - sudo apt-get update
-matrix:
-        include:
-                 - language: python
-                   python:
-                        - "3.7.2"
+          #matrix:
+          #        include:
+          #      - language: python
+          #        python:
+          #             - "3.7.2"
         before_install:
                 - yarn cache clean
                 - yarn install
