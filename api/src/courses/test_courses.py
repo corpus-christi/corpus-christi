@@ -609,7 +609,7 @@ def test_update_course_offering(auth_client):
         assert resp.json['maxSize'] == 1
         assert resp.json['description'] == 'test_descr'
         assert resp.json['active'] == False
-
+"""
 # ---- Diploma_Course
 
 @pytest.mark.xfail()
@@ -789,5 +789,5 @@ def test_update_class_meeting(client, db):
     # WHEN
     # THEN
     assert True == False
-
+"""
 open
