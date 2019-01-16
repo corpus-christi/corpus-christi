@@ -1,4 +1,3 @@
-// TODO: Wait for endTime bugfix
 describe("Update Event Test", function() {
   before(() => {
     cy.login();
@@ -33,7 +32,7 @@ describe("Update Event Test", function() {
       .click();
 
     cy.get("[data-cy=description]").should(
-      "include",
+      "have.value",
       "A whole new description."
     );
   });

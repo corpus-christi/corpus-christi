@@ -154,12 +154,9 @@ def create_events_assets(sqla, fraction=0.75):
     new_events_assets = []
     all_events_assets = sqla.query(Event, Asset).all()
     sample_events_assets = random.sample(all_events_assets, math.floor(len(all_events_assets) * fraction))
-    #print(sample_events_assets[0][0].id)
     for events_assets in sample_events_assets:
         valid_events_assets = event_asset_schema.load(event_asset_object_factory(events_assets[0].id,events_assets[1].id))
-        #print(valid_events_assets)
         new_events_assets.append(EventAsset(**valid_events_assets))
-    #print(new_events_assets)
     sqla.add_all(new_events_assets)
     sqla.commit()
 
@@ -170,13 +167,9 @@ def create_events_teams(sqla, fraction=0.75):
     new_events_teams = []
     all_events_teams = sqla.query(Event, Team).all()
     sample_events_teams = random.sample(all_events_teams, math.floor(len(all_events_teams) * fraction))
-    #print(sample_events_teams[0][0].id)
     for events_teams in sample_events_teams:
-        #print(events_teams)
         valid_events_teams = event_team_schema.load(event_team_object_factory(events_teams[0].id,events_teams[1].id))
-        #print(valid_events_teams)
         new_events_teams.append(EventTeam(**valid_events_teams))
-    #print(new_events_teams)
     sqla.add_all(new_events_teams)
     sqla.commit()
 
@@ -186,13 +179,9 @@ def create_events_participants(sqla, fraction=0.75):
     new_events_participants = []
     all_events_participants = sqla.query(Event, Person).all()
     sample_events_participants = random.sample(all_events_participants, math.floor(len(all_events_participants) * fraction))
-    #print(sample_events_participants[0][0].id)
     for events_participants in sample_events_participants:
-        #print(events_participants)
         valid_events_participants = event_participant_schema.load(event_participant_object_factory(events_participants[0].id,events_participants[1].id))
-        #print(valid_events_participants)
         new_events_participants.append(EventParticipant(**valid_events_participants))
-    #print(new_events_participants)
     sqla.add_all(new_events_participants)
     sqla.commit()
 
@@ -202,13 +191,9 @@ def create_events_persons(sqla, fraction=0.75):
     new_events_persons = []
     all_events_persons = sqla.query(Event, Person).all()
     sample_events_persons = random.sample(all_events_persons, math.floor(len(all_events_persons) * fraction))
-    #print(sample_events_persons[0][0].id)
     for events_persons in sample_events_persons:
-        #print(events_persons)
         valid_events_persons = event_person_schema.load(event_person_object_factory(events_persons[0].id,events_persons[1].id))
-        #print(valid_events_persons)
         new_events_persons.append(EventPerson(**valid_events_persons))
-    #print(new_events_persons)
     sqla.add_all(new_events_persons)
     sqla.commit()
 
@@ -218,13 +203,9 @@ def create_teams_members(sqla, fraction=0.75):
     new_teams_members = []
     all_teams_members = sqla.query(Team, Person).all()
     sample_teams_members = random.sample(all_teams_members, math.floor(len(all_teams_members) * fraction))
-    #print(sample_teams_members[0][0].id)
     for teams_members in sample_teams_members:
-        #print(teams_members)
         valid_teams_members = team_member_schema.load(team_member_object_factory(teams_members[0].id,teams_members[1].id))
-        #print(valid_teams_members)
         new_teams_members.append(TeamMember(**valid_teams_members))
-    #print(new_teams_members)
     sqla.add_all(new_teams_members)
     sqla.commit()
 
