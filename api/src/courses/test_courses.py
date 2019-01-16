@@ -602,4 +602,105 @@ def test_delete_course_offering(auth_client):
     assert True == False
 """
 
+# ---- Class_Attendance
+
+
+@pytest.mark.xfail()
+def test_create_class_attendance(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_read_all_class_attendance(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_read_one_class_attendance(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_replace_class_attendance(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_update_class_attendance(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_delete_class_attendance(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+# ---- Class_Meeting
+
+
+@pytest.mark.xfail()
+def test_create_class_meeting(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_read_all_class_meetings(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_read_one_class_meeting(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_replace_class_meeting(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_update_class_meeting(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+@pytest.mark.xfail()
+def test_delete_class_meeting(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
 open
