@@ -51,7 +51,7 @@
                 readonly
                 name="startDate"
                 ref="startDate"
-                v-validate="'required|date_format:YYYY-MM-DD|after:today,true'"
+                v-validate="'required'"
                 v-bind:error-messages="errors.first('startDate')"
               ></v-text-field>
               <v-date-picker
@@ -124,6 +124,7 @@
               full-width
               min-width="290px"
               data-cy="end-date-menu"
+              :disabled="!startDateTimeSelected"
             >
               <v-text-field
                 slot="activator"
@@ -132,11 +133,10 @@
                 prepend-icon="event"
                 name="endDate"
                 ref="endDate"
-                v-validate="
-                  'required|date_format:YYYY-MM-DD|after:startDate,true'
-                "
+                v-validate="'required'"
                 v-bind:error-messages="errors.first('endDate')"
                 readonly
+                :disabled="!startDateTimeSelected"
               ></v-text-field>
 
               <v-date-picker
@@ -153,6 +153,7 @@
             <v-dialog
               ref="dialog2"
               v-model="endTimeModal"
+              :disabled="!startDateTimeSelected"
               :return-value.sync="endTime"
               lazy
               full-width
@@ -168,6 +169,7 @@
                 v-bind:error-messages="errors.first('endTime')"
                 v-bind:label="$t('events.end-time')"
                 prepend-icon="update"
+                :disabled="!startDateTimeSelected"
                 readonly
               ></v-text-field>
               <v-time-picker
@@ -281,7 +283,7 @@ export default {
 
     endDate() {
       //TODO don't clear if still valid
-      this.endTime = "";
+      // this.endTime = "";
     }
   },
   computed: {
@@ -307,6 +309,10 @@ export default {
 
     today() {
       return this.getDateFromTimestamp(Date.now());
+    },
+
+    startDateTimeSelected() {
+      return this.startDate && this.startTime;
     },
 
     ...mapGetters(["currentLanguageCode"])

@@ -26,6 +26,15 @@
           >
           </v-select>
         </v-flex>
+        <v-flex>
+          <v-switch
+            hide-details
+            v-model="viewPast"
+            data-cy="view-past-switch"
+            v-bind:label="$t('actions.view-past')"
+          >
+          </v-switch>
+        </v-flex>
         <v-flex shrink justify-self-end>
           <v-btn
             color="primary"
@@ -46,6 +55,8 @@
       :items="visibleEvents"
       :search="search"
       :loading="tableLoading"
+      :pagination.sync="paginationInfo"
+      must-sort
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
@@ -53,7 +64,10 @@
           class="hover-hand"
           v-on:click="$router.push({ path: '/events/' + props.item.id })"
         >
-          {{ props.item.title }}
+        <v-badge left color="secondary">
+          <span slot="badge" v-if="eventOngoing(props.item)">!</span>
+          <span>{{ props.item.title }}</span>
+        </v-badge>
         </td>
         <td
           class="hover-hand"
@@ -205,6 +219,11 @@ export default {
         25,
         { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 }
       ],
+      paginationInfo: {
+        sortBy: 'start', //default sorted column
+        rowsPerPage: 10,
+        page: 1,
+      },
       tableLoading: true,
       events: [],
       eventDialog: {
@@ -225,8 +244,8 @@ export default {
         show: false,
         text: ""
       },
-      viewStatus: "viewAll",
-
+      viewStatus: "viewActive",
+      viewPast: false,
       windowSize: {
         x: 0,
         y: 0,
@@ -253,12 +272,17 @@ export default {
     },
 
     visibleEvents() {
+      let list = this.events;
+      if (!this.viewPast) {
+        list = this.events.filter(ev => new Date(ev.end) >= new Date());
+      }
+
       if (this.viewStatus == "viewActive") {
-        return this.events.filter(ev => ev.active);
+        return list.filter(ev => ev.active);
       } else if (this.viewStatus == "viewArchived") {
-        return this.events.filter(ev => !ev.active);
+        return list.filter(ev => !ev.active);
       } else {
-        return this.events;
+        return list;
       }
     },
 
@@ -432,6 +456,12 @@ export default {
         }
       }
       return name;
+    },
+
+    eventOngoing(event) {
+      let start = new Date(event.start);
+      let end = new Date(event.end);
+      return start <= Date.now() && Date.now() <= end;
     },
 
     onResize() {

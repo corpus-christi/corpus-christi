@@ -68,7 +68,6 @@
         v-bind:editMode="true"
         v-bind:initialData="eventDialog.event"
         v-bind:saveLoading="eventDialog.saveLoading"
-        v-bind:addMoreLoading="eventDialog.addMoreLoading"
         v-on:cancel="cancelEvent"
         v-on:save="saveEvent"
       />
@@ -89,6 +88,7 @@ export default {
     const id = this.$route.params.event;
     this.$http.get(`/api/v1/events/${id}`).then(resp => {
       this.event = resp.data;
+      console.log(resp.data);
       this.pageLoaded = true;
     });
   },
@@ -115,9 +115,9 @@ export default {
     return {
       event: {},
       eventDialog: {
-        event: {},
         show: false,
-        saveLoading: false
+        saveLoading: false,
+        event: {}
       },
 
       snackbar: {
@@ -139,14 +139,15 @@ export default {
 
     saveEvent(event) {
       this.eventDialog.saveLoading = true;
-      const eventId = event.id;
-      const idx = this.events.findIndex(ev => ev.id === event.id);
+      const id = this.event.id;
       delete event.id;
+      event.location_id = event.location.id;
+      delete event.location;
       this.$http
-        .put(`http://localhost:3000/events/${eventId}`, event)
+        .put(`/api/v1/events/${id}`, event)
         .then(resp => {
           console.log("EDITED", resp);
-          Object.assign(this.events[idx], event);
+          this.event = resp.data;
           this.eventDialog.show = false;
           this.eventDialog.saveLoading = false;
           this.showSnackbar(this.$t("events.event-edited"));
