@@ -11,8 +11,14 @@ node_js:
         - "10"
 before_install:
         - sudo apt-get update
-        - yarn cache clean
-        - yarn install
+matrix:
+        include:
+                 - language: python
+                   python:
+                        - 3.7
+        before_install:
+                - yarn cache clean
+                - yarn install
 script:
         - echo "Hello World"
 deploy:
