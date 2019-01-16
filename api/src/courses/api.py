@@ -12,6 +12,7 @@ from . import courses
 from .models import Course, CourseSchema, \
     Course_Offering, Course_OfferingSchema, \
     Student, StudentSchema
+from src.people.models import Person
 from .. import db
 
 course_schema = CourseSchema()

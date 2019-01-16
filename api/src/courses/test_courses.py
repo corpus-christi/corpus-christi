@@ -763,19 +763,33 @@ def setup_dependencies_of_student(auth_client, n):
 
 
 def test_create_student(auth_client):
-    # GIVEN a course, course offering, and a person
     setup_dependencies_of_student(auth_client,1)
     person = auth_client.sqla.query(Person).one()
     course_offering = auth_client.sqla.query(Course_Offering).one()
+    # GIVEN an invalid student
+    student = student_object_factory(course_offering.id, person.id)
+    del student['confirmed']
+    # WHEN requested to create student
+    resp = auth_client.post(url_for('courses.add_student_to_course_offering',
+    s_id=person.id), json=student)
+    # THEN the response code should be 422
+    assert resp.status_code == 422
+    # GIVEN a course, course offering, and a valid person
+    student = student_object_factory(course_offering.id, person.id)
     # WHEN a person wants to enroll in a course offering they become a student
-    student = student_object_factory(course_offering.id, person.id)#student_schema.dump()
     resp = auth_client.post(url_for('courses.add_student_to_course_offering',
         s_id=person.id), json=student)
-    print(student)
     # THEN the person should be a student in that course
     course_offering = auth_client.sqla.query(Course_Offering).one()
-    print(resp.status_code)
+    assert resp.status_code == 201
     assert course_offering.students[0].id == person.id
+    # GIVEN a valid student that has been added to a course already
+    student = student_object_factory(course_offering.id, person.id)
+    # WHEN a person tries to register them again
+    resp = auth_client.post(url_for('courses.add_student_to_course_offering',
+        s_id=person.id), json=student)
+    # THEN it will throw a 208 error
+    assert resp.status_code == 208
 
 
 @pytest.mark.xfail()
