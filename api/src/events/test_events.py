@@ -91,12 +91,12 @@ def test_read_all_events_with_query(auth_client):
     create_multiple_events(auth_client.sqla, count)
     all_events = auth_client.sqla.query(Event).all()
 
-    for _ in range(random.randint(10, 15)):
+    for _ in range(15):
         # WHEN queried for all events matching a flag
         query_string = dict()
         if flip():
             query_string['return_group'] = 'inactive'
-        elif flip():
+        else:
             query_string['return_group'] = 'both'
 
         if flip():
@@ -394,12 +394,12 @@ def test_read_all_assets(auth_client):
         tmp_asset = asset_object_factory(auth_client.sqla)
         if i == 0:
             tmp_asset["description"] = "church drum"
+            tmp_asset['active'] = True
         else:
             tmp_asset["description"] = "nothing to be filtered"
         assets.append(Asset(**AssetSchema().load(tmp_asset)))
     auth_client.sqla.add_all(assets)
     auth_client.sqla.commit()
-    print(auth_client.sqla.query(Asset).filter(Asset.description.like('%drum%')).all())
     # WHEN we try to read all assets with a filter 'drum'
     filtered_assets = auth_client.get(url_for('events.read_all_assets', desc="drum")).json
     # THEN we should have exactly one asset
@@ -749,30 +749,26 @@ def test_add_asset_to_event(auth_client):
         test_event_id = random.randint(1, count_events + 1)
         test_asset = auth_client.sqla.query(Asset).filter(Asset.id == test_asset_id).first()
         test_event = auth_client.sqla.query(Event).filter(Event.id == test_event_id).first()
+        test_asset_events = auth_client.sqla.query(EventAsset).filter_by(asset_id=test_asset_id).join(Event).all()
         resp = auth_client.put(url_for('events.add_asset_to_event', asset_id = test_asset_id, event_id = test_event_id))
-        if not test_event:
+        if not test_event or not test_asset:
             assert resp.status_code == 404
             continue
-
-        test_asset_events = auth_client.sqla.query(Event).join(EventAsset).filter_by(asset_id=test_asset_id).all()
-        for asset_event in test_asset_events:
-            # test for overlap with existing events
-            if test_event.start <= asset_event.start < test_event.end \
-            or asset_event.start <= test_event.start < asset_event.end \
-            or test_event.start < asset_event.end <= test_event.end \
-            or asset_event.start < test_event.end <= asset_event.end:
-                assert resp.status_code == 422
-                continue
-
-    # THEN we expect the right status code
+        if event_overlap(test_event, test_asset_events):
+            assert resp.status_code == 422
+            continue
+        # THEN we expect the right status code
         assert resp.status_code == 200
-    # THEN we expect the entry in the database's linking table
-    queried_event_asset_count = auth_client.sqla.query(EventAsset).filter(EventAsset.event_id == event_id, EventAsset.asset_id == asset_id).count()
-    assert queried_event_asset_count == 1
-    # WHEN we create the eventAsset again
-    resp = auth_client.post(url)
-    # THEN we expect an error code
-    assert resp.status_code == 422
+
+def event_overlap(test_event, test_asset_events):
+    for asset_event in test_asset_events:
+        # test for overlap with existing events
+        if test_event.start <= asset_event.event.start < test_event.end \
+        or asset_event.event.start <= test_event.start < asset_event.event.end \
+        or test_event.start < asset_event.event.end <= test_event.end \
+        or asset_event.event.start < test_event.end <= asset_event.event.end:
+            return True
+    return False
 
 @pytest.mark.smoke
 def test_add_asset_to_invalid_event(auth_client):
