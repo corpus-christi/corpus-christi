@@ -143,7 +143,6 @@ def create_prerequisite(course_id):
     course = db.session.query(Course).filter_by(id=course_id).first()
     if course is None:
         return 'Course to add prereqs not found', 404
-    # print(request.json)
     for p in request.json['prerequisites']:
         if(p == course.id):
             continue  # don't add course as it's own prerequisite
@@ -304,7 +303,6 @@ def add_student_to_course_offering(s_id):
         student_id=s_id, offering_id=course_offering).all()
     if courseInDB is []:
         new_student = Student(**valid_student)
-        # print(new_student)
 
         db.session.add(new_student)
         db.session.commit()
