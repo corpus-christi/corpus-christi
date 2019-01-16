@@ -80,7 +80,7 @@ def load_all():
     create_class_meetings(db.session, 30)
     create_diploma_awards(db.session, 30)
     create_class_attendance(db.session, 30)
-
+    access_token = create_access_token(identity='test-user')
 
 @data_cli.command('test', help='Load everything')
 def test_random_data():

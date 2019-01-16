@@ -63,7 +63,7 @@ actions:
   view-archived:
     _desc: View all inactive
     en: View Archived
-    es: Ver Archivo
+    es: Ver Archivado
   view-active:
     _desc: View all active
     en: View Active
@@ -88,6 +88,6 @@ actions:
     archive:
       en: Archive
       es: Archivar
-    activate:
-      en: Activate
-      es: Activar
+    reactivate:
+      en: Unarchive
+      es: Desarchivar

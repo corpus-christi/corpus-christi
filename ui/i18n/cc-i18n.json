@@ -40,8 +40,8 @@
       "search": "Search",
       "search-people": "Search People",
       "tooltips": {
-        "activate": "Activate",
         "archive": "Archive",
+        "reactivate": "Unarchive",
         "settings": "Settings"
       },
       "view-active": "View Active",
@@ -202,20 +202,20 @@
       "confirm": "Confirmar",
       "duplicate": "Duplicar",
       "edit": "Editar",
-      "header": "Comportamiento",
+      "header": "Acciones",
       "login": "Acceder",
       "logout": "Cerrar sesi\u00f3n",
       "save": "Salvar",
       "search": "Buscar",
       "search-people": "Buscar Personas",
       "tooltips": {
-        "activate": "Activar",
         "archive": "Archivar",
+        "reactivate": "Desarchivar",
         "settings": "Ajustes"
       },
       "view-active": "Ver Activo",
       "view-all": "Ver Todo",
-      "view-archived": "Ver Archivo",
+      "view-archived": "Ver Archivado",
       "view-inactive": "Ver Inactivo"
     },
     "courses": {
