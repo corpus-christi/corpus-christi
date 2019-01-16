@@ -29,9 +29,14 @@ matrix:
                   dist: "xenial"
                   sudo: true
                   before_install:
-                        - echo "chris"
+                        - python -m venv venv
+                        - source venv/bin/activate
+                        - which pip
                   script:
+                        - pip install -r requirements.txt
                         - echo "Hello World"
+                  after_script:
+                        - deactivate
 deploy:
 provider: linode
 local-dir: public
