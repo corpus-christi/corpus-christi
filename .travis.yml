@@ -1,7 +1,9 @@
 sudo: true
 os: ubuntu
 ubuntu: 
-        - 18.04 
+        - 18.04
+env:
+        - FLASK_CONFIG=staging 
 language: node_js
 node_js:
         - "11"
