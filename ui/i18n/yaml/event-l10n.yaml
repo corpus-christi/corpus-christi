@@ -68,7 +68,21 @@ events:
     title:
       en: Participants
       es: Participantes
-
+    added:
+      en: Participants added
+      es: Participantes agregado
+    error-adding:
+      en: Error adding participant
+      es: Error al agregar participante
+    removed:
+      en: Removed participant
+      es: Participante eliminado
+    error-removing:
+      en: Error removing participant
+      es: Error al eliminadar el participante
+    confirm-remove:
+      en: Are you sure you want to remove this participant?
+      es: ¿Estás seguro de que quieres eliminar a este participante?
   teams:
     title:
       en: Teams
