@@ -47,9 +47,28 @@
     </v-card-text>
 
     <v-card-actions>
-      <v-spacer></v-spacer>
+      <v-spacer v-if="!person.accountInfo"></v-spacer>
       <v-btn color="secondary" flat v-on:click="close" data-cy="cancel-button">
         {{ $t("actions.cancel") }}
+      </v-btn>
+      <v-spacer v-if="person.accountInfo"></v-spacer>
+      <v-btn
+        v-if="person.accountInfo && account.active"
+        color="primary"
+        outline
+        v-on:click="deactivateAccount"
+        data-cy="deactivate-account"
+      >
+        {{ $t("actions.deactivate-account") }}
+      </v-btn>
+      <v-btn
+        v-if="person.accountInfo && !account.active"
+        color="primary"
+        outline
+        v-on:click="reactivateAccount"
+        data-cy="reactivate-account"
+      >
+        {{ $t("actions.activate-account") }}
       </v-btn>
       <v-btn
         color="primary"
@@ -121,6 +140,16 @@ export default {
           this.close();
         }
       });
+    },
+    deactivateAccount() {
+      console.log(this.account.id);
+      this.$emit("deactivateAccount", this.account.id);
+      this.close();
+    },
+    reactivateAccount() {
+      console.log(this.account.id);
+      this.$emit("reactivateAccount", this.account.id);
+      this.close();
     },
     close() {
       this.$validator.reset();

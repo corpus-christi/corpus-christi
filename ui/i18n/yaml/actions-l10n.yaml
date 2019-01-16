@@ -15,6 +15,14 @@ actions:
     _desc: Add an event to the database
     en: Add Event
     es: Añadir Evento
+  activate-account:
+    _desc: Activate account
+    en: Activate
+    es: Activar
+  deactivate-account:
+    _desc: Deactivate account
+    en: Deactivate
+    es: Desactivar
   cancel:
     _desc: Cancel a pending action
     en: Cancel

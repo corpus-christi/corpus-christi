@@ -55,9 +55,18 @@
     >
       <template slot="items" slot-scope="props">
         <td>
-          <v-icon size="15" v-if="props.item.accountInfo"
-            >account_circle</v-icon
-          >
+          <span v-if="props.item.accountInfo">
+            <span v-if="props.item.accountInfo.active">
+              <v-icon size="15">account_circle</v-icon>
+              {{ $t("account.active") }}
+            </span>
+            <span v-if="!props.item.accountInfo.active">
+              <v-icon size="15" v-if="!props.item.accountInfo.active"
+                >person_outline</v-icon
+              >
+              {{ $t("account.inactive") }}
+            </span>
+          </span>
         </td>
         <td :data-cy="'first-name-' + props.item.id">
           {{ props.item.firstName }}
@@ -170,6 +179,8 @@
         v-bind:account="adminDialog.account"
         v-on:addAccount="addAccount"
         v-on:updateAccount="updateAccount"
+        v-on:deactivateAccount="deactivateAccount"
+        v-on:reactivateAccount="reactivateAccount"
         v-on:close="closeAdmin"
       />
     </v-dialog>
@@ -220,9 +231,9 @@ export default {
     headers() {
       return [
         {
-          text: "",
+          text: "Account",
           value: "person.accountInfo",
-          align: "right",
+          align: "left",
           sortable: false
         },
         {
@@ -417,10 +428,10 @@ export default {
 
     deactivateAccount(accountId) {
       this.$http
-        .put(`/api/v1/accounts/deactivate/${accountId}`)
+        .put(`/api/v1/people/accounts/deactivate/${accountId}`)
         .then(resp => {
           console.log("DEACTIVATED", resp);
-          this.showSnackbar("Translate Me");
+          this.showSnackbar(this.$t("person.messages.account-deactivate"));
         })
         .then(() => this.refreshPeopleList())
         .catch(err => console.error("FAILURE", err.response));
@@ -428,11 +439,11 @@ export default {
 
     reactivateAccount(accountId) {
       this.$http
-        .patch(`/api/v1/people/accounts/${accountId}`, account)
+        .put(`/api/v1/people/accounts/activate/${accountId}`)
         .then(resp => {
-          console.log("PATCHED", resp);
+          console.log("REACTIVATED", resp);
           this.refreshPeopleList();
-          this.showSnackbar(this.$t("account.messages.updated-ok"));
+          this.showSnackbar(this.$t("person.messages.account-activate"));
         })
         .catch(err => console.error("FAILURE", err.response));
     },

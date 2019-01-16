@@ -15,6 +15,8 @@
       "noDataText": "No data available"
     },
     "account": {
+      "active": "Active",
+      "inactive": "Inactive",
       "messages": {
         "added-ok": "Account added successfully",
         "updated-ok": "Account updated successfully"
@@ -24,6 +26,7 @@
       "username": "Username"
     },
     "actions": {
+      "activate-account": "Activate",
       "add-another": "Add Another",
       "add-event": "Add Event",
       "add-person": "Add Person",
@@ -31,6 +34,7 @@
       "clear": "Clear",
       "close": "Close",
       "confirm": "Confirm",
+      "deactivate-account": "Deactivate",
       "duplicate": "Duplicate",
       "edit": "Edit",
       "header": "Actions",
@@ -136,6 +140,8 @@
       "gender": "Gender",
       "male": "Male",
       "messages": {
+        "account-activate": "Account activated",
+        "account-deactivate": "Account deactivated",
         "canceled": "Canceled add new person",
         "person-activate": "Person activated",
         "person-add": "New person added",
@@ -185,6 +191,8 @@
       "noDataText": "Datos no disponibles"
     },
     "account": {
+      "active": "Activo",
+      "inactive": "Inactivo",
       "messages": {
         "added-ok": "Cuenta agregada exitosamente",
         "updated-ok": "Cuenta actualizada con \u00e9xito"
@@ -194,6 +202,7 @@
       "username": "Nombre de usuario"
     },
     "actions": {
+      "activate-account": "Activar",
       "add-another": "A\u00f1adir Otro",
       "add-event": "A\u00f1adir Evento",
       "add-person": "A\u00f1adir Persona",
@@ -201,9 +210,10 @@
       "clear": "Despejar",
       "close": "Cerrar",
       "confirm": "Confirmar",
+      "deactivate-account": "Desactivar",
       "duplicate": "Duplicar",
       "edit": "Editar",
-      "header": "Comportamiento",
+      "header": "Acciones",
       "login": "Acceder",
       "logout": "Cerrar sesi\u00f3n",
       "save": "Salvar",
@@ -306,6 +316,8 @@
       "gender": "G\u00e9nero",
       "male": "Hombre",
       "messages": {
+        "account-activate": "Cuenta activada",
+        "account-deactivate": "Cuenta desactivada",
         "canceled": "Cancelado a\u00f1adir nueva persona",
         "person-activate": "Persona activada",
         "person-add": "Nueva persona agregada",
