@@ -41,8 +41,12 @@
     >
       <v-progress-linear slot="progress" color="primary" indeterminate></v-progress-linear>
       <template slot="items" slot-scope="props">
-        <td>{{ props.item.description }}</td>
-        <td>{{ props.item.maxSize }}</td>
+        <td class="hover-hand" @click="clickThrough(props.item)">
+          {{ props.item.description }}
+        </td>
+        <td class="hover-hand" @click="clickThrough(props.item)">
+          {{ props.item.maxSize }}
+        </td>
         <td>
           <CourseOfferingAdminActions
             v-bind:courseOffering="props.item"
@@ -179,6 +183,10 @@ export default {
   },
 
   methods: {
+    clickThrough(courseOffering) {
+      this.$router.push({ name: "course-offering-details", params: { offeringId: courseOffering.id }});
+    },
+
     dispatchAction(actionName, courseOffering) {
       switch (actionName) {
         case "edit":
@@ -320,3 +328,9 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+  .hover-hand {
+    cursor: pointer;
+  }
+</style>
