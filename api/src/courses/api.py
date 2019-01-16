@@ -163,7 +163,7 @@ Route reads all prerequisites in database
 # @authorize(["role.superuser", "role.registrar", "role.public"])
 def read_all_prerequisites():
     result = db.session.query(Course).all()  # Get courses to get prereq's
-    if result is []:
+    if result == []:
         return 'No courses found', 404
     results = []  # new list
     for i in result:
@@ -229,7 +229,7 @@ def create_course_offering():
 # @authorize(["role.superuser", "role.registrar", "role.public"])
 def read_all_course_offerings():
     result = db.session.query(Course_Offering).all()
-    if result is []:
+    if result == []:
         return 'No Course Offerings found', 404
     results = course_offering_schema.dump(result, many=True)
     for r in results:
