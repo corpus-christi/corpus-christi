@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-menu offset-y v-if="isLoggedIn">
-      <v-btn id="cur-locale" flat slot="activator" data-cy="cur-locale">
+      <v-btn id="cur-locale" flat slot="activator">
         {{ currentAccount.fullName() }}
       </v-btn>
       <v-list>

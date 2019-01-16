@@ -22,6 +22,9 @@ person:
     last:
       en: Last Name
       es: Apellido
+    second-last:
+      en: Second Last Name
+      es: Segundo Apellido
   gender:
     es: Género
     en: Gender
@@ -51,6 +54,9 @@ person:
     edit:
       en: Edit Person
       es: Editar persona
+    add-participant:
+      en: Add a Participant
+      es: Añadir Partícipe
     add-account:
       en: Add Account
       es: Añadir cuenta

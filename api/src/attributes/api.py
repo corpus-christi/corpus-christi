@@ -5,56 +5,87 @@ from flask.json import jsonify
 from flask_jwt_extended import jwt_required, get_raw_jwt, jwt_optional
 from marshmallow import ValidationError
 
-from . import people
-from .models import Person, Account, AttriuteSchema, Enumerated_ValueSchema
+from . import attributes
+from ..people.models import Person, Account
+from .models import Attribute, AttributeSchema, EnumeratedValue, EnumeratedValueSchema, PersonAttribute, PersonAttributeSchema
 from .. import db
 
 
 # ---- Attribute
 
 attribute_schema = AttributeSchema()
+enumerated_value_schema = EnumeratedValueSchema(exclude=['id'])
+enumerated_value_schema_with_id = EnumeratedValueSchema()
+
 
 @attributes.route('/attributes', methods=['POST'])
 @jwt_required
 def create_attribute():
     try:
-        valid_attribute = attribute_schema.load(request.json)
+        valid_attribute = attribute_schema.load(request.json['attribute'])
+        valid_enumerated_values = enumerated_value_schema.load(
+            request.json['enumeratedValues'], many=True)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
     new_attribute = Attribute(**valid_attribute)
     db.session.add(new_attribute)
     db.session.commit()
-    return jsonify(attribute_schema.dump(new_attribute)), 201
-    
+
+    for enumerated_value in valid_enumerated_values:
+        enumerated_value = EnumeratedValue(**enumerated_value)
+        enumerated_value.attribute_id = new_attribute.id
+        db.session.add(enumerated_value)
+
+    db.session.commit()
+    result = db.session.query(Attribute).filter_by(id=new_attribute.id).first()
+    result.enumerated_values = result.enumerated_values
+    return jsonify(attribute_schema.dump(result)), 201
+
 
 @attributes.route('/attributes')
 @jwt_required
 def read_all_attributes():
     result = db.session.query(Attribute).all()
     return jsonify(attribute_schema.dump(result, many=True))
-    
+
 
 @attributes.route('/attributes/<attribute_id>')
 @jwt_required
 def read_one_attribute(attribute_id):
     result = db.session.query(Attribute).filter_by(id=attribute_id).first()
     return jsonify(attribute_schema.dump(result))
-    
 
-@attributes.route('/attributes/<attribute_id>', methods=['PUT'])
-@jwt_required
-def replace_attribute(attribute_id):
-    pass
-    
 
 @attributes.route('/attributes/<attribute_id>', methods=['PATCH'])
 @jwt_required
 def update_attribute(attribute_id):
+    update_enumerated_values = []
+    new_enumerated_values = []
+
     try:
-        valid_attribute = attribute_schema.load(request.json)
+        valid_attribute = attribute_schema.load(request.json['attribute'])
+        for enumerated_value in request.json['enumeratedValues']:
+            if 'id' in enumerated_value.keys():
+                update_enumerated_values.append(
+                    enumerated_value_schema_with_id.load(enumerated_value))
+            else:
+                new_enumerated_values.append(
+                    enumerated_value_schema.load(enumerated_value))
     except ValidationError as err:
         return jsonify(err.messages), 422
+
+    for new_enumerated_value in new_enumerated_values:
+        new_enumerated_value = Enumerated_Value(**new_enumerated_value)
+        new_enumerated_value.attribute_id = attribute_id
+        db.session.add(new_enumerated_value)
+
+    for update_enumerated_value in update_enumerated_values:
+        old_enumerated_value = db.session.query(Enumerated_Value).filter_by(
+            attribute_id=attribute_id, id=update_enumerated_value['id']).first()
+        if old_enumerated_value is not None:
+            setattr(old_enumerated_value, 'value_i18n',
+                    update_enumerated_value['value_i18n'])
 
     attribute = db.session.query(Attribute).filter_by(id=attribute_id).first()
 
@@ -62,24 +93,37 @@ def update_attribute(attribute_id):
         setattr(attribute, key, val)
 
     db.session.commit()
+    result = db.session.query(Attribute).filter_by(id=attribute.id).first()
+    result.enumerated_values = result.enumerated_values
     return jsonify(attribute_schema.dump(attribute))
-    
 
-@attributes.route('/attributes/disable/<attribute_id>', methods=['PATCH'])
+
+@attributes.route('/attributes/deactivate/<attribute_id>', methods=['PATCH'])
 @jwt_required
-def disable_attribute(attribute_id):
+def deactivate_attribute(attribute_id):
     attribute = db.session.query(Attribute).filter_by(id=attribute_id).first()
-   
+
     setattr(attribute, 'active', False)
 
     db.session.commit()
 
     return jsonify(attribute_schema.dump(attribute))
-    
 
-# ---- Enumerated_Value
 
-enumerated_value_schema = Enumerated_ValueSchema()
+@attributes.route('/attributes/activate/<attribute_id>', methods=['PATCH'])
+@jwt_required
+def activate_attribute(attribute_id):
+    attribute = db.session.query(Attribute).filter_by(id=attribute_id).first()
+
+    setattr(attribute, 'active', True)
+
+    db.session.commit()
+
+    return jsonify(attribute_schema.dump(attribute))
+
+
+# ---- EnumeratedValue
+
 
 @attributes.route('/enumerated_values', methods=['POST'])
 @jwt_required
@@ -89,25 +133,26 @@ def create_enumerated_value():
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    new_enumerated_value = Enumerated_Value(**valid_enumerated_value)
+    new_enumerated_value = EnumeratedValue(**valid_enumerated_value)
     db.session.add(new_enumerated_value)
     db.session.commit()
     return jsonify(enumerated_value_schema.dump(new_enumerated_value)), 201
-    
+
 
 @attributes.route('/enumerated_values')
 @jwt_required
 def read_all_enumerated_values():
-    result = db.session.query(Enumerated_Value).all()
+    result = db.session.query(EnumeratedValue).all()
     return jsonify(enumerated_value_schema.dump(result, many=True))
-    
+
 
 @attributes.route('/enumerated_values/<enumerated_value_id>')
 @jwt_required
 def read_one_enumerated_value(enumerated_value_id):
-    result = db.session.query(Enumerated_Value).filter_by(id=enumerated_value_id).first()
+    result = db.session.query(EnumeratedValue).filter_by(
+        id=enumerated_value_id).first()
     return jsonify(enumerated_value_schema.dump(result))
-        
+
 
 @attributes.route('/enumerated_values/<enumerated_value_id>', methods=['PATCH'])
 @jwt_required
@@ -117,30 +162,44 @@ def update_enumerated_value(enumerated_value_id):
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    enumerated_value = db.session.query(Enumerated_Value).filter_by(id=enumerated_value_id).first()
+    enumerated_value = db.session.query(
+        EnumeratedValue).filter_by(id=enumerated_value_id).first()
 
     for key, val in valid_enumerated_value.items():
         setattr(enumerated_value, key, val)
 
     db.session.commit()
     return jsonify(enumerated_value_schema.dump(enumerated_value))
-    
 
-@attributes.route('/enumerated_values/disable/<enumerated_value_id>', methods=['PATCH'])
+
+@attributes.route('/enumerated_values/deactivate/<enumerated_value_id>', methods=['PATCH'])
 @jwt_required
-def disable_enumerated_value(enumerated_value_id):
-    enumerated_value = db.session.query(Enumerated_Value).filter_by(id=enumerated_value_id).first()
-   
+def deactivate_enumerated_value(enumerated_value_id):
+    enumerated_value = db.session.query(
+        EnumeratedValue).filter_by(id=enumerated_value_id).first()
+
     setattr(enumerated_value, 'active', False)
 
     db.session.commit()
 
-    return jsonify(attribute_schema.dump(attribute))
-    
+    return jsonify(enumerated_value_schema.dump(enumerated_value))
 
-# ---- Person_Attribute
 
-person_attribute_schema = Person_AttributeSchema()
+@attributes.route('/enumerated_values/activate/<enumerated_value_id>', methods=['PATCH'])
+@jwt_required
+def activate_enumerated_value(enumerated_value_id):
+    enumerated_value = db.session.query(
+        EnumeratedValue).filter_by(id=enumerated_value_id).first()
+
+    setattr(enumerated_value, 'active', True)
+
+    db.session.commit()
+
+    return jsonify(enumerated_value_schema.dump(enumerated_value))
+
+
+person_attribute_schema = PersonAttributeSchema()
+
 
 @attributes.route('/person_attributes', methods=['POST'])
 @jwt_required
@@ -150,50 +209,7 @@ def create_person_attribute():
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    new_person_attribute = Person_Attribute(**valid_person_attribute)
+    new_person_attribute = PersonAttribute(**valid_person_attribute)
     db.session.add(new_person_attribute)
     db.session.commit()
     return jsonify(person_attribute_schema.dump(new_person_attribute)), 201
-    
-
-@attributes.route('/person_attributes')
-@jwt_required
-def read_all_person_attributes():
-    result = db.session.query(Person_Attribute).all()
-    return jsonify(person_attribute_schema.dump(result, many=True))
-    
-
-@attributes.route('/person_attributes/<person_attribute_id>')
-@jwt_required
-def read_one_person_attribute(person_attribute_id):
-    result = db.session.query(Person_Attribute).filter_by(id=person_attribute_id).first()
-    return jsonify(person_attribute_schema.dump(result))
-    
-
-@attributes.route('/person_attributes/<person_attribute_id>', methods=['PUT'])
-@jwt_required
-def replace_person_attribute(person_attribute_id):
-    pass
-    
-
-@attributes.route('/person_attributes/<person_attribute_id>', methods=['PATCH'])
-@jwt_required
-def update_person_attribute(person_attribute_id):
-    try:
-        valid_person_attribute = person_attribute_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    person_attribute = db.session.query(Person_Attribute).filter_by(id=person_attribute_id).first()
-
-    for key, val in valid_person_attribute.items():
-        setattr(person_attribute, key, val)
-
-    db.session.commit()
-    return jsonify(person_attribute_schema.dump(person_attribute))
-    
-
-@attributes.route('/person_attributes/<person_attribute_id>', methods=['DELETE'])
-@jwt_required
-def delete_person_attribute(person_attribute_id):
-    pass

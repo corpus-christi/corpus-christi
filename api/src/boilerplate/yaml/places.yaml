@@ -1,0 +1,125 @@
+module: places
+entities:
+  - name: Location
+    singular: location
+    plural: locations
+    uri: /locations
+    table: places_location
+    attributes:
+      - name: id
+        type: integer
+        primary-key: true
+        min: 1
+        required: true
+      - name: description
+        type: string
+        min-length: 1
+        length: medium
+      - name: address_id
+        type: integer
+        min: 1
+        foreign-key: places_address.id
+        required: true
+    relationships:
+      - name: address
+        related-model: Address
+        backref: locations
+  - name: Address
+    singular: address
+    plural: addresses
+    uri: /addresses
+    table: places_address
+    attributes:
+      - name: id
+        type: integer
+        primary-key: true
+        min: 1
+        required: true
+      - name: name
+        type: string
+        min-length: 1
+        length: medium
+        required: true
+      - name: address
+        type: string
+        min-length: 1
+        length: long
+        required: true
+      - name: city
+        type: string
+        min-length: 1
+        length: medium
+        required: true
+      - name: area_id
+        type: integer
+        min: 1
+        foreign-key: places_area.id
+        required: true
+      - name: country_code
+        type: string
+        length: short
+        foreign-key: places_country.code
+        required: true
+      - name: latitude
+        type: float
+      - name: longitude
+        type: float
+    relationships:
+      - name: area
+        related-model: Area
+        backref: addresses
+      - name: country
+        related-model: Country
+        backref: addresses
+  - name: Area
+    singular: area
+    plural: areas
+    uri: /areas
+    table: places_area
+    attributes:
+      - name: id
+        type: integer
+        min: 1
+        primary-key: true
+        required: true
+      - name: name
+        type: string
+        min-length: 1
+        length: medium
+        required: true
+      - name: country_code
+        type: string
+        length: short
+        foreign-key: places_country.code
+        required: true
+    relationships:
+      - name: country
+        related-model: Country
+        backref: areas
+  - name: Country
+    singular: country
+    plural: countries
+    uri: /countries
+    table: places_country
+    attributes:
+      - name: code
+        type: string
+        length: short
+        primary-key: true
+        required: true
+      - name: name_i18n
+        type: string
+        length: locale
+        required: true
+    relationships:
+      - name: I18NKey
+        related-model: I18NKey
+        backref: countries
+
+
+
+
+
+
+
+
