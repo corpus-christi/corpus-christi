@@ -16,8 +16,8 @@ before_install:
 script:
         - echo "Hello World"
 deploy:
-        provider: linode
-        local-dir: public
-                branchs:
-                        only: 
-                                - development
+provider: linode
+local-dir: public
+        branchs:
+                only: 
+                        - development
