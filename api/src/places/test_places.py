@@ -313,6 +313,29 @@ def test_create_location(auth_client):
     assert auth_client.sqla.query(Location).count() == count
 
 
+@pytest.mark.smoke
+def test_create_location_invalid(auth_client):
+    # GIVEN a set of areas and addresses
+    Country.load_from_file()
+    count = random.randint(5, 15)
+    create_multiple_areas(auth_client.sqla, count)
+    create_multiple_addresses(auth_client.sqla, count)
+
+    # GIVEN new locations with bad data
+    for i in range(count):
+        new_location = location_factory(auth_client.sqla)
+        new_location[fake.word()] = fake.word()
+        
+        # WHEN locations with bad data are requested to be created
+        resp = auth_client.post(url_for('places.create_location'), json = new_location)
+        
+        # THEN expect requests to be unprocessable
+        assert resp.status_code == 422
+
+    # THEN expect no locations to be created
+    assert auth_client.sqla.query(Location).count() == 0
+
+
 @pytest.mark.slow
 def test_read_all_locations(auth_client):
     # GIVEN a DB with a collection of addresses.
@@ -355,96 +378,111 @@ def test_read_one_location(auth_client):
 
 @pytest.mark.smoke
 def test_replace_location(auth_client):
-    # GIVEN
+    # GIVEN a set of areas, addresses, and locations
     Country.load_from_file()
     count = random.randint(3, 11)
     create_multiple_areas(auth_client.sqla, count)
     create_multiple_addresses(auth_client.sqla, count)
     create_multiple_locations(auth_client.sqla, count)
 
-    # WHEN
     locations = auth_client.sqla.query(Location).all()
-
+    
+    # GIVEN replacement locations
     for location in locations:
         new_location = location_factory(auth_client.sqla)
 
-        # THEN
+        # WHEN locations are requested to be replaced
         resp = auth_client.put(url_for('places.replace_location', location_id = location.id), json = new_location)
+
+        # THEN expect an OK response
         assert resp.status_code == 200
 
+        # THEN expect locations to be replaced but with consistent ids
         assert resp.json['id'] == location.id
-        assert not resp.json['description'] == location.description
-        assert resp.json['description'] == new_location['description']
+
+        if not location.description == new_location['description']:
+            assert not resp.json['description'] == location.description
+        else:
+            assert resp.json['description'] == location.description
+
+        if not location.address_id == new_location['address_id']:
+            assert not resp.json['address_id'] == location.address_id
+        else:
+            assert resp.json['address_id'] == location.address_id
 
 
 @pytest.mark.smoke
 def test_replace_location_invalid(auth_client):
-    # GIVEN
+    # GIVEN a set of areas, addresses, and locations
     Country.load_from_file()
     count = random.randint(3, 11)
     create_multiple_areas(auth_client.sqla, count)
     create_multiple_addresses(auth_client.sqla, count)
     create_multiple_locations(auth_client.sqla, count)
 
-    # WHEN
     locations = auth_client.sqla.query(Location).all()
-
+    
+    # Given replacement locations with bad data
     for location in locations:
         new_location = location_factory(auth_client.sqla)
         new_location[fake.word()] = fake.word()
 
-        # THEN
+        # WHEN locations are requested to be replaced
         resp = auth_client.put(url_for('places.replace_location', location_id = location.id), json = new_location)
+
+        # THEN expect request to be unprocessable
         assert resp.status_code == 422
 
 
 @pytest.mark.smoke
 def test_delete_location(auth_client):
-    # GIVEN
+    # GIVEN a set of areas, addresses, and locations
     Country.load_from_file()
     count = random.randint(3, 11)
     create_multiple_areas(auth_client.sqla, count)
     create_multiple_addresses(auth_client.sqla, count)
     create_multiple_locations(auth_client.sqla, count)
 
-    # WHEN
     locations = auth_client.sqla.query(Location).all()
+    
+    # WHEN a random portion of locations are deleted
     deleted = 0
-
     for location in locations:
-        # THEN
         if flip():
             resp = auth_client.delete(url_for('places.delete_location', location_id = location.id))
             deleted += 1
+
+            # THEN for each delete expect delete to run OK
             assert resp.status_code == 204
 
+    # THEN expect the correct number of locations remaining
     locations = auth_client.sqla.query(Location).all()
     assert len(locations) == count - deleted
 
 
 @pytest.mark.smoke
 def test_delete_location_no_exist(auth_client):
-    # GIVEN
+    # GIVEN an empty database
     
-    # WHEN
-    
-    # THEN
+    # WHEN a location is requested to be deleted
     resp = auth_client.delete(url_for('places.delete_location', location_id = 1))
+    
+    # THEN expect row not to be found
     assert resp.status_code == 404
 
 
 @pytest.mark.smoke
 def test_update_location(auth_client):
-    # GIVEN
+    # GIVEN a set of areas, addresses, and locations
     Country.load_from_file()
     count = random.randint(3, 11)
     create_multiple_areas(auth_client.sqla, count)
     create_multiple_addresses(auth_client.sqla, count)
     create_multiple_locations(auth_client.sqla, count)
 
-    # WHEN
     locations = auth_client.sqla.query(Location).all()
-
+    
+    # GIVEN modification data
     for location in locations:
         mod = {}
         flips = (flip(), flip())
@@ -453,53 +491,57 @@ def test_update_location(auth_client):
         if flips[1]:
             mod['address_id'] = random.randint(1, count + 1)
 
+        # WHEN locations are updated with modification data
         resp = auth_client.patch(url_for('places.update_location', location_id = location.id), json = mod)
+
+        # THEN expect an OK response
         assert resp.status_code == 200
 
-        if flips[0]:
+        # THEN expect rows to be updated
+        if flips[0] and not location.description == mod['description']:
             assert not resp.json['description'] == location.description
-        if flips[1]:
-            assert resp.json['address_id'] == mod['address_id']
+        else:
+            assert resp.json['description'] == location.desciption
+
+        if flips[1] and not location.address_id == mod['address_id']:
+            assert not resp.json['address_id'] == location.address_id
+        else:
+            assert resp.json['address_id'] == location.address_id
 
 
 @pytest.mark.smoke
 def test_update_location_invalid(auth_client):
-    # GIVEN
+    # GIVEN a set of areas, addresses, and locations
     Country.load_from_file()
     count = random.randint(3, 11)
     create_multiple_areas(auth_client.sqla, count)
     create_multiple_addresses(auth_client.sqla, count)
     create_multiple_locations(auth_client.sqla, count)
 
-    #WHEN
     locations = auth_client.sqla.query(Location).all()
-
+    
+    # WHEN locations are updated with bad data
     for location in locations:
         resp = auth_client.patch(url_for('places.update_location', location_id = location.id), json = {fake.word(): fake.word()})
+
+        #THEN expect the request to be unprocessable
         assert resp.status_code == 422
 
 
 @pytest.mark.smoke
 def test_update_location_no_exist(auth_client):
-    # GIVEN
-    Country.load_from_file()
-    count = random.randint(3, 11)
-    create_multiple_areas(auth_client.sqla, count)
-    create_multiple_addresses(auth_client.sqla, count)
-    create_multiple_locations(auth_client.sqla, count)
-
-    #WHEN
-    locations = auth_client.sqla.query(Location).all()
-
-    for location in locations:
-        mod = {}
-        flips = (flip(), flip())
-        if flips[0]:
-            mod['description'] = fake.sentences(nb=1)[0]
-        if flips[1]:
-            mod['address_id'] = random.randint(1, count + 1)
+    # GIVEN no data in the database and some modification data
+    mod = {}
+    flips = (flip(), flip())
+    if flips[0]:
+        mod['description'] = fake.sentences(nb=1)[0]
+    if flips[1]:
+       mod['address_id'] = random.randint(1, count + 1)
         
-        resp = auth_client.patch(url_for('places.update_location', location_id = location.id + count), json = mod)
-        assert resp.status_code == 404
+    # WHEN update_location is called with mod data on a location
+    resp = auth_client.patch(url_for('places.update_location', location_id = 1), json = mod)
+    
+    # THEN expect the location not to be found
+    assert resp.status_code == 404
 
 

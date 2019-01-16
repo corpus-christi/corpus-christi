@@ -214,50 +214,49 @@ def test_replace_invalid_event(auth_client):
 
 @pytest.mark.smoke
 def test_update_event(auth_client):
-    # GIVEN
+    # GIVEN a database with a number of events
     count = random.randint(3,11)
     create_multiple_events(auth_client.sqla, count)
 
-    # WHEN
-    events = auth_client.sqla.query(Event).all()
+    # WHEN we update one event
+    event = auth_client.sqla.query(Event).first()
 
-    for event in events:
-        # THEN
-        payload = {}
-        new_event = event_object_factory(auth_client.sqla)
+    payload = {}
+    new_event = event_object_factory(auth_client.sqla)
 
-        flips = (flip(), flip(), flip(), flip(), flip(), flip())
+    flips = (flip(), flip(), flip(), flip(), flip(), flip())
 
-        print(new_event)
-        if flips[0]:
-            payload['title'] = new_event['title']
-        if flips[1]:
-            payload['start'] = new_event['start']
-        if flips[2]:
-            payload['end'] = new_event['end']
-        if flips[3]:
-            payload['active'] = new_event['active']
-        if flips[4] and 'description' in new_event.keys():
-            payload['description'] = new_event['description']
-        if flips[5] and 'location_id' in new_event.keys():
-            payload['location_id'] = new_event['location_id']
+    if flips[0]:
+        payload['title'] = new_event['title']
+    if flips[1]:
+        payload['start'] = new_event['start']
+    if flips[2]:
+        payload['end'] = new_event['end']
+    if flips[3]:
+        payload['active'] = new_event['active']
+    if flips[4] and 'description' in new_event.keys():
+        payload['description'] = new_event['description']
+    if flips[5] and 'location_id' in new_event.keys():
+        payload['location_id'] = new_event['location_id']
 
-        resp = auth_client.patch(url_for('events.update_event', event_id = event.id), json=payload)
+    resp = auth_client.patch(url_for('events.update_event', event_id = event.id), json=payload)
 
-        assert resp.status_code == 200
+    # THEN we assume the correct status code
+    assert resp.status_code == 200
 
-        if flips[0]:
-            assert resp.json['title'] == payload['title']
-        if flips[1]:
-            assert resp.json['start'] == payload['start'].replace(' ', 'T') + "+00:00"
-        if flips[2]:
-            assert resp.json['end'] == payload['end'].replace(' ', 'T') + "+00:00"
-        if flips[3]:
-            assert resp.json['active'] == payload['active']
-        if flips[4] and 'description' in new_event.keys():
-            assert resp.json['description'] == payload['description']
-        if flips[5] and 'location_id' in new_event.keys():
-            assert resp.json['location'] == payload['location_id']
+    # THEN we assume the correct content in the returned object
+    if flips[0]:
+        assert resp.json['title'] == payload['title']
+    if flips[1]:
+        assert resp.json['start'] == payload['start'].replace(' ', 'T') + "+00:00"
+    if flips[2]:
+        assert resp.json['end'] == payload['end'].replace(' ', 'T') + "+00:00"
+    if flips[3]:
+        assert resp.json['active'] == payload['active']
+    if flips[4] and 'description' in new_event.keys():
+        assert resp.json['description'] == payload['description']
+    if flips[5] and 'location_id' in new_event.keys():
+        assert resp.json['location'] == payload['location_id']
     
 
 @pytest.mark.smoke
@@ -299,23 +298,23 @@ def test_update_missing_event(auth_client):
 
 @pytest.mark.smoke
 def test_delete_event(auth_client):
-    # GIVEN
+    # GIVEN a database with a number of events
     count = random.randint(3, 11)
     create_multiple_events(auth_client.sqla, count)
 
-    # WHEN
+    # WHEN we deactivate a number of them
     events = auth_client.sqla.query(Event).all()
 
     deleted = 0
     for event in events:
-        # THEN
         if flip() and event.active:
             resp = auth_client.delete(url_for('events.delete_event', event_id = event.id))
+            # THEN we assume the correct status code
             assert resp.status_code == 204
             deleted += 1
         elif not event.active:
             deleted += 1
-
+    # THEN we assume the number of active events in the database to be the correct number
     new_events = auth_client.sqla.query(Event).filter(Event.active == True).all()
     assert len(new_events) == count - deleted
     
@@ -681,25 +680,25 @@ def test_read_one_team(auth_client):
 
 @pytest.mark.smoke
 def test_read_all_team_members(auth_client):
-    # GIVEN
+    # GIVEN a database with some linked teams and members
     count = random.randint(5, 15)
     create_multiple_teams(auth_client.sqla, count)
     person_count = random.randint(20, 30)
     create_multiple_people(auth_client.sqla, count)
-    
-    # WHEN
     create_teams_members(auth_client.sqla)
+    
+    # WHEN we read all members for each team
     teams = auth_client.sqla.query(Team).all()
 
     for team in teams:
         members = auth_client.sqla.query(TeamMember).filter(TeamMember.team_id == team.id).all()
         
-        # THEN
         resp = auth_client.get(url_for('events.read_all_team_members', team_id = team.id))
+        # THEN we expect a correct status code
         assert resp.status_code == 200
 
+        # THEN we expect for each member of the team, the current team's id is in the member's "teams"
         for member in members:
-            in_team = False
             team_ids = get_team_ids(resp.json[str(member.member_id)]['teams'])
             assert team.id in team_ids
 
@@ -1182,38 +1181,36 @@ def test_delete_event_participant(auth_client):
 
 @pytest.mark.smoke
 def test_get_team_members(auth_client):
-    # GIVEN
+    # GIVEN a database with a number of connected team and members
     count = random.randint(5, 15)
     create_multiple_teams(auth_client.sqla, count)
     person_count = random.randint(20, 30)
     create_multiple_people(auth_client.sqla, count)
     create_teams_members(auth_client.sqla)
     
-    # WHEN
+    # WHEN we ask for the members associated with each team
     teams = auth_client.sqla.query(Team).all()
-    
     for team in teams:
         members = auth_client.sqla.query(TeamMember).filter(TeamMember.team_id == team.id).all()
         
-        # THEN
         resp = auth_client.get(url_for('events.get_team_members', team_id = team.id))
 
+        # THEN we assume the correct status code
         assert resp.status_code == 200
+        # THEN we assume the right amount of members associated with the team
         assert len(resp.json) == len(members)
 
 
 @pytest.mark.smoke
 def test_get_team_members_no_members(auth_client):
-    # GIVEN
+    # GIVEN a database with only some teams
     count = random.randint(5, 15)
     create_multiple_teams(auth_client.sqla, count)
-
-    # WHEN
+    # WHEN we ask for TeamMembers
     teams = auth_client.sqla.query(Team).all()
-
     for team in teams:
         resp = auth_client.get(url_for('events.get_team_members', team_id = team.id))
-
+        # THEN we expect an error
         assert resp.status_code == 404
 
 @pytest.mark.smoke
@@ -1256,39 +1253,41 @@ def test_add_team_member_invalid(auth_client):
 
 @pytest.mark.smoke
 def test_modify_team_member(auth_client):
-    # GIVEN
+    # GIVEN a database with some linked teams and people
     count = random.randint(5, 15)
     create_multiple_teams(auth_client.sqla, count)
     person_count = random.randint(20, 30)
     create_multiple_people(auth_client.sqla, count)
-    
-    # WHEN
     create_teams_members(auth_client.sqla)
+    
+    # WHEN we modify each teamMember
     team_members = auth_client.sqla.query(TeamMember).all()
 
     for team_member in team_members:
         f = flip()
         resp = auth_client.patch(url_for('events.modify_team_member', team_id = team_member.team_id, member_id = team_member.member_id), json = {'active':f})
         
+        # THEN we expect the right status code
         assert resp.status_code == 200
+        # THEN we expect the correct content in the TeamMember
         assert resp.json['active'] == f
 
 
 @pytest.mark.smoke
 def test_modify_team_member_invalid(auth_client):
-    # GIVEN
+    # GIVEN a database with some linked teamMembers
     count = random.randint(5, 15)
     create_multiple_teams(auth_client.sqla, count)
     person_count = random.randint(20, 30)
     create_multiple_people(auth_client.sqla, count)
-    
-    # WHEN
     create_teams_members(auth_client.sqla)
+    
+    # WHEN we try to modify the content with an invalid payload
     team_members = auth_client.sqla.query(TeamMember).all()
 
     for team_member in team_members:
-        resp = auth_client.patch(url_for('events.modify_team_member', team_id = team_member.team_id, member_id = team_member.member_id), json = {'team_id': 10})
-
+        resp = auth_client.patch(url_for('events.modify_team_member', team_id = team_member.team_id, member_id = team_member.member_id), json = {'invalid_field': 10})
+        # THEN we expect an error
         assert resp.status_code == 422
 
     # WHEN we modify a team member that doesn't exist
@@ -1326,25 +1325,25 @@ def test_delete_team_member(auth_client):
 
 @pytest.mark.smoke
 def test_send_email(auth_client):
-    # GIVEN
+    # GIVEN nothing
 
-    # WHEN
-
-    # THEN
+    # WHEN we try to send an email
     resp = auth_client.post(url_for('events.send_email'), json = email_object_factory())
+
+    # THEN we expect the correct code
     assert resp.status_code == 200
 
 
 @pytest.mark.smoke
 def test_send_email_invalid(auth_client):
-    # GIVEN
+    # GIVEN nothing
 
-    # WHEN
+    # WHEN we try to send an invalid email
     email = email_object_factory()
     email[fake.word()] = fake.word()
-
-    # THEN
     resp = auth_client.post(url_for('events.send_email'), json = email)
+
+    # THEN we expect an error code
     assert resp.status_code == 422
 
 
