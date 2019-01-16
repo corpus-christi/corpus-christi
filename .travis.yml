@@ -7,7 +7,7 @@ node_js:
         - "11"
         - "10"
 before_install:
-        - cd corpus_christi/ui
+        #        - cd corpus_christi/ui
         - yarn cache clean
         - yarn install
 script:
