@@ -6,10 +6,11 @@ ubuntu:
 env:
         - FLASK_CONFIG=staging 
 before_install:
-        - sudo apt-get update
-        - sudo apt-get install python3
-        - sudo apt-get upgrade python3
         - python --version
+        - sudo apt-get update
+        - python --version
+          #  igggg      - sudo apt-get install python3
+          #        - sudo apt-get upgrade python3
 matrix:
         include:
                 - language: node_js
