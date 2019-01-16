@@ -6,5 +6,7 @@ language: node_js
 node_js:
         - "11"
         - "10"
-          #script:
-        #        - echo "Hello World"
+before_install:
+        - apt-get update
+script:
+        - echo "Hello World"
