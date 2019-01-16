@@ -18,3 +18,5 @@ script:
 deploy:
         provider: linode
         local-dir: public
+                on: 
+                        branch: corpus-cristi/development
