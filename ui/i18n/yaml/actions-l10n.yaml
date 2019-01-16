@@ -80,6 +80,10 @@ actions:
     _desc: View all inactive people
     en: View Inactive
     es: Ver Inactivo
+  view-past:
+    _desc: View past events
+    en: View Past
+    es: Ver Pasados
   tooltips:
     settings:
       _desc: Change settings

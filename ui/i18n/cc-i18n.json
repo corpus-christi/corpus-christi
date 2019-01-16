@@ -48,7 +48,8 @@
       "view-active": "View Active",
       "view-all": "View All",
       "view-archived": "View Archived",
-      "view-inactive": "View Inactive"
+      "view-inactive": "View Inactive",
+      "view-past": "View Past"
     },
     "courses": {
       "add-failed": "Failed to add course",
@@ -239,7 +240,8 @@
       "view-active": "Ver Activo",
       "view-all": "Ver Todo",
       "view-archived": "Ver Archivo",
-      "view-inactive": "Ver Inactivo"
+      "view-inactive": "Ver Inactivo",
+      "view-past": "Ver Pasados"
     },
     "courses": {
       "add-failed": "Se fall\u00f3 a a\u00f1adir el curso",
