@@ -14,7 +14,7 @@ class Event(Base):
     __tablename__ = 'events_event'
     id = Column(Integer, primary_key=True)
     title = Column(StringTypes.LONG_STRING, nullable=False)
-    description = Column(StringTypes.LONG_STRING)
+    description = Column(StringTypes.LONG_STRING, nullable=True)
     start = Column(DateTime, nullable=False)
     end = Column(DateTime, nullable=False)
     location_id = Column(Integer, ForeignKey('places_location.id'), nullable=True)
@@ -33,7 +33,7 @@ class Event(Base):
 class EventSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     title = fields.String(required=True, validate=Length(min=1))
-    description = fields.String()
+    description = fields.String(allow_none=True)
     start = fields.DateTime(required=True)
     end = fields.DateTime(required=True)
     location_id = fields.Integer(load_only=True, allow_none=True)
@@ -49,7 +49,7 @@ class EventSchema(Schema):
 class Asset(Base):
     __tablename__ = 'events_asset'
     id = Column(Integer, primary_key=True)
-    description = Column(StringTypes.LONG_STRING)
+    description = Column(StringTypes.LONG_STRING, nullable=False)
     location_id = Column(Integer, ForeignKey('places_location.id'))
     active = Column(Boolean, default=True)
 
@@ -150,7 +150,7 @@ class TeamMemberSchema(Schema):
     member = fields.Nested('PersonSchema')
     team_id = fields.Integer(required=True, min=1)
     member_id = fields.Integer(required=True, min=1)
-    active = fields.Boolean()
+    active = fields.Boolean(required=True)
 
 # ---- EventParticipant
 
@@ -168,3 +168,13 @@ class EventParticipantSchema(Schema):
     event_id = fields.Integer(required=True, min=1)
     person_id = fields.Integer(required=True, min=1)
     confirmed = fields.Boolean()
+
+# ---- Email Schema
+
+class EmailSchema(Schema):
+    subject = fields.String()
+    body = fields.String()
+    recipients = fields.List(fields.String(), required=True)
+    cc = fields.List(fields.String())
+    bcc = fields.List(fields.String())
+

@@ -1,7 +1,10 @@
 events:
-  title:
+  header:
     en: Events
     es: Eventos
+  title:
+    en: Event Title
+    es: Título del Evento
   event-description:
     en: Event Description
     es: Descripción del Evento
@@ -65,15 +68,55 @@ events:
     title:
       en: Participants
       es: Participantes
+
   teams:
     title:
       en: Teams
       es: Equipos
+    description:
+      en: Description
+      es: Descripción
+    new:
+      en: Add Team
+      es: Añadir Equipo
+    create-team:
+      en: Create Team
+      es: Crear Equipo
+    edit-team:
+      en: Edit Team
+      es: Editar Equipo
+    confirm-archive:
+      en: Are you sure you want to archive this team?
+      es: ¿Seguro que quieres archivar este equipo?
+    team-archived:
+      en: Team archived
+      es: Equipo archivado
+    error-archiving-team:
+      en: Error while archiving team 
+      es: Error al archivar este equipo
+    team-unarchived:
+      en: Team unarchived
+      es: Equipo desarchivado   # probably not right
+    error-unarchiving-team:
+      en: Error while unarchiving team 
+      es: Error al desarchivar equipo
+    team-edited:
+      en: Team edited
+      es: Equipo editado   # ?
+    error-editing-team:
+      en: Error while editing team
+      es: Error al editar equipo
+    team-added:
+      en: Team added
+      es: Equipo agregado
+    error-adding-team:
+      en: Error while adding team
+      es: Error al agregar equipo
   
   assets:
     title: 
       en: Assets
-      es: Imudos
+      es: Insumos
     description:
       en: Description
       es: Descripción
@@ -82,37 +125,37 @@ events:
       es: Ubicación
     new:
       en: Add Asset
-      es: Añadir Imudos
+      es: Añadir Insumo
     create-asset:
       en: Create Asset
-      es: Crear Imudos
+      es: Crear Insumo
     edit-asset:
       en: Edit Asset
-      es: Editar Imudos
+      es: Editar Insumo
     confirm-archive:
       en: Are you sure you want to archive this asset?
-      es: ¿Seguro que quieres archivar este imudo?
+      es: ¿Seguro que quieres archivar este insumo?
     asset-archived:
       en: Asset archived
-      es: Imudos archivado
+      es: Insumo archivado
     error-archiving-asset:
       en: Error while archiving asset 
-      es: Error al archivar este imudo
+      es: Error al archivar este insumo
     asset-unarchived:
       en: Asset unarchived
-      es: Imudo desarchivado   # probably not right
+      es: Insumo desarchivado   # probably not right
     error-unarchiving-asset:
       en: Error while unarchiving asset 
-      es: Error al desarchivar imudo
+      es: Error al desarchivar insumo
     asset-edited:
       en: Asset edited
-      es: Imudo editados   # ?
+      es: Insumo editado   # ?
     error-editing-asset:
       en: Error while editing asset
-      es: Error al editar imudo
+      es: Error al editar insumo
     asset-added:
       en: Asset added
-      es: Imudo agregado
+      es: Insumo agregado
     error-adding-asset:
       en: Error while adding asset
-      es: Error al agregar imudo
+      es: Error al agregar insumo
