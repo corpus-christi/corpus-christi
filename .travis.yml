@@ -19,5 +19,5 @@ deploy:
 provider: linode
 local-dir: public
 branchs:
-only: 
-        - development
+        only: 
+                - development
