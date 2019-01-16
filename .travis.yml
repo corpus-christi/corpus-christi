@@ -12,6 +12,7 @@ node_js:
 before_install:
         - sudo apt-get update
         - python3 --version
+        - python --version
           # - sudo apt-get install python3.
 matrix:
         include:
@@ -22,7 +23,7 @@ matrix:
         before_install:
                 - yarn cache clean
                 - yarn install
-                - python3 --version
+                  #   - python3 --version
 script:
         - echo "Hello World"
 deploy:
