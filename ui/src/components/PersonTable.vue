@@ -122,7 +122,7 @@
               color="primary"
               slot="activator"
               v-on:click="activatePerson(props.item)"
-              data-cy="deactivate-person"
+              data-cy="reactivate-person"
             >
               <v-icon small>undo</v-icon>
             </v-btn>
@@ -348,8 +348,9 @@ export default {
 
     addAnother(person) {
       this.personDialog.addMoreLoading = true;
+      this.data = this.constructPersonData(person);
       this.$http
-        .post("/api/v1/people/persons", person)
+        .post("/api/v1/people/persons", this.data)
         .then(resp => {
           console.log("ADDED", resp);
           this.refreshPeopleList();
