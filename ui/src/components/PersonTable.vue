@@ -410,6 +410,7 @@ export default {
         .post("/api/v1/people/accounts", account)
         .then(resp => {
           console.log("ADDED", resp);
+          this.refreshPeopleList();
           this.showSnackbar(this.$t("account.messages.added-ok"));
         })
         .catch(err => console.error("FAILURE", err.response));
@@ -468,6 +469,9 @@ export default {
         })
         .then(() => this.refreshPeopleList())
         .catch(err => console.error("FAILURE", err.response));
+      if (person.accountInfo) {
+        this.deactivateAccount(person.account.id);
+      }
     },
 
     refreshPeopleList() {
