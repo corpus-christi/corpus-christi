@@ -16,7 +16,9 @@ matrix:
                 - language: node_js
                   node_js: "11"
                   before_install:
-                          - echo "hi"        
+                          - yarn cache clean
+                  install:
+                          - yarn install
                   script:
                           - echo "Hello chris"      
                                  #yarn cache clean
