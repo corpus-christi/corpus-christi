@@ -58,9 +58,9 @@ class RandomLocaleFaker:
 rl_fake = RandomLocaleFaker('en_US', 'es_MX')
 fake = Faker()  # Generic faker; random-locale ones don't implement everything.
 
-def flip(auth_client):
+def flip():
     """Return true or false randomly."""
-    return random.choice(auth_client.sqla.query(Area).all())
+    return random.choice((True, False))
 
 def area_factory(sqla):
     """Create a fake area."""
@@ -151,12 +151,24 @@ def test_create_area(auth_client):
     # GIVEN an empty database
     Country.load_from_file()
     count = random.randint(5, 15)
+    expected_count = count
     # WHEN we create a random number of new areas
     for i in range(count):
-        resp = auth_client.post(url_for('places.create_area'), json=area_factory(db.session))
-        assert resp.status_code == 201
+        area = area_factory(auth_client.sqla)
+        expected_status_code = 201
+        if flip():
+            area['name'] = None
+            expected_status_code = 422
+            expected_count -= 1
+        elif flip():
+            area['country_code'] = None
+            expected_status_code = 422
+            expected_count -= 1
+    
+        resp = auth_client.post(url_for('places.create_area'), json=area)
+        assert resp.status_code == expected_status_code
     # THEN we end up with the proper number of areas in the database
-    assert auth_client.sqla.query(Area).count() == count
+    assert auth_client.sqla.query(Area).count() == expected_count
 
 @pytest.mark.smoke
 def test_read_area(auth_client):
@@ -191,6 +203,36 @@ def test_read_all_areas(auth_client):
     # THEN the count matches the number of entries in the database
     assert resp.status_code == 200
     assert len(resp.json) == count
+
+@pytest.mark.smoke
+def test_replace_area(auth_client):
+    # GIVEN a DB with a collection areas.
+    Country.load_from_file()
+    count = random.randint(3, 11)
+    create_multiple_areas(auth_client.sqla, count)
+
+    # WHEN we grab one area (an a list of country_codes)
+    areas = auth_client.sqla.query(Area).all()
+    country_codes = auth_client.sqla.query(Country.code).all()
+    for _ in range(count):
+        expected_status_code = 200
+        area = random.choice(areas)
+        print(area)
+        # WHEN we modify that area
+        if flip():
+            area['name'] = Faker().last_name
+        elif flip():
+            area['country_code'] = random.choice(country_codes['code'])
+        else:
+            if flip():
+                area['name'] = None
+            else:
+                area['county_code'] = None
+            expected_status_code = 422
+    # WHEN we request each of them from the server
+        assert resp.status_code == expected_status_code
+        assert resp.json['name'] == area.name
+        assert resp.json['country_code'] == area.country_code
 
 
 # ---- Address
@@ -309,3 +351,40 @@ def test_read_all_locations(auth_client):
     # THEN the count matches the number of entries in the database
     assert resp.status_code == 200
     assert len(resp.json) == count
+
+
+@pytest.mark.smoke
+def test_delete_location(auth_client):
+    # GIVEN
+    Country.load_from_file()
+    count = random.randint(3, 11)
+    create_multiple_areas(auth_client.sqla, count)
+    create_multiple_addresses(auth_client.sqla, count)
+    create_multiple_locations(auth_client.sqla, count)
+
+    # WHEN
+    locations = auth_client.sqla.query(Location).all()
+    deleted = 0
+
+    for location in locations:
+        # THEN
+        if flip():
+            resp = auth_client.delete(url_for('places.delete_location', location_id = location.id))
+            deleted += 1
+            assert resp.status_code == 204
+
+    locations = auth_client.sqla.query(Location).all()
+    assert len(locations) == count - deleted
+
+
+@pytest.mark.smoke
+def test_delete_location_invalid(auth_client):
+    # GIVEN
+    
+    # WHEN
+    
+    # THEN
+    resp = auth_client.delete(url_for('places.delete_location', location_id = 1))
+    assert resp.status_code == 404
+
+
