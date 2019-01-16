@@ -10,19 +10,21 @@ before_install:
 matrix:
         include:
                 - language: node_js
-                        node_js: "11"
+                  node_js: "11"
+                  script:
+                          - echo "Hello chris"      
                         #before_install:
                         #               - echo "hi"        
                                         #yarn cache clean
                                   #- yarn install
                                   # - language: python
                 - language: python
-                        python: "3.7"
+                  python: "3.7"
                         #       before_install:
                         #               - echo "chris"
                                           #hello
-script:
-        - echo "Hello World"
+                  script:
+                        - echo "Hello World"
 deploy:
 provider: linode
 local-dir: public
