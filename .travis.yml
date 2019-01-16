@@ -8,11 +8,12 @@ env:
 language: node_js 
 node_js:
         - "11"
-        - "10"
+          #        - "10"
 before_install:
         - sudo apt-get update
         - python --version
-        - sudo apt-get install python3.6
+        - which python3
+          #        - sudo apt-get install python3.6
         - python --version
           #matrix:
           #        include:
