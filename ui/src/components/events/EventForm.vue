@@ -278,13 +278,14 @@ export default {
 
     startDate(date) {
       this.clearEndTimeIfInvalid();
-      if (new Date(this.endDate) < new Date(date)){
+      if (new Date(this.endDate) < new Date(date)) {
         this.endDate = date;
       }
     },
 
     endDate(date) {
-      this.clearEndTimeIfInvalid()
+      console.log(date);
+      this.clearEndTimeIfInvalid();
     }
   },
   computed: {
@@ -366,7 +367,7 @@ export default {
 
     getTimestamp(date, time) {
       let datems = new Date(date).getTime();
-      let timemin = getMinutesFromTime(time)
+      let timemin = this.getMinutesFromTime(time);
       let timems = timemin * 60000;
       let tzoffset = new Date().getTimezoneOffset() * 60000;
       return new Date(datems + timems + tzoffset);
@@ -405,8 +406,8 @@ export default {
 
     clearEndTimeIfInvalid() {
       if (this.startDate == this.endDate) {
-        let endMins = this.getMinutesFromTime(this.endTime)
-        let startMins = this.getMinutesFromTime(this.startTime)
+        let endMins = this.getMinutesFromTime(this.endTime);
+        let startMins = this.getMinutesFromTime(this.startTime);
         if (endMins < startMins) {
           this.endTime = "";
         }

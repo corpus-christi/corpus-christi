@@ -177,6 +177,12 @@ export default {
 
   data() {
     return {
+      rowsPerPageItem: [
+        10,
+        15,
+        25,
+        { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 }
+      ],
       tableLoading: true,
       teams: [],
       teamDialog: {
