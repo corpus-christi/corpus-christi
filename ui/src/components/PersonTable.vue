@@ -57,14 +57,17 @@
         <td>
           <span v-if="props.item.accountInfo">
             <span v-if="props.item.accountInfo.active">
-              <v-icon size="15">account_circle</v-icon>
+              <v-tooltip bottom>
+              <v-icon size="16" slot="activator" data-cy="account-active-icon">account_circle</v-icon>
               {{ $t("account.active") }}
+              </v-tooltip>
             </span>
+
             <span v-if="!props.item.accountInfo.active">
-              <v-icon size="15" v-if="!props.item.accountInfo.active"
-                >person_outline</v-icon
-              >
+              <v-tooltip bottom>
+              <v-icon size="16" slot="activator" data-cy="account-inactive-icon">person_outline</v-icon>
               {{ $t("account.inactive") }}
+              </v-tooltip>
             </span>
           </span>
         </td>
