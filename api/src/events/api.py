@@ -660,7 +660,7 @@ def add_team_member(team_id, member_id):
         db.session.commit()
         return 'Team member successfully added.'
     else:
-        return jsonify(f"Person with id #{member_id} is already on Team with id #{team_id}.")
+        return jsonify(f"Person with id #{member_id} is already on Team with id #{team_id}."), 422
 
 @events.route('/teams/<team_id>/members/<member_id>', methods=['DELETE'])
 @jwt_required
