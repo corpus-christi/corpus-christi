@@ -41,6 +41,7 @@
     </v-toolbar>
 
     <v-data-table
+      :rows-per-page-items="rowsPerPageItem"
       :headers="headers"
       :items="visibleTeams"
       :search="search"
@@ -155,28 +156,30 @@
 </template>
 
 <script>
-import TeamForm from "../../teams/TeamForm";
+import TeamForm from "./TeamForm";
 import { mapGetters } from "vuex";
 
 export default {
-  name: "EventTeams",
+  name: "TeamTable",
   components: { "team-form": TeamForm },
   mounted() {
     this.tableLoading = true;
     let eventId = this.$route.params.event;
-    this.$http.get(`/api/v1/events/${eventId}?include_teams=1`).then(resp => {
-      this.event = resp.data;
-
-      if (this.event.teams) {
-        this.teams = this.event.teams.map(ev_te => ev_te.team);
-        this.tableLoading = false;
-      }
-      // console.log(this.teams);
+    this.$http.get(`/api/v1/events/teams`).then(resp => {
+      this.teams = resp.data;
+      console.log(resp.data)
+      this.tableLoading = false
     });
   },
 
   data() {
     return {
+      rowsPerPageItem: [
+        10,
+        15,
+        25,
+        { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 }
+      ],
       tableLoading: true,
       teams: [],
       teamDialog: {
@@ -321,6 +324,16 @@ export default {
       this.teamDialog.show = false;
     },
 
+    clearTeam() {
+      this.teamDialog = {
+        show: false,
+        editMode: false,
+        saveLoading: false,
+        addMoreLoading: false,
+        team: {}
+      }
+    },
+
     saveTeam(team) {
       this.teamDialog.saveLoading = true;
       if (this.teamDialog.editMode) {
@@ -337,6 +350,7 @@ export default {
             this.teamDialog.show = false;
             this.teamDialog.saveLoading = false;
             this.showSnackbar(this.$t("events.teams.team-edited"));
+            this.clearTeam()
           })
           .catch(err => {
             console.error("PUT FALURE", err.response);
@@ -346,6 +360,8 @@ export default {
       } else {
         let newTeam = JSON.parse(JSON.stringify(team));
         delete newTeam.id;
+        delete newTeam.active;
+        console.log(newTeam)
         this.$http
           .post("/api/v1/events/teams", newTeam)
           .then(resp => {
@@ -354,6 +370,7 @@ export default {
             this.teamDialog.show = false;
             this.teamDialog.saveLoading = false;
             this.showSnackbar(this.$t("events.teams.team-added"));
+            this.clearTeam()
           })
           .catch(err => {
             console.error("POST FAILURE", err.response);
