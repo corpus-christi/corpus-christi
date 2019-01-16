@@ -128,8 +128,8 @@
         "new": "Add Team",
         "team-added": "Team added",
         "team-edited": "Team edited",
+        "team-on-event": "That team is already assigned to this event.",
         "team-removed": "Team removed",
-        "team-unarchived": "Team unarchived",
         "title": "Teams"
       },
       "title": "Event Title"
@@ -327,8 +327,8 @@
         "new": "A\u00f1adir Equipo",
         "team-added": "Equipo agregado",
         "team-edited": "Equipo editado",
+        "team-on-event": "Ese equipo ya est\u00e1 asignado a este evento.",
         "team-removed": "Equipo eliminado",
-        "team-unarchived": "Equipo desarchivado",
         "title": "Equipos"
       },
       "title": "T\u00edtulo del Evento"

@@ -59,26 +59,32 @@
               <span class="headline">{{ $t("events.teams.title") }}</span>
             </v-flex>
             <v-layout xs3 sm3 align-end justify-end>
-              <v-btn flat color="primary" v-on:click="addTeamDialog.show = true">
+              <v-btn
+                flat
+                color="primary"
+                v-on:click="addTeamDialog.show = true"
+              >
                 <v-icon>add</v-icon>&nbsp;{{ $t("events.teams.new") }}
               </v-btn>
             </v-layout>
           </v-container>
-            <v-list>
-              <template v-for="eventTeam in event.teams"> 
-              <v-divider v-bind:key="'divider'+eventTeam.team_id"></v-divider>
+          <v-list>
+            <template v-for="eventTeam in event.teams">
+              <v-divider v-bind:key="'divider' + eventTeam.team_id"></v-divider>
               <v-list-tile v-bind:key="eventTeam.team_id">
                 <v-list-tile-content>
                   <span>{{ eventTeam.team.description }}</span>
                 </v-list-tile-content>
-                  <v-list-tile-action>
-                    <v-btn flat color="primary">
-                      <v-icon v-on:click="showDeleteTeamDialog(eventTeam.team_id)">delete</v-icon>
-                    </v-btn>
-                  </v-list-tile-action>
+                <v-list-tile-action>
+                  <v-btn flat color="primary">
+                    <v-icon v-on:click="showDeleteTeamDialog(eventTeam.team_id)"
+                      >delete</v-icon
+                    >
+                  </v-btn>
+                </v-list-tile-action>
               </v-list-tile>
-              </template>
-            </v-list>
+            </template>
+          </v-list>
         </template>
       </v-card>
     </v-flex>
@@ -160,7 +166,6 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-
   </v-layout>
 </template>
 
@@ -168,7 +173,6 @@
 import EventForm from "./EventForm";
 import { mapGetters } from "vuex";
 import EntitySearch from "../EntitySearch";
-
 
 export default {
   name: "EventDetails",
@@ -187,13 +191,13 @@ export default {
         event: {}
       },
 
-      addTeamDialog:{
+      addTeamDialog: {
         show: false,
         loading: false,
         team: null
       },
 
-      deleteTeamDialog:{
+      deleteTeamDialog: {
         show: false,
         loading: false,
         teamId: -1
@@ -203,7 +207,7 @@ export default {
         show: false,
         text: ""
       },
-      pageLoaded: false,
+      pageLoaded: false
     };
   },
 
@@ -235,7 +239,8 @@ export default {
   methods: {
     getEvent() {
       const id = this.$route.params.event;
-      return this.$http.get(`/api/v1/events/${id}?include_teams=1`)
+      return this.$http
+        .get(`/api/v1/events/${id}?include_teams=1`)
         .then(resp => {
           this.event = resp.data;
           if (!this.event.teams) {
@@ -262,23 +267,23 @@ export default {
       delete newEvent.location;
       delete newEvent.teams;
       delete newEvent.id;
-        const eventId = event.id;
-        this.$http
-          .put(`/api/v1/events/${eventId}`, newEvent)
-          .then(resp => {
-            console.log("EDITED", resp);
-            this.eventDialog.show = false;
-            this.eventDialog.saveLoading = false;
-            this.pageLoaded = false;
-            this.getEvent().then(() => this.pageLoaded = true);
-            this.showSnackbar(this.$t("events.event-edited"));
-          })
-          .catch(err => {
-            console.error("PUT FALURE", err.response);
-            this.eventDialog.saveLoading = false;
-            this.showSnackbar(this.$t("events.error-editing-event"));
-          });
-      },
+      const eventId = event.id;
+      this.$http
+        .put(`/api/v1/events/${eventId}`, newEvent)
+        .then(resp => {
+          console.log("EDITED", resp);
+          this.eventDialog.show = false;
+          this.eventDialog.saveLoading = false;
+          this.pageLoaded = false;
+          this.getEvent().then(() => (this.pageLoaded = true));
+          this.showSnackbar(this.$t("events.event-edited"));
+        })
+        .catch(err => {
+          console.error("PUT FALURE", err.response);
+          this.eventDialog.saveLoading = false;
+          this.showSnackbar(this.$t("events.error-editing-event"));
+        });
+    },
 
     getDisplayDate(ts) {
       let date = new Date(ts);
@@ -299,16 +304,27 @@ export default {
 
     addTeam() {
       const eventId = this.$route.params.event;
-      let teamId =  this.addTeamDialog.team.id;
-      this.$http.post(`/api/v1/events/${eventId}/teams/${teamId}`)
-        .then(resp => {
+      let teamId = this.addTeamDialog.team.id;
+      const idx = this.event.teams.findIndex(ev_te => ev_te.team_id === teamId);
+      if (idx > -1) {
+        this.addTeamDialog.loading = false;
+        this.addTeamDialog.show = false;
+        this.addTeamDialog.team = null;
+        this.showSnackbar(this.$t("events.teams.team-on-event"));
+        return;
+      }
+
+      this.$http
+        .post(`/api/v1/events/${eventId}/teams/${teamId}`)
+        .then(() => {
           this.showSnackbar(this.$t("events.teams.team-added"));
           this.addTeamDialog.loading = false;
           this.addTeamDialog.show = false;
           this.addTeamDialog.team = null;
           this.pageLoaded = false;
-          this.getEvent().then(() => this.pageLoaded = true);
-        }).catch(err => {
+          this.getEvent().then(() => (this.pageLoaded = true));
+        })
+        .catch(err => {
           console.log(err);
           this.addTeamDialog.loading = false;
           if (err.response.status == 422) {
@@ -316,25 +332,25 @@ export default {
           } else {
             this.showSnackbar(this.$t("events.teams.error-adding-team"));
           }
-        })
+        });
     },
-
 
     deleteTeam() {
       let id = this.deleteTeamDialog.teamId;
       const idx = this.event.teams.findIndex(ev_te => ev_te.team_id === id);
       this.deleteTeamDialog.loading = true;
       const eventId = this.$route.params.event;
-      this.$http.delete(`/api/v1/events/${eventId}/teams/${id}`)
+      this.$http
+        .delete(`/api/v1/events/${eventId}/teams/${id}`)
         .then(resp => {
-          console.log("REMOVED", resp)
+          console.log("REMOVED", resp);
           this.deleteTeamDialog.show = false;
           this.deleteTeamDialog.loading = false;
           this.deleteTeamDialog.teamId = -1;
           this.event.teams.splice(idx, 1);
           this.showSnackbar(this.$t("events.teams.team-removed"));
         })
-        .catch( err => {
+        .catch(err => {
           console.log(err);
           this.deleteTeamDialog.loading = false;
           this.showSnackbar(this.$t("events.teams.error-removing-team"));
