@@ -80,12 +80,10 @@ actions:
     archive:
       en: Archive
       es: Archivar
-<<<<<<< HEAD
-    reactivate:
-      en: Unarchive
-      es: Desarchivar
-=======
     activate:
       en: Activate
       es: Activar
->>>>>>> feature/courses-28_manually-enter-students
+    remove:
+      en: Remove
+      es: Retirar
+
