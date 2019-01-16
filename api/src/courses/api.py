@@ -56,7 +56,7 @@ def add_prereqs(query_result):
 def read_all_courses():
     """List all active and inactive courses"""
     result = db.session.query(Course).all()
-    if(result is None):
+    if(result == []):
         return "Result NOT found", 404
     return jsonify(add_prereqs(result))
 

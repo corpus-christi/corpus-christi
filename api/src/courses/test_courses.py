@@ -359,34 +359,6 @@ def test_read_one_course(auth_client):
         assert resp.json['description'] == course.description
         assert resp.json['active'] == course.active
 
-#Test that active courses can be deactivated
-def test_deactivate_course(auth_client):
-    # GIVEN course to deactivate
-    count = random.randint(3,11)
-    create_multiple_courses_active(auth_client.sqla, count)
-    courses = auth_client.sqla.query(Course).all()
-    # WHEN course is changed to inactive
-    for course in courses:
-        resp = auth_client.patch(url_for('courses.deactivate_course', course_id=course.id),
-            json={'active': False})
-        # THEN assert course is inactive
-        assert resp.status_code == 200
-        assert resp.json['active'] == False
-
-#Test that inactive courses can be reactivated
-def test_reactivate_course(auth_client):
-    # GIVEN course to activate
-    count = random.randint(3,11)
-    create_multiple_courses_inactive(auth_client.sqla, count)
-    courses = auth_client.sqla.query(Course).all()
-    # WHEN course is changed to active
-    for course in courses:
-        resp = auth_client.patch(url_for('courses.reactivate_course', course_id=course.id),
-            json={'active': True})
-        # THEN assert course is active
-        assert resp.status_code == 200
-        assert resp.json['active'] == True
-
 """
 # Test
 @pytest.mark.xfail()
