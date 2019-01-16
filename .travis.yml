@@ -10,9 +10,6 @@ before_install:
 matrix:
         include:
                  language:
-                        - node_js
-                        - python 
-
                         node_js:
                                 - "11"
                                   # before_install:
