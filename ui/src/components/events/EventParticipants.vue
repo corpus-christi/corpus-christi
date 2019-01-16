@@ -85,7 +85,7 @@
             color="primary"
             raised
             :loading="addParticipantDialog.loading"
-            data-cy=""
+            data-cy="confirm-participant"
             >Add Participants</v-btn
           >
         </v-card-actions>
