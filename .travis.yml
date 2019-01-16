@@ -17,3 +17,4 @@ script:
         - echo "Hello World"
 deploy:
         provider: linode
+        local-dir: public
