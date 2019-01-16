@@ -300,7 +300,7 @@ def add_student_to_course_offering(s_id):
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    course_offering = request.json['offering_id']
+    course_offering = request.json['offeringId']
     courseInDB = db.session.query(Student).filter_by(
         student_id=s_id, offering_id=course_offering).all()
     if courseInDB is []:
@@ -374,18 +374,29 @@ def update_student(student_id):
 
 class_meeting_schema = Class_MeetingSchema()
 
-@courses.route('/class_meetings', methods=['POST'])
+@courses.route('/course_offerings/class_meetings', methods=['POST'])
 @jwt_required
 def create_class_meeting():
+    """ Create and add class meeting into course offering. """
     try:
         valid_class_meeting = class_meeting_schema.load(request.json)
     except ValidationError as err:
         return jsonify(err.messages), 422
+    
+    meetingInDB = db.session.query(Class_Meeting).filter_by(
+        offering_id=request.json['offeringId'],
+        teacher_id=request.json['teacherId'],
+        when=request.json['when'] ).first()
 
-    new_class_meeting = Class_Meeting(**valid_class_meeting)
-    db.session.add(new_class_meeting)
-    db.session.commit()
-    return jsonify(class_meeting_schema.dump(new_class_meeting)), 201
+    # If a class meeting for a course offering DNE
+    if meetingInDB is None:
+        # Create and add new class meeting to course offering
+        new_class_meeting = Class_Meeting(**valid_class_meeting)
+        db.session.add(new_class_meeting)
+        db.session.commit()
+        return jsonify(class_meeting_schema.dump(new_class_meeting)), 201
+    else:
+        return 'Class meeting already exists in course offering', 208
 
 
 @courses.route('/course_offerings/<course_offering_id>/class_meetings')
@@ -420,11 +431,6 @@ def update_class_meeting(course_offering_id, class_meeting_id):
     db.session.commit()
     return jsonify(class_meeting_schema.dump(class_meeting))
 
-
-@courses.route('/class_meetings/<class_meeting_id>', methods=['DELETE'])
-@jwt_required
-def delete_class_meeting(class_meeting_id):
-    pass
 
 # ---- Class_Attendance
 

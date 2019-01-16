@@ -256,9 +256,9 @@ def class_meeting_object_factory(teacher, offering_id, location=1):
     fake = Faker()
     class_meeting = {
     'offeringId': offering_id,
-    'teacher': teacher,
+    'teacherId': teacher,
     'when': str(fake.future_datetime(end_date="+30d")),
-    'location': location,
+    'locationId': location,
     }
     return class_meeting
 
