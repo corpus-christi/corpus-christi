@@ -11,7 +11,9 @@ import sys
 from . import courses
 from .models import Course, CourseSchema, \
     Course_Offering, Course_OfferingSchema, \
-    Student, StudentSchema
+    Student, StudentSchema, Class_Attendance, \
+    Class_AttendanceSchema, Class_Meeting, \
+    Class_MeetingSchema
 from .. import db
 
 course_schema = CourseSchema()
@@ -362,3 +364,124 @@ def update_student(student_id):
 
     db.session.commit()
     return jsonify(student_schema.dump(student))
+
+
+# ---- Class_Meeting
+
+class_meeting_schema = Class_MeetingSchema()
+
+@courses.route('/class_meetings', methods=['POST'])
+@jwt_required
+def create_class_meeting():
+    try:
+        valid_class_meeting = class_meeting_schema.load(request.json)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+
+    new_class_meeting = Class_Meeting(**valid_class_meeting)
+    db.session.add(new_class_meeting)
+    db.session.commit()
+    return jsonify(class_meeting_schema.dump(new_class_meeting)), 201
+
+
+@courses.route('/class_meetings')
+@jwt_required
+def read_all_class_meetings():
+    result = db.session.query(Class_Meeting).all()
+    return jsonify(class_meeting_schema.dump(result, many=True))
+
+
+@courses.route('/class_meetings/<class_meeting_id>')
+@jwt_required
+def read_one_class_meeting(class_meeting_id):
+    result = db.session.query(Class_Meeting).filter_by(id=class_meeting_id).first()
+    return jsonify(class_meeting_schema.dump(result))
+
+
+@courses.route('/class_meetings/<class_meeting_id>', methods=['PUT'])
+@jwt_required
+def replace_class_meeting(class_meeting_id):
+    pass
+
+
+@courses.route('/class_meetings/<class_meeting_id>', methods=['PATCH'])
+@jwt_required
+def update_class_meeting(class_meeting_id):
+    try:
+        valid_class_meeting = class_meeting_schema.load(request.json)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+
+    class_meeting = db.session.query(Class_Meeting).filter_by(id=class_meeting_id).first()
+
+    for key, val in valid_class_meeting.items():
+        setattr(class_meeting, key, val)
+
+    db.session.commit()
+    return jsonify(class_meeting_schema.dump(class_meeting))
+
+
+@courses.route('/class_meetings/<class_meeting_id>', methods=['DELETE'])
+@jwt_required
+def delete_class_meeting(class_meeting_id):
+    pass
+
+# ---- Class_Attendance
+
+class_attendance_schema = Class_AttendanceSchema()
+
+@courses.route('/class_attendance', methods=['POST'])
+@jwt_required
+def create_class_attendance():
+    try:
+        valid_class_attendance = class_attendance_schema.load(request.json)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+
+    new_class_attendance = Class_Attendance(**valid_class_attendance)
+    db.session.add(new_class_attendance)
+    db.session.commit()
+    return jsonify(class_attendance_schema.dump(new_class_attendance)), 201
+
+
+@courses.route('/class_attendance')
+@jwt_required
+def read_all_class_attendance():
+    result = db.session.query(Class_Attendance).all()
+    return jsonify(class_attendance_schema.dump(result, many=True))
+
+
+@courses.route('/class_attendance/<class_attendance_id>')
+@jwt_required
+def read_one_class_attendance(class_attendance_id):
+    result = db.session.query(Class_Attendance).filter_by(id=class_attendance_id).first()
+    return jsonify(class_attendance_schema.dump(result))
+
+
+@courses.route('/class_attendance/<class_attendance_id>', methods=['PUT'])
+@jwt_required
+def replace_class_attendance(class_attendance_id):
+    pass
+
+
+@courses.route('/class_attendance/<class_attendance_id>', methods=['PATCH'])
+@jwt_required
+def update_class_attendance(class_attendance_id):
+    try:
+        valid_class_attendance = class_attendance_schema.load(request.json)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+
+    class_attendance = db.session.query(Class_Attendance).filter_by(id=class_attendance_id).first()
+
+    for key, val in valid_class_attendance.items():
+        setattr(class_attendance, key, val)
+
+    db.session.commit()
+    return jsonify(class_attendance_schema.dump(class_attendance))
+
+
+@courses.route('/class_attendance/<class_attendance_id>', methods=['DELETE'])
+@jwt_required
+def delete_class_attendance(class_attendance_id):
+    pass
