@@ -1,6 +1,7 @@
 sudo: true
 os: ubuntu
-#        ubuntu: 18.04 
+ubuntu: 
+        - 18.04 
 language: node_js
 node_js:
         - "11"
