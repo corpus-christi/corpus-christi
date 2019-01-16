@@ -8,7 +8,9 @@ from flask_mail import Message
 from marshmallow import ValidationError
 from sqlalchemy import func
 
+from .models import EmailSchema
 from . import emails
+from .. import mail
 
 # ---- Email
 
