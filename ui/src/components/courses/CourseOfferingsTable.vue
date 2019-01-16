@@ -41,8 +41,8 @@
     >
       <v-progress-linear slot="progress" color="primary" indeterminate></v-progress-linear>
       <template slot="items" slot-scope="props">
-        <td>{{ course.name }}</td>
         <td>{{ props.item.description }}</td>
+        <td>{{ props.item.maxSize }}</td>
         <td>
           <CourseOfferingAdminActions
             v-bind:courseOffering="props.item"
@@ -143,11 +143,11 @@ export default {
     // Put here so that the headers are reactive.
     headers() {
       return [
-        { text: this.$t("courses.title"), value: "name", width: "40%" },
+        { text: this.$t("courses.description"), value: "description", width: "80%" },
         {
-          text: this.$t("courses.description"),
-          value: "description",
-          width: "60%"
+          text: this.$t("courses.max-size"),
+          value: "maxSize",
+          width: "20%"
         },
         { text: this.$t("actions.header"), sortable: false }
       ];
