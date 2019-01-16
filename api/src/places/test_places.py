@@ -313,8 +313,25 @@ def test_create_location(auth_client):
     assert auth_client.sqla.query(Location).count() == count
 
 
+@pytest.mark.slow
+def test_read_all_locations(auth_client):
+    # GIVEN a DB with a collection of addresses.
+    Country.load_from_file()
+    count = random.randint(3, 11)
+    create_multiple_areas(auth_client.sqla, count)
+    create_multiple_addresses(auth_client.sqla, count)
+    create_multiple_locations(auth_client.sqla, count)
+    assert count > 0
+
+    # WHEN we request all addresses from the server
+    resp = auth_client.get(url_for('places.read_all_locations', locale='en-US'))
+    # THEN the count matches the number of entries in the database
+    assert resp.status_code == 200
+    assert len(resp.json) == count
+
+
 @pytest.mark.smoke
-def test_read_location(auth_client):
+def test_read_one_location(auth_client):
     # GIVEN a DB with a collection locations.
     Country.load_from_file()
     count = random.randint(3, 11)
@@ -336,21 +353,49 @@ def test_read_location(auth_client):
         assert resp.json['address_id'] == location.address_id
 
 
-@pytest.mark.slow
-def test_read_all_locations(auth_client):
-    # GIVEN a DB with a collection of addresses.
+@pytest.mark.smoke
+def test_replace_location(auth_client):
+    # GIVEN
     Country.load_from_file()
     count = random.randint(3, 11)
     create_multiple_areas(auth_client.sqla, count)
     create_multiple_addresses(auth_client.sqla, count)
     create_multiple_locations(auth_client.sqla, count)
-    assert count > 0
 
-    # WHEN we request all addresses from the server
-    resp = auth_client.get(url_for('places.read_all_locations', locale='en-US'))
-    # THEN the count matches the number of entries in the database
-    assert resp.status_code == 200
-    assert len(resp.json) == count
+    # WHEN
+    locations = auth_client.sqla.query(Location).all()
+
+    for location in locations:
+        new_location = location_factory(auth_client.sqla)
+
+        # THEN
+        resp = auth_client.put(url_for('places.replace_location', location_id = location.id), json = new_location)
+        assert resp.status_code == 200
+
+        assert resp.json['id'] == location.id
+        assert not resp.json['description'] == location.description
+        assert resp.json['description'] == new_location['description']
+
+
+@pytest.mark.smoke
+def test_replace_location_invalid(auth_client):
+    # GIVEN
+    Country.load_from_file()
+    count = random.randint(3, 11)
+    create_multiple_areas(auth_client.sqla, count)
+    create_multiple_addresses(auth_client.sqla, count)
+    create_multiple_locations(auth_client.sqla, count)
+
+    # WHEN
+    locations = auth_client.sqla.query(Location).all()
+
+    for location in locations:
+        new_location = location_factory(auth_client.sqla)
+        new_location[fake.word()] = fake.word()
+
+        # THEN
+        resp = auth_client.put(url_for('places.replace_location', location_id = location.id), json = new_location)
+        assert resp.status_code == 422
 
 
 @pytest.mark.smoke
