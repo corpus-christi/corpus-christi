@@ -105,6 +105,11 @@
       "event-unarchived": "Event unarchived",
       "header": "Events",
       "participants": {
+        "added": "Participants added",
+        "confirm-remove": "Are you sure you want to remove this participant?",
+        "error-adding": "Error adding participant",
+        "error-removing": "Error removing participant",
+        "removed": "Removed participant",
         "title": "Participants"
       },
       "start-date": "Start Date",
@@ -297,6 +302,11 @@
       "event-unarchived": "Evento desarchivado",
       "header": "Eventos",
       "participants": {
+        "added": "Participantes agregado",
+        "confirm-remove": "\u00bfEst\u00e1s seguro de que quieres eliminar a este participante?",
+        "error-adding": "Error al agregar participante",
+        "error-removing": "Error al eliminadar el participante",
+        "removed": "Participante eliminado",
         "title": "Participantes"
       },
       "start-date": "Fecha de Inicio",
