@@ -29,7 +29,7 @@ matrix:
                   dist: "xenial"
                   sudo: true
                   before_install:
-                        - which set-up-bash.sh
+                        - cd api/
                         - python -m venv venv
                   script:
                         - which pip
