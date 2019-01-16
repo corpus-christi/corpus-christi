@@ -353,8 +353,9 @@ export default {
 
     addAnother(person) {
       this.personDialog.addMoreLoading = true;
+      this.data = this.constructPersonData(person);
       this.$http
-        .post("/api/v1/people/persons", person)
+        .post("/api/v1/people/persons", this.data)
         .then(resp => {
           console.log("ADDED", resp);
           this.refreshPeopleList();
