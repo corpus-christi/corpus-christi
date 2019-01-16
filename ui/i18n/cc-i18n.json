@@ -64,6 +64,7 @@
       "enrolled": "Number Enrolled",
       "max-size": "Max Number of Students",
       "new": "New Course",
+      "new-offering": "New Course Offering",
       "prerequisites": "Prerequisites",
       "reactivated": "Course unarchived",
       "title": "Title",
@@ -166,6 +167,7 @@
     },
     "validation": {
       "attributes": {
+        "course": "course",
         "email": "email",
         "firstName": "first name",
         "lastName": "last name",
@@ -239,6 +241,7 @@
       "enrolled": "N\u00famero Registrado",
       "max-size": "N\u00famero M\u00e1ximo de Estudiantes",
       "new": "Nuevo Curso",
+      "new-offering": "Nuevo Oferta de Curso",
       "prerequisites": "Prerrequisitos",
       "reactivated": "Curso desarchivado",
       "title": "T\u00edtulo",
@@ -341,6 +344,7 @@
     },
     "validation": {
       "attributes": {
+        "course": "curso",
         "email": "correo electr\u00f3nico",
         "firstName": "nombre de pila",
         "lastName": "appellido",

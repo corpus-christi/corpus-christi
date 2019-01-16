@@ -12,7 +12,10 @@
           item-value="id"
           item-text="name"
           v-bind:label="$t('courses.course')"
-          :disableda="editMode"
+          :disabled="editMode"
+          name="course"
+          v-validate="'required'"
+          v-bind:error-messages="errors.first('course')"
           ></v-autocomplete>
         <!-- description -->
         <v-textarea
@@ -59,7 +62,7 @@
           </v-flex>
           
           <!-- time -->
-          <v-flex xs12 md3 ml-5>
+          <v-flex xs12 md4 ml-4>
             <v-dialog
               ref="dialog1"
               v-model="timeModal"
@@ -73,7 +76,7 @@
               <v-text-field
                 slot="activator"
                 v-model="time"
-                v-bind:label="$t('events.start-time')"
+                v-bind:label="$t('courses.choose-time')"
                 prepend-icon="schedule"
                 readonly
               ></v-text-field>
@@ -110,7 +113,9 @@
         <v-text-field v-model="location" v-bind:label="$t('courses.choose-location')" name="location"></v-text-field>
 
         <!-- max size TODO: integer validation-->
-        <v-text-field v-model="courseOffering.maxSize" v-bind:label="$t('courses.max-size')" name="max-size"></v-text-field>
+        <v-flex xs7 md7>
+          <v-text-field v-model="courseOffering.maxSize" v-bind:label="$t('courses.max-size')" name="max-size" type="number" v-validate="'integer'"></v-text-field>
+        </v-flex>
       </form>
     </v-card-text>
     <v-card-actions>
@@ -221,19 +226,21 @@ export default {
       this.date = "";
       this.showDatePicker = false;
       this.timeModal = false;
+      this.dates = [];
       
       this.$validator.reset();
     },
 
     // Trigger a save event, returning the updated `Course Offering`.
     save() {
-      this.$validator.validateAll();
-      if (!this.errors.any()) {
-        // this.courseOffering.when = this.getTimestamp(this.date, this.time);
-        this.courseOffering.courseId = this.courseOffering.course.id;
-        
-        this.$emit("save", this.courseOffering);
-      }
+      this.$validator.validateAll().then(() => {
+        if (!this.errors.any()) {
+          // this.courseOffering.when = this.getTimestamp(this.date, this.time);
+          this.courseOffering.courseId = this.courseOffering.course.id;
+          
+          this.$emit("save", this.courseOffering);
+        }
+      });
     },
   
     remove(item) {
