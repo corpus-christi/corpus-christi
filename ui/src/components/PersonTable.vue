@@ -58,15 +58,22 @@
           <span v-if="props.item.accountInfo">
             <span v-if="props.item.accountInfo.active">
               <v-tooltip bottom>
-              <v-icon size="16" slot="activator" data-cy="account-active-icon">account_circle</v-icon>
-              {{ $t("account.active") }}
+                <v-icon size="16" slot="activator" data-cy="account-active-icon"
+                  >account_circle</v-icon
+                >
+                {{ $t("account.active") }}
               </v-tooltip>
             </span>
 
             <span v-if="!props.item.accountInfo.active">
               <v-tooltip bottom>
-              <v-icon size="16" slot="activator" data-cy="account-inactive-icon">person_outline</v-icon>
-              {{ $t("account.inactive") }}
+                <v-icon
+                  size="16"
+                  slot="activator"
+                  data-cy="account-inactive-icon"
+                  >person_outline</v-icon
+                >
+                {{ $t("account.inactive") }}
               </v-tooltip>
             </span>
           </span>
@@ -225,6 +232,7 @@ export default {
       allPeople: [],
       activePeople: [],
       archivedPeople: [],
+      rolesList: [],
       search: "",
       data: {}
     };
@@ -497,11 +505,29 @@ export default {
           }
         })
         .catch(err => console.error("FAILURE", err.response));
+    },
+
+    getRolesList() {
+      this.$http
+        .get("/api/v1/people/role")
+        .then(resp => {
+          console.log("FETCHED", resp);
+          let roles = [];
+          for (var role of resp.data) {
+            roles.push({
+              text: role.nameI18n,
+              value: role.id
+            });
+          }
+          this.rolesList = roles;
+        })
+        .catch(err => console.error("FAILURE", err.response));
     }
   },
 
   mounted: function() {
     this.refreshPeopleList();
+    this.getRolesList();
     this.getAttributesInfo();
   }
 };
