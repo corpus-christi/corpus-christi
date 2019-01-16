@@ -8,7 +8,8 @@ from ..shared.utils import authorize
 import sys
 
 from . import courses
-from .models import Course, CourseSchema, Course_Offering, Course_OfferingSchema, PrerequisiteSchema
+from .models import Course, CourseSchema, Course_Offering, Course_OfferingSchema, PrerequisiteSchema, \
+                Diploma, DiplomaSchema, Diploma_Course, Diploma_CourseSchema, Diploma_Awarded, Diploma_AwardedSchema
 from .. import db
 
 course_schema = CourseSchema()
@@ -40,6 +41,7 @@ def add_prereqs(query_result):
             courses[i]['prerequisites'] = []
             for j in query_result[i].prerequisites:
                 j = course_schema.dump(j, many=False)
+                del j['diplomaList']
                 courses[i]['prerequisites'].append(j)
     else:
         courses = course_schema.dump(query_result, many=False)
@@ -56,6 +58,8 @@ def add_prereqs(query_result):
 def read_all_courses():
     """List all active and inactive courses"""
     result = db.session.query(Course).all()
+    for course in result:
+        course.diplomaList = course.diplomas
     if(result is None):
         return "Result NOT found", 404
     return jsonify(add_prereqs(result))
@@ -256,3 +260,192 @@ def update_course_offering(course_offering_id):
 
     db.session.commit()
     return jsonify(course_offering_schema.dump(course_offering))
+   
+
+# ---- Diploma
+
+diploma_schema = DiplomaSchema()
+
+@courses.route('/diplomas', methods=['POST'])
+@jwt_required
+def create_diploma():
+    request.json['active'] = True
+
+    if request.json['courses']:
+        courses = request.json['courses']
+        del request.json['courses']
+
+    try:
+        valid_diploma = diploma_schema.load(request.json)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+
+    new_diploma = Diploma(**valid_diploma)
+
+    for course_id in courses:
+        course = db.session.query(Course).filter_by(id=course_id).first()
+        new_diploma.courses.append(course)
+
+    db.session.add(new_diploma)
+    db.session.commit()
+    new_diploma.courseList = new_diploma.courses
+    return jsonify(diploma_schema.dump(new_diploma)), 201
+    
+
+@courses.route('/diplomas')
+@jwt_required
+def read_all_diplomas():
+    result = db.session.query(Diploma).all()
+    for diploma in result:
+        diploma.courseList = diploma.courses
+    return jsonify(diploma_schema.dump(result, many=True))
+    
+
+@courses.route('/diplomas/<diploma_id>')
+@jwt_required
+def read_one_diploma(diploma_id):
+    result = db.session.query(Diploma).filter_by(id=diploma_id).first()
+    result.courseList = result.courses
+    return jsonify(diploma_schema.dump(result))
+    
+
+@courses.route('/diplomas/<diploma_id>', methods=['PATCH'])
+@jwt_required
+def update_diploma(diploma_id):
+    request.json['active'] = True
+    if request.json['courses']:
+            courses = request.json['courses']
+            del request.json['courses']
+
+    try:
+        valid_diploma = diploma_schema.load(request.json)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+
+    diploma = db.session.query(Diploma).filter_by(id=diploma_id).first()
+
+    for key, val in valid_diploma.items():
+        setattr(diploma, key, val)
+
+    if courses:
+        diploma.courses = []
+        for course_id in courses:
+            course = db.session.query(Course).filter_by(id=course_id).first()
+            diploma.courses.append(course)    
+
+    db.session.commit()
+    diploma.courseList = diploma.courses
+    return jsonify(diploma_schema.dump(diploma))
+
+
+@courses.route('/diplomas/<diploma_id>/<course_id>', methods=['PUT'])
+@jwt_required
+def add_course_to_diploma(diploma_id, course_id):
+    diploma = db.session.query(Diploma).filter_by(id=diploma_id).first()
+    course = db.session.query(Course).filter_by(id=course_id).first()
+
+    if course not in diploma.courses:
+        diploma.courses.append(course)
+    else:
+        return jsonify(msg='Course already in diploma'), 409
+    
+    db.session.commit()
+    diploma.courseList = diploma.courses
+    return jsonify(diploma_schema.dump(diploma))
+
+
+@courses.route('/diplomas/<diploma_id>/<course_id>', methods=['DELETE'])
+@jwt_required
+def remove_course_from_diploma(diploma_id, course_id):
+    diploma = db.session.query(Diploma).filter_by(id=diploma_id).first()
+    course = db.session.query(Course).filter_by(id=course_id).first()
+
+    if course in diploma.courses:
+        diploma.courses.remove(course)
+    else:
+        return jsonify(msg='Course not found in diploma'), 404
+    
+    db.session.commit()
+    diploma.courseList = diploma.courses
+    return jsonify(diploma_schema.dump(diploma))
+
+
+
+
+
+@courses.route('/diplomas/activate/<diploma_id>', methods=['PUT'])
+@jwt_required
+def activate_diploma(diploma_id):
+    diploma = db.session.query(Diploma).filter_by(id=diploma_id).first()
+    setattr(diploma, 'active', True)
+    return jsonify(diploma_schema.dump(diploma))
+    
+
+@courses.route('/diplomas/deactivate/<diploma_id>', methods=['PUT'])
+@jwt_required
+def deactivate_diploma(diploma_id):
+    diploma = db.session.query(Diploma).filter_by(id=diploma_id).first()
+    setattr(diploma, 'active', False)
+    return jsonify(diploma_schema.dump(diploma))
+    
+
+# ---- Diploma_Awarded
+
+diploma_awarded_schema = Diploma_AwardedSchema()
+
+@courses.route('/diplomas_awarded', methods=['POST'])
+@jwt_required
+def create_diploma_awarded():
+    try:
+        valid_diploma_awarded = diploma_awarded_schema.load(request.json)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+
+    new_diploma_awarded = Diploma_Awarded(**valid_diploma_awarded)
+    db.session.add(new_diploma_awarded)
+    db.session.commit()
+    return jsonify(diploma_awarded_schema.dump(new_diploma_awarded)), 201
+    
+
+@courses.route('/diplomas_awarded')
+@jwt_required
+def read_all_diplomas_awarded():
+    result = db.session.query(Diploma_Awarded).all()
+    return jsonify(diploma_awarded_schema.dump(result, many=True))
+    
+
+@courses.route('/diplomas_awarded/<diploma_awarded_id>')
+@jwt_required
+def read_one_diploma_awarded(diploma_awarded_id):
+    result = db.session.query(Diploma_Awarded).filter_by(id=diploma_awarded_id).first()
+    return jsonify(diploma_awarded_schema.dump(result))
+    
+
+@courses.route('/diplomas_awarded/<diploma_awarded_id>', methods=['PUT'])
+@jwt_required
+def replace_diploma_awarded(diploma_awarded_id):
+    pass
+    
+
+@courses.route('/diplomas_awarded/<diploma_awarded_id>', methods=['PATCH'])
+@jwt_required
+def update_diploma_awarded(diploma_awarded_id):
+    try:
+        valid_diploma_awarded = diploma_awarded_schema.load(request.json)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+
+    diploma_awarded = db.session.query(Diploma_Awarded).filter_by(id=diploma_awarded_id).first()
+
+    for key, val in valid_diploma_awarded.items():
+        setattr(diploma_awarded, key, val)
+
+    db.session.commit()
+    return jsonify(diploma_awarded_schema.dump(diploma_awarded))
+    
+
+@courses.route('/diplomas_awarded/<diploma_awarded_id>', methods=['DELETE'])
+@jwt_required
+def delete_diploma_awarded(diploma_awarded_id):
+    pass
+ 

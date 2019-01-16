@@ -90,6 +90,7 @@ class CourseSchema(Schema):
      name = fields.String(required=True, validate=Length(min=1))
      description = fields.String(required=True, validate=Length(min=1))
      active = fields.Boolean(required=True)
+     diplomaList = fields.Nested('DiplomaSchema', many=True)
 
 
 # ---- Diploma
@@ -115,6 +116,8 @@ class DiplomaSchema(Schema):
      name = fields.String(required=True, validate=Length(min=1))
      description = fields.String(required=True, validate=Length(min=1))
      active = fields.Boolean(required=True)
+     courseList = fields.Nested('CourseSchema', many=True)
+     #studentList = fields.Nested('StudentSchema', many=True)
 
 # ---- Student
 
@@ -143,6 +146,7 @@ class StudentSchema(Schema):
      student_id = fields.Integer(data_key='studentId', required=True)
      confirmed = fields.Boolean(required=True)
      active = fields.Boolean(required=True)
+     #diplomas = fields.Nested('DiplomaSchema', many=True)
 
 # ---- Course_Offering
 
