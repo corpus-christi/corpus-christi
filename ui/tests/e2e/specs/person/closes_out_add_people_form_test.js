@@ -16,16 +16,16 @@ describe("Getting to the people page", function() {
   });
 });
 
-//Fills in form then clears it
-var testNum = 0;
+//Fills in form then cancels out of it
+var testNum = 5;
 
 describe("Fills out form then clears it", function() {
   it("Given: gets to add people form", function() {
     cy.get("[data-cy=new-person]").click();
   });
   it("When: form is filled out", function() {
-    cy.get("[data-cy=firstName]").type("Test"); //first name
-    cy.get("[data-cy=lastName]").type(testNum); //last name
+    cy.get("[data-cy=first-name]").type("Test"); //first name
+    cy.get("[data-cy=last-name]").type(testNum); //last name
     cy.get(
       ":nth-child(1) > .v-input--selection-controls__input > .v-input--selection-controls__ripple"
     ).click(); //gender
@@ -37,7 +37,8 @@ describe("Fills out form then clears it", function() {
     cy.get("[data-cy=phone]").type("123-456-7890"); //phone
   });
   it("Then: check to see it saved or not", function() {
-    cy.get("[data-cy=clear]").click();
-    cy.get("[data-cy=firstName]").should("be.empty");
+    cy.get("[data-cy=cancel]").click();
+    cy.url().should("include", "/people");
+    cy.get("[data-cy=search]").type(testNum);
   });
 });
