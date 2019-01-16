@@ -79,6 +79,7 @@ def read_all_courses():
     result = db.session.query(Course).all()
     if(result is None):
         return "Result NOT found", 404
+    with_prereqs = add_prereqs(result)
     for i in with_prereqs:
         include_course_offerings(i)
     return jsonify(with_prereqs)
