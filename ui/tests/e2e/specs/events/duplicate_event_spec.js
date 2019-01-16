@@ -10,6 +10,8 @@ describe("Duplicate Event Test", function() {
   it("WHEN: Event planner duplicates an event", function() {
     cy.get("[data-cy=duplicate]").eq(0).click();
 
+    cy.wait(250);
+
     // Pick a new start and end date
     cy.get("[data-cy=start-date-menu").click();
     cy.get(":nth-child(5) > :nth-child(2) > .v-btn > .v-btn__content").click();
