@@ -295,6 +295,42 @@ def test_read_all_addresses(auth_client):
     assert len(resp.json) == count
 
 
+@pytest.mark.smoke
+def test_delete_address(auth_client):
+    # GIVEN a set of areas and addresses
+    Country.load_from_file()
+    count = random.randint(3, 11)
+    create_multiple_areas(auth_client.sqla, count)
+    create_multiple_addresses(auth_client.sqla, count)
+
+    addresses = auth_client.sqla.query(Address).all()
+
+    # WHEN addresses are deleted at random
+    deleted = 0
+    for address in addresses:
+        if flip():
+            resp = auth_client.delete(url_for('places.delete_address', address_id = address.id))
+            deleted += 1
+
+            # THEN expect each delete to run OK
+            assert resp.status_code == 204
+
+    # THEN expect the correct number of addresses were deleted
+    addresses = auth_client.sqla.query(Address).all()
+    assert len(addresses) == count - deleted
+
+
+@pytest.mark.smoke
+def test_delete_address_no_exist(auth_client):
+    # GIVEN an empty database
+
+    # WHEN an address is requested to be deleted
+    resp = auth_client.delete(url_for('places.delete_address', address_id = random.randint(1, 8)))
+    
+    # THEN expect row not to be found
+    assert resp.status_code == 404
+
+
 # ---- Location
 
 @pytest.mark.smoke
@@ -501,7 +537,7 @@ def test_update_location(auth_client):
         if flips[0] and not location.description == mod['description']:
             assert not resp.json['description'] == location.description
         else:
-            assert resp.json['description'] == location.desciption
+            assert resp.json['description'] == location.description
 
         if flips[1] and not location.address_id == mod['address_id']:
             assert not resp.json['address_id'] == location.address_id
@@ -536,10 +572,10 @@ def test_update_location_no_exist(auth_client):
     if flips[0]:
         mod['description'] = fake.sentences(nb=1)[0]
     if flips[1]:
-       mod['address_id'] = random.randint(1, count + 1)
+       mod['address_id'] = random.randint(1, 8)
         
     # WHEN update_location is called with mod data on a location
-    resp = auth_client.patch(url_for('places.update_location', location_id = 1), json = mod)
+    resp = auth_client.patch(url_for('places.update_location', location_id = random.randint(1, 8)), json = mod)
     
     # THEN expect the location not to be found
     assert resp.status_code == 404
