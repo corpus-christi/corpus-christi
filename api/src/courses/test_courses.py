@@ -323,12 +323,13 @@ def test_read_all_courses(auth_client):
     # WHEN databse queried
     resp = auth_client.get(url_for('courses.read_all_courses'))
     # THEN assert error code
-    print(resp)
     assert resp.status_code == 404
     """Test with populated database"""
     # GIVEN existing (active and inactive) courses in database
     count = random.randint(3,11)
     create_multiple_courses(auth_client.sqla, count)
+    create_multiple_prerequisites(auth_client.sqla)
+    create_multiple_course_offerings(auth_client.sqla, 5)
     # WHEN call to database
     resp = auth_client.get(url_for('courses.read_all_courses'))
     # THEN assert all entries from database are called
@@ -362,7 +363,7 @@ def test_read_active_state_of_courses(auth_client):
 
 # Test reading a single course from the database
 def test_read_one_course(auth_client):
-    """Test with empty database"""
+    """Test with invalid course"""
     # GIVEN empty database
     # WHEN databse queried
     resp = auth_client.get(url_for('courses.read_one_course', course_id = 1))
@@ -372,6 +373,8 @@ def test_read_one_course(auth_client):
     # GIVEN one course in the database
     count = random.randint(3,11)
     create_multiple_courses(auth_client.sqla, count)
+    create_multiple_prerequisites(auth_client.sqla)
+    create_multiple_course_offerings(auth_client.sqla, 5)
     # WHEN call to database
     courses = auth_client.sqla.query(Course).all()
     # THEN assert entry called is only entry returned
@@ -383,17 +386,14 @@ def test_read_one_course(auth_client):
         assert resp.json['description'] == course.description
         assert resp.json['active'] == course.active
 
-"""
-# Test
-@pytest.mark.xfail()
-def test_replace_course(auth_client):
-    # GIVEN a deactivated course in database
-    # WHEN
-    # THEN assert
-    assert True == False
-"""
-
 def test_update_course(auth_client):
+    """Test with invalid course"""
+    # GIVEN empty database
+    # WHEN databse queried
+    resp = auth_client.patch(url_for('courses.update_course', course_id = 1))
+    # THEN assert error code
+    assert resp.status_code == 404
+    """Test with populated database"""
     # GIVEN active or inactive course in database
     count = random.randint(3,11)
     create_multiple_courses(auth_client.sqla, count)
@@ -409,56 +409,63 @@ def test_update_course(auth_client):
         assert resp.json['description'] == 'test_descr'
         assert resp.json['active'] == False
 
-"""
-@pytest.mark.xfail()
-def test_delete_course(auth_client):
-    # GIVEN undesirable course in database
-    # WHEN course is removed
-    # THEN assert course and all associated information deleted
-    assert True == False
-"""
-
 # ---- Prerequisite
 
 #Test that prerequisites can be added
 def test_create_prerequisite(auth_client):
+    """Test with invalid course"""
+    # GIVEN empty database
+    # WHEN databse queried
+    resp = auth_client.post(url_for('courses.create_prerequisite', course_id = 1))
+    # THEN assert error code
+    assert resp.status_code == 404
+    """Test with populated database"""
     # GIVEN existing and available course in database
     count = random.randint(2,13)
     create_multiple_courses(auth_client.sqla, count)
     courses = auth_client.sqla.query(Course).all()
     course = courses[0]
     prereq_ids = []
-    for i in range(1,len(courses)-1):
-        prereq_ids.append(courses[i].id)
+    for prereq in courses:
+        prereq_ids.append(prereq.id)
     # WHEN course requires previous attendance to another course
     resp = auth_client.post(url_for('courses.create_prerequisite', course_id=course.id),
         json={ 'prerequisites': prereq_ids})
     assert resp.status_code == 201
     # THEN asssert course is prerequisite
-    for i in range(len(prereq_ids)):
-        assert auth_client.sqla.query(Course)[0].prerequisites[i].id == prereq_ids[i]
+    course = auth_client.sqla.query(Course).all()[0]
+    for i in range(len(prereq_ids) - 1):
+        assert course.prerequisites[i].id == prereq_ids[i+1]
 
 # This will test getting all prerequisites for all courses
 def test_read_all_prerequisites(auth_client):
+    """Test with empty database"""
+    # GIVEN empty database
+    # WHEN databse queried
+    resp = auth_client.get(url_for('courses.read_all_prerequisites'))
+    # THEN assert error code
+    assert resp.status_code == 404
+    """Test with populated database"""
     # GIVEN existing and available course in database
     count_courses = random.randint(3,15)
     count_prereqs = count_courses - 1
     create_multiple_courses(auth_client.sqla, count_courses)
-    # count_courses = auth_client.sqla.query(Course).count()
-    count_prereqs = count_courses -1
     create_multiple_prerequisites(auth_client.sqla)
     # WHEN that course has prerequisites
-    courses = auth_client.sqla.query(Course).all()
-    prereqs = []
-    for course in courses:
-        for prereq in course.prerequisites:
-            if prereq not in prereqs:
-                prereqs.append(prereq)
+    resp = auth_client.get(url_for('courses.read_all_prerequisites'))
+    assert resp.status_code == 200
     # THEN assert all prereq's are listed
-    assert len(prereqs) == count_prereqs
+    assert len(resp.json) == count_prereqs
 
 #This will test getting prerequistes for one course
 def test_read_one_course_prerequisites(auth_client):
+    """Test with invalid course"""
+    # GIVEN empty database
+    # WHEN databse queried
+    resp = auth_client.get(url_for('courses.read_one_course_prerequisites', course_id = 1))
+    # THEN assert error code
+    assert resp.status_code == 404
+    """Test with populated database"""
     #GIVEN course in database
     count_courses = random.randint(3,15)
     create_multiple_courses(auth_client.sqla, count_courses)
@@ -466,11 +473,25 @@ def test_read_one_course_prerequisites(auth_client):
     #WHEN that course has prerequisites
     courses = auth_client.sqla.query(Course).all()
     #THEN list all prerequisites of given course
-    for i in range(len(courses)-1):
-        assert courses[i].prerequisites == [courses[i+1]]
+    for course in courses:
+        resp = auth_client.get(url_for('courses.read_one_course_prerequisites', course_id=course.id))
+        assert resp.status_code == 200
+        for i in range(len(resp.json)):
+            assert resp.json[i]['id'] == course.prerequisites[i].id
+            assert resp.json[i]['name'] == course.prerequisites[i].name
+            assert resp.json[i]['description'] == course.prerequisites[i].description
+            assert resp.json[i]['active'] == course.prerequisites[i].active
 
 
 def test_update_prerequisite(auth_client):
+    """Test with invalid course"""
+    # GIVEN empty database
+    # WHEN databse queried
+    resp = auth_client.patch(url_for('courses.update_prerequisite', course_id = 1),
+            json={'prerequisites':[1]})
+    # THEN assert error code
+    assert resp.status_code == 404
+    """Test with populated database"""
     # GIVEN an existing and available course with an existing prereq
     count_courses = random.randint(3,13)
     create_multiple_courses(auth_client.sqla, count_courses)
@@ -488,19 +509,17 @@ def test_update_prerequisite(auth_client):
             continue
         assert course.prerequisites[0].id == 1
 
-"""
-@pytest.mark.xfail()
-def test_delete_prerequisite(auth_client):
-    # GIVEN an existing prereq and related course
-    # WHEN prereq no longer needed from associated course
-    # THEN prereq row entry removed (along with associated course)
-    assert True == False
-"""
-
-
 # ---- Course_Offering
 
 def test_create_course_offering(auth_client):
+    """Test creating invalid course offering"""
+    # GIVEN invalid course offering to put in database
+    broken_course_offering = {}
+    # WHEN database queried
+    resp = auth_client.post(url_for('courses.create_course_offering'), json=broken_course_offering)
+    # THEN assert exception thrown
+    assert resp.status_code == 422
+    """Test creating valid course offering"""
     # GIVEN an existing course
     count = random.randint(8,19)
     create_multiple_courses(auth_client.sqla, 1)
@@ -513,38 +532,45 @@ def test_create_course_offering(auth_client):
     assert auth_client.sqla.query(Course_Offering).count() == count
 
 def test_read_all_course_offerings(auth_client):
+    """Test with empty database"""
+    # GIVEN empty database
+    # WHEN databse queried
+    resp = auth_client.get(url_for('courses.read_all_course_offerings'))
+    # THEN assert error code
+    assert resp.status_code == 404
+    """Test with populated database"""
     # GIVEN existing (active and inactive) course offerings
     create_multiple_courses(auth_client.sqla,1)
     count = random.randint(8,19)
     create_multiple_course_offerings(auth_client.sqla, count)
     # WHEN all sections needed
-    course_offerings = auth_client.sqla.query(Course_Offering).all()
+    resp = auth_client.get(url_for('courses.read_all_course_offerings'))
     # THEN list all course sections
-    assert len(course_offerings) == count
+    assert len(resp.json) == count
 
-def test_read_all_active_course_offerings(auth_client):
-    # GIVEN existing active course offerings
+def test_read_active_state_course_offerings(auth_client):
+    # GIVEN existing active/inactive course offerings
     create_multiple_courses(auth_client.sqla,1)
     count_active = random.randint(3,11)
     create_multiple_course_offerings_active(auth_client.sqla, count_active)
     count_inactive = random.randint(3,11)
     create_multiple_course_offerings_inactive(auth_client.sqla, count_inactive)
-    # WHEN all active course sections needed
-    active_courses = auth_client.sqla.query(Course_Offering).filter_by(active=True).all()
-    # THEN list all sections of active courses
-    assert len(active_courses) == count_active
-
-def test_read_all_inactive_course_offerings(auth_client):
-    # GIVEN existing inactive course offerings
-    create_multiple_courses(auth_client.sqla,1)
-    count_active = random.randint(3,11)
-    create_multiple_course_offerings_active(auth_client.sqla, count_active)
-    count_inactive = random.randint(3,11)
-    create_multiple_course_offerings_inactive(auth_client.sqla, count_inactive)
-    # WHEN all inactive course sections needed
-    inactive_courses = auth_client.sqla.query(Course_Offering).filter_by(active=False).all()
-    # THEN list all sections of inactive courses
-    assert len(inactive_courses) == count_inactive
+    # WHEN call to database
+    resp = auth_client.get(url_for('courses.read_active_state_course_offerings', active_state='active'))
+    # THEN assert all active courses are listed
+    assert resp.status_code == 200
+    assert len(resp.json) == count_active
+    """Test listing all inactive courses"""
+    # WHEN call to database
+    resp = auth_client.get(url_for('courses.read_active_state_course_offerings', active_state='inactive'))
+    # THEN assert all active courses are listed
+    assert resp.status_code == 200
+    assert len(resp.json) == count_inactive
+    """Test listing courses with invalid state"""
+    # WHEN call to database
+    resp = auth_client.get(url_for('courses.read_active_state_course_offerings', active_state='garbage'))
+    # THEN assert error code
+    assert resp.status_code == 404
 
 def test_read_one_course_offering(auth_client):
     # GIVEN an existing course
@@ -562,16 +588,14 @@ def test_read_one_course_offering(auth_client):
         assert resp.json['active'] == course_offering.active
         assert resp.json['courseId'] == course_offering.course_id
 
-"""
-@pytest.mark.xfail()
-def test_replace_course_offering(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
-"""
-
 def test_update_course_offering(auth_client):
+    """Test with invalid course offering"""
+    # GIVEN empty database
+    # WHEN databse queried
+    resp = auth_client.patch(url_for('courses.update_course_offering', course_offering_id = 555))
+    # THEN assert error code
+    assert resp.status_code == 404
+    """Test with populated database"""
     # GIVEN an existing (active or inactive) course offering
     create_multiple_courses(auth_client.sqla, 1)
     count = random.randint(3,11)
