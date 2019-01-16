@@ -11,7 +11,7 @@ from werkzeug.security import check_password_hash
 from .models import Asset, AssetSchema, Event, EventSchema, Team, TeamSchema, EventParticipant, EventParticipantSchema, EventPerson, EventPersonSchema, TeamMember, TeamMemberSchema, EventAsset, EventAssetSchema, EventTeam, EventTeamSchema
 from ..places.models import Location, Country
 from ..people.models import Person
-from .create_event_data import flip, fake, create_multiple_events, event_object_factory, email_object_factory, create_multiple_assets, create_multiple_teams, create_events_assets, create_events_teams, create_events_persons, create_events_participants, create_teams_members, get_team_ids, asset_object_factory
+from .create_event_data import flip, fake, create_multiple_events, event_object_factory, email_object_factory, create_multiple_assets, create_multiple_teams, create_events_assets, create_events_teams, create_events_persons, create_events_participants, create_teams_members, get_team_ids, asset_object_factory, team_object_factory
 from ..places.test_places import create_multiple_locations, create_multiple_addresses, create_multiple_areas
 from ..people.test_people import create_multiple_people
 
@@ -91,12 +91,12 @@ def test_read_all_events_with_query(auth_client):
     create_multiple_events(auth_client.sqla, count)
     all_events = auth_client.sqla.query(Event).all()
 
-    for _ in range(random.randint(10, 15)):
+    for _ in range(15):
         # WHEN queried for all events matching a flag
         query_string = dict()
         if flip():
             query_string['return_group'] = 'inactive'
-        elif flip():
+        else:
             query_string['return_group'] = 'both'
 
         if flip():
@@ -394,14 +394,14 @@ def test_read_all_assets(auth_client):
         tmp_asset = asset_object_factory(auth_client.sqla)
         if i == 0:
             tmp_asset["description"] = "church drum"
+            tmp_asset['active'] = True
         else:
             tmp_asset["description"] = "nothing to be filtered"
         assets.append(Asset(**AssetSchema().load(tmp_asset)))
     auth_client.sqla.add_all(assets)
     auth_client.sqla.commit()
-    print(auth_client.sqla.query(Asset).filter(Asset.description.like('%drum%')).all())
     # WHEN we try to read all assets with a filter 'drum'
-    filtered_assets = auth_client.get(url_for('events.read_all_assets', desc="drum")).json
+    filtered_assets = auth_client.get(url_for('events.read_all_assets', return_group="all", desc="drum")).json
     # THEN we should have exactly one asset
     assert len(filtered_assets) == 1
     # GIVEN a database with some assets
@@ -611,9 +611,24 @@ def test_create_team(auth_client):
 
 @pytest.mark.smoke
 def test_read_all_teams(auth_client):
-    # GIVEN a database with some teams
+    # GIVEN a database with a number of pre-defined teams
+    teams = []
     count = random.randint(5, 15)
-    create_multiple_teams(auth_client.sqla, count)
+    for i in range(count):
+        tmp_team = team_object_factory()
+        if i == 0:
+            tmp_team["description"] = "the most awesome team"
+            tmp_team['active'] = True
+        else:
+            tmp_team["description"] = "nothing to be filtered"
+        teams.append(Team(**TeamSchema().load(tmp_team)))
+    auth_client.sqla.add_all(teams)
+    auth_client.sqla.commit()
+    # WHEN we try to read all teams with a filter 'drum'
+    filtered_teams = auth_client.get(url_for('events.read_all_teams', return_group="all", desc="awesome")).json
+    # THEN we should have exactly one team
+    assert len(filtered_teams) == 1
+    # GIVEN a database with some teams
     # WHEN we read all active ones
     active_teams = auth_client.get(url_for('events.read_all_teams')).json
     queried_active_teams_count = auth_client.sqla.query(Team).filter(Team.active==True).count()
@@ -749,30 +764,26 @@ def test_add_asset_to_event(auth_client):
         test_event_id = random.randint(1, count_events + 1)
         test_asset = auth_client.sqla.query(Asset).filter(Asset.id == test_asset_id).first()
         test_event = auth_client.sqla.query(Event).filter(Event.id == test_event_id).first()
+        test_asset_events = auth_client.sqla.query(EventAsset).filter_by(asset_id=test_asset_id).join(Event).all()
         resp = auth_client.put(url_for('events.add_asset_to_event', asset_id = test_asset_id, event_id = test_event_id))
-        if not test_event:
+        if not test_event or not test_asset:
             assert resp.status_code == 404
             continue
-
-        test_asset_events = auth_client.sqla.query(Event).join(EventAsset).filter_by(asset_id=test_asset_id).all()
-        for asset_event in test_asset_events:
-            # test for overlap with existing events
-            if test_event.start <= asset_event.start < test_event.end \
-            or asset_event.start <= test_event.start < asset_event.end \
-            or test_event.start < asset_event.end <= test_event.end \
-            or asset_event.start < test_event.end <= asset_event.end:
-                assert resp.status_code == 422
-                continue
-
-    # THEN we expect the right status code
+        if event_overlap(test_event, test_asset_events):
+            assert resp.status_code == 422
+            continue
+        # THEN we expect the right status code
         assert resp.status_code == 200
-    # THEN we expect the entry in the database's linking table
-    queried_event_asset_count = auth_client.sqla.query(EventAsset).filter(EventAsset.event_id == event_id, EventAsset.asset_id == asset_id).count()
-    assert queried_event_asset_count == 1
-    # WHEN we create the eventAsset again
-    resp = auth_client.post(url)
-    # THEN we expect an error code
-    assert resp.status_code == 422
+
+def event_overlap(test_event, test_asset_events):
+    for asset_event in test_asset_events:
+        # test for overlap with existing events
+        if test_event.start <= asset_event.event.start < test_event.end \
+        or asset_event.event.start <= test_event.start < asset_event.event.end \
+        or test_event.start < asset_event.event.end <= test_event.end \
+        or asset_event.event.start < test_event.end <= asset_event.event.end:
+            return True
+    return False
 
 @pytest.mark.smoke
 def test_add_asset_to_invalid_event(auth_client):
@@ -1196,7 +1207,20 @@ def test_add_team_member(auth_client):
     resp = auth_client.post(url_for('events.add_team_member', team_id=team_id, member_id=member_id), json={'active': flip()})
     # THEN we expect an error status code
     assert resp.status_code == 422
+    # WHEN we link an invalid person
+    resp = auth_client.post(url_for('events.add_team_member', team_id=team_id, member_id=999999999), json={'active': flip()})
+    # THEN we expect an error status code
+    assert resp.status_code == 404
 
+@pytest.mark.smoke
+def test_add_team_member_invalid(auth_client):
+    # GIVEN a database with only some members
+    create_multiple_people(auth_client.sqla, 5)
+    member_id = auth_client.sqla.query(Person.id).first()[0]
+    # WHEN we try to link a non-existant team to a member
+    resp = auth_client.post(url_for('events.add_team_member', team_id=1, member_id=member_id))
+    # THEN we expect an error code
+    assert resp.status_code == 422
 
 @pytest.mark.smoke
 def test_modify_team_member(auth_client):
@@ -1257,6 +1281,10 @@ def test_delete_team_member(auth_client):
     resp = auth_client.delete(url_for('events.delete_team_member', team_id=team_member.team_id, member_id=team_member.member_id))
     # THEN we expect an error
     assert resp.status_code == 422
+    # WHEN we unlink using an invalid person
+    resp = auth_client.delete(url_for('events.delete_team_member', team_id=9999999999, member_id=team_member.member_id))
+    # THEN we expect an error
+    assert resp.status_code == 404
 
 
 @pytest.mark.smoke

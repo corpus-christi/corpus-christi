@@ -159,26 +159,19 @@ def add_asset_to_event(event_id, asset_id):
         return jsonify(f"Event with id #{event_id} does not exist."), 404
 
     # Make sure asset isn't already booked in the current event
-    # Make sure asset isn't booked in another event during that time    
-    event_start = event.start
-    event_end = event.end
-
-    is_overlap = False
-
+    # Make sure asset isn't booked in another event during that time 
     for asset_event in asset_events:
-        if event_start <= asset_event.start < event_end or event_start < asset_event.end <= event_end \
-          or asset_event.start <= event_start < asset_event.end or asset_event.start < event.end <= asset_event.end:
-            is_overlap = True
-            break
+        if event.start <= asset_event.start < event.end \
+        or asset_event.start <= event.start < asset_event.end \
+        or event.start < asset_event.end <= event.end \
+        or asset_event.start < event.end <= asset_event.end:
+            return jsonify(f"Asset with id #{asset_id} is unavailable for Event with id #{event_id}."), 422
 
-    if is_overlap:
-        return jsonify(f"Asset with id #{asset_id} is unavailable for Event with id #{event_id}."), 422
-    else:
-        new_entry = EventAsset(**{'event_id': event_id, 'asset_id': asset_id})
-        db.session.add(new_entry)
-        db.session.commit()
+    new_entry = EventAsset(**{'event_id': event_id, 'asset_id': asset_id})
+    db.session.add(new_entry)
+    db.session.commit()
 
-        return jsonify(f"Asset with id #{asset_id} successfully booked for Event with id #{event_id}.")
+    return jsonify(f"Asset with id #{asset_id} successfully booked for Event with id #{event_id}.")
 
 @events.route('/<event_id>/assets/<asset_id>', methods=['DELETE'])
 @jwt_required
@@ -667,7 +660,7 @@ def add_team_member(team_id, member_id):
         db.session.commit()
         return 'Team member successfully added.'
     else:
-        return jsonify(f"Person with id #{member_id} is already on Team with id #{team_id}.")
+        return jsonify(f"Person with id #{member_id} is already on Team with id #{team_id}."), 422
 
 @events.route('/teams/<team_id>/members/<member_id>', methods=['DELETE'])
 @jwt_required
