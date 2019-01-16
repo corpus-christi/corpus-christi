@@ -1,3 +1,4 @@
 sudo: true
-os: ubuntu
-   ubuntu: 18.04
+language: node_js
+        - "11.6.0"
+        - "10.15.0"
