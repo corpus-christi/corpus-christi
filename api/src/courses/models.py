@@ -110,7 +110,7 @@ class Diploma(Base):
      courses = relationship('Course', secondary=Diploma_Course,
                back_populates='diplomas', lazy=True)
      diplomas_awarded = relationship('Diploma_Awarded',
-               back_populates='diplomas', lazy=True, uselist=False)
+               back_populates='diplomas', lazy=True)
 
 
      def __repr__(self):
@@ -123,7 +123,7 @@ class DiplomaSchema(Schema):
      description = fields.String(required=True, validate=Length(min=1))
      active = fields.Boolean(required=True)
      courseList = fields.Nested('CourseSchema', many=True)
-     #studentList = fields.Nested('StudentSchema', many=True)
+     studentList = fields.Nested('StudentSchema', many=True)
 
 # ---- Student
 
@@ -137,7 +137,7 @@ class Student(Base):
      course_offering = relationship('Course_Offering', backref='students', lazy=True)
      person = relationship('Person', backref='students', lazy=True)
      diplomas_awarded = relationship('Diploma_Awarded',
-               back_populates='students', lazy=True, uselist=False)
+               back_populates='students', lazy=True)
      attendance = relationship('Class_Meeting', secondary=Class_Attendance,
                back_populates='students', lazy=True)
 
@@ -153,7 +153,7 @@ class StudentSchema(Schema):
      student_id = fields.Integer(data_key='studentId', required=True)
      confirmed = fields.Boolean(required=True, default=False)
      active = fields.Boolean(required=True, default=True)
-     #diplomas = fields.Nested('DiplomaSchema', many=True)
+     diplomaList = fields.Nested('DiplomaSchema', many=True)
 
 # ---- Course_Offering
 

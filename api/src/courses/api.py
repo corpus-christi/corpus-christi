@@ -327,6 +327,10 @@ def read_all_diplomas():
     result = db.session.query(Diploma).all()
     for diploma in result:
         diploma.courseList = diploma.courses
+        students = []
+        for da in diploma.diplomas_awarded:
+            students.append(da.students)
+        diploma.studentList = students
     return jsonify(diploma_schema.dump(result, many=True))
     
 
@@ -334,7 +338,16 @@ def read_all_diplomas():
 @jwt_required
 def read_one_diploma(diploma_id):
     result = db.session.query(Diploma).filter_by(id=diploma_id).first()
+    if result is None:
+        return jsonify(msg="Diploma not found"), 404
+    
     result.courseList = result.courses
+    
+    students = []
+    for da in result.diplomas_awarded:
+        students.append(da.students)
+    result.studentList = students
+
     return jsonify(diploma_schema.dump(result))
     
 
@@ -431,6 +444,12 @@ def create_diploma_awarded():
         return jsonify(err.messages), 422
 
     new_diploma_awarded = Diploma_Awarded(**valid_diploma_awarded)
+    
+    check = db.session.query(Diploma_Awarded).filter_by(student_id=new_diploma_awarded.student_id,\
+                                        diploma_id=new_diploma_awarded.diploma_id).first()
+    if check:
+        return jsonify(msg='Diploma_Awarded already exists'), 409
+
     db.session.add(new_diploma_awarded)
     db.session.commit()
     return jsonify(diploma_awarded_schema.dump(new_diploma_awarded)), 201
@@ -473,10 +492,17 @@ def update_diploma_awarded(diploma_awarded_id):
     return jsonify(diploma_awarded_schema.dump(diploma_awarded))
     
 
-@courses.route('/diplomas_awarded/<diploma_awarded_id>', methods=['DELETE'])
+@courses.route('/diplomas_awarded/<diploma_id>/<student_id>', methods=['DELETE'])
 @jwt_required
-def delete_diploma_awarded(diploma_awarded_id):
-    pass
+def delete_diploma_awarded(diploma_id, student_id):
+    diploma_awarded = db.session.query(Diploma_Awarded)\
+            .filter_by(diploma_id=diploma_id, student_id=student_id).first()
+    if diploma_awarded is None:
+        return jsonify(msg="That diploma_awarded does not exist"), 404
+    print(diploma_awarded, end='\n\n\n')
+    db.session.delete(diploma_awarded)
+    db.session.commit()
+    return jsonify(diploma_awarded_schema.dump(diploma_awarded))
  
 
 # ---- Student
@@ -536,6 +562,11 @@ def read_all_course_offering_students(course_offering_id):
 # @jwt_required
 # def read_all_students():
 #     result = db.session.query(Student).all()
+    # for r in result:
+    #     diplomas = []
+    #     for da in result.diplomas_awarded:
+    #         diplomas.append(da.diplomas)
+    #     result.diplomaList = diplomas
 #     return jsonify(student_schema.dump(result, many=True))
 
 
@@ -545,6 +576,12 @@ def read_one_student(student_id):
     result = db.session.query(Student).filter_by(id=student_id).first()
     if result is None:
         return 'Student not found', 404
+    
+    diplomas = []
+    for da in result.diplomas_awarded:
+        diplomas.append(da.diplomas)
+    result.diplomaList = diplomas
+
     return jsonify(student_schema.dump(result))
 
 
