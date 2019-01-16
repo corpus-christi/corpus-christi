@@ -10,6 +10,7 @@ from .models import Course, CourseSchema, Course_Offering, Class_Meeting,\
         Class_Meeting, Class_MeetingSchema, Diploma_Awarded, Diploma_AwardedSchema
 from ..people.models import Person
 from ..places.models import Location
+from ..people.test_people import create_multiple_people
 
 
 def flip():
@@ -602,55 +603,6 @@ def test_delete_course_offering(auth_client):
     assert True == False
 """
 
-# ---- Prerequisite
-
-
-@pytest.mark.xfail()
-def test_create_prerequisite(client, db):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
-
-
-@pytest.mark.xfail()
-def test_read_all_prerequisites(client, db):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
-
-
-@pytest.mark.xfail()
-def test_read_one_prerequisite(client, db):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
-
-
-@pytest.mark.xfail()
-def test_replace_prerequisite(client, db):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
-
-
-@pytest.mark.xfail()
-def test_update_prerequisite(client, db):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
-
-
-@pytest.mark.xfail()
-def test_delete_prerequisite(client, db):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
 
 
 # ---- Diploma_Course
@@ -658,8 +610,8 @@ def test_delete_prerequisite(client, db):
 
 @pytest.mark.xfail()
 def test_create_diploma_course(client, db):
-    # GIVEN
-    # WHEN
+    # GIVEN a diploma ionm a database
+    # WHEN 
     # THEN
     assert True == False
 
@@ -709,7 +661,7 @@ def test_delete_diploma_course(client, db):
 
 @pytest.mark.xfail()
 def test_create_diploma(client, db):
-    # GIVEN
+    # GIVEN 
     # WHEN
     # THEN
     assert True == False
@@ -825,12 +777,18 @@ def test_read_all_students(client, db):
     assert True == False
 
 
-@pytest.mark.xfail()
-def test_read_one_student(client, db):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
+def test_read_one_student(auth_client):
+    # GIVEN a student is in the database
+    create_multiple_people(auth_client.sqla, 1)
+    create_multiple_courses(auth_client.sqla, 1)
+    create_multiple_course_offerings(auth_client.sqla, 1)
+    create_multiple_students(auth_client.sqla, 1)
+    # WHEN that student needs to be read
+    student = auth_client.sqla.query(Student).one()
+    # THEN read that student
+    resp = auth_client.get(url_for('courses.read_one_student', student_id=student.id))
+    # assert resp == student.id
+    print(resp)
 
 
 @pytest.mark.xfail()
@@ -843,9 +801,12 @@ def test_replace_student(client, db):
 
 @pytest.mark.xfail()
 def test_update_student(client, db):
-    # GIVEN
-    # WHEN
-    # THEN
+    # GIVEN a student in the database
+    create_multiple_students(auth_client.sqla, 1)
+    # WHEN that student needs to be updated
+    student = auth_client.sqla.query(Student).one()
+    # THEN assert these updates to the student
+    
     assert True == False
 
 
