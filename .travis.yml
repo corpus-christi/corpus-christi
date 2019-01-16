@@ -13,14 +13,14 @@ before_install:
           #        - sudo apt-get upgrade python3
 matrix:
         include:
-                - language: node_js
-                  node_js: "11"
-                  before_install:
-                          - yarn cache clean
-                  install:
-                          - yarn install
-                  script:
-                          - echo "Hello chris"      
+#               - language: node_js
+#                 node_js: "11"
+#                 before_install:
+#                         - yarn cache clean
+#                 install:
+#                         - yarn install
+#                 script:
+#                         - echo "Hello chris"      
                                  #yarn cache clean
                                   #- yarn install
                                   # -dfdfsdfsddf lajkdfkdjfnguage: python
@@ -29,7 +29,7 @@ matrix:
                   dist: "xenial"
                   sudo: true
                   before_install:
-                        - cd ../../../
+                        - which corpus_christi
                         - python -m venv venv
                   script:
                         - which pip
