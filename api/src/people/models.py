@@ -47,7 +47,12 @@ class PersonSchema(Schema):
     phone = fields.String(allow_none=True)
     email = fields.String(allow_none=True)
     active = fields.Boolean(required=True)
-    location_id = fields.Integer(data_key='locationId')
+    location_id = fields.Integer(data_key='locationId', allow_none=True)
+
+    accountInfo = fields.Nested(
+        'AccountSchema', allow_none=True, only=['username', 'id', 'active'])
+
+    attributesInfo = fields.Nested('PersonAttributeSchema', many=True)
 
 # Defines join table for people_account and people_role
 

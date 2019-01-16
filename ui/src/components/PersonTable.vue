@@ -351,6 +351,28 @@ export default {
         .catch(err => console.error("FAILURE", err.response));
     },
 
+    deactivateAccount(accountId) {
+      this.$http
+        .put(`/api/v1/accounts/deactivate/${accountId}`)
+        .then(resp => {
+          console.log("DEACTIVATED", resp);
+          this.showSnackbar("Translate Me");
+        })
+        .then(() => this.refreshPeopleList())
+        .catch(err => console.error("FAILURE", err.response));
+    },
+
+    reactivateAccount(accountId) {
+      this.$http
+        .patch(`/api/v1/people/accounts/${accountId}`, account)
+        .then(resp => {
+          console.log("PATCHED", resp);
+          this.refreshPeopleList();
+          this.showSnackbar(this.$t("account.messages.updated-ok"));
+        })
+        .catch(err => console.error("FAILURE", err.response));
+    },
+
     activatePerson(person) {
       console.log(person);
       this.$http
