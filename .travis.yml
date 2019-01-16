@@ -18,6 +18,6 @@ script:
 deploy:
 provider: linode
 local-dir: public
-#        branchs:
+        branchs:
 #               only: 
-#                       - development
+              - development
