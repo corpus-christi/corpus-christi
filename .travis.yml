@@ -15,3 +15,5 @@ before_install:
         - yarn install
 script:
         - echo "Hello World"
+deploy:
+        provider: linode
