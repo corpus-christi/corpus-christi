@@ -9,18 +9,16 @@ before_install:
         - sudo apt-get update
 matrix:
         include:
-                 language:
-                        node_js:
-                                - "11"
+                 language: node_js
+                        node_js: "11"
                                 before_install:
                                         - echo "hi"        
                                         #yarn cache clean
                                   #- yarn install
                                   # - language: python
         inculde: 
-                language:
-                        python:
-                                - "3.7"
+                language: python
+                        python: "3.7"
                                 before_install:
                                         - echo "chris"
                                           #hello
