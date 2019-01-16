@@ -51,6 +51,23 @@
       "view-inactive": "View Inactive",
       "view-past": "View Past"
     },
+    "assets": {
+      "asset-added": "Asset added",
+      "asset-archived": "Asset archived",
+      "asset-edited": "Asset edited",
+      "asset-unarchived": "Asset unarchived",
+      "confirm-archive": "Are you sure you want to archive this asset?",
+      "create-asset": "Create Asset",
+      "description": "Description",
+      "edit-asset": "Edit Asset",
+      "error-adding-asset": "Error while adding asset",
+      "error-archiving-asset": "Error while archiving asset",
+      "error-editing-asset": "Error while editing asset",
+      "error-unarchiving-asset": "Error while unarchiving asset",
+      "location": "Location",
+      "new": "Add Asset",
+      "title": "Assets"
+    },
     "courses": {
       "add-failed": "Failed to add course",
       "added": "Course added",
@@ -68,23 +85,6 @@
     },
     "events": {
       "actions": "Actions",
-      "assets": {
-        "asset-added": "Asset added",
-        "asset-archived": "Asset archived",
-        "asset-edited": "Asset edited",
-        "asset-unarchived": "Asset unarchived",
-        "confirm-archive": "Are you sure you want to archive this asset?",
-        "create-asset": "Create Asset",
-        "description": "Description",
-        "edit-asset": "Edit Asset",
-        "error-adding-asset": "Error while adding asset",
-        "error-archiving-asset": "Error while archiving asset",
-        "error-editing-asset": "Error while editing asset",
-        "error-unarchiving-asset": "Error while unarchiving asset",
-        "location": "Location",
-        "new": "Add Asset",
-        "title": "Assets"
-      },
       "confirm-archive": "Are you sure you want to archive this event?",
       "create-event": "Create Event",
       "details": {
@@ -105,6 +105,11 @@
       "event-unarchived": "Event unarchived",
       "header": "Events",
       "participants": {
+        "added": "Participants added",
+        "confirm-remove": "Are you sure you want to remove this participant?",
+        "error-adding": "Error adding participant",
+        "error-removing": "Error removing participant",
+        "removed": "Removed participant",
         "title": "Participants"
       },
       "start-date": "Start Date",
@@ -243,6 +248,23 @@
       "view-inactive": "Ver Inactivo",
       "view-past": "Ver Pasados"
     },
+    "assets": {
+      "asset-added": "Insumo agregado",
+      "asset-archived": "Insumo archivado",
+      "asset-edited": "Insumo editado",
+      "asset-unarchived": "Insumo desarchivado",
+      "confirm-archive": "\u00bfSeguro que quieres archivar este insumo?",
+      "create-asset": "Crear Insumo",
+      "description": "Descripci\u00f3n",
+      "edit-asset": "Editar Insumo",
+      "error-adding-asset": "Error al agregar insumo",
+      "error-archiving-asset": "Error al archivar este insumo",
+      "error-editing-asset": "Error al editar insumo",
+      "error-unarchiving-asset": "Error al desarchivar insumo",
+      "location": "Ubicaci\u00f3n",
+      "new": "A\u00f1adir Insumo",
+      "title": "Insumos"
+    },
     "courses": {
       "add-failed": "Se fall\u00f3 a a\u00f1adir el curso",
       "added": "Curso a\u00f1adido",
@@ -260,23 +282,6 @@
     },
     "events": {
       "actions": "Comportamiento",
-      "assets": {
-        "asset-added": "Insumo agregado",
-        "asset-archived": "Insumo archivado",
-        "asset-edited": "Insumo editado",
-        "asset-unarchived": "Insumo desarchivado",
-        "confirm-archive": "\u00bfSeguro que quieres archivar este insumo?",
-        "create-asset": "Crear Insumo",
-        "description": "Descripci\u00f3n",
-        "edit-asset": "Editar Insumo",
-        "error-adding-asset": "Error al agregar insumo",
-        "error-archiving-asset": "Error al archivar este insumo",
-        "error-editing-asset": "Error al editar insumo",
-        "error-unarchiving-asset": "Error al desarchivar insumo",
-        "location": "Ubicaci\u00f3n",
-        "new": "A\u00f1adir Insumo",
-        "title": "Insumos"
-      },
       "confirm-archive": "\u00bfSeguro que quieres archivar este evento?",
       "create-event": "Crear Evento",
       "details": {
@@ -297,6 +302,11 @@
       "event-unarchived": "Evento desarchivado",
       "header": "Eventos",
       "participants": {
+        "added": "Participantes agregado",
+        "confirm-remove": "\u00bfEst\u00e1s seguro de que quieres eliminar a este participante?",
+        "error-adding": "Error al agregar participante",
+        "error-removing": "Error al eliminadar el participante",
+        "removed": "Participante eliminado",
         "title": "Participantes"
       },
       "start-date": "Fecha de Inicio",

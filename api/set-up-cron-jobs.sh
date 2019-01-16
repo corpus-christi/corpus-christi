@@ -2,7 +2,7 @@ crontab -l > tempcron
 crontab -l  > refcron
 
 #Enter all new jobs to be created below the current entries:
-echo "30 3 * * * cd $(pwd); flask maintain prune-events" >> tempcron
+echo "30 3 * * * \$(cd $(pwd); . ./set-up-bash.sh; flask maintain prune-events)" >> tempcron
 
 if [[ $(tail -n 1 ./tempcron) == $(tail -n 1 ./refcron) ]]; then
     echo "Jobs already created, exiting."

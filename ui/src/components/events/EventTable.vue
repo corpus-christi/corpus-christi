@@ -62,7 +62,14 @@
       <template slot="items" slot-scope="props">
         <!-- TODO: Add icons for past, upcoming, etc. -->
         <td>
-          <v-icon v-if="eventOngoing(props.item)" slot="badge" small justify-space-around color="secondary">autorenew</v-icon>
+          <v-icon
+            v-if="eventOngoing(props.item)"
+            slot="badge"
+            small
+            justify-space-around
+            color="secondary"
+            >autorenew</v-icon
+          >
         </td>
         <td
           class="hover-hand"
@@ -221,9 +228,9 @@ export default {
         { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 }
       ],
       paginationInfo: {
-        sortBy: 'start', //default sorted column
+        sortBy: "start", //default sorted column
         rowsPerPage: 10,
-        page: 1,
+        page: 1
       },
       tableLoading: true,
       events: [],
@@ -373,7 +380,9 @@ export default {
 
     saveEvent(event) {
       this.eventDialog.saveLoading = true;
-      event.location_id = event.location.id;
+      if (event.location) {
+        event.location_id = event.location.id;
+      }
       let newEvent = JSON.parse(JSON.stringify(event));
       delete newEvent.location;
       delete newEvent.id;

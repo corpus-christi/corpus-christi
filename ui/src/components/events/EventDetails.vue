@@ -45,9 +45,7 @@
               color="primary"
               v-on:click="navigateTo('/assets')"
             >
-              <v-icon>devices_other</v-icon>&nbsp;{{
-                $t("events.assets.title")
-              }}
+              <v-icon>devices_other</v-icon>&nbsp;{{ $t("assets.title") }}
             </v-btn>
           </v-card-actions>
         </template>

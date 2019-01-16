@@ -64,7 +64,11 @@
           </div>
         </v-card-title>
         <v-card-text>
-          <entity-search person v-model="addParticipantDialog.newParticipant" />
+          <entity-search
+            multiple
+            person
+            v-model="addParticipantDialog.newParticipants"
+          />
         </v-card-text>
         <v-card-actions>
           <v-btn
@@ -76,13 +80,13 @@
           >
           <v-spacer></v-spacer>
           <v-btn
-            v-on:click="addParticipant"
-            :disabled="addParticipantDialog.newParticipant == null"
+            v-on:click="addParticipants"
+            :disabled="addParticipantDialog.newParticipants.length == 0"
             color="primary"
             raised
             :loading="addParticipantDialog.loading"
             data-cy=""
-            >Add Participant</v-btn
+            >Add Participants</v-btn
           >
         </v-card-actions>
       </v-card>
@@ -91,7 +95,9 @@
     <!-- Delete dialog -->
     <v-dialog v-model="deleteDialog.show" max-width="350px">
       <v-card>
-        <v-card-text>{{ $t("events.confirm-archive") }}</v-card-text>
+        <v-card-text>{{
+          $t("events.participants.confirm-remove")
+        }}</v-card-text>
         <v-card-actions>
           <v-btn
             v-on:click="cancelDelete"
@@ -136,12 +142,11 @@ export default {
         { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 }
       ],
       tableLoading: false,
-      selectedValue: null,
       search: "",
       people: [],
       addParticipantDialog: {
         show: false,
-        newParticipant: null,
+        newParticipants: [],
         loading: false
       },
       deleteDialog: {
@@ -182,28 +187,40 @@ export default {
     cancelNewParticipantDialog() {
       this.addParticipantDialog.show = false;
     },
-    addParticipant() {
+
+    addParticipants() {
       this.addParticipantDialog.loading = true;
-      const id = this.$route.params.event;
-      this.$http
-        .post(
-          `/api/v1/events/${id}/participants/${
-            this.addParticipantDialog.newParticipant.id
-          }`,
-          { confirmed: false }
-        )
+      let promises = [];
+
+      for (let person of this.addParticipantDialog.newParticipants) {
+        const idx = this.people.findIndex(
+          ev_pe => ev_pe.person_id === person.id
+        );
+        if (idx === -1) {
+          promises.push(this.addParticipant(person.id));
+        }
+      }
+
+      Promise.all(promises)
         .then(() => {
-          this.showSnackbar(this.$t("events.event-added"));
+          this.showSnackbar(this.$t("events.participants.added"));
           this.addParticipantDialog.loading = false;
           this.addParticipantDialog.show = false;
-          this.addParticipantDialog.newParticipant = null;
+          this.addParticipantDialog.newParticipants = [];
           this.getParticipants();
         })
         .catch(err => {
           console.log(err);
           this.addParticipantDialog.loading = false;
-          this.showSnackbar(this.$t("events.error-adding-event"));
+          this.showSnackbar(this.$t("events.participants.error-adding"));
         });
+    },
+
+    addParticipant(id) {
+      const eventId = this.$route.params.event;
+      return this.$http.post(`/api/v1/events/${eventId}/participants/${id}`, {
+        confirmed: true
+      });
     },
 
     confirmDelete(event) {
@@ -221,13 +238,13 @@ export default {
           this.deleteDialog.loading = false;
           this.deleteDialog.show = false;
           this.people.splice(idx, 1);
-          this.showSnackbar(this.$t("events.event-archived"));
+          this.showSnackbar(this.$t("events.participants.removed"));
         })
         .catch(err => {
           console.log(err);
           this.deleteDialog.loading = false;
           this.deleteDialog.show = false;
-          this.showSnackbar(this.$t("events.error-archiving-event"));
+          this.showSnackbar(this.$t("events.participants.error-removing"));
         });
     },
     cancelDelete() {

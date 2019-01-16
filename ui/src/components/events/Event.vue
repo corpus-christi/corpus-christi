@@ -39,7 +39,7 @@
           $router.push({ path: '/events/' + $route.params.event + '/assets' })
         "
       >
-        <v-icon>devices_other</v-icon>&nbsp;{{ $t("events.assets.title") }}
+        <v-icon>devices_other</v-icon>&nbsp;{{ $t("assets.title") }}
       </v-tab>
     </v-tabs>
     <hr class="vertical-spacer" />
