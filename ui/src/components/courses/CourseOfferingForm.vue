@@ -6,22 +6,25 @@
     <v-card-text>
       <form>
         <v-autocomplete 
-          v-model="courseOffering.course_id" 
+          v-model="courseOffering.course" 
           :items="availableCourses" 
-          item-value="id" 
+          return-object
+          item-value="id"
           item-text="name"
           v-bind:label="$t('courses.course')"
+          :disableda="editMode"
           ></v-autocomplete>
         <!-- description -->
         <v-textarea
           v-model="courseOffering.description"
           v-bind:label="$t('courses.description')"
           name="description"
+          rows="3"
         ></v-textarea>
 
         <!-- date -->
-        <v-layout row>
-          <v-flex>
+        <v-layout>
+          <v-flex xs12 md7>
             <v-menu
               ref="menu"
               v-model="showDatePicker"
@@ -49,54 +52,57 @@
                 multiple no-title scrollable 
                 v-bind:locale="currentLanguageCode">
                 <v-spacer></v-spacer>
-                <v-btn flat color="primary" @click="menu = false">{{ $t("actions.cancel") }}</v-btn>
+                <v-btn flat color="primary" @click="showDatePicker = false">{{ $t("actions.cancel") }}</v-btn>
                 <v-btn flat color="primary" @click="$refs.menu.save(dates)">{{ $t("actions.confirm") }}</v-btn>
               </v-date-picker>
             </v-menu>
           </v-flex>
+          
+          <!-- time -->
+          <v-flex xs12 md3 ml-5>
+            <v-dialog
+              ref="dialog1"
+              v-model="timeModal"
+              :return-value.sync="time"
+              lazy
+              full-width
+              width="290px"
+              persistent
+              data-cy="start-time-dialog"
+            >
+              <v-text-field
+                slot="activator"
+                v-model="time"
+                v-bind:label="$t('events.start-time')"
+                prepend-icon="schedule"
+                readonly
+              ></v-text-field>
+              <v-time-picker
+                v-if="timeModal"
+                :format="timeFormat"
+                v-model="time"
+                data-cy="start-time-picker"
+              >
+                <v-spacer></v-spacer>
+                <v-btn
+                  flat
+                  color="primary"
+                  @click="timeModal = false"
+                  data-cy="start-time-cancel"
+                  >{{ $t("actions.cancel") }}</v-btn
+                >
+                <v-btn
+                  flat
+                  color="primary"
+                  @click="$refs.dialog1.save(time)"
+                  data-cy="start-time-ok"
+                  >{{ $t("actions.confirm") }}</v-btn
+                >
+              </v-time-picker>
+            </v-dialog>
+        </v-flex>
         </v-layout>
-
-        <!-- time -->
-       <v-dialog
-         ref="dialog1"
-         v-model="timeModal"
-         :return-value.sync="time"
-         lazy
-         full-width
-         width="290px"
-         persistent
-         data-cy="start-time-dialog"
-       >
-         <v-text-field
-           slot="activator"
-           v-model="time"
-           v-bind:label="$t('events.start-time')"
-           prepend-icon="schedule"
-           readonly
-         ></v-text-field>
-         <v-time-picker
-           v-if="timeModal"
-           :format="timeFormat"
-           v-model="time"
-           data-cy="start-time-picker"
-         >
-           <v-spacer></v-spacer>
-           <v-btn
-             flat
-             color="primary"
-             @click="timeModal = false"
-             data-cy="start-time-cancel"
-             >{{ $t("actions.cancel") }}</v-btn
-           >
-           <v-btn
-             flat
-             color="primary"
-             @click="$refs.dialog1.save(time)"
-             data-cy="start-time-ok"
-             >{{ $t("actions.confirm") }}</v-btn
-           >
-         </v-time-picker>
-       </v-dialog>
+       
         <!-- teacher -->
         <v-text-field v-model="teacher" v-bind:label="$t('courses.choose-teacher')" name="teacher"></v-text-field>
 
@@ -104,7 +110,7 @@
         <v-text-field v-model="location" v-bind:label="$t('courses.choose-location')" name="location"></v-text-field>
 
         <!-- max size TODO: integer validation-->
-        <v-text-field v-model="courseOffering.max_size" v-bind:label="$t('courses.max-size')" name="max-size"></v-text-field>
+        <v-text-field v-model="courseOffering.maxSize" v-bind:label="$t('courses.max-size')" name="max-size"></v-text-field>
       </form>
     </v-card-text>
     <v-card-actions>
@@ -155,7 +161,7 @@ export default {
   },
   computed: {
     title() {
-      return this.editMode ? this.$t("actions.edit") : this.$t("courses.new");
+      return this.editMode ? this.$t("actions.edit") : this.$t("courses.new-offering");
     },
     
     timeFormat() {
@@ -224,7 +230,8 @@ export default {
       this.$validator.validateAll();
       if (!this.errors.any()) {
         // this.courseOffering.when = this.getTimestamp(this.date, this.time);
-        console.log(this.courseOffering);
+        this.courseOffering.courseId = this.courseOffering.course.id;
+        
         this.$emit("save", this.courseOffering);
       }
     },

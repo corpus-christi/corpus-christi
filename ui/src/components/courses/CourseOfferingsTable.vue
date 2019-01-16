@@ -251,6 +251,10 @@ export default {
 
     saveCourseOffering(courseOffering) {
       this.courseOfferingDialog.saving = true;
+      
+      const courseObject = courseOffering.course || [];
+      delete courseOffering.course;
+      
       if (this.courseOfferingDialog.editMode) {
         // Hang on to the ID of the person being updated.
         const courseOffering_id = courseOffering.id;
@@ -278,11 +282,17 @@ export default {
             this.courseOfferingDialog.saving = false;
           });
       } else {
+        courseOffering.active = true;
         this.$http
           .post("/api/v1/courses/course_offerings", courseOffering)
           .then(resp => {
             console.log("ADDED", resp);
-            this.courseOfferings.push(resp.data);
+            
+            let newOffering = resp.data;
+            newOffering.course = courseObject;
+      
+            this.courseOfferings.push(newOffering);
+            
             this.snackbar.text = this.$t("courses.added");
             this.snackbar.show = true;
           })

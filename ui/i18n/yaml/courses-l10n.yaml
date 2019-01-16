@@ -56,3 +56,6 @@ courses:
   dates:
     en: Choose Dates
     es: Elegir Fechas
+  new-offering:
+    en: New Course Offering
+    es: Nuevo Oferta de Curso
