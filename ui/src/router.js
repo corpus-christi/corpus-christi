@@ -48,10 +48,10 @@ const router = new VueRouter({
       path: "/events",
       meta: { authRequired: true },
       component: () => import("@/pages/Events"),
-      redirect: { name: "all" },
+      redirect: { name: "all-events" },
       children: [
         {
-          name: "all",
+          name: "all-events",
           path: "all",
           meta: { authRequired: true },
           component: () => import("@/components/events/EventTable")
@@ -60,29 +60,29 @@ const router = new VueRouter({
           name: "event",
           path: ":event",
           meta: { authRequired: true },
-          redirect: { name: "details" },
+          redirect: { name: "event-details" },
           component: () => import("@/components/events/Event"),
           children: [
             {
-              name: "details",
+              name: "event-details",
               path: "details",
               meta: { authRequired: true },
               component: () => import("@/components/events/EventDetails")
             },
             {
-              name: "participants",
+              name: "event-participants",
               path: "participants",
               meta: { authRequired: true },
               component: () => import("@/components/events/EventParticipants")
             },
             {
-              name: "teams",
+              name: "event-teams",
               path: "teams",
               meta: { authRequired: true },
               component: () => import("@/components/events/EventTeams")
             },
             {
-              name: "assets",
+              name: "event-assets",
               path: "assets",
               meta: { authRequired: true },
               component: () => import("@/components/events/assets/EventAssets")
@@ -98,16 +98,25 @@ const router = new VueRouter({
       component: () => import("@/pages/Locale")
     },
     {
-      name: "courses-admin",
+      name: "courses",
       path: "/courses",
       meta: { authRequired: true },
-      component: () => import("@/pages/Courses")
-    },
-    {
-      name: "course-offerings-admin",
-      path: "/course-offerings",
-      meta: { authRequired: true },
-      component: () => import("@/pages/CourseOfferings")
+      component: () => import("@/pages/Courses"),
+      redirect: { name: "all-courses" },
+      children: [
+        {
+          name: "all-courses",
+          path: "all",
+          meta: { authRequired:  true },
+          component: () => import("@/components/courses/CoursesTable")
+        },
+        {
+          name: "course-details",
+          path: ":course",
+          meta: { authRequired: true },
+          component: () => import("@/components/courses/CourseDetails"),
+        }
+      ]
     }
   ]
 });

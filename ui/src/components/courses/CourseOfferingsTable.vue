@@ -37,12 +37,11 @@
       :headers="headers"
       :search="search"
       :items="showCourseOfferings"
-      :loading="!tableLoaded"
       class="elevation-1"
     >
       <v-progress-linear slot="progress" color="primary" indeterminate></v-progress-linear>
       <template slot="items" slot-scope="props">
-        <td>{{ props.item.course.name }}</td>
+        <td>{{ course.name }}</td>
         <td>{{ props.item.description }}</td>
         <td>
           <CourseOfferingAdminActions
@@ -107,6 +106,12 @@ export default {
     CourseOfferingForm,
     CourseOfferingAdminActions,
   },
+  props: {
+    course: {
+      type: Object,
+      required: true
+    }
+  },
   data() {
     return {
       courseOfferingDialog: {
@@ -129,7 +134,6 @@ export default {
 
       courseOfferings: [],
       
-      tableLoaded: false,
       selected: [],
       search: "",
       viewStatus: "active"
@@ -163,11 +167,15 @@ export default {
         case "archived":
           return this.courseOfferings.filter(courseOffering => !courseOffering.active);
         case "all":
-          return this.courseOfferings;
         default:
+          return this.courseOfferings;
           break;
       }
     }
+  },
+
+  mounted() {
+    this.courseOfferings = this.course.course_offerings;
   },
 
   methods: {
@@ -256,10 +264,10 @@ export default {
       delete courseOffering.course;
       
       if (this.courseOfferingDialog.editMode) {
-        // Hang on to the ID of the person being updated.
+        // Hang on to the ID of the record being updated.
         const courseOffering_id = courseOffering.id;
 
-        // Locate the person we're updating in the table.
+        // Locate the record we're updating in the table.
         const idx = this.courseOfferings.findIndex(c => c.id === courseOffering.id);
         // Get rid of the ID; not for consumption by endpoint.
         delete courseOffering.id;
@@ -309,13 +317,6 @@ export default {
 
       this.courseOfferingDialog.show = false;
     }
-  },
-
-  mounted: function() {
-    this.$http.get("/api/v1/courses/course_offerings").then(resp => {
-      this.courseOfferings = resp.data;
-      this.tableLoaded = true;             
-    });
   }
 };
 </script>

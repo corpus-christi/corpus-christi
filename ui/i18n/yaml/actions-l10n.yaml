@@ -80,6 +80,10 @@ actions:
     _desc: View all inactive people
     en: View Inactive
     es: Ver Inactivo
+  back:
+    _desc: Back to a previous view
+    en: Back
+    es: Regresar
   tooltips:
     settings:
       _desc: Change settings

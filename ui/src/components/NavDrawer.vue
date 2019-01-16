@@ -53,12 +53,7 @@ export default {
         },
         {
           title: this.$t("courses.course"),
-          route: "courses-admin",
-          icon: "school"
-        },
-        {
-          title: this.$t("courses.course-offering"),
-          route: "course-offerings-admin",
+          route: "courses",
           icon: "school"
         },
         {
