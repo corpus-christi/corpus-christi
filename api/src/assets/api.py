@@ -8,11 +8,35 @@ from flask_mail import Message
 from marshmallow import ValidationError
 from sqlalchemy import func
 
+from .models import Asset, AssetSchema
+from ..events.models import EventAsset, EventAssetSchema
 from . import assets
+from .. import db
+
+def modify_entity(entity_type, schema, id, new_value_dict):
+    item = db.session.query(entity_type).filter_by(id=id).first()
+
+    if not item:
+        return jsonify(f"Item with id #{id} does not exist."), 404
+
+    for key, val in new_value_dict.items():
+        if key != 'id':
+            setattr(item, key, val)
+    
+    db.session.commit()
+
+    return jsonify(schema.dump(item)), 200
+
+def get_exclusion_list(query_object, default_exclusion_list):
+    for exclusion in default_exclusion_list:
+        include_filter = request.args.get(f"include_{exclusion}")
+        if include_filter:
+            default_exclusion_list.remove(exclusion)
+    return default_exclusion_list
 
 # ---- Asset
 
-@assets.route('/assets', methods=['POST'])
+@assets.route('/', methods=['POST'])
 @jwt_required
 def create_asset():
     asset_schema = AssetSchema(exclude=get_exclusion_list(request.args, ['location']))
@@ -27,7 +51,7 @@ def create_asset():
     return jsonify(asset_schema.dump(new_asset)), 201
     
 
-@assets.route('/assets')
+@assets.route('/')
 @jwt_required
 def read_all_assets():
     asset_schema = AssetSchema(exclude=get_exclusion_list(request.args, ['location']))
@@ -64,7 +88,7 @@ def read_all_assets():
 
     return jsonify(asset_schema.dump(temp_result, many=True))
 
-@assets.route('/assets/<asset_id>')
+@assets.route('/<asset_id>')
 @jwt_required
 def read_one_asset(asset_id):
     asset_schema = AssetSchema(exclude=get_exclusion_list(request.args, ['location']))
@@ -79,7 +103,7 @@ def read_one_asset(asset_id):
     return jsonify(asset_schema.dump(result))
 
 
-@assets.route('/assets/<asset_id>', methods=['PUT'])
+@assets.route('/<asset_id>', methods=['PUT'])
 @jwt_required
 def replace_asset(asset_id):
     asset_schema = AssetSchema(exclude=get_exclusion_list(request.args, ['location']))
@@ -91,7 +115,7 @@ def replace_asset(asset_id):
     return modify_entity(Asset, asset_schema, asset_id, valid_asset)
     
 
-@assets.route('/assets/<asset_id>', methods=['PATCH'])
+@assets.route('/<asset_id>', methods=['PATCH'])
 @jwt_required
 def update_asset(asset_id):
     asset_schema = AssetSchema(exclude=get_exclusion_list(request.args, ['location']))
@@ -103,7 +127,7 @@ def update_asset(asset_id):
     return modify_entity(Asset, asset_schema, asset_id, valid_attributes)
     
 
-@assets.route('/assets/<asset_id>', methods=['DELETE'])
+@assets.route('/<asset_id>', methods=['DELETE'])
 @jwt_required
 def delete_asset(asset_id):
     asset = db.session.query(Asset).filter_by(id=asset_id).first()
