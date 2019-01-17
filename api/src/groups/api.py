@@ -168,6 +168,19 @@ def read_all_meetings():
     result = db.session.query(Meeting).all()
     return jsonify(meeting_schema.dump(result, many=True))
 
+@groups.route('/meetings/group/<group_id>')
+@jwt_required
+def read_all_meetings_by_group(group_id):
+    result = db.session.query(Meeting).filter_by(group_id=group_id).all()
+    return jsonify(meeting_schema.dump(result, many=True))
+
+
+@groups.route('/meetings/address/<address_id>')
+@jwt_required
+def read_all_meetings_by_location(address_id):
+    result = db.session.query(Meeting).filter_by(address_id=address_id).all()
+    return jsonify(meeting_schema.dump(result, many=True))
+
 
 @groups.route('/meetings/<meeting_id>')
 @jwt_required
