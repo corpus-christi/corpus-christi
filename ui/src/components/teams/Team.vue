@@ -256,8 +256,9 @@ export default {
 
     reloadTeam() {
       const id = this.$route.params.team;
-      this.$http.get(`/api/v1/teams/${id}`).then(resp => {
+      this.$http.get(`/api/v1/teams/${id}?include_members=1`).then(resp => {
         this.team = resp.data;
+        console.log(this.team)
         this.members = resp.data.members
         this.pageLoaded = true;
       });

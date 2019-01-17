@@ -166,7 +166,7 @@ export default {
   mounted() {
     this.tableLoading = true;
     let eventId = this.$route.params.event;
-    this.$http.get(`/api/v1/teams`).then(resp => {
+    this.$http.get(`/api/v1/teams/`).then(resp => {
       this.teams = resp.data;
       this.tableLoading = false
     });
@@ -370,7 +370,7 @@ export default {
         // }
         console.log(newTeam)
         this.$http
-          .post("/api/v1/teams", newTeam)
+          .post("/api/v1/teams/", newTeam)
           .then(resp => {
             console.log("ADDED", resp);
             this.teams.push(resp.data);
