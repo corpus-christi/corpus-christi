@@ -116,7 +116,6 @@ export default {
   methods: {
     cancel() {
       this.clear();
-      //this.$refs.obs.reset();
       this.$emit("cancel");
     },
 
@@ -135,39 +134,7 @@ export default {
       if (result) {
         this.$emit("save", this.diploma);
       }
-    },
-
-  
-
-
-
-    /*
-
-    // Abandon ship.
-    cancel() {
-      this.clear();
-      this.$emit("cancel");
-    },
-    // Clear the forms.
-    clear() {
-      this.diploma = {};
-      //this.$refs.form.$validator.reset();
-    },
-    // Trigger a save event, returning the updated `Diploma`.
-    save() {
-      //this.$refs.form.$validator.validateAll();
-      console.log('diploma in editor: ', this.diploma);
-      //console.log('form errors: ', this.$refs.form.$validator);
-      /*
-      if (!this.$refs.form.errors.any()) {
-        console.log('form has no errors');
-        this.$emit("save", this.diploma);
-      } else {
-        console.log('the form contains errors!', this.$refs.form.errors);
-      }
-      */
- 
-    //}
+    }
 
   },
 
