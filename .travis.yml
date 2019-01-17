@@ -4,7 +4,6 @@ ubuntu:
         - 18.04
 env:
         - FLASK_CONFIG=staging 
-        - PASS=EOTe70UAg4YZ
 before_install:
         - sudo apt-get update
 matrix:
@@ -31,7 +30,7 @@ matrix:
                   script:
                         # - dropdb --if-exists cc-staging
                         # -    dropuser arco
-                        - sudo services postgresql  start
+                        - sudo service postgresql start
                         - sudo -u postgres createuser -w arco
                         - sudo -u postgres createdb -O arco cc-staging 
                         # - rm api/dev-db.sqlite4
