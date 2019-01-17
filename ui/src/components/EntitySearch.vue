@@ -133,7 +133,7 @@ export default {
     if (this.location) endpoint = "/api/v1/places/locations";
     else if (this.person) endpoint = "/api/v1/people/persons";
     else if (this.course) endpoint = "/api/v1/courses/courses";
-    else if (this.team) endpoint = "/api/v1/events/teams";
+    else if (this.team) endpoint = "/api/v1/teams/";
     this.$http
       .get(endpoint)
       .then(resp => {

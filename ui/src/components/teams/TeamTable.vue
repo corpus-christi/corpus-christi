@@ -41,6 +41,7 @@
     </v-toolbar>
 
     <v-data-table
+      :rows-per-page-items="rowsPerPageItem"
       :headers="headers"
       :items="visibleTeams"
       :search="search"
@@ -48,7 +49,8 @@
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
-        <td class="hover-hand">{{ props.item.description }}</td>
+        <td class="hover-hand"
+          v-on:click="$router.push({ path: '/teams/' + props.item.id })">{{ props.item.description }}</td>
         <td>
           <template v-if="props.item.active">
             <v-tooltip bottom v-if="props.item.active">
@@ -155,23 +157,18 @@
 </template>
 
 <script>
-import TeamForm from "../../teams/TeamForm";
+import TeamForm from "./TeamForm";
 import { mapGetters } from "vuex";
 
 export default {
-  name: "EventTeams",
+  name: "TeamTable",
   components: { "team-form": TeamForm },
   mounted() {
     this.tableLoading = true;
     let eventId = this.$route.params.event;
-    this.$http.get(`/api/v1/events/${eventId}?include_teams=1`).then(resp => {
-      this.event = resp.data;
-
-      if (this.event.teams) {
-        this.teams = this.event.teams.map(ev_te => ev_te.team);
-        this.tableLoading = false;
-      }
-      // console.log(this.teams);
+    this.$http.get(`/api/v1/teams/`).then(resp => {
+      this.teams = resp.data;
+      this.tableLoading = false
     });
   },
 
@@ -327,6 +324,16 @@ export default {
       this.teamDialog.show = false;
     },
 
+    clearTeam() {
+      this.teamDialog = {
+        show: false,
+        editMode: false,
+        saveLoading: false,
+        addMoreLoading: false,
+        team: {}
+      }
+    },
+
     saveTeam(team) {
       this.teamDialog.saveLoading = true;
       if (this.teamDialog.editMode) {
@@ -343,6 +350,7 @@ export default {
             this.teamDialog.show = false;
             this.teamDialog.saveLoading = false;
             this.showSnackbar(this.$t("events.teams.team-edited"));
+            this.clearTeam()
           })
           .catch(err => {
             console.error("PUT FALURE", err.response);
@@ -352,14 +360,24 @@ export default {
       } else {
         let newTeam = JSON.parse(JSON.stringify(team));
         delete newTeam.id;
+        delete newTeam.active;
+        delete newTeam.members
+        // for(var i=0; i<newTeam.members.length; i++) {
+        //   newTeam.members[i] = {
+        //     active: true,
+        //     member: newTeam.members[i]
+        //   }
+        // }
+        console.log(newTeam)
         this.$http
-          .post("/api/v1/teams", newTeam)
+          .post("/api/v1/teams/", newTeam)
           .then(resp => {
             console.log("ADDED", resp);
             this.teams.push(resp.data);
             this.teamDialog.show = false;
             this.teamDialog.saveLoading = false;
             this.showSnackbar(this.$t("events.teams.team-added"));
+            this.clearTeam()
           })
           .catch(err => {
             console.error("POST FAILURE", err.response);
