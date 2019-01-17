@@ -60,7 +60,7 @@ def test_read_all_teams(auth_client):
     auth_client.sqla.add_all(teams)
     auth_client.sqla.commit()
     # WHEN we try to read all teams with a filter 'drum'
-    filtered_teams = auth_client.get(url_for('teams.read_all_teams', return_group="all", desc="awesome")).json
+    filtered_teams = auth_client.get(url_for('teams.read_all_teams', return_group="all", desc="awesome", sort='description_desc')).json
     # THEN we should have exactly one team
     assert len(filtered_teams) == 1
     # GIVEN a database with some teams

@@ -53,6 +53,18 @@ def read_all_teams():
     if desc_filter:
         query = query.filter(Team.description.like(f"%{desc_filter}%"))
 
+    # Sorting
+    sort_filter = request.args.get('sort')
+    if sort_filter:
+        sort_column = None
+        if sort_filter[:11] == 'description':
+            sort_column = Team.description
+
+        if sort_filter[-4:] == 'desc' and sort_column:
+            sort_column = sort_column.desc()
+        
+        query = query.order_by(sort_column)
+
     result = query.all()
     return jsonify(team_schema.dump(result, many=True))
     
