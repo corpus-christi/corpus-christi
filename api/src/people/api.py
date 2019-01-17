@@ -101,15 +101,20 @@ def update_person(person_id):
             request.json['attributesInfo'], many=True)
     except ValidationError as err:
         return jsonify(err.messages), 422
-
     for new_person_attribute in valid_person_attributes:
         old_person_attribute = db.session.query(PersonAttribute).filter_by(
             person_id=person_id, attribute_id=new_person_attribute['attribute_id']).first()
         if old_person_attribute is not None:
+            value = None
+            if 'string_value' in new_person_attribute:
+                value = new_person_attribute['string_value']
             setattr(old_person_attribute, 'string_value',
-                    new_person_attribute['string_value'])
+                    value)
+            value = None
+            if 'enum_value_id' in new_person_attribute:
+                value = new_person_attribute['enum_value_id']
             setattr(old_person_attribute, 'enum_value_id',
-                    new_person_attribute['enum_value_id'])
+                    value)
         else:
             new_person_attribute = PersonAttribute(**new_person_attribute)
             new_person_attribute.person_id = person_id
