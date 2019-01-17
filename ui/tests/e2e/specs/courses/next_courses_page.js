@@ -9,14 +9,14 @@ describe("Get to Courses Page", () => {
   
     it("When: clicking to course page", () => {
       cy.get("[data-cy=open-navigation]").click();
-      cy.get(":nth-child(5) > .v-list__tile").click();
+      cy.get('[data-cy=courses-admin]').click();
     });
     it("Then: should be in course page", () => {
       cy.url().should("include", "/courses");
     });
 });
 
-describe("Get to Courses Page", () => {
+describe("Flip through Courses Page", () => {
     it("Next page", () => {
         cy.get('[aria-label="Siguiente página"]').click()
     });
