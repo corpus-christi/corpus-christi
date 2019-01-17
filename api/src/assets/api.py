@@ -68,7 +68,7 @@ def read_all_assets():
 
         if sort_filter[-4:] == 'desc' and sort_column:
             sort_column = sort_column.desc()
-        
+
         query = query.order_by(sort_column)
 
     result = query.join(EventAsset, isouter=True).group_by(Asset.id).all()

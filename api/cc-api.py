@@ -20,10 +20,9 @@ from src.events.create_event_data import create_events_test_data
 from src.places.test_places import create_multiple_areas, create_multiple_addresses, create_multiple_locations
 from src.places.models import Country
 from src.courses.models import Course, Prerequisite
-from src.courses.test_courses import create_multiple_courses,\
-    create_multiple_course_offerings, create_multiple_prerequisites,\
+from src.courses.test_courses import create_multiple_courses, create_multiple_course_offerings,\
     create_multiple_diplomas, create_multiple_students, create_class_meetings,\
-    create_diploma_awards, create_class_attendance
+    create_diploma_awards, create_class_attendance, create_multiple_prerequisites
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 
@@ -83,7 +82,7 @@ def load_all():
     create_multiple_students(db.session, 30)
     create_class_meetings(db.session, 30)
     # create_diploma_awards(db.session, 30)
-    create_class_attendance(db.session, 30)
+    # create_class_attendance(db.session, 30)
 
 
 @data_cli.command('test', help='Load everything')
