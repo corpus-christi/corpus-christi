@@ -8,13 +8,13 @@
               <span class="headline">{{ event.title }}</span>
             </v-flex>
             <v-layout xs3 sm3 align-end justify-end>
-              <v-btn flat color="primary" v-on:click="editEvent(event)">
+              <v-btn flat color="primary" data-cy="edit-event" v-on:click="editEvent(event)">
                 <v-icon>edit</v-icon>&nbsp;{{ $t("actions.edit") }}
               </v-btn>
             </v-layout>
           </v-container>
           <v-card-text class="pa-4">
-            <div>
+            <div v-if="event.location">
               <b>Location: </b>
               <div class="multi-line ml-2">{{ displayLocation }}</div>
             </div>
@@ -27,6 +27,7 @@
               flat
               ripple
               color="primary"
+              data-cy="navigate-to-participants"
               v-on:click="navigateTo('/participants')"
             >
               <v-icon>person</v-icon>&nbsp;{{ $t("events.participants.title") }}
@@ -35,6 +36,7 @@
               flat
               ripple
               color="primary"
+              data-cy="navigate-to-assets"
               v-on:click="navigateTo('/assets')"
             >
               <v-icon>devices_other</v-icon>&nbsp;{{ $t("assets.title") }}
@@ -62,6 +64,7 @@
               <v-btn
                 flat
                 color="primary"
+                data-cy="add-team-dialog"
                 v-on:click="addTeamDialog.show = true"
               >
                 <v-icon>add</v-icon>&nbsp;{{ $t("events.teams.new") }}
@@ -77,7 +80,9 @@
                 </v-list-tile-content>
                 <v-list-tile-action>
                   <v-btn flat color="primary">
-                    <v-icon v-on:click="showDeleteTeamDialog(eventTeam.team_id)"
+                    <v-icon 
+                      v-on:click="showDeleteTeamDialog(eventTeam.team_id)"
+                      :data-cy="'deleteTeam-'+eventTeam.team_id"
                       >delete</v-icon
                     >
                   </v-btn>
@@ -91,7 +96,7 @@
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false">
+      <v-btn flat @click="snackbar.show = false" data-cy="close-snackbar">
         {{ $t("actions.close") }}
       </v-btn>
     </v-snackbar>

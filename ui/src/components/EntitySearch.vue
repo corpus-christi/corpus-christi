@@ -138,7 +138,6 @@ export default {
       .get(endpoint)
       .then(resp => {
         this.entities = resp.data;
-        console.log(this.entities);
         this.isLoading = false;
       })
       .catch(error => {
