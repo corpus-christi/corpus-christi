@@ -52,11 +52,11 @@
 </template>
 
 <script>
+import EntitySearch from "../EntitySearch"
 import { isEmpty } from "lodash";
 // import { mapGetters } from "vuex";
-// import EntitySearch from "../../EntitySearch";
 export default {
-  //   components: { "entity-search": EntitySearch },
+  components: { "entity-search": EntitySearch },
   name: "TeamForm",
   watch: {
     // Make sure data stays in sync with any changes to `initialData` from parent.

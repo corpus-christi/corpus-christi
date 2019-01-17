@@ -155,7 +155,7 @@
 </template>
 
 <script>
-import TeamForm from "./TeamForm";
+import TeamForm from "../../teams/TeamForm";
 import { mapGetters } from "vuex";
 
 export default {
@@ -177,6 +177,12 @@ export default {
 
   data() {
     return {
+      rowsPerPageItem: [
+        10,
+        15,
+        25,
+        { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 }
+      ],
       tableLoading: true,
       teams: [],
       teamDialog: {
@@ -269,7 +275,7 @@ export default {
       const teamId = this.archiveDialog.teamId;
       const idx = this.teams.findIndex(te => te.id === teamId);
       this.$http
-        .delete(`/api/v1/events/teams/${teamId}`)
+        .delete(`/api/v1/teams/${teamId}`)
         .then(resp => {
           console.log("ARCHIVE", resp);
           this.teams[idx].active = false;
@@ -295,7 +301,7 @@ export default {
       const patchId = copyTeam.id;
       delete copyTeam.id;
       this.$http
-        .patch(`/api/v1/events/teams/${patchId}`, { active: true })
+        .patch(`/api/v1/teams/${patchId}`, { active: true })
         .then(resp => {
           console.log("UNARCHIVED", resp);
           delete team.unarchiving;
@@ -328,7 +334,7 @@ export default {
         const idx = this.teams.findIndex(te => te.id === team.id);
         delete team.id;
         this.$http
-          .patch(`/api/v1/events/teams/${teamId}`, {
+          .patch(`/api/v1/teams/${teamId}`, {
             description: team.description
           })
           .then(resp => {
@@ -347,7 +353,7 @@ export default {
         let newTeam = JSON.parse(JSON.stringify(team));
         delete newTeam.id;
         this.$http
-          .post("/api/v1/events/teams", newTeam)
+          .post("/api/v1/teams", newTeam)
           .then(resp => {
             console.log("ADDED", resp);
             this.teams.push(resp.data);
@@ -367,7 +373,7 @@ export default {
       this.teamDialog.addMoreLoading = true;
       let newTeam = JSON.parse(JSON.stringify(team));
       this.$http
-        .post("/api/v1/events/teams", newTeam)
+        .post("/api/v1/teams", newTeam)
         .then(resp => {
           console.log("ADDED", resp);
           this.teams.push(resp.data);
