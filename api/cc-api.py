@@ -25,7 +25,6 @@ from src.courses.models import Course, Prerequisite
 from src.courses.test_courses import create_multiple_courses, create_multiple_course_offerings,\
     create_multiple_diplomas, create_multiple_students, create_class_meetings,\
     create_diploma_awards, create_class_attendance, create_multiple_prerequisites
-from src.events.models import Event, Asset, Team
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 
