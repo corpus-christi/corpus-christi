@@ -108,6 +108,8 @@ def update_person(person_id):
         if old_person_attribute is not None:
             setattr(old_person_attribute, 'string_value',
                     new_person_attribute['string_value'])
+            setattr(old_person_attribute, 'enum_value_id',
+                    new_person_attribute['enum_value_id'])
         else:
             new_person_attribute = PersonAttribute(**new_person_attribute)
             new_person_attribute.person_id = person_id
