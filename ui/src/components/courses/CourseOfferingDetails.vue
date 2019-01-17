@@ -5,7 +5,7 @@
         <template v-if="pageLoaded">
           <v-container fill-height fluid>
             <v-flex xs9 sm9 align-end flexbox>
-              <span class="headline">{{ courseName }}</span>
+              <span class="headline">{{ courseOffering.course.name }}</span>
             </v-flex>
           </v-container>
           <v-card-text class="pa-4">
@@ -53,11 +53,7 @@ export default {
     const id = this.offeringId;
     this.$http.get(`/api/v1/courses/course_offerings/${id}`).then(resp => {
       this.courseOffering = resp.data;
-      
-      this.$http.get(`/api/v1/courses/courses/${this.courseOffering.courseId}`).then(resp => {
-        this.courseName = resp.data.name;
-        this.pageLoaded = true;
-      });
+      this.pageLoaded = true;
     });
   },
 
@@ -79,13 +75,11 @@ export default {
         show: false,
         text: ""
       },
-      pageLoaded: false,
-      
-      courseName: ""
+      pageLoaded: false
     };
   },
   props: {
-    offeringId: 0
+    offeringId: 0,
   },
   methods: {
 

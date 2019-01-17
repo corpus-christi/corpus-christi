@@ -13,8 +13,7 @@
       <v-spacer></v-spacer>
       <v-btn
         color="primary"
-        raised
-        data-cy="add-student"
+        r        data-cy="add-student"
       >
         <v-icon dark left>add</v-icon>
         {{ $t("actions.add-person") }}
@@ -41,7 +40,7 @@
 import EntitySearch from "../EntitySearch";
 export default {
   components: { "entity-search": EntitySearch },
-  name: "EventStudents",
+  name: "CourseOfferingStudents",
   data() {
     return {
       selectedValue: null,

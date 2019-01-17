@@ -5,18 +5,6 @@
     </v-card-title>
     <v-card-text>
       <form>
-        <v-autocomplete 
-          v-model="courseOffering.course" 
-          :items="availableCourses" 
-          return-object
-          item-value="id"
-          item-text="name"
-          v-bind:label="$t('courses.course')"
-          :disabled="editMode"
-          name="course"
-          v-validate="'required'"
-          v-bind:error-messages="errors.first('course')"
-          ></v-autocomplete>
         <!-- description -->
         <v-textarea
           v-model="courseOffering.description"
@@ -235,9 +223,7 @@ export default {
     save() {
       this.$validator.validateAll().then(() => {
         if (!this.errors.any()) {
-          // this.courseOffering.when = this.getTimestamp(this.date, this.time);
-          this.courseOffering.courseId = this.courseOffering.course.id;
-          
+          // this.courseOffering.when = this.getTimestamp(this.date, this.time);          
           this.$emit("save", this.courseOffering);
         }
       });

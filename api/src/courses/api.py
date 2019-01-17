@@ -202,12 +202,13 @@ def read_all_course_offerings():
     return jsonify(results)
 
 
-# @courses.route('/course_offerings/<course_offering_id>')
-# @jwt_required
-# # @authorize(["role.superuser", "role.public"])
-# def read_one_course_offering(course_offering_id):
-#     result = db.session.query(Course_Offering).filter_by(id=course_offering_id).first()
-#     return jsonify(course_offering_schema.dump(result))
+@courses.route('/course_offerings/<course_offering_id>')
+@jwt_required
+# @authorize(["role.superuser", "role.public"])
+def read_one_course_offering(course_offering_id):
+    result = course_offering_schema.dump(db.session.query(Course_Offering).filter_by(id=course_offering_id).first())
+    result['course'] = course_schema.dump(db.session.query(Course).filter_by(id=result['courseId']).first())
+    return jsonify(result)
 
 
 @courses.route('/course_offerings/<course_offering_id>', methods=['PATCH'])

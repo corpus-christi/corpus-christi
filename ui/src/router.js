@@ -131,6 +131,13 @@ const router = new VueRouter({
               meta: { authRequired: true },
               props: true,
               component: () => import("@/components/courses/CourseOfferingDetails")
+            },
+            {
+              name: "course-offering-students",
+              path: "students",
+              meta: { authRequired: true },
+              props: true,
+              component: () => import("@/components/courses/CourseOfferingStudents")
             }
           ]
         }

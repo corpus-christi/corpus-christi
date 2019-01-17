@@ -68,6 +68,7 @@
       "new-offering": "New Course Offering",
       "prerequisites": "Prerequisites",
       "reactivated": "Course unarchived",
+      "students": "Students",
       "title": "Title",
       "update-failed": "Failed to update course",
       "updated": "Course updated"
@@ -246,6 +247,7 @@
       "new-offering": "Nuevo Oferta de Curso",
       "prerequisites": "Prerrequisitos",
       "reactivated": "Curso desarchivado",
+      "students": "Estudiantes",
       "title": "T\u00edtulo",
       "update-failed": "Se fall\u00f3 a actualizar el curso",
       "updated": "Curso actualizado"

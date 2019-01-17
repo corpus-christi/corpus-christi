@@ -268,8 +268,7 @@ export default {
     saveCourseOffering(courseOffering) {
       this.courseOfferingDialog.saving = true;
       
-      const courseObject = courseOffering.course || [];
-      delete courseOffering.course;
+      courseOffering.courseId = this.course.id;
       
       if (this.courseOfferingDialog.editMode) {
         // Hang on to the ID of the record being updated.
@@ -303,11 +302,7 @@ export default {
           .post("/api/v1/courses/course_offerings", courseOffering)
           .then(resp => {
             console.log("ADDED", resp);
-            
-            let newOffering = resp.data;
-            newOffering.course = courseObject;
-      
-            this.courseOfferings.push(newOffering);
+            this.courseOfferings.push(resp.data);
             
             this.snackbar.text = this.$t("courses.added");
             this.snackbar.show = true;
