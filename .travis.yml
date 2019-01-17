@@ -21,7 +21,7 @@ matrix:
                   dist: "xenial"
                   sudo: true
                   env: 
-                        - FLASK_APP=api/cc-api.py
+                        - FLASK_APP=cc-api.py
                   install:
                         - pip install -r api/requirements.txt
                         # - pip install -U pytest
