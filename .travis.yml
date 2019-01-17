@@ -27,7 +27,7 @@ matrix:
                   script:
                         - echo "Hello World"
                         - ./api/reset-database.sh
-# reset database script (david)4
+# reset database script (david)5
 # run server side testing script (pytest)
 # create script by configuration and make file
 # install nginx??
