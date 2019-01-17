@@ -3,7 +3,7 @@
     <v-toolbar class="pa-1">
       <v-layout align-center justify-space-between fill-height>
         <v-flex md2>
-          <v-toolbar-title>{{ $t("assets.title") }}</v-toolbar-title>
+          <v-toolbar-title>{{ $t("events.teams.title") }}</v-toolbar-title>
         </v-flex>
         <v-flex md2>
           <v-text-field
@@ -30,11 +30,11 @@
           <v-btn
             color="primary"
             raised
-            v-on:click.stop="newAsset"
-            data-cy="add-asset"
+            v-on:click.stop="newTeam"
+            data-cy="add-team"
           >
             <v-icon dark left>add</v-icon>
-            {{ $t("assets.new") }}
+            {{ $t("events.teams.new") }}
           </v-btn>
         </v-flex>
       </v-layout>
@@ -43,16 +43,14 @@
     <v-data-table
       :rows-per-page-items="rowsPerPageItem"
       :headers="headers"
-      :items="visibleAssets"
+      :items="visibleTeams"
       :search="search"
       :loading="tableLoading"
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
-        <td class="hover-hand">{{ props.item.description }}</td>
-        <td class="hover-hand">
-          {{ getDisplayLocation(props.item.location) }}
-        </td>
+        <td class="hover-hand"
+          v-on:click="$router.push({ path: '/teams/' + props.item.id })">{{ props.item.description }}</td>
         <td>
           <template v-if="props.item.active">
             <v-tooltip bottom v-if="props.item.active">
@@ -62,7 +60,7 @@
                 small
                 color="primary"
                 slot="activator"
-                v-on:click="editAsset(props.item)"
+                v-on:click="editTeam(props.item)"
               >
                 <v-icon small>edit</v-icon>
               </v-btn>
@@ -123,29 +121,29 @@
     </v-snackbar>
 
     <!-- New/Edit dialog -->
-    <v-dialog v-model="assetDialog.show" max-width="500px">
-      <asset-form
-        v-bind:editMode="assetDialog.editMode"
-        v-bind:initialData="assetDialog.asset"
-        v-bind:saveLoading="assetDialog.saveLoading"
-        v-bind:addMoreLoading="assetDialog.addMoreLoading"
-        v-on:add-another="addAnotherAsset"
-        v-on:save="saveAsset"
-        v-on:cancel="cancelAsset"
+    <v-dialog v-model="teamDialog.show" max-width="500px">
+      <team-form
+        v-bind:editMode="teamDialog.editMode"
+        v-bind:initialData="teamDialog.team"
+        v-bind:saveLoading="teamDialog.saveLoading"
+        v-bind:addMoreLoading="teamDialog.addMoreLoading"
+        v-on:add-another="addAnotherTeam"
+        v-on:save="saveTeam"
+        v-on:cancel="cancelTeam"
       />
     </v-dialog>
 
     <!-- Archive dialog -->
     <v-dialog v-model="archiveDialog.show" max-width="350px">
       <v-card>
-        <v-card-text>{{ $t("assets.confirm-archive") }}</v-card-text>
+        <v-card-text>{{ $t("events.teams.confirm-archive") }}</v-card-text>
         <v-card-actions>
           <v-btn v-on:click="cancelArchive" color="secondary" flat data-cy="">{{
             $t("actions.cancel")
           }}</v-btn>
           <v-spacer></v-spacer>
           <v-btn
-            v-on:click="archiveAsset"
+            v-on:click="archiveTeam"
             color="primary"
             raised
             :loading="archiveDialog.loading"
@@ -159,23 +157,18 @@
 </template>
 
 <script>
-import AssetForm from "../../assets/AssetForm";
+import TeamForm from "./TeamForm";
 import { mapGetters } from "vuex";
 
 export default {
-  name: "EventAssets",
-  components: { "asset-form": AssetForm },
+  name: "TeamTable",
+  components: { "team-form": TeamForm },
   mounted() {
     this.tableLoading = true;
     let eventId = this.$route.params.event;
-    this.$http.get(`/api/v1/events/${eventId}?include_assets=1`).then(resp => {
-      this.event = resp.data;
-
-      if (this.event.assets) {
-        this.assets = this.event.assets.map(ev_as => ev_as.asset);
-        this.tableLoading = false;
-      }
-      // console.log(this.assets);
+    this.$http.get(`/api/v1/teams/`).then(resp => {
+      this.teams = resp.data;
+      this.tableLoading = false
     });
   },
 
@@ -188,17 +181,17 @@ export default {
         { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 }
       ],
       tableLoading: true,
-      assets: [],
-      assetDialog: {
+      teams: [],
+      teamDialog: {
         show: false,
         editMode: false,
         saveLoading: false,
         addMoreLoading: false,
-        asset: {}
+        team: {}
       },
       archiveDialog: {
         show: false,
-        assetId: -1,
+        teamId: -1,
         loading: false
       },
       search: "",
@@ -220,16 +213,11 @@ export default {
     headers() {
       return [
         {
-          text: this.$t("assets.description"),
+          text: this.$t("events.teams.description"),
           value: "description",
-          width: "45%"
+          width: "40%"
         },
-        {
-          text: this.$t("assets.location"),
-          value: "location_name",
-          width: "30%"
-        },
-        { text: this.$t("actions.header"), sortable: false, width: "25%" }
+        { text: this.$t("events.actions"), sortable: false, width: "20%" }
       ];
     },
 
@@ -241,87 +229,86 @@ export default {
       ];
     },
 
-    visibleAssets() {
+    visibleTeams() {
       if (this.viewStatus == "viewActive") {
-        return this.assets.filter(as => as.active);
+        return this.teams.filter(te => te.active);
       } else if (this.viewStatus == "viewArchived") {
-        return this.assets.filter(as => !as.active);
+        return this.teams.filter(te => !te.active);
       } else {
-        return this.assets;
+        return this.teams;
       }
     },
 
     ...mapGetters(["currentLanguageCode"])
   },
   methods: {
-    activateAssetDialog(asset = {}, editMode = false) {
-      this.assetDialog.editMode = editMode;
-      this.assetDialog.asset = asset;
-      this.assetDialog.show = true;
+    activateTeamDialog(team = {}, editMode = false) {
+      this.teamDialog.editMode = editMode;
+      this.teamDialog.team = team;
+      this.teamDialog.show = true;
     },
 
-    editAsset(asset) {
-      this.activateAssetDialog({ ...asset }, true);
+    editTeam(team) {
+      this.activateTeamDialog({ ...team }, true);
     },
 
-    activateArchiveDialog(assetId) {
+    activateArchiveDialog(teamId) {
       this.archiveDialog.show = true;
-      this.archiveDialog.assetId = assetId;
+      this.archiveDialog.teamId = teamId;
     },
 
-    confirmArchive(asset) {
-      this.activateArchiveDialog(asset.id);
+    confirmArchive(team) {
+      this.activateArchiveDialog(team.id);
     },
 
-    duplicate(asset) {
-      const copyAsset = JSON.parse(JSON.stringify(asset));
-      delete copyAsset.id;
-      this.activateAssetDialog(copyAsset);
+    duplicate(team) {
+      const copyTeam = JSON.parse(JSON.stringify(team));
+      delete copyTeam.id;
+      this.activateTeamDialog(copyTeam);
     },
 
-    archiveAsset() {
+    archiveTeam() {
       this.archiveDialog.loading = true;
-      const assetId = this.archiveDialog.assetId;
-      const idx = this.assets.findIndex(as => as.id === assetId);
+      const teamId = this.archiveDialog.teamId;
+      const idx = this.teams.findIndex(te => te.id === teamId);
       this.$http
-        .delete(`/api/v1/assets/${assetId}`)
+        .delete(`/api/v1/teams/${teamId}`)
         .then(resp => {
           console.log("ARCHIVE", resp);
-          this.assets[idx].active = false;
+          this.teams[idx].active = false;
           this.archiveDialog.loading = false;
           this.archiveDialog.show = false;
-          this.showSnackbar(this.$t("assets.asset-archived"));
+          this.showSnackbar(this.$t("events.teams.team-archived"));
         })
         .catch(err => {
           console.error("ARCHIVE FALURE", err.response);
           this.archiveDialog.loading = false;
           this.archiveDialog.show = false;
-          this.showSnackbar(this.$t("assets.error-archiving-asset"));
+          this.showSnackbar(this.$t("events.teams.error-archiving-team"));
         });
 
       // this.archiveDialog.show = false;
     },
 
-    unarchive(asset) {
-      const idx = this.assets.findIndex(as => as.id === asset.id);
-      const copyAsset = JSON.parse(JSON.stringify(asset));
-      asset.unarchiving = true;
-      copyAsset.active = true;
-      const patchId = copyAsset.id;
-      delete copyAsset.id;
-      delete copyAsset.location; //Temporary delete
+    unarchive(team) {
+      const idx = this.teams.findIndex(te => te.id === team.id);
+      const copyTeam = JSON.parse(JSON.stringify(team));
+      team.unarchiving = true;
+      copyTeam.active = true;
+      const patchId = copyTeam.id;
+      delete copyTeam.id;
       this.$http
-        .patch(`/api/v1/assets/${patchId}`, { active: true })
+        .patch(`/api/v1/teams/${patchId}`, { active: true })
         .then(resp => {
           console.log("UNARCHIVED", resp);
-          delete asset.unarchiving;
-          Object.assign(this.assets[idx], resp.data);
-          this.showSnackbar(this.$t("assets.asset-unarchived"));
+          delete team.unarchiving;
+          Object.assign(this.teams[idx], resp.data);
+          this.showSnackbar(this.$t("events.teams.team-unarchived"));
         })
         .catch(err => {
-          delete asset.unarchiving;
+          delete team.unarchiving;
           console.error("UNARCHIVE FALURE", err.response);
-          this.showSnackbar(this.$t("assets.error-unarchiving-asset"));
+          this.showSnackbar(this.$t("events.teams.error-unarchiving-team"));
         });
     },
 
@@ -329,93 +316,99 @@ export default {
       this.archiveDialog.show = false;
     },
 
-    newAsset() {
-      this.activateAssetDialog();
+    newTeam() {
+      this.activateTeamDialog();
     },
 
-    cancelAsset() {
-      this.assetDialog.show = false;
+    cancelTeam() {
+      this.teamDialog.show = false;
     },
 
-    saveAsset(asset) {
-      this.assetDialog.saveLoading = true;
-      asset.location_id = asset.location.id;
-      let newAsset = JSON.parse(JSON.stringify(asset));
-      delete newAsset.location;
-      delete newAsset.id;
-      if (this.assetDialog.editMode) {
-        const assetId = asset.id;
-        const idx = this.assets.findIndex(as => as.id === asset.id);
-        delete asset.id;
+    clearTeam() {
+      this.teamDialog = {
+        show: false,
+        editMode: false,
+        saveLoading: false,
+        addMoreLoading: false,
+        team: {}
+      }
+    },
+
+    saveTeam(team) {
+      this.teamDialog.saveLoading = true;
+      if (this.teamDialog.editMode) {
+        const teamId = team.id;
+        const idx = this.teams.findIndex(te => te.id === team.id);
+        delete team.id;
         this.$http
-          .put(`/api/v1/assets/${assetId}`, newAsset)
+          .patch(`/api/v1/teams/${teamId}`, {
+            description: team.description
+          })
           .then(resp => {
             console.log("EDITED", resp);
-            Object.assign(this.assets[idx], resp.data);
-            this.assetDialog.show = false;
-            this.assetDialog.saveLoading = false;
-            this.showSnackbar(this.$t("assets.asset-edited"));
+            Object.assign(this.teams[idx], resp.data);
+            this.teamDialog.show = false;
+            this.teamDialog.saveLoading = false;
+            this.showSnackbar(this.$t("events.teams.team-edited"));
+            this.clearTeam()
           })
           .catch(err => {
             console.error("PUT FALURE", err.response);
-            this.assetDialog.saveLoading = false;
-            this.showSnackbar(this.$t("assets.error-editing-asset"));
+            this.teamDialog.saveLoading = false;
+            this.showSnackbar(this.$t("events.teams.error-editing-team"));
           });
       } else {
+        let newTeam = JSON.parse(JSON.stringify(team));
+        delete newTeam.id;
+        delete newTeam.active;
+        delete newTeam.members
+        // for(var i=0; i<newTeam.members.length; i++) {
+        //   newTeam.members[i] = {
+        //     active: true,
+        //     member: newTeam.members[i]
+        //   }
+        // }
+        console.log(newTeam)
         this.$http
-          .post("/api/v1/assets", newAsset)
+          .post("/api/v1/teams/", newTeam)
           .then(resp => {
             console.log("ADDED", resp);
-            this.assets.push(resp.data);
-            this.assetDialog.show = false;
-            this.assetDialog.saveLoading = false;
-            this.showSnackbar(this.$t("assets.asset-added"));
+            this.teams.push(resp.data);
+            this.teamDialog.show = false;
+            this.teamDialog.saveLoading = false;
+            this.showSnackbar(this.$t("events.teams.team-added"));
+            this.clearTeam()
           })
           .catch(err => {
             console.error("POST FAILURE", err.response);
-            this.assetDialog.saveLoading = false;
-            this.showSnackbar(this.$t("assets.error-adding-asset"));
+            this.teamDialog.saveLoading = false;
+            this.showSnackbar(this.$t("events.teams.error-adding-team"));
           });
       }
     },
 
-    addAnotherAsset(asset) {
-      this.assetDialog.addMoreLoading = true;
-      asset.location_id = asset.location.id;
-      let newAsset = JSON.parse(JSON.stringify(asset));
-      delete newAsset.location;
+    addAnotherTeam(team) {
+      this.teamDialog.addMoreLoading = true;
+      let newTeam = JSON.parse(JSON.stringify(team));
       this.$http
-        .post("/api/v1/assets", newAsset)
+        .post("/api/v1/teams", newTeam)
         .then(resp => {
           console.log("ADDED", resp);
-          this.assets.push(resp.data);
-          this.assetDialog.show = false;
-          this.assetDialog.saveLoading = false;
-          this.showSnackbar(this.$t("assets.asset-added"));
+          this.teams.push(resp.data);
+          this.teamDialog.show = false;
+          this.teamDialog.saveLoading = false;
+          this.showSnackbar(this.$t("events.teams.team-added"));
         })
         .catch(err => {
           console.error("FAILURE", err.response);
-          this.assetDialog.saveLoading = false;
-          this.showSnackbar(this.$t("assets.error-adding-asset"));
+          this.teamDialog.saveLoading = false;
+          this.showSnackbar(this.$t("events.teams.error-adding-team"));
         });
     },
 
     showSnackbar(message) {
       this.snackbar.text = message;
       this.snackbar.show = true;
-    },
-
-    getDisplayLocation(location, length = 20) {
-      if (location && location.description) {
-        let name = location.description;
-        if (name && name.length && name.length > 0) {
-          if (name.length > length) {
-            return `${name.substring(0, length - 3)}...`;
-          }
-          return name;
-        }
-      }
-      return name;
     },
 
     onResize() {
