@@ -500,7 +500,7 @@ def query_address_with_params(auth_client, query_dict):
 def test_read_all_addresses_with_query(auth_client):
     # GIVEN a DB with a collection of addresses.
     Country.load_from_file()
-    count = random.randint(3, 6)
+    count = random.randint(9, 18)
     create_multiple_areas(auth_client.sqla, count)
     create_multiple_addresses(auth_client.sqla, count)
 
@@ -510,31 +510,31 @@ def test_read_all_addresses_with_query(auth_client):
         addresses = auth_client.sqla.query(Address).all()
         address = random.choice(addresses)
 
-        if flip():
+        if i % 9 == 0:
             query_string['name'] = address.name
 
-        if flip():
+        if i % 9 == 1:
             query_string['address'] = address.address
 
-        if flip():
+        if i % 9 == 2:
             query_string['city'] = address.city
         
-        if flip():
+        if i % 9 == 3:
             query_string['area_id'] = address.area_id
         
-        if flip():
+        if i % 9 == 4:
             query_string['country_code'] = address.country_code
 
-        if flip():
+        if i % 9 == 5:
             query_string['lat_start'] = address.latitude - 1
 
-        if flip():
+        if i % 9 == 6:
             query_string['lat_end'] = address.latitude + 1
 
-        if flip():
+        if i % 9 == 7:
             query_string['lon_start'] = address.longitude - 1
         
-        if flip():
+        if i % 9 == 8:
             query_string['lon_end'] = address.longitude + 1
 
         filtered_results = query_address_with_params(auth_client, query_string)
