@@ -1,6 +1,5 @@
 sudo: true
 os: ubuntu
-#haha chris was here!!!!
 ubuntu: 
         - 18.04
 env:
@@ -27,8 +26,8 @@ matrix:
                   python: "3.7"
                   dist: "xenial"
                   sudo: true
-                  install:
-                        - pip install -r api/requirements.txt
+                  #install:
+                          #- pip install -r api/requirements.txt
                   script:
                         - echo "Hello World"
 # reset database script (david) 
