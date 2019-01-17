@@ -432,8 +432,7 @@ def test_delete_member(auth_client, db):
 @pytest.mark.smoke
 def test_create_attendance(auth_client):
     # GIVEN a database with some members and meetings
-    create_multiple_people(auth_client.sqla, 4)
-    create_multiple_managers(auth_client.sqla, 2, "Manager")
+    generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, 4)
     count_meetings = random.randint(15, 20)
     count_members = random.randint(3, 5)
@@ -475,19 +474,26 @@ def test_create_attendance(auth_client):
 @pytest.mark.smoke
 def test_read_all_attendance(auth_client):
     # GIVEN a database with some attendances
-    create_multiple_
+    generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, 4)
     create_multiple_people(auth_client.sqla, 4)
     create_multiple_members(auth_client.sqla, 4)
     create_multiple_meetings(auth_client.sqla, 4)
     create_attendance(auth_client.sqla, 0.75)
-    attendances = auth_client.sqla.query(Attendance).all()
+    attendances_count = auth_client.sqla.query(Attendance).count()
     # WHEN reading all of them
-    resp = auth_client.get(url_for('groups.create_group'))
+    resp = auth_client.get(url_for('groups.read_all_attendance'))
     # THEN we should get the correct code
-    assert len(resp.json) == len(attendances)
+    assert resp.status_code == 200
     # THEN we should get the correct count
+    assert len(resp.json) == attendances_count
     # THEN each one of them should correspond to something in the database
+    for attendance in resp.json:
+        assert auth_client.sqla.query(Attendance).filter( \
+                Attendance.member_id == attendance['member_id'], \
+                Attendance.meeting_id == attendance['meeting_id'], \
+                ).count() == 1
+        
 
 
 @pytest.mark.xfail()
