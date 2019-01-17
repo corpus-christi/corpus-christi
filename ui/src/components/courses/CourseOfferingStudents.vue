@@ -27,13 +27,18 @@
         <td>{{ props.item.lastName }}</td>
         <td>{{ props.item.email }}</td>
         <td>{{ props.item.phone }}</td>
-        <td></td>
+        <td>
+          <StudentsAdminActions
+            v-bind:student="props.item"
+            display-context="compact"
+            v-on:action="dispatchAction($event, props.item)"
+          />
+        </td>
       </template>
     </v-data-table>
     
     <v-dialog persistent scrollable v-model="newStudentDialog.show" max-width="500px">
       <StudentsForm
-        v-bind:editMode="newStudentDialog.editMode"
         v-bind:initialData="newStudentDialog.newStudent"
         v-bind:saving="newStudentDialog.saving"
         v-on:cancel="cancelNewStudent"
@@ -46,11 +51,13 @@
 <script>
 import EntitySearch from "../EntitySearch";
 import StudentsForm from "./StudentsForm";
+import StudentsAdminActions from "./actions/StudentsAdminActions";
 
 export default {
   components: { 
     "entity-search": EntitySearch,
-    StudentsForm
+    StudentsForm,
+    StudentsAdminActions
   },
   name: "CourseOfferingStudents",
   data() {
@@ -63,8 +70,7 @@ export default {
       newStudentDialog: {
         show: false,
         newStudent: {},
-        saving: false,
-        editMode: false
+        saving: false
       }
       
     };
@@ -91,9 +97,8 @@ export default {
   },
 
   methods: {
-    activateNewStudentDialog(newStudent = {}, editMode = false) {
+    activateNewStudentDialog(newStudent = {}) {
       this.newStudentDialog.show = true;
-      this.newStudentDialog.editMode = editMode;
       this.newStudentDialog.newStudent = newStudent;
     },
     editStudentDialog(newStudent) {
@@ -110,35 +115,31 @@ export default {
       
       const personObject = newStudent;
       newStudent = {};
-      
-      if (this.newStudentDialog.editMode) {
-        //edit
-      } else {
-        newStudent.confirmed = true;
-        newStudent.offeringId = this.offeringId;
-        newStudent.studentId = personObject.id;
-        newStudent.active = true;
+
+      newStudent.confirmed = true;
+      newStudent.offeringId = this.offeringId;
+      newStudent.studentId = personObject.id;
+      newStudent.active = true;
         
-        this.$http
-          .post(`/api/v1/courses/course_offerings/${newStudent.studentId}`, newStudent)
-          .then(resp => {
-            console.log("ADDED", resp);
-            this.students.push(resp.data);
-            this.people.push(personObject);
-            
-            // this.snackbar.text = this.$t("courses.added");
-            // this.snackbar.show = true;
-          })
-          .catch(err => {
-             console.error("FAILURE", err.response);
-             this.snackbar.text = this.$t("courses.add-failed");
-             this.snackbar.show = true;
-          })
-          .finally(() => {
-            this.newStudentDialog.show = false;
-            this.newStudentDialog.saving = false;
-          });
-      }
+      this.$http
+        .post(`/api/v1/courses/course_offerings/${newStudent.studentId}`, newStudent)
+        .then(resp => {
+          console.log("ADDED", resp);
+          this.students.push(resp.data);
+          this.people.push(personObject);
+          
+          // this.snackbar.text = this.$t("courses.added");
+          // this.snackbar.show = true;
+        })
+        .catch(err => {
+           console.error("FAILURE", err.response);
+           this.snackbar.text = this.$t("courses.add-failed");
+           this.snackbar.show = true;
+        })
+        .finally(() => {
+          this.newStudentDialog.show = false;
+          this.newStudentDialog.saving = false;
+        });
     }
   },
 

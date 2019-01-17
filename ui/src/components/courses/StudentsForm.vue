@@ -26,7 +26,7 @@
       <v-btn
         color="primary"
         raised
-        :disabled="saving"
+        :disabled="Object.keys(newStudent).length == 0"
         :loading="saving"
         v-on:click="save"
         data-cy="studentform-save"
@@ -54,7 +54,7 @@ export default {
   
   computed: {
     title() {
-      return this.editMode ? this.$t("actions.edit") : this.$t("courses.new-offering");
+      return this.$t("courses.new-offering");
     },
     
     ...mapGetters(["currentLanguageCode"])
@@ -72,10 +72,6 @@ export default {
   },
   
   props: {
-    editMode: {
-      type: Boolean,
-      required: true
-    },
     initialData: {
       type: Object,
       required: true
