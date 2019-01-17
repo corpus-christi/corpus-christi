@@ -155,7 +155,7 @@
 </template>
 
 <script>
-import TeamForm from "./TeamForm";
+import TeamForm from "../../teams/TeamForm";
 import { mapGetters } from "vuex";
 
 export default {

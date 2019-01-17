@@ -3,7 +3,7 @@
     <v-toolbar app>
       <v-toolbar-side-icon
         v-on:click="toggleNavDrawer"
-        data-cy="open-navigation"
+        data-cy="toggle-nav-drawer"
       ></v-toolbar-side-icon>
 
       <v-toolbar-title class="headline text-uppercase">
@@ -12,8 +12,8 @@
 
       <v-spacer></v-spacer>
 
-      <AccountMenu></AccountMenu>
-      <LocaleMenu></LocaleMenu>
+      <AccountMenu data-cy="account-menu"></AccountMenu>
+      <LocaleMenu data-cy="cur-locale"></LocaleMenu>
     </v-toolbar>
 
     <NavDrawer ref="drawer"></NavDrawer>

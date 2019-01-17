@@ -23,6 +23,9 @@ events:
   event-location:
     en: Event Location
     es: Ubicación de Evento
+  location:
+    en: Location
+    es: Ubicación
   actions:
     en: Actions
     es: Comportamiento

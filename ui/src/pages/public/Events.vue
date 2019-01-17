@@ -1,5 +1,5 @@
 <template>
-  <v-container grid-list-md>
+  <v-container grid-list-md> 
     <v-layout layout row wrap>
       <v-flex xs12 sm6 md4 lg4 v-for="event in events" v-bind:key="event.id">
         <EventCard :event="event"></EventCard>
@@ -24,7 +24,7 @@ export default {
   },
   mounted() {
     this.pageLoaded = false;
-    this.$http.get(`/api/v1/events/?return_group=all`).then(resp => {
+    this.$http.get(`/api/v1/events/?return_group=all&sort=start`).then(resp => {
       this.events = resp.data;
       console.log(resp.data);
       this.pageLoaded = true;

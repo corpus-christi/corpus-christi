@@ -8,8 +8,7 @@ from flask_jwt_extended import create_access_token
 from flask import jsonify
 
 #Needed for pruning events
-from sqlalchemy import update
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from src import create_app
 from src import db
@@ -21,10 +20,9 @@ from src.events.create_event_data import create_events_test_data
 from src.places.test_places import create_multiple_areas, create_multiple_addresses, create_multiple_locations
 from src.places.models import Country
 from src.courses.models import Course, Prerequisite
-from src.courses.test_courses import create_multiple_courses,\
-    create_multiple_course_offerings, create_multiple_prerequisites,\
+from src.courses.test_courses import create_multiple_courses, create_multiple_course_offerings,\
     create_multiple_diplomas, create_multiple_students, create_class_meetings,\
-    create_diploma_awards, create_class_attendance
+    create_diploma_awards, create_class_attendance, create_multiple_prerequisites
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 
@@ -84,7 +82,7 @@ def load_all():
     create_multiple_students(db.session, 30)
     create_class_meetings(db.session, 30)
     # create_diploma_awards(db.session, 30)
-    create_class_attendance(db.session, 30)
+    # create_class_attendance(db.session, 30)
 
 
 @data_cli.command('test', help='Load everything')
@@ -147,11 +145,12 @@ app.cli.add_command(user_cli)
 
 maintain_cli = AppGroup('maintain', help="Mantaining the database.")
 
-@maintain_cli.command('prune-events', help="Sets events that have ended to inactive")
+@maintain_cli.command('prune-events', help="Sets events that have ended before <pruningOffset> to inactive")
 def prune_events():
     events = db.session.query(Event).filter_by(active=True).all()
+    pruningOffset = datetime.now() - timedelta(days=30)
     for event in events:
-        if(event.end < datetime.now()):
+        if(event.end < pruningOffset):
             event.active = False
     db.session.commit()
 

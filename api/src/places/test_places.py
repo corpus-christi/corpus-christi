@@ -1,4 +1,3 @@
-
 import math
 import random
 
@@ -14,7 +13,9 @@ from .. import db
 from .models import Location, Address, Area, Country, AreaSchema, LocationSchema, AddressSchema
 
 
-@pytest.mark.slow
+area_schema = AreaSchema()
+
+@pytest.mark.smoke
 @pytest.mark.parametrize('code, name', [('US', 'United States'),
                                         ('EC', 'Ecuador'),
                                         ('TH', 'Thailand')])
@@ -150,36 +151,59 @@ def prep_database(sqla):
 def test_create_area(auth_client):
     # GIVEN an empty database
     Country.load_from_file()
-    count = random.randint(5, 15)
-    expected_count = count
-    # WHEN we create a random number of new areas
+    count = random.randint(3, 6)
+
+    # GIVEN areas with good data
     for i in range(count):
-        area = area_factory(auth_client.sqla)
-        expected_status_code = 201
-        if flip():
-            area['name'] = None
-            expected_status_code = 422
-            expected_count -= 1
-        elif flip():
-            area['country_code'] = None
-            expected_status_code = 422
-            expected_count -= 1
+        new_area = area_factory(auth_client.sqla)
     
-        resp = auth_client.post(url_for('places.create_area'), json=area)
-        assert resp.status_code == expected_status_code
-    # THEN we end up with the proper number of areas in the database
-    assert auth_client.sqla.query(Area).count() == expected_count
+        # WHEN areas are attempted to be created
+        resp = auth_client.post(url_for('places.create_area'), json = new_area)
+        
+        # THEN expect creates to run OK
+        assert resp.status_code == 201
+    
+    # THEN expect rows to be created
+    assert auth_client.sqla.query(Area).count() == count
+
+
+@pytest.mark.smoke
+def test_create_area_invalid(auth_client):
+    # GIVEN an empty database
+    Country.load_from_file()
+    count = random.randint(3, 6)
+
+    # GIVEN new areas with bad data
+    for i in range(count):
+        new_area = area_factory(auth_client.sqla)
+        if flip():
+            new_area['name'] = None
+        if flip():
+            new_area['country_code'] = None
+        if not (new_area['name'] is None or new_area['country_code'] is None):
+            new_area[fake.word()] = fake.word()
+        
+        # WHEN areas with bad data are attempted to be created
+        resp = auth_client.post(url_for('places.create_area'), json = new_area)
+
+        # THEN expect the request to be unprocessable
+        assert resp.status_code == 422
+
+    # THEN expect no rows to be created
+    assert auth_client.sqla.query(Area).count() == 0
+
 
 @pytest.mark.smoke
 def test_read_area(auth_client):
-    # GIVEN a DB with a collection areas.
+    # GIVEN an empty DB
+    # WHEN we add a collection of areas
     Country.load_from_file()
-    count = random.randint(3, 11)
+    count = random.randint(3, 6)
     create_multiple_areas(auth_client.sqla, count)
 
     # WHEN we ask for them all
     areas = auth_client.sqla.query(Area).all()
-    # THEN we exepct the same number
+    # THEN we expect the same number
     assert db.session.query(Area).count() == count
 
     # WHEN we request each of them from the server
@@ -190,11 +214,13 @@ def test_read_area(auth_client):
         assert resp.json['name'] == area.name
         assert resp.json['country_code'] == area.country_code
 
-@pytest.mark.slow
+
+@pytest.mark.smoke
 def test_read_all_areas(auth_client):
-    # GIVEN a DB with a collection of areas.
+    # GIVEN an empty DB
+    # WHEN we add a collection of areas.
     Country.load_from_file()
-    count = random.randint(3, 11)
+    count = random.randint(3, 6)
     create_multiple_areas(auth_client.sqla, count)
     assert count > 0
     
@@ -204,35 +230,159 @@ def test_read_all_areas(auth_client):
     assert resp.status_code == 200
     assert len(resp.json) == count
 
+
 @pytest.mark.smoke
 def test_replace_area(auth_client):
-    # GIVEN a DB with a collection areas.
+    # GIVEN a set of areas
     Country.load_from_file()
-    count = random.randint(3, 11)
+    count = random.randint(3, 6)
     create_multiple_areas(auth_client.sqla, count)
 
-    # WHEN we grab one area (an a list of country_codes)
     areas = auth_client.sqla.query(Area).all()
-    country_codes = auth_client.sqla.query(Country.code).all()
-    for _ in range(count):
-        expected_status_code = 200
-        area = random.choice(areas)
-        print(area)
-        # WHEN we modify that area
-        if flip():
-            area['name'] = Faker().last_name
-        elif flip():
-            area['country_code'] = random.choice(country_codes['code'])
+
+    # GIVEN new areas with good data
+    for area in areas:
+        new_area = area_factory(auth_client.sqla)
+
+        # WHEN areas are requested to be replaced with new areas
+        resp = auth_client.put(url_for('places.replace_area', area_id = area.id), json = new_area)
+
+        # THEN expect request to run OK
+        assert resp.status_code == 200
+
+        # THEN expect areas to be replaced
+        assert resp.json['id'] == area.id
+        if new_area['name'] != area.name:
+            assert resp.json['name'] != area.name
         else:
-            if flip():
-                area['name'] = None
-            else:
-                area['county_code'] = None
-            expected_status_code = 422
-    # WHEN we request each of them from the server
-        assert resp.status_code == expected_status_code
-        assert resp.json['name'] == area.name
-        assert resp.json['country_code'] == area.country_code
+            assert resp.json['name'] == area.name
+        if new_area['country_code'] != area.country_code:
+            assert resp.json['country_code'] != area.country_code
+        else:
+            assert resp.json['country_code'] == area.country_code
+
+
+@pytest.mark.smoke
+def test_replace_area_invalid(auth_client):
+    # GIVEN a set of areas
+    Country.load_from_file()
+    count = random.randint(3, 6)
+    create_multiple_areas(auth_client.sqla, count)
+    
+    areas = auth_client.sqla.query(Area).all()
+
+    # GIVEN new areas with bad data
+    for area in areas:
+        new_area = area_factory(auth_client.sqla)
+        if flip():
+            new_area['name'] = None
+        if flip():
+            new_area['country_code'] = None
+        if not (new_area['name'] is None or new_area['country_code'] is None):
+            new_area[fake.word()] = fake.word()
+
+        # WHEN areas are requested to be replaced with bad areas
+        resp = auth_client.put(url_for('places.replace_area', area_id = area.id), json = new_area)
+
+        # THEN expect request to be unprocessable
+        assert resp.status_code == 422
+
+
+@pytest.mark.smoke
+def test_update_area(auth_client):
+    # GIVEN a set of areas
+    Country.load_from_file()
+    count = random.randint(3, 6)
+    create_multiple_areas(auth_client.sqla, count)
+    
+    areas = auth_client.sqla.query(Area).all()
+
+    # GIVEN good modifcation data
+    for area in areas:
+        mod = {}
+        new_area = area_factory(auth_client.sqla)
+        flips = (flip(), flip())
+        if flips[0]:
+            mod['name'] = new_area['name']
+        if flips[1]:
+            mod['country_code'] = new_area['country_code']
+
+        # WHEN areas are requested to be updated
+        resp = auth_client.patch(url_for('places.update_area', area_id = area.id), json = mod)
+
+        # THEN expect request run OK
+        assert resp.status_code == 200
+
+        # THEN expect rows to be updated
+        assert resp.json['id'] == area.id
+        if flips[0] and mod['name'] != area.name:
+            assert resp.json['name'] != area.name
+        else:
+            assert resp.json['name'] == area.name
+        if flips[1] and mod['country_code'] != area.country_code:
+            assert resp.json['country_code'] != area.country_code
+        else:
+            assert resp.json['country_code'] == area.country_code
+
+
+@pytest.mark.smoke
+def test_update_area_invalid(auth_client):
+    # GIVEN a set of areas
+    Country.load_from_file()
+    count = random.randint(3, 6)
+    create_multiple_areas(auth_client.sqla, count)
+    
+    areas = auth_client.sqla.query(Area).all()
+
+    # GIVEN bad modification data
+    for area in areas:
+        mod = {}
+        flips = (flip(), flip(), flip())
+        if flips[0]:
+            mod['name'] = None
+        if flips[1]:
+            mod['country_code'] = None
+        if flips[2] or not (flips[0] or flips[1]):
+            mod[fake.word()] = fake.word()
+
+        # WHEN areas are requested to be updated with bad data
+        resp = auth_client.patch(url_for('places.update_area', area_id = area.id), json = mod)
+
+        # THEN expect request to be unprocessable
+        assert resp.status_code == 422
+
+
+@pytest.mark.smoke
+def test_delete_area(auth_client):
+    # GIVEN a set of areas
+    Country.load_from_file()
+    count = random.randint(3, 6)
+    create_multiple_areas(auth_client.sqla, count)
+
+    areas = auth_client.sqla.query(Area).all()
+    
+    # WHEN areas are deleted
+    deleted = 0
+    for area in areas:
+        resp = auth_client.delete(url_for('places.delete_area', area_id = area.id))
+        deleted += 1
+
+        # THEN for each delete expect delete to run OK
+        assert resp.status_code == 204
+
+        # THEN expect the area to be deleted
+        assert auth_client.sqla.query(Area).count() == count - deleted
+
+
+@pytest.mark.smoke
+def test_delete_area_no_exist(auth_client):
+    # GIVEN an empty database
+    
+    # WHEN an area is requested to be deleted
+    resp = auth_client.delete(url_for('places.delete_area', area_id = random.randint(1, 8)))
+    
+    # THEN expect row not to be found
+    assert resp.status_code == 404
 
 
 # ---- Address
@@ -241,7 +391,7 @@ def test_replace_area(auth_client):
 def test_create_address(auth_client):
     # GIVEN an empty database
     Country.load_from_file()
-    count = random.randint(5, 15)
+    count = random.randint(3, 6)
     create_multiple_areas(auth_client.sqla, count)
     
     # WHEN we create a random number of new addresses
@@ -251,12 +401,11 @@ def test_create_address(auth_client):
     # THEN we end up with the proper number of addresses in the database
     assert auth_client.sqla.query(Address).count() == count
 
-
 @pytest.mark.smoke
 def test_create_address_invalid(auth_client):
     # GIVEN a set of areas
     Country.load_from_file()
-    count = random.randint(5, 15)
+    count = random.randint(3, 6)
     create_multiple_areas(auth_client.sqla, count)
     
     # WHEN a random number of addresses with bad data are requested to be created
@@ -271,12 +420,11 @@ def test_create_address_invalid(auth_client):
     # THEN expect there to be no addresses created
     assert len(auth_client.sqla.query(Address).all()) == 0
 
-
 @pytest.mark.smoke
 def test_read_address(auth_client):
     # GIVEN a DB with a collection addresses.
     Country.load_from_file()
-    count = random.randint(3, 11)
+    count = random.randint(3, 6)
     create_multiple_areas(auth_client.sqla, count)
     create_multiple_addresses(auth_client.sqla, count)
 
@@ -299,14 +447,13 @@ def test_read_address(auth_client):
         assert resp.json['longitude'] == address.longitude
 
 
-@pytest.mark.slow
+@pytest.mark.smoke
 def test_read_all_addresses(auth_client):
     # GIVEN a DB with a collection of addresses.
     Country.load_from_file()
-    count = random.randint(3, 11)
+    count = random.randint(3, 6)
     create_multiple_areas(auth_client.sqla, count)
     create_multiple_addresses(auth_client.sqla, count)
-    assert count > 0
 
     # WHEN we request all addresses from the server
     resp = auth_client.get(url_for('places.read_all_addresses', locale='en-US'))
@@ -315,11 +462,115 @@ def test_read_all_addresses(auth_client):
     assert len(resp.json) == count
 
 
+def query_address_with_params(auth_client, query_dict):
+    result = auth_client.sqla.query(Address)
+    print(query_dict.keys())
+    if 'name' in query_dict.keys():
+        result = result.filter_by(name=query_dict['name'])
+
+    if 'address' in query_dict.keys():
+        result = result.filter_by(address=query_dict['address'])
+
+    if 'city' in query_dict.keys():
+        result = result.filter_by(city=query_dict['city'])
+
+    if 'area_id' in query_dict.keys():
+        result = result.filter_by(area_id=query_dict['area_id'])   
+
+    if 'country_code' in query_dict.keys():
+        result = result.filter_by(country_code=query_dict['country_code'])
+
+    if 'lat_start' in query_dict.keys():
+        result = result.filter(Address.latitude > query_dict['lat_start'])
+
+    if 'lat_end' in query_dict.keys():
+        result = result.filter(Address.latitude < query_dict['lat_end'])
+
+    if 'lon_start' in query_dict.keys():
+        result = result.filter(Address.longitude > query_dict['lon_start'])
+
+    if 'lon_end' in query_dict.keys():
+        result = result.filter(Address.longitude < query_dict['lon_end']) 
+    print(result)
+    result = result.all()
+
+    return result
+
+@pytest.mark.smoke
+def test_read_all_addresses_with_query(auth_client):
+    # GIVEN a DB with a collection of addresses.
+    Country.load_from_file()
+    count = random.randint(9, 18)
+    create_multiple_areas(auth_client.sqla, count)
+    create_multiple_addresses(auth_client.sqla, count)
+
+    for i in range(count):
+        # WHEN queried for all addresses matching a flag
+        query_string = dict()
+        addresses = auth_client.sqla.query(Address).all()
+        address = random.choice(addresses)
+
+        if i % 9 == 0:
+            query_string['name'] = address.name
+
+        if i % 9 == 1:
+            query_string['address'] = address.address
+
+        if i % 9 == 2:
+            query_string['city'] = address.city
+        
+        if i % 9 == 3:
+            query_string['area_id'] = address.area_id
+        
+        if i % 9 == 4:
+            query_string['country_code'] = address.country_code
+
+        if i % 9 == 5:
+            query_string['lat_start'] = address.latitude - 1
+
+        if i % 9 == 6:
+            query_string['lat_end'] = address.latitude + 1
+
+        if i % 9 == 7:
+            query_string['lon_start'] = address.longitude - 1
+        
+        if i % 9 == 8:
+            query_string['lon_end'] = address.longitude + 1
+
+        filtered_results = query_address_with_params(auth_client, query_string)
+
+        # WHEN we request all addresses from the server
+        resp = auth_client.get(url_for('places.read_all_addresses'), query_string=query_string)
+        # THEN the count matches the number of entries in the database
+        assert resp.status_code == 200
+        assert len(filtered_results) == len(resp.json)
+
+
+        # assert len(resp.json) == 1
+
+        # for event in resp.json:
+        #     if 'return_group' in query_string:
+        #         if query_string['return_group'] == 'inactive':
+        #             assert event['active'] == False
+        #     else:
+        #         assert event['active'] == True
+
+        #     if 'start' in query_string:
+        #         assert datetime.datetime.strptime(event['start'][:event['start'].index('T')], '%Y-%m-%d') >= datetime.datetime.strptime(query_string['start'], '%Y-%m-%d')
+        #     if 'end' in query_string:
+        #         assert datetime.datetime.strptime(event['end'][:event['end'].index('T')], '%Y-%m-%d') <= datetime.datetime.strptime(query_string['end'], '%Y-%m-%d')
+
+        #     if 'title' in query_string:
+        #         assert query_string['title'].lower() in event['title'].lower()
+
+        #     if 'location_id' in query_string:
+        #         assert event['location_id'] == query_string['location_id']
+
 @pytest.mark.smoke
 def test_replace_address(auth_client):
     # GIVEN a set of areas and addresses
     Country.load_from_file()
-    count = random.randint(3, 11)
+    count = random.randint(3, 6)
     create_multiple_areas(auth_client.sqla, count)
     create_multiple_addresses(auth_client.sqla, count)
 
@@ -370,7 +621,7 @@ def test_replace_address(auth_client):
 def test_replace_address_invalid(auth_client):
     # GIVEN a set of areas and addresses
     Country.load_from_file()
-    count = random.randint(3, 11)
+    count = random.randint(3, 6)
     create_multiple_areas(auth_client.sqla, count)
     create_multiple_addresses(auth_client.sqla, count)
 
@@ -392,7 +643,7 @@ def test_replace_address_invalid(auth_client):
 def test_update_address(auth_client):
     # GIVEN a set of areas and addresses
     Country.load_from_file()
-    count = random.randint(3, 11)
+    count = random.randint(3, 6)
     create_multiple_areas(auth_client.sqla, count)
     create_multiple_addresses(auth_client.sqla, count)
 
@@ -459,7 +710,7 @@ def test_update_address(auth_client):
 def test_update_address_invalid(auth_client):
     # GIVEN a set of areas
     Country.load_from_file()
-    count = random.randint(3, 11)
+    count = random.randint(3, 6)
     create_multiple_areas(auth_client.sqla, count)
 
     # GIVEN modification data with bad data
@@ -493,7 +744,7 @@ def test_update_address_invalid(auth_client):
 def test_delete_address(auth_client):
     # GIVEN a set of areas and addresses
     Country.load_from_file()
-    count = random.randint(3, 11)
+    count = random.randint(3, 6)
     create_multiple_areas(auth_client.sqla, count)
     create_multiple_addresses(auth_client.sqla, count)
 
@@ -531,7 +782,7 @@ def test_delete_address_no_exist(auth_client):
 def test_create_location(auth_client):
     # GIVEN an empty database
     Country.load_from_file()
-    count = random.randint(5, 15)
+    count = random.randint(3, 6)
     create_multiple_areas(auth_client.sqla, count)
     create_multiple_addresses(auth_client.sqla, count)
 
@@ -547,7 +798,7 @@ def test_create_location(auth_client):
 def test_create_location_invalid(auth_client):
     # GIVEN a set of areas and addresses
     Country.load_from_file()
-    count = random.randint(5, 15)
+    count = random.randint(3, 6)
     create_multiple_areas(auth_client.sqla, count)
     create_multiple_addresses(auth_client.sqla, count)
 
@@ -566,11 +817,11 @@ def test_create_location_invalid(auth_client):
     assert auth_client.sqla.query(Location).count() == 0
 
 
-@pytest.mark.slow
+@pytest.mark.smoke
 def test_read_all_locations(auth_client):
     # GIVEN a DB with a collection of addresses.
     Country.load_from_file()
-    count = random.randint(3, 11)
+    count = random.randint(3, 6)
     create_multiple_areas(auth_client.sqla, count)
     create_multiple_addresses(auth_client.sqla, count)
     create_multiple_locations(auth_client.sqla, count)
@@ -587,7 +838,7 @@ def test_read_all_locations(auth_client):
 def test_read_one_location(auth_client):
     # GIVEN a DB with a collection locations.
     Country.load_from_file()
-    count = random.randint(3, 11)
+    count = random.randint(3, 6)
     create_multiple_areas(auth_client.sqla, count)
     create_multiple_addresses(auth_client.sqla, count)
     create_multiple_locations(auth_client.sqla, count)
@@ -610,7 +861,7 @@ def test_read_one_location(auth_client):
 def test_replace_location(auth_client):
     # GIVEN a set of areas, addresses, and locations
     Country.load_from_file()
-    count = random.randint(3, 11)
+    count = random.randint(3, 6)
     create_multiple_areas(auth_client.sqla, count)
     create_multiple_addresses(auth_client.sqla, count)
     create_multiple_locations(auth_client.sqla, count)
@@ -645,7 +896,7 @@ def test_replace_location(auth_client):
 def test_replace_location_invalid(auth_client):
     # GIVEN a set of areas, addresses, and locations
     Country.load_from_file()
-    count = random.randint(3, 11)
+    count = random.randint(3, 6)
     create_multiple_areas(auth_client.sqla, count)
     create_multiple_addresses(auth_client.sqla, count)
     create_multiple_locations(auth_client.sqla, count)
@@ -668,26 +919,24 @@ def test_replace_location_invalid(auth_client):
 def test_delete_location(auth_client):
     # GIVEN a set of areas, addresses, and locations
     Country.load_from_file()
-    count = random.randint(3, 11)
+    count = random.randint(3, 6)
     create_multiple_areas(auth_client.sqla, count)
     create_multiple_addresses(auth_client.sqla, count)
     create_multiple_locations(auth_client.sqla, count)
 
     locations = auth_client.sqla.query(Location).all()
     
-    # WHEN a random portion of locations are deleted
+    # WHEN locations are deleted
     deleted = 0
     for location in locations:
-        if flip():
-            resp = auth_client.delete(url_for('places.delete_location', location_id = location.id))
-            deleted += 1
+        resp = auth_client.delete(url_for('places.delete_location', location_id = location.id))
+        deleted += 1
 
-            # THEN for each delete expect delete to run OK
-            assert resp.status_code == 204
+        # THEN for each delete expect delete to run OK
+        assert resp.status_code == 204
 
-    # THEN expect the correct number of locations remaining
-    locations = auth_client.sqla.query(Location).all()
-    assert len(locations) == count - deleted
+        # THEN expect the location to be deleted
+        assert auth_client.sqla.query(Location).count() == count - deleted
 
 
 @pytest.mark.smoke
@@ -695,7 +944,7 @@ def test_delete_location_no_exist(auth_client):
     # GIVEN an empty database
     
     # WHEN a location is requested to be deleted
-    resp = auth_client.delete(url_for('places.delete_location', location_id = 1))
+    resp = auth_client.delete(url_for('places.delete_location', location_id = random.randint(1, 8)))
     
     # THEN expect row not to be found
     assert resp.status_code == 404
@@ -705,7 +954,7 @@ def test_delete_location_no_exist(auth_client):
 def test_update_location(auth_client):
     # GIVEN a set of areas, addresses, and locations
     Country.load_from_file()
-    count = random.randint(3, 11)
+    count = random.randint(3, 6)
     create_multiple_areas(auth_client.sqla, count)
     create_multiple_addresses(auth_client.sqla, count)
     create_multiple_locations(auth_client.sqla, count)
@@ -743,7 +992,7 @@ def test_update_location(auth_client):
 def test_update_location_invalid(auth_client):
     # GIVEN a set of areas, addresses, and locations
     Country.load_from_file()
-    count = random.randint(3, 11)
+    count = random.randint(3, 6)
     create_multiple_areas(auth_client.sqla, count)
     create_multiple_addresses(auth_client.sqla, count)
     create_multiple_locations(auth_client.sqla, count)

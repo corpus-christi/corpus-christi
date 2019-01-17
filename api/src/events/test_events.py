@@ -122,6 +122,16 @@ def test_read_all_events_with_query(auth_client):
         if flip():
             query_string['include_assets'] = 1
 
+        if flip():
+            query_string['sort'] = 'start'
+        elif flip():
+            query_string['sort'] = 'end'
+        else:
+            query_string['sort'] = 'title'
+
+        if flip():
+            query_string['sort'] += '_desc'
+
         # THEN the response should match those flags
         resp = auth_client.get(url_for('events.read_all_events'), query_string=query_string)
         assert resp.status_code == 200
@@ -467,26 +477,6 @@ def test_remove_unbooked_asset_from_event(auth_client):
 # ---- Linking tables (event <-> team)
 
 @pytest.mark.smoke
-def test_get_event_teams(auth_client):
-    # GIVEN a database with some linked events and teams
-    create_multiple_events(auth_client.sqla, 5)
-    create_multiple_teams(auth_client.sqla, 5)
-    create_events_teams(auth_client.sqla, 1)
-    event_id = auth_client.sqla.query(Event.id).first()[0]
-    link_count = auth_client.sqla.query(EventTeam).filter(EventTeam.event_id == event_id).count()
-    # WHEN we get the teams associated with an event
-    resp = auth_client.get(url_for('events.get_event_teams', event_id=event_id))
-    # THEN we expect the right status code
-    assert resp.status_code == 200
-    # THEN we expect the correct count of teams
-    assert len(resp.json) == link_count
-    # THEN we expect each entry in the returned array to correspond to one entry in the database
-    for team in resp.json:
-        queried_event_team_count = auth_client.sqla.query(EventTeam).filter(EventTeam.event_id == event_id, EventTeam.team_id == team["id"]).count()
-        assert queried_event_team_count == 1
-
-
-@pytest.mark.smoke
 def test_add_event_team(auth_client):
     # GIVEN a database with only some teams
     create_multiple_teams(auth_client.sqla, 5)
@@ -534,25 +524,6 @@ def test_delete_event_team(auth_client):
     assert resp.status_code == 404
 
 # ---- Linking tables (event <-> person)
-
-@pytest.mark.smoke
-def test_get_event_persons(auth_client):
-    # GIVEN a database with some linked events and persons
-    create_multiple_events(auth_client.sqla, 5)
-    create_multiple_people(auth_client.sqla, 5)
-    create_events_persons(auth_client.sqla, 1)
-    event_id = auth_client.sqla.query(Event.id).first()[0]
-    link_count = auth_client.sqla.query(EventPerson).filter(EventPerson.event_id == event_id).count()
-    # WHEN we get the persons associated with an event
-    resp = auth_client.get(url_for('events.get_event_persons', event_id=event_id))
-    # THEN we expect the right status code
-    assert resp.status_code == 200
-    # THEN we expect the correct count of persons
-    assert len(resp.json) == link_count
-    # THEN we expect each entry in the returned array to correspond to one entry in the database
-    for person in resp.json:
-        queried_event_person_count = auth_client.sqla.query(EventPerson).filter(EventPerson.event_id == event_id, EventPerson.person_id == person["person_id"]).count()
-        assert queried_event_person_count == 1
 
 @pytest.mark.smoke
 def test_add_event_persons(auth_client):
@@ -639,25 +610,6 @@ def test_delete_event_persons(auth_client):
     assert resp.status_code == 404
 
 # ---- Linking tables (event <-> participant)
-
-@pytest.mark.smoke
-def test_get_event_participants(auth_client):
-    # GIVEN a database with some linked events and participants
-    create_multiple_events(auth_client.sqla, 5)
-    create_multiple_people(auth_client.sqla, 5)
-    create_events_participants(auth_client.sqla, 1)
-    event_id = auth_client.sqla.query(Event.id).first()[0]
-    link_count = auth_client.sqla.query(EventParticipant).filter(EventParticipant.event_id == event_id).count()
-    # WHEN we get the participants associated with an event
-    resp = auth_client.get(url_for('events.get_event_participants', event_id=event_id))
-    # THEN we expect the right status code
-    assert resp.status_code == 200
-    # THEN we expect the correct count of participants
-    assert len(resp.json) == link_count
-    # THEN we expect each entry in the returned array to correspond to one entry in the database
-    for participant in resp.json:
-        queried_event_participant_count = auth_client.sqla.query(EventParticipant).filter(EventParticipant.event_id == event_id, EventParticipant.person_id == participant["person_id"]).count()
-        assert queried_event_participant_count == 1
 
 @pytest.mark.smoke
 def test_add_event_participants(auth_client):

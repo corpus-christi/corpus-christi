@@ -29,25 +29,44 @@
       </v-flex>
 
       <v-flex xs12 sm6 md5 offset-md2>
-        <v-toolbar color="blue" dark>
+        <v-toolbar color="blue" dark style="z-index: 1">
           <v-toolbar-title>
             {{ $t("public.headers.upcoming-events") }}
           </v-toolbar-title>
         </v-toolbar>
-        <v-list>
-          <v-card v-for="(item, idx) in events" v-bind:key="idx">
-            <v-card-title>
-              <div>
-                <span>{{ item.title }}</span> <br />
+        <v-list style="padding-top: 0px; z-index: 0">
+          <v-expansion-panel>
+            <v-expansion-panel-content
+              v-for="(event,idx) in events"
+              v-bind:key="idx"
+            >
+              <div slot="header">
+                {{ event.title }}
+                <br>
                 <span class="grey--text">
-                  {{ item.startDate }}
-                  <span v-if="item.endDate">to {{ item.endDate }}</span>
+                  <div>{{ getDisplayDate(event.start) }}</div>
                 </span>
               </div>
-            </v-card-title>
-            <v-card-text>{{ item.description }}</v-card-text>
-            <v-divider></v-divider>
+              <v-card>
+                <v-card-text>{{ event.description }}</v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                    <v-btn raised color="primary">{{ $t("public.events.join") }}</v-btn>
+                  <v-spacer></v-spacer>
+                </v-card-actions>
+              </v-card>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+          <!-- <v-divider light></v-divider> -->
+          <v-card>
+            <v-card-actions>
+              <v-btn 
+                v-on:click="$router.push({ path: '/public/events' })"
+                flat block outline color="primary">{{ $t("public.events.view-all") }}
+              </v-btn>
+            </v-card-actions>
           </v-card>
+
         </v-list>
       </v-flex>
     </v-layout>
@@ -77,15 +96,31 @@ export default {
         { title: "Christian Parenting 1", date: "2019-01-12" },
         { title: "Christian Parenting 2", date: "2019-01-19" }
       ],
-      events: [
-        {
-          title: "Men's Retreat",
-          startDate: "2019-03-15",
-          endDate: "2019-03-17",
-          description: "Longer description of the men's retreat."
-        }
-      ]
+      events: [],
+      pageLoaded: false,
     };
+  },
+  mounted() {
+    this.pageLoaded = false;
+    this.$http.get(`/api/v1/events/?return_group=all&sort=start`).then(resp => {
+      this.events = resp.data;
+      this.events = this.events.slice(0, 5);
+      console.log(resp.data);
+      this.pageLoaded = true;
+    });
+  },
+
+  methods: {
+    getDisplayDate(ts) {
+      let date = new Date(ts);
+      return date.toLocaleTimeString(this.currentLanguageCode, {
+        year: "numeric",
+        month: "numeric",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    }
   }
 };
 </script>

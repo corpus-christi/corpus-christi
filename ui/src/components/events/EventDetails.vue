@@ -20,11 +20,11 @@
           </v-container>
           <v-card-text class="pa-4">
             <div v-if="event.location">
-              <b>Location: </b>
+              <b>{{ $t("events.location") }}: </b>
               <div class="multi-line ml-2">{{ displayLocation }}</div>
             </div>
-            <div><b>Start: </b>{{ getDisplayDate(event.start) }}</div>
-            <div><b>End: </b>{{ getDisplayDate(event.end) }}</div>
+            <div><b>{{ $t("events.start-time") }}: </b>{{ getDisplayDate(event.start) }}</div>
+            <div><b>{{ $t("events.end-time") }}: </b>{{ getDisplayDate(event.end) }}</div>
             <div class="mt-2">{{ event.description }}</div>
           </v-card-text>
           <v-card-actions>
