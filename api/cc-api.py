@@ -8,8 +8,7 @@ from flask_jwt_extended import create_access_token
 from flask import jsonify
 
 #Needed for pruning events
-from sqlalchemy import update
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from src import create_app
 from src import db
@@ -147,11 +146,12 @@ app.cli.add_command(user_cli)
 
 maintain_cli = AppGroup('maintain', help="Mantaining the database.")
 
-@maintain_cli.command('prune-events', help="Sets events that have ended to inactive")
+@maintain_cli.command('prune-events', help="Sets events that have ended before <pruningOffset> to inactive")
 def prune_events():
     events = db.session.query(Event).filter_by(active=True).all()
+    pruningOffset = datetime.now() - timedelta(days=30)
     for event in events:
-        if(event.end < datetime.now()):
+        if(event.end < pruningOffset):
             event.active = False
     db.session.commit()
 
