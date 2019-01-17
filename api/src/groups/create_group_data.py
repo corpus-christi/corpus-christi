@@ -46,9 +46,12 @@ def meeting_object_factory(sqla):
     all_addresses = sqla.query(Address).all()
     meeting = {
         'when': str(rl_fake().future_datetime(end_date="+6h")),
-        'group_id': all_groups[random.randint(0, len(all_groups)-1)].id,
-        'address_id': all_addresses[random.randint(0, len(all_addresses)-1)].id
+        'group_id': all_groups[random.randint(0, len(all_groups)-1)].id
+        #'address_id': all_addresses[random.randint(0, len(all_addresses) - 1)].id
     }
+    if len(all_addresses) > 0:
+        meeting["address_id"] = all_addresses[random.randint(0, len(all_addresses) - 1)].id
+
     return meeting
 
 
