@@ -5,11 +5,7 @@ ubuntu:
 env:
         - FLASK_CONFIG=staging 
 before_install:
-        #        - python --versdfddfsdon
         - sudo apt-get update
-          #        - python --version
-          #        - sudo apt-get install python3
-          #        - sudo apt-get upgrade python3
 matrix:
         include:
 #               - language: node_js
@@ -26,10 +22,11 @@ matrix:
                   python: "3.7"
                   dist: "xenial"
                   sudo: true
-                  #install:
-                          #- pip install -r api/requirements.txt
+                  install:
+                        - pip install -r api/requirements.txt
                   script:
                         - echo "Hello World"
+                        - ./api/reset-database.sh
 # reset database script (david) 
 # run server side testing script (pytest)
 # create script by configuration and make file
