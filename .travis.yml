@@ -36,8 +36,8 @@ matrix:
 # create script by configuration and make file
 # install nginx??
 # install postgress and configure it
-notifications:
-        slack: tumissionscomputing:pihkOzDoe7PgVwRXgAuu7hoS
+notifications:       
+        slack: tumissionscomputing:wp25PPGEFitgDVKamhxxq6jU
 deploy:
 provider: linode
 local-dir: public
