@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: b297622e0f15
+Revision ID: cb88bfd6385f
 Revises: 
-Create Date: 2019-01-16 15:35:40.661104
+Create Date: 2019-01-16 14:20:34.109795
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'b297622e0f15'
+revision = 'cb88bfd6385f'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -175,12 +175,12 @@ def upgrade():
     op.create_table('courses_class_meeting',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('offering_id', sa.Integer(), nullable=False),
-    sa.Column('location_id', sa.Integer(), nullable=False),
-    sa.Column('teacher_id', sa.Integer(), nullable=False),
+    sa.Column('location', sa.Integer(), nullable=False),
+    sa.Column('teacher', sa.Integer(), nullable=False),
     sa.Column('when', sa.DateTime(), nullable=False),
-    sa.ForeignKeyConstraint(['location_id'], ['places_location.id'], ),
+    sa.ForeignKeyConstraint(['location'], ['places_location.id'], ),
     sa.ForeignKeyConstraint(['offering_id'], ['courses_course_offering.id'], ),
-    sa.ForeignKeyConstraint(['teacher_id'], ['people_person.id'], ),
+    sa.ForeignKeyConstraint(['teacher'], ['people_person.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('courses_students',

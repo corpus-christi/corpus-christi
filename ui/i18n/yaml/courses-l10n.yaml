@@ -17,6 +17,10 @@ courses:
   prerequisites:
     en: Prerequisites
     es: Prerrequisitos
+  no-prerequisites:
+    _desc: For indicating that a course has no prerequisites
+    en: This course has no prerequisites.
+    es: Este curso no tiene prerrequisitos.
   added:
     en: Course added
     es: Curso añadido
@@ -38,6 +42,10 @@ courses:
   confirm-archive:
     en: Are you sure you want to archive this course?
     es: ¿Estás seguro que quieres archivar este curso?
+  is-archived:
+    _desc: For indicating that a course is currently archived
+    en: This course is archived
+    es: Este curso está archivado
   course-offering:
     en: Course Offerings
     es: Ofertas de Cursos
