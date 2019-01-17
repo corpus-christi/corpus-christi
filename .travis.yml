@@ -4,33 +4,32 @@ ubuntu:
         - 18.04
 env:
         - FLASK_CONFIG=staging 
+        - FLASK_APP=cc-api.py
 before_install:
         - sudo apt-get update
 matrix:
         include:
-#               - language: node_js
-#                 node_js: "11"
-#                 before_install:
-#                         - yarn cache clean
-#                 install:
-#                         - yarn install
-#                 script:
-#                         - echo "Hello chris"      
-                                 #yarn cache clean
-                                  #- yarn install
+                - language: node_js
+                  node_js: "11"
+                  before_install:
+                          - yarn cache clean
+                  install:
+                          - yarn install
+                  script:
+                          - echo "Done with Node_js"  
                 - language: python
                   python: "3.7"
                   dist: "xenial"
                   sudo: true
                   install:
                         - pip install -r api/requirements.txt
-                        - pip install -U pytest
+                        # - pip install -U pytest
                         - sudo apt install postgresql
-                        - sudo apt install nginx
+                        # - sudo apt install nginx
                   before_script:
                         - sudo service postgresql start
-                        - sudo -u postgres dropdb --if-exists cc-staging
-                        - sudo -u postgres dropuser --if-exists arco
+                        # - sudo -u postgres dropdb --if-exists cc-staging
+                        # - sudo -u postgres dropuser --if-exists arco
                         - sudo -u postgres createuser -w arco
                         - sudo -u postgres createdb -O arco cc-staging 
                   script:
