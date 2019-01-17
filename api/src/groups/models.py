@@ -29,7 +29,7 @@ class GroupSchema(Schema):
     name = fields.String(required=True, validate=Length(min=1))
     description = fields.String(required=True, validate=Length(min=1))
     active = fields.Boolean(required=True)
-    manager_id = fields.Integer(data_key='managerId', required=True)
+    manager_id = fields.Integer(data_key='manager_id', required=True)
 
 
 # ---- Meeting
@@ -51,8 +51,8 @@ class Meeting(Base):
 class MeetingSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     when = fields.DateTime(required=True)
-    group_id = fields.Integer(data_key='groupId', required=True)
-    address_id = fields.Integer(data_key='addressId')
+    group_id = fields.Integer(data_key='group_id', required=True)
+    address_id = fields.Integer(data_key='address_id')
 
 
 # ---- Member
@@ -76,8 +76,8 @@ class MemberSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     joined = fields.Date(required=True)
     active = fields.Boolean(required=True)
-    group_id = fields.Integer(data_key='groupId', required=True)
-    person_id = fields.Integer(data_key='personId', required=True)
+    group_id = fields.Integer(data_key='group_id', required=True)
+    person_id = fields.Integer(data_key='person_id', required=True)
 
 
 # ---- Attendance
@@ -94,5 +94,5 @@ class Attendance(Base):
 
 
 class AttendanceSchema(Schema):
-    meeting_id = fields.Integer(dump_only=True, data_key='meetingId', required=True)
-    member_id = fields.Integer(dump_only=True, data_key='memberId', required=True)
+    meeting_id = fields.Integer(data_key='meeting_id', required=True)
+    member_id = fields.Integer(data_key='member_id', required=True)
