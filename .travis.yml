@@ -25,7 +25,7 @@ matrix:
                   install:
                         - pip install -r api/requirements.txt
                         - pip install -U pytest
-                        - sudo apt install postresql
+                        - sudo apt install postgresql
                   script:
                         - echo "Hello World"
                           # - pytest
