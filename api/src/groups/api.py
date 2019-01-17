@@ -1,9 +1,12 @@
+import datetime
+
 from flask import request, jsonify
 from flask_jwt_extended import jwt_required
 from marshmallow import ValidationError
 
 from . import groups
 from .models import GroupSchema, Group, Attendance, Member, MemberSchema, Meeting, MeetingSchema, AttendanceSchema
+from ..people.models import Role
 from .. import db
 
 # ---- Group
@@ -14,14 +17,41 @@ group_schema = GroupSchema()
 @groups.route('/groups', methods=['POST'])
 @jwt_required
 def create_group():
+    request.json['active'] = True
+
+    if request.json['members']:
+        members_to_add = request.json['members']
+        del request.json['members']
+
     try:
         valid_group = group_schema.load(request.json)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
     new_group = Group(**valid_group)
+    
     db.session.add(new_group)
     db.session.commit()
+
+    today = datetime.datetime.today().strftime('%Y-%m-%d')
+
+    for member in members_to_add:
+        new_member = generate_member(new_group.id, member, today, True)
+        db.session.add(new_member)
+
+    group_overseer = db.session.query(Role).filter_by(name_i18n="role.group-overseer").first()
+    manager_roles = new_group.manager.account.roles
+
+    if group_overseer:
+        if group_overseer not in manager_roles:
+            print("adding role", end='\n\n\n')
+            manager_roles.append(group_overseer)
+
+    db.session.add(new_group.manager.account)
+    db.session.commit()
+    new_group.managerInfo = new_group.manager
+    new_group.managerInfo.person = new_group.manager.account.person
+    new_group.memberList = new_group.members
     return jsonify(group_schema.dump(new_group)), 201
 
 
@@ -29,6 +59,10 @@ def create_group():
 @jwt_required
 def read_all_groups():
     result = db.session.query(Group).all()
+    for group in result:
+        group.memberList = group.members
+        group.managerInfo = group.manager
+        group.managerInfo.person = group.manager.account.person
     return jsonify(group_schema.dump(result, many=True))
 
 
@@ -36,6 +70,9 @@ def read_all_groups():
 @jwt_required
 def read_one_group(group_id):
     result = db.session.query(Group).filter_by(id=group_id).first()
+    result.memberList = result.members
+    result.managerInfo = result.manager
+    result.managerInfo.person = result.manager.account.person
     return jsonify(group_schema.dump(result))
 
 
@@ -53,6 +90,28 @@ def update_group(group_id):
         setattr(group, key, val)
 
     db.session.commit()
+    return jsonify(group_schema.dump(group))
+
+
+@groups.route('/groups/activate/<group_id>', methods=['PUT'])
+@jwt_required
+def activate_group(group_id):
+    group = db.session.query(Group).filter_by(id=group_id).first()
+    
+    if group is None:
+        return jsonify(msg="Group not found"), 404
+    setattr(group, 'active', True)
+    return jsonify(group_schema.dump(group))
+
+
+@groups.route('/groups/deactivate/<group_id>', methods=['PUT'])
+@jwt_required
+def deactivate_group(group_id):
+    group = db.session.query(Group).filter_by(id=group_id).first()
+    
+    if group is None:
+        return jsonify(msg="Group not found"), 404
+    setattr(group, 'active', False)
     return jsonify(group_schema.dump(group))
 
 
@@ -111,9 +170,20 @@ def update_meeting(meeting_id):
 member_schema = MemberSchema()
 
 
+def generate_member(group_id, person_id, joined, active):
+    member = {}
+    member['group_id'] = group_id
+    member['person_id'] = person_id
+    member['joined'] = joined
+    member['active'] = active
+    member = Member(**member_schema.load(member))
+    return member
+
+
 @groups.route('/members', methods=['POST'])
 @jwt_required
 def create_member():
+    request.json['active'] = True
     try:
         valid_member = member_schema.load(request.json)
     except ValidationError as err:
