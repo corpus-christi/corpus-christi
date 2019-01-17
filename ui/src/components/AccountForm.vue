@@ -53,7 +53,7 @@
       </v-btn>
       <v-spacer v-if="person.accountInfo"></v-spacer>
       <v-btn
-        v-if="person.accountInfo && account.active"
+        v-if="person.active && person.accountInfo && account.active"
         color="primary"
         outline
         v-on:click="deactivateAccount"
@@ -62,7 +62,7 @@
         {{ $t("actions.deactivate-account") }}
       </v-btn>
       <v-btn
-        v-if="person.accountInfo && !account.active"
+        v-if="person.active && person.accountInfo && !account.active"
         color="primary"
         outline
         v-on:click="reactivateAccount"

@@ -141,7 +141,7 @@
               color="primary"
               slot="activator"
               v-on:click="activatePerson(props.item)"
-              data-cy="deactivate-person"
+              data-cy="activate-person"
             >
               <v-icon small>undo</v-icon>
             </v-btn>
@@ -442,7 +442,7 @@ export default {
       this.$http
         .put(`/api/v1/people/accounts/deactivate/${accountId}`)
         .then(resp => {
-          console.log("DEACTIVATED", resp);
+          console.log("DEACTIVATED ACCOUNT", resp);
           this.showSnackbar(this.$t("person.messages.account-deactivate"));
         })
         .then(() => this.refreshPeopleList())
@@ -453,7 +453,7 @@ export default {
       this.$http
         .put(`/api/v1/people/accounts/activate/${accountId}`)
         .then(resp => {
-          console.log("REACTIVATED", resp);
+          console.log("REACTIVATED ACCOUNT", resp);
           this.refreshPeopleList();
           this.showSnackbar(this.$t("person.messages.account-activate"));
         })
@@ -464,7 +464,7 @@ export default {
       this.$http
         .put(`/api/v1/people/persons/activate/${person.id}`)
         .then(resp => {
-          console.log("ACTIVATED", resp);
+          console.log("ACTIVATED PERSON", resp);
           this.showSnackbar(this.$t("person.messages.person-activate"));
         })
         .then(() => this.refreshPeopleList())
@@ -475,14 +475,16 @@ export default {
       this.$http
         .put(`/api/v1/people/persons/deactivate/${person.id}`)
         .then(resp => {
-          console.log("DEACTIVATED", resp);
+          console.log("DEACTIVATED PERSON", resp);
           this.showSnackbar(this.$t("person.messages.person-deactivate"));
         })
         .then(() => this.refreshPeopleList())
-        .catch(err => console.error("FAILURE", err.response));
-      if (person.accountInfo) {
-        this.deactivateAccount(person.account.id);
-      }
+        .then(() => {
+          if (person.accountInfo && person.accountInfo.active) {
+            this.deactivateAccount(person.accountInfo.id);
+          }
+        })
+        .catch(err => console.error("FAILURE PLEASE", err.response));
     },
 
     refreshPeopleList() {
