@@ -13,12 +13,12 @@
 // Cypress.Commands.add("login", (email, password) => { ... })
 
 
-Cypress.Commands.add('login', function() {
-    cy.visit('/login');
-    cy.get('[data-cy=username]').type('Cytest');
-    cy.get('[data-cy=password]').type('password');
-    cy.get('[data-cy=login]').click();
-})
+// Cypress.Commands.add('login', function() {
+//     cy.visit('/login');
+//     cy.get('[data-cy=username]').type('Cytest');
+//     cy.get('[data-cy=password]').type('password');
+//     cy.get('[data-cy=login]').click();
+// })
 
 
 

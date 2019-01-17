@@ -5,7 +5,7 @@ describe("Get to Courses Page", () => {
 
   it("When: clicking to course page", () => {
     cy.get('[data-cy=toggle-nav-drawer]').click();
-    cy.get('[data-cy=courses-admin]').click();
+    cy.get('[data-cy=courses]').click();
   });
   it("Then: should be in course page", () => {
     cy.url().should("include", "/courses");
@@ -50,7 +50,7 @@ describe('Add Course with a Prereq', () => {
     cy.get('[data-cy=course-form-name]').type('COS 113')
     cy.get('[data-cy=course-form-description]').type('Hello World')
     cy.get(':nth-child(4) > .v-input__icon > .v-icon').click()
-    cy.contains('Wall stage.').click()
+    cy.contains('My kid.').click()
   });
   it('Then: Click add button', ()=>{
     cy.get('[data-cy=course-editor-actions] > .primary').click()
@@ -66,9 +66,9 @@ describe('Add Course with Muiltiple Prereq', () => {
     cy.get('[data-cy=course-form-name]').type('COS 115')
     cy.get('[data-cy=course-form-description]').type('Hello World')
     cy.get(':nth-child(4) > .v-input__icon > .v-icon').click()
-    cy.contains('Debate until.').click()
+    cy.contains('Alone low investment').click()
     cy.get(':nth-child(4) > .v-input__icon > .v-icon').click()    
-    cy.contains('Particularly.').click()
+    cy.contains('Expert world.').click()
   });
   it('Then: Click add button', ()=>{
     cy.get('[data-cy=course-editor-actions] > .primary').click()
