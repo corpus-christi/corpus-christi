@@ -15,8 +15,8 @@
 
 Cypress.Commands.add('login', function() {
     cy.visit('/login');
-    cy.get('[data-cy=username]').type('lpratico');
-    cy.get('[data-cy=password]').type('Qwerty1234');
+    cy.get('[data-cy=username]').type('Cytest');
+    cy.get('[data-cy=password]').type('password');
     cy.get('[data-cy=login]').click();
 })
 
