@@ -43,7 +43,6 @@ export default {
       isLoading: false
     };
   },
-
   computed: {
     getLabel() {
       if (this.location) return this.$t("events.event-location");
@@ -52,7 +51,6 @@ export default {
       else return "";
     }
   },
-
   methods: {
     setSelected(entity) {
       this.$emit("input", entity);

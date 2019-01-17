@@ -713,6 +713,7 @@ def setup_dependencies_of_student(auth_client, n):
     create_multiple_course_offerings_active(auth_client.sqla, n)
 
 
+@pytest.mark.student
 def test_create_student(auth_client):
     setup_dependencies_of_student(auth_client,1)
     person = auth_client.sqla.query(Person).one()
@@ -750,6 +751,7 @@ def test_read_all_students(client, db):
     assert True == False
 
 
+@pytest.mark.student
 def test_read_one_student(auth_client):
     # GIVEN a student is in the database
     create_multiple_people(auth_client.sqla, 1)
@@ -771,7 +773,7 @@ def test_replace_student(client, db):
     # THEN
     assert True == False
 
-
+@pytest.mark.student
 def test_update_student(auth_client):
     # GIVEN a student in the database
     setup_dependencies_of_student(auth_client, 1)
@@ -852,5 +854,8 @@ def test_update_class_meeting(client, db):
     # WHEN
     # THEN
     assert True == False
+<<<<<<< HEAD
 
 open
+=======
+>>>>>>> fc47f6ab419aeee0c4611daab6c4a71d3c0aa7a0
