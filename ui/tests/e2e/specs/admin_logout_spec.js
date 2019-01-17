@@ -8,7 +8,7 @@ describe("Admin Logout Test", function() {
 
   it("WHEN: Admin logs out", function() {
     cy.url().should("include", "/admin");
-    cy.get("[data-cy=cur-locale").click({ multiple: true });
+    cy.get("[data-cy=account-menu]").click();
     cy.get("[data-cy=logout]").click();
   });
 
