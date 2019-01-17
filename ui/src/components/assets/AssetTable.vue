@@ -167,7 +167,7 @@ export default {
   components: { "asset-form": AssetForm },
   mounted() {
     this.tableLoading = true;
-    this.$http.get("/api/v1/events/assets").then(resp => {
+    this.$http.get("/api/v1/assets").then(resp => {
       this.assets = resp.data;
       this.tableLoading = false;
       console.log(this.assets);
@@ -280,7 +280,7 @@ export default {
       const assetId = this.archiveDialog.assetId;
       const idx = this.assets.findIndex(as => as.id === assetId);
       this.$http
-        .delete(`/api/v1/events/assets/${assetId}`)
+        .delete(`/api/v1/assets/${assetId}`)
         .then(resp => {
           console.log("ARCHIVE", resp);
           this.assets[idx].active = false;
@@ -307,7 +307,7 @@ export default {
       delete copyAsset.id;
       delete copyAsset.location; //Temporary delete
       this.$http
-        .patch(`/api/v1/events/assets/${patchId}`, { active: true })
+        .patch(`/api/v1/assets/${patchId}`, { active: true })
         .then(resp => {
           console.log("UNARCHIVED", resp);
           delete asset.unarchiving;
@@ -344,7 +344,7 @@ export default {
         const idx = this.assets.findIndex(as => as.id === asset.id);
         delete asset.id;
         this.$http
-          .put(`/api/v1/events/assets/${assetId}`, newAsset)
+          .put(`/api/v1/assets/${assetId}`, newAsset)
           .then(resp => {
             console.log("EDITED", resp);
             Object.assign(this.assets[idx], resp.data);
@@ -359,7 +359,7 @@ export default {
           });
       } else {
         this.$http
-          .post("/api/v1/events/assets", newAsset)
+          .post("/api/v1/assets", newAsset)
           .then(resp => {
             console.log("ADDED", resp);
             this.assets.push(resp.data);
@@ -381,7 +381,7 @@ export default {
       let newAsset = JSON.parse(JSON.stringify(asset));
       delete newAsset.location;
       this.$http
-        .post("/api/v1/events/assets", newAsset)
+        .post("/api/v1/assets", newAsset)
         .then(resp => {
           console.log("ADDED", resp);
           this.assets.push(resp.data);

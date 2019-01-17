@@ -17,7 +17,13 @@ const router = new VueRouter({
       name: "public",
       path: "/public",
       meta: { layout: "arco" },
-      component: () => import("@/pages/Public")
+      component: () => import("@/pages/Public"),
+    },
+    {
+      name: "public-events",
+      path: "/public/events",
+      meta: { authRequired: false },
+      component: () => import("@/pages/public/Events")
     },
     {
       name: "login",
@@ -74,12 +80,6 @@ const router = new VueRouter({
               path: "participants",
               meta: { authRequired: true },
               component: () => import("@/components/events/EventParticipants")
-            },
-            {
-              name: "event-teams",
-              path: "teams",
-              meta: { authRequired: true },
-              component: () => import("@/components/events/teams/EventTeams")
             },
             {
               name: "event-assets",

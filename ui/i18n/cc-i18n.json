@@ -104,6 +104,7 @@
       "event-location": "Event Location",
       "event-unarchived": "Event unarchived",
       "header": "Events",
+      "location": "Location",
       "participants": {
         "added": "Participants added",
         "confirm-remove": "Are you sure you want to remove this participant?",
@@ -116,18 +117,20 @@
       "start-time": "Start Time",
       "teams": {
         "confirm-archive": "Are you sure you want to archive this team?",
+        "confirm-remove-from-event": "Are you sure you want to remove this team from this event?",
         "create-team": "Create Team",
         "description": "Description",
         "edit-team": "Edit Team",
         "error-adding-team": "Error while adding team",
-        "error-archiving-team": "Error while archiving team",
         "error-editing-team": "Error while editing team",
+        "error-removing-team": "Error while removing team",
+        "error-team-assigned": "That team is assigned to a conflicting event.",
         "error-unarchiving-team": "Error while unarchiving team",
         "new": "Add Team",
         "team-added": "Team added",
-        "team-archived": "Team archived",
         "team-edited": "Team edited",
-        "team-unarchived": "Team unarchived",
+        "team-on-event": "That team is already assigned to this event.",
+        "team-removed": "Team removed",
         "title": "Teams"
       },
       "title": "Event Title"
@@ -172,6 +175,9 @@
       "settings": "Settings for {person}"
     },
     "public": {
+      "events": {
+        "join": "Join Event"
+      },
       "headers": {
         "home-church": "Find a Home Church",
         "upcoming-classes": "Upcoming Clases",
@@ -301,6 +307,7 @@
       "event-location": "Ubicaci\u00f3n de Evento",
       "event-unarchived": "Evento desarchivado",
       "header": "Eventos",
+      "location": "Ubicaci\u00f3n",
       "participants": {
         "added": "Participantes agregado",
         "confirm-remove": "\u00bfEst\u00e1s seguro de que quieres eliminar a este participante?",
@@ -313,18 +320,20 @@
       "start-time": "Hora de Inicio",
       "teams": {
         "confirm-archive": "\u00bfSeguro que quieres archivar este equipo?",
+        "confirm-remove-from-event": "\u00bfEst\u00e1s seguro de que quieres eliminar a este equipo de este evento?",
         "create-team": "Crear Equipo",
         "description": "Descripci\u00f3n",
         "edit-team": "Editar Equipo",
         "error-adding-team": "Error al agregar equipo",
-        "error-archiving-team": "Error al archivar este equipo",
         "error-editing-team": "Error al editar equipo",
+        "error-removing-team": "Error al eliminadar este equipo",
+        "error-team-assigned": "Ese equipo est\u00e1 asignado a un evento conflictivo.",
         "error-unarchiving-team": "Error al desarchivar equipo",
         "new": "A\u00f1adir Equipo",
         "team-added": "Equipo agregado",
-        "team-archived": "Equipo archivado",
         "team-edited": "Equipo editado",
-        "team-unarchived": "Equipo desarchivado",
+        "team-on-event": "Ese equipo ya est\u00e1 asignado a este evento.",
+        "team-removed": "Equipo eliminado",
         "title": "Equipos"
       },
       "title": "T\u00edtulo del Evento"
@@ -369,6 +378,9 @@
       "settings": "Configuraci\u00f3n de la {person}"
     },
     "public": {
+      "events": {
+        "join": "Juntarse Evento"
+      },
       "headers": {
         "home-church": "Encontrar una Iglesia Hogar",
         "upcoming-classes": "Pr\u00f3ximas Clases",

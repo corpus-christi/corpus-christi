@@ -28,14 +28,6 @@
       <v-tab
         ripple
         v-on:click="
-          $router.push({ path: '/events/' + $route.params.event + '/teams' })
-        "
-      >
-        <v-icon>group</v-icon>&nbsp;{{ $t("events.teams.title") }}
-      </v-tab>
-      <v-tab
-        ripple
-        v-on:click="
           $router.push({ path: '/events/' + $route.params.event + '/assets' })
         "
       >
