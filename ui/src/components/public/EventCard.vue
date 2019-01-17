@@ -11,8 +11,11 @@
     <v-card-text class="text">
       <v-layout>
         <v-flex>
-          <div><b>Start: </b>{{ getDisplayDate(event.start) }}</div>
-          <div class="mb-3"><b>End: </b>{{ getDisplayDate(event.end) }}</div>
+          <div v-if="event.location">
+            <b>{{ $t("events.location") }}: </b>{{ event.location.description }}
+          </div>
+          <div><b>{{ $t("events.start-time") }}: </b>{{ getDisplayDate(event.start) }}</div>
+          <div class="mb-3"><b>{{ $t("events.end-time") }}: </b>{{ getDisplayDate(event.end) }}</div>
           <div class="mb-3">{{ event.description }}</div>
         </v-flex>
       </v-layout>
@@ -20,7 +23,7 @@
 
     <v-card-actions>
       <v-spacer></v-spacer>
-        <v-btn raised color="primary">Join Event</v-btn>
+        <v-btn raised color="primary">{{ $t("public.events.join") }}</v-btn>
       <v-spacer></v-spacer>
     </v-card-actions>
   </v-card>

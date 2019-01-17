@@ -104,6 +104,7 @@
       "event-location": "Event Location",
       "event-unarchived": "Event unarchived",
       "header": "Events",
+      "location": "Location",
       "participants": {
         "added": "Participants added",
         "confirm-remove": "Are you sure you want to remove this participant?",
@@ -174,6 +175,9 @@
       "settings": "Settings for {person}"
     },
     "public": {
+      "events": {
+        "join": "Join Event"
+      },
       "headers": {
         "home-church": "Find a Home Church",
         "upcoming-classes": "Upcoming Clases",
@@ -303,6 +307,7 @@
       "event-location": "Ubicaci\u00f3n de Evento",
       "event-unarchived": "Evento desarchivado",
       "header": "Eventos",
+      "location": "Ubicaci\u00f3n",
       "participants": {
         "added": "Participantes agregado",
         "confirm-remove": "\u00bfEst\u00e1s seguro de que quieres eliminar a este participante?",
@@ -373,6 +378,9 @@
       "settings": "Configuraci\u00f3n de la {person}"
     },
     "public": {
+      "events": {
+        "join": "Juntarse Evento"
+      },
       "headers": {
         "home-church": "Encontrar una Iglesia Hogar",
         "upcoming-classes": "Pr\u00f3ximas Clases",
