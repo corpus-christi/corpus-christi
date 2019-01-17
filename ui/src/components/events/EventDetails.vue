@@ -8,7 +8,12 @@
               <span class="headline">{{ event.title }}</span>
             </v-flex>
             <v-layout xs3 sm3 align-end justify-end>
-              <v-btn flat color="primary" data-cy="edit-event" v-on:click="editEvent(event)">
+              <v-btn
+                flat
+                color="primary"
+                data-cy="edit-event"
+                v-on:click="editEvent(event)"
+              >
                 <v-icon>edit</v-icon>&nbsp;{{ $t("actions.edit") }}
               </v-btn>
             </v-layout>
@@ -80,9 +85,9 @@
                 </v-list-tile-content>
                 <v-list-tile-action>
                   <v-btn flat color="primary">
-                    <v-icon 
+                    <v-icon
                       v-on:click="showDeleteTeamDialog(eventTeam.team_id)"
-                      :data-cy="'deleteTeam-'+eventTeam.team_id"
+                      :data-cy="'deleteTeam-' + eventTeam.team_id"
                       >delete</v-icon
                     >
                   </v-btn>
@@ -119,7 +124,11 @@
           <span class="headline">{{ $t("events.teams.new") }}</span>
         </v-card-title>
         <v-card-text>
-          <entity-search data-cy="team-entity-search" v-model="addTeamDialog.team" team></entity-search>
+          <entity-search
+            data-cy="team-entity-search"
+            v-model="addTeamDialog.team"
+            team
+          ></entity-search>
         </v-card-text>
         <v-card-actions>
           <v-btn

@@ -1,11 +1,11 @@
 <template>
-  <v-card class="card elevation-10">    
+  <v-card class="card elevation-10">
     <v-card-title>
       <v-layout row align-center justify-center>
         <v-flex shrink>
           <span class="headline mb-3">{{ event.title }}</span>
         </v-flex>
-      </v-layout>      
+      </v-layout>
     </v-card-title>
 
     <v-card-text class="text">
@@ -20,7 +20,7 @@
 
     <v-card-actions>
       <v-spacer></v-spacer>
-        <v-btn raised color="primary">Join Event</v-btn>
+      <v-btn raised color="primary">Join Event</v-btn>
       <v-spacer></v-spacer>
     </v-card-actions>
   </v-card>
@@ -33,9 +33,7 @@ export default {
     event: {}
   },
   data() {
-    return {
-
-    };
+    return {};
   },
   methods: {
     getDisplayDate(ts) {
@@ -53,7 +51,6 @@ export default {
 </script>
 
 <style scoped>
-
 .text {
   max-height: 200px;
   min-height: 200px;
@@ -64,5 +61,4 @@ export default {
   padding: 10px;
   border-radius: 30px;
 }
-
 </style>
