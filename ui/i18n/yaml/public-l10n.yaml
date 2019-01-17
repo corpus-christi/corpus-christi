@@ -12,3 +12,7 @@ public:
     home-church:
       en: Find a Home Church
       es: Encontrar una Iglesia Hogar
+  events:
+    join:
+      en: Join Event
+      es: Juntarse Evento

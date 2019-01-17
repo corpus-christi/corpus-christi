@@ -278,12 +278,15 @@ export default {
     startDate(date) {
       this.clearEndTimeIfInvalid();
       if (!this.endDate || new Date(this.endDate) < new Date(date)) {
-        this.endDate = date;
+        if (!this.event.dayDuration) {
+          this.endDate = date;
+        } else {
+          this.endDate = this.addDaystoDate(date, this.event.dayDuration);
+        }
       }
     },
 
     endDate(date) {
-      console.log(date);
       this.clearEndTimeIfInvalid();
     }
   },
@@ -401,6 +404,12 @@ export default {
       let hr = String(date.getHours()).padStart(2, "0");
       let min = String(date.getMinutes()).padStart(2, "0");
       return `${hr}:${min}`;
+    },
+
+    addDaystoDate(date, dayDuration) {
+      let date1 = this.getTimestamp(date, "00:00");
+      date1.setDate(date1.getDate() + dayDuration);
+      return this.getDateFromTimestamp(date1);
     },
 
     clearEndTimeIfInvalid() {

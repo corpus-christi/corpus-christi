@@ -35,7 +35,7 @@ def create_event():
     
 
 @events.route('/')
-@jwt_required
+@jwt_optional
 def read_all_events():
     event_schema = EventSchema(exclude=get_exclusion_list(request.args, ['assets', 'participants', 'persons', 'teams']))
     query = db.session.query(Event)
