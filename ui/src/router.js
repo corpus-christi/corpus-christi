@@ -82,15 +82,6 @@ const router = new VueRouter({
               component: () => import("@/components/events/EventParticipants")
             },
             {
-<<<<<<< HEAD
-              name: "event-teams",
-              path: "teams",
-              meta: { authRequired: true },
-              component: () => import("@/components/events/teams/EventTeams")
-            },
-            {
-=======
->>>>>>> development
               name: "event-assets",
               path: "assets",
               meta: { authRequired: true },
@@ -143,7 +134,7 @@ const router = new VueRouter({
         {
           name: "all-courses",
           path: "all",
-          meta: { authRequired:  true },
+          meta: { authRequired: true },
           component: () => import("@/components/courses/CoursesTable")
         },
         {
