@@ -7,8 +7,6 @@
     </v-layout>
   </v-container>
 </template>
-      
-
 
 <script>
 import EventCard from "../../components/public/EventCard";
