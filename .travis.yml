@@ -26,6 +26,7 @@ matrix:
                         - pip install -r api/requirements.txt
                         - pip install -U pytest
                         - sudo apt install postgresql
+                        - sudo apt install nginx
                   script:
                         - echo "Hello World"
                           # - pytest
