@@ -6,6 +6,7 @@ env:
         - FLASK_CONFIG=staging 
 before_install:
         - sudo apt-get update
+        - sudo apt install postresql
 matrix:
         include:
 #               - language: node_js
@@ -25,7 +26,6 @@ matrix:
                   install:
                         - pip install -r api/requirements.txt
                         - pip install -U pytest
-                        - sudo apt install postresql
                   script:
                         - echo "Hello World"
                           # - pytest
