@@ -198,6 +198,6 @@ class Class_Meeting(Base):
 class Class_MeetingSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     offering_id = fields.Integer(data_key='offeringId', required=True)
-    location_id = fields.Integer(required=True)
-    teacher_id = fields.Integer(required=True)
+    location_id = fields.Integer(data_key='locationId', required=True)
+    teacher_id = fields.Integer(data_key='teacherId', required=True)
     when = fields.DateTime(required=True)

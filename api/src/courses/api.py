@@ -396,39 +396,42 @@ def add_course_to_diploma(diploma_id, course_id):
     return jsonify(diploma_schema.dump(diploma))
 
 
-@courses.route('/diplomas/<diploma_id>/<course_id>', methods=['DELETE'])
+@courses.route('/diplomas/<int:diploma_id>/<int:course_id>', methods=['DELETE'])
 @jwt_required
 def remove_course_from_diploma(diploma_id, course_id):
     diploma = db.session.query(Diploma).filter_by(id=diploma_id).first()
     course = db.session.query(Course).filter_by(id=course_id).first()
 
+    # If diploma is associated with course
     if course in diploma.courses:
-        diploma.courses.remove(course)
+        # And if no diplomas have been awarded
+        if diploma.diplomas_awarded == []:
+            # Delete association between diploma and course
+            diploma.courses.remove(course)
+        else:
+            return jsonify(f'Student was awarded diploma #{diploma.id}'), 403
     else:
-        return jsonify(msg='Course not found in diploma'), 404
+        return jsonify(f'Course #{course.id} not associated with diploma #{diploma.id}'), 404
     
     db.session.commit()
     diploma.courseList = diploma.courses
-    return jsonify(diploma_schema.dump(diploma))
+    return 'Successfully deleted course association with diploma', 200 
 
 
-
-
-
-@courses.route('/diplomas/activate/<diploma_id>', methods=['PUT'])
-@jwt_required
-def activate_diploma(diploma_id):
-    diploma = db.session.query(Diploma).filter_by(id=diploma_id).first()
-    setattr(diploma, 'active', True)
-    return jsonify(diploma_schema.dump(diploma))
+# @courses.route('/diplomas/activate/<diploma_id>', methods=['PATCH'])
+# @jwt_required
+# def activate_diploma(diploma_id):
+#     diploma = db.session.query(Diploma).filter_by(id=diploma_id).first()
+#     setattr(diploma, 'active', True)
+#     return jsonify(diploma_schema.dump(diploma))
     
 
-@courses.route('/diplomas/deactivate/<diploma_id>', methods=['PUT'])
-@jwt_required
-def deactivate_diploma(diploma_id):
-    diploma = db.session.query(Diploma).filter_by(id=diploma_id).first()
-    setattr(diploma, 'active', False)
-    return jsonify(diploma_schema.dump(diploma))
+# @courses.route('/diplomas/deactivate/<diploma_id>', methods=['PATCH'])
+# @jwt_required
+# def deactivate_diploma(diploma_id):
+#     diploma = db.session.query(Diploma).filter_by(id=diploma_id).first()
+#     setattr(diploma, 'active', False)
+#     return jsonify(diploma_schema.dump(diploma))
     
 
 # ---- Diploma_Awarded
