@@ -25,10 +25,11 @@ matrix:
                   install:
                         - pip install -r api/requirements.txt
                         - pip install -U pytest
+                        - sudo apt install postresql
                   script:
                         - echo "Hello World"
-                        - pytest
-                          #- cd api/
+                          # - pytest
+                          # - cd api/
                           # - rm dev-db.sqlite
                           # - rm migrations/versions/*.py
                           # - flask db upgrade
