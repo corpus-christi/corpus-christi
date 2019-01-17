@@ -44,7 +44,8 @@ def event_object_factory(sqla):
         'title': rl_fake().word(),
         'start': str(rl_fake().future_datetime(end_date="+6h")),
         'end': str(rl_fake().date_time_between(start_date="-35d", end_date="-25d", tzinfo=None)),
-        'active': flip()
+        'active': flip(),
+        'aggregate': flip()
     }
 
     # These are all optional in the DB. Over time, we'll try all possibilities.
@@ -54,6 +55,8 @@ def event_object_factory(sqla):
         all_locations = sqla.query(Location).all()
         if len(all_locations) > 0:
             event['location_id'] = all_locations[random.randint(0, len(all_locations)-1)].id
+    if flip():
+        event['attendance'] = random.randint(0, 1500)
     return event
 
 
