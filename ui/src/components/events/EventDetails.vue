@@ -8,7 +8,12 @@
               <span class="headline">{{ event.title }}</span>
             </v-flex>
             <v-layout xs3 sm3 align-end justify-end>
-              <v-btn flat color="primary" data-cy="edit-event" v-on:click="editEvent(event)">
+              <v-btn
+                flat
+                color="primary"
+                data-cy="edit-event"
+                v-on:click="editEvent(event)"
+              >
                 <v-icon>edit</v-icon>&nbsp;{{ $t("actions.edit") }}
               </v-btn>
             </v-layout>
@@ -72,17 +77,17 @@
             </v-layout>
           </v-container>
           <v-list>
-            <template v-for="eventTeam in event.teams">
-              <v-divider v-bind:key="'divider' + eventTeam.team_id"></v-divider>
-              <v-list-tile v-bind:key="eventTeam.team_id">
+            <template v-for="team in event.teams">
+              <v-divider v-bind:key="'divider' + team.id"></v-divider>
+              <v-list-tile v-bind:key="team.id">
                 <v-list-tile-content>
-                  <span>{{ eventTeam.team.description }}</span>
+                  <span>{{ team.description }} {{team.id}}</span>
                 </v-list-tile-content>
                 <v-list-tile-action>
                   <v-btn flat color="primary">
-                    <v-icon 
-                      v-on:click="showDeleteTeamDialog(eventTeam.team_id)"
-                      :data-cy="'deleteTeam-'+eventTeam.team_id"
+                    <v-icon
+                      v-on:click="showDeleteTeamDialog(team.id)"
+                      :data-cy="'deleteTeam-' + team.id"
                       >delete</v-icon
                     >
                   </v-btn>
@@ -119,7 +124,12 @@
           <span class="headline">{{ $t("events.teams.new") }}</span>
         </v-card-title>
         <v-card-text>
-          <entity-search data-cy="team-entity-search" v-model="addTeamDialog.team" team></entity-search>
+          <entity-search
+            data-cy="team-entity-search"
+            v-model="addTeamDialog.team"
+            :existing-entities="event.teams"
+            team
+          ></entity-search>
         </v-card-text>
         <v-card-actions>
           <v-btn
@@ -250,6 +260,8 @@ export default {
           this.event = resp.data;
           if (!this.event.teams) {
             this.event.teams = [];
+          } else {
+            this.event.teams = this.event.teams.map(t => t.team)
           }
         });
     },
@@ -311,7 +323,7 @@ export default {
     addTeam() {
       const eventId = this.$route.params.event;
       let teamId = this.addTeamDialog.team.id;
-      const idx = this.event.teams.findIndex(ev_te => ev_te.team_id === teamId);
+      const idx = this.event.teams.findIndex(ev_te => ev_te.id === teamId);
       if (idx > -1) {
         this.addTeamDialog.loading = false;
         this.addTeamDialog.show = false;
@@ -343,7 +355,7 @@ export default {
 
     deleteTeam() {
       let id = this.deleteTeamDialog.teamId;
-      const idx = this.event.teams.findIndex(ev_te => ev_te.team_id === id);
+      const idx = this.event.teams.findIndex(ev_te => ev_te.id === id);
       this.deleteTeamDialog.loading = true;
       const eventId = this.$route.params.event;
       this.$http
