@@ -29,10 +29,10 @@ matrix:
                         - sudo apt install postgresql
                         - sudo apt install nginx
                   script:
-                        - dropdb --if-exists cc-staging
-                        - dropuser arco
-                        - createuser -w arco
-                        - createdb -O arco cc-staging 
+                        # - dropdb --if-exists cc-staging
+                        # - dropuser arco
+                        - sudo -u postgres createuser -w arco
+                        - sudo -u postgres createdb -O arco cc-staging 
                         - source ./api/set-up-bash.sh
                         # - rm api/dev-db.sqlite4
                         # - rm api/migrations/versions/*.py
