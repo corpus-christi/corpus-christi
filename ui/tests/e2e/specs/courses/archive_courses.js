@@ -2,7 +2,7 @@ describe("Get to Courses Page", () => {
     it("Given Successfull login", () => {
       cy.login()
     });
-  
+
     it("When: clicking to course page", () => {
         cy.get('[data-cy=toggle-nav-drawer]').click();
         cy.get('[data-cy=courses]').click();
@@ -12,6 +12,18 @@ describe("Get to Courses Page", () => {
     });
 });
 
+describe('Add Course', () => {
+    it('Given: New Course Form', () =>{
+      cy.get('[data-cy=courses-table-new]').click()
+    });
+    it('When: Form is filled out', ()=>{
+      cy.get('[data-cy=course-form-name]').type('My kid.')
+      cy.get('[data-cy=course-form-description]').type('This should work!')
+    });
+    it('Then: Click add button', ()=>{
+      cy.get('[data-cy=course-editor-actions] > .primary').click()
+    });
+});
 
 describe("Archive Courses", () => {
     it("click archive button", () => {
@@ -37,4 +49,3 @@ describe('Activate archive courses', () => {
         cy.get('tbody > tr > :nth-child(1)').contains('My kid.')
     });
 });
-
