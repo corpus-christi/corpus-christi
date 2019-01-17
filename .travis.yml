@@ -4,7 +4,6 @@ ubuntu:
         - 18.04
 env:
         - FLASK_CONFIG=staging 
-        - FLASK_APP=cc-api.py
 before_install:
         - sudo apt-get update
 matrix:
@@ -21,11 +20,13 @@ matrix:
                   python: "3.7"
                   dist: "xenial"
                   sudo: true
+                  env: 
+                        - FLASK_APP=api/cc-api.py
                   install:
                         - pip install -r api/requirements.txt
                         # - pip install -U pytest
                         - sudo apt install postgresql
-                        # - sudo apt install nginx
+                        - sudo apt install nginx
                   before_script:
                         - sudo service postgresql start
                         # - sudo -u postgres dropdb --if-exists cc-staging
@@ -33,7 +34,6 @@ matrix:
                         - sudo -u postgres createuser -w arco
                         - sudo -u postgres createdb -O arco cc-staging 
                   script:
-                        # - rm api/dev-db.sqlite4
                         # - rm api/migrations/versions/*.py
                         - flask db upgrade
                         - flask data load-all
