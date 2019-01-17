@@ -142,6 +142,7 @@
       "header": "Log In"
     },
     "people": {
+      "attributes": "Attributes",
       "title": "People"
     },
     "person": {
@@ -346,6 +347,7 @@
       "header": "Iniciar Sesi\u00f3n"
     },
     "people": {
+      "attributes": "Atributas",
       "title": "Personas"
     },
     "person": {
