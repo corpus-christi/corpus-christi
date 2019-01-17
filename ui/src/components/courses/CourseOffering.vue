@@ -9,7 +9,7 @@
       color="transparent"
       slider-color="accent">
       <v-tab :to="{ name: 'course-offering-details' }"><v-icon>list</v-icon>&nbsp;{{ $t("events.details.title") }}</v-tab>
-      <v-tab :to="{ name: 'course-offering-students' }"><v-icon>person </v-icon>&nbsp;{{ $t("courses.students") }}</v-tab>
+      <v-tab :to="{ name: 'course-offering-students', params: { offeringId } }"><v-icon>person </v-icon>&nbsp;{{ $t("courses.students") }}</v-tab>
     </v-tabs>
     <hr class="vertical-spacer" />
     <router-view/>

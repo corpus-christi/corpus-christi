@@ -307,26 +307,7 @@ def add_student_to_course_offering(s_id):
 @courses.route('/course_offerings/<course_offering_id>/students')
 @jwt_required
 def read_all_course_offering_students(course_offering_id):
-    """ This function lists all students by a specific course offering.
-        Students are listed regardless of confirmed or active state. """
-    stu_result = db.session.query(Student).filter_by(
-        offering_id=course_offering_id).all()
-    co_result = db.session.query(Course_Offering).filter_by(
-        id=course_offering_id).first()
-
-    if stu_result is [] or co_result is None:
-        return 'The specified course offering does not exist \
-                or there are no students enrolled in the course offering ', 404
-
-    # Serialize specific course offering into json obj
-    offering = course_offering_schema.dump(co_result, many=False)
-    # Create new students dictionary into a specific course offering
-    offering['students'] = []
-    # Serialize every student from query result into json obj
-    s = student_schema.dump(stu_result, many=True)
-    # Add json object of all student objects into the course offering
-    offering['students'].append(s)
-    return jsonify(offering)
+    return jsonify(student_schema.dump(db.session.query(Student).filter_by(offering_id=course_offering_id), many=True))
 
 
 # May not need this route unless UI says so...

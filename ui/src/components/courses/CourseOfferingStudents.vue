@@ -45,16 +45,22 @@ export default {
     return {
       selectedValue: null,
       search: "",
+      students: [],
       people: [],
       newStudent: null,
       newStudentDialog: {
         show: false,
         eventId: -1,
         loading: false
-      }
+      },
+      
     };
   },
-
+  
+  props: {
+    offeringId: 0
+  },
+  
   computed: {
     headers() {
       return [
@@ -102,9 +108,17 @@ export default {
   },
 
   mounted: function() {
-    this.$http
-      .get("/api/v1/people/persons")
-      .then(resp => (this.people = resp.data));
+    const id = this.offeringId;
+    this.$http.get(`/api/v1/courses/course_offerings/${id}/students`).then(resp => {
+      this.students = resp.data;
+
+      for (var i = 0; i < this.students.length; i++) {
+        this.$http.get(`/api/v1/people/persons/${this.students[i].studentId}`).then(peopleResp => {
+          this.people.push(peopleResp.data);
+        });
+      }
+      
+    });
   }
 };
 </script>

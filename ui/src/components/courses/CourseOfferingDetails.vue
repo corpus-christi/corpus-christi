@@ -19,9 +19,9 @@
               flat
               ripple
               color="primary"
-              v-on:click="navigateTo('/participants')"
+              v-on:click="navigateTo('/students')"
             >
-              <v-icon>person</v-icon>&nbsp;{{ $t("events.participants.title") }}
+              <v-icon>person</v-icon>&nbsp;{{ $t("courses.students") }}
             </v-btn>
           </v-card-actions>
         </template>
@@ -79,7 +79,7 @@ export default {
     };
   },
   props: {
-    offeringId: 0,
+    offeringId: 0
   },
   methods: {
 
@@ -96,7 +96,7 @@ export default {
 
     navigateTo(path) {
       this.$router.push({
-        path: "/courses/" + offeringId + path
+        path: "/courses/" + this.courseOffering.courseId + "/offering/" + this.courseOffering.id + path
       });
     },
 
