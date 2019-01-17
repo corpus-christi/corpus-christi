@@ -17,7 +17,7 @@ describe('Add Course', () => {
       cy.get('[data-cy=courses-table-new]').click()
     });
     it('When: Form is filled out', ()=>{
-      cy.get('[data-cy=course-form-name]').type('My kid.')
+      cy.get('[data-cy=course-form-name]').type('My kiddos.')
       cy.get('[data-cy=course-form-description]').type('This should work!')
     });
     it('Then: Click add button', ()=>{
@@ -27,7 +27,7 @@ describe('Add Course', () => {
 
 describe("Archive Courses", () => {
     it("click archive button", () => {
-        cy.get('[data-cy=courses-table-search]').type('My kid.')
+        cy.get('[data-cy=courses-table-search]').type('My kiddos.')
         //cy.contains('Debate until.').click()
         cy.get(':nth-child(2) > span > .v-btn').click()//click archive
         cy.get('.v-dialog__content--active > .v-dialog > .v-card > .v-card__actions > .primary').click()//confirm click
