@@ -499,7 +499,6 @@ def delete_diploma_awarded(diploma_id, student_id):
             .filter_by(diploma_id=diploma_id, student_id=student_id).first()
     if diploma_awarded is None:
         return jsonify(msg="That diploma_awarded does not exist"), 404
-    print(diploma_awarded, end='\n\n\n')
     db.session.delete(diploma_awarded)
     db.session.commit()
     return jsonify(diploma_awarded_schema.dump(diploma_awarded))
