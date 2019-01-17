@@ -280,12 +280,17 @@ def read_all_attendance():
     return jsonify(attendance_schema.dump(result, many=True))
 
 
-@groups.route('/attendance/<attendance_id>')
+@groups.route('/attendance/meeting/<meeting_id>')
 @jwt_required
-def read_one_attendance(attendance_id):
-    result = db.session.query(Attendance).filter_by(id=attendance_id).first()
-    return jsonify(attendance_schema.dump(result))
+def read_attendance_by_meeting(meeting_id):
+    result = db.session.query(Attendance).filter_by(meeting_id=meeting_id).all()
+    return jsonify(attendance_schema.dump(result, many=True))
 
+@groups.route('/attendance/member/<member_id>')
+@jwt_required
+def read_attendance_by_member(member_id):
+    result = db.session.query(Attendance).filter_by(member_id=member_id).all()
+    return jsonify(attendance_schema.dump(result, many=True))
 
 @groups.route('/attendance/<attendance_id>', methods=['PATCH'])
 @jwt_required

@@ -496,12 +496,46 @@ def test_read_all_attendance(auth_client):
         
 
 
-@pytest.mark.xfail()
-def test_read_one_attendance(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
+def test_read_attendance_by_member(auth_client):
+    # GIVEN a database with some attendances
+    generate_managers(auth_client)
+    create_multiple_groups(auth_client.sqla, 4)
+    create_multiple_people(auth_client.sqla, 4)
+    create_multiple_members(auth_client.sqla, 4)
+    create_multiple_meetings(auth_client.sqla, 4)
+    create_attendance(auth_client.sqla, 0.75)
+    # WHEN we read attendances by member id
+    member_id = auth_client.sqla.query(Member.id).first()[0]
+    queried_attendance_count = auth_client.sqla.query(Attendance).filter_by(member_id=member_id).count()
+    resp = auth_client.get(url_for('groups.read_attendance_by_member', member_id=member_id))
+    # THEN we should get the correct code
+    assert resp.status_code == 200
+    # THEN the content returned should have the same length
+    assert queried_attendance_count == len(resp.json)
+    # THEN each of the attendance should correspond to one in the database
+    for attendance in resp.json:
+        assert 1 == auth_client.sqla.query(Attendance).filter_by(member_id=attendance["member_id"], meeting_id=attendance["meeting_id"]).count()
+
+def test_read_attendance_by_meeting(auth_client):
+    # GIVEN a database with some attendances
+    generate_managers(auth_client)
+    create_multiple_groups(auth_client.sqla, 4)
+    create_multiple_people(auth_client.sqla, 4)
+    create_multiple_meetings(auth_client.sqla, 4)
+    create_multiple_members(auth_client.sqla, 4)
+    create_attendance(auth_client.sqla, 0.75)
+    # WHEN we read attendances by meeting id
+    meeting_id = auth_client.sqla.query(Meeting.id).first()[0]
+    queried_attendance_count = auth_client.sqla.query(Attendance).filter_by(meeting_id=meeting_id).count()
+    resp = auth_client.get(url_for('groups.read_attendance_by_meeting', meeting_id=meeting_id))
+    # THEN we should get the correct code
+    assert resp.status_code == 200
+    # THEN the content returned should have the same length
+    assert queried_attendance_count == len(resp.json)
+    # THEN each of the attendance should correspond to one in the database
+    for attendance in resp.json:
+        assert 1 == auth_client.sqla.query(Attendance).filter_by(meeting_id=attendance["meeting_id"], member_id=attendance["member_id"]).count()
+
 
 
 @pytest.mark.xfail()
