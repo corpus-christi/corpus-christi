@@ -26,6 +26,7 @@ matrix:
                         - pip install -r api/requirements.txt
                   script:
                         - echo "Hello World"
+                        - cd api/
                         - rm dev-db.sqlite
                         - rm migrations/versions/*.py
                         - flask db upgrade
