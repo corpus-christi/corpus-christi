@@ -261,15 +261,6 @@ def read_active_state_course_offerings(active_state):
     return jsonify(course_offering_schema.dump(query, many=True))
 
 
-@courses.route('/course_offerings/<course_offering_id>')
-@jwt_required
-# @authorize(["role.superuser", "role.public"])
-def read_one_course_offering(course_offering_id):
-    result = db.session.query(Course_Offering).filter_by(
-        id=course_offering_id).first()
-    return jsonify(course_offering_schema.dump(result))
-
-
 @courses.route('/course_offerings/<course_offering_id>', methods=['PATCH'])
 @jwt_required
 # @authorize(["role.superuser", "role.registrar"])
