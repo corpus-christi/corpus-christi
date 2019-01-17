@@ -428,11 +428,11 @@ def manager_object_factory(sqla, description, next_level = None, locale_code='en
         i18n_create(description_i18n, 'en-US',
                     description, description=f"Manager {description}")
 
-    all_people = sqla.query(Person).all()
+    all_account = sqla.query(Account).all()
 
     manager = {
 
-        'person_id': random.choice(all_people).id,
+        'account_id': random.choice(all_accounts).id,
         'description_i18n': description_i18n
     }
     all_managers = sqla.query(Manager).all()
@@ -459,12 +459,13 @@ def create_multiple_managers (sqla, n, description, next_level = None):
 
 @pytest.mark.smoke
 def test_create_manager(auth_client):
-    # GIVEN an empty databaseZ
+    # GIVEN an empty database
     person_count = random.randint(10,20)
     manager_count = random.randint(5, person_count)
 
     # WHEN we create a random number of new managers and managers in the database
     create_multiple_people(auth_client.sqla, person_count)
+    create_multiple_accounts(auth_client.sqla, 1)
 
     for i in range(manager_count):
         resp = auth_client.post(url_for('people.create_manager'), json=manager_object_factory(auth_client.sqla, 'first level'))
@@ -481,6 +482,7 @@ def test_create_manager_with_manager(auth_client):
 
     # WHEN we create a random number of new managers and managers in the database
     create_multiple_people(auth_client.sqla, person_count)
+    create_multiple_accounts(auth_client.sqla, 1)
     create_multiple_managers(auth_client.sqla, manager_count, 'second level')
 
     for i in range(manager_count):
@@ -503,12 +505,37 @@ def test_create_manager_with_manager(auth_client):
     assert level2_count == manager_count
 
 
+@pytest.mark.smoke
+def test_create_manager_invalid(auth_client):
+    # GIVEN a set of accounts, and people
+    count = random.randint(3, 6)
+    create_multiple_people(auth_client.sqla, count + 3)
+    create_multiple_accounts(auth_client.sqla)
+
+    accounts = auth_client.sqla.query(Account).all()
+
+    # GIVEN managers with bad data for each account
+    for account in accounts:
+        new_manager = manager_object_factory(auth_client.sqla, fake.sentences(nb=1)[0])
+        new_manager[fake.word()] = fake.word()
+        
+        # WHEN a request is made to make a manager with bad data
+        resp = auth_client.post(url_for('people.create_manager'), json = new_manager)
+
+        # THEN expect request to be unprocessable
+        assert resp.status_code == 422
+
+    # THEN expect no managers to be created
+    assert auth_client.sqla.query(Manager).count() == 0
+
+
 @pytest.mark.slow
 def test_read_all_managers(auth_client):
     # GIVEN a DB with a collection of managers.
     person_count = random.randint(10, 20)
     manager_count = random.randint(5, person_count)
     create_multiple_people(auth_client.sqla, person_count)
+    create_multiple_accounts(auth_client.sqla, 1)
     create_multiple_managers(auth_client.sqla, manager_count, 'test manager')
     # WHEN we request all managers from the server
     resp = auth_client.get(url_for('people.read_all_managers', locale='en-US'))
@@ -523,6 +550,7 @@ def test_read_one_manager(auth_client):
     person_count = random.randint(10, 20)
     manager_count = random.randint(5, person_count)
     create_multiple_people(auth_client.sqla, person_count)
+    create_multiple_accounts(auth_client.sqla, 1)
     create_multiple_managers(auth_client.sqla, manager_count, 'test manager')
 
     # WHEN we ask for them all
@@ -536,7 +564,7 @@ def test_read_one_manager(auth_client):
         resp = auth_client.get(url_for('people.read_one_manager', manager_id=manager.id, locale='en-US'))
         # THEN we find a matching manager
         assert resp.status_code == 200
-        assert resp.json['person_id'] == manager.person_id
+        assert resp.json['account_id'] == manager.account_id
         assert resp.json['manager_id'] == manager.manager_id
         assert resp.json['description_i18n'] == manager.description_i18n
 
@@ -547,23 +575,24 @@ def test_update_manager(auth_client):
     person_count = random.randint(10, 20)
     manager_count = random.randint(5, person_count)
     create_multiple_people(auth_client.sqla, person_count)
+    create_multiple_accounts(auth_client.sqla, 1)
     create_multiple_managers(auth_client.sqla, manager_count, 'test manager')
 
     managers = auth_client.sqla.query(Manager).all()
-    persons = auth_client.sqla.query(Person).all()
+    accounts = auth_client.sqla.query(Account).all()
 
     update_manager = random.choice(managers)
 
-    new_person_id = update_manager.person_id
-    while new_person_id == update_manager.person_id:
-        new_person_id = random.choice(persons).id
+    new_account_id = update_manager.account_id
+    while new_account_id == update_manager.account_id:
+        new_account_id = random.choice(accounts).id
 
     new_manager_id = update_manager.manager_id
     while new_manager_id == update_manager.manager_id or new_manager_id == update_manager.id:
         new_manager_id = random.choice(managers).id
 
     update_json = {
-        'person_id': new_person_id,
+        'account_id': new_account_id,
         'manager_id': new_manager_id,
         'description_i18n': update_manager.description_i18n
     }
@@ -572,7 +601,7 @@ def test_update_manager(auth_client):
     resp = auth_client.patch(url_for('people.update_manager', manager_id=update_manager.id), json=update_json)
     # THEN
     assert resp.status_code == 200
-    assert resp.json['person_id'] == new_person_id
+    assert resp.json['account_id'] == new_account_id
     assert resp.json['manager_id'] == new_manager_id
 
 
@@ -581,10 +610,11 @@ def test_delete_manager(auth_client):
     person_count = random.randint(10, 20)
     manager_count = random.randint(5, person_count)
     create_multiple_people(auth_client.sqla, person_count)
+    create_multiple_accounts(auth_client.sqla, 1)
     create_multiple_managers(auth_client.sqla, manager_count, 'test manager')
 
     managers = auth_client.sqla.query(Manager).all()
-    persons = auth_client.sqla.query(Person).all()
+    accounts = auth_client.sqla.query(Account).all()
 
     delete_manager = managers[0]
     subordinate = managers[1]
@@ -607,6 +637,7 @@ def test_delete_manager(auth_client):
 def test_repr_manager(auth_client):
     # GIVEN a DB with a manager
     create_multiple_people(auth_client.sqla, 1)
+    create_multiple_accounts(auth_client.sqla, 1)
     create_multiple_managers(auth_client.sqla, 1, 'test manager')
     managers = auth_client.sqla.query(Manager).all()
     managers[0].__repr__()
@@ -759,3 +790,5 @@ def test_remove_role_from_account(auth_client):
 
     # TODO FINISH
     assert False
+
+
