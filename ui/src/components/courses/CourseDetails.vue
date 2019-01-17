@@ -17,11 +17,37 @@
           </v-container>
         </template>
         <template v-else>
-          <v-card-title>
-            <span class="headline">{{ course.name }}</span>
+          <v-card-title class="d-block">
+            <h5 class="headline">{{ course.name }}</h5>
+            <span class="caption" v-if="!course.active">
+              <v-icon small>archive</v-icon>
+              {{ $t("courses.is-archived") }}
+            </span>
           </v-card-title>
           <v-card-text>
             {{ course.description }}
+          </v-card-text>
+        </template>
+      </v-card>
+      <v-card class="mt-2" v-if="!loading">
+        <template v-if="course.prerequisites.length > 0">
+          <v-card-title>
+            <h5 class="headline">{{ $t("courses.prerequisites") }}</h5>
+          </v-card-title>
+          <v-card-text>
+            <v-list dense>
+              <v-list-tile
+                v-for="prereq of course.prerequisites"
+                :key="prereq.id"
+                :to="{ name: 'course-details', params: { courseId: prereq.id } }">
+                {{ prereq.name }}
+              </v-list-tile>
+            </v-list>
+          </v-card-text>
+        </template>
+        <template v-else>
+          <v-card-text>
+            {{ $t("courses.no-prerequisites") }}
           </v-card-text>
         </template>
       </v-card>
@@ -47,22 +73,32 @@ export default {
   },
   data() {
     return {
-      course: {},
+      course: { prerequisites: [] },
       loading: true,
       loadingFailed: false
     };
   },
   mounted() { 
-    this.$http.get(`/api/v1/courses/courses/${this.courseId}`)
-      .then(resp => {
-        this.course = resp.data;
-      })
-      .catch(() => {
-        this.loadingFailed = true;
-      })
-      .finally(() => {
-        this.loading = false;
-      });
+    this.loadCourse();
+  },
+  watch: {
+    $route: "loadCourse"
+  },
+  methods: {
+    loadCourse() {
+      this.loading = true;
+      this.loadingFailed = false;
+      this.$http.get(`/api/v1/courses/courses/${this.courseId}`)
+        .then(resp => {
+          this.course = resp.data;
+        })
+        .catch(() => {
+          this.loadingFailed = true;
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    }
   }
 }
 </script>
