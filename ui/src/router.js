@@ -95,7 +95,22 @@ const router = new VueRouter({
       name: "teams",
       path: "/teams",
       meta: { authRequired: true },
-      component: () => import("@/pages/Teams")
+      component: () => import("@/pages/Teams"),
+      redirect: { name: "all-teams" },
+      children: [
+        {
+          name: "all-teams",
+          path: "all",
+          meta: { authRequired: true },
+          component: () => import("@/components/teams/TeamTable")
+        },
+        {
+          name: "team",
+          path: ":team",
+          meta: { authRequired: true },
+          component: () => import("@/components/teams/Team")
+        }
+      ]
     },
     {
       name: "assets",

@@ -1,13 +1,11 @@
 <template>
-  <v-container> <team-table /> </v-container>
+  <v-container> <router-view></router-view> </v-container>
 </template>
 
 <script>
-import TeamTable from "../components/teams/TeamTable";
 
 export default {
   name: "Teams",
-  components: { "team-table":TeamTable }
 };
 </script>
 
