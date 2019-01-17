@@ -7,6 +7,7 @@ from flask_jwt_extended import jwt_required
 from marshmallow import ValidationError
 from ..shared.utils import authorize
 import sys
+from datetime import datetime
 
 from . import courses
 from .models import Course, CourseSchema, \
@@ -377,7 +378,7 @@ def create_class_meeting(course_offering_id):
     meetingInDB = db.session.query(Class_Meeting).filter_by(
         offering_id=course_offering_id,
         teacher_id=request.json['teacherId'],
-        when=request.json['when'] ).first()
+        when=request.json['when'] ).first() # Todo: make sure when is datetime obj
 
     # If a class meeting for a course offering DNE
     if meetingInDB is None:
@@ -397,29 +398,29 @@ def create_class_meeting(course_offering_id):
 def read_all_class_meetings(course_offering_id):
     result = db.session.query(Class_Meeting).filter_by(offering_id=course_offering_id).all()
     if result is None:
-        return 'No Class Meetings found for this course offering', 404
+        return 'No class meetings found for this course offering', 404
     return jsonify(class_meeting_schema.dump(result, many=True))
 
 
-# @courses.route('/class_meetings/<class_meeting_id>')
-# @jwt_required
-# def read_one_class_meeting(class_meeting_id):
-#     result = db.session.query(Class_Meeting).filter_by(id=class_meeting_id).first()
-#     return jsonify(class_meeting_schema.dump(result))
+@courses.route('/course_offerings/<int:course_offering_id>/<int:class_meeting_id>')
+@jwt_required
+def read_one_class_meeting(course_offering_id, class_meeting_id):
+    result = db.session.query(Class_Meeting).filter_by(id=class_meeting_id, offering_id=course_offering_id).first()
+    if result is None:
+        return 'Specified class meeting does not exist for this course offering', 404
+    return jsonify(class_meeting_schema.dump(result))
 
 
 @courses.route('/course_offerings/<int:course_offering_id>/<int:class_meeting_id>', methods=['PATCH'])
 @jwt_required
 def update_class_meeting(course_offering_id, class_meeting_id):
-    try:
-        valid_class_meeting = class_meeting_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
     class_meeting = db.session.query(Class_Meeting).filter_by(id=class_meeting_id, offering_id=course_offering_id).first()
 
     for attr in 'location_id', 'teacher_id', 'when':
-        if 'when' in request.json:
+        if attr in request.json:
+            if attr == 'when':
+                # For example, the following line requires datetime input to be "2019-02-01 10:01:30"
+                request.json['when'] = datetime.strptime(request.json['when'], '%Y-%m-%d %H:%M:%S')
             setattr(class_meeting, attr, request.json[attr])
 
     db.session.commit()
