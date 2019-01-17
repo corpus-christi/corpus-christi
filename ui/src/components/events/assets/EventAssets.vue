@@ -49,8 +49,8 @@
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
-        <td class="hover-hand">{{ props.item.description }}</td>
-        <td class="hover-hand">
+        <td>{{ props.item.description }}</td>
+        <td>
           {{ getDisplayLocation(props.item.location) }}
         </td>
         <td>
@@ -430,8 +430,4 @@ export default {
 };
 </script>
 
-<style scoped>
-.hover-hand {
-  cursor: pointer;
-}
-</style>
+<style scoped></style>
