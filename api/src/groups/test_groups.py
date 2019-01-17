@@ -44,9 +44,7 @@ def test_create_group(auth_client):
 @pytest.mark.smoke
 def test_create_invalid_group(auth_client):
     # GIVEN an empty database
-    create_multiple_people(auth_client.sqla, 3)
-    create_multiple_accounts(auth_client.sqla, 1)
-    create_multiple_managers(auth_client.sqla, 2, "Manager")
+    generate_managers(auth_client)
     # WHEN we attempt to add invalid events
     count = random.randint(5, 15)
 
@@ -59,6 +57,7 @@ def test_create_invalid_group(auth_client):
             group['description'] = None
         else:
             group['active'] = None
+        group['invalid_field'] = 4
 
         resp = auth_client.post(url_for('groups.create_group'), json=group)
 
@@ -73,9 +72,7 @@ def test_create_invalid_group(auth_client):
 def test_read_all_groups(auth_client):
     # GIVEN
     count = random.randint(3, 11)
-    create_multiple_people(auth_client.sqla, 3)
-    create_multiple_accounts(auth_client.sqla, 1)
-    create_multiple_managers(auth_client.sqla, 2, "Manager")
+    generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, count)
 
     # WHEN
@@ -155,9 +152,7 @@ def test_read_all_groups(auth_client):
 def test_read_one_group(auth_client):
     # GIVEN
     count = random.randint(3, 11)
-    create_multiple_people(auth_client.sqla, 3)
-    create_multiple_accounts(auth_client.sqla, 1)
-    create_multiple_managers(auth_client.sqla, 2, "Manager")
+    generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, count)
 
     # WHEN
@@ -199,9 +194,7 @@ def test_read_one_group(auth_client):
 def test_update_group(auth_client):
     # GIVEN a database with a number of groups
     count = random.randint(3, 11)
-    create_multiple_people(auth_client.sqla, 3)
-    create_multiple_accounts(auth_client.sqla, 1)
-    create_multiple_managers(auth_client.sqla, 2, "Manager")
+    generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, count)
 
     # WHEN we update one group
@@ -220,7 +213,7 @@ def test_update_group(auth_client):
     resp = auth_client.patch(url_for('groups.update_group', group_id=group.id), json=payload)
 
     # THEN we assume the correct status code
-    assert resp.status_code == 200
+    assert resp.status_code == 201
 
     # THEN we assume the correct content in the returned object
     assert resp.json['name'] == payload['name']
@@ -243,9 +236,7 @@ def test_update_group(auth_client):
 @pytest.mark.smoke
 def test_create_meeting(auth_client):
     # GIVEN an empty database
-    create_multiple_people(auth_client.sqla, 3)
-    create_multiple_accounts(auth_client.sqla, 1)
-    create_multiple_managers(auth_client.sqla, 2, "Manager")
+    generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, 1)
     # WHEN we add in some events
 
@@ -264,9 +255,7 @@ def test_create_meeting(auth_client):
 def test_read_all_meetings(auth_client):
     # GIVEN
     count = random.randint(3, 11)
-    create_multiple_people(auth_client.sqla, 3)
-    create_multiple_accounts(auth_client.sqla, 1)
-    create_multiple_managers(auth_client.sqla, 2, "Manager")
+    generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, count)
     create_multiple_meetings(auth_client.sqla, count)
 
@@ -287,9 +276,7 @@ def test_read_all_meetings(auth_client):
 def test_read_one_meeting(auth_client):
     # GIVEN
     count = random.randint(3, 11)
-    create_multiple_people(auth_client.sqla, 3)
-    create_multiple_accounts(auth_client.sqla, 1)
-    create_multiple_managers(auth_client.sqla, 2, "Manager")
+    generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, count)
     create_multiple_meetings(auth_client.sqla, count)
 
@@ -316,9 +303,7 @@ def test_read_one_meeting(auth_client):
 def test_update_meeting(auth_client):
     # GIVEN a database with a number of meetings
     count = random.randint(3, 11)
-    create_multiple_people(auth_client.sqla, 3)
-    create_multiple_accounts(auth_client.sqla, 1)
-    create_multiple_managers(auth_client.sqla, 2, "Manager")
+    generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, count)
     create_multiple_meetings(auth_client.sqla, count)
 
@@ -357,9 +342,7 @@ def test_update_meeting(auth_client):
 def test_create_member(auth_client):
     # GIVEN an empty database
     count = random.randint(3, 11)
-    create_multiple_people(auth_client.sqla, 15)
-    create_multiple_accounts(auth_client.sqla, 1)
-    create_multiple_managers(auth_client.sqla, 2, "Manager")
+    generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, 2)
 
     # WHEN
@@ -375,9 +358,7 @@ def test_create_member(auth_client):
 def test_read_all_members(auth_client):
     # GIVEN
     count = random.randint(3, 11)
-    create_multiple_people(auth_client.sqla, 3)
-    create_multiple_accounts(auth_client.sqla, 1)
-    create_multiple_managers(auth_client.sqla, 2, "Manager")
+    generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, 2)
     create_multiple_members(auth_client.sqla, count)
 
@@ -394,36 +375,70 @@ def test_read_all_members(auth_client):
         assert resp.json[i]['id'] == members[i].id
 
 
-@pytest.mark.xfail()
-def test_read_one_member(auth_client, db):
+@pytest.mark.smoke
+def test_read_one_member(auth_client):
     # GIVEN
+    count = random.randint(3, 11)
+    generate_managers(auth_client)
+    create_multiple_groups(auth_client.sqla, count)
+    create_multiple_meetings(auth_client.sqla, count)
+
     # WHEN
-    # THEN
-    assert True == False
+    members = auth_client.sqla.query(Member).all()
+
+    for member in members:
+        resp = auth_client.get(url_for('groups.read_one_member', member_id=member.id))
+        # THEN expect groups to match
+        assert resp.status_code == 200
+        assert resp.json['id'] == member.id
+
+# Waiting for API
+# @pytest.mark.xfail()
+# def test_replace_member(auth_client, db):
+#     # GIVEN
+#     # WHEN
+#     # THEN
+#     assert True == False
 
 
-@pytest.mark.xfail()
-def test_replace_member(auth_client, db):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
+@pytest.mark.smoke
+def test_update_member(auth_client):
+    # GIVEN a database with a number of meetings
+    count = random.randint(3, 11)
+    generate_managers(auth_client)
+    create_multiple_groups(auth_client.sqla, count)
+    create_multiple_members(auth_client.sqla, count)
+
+    # WHEN we update one event
+    member = auth_client.sqla.query(Member).first()
+
+    payload = {}
+    new_member = member_object_factory(auth_client.sqla)
+
+    payload['group_id'] = new_member['group_id']
+    payload['person_id'] = new_member['person_id']
+    payload['joined'] = new_member['joined']
+    payload['active'] = new_member['active']
+
+    resp = auth_client.patch(url_for('groups.update_member', member_id=member.id), json=payload)
+
+    # THEN we assume the correct status code
+    assert resp.status_code == 200
+
+    # THEN we assume the correct content in the returned object
+    assert resp.json['group_id'] == payload['group_id']
+    assert resp.json['person_id'] == payload['person_id']
+    assert resp.json['joined'] == payload['joined']
+    assert resp.json['active'] == payload['active']
 
 
-@pytest.mark.xfail()
-def test_update_member(auth_client, db):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
-
-
-@pytest.mark.xfail()
-def test_delete_member(auth_client, db):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
+# Waiting for API
+# @pytest.mark.smoke
+# def test_delete_member(auth_client):
+#     # GIVEN
+#     # WHEN
+#     # THEN
+#     assert True == False
 
 
 # ---- Attendance
