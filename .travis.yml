@@ -27,12 +27,13 @@ matrix:
                         - pip install -U pytest
                         - sudo apt install postgresql
                         - sudo apt install nginx
-                  script:
-                        - dropdb --if-exists cc-staging
-                        - dropuser arco
+                  before_script:
                         - sudo service postgresql start
+                        - sudo -u postgres dropdb --if-exists cc-staging
+                        - sudo -u postgres dropuser arco
                         - sudo -u postgres createuser -w arco
                         - sudo -u postgres createdb -O arco cc-staging 
+                  script:
                         # - rm api/dev-db.sqlite4
                         # - rm api/migrations/versions/*.py
                         - flask db upgrade
