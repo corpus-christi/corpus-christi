@@ -854,8 +854,5 @@ def test_update_class_meeting(client, db):
     # WHEN
     # THEN
     assert True == False
-<<<<<<< HEAD
 
 open
-=======
->>>>>>> fc47f6ab419aeee0c4611daab6c4a71d3c0aa7a0
