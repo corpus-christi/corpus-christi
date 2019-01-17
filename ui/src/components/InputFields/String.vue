@@ -4,6 +4,7 @@
     :name="name"
     :value="value"
     @input="$emit('input', $event)"
+    v-validate="{regex: '^[a-zA-Z]*$'}"
   ></v-text-field>
 </template>
 

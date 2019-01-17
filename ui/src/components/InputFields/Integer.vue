@@ -1,23 +1,19 @@
 <template>
-  <v-select
+  <v-text-field
     :label="label"
     :name="name"
     :value="value"
     @input="$emit('input', $event)"
-    :items="options"
-  ></v-select>
+    v-validate="'decimal:0'"
+  ></v-text-field>
 </template>
 
 <script>
 export default {
-  name: "Dropdown",
+  name: "Integer",
   props: {
     label: {
       type: String,
-      required: true
-    },
-    options: {
-      type: Array,
       required: true
     },
     name: {
@@ -25,7 +21,7 @@ export default {
       required: true
     },
     value: {
-      type: Number,
+      type: String,
       required: true
     }
   }

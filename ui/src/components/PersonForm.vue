@@ -92,11 +92,15 @@
           data-cy="phone"
           :readonly="formDisabled"
         ></v-text-field>
-        <span class="headline">{{ $t("people.attributes") }}</span>
-        <AttributeForm
-          :attributes="attributeFields"
-          v-model="formData"
-        ></AttributeForm>
+        <div v-if="hasAttributes">
+          <span class="headline">{{
+            $t("people.attributes")
+          }}</span>
+          <AttributeForm
+            :attributes="attributeFields"
+            v-model="formData"
+          ></AttributeForm>
+        </div>
       </form>
     </v-card-text>
     <v-card-actions>
@@ -210,8 +214,8 @@ export default {
       return this.saveLoading || this.addMoreLoading;
     },
 
-    showAttributes() {
-      return true;
+    hasAttributes() {
+      return this.$props.attributes.length !== 0;
     }
   },
 
@@ -275,10 +279,13 @@ export default {
         let component;
         switch (attr.typeI18n) {
           case "attribute.float":
+            component = this.floatFieldConstructor(attr);
             break;
           case "attribute.integer":
+            component = this.integerFieldConstructor(attr);
             break;
           case "attribute.date":
+            component = this.dateFieldConstructor(attr);
             break;
           case "attribute.string":
             component = this.stringFieldConstructor(attr);
@@ -293,6 +300,33 @@ export default {
         }
         this.attributeFields.push(component);
       }
+    },
+
+    floatFieldConstructor(attr) {
+      this.$set(this.formData, attr.id.toString(), "");
+      return {
+        fieldType: "Float",
+        name: attr.id.toString(),
+        label: attr.nameI18n
+      };
+    },
+
+    integerFieldConstructor(attr) {
+      this.$set(this.formData, attr.id.toString(), "");
+      return {
+        fieldType: "Integer",
+        name: attr.id.toString(),
+        label: attr.nameI18n
+      };
+    },
+
+    dateFieldConstructor(attr) {
+      this.$set(this.formData, attr.id.toString(), "");
+      return {
+        fieldType: "Date",
+        name: attr.id.toString(),
+        label: attr.nameI18n
+      };
     },
 
     stringFieldConstructor(attr) {

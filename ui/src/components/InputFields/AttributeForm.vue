@@ -13,11 +13,15 @@
 </template>
 
 <script>
+import Date from "./Date.vue";
+import Float from "./Float.vue";
+import Integer from "./Integer.vue";
 import String from "./String.vue";
 import Dropdown from "./Dropdown.vue";
+
 export default {
   name: "AttributeForm",
-  components: { String, Dropdown },
+  components: { Date, Float, Integer, String, Dropdown },
   props: ["attributes", "value"],
   data() {
     return {
