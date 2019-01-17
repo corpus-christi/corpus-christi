@@ -7,8 +7,8 @@ from src.db import Base
 
 from .models import Course, CourseSchema, Course_Offering, Class_Meeting,\
         Course_OfferingSchema, Diploma, DiplomaSchema, Student, StudentSchema,\
-        Class_Meeting, Class_MeetingSchema, Diploma_Awarded, Diploma_AwardedSchema
-from ..people.test_people import create_multiple_people
+        Class_Meeting, Class_MeetingSchema, Diploma_Awarded, Diploma_AwardedSchema,\
+        Class_Attendance, Class_AttendanceSchema
 from ..people.models import Person
 from ..places.models import Location
 from ..people.test_people import create_multiple_people
