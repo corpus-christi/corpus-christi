@@ -30,7 +30,7 @@ matrix:
                   before_script:
                         - sudo service postgresql start
                         - sudo -u postgres dropdb --if-exists cc-staging
-                        - sudo -u postgres dropuser arco
+                        - sudo -u postgres dropuser --if-exists arco
                         - sudo -u postgres createuser -w arco
                         - sudo -u postgres createdb -O arco cc-staging 
                   script:
