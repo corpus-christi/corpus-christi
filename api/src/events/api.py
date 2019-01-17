@@ -15,27 +15,7 @@ from ..teams.models import Team, TeamMember, TeamSchema, TeamMemberSchema
 from ..emails.models import EmailSchema
 from ..people.models import Person, PersonSchema
 from .. import db, mail
-
-def modify_entity(entity_type, schema, id, new_value_dict):
-    item = db.session.query(entity_type).filter_by(id=id).first()
-
-    if not item:
-        return jsonify(f"Item with id #{id} does not exist."), 404
-
-    for key, val in new_value_dict.items():
-        if key != 'id':
-            setattr(item, key, val)
-    
-    db.session.commit()
-
-    return jsonify(schema.dump(item)), 200
-
-def get_exclusion_list(query_object, default_exclusion_list):
-    for exclusion in default_exclusion_list:
-        include_filter = request.args.get(f"include_{exclusion}")
-        if include_filter:
-            default_exclusion_list.remove(exclusion)
-    return default_exclusion_list
+from ..etc.helper import modify_entity, get_exclusion_list
 
 # ---- Event
 
