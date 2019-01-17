@@ -13,15 +13,23 @@ from .. import db
 
 group_schema = GroupSchema()
 
+def group_dump(group):
+    group.managerInfo = group.manager
+    group.managerInfo.person = group.manager.account.person
+    group.memberList = group.members
+    return jsonify(group_schema.dump(group))
+
+
 
 @groups.route('/groups', methods=['POST'])
 @jwt_required
 def create_group():
     request.json['active'] = True
 
-    if request.json['members']:
-        members_to_add = request.json['members']
-        del request.json['members']
+    members_to_add = None
+    if 'member_ids' in request.json.keys():
+        members_to_add = request.json['member_ids']
+        del request.json['member_ids']
 
     try:
         valid_group = group_schema.load(request.json)
@@ -35,9 +43,10 @@ def create_group():
 
     today = datetime.datetime.today().strftime('%Y-%m-%d')
 
-    for member in members_to_add:
-        new_member = generate_member(new_group.id, member, today, True)
-        db.session.add(new_member)
+    if members_to_add is not None:
+        for member in members_to_add:
+            new_member = generate_member(new_group.id, member, today, True)
+            db.session.add(new_member)
 
     group_overseer = db.session.query(Role).filter_by(name_i18n="role.group-overseer").first()
     manager_roles = new_group.manager.account.roles
@@ -49,10 +58,7 @@ def create_group():
 
     db.session.add(new_group.manager.account)
     db.session.commit()
-    new_group.managerInfo = new_group.manager
-    new_group.managerInfo.person = new_group.manager.account.person
-    new_group.memberList = new_group.members
-    return jsonify(group_schema.dump(new_group)), 201
+    return group_dump(new_group), 201
 
 
 @groups.route('/groups')
@@ -70,15 +76,18 @@ def read_all_groups():
 @jwt_required
 def read_one_group(group_id):
     result = db.session.query(Group).filter_by(id=group_id).first()
-    result.memberList = result.members
-    result.managerInfo = result.manager
-    result.managerInfo.person = result.manager.account.person
-    return jsonify(group_schema.dump(result))
+    return group_dump(result), 200
 
 
 @groups.route('/groups/<group_id>', methods=['PATCH'])
 @jwt_required
 def update_group(group_id):
+    
+    update_members = None
+    if 'member_ids' in request.json.keys():
+        update_members = request.json['member_ids']
+        del request.json['member_ids']
+    
     try:
         valid_group = group_schema.load(request.json)
     except ValidationError as err:
@@ -86,11 +95,30 @@ def update_group(group_id):
 
     group = db.session.query(Group).filter_by(id=group_id).first()
 
+    old_members = []
+    for member in group.members:
+        old_members.append({member.person_id : member.joined})
+
+    today = datetime.datetime.today().strftime('%Y-%m-%d')
+
+    print(old_members, end='\n\n\n')
+    if update_members is not None:
+        for member in group.members:
+            db.session.delete(member)
+        for member in update_members:
+            if member in old_members:
+                date = old_members[member]
+            else:
+                date = today
+            
+            new_member = generate_member(group.id, member, date, True)
+            db.session.add(new_member)
+
     for key, val in valid_group.items():
         setattr(group, key, val)
 
     db.session.commit()
-    return jsonify(group_schema.dump(group))
+    return group_dump(group), 201
 
 
 @groups.route('/groups/activate/<group_id>', methods=['PUT'])
