@@ -100,7 +100,6 @@
         <!-- location -->
         <v-text-field v-model="location" v-bind:label="$t('courses.choose-location')" name="location"></v-text-field>
 
-        <!-- max size TODO: integer validation-->
         <v-flex xs7 md7>
           <v-text-field v-model="courseOffering.maxSize" v-bind:label="$t('courses.max-size')" name="max-size" type="number" v-validate="'integer'"></v-text-field>
         </v-flex>
@@ -186,7 +185,7 @@ export default {
     }
   },
 
-   props: {
+  props: {
     editMode: {
       type: Boolean,
       required: true

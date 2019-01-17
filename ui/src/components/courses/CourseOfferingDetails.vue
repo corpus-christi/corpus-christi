@@ -14,16 +14,6 @@
             <b>{{ $t("courses.enrolled") }}:</b>
             <div class="ml-2">{{ "0 / " + courseOffering.maxSize }}</div>
           </v-card-text>
-          <v-card-actions>
-            <v-btn
-              flat
-              ripple
-              color="primary"
-              v-on:click="navigateTo('/students')"
-            >
-              <v-icon>person</v-icon>&nbsp;{{ $t("courses.students") }}
-            </v-btn>
-          </v-card-actions>
         </template>
         <v-layout v-else justify-center height="500px">
           <div class="ma-5 pa-5">
@@ -91,12 +81,6 @@ export default {
         day: "numeric",
         hour: "2-digit",
         minute: "2-digit"
-      });
-    },
-
-    navigateTo(path) {
-      this.$router.push({
-        path: "/courses/" + this.courseOffering.courseId + "/offering/" + this.courseOffering.id + path
       });
     },
 

@@ -11,10 +11,7 @@
         hide-details
       ></v-text-field>
       <v-spacer></v-spacer>
-      <v-btn
-        color="primary"
-        r        data-cy="add-student"
-      >
+      <v-btn color="primary" raised v-on:click.stop="newStudent">
         <v-icon dark left>add</v-icon>
         {{ $t("actions.add-person") }}
       </v-btn>
@@ -33,13 +30,28 @@
         <td></td>
       </template>
     </v-data-table>
+    
+    <v-dialog persistent scrollable v-model="newStudentDialog.show" max-width="500px">
+      <StudentsForm
+        v-bind:editMode="newStudentDialog.editMode"
+        v-bind:initialData="newStudentDialog.newStudent"
+        v-bind:saving="newStudentDialog.saving"
+        v-on:cancel="cancelNewStudent"
+        v-on:save="saveNewStudent"
+      />
+    </v-dialog>
   </div>
 </template>
 
 <script>
 import EntitySearch from "../EntitySearch";
+import StudentsForm from "./StudentsForm";
+
 export default {
-  components: { "entity-search": EntitySearch },
+  components: { 
+    "entity-search": EntitySearch,
+    StudentsForm
+  },
   name: "CourseOfferingStudents",
   data() {
     return {
@@ -47,12 +59,13 @@ export default {
       search: "",
       students: [],
       people: [],
-      newStudent: null,
+
       newStudentDialog: {
         show: false,
-        eventId: -1,
-        loading: false
-      },
+        newStudent: {},
+        saving: false,
+        editMode: false
+      }
       
     };
   },
@@ -78,32 +91,54 @@ export default {
   },
 
   methods: {
-    activateNewStudentDialog(eventId) {
+    activateNewStudentDialog(newStudent = {}, editMode = false) {
       this.newStudentDialog.show = true;
-      this.newStudentDialog.eventId = eventId;
+      this.newStudentDialog.editMode = editMode;
+      this.newStudentDialog.newStudent = newStudent;
     },
-    openStudentDialog(event) {
-      this.activateNewStudentDialog(event.id);
+    editStudentDialog(newStudent) {
+      this.activateNewStudentDialog({ ...newStudent }, true);
     },
-    cancelNewStudentDialog() {
+    cancelNewStudent() {
       this.newStudentDialog.show = false;
     },
-    addStudent() {
-      console.log(this.newStudent);
-      this.newStudentDialog.loading = true;
-      // loading true
-      // axios post
-      // success -> re-request Students all
-      // loading false
-      this.newStudentDialog.loading = false;
-      this.newStudentDialog.show = false;
-      this.newStudent = null;
+    newStudent() {
+      this.activateNewStudentDialog();
     },
-    archiveStudent() {
-      // loading true
-      // axios post
-      // success -> re-request Students all
-      // loading false
+    saveNewStudent(newStudent) {
+      this.newStudentDialog.saving = true;
+      
+      const personObject = newStudent;
+      newStudent = {};
+      
+      if (this.newStudentDialog.editMode) {
+        //edit
+      } else {
+        newStudent.confirmed = true;
+        newStudent.offeringId = this.offeringId;
+        newStudent.studentId = personObject.id;
+        newStudent.active = true;
+        
+        this.$http
+          .post(`/api/v1/courses/course_offerings/${newStudent.studentId}`, newStudent)
+          .then(resp => {
+            console.log("ADDED", resp);
+            this.students.push(resp.data);
+            this.people.push(personObject);
+            
+            // this.snackbar.text = this.$t("courses.added");
+            // this.snackbar.show = true;
+          })
+          .catch(err => {
+             console.error("FAILURE", err.response);
+             this.snackbar.text = this.$t("courses.add-failed");
+             this.snackbar.show = true;
+          })
+          .finally(() => {
+            this.newStudentDialog.show = false;
+            this.newStudentDialog.saving = false;
+          });
+      }
     }
   },
 
