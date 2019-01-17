@@ -26,8 +26,7 @@
               single-line
               :items="viewOptions"
               v-model="viewStatus"
-            >
-            </v-select>
+            ></v-select>
           </div>
         </v-flex>
         <v-flex shrink justify-self-end>
@@ -134,9 +133,9 @@
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false" data-cy>
-        {{ $t("actions.close") }}
-      </v-btn>
+      <v-btn flat @click="snackbar.show = false" data-cy>{{
+        $t("actions.close")
+      }}</v-btn>
     </v-snackbar>
 
     <!-- New/Edit dialog -->
@@ -297,14 +296,12 @@ export default {
         const person_id = person.id;
         // Locate the person we're updating in the table.
         const idx = this.allPeople.findIndex(p => p.id === person.id);
-        // Get rid of the ID; not for consumption by endpoint.
-        delete person.id;
 
         this.data = this.constructPersonData(person);
         this.$http
           .put(`/api/v1/people/persons/${person_id}`, this.data)
-          .then(() => {
-            Object.assign(this.allPeople[idx], person);
+          .then(response => {
+            Object.assign(this.allPeople[idx], response.data);
             this.personDialog.show = false;
             this.personDialog.saveLoading = false;
             this.showSnackbar(this.$t("person.messages.person-edit"));
@@ -334,12 +331,13 @@ export default {
     },
 
     constructPersonData(person) {
-      var attributes = [];
+      let attributes = [];
       if (person.attributesInfo) {
         attributes = person.attributesInfo;
       }
       delete person["attributesInfo"];
       delete person["accountInfo"];
+      delete person["id"];
       return {
         person: person,
         attributesInfo: attributes

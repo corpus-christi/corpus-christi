@@ -1,12 +1,12 @@
 <template>
   <div>
     <component
-      v-for="(field, index) in attributes"
+      v-for="(attribute, index) in attributes"
       :key="index"
-      :is="field.fieldType"
-      :value="formData[field.name]"
-      @input="updateForm(field.name, $event)"
-      v-bind="field"
+      :is="attribute.fieldType"
+      :value="formData[attribute.name]"
+      @input="updateForm(attribute.name, $event)"
+      v-bind="attribute"
     >
     </component>
   </div>
@@ -18,10 +18,12 @@ import Float from "./Float.vue";
 import Integer from "./Integer.vue";
 import String from "./String.vue";
 import Dropdown from "./Dropdown.vue";
+import Check from "./Check.vue";
+import Radio from "./Radio.vue";
 
 export default {
   name: "AttributeForm",
-  components: { Date, Float, Integer, String, Dropdown },
+  components: { Date, Float, Integer, String, Dropdown, Check, Radio },
   props: ["attributes", "value"],
   data() {
     return {

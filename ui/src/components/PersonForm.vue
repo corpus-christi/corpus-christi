@@ -93,9 +93,7 @@
           :readonly="formDisabled"
         ></v-text-field>
         <div v-if="hasAttributes">
-          <span class="headline">{{
-            $t("people.attributes")
-          }}</span>
+          <span class="headline">{{ $t("people.attributes") }}</span>
           <AttributeForm
             :attributes="attributeFields"
             v-model="formData"
@@ -146,7 +144,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-import { isEmpty } from "lodash";
+import { isEmpty, find } from "lodash";
 import AttributeForm from "./InputFields/AttributeForm.vue";
 
 export default {
@@ -179,6 +177,7 @@ export default {
       showBirthdayPicker: false,
 
       person: {
+        id: 0,
         active: true,
         firstName: "",
         lastName: "",
@@ -187,10 +186,9 @@ export default {
         birthday: "",
         email: "",
         phone: "",
-        locationId: 0
+        locationId: 0,
+        attributesInfo: []
       },
-
-      personObject: {},
 
       attributeFields: [],
       formData: {}
@@ -243,15 +241,15 @@ export default {
       for (let key of this.personKeys) {
         this.person[key] = "";
       }
+      this.constructAttributeForm(this.$props.attributes);
       this.$validator.reset();
     },
 
     // Trigger a save event, returning the update `Person`.
     save() {
       this.$validator.validateAll().then(() => {
-        console.log(this.formData);
         if (!this.errors.any()) {
-          this.constructPersonObject(this.person);
+          this.person.attributesInfo = this.collectAttributes();
           this.$emit("save", this.person);
         }
       });
@@ -265,11 +263,34 @@ export default {
       });
     },
 
-    constructPersonObject(person) {
-      this.personObject = {
-        person: person,
-        attributesInfo: []
-      };
+    collectAttributes() {
+      let attributes = [];
+      for (let attribute of this.attributeFields) {
+        attributes.push({
+          personId: this.person.id ? this.person.id : 0,
+          attributeId: attribute.name,
+          enumValueId: this.isEnum(attribute.fieldType)
+            ? this.formData[attribute.name]
+            : 0,
+          stringValue: this.isEnum(attribute.fieldType)
+            ? ""
+            : this.formData[attribute.name].toString()
+        });
+      }
+      return attributes;
+    },
+
+    isEnum(type) {
+      return type === "Dropdown" || type === "Radio";
+    },
+
+    getExistingAttribute(attributeId) {
+      let existingValue = find(this.person.attributesInfo, item => {
+        return item.attributeId === attributeId;
+      });
+      return existingValue
+        ? existingValue
+        : { stringValue: "", enumValueId: 0 };
     },
 
     constructAttributeForm(attributes) {
@@ -294,8 +315,10 @@ export default {
             component = this.dropdownFieldConstructor(attr);
             break;
           case "attribute.check":
+            component = this.checkFieldConstructor(attr);
             break;
           case "attribute.radio":
+            component = this.radioFieldConstructor(attr);
             break;
         }
         this.attributeFields.push(component);
@@ -303,7 +326,11 @@ export default {
     },
 
     floatFieldConstructor(attr) {
-      this.$set(this.formData, attr.id.toString(), "");
+      this.$set(
+        this.formData,
+        attr.id.toString(),
+        this.getExistingAttribute(attr.id).stringValue
+      );
       return {
         fieldType: "Float",
         name: attr.id.toString(),
@@ -312,7 +339,11 @@ export default {
     },
 
     integerFieldConstructor(attr) {
-      this.$set(this.formData, attr.id.toString(), "");
+      this.$set(
+        this.formData,
+        attr.id.toString(),
+        this.getExistingAttribute(attr.id).stringValue
+      );
       return {
         fieldType: "Integer",
         name: attr.id.toString(),
@@ -321,7 +352,11 @@ export default {
     },
 
     dateFieldConstructor(attr) {
-      this.$set(this.formData, attr.id.toString(), "");
+      this.$set(
+        this.formData,
+        attr.id.toString(),
+        this.getExistingAttribute(attr.id).stringValue
+      );
       return {
         fieldType: "Date",
         name: attr.id.toString(),
@@ -330,7 +365,11 @@ export default {
     },
 
     stringFieldConstructor(attr) {
-      this.$set(this.formData, attr.id.toString(), "");
+      this.$set(
+        this.formData,
+        attr.id.toString(),
+        this.getExistingAttribute(attr.id).stringValue
+      );
       return {
         fieldType: "String",
         name: attr.id.toString(),
@@ -347,12 +386,67 @@ export default {
         });
       }
 
-      this.$set(this.formData, attr.id.toString(), 0);
+      this.$set(
+        this.formData,
+        attr.id.toString(),
+        this.getExistingAttribute(attr.id).enumValueId
+      );
       return {
         fieldType: "Dropdown",
         name: attr.id.toString(),
         label: attr.nameI18n,
         options: options
+      };
+    },
+
+    checkFieldConstructor(attr) {
+      let options = [];
+      for (let item of attr.enumerated_values) {
+        options.push({
+          label: item.valueI18n,
+          name: item.valueI18n,
+          value: item.id
+        });
+      }
+
+      let existingAttr = this.getExistingAttribute(attr.id).stringValue.split(',');
+      for(let index in existingAttr) {
+        existingAttr[index] = Number(existingAttr[index]);
+      }
+
+      this.$set(
+        this.formData,
+        attr.id.toString(),
+        existingAttr);
+      return {
+        fieldType: "Check",
+        name: attr.id.toString(),
+        label: attr.nameI18n,
+        options: options,
+        value: existingAttr
+      };
+    },
+
+    radioFieldConstructor(attr) {
+      let options = [];
+      for (let item of attr.enumerated_values) {
+        options.push({
+          label: item.valueI18n,
+          name: item.valueI18n,
+          value: item.id,
+          inputValue: this.getExistingAttribute(attr.id).enumValueId
+        });
+      }
+
+      this.$set(
+        this.formData,
+        attr.id.toString(),
+        this.getExistingAttribute(attr.id).enumValueId);
+      return {
+        fieldType: "Radio",
+        name: attr.id.toString(),
+        label: attr.nameI18n,
+        options: options,
       };
     }
   }
