@@ -159,24 +159,20 @@
 </template>
 
 <script>
-import AssetForm from "../../assets/AssetForm";
+import AssetForm from "./AssetForm";
 import { mapGetters } from "vuex";
 
 export default {
-  name: "EventAssets",
+  name: "AssetTable",
   components: { "asset-form": AssetForm },
   mounted() {
     this.tableLoading = true;
-    let eventId = this.$route.params.event;
-    this.$http.get(`/api/v1/events/${eventId}?include_assets=1`).then(resp => {
-      this.event = resp.data;
-
-      if (this.event.assets) {
-        this.assets = this.event.assets.map(ev_as => ev_as.asset);
-        this.tableLoading = false;
-      }
-      // console.log(this.assets);
+    this.$http.get("/api/v1/assets/?include_location=1").then(resp => {
+      this.assets = resp.data;
+      this.tableLoading = false;
+      console.log(this.assets);
     });
+    this.onResize();
   },
 
   data() {
@@ -346,9 +342,10 @@ export default {
       if (this.assetDialog.editMode) {
         const assetId = asset.id;
         const idx = this.assets.findIndex(as => as.id === asset.id);
-        delete asset.id;
+        delete newAsset.id;
+        delete newAsset.event_count
         this.$http
-          .put(`/api/v1/assets/${assetId}`, newAsset)
+          .patch(`/api/v1/assets/${assetId}`, newAsset)
           .then(resp => {
             console.log("EDITED", resp);
             Object.assign(this.assets[idx], resp.data);
@@ -362,8 +359,11 @@ export default {
             this.showSnackbar(this.$t("assets.error-editing-asset"));
           });
       } else {
+        console.log(newAsset)
+        delete newAsset.event_count
+        newAsset.active = true
         this.$http
-          .post("/api/v1/assets", newAsset)
+          .post("/api/v1/assets/", newAsset)
           .then(resp => {
             console.log("ADDED", resp);
             this.assets.push(resp.data);

@@ -7,10 +7,14 @@ from flask_jwt_extended import create_access_token
 
 from flask import jsonify
 
+#Needed for pruning events
+from datetime import datetime, timedelta
+
 from src import create_app
 from src import db
 from src.i18n.models import Language, I18NLocale
 from src.people.models import Person, Account, Role
+from src.events.models import Event
 from src.events.create_event_data import create_events_test_data
 from src.attributes.models import Attribute, PersonAttribute, EnumeratedValue
 from src.attributes.test_attributes import create_multiple_attributes, create_multiple_enumerated_values, create_multiple_person_attribute_enumerated, create_multiple_person_attribute_strings
@@ -148,5 +152,19 @@ def update_password(username, password):
     db.session.commit()
     print(f"Password for '{username}' updated")
 
-
 app.cli.add_command(user_cli)
+
+# ---- Maintainence
+
+maintain_cli = AppGroup('maintain', help="Mantaining the database.")
+
+@maintain_cli.command('prune-events', help="Sets events that have ended before <pruningOffset> to inactive")
+def prune_events():
+    events = db.session.query(Event).filter_by(active=True).all()
+    pruningOffset = datetime.now() - timedelta(days=30)
+    for event in events:
+        if(event.end < pruningOffset):
+            event.active = False
+    db.session.commit()
+
+app.cli.add_command(maintain_cli)
