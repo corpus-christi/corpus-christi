@@ -30,14 +30,12 @@ matrix:
                         - sudo apt install nginx
                   before_script:
                         - sudo service postgresql start
-                        - sudo -u postgres dropdb --if-exists cc-staging
-                        - sudo -u postgres dropuser --if-exists arco
+                  script:
                         - sudo -u postgres createuser -w arco
                         - sudo -u postgres createdb -O arco cc-staging 
-                  script:
                         - flask db upgrade
                         - flask data load-all
-                        - rm api/migrations/versions/*.py
+                        - rm migrations/versions/*.py
                         - sudo nginx -t
                         - sudo systemctl restart nginx
                         - cd ../
