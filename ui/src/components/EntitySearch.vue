@@ -4,7 +4,7 @@
       data-cy="entity-search-field"
       v-bind:label="getLabel"
       prepend-icon="search"
-      :items="entities"
+      :items="searchableEntities"
       :loading="isLoading"
       v-bind:value="value"
       v-on:input="setSelected"
@@ -49,6 +49,7 @@ export default {
     course: Boolean,
     team: Boolean,
     multiple: { type: Boolean, default: false },
+    existingEntities: Array,
     value: null,
     searchEndpoint: String,
     errorMessages: String
@@ -72,6 +73,19 @@ export default {
     },
     idField() {
       return "id";
+    },
+    searchableEntities() {
+      if (this.existingEntities){
+        this.entities = this.entities.filter(ent => {
+          for (let otherEnt of this.existingEntities) {
+            if (ent[this.idField] == otherEnt[this.idField]) {
+              return false;
+            }
+          }
+          return true;
+        });
+      }
+      return this.entities;
     }
   },
 
