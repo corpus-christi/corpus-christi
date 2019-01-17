@@ -45,6 +45,25 @@
         data-cy="confirm-password"
       ></v-text-field>
     </v-card-text>
+    <v-card-title>$tRole Settings</v-card-title>
+    <v-card-text>
+      <v-select
+        :items="rolesList"
+        label="$tRoles"
+        chips
+        deletable-chips
+        clearable
+        solo
+        multiple
+        hide-selected
+        return-object
+        item-value="value"
+        item-text="text"
+        :menu-props="{ closeOnContentClick: true }"
+        data-cy="account-form-roles"
+      >
+      </v-select>
+    </v-card-text>
 
     <v-card-actions>
       <v-spacer v-if="!person.accountInfo"></v-spacer>
@@ -91,7 +110,8 @@ export default {
   name: "AccountForm",
   props: {
     person: { type: Object, required: true },
-    account: { type: Object, required: true }
+    account: { type: Object, required: true },
+    roles: Array
   },
   data() {
     return {
@@ -119,6 +139,10 @@ export default {
       return this.addingAccount
         ? this.$t("person.actions.add-account")
         : this.$t("person.actions.reset-password");
+    },
+    rolesList() {
+      console.log(this.roles);
+      return this.roles;
     }
   },
   methods: {
@@ -142,12 +166,10 @@ export default {
       });
     },
     deactivateAccount() {
-      console.log(this.account.id);
       this.$emit("deactivateAccount", this.account.id);
       this.close();
     },
     reactivateAccount() {
-      console.log(this.account.id);
       this.$emit("reactivateAccount", this.account.id);
       this.close();
     },

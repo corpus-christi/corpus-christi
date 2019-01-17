@@ -204,6 +204,7 @@ import PersonAdminForm from "./AccountForm";
 export default {
   name: "PersonTable",
   components: { PersonAdminForm, PersonForm },
+  props: ["peopleList"],
   data() {
     return {
       viewStatus: "viewActive",
@@ -232,7 +233,6 @@ export default {
       allPeople: [],
       activePeople: [],
       archivedPeople: [],
-      rolesList: [],
       search: "",
       data: {}
     };
@@ -488,14 +488,13 @@ export default {
     },
 
     refreshPeopleList() {
-      this.$http
-        .get("/api/v1/people/persons")
-        .then(resp => {
-          this.allPeople = resp.data;
-          this.activePeople = this.allPeople.filter(person => person.active);
-          this.archivedPeople = this.allPeople.filter(person => !person.active);
-        })
-        .catch(err => console.error("FAILURE", err.response));
+      console.log("Refresh people list");
+      this.allPeople = this.props.peopleList;
+      console.log(this.allPeople);
+      this.activePeople = this.getPeopleList().filter(person => person.active);
+      this.archivedPeople = this.getPeopleList().filter(
+        person => !person.active
+      );
     },
 
     getAttributesInfo() {
@@ -507,29 +506,12 @@ export default {
           }
         })
         .catch(err => console.error("FAILURE", err.response));
-    },
-
-    getRolesList() {
-      this.$http
-        .get("/api/v1/people/role")
-        .then(resp => {
-          console.log("FETCHED", resp);
-          let roles = [];
-          for (var role of resp.data) {
-            roles.push({
-              text: role.nameI18n,
-              value: role.id
-            });
-          }
-          this.rolesList = roles;
-        })
-        .catch(err => console.error("FAILURE", err.response));
     }
   },
 
   mounted: function() {
     this.refreshPeopleList();
-    this.getRolesList();
+    // this.getRolesList();
     this.getAttributesInfo();
   }
 };
