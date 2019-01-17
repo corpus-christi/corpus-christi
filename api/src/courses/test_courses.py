@@ -176,13 +176,13 @@ def create_multiple_prerequisites(sqla):
 
 # --- Diploma
 
-def courses_diploma_object_factory():
+def courses_diploma_object_factory(num_courses):
     """Cook up a fake diploma."""
     fake = Faker()  # Use a generic one; others may not have all methods.
     course_diploma = {
-    'name': fake.sentence(nb_words=4),
-    'description': fake.paragraph(),
-    'active': flip()
+        'name': fake.sentence(nb_words=4),
+        'description': fake.paragraph(),
+        'active': flip(),
     }
     return course_diploma
 
@@ -192,7 +192,7 @@ def create_multiple_diplomas(sqla, n=20):
     course_diploma_schema = DiplomaSchema()
     new_courses = []
     for i in range(n):
-        valid_course_diploma = course_diploma_schema.load(courses_diploma_object_factory())
+        valid_course_diploma = course_diploma_schema.load(courses_diploma_object_factory(20))
         diploma = Diploma(**valid_course_diploma)
         courses[i%len(courses)].diplomas.append(diploma)
     sqla.add_all(new_courses)
@@ -315,6 +315,7 @@ def test_create_course(auth_client):
         assert resp.status_code == 201
     # THEN assert that entry is now in database
     assert auth_client.sqla.query(Course).count() == count
+
 
 # Test getting all courses from the database
 def test_read_all_courses(auth_client):
@@ -700,21 +701,28 @@ def test_delete_diploma_course(client, db):
 
 # ---- Diploma
 
+def test_create_diploma(auth_client):
+    ''' Test for good diploma '''
+    # GIVEN some existing courses
+    create_multiple_courses(auth_client.sqla, 10)
+    # WHEN we create a diploma and add courses to add
+    diploma = courses_diploma_object_factory(10)
+    diploma['courses'] = [1,2,3]
+    resp = auth_client.post(url_for('courses.create_diploma'), json=diploma)
+    # THEN the diploma is added to the db
+    assert resp.status_code == 201
+    assert auth_client.sqla.query(Diploma).count() == 1
 
-@pytest.mark.xfail()
-def test_create_diploma(client, db):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
 
-
-@pytest.mark.xfail()
-def test_read_all_diplomas(client, db):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
+def test_read_all_diplomas(auth_client):
+    # GIVEN 50 courses and 15 diplomas
+    create_multiple_courses(auth_client.sqla, 50)
+    create_multiple_diplomas(auth_client.sqla, 15)
+    # WHEN we read the diplomas
+    resp = auth_client.get(url_for('courses.read_all_diplomas'))
+    # THEN we should receive 15 diplomas
+    assert resp.status_code == 200
+    assert len(resp.json) == 15
 
 
 @pytest.mark.xfail()
