@@ -17,15 +17,17 @@ from ..people.test_people import create_multiple_accounts, create_multiple_peopl
 
 fake = Faker()
 
+def generate_managers(auth_client):
+    create_multiple_people(auth_client.sqla, 4)
+    create_multiple_accounts(auth_client.sqla)
+    create_multiple_managers(auth_client.sqla, 4, "Manager")
 
 # ---- Group
 
 @pytest.mark.smoke
 def test_create_group(auth_client):
     # GIVEN an empty database
-    create_multiple_people(auth_client.sqla, 3)
-    create_multiple_accounts(auth_client.sqla, 1)
-    create_multiple_managers(auth_client.sqla, 2, "Manager")
+    generate_managers(auth_client)
     # WHEN we add in some events
 
     count = random.randint(5, 15)
@@ -427,8 +429,69 @@ def test_delete_member(auth_client, db):
 # ---- Attendance
 
 
+@pytest.mark.smoke
+def test_create_attendance(auth_client):
+    # GIVEN a database with some members and meetings
+    create_multiple_people(auth_client.sqla, 4)
+    create_multiple_managers(auth_client.sqla, 2, "Manager")
+    create_multiple_groups(auth_client.sqla, 4)
+    count_meetings = random.randint(15, 20)
+    count_members = random.randint(3, 5)
+    create_multiple_meetings(auth_client.sqla, count_meetings)
+    create_multiple_members(auth_client.sqla, count_members)
+    # WHEN we create a meeting to a member
+    meeting_id = auth_client.sqla.query(Meeting.id).first()[0]
+    member_id = auth_client.sqla.query(Meeting.id).first()[0]
+    payload = {
+            'member_id': member_id,
+            'meeting_id': meeting_id
+    }
+    resp = auth_client.post(url_for('groups.create_attendance'), json=payload)
+    # THEN we expect the right status code
+    assert resp.status_code == 201
+    # THEN we expect the entry to be created
+    queried_attendance_count = auth_client.sqla.query(Attendance).filter(Attendance.meeting_id == payload['meeting_id'], Attendance.member_id == payload['member_id']).count()
+    assert queried_attendance_count == 1
+
+    # WHEN we create an invalid meeting
+    invalid_payload = {
+            'member_id': member_id,
+            'meeting_id': meeting_id,
+            'invalid_field': 23
+    }
+    resp = auth_client.post(url_for('groups.create_attendance'), json=invalid_payload)
+    # THEN we expect an error
+    assert resp.status_code == 422
+
+    # to be implemented
+    # # WHEN we create an existing attendance
+    # resp = auth_client.post(url_for('groups.create_attendance'), json=payload)
+    # # THEN we expect an error
+    # assert resp.status_code == 422
+
+
+
+
+@pytest.mark.smoke
+def test_read_all_attendance(auth_client):
+    # GIVEN a database with some attendances
+    create_multiple_
+    create_multiple_groups(auth_client.sqla, 4)
+    create_multiple_people(auth_client.sqla, 4)
+    create_multiple_members(auth_client.sqla, 4)
+    create_multiple_meetings(auth_client.sqla, 4)
+    create_attendance(auth_client.sqla, 0.75)
+    attendances = auth_client.sqla.query(Attendance).all()
+    # WHEN reading all of them
+    resp = auth_client.get(url_for('groups.create_group'))
+    # THEN we should get the correct code
+    assert len(resp.json) == len(attendances)
+    # THEN we should get the correct count
+    # THEN each one of them should correspond to something in the database
+
+
 @pytest.mark.xfail()
-def test_create_attendance(auth_client, db):
+def test_read_one_attendance(auth_client):
     # GIVEN
     # WHEN
     # THEN
@@ -436,7 +499,7 @@ def test_create_attendance(auth_client, db):
 
 
 @pytest.mark.xfail()
-def test_read_all_attendance(auth_client, db):
+def test_replace_attendance(auth_client):
     # GIVEN
     # WHEN
     # THEN
@@ -444,7 +507,7 @@ def test_read_all_attendance(auth_client, db):
 
 
 @pytest.mark.xfail()
-def test_read_one_attendance(auth_client, db):
+def test_update_attendance(auth_client):
     # GIVEN
     # WHEN
     # THEN
@@ -452,23 +515,7 @@ def test_read_one_attendance(auth_client, db):
 
 
 @pytest.mark.xfail()
-def test_replace_attendance(auth_client, db):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
-
-
-@pytest.mark.xfail()
-def test_update_attendance(auth_client, db):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
-
-
-@pytest.mark.xfail()
-def test_delete_attendance(auth_client, db):
+def test_delete_attendance(auth_client):
     # GIVEN
     # WHEN
     # THEN
