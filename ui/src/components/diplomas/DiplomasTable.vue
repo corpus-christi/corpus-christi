@@ -69,7 +69,7 @@
                   <span class="font-weight-bold">{{$t("diplomas.courses-this-diploma")}}:</span>
                   <ul>
                     <li 
-                    v-for="course in props.item.courses"
+                    v-for="course in props.item.courseList"
                     v-bind:key="course.id"
                     >
                       <span class="font-weight-bold">{{ course.name }}:</span> {{course.description}}
@@ -280,26 +280,22 @@ export default {
     },
 
     saveDiploma(diploma) {
+      console.log('diploma: ', diploma);
       this.diplomaDialog.saving = true;
       // just to be careful, make a clone of diploma, so not editing the object itself
       let diplomaClone = _.cloneDeep(diploma);  
       // grab the courses
       const courses = diplomaClone.courseList || [];
+      console.log('courses: ', courses);
       // create an array of course ids
       const courseIDList = courses.map(course => course.id);
       // Get rid of the courseList, which is an array of objects    
       delete diplomaClone.courseList;
       // the api is expecting an array of course IDs, so add that property to diplomaClone
       diplomaClone.courses = courseIDList;
+      console.log('diplomaClone: ', diplomaClone);
 
-<<<<<<< HEAD
-      // Hang onto the prereqs of the course
-      const courses = diploma.courses || [];
-      // Get rid of the prereqs; not for consumption by the endpoint
-      delete diploma.prerequisites;
-=======
       console.log('all diplomas: ', this.diplomas);
->>>>>>> 524eb43... wire up diplomas ui to api endpoints
 
       if (this.diplomaDialog.editMode) {
         // Hang on to the ID of the diploma being updated.
@@ -315,6 +311,7 @@ export default {
           .then(resp => {
             console.log("UPDATED", resp);
             let updatedDiploma = resp.data;
+            console.log(updatedDiploma);
             Object.assign(this.diplomas[idx], updatedDiploma);
             this.snackbar.text = this.$t("diplomas.updated");
             this.snackbar.show = true;

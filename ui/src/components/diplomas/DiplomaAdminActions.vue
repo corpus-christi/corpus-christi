@@ -12,7 +12,7 @@
       <span>{{ $t("actions.edit") }}</span>
     </v-tooltip>
     <v-tooltip bottom>
-      <v-btn flat icon outline
+      <v-btn
         flat
         icon
         outline

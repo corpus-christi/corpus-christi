@@ -29,7 +29,7 @@
           ></v-textarea>
 
           <v-select
-            v-model="diploma.courses"
+            v-model="diploma.courseList"
             :items="items"
             v-bind:label="$t('diplomas.courses')"
             chips
