@@ -4,13 +4,12 @@
     :name="name"
     :value="value"
     @input="$emit('input', $event)"
-    v-validate="'decimal'"
   ></v-text-field>
 </template>
 
 <script>
 export default {
-  name: "Float",
+  name: "String",
   props: {
     label: {
       type: String,

@@ -4,11 +4,10 @@
       v-for="(attribute, index) in attributes"
       :key="index"
       :is="attribute.fieldType"
-      :value="formData[attribute.name]"
-      @input="updateForm(attribute.name, $event)"
+      :value="formData[attribute.id]"
+      @input="updateForm(attribute.id, $event)"
       v-bind="attribute"
-    >
-    </component>
+    ></component>
   </div>
 </template>
 
@@ -31,8 +30,8 @@ export default {
     };
   },
   methods: {
-    updateForm(fieldName, value) {
-      this.$set(this.formData, fieldName, value);
+    updateForm(fieldId, value) {
+      this.$set(this.formData, fieldId, value);
       this.$emit("input", this.formData);
     }
   }

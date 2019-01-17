@@ -151,6 +151,7 @@
         v-bind:saveLoading="personDialog.saveLoading"
         v-bind:addMoreLoading="personDialog.addMoreLoading"
         v-bind:attributes="personDialog.attributes"
+        v-bind:translations="translations"
         v-on:cancel="cancelPerson"
         v-on:save="savePerson"
         v-on:add-another="addAnother"
@@ -178,6 +179,7 @@
 <script>
 import PersonForm from "./PersonForm";
 import PersonAdminForm from "./AccountForm";
+import store from "../store.js";
 
 export default {
   name: "PersonTable",
@@ -211,7 +213,8 @@ export default {
       activePeople: [],
       archivedPeople: [],
       search: "",
-      data: {}
+      data: {},
+      translations: {}
     };
   },
   computed: {
@@ -266,6 +269,15 @@ export default {
         default:
           return this.activePeople;
       }
+    },
+
+    getCurrentLocaleCode() {
+      return store.state.currentLocaleCode;
+    }
+  },
+  watch: {
+    getCurrentLocaleCode() {
+      this.getAllTranslations();
     }
   },
   methods: {
@@ -450,12 +462,25 @@ export default {
           }
         })
         .catch(err => console.error("FAILURE", err.response));
+    },
+
+    getAllTranslations() {
+      this.$http
+        .get(`/api/v1/i18n/values/${store.state.currentLocaleCode}`)
+        .then(resp => {
+          for (let item of resp.data) {
+            this.translations[item.key_id] = item.gloss;
+          }
+          console.log(this.translations);
+        })
+        .catch(err => console.error("FAILURE", err.response));
     }
   },
 
   mounted: function() {
     this.refreshPeopleList();
     this.getAttributesInfo();
+    this.getAllTranslations();
   }
 };
 </script>

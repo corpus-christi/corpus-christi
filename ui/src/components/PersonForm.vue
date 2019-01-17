@@ -145,7 +145,7 @@
 <script>
 import { mapGetters } from "vuex";
 import { isEmpty, find } from "lodash";
-import AttributeForm from "./InputFields/AttributeForm.vue";
+import AttributeForm from "./input-fields/AttributeForm.vue";
 
 export default {
   name: "PersonForm",
@@ -169,6 +169,10 @@ export default {
     },
     attributes: {
       type: Array,
+      required: true
+    },
+    translations: {
+      type: Object,
       required: true
     }
   },
@@ -268,13 +272,13 @@ export default {
       for (let attribute of this.attributeFields) {
         attributes.push({
           personId: this.person.id ? this.person.id : 0,
-          attributeId: attribute.name,
+          attributeId: attribute.id,
           enumValueId: this.isEnum(attribute.fieldType)
-            ? this.formData[attribute.name]
+            ? this.formData[attribute.id]
             : 0,
           stringValue: this.isEnum(attribute.fieldType)
             ? ""
-            : this.formData[attribute.name].toString()
+            : this.formData[attribute.id].toString()
         });
       }
       return attributes;
@@ -336,8 +340,9 @@ export default {
       );
       return {
         fieldType: "Float",
-        name: attr.id.toString(),
-        label: attr.nameI18n
+        name: this.translations[attr.nameI18n],
+        label: this.translations[attr.nameI18n],
+        id: attr.id.toString()
       };
     },
 
@@ -349,8 +354,9 @@ export default {
       );
       return {
         fieldType: "Integer",
-        name: attr.id.toString(),
-        label: attr.nameI18n
+        name: this.translations[attr.nameI18n],
+        label: this.translations[attr.nameI18n],
+        id: attr.id.toString()
       };
     },
 
@@ -362,8 +368,9 @@ export default {
       );
       return {
         fieldType: "Date",
-        name: attr.id.toString(),
-        label: attr.nameI18n
+        name: this.translations[attr.nameI18n],
+        label: this.translations[attr.nameI18n],
+        id: attr.id.toString()
       };
     },
 
@@ -375,8 +382,9 @@ export default {
       );
       return {
         fieldType: "String",
-        name: attr.id.toString(),
-        label: attr.nameI18n
+        name: this.translations[attr.nameI18n],
+        label: this.translations[attr.nameI18n],
+        id: attr.id.toString()
       };
     },
 
@@ -384,7 +392,7 @@ export default {
       let options = [];
       for (let item of attr.enumerated_values) {
         options.push({
-          text: item.valueI18n,
+          text: this.translations[item.valueI18n],
           value: item.id
         });
       }
@@ -396,9 +404,10 @@ export default {
       );
       return {
         fieldType: "Dropdown",
-        name: attr.id.toString(),
-        label: attr.nameI18n,
-        options: options
+        name: this.translations[attr.nameI18n],
+        label: this.translations[attr.nameI18n],
+        options: options,
+        id: attr.id.toString()
       };
     },
 
@@ -406,8 +415,8 @@ export default {
       let options = [];
       for (let item of attr.enumerated_values) {
         options.push({
-          label: item.valueI18n,
-          name: item.valueI18n,
+          label: this.translations[item.valueI18n],
+          name: this.translations[item.valueI18n],
           value: item.id
         });
       }
@@ -422,10 +431,11 @@ export default {
       this.$set(this.formData, attr.id.toString(), existingAttr);
       return {
         fieldType: "Check",
-        name: attr.id.toString(),
-        label: attr.nameI18n,
+        name: this.translations[attr.nameI18n],
+        label: this.translations[attr.nameI18n],
         options: options,
-        value: existingAttr
+        value: existingAttr,
+        id: attr.id.toString()
       };
     },
 
@@ -433,8 +443,8 @@ export default {
       let options = [];
       for (let item of attr.enumerated_values) {
         options.push({
-          label: item.valueI18n,
-          name: item.valueI18n,
+          label: this.translations[item.valueI18n],
+          name: this.translations[item.valueI18n],
           value: item.id,
           inputValue: this.getExistingAttribute(attr.id).enumValueId
         });
@@ -447,9 +457,10 @@ export default {
       );
       return {
         fieldType: "Radio",
-        name: attr.id.toString(),
-        label: attr.nameI18n,
-        options: options
+        name: this.translations[attr.nameI18n],
+        label: this.translations[attr.nameI18n],
+        options: options,
+        id: attr.id.toString()
       };
     }
   }
