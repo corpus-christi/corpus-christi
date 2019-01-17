@@ -32,6 +32,8 @@ matrix:
                         - sudo systemctl restart nginx
                         - echo "Hello World"
                        
+                        - rm /api/dev-db.sqlite
+                        - rm /api/migrations/versions/*.py
                           # - pytest
                           # - cd api/
                           # - rm dev-db.sqlite
@@ -44,8 +46,6 @@ matrix:
 # reset database script (david)5
 # run server side testing script (pytest)
 # create script by configuration and make file
-# install nginx??
-# install postgress and configure it
 notifications:       
         slack: tumissionscomputing:wp25PPGEFitgDVKamhxxq6jU
 deploy:
