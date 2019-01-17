@@ -32,8 +32,8 @@ matrix:
                         - sudo systemctl restart nginx
                         - echo "Hello World"
                        
-                        - rm /api/dev-db.sqlite
-                        - rm /api/migrations/versions/*.py
+                        - rm api/dev-db.sqlite
+                        - rm api/migrations/versions/*.py
                           # - pytest
                           # - cd api/
                           # - rm dev-db.sqlite
