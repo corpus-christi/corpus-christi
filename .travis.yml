@@ -27,14 +27,14 @@ matrix:
                   script:
                         - echo "Hello World"
                         - cd api/
-                        - rm dev-db.sqlite
-                        - rm migrations/versions/*.py
-                        - flask db upgrade
+                          #  - rm dev-db.sqlite
+                          # - rm migrations/versions/*.py
+                          # - flask db upgrade
                         - flask db migrate
-                        - flask db upgrade
-                        - flask data load-all
-                        - flask account new --first="Fred" --last="Ziffle" username password
-                        - flask account new --first="Quality" --last="Assurance" Cytest password
+                          # - flask db upgrade
+                          # - flask data load-all
+                          # - flask account new --first="Fred" --last="Ziffle" username password
+                          # - flask account new --first="Quality" --last="Assurance" Cytest password
 
 # reset database script (david)5
 # run server side testing script (pytest)
