@@ -11,13 +11,32 @@
 //
 // -- This is a parent command --
 // Cypress.Commands.add("login", (email, password) => { ... })
+
+
 Cypress.Commands.add('login', function() {
     cy.visit('/login');
     cy.get('[data-cy=username]').type('lpratico');
     cy.get('[data-cy=password]').type('Qwerty1234');
     cy.get('[data-cy=login]').click();
 })
-//
+
+
+
+// Cypress.Commands.add('login', () => {
+//     cy.request({
+//         method: 'POST',
+//         url: 'http://localhost:8080/api/v1/auth/login',
+//         body: {
+//             password: 'Qwerty1234',
+//             username: 'lpratico'
+//         }
+//     })
+//     .then((resp) => {
+//         window.localStorage.setItem('jwt', Response.body.user.token)
+//     })
+// })
+
+
 //
 // -- This is a child command --
 // Cypress.Commands.add("drag", { prevSubject: 'element'}, (subject, options) => { ... })
