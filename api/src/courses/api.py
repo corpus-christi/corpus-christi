@@ -7,11 +7,14 @@ from flask_jwt_extended import jwt_required
 from marshmallow import ValidationError
 from ..shared.utils import authorize
 import sys
+from datetime import datetime
 
 from . import courses
 from .models import Course, CourseSchema, \
     Course_Offering, Course_OfferingSchema, \
-    Student, StudentSchema
+    Student, StudentSchema, Class_Attendance, \
+    Class_AttendanceSchema, Class_Meeting, \
+    Class_MeetingSchema
 from src.people.models import Person
 from .. import db
 
@@ -359,3 +362,146 @@ def update_student(student_id):
 
     db.session.commit()
     return jsonify(student_schema.dump(student))
+
+
+# ---- Class_Meeting
+
+class_meeting_schema = Class_MeetingSchema()
+
+@courses.route('/course_offerings/<int:course_offering_id>/class_meetings', methods=['POST'])
+@jwt_required
+def create_class_meeting(course_offering_id):
+    """ Create and add class meeting into course offering. """
+    try:
+        valid_class_meeting = class_meeting_schema.load(request.json)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+    
+    meetingInDB = db.session.query(Class_Meeting).filter_by(
+        offering_id=course_offering_id,
+        teacher_id=request.json['teacherId'],
+        when=request.json['when'] ).first() # Todo: make sure when is datetime obj
+
+    # If a class meeting for a course offering DNE
+    if meetingInDB is None:
+        # Create and add new class meeting to course offering
+        new_class_meeting = Class_Meeting(**valid_class_meeting)
+        db.session.add(new_class_meeting)
+        db.session.commit()
+        return jsonify(class_meeting_schema.dump(new_class_meeting)), 201
+    else:
+        # If a class meeting has entry with same offering, teacher, and datetime
+        # then don't create new class meeting
+        return 'Class meeting already exists in course offering', 208
+
+
+@courses.route('/course_offerings/<int:course_offering_id>/class_meetings')
+@jwt_required
+def read_all_class_meetings(course_offering_id):
+    result = db.session.query(Class_Meeting).filter_by(offering_id=course_offering_id).all()
+    if result is None:
+        return 'No class meetings found for this course offering', 404
+    return jsonify(class_meeting_schema.dump(result, many=True))
+
+
+@courses.route('/course_offerings/<int:course_offering_id>/<int:class_meeting_id>')
+@jwt_required
+def read_one_class_meeting(course_offering_id, class_meeting_id):
+    result = db.session.query(Class_Meeting).filter_by(id=class_meeting_id, offering_id=course_offering_id).first()
+    if result is None:
+        return 'Specified class meeting does not exist for this course offering', 404
+    return jsonify(class_meeting_schema.dump(result))
+
+
+@courses.route('/course_offerings/<int:course_offering_id>/<int:class_meeting_id>', methods=['PATCH'])
+@jwt_required
+def update_class_meeting(course_offering_id, class_meeting_id):
+    class_meeting = db.session.query(Class_Meeting).filter_by(id=class_meeting_id, offering_id=course_offering_id).first()
+
+    for attr in 'location_id', 'teacher_id', 'when':
+        if attr in request.json:
+            if attr == 'when':
+                # For example, the following line requires datetime input to be "2019-02-01 10:01:30"
+                request.json['when'] = datetime.strptime(request.json['when'], '%Y-%m-%d %H:%M:%S')
+            setattr(class_meeting, attr, request.json[attr])
+
+    db.session.commit()
+    return jsonify(class_meeting_schema.dump(class_meeting))
+
+@courses.route('/course_offerings/<int:course_offering_id>/<int:class_meeting_id>', methods=['DELETE'])
+@jwt_required
+def delete_class_meeting(course_offering_id, class_meeting_id):
+    class_meeting = db.session.query(Class_Meeting).filter_by(id=class_meeting_id, offering_id=course_offering_id).first()
+    class_attended = db.session.query(Class_Attendance).filter_by(class_id=class_meeting_id).first()
+    
+    # If class meeting exists with no class attendance, then delete meeting
+    if class_meeting is not None and class_attended is None: 
+        db.session.delete(class_meeting)
+        db.session.commit()
+        return 'Class meeting successfully deleted', 200
+    # If class meeting DNE
+    elif class_meeting is None:
+        return 'Course offering does not exist'
+    else:
+        return 'Students have attended the class meeting. Cannot delete class meeting.', 403
+    
+
+# ---- Class_Attendance
+
+class_attendance_schema = Class_AttendanceSchema()
+
+@courses.route('/class_attendance', methods=['POST'])
+@jwt_required
+def create_class_attendance():
+    try:
+        valid_class_attendance = class_attendance_schema.load(request.json)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+
+    new_class_attendance = Class_Attendance(**valid_class_attendance)
+    db.session.add(new_class_attendance)
+    db.session.commit()
+    return jsonify(class_attendance_schema.dump(new_class_attendance)), 201
+
+
+@courses.route('/class_attendance')
+@jwt_required
+def read_all_class_attendance():
+    result = db.session.query(Class_Attendance).all()
+    return jsonify(class_attendance_schema.dump(result, many=True))
+
+
+@courses.route('/class_attendance/<class_attendance_id>')
+@jwt_required
+def read_one_class_attendance(class_attendance_id):
+    result = db.session.query(Class_Attendance).filter_by(id=class_attendance_id).first()
+    return jsonify(class_attendance_schema.dump(result))
+
+
+@courses.route('/class_attendance/<class_attendance_id>', methods=['PUT'])
+@jwt_required
+def replace_class_attendance(class_attendance_id):
+    pass
+
+
+@courses.route('/class_attendance/<class_attendance_id>', methods=['PATCH'])
+@jwt_required
+def update_class_attendance(class_attendance_id):
+    try:
+        valid_class_attendance = class_attendance_schema.load(request.json)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+
+    class_attendance = db.session.query(Class_Attendance).filter_by(id=class_attendance_id).first()
+
+    for key, val in valid_class_attendance.items():
+        setattr(class_attendance, key, val)
+
+    db.session.commit()
+    return jsonify(class_attendance_schema.dump(class_attendance))
+
+
+@courses.route('/class_attendance/<class_attendance_id>', methods=['DELETE'])
+@jwt_required
+def delete_class_attendance(class_attendance_id):
+    pass
