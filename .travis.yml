@@ -28,7 +28,10 @@ matrix:
                         - sudo apt install postgresql
                         - sudo apt install nginx
                   script:
+                        - sudo nginx -t
+                        - sudo systemctl restart nginx
                         - echo "Hello World"
+                       
                           # - pytest
                           # - cd api/
                           # - rm dev-db.sqlite
