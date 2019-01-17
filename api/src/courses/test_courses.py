@@ -7,8 +7,8 @@ from src.db import Base
 
 from .models import Course, CourseSchema, Course_Offering, Class_Meeting,\
         Course_OfferingSchema, Diploma, DiplomaSchema, Student, StudentSchema,\
-        Class_Meeting, Class_MeetingSchema, Diploma_Awarded, Diploma_AwardedSchema
-from ..people.test_people import create_multiple_people
+        Class_Meeting, Class_MeetingSchema, Diploma_Awarded, Diploma_AwardedSchema,\
+        Class_Attendance, Class_AttendanceSchema
 from ..people.models import Person
 from ..places.models import Location
 from ..people.test_people import create_multiple_people
@@ -258,9 +258,9 @@ def class_meeting_object_factory(teacher, offering_id, location=1):
     fake = Faker()
     class_meeting = {
     'offeringId': offering_id,
-    'teacher_id': teacher,
+    'teacherId': teacher,
     'when': str(fake.future_datetime(end_date="+30d")),
-    'location_id': location,
+    'locationId': location,
     }
     return class_meeting
 
@@ -854,3 +854,5 @@ def test_update_class_meeting(client, db):
     # WHEN
     # THEN
     assert True == False
+
+open
