@@ -102,7 +102,7 @@
     </v-snackbar>
 
     <!-- Edit dialog -->
-    <v-dialog v-model="eventDialog.show" max-width="500px">
+    <v-dialog v-model="eventDialog.show" persistent max-width="500px">
       <event-form
         v-bind:editMode="true"
         v-bind:initialData="eventDialog.event"
@@ -113,7 +113,7 @@
     </v-dialog>
 
     <!-- Add Team dialog -->
-    <v-dialog v-model="addTeamDialog.show" max-width="500px">
+    <v-dialog v-model="addTeamDialog.show" persistent max-width="500px">
       <v-card>
         <v-card-title primary-title>
           <span class="headline">{{ $t("events.teams.new") }}</span>
@@ -270,6 +270,7 @@ export default {
       }
       let newEvent = JSON.parse(JSON.stringify(event));
       delete newEvent.location;
+      delete newEvent.dayDuration;
       delete newEvent.teams;
       delete newEvent.id;
       const eventId = event.id;
