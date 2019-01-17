@@ -4,7 +4,7 @@ describe("Get to Courses Page", () => {
   });
 
   it("When: clicking to course page", () => {
-    cy.get("[data-cy=open-navigation]").click();
+    cy.get('[data-cy=toggle-nav-drawer]').click();
     cy.get('[data-cy=courses-admin]').click();
   });
   it("Then: should be in course page", () => {
@@ -50,7 +50,7 @@ describe('Add Course with a Prereq', () => {
     cy.get('[data-cy=course-form-name]').type('COS 113')
     cy.get('[data-cy=course-form-description]').type('Hello World')
     cy.get(':nth-child(4) > .v-input__icon > .v-icon').click()
-    cy.contains('Identify.').click()
+    cy.contains('Wall stage.').click()
   });
   it('Then: Click add button', ()=>{
     cy.get('[data-cy=course-editor-actions] > .primary').click()
@@ -66,13 +66,13 @@ describe('Add Course with Muiltiple Prereq', () => {
     cy.get('[data-cy=course-form-name]').type('COS 115')
     cy.get('[data-cy=course-form-description]').type('Hello World')
     cy.get(':nth-child(4) > .v-input__icon > .v-icon').click()
-    cy.contains('Identify.').click()
+    cy.contains('Debate until.').click()
     cy.get(':nth-child(4) > .v-input__icon > .v-icon').click()    
-    cy.contains('West water yet').click()
+    cy.contains('Particularly.').click()
   });
   it('Then: Click add button', ()=>{
     cy.get('[data-cy=course-editor-actions] > .primary').click()
     cy.get('[data-cy=courses-table-search]').clear().type('COS 115')
-    cy.get(':nth-child(1) > :nth-child(3) > .layout > :nth-child(1) > span > .v-btn').click()
+    //cy.get(':nth-child(1) > :nth-child(3) > .layout > :nth-child(1) > span > .v-btn').click()
   });
 });

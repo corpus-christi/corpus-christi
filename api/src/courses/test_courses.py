@@ -852,5 +852,5 @@ def test_update_class_meeting(client, db):
     # WHEN
     # THEN
     assert True == False
-"""
+
 open
