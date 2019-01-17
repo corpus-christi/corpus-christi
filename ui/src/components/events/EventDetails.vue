@@ -119,7 +119,7 @@
           <span class="headline">{{ $t("events.teams.new") }}</span>
         </v-card-title>
         <v-card-text>
-          <entity-search v-model="addTeamDialog.team" team></entity-search>
+          <entity-search data-cy="team-entity-search" v-model="addTeamDialog.team" team></entity-search>
         </v-card-text>
         <v-card-actions>
           <v-btn
