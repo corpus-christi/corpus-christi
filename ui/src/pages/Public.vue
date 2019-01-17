@@ -102,7 +102,7 @@ export default {
   },
   mounted() {
     this.pageLoaded = false;
-    this.$http.get(`/api/v1/events/?return_group=all`).then(resp => {
+    this.$http.get(`/api/v1/events/?return_group=all&sort=start`).then(resp => {
       this.events = resp.data;
       this.events = this.events.slice(0, 5);
       console.log(resp.data);
