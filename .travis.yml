@@ -35,10 +35,12 @@ matrix:
                         - sudo -u postgres createdb -O arco cc-staging 
                   script:
                         # - rm api/migrations/versions/*.py
+                        - cd api/
                         - flask db upgrade
                         - flask data load-all
                         - sudo nginx -t
                         - sudo systemctl restart nginx
+                        - cd ../
                           #- ls -la ./api
                           #- rm api/dev-db.sqlite
                           #- rm api/migrations/versions/*.py
