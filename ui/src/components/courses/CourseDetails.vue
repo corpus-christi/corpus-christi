@@ -17,7 +17,7 @@
           </v-container>
         </template>
         <template v-else>
-          <v-card-title>
+          <v-card-title class="d-block">
             <h5 class="headline">{{ course.name }}</h5>
             <span class="caption" v-if="!course.active">
               <v-icon small>archive</v-icon>
