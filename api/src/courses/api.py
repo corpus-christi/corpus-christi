@@ -111,7 +111,7 @@ def read_active_state_of_courses(active_state):
 def read_one_course(course_id):
     """List only one course with given course_id"""
     result = db.session.query(Course).filter_by(id=course_id).first()
-    if(result is None):
+    if result is None:
         return "Result NOT found", 404
     with_prereqs = add_prereqs(result)
     with_offerings = include_course_offerings(with_prereqs)
@@ -380,7 +380,7 @@ def create_class_meeting(course_offering_id):
     meetingInDB = db.session.query(Class_Meeting).filter_by(
         offering_id=course_offering_id,
         teacher_id=request.json['teacherId'],
-        when=request.json['when'] ).first() # Todo: make sure when is datetime obj
+        when=datetime.strptime(request.json['when'], '%Y-%m-%d %H:%M:%S') ).first() # Todo: make sure when is datetime obj
 
     # If a class meeting for a course offering DNE
     if meetingInDB is None:
@@ -399,7 +399,7 @@ def create_class_meeting(course_offering_id):
 @jwt_required
 def read_all_class_meetings(course_offering_id):
     result = db.session.query(Class_Meeting).filter_by(offering_id=course_offering_id).all()
-    if result is None:
+    if result == []:
         return 'No class meetings found for this course offering', 404
     return jsonify(class_meeting_schema.dump(result, many=True))
 
@@ -417,6 +417,8 @@ def read_one_class_meeting(course_offering_id, class_meeting_id):
 @jwt_required
 def update_class_meeting(course_offering_id, class_meeting_id):
     class_meeting = db.session.query(Class_Meeting).filter_by(id=class_meeting_id, offering_id=course_offering_id).first()
+    if class_meeting is None:
+           return "Class meeting not found", 404 
 
     for attr in 'location_id', 'teacher_id', 'when':
         if attr in request.json:
@@ -441,7 +443,7 @@ def delete_class_meeting(course_offering_id, class_meeting_id):
         return 'Class meeting successfully deleted', 200
     # If class meeting DNE
     elif class_meeting is None:
-        return 'Course offering does not exist'
+        return 'Course offering does not exist', 404
     else:
         return 'Students have attended the class meeting. Cannot delete class meeting.', 403
     
