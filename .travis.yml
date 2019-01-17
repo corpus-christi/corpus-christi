@@ -28,8 +28,8 @@ matrix:
                         - sudo apt install postgresql
                         - sudo apt install nginx
                   script:
-                        # - dropdb --if-exists cc-staging
-                        # -    dropuser arco
+                        - dropdb --if-exists cc-staging
+                        - dropuser arco
                         - sudo service postgresql start
                         - sudo -u postgres createuser -w arco
                         - sudo -u postgres createdb -O arco cc-staging 
