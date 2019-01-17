@@ -20,7 +20,10 @@
 
     <v-date-picker
       :value="value"
-      @input="showDatePicker = false; $emit('input', $event)"
+      @input="
+        showDatePicker = false;
+        $emit('input', $event);
+      "
     ></v-date-picker>
   </v-menu>
 </template>
@@ -44,7 +47,7 @@ export default {
   },
   data: () => {
     return {
-      showDatePicker: false,
+      showDatePicker: false
     };
   }
 };

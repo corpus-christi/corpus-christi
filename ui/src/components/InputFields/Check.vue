@@ -1,6 +1,6 @@
 <template>
   <v-container>
-  <span class="title">{{ label }}</span>
+    <span class="title">{{ label }}</span>
     <v-layout row>
       <v-checkbox
         v-for="(field, index) in options"
@@ -41,7 +41,7 @@ export default {
       selected: []
     };
   },
-  
+
   watch: {
     value(val) {
       this.selected = val;

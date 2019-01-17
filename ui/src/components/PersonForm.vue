@@ -294,6 +294,9 @@ export default {
     },
 
     constructAttributeForm(attributes) {
+      attributes.sort((a, b) => {
+        return a.seq - b.seq;
+      });
       this.attributeFields = [];
       // reference: https://blog.rangle.io/how-to-create-data-driven-user-interfaces-in-vue/
       for (let attr of attributes) {
@@ -409,15 +412,14 @@ export default {
         });
       }
 
-      let existingAttr = this.getExistingAttribute(attr.id).stringValue.split(',');
-      for(let index in existingAttr) {
+      let existingAttr = this.getExistingAttribute(attr.id).stringValue.split(
+        ","
+      );
+      for (let index in existingAttr) {
         existingAttr[index] = Number(existingAttr[index]);
       }
 
-      this.$set(
-        this.formData,
-        attr.id.toString(),
-        existingAttr);
+      this.$set(this.formData, attr.id.toString(), existingAttr);
       return {
         fieldType: "Check",
         name: attr.id.toString(),
@@ -441,12 +443,13 @@ export default {
       this.$set(
         this.formData,
         attr.id.toString(),
-        this.getExistingAttribute(attr.id).enumValueId);
+        this.getExistingAttribute(attr.id).enumValueId
+      );
       return {
         fieldType: "Radio",
         name: attr.id.toString(),
         label: attr.nameI18n,
-        options: options,
+        options: options
       };
     }
   }
