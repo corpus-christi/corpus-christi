@@ -43,7 +43,7 @@ def event_object_factory(sqla):
     event = {
         'title': rl_fake().word(),
         'start': str(rl_fake().future_datetime(end_date="+6h")),
-        'end': str(rl_fake().date_time_between(start_date="+6h", end_date="+1d", tzinfo=None)),
+        'end': str(rl_fake().date_time_between(start_date="-35d", end_date="-25d", tzinfo=None)),
         'active': flip()
     }
 
