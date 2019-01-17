@@ -26,7 +26,7 @@ export default {
   },
   mounted() {
     this.pageLoaded = false;
-    this.$http.get(`/api/v1/events/?return_group=all`).then(resp => {
+    this.$http.get(`/api/v1/events/?return_group=all&sort=start`).then(resp => {
       this.events = resp.data;
       console.log(resp.data);
       this.pageLoaded = true;
