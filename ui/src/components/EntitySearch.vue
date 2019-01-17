@@ -12,15 +12,27 @@
       v-bind:error-messages="errorMessages"
       return-object
       :filter="customFilter"
+      :multiple="multiple"
+      menu-props="closeOnClick, closeOnContentClick"
       color="secondary"
     >
-      <template slot="selection" slot-scope="data">
+      <template v-if="!multiple" slot="selection" slot-scope="data">
         {{ getEntityDescription(data.item, 100) }}
       </template>
       <template slot="item" slot-scope="data">
+        <span v-if="multiple && selectionContains(data.item)">
+          <v-icon>clear</v-icon>
+        </span>
         {{ getEntityDescription(data.item) }}
       </template>
     </v-autocomplete>
+    <template v-if="multiple">
+      <div v-for="entity in value" v-bind:key="entity[idField]">
+        <v-chip close @input="remove(entity)" :data-cy="'chip-'+entity[idField]">
+          {{ getEntityDescription(entity) }}
+        </v-chip>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -31,7 +43,9 @@ export default {
     location: Boolean,
     person: Boolean,
     course: Boolean,
-    value: Object,
+    team: Boolean,
+    multiple: { type: Boolean, default: false },
+    value: null,
     searchEndpoint: String,
     errorMessages: String
   },
@@ -49,11 +63,23 @@ export default {
       if (this.location) return this.$t("events.event-location");
       else if (this.person) return this.$t("actions.search-people");
       else if (this.course) return this.$t("actions.search-courses");
+      else if (this.team) return this.$t("events.teams.title");
       else return "";
+    },
+    idField() {
+      return "id";
     }
   },
 
   methods: {
+    selectionContains(entity) {
+      if (!this.value || !this.value.length) return;
+      var idx = this.value.findIndex(
+        en => en[this.idField] === entity[this.idField]
+      );
+      return idx > -1;
+    },
+
     setSelected(entity) {
       this.$emit("input", entity);
     },
@@ -72,9 +98,12 @@ export default {
         entityDescriptor = entity.firstName + " " + entity.lastName;
       } else if (this.course) {
         entityDescriptor = entity.name;
+      } else if (this.team) {
+        entityDescriptor = entity.description;
       }
 
       if (entityDescriptor.length > letterLimit) {
+        //TODO don't do this here, it limits search functionality
         entityDescriptor = entityDescriptor.substring(0, letterLimit) + "...";
       }
       return entityDescriptor;
@@ -84,6 +113,16 @@ export default {
       const itemDesc = this.getEntityDescription(item).toLowerCase();
       const searchText = queryText.toLowerCase();
       return itemDesc.indexOf(searchText) > -1;
+    },
+
+    remove(entity) {
+      if (!this.multiple) return;
+      var idx = this.value.findIndex(
+        en => en[this.idField] === entity[this.idField]
+      );
+      if (idx > -1) {
+        this.value.splice(idx, 1);
+      }
     }
   },
 
@@ -94,11 +133,11 @@ export default {
     if (this.location) endpoint = "/api/v1/places/locations";
     else if (this.person) endpoint = "/api/v1/people/persons";
     else if (this.course) endpoint = "/api/v1/courses/courses";
+    else if (this.team) endpoint = "/api/v1/teams/";
     this.$http
       .get(endpoint)
       .then(resp => {
         this.entities = resp.data;
-        console.log(this.entities);
         this.isLoading = false;
       })
       .catch(error => {
