@@ -72,6 +72,22 @@ def read_all_events():
     if location_filter:
         query = query.filter_by(location_id=location_filter)
 
+    # Sorting
+    sort_filter = request.args.get('sort')
+    if sort_filter:
+        sort_column = None
+        if sort_filter[:5] == 'start':
+            sort_column = Event.start
+        elif sort_filter[:3] == 'end':
+            sort_column = Event.end
+        elif sort_filter[:5] == 'title':
+            sort_column = Event.title
+
+        if sort_filter[-4:] == 'desc' and sort_column:
+            sort_column = sort_column.desc()
+        
+        query = query.order_by(sort_column)
+
     result = query.all()
 
     return jsonify(event_schema.dump(result, many=True))
@@ -170,13 +186,6 @@ def remove_asset_from_event(event_id, asset_id):
     # 204 codes don't respond with any content
     return 'Successfully un-booked', 204
 
-@events.route('/<event_id>/teams')
-@jwt_required
-def get_event_teams(event_id):
-    team_schema = TeamSchema(exclude=get_exclusion_list(request.args, ['members', 'events']))
-    teams = db.session.query(Team).join(EventTeam).filter_by(event_id=event_id).all()
-
-    return jsonify(team_schema.dump(teams, many=True))
 
 @events.route('/<event_id>/teams/<team_id>', methods=['POST','PUT','PATCH'])
 @jwt_required
@@ -223,13 +232,6 @@ def delete_event_team(event_id, team_id):
     # 204 codes don't respond with any content
     return 'Successfully removed team member', 204
 
-@events.route('/<event_id>/individuals')
-@jwt_required
-def get_event_persons(event_id):
-    event_person_schema = EventPersonSchema(exclude=['event'])
-    people = db.session.query(EventPerson).filter_by(event_id=event_id).all()
-
-    return jsonify(event_person_schema.dump(people, many=True))
 
 @events.route('/<event_id>/individuals/<person_id>', methods=['POST','PUT'])
 @jwt_required
@@ -302,14 +304,6 @@ def delete_event_persons(event_id, person_id):
     return 'Successfully removed individual', 204
 
 # ---- Participant
-
-@events.route('/<event_id>/participants')
-@jwt_required
-def get_event_participants(event_id):
-    event_participant_schema = EventParticipantSchema(exclude=['event'])
-    participants = db.session.query(EventParticipant).filter_by(event_id=event_id).all()
-
-    return jsonify(event_participant_schema.dump(participants, many=True))
 
 @events.route('/<event_id>/participants/<person_id>', methods=['POST','PUT'])
 @jwt_required

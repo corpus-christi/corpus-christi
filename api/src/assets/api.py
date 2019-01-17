@@ -59,6 +59,18 @@ def read_all_assets():
     if location_filter:
         query = query.filter_by(location_id=location_filter)
 
+    # Sorting
+    sort_filter = request.args.get('sort')
+    if sort_filter:
+        sort_column = None
+        if sort_filter[:11] == 'description':
+            sort_column = Asset.description
+
+        if sort_filter[-4:] == 'desc' and sort_column:
+            sort_column = sort_column.desc()
+
+        query = query.order_by(sort_column)
+
     result = query.join(EventAsset, isouter=True).group_by(Asset.id).all()
 
     temp_result = list()
