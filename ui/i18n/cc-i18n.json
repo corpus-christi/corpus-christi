@@ -176,7 +176,8 @@
     },
     "public": {
       "events": {
-        "join": "Join Event"
+        "join": "Join Event",
+        "view-all": "View All Events"
       },
       "headers": {
         "home-church": "Find a Home Church",
@@ -379,7 +380,8 @@
     },
     "public": {
       "events": {
-        "join": "Juntarse Evento"
+        "join": "Juntarse Evento",
+        "view-all": "Ver Todos Eventos"
       },
       "headers": {
         "home-church": "Encontrar una Iglesia Hogar",
