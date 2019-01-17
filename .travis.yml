@@ -41,9 +41,9 @@ matrix:
                         - sudo nginx -t
                         - sudo systemctl restart nginx
                         - cd ../
-                          #- ls -la ./api
-                          #- rm api/dev-db.sqlite
-                          #- rm api/migrations/versions/*.py
+                          # - ls -la ./api
+                          # - rm api/dev-db.sqlite
+                          # - rm api/migrations/versions/*.py
                           # - pytest
                           # - cd api/
                           # - rm dev-db.sqlite
