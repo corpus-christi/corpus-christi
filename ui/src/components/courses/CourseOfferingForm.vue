@@ -167,7 +167,6 @@ export default {
   name: "CourseOfferingForm",
   data: function() {
     return {
-      availableCourses: [],
       location: "",
       teacher: "",
       time: "",
@@ -341,11 +340,6 @@ export default {
     }
   },
   mounted() {
-    this.$http
-      .get("/api/v1/courses/courses")
-      .then(
-        resp => (this.availableCourses = resp.data.filter(item => item.active))
-      );
   }
 };
 </script>
