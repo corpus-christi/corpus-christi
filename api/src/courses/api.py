@@ -10,6 +10,8 @@ import sys
 from datetime import datetime
 
 from . import courses
+from ..people.models import Person, PersonSchema
+from ..places.models import Location, LocationSchema
 from .models import Course, CourseSchema, \
     Course_Offering, Course_OfferingSchema, \
     Student, StudentSchema, Class_Attendance, \
@@ -19,6 +21,8 @@ from src.people.models import Person
 from .. import db
 
 course_schema = CourseSchema()
+location_schema = LocationSchema()
+person_schema = PersonSchema()
 
 
 @courses.route('/courses', methods=['POST'])
@@ -271,7 +275,7 @@ def update_course_offering(course_offering_id):
     course_offering = db.session.query(Course_Offering).filter_by(id=course_offering_id).first()
     if course_offering is None:
         return "Course Offering NOT Found", 404
-    
+
     course_offering_json = course_offering_schema.load(request.json)
     for attr in course_offering_json.keys():
         setattr(course_offering, attr, course_offering_json[attr])
@@ -393,14 +397,33 @@ def create_class_meeting(course_offering_id):
         # then don't create new class meeting
         return 'Class meeting already exists in course offering', 208
 
+"""
+Helper function applies location and teacher to a
+class meeting object
+"""
+def get_loc_and_person_for_meeting(meeting):
+    print(meeting)
+    location = location_schema.dump(db.session.query(Location).filter_by(id=meeting['locationId']).first())
+    teacher = person_schema.dump(db.session.query(Person).filter_by(id=meeting['teacherId']).first())
+    if location is None:
+        return 'Could not find specified location', 404
+    if teacher is None:
+        return 'Could not find specified person', 404
+
+    meeting['location'] = location
+    meeting['teacher'] = teacher
+    return meeting
 
 @courses.route('/course_offerings/<int:course_offering_id>/class_meetings')
 @jwt_required
 def read_all_class_meetings(course_offering_id):
     result = db.session.query(Class_Meeting).filter_by(offering_id=course_offering_id).all()
-    if result is None:
+    if result == []:
         return 'No class meetings found for this course offering', 404
-    return jsonify(class_meeting_schema.dump(result, many=True))
+    result = class_meeting_schema.dump(result, many=True)
+    for i in result:
+        get_loc_and_person_for_meeting(i)
+    return jsonify(result)
 
 
 @courses.route('/course_offerings/<int:course_offering_id>/<int:class_meeting_id>')
@@ -409,7 +432,9 @@ def read_one_class_meeting(course_offering_id, class_meeting_id):
     result = db.session.query(Class_Meeting).filter_by(id=class_meeting_id, offering_id=course_offering_id).first()
     if result is None:
         return 'Specified class meeting does not exist for this course offering', 404
-    return jsonify(class_meeting_schema.dump(result))
+    result = class_meeting_schema.dump(result)
+    get_loc_and_person_for_meeting(result)
+    return jsonify(result)
 
 
 @courses.route('/course_offerings/<int:course_offering_id>/<int:class_meeting_id>', methods=['PATCH'])
