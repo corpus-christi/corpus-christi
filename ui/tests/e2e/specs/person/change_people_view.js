@@ -1,5 +1,6 @@
 // Log in
-/*describe("Seed for test", () => {
+/*
+describe("Seed for test", () => {
   it("Given: seeding", function() {
     cy.exec("cd ../api && source ./set-up-bash.sh && ./reset-database.sh");
   });
@@ -58,26 +59,4 @@ describe("Tests the Person table Archived/active user filter", function() {
     );
     cy.get("[data-cy=reactivate-person").should("not.exist");
   });
-
-  /*it("Then: There should be zero archived users in the table", () => {
-    cy.get("tbody > :nth-child(1) > :nth-child(2)").should("not.exist");
-  });
-  it("And: When a user is archived, they should show up in the archived people", () => {
-    //go to active
-    cy.get("[data-cy=view-dropdown]").click(); // open dropdown
-    cy.get('@dropdown').find(":nth-child(1)")
-      .first().click(); // find and click child element in dropdown
-    //select first person & deactivate them
-    cy.get('tbody > :nth-child(1) > :nth-child(2)').as('firstName');
-    cy.get('tbody > :nth-child(1) [data-cy = deactivate-person]').click();
-    //make sure they are not there anymore
-    cy.get('tbody > :nth-child(1) > :nth-child(2)').should('not.contain','@firstName');
-
-    //go to archived users
-    //make sure they are there
-    //go to all users, make sure he is first user
-
-    //cy.get("tbody > :nth-child(1) > :nth-child(2)").should("not.exist");
-  });
-*/
 });

@@ -113,8 +113,14 @@ def create_multiple_people_attributes(sqla, n):
         valid_person = person_schema.load(person_object_factory())
         new_people.append(Person(**valid_person))
     sqla.add_all(new_people)
-    new_attributes = [{'nameI18n': add_i18n_code('married', sqla, 'en-US', f'attribute.married'), 'typeI18n': add_i18n_code('attribute.radio', sqla, 'en-US', f'attribute.radio'), 'seq': 2, 'active': 1}, {'nameI18n':add_i18n_code('Home Group Name', sqla, 'en-US', f'attribute.HomeGroupName'), 'typeI18n': add_i18n_code('attribute.string', sqla, 'en-US', f'attribute.string'), 'seq': 1, 'active': 1}, {'nameI18n': add_i18n_code('Baptism Date', sqla, 'en-US', f'attribute.BaptismDate'), 'typeI18n': add_i18n_code('attribute.date', sqla, 'en-US', f'attribute.date'), 'seq': 3, 'active': 1}]
+    new_attributes = [{'nameI18n': add_i18n_code('Marital Status', sqla, 'en-US', f'attribute.married'), 'typeI18n': add_i18n_code('attribute.radio', sqla, 'en-US', f'attribute.radio'), 'seq': 2, 'active': 1}, {'nameI18n':add_i18n_code('Home Group Name', sqla, 'en-US', f'attribute.HomeGroupName'), 'typeI18n': add_i18n_code('attribute.string', sqla, 'en-US', f'attribute.string'), 'seq': 1, 'active': 1}, {'nameI18n': add_i18n_code('Baptism Date', sqla, 'en-US', f'attribute.BaptismDate'), 'typeI18n': add_i18n_code('attribute.date', sqla, 'en-US', f'attribute.date'), 'seq': 3, 'active': 1}]
     new_enumerated_values = [{'attributeId': 1, 'valueI18n': add_i18n_code('married', sqla, 'en-US', f'personAttribute.married'), 'active': 1}, {'attributeId': 1, 'valueI18n': add_i18n_code('single', sqla, 'en-US', f'personAttribute.single'), 'active': 1} ]
+
+    add_i18n_code('Estado Civil', sqla, 'es-EC', f'attribute.married')
+    add_i18n_code('Nombre del grupo de origen', sqla, 'es-EC', f'attribute.HomeGroupName')
+    add_i18n_code('Fecha de bautismo', sqla, 'es-EC', f'attribute.BaptismDate')
+    add_i18n_code('casado', sqla, 'es-EC', f'personAttribute.married')
+    add_i18n_code('soltero', sqla, 'es-EC', f'personAttribute.single')
     
     valid_attributes = []
     for attribute in new_attributes:
