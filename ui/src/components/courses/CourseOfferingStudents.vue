@@ -81,6 +81,38 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    
+    <!-- Confirm Dialog -->
+    <v-dialog v-model="confirmDialog.show" max-width="400px">
+      <v-card>
+        <v-card-text>{{ $t("courses.confirm-student") }}</v-card-text>
+        <v-card-actions>
+          <v-btn
+            v-on:click="cancelConfirmDialog"
+            color="secondary"
+            flat
+            :disabled="confirmDialog.confirming"
+            data-cy
+          >{{ $t("actions.cancel") }}</v-btn>
+          <v-spacer></v-spacer>
+          <v-btn
+            v-on:click="rejectStudent(confirmDialog.student)"
+            color="accent"
+            raised
+            :loading="confirmDialog.confirming"
+            data-cy
+          >{{ $t("courses.reject") }}</v-btn>
+          <v-btn
+            v-on:click="confirmStudent(confirmDialog.student)"
+            color="primary"
+            raised
+            :disabled="confirmDialog.confirming"
+            :loading="confirmDialog.confirming"
+            data-cy
+          >{{ $t("actions.confirm") }}</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -113,6 +145,12 @@ export default {
         show: false,
         student: {},
         loading: false
+      },
+      
+      confirmDialog: {
+        show: false,
+        student: {},
+        confirming: false
       },
       
       snackbar: {
@@ -217,9 +255,60 @@ export default {
          case "activate":
            this.activate(student);
            break;
+         case "confirm":
+           this.showConfirmDialog(student);
+           break;
          default:
            break;
       }
+    },
+    
+    showConfirmDialog(student) {
+      this.confirmDialog.show = true;
+      this.confirmDialog.student = student;
+    },
+    
+    rejectStudent(student) {
+      this.confirmDialog.confirming = true;
+      this.$http
+        .patch(`/api/v1/courses/students/${student.id}`, { active: false })
+        .then(resp => {
+          console.log("EDITED", resp);
+          Object.assign(student, resp.data);
+          this.snackbar.text = this.$t("courses.archived");
+          this.snackbar.show = true;
+        })
+        .catch(() => {
+          this.snackbar.text = this.$t("courses.update-failed");
+          this.snackbar.show = true;
+        })
+        .finally(() => {
+          this.confirmDialog.confirming = false;
+          this.confirmDialog.show = false;
+        });
+    },
+    
+    confirmStudent(student) {
+      this.$http
+        .patch(`/api/v1/courses/students/${student.id}`, { confirmed: true })
+        .then(resp => {
+          console.log("EDITED", resp);
+          Object.assign(student, resp.data);
+          this.snackbar.text = this.$t("courses.reactivated");
+          this.snackbar.show = true;
+        })
+        .catch(() => {
+          this.snackbar.text = this.$t("courses.update-failed");
+          this.snackbar.show = true;
+        })
+        .finally(() => {
+          this.confirmDialog.show = false;
+          this.confirmDialog.confirming = false;
+        });
+    },
+    
+    cancelConfirmDialog() {
+      this.confirmDialog.show = false;
     },
     
     confirmDeactivate(student) {

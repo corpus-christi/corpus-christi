@@ -15,7 +15,8 @@
         </v-icon>
       </v-btn>
     </v-tooltip>
-    <v-tooltip bottom>
+    <v-tooltip bottom v-if="!student.confirmed"
+>
       <v-btn
         flat
         icon
@@ -23,7 +24,7 @@
         color="primary"
         slot="activator"
         v-bind:small="displayContext === 'compact'"
-        @click="emitAction(student.confirmed ? 'unconfirm' : 'confirm')"
+        @click="emitAction('confirm')"
       >
         <v-icon v-bind:small="displayContext === 'compact'">done</v-icon>
       </v-btn>
