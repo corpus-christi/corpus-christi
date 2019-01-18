@@ -115,7 +115,10 @@
       "title": "Home Churches"
     },
     "login": {
-      "header": "Log In"
+      "header": "Log In",
+      "messages": {
+        "incorrect-login": "Username or password is incorrect"
+      }
     },
     "people": {
       "attributes": "Attributes",
@@ -204,7 +207,7 @@
       "confirm": "Confirmar",
       "duplicate": "Duplicar",
       "edit": "Editar",
-      "header": "Comportamiento",
+      "header": "Acciones",
       "login": "Acceder",
       "logout": "Cerrar sesi\u00f3n",
       "save": "Salvar",
@@ -286,7 +289,10 @@
       "title": "Iglesias Hogar"
     },
     "login": {
-      "header": "Iniciar Sesi\u00f3n"
+      "header": "Iniciar Sesi\u00f3n",
+      "messages": {
+        "incorrect-login": "Nombre de usuario o contrase\u00f1a incorrecta"
+      }
     },
     "people": {
       "attributes": "Atributas",
