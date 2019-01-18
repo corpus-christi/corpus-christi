@@ -227,13 +227,13 @@ export default {
 
     getTodayString() {
       let today = new Date();
-      let str = `${today.getFullYear()}-${
-        (today.getMonth() + 1).toLocaleString("en-US",
-          { minimumIntegerDigits: 2, useGrouping: false })}-${
-        today.getDate().toLocaleString("en-US", 
-          { minimumIntegerDigits: 2, useGrouping: false })}`;
-
-      console.log(str);
+      let str = `${today.getFullYear()}-${(today.getMonth() + 1).toLocaleString(
+        "en-US",
+        { minimumIntegerDigits: 2, useGrouping: false }
+      )}-${today.getDate().toLocaleString("en-US", {
+        minimumIntegerDigits: 2,
+        useGrouping: false
+      })}`;
       return str;
     }
   },

@@ -98,7 +98,7 @@ const router = new VueRouter({
       component: () => import("@/pages/Locale")
     },
     {
-      name: "courses-admin",
+      name: "courses",
       path: "/courses",
       meta: { authRequired: true },
       component: () => import("@/pages/Courses")

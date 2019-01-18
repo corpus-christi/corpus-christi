@@ -67,7 +67,7 @@ export default {
       snackbar: {
         show: false,
         text: ""
-      },
+      }
     };
   },
   methods: {
@@ -78,7 +78,7 @@ export default {
     },
 
     async login() {
-      try {      
+      try {
         const resp = await this.$httpNoAuth.post("/api/v1/auth/login", {
           username: this.username,
           password: this.password
@@ -89,9 +89,9 @@ export default {
         } else {
           this.logIn({
             account: new Account(
-            resp.data.username,
-            resp.data.firstName,
-            resp.data.lastName
+              resp.data.username,
+              resp.data.firstName,
+              resp.data.lastName
             ),
             jwt: resp.data.jwt
           });
@@ -101,7 +101,7 @@ export default {
           const routeName = this.$route.query.redirect || "admin";
           this.$router.replace({ name: routeName });
         }
-      } catch(err) {
+      } catch (err) {
         console.log(err);
         this.snackbar.text = this.$t("login.messages.incorrect-login");
         this.snackbar.show = true;
