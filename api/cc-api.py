@@ -25,6 +25,7 @@ from src.courses.models import Course, Prerequisite
 from src.courses.test_courses import create_multiple_courses, create_multiple_course_offerings,\
     create_multiple_diplomas, create_multiple_students, create_class_meetings,\
     create_diploma_awards, create_class_attendance, create_multiple_prerequisites
+from src.groups.create_group_data import create_group_test_data
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 
@@ -97,6 +98,8 @@ def load_all():
     create_multiple_people_attributes(db.session, 5)
     create_multiple_managers(db.session, 2, 'Group Overseer')
     create_multiple_managers(db.session, 5, 'Group Leader', 'Group Overseer')
+
+    create_group_test_data(db.session)
 
 
 @data_cli.command('test', help='Load everything')
