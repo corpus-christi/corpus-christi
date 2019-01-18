@@ -22,6 +22,7 @@ matrix:
                   sudo: true
                   env: 
                         - FLASK_APP=cc-api.py
+                        - FLASK_CONFIG=staging
                   install:
                         - pip install -r api/requirements.txt
                         - pip install -U pytest
