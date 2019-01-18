@@ -10,8 +10,8 @@ from werkzeug.security import check_password_hash
 from dateutil import parser
 
 from .models import Group, GroupSchema, Member, MemberSchema, Meeting, MeetingSchema, Attendance, AttendanceSchema
-from .create_group_data import flip, fake, group_object_factory, create_multiple_groups, member_object_factory, create_multiple_members, meeting_object_factory, create_multiple_meetings, attendance_object_factory, create_attendance
-from ..people.models import Person, Manager
+from .create_group_data import flip, fake, create_role, group_object_factory, group_object_factory_with_members, create_multiple_groups, member_object_factory, create_multiple_members, meeting_object_factory, create_multiple_meetings, attendance_object_factory, create_attendance
+from ..people.models import Person, Manager, Role
 from ..places.models import Address
 from ..people.test_people import create_multiple_accounts, create_multiple_people, create_multiple_managers
 
@@ -28,13 +28,14 @@ def generate_managers(auth_client):
 def test_create_group(auth_client):
     # GIVEN an empty database
     generate_managers(auth_client)
+    create_role(auth_client.sqla)
+    # print(auth_client.sqla.query(Role).first().name_i18n)
     # WHEN we add in some events
 
     count = random.randint(5, 15)
-
     # WHEN
     for i in range(count):
-        resp = auth_client.post(url_for('groups.create_group'), json=group_object_factory(auth_client.sqla))
+        resp = auth_client.post(url_for('groups.create_group'), json=group_object_factory_with_members(auth_client.sqla))
         assert resp.status_code == 201
 
     # THEN
@@ -53,10 +54,10 @@ def test_create_invalid_group(auth_client):
 
         if flip():
             group['name'] = None
-        elif flip():
-            group['description'] = None
-        else:
-            group['active'] = None
+        # elif flip():
+        #     group['description'] = None
+        # else:
+        #     group['active'] = None
         group['invalid_field'] = 4
 
         resp = auth_client.post(url_for('groups.create_group'), json=group)
@@ -196,19 +197,20 @@ def test_update_group(auth_client):
     count = random.randint(3, 11)
     generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, count)
+    create_multiple_members(auth_client.sqla, count*3)
 
     # WHEN we update one group
     group = auth_client.sqla.query(Group).first()
     manager_id = auth_client.sqla.query(Manager.id).first()[0]
 
-    payload = group_object_factory(auth_client.sqla)
+    payload = group_object_factory_with_members(auth_client.sqla)
 
     # payload['name'] = new_group['name']
     # payload['description'] = new_group['description']
     payload['manager_id'] = manager_id
-    flips = flip()
-    if flips:
-        payload['active'] = flip()
+    # flips = flip()
+    # if flips:
+    #     payload['active'] = flip()
 
     resp = auth_client.patch(url_for('groups.update_group', group_id=group.id), json=payload)
 
@@ -218,8 +220,70 @@ def test_update_group(auth_client):
     # THEN we assume the correct content in the returned object
     assert resp.json['name'] == payload['name']
     assert resp.json['description'] == payload['description']
-    if flips:
-        assert resp.json['active'] == payload['active']
+    # if flips:
+    #     assert resp.json['active'] == payload['active']
+
+
+@pytest.mark.smoke
+def test_invalid_update_group(auth_client):
+    # GIVEN a database with a number of groups
+    count = random.randint(3, 11)
+    generate_managers(auth_client)
+    create_multiple_groups(auth_client.sqla, count)
+
+    original_group = auth_client.sqla.query(Group).first()
+    modified_group = group_object_factory(auth_client.sqla)
+
+    modified_group['invalid_field'] = 4
+
+    resp = auth_client.patch(url_for('groups.update_group', group_id=original_group.id), json=modified_group)
+
+    # THEN we assume the incorrect status code
+    assert resp.status_code == 422
+
+
+@pytest.mark.smoke
+def test_activate_group(auth_client):
+    # GIVEN group to deactivate
+    count = random.randint(3, 11)
+    generate_managers(auth_client)
+    create_multiple_groups(auth_client.sqla, count)
+
+    groups = auth_client.sqla.query(Group).all()
+
+    # WHEN group is changed to active
+    for group in groups:
+        resp = auth_client.put(url_for('groups.activate_group', group_id=group.id),
+                                 json={'active': True})
+        # THEN assert group is active
+        assert resp.status_code == 200
+        assert resp.json['active'] == True
+
+    resp = auth_client.put(url_for('groups.activate_group', group_id='None'), json={'active': True})
+    # THEN assert group is not found
+    assert resp.status_code == 404
+
+
+@pytest.mark.smoke
+def test_deactivate_group(auth_client):
+    # GIVEN group to deactivate
+    count = random.randint(3, 11)
+    generate_managers(auth_client)
+    create_multiple_groups(auth_client.sqla, count)
+
+    groups = auth_client.sqla.query(Group).all()
+
+    # WHEN group is changed to inactive
+    for group in groups:
+        resp = auth_client.put(url_for('groups.deactivate_group', group_id=group.id),
+                                 json={'active': False})
+        # THEN assert group is inactive
+        assert resp.status_code == 200
+        assert resp.json['active'] == False
+
+    resp = auth_client.put(url_for('groups.deactivate_group', group_id='None'), json={'active': False})
+    # THEN assert group is not found
+    assert resp.status_code == 404
 
 # Waiting on API
 # @pytest.mark.xfail()
@@ -249,6 +313,26 @@ def test_create_meeting(auth_client):
 
     # THEN
     assert auth_client.sqla.query(Meeting).count() == count
+
+
+@pytest.mark.smoke
+def test_create_invalid_meeting(auth_client):
+    # GIVEN an empty database
+    generate_managers(auth_client)
+    create_multiple_groups(auth_client.sqla, 1)
+    # WHEN we attempt to add invalid events
+    count = random.randint(5, 15)
+
+    for i in range(count):
+        meeting = meeting_object_factory(auth_client.sqla)
+        meeting['invalid_field'] = 4
+        resp = auth_client.post(url_for('groups.create_meeting'), json=meeting)
+
+        # THEN the response should have the correct code
+        assert resp.status_code == 422
+
+    # AND the database should still be empty
+    assert auth_client.sqla.query(Meeting).count() == 0
 
 
 @pytest.mark.smoke
@@ -326,6 +410,25 @@ def test_update_meeting(auth_client):
     assert parser.parse(resp.json['when']).replace(tzinfo=None) == parser.parse(payload['when']).replace(tzinfo=None)
 
 
+@pytest.mark.smoke
+def test_invalid_update_meeting(auth_client):
+    # GIVEN a database with a number of groups
+    count = random.randint(3, 11)
+    generate_managers(auth_client)
+    create_multiple_groups(auth_client.sqla, count)
+    create_multiple_meetings(auth_client.sqla, count)
+
+    original_meeting = auth_client.sqla.query(Meeting).first()
+    modified_meeting = meeting_object_factory(auth_client.sqla)
+
+    modified_meeting['invalid_field'] = 4
+
+    resp = auth_client.patch(url_for('groups.update_meeting', meeting_id=original_meeting.id), json=modified_meeting)
+
+    # THEN we assume the incorrect status code
+    assert resp.status_code == 422
+
+
 # Waiting for API
 # @pytest.mark.xfail()
 # def test_delete_meeting(auth_client, db):
@@ -368,6 +471,26 @@ def test_create_member(auth_client):
 
 
 @pytest.mark.smoke
+def test_create_invalid_member(auth_client):
+    # GIVEN an empty database
+    generate_managers(auth_client)
+    create_multiple_groups(auth_client.sqla, 1)
+    # WHEN we attempt to add invalid events
+    count = random.randint(5, 15)
+
+    for i in range(count):
+        member = member_object_factory(auth_client.sqla)
+        member['invalid_field'] = 4
+        resp = auth_client.post(url_for('groups.create_member'), json=member)
+
+        # THEN the response should have the correct code
+        assert resp.status_code == 422
+
+    # AND the database should still be empty
+    assert auth_client.sqla.query(Member).count() == 0
+
+
+@pytest.mark.smoke
 def test_read_all_members(auth_client):
     # GIVEN a database with some members
     generate_managers(auth_client)
@@ -391,10 +514,10 @@ def test_read_all_members(auth_client):
 @pytest.mark.smoke
 def test_read_one_member(auth_client):
     # GIVEN a database with some members
+    count = random.randint(3, 11)
     generate_managers(auth_client)
-    create_multiple_groups(auth_client.sqla, 4)
-    create_multiple_people(auth_client.sqla, 4)
-    create_multiple_members(auth_client.sqla, 4)
+    create_multiple_groups(auth_client.sqla, count)
+    create_multiple_members(auth_client.sqla, count)
 
     members = auth_client.sqla.query(Member).all()
     # WHEN we ask for the members one by one
@@ -441,14 +564,33 @@ def test_update_member(auth_client):
     resp = auth_client.patch(url_for('groups.update_member', member_id=member.id), json=invalid_payload)
     # THEN we expect an error
     assert resp.status_code == 422
-    
+
     # to be implemented
     # # WHEN we try to update a nonexistent member
     # auth_client.sqla.delete(member)
     # auth_client.sqla.commit()
     # resp = auth_client.patch(url_for('groups.update_member', member_id=member.id), json=payload)
     # assert resp.status_code == 404
-    
+
+
+
+@pytest.mark.smoke
+def test_invalid_update_member(auth_client):
+    # GIVEN a database with a number of groups
+    count = random.randint(3, 11)
+    generate_managers(auth_client)
+    create_multiple_groups(auth_client.sqla, count)
+    create_multiple_members(auth_client.sqla, count)
+
+    original_member = auth_client.sqla.query(Member).first()
+    modified_member = member_object_factory(auth_client.sqla)
+
+    modified_member['invalid_field'] = 4
+
+    resp = auth_client.patch(url_for('groups.update_member', member_id=original_member.id), json=modified_member)
+
+    # THEN we assume the incorrect status code
+    assert resp.status_code == 422
 
 
 # Waiting for API
@@ -605,9 +747,41 @@ def test_delete_attendance(auth_client):
     }
     resp = auth_client.delete(url_for('groups.delete_attendance'), json=invalid_payload)
     # THEN we expect an error
-    assert resp.status_code == 422 
+    assert resp.status_code == 422
 
     # WHEN we delete a non-existant attendance (delete the same attendance again)
     resp = auth_client.delete(url_for('groups.delete_attendance'), json=payload)
     # THEN we expect an error
     assert resp.status_code == 404
+
+
+@pytest.mark.smoke
+def test_repr_group(auth_client):
+    # GIVEN a DB with a manager
+    # generate_managers(auth_client)
+    group = Group()
+    group.__repr__()
+
+
+@pytest.mark.smoke
+def test_repr_meeting(auth_client):
+    # GIVEN a DB with a manager
+    # generate_managers(auth_client)
+    meeting = Meeting()
+    meeting.__repr__()
+
+
+@pytest.mark.smoke
+def test_repr_member(auth_client):
+    # GIVEN a DB with a manager
+    # generate_managers(auth_client)
+    member = Member()
+    member.__repr__()
+
+
+@pytest.mark.smoke
+def test_repr_attendance(auth_client):
+    # GIVEN a DB with a manager
+    # generate_managers(auth_client)
+    attendance = Attendance()
+    attendance.__repr__()

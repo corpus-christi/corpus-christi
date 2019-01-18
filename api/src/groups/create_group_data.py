@@ -4,7 +4,7 @@ import random
 from faker import Faker
 
 from ..places.models import Address
-from ..people.models import Person, Manager
+from ..people.models import Person, Manager, Role, RoleSchema
 from ..groups.models import Group, Meeting, Attendance, Member, GroupSchema, MeetingSchema, AttendanceSchema, MemberSchema
 
 
@@ -36,6 +36,19 @@ def group_object_factory(sqla):
         'description': rl_fake().sentences(nb=1)[0],
         'active': flip(),
         'manager_id': all_managers[random.randint(0, len(all_managers)-1)].id
+    }
+    return group
+
+
+def group_object_factory_with_members(sqla):
+    """Cook up a fake group."""
+    all_managers = sqla.query(Manager).all()
+    group = {
+        'name': rl_fake().word(),
+        'description': rl_fake().sentences(nb=1)[0],
+        'active': flip(),
+        'manager_id': all_managers[random.randint(0, len(all_managers)-1)].id,
+        'member_ids': [1,2,3]
     }
     return group
 
@@ -77,6 +90,14 @@ def attendance_object_factory(meeting_id, member_id):
     }
     return attendance
 
+
+def role_object_factory(role_name):
+    """Cook up a fake role."""
+    role = {
+        'nameI18n': role_name,
+        'active': 1
+    }
+    return role
 
 #---------End of Factories
 
@@ -123,6 +144,16 @@ def create_attendance(sqla, fraction=0.75):
     sqla.add_all(new_attendances)
     sqla.commit()
 
+
+def create_role(sqla):
+    """Commit new role to the database. Return ID."""
+    role_schema = RoleSchema()
+
+    valid_role_object = role_schema.load(role_object_factory("role.group-overseer"))  # fake role is fake job
+    valid_role_row = Role(**valid_role_object)
+    sqla.add(valid_role_row)
+    sqla.commit()
+    return valid_role_row.id
 
 def create_group_test_data(sqla):
     """The function that creates test data in the correct order """

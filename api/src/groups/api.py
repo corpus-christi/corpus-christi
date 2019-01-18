@@ -105,10 +105,11 @@ def update_group(group_id):
     if group is None:
         return jsonify(msg="Group not found"), 404
 
+    new_manager = request.json['manager_id']
+
     if db.session.query(Manager).filter_by(id=new_manager).first() is None:
         return jsonify(msg="Manager not found"), 404
 
-    new_manager = request.json['manager_id']
     if new_manager is not None and new_manager is not group.manager_id:
         group_overseer = db.session.query(Role).filter_by(name_i18n="role.group-overseer").first()
         if group_overseer:
@@ -244,7 +245,7 @@ def update_meeting(meeting_id):
 
     meeting = db.session.query(Meeting).filter_by(id=meeting_id).first()
 
-    if result is None:
+    if meeting is None:
         return jsonify(msg="Meeting not found"), 404
 
     for key, val in valid_meeting.items():
@@ -354,7 +355,7 @@ def update_member(member_id):
 
     member = db.session.query(Member).filter_by(id=member_id).first()
 
-    if result is None:
+    if member is None:
         return jsonify(msg="No members found"), 404
 
     for key, val in valid_member.items():
