@@ -6,7 +6,7 @@ from marshmallow import ValidationError
 
 from . import groups
 from .models import GroupSchema, Group, Attendance, Member, MemberSchema, Meeting, MeetingSchema, AttendanceSchema
-from ..people.models import Role
+from ..people.models import Role, Manager
 from .. import db
 
 # ---- Group
@@ -37,6 +37,9 @@ def create_group():
         return jsonify(err.messages), 422
 
     new_group = Group(**valid_group)
+
+    if db.session.query(Manager).filter_by(id=new_group.manager_id).first() is None:
+        return jsonify(msg="Manager not found"), 404
     
     db.session.add(new_group)
     db.session.commit()
@@ -94,6 +97,21 @@ def update_group(group_id):
         return jsonify(err.messages), 422
 
     group = db.session.query(Group).filter_by(id=group_id).first()
+
+    if db.session.query(Manager).filter_by(id=new_manager).first() is None:
+        return jsonify(msg="Manager not found"), 404
+
+    new_manager = request.json['manager_id']
+    if new_manager is not None and new_manager is not group.manager_id:
+        group_overseer = db.session.query(Role).filter_by(name_i18n="role.group-overseer").first()
+        if group_overseer:
+            manager = db.session.query(Manager).filter_by(id=new_manager).first()
+            manager_roles = manager.account.roles
+            if group_overseer not in manager_roles:
+                print("adding role", end='\n\n\n')
+                manager_roles.append(group_overseer)
+
+
 
     old_members = []
     for member in group.members:
