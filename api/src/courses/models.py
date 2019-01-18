@@ -168,7 +168,7 @@ class Course_Offering(Base):
 
 class Course_OfferingSchema(Schema):
      id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
-     course_id = fields.Integer(data_key='courseId', required=True)
+     course_id = fields.Integer(data_key='courseId', required=False)
      description = fields.String(required=True, validate=Length(min=1))
      max_size = fields.Integer(data_key='maxSize', required=True, validate=Range(min=1))
      active = fields.Boolean(required=False, default=True)
