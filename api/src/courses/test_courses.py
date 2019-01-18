@@ -750,9 +750,15 @@ def test_read_all_course_offering_students(auth_client):
     resp = auth_client.get(url_for('courses.read_all_course_offering_students', course_offering_id=1))
     # THEN assert error code
     assert resp.status_code == 404
+    """Test with no students"""
+    # GIVEN course offering with no students
+    setup_dependencies_of_student(auth_client, 1)
+    # WHEN database queried
+    resp = auth_client.get(url_for('courses.read_all_course_offering_students', course_offering_id=1))
+    # THEN assert error code
+    assert resp.status_code == 404
     """Test with populated database"""
     # GIVEN existing course offering in database
-    setup_dependencies_of_student(auth_client, 1)
     count = random.randint(3,14)
     create_multiple_students(auth_client.sqla, count)
     # WHEN call to database
