@@ -41,9 +41,8 @@ matrix:
                         - cd ../
                         - pytest
 
-# reset database script (david)5
-# run server side testing script (pytest)
 # create script by configuration and make file
+# fix flask data load-all
 notifications:       
         slack: tumissionscomputing:wp25PPGEFitgDVKamhxxq6jU
 deploy:
