@@ -1,6 +1,6 @@
 <template>
-  <v-layout>
-    <v-flex xs6 sm6>
+  <v-layout row>
+    <v-flex xs6 sm6 md6>
       <v-card class="ma-1">
         <template v-if="pageLoaded">
           <v-container fill-height fluid>
@@ -43,15 +43,6 @@
             >
               <v-icon>person</v-icon>&nbsp;{{ $t("events.participants.title") }}
             </v-btn>
-            <v-btn
-              flat
-              ripple
-              color="primary"
-              data-cy="navigate-to-assets"
-              v-on:click="navigateTo('/assets')"
-            >
-              <v-icon>devices_other</v-icon>&nbsp;{{ $t("assets.title") }}
-            </v-btn>
           </v-card-actions>
         </template>
         <v-layout v-else justify-center height="500px">
@@ -64,46 +55,88 @@
         </v-layout>
       </v-card>
     </v-flex>
-    <v-flex xs6 sm6>
-      <v-card class="ma-1">
-        <template v-if="pageLoaded">
-          <v-container fill-height fluid>
-            <v-flex xs9 sm9 align-end flexbox>
-              <span class="headline">{{ $t("teams.title") }}</span>
-            </v-flex>
-            <v-layout xs3 sm3 align-end justify-end>
-              <v-btn
-                flat
-                color="primary"
-                data-cy="add-team-dialog"
-                v-on:click="addTeamDialog.show = true"
-              >
-                <v-icon>add</v-icon>&nbsp;{{ $t("teams.new") }}
-              </v-btn>
-            </v-layout>
-          </v-container>
-          <v-list>
-            <template v-for="team in event.teams">
-              <v-divider v-bind:key="'divider' + team.id"></v-divider>
-              <v-list-tile v-bind:key="team.id">
-                <v-list-tile-content>
-                  <span>{{ team.description }} {{ team.id }}</span>
-                </v-list-tile-content>
-                <v-list-tile-action>
-                  <v-btn flat color="primary">
-                    <v-icon
-                      v-on:click="showDeleteTeamDialog(team.id)"
-                      :data-cy="'deleteTeam-' + team.id"
-                      >delete</v-icon
-                    >
-                  </v-btn>
-                </v-list-tile-action>
-              </v-list-tile>
-            </template>
-          </v-list>
-        </template>
-      </v-card>
-    </v-flex>
+    <v-layout row wrap>
+      <v-flex xs12>
+        <v-card class="ma-1">
+          <template v-if="pageLoaded">
+            <v-container fill-height fluid>
+              <v-flex xs9 sm9 align-end flexbox>
+                <span class="headline">{{ $t("teams.title") }}</span>
+              </v-flex>
+              <v-layout xs3 sm3 align-end justify-end>
+                <v-btn
+                  flat
+                  color="primary"
+                  data-cy="add-team-dialog"
+                  v-on:click="addTeamDialog.show = true"
+                >
+                  <v-icon>add</v-icon>&nbsp;{{ $t("teams.new") }}
+                </v-btn>
+              </v-layout>
+            </v-container>
+            <v-list>
+              <template v-for="team in event.teams">
+                <v-divider  v-bind:key="'teamDivider' + team.id"></v-divider>
+                <v-list-tile v-bind:key="team.id">
+                  <v-list-tile-content>
+                    <span>{{ team.description }}</span>
+                  </v-list-tile-content>
+                  <v-list-tile-action>
+                    <v-btn flat color="primary">
+                      <v-icon
+                        v-on:click="showDeleteTeamDialog(team.id)"
+                        :data-cy="'deleteTeam-' + team.id"
+                        >delete</v-icon
+                      >
+                    </v-btn>
+                  </v-list-tile-action>
+                </v-list-tile>
+              </template>
+            </v-list>
+          </template>
+        </v-card>
+      </v-flex>
+      <v-flex xs12>
+        <v-card class="ma-1">
+          <template v-if="pageLoaded">
+            <v-container fill-height fluid>
+              <v-flex xs9 sm9 align-end flexbox>
+                <span class="headline">{{ $t("assets.title") }}</span>
+              </v-flex>
+              <v-layout xs3 sm3 align-end justify-end>
+                <v-btn
+                  flat
+                  color="primary"
+                  data-cy="add-asset-dialog"
+                  v-on:click="addAssetDialog.show = true"
+                >
+                  <v-icon>add</v-icon>&nbsp;{{ $t("assets.new") }}
+                </v-btn>
+              </v-layout>
+            </v-container>
+            <v-list>
+              <template v-for="asset in event.assets">
+                <v-divider v-bind:key="'assetDivider' + asset.id"></v-divider>
+                <v-list-tile v-bind:key="asset.id">
+                  <v-list-tile-content>
+                    <span>{{ asset.description }}</span>
+                  </v-list-tile-content>
+                  <v-list-tile-action>
+                    <v-btn flat color="primary">
+                      <v-icon
+                        v-on:click="showDeleteAssetDialog(asset.id)"
+                        :data-cy="'deleteAsset-' + asset.id"
+                        >delete</v-icon
+                      >
+                    </v-btn>
+                  </v-list-tile-action>
+                </v-list-tile>
+              </template>
+            </v-list>
+          </template>
+        </v-card>
+      </v-flex>
+    </v-layout>
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
@@ -187,6 +220,71 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- Add Asset dialog -->
+    <v-dialog v-model="addAssetDialog.show" persistent max-width="500px">
+      <v-card>
+        <v-card-title primary-title>
+          <span class="headline">{{ $t("assets.new") }}</span>
+        </v-card-title>
+        <v-card-text>
+          <entity-search
+            data-cy="assets-entity-search"
+            v-model="addAssetDialog.asset"
+            :existing-entities="event.assets"
+            asset
+          ></entity-search>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn
+            v-on:click="cancelAddAsset()"
+            color="secondary"
+            flat
+            :disabled="addAssetDialog.loading"
+            data-cy="cancel-add"
+            >{{ $t("actions.cancel") }}</v-btn
+          >
+          <v-spacer></v-spacer>
+          <v-btn
+            v-on:click="addAsset()"
+            color="primary"
+            raised
+            :disabled="!addAssetDialog.asset"
+            :loading="addAssetDialog.loading"
+            data-cy="confirm-add"
+            >{{ $t("actions.confirm") }}</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Delete Asset dialog -->
+    <v-dialog v-model="deleteAssetDialog.show" max-width="350px">
+      <v-card>
+        <v-card-text>
+          <span>{{ $t("assets.confirm-remove-from-event") }}</span>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn
+            v-on:click="deleteAssetDialog.show = false"
+            color="secondary"
+            flat
+            :disabled="deleteAssetDialog.loading"
+            data-cy="cancel-delete"
+            >{{ $t("actions.cancel") }}</v-btn
+          >
+          <v-spacer></v-spacer>
+          <v-btn
+            v-on:click="deleteAsset()"
+            color="primary"
+            raised
+            :loading="deleteAssetDialog.loading"
+            data-cy="confirm-delete"
+            >{{ $t("actions.confirm") }}</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-layout>
 </template>
 
@@ -222,6 +320,18 @@ export default {
         show: false,
         loading: false,
         teamId: -1
+      },
+
+      addAssetDialog: {
+        show: false,
+        loading: false,
+        asset: null
+      },
+
+      deleteAssetDialog: {
+        show: false,
+        loading: false,
+        assetId: -1
       },
 
       snackbar: {
@@ -261,13 +371,20 @@ export default {
     getEvent() {
       const id = this.$route.params.event;
       return this.$http
-        .get(`/api/v1/events/${id}?include_teams=1`)
+        .get(`/api/v1/events/${id}?include_teams=1&include_assets=1`)
         .then(resp => {
           this.event = resp.data;
+          console.log(this.event)
           if (!this.event.teams) {
             this.event.teams = [];
           } else {
             this.event.teams = this.event.teams.map(t => t.team);
+          }
+
+          if (!this.event.assets) {
+            this.event.assets = [];
+          } else {
+            this.event.assets = this.event.assets.map(a => a.asset);
           }
         });
     },
@@ -384,6 +501,72 @@ export default {
     showDeleteTeamDialog(teamId) {
       this.deleteTeamDialog.teamId = teamId;
       this.deleteTeamDialog.show = true;
+    },
+
+    cancelAddAsset() {
+      this.addAssetDialog.loading = false;
+      this.addAssetDialog.show = false;
+      this.addAssetDialog.asset = null;
+    },
+
+    addAsset() {
+      const eventId = this.$route.params.event;
+      let assetId = this.addAssetDialog.asset.id;
+      const idx = this.event.assets.findIndex(ev_as => ev_as.id === assetId);
+      if (idx > -1) {
+        this.addAssetDialog.loading = false;
+        this.addAssetDialog.show = false;
+        this.addAssetDialog.asset = null;
+        this.showSnackbar(this.$t("assets.assets-on-event"));
+        return;
+      }
+
+      this.$http
+        .post(`/api/v1/events/${eventId}/assets/${assetId}`)
+        .then(() => {
+          this.showSnackbar(this.$t("assets.asset-added"));
+          this.addAssetDialog.loading = false;
+          this.addAssetDialog.show = false;
+          this.addAssetDialog.asset = null;
+          this.pageLoaded = false;
+          this.getEvent().then(() => (this.pageLoaded = true));
+        })
+        .catch(err => {
+          console.log(err);
+          this.addAssetDialog.loading = false;
+          if (err.response.status == 422) {
+            this.showSnackbar(this.$t("assets.error-asset-assigned"));
+          } else {
+            this.showSnackbar(this.$t("assets.error-adding-asset"));
+          }
+        });
+    },
+
+    deleteAsset() {
+      let id = this.deleteAssetDialog.assetId;
+      const idx = this.event.assets.findIndex(ev_as => ev_as.id === id);
+      this.deleteAssetDialog.loading = true;
+      const eventId = this.$route.params.event;
+      this.$http
+        .delete(`/api/v1/events/${eventId}/assets/${id}`)
+        .then(resp => {
+          console.log("REMOVED", resp);
+          this.deleteAssetDialog.show = false;
+          this.deleteAssetDialog.loading = false;
+          this.deleteAssetDialog.assetId = -1;
+          this.event.assets.splice(idx, 1);
+          this.showSnackbar(this.$t("assets.asset-removed"));
+        })
+        .catch(err => {
+          console.log(err);
+          this.deleteAssetDialog.loading = false;
+          this.showSnackbar(this.$t("assets.error-removing-asset"));
+        });
+    },
+
+    showDeleteAssetDialog(assetId) {
+      this.deleteAssetDialog.assetId = assetId;
+      this.deleteAssetDialog.show = true;
     },
 
     navigateTo(path) {

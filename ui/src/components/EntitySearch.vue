@@ -48,6 +48,7 @@ export default {
     person: Boolean,
     course: Boolean,
     team: Boolean,
+    asset: Boolean,
     multiple: { type: Boolean, default: false },
     existingEntities: Array,
     value: null,
@@ -69,6 +70,7 @@ export default {
       else if (this.person) return this.$t("actions.search-people");
       else if (this.course) return this.$t("actions.search-courses");
       else if (this.team) return this.$t("teams.title");
+      else if (this.asset) return this.$t("assets.title");
       else return "";
     },
     idField() {
@@ -118,7 +120,10 @@ export default {
         entityDescriptor = entity.name;
       } else if (this.team) {
         entityDescriptor = entity.description;
+      } else if (this.asset) {
+        entityDescriptor = entity.description;
       }
+
 
       if (entityDescriptor.length > letterLimit) {
         //TODO don't do this here, it limits search functionality
@@ -152,6 +157,7 @@ export default {
     else if (this.person) endpoint = "/api/v1/people/persons";
     else if (this.course) endpoint = "/api/v1/courses/courses";
     else if (this.team) endpoint = "/api/v1/teams/";
+    else if (this.asset) endpoint = "/api/v1/assets/";
     this.$http
       .get(endpoint)
       .then(resp => {

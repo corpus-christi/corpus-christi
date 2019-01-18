@@ -25,14 +25,14 @@
       >
         <v-icon>person </v-icon>&nbsp;{{ $t("events.participants.title") }}
       </v-tab>
-      <v-tab
+      <!-- <v-tab
         ripple
         v-on:click="
           $router.push({ path: '/events/' + $route.params.event + '/assets' })
         "
       >
         <v-icon>devices_other</v-icon>&nbsp;{{ $t("assets.title") }}
-      </v-tab>
+      </v-tab> -->
     </v-tabs>
     <hr class="vertical-spacer" />
     <router-view></router-view>
