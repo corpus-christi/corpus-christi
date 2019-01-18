@@ -390,7 +390,7 @@ def test_read_one_course(auth_client):
         assert resp.json['name'] == course.name
         assert resp.json['description'] == course.description
         assert resp.json['active'] == course.active
-
+       
 def test_update_course(auth_client):
     """Test with invalid course"""
     # GIVEN empty database
@@ -617,9 +617,16 @@ def test_update_course_offering(auth_client):
 # ---- Diploma
 
 def test_create_diploma(auth_client):
-    ''' Test for good diploma '''
-    # GIVEN some existing courses
+    """Test with invalid diploma"""
+    # GIVEN invalid diploma to add
     create_multiple_courses(auth_client.sqla, 10)
+    broken_diploma = {}
+    # WHEN database queried
+    resp = auth_client.post(url_for('courses.create_diploma'), json=broken_diploma)
+    # THEN assert error code
+    assert resp.status_code == 422
+    """Test for good diploma"""
+    # GIVEN some existing courses
     # WHEN we create a diploma and add courses to add
     diploma = courses_diploma_object_factory(10)
     diploma['courses'] = [1,2,3]
@@ -630,29 +637,72 @@ def test_create_diploma(auth_client):
 
 
 def test_read_all_diplomas(auth_client):
+    """Test with empty database"""
+    # GIVEN empty database
+    # WHEN databse queried
+    resp = auth_client.get(url_for('courses.read_all_diplomas'))
+    # THEN assert error code
+    assert resp.status_code == 404
+    """Test with populated database"""
     # GIVEN 50 courses and 15 diplomas
     create_multiple_courses(auth_client.sqla, 50)
     create_multiple_diplomas(auth_client.sqla, 15)
+    create_diploma_awards(auth_client.sqla, 15)
     # WHEN we read the diplomas
     resp = auth_client.get(url_for('courses.read_all_diplomas'))
     # THEN we should receive 15 diplomas
     assert resp.status_code == 200
     assert len(resp.json) == 15
-""""
-@pytest.mark.xfail()
+
 def test_read_one_diploma(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
+    """Test with invalid diploma"""
+    # GIVEN empty database
+    # WHEN databse queried
+    resp = auth_client.get(url_for('courses.read_one_diploma', diploma_id = 1))
+    # THEN assert error code
+    assert resp.status_code == 404
+    """Test with populated database"""
+    # GIVEN one course in the database
+    count = random.randint(3,11)
+    create_multiple_courses(auth_client.sqla, count)
+    create_multiple_diplomas(auth_client.sqla, count)
+    create_diploma_awards(auth_client.sqla, count)
+    # WHEN call to database
+    diplomas = auth_client.sqla.query(Diploma).all()
+    # THEN assert entry called is only entry returned
+    for diploma in diplomas:
+        resp = auth_client.get(url_for('courses.read_one_diploma', diploma_id=diploma.id))
+        # THEN we find a matching class
+        assert resp.status_code == 200
+        assert resp.json['name'] == diploma.name
+        assert resp.json['description'] == diploma.description
+        assert resp.json['active'] == diploma.active
 
-@pytest.mark.xfail()
 def test_update_diploma(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
+    """Test with invalid diploma"""
+    # GIVEN empty database
+    # WHEN databse queried
+    resp = auth_client.patch(url_for('courses.update_diploma', diploma_id = 1))
+    # THEN assert error code
+    assert resp.status_code == 404
+     
+    """Test with populated database"""
+    # GIVEN active or inactive course in database
+    count = random.randint(3,11)
+    create_multiple_courses(auth_client.sqla, count)
+    create_multiple_diplomas(auth_client.sqla, count)
+    diplomas = auth_client.sqla.query(Course).all()
+    # WHEN course information updated
+    for diploma in diplomas:
+        resp = auth_client.patch(url_for('courses.update_diploma', diploma_id=diploma.id),
+            json=courses_diploma_object_factory(count))
+        # THEN assert course reflects new detail(s)
+        assert resp.status_code == 200
+        assert resp.json['name'] == 'test_name'
+        assert resp.json['description'] == 'test_descr'
+        assert resp.json['active'] == False
 
+"""
 # ---- Diploma_Awarded
 
 @pytest.mark.xfail()

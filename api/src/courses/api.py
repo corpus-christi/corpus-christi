@@ -324,6 +324,8 @@ def create_diploma():
 @jwt_required
 def read_all_diplomas():
     result = db.session.query(Diploma).all()
+    if result == []:
+        return 'No Diplomas found', 404
     for diploma in result:
         diploma.courseList = diploma.courses
         students = []
@@ -353,7 +355,7 @@ def read_one_diploma(diploma_id):
 @courses.route('/diplomas/<diploma_id>', methods=['PATCH'])
 @jwt_required
 def update_diploma(diploma_id):
-    request.json['active'] = True
+    #request.json['active'] = True
     if request.json['courses']:
             courses = request.json['courses']
             del request.json['courses']
@@ -365,8 +367,14 @@ def update_diploma(diploma_id):
 
     diploma = db.session.query(Diploma).filter_by(id=diploma_id).first()
 
-    for key, val in valid_diploma.items():
-        setattr(diploma, key, val)
+    if diploma is None:
+        return "Diploma NOT Found", 404
+
+    for attr in 'name', 'description', 'active':
+        if attr in request.json:
+            setattr(diploma, attr, request.json[attr])
+    # for key, val in valid_diploma.items():
+    #     setattr(diploma, key, val)
 
     if courses:
         diploma.courses = []
