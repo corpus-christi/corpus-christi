@@ -14,6 +14,19 @@
           {{ student.active ? "archive" : "undo" }}
         </v-icon>
       </v-btn>
+    </v-tooltip>
+    <v-tooltip bottom>
+      <v-btn
+        flat
+        icon
+        outline
+        color="primary"
+        slot="activator"
+        v-bind:small="displayContext === 'compact'"
+        @click="emitAction(student.active ? 'deactivate' : 'activate')"
+      >
+        <v-icon v-bind:small="displayContext === 'compact'">done</v-icon>
+      </v-btn>
       <span>{{ $t(student.active ? "actions.tooltips.deactivate" : "actions.tooltips.reactivate") }}</span>
     </v-tooltip>
   </v-layout>

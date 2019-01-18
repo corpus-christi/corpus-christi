@@ -4,16 +4,18 @@
       <v-card>
         <template v-if="pageLoaded">
           <v-container fill-height fluid>
-            <v-flex xs9 sm9 align-end flexbox>
-              <span class="headline">{{ courseOffering.course.name }}</span>
-            </v-flex>
+            <v-layout column>
+              <v-flex xs9 sm9 align-end flexbox>
+                <span class="headline">{{ courseOffering.course.name }}</span>
+              </v-flex>
+              <v-card-text class="pa-4">
+                <b>{{ $t("courses.description") }}:</b>
+                <div class="ml-2">{{ courseOffering.description }}</div>
+                <b>{{ $t("courses.enrolled") }}:</b>
+                <div class="ml-2">{{ "0 / " + courseOffering.maxSize }}</div>
+              </v-card-text>
+            </v-layout>
           </v-container>
-          <v-card-text class="pa-4">
-            <b>{{ $t("courses.description") }}:</b>
-            <div class="ml-2">{{ courseOffering.description }}</div>
-            <b>{{ $t("courses.enrolled") }}:</b>
-            <div class="ml-2">{{ "0 / " + courseOffering.maxSize }}</div>
-          </v-card-text>
         </template>
         <v-layout v-else justify-center height="500px">
           <div class="ma-5 pa-5">
