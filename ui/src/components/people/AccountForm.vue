@@ -111,7 +111,7 @@ export default {
   props: {
     person: { type: Object, required: true },
     account: { type: Object, required: true },
-    roles: Array
+    rolesList: Array
   },
   data() {
     return {
@@ -140,10 +140,6 @@ export default {
         ? this.$t("person.actions.add-account")
         : this.$t("person.actions.reset-password");
     },
-    rolesList() {
-      console.log(this.roles);
-      return this.roles;
-    }
   },
   methods: {
     confirm() {

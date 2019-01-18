@@ -80,6 +80,8 @@ def read_all_persons():
     for r in result:
         r.attributesInfo = r.person_attributes
         r.accountInfo = r.account
+        if r.account:
+            r.accountInfo.roles = r.account.roles
     return jsonify(person_schema.dump(result, many=True))
 
 

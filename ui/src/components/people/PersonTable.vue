@@ -187,6 +187,7 @@
       <PersonAdminForm
         v-bind:person="adminDialog.person"
         v-bind:account="adminDialog.account"
+        v-bind:rolesList="rolesList"
         v-on:addAccount="addAccount"
         v-on:updateAccount="updateAccount"
         v-on:deactivateAccount="deactivateAccount"
@@ -204,7 +205,16 @@ import PersonAdminForm from "./AccountForm";
 export default {
   name: "PersonTable",
   components: { PersonAdminForm, PersonForm },
-  props: ["peopleList"],
+  props: {
+    peopleList: {
+      type: Array,
+      required: true
+    },
+    rolesList: {
+      type: Array,
+      required: true
+    }
+  },
   data() {
     return {
       viewStatus: "viewActive",
@@ -289,8 +299,23 @@ export default {
         default:
           return this.activePeople;
       }
+    },
+  },
+
+  watch: {
+    peopleList(all_people) {
+     this.allPeople = all_people;
+     this.activePeople = this.allPeople.filter(person => person.active);
+     this.archivedPeople = this.allPeople.filter(
+       person => !person.active
+     );
+    },
+    rolesList(all_roles) {
+      console.log(this.rolesList);
+      this.rolesList = all_roles;
     }
   },
+
   methods: {
     // ---- Person Administration
 
@@ -487,16 +512,6 @@ export default {
         .catch(err => console.error("FAILURE PLEASE", err.response));
     },
 
-    refreshPeopleList() {
-      console.log("Refresh people list");
-      this.allPeople = this.props.peopleList;
-      console.log(this.allPeople);
-      this.activePeople = this.getPeopleList().filter(person => person.active);
-      this.archivedPeople = this.getPeopleList().filter(
-        person => !person.active
-      );
-    },
-
     getAttributesInfo() {
       this.$http
         .get("/api/v1/people/persons/fields")
@@ -506,12 +521,14 @@ export default {
           }
         })
         .catch(err => console.error("FAILURE", err.response));
-    }
+    },
+
+    refreshPeopleList() {
+      this.$emit("fetchPeopleList")
+    },
   },
 
   mounted: function() {
-    this.refreshPeopleList();
-    // this.getRolesList();
     this.getAttributesInfo();
   }
 };

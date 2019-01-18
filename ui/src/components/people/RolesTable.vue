@@ -73,9 +73,13 @@
         <td class="hidden-sm-and-down" :data-cy="'email-' + props.item.id">
           {{ props.item.email }}
         </td>
-        <td :data-cy="'phone-' + props.item.id">{{ props.item.phone }}</td>
+        <!-- <td :data-cy="'phone-' + props.item.id">{{ props.item.phone }}</td> -->
+        <td class="hidden-sm-and-down" :data-cy="'username-' + props.item.id">
+          {{ props.item.accountInfo.username}}
+        </td>
+          
         <td class="text-no-wrap">
-          <v-tooltip bottom>
+          <!-- <v-tooltip bottom>
             <v-btn
               icon
               outline
@@ -88,7 +92,7 @@
               <v-icon small>edit</v-icon>
             </v-btn>
             <span>{{ $t("actions.edit") }}</span>
-          </v-tooltip>
+          </v-tooltip> -->
           <v-tooltip bottom>
             <v-btn
               icon
@@ -102,36 +106,6 @@
               <v-icon small>settings</v-icon>
             </v-btn>
             <span>{{ $t("actions.tooltips.settings") }}</span>
-          </v-tooltip>
-          <v-tooltip bottom>
-            <v-btn
-              v-if="props.item.active === true"
-              icon
-              outline
-              small
-              color="primary"
-              slot="activator"
-              v-on:click="deactivatePerson(props.item)"
-              data-cy="deactivate-person"
-            >
-              <v-icon small>archive</v-icon>
-            </v-btn>
-            <span>{{ $t("actions.tooltips.archive") }}</span>
-          </v-tooltip>
-          <v-tooltip bottom>
-            <v-btn
-              v-if="props.item.active === false"
-              icon
-              outline
-              small
-              color="primary"
-              slot="activator"
-              v-on:click="activatePerson(props.item)"
-              data-cy="activate-person"
-            >
-              <v-icon small>undo</v-icon>
-            </v-btn>
-            <span>{{ $t("actions.tooltips.activate") }}</span>
           </v-tooltip>
         </td>
       </template>
@@ -173,7 +147,7 @@
       <PersonAdminForm
         v-bind:person="adminDialog.person"
         v-bind:account="adminDialog.account"
-        v-bind:roles="adminDialog.roles"
+        v-bind:rolesList="rolesList"
         v-on:addAccount="addAccount"
         v-on:updateAccount="updateAccount"
         v-on:deactivateAccount="deactivateAccount"
@@ -191,6 +165,17 @@ import PersonAdminForm from "./AccountForm";
 export default {
   name: "RolesTable",
   components: { PersonAdminForm, PersonForm },
+  props: {
+    peopleList: {
+      type: Array,
+      required: true
+    },
+    rolesList: {
+      type: Array,
+      required: true
+    },
+  },
+  
   data() {
     return {
       viewStatus: "viewActive",
@@ -219,8 +204,9 @@ export default {
       selected: [],
       allPeople: [],
       activePeople: [],
+      allAccount: [],
       archivedPeople: [],
-      rolesList: [],
+      // rolesList: [],
       search: "",
       data: {}
     };
@@ -247,7 +233,7 @@ export default {
           width: "15%",
           class: "hidden-sm-and-down"
         },
-        { text: this.$t("person.phone"), value: "phone", width: "15%" },
+        { text: this.$t("person.accountInfo.username"), value: "username", width: "15%" },
         { text: this.$t("actions.header"), sortable: false }
       ];
     },
@@ -267,18 +253,32 @@ export default {
       ];
     },
     peopleToDisplay() {
-      switch (this.viewStatus) {
-        case "viewActive":
-          return this.activePeople;
-        case "viewArchived":
-          return this.archivedPeople;
-        case "viewAll":
-          return this.allPeople;
-        default:
-          return this.activePeople;
-      }
+      // switch (this.viewStatus) {
+      //   case "viewActive":
+      //     return this.activePeople;
+      //   case "viewArchived":
+      //     return this.archivedPeople;
+      //   case "viewAll":
+      //     return this.allPeople;
+      //   default:
+      //     return this.activePeople;
+      return this.allAccount;
+      // }
     }
   },
+
+  watch: {
+    peopleList(all_people) {
+    this.allPeople = all_people;
+    this.allAccount = this.allPeople.filter(person => person.accountInfo);
+    },
+
+    rolesList(all_roles) {
+      console.log(this.rolesList);
+      this.rolesList = all_roles;
+    }
+  },
+
   methods: {
     // ---- Person Administration
 
@@ -485,13 +485,19 @@ export default {
           }
         })
         .catch(err => console.error("FAILURE", err.response));
-    }
+    },
+
+    refreshPeopleList() {
+      this.$emit("fetchPeopleList")
+    },
   },
 
   mounted: function() {
-    this.refreshPeopleList();
-    this.getRolesList();
     this.getAttributesInfo();
   }
 };
+/*
+@TODO:
+  Make the search be able to use username as a search parameter.
+*/
 </script>
