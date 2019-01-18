@@ -361,6 +361,18 @@ def test_activate_person(auth_client):
     assert auth_client.sqla.query(Person).filter(Person.active == True).count() == count
 
 
+@pytest.mark.smoke
+def test_activate_person_no_exist(auth_client):
+    # GIVEN an empty database
+
+    # WHEN a person is requested to be activated
+    resp = auth_client.put(url_for('people.activate_person', person_id = random.randint(1,8)))
+
+    # THEN expect response to be unprocessable
+    assert resp.status_code == 422
+    assert resp.json == None
+
+
 # ---- Account
 
 def test_create_account(auth_client):
