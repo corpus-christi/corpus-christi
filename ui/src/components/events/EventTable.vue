@@ -6,41 +6,49 @@
       </v-flex>
     </v-layout>
     <v-toolbar class="pa-1" extension-height="64px">
-      <v-toolbar-title class="hidden-xs-only">{{
-        $t("events.header")
-      }}</v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-text-field
-        v-model="search"
-        append-icon="search"
-        v-bind:label="$t('actions.search')"
-        single-line
-        hide-details
-        data-cy="form-search"
-      ></v-text-field>
-      <v-btn
-        class="hidden-xs-only mr-2"
-        color="primary"
-        raised
-        v-on:click.stop="newEvent"
-        data-cy="add-event"
-      >
-        <v-icon dark>add</v-icon>
-        <span class="mr-1"> {{ $t("actions.add-event") }} </span>
-      </v-btn>
-      <v-btn
-        class="hidden-sm-and-up"
-        color="primary"
-        raised
-        fab
-        v-on:click.stop="newEvent"
-        data-cy="add-event-small"
-      >
-        <v-icon dark>add</v-icon>
-      </v-btn>
-      <v-layout row slot="extension" justify-space-around align-center>
-        <v-flex xs6>
+      <v-layout justify-space-between>
+        <v-flex shrink align-self-center>
+          <v-toolbar-title class="hidden-xs-only">{{
+            $t("events.header")
+          }}</v-toolbar-title>
+        </v-flex>
+        <v-spacer></v-spacer>
+        <v-text-field
+          class="max-width-250 mr-2"
+          v-model="search"
+          append-icon="search"
+          v-bind:label="$t('actions.search')"
+          single-line
+          hide-details
+          data-cy="form-search"
+        ></v-text-field>
+        <v-flex shrink justify-self-end>
+          <v-btn
+            class="hidden-xs-only mr-2"
+            color="primary"
+            raised
+            v-on:click.stop="newEvent"
+            data-cy="add-event"
+          >
+            <v-icon dark>add</v-icon>
+            <span class="mr-1"> {{ $t("actions.add-event") }} </span>
+          </v-btn>
+          <v-btn
+            class="hidden-sm-and-up"
+            color="primary"
+            raised
+            fab
+            v-on:click.stop="newEvent"
+            data-cy="add-event-small"
+          >
+            <v-icon dark>add</v-icon>
+          </v-btn>
+        </v-flex>
+      </v-layout>
+      <v-layout row slot="extension" justify-space-between align-center>
+        <v-flex>
           <v-select
+            class="max-width-250 mr-2"
             hide-details
             solo
             single-line
@@ -50,7 +58,7 @@
           >
           </v-select>
         </v-flex>
-        <v-flex xs4>
+        <v-flex shrink>
           <v-switch
             hide-details
             v-model="viewPast"
@@ -511,5 +519,9 @@ export default {
 <style scoped>
 .hover-hand {
   cursor: pointer;
+}
+
+.max-width-250 {
+  max-width: 250px;
 }
 </style>
