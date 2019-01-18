@@ -7,15 +7,21 @@ from flask_jwt_extended import create_access_token
 
 from flask import jsonify
 
+#Needed for pruning events
+from datetime import datetime, timedelta
+
 from src import create_app
 from src import db
 from src.i18n.models import Language, I18NLocale
 from src.people.models import Person, Account, Role
-from src.people.test_people import create_multiple_people, create_multiple_accounts
+from src.events.models import Event
 from src.events.create_event_data import create_events_test_data
+from src.attributes.models import Attribute, PersonAttribute, EnumeratedValue
+from src.attributes.test_attributes import create_multiple_attributes, create_multiple_enumerated_values, create_multiple_person_attribute_enumerated, create_multiple_person_attribute_strings
+from src.people.test_people import create_multiple_people, create_multiple_accounts, create_multiple_managers, create_multiple_people_attributes
 from src.places.test_places import create_multiple_areas, create_multiple_addresses, create_multiple_locations
 from src.places.models import Country
-from src.courses.models import Course, Prerequisite
+from src.courses.models import Course
 from src.courses.test_courses import create_multiple_courses, create_multiple_course_offerings,\
     create_multiple_diplomas, create_multiple_students, create_class_meetings,\
     create_diploma_awards, create_class_attendance, create_multiple_prerequisites
@@ -55,6 +61,10 @@ def load_languages():
 def load_roles():
     Role.load_from_file()
 
+@data_cli.command('load-attribute-types', help='Load attribute types')
+def load_attribute_types():
+    Attribute.load_types_from_file()
+
 
 @data_cli.command('load-all', help='Load everything')
 def load_all():
@@ -63,6 +73,10 @@ def load_all():
     Country.load_from_file()
     Language.load_from_file()
     Role.load_from_file()
+    Attribute.load_types_from_file()
+    create_multiple_people(db.session, 17)
+    create_multiple_accounts(db.session, 0.25)
+    access_token = create_access_token(identity='test-user')
 
     create_multiple_areas(db.session, 5)
     create_multiple_addresses(db.session, 10)
@@ -79,6 +93,10 @@ def load_all():
     create_class_meetings(db.session, 30)
     create_diploma_awards(db.session, 30)
     create_class_attendance(db.session, 30)
+
+    create_multiple_people_attributes(db.session, 5)
+    create_multiple_managers(db.session, 2, 'Group Overseer')
+    create_multiple_managers(db.session, 5, 'Group Leader', 'Group Overseer')
 
 
 @data_cli.command('test', help='Load everything')
@@ -135,5 +153,47 @@ def update_password(username, password):
     db.session.commit()
     print(f"Password for '{username}' updated")
 
-
 app.cli.add_command(user_cli)
+
+
+# ---- Courses and Relating to Courses
+
+course_cli = AppGroup('course', help="Maintain course data.")
+
+
+@course_cli.command('new', help="Create new course")
+@click.argument('name')
+@click.argument('description')
+@click.option('--prereq', help="Number of prerequisites to make")
+def create_account(name, description, prereq):
+    num_prereqs = int(prereq or 0)
+
+    # Create the Course and Prereq Courses; commit to DB so we get ID
+    course = Course(name=name, description=description)
+
+    for i in range(num_prereqs):
+        course.prerequisites.append(Course(name=f"prereq course{i}",
+                description=f"here we are using the command line lol.{i}"))
+    db.session.add(course)
+    db.session.commit()
+    print(f"Created {course}")
+    print(f"Created Prerequisites {course.prerequisites}")
+
+
+app.cli.add_command(course_cli)
+
+
+# ---- Maintainence
+
+maintain_cli = AppGroup('maintain', help="Mantaining the database.")
+
+@maintain_cli.command('prune-events', help="Sets events that have ended before <pruningOffset> to inactive")
+def prune_events():
+    events = db.session.query(Event).filter_by(active=True).all()
+    pruningOffset = datetime.now() - timedelta(days=30)
+    for event in events:
+        if(event.end < pruningOffset):
+            event.active = False
+    db.session.commit()
+
+app.cli.add_command(maintain_cli)

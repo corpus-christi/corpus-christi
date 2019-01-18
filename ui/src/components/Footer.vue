@@ -4,8 +4,8 @@
     <div>
       &copy; {{ new Date().getFullYear() }} Taylor Center for Missions Computing
     </div>
-  </v-footer></template
->
+  </v-footer>
+</template>
 
 <script>
 export default {

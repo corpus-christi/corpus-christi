@@ -107,6 +107,7 @@ class CourseSchema(Schema):
      name = fields.String(required=True, validate=Length(min=1))
      description = fields.String(required=True, validate=Length(min=1))
      active = fields.Boolean(required=True, default=True)
+     diplomaList = fields.Nested('DiplomaSchema', many=True)
 
 
 # ---- Diploma
@@ -120,7 +121,7 @@ class Diploma(Base):
      courses = relationship('Course', secondary=Diploma_Course,
                back_populates='diplomas', lazy=True)
      diplomas_awarded = relationship('Diploma_Awarded',
-               back_populates='diplomas', lazy=True, uselist=False)
+               back_populates='diplomas', lazy=True)
 
 
      def __repr__(self):
@@ -132,6 +133,8 @@ class DiplomaSchema(Schema):
      name = fields.String(required=True, validate=Length(min=1))
      description = fields.String(required=True, validate=Length(min=1))
      active = fields.Boolean(required=True)
+     courseList = fields.Nested('CourseSchema', many=True)
+     studentList = fields.Nested('StudentSchema', many=True)
 
 # ---- Student
 
@@ -159,6 +162,7 @@ class StudentSchema(Schema):
      student_id = fields.Integer(data_key='studentId', required=True)
      confirmed = fields.Boolean(required=True, default=False)
      active = fields.Boolean(required=True, default=True)
+     diplomaList = fields.Nested('DiplomaSchema', many=True)
 
 # ---- Course_Offering
 
@@ -204,6 +208,6 @@ class Class_Meeting(Base):
 class Class_MeetingSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     offering_id = fields.Integer(data_key='offeringId', required=True)
-    location_id = fields.Integer(required=True)
-    teacher_id = fields.Integer(required=True)
+    location_id = fields.Integer(data_key='locationId', required=True)
+    teacher_id = fields.Integer(data_key='teacherId', required=True)
     when = fields.DateTime(required=True)
