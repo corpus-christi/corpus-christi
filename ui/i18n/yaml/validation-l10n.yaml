@@ -24,6 +24,9 @@ validation:
     location:
       en: location
       es: ubicación
+    team-description:
+      en: team description
+      es: descripción del equipo
   messages:
     _default:
       en: Error

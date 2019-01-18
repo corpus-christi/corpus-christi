@@ -13,7 +13,7 @@ from ..people.models import Person
 class Image(Base):
     __tablename__ = 'images_image'
     id = Column(Integer, primary_key=True)
-    path = Column(StringTypes.LONG_STRING, nullable=False)
+    path = Column(StringTypes.LONG_STRING, unique=True, nullable=False)
     description = Column(StringTypes.LONG_STRING)
 
     events = relationship("ImageEvent", back_populates="image")

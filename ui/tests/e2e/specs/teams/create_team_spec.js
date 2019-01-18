@@ -21,11 +21,12 @@ describe("Create Team Test", function() {
 
   it("AND: Event planner creates a blank team", function() {
     cy.get("[data-cy=add-team]").click();
-    
+
     cy.get("[data-cy=form-save]").click();
   });
 
   it("THEN: TeamForm has errors", function() {
-    cy.get("[data-cy=form-save]").should("exist");
+    // Check for the validation error message
+    cy.get(".v-messages__message").should("exist");
   });
 });

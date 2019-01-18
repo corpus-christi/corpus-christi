@@ -9,8 +9,9 @@
           rows="3"
           v-model="team.description"
           v-bind:label="$t('events.teams.description')"
-          name="description"
-          v-bind:error-messages="errors.collect('description')"
+          name="team-description"
+          v-validate="'required'"
+          v-bind:error-messages="errors.collect('team-description')"
           data-cy="description"
         ></v-textarea>
       </form>
@@ -102,11 +103,12 @@ export default {
     },
 
     save() {
-      this.$validator.validateAll();
-      if (!this.errors.any()) {
-        // this.team.active = true;
-        this.$emit("save", this.team);
-      }
+      this.$validator.validateAll().then(() => {
+        if (!this.errors.any()) {
+          // this.team.active = true;
+          this.$emit("save", this.team);
+        }
+      });
     },
 
     addAnother() {
