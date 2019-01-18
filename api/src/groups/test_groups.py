@@ -552,26 +552,43 @@ def test_read_attendance_by_meeting(auth_client):
         assert 1 == auth_client.sqla.query(Attendance).filter_by(meeting_id=attendance["meeting_id"], member_id=attendance["member_id"]).count()
 
 
-
-@pytest.mark.xfail()
-def test_replace_attendance(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
-
-
-@pytest.mark.xfail()
-def test_update_attendance(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
-
-
-@pytest.mark.xfail()
 def test_delete_attendance(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
+    # GIVEN a database with a number of attendance
+    generate_managers(auth_client)
+    create_multiple_groups(auth_client.sqla, 4)
+    create_multiple_people(auth_client.sqla, 4)
+    create_multiple_meetings(auth_client.sqla, 4)
+    create_multiple_members(auth_client.sqla, 4)
+    create_attendance(auth_client.sqla, 0.75)
+    attendance_count = auth_client.sqla.query(Attendance).count()
+
+    # WHEN we delete one attendance
+    queried_attendance = auth_client.sqla.query(Attendance).first()
+    payload = {
+            'meeting_id': queried_attendance.meeting_id,
+            'member_id': queried_attendance.member_id
+    }
+    resp = auth_client.delete(url_for('groups.delete_attendance'), json=payload)
+    # THEN we expect the correct status code
+    assert resp.status_code == 204
+    # THEN the total number of attendance should be the right number
+    assert attendance_count-1 == auth_client.sqla.query(Attendance).count()
+    # THEN the deleted attendance should be absent from the database
+    assert auth_client.sqla.query(Attendance).filter_by(\
+            meeting_id=queried_attendance.meeting_id, \
+            member_id=queried_attendance.member_id).count() == 0
+
+    # WHEN we delete with an invalid payload
+    invalid_payload = {
+            'invalid_field': 4,
+            'meeting_id': queried_attendance.meeting_id,
+            'member_id': queried_attendance.member_id
+    }
+    resp = auth_client.delete(url_for('groups.delete_attendance'), json=invalid_payload)
+    # THEN we expect an error
+    assert resp.status_code == 422 
+
+    # WHEN we delete a non-existant attendance (delete the same attendance again)
+    resp = auth_client.delete(url_for('groups.delete_attendance'), json=payload)
+    # THEN we expect an error
+    assert resp.status_code == 404
