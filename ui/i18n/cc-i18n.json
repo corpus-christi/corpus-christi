@@ -194,6 +194,7 @@
         "lastName": "last name",
         "location": "location",
         "startDate": "start date",
+        "team-description": "team description",
         "title": "title"
       },
       "messages": {
@@ -398,6 +399,7 @@
         "lastName": "appellido",
         "location": "ubicaci\u00f3n",
         "startDate": "fecha de inicio",
+        "team-description": "descripci\u00f3n del equipo",
         "title": "t\u00edtulo"
       },
       "messages": {
