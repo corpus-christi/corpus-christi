@@ -465,31 +465,17 @@ def test_get_accounts_by_role(auth_client):
         auth_client.sqla.add(account)
     auth_client.sqla.commit()
 
-    for role in roles:
+    for role in roles: #Iterate through roles and use api to compare to db
+        # WHEN the api call for getting accounts by role is called
         resp = auth_client.get(url_for('people.get_accounts_by_role', role_id=role.id))
         assert resp.status_code == 200  # check response
 
         account_count = 0
-        for account in accounts:
+        for account in accounts: # count the accounts that have this specific role
             if role in account.roles:
                 account_count += 1
-
-        print("Chu gus: " + str(account_count))
-        # assert that account_count is equal to number of entries in get_account_by_role
-        # db_resp = auth_client.sqla.query(Account).filter_by(role_id=role.id)
-        print("Brungus")
-        print(len(resp))
-
-        print("crankYS")
-        print(resp.json)
-
-
-    # WHEN the api call for getting accounts by role is called
-    # THEN the results match the database
-    # TODO Write
-    # TODO Iterate through roles and use api to compare to db
-    # TODO Generate new role names with a random number of different roles possibility
-    assert False
+        # THEN the number of accounts returned by role matches the DB
+        assert account_count == len(resp.json) #  account_count is equal to number of entries in get_account_by_role
 
 def test_update_account(auth_client):
     """Test that we can update the password"""
