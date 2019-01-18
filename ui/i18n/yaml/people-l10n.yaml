@@ -2,6 +2,9 @@ people:
   title:
     en: People
     es: Personas
+  attributes:
+    en: Attributes
+    es: Atributas
 
 account:
   username:

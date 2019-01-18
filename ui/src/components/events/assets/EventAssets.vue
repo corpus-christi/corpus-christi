@@ -1,91 +1,116 @@
 <template>
   <div>
-    <v-toolbar>
-      <v-toolbar-title>{{ $t("events.assets.title") }}</v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-text-field
-        v-model="search"
-        append-icon="search"
-        v-bind:label="$t('actions.search')"
-        single-line
-        hide-details
-      ></v-text-field>
-      <v-spacer></v-spacer>
-
-      <v-btn
-        color="primary"
-        raised
-        v-on:click.stop="newAsset"
-        data-cy="add-asset"
-      >
-        <v-icon dark left>add</v-icon>
-        {{ $t("events.assets.new") }}
-      </v-btn>
+    <v-toolbar class="pa-1">
+      <v-layout align-center justify-space-between fill-height>
+        <v-flex md2>
+          <v-toolbar-title>{{ $t("assets.title") }}</v-toolbar-title>
+        </v-flex>
+        <v-flex md2>
+          <v-text-field
+            v-model="search"
+            append-icon="search"
+            v-bind:label="$t('actions.search')"
+            single-line
+            hide-details
+            data-cy="form-search"
+          ></v-text-field>
+        </v-flex>
+        <v-flex md3>
+          <v-select
+            hide-details
+            solo
+            single-line
+            :items="viewOptions"
+            v-model="viewStatus"
+            data-cy="view-status-select"
+          >
+          </v-select>
+        </v-flex>
+        <v-flex shrink justify-self-end>
+          <v-btn
+            color="primary"
+            raised
+            v-on:click.stop="newAsset"
+            data-cy="add-asset"
+          >
+            <v-icon dark left>add</v-icon>
+            {{ $t("assets.new") }}
+          </v-btn>
+        </v-flex>
+      </v-layout>
     </v-toolbar>
 
     <v-data-table
+      :rows-per-page-items="rowsPerPageItem"
       :headers="headers"
-      :items="assets"
+      :items="visibleAssets"
       :search="search"
+      :loading="tableLoading"
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
         <td class="hover-hand">{{ props.item.description }}</td>
-        <td class="hover-hand">{{ props.item.location }}</td>
+        <td class="hover-hand">
+          {{ getDisplayLocation(props.item.location) }}
+        </td>
         <td>
-          <v-tooltip bottom v-if="props.item.active">
-            <v-btn
-              icon
-              outline
-              small
-              color="primary"
-              slot="activator"
-              v-on:click="editAsset(props.item)"
-            >
-              <v-icon small>edit</v-icon>
-            </v-btn>
-            <span>{{ $t("actions.edit") }}</span>
-          </v-tooltip>
-          <v-tooltip bottom>
-            <v-btn
-              icon
-              outline
-              small
-              color="primary"
-              slot="activator"
-              v-on:click="duplicate(props.item)"
-            >
-              <v-icon small>filter_none</v-icon>
-            </v-btn>
-            <span>{{ $t("actions.duplicate") }}</span>
-          </v-tooltip>
-          <v-tooltip bottom v-if="props.item.active">
-            <v-btn
-              icon
-              outline
-              small
-              color="primary"
-              slot="activator"
-              v-on:click="confirmArchive(props.item)"
-            >
-              <v-icon small>archive</v-icon>
-            </v-btn>
-            <span>{{ $t("actions.tooltips.archive") }}</span>
-          </v-tooltip>
-          <v-tooltip bottom v-if="!props.item.active">
-            <v-btn
-              icon
-              outline
-              small
-              color="primary"
-              slot="activator"
-              v-on:click="unarchive(props.item)"
-              :loading="props.item.unarchiving"
-            >
-              <v-icon small>unarchive</v-icon>
-            </v-btn>
-            <span>{{ $t("actions.tooltips.activate") }}</span>
-          </v-tooltip>
+          <template v-if="props.item.active">
+            <v-tooltip bottom v-if="props.item.active">
+              <v-btn
+                icon
+                outline
+                small
+                color="primary"
+                slot="activator"
+                v-on:click="editAsset(props.item)"
+              >
+                <v-icon small>edit</v-icon>
+              </v-btn>
+              <span>{{ $t("actions.edit") }}</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <v-btn
+                icon
+                outline
+                small
+                color="primary"
+                slot="activator"
+                v-on:click="duplicate(props.item)"
+              >
+                <v-icon small>filter_none</v-icon>
+              </v-btn>
+              <span>{{ $t("actions.duplicate") }}</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <v-btn
+                icon
+                outline
+                small
+                color="primary"
+                slot="activator"
+                v-on:click="confirmArchive(props.item)"
+              >
+                <v-icon small>archive</v-icon>
+              </v-btn>
+              <span>{{ $t("actions.tooltips.archive") }}</span>
+            </v-tooltip>
+          </template>
+          <template v-else>
+            <v-tooltip bottom v-if="!props.item.active">
+              <v-btn
+                icon
+                outline
+                small
+                color="primary"
+                slot="activator"
+                v-on:click="unarchive(props.item)"
+                :loading="props.item.unarchiving"
+              >
+                <v-icon small>undo</v-icon>
+              </v-btn>
+              <span>{{ $t("actions.tooltips.activate") }}</span>
+            </v-tooltip>
+          </template>
         </td>
       </template>
     </v-data-table>
@@ -113,7 +138,7 @@
     <!-- Archive dialog -->
     <v-dialog v-model="archiveDialog.show" max-width="350px">
       <v-card>
-        <v-card-text>{{ $t("events.assets.confirm-archive") }}</v-card-text>
+        <v-card-text>{{ $t("assets.confirm-archive") }}</v-card-text>
         <v-card-actions>
           <v-btn v-on:click="cancelArchive" color="secondary" flat data-cy="">{{
             $t("actions.cancel")
@@ -134,21 +159,35 @@
 </template>
 
 <script>
-import AssetForm from "./AssetForm";
+import AssetForm from "../../assets/AssetForm";
 import { mapGetters } from "vuex";
 
 export default {
   name: "EventAssets",
   components: { "asset-form": AssetForm },
   mounted() {
-    this.$http.get("http://localhost:3000/assets").then(resp => {
-      this.assets = resp.data;
-      console.log(resp);
+    this.tableLoading = true;
+    let eventId = this.$route.params.event;
+    this.$http.get(`/api/v1/events/${eventId}?include_assets=1`).then(resp => {
+      this.event = resp.data;
+
+      if (this.event.assets) {
+        this.assets = this.event.assets.map(ev_as => ev_as.asset);
+        this.tableLoading = false;
+      }
+      // console.log(this.assets);
     });
   },
 
   data() {
     return {
+      rowsPerPageItem: [
+        10,
+        15,
+        25,
+        { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 }
+      ],
+      tableLoading: true,
       assets: [],
       assetDialog: {
         show: false,
@@ -168,24 +207,48 @@ export default {
         show: false,
         text: ""
       },
-      viewStatus: "viewAll"
+      viewStatus: "viewAll",
+
+      windowSize: {
+        x: 0,
+        y: 0,
+        screen
+      }
     };
   },
   computed: {
     headers() {
       return [
         {
-          text: this.$t("events.assets.description"),
+          text: this.$t("assets.description"),
           value: "description",
-          width: "40%"
+          width: "45%"
         },
         {
-          text: this.$t("events.assets.location"),
-          value: "location",
-          width: "40%"
+          text: this.$t("assets.location"),
+          value: "location_name",
+          width: "30%"
         },
-        { text: this.$t("events.actions"), sortable: false, width: "20%" }
+        { text: this.$t("actions.header"), sortable: false, width: "25%" }
       ];
+    },
+
+    viewOptions() {
+      return [
+        { text: this.$t("actions.view-active"), value: "viewActive" },
+        { text: this.$t("actions.view-archived"), value: "viewArchived" },
+        { text: this.$t("actions.view-all"), value: "viewAll" }
+      ];
+    },
+
+    visibleAssets() {
+      if (this.viewStatus == "viewActive") {
+        return this.assets.filter(as => as.active);
+      } else if (this.viewStatus == "viewArchived") {
+        return this.assets.filter(as => !as.active);
+      } else {
+        return this.assets;
+      }
     },
 
     ...mapGetters(["currentLanguageCode"])
@@ -217,24 +280,23 @@ export default {
     },
 
     archiveAsset() {
-      console.log("Archived asset");
       this.archiveDialog.loading = true;
       const assetId = this.archiveDialog.assetId;
       const idx = this.assets.findIndex(as => as.id === assetId);
       this.$http
-        .delete(`http://localhost:3000/assets/${assetId}`)
+        .delete(`/api/v1/assets/${assetId}`)
         .then(resp => {
           console.log("ARCHIVE", resp);
           this.assets[idx].active = false;
           this.archiveDialog.loading = false;
           this.archiveDialog.show = false;
-          this.showSnackbar(this.$t("events.assets.asset-archived"));
+          this.showSnackbar(this.$t("assets.asset-archived"));
         })
         .catch(err => {
           console.error("ARCHIVE FALURE", err.response);
           this.archiveDialog.loading = false;
           this.archiveDialog.show = false;
-          this.showSnackbar(this.$t("events.assets.error-archiving-asset"));
+          this.showSnackbar(this.$t("assets.error-archiving-asset"));
         });
 
       // this.archiveDialog.show = false;
@@ -245,17 +307,21 @@ export default {
       const copyAsset = JSON.parse(JSON.stringify(asset));
       asset.unarchiving = true;
       copyAsset.active = true;
+      const patchId = copyAsset.id;
+      delete copyAsset.id;
+      delete copyAsset.location; //Temporary delete
       this.$http
-        .put(`http://localhost:3000/assets/${copyAsset.id}`, copyAsset)
+        .patch(`/api/v1/assets/${patchId}`, { active: true })
         .then(resp => {
           console.log("UNARCHIVED", resp);
+          delete asset.unarchiving;
           Object.assign(this.assets[idx], resp.data);
-          this.showSnackbar(this.$t("events.assets.asset-unarchived"));
+          this.showSnackbar(this.$t("assets.asset-unarchived"));
         })
         .catch(err => {
           delete asset.unarchiving;
           console.error("UNARCHIVE FALURE", err.response);
-          this.showSnackbar(this.$t("events.assets.error-unarchiving-asset"));
+          this.showSnackbar(this.$t("assets.error-unarchiving-asset"));
         });
     },
 
@@ -273,64 +339,99 @@ export default {
 
     saveAsset(asset) {
       this.assetDialog.saveLoading = true;
+      asset.location_id = asset.location.id;
+      let newAsset = JSON.parse(JSON.stringify(asset));
+      delete newAsset.location;
+      delete newAsset.id;
       if (this.assetDialog.editMode) {
         const assetId = asset.id;
         const idx = this.assets.findIndex(as => as.id === asset.id);
         delete asset.id;
         this.$http
-          .put(`http://localhost:3000/assets/${assetId}`, asset)
+          .put(`/api/v1/assets/${assetId}`, newAsset)
           .then(resp => {
             console.log("EDITED", resp);
-            Object.assign(this.assets[idx], asset);
+            Object.assign(this.assets[idx], resp.data);
             this.assetDialog.show = false;
             this.assetDialog.saveLoading = false;
-            this.showSnackbar(this.$t("events.assets.asset-edited"));
+            this.showSnackbar(this.$t("assets.asset-edited"));
           })
           .catch(err => {
             console.error("PUT FALURE", err.response);
             this.assetDialog.saveLoading = false;
-            this.showSnackbar(this.$t("events.assets.error-editing-asset"));
+            this.showSnackbar(this.$t("assets.error-editing-asset"));
           });
       } else {
         this.$http
-          .post("http://localhost:3000/assets/", asset)
+          .post("/api/v1/assets", newAsset)
           .then(resp => {
             console.log("ADDED", resp);
             this.assets.push(resp.data);
             this.assetDialog.show = false;
             this.assetDialog.saveLoading = false;
-            this.showSnackbar(this.$t("events.assets.asset-added"));
+            this.showSnackbar(this.$t("assets.asset-added"));
           })
           .catch(err => {
             console.error("POST FAILURE", err.response);
             this.assetDialog.saveLoading = false;
-            this.showSnackbar(this.$t("events.assets.error-adding-asset"));
+            this.showSnackbar(this.$t("assets.error-adding-asset"));
           });
       }
     },
 
     addAnotherAsset(asset) {
       this.assetDialog.addMoreLoading = true;
+      asset.location_id = asset.location.id;
+      let newAsset = JSON.parse(JSON.stringify(asset));
+      delete newAsset.location;
       this.$http
-        .post("http://localhost:3000/assets/", asset)
+        .post("/api/v1/assets", newAsset)
         .then(resp => {
           console.log("ADDED", resp);
           this.assets.push(resp.data);
           this.assetDialog.show = false;
           this.assetDialog.saveLoading = false;
-          this.showSnackbar(this.$t("events.assets.asset-added"));
+          this.showSnackbar(this.$t("assets.asset-added"));
         })
         .catch(err => {
           console.error("FAILURE", err.response);
           this.assetDialog.saveLoading = false;
-          this.showSnackbar(this.$t("events.assets.error-adding-asset"));
+          this.showSnackbar(this.$t("assets.error-adding-asset"));
         });
     },
 
     showSnackbar(message) {
       this.snackbar.text = message;
       this.snackbar.show = true;
+    },
+
+    getDisplayLocation(location, length = 20) {
+      if (location && location.description) {
+        let name = location.description;
+        if (name && name.length && name.length > 0) {
+          if (name.length > length) {
+            return `${name.substring(0, length - 3)}...`;
+          }
+          return name;
+        }
+      }
+      return name;
+    },
+
+    onResize() {
+      this.windowSize = { x: window.innerWidth, y: window.innerHeight };
+      if (this.windowSize.x <= 960) {
+        this.windowSize.small = true;
+      } else {
+        this.windowSize.small = false;
+      }
     }
   }
 };
 </script>
+
+<style scoped>
+.hover-hand {
+  cursor: pointer;
+}
+</style>

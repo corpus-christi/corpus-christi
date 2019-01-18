@@ -48,9 +48,6 @@ class Person(Base):
     def full_name(self):
         return f"{self.first_name} {self.last_name}"
 
-    def full_name(self):
-        return f"{self.first_name} {self.last_name}"
-
 
 class PersonSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))

@@ -20,14 +20,7 @@
         </v-flex>
         <v-flex md3>
           <div data-cy="view-dropdown">
-            <v-select
-              hide-details
-              solo
-              single-line
-              :items="viewOptions"
-              v-model="viewStatus"
-            >
-            </v-select>
+            <v-select hide-details solo single-line :items="viewOptions" v-model="viewStatus"></v-select>
           </div>
         </v-flex>
         <v-flex shrink justify-self-end>
@@ -55,19 +48,11 @@
     >
       <template slot="items" slot-scope="props">
         <td>
-          <v-icon size="15" v-if="props.item.accountInfo"
-            >account_circle</v-icon
-          >
+          <v-icon size="15" v-if="props.item.accountInfo">account_circle</v-icon>
         </td>
-        <td :data-cy="'first-name-' + props.item.id">
-          {{ props.item.firstName }}
-        </td>
-        <td :data-cy="'last-name-' + props.item.id">
-          {{ props.item.lastName }}
-        </td>
-        <td class="hidden-sm-and-down" :data-cy="'email-' + props.item.id">
-          {{ props.item.email }}
-        </td>
+        <td :data-cy="'first-name-' + props.item.id">{{ props.item.firstName }}</td>
+        <td :data-cy="'last-name-' + props.item.id">{{ props.item.lastName }}</td>
+        <td class="hidden-sm-and-down" :data-cy="'email-' + props.item.id">{{ props.item.email }}</td>
         <td :data-cy="'phone-' + props.item.id">{{ props.item.phone }}</td>
         <td class="text-no-wrap">
           <v-tooltip bottom>
@@ -122,7 +107,7 @@
               color="primary"
               slot="activator"
               v-on:click="activatePerson(props.item)"
-              data-cy="deactivate-person"
+              data-cy="reactivate-person"
             >
               <v-icon small>undo</v-icon>
             </v-btn>
@@ -134,18 +119,11 @@
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false" data-cy>
-        {{ $t("actions.close") }}
-      </v-btn>
+      <v-btn flat @click="snackbar.show = false" data-cy>{{ $t("actions.close") }}</v-btn>
     </v-snackbar>
 
     <!-- New/Edit dialog -->
-    <v-dialog
-      scrollable
-      persistent
-      v-model="personDialog.show"
-      max-width="500px"
-    >
+    <v-dialog scrollable persistent v-model="personDialog.show" max-width="500px">
       <PersonForm
         v-bind:editMode="personDialog.editMode"
         v-bind:initialData="personDialog.person"
@@ -159,12 +137,7 @@
     </v-dialog>
 
     <!-- Person admin dialog -->
-    <v-dialog
-      scrollable
-      persistent
-      v-model="adminDialog.show"
-      max-width="500px"
-    >
+    <v-dialog scrollable persistent v-model="adminDialog.show" max-width="500px">
       <PersonAdminForm
         v-bind:person="adminDialog.person"
         v-bind:account="adminDialog.account"
@@ -297,17 +270,12 @@ export default {
         const person_id = person.id;
         // Locate the person we're updating in the table.
         const idx = this.allPeople.findIndex(p => p.id === person.id);
-        // Get rid of the ID; not for consumption by endpoint.
-        delete person.id;
 
-        console.log(person);
         this.data = this.constructPersonData(person);
-        console.log(this.data);
         this.$http
           .put(`/api/v1/people/persons/${person_id}`, this.data)
-          .then(resp => {
-            console.log("EDITED", resp);
-            Object.assign(this.allPeople[idx], person);
+          .then(response => {
+            Object.assign(this.allPeople[idx], response.data);
             this.personDialog.show = false;
             this.personDialog.saveLoading = false;
             this.showSnackbar(this.$t("person.messages.person-edit"));
@@ -318,9 +286,7 @@ export default {
             this.showSnackbar(this.$t("person.messages.person-save-error"));
           });
       } else {
-        console.log(person);
         this.data = this.constructPersonData(person);
-        console.log(this.data);
         this.$http
           .post("/api/v1/people/persons", this.data)
           .then(resp => {
@@ -345,6 +311,7 @@ export default {
       }
       delete person["attributesInfo"];
       delete person["accountInfo"];
+      delete person["id"];
       return {
         person: person,
         attributesInfo: attributes
