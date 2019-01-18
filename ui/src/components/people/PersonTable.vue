@@ -542,7 +542,6 @@ export default {
           for (let item of resp.data) {
             this.translations[item.key_id] = item.gloss;
           }
-          console.log(this.translations);
         })
         .catch(err => console.error("FAILURE", err.response));
     }
