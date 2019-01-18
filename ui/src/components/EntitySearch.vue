@@ -68,14 +68,14 @@ export default {
       if (this.location) return this.$t("events.event-location");
       else if (this.person) return this.$t("actions.search-people");
       else if (this.course) return this.$t("actions.search-courses");
-      else if (this.team) return this.$t("events.teams.title");
+      else if (this.team) return this.$t("teams.title");
       else return "";
     },
     idField() {
       return "id";
     },
     searchableEntities() {
-      if (this.existingEntities){
+      if (this.existingEntities) {
         this.entities = this.entities.filter(ent => {
           for (let otherEnt of this.existingEntities) {
             if (ent[this.idField] == otherEnt[this.idField]) {

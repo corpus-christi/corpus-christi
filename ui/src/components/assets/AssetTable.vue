@@ -50,9 +50,7 @@
     >
       <template slot="items" slot-scope="props">
         <td>{{ props.item.description }}</td>
-        <td>
-          {{ getDisplayLocation(props.item.location) }}
-        </td>
+        <td>{{ getDisplayLocation(props.item.location) }}</td>
         <td>
           <template v-if="props.item.active">
             <v-tooltip bottom v-if="props.item.active">
@@ -143,9 +141,13 @@
       <v-card>
         <v-card-text>{{ $t("assets.confirm-archive") }}</v-card-text>
         <v-card-actions>
-          <v-btn v-on:click="cancelArchive" color="secondary" flat data-cy="cancel-archive">{{
-            $t("actions.cancel")
-          }}</v-btn>
+          <v-btn
+            v-on:click="cancelArchive"
+            color="secondary"
+            flat
+            data-cy="cancel-archive"
+            >{{ $t("actions.cancel") }}</v-btn
+          >
           <v-spacer></v-spacer>
           <v-btn
             v-on:click="archiveAsset"
@@ -346,7 +348,7 @@ export default {
         const assetId = asset.id;
         const idx = this.assets.findIndex(as => as.id === asset.id);
         delete newAsset.id;
-        delete newAsset.event_count
+        delete newAsset.event_count;
         this.$http
           .patch(`/api/v1/assets/${assetId}`, newAsset)
           .then(resp => {
@@ -362,9 +364,9 @@ export default {
             this.showSnackbar(this.$t("assets.error-editing-asset"));
           });
       } else {
-        console.log(newAsset)
-        delete newAsset.event_count
-        newAsset.active = true
+        console.log(newAsset);
+        delete newAsset.event_count;
+        newAsset.active = true;
         this.$http
           .post("/api/v1/assets/", newAsset)
           .then(resp => {

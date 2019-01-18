@@ -1,16 +1,18 @@
 <template>
   <v-card class="card elevation-10">
     <!-- TODO: Replace with actual event image -->
-    <v-img 
+    <v-img
       v-if="event.image"
       src="https://i.ytimg.com/vi/LQ1ZMvqlqYA/maxresdefault.jpg"
-      class="image">
+      class="image"
+    >
     </v-img>
     <!-- Placeholder for if they don't add images -->
-    <v-img 
+    <v-img
       v-else
       src="https://i.ytimg.com/vi/LQ1ZMvqlqYA/maxresdefault.jpg"
-      class="image">
+      class="image"
+    >
     </v-img>
     <v-divider></v-divider>
     <div class="body">
@@ -19,17 +21,24 @@
           <v-flex shrink>
             <span class="headline mb-3">{{ event.title }}</span>
           </v-flex>
-        </v-layout>      
+        </v-layout>
       </v-card-title>
 
       <v-card-text class="text">
         <v-layout>
           <v-flex>
             <div v-if="event.location">
-              <b>{{ $t("events.location") }}: </b>{{ event.location.description }}
+              <b>{{ $t("events.location") }}: </b
+              >{{ event.location.description }}
             </div>
-            <div><b>{{ $t("events.start-time") }}: </b>{{ getDisplayDate(event.start) }}</div>
-            <div class="mb-3"><b>{{ $t("events.end-time") }}: </b>{{ getDisplayDate(event.end) }}</div>
+            <div>
+              <b>{{ $t("events.start-time") }}: </b
+              >{{ getDisplayDate(event.start) }}
+            </div>
+            <div class="mb-3">
+              <b>{{ $t("events.end-time") }}: </b
+              >{{ getDisplayDate(event.end) }}
+            </div>
             <div class="mb-3">{{ event.description }}</div>
           </v-flex>
         </v-layout>
@@ -37,7 +46,7 @@
 
       <v-card-actions>
         <v-spacer></v-spacer>
-          <v-btn raised color="primary">{{ $t("public.events.join") }}</v-btn>
+        <v-btn raised color="primary">{{ $t("public.events.join") }}</v-btn>
         <v-spacer></v-spacer>
       </v-card-actions>
     </div>
@@ -51,9 +60,7 @@ export default {
     event: {}
   },
   data() {
-    return {
-
-    };
+    return {};
   },
   methods: {
     getDisplayDate(ts) {
@@ -71,7 +78,6 @@ export default {
 </script>
 
 <style scoped>
-
 .image {
   max-height: 300px;
   min-height: 200px;
@@ -91,5 +97,4 @@ export default {
   padding-top: 10px;
   border-radius: 30px;
 }
-
 </style>

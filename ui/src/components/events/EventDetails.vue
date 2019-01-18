@@ -23,8 +23,14 @@
               <b>{{ $t("events.location") }}: </b>
               <div class="multi-line ml-2">{{ displayLocation }}</div>
             </div>
-            <div><b>{{ $t("events.start-time") }}: </b>{{ getDisplayDate(event.start) }}</div>
-            <div><b>{{ $t("events.end-time") }}: </b>{{ getDisplayDate(event.end) }}</div>
+            <div>
+              <b>{{ $t("events.start-time") }}: </b
+              >{{ getDisplayDate(event.start) }}
+            </div>
+            <div>
+              <b>{{ $t("events.end-time") }}: </b
+              >{{ getDisplayDate(event.end) }}
+            </div>
             <div class="mt-2">{{ event.description }}</div>
           </v-card-text>
           <v-card-actions>
@@ -63,7 +69,7 @@
         <template v-if="pageLoaded">
           <v-container fill-height fluid>
             <v-flex xs9 sm9 align-end flexbox>
-              <span class="headline">{{ $t("events.teams.title") }}</span>
+              <span class="headline">{{ $t("teams.title") }}</span>
             </v-flex>
             <v-layout xs3 sm3 align-end justify-end>
               <v-btn
@@ -72,7 +78,7 @@
                 data-cy="add-team-dialog"
                 v-on:click="addTeamDialog.show = true"
               >
-                <v-icon>add</v-icon>&nbsp;{{ $t("events.teams.new") }}
+                <v-icon>add</v-icon>&nbsp;{{ $t("teams.new") }}
               </v-btn>
             </v-layout>
           </v-container>
@@ -81,7 +87,7 @@
               <v-divider v-bind:key="'divider' + team.id"></v-divider>
               <v-list-tile v-bind:key="team.id">
                 <v-list-tile-content>
-                  <span>{{ team.description }} {{team.id}}</span>
+                  <span>{{ team.description }} {{ team.id }}</span>
                 </v-list-tile-content>
                 <v-list-tile-action>
                   <v-btn flat color="primary">
@@ -121,7 +127,7 @@
     <v-dialog v-model="addTeamDialog.show" persistent max-width="500px">
       <v-card>
         <v-card-title primary-title>
-          <span class="headline">{{ $t("events.teams.new") }}</span>
+          <span class="headline">{{ $t("teams.new") }}</span>
         </v-card-title>
         <v-card-text>
           <entity-search
@@ -158,7 +164,7 @@
     <v-dialog v-model="deleteTeamDialog.show" max-width="350px">
       <v-card>
         <v-card-text>
-          <span>{{ $t("events.teams.confirm-remove-from-event") }}</span>
+          <span>{{ $t("teams.confirm-remove-from-event") }}</span>
         </v-card-text>
         <v-card-actions>
           <v-btn
@@ -261,7 +267,7 @@ export default {
           if (!this.event.teams) {
             this.event.teams = [];
           } else {
-            this.event.teams = this.event.teams.map(t => t.team)
+            this.event.teams = this.event.teams.map(t => t.team);
           }
         });
     },
@@ -328,14 +334,14 @@ export default {
         this.addTeamDialog.loading = false;
         this.addTeamDialog.show = false;
         this.addTeamDialog.team = null;
-        this.showSnackbar(this.$t("events.teams.team-on-event"));
+        this.showSnackbar(this.$t("teams.team-on-event"));
         return;
       }
 
       this.$http
         .post(`/api/v1/events/${eventId}/teams/${teamId}`)
         .then(() => {
-          this.showSnackbar(this.$t("events.teams.team-added"));
+          this.showSnackbar(this.$t("teams.team-added"));
           this.addTeamDialog.loading = false;
           this.addTeamDialog.show = false;
           this.addTeamDialog.team = null;
@@ -346,9 +352,9 @@ export default {
           console.log(err);
           this.addTeamDialog.loading = false;
           if (err.response.status == 422) {
-            this.showSnackbar(this.$t("events.teams.error-team-assigned"));
+            this.showSnackbar(this.$t("teams.error-team-assigned"));
           } else {
-            this.showSnackbar(this.$t("events.teams.error-adding-team"));
+            this.showSnackbar(this.$t("teams.error-adding-team"));
           }
         });
     },
@@ -366,12 +372,12 @@ export default {
           this.deleteTeamDialog.loading = false;
           this.deleteTeamDialog.teamId = -1;
           this.event.teams.splice(idx, 1);
-          this.showSnackbar(this.$t("events.teams.team-removed"));
+          this.showSnackbar(this.$t("teams.team-removed"));
         })
         .catch(err => {
           console.log(err);
           this.deleteTeamDialog.loading = false;
-          this.showSnackbar(this.$t("events.teams.error-removing-team"));
+          this.showSnackbar(this.$t("teams.error-removing-team"));
         });
     },
 

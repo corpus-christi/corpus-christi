@@ -50,9 +50,7 @@
     >
       <template slot="items" slot-scope="props">
         <td>{{ props.item.description }}</td>
-        <td>
-          {{ getDisplayLocation(props.item.location) }}
-        </td>
+        <td>{{ getDisplayLocation(props.item.location) }}</td>
         <td>
           <template v-if="props.item.active">
             <v-tooltip bottom v-if="props.item.active">
@@ -339,7 +337,9 @@ export default {
 
     saveAsset(asset) {
       this.assetDialog.saveLoading = true;
-      asset.location_id = asset.location.id;
+      if (asset.location) {
+        asset.location_id = asset.location.id;
+      }
       let newAsset = JSON.parse(JSON.stringify(asset));
       delete newAsset.location;
       delete newAsset.id;
@@ -363,7 +363,7 @@ export default {
           });
       } else {
         this.$http
-          .post("/api/v1/assets", newAsset)
+          .post("/api/v1/assets/", newAsset)
           .then(resp => {
             console.log("ADDED", resp);
             this.assets.push(resp.data);

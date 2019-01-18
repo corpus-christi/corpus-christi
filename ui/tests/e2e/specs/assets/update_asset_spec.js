@@ -8,7 +8,9 @@ describe("Update Asset Test", function() {
   });
 
   it("WHEN: Event planner updates an asset", function() {
-    cy.get("[data-cy=edit-asset]").eq(0).click();
+    cy.get("[data-cy=edit-asset]")
+      .eq(0)
+      .click();
 
     cy.get("[data-cy=description]").type(" V2");
 

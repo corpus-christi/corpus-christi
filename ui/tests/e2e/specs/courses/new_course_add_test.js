@@ -16,17 +16,21 @@ describe("Get to Courses Page", () => {
   });
 });
 
-describe('Add Course', ()=>{
-    it('Given: New Course Form', () =>{
-      cy.get('[data-cy=courses-table-new]').click()
-    });
-    it('When: Form is filled out', ()=>{
-      cy.get('[data-cy=course-form-name]').type('COS 5')
-      cy.get('[data-cy=course-form-description]').type('Hello World')
-    });
-    it('Then: Click add button', ()=>{
-      cy.get('[data-cy=course-editor-actions] > .primary').click()
-        cy.get(':nth-child(5) > .v-input > .v-input__control > .v-input__slot > .v-select__slot > .v-input__append-inner > .v-input__icon > .v-icon').click()
-        cy.get('.menuable__content__active > .v-select-list > .v-list > :nth-child(3) > .v-list__tile').click
-    });
+describe("Add Course", () => {
+  it("Given: New Course Form", () => {
+    cy.get("[data-cy=courses-table-new]").click();
+  });
+  it("When: Form is filled out", () => {
+    cy.get("[data-cy=course-form-name]").type("COS 5");
+    cy.get("[data-cy=course-form-description]").type("Hello World");
+  });
+  it("Then: Click add button", () => {
+    cy.get("[data-cy=course-editor-actions] > .primary").click();
+    cy.get(
+      ":nth-child(5) > .v-input > .v-input__control > .v-input__slot > .v-select__slot > .v-input__append-inner > .v-input__icon > .v-icon"
+    ).click();
+    cy.get(
+      ".menuable__content__active > .v-select-list > .v-list > :nth-child(3) > .v-list__tile"
+    ).click;
+  });
 });

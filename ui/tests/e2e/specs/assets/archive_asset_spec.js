@@ -2,7 +2,7 @@ describe("Archive Asset Test", function() {
   before(() => {
     cy.login();
   });
-  
+
   it("GIVEN: Event planner goes to Assets page", function() {
     cy.visit("/assets");
   });

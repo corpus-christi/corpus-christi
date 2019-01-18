@@ -288,7 +288,7 @@ export default {
         { text: this.$t("events.title"), value: "title" },
         { text: this.$t("events.start-time"), value: "start" },
         { text: this.$t("events.event-location"), value: "location_name" },
-        { text: this.$t("events.actions"), sortable: false }
+        { text: this.$t("actions.header"), sortable: false }
       ];
     },
 

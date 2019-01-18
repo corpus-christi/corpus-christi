@@ -8,7 +8,7 @@
         <v-textarea
           rows="3"
           v-model="team.description"
-          v-bind:label="$t('events.teams.description')"
+          v-bind:label="$t('teams.description')"
           name="team-description"
           v-validate="'required'"
           v-bind:error-messages="errors.collect('team-description')"
@@ -53,7 +53,7 @@
 </template>
 
 <script>
-import EntitySearch from "../EntitySearch"
+import EntitySearch from "../EntitySearch";
 import { isEmpty } from "lodash";
 // import { mapGetters } from "vuex";
 export default {
@@ -76,8 +76,8 @@ export default {
     },
     title() {
       return this.editMode
-        ? this.$t("events.teams.edit-team")
-        : this.$t("events.teams.create-team");
+        ? this.$t("teams.edit-team")
+        : this.$t("teams.create-team");
     },
 
     formDisabled() {

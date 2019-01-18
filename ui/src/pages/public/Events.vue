@@ -1,11 +1,13 @@
 <template>
-  <v-container grid-list-md> 
+  <v-container grid-list-md>
     <v-layout row wrap>
       <v-flex xs12 sm12 md4>
-        <h1 style="margin-left: 25px;">{{ $t("public.headers.upcoming-events") }}</h1>
+        <h1 style="margin-left: 25px;">
+          {{ $t("public.headers.upcoming-events") }}
+        </h1>
       </v-flex>
       <v-spacer></v-spacer>
-      
+
       <!-- Start Date -->
       <v-flex xs12 sm4 md3>
         <v-menu
@@ -25,8 +27,8 @@
             prepend-icon="event"
             readonly
           ></v-text-field>
-          <v-date-picker 
-            v-model="filterStart" 
+          <v-date-picker
+            v-model="filterStart"
             @input="showStartDatePicker = false"
             v-bind:locale="currentLanguageCode"
           ></v-date-picker>
@@ -36,35 +38,42 @@
       <!-- End Date -->
       <v-flex xs12 sm4 md3>
         <v-menu
-        :close-on-content-click="false"
-        v-model="showEndDatePicker"
-        :nudge-right="40"
-        lazy
-        transition="scale-transition"
-        offset-y
-        full-width
-        min-width="290px"
-      >
-        <v-text-field
-          slot="activator"
-          v-model="filterEnd"
-          v-bind:label="$t('events.end-date')"
-          prepend-icon="event"
-          readonly
-        ></v-text-field>
-        <v-date-picker 
-          v-model="filterEnd" 
-          @input="showEndDatePicker = false"
-          v-bind:locale="currentLanguageCode"
-          :min="filterStart"
-        ></v-date-picker>
-      </v-menu>
+          :close-on-content-click="false"
+          v-model="showEndDatePicker"
+          :nudge-right="40"
+          lazy
+          transition="scale-transition"
+          offset-y
+          full-width
+          min-width="290px"
+        >
+          <v-text-field
+            slot="activator"
+            v-model="filterEnd"
+            v-bind:label="$t('events.end-date')"
+            prepend-icon="event"
+            readonly
+          ></v-text-field>
+          <v-date-picker
+            v-model="filterEnd"
+            @input="showEndDatePicker = false"
+            v-bind:locale="currentLanguageCode"
+            :min="filterStart"
+          ></v-date-picker>
+        </v-menu>
       </v-flex>
     </v-layout>
 
     <!-- Cards -->
     <v-layout layout row wrap>
-      <v-flex xs12 sm6 md4 lg4 v-for="event in filteredEvents" v-bind:key="event.id">
+      <v-flex
+        xs12
+        sm6
+        md4
+        lg4
+        v-for="event in filteredEvents"
+        v-bind:key="event.id"
+      >
         <EventCard :event="event"></EventCard>
       </v-flex>
     </v-layout>
@@ -87,7 +96,7 @@ export default {
       filterStart: "",
       filterEnd: "",
       showStartDatePicker: false,
-      showEndDatePicker: false,
+      showEndDatePicker: false
     };
   },
   mounted() {
@@ -110,8 +119,10 @@ export default {
     filteredEvents() {
       const start = this.getTimestamp(this.filterStart);
       const end = this.getTimestamp(this.addDaystoDate(this.filterEnd, 1));
-      
-      return this.events.filter(ev => new Date(ev.start) <= end && new Date(ev.start) >= start); 
+
+      return this.events.filter(
+        ev => new Date(ev.start) <= end && new Date(ev.start) >= start
+      );
     },
 
     ...mapGetters(["currentLanguageCode"])
@@ -146,7 +157,7 @@ export default {
       let date1 = this.getTimestamp(date);
       date1.setDate(date1.getDate() + dayDuration);
       return this.getDateFromTimestamp(date1);
-    },
+    }
   }
 };
 </script>
