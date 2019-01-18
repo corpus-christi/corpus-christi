@@ -539,7 +539,12 @@ def test_create_member(auth_client):
     # THEN we expect the correct status code
     assert resp.status_code == 201
     # THEN we expect that member to be present in database
-    assert 1 == auth_client.sqla.query(Member).filter_by(**payload).count()
+    print(payload)
+    print(auth_client.sqla.query(Member).first().__dict__)
+    assert 1 == auth_client.sqla.query(Member).filter_by(\
+                person_id=payload["person_id"],\
+                group_id=payload["group_id"],\
+            ).count()
 
     # WHEN we try to create a member with an invalid payload
     invalid_payload = { 'invalid_field': 1 }
@@ -547,11 +552,10 @@ def test_create_member(auth_client):
     # THEN we expect an error
     assert resp.status_code == 422
 
-    # to be implemented
-    # # WHEN we try to recreate the same member
-    # resp = auth_client.post(url_for('groups.create_member'), json=payload)
-    # # THEN we expect an error
-    # assert resp.status_code == 404
+    # WHEN we try to recreate the same member
+    resp = auth_client.post(url_for('groups.create_member'), json=payload)
+    # THEN we expect an error
+    assert resp.status_code == 409
 
 
 

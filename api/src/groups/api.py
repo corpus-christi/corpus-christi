@@ -321,6 +321,12 @@ def create_member():
     except ValidationError as err:
         return jsonify(err.messages), 422
 
+    if db.session.query(Member).filter_by(\
+            group_id=valid_member["group_id"],
+            person_id= valid_member["person_id"]
+            ).count() != 0:
+        return 'member already exists', 409
+
     new_member = Member(**valid_member)
     db.session.add(new_member)
     db.session.commit()
