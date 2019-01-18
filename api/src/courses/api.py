@@ -268,14 +268,13 @@ def read_active_state_course_offerings(active_state):
 @jwt_required
 # @authorize(["role.superuser", "role.registrar"])
 def update_course_offering(course_offering_id):
-    course_offering = db.session.query(
-        Course_Offering).filter_by(id=course_offering_id).first()
+    course_offering = db.session.query(Course_Offering).filter_by(id=course_offering_id).first()
     if course_offering is None:
         return "Course Offering NOT Found", 404
-
-    for attr in 'description', 'active', 'max_size':
-        if attr in request.json:
-            setattr(course_offering, attr, request.json[attr])
+    
+    course_offering_json = course_offering_schema.load(request.json)
+    for attr in course_offering_json.keys():
+        setattr(course_offering, attr, course_offering_json[attr])
 
     db.session.commit()
     return jsonify(course_offering_schema.dump(course_offering))
@@ -376,7 +375,7 @@ def create_class_meeting(course_offering_id):
         valid_class_meeting = class_meeting_schema.load(request.json)
     except ValidationError as err:
         return jsonify(err.messages), 422
-    
+
     meetingInDB = db.session.query(Class_Meeting).filter_by(
         offering_id=course_offering_id,
         teacher_id=request.json['teacherId'],
@@ -433,9 +432,9 @@ def update_class_meeting(course_offering_id, class_meeting_id):
 def delete_class_meeting(course_offering_id, class_meeting_id):
     class_meeting = db.session.query(Class_Meeting).filter_by(id=class_meeting_id, offering_id=course_offering_id).first()
     class_attended = db.session.query(Class_Attendance).filter_by(class_id=class_meeting_id).first()
-    
+
     # If class meeting exists with no class attendance, then delete meeting
-    if class_meeting is not None and class_attended is None: 
+    if class_meeting is not None and class_attended is None:
         db.session.delete(class_meeting)
         db.session.commit()
         return 'Class meeting successfully deleted', 200
@@ -444,7 +443,7 @@ def delete_class_meeting(course_offering_id, class_meeting_id):
         return 'Course offering does not exist'
     else:
         return 'Students have attended the class meeting. Cannot delete class meeting.', 403
-    
+
 
 # ---- Class_Attendance
 
