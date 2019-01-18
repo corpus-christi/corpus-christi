@@ -11,6 +11,7 @@ matrix:
                 - language: node_js
                   node_js: "11"
                   before_install:
+                          - cd ui/
                           - yarn cache clean
                   install:
                           - yarn install
@@ -26,7 +27,7 @@ matrix:
                         - pip install -r api/requirements.txt
                           # - pip install -U pytest
                         - ls
-                        - cd api/
+                          #- cd api/
                         - sudo apt install postgresql
                         - sudo apt install nginx
                   script:
