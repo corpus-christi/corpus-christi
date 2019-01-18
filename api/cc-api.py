@@ -151,7 +151,8 @@ course_cli = AppGroup('course', help="Maintain course data.")
 @click.argument('name')
 @click.argument('description')
 @click.option('--prereq', help="Number of prerequisites to make")
-def create_account(name, description, prereq):
+@click.option('--offering', help="Number of prerequisites to make")
+def create_account(name, description, prereq, offering):
     num_prereqs = int(prereq or 0)
 
     # Create the Course and Prereq Courses; commit to DB so we get ID
@@ -160,6 +161,8 @@ def create_account(name, description, prereq):
     for i in range(num_prereqs):
         course.prerequisites.append(Course(name=f"prereq course{i}",
                 description=f"here we are using the command line lol.{i}"))
+    if offering is not None:
+        print(offering)
     db.session.add(course)
     db.session.commit()
     print(f"Created {course}")
