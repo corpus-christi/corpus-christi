@@ -20,7 +20,10 @@ export default new Vuex.Store({
     // Current `Account` object if someone logged in.
     _currentAccount: null,
     // Current JSON Web Token if someone logged in.
-    _currentJWT: null
+    _currentJWT: null,
+
+    // All translations for the given currentLocaleCode
+    translations: []
   },
 
   getters: {
