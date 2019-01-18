@@ -21,7 +21,7 @@ describe("Create Team Test", function() {
 
   it("AND: Event planner creates a blank team", function() {
     cy.get("[data-cy=add-team]").click();
-    
+
     cy.get("[data-cy=form-save]").click();
   });
 

@@ -77,6 +77,7 @@
                 color="primary"
                 slot="activator"
                 v-on:click="confirmArchive(props.item)"
+                data-cy="archive"
               >
                 <v-icon small>archive</v-icon>
               </v-btn>
@@ -93,6 +94,7 @@
                 slot="activator"
                 v-on:click="unarchive(props.item)"
                 :loading="props.item.unarchiving"
+                data-cy="unarchive"
               >
                 <v-icon small>undo</v-icon>
               </v-btn>
@@ -125,7 +127,7 @@
             color="primary"
             raised
             :loading="archiveDialog.loading"
-            data-cy=""
+            data-cy="confirm-archive"
             >{{ $t("actions.confirm") }}</v-btn
           >
         </v-card-actions>
@@ -166,7 +168,7 @@
             v-on:click="cancelNewParticipantDialog"
             color="secondary"
             flat
-            data-cy=""
+            data-cy="cancel-participant"
             >{{ $t("actions.cancel") }}</v-btn
           >
           <v-spacer></v-spacer>
@@ -176,7 +178,7 @@
             color="primary"
             raised
             :loading="addMemberDialog.loading"
-            data-cy=""
+            data-cy="confirm-participant"
             >Add Participants</v-btn
           >
         </v-card-actions>
