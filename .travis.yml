@@ -22,7 +22,6 @@ matrix:
                   sudo: true
                   env: 
                         - FLASK_APP=cc-api.py
-                        - FLASK_CONFIG=staging
                   install:
                         - pip install -r api/requirements.txt
                         - pip install -U pytest
@@ -43,7 +42,7 @@ matrix:
                         - pytest
 
 # create script by configuration and make file
-# fix flask data load-al11
+# fix flask data load-al112
 notifications:       
         slack: tumissionscomputing:wp25PPGEFitgDVKamhxxq6jU
 deploy:
