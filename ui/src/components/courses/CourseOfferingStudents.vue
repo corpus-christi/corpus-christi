@@ -35,6 +35,10 @@
           />
         </td>
       </template>
+      
+      <template slot="students" slot-scope="props">
+        
+      </template>
     </v-data-table>
     
     <v-dialog persistent scrollable v-model="newStudentDialog.show" max-width="500px">
@@ -44,6 +48,31 @@
         v-on:cancel="cancelNewStudent"
         v-on:save="saveNewStudent"
       />
+    </v-dialog>
+    
+    <!-- Deactivate/archive confirmation -->
+    <v-dialog v-model="deactivateDialog.show" max-width="350px">
+      <v-card>
+        <v-card-text>{{ $t("courses.confirm-archive") }}</v-card-text>
+        <v-card-actions>
+          <v-btn
+            v-on:click="cancelDeactivate"
+            color="secondary"
+            flat
+            :disabled="deactivateDialog.loading"
+            data-cy
+          >{{ $t("actions.cancel") }}</v-btn>
+          <v-spacer></v-spacer>
+          <v-btn
+            v-on:click="deactivate(deactivateDialog.student)"
+            color="primary"
+            raised
+            :disabled="deactivateDialog.loading"
+            :loading="deactivateDialog.loading"
+            data-cy
+          >{{ $t("actions.confirm") }}</v-btn>
+        </v-card-actions>
+      </v-card>
     </v-dialog>
   </div>
 </template>
@@ -71,6 +100,17 @@ export default {
         show: false,
         newStudent: {},
         saving: false
+      },
+      
+      deactivateDialog: {
+        show: false,
+        student: {},
+        loading: false
+      },
+      
+      snackbar: {
+        show: false,
+        text: ""
       }
       
     };
@@ -128,8 +168,8 @@ export default {
           this.students.push(resp.data);
           this.people.push(personObject);
           
-          // this.snackbar.text = this.$t("courses.added");
-          // this.snackbar.show = true;
+          this.snackbar.text = this.$t("courses.added");
+          this.snackbar.show = true;
         })
         .catch(err => {
            console.error("FAILURE", err.response);
@@ -139,6 +179,64 @@ export default {
         .finally(() => {
           this.newStudentDialog.show = false;
           this.newStudentDialog.saving = false;
+        });
+    },
+    
+    dispatchAction(actionName, student) {
+      switch (actionName) {
+         case "deactivate":
+           this.confirmDeactivate(student);
+           break;
+         case "activate":
+           this.activate(student);
+           break;
+         default:
+           break;
+      }
+    },
+    
+    confirmDeactivate(student) {
+      this.deactivateDialog.show = true;
+      this.deactivateDialog.student = student;
+    },
+
+    cancelDeactivate() {
+      this.deactivateDialog.show = false;
+    },
+
+    deactivate(student) {
+      this.deactivateDialog.loading = true;
+      this.$http
+        .patch(`/api/v1/courses/students/${student.id}`, { active: false })
+        .then(resp => {
+          console.log("EDITED", resp);
+          Object.assign(student, resp.data);
+          console.log(student);
+          this.snackbar.text = this.$t("courses.archived");
+          this.snackbar.show = true;
+        })
+        .catch(() => {
+          this.snackbar.text = this.$t("courses.update-failed");
+          this.snackbar.show = true;
+        })
+        .finally(() => {
+          this.deactivateDialog.loading = false;
+          this.deactivateDialog.show = false;
+        });
+    },
+
+    activate(student) {
+      this.$http
+        .patch(`/api/v1/courses/students/${student.id}`, { active: true })
+        .then(resp => {
+          console.log("EDITED", resp);
+          Object.assign(student, resp.data);
+          this.snackbar.text = this.$t("courses.reactivated");
+          this.snackbar.show = true;
+        })
+        .catch(() => {
+          this.snackbar.text = this.$t("courses.update-failed");
+          this.snackbar.show = true;
         });
     }
   },
@@ -151,7 +249,7 @@ export default {
       for (var i = 0; i < this.students.length; i++) {
         this.$http.get(`/api/v1/people/persons/${this.students[i].studentId}`).then(peopleResp => {
           this.people.push(peopleResp.data);
-        });
+        });      
       }
       
     });

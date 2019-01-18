@@ -27,9 +27,9 @@ export default {
     offeringId: {
       type: [String, Number],
       required: true
-    },
+    }
   }
-}
+};
 </script>
 
 <style>
