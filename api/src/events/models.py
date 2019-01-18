@@ -41,9 +41,9 @@ class EventSchema(Schema):
     start = fields.DateTime(required=True)
     end = fields.DateTime(required=True)
     location_id = fields.Integer(allow_none=True)
-    active = fields.Boolean(default=True)
-    attendance = fields.Integer()
-    aggregate = fields.Boolean(default=True)
+    active = fields.Boolean()
+    attendance = fields.Integer(allow_none=True)
+    aggregate = fields.Boolean(allow_none=True)
 
     location = fields.Nested('LocationSchema', allow_none=True, dump_only=True)
     participants = fields.Nested('EventParticipantSchema', many=True, exclude=['event'], dump_only=True)
