@@ -67,7 +67,7 @@
       <CourseOfferingForm
         v-bind:editMode="courseOfferingDialog.editMode"
         v-bind:initialData="courseOfferingDialog.courseOffering"
-        v-bind:saving="courseOfferingDialog.saving"
+        v-bind:course="course"
         v-on:cancel="cancelCourseOffering"
         v-on:save="saveCourseOffering"
       />
@@ -121,7 +121,6 @@ export default {
       courseOfferingDialog: {
         show: false,
         editMode: false,
-        saving: false,
         courseOffering: {}
       },
 
@@ -266,57 +265,29 @@ export default {
     },
 
     saveCourseOffering(courseOffering) {
-      this.courseOfferingDialog.saving = true;
-      
-      courseOffering.courseId = this.course.id;
-      
-      if (this.courseOfferingDialog.editMode) {
-        // Hang on to the ID of the record being updated.
-        const courseOffering_id = courseOffering.id;
+      if (courseOffering instanceof Error) {
+        this.snackbar.text =
+          this.courseOfferingDialog.editMode ?
+            this.$t("courses.update-failed")
+            : this.$t("courses.add-failed");
+        this.snackbar.show = true;
 
+        this.courseOfferingDialog.show = false;
+
+        return;
+      }
+
+      if (this.courseOfferingDialog.editMode) {
         // Locate the record we're updating in the table.
         const idx = this.courseOfferings.findIndex(c => c.id === courseOffering.id);
-        // Get rid of the ID; not for consumption by endpoint.
-        delete courseOffering.id;
-
-        this.$http
-          .patch(`/api/v1/courses/course_offerings/${courseOffering_id}`, courseOffering)
-          .then(resp => {
-            console.log("EDITED", resp);
-            Object.assign(this.courseOfferings[idx], courseOffering);
-            this.snackbar.text = this.$t("courses.updated");
-            this.snackbar.show = true;
-          })
-          .catch(err => {
-            console.error("FALURE", err.response);
-            this.snackbar.text = this.$t("courses.update-failed");
-            this.snackbar.show = true;
-          })
-          .finally(() => {
-            this.courseOfferingDialog.show = false;
-            this.courseOfferingDialog.saving = false;
-          });
+        Object.assign(this.courseOfferings[idx], courseOffering);
+        this.snackbar.text = this.$t("courses.updated");
       } else {
-        courseOffering.active = true;
-        this.$http
-          .post("/api/v1/courses/course_offerings", courseOffering)
-          .then(resp => {
-            console.log("ADDED", resp);
-            this.courseOfferings.push(resp.data);
-            
-            this.snackbar.text = this.$t("courses.added");
-            this.snackbar.show = true;
-          })
-          .catch(err => {
-            console.error("FAILURE", err.response);
-            this.snackbar.text = this.$t("courses.add-failed");
-            this.snackbar.show = true;
-          })
-          .finally(() => {
-            this.courseOfferingDialog.show = false;
-            this.courseOfferingDialog.saving = false;
-          });
+        this.courseOfferings.push(courseOffering);
+        this.snackbar.text = this.$t("courses.added");
       }
+
+      this.snackbar.show = true;
 
       this.courseOfferingDialog.show = false;
     }

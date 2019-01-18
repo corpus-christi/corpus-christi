@@ -11,13 +11,14 @@
           v-bind:label="$t('courses.description')"
           name="description"
           rows="3"
+          data-cy="course-offering-description"
         ></v-textarea>
 
         <!-- date -->
         <v-layout>
           <v-flex xs12 md7>
             <v-menu
-              ref="menu"
+              ref="dateMenu"
               v-model="showDatePicker"
               :close-on-content-click="false"
               :nudge-right="40"
@@ -37,29 +38,44 @@
                 v-bind:label="$t('courses.dates')"
                 prepend-icon="event"
                 readonly
+                data-cy="course-offering-date"
               ></v-combobox>
               <v-date-picker 
                 v-model="dates" 
                 multiple no-title scrollable 
-                v-bind:locale="currentLanguageCode">
+                v-bind:locale="currentLanguageCode"
+                data-cy="course-offering-date-picker"
+              >
                 <v-spacer></v-spacer>
-                <v-btn flat color="primary" @click="showDatePicker = false">{{ $t("actions.cancel") }}</v-btn>
-                <v-btn flat color="primary" @click="$refs.menu.save(dates)">{{ $t("actions.confirm") }}</v-btn>
+                <v-btn
+                  flat
+                  color="primary"
+                  @click="showDatePicker = false"
+                  data-cy="course-offering-date-cancel"
+                >{{ $t("actions.cancel") }}</v-btn>
+                <v-btn
+                  flat
+                  color="primary"
+                  @click="$refs.dateMenu.save(dates)"
+                  data-cy="course-offering-date-ok"
+                >{{ $t("actions.confirm") }}</v-btn>
               </v-date-picker>
             </v-menu>
           </v-flex>
           
           <!-- time -->
           <v-flex xs12 md4 ml-4>
-            <v-dialog
-              ref="dialog1"
-              v-model="timeModal"
+            <v-menu
+              ref="timeMenu"
+              v-model="showTimePicker"
+              :close-on-content-click="false"
+              :nudge-right="40"
               :return-value.sync="time"
               lazy
+              transition="scale-transition"
+              offset-y
               full-width
-              width="290px"
-              persistent
-              data-cy="start-time-dialog"
+              min-width="290px"
             >
               <v-text-field
                 slot="activator"
@@ -67,42 +83,58 @@
                 v-bind:label="$t('courses.choose-time')"
                 prepend-icon="schedule"
                 readonly
+                data-cy="course-offering-time"
               ></v-text-field>
               <v-time-picker
-                v-if="timeModal"
+                v-if="showTimePicker"
                 :format="timeFormat"
                 v-model="time"
-                data-cy="start-time-picker"
+                data-cy="course-offering-time-picker"
               >
                 <v-spacer></v-spacer>
                 <v-btn
                   flat
                   color="primary"
-                  @click="timeModal = false"
-                  data-cy="start-time-cancel"
-                  >{{ $t("actions.cancel") }}</v-btn
-                >
+                  @click="showTimePicker = false"
+                  data-cy="course-offering-time-cancel"
+                >{{ $t("actions.cancel") }}</v-btn>
                 <v-btn
                   flat
                   color="primary"
-                  @click="$refs.dialog1.save(time)"
-                  data-cy="start-time-ok"
-                  >{{ $t("actions.confirm") }}</v-btn
-                >
+                  @click="$refs.timeMenu.save(time)"
+                  data-cy="course-offering-time-ok"
+                >{{ $t("actions.confirm") }}</v-btn>
               </v-time-picker>
-            </v-dialog>
+            </v-menu>
         </v-flex>
         </v-layout>
        
         <!-- teacher -->
-        <v-text-field v-model="teacher" v-bind:label="$t('courses.choose-teacher')" name="teacher"></v-text-field>
+        <v-text-field
+          v-model="teacher"
+          v-bind:label="$t('courses.choose-teacher')"
+          name="teacher"
+          data-cy="course-offering-teacher"
+        ></v-text-field>
 
         <!-- location -->
-        <v-text-field v-model="location" v-bind:label="$t('courses.choose-location')" name="location"></v-text-field>
+        <v-text-field
+          v-model="location"
+          v-bind:label="$t('courses.choose-location')"
+          name="location"
+          data-cy="course-offering-location"
+        ></v-text-field>
 
         <!-- max size TODO: integer validation-->
         <v-flex xs7 md7>
-          <v-text-field v-model="courseOffering.maxSize" v-bind:label="$t('courses.max-size')" name="max-size" type="number" v-validate="'integer'"></v-text-field>
+          <v-text-field
+            v-model="courseOffering.maxSize"
+            v-bind:label="$t('courses.max-size')"
+            name="max-size"
+            type="number"
+            v-validate="'integer'"
+            data-cy="course-offering-max-size"
+          ></v-text-field>
         </v-flex>
       </form>
     </v-card-text>
@@ -128,15 +160,11 @@
 
 <script>
 
-import { isEmpty } from "lodash";
-import EntitySearch from "../EntitySearch";
+import { isEmpty, cloneDeep } from "lodash";
 import { mapGetters } from "vuex";
 
 export default {
   name: "CourseOfferingForm",
-  components: {
-    EntitySearch
-  },
   data: function() {
     return {
       availableCourses: [],
@@ -144,11 +172,11 @@ export default {
       teacher: "",
       time: "",
       dates: [],
-      menu: false,
-      
+      saving: false,
+
       showDatePicker: false,
-      timeModal: false,
-      
+      showTimePicker: false,
+
       courseOffering: {},
     };
   },
@@ -156,13 +184,13 @@ export default {
     title() {
       return this.editMode ? this.$t("actions.edit") : this.$t("courses.new-offering");
     },
-    
+
     timeFormat() {
       if (this.currentLanguageCode == "en") {
         return "ampm";
       } else return "24hr";
     },
-    
+
     today() {
       return this.getDateFromTimestamp(Date.now());
     },
@@ -186,7 +214,7 @@ export default {
     }
   },
 
-   props: {
+  props: {
     editMode: {
       type: Boolean,
       required: true
@@ -195,11 +223,12 @@ export default {
       type: Object,
       required: true
     },
-    saving: {
-      type: Boolean,
-      default: false
+    course: {
+      type: Object,
+      required: true
     }
   },
+
   methods: {
      // Abandon ship.
     cancel() {
@@ -219,21 +248,64 @@ export default {
       this.$validator.reset();
     },
 
-    // Trigger a save event, returning the updated `Course Offering`.
+    // Save the record and trigger a save event, returning the updated `Course Offering`.
     save() {
       this.$validator.validateAll().then(() => {
         if (!this.errors.any()) {
-          // this.courseOffering.when = this.getTimestamp(this.date, this.time);          
-          this.$emit("save", this.courseOffering);
+          this.saving = true;
+          let courseOffering = cloneDeep(this.courseOffering);
+          courseOffering.courseId = this.course.id;
+          this.saveCourseOffering(courseOffering);
         }
       });
     },
-  
+
+    saveCourseOffering(courseOffering) {
+      if (this.editMode) {
+        // Hang on to the ID of the record being updated.
+        const courseOfferingId = courseOffering.id;
+
+        // Get rid of the ID; not for consumption by endpoint.
+        delete courseOffering.id;
+
+        this.$http
+          .patch(`/api/v1/courses/course_offerings/${courseOfferingId}`, courseOffering)
+          .then(resp => {
+            console.log("EDITED", resp);
+            courseOffering = resp.data;
+            this.$emit("save", courseOffering);
+          })
+          .catch(err => {
+            console.error("FALURE", err.response);
+            this.$emit("save", err);
+          })
+          .finally(() => {
+            this.saving = false;
+          });
+      } else {
+        courseOffering.active = true;
+        this.$http
+          .post("/api/v1/courses/course_offerings", courseOffering)
+          .then(resp => {
+            console.log("ADDED", resp);
+            courseOffering = resp.data;
+            this.$emit("save", courseOffering);
+          })
+          .catch(err => {
+            console.error("FAILURE", err.response);
+            this.$emit("save", courseOffering);
+          })
+          .finally(() => {
+            this.saving = false;
+          });
+      }
+    },
+
     remove(item) {
       this.prereqs.splice(this.prereqs.indexOf(item), 1);
       this.prereqs = [...this.prereqs];
     },
-    
+
     getTimestamp(date, time) {
       let datems = new Date(date).getTime();
       let timearr = time.split(":");
@@ -242,7 +314,7 @@ export default {
       let tzoffset = new Date().getTimezoneOffset() * 60000;
       return new Date(datems + timems + tzoffset);
     },
-    
+
     getDateFromTimestamp(ts) {
       let date = new Date(ts);
       if (date.getTime() < 86400000) {
@@ -260,7 +332,7 @@ export default {
       });
       return `${yr}-${mo}-${da}`;
     },
-    
+
     getTimeFromTimestamp(ts) {
       let date = new Date(ts);
       let hr = String(date.getHours()).padStart(2, "0");
