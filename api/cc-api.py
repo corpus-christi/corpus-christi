@@ -73,7 +73,6 @@ def load_all():
     create_multiple_addresses(db.session, 10)
     create_multiple_locations(db.session, 20)
 
-    create_events_test_data(db.session)
 
     create_images_test_data(db.session)
 
@@ -85,6 +84,7 @@ def load_all():
     create_multiple_diplomas(db.session, 30)
     create_multiple_students(db.session, 30)
     create_class_meetings(db.session, 30)
+    create_events_test_data(db.session)
     # create_diploma_awards(db.session, 30)
     # create_class_attendance(db.session, 30)
 

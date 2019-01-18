@@ -42,8 +42,8 @@ def event_object_factory(sqla):
     """Cook up a fake event."""
     event = {
         'title': rl_fake().word(),
-        'start': str(rl_fake().future_datetime(end_date="+6h")),
-        'end': str(rl_fake().date_time_between(start_date="+8h", end_date="+1d", tzinfo=None)),
+        'start': str(rl_fake().future_datetime(end_date="+3d")),
+        'end': str(rl_fake().date_time_between(start_date="+3d", end_date="+4d", tzinfo=None)),
         'active': flip(),
         'aggregate': flip()
     }

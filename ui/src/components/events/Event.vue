@@ -1,12 +1,9 @@
 <template>
   <div>
-    <v-btn
-      outline
-      color="primary"
-      v-on:click="$router.push({ path: '/events/all' })"
+    <v-btn outline color="primary" :to="{ path: '/events/all' }"
       ><v-icon>arrow_back</v-icon>Back</v-btn
     >
-    <v-tabs v-model="activeTab" color="transparent" slider-color="accent">
+    <v-tabs color="transparent" slider-color="accent">
       <v-tab
         ripple
         v-on:click="
@@ -17,19 +14,15 @@
       </v-tab>
       <v-tab
         ripple
-        v-on:click="
-          $router.push({
-            path: '/events/' + $route.params.event + '/participants'
-          })
-        "
+        :to="{
+          path: '/events/' + $route.params.event + '/participants'
+        }"
       >
         <v-icon>person </v-icon>&nbsp;{{ $t("events.participants.title") }}
       </v-tab>
       <!-- <v-tab
         ripple
-        v-on:click="
-          $router.push({ path: '/events/' + $route.params.event + '/assets' })
-        "
+        :to="{ path: '/events/' + $route.params.event + '/assets' }"
       >
         <v-icon>devices_other</v-icon>&nbsp;{{ $t("assets.title") }}
       </v-tab> -->
@@ -50,26 +43,9 @@ export default {
       tabs: {
         details: 0,
         participants: 1,
-        teams: 2,
-        assets: 3
+        assets: 2
       }
     };
-  },
-
-  created() {
-    var splitPath = this.$route.fullPath.split("/");
-    this.currentComponent = this.$route.fullPath.split("/")[
-      splitPath.length - 1
-    ];
-    this.activeTab = this.tabs[this.currentComponent];
-  },
-
-  watch: {
-    $route: function(to) {
-      var splitPath = to.fullPath.split("/");
-      this.currentComponent = to.fullPath.split("/")[splitPath.length - 1];
-      this.activeTab = this.tabs[this.currentComponent];
-    }
   }
 };
 </script>

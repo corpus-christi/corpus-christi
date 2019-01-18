@@ -113,7 +113,6 @@
       </template>
     </v-data-table>
 
-
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
       <v-btn flat @click="snackbar.show = false">
@@ -163,7 +162,7 @@ import { mapGetters } from "vuex";
 
 export default {
   name: "EventAssets",
-  components: { 
+  components: {
     "asset-form": AssetForm
   },
   mounted() {
@@ -387,13 +386,15 @@ export default {
             console.log("event assets table");
             let assetId = resp.data.id;
             let eventId = this.$route.params.event;
-            this.$http
-              .post(`/api/v1/events/${eventId}/assets/${assetId}`, newAsset)
-              console.log("ADDED", resp);
-              this.assets.push(resp.data);
-              this.assetDialog.show = false;
-              this.assetDialog.saveLoading = false;
-              this.showSnackbar(this.$t("assets.asset-added"));
+            this.$http.post(
+              `/api/v1/events/${eventId}/assets/${assetId}`,
+              newAsset
+            );
+            console.log("ADDED", resp);
+            this.assets.push(resp.data);
+            this.assetDialog.show = false;
+            this.assetDialog.saveLoading = false;
+            this.showSnackbar(this.$t("assets.asset-added"));
           })
           .catch(err => {
             console.error("POST FAILURE", err.response);

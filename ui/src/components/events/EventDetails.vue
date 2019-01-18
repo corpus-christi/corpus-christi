@@ -76,7 +76,7 @@
             </v-container>
             <v-list>
               <template v-for="team in event.teams">
-                <v-divider  v-bind:key="'teamDivider' + team.id"></v-divider>
+                <v-divider v-bind:key="'teamDivider' + team.id"></v-divider>
                 <v-list-tile v-bind:key="team.id">
                   <v-list-tile-content>
                     <span>{{ team.description }}</span>
@@ -374,7 +374,7 @@ export default {
         .get(`/api/v1/events/${id}?include_teams=1&include_assets=1`)
         .then(resp => {
           this.event = resp.data;
-          console.log(this.event)
+          console.log(this.event);
           if (!this.event.teams) {
             this.event.teams = [];
           } else {

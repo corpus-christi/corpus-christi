@@ -124,7 +124,6 @@ export default {
         entityDescriptor = entity.description;
       }
 
-
       if (entityDescriptor.length > letterLimit) {
         //TODO don't do this here, it limits search functionality
         entityDescriptor = entityDescriptor.substring(0, letterLimit) + "...";
