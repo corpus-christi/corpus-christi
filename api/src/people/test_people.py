@@ -75,12 +75,14 @@ def account_object_factory(person_id):
     return account
 
 
-def create_multiple_people(sqla, n):
+def create_multiple_people(sqla, n, inactive = False):
     """Commit `n` new people to the database. Returns the people."""
     person_schema = PersonSchema()
     new_people = []
     for i in range(n):
         valid_person = person_schema.load(person_object_factory())
+        if inactive:
+            valid_person['active'] == False
         new_people.append(Person(**valid_person))
     sqla.add_all(new_people)
     sqla.commit()
@@ -339,16 +341,25 @@ def test_deactivate_person(auth_client):
     assert updated_person.active == False
     return current_person.id
 
+
 @pytest.mark.smoke
 def test_activate_person(auth_client):
-    # GIVEN a random person from a collection of people that is deactivated
+    # GIVEN a set of inactive people
+    count = random.randint(3, 6)
+    create_multiple_people(auth_client.sqla, count, True)
 
-    # WHEN we activate that person
+    people = auth_client.sqla.query(Person).all()
 
+    # WHEN each person is requested to be activated
+    for person in people:
+        resp = auth_client.put(url_for('people.activate_person', person_id = person.id))
 
-    # THEN the person is marked as active
+        # THEN expect the request to run OK
+        resp.status_code == 200
 
-    assert False
+    # THEN expect all inactive people to be active
+    assert auth_client.sqla.query(Person).filter(Person.active == True).count() == count
+
 
 # ---- Account
 
