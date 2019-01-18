@@ -11,7 +11,7 @@ from .models import Course, CourseSchema, Course_Offering, Class_Meeting,\
         Class_Meeting, Class_MeetingSchema, Diploma_Awarded, Diploma_AwardedSchema,\
         Class_Attendance, Class_AttendanceSchema
 from ..people.models import Person
-from ..places.models import Country, Location 
+from ..places.models import Country, Location
 from ..people.test_people import create_multiple_people
 from ..places.test_places import create_multiple_areas, create_multiple_addresses, create_multiple_locations
 
@@ -230,11 +230,11 @@ def create_multiple_students(sqla, n=6):
 
 # --- Diploma_Award
 
-def diploma_award_object_factory(diploma_id, student_id):
+def diploma_award_object_factory(diploma_id, people_id):
     """Cook up a fake diploma award"""
     fake = Faker()
     diploma_award = {
-        'personId': student_id,
+        'personId': people_id,
         'diplomaId': diploma_id,
         'when': str(fake.past_date(start_date="-30d"))
     }
@@ -242,14 +242,26 @@ def diploma_award_object_factory(diploma_id, student_id):
 
 def create_diploma_awards(sqla, n):
     """Commits the number of diploma awards to the DB."""
-    students = sqla.query(Student).all()
+    people = sqla.query(Person).all()
     diplomas = sqla.query(Diploma).all()
     diploma_award_schema = Diploma_AwardedSchema()
     new_diploma_awards = []
-    for student in students:
+    for person in people:
         diploma = diplomas[random.randint(0,len(diplomas)-1)]
-        valid_diploma_awarded = diploma_award_schema.load(diploma_award_object_factory(diploma.id,student.id))
+        valid_diploma_awarded = diploma_award_schema.load(diploma_award_object_factory(diploma.id,person.id))
         new_diploma_awards.append(Diploma_Awarded(**valid_diploma_awarded))
+    sqla.add_all(new_diploma_awards)
+    sqla.commit()
+
+def create_course_completion(sqla, n):
+    """Commits the number of course completions to the DB."""
+    people = sqla.query(Person).all()
+    courses = sqla.query(Course).all()
+    new_course_completion = []
+    for person in people:
+        course = courses[random.randint(0,len(courses)-1)]
+        person.completion.courses.append(course)
+        new_course_completion.append(person)
     sqla.add_all(new_diploma_awards)
     sqla.commit()
 
@@ -283,8 +295,6 @@ def create_class_meetings(sqla, n=6):
         new_class_meetings.append(class_meeting)
     sqla.add_all(new_class_meetings)
     sqla.commit()
-
-# --- Class_Attendance
 
 def create_class_attendance(sqla, n):
     """Commits the number of class attendances to the DB."""
@@ -944,8 +954,8 @@ def test_delete_class_meeting(auth_client):
         # THEN assert meeting is no longer in database
         assert resp.status_code == 200
         assert auth_client.sqla.query(Class_Meeting).count() == count
-    """Test removing attended class""" 
-    # GIVEN class meeting that was attended   
+    """Test removing attended class"""
+    # GIVEN class meeting that was attended
     create_class_meetings(auth_client.sqla,1)
     create_multiple_students(auth_client.sqla, 1)
     create_class_attendance(auth_client.sqla, 1)
