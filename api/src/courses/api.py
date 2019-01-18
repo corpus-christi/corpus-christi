@@ -120,7 +120,7 @@ def read_active_state_of_courses(active_state):
 def read_one_course(course_id):
     """List only one course with given course_id"""
     result = db.session.query(Course).filter_by(id=course_id).first()
-    if(result is None):
+    if result is None:
         return "Result NOT found", 404
     with_prereqs = add_prereqs(result)
     with_offerings = include_course_offerings(with_prereqs)
@@ -533,27 +533,14 @@ def add_student_to_course_offering(s_id):
 @courses.route('/course_offerings/<course_offering_id>/students')
 @jwt_required
 def read_all_course_offering_students(course_offering_id):
-    """ This function lists all students by a specific course offering.
-        Students are listed regardless of confirmed or active state. """
-    stu_result = db.session.query(Student).filter_by(
-        offering_id=course_offering_id).all()
-    co_result = db.session.query(Course_Offering).filter_by(
-        id=course_offering_id).first()
-
-    if stu_result is [] or co_result is None:
-        return 'The specified course offering does not exist \
-                or there are no students enrolled in the course offering ', 404
-
-    # Serialize specific course offering into json obj
-    offering = course_offering_schema.dump(co_result, many=False)
-    # Create new students dictionary into a specific course offering
-    offering['students'] = []
-    # Serialize every student from query result into json obj
-    s = student_schema.dump(stu_result, many=True)
-    # Add json object of all student objects into the course offering
-    offering['students'].append(s)
-    return jsonify(offering)
-
+    co = db.session.query(Course_Offering).filter_by(id=course_offering_id).first()
+    if co is None:
+        return 'Course offering NOT found', 404
+    students = db.session.query(Student).filter_by(offering_id=course_offering_id).all()
+    if students == []:
+        return 'No Students Found', 404
+    students = student_schema.dump(students, many=True)
+    return jsonify(students)
 
 # May not need this route unless UI says so...
 # @courses.route('/students')
@@ -614,7 +601,7 @@ def create_class_meeting(course_offering_id):
     meetingInDB = db.session.query(Class_Meeting).filter_by(
         offering_id=course_offering_id,
         teacher_id=request.json['teacherId'],
-        when=request.json['when'] ).first() # Todo: make sure when is datetime obj
+        when=datetime.strptime(request.json['when'], '%Y-%m-%d %H:%M:%S') ).first() # Todo: make sure when is datetime obj
 
     # If a class meeting for a course offering DNE
     if meetingInDB is None:
@@ -633,7 +620,7 @@ def create_class_meeting(course_offering_id):
 @jwt_required
 def read_all_class_meetings(course_offering_id):
     result = db.session.query(Class_Meeting).filter_by(offering_id=course_offering_id).all()
-    if result is None:
+    if result == []:
         return 'No class meetings found for this course offering', 404
     return jsonify(class_meeting_schema.dump(result, many=True))
 
@@ -651,6 +638,8 @@ def read_one_class_meeting(course_offering_id, class_meeting_id):
 @jwt_required
 def update_class_meeting(course_offering_id, class_meeting_id):
     class_meeting = db.session.query(Class_Meeting).filter_by(id=class_meeting_id, offering_id=course_offering_id).first()
+    if class_meeting is None:
+           return "Class meeting not found", 404 
 
     for attr in 'location_id', 'teacher_id', 'when':
         if attr in request.json:
@@ -675,7 +664,7 @@ def delete_class_meeting(course_offering_id, class_meeting_id):
         return 'Class meeting successfully deleted', 200
     # If class meeting DNE
     elif class_meeting is None:
-        return 'Course offering does not exist'
+        return 'Course offering does not exist', 404
     else:
         return 'Students have attended the class meeting. Cannot delete class meeting.', 403
 
