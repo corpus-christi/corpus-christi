@@ -70,10 +70,10 @@
 import {
   ValidationObserver,
   ValidationProvider,
-  withValidation
+  // withValidation
 } from "vee-validate";
 
-import { isEmpty } from "lodash";
+// import { isEmpty } from "lodash";
 export default {
   name: "DiplomaEditor",
 
@@ -104,9 +104,7 @@ export default {
 
   computed: {
     name() {
-      return this.editMode
-        ? this.$t("actions.edit")
-        : this.$t("diplomas.new");
+      return this.editMode ? this.$t("actions.edit") : this.$t("diplomas.new");
     },
     items() {
       return this.coursesPool;
@@ -130,12 +128,11 @@ export default {
     },
     async save() {
       const result = await this.$refs.obs.validate();
-      console.log('result: ', result);
+      console.log("result: ", result);
       if (result) {
         this.$emit("save", this.diploma);
       }
     }
-
   },
 
   mounted() {

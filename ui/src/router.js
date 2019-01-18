@@ -63,7 +63,7 @@ const router = new VueRouter({
           component: () => import("@/components/events/EventTable")
         },
         {
-          name: "dashboard",
+          name: "events-dashboard",
           path: "dashboard",
           meta: { authRequired: true },
           component: () => import("@/components/events/Dashboard")
@@ -143,6 +143,12 @@ const router = new VueRouter({
       component: () => import("@/pages/Courses"),
       redirect: { name: "all-courses" },
       children: [
+        {
+          name: "courses-dashboard",
+          path: "dashboard",
+          meta: { authRequired: true },
+          component: () => import("@/components/courses/Dashboard")
+        },
         {
           name: "all-courses",
           path: "all",

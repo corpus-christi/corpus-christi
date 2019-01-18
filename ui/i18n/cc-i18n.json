@@ -123,7 +123,8 @@
         "title": "Dashboard",
         "headers": {
           "location-attendance": "Attendance by Location",
-          "yearly-attendance": "Yearly Attendance"
+          "yearly-attendance": "Yearly Attendance",
+          "home-group-percentage": "Percentage of Churchgoers in a Home Group"
         }
       },
       "details": {
