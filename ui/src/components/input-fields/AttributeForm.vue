@@ -1,5 +1,6 @@
 <template>
   <div>
+    <span class="headline">{{ $t("people.attributes") }}</span>
     <component
       v-for="(attribute, index) in attributes"
       :key="index"
@@ -23,7 +24,7 @@ import Radio from "./Radio.vue";
 export default {
   name: "AttributeForm",
   components: { Date, Float, Integer, String, Dropdown, Check, Radio },
-  props: ["value", "existingAttributes","personId"],
+  props: ["value", "existingAttributes", "personId"],
   data() {
     return {
       formData: this.value || {},
@@ -38,15 +39,19 @@ export default {
   },
   watch: {
     existingAttributes() {
-      if(this.existingAttributes && this.existingAttributes.length > 0) {
+      if (this.existingAttributes && this.existingAttributes.length > 0) {
         for (let attr of this.attributes) {
-          this.$set(attr, 'value', this.getExistingAttribute(attr.id.toString()));
-        } 
+          this.$set(
+            attr,
+            "value",
+            this.getExistingAttribute(attr.id.toString())
+          );
+        }
       }
     },
     getCurrentLocaleCode() {
       this.getAllTranslations().then(() => {
-        this.setupAttributes(this.attributes)
+        this.setupAttributes(this.attributes);
       });
     }
   },
@@ -91,10 +96,10 @@ export default {
     },
 
     getStringOrEnumValue(attr) {
-      if(attr.stringValue) {
+      if (attr.stringValue) {
         return attr.stringValue;
-      } else if(attr.enumValueId) {
-        return attr.enumValueId
+      } else if (attr.enumValueId) {
+        return attr.enumValueId;
       }
       return null;
     },
@@ -103,7 +108,7 @@ export default {
       for (let attr of attributes) {
         this.$set(attr, "name", this.translate(attr.nameI18n));
         this.$set(attr, "type", this.componentType(attr.typeI18n));
-        this.$set(attr, 'value', null);
+        this.$set(attr, "value", null);
         for (let enumval of attr.enumerated_values) {
           this.$set(enumval, "value", this.translate(enumval.valueI18n));
         }
@@ -134,37 +139,33 @@ export default {
     },
 
     componentType(typeI18n) {
-        switch (typeI18n) {
-          case "attribute.float":
-            return "Float"
-            break;
-          case "attribute.integer":
-            return "Integer"
-            break;
-          case "attribute.date":
-            return "Date"
-            break;
-          case "attribute.string":
-            return "String"
-            break;
-          case "attribute.dropdown":
-            return "Dropdown"
-            break;
-          case "attribute.checkbox":
-            return "Check"
-            break;
-          case "attribute.radio":
-            return "Radio"
-            break;
-        }
+      switch (typeI18n) {
+        case "attribute.float":
+          return "Float";
+        case "attribute.integer":
+          return "Integer";
+        case "attribute.date":
+          return "Date";
+        case "attribute.string":
+          return "String";
+        case "attribute.dropdown":
+          return "Dropdown";
+        case "attribute.checkbox":
+          return "Check";
+        case "attribute.radio":
+          return "Radio";
+      }
     },
 
     clear() {
       for (let idx in this.attributes) {
-        this.$set(this.attributes[idx], 'value', null)
-        this.updateForm(this.attributes[idx].id.toString(), idx, {enumValueId: 0, stringValue: ""})
+        this.$set(this.attributes[idx], "value", null);
+        this.updateForm(this.attributes[idx].id.toString(), idx, {
+          enumValueId: 0,
+          stringValue: ""
+        });
       }
-      console.log(this.attributes,this.formData)
+      console.log(this.attributes, this.formData);
     }
   }
 };

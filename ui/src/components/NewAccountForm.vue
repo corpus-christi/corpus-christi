@@ -1,8 +1,8 @@
 <template>
   <v-card>
-    {{formData}}
+    {{ formData }}
     <v-card-title>
-      <span class="headline">{{ $t('actions.signup') }}</span>
+      <span class="headline">{{ $t("actions.signup") }}</span>
     </v-card-title>
     <v-card-text>
       <form ref="form">
@@ -35,7 +35,12 @@
           data-cy="second-last-name"
         ></v-text-field>
 
-        <v-radio-group v-model="person.gender" :readonly="isLoading" row data-cy="radio-gender">
+        <v-radio-group
+          v-model="person.gender"
+          :readonly="isLoading"
+          row
+          data-cy="radio-gender"
+        >
           <v-radio v-bind:label="$t('person.male')" value="M"></v-radio>
           <v-radio v-bind:label="$t('person.female')" value="F"></v-radio>
         </v-radio-group>
@@ -99,23 +104,23 @@
         v-on:click="clear"
         :disabled="isLoading"
         data-cy="clear"
-      >{{ $t("actions.clear") }}</v-btn>
+        >{{ $t("actions.clear") }}</v-btn
+      >
       <v-btn
         color="secondary"
         flat
         v-on:click="signup"
         :disabled="isLoading"
         data-cy="signup"
-      >{{ $t("actions.signup") }}</v-btn>
+        >{{ $t("actions.signup") }}</v-btn
+      >
     </v-card-actions>
   </v-card>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
-import { isEmpty, find } from "lodash";
 import AttributeForm from "./input-fields/AttributeForm.vue";
-import store from "../store.js";
 
 export default {
   name: "NewAccountForm",
@@ -152,7 +157,7 @@ export default {
       return Object.keys(this.person);
     },
 
-    ...mapGetters(["currentLanguageCode"]),
+    ...mapGetters(["currentLanguageCode"])
   },
   methods: {
     // Clear the form and the validators.
@@ -174,7 +179,7 @@ export default {
           this.isLoading = false;
         }
       });
-    },
+    }
   }
 };
 </script>

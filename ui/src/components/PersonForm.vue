@@ -34,7 +34,12 @@
           data-cy="second-last-name"
         ></v-text-field>
 
-        <v-radio-group v-model="person.gender" :readonly="formDisabled" row data-cy="radio-gender">
+        <v-radio-group
+          v-model="person.gender"
+          :readonly="formDisabled"
+          row
+          data-cy="radio-gender"
+        >
           <v-radio v-bind:label="$t('person.male')" value="M"></v-radio>
           <v-radio v-bind:label="$t('person.female')" value="F"></v-radio>
         </v-radio-group>
@@ -87,10 +92,12 @@
           data-cy="phone"
           :readonly="formDisabled"
         ></v-text-field>
-        <div v-if="hasAttributes">
-          <span class="headline">{{ $t("people.attributes") }}</span>
-          <AttributeForm :personId="person.id" :existingAttributes="person.attributesInfo" v-model="attributeFormData" ref="attributeForm"></AttributeForm>
-        </div>
+        <AttributeForm
+          :personId="person.id"
+          :existingAttributes="person.attributesInfo"
+          v-model="attributeFormData"
+          ref="attributeForm"
+        ></AttributeForm>
       </form>
     </v-card-text>
     <v-card-actions>
@@ -100,7 +107,8 @@
         v-on:click="cancel"
         :disabled="formDisabled"
         data-cy="cancel"
-      >{{ $t("actions.cancel") }}</v-btn>
+        >{{ $t("actions.cancel") }}</v-btn
+      >
       <v-spacer></v-spacer>
       <v-btn
         color="primary"
@@ -108,7 +116,8 @@
         v-on:click="clear"
         :disabled="formDisabled"
         data-cy="clear"
-      >{{ $t("actions.clear") }}</v-btn>
+        >{{ $t("actions.clear") }}</v-btn
+      >
       <v-btn
         color="primary"
         outline
@@ -117,7 +126,8 @@
         :loading="addMoreLoading"
         :disabled="formDisabled"
         data-cy="add-another"
-      >{{ $t("actions.add-another") }}</v-btn>
+        >{{ $t("actions.add-another") }}</v-btn
+      >
       <v-btn
         color="primary"
         raised
@@ -125,15 +135,16 @@
         :loading="saveLoading"
         :disabled="formDisabled"
         data-cy="save"
-      >{{ $t("actions.save") }}</v-btn>
+        >{{ $t("actions.save") }}</v-btn
+      >
     </v-card-actions>
   </v-card>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
-import { isEmpty, find } from "lodash";
 import AttributeForm from "./input-fields/AttributeForm.vue";
+import { isEmpty } from "lodash";
 
 export default {
   name: "PersonForm",
@@ -153,14 +164,6 @@ export default {
     },
     saveLoading: {
       type: Boolean,
-      required: true
-    },
-    attributes: {
-      type: Array,
-      required: true
-    },
-    translations: {
-      type: Object,
       required: true
     }
   },
@@ -202,10 +205,6 @@ export default {
 
     formDisabled() {
       return this.saveLoading || this.addMoreLoading;
-    },
-
-    hasAttributes() {
-      return this.$props.attributes.length !== 0;
     }
   },
 
@@ -232,18 +231,18 @@ export default {
       for (let key of this.personKeys) {
         this.person[key] = "";
       }
-      this.$refs.attributeForm.clear()
+      this.$refs.attributeForm.clear();
       this.$validator.reset();
     },
 
     // Trigger a save event, returning the update `Person`.
     save() {
-      console.log("SAVING")
+      console.log("SAVING");
       this.$validator.validateAll().then(() => {
         if (!this.errors.any()) {
-          this.$set(this.person, 'attributesInfo', this.attributeFormData);
-          console.log(this.person.attributesInfo)
-          console.log(this.attributeFormData)
+          this.$set(this.person, "attributesInfo", this.attributeFormData);
+          console.log(this.person.attributesInfo);
+          console.log(this.attributeFormData);
           this.$emit("save", this.person);
         }
       });
@@ -255,7 +254,7 @@ export default {
           this.$emit("add-another", this.person);
         }
       });
-    },
+    }
   }
 };
 </script>

@@ -1,7 +1,5 @@
 <template>
-  <v-card>
-    <NewAccountForm/>
-  </v-card>
+  <v-card> <NewAccountForm /> </v-card>
 </template>
 
 <script>

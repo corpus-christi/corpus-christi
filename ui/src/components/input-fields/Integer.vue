@@ -4,7 +4,7 @@
       :label="attribute.name"
       :name="attribute.name"
       :value="attribute.value"
-      @input="$emit('input', { stringValue: $event, enumValueId: 0})"
+      @input="$emit('input', { stringValue: $event, enumValueId: 0 })"
       v-bind:error-messages="errors.collect(attribute.name)"
       v-validate="{ regex: /^[0-9]*$/ }"
     ></v-text-field>

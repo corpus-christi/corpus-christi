@@ -150,8 +150,6 @@
         v-bind:initialData="personDialog.person"
         v-bind:saveLoading="personDialog.saveLoading"
         v-bind:addMoreLoading="personDialog.addMoreLoading"
-        v-bind:attributes="personDialog.attributes"
-        v-bind:translations="translations"
         v-on:cancel="cancelPerson"
         v-on:save="savePerson"
         v-on:add-another="addAnother"
@@ -179,7 +177,6 @@
 <script>
 import PersonForm from "./PersonForm";
 import PersonAdminForm from "./AccountForm";
-import store from "../store.js";
 
 export default {
   name: "PersonTable",
@@ -269,15 +266,6 @@ export default {
         default:
           return this.activePeople;
       }
-    },
-
-    getCurrentLocaleCode() {
-      return store.state.currentLocaleCode;
-    }
-  },
-  watch: {
-    getCurrentLocaleCode() {
-      this.getAllTranslations();
     }
   },
   methods: {
@@ -345,7 +333,7 @@ export default {
     constructPersonData(person) {
       let attributes = [];
       if (person.attributesInfo) {
-        for(let key in person.attributesInfo) {
+        for (let key in person.attributesInfo) {
           attributes.push(person.attributesInfo[key]);
         }
       }
@@ -453,35 +441,11 @@ export default {
           this.archivedPeople = this.allPeople.filter(person => !person.active);
         })
         .catch(err => console.error("FAILURE", err.response));
-    },
-
-    getAttributesInfo() {
-      this.$http
-        .get("/api/v1/people/persons/fields")
-        .then(resp => {
-          if (resp.data.person_attributes) {
-            this.personDialog.attributes = resp.data.person_attributes;
-          }
-        })
-        .catch(err => console.error("FAILURE", err.response));
-    },
-
-    getAllTranslations() {
-      this.$http
-        .get(`/api/v1/i18n/values/${store.state.currentLocaleCode}`)
-        .then(resp => {
-          for (let item of resp.data) {
-            this.translations[item.key_id] = item.gloss;
-          }
-        })
-        .catch(err => console.error("FAILURE", err.response));
     }
   },
 
   mounted: function() {
     this.refreshPeopleList();
-    this.getAttributesInfo();
-    this.getAllTranslations();
   }
 };
 </script>

@@ -4,7 +4,7 @@
       :label="attribute.name"
       :name="attribute.name"
       :value="attribute.value"
-      @input="$emit('input', { stringValue: '', enumValueId: $event})"
+      @input="$emit('input', { stringValue: '', enumValueId: $event })"
       :items="getItems"
     ></v-select>
   </div>
@@ -20,16 +20,16 @@ export default {
     }
   },
   computed: {
-      getItems() {
-        let items = []
-        for(let enumeratedValue of this.attribute.enumerated_values) {
-          items.push({
-            text: enumeratedValue.value,
-            value: enumeratedValue.id
-          });
-        }
-        return items
+    getItems() {
+      let items = [];
+      for (let enumeratedValue of this.attribute.enumerated_values) {
+        items.push({
+          text: enumeratedValue.value,
+          value: enumeratedValue.id
+        });
       }
+      return items;
+    }
   }
 };
 </script>

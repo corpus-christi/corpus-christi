@@ -1,7 +1,11 @@
 <template>
   <v-container>
     <span class="title">{{ attribute.name }}</span>
-    <v-radio-group row :value="attribute.value" @change="$emit('input', { stringValue: '', enumValueId: $event})">
+    <v-radio-group
+      row
+      :value="attribute.value"
+      @change="$emit('input', { stringValue: '', enumValueId: $event })"
+    >
       <v-radio
         v-for="(enumerateValue, index) in attribute.enumerated_values"
         :key="index"
