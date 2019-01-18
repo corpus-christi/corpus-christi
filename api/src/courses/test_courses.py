@@ -232,7 +232,7 @@ def diploma_award_object_factory(diploma_id, student_id):
     """Cook up a fake diploma award"""
     fake = Faker()
     diploma_award = {
-        'studentId': student_id,
+        'personId': student_id,
         'diplomaId': diploma_id,
         'when': str(fake.past_date(start_date="-30d"))
     }

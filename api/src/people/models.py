@@ -34,6 +34,7 @@ class Person(Base):
     # events_par refers to the participated events (linked via events_eventparticipant table)
     events_par = relationship("EventParticipant", back_populates="person")
     teams = relationship("TeamMember", back_populates="member")
+    diplomas_awarded = relationship('Diploma_Awarded', back_populates='students', lazy=True, uselist=False)
 
 
 
@@ -173,4 +174,3 @@ class RoleSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     name_i18n = fields.String(data_key='nameI18n')
     active = fields.Boolean()
-
