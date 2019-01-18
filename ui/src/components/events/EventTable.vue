@@ -1,5 +1,26 @@
 <template>
   <div>
+    <v-tabs
+      v-model="active"
+      slider-color="accent"
+    >
+      <v-tab
+        :key="0"
+        ripple
+      >
+      {{ $t("events.header") }}
+      </v-tab>
+      <v-tab
+        :key="1"
+        ripple
+      >
+      Calendar
+      </v-tab>
+      <v-tab-item
+        :key="0"
+        style="padding-top:12px"
+      >
+
     <v-layout justify-center>
       <v-flex shrink class="mb-2">
         <h1 class="hidden-sm-and-up">{{ $t("events.header") }}</h1>
@@ -219,16 +240,24 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+      </v-tab-item>
+      <v-tab-item
+      style="padding-top:12px"
+        :key="1"
+      >
+      <calendar/>
+      </v-tab-item>
+    </v-tabs>
   </div>
 </template>
 
 <script>
 import EventForm from "./EventForm";
 import { mapGetters } from "vuex";
-
+import Calendar from "./Calendar";
 export default {
   name: "EventTable",
-  components: { "event-form": EventForm },
+  components: { "event-form": EventForm, "calendar":Calendar },
   mounted() {
     this.tableLoading = true;
     this.$http.get("/api/v1/events/?return_group=all").then(resp => {
@@ -241,6 +270,7 @@ export default {
 
   data() {
     return {
+      active: 0,
       rowsPerPageItem: [
         10,
         15,
