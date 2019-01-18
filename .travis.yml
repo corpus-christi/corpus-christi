@@ -42,7 +42,7 @@ matrix:
                         - pytest
 
 # create script by configuration and make file
-# fix flask data load-all
+# fix flask data load-al11
 notifications:       
         slack: tumissionscomputing:wp25PPGEFitgDVKamhxxq6jU
 deploy:
