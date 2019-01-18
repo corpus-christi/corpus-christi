@@ -125,6 +125,12 @@ const router = new VueRouter({
       component: () => import("@/pages/Locale")
     },
     {
+      name: "diplomas-admin",
+      path: "/diplomas",
+      meta: { authRequired: true },
+      component: () => import("@/pages/Diplomas")
+    },
+    {
       name: "courses",
       path: "/courses",
       meta: { authRequired: true },

@@ -95,6 +95,18 @@
       "update-failed": "Failed to update course",
       "updated": "Course updated"
     },
+    "diplomas": {
+      "archived": "Diploma archived",
+      "confirm-archive": "Are you sure you want to archive this diploma?",
+      "courses": "Courses",
+      "courses-this-diploma": "Courses for this Diploma",
+      "description": "Description",
+      "diploma": "Diplomas",
+      "new": "New Diploma",
+      "reactivated": "Diploma unarchived",
+      "title": "Title",
+      "updated": "Diploma updated"
+    },
     "events": {
       "actions": "Actions",
       "confirm-archive": "Are you sure you want to archive this event?",
@@ -310,6 +322,18 @@
       "title": "T\u00edtulo",
       "update-failed": "Se fall\u00f3 a actualizar el curso",
       "updated": "Curso actualizado"
+    },
+    "diplomas": {
+      "archived": "Diploma archivado",
+      "confirm-archive": "\u00bfEst\u00e1s seguro que quieres archivar esta diploma?",
+      "courses": "Cursos",
+      "courses-this-diploma": "Cursos para esta Diploma",
+      "description": "Descripci\u00f3n",
+      "diploma": "Diplomas",
+      "new": "Nueva Diploma",
+      "reactivated": "Diploma desarchivado",
+      "title": "T\u00edtulo",
+      "updated": "Diploma actualizado"
     },
     "events": {
       "actions": "Comportamiento",
