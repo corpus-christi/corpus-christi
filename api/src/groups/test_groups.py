@@ -340,57 +340,72 @@ def test_update_meeting(auth_client):
 
 @pytest.mark.smoke
 def test_create_member(auth_client):
-    # GIVEN an empty database
+    # GIVEN database with some groups and people
     count = random.randint(3, 11)
     generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, 2)
 
-    # WHEN
-    for i in range(count):
-        resp = auth_client.post(url_for('groups.create_member'), json=member_object_factory(auth_client.sqla))
-        assert resp.status_code == 201
+    # WHEN we try to create a member
+    payload = member_object_factory(auth_client.sqla)
+    resp = auth_client.post(url_for('groups.create_member'), json=payload)
+    # THEN we expect the correct status code
+    assert resp.status_code == 201
+    # THEN we expect that member to be present in database
+    assert 1 == auth_client.sqla.query(Member).filter_by(**payload).count()
 
-    # THEN
-    assert auth_client.sqla.query(Member).count() == count
+    # WHEN we try to create a member with an invalid payload
+    invalid_payload = { 'invalid_field': 1 }
+    resp = auth_client.post(url_for('groups.create_member'), json=invalid_payload)
+    # THEN we expect an error
+    assert resp.status_code == 422
+
+    # to be implemented
+    # # WHEN we try to recreate the same member
+    # resp = auth_client.post(url_for('groups.create_member'), json=payload)
+    # # THEN we expect an error
+    # assert resp.status_code == 404
+
 
 
 @pytest.mark.smoke
 def test_read_all_members(auth_client):
-    # GIVEN
-    count = random.randint(3, 11)
+    # GIVEN a database with some members
     generate_managers(auth_client)
-    create_multiple_groups(auth_client.sqla, 2)
-    create_multiple_members(auth_client.sqla, count)
-
-    # WHEN
+    create_multiple_groups(auth_client.sqla, 4)
+    create_multiple_people(auth_client.sqla, 4)
+    create_multiple_members(auth_client.sqla, 4)
+    members_count = auth_client.sqla.query(Member).count()
+    # WHEN reading all of them
     resp = auth_client.get(url_for('groups.read_all_members'))
+    # THEN we should get the correct code
     assert resp.status_code == 200
-    members = auth_client.sqla.query(Member).all()
-
-    # THEN
-    assert len(members) == count
-    assert len(resp.json) == count
-
-    for i in range(count):
-        assert resp.json[i]['id'] == members[i].id
+    # THEN we should get the correct count
+    assert len(resp.json) == members_count
+    # THEN each one of them should correspond to something in the database
+    for member in resp.json:
+        keylist = ['active', 'group_id', 'person_id', 'joined', 'id']
+        filtered_member = { k:member[k] for k in member if k in keylist }
+        assert auth_client.sqla.query(Member).filter_by(**filtered_member).count() == 1
 
 
 @pytest.mark.smoke
 def test_read_one_member(auth_client):
-    # GIVEN
-    count = random.randint(3, 11)
+    # GIVEN a database with some members
     generate_managers(auth_client)
-    create_multiple_groups(auth_client.sqla, count)
-    create_multiple_meetings(auth_client.sqla, count)
+    create_multiple_groups(auth_client.sqla, 4)
+    create_multiple_people(auth_client.sqla, 4)
+    create_multiple_members(auth_client.sqla, 4)
 
-    # WHEN
     members = auth_client.sqla.query(Member).all()
-
+    # WHEN we ask for the members one by one
     for member in members:
-        resp = auth_client.get(url_for('groups.read_one_member', member_id=member.id))
-        # THEN expect groups to match
+        resp = auth_client.get(url_for('groups.read_one_member', member_id = member.id))
+        # THEN we expect the correct status code
         assert resp.status_code == 200
-        assert resp.json['id'] == member.id
+        # THEN we expect each of them to correspond to the member in the database
+        keylist = ['active', 'group_id', 'person_id', 'id'] # skipping 'joined', because datetimes come back in a slightly different format, but information is the same.
+        for attr in keylist:
+            assert resp.json[attr] == member.__dict__[attr]
 
 # Waiting for API
 # @pytest.mark.xfail()
@@ -403,33 +418,37 @@ def test_read_one_member(auth_client):
 
 @pytest.mark.smoke
 def test_update_member(auth_client):
-    # GIVEN a database with a number of meetings
+    # GIVEN a database with a number of members
     count = random.randint(3, 11)
     generate_managers(auth_client)
-    create_multiple_groups(auth_client.sqla, count)
+    create_multiple_groups(auth_client.sqla, 3)
     create_multiple_members(auth_client.sqla, count)
 
     # WHEN we update one event
     member = auth_client.sqla.query(Member).first()
-
-    payload = {}
-    new_member = member_object_factory(auth_client.sqla)
-
-    payload['group_id'] = new_member['group_id']
-    payload['person_id'] = new_member['person_id']
-    payload['joined'] = new_member['joined']
-    payload['active'] = new_member['active']
-
+    payload = member_object_factory(auth_client.sqla)
     resp = auth_client.patch(url_for('groups.update_member', member_id=member.id), json=payload)
-
     # THEN we assume the correct status code
     assert resp.status_code == 200
-
     # THEN we assume the correct content in the returned object
     assert resp.json['group_id'] == payload['group_id']
     assert resp.json['person_id'] == payload['person_id']
     assert resp.json['joined'] == payload['joined']
     assert resp.json['active'] == payload['active']
+
+    # WHEN we try to update a member with an invalid payload
+    invalid_payload = { 'invalid_field': 1 }
+    resp = auth_client.patch(url_for('groups.update_member', member_id=member.id), json=invalid_payload)
+    # THEN we expect an error
+    assert resp.status_code == 422
+    
+    # to be implemented
+    # # WHEN we try to update a nonexistent member
+    # auth_client.sqla.delete(member)
+    # auth_client.sqla.commit()
+    # resp = auth_client.patch(url_for('groups.update_member', member_id=member.id), json=payload)
+    # assert resp.status_code == 404
+    
 
 
 # Waiting for API
