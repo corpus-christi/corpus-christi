@@ -1,4 +1,5 @@
 <template>
+<div>
   <v-menu
     :close-on-content-click="false"
     v-model="showDatePicker"
@@ -13,42 +14,35 @@
       slot="activator"
       prepend-icon="event"
       readonly
-      :label="label"
-      :name="name"
-      :value="value"
+      :label="attribute.name"
+      :name="attribute.name"
+      :value="attribute.value"
     ></v-text-field>
 
     <v-date-picker
-      :value="value"
+      :value="attribute.value"
       @input="
         showDatePicker = false;
-        $emit('input', $event);
+        $emit('input', { stringValue: $event, enumValueId: 0})
       "
     ></v-date-picker>
   </v-menu>
+  </div>
 </template>
 
 <script>
 export default {
   name: "Date",
   props: {
-    label: {
-      type: String,
-      required: true
-    },
-    name: {
-      type: String,
-      required: true
-    },
-    value: {
-      type: String,
+    attribute: {
+      type: Object,
       required: true
     }
   },
-  data: () => {
+  data() {
     return {
-      showDatePicker: false
+      showDatePicker: false,
     };
-  }
+  },
 };
 </script>

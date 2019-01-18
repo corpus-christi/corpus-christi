@@ -345,7 +345,9 @@ export default {
     constructPersonData(person) {
       let attributes = [];
       if (person.attributesInfo) {
-        attributes = person.attributesInfo;
+        for(let key in person.attributesInfo) {
+          attributes.push(person.attributesInfo[key]);
+        }
       }
       delete person["attributesInfo"];
       delete person["accountInfo"];
@@ -471,7 +473,6 @@ export default {
           for (let item of resp.data) {
             this.translations[item.key_id] = item.gloss;
           }
-          console.log(this.translations);
         })
         .catch(err => console.error("FAILURE", err.response));
     }

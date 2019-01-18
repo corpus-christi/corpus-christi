@@ -30,13 +30,15 @@
             </v-form>
           </v-card-text>
           <v-card-actions>
+            <div>
+              {{ $t('account.no-account') }}
+              <router-link v-bind:to="{ name: 'signup' }" data-cy="signup">
+                <a class="href" v-text="$t('actions.signup')"/>
+              </router-link>
+            </div>
             <v-spacer></v-spacer>
-            <v-btn color="primary" v-on:click="cancel" data-cy="cancel">
-              {{ $t("actions.cancel") }}
-            </v-btn>
-            <v-btn color="primary" v-on:click="login" data-cy="login">
-              {{ $t("actions.login") }}
-            </v-btn>
+            <v-btn color="primary" v-on:click="cancel" data-cy="cancel">{{ $t("actions.cancel") }}</v-btn>
+            <v-btn color="primary" v-on:click="login" data-cy="login">{{ $t("actions.login") }}</v-btn>
           </v-card-actions>
         </v-card>
       </v-flex>

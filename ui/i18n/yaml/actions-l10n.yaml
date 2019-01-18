@@ -56,6 +56,9 @@ actions:
     _desc: Search for people
     en: Search People
     es: Buscar Personas
+  signup:
+    en: Signup
+    es: Regístrate
   view-inactive:
     _desc: View all inactive people
     en: View Inactive

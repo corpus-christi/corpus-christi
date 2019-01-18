@@ -1,7 +1,8 @@
 <template>
   <v-card>
+    {{formData}}
     <v-card-title>
-      <span class="headline">{{ title }}</span>
+      <span class="headline">{{ $t('actions.signup') }}</span>
     </v-card-title>
     <v-card-text>
       <form ref="form">
@@ -11,7 +12,7 @@
           name="firstName"
           v-validate="'required'"
           v-bind:error-messages="errors.collect('firstName')"
-          :readonly="formDisabled"
+          :readonly="isLoading"
           data-cy="first-name"
         ></v-text-field>
 
@@ -21,7 +22,7 @@
           name="lastName"
           v-validate="'required'"
           v-bind:error-messages="errors.collect('lastName')"
-          :readonly="formDisabled"
+          :readonly="isLoading"
           data-cy="last-name"
         ></v-text-field>
 
@@ -30,11 +31,11 @@
           v-bind:label="$t('person.name.second-last')"
           name="secondLastName"
           v-bind:error-messages="errors.collect('secondLastName')"
-          :readonly="formDisabled"
+          :readonly="isLoading"
           data-cy="second-last-name"
         ></v-text-field>
 
-        <v-radio-group v-model="person.gender" :readonly="formDisabled" row data-cy="radio-gender">
+        <v-radio-group v-model="person.gender" :readonly="isLoading" row data-cy="radio-gender">
           <v-radio v-bind:label="$t('person.male')" value="M"></v-radio>
           <v-radio v-bind:label="$t('person.female')" value="F"></v-radio>
         </v-radio-group>
@@ -48,7 +49,7 @@
           offset-y
           full-width
           min-width="290px"
-          :disabled="formDisabled"
+          :disabled="isLoading"
           data-cy="show-birthday-picker"
         >
           <v-text-field
@@ -77,7 +78,7 @@
           v-bind:error-messages="errors.collect('email')"
           prepend-icon="email"
           data-cy="email"
-          :readonly="formDisabled"
+          :readonly="isLoading"
         ></v-text-field>
 
         <v-text-field
@@ -85,47 +86,27 @@
           v-bind:label="$t('person.phone')"
           prepend-icon="phone"
           data-cy="phone"
-          :readonly="formDisabled"
+          :readonly="isLoading"
         ></v-text-field>
-        <div v-if="hasAttributes">
-          <span class="headline">{{ $t("people.attributes") }}</span>
-          <AttributeForm :personId="person.id" :existingAttributes="person.attributesInfo" v-model="attributeFormData" ref="attributeForm"></AttributeForm>
-        </div>
+        <AttributeForm v-model="formData"></AttributeForm>
       </form>
     </v-card-text>
     <v-card-actions>
-      <v-btn
-        color="secondary"
-        flat
-        v-on:click="cancel"
-        :disabled="formDisabled"
-        data-cy="cancel"
-      >{{ $t("actions.cancel") }}</v-btn>
       <v-spacer></v-spacer>
       <v-btn
         color="primary"
         flat
         v-on:click="clear"
-        :disabled="formDisabled"
+        :disabled="isLoading"
         data-cy="clear"
       >{{ $t("actions.clear") }}</v-btn>
       <v-btn
-        color="primary"
-        outline
-        v-on:click="add_another"
-        v-if="editMode === false"
-        :loading="addMoreLoading"
-        :disabled="formDisabled"
-        data-cy="add-another"
-      >{{ $t("actions.add-another") }}</v-btn>
-      <v-btn
-        color="primary"
-        raised
-        v-on:click="save"
-        :loading="saveLoading"
-        :disabled="formDisabled"
-        data-cy="save"
-      >{{ $t("actions.save") }}</v-btn>
+        color="secondary"
+        flat
+        v-on:click="signup"
+        :disabled="isLoading"
+        data-cy="signup"
+      >{{ $t("actions.signup") }}</v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -134,39 +115,16 @@
 import { mapGetters } from "vuex";
 import { isEmpty, find } from "lodash";
 import AttributeForm from "./input-fields/AttributeForm.vue";
+import store from "../store.js";
 
 export default {
-  name: "PersonForm",
+  name: "NewAccountForm",
   components: { AttributeForm },
-  props: {
-    editMode: {
-      type: Boolean,
-      required: true
-    },
-    initialData: {
-      type: Object,
-      required: true
-    },
-    addMoreLoading: {
-      type: Boolean,
-      required: true
-    },
-    saveLoading: {
-      type: Boolean,
-      required: true
-    },
-    attributes: {
-      type: Array,
-      required: true
-    },
-    translations: {
-      type: Object,
-      required: true
-    }
-  },
+  props: {},
   data: function() {
     return {
       showBirthdayPicker: false,
+      isLoading: false,
 
       person: {
         id: 0,
@@ -183,7 +141,9 @@ export default {
       },
 
       attributeFields: [],
-      attributeFormData: {}
+      formData: {},
+      translations: {},
+      attributes: []
     };
   },
   computed: {
@@ -192,67 +152,26 @@ export default {
       return Object.keys(this.person);
     },
 
-    title() {
-      return this.editMode
-        ? this.$t("person.actions.edit")
-        : this.$t("person.actions.new");
-    },
-
     ...mapGetters(["currentLanguageCode"]),
-
-    formDisabled() {
-      return this.saveLoading || this.addMoreLoading;
-    },
-
-    hasAttributes() {
-      return this.$props.attributes.length !== 0;
-    }
   },
-
-  watch: {
-    // Make sure data stays in sync with any changes to `initialData` from parent.
-    initialData(personProp) {
-      if (isEmpty(personProp)) {
-        this.clear();
-      } else {
-        this.person = personProp;
-      }
-    }
-  },
-
   methods: {
-    // Abandon ship.
-    cancel() {
-      this.clear();
-      this.$emit("cancel");
-    },
-
     // Clear the form and the validators.
     clear() {
       for (let key of this.personKeys) {
         this.person[key] = "";
       }
-      this.$refs.attributeForm.clear()
       this.$validator.reset();
     },
 
     // Trigger a save event, returning the update `Person`.
-    save() {
-      console.log("SAVING")
+    signup() {
+      this.isLoading = true;
       this.$validator.validateAll().then(() => {
         if (!this.errors.any()) {
-          this.$set(this.person, 'attributesInfo', this.attributeFormData);
-          console.log(this.person.attributesInfo)
-          console.log(this.attributeFormData)
+          this.person.attributesInfo = this.collectAttributes();
           this.$emit("save", this.person);
-        }
-      });
-    },
-
-    add_another() {
-      this.$validator.validateAll().then(() => {
-        if (!this.errors.any()) {
-          this.$emit("add-another", this.person);
+        } else {
+          this.isLoading = false;
         }
       });
     },

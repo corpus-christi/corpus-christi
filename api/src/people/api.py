@@ -4,6 +4,7 @@ from flask import request
 from flask.json import jsonify
 from flask_jwt_extended import jwt_required, get_raw_jwt, jwt_optional
 from marshmallow import ValidationError
+from ..auth.utils import jwt_not_required
 
 from . import people
 from .models import Person, Account, AccountSchema, Role, PersonSchema, RoleSchema, Manager, ManagerSchema
@@ -19,7 +20,6 @@ enumerated_value_schema = EnumeratedValueSchema(exclude=['active'])
 
 
 @people.route('/persons/fields', methods=['GET'])
-@jwt_required
 def read_person_fields():
     response = {'person': [], 'person_attributes': []}
 

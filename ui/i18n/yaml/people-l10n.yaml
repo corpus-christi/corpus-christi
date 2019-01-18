@@ -16,6 +16,9 @@ account:
   repeat-password:
     en: Repeat Password
     es: Repite la contraseña
+  no-account:
+    en: Don't have an account?
+    es: ¿No tienes una cuenta?
 
 person:
   name:

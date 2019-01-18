@@ -26,6 +26,12 @@ const router = new VueRouter({
       component: () => import("@/pages/Login")
     },
     {
+      name: "signup",
+      path: "/signup",
+      meta: { layout: "arco" },
+      component: () => import("@/pages/Signup")
+    },
+    {
       name: "admin",
       path: "/admin",
       meta: { authRequired: true },
