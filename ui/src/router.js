@@ -17,7 +17,7 @@ const router = new VueRouter({
       name: "public",
       path: "/public",
       meta: { layout: "arco" },
-      component: () => import("@/pages/Public"),
+      component: () => import("@/pages/Public")
     },
     {
       name: "public-events",
@@ -61,6 +61,12 @@ const router = new VueRouter({
           path: "all",
           meta: { authRequired: true },
           component: () => import("@/components/events/EventTable")
+        },
+        {
+          name: "dashboard",
+          path: "dashboard",
+          meta: { authRequired: true },
+          component: () => import("@/components/events/Dashboard")
         },
         {
           name: "event",
