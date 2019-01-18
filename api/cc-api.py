@@ -15,15 +15,15 @@ from src import db
 from src.i18n.models import Language, I18NLocale
 from src.people.models import Person, Account, Role
 from src.people.test_people import create_multiple_people, create_multiple_accounts
+from src.images.create_image_data import create_images_test_data
 from src.events.models import Event
 from src.events.create_event_data import create_events_test_data
 from src.places.test_places import create_multiple_areas, create_multiple_addresses, create_multiple_locations
 from src.places.models import Country
 from src.courses.models import Course, Prerequisite
-from src.courses.test_courses import create_multiple_courses,\
-    create_multiple_course_offerings, create_multiple_prerequisites,\
+from src.courses.test_courses import create_multiple_courses, create_multiple_course_offerings,\
     create_multiple_diplomas, create_multiple_students, create_class_meetings,\
-    create_diploma_awards, create_class_attendance
+    create_diploma_awards, create_class_attendance, create_multiple_prerequisites
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 
@@ -72,7 +72,10 @@ def load_all():
     create_multiple_areas(db.session, 5)
     create_multiple_addresses(db.session, 10)
     create_multiple_locations(db.session, 20)
+
     create_events_test_data(db.session)
+
+    create_images_test_data(db.session)
 
     create_multiple_people(db.session, 17)
     create_multiple_accounts(db.session, 0.25)
@@ -83,7 +86,7 @@ def load_all():
     create_multiple_students(db.session, 30)
     create_class_meetings(db.session, 30)
     # create_diploma_awards(db.session, 30)
-    create_class_attendance(db.session, 30)
+    # create_class_attendance(db.session, 30)
 
 
 @data_cli.command('test', help='Load everything')

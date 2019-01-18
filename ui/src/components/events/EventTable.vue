@@ -20,23 +20,56 @@
         :key="0"
         style="padding-top:12px"
       >
-      <v-toolbar class="pa-1">
-      <v-layout align-center justify-space-between fill-height>
-        <v-flex md2>
-          <v-toolbar-title>{{ $t("events.header") }}</v-toolbar-title>
+
+    <v-layout justify-center>
+      <v-flex shrink class="mb-2">
+        <h1 class="hidden-sm-and-up">{{ $t("events.header") }}</h1>
+      </v-flex>
+    </v-layout>
+    <v-toolbar class="pa-1" extension-height="64px">
+      <v-layout justify-space-between>
+        <v-flex shrink align-self-center>
+          <v-toolbar-title class="hidden-xs-only">{{
+            $t("events.header")
+          }}</v-toolbar-title>
         </v-flex>
-        <v-flex md2>
-          <v-text-field
-            v-model="search"
-            append-icon="search"
-            v-bind:label="$t('actions.search')"
-            single-line
-            hide-details
-            data-cy="form-search"
-          ></v-text-field>
+        <v-spacer></v-spacer>
+        <v-text-field
+          class="max-width-250 mr-2"
+          v-model="search"
+          append-icon="search"
+          v-bind:label="$t('actions.search')"
+          single-line
+          hide-details
+          data-cy="form-search"
+        ></v-text-field>
+        <v-flex shrink justify-self-end>
+          <v-btn
+            class="hidden-xs-only mr-2"
+            color="primary"
+            raised
+            v-on:click.stop="newEvent"
+            data-cy="add-event"
+          >
+            <v-icon dark>add</v-icon>
+            <span class="mr-1"> {{ $t("actions.add-event") }} </span>
+          </v-btn>
+          <v-btn
+            class="hidden-sm-and-up"
+            color="primary"
+            raised
+            fab
+            v-on:click.stop="newEvent"
+            data-cy="add-event-small"
+          >
+            <v-icon dark>add</v-icon>
+          </v-btn>
         </v-flex>
-        <v-flex md3>
+      </v-layout>
+      <v-layout row slot="extension" justify-space-between align-center>
+        <v-flex>
           <v-select
+            class="max-width-250 mr-2"
             hide-details
             solo
             single-line
@@ -46,7 +79,7 @@
           >
           </v-select>
         </v-flex>
-        <v-flex>
+        <v-flex shrink>
           <v-switch
             hide-details
             v-model="viewPast"
@@ -55,20 +88,8 @@
           >
           </v-switch>
         </v-flex>
-        <v-flex shrink justify-self-end>
-          <v-btn
-            color="primary"
-            raised
-            v-on:click.stop="newEvent"
-            data-cy="add-event"
-          >
-            <v-icon dark left>add</v-icon>
-            {{ $t("actions.add-event") }}
-          </v-btn>
-        </v-flex>
       </v-layout>
     </v-toolbar>
-
     <v-data-table
       :headers="headers"
       :rows-per-page-items="rowsPerPageItem"
@@ -297,7 +318,7 @@ export default {
         { text: this.$t("events.title"), value: "title" },
         { text: this.$t("events.start-time"), value: "start" },
         { text: this.$t("events.event-location"), value: "location_name" },
-        { text: this.$t("events.actions"), sortable: false }
+        { text: this.$t("actions.header"), sortable: false }
       ];
     },
 
@@ -312,16 +333,15 @@ export default {
     visibleEvents() {
       let list = this.events;
       if (!this.viewPast) {
-        list = this.events.filter(ev => new Date(ev.end) >= new Date());
+        let today = new Date();
+        list = this.events.filter(ev => new Date(ev.end) >= today);
       }
-
       if (this.viewStatus == "viewActive") {
-        return list.filter(ev => ev.active);
+        list = list.filter(ev => ev.active);
       } else if (this.viewStatus == "viewArchived") {
-        return list.filter(ev => !ev.active);
-      } else {
-        return list;
+        list = list.filter(ev => !ev.active);
       }
+      return list;
     },
 
     ...mapGetters(["currentLanguageCode"])
@@ -349,13 +369,13 @@ export default {
     duplicate(event) {
       //TODO maintain duration for date select
       const copyEvent = JSON.parse(JSON.stringify(event));
-      copyEvent.start = new Date(copyEvent.start)
-      copyEvent.end = new Date(copyEvent.end)
+      copyEvent.start = new Date(copyEvent.start);
+      copyEvent.end = new Date(copyEvent.end);
       const startDate = copyEvent.start.toDateString();
       const endDate = copyEvent.end.toDateString();
       if (startDate != endDate) {
         const diff = copyEvent.end - copyEvent.start;
-        copyEvent.dayDuration = Math.ceil(diff/86400000);
+        copyEvent.dayDuration = Math.ceil(diff / 86400000);
       }
       copyEvent.start = new Date(copyEvent.start).getTime();
       copyEvent.end = new Date(copyEvent.end).getTime();
@@ -529,5 +549,9 @@ export default {
 <style scoped>
 .hover-hand {
   cursor: pointer;
+}
+
+.max-width-250 {
+  max-width: 250px;
 }
 </style>

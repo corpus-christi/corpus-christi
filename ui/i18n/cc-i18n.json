@@ -115,24 +115,6 @@
       },
       "start-date": "Start Date",
       "start-time": "Start Time",
-      "teams": {
-        "confirm-archive": "Are you sure you want to archive this team?",
-        "confirm-remove-from-event": "Are you sure you want to remove this team from this event?",
-        "create-team": "Create Team",
-        "description": "Description",
-        "edit-team": "Edit Team",
-        "error-adding-team": "Error while adding team",
-        "error-editing-team": "Error while editing team",
-        "error-removing-team": "Error while removing team",
-        "error-team-assigned": "That team is assigned to a conflicting event.",
-        "error-unarchiving-team": "Error while unarchiving team",
-        "new": "Add Team",
-        "team-added": "Team added",
-        "team-edited": "Team edited",
-        "team-on-event": "That team is already assigned to this event.",
-        "team-removed": "Team removed",
-        "title": "Teams"
-      },
       "title": "Event Title"
     },
     "groups": {
@@ -176,7 +158,8 @@
     },
     "public": {
       "events": {
-        "join": "Join Event"
+        "join": "Join Event",
+        "view-all": "View All Events"
       },
       "headers": {
         "home-church": "Find a Home Church",
@@ -184,6 +167,24 @@
         "upcoming-events": "Upcoming Events"
       },
       "title": "Public"
+    },
+    "teams": {
+      "confirm-archive": "Are you sure you want to archive this team?",
+      "confirm-remove-from-event": "Are you sure you want to remove this team from this event?",
+      "create-team": "Create Team",
+      "description": "Description",
+      "edit-team": "Edit Team",
+      "error-adding-team": "Error while adding team",
+      "error-editing-team": "Error while editing team",
+      "error-removing-team": "Error while removing team",
+      "error-team-assigned": "That team is assigned to a conflicting event.",
+      "error-unarchiving-team": "Error while unarchiving team",
+      "new": "Add Team",
+      "team-added": "Team added",
+      "team-edited": "Team edited",
+      "team-on-event": "That team is already assigned to this event.",
+      "team-removed": "Team removed",
+      "title": "Teams"
     },
     "validation": {
       "attributes": {
@@ -193,6 +194,7 @@
         "lastName": "last name",
         "location": "location",
         "startDate": "start date",
+        "team-description": "team description",
         "title": "title"
       },
       "messages": {
@@ -250,7 +252,7 @@
       },
       "view-active": "Ver Activo",
       "view-all": "Ver Todo",
-      "view-archived": "Ver Archivo",
+      "view-archived": "Ver Archivado",
       "view-inactive": "Ver Inactivo",
       "view-past": "Ver Pasados"
     },
@@ -318,24 +320,6 @@
       },
       "start-date": "Fecha de Inicio",
       "start-time": "Hora de Inicio",
-      "teams": {
-        "confirm-archive": "\u00bfSeguro que quieres archivar este equipo?",
-        "confirm-remove-from-event": "\u00bfEst\u00e1s seguro de que quieres eliminar a este equipo de este evento?",
-        "create-team": "Crear Equipo",
-        "description": "Descripci\u00f3n",
-        "edit-team": "Editar Equipo",
-        "error-adding-team": "Error al agregar equipo",
-        "error-editing-team": "Error al editar equipo",
-        "error-removing-team": "Error al eliminadar este equipo",
-        "error-team-assigned": "Ese equipo est\u00e1 asignado a un evento conflictivo.",
-        "error-unarchiving-team": "Error al desarchivar equipo",
-        "new": "A\u00f1adir Equipo",
-        "team-added": "Equipo agregado",
-        "team-edited": "Equipo editado",
-        "team-on-event": "Ese equipo ya est\u00e1 asignado a este evento.",
-        "team-removed": "Equipo eliminado",
-        "title": "Equipos"
-      },
       "title": "T\u00edtulo del Evento"
     },
     "groups": {
@@ -379,7 +363,8 @@
     },
     "public": {
       "events": {
-        "join": "Juntarse Evento"
+        "join": "Juntarse Evento",
+        "view-all": "Ver Todos Eventos"
       },
       "headers": {
         "home-church": "Encontrar una Iglesia Hogar",
@@ -387,6 +372,24 @@
         "upcoming-events": "Pr\u00f3ximos Eventos"
       },
       "title": "P\u00fablico"
+    },
+    "teams": {
+      "confirm-archive": "\u00bfSeguro que quieres archivar este equipo?",
+      "confirm-remove-from-event": "\u00bfEst\u00e1s seguro de que quieres eliminar a este equipo de este evento?",
+      "create-team": "Crear Equipo",
+      "description": "Descripci\u00f3n",
+      "edit-team": "Editar Equipo",
+      "error-adding-team": "Error al agregar equipo",
+      "error-editing-team": "Error al editar equipo",
+      "error-removing-team": "Error al eliminadar este equipo",
+      "error-team-assigned": "Ese equipo est\u00e1 asignado a un evento conflictivo.",
+      "error-unarchiving-team": "Error al desarchivar equipo",
+      "new": "A\u00f1adir Equipo",
+      "team-added": "Equipo agregado",
+      "team-edited": "Equipo editado",
+      "team-on-event": "Ese equipo ya est\u00e1 asignado a este evento.",
+      "team-removed": "Equipo eliminado",
+      "title": "Equipos"
     },
     "validation": {
       "attributes": {
@@ -396,6 +399,7 @@
         "lastName": "appellido",
         "location": "ubicaci\u00f3n",
         "startDate": "fecha de inicio",
+        "team-description": "descripci\u00f3n del equipo",
         "title": "t\u00edtulo"
       },
       "messages": {

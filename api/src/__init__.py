@@ -61,5 +61,7 @@ def create_app(config_name):
     from .places import places as places_blueprint
     app.register_blueprint(places_blueprint, url_prefix='/api/v1/places')
 
+    from .images import images as images_blueprint
+    app.register_blueprint(images_blueprint, url_prefix='/api/v1/images')
 
     return app

@@ -7,30 +7,30 @@
       ><v-icon>arrow_back</v-icon>Back</v-btn
     >
     <v-layout class="vertical-spacer">
-    <v-flex xs12 sm12>
-      <v-card>
-        <template v-if="pageLoaded">
-          <v-container fill-height fluid>
-            <v-flex xs9 sm9 align-end flexbox>
-              <span class="headline">{{ team.description }}</span>
-            </v-flex>
-            <v-layout xs3 sm3 align-end justify-end>
-              <v-btn flat color="primary" v-on:click="editTeam(team)">
-                <v-icon>edit</v-icon>&nbsp;{{ $t("actions.edit") }}
-              </v-btn>
-            </v-layout>
-          </v-container>
-        </template>
-        <v-layout v-else justify-center height="500px">
-          <div class="ma-5 pa-5">
-            <v-progress-circular
-              indeterminate
-              color="primary"
-            ></v-progress-circular>
-          </div>
-        </v-layout>
-      </v-card>
-    </v-flex>
+      <v-flex xs12 sm12>
+        <v-card>
+          <template v-if="pageLoaded">
+            <v-container fill-height fluid>
+              <v-flex xs9 sm9 align-end flexbox>
+                <span class="headline">{{ team.description }}</span>
+              </v-flex>
+              <v-layout xs3 sm3 align-end justify-end>
+                <v-btn flat color="primary" v-on:click="editTeam(team)">
+                  <v-icon>edit</v-icon>&nbsp;{{ $t("actions.edit") }}
+                </v-btn>
+              </v-layout>
+            </v-container>
+          </template>
+          <v-layout v-else justify-center height="500px">
+            <div class="ma-5 pa-5">
+              <v-progress-circular
+                indeterminate
+                color="primary"
+              ></v-progress-circular>
+            </div>
+          </v-layout>
+        </v-card>
+      </v-flex>
     </v-layout>
 
     <v-toolbar>
@@ -77,6 +77,7 @@
                 color="primary"
                 slot="activator"
                 v-on:click="confirmArchive(props.item)"
+                data-cy="archive"
               >
                 <v-icon small>archive</v-icon>
               </v-btn>
@@ -93,6 +94,7 @@
                 slot="activator"
                 v-on:click="unarchive(props.item)"
                 :loading="props.item.unarchiving"
+                data-cy="unarchive"
               >
                 <v-icon small>undo</v-icon>
               </v-btn>
@@ -125,7 +127,7 @@
             color="primary"
             raised
             :loading="archiveDialog.loading"
-            data-cy=""
+            data-cy="confirm-archive"
             >{{ $t("actions.confirm") }}</v-btn
           >
         </v-card-actions>
@@ -166,7 +168,7 @@
             v-on:click="cancelNewParticipantDialog"
             color="secondary"
             flat
-            data-cy=""
+            data-cy="cancel-participant"
             >{{ $t("actions.cancel") }}</v-btn
           >
           <v-spacer></v-spacer>
@@ -176,7 +178,7 @@
             color="primary"
             raised
             :loading="addMemberDialog.loading"
-            data-cy=""
+            data-cy="confirm-participant"
             >Add Participants</v-btn
           >
         </v-card-actions>
@@ -190,7 +192,7 @@ import TeamForm from "./TeamForm";
 import EntitySearch from "../EntitySearch";
 export default {
   name: "Team",
-    components: { "team-form": TeamForm, "entity-search": EntitySearch },
+  components: { "team-form": TeamForm, "entity-search": EntitySearch },
   data() {
     return {
       rowsPerPageItem: [
@@ -227,13 +229,13 @@ export default {
       snackbar: {
         show: false,
         text: ""
-      },
+      }
     };
   },
 
   mounted() {
     this.pageLoaded = false;
-    this.reloadTeam()
+    this.reloadTeam();
   },
 
   computed: {
@@ -253,13 +255,12 @@ export default {
   },
 
   methods: {
-
     reloadTeam() {
       const id = this.$route.params.team;
       this.$http.get(`/api/v1/teams/${id}?include_members=1`).then(resp => {
         this.team = resp.data;
-        console.log(this.team)
-        this.members = resp.data.members
+        console.log(this.team);
+        this.members = resp.data.members;
         this.pageLoaded = true;
       });
     },
@@ -296,11 +297,12 @@ export default {
           this.archiveDialog.show = false;
           this.showSnackbar(this.$t("assets.error-archiving-asset"));
         });
-
     },
 
     unarchive(member) {
-      const idx = this.members.findIndex(as => as.member_id === member.member_id);
+      const idx = this.members.findIndex(
+        as => as.member_id === member.member_id
+      );
       const copyMember = JSON.parse(JSON.stringify(member));
       member.unarchiving = true;
       copyMember.active = true;
@@ -320,7 +322,6 @@ export default {
           this.showSnackbar(this.$t("assets.error-unarchiving-asset"));
         });
     },
-
 
     activateNewParticipantDialog() {
       this.addMemberDialog.show = true;
@@ -351,7 +352,7 @@ export default {
           this.addMemberDialog.loading = false;
           this.addMemberDialog.show = false;
           this.addMemberDialog.newParticipants = [];
-          this.reloadTeam()
+          this.reloadTeam();
         })
         .catch(err => {
           console.log(err);
@@ -391,30 +392,29 @@ export default {
         })
         .then(resp => {
           console.log("EDITED", resp);
-          this.team = resp.data
+          this.team = resp.data;
           this.teamDialog.show = false;
           this.teamDialog.saveLoading = false;
-          this.showSnackbar(this.$t("events.teams.team-edited"));
+          this.showSnackbar(this.$t("teams.team-edited"));
         })
         .catch(err => {
           console.error("PUT FALURE", err.response);
-          console.log(err)
+          console.log(err);
           this.teamDialog.saveLoading = false;
-          this.showSnackbar(this.$t("events.teams.error-editing-team"));
+          this.showSnackbar(this.$t("teams.error-editing-team"));
         });
     },
 
     showSnackbar(message) {
       this.snackbar.text = message;
       this.snackbar.show = true;
-    },
-
+    }
   }
 };
 </script>
 
 <style scoped>
 .vertical-spacer {
-  margin-bottom: 20px
+  margin-bottom: 20px;
 }
 </style>

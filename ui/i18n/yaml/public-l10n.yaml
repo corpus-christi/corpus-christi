@@ -16,3 +16,6 @@ public:
     join:
       en: Join Event
       es: Juntarse Evento
+    view-all:
+      en: View All Events
+      es: Ver Todos Eventos

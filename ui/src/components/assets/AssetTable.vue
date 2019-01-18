@@ -49,10 +49,8 @@
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
-        <td class="hover-hand">{{ props.item.description }}</td>
-        <td class="hover-hand">
-          {{ getDisplayLocation(props.item.location) }}
-        </td>
+        <td>{{ props.item.description }}</td>
+        <td>{{ getDisplayLocation(props.item.location) }}</td>
         <td>
           <template v-if="props.item.active">
             <v-tooltip bottom v-if="props.item.active">
@@ -63,6 +61,7 @@
                 color="primary"
                 slot="activator"
                 v-on:click="editAsset(props.item)"
+                data-cy="edit-asset"
               >
                 <v-icon small>edit</v-icon>
               </v-btn>
@@ -89,6 +88,7 @@
                 color="primary"
                 slot="activator"
                 v-on:click="confirmArchive(props.item)"
+                data-cy="archive"
               >
                 <v-icon small>archive</v-icon>
               </v-btn>
@@ -105,6 +105,7 @@
                 slot="activator"
                 v-on:click="unarchive(props.item)"
                 :loading="props.item.unarchiving"
+                data-cy="unarchive"
               >
                 <v-icon small>undo</v-icon>
               </v-btn>
@@ -140,16 +141,20 @@
       <v-card>
         <v-card-text>{{ $t("assets.confirm-archive") }}</v-card-text>
         <v-card-actions>
-          <v-btn v-on:click="cancelArchive" color="secondary" flat data-cy="">{{
-            $t("actions.cancel")
-          }}</v-btn>
+          <v-btn
+            v-on:click="cancelArchive"
+            color="secondary"
+            flat
+            data-cy="cancel-archive"
+            >{{ $t("actions.cancel") }}</v-btn
+          >
           <v-spacer></v-spacer>
           <v-btn
             v-on:click="archiveAsset"
             color="primary"
             raised
             :loading="archiveDialog.loading"
-            data-cy=""
+            data-cy="confirm-archive"
             >{{ $t("actions.confirm") }}</v-btn
           >
         </v-card-actions>
@@ -167,7 +172,7 @@ export default {
   components: { "asset-form": AssetForm },
   mounted() {
     this.tableLoading = true;
-    this.$http.get("/api/v1/assets").then(resp => {
+    this.$http.get("/api/v1/assets/?include_location=1").then(resp => {
       this.assets = resp.data;
       this.tableLoading = false;
       console.log(this.assets);
@@ -342,9 +347,10 @@ export default {
       if (this.assetDialog.editMode) {
         const assetId = asset.id;
         const idx = this.assets.findIndex(as => as.id === asset.id);
-        delete asset.id;
+        delete newAsset.id;
+        delete newAsset.event_count;
         this.$http
-          .put(`/api/v1/assets/${assetId}`, newAsset)
+          .patch(`/api/v1/assets/${assetId}`, newAsset)
           .then(resp => {
             console.log("EDITED", resp);
             Object.assign(this.assets[idx], resp.data);
@@ -358,8 +364,11 @@ export default {
             this.showSnackbar(this.$t("assets.error-editing-asset"));
           });
       } else {
+        console.log(newAsset);
+        delete newAsset.event_count;
+        newAsset.active = true;
         this.$http
-          .post("/api/v1/assets", newAsset)
+          .post("/api/v1/assets/", newAsset)
           .then(resp => {
             console.log("ADDED", resp);
             this.assets.push(resp.data);
@@ -426,8 +435,4 @@ export default {
 };
 </script>
 
-<style scoped>
-.hover-hand {
-  cursor: pointer;
-}
-</style>
+<style scoped></style>

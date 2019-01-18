@@ -12,6 +12,7 @@ from .. import db
 # ---- Person
 
 person_schema = PersonSchema()
+person_schema_no_id = PersonSchema(exclude=['accountInfo.id'])
 
 
 @people.route('/persons/fields', methods=['GET'])
@@ -51,6 +52,8 @@ def create_person():
 @jwt_required
 def read_all_persons():
     result = db.session.query(Person).all()
+    for r in result:
+        r.accountInfo = r.account
     return jsonify(person_schema.dump(result, many=True))
 
 
@@ -58,6 +61,7 @@ def read_all_persons():
 @jwt_required
 def read_one_person(person_id):
     result = db.session.query(Person).filter_by(id=person_id).first()
+    result.accountInfo = result.account
     return jsonify(person_schema.dump(result))
 
 
@@ -65,7 +69,10 @@ def read_one_person(person_id):
 @jwt_required
 def update_person(person_id):
     try:
-        valid_person = person_schema.load(request.json)
+        print(request.json)
+        del request.json['accountInfo'] 
+        print(request.json)
+        valid_person = person_schema_no_id.load(request.json)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
@@ -76,7 +83,7 @@ def update_person(person_id):
 
     db.session.commit()
 
-    return jsonify(person_schema.dump(person))
+    return jsonify(person_schema_no_id.dump(person))
 
 
 @people.route('/persons/deactivate/<person_id>', methods=['PUT'])
@@ -156,6 +163,13 @@ def read_one_account_by_username(username):
 def read_person_account(person_id):
     account = db.session.query(Account).filter_by(person_id=person_id).first()
     return jsonify(account_schema.dump(account))
+
+
+@people.route('/role/<role_id>/accounts')
+@jwt_required
+def get_accounts_by_role(role_id):
+    role = db.session.query(Role).filter_by(id=role_id).first()
+    return jsonify(account_schema.dump(role.accounts, many=True))
 
 
 @people.route('/accounts/<account_id>', methods=['PATCH'])
@@ -312,4 +326,3 @@ def remove_role_from_account(account_id, role_id):
 
     # return jsonify(user_roles)
     return jsonify(role_to_remove)
-

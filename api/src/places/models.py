@@ -89,7 +89,8 @@ class Location(Base):
         attributes = [f"id='{self.id}'"]
         for attr in ['description', "address_id"]:
             if hasattr(self, attr):
-                attributes.append(f"{attr}={self.attr}")
+                value = getattr(self, attr)
+                attributes.append(f"{attr}={value}")
         as_string = ",".join(attributes)
         return f"<Location({as_string})>"
 
@@ -118,7 +119,8 @@ class Address(Base):
         attributes = [f"id='{self.id}'"]
         for attr in ['name', 'address', 'city', 'area_id', 'country_code', 'latitude', 'longitude']:
             if hasattr(self, attr):
-                attributes.append(f"{attr}={self.attr}")
+                value = getattr(self, attr)
+                attributes.append(f"{attr}={value}")
         as_string = ",".join(attributes)
         return f"<Address({as_string})>"
 
