@@ -409,7 +409,6 @@ def test_update_meeting(auth_client):
     assert resp.json['group_id'] == payload['group_id']
     assert parser.parse(resp.json['when']).replace(tzinfo=None) == parser.parse(payload['when']).replace(tzinfo=None)
 
-
 @pytest.mark.smoke
 def test_invalid_update_meeting(auth_client):
     # GIVEN a database with a number of groups
@@ -436,6 +435,83 @@ def test_invalid_update_meeting(auth_client):
 #     # WHEN
 #     # THEN
 #     assert True == False
+
+def test_delete_meeting(auth_client):
+    # GIVEN a database with meetings and attendances
+    count = random.randint(3, 11)
+    generate_managers(auth_client)
+    create_multiple_groups(auth_client.sqla, count)
+    create_multiple_meetings(auth_client.sqla, count)
+    create_attendance(auth_client.sqla, 0.75)
+    # WHEN we delete a meeting
+    meeting_id = auth_client.sqla.query(Meeting.id).first()[0]
+    resp = auth_client.delete(url_for('groups.delete_meeting', meeting_id=meeting_id))
+    # THEN we assume the correct status code
+    assert resp.status_code == 200
+    # THEN we should not have that meeting in the database
+    assert auth_client.sqla.query(Meeting).filter_by(id=meeting_id).count() == 0
+    # THEN we should not have any attendances related to that meeting in the attendance table
+    assert auth_client.sqla.query(Attendance).filter_by(meeting_id=meeting_id).count() == 0
+
+    # WHEN we delete that meeting again
+    resp = auth_client.delete(url_for('groups.delete_meeting', meeting_id=meeting_id))
+    # THEN we should get an error code
+    assert resp.status_code == 404
+
+def test_activate_meeting(auth_client):
+    # GIVEN a database with inactive meetings and attendances
+    count = random.randint(3, 11)
+    generate_managers(auth_client)
+    create_multiple_groups(auth_client.sqla, count)
+    inactive_meetings = []
+    for _ in range(count):
+        inactive_meeting = meeting_object_factory(auth_client.sqla)
+        inactive_meeting["active"] = False
+        valid_meeting = MeetingSchema().load(inactive_meeting)
+        inactive_meetings.append(Meeting(**valid_meeting))
+    auth_client.sqla.add_all(inactive_meetings)
+    auth_client.sqla.commit()
+
+    # WHEN we active one meeting
+    meeting = auth_client.sqla.query(Meeting).filter_by(active=False).first()
+    resp = auth_client.put(url_for('groups.activate_meeting', meeting_id=meeting.id))
+    # THEN we expect the right status code
+    assert resp.status_code == 200
+    # THEN we expect the meeting to be activated
+    assert auth_client.sqla.query(Meeting).filter_by(id=meeting.id).first().active == True
+    
+    # WHEN we activate a non-existant meeting
+    resp = auth_client.put(url_for('groups.activate_meeting', meeting_id=-1))
+    # THEN we expect an error code
+    assert resp.status_code == 404
+    
+def test_deactivate_meeting(auth_client):
+    # GIVEN a database with active meetings and attendances
+    count = random.randint(3, 11)
+    generate_managers(auth_client)
+    create_multiple_groups(auth_client.sqla, count)
+    active_meetings = []
+    for _ in range(count):
+        active_meeting = meeting_object_factory(auth_client.sqla)
+        active_meeting["active"] = True
+        valid_meeting = MeetingSchema().load(active_meeting)
+        active_meetings.append(Meeting(**valid_meeting))
+    auth_client.sqla.add_all(active_meetings)
+    auth_client.sqla.commit()
+
+    # WHEN we deactivate one meeting
+    meeting = auth_client.sqla.query(Meeting).filter_by(active=True).first()
+    resp = auth_client.put(url_for('groups.deactivate_meeting', meeting_id=meeting.id))
+    # THEN we expect the right status code
+    assert resp.status_code == 200
+    # THEN we expect the meeting to be deactivated
+    assert auth_client.sqla.query(Meeting).filter_by(id=meeting.id).first().active == False
+    
+    # WHEN we deactivate a non-existant meeting
+    resp = auth_client.put(url_for('groups.deactivate_meeting', meeting_id=-1))
+    # THEN we expect an error code
+    assert resp.status_code == 404
+
 
 
 # ---- Member
@@ -532,7 +608,7 @@ def test_read_one_member(auth_client):
 
 # Waiting for API
 # @pytest.mark.xfail()
-# def test_replace_member(auth_client, db):
+# def test_replace_member(auth_client):
 #     # GIVEN
 #     # WHEN
 #     # THEN
