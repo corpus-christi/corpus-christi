@@ -688,12 +688,66 @@ def test_read_one_role_no_exist(auth_client):
 
 @pytest.mark.smoke
 def test_update_role(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
+    # GIVEN a set of roles
+    count = random.randint(3, 6)
+    create_roles(auth_client.sqla, count)
 
-    # TODO FINISH
-    assert False
+    roles = auth_client.sqla.query(Role).all()
+
+    # GIVEN modification data
+    for role in roles:
+        new_role = role_object_factory(fake.job())
+        mod = {}
+        flips = (flip(), flip())
+        if flips[0]:
+            mod['nameI18n'] = new_role['nameI18n']
+        if flips[1]:
+            mod['active'] = new_role['active']
+       
+        # WHEN roles are updated with modification data
+        resp = auth_client.patch(url_for('people.update_role', role_id = role.id), json =mod)
+
+        # THEN expect request to run OK
+        assert resp.status_code == 200
+
+        # THEN expect row to be updated
+        assert resp.json['id'] == role.id
+        if flips[0] and new_role['nameI18n'] != role.name_i18n:
+            assert resp.json['nameI18n'] != role.name_i18n
+        else:
+            assert resp.json['nameI18n'] == role.name_i18n
+        if flips[1] and new_role['active'] != role.active:
+            assert resp.json['active'] != role.active
+        else:
+            assert resp.json['active'] == role.active
+
+
+@pytest.mark.smoke
+def test_update_role_invalid(auth_client):
+    # GIVEN a set of roles
+    count = random.randint(3, 6)
+    create_roles(auth_client.sqla, count)
+
+    roles = auth_client.sqla.query(Role).all()
+
+    for role in roles:
+        # WHEN roles are updated with invalid modification data
+        resp = auth_client.patch(url_for('people.update_role', role_id = role.id), json ={fake.word(): fake.word()})
+
+        # THEN expect request to be unprocessable
+        assert resp.status_code == 422
+
+
+@pytest.mark.smoke
+def test_update_role_no_exist(auth_client):
+    # GIVEN an empty database
+
+    # WHEN a role is requested to be updated
+    resp = auth_client.patch(url_for('people.update_role', role_id = random.randint(1, 8)), json = {'active': False})
+
+    # THEN expect requested role to not be found
+    assert resp.status_code == 404
+
 
 @pytest.mark.smoke
 def test_activate_role(auth_client):
