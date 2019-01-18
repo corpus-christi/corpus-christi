@@ -8,6 +8,7 @@ from src.db import Base
 from src.shared.models import StringTypes
 
 
+
 # ---- Prerequisite
 
 Prerequisite = Table('courses_prerequisite', Base.metadata,
@@ -45,11 +46,6 @@ class Diploma_Awarded(Base):
      def __repr__(self):
          return f"<Diploma_Awarded(student_id={self.person_id},diploma_id={self.diploma_id})>"
 
-# Diploma_Awarded = Table('courses_diploma_awarded', Base.metadata,
-#      Column('student_id', Integer, ForeignKey('courses_students.id'), primary_key=True),
-#      Column('diploma_id', Integer, ForeignKey('courses_diploma.id'), primary_key=True),
-#      Column('when', Date, nullable=False, default=date.today()))
-
 
 class Diploma_AwardedSchema(Schema):
      person_id = fields.Integer(data_key='personId', required=True, validate=Range(min=1))
@@ -66,6 +62,20 @@ Class_Attendance = Table('courses_class_attendance', Base.metadata,
 class Class_AttendanceSchema(Schema):
     class_id = fields.Integer(dump_only=True, data_key='classId', required=True)
     student_id = fields.Integer(dump_only=True, data_key='studentId', required=True)
+
+# --- Course_Completion
+
+class Course_Completion(Base):
+     __tablename__ = 'courses_course_completion'
+     course_id = Column(Integer, ForeignKey('courses_course.id'), primary_key=True)
+     person_id = Column(Integer, ForeignKey('people_person.id'), primary_key=True)
+
+     people = relationship('Person', backref='completion', lazy=True)
+     courses = relationship('Course', backref='completion', lazy=True)
+
+class Course_Completion(Schema):
+     course_id = fields.Integer(dump_only=True, data_key='courseId', required=True)
+     person_id = fields.Integer(dump_only=True, data_key='personId', required=True)
 
 # ---- Course
 
@@ -86,6 +96,7 @@ class Course(Base):
                 foreign_keys=[Prerequisite.c.course_id, Prerequisite.c.prereq_id],
                 back_populates='depends', lazy=True)
      diplomas = relationship('Diploma', secondary=Diploma_Course, back_populates='courses', lazy=True)
+
 
      def __repr__(self):
          return f"<Course(id={self.id})>"
