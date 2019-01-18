@@ -31,7 +31,6 @@ def test_create_group(auth_client):
     create_role(auth_client.sqla)
     # print(auth_client.sqla.query(Role).first().name_i18n)
     # WHEN we add in some events
-
     count = random.randint(5, 15)
     # WHEN
     for i in range(count):
@@ -40,6 +39,14 @@ def test_create_group(auth_client):
 
     # THEN
     assert auth_client.sqla.query(Group).count() == count
+
+    group = group_object_factory_with_members(auth_client.sqla)
+    group['manager_id'] = -1
+    resp = auth_client.post(url_for('groups.create_group'), json=group)
+    # THEN assert group is not found
+    assert resp.status_code == 404
+
+
 
 
 @pytest.mark.smoke
@@ -87,6 +94,8 @@ def test_read_all_groups(auth_client):
 
     for i in range(count):
         assert resp.json[i]['name'] == groups[i].name
+
+
 
 
 # @pytest.mark.smoke
