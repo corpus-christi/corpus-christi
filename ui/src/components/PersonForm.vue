@@ -59,14 +59,18 @@
           <v-text-field
             slot="activator"
             v-model="person.birthday"
+            name="birthday"
             v-bind:label="$t('person.date.birthday')"
             prepend-icon="event"
             readonly
             data-cy="birthday"
+            data-vv-validate-on="input"
+            v-validate="'date_format:YYYY-MM-DD'"
+            v-bind:error-messages="errors.collect('birthday')"
           ></v-text-field>
-
           <v-date-picker
             v-bind:locale="currentLanguageCode"
+            :max="getTodayString"
             v-model="person.birthday"
             @input="showBirthdayPicker = false"
             data-cy="birthday-picker"
@@ -218,6 +222,18 @@ export default {
 
     hasAttributes() {
       return this.$props.attributes.length !== 0;
+    },
+
+    getTodayString() {
+      let today = new Date();
+      let str = `${today.getFullYear()}-${
+        (today.getMonth() + 1).toLocaleString("en-US",
+          { minimumIntegerDigits: 2, useGrouping: false })}-${
+        today.getDate().toLocaleString("en-US", 
+          { minimumIntegerDigits: 2, useGrouping: false })}`;
+
+      console.log(str);
+      return str;
     }
   },
 
