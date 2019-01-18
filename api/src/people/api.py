@@ -61,6 +61,8 @@ def read_all_persons():
 @jwt_required
 def read_one_person(person_id):
     result = db.session.query(Person).filter_by(id=person_id).first()
+    if result is None:
+        return 'Person specified was NOT found', 404
     result.accountInfo = result.account
     return jsonify(person_schema.dump(result))
 
@@ -70,13 +72,15 @@ def read_one_person(person_id):
 def update_person(person_id):
     try:
         print(request.json)
-        del request.json['accountInfo'] 
+        del request.json['accountInfo']
         print(request.json)
         valid_person = person_schema_no_id.load(request.json)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
     person = db.session.query(Person).filter_by(id=person_id).first()
+    if person is None:
+        return 'Person specified was NOT found', 404
 
     for key, val in valid_person.items():
         setattr(person, key, val)
@@ -90,9 +94,13 @@ def update_person(person_id):
 @jwt_required
 def deactivate_person(person_id):
     person = db.session.query(Person).filter_by(id=person_id).first()
+    if person is None:
+        return 'Person specified was NOT found', 404
 
     if person.account:
         account = db.session.query(Account).filter_by(id=person.account.id).first()
+        if account is None:
+            return 'Account specified was NOT found', 404
         setattr(account, 'active', False)
     setattr(person, 'active', False)
 
@@ -105,6 +113,8 @@ def deactivate_person(person_id):
 @jwt_required
 def activate_person(person_id):
     person = db.session.query(Person).filter_by(id=person_id).first()
+    if person is None:
+        return 'Person specified was NOT found', 404
 
     setattr(person, 'active', True)
 
@@ -147,6 +157,8 @@ def read_all_accounts():
 def read_one_account(account_id):
     """Read one account by ID."""
     result = db.session.query(Account).filter_by(id=account_id).first()
+    if result is None:
+        return 'Account specified was NOT found', 404
     return jsonify(account_schema.dump(result))
 
 
@@ -155,6 +167,8 @@ def read_one_account(account_id):
 def read_one_account_by_username(username):
     """Read one account by its (unique) user name."""
     result = db.session.query(Account).filter_by(username=username).first()
+    if account is None:
+        return 'Account specified was NOT found', 404
     return jsonify(account_schema.dump(result))
 
 
@@ -162,6 +176,8 @@ def read_one_account_by_username(username):
 @jwt_required
 def read_person_account(person_id):
     account = db.session.query(Account).filter_by(person_id=person_id).first()
+    if account is None:
+        return 'Account specified was NOT found', 404
     return jsonify(account_schema.dump(account))
 
 
@@ -169,6 +185,8 @@ def read_person_account(person_id):
 @jwt_required
 def get_accounts_by_role(role_id):
     role = db.session.query(Role).filter_by(id=role_id).first()
+    if role is None:
+        return 'Role specified was NOT found', 404
     return jsonify(account_schema.dump(role.accounts, many=True))
 
 
@@ -177,7 +195,7 @@ def get_accounts_by_role(role_id):
 def update_account(account_id):
     account = db.session.query(Account).filter_by(id=account_id).first()
     if account is None:
-        return 'Account not found', 404
+        return 'Account specified was NOT found', 404
 
     # Only these fields can be meaningfully updated.
     for field in 'password', 'username', 'active':
@@ -191,6 +209,8 @@ def update_account(account_id):
 @jwt_required
 def deactivate_account(account_id):
     account = db.session.query(Account).filter_by(id=account_id).first()
+    if account is None:
+        return 'Account specified was NOT found', 404
 
     setattr(account, 'active', False)
 
@@ -203,12 +223,32 @@ def deactivate_account(account_id):
 @jwt_required
 def activate_account(account_id):
     account = db.session.query(Account).filter_by(id=account_id).first()
+    if account is None:
+        return 'Account specified was NOT found', 404
 
     setattr(account, 'active', True)
 
     db.session.commit()
 
     return jsonify(account_schema.dump(account))
+
+
+@people.route('/accounts/<account_id>/confirm')
+@jwt_required
+# @authorize(['role.superuser, role.infrastructure']) # <-- Only these people can confirm an account
+def confirm_user_account(account_id):
+    """ Confirm a user's account (ADMIN ACTION ONLY) """
+    account = db.session.query(Account).filter_by(id=account_id).first()
+    if account is None:
+        return 'Account to confirm was NOT found', 404
+
+    setattr(account, 'confirmed', True)
+
+    db.session.commit()
+
+    return jsonify(account_schema.dump(account))
+
+
 # ---- Roles
 
 role_schema = RoleSchema()
@@ -267,6 +307,8 @@ def update_role(role_id):
         return jsonify(err.messages), 422
 
     role = db.session.query(Role).filter_by(id=role_id).first()
+    if role is None:
+        return 'Role specified was NOT found', 404
 
     for key, val in valid_role.items():
         setattr(role, key, val)
@@ -301,20 +343,20 @@ def add_role_to_account(account_id, role_id):
 
     return jsonify(user_roles)
 
-    
+
 @people.route('/role/<account_id>&<role_id>', methods=['DELETE'])
 @jwt_required
 def remove_role_from_account(account_id, role_id):
     account = db.session.query(Account).filter_by(id=account_id).first()
-
     if account is None:
         return 'Account not found', 404
 
     role_to_remove = db.session.query(Role).filter_by(id=role_id).first()
+    if role is None:
+        return 'Role specified was NOT found', 404
 
     if role_to_remove not in account.roles:
         return 'That accout does not have that role', 404
-
 
     account.roles.remove(role_to_remove)
     db.session.commit()
