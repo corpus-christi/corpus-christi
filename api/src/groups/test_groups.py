@@ -174,6 +174,9 @@ def test_read_one_group(auth_client):
         assert resp.status_code == 200
         assert resp.json['name'] == group.name
 
+    resp = auth_client.get(url_for('groups.read_one_group', group_id='None'))
+    assert resp.status_code == 404
+
 
 # Not in API yet
 # @pytest.mark.smoke
@@ -205,6 +208,7 @@ def test_update_group(auth_client):
     # GIVEN a database with a number of groups
     count = random.randint(3, 11)
     generate_managers(auth_client)
+    create_role(auth_client.sqla)
     create_multiple_groups(auth_client.sqla, count)
     create_multiple_members(auth_client.sqla, count*3)
 
@@ -231,6 +235,13 @@ def test_update_group(auth_client):
     assert resp.json['description'] == payload['description']
     # if flips:
     #     assert resp.json['active'] == payload['active']
+
+    resp = auth_client.patch(url_for('groups.update_group', group_id='None'), json=payload)
+    assert resp.status_code == 404
+
+    payload['manager_id'] = -1
+    resp = auth_client.patch(url_for('groups.update_group', group_id=group.id), json=payload)
+    assert resp.status_code == 404
 
 
 @pytest.mark.smoke
@@ -323,6 +334,11 @@ def test_create_meeting(auth_client):
     # THEN
     assert auth_client.sqla.query(Meeting).count() == count
 
+    payload = meeting_object_factory(auth_client.sqla)
+    del payload['active']
+
+    resp = auth_client.post(url_for('groups.create_meeting'), json=payload)
+    assert resp.status_code == 201
 
 @pytest.mark.smoke
 def test_create_invalid_meeting(auth_client):

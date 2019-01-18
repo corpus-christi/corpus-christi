@@ -68,8 +68,6 @@ def create_group():
 @jwt_required
 def read_all_groups():
     result = db.session.query(Group).all()
-    if result is None:
-        return jsonify(msg="No groups found"), 404
     for group in result:
         group.memberList = group.members
         group.managerInfo = group.manager
