@@ -4,9 +4,7 @@
     <v-toolbar class="pa-1">
       <v-layout align-center justify-space-between fill-height>
         <v-flex md2>
-          <v-toolbar-title>{{
-            $t("people.title-roles")
-          }}</v-toolbar-title>
+          <v-toolbar-title>{{ $t("people.title-roles") }}</v-toolbar-title>
         </v-flex>
         <v-flex md3>
           <v-text-field
@@ -22,12 +20,7 @@
         </v-flex>
         <v-flex md3>
           <div data-cy="roles-dropdown">
-            <v-select
-              hide-details
-              solo
-              single-line
-              :items="rolesList"
-            >
+            <v-select hide-details solo single-line :items="rolesList">
             </v-select>
           </div>
         </v-flex>
@@ -241,14 +234,16 @@ export default {
       ];
     },
     peopleToDisplay() {
-        return this.allAccount;
-      }
+      return this.allAccount;
+    }
   },
 
   watch: {
     peopleList(all_people) {
       this.allPeople = all_people;
-      this.allAccount = this.allPeople.filter(person => person.accountInfo && person.active);
+      this.allAccount = this.allPeople.filter(
+        person => person.accountInfo && person.active
+      );
     },
 
     rolesList(all_roles) {

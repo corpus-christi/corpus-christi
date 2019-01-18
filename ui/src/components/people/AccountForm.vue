@@ -45,9 +45,7 @@
         data-cy="confirm-password"
       ></v-text-field>
     </v-card-text>
-    <v-card-title
-      >{{ $t("person.actions.assign-roles") }}</v-card-title
-    >
+    <v-card-title>{{ $t("person.actions.assign-roles") }}</v-card-title>
     <v-card-text>
       <v-select
         :items="rolesList"
