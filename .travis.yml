@@ -28,9 +28,8 @@ matrix:
                         - cd api/
                         - sudo apt install postgresql
                         - sudo apt install nginx
-                  before_script:
-                        - sudo service postgresql start
                   script:
+                        - sudo service postgresql start
                         - sudo -u postgres createuser -w arco
                         - sudo -u postgres createdb -O arco cc-staging 
                         - flask db upgrade
