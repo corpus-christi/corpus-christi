@@ -335,25 +335,38 @@ def read_all_attendance():
     return jsonify(attendance_schema.dump(result, many=True))
 
 
-@groups.route('/attendance/<attendance_id>')
+@groups.route('/attendance/meeting/<meeting_id>')
 @jwt_required
-def read_one_attendance(attendance_id):
-    result = db.session.query(Attendance).filter_by(id=attendance_id).first()
-    return jsonify(attendance_schema.dump(result))
+def read_attendance_by_meeting(meeting_id):
+    result = db.session.query(Attendance).filter_by(meeting_id=meeting_id).all()
+    return jsonify(attendance_schema.dump(result, many=True))
 
-
-@groups.route('/attendance/<attendance_id>', methods=['PATCH'])
+@groups.route('/attendance/member/<member_id>')
 @jwt_required
-def update_attendance(attendance_id):
+def read_attendance_by_member(member_id):
+    result = db.session.query(Attendance).filter_by(member_id=member_id).all()
+    return jsonify(attendance_schema.dump(result, many=True))
+
+@groups.route('/attendance', methods=['DELETE'])
+@jwt_required
+def delete_attendance():
     try:
         valid_attendance = attendance_schema.load(request.json)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    attendance = db.session.query(Attendance).filter_by(id=attendance_id).first()
+    meeting_id = valid_attendance["meeting_id"]
+    member_id = valid_attendance["member_id"]
 
-    for key, val in valid_attendance.items():
-        setattr(attendance, key, val)
+    result = db.session.query(Attendance).filter_by(meeting_id=meeting_id, \
+            member_id=member_id
+            ).first()
 
+    if not result:
+        return f"Attendance with member_id {member_id} and meeting_id {meeting_id} doesn't exist", 404
+
+    db.session.delete(result)
     db.session.commit()
-    return jsonify(attendance_schema.dump(attendance))
+
+    # 204 codes don't respond with any content
+    return jsonify(attendance_schema.dump(valid_attendance)), 204

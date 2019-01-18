@@ -11,7 +11,7 @@ from werkzeug.security import check_password_hash
 
 from src.i18n.models import i18n_create, I18NLocale, I18NKey
 from src.people.models import Person
-from src.people.test_people import create_multiple_people
+# from src.people.test_people import create_multiple_people
 
 from .. import db
 
@@ -60,6 +60,8 @@ def add_i18n_code(name, sqla, locale_code, name_i18n):
         i18n_create(name_i18n, 'en-US',
                     name, description=f"Type {name}")
 
+    return name_i18n
+
 
 def attribute_factory(sqla, name, locale_code='en-US'):
     """Create a fake attribute."""
@@ -86,7 +88,7 @@ def attribute_factory(sqla, name, locale_code='en-US'):
 def enumerated_value_factory(sqla):
     """Create a fake enumerated value."""
     count = random.randint(5, 15)
-    create_multiple_attributes(sqla, count, 1)
+    create_multiple_attributes(sqla, 3, 1)
     attributes = sqla.query(Attribute).all()
 
     value_string = rl_fake().name()
@@ -110,7 +112,7 @@ def enumerated_value_factory(sqla):
 
 def person_attribute_enumerated_factory(sqla):
     """Create a fake person attribute that is enumerated."""
-    create_multiple_people(sqla, 17)
+    # create_multiple_people(sqla, 17)
     create_multiple_attributes(sqla, 5, 1)
     create_multiple_enumerated_values(sqla, 10)
     people = sqla.query(Person).all()
@@ -120,16 +122,14 @@ def person_attribute_enumerated_factory(sqla):
     person_attribute = {
         'personId': current_person.id,
         'attributeId': current_enumerated_value.attribute_id,
-        'enumValueId': current_enumerated_value.id,
-        'stringValue': None
+        'enumValueId': current_enumerated_value.id
     }
-    print(person_attribute)
     return person_attribute
 
 
 def person_attribute_string_factory(sqla):
     """Create a fake person attribute that is enumerated."""
-    create_multiple_people(sqla, 17)
+    # create_multiple_people(sqla, 17)
     create_multiple_attributes(sqla, 5, 1)
     people = sqla.query(Person).all()
     current_person = random.choice(people)
@@ -138,7 +138,6 @@ def person_attribute_string_factory(sqla):
     person_attribute = {
         'personId': current_person.id,
         'attributeId': current_nonenumerated_value.id,
-        'enumValueId': None,
         'stringValue': rl_fake().first_name()
     }
     return person_attribute
@@ -398,28 +397,5 @@ def test_activate_enumerated_value(auth_client):
     assert updated_enumerated_value is not None
     assert updated_enumerated_value.active == True
 
-
-@pytest.mark.smoke
-def test_create_multiple_person_attribute_strings(auth_client):
-    # GIVEN an empty database
-    count = random.randint(5, 15)
-    # WHEN we create a random number of new attributes with strings
-    for i in range(count):
-        resp = auth_client.post(url_for('attributes.create_attribute'), json={"attribute": attribute_factory(auth_client.sqla, 'name', 'en-US'), "enumeratedValues":[]})
-        assert resp.status_code == 201
-    # THEN we end up with the proper number of attributes in the database
-    assert auth_client.sqla.query(Attribute).count() == count
-
-
-# @pytest.mark.smoke
-# def test_create_multiple_person_attribute_enumerated(auth_client):
-#     # GIVEN an empty database
-#     count = random.randint(5, 15)
-#     # WHEN we create a random number of new attributes
-#     for i in range(count):
-#         resp = auth_client.post(url_for('attributes.create_person_attribute'), json=person_attribute_enumerated_factory(auth_client.sqla))
-#         assert resp.status_code == 201
-#     # THEN we end up with the proper number of attributes in the database
-#     assert auth_client.sqla.query(PersonAttribute).count() == count
 
 
