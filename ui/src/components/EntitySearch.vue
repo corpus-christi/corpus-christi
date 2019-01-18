@@ -57,7 +57,6 @@ export default {
       isLoading: false
     };
   },
-
   computed: {
     getLabel() {
       if (this.location) return this.$t("events.event-location");
@@ -70,7 +69,6 @@ export default {
       return "id";
     }
   },
-
   methods: {
     selectionContains(entity) {
       if (!this.value || !this.value.length) return;
