@@ -29,10 +29,14 @@ matrix:
                           #- cd api/
                         - sudo apt install postgresql
                         - sudo apt install nginx
-                  before_script:
                         - sudo service postgresql start
+                  postgres:
+                                adapter: postgresql
+                                database: cc-staging
+                                username: arco
+                  before_script:
                         - psql -c "CREATE DATABASE testing_db;" -U postgres
-                        - psql -c "CREATE USER arco" -O -U postgres
+                          # - psql -c "CREATE USER arco" -O -U postgres
                   script:
                           #- sudo -u postgres psql createuser -w arco
                           #- sudo -u postgres psql createdb -O arco cc-staging 
