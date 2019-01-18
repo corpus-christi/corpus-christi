@@ -19,6 +19,7 @@
           offset-y
           full-width
           min-width="290px"
+          data-cy="start-date-picker"
         >
           <v-text-field
             slot="activator"
@@ -46,6 +47,7 @@
           offset-y
           full-width
           min-width="290px"
+          data-cy="end-date-picker"
         >
           <v-text-field
             slot="activator"
