@@ -45,11 +45,6 @@ class Diploma_Awarded(Base):
      def __repr__(self):
          return f"<Diploma_Awarded(student_id={self.student_id},diploma_id={self.diploma_id})>"
 
-# Diploma_Awarded = Table('courses_diploma_awarded', Base.metadata,
-#      Column('student_id', Integer, ForeignKey('courses_students.id'), primary_key=True),
-#      Column('diploma_id', Integer, ForeignKey('courses_diploma.id'), primary_key=True),
-#      Column('when', Date, nullable=False, default=date.today()))
-
 
 class Diploma_AwardedSchema(Schema):
      student_id = fields.Integer(data_key='studentId', required=True, validate=Range(min=1))

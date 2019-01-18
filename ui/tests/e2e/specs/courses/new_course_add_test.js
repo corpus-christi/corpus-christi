@@ -50,7 +50,7 @@ describe('Add Course with a Prereq', () => {
     cy.get('[data-cy=course-form-name]').type('COS 113')
     cy.get('[data-cy=course-form-description]').type('Hello World')
     cy.get(':nth-child(4) > .v-input__icon > .v-icon').click()
-    cy.contains('My kid.').click()
+    cy.get('.menuable__content__active > .v-select-list > .v-list > :nth-child(4) > .v-list__tile > .v-list__tile__content').click()
   });
   it('Then: Click add button', ()=>{
     cy.get('[data-cy=course-editor-actions] > .primary').click()
