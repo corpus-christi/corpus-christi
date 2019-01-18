@@ -8,7 +8,7 @@
         <v-textarea
           rows="3"
           v-model="asset.description"
-          v-bind:label="$t('events.assets.description')"
+          v-bind:label="$t('assets.description')"
           name="description"
           v-bind:error-messages="errors.collect('description')"
           data-cy="description"
@@ -56,7 +56,7 @@
 <script>
 import { isEmpty } from "lodash";
 // import { mapGetters } from "vuex";
-import EntitySearch from "../../EntitySearch";
+import EntitySearch from "../EntitySearch";
 export default {
   components: { "entity-search": EntitySearch },
   name: "AssetForm",
@@ -77,8 +77,8 @@ export default {
     },
     title() {
       return this.editMode
-        ? this.$t("events.assets.edit-asset")
-        : this.$t("events.assets.create-asset");
+        ? this.$t("assets.edit-asset")
+        : this.$t("assets.create-asset");
     },
 
     formDisabled() {

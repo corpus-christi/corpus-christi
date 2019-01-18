@@ -7,11 +7,15 @@ from flask_jwt_extended import create_access_token
 
 from flask import jsonify
 
+#Needed for pruning events
+from datetime import datetime, timedelta
+
 from src import create_app
 from src import db
 from src.i18n.models import Language, I18NLocale
 from src.people.models import Person, Account, Role
 from src.people.test_people import create_multiple_people, create_multiple_accounts
+from src.events.models import Event
 from src.events.create_event_data import create_events_test_data
 from src.places.test_places import create_multiple_areas, create_multiple_addresses, create_multiple_locations
 from src.places.models import Country
@@ -77,8 +81,8 @@ def load_all():
     create_multiple_diplomas(db.session, 30)
     create_multiple_students(db.session, 30)
     create_class_meetings(db.session, 30)
-    # create_diploma_awards(db.session, 30)
-    # create_class_attendance(db.session, 30)
+    create_diploma_awards(db.session, 30)
+    create_class_attendance(db.session, 30)
 
 
 @data_cli.command('test', help='Load everything')
@@ -135,5 +139,19 @@ def update_password(username, password):
     db.session.commit()
     print(f"Password for '{username}' updated")
 
-
 app.cli.add_command(user_cli)
+
+# ---- Maintainence
+
+maintain_cli = AppGroup('maintain', help="Mantaining the database.")
+
+@maintain_cli.command('prune-events', help="Sets events that have ended before <pruningOffset> to inactive")
+def prune_events():
+    events = db.session.query(Event).filter_by(active=True).all()
+    pruningOffset = datetime.now() - timedelta(days=30)
+    for event in events:
+        if(event.end < pruningOffset):
+            event.active = False
+    db.session.commit()
+
+app.cli.add_command(maintain_cli)
