@@ -23,6 +23,9 @@ events:
   event-location:
     en: Event Location
     es: Ubicación de Evento
+  location:
+    en: Location
+    es: Ubicación
   actions:
     en: Actions
     es: Comportamiento
@@ -68,7 +71,21 @@ events:
     title:
       en: Participants
       es: Participantes
-
+    added:
+      en: Participants added
+      es: Participantes agregado
+    error-adding:
+      en: Error adding participant
+      es: Error al agregar participante
+    removed:
+      en: Removed participant
+      es: Participante eliminado
+    error-removing:
+      en: Error removing participant
+      es: Error al eliminadar el participante
+    confirm-remove:
+      en: Are you sure you want to remove this participant?
+      es: ¿Estás seguro de que quieres eliminar a este participante?
   teams:
     title:
       en: Teams
@@ -88,15 +105,15 @@ events:
     confirm-archive:
       en: Are you sure you want to archive this team?
       es: ¿Seguro que quieres archivar este equipo?
-    team-archived:
-      en: Team archived
-      es: Equipo archivado
-    error-archiving-team:
-      en: Error while archiving team 
-      es: Error al archivar este equipo
-    team-unarchived:
-      en: Team unarchived
-      es: Equipo desarchivado   # probably not right
+    confirm-remove-from-event:
+      en: Are you sure you want to remove this team from this event?
+      es: ¿Estás seguro de que quieres eliminar a este equipo de este evento?
+    team-removed:
+      en: Team removed
+      es: Equipo eliminado
+    error-removing-team:
+      en: Error while removing team 
+      es: Error al eliminadar este equipo
     error-unarchiving-team:
       en: Error while unarchiving team 
       es: Error al desarchivar equipo
@@ -112,50 +129,10 @@ events:
     error-adding-team:
       en: Error while adding team
       es: Error al agregar equipo
-  
-  assets:
-    title: 
-      en: Assets
-      es: Insumos
-    description:
-      en: Description
-      es: Descripción
-    location:
-      en: Location
-      es: Ubicación
-    new:
-      en: Add Asset
-      es: Añadir Insumo
-    create-asset:
-      en: Create Asset
-      es: Crear Insumo
-    edit-asset:
-      en: Edit Asset
-      es: Editar Insumo
-    confirm-archive:
-      en: Are you sure you want to archive this asset?
-      es: ¿Seguro que quieres archivar este insumo?
-    asset-archived:
-      en: Asset archived
-      es: Insumo archivado
-    error-archiving-asset:
-      en: Error while archiving asset 
-      es: Error al archivar este insumo
-    asset-unarchived:
-      en: Asset unarchived
-      es: Insumo desarchivado   # probably not right
-    error-unarchiving-asset:
-      en: Error while unarchiving asset 
-      es: Error al desarchivar insumo
-    asset-edited:
-      en: Asset edited
-      es: Insumo editado   # ?
-    error-editing-asset:
-      en: Error while editing asset
-      es: Error al editar insumo
-    asset-added:
-      en: Asset added
-      es: Insumo agregado
-    error-adding-asset:
-      en: Error while adding asset
-      es: Error al agregar insumo
+    error-team-assigned:
+      en: That team is assigned to a conflicting event.
+      es: Ese equipo está asignado a un evento conflictivo.
+    team-on-event:
+      en: That team is already assigned to this event.
+      es: Ese equipo ya está asignado a este evento.
+    
