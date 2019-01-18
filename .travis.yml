@@ -11,7 +11,6 @@ matrix:
                 - language: node_js
                   node_js: "11"
                   before_install:
-                          - cd ui/
                           - yarn cache clean
                   install:
                           - yarn install
@@ -32,8 +31,8 @@ matrix:
                         - sudo apt install nginx
                   script:
                         - sudo service postgresql start
-                        - sudo -u postgres createuser -w arco
-                        - sudo -u postgres createdb -O arco cc-staging 
+                        - sudo -u postgres psql createuser -w arco
+                        - sudo -u postgres psql createdb -O arco cc-staging 
                         - flask db upgrade
                         - flask data load-all
                         - rm migrations/versions/*.py
