@@ -19,7 +19,7 @@ from src.events.models import Event
 from src.events.create_event_data import create_events_test_data
 from src.places.test_places import create_multiple_areas, create_multiple_addresses, create_multiple_locations
 from src.places.models import Country
-from src.courses.models import Course
+from src.courses.models import Course, Course_Offering
 from src.courses.test_courses import create_multiple_courses, create_multiple_course_offerings,\
     create_multiple_diplomas, create_multiple_students, create_class_meetings,\
     create_diploma_awards, create_class_attendance, create_multiple_prerequisites
@@ -162,11 +162,14 @@ def create_account(name, description, prereq, offering):
         course.prerequisites.append(Course(name=f"prereq course{i}",
                 description=f"here we are using the command line lol.{i}"))
     if offering is not None:
-        print(offering)
+        course_offering = Course_Offering(course_id=course.id,
+                        description=offering, max_size=2, active=True)
+        course.courses_offered.append(course_offering)
     db.session.add(course)
     db.session.commit()
     print(f"Created {course}")
     print(f"Created Prerequisites {course.prerequisites}")
+    print(f"Created Course Offering {course.courses_offered}")
 
 
 app.cli.add_command(course_cli)
