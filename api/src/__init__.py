@@ -2,13 +2,14 @@ from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_mail import Mail
 
-from config import config
+from config import config, BASE_DIR
 from .db import DbConfig
 
 db = DbConfig()
 jwt = JWTManager()
 mail = Mail()
 
+BASE_DIR = BASE_DIR
 
 def create_app(config_name):
     """Application factory for the API."""

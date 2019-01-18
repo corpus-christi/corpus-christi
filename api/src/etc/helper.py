@@ -21,3 +21,10 @@ def get_exclusion_list(query_object, default_exclusion_list):
         if include_filter:
             default_exclusion_list.remove(exclusion)
     return default_exclusion_list
+
+def is_allowed_file(filename):
+    return '.' in filename and \
+         get_file_extension(filename) in set(['pdf', 'png', 'jpg', 'jpeg', 'gif'])
+
+def get_file_extension(filename):
+    return filename.rsplit('.', 1)[1].lower()
