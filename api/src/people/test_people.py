@@ -653,24 +653,38 @@ def test_get_roles_for_account(auth_client):
     # TODO FINISH
     assert False
 
+
 @pytest.mark.smoke
 def test_read_one_role(auth_client):
-    # GIVEN a collection of roles
-    prep_database(auth_client.sqla)
-    Role.load_from_file()
-    create_roles(auth_client.sqla, 3)
+    # GIVEN a set roles
+    count = random.randint(3, 6)
+    create_roles(auth_client.sqla, count)
 
-    for role in auth_client.sqla.query(Role).all():
-        # WHEN we request one
-        print('Role = ', role)
-        resp = auth_client.get(url_for('people.read_one_role', role_id=role.id))
-        # THEN we find the matching role
-        print("Response: ", resp.json)
+    roles = auth_client.sqla.query(Role).all()
+
+    # WHEN each role is read
+    for role in roles:
+        resp = auth_client.get(url_for('people.read_one_role', role_id = role.id))
+        
+        # THEN expect the request to run OK
         assert resp.status_code == 200
 
-        # assert resp.json['id'] == role.id
-        # assert resp.json['nameI18n'] == role.name_i18n
-        # assert resp.json['active'] == True
+        # THEN expect the role to be read correctly
+        assert resp.json['id'] == role.id
+        assert resp.json['name_i18n'] == role.name_i18n
+        assert resp.json['active'] == role.active
+
+
+@pytest.mark.smoke
+def test_read_one_role_no_exist(auth_client):
+    # GIVEN an empty database
+
+    # WHEN a role is requested to be read
+    resp = auth_client.get(url_for('people.read_one_role', role_id = random.randint(1, 8)))
+    
+    # THEN expect the requested role not to be found
+    assert resp.status_code == 404
+
 
 @pytest.mark.smoke
 def test_update_role(auth_client):
