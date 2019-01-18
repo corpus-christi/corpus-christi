@@ -72,6 +72,22 @@ actions:
     _desc: View all
     en: View All
     es: Ver Todo
+  search-people:
+    _desc: Search for people
+    en: Search People
+    es: Buscar Personas
+  view-inactive:
+    _desc: View all inactive people
+    en: View Inactive
+    es: Ver Inactivo
+  back:
+    _desc: Back to a previous view
+    en: Back
+    es: Regresar
+  view-past:
+    _desc: View past events
+    en: View Past
+    es: Ver Pasados
   tooltips:
     settings:
       _desc: Change settings
@@ -86,4 +102,6 @@ actions:
     remove:
       en: Remove
       es: Retirar
-
+    unarchive:
+      en: Unarchive
+      es: Desarchivar

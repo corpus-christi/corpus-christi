@@ -37,6 +37,15 @@ def create_app(config_name):
     from .events import events as events_blueprint
     app.register_blueprint(events_blueprint, url_prefix='/api/v1/events')
 
+    from .assets import assets as assets_blueprint
+    app.register_blueprint(assets_blueprint, url_prefix='/api/v1/assets')
+
+    from .teams import teams as teams_blueprint
+    app.register_blueprint(teams_blueprint, url_prefix='/api/v1/teams')
+
+    from .emails import emails as emails_blueprint
+    app.register_blueprint(emails_blueprint, url_prefix='/api/v1/emails')
+
     from .groups import groups as groups_blueprint
     app.register_blueprint(groups_blueprint, url_prefix='/api/v1/groups')
 

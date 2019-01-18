@@ -11,11 +11,13 @@
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-tile-action>
           <v-list-tile-title>{{ item.title }}</v-list-tile-title>
+       
         </v-list-tile>
         <v-divider
           v-if="item.divider"
           v-bind:key="'div-' + item.route"
         ></v-divider>
+
       </template>
     </v-list>
   </v-navigation-drawer>
@@ -51,13 +53,23 @@ export default {
         },
         {
           title: this.$t("courses.course"),
-          route: "courses-admin",
+          route: "courses",
           icon: "school"
         },
         {
-          title: this.$t("events.title"),
+          title: this.$t("events.header"),
           route: "events",
           icon: "event"
+        },
+        {
+          title: this.$t("events.teams.title"),
+          route: "teams",
+          icon: "group"
+        },
+        {
+          title: this.$t("assets.title"),
+          route: "assets",
+          icon: "devices_other"
         }
       ];
     }

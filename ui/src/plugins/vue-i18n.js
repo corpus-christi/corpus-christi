@@ -15,18 +15,7 @@ const i18n = new VueI18n({
 });
 
 Vue.use(VeeValidate, {
-  i18n,
-  i18nRootKey: "i18n_data",
-  dictionary: {
-    en: {
-      messages: enValidation.messages,
-      attributes: i18n_data.en.validation.attributes
-    },
-    es: {
-      messages: esValidation.messages,
-      attributes: i18n_data.es.validation.attributes
-    }
-  }
+  i18n
 });
 
 export default i18n;

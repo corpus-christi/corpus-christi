@@ -7,8 +7,8 @@ from src.db import Base
 
 from .models import Course, CourseSchema, Course_Offering, Class_Meeting,\
         Course_OfferingSchema, Diploma, DiplomaSchema, Student, StudentSchema,\
-        Class_Meeting, Class_MeetingSchema, Diploma_Awarded, Diploma_AwardedSchema
-from ..people.test_people import create_multiple_people
+        Class_Meeting, Class_MeetingSchema, Diploma_Awarded, Diploma_AwardedSchema,\
+        Class_Attendance, Class_AttendanceSchema
 from ..people.models import Person
 from ..places.models import Location
 from ..people.test_people import create_multiple_people
@@ -710,6 +710,7 @@ def setup_dependencies_of_student(auth_client, n):
     create_multiple_course_offerings_active(auth_client.sqla, n)
 
 
+@pytest.mark.student
 def test_create_student(auth_client):
     setup_dependencies_of_student(auth_client,1)
     person = auth_client.sqla.query(Person).one()
@@ -747,6 +748,7 @@ def test_read_all_students(auth_client):
     assert True == False
 """
 
+@pytest.mark.student
 def test_read_one_student(auth_client):
     # GIVEN a student is in the database
     create_multiple_people(auth_client.sqla, 1)
