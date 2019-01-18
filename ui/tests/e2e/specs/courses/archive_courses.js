@@ -23,7 +23,7 @@ describe('Add Course', () => {
       cy.get('[data-cy=course-form-description]').type('This should work!')
     });
     it('Then: Click add button', ()=>{
-      cy.get('[data-cy=course-editor-actions] > .primary').click()
+        cy.get('[data-cy=course-editor-actions] > .primary').click()
     });
 });
 
@@ -31,7 +31,7 @@ describe("Archive Courses", () => {
     it("click archive button", () => {
         cy.get('[data-cy=courses-table-search]').type(course_name)
         //cy.contains('Debate until.').click()
-        cy.get(':nth-child(2) > span > .v-btn').click()//click archive
+        cy.get(':nth-child(1) > :nth-child(3) > .layout > :nth-child(2) > span > .v-btn').click()//click archive
         cy.get('.v-dialog__content--active > .v-dialog > .v-card > .v-card__actions > .primary').click()//confirm click
     });
     it("check archive course", () => {
