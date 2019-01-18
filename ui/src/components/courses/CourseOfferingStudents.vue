@@ -1,27 +1,52 @@
 <template>
   <div>
-    <v-toolbar>
-      <v-toolbar-title>{{ $t("courses.students") }}</v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-text-field
-        v-model="search"
-        append-icon="search"
-        v-bind:label="$t('actions.search')"
-        single-line
-        hide-details
-      ></v-text-field>
-      <v-spacer></v-spacer>
-      
-      <v-flex md3>
-        <v-select v-model="viewStatus" :items="options" solo hide-details></v-select>
-      </v-flex>
-      
-      <v-flex shrink justify-self-end>
-        <v-btn color="primary" raised v-on:click.stop="newStudent">
-          <v-icon dark left>add</v-icon>
-          {{ $t("actions.add-person") }}
-        </v-btn>
-      </v-flex>
+    <v-toolbar class="pa-1" extension-height="64px">
+      <v-layout justify-space-between>
+        <v-flex shrink align-self-center>
+          <v-toolbar-title>{{ $t("courses.students") }}</v-toolbar-title>
+        </v-flex>
+        <v-spacer></v-spacer>
+        
+        <v-flex shrink justify-self-end>
+          <v-btn 
+            color="primary" 
+            raised 
+            v-on:click.stop="newStudent"
+            class="hidden-xs-only mr-2">
+            <v-icon dark left>add</v-icon>
+            <span class="mr-1"> {{ $t("actions.add-person") }} </span>
+          </v-btn>
+          <v-btn
+            class="hidden-sm-and-up"
+            color="primary"
+            raised
+            fab
+            v-on:click.stop="newStudent"
+            data-cy="add-student-small"
+            >
+            <v-icon dark>add</v-icon>
+          </v-btn> 
+        </v-flex>
+      </v-layout>
+      <v-layout row slot="extension" justify-space-between align-center>
+        <v-flex>
+          <v-text-field
+            v-model="search"
+            append-icon="search"
+            v-bind:label="$t('actions.search')"
+            single-line
+            hide-details
+            class="max-width-250 mr-2"
+          ></v-text-field>
+        </v-flex>
+        <v-select 
+         v-model="viewStatus" 
+         :items="options" 
+         solo hide-details
+         class="max-width-250 mr-2"
+         >
+        </v-select>
+      </v-layout>
     </v-toolbar>
     <v-data-table
       :headers="headers"
@@ -364,3 +389,9 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.max-width-250 {
+  max-width: 250px;
+}
+</style>

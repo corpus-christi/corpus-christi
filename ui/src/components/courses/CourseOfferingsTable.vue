@@ -1,34 +1,51 @@
 <template>
   <div>
     <!-- Header -->
-    <v-toolbar>
-      <v-layout align-center justify-space-between fill-height>
-        <v-flex md2>
+    <v-toolbar class="pa-1" extension-height="64px">
+      <v-layout justify-space-between>
+        <v-flex shrink align-self-center>
           <v-toolbar-title>{{ $t("courses.course-offering") }}</v-toolbar-title>
         </v-flex>
         <v-spacer></v-spacer>
-        <v-flex md3>
-          <v-text-field
-            v-model="search"
-            append-icon="search"
-            v-bind:label="$t('actions.search')"
-            single-line
-            box
-            hide-details
-          ></v-text-field>          
-        </v-flex>
-        <v-spacer></v-spacer>
-
-        <v-flex md3>
-          <v-select v-model="viewStatus" :items="options" solo hide-details></v-select>
-        </v-flex>
-
         <v-flex shrink justify-self-end>
-        <v-btn color="primary" raised v-on:click.stop="newCourseOffering">
-          <v-icon left>library_add</v-icon>
-          {{ $t("courses.new-offering") }}
-        </v-btn>
+          <v-btn 
+            color="primary" 
+            raised 
+            v-on:click.stop="newCourseOffering"
+            class="hidden-xs-only mr-2">
+            <v-icon left>library_add</v-icon>
+            {{ $t("courses.new-offering") }}
+          </v-btn>
+          <v-btn
+            class="hidden-sm-and-up"
+            color="primary"
+            raised
+            fab
+            v-on:click.stop="newCourseOffering"
+            data-cy="add-courseOffering-small"
+            >
+            <v-icon dark>add</v-icon>
+          </v-btn> 
         </v-flex>
+      </v-layout>
+      <v-layout row slot="extension" justify-space-between align-center>
+        <v-flex>
+           <v-text-field
+             v-model="search"
+             append-icon="search"
+             v-bind:label="$t('actions.search')"
+             single-line
+             hide-details
+             class="max-width-250 mr-2"
+           ></v-text-field>  
+        </v-flex>
+        <v-select 
+          v-model="viewStatus" 
+          :items="options" 
+          solo hide-details
+          class="max-width-250 mr-2"
+          >
+        </v-select>
       </v-layout>
     </v-toolbar>
 
@@ -325,7 +342,11 @@ export default {
 </script>
 
 <style scoped>
-  .hover-hand {
-    cursor: pointer;
-  }
+.hover-hand {
+  cursor: pointer;
+}
+
+.max-width-250 {
+  max-width: 250px;
+}
 </style>

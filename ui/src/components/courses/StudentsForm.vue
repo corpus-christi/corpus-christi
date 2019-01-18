@@ -99,7 +99,6 @@ export default {
    save() {
      this.$validator.validateAll().then(() => {
        if (!this.errors.any()) {
-         console.log(this.newStudent);
          this.$emit("save", this.newStudent);
        }
      });
