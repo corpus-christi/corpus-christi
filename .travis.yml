@@ -33,11 +33,11 @@ matrix:
                   postgres:
                                 adapter: postgresql
                                 database: cc-staging
-                  before_script:
-                        - psql -c "CREATE DATABASE testing_db;" -U postgres
+                                #before_script:
+                                #- psql -c "CREATE DATABASE testing_db;" -U postgres
                   script:
-                          #- sudo -u postgres psql createuser -w arco
-                          #- sudo -u postgres psql createdb -O arco cc-staging 
+                        - sudo -u postgres createuser -w arco
+                        - sudo -u postgres createdb -O arco cc-staging 
                         - flask db upgrade
                         - flask data load-all
                           #- rm migrations/versions/*.py
