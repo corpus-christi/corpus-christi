@@ -247,8 +247,9 @@ def read_all_course_offerings():
 @jwt_required
 # @authorize(["role.superuser", "role.public"])
 def read_one_course_offering(course_offering_id):
-    result = db.session.query(Course_Offering).filter_by(id=course_offering_id).first()
-    return jsonify(course_offering_schema.dump(result))
+    result = course_offering_schema.dump(db.session.query(Course_Offering).filter_by(id=course_offering_id).first())
+    result['course'] = course_schema.dump(db.session.query(Course).filter_by(id=result['courseId']).first())
+    return jsonify(result)
 
 
 @courses.route('/<active_state>/course_offerings')
@@ -288,6 +289,9 @@ student_schema = StudentSchema()
 @courses.route('/course_offerings/<s_id>', methods=['POST'])
 @jwt_required
 def add_student_to_course_offering(s_id):
+    person = db.session.query(Person).filter_by(id=s_id).first()
+    if person is None:
+        return 'Person NOT in database', 404
     try:
         valid_student = student_schema.load(request.json)
     except ValidationError as err:
@@ -296,12 +300,14 @@ def add_student_to_course_offering(s_id):
     course_offering = request.json['offeringId']
     courseInDB = db.session.query(Student).filter_by(
         student_id=s_id, offering_id=course_offering).all()
-    if courseInDB is []:
+    if courseInDB == []:
         new_student = Student(**valid_student)
 
         db.session.add(new_student)
         db.session.commit()
-        return jsonify(student_schema.dump(new_student)), 201
+        to_return = student_schema.dump(new_student)
+        to_return['person'] = person_schema.dump(person)
+        return jsonify(to_return), 201
     else:
         return 'Student already enrolled in course offering', 208
 

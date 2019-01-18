@@ -23,7 +23,7 @@
         color="primary"
         slot="activator"
         v-bind:small="displayContext === 'compact'"
-        @click="emitAction(student.active ? 'deactivate' : 'activate')"
+        @click="emitAction(student.confirmed ? 'unconfirm' : 'confirm')"
       >
         <v-icon v-bind:small="displayContext === 'compact'">done</v-icon>
       </v-btn>

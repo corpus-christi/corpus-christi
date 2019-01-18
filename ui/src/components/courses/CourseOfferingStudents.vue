@@ -11,22 +11,29 @@
         hide-details
       ></v-text-field>
       <v-spacer></v-spacer>
-      <v-btn color="primary" raised v-on:click.stop="newStudent">
-        <v-icon dark left>add</v-icon>
-        {{ $t("actions.add-person") }}
-      </v-btn>
+      
+      <v-flex md3>
+        <v-select v-model="viewStatus" :items="options" solo hide-details></v-select>
+      </v-flex>
+      
+      <v-flex shrink justify-self-end>
+        <v-btn color="primary" raised v-on:click.stop="newStudent">
+          <v-icon dark left>add</v-icon>
+          {{ $t("actions.add-person") }}
+        </v-btn>
+      </v-flex>
     </v-toolbar>
     <v-data-table
       :headers="headers"
-      :items="people"
+      :items="showStudents"
       :search="search"
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
-        <td>{{ props.item.firstName }}</td>
-        <td>{{ props.item.lastName }}</td>
-        <td>{{ props.item.email }}</td>
-        <td>{{ props.item.phone }}</td>
+        <td>{{ props.item.person.firstName }}</td>
+        <td>{{ props.item.person.lastName }}</td>
+        <td>{{ props.item.person.email }}</td>
+        <td>{{ props.item.person.phone }}</td>
         <td>
           <StudentsAdminActions
             v-bind:student="props.item"
@@ -94,7 +101,7 @@ export default {
       selectedValue: null,
       search: "",
       students: [],
-      people: [],
+      viewStatus: "active",
 
       newStudentDialog: {
         show: false,
@@ -133,6 +140,27 @@ export default {
         { text: this.$t("person.phone"), value: "phone", width: "22.5%" },
         { text: this.$t("actions.header"), sortable: false }
       ];
+    },
+    
+    options() {
+      return [
+        { text: this.$t("actions.view-active"), value: "active" },
+        { text: this.$t("actions.view-archived"), value: "archived" },
+        { text: this.$t("actions.view-all"), value: "all" }
+      ];
+    },
+    
+    showStudents() {
+      switch (this.viewStatus) {
+        case "active":
+          return this.students.filter(student => student.active);
+        case "archived":
+          return this.students.filter(student => !student.active);
+        case "all":
+        default:
+          return this.students;
+          break;
+      }
     }
   },
 
@@ -155,7 +183,7 @@ export default {
       
       const personObject = newStudent;
       newStudent = {};
-
+            
       newStudent.confirmed = true;
       newStudent.offeringId = this.offeringId;
       newStudent.studentId = personObject.id;
@@ -166,7 +194,6 @@ export default {
         .then(resp => {
           console.log("ADDED", resp);
           this.students.push(resp.data);
-          this.people.push(personObject);
           
           this.snackbar.text = this.$t("courses.added");
           this.snackbar.show = true;
@@ -211,7 +238,6 @@ export default {
         .then(resp => {
           console.log("EDITED", resp);
           Object.assign(student, resp.data);
-          console.log(student);
           this.snackbar.text = this.$t("courses.archived");
           this.snackbar.show = true;
         })
@@ -245,13 +271,6 @@ export default {
     const id = this.offeringId;
     this.$http.get(`/api/v1/courses/course_offerings/${id}/students`).then(resp => {
       this.students = resp.data;
-
-      for (var i = 0; i < this.students.length; i++) {
-        this.$http.get(`/api/v1/people/persons/${this.students[i].studentId}`).then(peopleResp => {
-          this.people.push(peopleResp.data);
-        });      
-      }
-      
     });
   }
 };
