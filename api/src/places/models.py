@@ -4,7 +4,7 @@ from flask import json
 from marshmallow import Schema, fields
 from marshmallow.validate import Length, Range
 from sqlalchemy import Column, String, ForeignKey, Integer, Float
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 
 from src.db import Base
 from src.i18n.models import i18n_create, I18NLocale
@@ -61,7 +61,8 @@ class Area(Base):
     name = Column(StringTypes.MEDIUM_STRING, nullable=False)
     country_code = Column(String(2), ForeignKey('places_country.code'), nullable=False)
 
-    country = relationship(Country, backref='areas', lazy=True)
+    addresses = relationship('Address', backref='areas', passive_deletes=True)
+    country = relationship('Country', backref='areas', lazy=True)
 
     def __repr__(self):
         return f"<Area(name={self.name},Country Code='{self.country_code}')>"
@@ -107,11 +108,11 @@ class Address(Base):
     name = Column(StringTypes.MEDIUM_STRING, nullable=False)
     address = Column(StringTypes.LONG_STRING, nullable=False)
     city = Column(StringTypes.MEDIUM_STRING, nullable=False)
-    area_id = Column(Integer, ForeignKey('places_area.id'), nullable=False)
+    area_id = Column(Integer, ForeignKey('places_area.id', ondelete='CASCADE'), nullable=False)
     country_code = Column(StringTypes.SHORT_STRING, ForeignKey('places_country.code'), nullable=False)
     latitude = Column(Float)
     longitude = Column(Float)
-    area = relationship('Area', backref='addresses', lazy=True)
+    # area = relationship('Area', backref='addresses', lazy=True)
     country = relationship('Country', backref='addresses', lazy=True)
 
     def __repr__(self):

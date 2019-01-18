@@ -84,6 +84,10 @@ actions:
     _desc: Back to a previous view
     en: Back
     es: Regresar
+  view-past:
+    _desc: View past events
+    en: View Past
+    es: Ver Pasados
   tooltips:
     settings:
       _desc: Change settings

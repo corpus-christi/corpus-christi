@@ -66,9 +66,9 @@ describe('Add Course with Muiltiple Prereq', () => {
     cy.get('[data-cy=course-form-name]').type('COS 115')
     cy.get('[data-cy=course-form-description]').type('Hello World')
     cy.get(':nth-child(4) > .v-input__icon > .v-icon').click()
-    cy.contains('Alone low investment').click()
-    cy.get(':nth-child(4) > .v-input__icon > .v-icon').click()    
-    cy.contains('Expert world.').click()
+    cy.get('.menuable__content__active > .v-select-list > .v-list > :nth-child(1) > .v-list__tile > .v-list__tile__content').click()
+    cy.get(':nth-child(4) > .v-input__icon > .v-icon').click()
+    cy.get('.menuable__content__active > .v-select-list > .v-list > :nth-child(2) > .v-list__tile > .v-list__tile__content').click()
   });
   it('Then: Click add button', ()=>{
     cy.get('[data-cy=course-editor-actions] > .primary').click()

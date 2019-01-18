@@ -38,7 +38,6 @@ Cypress.Commands.add("course_page", function (){
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
 
-
 // TODO: Eventually bypass logging in before each test
 // import store from "../../../src/store"
 // const getStore = () => cy.window().its('app.$store');
