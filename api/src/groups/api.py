@@ -68,6 +68,8 @@ def create_group():
 @jwt_required
 def read_all_groups():
     result = db.session.query(Group).all()
+    if result is None:
+        return jsonify(msg="No groups found"), 404
     for group in result:
         group.memberList = group.members
         group.managerInfo = group.manager
@@ -79,6 +81,8 @@ def read_all_groups():
 @jwt_required
 def read_one_group(group_id):
     result = db.session.query(Group).filter_by(id=group_id).first()
+    if result is None:
+        return jsonify(msg="Group not found"), 404
     return group_dump(result), 200
 
 
@@ -97,6 +101,9 @@ def update_group(group_id):
         return jsonify(err.messages), 422
 
     group = db.session.query(Group).filter_by(id=group_id).first()
+
+    if group is None:
+        return jsonify(msg="Group not found"), 404
 
     if db.session.query(Manager).filter_by(id=new_manager).first() is None:
         return jsonify(msg="Manager not found"), 404
@@ -146,6 +153,7 @@ def activate_group(group_id):
     
     if group is None:
         return jsonify(msg="Group not found"), 404
+
     setattr(group, 'active', True)
     return jsonify(group_schema.dump(group))
 
@@ -157,6 +165,7 @@ def deactivate_group(group_id):
     
     if group is None:
         return jsonify(msg="Group not found"), 404
+
     setattr(group, 'active', False)
     return jsonify(group_schema.dump(group))
 
@@ -186,12 +195,20 @@ def create_meeting():
 @jwt_required
 def read_all_meetings():
     result = db.session.query(Meeting).all()
+
+    if result is None:
+        return jsonify(msg="No meetings found"), 404
+
     return jsonify(meeting_schema.dump(result, many=True))
 
 @groups.route('/meetings/group/<group_id>')
 @jwt_required
 def read_all_meetings_by_group(group_id):
     result = db.session.query(Meeting).filter_by(group_id=group_id).all()
+
+    if result is None:
+            return jsonify(msg="No meetings found"), 404
+
     return jsonify(meeting_schema.dump(result, many=True))
 
 
@@ -199,6 +216,10 @@ def read_all_meetings_by_group(group_id):
 @jwt_required
 def read_all_meetings_by_location(address_id):
     result = db.session.query(Meeting).filter_by(address_id=address_id).all()
+
+    if result is None:
+        return jsonify(msg="No meetings found"), 404
+
     return jsonify(meeting_schema.dump(result, many=True))
 
 
@@ -206,6 +227,10 @@ def read_all_meetings_by_location(address_id):
 @jwt_required
 def read_one_meeting(meeting_id):
     result = db.session.query(Meeting).filter_by(id=meeting_id).first()
+
+    if result is None:
+        return jsonify(msg="Meeting not found"), 404
+
     return jsonify(meeting_schema.dump(result))
 
 
@@ -218,6 +243,9 @@ def update_meeting(meeting_id):
         return jsonify(err.messages), 422
 
     meeting = db.session.query(Meeting).filter_by(id=meeting_id).first()
+
+    if result is None:
+        return jsonify(msg="Meeting not found"), 404
 
     for key, val in valid_meeting.items():
         setattr(meeting, key, val)
@@ -250,6 +278,7 @@ def activate_meeting(meeting_id):
     
     if meeting is None:
         return jsonify(msg="Meeting not found"), 404
+
     setattr(meeting, 'active', True)
     return jsonify(meeting_schema.dump(meeting))
 
@@ -261,6 +290,7 @@ def deactivate_meeting(meeting_id):
     
     if meeting is None:
         return jsonify(msg="Meeting not found"), 404
+
     setattr(meeting, 'active', False)
     return jsonify(meeting_schema.dump(meeting))
 
@@ -300,6 +330,10 @@ def create_member():
 @jwt_required
 def read_all_members():
     result = db.session.query(Member).all()
+
+    if result is None:
+        return jsonify(msg="No members found"), 404
+
     return jsonify(member_schema.dump(result, many=True))
 
 
@@ -319,6 +353,9 @@ def update_member(member_id):
         return jsonify(err.messages), 422
 
     member = db.session.query(Member).filter_by(id=member_id).first()
+
+    if result is None:
+        return jsonify(msg="No members found"), 404
 
     for key, val in valid_member.items():
         setattr(member, key, val)
@@ -350,6 +387,10 @@ def create_attendance():
 @jwt_required
 def read_all_attendance():
     result = db.session.query(Attendance).all()
+
+    if result is None:
+        return jsonify(msg="No attendance records found"), 404
+
     return jsonify(attendance_schema.dump(result, many=True))
 
 
@@ -357,12 +398,20 @@ def read_all_attendance():
 @jwt_required
 def read_attendance_by_meeting(meeting_id):
     result = db.session.query(Attendance).filter_by(meeting_id=meeting_id).all()
+
+    if result is None:
+        return jsonify(msg="No attendance records found"), 404
+
     return jsonify(attendance_schema.dump(result, many=True))
 
 @groups.route('/attendance/member/<member_id>')
 @jwt_required
 def read_attendance_by_member(member_id):
     result = db.session.query(Attendance).filter_by(member_id=member_id).all()
+
+    if result is None:
+        return jsonify(msg="No attendance records found"), 404
+
     return jsonify(attendance_schema.dump(result, many=True))
 
 @groups.route('/attendance', methods=['DELETE'])
