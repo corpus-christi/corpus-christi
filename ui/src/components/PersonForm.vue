@@ -34,7 +34,12 @@
           data-cy="second-last-name"
         ></v-text-field>
 
-        <v-radio-group v-model="person.gender" :readonly="formDisabled" row data-cy="radio-gender">
+        <v-radio-group
+          v-model="person.gender"
+          :readonly="formDisabled"
+          row
+          data-cy="radio-gender"
+        >
           <v-radio v-bind:label="$t('person.male')" value="M"></v-radio>
           <v-radio v-bind:label="$t('person.female')" value="F"></v-radio>
         </v-radio-group>
@@ -87,8 +92,13 @@
           data-cy="phone"
           :readonly="formDisabled"
         ></v-text-field>
-        <span class="headline">{{ $t("people.attributes") }}</span>
-        <AttributeForm :attributes="attributeFields" v-model="formData"></AttributeForm>
+        <div v-if="hasAttributes">
+          <span class="headline">{{ $t("people.attributes") }}</span>
+          <AttributeForm
+            :attributes="attributeFields"
+            v-model="formData"
+          ></AttributeForm>
+        </div>
       </form>
     </v-card-text>
     <v-card-actions>
@@ -98,7 +108,8 @@
         v-on:click="cancel"
         :disabled="formDisabled"
         data-cy="cancel"
-      >{{ $t("actions.cancel") }}</v-btn>
+        >{{ $t("actions.cancel") }}</v-btn
+      >
       <v-spacer></v-spacer>
       <v-btn
         color="primary"
@@ -106,7 +117,8 @@
         v-on:click="clear"
         :disabled="formDisabled"
         data-cy="clear"
-      >{{ $t("actions.clear") }}</v-btn>
+        >{{ $t("actions.clear") }}</v-btn
+      >
       <v-btn
         color="primary"
         outline
@@ -115,7 +127,8 @@
         :loading="addMoreLoading"
         :disabled="formDisabled"
         data-cy="add-another"
-      >{{ $t("actions.add-another") }}</v-btn>
+        >{{ $t("actions.add-another") }}</v-btn
+      >
       <v-btn
         color="primary"
         raised
@@ -123,7 +136,8 @@
         :loading="saveLoading"
         :disabled="formDisabled"
         data-cy="save"
-      >{{ $t("actions.save") }}</v-btn>
+        >{{ $t("actions.save") }}</v-btn
+      >
     </v-card-actions>
   </v-card>
 </template>
@@ -131,7 +145,7 @@
 <script>
 import { mapGetters } from "vuex";
 import { isEmpty, find } from "lodash";
-import AttributeForm from "./InputFields/AttributeForm.vue";
+import AttributeForm from "./input-fields/AttributeForm.vue";
 
 export default {
   name: "PersonForm",
@@ -155,6 +169,10 @@ export default {
     },
     attributes: {
       type: Array,
+      required: true
+    },
+    translations: {
+      type: Object,
       required: true
     }
   },
@@ -198,8 +216,8 @@ export default {
       return this.saveLoading || this.addMoreLoading;
     },
 
-    showAttributes() {
-      return true;
+    hasAttributes() {
+      return this.$props.attributes.length !== 0;
     }
   },
 
@@ -227,6 +245,7 @@ export default {
       for (let key of this.personKeys) {
         this.person[key] = "";
       }
+      this.constructAttributeForm(this.$props.attributes);
       this.$validator.reset();
     },
 
@@ -253,20 +272,20 @@ export default {
       for (let attribute of this.attributeFields) {
         attributes.push({
           personId: this.person.id ? this.person.id : 0,
-          attributeId: attribute.name,
+          attributeId: attribute.id,
           enumValueId: this.isEnum(attribute.fieldType)
-            ? this.formData[attribute.name]
+            ? this.formData[attribute.id]
             : 0,
           stringValue: this.isEnum(attribute.fieldType)
             ? ""
-            : this.formData[attribute.name]
+            : this.formData[attribute.id].toString()
         });
       }
       return attributes;
     },
 
     isEnum(type) {
-      return type === "Dropdown";
+      return type === "Dropdown" || type === "Radio";
     },
 
     getExistingAttribute(attributeId) {
@@ -279,16 +298,22 @@ export default {
     },
 
     constructAttributeForm(attributes) {
+      attributes.sort((a, b) => {
+        return a.seq - b.seq;
+      });
       this.attributeFields = [];
       // reference: https://blog.rangle.io/how-to-create-data-driven-user-interfaces-in-vue/
       for (let attr of attributes) {
         let component;
         switch (attr.typeI18n) {
           case "attribute.float":
+            component = this.floatFieldConstructor(attr);
             break;
           case "attribute.integer":
+            component = this.integerFieldConstructor(attr);
             break;
           case "attribute.date":
+            component = this.dateFieldConstructor(attr);
             break;
           case "attribute.string":
             component = this.stringFieldConstructor(attr);
@@ -297,12 +322,56 @@ export default {
             component = this.dropdownFieldConstructor(attr);
             break;
           case "attribute.check":
+            component = this.checkFieldConstructor(attr);
             break;
           case "attribute.radio":
+            component = this.radioFieldConstructor(attr);
             break;
         }
         this.attributeFields.push(component);
       }
+    },
+
+    floatFieldConstructor(attr) {
+      this.$set(
+        this.formData,
+        attr.id.toString(),
+        this.getExistingAttribute(attr.id).stringValue
+      );
+      return {
+        fieldType: "Float",
+        name: this.translations[attr.nameI18n],
+        label: this.translations[attr.nameI18n],
+        id: attr.id.toString()
+      };
+    },
+
+    integerFieldConstructor(attr) {
+      this.$set(
+        this.formData,
+        attr.id.toString(),
+        this.getExistingAttribute(attr.id).stringValue
+      );
+      return {
+        fieldType: "Integer",
+        name: this.translations[attr.nameI18n],
+        label: this.translations[attr.nameI18n],
+        id: attr.id.toString()
+      };
+    },
+
+    dateFieldConstructor(attr) {
+      this.$set(
+        this.formData,
+        attr.id.toString(),
+        this.getExistingAttribute(attr.id).stringValue
+      );
+      return {
+        fieldType: "Date",
+        name: this.translations[attr.nameI18n],
+        label: this.translations[attr.nameI18n],
+        id: attr.id.toString()
+      };
     },
 
     stringFieldConstructor(attr) {
@@ -313,8 +382,9 @@ export default {
       );
       return {
         fieldType: "String",
-        name: attr.id.toString(),
-        label: attr.nameI18n
+        name: this.translations[attr.nameI18n],
+        label: this.translations[attr.nameI18n],
+        id: attr.id.toString()
       };
     },
 
@@ -322,7 +392,7 @@ export default {
       let options = [];
       for (let item of attr.enumerated_values) {
         options.push({
-          text: item.valueI18n,
+          text: this.translations[item.valueI18n],
           value: item.id
         });
       }
@@ -334,9 +404,63 @@ export default {
       );
       return {
         fieldType: "Dropdown",
-        name: attr.id.toString(),
-        label: attr.nameI18n,
-        options: options
+        name: this.translations[attr.nameI18n],
+        label: this.translations[attr.nameI18n],
+        options: options,
+        id: attr.id.toString()
+      };
+    },
+
+    checkFieldConstructor(attr) {
+      let options = [];
+      for (let item of attr.enumerated_values) {
+        options.push({
+          label: this.translations[item.valueI18n],
+          name: this.translations[item.valueI18n],
+          value: item.id
+        });
+      }
+
+      let existingAttr = this.getExistingAttribute(attr.id).stringValue.split(
+        ","
+      );
+      for (let index in existingAttr) {
+        existingAttr[index] = Number(existingAttr[index]);
+      }
+
+      this.$set(this.formData, attr.id.toString(), existingAttr);
+      return {
+        fieldType: "Check",
+        name: this.translations[attr.nameI18n],
+        label: this.translations[attr.nameI18n],
+        options: options,
+        value: existingAttr,
+        id: attr.id.toString()
+      };
+    },
+
+    radioFieldConstructor(attr) {
+      let options = [];
+      for (let item of attr.enumerated_values) {
+        options.push({
+          label: this.translations[item.valueI18n],
+          name: this.translations[item.valueI18n],
+          value: item.id,
+          inputValue: this.getExistingAttribute(attr.id).enumValueId
+        });
+      }
+
+      this.$set(
+        this.formData,
+        attr.id.toString(),
+        this.getExistingAttribute(attr.id).enumValueId
+      );
+      return {
+        fieldType: "Radio",
+        name: this.translations[attr.nameI18n],
+        label: this.translations[attr.nameI18n],
+        options: options,
+        id: attr.id.toString()
       };
     }
   }

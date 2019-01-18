@@ -26,7 +26,7 @@ describe("Testing Editing User Information", () => {
     cy.get("thead > :nth-child(1) > :nth-child(3)").click();
   });
   it("Then: The table should resort itself based on what was being sorted", () => {
-    cy.get("tbody > :nth-child(1) > :nth-child(3)").contains("Altamirano");
+    cy.get("tbody > :nth-child(1) > :nth-child(3)").contains("Arellano");
   });
 
   it("And: When clicked again should change the sorting method: last name ascending", () => {
@@ -35,17 +35,13 @@ describe("Testing Editing User Information", () => {
   });
   it("And: When clicked again should change the sorting method: last name by user_id", () => {
     cy.get("thead > :nth-child(1) > :nth-child(3)").click();
-    cy.get("tbody > :nth-child(1) > :nth-child(3)").contains("Godoy");
+    cy.get("tbody > :nth-child(1) > :nth-child(3)").contains("Brown");
   });
   it("And: The other sorting buttons should be clickable and work as well", () => {
     cy.get("thead > :nth-child(1) > :nth-child(2)").click();
-    cy.get("tbody > :nth-child(1) > :nth-child(2)").contains("Alberto");
-    cy.get("thead > :nth-child(1) > :nth-child(4)")
-      .click()
-      .click();
-    cy.get("tbody > :nth-child(1) > :nth-child(4)").contains(
-      "rodolfovela@industrias.net"
-    );
+    cy.get("tbody > :nth-child(1) > :nth-child(2)").contains("Andrew");
+    cy.get("thead > :nth-child(1) > :nth-child(4)").click().click();
+    cy.get("tbody > :nth-child(1) > :nth-child(4)").contains("xdiaz@industrias.com");
     cy.get("thead > :nth-child(1) > :nth-child(5)").click();
     cy.get("tbody > :nth-child(1) > :nth-child(5)").should("be.empty");
   });
