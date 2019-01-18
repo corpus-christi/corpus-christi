@@ -1,6 +1,45 @@
 {
   "courses": [
     {
+      "id": 1,
+      "name": "Intro to the Old Testament",
+      "description": "A survey of the Old Testament",
+      "active": true
+    },
+    {
+      "id": 2,
+      "name": "Intro to New Testament",
+      "description": "A survey of the New Testament",
+      "active": true
+    },
+    {
+      "id": 3,
+      "name": "Survey of the Minor Prophets",
+      "description": "All you'd want to know and more!",
+      "active": true
+    },
+    {
+      "title": "Old Testament",
+      "description": "typicod",
+      "active": true,
+      "id": 4,
+      "name": "hello"
+    },
+    {
+      "name": "test foo",
+      "description": "test",
+      "id": 5,
+      "active": true
+    },
+    {
+      "name": "testing ",
+      "description": "123",
+      "id": 6,
+      "active": false
+    }
+  ],
+  "course_offering": [
+    {
       "name": "Intro to New Testament",
       "description": "typicode here",
       "active": true,
@@ -19,22 +58,79 @@
       "active": false
     },
     {
+      "title": "Old Testament",
+      "description": "typicod",
+      "active": true,
       "id": 4,
-      "name": "Old Testament",
-      "description": "typicode",
-      "active": true
+      "name": "Old Testament"
     },
     {
       "name": "test foo",
       "description": "test",
       "id": 5,
+      "name": "Predestination and other cool topics",
+      "description": "Not actually the P in TULIP...it's the U.",
       "active": true
     },
     {
-      "name": "testing ",
-      "description": "123",
       "id": 6,
-      "active": false
+      "name": "TULIP, the course",
+      "description": "The whole shootin match....",
+      "active": true
+    }
+  ],
+  "diplomas": [
+    {
+      "id": 1,
+      "name": "Survey of the Bible",
+      "description": "A survey of the entire Bible, through three courses.",
+      "active": false,
+      "courses": [
+        {
+          "id": 1,
+          "name": "Intro to the Old Testament",
+          "description": "A survey of the Old Testament",
+          "active": true
+        },
+        {
+          "id": 2,
+          "name": "Intro to New Testament",
+          "description": "A survey of the New Testament",
+          "active": true
+        },
+        {
+          "id": 3,
+          "name": "Survey of the Minor Prophets",
+          "description": "All you'd want to know and more!",
+          "active": true
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Covenant Theology",
+      "description": "A comprehensive study of reformed doctrine, with applications.",
+      "active": true,
+      "courses": [
+        {
+          "id": 4,
+          "name": "Calvin's Institutes",
+          "description": "Two large volumes...get reading :)",
+          "active": true
+        },
+        {
+          "id": 5,
+          "name": "Predestination",
+          "description": "Not actually the P in TULIP...it's the U.",
+          "active": true
+        },
+        {
+          "id": 6,
+          "name": "TULIP, the course",
+          "description": "The whole shootin match....",
+          "active": true
+        }
+      ]
     }
   ]
 }

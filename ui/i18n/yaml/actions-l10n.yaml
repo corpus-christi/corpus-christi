@@ -80,6 +80,10 @@ actions:
     _desc: View all inactive people
     en: View Inactive
     es: Ver Inactivo
+  back:
+    _desc: Back to a previous view
+    en: Back
+    es: Regresar
   view-past:
     _desc: View past events
     en: View Past
@@ -92,10 +96,15 @@ actions:
     archive:
       en: Archive
       es: Archivar
+    unarchive:
+      en: Unarchive
+      es: Desarchivar
     activate:
       en: Activate
       es: Activar
     remove:
       en: Remove
       es: Retirar
-
+    unarchive:
+      en: Unarchive
+      es: Desarchivar
