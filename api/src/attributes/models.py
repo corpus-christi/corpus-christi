@@ -1,3 +1,6 @@
+import os
+import json
+
 from marshmallow import fields, Schema, pre_load
 from marshmallow.validate import Length, Range, OneOf
 from sqlalchemy import Column, Integer, String, Date, ForeignKey, Boolean
@@ -5,6 +8,8 @@ from sqlalchemy.orm import relationship, backref
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from ..db import Base
+from .. import db
+from src.i18n.models import i18n_create, I18NLocale
 from ..places.models import Location
 from ..shared.models import StringTypes
 
@@ -33,6 +38,30 @@ class Attribute(Base):
     def available_types():
         return Attribute.enumerated_types_list + Attribute.nonenumerated_types_list
 
+    @classmethod
+    def load_types_from_file(cls, file_name='attribute_types.json'):
+        count = 0
+        file_path = os.path.abspath(os.path.join(
+            __file__, os.path.pardir, 'data', file_name))
+
+        with open(file_path, 'r') as fp:
+
+            attribute_types = json.load(fp)
+
+            for attribute_type in attribute_types:
+                attribute_name = attribute_type['name']
+                name_i18n = f'attribute.{attribute_name}'
+
+                for locale in attribute_type['locales']:
+                    locale_code = locale['locale_code']
+                    if not db.session.query(I18NLocale).get(locale_code):
+                        db.session.add(I18NLocale(code=locale_code, desc=''))
+                    i18n_create(name_i18n, locale['locale_code'],
+                                locale['name'], description=f"Attribute type {attribute_name}")
+                count += 1
+            db.session.commit()
+            return count
+
 
 class AttributeSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
@@ -58,7 +87,7 @@ class EnumeratedValue(Base):
 
 
 class EnumeratedValueSchema(Schema):
-    id = fields.Integer(dump_only=False, required=True, validate=Range(min=1))
+    id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     attribute_id = fields.Integer(data_key='attributeId')
     value_i18n = fields.String(data_key='valueI18n')
     active = fields.Boolean(required=True)
