@@ -221,7 +221,7 @@ def test_create_enumerated_attribute(auth_client):
     count = random.randint(5, 15)
     # WHEN we create a random number of new attributes
     for i in range(count):
-        resp = auth_client.post(url_for('attributes.create_attribute'), json={"attribute": attribute_factory(auth_client.sqla, 'name', 'en-US'), "enumeratedValues":[]})
+        resp = auth_client.post(url_for('attributes.create_attribute'), json={"attribute": (auth_client.sqla, 'name', 'en-US'), "enumeratedValues":[]})
         assert resp.status_code == 201
     # THEN we end up with the proper number of attributes in the database
     assert auth_client.sqla.query(Attribute).count() == count

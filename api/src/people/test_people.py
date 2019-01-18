@@ -608,27 +608,36 @@ def test_activate_account(auth_client):
 
 #   -----   Roles
 
+
 @pytest.mark.smoke
 def test_create_role(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
-
-    # TODO FINISH
-    assert False
+    # GIVEN an empty database
+    count = random.randint(3, 8)
+    # WHEN we create a random number of new roles
+    for i in range(count):
+        resp = auth_client.post(url_for('people.create_role'), json=role_object_factory(fake.job()))
+        assert resp.status_code == 201
+    # THEN we end up with the proper number of roles in the database
+    assert auth_client.sqla.query(Role).count() == count
 
 @pytest.mark.smoke
 def test_read_all_roles(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
+    # GIVEN a collection of roles
+    role_count = random.randint(3, 8)
+    create_roles(auth_client.sqla, role_count)
 
-    # TODO FINISH
-    assert False
+    # WHEN we request all roles from the api
+    resp = auth_client.get(url_for('people.read_all_roles', locale='en-US'))
+
+    # THEN the count matches the number of entries in the database
+    assert resp.status_code == 200
+    assert len(resp.json) == role_count
 
 @pytest.mark.smoke
 def test_get_roles_for_account(auth_client):
-    # GIVEN
+    # GIVEN a DB populated with accounts and roles
+    prep_database(auth_client.sqla)
+    Role.load_from_file()
     # WHEN
     # THEN
 
@@ -637,12 +646,22 @@ def test_get_roles_for_account(auth_client):
 
 @pytest.mark.smoke
 def test_read_one_role(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
+    # GIVEN a collection of roles
+    prep_database(auth_client.sqla)
+    Role.load_from_file()
+    create_roles(auth_client.sqla, 3)
 
-    # TODO FINISH
-    assert False
+    for role in auth_client.sqla.query(Role).all():
+        # WHEN we request one
+        print('Role = ', role)
+        resp = auth_client.get(url_for('people.read_one_role', role_id=role.id))
+        # THEN we find the matching role
+        print("Response: ", resp.json)
+        assert resp.status_code == 200
+
+        # assert resp.json['id'] == role.id
+        # assert resp.json['nameI18n'] == role.name_i18n
+        # assert resp.json['active'] == True
 
 @pytest.mark.smoke
 def test_update_role(auth_client):
@@ -655,30 +674,61 @@ def test_update_role(auth_client):
 
 @pytest.mark.smoke
 def test_activate_role(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
+    # GIVEN a DB with a collection roles.
+    Role.load_from_file()
+    all_roles = auth_client.sqla.query(Role).all()
+    current_role = random.choice(all_roles)
 
-    # TODO FINISH
-    assert False
+    resp = auth_client.put(url_for(
+        'people.deactivate_role', role_id=current_role.id))
+    assert resp.status_code == 200
+    assert current_role.active == False
+
+    # WHEN we choose a role that has been deactivated
+    resp = auth_client.put(url_for(
+        'people.activate_role', role_id=current_role.id))
+    assert resp.status_code == 200
+
+    # THEN the role is marked as active
+    updated_role = auth_client.sqla.query(
+        Role).filter_by(id=current_role.id).first()
+    assert updated_role is not None
+    assert updated_role.active == True
 
 @pytest.mark.smoke
 def test_deactivate_role(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
+    # GIVEN a DB with a collection roles.
+    Role.load_from_file()
+    all_roles = auth_client.sqla.query(Role).all()
+    current_role = random.choice(all_roles)
 
-    # TODO FINISH
-    assert False
+    #WHEN a role is chosen at random
+    resp = auth_client.put(url_for(
+        'people.deactivate_role', role_id=current_role.id))
+    updated_role = auth_client.sqla.query(
+        Role).filter_by(id=current_role.id).first()
+    assert resp.status_code == 200
+
+    #THEN the role is marked as unactive
+    assert updated_role is not None
+    assert current_role.active == False
 
 @pytest.mark.smoke
 def test_add_role_to_account(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
+    # GIVEN a DB populated with people, accounts, and roles
+    prep_database(auth_client.sqla)
+    Role.load_from_file()
+    all_accounts = auth_client.sqla.query(Account).all()
+    current_account = random.choice(all_accounts)
+    all_roles = auth_client.sqla.query(Role).all()
+    current_role = random.choice(all_roles)
 
-    # TODO FINISH
-    assert False
+    #WHEN account and a role are specified
+    resp = auth_client.post(url_for(
+        'people.add_role_to_account', account_id=current_account.id, role_id=current_role.id))
+    assert resp.status_code == 200
+    Pr
+
 
 @pytest.mark.smoke
 def test_remove_role_from_account(auth_client):
