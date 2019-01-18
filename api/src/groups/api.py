@@ -151,6 +151,8 @@ meeting_schema = MeetingSchema()
 @groups.route('/meetings', methods=['POST'])
 @jwt_required
 def create_meeting():
+    if 'active' not in request.json.keys():
+        request.json['active']=True
     try:
         valid_meeting = meeting_schema.load(request.json)
     except ValidationError as err:
@@ -204,6 +206,46 @@ def update_meeting(meeting_id):
 
     db.session.commit()
     return jsonify(meeting_schema.dump(meeting))
+
+
+@groups.route('/meetings/delete/<meeting_id>', methods=['DELETE'])
+@jwt_required
+def delete_meeting(meeting_id):
+    # USE WITH CARE!!! --- WILL DELETE MEETING AND ALL ATTENDANCE TO THAT MEETING
+    meeting = db.session.query(Meeting).filter_by(id=meeting_id).first()
+    
+    if meeting is None:
+        return jsonify(msg='Meeting not found'), 404
+    
+    for member in meeting.members:
+        db.session.delete(member)
+    db.session.delete(meeting)
+    db.session.commit()
+    
+    return jsonify(msg='Meeting ' + meeting_id + ' deleted'), 200
+
+
+@groups.route('/meetings/activate/<meeting_id>', methods=['PUT'])
+@jwt_required
+def activate_meeting(meeting_id):
+    meeting = db.session.query(Meeting).filter_by(id=meeting_id).first()
+    
+    if meeting is None:
+        return jsonify(msg="Meeting not found"), 404
+    setattr(meeting, 'active', True)
+    return jsonify(meeting_schema.dump(meeting))
+
+
+@groups.route('/meetings/deactivate/<meeting_id>', methods=['PUT'])
+@jwt_required
+def deactivate_meeting(meeting_id):
+    meeting = db.session.query(Meeting).filter_by(id=meeting_id).first()
+    
+    if meeting is None:
+        return jsonify(msg="Meeting not found"), 404
+    setattr(meeting, 'active', False)
+    return jsonify(meeting_schema.dump(meeting))
+
 
 
 # ---- Member

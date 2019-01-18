@@ -42,6 +42,7 @@ class Meeting(Base):
     when = Column(DateTime, nullable=False)
     group_id = Column(Integer, ForeignKey('groups_group.id'), nullable=False)
     address_id = Column(Integer, ForeignKey('places_address.id'))
+    active = Column(Boolean, nullable=False)
     group = relationship('Group', back_populates='meetings', lazy=True)
     address = relationship('Address', back_populates='meetings', lazy=True)
     members = relationship('Attendance', back_populates='meeting', lazy=True)
@@ -55,6 +56,7 @@ class MeetingSchema(Schema):
     when = fields.DateTime(required=True)
     group_id = fields.Integer(data_key='group_id', required=True)
     address_id = fields.Integer(data_key='address_id')
+    active = fields.Boolean(nullable=False)
     
 
 
