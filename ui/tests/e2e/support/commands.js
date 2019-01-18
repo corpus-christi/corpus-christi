@@ -12,29 +12,17 @@
 // -- This is a parent command --
 // Cypress.Commands.add("login", (email, password) => { ... })
 
+Cypress.Commands.add("login", function() {
+  cy.visit("/login");
+  cy.get("[data-cy=username]").type("Cytest");
+  cy.get("[data-cy=password]").type("password");
+  cy.get("[data-cy=login]").click();
+});
 
-// Cypress.Commands.add('login', function() {
-//     cy.visit('/login');
-//     cy.get('[data-cy=username]').type('Cytest');
-//     cy.get('[data-cy=password]').type('password');
-//     cy.get('[data-cy=login]').click();
-// })
-
-
-
-// Cypress.Commands.add('login', () => {
-//     cy.request({
-//         method: 'POST',
-//         url: 'http://localhost:8080/api/v1/auth/login',
-//         body: {
-//             password: 'Qwerty1234',
-//             username: 'lpratico'
-//         }
-//     })
-//     .then((resp) => {
-//         window.localStorage.setItem('jwt', Response.body.user.token)
-//     })
-// })
+Cypress.Commands.add("course_page", function (){
+  cy.get('[data-cy=toggle-nav-drawer]').click();
+  cy.get('[data-cy=courses]').click();
+})
 
 
 //
@@ -49,12 +37,7 @@
 // -- This is will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
-Cypress.Commands.add("login", function() {
-  cy.visit("/login");
-  cy.get("[data-cy=username]").type("Cytest");
-  cy.get("[data-cy=password]").type("password");
-  cy.get("[data-cy=login]").click();
-});
+
 
 // TODO: Eventually bypass logging in before each test
 // import store from "../../../src/store"

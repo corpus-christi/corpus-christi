@@ -37,7 +37,7 @@ describe('Attempt to Add Course Without Title', () => {
     cy.get('[data-cy=course-editor-actions] > .primary').click()
   })
   it('Adding Course should fail', () => {
-    cy.wait(5000)
+    cy.wait(500)
     cy.contains('Se fall')
   })
 })
