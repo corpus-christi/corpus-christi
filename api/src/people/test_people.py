@@ -26,6 +26,7 @@ class RandomLocaleFaker:
 rl_fake = RandomLocaleFaker('en_US', 'es_MX')
 fake = Faker()  # Generic faker; random-locale ones don't implement everything.
 
+# ---- Helper Functions
 
 def flip():
     """Return true or false randomly."""
@@ -73,7 +74,7 @@ def account_object_factory(person_id):
 
 
 def create_multiple_people(sqla, n):
-    """Commit `n` new people to the database. Return their IDs."""
+    """Commit `n` new people to the database. Returns the people."""
     person_schema = PersonSchema()
     new_people = []
     for i in range(n):
@@ -81,6 +82,7 @@ def create_multiple_people(sqla, n):
         new_people.append(Person(**valid_person))
     sqla.add_all(new_people)
     sqla.commit()
+    return new_people
 
 
 def create_multiple_accounts(sqla, fraction=0.75):
@@ -99,6 +101,42 @@ def create_multiple_accounts(sqla, fraction=0.75):
         new_accounts.append(Account(**valid_account))
     sqla.add_all(new_accounts)
     sqla.commit()
+
+def prep_database(sqla):
+    """Prepare the database with a random number of people, some of which have accounts.
+    Returns list of IDs of the new accounts.
+    """
+    create_multiple_people(sqla, random.randint(5, 15))
+    create_multiple_accounts(sqla)
+    return [account.id for account in sqla.query(Account.id).all()]
+
+def role_object_factory(role_name = 'role.test_role'):
+    """Cook up a fake role."""
+    role = {
+        'nameI18n': role_name,
+        'active' : 1
+    }
+    return role
+
+def create_role(sqla):
+    """Commit new role to the database. Return ID."""
+    role_schema = RoleSchema()
+
+    valid_role_object = role_schema.load(role_object_factory(fake.job())) # fake role is fake job
+    valid_role_row = Role(**valid_role_object)
+    sqla.add(valid_role_row)
+    sqla.commit()
+    return valid_role_row.id
+
+def create_roles(sqla, n):
+    """Commit `n` new roles to the database. Return their IDs."""
+    role_schema = RoleSchema()
+    role_ids = []
+
+    for x in range(0, n):
+        role_ids.append(create_role(sqla))
+
+    return role_ids
 
 
 # ---- Person
@@ -262,22 +300,6 @@ def test_create_account(auth_client):
     assert auth_client.sqla.query(Account).count() == count
 
 
-def prep_database(sqla):
-    """Prepare the database with a random number of people, some of which have accounts.
-    Returns list of IDs of the new accounts.
-    """
-    create_multiple_people(sqla, random.randint(5, 15))
-    create_multiple_accounts(sqla)
-    return [account.id for account in sqla.query(Account.id).all()]
-
-def prep_accounts_with_roles(sqla, roles):
-    """Prepare the database with a random number of people, all of which have accounts.
-    Returns list of IDs of the new accounts.
-    """
-    create_multiple_people(sqla, random.randint(5, 15))
-    create_multiple_accounts(sqla)
-    return [account.id for account in sqla.query(Account.id).all()]
-
 @pytest.mark.smoke
 def test_read_all_accounts(auth_client):
     # GIVEN a collection of accounts
@@ -346,20 +368,38 @@ def test_read_person_account(auth_client):
 
 def test_get_accounts_by_role(auth_client):
     # GIVEN an account with a role
-    role_count = random.randint(8, 19)
-    role_ids = create_roles(auth_client.sqla, role_count) # Create x Roles and return their id's
-    # TODO Create random number of accounts who have random roles
-    account_ids = prep_accounts_with_roles(auth_client.sqla, "roles")
-    print("account_ids Created: " + str(account_ids))
+    role_count = random.randint(3, 7)
+    create_roles(auth_client.sqla, role_count) # Create x Roles and return their id's
+    people_count = random.randint(30, 55)
+    create_multiple_people(auth_client.sqla, people_count) # create random people
+    create_multiple_accounts(auth_client.sqla, 1.0) # create accounts for all people
+
     roles = auth_client.sqla.query(Role).all()
-    print("Roles Before: "+ str(roles))
+    accounts = auth_client.sqla.query(Account).all()
 
+    for account in accounts:
+        account.roles.append(roles[random.randint(0, len(roles)-1)]) # assign roles to accounts
+        auth_client.sqla.add(account)
+    auth_client.sqla.commit()
 
+    for role in roles:
+        resp = auth_client.get(url_for('people.get_accounts_by_role', role_id=role.id))
+        assert resp.status_code == 200  # check response
 
-    random_id = account_ids[random.randint(0, len(account_ids) - 1)]  # Random account id to test
-    roles = auth_client.sqla.query(Role).all()
-    print("Roles After Creation: " + str(roles))
-    print("First Role : " + str(auth_client.sqla.query(Role).get(3)))
+        account_count = 0
+        for account in accounts:
+            if role in account.roles:
+                account_count += 1
+
+        print("Chu gus: " + str(account_count))
+        # assert that account_count is equal to number of entries in get_account_by_role
+        # db_resp = auth_client.sqla.query(Account).filter_by(role_id=role.id)
+        print("Brungus")
+        print(len(resp))
+
+        print("crankYS")
+        print(resp.json)
+
 
     # WHEN the api call for getting accounts by role is called
     # THEN the results match the database
@@ -495,34 +535,6 @@ def test_verify_password_account(auth_client):
 
 
 #   -----   Roles
-
-def role_object_factory(role_name = 'role.test_role'):
-    """Cook up a fake role."""
-    role = {
-        'nameI18n': role_name,
-        'active' : 1
-    }
-    return role
-
-def create_role(sqla):
-    """Commit new role to the database. Return ID."""
-    role_schema = RoleSchema()
-
-    valid_role_object = role_schema.load(role_object_factory())
-    valid_role_row = Role(**valid_role_object)
-    sqla.add(valid_role_row)
-    sqla.commit()
-    return valid_role_row.id
-
-def create_roles(sqla, n):
-    """Commit `n` new roles to the database. Return their IDs."""
-    role_schema = RoleSchema()
-    role_ids = []
-
-    for x in range(0, n):
-        role_ids.append(create_role(sqla))
-
-    return role_ids
 
 #
 # def test_create_role(auth_client):
