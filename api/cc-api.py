@@ -61,6 +61,10 @@ def load_languages():
 def load_roles():
     Role.load_from_file()
 
+@data_cli.command('load-attribute-types', help='Load attribute types')
+def load_attribute_types():
+    Attribute.load_types_from_file()
+
 
 @data_cli.command('load-all', help='Load everything')
 def load_all():
@@ -69,6 +73,7 @@ def load_all():
     Country.load_from_file()
     Language.load_from_file()
     Role.load_from_file()
+    Attribute.load_types_from_file()
     create_multiple_people(db.session, 17)
     create_multiple_accounts(db.session, 0.25)
     access_token = create_access_token(identity='test-user')
