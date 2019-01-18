@@ -45,7 +45,9 @@
         data-cy="confirm-password"
       ></v-text-field>
     </v-card-text>
-    <v-card-title>$tRole Settings</v-card-title>
+    <v-card-title
+      >{{ $t("person.actions.assign-roles") }}</v-card-title
+    >
     <v-card-text>
       <v-select
         :items="rolesList"
@@ -139,7 +141,7 @@ export default {
       return this.addingAccount
         ? this.$t("person.actions.add-account")
         : this.$t("person.actions.reset-password");
-    },
+    }
   },
   methods: {
     confirm() {

@@ -2,6 +2,9 @@ people:
   title:
     en: People
     es: Personas
+  title-roles:
+    en: Roles
+    es: Papeles
 
 account:
   username:
@@ -71,6 +74,9 @@ person:
     reset-password:
       en: Reset Password
       es: Restablecer la contraseña
+    assign-roles:
+      en: Assign Roles
+      es: Asigne Papeles
   messages:
     account-activate:
       en: Account activated

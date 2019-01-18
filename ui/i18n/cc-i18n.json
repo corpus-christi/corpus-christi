@@ -122,12 +122,14 @@
       "header": "Log In"
     },
     "people": {
-      "title": "People"
+      "title": "People",
+      "title-roles": "Roles"
     },
     "person": {
       "actions": {
         "add-account": "Add Account",
         "add-participant": "Add a Participant",
+        "assign-roles": "Assign Roles",
         "edit": "Edit Person",
         "new": "New Person",
         "reset-password": "Reset Password"
@@ -298,12 +300,14 @@
       "header": "Iniciar Sesi\u00f3n"
     },
     "people": {
-      "title": "Personas"
+      "title": "Personas",
+      "title-roles": "Papeles"
     },
     "person": {
       "actions": {
         "add-account": "A\u00f1adir cuenta",
         "add-participant": "A\u00f1adir Part\u00edcipe",
+        "assign-roles": "Asigne Papeles",
         "edit": "Editar persona",
         "new": "Persona Nueva",
         "reset-password": "Restablecer la contrase\u00f1a"

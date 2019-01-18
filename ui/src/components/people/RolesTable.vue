@@ -3,7 +3,11 @@
     <!-- Header -->
     <v-toolbar class="pa-1">
       <v-layout align-center justify-space-between fill-height>
-        <v-flex md2> <v-toolbar-title>$tRoles</v-toolbar-title> </v-flex>
+        <v-flex md2>
+          <v-toolbar-title>{{
+            $t("people.title-roles")
+          }}</v-toolbar-title>
+        </v-flex>
         <v-flex md3>
           <v-text-field
             v-model="search"
@@ -17,13 +21,12 @@
           ></v-text-field>
         </v-flex>
         <v-flex md3>
-          <div data-cy="view-dropdown">
+          <div data-cy="roles-dropdown">
             <v-select
               hide-details
               solo
               single-line
               :items="rolesList"
-              v-model="viewStatus"
             >
             </v-select>
           </div>
@@ -37,7 +40,7 @@
       :items="peopleToDisplay"
       :search="search"
       class="elevation-1"
-      data-cy="person-table"
+      data-cy="roles-table"
     >
       <template slot="items" slot-scope="props">
         <td>
@@ -75,11 +78,11 @@
         </td>
         <!-- <td :data-cy="'phone-' + props.item.id">{{ props.item.phone }}</td> -->
         <td class="hidden-sm-and-down" :data-cy="'username-' + props.item.id">
-          {{ props.item.accountInfo.username}}
+          {{ props.item.accountInfo.username }}
         </td>
-          
+
         <td class="text-no-wrap">
-          <!-- <v-tooltip bottom>
+          <v-tooltip bottom>
             <v-btn
               icon
               outline
@@ -92,7 +95,7 @@
               <v-icon small>edit</v-icon>
             </v-btn>
             <span>{{ $t("actions.edit") }}</span>
-          </v-tooltip> -->
+          </v-tooltip>
           <v-tooltip bottom>
             <v-btn
               icon
@@ -173,12 +176,11 @@ export default {
     rolesList: {
       type: Array,
       required: true
-    },
+    }
   },
-  
+
   data() {
     return {
-      viewStatus: "viewActive",
       personDialog: {
         show: false,
         editMode: false,
@@ -203,10 +205,7 @@ export default {
       showingArchived: false,
       selected: [],
       allPeople: [],
-      activePeople: [],
       allAccount: [],
-      archivedPeople: [],
-      // rolesList: [],
       search: "",
       data: {}
     };
@@ -233,48 +232,26 @@ export default {
           width: "15%",
           class: "hidden-sm-and-down"
         },
-        { text: this.$t("person.accountInfo.username"), value: "username", width: "15%" },
+        {
+          text: this.$t("person.accountInfo.username"),
+          value: "username",
+          width: "15%"
+        },
         { text: this.$t("actions.header"), sortable: false }
       ];
     },
-    viewOptions() {
-      return [
-        {
-          text: this.$t("actions.view-active"),
-          value: "viewActive",
-          class: "view-active"
-        },
-        {
-          text: this.$t("actions.view-archived"),
-          value: "viewArchived",
-          class: "view-archived"
-        },
-        { text: this.$t("actions.view-all"), value: "viewAll" }
-      ];
-    },
     peopleToDisplay() {
-      // switch (this.viewStatus) {
-      //   case "viewActive":
-      //     return this.activePeople;
-      //   case "viewArchived":
-      //     return this.archivedPeople;
-      //   case "viewAll":
-      //     return this.allPeople;
-      //   default:
-      //     return this.activePeople;
-      return this.allAccount;
-      // }
-    }
+        return this.allAccount;
+      }
   },
 
   watch: {
     peopleList(all_people) {
-    this.allPeople = all_people;
-    this.allAccount = this.allPeople.filter(person => person.accountInfo);
+      this.allPeople = all_people;
+      this.allAccount = this.allPeople.filter(person => person.accountInfo && person.active);
     },
 
     rolesList(all_roles) {
-      console.log(this.rolesList);
       this.rolesList = all_roles;
     }
   },
@@ -449,33 +426,6 @@ export default {
         .catch(err => console.error("FAILURE", err.response));
     },
 
-    activatePerson(person) {
-      this.$http
-        .put(`/api/v1/people/persons/activate/${person.id}`)
-        .then(resp => {
-          console.log("ACTIVATED PERSON", resp);
-          this.showSnackbar(this.$t("person.messages.person-activate"));
-        })
-        .then(() => this.refreshPeopleList())
-        .catch(err => console.error("FAILURE", err.response));
-    },
-
-    deactivatePerson(person) {
-      this.$http
-        .put(`/api/v1/people/persons/deactivate/${person.id}`)
-        .then(resp => {
-          console.log("DEACTIVATED PERSON", resp);
-          this.showSnackbar(this.$t("person.messages.person-deactivate"));
-        })
-        .then(() => this.refreshPeopleList())
-        .then(() => {
-          if (person.accountInfo && person.accountInfo.active) {
-            this.deactivateAccount(person.accountInfo.id);
-          }
-        })
-        .catch(err => console.error("FAILURE PLEASE", err.response));
-    },
-
     getAttributesInfo() {
       this.$http
         .get("/api/v1/people/persons/fields")
@@ -488,8 +438,8 @@ export default {
     },
 
     refreshPeopleList() {
-      this.$emit("fetchPeopleList")
-    },
+      this.$emit("fetchPeopleList");
+    }
   },
 
   mounted: function() {

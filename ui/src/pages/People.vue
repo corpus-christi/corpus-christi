@@ -2,16 +2,24 @@
   <v-container>
     <v-tabs color="transparent" slider-color="accent">
       <v-tab ripple>
-        <v-icon>list</v-icon>&nbsp;{{ $t("events.details.title") }}
+        <v-icon>person</v-icon>&nbsp;{{ $t("people.title") }}
       </v-tab>
       <v-tab-item>
-        <PersonTable v-bind:peopleList="peopleList" v-bind:rolesList="rolesList" v-on:fetchPeopleList="fetchPeopleList"/>
+        <PersonTable
+          v-bind:peopleList="peopleList"
+          v-bind:rolesList="rolesList"
+          v-on:fetchPeopleList="fetchPeopleList"
+        />
       </v-tab-item>
       <v-tab ripple>
-        <v-icon>person </v-icon>&nbsp;{{ $t("events.participants.title") }}
+        <v-icon>supervisor_account</v-icon>&nbsp;{{ $t("people.title-roles") }}
       </v-tab>
-      <v-tab-item> 
-        <RolesTable v-bind:peopleList="peopleList" v-bind:rolesList="rolesList" v-on:fetchPeopleList="fetchPeopleList"/> 
+      <v-tab-item>
+        <RolesTable
+          v-bind:peopleList="peopleList"
+          v-bind:rolesList="rolesList"
+          v-on:fetchPeopleList="fetchPeopleList"
+        />
       </v-tab-item>
     </v-tabs>
   </v-container>
@@ -39,10 +47,8 @@ export default {
       this.$http
         .get("/api/v1/people/persons")
         .then(resp => {
-          console.log("FETCHED", resp);
+          console.log("FETCHED PEOPLE", resp);
           this.peopleList = resp.data;
-          // this.activePeople = this.allPeople.filter(person => person.active);
-          // this.archivedPeople = this.allPeople.filter(person => !person.active);
         })
         .catch(err => console.error("FAILURE", err.response));
     },
@@ -51,7 +57,7 @@ export default {
       this.$http
         .get("/api/v1/people/role")
         .then(resp => {
-          console.log("FETCHED", resp);
+          console.log("FETCHED ROLES", resp);
           let roles = [];
           for (var role of resp.data) {
             roles.push({

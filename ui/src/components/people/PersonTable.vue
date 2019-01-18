@@ -299,19 +299,16 @@ export default {
         default:
           return this.activePeople;
       }
-    },
+    }
   },
 
   watch: {
     peopleList(all_people) {
-     this.allPeople = all_people;
-     this.activePeople = this.allPeople.filter(person => person.active);
-     this.archivedPeople = this.allPeople.filter(
-       person => !person.active
-     );
+      this.allPeople = all_people;
+      this.activePeople = this.allPeople.filter(person => person.active);
+      this.archivedPeople = this.allPeople.filter(person => !person.active);
     },
     rolesList(all_roles) {
-      console.log(this.rolesList);
       this.rolesList = all_roles;
     }
   },
@@ -524,8 +521,8 @@ export default {
     },
 
     refreshPeopleList() {
-      this.$emit("fetchPeopleList")
-    },
+      this.$emit("fetchPeopleList");
+    }
   },
 
   mounted: function() {
