@@ -55,6 +55,8 @@
       :search="search"
       :items="showCourseOfferings"
       class="elevation-1"
+      :rows-per-page-items="rowsPerPageItem"
+      :pagination.sync="paginationInfo"
     >
       <v-progress-linear slot="progress" color="primary" indeterminate></v-progress-linear>
       <template slot="items" slot-scope="props">
@@ -153,6 +155,19 @@ export default {
         text: ""
       },
 
+      rowsPerPageItem: [
+        10,
+        15,
+        25,
+        { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 }
+      ],
+
+      paginationInfo: {
+        sortBy: "start",
+        rowsPerPage: 10,
+        page: 1
+      },
+      
       courseOfferings: [],
       
       selected: [],

@@ -53,6 +53,8 @@
       :items="showStudents"
       :search="search"
       class="elevation-1"
+      :rows-per-page-items="rowsPerPageItem"
+      :pagination.sync="paginationInfo"
     >
       <template slot="items" slot-scope="props">
         <td>{{ props.item.person.firstName }}</td>
@@ -181,6 +183,19 @@ export default {
       snackbar: {
         show: false,
         text: ""
+      },
+      
+      rowsPerPageItem: [
+        10,
+        15,
+        25,
+        { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 }
+      ],
+      
+      paginationInfo: {
+        sortBy: "start",
+        rowsPerPage: 10,
+        page: 1
       }
       
     };
