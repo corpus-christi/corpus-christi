@@ -4,7 +4,7 @@
       <span class="headline">{{ title }}</span>
     </v-card-title>
     <v-card-text>
-      <form ref="container">
+      <form ref="form">
         <v-text-field
           v-model="person.firstName"
           v-bind:label="$t('person.name.first')"
@@ -34,12 +34,7 @@
           data-cy="second-last-name"
         ></v-text-field>
 
-        <v-radio-group
-          v-model="person.gender"
-          :readonly="formDisabled"
-          row
-          data-cy="radio-gender"
-        >
+        <v-radio-group v-model="person.gender" :readonly="formDisabled" row data-cy="radio-gender">
           <v-radio v-bind:label="$t('person.male')" value="M"></v-radio>
           <v-radio v-bind:label="$t('person.female')" value="F"></v-radio>
         </v-radio-group>
@@ -92,6 +87,8 @@
           data-cy="phone"
           :readonly="formDisabled"
         ></v-text-field>
+        <span class="headline">{{ $t("people.attributes") }}</span>
+        <AttributeForm :attributes="attributeFields" v-model="formData"></AttributeForm>
       </form>
     </v-card-text>
     <v-card-actions>
@@ -101,8 +98,7 @@
         v-on:click="cancel"
         :disabled="formDisabled"
         data-cy="cancel"
-        >{{ $t("actions.cancel") }}</v-btn
-      >
+      >{{ $t("actions.cancel") }}</v-btn>
       <v-spacer></v-spacer>
       <v-btn
         color="primary"
@@ -110,8 +106,7 @@
         v-on:click="clear"
         :disabled="formDisabled"
         data-cy="clear"
-        >{{ $t("actions.clear") }}</v-btn
-      >
+      >{{ $t("actions.clear") }}</v-btn>
       <v-btn
         color="primary"
         outline
@@ -120,8 +115,7 @@
         :loading="addMoreLoading"
         :disabled="formDisabled"
         data-cy="add-another"
-        >{{ $t("actions.add-another") }}</v-btn
-      >
+      >{{ $t("actions.add-another") }}</v-btn>
       <v-btn
         color="primary"
         raised
@@ -129,20 +123,19 @@
         :loading="saveLoading"
         :disabled="formDisabled"
         data-cy="save"
-        >{{ $t("actions.save") }}</v-btn
-      >
+      >{{ $t("actions.save") }}</v-btn>
     </v-card-actions>
   </v-card>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
-import { isEmpty } from "lodash";
-import Vue from "vue/dist/vue.esm";
-import { VSelect } from "vuetify";
+import { isEmpty, find } from "lodash";
+import AttributeForm from "./InputFields/AttributeForm.vue";
 
 export default {
   name: "PersonForm",
+  components: { AttributeForm },
   props: {
     editMode: {
       type: Boolean,
@@ -170,14 +163,21 @@ export default {
       showBirthdayPicker: false,
 
       person: {
+        id: 0,
+        active: true,
         firstName: "",
         lastName: "",
+        secondLastName: "",
         gender: "",
         birthday: "",
         email: "",
         phone: "",
+        locationId: 0,
         attributesInfo: []
-      }
+      },
+
+      attributeFields: [],
+      formData: {}
     };
   },
   computed: {
@@ -196,6 +196,10 @@ export default {
 
     formDisabled() {
       return this.saveLoading || this.addMoreLoading;
+    },
+
+    showAttributes() {
+      return true;
     }
   },
 
@@ -230,6 +234,7 @@ export default {
     save() {
       this.$validator.validateAll().then(() => {
         if (!this.errors.any()) {
+          this.person.attributesInfo = this.collectAttributes();
           this.$emit("save", this.person);
         }
       });
@@ -243,18 +248,96 @@ export default {
       });
     },
 
+    collectAttributes() {
+      let attributes = [];
+      for (let attribute of this.attributeFields) {
+        attributes.push({
+          personId: this.person.id ? this.person.id : 0,
+          attributeId: attribute.name,
+          enumValueId: this.isEnum(attribute.fieldType)
+            ? this.formData[attribute.name]
+            : 0,
+          stringValue: this.isEnum(attribute.fieldType)
+            ? ""
+            : this.formData[attribute.name]
+        });
+      }
+      return attributes;
+    },
+
+    isEnum(type) {
+      return type === "Dropdown";
+    },
+
+    getExistingAttribute(attributeId) {
+      let existingValue = find(this.person.attributesInfo, item => {
+        return item.attributeId === attributeId;
+      });
+      return existingValue
+        ? existingValue
+        : { stringValue: "", enumValueId: 0 };
+    },
+
     constructAttributeForm(attributes) {
+      this.attributeFields = [];
+      // reference: https://blog.rangle.io/how-to-create-data-driven-user-interfaces-in-vue/
       for (let attr of attributes) {
+        let component;
         switch (attr.typeI18n) {
-          case "type.drop":
-            console.log(VSelect);
-            var DropdownClass = Vue.extend(VSelect);
-            var dropdown = new DropdownClass();
-            dropdown.$mount();
-            this.$refs.container.appendChild(dropdown.$el);
+          case "attribute.float":
+            break;
+          case "attribute.integer":
+            break;
+          case "attribute.date":
+            break;
+          case "attribute.string":
+            component = this.stringFieldConstructor(attr);
+            break;
+          case "attribute.dropdown":
+            component = this.dropdownFieldConstructor(attr);
+            break;
+          case "attribute.check":
+            break;
+          case "attribute.radio":
             break;
         }
+        this.attributeFields.push(component);
       }
+    },
+
+    stringFieldConstructor(attr) {
+      this.$set(
+        this.formData,
+        attr.id.toString(),
+        this.getExistingAttribute(attr.id).stringValue
+      );
+      return {
+        fieldType: "String",
+        name: attr.id.toString(),
+        label: attr.nameI18n
+      };
+    },
+
+    dropdownFieldConstructor(attr) {
+      let options = [];
+      for (let item of attr.enumerated_values) {
+        options.push({
+          text: item.valueI18n,
+          value: item.id
+        });
+      }
+
+      this.$set(
+        this.formData,
+        attr.id.toString(),
+        this.getExistingAttribute(attr.id).enumValueId
+      );
+      return {
+        fieldType: "Dropdown",
+        name: attr.id.toString(),
+        label: attr.nameI18n,
+        options: options
+      };
     }
   }
 };
