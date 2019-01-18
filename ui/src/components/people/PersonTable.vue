@@ -26,8 +26,7 @@
               single-line
               :items="viewOptions"
               v-model="viewStatus"
-            >
-            </v-select>
+            ></v-select>
           </div>
         </v-flex>
         <v-flex shrink justify-self-end>
@@ -141,7 +140,7 @@
               color="primary"
               slot="activator"
               v-on:click="activatePerson(props.item)"
-              data-cy="activate-person"
+              data-cy="reactivate-person"
             >
               <v-icon small>undo</v-icon>
             </v-btn>
@@ -153,9 +152,9 @@
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false" data-cy>
-        {{ $t("actions.close") }}
-      </v-btn>
+      <v-btn flat @click="snackbar.show = false" data-cy>{{
+        $t("actions.close")
+      }}</v-btn>
     </v-snackbar>
 
     <!-- New/Edit dialog -->
@@ -171,6 +170,7 @@
         v-bind:saveLoading="personDialog.saveLoading"
         v-bind:addMoreLoading="personDialog.addMoreLoading"
         v-bind:attributes="personDialog.attributes"
+        v-bind:translations="translations"
         v-on:cancel="cancelPerson"
         v-on:save="savePerson"
         v-on:add-another="addAnother"
@@ -201,6 +201,7 @@
 <script>
 import PersonForm from "./PersonForm";
 import PersonAdminForm from "./AccountForm";
+import store from "../store.js";
 
 export default {
   name: "PersonTable",
@@ -244,7 +245,8 @@ export default {
       activePeople: [],
       archivedPeople: [],
       search: "",
-      data: {}
+      data: {},
+      translations: {}
     };
   },
   computed: {
@@ -299,6 +301,15 @@ export default {
         default:
           return this.activePeople;
       }
+    },
+
+    getCurrentLocaleCode() {
+      return store.state.currentLocaleCode;
+    }
+  },
+  watch: {
+    getCurrentLocaleCode() {
+      this.getAllTranslations();
     }
   },
 
@@ -349,9 +360,8 @@ export default {
         console.log(this.data);
         this.$http
           .put(`/api/v1/people/persons/${person_id}`, this.data)
-          .then(resp => {
-            console.log("EDITED", resp);
-            Object.assign(this.allPeople[idx], person);
+          .then(response => {
+            Object.assign(this.allPeople[idx], response.data);
             this.personDialog.show = false;
             this.personDialog.saveLoading = false;
             this.showSnackbar(this.$t("person.messages.person-edit"));
@@ -383,12 +393,13 @@ export default {
     },
 
     constructPersonData(person) {
-      var attributes = [];
+      let attributes = [];
       if (person.attributesInfo) {
         attributes = person.attributesInfo;
       }
       delete person["attributesInfo"];
       delete person["accountInfo"];
+      delete person["id"];
       return {
         person: person,
         attributesInfo: attributes
@@ -522,11 +533,24 @@ export default {
 
     refreshPeopleList() {
       this.$emit("fetchPeopleList");
+    },
+
+    getAllTranslations() {
+      this.$http
+        .get(`/api/v1/i18n/values/${store.state.currentLocaleCode}`)
+        .then(resp => {
+          for (let item of resp.data) {
+            this.translations[item.key_id] = item.gloss;
+          }
+          console.log(this.translations);
+        })
+        .catch(err => console.error("FAILURE", err.response));
     }
   },
 
   mounted: function() {
     this.getAttributesInfo();
+    this.getAllTranslations();
   }
 };
 </script>
