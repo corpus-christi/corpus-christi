@@ -26,6 +26,7 @@ describe("Create Team Test", function() {
   });
 
   it("THEN: TeamForm has errors", function() {
-    cy.get("[data-cy=form-save]").should("exist");
+    // Check for the validation error message
+    cy.get(".v-messages__message").should("exist");
   });
 });

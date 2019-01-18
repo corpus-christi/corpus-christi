@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: df90b6d90db3
+Revision ID: e083892124a9
 Revises: 
-Create Date: 2019-01-17 15:28:03.306180
+Create Date: 2019-01-18 09:22:34.914731
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'df90b6d90db3'
+revision = 'e083892124a9'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -54,6 +54,12 @@ def upgrade():
     sa.Column('code', sa.String(length=5), nullable=False),
     sa.Column('desc', sa.String(length=64), nullable=False),
     sa.PrimaryKeyConstraint('code')
+    )
+    op.create_table('images_image',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('path', sa.String(length=255), nullable=False),
+    sa.Column('description', sa.String(length=255), nullable=True),
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('people_role',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -147,6 +153,8 @@ def upgrade():
     sa.Column('end', sa.DateTime(), nullable=False),
     sa.Column('location_id', sa.Integer(), nullable=True),
     sa.Column('active', sa.Boolean(), nullable=True),
+    sa.Column('attendance', sa.Integer(), nullable=True),
+    sa.Column('aggregate', sa.Boolean(), nullable=True),
     sa.ForeignKeyConstraint(['location_id'], ['places_location.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -243,6 +251,13 @@ def upgrade():
     sa.ForeignKeyConstraint(['role_id'], ['people_role.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_table('images_imageevent',
+    sa.Column('image_id', sa.Integer(), nullable=False),
+    sa.Column('event_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['event_id'], ['events_event.id'], ),
+    sa.ForeignKeyConstraint(['image_id'], ['images_image.id'], ),
+    sa.PrimaryKeyConstraint('image_id', 'event_id')
+    )
     op.create_table('people_account',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('username', sa.String(length=64), nullable=False),
@@ -293,6 +308,7 @@ def downgrade():
     op.drop_table('courses_class_attendance')
     op.drop_table('account_role')
     op.drop_table('people_account')
+    op.drop_table('images_imageevent')
     op.drop_table('groups_member')
     op.drop_table('events_teammember')
     op.drop_table('events_eventteam')
@@ -315,6 +331,7 @@ def downgrade():
     op.drop_table('courses_diploma_course')
     op.drop_table('courses_course_offering')
     op.drop_table('people_role')
+    op.drop_table('images_image')
     op.drop_table('i18n_locale')
     op.drop_table('i18n_key')
     op.drop_table('groups_group')
