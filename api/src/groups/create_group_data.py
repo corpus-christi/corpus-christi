@@ -40,16 +40,18 @@ def group_object_factory(sqla):
     return group
 
 
-def group_object_factory_with_members(sqla):
+def group_object_factory_with_members(sqla, fraction=0.75):
     """Cook up a fake group."""
     all_managers = sqla.query(Manager).all()
+    all_members = sqla.query(Member).all()
     group = {
         'name': rl_fake().word(),
         'description': rl_fake().sentences(nb=1)[0],
         'active': flip(),
         'manager_id': all_managers[random.randint(0, len(all_managers)-1)].id,
-        'member_ids': [1,2,3]
     }
+    all_member_ids = [ member.id for member in all_members ]
+    group['member_ids'] = random.sample(all_member_ids, math.floor(len(all_member_ids) * fraction))
     return group
 
 
