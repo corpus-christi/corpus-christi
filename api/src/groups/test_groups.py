@@ -12,8 +12,9 @@ from dateutil import parser
 from .models import Group, GroupSchema, Member, MemberSchema, Meeting, MeetingSchema, Attendance, AttendanceSchema
 from .create_group_data import flip, fake, create_role, group_object_factory, group_object_factory_with_members, create_multiple_groups, member_object_factory, create_multiple_members, meeting_object_factory, create_multiple_meetings, attendance_object_factory, create_attendance
 from ..people.models import Person, Manager, Role
-from ..places.models import Address
+from ..places.models import Address, Country
 from ..people.test_people import create_multiple_accounts, create_multiple_people, create_multiple_managers
+from ..places.test_places import create_multiple_addresses, create_multiple_areas
 
 fake = Faker()
 
@@ -61,10 +62,6 @@ def test_create_invalid_group(auth_client):
 
         if flip():
             group['name'] = None
-        # elif flip():
-        #     group['description'] = None
-        # else:
-        #     group['active'] = None
         group['invalid_field'] = 4
 
         resp = auth_client.post(url_for('groups.create_group'), json=group)
@@ -97,67 +94,6 @@ def test_read_all_groups(auth_client):
 
 
 
-
-# @pytest.mark.smoke
-# def test_read_all_events_with_query(auth_client):
-#     # GIVEN some existing events
-#     count = random.randint(3, 11)
-#     create_multiple_people(auth_client.sqla, 3)
-#     create_multiple_managers(auth_client.sqla, 2, "Manager")
-#     create_multiple_groups(auth_client.sqla, count)
-#     all_groups = auth_client.sqla.query(Group).all()
-#
-#     for _ in range(15):
-#         # WHEN queried for all events matching a flag
-#         query_string = dict()
-#         if flip():
-#             query_string['return_group'] = 'inactive'
-#         else:
-#             query_string['return_group'] = 'both'
-#
-#         if flip():
-#             query_string['start'] = datetime.datetime.now().strftime('%Y-%m-%d')
-#         if flip():
-#             query_string['end'] = datetime.datetime.now().strftime('%Y-%m-%d')
-#
-#         if flip():
-#             query_string['title'] = 'c'
-#
-#         if flip():
-#             query_string['location_id'] = 1
-#
-#         if flip():
-#             query_string['include_assets'] = 1
-#
-#         # THEN the response should match those flags
-#         resp = auth_client.get(url_for('events.read_all_events'), query_string=query_string)
-#         assert resp.status_code == 200
-#         events = auth_client.sqla.query(Event).all()
-#
-#         for event in resp.json:
-#             if 'return_group' in query_string:
-#                 if query_string['return_group'] == 'inactive':
-#                     assert event['active'] == False
-#             else:
-#                 assert event['active'] == True
-#
-#             if 'start' in query_string:
-#                 assert datetime.datetime.strptime(event['start'][:event['start'].index('T')],
-#                                                   '%Y-%m-%d') >= datetime.datetime.strptime(query_string['start'],
-#                                                                                             '%Y-%m-%d')
-#             if 'end' in query_string:
-#                 assert datetime.datetime.strptime(event['end'][:event['end'].index('T')],
-#                                                   '%Y-%m-%d') <= datetime.datetime.strptime(query_string['end'],
-#                                                                                             '%Y-%m-%d')
-#
-#             if 'title' in query_string:
-#                 assert query_string['title'].lower() in event['title'].lower()
-#
-#             if 'location_id' in query_string:
-#                 assert event['location_id'] == query_string['location_id']
-
-
-
 @pytest.mark.smoke
 def test_read_one_group(auth_client):
     # GIVEN
@@ -178,30 +114,6 @@ def test_read_one_group(auth_client):
     assert resp.status_code == 404
 
 
-# Not in API yet
-# @pytest.mark.smoke
-# def test_replace_group(auth_client):
-#     # GIVEN a database with a number of groups
-#     count = random.randint(3, 11)
-#     create_multiple_people(auth_client.sqla, 3)
-#     create_multiple_managers(auth_client.sqla, 2, "Manager")
-#     create_multiple_groups(auth_client.sqla, count)
-#     # WHEN we replace one event with a predefined content
-#     group = auth_client.sqla.query(Group).first()
-#     new_group = {
-#         'name': fake.word(),
-#         'start': str(fake.future_datetime(end_date="+6h")),
-#         'end': str(fake.date_time_between(start_date="+6h", end_date="+1d", tzinfo=None)),
-#         'active': flip()
-#     }
-#     resp = auth_client.put(url_for('events.replace_event', event_id=event.id), json=new_event)
-#     # THEN we expect the right status code
-#     assert resp.status_code == 200
-#     # THEN we expect the event in the database to have the same content of the predefined content
-#     assert resp.json['id'] == event.id
-#     assert resp.json['title'] == new_event['title']
-#     assert resp.json['active'] == new_event['active']
-
 
 @pytest.mark.smoke
 def test_update_group(auth_client):
@@ -216,31 +128,37 @@ def test_update_group(auth_client):
     group = auth_client.sqla.query(Group).first()
     manager_id = auth_client.sqla.query(Manager.id).first()[0]
 
-    payload = group_object_factory_with_members(auth_client.sqla)
-
-    # payload['name'] = new_group['name']
-    # payload['description'] = new_group['description']
+    payload = group_object_factory_with_members(auth_client.sqla, 0.5)
     payload['manager_id'] = manager_id
-    # flips = flip()
-    # if flips:
-    #     payload['active'] = flip()
 
     resp = auth_client.patch(url_for('groups.update_group', group_id=group.id), json=payload)
 
     # THEN we assume the correct status code
     assert resp.status_code == 201
+    # THEN we assume the correct content of the group in the database
+    updated_group = auth_client.sqla.query(Group).filter_by(id=group.id).first()
+    for attr in ['name', 'description', 'manager_id', 'active']:
+        assert vars(updated_group)[attr] == payload[attr]
+    # THEN we assume the correct amount of members with the group in the database
+    queried_members = auth_client.sqla.query(Group).filter_by(id=group.id).first().members
+    queried_members = auth_client.sqla.query(Member).filter_by(group_id=group.id).all()
+    print(f"members in database {queried_members}, members in the payload {payload['person_ids']}")
+    for queried_member in queried_members:
+        print(f"person id in database: {queried_member.person_id}")
+    assert len(queried_members) == len(payload['person_ids'])
+    # THEN we assume each member in the database match up with a member in the payload
+    for queried_member in queried_members:
+        assert queried_member.person_id in payload['person_ids']
 
-    # THEN we assume the correct content in the returned object
-    assert resp.json['name'] == payload['name']
-    assert resp.json['description'] == payload['description']
-    # if flips:
-    #     assert resp.json['active'] == payload['active']
-
-    resp = auth_client.patch(url_for('groups.update_group', group_id='None'), json=payload)
+    # WHEN we update a non-existant group
+    resp = auth_client.patch(url_for('groups.update_group', group_id=-1), json=payload)
+    # THEN we expect an error code
     assert resp.status_code == 404
 
+    # WHEN we update with an invalid manager
     payload['manager_id'] = -1
     resp = auth_client.patch(url_for('groups.update_group', group_id=group.id), json=payload)
+    # THEN we expect an error
     assert resp.status_code == 404
 
 
@@ -362,50 +280,134 @@ def test_create_invalid_meeting(auth_client):
 
 @pytest.mark.smoke
 def test_read_all_meetings(auth_client):
-    # GIVEN
+    # GIVEN a database with a number of meetings
     count = random.randint(3, 11)
     generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, count)
     create_multiple_meetings(auth_client.sqla, count)
 
-    # WHEN
+    # WHEN reading all of them
     resp = auth_client.get(url_for('groups.read_all_meetings'))
+    # THEN we expect the correct status code
     assert resp.status_code == 200
-    meetings = auth_client.sqla.query(Meeting).all()
 
-    # THEN
-    assert len(meetings) == count
-    assert len(resp.json) == count
+    meetings_count = auth_client.sqla.query(Meeting).count()
+    # THEN the number of meetings should agree with the number in the database
+    assert len(resp.json) == meetings_count
 
-    for i in range(count):
-        assert resp.json[i]['id'] == meetings[i].id
+    # THEN each one of them should correspond to something in the database
+    for meeting in resp.json:
+        keylist = ['active', 'address_id', 'group_id', 'id']
+        filtered_meeting = { k:meeting[k] for k in meeting if k in keylist }
+        assert auth_client.sqla.query(Meeting).filter_by(**filtered_meeting).count() == 1
+
+def generate_addresses(auth_client, count=1):
+    Country.load_from_file()
+    create_multiple_areas(auth_client.sqla, count)
+    create_multiple_addresses(auth_client.sqla, count)
+
+@pytest.mark.smoke
+def test_read_all_meetings_by_group(auth_client):
+    # GIVEN a database with mutliple meetings connected with a particular group
+    count = random.randint(3, 11)
+    generate_managers(auth_client)
+    create_multiple_groups(auth_client.sqla, 3)
+    group_ids = [ attr_tuple[0] for attr_tuple in auth_client.sqla.query(Group.id).all() ]
+    group_id_with_meetings = group_ids[0]
+    meetings = []
+    for _ in range(count):
+        meeting = meeting_object_factory(auth_client.sqla)
+        meeting["group_id"] = group_id_with_meetings
+        valid_meeting = MeetingSchema().load(meeting)
+        meetings.append(Meeting(**valid_meeting))
+    auth_client.sqla.add_all(meetings)
+    auth_client.sqla.commit()
+
+    # WHEN reading all of them by group
+    resp = auth_client.get(url_for('groups.read_all_meetings_by_group', group_id=group_id_with_meetings))
+    # THEN we expect the correct status code
+    assert resp.status_code == 200
+
+    meetings_count = auth_client.sqla.query(Meeting).filter_by(group_id=group_id_with_meetings).count()
+    # THEN the number of meetings should agree with the number in the database
+    assert len(resp.json) == meetings_count
+
+    # THEN each one of them should correspond to something in the database
+    for meeting in resp.json:
+        keylist = ['active', 'address_id', 'group_id', 'id']
+        filtered_meeting = { k:meeting[k] for k in meeting if k in keylist }
+        assert auth_client.sqla.query(Meeting).filter_by(**filtered_meeting).count() == 1
+
+
+    # WHEN the group has no meetings
+    group_id_with_no_meetings = group_ids[1]
+    resp = auth_client.get(url_for('groups.read_all_meetings_by_group', group_id=group_id_with_no_meetings))
+    # THEN we expect an error
+    assert resp.status_code == 404
 
 
 @pytest.mark.smoke
+def test_read_all_meetings_by_location(auth_client):
+    # GIVEN a database with multiple meetings with locations
+    count = random.randint(3, 11)
+    generate_addresses(auth_client, 2)
+    generate_managers(auth_client)
+    create_multiple_groups(auth_client.sqla, 3)
+
+    address_ids = [ attr_tuple[0] for attr_tuple in auth_client.sqla.query(Address.id).all() ]
+    address_id_with_meetings = address_ids[0]
+    meetings = []
+    for _ in range(count):
+        meeting = meeting_object_factory(auth_client.sqla)
+        meeting["address_id"] = address_id_with_meetings
+        valid_meeting = MeetingSchema().load(meeting)
+        meetings.append(Meeting(**valid_meeting))
+    auth_client.sqla.add_all(meetings)
+    auth_client.sqla.commit()
+
+    # WHEN reading all of them by address
+    resp = auth_client.get(url_for('groups.read_all_meetings_by_location', address_id=address_id_with_meetings))
+    # THEN we expect the correct status code
+    assert resp.status_code == 200
+
+    meetings_count = auth_client.sqla.query(Meeting).filter_by(address_id=address_id_with_meetings).count()
+    # THEN the number of meetings should agree with the number in the database
+    assert len(resp.json) == meetings_count
+
+    # THEN each one of them should correspond to something in the database
+    for meeting in resp.json:
+        keylist = ['active', 'address_id', 'group_id', 'id']
+        filtered_meeting = { k:meeting[k] for k in meeting if k in keylist }
+        assert auth_client.sqla.query(Meeting).filter_by(**filtered_meeting).count() == 1
+
+
+    # WHEN the address has no meetings
+    address_id_with_no_meetings = address_ids[1]
+    resp = auth_client.get(url_for('groups.read_all_meetings_by_location', address_id=address_id_with_no_meetings))
+    # THEN we expect an error
+    assert resp.status_code == 404
+
+@pytest.mark.smoke
 def test_read_one_meeting(auth_client):
-    # GIVEN
+    # GIVEN a database with a number of meetings
     count = random.randint(3, 11)
     generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, count)
     create_multiple_meetings(auth_client.sqla, count)
 
-    # WHEN
-    meetings = auth_client.sqla.query(Meeting).all()
+    meeting = auth_client.sqla.query(Meeting).first()
 
-    for meeting in meetings:
-        resp = auth_client.get(url_for('groups.read_one_meeting', meeting_id=meeting.id))
-        # THEN expect groups to match
-        assert resp.status_code == 200
-        assert resp.json['id'] == meeting.id
-
-
-# Waiting for API
-# @pytest.mark.smoke
-# def test_replace_meeting(auth_client):
-#     # GIVEN
-#     # WHEN
-#     # THEN
-#     assert True == False
+    # WHEN we read one of them
+    resp = auth_client.get(url_for('groups.read_one_meeting', meeting_id=meeting.id))
+    # THEN we expect the correct status code
+    assert resp.status_code == 200
+    # THEN we expect the returned fields to be correct
+    for attr in ['active', 'address_id', 'group_id']:
+        assert resp.json[attr] == meeting.__dict__[attr]
+    # WHEN we try to read a non-existant meeting
+    resp = auth_client.get(url_for('groups.read_one_meeting', meeting_id=-1))
+    # THEN we expect an error code
+    assert resp.status_code == 404
 
 
 @pytest.mark.smoke
@@ -416,7 +418,7 @@ def test_update_meeting(auth_client):
     create_multiple_groups(auth_client.sqla, count)
     create_multiple_meetings(auth_client.sqla, count)
 
-    # WHEN we update one event
+    # WHEN we update one meeting
     meeting = auth_client.sqla.query(Meeting).first()
 
     payload = {}
@@ -434,40 +436,42 @@ def test_update_meeting(auth_client):
     assert resp.json['group_id'] == payload['group_id']
     assert parser.parse(resp.json['when']).replace(tzinfo=None) == parser.parse(payload['when']).replace(tzinfo=None)
 
+
 @pytest.mark.smoke
 def test_invalid_update_meeting(auth_client):
-    # GIVEN a database with a number of groups
+    # GIVEN a database with a number of groups and meetings
     count = random.randint(3, 11)
     generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, count)
     create_multiple_meetings(auth_client.sqla, count)
 
-    original_meeting = auth_client.sqla.query(Meeting).first()
-    modified_meeting = meeting_object_factory(auth_client.sqla)
+    valid_meeting = meeting_object_factory(auth_client.sqla)
 
+    # WHEN we try to update an invalid meeting
+    resp = auth_client.patch(url_for('groups.update_meeting', meeting_id=-1), json=valid_meeting)
+    # THEN we expect an error code
+    assert resp.status_code == 404
+
+    original_meeting = auth_client.sqla.query(Meeting).first()
+    modified_meeting = valid_meeting
     modified_meeting['invalid_field'] = 4
 
+    # WHEN we try to update an existing meeting with invalid payload
     resp = auth_client.patch(url_for('groups.update_meeting', meeting_id=original_meeting.id), json=modified_meeting)
 
     # THEN we assume the incorrect status code
     assert resp.status_code == 422
 
 
-# Waiting for API
-# @pytest.mark.xfail()
-# def test_delete_meeting(auth_client, db):
-#     # GIVEN
-#     # WHEN
-#     # THEN
-#     assert True == False
 
 def test_delete_meeting(auth_client):
     # GIVEN a database with meetings and attendances
     count = random.randint(3, 11)
     generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, count)
+    create_multiple_members(auth_client.sqla, count)
     create_multiple_meetings(auth_client.sqla, count)
-    create_attendance(auth_client.sqla, 0.75)
+    create_attendance(auth_client.sqla, 1)
     # WHEN we delete a meeting
     meeting_id = auth_client.sqla.query(Meeting.id).first()[0]
     resp = auth_client.delete(url_for('groups.delete_meeting', meeting_id=meeting_id))
@@ -555,8 +559,6 @@ def test_create_member(auth_client):
     # THEN we expect the correct status code
     assert resp.status_code == 201
     # THEN we expect that member to be present in database
-    print(payload)
-    print(auth_client.sqla.query(Member).first().__dict__)
     assert 1 == auth_client.sqla.query(Member).filter_by(\
                 person_id=payload["person_id"],\
                 group_id=payload["group_id"],\
@@ -572,27 +574,6 @@ def test_create_member(auth_client):
     resp = auth_client.post(url_for('groups.create_member'), json=payload)
     # THEN we expect an error
     assert resp.status_code == 409
-
-
-
-@pytest.mark.smoke
-def test_create_invalid_member(auth_client):
-    # GIVEN an empty database
-    generate_managers(auth_client)
-    create_multiple_groups(auth_client.sqla, 1)
-    # WHEN we attempt to add invalid events
-    count = random.randint(5, 15)
-
-    for i in range(count):
-        member = member_object_factory(auth_client.sqla)
-        member['invalid_field'] = 4
-        resp = auth_client.post(url_for('groups.create_member'), json=member)
-
-        # THEN the response should have the correct code
-        assert resp.status_code == 422
-
-    # AND the database should still be empty
-    assert auth_client.sqla.query(Member).count() == 0
 
 
 @pytest.mark.smoke
@@ -634,14 +615,10 @@ def test_read_one_member(auth_client):
         keylist = ['active', 'group_id', 'person_id', 'id'] # skipping 'joined', because datetimes come back in a slightly different format, but information is the same.
         for attr in keylist:
             assert resp.json[attr] == member.__dict__[attr]
-
-# Waiting for API
-# @pytest.mark.xfail()
-# def test_replace_member(auth_client):
-#     # GIVEN
-#     # WHEN
-#     # THEN
-#     assert True == False
+    # WHEN we ask for a non-existant member
+    resp = auth_client.get(url_for('groups.read_one_member', member_id=-1))
+    # THEN we expect an error code
+    assert resp.status_code == 404
 
 
 @pytest.mark.smoke
@@ -670,41 +647,12 @@ def test_update_member(auth_client):
     # THEN we expect an error
     assert resp.status_code == 422
 
-    # to be implemented
-    # # WHEN we try to update a nonexistent member
-    # auth_client.sqla.delete(member)
-    # auth_client.sqla.commit()
-    # resp = auth_client.patch(url_for('groups.update_member', member_id=member.id), json=payload)
-    # assert resp.status_code == 404
+    # WHEN we try to update a nonexistent member
+    auth_client.sqla.delete(member)
+    auth_client.sqla.commit()
+    resp = auth_client.patch(url_for('groups.update_member', member_id=member.id), json=payload)
+    assert resp.status_code == 404
 
-
-
-@pytest.mark.smoke
-def test_invalid_update_member(auth_client):
-    # GIVEN a database with a number of groups
-    count = random.randint(3, 11)
-    generate_managers(auth_client)
-    create_multiple_groups(auth_client.sqla, count)
-    create_multiple_members(auth_client.sqla, count)
-
-    original_member = auth_client.sqla.query(Member).first()
-    modified_member = member_object_factory(auth_client.sqla)
-
-    modified_member['invalid_field'] = 4
-
-    resp = auth_client.patch(url_for('groups.update_member', member_id=original_member.id), json=modified_member)
-
-    # THEN we assume the incorrect status code
-    assert resp.status_code == 422
-
-
-# Waiting for API
-# @pytest.mark.smoke
-# def test_delete_member(auth_client):
-#     # GIVEN
-#     # WHEN
-#     # THEN
-#     assert True == False
 
 
 # ---- Attendance
@@ -796,6 +744,10 @@ def test_read_attendance_by_member(auth_client):
     # THEN each of the attendance should correspond to one in the database
     for attendance in resp.json:
         assert 1 == auth_client.sqla.query(Attendance).filter_by(member_id=attendance["member_id"], meeting_id=attendance["meeting_id"]).count()
+    # WHEN we try to read a non-existant attendance
+    resp = auth_client.get(url_for('groups.read_attendance_by_member', member_id=-1))
+    # THEN we expect an error code
+    assert resp.status_code == 404
 
 def test_read_attendance_by_meeting(auth_client):
     # GIVEN a database with some attendances
@@ -816,6 +768,10 @@ def test_read_attendance_by_meeting(auth_client):
     # THEN each of the attendance should correspond to one in the database
     for attendance in resp.json:
         assert 1 == auth_client.sqla.query(Attendance).filter_by(meeting_id=attendance["meeting_id"], member_id=attendance["member_id"]).count()
+    # WHEN we try to read a non-existant attendance
+    resp = auth_client.get(url_for('groups.read_attendance_by_meeting', meeting_id=-1))
+    # THEN we expect an error code
+    assert resp.status_code == 404
 
 
 def test_delete_attendance(auth_client):

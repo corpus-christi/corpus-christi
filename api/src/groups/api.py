@@ -27,9 +27,9 @@ def create_group():
     request.json['active'] = True
 
     members_to_add = None
-    if 'member_ids' in request.json.keys():
-        members_to_add = request.json['member_ids']
-        del request.json['member_ids']
+    if 'person_ids' in request.json.keys():
+        members_to_add = request.json['person_ids']
+        del request.json['person_ids']
 
     try:
         valid_group = group_schema.load(request.json)
@@ -88,10 +88,11 @@ def read_one_group(group_id):
 @jwt_required
 def update_group(group_id):
     
-    update_members = None
-    if 'member_ids' in request.json.keys():
-        update_members = request.json['member_ids']
-        del request.json['member_ids']
+    # fetch the optional 'person_ids' field in the request object
+    update_person_ids = [] 
+    if 'person_ids' in request.json.keys():
+        update_person_ids = request.json['person_ids']
+        del request.json['person_ids']
     
     try:
         valid_group = group_schema.load(request.json)
@@ -99,45 +100,49 @@ def update_group(group_id):
         return jsonify(err.messages), 422
 
     group = db.session.query(Group).filter_by(id=group_id).first()
-
     if group is None:
         return jsonify(msg="Group not found"), 404
 
-    new_manager = request.json['manager_id']
-
-    if db.session.query(Manager).filter_by(id=new_manager).first() is None:
+    new_manager_id = None
+    # fetch 'manager_id' from the request object
+    if 'manager_id' in request.json.keys():
+        new_manager_id = request.json['manager_id']
+    if db.session.query(Manager).filter_by(id=new_manager_id).first() is None:
         return jsonify(msg="Manager not found"), 404
 
-    if new_manager is not None and new_manager is not group.manager_id:
+    # if the manager changed, then try to add the overseer role to the manager's account
+    if new_manager_id and new_manager_id is not group.manager_id:
         group_overseer = db.session.query(Role).filter_by(name_i18n="role.group-overseer").first()
         if group_overseer:
-            manager = db.session.query(Manager).filter_by(id=new_manager).first()
+            manager = db.session.query(Manager).filter_by(id=new_manager_id).first()
             manager_roles = manager.account.roles
             if group_overseer not in manager_roles:
-                print("adding role", end='\n\n\n')
                 manager_roles.append(group_overseer)
 
-
-
-    old_members = []
+    old_member_joined_dates = []
     for member in group.members:
-        old_members.append({member.person_id : member.joined})
+        old_member_joined_dates.append({member.person_id : member.joined})
+
+    old_person_ids = [ member.person_id for member in group.members ]
+    print(f"old person ids: {old_person_ids}")
 
     today = datetime.datetime.today().strftime('%Y-%m-%d')
 
-    print(old_members, end='\n\n\n')
-    if update_members is not None:
-        for member in group.members:
-            db.session.delete(member)
-        for member in update_members:
-            if member in old_members:
-                date = old_members[member]
-            else:
-                date = today
-            
-            new_member = generate_member(group.id, member, date, True)
+    # for each update_person_id, if it already exists, skip, otherwise, add
+    # this way it keeps the original member_id unchanged
+    for update_person_id in update_person_ids:
+        if update_person_id not in old_person_ids:
+            new_member = generate_member(group.id, update_person_id, today, True)
+            print(f"adding person with id {update_person_id}")
             db.session.add(new_member)
 
+    for old_person_id in old_person_ids:
+        if old_person_id not in update_person_ids:
+            print(f"removing person with id {old_person_id}")
+            delete_member = db.session.query(Member).filter_by(group_id=group.id, person_id=old_person_id).first()
+            db.session.delete(delete_member)
+
+    # set other attributes
     for key, val in valid_group.items():
         setattr(group, key, val)
 
@@ -194,10 +199,6 @@ def create_meeting():
 @jwt_required
 def read_all_meetings():
     result = db.session.query(Meeting).all()
-
-    if result is None:
-        return jsonify(msg="No meetings found"), 404
-
     return jsonify(meeting_schema.dump(result, many=True))
 
 @groups.route('/meetings/group/<group_id>')
@@ -205,7 +206,7 @@ def read_all_meetings():
 def read_all_meetings_by_group(group_id):
     result = db.session.query(Meeting).filter_by(group_id=group_id).all()
 
-    if result is None:
+    if len(result) == 0:
             return jsonify(msg="No meetings found"), 404
 
     return jsonify(meeting_schema.dump(result, many=True))
@@ -216,7 +217,7 @@ def read_all_meetings_by_group(group_id):
 def read_all_meetings_by_location(address_id):
     result = db.session.query(Meeting).filter_by(address_id=address_id).all()
 
-    if result is None:
+    if len(result) == 0:
         return jsonify(msg="No meetings found"), 404
 
     return jsonify(meeting_schema.dump(result, many=True))
@@ -336,9 +337,6 @@ def create_member():
 def read_all_members():
     result = db.session.query(Member).all()
 
-    if result is None:
-        return jsonify(msg="No members found"), 404
-
     return jsonify(member_schema.dump(result, many=True))
 
 
@@ -346,6 +344,10 @@ def read_all_members():
 @jwt_required
 def read_one_member(member_id):
     result = db.session.query(Member).filter_by(id=member_id).first()
+
+    if result is None:
+        return jsonify(msg="No members found"), 404
+
     return jsonify(member_schema.dump(result))
 
 
@@ -393,9 +395,6 @@ def create_attendance():
 def read_all_attendance():
     result = db.session.query(Attendance).all()
 
-    if result is None:
-        return jsonify(msg="No attendance records found"), 404
-
     return jsonify(attendance_schema.dump(result, many=True))
 
 
@@ -404,7 +403,7 @@ def read_all_attendance():
 def read_attendance_by_meeting(meeting_id):
     result = db.session.query(Attendance).filter_by(meeting_id=meeting_id).all()
 
-    if result is None:
+    if len(result) == 0:
         return jsonify(msg="No attendance records found"), 404
 
     return jsonify(attendance_schema.dump(result, many=True))
@@ -414,7 +413,7 @@ def read_attendance_by_meeting(meeting_id):
 def read_attendance_by_member(member_id):
     result = db.session.query(Attendance).filter_by(member_id=member_id).all()
 
-    if result is None:
+    if len(result) == 0:
         return jsonify(msg="No attendance records found"), 404
 
     return jsonify(attendance_schema.dump(result, many=True))
