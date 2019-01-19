@@ -146,8 +146,10 @@
       max-width="500px"
     >
       <PersonForm
-        v-bind:editMode="personDialog.editMode"
         v-bind:initialData="personDialog.person"
+        v-bind:title="personDialog.title"
+        v-bind:addAnotherEnabled="personDialog.addAnotherEnabled"
+        v-bind:saveButtonText="personDialog.saveButtonText"
         v-on:cancel="cancelPerson"
         v-on:saved="savePerson"
         v-on:added-another="addAnother"
@@ -184,9 +186,10 @@ export default {
       viewStatus: "viewActive",
       personDialog: {
         show: false,
-        editMode: false,
-        attributes: [],
-        person: {}
+        title: '',
+        person: {},
+        addAnotherEnabled: false,
+        saveButtonText: 'actions.save'
       },
 
       adminDialog: {
@@ -267,8 +270,9 @@ export default {
   methods: {
     // ---- Person Administration
 
-    activatePersonDialog(person = {}, editMode = false) {
-      this.personDialog.editMode = editMode;
+    activatePersonDialog(person = {}, isEditTitle = false) {
+      this.personDialog.title = isEditTitle ? this.$t("person.actions.edit") : this.$t("person.actions.new");
+      this.personDialog.addAnotherEnabled = !isEditTitle;
       this.personDialog.person = person;
       this.personDialog.show = true;
     },
@@ -286,8 +290,8 @@ export default {
     },
 
     savePerson(person) {
-      if (this.personDialog.editMode) {
-        let idx = this.allPeople.findIndex(p => p.id === person.id);
+      let idx = this.allPeople.findIndex(p => p.id === person.id);
+      if (idx !== -1) {
         Object.assign(this.allPeople[idx], person);
         this.showSnackbar(this.$t("person.messages.person-edit"));
       } else {

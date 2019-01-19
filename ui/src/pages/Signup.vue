@@ -1,12 +1,17 @@
 <template>
-  <v-card> <NewAccountForm /> </v-card>
+  <v-card> <PersonForm
+        v-bind:initialData="{}"
+        v-bind:title="$t('actions.signup')"
+        v-bind:addAnotherEnabled="false"
+        v-bind:saveButtonText="'actions.signup'"
+      /> </v-card>
 </template>
 
 <script>
-import NewAccountForm from "./../components/NewAccountForm";
+import PersonForm from "./../components/PersonForm";
 
 export default {
   name: "Signup",
-  components: { NewAccountForm }
+  components: { PersonForm }
 };
 </script>

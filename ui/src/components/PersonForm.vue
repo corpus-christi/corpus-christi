@@ -122,7 +122,7 @@
         color="primary"
         outline
         v-on:click="addMore"
-        v-if="editMode === false"
+        v-if="addAnotherEnabled"
         :loading="addMoreIsLoading"
         :disabled="formDisabled"
         data-cy="add-another"
@@ -135,7 +135,7 @@
         :loading="saveIsLoading"
         :disabled="formDisabled"
         data-cy="save"
-        >{{ $t("actions.save") }}</v-btn
+        >{{ $t(saveButtonText) }}</v-btn
       >
     </v-card-actions>
   </v-card>
@@ -150,13 +150,21 @@ export default {
   name: "PersonForm",
   components: { AttributeForm },
   props: {
-    editMode: {
-      type: Boolean,
-      required: true
-    },
     initialData: {
       type: Object,
       required: true
+    },
+    title: {
+      type: String,
+      required: false
+    },
+    addAnotherEnabled: {
+      type: Boolean,
+      required: false
+    },
+    saveButtonText: {
+      type: String,
+      required: false
     }
   },
   data: function() {
@@ -186,12 +194,6 @@ export default {
     // List the keys in a Person record.
     personKeys() {
       return Object.keys(this.person);
-    },
-
-    title() {
-      return this.editMode
-        ? this.$t("person.actions.edit")
-        : this.$t("person.actions.new");
     },
 
     ...mapGetters(["currentLanguageCode"]),
@@ -258,7 +260,7 @@ export default {
             person: this.person,
             attributesInfo: attributes
           }
-          if(this.editMode) {
+          if(personId) {
             this.updatePerson(data, personId, emitMessage);
           } else {
             this.addPerson(data, emitMessage);
