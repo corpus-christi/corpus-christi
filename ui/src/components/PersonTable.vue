@@ -148,11 +148,9 @@
       <PersonForm
         v-bind:editMode="personDialog.editMode"
         v-bind:initialData="personDialog.person"
-        v-bind:saveLoading="personDialog.saveLoading"
-        v-bind:addMoreLoading="personDialog.addMoreLoading"
         v-on:cancel="cancelPerson"
-        v-on:save="savePerson"
-        v-on:add-another="addAnother"
+        v-on:saved="savePerson"
+        v-on:added-another="addAnother"
       />
     </v-dialog>
 
@@ -187,8 +185,6 @@ export default {
       personDialog: {
         show: false,
         editMode: false,
-        saveLoading: false,
-        addMoreLoading: false,
         attributes: [],
         person: {}
       },
@@ -290,79 +286,21 @@ export default {
     },
 
     savePerson(person) {
-      this.personDialog.saveLoading = true;
       if (this.personDialog.editMode) {
-        // Hang on to the ID of the person being updated.
-        const person_id = person.id;
-        // Locate the person we're updating in the table.
-        const idx = this.allPeople.findIndex(p => p.id === person.id);
-
-        this.data = this.constructPersonData(person);
-        this.$http
-          .put(`/api/v1/people/persons/${person_id}`, this.data)
-          .then(response => {
-            Object.assign(this.allPeople[idx], response.data);
-            this.personDialog.show = false;
-            this.personDialog.saveLoading = false;
-            this.showSnackbar(this.$t("person.messages.person-edit"));
-          })
-          .catch(err => {
-            console.error("FALURE", err.response);
-            this.personDialog.saveLoading = false;
-            this.showSnackbar(this.$t("person.messages.person-save-error"));
-          });
+        let idx = this.allPeople.findIndex(p => p.id === person.id);
+        Object.assign(this.allPeople[idx], person);
+        this.showSnackbar(this.$t("person.messages.person-edit"));
       } else {
-        this.data = this.constructPersonData(person);
-        this.$http
-          .post("/api/v1/people/persons", this.data)
-          .then(resp => {
-            console.log("ADDED", resp);
-            this.refreshPeopleList();
-            this.personDialog.show = false;
-            this.personDialog.saveLoading = false;
-            this.showSnackbar(this.$t("person.messages.person-add"));
-          })
-          .catch(err => {
-            console.error("FAILURE", err.response);
-            this.personDialog.saveLoading = false;
-            this.showSnackbar(this.$t("person.messages.person-save-error"));
-          });
+        this.refreshPeopleList();
+        this.showSnackbar(this.$t("person.messages.person-add"));
       }
-    },
-
-    constructPersonData(person) {
-      let attributes = [];
-      if (person.attributesInfo) {
-        for (let key in person.attributesInfo) {
-          attributes.push(person.attributesInfo[key]);
-        }
-      }
-      delete person["attributesInfo"];
-      delete person["accountInfo"];
-      delete person["id"];
-      return {
-        person: person,
-        attributesInfo: attributes
-      };
+      this.personDialog.show = false;
     },
 
     addAnother(person) {
-      this.personDialog.addMoreLoading = true;
-      this.data = this.constructPersonData(person);
-      this.$http
-        .post("/api/v1/people/persons", this.data)
-        .then(resp => {
-          console.log("ADDED", resp);
-          this.refreshPeopleList();
-          this.activatePersonDialog();
-          this.personDialog.addMoreLoading = false;
-          this.showSnackbar(this.$t("person.messages.person-add"));
-        })
-        .catch(err => {
-          console.error("FAILURE", err.response);
-          this.personDialog.addMoreLoading = false;
-          this.showSnackbar(this.$t("person.messages.person-save-error"));
-        });
+      this.refreshPeopleList();
+      this.activatePersonDialog();
+      this.showSnackbar(this.$t("person.messages.person-add"));
     },
 
     showSnackbar(message) {

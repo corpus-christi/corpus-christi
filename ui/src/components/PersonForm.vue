@@ -121,9 +121,9 @@
       <v-btn
         color="primary"
         outline
-        v-on:click="add_another"
+        v-on:click="addMore"
         v-if="editMode === false"
-        :loading="addMoreLoading"
+        :loading="addMoreIsLoading"
         :disabled="formDisabled"
         data-cy="add-another"
         >{{ $t("actions.add-another") }}</v-btn
@@ -132,7 +132,7 @@
         color="primary"
         raised
         v-on:click="save"
-        :loading="saveLoading"
+        :loading="saveIsLoading"
         :disabled="formDisabled"
         data-cy="save"
         >{{ $t("actions.save") }}</v-btn
@@ -157,19 +157,13 @@ export default {
     initialData: {
       type: Object,
       required: true
-    },
-    addMoreLoading: {
-      type: Boolean,
-      required: true
-    },
-    saveLoading: {
-      type: Boolean,
-      required: true
     }
   },
   data: function() {
     return {
       showBirthdayPicker: false,
+      saveIsLoading: false,
+      addMoreIsLoading: false,
 
       person: {
         id: 0,
@@ -185,7 +179,6 @@ export default {
         attributesInfo: []
       },
 
-      attributeFields: [],
       attributeFormData: {}
     };
   },
@@ -204,7 +197,7 @@ export default {
     ...mapGetters(["currentLanguageCode"]),
 
     formDisabled() {
-      return this.saveLoading || this.addMoreLoading;
+      return this.saveIsLoading || this.addMoreIsLoading;
     }
   },
 
@@ -235,26 +228,72 @@ export default {
       this.$validator.reset();
     },
 
-    // Trigger a save event, returning the update `Person`.
+    resetIsLoading() {
+      this.saveIsLoading = false;
+      this.addMoreIsLoading = false;
+    },
+
+    addMore() {
+      this.addMoreIsLoading = true;
+      this.savePerson('added-another');
+    },
+
     save() {
-      console.log("SAVING");
+      this.saveIsLoading = true;
+      this.savePerson('saved');
+    },
+
+    savePerson(emitMessage) {
       this.$validator.validateAll().then(() => {
         if (!this.errors.any()) {
-          this.$set(this.person, "attributesInfo", this.attributeFormData);
-          console.log(this.person.attributesInfo);
-          console.log(this.attributeFormData);
-          this.$emit("save", this.person);
+          let attributes = [];
+          let personId = this.person.id;
+          for (let key in this.attributeFormData) {
+            attributes.push(this.attributeFormData[key]);
+          }
+          delete this.person["attributesInfo"];
+          delete this.person["accountInfo"];
+          delete this.person["id"];
+          let data = {
+            person: this.person,
+            attributesInfo: attributes
+          }
+          if(this.editMode) {
+            this.updatePerson(data, personId, emitMessage);
+          } else {
+            this.addPerson(data, emitMessage);
+          }
+        } else {
+          this.resetIsLoading();
         }
       });
     },
 
-    add_another() {
-      this.$validator.validateAll().then(() => {
-        if (!this.errors.any()) {
-          this.$emit("add-another", this.person);
-        }
+    updatePerson(data, personId, emitMessage) {
+      this.$http
+          .put(`/api/v1/people/persons/${personId}`, data)
+          .then(response => {
+            this.$emit(emitMessage, response.data);
+            this.saveIsLoading = false;
+          })
+          .catch(err => {
+            this.saveIsLoading = false;
+            console.error("FALURE", err.response);
       });
-    }
+    },
+
+    addPerson(data, emitMessage) {
+      this.$http
+          .post("/api/v1/people/persons", data)
+          .then(response => {
+            this.$emit(emitMessage, response.data);
+            this.resetIsLoading();
+          })
+          .catch(err => {
+            this.resetIsLoading();
+            console.error("FAILURE", err.response);
+      });
+    },
   }
 };
 </script>

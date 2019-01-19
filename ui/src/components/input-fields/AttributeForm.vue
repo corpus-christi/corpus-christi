@@ -165,7 +165,6 @@ export default {
           stringValue: ""
         });
       }
-      console.log(this.attributes, this.formData);
     }
   }
 };
