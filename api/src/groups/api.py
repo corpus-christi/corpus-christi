@@ -384,6 +384,12 @@ def create_attendance():
     except ValidationError as err:
         return jsonify(err.messages), 422
 
+    if db.session.query(Attendance).filter_by(\
+            meeting_id=valid_attendance["meeting_id"],
+            member_id=valid_attendance["member_id"]
+            ).count() != 0:
+        return 'attendance already exists', 409
+
     new_attendance = Attendance(**valid_attendance)
     db.session.add(new_attendance)
     db.session.commit()

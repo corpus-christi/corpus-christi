@@ -691,11 +691,10 @@ def test_create_attendance(auth_client):
     # THEN we expect an error
     assert resp.status_code == 422
 
-    # to be implemented
-    # # WHEN we create an existing attendance
-    # resp = auth_client.post(url_for('groups.create_attendance'), json=payload)
-    # # THEN we expect an error
-    # assert resp.status_code == 422
+    # WHEN we create an existing attendance
+    resp = auth_client.post(url_for('groups.create_attendance'), json=payload)
+    # THEN we expect an error
+    assert resp.status_code == 409
 
 
 
