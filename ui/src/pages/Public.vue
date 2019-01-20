@@ -78,7 +78,9 @@
             {{ $t("public.headers.home-church") }}
           </v-toolbar-title>
         </v-toolbar>
-        <GoogleMap></GoogleMap>
+        <GoogleMap
+          v-bind:markers="groupLocations"
+        ></GoogleMap>
       </v-flex>
     </v-layout>
   </v-container>
@@ -98,16 +100,10 @@ export default {
       ],
       events: [],
       pageLoaded: false,
+      groupLocations: []
     };
   },
   mounted() {
-    this.pageLoaded = false;
-    this.$http.get(`/api/v1/events/?return_group=all`).then(resp => {
-      this.events = resp.data;
-      this.events = this.events.slice(0, 5);
-      console.log(resp.data);
-      this.pageLoaded = true;
-    });
   },
 
   methods: {
@@ -120,7 +116,36 @@ export default {
         hour: "2-digit",
         minute: "2-digit"
       });
+    },
+
+    getHomegroupLocations() {
+      this.$httpNoAuth.get("/api/v1/places/locations").then(resp => {
+        console.log(resp);
+        for(let loc of resp.data) {
+          this.groupLocations.push({
+            position: {
+              lat: loc.address.latitude,
+              lng: loc.address.longitude
+            }
+          });
+        }
+      })
+      .catch(err => console.log("FAILED", err))
+    },
+
+    getEventData() {
+      this.pageLoaded = false;
+      this.$http.get(`/api/v1/events/?return_group=all`).then(resp => {
+      this.events = resp.data;
+      this.events = this.events.slice(0, 5);
+      console.log(resp.data);
+      this.pageLoaded = true;
+    });
     }
+  },
+  mounted: function() {
+    this.getHomegroupLocations();
+    this.getEventData();
   }
 };
 </script>
