@@ -522,6 +522,19 @@ def test_create_account(auth_client):
     # AND we end up with the proper number of accounts.
     assert auth_client.sqla.query(Account).count() == count
 
+    # GIVEN an invalid json object of bad things
+    # WHEN we try to pass that to the api to create account
+    # THEN we get an error
+    nasty_account = {
+        'username': username_factory(),
+        # 'password': fake.password(),
+        'personId': "slks"
+    }
+    resp = auth_client.post(url_for('people.create_account'), json=nasty_account)
+    assert resp.status_code == 422
+    print(resp.status_code)
+    # assert "asshole" == "will"
+
 @pytest.mark.slow
 def test_read_all_accounts(auth_client):
     # GIVEN a collection of accounts
