@@ -41,7 +41,7 @@
           v-model="account.username"
           v-bind:label="$t('account.username')"
           name="username"
-          v-validate="{required: isAccountRequired, alpha_dash: true, min: 6}"
+          v-validate="{ required: isAccountRequired, alpha_dash: true, min: 6 }"
           v-bind:error-messages="errors.collect('username')"
           prepend-icon="person"
           data-cy="username"
@@ -55,7 +55,7 @@
           ref="pwdField"
           v-bind:label="$t('account.password')"
           name="password"
-          v-validate="{required: isAccountRequired, min:8}"
+          v-validate="{ required: isAccountRequired, min: 8 }"
           v-bind:error-messages="errors.collect('password')"
           prepend-icon="lock"
           data-cy="password"
@@ -73,7 +73,12 @@
           data-cy="confirm-password"
         ></v-text-field>
 
-        <v-radio-group v-model="person.gender" :readonly="formDisabled" row data-cy="radio-gender">
+        <v-radio-group
+          v-model="person.gender"
+          :readonly="formDisabled"
+          row
+          data-cy="radio-gender"
+        >
           <v-radio v-bind:label="$t('person.male')" value="M"></v-radio>
           <v-radio v-bind:label="$t('person.female')" value="F"></v-radio>
         </v-radio-group>
@@ -145,7 +150,8 @@
         v-on:click="cancel"
         :disabled="formDisabled"
         data-cy="cancel"
-      >{{ $t("actions.cancel") }}</v-btn>
+        >{{ $t("actions.cancel") }}</v-btn
+      >
       <v-spacer></v-spacer>
       <v-btn
         color="primary"
@@ -153,7 +159,8 @@
         v-on:click="clear"
         :disabled="formDisabled"
         data-cy="clear"
-      >{{ $t("actions.clear") }}</v-btn>
+        >{{ $t("actions.clear") }}</v-btn
+      >
       <v-btn
         color="primary"
         outline
@@ -162,7 +169,8 @@
         :loading="addMoreIsLoading"
         :disabled="formDisabled"
         data-cy="add-another"
-      >{{ $t("actions.add-another") }}</v-btn>
+        >{{ $t("actions.add-another") }}</v-btn
+      >
       <v-btn
         color="primary"
         raised
@@ -170,7 +178,8 @@
         :loading="saveIsLoading"
         :disabled="formDisabled"
         data-cy="save"
-      >{{ $t(saveButtonText) }}</v-btn>
+        >{{ $t(saveButtonText) }}</v-btn
+      >
     </v-card-actions>
   </v-card>
 </template>

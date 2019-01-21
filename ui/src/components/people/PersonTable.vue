@@ -20,7 +20,13 @@
         </v-flex>
         <v-flex md3>
           <div data-cy="view-dropdown">
-            <v-select hide-details solo single-line :items="viewOptions" v-model="viewStatus"></v-select>
+            <v-select
+              hide-details
+              solo
+              single-line
+              :items="viewOptions"
+              v-model="viewStatus"
+            ></v-select>
           </div>
         </v-flex>
         <v-flex shrink justify-self-end>
@@ -51,22 +57,35 @@
           <span v-if="props.item.accountInfo">
             <span v-if="props.item.accountInfo.active">
               <v-tooltip bottom>
-                <v-icon size="16" slot="activator" data-cy="account-active-icon">account_circle</v-icon>
+                <v-icon size="16" slot="activator" data-cy="account-active-icon"
+                  >account_circle</v-icon
+                >
                 {{ $t("account.active") }}
               </v-tooltip>
             </span>
-            
+
             <span v-if="!props.item.accountInfo.active">
               <v-tooltip bottom>
-                <v-icon size="16" slot="activator" data-cy="account-inactive-icon">person_outline</v-icon>
+                <v-icon
+                  size="16"
+                  slot="activator"
+                  data-cy="account-inactive-icon"
+                  >person_outline</v-icon
+                >
                 {{ $t("account.inactive") }}
               </v-tooltip>
             </span>
           </span>
         </td>
-        <td :data-cy="'first-name-' + props.item.id">{{ props.item.firstName }}</td>
-        <td :data-cy="'last-name-' + props.item.id">{{ props.item.lastName }}</td>
-        <td class="hidden-sm-and-down" :data-cy="'email-' + props.item.id">{{ props.item.email }}</td>
+        <td :data-cy="'first-name-' + props.item.id">
+          {{ props.item.firstName }}
+        </td>
+        <td :data-cy="'last-name-' + props.item.id">
+          {{ props.item.lastName }}
+        </td>
+        <td class="hidden-sm-and-down" :data-cy="'email-' + props.item.id">
+          {{ props.item.email }}
+        </td>
         <td :data-cy="'phone-' + props.item.id">{{ props.item.phone }}</td>
         <td class="text-no-wrap">
           <v-tooltip bottom>
@@ -134,14 +153,17 @@
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
       <v-btn flat @click="snackbar.show = false" data-cy>
-        {{
-        $t("actions.close")
-        }}
+        {{ $t("actions.close") }}
       </v-btn>
     </v-snackbar>
 
     <!-- New/Edit dialog -->
-    <v-dialog scrollable persistent v-model="personDialog.show" max-width="500px">
+    <v-dialog
+      scrollable
+      persistent
+      v-model="personDialog.show"
+      max-width="500px"
+    >
       <PersonForm
         v-bind:initialData="personDialog.person"
         v-bind:title="personDialog.title"
@@ -156,7 +178,12 @@
     </v-dialog>
 
     <!-- Person admin dialog -->
-    <v-dialog scrollable persistent v-model="adminDialog.show" max-width="500px">
+    <v-dialog
+      scrollable
+      persistent
+      v-model="adminDialog.show"
+      max-width="500px"
+    >
       <PersonAdminForm
         v-bind:person="adminDialog.person"
         v-bind:account="adminDialog.account"
