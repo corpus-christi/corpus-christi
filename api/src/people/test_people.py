@@ -1146,34 +1146,28 @@ def test_delete_manager_with_subordinate(auth_client):
 
 
 @pytest.mark.smoke
-def test_create_manager_with_manager(auth_client):
-    # GIVEN an empty databaseZ
-    person_count = random.randint(10,20)
-    manager_count = random.randint(5, person_count)
-
-    # WHEN we create a random number of new managers and managers in the database
-    create_multiple_people(auth_client.sqla, person_count)
+def test_create_manager_with_superior(auth_client):
+    # GIVEN a set of people, accounts, and managers
+    count = random.randint(3, 6)
+    create_multiple_people(auth_client.sqla, count * 2)
     create_multiple_accounts(auth_client.sqla, 1)
-    create_multiple_managers(auth_client.sqla, manager_count)
+    create_multiple_managers(auth_client.sqla, count)
 
-    for i in range(manager_count):
-        resp = auth_client.post(url_for('people.create_manager'), json=manager_object_factory(auth_client.sqla, 'first level', next_level='second_level'))
-        assert resp.status_code == 201
+    superiors = auth_client.sqla.query(Manager).all()
 
-    # THEN we end up with the proper number of managers in the database
-    managers = auth_client.sqla.query(Manager).all()
-    level1_count = 0
-    level2_count = 0
-    for manager in managers:
-        if manager.description_i18n == 'manager.description.first_level':
-            level1_count = level1_count+1
-            assert manager.manager_id is not None
-        else:
-            level2_count = level2_count+1
-            assert manager.manager_id is None
+    # GIVEN data for subordinate managers
+    for superior in superiors:
+        new_manager = manager_object_factory(auth_client.sqla, fake.sentences(nb=1)[0])
+        new_manager['manager_id'] = superior.id
 
-    assert level1_count == manager_count
-    assert level2_count == manager_count
+        # WHEN subordinates are requested to be created
+        resp = auth_client.post(url_for('people.create_manager'), json = new_manager)
+
+        # THEN expect the create to run OK
+        resp.status_code == 201
+
+    # THEN expect the right number of managers to be created
+    assert auth_client.sqla.query(Manager).count() == count * 2
 
 
 @pytest.mark.smoke
