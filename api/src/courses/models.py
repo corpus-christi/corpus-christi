@@ -70,12 +70,15 @@ class Course_Completion(Base):
      course_id = Column(Integer, ForeignKey('courses_course.id'), primary_key=True)
      person_id = Column(Integer, ForeignKey('people_person.id'), primary_key=True)
 
-     people = relationship('Person', backref='completion', lazy=True)
-     courses = relationship('Course', backref='completion', lazy=True)
+     people = relationship('Person', backref='completions', lazy=True)
+     courses = relationship('Course', backref='completions', lazy=True)
 
-class Course_Completion(Schema):
-     course_id = fields.Integer(dump_only=True, data_key='courseId', required=True)
-     person_id = fields.Integer(dump_only=True, data_key='personId', required=True)
+     def __repr__(self):
+         return f"<Course_Completion(course_id={self.course_id},person_id={self.person_id})>"
+
+class Course_CompletionSchema(Schema):
+     course_id = fields.Integer(data_key='courseId', required=True)
+     person_id = fields.Integer(data_key='personId', required=True)
 
 # ---- Course
 
