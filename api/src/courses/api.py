@@ -498,7 +498,7 @@ def update_diploma_awarded(diploma_id,student_id):
     return jsonify(diploma_awarded_schema.dump(diploma_awarded))
     
 
-@courses.route('/diplomas_awarded/<diploma_id>/<student_id>', methods=['DELETE'])
+@courses.route('/diplomas_awarded/<int:diploma_id>/<int:student_id>', methods=['DELETE'])
 @jwt_required
 def delete_diploma_awarded(diploma_id, student_id):
     diploma_awarded = db.session.query(Diploma_Awarded)\
