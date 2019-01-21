@@ -12,10 +12,12 @@ matrix:
                 - language: node_js
                   node_js: "11"
                   before_install:
+                          - cd ui/
                           - yarn cache clean
                   install:
                           - yarn install
                   script:
+                          - yarn build
                           - echo "Done with Node_js"  
                 - language: python
                   python: "3.7"
@@ -43,10 +45,10 @@ matrix:
                         - sudo systemctl restart nginx
                         - cd ../
                           #- pytest
-after_succes:
-        - cd ui/
-        - yarn build
-        - cd ../
+#after_succes:
+#  - cd ui/
+#  - yarn build
+#  - cd ../
 
 # create script by configuration and make file
 # fix flask data load-al112
@@ -55,6 +57,6 @@ notifications:
 deploy:
 provider: linode
 local-dir: public
-branchs:
+branches:
         only: 
                 - development
