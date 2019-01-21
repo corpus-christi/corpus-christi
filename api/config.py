@@ -1,6 +1,9 @@
 import datetime
 import os
-import private
+try:
+    import private
+except:
+    print("Private.py not needed for CI testing")
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
@@ -10,10 +13,7 @@ SQLITE_MEM = 'sqlite://'
 
 PSQL_TEST = 'postgresql://arco@localhost:5432/cc-test'
 PSQL_DEV = 'postgresql://arco@localhost:5432/cc-dev'
-try:
-    PSQL_STAGING = 'postgresql://arco:' + private.PASS + '@localhost:5432/cc-staging'
-except:
-    print("Private.py not used for CI testing")
+PSQL_STAGING = 'postgresql://arco:' + private.PASS + '@localhost:5432/cc-staging'
 PSQL_STAGING_CI = 'postgresql://arco@localhost:5432/cc-staging'
 PSQL_PROD = 'postgresql://arco@localhost:5432/cc-prod'
 
