@@ -26,7 +26,7 @@
                 :multiple="!editMode"
                 chips
                 small-chips
-                v-bind:label="$t(editMode ? 'course.date' : 'courses.dates')"
+                v-bind:label="$t(editMode ? 'courses.date' : 'courses.dates')"
                 prepend-icon="event"
                 readonly
                 data-cy="course-offering-date"
