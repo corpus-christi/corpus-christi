@@ -17,7 +17,13 @@ const router = new VueRouter({
       name: "public",
       path: "/public",
       meta: { layout: "arco" },
-      component: () => import("@/pages/Public")
+      component: () => import("@/pages/Public"),
+    },
+    {
+      name: "public-events",
+      path: "/public/events",
+      meta: { authRequired: false },
+      component: () => import("@/pages/public/Events")
     },
     {
       name: "login",
@@ -76,12 +82,6 @@ const router = new VueRouter({
               component: () => import("@/components/events/EventParticipants")
             },
             {
-              name: "event-teams",
-              path: "teams",
-              meta: { authRequired: true },
-              component: () => import("@/components/events/teams/EventTeams")
-            },
-            {
               name: "event-assets",
               path: "assets",
               meta: { authRequired: true },
@@ -92,10 +92,43 @@ const router = new VueRouter({
       ]
     },
     {
+      name: "teams",
+      path: "/teams",
+      meta: { authRequired: true },
+      component: () => import("@/pages/Teams"),
+      redirect: { name: "all-teams" },
+      children: [
+        {
+          name: "all-teams",
+          path: "all",
+          meta: { authRequired: true },
+          component: () => import("@/components/teams/TeamTable")
+        },
+        {
+          name: "team",
+          path: ":team",
+          meta: { authRequired: true },
+          component: () => import("@/components/teams/Team")
+        }
+      ]
+    },
+    {
+      name: "assets",
+      path: "/assets",
+      meta: { authRequired: true },
+      component: () => import("@/pages/Assets")
+    },
+    {
       name: "locale",
       path: "/locale",
       meta: { authRequired: true },
       component: () => import("@/pages/Locale")
+    },
+    {
+      name: "diplomas-admin",
+      path: "/diplomas",
+      meta: { authRequired: true },
+      component: () => import("@/pages/Diplomas")
     },
     {
       name: "courses",
@@ -107,7 +140,7 @@ const router = new VueRouter({
         {
           name: "all-courses",
           path: "all",
-          meta: { authRequired:  true },
+          meta: { authRequired: true },
           component: () => import("@/components/courses/CoursesTable")
         },
         {

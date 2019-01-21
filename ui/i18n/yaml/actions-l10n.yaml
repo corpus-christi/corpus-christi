@@ -84,6 +84,10 @@ actions:
     _desc: Back to a previous view
     en: Back
     es: Regresar
+  view-past:
+    _desc: View past events
+    en: View Past
+    es: Ver Pasados
   tooltips:
     settings:
       _desc: Change settings
@@ -92,6 +96,9 @@ actions:
     archive:
       en: Archive
       es: Archivar
+    unarchive:
+      en: Unarchive
+      es: Desarchivar
     activate:
       en: Activate
       es: Activar
