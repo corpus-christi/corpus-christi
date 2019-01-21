@@ -24,7 +24,7 @@ from src.places.models import Country
 from src.courses.models import Course, Course_Offering, Diploma
 from src.courses.test_courses import create_multiple_courses, create_multiple_course_offerings,\
     create_multiple_diplomas, create_multiple_students, create_class_meetings,\
-    create_diploma_awards, create_class_attendance, create_multiple_prerequisites
+    create_diploma_awards, create_class_attendance, create_multiple_prerequisites, create_course_completion
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 
@@ -93,6 +93,7 @@ def load_all():
     create_class_meetings(db.session, 30)
     create_diploma_awards(db.session, 30)
     create_class_attendance(db.session, 30)
+    create_course_completion(db.session, 30)
 
     create_multiple_people_attributes(db.session, 5)
     create_multiple_managers(db.session, 2, 'Group Overseer')
