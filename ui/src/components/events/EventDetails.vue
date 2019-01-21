@@ -65,44 +65,12 @@
         ></event-team-details>
       </v-flex>
       <v-flex xs6>
-        <v-card class="ma-1">
-          <template v-if="pageLoaded">
-            <v-container fill-height fluid>
-              <v-flex xs9 sm9 align-end flexbox>
-                <span class="headline">{{ $t("assets.title") }}</span>
-              </v-flex>
-              <v-layout xs3 sm3 align-end justify-end>
-                <v-btn
-                  flat
-                  color="primary"
-                  data-cy="add-asset-dialog"
-                  v-on:click="addAssetDialog.show = true"
-                >
-                  <v-icon>add</v-icon>&nbsp;{{ $t("assets.new") }}
-                </v-btn>
-              </v-layout>
-            </v-container>
-            <v-list>
-              <template v-for="asset in event.assets">
-                <v-divider v-bind:key="'assetDivider' + asset.id"></v-divider>
-                <v-list-tile v-bind:key="asset.id">
-                  <v-list-tile-content>
-                    <span>{{ asset.description }}</span>
-                  </v-list-tile-content>
-                  <v-list-tile-action>
-                    <v-btn flat color="primary">
-                      <v-icon
-                        v-on:click="showDeleteAssetDialog(asset.id)"
-                        :data-cy="'deleteAsset-' + asset.id"
-                        >delete</v-icon
-                      >
-                    </v-btn>
-                  </v-list-tile-action>
-                </v-list-tile>
-              </template>
-            </v-list>
-          </template>
-        </v-card>
+        <event-asset-details
+          :assets="event.assets"
+          :pageLoaded="pageLoaded"
+          v-on:snackbar="showSnackbar($event)"
+          v-on:asset-added="getEvent()"
+        ></event-asset-details>
       </v-flex>
     </v-layout>
 
@@ -113,7 +81,7 @@
       </v-btn>
     </v-snackbar>
 
-    <!-- Edit dialog -->
+    <!-- Edit Event dialog -->
     <v-dialog v-model="eventDialog.show" persistent max-width="500px">
       <event-form
         v-bind:editMode="true"
@@ -123,71 +91,6 @@
         v-on:save="saveEvent"
       />
     </v-dialog>
-
-    <!-- Add Asset dialog -->
-    <v-dialog v-model="addAssetDialog.show" persistent max-width="500px">
-      <v-card>
-        <v-card-title primary-title>
-          <span class="headline">{{ $t("assets.new") }}</span>
-        </v-card-title>
-        <v-card-text>
-          <entity-search
-            data-cy="assets-entity-search"
-            v-model="addAssetDialog.asset"
-            :existing-entities="event.assets"
-            asset
-          ></entity-search>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn
-            v-on:click="cancelAddAsset()"
-            color="secondary"
-            flat
-            :disabled="addAssetDialog.loading"
-            data-cy="cancel-add"
-            >{{ $t("actions.cancel") }}</v-btn
-          >
-          <v-spacer></v-spacer>
-          <v-btn
-            v-on:click="addAsset()"
-            color="primary"
-            raised
-            :disabled="!addAssetDialog.asset"
-            :loading="addAssetDialog.loading"
-            data-cy="confirm-add"
-            >{{ $t("actions.confirm") }}</v-btn
-          >
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-    <!-- Delete Asset dialog -->
-    <v-dialog v-model="deleteAssetDialog.show" max-width="350px">
-      <v-card>
-        <v-card-text>
-          <span>{{ $t("assets.confirm-remove-from-event") }}</span>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn
-            v-on:click="deleteAssetDialog.show = false"
-            color="secondary"
-            flat
-            :disabled="deleteAssetDialog.loading"
-            data-cy="cancel-delete"
-            >{{ $t("actions.cancel") }}</v-btn
-          >
-          <v-spacer></v-spacer>
-          <v-btn
-            v-on:click="deleteAsset()"
-            color="primary"
-            raised
-            :loading="deleteAssetDialog.loading"
-            data-cy="confirm-delete"
-            >{{ $t("actions.confirm") }}</v-btn
-          >
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
   </v-layout>
 </template>
 
@@ -196,13 +99,15 @@ import EventForm from "./EventForm";
 import { mapGetters } from "vuex";
 import EntitySearch from "../EntitySearch";
 import EventTeamDetails from "./EventTeamDetails";
+import EventAssetDetails from "./EventAssetDetails";
 
 export default {
   name: "EventDetails",
   components: {
     "event-form": EventForm,
     "entity-search": EntitySearch,
-    "event-team-details": EventTeamDetails
+    "event-team-details": EventTeamDetails,
+    "event-asset-details": EventAssetDetails
   },
 
   data() {
@@ -267,17 +172,8 @@ export default {
         .get(`/api/v1/events/${id}?include_teams=1&include_assets=1`)
         .then(resp => {
           this.event = resp.data;
-          if (this.event.teams) {
-            this.event.teams = this.event.teams.map(t => t.team);
-          } else {
-            this.event.teams = [];
-          }
-
-          if (!this.event.assets) {
-            this.event.assets = [];
-          } else {
-            this.event.assets = this.event.assets.map(a => a.asset);
-          }
+          this.event.teams = this.event.teams ? this.event.teams.map(t => t.team) : [];
+          this.event.assets = this.event.assets ? this.event.assets.map(a => a.asset) : [];
           this.pageLoaded = true;
         });
     },
