@@ -43,7 +43,6 @@ def read_person_fields():
 
 
 @people.route('/persons', methods=['POST'])
-@jwt_required
 def create_person():
     request.json['person']['active'] = True
 
@@ -168,7 +167,6 @@ account_schema = AccountSchema()
 
 
 @people.route('/accounts', methods=['POST'])
-@jwt_required
 def create_account():
     request.json["active"] = True
     try:
@@ -239,13 +237,13 @@ def update_account(account_id):
     for field in 'password', 'username', 'active':
         if field in request.json:
             setattr(account, field, request.json[field])
-    
+
     if roles_to_add is not None:
         role_objects = []
         for role in roles_to_add:
             role_object = db.session.query(Role).filter_by(id=role).first()
             role_objects.append(role_object)
-    
+
     account.roles = role_objects
 
     db.session.commit()
