@@ -160,7 +160,7 @@ export default {
     addAsset() {
       const eventId = this.$route.params.event;
       let assetId = this.addAssetDialog.asset.id;
-      const idx = this.assets.findIndex(ev_te => ev_te.id === assetId);
+      const idx = this.assets.findIndex(a => a.id === assetId);
       this.addAssetDialog.loading = true;
       if (idx > -1) {
         this.closeAddAssetDialog();
@@ -188,7 +188,7 @@ export default {
 
     deleteAsset() {
       let id = this.deleteAssetDialog.assetId;
-      const idx = this.assets.findIndex(ev_te => ev_te.id === id);
+      const idx = this.assets.findIndex(a => a.id === id);
       this.deleteAssetDialog.loading = true;
       const eventId = this.$route.params.event;
       this.$http

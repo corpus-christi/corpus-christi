@@ -65,6 +65,15 @@
         ></event-team-details>
       </v-flex>
       <v-flex xs6>
+        <event-person-details
+          :persons="event.persons"
+          :pageLoaded="pageLoaded"
+          v-on:snackbar="showSnackbar($event)"
+          v-on:person-added="getEvent()"
+        ></event-person-details>
+      </v-flex>
+
+      <v-flex xs6>
         <event-asset-details
           :assets="event.assets"
           :pageLoaded="pageLoaded"
@@ -100,6 +109,7 @@ import { mapGetters } from "vuex";
 import EntitySearch from "../EntitySearch";
 import EventTeamDetails from "./EventTeamDetails";
 import EventAssetDetails from "./EventAssetDetails";
+import EventPersonDetails from "./EventPersonDetails";
 
 export default {
   name: "EventDetails",
@@ -107,7 +117,8 @@ export default {
     "event-form": EventForm,
     "entity-search": EntitySearch,
     "event-team-details": EventTeamDetails,
-    "event-asset-details": EventAssetDetails
+    "event-asset-details": EventAssetDetails,
+    "event-person-details": EventPersonDetails
   },
 
   data() {
@@ -169,11 +180,17 @@ export default {
       this.pageLoaded = false;
       const id = this.$route.params.event;
       return this.$http
-        .get(`/api/v1/events/${id}?include_teams=1&include_assets=1`)
+        .get(
+          `/api/v1/events/${id}?include_teams=1&include_assets=1&include_persons=1`
+        )
         .then(resp => {
           this.event = resp.data;
-          this.event.teams = this.event.teams ? this.event.teams.map(t => t.team) : [];
-          this.event.assets = this.event.assets ? this.event.assets.map(a => a.asset) : [];
+          this.event.teams = !this.event.teams ? []
+            : this.event.teams.map(t => t.team);
+          this.event.assets = !this.event.assets ? []
+            : this.event.assets.map(a => a.asset);
+          this.event.persons = !this.event.persons ? []
+            : this.event.persons.map(p => p.person);
           this.pageLoaded = true;
         });
     },
@@ -224,72 +241,6 @@ export default {
         hour: "2-digit",
         minute: "2-digit"
       });
-    },
-
-    cancelAddAsset() {
-      this.addAssetDialog.loading = false;
-      this.addAssetDialog.show = false;
-      this.addAssetDialog.asset = null;
-    },
-
-    addAsset() {
-      const eventId = this.$route.params.event;
-      let assetId = this.addAssetDialog.asset.id;
-      const idx = this.event.assets.findIndex(ev_as => ev_as.id === assetId);
-      if (idx > -1) {
-        this.addAssetDialog.loading = false;
-        this.addAssetDialog.show = false;
-        this.addAssetDialog.asset = null;
-        this.showSnackbar(this.$t("assets.assets-on-event"));
-        return;
-      }
-
-      this.$http
-        .post(`/api/v1/events/${eventId}/assets/${assetId}`)
-        .then(() => {
-          this.showSnackbar(this.$t("assets.asset-added"));
-          this.addAssetDialog.loading = false;
-          this.addAssetDialog.show = false;
-          this.addAssetDialog.asset = null;
-          this.pageLoaded = false;
-          this.getEvent().then(() => (this.pageLoaded = true));
-        })
-        .catch(err => {
-          console.log(err);
-          this.addAssetDialog.loading = false;
-          if (err.response.status == 422) {
-            this.showSnackbar(this.$t("assets.error-asset-assigned"));
-          } else {
-            this.showSnackbar(this.$t("assets.error-adding-asset"));
-          }
-        });
-    },
-
-    deleteAsset() {
-      let id = this.deleteAssetDialog.assetId;
-      const idx = this.event.assets.findIndex(ev_as => ev_as.id === id);
-      this.deleteAssetDialog.loading = true;
-      const eventId = this.$route.params.event;
-      this.$http
-        .delete(`/api/v1/events/${eventId}/assets/${id}`)
-        .then(resp => {
-          console.log("REMOVED", resp);
-          this.deleteAssetDialog.show = false;
-          this.deleteAssetDialog.loading = false;
-          this.deleteAssetDialog.assetId = -1;
-          this.event.assets.splice(idx, 1);
-          this.showSnackbar(this.$t("assets.asset-removed"));
-        })
-        .catch(err => {
-          console.log(err);
-          this.deleteAssetDialog.loading = false;
-          this.showSnackbar(this.$t("assets.error-removing-asset"));
-        });
-    },
-
-    showDeleteAssetDialog(assetId) {
-      this.deleteAssetDialog.assetId = assetId;
-      this.deleteAssetDialog.show = true;
     },
 
     navigateTo(path) {

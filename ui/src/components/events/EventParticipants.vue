@@ -263,11 +263,13 @@ export default {
     getParticipants() {
       this.tableLoading = true;
       const id = this.$route.params.event;
-      this.$http.get(`/api/v1/events/${id}?include_participants=1`).then(resp => {
-        let event = resp.data;
-        this.people = event.participants;
-        this.tableLoading = false;
-      });
+      this.$http
+        .get(`/api/v1/events/${id}?include_participants=1`)
+        .then(resp => {
+          let event = resp.data;
+          this.people = event.participants;
+          this.tableLoading = false;
+        });
     }
   },
 

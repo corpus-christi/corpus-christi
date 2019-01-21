@@ -150,17 +150,11 @@
       <v-card>
         <v-card-title primary-title>
           <div>
-            <h3 class="headline mb-0">
-              {{ $t("teams.members.add") }}
-            </h3>
+            <h3 class="headline mb-0">{{ $t("teams.members.add") }}</h3>
           </div>
         </v-card-title>
         <v-card-text>
-          <entity-search
-            multiple
-            person
-            v-model="addMemberDialog.newMembers"
-          />
+          <entity-search multiple person v-model="addMemberDialog.newMembers" />
         </v-card-text>
         <v-card-actions>
           <v-btn

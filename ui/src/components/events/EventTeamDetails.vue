@@ -175,7 +175,7 @@ export default {
     addTeam() {
       const eventId = this.$route.params.event;
       let teamId = this.addTeamDialog.team.id;
-      const idx = this.teams.findIndex(ev_te => ev_te.id === teamId);
+      const idx = this.teams.findIndex(t => t.id === teamId);
       this.addTeamDialog.loading = true;
       if (idx > -1) {
         this.closeAddTeamDialog();
@@ -203,7 +203,7 @@ export default {
 
     deleteTeam() {
       let id = this.deleteTeamDialog.teamId;
-      const idx = this.teams.findIndex(ev_te => ev_te.id === id);
+      const idx = this.teams.findIndex(t => t.id === id);
       this.deleteTeamDialog.loading = true;
       const eventId = this.$route.params.event;
       this.$http

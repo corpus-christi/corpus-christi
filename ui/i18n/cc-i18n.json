@@ -120,6 +120,18 @@
         "removed": "Removed participant",
         "title": "Participants"
       },
+      "persons": {
+        "confirm-remove-from-event": "Are you sure you want to remove this person from this event?",
+        "error-adding-person": "Error while adding person",
+        "error-person-assigned": "That person is assigned to a conflicting event.",
+        "error-removing-person": "Error while removing person",
+        "new": "Add Person",
+        "none-assigned": "No people assigned.",
+        "person-added": "Person added",
+        "person-on-event": "That person is already assigned to this event.",
+        "person-removed": "Person removed",
+        "title": "Event People"
+      },
       "start-date": "Start Date",
       "start-time": "Start Time",
       "title": "Event Title"
@@ -337,6 +349,18 @@
         "error-removing": "Error al eliminadar el participante",
         "removed": "Participante eliminado",
         "title": "Participantes"
+      },
+      "persons": {
+        "confirm-remove-from-event": "\u00bfEst\u00e1 seguro de que desea eliminar este persona de este evento?",
+        "error-adding-person": "Error al agregar persona",
+        "error-person-assigned": "Ese persona est\u00e1 asignado a un evento conflictivo.",
+        "error-removing-person": "Error al eliminadar este persona",
+        "new": "A\u00f1adir Persona",
+        "none-assigned": "No hay personas asignados.",
+        "person-added": "Persona agregado",
+        "person-on-event": "Ese persona ya est\u00e1 asignado a este evento.",
+        "person-removed": "Persona eliminado",
+        "title": "Personas del Evento"
       },
       "start-date": "Fecha de Inicio",
       "start-time": "Hora de Inicio",
