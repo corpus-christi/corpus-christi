@@ -12,9 +12,9 @@ matrix:
                 - language: node_js
                   node_js: "11"
                   before_install:
-                          #- cd ui/
                           - yarn cache clean
                   install:
+                          - cd ui/
                           - yarn install
                   script:
                           - yarn build
