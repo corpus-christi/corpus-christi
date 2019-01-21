@@ -75,6 +75,6 @@ notifications:
 deploy:
 provider: linode
 local-dir: public
-branchs:
-        only: 
-                - development
+branches:
+  only: 
+    - development
