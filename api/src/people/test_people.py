@@ -248,17 +248,42 @@ def create_multiple_managers (sqla, n, next_level = None):
 
 @pytest.mark.smoke
 def test_read_person_fields(auth_client):
+    # GIVEN an empty data base
 
-    #GIVEN an empty data base
-
-    #WHEN read_person_fields is called
+    # WHEN read_person_fields is called by the api
     resp = auth_client.get(url_for('people.read_person_fields'))
     assert resp.status_code == 200
 
-    #THEN the person field structure is returned
+    # THEN the person field structure is returned
     assert resp.json['person'][0]['id'] == 'INTEGER'
     assert resp.json['person'][1]['first_name'] == 'VARCHAR(64)'
     assert resp.json['person'][2]['last_name'] == 'VARCHAR(64)'
+    assert resp.json['person'][3]['second_last_name'] == 'VARCHAR(64)'
+    assert resp.json['person'][4]['gender'] == 'VARCHAR(1)'
+    assert resp.json['person'][5]['birthday'] == 'DATE'
+    assert resp.json['person'][6]['phone'] == 'VARCHAR(64)'
+    assert resp.json['person'][7]['email'] == 'VARCHAR(64)'
+    assert resp.json['person'][8]['active'] == 'BOOLEAN'
+    assert resp.json['person'][9]['location_id'] == 'INTEGER'
+    assert resp.json['person_attributes'] == []
+
+    # GIVEN a DB with actual attributes
+    create_multiple_people(auth_client.sqla, 15)
+    create_multiple_people_attributes(auth_client.sqla, 15)
+
+    # WHEN we use the api to call the read person fields
+    resp = auth_client.get(url_for('people.read_person_fields'))
+
+    # THEN we get the correct attributes
+    assert resp.json['person_attributes'] != []
+    print(resp.json['person_attributes'])
+
+    print("sloopy")
+    print(Person.__table__.columns.keys())
+    print(resp.json.keys())
+    # assert resp.json['person_attributes'] == []
+    print(resp.json['person_attributes'])
+    # assert False
 
 @pytest.mark.smoke
 def test_create_person(auth_client):

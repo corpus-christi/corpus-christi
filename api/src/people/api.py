@@ -152,7 +152,6 @@ def deactivate_person(person_id):
 @jwt_required
 def activate_person(person_id):
     person = db.session.query(Person).filter_by(id=person_id).first()
-
     setattr(person, 'active', True)
 
     db.session.commit()
