@@ -4,12 +4,15 @@ import random
 import pytest
 from faker import Faker
 from flask import url_for
+from flask.json import jsonify
 from flask_jwt_extended import create_access_token
 from werkzeug.datastructures import Headers
 from werkzeug.security import check_password_hash
 
-from .models import Person, PersonSchema, AccountSchema, Account, RoleSchema, Role
-
+from .models import Person, PersonSchema, AccountSchema, Account, RoleSchema, Role, Manager, ManagerSchema
+from ..i18n.models import I18NKey, i18n_create, I18NLocale
+from ..attributes.models import Attribute, PersonAttribute, EnumeratedValue, PersonAttributeSchema, AttributeSchema, EnumeratedValueSchema
+from ..attributes.test_attributes import person_attribute_string_factory, person_attribute_enumerated_factory, add_i18n_code
 
 class RandomLocaleFaker:
     """Generate multiple fakers for different locales."""
@@ -35,17 +38,20 @@ def person_object_factory():
     """Cook up a fake person."""
     person = {
         'lastName': rl_fake().last_name(),
+        'secondLastName': rl_fake().last_name(),
         'gender': random.choice(('M', 'F')),
         'active': flip()
     }
 
     # Make the person's name match their gender.
-    person['firstName'] = rl_fake().first_name_male() if person['gender'] == 'M' else rl_fake().first_name_female()
-    person['active'] = True;
+    person['firstName'] = rl_fake().first_name_male(
+    ) if person['gender'] == 'M' else rl_fake().first_name_female()
+    person['active'] = True
 
     # These are all optional in the DB. Over time, we'll try all possibilities.
     if flip():
-        person['birthday'] = rl_fake().date_of_birth(minimum_age=18).strftime('%Y-%m-%d')
+        person['birthday'] = rl_fake().date_of_birth(
+            minimum_age=18).strftime('%Y-%m-%d')
     if flip():
         person['phone'] = rl_fake().phone_number()
     if flip():
@@ -85,7 +91,8 @@ def create_multiple_accounts(sqla, fraction=0.75):
         raise RuntimeError(f"Fraction ({fraction}) is out of bounds")
 
     all_people = sqla.query(Person).all()
-    sample_people = random.sample(all_people, math.floor(len(all_people) * fraction))
+    sample_people = random.sample(
+        all_people, math.floor(len(all_people) * fraction))
 
     account_schema = AccountSchema()
     new_accounts = []
@@ -94,6 +101,55 @@ def create_multiple_accounts(sqla, fraction=0.75):
         new_accounts.append(Account(**valid_account))
     sqla.add_all(new_accounts)
     sqla.commit()
+
+def create_multiple_people_attributes(sqla, n):
+    """Commit `n` new people with attributes to the database."""
+    person_schema = PersonSchema()
+    attribute_schema = AttributeSchema()
+    person_attribute_schema = PersonAttributeSchema()
+    enumerated_value_schema = EnumeratedValueSchema()
+    new_people = []
+    for i in range(n):
+        valid_person = person_schema.load(person_object_factory())
+        new_people.append(Person(**valid_person))
+    sqla.add_all(new_people)
+    new_attributes = [{'nameI18n': add_i18n_code('Marital Status', sqla, 'en-US', f'attribute.married'), 'typeI18n': add_i18n_code('attribute.radio', sqla, 'en-US', f'attribute.radio'), 'seq': 2, 'active': 1}, {'nameI18n':add_i18n_code('Home Group Name', sqla, 'en-US', f'attribute.HomeGroupName'), 'typeI18n': add_i18n_code('attribute.string', sqla, 'en-US', f'attribute.string'), 'seq': 1, 'active': 1}, {'nameI18n': add_i18n_code('Baptism Date', sqla, 'en-US', f'attribute.BaptismDate'), 'typeI18n': add_i18n_code('attribute.date', sqla, 'en-US', f'attribute.date'), 'seq': 3, 'active': 1}]
+    new_enumerated_values = [{'attributeId': 1, 'valueI18n': add_i18n_code('married', sqla, 'en-US', f'personAttribute.married'), 'active': 1}, {'attributeId': 1, 'valueI18n': add_i18n_code('single', sqla, 'en-US', f'personAttribute.single'), 'active': 1} ]
+
+    add_i18n_code('Estado Civil', sqla, 'es-EC', f'attribute.married')
+    add_i18n_code('Nombre del grupo de origen', sqla, 'es-EC', f'attribute.HomeGroupName')
+    add_i18n_code('Fecha de bautismo', sqla, 'es-EC', f'attribute.BaptismDate')
+    add_i18n_code('casado', sqla, 'es-EC', f'personAttribute.married')
+    add_i18n_code('soltero', sqla, 'es-EC', f'personAttribute.single')
+    
+    valid_attributes = []
+    for attribute in new_attributes:
+        valid_attribute = attribute_schema.load(attribute)
+        valid_attributes.append(Attribute(**valid_attribute))
+    sqla.add_all(valid_attributes)
+    sqla.commit()
+    
+    valid_enumerated_values = []
+    for enumerated_value in new_enumerated_values:
+        valid_enumerated_value = enumerated_value_schema.load(enumerated_value)
+        valid_enumerated_values.append(EnumeratedValue(**valid_enumerated_value))
+    sqla.add_all(valid_enumerated_values)
+    sqla.commit()
+
+    all_people = sqla.query(Person).all()
+    count = 1
+    for i in range(n):
+        # current_person = random.choice(all_people)
+        # person_id = current_person.id
+        new_person_attributes = [{'personId': count, 'attributeId': 1, 'enumValueId': 1}, {'personId': count, 'attributeId': 2, 'stringValue': "Home Group 1"}, {'personId': count, 'attributeId': 3, 'stringValue': '1-15-2019'}]
+
+        valid_person_attributes = []
+        count = count + 1
+        for person_attribute in new_person_attributes:
+            valid_person_attribute = person_attribute_schema.load(person_attribute)
+            valid_person_attributes.append(PersonAttribute(**valid_person_attribute))
+        sqla.add_all(valid_person_attributes)
+        sqla.commit()
 
 
 # ---- Person
@@ -104,7 +160,8 @@ def test_create_person(auth_client):
     count = random.randint(5, 15)
     # WHEN we create a random number of new people
     for i in range(count):
-        resp = auth_client.post(url_for('people.create_person'), json=person_object_factory())
+        resp = auth_client.post(url_for('people.create_person'), json={
+                                'person': person_object_factory(), 'attributesInfo': []})
         assert resp.status_code == 201
     # THEN we end up with the proper number of people in the database
     assert auth_client.sqla.query(Person).count() == count
@@ -123,11 +180,66 @@ def test_read_person(auth_client):
 
     # WHEN we request each of them from the server
     for person in people:
-        resp = auth_client.get(url_for('people.read_one_person', person_id=person.id))
+        resp = auth_client.get(
+            url_for('people.read_one_person', person_id=person.id))
         # THEN we find a matching person
         assert resp.status_code == 200
         assert resp.json['firstName'] == person.first_name
         assert resp.json['lastName'] == person.last_name
+        assert resp.json['secondLastName'] == person.second_last_name
+
+def test_deactivate_person(auth_client):
+    # GIVEN a DB with a collection people.
+    count = random.randint(3, 11)
+    create_multiple_people(auth_client.sqla, count)
+
+    # WHEN we choose a person at random
+    all_people = auth_client.sqla.query(Person).all()
+    current_person = random.choice(all_people)
+    # person_id = auth_client.sqla.query(Person.id).first().id
+    # GIVEN a DB with an enumerated_value.
+
+    # WHEN we call deactivate
+    print("ID = ", current_person.id)
+    resp = auth_client.put(url_for(
+        'people.deactivate_person', person_id=current_person.id))
+    assert resp.status_code == 200
+
+    updated_person = auth_client.sqla.query(
+        Person).filter_by(id=current_person.id).first()
+    assert updated_person is not None
+    assert updated_person.active == False
+    return current_person.id
+
+def test_activate_person(auth_client):
+    # GIVEN a DB with a collection people.
+    current_person_id = test_deactivate_person(auth_client)
+
+    # WHEN we choose a person who has been deactivated
+    resp = auth_client.put(url_for(
+        'people.activate_person', person_id=current_person_id))
+    assert resp.status_code == 200
+
+    #THEN they are reactivated
+    updated_person = auth_client.sqla.query(
+        Person).filter_by(id=current_person_id).first()
+    assert updated_person is not None
+    assert updated_person.active == True
+
+def test_read_person_fields(auth_client):
+
+    #GIVEN an empty data base
+
+    #WHEN read_person_fields is called
+    resp = auth_client.get(url_for('people.read_person_fields'))
+    assert resp.status_code == 200
+
+    #THEN the person field structure is returned
+    assert resp.json['person'][0]['id'] == 'INTEGER'
+    assert resp.json['person'][1]['first_name'] == 'VARCHAR(64)'
+    assert resp.json['person'][2]['last_name'] == 'VARCHAR(64)'
+
+
 
 
 # ---- Account
@@ -136,6 +248,7 @@ def test_create_account(auth_client):
     # GIVEN some randomly created people
     count = random.randint(8, 19)
     create_multiple_people(auth_client.sqla, count)
+    create_role(auth_client.sqla)
 
     # WHEN we retrieve them all
     people = auth_client.sqla.query(Person).all()
@@ -149,7 +262,8 @@ def test_create_account(auth_client):
         # THEN we expect them to be created
         assert resp.status_code == 201
         # AND the account exists in the database
-        new_account = auth_client.sqla.query(Account).filter_by(person_id=person.id).first()
+        new_account = auth_client.sqla.query(
+            Account).filter_by(person_id=person.id).first()
         assert new_account is not None
         # And the password is properly hashed (refer to docs for generate_password_hash)
         method, salt, hash = new_account.password_hash.split('$')
@@ -161,6 +275,59 @@ def test_create_account(auth_client):
         assert len(hash) == 64  # SHA 256 / 4 bits per hex value
     # AND we end up with the proper number of accounts.
     assert auth_client.sqla.query(Account).count() == count
+
+def test_deactivate_account(auth_client):
+    # GIVEN a DB with a collection people.
+    count = random.randint(3, 11)
+    create_multiple_people(auth_client.sqla, count)
+    create_multiple_accounts(auth_client.sqla)
+
+    # WHEN we choose a person at random
+    all_accounts = auth_client.sqla.query(Account).all()
+    current_account = random.choice(all_accounts)
+    # person_id = auth_client.sqla.query(Person.id).first().id
+    # GIVEN a DB with an enumerated_value.
+
+    # WHEN we call deactivate
+    print("ID = ", current_account.id)
+    resp = auth_client.put(url_for(
+        'people.deactivate_account', account_id=current_account.id))
+    assert resp.status_code == 200
+
+    updated_account = auth_client.sqla.query(
+        Account).filter_by(id=current_account.id).first()
+    assert updated_account is not None
+    assert updated_account.active == False
+    return current_account.id
+
+def test_activate_account(auth_client):
+    # GIVEN a DB with a collection people and accounts.
+    current_account_id = test_deactivate_account(auth_client)
+
+    # WHEN we choose an account who has been deactivated
+    resp = auth_client.put(url_for(
+        'people.activate_account', account_id=current_account_id))
+    assert resp.status_code == 200
+
+    #THEN they are reactivated
+    updated_account = auth_client.sqla.query(
+        Account).filter_by(id=current_account_id).first()
+    assert updated_account is not None
+    assert updated_account.active == True
+
+def test_read_one_account_by_username(auth_client):
+    #GIVEN a database populated with people and accounts
+    create_multiple_people(auth_client.sqla, 10)
+    create_multiple_accounts(auth_client.sqla)
+    all_accounts = auth_client.sqla.query(Account).all()
+    current_account = random.choice(all_accounts)
+
+    #WHEN read_one_account_by_username is called
+    resp = auth_client.get(url_for('people.read_one_account_by_username', username=current_account.username))
+    assert resp.status_code == 200
+
+    #THEN the username response will match that of the account
+    assert resp.json['username'] == current_account.username
 
 
 def prep_database(sqla):
@@ -179,12 +346,27 @@ def test_read_account(auth_client):
 
     for account in auth_client.sqla.query(Account).all():
         # WHEN we request one
-        resp = auth_client.get(url_for('people.read_one_account', account_id=account.id))
+        resp = auth_client.get(
+            url_for('people.read_one_account', account_id=account.id))
         # THEN we find the matching account
         assert resp.status_code == 200
         assert resp.json['username'] == account.username
         assert 'password' not in resp.json  # Shouldn't be exposed by API
         assert resp.json['active'] == True
+
+@pytest.mark.slow
+def test_read_all_accounts(auth_client):
+    # GIVEN a collection of accounts
+    account_count = random.randint(10, 20)
+    create_multiple_people(auth_client.sqla, account_count)
+    create_multiple_accounts(auth_client.sqla)
+
+    # WHEN we request all managers from the server
+    resp = auth_client.get(url_for('people.read_all_accounts', locale='en-US'))
+
+    # THEN the count matches the number of entries in the database
+    assert resp.status_code == 200
+    assert len(resp.json) == math.floor((account_count) * 0.75)
 
 
 def test_update_password(auth_client):
@@ -199,7 +381,7 @@ def test_update_password(auth_client):
         # WHEN we update the password via the API
         new_password = password_by_id[account_id] = fake.password()
         resp = auth_client.patch(url_for('people.update_account', account_id=account_id),
-                            json={'password': new_password})
+                                 json={'password': new_password})
         # THEN the update worked
         assert resp.status_code == 200
         # AND the password was not returned
@@ -208,7 +390,8 @@ def test_update_password(auth_client):
     # GIVEN a collection of accounts
     for account_id in account_ids:
         # WHEN we retrieve account details from the database
-        updated_account = auth_client.sqla.query(Account).filter_by(id=account_id).first()
+        updated_account = auth_client.sqla.query(
+            Account).filter_by(id=account_id).first()
         assert updated_account is not None
         # THEN the (account-specific) password is properly hashed
         password_hash = updated_account.password_hash
@@ -222,7 +405,8 @@ def test_update_other_fields(auth_client):
     # For each of the accounts, grab the current value of the "other" fields.
     expected_by_id = {}
     for account_id in account_ids:
-        current_account = auth_client.sqla.query(Account).filter_by(id=account_id).first()
+        current_account = auth_client.sqla.query(
+            Account).filter_by(id=account_id).first()
         expected_by_id[account_id] = {
             'username': current_account.username,
             'active': current_account.active
@@ -251,40 +435,381 @@ def test_update_other_fields(auth_client):
         # It's possible that none of the fields will have been selected for update,
         # which doesn't make much sense, but we'll still test for that possibility.
 
-        resp = auth_client.patch(url_for('people.update_account', account_id=account_id), json=payload)
+        resp = auth_client.patch(
+            url_for('people.update_account', account_id=account_id), json=payload)
         assert resp.status_code == 200
 
     for account_id in account_ids:
-        updated_account = auth_client.sqla.query(Account).filter_by(id=account_id).first()
+        updated_account = auth_client.sqla.query(
+            Account).filter_by(id=account_id).first()
         assert updated_account is not None
         assert updated_account.username == expected_by_id[account_id]['username']
         assert updated_account.active == expected_by_id[account_id]['active']
 
 
-    #   -----   Roles
+#   -----   __repr__
 
-    def role_object_factory():
-        """Cook up a fake role."""
-        role = {
-            'name_i18n': 'role.test_role',
-            'active' : True
-        }
-    
-    def create_role(sqla, n):
-        """Commit `n` new roles to the database. Return their IDs."""
-        role_schema = RoleSchema()
-
-        valid_role = role_schema.load(role_object_factory())
-
-        sqla.add(valid_role)
-        sqla.commit()     
+@pytest.mark.smoke
+def test_repr_person(auth_client):
+    person = Person()
+    person.__repr__()
 
 
-    def test_create_role(auth_client):
-        # GIVEN some randomly created people
-        create_role(auth_client.sqla)
+@pytest.mark.smoke
+def test_repr_account(auth_client):
+    create_multiple_people(auth_client.sqla, 4)
+    create_multiple_accounts(auth_client.sqla, 1)
+    account = auth_client.sqla.query(Account).all()
+    account[0].__repr__()
 
-        # WHEN we retrieve them all
-        role = auth_client.sqla.query(Role).all()
-        # THEN we get the expected number
-        assert len(role) == 1
+
+@pytest.mark.smoke
+def test_repr_role(auth_client):
+    role = Role()
+    role.__repr__()
+
+
+#   -----   _init
+
+@pytest.mark.smoke
+def test_init_person(auth_client):
+    person = Person()
+    person._init(auth_client.sqla)
+
+
+#   -----   Account Passwords
+@pytest.mark.smoke
+def test_password_account(auth_client):
+    account = Account()
+    try:
+        account.password()
+    except:
+        assert True
+
+
+@pytest.mark.smoke
+def test_verify_password_account(auth_client):
+    create_multiple_people(auth_client.sqla, 4)
+    create_multiple_accounts(auth_client.sqla, 1)
+    account = auth_client.sqla.query(Account).all()
+    account[0].password = "test"
+    account[0].verify_password("test")
+
+
+#   -----   Roles
+
+def role_object_factory():
+    """Cook up a fake role."""
+    role = {
+        'nameI18n': 'role.test_role',
+        'active' : 1
+    }
+    return role
+
+def create_role(sqla):
+    """Commit `n` new roles to the database. Return their IDs."""
+    role_schema = RoleSchema()
+
+    valid_role = role_schema.load(role_object_factory())
+    valid_role = Role(**valid_role)
+    sqla.add(valid_role)
+    sqla.commit()
+
+#
+# def test_create_role(auth_client):
+#     # GIVEN some randomly created role
+#     create_role(auth_client.sqla)
+#
+#     # WHEN we retrieve them all
+#     role = auth_client.sqla.query(Role).all()
+#     # THEN we get the expected number
+#     assert len(role) == 1
+
+# ---- Manager
+
+def manager_object_factory(sqla, description, next_level = None, locale_code='en-US'):
+    """Cook up a fake person."""
+    description_i18n = f'manager.description.{description.replace(" ","_")}'
+
+    if not sqla.query(I18NLocale).get(locale_code):
+        sqla.add(I18NLocale(code=locale_code, desc='English US'))
+
+    if not sqla.query(I18NKey).get(description_i18n):
+        i18n_create(description_i18n, 'en-US',
+                    description, description=f"Manager {description}")
+
+    all_people = sqla.query(Person).all()
+
+    manager = {
+
+        'person_id': random.choice(all_people).id,
+        'description_i18n': description_i18n
+    }
+    all_managers = sqla.query(Manager).all()
+
+    if next_level is not None:
+        next_level_description_i18n = f'manager.description.{next_level.replace(" ","_")}'
+        next_level_managers = sqla.query(Manager).filter(Manager.description_i18n==next_level_description_i18n).all()
+        if (len(next_level_managers) > 0):
+            manager['manager_id'] = random.choice(next_level_managers).id
+
+    return manager
+
+
+def create_multiple_managers (sqla, n, description, next_level = None):
+    """Commit `n` new people to the database. Return their IDs."""
+    manager_schema = ManagerSchema()
+    new_managers = []
+    for i in range(n):
+        valid_manager = manager_schema.load(manager_object_factory(sqla, description, next_level))
+        new_managers.append(Manager(**valid_manager))
+    sqla.add_all(new_managers)
+    sqla.commit()
+
+
+@pytest.mark.smoke
+def test_create_manager(auth_client):
+    # GIVEN an empty databaseZ
+    person_count = random.randint(10,20)
+    manager_count = random.randint(5, person_count)
+
+    # WHEN we create a random number of new managers and managers in the database
+    create_multiple_people(auth_client.sqla, person_count)
+
+    for i in range(manager_count):
+        resp = auth_client.post(url_for('people.create_manager'), json=manager_object_factory(auth_client.sqla, 'first level'))
+        assert resp.status_code == 201
+
+    # THEN we end up with the proper number of managers in the database
+    assert auth_client.sqla.query(Manager).count() == manager_count
+
+@pytest.mark.slow
+def test_create_manager_with_manager(auth_client):
+    # GIVEN an empty databaseZ
+    person_count = random.randint(10,20)
+    manager_count = random.randint(5, person_count)
+
+    # WHEN we create a random number of new managers and managers in the database
+    create_multiple_people(auth_client.sqla, person_count)
+    create_multiple_managers(auth_client.sqla, manager_count, 'second level')
+
+    for i in range(manager_count):
+        resp = auth_client.post(url_for('people.create_manager'), json=manager_object_factory(auth_client.sqla, 'first level', next_level='second_level'))
+        assert resp.status_code == 201
+
+    # THEN we end up with the proper number of managers in the database
+    managers = auth_client.sqla.query(Manager).all()
+    level1_count = 0
+    level2_count = 0
+    for manager in managers:
+        if manager.description_i18n == 'manager.description.first_level':
+            level1_count = level1_count+1
+            assert manager.manager_id is not None
+        else:
+            level2_count = level2_count+1
+            assert manager.manager_id is None
+
+    assert level1_count == manager_count
+    assert level2_count == manager_count
+
+
+@pytest.mark.slow
+def test_read_all_managers(auth_client):
+    # GIVEN a DB with a collection of managers.
+    person_count = random.randint(10, 20)
+    manager_count = random.randint(5, person_count)
+    create_multiple_people(auth_client.sqla, person_count)
+    create_multiple_managers(auth_client.sqla, manager_count, 'test manager')
+    # WHEN we request all managers from the server
+    resp = auth_client.get(url_for('people.read_all_managers', locale='en-US'))
+    # THEN the count matches the number of entries in the database
+    assert resp.status_code == 200
+    assert len(resp.json) == manager_count
+
+
+@pytest.mark.slow
+def test_read_one_manager(auth_client):
+    # GIVEN a DB with a collection of managers.
+    person_count = random.randint(10, 20)
+    manager_count = random.randint(5, person_count)
+    create_multiple_people(auth_client.sqla, person_count)
+    create_multiple_managers(auth_client.sqla, manager_count, 'test manager')
+
+    # WHEN we ask for them all
+    managers = auth_client.sqla.query(Manager).all()
+
+    # THEN we expect the same number
+    assert len(managers) == manager_count
+
+    # WHEN we request each of them from the server
+    for manager in managers:
+        resp = auth_client.get(url_for('people.read_one_manager', manager_id=manager.id, locale='en-US'))
+        # THEN we find a matching manager
+        assert resp.status_code == 200
+        assert resp.json['person_id'] == manager.person_id
+        assert resp.json['manager_id'] == manager.manager_id
+        assert resp.json['description_i18n'] == manager.description_i18n
+
+
+@pytest.mark.slow
+def test_update_manager(auth_client):
+    # GIVEN a DB with a collection of managers.
+    person_count = random.randint(10, 20)
+    manager_count = random.randint(5, person_count)
+    create_multiple_people(auth_client.sqla, person_count)
+    create_multiple_managers(auth_client.sqla, manager_count, 'test manager')
+
+    managers = auth_client.sqla.query(Manager).all()
+    persons = auth_client.sqla.query(Person).all()
+
+    update_manager = random.choice(managers)
+
+    new_person_id = update_manager.person_id
+    while new_person_id == update_manager.person_id:
+        new_person_id = random.choice(persons).id
+
+    new_manager_id = update_manager.manager_id
+    while new_manager_id == update_manager.manager_id or new_manager_id == update_manager.id:
+        new_manager_id = random.choice(managers).id
+
+    update_json = {
+        'person_id': new_person_id,
+        'manager_id': new_manager_id,
+        'description_i18n': update_manager.description_i18n
+    }
+
+    # WHEN
+    resp = auth_client.patch(url_for('people.update_manager', manager_id=update_manager.id), json=update_json)
+    # THEN
+    assert resp.status_code == 200
+    assert resp.json['person_id'] == new_person_id
+    assert resp.json['manager_id'] == new_manager_id
+
+
+def test_delete_manager(auth_client):
+    # GIVEN a DB with a collection of managers.
+    person_count = random.randint(10, 20)
+    manager_count = random.randint(5, person_count)
+    create_multiple_people(auth_client.sqla, person_count)
+    create_multiple_managers(auth_client.sqla, manager_count, 'test manager')
+
+    managers = auth_client.sqla.query(Manager).all()
+    persons = auth_client.sqla.query(Person).all()
+
+    delete_manager = managers[0]
+    subordinate = managers[1]
+
+    update_json = {
+        'manager_id': delete_manager.id
+    }
+    auth_client.patch(url_for('people.update_manager', manager_id=subordinate.id), json=update_json)
+
+    # WHEN we delete the manager
+    resp = auth_client.delete(url_for('people.delete_manager', manager_id=delete_manager.id))
+
+    # THEN the manager and all references to that manager are deleted
+    assert resp.status_code == 200
+    assert auth_client.sqla.query(Manager).filter_by(id=delete_manager.id).first() == None
+    assert auth_client.sqla.query(Manager).filter_by(id=subordinate.id).first().manager_id == None
+
+
+@pytest.mark.smoke
+def test_repr_manager(auth_client):
+    # GIVEN a DB with a manager
+    create_multiple_people(auth_client.sqla, 1)
+    create_multiple_managers(auth_client.sqla, 1, 'test manager')
+    managers = auth_client.sqla.query(Manager).all()
+    managers[0].__repr__()
+
+# ---- PersonAttributes
+
+@pytest.mark.smoke
+def test_create_person_with_attributes_enumerated(auth_client):
+    # GIVEN an empty database
+    create_multiple_people(auth_client.sqla, 17)
+    count = random.randint(5, 15)
+    # WHEN we create a random number of new people
+    for i in range(count):
+        resp = auth_client.post(url_for('people.create_person'), json={
+                                'person': person_object_factory(), 'attributesInfo': [person_attribute_enumerated_factory(auth_client.sqla)]})
+        assert resp.status_code == 201
+    # THEN we end up with the proper number of people attributes that are enumerated in the database
+    assert auth_client.sqla.query(PersonAttribute).count() == count
+
+@pytest.mark.smoke
+def test_create_person_with_attributes_string(auth_client):
+    # GIVEN an empty database
+    create_multiple_people(auth_client.sqla, 17)
+    count = random.randint(5, 15)
+    # WHEN we create a random number of new people attributes
+    for i in range(count):
+        resp = auth_client.post(url_for('people.create_person'), json={
+                                'person': person_object_factory(), 'attributesInfo': [person_attribute_string_factory(auth_client.sqla)]})
+        assert resp.status_code == 201
+    # THEN we end up with the proper number of people attributes of the string type in the database
+    assert auth_client.sqla.query(PersonAttribute).count() == count
+
+def test_update_person_attributes_enumerated(auth_client):
+    #GIVEN an empty database
+
+    create_multiple_people_attributes(auth_client.sqla, 15)
+
+    all_people = auth_client.sqla.query(Person).all()
+
+    update_person = random.choice(all_people)
+    person_attributes = auth_client.sqla.query(PersonAttribute).filter(PersonAttribute.person_id == update_person.id).all()
+
+    #WHEN we update person attributes
+    attribute_list = []
+    for current_person_attribute in person_attributes:
+        if current_person_attribute.enum_value_id == None:
+            update_json = {
+                'personId': update_person.id,
+                'attributeId': current_person_attribute.attribute_id,
+                'stringValue': 'update'
+            }
+
+        else:
+            print("Before enum is updated: ", current_person_attribute.enum_value_id)
+            if current_person_attribute.enum_value_id == 1:
+                current_person_attribute.enum_value_id = 2
+            else:
+                current_person_attribute.enum_value_id = 1
+            update_json = {
+                'personId': update_person.id,
+                'attributeId': current_person_attribute.attribute_id,
+                'enumValueId': current_person_attribute.enum_value_id
+            }
+        attribute_list.append(update_json)
+
+    valid_person = PersonSchema().load({'firstName': 'Rita', 'lastName': 'Smith', 'gender': 'F', 'active': True })
+    valid_person_attributes = PersonAttributeSchema().load(
+        update_json)
+
+    resp = auth_client.put(url_for('people.update_person', person_id=update_person.id), json={
+
+                                'person':{'firstName': 'Rita', 'lastName': 'Smith', 'gender': 'F', 'active': True }, 'attributesInfo': attribute_list})
+    # THEN people attributes will be updated for each individual person
+    assert resp.status_code == 200
+
+    assert resp.json['id'] == update_person.id
+    for i in range(len(person_attributes)):
+        assert resp.json['attributesInfo'][i]['attributeId'] == person_attributes[i].attribute_id
+        if person_attributes[i].enum_value_id is not None:
+            assert resp.json['attributesInfo'][i]['enumValueId'] == person_attributes[i].enum_value_id
+        else:
+            assert resp.json['attributesInfo'][i]['stringValue'] == 'update'
+
+# --- test Person
+
+@pytest.mark.slow
+def test_read_all_persons(auth_client):
+    # GIVEN a DB with a collection of people.
+    person_count = random.randint(10, 20)
+    create_multiple_people(auth_client.sqla, person_count)
+    # WHEN we request all people from the server
+    resp = auth_client.get(url_for('people.read_all_persons', locale='en-US'))
+    # THEN the count matches the number of entries in the database
+    assert resp.status_code == 200
+    assert len(resp.json) == person_count
+

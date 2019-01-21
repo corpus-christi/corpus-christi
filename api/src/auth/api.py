@@ -1,4 +1,5 @@
 from datetime import datetime
+import datetime
 
 from flask import jsonify, request, current_app
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_raw_jwt, get_jwt_claims
@@ -43,6 +44,7 @@ def login():
     if person is None:
         return jsonify(badCred), 404
 
+    print(datetime)
     access_token = create_access_token(identity=username)
     return jsonify(jwt=access_token, username=account.username,
                    firstName=person.first_name, lastName=person.last_name)

@@ -15,6 +15,14 @@ actions:
     _desc: Add an event to the database
     en: Add Event
     es: Añadir Evento
+  activate-account:
+    _desc: Activate account
+    en: Activate
+    es: Activar
+  deactivate-account:
+    _desc: Deactivate account
+    en: Deactivate
+    es: Desactivar
   cancel:
     _desc: Cancel a pending action
     en: Cancel
@@ -56,6 +64,9 @@ actions:
     _desc: Search for people
     en: Search People
     es: Buscar Personas
+  signup:
+    en: Signup
+    es: Regístrate
   view-inactive:
     _desc: View all inactive people
     en: View Inactive
@@ -84,6 +95,10 @@ actions:
     _desc: Back to a previous view
     en: Back
     es: Regresar
+  view-past:
+    _desc: View past events
+    en: View Past
+    es: Ver Pasados
   tooltips:
     settings:
       _desc: Change settings
@@ -92,6 +107,9 @@ actions:
     archive:
       en: Archive
       es: Archivar
+    unarchive:
+      en: Unarchive
+      es: Desarchivar
     activate:
       en: Activate
       es: Activar

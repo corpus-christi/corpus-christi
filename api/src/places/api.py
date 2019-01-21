@@ -204,108 +204,6 @@ def read_all_addresses():
 
     result = query.all()
 
-
-    # -- name --
-    # Filter address on a wildcard name string
-    name_filter = request.args.get('name')
-    if name_filter:
-        query = query.filter(Address.name.like(f"%{name_filter}%"))
-
-    # -- address --
-    # Filter address on a wildcard address string
-    address_filter = request.args.get('address')
-    if address_filter:
-        query = query.filter(Address.address.like(f"%{address_filter}%"))
-
-    # -- city --
-    # Filter city on a wildcard city string
-    city_filter = request.args.get('city')
-    if city_filter:
-        query = query.filter(Address.city.like(f"%{city_filter}%"))
-
-    # -- area_id --
-    # Filter on an area_id string
-    area_filter = request.args.get('area_id')
-    if area_filter:
-        query = query.filter_by(area_id=area_filter)
-        
-    # -- country_code --
-    # Filter country_code on a wildcard country_code string
-    country_filter = request.args.get('country_code')
-    if country_filter:
-        query = query.filter(Address.country_code.like(f"%{country_filter}%"))
-
-    # -- latitude --
-    # Filter latitude between start and end latitudes
-    lat_start_filter = request.args.get('lat_start')
-    lat_end_filter = request.args.get('lat_end')
-    if lat_start_filter:
-        query = query.filter(Address.latitude >= lat_start_filter)
-    if lat_end_filter:
-        query = query.filter(Address.latitude <= lat_end_filter)
-
-    # -- longitude --
-    # Filter longitude between start and end longitudes
-    lon_start_filter = request.args.get('lon_start')
-    lon_end_filter = request.args.get('lon_end')
-    if lon_start_filter:
-        query = query.filter(Address.longitude >= lon_start_filter)
-    if lon_end_filter:
-        query = query.filter(Address.longitude <= lon_end_filter)
-
-    result = query.all()
-
-
-    # -- name --
-    # Filter address on a wildcard name string
-    name_filter = request.args.get('name')
-    if name_filter:
-        query = query.filter(Address.name.like(f"%{name_filter}%"))
-
-    # -- address --
-    # Filter address on a wildcard address string
-    address_filter = request.args.get('address')
-    if address_filter:
-        query = query.filter(Address.address.like(f"%{address_filter}%"))
-
-    # -- city --
-    # Filter city on a wildcard city string
-    city_filter = request.args.get('city')
-    if city_filter:
-        query = query.filter(Address.city.like(f"%{city_filter}%"))
-
-    # -- area_id --
-    # Filter on an area_id string
-    area_filter = request.args.get('area_id')
-    if area_filter:
-        query = query.filter_by(area_id=area_filter)
-        
-    # -- country_code --
-    # Filter country_code on a wildcard country_code string
-    country_filter = request.args.get('country_code')
-    if country_filter:
-        query = query.filter(Address.country_code.like(f"%{country_filter}%"))
-
-    # -- latitude --
-    # Filter latitude between start and end latitudes
-    lat_start_filter = request.args.get('lat_start')
-    lat_end_filter = request.args.get('lat_end')
-    if lat_start_filter:
-        query = query.filter(Address.latitude >= lat_start_filter)
-    if lat_end_filter:
-        query = query.filter(Address.latitude <= lat_end_filter)
-
-    # -- longitude --
-    # Filter longitude between start and end longitudes
-    lon_start_filter = request.args.get('lon_start')
-    lon_end_filter = request.args.get('lon_end')
-    if lon_start_filter:
-        query = query.filter(Address.longitude >= lon_start_filter)
-    if lon_end_filter:
-        query = query.filter(Address.longitude <= lon_end_filter)
-
-    result = query.all()
-
     return jsonify(address_schema.dump(result, many=True))
 
 
@@ -377,7 +275,7 @@ def create_location():
 
 
 @places.route('/locations')
-@jwt_required
+# @jwt_required
 def read_all_locations():
     result = db.session.query(Location).all()
     return jsonify(location_schema.dump(result, many=True))

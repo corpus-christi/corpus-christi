@@ -7,14 +7,12 @@
       <form>
         <v-textarea
           rows="3"
-          v-model="asset.description"
-          v-bind:label="$t('events.assets.description')"
+          v-model="team.description"
+          v-bind:label="$t('events.teams.description')"
           name="description"
           v-bind:error-messages="errors.collect('description')"
           data-cy="description"
         ></v-textarea>
-
-        <entity-search location v-model="asset.location" />
       </form>
     </v-card-text>
     <v-card-actions>
@@ -27,9 +25,9 @@
         >{{ $t("actions.cancel") }}</v-btn
       >
       <v-spacer></v-spacer>
-      <v-btn color="primary" flat v-on:click="clear" :disabled="formDisabled">{{
-        $t("actions.clear")
-      }}</v-btn>
+      <v-btn color="primary" flat v-on:click="clear" :disabled="formDisabled">
+        {{ $t("actions.clear") }}
+      </v-btn>
       <v-btn
         color="primary"
         outline
@@ -56,29 +54,27 @@
 <script>
 import { isEmpty } from "lodash";
 // import { mapGetters } from "vuex";
-import EntitySearch from "../../EntitySearch";
 export default {
-  components: { "entity-search": EntitySearch },
-  name: "AssetForm",
+  name: "TeamForm",
   watch: {
     // Make sure data stays in sync with any changes to `initialData` from parent.
-    initialData(assetProp) {
-      if (isEmpty(assetProp)) {
+    initialData(teamProp) {
+      if (isEmpty(teamProp)) {
         this.clear();
       } else {
-        this.asset = assetProp;
+        this.team = teamProp;
       }
     }
   },
   computed: {
-    // List the keys in an Asset record.
-    assetKeys() {
-      return Object.keys(this.asset);
+    // List the keys in an Team record.
+    teamKeys() {
+      return Object.keys(this.team);
     },
     title() {
       return this.editMode
-        ? this.$t("events.assets.edit-asset")
-        : this.$t("events.assets.create-asset");
+        ? this.$t("events.teams.edit-team")
+        : this.$t("events.teams.create-team");
     },
 
     formDisabled() {
@@ -96,9 +92,8 @@ export default {
 
     // Clear the form and the validators.
     clear() {
-      delete this.asset.location;
-      for (let key of this.assetKeys) {
-        this.asset[key] = "";
+      for (let key of this.teamKeys) {
+        this.team[key] = "";
       }
 
       this.$validator.reset();
@@ -107,15 +102,15 @@ export default {
     save() {
       this.$validator.validateAll();
       if (!this.errors.any()) {
-        // this.asset.active = true;
-        this.$emit("save", this.asset);
+        // this.team.active = true;
+        this.$emit("save", this.team);
       }
     },
 
     addAnother() {
       this.$validator.validateAll();
       if (!this.errors.any()) {
-        this.$emit("add-another", this.asset);
+        this.$emit("add-another", this.team);
       }
     }
   },
@@ -137,7 +132,7 @@ export default {
   },
   data: function() {
     return {
-      asset: {},
+      team: {},
       save_loading: false,
       add_more_loading: false
     };

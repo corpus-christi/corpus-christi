@@ -8,6 +8,7 @@ from src.db import Base
 from src.shared.models import StringTypes
 
 
+
 # ---- Prerequisite
 
 Prerequisite = Table('courses_prerequisite', Base.metadata,
@@ -34,25 +35,20 @@ class Diploma_CourseSchema(Schema):
 
 class Diploma_Awarded(Base):
      __tablename__ = 'courses_diploma_awarded'
-     student_id = Column(Integer, ForeignKey('courses_students.id'), primary_key=True)
+     person_id = Column(Integer, ForeignKey('people_person.id'), primary_key=True)
      diploma_id = Column(Integer, ForeignKey('courses_diploma.id'), primary_key=True)
      when = Column(Date, nullable=False, default=date.today())
 
-     students = relationship('Student', back_populates='diplomas_awarded', lazy=True)
+     students = relationship('Person', back_populates='diplomas_awarded', lazy=True)
      diplomas = relationship('Diploma', back_populates='diplomas_awarded', lazy=True)
 
 
      def __repr__(self):
-         return f"<Diploma_Awarded(student_id={self.student_id},diploma_id={self.diploma_id})>"
-
-# Diploma_Awarded = Table('courses_diploma_awarded', Base.metadata,
-#      Column('student_id', Integer, ForeignKey('courses_students.id'), primary_key=True),
-#      Column('diploma_id', Integer, ForeignKey('courses_diploma.id'), primary_key=True),
-#      Column('when', Date, nullable=False, default=date.today()))
+         return f"<Diploma_Awarded(student_id={self.person_id},diploma_id={self.diploma_id})>"
 
 
 class Diploma_AwardedSchema(Schema):
-     student_id = fields.Integer(data_key='studentId', required=True, validate=Range(min=1))
+     person_id = fields.Integer(data_key='personId', required=True, validate=Range(min=1))
      diploma_id = fields.Integer(data_key='diplomaId', required=True, validate=Range(min=1))
      when = fields.Date(required=True)
 
@@ -66,6 +62,23 @@ Class_Attendance = Table('courses_class_attendance', Base.metadata,
 class Class_AttendanceSchema(Schema):
     class_id = fields.Integer(dump_only=True, data_key='classId', required=True)
     student_id = fields.Integer(dump_only=True, data_key='studentId', required=True)
+
+# --- Course_Completion
+
+class Course_Completion(Base):
+     __tablename__ = 'courses_course_completion'
+     course_id = Column(Integer, ForeignKey('courses_course.id'), primary_key=True)
+     person_id = Column(Integer, ForeignKey('people_person.id'), primary_key=True)
+
+     people = relationship('Person', backref='completions', lazy=True)
+     courses = relationship('Course', backref='completions', lazy=True)
+
+     def __repr__(self):
+         return f"<Course_Completion(course_id={self.course_id},person_id={self.person_id})>"
+
+class Course_CompletionSchema(Schema):
+     course_id = fields.Integer(data_key='courseId', required=True)
+     person_id = fields.Integer(data_key='personId', required=True)
 
 # ---- Course
 
@@ -87,6 +100,7 @@ class Course(Base):
                 back_populates='depends', lazy=True)
      diplomas = relationship('Diploma', secondary=Diploma_Course, back_populates='courses', lazy=True)
 
+
      def __repr__(self):
          return f"<Course(id={self.id})>"
 
@@ -96,6 +110,7 @@ class CourseSchema(Schema):
      name = fields.String(required=True, validate=Length(min=1))
      description = fields.String(required=True, validate=Length(min=1))
      active = fields.Boolean(required=True, default=True)
+     diplomaList = fields.Nested('DiplomaSchema', many=True)
 
 
 # ---- Diploma
@@ -109,7 +124,7 @@ class Diploma(Base):
      courses = relationship('Course', secondary=Diploma_Course,
                back_populates='diplomas', lazy=True)
      diplomas_awarded = relationship('Diploma_Awarded',
-               back_populates='diplomas', lazy=True, uselist=False)
+               back_populates='diplomas', lazy=True)
 
 
      def __repr__(self):
@@ -120,7 +135,9 @@ class DiplomaSchema(Schema):
      id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
      name = fields.String(required=True, validate=Length(min=1))
      description = fields.String(required=True, validate=Length(min=1))
-     active = fields.Boolean(required=True)
+     active = fields.Boolean(required=False, default=True)
+     courseList = fields.Nested('CourseSchema', many=True)
+     studentList = fields.Nested('StudentSchema', many=True)
 
 # ---- Student
 
@@ -133,8 +150,6 @@ class Student(Base):
      active = Column(Boolean, default=True, nullable=False)
      courses_offered = relationship('Course_Offering', back_populates='students', lazy=True)
      person = relationship('Person', backref='students', lazy=True)
-     diplomas_awarded = relationship('Diploma_Awarded',
-               back_populates='students', lazy=True, uselist=False)
      attendance = relationship('Class_Meeting', secondary=Class_Attendance,
                back_populates='students', lazy=True)
 
@@ -150,6 +165,7 @@ class StudentSchema(Schema):
      student_id = fields.Integer(data_key='studentId', required=True)
      confirmed = fields.Boolean(required=True, default=False)
      active = fields.Boolean(required=True, default=True)
+     diplomaList = fields.Nested('DiplomaSchema', many=True)
 
 # ---- Course_Offering
 
@@ -168,7 +184,7 @@ class Course_Offering(Base):
 
 class Course_OfferingSchema(Schema):
      id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
-     course_id = fields.Integer(data_key='courseId', required=True)
+     course_id = fields.Integer(data_key='courseId', required=False)
      description = fields.String(required=True, validate=Length(min=1))
      max_size = fields.Integer(data_key='maxSize', required=True, validate=Range(min=1))
      active = fields.Boolean(required=False, default=True)
@@ -195,6 +211,6 @@ class Class_Meeting(Base):
 class Class_MeetingSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     offering_id = fields.Integer(data_key='offeringId', required=True)
-    location_id = fields.Integer(required=True)
-    teacher_id = fields.Integer(required=True)
+    location_id = fields.Integer(data_key='locationId', required=True)
+    teacher_id = fields.Integer(data_key='teacherId', required=True)
     when = fields.DateTime(required=True)

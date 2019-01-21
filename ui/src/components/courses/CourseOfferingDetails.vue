@@ -32,13 +32,9 @@
 
 <script>
 import { mapGetters } from "vuex";
-import CourseOfferingForm from "./CourseOfferingForm";
 
 export default {
   name: "CourseOfferingDetails",
-  components: {
-    CourseOfferingForm
-  },
 
   mounted() {
     this.pageLoaded = false;
@@ -74,7 +70,6 @@ export default {
     offeringId: 0
   },
   methods: {
-
     getDisplayDate(ts) {
       let date = new Date(ts);
       return date.toLocaleTimeString(this.currentLanguageCode, {

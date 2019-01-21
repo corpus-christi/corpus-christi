@@ -25,7 +25,6 @@
           location
           v-model="event.location"
           name="location"
-          v-validate="'required'"
           v-bind:error-messages="errors.first('location')"
         />
 
@@ -51,7 +50,7 @@
                 readonly
                 name="startDate"
                 ref="startDate"
-                v-validate="startDateValidateString"
+                v-validate="'required'"
                 v-bind:error-messages="errors.first('startDate')"
               ></v-text-field>
               <v-date-picker
@@ -124,6 +123,7 @@
               full-width
               min-width="290px"
               data-cy="end-date-menu"
+              :disabled="!startDateTimeSelected"
             >
               <v-text-field
                 slot="activator"
@@ -132,9 +132,10 @@
                 prepend-icon="event"
                 name="endDate"
                 ref="endDate"
-                v-validate="endDateValidateString"
+                v-validate="'required'"
                 v-bind:error-messages="errors.first('endDate')"
                 readonly
+                :disabled="!startDateTimeSelected"
               ></v-text-field>
 
               <v-date-picker
@@ -151,6 +152,7 @@
             <v-dialog
               ref="dialog2"
               v-model="endTimeModal"
+              :disabled="!startDateTimeSelected"
               :return-value.sync="endTime"
               lazy
               full-width
@@ -166,6 +168,7 @@
                 v-bind:error-messages="errors.first('endTime')"
                 v-bind:label="$t('events.end-time')"
                 prepend-icon="update"
+                :disabled="!startDateTimeSelected"
                 readonly
               ></v-text-field>
               <v-time-picker
@@ -273,13 +276,18 @@ export default {
     },
 
     startDate(date) {
-      if (new Date(this.endDate) > new Date(date)) return;
-      this.endDate = date;
+      this.clearEndTimeIfInvalid();
+      if (!this.endDate || new Date(this.endDate) < new Date(date)) {
+        if (!this.event.dayDuration) {
+          this.endDate = date;
+        } else {
+          this.endDate = this.addDaystoDate(date, this.event.dayDuration);
+        }
+      }
     },
 
     endDate() {
-      //TODO don't clear if still valid
-      // this.endTime = "";
+      this.clearEndTimeIfInvalid();
     }
   },
   computed: {
@@ -307,12 +315,8 @@ export default {
       return this.getDateFromTimestamp(Date.now());
     },
 
-    endDateValidateString() {
-      return 'required'
-    },
-
-    startDateValidateString() {
-      return 'required'
+    startDateTimeSelected() {
+      return this.startDate && this.startTime;
     },
 
     ...mapGetters(["currentLanguageCode"])
@@ -365,11 +369,16 @@ export default {
 
     getTimestamp(date, time) {
       let datems = new Date(date).getTime();
-      let timearr = time.split(":");
-      let timemin = Number(timearr[0]) * 60 + Number(timearr[1]);
+      let timemin = this.getMinutesFromTime(time);
       let timems = timemin * 60000;
       let tzoffset = new Date().getTimezoneOffset() * 60000;
       return new Date(datems + timems + tzoffset);
+    },
+
+    getMinutesFromTime(time) {
+      let timearr = time.split(":");
+      let mins = Number(timearr[0]) * 60 + Number(timearr[1]);
+      return mins;
     },
 
     getDateFromTimestamp(ts) {
@@ -395,6 +404,22 @@ export default {
       let hr = String(date.getHours()).padStart(2, "0");
       let min = String(date.getMinutes()).padStart(2, "0");
       return `${hr}:${min}`;
+    },
+
+    addDaystoDate(date, dayDuration) {
+      let date1 = this.getTimestamp(date, "00:00");
+      date1.setDate(date1.getDate() + dayDuration);
+      return this.getDateFromTimestamp(date1);
+    },
+
+    clearEndTimeIfInvalid() {
+      if (this.startDate == this.endDate) {
+        let endMins = this.getMinutesFromTime(this.endTime);
+        let startMins = this.getMinutesFromTime(this.startTime);
+        if (endMins < startMins) {
+          this.endTime = "";
+        }
+      }
     }
   },
   props: {
