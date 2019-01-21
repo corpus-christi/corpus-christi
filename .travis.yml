@@ -14,10 +14,10 @@ matrix:
                   #before_install:
                   script:
                         - cd ui/
-                        - yarn add cypress
+                          #- yarn add cypress
                         - yarn cache clean
                           #install:
-                        - yarn install
+                        - yarn install cypress
                  #script:
                           #- cd ui/
                         - yarn build
