@@ -38,7 +38,7 @@ matrix:
                         - createuser arco
                           # - sudo -u postgres createuser arco
                         - createdb --owner=arco cc-staging 
-                          # - sudo -u postgres createdb --owner=arco cc-staging
+                          #  sudo -u postgres createdb --owner=arco cc-staging
                         - flask db upgrade
                         - flask data load-all
                           #- rm migrations/versions/*.py
