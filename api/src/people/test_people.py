@@ -1009,6 +1009,7 @@ def test_remove_role_from_account(auth_client):
     # TODO FINISH
     assert False
 
+
 # ---- Manager
 
 @pytest.mark.smoke
@@ -1066,6 +1067,7 @@ def test_read_all_managers(auth_client):
     # THEN the count matches the number of entries in the database
     assert resp.status_code == 200
     assert len(resp.json) == manager_count
+
 
 @pytest.mark.smoke
 def test_read_one_manager(auth_client):
@@ -1348,6 +1350,37 @@ def test_update_person_attributes_enumerated(auth_client):
             assert resp.json['attributesInfo'][i]['enumValueId'] == person_attributes[i].enum_value_id
         else:
             assert resp.json['attributesInfo'][i]['stringValue'] == 'update'
+
+
+@pytest.mark.smoke
+def test_delete_person(auth_client):
+    # GIVEN a set of people
+    count = random.randint(3, 6)
+    create_multiple_people(auth_client.sqla, count)
+
+    people = auth_client.sqla.query(Person).all()
+
+    # WHEN the people are requested to be deleted
+    for person in people:
+        resp = auth_client.delete(url_for('people.delete_person', person_id = person.id))
+
+        # THEN expect the delete to run OK
+        assert resp.status_code == 204
+
+    # THEN expect all people to be deleted
+    assert auth_client.sqla.query(Person).count() == 0
+
+
+@pytest.mark.smoke
+def test_delete_person_no_exist(auth_client):
+    # GIVEN an empty database
+
+    # WHEN a person that does not exist is requested to be deleted
+    resp = auth_client.delete(url_for('people.delete_person', person_id = random.randint(1, 8)))
+
+    # THEN expect the requested person to not be found
+    assert resp.status_code == 404
+
 
 #   -----   __repr__
 
