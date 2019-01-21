@@ -16,9 +16,9 @@ matrix:
                           - yarn cache clean
                   install:
                           #   replacing the dist directory 
-                          # - yarn install
+                          - yarn install
                   script:
-                          - yarn build
+                          #- yarn build
                           - echo "Done with Node_js"  
                 - language: python
                   python: "3.7"
