@@ -21,7 +21,7 @@ from src.attributes.test_attributes import create_multiple_attributes, create_mu
 from src.people.test_people import create_multiple_people, create_multiple_accounts, create_multiple_managers, create_multiple_people_attributes
 from src.places.test_places import create_multiple_areas, create_multiple_addresses, create_multiple_locations
 from src.places.models import Country
-from src.courses.models import Course, Course_Offering
+from src.courses.models import Course, Course_Offering, Diploma
 from src.courses.test_courses import create_multiple_courses, create_multiple_course_offerings,\
     create_multiple_diplomas, create_multiple_students, create_class_meetings,\
     create_diploma_awards, create_class_attendance, create_multiple_prerequisites
@@ -188,6 +188,25 @@ def create_course(name, description, prereq, offering):
 
 app.cli.add_command(course_cli)
 
+
+# ---- Diploma
+
+diploma_cli = AppGroup('diploma', help="Maintain diploma data.")
+
+
+@diploma_cli.command('new', help="Create new diploma")
+@click.argument('name')
+@click.argument('description')
+# @click.option('--courses', help="Number of courses to make attached")
+def create_diploma(name, description):
+    # Create the diploma; commit to DB so we get ID
+    diploma = Diploma(name=name, description=description)
+    db.session.add(diploma)
+    db.session.commit()
+    print(f"Created Diploma {diploma}")
+
+
+app.cli.add_command(diploma_cli)
 
 # ---- Maintainence
 
