@@ -197,7 +197,6 @@ diploma_cli = AppGroup('diploma', help="Maintain diploma data.")
 @diploma_cli.command('new', help="Create new diploma")
 @click.argument('name')
 @click.argument('description')
-# @click.option('--courses', help="Number of courses to make attached")
 def create_diploma(name, description):
     # Create the diploma; commit to DB so we get ID
     diploma = Diploma(name=name, description=description)

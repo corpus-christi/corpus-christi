@@ -5,7 +5,7 @@ import os
 import pytest
 
 from src.people.models import Person, Account, Role
-from src.courses.models import Course
+from src.courses.models import Course, Diploma
 from src.places.models import Country
 from src.i18n.models import Language, I18NLocale, I18NValue
 from src import db, create_app
@@ -79,6 +79,23 @@ def test_course_cli():
     assert course.name == name
     assert course.courses_offered[0].description == offering_name
 
+def test_diploma_cli():
+    """Tests the cli command for creating a diploma"""
+    runner = ccapi.app.test_cli_runner()
+    # GIVEN all the valid arguments for a diploma
+    name = 'diploma1'
+    # WHEN call is invoked
+    runner.invoke(ccapi.create_diploma, [name, ''])
+    # THEN
+    diploma = db.session.query(Diploma).filter_by(name=name).first()
+    assert diploma.name == name
+    assert diploma.description == ''
+    # GIVEN missing arguments for diploma
+    name = 'diploma2'
+    # WHEN call is invoked
+    result = runner.invoke(ccapi.create_diploma, [name])
+    # THEN help message is printed
+    assert 'Usage' in result.output
 
 def test_load_attribute_types():
     init_app()
