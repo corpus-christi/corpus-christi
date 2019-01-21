@@ -8,7 +8,7 @@
               $t("courses.dashboard.headers.course-flow")
             }}</v-toolbar-title>
           </v-toolbar>
-          <ve-sankey :data="courseFlowData" :loading="loading" :settings="sankeySettings"></ve-sankey>
+          <ve-sankey :data="courseFlowData" :loading="loadingCourseFlow" :settings="sankeySettings"></ve-sankey>
         </v-card>
       </v-flex>
       <v-flex>
@@ -18,7 +18,7 @@
               $t("courses.dashboard.headers.graduation-rate")
             }}</v-toolbar-title>
           </v-toolbar>
-          <ve-line :data="graduationRateData" :loading="loading"></ve-line>
+          <ve-line :data="graduationRateData" :loading="loadingGraduationRate"></ve-line>
         </v-card>
       </v-flex>
       <v-flex>
@@ -28,7 +28,7 @@
               $t("courses.dashboard.headers.enrollment")
             }}</v-toolbar-title>
           </v-toolbar>
-          <ve-bar :data="enrollmentData" :loading="loading"></ve-bar>
+          <ve-bar :data="enrollmentData" :loading="loadingEnrollment"></ve-bar>
         </v-card>
       </v-flex>
     </v-layout>
@@ -40,27 +40,46 @@ export default {
   name: "Dashboard",
   data: function() {
     this.$http
-      .get(`/api/v1/courses/courses`)
+      .get(`/api/v1/courses/course_offerings`)
       .then(resp => {
-          console.log(resp);
-          // TODO FIXME Data collection goes here
+        console.log("GOT DATA", resp);
+        var enrollmentData = Object();
+        var graduationRateData = Object();
+        var subdataCount = 0;
+        resp.data.forEach(offering => {
+          var courseName = offering.course.name;
+          if (!enrollmentData[courseName]) {
+            enrollmentData[courseName] = 0;
+          }
+          if (!graduationRateData[courseName]) {
+            graduationRateData[courseName] = 0;
+          }
+          
+          this.$http
+          .get(`/api/v1/courses/course_offerings/${offering.id}/students`)
+          .then(studentResp => {
+            console.log("GOT SUBDATA", studentResp);
+            enrollmentData[courseName] += studentResp.data.length;
+            
+            if (++subdataCount == resp.data.length) {
+              Object.keys(enrollmentData).forEach(givenCourseName => {
+                this.enrollmentData.rows.push({
+                  course: givenCourseName,
+                  enrollment: enrollmentData[givenCourseName]
+                });
+              });
+              this.loadingEnrollment = false;
+            }
+          })
+          .catch(err => {
+            console.error("GET FALURE", err.response);
+          });
+        });
       })
       .catch(err => {
         console.error("GET FALURE", err.response);
-        this.showSnackbar(this.$t("dashboard.error-loading-data"));
-        this.graduationRateData = {
-          columns: [],
-          rows: []
-        };
-        this.enrollmentData = {
-          columns: [],
-          rows: []
-        };
-        this.courseFlowData = {
-          columns: [],
-          rows: []
-        };
-      })
+      });
+
     return {
       courseFlowData: {
         columns: ["status", "count"],
@@ -73,11 +92,11 @@ export default {
         ]
       },
       graduationRateData: {
-        columns: [], // NOTE: dynamically generate columns based on courses
+        columns: [],
         rows: []
       },
       enrollmentData: {
-        columns: [], // NOTE: dynamically generate columns based on courses
+        columns: ["course", "enrollment"],
         rows: []
       },
       sankeySettings: {
@@ -90,7 +109,9 @@ export default {
         ],
         dataType: ["normal", "percent"]
       },
-      loading: true
+      loadingEnrollment: true,
+      loadingGraduationRate: true,
+      loadingCourseFlow: true
     };
   }
 };

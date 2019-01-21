@@ -50,9 +50,7 @@ export default {
       .then(resp => {
         console.log("GOT DATA", resp);
         var data = Object();
-        var i;
-        for (i = 0; i < resp.data.length; ++i) {
-          var event = resp.data[i];
+        resp.data.forEach(event => {
           var campus = "Unknown";
           var attendance = 0;
           if (event.location && event.location.description) {
@@ -67,7 +65,7 @@ export default {
             data[campus] = 0;
           }
           data[campus] += attendance;
-        }
+        });
         var arr = Array();
         Object.keys(data).forEach(key => {
           arr.push({
