@@ -4,7 +4,7 @@
       data-cy="entity-search-field"
       v-bind:label="getLabel"
       prepend-icon="search"
-      :items="entities"
+      :items="searchableEntities"
       :loading="isLoading"
       v-bind:value="value"
       v-on:input="setSelected"
@@ -28,7 +28,11 @@
     </v-autocomplete>
     <template v-if="multiple">
       <div v-for="entity in value" v-bind:key="entity[idField]">
-        <v-chip close @input="remove(entity)" :data-cy="'chip-'+entity[idField]">
+        <v-chip
+          close
+          @input="remove(entity)"
+          :data-cy="'chip-' + entity[idField]"
+        >
           {{ getEntityDescription(entity) }}
         </v-chip>
       </div>
@@ -45,6 +49,7 @@ export default {
     course: Boolean,
     team: Boolean,
     multiple: { type: Boolean, default: false },
+    existingEntities: Array,
     value: null,
     searchEndpoint: String,
     errorMessages: String,
@@ -69,8 +74,22 @@ export default {
     },
     idField() {
       return "id";
+    },
+    searchableEntities() {
+      if (this.existingEntities){
+        this.entities = this.entities.filter(ent => {
+          for (let otherEnt of this.existingEntities) {
+            if (ent[this.idField] == otherEnt[this.idField]) {
+              return false;
+            }
+          }
+          return true;
+        });
+      }
+      return this.entities;
     }
   },
+
   methods: {
     selectionContains(entity) {
       if (!this.value || !this.value.length) return;
