@@ -8,17 +8,7 @@
               $t("events.dashboard.headers.location-attendance")
             }}</v-toolbar-title>
           </v-toolbar>
-          <ve-ring :data="locationAttendanceData" :loading="loading"></ve-ring>
-        </v-card>
-      </v-flex>
-      <v-flex>
-        <v-card>
-          <v-toolbar dark color="primary">
-            <v-toolbar-title>{{
-              $t("events.dashboard.headers.yearly-attendance")
-            }}</v-toolbar-title>
-          </v-toolbar>
-          <ve-line :data="yearlyAttendanceData" :loading="loading"></ve-line>
+          <ve-ring :data="locationAttendanceData"></ve-ring>
         </v-card>
       </v-flex>
       <v-flex>
@@ -28,7 +18,17 @@
               $t("events.dashboard.headers.home-group-percentage")
             }}</v-toolbar-title>
           </v-toolbar>
-          <ve-liquidfill :data="yearlyAttendanceData" :loading="loading"></ve-liquidfill>
+          <ve-liquidfill :data="homeGroupPercentageData"></ve-liquidfill>
+        </v-card>
+      </v-flex>
+      <v-flex>
+        <v-card>
+          <v-toolbar dark color="primary">
+            <v-toolbar-title>{{
+              $t("events.dashboard.headers.yearly-attendance")
+            }}</v-toolbar-title>
+          </v-toolbar>
+          <ve-line :data="yearlyAttendanceData"></ve-line>
         </v-card>
       </v-flex>
     </v-layout>
@@ -135,10 +135,12 @@ export default {
         rows: []
       },
       homeGroupPercentageData: {
-        columns: [],
-        rows: []
-      },
-      loading: true
+        columns: ["homeGroups", "percent"],
+        rows: [{
+          homeGroups: "Home Groups",
+          percent: 0.5
+        }]
+      }
     };
   }
 }

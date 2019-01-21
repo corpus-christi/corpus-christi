@@ -97,6 +97,7 @@
         "title": "Dashboard",
         "headers": {
           "course-flow": "Course Flow",
+          "course-attendance": "Course Attendance",
           "enrollment": "Course Data"
         }
       },
