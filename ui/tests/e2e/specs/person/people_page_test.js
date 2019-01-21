@@ -1,10 +1,7 @@
 //Tests logging in and going to the people page
-describe("Clicking home after logging in", function() {
+describe("Tests the user navigation to the people page", function() {
   it("Given: logs in successfully", function() {
-    cy.visit("/login");
-    cy.get("[data-cy=username]").type("Cytest");
-    cy.get("[data-cy=password]").type("password");
-    cy.get("[data-cy=login]").click();
+    cy.login();
     cy.url().should("include", "/admin");
   });
   it("When: people tab is pressed", function() {
