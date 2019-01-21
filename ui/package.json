@@ -18,6 +18,7 @@
     "lodash": "^4.17.11",
     "vee-validate": "^2.1.4",
     "vue": "^2.5.17",
+    "vue-cal": "^1.21.0",
     "vue-i18n": "^8.5.0",
     "vue-router": "^3.0.1",
     "vue2-google-maps": "^0.10.5",

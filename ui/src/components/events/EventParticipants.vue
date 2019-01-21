@@ -64,6 +64,7 @@
           </div>
         </v-card-title>
         <v-card-text>
+          <!-- TODO maybe include existingEntities -->
           <entity-search
             multiple
             person
@@ -86,7 +87,7 @@
             raised
             :loading="addParticipantDialog.loading"
             data-cy="confirm-participant"
-            >Add Participants</v-btn
+            >{{ $t("events.participants.add") }}</v-btn
           >
         </v-card-actions>
       </v-card>
@@ -262,10 +263,13 @@ export default {
     getParticipants() {
       this.tableLoading = true;
       const id = this.$route.params.event;
-      this.$http.get(`/api/v1/events/${id}/participants`).then(resp => {
-        this.people = resp.data;
-        this.tableLoading = false;
-      });
+      this.$http
+        .get(`/api/v1/events/${id}?include_participants=1`)
+        .then(resp => {
+          let event = resp.data;
+          this.people = event.participants;
+          this.tableLoading = false;
+        });
     }
   },
 

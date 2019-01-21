@@ -8,9 +8,10 @@
         <v-textarea
           rows="3"
           v-model="team.description"
-          v-bind:label="$t('events.teams.description')"
-          name="description"
-          v-bind:error-messages="errors.collect('description')"
+          v-bind:label="$t('teams.description')"
+          name="team-description"
+          v-validate="'required'"
+          v-bind:error-messages="errors.collect('team-description')"
           data-cy="description"
         ></v-textarea>
       </form>
@@ -25,9 +26,9 @@
         >{{ $t("actions.cancel") }}</v-btn
       >
       <v-spacer></v-spacer>
-      <v-btn color="primary" flat v-on:click="clear" :disabled="formDisabled">{{
-        $t("actions.clear")
-      }}</v-btn>
+      <v-btn color="primary" flat v-on:click="clear" :disabled="formDisabled">
+        {{ $t("actions.clear") }}
+      </v-btn>
       <v-btn
         color="primary"
         outline
@@ -52,11 +53,9 @@
 </template>
 
 <script>
-import EntitySearch from "../EntitySearch"
 import { isEmpty } from "lodash";
 // import { mapGetters } from "vuex";
 export default {
-  components: { "entity-search": EntitySearch },
   name: "TeamForm",
   watch: {
     // Make sure data stays in sync with any changes to `initialData` from parent.
@@ -75,8 +74,8 @@ export default {
     },
     title() {
       return this.editMode
-        ? this.$t("events.teams.edit-team")
-        : this.$t("events.teams.create-team");
+        ? this.$t("teams.edit-team")
+        : this.$t("teams.create-team");
     },
 
     formDisabled() {
@@ -102,11 +101,12 @@ export default {
     },
 
     save() {
-      this.$validator.validateAll();
-      if (!this.errors.any()) {
-        // this.team.active = true;
-        this.$emit("save", this.team);
-      }
+      this.$validator.validateAll().then(() => {
+        if (!this.errors.any()) {
+          // this.team.active = true;
+          this.$emit("save", this.team);
+        }
+      });
     },
 
     addAnother() {

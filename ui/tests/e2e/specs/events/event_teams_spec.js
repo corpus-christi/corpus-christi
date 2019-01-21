@@ -5,14 +5,16 @@ describe("Event Teams Test", function() {
 
   it("GIVEN: Event planner goes to event details", function() {
     cy.visit("/events/1/details");
-  })
+  });
 
   it("WHEN: Event planner adds a team to an event", function() {
     cy.get("[data-cy=add-team-dialog]").click();
 
     cy.wait(250);
 
-    cy.get("[data-cy=entity-search-field]").eq(0).click();
+    cy.get("[data-cy=entity-search-field]")
+      .eq(0)
+      .click();
     cy.get(
       ".menuable__content__active > .v-select-list > .v-list > :nth-child(1) > .v-list__tile"
     ).click();
@@ -29,7 +31,9 @@ describe("Event Teams Test", function() {
 
     cy.wait(250);
 
-    cy.get("[data-cy=entity-search-field]").eq(0).click();
+    cy.get("[data-cy=entity-search-field]")
+      .eq(0)
+      .click();
     cy.get(
       ".menuable__content__active > .v-select-list > .v-list > :nth-child(2) > .v-list__tile"
     ).click();

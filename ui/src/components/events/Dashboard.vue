@@ -141,5 +141,5 @@ export default {
       loading: true
     };
   }
-};
+}
 </script>
