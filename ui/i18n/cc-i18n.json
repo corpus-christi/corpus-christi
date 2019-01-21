@@ -112,6 +112,7 @@
       "header": "Events",
       "location": "Location",
       "participants": {
+        "add": "Add Participants",
         "added": "Participants added",
         "confirm-remove": "Are you sure you want to remove this participant?",
         "error-adding": "Error adding participant",
@@ -185,6 +186,11 @@
       "error-removing-team": "Error while removing team",
       "error-team-assigned": "That team is assigned to a conflicting event.",
       "error-unarchiving-team": "Error while unarchiving team",
+      "members": {
+        "add": "Add Team Members",
+        "confirm-remove": "Are you sure you want to remove this member?",
+        "title": "Team Members"
+      },
       "new": "Add Team",
       "none-assigned": "No teams assigned.",
       "team-added": "Team added",
@@ -324,6 +330,7 @@
       "header": "Eventos",
       "location": "Ubicaci\u00f3n",
       "participants": {
+        "add": "A\u00f1adir participantes",
         "added": "Participantes agregado",
         "confirm-remove": "\u00bfEst\u00e1s seguro de que quieres eliminar a este participante?",
         "error-adding": "Error al agregar participante",
@@ -397,6 +404,11 @@
       "error-removing-team": "Error al eliminadar este equipo",
       "error-team-assigned": "Ese equipo est\u00e1 asignado a un evento conflictivo.",
       "error-unarchiving-team": "Error al desarchivar equipo",
+      "members": {
+        "add": "A\u00f1adir Miembros",
+        "confirm-remove": "\u00bfSeguro que quieres eliminar este miembro?",
+        "title": "Miembros del Equipo"
+      },
       "new": "A\u00f1adir Equipo",
       "none-assigned": "No hay equipos asignados.",
       "team-added": "Equipo agregado",

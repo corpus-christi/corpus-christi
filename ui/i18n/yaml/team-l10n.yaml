@@ -50,3 +50,13 @@ teams:
   none-assigned:
     en: No teams assigned.
     es: No hay equipos asignados.
+  members:
+    title:
+      en: Team Members
+      es: Miembros del Equipo
+    add:
+      en: Add Team Members
+      es: Añadir Miembros
+    confirm-remove:
+      en: Are you sure you want to remove this member?
+      es: ¿Seguro que quieres eliminar este miembro?

@@ -31,7 +31,7 @@
     </v-layout>
 
     <v-toolbar>
-      <v-toolbar-title>{{ $t("events.participants.title") }}</v-toolbar-title>
+      <v-toolbar-title>{{ $t("teams.members.title") }}</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-text-field
         v-model="search"
@@ -45,10 +45,10 @@
         color="primary"
         raised
         v-on:click="openParticipantDialog"
-        data-cy="add-participant"
+        data-cy="add-team-member"
       >
         <v-icon dark left>add</v-icon>
-        {{ $t("actions.add-person") }}
+        {{ $t("teams.members.add") }}
       </v-btn>
     </v-toolbar>
     <v-data-table
@@ -66,6 +66,7 @@
         <td>{{ props.item.member.phone }}</td>
         <td>
           <template v-if="props.item.active">
+            <!-- TODO change archive to remove -->
             <v-tooltip bottom>
               <v-btn
                 icon
@@ -113,7 +114,7 @@
     <!-- Archive dialog -->
     <v-dialog v-model="archiveDialog.show" max-width="350px">
       <v-card>
-        <v-card-text>{{ $t("assets.confirm-archive") }}</v-card-text>
+        <v-card-text>{{ $t("team.members.confirm-remove") }}</v-card-text>
         <v-card-actions>
           <v-btn v-on:click="cancelArchive" color="secondary" flat data-cy="">{{
             $t("actions.cancel")
@@ -132,6 +133,7 @@
     </v-dialog>
 
     <!-- New/Edit dialog -->
+    <!-- TODO: This doesn't need to be in its own file -->
     <v-dialog v-model="teamDialog.show" max-width="500px">
       <team-form
         v-bind:editMode="teamDialog.editMode"
@@ -143,13 +145,13 @@
       />
     </v-dialog>
 
-    <!-- Add Participant Dialog -->
+    <!-- Add Member Dialog -->
     <v-dialog v-model="addMemberDialog.show" max-width="350px">
       <v-card>
         <v-card-title primary-title>
           <div>
             <h3 class="headline mb-0">
-              {{ $t("person.actions.add-participant") }}
+              {{ $t("teams.members.add") }}
             </h3>
           </div>
         </v-card-title>
@@ -157,7 +159,7 @@
           <entity-search
             multiple
             person
-            v-model="addMemberDialog.newParticipants"
+            v-model="addMemberDialog.newMembers"
           />
         </v-card-text>
         <v-card-actions>
@@ -171,12 +173,12 @@
           <v-spacer></v-spacer>
           <v-btn
             v-on:click="addParticipants"
-            :disabled="addMemberDialog.newParticipants.length == 0"
+            :disabled="addMemberDialog.newMembers.length == 0"
             color="primary"
             raised
             :loading="addMemberDialog.loading"
             data-cy="confirm-participant"
-            >Add Participants</v-btn
+            >{{ $t("teams.members.add") }}</v-btn
           >
         </v-card-actions>
       </v-card>
@@ -220,7 +222,7 @@ export default {
 
       addMemberDialog: {
         show: false,
-        newParticipants: [],
+        newMembers: [],
         loading: false
       },
       snackbar: {
@@ -334,7 +336,7 @@ export default {
       this.addMemberDialog.loading = true;
       let promises = [];
 
-      for (let person of this.addMemberDialog.newParticipants) {
+      for (let person of this.addMemberDialog.newMembers) {
         const idx = this.members.findIndex(
           ev_pe => ev_pe.person_id === person.id
         );
@@ -348,7 +350,7 @@ export default {
           this.showSnackbar(this.$t("events.participants.added"));
           this.addMemberDialog.loading = false;
           this.addMemberDialog.show = false;
-          this.addMemberDialog.newParticipants = [];
+          this.addMemberDialog.newMembers = [];
           this.reloadTeam();
         })
         .catch(err => {

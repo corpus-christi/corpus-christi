@@ -71,6 +71,9 @@ events:
     title:
       en: Participants
       es: Participantes
+    add:
+      en: Add Participants
+      es: Añadir participantes
     added:
       en: Participants added
       es: Participantes agregado
