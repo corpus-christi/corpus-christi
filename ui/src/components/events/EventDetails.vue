@@ -106,7 +106,6 @@
 <script>
 import EventForm from "./EventForm";
 import { mapGetters } from "vuex";
-import EntitySearch from "../EntitySearch";
 import EventTeamDetails from "./EventTeamDetails";
 import EventAssetDetails from "./EventAssetDetails";
 import EventPersonDetails from "./EventPersonDetails";
@@ -115,7 +114,6 @@ export default {
   name: "EventDetails",
   components: {
     "event-form": EventForm,
-    "entity-search": EntitySearch,
     "event-team-details": EventTeamDetails,
     "event-asset-details": EventAssetDetails,
     "event-person-details": EventPersonDetails
@@ -185,11 +183,14 @@ export default {
         )
         .then(resp => {
           this.event = resp.data;
-          this.event.teams = !this.event.teams ? []
+          this.event.teams = !this.event.teams
+            ? []
             : this.event.teams.map(t => t.team);
-          this.event.assets = !this.event.assets ? []
+          this.event.assets = !this.event.assets
+            ? []
             : this.event.assets.map(a => a.asset);
-          this.event.persons = !this.event.persons ? []
+          this.event.persons = !this.event.persons
+            ? []
             : this.event.persons.map(p => p.person);
           this.pageLoaded = true;
         });
