@@ -139,7 +139,7 @@ def update_group(group_id):
                 db.session.add(new_member)
             else:
                 print(f"NEW ID: {update_person_id}")
-                new_member = db.session.query(Member).filter_by(person_id=update_person_id).first()
+                new_member = db.session.query(Member).filter_by(person_id=update_person_id, group_id=group_id).first()
                 setattr(new_member,'active', True)
 
     if update_person_ids != []:
@@ -388,6 +388,30 @@ def update_member(member_id):
         setattr(member, key, val)
 
     db.session.commit()
+    return jsonify(member_schema.dump(member))
+
+
+@groups.route('/members/activate/<member_id>', methods=['PUT'])
+@jwt_required
+def activate_member(member_id):
+    member = db.session.query(Meeting).filter_by(id=member_id).first()
+    
+    if member is None:
+        return jsonify(msg="Member not found"), 404
+
+    setattr(member, 'active', True)
+    return jsonify(member_schema.dump(member))
+
+
+@groups.route('/members/deactivate/<member_id>', methods=['PUT'])
+@jwt_required
+def deactivate_member(member_id):
+    member = db.session.query(Meeting).filter_by(id=member_id).first()
+    
+    if member is None:
+        return jsonify(msg="Member not found"), 404
+
+    setattr(member, 'active', False)
     return jsonify(member_schema.dump(member))
 
 
