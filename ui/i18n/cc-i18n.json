@@ -210,6 +210,13 @@
       },
       "title": "Public"
     },
+    "transcripts": {
+      "courses": "Courses",
+      "courses-this-diploma": "Courses for this Diploma",
+      "description": "Description",
+      "title": "Title",
+      "transcript": "Transcripts"
+    },
     "validation": {
       "attributes": {
         "email": "email",
@@ -437,6 +444,13 @@
         "upcoming-events": "Pr\u00f3ximos Eventos"
       },
       "title": "P\u00fablico"
+    },
+    "transcripts": {
+      "courses": "Cursos",
+      "courses-this-diploma": "Cursos para esta Diploma",
+      "description": "Descripci\u00f3n",
+      "title": "T\u00edtulo",
+      "transcript": "Transcripci\u00f3nes"
     },
     "validation": {
       "attributes": {

@@ -131,6 +131,28 @@ const router = new VueRouter({
       component: () => import("@/pages/Diplomas")
     },
     {
+      name: "transcripts",
+      path: "/transcripts",
+      meta: { authRequired: true },
+      component: () => import("@/pages/Transcripts"),
+      redirect: { name: "all-transcripts" },
+      children: [
+        {
+          name: "all-transcripts",
+          path: "all",
+          meta: { authRequired: true },
+          component: () => import("@/components/transcripts/TranscriptsTable")
+        },
+        {
+          name: "transcript-details",
+          path: ":studentId",
+          meta: { authRequired: true },
+          props: true,
+          component: () => import("@/components/transcripts/TranscriptDetails")
+        }
+      ]
+    },
+    {
       name: "courses",
       path: "/courses",
       meta: { authRequired: true },

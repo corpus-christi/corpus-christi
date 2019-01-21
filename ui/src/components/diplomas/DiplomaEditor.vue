@@ -10,13 +10,11 @@
           <ValidationProvider name="Name" rules="required|max:128">
             <v-text-field
                 slot-scope="{
-                  errors,
-                  valid
+                  errors
                 }"
                 v-model="diploma.name"
                 :counter="128"
                 :error-messages="errors"
-                :success="valid"
                 v-bind:label="$t('diplomas.title')"
                 name="name"
                 required
