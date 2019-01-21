@@ -67,9 +67,14 @@ courses:
   date:
     en: Date
     es: Fecha
+  new-offering-short:
+    _desc: Action for creating a new course offering, short version for buttons
+    en: New Offering
+    es: Nueva Oferta
   new-offering:
+    _desc: Action for creating a new course offering, full phrase
     en: New Course Offering
-    es: Nuevo Oferta de Curso
+    es: Nueva Oferta de Curso
   students:
     en: Students
     es: Estudiantes
