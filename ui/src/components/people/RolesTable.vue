@@ -66,6 +66,9 @@
         <td :data-cy="'last-name-' + props.item.id">
           {{ props.item.lastName }}
         </td>
+        <td class="hidden-sm-and-down" :data-cy="'roles-' + props.item.id">
+          {{ props.item.rolesList }}
+        </td>
         <td class="hidden-sm-and-down" :data-cy="'email-' + props.item.id">
           {{ props.item.email }}
         </td>
@@ -219,6 +222,11 @@ export default {
           width: "10%"
         },
         { text: this.$t("person.name.last"), value: "lastName", width: "20%" },
+        {
+          text: this.$t("person.accountInfo.roles"),
+          value: "roles",
+          width: "20%"
+        },
         {
           text: this.$t("person.email"),
           value: "email",
@@ -388,9 +396,9 @@ export default {
         .catch(err => console.error("FAILURE", err.response));
     },
 
-    updateAccount(accountId, account) {
+    updateAccount(accountId, account, roles) {
       this.$http
-        .patch(`/api/v1/people/accounts/${accountId}`, account)
+        .patch(`/api/v1/people/accounts/${accountId}`, account, roles)
         .then(resp => {
           console.log("PATCHED", resp);
           this.refreshPeopleList();
