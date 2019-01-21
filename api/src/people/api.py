@@ -171,7 +171,7 @@ def delete_person(person_id):
     if person is None:
         return jsonify(msg="Person not found"), 404
 
-    db.session.query(TeamMember).filter_by(member_id=person_id).delete()
+    # db.session.query(TeamMember).filter_by(member_id=person_id).delete()
     db.session.query(EventParticipant).filter_by(person_id=person_id).delete()
     db.session.query(EventPerson).filter_by(person_id=person_id).delete()
     db.session.query(Student).filter_by(student_id=person_id).delete()

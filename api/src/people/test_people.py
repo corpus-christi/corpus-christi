@@ -418,7 +418,6 @@ def test_activate_person_no_exist(auth_client):
 
     # WHEN a person is requested to be activated
     resp = auth_client.put(url_for('people.activate_person', person_id = random.randint(1,8)))
-
     # THEN expect response to be unprocessable
     assert resp.status_code == 422
     assert resp.json is None
