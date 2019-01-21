@@ -291,6 +291,7 @@ def test_read_person_fields(auth_client):
     print(resp.json['person_attributes'])
     # assert False
 
+
 @pytest.mark.smoke
 def test_create_person(auth_client):
     # GIVEN an empty database
@@ -302,6 +303,57 @@ def test_create_person(auth_client):
         assert resp.status_code == 201
     # THEN we end up with the proper number of people in the database
     assert auth_client.sqla.query(Person).count() == count
+
+
+@pytest.mark.smoke
+def test_create_person_none(auth_client):
+    # GIVEN an empty database
+    count = random.randint(3, 6)
+
+    # GIVEN new person data
+    for i in range(count):
+        new_person = person_object_factory()
+        flips = (flip(), flip())
+        if flips[0]:
+            new_person['phone'] = ""
+        if flips[1] or not flips[0]:
+            new_person['email'] = ""
+
+        # WHEN the new person is requested to be created
+        resp = auth_client.post(url_for('people.create_person'), json = {'person': new_person, 'attributesInfo': []})
+        
+        # THEN expect the creation to run OK
+        assert resp.status_code == 201
+
+    # THEN expect people to be created
+    assert auth_client.sqla.query(Person).count() == count
+
+
+@pytest.mark.smoke
+def test_create_person_invalid(auth_client):
+    # GIVEN an empty database
+    count = random.randint(3, 6)
+
+    # GIVEN new person with bad data
+    for i in range(count):
+        new_person = person_object_factory()
+        flips = (flip(), flip(), flip())
+        if flips[0]:
+            new_person['first_name'] = None
+        if flips[1]:
+            new_person['last_name'] = None
+        if flips[2]:
+            new_person[fake.word()] = fake.word()
+
+        # WHEN the bad person is requested to be created
+        resp = auth_client.post(url_for('people.create_person'), json = {'person': new_person, 'attributesInfo': []})
+        
+        # THEN expect the creation to be unprocessable
+        assert resp.status_code == 422
+
+    # THEN expect people not to be created
+    assert auth_client.sqla.query(Person).count() == 0
+
 
 @pytest.mark.smoke
 def test_read_all_persons(auth_client):
