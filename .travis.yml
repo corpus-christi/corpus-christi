@@ -11,58 +11,40 @@ matrix:
         include:
                 - language: node_js
                   node_js: "11"
-                  #before_install:
-                  #       - yarn cache clean
-                  #install:
-                  #       - yarn install
-                  #script:
-                            # - cd ui/
-                            #- yarn build
-                            #- echo "Done with Node_js"  
-                            #- cd ../
+                  before_install:
+                        - yarn cache clean
+                  install:
+                        - yarn install
+                  script:
+                        - cd ui/
+                        - yarn build
+                        - echo "Done with Node_js"  
+                        - cd ../
                 - language: python
                   python: "3.7"
                   dist: "xenial"
                   sudo: true
                   env: 
                         - FLASK_APP=cc-api.py
-                          #install:
-                          #- pip install -r api/requirements.txt
-                          #  - pip install -U pytest
-                          #- cd api/
-                          #- sudo apt install postgresql
-                          #- sudo apt install nginx
-                          #- sudo service postgresql start
+                  install:
+                        - pip install -r api/requirements.txt
+                          #- pip install -U pytest
+                        - cd api/
+                        - sudo apt install postgresql
+                        - sudo apt install nginx
+                        - sudo service postgresql start
                   postgres:
                         adapter: postgresql
                         database: cc-staging
-                        #before_install:
-script:
-        - cd ui/
-        - yarn cache clean
-          #install:
-        - yarn install
-        - cd ../
-        - cd api/
-        - pip install -r api/requirements.txt
-        #  - pip install -U pytest
-        - sudo apt install postgresql
-        - sudo apt install nginx
-        - sudo service postgresql start
-        - createuser arco
-        - createdb --owner=arco cc-staging 
-        - flask db upgrade
-        - flask data load-all
-                          #    - rm migrations/versions/*.py
-        - sudo nginx -t
-        - sudo systemctl restart nginx
-        - cd ../
-                          #- pytest
-                          # script:
-        - cd ui/
-        - yarn build
-        - echo "Done with Node_js"  
-        - cd ../
+                  script:
+                        - createuser arco
+                        - createdb --owner=arco cc-staging 
+                        - flask db upgrade
+                        - flask data load-all
+                        - sudo nginx -t
+                        - sudo systemctl restart nginx
+                        - cd ../
+                        #- pytest
 #after_succes:
 #  - cd ui/
 #  - yarn build
@@ -75,6 +57,6 @@ notifications:
 deploy:
 provider: linode
 local-dir: public
-branches:
+branchs:
   only: 
     - development
