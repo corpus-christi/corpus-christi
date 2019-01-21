@@ -33,8 +33,6 @@ matrix:
                   postgres:
                                 adapter: postgresql
                                 database: cc-staging
-                                #before_script:
-                                #- psql -c "CREATE DATABASE testing_db;" -U postgres
                   script:
                         - createuser arco
                         - createdb --owner=arco cc-staging 
@@ -46,8 +44,6 @@ matrix:
                         - cd ../
                         - pytest
 
-script:
-        - 
 # create script by configuration and make file
 # fix flask data load-al112
 notifications:       
