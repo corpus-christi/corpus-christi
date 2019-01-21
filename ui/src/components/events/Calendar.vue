@@ -25,7 +25,7 @@
 <script>
 import Vuecal from "vue-cal";
 import "vue-cal/dist/vuecal.css";
-import { mapGetters, mapMutations, mapState } from "vuex";
+import { mapGetters, mapState } from "vuex";
 export default {
   components: { "vue-cal": Vuecal },
   data() {
@@ -43,14 +43,14 @@ export default {
     this.$http.get("/api/v1/events/?return_group=all").then(resp => {
       this.originalEvents = resp.data;
       var currentDate = new Date();
-      for (event in resp.data) {
+      for (let event in resp.data) {
         this.events.push({
           event: resp.data[event],
           start: this.getDate(resp.data[event].start),
           end: this.getDate(resp.data[event].end),
           description: resp.data[event].description,
           class:
-            new Date(resp.data[event].end) < new Date() ? "leisure" : "sport",
+            new Date(resp.data[event].end) < currentDate ? "leisure" : "sport",
           content:
             '<a href="/events/' +
             resp.data[event].id +

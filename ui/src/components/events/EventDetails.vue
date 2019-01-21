@@ -1,6 +1,6 @@
 <template>
-  <v-layout row>
-    <v-flex xs6 sm6 md6>
+  <v-layout column>
+    <v-flex xs12>
       <v-card class="ma-1">
         <template v-if="pageLoaded">
           <v-container fill-height fluid>
@@ -56,47 +56,15 @@
       </v-card>
     </v-flex>
     <v-layout row wrap>
-      <v-flex xs12>
-        <v-card class="ma-1">
-          <template v-if="pageLoaded">
-            <v-container fill-height fluid>
-              <v-flex xs9 sm9 align-end flexbox>
-                <span class="headline">{{ $t("teams.title") }}</span>
-              </v-flex>
-              <v-layout xs3 sm3 align-end justify-end>
-                <v-btn
-                  flat
-                  color="primary"
-                  data-cy="add-team-dialog"
-                  v-on:click="addTeamDialog.show = true"
-                >
-                  <v-icon>add</v-icon>&nbsp;{{ $t("teams.new") }}
-                </v-btn>
-              </v-layout>
-            </v-container>
-            <v-list>
-              <template v-for="team in event.teams">
-                <v-divider v-bind:key="'teamDivider' + team.id"></v-divider>
-                <v-list-tile v-bind:key="team.id">
-                  <v-list-tile-content>
-                    <span>{{ team.description }}</span>
-                  </v-list-tile-content>
-                  <v-list-tile-action>
-                    <v-btn flat color="primary">
-                      <v-icon
-                        v-on:click="showDeleteTeamDialog(team.id)"
-                        :data-cy="'deleteTeam-' + team.id"
-                        >delete</v-icon
-                      >
-                    </v-btn>
-                  </v-list-tile-action>
-                </v-list-tile>
-              </template>
-            </v-list>
-          </template>
-        </v-card>
+      <v-flex xs6>
+        <event-team-details
+          :teams="event.teams"
+          :pageLoaded="pageLoaded"
+          v-on:snackbar="showSnackbar($event)"
+          v-on:team-added="getEvent()"
+        ></event-team-details>
       </v-flex>
-      <v-flex xs12>
+      <v-flex xs6>
         <v-card class="ma-1">
           <template v-if="pageLoaded">
             <v-container fill-height fluid>
@@ -154,71 +122,6 @@
         v-on:cancel="cancelEvent"
         v-on:save="saveEvent"
       />
-    </v-dialog>
-
-    <!-- Add Team dialog -->
-    <v-dialog v-model="addTeamDialog.show" persistent max-width="500px">
-      <v-card>
-        <v-card-title primary-title>
-          <span class="headline">{{ $t("teams.new") }}</span>
-        </v-card-title>
-        <v-card-text>
-          <entity-search
-            data-cy="team-entity-search"
-            v-model="addTeamDialog.team"
-            :existing-entities="event.teams"
-            team
-          ></entity-search>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn
-            v-on:click="cancelAddTeam()"
-            color="secondary"
-            flat
-            :disabled="addTeamDialog.loading"
-            data-cy="cancel-add"
-            >{{ $t("actions.cancel") }}</v-btn
-          >
-          <v-spacer></v-spacer>
-          <v-btn
-            v-on:click="addTeam()"
-            color="primary"
-            raised
-            :disabled="!addTeamDialog.team"
-            :loading="addTeamDialog.loading"
-            data-cy="confirm-add"
-            >{{ $t("actions.confirm") }}</v-btn
-          >
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-    <!-- Delete Team dialog -->
-    <v-dialog v-model="deleteTeamDialog.show" max-width="350px">
-      <v-card>
-        <v-card-text>
-          <span>{{ $t("teams.confirm-remove-from-event") }}</span>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn
-            v-on:click="deleteTeamDialog.show = false"
-            color="secondary"
-            flat
-            :disabled="deleteTeamDialog.loading"
-            data-cy="cancel-delete"
-            >{{ $t("actions.cancel") }}</v-btn
-          >
-          <v-spacer></v-spacer>
-          <v-btn
-            v-on:click="deleteTeam()"
-            color="primary"
-            raised
-            :loading="deleteTeamDialog.loading"
-            data-cy="confirm-delete"
-            >{{ $t("actions.confirm") }}</v-btn
-          >
-        </v-card-actions>
-      </v-card>
     </v-dialog>
 
     <!-- Add Asset dialog -->
@@ -292,34 +195,23 @@
 import EventForm from "./EventForm";
 import { mapGetters } from "vuex";
 import EntitySearch from "../EntitySearch";
+import EventTeamDetails from "./EventTeamDetails";
 
 export default {
   name: "EventDetails",
   components: {
     "event-form": EventForm,
-    "entity-search": EntitySearch
+    "entity-search": EntitySearch,
+    "event-team-details": EventTeamDetails
   },
 
   data() {
     return {
       event: {},
-      teams: [],
       eventDialog: {
         show: false,
         saveLoading: false,
         event: {}
-      },
-
-      addTeamDialog: {
-        show: false,
-        loading: false,
-        team: null
-      },
-
-      deleteTeamDialog: {
-        show: false,
-        loading: false,
-        teamId: -1
       },
 
       addAssetDialog: {
@@ -369,16 +261,16 @@ export default {
 
   methods: {
     getEvent() {
+      this.pageLoaded = false;
       const id = this.$route.params.event;
       return this.$http
         .get(`/api/v1/events/${id}?include_teams=1&include_assets=1`)
         .then(resp => {
           this.event = resp.data;
-          console.log(this.event);
-          if (!this.event.teams) {
-            this.event.teams = [];
-          } else {
+          if (this.event.teams) {
             this.event.teams = this.event.teams.map(t => t.team);
+          } else {
+            this.event.teams = [];
           }
 
           if (!this.event.assets) {
@@ -386,6 +278,7 @@ export default {
           } else {
             this.event.assets = this.event.assets.map(a => a.asset);
           }
+          this.pageLoaded = true;
         });
     },
 
@@ -435,72 +328,6 @@ export default {
         hour: "2-digit",
         minute: "2-digit"
       });
-    },
-
-    cancelAddTeam() {
-      this.addTeamDialog.loading = false;
-      this.addTeamDialog.show = false;
-      this.addTeamDialog.team = null;
-    },
-
-    addTeam() {
-      const eventId = this.$route.params.event;
-      let teamId = this.addTeamDialog.team.id;
-      const idx = this.event.teams.findIndex(ev_te => ev_te.id === teamId);
-      if (idx > -1) {
-        this.addTeamDialog.loading = false;
-        this.addTeamDialog.show = false;
-        this.addTeamDialog.team = null;
-        this.showSnackbar(this.$t("teams.team-on-event"));
-        return;
-      }
-
-      this.$http
-        .post(`/api/v1/events/${eventId}/teams/${teamId}`)
-        .then(() => {
-          this.showSnackbar(this.$t("teams.team-added"));
-          this.addTeamDialog.loading = false;
-          this.addTeamDialog.show = false;
-          this.addTeamDialog.team = null;
-          this.pageLoaded = false;
-          this.getEvent().then(() => (this.pageLoaded = true));
-        })
-        .catch(err => {
-          console.log(err);
-          this.addTeamDialog.loading = false;
-          if (err.response.status == 422) {
-            this.showSnackbar(this.$t("teams.error-team-assigned"));
-          } else {
-            this.showSnackbar(this.$t("teams.error-adding-team"));
-          }
-        });
-    },
-
-    deleteTeam() {
-      let id = this.deleteTeamDialog.teamId;
-      const idx = this.event.teams.findIndex(ev_te => ev_te.id === id);
-      this.deleteTeamDialog.loading = true;
-      const eventId = this.$route.params.event;
-      this.$http
-        .delete(`/api/v1/events/${eventId}/teams/${id}`)
-        .then(resp => {
-          console.log("REMOVED", resp);
-          this.deleteTeamDialog.show = false;
-          this.deleteTeamDialog.loading = false;
-          this.deleteTeamDialog.teamId = -1;
-          this.event.teams.splice(idx, 1);
-          this.showSnackbar(this.$t("teams.team-removed"));
-        })
-        .catch(err => {
-          console.log(err);
-          this.deleteTeamDialog.loading = false;
-          this.showSnackbar(this.$t("teams.error-removing-team"));
-        });
-    },
-
-    showDeleteTeamDialog(teamId) {
-      this.deleteTeamDialog.teamId = teamId;
-      this.deleteTeamDialog.show = true;
     },
 
     cancelAddAsset() {

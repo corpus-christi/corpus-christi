@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-btn outline color="primary" :to="{ path: '/events/all' }"
-      ><v-icon>arrow_back</v-icon>Back</v-btn
+      ><v-icon>arrow_back</v-icon>To all teams($t me)</v-btn
     >
     <v-tabs color="transparent" slider-color="accent">
       <v-tab

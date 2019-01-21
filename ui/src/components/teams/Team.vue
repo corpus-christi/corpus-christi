@@ -1,10 +1,7 @@
 <template>
   <div>
-    <v-btn
-      outline
-      color="primary"
-      v-on:click="$router.push({ path: '/teams/all' })"
-      ><v-icon>arrow_back</v-icon>Back</v-btn
+    <v-btn outline color="primary" :to="{ path: '/teams/all' }"
+      ><v-icon>arrow_back</v-icon>To all teams($t me)</v-btn
     >
     <v-layout class="vertical-spacer">
       <v-flex xs12 sm12>

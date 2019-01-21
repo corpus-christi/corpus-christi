@@ -177,9 +177,9 @@ export default {
   components: { "team-form": TeamForm },
   mounted() {
     this.tableLoading = true;
-    let eventId = this.$route.params.event;
-    this.$http.get(`/api/v1/teams/`).then(resp => {
+    this.$http.get(`/api/v1/teams/?return_group=all`).then(resp => {
       this.teams = resp.data;
+      console.log(resp.data);
       this.tableLoading = false;
     });
   },
@@ -212,7 +212,7 @@ export default {
         show: false,
         text: ""
       },
-      viewStatus: "viewAll",
+      viewStatus: "viewActive",
 
       windowSize: {
         x: 0,
