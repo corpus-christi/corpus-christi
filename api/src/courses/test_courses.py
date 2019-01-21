@@ -127,11 +127,12 @@ def course_offerings_object_factory_inactive(course_id):
 
 def create_multiple_course_offerings(sqla, n=3):
     """Commits the number of course offering to the DB."""
-    course = sqla.query(Course).first()
+    course = sqla.query(Course).all()
     course_offerings_schema = Course_OfferingSchema()
     new_course_offerings = []
     for i in range(n):
-        valid_course_offering = course_offerings_schema.load(course_offerings_object_factory(course.id))
+        c = random.randint(1, len(course)+1)
+        valid_course_offering = course_offerings_schema.load(course_offerings_object_factory(c))
         new_course_offerings.append(Course_Offering(**valid_course_offering))
     sqla.add_all(new_course_offerings)
     sqla.commit()
@@ -637,6 +638,25 @@ def test_create_diploma(auth_client):
     # THEN the diploma is added to the db
     assert resp.status_code == 201
     assert auth_client.sqla.query(Diploma).count() == 1
+
+
+def test_read_all_diplomas(auth_client):
+    # GIVEN 50 courses and 15 diplomas
+    create_multiple_courses(auth_client.sqla, 50)
+    create_multiple_diplomas(auth_client.sqla, 15)
+    # WHEN we read the diplomas
+    resp = auth_client.get(url_for('courses.read_all_diplomas'))
+    # THEN we should receive 15 diplomas
+    assert resp.status_code == 200
+    assert len(resp.json) == 15
+
+
+@pytest.mark.xfail()
+def test_read_one_diploma(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
 
 
 def test_read_all_diplomas(auth_client):

@@ -301,7 +301,8 @@ diploma_schema = DiplomaSchema()
 @courses.route('/diplomas', methods=['POST'])
 @jwt_required
 def create_diploma():
-    request.json['active'] = True
+    if 'active' not in request.json:
+        request.json['active'] = True
 
     if request.json['courses']:
         courses = request.json['courses']
@@ -337,7 +338,7 @@ def read_all_diplomas():
     return jsonify(diploma_schema.dump(result, many=True))
 
 
-@courses.route('/diplomas/<diploma_id>')
+@courses.route('/diplomas/<int:diploma_id>')
 @jwt_required
 def read_one_diploma(diploma_id):
     result = db.session.query(Diploma).filter_by(id=diploma_id).first()
@@ -354,13 +355,12 @@ def read_one_diploma(diploma_id):
     return jsonify(diploma_schema.dump(result))
 
 
-@courses.route('/diplomas/<diploma_id>', methods=['PATCH'])
+@courses.route('/diplomas/<int:diploma_id>', methods=['PATCH'])
 @jwt_required
 def update_diploma(diploma_id):
-    request.json['active'] = True
     if request.json['courses']:
-            courses = request.json['courses']
-            del request.json['courses']
+        courses = request.json['courses']
+        del request.json['courses']
 
     try:
         valid_diploma = diploma_schema.load(request.json)
@@ -369,8 +369,9 @@ def update_diploma(diploma_id):
 
     diploma = db.session.query(Diploma).filter_by(id=diploma_id).first()
 
-    for key, val in valid_diploma.items():
-        setattr(diploma, key, val)
+    for attr in 'courses', 'description', 'name', 'active':
+        if attr in request.json:
+            setattr(diploma, attr, request.json[attr])
 
     if courses:
         diploma.courses = []
@@ -383,7 +384,7 @@ def update_diploma(diploma_id):
     return jsonify(diploma_schema.dump(diploma))
 
 
-@courses.route('/diplomas/<diploma_id>/<course_id>', methods=['PUT'])
+@courses.route('/diplomas/<int:diploma_id>/<int:course_id>', methods=['PUT'])
 @jwt_required
 def add_course_to_diploma(diploma_id, course_id):
     diploma = db.session.query(Diploma).filter_by(id=diploma_id).first()
@@ -399,26 +400,29 @@ def add_course_to_diploma(diploma_id, course_id):
     return jsonify(diploma_schema.dump(diploma))
 
 
-@courses.route('/diplomas/<diploma_id>/<course_id>', methods=['DELETE'])
+@courses.route('/diplomas/<int:diploma_id>/<int:course_id>', methods=['DELETE'])
 @jwt_required
 def remove_course_from_diploma(diploma_id, course_id):
     diploma = db.session.query(Diploma).filter_by(id=diploma_id).first()
     course = db.session.query(Course).filter_by(id=course_id).first()
 
+    # If diploma is associated with course
     if course in diploma.courses:
-        diploma.courses.remove(course)
+        # And if no diplomas have been awarded
+        if diploma.diplomas_awarded == []:
+            # Delete association between diploma and course
+            diploma.courses.remove(course)
+        else:
+            return jsonify(f'Student was awarded diploma #{diploma.id}'), 403
     else:
-        return jsonify(msg='Course not found in diploma'), 404
+        return jsonify(f'Course #{course.id} not associated with diploma #{diploma.id}'), 404
 
     db.session.commit()
     diploma.courseList = diploma.courses
-    return jsonify(diploma_schema.dump(diploma))
+    return 'Successfully deleted course association with diploma', 200
 
 
-
-
-
-@courses.route('/diplomas/activate/<diploma_id>', methods=['PUT'])
+@courses.route('/diplomas/activate/<int:diploma_id>', methods=['PATCH'])
 @jwt_required
 def activate_diploma(diploma_id):
     diploma = db.session.query(Diploma).filter_by(id=diploma_id).first()
@@ -426,7 +430,7 @@ def activate_diploma(diploma_id):
     return jsonify(diploma_schema.dump(diploma))
 
 
-@courses.route('/diplomas/deactivate/<diploma_id>', methods=['PUT'])
+@courses.route('/diplomas/deactivate/<int:diploma_id>', methods=['PATCH'])
 @jwt_required
 def deactivate_diploma(diploma_id):
     diploma = db.session.query(Diploma).filter_by(id=diploma_id).first()
@@ -451,7 +455,7 @@ def create_diploma_awarded():
     check = db.session.query(Diploma_Awarded).filter_by(student_id=new_diploma_awarded.student_id,\
                                         diploma_id=new_diploma_awarded.diploma_id).first()
     if check:
-        return jsonify(msg='Diploma_Awarded already exists'), 409
+        return jsonify(msg=f'Diploma #{diploma_id} already awarded to student #{student_id}'), 409
 
     db.session.add(new_diploma_awarded)
     db.session.commit()
@@ -462,46 +466,53 @@ def create_diploma_awarded():
 @jwt_required
 def read_all_diplomas_awarded():
     result = db.session.query(Diploma_Awarded).all()
+    # Currently does not show student objects for each student.. may want to show
     return jsonify(diploma_awarded_schema.dump(result, many=True))
 
 
-@courses.route('/diplomas_awarded/<diploma_awarded_id>')
+@courses.route('/diplomas_awarded/<int:diploma_id>')
 @jwt_required
 def read_one_diploma_awarded(diploma_awarded_id):
     result = db.session.query(Diploma_Awarded).filter_by(id=diploma_awarded_id).first()
     return jsonify(diploma_awarded_schema.dump(result))
 
 
-@courses.route('/diplomas_awarded/<diploma_awarded_id>', methods=['PUT'])
-@jwt_required
-def replace_diploma_awarded(diploma_awarded_id):
-    pass
+def read_all_students_diploma_awarded(diploma_id):
+    """ Read all students that were awarded with the diploma id. """
+    result = db.session.query(Diploma_Awarded).filter_by(diploma_id=diploma_id).all()
+    return jsonify(diploma_awarded_schema.dump(result, many=True))
 
-
-@courses.route('/diplomas_awarded/<diploma_awarded_id>', methods=['PATCH'])
+@courses.route('/diplomas_awarded/<int:diploma_id>/<int:student_id>', methods=['PATCH'])
 @jwt_required
-def update_diploma_awarded(diploma_awarded_id):
+def update_diploma_awarded(diploma_id,student_id):
+    if 'studentId' not in request.json:
+        request.json['studentId'] = student_id
+    if 'diplomaId' not in request.json:
+        request.json['diplomaId'] = diploma_id
+
     try:
         valid_diploma_awarded = diploma_awarded_schema.load(request.json)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    diploma_awarded = db.session.query(Diploma_Awarded).filter_by(id=diploma_awarded_id).first()
+    diploma_awarded = db.session.query(Diploma_Awarded).filter_by(diploma_id=diploma_id, student_id=student_id).first()
 
-    for key, val in valid_diploma_awarded.items():
-        setattr(diploma_awarded, key, val)
+    if 'when' in request.json:
+        # For example, the following line requires datetime input to be "2019-02-01"
+        request.json['when'] = datetime.strptime(request.json['when'], '%Y-%m-%d')
+        setattr(diploma_awarded, 'when', request.json['when'])
 
     db.session.commit()
     return jsonify(diploma_awarded_schema.dump(diploma_awarded))
 
 
-@courses.route('/diplomas_awarded/<diploma_id>/<student_id>', methods=['DELETE'])
+@courses.route('/diplomas_awarded/<int:diploma_id>/<int:student_id>', methods=['DELETE'])
 @jwt_required
 def delete_diploma_awarded(diploma_id, student_id):
     diploma_awarded = db.session.query(Diploma_Awarded)\
             .filter_by(diploma_id=diploma_id, student_id=student_id).first()
     if diploma_awarded is None:
-        return jsonify(msg="That diploma_awarded does not exist"), 404
+        return jsonify(msg=f"That diploma #{diploma_id} for student #{student_id} does not exist"), 404
     db.session.delete(diploma_awarded)
     db.session.commit()
     return jsonify(diploma_awarded_schema.dump(diploma_awarded))
@@ -511,7 +522,6 @@ def delete_diploma_awarded(diploma_id, student_id):
 
 
 student_schema = StudentSchema()
-
 
 @courses.route('/course_offerings/<s_id>', methods=['POST'])
 @jwt_required
@@ -546,51 +556,58 @@ def read_all_course_offering_students(course_offering_id):
     students = student_schema.dump(students, many=True)
     return jsonify(students)
 
-# May not need this route unless UI says so...
-# @courses.route('/students')
-# @jwt_required
-# def read_all_students():
-#     result = db.session.query(Student).all()
-    # for r in result:
-    #     diplomas = []
-    #     for da in result.diplomas_awarded:
-    #         diplomas.append(da.diplomas)
-    #     result.diplomaList = diplomas
-#     return jsonify(student_schema.dump(result, many=True))
 
+@courses.route('/students')
+@jwt_required
+def get_all_students():
+    people = db.session.query(Student, Person).join(Person).all()
+    
+    if people == []:
+        return 'No students found in database', 404
 
-@courses.route('/maybethisworks')
-@jwt_optional
-def get_a_bunch_of_data():
-    people = db.session.query(Person).join(Student).join(Course_Offering) #People who are students
-    course_complete = db.session.query(Person).join(Course_Completion) #People who have completed courses
-    students = db.session.query(Person).join(Diploma_Awarded) #People who have diplomas
+    to_return = []
+    for i in people:
+        p = student_schema.dump(i.Student)
+        p['person'] = person_schema.dump(i.Person)
+        p['diplomaList'] = []
+        diplomas = i.Person.diplomas_awarded
+        for j in diplomas:
+            d = db.session.query(Diploma).filter_by(id=j.diploma_id).first()
+            if d is None:
+                return 'Diploma not found', 404
+            d = diploma_schema.dump(d)
+            d['diplomaIsActive'] = d.pop('active')
+            p['diplomaList'].append(d)
+        to_return.append(p)
 
-    result = people.union(students, course_complete).all()
-    for i in result:
-        print(i)
-    return jsonify(person_schema.dump(result, many=True))
+    return jsonify(to_return)
 
 
 @courses.route('/students/<student_id>')
 @jwt_required
 def read_one_student(student_id):
-    result = db.session.query(Student, Person).filter_by(id=student_id).join(Person).first()
-    if result is None:
+    result = db.session.query(Student, Person, Course_Offering, Course).filter_by(student_id=student_id).join(Person).join(Course_Offering).join(Course).all()
+
+    if result == []:
         return 'Student not found', 404
-    student = result.Student
-    diplomas = []
-    for da in result.Student.diplomas_awarded:
-        diplomas.append(da.diplomas)
-    result.Student.diplomaList = diplomas
-    person = person_schema.dump(result.Person)
-    result = student_schema.dump(result)
-    result['person'] = person
-    result['diplomaList'] = diploma_schema.dump(diplomas, many=True)
-    for i in result['diplomaList']:
-        i['diplomaIsActive'] = i.pop('active')
-    print(result)
-    return jsonify(result)
+
+    r = student_schema.dump(result[0].Student)
+    r['person'] = person_schema.dump(result[0].Person)
+    r['courses'] = []
+    for i in result:
+        r['courses'].append(course_schema.dump(i.Course))
+    for i in r['courses']:
+        i['courseOfferings'] = []
+        for j in result:
+            if(j.Course_Offering.course_id == i['id']):
+                co = course_offering_schema.dump(j.Course_Offering)
+                print(co)
+                co['courseIsActive'] = i['active']
+                co['courseOfferingIsActive'] = co.pop('active')
+                co.pop('id')
+                co.pop('courseId')
+                i['courseOfferings'].append(co)
+    return jsonify(r)
 
 
 
