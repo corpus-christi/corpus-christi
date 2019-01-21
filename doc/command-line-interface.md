@@ -26,6 +26,8 @@ type `flask data clear-all`
     - `db` - handles database migrations; there are many options within `flask db`; the most relevant are:
         - `migrate` to create a new migration after updating application models
         - `upgrade` to apply a migration to the database.    
+    - `maintain` - contains operations that are used to maintain the database
+        - `prune-events` archives all events that have ended 30 days or more before the script is run
     - `routes` - prints a list of all routes configured in the API
     - `run` - starts the Flask server
     - `shell` - opens a Python shell set up with access to Flask objects (e.g., `request`, `session`)
