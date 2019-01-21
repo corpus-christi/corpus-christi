@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 35ba11184cb5
+Revision ID: 1eb19cb0dfb0
 Revises: 
-Create Date: 2019-01-11 11:54:39.128669
+Create Date: 2019-01-21 10:40:13.824419
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '35ba11184cb5'
+revision = '1eb19cb0dfb0'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -43,7 +43,7 @@ def upgrade():
     )
     op.create_table('people_role',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('name_i18n', sa.String(length=5), nullable=True),
+    sa.Column('name_i18n', sa.String(length=32), nullable=True),
     sa.Column('active', sa.Boolean(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
@@ -74,16 +74,24 @@ def upgrade():
     sa.ForeignKeyConstraint(['country_code'], ['places_country.code'], ),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_table('places_location',
+    op.create_table('places_address',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('address', sa.String(length=255), nullable=True),
-    sa.Column('city', sa.String(length=64), nullable=True),
-    sa.Column('area_id', sa.Integer(), nullable=True),
-    sa.Column('country_code', sa.String(length=2), nullable=True),
+    sa.Column('name', sa.String(length=64), nullable=False),
+    sa.Column('address', sa.String(length=255), nullable=False),
+    sa.Column('city', sa.String(length=64), nullable=False),
+    sa.Column('area_id', sa.Integer(), nullable=False),
+    sa.Column('country_code', sa.String(length=16), nullable=False),
     sa.Column('latitude', sa.Float(), nullable=True),
     sa.Column('longitude', sa.Float(), nullable=True),
     sa.ForeignKeyConstraint(['area_id'], ['places_area.id'], ),
     sa.ForeignKeyConstraint(['country_code'], ['places_country.code'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('places_location',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('description', sa.String(length=64), nullable=True),
+    sa.Column('address_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['address_id'], ['places_address.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('events_asset',
@@ -177,6 +185,7 @@ def downgrade():
     op.drop_table('events_event')
     op.drop_table('events_asset')
     op.drop_table('places_location')
+    op.drop_table('places_address')
     op.drop_table('places_area')
     op.drop_table('places_country')
     op.drop_table('i18n_value')

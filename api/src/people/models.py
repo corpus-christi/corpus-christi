@@ -113,7 +113,7 @@ class AccountSchema(Schema):
 class Role(Base):
     __tablename__ = 'people_role'
     id = Column(Integer, primary_key=True)
-    name_i18n = Column(StringTypes.LOCALE_CODE)
+    name_i18n = Column(StringTypes.I18N_KEY)
     active = Column(Boolean)
 
     def __repr__(self):

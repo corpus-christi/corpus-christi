@@ -14,8 +14,8 @@ from ..shared.models import StringTypes
 class Attribute(Base):
     __tablename__ = 'people_attributes'
     id = Column(Integer, primary_key=True)
-    name_i18n = Column(StringTypes.LOCALE_CODE)
-    type_i18n = Column(StringTypes.LOCALE_CODE)
+    name_i18n = Column(StringTypes.I18N_KEY)
+    type_i18n = Column(StringTypes.I18N_KEY)
     seq = Column(Integer, nullable=False)
     active = Column(Boolean, nullable=False)
 
@@ -36,7 +36,7 @@ class Enumerated_Value(Base):
     __tablename__ = 'people_enumerated_value'
     id = Column(Integer, primary_key=True)
     attribute_id = Column(Integer, ForeignKey('people_attributes.id'))
-    value_i18n = Column(StringTypes.LOCALE_CODE)
+    value_i18n = Column(StringTypes.I18N_KEY)
     active = Column(Boolean, nullable=False)
 
     def __repr__(self):
