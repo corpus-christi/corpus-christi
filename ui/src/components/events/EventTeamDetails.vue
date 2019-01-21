@@ -17,7 +17,7 @@
             </v-btn>
           </v-layout>
         </v-container>
-        <v-list>
+        <v-list v-if="teams.length">
           <template v-for="team in teams">
             <v-divider v-bind:key="'teamDivider' + team.id"></v-divider>
             <v-list-tile v-bind:key="team.id">
@@ -52,6 +52,9 @@
             </v-list-tile>
           </template>
         </v-list>
+        <div v-else class="text-xs-center pa-4">
+          {{ $t("teams.none-assigned") }}
+        </div>
       </template>
       <v-layout v-else justify-center height="500px">
         <div class="ma-5 pa-5">
@@ -210,7 +213,7 @@ export default {
           this.deleteTeamDialog.show = false;
           this.deleteTeamDialog.loading = false;
           this.deleteTeamDialog.teamId = -1;
-          this.teams.splice(idx, 1);
+          this.teams.splice(idx, 1); //TODO maybe fix me?
           this.showSnackbar(this.$t("teams.team-removed"));
         })
         .catch(err => {
