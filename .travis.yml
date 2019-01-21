@@ -37,12 +37,14 @@ matrix:
                         adapter: postgresql
                         database: cc-staging
 before_install:
+        - cd ui/
         - yarn cache clean
 install:
         - yarn install
+        - cd ../
+        - cd api/
         - pip install -r api/requirements.txt
         #  - pip install -U pytest
-        - cd api/
         - sudo apt install postgresql
         - sudo apt install nginx
         - sudo service postgresql start
