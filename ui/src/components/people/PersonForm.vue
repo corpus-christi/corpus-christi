@@ -35,6 +35,44 @@
           data-cy="second-last-name"
         ></v-text-field>
 
+        <!-- User name (for creating new account) -->
+        <v-text-field
+          v-if="showAccountInfo"
+          v-model="account.username"
+          v-bind:label="$t('account.username')"
+          name="username"
+          v-validate="{ required: isAccountRequired, alpha_dash: true, min: 6 }"
+          v-bind:error-messages="errors.collect('username')"
+          prepend-icon="person"
+          data-cy="username"
+        ></v-text-field>
+
+        <!-- Password (new or update) -->
+        <v-text-field
+          v-if="showAccountInfo"
+          v-model="account.password"
+          type="password"
+          ref="pwdField"
+          v-bind:label="$t('account.password')"
+          name="password"
+          v-validate="{ required: isAccountRequired, min: 8 }"
+          v-bind:error-messages="errors.collect('password')"
+          prepend-icon="lock"
+          data-cy="password"
+        ></v-text-field>
+        <!-- Password confirmation (new or update) -->
+        <v-text-field
+          v-if="showAccountInfo"
+          v-model="account.repeatPassword"
+          type="password"
+          v-bind:label="$t('account.repeat-password')"
+          name="repeat-password"
+          v-validate="'confirmed:pwdField'"
+          v-bind:error-messages="errors.collect('repeat-password')"
+          prepend-icon="lock"
+          data-cy="confirm-password"
+        ></v-text-field>
+
         <v-radio-group
           v-model="person.gender"
           :readonly="formDisabled"
@@ -148,7 +186,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-import AttributeForm from "./input-fields/AttributeForm.vue";
+import AttributeForm from "./input_fields/AttributeForm.vue";
 import { isEmpty } from "lodash";
 
 export default {
@@ -161,15 +199,28 @@ export default {
     },
     title: {
       type: String,
-      required: false
+      required: false,
+      default: "people.title"
     },
     addAnotherEnabled: {
       type: Boolean,
-      required: false
+      required: false,
+      default: false
     },
     saveButtonText: {
       type: String,
-      required: false
+      required: false,
+      default: "actions.save"
+    },
+    showAccountInfo: {
+      type: Boolean,
+      required: false,
+      default: true
+    },
+    isAccountRequired: {
+      type: Boolean,
+      required: false,
+      default: true
     }
   },
   data: function() {
@@ -190,6 +241,12 @@ export default {
         phone: "",
         locationId: 0,
         attributesInfo: []
+      },
+
+      account: {
+        username: "",
+        password: "",
+        repeatPassword: ""
       },
 
       attributeFormData: {}
@@ -305,8 +362,32 @@ export default {
       this.$http
         .post("/api/v1/people/persons", data)
         .then(response => {
-          this.$emit(emitMessage, response.data);
+          if (this.account.username && this.account.password) {
+            this.addAccount(response.data.id).then(() => {
+              this.$emit(emitMessage, response.data);
+              this.resetIsLoading();
+            });
+          } else {
+            this.$emit(emitMessage, response.data);
+            this.resetIsLoading();
+          }
+        })
+        .catch(err => {
           this.resetIsLoading();
+          console.error("FAILURE", err.response);
+        });
+    },
+
+    addAccount(personId) {
+      return this.$http
+        .post("/api/v1/people/accounts", {
+          username: this.account.username,
+          password: this.account.password,
+          active: true,
+          personId: personId
+        })
+        .then(resp => {
+          console.log("ADDED", resp);
         })
         .catch(err => {
           this.resetIsLoading();
