@@ -23,17 +23,17 @@
               <v-combobox
                 slot="activator"
                 v-model="dates"
-                multiple
+                :multiple="!editMode"
                 chips
                 small-chips
-                v-bind:label="$t('courses.dates')"
+                v-bind:label="$t(editMode ? 'course.date' : 'courses.dates')"
                 prepend-icon="event"
                 readonly
                 data-cy="course-offering-date"
               ></v-combobox>
-              <v-date-picker 
+              <v-date-picker
                 v-model="dates" 
-                multiple no-title scrollable 
+                :multiple="!editMode" no-title scrollable
                 v-bind:locale="currentLanguageCode"
                 data-cy="course-offering-date-picker"
               >
@@ -145,6 +145,7 @@
       >
         {{ $t("actions.save") }}
         <v-progress-circular
+          v-if="!editMode"
           slot="loader"
           :size="20"
           :width="3"
@@ -172,7 +173,7 @@ export default {
       savingProgress: 0,
 
       classMeeting: {},
-      dates: [],
+      dates: "",
       time: "",
       teacher: {},
       location: {},
@@ -204,6 +205,12 @@ export default {
         this.clear();
       } else {
         this.classMeeting = prop;
+        if (this.editMode) {
+          this.dates = this.getDateFromTimestamp(this.classMeeting.when);
+          this.time = this.getTimeFromTimestamp(this.classMeeting.when);
+          this.teacher = this.classMeeting.teacher;
+          this.location = this.classMeeting.location;
+        }
       }
     }
   },
@@ -232,7 +239,7 @@ export default {
 
     // Clear the forms.
     clear() {
-      this.dates = [];
+      this.dates = this.editMode ? "" : [];
       this.time = "";
       this.teacher = {};
       this.location = {};
@@ -251,7 +258,28 @@ export default {
 
     saveClassMeeting(classMeeting) {
       if (this.editMode) {
+        let meeting = {};
+        meeting.offeringId = this.offeringId;
+        meeting.locationId = this.location.id;
+        meeting.teacherId = this.teacher.id;
+        meeting.when = this.getTimestamp(this.dates, this.time);
 
+        this.$http.patch(
+          `/api/v1/courses/course_offerings/${this.offeringId}/${this.classMeeting.id}`,
+          meeting
+        )
+          .then(resp => {
+            let newMeeting = resp.data;
+            newMeeting.location = this.location;
+            newMeeting.teacher = this.teacher;
+            this.$emit("save", [newMeeting]); // Parent expects array of updated records
+          })
+          .catch(err => {
+            this.$emit("save", err);
+          })
+          .finally(() => {
+            this.saving = false;
+          })
       } else {
         let meetingTemplate = {};
         meetingTemplate.offeringId = this.offeringId;
@@ -272,7 +300,8 @@ export default {
         let promises = meetings.map(meeting => {
           return this.$http.post(
             `/api/v1/courses/course_offerings/${this.offeringId}/class_meetings`,
-            meeting)
+            meeting
+          )
             .then(resp => {
               savingCount += 1;
               this.savingProgress = 100 * savingCount / promises.length;
