@@ -25,7 +25,7 @@ matrix:
                         - FLASK_APP=cc-api.py
                   install:
                         - pip install -r api/requirements.txt
-                          # - pip install -U pytest
+                        - pip install -U pytest
                         - cd api/
                         - sudo apt install postgresql
                         - sudo apt install nginx
@@ -37,16 +37,14 @@ matrix:
                                 #- psql -c "CREATE DATABASE testing_db;" -U postgres
                   script:
                         - createuser arco
-                          # - sudo -u postgres createuser arco
                         - createdb --owner=arco cc-staging 
-                          #   - sudo -u postgres createdb --owner=arco cc-staging
                         - flask db upgrade
                         - flask data load-all
                           #- rm migrations/versions/*.py
                         - sudo nginx -t
                         - sudo systemctl restart nginx
                         - cd ../
-                          # - pytest
+                        - pytest
 
 script:
         - 
