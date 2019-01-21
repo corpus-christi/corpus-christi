@@ -14,7 +14,7 @@ class Image(Base):
     __tablename__ = 'images_image'
     id = Column(Integer, primary_key=True)
     path = Column(StringTypes.LONG_STRING, unique=True, nullable=False)
-    description = Column(StringTypes.LONG_STRING)
+    description = Column(StringTypes.LONG_STRING, default=None)
 
     events = relationship("ImageEvent", back_populates="image")
 
@@ -22,6 +22,8 @@ class ImageSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, min=1)
     path = fields.String(required=True)
     description = fields.String(allow_none=True)
+
+    events = fields.Nested('EventSchema', dump_only=True)
 
 class ImageEvent(Base):
     __tablename__ = 'images_imageevent'
@@ -34,4 +36,7 @@ class ImageEvent(Base):
 class ImageEventSchema(Schema):
     image_id = fields.Integer(required=True, min=1)
     event_id = fields.Integer(required=True, min=1)
+
+    event = fields.Nested('EventSchema', dump_only=True)
+    image = fields.Nested('ImageSchema', exclude=['events'], dump_only=True)
 

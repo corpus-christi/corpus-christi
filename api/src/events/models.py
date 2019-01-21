@@ -50,6 +50,7 @@ class EventSchema(Schema):
     persons = fields.Nested('EventPersonSchema', many=True, exclude=['event'], dump_only=True)
     teams = fields.Nested('EventTeamSchema', many=True, exclude=['event'], dump_only=True)
     assets = fields.Nested('EventAssetSchema', many=True, exclude=['event'], dump_only=True)
+    images = fields.Nested('ImageEventSchema', many=True, exclude=['event'], dump_only=True)
 
 
 # ---- EventAsset

@@ -52,11 +52,7 @@ export default {
           class:
             new Date(resp.data[event].end) < currentDate ? "leisure" : "sport",
           content:
-            '<a href="/events/' +
-            resp.data[event].id +
-            '">' +
-            resp.data[event].title +
-            "</a>"
+            `<a href="/events/${resp.data[event].id}">${resp.data[event].title}</a>`
         });
       }
     });
