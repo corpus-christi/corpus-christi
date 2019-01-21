@@ -16,6 +16,7 @@ matrix:
                         - cd ui/
                         - yarn cache clean
                           #install:
+                        - yarn add cypress
                         - yarn install
                  #script:
                           #- cd ui/
