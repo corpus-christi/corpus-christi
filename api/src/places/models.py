@@ -25,12 +25,9 @@ class Country(Base):
         return f"<Country(code={self.code},i18n_key='{self.name_i18n}')>"
 
     @classmethod
-    def load_from_file(cls, file_name='country-codes.json', locale_code='en-US'):
+    def load_from_file(cls, file_name='country-codes.json'):
         count = 0
         file_path = os.path.abspath(os.path.join(__file__, os.path.pardir, 'data', file_name))
-
-        if not db.session.query(I18NLocale).get(locale_code):
-            db.session.add(I18NLocale(code=locale_code, desc='English US'))
 
         with open(file_path, 'r') as fp:
             countries = json.load(fp)
@@ -40,8 +37,14 @@ class Country(Base):
                 country_name = country['Name']
 
                 name_i18n = f'country.name.{country_code}'
-                i18n_create(name_i18n, locale_code,
-                            country_name, description=f"Country {country_name}")
+
+                for locale in country['locales']:
+                    locale_code = locale['locale_code']
+                    if not db.session.query(I18NLocale).get(locale_code):
+                        db.session.add(I18NLocale(code=locale_code, desc=''))
+
+                    i18n_create(name_i18n, locale_code,
+                                locale['name'], description=f"Country {country_name}")
 
                 db.session.add(cls(code=country_code, name_i18n=name_i18n))
                 count += 1
