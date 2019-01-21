@@ -297,12 +297,10 @@ diploma_schema = DiplomaSchema()
 @courses.route('/diplomas', methods=['POST'])
 @jwt_required
 def create_diploma():
-    request.json['active'] = True
-
-    if request.json['courses']:
+    if 'courses' in request.json:
         courses = request.json['courses']
         del request.json['courses']
-
+    
     try:
         valid_diploma = diploma_schema.load(request.json)
     except ValidationError as err:
@@ -355,30 +353,17 @@ def read_one_diploma(diploma_id):
 @courses.route('/diplomas/<diploma_id>', methods=['PATCH'])
 @jwt_required
 def update_diploma(diploma_id):
-    #request.json['active'] = True
-    if request.json['courses']:
-            courses = request.json['courses']
-            del request.json['courses']
-
-    try:
-        valid_diploma = diploma_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
     diploma = db.session.query(Diploma).filter_by(id=diploma_id).first()
-
     if diploma is None:
         return "Diploma NOT Found", 404
 
     for attr in 'name', 'description', 'active':
         if attr in request.json:
             setattr(diploma, attr, request.json[attr])
-    # for key, val in valid_diploma.items():
-    #     setattr(diploma, key, val)
 
-    if courses:
+    if 'courses' in request.json:
         diploma.courses = []
-        for course_id in courses:
+        for course_id in request.json['courses']:
             course = db.session.query(Course).filter_by(id=course_id).first()
             diploma.courses.append(course)    
 
@@ -466,6 +451,8 @@ def create_diploma_awarded():
 @jwt_required
 def read_all_diplomas_awarded():
     result = db.session.query(Diploma_Awarded).all()
+    if result == []:
+        return 'No Diplomas Awarded found', 404
     return jsonify(diploma_awarded_schema.dump(result, many=True))
     
 
@@ -473,14 +460,16 @@ def read_all_diplomas_awarded():
 @jwt_required
 def read_one_diploma_awarded(diploma_awarded_id):
     result = db.session.query(Diploma_Awarded).filter_by(id=diploma_awarded_id).first()
+    if result is None:
+        return "Result NOT found", 404
     return jsonify(diploma_awarded_schema.dump(result))
     
-
+"""
 @courses.route('/diplomas_awarded/<diploma_awarded_id>', methods=['PUT'])
 @jwt_required
 def replace_diploma_awarded(diploma_awarded_id):
     pass
-    
+""" 
 
 @courses.route('/diplomas_awarded/<diploma_awarded_id>', methods=['PATCH'])
 @jwt_required
