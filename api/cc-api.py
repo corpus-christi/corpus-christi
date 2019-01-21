@@ -14,15 +14,17 @@ from src import create_app
 from src import db
 from src.i18n.models import Language, I18NLocale
 from src.people.models import Person, Account, Role
-from src.people.test_people import create_multiple_people, create_multiple_accounts
 from src.events.models import Event
 from src.events.create_event_data import create_events_test_data
+from src.attributes.models import Attribute, PersonAttribute, EnumeratedValue
+from src.attributes.test_attributes import create_multiple_attributes, create_multiple_enumerated_values, create_multiple_person_attribute_enumerated, create_multiple_person_attribute_strings
+from src.people.test_people import create_multiple_people, create_multiple_accounts, create_multiple_managers, create_multiple_people_attributes
 from src.places.test_places import create_multiple_areas, create_multiple_addresses, create_multiple_locations
 from src.places.models import Country
 from src.courses.models import Course
 from src.courses.test_courses import create_multiple_courses, create_multiple_course_offerings,\
     create_multiple_diplomas, create_multiple_students, create_class_meetings,\
-    create_diploma_awards, create_class_attendance, create_multiple_prerequisites
+    create_diploma_awards, create_class_attendance, create_multiple_prerequisites, create_course_completion
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 
@@ -59,6 +61,10 @@ def load_languages():
 def load_roles():
     Role.load_from_file()
 
+@data_cli.command('load-attribute-types', help='Load attribute types')
+def load_attribute_types():
+    Attribute.load_types_from_file()
+
 
 @data_cli.command('load-all', help='Load everything')
 def load_all():
@@ -67,6 +73,10 @@ def load_all():
     Country.load_from_file()
     Language.load_from_file()
     Role.load_from_file()
+    Attribute.load_types_from_file()
+    create_multiple_people(db.session, 17)
+    create_multiple_accounts(db.session, 0.25)
+    access_token = create_access_token(identity='test-user')
 
     create_multiple_areas(db.session, 5)
     create_multiple_addresses(db.session, 10)
@@ -83,6 +93,11 @@ def load_all():
     create_class_meetings(db.session, 30)
     create_diploma_awards(db.session, 30)
     create_class_attendance(db.session, 30)
+    create_course_completion(db.session, 30)
+
+    create_multiple_people_attributes(db.session, 5)
+    create_multiple_managers(db.session, 2, 'Group Overseer')
+    create_multiple_managers(db.session, 5, 'Group Leader', 'Group Overseer')
 
 
 @data_cli.command('test', help='Load everything')

@@ -1,11 +1,11 @@
 <template>
-  <v-card class="card elevation-10">    
+  <v-card class="card elevation-10">
     <v-card-title>
       <v-layout row align-center justify-center>
         <v-flex shrink>
           <span class="headline mb-3">{{ event.title }}</span>
         </v-flex>
-      </v-layout>      
+      </v-layout>
     </v-card-title>
 
     <v-card-text class="text">
@@ -14,8 +14,13 @@
           <div v-if="event.location">
             <b>{{ $t("events.location") }}: </b>{{ event.location.description }}
           </div>
-          <div><b>{{ $t("events.start-time") }}: </b>{{ getDisplayDate(event.start) }}</div>
-          <div class="mb-3"><b>{{ $t("events.end-time") }}: </b>{{ getDisplayDate(event.end) }}</div>
+          <div>
+            <b>{{ $t("events.start-time") }}: </b
+            >{{ getDisplayDate(event.start) }}
+          </div>
+          <div class="mb-3">
+            <b>{{ $t("events.end-time") }}: </b>{{ getDisplayDate(event.end) }}
+          </div>
           <div class="mb-3">{{ event.description }}</div>
         </v-flex>
       </v-layout>
@@ -23,7 +28,7 @@
 
     <v-card-actions>
       <v-spacer></v-spacer>
-        <v-btn raised color="primary">{{ $t("public.events.join") }}</v-btn>
+      <v-btn raised color="primary">{{ $t("public.events.join") }}</v-btn>
       <v-spacer></v-spacer>
     </v-card-actions>
   </v-card>
@@ -36,9 +41,7 @@ export default {
     event: {}
   },
   data() {
-    return {
-
-    };
+    return {};
   },
   methods: {
     getDisplayDate(ts) {
@@ -56,7 +59,6 @@ export default {
 </script>
 
 <style scoped>
-
 .text {
   max-height: 200px;
   min-height: 200px;
@@ -67,5 +69,4 @@ export default {
   padding: 10px;
   border-radius: 30px;
 }
-
 </style>

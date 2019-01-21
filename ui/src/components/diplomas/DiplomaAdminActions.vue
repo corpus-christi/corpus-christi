@@ -1,13 +1,16 @@
 <template>
   <v-layout align-center justify-end>
     <v-tooltip bottom>
-      <v-btn flat icon outline
+      <v-btn
+        flat
+        icon
+        outline
         color="primary"
         slot="activator"
         v-bind:small="displayContext === 'compact'"
-        v-on:click.stop="emitAction('edit')">
-
-          <v-icon v-bind:small="displayContext === 'compact'">edit</v-icon>
+        v-on:click.stop="emitAction('edit')"
+      >
+        <v-icon v-bind:small="displayContext === 'compact'">edit</v-icon>
       </v-btn>
       <span>{{ $t("actions.edit") }}</span>
     </v-tooltip>
@@ -47,7 +50,7 @@ export default {
       this.$emit("action", actionName);
     }
   }
-}
+};
 </script>
 
 <style></style>
