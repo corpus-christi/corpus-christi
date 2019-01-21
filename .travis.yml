@@ -55,8 +55,8 @@ matrix:
 notifications:       
         slack: tumissionscomputing:wp25PPGEFitgDVKamhxxq6jU
 deploy:
-provider: linode
-local-dir: public
-branchs:
-  only: 
-    - development
+        provider: linode
+        local-dir: public
+        branches:
+                only: 
+                        - development
