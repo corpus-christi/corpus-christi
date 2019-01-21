@@ -4,7 +4,7 @@ ubuntu:
         - 18.04
 env:
         global:
-                - FLASK_CONFIG=staging 
+                - FLASK_CONFIG=staging-ci 
 before_install:
         - sudo apt-get update
 matrix:
@@ -12,6 +12,7 @@ matrix:
                 - language: node_js
                   node_js: "11"
                   before_install:
+                        - cd ui/
                         - yarn cache clean
                   install:
                         - yarn install
