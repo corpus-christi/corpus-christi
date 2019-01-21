@@ -67,8 +67,8 @@
                 block
                 outline
                 color="primary"
-                >{{ $t("public.events.view-all") }}</v-btn
-              >
+                >{{ $t("public.events.view-all") }}
+              </v-btn>
             </v-card-actions>
           </v-card>
         </v-list>
@@ -105,6 +105,16 @@ export default {
       groupLocations: []
     };
   },
+  mounted() {
+    this.pageLoaded = false;
+    this.$http.get(`/api/v1/events/?return_group=all&sort=start`).then(resp => {
+      this.events = resp.data;
+      this.events = this.events.slice(0, 5);
+      console.log(resp.data);
+      this.pageLoaded = true;
+    });
+  },
+
   methods: {
     getDisplayDate(ts) {
       let date = new Date(ts);
