@@ -142,6 +142,26 @@ def create_roles(sqla, n):
 
     return role_ids
 
+
+def account_role_object_factory(account_id, role_id):
+    accountrole = {
+        'account_id': account_id,
+        'role_id': role_id
+    }
+    return accountrole
+
+
+def create_accounts_roles(sqla, fraction=0.75):
+    new_accounts_roles = []
+    all_accounts_roles = sqla.query(Account, Role).all()
+    sample_accounts_roles = random.sample(all_accounts_roles, math.floor(len(all_accounts_roles) * fraction))
+    for accounts_roles in sample_accounts_roles:
+        accounts_roles[0].roles.append(accounts_roles[1])
+        new_accounts_roles.append(accounts_roles[0])
+    sqla.add_all(new_accounts_roles)
+    sqla.commit()
+
+
 def create_multiple_people_attributes(sqla, n):
     """Commit `n` new people with attributes to the database."""
     person_schema = PersonSchema()
@@ -629,6 +649,7 @@ def test_create_role(auth_client):
     # THEN we end up with the proper number of roles in the database
     assert auth_client.sqla.query(Role).count() == count
 
+
 @pytest.mark.smoke
 def test_read_all_roles(auth_client):
     # GIVEN a collection of roles
@@ -642,16 +663,40 @@ def test_read_all_roles(auth_client):
     assert resp.status_code == 200
     assert len(resp.json) == role_count
 
+
 @pytest.mark.smoke
 def test_get_roles_for_account(auth_client):
-    # GIVEN a DB populated with accounts and roles
-    prep_database(auth_client.sqla)
-    Role.load_from_file()
-    # WHEN
-    # THEN
+    # GIVEN a set of people, accounts, roles and account-role relationships
+    count = random.randint(3, 6)
+    create_multiple_people(auth_client.sqla, count)
+    create_multiple_accounts(auth_client.sqla, 1)
+    create_roles(auth_client.sqla, count)
+    create_accounts_roles(auth_client.sqla)
 
-    # TODO FINISH
-    assert False
+    accounts = auth_client.sqla.query(Account).all()
+    
+    # WHEN the roles for each account are requested
+    for account in accounts:
+        resp = auth_client.get(url_for('people.get_roles_for_account', account_id = account.id))
+        
+        # THEN expect the request to run OK
+        assert resp.status_code == 200
+
+        # THEN expect the right roles to be returned for the account
+        for i in range(len(account.roles)):
+            print(account.roles[i])
+            assert resp.json[i] == account.roles[i].name_i18n
+
+
+@pytest.mark.smoke
+def test_get_roles_for_account_no_exist(auth_client):
+    # GIVEN an empty database
+
+    # WHEN the roles for an account that does not exist are requested
+    resp = auth_client.get(url_for('people.get_roles_for_account', account_id = random.randint(1, 8)))
+
+    # THEN expect the requested account to not be found
+    assert resp.status_code == 404
 
 
 @pytest.mark.smoke
