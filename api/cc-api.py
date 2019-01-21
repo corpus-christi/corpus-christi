@@ -21,6 +21,7 @@ from src.attributes.test_attributes import create_multiple_attributes, create_mu
 from src.people.test_people import create_multiple_people, create_multiple_accounts, create_multiple_managers, create_multiple_people_attributes
 from src.places.test_places import create_multiple_areas, create_multiple_addresses, create_multiple_locations
 from src.places.models import Country
+from src.groups.test_groups import create_multiple_groups
 from src.courses.models import Course
 from src.courses.test_courses import create_multiple_courses, create_multiple_course_offerings,\
     create_multiple_diplomas, create_multiple_students, create_class_meetings,\
@@ -98,6 +99,7 @@ def load_all():
     create_multiple_people_attributes(db.session, 5)
     create_multiple_managers(db.session, 2, 'Group Overseer')
     create_multiple_managers(db.session, 5, 'Group Leader', 'Group Overseer')
+    create_multiple_groups(db.session, 5)
 
     create_group_test_data(db.session)
 
