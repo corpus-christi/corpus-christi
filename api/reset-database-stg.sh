@@ -6,7 +6,6 @@ export FLASK_APP=cc-api.py
 #dropdb --if-exists cc-staging
 #dropuser arco
 #createuser --pwprompt arco
-#createdb -O arco cc-staging
 
 source ./venv/bin/activate
 
