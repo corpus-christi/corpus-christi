@@ -11,14 +11,16 @@ matrix:
         include:
                 - language: node_js
                   node_js: "11"
-                  before_install:
+                  #before_install:
+                  script:
                         - cd ui/
                         - yarn cache clean
-                  install:
+                          #install:
                         - yarn install
-                  script:
+                 #script:
                           #- cd ui/
                         - yarn build
+                        - cd ../  
                           #- echo "Done with Node_js"  
                           #- cd ../
                 - language: python
