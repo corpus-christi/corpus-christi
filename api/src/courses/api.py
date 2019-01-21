@@ -300,7 +300,7 @@ def create_diploma():
     if 'active' not in request.json:
         request.json['active'] = True
 
-    if request.json['courses']:
+    if 'courses' in request.json:
         courses = request.json['courses']
         del request.json['courses']
     
@@ -356,26 +356,27 @@ def read_one_diploma(diploma_id):
 @courses.route('/diplomas/<int:diploma_id>', methods=['PATCH'])
 @jwt_required
 def update_diploma(diploma_id):
-    if request.json['courses']:
-        courses = request.json['courses']
-        del request.json['courses'] 
-
-    try:
-        valid_diploma = diploma_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
     diploma = db.session.query(Diploma).filter_by(id=diploma_id).first()
     if diploma is None:
         return "Diploma NOT Found", 404
 
-    for attr in 'courses', 'description', 'name', 'active':
+    courses = []
+    if 'courses' in request.json:
+        courses = request.json['courses']
+        del request.json['courses'] 
+
+    try:
+        valid_diploma = diploma_schema.load(request.json, partial=True)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+
+    for attr in 'description', 'name', 'active':
         if attr in request.json:
             setattr(diploma, attr, request.json[attr])
 
-    if 'courses' in request.json:
+    if courses != []:
         diploma.courses = []
-        for course_id in request.json['courses']:
+        for course_id in courses:
             course = db.session.query(Course).filter_by(id=course_id).first()
             diploma.courses.append(course)    
 
@@ -452,10 +453,10 @@ def create_diploma_awarded():
 
     new_diploma_awarded = Diploma_Awarded(**valid_diploma_awarded)
     
-    check = db.session.query(Diploma_Awarded).filter_by(student_id=new_diploma_awarded.student_id,\
+    check = db.session.query(Diploma_Awarded).filter_by(person_id=new_diploma_awarded.person_id,\
                                         diploma_id=new_diploma_awarded.diploma_id).first()
     if check:
-        return jsonify(msg=f'Diploma #{diploma_id} already awarded to student #{student_id}'), 409
+        return jsonify(msg=f'Diploma #{new_diploma_awarded.diploma_id} already awarded to person #{new_diploma_awarded.person_id}'), 409
 
     db.session.add(new_diploma_awarded)
     db.session.commit()
@@ -474,8 +475,8 @@ def read_all_diplomas_awarded():
 
 @courses.route('/diplomas_awarded/<int:diploma_id>')
 @jwt_required
-def read_one_diploma_awarded(diploma_awarded_id):
-    result = db.session.query(Diploma_Awarded).filter_by(id=diploma_awarded_id).first()
+def read_one_diploma_awarded(diploma_id):
+    result = db.session.query(Diploma_Awarded).filter_by(diploma_id=diploma_id).first()
     if result is None:
         return "Result NOT found", 404
     return jsonify(diploma_awarded_schema.dump(result))
@@ -487,20 +488,20 @@ def replace_diploma_awarded(diploma_awarded_id):
     pass
 """ 
 
-@courses.route('/diplomas_awarded/<int:diploma_id>/<int:student_id>', methods=['PATCH'])
+@courses.route('/diplomas_awarded/<int:diploma_id>/<int:person_id>', methods=['PATCH'])
 @jwt_required
-def update_diploma_awarded(diploma_id,student_id):
-    if 'studentId' not in request.json:
-        request.json['studentId'] = student_id
+def update_diploma_awarded(diploma_id,person_id):
+    if 'personId' not in request.json:
+        request.json['personId'] = person_id
     if 'diplomaId' not in request.json:
         request.json['diplomaId'] = diploma_id
 
     try:
-        valid_diploma_awarded = diploma_awarded_schema.load(request.json)
+        valid_diploma_awarded = diploma_awarded_schema.load(request.json, partial=True)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    diploma_awarded = db.session.query(Diploma_Awarded).filter_by(diploma_id=diploma_id, student_id=student_id).first()
+    diploma_awarded = db.session.query(Diploma_Awarded).filter_by(diploma_id=diploma_id, person_id=person_id).first()
 
     if 'when' in request.json:
         # For example, the following line requires datetime input to be "2019-02-01"
