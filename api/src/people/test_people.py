@@ -874,7 +874,17 @@ def test_add_role_to_account(auth_client):
     resp = auth_client.post(url_for(
         'people.add_role_to_account', account_id=current_account.id, role_id=current_role.id))
     assert resp.status_code == 200
-    Pr
+
+
+@pytest.mark.smoke
+def test_add_role_to_account_no_exist(auth_client):
+    # GIVEN an empty database
+
+    # WHEN a role is requested to be added to an account that does not exist
+    resp = auth_client.post(url_for('people.add_role_to_account', account_id = random.randint(1, 8), role_id = random.randint(1, 8)))
+    
+    # THEN expect the request to be not found
+    assert resp.status_code == 404
 
 
 @pytest.mark.smoke
