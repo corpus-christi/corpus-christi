@@ -974,7 +974,7 @@ def test_update_class_attendance(auth_client):
     # WHEN
     # THEN
     assert True == False
-"""
+
 # ---- Class_Meeting
 
 def setup_dependencies_of_class_meeting(auth_client, n):
