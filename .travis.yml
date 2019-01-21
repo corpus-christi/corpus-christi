@@ -14,9 +14,9 @@ matrix:
                   before_install:
                           - yarn cache clean
                   install:
-                          - cd ui/
                           - yarn install
                   script:
+                          - cd ui/
                           - yarn build
                           - echo "Done with Node_js"  
                             #- cd ../
