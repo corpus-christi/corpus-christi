@@ -275,7 +275,6 @@ def create_location():
 
 
 @places.route('/locations')
-@jwt_required
 def read_all_locations():
     result = db.session.query(Location).all()
     return jsonify(location_schema.dump(result, many=True))

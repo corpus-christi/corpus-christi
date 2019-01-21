@@ -26,7 +26,6 @@ def create_group():
 
 
 @groups.route('/groups')
-@jwt_required
 def read_all_groups():
     result = db.session.query(Group).all()
     return jsonify(group_schema.dump(result, many=True))

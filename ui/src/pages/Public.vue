@@ -82,7 +82,7 @@
             {{ $t("public.headers.home-church") }}
           </v-toolbar-title>
         </v-toolbar>
-        <GoogleMap></GoogleMap>
+        <GoogleMap v-bind:markers="homegroups"></GoogleMap>
       </v-flex>
     </v-layout>
   </v-container>
@@ -101,6 +101,7 @@ export default {
         { title: "Christian Parenting 2", date: "2019-01-19" }
       ],
       events: [],
+      homegroups: [],
       pageLoaded: false
     };
   },
@@ -112,6 +113,8 @@ export default {
       console.log(resp.data);
       this.pageLoaded = true;
     });
+
+    this.getHomegroupLocations();
   },
 
   methods: {
@@ -124,6 +127,21 @@ export default {
         hour: "2-digit",
         minute: "2-digit"
       });
+    },
+
+    getHomegroupLocations() {
+      let locations, groups;
+      this.$httpNoAuth.get("/api/v1/places/locations").then(resp => {
+        console.log("locations", resp.data)
+        let locations = resp.data;
+      })
+      .catch(err => console.log("FAILED", err));
+
+      this.$httpNoAuth.get("/api/v1/groups/groups").then(resp => {
+        console.log("groups", resp.data);
+        let groups = resp.data;
+      })
+      .catch(err => console.log("FAILED", err));
     }
   }
 };
