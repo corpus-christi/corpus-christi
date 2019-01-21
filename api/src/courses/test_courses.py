@@ -127,11 +127,12 @@ def course_offerings_object_factory_inactive(course_id):
 
 def create_multiple_course_offerings(sqla, n=3):
     """Commits the number of course offering to the DB."""
-    course = sqla.query(Course).first()
+    course = sqla.query(Course).all()
     course_offerings_schema = Course_OfferingSchema()
     new_course_offerings = []
     for i in range(n):
-        valid_course_offering = course_offerings_schema.load(course_offerings_object_factory(course.id))
+        c = random.randint(1, len(course)+1)
+        valid_course_offering = course_offerings_schema.load(course_offerings_object_factory(c))
         new_course_offerings.append(Course_Offering(**valid_course_offering))
     sqla.add_all(new_course_offerings)
     sqla.commit()
