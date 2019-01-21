@@ -9,7 +9,7 @@ from datetime import datetime
 from .models import Course, CourseSchema, Course_Offering, Class_Meeting,\
         Course_OfferingSchema, Diploma, DiplomaSchema, Student, StudentSchema,\
         Class_Meeting, Class_MeetingSchema, Diploma_Awarded, Diploma_AwardedSchema,\
-        Class_Attendance, Class_AttendanceSchema
+        Class_Attendance, Class_AttendanceSchema, Course_Completion, Course_CompletionSchema
 from ..people.models import Person
 from ..places.models import Country, Location
 from ..people.test_people import create_multiple_people
@@ -28,8 +28,8 @@ def course_object_factory():
     """Cook up a fake course."""
     fake = Faker()  # Use a generic one; others may not have all methods.
     course = {
-    'name': fake.sentence(nb_words=3),
-    'description': fake.paragraph(),
+    'name': "course: " + fake.sentence(nb_words=3),
+    'description': "description: " + fake.paragraph(),
     'active': flip()
     }
     return course
@@ -38,8 +38,8 @@ def course_object_factory_active():
     """Cook up a fake course."""
     fake = Faker()  # Use a generic one; others may not have all methods.
     course = {
-    'name': fake.sentence(nb_words=3),
-    'description': fake.paragraph(),
+    'name': "course: " + fake.sentence(nb_words=3),
+    'description': "description: " + fake.paragraph(),
     'active': True
     }
     return course
@@ -48,8 +48,8 @@ def course_object_factory_inactive():
     """Cook up a fake course."""
     fake = Faker()  # Use a generic one; others may not have all methods.
     course = {
-    'name': fake.sentence(nb_words=3),
-    'description': fake.paragraph(),
+    'name': "course: " + fake.sentence(nb_words=3),
+    'description': "description: " + fake.paragraph(),
     'active': False
     }
     return course
@@ -97,7 +97,7 @@ def course_offerings_object_factory(course_id):
     fake = Faker()  # Use a generic one; others may not have all methods.
     course_offerings = {
     'maxSize': random.randint(1,100),
-    'description': fake.paragraph(),
+    'description': "course offering: " + fake.paragraph(),
     'active': flip(),
     'courseId': course_id
     }
@@ -108,7 +108,7 @@ def course_offerings_object_factory_active(course_id):
     fake = Faker()  # Use a generic one; others may not have all methods.
     course_offerings = {
     'maxSize': random.randint(1,100),
-    'description': fake.paragraph(),
+    'description': "course offering: " + fake.paragraph(),
     'active': True,
     'courseId': course_id
     }
@@ -119,7 +119,7 @@ def course_offerings_object_factory_inactive(course_id):
     fake = Faker()  # Use a generic one; others may not have all methods.
     course_offerings = {
     'maxSize': random.randint(1,100),
-    'description': fake.paragraph(),
+    'description': "course offering: " + fake.paragraph(),
     'active': False,
     'courseId': course_id
     }
@@ -184,8 +184,8 @@ def courses_diploma_object_factory(num_courses):
     """Cook up a fake diploma."""
     fake = Faker()  # Use a generic one; others may not have all methods.
     course_diploma = {
-        'name': fake.sentence(nb_words=4),
-        'description': fake.paragraph(),
+        'name': "diploma name: " + fake.sentence(nb_words=4),
+        'description': "diploma description: " + fake.paragraph(),
         'active': flip(),
     }
     return course_diploma
@@ -253,17 +253,28 @@ def create_diploma_awards(sqla, n):
     sqla.add_all(new_diploma_awards)
     sqla.commit()
 
+def course_completion_object_factory(person_id, course_id):
+    """Cook up a fake course completion"""
+    course_completion = {
+        'personId': person_id,
+        'courseId': course_id
+    }
+    return course_completion
+
 def create_course_completion(sqla, n):
     """Commits the number of course completions to the DB."""
     people = sqla.query(Person).all()
     courses = sqla.query(Course).all()
+    course_completion_schema = Course_CompletionSchema()
     new_course_completion = []
     for person in people:
         course = courses[random.randint(0,len(courses)-1)]
-        person.completion.courses.append(course)
+        valid_course_completion = course_completion_schema.load(course_completion_object_factory(person.id, course.id))
+        person.completions.append(Course_Completion(**valid_course_completion))
         new_course_completion.append(person)
-    sqla.add_all(new_diploma_awards)
+    sqla.add_all(new_course_completion)
     sqla.commit()
+
 
 # --- Class_Meeting
 
@@ -304,6 +315,8 @@ def create_class_attendance(sqla, n):
     for i in range(n):
         class_meeting = class_meetings[random.randint(0, len(class_meetings)-1)]
         student = students[random.randint(0, len(students)-1)]
+        while class_meeting in student.attendance:
+            student = students[random.randint(0, len(students)-1)]
         student.attendance.append(class_meeting)
         new_class_attendance.append(student)
     sqla.add_all(new_class_attendance)
@@ -400,7 +413,7 @@ def test_read_one_course(auth_client):
         assert resp.json['name'] == course.name
         assert resp.json['description'] == course.description
         assert resp.json['active'] == course.active
-       
+
 def test_update_course(auth_client):
     """Test with invalid course"""
     # GIVEN empty database
@@ -991,7 +1004,7 @@ def test_update_class_attendance(auth_client):
     # WHEN
     # THEN
     assert True == False
-"""
+
 # ---- Class_Meeting
 
 def setup_dependencies_of_class_meeting(auth_client, n):

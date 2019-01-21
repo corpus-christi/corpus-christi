@@ -89,8 +89,8 @@ def address_factory(sqla):
         'city': addresslines[1].split(",")[0],
         'area_id': current_area.id,
         'country_code': current_area.country_code,
-        'latitude':random.random() * 360 - 180,
-        'longitude': random.random() * 360 - 180
+        'latitude':random.random() * 0.064116 + -2.933783,
+        'longitude': random.random() * 0.09952 + -79.055411
     }
     return address
 
