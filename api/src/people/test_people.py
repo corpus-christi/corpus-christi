@@ -173,8 +173,14 @@ def create_multiple_people_attributes(sqla, n):
         valid_person = person_schema.load(person_object_factory())
         new_people.append(Person(**valid_person))
     sqla.add_all(new_people)
-    new_attributes = [{'nameI18n': add_i18n_code('married', sqla, 'en-US', f'attribute.married'), 'typeI18n': add_i18n_code('attribute.radio', sqla, 'en-US', f'attribute.radio'), 'seq': 2, 'active': 1}, {'nameI18n':add_i18n_code('Home Group Name', sqla, 'en-US', f'attribute.HomeGroupName'), 'typeI18n': add_i18n_code('attribute.string', sqla, 'en-US', f'attribute.string'), 'seq': 1, 'active': 1}, {'nameI18n': add_i18n_code('Baptism Date', sqla, 'en-US', f'attribute.BaptismDate'), 'typeI18n': add_i18n_code('attribute.date', sqla, 'en-US', f'attribute.date'), 'seq': 3, 'active': 1}]
+    new_attributes = [{'nameI18n': add_i18n_code('Marital Status', sqla, 'en-US', f'attribute.married'), 'typeI18n': add_i18n_code('attribute.radio', sqla, 'en-US', f'attribute.radio'), 'seq': 2, 'active': 1}, {'nameI18n':add_i18n_code('Home Group Name', sqla, 'en-US', f'attribute.HomeGroupName'), 'typeI18n': add_i18n_code('attribute.string', sqla, 'en-US', f'attribute.string'), 'seq': 1, 'active': 1}, {'nameI18n': add_i18n_code('Baptism Date', sqla, 'en-US', f'attribute.BaptismDate'), 'typeI18n': add_i18n_code('attribute.date', sqla, 'en-US', f'attribute.date'), 'seq': 3, 'active': 1}]
     new_enumerated_values = [{'attributeId': 1, 'valueI18n': add_i18n_code('married', sqla, 'en-US', f'personAttribute.married'), 'active': 1}, {'attributeId': 1, 'valueI18n': add_i18n_code('single', sqla, 'en-US', f'personAttribute.single'), 'active': 1} ]
+
+    add_i18n_code('Estado Civil', sqla, 'es-EC', f'attribute.married')
+    add_i18n_code('Nombre del grupo de origen', sqla, 'es-EC', f'attribute.HomeGroupName')
+    add_i18n_code('Fecha de bautismo', sqla, 'es-EC', f'attribute.BaptismDate')
+    add_i18n_code('casado', sqla, 'es-EC', f'personAttribute.married')
+    add_i18n_code('soltero', sqla, 'es-EC', f'personAttribute.single')
 
     valid_attributes = []
     for attribute in new_attributes:
@@ -716,11 +722,11 @@ def test_get_roles_for_account(auth_client):
     create_accounts_roles(auth_client.sqla)
 
     accounts = auth_client.sqla.query(Account).all()
-    
+
     # WHEN the roles for each account are requested
     for account in accounts:
         resp = auth_client.get(url_for('people.get_roles_for_account', account_id = account.id))
-        
+
         # THEN expect the request to run OK
         assert resp.status_code == 200
 
@@ -752,7 +758,7 @@ def test_read_one_role(auth_client):
     # WHEN each role is read
     for role in roles:
         resp = auth_client.get(url_for('people.read_one_role', role_id = role.id))
-        
+
         # THEN expect the request to run OK
         assert resp.status_code == 200
 
@@ -768,7 +774,7 @@ def test_read_one_role_no_exist(auth_client):
 
     # WHEN a role is requested to be read
     resp = auth_client.get(url_for('people.read_one_role', role_id = random.randint(1, 8)))
-    
+
     # THEN expect the requested role not to be found
     assert resp.status_code == 404
 
@@ -790,7 +796,7 @@ def test_update_role(auth_client):
             mod['nameI18n'] = new_role['nameI18n']
         if flips[1]:
             mod['active'] = new_role['active']
-       
+
         # WHEN roles are updated with modification data
         resp = auth_client.patch(url_for('people.update_role', role_id = role.id), json =mod)
 
@@ -899,7 +905,7 @@ def test_add_role_to_account_no_exist(auth_client):
 
     # WHEN a role is requested to be added to an account that does not exist
     resp = auth_client.post(url_for('people.add_role_to_account', account_id = random.randint(1, 8), role_id = random.randint(1, 8)))
-    
+
     # THEN expect the request to be not found
     assert resp.status_code == 404
 
@@ -1064,7 +1070,7 @@ def test_update_manager_invalid(auth_client):
             mod['description_i18n'] = None
         if flips[2] or not (flips[0] or flips[1]):
             mod[fake.word()] = fake.word()
-        
+
         # WHEN a manager is requested to be updated with bad data
         resp = auth_client.patch(url_for('people.update_manager', manager_id = manager.id), json = mod)
 
@@ -1120,7 +1126,7 @@ def test_delete_manager_with_subordinate(auth_client):
     create_multiple_accounts(auth_client.sqla, 1)
     create_multiple_managers(auth_client.sqla, count * 2)
 
-    # GIVEN half of the managers are subordinates of the others 
+    # GIVEN half of the managers are subordinates of the others
     for i in range(1, count + 1):
         auth_client.sqla.query(Manager).filter(Manager.id == i).update({"manager_id":i + count})
         auth_client.sqla.commit()
