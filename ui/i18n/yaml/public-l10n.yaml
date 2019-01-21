@@ -4,7 +4,7 @@ public:
     es: Público
   headers:
     upcoming-classes:
-      en: Upcoming Clases
+      en: Upcoming Classes
       es: Próximas Clases
     upcoming-events:
       en: Upcoming Events
