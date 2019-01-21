@@ -201,7 +201,6 @@
 <script>
 import PersonForm from "./PersonForm";
 import PersonAdminForm from "./AccountForm";
-import store from "../store.js";
 
 export default {
   name: "PersonTable",
