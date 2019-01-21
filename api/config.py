@@ -22,7 +22,10 @@ PSQL_PROD = 'postgresql://arco@localhost:5432/cc-prod'
 
 
 class Config:
-    SECRET_KEY = os.environ.get(private.SECRET_KEY1) or private.SECRET_KEY2
+    try:
+        SECRET_KEY = os.environ.get(private.SECRET_KEY1) or private.SECRET_KEY2
+    except: 
+        print("Private.py not needed for CI testing")
 
     JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY') or 'jwt super secret key'
     JWT_ACCESS_TOKEN_EXPIRES = datetime.timedelta(hours=8)
