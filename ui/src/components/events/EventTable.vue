@@ -3,7 +3,7 @@
     <v-toolbar class="pa-1">
       <v-layout align-center justify-space-between fill-height>
         <v-flex md2>
-          <v-toolbar-title>{{ $t("events.title") }}</v-toolbar-title>
+          <v-toolbar-title>{{ $t("events.header") }}</v-toolbar-title>
         </v-flex>
         <v-flex md2>
           <v-text-field
@@ -26,6 +26,15 @@
           >
           </v-select>
         </v-flex>
+        <v-flex>
+          <v-switch
+            hide-details
+            v-model="viewPast"
+            data-cy="view-past-switch"
+            v-bind:label="$t('actions.view-past')"
+          >
+          </v-switch>
+        </v-flex>
         <v-flex shrink justify-self-end>
           <v-btn
             color="primary"
@@ -42,16 +51,31 @@
 
     <v-data-table
       :headers="headers"
+      :rows-per-page-items="rowsPerPageItem"
       :items="visibleEvents"
       :search="search"
+      :loading="tableLoading"
+      :pagination.sync="paginationInfo"
+      must-sort
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
+        <!-- TODO: Add icons for past, upcoming, etc. -->
+        <td>
+          <v-icon
+            v-if="eventOngoing(props.item)"
+            slot="badge"
+            small
+            justify-space-around
+            color="secondary"
+            >autorenew</v-icon
+          >
+        </td>
         <td
           class="hover-hand"
           v-on:click="$router.push({ path: '/events/' + props.item.id })"
         >
-          {{ props.item.title }}
+          <span> {{ props.item.title }}</span>
         </td>
         <td
           class="hover-hand"
@@ -119,7 +143,7 @@
                 color="primary"
                 slot="activator"
                 v-on:click="unarchive(props.item)"
-                :loading="props.item.unarchiving"
+                :loading="props.item.id < 0"
                 data-cy="unarchive"
               >
                 <v-icon small>undo</v-icon>
@@ -186,14 +210,29 @@ export default {
   name: "EventTable",
   components: { "event-form": EventForm },
   mounted() {
+    this.tableLoading = true;
     this.$http.get("/api/v1/events/?return_group=all").then(resp => {
       this.events = resp.data;
+      this.tableLoading = false;
+      console.log(this.events);
     });
     this.onResize();
   },
 
   data() {
     return {
+      rowsPerPageItem: [
+        10,
+        15,
+        25,
+        { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 }
+      ],
+      paginationInfo: {
+        sortBy: "start", //default sorted column
+        rowsPerPage: 10,
+        page: 1
+      },
+      tableLoading: true,
       events: [],
       eventDialog: {
         show: false,
@@ -213,8 +252,8 @@ export default {
         show: false,
         text: ""
       },
-      viewStatus: "viewAll",
-
+      viewStatus: "viewActive",
+      viewPast: false,
       windowSize: {
         x: 0,
         y: 0,
@@ -225,6 +264,7 @@ export default {
   computed: {
     headers() {
       return [
+        { text: "", sortable: false, width: "5%" },
         { text: this.$t("events.title"), value: "title" },
         { text: this.$t("events.start-time"), value: "start" },
         { text: this.$t("events.event-location"), value: "location_name" },
@@ -241,12 +281,17 @@ export default {
     },
 
     visibleEvents() {
+      let list = this.events;
+      if (!this.viewPast) {
+        list = this.events.filter(ev => new Date(ev.end) >= new Date());
+      }
+
       if (this.viewStatus == "viewActive") {
-        return this.events.filter(ev => ev.active);
+        return list.filter(ev => ev.active);
       } else if (this.viewStatus == "viewArchived") {
-        return this.events.filter(ev => !ev.active);
+        return list.filter(ev => !ev.active);
       } else {
-        return this.events;
+        return list;
       }
     },
 
@@ -273,10 +318,19 @@ export default {
     },
 
     duplicate(event) {
+      //TODO maintain duration for date select
       const copyEvent = JSON.parse(JSON.stringify(event));
+      copyEvent.start = new Date(copyEvent.start);
+      copyEvent.end = new Date(copyEvent.end);
+      const startDate = copyEvent.start.toDateString();
+      const endDate = copyEvent.end.toDateString();
+      if (startDate != endDate) {
+        const diff = copyEvent.end - copyEvent.start;
+        copyEvent.dayDuration = Math.ceil(diff / 86400000);
+      }
       copyEvent.start = new Date(copyEvent.start).getTime();
-      copyEvent.start %= 86400000; //ms in a day
       copyEvent.end = new Date(copyEvent.end).getTime();
+      copyEvent.start %= 86400000; //ms in a day
       copyEvent.end %= 86400000; //ms in a day
       delete copyEvent.id;
       this.activateEventDialog(copyEvent);
@@ -306,22 +360,16 @@ export default {
 
     unarchive(event) {
       const idx = this.events.findIndex(ev => ev.id === event.id);
-      const copyEvent = JSON.parse(JSON.stringify(event));
-      event.unarchiving = true;
-      copyEvent.active = true;
-      const putId = copyEvent.id;
-      delete copyEvent.id;
-      delete copyEvent.location; //Temporary delete
+      const patchId = event.id;
+      event.id *= -1; // to show loading spinner
       this.$http
-        .put(`/api/v1/events/${putId}`, copyEvent)
+        .patch(`/api/v1/events/${patchId}`, { active: true })
         .then(resp => {
           console.log("UNARCHIVED", resp);
-          delete event.unarchiving;
           Object.assign(this.events[idx], resp.data);
           this.showSnackbar(this.$t("events.event-unarchived"));
         })
         .catch(err => {
-          delete event.unarchiving;
           console.error("UNARCHIVE FALURE", err.response);
           this.showSnackbar(this.$t("events.error-unarchiving-event"));
         });
@@ -341,9 +389,12 @@ export default {
 
     saveEvent(event) {
       this.eventDialog.saveLoading = true;
-      event.location_id = event.location.id;
+      if (event.location) {
+        event.location_id = event.location.id;
+      }
       let newEvent = JSON.parse(JSON.stringify(event));
       delete newEvent.location;
+      delete newEvent.dayDuration;
       delete newEvent.id;
       if (this.eventDialog.editMode) {
         const eventId = event.id;
@@ -352,7 +403,7 @@ export default {
           .put(`/api/v1/events/${eventId}`, newEvent)
           .then(resp => {
             console.log("EDITED", resp);
-            Object.assign(this.events[idx], newEvent);
+            Object.assign(this.events[idx], resp.data);
             this.eventDialog.show = false;
             this.eventDialog.saveLoading = false;
             this.showSnackbar(this.$t("events.event-edited"));
@@ -386,7 +437,7 @@ export default {
       let newEvent = JSON.parse(JSON.stringify(event));
       delete newEvent.location;
       this.$http
-        .post("/api/v1/events/", event)
+        .post("/api/v1/events/", newEvent)
         .then(resp => {
           console.log("ADDED", resp);
           this.events.push(resp.data);
@@ -426,6 +477,12 @@ export default {
         }
       }
       return name;
+    },
+
+    eventOngoing(event) {
+      let start = new Date(event.start);
+      let end = new Date(event.end);
+      return start <= Date.now() && Date.now() <= end;
     },
 
     onResize() {

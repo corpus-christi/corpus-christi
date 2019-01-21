@@ -40,8 +40,12 @@ describe("Testing Editing User Information", () => {
   it("And: The other sorting buttons should be clickable and work as well", () => {
     cy.get("thead > :nth-child(1) > :nth-child(2)").click();
     cy.get("tbody > :nth-child(1) > :nth-child(2)").contains("Andrew");
-    cy.get("thead > :nth-child(1) > :nth-child(4)").click().click();
-    cy.get("tbody > :nth-child(1) > :nth-child(4)").contains("xdiaz@industrias.com");
+    cy.get("thead > :nth-child(1) > :nth-child(4)")
+      .click()
+      .click();
+    cy.get("tbody > :nth-child(1) > :nth-child(4)").contains(
+      "xdiaz@industrias.com"
+    );
     cy.get("thead > :nth-child(1) > :nth-child(5)").click();
     cy.get("tbody > :nth-child(1) > :nth-child(5)").should("be.empty");
   });

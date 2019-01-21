@@ -4,6 +4,7 @@ from flask import request
 from flask.json import jsonify
 from flask_jwt_extended import jwt_required, get_raw_jwt, jwt_optional
 from marshmallow import ValidationError
+from ..auth.utils import jwt_not_required
 
 from . import people
 from .models import Person, Account, AccountSchema, Role, PersonSchema, RoleSchema, Manager, ManagerSchema
@@ -19,7 +20,6 @@ enumerated_value_schema = EnumeratedValueSchema(exclude=['active'])
 
 
 @people.route('/persons/fields', methods=['GET'])
-@jwt_required
 def read_person_fields():
     response = {'person': [], 'person_attributes': []}
 
@@ -80,6 +80,8 @@ def read_all_persons():
     for r in result:
         r.attributesInfo = r.person_attributes
         r.accountInfo = r.account
+        if r.account:
+            r.accountInfo.roles = r.account.roles
     return jsonify(person_schema.dump(result, many=True))
 
 
@@ -229,10 +231,23 @@ def update_account(account_id):
     if account is None:
         return 'Account not found', 404
 
+    roles_to_add = []
+    if 'roles' in request.json.keys():
+        roles_to_add = request.json['roles']
+
     # Only these fields can be meaningfully updated.
     for field in 'password', 'username', 'active':
         if field in request.json:
             setattr(account, field, request.json[field])
+    
+    if roles_to_add is not None:
+        role_objects = []
+        for role in roles_to_add:
+            role_object = db.session.query(Role).filter_by(id=role).first()
+            role_objects.append(role_object)
+    
+    account.roles = role_objects
+
     db.session.commit()
     return jsonify(account_schema.dump(account))
 

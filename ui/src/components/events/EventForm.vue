@@ -10,7 +10,7 @@
           v-bind:label="$t('events.title')"
           name="title"
           v-validate="'required'"
-          v-bind:error-messages="errors.collect('title')"
+          v-bind:error-messages="errors.first('title')"
           data-cy="title"
         ></v-text-field>
         <v-textarea
@@ -18,11 +18,15 @@
           v-model="event.description"
           v-bind:label="$t('events.event-description')"
           name="description"
-          v-bind:error-messages="errors.collect('description')"
           data-cy="description"
         ></v-textarea>
 
-        <entity-search location v-model="event.location" />
+        <entity-search
+          location
+          v-model="event.location"
+          name="location"
+          v-bind:error-messages="errors.first('location')"
+        />
 
         <v-layout>
           <v-flex xs12 md6>
@@ -44,14 +48,17 @@
                 v-bind:label="$t('events.start-date')"
                 prepend-icon="event"
                 readonly
+                name="startDate"
+                ref="startDate"
+                v-validate="'required'"
+                v-bind:error-messages="errors.first('startDate')"
               ></v-text-field>
-
               <v-date-picker
                 v-bind:locale="currentLanguageCode"
                 v-model="startDate"
                 @input="showStartDatePicker = false"
-                data-cy="start-date-picker"
                 :min="today"
+                data-cy="start-date-picker"
               ></v-date-picker>
             </v-menu>
           </v-flex>
@@ -70,6 +77,9 @@
               <v-text-field
                 slot="activator"
                 v-model="startTime"
+                name="startTime"
+                v-validate="'required'"
+                v-bind:error-messages="errors.first('startTime')"
                 v-bind:label="$t('events.start-time')"
                 prepend-icon="schedule"
                 readonly
@@ -78,6 +88,7 @@
                 v-if="startTimeModal"
                 :format="timeFormat"
                 v-model="startTime"
+                :max="startDate == endDate ? endTime : null"
                 data-cy="start-time-picker"
               >
                 <v-spacer></v-spacer>
@@ -112,13 +123,19 @@
               full-width
               min-width="290px"
               data-cy="end-date-menu"
+              :disabled="!startDateTimeSelected"
             >
               <v-text-field
                 slot="activator"
                 v-model="endDate"
                 v-bind:label="$t('events.end-date')"
                 prepend-icon="event"
+                name="endDate"
+                ref="endDate"
+                v-validate="'required'"
+                v-bind:error-messages="errors.first('endDate')"
                 readonly
+                :disabled="!startDateTimeSelected"
               ></v-text-field>
 
               <v-date-picker
@@ -135,6 +152,7 @@
             <v-dialog
               ref="dialog2"
               v-model="endTimeModal"
+              :disabled="!startDateTimeSelected"
               :return-value.sync="endTime"
               lazy
               full-width
@@ -145,14 +163,19 @@
               <v-text-field
                 slot="activator"
                 v-model="endTime"
+                name="endTime"
+                v-validate="'required'"
+                v-bind:error-messages="errors.first('endTime')"
                 v-bind:label="$t('events.end-time')"
                 prepend-icon="update"
+                :disabled="!startDateTimeSelected"
                 readonly
               ></v-text-field>
               <v-time-picker
                 v-if="endTimeModal"
                 :format="timeFormat"
                 v-model="endTime"
+                :min="startDate == endDate ? startTime : null"
                 data-cy="end-time-picker"
               >
                 <v-spacer></v-spacer>
@@ -174,6 +197,14 @@
             </v-dialog>
           </v-flex>
         </v-layout>
+        <input
+          name="today"
+          type="text"
+          ref="today"
+          v-bind:value="today"
+          hidden
+          readonly
+        />
       </form>
     </v-card-text>
     <v-card-actions>
@@ -186,9 +217,14 @@
         >{{ $t("actions.cancel") }}</v-btn
       >
       <v-spacer></v-spacer>
-      <v-btn color="primary" flat v-on:click="clear" :disabled="formDisabled">{{
-        $t("actions.clear")
-      }}</v-btn>
+      <v-btn
+        color="primary"
+        data-cy="form-clear"
+        flat
+        v-on:click="clear"
+        :disabled="formDisabled"
+        >{{ $t("actions.clear") }}</v-btn
+      >
       <v-btn
         color="primary"
         outline
@@ -228,15 +264,30 @@ export default {
         this.event = eventProp;
         if (this.event.start != null) {
           this.event.start = new Date(this.event.start);
-          this.startTime = this.getTimeFromTimestamp(this.event.start);
           this.startDate = this.getDateFromTimestamp(this.event.start);
+          this.startTime = this.getTimeFromTimestamp(this.event.start);
         }
         if (this.event.end != null) {
           this.event.end = new Date(this.event.end);
-          this.endTime = this.getTimeFromTimestamp(this.event.end);
           this.endDate = this.getDateFromTimestamp(this.event.end);
+          this.endTime = this.getTimeFromTimestamp(this.event.end);
         }
       }
+    },
+
+    startDate(date) {
+      this.clearEndTimeIfInvalid();
+      if (!this.endDate || new Date(this.endDate) < new Date(date)) {
+        if (!this.event.dayDuration) {
+          this.endDate = date;
+        } else {
+          this.endDate = this.addDaystoDate(date, this.event.dayDuration);
+        }
+      }
+    },
+
+    endDate() {
+      this.clearEndTimeIfInvalid();
     }
   },
   computed: {
@@ -251,7 +302,7 @@ export default {
     },
 
     timeFormat() {
-      if (this.currentLanguageCode == "en") {
+      if (this.currentLanguageCode.substring(0, 2) == "en") {
         return "ampm";
       } else return "24hr";
     },
@@ -262,6 +313,10 @@ export default {
 
     today() {
       return this.getDateFromTimestamp(Date.now());
+    },
+
+    startDateTimeSelected() {
+      return this.startDate && this.startTime;
     },
 
     ...mapGetters(["currentLanguageCode"])
@@ -275,10 +330,10 @@ export default {
 
     // Clear the form and the validators.
     clear() {
-      delete this.event.location;
       for (let key of this.eventKeys) {
-        delete this.event[key];
+        this.event[key] = "";
       }
+      delete this.event.location;
       this.startTime = "";
       this.startDate = "";
       this.endTime = "";
@@ -314,11 +369,16 @@ export default {
 
     getTimestamp(date, time) {
       let datems = new Date(date).getTime();
-      let timearr = time.split(":");
-      let timemin = Number(timearr[0]) * 60 + Number(timearr[1]);
+      let timemin = this.getMinutesFromTime(time);
       let timems = timemin * 60000;
       let tzoffset = new Date().getTimezoneOffset() * 60000;
       return new Date(datems + timems + tzoffset);
+    },
+
+    getMinutesFromTime(time) {
+      let timearr = time.split(":");
+      let mins = Number(timearr[0]) * 60 + Number(timearr[1]);
+      return mins;
     },
 
     getDateFromTimestamp(ts) {
@@ -344,6 +404,22 @@ export default {
       let hr = String(date.getHours()).padStart(2, "0");
       let min = String(date.getMinutes()).padStart(2, "0");
       return `${hr}:${min}`;
+    },
+
+    addDaystoDate(date, dayDuration) {
+      let date1 = this.getTimestamp(date, "00:00");
+      date1.setDate(date1.getDate() + dayDuration);
+      return this.getDateFromTimestamp(date1);
+    },
+
+    clearEndTimeIfInvalid() {
+      if (this.startDate == this.endDate) {
+        let endMins = this.getMinutesFromTime(this.endTime);
+        let startMins = this.getMinutesFromTime(this.startTime);
+        if (endMins < startMins) {
+          this.endTime = "";
+        }
+      }
     }
   },
   props: {
