@@ -561,7 +561,7 @@ def read_all_course_offering_students(course_offering_id):
 @jwt_required
 def get_all_students():
     people = db.session.query(Student, Person).join(Person).all()
-    
+
     if people == []:
         return 'No students found in database', 404
 
@@ -594,6 +594,14 @@ def read_one_student(student_id):
     r = student_schema.dump(result[0].Student)
     r['person'] = person_schema.dump(result[0].Person)
     r['courses'] = []
+    r['diplomaList'] = []
+    for i in result[0].Person.diplomas_awarded:
+        d = db.session.query(Diploma).filter_by(id=i.diploma_id).first()
+        if d is None:
+            return 'Diploma not found', 404
+        d = diploma_schema.dump(d)
+        d['diplomaIsActive'] = d.pop('active')
+        r['diplomaList'].append(d)
     for i in result:
         r['courses'].append(course_schema.dump(i.Course))
     for i in r['courses']:
