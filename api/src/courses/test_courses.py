@@ -695,7 +695,7 @@ def test_read_all_diplomas(auth_client):
     # THEN we should receive 15 diplomas
     assert resp.status_code == 200
     assert len(resp.json) == 15
-""""
+
 @pytest.mark.xfail()
 def test_read_one_diploma(auth_client):
     """Test with invalid diploma"""
@@ -793,7 +793,7 @@ def test_read_all_diplomas_awarded(auth_client):
     assert resp.status_code == 200
     assert len(resp.json) == count
 
-"""
+
 def test_read_one_diploma_awarded(auth_client):
     #Test with invalid diploma awarded
     # GIVEN empty database
@@ -826,7 +826,7 @@ def test_update_diploma_awarded(auth_client):
     # WHEN
     # THEN
     assert True == False
-"""
+
 # ---- Student
 
 def setup_dependencies_of_student(auth_client, n):
@@ -953,7 +953,7 @@ def test_add_class_attendance(auth_client):
         assert resp.status_code == 200
     # THEN assert that entry is now in database
     assert auth_client.sqla.query(Class_Attendance).count() == len(students)
-"""
+
 @pytest.mark.xfail()
 def test_read_all_class_attendance(auth_client):
     # GIVEN
