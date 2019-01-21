@@ -661,6 +661,25 @@ def test_read_all_diplomas(auth_client):
     # THEN we should receive 15 diplomas
     assert resp.status_code == 200
     assert len(resp.json) == 15
+
+
+@pytest.mark.xfail()
+def test_read_one_diploma(client, db):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+
+
+def test_read_all_diplomas(auth_client):
+    # GIVEN 50 courses and 15 diplomas
+    create_multiple_courses(auth_client.sqla, 50)
+    create_multiple_diplomas(auth_client.sqla, 15)
+    # WHEN we read the diplomas
+    resp = auth_client.get(url_for('courses.read_all_diplomas'))
+    # THEN we should receive 15 diplomas
+    assert resp.status_code == 200
+    assert len(resp.json) == 15
 """"
 @pytest.mark.xfail()
 def test_read_one_diploma(auth_client):
