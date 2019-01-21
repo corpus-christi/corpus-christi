@@ -28,21 +28,21 @@
       </form>
     </v-card-text>
     <v-card-actions>
-      <v-btn
-        color="secondary"
-        flat
-        :disabled="saving"
-        v-on:click="cancel"
-      >{{ $t("actions.cancel") }}</v-btn>
+      <v-btn color="secondary" flat :disabled="saving" v-on:click="cancel">
+        {{ $t("actions.cancel") }}
+      </v-btn>
       <v-spacer></v-spacer>
-      <v-btn color="primary" flat :disabled="saving" v-on:click="clear">{{ $t("actions.clear") }}</v-btn>
+      <v-btn color="primary" flat :disabled="saving" v-on:click="clear">
+        {{ $t("actions.clear") }}
+      </v-btn>
       <v-btn
         color="primary"
         raised
         :disabled="saving"
         :loading="saving"
         v-on:click="save"
-      >{{ $t("actions.save") }}</v-btn>
+        >{{ $t("actions.save") }}</v-btn
+      >
     </v-card-actions>
   </v-card>
 </template>
@@ -63,7 +63,9 @@ export default {
   },
   computed: {
     title() {
-      return this.editMode ? this.$t("actions.edit") : this.$t("courses.new-offering");
+      return this.editMode
+        ? this.$t("actions.edit")
+        : this.$t("courses.new-offering");
     },
   },
 
@@ -94,7 +96,7 @@ export default {
   },
 
   methods: {
-     // Abandon ship.
+    // Abandon ship.
     cancel() {
       this.clear();
       this.$emit("cancel");

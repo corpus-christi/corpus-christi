@@ -1,6 +1,8 @@
 describe("Testing Editing User Information", () => {
-  it("Given: Visits the app root url, logs into an account, navigates" +
-      "to the people page, and filters the search to one person",() => {
+  it(
+    "Given: Visits the app root url, logs into an account, navigates" +
+      "to the people page, and filters the search to one person",
+    () => {
       cy.login();
       //Making sure we're in the right place
       cy.url().should("include", "/admin");
@@ -29,26 +31,34 @@ describe("Testing Editing User Information", () => {
     cy.get("[data-cy=login]").click();
     cy.url().should("include", "/admin");
   });
-  it("Finally: The password can be changed as many times as desired, so long as the password is 8+ characters, and " +
-    "the two fields match", () => {
-    cy.get('[data-cy=toggle-nav-drawer]').click();
-    cy.get('[data-cy=people]').click();
-    cy.get("[data-cy=search]").type("Quality");
-    cy.get("[data-cy=account-settings").click();
-    cy.get("[data-cy=new-update-password").type("test");
-    cy.get(':nth-child(1) > .v-input__control > .v-text-field__details').should('not.be.empty');
-    cy.get("[data-cy=confirm-password").type("bad");
-    cy.get(':nth-child(2) > .v-input__control > .v-text-field__details ').should('not.be.empty');
-    cy.get("[data-cy=new-update-password").clear().type("password");
-    cy.get("[data-cy=confirm-password").clear().type("password");
-    cy.get("[data-cy=confirm-button]").click();
-  });
+  it(
+    "Finally: The password can be changed as many times as desired, so long as the password is 8+ characters, and " +
+      "the two fields match",
+    () => {
+      cy.get("[data-cy=toggle-nav-drawer]").click();
+      cy.get("[data-cy=people]").click();
+      cy.get("[data-cy=search]").type("Quality");
+      cy.get("[data-cy=account-settings").click();
+      cy.get("[data-cy=new-update-password").type("test");
+      cy.get(
+        ":nth-child(1) > .v-input__control > .v-text-field__details"
+      ).should("not.be.empty");
+      cy.get("[data-cy=confirm-password").type("bad");
+      cy.get(
+        ":nth-child(2) > .v-input__control > .v-text-field__details "
+      ).should("not.be.empty");
+      cy.get("[data-cy=new-update-password")
+        .clear()
+        .type("password");
+      cy.get("[data-cy=confirm-password")
+        .clear()
+        .type("password");
+      cy.get("[data-cy=confirm-button]").click();
+    }
+  );
   it("Also: The cancel button brings the user out of the text field", () => {
     cy.get("[data-cy=account-settings").click();
     cy.get("[data-cy=cancel-button]").click();
-    cy.get('.v-dialog__content--active > .v-dialog').should('not.exist');
+    cy.get(".v-dialog__content--active > .v-dialog").should("not.exist");
   });
-
 });
-
-

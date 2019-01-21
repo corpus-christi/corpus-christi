@@ -3,9 +3,8 @@
 </template>
 
 <script>
-
 export default {
-  name: "Teams",
+  name: "Teams"
 };
 </script>
 

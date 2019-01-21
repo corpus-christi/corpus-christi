@@ -66,7 +66,7 @@ class PersonSchema(Schema):
     location_id = fields.Integer(data_key='locationId', allow_none=True)
 
     accountInfo = fields.Nested(
-        'AccountSchema', allow_none=True, only=['username', 'id'])
+        'AccountSchema', allow_none=True, only=['username', 'id', 'active', 'roles'])
 
     attributesInfo = fields.Nested('PersonAttributeSchema', many=True)
 
@@ -126,6 +126,7 @@ class AccountSchema(Schema):
     confirmed = fields.Boolean()
     person_id = fields.Integer(
         required=True, data_key="personId", validate=Range(min=1))
+    roles = fields.Nested('RoleSchema', many=True)
 
     @pre_load
     def hash_password(self, data):

@@ -15,15 +15,19 @@
       "noDataText": "No data available"
     },
     "account": {
+      "active": "Active",
+      "inactive": "Inactive",
       "messages": {
         "added-ok": "Account added successfully",
         "updated-ok": "Account updated successfully"
       },
+      "no-account": "Don't have an account?",
       "password": "Password",
       "repeat-password": "Repeat Password",
       "username": "Username"
     },
     "actions": {
+      "activate-account": "Activate",
       "add-another": "Add Another",
       "add-event": "Add Event",
       "add-person": "Add Person",
@@ -32,6 +36,7 @@
       "clear": "Clear",
       "close": "Close",
       "confirm": "Confirm",
+      "deactivate-account": "Deactivate",
       "duplicate": "Duplicate",
       "edit": "Edit",
       "header": "Actions",
@@ -40,6 +45,7 @@
       "save": "Save",
       "search": "Search",
       "search-people": "Search People",
+      "signup": "Signup",
       "tooltips": {
         "activate": "Activate",
         "archive": "Archive",
@@ -166,22 +172,27 @@
         "team-removed": "Team removed",
         "title": "Teams"
       },
-      "title": "Event Title"
+      "title": "Events"
     },
     "groups": {
       "title": "Home Churches"
     },
     "login": {
-      "header": "Log In"
+      "header": "Log In",
+      "messages": {
+        "incorrect-login": "Username or password is incorrect"
+      }
     },
     "people": {
-      "attributes": "Attributes",
-      "title": "People"
+      "title": "People",
+      "title-roles": "Roles",
+      "attributes": "Attributes"
     },
     "person": {
       "actions": {
         "add-account": "Add Account",
         "add-participant": "Add a Participant",
+        "assign-roles": "Assign Roles",
         "edit": "Edit Person",
         "new": "New Person",
         "reset-password": "Reset Password"
@@ -194,6 +205,8 @@
       "gender": "Gender",
       "male": "Male",
       "messages": {
+        "account-activate": "Account activated",
+        "account-deactivate": "Account deactivated",
         "canceled": "Canceled add new person",
         "person-activate": "Person activated",
         "person-add": "New person added",
@@ -203,7 +216,8 @@
       },
       "name": {
         "first": "First Name",
-        "last": "Last Name"
+        "last": "Last Name",
+        "second-last": "Second Last Name"
       },
       "phone": "Phone",
       "settings": "Settings for {person}"
@@ -253,15 +267,19 @@
       "noDataText": "Datos no disponibles"
     },
     "account": {
+      "active": "Activo",
+      "inactive": "Inactivo",
       "messages": {
         "added-ok": "Cuenta agregada exitosamente",
         "updated-ok": "Cuenta actualizada con \u00e9xito"
       },
+      "no-account": "\u00bfNo tienes una cuenta?",
       "password": "Contrase\u00f1a",
       "repeat-password": "Repite la contrase\u00f1a",
       "username": "Nombre de usuario"
     },
     "actions": {
+      "activate-account": "Activar",
       "add-another": "A\u00f1adir Otro",
       "add-event": "A\u00f1adir Evento",
       "add-person": "A\u00f1adir Persona",
@@ -270,6 +288,7 @@
       "clear": "Despejar",
       "close": "Cerrar",
       "confirm": "Confirmar",
+      "deactivate-account": "Desactivar",
       "duplicate": "Duplicar",
       "edit": "Editar",
       "header": "Acciones",
@@ -278,6 +297,7 @@
       "save": "Salvar",
       "search": "Buscar",
       "search-people": "Buscar Personas",
+      "signup": "Reg\u00edstrate",
       "tooltips": {
         "activate": "Activar",
         "archive": "Archivar",
@@ -410,16 +430,21 @@
       "title": "Iglesias Hogar"
     },
     "login": {
-      "header": "Iniciar Sesi\u00f3n"
+      "header": "Iniciar Sesi\u00f3n",
+      "messages": {
+        "incorrect-login": "Nombre de usuario o contrase\u00f1a incorrecta"
+      }
     },
     "people": {
-      "attributes": "Atributas",
-      "title": "Personas"
+      "title": "Personas",
+      "title-roles": "Papeles",
+      "attributes": "Atributas"
     },
     "person": {
       "actions": {
         "add-account": "A\u00f1adir cuenta",
         "add-participant": "A\u00f1adir Part\u00edcipe",
+        "assign-roles": "Asigne Papeles",
         "edit": "Editar persona",
         "new": "Persona Nueva",
         "reset-password": "Restablecer la contrase\u00f1a"
@@ -432,6 +457,8 @@
       "gender": "G\u00e9nero",
       "male": "Hombre",
       "messages": {
+        "account-activate": "Cuenta activada",
+        "account-deactivate": "Cuenta desactivada",
         "canceled": "Cancelado a\u00f1adir nueva persona",
         "person-activate": "Persona activada",
         "person-add": "Nueva persona agregada",
