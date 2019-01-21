@@ -4,7 +4,7 @@
       data-cy="entity-search-field"
       v-bind:label="getLabel"
       prepend-icon="search"
-      :items="entities"
+      :items="searchableEntities"
       :loading="isLoading"
       v-bind:value="value"
       v-on:input="setSelected"
@@ -14,6 +14,7 @@
       :filter="customFilter"
       :multiple="multiple"
       menu-props="closeOnClick, closeOnContentClick"
+      :value-comparator="compare"
       color="secondary"
     >
       <template v-if="!multiple" slot="selection" slot-scope="data">
@@ -28,7 +29,11 @@
     </v-autocomplete>
     <template v-if="multiple">
       <div v-for="entity in value" v-bind:key="entity[idField]">
-        <v-chip close @input="remove(entity)" :data-cy="'chip-'+entity[idField]">
+        <v-chip
+          close
+          @input="remove(entity)"
+          :data-cy="'chip-' + entity[idField]"
+        >
           {{ getEntityDescription(entity) }}
         </v-chip>
       </div>
@@ -47,6 +52,7 @@ export default {
     address: Boolean,
     manager: Boolean,
     multiple: { type: Boolean, default: false },
+    existingEntities: Array,
     value: null,
     searchEndpoint: String,
     errorMessages: String
@@ -71,6 +77,19 @@ export default {
     },
     idField() {
       return "id";
+    },
+    searchableEntities() {
+      if (this.existingEntities){
+        this.entities = this.entities.filter(ent => {
+          for (let otherEnt of this.existingEntities) {
+            if (ent[this.idField] == otherEnt[this.idField]) {
+              return false;
+            }
+          }
+          return true;
+        });
+      }
+      return this.entities;
     }
   },
   methods: {
@@ -81,11 +100,9 @@ export default {
       );
       return idx > -1;
     },
-
     setSelected(entity) {
       this.$emit("input", entity);
     },
-
     getEntityDescription(entity, letterLimit = this.descriptionLimit) {
       if (!entity) return;
       let entityDescriptor = "";
@@ -105,22 +122,20 @@ export default {
       } else if (this.address) {
         entityDescriptor = entity.name + ", " + entity.address;
       } else if (this.manager) {
-        entityDescriptor = entity.person.firstName + " " + entity.person.lastName + " " + ((entity.person.secondLastName) ? entity.person.secondLastName : "");
+        var person = entity.person
+        entityDescriptor = person.firstName + " " + person.lastName + " " + ((person.secondLastName) ? person.secondLastName : "");
       }
-
       if (entityDescriptor.length > letterLimit) {
         //TODO don't do this here, it limits search functionality
         entityDescriptor = entityDescriptor.substring(0, letterLimit) + "...";
       }
       return entityDescriptor;
     },
-
     customFilter(item, queryText) {
       const itemDesc = this.getEntityDescription(item).toLowerCase();
       const searchText = queryText.toLowerCase();
       return itemDesc.indexOf(searchText) > -1;
     },
-
     remove(entity) {
       if (!this.multiple) return;
       var idx = this.value.findIndex(
@@ -129,9 +144,12 @@ export default {
       if (idx > -1) {
         this.value.splice(idx, 1);
       }
+    },
+    compare(a, b) {
+      if (!a || !b) return false;
+      return a[this.idField] == b[this.idField];
     }
   },
-
   mounted() {
     //TODO use search-input.sync to avoid making a huge request here
     this.isLoading = true;

@@ -142,6 +142,31 @@
       />
     </v-dialog>
 
+    <!-- Archive dialog -->
+    <v-dialog v-model="archiveDialog.show" max-width="350px">
+      <v-card>
+        <v-card-text>{{ $t("groups.confirm-archive") }}</v-card-text>
+        <v-card-actions>
+          <v-btn
+            v-on:click="cancelArchive"
+            color="secondary"
+            flat
+            data-cy="cancel-archive"
+            >{{ $t("actions.cancel") }}</v-btn
+          >
+          <v-spacer></v-spacer>
+          <v-btn
+            v-on:click="archiveGroup"
+            color="primary"
+            raised
+            :loading="archiveDialog.loading"
+            data-cy="confirm-archive"
+            >{{ $t("actions.confirm") }}</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
       <v-btn flat @click="snackbar.show = false">
@@ -188,6 +213,12 @@ export default {
         saveLoading: false,
         addMoreLoading: false,
         group: {}
+      },
+
+      archiveDialog: {
+        show: false,
+        groupId: -1,
+        loading: false
       },
 
       snackbar: {
@@ -252,9 +283,10 @@ export default {
       delete newGroup.id;
       if (this.groupDialog.editMode) {
         const groupId = group.id;
+        delete newGroup.managerInfo;
         const idx = this.groups.findIndex(ev => ev.id === group.id);
         this.$http
-          .put(`/api/v1/groups/${groupId}`, newGroup)
+          .patch(`/api/v1/groups/groups/${groupId}`, newGroup)
           .then(resp => {
             console.log("EDITED", resp);
             Object.assign(this.groups[idx], resp.data);
@@ -289,6 +321,64 @@ export default {
       this.activateGroupDialog({ ...group }, true);
     },
 
+    activateArchiveDialog(groupId) {
+      this.archiveDialog.show = true;
+      this.archiveDialog.groupId = groupId;
+    },
+
+    confirmArchive(event) {
+      this.activateArchiveDialog(event.id);
+    },
+
+    cancelArchive() {
+      this.archiveDialog.show = false;
+    },
+
+    archiveGroup() {
+      console.log("Archived group");
+      this.archiveDialog.loading = true;
+      const groupId = this.archiveDialog.groupId;
+      const idx = this.groups.findIndex(ev => ev.id === groupId);
+      this.$http
+        .put(`/api/v1/groups/groups/deactivate/${groupId}`)
+        .then(resp => {
+          console.log("ARCHIVE", resp);
+          this.groups[idx].active = false;
+          this.archiveDialog.loading = false;
+          this.archiveDialog.show = false;
+          this.showSnackbar(this.$t("groups.group-archived"));
+        })
+        .catch(err => {
+          console.error("ARCHIVE FALURE", err.response);
+          this.archiveDialog.loading = false;
+          this.archiveDialog.show = false;
+          this.showSnackbar(this.$t("groups.error-archiving-group"));
+        });
+    },
+
+    unarchive(group) {
+      const idx = this.groups.findIndex(ev => ev.id === group.id);
+      const groupId = group.id;
+      group.id *= -1; // to show loading spinner
+      this.$http
+        .put(`/api/v1/groups/groups/activate/${groupId}`)
+        .then(resp => {
+          console.log("UNARCHIVED", resp);
+          Object.assign(this.groups[idx], resp.data);
+          this.showSnackbar(this.$t("events.event-unarchived"));
+        })
+        .catch(err => {
+          console.error("UNARCHIVE FALURE", err.response);
+          this.showSnackbar(this.$t("events.error-unarchiving-event"));
+        });
+    },
+
+    duplicate(group) {
+      const copyGroup = JSON.parse(JSON.stringify(group));
+      delete copyGroup.id;
+      this.activateGroupDialog(copyGroup);
+    },
+
     addAnotherGroup() {
 
     },
@@ -310,3 +400,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.hover-hand {
+  cursor: pointer;
+}
+</style>

@@ -6,7 +6,7 @@
 
 <script>
 export default {
-  name: 'Group Meetings',
+  name: 'GroupMeetings',
   data() {
     return {
     };

@@ -6,7 +6,7 @@
       v-on:click="$router.push({ path: '/groups/all' })"
       ><v-icon>arrow_back</v-icon>Back</v-btn
     >
-    <v-tabs v-model="activeTab" color="transparent" slider-color="accent">
+    <v-tabs color="transparent" slider-color="accent">
       <v-tab
         ripple
         :to="{ path: '/groups/' + $route.params.group + '/details' }"

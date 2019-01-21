@@ -5,7 +5,6 @@
     </v-card-title>
     <v-card-text>
       <form>
-        {{ group }}
         <v-text-field
           v-model="group.name"
           v-bind:label="$t('groups.name')"
@@ -85,6 +84,7 @@ export default {
         this.clear();
       } else {
         this.group = groupProp;
+        this.group.manager = groupProp.managerInfo;
       }
     },
 
