@@ -139,10 +139,13 @@ def test_update_group(auth_client):
     updated_group = auth_client.sqla.query(Group).filter_by(id=group.id).first()
     for attr in ['name', 'description', 'manager_id', 'active']:
         assert vars(updated_group)[attr] == payload[attr]
+
     # THEN we assume the correct amount of members with the group in the database
     queried_members = auth_client.sqla.query(Group).filter_by(id=group.id).first().members
-    queried_members = auth_client.sqla.query(Member).filter_by(group_id=group.id).all()
+    queried_members = auth_client.sqla.query(Member).filter_by(group_id=group.id).filter_by(active=True).all()
+    
     print(f"members in database {queried_members}, members in the payload {payload['person_ids']}")
+
     for queried_member in queried_members:
         print(f"person id in database: {queried_member.person_id}")
     assert len(queried_members) == len(payload['person_ids'])
@@ -660,6 +663,52 @@ def test_update_member(auth_client):
     auth_client.sqla.delete(member)
     auth_client.sqla.commit()
     resp = auth_client.patch(url_for('groups.update_member', member_id=member.id), json=payload)
+    assert resp.status_code == 404
+
+
+@pytest.mark.smoke
+def test_activate_member(auth_client):
+    # GIVEN a database with a number of members
+    generate_managers(auth_client)
+    create_multiple_groups(auth_client.sqla, 4)
+    create_multiple_people(auth_client.sqla, 4)
+    create_multiple_members(auth_client.sqla, 4)
+
+    members = auth_client.sqla.query(Member).all()
+
+    # WHEN member is changed to active
+    for member in members:
+        resp = auth_client.put(url_for('groups.activate_member', member_id=member.id))
+        print(member)
+        # THEN assert group is active
+        assert resp.status_code == 200
+        assert resp.json['active'] == True
+
+    resp = auth_client.put(url_for('groups.activate_member', member_id='None'))
+    # THEN assert group is not found
+    assert resp.status_code == 404
+
+
+@pytest.mark.smoke
+def test_deactivate_member(auth_client):
+    # GIVEN a database with a number of members
+    generate_managers(auth_client)
+    create_multiple_groups(auth_client.sqla, 4)
+    create_multiple_people(auth_client.sqla, 4)
+    create_multiple_members(auth_client.sqla, 4)
+
+    members = auth_client.sqla.query(Member).all()
+
+    # WHEN member is changed to active
+    for member in members:
+        resp = auth_client.put(url_for('groups.deactivate_member', member_id=member.id))
+        print(member)
+        # THEN assert group is active
+        assert resp.status_code == 200
+        assert resp.json['active'] == False
+
+    resp = auth_client.put(url_for('groups.activate_member', member_id='None'))
+    # THEN assert group is not found
     assert resp.status_code == 404
 
 
