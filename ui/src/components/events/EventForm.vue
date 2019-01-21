@@ -205,40 +205,10 @@
           hidden
           readonly
         />
+      </form>
 
-        <div class="upload">
-          <ul>
-            <li v-for="file in files" :key="file.id">
-              <span>{{ file.name }}</span> -
-              <span v-if="file.error">{{ file.error }}</span>
-              <span v-else-if="file.success">Added</span>
-              <span v-else-if="file.active">Adding</span>
-              <span v-else></span>
-            </li>
-          </ul>
-          <div>
-            <v-btn>
-              <file-upload
-                post-action="/upload/post"
-                extensions="gif,jpg,jpeg,png,webp"
-                accept="image/png,image/gif,image/jpeg,image/webp"
-                :multiple="true"
-                :size="1024 * 1024 * 10"
-                v-model="files"
-                @input-filter="inputFilter"
-                @input-file="inputFile"
-                ref="upload">
-                <v-icon small dark>add</v-icon> Add Picture
-              </file-upload>
-            </v-btn>
-            <v-btn color="primary" v-if="!$refs.upload || !$refs.upload.active" @click.prevent="$refs.upload.active = true">
-              <v-icon small dark>done</v-icon>&nbsp; Save
-            </v-btn>
-            <v-btn color="error" v-else @click.prevent="$refs.upload.active = false">
-              <v-icon small dark>stop</v-icon>&nbsp; Stop
-            </v-btn>
-          </div>
-        </div>
+      <form method="POST" ref="imageForm" @submit.prevent="postImage">
+        <input type="file" name="file" ref="fileChooser" />
       </form>
     </v-card-text>
     <v-divider></v-divider>
@@ -287,12 +257,11 @@
 import { isEmpty } from "lodash";
 import { mapGetters } from "vuex";
 import EntitySearch from "../EntitySearch";
-import FileUpload from 'vue-upload-component';
 
 export default {
-  components: { 
-    "entity-search": EntitySearch,
-    FileUpload },
+  components: {
+    "entity-search": EntitySearch
+  },
   name: "EventForm",
   watch: {
     // Make sure data stays in sync with any changes to `initialData` from parent.
@@ -390,7 +359,11 @@ export default {
           this.event.start = this.getTimestamp(this.startDate, this.startTime);
           this.event.end = this.getTimestamp(this.endDate, this.endTime);
           this.event.active = true;
-          this.$emit("save", this.event);
+          if (this.$refs.fileChooser.files.length > 0) {
+            this.postImage().then(() => this.$emit("save", this.event));
+          } else {
+            this.$emit("save", this.event);
+          }
         }
       });
     },
@@ -461,27 +434,40 @@ export default {
       }
     },
 
-    inputFilter(newFile, oldFile, prevent) {
-      if (newFile && !oldFile) {
-        if (/(\/|^)(Thumbs\.db|desktop\.ini|\..+)$/.test(newFile.name)) {
-          return prevent()
-        }
-        if (/\.(php5?|html?|jsx?)$/i.test(newFile.name)) {
-          return prevent()
-        }
-      }
-    },
-    inputFile(newFile, oldFile) {
-      if (newFile && !oldFile) {
-        console.log('add', newFile)
-      }
-      if (newFile && oldFile) {
-        console.log('update', newFile)
-      }
-      if (!newFile && oldFile) {
-        console.log('remove', oldFile)
-      }
+    postImage() {
+      var formData = new FormData(this.$refs.imageForm);
+      var url = "/api/v1/images/";
+      return this.$http
+        .post(url, formData)
+        .then(resp => {
+          console.log("IMAGE ADDED", resp);
+        })
+        .catch(err => {
+          console.error("IMAGE UPLOAD FAILURE", err.response);
+        });
     }
+
+    // inputFilter(newFile, oldFile, prevent) {
+    //   if (newFile && !oldFile) {
+    //     if (/(\/|^)(Thumbs\.db|desktop\.ini|\..+)$/.test(newFile.name)) {
+    //       return prevent()
+    //     }
+    //     if (/\.(php5?|html?|jsx?)$/i.test(newFile.name)) {
+    //       return prevent()
+    //     }
+    //   }
+    // },
+    // inputFile(newFile, oldFile) {
+    //   if (newFile && !oldFile) {
+    //     console.log('add', newFile)
+    //   }
+    //   if (newFile && oldFile) {
+    //     console.log('update', newFile)
+    //   }
+    //   if (!newFile && oldFile) {
+    //     console.log('remove', oldFile)
+    //   }
+    // }
   },
   props: {
     editMode: {

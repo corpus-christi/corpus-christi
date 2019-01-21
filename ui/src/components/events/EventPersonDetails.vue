@@ -183,7 +183,9 @@ export default {
   },
   computed: {
     addPersonDialogTitle() {
-      return this.addPersonDialog.editMode ? this.$t("events.persons.edit") : this.$t("events.persons.new");
+      return this.addPersonDialog.editMode
+        ? this.$t("events.persons.edit")
+        : this.$t("events.persons.new");
     }
   },
 
@@ -199,7 +201,7 @@ export default {
     openEditDialog(eventPerson) {
       this.addPersonDialog.editMode = true;
       this.addPersonDialog.show = true;
-      this.$set(this.addPersonDialog, 'person', eventPerson.person);
+      this.$set(this.addPersonDialog, "person", eventPerson.person);
       this.addPersonDialog.description = eventPerson.description;
     },
 
@@ -215,33 +217,38 @@ export default {
           return;
         }
       }
-      let body =  {description: this.addPersonDialog.description}
+      let body = { description: this.addPersonDialog.description };
       let promise;
       if (this.addPersonDialog.editMode) {
-        promise = this.$http
-          .patch(`/api/v1/events/${eventId}/individuals/${personId}`, body)
+        promise = this.$http.patch(
+          `/api/v1/events/${eventId}/individuals/${personId}`,
+          body
+        );
       } else {
-        promise = this.$http
-          .post(`/api/v1/events/${eventId}/individuals/${personId}`, body)
+        promise = this.$http.post(
+          `/api/v1/events/${eventId}/individuals/${personId}`,
+          body
+        );
       }
-      promise.then(() => {
-        if (this.addPersonDialog.editMode) {
-          this.showSnackbar(this.$t("events.persons.person-edited"));
-        } else {
-          this.showSnackbar(this.$t("events.persons.person-added"));
-        }
-        this.$emit("person-added");
-        this.closeAddPersonDialog();
-      })
-      .catch(err => {
-        console.log(err);
-        this.addPersonDialog.loading = false;
-        if (err.response.status == 422) {
-          this.showSnackbar(this.$t("events.persons.error-person-assigned"));
-        } else {
-          this.showSnackbar(this.$t("events.persons.error-adding-person"));
-        }
-      });
+      promise
+        .then(() => {
+          if (this.addPersonDialog.editMode) {
+            this.showSnackbar(this.$t("events.persons.person-edited"));
+          } else {
+            this.showSnackbar(this.$t("events.persons.person-added"));
+          }
+          this.$emit("person-added");
+          this.closeAddPersonDialog();
+        })
+        .catch(err => {
+          console.log(err);
+          this.addPersonDialog.loading = false;
+          if (err.response.status == 422) {
+            this.showSnackbar(this.$t("events.persons.error-person-assigned"));
+          } else {
+            this.showSnackbar(this.$t("events.persons.error-adding-person"));
+          }
+        });
     },
 
     deletePerson() {

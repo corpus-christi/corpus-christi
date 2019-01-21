@@ -192,7 +192,9 @@ export default {
           // conserve description on EventPersons
           this.event.persons = !this.event.persons
             ? []
-            : this.event.persons.map(p => Object.assign(p, {id:p.person_id}));
+            : this.event.persons.map(p =>
+                Object.assign(p, { id: p.person_id })
+              );
           this.pageLoaded = true;
         });
     },
