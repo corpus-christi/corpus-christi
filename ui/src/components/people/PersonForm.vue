@@ -9,7 +9,7 @@
           v-model="person.firstName"
           v-bind:label="$t('person.name.first')"
           name="firstName"
-          v-validate="'required'"
+          v-validate="'required|alpha_spaces'"
           v-bind:error-messages="errors.collect('firstName')"
           :readonly="formDisabled"
           data-cy="first-name"
@@ -19,7 +19,7 @@
           v-model="person.lastName"
           v-bind:label="$t('person.name.last')"
           name="lastName"
-          v-validate="'required'"
+          v-validate="'required|alpha_spaces'"
           v-bind:error-messages="errors.collect('lastName')"
           :readonly="formDisabled"
           data-cy="last-name"
@@ -29,6 +29,7 @@
           v-model="person.secondLastName"
           v-bind:label="$t('person.name.second-last')"
           name="secondLastName"
+          v-validate="'alpha_spaces'"
           v-bind:error-messages="errors.collect('secondLastName')"
           :readonly="formDisabled"
           data-cy="second-last-name"
@@ -59,14 +60,18 @@
           <v-text-field
             slot="activator"
             v-model="person.birthday"
+            name="birthday"
             v-bind:label="$t('person.date.birthday')"
             prepend-icon="event"
             readonly
             data-cy="birthday"
+            data-vv-validate-on="input"
+            v-validate="'date_format:YYYY-MM-DD'"
+            v-bind:error-messages="errors.collect('birthday')"
           ></v-text-field>
-
           <v-date-picker
             v-bind:locale="currentLanguageCode"
+            :max="getTodayString"
             v-model="person.birthday"
             @input="showBirthdayPicker = false"
             data-cy="birthday-picker"
@@ -218,6 +223,18 @@ export default {
 
     hasAttributes() {
       return this.$props.attributes.length !== 0;
+    },
+
+    getTodayString() {
+      let today = new Date();
+      let str = `${today.getFullYear()}-${(today.getMonth() + 1).toLocaleString(
+        "en-US",
+        { minimumIntegerDigits: 2, useGrouping: false }
+      )}-${today.getDate().toLocaleString("en-US", {
+        minimumIntegerDigits: 2,
+        useGrouping: false
+      })}`;
+      return str;
     }
   },
 
