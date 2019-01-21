@@ -14,6 +14,7 @@
       :filter="customFilter"
       :multiple="multiple"
       menu-props="closeOnClick, closeOnContentClick"
+      :value-comparator="compare"
       color="secondary"
     >
       <template v-if="!multiple" slot="selection" slot-scope="data">
@@ -141,6 +142,11 @@ export default {
       if (idx > -1) {
         this.value.splice(idx, 1);
       }
+    },
+
+    compare(a, b) {
+      if (!a || !b) return false;
+      return a[this.idField] == b[this.idField];
     }
   },
 
