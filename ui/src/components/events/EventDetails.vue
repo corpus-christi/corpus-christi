@@ -56,7 +56,6 @@
       </v-card>
     </v-flex>
     <v-layout column wrap>
-      <!-- TODO: reload individually on add -->
       <v-flex xs12>
         <event-team-details
           :teams="event.teams"
