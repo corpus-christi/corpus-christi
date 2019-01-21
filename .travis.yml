@@ -39,8 +39,8 @@ matrix:
                         - createuser arco
                         - createdb --owner=arco cc-staging 
                         - flask db upgrade
-                        - flask data load-all
-                          #- rm migrations/versions/*.py
+                          #- flask data load-all
+                          #    - rm migrations/versions/*.py
                         - sudo nginx -t
                         - sudo systemctl restart nginx
                         - cd ../
