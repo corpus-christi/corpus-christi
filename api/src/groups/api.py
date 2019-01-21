@@ -394,7 +394,7 @@ def update_member(member_id):
 @groups.route('/members/activate/<member_id>', methods=['PUT'])
 @jwt_required
 def activate_member(member_id):
-    member = db.session.query(Meeting).filter_by(id=member_id).first()
+    member = db.session.query(Member).filter_by(id=member_id).first()
     
     if member is None:
         return jsonify(msg="Member not found"), 404
@@ -406,7 +406,7 @@ def activate_member(member_id):
 @groups.route('/members/deactivate/<member_id>', methods=['PUT'])
 @jwt_required
 def deactivate_member(member_id):
-    member = db.session.query(Meeting).filter_by(id=member_id).first()
+    member = db.session.query(Member).filter_by(id=member_id).first()
     
     if member is None:
         return jsonify(msg="Member not found"), 404
