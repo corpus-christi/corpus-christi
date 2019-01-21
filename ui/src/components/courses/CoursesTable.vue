@@ -59,8 +59,12 @@
         indeterminate
       ></v-progress-linear>
       <template slot="items" slot-scope="props">
-        <td>{{ props.item.name }}</td>
-        <td>{{ props.item.description }}</td>
+        <td class="hover-hand" @click="clickThrough(props.item)">
+          {{ props.item.name }}
+        </td>
+        <td class="hover-hand" @click="clickThrough(props.item)">
+          {{ props.item.description }}
+        </td>
         <td>
           <CourseAdminActions
             v-bind:course="props.item"
@@ -130,7 +134,7 @@
 
 <script>
 import CourseEditor from "./CourseEditor";
-import CourseAdminActions from "./CourseAdminActions";
+import CourseAdminActions from "./actions/CourseAdminActions";
 
 export default {
   name: "CoursesTable",
@@ -201,6 +205,13 @@ export default {
   },
 
   methods: {
+    clickThrough(course) {
+      this.$router.push({
+        name: "course-details",
+        params: { courseId: course.id }
+      });
+    },
+
     dispatchAction(actionName, course) {
       switch (actionName) {
         case "edit":
@@ -369,3 +380,9 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.hover-hand {
+  cursor: pointer;
+}
+</style>

@@ -45,7 +45,7 @@ def login():
         return jsonify(badCred), 404
 
     print(datetime)
-    access_token = create_access_token(identity=username, expires_delta=datetime.timedelta(seconds=10))
+    access_token = create_access_token(identity=username)
     return jsonify(jwt=access_token, username=account.username,
                    firstName=person.first_name, lastName=person.last_name)
 

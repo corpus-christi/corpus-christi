@@ -55,9 +55,24 @@ export default {
           icon: "school"
         },
         {
-          title: this.$t("events.title"),
+          title: this.$t("diplomas.diploma"),
+          route: "diplomas-admin",
+          icon: "school"
+        },
+        {
+          title: this.$t("events.header"),
           route: "events",
           icon: "event"
+        },
+        {
+          title: this.$t("events.teams.title"),
+          route: "teams",
+          icon: "group"
+        },
+        {
+          title: this.$t("assets.title"),
+          route: "assets",
+          icon: "devices_other"
         }
       ];
     }
