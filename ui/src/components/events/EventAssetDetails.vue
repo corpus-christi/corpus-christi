@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-card class="ma-1">
-      <template v-if="pageLoaded">
+      <template v-if="loaded">
         <v-container fill-height fluid>
           <v-flex xs9 sm9 align-end flexbox>
             <span class="headline">{{ $t("assets.title") }}</span>
@@ -128,7 +128,7 @@ export default {
     assets: {
       required: true
     },
-    pageLoaded: {
+    loaded: {
       type: Boolean,
       required: true
     }

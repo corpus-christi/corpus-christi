@@ -51,8 +51,4 @@ describe("Event Participants Test", function() {
       .click();
     cy.get("[data-cy=confirm-delete]").click();
   });
-
-  it("THEN: Event has one participant", function() {
-    cy.get("tbody > :nth-child(2)").should("not.exist");
-  });
 });

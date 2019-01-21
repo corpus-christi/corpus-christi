@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-card class="ma-1">
-      <template v-if="pageLoaded">
+      <template v-if="loaded">
         <v-container fill-height fluid>
           <v-flex xs9 sm9 align-end flexbox>
             <span class="headline">{{ $t("events.persons.title") }}</span>
@@ -22,7 +22,10 @@
             <v-divider v-bind:key="'personDivider' + person.id"></v-divider>
             <v-list-tile v-bind:key="person.id">
               <v-list-tile-content class="pr-0">
-                {{ getFullName(person.person) }} - {{ person.description }}
+                {{ getFullName(person.person) }}
+                <template v-if="person.description">
+                  - {{ person.description }}</template
+                >
               </v-list-tile-content>
               <v-list-tile-action>
                 <v-layout row>
@@ -158,7 +161,7 @@ export default {
     persons: {
       required: true
     },
-    pageLoaded: {
+    loaded: {
       type: Boolean,
       required: true
     }
