@@ -47,7 +47,7 @@ matrix:
                                 PASS = 'DFGjhfdhGf5434H'
                                 SECRET_KEY1 = 'oi5uy5tred3434fgh'
                                 SECRET_KEY2 = 'mnbavc4xs4dfghj34kiuytres'
-                                END 
+                          END 
                         - flask db upgrade
                         - flask data load-all
                         - sudo nginx -t
