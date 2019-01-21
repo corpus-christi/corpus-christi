@@ -73,7 +73,7 @@ class Course_Completion(Base):
      people = relationship('Person', backref='completion', lazy=True)
      courses = relationship('Course', backref='completion', lazy=True)
 
-class Course_Completion(Schema):
+class Course_CompletionSchema(Schema):
      course_id = fields.Integer(dump_only=True, data_key='courseId', required=True)
      person_id = fields.Integer(dump_only=True, data_key='personId', required=True)
 
