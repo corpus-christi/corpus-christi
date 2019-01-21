@@ -15,19 +15,24 @@
             single-line
             box
             hide-details
-          ></v-text-field>          
+          ></v-text-field>
         </v-flex>
         <v-spacer></v-spacer>
 
         <v-flex md3>
-          <v-select v-model="viewStatus" :items="options" solo hide-details></v-select>
+          <v-select
+            v-model="viewStatus"
+            :items="options"
+            solo
+            hide-details
+          ></v-select>
         </v-flex>
 
         <v-flex shrink justify-self-end>
-        <v-btn color="primary" raised v-on:click.stop="newCourseOffering">
-          <v-icon left>library_add</v-icon>
-          {{ $t("courses.new") }}
-        </v-btn>
+          <v-btn color="primary" raised v-on:click.stop="newCourseOffering">
+            <v-icon left>library_add</v-icon>
+            {{ $t("courses.new") }}
+          </v-btn>
         </v-flex>
       </v-layout>
     </v-toolbar>
@@ -39,7 +44,11 @@
       :items="showCourseOfferings"
       class="elevation-1"
     >
-      <v-progress-linear slot="progress" color="primary" indeterminate></v-progress-linear>
+      <v-progress-linear
+        slot="progress"
+        color="primary"
+        indeterminate
+      ></v-progress-linear>
       <template slot="items" slot-scope="props">
         <td class="hover-hand" @click="clickThrough(props.item)">
           {{ props.item.description }}
@@ -59,11 +68,18 @@
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false">{{ $t("actions.close") }}</v-btn>
+      <v-btn flat @click="snackbar.show = false">
+        {{ $t("actions.close") }}
+      </v-btn>
     </v-snackbar>
 
     <!-- New/Edit dialog -->
-    <v-dialog persistent scrollable v-model="courseOfferingDialog.show" max-width="500px">
+    <v-dialog
+      persistent
+      scrollable
+      v-model="courseOfferingDialog.show"
+      max-width="500px"
+    >
       <CourseOfferingForm
         v-bind:editMode="courseOfferingDialog.editMode"
         v-bind:initialData="courseOfferingDialog.courseOffering"
@@ -84,7 +100,8 @@
             flat
             :disabled="deactivateDialog.loading"
             data-cy
-          >{{ $t("actions.cancel") }}</v-btn>
+            >{{ $t("actions.cancel") }}</v-btn
+          >
           <v-spacer></v-spacer>
           <v-btn
             v-on:click="deactivate(deactivateDialog.courseOffering)"
@@ -93,7 +110,8 @@
             :disabled="deactivateDialog.loading"
             :loading="deactivateDialog.loading"
             data-cy
-          >{{ $t("actions.confirm") }}</v-btn>
+            >{{ $t("actions.confirm") }}</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -108,7 +126,7 @@ export default {
   name: "CourseOfferingsTable",
   components: {
     CourseOfferingForm,
-    CourseOfferingAdminActions,
+    CourseOfferingAdminActions
   },
   props: {
     course: {
@@ -137,7 +155,7 @@ export default {
       },
 
       courseOfferings: [],
-      
+
       selected: [],
       search: "",
       viewStatus: "active"
@@ -147,7 +165,11 @@ export default {
     // Put here so that the headers are reactive.
     headers() {
       return [
-        { text: this.$t("courses.description"), value: "description", width: "80%" },
+        {
+          text: this.$t("courses.description"),
+          value: "description",
+          width: "80%"
+        },
         {
           text: this.$t("courses.max-size"),
           value: "maxSize",
@@ -167,13 +189,16 @@ export default {
     showCourseOfferings() {
       switch (this.viewStatus) {
         case "active":
-          return this.courseOfferings.filter(courseOffering => courseOffering.active);
+          return this.courseOfferings.filter(
+            courseOffering => courseOffering.active
+          );
         case "archived":
-          return this.courseOfferings.filter(courseOffering => !courseOffering.active);
+          return this.courseOfferings.filter(
+            courseOffering => !courseOffering.active
+          );
         case "all":
         default:
           return this.courseOfferings;
-          break;
       }
     }
   },
@@ -184,7 +209,10 @@ export default {
 
   methods: {
     clickThrough(courseOffering) {
-      this.$router.push({ name: "course-offering-details", params: { offeringId: courseOffering.id }});
+      this.$router.push({
+        name: "course-offering-details",
+        params: { offeringId: courseOffering.id }
+      });
     },
 
     dispatchAction(actionName, courseOffering) {
@@ -233,7 +261,9 @@ export default {
     deactivate(courseOffering) {
       this.deactivateDialog.loading = true;
       this.$http
-        .patch(`/api/v1/courses/course_offerings/${courseOffering.id}`, { active: false })
+        .patch(`/api/v1/courses/course_offerings/${courseOffering.id}`, {
+          active: false
+        })
         .then(resp => {
           console.log("EDITED", resp);
           Object.assign(courseOffering, resp.data);
@@ -252,7 +282,9 @@ export default {
 
     activate(courseOffering) {
       this.$http
-        .patch(`/api/v1/courses/course_offerings/${courseOffering.id}`, { active: true })
+        .patch(`/api/v1/courses/course_offerings/${courseOffering.id}`, {
+          active: true
+        })
         .then(resp => {
           console.log("EDITED", resp);
           Object.assign(courseOffering, resp.data);
@@ -267,20 +299,25 @@ export default {
 
     saveCourseOffering(courseOffering) {
       this.courseOfferingDialog.saving = true;
-      
+
       courseOffering.courseId = this.course.id;
-      
+
       if (this.courseOfferingDialog.editMode) {
         // Hang on to the ID of the record being updated.
         const courseOffering_id = courseOffering.id;
 
         // Locate the record we're updating in the table.
-        const idx = this.courseOfferings.findIndex(c => c.id === courseOffering.id);
+        const idx = this.courseOfferings.findIndex(
+          c => c.id === courseOffering.id
+        );
         // Get rid of the ID; not for consumption by endpoint.
         delete courseOffering.id;
 
         this.$http
-          .patch(`/api/v1/courses/course_offerings/${courseOffering_id}`, courseOffering)
+          .patch(
+            `/api/v1/courses/course_offerings/${courseOffering_id}`,
+            courseOffering
+          )
           .then(resp => {
             console.log("EDITED", resp);
             Object.assign(this.courseOfferings[idx], courseOffering);
@@ -303,7 +340,7 @@ export default {
           .then(resp => {
             console.log("ADDED", resp);
             this.courseOfferings.push(resp.data);
-            
+
             this.snackbar.text = this.$t("courses.added");
             this.snackbar.show = true;
           })
@@ -325,7 +362,7 @@ export default {
 </script>
 
 <style scoped>
-  .hover-hand {
-    cursor: pointer;
-  }
+.hover-hand {
+  cursor: pointer;
+}
 </style>

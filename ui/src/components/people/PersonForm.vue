@@ -97,13 +97,12 @@
           data-cy="phone"
           :readonly="formDisabled"
         ></v-text-field>
-        <div v-if="hasAttributes">
-          <span class="headline">{{ $t("people.attributes") }}</span>
-          <AttributeForm
-            :attributes="attributeFields"
-            v-model="formData"
-          ></AttributeForm>
-        </div>
+        <AttributeForm
+          :personId="person.id"
+          :existingAttributes="person.attributesInfo"
+          v-model="attributeFormData"
+          ref="attributeForm"
+        ></AttributeForm>
       </form>
     </v-card-text>
     <v-card-actions>
@@ -127,9 +126,9 @@
       <v-btn
         color="primary"
         outline
-        v-on:click="add_another"
-        v-if="editMode === false"
-        :loading="addMoreLoading"
+        v-on:click="addMore"
+        v-if="addAnotherEnabled"
+        :loading="addMoreIsLoading"
         :disabled="formDisabled"
         data-cy="add-another"
         >{{ $t("actions.add-another") }}</v-btn
@@ -138,10 +137,10 @@
         color="primary"
         raised
         v-on:click="save"
-        :loading="saveLoading"
+        :loading="saveIsLoading"
         :disabled="formDisabled"
         data-cy="save"
-        >{{ $t("actions.save") }}</v-btn
+        >{{ $t(saveButtonText) }}</v-btn
       >
     </v-card-actions>
   </v-card>
@@ -156,34 +155,28 @@ export default {
   name: "PersonForm",
   components: { AttributeForm },
   props: {
-    editMode: {
-      type: Boolean,
-      required: true
-    },
     initialData: {
       type: Object,
       required: true
     },
-    addMoreLoading: {
+    title: {
+      type: String,
+      required: false
+    },
+    addAnotherEnabled: {
       type: Boolean,
-      required: true
+      required: false
     },
-    saveLoading: {
-      type: Boolean,
-      required: true
-    },
-    attributes: {
-      type: Array,
-      required: true
-    },
-    translations: {
-      type: Object,
-      required: true
+    saveButtonText: {
+      type: String,
+      required: false
     }
   },
   data: function() {
     return {
       showBirthdayPicker: false,
+      saveIsLoading: false,
+      addMoreIsLoading: false,
 
       person: {
         id: 0,
@@ -199,8 +192,7 @@ export default {
         attributesInfo: []
       },
 
-      attributeFields: [],
-      formData: {}
+      attributeFormData: {}
     };
   },
   computed: {
@@ -209,20 +201,10 @@ export default {
       return Object.keys(this.person);
     },
 
-    title() {
-      return this.editMode
-        ? this.$t("person.actions.edit")
-        : this.$t("person.actions.new");
-    },
-
     ...mapGetters(["currentLanguageCode"]),
 
     formDisabled() {
-      return this.saveLoading || this.addMoreLoading;
-    },
-
-    hasAttributes() {
-      return this.$props.attributes.length !== 0;
+      return this.saveIsLoading || this.addMoreIsLoading;
     },
 
     getTodayString() {
@@ -246,7 +228,6 @@ export default {
       } else {
         this.person = personProp;
       }
-      this.constructAttributeForm(this.$props.attributes);
     }
   },
 
@@ -262,223 +243,75 @@ export default {
       for (let key of this.personKeys) {
         this.person[key] = "";
       }
-      this.constructAttributeForm(this.$props.attributes);
+      this.$refs.attributeForm.clear();
       this.$validator.reset();
     },
 
-    // Trigger a save event, returning the update `Person`.
+    resetIsLoading() {
+      this.saveIsLoading = false;
+      this.addMoreIsLoading = false;
+    },
+
+    addMore() {
+      this.addMoreIsLoading = true;
+      this.savePerson("added-another");
+    },
+
     save() {
+      this.saveIsLoading = true;
+      this.savePerson("saved");
+    },
+
+    savePerson(emitMessage) {
       this.$validator.validateAll().then(() => {
         if (!this.errors.any()) {
-          this.person.attributesInfo = this.collectAttributes();
-          this.$emit("save", this.person);
+          let attributes = [];
+          let personId = this.person.id;
+          for (let key in this.attributeFormData) {
+            attributes.push(this.attributeFormData[key]);
+          }
+          delete this.person["attributesInfo"];
+          delete this.person["accountInfo"];
+          delete this.person["id"];
+          let data = {
+            person: this.person,
+            attributesInfo: attributes
+          };
+          if (personId) {
+            this.updatePerson(data, personId, emitMessage);
+          } else {
+            this.addPerson(data, emitMessage);
+          }
+        } else {
+          this.resetIsLoading();
         }
       });
     },
 
-    add_another() {
-      this.$validator.validateAll().then(() => {
-        if (!this.errors.any()) {
-          this.$emit("add-another", this.person);
-        }
-      });
-    },
-
-    collectAttributes() {
-      let attributes = [];
-      for (let attribute of this.attributeFields) {
-        attributes.push({
-          personId: this.person.id ? this.person.id : 0,
-          attributeId: attribute.id,
-          enumValueId: this.isEnum(attribute.fieldType)
-            ? this.formData[attribute.id]
-            : 0,
-          stringValue: this.isEnum(attribute.fieldType)
-            ? ""
-            : this.formData[attribute.id].toString()
+    updatePerson(data, personId, emitMessage) {
+      this.$http
+        .put(`/api/v1/people/persons/${personId}`, data)
+        .then(response => {
+          this.$emit(emitMessage, response.data);
+          this.saveIsLoading = false;
+        })
+        .catch(err => {
+          this.saveIsLoading = false;
+          console.error("FALURE", err.response);
         });
-      }
-      return attributes;
     },
 
-    isEnum(type) {
-      return type === "Dropdown" || type === "Radio";
-    },
-
-    getExistingAttribute(attributeId) {
-      let existingValue = find(this.person.attributesInfo, item => {
-        return item.attributeId === attributeId;
-      });
-      return existingValue
-        ? existingValue
-        : { stringValue: "", enumValueId: 0 };
-    },
-
-    constructAttributeForm(attributes) {
-      attributes.sort((a, b) => {
-        return a.seq - b.seq;
-      });
-      this.attributeFields = [];
-      // reference: https://blog.rangle.io/how-to-create-data-driven-user-interfaces-in-vue/
-      for (let attr of attributes) {
-        let component;
-        switch (attr.typeI18n) {
-          case "attribute.float":
-            component = this.floatFieldConstructor(attr);
-            break;
-          case "attribute.integer":
-            component = this.integerFieldConstructor(attr);
-            break;
-          case "attribute.date":
-            component = this.dateFieldConstructor(attr);
-            break;
-          case "attribute.string":
-            component = this.stringFieldConstructor(attr);
-            break;
-          case "attribute.dropdown":
-            component = this.dropdownFieldConstructor(attr);
-            break;
-          case "attribute.check":
-            component = this.checkFieldConstructor(attr);
-            break;
-          case "attribute.radio":
-            component = this.radioFieldConstructor(attr);
-            break;
-        }
-        this.attributeFields.push(component);
-      }
-    },
-
-    floatFieldConstructor(attr) {
-      this.$set(
-        this.formData,
-        attr.id.toString(),
-        this.getExistingAttribute(attr.id).stringValue
-      );
-      return {
-        fieldType: "Float",
-        name: this.translations[attr.nameI18n],
-        label: this.translations[attr.nameI18n],
-        id: attr.id.toString()
-      };
-    },
-
-    integerFieldConstructor(attr) {
-      this.$set(
-        this.formData,
-        attr.id.toString(),
-        this.getExistingAttribute(attr.id).stringValue
-      );
-      return {
-        fieldType: "Integer",
-        name: this.translations[attr.nameI18n],
-        label: this.translations[attr.nameI18n],
-        id: attr.id.toString()
-      };
-    },
-
-    dateFieldConstructor(attr) {
-      this.$set(
-        this.formData,
-        attr.id.toString(),
-        this.getExistingAttribute(attr.id).stringValue
-      );
-      return {
-        fieldType: "Date",
-        name: this.translations[attr.nameI18n],
-        label: this.translations[attr.nameI18n],
-        id: attr.id.toString()
-      };
-    },
-
-    stringFieldConstructor(attr) {
-      this.$set(
-        this.formData,
-        attr.id.toString(),
-        this.getExistingAttribute(attr.id).stringValue
-      );
-      return {
-        fieldType: "String",
-        name: this.translations[attr.nameI18n],
-        label: this.translations[attr.nameI18n],
-        id: attr.id.toString()
-      };
-    },
-
-    dropdownFieldConstructor(attr) {
-      let options = [];
-      for (let item of attr.enumerated_values) {
-        options.push({
-          text: this.translations[item.valueI18n],
-          value: item.id
+    addPerson(data, emitMessage) {
+      this.$http
+        .post("/api/v1/people/persons", data)
+        .then(response => {
+          this.$emit(emitMessage, response.data);
+          this.resetIsLoading();
+        })
+        .catch(err => {
+          this.resetIsLoading();
+          console.error("FAILURE", err.response);
         });
-      }
-
-      this.$set(
-        this.formData,
-        attr.id.toString(),
-        this.getExistingAttribute(attr.id).enumValueId
-      );
-      return {
-        fieldType: "Dropdown",
-        name: this.translations[attr.nameI18n],
-        label: this.translations[attr.nameI18n],
-        options: options,
-        id: attr.id.toString()
-      };
-    },
-
-    checkFieldConstructor(attr) {
-      let options = [];
-      for (let item of attr.enumerated_values) {
-        options.push({
-          label: this.translations[item.valueI18n],
-          name: this.translations[item.valueI18n],
-          value: item.id
-        });
-      }
-
-      let existingAttr = this.getExistingAttribute(attr.id).stringValue.split(
-        ","
-      );
-      for (let index in existingAttr) {
-        existingAttr[index] = Number(existingAttr[index]);
-      }
-
-      this.$set(this.formData, attr.id.toString(), existingAttr);
-      return {
-        fieldType: "Check",
-        name: this.translations[attr.nameI18n],
-        label: this.translations[attr.nameI18n],
-        options: options,
-        value: existingAttr,
-        id: attr.id.toString()
-      };
-    },
-
-    radioFieldConstructor(attr) {
-      let options = [];
-      for (let item of attr.enumerated_values) {
-        options.push({
-          label: this.translations[item.valueI18n],
-          name: this.translations[item.valueI18n],
-          value: item.id,
-          inputValue: this.getExistingAttribute(attr.id).enumValueId
-        });
-      }
-
-      this.$set(
-        this.formData,
-        attr.id.toString(),
-        this.getExistingAttribute(attr.id).enumValueId
-      );
-      return {
-        fieldType: "Radio",
-        name: this.translations[attr.nameI18n],
-        label: this.translations[attr.nameI18n],
-        options: options,
-        id: attr.id.toString()
-      };
     }
   }
 };

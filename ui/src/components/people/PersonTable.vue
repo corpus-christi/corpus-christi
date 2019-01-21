@@ -165,15 +165,13 @@
       max-width="500px"
     >
       <PersonForm
-        v-bind:editMode="personDialog.editMode"
         v-bind:initialData="personDialog.person"
-        v-bind:saveLoading="personDialog.saveLoading"
-        v-bind:addMoreLoading="personDialog.addMoreLoading"
-        v-bind:attributes="personDialog.attributes"
-        v-bind:translations="translations"
+        v-bind:title="personDialog.title"
+        v-bind:addAnotherEnabled="personDialog.addAnotherEnabled"
+        v-bind:saveButtonText="personDialog.saveButtonText"
         v-on:cancel="cancelPerson"
-        v-on:save="savePerson"
-        v-on:add-another="addAnother"
+        v-on:saved="savePerson"
+        v-on:added-another="addAnother"
       />
     </v-dialog>
 
@@ -220,11 +218,10 @@ export default {
       viewStatus: "viewActive",
       personDialog: {
         show: false,
-        editMode: false,
-        saveLoading: false,
-        addMoreLoading: false,
-        attributes: [],
-        person: {}
+        title: "",
+        person: {},
+        addAnotherEnabled: false,
+        saveButtonText: "actions.save"
       },
 
       adminDialog: {
@@ -300,15 +297,6 @@ export default {
         default:
           return this.activePeople;
       }
-    },
-
-    getCurrentLocaleCode() {
-      return store.state.currentLocaleCode;
-    }
-  },
-  watch: {
-    getCurrentLocaleCode() {
-      this.getAllTranslations();
     }
   },
 
@@ -326,8 +314,11 @@ export default {
   methods: {
     // ---- Person Administration
 
-    activatePersonDialog(person = {}, editMode = false) {
-      this.personDialog.editMode = editMode;
+    activatePersonDialog(person = {}, isEditTitle = false) {
+      this.personDialog.title = isEditTitle
+        ? this.$t("person.actions.edit")
+        : this.$t("person.actions.new");
+      this.personDialog.addAnotherEnabled = !isEditTitle;
       this.personDialog.person = person;
       this.personDialog.show = true;
     },
@@ -345,83 +336,21 @@ export default {
     },
 
     savePerson(person) {
-      this.personDialog.saveLoading = true;
-      if (this.personDialog.editMode) {
-        // Hang on to the ID of the person being updated.
-        const person_id = person.id;
-        // Locate the person we're updating in the table.
-        const idx = this.allPeople.findIndex(p => p.id === person.id);
-        // Get rid of the ID; not for consumption by endpoint.
-        delete person.id;
-
-        console.log(person);
-        this.data = this.constructPersonData(person);
-        console.log(this.data);
-        this.$http
-          .put(`/api/v1/people/persons/${person_id}`, this.data)
-          .then(response => {
-            Object.assign(this.allPeople[idx], response.data);
-            this.personDialog.show = false;
-            this.personDialog.saveLoading = false;
-            this.showSnackbar(this.$t("person.messages.person-edit"));
-          })
-          .catch(err => {
-            console.error("FALURE", err.response);
-            this.personDialog.saveLoading = false;
-            this.showSnackbar(this.$t("person.messages.person-save-error"));
-          });
+      let idx = this.allPeople.findIndex(p => p.id === person.id);
+      if (idx !== -1) {
+        Object.assign(this.allPeople[idx], person);
+        this.showSnackbar(this.$t("person.messages.person-edit"));
       } else {
-        console.log(person);
-        this.data = this.constructPersonData(person);
-        console.log(this.data);
-        this.$http
-          .post("/api/v1/people/persons", this.data)
-          .then(resp => {
-            console.log("ADDED", resp);
-            this.refreshPeopleList();
-            this.personDialog.show = false;
-            this.personDialog.saveLoading = false;
-            this.showSnackbar(this.$t("person.messages.person-add"));
-          })
-          .catch(err => {
-            console.error("FAILURE", err.response);
-            this.personDialog.saveLoading = false;
-            this.showSnackbar(this.$t("person.messages.person-save-error"));
-          });
+        this.refreshPeopleList();
+        this.showSnackbar(this.$t("person.messages.person-add"));
       }
+      this.personDialog.show = false;
     },
 
-    constructPersonData(person) {
-      let attributes = [];
-      if (person.attributesInfo) {
-        attributes = person.attributesInfo;
-      }
-      delete person["attributesInfo"];
-      delete person["accountInfo"];
-      delete person["id"];
-      return {
-        person: person,
-        attributesInfo: attributes
-      };
-    },
-
-    addAnother(person) {
-      this.personDialog.addMoreLoading = true;
-      this.data = this.constructPersonData(person);
-      this.$http
-        .post("/api/v1/people/persons", this.data)
-        .then(resp => {
-          console.log("ADDED", resp);
-          this.refreshPeopleList();
-          this.activatePersonDialog();
-          this.personDialog.addMoreLoading = false;
-          this.showSnackbar(this.$t("person.messages.person-add"));
-        })
-        .catch(err => {
-          console.error("FAILURE", err.response);
-          this.personDialog.addMoreLoading = false;
-          this.showSnackbar(this.$t("person.messages.person-save-error"));
-        });
+    addAnother() {
+      this.refreshPeopleList();
+      this.activatePersonDialog();
+      this.showSnackbar(this.$t("person.messages.person-add"));
     },
 
     showSnackbar(message) {
@@ -516,39 +445,16 @@ export default {
             this.deactivateAccount(person.accountInfo.id);
           }
         })
-        .catch(err => console.error("FAILURE PLEASE", err.response));
-    },
-
-    getAttributesInfo() {
-      this.$http
-        .get("/api/v1/people/persons/fields")
-        .then(resp => {
-          if (resp.data.person_attributes) {
-            this.personDialog.attributes = resp.data.person_attributes;
-          }
-        })
         .catch(err => console.error("FAILURE", err.response));
     },
 
     refreshPeopleList() {
       this.$emit("fetchPeopleList");
-    },
-
-    getAllTranslations() {
-      this.$http
-        .get(`/api/v1/i18n/values/${store.state.currentLocaleCode}`)
-        .then(resp => {
-          for (let item of resp.data) {
-            this.translations[item.key_id] = item.gloss;
-          }
-        })
-        .catch(err => console.error("FAILURE", err.response));
     }
   },
 
   mounted: function() {
-    this.getAttributesInfo();
-    this.getAllTranslations();
+    this.refreshPeopleList();
   }
 };
 </script>
