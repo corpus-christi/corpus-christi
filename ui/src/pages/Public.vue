@@ -1,10 +1,10 @@
 <template>
   <v-container>
     <v-layout row>
-      <v-flex xs12 sm6 md5 offset-md2>
-        <v-toolbar color="blue" dark style="z-index: 1">
+      <v-flex xs12 sm6 md5>
+        <v-toolbar color="cyan" dark style="z-index: 1">
           <v-toolbar-title>
-            {{ $t("public.headers.upcoming-courses") }}
+            {{ $t("public.headers.upcoming-classes") }}
           </v-toolbar-title>
         </v-toolbar>
         <v-list style="padding-top: 0px; z-index: 0">

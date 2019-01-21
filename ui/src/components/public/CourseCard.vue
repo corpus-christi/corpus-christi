@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card class="card elevation-10">
     <div class="body">
       <!-- Display course title, description and register button -->
         <v-card-title>
@@ -24,7 +24,7 @@
           <v-spacer></v-spacer>
         </v-card-actions>
       </div>
-    <v-card>
+    </v-card>
 </template>
 
 <script>

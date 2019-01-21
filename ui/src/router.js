@@ -26,6 +26,12 @@ const router = new VueRouter({
       component: () => import("@/pages/public/Events")
     },
     {
+      name: "public-courses",
+      path: "/public/courses",
+      meta: { authRequired: false },
+      component: () => import("@/pages/public/Courses")
+    },
+    {
       name: "login",
       path: "/login",
       meta: { layout: "arco" },
