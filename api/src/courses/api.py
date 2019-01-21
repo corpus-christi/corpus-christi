@@ -3,7 +3,7 @@ import json
 from flask import request
 #from flask_api import status
 from flask.json import jsonify, dumps
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, jwt_optional
 from marshmallow import ValidationError
 from ..shared.utils import authorize
 import sys
@@ -19,12 +19,16 @@ from .models import Course, CourseSchema, \
     Diploma_Awarded, Diploma_AwardedSchema, \
     Class_Attendance, \
     Class_AttendanceSchema, Class_Meeting, \
-    Class_MeetingSchema
+    Class_MeetingSchema, Diploma, DiplomaSchema, \
+    Diploma_Awarded, Diploma_AwardedSchema, \
+    Course_Completion, Course_CompletionSchema
 from src.people.models import Person
 
 from .. import db
 
 course_schema = CourseSchema()
+# course_completion = Course_Completion()
+course_completion_schema = Course_CompletionSchema()
 
 
 @courses.route('/courses', methods=['POST'])
@@ -555,19 +559,39 @@ def read_all_course_offering_students(course_offering_id):
 #     return jsonify(student_schema.dump(result, many=True))
 
 
+@courses.route('/maybethisworks')
+@jwt_optional
+def get_a_bunch_of_data():
+    people = db.session.query(Person).join(Student).join(Course_Offering) #People who are students
+    course_complete = db.session.query(Person).join(Course_Completion) #People who have completed courses
+    students = db.session.query(Person).join(Diploma_Awarded) #People who have diplomas
+
+    result = people.union(students, course_complete).all()
+    for i in result:
+        print(i)
+    return jsonify(person_schema.dump(result, many=True))
+
+
 @courses.route('/students/<student_id>')
 @jwt_required
 def read_one_student(student_id):
-    result = db.session.query(Student).filter_by(id=student_id).first()
+    result = db.session.query(Student, Person).filter_by(id=student_id).join(Person).first()
     if result is None:
         return 'Student not found', 404
-
+    student = result.Student
     diplomas = []
-    for da in result.diplomas_awarded:
+    for da in result.Student.diplomas_awarded:
         diplomas.append(da.diplomas)
-    result.diplomaList = diplomas
+    result.Student.diplomaList = diplomas
+    person = person_schema.dump(result.Person)
+    result = student_schema.dump(result)
+    result['person'] = person
+    result['diplomaList'] = diploma_schema.dump(diplomas, many=True)
+    for i in result['diplomaList']:
+        i['diplomaIsActive'] = i.pop('active')
+    print(result)
+    return jsonify(result)
 
-    return jsonify(student_schema.dump(result))
 
 
 @courses.route('/students/<student_id>', methods=['PATCH'])
