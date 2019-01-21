@@ -9,7 +9,7 @@ from flask_jwt_extended import create_access_token
 from werkzeug.datastructures import Headers
 from werkzeug.security import check_password_hash
 
-from src.i18n.models import i18n_create, I18NLocale, I18NKey
+from src.i18n.models import i18n_create, I18NLocale, I18NKey, I18NValue
 from src.people.models import Person
 # from src.people.test_people import create_multiple_people
 
@@ -54,11 +54,14 @@ def add_attribute_type(name, sqla, locale_code):
 def add_i18n_code(name, sqla, locale_code, name_i18n):
 
     if not sqla.query(I18NLocale).get(locale_code):
-        sqla.add(I18NLocale(code=locale_code, desc='English US'))
+        sqla.add(I18NLocale(code=locale_code, desc=''))
 
-    if not sqla.query(I18NKey).get(name_i18n):
-        i18n_create(name_i18n, 'en-US',
+    try:
+        i18n_create(name_i18n, locale_code,
                     name, description=f"Type {name}")
+    except:
+        # entry is already in value table
+        pass
 
     return name_i18n
 
