@@ -2,7 +2,7 @@
   <v-layout column>
     <v-flex xs12>
       <v-card class="ma-1">
-        <template v-if="pageLoaded">
+        <template v-if="eventLoaded">
           <v-container fill-height fluid>
             <v-flex xs9 sm9 align-end flexbox>
               <span class="headline">{{ event.title }}</span>
@@ -60,7 +60,7 @@
       <v-flex xs12>
         <event-team-details
           :teams="event.teams"
-          :pageLoaded="pageLoaded"
+          :loaded="teamsLoaded"
           v-on:snackbar="showSnackbar($event)"
           v-on:team-added="getEvent()"
         ></event-team-details>
@@ -68,7 +68,7 @@
       <v-flex xs12>
         <event-person-details
           :persons="event.persons"
-          :pageLoaded="pageLoaded"
+          :loaded="personsLoaded"
           v-on:snackbar="showSnackbar($event)"
           v-on:person-added="getEvent()"
         ></event-person-details>
@@ -76,7 +76,7 @@
       <v-flex xs12>
         <event-asset-details
           :assets="event.assets"
-          :pageLoaded="pageLoaded"
+          :loaded="assetsLoaded"
           v-on:snackbar="showSnackbar($event)"
           v-on:asset-added="getEvent()"
         ></event-asset-details>
@@ -144,14 +144,23 @@ export default {
         show: false,
         text: ""
       },
-      pageLoaded: false
+      eventLoaded: false,
+      teamsLoaded: false,
+      assetsLoaded: false,
+      personsLoaded: false
     };
   },
 
   mounted() {
-    this.pageLoaded = false;
+    this.eventLoaded = false;
+    this.teamsLoaded = false;
+    this.assetsLoaded = false;
+    this.personsLoaded = false;
     this.getEvent().then(() => {
-      this.pageLoaded = true;
+      this.eventLoaded = true;
+      this.teamsLoaded = true;
+      this.assetsLoaded = true;
+      this.personsLoaded = true;
     });
   },
 
@@ -175,7 +184,6 @@ export default {
 
   methods: {
     getEvent() {
-      this.pageLoaded = false;
       const id = this.$route.params.event;
       return this.$http
         .get(
@@ -192,9 +200,46 @@ export default {
           // conserve description on EventPersons
           this.event.persons = !this.event.persons
             ? []
-            : this.event.persons.map(p => Object.assign(p, {id:p.person_id}));
-          this.pageLoaded = true;
+            : this.event.persons.map(p =>
+                Object.assign(p, { id: p.person_id })
+              );
         });
+    },
+
+    reloadTeams() {
+      this.teamsLoaded = false;
+      const id = this.$route.params.event;
+      this.$http.get(`/api/v1/events/${id}?include_teams=1`).then(resp => {
+        let eventData = resp.data;
+        this.event.teams = !eventData.teams
+          ? []
+          : eventData.teams.map(t => t.team);
+        this.teamsLoaded = true;
+      });
+    },
+
+    reloadAssets() {
+      this.assetsLoaded = false;
+      const id = this.$route.params.event;
+      this.$http.get(`/api/v1/events/${id}?include_assets=1`).then(resp => {
+        let eventData = resp.data;
+        this.event.assets = !eventData.assets
+          ? []
+          : eventData.assets.map(a => a.asset);
+        this.assetsLoaded = true;
+      });
+    },
+
+    reloadPersons() {
+      this.personsLoaded = false;
+      const id = this.$route.params.event;
+      this.$http.get(`/api/v1/events/${id}?include_persons=1`).then(resp => {
+        let eventData = resp.data;
+        this.event.persons = !eventData.persons
+          ? []
+          : eventData.persons.map(p => Object.assign(p, { id: p.person_id }));
+        this.personsLoaded = true;
+      });
     },
 
     editEvent(event) {
@@ -213,6 +258,9 @@ export default {
       }
       let newEvent = JSON.parse(JSON.stringify(event));
       delete newEvent.location;
+      delete newEvent.assets;
+      delete newEvent.teams;
+      delete newEvent.persons;
       delete newEvent.dayDuration;
       delete newEvent.teams;
       delete newEvent.id;
@@ -223,8 +271,8 @@ export default {
           console.log("EDITED", resp);
           this.eventDialog.show = false;
           this.eventDialog.saveLoading = false;
-          this.pageLoaded = false;
-          this.getEvent().then(() => (this.pageLoaded = true));
+          this.eventLoaded = false;
+          this.getEvent().then(() => (this.eventLoaded = true));
           this.showSnackbar(this.$t("events.event-edited"));
         })
         .catch(err => {
