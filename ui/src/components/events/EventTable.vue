@@ -2,7 +2,7 @@
   <div>
     <v-tabs v-model="active" slider-color="accent">
       <v-tab :key="0" ripple> {{ $t("events.header") }} </v-tab>
-      <v-tab :key="1" ripple> Calendar </v-tab>
+      <v-tab :key="1" ripple data-cy="calendar"> Calendar </v-tab>
       <v-tab-item :key="0" style="padding-top:12px">
         <v-layout justify-center>
           <v-flex shrink class="mb-2">

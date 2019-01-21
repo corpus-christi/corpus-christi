@@ -1,3 +1,4 @@
+// NOTE: Requires no teams assigned to any events
 describe("Event Teams Test", function() {
   before(() => {
     cy.login();
@@ -13,13 +14,13 @@ describe("Event Teams Test", function() {
     cy.wait(250);
 
     cy.get("[data-cy=entity-search-field]")
-      .eq(0)
+      .eq(3)
       .click();
     cy.get(
       ".menuable__content__active > .v-select-list > .v-list > :nth-child(1) > .v-list__tile"
     ).click();
 
-    cy.get("[data-cy=confirm-add]").click();
+    cy.get("[data-cy=confirm-add]").eq(2).click();
   });
 
   it("THEN: A new team is listed for the event", function() {

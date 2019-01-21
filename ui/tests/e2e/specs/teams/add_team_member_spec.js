@@ -1,3 +1,4 @@
+// NOTE: Requires no team members assigned to event
 describe("Add Team Member Test", function() {
   before(() => {
     cy.login();
@@ -8,7 +9,7 @@ describe("Add Team Member Test", function() {
   });
 
   it("WHEN: Event planner adds a new person to the team", function() {
-    cy.get("[data-cy=add-participant]").click();
+    cy.get("[data-cy=add-team-member]").click();
 
     cy.wait(250);
 
@@ -25,12 +26,12 @@ describe("Add Team Member Test", function() {
   });
 
   it("AND: The team member can be archived and unarchived", function() {
-    cy.get("[data-cy=archive]").click();
+    cy.get("[data-cy=archive]").eq(0).click();
     cy.get("[data-cy=confirm-archive]").click();
 
     cy.get("[data-cy=unarchive]").should("exist");
 
-    cy.get("[data-cy=unarchive]").click();
+    cy.get("[data-cy=unarchive]").eq(0).click();
 
     cy.get("[data-cy=archive]").should("exist");
   });
