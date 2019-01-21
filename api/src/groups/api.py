@@ -89,7 +89,7 @@ def read_one_group(group_id):
 def update_group(group_id):
     
     # fetch the optional 'person_ids' field in the request object
-    update_person_ids = [] 
+    update_person_ids = []
     if 'person_ids' in request.json.keys():
         update_person_ids = request.json['person_ids']
         del request.json['person_ids']
@@ -199,6 +199,10 @@ def create_meeting():
 @jwt_required
 def read_all_meetings():
     result = db.session.query(Meeting).all()
+
+    if result == []:
+        return jsonify(msg="No meetings found"), 404
+
     return jsonify(meeting_schema.dump(result, many=True))
 
 @groups.route('/meetings/group/<group_id>')
@@ -337,6 +341,9 @@ def create_member():
 def read_all_members():
     result = db.session.query(Member).all()
 
+    if result == []:
+        return jsonify(msg="No members found"), 404
+
     return jsonify(member_schema.dump(result, many=True))
 
 
@@ -401,6 +408,9 @@ def create_attendance():
 def read_all_attendance():
     result = db.session.query(Attendance).all()
 
+    if result == []:
+        return jsonify(msg="No attendance records found"), 404
+
     return jsonify(attendance_schema.dump(result, many=True))
 
 
@@ -409,7 +419,7 @@ def read_all_attendance():
 def read_attendance_by_meeting(meeting_id):
     result = db.session.query(Attendance).filter_by(meeting_id=meeting_id).all()
 
-    if len(result) == 0:
+    if result == []:
         return jsonify(msg="No attendance records found"), 404
 
     return jsonify(attendance_schema.dump(result, many=True))
@@ -419,7 +429,7 @@ def read_attendance_by_meeting(meeting_id):
 def read_attendance_by_member(member_id):
     result = db.session.query(Attendance).filter_by(member_id=member_id).all()
 
-    if len(result) == 0:
+    if result == []:
         return jsonify(msg="No attendance records found"), 404
 
     return jsonify(attendance_schema.dump(result, many=True))

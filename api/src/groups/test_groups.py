@@ -280,6 +280,9 @@ def test_create_invalid_meeting(auth_client):
 
 @pytest.mark.smoke
 def test_read_all_meetings(auth_client):
+    # Testing an empty Database
+    resp = auth_client.get(url_for('groups.read_all_meetings'))
+    assert resp.status_code == 404
     # GIVEN a database with a number of meetings
     count = random.randint(3, 11)
     generate_managers(auth_client)
@@ -436,6 +439,9 @@ def test_update_meeting(auth_client):
     assert resp.json['group_id'] == payload['group_id']
     assert parser.parse(resp.json['when']).replace(tzinfo=None) == parser.parse(payload['when']).replace(tzinfo=None)
 
+    resp = auth_client.patch(url_for('groups.update_meeting', meeting_id='None'), json=payload)
+    assert resp.status_code == 404
+
 
 @pytest.mark.smoke
 def test_invalid_update_meeting(auth_client):
@@ -578,6 +584,9 @@ def test_create_member(auth_client):
 
 @pytest.mark.smoke
 def test_read_all_members(auth_client):
+    # Testing an empty Database
+    resp = auth_client.get(url_for('groups.read_all_members'))
+    assert resp.status_code == 404
     # GIVEN a database with some members
     generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, 4)
@@ -701,6 +710,9 @@ def test_create_attendance(auth_client):
 
 @pytest.mark.smoke
 def test_read_all_attendance(auth_client):
+    # Testing an empty Database
+    resp = auth_client.get(url_for('groups.read_all_attendance'))
+    assert resp.status_code == 404
     # GIVEN a database with some attendances
     generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, 4)
@@ -721,10 +733,12 @@ def test_read_all_attendance(auth_client):
                 Attendance.member_id == attendance['member_id'], \
                 Attendance.meeting_id == attendance['meeting_id'], \
                 ).count() == 1
-        
 
 
 def test_read_attendance_by_member(auth_client):
+    # Testing an empty Database
+    resp = auth_client.get(url_for('groups.read_attendance_by_member', member_id='None'))
+    assert resp.status_code == 404
     # GIVEN a database with some attendances
     generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, 4)
@@ -743,12 +757,12 @@ def test_read_attendance_by_member(auth_client):
     # THEN each of the attendance should correspond to one in the database
     for attendance in resp.json:
         assert 1 == auth_client.sqla.query(Attendance).filter_by(member_id=attendance["member_id"], meeting_id=attendance["meeting_id"]).count()
-    # WHEN we try to read a non-existant attendance
-    resp = auth_client.get(url_for('groups.read_attendance_by_member', member_id=-1))
-    # THEN we expect an error code
-    assert resp.status_code == 404
+
 
 def test_read_attendance_by_meeting(auth_client):
+    # Testing an empty Database
+    resp = auth_client.get(url_for('groups.read_attendance_by_meeting', meeting_id='None'))
+    assert resp.status_code == 404
     # GIVEN a database with some attendances
     generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, 4)
@@ -767,10 +781,6 @@ def test_read_attendance_by_meeting(auth_client):
     # THEN each of the attendance should correspond to one in the database
     for attendance in resp.json:
         assert 1 == auth_client.sqla.query(Attendance).filter_by(meeting_id=attendance["meeting_id"], member_id=attendance["member_id"]).count()
-    # WHEN we try to read a non-existant attendance
-    resp = auth_client.get(url_for('groups.read_attendance_by_meeting', meeting_id=-1))
-    # THEN we expect an error code
-    assert resp.status_code == 404
 
 
 def test_delete_attendance(auth_client):
@@ -845,3 +855,4 @@ def test_repr_attendance(auth_client):
     # generate_managers(auth_client)
     attendance = Attendance()
     attendance.__repr__()
+
