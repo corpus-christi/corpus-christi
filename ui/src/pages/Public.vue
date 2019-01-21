@@ -1,31 +1,46 @@
 <template>
   <v-container>
     <v-layout row>
-      <v-flex xs12 sm6 md5>
-        <v-card>
-          <v-toolbar color="cyan" dark>
-            <v-toolbar-title>
-              {{ $t("public.headers.upcoming-classes") }}
-            </v-toolbar-title>
-          </v-toolbar>
-          <v-list>
-            <template v-for="(item, idx) in classes">
-              <v-list-tile avatar v-bind:key="idx">
-                <v-list-tile-avatar>
-                  <v-icon>calendar_today</v-icon>
-                </v-list-tile-avatar>
-                <v-list-tile-content>
-                  <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-                  <v-list-tile-sub-title>{{ item.date }}</v-list-tile-sub-title>
-                </v-list-tile-content>
-              </v-list-tile>
-              <v-divider
-                v-if="idx + 1 < classes.length"
-                v-bind:key="'div' + idx"
-              ></v-divider>
-            </template>
-          </v-list>
-        </v-card>
+      <v-flex xs12 sm6 md5 offset-md2>
+        <v-toolbar color="blue" dark style="z-index: 1">
+          <v-toolbar-title>
+            {{ $t("public.headers.upcoming-courses") }}
+          </v-toolbar-title>
+        </v-toolbar>
+        <v-list style="padding-top: 0px; z-index: 0">
+          <v-expansion-panel>
+            <v-expansion-panel-content
+              v-for="(course,idx) in courses"
+              v-bind:key="idx"
+            >
+              <div slot="header">
+                {{ course.name }}
+                <br>
+                <span class="grey--text">
+                  <div>date</div>
+                </span>
+              </div>
+              <v-card>
+                <v-card-text>{{ course.description }}</v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                    <v-btn raised color="primary">{{ $t("public.course.register") }}</v-btn>
+                  <v-spacer></v-spacer>
+                </v-card-actions>
+              </v-card>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+          <!-- <v-divider light></v-divider> -->
+          <v-card>
+            <v-card-actions>
+              <v-btn 
+                v-on:click="$router.push({ path: '/public/courses' })"
+                flat block outline color="primary">{{ $t("public.courses.view-all") }}
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+
+        </v-list>
       </v-flex>
 
       <v-flex xs12 sm6 md5 offset-md2>
@@ -66,7 +81,6 @@
               </v-btn>
             </v-card-actions>
           </v-card>
-
         </v-list>
       </v-flex>
     </v-layout>
@@ -91,12 +105,8 @@ export default {
   components: { GoogleMap },
   data() {
     return {
-      classes: [
-        { title: "Intro to New Testament", date: "2019-01-03" },
-        { title: "Christian Parenting 1", date: "2019-01-12" },
-        { title: "Christian Parenting 2", date: "2019-01-19" }
-      ],
       events: [],
+      courses: [],
       pageLoaded: false,
     };
   },
@@ -106,6 +116,12 @@ export default {
       this.events = resp.data;
       this.events = this.events.slice(0, 5);
       console.log(resp.data);
+    });
+
+    this.$http.get("/api/v1/courses/courses").then(resp => {
+      this.courses = resp.data;
+      this.courses = this.courses.slice(0, 5);
+      // console.log(resp.data);
       this.pageLoaded = true;
     });
   },
