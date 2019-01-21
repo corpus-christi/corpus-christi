@@ -11,6 +11,7 @@ SQLITE_MEM = 'sqlite://'
 PSQL_TEST = 'postgresql://arco@localhost:5432/cc-test'
 PSQL_DEV = 'postgresql://arco@localhost:5432/cc-dev'
 PSQL_STAGING = 'postgresql://arco:' + private.PASS + '@localhost:5432/cc-staging'
+PSQL_STAGING_CI = 'postgresql://arco@localhost:5432/cc-staging'
 PSQL_PROD = 'postgresql://arco@localhost:5432/cc-prod'
 
 
@@ -44,6 +45,10 @@ class StagingConfig(Config):
     DEBUG = False
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DB_URL') or PSQL_STAGING
 
+class StagingConfigCI(Config):
+    TESTING = False
+    DEBUG = False
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DB_URL') or PSQL_STAGING_CI
 
 class ProductionConfig(Config):
     TESTING = False
@@ -55,6 +60,7 @@ config = {
     'dev': DevelopmentConfig,
     'test': TestingConfig,
     'staging': StagingConfig,
+    'staging-ci': StagingConfigCI,
     'prod': ProductionConfig,
     'default': DevelopmentConfig
 }
