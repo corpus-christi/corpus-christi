@@ -56,6 +56,7 @@ class MeetingSchema(Schema):
     when = fields.DateTime(required=True)
     group_id = fields.Integer(data_key='group_id', required=True)
     address_id = fields.Integer(data_key='address_id')
+    address = fields.Nested('AddressSchema')
     active = fields.Boolean(nullable=False)
     
 
