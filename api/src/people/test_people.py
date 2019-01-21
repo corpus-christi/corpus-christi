@@ -358,16 +358,27 @@ def test_create_person_invalid(auth_client):
 @pytest.mark.smoke
 def test_read_all_persons(auth_client):
     # GIVEN a DB with a collection people.
-    count = random.randint(3, 11)
-    create_multiple_people(auth_client.sqla, count)
+
+    role_count = random.randint(3, 7)
+    create_roles(auth_client.sqla, role_count)  # Create x Roles and return their id's
+    people_count = random.randint(30, 55)
+    create_multiple_people(auth_client.sqla, people_count)  # create random people
+    create_multiple_accounts(auth_client.sqla, 1.0)  # create accounts for all people
+
+    roles = auth_client.sqla.query(Role).all()
+    accounts = auth_client.sqla.query(Account).all()
+
+    for account in accounts:
+        account.roles.append(roles[random.randint(0, len(roles) - 1)])  # assign roles to accounts
+        auth_client.sqla.add(account)
+    auth_client.sqla.commit()
+
     # WHEN the api call is made for read all persons
     resp = auth_client.get(url_for('people.read_all_persons'))
     assert resp.status_code == 200
     # THEN number of all persons returned match that of the DB
     people = auth_client.sqla.query(Person).all()
     assert len(resp.json) == len(people)
-
-    # TODO read roles bitch
 
 
 @pytest.mark.smoke
