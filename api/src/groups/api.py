@@ -195,7 +195,6 @@ def create_meeting():
 
 
 @groups.route('/meetings')
-@jwt_required
 def read_all_meetings():
     result = db.session.query(Meeting).all()
     return jsonify(meeting_schema.dump(result, many=True))

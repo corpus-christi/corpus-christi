@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: e1648d10b784
+Revision ID: 197c63248b3f
 Revises: 
-Create Date: 2019-01-21 09:32:19.383844
+Create Date: 2019-01-21 10:28:12.125071
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'e1648d10b784'
+revision = '197c63248b3f'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -36,13 +36,6 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('description', sa.String(length=255), nullable=False),
     sa.Column('active', sa.Boolean(), nullable=True),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('groups_group',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('name', sa.String(length=64), nullable=False),
-    sa.Column('description', sa.String(length=255), nullable=False),
-    sa.Column('active', sa.Boolean(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('i18n_key',
@@ -169,15 +162,6 @@ def upgrade():
     sa.ForeignKeyConstraint(['location_id'], ['places_location.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_table('groups_meeting',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('when', sa.DateTime(), nullable=False),
-    sa.Column('group_id', sa.Integer(), nullable=False),
-    sa.Column('location_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['group_id'], ['groups_group.id'], ),
-    sa.ForeignKeyConstraint(['location_id'], ['places_location.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
     op.create_table('people_person',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('first_name', sa.String(length=64), nullable=False),
@@ -251,18 +235,6 @@ def upgrade():
     sa.ForeignKeyConstraint(['team_id'], ['events_team.id'], ),
     sa.PrimaryKeyConstraint('team_id', 'member_id')
     )
-    op.create_table('groups_member',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('joined', sa.Date(), nullable=False),
-    sa.Column('active', sa.Boolean(), nullable=False),
-    sa.Column('group_id', sa.Integer(), nullable=False),
-    sa.Column('person_id', sa.Integer(), nullable=False),
-    sa.Column('role_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['group_id'], ['groups_group.id'], ),
-    sa.ForeignKeyConstraint(['person_id'], ['people_person.id'], ),
-    sa.ForeignKeyConstraint(['role_id'], ['people_role.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
     op.create_table('people_account',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('username', sa.String(length=64), nullable=False),
@@ -273,16 +245,6 @@ def upgrade():
     sa.ForeignKeyConstraint(['person_id'], ['people_person.id'], ),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('username')
-    )
-    op.create_table('people_manager',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('person_id', sa.Integer(), nullable=False),
-    sa.Column('manager_id', sa.Integer(), nullable=True),
-    sa.Column('description_i18n', sa.String(length=32), nullable=False),
-    sa.ForeignKeyConstraint(['description_i18n'], ['i18n_key.id'], ),
-    sa.ForeignKeyConstraint(['manager_id'], ['people_manager.id'], ),
-    sa.ForeignKeyConstraint(['person_id'], ['people_person.id'], ),
-    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('people_person_attributes',
     sa.Column('person_id', sa.Integer(), nullable=False),
@@ -316,6 +278,45 @@ def upgrade():
     sa.ForeignKeyConstraint(['student_id'], ['courses_students.id'], ),
     sa.PrimaryKeyConstraint('student_id', 'diploma_id')
     )
+    op.create_table('people_manager',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('account_id', sa.Integer(), nullable=False),
+    sa.Column('manager_id', sa.Integer(), nullable=True),
+    sa.Column('description_i18n', sa.String(length=32), nullable=False),
+    sa.ForeignKeyConstraint(['account_id'], ['people_account.id'], ),
+    sa.ForeignKeyConstraint(['description_i18n'], ['i18n_key.id'], ),
+    sa.ForeignKeyConstraint(['manager_id'], ['people_manager.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('groups_group',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(length=64), nullable=False),
+    sa.Column('description', sa.String(length=255), nullable=False),
+    sa.Column('active', sa.Boolean(), nullable=False),
+    sa.Column('manager_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['manager_id'], ['people_manager.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('groups_meeting',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('when', sa.DateTime(), nullable=False),
+    sa.Column('group_id', sa.Integer(), nullable=False),
+    sa.Column('address_id', sa.Integer(), nullable=True),
+    sa.Column('active', sa.Boolean(), nullable=False),
+    sa.ForeignKeyConstraint(['address_id'], ['places_address.id'], ),
+    sa.ForeignKeyConstraint(['group_id'], ['groups_group.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('groups_member',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('joined', sa.Date(), nullable=False),
+    sa.Column('active', sa.Boolean(), nullable=False),
+    sa.Column('group_id', sa.Integer(), nullable=False),
+    sa.Column('person_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['group_id'], ['groups_group.id'], ),
+    sa.ForeignKeyConstraint(['person_id'], ['people_person.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('groups_attendance',
     sa.Column('meeting_id', sa.Integer(), nullable=False),
     sa.Column('member_id', sa.Integer(), nullable=False),
@@ -329,13 +330,15 @@ def upgrade():
 def downgrade():
     # ### commands auto generated by Alembic - please adjust! ###
     op.drop_table('groups_attendance')
+    op.drop_table('groups_member')
+    op.drop_table('groups_meeting')
+    op.drop_table('groups_group')
+    op.drop_table('people_manager')
     op.drop_table('courses_diploma_awarded')
     op.drop_table('courses_class_attendance')
     op.drop_table('account_role')
     op.drop_table('people_person_attributes')
-    op.drop_table('people_manager')
     op.drop_table('people_account')
-    op.drop_table('groups_member')
     op.drop_table('events_teammember')
     op.drop_table('events_eventteam')
     op.drop_table('events_eventperson')
@@ -344,7 +347,6 @@ def downgrade():
     op.drop_table('courses_students')
     op.drop_table('courses_class_meeting')
     op.drop_table('people_person')
-    op.drop_table('groups_meeting')
     op.drop_table('events_event')
     op.drop_table('events_asset')
     op.drop_table('places_location')
@@ -361,7 +363,6 @@ def downgrade():
     op.drop_table('people_role')
     op.drop_table('i18n_locale')
     op.drop_table('i18n_key')
-    op.drop_table('groups_group')
     op.drop_table('events_team')
     op.drop_table('courses_diploma')
     op.drop_table('courses_course')

@@ -10,8 +10,19 @@
       v-for="(m, index) in markers"
       :key="index"
       :position="m.position"
-      @click="centerMapOnPosition"
-    ></gmap-marker>
+      @click="markerSelected(m)"
+    >
+      <GmapInfoWindow
+        :position="m.position"
+        :opened="m.opened"
+        @closeclick="close(m)"
+      >
+        <div>
+          <h2>{{m.data.name}}</h2>
+          <p>{{m.data.description}}</p>
+        </div>
+      </GmapInfoWindow>
+    </gmap-marker>
   </gmap-map>
 </template>
 
@@ -21,12 +32,18 @@ export default {
   data() {
     return {
       center: { lat: -2.90548355117024, lng: -79.02949294174876 },
-      zoom: 15
+      zoom: 13,
     };
   },
   methods: {
-    centerMapOnPosition(position) {
-      this.$refs.gmap.panTo(position.latLng);
+    markerSelected(m) {
+      this.$refs.gmap.$mapPromise.then(map => {
+        map.panTo(m.position);
+      });
+      m.opened = true;
+    },
+    close(m) {
+      m.opened = false;
     }
   },
   props: {

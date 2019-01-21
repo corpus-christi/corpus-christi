@@ -129,19 +129,38 @@ export default {
       });
     },
 
-    getHomegroupLocations() {
-      let locations, groups;
-      this.$httpNoAuth.get("/api/v1/places/locations").then(resp => {
-        console.log("locations", resp.data)
-        let locations = resp.data;
-      })
-      .catch(err => console.log("FAILED", err));
+    async getHomegroupLocations() {
+      let resp = await this.$httpNoAuth.get("/api/v1/groups/meetings");
+      let meetings = resp.data;
+      resp = await this.$httpNoAuth.get("/api/v1/places/addresses");
+      let addresses = resp.data;
+      resp = await this.$httpNoAuth.get("/api/v1/groups/groups");
+      let groups = resp.data;
+      this.populateHomegroupData(meetings, addresses, groups);
+    },
 
-      this.$httpNoAuth.get("/api/v1/groups/groups").then(resp => {
-        console.log("groups", resp.data);
-        let groups = resp.data;
-      })
-      .catch(err => console.log("FAILED", err));
+    populateHomegroupData(meetings, addresses, groups) {
+      for(let m of meetings) {
+        for(let a of addresses) {
+          if (m.address_id === a.id) {
+            for(let g of groups) {
+              if(m.group_id === g.id) {
+                this.homegroups.push({
+                  position: {
+                    lat: a.latitude,
+                    lng: a.longitude
+                  },
+                  data: {
+                    name: g.name,
+                    description: g.description
+                  },
+                  opened: false
+                });
+              }
+            }
+          }
+        }
+      }
     }
   }
 };
