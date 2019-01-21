@@ -23,8 +23,7 @@
             :items="viewOptions"
             v-model="viewStatus"
             data-cy="view-status-select"
-          >
-          </v-select>
+          ></v-select>
         </v-flex>
         <v-flex shrink justify-self-end>
           <v-btn
@@ -49,8 +48,12 @@
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
-        <td class="hover-hand"
-          v-on:click="$router.push({ path: '/teams/' + props.item.id })">{{ props.item.description }}</td>
+        <td
+          class="hover-hand"
+          v-on:click="$router.push({ path: '/teams/' + props.item.id })"
+        >
+          {{ props.item.description }}
+        </td>
         <td>
           <template v-if="props.item.active">
             <v-tooltip bottom v-if="props.item.active">
@@ -115,9 +118,9 @@
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false">
-        {{ $t("actions.close") }}
-      </v-btn>
+      <v-btn flat @click="snackbar.show = false">{{
+        $t("actions.close")
+      }}</v-btn>
     </v-snackbar>
 
     <!-- New/Edit dialog -->
@@ -138,16 +141,16 @@
       <v-card>
         <v-card-text>{{ $t("events.teams.confirm-archive") }}</v-card-text>
         <v-card-actions>
-          <v-btn v-on:click="cancelArchive" color="secondary" flat data-cy="">{{
-            $t("actions.cancel")
-          }}</v-btn>
+          <v-btn v-on:click="cancelArchive" color="secondary" flat data-cy>
+            {{ $t("actions.cancel") }}
+          </v-btn>
           <v-spacer></v-spacer>
           <v-btn
             v-on:click="archiveTeam"
             color="primary"
             raised
             :loading="archiveDialog.loading"
-            data-cy=""
+            data-cy
             >{{ $t("actions.confirm") }}</v-btn
           >
         </v-card-actions>
@@ -165,10 +168,9 @@ export default {
   components: { "team-form": TeamForm },
   mounted() {
     this.tableLoading = true;
-    let eventId = this.$route.params.event;
     this.$http.get(`/api/v1/teams/`).then(resp => {
       this.teams = resp.data;
-      this.tableLoading = false
+      this.tableLoading = false;
     });
   },
 
@@ -331,7 +333,7 @@ export default {
         saveLoading: false,
         addMoreLoading: false,
         team: {}
-      }
+      };
     },
 
     saveTeam(team) {
@@ -350,7 +352,7 @@ export default {
             this.teamDialog.show = false;
             this.teamDialog.saveLoading = false;
             this.showSnackbar(this.$t("events.teams.team-edited"));
-            this.clearTeam()
+            this.clearTeam();
           })
           .catch(err => {
             console.error("PUT FALURE", err.response);
@@ -361,14 +363,14 @@ export default {
         let newTeam = JSON.parse(JSON.stringify(team));
         delete newTeam.id;
         delete newTeam.active;
-        delete newTeam.members
+        delete newTeam.members;
         // for(var i=0; i<newTeam.members.length; i++) {
         //   newTeam.members[i] = {
         //     active: true,
         //     member: newTeam.members[i]
         //   }
         // }
-        console.log(newTeam)
+        console.log(newTeam);
         this.$http
           .post("/api/v1/teams/", newTeam)
           .then(resp => {
@@ -377,7 +379,7 @@ export default {
             this.teamDialog.show = false;
             this.teamDialog.saveLoading = false;
             this.showSnackbar(this.$t("events.teams.team-added"));
-            this.clearTeam()
+            this.clearTeam();
           })
           .catch(err => {
             console.error("POST FAILURE", err.response);

@@ -21,7 +21,7 @@ from src.attributes.test_attributes import create_multiple_attributes, create_mu
 from src.people.test_people import create_multiple_people, create_multiple_accounts, create_multiple_managers, create_multiple_people_attributes
 from src.places.test_places import create_multiple_areas, create_multiple_addresses, create_multiple_locations
 from src.places.models import Country
-from src.courses.models import Course, Prerequisite
+from src.courses.models import Course
 from src.courses.test_courses import create_multiple_courses, create_multiple_course_offerings,\
     create_multiple_diplomas, create_multiple_students, create_class_meetings,\
     create_diploma_awards, create_class_attendance, create_multiple_prerequisites
@@ -92,8 +92,8 @@ def load_all():
     create_multiple_diplomas(db.session, 30)
     create_multiple_students(db.session, 30)
     create_class_meetings(db.session, 30)
-    # create_diploma_awards(db.session, 30)
-    # create_class_attendance(db.session, 30)
+    create_diploma_awards(db.session, 30)
+    create_class_attendance(db.session, 30)
 
     create_multiple_people_attributes(db.session, 5)
     create_multiple_managers(db.session, 2, 'Group Overseer')
@@ -157,6 +157,34 @@ def update_password(username, password):
     print(f"Password for '{username}' updated")
 
 app.cli.add_command(user_cli)
+
+
+# ---- Courses and Relating to Courses
+
+course_cli = AppGroup('course', help="Maintain course data.")
+
+
+@course_cli.command('new', help="Create new course")
+@click.argument('name')
+@click.argument('description')
+@click.option('--prereq', help="Number of prerequisites to make")
+def create_account(name, description, prereq):
+    num_prereqs = int(prereq or 0)
+
+    # Create the Course and Prereq Courses; commit to DB so we get ID
+    course = Course(name=name, description=description)
+
+    for i in range(num_prereqs):
+        course.prerequisites.append(Course(name=f"prereq course{i}",
+                description=f"here we are using the command line lol.{i}"))
+    db.session.add(course)
+    db.session.commit()
+    print(f"Created {course}")
+    print(f"Created Prerequisites {course.prerequisites}")
+
+
+app.cli.add_command(course_cli)
+
 
 # ---- Maintainence
 

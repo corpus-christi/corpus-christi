@@ -1,16 +1,10 @@
 <template>
-  <v-container> <CoursesTable v-bind:course="course" /> </v-container>
+  <v-container> <router-view></router-view> </v-container>
 </template>
 
 <script>
-import CoursesTable from "../components/courses/CoursesTable";
-
 export default {
-  name: "Courses",
-  components: {
-    CoursesTable
-  },
-  props: ["course"]
+  name: "Courses"
 };
 </script>
 

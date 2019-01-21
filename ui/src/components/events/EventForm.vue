@@ -286,7 +286,7 @@ export default {
       }
     },
 
-    endDate(date) {
+    endDate() {
       this.clearEndTimeIfInvalid();
     }
   },

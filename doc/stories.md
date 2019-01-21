@@ -521,6 +521,7 @@ that this user oversees.
    including the required _Course_'s.
 1. Deactivate or reactivate a _Diploma_.
 1. Award a _Diploma_ to a _Student_.
+1. Display a transcript for each _Student_, showing course and diploma information for that _Student_.
 
 ## Teaching Assistant
 

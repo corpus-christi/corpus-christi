@@ -28,7 +28,11 @@
     </v-autocomplete>
     <template v-if="multiple">
       <div v-for="entity in value" v-bind:key="entity[idField]">
-        <v-chip close @input="remove(entity)" :data-cy="'chip-'+entity[idField]">
+        <v-chip
+          close
+          @input="remove(entity)"
+          :data-cy="'chip-' + entity[idField]"
+        >
           {{ getEntityDescription(entity) }}
         </v-chip>
       </div>
@@ -57,7 +61,6 @@ export default {
       isLoading: false
     };
   },
-
   computed: {
     getLabel() {
       if (this.location) return this.$t("events.event-location");
@@ -70,7 +73,6 @@ export default {
       return "id";
     }
   },
-
   methods: {
     selectionContains(entity) {
       if (!this.value || !this.value.length) return;

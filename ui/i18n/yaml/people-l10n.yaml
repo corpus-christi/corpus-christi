@@ -2,6 +2,9 @@ people:
   title:
     en: People
     es: Personas
+  title-roles:
+    en: Roles
+    es: Papeles
   attributes:
     en: Attributes
     es: Atributas
@@ -16,6 +19,17 @@ account:
   repeat-password:
     en: Repeat Password
     es: Repite la contraseña
+  no-account:
+    en: Don't have an account?
+    es: ¿No tienes una cuenta?
+  active:
+    _desc: Account status active
+    en: Active
+    es: Activo
+  inactive:
+    _desc: Account status inactive
+    en: Inactive
+    es: Inactivo
 
 person:
   name:
@@ -66,7 +80,16 @@ person:
     reset-password:
       en: Reset Password
       es: Restablecer la contraseña
+    assign-roles:
+      en: Assign Roles
+      es: Asigne Papeles
   messages:
+    account-activate:
+      en: Account activated
+      es: Cuenta activada
+    account-deactivate:
+      en: Account deactivated
+      es: Cuenta desactivada
     canceled:
       en: Canceled add new person
       es: Cancelado añadir nueva persona
