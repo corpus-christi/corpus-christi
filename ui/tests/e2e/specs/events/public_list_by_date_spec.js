@@ -1,3 +1,4 @@
+// NOTE: Needs specific dates to pass tests
 describe("Public LIst by Date Test", function() {
   it("GIVEN: User navigates to events page", function() {
     cy.visit("/public/events");
@@ -9,7 +10,7 @@ describe("Public LIst by Date Test", function() {
     cy.get(
       ".v-date-picker-header > :nth-child(1) > .v-btn__content > .v-icon"
     ).click();
-    cy.get(":nth-child(3) > :nth-child(7) > .v-btn")
+    cy.get(":nth-child(4) > :nth-child(7) > .v-btn")
       .eq(1)
       .click();
   });
