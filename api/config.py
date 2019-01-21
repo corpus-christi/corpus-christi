@@ -10,7 +10,10 @@ SQLITE_MEM = 'sqlite://'
 
 PSQL_TEST = 'postgresql://arco@localhost:5432/cc-test'
 PSQL_DEV = 'postgresql://arco@localhost:5432/cc-dev'
-PSQL_STAGING = 'postgresql://arco:' + private.PASS + '@localhost:5432/cc-staging'
+try:
+    PSQL_STAGING = 'postgresql://arco:' + private.PASS + '@localhost:5432/cc-staging'
+except:
+    print("Private.py not used for CI testing")
 PSQL_STAGING_CI = 'postgresql://arco@localhost:5432/cc-staging'
 PSQL_PROD = 'postgresql://arco@localhost:5432/cc-prod'
 
