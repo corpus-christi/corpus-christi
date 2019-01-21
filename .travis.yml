@@ -11,11 +11,11 @@ matrix:
         include:
                 - language: node_js
                   node_js: "11"
-                  before_install:
-                          - yarn cache clean
-                  install:
-                          - yarn install
-                            #                  script:
+                  #before_install:
+                  #       - yarn cache clean
+                  #install:
+                  #       - yarn install
+                  #script:
                             # - cd ui/
                             #- yarn build
                             #- echo "Done with Node_js"  
@@ -26,16 +26,26 @@ matrix:
                   sudo: true
                   env: 
                         - FLASK_APP=cc-api.py
-                  install:
-                        - pip install -r api/requirements.txt
+                          #install:
+                          #- pip install -r api/requirements.txt
                           #  - pip install -U pytest
-                        - cd api/
-                        - sudo apt install postgresql
-                        - sudo apt install nginx
-                        - sudo service postgresql start
+                          #- cd api/
+                          #- sudo apt install postgresql
+                          #- sudo apt install nginx
+                          #- sudo service postgresql start
                   postgres:
-                                adapter: postgresql
-                                database: cc-staging
+                        adapter: postgresql
+                        database: cc-staging
+before_install:
+        - yarn cache clean
+install:
+        - yarn install
+        - pip install -r api/requirements.txt
+        #  - pip install -U pytest
+        - cd api/
+        - sudo apt install postgresql
+        - sudo apt install nginx
+        - sudo service postgresql start
 script:
         - createuser arco
         - createdb --owner=arco cc-staging 
