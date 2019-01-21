@@ -8,7 +8,7 @@ from ..auth.utils import jwt_not_required
 
 from . import people
 from .models import Person, Account, AccountSchema, Role, PersonSchema, RoleSchema, Manager, ManagerSchema
-from ..events.models import TeamMember, EventPerson, EventParticipant
+from ..events.models import EventPerson, EventParticipant #TeamMember
 from ..attributes.models import Attribute, AttributeSchema, EnumeratedValue, EnumeratedValueSchema, PersonAttribute, PersonAttributeSchema
 from ..courses.models import Student, Class_Meeting
 
