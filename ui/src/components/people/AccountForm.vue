@@ -156,13 +156,18 @@ export default {
             });
           } else {
             var roles = [];
-            for(var role of this.currentRoles){
+            for (var role of this.currentRoles) {
               roles.push(role.value);
             }
             console.log(roles);
-            this.$emit("updateAccount", this.account.id, {roles: roles}, {
-              password: this.password
-            });
+            this.$emit(
+              "updateAccount",
+              this.account.id,
+              { roles: roles },
+              {
+                password: this.password
+              }
+            );
           }
           this.close();
         }

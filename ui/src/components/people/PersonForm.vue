@@ -148,8 +148,8 @@
 
 <script>
 import { mapGetters } from "vuex";
-import { isEmpty, find } from "lodash";
-import AttributeForm from "../input-fields/AttributeForm.vue";
+import { isEmpty } from "lodash";
+import AttributeForm from "./input-fields/AttributeForm.vue";
 
 export default {
   name: "PersonForm",

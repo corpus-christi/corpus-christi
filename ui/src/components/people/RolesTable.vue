@@ -60,7 +60,9 @@
             </span>
           </span>
         </td>
-        <td :data-cy="'first-name-' + props.item.id">{{ props.item.firstName }}</td>
+        <td :data-cy="'first-name-' + props.item.id">
+          {{ props.item.firstName }}
+        </td>
         <td :data-cy="'last-name-' + props.item.id">
           {{ props.item.lastName }}
         </td>
@@ -220,7 +222,11 @@ export default {
           width: "10%"
         },
         { text: this.$t("person.name.last"), value: "lastName", width: "20%" },
-        { text: this.$t("person.accountInfo.roles"), value: "roles", width: "20%"},
+        {
+          text: this.$t("person.accountInfo.roles"),
+          value: "roles",
+          width: "20%"
+        },
         {
           text: this.$t("person.email"),
           value: "email",
