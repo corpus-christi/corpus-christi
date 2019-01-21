@@ -36,10 +36,11 @@ matrix:
                   postgres:
                         adapter: postgresql
                         database: cc-staging
-before_install:
+                        #before_install:
+script:
         - cd ui/
         - yarn cache clean
-install:
+          #install:
         - yarn install
         - cd ../
         - cd api/
@@ -48,7 +49,6 @@ install:
         - sudo apt install postgresql
         - sudo apt install nginx
         - sudo service postgresql start
-script:
         - createuser arco
         - createdb --owner=arco cc-staging 
         - flask db upgrade
