@@ -1,25 +1,56 @@
 <template>
-  <v-container>
-    <v-layout>
-      <v-flex>
-        <v-toolbar color="cyan" dark>
-          <v-toolbar-title> {{ course.name }} </v-toolbar-title>
-        </v-toolbar>
-        <v-card>
-          <v-card-text>{{ course.description }}</v-card-text>
-          <v-card-text
-            >{{ $t("courses.enrolled") }}: {{ course.enrolled }}</v-card-text
-          >
-          <v-card-actions> <slot name="actions"></slot> </v-card-actions>
-        </v-card>
-      </v-flex>
-    </v-layout>
-  </v-container>
+  <div class="body">
+    <!-- Display course title, description and register button -->
+      <v-card-title>
+        <v-layout row align-center justify-center>
+          <v-flex shrink>
+            <span class="headline mb-3">{{ course.title }}</span>
+          </v-flex>
+        </v-layout>
+      </v-card-title>
+
+      <v-card-text class="text">
+        <v-layout>
+          <v-flex>
+            <div class="mb-3">{{ course.description }}</div>
+          </v-flex>
+        </v-layout>
+      </v-card-text>
+
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn raised color="primary">{{ $t("courses.course.register") }}</v-btn>
+        <v-spacer></v-spacer>
+      </v-card-actions>
+    </div>
 </template>
 
 <script>
 export default {
   name: "CourseCard",
-  props: ["course"]
+  props:{ 
+    course: {}
+  },
+  data() {
+    return {};
+  }
+  
 };
 </script>
+
+<style scoped>
+.text {
+  max-height: 200px;
+  min-height: 200px;
+}
+
+.card {
+  margin: 25px;
+  border-radius: 30px;
+}
+
+.body {
+  padding-top: 10px;
+  border-radius: 30px;
+}
+</style>
