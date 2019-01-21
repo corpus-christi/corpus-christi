@@ -44,6 +44,8 @@ export default {
     person: Boolean,
     course: Boolean,
     team: Boolean,
+    address: Boolean,
+    manager: Boolean,
     multiple: { type: Boolean, default: false },
     value: null,
     searchEndpoint: String,
@@ -63,6 +65,8 @@ export default {
       else if (this.person) return this.$t("actions.search-people");
       else if (this.course) return this.$t("actions.search-courses");
       else if (this.team) return this.$t("events.teams.title");
+      else if (this.address) return this.$t("actions-search-addresses");
+      else if (this.manager) return this.$t("actions-search-managers");
       else return "";
     },
     idField() {
@@ -98,6 +102,10 @@ export default {
         entityDescriptor = entity.name;
       } else if (this.team) {
         entityDescriptor = entity.description;
+      } else if (this.address) {
+        entityDescriptor = entity.name + ", " + entity.address;
+      } else if (this.manager) {
+        entityDescriptor = entity.person.firstName + " " + entity.person.lastName + " " + ((entity.person.secondLastName) ? entity.person.secondLastName : "");
       }
 
       if (entityDescriptor.length > letterLimit) {
@@ -132,6 +140,8 @@ export default {
     else if (this.person) endpoint = "/api/v1/people/persons";
     else if (this.course) endpoint = "/api/v1/courses/courses";
     else if (this.team) endpoint = "/api/v1/teams/";
+    else if (this.address) endpoint = "/api/v1/places/addresses";
+    else if (this.manager) endpoint = "/api/v1/people/manager";
     this.$http
       .get(endpoint)
       .then(resp => {

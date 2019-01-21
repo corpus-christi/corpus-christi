@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <h1>{{ $t("groups.title") }}</h1>
+    <router-view></router-view>
   </v-container>
 </template>
 

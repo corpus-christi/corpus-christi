@@ -47,7 +47,43 @@ const router = new VueRouter({
       name: "groups",
       path: "/groups",
       meta: { authRequired: true },
-      component: () => import("@/pages/Groups")
+      component: () => import("@/pages/Groups"),
+      redirect: { name: "all-groups" },
+      children: [
+        {
+          name: "all-groups",
+          path: "all",
+          meta: { authRequired: true },
+          component: () => import("@/components/groups/GroupTable")
+        },
+        {
+          name: "group",
+          path: ":group",
+          meta: { authRequired: true },
+          redirect: { name: "group-details" },
+          component: () => import("@/components/groups/Group"),
+          children: [
+            {
+              name: "group-details",
+              path: "details",
+              meta: { authRequired: true },
+              component: () => import("@/components/groups/GroupDetails")
+            },
+            {
+              name: "group-members",
+              path: "members",
+              meta: { authRequired: true },
+              component: () => import("@/components/groups/members/GroupMembers")
+            },
+            {
+              name: "group-meetings",
+              path: "meetings",
+              meta: { authRequired: true },
+              component: () => import("@/components/groups/meetings/GroupMeetings")
+            }
+          ]
+        }
+      ]
     },
     {
       name: "events",
