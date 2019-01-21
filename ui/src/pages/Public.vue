@@ -37,12 +37,11 @@
         <v-list style="padding-top: 0px; z-index: 0">
           <v-expansion-panel>
             <v-expansion-panel-content
-              v-for="(event,idx) in events"
+              v-for="(event, idx) in events"
               v-bind:key="idx"
             >
               <div slot="header">
-                {{ event.title }}
-                <br>
+                {{ event.title }} <br />
                 <span class="grey--text">
                   <div>{{ getDisplayDate(event.start) }}</div>
                 </span>
@@ -51,7 +50,9 @@
                 <v-card-text>{{ event.description }}</v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                    <v-btn raised color="primary">{{ $t("public.events.join") }}</v-btn>
+                  <v-btn raised color="primary">{{
+                    $t("public.events.join")
+                  }}</v-btn>
                   <v-spacer></v-spacer>
                 </v-card-actions>
               </v-card>
@@ -60,13 +61,16 @@
           <!-- <v-divider light></v-divider> -->
           <v-card>
             <v-card-actions>
-              <v-btn 
+              <v-btn
                 v-on:click="$router.push({ path: '/public/events' })"
-                flat block outline color="primary">{{ $t("public.events.view-all") }}
-              </v-btn>
+                flat
+                block
+                outline
+                color="primary"
+                >{{ $t("public.events.view-all") }}</v-btn
+              >
             </v-card-actions>
           </v-card>
-
         </v-list>
       </v-flex>
     </v-layout>
@@ -78,7 +82,7 @@
             {{ $t("public.headers.home-church") }}
           </v-toolbar-title>
         </v-toolbar>
-        <GoogleMap></GoogleMap>
+        <GoogleMap v-bind:markers="groupLocations"></GoogleMap>
       </v-flex>
     </v-layout>
   </v-container>
@@ -98,18 +102,9 @@ export default {
       ],
       events: [],
       pageLoaded: false,
+      groupLocations: []
     };
   },
-  mounted() {
-    this.pageLoaded = false;
-    this.$http.get(`/api/v1/events/?return_group=all`).then(resp => {
-      this.events = resp.data;
-      this.events = this.events.slice(0, 5);
-      console.log(resp.data);
-      this.pageLoaded = true;
-    });
-  },
-
   methods: {
     getDisplayDate(ts) {
       let date = new Date(ts);
@@ -120,7 +115,38 @@ export default {
         hour: "2-digit",
         minute: "2-digit"
       });
+    },
+
+    getHomegroupLocations() {
+      this.$httpNoAuth
+        .get("/api/v1/places/locations")
+        .then(resp => {
+          console.log(resp);
+          for (let loc of resp.data) {
+            this.groupLocations.push({
+              position: {
+                lat: loc.address.latitude,
+                lng: loc.address.longitude
+              }
+            });
+          }
+        })
+        .catch(err => console.log("FAILED", err));
+    },
+
+    getEventData() {
+      this.pageLoaded = false;
+      this.$http.get(`/api/v1/events/?return_group=all`).then(resp => {
+        this.events = resp.data;
+        this.events = this.events.slice(0, 5);
+        console.log(resp.data);
+        this.pageLoaded = true;
+      });
     }
+  },
+  mounted: function() {
+    this.getHomegroupLocations();
+    this.getEventData();
   }
 };
 </script>
