@@ -26,6 +26,13 @@ Cypress.Commands.add("course_page", function (){
   cy.get('[data-cy=toggle-nav-drawer]').click();
   cy.get('[data-cy=courses]').click();
 })
+
+Cypress.Commands.add('deploma_page', function (){
+  cy.get('[data-cy=toggle-nav-drawer]').click();
+  cy.get('[data-cy=diplomas-admin]').click();
+})
+
+
 //
 // -- This is a child command --
 // Cypress.Commands.add("drag", { prevSubject: 'element'}, (subject, options) => { ... })

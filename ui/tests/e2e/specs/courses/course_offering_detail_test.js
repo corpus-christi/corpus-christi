@@ -24,14 +24,14 @@ let section = 'Around happy fast'
 describe('Get more section details on a course', () =>{
   it('Click into details of a section', () =>{
     cy.get('tbody').contains(section).click()
-    cy.url().should("include", "/courses/1/offering/5/details");
+    cy.url().should("include", "/courses/13/offering/7/details");
   })
 })
 
 describe('Check students in section', () =>{
   it('Click into students', () =>{
     cy.get(':nth-child(3) > .v-tabs__item').click()
-    cy.url().should("include", "/courses/1/offering/5/students");
+    cy.url().should("include", "/courses/13/offering/7/students");
   })
 })
 
@@ -103,4 +103,3 @@ describe('Get back to courses page', () =>{
     cy.url().should("include", "/courses");
   })
 })
-
