@@ -15,16 +15,23 @@ class Group(Base):
     name = Column(StringTypes.MEDIUM_STRING, nullable=False)
     description = Column(StringTypes.LONG_STRING, nullable=False)
     active = Column(Boolean, nullable=False, default=True)
+    manager_id = Column(Integer, ForeignKey('people_manager.id'), nullable=False)
+    manager = relationship('Manager', back_populates='groups', lazy=True)
+    members = relationship('Member', back_populates='group', lazy=True)
+    meetings = relationship('Meeting', back_populates='group', lazy=True)
 
     def __repr__(self):
-        return f"<Group(id={self.id},name='{self.name}')>"
+        return f"<Group(id={self.id})>"
 
 
 class GroupSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     name = fields.String(required=True, validate=Length(min=1))
     description = fields.String(required=True, validate=Length(min=1))
-    active = fields.Boolean(required=True)
+    active = fields.Boolean(nullable=False)
+    manager_id = fields.Integer(data_key='manager_id', required=True)
+    memberList = fields.Nested('MemberSchema', many=True, only=['person','joined','active'])
+    managerInfo = fields.Nested('ManagerSchema', only=['description_i18n','person'])
 
 
 # ---- Meeting
@@ -34,20 +41,23 @@ class Meeting(Base):
     id = Column(Integer, primary_key=True)
     when = Column(DateTime, nullable=False)
     group_id = Column(Integer, ForeignKey('groups_group.id'), nullable=False)
-    location_id = Column(Integer, ForeignKey('places_location.id'))
-
-    group = relationship('Group', backref='meetings', lazy=True)
-    location = relationship('Location', backref='meetings', lazy=True)
+    address_id = Column(Integer, ForeignKey('places_address.id'))
+    active = Column(Boolean, nullable=False)
+    group = relationship('Group', back_populates='meetings', lazy=True)
+    address = relationship('Address', back_populates='meetings', lazy=True)
+    members = relationship('Attendance', back_populates='meeting', lazy=True)
 
     def __repr__(self):
-        return f"<Meeting(id={self.id},when={self.when})>"
+        return f"<Meeting(id={self.id})>"
 
 
 class MeetingSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     when = fields.DateTime(required=True)
-    group_id = fields.Integer(data_key='groupId', required=True)
-    location_id = fields.Integer(data_key='locationId')
+    group_id = fields.Integer(data_key='group_id', required=True)
+    address_id = fields.Integer(data_key='address_id')
+    active = fields.Boolean(nullable=False)
+    
 
 
 # ---- Member
@@ -59,22 +69,21 @@ class Member(Base):
     active = Column(Boolean, nullable=False, default=True)
     group_id = Column(Integer, ForeignKey('groups_group.id'), nullable=False)
     person_id = Column(Integer, ForeignKey('people_person.id'), nullable=False)
-    role_id = Column(Integer, ForeignKey('people_role.id'))
-    group = relationship('Group', backref='members', lazy=True)
-    person = relationship('Person', backref='memberships', lazy=True)
+    group = relationship('Group', back_populates='members', lazy=True)
+    person = relationship('Person', back_populates='members', lazy=True)
+    meetings = relationship('Attendance', back_populates='member', lazy=True)
 
-
-def __repr__(self):
-    return f"<Member(id={self.id})>"
+    def __repr__(self):
+        return f"<Member(id={self.id})>"
 
 
 class MemberSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     joined = fields.Date(required=True)
     active = fields.Boolean(required=True)
-    group_id = fields.Integer(data_key='groupId', required=True)
-    person_id = fields.Integer(data_key='personId', required=True)
-    role_id = fields.Integer(data_key='roleId')
+    group_id = fields.Integer(data_key='group_id', required=True)
+    person_id = fields.Integer(data_key='person_id', required=True)
+    person = fields.Nested('PersonSchema')
 
 
 # ---- Attendance
@@ -83,11 +92,13 @@ class Attendance(Base):
     __tablename__ = 'groups_attendance'
     meeting_id = Column(Integer, ForeignKey('groups_meeting.id'), primary_key=True)
     member_id = Column(Integer, ForeignKey('groups_member.id'), primary_key=True)
+    meeting = relationship('Meeting', back_populates='members', lazy=True)
+    member = relationship('Member', back_populates='meetings', lazy=True)
 
     def __repr__(self):
         return f"<Attendance(meeting_id={self.meeting_id},member_id={self.member_id})>"
 
 
 class AttendanceSchema(Schema):
-    meeting_id = fields.Integer(dump_only=True, data_key='meetingId', required=True)
-    member_id = fields.Integer(dump_only=True, data_key='memberId', required=True)
+    meeting_id = fields.Integer(data_key='meeting_id', required=True)
+    member_id = fields.Integer(data_key='member_id', required=True)
