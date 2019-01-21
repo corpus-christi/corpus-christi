@@ -8,7 +8,7 @@
           v-bind:label="$t('account.username')"
           prepend-icon="person"
           type="text"
-          data-cy="username"
+          data-cy="register-username"
         ></v-text-field>
         <v-text-field
           v-model="password"
@@ -16,10 +16,25 @@
           prepend-icon="lock"
           name="password"
           type="password"
-          data-cy="password"
+          data-cy="register-password"
         ></v-text-field>
+      
+        <!-- course offerings radios -->
+        <p>{{ $t("courses.register.choose-offering") }}</p>
+        <v-radio-group>
+          <v-radio
+            v-for="offering in course.course_offerings"
+            :key="offering.id"
+            :label="`${offering.description}`"
+            :value="offering.id"
+            data-cy="offering-selection"
+          ></v-radio>
+        </v-radio-group>
+         {{ }}
       </v-form>
     </v-card-text>
+
+    <!-- cancel and register buttons -->
     <v-card-actions>
       <v-spacer></v-spacer>
       <v-btn color="primary" v-on:click="cancel" data-cy="cancel">{{ $t("actions.cancel") }}</v-btn>
@@ -34,10 +49,11 @@ export default {
   data() {
     return {
       username: "",
-      password: ""
+      password: "",
     };
   },
   props: {
+    course:{}
   },
 
   methods: {

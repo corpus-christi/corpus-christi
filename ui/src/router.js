@@ -26,12 +26,6 @@ const router = new VueRouter({
       component: () => import("@/pages/public/Events")
     },
     {
-      name: "public-events",
-      path: "/public/events",
-      meta: { authRequired: false },
-      component: () => import("@/pages/public/Events")
-    },
-    {
       name: "public-courses",
       path: "/public/courses",
       meta: { authRequired: false },

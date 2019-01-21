@@ -10,7 +10,7 @@
         <v-list style="padding-top: 0px; z-index: 0">
           <v-expansion-panel>
             <v-expansion-panel-content
-              v-for="(course,idx) in courses"
+              v-for="(course,idx) in offeredCourses"
               v-bind:key="idx"
             >
               <div slot="header">
@@ -105,6 +105,8 @@
 
 <script>
 import GoogleMap from "../components/GoogleMap";
+import { isEmpty } from "lodash";
+
 export default {
   name: "Public",
   components: { GoogleMap },
@@ -116,6 +118,15 @@ export default {
       groupLocations: []
     };
   },
+
+  computed: {
+    offeredCourses: function() {
+      return this.courses.filter((course) => {
+        return !isEmpty(course.course_offerings)
+       })
+    },
+  },
+
   mounted() {
     this.pageLoaded = false;
     this.$http.get(`/api/v1/events/?return_group=all`).then(resp => {

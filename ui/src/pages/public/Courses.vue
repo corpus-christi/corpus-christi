@@ -15,7 +15,7 @@
         sm6
         md4
         lg4
-        v-for="course in courses"
+        v-for="course in offeredCourses"
         v-bind:key="course.id"
       >
         <CourseCard :course="course"></CourseCard>
@@ -29,6 +29,8 @@
 <script>
 import CourseCard from "../../components/public/CourseCard";
 import { mapGetters } from "vuex";
+import { isEmpty } from "lodash";
+
 
 export default {
   name: "Courses",
@@ -38,8 +40,8 @@ export default {
   data() {
     return {
       courses: [],
+      course: {},
       pageLoaded: false,
-      showDatePicker: false
     };
   },
   mounted() {
@@ -52,43 +54,17 @@ export default {
   },
   
   computed: {
-    today() {
-      return this.getDateFromTimestamp(Date.now());
+    offeredCourses: function() {
+      return this.courses.filter((course) => {
+        return !isEmpty(course.course_offerings)
+       })
     },
-    
-    ...mapGetters(["currentLanguageCode"])
+
+    ...mapGetters(["currentLanguageCode"]),
   },
   
   methods: {
-    getDateFromTimestamp(ts) {
-      let date = new Date(ts);
-      if (date.getTime() < 86400000) {
-        //ms in a day
-        return "";
-      }
-      let yr = date.toLocaleDateString(this.currentLanguageCode, {
-        year: "numeric"
-      });
-      let mo = date.toLocaleDateString(this.currentLanguageCode, {
-        month: "2-digit"
-      });
-      let da = date.toLocaleDateString(this.currentLanguageCode, {
-        day: "2-digit"
-      });
-      return `${yr}-${mo}-${da}`;
-    },
-
-    getTimestamp(date) {
-      let datems = new Date(date).getTime();
-      let tzoffset = new Date().getTimezoneOffset() * 60000;
-      return new Date(datems + tzoffset);
-    },
-
-    addDaystoDate(date, dayDuration) {
-      let date1 = this.getTimestamp(date);
-      date1.setDate(date1.getDate() + dayDuration);
-      return this.getDateFromTimestamp(date1);
-    }
+  
   }
 };
 </script>

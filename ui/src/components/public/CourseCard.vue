@@ -9,7 +9,6 @@
           </v-flex>
         </v-layout>
       </v-card-title>
-
       <div class="body">
         <v-layout>
           <v-card-text class="text">
@@ -22,10 +21,11 @@
           <v-flex>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn raised color="primary" 
-               @click="registrationFormDialog.show = true">{{
+              <v-btn raised color="primary" @click="registrationFormDialog.show = true">
+                {{
                 $t("courses.course.register")
-              }}</v-btn>
+                }}
+              </v-btn>
               <v-spacer></v-spacer>
             </v-card-actions>
           </v-flex>
@@ -33,15 +33,12 @@
       </div>
     </v-card>
     <v-dialog v-model="registrationFormDialog.show" max-width="500px">
-      <courseRegistrationForm 
-        v-on:cancel="cancel"
-        />
+      <courseRegistrationForm v-on:cancel="cancel" :course="course"/>
     </v-dialog>
   </div>
 </template>
 
 <script>
-
 import courseRegistrationForm from "./courseRegistrationForm";
 
 export default {
@@ -59,14 +56,14 @@ export default {
         editMode: false,
         saving: false,
         courseOffering: {}
-      },
+      }
     };
   },
 
   methods: {
     cancel() {
       this.registrationFormDialog.show = false;
-    },
+    }
   }
 };
 </script>
