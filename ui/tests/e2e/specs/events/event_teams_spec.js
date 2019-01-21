@@ -20,7 +20,9 @@ describe("Event Teams Test", function() {
       ".menuable__content__active > .v-select-list > .v-list > :nth-child(1) > .v-list__tile"
     ).click();
 
-    cy.get("[data-cy=confirm-add]").eq(2).click();
+    cy.get("[data-cy=confirm-add]")
+      .eq(2)
+      .click();
   });
 
   it("THEN: A new team is listed for the event", function() {
