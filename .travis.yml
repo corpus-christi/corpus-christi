@@ -15,8 +15,8 @@ matrix:
                           - cd ui/
                           - yarn cache clean
                   install:
-                          #replacing the dist directory 
-                          - yarn install
+                          #   replacing the dist directory 
+                          # - yarn install
                   script:
                           - yarn build
                           - echo "Done with Node_js"  
