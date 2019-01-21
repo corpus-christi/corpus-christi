@@ -49,8 +49,12 @@
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
-        <td class="hover-hand"
-          v-on:click="$router.push({ path: '/teams/' + props.item.id })">{{ props.item.description }}</td>
+        <td
+          class="hover-hand"
+          v-on:click="$router.push({ path: '/teams/' + props.item.id })"
+        >
+          {{ props.item.description }}
+        </td>
         <td>
           <template v-if="props.item.active">
             <v-tooltip bottom v-if="props.item.active">
@@ -168,7 +172,7 @@ export default {
     let eventId = this.$route.params.event;
     this.$http.get(`/api/v1/teams/`).then(resp => {
       this.teams = resp.data;
-      this.tableLoading = false
+      this.tableLoading = false;
     });
   },
 
@@ -331,7 +335,7 @@ export default {
         saveLoading: false,
         addMoreLoading: false,
         team: {}
-      }
+      };
     },
 
     saveTeam(team) {
@@ -350,7 +354,7 @@ export default {
             this.teamDialog.show = false;
             this.teamDialog.saveLoading = false;
             this.showSnackbar(this.$t("events.teams.team-edited"));
-            this.clearTeam()
+            this.clearTeam();
           })
           .catch(err => {
             console.error("PUT FALURE", err.response);
@@ -361,14 +365,14 @@ export default {
         let newTeam = JSON.parse(JSON.stringify(team));
         delete newTeam.id;
         delete newTeam.active;
-        delete newTeam.members
+        delete newTeam.members;
         // for(var i=0; i<newTeam.members.length; i++) {
         //   newTeam.members[i] = {
         //     active: true,
         //     member: newTeam.members[i]
         //   }
         // }
-        console.log(newTeam)
+        console.log(newTeam);
         this.$http
           .post("/api/v1/teams/", newTeam)
           .then(resp => {
@@ -377,7 +381,7 @@ export default {
             this.teamDialog.show = false;
             this.teamDialog.saveLoading = false;
             this.showSnackbar(this.$t("events.teams.team-added"));
-            this.clearTeam()
+            this.clearTeam();
           })
           .catch(err => {
             console.error("POST FAILURE", err.response);

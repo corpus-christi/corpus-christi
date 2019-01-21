@@ -38,17 +38,24 @@
                 prepend-icon="event"
                 readonly
               ></v-combobox>
-              <v-date-picker 
-                v-model="dates" 
-                multiple no-title scrollable 
-                v-bind:locale="currentLanguageCode">
+              <v-date-picker
+                v-model="dates"
+                multiple
+                no-title
+                scrollable
+                v-bind:locale="currentLanguageCode"
+              >
                 <v-spacer></v-spacer>
-                <v-btn flat color="primary" @click="showDatePicker = false">{{ $t("actions.cancel") }}</v-btn>
-                <v-btn flat color="primary" @click="$refs.menu.save(dates)">{{ $t("actions.confirm") }}</v-btn>
+                <v-btn flat color="primary" @click="showDatePicker = false">{{
+                  $t("actions.cancel")
+                }}</v-btn>
+                <v-btn flat color="primary" @click="$refs.menu.save(dates)">{{
+                  $t("actions.confirm")
+                }}</v-btn>
               </v-date-picker>
             </v-menu>
           </v-flex>
-          
+
           <!-- time -->
           <v-flex xs12 md4 ml-4>
             <v-dialog
@@ -91,43 +98,56 @@
                 >
               </v-time-picker>
             </v-dialog>
-        </v-flex>
+          </v-flex>
         </v-layout>
-       
+
         <!-- teacher -->
-        <v-text-field v-model="teacher" v-bind:label="$t('courses.choose-teacher')" name="teacher"></v-text-field>
+        <v-text-field
+          v-model="teacher"
+          v-bind:label="$t('courses.choose-teacher')"
+          name="teacher"
+        ></v-text-field>
 
         <!-- location -->
-        <v-text-field v-model="location" v-bind:label="$t('courses.choose-location')" name="location"></v-text-field>
+        <v-text-field
+          v-model="location"
+          v-bind:label="$t('courses.choose-location')"
+          name="location"
+        ></v-text-field>
 
         <!-- max size TODO: integer validation-->
         <v-flex xs7 md7>
-          <v-text-field v-model="courseOffering.maxSize" v-bind:label="$t('courses.max-size')" name="max-size" type="number" v-validate="'integer'"></v-text-field>
+          <v-text-field
+            v-model="courseOffering.maxSize"
+            v-bind:label="$t('courses.max-size')"
+            name="max-size"
+            type="number"
+            v-validate="'integer'"
+          ></v-text-field>
         </v-flex>
       </form>
     </v-card-text>
     <v-card-actions>
-      <v-btn
-        color="secondary"
-        flat
-        :disabled="saving"
-        v-on:click="cancel"
-      >{{ $t("actions.cancel") }}</v-btn>
+      <v-btn color="secondary" flat :disabled="saving" v-on:click="cancel">{{
+        $t("actions.cancel")
+      }}</v-btn>
       <v-spacer></v-spacer>
-      <v-btn color="primary" flat :disabled="saving" v-on:click="clear">{{ $t("actions.clear") }}</v-btn>
+      <v-btn color="primary" flat :disabled="saving" v-on:click="clear">{{
+        $t("actions.clear")
+      }}</v-btn>
       <v-btn
         color="primary"
         raised
         :disabled="saving"
         :loading="saving"
         v-on:click="save"
-      >{{ $t("actions.save") }}</v-btn>
+        >{{ $t("actions.save") }}</v-btn
+      >
     </v-card-actions>
   </v-card>
 </template>
 
 <script>
-
 import { isEmpty } from "lodash";
 import EntitySearch from "../EntitySearch";
 import { mapGetters } from "vuex";
@@ -145,28 +165,30 @@ export default {
       time: "",
       dates: [],
       menu: false,
-      
+
       showDatePicker: false,
       timeModal: false,
-      
-      courseOffering: {},
+
+      courseOffering: {}
     };
   },
   computed: {
     title() {
-      return this.editMode ? this.$t("actions.edit") : this.$t("courses.new-offering");
+      return this.editMode
+        ? this.$t("actions.edit")
+        : this.$t("courses.new-offering");
     },
-    
+
     timeFormat() {
       if (this.currentLanguageCode == "en") {
         return "ampm";
       } else return "24hr";
     },
-    
+
     today() {
       return this.getDateFromTimestamp(Date.now());
     },
-    
+
     ...mapGetters(["currentLanguageCode"])
   },
 
@@ -186,7 +208,7 @@ export default {
     }
   },
 
-   props: {
+  props: {
     editMode: {
       type: Boolean,
       required: true
@@ -201,7 +223,7 @@ export default {
     }
   },
   methods: {
-     // Abandon ship.
+    // Abandon ship.
     cancel() {
       this.clear();
       this.$emit("cancel");
@@ -215,7 +237,7 @@ export default {
       this.showDatePicker = false;
       this.timeModal = false;
       this.dates = [];
-      
+
       this.$validator.reset();
     },
 
@@ -223,17 +245,17 @@ export default {
     save() {
       this.$validator.validateAll().then(() => {
         if (!this.errors.any()) {
-          // this.courseOffering.when = this.getTimestamp(this.date, this.time);          
+          // this.courseOffering.when = this.getTimestamp(this.date, this.time);
           this.$emit("save", this.courseOffering);
         }
       });
     },
-  
+
     remove(item) {
       this.prereqs.splice(this.prereqs.indexOf(item), 1);
       this.prereqs = [...this.prereqs];
     },
-    
+
     getTimestamp(date, time) {
       let datems = new Date(date).getTime();
       let timearr = time.split(":");
@@ -242,7 +264,7 @@ export default {
       let tzoffset = new Date().getTimezoneOffset() * 60000;
       return new Date(datems + timems + tzoffset);
     },
-    
+
     getDateFromTimestamp(ts) {
       let date = new Date(ts);
       if (date.getTime() < 86400000) {
@@ -260,7 +282,7 @@ export default {
       });
       return `${yr}-${mo}-${da}`;
     },
-    
+
     getTimeFromTimestamp(ts) {
       let date = new Date(ts);
       let hr = String(date.getHours()).padStart(2, "0");

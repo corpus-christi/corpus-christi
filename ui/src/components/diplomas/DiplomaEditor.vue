@@ -9,18 +9,15 @@
         <v-form>
           <ValidationProvider name="Name" rules="required|max:128">
             <v-text-field
-                slot-scope="{
-                  errors,
-                  valid
-                }"
-                v-model="diploma.name"
-                :counter="128"
-                :error-messages="errors"
-                :success="valid"
-                v-bind:label="$t('diplomas.title')"
-                name="name"
-                required
-              ></v-text-field>
+              slot-scope="{ errors, valid }"
+              v-model="diploma.name"
+              :counter="128"
+              :error-messages="errors"
+              :success="valid"
+              v-bind:label="$t('diplomas.title')"
+              name="name"
+              required
+            ></v-text-field>
           </ValidationProvider>
           <v-textarea
             v-model="diploma.description"
@@ -37,16 +34,14 @@
             clearable
             outline
             multiple
-            hide-selected 
+            hide-selected
             return-object
-            item-value = "id"
+            item-value="id"
             item-text="name"
             :menu-props="{ closeOnContentClick: true }"
           >
           </v-select>
-
         </v-form>
-
       </v-card-text>
       <v-card-actions>
         <v-btn color="secondary" flat :disabled="saving" v-on:click="cancel">
@@ -56,13 +51,17 @@
         <v-btn color="primary" flat :disabled="saving" v-on:click="clear">
           {{ $t("actions.clear") }}
         </v-btn>
-        <v-btn color="primary" raised :disabled="saving || invalid || !validated" :loading="saving" v-on:click="save">
+        <v-btn
+          color="primary"
+          raised
+          :disabled="saving || invalid || !validated"
+          :loading="saving"
+          v-on:click="save"
+        >
           {{ $t("actions.save") }}
         </v-btn>
       </v-card-actions>
-
     </v-card>
-    
   </ValidationObserver>
 </template>
 
@@ -81,7 +80,7 @@ export default {
     ValidationProvider,
     ValidationObserver
   },
-  
+
   props: {
     diploma: Object,
     saving: {
@@ -94,19 +93,15 @@ export default {
     }
   },
 
-
   data: function() {
     return {
-      coursesPool: []  // courses for this diploma (the list of courses for this diploma)
+      coursesPool: [] // courses for this diploma (the list of courses for this diploma)
     };
   },
-  
 
   computed: {
     name() {
-      return this.editMode
-        ? this.$t("actions.edit")
-        : this.$t("diplomas.new");
+      return this.editMode ? this.$t("actions.edit") : this.$t("diplomas.new");
     },
     items() {
       return this.coursesPool;
@@ -130,12 +125,11 @@ export default {
     },
     async save() {
       const result = await this.$refs.obs.validate();
-      console.log('result: ', result);
+      console.log("result: ", result);
       if (result) {
         this.$emit("save", this.diploma);
       }
     }
-
   },
 
   mounted() {

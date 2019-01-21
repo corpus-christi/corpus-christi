@@ -82,7 +82,6 @@ export default {
     offeringId: 0,
   },
   methods: {
-
     getDisplayDate(ts) {
       let date = new Date(ts);
       return date.toLocaleTimeString(this.currentLanguageCode, {

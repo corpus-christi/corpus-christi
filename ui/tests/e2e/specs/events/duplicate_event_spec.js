@@ -8,7 +8,9 @@ describe("Duplicate Event Test", function() {
   });
 
   it("WHEN: Event planner duplicates an event", function() {
-    cy.get("[data-cy=duplicate]").eq(0).click();
+    cy.get("[data-cy=duplicate]")
+      .eq(0)
+      .click();
 
     cy.wait(250);
 
@@ -31,6 +33,8 @@ describe("Duplicate Event Test", function() {
     ).click();
     cy.contains("Todos").click();
 
-    cy.get("tbody").eq(2).contains("28/1/2019");
+    cy.get("tbody")
+      .eq(2)
+      .contains("28/1/2019");
   });
 });
