@@ -676,6 +676,23 @@ def test_create_role(auth_client):
 
 
 @pytest.mark.smoke
+def test_create_role_invalid(auth_client):
+    # GIVEN an empty database
+    count = random.randint(3, 6)
+
+    # GIVEN new roles with bad data
+    for i in range(count):
+        new_role = role_object_factory(fake.job())
+        new_role[fake.word()] = fake.word()
+
+        # WHEN the bad role is requested to be created
+        resp = auth_client.post(url_for('people.create_role'), json = new_role)
+
+        # THEN expect the request to be unprocessable
+        assert resp.status_code == 422
+
+
+@pytest.mark.smoke
 def test_read_all_roles(auth_client):
     # GIVEN a collection of roles
     role_count = random.randint(3, 8)
