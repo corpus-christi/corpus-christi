@@ -55,8 +55,9 @@
         </v-layout>
       </v-card>
     </v-flex>
-    <v-layout row wrap>
-      <v-flex xs6>
+    <v-layout column wrap>
+      <!-- TODO: reload individually on add -->
+      <v-flex xs12>
         <event-team-details
           :teams="event.teams"
           :pageLoaded="pageLoaded"
@@ -64,7 +65,7 @@
           v-on:team-added="getEvent()"
         ></event-team-details>
       </v-flex>
-      <v-flex xs6>
+      <v-flex xs12>
         <event-person-details
           :persons="event.persons"
           :pageLoaded="pageLoaded"
@@ -72,8 +73,7 @@
           v-on:person-added="getEvent()"
         ></event-person-details>
       </v-flex>
-
-      <v-flex xs6>
+      <v-flex xs12>
         <event-asset-details
           :assets="event.assets"
           :pageLoaded="pageLoaded"
@@ -189,9 +189,10 @@ export default {
           this.event.assets = !this.event.assets
             ? []
             : this.event.assets.map(a => a.asset);
+          // conserve description on EventPersons
           this.event.persons = !this.event.persons
             ? []
-            : this.event.persons.map(p => p.person);
+            : this.event.persons.map(p => Object.assign(p, {id:p.person_id}));
           this.pageLoaded = true;
         });
     },

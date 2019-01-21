@@ -122,12 +122,15 @@
       },
       "persons": {
         "confirm-remove-from-event": "Are you sure you want to remove this person from this event?",
+        "description": "Role Description",
+        "edit": "Edit Person",
         "error-adding-person": "Error while adding person",
         "error-person-assigned": "That person is assigned to a conflicting event.",
         "error-removing-person": "Error while removing person",
         "new": "Add Person",
         "none-assigned": "No people assigned.",
         "person-added": "Person added",
+        "person-edited": "Person edited",
         "person-on-event": "That person is already assigned to this event.",
         "person-removed": "Person removed",
         "title": "Event People"
@@ -352,12 +355,15 @@
       },
       "persons": {
         "confirm-remove-from-event": "\u00bfEst\u00e1 seguro de que desea eliminar este persona de este evento?",
+        "description": "Descripci\u00f3n del Rol",
+        "edit": "Editar Persona",
         "error-adding-person": "Error al agregar persona",
         "error-person-assigned": "Ese persona est\u00e1 asignado a un evento conflictivo.",
         "error-removing-person": "Error al eliminadar este persona",
         "new": "A\u00f1adir Persona",
         "none-assigned": "No hay personas asignados.",
         "person-added": "Persona agregado",
+        "person-edited": "Persona editado",
         "person-on-event": "Ese persona ya est\u00e1 asignado a este evento.",
         "person-removed": "Persona eliminado",
         "title": "Personas del Evento"
