@@ -3,7 +3,7 @@
     <v-toolbar class="pa-1">
       <v-layout align-center justify-space-between fill-height>
         <v-flex md2>
-          <v-toolbar-title>{{ $t("events.assets.title") }}</v-toolbar-title>
+          <v-toolbar-title>{{ $t("assets.title") }}</v-toolbar-title>
         </v-flex>
         <v-flex md2>
           <v-text-field
@@ -34,7 +34,7 @@
             data-cy="add-asset"
           >
             <v-icon dark left>add</v-icon>
-            {{ $t("events.assets.new") }}
+            {{ $t("assets.new") }}
           </v-btn>
         </v-flex>
       </v-layout>
@@ -138,7 +138,7 @@
     <!-- Archive dialog -->
     <v-dialog v-model="archiveDialog.show" max-width="350px">
       <v-card>
-        <v-card-text>{{ $t("events.assets.confirm-archive") }}</v-card-text>
+        <v-card-text>{{ $t("assets.confirm-archive") }}</v-card-text>
         <v-card-actions>
           <v-btn v-on:click="cancelArchive" color="secondary" flat data-cy="">{{
             $t("actions.cancel")
@@ -159,7 +159,7 @@
 </template>
 
 <script>
-import AssetForm from "./AssetForm";
+import AssetForm from "../../assets/AssetForm";
 import { mapGetters } from "vuex";
 
 export default {
@@ -220,16 +220,16 @@ export default {
     headers() {
       return [
         {
-          text: this.$t("events.assets.description"),
+          text: this.$t("assets.description"),
           value: "description",
           width: "45%"
         },
         {
-          text: this.$t("events.assets.location"),
+          text: this.$t("assets.location"),
           value: "location_name",
           width: "30%"
         },
-        { text: this.$t("events.actions"), sortable: false, width: "25%" }
+        { text: this.$t("actions.header"), sortable: false, width: "25%" }
       ];
     },
 
@@ -284,19 +284,19 @@ export default {
       const assetId = this.archiveDialog.assetId;
       const idx = this.assets.findIndex(as => as.id === assetId);
       this.$http
-        .delete(`/api/v1/events/assets/${assetId}`)
+        .delete(`/api/v1/assets/${assetId}`)
         .then(resp => {
           console.log("ARCHIVE", resp);
           this.assets[idx].active = false;
           this.archiveDialog.loading = false;
           this.archiveDialog.show = false;
-          this.showSnackbar(this.$t("events.assets.asset-archived"));
+          this.showSnackbar(this.$t("assets.asset-archived"));
         })
         .catch(err => {
           console.error("ARCHIVE FALURE", err.response);
           this.archiveDialog.loading = false;
           this.archiveDialog.show = false;
-          this.showSnackbar(this.$t("events.assets.error-archiving-asset"));
+          this.showSnackbar(this.$t("assets.error-archiving-asset"));
         });
 
       // this.archiveDialog.show = false;
@@ -311,17 +311,17 @@ export default {
       delete copyAsset.id;
       delete copyAsset.location; //Temporary delete
       this.$http
-        .patch(`/api/v1/events/assets/${patchId}`, { active: true })
+        .patch(`/api/v1/assets/${patchId}`, { active: true })
         .then(resp => {
           console.log("UNARCHIVED", resp);
           delete asset.unarchiving;
           Object.assign(this.assets[idx], resp.data);
-          this.showSnackbar(this.$t("events.assets.asset-unarchived"));
+          this.showSnackbar(this.$t("assets.asset-unarchived"));
         })
         .catch(err => {
           delete asset.unarchiving;
           console.error("UNARCHIVE FALURE", err.response);
-          this.showSnackbar(this.$t("events.assets.error-unarchiving-asset"));
+          this.showSnackbar(this.$t("assets.error-unarchiving-asset"));
         });
     },
 
@@ -348,33 +348,33 @@ export default {
         const idx = this.assets.findIndex(as => as.id === asset.id);
         delete asset.id;
         this.$http
-          .put(`/api/v1/events/assets/${assetId}`, newAsset)
+          .put(`/api/v1/assets/${assetId}`, newAsset)
           .then(resp => {
             console.log("EDITED", resp);
             Object.assign(this.assets[idx], resp.data);
             this.assetDialog.show = false;
             this.assetDialog.saveLoading = false;
-            this.showSnackbar(this.$t("events.assets.asset-edited"));
+            this.showSnackbar(this.$t("assets.asset-edited"));
           })
           .catch(err => {
             console.error("PUT FALURE", err.response);
             this.assetDialog.saveLoading = false;
-            this.showSnackbar(this.$t("events.assets.error-editing-asset"));
+            this.showSnackbar(this.$t("assets.error-editing-asset"));
           });
       } else {
         this.$http
-          .post("/api/v1/events/assets", newAsset)
+          .post("/api/v1/assets", newAsset)
           .then(resp => {
             console.log("ADDED", resp);
             this.assets.push(resp.data);
             this.assetDialog.show = false;
             this.assetDialog.saveLoading = false;
-            this.showSnackbar(this.$t("events.assets.asset-added"));
+            this.showSnackbar(this.$t("assets.asset-added"));
           })
           .catch(err => {
             console.error("POST FAILURE", err.response);
             this.assetDialog.saveLoading = false;
-            this.showSnackbar(this.$t("events.assets.error-adding-asset"));
+            this.showSnackbar(this.$t("assets.error-adding-asset"));
           });
       }
     },
@@ -385,18 +385,18 @@ export default {
       let newAsset = JSON.parse(JSON.stringify(asset));
       delete newAsset.location;
       this.$http
-        .post("/api/v1/events/assets", newAsset)
+        .post("/api/v1/assets", newAsset)
         .then(resp => {
           console.log("ADDED", resp);
           this.assets.push(resp.data);
           this.assetDialog.show = false;
           this.assetDialog.saveLoading = false;
-          this.showSnackbar(this.$t("events.assets.asset-added"));
+          this.showSnackbar(this.$t("assets.asset-added"));
         })
         .catch(err => {
           console.error("FAILURE", err.response);
           this.assetDialog.saveLoading = false;
-          this.showSnackbar(this.$t("events.assets.error-adding-asset"));
+          this.showSnackbar(this.$t("assets.error-adding-asset"));
         });
     },
 

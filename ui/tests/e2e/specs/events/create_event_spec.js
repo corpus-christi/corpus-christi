@@ -66,19 +66,22 @@ describe("Create Event Test", function() {
     cy.get("[data-cy=add-event]").click();
     cy.get("[data-cy=form-save]").click();
   });
-    
+
   it("THEN: Error messages appear", function() {
     // Check for error messages under each input field
-    cy.get("form > :nth-child(1) > .v-input__control > .v-text-field__details > .v-messages > .v-messages__wrapper > .v-messages__message").should("exist");
-    cy.get("[name='location'] > .v-input > .v-input__control > .v-text-field__details > .v-messages > .v-messages__wrapper > .v-messages__message").should("exist");
-    cy.get("[data-cy=start-date-menu] > .v-menu__activator > .v-input > .v-input__control > .v-text-field__details > .v-messages > .v-messages__wrapper > .v-messages__message").should("exist");
-    cy.get("[data-cy=start-time-dialog] > .v-dialog__activator > .v-input > .v-input__control > .v-text-field__details > .v-messages > .v-messages__wrapper > .v-messages__message").should("exist");
-    cy.get("[data-cy=start-time-dialog] > .v-dialog__activator > .v-input > .v-input__control > .v-text-field__details > .v-messages > .v-messages__wrapper > .v-messages__message").should("exist");
-    cy.get("[data-cy=end-date-menu] > .v-menu__activator > .v-input > .v-input__control > .v-text-field__details > .v-messages > .v-messages__wrapper > .v-messages__message").should("exist");
-    cy.get("[data-cy=end-time-dialog] > .v-dialog__activator > .v-input > .v-input__control > .v-text-field__details > .v-messages > .v-messages__wrapper > .v-messages__message").should("exist");
+    cy.get(
+      "form > :nth-child(1) > .v-input__control > .v-text-field__details > .v-messages > .v-messages__wrapper > .v-messages__message"
+    ).should("exist");
+    cy.get(
+      "[data-cy=start-date-menu] > .v-menu__activator > .v-input > .v-input__control > .v-text-field__details > .v-messages > .v-messages__wrapper > .v-messages__message"
+    ).should("exist");
+    cy.get(
+      "[data-cy=start-time-dialog] > .v-dialog__activator > .v-input > .v-input__control > .v-text-field__details > .v-messages > .v-messages__wrapper > .v-messages__message"
+    ).should("exist");
+    cy.get(
+      "[data-cy=start-time-dialog] > .v-dialog__activator > .v-input > .v-input__control > .v-text-field__details > .v-messages > .v-messages__wrapper > .v-messages__message"
+    ).should("exist");
 
     cy.get("[data-cy=form-cancel]").click();
   });
-  // TODO: Pick end date first
-  // TODO: Pick end time first
 });

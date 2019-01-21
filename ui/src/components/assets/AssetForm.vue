@@ -7,12 +7,14 @@
       <form>
         <v-textarea
           rows="3"
-          v-model="team.description"
-          v-bind:label="$t('events.teams.description')"
+          v-model="asset.description"
+          v-bind:label="$t('assets.description')"
           name="description"
           v-bind:error-messages="errors.collect('description')"
           data-cy="description"
         ></v-textarea>
+
+        <entity-search location v-model="asset.location" />
       </form>
     </v-card-text>
     <v-card-actions>
@@ -54,29 +56,29 @@
 <script>
 import { isEmpty } from "lodash";
 // import { mapGetters } from "vuex";
-// import EntitySearch from "../../EntitySearch";
+import EntitySearch from "../EntitySearch";
 export default {
-  //   components: { "entity-search": EntitySearch },
-  name: "TeamForm",
+  components: { "entity-search": EntitySearch },
+  name: "AssetForm",
   watch: {
     // Make sure data stays in sync with any changes to `initialData` from parent.
-    initialData(teamProp) {
-      if (isEmpty(teamProp)) {
+    initialData(assetProp) {
+      if (isEmpty(assetProp)) {
         this.clear();
       } else {
-        this.team = teamProp;
+        this.asset = assetProp;
       }
     }
   },
   computed: {
-    // List the keys in an Team record.
-    teamKeys() {
-      return Object.keys(this.team);
+    // List the keys in an Asset record.
+    assetKeys() {
+      return Object.keys(this.asset);
     },
     title() {
       return this.editMode
-        ? this.$t("events.teams.edit-team")
-        : this.$t("events.teams.create-team");
+        ? this.$t("assets.edit-asset")
+        : this.$t("assets.create-asset");
     },
 
     formDisabled() {
@@ -94,8 +96,9 @@ export default {
 
     // Clear the form and the validators.
     clear() {
-      for (let key of this.teamKeys) {
-        this.team[key] = "";
+      delete this.asset.location;
+      for (let key of this.assetKeys) {
+        this.asset[key] = "";
       }
 
       this.$validator.reset();
@@ -104,15 +107,15 @@ export default {
     save() {
       this.$validator.validateAll();
       if (!this.errors.any()) {
-        // this.team.active = true;
-        this.$emit("save", this.team);
+        // this.asset.active = true;
+        this.$emit("save", this.asset);
       }
     },
 
     addAnother() {
       this.$validator.validateAll();
       if (!this.errors.any()) {
-        this.$emit("add-another", this.team);
+        this.$emit("add-another", this.asset);
       }
     }
   },
@@ -134,7 +137,7 @@ export default {
   },
   data: function() {
     return {
-      team: {},
+      asset: {},
       save_loading: false,
       add_more_loading: false
     };

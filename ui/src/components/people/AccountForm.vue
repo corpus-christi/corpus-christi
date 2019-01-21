@@ -15,7 +15,7 @@
         v-model="username"
         v-bind:label="$t('account.username')"
         name="username"
-        v-validate="'alpha_dash|min:6'"
+        v-validate="'required|alpha_dash|min:6'"
         v-bind:error-messages="errors.collect('username')"
         prepend-icon="person"
         data-cy="new-account-username"
@@ -45,11 +45,49 @@
         data-cy="confirm-password"
       ></v-text-field>
     </v-card-text>
+    <v-card-title>{{ $t("person.actions.assign-roles") }}</v-card-title>
+    <v-card-text>
+      <v-select
+        :items="rolesList"
+        label="$tRoles"
+        chips
+        deletable-chips
+        clearable
+        solo
+        multiple
+        hide-selected
+        return-object
+        item-value="value"
+        item-text="text"
+        :menu-props="{ closeOnContentClick: true }"
+        data-cy="account-form-roles"
+      >
+      </v-select>
+    </v-card-text>
 
     <v-card-actions>
-      <v-spacer></v-spacer>
+      <v-spacer v-if="!person.accountInfo"></v-spacer>
       <v-btn color="secondary" flat v-on:click="close" data-cy="cancel-button">
         {{ $t("actions.cancel") }}
+      </v-btn>
+      <v-spacer v-if="person.accountInfo"></v-spacer>
+      <v-btn
+        v-if="person.active && person.accountInfo && account.active"
+        color="primary"
+        outline
+        v-on:click="deactivateAccount"
+        data-cy="deactivate-account"
+      >
+        {{ $t("actions.deactivate-account") }}
+      </v-btn>
+      <v-btn
+        v-if="person.active && person.accountInfo && !account.active"
+        color="primary"
+        outline
+        v-on:click="reactivateAccount"
+        data-cy="reactivate-account"
+      >
+        {{ $t("actions.activate-account") }}
       </v-btn>
       <v-btn
         color="primary"
@@ -72,7 +110,8 @@ export default {
   name: "AccountForm",
   props: {
     person: { type: Object, required: true },
-    account: { type: Object, required: true }
+    account: { type: Object, required: true },
+    rolesList: Array
   },
   data() {
     return {
@@ -104,21 +143,34 @@ export default {
   },
   methods: {
     confirm() {
-      if (this.addingAccount) {
-        this.$emit("addAccount", {
-          username: this.username,
-          password: this.password,
-          active: true,
-          personId: this.person.id
-        });
-      } else {
-        this.$emit("updateAccount", this.account.id, {
-          password: this.password
-        });
-      }
+      this.$validator.validateAll().then(() => {
+        if (!this.errors.any()) {
+          if (this.addingAccount) {
+            this.$emit("addAccount", {
+              username: this.username,
+              password: this.password,
+              active: true,
+              personId: this.person.id
+            });
+          } else {
+            this.$emit("updateAccount", this.account.id, {
+              password: this.password
+            });
+          }
+          this.close();
+        }
+      });
+    },
+    deactivateAccount() {
+      this.$emit("deactivateAccount", this.account.id);
+      this.close();
+    },
+    reactivateAccount() {
+      this.$emit("reactivateAccount", this.account.id);
       this.close();
     },
     close() {
+      this.$validator.reset();
       this.username = this.password = this.repeat_password = "";
       this.$emit("close");
     }

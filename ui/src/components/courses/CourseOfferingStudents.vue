@@ -11,10 +11,7 @@
         hide-details
       ></v-text-field>
       <v-spacer></v-spacer>
-      <v-btn
-        color="primary"
-        r        data-cy="add-student"
-      >
+      <v-btn color="primary" r data-cy="add-student">
         <v-icon dark left>add</v-icon>
         {{ $t("actions.add-person") }}
       </v-btn>
@@ -37,9 +34,7 @@
 </template>
 
 <script>
-import EntitySearch from "../EntitySearch";
 export default {
-  components: { "entity-search": EntitySearch },
   name: "CourseOfferingStudents",
   data() {
     return {
