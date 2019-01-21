@@ -367,6 +367,8 @@ def test_read_all_persons(auth_client):
     people = auth_client.sqla.query(Person).all()
     assert len(resp.json) == len(people)
 
+    # TODO read roles bitch
+
 
 @pytest.mark.smoke
 def test_read_one_person(auth_client):
