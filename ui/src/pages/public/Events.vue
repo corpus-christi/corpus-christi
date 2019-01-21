@@ -1,5 +1,5 @@
 <template>
-  <v-container grid-list-md> 
+  <v-container grid-list-md>
     <v-layout layout row wrap>
       <v-flex xs12 sm6 md4 lg4 v-for="event in events" v-bind:key="event.id">
         <EventCard :event="event"></EventCard>
@@ -7,8 +7,6 @@
     </v-layout>
   </v-container>
 </template>
-      
-
 
 <script>
 import EventCard from "../../components/public/EventCard";

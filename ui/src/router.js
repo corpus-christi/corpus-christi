@@ -17,7 +17,7 @@ const router = new VueRouter({
       name: "public",
       path: "/public",
       meta: { layout: "arco" },
-      component: () => import("@/pages/Public"),
+      component: () => import("@/pages/Public")
     },
     {
       name: "public-events",
@@ -169,14 +169,16 @@ const router = new VueRouter({
               path: "details",
               meta: { authRequired: true },
               props: true,
-              component: () => import("@/components/courses/CourseOfferingDetails")
+              component: () =>
+                import("@/components/courses/CourseOfferingDetails")
             },
             {
               name: "course-offering-students",
               path: "students",
               meta: { authRequired: true },
               props: true,
-              component: () => import("@/components/courses/CourseOfferingStudents")
+              component: () =>
+                import("@/components/courses/CourseOfferingStudents")
             }
           ]
         }

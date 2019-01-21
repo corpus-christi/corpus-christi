@@ -320,13 +320,13 @@ export default {
     duplicate(event) {
       //TODO maintain duration for date select
       const copyEvent = JSON.parse(JSON.stringify(event));
-      copyEvent.start = new Date(copyEvent.start)
-      copyEvent.end = new Date(copyEvent.end)
+      copyEvent.start = new Date(copyEvent.start);
+      copyEvent.end = new Date(copyEvent.end);
       const startDate = copyEvent.start.toDateString();
       const endDate = copyEvent.end.toDateString();
       if (startDate != endDate) {
         const diff = copyEvent.end - copyEvent.start;
-        copyEvent.dayDuration = Math.ceil(diff/86400000);
+        copyEvent.dayDuration = Math.ceil(diff / 86400000);
       }
       copyEvent.start = new Date(copyEvent.start).getTime();
       copyEvent.end = new Date(copyEvent.end).getTime();

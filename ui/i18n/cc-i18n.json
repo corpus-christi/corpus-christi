@@ -175,9 +175,9 @@
       }
     },
     "people": {
-      "title": "People"
-      "title-roles": "Roles"
-      "attributes": "Attributes",
+      "title": "People",
+      "title-roles": "Roles",
+      "attributes": "Attributes"
     },
     "person": {
       "actions": {

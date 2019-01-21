@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import store from "../../store.js";
+import store from "./../../../store.js";
 import Date from "./Date.vue";
 import Float from "./Float.vue";
 import Integer from "./Integer.vue";

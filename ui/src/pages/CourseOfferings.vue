@@ -1,5 +1,7 @@
 <template>
-  <v-container> <CourseOfferingsTable v-bind:course="courseOffering" /> </v-container>
+  <v-container>
+    <CourseOfferingsTable v-bind:course="courseOffering" />
+  </v-container>
 </template>
 
 <script>
