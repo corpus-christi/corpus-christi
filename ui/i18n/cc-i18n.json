@@ -85,8 +85,7 @@
         "title": "Dashboard",
         "headers": {
           "course-flow": "Course Flow",
-          "graduation-rate": "Graduation Rate",
-          "enrollment": "Course Enrollment"
+          "enrollment": "Course Data"
         }
       },
       "description": "Description",
