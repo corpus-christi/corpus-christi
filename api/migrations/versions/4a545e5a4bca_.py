@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: def2cd6e8d2f
+Revision ID: 4a545e5a4bca
 Revises: 
-Create Date: 2019-01-17 13:59:06.068686
+Create Date: 2019-01-20 18:22:58.677040
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'def2cd6e8d2f'
+revision = '4a545e5a4bca'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -98,11 +98,30 @@ def upgrade():
     sa.ForeignKeyConstraint(['locale_code'], ['i18n_locale.code'], ),
     sa.PrimaryKeyConstraint('key_id', 'locale_code')
     )
+    op.create_table('people_attributes',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name_i18n', sa.String(length=5), nullable=True),
+    sa.Column('type_i18n', sa.String(length=5), nullable=True),
+    sa.Column('seq', sa.Integer(), nullable=False),
+    sa.Column('active', sa.Boolean(), nullable=False),
+    sa.ForeignKeyConstraint(['name_i18n'], ['i18n_key.id'], ),
+    sa.ForeignKeyConstraint(['type_i18n'], ['i18n_key.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('places_country',
     sa.Column('code', sa.String(length=2), nullable=False),
     sa.Column('name_i18n', sa.String(length=32), nullable=False),
     sa.ForeignKeyConstraint(['name_i18n'], ['i18n_key.id'], ),
     sa.PrimaryKeyConstraint('code')
+    )
+    op.create_table('people_enumerated_value',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('attribute_id', sa.Integer(), nullable=True),
+    sa.Column('value_i18n', sa.String(length=5), nullable=True),
+    sa.Column('active', sa.Boolean(), nullable=False),
+    sa.ForeignKeyConstraint(['attribute_id'], ['people_attributes.id'], ),
+    sa.ForeignKeyConstraint(['value_i18n'], ['i18n_key.id'], ),
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('places_area',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -163,6 +182,7 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('first_name', sa.String(length=64), nullable=False),
     sa.Column('last_name', sa.String(length=64), nullable=False),
+    sa.Column('second_last_name', sa.String(length=64), nullable=True),
     sa.Column('gender', sa.String(length=1), nullable=True),
     sa.Column('birthday', sa.Date(), nullable=True),
     sa.Column('phone', sa.String(length=64), nullable=True),
@@ -175,12 +195,12 @@ def upgrade():
     op.create_table('courses_class_meeting',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('offering_id', sa.Integer(), nullable=False),
-    sa.Column('location', sa.Integer(), nullable=False),
-    sa.Column('teacher', sa.Integer(), nullable=False),
+    sa.Column('location_id', sa.Integer(), nullable=False),
+    sa.Column('teacher_id', sa.Integer(), nullable=False),
     sa.Column('when', sa.DateTime(), nullable=False),
-    sa.ForeignKeyConstraint(['location'], ['places_location.id'], ),
+    sa.ForeignKeyConstraint(['location_id'], ['places_location.id'], ),
     sa.ForeignKeyConstraint(['offering_id'], ['courses_course_offering.id'], ),
-    sa.ForeignKeyConstraint(['teacher'], ['people_person.id'], ),
+    sa.ForeignKeyConstraint(['teacher_id'], ['people_person.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('courses_students',
@@ -254,6 +274,26 @@ def upgrade():
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('username')
     )
+    op.create_table('people_manager',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('person_id', sa.Integer(), nullable=False),
+    sa.Column('manager_id', sa.Integer(), nullable=True),
+    sa.Column('description_i18n', sa.String(length=32), nullable=False),
+    sa.ForeignKeyConstraint(['description_i18n'], ['i18n_key.id'], ),
+    sa.ForeignKeyConstraint(['manager_id'], ['people_manager.id'], ),
+    sa.ForeignKeyConstraint(['person_id'], ['people_person.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('people_person_attributes',
+    sa.Column('person_id', sa.Integer(), nullable=False),
+    sa.Column('attribute_id', sa.Integer(), nullable=False),
+    sa.Column('enum_value_id', sa.Integer(), nullable=True),
+    sa.Column('string_value', sa.String(length=5), nullable=True),
+    sa.ForeignKeyConstraint(['attribute_id'], ['people_attributes.id'], ),
+    sa.ForeignKeyConstraint(['enum_value_id'], ['people_enumerated_value.id'], ),
+    sa.ForeignKeyConstraint(['person_id'], ['people_person.id'], ),
+    sa.PrimaryKeyConstraint('person_id', 'attribute_id')
+    )
     op.create_table('account_role',
     sa.Column('people_account_id', sa.Integer(), nullable=False),
     sa.Column('people_role_id', sa.Integer(), nullable=False),
@@ -292,6 +332,8 @@ def downgrade():
     op.drop_table('courses_diploma_awarded')
     op.drop_table('courses_class_attendance')
     op.drop_table('account_role')
+    op.drop_table('people_person_attributes')
+    op.drop_table('people_manager')
     op.drop_table('people_account')
     op.drop_table('groups_member')
     op.drop_table('events_teammember')
@@ -308,7 +350,9 @@ def downgrade():
     op.drop_table('places_location')
     op.drop_table('places_address')
     op.drop_table('places_area')
+    op.drop_table('people_enumerated_value')
     op.drop_table('places_country')
+    op.drop_table('people_attributes')
     op.drop_table('i18n_value')
     op.drop_table('i18n_language')
     op.drop_table('courses_prerequisite')

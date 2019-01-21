@@ -65,7 +65,7 @@ class PersonSchema(Schema):
     location_id = fields.Integer(data_key='locationId', allow_none=True)
 
     accountInfo = fields.Nested(
-        'AccountSchema', allow_none=True, only=['username', 'id'])
+        'AccountSchema', allow_none=True, only=['username', 'id', 'active', 'roles'])
 
     attributesInfo = fields.Nested('PersonAttributeSchema', many=True)
 
@@ -125,6 +125,7 @@ class AccountSchema(Schema):
     confirmed = fields.Boolean()
     person_id = fields.Integer(
         required=True, data_key="personId", validate=Range(min=1))
+    roles = fields.Nested('RoleSchema', many=True)
 
     @pre_load
     def hash_password(self, data):
@@ -146,13 +147,10 @@ class Role(Base):
         return f"<Role(id={self.id})>"
 
     @classmethod
-    def load_from_file(cls, file_name='roles.json', locale_code='en-US'):
+    def load_from_file(cls, file_name='roles.json'):
         count = 0
         file_path = os.path.abspath(os.path.join(
             __file__, os.path.pardir, 'data', file_name))
-
-        if not db.session.query(I18NLocale).get(locale_code):
-            db.session.add(I18NLocale(code=locale_code, desc='English US'))
 
         with open(file_path, 'r') as fp:
             if db.session.query(Role).count() == 0:
@@ -160,15 +158,17 @@ class Role(Base):
                 roles = json.load(fp)
 
                 for role in roles:
-                    role_id = role['id']
                     role_name = role['name']
-
                     name_i18n = f'role.{role_name}'
-                    i18n_create(name_i18n, locale_code,
-                                role_name, description=f"Role {role_name}")
 
+                    for locale in role['locales']:
+                        locale_code = locale['locale_code']
+                        if not db.session.query(I18NLocale).get(locale_code):
+                            db.session.add(I18NLocale(code=locale_code, desc=''))
+                        i18n_create(name_i18n, locale['locale_code'],
+                                locale['name'], description=f"Role {role_name}")
                     db.session.add(
-                        cls(id=role_id, name_i18n=name_i18n, active=True))
+                        cls(name_i18n=name_i18n, active=True))
                     count += 1
                 db.session.commit()
             return count

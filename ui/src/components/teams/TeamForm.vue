@@ -25,9 +25,9 @@
         >{{ $t("actions.cancel") }}</v-btn
       >
       <v-spacer></v-spacer>
-      <v-btn color="primary" flat v-on:click="clear" :disabled="formDisabled">{{
-        $t("actions.clear")
-      }}</v-btn>
+      <v-btn color="primary" flat v-on:click="clear" :disabled="formDisabled">
+        {{ $t("actions.clear") }}
+      </v-btn>
       <v-btn
         color="primary"
         outline
@@ -52,11 +52,9 @@
 </template>
 
 <script>
-import EntitySearch from "../EntitySearch"
 import { isEmpty } from "lodash";
 // import { mapGetters } from "vuex";
 export default {
-  components: { "entity-search": EntitySearch },
   name: "TeamForm",
   watch: {
     // Make sure data stays in sync with any changes to `initialData` from parent.
