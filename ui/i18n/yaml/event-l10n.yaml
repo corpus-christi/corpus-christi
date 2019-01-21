@@ -26,9 +26,9 @@ events:
   location:
     en: Location
     es: Ubicación
-  actions:
-    en: Actions
-    es: Comportamiento
+  all-events:
+    en: All Events
+    es: Todos Eventos
   edit-event:
     en: Edit Event
     es: Editar Evento

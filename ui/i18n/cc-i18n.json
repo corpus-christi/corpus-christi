@@ -90,7 +90,7 @@
       "updated": "Course updated"
     },
     "events": {
-      "actions": "Actions",
+      "all-events": "All Events",
       "confirm-archive": "Are you sure you want to archive this event?",
       "create-event": "Create Event",
       "details": {
@@ -320,7 +320,7 @@
       "updated": "Curso actualizado"
     },
     "events": {
-      "actions": "Comportamiento",
+      "all-events": "Todos Eventos",
       "confirm-archive": "\u00bfSeguro que quieres archivar este evento?",
       "create-event": "Crear Evento",
       "details": {
