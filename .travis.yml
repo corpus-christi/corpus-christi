@@ -19,7 +19,7 @@ matrix:
                           - cd ui/
                           - yarn build
                           - echo "Done with Node_js"  
-                            #- cd ../
+                          - cd ../
                 - language: python
                   python: "3.7"
                   dist: "xenial"
@@ -58,6 +58,6 @@ notifications:
 deploy:
 provider: linode
 local-dir: public
-branchs:
+branches:
         only: 
-        - development
+                - development
