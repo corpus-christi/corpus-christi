@@ -22,33 +22,39 @@
             <v-divider v-bind:key="'teamDivider' + team.id"></v-divider>
             <v-list-tile v-bind:key="team.id">
               <v-list-tile-content class="pr-0">
-                {{ team.description }}
+                <v-container fluid class="pa-0">
+                  <v-layout justify-space-between align-center>
+                    <v-flex>{{ team.description }}</v-flex>
+                    <v-flex shrink>
+                      <v-layout>
+                        <v-flex xs6>
+                          <!-- TODO: popup with members instead of rerouting -->
+                          <v-btn
+                            icon
+                            outline
+                            flat
+                            color="primary"
+                            :to="{ path: '/teams/' + team.id }"
+                            :data-cy="'view-team-' + team.id"
+                            ><v-icon>info</v-icon>
+                          </v-btn>
+                        </v-flex>
+                        <v-flex xs6>
+                          <v-btn
+                            icon
+                            outline
+                            flat
+                            color="primary"
+                            v-on:click="showDeleteTeamDialog(team.id)"
+                            :data-cy="'deleteTeam-' + team.id"
+                            ><v-icon>delete</v-icon>
+                          </v-btn>
+                        </v-flex>
+                      </v-layout>
+                    </v-flex>
+                  </v-layout>
+                </v-container>
               </v-list-tile-content>
-              <v-list-tile-action>
-                <v-layout>
-                  <v-flex>
-                    <!-- TODO: popup with members instead of rerouting -->
-                    <v-btn
-                      icon
-                      flat
-                      color="primary"
-                      :to="{ path: '/teams/' + team.id }"
-                      :data-cy="'view-team-' + team.id"
-                      ><v-icon>info</v-icon>
-                    </v-btn>
-                  </v-flex>
-                  <v-flex>
-                    <v-btn
-                      icon
-                      flat
-                      color="primary"
-                      v-on:click="showDeleteTeamDialog(team.id)"
-                      :data-cy="'deleteTeam-' + team.id"
-                      ><v-icon>delete</v-icon>
-                    </v-btn>
-                  </v-flex>
-                </v-layout>
-              </v-list-tile-action>
             </v-list-tile>
           </template>
         </v-list>

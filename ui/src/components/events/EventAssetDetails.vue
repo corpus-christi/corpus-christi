@@ -21,19 +21,24 @@
           <template v-for="asset in assets">
             <v-divider v-bind:key="'assetDivider' + asset.id"></v-divider>
             <v-list-tile v-bind:key="asset.id">
-              <v-list-tile-content class="pr-0">
-                {{ asset.description }}
+              <v-list-tile-content>
+                <v-container fluid class="pa-0">
+                  <v-layout row justify-space-between align-center>
+                    <v-flex>{{ asset.description }}</v-flex>
+                    <v-flex shrink>
+                      <v-btn
+                        icon
+                        outline
+                        flat
+                        color="primary"
+                        v-on:click="showDeleteAssetDialog(asset.id)"
+                        :data-cy="'deleteAsset-' + asset.id"
+                        ><v-icon>delete</v-icon>
+                      </v-btn>
+                    </v-flex>
+                  </v-layout>
+                </v-container>
               </v-list-tile-content>
-              <v-list-tile-action>
-                <v-btn
-                  icon
-                  flat
-                  color="primary"
-                  v-on:click="showDeleteAssetDialog(asset.id)"
-                  :data-cy="'deleteAsset-' + asset.id"
-                  ><v-icon>delete</v-icon>
-                </v-btn>
-              </v-list-tile-action>
             </v-list-tile>
           </template>
         </v-list>
