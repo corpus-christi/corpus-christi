@@ -107,6 +107,8 @@ export default {
   },
   mounted() {
     this.pageLoaded = false;
+    this.getHomegroupLocations();
+    this.getEventData();
     this.$http.get(`/api/v1/events/?return_group=all&sort=start`).then(resp => {
       this.events = resp.data;
       this.events = this.events.slice(0, 5);
@@ -153,10 +155,6 @@ export default {
         this.pageLoaded = true;
       });
     }
-  },
-  mounted: function() {
-    this.getHomegroupLocations();
-    this.getEventData();
   }
 };
 </script>

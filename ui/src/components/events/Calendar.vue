@@ -51,8 +51,7 @@ export default {
           description: resp.data[event].description,
           class:
             new Date(resp.data[event].end) < currentDate ? "leisure" : "sport",
-          content:
-            `<a href="/events/${resp.data[event].id}">${resp.data[event].title}</a>`
+          content: this.getTemplate(resp.data[event])
         });
       }
     });
@@ -82,6 +81,9 @@ export default {
         path: "/events/" + this.dialog.event.id
       });
       window.open(routeData.href, "_blank");
+    },
+    getTemplate(event) {
+      return `<a href="/events/${event.id}">${event.title}</a>`;
     }
   }
 };
