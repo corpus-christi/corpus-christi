@@ -551,6 +551,7 @@ def test_get_accounts_by_role(auth_client):
         # THEN the number of accounts returned by role matches the DB
         assert account_count == len(resp.json) #  account_count is equal to number of entries in get_account_by_role
 
+
 def test_update_account(auth_client):
     """Test that we can update the password"""
     # Seed the database and fetch the IDs for the new accounts.
@@ -627,6 +628,95 @@ def test_update_account(auth_client):
         assert updated_account.username == expected_by_id[account_id]['username']
         assert updated_account.active == expected_by_id[account_id]['active']
 
+
+@pytest.mark.smoke
+def test_update_account_add_roles(auth_client):
+    # GIVEN a set of people, accounts and roles
+    count = random.randint(3, 6)
+    create_multiple_people(auth_client.sqla, count)
+    create_multiple_accounts(auth_client.sqla, 1)
+    create_roles(auth_client.sqla, count)
+
+    accounts = auth_client.sqla.query(Account).all()
+    roles = auth_client.sqla.query(Role).all()
+
+    # GIVEN modification data with roles
+    for account in accounts:
+        new_account = account_object_factory(0)
+        mod = {}
+        flips = (flip(), flip())
+        if flips[0]:
+            mod['username'] = new_account['username']
+        if flips[1]:
+            mod['password'] = new_account['password']
+        
+        sample_roles = random.sample(roles, math.floor(len(roles) * 0.75))
+        mod['roles'] = []
+        for role in sample_roles:
+            mod['roles'].append(role.id)
+
+        # WHEN account is requested to be updated
+        resp = auth_client.patch(url_for('people.update_account', account_id = account.id), json = mod)
+
+        # THEN expect the update to run OK
+        assert resp.status_code == 200
+
+        # THEN expect the number of roles for the account is correct
+        account_roles = auth_client.sqla.query(Account).filter_by(id = account.id).first().roles
+        assert len(account_roles) == len(mod['roles'])
+
+
+@pytest.mark.smoke
+def test_update_account_invalid(auth_client):
+    # GIVEN a set of people, accounts and roles
+    count = random.randint(3, 6)
+    create_multiple_people(auth_client.sqla, count)
+    create_multiple_accounts(auth_client.sqla, 1)
+    create_roles(auth_client.sqla, count)
+
+    accounts = auth_client.sqla.query(Account).all()
+    roles = auth_client.sqla.query(Role).all()
+
+    # GIVEN bad modification data
+    for account in accounts:
+        mod = {}
+        flips = (flip(), flip(), flip())
+        if flips[0]:
+            mod['username'] = None
+        if flips[1]:
+            mod['password'] = None
+        if flips[2] or not (flips[0] or flips[1]):
+            mod[fake.word()] = fake.word()
+        
+        # WHEN account is requested to be updated with bad data
+        resp = auth_client.patch(url_for('people.update_account', account_id = account.id), json = mod)
+
+        # THEN expect the request to be unprocessable
+        assert resp.status_code == 422
+
+
+@pytest.mark.smoke
+def test_update_account_no_exist(auth_client):
+    # GIVEN a empty database
+
+    # GIVEN modification data
+    new_account = account_object_factory(0)
+    mod = {}
+    flips = (flip(), flip())
+    if flips[0]:
+        mod['username'] = new_account['username']
+    if flips[1] or not flips[0]:
+        mod['password'] = new_account['password']
+
+    # WHEN a row is requested to be updated with the data
+    resp = auth_client.patch(url_for('people.update_account', account_id = random.randint(1, 8)), json = mod)
+
+    # THEN expect the requested account to not be found
+    assert resp.status_code == 404
+
+
+
+@pytest.mark.smoke
 def test_deactivate_account(auth_client):
     # GIVEN a DB with a collection people.
     count = random.randint(3, 11)
