@@ -43,8 +43,10 @@ matrix:
                         - sudo systemctl restart nginx
                         - cd ../
                           #- pytest
-script:
-        - echo "hello World"
+build:
+        - cd ui/
+        - yarn build
+        - cd ../
 
 # create script by configuration and make file
 # fix flask data load-al112
