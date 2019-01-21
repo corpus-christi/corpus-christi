@@ -12,7 +12,7 @@ matrix:
                 - language: node_js
                   node_js: "11"
                   before_install:
-                          - cd ui/
+                          #- cd ui/
                           - yarn cache clean
                   install:
                           #   replacing the dist directory 
