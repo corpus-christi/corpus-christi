@@ -46,12 +46,13 @@ export default {
         {
           title: this.$t("courses.course"),
           route: "courses",
-          icon: "school"
-        },
-        {
-          title: this.$t("diplomas.diploma"),
-          route: "diplomas-admin",
-          icon: "school"
+          icon: "school",
+          children: [
+            {
+              title: this.$t("diplomas.diploma"),
+              route: "diplomas-admin"
+            }
+          ]
         },
         {
           title: this.$t("events.header"),
