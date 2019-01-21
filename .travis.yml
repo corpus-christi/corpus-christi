@@ -14,10 +14,10 @@ matrix:
                   #before_install:
                   script:
                         - cd ui/
-                          #- yarn add cypress
                         - yarn cache clean
+                        - yarn add cypress
                           #install:
-                        - yarn install cypress
+                        - yarn install
                  #script:
                           #- cd ui/
                         - yarn build
@@ -49,10 +49,6 @@ matrix:
                         - sudo systemctl restart nginx
                         - cd ../
                         #- pytest
-#after_succes:
-#  - cd ui/
-#  - yarn build
-#  - cd ../
 
 # create script by configuration and make file
 # fix flask data load-al112
