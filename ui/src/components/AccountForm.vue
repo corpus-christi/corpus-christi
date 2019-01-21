@@ -15,7 +15,7 @@
         v-model="username"
         v-bind:label="$t('account.username')"
         name="username"
-        v-validate="'alpha_dash|min:6'"
+        v-validate="'required|alpha_dash|min:6'"
         v-bind:error-messages="errors.collect('username')"
         prepend-icon="person"
         data-cy="new-account-username"
@@ -104,21 +104,26 @@ export default {
   },
   methods: {
     confirm() {
-      if (this.addingAccount) {
-        this.$emit("addAccount", {
-          username: this.username,
-          password: this.password,
-          active: true,
-          personId: this.person.id
-        });
-      } else {
-        this.$emit("updateAccount", this.account.id, {
-          password: this.password
-        });
-      }
-      this.close();
+      this.$validator.validateAll().then(() => {
+        if (!this.errors.any()) {
+          if (this.addingAccount) {
+            this.$emit("addAccount", {
+              username: this.username,
+              password: this.password,
+              active: true,
+              personId: this.person.id
+            });
+          } else {
+            this.$emit("updateAccount", this.account.id, {
+              password: this.password
+            });
+          }
+          this.close();
+        }
+      });
     },
     close() {
+      this.$validator.reset();
       this.username = this.password = this.repeat_password = "";
       this.$emit("close");
     }
