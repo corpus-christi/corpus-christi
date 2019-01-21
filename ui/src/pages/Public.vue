@@ -4,7 +4,9 @@
       <v-flex xs12 sm6 md5>
         <v-card>
           <v-toolbar color="cyan" dark>
-            <v-toolbar-title>{{ $t("public.headers.upcoming-classes") }}</v-toolbar-title>
+            <v-toolbar-title>
+              {{ $t("public.headers.upcoming-classes") }}
+            </v-toolbar-title>
           </v-toolbar>
           <v-list>
             <template v-for="(item, idx) in classes">
@@ -17,7 +19,10 @@
                   <v-list-tile-sub-title>{{ item.date }}</v-list-tile-sub-title>
                 </v-list-tile-content>
               </v-list-tile>
-              <v-divider v-if="idx + 1 < classes.length" v-bind:key="'div' + idx"></v-divider>
+              <v-divider
+                v-if="idx + 1 < classes.length"
+                v-bind:key="'div' + idx"
+              ></v-divider>
             </template>
           </v-list>
         </v-card>
@@ -25,14 +30,18 @@
 
       <v-flex xs12 sm6 md5 offset-md2>
         <v-toolbar color="blue" dark style="z-index: 1">
-          <v-toolbar-title>{{ $t("public.headers.upcoming-events") }}</v-toolbar-title>
+          <v-toolbar-title>
+            {{ $t("public.headers.upcoming-events") }}
+          </v-toolbar-title>
         </v-toolbar>
         <v-list style="padding-top: 0px; z-index: 0">
           <v-expansion-panel>
-            <v-expansion-panel-content v-for="(event, idx) in events" v-bind:key="idx">
+            <v-expansion-panel-content
+              v-for="(event, idx) in events"
+              v-bind:key="idx"
+            >
               <div slot="header">
-                {{ event.title }}
-                <br>
+                {{ event.title }} <br />
                 <span class="grey--text">
                   <div>{{ getDisplayDate(event.start) }}</div>
                 </span>
@@ -41,11 +50,9 @@
                 <v-card-text>{{ event.description }}</v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn raised color="primary">
-                    {{
+                  <v-btn raised color="primary">{{
                     $t("public.events.join")
-                    }}
-                  </v-btn>
+                  }}</v-btn>
                   <v-spacer></v-spacer>
                 </v-card-actions>
               </v-card>
@@ -60,7 +67,8 @@
                 block
                 outline
                 color="primary"
-              >{{ $t("public.events.view-all") }}</v-btn>
+                >{{ $t("public.events.view-all") }}</v-btn
+              >
             </v-card-actions>
           </v-card>
         </v-list>
@@ -70,7 +78,9 @@
     <v-layout class="mt-3">
       <v-flex>
         <v-toolbar color="blue" dark>
-          <v-toolbar-title data-cy="church-sentence">{{ $t("public.headers.home-church") }}</v-toolbar-title>
+          <v-toolbar-title data-cy="church-sentence">
+            {{ $t("public.headers.home-church") }}
+          </v-toolbar-title>
         </v-toolbar>
         <GoogleMap v-bind:markers="groupLocations"></GoogleMap>
       </v-flex>
@@ -95,8 +105,6 @@ export default {
       groupLocations: []
     };
   },
-  mounted() {},
-
   methods: {
     getDisplayDate(ts) {
       let date = new Date(ts);

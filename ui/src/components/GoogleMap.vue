@@ -36,7 +36,7 @@ export default {
     };
   },
   mounted: function() {
-    this.$refs.map.$mapPromise.then((m) => {
+    this.$refs.map.$mapPromise.then(m => {
       this.map = m;
     });
   }
