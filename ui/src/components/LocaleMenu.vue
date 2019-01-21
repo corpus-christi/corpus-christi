@@ -2,6 +2,7 @@
   <v-menu>
     <v-btn id="cur-locale" data-cy="cur-locale" flat slot="activator">
       {{ displayLocale(currentLocale) }}
+      <v-icon left>arrow_drop_down</v-icon>
     </v-btn>
     <v-list data-cy="language-dropdown">
       <v-list-tile
