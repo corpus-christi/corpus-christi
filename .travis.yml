@@ -42,7 +42,12 @@ matrix:
                         database: cc-staging
                   script:
                         - createuser arco
-                        - createdb --owner=arco cc-staging 
+                        - createdb --owner=arco cc-staging
+                        - cat > private_ci.py << END
+                        - PASS = 'DFGjhfdhGf5434H'
+                        - SECRET_KEY1 = 'oi5uy5tred3434fgh'
+                        - SECRET_KEY2 = 'mnbvc4xs4dfghj34kiuytres'
+                        - END 
                         - flask db upgrade
                         - flask data load-all
                         - sudo nginx -t
