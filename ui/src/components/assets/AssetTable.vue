@@ -343,7 +343,7 @@ export default {
         const assetId = asset.id;
         const idx = this.assets.findIndex(as => as.id === asset.id);
         delete newAsset.id;
-        delete newAsset.event_count
+        delete newAsset.event_count;
         this.$http
           .patch(`/api/v1/assets/${assetId}`, newAsset)
           .then(resp => {
@@ -359,9 +359,9 @@ export default {
             this.showSnackbar(this.$t("assets.error-editing-asset"));
           });
       } else {
-        console.log(newAsset)
-        delete newAsset.event_count
-        newAsset.active = true
+        console.log(newAsset);
+        delete newAsset.event_count;
+        newAsset.active = true;
         this.$http
           .post("/api/v1/assets/", newAsset)
           .then(resp => {

@@ -21,7 +21,8 @@
               color="primary"
               v-on:click="navigateTo('/participants')"
             >
-              <v-icon>person</v-icon>&nbsp;{{ $t("events.participants.title") }}
+              <v-icon>person</v-icon>
+              &nbsp;{{ $t("events.participants.title") }}
             </v-btn>
           </v-card-actions>
         </template>
@@ -40,13 +41,9 @@
 
 <script>
 import { mapGetters } from "vuex";
-import CourseOfferingForm from "./CourseOfferingForm";
 
 export default {
   name: "CourseOfferingDetails",
-  components: {
-    CourseOfferingForm
-  },
 
   mounted() {
     this.pageLoaded = false;
@@ -79,10 +76,12 @@ export default {
     };
   },
   props: {
-    offeringId: 0,
+    offeringId: {
+      type: [String, Number],
+      required: true
+    }
   },
   methods: {
-
     getDisplayDate(ts) {
       let date = new Date(ts);
       return date.toLocaleTimeString(this.currentLanguageCode, {
@@ -96,7 +95,7 @@ export default {
 
     navigateTo(path) {
       this.$router.push({
-        path: "/courses/" + offeringId + path
+        path: "/courses/" + this.offeringId + path
       });
     },
 
