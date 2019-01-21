@@ -4,8 +4,8 @@ describe("Get to Courses Page", () => {
     });
   
     it("When: clicking to course page", () => {
-      cy.get("[data-cy=open-navigation]").click();
-      cy.get('[data-cy=courses-admin]').click();
+      cy.get('[data-cy=toggle-nav-drawer]').click();
+      cy.get('[data-cy=courses]').click();
     });
     it("Then: should be in course page", () => {
       cy.url().should("include", "/courses");
