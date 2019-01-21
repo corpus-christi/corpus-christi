@@ -1,3 +1,4 @@
+// NOTE: Test will fail if there are no members on a team
 function getAllTeamsOnPage() {
   cy.get(
     ".v-datatable__actions__select > .v-input > .v-input__control > .v-input__slot > .v-select__slot > .v-input__append-inner > .v-input__icon > .v-icon"
