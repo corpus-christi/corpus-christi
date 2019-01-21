@@ -104,3 +104,6 @@ courses:
   update-meeting-failed:
     en: Failed to update meeting
     es: Se falló a actualizar el reunión
+  create-new-person:
+    en: Create a new person
+    es: Crear una nueva persona

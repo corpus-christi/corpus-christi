@@ -11,6 +11,16 @@
       <form>
         <entity-search person v-model="newStudent" />
       </form>
+      
+      <v-expansion-panel v-model="showExpansion" expand>
+        <v-expansion-panel-content>
+          <div slot="header">{{ $t("courses.create-new-person") }}</div>
+          <PersonForm 
+            v-bind:initialData="{}"
+            v-on:cancel="cancelNewPerson"
+            v-on:saved="savedNewPerson"/>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
     </v-card-text>
       
     <v-card-actions>
@@ -40,15 +50,18 @@
 import EntitySearch from "../EntitySearch";
 import { mapGetters } from "vuex";
 import { isEmpty } from "lodash";
+import PersonForm from "../people/PersonForm";
 
 export default {
   name: "StudentsForm",
   components: {
-    EntitySearch
+    EntitySearch,
+    PersonForm
   },
   data: function() {
     return {
-      newStudent: {}
+      newStudent: {},
+      showExpansion: [false]
     };
   },
   
@@ -83,6 +96,22 @@ export default {
   },
   
   methods: {
+    
+    cancelNewPerson() {
+      this.showExpansion = [false];
+    },
+    
+    savedNewPerson(person) {
+      // this.$http
+      //   .get("/api/v1/people/persons")
+      //   .then(resp => {
+      //     console.log("FETCHED PEOPLE", resp);
+      //   })
+      //   .catch(err => console.error("FAILURE", err.response));
+      this.newStudent = "person";
+      this.showExpansion = [false];
+    },
+    
     // Abandon ship.
    cancel() {
      this.clear();
