@@ -11,14 +11,7 @@ from datetime import datetime
 
 from . import courses
 from ..people.models import Person, PersonSchema
-from .models import Course, CourseSchema, \
-    Course_Offering, Course_OfferingSchema, \
-    Student, StudentSchema, Class_Attendance, \
-    Class_AttendanceSchema, Class_Meeting, \
-    Class_MeetingSchema
-from .. import db
 
-course_schema = CourseSchema()
 from ..places.models import Location, LocationSchema
 from .models import Course, CourseSchema, \
     Course_Offering, Course_OfferingSchema, \
@@ -35,7 +28,6 @@ from .. import db
 
 course_schema = CourseSchema()
 location_schema = LocationSchema()
->>>>>>> app-courses
 person_schema = PersonSchema()
 
 
@@ -550,7 +542,6 @@ def add_student_to_course_offering(s_id):
 @courses.route('/course_offerings/<course_offering_id>/students')
 @jwt_required
 def read_all_course_offering_students(course_offering_id):
-<<<<<<< HEAD
     """ This function lists all students by a specific course offering.
         Students are listed regardless of confirmed or active state. """
     co = db.session.query(Course_Offering).filter_by(id=course_offering_id)
@@ -565,17 +556,6 @@ def read_all_course_offering_students(course_offering_id):
         s['person'] = person_schema.dump(i.Person)
         student_list.append(s)
     return jsonify(student_list)
-
-=======
-    co = db.session.query(Course_Offering).filter_by(id=course_offering_id).first()
-    if co is None:
-        return 'Course offering NOT found', 404
-    students = db.session.query(Student).filter_by(offering_id=course_offering_id).all()
-    if students == []:
-        return 'No Students Found', 404
-    students = student_schema.dump(students, many=True)
-    return jsonify(students)
->>>>>>> app-courses
 
 # May not need this route unless UI says so...
 # @courses.route('/students')
@@ -636,11 +616,7 @@ def create_class_meeting(course_offering_id):
     meetingInDB = db.session.query(Class_Meeting).filter_by(
         offering_id=course_offering_id,
         teacher_id=request.json['teacherId'],
-<<<<<<< HEAD
         when=request.json['when'] ).first() # Todo: make sure when is datetime obj
-=======
-        when=datetime.strptime(request.json['when'], '%Y-%m-%d %H:%M:%S') ).first() # Todo: make sure when is datetime obj
->>>>>>> app-courses
 
     # If a class meeting for a course offering DNE
     if meetingInDB is None:
@@ -654,8 +630,6 @@ def create_class_meeting(course_offering_id):
         # then don't create new class meeting
         return 'Class meeting already exists in course offering', 208
 
-<<<<<<< HEAD
-=======
 """
 Helper function applies location and teacher to a
 class meeting object
@@ -672,24 +646,17 @@ def get_loc_and_person_for_meeting(meeting):
     meeting['location'] = location
     meeting['teacher'] = teacher
     return meeting
->>>>>>> app-courses
 
 @courses.route('/course_offerings/<int:course_offering_id>/class_meetings')
 @jwt_required
 def read_all_class_meetings(course_offering_id):
     result = db.session.query(Class_Meeting).filter_by(offering_id=course_offering_id).all()
-<<<<<<< HEAD
-    if result is None:
-        return 'No class meetings found for this course offering', 404
-    return jsonify(class_meeting_schema.dump(result, many=True))
-=======
     if result == []:
         return 'No class meetings found for this course offering', 404
     result = class_meeting_schema.dump(result, many=True)
     for i in result:
         get_loc_and_person_for_meeting(i)
     return jsonify(result)
->>>>>>> app-courses
 
 
 @courses.route('/course_offerings/<int:course_offering_id>/<int:class_meeting_id>')
@@ -698,24 +665,17 @@ def read_one_class_meeting(course_offering_id, class_meeting_id):
     result = db.session.query(Class_Meeting).filter_by(id=class_meeting_id, offering_id=course_offering_id).first()
     if result is None:
         return 'Specified class meeting does not exist for this course offering', 404
-<<<<<<< HEAD
-    return jsonify(class_meeting_schema.dump(result))
-=======
     result = class_meeting_schema.dump(result)
     get_loc_and_person_for_meeting(result)
     return jsonify(result)
->>>>>>> app-courses
 
 
 @courses.route('/course_offerings/<int:course_offering_id>/<int:class_meeting_id>', methods=['PATCH'])
 @jwt_required
 def update_class_meeting(course_offering_id, class_meeting_id):
     class_meeting = db.session.query(Class_Meeting).filter_by(id=class_meeting_id, offering_id=course_offering_id).first()
-<<<<<<< HEAD
-=======
     if class_meeting is None:
            return "Class meeting not found", 404 
->>>>>>> app-courses
 
     for attr in 'location_id', 'teacher_id', 'when':
         if attr in request.json:
@@ -740,11 +700,7 @@ def delete_class_meeting(course_offering_id, class_meeting_id):
         return 'Class meeting successfully deleted', 200
     # If class meeting DNE
     elif class_meeting is None:
-<<<<<<< HEAD
-        return 'Course offering does not exist'
-=======
         return 'Course offering does not exist', 404
->>>>>>> app-courses
     else:
         return 'Students have attended the class meeting. Cannot delete class meeting.', 403
 
@@ -753,63 +709,6 @@ def delete_class_meeting(course_offering_id, class_meeting_id):
 
 class_attendance_schema = Class_AttendanceSchema()
 
-<<<<<<< HEAD
-@courses.route('/class_attendance', methods=['POST'])
-@jwt_required
-def create_class_attendance():
-    try:
-        valid_class_attendance = class_attendance_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    new_class_attendance = Class_Attendance(**valid_class_attendance)
-    db.session.add(new_class_attendance)
-    db.session.commit()
-    return jsonify(class_attendance_schema.dump(new_class_attendance)), 201
-
-
-@courses.route('/class_attendance')
-@jwt_required
-def read_all_class_attendance():
-    result = db.session.query(Class_Attendance).all()
-    return jsonify(class_attendance_schema.dump(result, many=True))
-
-
-@courses.route('/class_attendance/<class_attendance_id>')
-@jwt_required
-def read_one_class_attendance(class_attendance_id):
-    result = db.session.query(Class_Attendance).filter_by(id=class_attendance_id).first()
-    return jsonify(class_attendance_schema.dump(result))
-
-
-@courses.route('/class_attendance/<class_attendance_id>', methods=['PUT'])
-@jwt_required
-def replace_class_attendance(class_attendance_id):
-    pass
-
-
-@courses.route('/class_attendance/<class_attendance_id>', methods=['PATCH'])
-@jwt_required
-def update_class_attendance(class_attendance_id):
-    try:
-        valid_class_attendance = class_attendance_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    class_attendance = db.session.query(Class_Attendance).filter_by(id=class_attendance_id).first()
-
-    for key, val in valid_class_attendance.items():
-        setattr(class_attendance, key, val)
-
-    db.session.commit()
-    return jsonify(class_attendance_schema.dump(class_attendance))
-
-
-@courses.route('/class_attendance/<class_attendance_id>', methods=['DELETE'])
-@jwt_required
-def delete_class_attendance(class_attendance_id):
-    pass
-=======
 """
 Helper function applies attendance with student name to
 a class meeting
@@ -895,9 +794,3 @@ def update_class_attendance(course_offering_id, class_meeting_id):
     db.session.add_all(updates)
     db.session.commit() # Commit all new changes
     return jsonify(add_attendance_to_meetings(class_meeting_schema.dump(class_meeting)))
-
-
-# ---- Class_Meeting
-person_schema = PersonSchema()
-class_meeting_schema = Class_MeetingSchema()
->>>>>>> app-courses
