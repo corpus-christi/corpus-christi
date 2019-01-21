@@ -669,14 +669,16 @@ def test_read_all_roles(auth_client):
 
 @pytest.mark.smoke
 def test_get_roles_for_account(auth_client):
+    #NEEDS a bit more work
     # GIVEN a DB populated with accounts and roles
     prep_database(auth_client.sqla)
     Role.load_from_file()
-    # WHEN
-    # THEN
+    all_accounts = auth_client.sqla.query(Account).all()
+    current_account = random.choice(all_accounts)
+    resp = auth_client.get(url_for('people.get_roles_for_account', account_id = current_account.id))
 
-    # TODO FINISH
-    assert False
+    assert resp.status_code == 200
+
 
 
 @pytest.mark.smoke
@@ -696,7 +698,7 @@ def test_read_one_role(auth_client):
 
         # THEN expect the role to be read correctly
         assert resp.json['id'] == role.id
-        assert resp.json['name_i18n'] == role.name_i18n
+        assert resp.json['nameI18n'] == role.name_i18n
         assert resp.json['active'] == role.active
 
 
@@ -829,17 +831,40 @@ def test_add_role_to_account(auth_client):
     resp = auth_client.post(url_for(
         'people.add_role_to_account', account_id=current_account.id, role_id=current_role.id))
     assert resp.status_code == 200
-    Pr
+    role_namei18n = auth_client.sqla.query(Account).filter(Account.id == current_account.id).first().roles[0].name_i18n
+
+    assert resp.json == [role_namei18n]
+
 
 
 @pytest.mark.smoke
 def test_remove_role_from_account(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
+    # GIVEN a DB populated with people, accounts, and roles
+    prep_database(auth_client.sqla)
+    Role.load_from_file()
+    all_accounts = auth_client.sqla.query(Account).all()
+    current_account = random.choice(all_accounts)
+    all_roles = auth_client.sqla.query(Role).all()
+    current_role = random.choice(all_roles)
 
-    # TODO FINISH
-    assert False
+    #WHEN account and a role are added
+    resp = auth_client.post(url_for(
+        'people.add_role_to_account', account_id=current_account.id, role_id=current_role.id))
+    assert resp.status_code == 200
+    role_namei18n = auth_client.sqla.query(Account).filter(Account.id == current_account.id).first().roles[0].name_i18n
+
+    assert resp.json == [role_namei18n]
+
+    #WHEN role is removed from account
+    resp = auth_client.delete(url_for(
+        'people.remove_role_from_account', account_id=current_account.id, role_id=current_role.id))
+    assert resp.status_code == 200
+
+    #THEN account no longer is associated with the given role
+    updated_role = auth_client.sqla.query(Account).filter(Account.id == current_account.id).first().roles
+
+    assert updated_role == []
+    assert resp.json != updated_role
 
 # ---- Manager
 

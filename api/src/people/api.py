@@ -286,7 +286,7 @@ def read_all_roles():
     return jsonify(role_schema.dump(result, many=True))
 
 
-@people.route('/role/<account_id>')
+@people.route('/role/account/<account_id>')
 @jwt_required
 def get_roles_for_account(account_id):
     account = db.session.query(Account).filter_by(id=account_id).first()
@@ -376,7 +376,8 @@ def remove_role_from_account(account_id, role_id):
     role_to_remove = db.session.query(Role).filter_by(id=role_id).first()
 
     if role_to_remove not in account.roles:
-        return 'That accout does not have that role', 404
+        return 'That account does not have that role', 404
+
 
     account.roles.remove(role_to_remove)
     db.session.commit()
@@ -385,9 +386,9 @@ def remove_role_from_account(account_id, role_id):
     # roles = db.session.query(Role).join(Account, Role.accounts).filter_by(id=account_id).filter_by(active=True).all()
     # for r in roles:
     #     user_roles.append(role_schema.dump(r)['nameI18n'])
-
+    #
     # return jsonify(user_roles)
-    return jsonify(role_to_remove)
+    return jsonify(role_schema.dump(role_to_remove))
 
 
 # ---- Manager
