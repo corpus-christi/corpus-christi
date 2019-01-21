@@ -43,7 +43,7 @@ matrix:
                         - sudo systemctl restart nginx
                         - cd ../
                           #- pytest
-build:
+after_succes:
         - cd ui/
         - yarn build
         - cd ../
