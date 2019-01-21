@@ -12,14 +12,14 @@ matrix:
                 - language: node_js
                   node_js: "11"
                   before_install:
-                          - cd ui/
+                          #- cd ui/
                           - yarn cache clean
                   install:
                           - yarn install
                   script:
                           - yarn build
                           - echo "Done with Node_js"  
-                          - cd ../
+                            #- cd ../
                 - language: python
                   python: "3.7"
                   dist: "xenial"
@@ -58,6 +58,6 @@ notifications:
 deploy:
 provider: linode
 local-dir: public
-branchs:
+branches:
         only: 
-                - development
+        - development
