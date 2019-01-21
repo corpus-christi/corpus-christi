@@ -97,6 +97,12 @@ describe("Admin edits user information", function() {
         .first()
         .click(); //Male
     });
+    cy.get('[data-cy=save]').click();
+    cy.get('[data-cy=search]').clear().type("TESTME");
+    cy.get('tbody > :nth-child(1) > :nth-child(2)').should('contain', 'TESTME');
+    cy.get('tbody > :nth-child(1) > :nth-child(3)').should('contain', 'LASTNAME');
+    cy.get('tbody > :nth-child(1) > :nth-child(4)').should('contain', 'editMe@gmail.com');
+    cy.get('tbody > :nth-child(1) > :nth-child(5)').should('contain', '123-456-7890');
     cy.get("[data-cy=save").click();
     cy.get("[data-cy=search")
       .clear()
