@@ -17,15 +17,15 @@ Cypress.Commands.add("login", function() {
   cy.get("[data-cy=username]").type("Cytest");
   cy.get("[data-cy=password]").type("password");
   cy.get("[data-cy=login]").click();
-  
+
   // Wait after pressing login to not redirect back to login
   cy.wait(250);
 });
 
-Cypress.Commands.add("course_page", function (){
-  cy.get('[data-cy=toggle-nav-drawer]').click();
-  cy.get('[data-cy=courses]').click();
-})
+Cypress.Commands.add("course_page", function() {
+  cy.get("[data-cy=toggle-nav-drawer]").click();
+  cy.get("[data-cy=courses]").click();
+});
 //
 // -- This is a child command --
 // Cypress.Commands.add("drag", { prevSubject: 'element'}, (subject, options) => { ... })
@@ -37,7 +37,6 @@ Cypress.Commands.add("course_page", function (){
 //
 // -- This is will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
-
 
 // TODO: Eventually bypass logging in before each test
 // import store from "../../../src/store"

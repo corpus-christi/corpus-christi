@@ -28,7 +28,13 @@
           {{ courseOffering.active ? "archive" : "undo" }}
         </v-icon>
       </v-btn>
-      <span>{{ $t(courseOffering.active ? "actions.tooltips.deactivate" : "actions.tooltips.reactivate") }}</span>
+      <span>{{
+        $t(
+          courseOffering.active
+            ? "actions.tooltips.deactivate"
+            : "actions.tooltips.reactivate"
+        )
+      }}</span>
     </v-tooltip>
   </v-layout>
 </template>
