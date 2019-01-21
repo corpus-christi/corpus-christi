@@ -55,24 +55,28 @@
         </v-layout>
       </v-card>
     </v-flex>
-    <v-layout column wrap>
-      <v-flex xs12>
-        <event-team-details
-          :teams="event.teams"
-          :loaded="teamsLoaded"
-          v-on:snackbar="showSnackbar($event)"
-          v-on:team-added="getEvent()"
-        ></event-team-details>
+    <v-layout row wrap>
+      <v-flex xs12 lg6>
+        <v-layout column>
+          <v-flex>
+            <event-team-details
+              :teams="event.teams"
+              :loaded="teamsLoaded"
+              v-on:snackbar="showSnackbar($event)"
+              v-on:team-added="getEvent()"
+            ></event-team-details>
+          </v-flex>
+          <v-flex>
+            <event-person-details
+              :persons="event.persons"
+              :loaded="personsLoaded"
+              v-on:snackbar="showSnackbar($event)"
+              v-on:person-added="getEvent()"
+            ></event-person-details>
+          </v-flex>
+        </v-layout>
       </v-flex>
-      <v-flex xs12>
-        <event-person-details
-          :persons="event.persons"
-          :loaded="personsLoaded"
-          v-on:snackbar="showSnackbar($event)"
-          v-on:person-added="getEvent()"
-        ></event-person-details>
-      </v-flex>
-      <v-flex xs12>
+      <v-flex xs12 lg6>
         <event-asset-details
           :assets="event.assets"
           :loaded="assetsLoaded"
@@ -125,18 +129,6 @@ export default {
         show: false,
         saveLoading: false,
         event: {}
-      },
-
-      addAssetDialog: {
-        show: false,
-        loading: false,
-        asset: null
-      },
-
-      deleteAssetDialog: {
-        show: false,
-        loading: false,
-        assetId: -1
       },
 
       snackbar: {
