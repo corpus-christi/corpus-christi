@@ -243,3 +243,59 @@ def get_team_ids(teams):
         ids.append(team['id'])
     return ids
 
+# Create a team in database, return the id
+def create_team(sqla, description, active=True):
+    team_schema = TeamSchema()
+    team_payload = {
+            'description': description,
+            'active': active
+    }
+    valid_team = team_schema.load(team_payload)
+    team = Team(**valid_team)
+    sqla.add(team)
+    sqla.commit()
+    return team.id
+
+def create_event(sqla, title, description, start, end, location_id = None, active=True):
+    event_schema = EventSchema()
+    event_payload = {
+            'title': title,
+            'description': description,
+            'start': str(start),
+            'end': str(end),
+            'active': active
+    }
+    if location_id:
+        event_payload['location_id'] = location_id
+    valid_event = event_schema.load(event_payload)
+    event = Event(**valid_event)
+    sqla.add(event)
+    sqla.commit()
+    return event.id
+
+def create_event_person(sqla, event_id, person_id, description):
+    event_person_schema = EventPersonSchema()
+    event_person_payload = {
+            'event_id': event_id,
+            'person_id': person_id,
+            'description': description
+    }
+    valid_event_person = event_person_schema.load(event_person_payload)
+    event_person = EventPerson(**valid_event_person)
+    sqla.add(event_person)
+    sqla.commit()
+    return event_person_payload
+
+def create_event_participant(sqla, event_id, person_id, confirmed=True):
+    event_participant_schema = EventParticipantSchema()
+    event_participant_payload = {
+            'event_id': event_id,
+            'person_id': person_id,
+            'confirmed': confirmed
+    }
+    valid_event_participant = event_participant_schema.load(event_participant_payload)
+    event_participant = EventParticipant(**valid_event_participant)
+    sqla.add(event_participant)
+    sqla.commit()
+    return event_participant_payload
+

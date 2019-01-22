@@ -49,7 +49,7 @@ export default {
   methods: {
     getDatetime(ts) {
       let date = this.getDateFromTimestamp(ts);
-      let time = this.getTimeFromTimestamp(ts)
+      let time = this.getTimeFromTimestamp(ts);
       return `${date} ${time}`;
     },
 
@@ -84,8 +84,7 @@ export default {
       let hr = String(date.getHours()).padStart(2, "0");
       let min = String(date.getMinutes()).padStart(2, "0");
       return `${hr}:${min}`;
-    },
-
+    }
   }
 };
 </script>

@@ -288,3 +288,22 @@ def test_update_other_fields(auth_client):
         role = auth_client.sqla.query(Role).all()
         # THEN we get the expected number
         assert len(role) == 1
+
+def create_person(sqla, first_name, last_name, gender, birthday, phone, email, active=True, address_id=None):
+    person_schema = PersonSchema()
+    person_payload = {
+            'firstName': first_name, 
+            'lastName': last_name, 
+            'gender': gender, 
+            'birthday': str(birthday), 
+            'phone': phone, 
+            'email': email, 
+            'active': active
+    }
+    if address_id:
+        person_payload['address_id'] = address_id
+    valid_person = person_schema.load(person_payload)
+    person = Person(**valid_person)
+    sqla.add(person)
+    sqla.commit()
+    return person.id
