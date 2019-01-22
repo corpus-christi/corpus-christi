@@ -1,3 +1,7 @@
+// This is how to target the bottommost bar in the form
+//    form > :nth-child(2) > [style=""]
+
+
 //Tests adding people to the people page
 describe("Ensures the Add-person works", function() {
   it("Given: logs in, navigates to people page", function() {
@@ -23,6 +27,12 @@ describe("Ensures the Add-person works", function() {
     cy.get(":nth-child(3) > :nth-child(5) > .v-btn > .v-btn__content").click(); //select birthday
     cy.get("[data-cy=email]").type("SoftDrink@gmail.com"); //email
     cy.get("[data-cy=phone]").type("123-456-7890"); //phone
+    //This is where the test diverges
+    cy.get("form > :nth-child(2) > [style=\"\"]").within(() => {
+      cy.get("[data-cy=next]").click();
+    });
+  });
+/*
     cy.get("[data-cy = save]").click();
   });
   it("Then: The user should show up in the database with the correct information", () => {
@@ -103,5 +113,5 @@ describe("Tests the add-person form to ensure proper functionality", () => {
   it("The exit form button works correctly", () => {
     cy.get("[data-cy=cancel").click();
     cy.get(".v-dialog__content--active > .v-dialog").should("not.exist");
-  });
+  });*/
 });

@@ -8,7 +8,7 @@ describe("Admin edits user information", function() {
   });
   it("When: The edit information button is pressed:", function() {
     cy.get("[data-cy=search]").type("Quality");
-    cy.get("[data-cy=person-table").within(() => {
+    cy.get("[data-cy=person-table]").within(() => {
       cy.get("tbody > :nth-child(1) > :nth-child(2)")
         .invoke("text")
         .as("firstName");
@@ -21,7 +21,7 @@ describe("Admin edits user information", function() {
       cy.get("tbody > :nth-child(1) > :nth-child(5)")
         .invoke("text")
         .as("phone");
-      cy.get("[data-cy=edit-person").click();
+      cy.get("[data-cy=edit-person]").click();
     });
   });
   it("Then: The information showing on the form should be the same as what was showing on the table", function() {
@@ -32,10 +32,10 @@ describe("Admin edits user information", function() {
   });
 
   it("And: The information should be mutable", function() {
-    cy.get("[data-cy=first-name")
+    cy.get("[data-cy=first-name]")
       .clear()
       .type("TESTME");
-    cy.get("[data-cy=last-name")
+    cy.get("[data-cy=last-name]")
       .clear()
       .type("LASTNAME");
     cy.get("[data-cy=show-birthday-picker]").click(); //open birthday picker
@@ -88,8 +88,8 @@ describe("Admin edits user information", function() {
       .type("Quality");
   });
   it("And: The clear button should work as well", function() {
-    cy.get("[data-cy=person-table").within(() => {
-      cy.get("[data-cy=edit-person").click();
+    cy.get("[data-cy=person-table]").within(() => {
+      cy.get("[data-cy=edit-person]").click();
     });
     cy.get("[data-cy=clear]").click();
     cy.get("[data-cy=first-name]").should("be.empty");
