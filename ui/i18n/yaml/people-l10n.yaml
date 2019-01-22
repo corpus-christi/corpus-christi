@@ -126,3 +126,10 @@ person:
     person-save-error:
       en: Person was not saved
       es: La persona no fue salvada
+    confirm:
+      activate:
+        en: Are you sure you want to restore this person?
+        es: ¿Estás seguro de que quieres restaurar a esta persona?
+      deactivate:
+        en: Are you sure you want to archive this person?
+        es: ¿Estás seguro de que quieres archivar a esta persona?

@@ -167,24 +167,6 @@
       },
       "start-date": "Start Date",
       "start-time": "Start Time",
-      "teams": {
-        "confirm-archive": "Are you sure you want to archive this team?",
-        "confirm-remove-from-event": "Are you sure you want to remove this team from this event?",
-        "create-team": "Create Team",
-        "description": "Description",
-        "edit-team": "Edit Team",
-        "error-adding-team": "Error while adding team",
-        "error-editing-team": "Error while editing team",
-        "error-removing-team": "Error while removing team",
-        "error-team-assigned": "That team is assigned to a conflicting event.",
-        "error-unarchiving-team": "Error while unarchiving team",
-        "new": "Add Team",
-        "team-added": "Team added",
-        "team-edited": "Team edited",
-        "team-on-event": "That team is already assigned to this event.",
-        "team-removed": "Team removed",
-        "title": "Teams"
-      },
       "title": "Event Title"
     },
     "groups": {
@@ -227,6 +209,10 @@
         "account-activate": "Account activated",
         "account-deactivate": "Account deactivated",
         "canceled": "Canceled add new person",
+        "confirm": {
+          "activate": "Are you sure you want to restore this person?",
+          "deactivate": "Are you sure you want to archive this person?"
+        },
         "person-activate": "Person activated",
         "person-add": "New person added",
         "person-deactivate": "Person deactivated",
@@ -505,6 +491,10 @@
         "account-activate": "Cuenta activada",
         "account-deactivate": "Cuenta desactivada",
         "canceled": "Cancelado a\u00f1adir nueva persona",
+        "confirm": {
+          "activate": "\u00bfEst\u00e1s seguro de que quieres restaurar a esta persona?",
+          "deactivate": "\u00bfEst\u00e1s seguro de que quieres archivar a esta persona?"
+        },
         "person-activate": "Persona activada",
         "person-add": "Nueva persona agregada",
         "person-deactivate": "Persona desactivada",
