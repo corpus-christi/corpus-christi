@@ -102,19 +102,25 @@ export default {
       this.$emit("cancel", false);
     },
 
-    saveAddressForm() {
+    async saveAddressForm() {
       this.formDisabled = true;
+      if(this.address.latitude === "" || this.address.longitude === "") {
+        await this.queryAddress('address');
+        this.sendData();
+      } else {
+        this.sendData();
+      }
+    },
+
+    sendData() {
       this.$http.post("/api/v1/places/locations", this.address).then(resp => {
-        console.log(resp);
         this.$emit("saved", resp.data);
       })
       .then(() => { 
-        console.log("reached");
         this.formDisabled = false
         this.cancelAddressForm();
       })
       .catch(err => { 
-        console.log(err);
         console.log("FAILED", err) 
         this.formDisabled = false;
       });
@@ -125,60 +131,62 @@ export default {
       if (!isValid) {
         return;
       } else {
-        this.$geocoder.setDefaultMode(type);
+        return new Promise((resolve,reject) => {
+          this.$geocoder.setDefaultMode(type);
 
-        // Av. Felipe II y Circunvalación Sur, Ave Circunvalación Sur, Cuenca
-        var addressObj;
-        if (type === "address") {
-          addressObj = {
-            address_line_1: this.address.address,
-            city: this.address.city
-          };
-        } else if (type === "lat-lng") {
-          addressObj = {
-            lat: this.address.latitude,
-            lng: this.address.longitude
-          };
-        } else {
-          return;
-        }
+          var addressObj;
+          if (type === "address") {
+            addressObj = {
+              address_line_1: this.address.address,
+              city: this.address.city
+            };
+          } else if (type === "lat-lng") {
+            addressObj = {
+              lat: this.address.latitude,
+              lng: this.address.longitude
+            };
+          } else {
+            return;
+          }
 
-        try {
-          this.$geocoder.send(addressObj, response => {
-            if (response.status === "ZERO_RESULTS") {
-              this.addressErr = true;
-              return;
-            } else {
-              console.log(response.results[0]);
-              this.addressErr = false;
-              console.log(response.results[0]);
-              let addr = response.results[0];
-              this.address.address = addr.formatted_address;
-              this.address.latitude = addr.geometry.location.lat;
-              this.address.longitude = addr.geometry.location.lng;
-              let addrcomps = addr.address_components;
-              for(let comp of addrcomps) {
-                for(type of comp.types) {
-                  if(type === "country") {
-                    this.address.country_code = comp.short_name;
-                  } else if(type === "locality") {
-                    this.address.city = comp.long_name;
-                  } else if(type === "administrative_area_level_1" ||
-                            type === "administrative_area_level_2") {
-                    this.address.area_name = comp.long_name;
+          try {
+            this.$geocoder.send(addressObj, response => {
+              if (response.status === "ZERO_RESULTS") {
+                this.addressErr = true;
+                return;
+              } else {
+                this.addressErr = false;
+                let addr = response.results[0];
+                this.address.address = addr.formatted_address;
+                this.address.latitude = addr.geometry.location.lat;
+                this.address.longitude = addr.geometry.location.lng;
+                let addrcomps = addr.address_components;
+                for(let comp of addrcomps) {
+                  for(type of comp.types) {
+                    if(type === "country") {
+                      this.address.country_code = comp.short_name;
+                      this.address.area_name = comp.long_name;
+                    } else if(type === "locality") {
+                      this.address.city = comp.long_name;
+                    } else if(type === "administrative_area_level_1" ||
+                              type === "administrative_area_level_2") {
+                      this.address.area_name = comp.long_name;
+                    }
                   }
                 }
+                this.marker = {
+                  lat: this.address.latitude,
+                  lng: this.address.longitude
+                };
+                this.centerMapOnMarker();
+                resolve();
               }
-              this.marker = {
-                lat: this.address.latitude,
-                lng: this.address.longitude
-              };
-              this.centerMapOnMarker();
-            }
-          });
-        } catch (err) {
-          console.log(err);
-        }
+            });
+          } catch (err) {
+            console.log(err);
+            reject(err);
+          }
+        });
       }
     },
 
