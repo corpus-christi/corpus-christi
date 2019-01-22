@@ -3,7 +3,7 @@
     <v-layout row wrap>
       <v-flex>
         <v-card>
-          <v-toolbar dark color="primary">
+          <v-toolbar class="pa-1">
             <v-toolbar-title>{{
               $t("events.dashboard.headers.location-attendance")
             }}</v-toolbar-title>
@@ -13,7 +13,7 @@
       </v-flex>
       <v-flex>
         <v-card>
-          <v-toolbar dark color="primary">
+          <v-toolbar class="pa-1">
             <v-toolbar-title>{{
               $t("events.dashboard.headers.home-group-percentage")
             }}</v-toolbar-title>
@@ -23,7 +23,7 @@
       </v-flex>
       <v-flex>
         <v-card>
-          <v-toolbar dark color="primary">
+          <v-toolbar class="pa-1">
             <v-toolbar-title>{{
               $t("events.dashboard.headers.yearly-attendance")
             }}</v-toolbar-title>
@@ -40,13 +40,25 @@ export default {
   name: "Dashboard",
   data: function() {
     // Get attendance data
-    var today = new Date(); // eslint-disable-next-line
-    var todayFormatted = today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
+    var today = new Date();
+    var todayFormatted =
+      today.getFullYear() +
+      "-" +
+      (today.getMonth() + 1) +
+      "-" +
+      today.getDate();
     var lastWeek = new Date();
-    lastWeek.setDate(today.getDate() - 7); // eslint-disable-next-line
-    var lastWeekFormatted = lastWeek.getFullYear() + "-" + (lastWeek.getMonth() + 1) + "-" + lastWeek.getDate();
-    this.$http // eslint-disable-next-line
-      .get(`/api/v1/events/?include_participants=1&start=${lastWeekFormatted}&end=${todayFormatted}`)
+    lastWeek.setDate(today.getDate() - 7);
+    var lastWeekFormatted =
+      lastWeek.getFullYear() +
+      "-" +
+      (lastWeek.getMonth() + 1) +
+      "-" +
+      lastWeek.getDate();
+    this.$http
+      .get(
+        `/api/v1/events/?include_participants=1&start=${lastWeekFormatted}&end=${todayFormatted}`
+      )
       .then(resp => {
         console.log("GOT DATA", resp);
         var data = Object();
@@ -73,22 +85,16 @@ export default {
             attendance: data[key]
           });
         });
-        this.locationAttendanceData = {
-          columns: ["campus", "attendance"],
-          rows: arr
-        };
+        this.locationAttendanceData.rows = arr;
       })
       .catch(err => {
         console.error("GET FALURE", err.response);
-        this.showSnackbar(this.$t("dashboard.error-loading-data"));
-        this.locationAttendanceData = {
-          columns: [],
-          rows: []
-        };
       });
+
     this.$http
-      .get(`/api/v1/events/?include_participants=1`)
+      .get(`/api/v1/events/?include_participants=1&sort=start`)
       .then(resp => {
+        console.log("GOT DATA", resp);
         var data = Object();
         var i;
         for (i = 0; i < resp.data.length; ++i) {
@@ -106,42 +112,48 @@ export default {
           data[date] += attendance;
         }
         var arr = Array();
-        Object.keys(data).forEach(key => {
+        Object.keys(data).forEach(date => {
           arr.push({
-            date: key,
-            attendance: data[key]
+            date: date,
+            attendance: data[date]
           });
         });
-        this.yearlyAttendanceData = {
-          columns: ["date", "attendance"],
-          rows: arr
-        };
+        this.yearlyAttendanceData.rows = arr;
+        this.$http
+          .get(`/api/v1/groups/members`)
+          .then(resp => {
+            console.log("GOT DATA", resp);
+            this.homeGroupPercentageData.rows[0].percent =
+              resp.data.length / arr[arr.length - 1].attendance;
+            this.loading = false;
+          })
+          .catch(err => {
+            console.error("GET FALURE", err.response);
+          });
       })
       .catch(err => {
         console.error("GET FALURE", err.response);
-        this.showSnackbar(this.$t("dashboard.error-loading-data"));
-        this.yearlyAttendanceData = {
-          columns: [],
-          rows: []
-        };
       });
+
     return {
       locationAttendanceData: {
-        columns: [],
+        columns: ["campus", "attendance"],
         rows: []
       },
       yearlyAttendanceData: {
-        columns: [],
+        columns: ["date", "attendance"],
         rows: []
       },
       homeGroupPercentageData: {
         columns: ["homeGroups", "percent"],
-        rows: [{
-          homeGroups: "Home Groups",
-          percent: 0.5
-        }]
+        rows: [
+          {
+            homeGroups: "Home Groups",
+            percent: 1
+          }
+        ]
       }
     };
   }
-}
+};
 </script>

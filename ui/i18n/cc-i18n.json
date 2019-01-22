@@ -93,14 +93,6 @@
       "course": "Courses",
       "course-offering": "Course Offerings",
       "dates": "Choose Dates",
-      "dashboard": {
-        "title": "Dashboard",
-        "headers": {
-          "course-flow": "Course Flow",
-          "course-attendance": "Course Attendance",
-          "enrollment": "Course Data"
-        }
-      },
       "description": "Description",
       "enrolled": "Number Enrolled",
       "is-archived": "This course is archived",
@@ -131,14 +123,6 @@
       "all-events": "All Events",
       "confirm-archive": "Are you sure you want to archive this event?",
       "create-event": "Create Event",
-      "dashboard": {
-        "title": "Dashboard",
-        "headers": {
-          "location-attendance": "Attendance by Location",
-          "yearly-attendance": "Yearly Attendance",
-          "home-group-percentage": "Percentage of Churchgoers in a Home Group"
-        }
-      },
       "details": {
         "title": "Details"
       },

@@ -3,17 +3,20 @@
     <v-layout column>
       <v-flex>
         <v-card>
-          <v-toolbar dark color="primary">
+          <v-toolbar class="pa-1">
             <v-toolbar-title>{{
               $t("courses.dashboard.headers.course-attendance")
             }}</v-toolbar-title>
           </v-toolbar>
-          <ve-sankey :data="courseAttendanceData" :settings="attendanceSankeySettings"></ve-sankey>
+          <ve-sankey
+            :data="courseAttendanceData"
+            :settings="attendanceSankeySettings"
+          ></ve-sankey>
         </v-card>
       </v-flex>
       <v-flex>
         <v-card>
-          <v-toolbar dark color="primary">
+          <v-toolbar class="pa-1">
             <v-toolbar-title>{{
               $t("courses.dashboard.headers.enrollment")
             }}</v-toolbar-title>
@@ -55,6 +58,10 @@ export default {
       });
     }
 
+    function courseAttendanceDataComplete(self) {
+      // TODO:
+    }
+
     function courseFlowDataComplete(self) {
       // TODO:
     }
@@ -72,24 +79,28 @@ export default {
           if (!graduationRateData[courseName]) {
             graduationRateData[courseName] = 0;
           }
-          
-          this.$http
-          .get(`/api/v1/courses/course_offerings/${offering.id}/students`)
-          .then(studentResp => {
-            console.log("GOT ENROLLMENT SUBDATA", studentResp);
-            enrollmentData[courseName] += studentResp.data.length;
-            
-            if (++enrollmentSubdataCount == resp.data.length /* FIXME: && graduationRateSubdataCount == resp.data.length */) {
-              enrollmentAndGraduationDataComplete(this);
 
-              if (attendanceSubdataCount == resp.data.length) {
-                courseAttendanceDataComplete(this);
+          this.$http
+            .get(`/api/v1/courses/course_offerings/${offering.id}/students`)
+            .then(studentResp => {
+              console.log("GOT ENROLLMENT SUBDATA", studentResp);
+              enrollmentData[courseName] += studentResp.data.length;
+
+              if (
+                ++enrollmentSubdataCount ==
+                resp.data
+                  .length /* FIXME: && graduationRateSubdataCount == resp.data.length */
+              ) {
+                enrollmentAndGraduationDataComplete(this);
+
+                if (attendanceSubdataCount == resp.data.length) {
+                  courseAttendanceDataComplete(this);
+                }
               }
-            }
-          })
-          .catch(err => {
-            console.error("GET FALURE", err.response);
-          });
+            })
+            .catch(err => {
+              console.error("GET FALURE", err.response);
+            });
 
           /*this.$http
           .get(`/api/v1/courses/FIXME:`)
@@ -101,23 +112,29 @@ export default {
           });*/
 
           this.$http
-          .get(`/api/v1/courses/course_offerings/${offering.id}/class_attendance`)
-          .then(attendanceResp => {
-            console.log("GOT ATTENDANCE SUBDATA", attendanceResp);
-            attendanceResp.data.forEach(attendance => {
-              attendance.attendance.forEach(student => {
-                if (!attendanceData[student.studentId]) {
-                  attendanceData[student.studentId] = 1;
+            .get(
+              `/api/v1/courses/course_offerings/${offering.id}/class_attendance`
+            )
+            .then(attendanceResp => {
+              console.log("GOT ATTENDANCE SUBDATA", attendanceResp);
+              attendanceResp.data.forEach(attendance => {
+                attendance.attendance.forEach(student => {
+                  if (!attendanceData[student.studentId]) {
+                    attendanceData[student.studentId] = 1;
+                  }
+                });
+                if (
+                  ++attendanceSubdataCount == resp.data.length &&
+                  enrollmentSubdataCount == resp.data.length &&
+                  graduationRateSubdataCount == resp.data.length
+                ) {
+                  courseAttendanceDataComplete(this);
                 }
               });
-              if (++attendanceSubdataCount == resp.data.length && enrollmentSubdataCount == resp.data.length && graduationRateSubdataCount == resp.data.length) {
-                courseAttendanceDataComplete(this);
-              }
+            })
+            .catch(err => {
+              console.error("GET FALURE", err.response);
             });
-          })
-          .catch(err => {
-            console.error("GET FALURE", err.response);
-          });
         });
       })
       .catch(err => {
@@ -128,15 +145,15 @@ export default {
       courseAttendanceData: {
         columns: ["status", "count"],
         rows: [
-            { status: "Course A", count: 32},
-            { status: "Course B", count: 27},
-            { status: "Course C", count: 29},
-            { status: "Course D", count: 8},
-            { status: "Course E", count: 4},
-            { status: "Attended", count: 80 },
-            { status: "Did Not Attend", count: 20 },
-            { status: "Graduated", count: 75 },
-            { status: "Did Not Graduate", count: 25 }
+          { status: "Course A", count: 32 },
+          { status: "Course B", count: 27 },
+          { status: "Course C", count: 29 },
+          { status: "Course D", count: 8 },
+          { status: "Course E", count: 4 },
+          { status: "Attended", count: 80 },
+          { status: "Did Not Attend", count: 20 },
+          { status: "Graduated", count: 75 },
+          { status: "Did Not Graduate", count: 25 }
         ]
       },
       courseData: {
@@ -145,19 +162,19 @@ export default {
       },
       attendanceSankeySettings: {
         links: [
-            { source: "Course A", target: "Attended", value: 24 },
-            { source: "Course A", target: "Did Not Attend", value: 8 },
-            { source: "Course B", target: "Attended", value: 22 },
-            { source: "Course B", target: "Did Not Attend", value: 5 },
-            { source: "Course C", target: "Attended", value: 26 },
-            { source: "Course C", target: "Did Not Attend", value: 3 },
-            { source: "Course D", target: "Attended", value: 5 },
-            { source: "Course D", target: "Did Not Attend", value: 3 },
-            { source: "Course E", target: "Attended", value: 3 },
-            { source: "Course E", target: "Did Not Attend", value: 1 },
-            { source: "Attended", target: "Graduated", value: 75 },
-            { source: "Attended", target: "Did Not Graduate", value: 5 },
-            { source: "Did Not Attend", target: "Did Not Graduate", value: 20 }
+          { source: "Course A", target: "Attended", value: 24 },
+          { source: "Course A", target: "Did Not Attend", value: 8 },
+          { source: "Course B", target: "Attended", value: 22 },
+          { source: "Course B", target: "Did Not Attend", value: 5 },
+          { source: "Course C", target: "Attended", value: 26 },
+          { source: "Course C", target: "Did Not Attend", value: 3 },
+          { source: "Course D", target: "Attended", value: 5 },
+          { source: "Course D", target: "Did Not Attend", value: 3 },
+          { source: "Course E", target: "Attended", value: 3 },
+          { source: "Course E", target: "Did Not Attend", value: 1 },
+          { source: "Attended", target: "Graduated", value: 75 },
+          { source: "Attended", target: "Did Not Graduate", value: 5 },
+          { source: "Did Not Attend", target: "Did Not Graduate", value: 20 }
         ],
         dataType: ["normal", "normal"]
       }

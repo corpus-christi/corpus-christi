@@ -1,4 +1,18 @@
 events:
+  dashboard:
+    title:
+      en: Dashboard
+      es: Tablero
+    headers:
+        location-attendance:
+          en: Attendance by Location
+          es: Asistencia por Ubicación
+        yearly-attendance:
+          en: Yearly Attendance
+          es: Asistencia Anual
+        home-group-percentage:
+          en: Percentage of Churchgoers in a Home Group
+          es: Porcentaje de Feligreses en un Grupo de Hogar
   header:
     en: Events
     es: Eventos

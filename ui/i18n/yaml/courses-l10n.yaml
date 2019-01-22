@@ -1,4 +1,15 @@
 courses:
+  dashboard:
+    title:
+      en: Dashboard
+      es: Tablero
+    headers:
+        course-retention:
+          en: Course Retention
+          es: Asistencia Anual
+        course-enrollment:
+          en: Course Data
+          es: Porcentaje de Feligreses en un Grupo de Hogar
   course:
     en: Courses
     es: Cursos
