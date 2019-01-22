@@ -15,6 +15,7 @@
       :multiple="multiple"
       menu-props="closeOnClick, closeOnContentClick"
       color="secondary"
+      :disabled="disabled"
     >
       <template v-if="!multiple" slot="selection" slot-scope="data">
         {{ getEntityDescription(data.item, 100) }}
@@ -53,7 +54,8 @@ export default {
     existingEntities: Array,
     value: null,
     searchEndpoint: String,
-    errorMessages: String
+    errorMessages: String,
+    disabled: Boolean
   },
   data() {
     return {

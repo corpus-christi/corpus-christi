@@ -82,14 +82,14 @@
             {{ $t("public.headers.home-church") }}
           </v-toolbar-title>
         </v-toolbar>
-        <GoogleMap v-bind:markers="groupLocations"></GoogleMap>
+        <GoogleMap v-bind:markers="homegroups"></GoogleMap>
       </v-flex>
     </v-layout>
   </v-container>
 </template>
 
 <script>
-import GoogleMap from "../components/GoogleMap";
+import GoogleMap from "../components/public/GoogleMap";
 export default {
   name: "Public",
   components: { GoogleMap },
@@ -101,8 +101,8 @@ export default {
         { title: "Christian Parenting 2", date: "2019-01-19" }
       ],
       events: [],
-      pageLoaded: false,
-      groupLocations: []
+      homegroups: [],
+      pageLoaded: false
     };
   },
   mounted() {
@@ -129,31 +129,38 @@ export default {
       });
     },
 
-    getHomegroupLocations() {
-      this.$httpNoAuth
-        .get("/api/v1/places/locations")
-        .then(resp => {
-          console.log(resp);
-          for (let loc of resp.data) {
-            this.groupLocations.push({
-              position: {
-                lat: loc.address.latitude,
-                lng: loc.address.longitude
-              }
-            });
-          }
-        })
-        .catch(err => console.log("FAILED", err));
+    async getHomegroupLocations() {
+      let resp = await this.$httpNoAuth.get("/api/v1/groups/meetings");
+      let meetings = resp.data;
+      resp = await this.$httpNoAuth.get("/api/v1/places/addresses");
+      let addresses = resp.data;
+      resp = await this.$httpNoAuth.get("/api/v1/groups/groups");
+      let groups = resp.data;
+      this.populateHomegroupData(meetings, addresses, groups);
     },
 
-    getEventData() {
-      this.pageLoaded = false;
-      this.$http.get(`/api/v1/events/?return_group=all`).then(resp => {
-        this.events = resp.data;
-        this.events = this.events.slice(0, 5);
-        console.log(resp.data);
-        this.pageLoaded = true;
-      });
+    populateHomegroupData(meetings, addresses, groups) {
+      for (let m of meetings) {
+        for (let a of addresses) {
+          if (m.address_id === a.id) {
+            for (let g of groups) {
+              if (m.group_id === g.id) {
+                this.homegroups.push({
+                  position: {
+                    lat: a.latitude,
+                    lng: a.longitude
+                  },
+                  data: {
+                    name: g.name,
+                    description: g.description
+                  },
+                  opened: false
+                });
+              }
+            }
+          }
+        }
+      }
     }
   }
 };
