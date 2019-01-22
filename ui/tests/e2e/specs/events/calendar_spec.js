@@ -1,18 +1,16 @@
-// NOTE: Requires selection of an event through the style tag
+// NOTE: Requires specific data
 describe("Calendar Test", function() {
   before(() => {
     cy.login();
   });
 
   it("GIVEN: Event planner goes to the calendar", function() {
-    cy.visit("/events/all");
-    cy.get("[data-cy=calendar]").click();
+    cy.visit("/events/calendar");
   });
 
   it("WHEN: Event planner clicks on a specific event", function() {
-    // TODO: Investigate routing issues
-    // Get style tag of an event
-    cy.get("[style='top: 626px;'] > .vuecal__event-content > a").click();
+    // Grab by span instead of link
+    cy.get(":nth-child(2) > .vuecal__cell-content > .vuecal__cell-events > .vuecal__event--overlapped.vuecal__event--split2 > .vuecal__event-time").click();
   });
 
   it("THEN: Event planner taken to event details page", function() {

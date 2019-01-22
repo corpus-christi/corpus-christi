@@ -4,7 +4,7 @@ describe("Attendance Test", function() {
   });
 
   it("GIVEN: Event planner goes to a specific event", function() {
-    cy.visit("/events/1/details");
+    cy.visit("/event/1/details");
   });
 
   it("WHEN: Event planner adds an attendance number", function() {
