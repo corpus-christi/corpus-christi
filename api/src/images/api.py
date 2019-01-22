@@ -21,7 +21,7 @@ image_schema = ImageSchema()
 image_schema_partial = ImageSchema(partial=True)
 
 @images.route('/<image_id>')
-@jwt_required
+# @jwt_required
 def download_image(image_id):
     image = db.session.query(Image).filter_by(id=image_id).first()
 

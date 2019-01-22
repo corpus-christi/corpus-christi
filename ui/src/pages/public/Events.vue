@@ -103,8 +103,9 @@ export default {
   },
   mounted() {
     this.pageLoaded = false;
-    this.$http.get(`/api/v1/events/?return_group=all&sort=start`).then(resp => {
+    this.$http.get(`/api/v1/events/?return_group=all&include_images=1&sort=start`).then(resp => {
       this.events = resp.data;
+      // console.log(this.events);
       this.pageLoaded = true;
     });
 

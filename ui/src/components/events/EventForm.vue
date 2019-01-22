@@ -452,7 +452,7 @@ export default {
       showStartDatePicker: false,
       showEndDatePicker: false,
       startTimeModal: false,
-      endTimeModal: false,
+      endTimeModal: false
     };
   }
 };
