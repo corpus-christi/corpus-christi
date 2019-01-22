@@ -133,12 +133,16 @@
     <!-- Mail Dialog -->
     <v-dialog v-model="mailDialog.show" max-width="400px">
       <v-card>
-        <v-card-title>
-          <span class="headline">Send Mail</span>
-        </v-card-title>
+        <v-card-title> <span class="headline">Send Mail</span> </v-card-title>
         <v-card-text>
-          <v-text-field v-model="mailDialog.recipients" label="Recipients"></v-text-field>
-          <v-text-field v-model="mailDialog.subject" label="Subject"></v-text-field>
+          <v-text-field
+            v-model="mailDialog.recipients"
+            label="Recipients"
+          ></v-text-field>
+          <v-text-field
+            v-model="mailDialog.subject"
+            label="Subject"
+          ></v-text-field>
           <v-textarea v-model="mailDialog.body" label="Body"></v-textarea>
         </v-card-text>
         <v-card-actions>
@@ -158,7 +162,6 @@
             data-cy="confirm-delete"
             >{{ $t("actions.confirm") }}</v-btn
           >
-
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -204,7 +207,7 @@ export default {
         loading: false,
         subject: "",
         body: "",
-        recipients: [],
+        recipients: []
       },
 
       snackbar: {
@@ -332,9 +335,8 @@ export default {
     closeMailDialog() {
       this.mailDialog.show = false;
       this.mailDialog.loading = false;
-
     },
-    
+
     sendMail() {
       console.log(this.mailDialog.body);
       this.closeMailDialog();

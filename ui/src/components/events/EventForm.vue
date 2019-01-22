@@ -424,7 +424,7 @@ export default {
           this.endTime = "";
         }
       }
-    },
+    }
   },
   props: {
     editMode: {
