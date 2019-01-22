@@ -48,7 +48,7 @@ describe('Check Scheduled times', () => {
   it('Add meeting time form - DATE Confirm button', () => {
     cy.wait(500)
     cy.get('[data-cy=course-offering-date]').click()
-    cy.get(':nth-child(4) > :nth-child(5) > .v-btn').click()//25 of Jan
+    cy.contains('30').click()//30 of Jan
     cy.get('[data-cy=course-offering-date-ok]').click()
   })
 
@@ -71,13 +71,13 @@ describe('Check Scheduled times', () => {
   })
   it('Add meeting form - Location', () => {
     cy.get('[data-cy=course-offering-location]').click()
-    cy.contains('Tara').click()
+    cy.contains('James').click()
   })
   it('Save form', () => {
 
     cy.get('.v-card__actions > .primary').click()
-    cy.wait(250)
-    cy.get('.v-snack__content').should('inclucde', 'Reuniones añadido')
+    cy.get('.v-toolbar__content > .v-input > .v-input__control > .v-input__slot > .v-text-field__slot > input').type('30')
+    cy.get('.v-datatable > tbody > tr > :nth(0)').contains('30')
   })
 })
 

@@ -30,6 +30,17 @@ describe('Fill out New Diploma Form', () => {
     })
 })
 
+describe('Fill out New Diploma Form half way', () => {
+    it('New Diploma Button', () => {
+        cy.get('[data-cy=diplomas-table-new]').click()
+    })
+    it('Fill out new diploma form', () => {
+        cy.get('.v-form > :nth-child(1) > .v-input__control > .v-input__slot > .v-text-field__slot > input').type('Half way gone!!')
+        cy.get('.v-dialog__content--active > .v-dialog > .v-card > .v-card__actions > .primary').click() 
+    })
+    
+})
+
 let new_diploma = 'Its Friday!!!'
 
 describe('Add Diploma', () => {
