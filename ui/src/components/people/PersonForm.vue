@@ -265,7 +265,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-import AttributeForm from "./input-fields/AttributeForm.vue";
+import AttributeForm from "./input_fields/AttributeForm.vue";
 import { isEmpty } from "lodash";
 
 export default {
