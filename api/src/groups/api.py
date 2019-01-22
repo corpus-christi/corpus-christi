@@ -165,6 +165,7 @@ def activate_group(group_id):
         return jsonify(msg="Group not found"), 404
 
     setattr(group, 'active', True)
+    db.session.commit()
     return jsonify(group_schema.dump(group))
 
 
@@ -177,6 +178,7 @@ def deactivate_group(group_id):
         return jsonify(msg="Group not found"), 404
 
     setattr(group, 'active', False)
+    db.session.commit()
     return jsonify(group_schema.dump(group))
 
 
@@ -297,6 +299,7 @@ def activate_meeting(meeting_id):
         return jsonify(msg="Meeting not found"), 404
 
     setattr(meeting, 'active', True)
+    db.session.commit()
     return jsonify(meeting_schema.dump(meeting))
 
 
@@ -309,6 +312,7 @@ def deactivate_meeting(meeting_id):
         return jsonify(msg="Meeting not found"), 404
 
     setattr(meeting, 'active', False)
+    db.session.commit()
     return jsonify(meeting_schema.dump(meeting))
 
 
@@ -400,6 +404,7 @@ def activate_member(member_id):
         return jsonify(msg="Member not found"), 404
 
     setattr(member, 'active', True)
+    db.session.commit()
     return jsonify(member_schema.dump(member))
 
 
@@ -412,6 +417,7 @@ def deactivate_member(member_id):
         return jsonify(msg="Member not found"), 404
 
     setattr(member, 'active', False)
+    db.session.commit()
     return jsonify(member_schema.dump(member))
 
 
