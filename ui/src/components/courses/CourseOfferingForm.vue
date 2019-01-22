@@ -14,7 +14,93 @@
           data-cy="course-offering-description"
         ></v-textarea>
 
-        <!-- max size TODO: integer validation-->
+        <!-- date -->
+        <!-- <v-layout>
+          <v-flex xs12 md7>
+            <v-menu
+              ref="menu"
+              v-model="showDatePicker"
+              :close-on-content-click="false"
+              :nudge-right="40"
+              :return-value.sync="dates"
+              lazy
+              transition="scale-transition"
+              offset-y
+              full-width
+              min-width="290px"
+            >
+              <v-combobox
+                slot="activator"
+                v-model="dates"
+                multiple
+                chips
+                small-chips
+                v-bind:label="$t('courses.dates')"
+                prepend-icon="event"
+                readonly
+              ></v-combobox>
+              <v-date-picker 
+                v-model="dates" 
+                multiple no-title scrollable 
+                v-bind:locale="currentLanguageCode">
+                <v-spacer></v-spacer>
+                <v-btn flat color="primary" @click="showDatePicker = false">{{ $t("actions.cancel") }}</v-btn>
+                <v-btn flat color="primary" @click="$refs.menu.save(dates)">{{ $t("actions.confirm") }}</v-btn>
+              </v-date-picker>
+            </v-menu>
+          </v-flex> -->
+          
+          <!-- time -->
+          <!-- <v-flex xs12 md4 ml-4>
+            <v-dialog
+              ref="dialog1"
+              v-model="timeModal"
+              :return-value.sync="time"
+              lazy
+              full-width
+              width="290px"
+              persistent
+              data-cy="start-time-dialog"
+            >
+              <v-text-field
+                slot="activator"
+                v-model="time"
+                v-bind:label="$t('courses.choose-time')"
+                prepend-icon="schedule"
+                readonly
+              ></v-text-field>
+              <v-time-picker
+                v-if="timeModal"
+                :format="timeFormat"
+                v-model="time"
+                data-cy="start-time-picker"
+              >
+                <v-spacer></v-spacer>
+                <v-btn
+                  flat
+                  color="primary"
+                  @click="timeModal = false"
+                  data-cy="start-time-cancel"
+                  >{{ $t("actions.cancel") }}</v-btn
+                >
+                <v-btn
+                  flat
+                  color="primary"
+                  @click="$refs.dialog1.save(time)"
+                  data-cy="start-time-ok"
+                  >{{ $t("actions.confirm") }}</v-btn
+                >
+              </v-time-picker>
+            </v-dialog>
+        </v-flex>
+        </v-layout> -->
+       
+        <!-- teacher -->
+        <v-text-field v-bind:label="$t('courses.choose-teacher')" name="teacher"></v-text-field>
+
+        <!-- location -->
+        <v-text-field v-bind:label="$t('courses.choose-location')" name="location"></v-text-field>
+        
         <v-flex xs7 md7>
           <v-text-field
             v-model="courseOffering.maxSize"

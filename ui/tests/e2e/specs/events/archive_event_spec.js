@@ -8,15 +8,13 @@ describe("Archive Event Test", function() {
   });
 
   it("WHEN: Event Planner wants to deactivate an event", function() {
-    // Change the view to see both active and archived events
+    // See all archived, active, and past events
     cy.get(
-      ".md3 > .v-input > .v-input__control > .v-input__slot > .v-select__slot > .v-select__selections"
+      ".layout > :nth-child(1) > .v-input > .v-input__control > .v-input__slot"
     ).click();
     cy.get(
-      ".menuable__content__active > .v-select-list > .v-list > :nth-child(3) > .v-list__tile > .v-list__tile__content > .v-list__tile__title"
+      ".menuable__content__active > .v-select-list > .v-list > :nth-child(3) > .v-list__tile > .v-list__tile__content"
     ).click();
-
-    // Also view past events
     cy.get("[data-cy=view-past-switch]")
       .eq(0)
       .click();

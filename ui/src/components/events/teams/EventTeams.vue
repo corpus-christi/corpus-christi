@@ -3,7 +3,7 @@
     <v-toolbar class="pa-1">
       <v-layout align-center justify-space-between fill-height>
         <v-flex md2>
-          <v-toolbar-title>{{ $t("events.teams.title") }}</v-toolbar-title>
+          <v-toolbar-title>{{ $t("teams.title") }}</v-toolbar-title>
         </v-flex>
         <v-flex md2>
           <v-text-field
@@ -34,7 +34,7 @@
             data-cy="add-team"
           >
             <v-icon dark left>add</v-icon>
-            {{ $t("events.teams.new") }}
+            {{ $t("teams.new") }}
           </v-btn>
         </v-flex>
       </v-layout>
@@ -134,7 +134,7 @@
     <!-- Archive dialog -->
     <v-dialog v-model="archiveDialog.show" max-width="350px">
       <v-card>
-        <v-card-text>{{ $t("events.teams.confirm-archive") }}</v-card-text>
+        <v-card-text>{{ $t("teams.confirm-archive") }}</v-card-text>
         <v-card-actions>
           <v-btn v-on:click="cancelArchive" color="secondary" flat data-cy="">{{
             $t("actions.cancel")
@@ -216,11 +216,11 @@ export default {
     headers() {
       return [
         {
-          text: this.$t("events.teams.description"),
+          text: this.$t("teams.description"),
           value: "description",
           width: "40%"
         },
-        { text: this.$t("events.actions"), sortable: false, width: "20%" }
+        { text: this.$t("actions.header"), sortable: false, width: "20%" }
       ];
     },
 
@@ -281,13 +281,13 @@ export default {
           this.teams[idx].active = false;
           this.archiveDialog.loading = false;
           this.archiveDialog.show = false;
-          this.showSnackbar(this.$t("events.teams.team-archived"));
+          this.showSnackbar(this.$t("teams.team-removed"));
         })
         .catch(err => {
           console.error("ARCHIVE FALURE", err.response);
           this.archiveDialog.loading = false;
           this.archiveDialog.show = false;
-          this.showSnackbar(this.$t("events.teams.error-archiving-team"));
+          this.showSnackbar(this.$t("teams.error-removing-team"));
         });
 
       // this.archiveDialog.show = false;
@@ -306,12 +306,12 @@ export default {
           console.log("UNARCHIVED", resp);
           delete team.unarchiving;
           Object.assign(this.teams[idx], resp.data);
-          this.showSnackbar(this.$t("events.teams.team-unarchived"));
+          this.showSnackbar(this.$t("teams.team-added"));
         })
         .catch(err => {
           delete team.unarchiving;
           console.error("UNARCHIVE FALURE", err.response);
-          this.showSnackbar(this.$t("events.teams.error-unarchiving-team"));
+          this.showSnackbar(this.$t("teams.error-unarchiving-team"));
         });
     },
 
@@ -342,12 +342,12 @@ export default {
             Object.assign(this.teams[idx], resp.data);
             this.teamDialog.show = false;
             this.teamDialog.saveLoading = false;
-            this.showSnackbar(this.$t("events.teams.team-edited"));
+            this.showSnackbar(this.$t("teams.team-edited"));
           })
           .catch(err => {
             console.error("PUT FALURE", err.response);
             this.teamDialog.saveLoading = false;
-            this.showSnackbar(this.$t("events.teams.error-editing-team"));
+            this.showSnackbar(this.$t("teams.error-editing-team"));
           });
       } else {
         let newTeam = JSON.parse(JSON.stringify(team));
@@ -359,12 +359,12 @@ export default {
             this.teams.push(resp.data);
             this.teamDialog.show = false;
             this.teamDialog.saveLoading = false;
-            this.showSnackbar(this.$t("events.teams.team-added"));
+            this.showSnackbar(this.$t("teams.team-added"));
           })
           .catch(err => {
             console.error("POST FAILURE", err.response);
             this.teamDialog.saveLoading = false;
-            this.showSnackbar(this.$t("events.teams.error-adding-team"));
+            this.showSnackbar(this.$t("teams.error-adding-team"));
           });
       }
     },
@@ -379,12 +379,12 @@ export default {
           this.teams.push(resp.data);
           this.teamDialog.show = false;
           this.teamDialog.saveLoading = false;
-          this.showSnackbar(this.$t("events.teams.team-added"));
+          this.showSnackbar(this.$t("teams.team-added"));
         })
         .catch(err => {
           console.error("FAILURE", err.response);
           this.teamDialog.saveLoading = false;
-          this.showSnackbar(this.$t("events.teams.error-adding-team"));
+          this.showSnackbar(this.$t("teams.error-adding-team"));
         });
     },
 
