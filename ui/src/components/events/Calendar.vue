@@ -76,6 +76,7 @@ export default {
       let da = date.toLocaleDateString(this.currentLanguageCode, {
         day: "2-digit"
       });
+<<<<<<< HEAD
       return `${yr}-${mo}-${da}`;
     },
 
@@ -84,6 +85,12 @@ export default {
       let hr = String(date.getHours()).padStart(2, "0");
       let min = String(date.getMinutes()).padStart(2, "0");
       return `${hr}:${min}`;
+=======
+      window.open(routeData.href, "_blank");
+    },
+    getTemplate(event) {
+      return `<a href="/events/${event.id}">${event.title}</a>`;
+>>>>>>> app-dashboard
     }
   }
 };

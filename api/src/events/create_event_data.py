@@ -59,6 +59,48 @@ def event_object_factory(sqla):
         event['attendance'] = random.randint(0, 1500)
     return event
 
+def event_object_factory_approx_one_week_ago(sqla):
+    """Cook up a fake event."""
+    event = {
+        'title': rl_fake().word(),
+        'start': str(rl_fake().date_time_between(start_date="-1w", end_date="-3d", tzinfo=None)),
+        'end': str(rl_fake().date_time_between(start_date="-3d", end_date="+0d", tzinfo=None)),
+        'active': flip(),
+        'aggregate': flip()
+    }
+
+    # These are all optional in the DB. Over time, we'll try all possibilities.
+    if flip():
+        event['description'] = rl_fake().sentences(nb=1)[0]
+    if flip():
+        all_locations = sqla.query(Location).all()
+        if len(all_locations) > 0:
+            event['location_id'] = all_locations[random.randint(0, len(all_locations)-1)].id
+    if flip():
+        event['attendance'] = random.randint(0, 1500)
+    return event
+
+def event_object_factory_long_ago(sqla):
+    """Cook up a fake event."""
+    event = {
+        'title': rl_fake().word(),
+        'start': str(rl_fake().date_time_between(start_date="-11y", end_date="-1m", tzinfo=None)),
+        'end': str(rl_fake().date_time_between(start_date="-1m", end_date="+0d", tzinfo=None)),
+        'active': flip(),
+        'aggregate': flip()
+    }
+
+    # These are all optional in the DB. Over time, we'll try all possibilities.
+    if flip():
+        event['description'] = rl_fake().sentences(nb=1)[0]
+    if flip():
+        all_locations = sqla.query(Location).all()
+        if len(all_locations) > 0:
+            event['location_id'] = all_locations[random.randint(0, len(all_locations)-1)].id
+    if flip():
+        event['attendance'] = random.randint(0, 1500)
+    return event
+
 
 def asset_object_factory(sqla):
     """Cook up a fake asset."""
@@ -140,7 +182,12 @@ def create_multiple_events(sqla, n):
     event_schema = EventSchema()
     new_events = []
     for i in range(n):
-        valid_events = event_schema.load(event_object_factory(sqla))
+        factory = event_object_factory_approx_one_week_ago
+        if flip():
+            factory = event_object_factory
+        elif flip():
+            factory = event_object_factory_long_ago
+        valid_events = event_schema.load(factory(sqla))
         new_events.append(Event(**valid_events))
     sqla.add_all(new_events)
     sqla.commit()
@@ -228,7 +275,7 @@ def create_teams_members(sqla, fraction=0.75):
 
 def create_events_test_data(sqla):
     """The function that creates test data in the correct order """
-    create_multiple_events(sqla, 18)
+    create_multiple_events(sqla, 1000)
     create_multiple_assets(sqla, 12)
     create_multiple_teams(sqla, 13)
     create_events_assets(sqla, 0.75)
