@@ -19,7 +19,7 @@ from .models import Course, CourseSchema, \
     Diploma_Awarded, Diploma_AwardedSchema, \
     Class_Attendance, \
     Class_AttendanceSchema, Class_Meeting, \
-    Class_MeetingSchema
+    Class_MeetingSchema, Course_Completion, Course_CompletionSchema
 from src.people.models import Person
 
 from .. import db
@@ -592,6 +592,60 @@ def update_student(student_id):
     return jsonify(student_schema.dump(student))
 
 
+# ---- Course_Completion
+
+course_completion_schema = Course_CompletionSchema()
+
+@courses.route('/courses/<int:courses_id>/course_completion', methods=['POST'])
+@jwt_required
+def create_course_completion(courses_id):
+    """ Create and add course completion entry for a person. Requires path to contain
+    valid courses_id and person_id in json request. """
+
+    try:
+        valid_course_completion = course_completion_schema.load(request.json, partial=True)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+    
+    person_id = request.json['personId']
+
+    # Query into DB to ensure person is enrolled in a course offering with course_id
+    personEnrolled = db.session.query(Person, Student, Course_Offering, Course)
+                        .filter_by(id=person_id).join(Student, Course_Offering)
+                        .filter_by(course_id=courses_id).join(Course) \
+                        .first()
+    
+    # Query into DB to ensure person has not already completed the course
+    personCompleted = db.session.query(Course_Completion) \
+                        .filter_by(course_id=courses_id, person_id=person_id) \
+                        .first()
+    
+    if personEnrolled is None:
+        return jsonify(f'Person #{person_id} is not enrolled in any course offerings with course #{courses_id}.'), 404
+    elif personCompleted: 
+        return jsonify(f'Entry for Person #{person_id} with completed course #{courses_id} already exists.'), 403
+    else: 
+        # Create and add course completion entry for person
+        new_course_completion = Course_Completion(**{'person_id':person_id, 'course_id': courses_id})
+        db.session.add(new_course_completion)
+        db.session.commit()
+        return jsonify(f'Person #{person_id} has successfully completed course #{courses_id}.'), 201
+
+@courses.route('/courses/<int:courses_id>/course_completion', methods=['DELETE'])
+@jwt_required
+def delete_course_completion(courses_id):
+    person_id = request.json['personId']
+    course_completion = db.session.query(Course_Completion).filter_by(course_id=courses_id, person_id=person_id).first()
+
+    # If there is an entry in DB for course and person, then delete
+    if course_completion is not None:
+        db.session.delete(course_completion)
+        db.session.commit()
+        return 'Course completion successfully deleted', 200
+    else:
+        return jsonify(f'Cannot remove non-existing entry. Person #{person_id} with completed course #{courses_id} DNE.'), 404
+
+
 # ---- Class_Meeting
 
 class_meeting_schema = Class_MeetingSchema()
@@ -599,7 +653,10 @@ class_meeting_schema = Class_MeetingSchema()
 @courses.route('/course_offerings/<int:course_offering_id>/class_meetings', methods=['POST'])
 @jwt_required
 def create_class_meeting(course_offering_id):
-    """ Create and add class meeting into course offering. """
+    """ Create and add class meeting into course offering. 
+    
+    Note: Python datetime obj violates ISO 8601 and does not add timezone. 
+    Don't worry about timezones for now. """
     try:
         valid_class_meeting = class_meeting_schema.load(request.json)
     except ValidationError as err:
@@ -608,7 +665,7 @@ def create_class_meeting(course_offering_id):
     meetingInDB = db.session.query(Class_Meeting).filter_by(
         offering_id=course_offering_id,
         teacher_id=request.json['teacherId'],
-        when=datetime.strptime(request.json['when'], '%Y-%m-%d %H:%M:%S') ).first() # Todo: make sure when is datetime obj
+        when=request.json['when']).first()
 
     # If a class meeting for a course offering DNE
     if meetingInDB is None:
@@ -652,7 +709,7 @@ def update_class_meeting(course_offering_id, class_meeting_id):
         if attr in request.json:
             if attr == 'when':
                 # For example, the following line requires datetime input to be "2019-02-01 10:01:30"
-                request.json['when'] = datetime.strptime(request.json['when'], '%Y-%m-%d %H:%M:%S')
+                request.json['when'] = datetime.fromisoformat(request.json['when'])
             setattr(class_meeting, attr, request.json[attr])
 
     db.session.commit()
