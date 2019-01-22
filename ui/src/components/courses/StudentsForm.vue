@@ -102,13 +102,7 @@ export default {
     },
     
     savedNewPerson(person) {
-      // this.$http
-      //   .get("/api/v1/people/persons")
-      //   .then(resp => {
-      //     console.log("FETCHED PEOPLE", resp);
-      //   })
-      //   .catch(err => console.error("FAILURE", err.response));
-      this.newStudent = "person";
+      this.newStudent = person;
       this.showExpansion = [false];
     },
     

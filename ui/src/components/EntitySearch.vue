@@ -14,6 +14,7 @@
       :filter="customFilter"
       :multiple="multiple"
       menu-props="closeOnClick, closeOnContentClick"
+      :value-comparator="compare"
       color="secondary"
     >
       <template v-if="!multiple" slot="selection" slot-scope="data">
@@ -52,8 +53,7 @@ export default {
     existingEntities: Array,
     value: null,
     searchEndpoint: String,
-    errorMessages: String,
-    label: String
+    errorMessages: String
   },
   data() {
     return {
@@ -66,8 +66,7 @@ export default {
 
   computed: {
     getLabel() {
-      if (this.label) return this.label;
-      else if (this.location) return this.$t("events.event-location");
+      if (this.location) return this.$t("events.event-location");
       else if (this.person) return this.$t("actions.search-people");
       else if (this.course) return this.$t("actions.search-courses");
       else if (this.team) return this.$t("events.teams.title");
@@ -143,6 +142,11 @@ export default {
       if (idx > -1) {
         this.value.splice(idx, 1);
       }
+    },
+
+    compare(a, b) {
+      if (!a || !b) return false;
+      return a[this.idField] == b[this.idField];
     }
   },
 
