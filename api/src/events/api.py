@@ -14,6 +14,7 @@ from ..assets.models import Asset, AssetSchema
 from ..teams.models import Team, TeamMember, TeamSchema, TeamMemberSchema
 from ..emails.models import EmailSchema
 from ..people.models import Person, PersonSchema
+from ..images.models import Image, ImageSchema, ImageEvent, ImageEventSchema
 from .. import db, mail
 from ..etc.helper import modify_entity, get_exclusion_list
 
@@ -22,7 +23,7 @@ from ..etc.helper import modify_entity, get_exclusion_list
 @events.route('/', methods=['POST'])
 @jwt_required
 def create_event():
-    event_schema = EventSchema(exclude=get_exclusion_list(request.args, ['assets', 'participants', 'persons', 'teams']))
+    event_schema = EventSchema(exclude=get_exclusion_list(request.args, ['assets', 'participants', 'persons', 'teams', 'images']))
     try:
         valid_event = event_schema.load(request.json)
     except ValidationError as err:
@@ -35,9 +36,8 @@ def create_event():
     
 
 @events.route('/')
-@jwt_optional
 def read_all_events():
-    event_schema = EventSchema(exclude=get_exclusion_list(request.args, ['assets', 'participants', 'persons', 'teams']))
+    event_schema = EventSchema(exclude=get_exclusion_list(request.args, ['assets', 'participants', 'persons', 'teams', 'images']))
     query = db.session.query(Event)
 
     # -- return_inactives --
@@ -96,7 +96,7 @@ def read_all_events():
 @events.route('/<event_id>')
 @jwt_required
 def read_one_event(event_id):
-    event_schema = EventSchema(exclude=get_exclusion_list(request.args, ['assets', 'participants', 'persons', 'teams']))
+    event_schema = EventSchema(exclude=get_exclusion_list(request.args, ['assets', 'participants', 'persons', 'teams', 'images']))
     event = db.session.query(Event).filter_by(id=event_id).first()
 
     if not event:
@@ -114,7 +114,7 @@ def replace_event(event_id):
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    event_schema = EventSchema(exclude=get_exclusion_list(request.args, ['assets', 'participants', 'persons', 'teams']))
+    event_schema = EventSchema(exclude=get_exclusion_list(request.args, ['assets', 'participants', 'persons', 'teams', 'images']))
 
     return modify_entity(Event, event_schema, event_id, valid_event)
 
@@ -128,7 +128,7 @@ def update_event(event_id):
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    event_schema = EventSchema(exclude=get_exclusion_list(request.args, ['assets', 'participants', 'persons', 'teams']))
+    event_schema = EventSchema(exclude=get_exclusion_list(request.args, ['assets', 'participants', 'persons', 'teams', 'images']))
                 
     return modify_entity(Event, event_schema, event_id, valid_attributes)
 
@@ -315,7 +315,6 @@ def add_event_participants(event_id, person_id):
         return jsonify(err.messages), 422
 
     event = db.session.query(Event).filter_by(id=event_id).first()
-    event_participants = db.session.query(Event).join(EventParticipant).filter_by(person_id=person_id).all()
 
     event_participant = db.session.query(EventParticipant).filter_by(event_id=event_id,person_id=person_id).first()
 
@@ -365,3 +364,43 @@ def delete_event_participant(event_id, person_id):
 
     # 204 codes don't respond with any content
     return 'Successfully removed participant', 204
+
+# ---- Image
+
+@events.route('/<event_id>/images/<image_id>', methods=['POST'])
+@jwt_required
+def add_event_images(event_id, image_id):
+    event = db.session.query(Event).filter_by(id=event_id).first()
+    image = db.session.query(Image).filter_by(id=image_id).first()
+
+    event_image = db.session.query(ImageEvent).filter_by(event_id=event_id,image_id=image_id).first()
+
+    if not event:
+        return jsonify(f"Event with id #{event_id} does not exist."), 404
+
+    if not image:
+        return jsonify(f"Image with id #{image_id} does not exist."), 404
+
+    # If image is already attached to the event
+    if event_image:
+        return jsonify(f"Image with id#{image_id} is already attached to event with id#{event_id}."), 422
+    else:
+        new_entry = ImageEvent(**{'event_id': event_id, 'image_id': image_id})
+        db.session.add(new_entry)
+        db.session.commit()
+
+    return jsonify(f"Image with id #{image_id} successfully added to Event with id #{event_id}.")
+
+@events.route('/<event_id>/images/<image_id>', methods=['DELETE'])
+@jwt_required
+def delete_event_image(event_id, image_id):
+    event_image = db.session.query(ImageEvent).filter_by(event_id=event_id,image_id=image_id).first()
+
+    if not event_image:
+        return jsonify(f"Image with id #{image_id} is not assigned to Event with id #{event_id}."), 404
+
+    db.session.delete(event_image)
+    db.session.commit()
+
+    # 204 codes don't respond with any content
+    return 'Successfully removed image', 204
