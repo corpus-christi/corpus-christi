@@ -90,7 +90,6 @@ def include_course_offerings(course):
 
 
 @courses.route('/courses')
-@jwt_required
 # @authorize(["role.superuser", "role.registrar", "role.public", ])
 def read_all_courses():
     """List all active and inactive courses"""
