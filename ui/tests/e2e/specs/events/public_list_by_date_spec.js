@@ -1,5 +1,5 @@
 // NOTE: Needs specific dates to pass tests
-describe("Public LIst by Date Test", function() {
+describe("Public List by Date Test", function() {
   it("GIVEN: User navigates to events page", function() {
     cy.visit("/public/events");
   });
