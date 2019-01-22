@@ -140,7 +140,23 @@ const router = new VueRouter({
       name: "diplomas-admin",
       path: "/diplomas",
       meta: { authRequired: true },
-      component: () => import("@/pages/Diplomas")
+      component: () => import("@/pages/Diplomas"),
+      redirect: { name: "all-diplomas" },
+      children: [
+        {
+          name: "all-diplomas",
+          path: "all",
+          meta: { authRequired: true },
+          component: () => import("@/components/diplomas/DiplomasTable")
+        },
+        {
+          name: "diploma-details",
+          path: ":diplomaId",
+          meta: { authRequired: true },
+          props: true,
+          component: () => import("@/components/diplomas/DiplomaDetails")
+        }
+      ]
     },
     {
       name: "transcripts",

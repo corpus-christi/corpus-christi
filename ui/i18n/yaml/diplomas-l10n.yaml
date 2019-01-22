@@ -1,7 +1,10 @@
 diplomas:
-  diploma:
+  diplomas:
     en: Diplomas
     es: Diplomas
+  diploma:
+    en: Diploma
+    es: Diploma
   title:
     en: Title
     es: Título

@@ -116,7 +116,8 @@
       "courses": "Courses",
       "courses-this-diploma": "Courses for this Diploma",
       "description": "Description",
-      "diploma": "Diplomas",
+      "diploma": "Diploma",
+      "diplomas": "Diplomas",
       "new": "New Diploma",
       "reactivated": "Diploma unarchived",
       "title": "Title",
@@ -172,7 +173,7 @@
         "team-removed": "Team removed",
         "title": "Teams"
       },
-      "title": "Events"
+      "title": "Event Title"
     },
     "groups": {
       "title": "Home Churches"
@@ -184,9 +185,9 @@
       }
     },
     "people": {
+      "attributes": "Attributes",
       "title": "People",
-      "title-roles": "Roles",
-      "attributes": "Attributes"
+      "title-roles": "Roles"
     },
     "person": {
       "actions": {
@@ -238,7 +239,8 @@
       "courses": "Courses",
       "courses-this-diploma": "Courses for this Diploma",
       "description": "Description",
-      "title": "Title",
+      "page-title": "Student Transcript -",
+      "student-information": "Information",
       "transcript": "Transcripts"
     },
     "validation": {
@@ -375,7 +377,8 @@
       "courses": "Cursos",
       "courses-this-diploma": "Cursos para esta Diploma",
       "description": "Descripci\u00f3n",
-      "diploma": "Diplomas",
+      "diploma": "Diploma",
+      "diplomas": "Diplomas",
       "new": "Nueva Diploma",
       "reactivated": "Diploma desarchivado",
       "title": "T\u00edtulo",
@@ -443,9 +446,9 @@
       }
     },
     "people": {
+      "attributes": "Atributas",
       "title": "Personas",
-      "title-roles": "Papeles",
-      "attributes": "Atributas"
+      "title-roles": "Papeles"
     },
     "person": {
       "actions": {
@@ -475,7 +478,8 @@
       },
       "name": {
         "first": "Nombre de pila",
-        "last": "Apellido"
+        "last": "Apellido",
+        "second-last": "Segundo Apellido"
       },
       "phone": "Tel\u00e9fono",
       "settings": "Configuraci\u00f3n de la {person}"
@@ -496,7 +500,8 @@
       "courses": "Cursos",
       "courses-this-diploma": "Cursos para esta Diploma",
       "description": "Descripci\u00f3n",
-      "title": "T\u00edtulo",
+      "page-title": "Transcripci\u00f3n para",
+      "student-information": "Datos",
       "transcript": "Transcripci\u00f3nes"
     },
     "validation": {

@@ -17,6 +17,8 @@
                   data-cy="transcripts-table-search"
               ></v-text-field>
             </v-flex>
+            <!--
+              possibly filter by active/inactive flag on students...but not for now
             <v-spacer></v-spacer>
             <v-flex md3>
               <v-select
@@ -27,6 +29,7 @@
                 data-cy="transcripts-table-viewstatus"
               ></v-select>
             </v-flex>
+            -->
           </v-layout>
         </v-toolbar>
 
@@ -78,6 +81,8 @@ export default {
         { text: this.$t("actions.header"), sortable: false }
       ];
     },
+    /*
+    // possibly filter by active/inactive flag on students...but not for now
     options() {
       return [
         { text: this.$t("actions.view-active"), value: "active" },
@@ -85,7 +90,11 @@ export default {
         { text: this.$t("actions.view-all"), value: "all" }
       ];
     },
+    */
     showStudents() {
+      return this.students;
+      /*
+      // possibly filter by active/inactive flag on students...but not for now
       switch (this.viewStatus) {
         case "active":
           return this.students.filter(student => student.active);
@@ -95,6 +104,7 @@ export default {
         default:
           return this.students;
       }
+      */
     }
   },
   methods: {
@@ -106,7 +116,7 @@ export default {
   mounted: function() {
     console.log('about to fetch students....');
     this.$http
-      .get("http://localhost:3000/students")
+      .get("/api/v1/courses/students")
       .then(resp => {
         this.students = resp.data
         console.log('student list received: ', this.students);

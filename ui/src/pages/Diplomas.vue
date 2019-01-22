@@ -1,18 +1,10 @@
 <template>
-  <v-container>
-    <DiplomasTable />
-  </v-container>
+  <v-container> <router-view></router-view> </v-container>
 </template>
 
 <script>
-import DiplomasTable from "../components/diplomas/DiplomasTable";
 export default {
   name: "Diplomas",
-  components: {
-    DiplomasTable
-  },
-  props: [
-  ]
 };
 </script>
 

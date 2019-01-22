@@ -4,7 +4,7 @@
     <v-toolbar>
       <v-layout align-center justify-space-between fill-height>
         <v-flex md2>
-          <v-toolbar-title>{{ $t("diplomas.diploma") }}</v-toolbar-title>
+          <v-toolbar-title>{{ $t("diplomas.diplomas") }}</v-toolbar-title>
         </v-flex>
         <v-spacer></v-spacer>
         <v-flex md3>
@@ -52,6 +52,26 @@
       data-cy="diplomas-table"
     >
       <template slot="items" slot-scope="props">
+        <tr>
+          <td class="hover-hand" @click="clickThrough(props.item)">
+            {{ props.item.name }}
+          </td>
+          <td class="hover-hand" @click="clickThrough(props.item)">
+            {{ props.item.description }}
+          </td>
+          <td class="hover-hand" @click="clickThrough(props.item)">
+            <DiplomaAdminActions
+              v-bind:diploma="props.item"
+              display-context="compact"
+              v-on:action="dispatchAction($event, props.item)"
+            />
+          </td>
+        </tr>
+      </template>
+
+
+<!--
+      <template slot="items" slot-scope="props">
         <tr @click="props.expanded = !props.expanded">
           <td>{{ props.item.name }}</td>
           <td>{{ props.item.description }}</td>
@@ -64,6 +84,8 @@
           </td>
         </tr>
       </template>
+      -->
+      <!--
       <template slot="expand" slot-scope="props">
         <v-card flat>
           <v-card-text>
@@ -82,6 +104,7 @@
           </v-card-text>
         </v-card>
       </template>
+      -->
     </v-data-table>
 
     <v-snackbar v-model="snackbar.show">
@@ -138,6 +161,7 @@
 import DiplomaEditor from "./DiplomaEditor";
 import DiplomaAdminActions from "./DiplomaAdminActions";
 import { cloneDeep } from "lodash";
+import { scrypt } from 'crypto';
 export default {
   name: "DiplomasTable",
   components: {
@@ -279,6 +303,11 @@ export default {
         });
     },
 
+    clickThrough(diploma) {
+      console.log(diploma);
+      this.$router.push({ name: 'diploma-details', params: { diplomaId: diploma.id }})
+    },
+
     saveDiploma(diploma) {
       console.log("diploma: ", diploma);
       this.diplomaDialog.saving = true;
@@ -292,7 +321,7 @@ export default {
       // Get rid of the courseList, which is an array of objects
       delete diplomaClone.courseList;
       // the api is expecting an array of course IDs, so add that property to diplomaClone
-      diplomaClone.courses = courseIDList;
+      diplomaClone.courseList = courseIDList;
       console.log("diplomaClone: ", diplomaClone);
 
       console.log("all diplomas: ", this.diplomas);
@@ -359,4 +388,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+  .hover-hand {
+      cursor: pointer;
+    }
+</style>

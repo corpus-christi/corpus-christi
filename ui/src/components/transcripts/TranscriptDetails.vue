@@ -1,18 +1,85 @@
 <template>
-  <v-layout row wrap>
-    <v-flex xs12>
-      <v-btn
-        outline
-        color="primary"
-        v-on:click="$router.push({ name: 'all-transcripts' })"
-      ><v-icon>arrow_back</v-icon>{{ $t("actions.back") }}</v-btn>
-    </v-flex>
+    <v-layout row wrap>
+        <v-flex xs12>
+        <v-btn
+            outline
+            color="primary"
+            v-on:click="$router.push({ name: 'all-transcripts' })"
+        ><v-icon>arrow_back</v-icon>{{ $t("actions.back") }}</v-btn>
+        </v-flex>
+        <v-flex xs12 sm8 offset-sm2>
+            <v-card>
+                <template v-if="loading">
+                    <v-container fill-height fluid>
+                        <v-layout xs12 align-center justify-center>
+                        <v-progress-circular color="primary" indeterminate/>
+                        </v-layout>
+                    </v-container>
+                </template>
+                <template v-else>
+                    <v-layout row>
+                        <v-flex xs12>
+                            <v-card>
+                                <v-toolbar primary>
+                                    <v-toolbar-title>
+                                        {{ $t("transcripts.page-title")}} {{ transcript.person.firstName }} {{ transcript.person.lastName }}
+                                        <span v-if="transcript.person.secondLastName">{{ transcript.person.secondLastName }}</span>
+                                    </v-toolbar-title>
+                                </v-toolbar>
+                                <v-list three-line>
+                                    <v-subheader >
+                                        {{ $t("transcripts.student-information") }}:
+                                    </v-subheader>
+                                    <v-layout row>
+                                        <v-flex xs12 sm10 offset-sm1>
+                                        <div> 
+                                            <span class="font-weight-bold">{{ $t("person.name.first") }}: </span> {{ transcript.person.firstName }} 
+                                        </div>
+                                        <div>
+                                            <span class="font-weight-bold">{{ $t("person.name.last") }}:  </span>{{ transcript.person.lastName }} 
+                                        </div>
+                                        <div v-if="transcript.person.secondLastName">
+                                            <span class="font-weight-bold">{{ $t("person.name.second-last") }}:  </span>{{ transcript.person.secondLastName }}
+                                        </div>
+                                        <div> 
+                                            <span class="font-weight-bold">{{ $t("person.email") }}:  </span>{{ transcript.person.email }} 
+                                        </div>
+                                        <div> 
+                                            <span class="font-weight-bold">{{ $t("person.phone") }}:  </span>{{ transcript.person.phone }} 
+                                        </div>
+                                        <div> 
+                                            <span class="font-weight-bold">{{ $t("person.date.birthday") }}:  </span>{{ transcript.person.birthday }} 
+                                        </div>
+                                    </v-flex>
+                                </v-layout>
+
+                                <v-subheader >
+                                    {{ $t("transcripts.courses") }}:
+                                </v-subheader>
+                                <template v-for="(course, index) in transcript.courses">
+                                    <v-list-tile
+                                        :key=index
+                                    >
+                                    <v-list-tile-content>
+                                        <v-list-tile-title v-html="course.name"></v-list-tile-title>
+                                        <v-list-tile-sub-title v-html="course.description"></v-list-tile-sub-title>
+                                    </v-list-tile-content>
+                                    </v-list-tile>
+                                </template>
+                                </v-list>
+                            </v-card>
+                        </v-flex>
+                    </v-layout>
+                </template>
+            </v-card>
+        </v-flex>
+    </v-layout>
+</template>
+<!--
+<template>
+  
     <v-flex xs12 sm8 offset-sm2>
       <v-card>
-        <v-img
-          src="https://cdn.vuetifyjs.com/images/cards/desert.jpg"
-          aspect-ratio="2.75"
-        ></v-img>
         <template v-if="loading">
           <v-container fill-height fluid>
             <v-layout xs12 align-center justify-center>
@@ -54,7 +121,7 @@
                 </div>
                 
 
-<!--
+
      "active": true,
           
           
@@ -63,7 +130,7 @@
           
           "locationId": null,
           "phone": "410-122-9419x6396"
-          -->
+        
 
                 <v-divider></v-divider>
 
@@ -78,66 +145,6 @@
   </v-layout>
 </template>
 
-<!--
-<template>
-  <v-layout row wrap>
-    <v-flex xs12>
-      <v-btn
-        outline
-        color="primary"
-        v-on:click="$router.push({ name: 'all-transcripts' })"
-      ><v-icon>arrow_back</v-icon>{{ $t("actions.back") }}</v-btn>
-    </v-flex>
-    <v-flex sm12 md3>
-      <v-card>
-        <template v-if="loading">
-          <v-container fill-height fluid>
-            <v-layout xs12 align-center justify-center>
-              <v-progress-circular color="primary" indeterminate/>
-            </v-layout>
-          </v-container>
-        </template>
-        <template v-else>
-          <v-card-title class="d-block">
-            <h5 class="headline">{{ transcript.person.firstName }} {{ transcript.person.lastName }}</h5>
-            <span class="caption" v-if="!course.active">
-              <v-icon small>archive</v-icon>
-              {{ $t("courses.is-archived") }}
-            </span>
-          </v-card-title>
-          <v-card-text>
-            {{ course.description }}
-          </v-card-text>
-        </template>
-      </v-card>
-      <v-card class="mt-2" v-if="!loading">
-        <template v-if="course.prerequisites.length > 0">
-          <v-card-title>
-            <h5 class="headline">{{ $t("courses.prerequisites") }}</h5>
-          </v-card-title>
-          <v-card-text>
-            <v-list dense>
-              <v-list-tile
-                v-for="prereq of course.prerequisites"
-                :key="prereq.id"
-                :to="{ name: 'course-details', params: { courseId: prereq.id } }">
-                {{ prereq.name }}
-              </v-list-tile>
-            </v-list>
-          </v-card-text>
-        </template>
-        <template v-else>
-          <v-card-text>
-            {{ $t("courses.no-prerequisites") }}
-          </v-card-text>
-        </template>
-      </v-card>
-    </v-flex>
-    <v-flex sm12 md9 class="pl-2" v-if="!loading">
-      <CourseOfferingsTable :course="course"/>
-    </v-flex>
-  </v-layout>
-</template>
 -->
 
 <script>
@@ -154,25 +161,25 @@ export default {
   data() {
     return {
       transcript: { }, //prerequisites: [] },
+      personalInformation: [],
       loading: true,
       loadingFailed: false
     };
   },
   mounted() { 
-    this.loadCourse();
+    this.loadTranscript();
   },
   watch: {
-    $route: "loadCourse"
+    $route: "loadTranscript"
   },
   methods: {
-    loadCourse() {
+    loadTranscript() {
       this.loading = true;
       this.loadingFailed = false;
-      //this.$http.get(`/api/v1/courses/courses/${this.courseId}`)
-      this.$http.get("http://localhost:3000/students")
+      this.$http.get(`/api/v1/courses/students/${this.studentId}`)
         .then(resp => {
-            //FIX THIS!
-          this.transcript = resp.data[0];
+          this.transcript = resp.data;
+          console.log('transcript for this student: ', this.transcript);
         })
         .catch(() => {
           this.loadingFailed = true;
