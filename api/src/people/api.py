@@ -100,7 +100,7 @@ def read_one_person(person_id):
 @jwt_required
 def update_person(person_id):
     try:
-        valid_person = person_schema.load(request.json['person'])
+        valid_person = person_schema.load(request.json['person'], partial=True)
         valid_person_attributes = person_attribute_schema.load(
             request.json['attributesInfo'], many=True)
     except ValidationError as err:
