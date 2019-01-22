@@ -76,7 +76,7 @@
               </v-layout>
             </v-card-text>
             <v-card-actions>
-              <v-layout justify-space-between>
+              <v-layout justify-space-between wrap>
                 <v-btn
                   flat
                   ripple
@@ -89,6 +89,7 @@
                   }}
                 </v-btn>
                 <v-btn
+                  class="ma-0"
                   flat
                   ripple
                   color="primary"

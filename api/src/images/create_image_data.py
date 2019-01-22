@@ -26,8 +26,12 @@ class RandomLocaleFaker:
 rl_fake = RandomLocaleFaker('en_US', 'es_MX')
 fake = Faker()  # Generic faker; random-locale ones don't implement everything.
 
+#Sample images
 valid_paths = ['data/a1/casa.jpg', 'data/a1/coffee_house.jpg', 'data/a1/park.jpg', 'data/a1/verbo.jpg', 'data/m5/downtown.jpg', 'data/m5/park.jpg', 'data/m5/broken_bridge.jpg', 'data/m5/tree.jpg']
 paths_taken = [False, False, False, False, False, False, False, False]
+
+#Used in create_multiple_images to guarentee that the program won't die due to an IndexOutOfRange with uneven array lengths
+num_valid_images = len(valid_paths) if len(valid_paths) < len(paths_taken) else len(paths_taken)
 
 def flip():
     """Return true or false randomly."""
@@ -66,7 +70,7 @@ def create_multiple_images(sqla, n):
     image_schema = ImageSchema()
     new_images = []
     for i in range(n):
-        if (i < len(valid_paths)):
+        if (i < num_valid_images):
             valid_images = image_schema.load(image_object_factory(sqla))
             new_images.append(Image(**valid_images))
     sqla.add_all(new_images)
