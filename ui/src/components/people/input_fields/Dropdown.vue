@@ -1,32 +1,34 @@
 <template>
-  <v-select
-    :label="label"
-    :name="name"
-    :value="value"
-    @input="$emit('input', $event)"
-    :items="options"
-  ></v-select>
+  <div>
+    <v-select
+      :label="attribute.name"
+      :name="attribute.name"
+      :value="attribute.value"
+      @input="$emit('input', { stringValue: '', enumValueId: $event })"
+      :items="getItems"
+    ></v-select>
+  </div>
 </template>
 
 <script>
 export default {
   name: "Dropdown",
   props: {
-    label: {
-      type: String,
+    attribute: {
+      type: Object,
       required: true
-    },
-    options: {
-      type: Array,
-      required: true
-    },
-    name: {
-      type: String,
-      required: true
-    },
-    value: {
-      type: Number,
-      required: true
+    }
+  },
+  computed: {
+    getItems() {
+      let items = [];
+      for (let enumeratedValue of this.attribute.enumerated_values) {
+        items.push({
+          text: enumeratedValue.value,
+          value: enumeratedValue.id
+        });
+      }
+      return items;
     }
   }
 };
