@@ -127,6 +127,9 @@ def update_person(person_id):
 
     person = db.session.query(Person).filter_by(id=person_id).first()
 
+    if person is None:
+        return jsonify("Person does not exist"), 404
+
     for key, val in valid_person.items():
         setattr(person, key, val)
 
@@ -157,6 +160,8 @@ def deactivate_person(person_id):
 @jwt_required
 def activate_person(person_id):
     person = db.session.query(Person).filter_by(id=person_id).first()
+    if person is None:
+        return jsonify("person does not exist"), 404
     setattr(person, 'active', True)
 
     db.session.commit()
@@ -249,6 +254,13 @@ def get_accounts_by_role(role_id):
 @people.route('/accounts/<account_id>', methods=['PATCH'])
 @jwt_required
 def update_account(account_id):
+    try:
+        account_request = request.json.copy()
+        account_request.pop('roles', None)
+        account_schema.load(account_request, partial=True)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+
     account = db.session.query(Account).filter_by(id=account_id).first()
     if account is None:
         return 'Account not found', 404

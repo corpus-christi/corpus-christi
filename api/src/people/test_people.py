@@ -567,7 +567,7 @@ def test_update_person_no_exist(auth_client):
     resp = auth_client.put(url_for('people.update_person', person_id = random.randint(1, 8)), json = {'person': mod, 'attributesInfo': []})
     
     # THEN expect the requested person not to be found
-    assert resp.status_code == 422
+    assert resp.status_code == 404
 
 
 @pytest.mark.smoke
@@ -620,9 +620,8 @@ def test_activate_person_no_exist(auth_client):
 
     # WHEN a person is requested to be activated
     resp = auth_client.put(url_for('people.activate_person', person_id = random.randint(1,8)))
-    # THEN expect response to be unprocessable
-    assert resp.status_code == 422
-    assert resp.json is None
+    # THEN expect requested person to not exist
+    assert resp.status_code == 404
 
 
 # ---- Account
