@@ -12,7 +12,7 @@
             <b>{{ $t("courses.description") }}:</b>
             <div class="ml-2">{{ courseOffering.description }}</div>
             <b>{{ $t("courses.enrolled") }}:</b>
-            <div class="ml-2">{{ "0 / " + courseOffering.maxSize }}</div>
+            <div class="ml-2">{{ studentsAmt + " / " + courseOffering.maxSize }}</div>
           </v-card-text>
           <v-card-actions>
             <v-btn
@@ -48,9 +48,14 @@ export default {
   mounted() {
     this.pageLoaded = false;
     const id = this.offeringId;
-    this.$http.get(`/api/v1/courses/course_offerings/${id}`).then(resp => {
-      this.courseOffering = resp.data;
-      this.pageLoaded = true;
+
+    this.$http.get(`/api/v1/courses/course_offerings/${id}/students`).then(resp => {
+      //TODO make call in parent or Promise.all
+      this.studentsAmt = resp.data.length;
+      this.$http.get(`/api/v1/courses/course_offerings/${id}`).then(resp => {
+        this.courseOffering = resp.data;
+        this.pageLoaded = true;
+      });
     });
   },
 
@@ -67,7 +72,7 @@ export default {
         saving: false,
         courseOffering: {}
       },
-
+      studentsAmt: 0,
       snackbar: {
         show: false,
         text: ""

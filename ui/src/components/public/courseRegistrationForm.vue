@@ -106,7 +106,6 @@ export default {
       //temporary for presentation! fix me later!!
       this.$validator.validateAll().then(() => {
         if (!this.errors.any()) {
-          console.log('b')
           this.loading = true;
           let my_username = this.currentAccount.username;
           this.$http.get(`/api/v1/people/accounts/username/${my_username}`)
