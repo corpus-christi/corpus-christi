@@ -116,6 +116,7 @@
       "event-location": "Event Location",
       "event-unarchived": "Event unarchived",
       "header": "Events",
+      "image-description": "Image Description",
       "location": "Location",
       "participants": {
         "add": "Add Participants",
@@ -143,7 +144,8 @@
       },
       "start-date": "Start Date",
       "start-time": "Start Time",
-      "title": "Event Title"
+      "title": "Event Title",
+      "upload-image": "Upload Image"
     },
     "groups": {
       "title": "Home Churches"
@@ -356,6 +358,7 @@
       "event-location": "Ubicaci\u00f3n de Evento",
       "event-unarchived": "Evento desarchivado",
       "header": "Eventos",
+      "image-description": "Descripci\u00f3n de la Imagen",
       "location": "Ubicaci\u00f3n",
       "participants": {
         "add": "A\u00f1adir participantes",
@@ -383,7 +386,8 @@
       },
       "start-date": "Fecha de Inicio",
       "start-time": "Hora de Inicio",
-      "title": "T\u00edtulo del Evento"
+      "title": "T\u00edtulo del Evento",
+      "upload-image": "Cargar Imagen"
     },
     "groups": {
       "title": "Iglesias Hogar"

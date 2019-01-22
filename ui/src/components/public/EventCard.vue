@@ -2,8 +2,10 @@
   <v-card class="card elevation-10">
     <!-- Image -->
     <template v-if="event.images.length > 0">
-      <!-- {{ event.images[0] }} -->
-      <v-img class="image picture" :src="'/api/v1/images/' + event.images[0].image.id">
+      <v-img
+        class="image picture"
+        :src="'/api/v1/images/' + event.images[0].image.id"
+      >
       </v-img>
     </template>
 
@@ -47,7 +49,9 @@
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn raised round color="primary">{{ $t("public.events.join") }}</v-btn>
+        <v-btn raised round color="primary">{{
+          $t("public.events.join")
+        }}</v-btn>
         <v-spacer></v-spacer>
       </v-card-actions>
     </div>

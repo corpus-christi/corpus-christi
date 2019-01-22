@@ -39,8 +39,8 @@ export default {
   name: "EventImageForm",
   props: {
     eventId: {
-      required: true,
-    },
+      required: true
+    }
   },
 
   data() {
@@ -50,20 +50,17 @@ export default {
     };
   },
 
-
   methods: {
     save() {
       this.postImage().then(resp => {
-        console.log(resp.data)
-        let imageId = resp.data.id
+        console.log(resp.data);
+        let imageId = resp.data.id;
         var url = `/api/v1/events/${this.eventId}/images/${imageId}`;
-        this.$http.post(url, {description: this.description})
-          .then(resp => {
-            console.log("image added to event!", resp)
-            this.$emit('saved')
-          })
-      })
-
+        this.$http.post(url, { description: this.description }).then(resp => {
+          console.log("image added to event!", resp);
+          this.$emit("saved");
+        });
+      });
     },
     postImage() {
       var formData = new FormData(this.$refs.imageForm);
@@ -77,7 +74,7 @@ export default {
         .catch(err => {
           console.error("IMAGE UPLOAD FAILURE", err.response);
         });
-    },
+    }
   }
 };
 </script>
