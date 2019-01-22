@@ -1,15 +1,12 @@
 <template>
-  <div>
-    Group Meetings
-  </div>
+  <div>Group Meetings</div>
 </template>
 
 <script>
 export default {
-  name: 'GroupMeetings',
+  name: "GroupMeetings",
   data() {
-    return {
-    };
-  },
-}
+    return {};
+  }
+};
 </script>

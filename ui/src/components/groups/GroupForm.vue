@@ -26,7 +26,6 @@
           name="address"
           v-bind:error-messages="errors.first('address')"
         />
-
       </form>
     </v-card-text>
     <v-card-actions>
@@ -85,8 +84,7 @@ export default {
         this.group = groupProp;
         this.group.manager = groupProp.managerInfo;
       }
-    },
-
+    }
   },
   computed: {
     groupKeys() {
@@ -98,7 +96,6 @@ export default {
         ? this.$t("groups.edit-group")
         : this.$t("groups.create-group");
     },
-
 
     formDisabled() {
       return this.saveLoading || this.addMoreLoading;
@@ -139,8 +136,7 @@ export default {
       //     this.$emit("add-another", this.event);
       //   }
       // });
-    },
-
+    }
   },
   props: {
     editMode: {
@@ -160,10 +156,8 @@ export default {
   },
   data: function() {
     return {
-      group: {},
+      group: {}
     };
   }
 };
 </script>
-
-

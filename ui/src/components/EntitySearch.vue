@@ -79,7 +79,7 @@ export default {
       return "id";
     },
     searchableEntities() {
-      if (this.existingEntities){
+      if (this.existingEntities) {
         this.entities = this.entities.filter(ent => {
           for (let otherEnt of this.existingEntities) {
             if (ent[this.idField] == otherEnt[this.idField]) {
@@ -122,8 +122,13 @@ export default {
       } else if (this.address) {
         entityDescriptor = entity.name + ", " + entity.address;
       } else if (this.manager) {
-        var person = entity.person
-        entityDescriptor = person.firstName + " " + person.lastName + " " + ((person.secondLastName) ? person.secondLastName : "");
+        var person = entity.person;
+        entityDescriptor =
+          person.firstName +
+          " " +
+          person.lastName +
+          " " +
+          (person.secondLastName ? person.secondLastName : "");
       }
       if (entityDescriptor.length > letterLimit) {
         //TODO don't do this here, it limits search functionality

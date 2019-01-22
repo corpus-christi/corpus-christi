@@ -267,15 +267,15 @@ export default {
 
     addParticipant(id) {
       const groupId = this.$route.params.group;
-      for(var member of this.members) {
-        if(id == member.person.id) {
-          return true
+      for (var member of this.members) {
+        if (id == member.person.id) {
+          return true;
         }
       }
       return this.$http.post(`/api/v1/groups/members`, {
         group_id: groupId,
         person_id: id,
-        joined: '2018-12-25'
+        joined: "2018-12-25"
       });
     },
 
@@ -321,7 +321,7 @@ export default {
     },
 
     confirmArchive(event) {
-      console.log(event)
+      console.log(event);
       this.activateArchiveDialog(event.id);
     },
 
@@ -333,7 +333,7 @@ export default {
       console.log("Archived member");
       this.archiveDialog.loading = true;
       const memberId = this.archiveDialog.memberId;
-      console.log(this.archiveDialog.memberId)
+      console.log(this.archiveDialog.memberId);
       const idx = this.members.findIndex(ev => ev.id === memberId);
       this.$http
         .put(`/api/v1/groups/members/deactivate/${memberId}`)

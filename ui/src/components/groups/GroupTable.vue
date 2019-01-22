@@ -40,7 +40,7 @@
       </v-layout>
     </v-toolbar>
 
-      <v-data-table
+    <v-data-table
       :headers="headers"
       :rows-per-page-items="rowsPerPageItem"
       :items="visibleGroups"
@@ -67,7 +67,7 @@
           class="hover-hand"
           v-on:click="$router.push({ path: '/groups/' + props.item.id })"
         >
-          {{ '' }}
+          {{ getManagerName(props.item.managerInfo) }}
         </td>
         <td>
           <template v-if="props.item.active">
@@ -186,7 +186,7 @@
 import GroupForm from "./GroupForm";
 export default {
   components: { "group-form": GroupForm },
-  name: 'GroupTable',
+  name: "GroupTable",
   mounted() {
     this.tableLoading = true;
     this.$http.get("/api/v1/groups/groups").then(resp => {
@@ -230,7 +230,7 @@ export default {
       snackbar: {
         show: false,
         text: ""
-      },
+      }
     };
   },
 
@@ -261,15 +261,20 @@ export default {
         { text: this.$t("groups.decription"), value: "description" },
         { text: this.$t("groups.manager"), value: "managerInfo" },
         { text: this.$t("groups.actions"), sortable: false }
-
       ];
-    },
+    }
   },
 
   methods: {
     getManagerName(managerInfo) {
-      var man = managerInfo.person
-      return man.firstName + " " + man.lastName + " " + ((man.secondLastName) ? man.secondLastName : '')
+      var man = managerInfo.person;
+      return (
+        man.firstName +
+        " " +
+        man.lastName +
+        " " +
+        (man.secondLastName ? man.secondLastName : "")
+      );
     },
 
     activateGroupDialog(group = {}, editMode = false) {
@@ -296,11 +301,11 @@ export default {
       if (this.groupDialog.editMode) {
         const groupId = group.id;
         delete newGroup.managerInfo;
-        delete newGroup.memberList
+        delete newGroup.memberList;
         // for(var member of newGroup.memberList){
         //   delete member.id
         // }
-        console.log(newGroup)
+        console.log(newGroup);
         const idx = this.groups.findIndex(ev => ev.id === group.id);
         this.$http
           .patch(`/api/v1/groups/groups/${groupId}`, newGroup)
@@ -317,8 +322,8 @@ export default {
             this.showSnackbar(this.$t("groups.messages.error-editing-group"));
           });
       } else {
-        delete newGroup.memberList
-        delete newGroup.managerInfo
+        delete newGroup.memberList;
+        delete newGroup.managerInfo;
         this.$http
           .post("/api/v1/groups/groups", newGroup)
           .then(resp => {
@@ -398,9 +403,7 @@ export default {
       this.activateGroupDialog(copyGroup);
     },
 
-    addAnotherGroup() {
-
-    },
+    addAnotherGroup() {},
 
     onResize() {
       this.windowSize = { x: window.innerWidth, y: window.innerHeight };
@@ -410,14 +413,13 @@ export default {
         this.windowSize.small = false;
       }
     },
-    
+
     showSnackbar(message) {
       this.snackbar.text = message;
       this.snackbar.show = true;
-    },
-
+    }
   }
-}
+};
 </script>
 
 <style scoped>

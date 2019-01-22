@@ -15,7 +15,7 @@
       </v-tab>
       <v-tab
         ripple
-        :to="{path: '/groups/' + $route.params.group + '/members'}"
+        :to="{ path: '/groups/' + $route.params.group + '/members' }"
       >
         <v-icon>person </v-icon>&nbsp;{{ $t("groups.members.title") }}
       </v-tab>
@@ -39,10 +39,10 @@ export default {
       tabs: {
         details: 0,
         members: 1,
-        meetings: 2,
+        meetings: 2
       }
     };
-  },
+  }
 };
 </script>
 

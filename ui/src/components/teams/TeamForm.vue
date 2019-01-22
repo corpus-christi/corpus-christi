@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import EntitySearch from "../EntitySearch"
+import EntitySearch from "../EntitySearch";
 import { isEmpty } from "lodash";
 // import { mapGetters } from "vuex";
 export default {

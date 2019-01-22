@@ -1,147 +1,145 @@
 <template>
-    <div>
-        <!-- Header -->
-        <v-toolbar>
-          <v-layout align-center justify-space-between fill-height>
-            <v-flex md2>
-              <v-toolbar-title>{{ $t("diplomas.diploma") }}</v-toolbar-title>
-            </v-flex>
-            <v-spacer></v-spacer>
-            <v-flex md3>
-              <v-text-field
-                  v-model="search"
-                  append-icon="search"
-                  v-bind:label="$t('actions.search')"
-                  single-line
-                  hide-details
-                  data-cy="diplomas-table-search"
-              ></v-text-field>
-            </v-flex>
-            <v-spacer></v-spacer>
-            <v-flex md3>
-              <v-select
-                v-model="viewStatus"
-                :items="options"
-                solo
-                hide-details
-                data-cy="diplomas-table-viewstatus"
-              ></v-select>
-            </v-flex>
+  <div>
+    <!-- Header -->
+    <v-toolbar>
+      <v-layout align-center justify-space-between fill-height>
+        <v-flex md2>
+          <v-toolbar-title>{{ $t("diplomas.diploma") }}</v-toolbar-title>
+        </v-flex>
+        <v-spacer></v-spacer>
+        <v-flex md3>
+          <v-text-field
+            v-model="search"
+            append-icon="search"
+            v-bind:label="$t('actions.search')"
+            single-line
+            hide-details
+            data-cy="diplomas-table-search"
+          ></v-text-field>
+        </v-flex>
+        <v-spacer></v-spacer>
+        <v-flex md3>
+          <v-select
+            v-model="viewStatus"
+            :items="options"
+            solo
+            hide-details
+            data-cy="diplomas-table-viewstatus"
+          ></v-select>
+        </v-flex>
 
-            <v-flex shrink justify-self-end>
-              <v-btn
-                color="primary"
-                raised
-                v-on:click.stop="newDiploma"
-                data-cy="diplomas-table-new"
+        <v-flex shrink justify-self-end>
+          <v-btn
+            color="primary"
+            raised
+            v-on:click.stop="newDiploma"
+            data-cy="diplomas-table-new"
+          >
+            <v-icon left>library_add</v-icon>
+            {{ $t("diplomas.new") }}
+          </v-btn>
+        </v-flex>
+      </v-layout>
+    </v-toolbar>
+
+    <!-- Table of existing people -->
+    <v-data-table
+      :headers="headers"
+      :items="showDiplomas"
+      :loading="!tableLoaded"
+      :search="search"
+      class="elevation-1"
+      data-cy="diplomas-table"
+    >
+      <template slot="items" slot-scope="props">
+        <tr @click="props.expanded = !props.expanded">
+          <td>{{ props.item.name }}</td>
+          <td>{{ props.item.description }}</td>
+          <td>
+            <DiplomaAdminActions
+              v-bind:diploma="props.item"
+              display-context="compact"
+              v-on:action="dispatchAction($event, props.item)"
+            />
+          </td>
+        </tr>
+      </template>
+      <template slot="expand" slot-scope="props">
+        <v-card flat>
+          <v-card-text>
+            <span class="font-weight-bold"
+              >{{ $t("diplomas.courses-this-diploma") }}:</span
+            >
+            <ul>
+              <li
+                v-for="course in props.item.courseList"
+                v-bind:key="course.id"
               >
-                <v-icon left>library_add</v-icon>
-                {{ $t("diplomas.new") }}
-              </v-btn>
-            </v-flex>
-          </v-layout>
-        </v-toolbar>
+                <span class="font-weight-bold">{{ course.name }}:</span>
+                {{ course.description }}
+              </li>
+            </ul>
+          </v-card-text>
+        </v-card>
+      </template>
+    </v-data-table>
 
-        <!-- Table of existing people -->
-        <v-data-table
-          :headers="headers"
-          :items="showDiplomas"
-          :loading="!tableLoaded"
-          :search="search"
-          class="elevation-1"
-          data-cy="diplomas-table"
-        >
-            <template slot="items" slot-scope="props">
-              <tr @click="props.expanded = !props.expanded">
-                <td>{{ props.item.name }}</td>
-                <td>{{ props.item.description }}</td>
-                <td>
-                <DiplomaAdminActions
-                    v-bind:diploma="props.item"
-                    display-context="compact"
-                    v-on:action="dispatchAction($event, props.item)"/>
-                </td>
-              </tr>
-            </template>
-            <template slot="expand" slot-scope="props">
-              <v-card flat>
-                <v-card-text>
-                  <span class="font-weight-bold">{{$t("diplomas.courses-this-diploma")}}:</span>
-                  <ul>
-                    <li 
-                    v-for="course in props.item.courseList"
-                    v-bind:key="course.id"
-                    >
-                      <span class="font-weight-bold">{{ course.name }}:</span> {{course.description}}
-                    </li>
-                  </ul>
-                </v-card-text>
-              </v-card>
-            </template>
-        </v-data-table>
- 
-        <v-snackbar v-model="snackbar.show">
-        {{ snackbar.text }}
-            <v-btn flat @click="snackbar.show = false">
-                {{ $t("actions.close") }}
-            </v-btn>
-        </v-snackbar>
+    <v-snackbar v-model="snackbar.show">
+      {{ snackbar.text }}
+      <v-btn flat @click="snackbar.show = false">
+        {{ $t("actions.close") }}
+      </v-btn>
+    </v-snackbar>
 
-        <!-- New/Edit dialog -->
-        <v-dialog 
-          v-model="diplomaDialog.show" 
-          max-width="500px"
-          persistent
-        >
-          <DiplomaEditor
-              v-bind:editMode="diplomaDialog.editMode"
-              v-bind:diploma="diplomaDialog.diploma"
-              v-bind:saving="diplomaDialog.saving"
-              v-on:cancel="cancelDiploma"
-              v-on:save="saveDiploma"
-              v-on:clearForm="clearForm"
-          />
-        </v-dialog>
+    <!-- New/Edit dialog -->
+    <v-dialog v-model="diplomaDialog.show" max-width="500px" persistent>
+      <DiplomaEditor
+        v-bind:editMode="diplomaDialog.editMode"
+        v-bind:diploma="diplomaDialog.diploma"
+        v-bind:saving="diplomaDialog.saving"
+        v-on:cancel="cancelDiploma"
+        v-on:save="saveDiploma"
+        v-on:clearForm="clearForm"
+      />
+    </v-dialog>
 
-
-        <!-- Deactivate/archive confirmation -->
-        <v-dialog
-          v-model="deactivateDialog.show"
-          max-width="350px"
-          data-cy="diplomas-table-confirmation"
-        >
-          <v-card>
-            <v-card-text>{{ $t("diplomas.confirm-archive") }}</v-card-text>
-            <v-card-actions>
-              <v-btn
-                v-on:click="cancelDeactivate"
-                color="secondary"
-                flat
-                :disabled="deactivateDialog.loading"
-              >
-                {{ $t("actions.cancel") }}
-              </v-btn>
-              <v-spacer></v-spacer>
-              <v-btn
-                v-on:click="deactivate(deactivateDialog.diploma)"
-                color="primary"
-                raised
-                :disabled="deactivateDialog.loading"
-                :loading="deactivateDialog.loading"
-              >
-                {{ $t("actions.confirm") }}
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-        
-    </div>
+    <!-- Deactivate/archive confirmation -->
+    <v-dialog
+      v-model="deactivateDialog.show"
+      max-width="350px"
+      data-cy="diplomas-table-confirmation"
+    >
+      <v-card>
+        <v-card-text>{{ $t("diplomas.confirm-archive") }}</v-card-text>
+        <v-card-actions>
+          <v-btn
+            v-on:click="cancelDeactivate"
+            color="secondary"
+            flat
+            :disabled="deactivateDialog.loading"
+          >
+            {{ $t("actions.cancel") }}
+          </v-btn>
+          <v-spacer></v-spacer>
+          <v-btn
+            v-on:click="deactivate(deactivateDialog.diploma)"
+            color="primary"
+            raised
+            :disabled="deactivateDialog.loading"
+            :loading="deactivateDialog.loading"
+          >
+            {{ $t("actions.confirm") }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </div>
 </template>
 
 <script>
 import DiplomaEditor from "./DiplomaEditor";
 import DiplomaAdminActions from "./DiplomaAdminActions";
-import {cloneDeep} from 'lodash';
+import { cloneDeep } from "lodash";
 export default {
   name: "DiplomasTable",
   components: {
@@ -177,7 +175,11 @@ export default {
     headers() {
       return [
         { text: this.$t("diplomas.title"), value: "name", width: "40%" },
-        { text: this.$t("diplomas.description"), value: "description", width: "60%" },
+        {
+          text: this.$t("diplomas.description"),
+          value: "description",
+          width: "60%"
+        },
         { text: this.$t("actions.header"), sortable: false }
       ];
     },
@@ -202,7 +204,7 @@ export default {
   },
   methods: {
     dispatchAction(actionName, diploma) {
-      switch(actionName) {
+      switch (actionName) {
         case "edit":
           this.editDiploma(diploma);
           break;
@@ -280,22 +282,22 @@ export default {
     },
 
     saveDiploma(diploma) {
-      console.log('diploma: ', diploma);
+      console.log("diploma: ", diploma);
       this.diplomaDialog.saving = true;
       // just to be careful, make a clone of diploma, so not editing the object itself
-      let diplomaClone = _.cloneDeep(diploma);  
+      let diplomaClone = _.cloneDeep(diploma);
       // grab the courses
       const courses = diplomaClone.courseList || [];
-      console.log('courses: ', courses);
+      console.log("courses: ", courses);
       // create an array of course ids
       const courseIDList = courses.map(course => course.id);
-      // Get rid of the courseList, which is an array of objects    
+      // Get rid of the courseList, which is an array of objects
       delete diplomaClone.courseList;
       // the api is expecting an array of course IDs, so add that property to diplomaClone
       diplomaClone.courses = courseIDList;
-      console.log('diplomaClone: ', diplomaClone);
+      console.log("diplomaClone: ", diplomaClone);
 
-      console.log('all diplomas: ', this.diplomas);
+      console.log("all diplomas: ", this.diplomas);
 
       if (this.diplomaDialog.editMode) {
         // Hang on to the ID of the diploma being updated.
@@ -304,7 +306,7 @@ export default {
         const idx = this.diplomas.findIndex(d => d.id === diplomaClone.id);
         // get rid of the id; not for consumption by the endpoint
         delete diplomaClone.id;
-        console.log('diplomaClone: ', diplomaClone);
+        console.log("diplomaClone: ", diplomaClone);
 
         this.$http
           .patch(`/api/v1/courses/diplomas/${diploma_id}`, diplomaClone)
@@ -315,7 +317,7 @@ export default {
             Object.assign(this.diplomas[idx], updatedDiploma);
             this.snackbar.text = this.$t("diplomas.updated");
             this.snackbar.show = true;
-            console.log('diploma list: ', this.diplomas);
+            console.log("diploma list: ", this.diplomas);
           })
           .catch(err => {
             console.error("FALURE", err.response);
@@ -350,18 +352,13 @@ export default {
     }
   },
   mounted: function() {
-    this.$http
-      .get("/api/v1/courses/diplomas")
-      .then(resp => {
-        this.diplomas = resp.data
-        //console.log('diplomas received: ', this.diplomas);
-        this.tableLoaded = true;
-      });
+    this.$http.get("/api/v1/courses/diplomas").then(resp => {
+      this.diplomas = resp.data;
+      //console.log('diplomas received: ', this.diplomas);
+      this.tableLoaded = true;
+    });
   }
 };
-
 </script>
 
-<style>
-
-</style>
+<style></style>
