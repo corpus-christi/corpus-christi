@@ -134,22 +134,35 @@ def create_event_demo():
     # def create_person(sqla, first_name, last_name, gender, birthday, phone, email, active=True, address_id=None):
     p1 = create_person(db.session, first_name='first', last_name='last', gender='M', birthday=date(1900, 2, 3), phone='12345678', email='xxx@mail.com')
     p2 = create_person(db.session, first_name='first', last_name='last', gender='M', birthday=date(1900, 2, 3), phone='12345678', email='xxx@mail.com')
+    p3 = create_person(db.session, first_name='first', last_name='last', gender='M', birthday=date(1900, 2, 3), phone='12345678', email='xxx@mail.com')
+    p4 = create_person(db.session, first_name='first', last_name='last', gender='M', birthday=date(1900, 2, 3), phone='12345678', email='xxx@mail.com')
+    p5 = create_person(db.session, first_name='first', last_name='last', gender='M', birthday=date(1900, 2, 3), phone='12345678', email='xxx@mail.com')
     print(f"person_id: {p1}")
+    print(f"person_id: {p2}")
+    print(f"person_id: {p3}")
+    print(f"person_id: {p4}")
+    print(f"person_id: {p5}")
 
     # CREATE STATIC EVENT PERSON, payload is returned
     # def create_event_person(sqla, event_id, person_id, description):
-    ep = create_event_person(db.session, event_id = e1, person_id = p1, description="description")
+    ep = create_event_person(db.session, event_id = e1, person_id = p1, description="devotional leader")
     print(ep)
-    ep = create_event_person(db.session, event_id = e2, person_id = p1, description="description")
-    print(ep)
-    ep = create_event_person(db.session, event_id = e3, person_id = p2, description="description")
-    print(ep)
-    ep = create_event_person(db.session, event_id = e2, person_id = p2, description="description")
+    ep = create_event_person(db.session, event_id = e2, person_id = p1, description="main speaker")
     print(ep)
 
     # CREATE STATIC EVENT PARTICIPANT, payload is returned
     # def create_event_participant(sqla, event_id, person_id, confirmed=True): 
     ep = create_event_participant(db.session, event_id = e1, person_id = p2, confirmed=True) 
+    print(ep)
+    ep = create_event_participant(db.session, event_id = e2, person_id = p3, confirmed=True) 
+    print(ep)
+    ep = create_event_participant(db.session, event_id = e1, person_id = p4, confirmed=True) 
+    print(ep)
+    ep = create_event_participant(db.session, event_id = e2, person_id = p5, confirmed=True) 
+    print(ep)
+    ep = create_event_participant(db.session, event_id = e1, person_id = p5, confirmed=True) 
+    print(ep)
+    ep = create_event_participant(db.session, event_id = e1, person_id = p3, confirmed=True) 
     print(ep)
     
 
