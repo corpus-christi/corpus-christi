@@ -14,8 +14,8 @@
         slot="activator"
         prepend-icon="event"
         readonly
-        :label="attribute.name"
-        :name="attribute.name"
+        :label="$t(attribute.name)"
+        :name="$t(attribute.name)"
         :value="attribute.value"
       ></v-text-field>
 

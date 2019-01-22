@@ -1,8 +1,8 @@
 <template>
   <div>
     <v-text-field
-      :label="attribute.name"
-      :name="attribute.name"
+      :label="$t(attribute.name)"
+      :name="$t(attribute.name)"
       :value="attribute.value"
       @input="$emit('input', { stringValue: $event, enumValueId: 0 })"
       v-bind:error-messages="errors.collect(attribute.name)"

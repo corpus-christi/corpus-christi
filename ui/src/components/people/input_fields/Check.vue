@@ -1,12 +1,12 @@
 <template>
   <v-container>
-    <span class="title">{{ attribute.name }}</span>
+    <span class="title">{{ $t(attribute.name) }}</span>
     <v-layout row>
       <v-checkbox
         v-for="(enumeratedValue, index) in attribute.enumerated_values"
         :key="index"
-        :label="enumeratedValue.value"
-        :name="enumeratedValue.value"
+        :label="$t(enumeratedValue.value)"
+        :name="$t(enumeratedValue.value)"
         :value="enumeratedValue.id"
         v-model="selected"
         @change="

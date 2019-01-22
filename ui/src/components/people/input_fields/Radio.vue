@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <span class="title">{{ attribute.name }}</span>
+    <span class="title">{{ $t(attribute.name) }}</span>
     <v-radio-group
       row
       :value="attribute.value"
@@ -9,8 +9,8 @@
       <v-radio
         v-for="(enumerateValue, index) in attribute.enumerated_values"
         :key="index"
-        :label="enumerateValue.value"
-        :name="enumerateValue.value"
+        :label="$t(enumerateValue.value)"
+        :name="$t(enumerateValue.value)"
         :value="enumerateValue.id"
       ></v-radio>
     </v-radio-group>

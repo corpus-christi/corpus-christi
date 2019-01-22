@@ -1,8 +1,8 @@
 <template>
   <div>
     <v-select
-      :label="attribute.name"
-      :name="attribute.name"
+      :label="$t(attribute.name)"
+      :name="$t(attribute.name)"
       :value="attribute.value"
       @input="$emit('input', { stringValue: '', enumValueId: $event })"
       :items="getItems"
@@ -24,7 +24,7 @@ export default {
       let items = [];
       for (let enumeratedValue of this.attribute.enumerated_values) {
         items.push({
-          text: enumeratedValue.value,
+          text: this.$t(enumeratedValue.value),
           value: enumeratedValue.id
         });
       }

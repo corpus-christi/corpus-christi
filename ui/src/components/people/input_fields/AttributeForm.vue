@@ -79,11 +79,11 @@ export default {
 
     setupAttributes(attributes) {
       for (let attr of attributes) {
-        this.$set(attr, "name", this.$t(attr.nameI18n));
+        this.$set(attr, "name", attr.nameI18n);
         this.$set(attr, "type", this.componentType(attr.typeI18n));
         this.$set(attr, "value", null);
         for (let enumval of attr.enumerated_values) {
-          this.$set(enumval, "value", this.$t(enumval.valueI18n));
+          this.$set(enumval, "value", enumval.valueI18n);
         }
         this.$set(this.formData, attr.id.toString(), {
           personId: this.personId ? this.personId : 0,
