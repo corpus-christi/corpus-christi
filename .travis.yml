@@ -14,7 +14,7 @@ matrix:
                   before_install:
                         - yarn cache clean
                   #install:
-                          # - yarn install
+                        - yarn install@lastest
                   script:
                         - yarn build
                 - language: python
