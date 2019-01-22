@@ -207,6 +207,7 @@
         />
       </form>
     </v-card-text>
+    <v-divider></v-divider>
     <v-card-actions>
       <v-btn
         color="secondary"
@@ -252,8 +253,11 @@
 import { isEmpty } from "lodash";
 import { mapGetters } from "vuex";
 import EntitySearch from "../EntitySearch";
+
 export default {
-  components: { "entity-search": EntitySearch },
+  components: {
+    "entity-search": EntitySearch
+  },
   name: "EventForm",
   watch: {
     // Make sure data stays in sync with any changes to `initialData` from parent.
@@ -351,7 +355,11 @@ export default {
           this.event.start = this.getTimestamp(this.startDate, this.startTime);
           this.event.end = this.getTimestamp(this.endDate, this.endTime);
           this.event.active = true;
-          this.$emit("save", this.event);
+          if (this.$refs.fileChooser.files.length > 0) {
+            this.postImage().then(() => this.$emit("save", this.event));
+          } else {
+            this.$emit("save", this.event);
+          }
         }
       });
     },
@@ -420,7 +428,7 @@ export default {
           this.endTime = "";
         }
       }
-    }
+    },
   },
   props: {
     editMode: {
@@ -448,7 +456,8 @@ export default {
       showStartDatePicker: false,
       showEndDatePicker: false,
       startTimeModal: false,
-      endTimeModal: false
+      endTimeModal: false,
+      files: []
     };
   }
 };

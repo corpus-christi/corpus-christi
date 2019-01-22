@@ -83,7 +83,7 @@ def upload_image():
     db.session.add(new_image)
     db.session.commit()
 
-    return jsonify(image_schema.dump(new_image)), 201
+    return 'Image successfully uploaded', 201
     
 
 @images.route('/<image_id>', methods=['PATCH'])

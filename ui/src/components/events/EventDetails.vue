@@ -254,6 +254,7 @@ export default {
             : this.event.persons.map(p =>
                 Object.assign(p, { id: p.person_id })
               );
+          this.pageLoaded = true;
         });
     },
 
