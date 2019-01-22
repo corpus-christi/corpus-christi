@@ -455,7 +455,7 @@ def create_diploma_awarded():
 
     new_diploma_awarded = Diploma_Awarded(**valid_diploma_awarded)
 
-    check = db.session.query(Diploma_Awarded).filter_by(student_id=new_diploma_awarded.student_id,\
+    check = db.session.query(Diploma_Awarded).filter_by(person_id=new_diploma_awarded.person_id,\
                                         diploma_id=new_diploma_awarded.diploma_id).first()
     if check:
         return jsonify(msg=f'Diploma #{diploma_id} already awarded to student #{student_id}'), 409
@@ -662,7 +662,7 @@ def create_course_completion(courses_id):
         valid_course_completion = course_completion_schema.load(request.json, partial=True)
     except ValidationError as err:
         return jsonify(err.messages), 422
-    
+
     person_id = request.json['personId']
 
     # Query into DB to ensure person is enrolled in a course offering with course_id
@@ -670,17 +670,17 @@ def create_course_completion(courses_id):
                         .filter_by(id=person_id).join(Student, Course_Offering) \
                         .filter_by(course_id=courses_id).join(Course) \
                         .first()
-    
+
     # Query into DB to ensure person has not already completed the course
     personCompleted = db.session.query(Course_Completion) \
                         .filter_by(course_id=courses_id, person_id=person_id) \
                         .first()
-    
+
     if personEnrolled is None:
         return jsonify(f'Person #{person_id} is not enrolled in any course offerings with course #{courses_id}.'), 404
-    elif personCompleted: 
+    elif personCompleted:
         return jsonify(f'Entry for Person #{person_id} with completed course #{courses_id} already exists.'), 403
-    else: 
+    else:
         # Create and add course completion entry for person
         new_course_completion = Course_Completion(**{'person_id':person_id, 'course_id': courses_id})
         db.session.add(new_course_completion)
@@ -709,9 +709,9 @@ class_meeting_schema = Class_MeetingSchema()
 @courses.route('/course_offerings/<int:course_offering_id>/class_meetings', methods=['POST'])
 @jwt_required
 def create_class_meeting(course_offering_id):
-    """ Create and add class meeting into course offering. 
-    
-    Note: Python datetime obj violates ISO 8601 and does not add timezone. 
+    """ Create and add class meeting into course offering.
+
+    Note: Python datetime obj violates ISO 8601 and does not add timezone.
     Don't worry about timezones for now. """
     try:
         valid_class_meeting = class_meeting_schema.load(request.json)

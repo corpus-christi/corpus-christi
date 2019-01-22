@@ -46,7 +46,7 @@ class Diploma_Awarded(Base):
         'people_person.id'), primary_key=True)
     diploma_id = Column(Integer, ForeignKey(
         'courses_diploma.id'), primary_key=True)
-    when = Column(Date, nullable=False, default=date.today())
+    when = Column(Date, nullable=True)
 
     students = relationship(
         'Person', back_populates='diplomas_awarded', lazy=True)
@@ -62,7 +62,7 @@ class Diploma_AwardedSchema(Schema):
         data_key='personId', required=True, validate=Range(min=1))
     diploma_id = fields.Integer(
         data_key='diplomaId', required=True, validate=Range(min=1))
-    when = fields.Date(required=True)
+    when = fields.Date(required=True, allow_none=True)
 
 # ---- Class_Attendance
 
