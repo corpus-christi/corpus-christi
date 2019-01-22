@@ -4,7 +4,7 @@
     <v-toolbar class="pa-1">
       <v-layout align-center justify-space-between fill-height>
         <v-flex md2>
-          <v-toolbar-title>{{ $t("people.title") }}</v-toolbar-title>
+          <v-toolbar-title>{{ $t("people.title-roles") }}</v-toolbar-title>
         </v-flex>
         <v-flex md3>
           <v-text-field
@@ -19,26 +19,10 @@
           ></v-text-field>
         </v-flex>
         <v-flex md3>
-          <v-select
-            hide-details
-            solo
-            single-line
-            :items="viewOptions"
-            v-model="viewStatus"
-          >
-          </v-select>
-        </v-flex>
-        <v-flex shrink justify-self-end>
-          <v-btn
-            class="mr-0 ml-0"
-            color="primary"
-            raised
-            v-on:click.stop="newPerson"
-            data-cy="new-person"
-          >
-            <v-icon left>person_add</v-icon>
-            {{ $t("actions.add-person") }}
-          </v-btn>
+          <div data-cy="roles-dropdown">
+            <v-select hide-details solo single-line :items="rolesList">
+            </v-select>
+          </div>
         </v-flex>
       </v-layout>
     </v-toolbar>
@@ -49,18 +33,47 @@
       :items="peopleToDisplay"
       :search="search"
       class="elevation-1"
-      data-cy="person-table"
+      data-cy="roles-table"
     >
       <template slot="items" slot-scope="props">
         <td>
-          <v-icon size="15" v-if="props.item.accountInfo"
-            >account_circle</v-icon
-          >
+          <span v-if="props.item.accountInfo">
+            <span v-if="props.item.accountInfo.active">
+              <v-tooltip bottom>
+                <v-icon size="16" slot="activator" data-cy="account-active-icon"
+                  >account_circle</v-icon
+                >
+                {{ $t("account.active") }}
+              </v-tooltip>
+            </span>
+
+            <span v-if="!props.item.accountInfo.active">
+              <v-tooltip bottom>
+                <v-icon
+                  size="16"
+                  slot="activator"
+                  data-cy="account-inactive-icon"
+                  >person_outline</v-icon
+                >
+                {{ $t("account.inactive") }}
+              </v-tooltip>
+            </span>
+          </span>
         </td>
-        <td>{{ props.item.firstName }}</td>
-        <td>{{ props.item.lastName }}</td>
-        <td class="hidden-sm-and-down">{{ props.item.email }}</td>
-        <td>{{ props.item.phone }}</td>
+        <td :data-cy="'first-name-' + props.item.id">
+          {{ props.item.firstName }}
+        </td>
+        <td :data-cy="'last-name-' + props.item.id">
+          {{ props.item.lastName }}
+        </td>
+        <td class="hidden-sm-and-down" :data-cy="'email-' + props.item.id">
+          {{ props.item.email }}
+        </td>
+        <!-- <td :data-cy="'phone-' + props.item.id">{{ props.item.phone }}</td> -->
+        <td class="hidden-sm-and-down" :data-cy="'username-' + props.item.id">
+          {{ props.item.accountInfo.username }}
+        </td>
+
         <td class="text-no-wrap">
           <v-tooltip bottom>
             <v-btn
@@ -84,41 +97,11 @@
               color="primary"
               slot="activator"
               v-on:click="adminPerson(props.item)"
-              data-cy="add-account"
+              data-cy="account-settings"
             >
               <v-icon small>settings</v-icon>
             </v-btn>
             <span>{{ $t("actions.tooltips.settings") }}</span>
-          </v-tooltip>
-          <v-tooltip bottom>
-            <v-btn
-              v-if="props.item.active === true"
-              icon
-              outline
-              small
-              color="primary"
-              slot="activator"
-              v-on:click="deactivatePerson(props.item)"
-              data-cy="deactivate-person"
-            >
-              <v-icon small>archive</v-icon>
-            </v-btn>
-            <span>{{ $t("actions.tooltips.deactivate") }}</span>
-          </v-tooltip>
-          <v-tooltip bottom>
-            <v-btn
-              v-if="props.item.active === false"
-              icon
-              outline
-              small
-              color="primary"
-              slot="activator"
-              v-on:click="activatePerson(props.item)"
-              data-cy="deactivate-person"
-            >
-              <v-icon small>undo</v-icon>
-            </v-btn>
-            <span>{{ $t("actions.tooltips.deactivate") }}</span>
           </v-tooltip>
         </td>
       </template>
@@ -132,12 +115,18 @@
     </v-snackbar>
 
     <!-- New/Edit dialog -->
-    <v-dialog scrollable v-model="personDialog.show" max-width="500px">
+    <v-dialog
+      scrollable
+      persistent
+      v-model="personDialog.show"
+      max-width="500px"
+    >
       <PersonForm
         v-bind:editMode="personDialog.editMode"
         v-bind:initialData="personDialog.person"
         v-bind:saveLoading="personDialog.saveLoading"
         v-bind:addMoreLoading="personDialog.addMoreLoading"
+        v-bind:attributes="personDialog.attributes"
         v-on:cancel="cancelPerson"
         v-on:save="savePerson"
         v-on:add-another="addAnother"
@@ -145,12 +134,20 @@
     </v-dialog>
 
     <!-- Person admin dialog -->
-    <v-dialog scrollable v-model="adminDialog.show" max-width="500px">
+    <v-dialog
+      scrollable
+      persistent
+      v-model="adminDialog.show"
+      max-width="500px"
+    >
       <PersonAdminForm
         v-bind:person="adminDialog.person"
         v-bind:account="adminDialog.account"
+        v-bind:rolesList="rolesList"
         v-on:addAccount="addAccount"
         v-on:updateAccount="updateAccount"
+        v-on:deactivateAccount="deactivateAccount"
+        v-on:reactivateAccount="reactivateAccount"
         v-on:close="closeAdmin"
       />
     </v-dialog>
@@ -162,23 +159,35 @@ import PersonForm from "./PersonForm";
 import PersonAdminForm from "./AccountForm";
 
 export default {
-  name: "PersonTable",
+  name: "RolesTable",
   components: { PersonAdminForm, PersonForm },
+  props: {
+    peopleList: {
+      type: Array,
+      required: true
+    },
+    rolesList: {
+      type: Array,
+      required: true
+    }
+  },
+
   data() {
     return {
-      viewStatus: "viewActive",
       personDialog: {
         show: false,
         editMode: false,
         saveLoading: false,
         addMoreLoading: false,
+        attributes: [],
         person: {}
       },
 
       adminDialog: {
         show: false,
         person: {},
-        account: {}
+        account: {},
+        roles: []
       },
 
       snackbar: {
@@ -189,9 +198,9 @@ export default {
       showingArchived: false,
       selected: [],
       allPeople: [],
-      activePeople: [],
-      archivedPeople: [],
-      search: ""
+      allAccount: [],
+      search: "",
+      data: {}
     };
   },
   computed: {
@@ -199,9 +208,9 @@ export default {
     headers() {
       return [
         {
-          text: "",
+          text: "Account",
           value: "person.accountInfo",
-          align: "right",
+          align: "left",
           sortable: false
         },
         {
@@ -216,30 +225,32 @@ export default {
           width: "15%",
           class: "hidden-sm-and-down"
         },
-        { text: this.$t("person.phone"), value: "phone", width: "15%" },
+        {
+          text: this.$t("person.accountInfo.username"),
+          value: "username",
+          width: "15%"
+        },
         { text: this.$t("actions.header"), sortable: false }
       ];
     },
-    viewOptions() {
-      return [
-        { text: this.$t("actions.view-active"), value: "viewActive" },
-        { text: this.$t("actions.view-archived"), value: "viewArchived" },
-        { text: this.$t("actions.view-all"), value: "viewAll" }
-      ];
-    },
     peopleToDisplay() {
-      switch (this.viewStatus) {
-        case "viewActive":
-          return this.activePeople;
-        case "viewArchived":
-          return this.archivedPeople;
-        case "viewAll":
-          return this.allPeople;
-        default:
-          return this.activePeople;
-      }
+      return this.allAccount;
     }
   },
+
+  watch: {
+    peopleList(all_people) {
+      this.allPeople = all_people;
+      this.allAccount = this.allPeople.filter(
+        person => person.accountInfo && person.active
+      );
+    },
+
+    rolesList(all_roles) {
+      this.rolesList = all_roles;
+    }
+  },
+
   methods: {
     // ---- Person Administration
 
@@ -272,8 +283,10 @@ export default {
         delete person.id;
 
         console.log(person);
+        this.data = this.constructPersonData(person);
+        console.log(this.data);
         this.$http
-          .put(`/api/v1/people/persons/${person_id}`, person)
+          .put(`/api/v1/people/persons/${person_id}`, this.data)
           .then(resp => {
             console.log("EDITED", resp);
             Object.assign(this.allPeople[idx], person);
@@ -287,8 +300,11 @@ export default {
             this.showSnackbar(this.$t("person.messages.person-save-error"));
           });
       } else {
+        console.log(person);
+        this.data = this.constructPersonData(person);
+        console.log(this.data);
         this.$http
-          .post("/api/v1/people/persons", person)
+          .post("/api/v1/people/persons", this.data)
           .then(resp => {
             console.log("ADDED", resp);
             this.refreshPeopleList();
@@ -304,10 +320,24 @@ export default {
       }
     },
 
+    constructPersonData(person) {
+      var attributes = [];
+      if (person.attributesInfo) {
+        attributes = person.attributesInfo;
+      }
+      delete person["attributesInfo"];
+      delete person["accountInfo"];
+      return {
+        person: person,
+        attributesInfo: attributes
+      };
+    },
+
     addAnother(person) {
       this.personDialog.addMoreLoading = true;
+      this.data = this.constructPersonData(person);
       this.$http
-        .post("/api/v1/people/persons", person)
+        .post("/api/v1/people/persons", this.data)
         .then(resp => {
           console.log("ADDED", resp);
           this.refreshPeopleList();
@@ -332,16 +362,16 @@ export default {
     adminPerson(person) {
       // Pass along the current person.
       this.adminDialog.person = person;
-
       // Fetch the person's account information (if any) before activating the dialog.
       this.$http
         .get(`/api/v1/people/persons/${person.id}/account`)
         .then(resp => {
           console.log("FETCHED", resp);
           this.adminDialog.account = resp.data;
+          this.adminDialog.roles = this.rolesList;
           this.adminDialog.show = true;
         })
-        .catch(err => console.error("FAILURE", err.response));
+        .catch(err => console.error("FAILURE Haaha", err.response));
     },
     closeAdmin() {
       this.adminDialog.show = false;
@@ -352,6 +382,7 @@ export default {
         .post("/api/v1/people/accounts", account)
         .then(resp => {
           console.log("ADDED", resp);
+          this.refreshPeopleList();
           this.showSnackbar(this.$t("account.messages.added-ok"));
         })
         .catch(err => console.error("FAILURE", err.response));
@@ -368,42 +399,50 @@ export default {
         .catch(err => console.error("FAILURE", err.response));
     },
 
-    activatePerson(person) {
+    deactivateAccount(accountId) {
       this.$http
-        .put(`/api/v1/people/persons/activate/${person.id}`)
+        .put(`/api/v1/people/accounts/deactivate/${accountId}`)
         .then(resp => {
-          console.log("ACTIVATED", resp);
-          this.showSnackbar(this.$t("person.messages.person-activate"));
+          console.log("DEACTIVATED ACCOUNT", resp);
+          this.showSnackbar(this.$t("person.messages.account-deactivate"));
         })
         .then(() => this.refreshPeopleList())
         .catch(err => console.error("FAILURE", err.response));
     },
 
-    deactivatePerson(person) {
+    reactivateAccount(accountId) {
       this.$http
-        .put(`/api/v1/people/persons/deactivate/${person.id}`)
+        .put(`/api/v1/people/accounts/activate/${accountId}`)
         .then(resp => {
-          console.log("DEACTIVATED", resp);
-          this.showSnackbar(this.$t("person.messages.person-deactivate"));
+          console.log("REACTIVATED ACCOUNT", resp);
+          this.refreshPeopleList();
+          this.showSnackbar(this.$t("person.messages.account-activate"));
         })
-        .then(() => this.refreshPeopleList())
+        .catch(err => console.error("FAILURE", err.response));
+    },
+
+    getAttributesInfo() {
+      this.$http
+        .get("/api/v1/people/persons/fields")
+        .then(resp => {
+          if (resp.data.person_attributes) {
+            this.personDialog.attributes = resp.data.person_attributes;
+          }
+        })
         .catch(err => console.error("FAILURE", err.response));
     },
 
     refreshPeopleList() {
-      this.$http
-        .get("/api/v1/people/persons")
-        .then(resp => {
-          this.allPeople = resp.data;
-          this.activePeople = this.allPeople.filter(person => person.active);
-          this.archivedPeople = this.allPeople.filter(person => !person.active);
-        })
-        .catch(err => console.error("FAILURE", err.response));
+      this.$emit("fetchPeopleList");
     }
   },
 
   mounted: function() {
-    this.refreshPeopleList();
+    this.getAttributesInfo();
   }
 };
+/*
+@TODO:
+  Make the search be able to use username as a search parameter.
+*/
 </script>
