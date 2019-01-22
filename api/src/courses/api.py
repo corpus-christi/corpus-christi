@@ -302,16 +302,13 @@ diploma_schema = DiplomaSchema()
 @courses.route('/diplomas', methods=['POST'])
 @jwt_required
 def create_diploma():
-    if 'active' not in request.json:
-        request.json['active'] = True
-
     courseList = []
     if 'courseList' in request.json:
         courseList = request.json['courseList']
         del request.json['courseList']
 
     try:
-        valid_diploma = diploma_schema.load(request.json)
+        valid_diploma = diploma_schema.load(request.json, partial=True)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
@@ -452,13 +449,15 @@ def create_diploma_awarded():
         valid_diploma_awarded = diploma_awarded_schema.load(request.json)
     except ValidationError as err:
         return jsonify(err.messages), 422
+    print(valid_diploma_awarded)
 
     new_diploma_awarded = Diploma_Awarded(**valid_diploma_awarded)
+    print(new_diploma_awarded)
 
-    check = db.session.query(Diploma_Awarded).filter_by(student_id=new_diploma_awarded.student_id,\
+    check = db.session.query(Diploma_Awarded).filter_by(person_id=new_diploma_awarded.person_id,\
                                         diploma_id=new_diploma_awarded.diploma_id).first()
     if check:
-        return jsonify(msg=f'Diploma #{diploma_id} already awarded to student #{student_id}'), 409
+        return jsonify(msg=f'Diploma #{diploma_id} already awarded to student #{person_id}'), 409
 
     db.session.add(new_diploma_awarded)
     db.session.commit()
@@ -597,10 +596,13 @@ def get_all_students():
     return jsonify(to_return)
 
 
-@courses.route('/students/<student_id>')
+@courses.route('/students/<int:student_id>')
 @jwt_required
 def read_one_student(student_id):
-    result = db.session.query(Student, Person, Course_Offering, Course).filter_by(student_id=student_id).join(Person).join(Course_Offering).join(Course).all()
+    result = db.session.query(Student, Person, Course_Offering, Course) \
+                        .filter_by(student_id=student_id).join(Person, Course_Offering, Course) \
+                        .all()
+    
 
     if result == []:
         return 'Student not found', 404
@@ -610,27 +612,66 @@ def read_one_student(student_id):
     r['courses'] = []
     r['diplomaList'] = []
     for i in result[0].Person.diplomas_awarded:
-        d = db.session.query(Diploma).filter_by(id=i.diploma_id).first()
+        # Query to get diploma attributes
+        d = db.session.query(Diploma) \
+                        .filter_by(id=i.diploma_id) \
+                        .first()
+        
         if d is None:
             return 'Diploma not found', 404
         d = diploma_schema.dump(d)
         d['diplomaIsActive'] = d.pop('active')
+        # Query to find when award was given or if in progress (null value)
+        award_query = db.session.query(Diploma_Awarded) \
+                        .filter_by(person_id=r['person']['id'], diploma_id=i.diploma_id) \
+                        .first()
+        award_query = diploma_awarded_schema.dump(award_query)
+        d['when'] = award_query['when']
+        # Add all attributes to diplomaList
         r['diplomaList'].append(d)
+
+    # The following adds all the courses associated with each diploma into a list
+    for diploma in r['diplomaList']:
+        # Get all courses associated with diploma
+        diploma_query = db.session.query(Diploma_Course).filter_by(diploma_id=diploma['id']).all()
+        # Create a list of courses associated for each diploma
+        diploma['courses'] = []
+        for course in diploma_query:
+            # Query course objects by courses associated with diploma
+            course_query = db.session.query(Course).filter_by(id=course.course_id).first()
+            course_query = course_schema.dump(course_query)
+            course_query['id'] = course.course_id
+            course_query['name'] = course_query['name']
+            course_query.pop('description')
+            course_query.pop('active')
+            # Add course object details to list of courses for each diploma
+            diploma['courses'].append(course_query)
+    
+        # Add courseCompleted attribute to each course object
+        for course in diploma['courses']:
+            # Query to see if course completion entry exists
+            completion_query = db.session.query(Course_Completion).filter_by(course_id=course['id'], person_id=r['person']['id']).first()
+            completion_query = course_completion_schema.dump(completion_query)
+            if completion_query: # If the student has completed the course
+                course['courseCompleted'] = True
+            else: # Student has not completed the course
+                course['courseCompleted'] = False
+
+    # For each person entry (enrolled in one or many courses)
     for i in result:
+        # Add each course associated with course offerings enrolled
         r['courses'].append(course_schema.dump(i.Course))
     for i in r['courses']:
         i['courseOfferings'] = []
         for j in result:
             if(j.Course_Offering.course_id == i['id']):
                 co = course_offering_schema.dump(j.Course_Offering)
-                print(co)
                 co['courseIsActive'] = i['active']
                 co['courseOfferingIsActive'] = co.pop('active')
                 co.pop('id')
                 co.pop('courseId')
                 i['courseOfferings'].append(co)
     return jsonify(r)
-
 
 
 @courses.route('/students/<student_id>', methods=['PATCH'])
