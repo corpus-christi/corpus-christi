@@ -358,8 +358,21 @@ def test_create_person_invalid(auth_client):
 @pytest.mark.smoke
 def test_read_all_persons(auth_client):
     # GIVEN a DB with a collection people.
-    count = random.randint(3, 11)
-    create_multiple_people(auth_client.sqla, count)
+
+    role_count = random.randint(3, 7)
+    create_roles(auth_client.sqla, role_count)  # Create x Roles and return their id's
+    people_count = random.randint(30, 55)
+    create_multiple_people(auth_client.sqla, people_count)  # create random people
+    create_multiple_accounts(auth_client.sqla, 1.0)  # create accounts for all people
+
+    roles = auth_client.sqla.query(Role).all()
+    accounts = auth_client.sqla.query(Account).all()
+
+    for account in accounts:
+        account.roles.append(roles[random.randint(0, len(roles) - 1)])  # assign roles to accounts
+        auth_client.sqla.add(account)
+    auth_client.sqla.commit()
+
     # WHEN the api call is made for read all persons
     resp = auth_client.get(url_for('people.read_all_persons'))
     assert resp.status_code == 200
@@ -644,6 +657,19 @@ def test_create_account(auth_client):
         assert len(hash) == 64  # SHA 256 / 4 bits per hex value
     # AND we end up with the proper number of accounts.
     assert auth_client.sqla.query(Account).count() == count
+
+    # GIVEN an invalid json object of bad things
+    # WHEN we try to pass that to the api to create account
+    # THEN we get an error
+    nasty_account = {
+        'username': username_factory(),
+        # 'password': fake.password(),
+        'personId': "slks"
+    }
+    resp = auth_client.post(url_for('people.create_account'), json=nasty_account)
+    assert resp.status_code == 422
+    print(resp.status_code)
+    # assert "asshole" == "will"
 
 @pytest.mark.slow
 def test_read_all_accounts(auth_client):
@@ -1215,9 +1241,27 @@ def test_remove_role_from_account(auth_client):
 
     #THEN account no longer is associated with the given role
     updated_role = auth_client.sqla.query(Account).filter(Account.id == current_account.id).first().roles
-
     assert updated_role == []
     assert resp.json != updated_role
+
+    # GIVEN the account doesn't exist
+    non_existant_id = -23 # account that doesn't exist
+
+    # WHEN you try to remove a role from an account that doesnt exist
+    resp = auth_client.delete(url_for(
+        'people.remove_role_from_account', account_id=non_existant_id, role_id=current_role.id))
+
+    # THEN you get a "account not found" 404 error
+    assert resp.status_code == 404
+
+    # GIVEN the acocunt you are trying to remove the role does not have that role
+        # just try to remove the role we just removed
+    # WHEN you try to remove that role
+    resp = auth_client.delete(url_for(
+        'people.remove_role_from_account', account_id=current_account.id, role_id=current_role.id))
+
+    # THEN you get a 'That account does not have that role' 404 error
+    assert resp.status_code == 404
 
 
 # ---- Manager

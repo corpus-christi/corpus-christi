@@ -174,7 +174,7 @@ class Role(Base):
                 db.session.commit()
             return count
 
-        return 0
+        # return 0
 
 
 class RoleSchema(Schema):
