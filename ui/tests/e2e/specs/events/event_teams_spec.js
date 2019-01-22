@@ -5,7 +5,7 @@ describe("Event Teams Test", function() {
   });
 
   it("GIVEN: Event planner goes to event details", function() {
-    cy.visit("/events/1/details");
+    cy.visit("/event/1/details");
   });
 
   it("WHEN: Event planner adds a team to an event", function() {

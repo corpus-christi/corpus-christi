@@ -206,10 +206,6 @@
           readonly
         />
       </form>
-
-      <form method="POST" ref="imageForm" @submit.prevent="postImage">
-        <input type="file" name="file" ref="fileChooser" />
-      </form>
     </v-card-text>
     <v-divider></v-divider>
     <v-card-actions>
@@ -433,41 +429,6 @@ export default {
         }
       }
     },
-
-    postImage() {
-      var formData = new FormData(this.$refs.imageForm);
-      var url = "/api/v1/images/";
-      return this.$http
-        .post(url, formData)
-        .then(resp => {
-          console.log("IMAGE ADDED", resp);
-        })
-        .catch(err => {
-          console.error("IMAGE UPLOAD FAILURE", err.response);
-        });
-    }
-
-    // inputFilter(newFile, oldFile, prevent) {
-    //   if (newFile && !oldFile) {
-    //     if (/(\/|^)(Thumbs\.db|desktop\.ini|\..+)$/.test(newFile.name)) {
-    //       return prevent()
-    //     }
-    //     if (/\.(php5?|html?|jsx?)$/i.test(newFile.name)) {
-    //       return prevent()
-    //     }
-    //   }
-    // },
-    // inputFile(newFile, oldFile) {
-    //   if (newFile && !oldFile) {
-    //     console.log('add', newFile)
-    //   }
-    //   if (newFile && oldFile) {
-    //     console.log('update', newFile)
-    //   }
-    //   if (!newFile && oldFile) {
-    //     console.log('remove', oldFile)
-    //   }
-    // }
   },
   props: {
     editMode: {

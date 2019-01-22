@@ -4,7 +4,7 @@ describe("Event Participants Test", function() {
   });
 
   it("GIVEN: Event planner goes to an events participants", function() {
-    cy.visit("/events/1/participants");
+    cy.visit("/event/1/participants");
   });
 
   it("WHEN: Event planner adds a new participant", function() {

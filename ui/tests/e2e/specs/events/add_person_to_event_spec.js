@@ -5,7 +5,7 @@ describe("Event Person Test", function() {
   });
 
   it("GIVEN: Event planner goes to an event's details", function() {
-    cy.visit("/events/1/details");
+    cy.visit("/event/1/details");
   });
 
   it("WHEN: Event planner adds a new person", function() {

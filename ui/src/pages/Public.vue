@@ -89,6 +89,7 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import GoogleMap from "../components/GoogleMap";
 export default {
   name: "Public",
@@ -109,9 +110,12 @@ export default {
     this.$http.get(`/api/v1/events/?return_group=all&sort=start`).then(resp => {
       this.events = resp.data;
       this.events = this.events.slice(0, 5);
-      console.log(resp.data);
       this.pageLoaded = true;
     });
+  },
+
+  computed: {
+    ...mapGetters(["currentLanguageCode"])
   },
 
   methods: {

@@ -18,6 +18,21 @@
               </v-btn>
             </v-layout>
           </v-container>
+          <div class="ml-4">
+            <b>{{ $t("events.attendance") }}: </b>
+            <span v-if="event.attendance != null">{{ event.attendance }}</span>
+            <span v-else>{{ $t("events.attendance-none") }}</span>
+            <v-btn
+              icon
+              outline
+              small
+              color="primary"
+              data-cy="edit-attendance"
+              v-on:click="openAttendanceDialog()"
+            >
+              <v-icon small color="primary">edit</v-icon>
+            </v-btn>
+          </div>
           <v-card-text class="pa-4">
             <div v-if="event.location">
               <b>{{ $t("events.location") }}: </b>
@@ -39,7 +54,7 @@
               ripple
               color="primary"
               data-cy="navigate-to-participants"
-              v-on:click="navigateTo('/participants')"
+              :to="'/event/' + $route.params.event + '/participants'"
             >
               <v-icon>person</v-icon>&nbsp;{{ $t("events.participants.title") }}
             </v-btn>
@@ -63,7 +78,7 @@
               :teams="event.teams"
               :loaded="teamsLoaded"
               v-on:snackbar="showSnackbar($event)"
-              v-on:team-added="getEvent()"
+              v-on:team-added="reloadTeams()"
             ></event-team-details>
           </v-flex>
           <v-flex>
@@ -71,7 +86,7 @@
               :persons="event.persons"
               :loaded="personsLoaded"
               v-on:snackbar="showSnackbar($event)"
-              v-on:person-added="getEvent()"
+              v-on:person-added="reloadPersons()"
             ></event-person-details>
           </v-flex>
         </v-layout>
@@ -81,7 +96,7 @@
           :assets="event.assets"
           :loaded="assetsLoaded"
           v-on:snackbar="showSnackbar($event)"
-          v-on:asset-added="getEvent()"
+          v-on:asset-added="reloadAssets()"
         ></event-asset-details>
       </v-flex>
     </v-layout>
@@ -103,6 +118,16 @@
         v-on:save="saveEvent"
       />
     </v-dialog>
+
+    <!-- Attendance dialog -->
+    <v-dialog v-model="attendanceDialog.show" persistent max-width="250px">
+      <event-attendance-form
+        v-bind:attendance="attendanceDialog.number"
+        v-bind:saving="attendanceDialog.saving"
+        v-on:cancel="attendanceDialog.show = false"
+        v-on:save-attendance="saveAttendance($event)"
+      ></event-attendance-form>
+    </v-dialog>
   </v-layout>
 </template>
 
@@ -112,6 +137,7 @@ import { mapGetters } from "vuex";
 import EventTeamDetails from "./EventTeamDetails";
 import EventAssetDetails from "./EventAssetDetails";
 import EventPersonDetails from "./EventPersonDetails";
+import EventAttendanceForm from "./EventAttendanceForm";
 
 export default {
   name: "EventDetails",
@@ -119,7 +145,8 @@ export default {
     "event-form": EventForm,
     "event-team-details": EventTeamDetails,
     "event-asset-details": EventAssetDetails,
-    "event-person-details": EventPersonDetails
+    "event-person-details": EventPersonDetails,
+    "event-attendance-form": EventAttendanceForm
   },
 
   data() {
@@ -129,6 +156,12 @@ export default {
         show: false,
         saveLoading: false,
         event: {}
+      },
+
+      attendanceDialog: {
+        show: false,
+        saving: false,
+        number: null
       },
 
       snackbar: {
@@ -274,6 +307,33 @@ export default {
         });
     },
 
+    openAttendanceDialog() {
+      this.attendanceDialog.show = true;
+      this.attendanceDialog.saving = false;
+      this.attendanceDialog.number = this.event.attendance;
+    },
+
+    closeAttendanceDialog() {
+      this.attendanceDialog.show = false;
+      this.attendanceDialog.saving = false;
+      this.attendanceDialog.number = null;
+    },
+
+    saveAttendance(number) {
+      const id = this.$route.params.event;
+      this.$http
+        .patch(`/api/v1/events/${id}`, { attendance: number })
+        .then(resp => {
+          console.log(resp);
+          this.event.attendance = resp.data.attendance;
+          this.closeAttendanceDialog();
+        })
+        .catch(err => {
+          console.error("ATTENDANCE PATCH FAILURE", err.response);
+          this.attendanceDialog.saving = false;
+        });
+    },
+
     getDisplayDate(ts) {
       let date = new Date(ts);
       return date.toLocaleTimeString(this.currentLanguageCode, {
@@ -282,12 +342,6 @@ export default {
         day: "numeric",
         hour: "2-digit",
         minute: "2-digit"
-      });
-    },
-
-    navigateTo(path) {
-      this.$router.push({
-        path: "/events/" + this.$route.params.event + path
       });
     },
 
