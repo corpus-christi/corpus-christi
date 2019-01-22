@@ -21,7 +21,6 @@
 <script>
 import { mapGetters, mapMutations, mapState } from "vuex";
 import { flagForLocale, splitLocaleCode } from "../helpers";
-import dotProp from "dot-prop";
 import store from "./../store";
 
 export default {
@@ -63,7 +62,17 @@ export default {
         .then(response => {
           let translations = {};
           for (let item of response.data) {
-            dotProp.set(translations, item.key_id, item.gloss);
+            let keys = item.key_id.split(".");
+            let lastLevel = translations;
+            for (let i in keys) {
+              let key = keys[i];
+              if (i == keys.length - 1) {
+                lastLevel[key] = item.gloss;
+              } else if (!Object.keys(lastLevel).includes(key)) {
+                lastLevel[key] = {};
+              }
+              lastLevel = lastLevel[key];
+            }
           }
           this.$i18n.mergeLocaleMessage(localCode, translations);
         })
