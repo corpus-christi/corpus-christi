@@ -23,11 +23,61 @@ describe("Get more details on a course", () => {
 
 let section = "Around happy fast";
 
-<<<<<<< HEAD
 describe('Get more section details on a course', () =>{
   it('Click into details of a section', () =>{
     cy.get('tbody').contains(section).click()
     cy.url().should("include", "/courses/13/offering/7/details");
+  })
+})
+
+describe('Check Scheduled times', () => {
+  it('Click schedule tab', () => {
+    cy.get(':nth-child(4) > .v-tabs__item').click()
+  })
+  it('Add meeting time form', () => {
+    cy.get('[courseid="13"] > .v-toolbar > .v-toolbar__content > .v-btn').click()//add meeting button
+  })
+  //Cancel button 
+  it('Add meeting time form - DATE Cancel button', () => {
+    cy.wait(500)
+    cy.get('[data-cy=course-offering-date]').click()
+    cy.get(':nth-child(4) > :nth-child(5) > .v-btn').click()//25 of Jan
+    cy.get('[data-cy=course-offering-date-cancel]').click()
+  })
+  //Confirm button 
+  it('Add meeting time form - DATE Confirm button', () => {
+    cy.wait(500)
+    cy.get('[data-cy=course-offering-date]').click()
+    cy.get(':nth-child(4) > :nth-child(5) > .v-btn').click()//25 of Jan
+    cy.get('[data-cy=course-offering-date-ok]').click()
+  })
+
+  //FIGURE OUT HOW TO CLICK A CLOCK FORM
+  it('Add meeting time Form - Time', () => {
+    //cancel
+    cy.get('[data-cy=course-offering-time]').click()
+    cy.contains('1').click()//HOUR
+    cy.contains('35').click()//Minute
+    cy.get('[data-cy=course-offering-time-cancel]').click()
+    //confirm
+    cy.get('[data-cy=course-offering-time]').click()
+    cy.contains('1').click()//HOUR
+    cy.contains('35').click()//Minute
+    cy.get('[data-cy=course-offering-time-ok]').click()
+  })
+  it('Add meeting form - Teacher', () => {
+    cy.get('[data-cy=course-offering-teacher]').click()
+    cy.contains('Ortiz').click()
+  })
+  it('Add meeting form - Location', () => {
+    cy.get('[data-cy=course-offering-location]').click()
+    cy.contains('Tara').click()
+  })
+  it('Save form', () => {
+
+    cy.get('.v-card__actions > .primary').click()
+    cy.wait(250)
+    cy.get('.v-snack__content').should('inclucde', 'Reuniones añadido')
   })
 })
 
@@ -37,23 +87,6 @@ describe('Check students in section', () =>{
     cy.url().should("include", "/courses/13/offering/7/students");
   })
 })
-=======
-describe("Get more section details on a course", () => {
-  it("Click into details of a section", () => {
-    cy.get("tbody")
-      .contains(section)
-      .click();
-    cy.url().should("include", "/courses/1/offering/5/details");
-  });
-});
-
-describe("Check students in section", () => {
-  it("Click into students", () => {
-    cy.get(":nth-child(3) > .v-tabs__item").click();
-    cy.url().should("include", "/courses/1/offering/5/students");
-  });
-});
->>>>>>> app-courses
 
 describe("Flip through students", () => {
   it("Next student page", () => {
@@ -149,10 +182,5 @@ describe("Get back to courses page", () => {
   it("Click back to courses page", () => {
     cy.get(".xs12 > .v-btn").click(); //back button
     cy.url().should("include", "/courses");
-<<<<<<< HEAD
   })
 })
-=======
-  });
-});
->>>>>>> app-courses

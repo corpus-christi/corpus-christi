@@ -29,6 +29,8 @@ Cypress.Commands.add("course_page", function (){
 
 Cypress.Commands.add('deploma_page', function (){
   cy.get('[data-cy=toggle-nav-drawer]').click();
+  cy.get('.v-list__group__header__append-icon').click()
+  
   cy.get('[data-cy=diplomas-admin]').click();
 })
 
