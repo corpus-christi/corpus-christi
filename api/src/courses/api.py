@@ -11,6 +11,7 @@ from datetime import datetime
 
 from . import courses
 from ..people.models import Person, PersonSchema
+
 from ..places.models import Location, LocationSchema
 from .models import Course, CourseSchema, \
     Course_Offering, Course_OfferingSchema, \
@@ -183,7 +184,7 @@ Route reads all prerequisites in database
 # @authorize(["role.superuser", "role.registrar", "role.public"])
 def read_all_prerequisites():
     result = db.session.query(Course).all()  # Get courses to get prereq's
-    if result == []:
+    if result is []:
         return 'No courses found', 404
     results = []  # new list
     for i in result:
@@ -249,7 +250,7 @@ def create_course_offering():
 # @authorize(["role.superuser", "role.registrar", "role.public"])
 def read_all_course_offerings():
     result = db.session.query(Course_Offering).all()
-    if result == []:
+    if result is []:
         return 'No Course Offerings found', 404
     results = course_offering_schema.dump(result, many=True)
     for r in results:
@@ -306,9 +307,10 @@ def create_diploma():
     if 'active' not in request.json:
         request.json['active'] = True
 
-    if request.json['courses']:
-        courses = request.json['courses']
-        del request.json['courses']
+    courseList = []
+    if 'courseList' in request.json:
+        courseList = request.json['courseList']
+        del request.json['courseList']
 
     try:
         valid_diploma = diploma_schema.load(request.json)
@@ -317,7 +319,7 @@ def create_diploma():
 
     new_diploma = Diploma(**valid_diploma)
 
-    for course_id in courses:
+    for course_id in courseList:
         course = db.session.query(Course).filter_by(id=course_id).first()
         new_diploma.courses.append(course)
 
@@ -360,12 +362,13 @@ def read_one_diploma(diploma_id):
 @courses.route('/diplomas/<int:diploma_id>', methods=['PATCH'])
 @jwt_required
 def update_diploma(diploma_id):
-    if request.json['courses']:
-        courses = request.json['courses']
-        del request.json['courses']
+    courseList = []
+    if 'courseList' in request.json:
+        courseList = request.json['courseList']
+        del request.json['courseList']
 
     try:
-        valid_diploma = diploma_schema.load(request.json)
+        valid_diploma = diploma_schema.load(request.json, partial=True)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
@@ -375,9 +378,9 @@ def update_diploma(diploma_id):
         if attr in request.json:
             setattr(diploma, attr, request.json[attr])
 
-    if courses:
+    if courseList:
         diploma.courses = []
-        for course_id in courses:
+        for course_id in courseList:
             course = db.session.query(Course).filter_by(id=course_id).first()
             diploma.courses.append(course)
 
@@ -528,6 +531,9 @@ student_schema = StudentSchema()
 @courses.route('/course_offerings/<s_id>', methods=['POST'])
 @jwt_required
 def add_student_to_course_offering(s_id):
+    person = db.session.query(Person).filter_by(id=s_id).first()
+    if person is None:
+        return 'Person NOT in database', 404
     try:
         valid_student = student_schema.load(request.json)
     except ValidationError as err:
@@ -541,7 +547,9 @@ def add_student_to_course_offering(s_id):
 
         db.session.add(new_student)
         db.session.commit()
-        return jsonify(student_schema.dump(new_student)), 201
+        to_return = student_schema.dump(new_student)
+        to_return['person'] = person_schema.dump(person)
+        return jsonify(to_return), 201
     else:
         return 'Student already enrolled in course offering', 208
 
@@ -549,14 +557,20 @@ def add_student_to_course_offering(s_id):
 @courses.route('/course_offerings/<course_offering_id>/students')
 @jwt_required
 def read_all_course_offering_students(course_offering_id):
-    co = db.session.query(Course_Offering).filter_by(id=course_offering_id).first()
+    """ This function lists all students by a specific course offering.
+        Students are listed regardless of confirmed or active state. """
+    co = db.session.query(Course_Offering).filter_by(id=course_offering_id)
     if co is None:
-        return 'Course offering NOT found', 404
-    students = db.session.query(Student).filter_by(offering_id=course_offering_id).all()
+        return 'Course Offering NOT found', 404
+    students = db.session.query(Student, Person).filter_by(offering_id=course_offering_id).join(Person).all()
     if students == []:
-        return 'No Students Found', 404
-    students = student_schema.dump(students, many=True)
-    return jsonify(students)
+        return 'No students enrolled in this course', 404
+    student_list = []
+    for i in students:
+        s = student_schema.dump(i.Student)
+        s['person'] = person_schema.dump(i.Person)
+        student_list.append(s)
+    return jsonify(student_list)
 
 
 @courses.route('/students')
@@ -643,8 +657,8 @@ def create_class_meeting(course_offering_id):
 
     meetingInDB = db.session.query(Class_Meeting).filter_by(
         offering_id=course_offering_id,
-        teacher_id=request.json['teacherId'],
-        when=datetime.strptime(request.json['when'], '%Y-%m-%d %H:%M:%S') ).first() # Todo: make sure when is datetime obj
+        teacher_id=valid_class_meeting['teacher_id'],
+        when=valid_class_meeting['when'] ).first()
 
     # If a class meeting for a course offering DNE
     if meetingInDB is None:
@@ -705,12 +719,9 @@ def update_class_meeting(course_offering_id, class_meeting_id):
     if class_meeting is None:
            return "Class meeting not found", 404
 
-    for attr in 'location_id', 'teacher_id', 'when':
-        if attr in request.json:
-            if attr == 'when':
-                # For example, the following line requires datetime input to be "2019-02-01 10:01:30"
-                request.json['when'] = datetime.strptime(request.json['when'], '%Y-%m-%d %H:%M:%S')
-            setattr(class_meeting, attr, request.json[attr])
+    to_update = class_meeting_schema.load(request.json, partial=True)
+    for key, val in to_update.items():
+        setattr(class_meeting, key, val)
 
     db.session.commit()
     return jsonify(class_meeting_schema.dump(class_meeting))
@@ -822,8 +833,3 @@ def update_class_attendance(course_offering_id, class_meeting_id):
     db.session.add_all(updates)
     db.session.commit() # Commit all new changes
     return jsonify(add_attendance_to_meetings(class_meeting_schema.dump(class_meeting)))
-
-
-# ---- Class_Meeting
-person_schema = PersonSchema()
-class_meeting_schema = Class_MeetingSchema()

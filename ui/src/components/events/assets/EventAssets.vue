@@ -30,7 +30,7 @@
           <v-btn
             color="primary"
             raised
-            v-on:click.stop="newAsset"
+            v-on:click="addAssetDialog.show = true"
             data-cy="add-asset"
           >
             <v-icon dark left>add</v-icon>
@@ -49,10 +49,8 @@
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
-        <td class="hover-hand">{{ props.item.description }}</td>
-        <td class="hover-hand">
-          {{ getDisplayLocation(props.item.location) }}
-        </td>
+        <td>{{ props.item.description }}</td>
+        <td>{{ getDisplayLocation(props.item.location) }}</td>
         <td>
           <template v-if="props.item.active">
             <v-tooltip bottom v-if="props.item.active">
@@ -164,7 +162,9 @@ import { mapGetters } from "vuex";
 
 export default {
   name: "EventAssets",
-  components: { "asset-form": AssetForm },
+  components: {
+    "asset-form": AssetForm
+  },
   mounted() {
     this.tableLoading = true;
     let eventId = this.$route.params.event;
@@ -201,6 +201,7 @@ export default {
         assetId: -1,
         loading: false
       },
+
       search: "",
 
       snackbar: {
@@ -339,16 +340,18 @@ export default {
 
     saveAsset(asset) {
       this.assetDialog.saveLoading = true;
-      asset.location_id = asset.location.id;
-      let newAsset = JSON.parse(JSON.stringify(asset));
-      delete newAsset.location;
-      delete newAsset.id;
+      if (asset.location) {
+        asset.location_id = asset.location.id;
+      }
       if (this.assetDialog.editMode) {
         const assetId = asset.id;
         const idx = this.assets.findIndex(as => as.id === asset.id);
         delete asset.id;
         this.$http
-          .put(`/api/v1/assets/${assetId}`, newAsset)
+          .patch(`/api/v1/assets/${assetId}`, {
+            description: asset.description,
+            location_id: asset.location_id
+          })
           .then(resp => {
             console.log("EDITED", resp);
             Object.assign(this.assets[idx], resp.data);
@@ -362,9 +365,31 @@ export default {
             this.showSnackbar(this.$t("assets.error-editing-asset"));
           });
       } else {
+        let newAsset = JSON.parse(JSON.stringify(asset));
+        delete newAsset.location;
+        delete newAsset.id;
+
+        // Post to assets table
         this.$http
-          .post("/api/v1/assets", newAsset)
+          .post("/api/v1/assets/", newAsset)
           .then(resp => {
+            console.log("assets table");
+            console.log("ADDED", resp);
+            this.assets.push(resp.data);
+            this.assetDialog.show = false;
+            this.assetDialog.saveLoading = false;
+            this.showSnackbar(this.$t("assets.asset-added"));
+            return resp;
+          })
+          // Post to event assets table
+          .then(resp => {
+            console.log("event assets table");
+            let assetId = resp.data.id;
+            let eventId = this.$route.params.event;
+            this.$http.post(
+              `/api/v1/events/${eventId}/assets/${assetId}`,
+              newAsset
+            );
             console.log("ADDED", resp);
             this.assets.push(resp.data);
             this.assetDialog.show = false;
@@ -430,8 +455,4 @@ export default {
 };
 </script>
 
-<style scoped>
-.hover-hand {
-  cursor: pointer;
-}
-</style>
+<style scoped></style>

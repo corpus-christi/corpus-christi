@@ -10,11 +10,17 @@
           v-model="asset.description"
           v-bind:label="$t('assets.description')"
           name="description"
+          v-validate="'required'"
           v-bind:error-messages="errors.collect('description')"
           data-cy="description"
         ></v-textarea>
 
-        <entity-search location v-model="asset.location" />
+        <entity-search
+          location
+          name="location"
+          v-model="asset.location"
+          v-bind:error-messages="errors.first('location')"
+        />
       </form>
     </v-card-text>
     <v-card-actions>
@@ -55,7 +61,6 @@
 
 <script>
 import { isEmpty } from "lodash";
-// import { mapGetters } from "vuex";
 import EntitySearch from "../EntitySearch";
 export default {
   components: { "entity-search": EntitySearch },
@@ -84,8 +89,6 @@ export default {
     formDisabled() {
       return this.saveLoading || this.addMoreLoading;
     }
-
-    // ...mapGetters(["currentLanguageCode"])
   },
 
   methods: {
@@ -105,20 +108,22 @@ export default {
     },
 
     save() {
-      this.$validator.validateAll();
-      if (!this.errors.any()) {
-        // this.asset.active = true;
-        this.$emit("save", this.asset);
-      }
+      this.$validator.validateAll().then(() => {
+        if (!this.errors.any()) {
+          this.$emit("save", this.asset);
+        }
+      });
     },
 
     addAnother() {
-      this.$validator.validateAll();
-      if (!this.errors.any()) {
-        this.$emit("add-another", this.asset);
-      }
+      this.$validator.validateAll().then(() => {
+        if (!this.errors.any()) {
+          this.$emit("add-another", this.asset);
+        }
+      });
     }
   },
+
   props: {
     editMode: {
       type: Boolean,

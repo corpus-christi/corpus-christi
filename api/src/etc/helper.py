@@ -1,3 +1,4 @@
+import hashlib
 from flask.json import jsonify
 from .. import db
 
@@ -16,8 +17,19 @@ def modify_entity(entity_type, schema, id, new_value_dict):
     return jsonify(schema.dump(item)), 200
 
 def get_exclusion_list(query_object, default_exclusion_list):
+    ret_list = default_exclusion_list.copy()
     for exclusion in default_exclusion_list:
         include_filter = query_object.get(f"include_{exclusion}")
         if include_filter:
-            default_exclusion_list.remove(exclusion)
-    return default_exclusion_list
+            ret_list.remove(exclusion)
+    return ret_list
+
+def is_allowed_file(filename):
+    return '.' in filename and \
+         get_file_extension(filename) in set(['png', 'jpg', 'jpeg', 'gif'])
+
+def get_file_extension(filename):
+    return filename.rsplit('.', 1)[1].lower()
+
+def get_hash(filename):
+    return hashlib.sha1(str(filename).encode('utf-8')).hexdigest()

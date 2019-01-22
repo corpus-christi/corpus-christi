@@ -64,7 +64,7 @@ export default {
           icon: "event"
         },
         {
-          title: this.$t("events.teams.title"),
+          title: this.$t("teams.title"),
           route: "teams",
           icon: "group"
         },

@@ -1,46 +1,55 @@
 <template>
   <div>
     <!-- Header -->
-    <v-toolbar>
-      <v-layout align-center justify-space-between fill-height>
-        <v-flex md2>
+    <v-toolbar class="pa-1" extension-height="64px">
+      <v-layout justify-space-between>
+        <v-flex shrink align-self-center>
           <v-toolbar-title>{{ $t("courses.course") }}</v-toolbar-title>
         </v-flex>
         <v-spacer></v-spacer>
-        <v-flex md3>
-          <v-text-field
-            v-model="search"
-            append-icon="search"
-            v-bind:label="$t('actions.search')"
-            single-line
-            box
-            hide-details
-            data-cy="courses-table-search"
-          ></v-text-field>
-        </v-flex>
-        <v-spacer></v-spacer>
-
-        <v-flex md3>
-          <v-select
-            v-model="viewStatus"
-            :items="options"
-            solo
-            hide-details
-            data-cy="courses-table-viewstatus"
-          ></v-select>
-        </v-flex>
-
         <v-flex shrink justify-self-end>
           <v-btn
             color="primary"
             raised
             v-on:click.stop="newCourse"
             data-cy="courses-table-new"
+            class="hidden-xs-only mr-2"
           >
             <v-icon left>library_add</v-icon>
-            {{ $t("courses.new") }}
+            <span class="mr-1"> {{ $t("courses.new") }} </span>
           </v-btn>
-        </v-flex>
+          <v-btn
+           class="hidden-sm-and-up"
+           color="primary"
+           raised
+           fab
+           v-on:click.stop="newCourse"
+           data-cy="add-courseOffering-small"
+           >
+            <v-icon dark>add</v-icon>
+          </v-btn>
+         </v-flex>
+        </v-layout>
+      
+      <v-layout row slot="extension" justify-space-between align-center>
+        <v-text-field
+          v-model="search"
+          append-icon="search"
+          v-bind:label="$t('actions.search')"
+          single-line
+          hide-details
+          data-cy="courses-table-search"
+          class="max-width-250 mr-2"
+        ></v-text-field>
+
+        <v-select
+          v-model="viewStatus"
+          :items="options"
+          solo
+          hide-details
+          data-cy="courses-table-viewstatus"
+          class="max-width-250 mr-2"
+        ></v-select>
       </v-layout>
     </v-toolbar>
 
@@ -50,6 +59,8 @@
       :search="search"
       :items="showCourses"
       :loading="!tableLoaded"
+      :rows-per-page-items="rowsPerPageItem"
+      :pagination.sync="paginationInfo"
       class="elevation-1"
       data-cy="courses-table"
     >
@@ -160,6 +171,19 @@ export default {
       snackbar: {
         show: false,
         text: ""
+      },
+      
+      rowsPerPageItem: [
+        10,
+        15,
+        25,
+        { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 }
+      ],
+      
+      paginationInfo: {
+        sortBy: "start",
+        rowsPerPage: 10,
+        page: 1
       },
 
       courses: [],
@@ -384,5 +408,9 @@ export default {
 <style scoped>
 .hover-hand {
   cursor: pointer;
+}
+  
+.max-width-250 {
+  max-width: 250px;
 }
 </style>
