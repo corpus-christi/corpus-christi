@@ -15,8 +15,8 @@ matrix:
                           #- yarn  cache clean
                   #install:
                         - yarn install 
-                        - yarn upgrade --latest 
                   script:
+                        - yarn upgrade --latest 
                         - yarn build
                 - language: python
                   python: "3.7"
