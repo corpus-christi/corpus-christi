@@ -287,7 +287,7 @@ def update_course_offering(course_offering_id):
     if course_offering is None:
         return "Course Offering NOT Found", 404
 
-    course_offering_json = course_offering_schema.load(request.json)
+    course_offering_json = course_offering_schema.load(request.json, partial=True)
     for attr in course_offering_json.keys():
         setattr(course_offering, attr, course_offering_json[attr])
 
