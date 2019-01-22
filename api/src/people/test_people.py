@@ -1105,9 +1105,27 @@ def test_remove_role_from_account(auth_client):
 
     #THEN account no longer is associated with the given role
     updated_role = auth_client.sqla.query(Account).filter(Account.id == current_account.id).first().roles
-
     assert updated_role == []
     assert resp.json != updated_role
+
+    # GIVEN the account doesn't exist
+    non_existant_id = -23 # account that doesn't exist
+
+    # WHEN you try to remove a role from an account that doesnt exist
+    resp = auth_client.delete(url_for(
+        'people.remove_role_from_account', account_id=non_existant_id, role_id=current_role.id))
+
+    # THEN you get a "account not found" 404 error
+    assert resp.status_code == 404
+
+    # GIVEN the acocunt you are trying to remove the role does not have that role
+        # just try to remove the role we just removed
+    # WHEN you try to remove that role
+    resp = auth_client.delete(url_for(
+        'people.remove_role_from_account', account_id=current_account.id, role_id=current_role.id))
+
+    # THEN you get a 'That account does not have that role' 404 error
+    assert resp.status_code == 404
 
 
 # ---- Manager
