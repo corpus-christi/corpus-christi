@@ -228,7 +228,7 @@
     },
     "person": {
       "account": "Account",
-      "accountInfo": {
+      "account-info": {
         "roles": "Roles"
       },
       "actions": {
@@ -567,7 +567,7 @@
     },
     "person": {
       "account": "Cuenta",
-      "accountInfo": {
+      "account-info": {
         "roles": "Papeles"
       },
       "actions": {

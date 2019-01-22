@@ -297,8 +297,10 @@ export default {
     },
 
     updateAccount(accountId, account, roles) {
+      console.log("ROLES");
+      console.log(roles);
       this.$http
-        .patch(`/api/v1/people/accounts/${accountId}`, account, roles)
+        .patch(`/api/v1/people/accounts/${accountId}`, account)
         .then(resp => {
           console.log("PATCHED", resp);
           this.refreshPeopleList();
