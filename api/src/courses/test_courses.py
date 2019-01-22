@@ -314,9 +314,9 @@ def create_class_attendance(sqla, n):
     new_class_attendance = []
     for i in range(n):
         class_meeting = class_meetings[random.randint(0, len(class_meetings)-1)]
-        student = students[random.randint(0, len(students)-1)]
-        while class_meeting in student.attendance:
-            student = students[random.randint(0, len(students)-1)]
+        student = students[i]
+        # while class_meeting in student.attendance:
+        #     student = students[random.randint(0, len(students)-1)]
         student.attendance.append(class_meeting)
         new_class_attendance.append(student)
     sqla.add_all(new_class_attendance)
@@ -630,7 +630,7 @@ def test_update_course_offering(auth_client):
     # WHEN course offering needs to update existing information
     for course_offering in course_offerings:
         resp = auth_client.patch(url_for('courses.update_course_offering', course_offering_id=course_offering.id),
-            json={'max_size': 1, 'description':'test_descr', 'active':False})
+            json={'maxSize': 1, 'description':'test_descr', 'active':False})
         # THEN assert changes to course offering reflect update
         assert resp.status_code == 200
         assert resp.json['maxSize'] == 1
@@ -779,6 +779,7 @@ def test_read_all_diplomas_awarded(auth_client):
     assert len(resp.json) == count
 
 #TODO: BROKEN studentId vs personId?
+@pytest.mark.smoke()
 def test_read_one_diploma_awarded(auth_client):
     #Test with invalid diploma awarded
     # GIVEN empty database
@@ -805,6 +806,7 @@ def test_read_one_diploma_awarded(auth_client):
         assert datetime.strptime(resp.json['when'], '%Y-%m-%d').date() == diploma_awarded.when
 
 #TODO: BROKEN unprocessable entity
+@pytest.mark.smoke()
 def test_update_diploma_awarded(auth_client):
     # GIVEN class meeting in database
     count = random.randint(3,11)
@@ -888,6 +890,8 @@ def test_read_all_course_offering_students(auth_client):
     assert resp.status_code == 200
     assert len(resp.json) == count
 
+#TODO: BROKEN Attribute error diplomas_awarded
+@pytest.mark.smoke()
 def test_read_one_student(auth_client):
     """Test with invalid student"""
     # GIVEN empty database
@@ -951,7 +955,6 @@ def test_add_class_attendance(auth_client):
     # THEN assert that entry is now in database
     assert auth_client.sqla.query(Class_Attendance).count() == len(students)
 
-#TODO: BROKEN Integrity Error
 def test_read_one_class_attendance(auth_client):
     """Test with invalid class offering"""
     # GIVEN empty database
@@ -965,15 +968,14 @@ def test_read_one_class_attendance(auth_client):
     setup_dependencies_of_class_attendance(auth_client, count)
     create_class_attendance(auth_client.sqla, count)
     #WHEN that course offering has attendance
-    class_attendances = auth_client.sqla.query(Class_Attendance).all()
+    class_attendance = auth_client.sqla.query(Class_Attendance).first()
+    students = auth_client.sqla.query(Student).all()
     #THEN list all prerequisites of given course
-    for class_attendance in class_attendances:
-        resp = auth_client.get(url_for('courses.read_one_class_attendance', course_offering_id=class_attendance.course_offering_id))
-        assert resp.status_code == 200
-        assert resp.json['classId'] == class_attendance.class_id
-        assert resp.json['studentId'] == class_attendance.student_id 
+    resp = auth_client.get(url_for('courses.read_one_class_attendance', course_offering_id=class_attendance.class_id))
+    assert resp.status_code == 200
+    for i in range(count):
+        assert resp.json[0]['attendance'][i]['studentId'] == students[i].id
 
-#TODO: BROKEN Key Error in add_attendance_to_meetings()
 def test_read_one_meeting_attendance(auth_client):
     """Test with invalid class meeting"""
     # GIVEN empty database
@@ -989,13 +991,13 @@ def test_read_one_meeting_attendance(auth_client):
     create_multiple_students(auth_client.sqla, count)
     create_class_attendance(auth_client.sqla, count)
     #WHEN that course offering has attendance
-    class_attendances = auth_client.sqla.query(Class_Attendance).all()
+    class_attendance = auth_client.sqla.query(Class_Attendance).first()
+    students = auth_client.sqla.query(Student).all()
     #THEN list all prerequisites of given course
-    for class_attendance in class_attendances:
-        resp = auth_client.get(url_for('courses.read_one_class_attendance', course_offering_id=class_attendance.course_offering_id, class_meeting_id=class_attendance.class_meeting_id))
-        assert resp.status_code == 200
-        assert resp.json['classId'] == class_attendance.class_id
-        assert resp.json['studentId'] == class_attendance.student_id 
+    resp = auth_client.get(url_for('courses.read_one_class_attendance', course_offering_id=class_attendance.class_id, class_meeting_id=1))
+    assert resp.status_code == 200
+    for i in range(count):
+        assert resp.json[0]['attendance'][i]['studentId'] == students[i].id
 
 """
 @pytest.mark.xfail()
@@ -1004,7 +1006,7 @@ def test_update_class_attendance(auth_client):
     # WHEN
     # THEN
     assert True == False
-
+"""
 # ---- Class_Meeting
 
 def setup_dependencies_of_class_meeting(auth_client, n):

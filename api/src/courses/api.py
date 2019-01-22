@@ -770,7 +770,7 @@ def read_one_class_attendance(course_offering_id):
 def read_one_meeting_attendance(course_offering_id, class_meeting_id):
     """ Get attendance for a single class """
     meeting = class_meeting_schema.dump(db.session.query(Class_Meeting).filter_by(offering_id=course_offering_id, id=class_meeting_id).first())
-    if meeting is None:
+    if meeting == {}:
         return 'Class Meeting NOT found', 404
     add_attendance_to_meetings(meeting)
     return jsonify(meeting)
