@@ -32,7 +32,7 @@ matrix:
                         - FLASK_APP=cc-api.py
                   install:
                         - pip install -r api/requirements.txt
-                          #- pip install -U pytest
+                        - pip install -U pytest
                         - cd api/
                         - sudo apt install postgresql
                         - sudo apt install nginx
@@ -44,14 +44,13 @@ matrix:
                         - createuser arco
                         - createdb --owner=arco cc-staging
                           # -    cp thing in to private.py
-                        - ls
                         - ./private-ci.sh
                         - flask db upgrade
                         - flask data load-all
                         - sudo nginx -t
                         - sudo systemctl restart nginx
                         - cd ../
-                        #- pytest
+                        - pytest
 
 # create script by configuration and make file
 # fix flask data load-al112
