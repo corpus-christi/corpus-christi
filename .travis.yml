@@ -11,10 +11,11 @@ matrix:
         include:
                 - language: node_js
                   node_js: "11"
-                  before_install:
+                  install:
                           #- yarn cache clean
                   #install:
                         - yarn install --latest
+                        - yarn add cypres
                   script:
                         - yarn build
                 - language: python
