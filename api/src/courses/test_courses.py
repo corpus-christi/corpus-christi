@@ -955,6 +955,7 @@ def test_add_class_attendance(auth_client):
     # THEN assert that entry is now in database
     assert auth_client.sqla.query(Class_Attendance).count() == len(students)
 
+@pytest.mark.smoke()
 def test_read_one_class_attendance(auth_client):
     """Test with invalid class offering"""
     # GIVEN empty database
@@ -976,6 +977,7 @@ def test_read_one_class_attendance(auth_client):
     for i in range(count):
         assert resp.json[0]['attendance'][i]['studentId'] == students[i].id
 
+@pytest.mark.smoke()
 def test_read_one_meeting_attendance(auth_client):
     """Test with invalid class meeting"""
     # GIVEN empty database

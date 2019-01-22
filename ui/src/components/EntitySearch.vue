@@ -14,6 +14,7 @@
       :filter="customFilter"
       :multiple="multiple"
       menu-props="closeOnClick, closeOnContentClick"
+      :value-comparator="compare"
       color="secondary"
     >
       <template v-if="!multiple" slot="selection" slot-scope="data">
@@ -48,6 +49,7 @@ export default {
     person: Boolean,
     course: Boolean,
     team: Boolean,
+    asset: Boolean,
     multiple: { type: Boolean, default: false },
     existingEntities: Array,
     value: null,
@@ -69,15 +71,16 @@ export default {
       else if (this.location) return this.$t("events.event-location");
       else if (this.person) return this.$t("actions.search-people");
       else if (this.course) return this.$t("actions.search-courses");
-      else if (this.team) return this.$t("events.teams.title");
+      else if (this.team) return this.$t("teams.title");
+      else if (this.asset) return this.$t("assets.title");
       else return "";
     },
     idField() {
       return "id";
     },
     searchableEntities() {
-      if (this.existingEntities){
-        this.entities = this.entities.filter(ent => {
+      if (this.existingEntities) {
+        return this.entities.filter(ent => {
           for (let otherEnt of this.existingEntities) {
             if (ent[this.idField] == otherEnt[this.idField]) {
               return false;
@@ -119,6 +122,8 @@ export default {
         entityDescriptor = entity.name;
       } else if (this.team) {
         entityDescriptor = entity.description;
+      } else if (this.asset) {
+        entityDescriptor = entity.description;
       }
 
       if (entityDescriptor.length > letterLimit) {
@@ -142,6 +147,11 @@ export default {
       if (idx > -1) {
         this.value.splice(idx, 1);
       }
+    },
+
+    compare(a, b) {
+      if (!a || !b) return false;
+      return a[this.idField] == b[this.idField];
     }
   },
 
@@ -153,6 +163,7 @@ export default {
     else if (this.person) endpoint = "/api/v1/people/persons";
     else if (this.course) endpoint = "/api/v1/courses/courses";
     else if (this.team) endpoint = "/api/v1/teams/";
+    else if (this.asset) endpoint = "/api/v1/assets/";
     this.$http
       .get(endpoint)
       .then(resp => {
