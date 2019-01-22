@@ -1,8 +1,11 @@
 <template>
   <v-card class="card elevation-10">
     <!-- Image -->
-    <template v-if="image.length > 0">
-      <v-img class="image picture" v-for="src in image" :src="src" :key="src">
+    <template v-if="event.images.length > 0">
+      <v-img
+        class="image picture"
+        :src="'/api/v1/images/' + event.images[0].image.id"
+      >
       </v-img>
     </template>
 
@@ -46,7 +49,9 @@
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn raised round color="primary">{{ $t("public.events.join") }}</v-btn>
+        <v-btn raised round color="primary">{{
+          $t("public.events.join")
+        }}</v-btn>
         <v-spacer></v-spacer>
       </v-card-actions>
     </div>
@@ -60,11 +65,6 @@ export default {
   name: "EventCard",
   props: {
     event: {}
-  },
-  data() {
-    return {
-      image: []
-    };
   },
   methods: {
     getDisplayDate(ts) {
@@ -83,7 +83,7 @@ export default {
 
 <style scoped>
 .picture {
-  max-height: 300px;
+  max-height: 200px;
   min-height: 200px;
 }
 

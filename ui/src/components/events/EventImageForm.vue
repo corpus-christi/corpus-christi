@@ -12,8 +12,6 @@
         name="description"
         v-model="description"
         :label="$t('events.image-description')"
-        v-bind:error-messages="errors.first('attendance')"
-        v-validate="'required|integer|min_value:0'"
       ></v-text-field>
     </v-card-text>
     <v-card-actions>
@@ -30,6 +28,7 @@
         color="primary"
         v-on:click="save"
         :loading="saving"
+        :disabled="!imagePresent"
         data-cy="image-save"
         >{{ $t("actions.save") }}</v-btn
       >
@@ -41,8 +40,8 @@ export default {
   name: "EventImageForm",
   props: {
     eventId: {
-      required: true,
-    },
+      required: true
+    }
   },
 
   data() {
@@ -52,19 +51,24 @@ export default {
     };
   },
 
+  computed: {
+    imagePresent() {
+      // return this.$refs.fileChooser && this.$refs.fileChooser.files && this.$refs.fileChooser.files.length > 0
+      return true;
+    }
+  },
 
   methods: {
     save() {
       this.postImage().then(resp => {
-        console.log(resp.data)
-        let imageId = resp.data.id
+        console.log(resp.data);
+        let imageId = resp.data.id;
         var url = `/api/v1/events/${this.eventId}/images/${imageId}`;
-        this.$http.post(url, {description: this.description})
-          .then(resp => {
-            console.log('imageevent response', resp)
-          })
-      })
-
+        this.$http.post(url, { description: this.description }).then(resp => {
+          console.log("image added to event!", resp);
+          this.$emit("saved");
+        });
+      });
     },
     postImage() {
       var formData = new FormData(this.$refs.imageForm);
@@ -78,7 +82,7 @@ export default {
         .catch(err => {
           console.error("IMAGE UPLOAD FAILURE", err.response);
         });
-    },
+    }
   }
 };
 </script>

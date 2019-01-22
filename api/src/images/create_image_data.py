@@ -26,8 +26,8 @@ class RandomLocaleFaker:
 rl_fake = RandomLocaleFaker('en_US', 'es_MX')
 fake = Faker()  # Generic faker; random-locale ones don't implement everything.
 
-valid_paths = ['data/a1/bird.jpg', 'data/a1/roll_out.jpg', 'data/a1/shipit.jpg', 'data/a1/superbird/jpg', 'data/m5/space.jpg', 'data/m5/tree.jpg', 'data/m5/viper.jpg']
-paths_taken = [False, False, False, False, False, False, False]
+valid_paths = ['data/a1/casa.jpg', 'data/a1/coffee_house.jpg', 'data/a1/park.jpg', 'data/a1/verbo.jpg', 'data/m5/downtown.jpg', 'data/m5/park.jpg', 'data/m5/broken_bridge.jpg', 'data/m5/tree.jpg']
+paths_taken = [False, False, False, False, False, False, False, False]
 
 def flip():
     """Return true or false randomly."""

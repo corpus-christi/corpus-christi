@@ -355,11 +355,7 @@ export default {
           this.event.start = this.getTimestamp(this.startDate, this.startTime);
           this.event.end = this.getTimestamp(this.endDate, this.endTime);
           this.event.active = true;
-          if (this.$refs.fileChooser.files.length > 0) {
-            this.postImage().then(() => this.$emit("save", this.event));
-          } else {
-            this.$emit("save", this.event);
-          }
+          this.$emit("save", this.event);
         }
       });
     },
@@ -428,7 +424,7 @@ export default {
           this.endTime = "";
         }
       }
-    },
+    }
   },
   props: {
     editMode: {
@@ -456,8 +452,7 @@ export default {
       showStartDatePicker: false,
       showEndDatePicker: false,
       startTimeModal: false,
-      endTimeModal: false,
-      files: []
+      endTimeModal: false
     };
   }
 };

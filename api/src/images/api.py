@@ -21,7 +21,7 @@ image_schema = ImageSchema()
 image_schema_partial = ImageSchema(partial=True)
 
 @images.route('/<image_id>')
-@jwt_required
+# @jwt_required
 def download_image(image_id):
     image = db.session.query(Image).filter_by(id=image_id).first()
 
@@ -83,7 +83,7 @@ def upload_image():
     db.session.add(new_image)
     db.session.commit()
 
-    return 'Image successfully uploaded', 201
+    return jsonify(image_schema.dump(new_image)), 201
     
 
 @images.route('/<image_id>', methods=['PATCH'])

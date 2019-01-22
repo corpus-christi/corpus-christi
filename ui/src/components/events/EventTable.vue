@@ -328,11 +328,12 @@ export default {
 
     duplicate(event) {
       //TODO loading logic
-      let id = event.id
+      let id = event.id;
       this.$http
         .get(
           `/api/v1/events/${id}?include_teams=1&include_assets=1&include_persons=1`
-        ).then(resp => {
+        )
+        .then(resp => {
           const copyEvent = JSON.parse(JSON.stringify(resp.data));
           copyEvent.start = new Date(copyEvent.start);
           copyEvent.end = new Date(copyEvent.end);
@@ -349,7 +350,7 @@ export default {
           delete copyEvent.id;
           this.activateEventDialog(copyEvent);
         })
-        .catch(err => console.log("DUPLICATE ERROR", err))
+        .catch(err => console.log("DUPLICATE ERROR", err));
     },
 
     archiveEvent() {
@@ -444,16 +445,21 @@ export default {
         this.$http
           .post("/api/v1/events/", newEvent)
           .then(resp => {
-            let promises = this.getDuplicationPromises(resp.data.id, newTeams, newPersons, newAssets)
+            let promises = this.getDuplicationPromises(
+              resp.data.id,
+              newTeams,
+              newPersons,
+              newAssets
+            );
             if (promises) {
               Promise.all(promises).then(values => {
                 console.log(values);
                 return resp;
-              })
+              });
             }
             return resp;
           })
-          .then( resp => {
+          .then(resp => {
             console.log("ADDED", resp);
             this.events.push(resp.data);
             this.cancelEvent();
@@ -472,19 +478,23 @@ export default {
       let promises = [];
       if (newTeams) {
         for (let t of newTeams) {
-          let promise = this.postEventTeam(eventId, t.team_id)
+          let promise = this.postEventTeam(eventId, t.team_id);
           promises.push(promise);
         }
       }
       if (newPersons) {
         for (let p of newPersons) {
-          let promise = this.postEventPerson(eventId, p.person_id, p.description)
+          let promise = this.postEventPerson(
+            eventId,
+            p.person_id,
+            p.description
+          );
           promises.push(promise);
         }
       }
       if (newAssets) {
         for (let a of newAssets) {
-          let promise = this.postEventAsset(eventId, a.asset_id)
+          let promise = this.postEventAsset(eventId, a.asset_id);
           promises.push(promise);
         }
       }
@@ -492,18 +502,16 @@ export default {
     },
 
     postEventTeam(eventId, teamId) {
-      return this.$http
-        .post(`/api/v1/events/${eventId}/teams/${teamId}`)
+      return this.$http.post(`/api/v1/events/${eventId}/teams/${teamId}`);
     },
     postEventAsset(eventId, assetId) {
-      return this.$http
-        .post(`/api/v1/events/${eventId}/assets/${assetId}`)
-
+      return this.$http.post(`/api/v1/events/${eventId}/assets/${assetId}`);
     },
     postEventPerson(eventId, personId, description) {
       return this.$http.post(
-          `/api/v1/events/${eventId}/individuals/${personId}`,
-          {description});
+        `/api/v1/events/${eventId}/individuals/${personId}`,
+        { description }
+      );
     },
 
     addAnotherEvent(event) {

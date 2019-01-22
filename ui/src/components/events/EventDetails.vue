@@ -1,86 +1,117 @@
 <template>
   <v-layout column>
-    <v-flex xs12>
-      <v-card class="ma-1">
-        <template v-if="eventLoaded">
-          <v-container fill-height fluid>
-            <v-flex xs9 sm9 align-end flexbox>
-              <span class="headline">{{ event.title }}</span>
-            </v-flex>
-            <v-layout xs3 sm3 align-end justify-end>
-              <v-btn
-                flat
+    <v-layout row wrap>
+      <v-flex xs12>
+        <v-card class="ma-1">
+          <template v-if="eventLoaded">
+            <v-container fill-height fluid>
+              <v-flex xs9 sm9 align-end flexbox>
+                <span class="headline">{{ event.title }}</span>
+              </v-flex>
+              <v-layout xs3 sm3 align-end justify-end>
+                <v-btn
+                  flat
+                  color="primary"
+                  data-cy="edit-event"
+                  v-on:click="editEvent(event)"
+                >
+                  <v-icon>edit</v-icon>&nbsp;{{ $t("actions.edit") }}
+                </v-btn>
+              </v-layout>
+            </v-container>
+            <v-card-text class="pa-4">
+              <v-layout row wrap>
+                <v-flex xs12 sm6>
+                  <div>
+                    <b>{{ $t("events.attendance") }}: </b>
+                    <span v-if="event.attendance != null">{{
+                      event.attendance
+                    }}</span>
+                    <span v-else>{{ $t("events.attendance-none") }}</span>
+                    <v-btn
+                      icon
+                      outline
+                      small
+                      color="primary"
+                      data-cy="edit-attendance"
+                      v-on:click="openAttendanceDialog()"
+                    >
+                      <v-icon small color="primary">edit</v-icon>
+                    </v-btn>
+                  </div>
+                  <div v-if="event.location">
+                    <b>{{ $t("events.location") }}: </b>
+                    <div class="multi-line ml-2">{{ displayLocation }}</div>
+                  </div>
+                  <div>
+                    <b>{{ $t("events.start-time") }}: </b
+                    >{{ getDisplayDate(event.start) }}
+                  </div>
+                  <div>
+                    <b>{{ $t("events.end-time") }}: </b
+                    >{{ getDisplayDate(event.end) }}
+                  </div>
+                  <div class="mt-2 mb-2">{{ event.description }}</div>
+                </v-flex>
+                <v-flex xs12 sm6>
+                  <!-- Image -->
+                  <template v-if="event.images && event.images.length > 0">
+                    <v-img
+                      max-height="400px"
+                      class="image picture"
+                      :src="'/api/v1/images/' + event.images[0].image.id"
+                    >
+                    </v-img>
+                  </template>
+
+                  <!-- Placeholder if no image uploaded -->
+                  <template v-else>
+                    <v-img
+                      class="picture"
+                      src="https://i.ytimg.com/vi/LQ1ZMvqlqYA/maxresdefault.jpg"
+                    >
+                    </v-img>
+                  </template>
+                </v-flex>
+              </v-layout>
+            </v-card-text>
+            <v-card-actions>
+              <v-layout justify-space-between>
+                <v-btn
+                  flat
+                  ripple
+                  color="primary"
+                  data-cy="navigate-to-participants"
+                  :to="'/event/' + $route.params.event + '/participants'"
+                >
+                  <v-icon>person</v-icon>&nbsp;{{
+                    $t("events.participants.title")
+                  }}
+                </v-btn>
+                <v-btn
+                  flat
+                  ripple
+                  color="primary"
+                  data-cy="upload-image"
+                  v-on:click="openImageDialog"
+                >
+                  <v-icon>image</v-icon>&nbsp;{{ $t("events.upload-image") }}
+                </v-btn>
+              </v-layout>
+            </v-card-actions>
+          </template>
+          <v-layout v-else justify-center height="500px">
+            <div class="ma-5 pa-5">
+              <v-progress-circular
+                indeterminate
                 color="primary"
-                data-cy="edit-event"
-                v-on:click="editEvent(event)"
-              >
-                <v-icon>edit</v-icon>&nbsp;{{ $t("actions.edit") }}
-              </v-btn>
-            </v-layout>
-          </v-container>
-          <div class="ml-4">
-            <b>{{ $t("events.attendance") }}: </b>
-            <span v-if="event.attendance != null">{{ event.attendance }}</span>
-            <span v-else>{{ $t("events.attendance-none") }}</span>
-            <v-btn
-              icon
-              outline
-              small
-              color="primary"
-              data-cy="edit-attendance"
-              v-on:click="openAttendanceDialog()"
-            >
-              <v-icon small color="primary">edit</v-icon>
-            </v-btn>
-          </div>
-          <v-card-text class="pa-4">
-            <div v-if="event.location">
-              <b>{{ $t("events.location") }}: </b>
-              <div class="multi-line ml-2">{{ displayLocation }}</div>
+              ></v-progress-circular>
             </div>
-            <div>
-              <b>{{ $t("events.start-time") }}: </b
-              >{{ getDisplayDate(event.start) }}
-            </div>
-            <div>
-              <b>{{ $t("events.end-time") }}: </b
-              >{{ getDisplayDate(event.end) }}
-            </div>
-            <div class="mt-2">{{ event.description }}</div>
-          </v-card-text>
-          <v-card-actions>
-            <v-layout justify-space-between>
-              <v-btn
-                flat
-                ripple
-                color="primary"
-                data-cy="navigate-to-participants"
-                :to="'/event/' + $route.params.event + '/participants'"
-              >
-                <v-icon>person</v-icon>&nbsp;{{ $t("events.participants.title") }}
-              </v-btn>
-              <v-btn
-                flat
-                ripple
-                color="primary"
-                data-cy="upload-image"
-                v-on:click="openImageDialog"
-              >
-                <v-icon>image</v-icon>&nbsp;{{ $t("events.upload-image") }}
-              </v-btn>
-            </v-layout>
-          </v-card-actions>
-        </template>
-        <v-layout v-else justify-center height="500px">
-          <div class="ma-5 pa-5">
-            <v-progress-circular
-              indeterminate
-              color="primary"
-            ></v-progress-circular>
-          </div>
-        </v-layout>
-      </v-card>
-    </v-flex>
+          </v-layout>
+        </v-card>
+      </v-flex>
+    </v-layout>
+
     <v-layout row wrap>
       <v-flex xs12 lg6>
         <v-layout column>
@@ -145,10 +176,9 @@
       <event-image-form
         v-bind:eventId="event.id"
         v-on:cancel="closeImageDialog"
-        v-on:saved="closeImageDialog"
+        v-on:saved="updateImage"
       ></event-image-form>
     </v-dialog>
-
   </v-layout>
 </template>
 
@@ -188,7 +218,7 @@ export default {
       },
 
       imageDialog: {
-        show: false,
+        show: false
       },
 
       snackbar: {
@@ -238,7 +268,7 @@ export default {
       const id = this.$route.params.event;
       return this.$http
         .get(
-          `/api/v1/events/${id}?include_teams=1&include_assets=1&include_persons=1`
+          `/api/v1/events/${id}?include_teams=1&include_assets=1&include_persons=1&include_images=1`
         )
         .then(resp => {
           this.event = resp.data;
@@ -254,7 +284,6 @@ export default {
             : this.event.persons.map(p =>
                 Object.assign(p, { id: p.person_id })
               );
-          this.pageLoaded = true;
         });
     },
 
@@ -367,6 +396,11 @@ export default {
 
     closeImageDialog() {
       this.imageDialog.show = false;
+    },
+
+    updateImage() {
+      this.closeImageDialog();
+      this.getEvent();
     },
 
     getDisplayDate(ts) {

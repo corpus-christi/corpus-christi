@@ -39,6 +39,12 @@ events:
   location:
     en: Location
     es: Ubicación
+  upload-image:
+    en: Upload Image
+    es: Cargar Imagen
+  image-description:
+    en: Image Description
+    es: Descripción de la Imagen
   all-events:
     en: All Events
     es: Todos Eventos
