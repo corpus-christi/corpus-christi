@@ -182,7 +182,7 @@ export default {
               {
                 password: this.password
               },
-              { roles: roles },
+              { roles: roles }
             );
           }
           this.close();

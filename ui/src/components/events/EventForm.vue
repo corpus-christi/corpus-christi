@@ -32,7 +32,11 @@
             />
           </v-flex>
           <v-flex shrink>
-            <v-btn flat color="primary" small @click="showAddressCreator = true"
+            <v-btn
+              flat
+              color="primary"
+              small
+              @click="showAddressCreator = true"
               >{{ $t("actions.add-address") }}</v-btn
             >
           </v-flex>

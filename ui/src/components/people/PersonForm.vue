@@ -433,7 +433,13 @@ export default {
     setErrors() {
       this.stepOneErrors =
         this.errors.items.findIndex(element => {
-          return element.field == "firstName" || element.field == "lastName";
+          return (
+            element.field == "firstName" ||
+            element.field == "lastName" ||
+            element.field == "secondLastName" ||
+            element.field == "email" ||
+            element.field == "brithday"
+          );
         }) != -1;
       this.stepTwoErrors =
         this.errors.items.findIndex(element => {
@@ -450,7 +456,10 @@ export default {
             element.field != "password" &&
             element.field != "confirm-password" &&
             element.field != "firstName" &&
-            element.field != "lastName"
+            element.field != "lastName" &&
+            element.field != "secondLastName" &&
+            element.field != "email" &&
+            element.field != "brithday"
           );
         }) != -1;
     },
@@ -488,6 +497,7 @@ export default {
         .put(`/api/v1/people/persons/${personId}`, data)
         .then(response => {
           this.$emit(emitMessage, response.data);
+          this.resetForm();
           this.saveIsLoading = false;
         })
         .catch(err => {
