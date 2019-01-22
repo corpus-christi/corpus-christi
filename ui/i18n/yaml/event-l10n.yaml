@@ -14,6 +14,13 @@ events:
   attendance-label:
     en: Enter a number
     es: Ingrese un numero
+  attendance-none:
+    en: None
+    es: Ninguno
+  calendar:
+    title:
+      en: Calendar
+      es: Calendario
   start-date:
     en: Start Date
     es: Fecha de Inicio
@@ -70,8 +77,8 @@ events:
     es: Error al agregar evento
   details:
     title:
-      en: Details
-      es: Detalles
+      en: Event Details
+      es: Detalles del Evento
   participants:
     title:
       en: Participants

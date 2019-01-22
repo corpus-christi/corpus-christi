@@ -31,12 +31,11 @@
                           <!-- TODO: popup with members instead of rerouting -->
                           <v-btn
                             icon
-                            outline
                             flat
                             color="primary"
                             :to="{ path: '/teams/' + team.id }"
                             :data-cy="'view-team-' + team.id"
-                            ><v-icon>info</v-icon>
+                            ><v-icon large>info</v-icon>
                           </v-btn>
                         </v-flex>
                         <v-flex xs6>

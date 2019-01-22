@@ -1,241 +1,224 @@
 <template>
   <div>
-    <v-tabs v-model="active" slider-color="accent">
-      <v-tab :key="0" ripple> {{ $t("events.header") }} </v-tab>
-      <v-tab :key="1" ripple data-cy="calendar"> Calendar </v-tab>
-      <v-tab-item :key="0" style="padding-top:12px">
-        <v-layout justify-center>
-          <v-flex shrink class="mb-2">
-            <h1 class="hidden-sm-and-up">{{ $t("events.header") }}</h1>
-          </v-flex>
-        </v-layout>
-        <v-toolbar class="pa-1" extension-height="64px">
-          <v-layout justify-space-between>
-            <v-flex shrink align-self-center>
-              <v-toolbar-title class="hidden-xs-only">{{
-                $t("events.header")
-              }}</v-toolbar-title>
-            </v-flex>
-            <v-spacer></v-spacer>
-            <v-text-field
-              class="max-width-250 mr-2"
-              v-model="search"
-              append-icon="search"
-              v-bind:label="$t('actions.search')"
-              single-line
-              hide-details
-              data-cy="form-search"
-            ></v-text-field>
-            <v-flex shrink justify-self-end>
-              <v-btn
-                class="hidden-xs-only mr-2"
-                color="primary"
-                raised
-                v-on:click.stop="newEvent"
-                data-cy="add-event"
-              >
-                <v-icon dark>add</v-icon>
-                <span class="mr-1"> {{ $t("actions.add-event") }} </span>
-              </v-btn>
-              <v-btn
-                class="hidden-sm-and-up"
-                color="primary"
-                raised
-                fab
-                v-on:click.stop="newEvent"
-                data-cy="add-event-small"
-              >
-                <v-icon dark>add</v-icon>
-              </v-btn>
-            </v-flex>
-          </v-layout>
-          <v-layout row slot="extension" justify-space-between align-center>
-            <v-flex>
-              <v-select
-                class="max-width-250 mr-2"
-                hide-details
-                solo
-                single-line
-                :items="viewOptions"
-                v-model="viewStatus"
-                data-cy="view-status-select"
-              >
-              </v-select>
-            </v-flex>
-            <v-flex shrink>
-              <v-switch
-                hide-details
-                v-model="viewPast"
-                data-cy="view-past-switch"
-                v-bind:label="$t('actions.view-past')"
-              >
-              </v-switch>
-            </v-flex>
-          </v-layout>
-        </v-toolbar>
-        <v-data-table
-          :headers="headers"
-          :rows-per-page-items="rowsPerPageItem"
-          :items="visibleEvents"
-          :search="search"
-          :loading="tableLoading"
-          :pagination.sync="paginationInfo"
-          must-sort
-          class="elevation-1"
-        >
-          <template slot="items" slot-scope="props">
-            <!-- TODO: Add icons for past, upcoming, etc. -->
-            <td>
-              <v-icon
-                v-if="eventOngoing(props.item)"
-                slot="badge"
-                small
-                justify-space-around
-                color="secondary"
-                >autorenew</v-icon
-              >
-            </td>
-            <td
-              class="hover-hand"
-              v-on:click="$router.push({ path: '/events/' + props.item.id })"
-            >
-              <span> {{ props.item.title }}</span>
-            </td>
-            <td
-              class="hover-hand"
-              v-on:click="$router.push({ path: '/events/' + props.item.id })"
-            >
-              {{ getDisplayDate(props.item.start) }}
-            </td>
-            <td
-              class="hover-hand"
-              v-on:click="$router.push({ path: '/events/' + props.item.id })"
-            >
-              {{ getDisplayLocation(props.item.location) }}
-            </td>
-            <td>
-              <template v-if="props.item.active">
-                <v-tooltip bottom>
-                  <v-btn
-                    icon
-                    outline
-                    small
-                    color="primary"
-                    slot="activator"
-                    v-on:click="editEvent(props.item)"
-                    data-cy="edit"
-                  >
-                    <v-icon small>edit</v-icon>
-                  </v-btn>
-                  <span>{{ $t("actions.edit") }}</span>
-                </v-tooltip>
-                <v-tooltip bottom>
-                  <v-btn
-                    icon
-                    outline
-                    small
-                    color="primary"
-                    slot="activator"
-                    v-on:click="duplicate(props.item)"
-                    data-cy="duplicate"
-                  >
-                    <v-icon small>filter_none</v-icon>
-                  </v-btn>
-                  <span>{{ $t("actions.duplicate") }}</span>
-                </v-tooltip>
-                <v-tooltip bottom>
-                  <v-btn
-                    icon
-                    outline
-                    small
-                    color="primary"
-                    slot="activator"
-                    v-on:click="confirmArchive(props.item)"
-                    data-cy="archive"
-                  >
-                    <v-icon small>archive</v-icon>
-                  </v-btn>
-                  <span>{{ $t("actions.tooltips.archive") }}</span>
-                </v-tooltip>
-              </template>
-              <template v-else>
-                <v-tooltip bottom v-if="!props.item.active">
-                  <v-btn
-                    icon
-                    outline
-                    small
-                    color="primary"
-                    slot="activator"
-                    v-on:click="unarchive(props.item)"
-                    :loading="props.item.id < 0"
-                    data-cy="unarchive"
-                  >
-                    <v-icon small>undo</v-icon>
-                  </v-btn>
-                  <span>{{ $t("actions.tooltips.activate") }}</span>
-                </v-tooltip>
-              </template>
-            </td>
-          </template>
-        </v-data-table>
-
-        <v-snackbar v-model="snackbar.show">
-          {{ snackbar.text }}
-          <v-btn flat @click="snackbar.show = false">
-            {{ $t("actions.close") }}
+    <v-layout justify-center>
+      <v-flex shrink class="mb-2">
+        <h1 class="hidden-sm-and-up">{{ $t("events.header") }}</h1>
+      </v-flex>
+    </v-layout>
+    <v-toolbar class="pa-1" extension-height="64px">
+      <v-layout justify-space-between>
+        <v-flex shrink align-self-center>
+          <v-toolbar-title class="hidden-xs-only">{{
+            $t("events.header")
+          }}</v-toolbar-title>
+        </v-flex>
+        <v-spacer></v-spacer>
+        <v-text-field
+          class="max-width-250 mr-2"
+          v-model="search"
+          append-icon="search"
+          v-bind:label="$t('actions.search')"
+          single-line
+          hide-details
+          data-cy="form-search"
+        ></v-text-field>
+        <v-flex shrink justify-self-end>
+          <v-btn
+            class="hidden-xs-only mr-2"
+            color="primary"
+            raised
+            v-on:click.stop="newEvent"
+            data-cy="add-event"
+          >
+            <v-icon dark>add</v-icon>
+            <span class="mr-1"> {{ $t("actions.add-event") }} </span>
           </v-btn>
-        </v-snackbar>
-
-        <!-- New/Edit dialog -->
-        <v-dialog v-model="eventDialog.show" max-width="500px" persistent>
-          <event-form
-            v-bind:editMode="eventDialog.editMode"
-            v-bind:initialData="eventDialog.event"
-            v-bind:saveLoading="eventDialog.saveLoading"
-            v-bind:addMoreLoading="eventDialog.addMoreLoading"
-            v-on:cancel="cancelEvent"
-            v-on:save="saveEvent"
-            v-on:add-another="addAnotherEvent"
-          />
-        </v-dialog>
-
-        <!-- Archive dialog -->
-        <v-dialog v-model="archiveDialog.show" max-width="350px">
-          <v-card>
-            <v-card-text>{{ $t("events.confirm-archive") }}</v-card-text>
-            <v-card-actions>
+          <v-btn
+            class="hidden-sm-and-up"
+            color="primary"
+            raised
+            fab
+            v-on:click.stop="newEvent"
+            data-cy="add-event-small"
+          >
+            <v-icon dark>add</v-icon>
+          </v-btn>
+        </v-flex>
+      </v-layout>
+      <v-layout row slot="extension" justify-space-between align-center>
+        <v-flex>
+          <v-select
+            class="max-width-250 mr-2"
+            hide-details
+            solo
+            single-line
+            :items="viewOptions"
+            v-model="viewStatus"
+            data-cy="view-status-select"
+          >
+          </v-select>
+        </v-flex>
+        <v-flex shrink>
+          <v-switch
+            hide-details
+            v-model="viewPast"
+            data-cy="view-past-switch"
+            v-bind:label="$t('actions.view-past')"
+          >
+          </v-switch>
+        </v-flex>
+      </v-layout>
+    </v-toolbar>
+    <v-data-table
+      :headers="headers"
+      :rows-per-page-items="rowsPerPageItem"
+      :items="visibleEvents"
+      :search="search"
+      :loading="tableLoading"
+      :pagination.sync="paginationInfo"
+      must-sort
+      class="elevation-1"
+    >
+      <template slot="items" slot-scope="props">
+        <!-- TODO: Add icons for past, upcoming, etc. -->
+        <td>
+          <v-icon
+            v-if="eventOngoing(props.item)"
+            slot="badge"
+            small
+            justify-space-around
+            color="secondary"
+            >autorenew</v-icon
+          >
+        </td>
+        <td class="hover-hand" v-on:click="navigateToEvent(props.item.id)">
+          <span> {{ props.item.title }}</span>
+        </td>
+        <td class="hover-hand" v-on:click="navigateToEvent(props.item.id)">
+          {{ getDisplayDate(props.item.start) }}
+        </td>
+        <td class="hover-hand" v-on:click="navigateToEvent(props.item.id)">
+          {{ getDisplayLocation(props.item.location) }}
+        </td>
+        <td>
+          <template v-if="props.item.active">
+            <v-tooltip bottom>
               <v-btn
-                v-on:click="cancelArchive"
-                color="secondary"
-                flat
-                data-cy="cancel-archive"
-                >{{ $t("actions.cancel") }}</v-btn
-              >
-              <v-spacer></v-spacer>
-              <v-btn
-                v-on:click="archiveEvent"
+                icon
+                outline
+                small
                 color="primary"
-                raised
-                :loading="archiveDialog.loading"
-                data-cy="confirm-archive"
-                >{{ $t("actions.confirm") }}</v-btn
+                slot="activator"
+                v-on:click="editEvent(props.item)"
+                data-cy="edit"
               >
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </v-tab-item>
-      <v-tab-item style="padding-top:12px" :key="1"> <calendar /> </v-tab-item>
-    </v-tabs>
+                <v-icon small>edit</v-icon>
+              </v-btn>
+              <span>{{ $t("actions.edit") }}</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <v-btn
+                icon
+                outline
+                small
+                color="primary"
+                slot="activator"
+                v-on:click="duplicate(props.item)"
+                data-cy="duplicate"
+              >
+                <v-icon small>filter_none</v-icon>
+              </v-btn>
+              <span>{{ $t("actions.duplicate") }}</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <v-btn
+                icon
+                outline
+                small
+                color="primary"
+                slot="activator"
+                v-on:click="confirmArchive(props.item)"
+                data-cy="archive"
+              >
+                <v-icon small>archive</v-icon>
+              </v-btn>
+              <span>{{ $t("actions.tooltips.archive") }}</span>
+            </v-tooltip>
+          </template>
+          <template v-else>
+            <v-tooltip bottom v-if="!props.item.active">
+              <v-btn
+                icon
+                outline
+                small
+                color="primary"
+                slot="activator"
+                v-on:click="unarchive(props.item)"
+                :loading="props.item.id < 0"
+                data-cy="unarchive"
+              >
+                <v-icon small>undo</v-icon>
+              </v-btn>
+              <span>{{ $t("actions.tooltips.activate") }}</span>
+            </v-tooltip>
+          </template>
+        </td>
+      </template>
+    </v-data-table>
+
+    <v-snackbar v-model="snackbar.show">
+      {{ snackbar.text }}
+      <v-btn flat @click="snackbar.show = false">
+        {{ $t("actions.close") }}
+      </v-btn>
+    </v-snackbar>
+
+    <!-- New/Edit dialog -->
+    <v-dialog v-model="eventDialog.show" max-width="500px" persistent>
+      <event-form
+        v-bind:editMode="eventDialog.editMode"
+        v-bind:initialData="eventDialog.event"
+        v-bind:saveLoading="eventDialog.saveLoading"
+        v-bind:addMoreLoading="eventDialog.addMoreLoading"
+        v-on:cancel="cancelEvent"
+        v-on:save="saveEvent"
+        v-on:add-another="addAnotherEvent"
+      />
+    </v-dialog>
+
+    <!-- Archive dialog -->
+    <v-dialog v-model="archiveDialog.show" max-width="350px">
+      <v-card>
+        <v-card-text>{{ $t("events.confirm-archive") }}</v-card-text>
+        <v-card-actions>
+          <v-btn
+            v-on:click="cancelArchive"
+            color="secondary"
+            flat
+            data-cy="cancel-archive"
+            >{{ $t("actions.cancel") }}</v-btn
+          >
+          <v-spacer></v-spacer>
+          <v-btn
+            v-on:click="archiveEvent"
+            color="primary"
+            raised
+            :loading="archiveDialog.loading"
+            data-cy="confirm-archive"
+            >{{ $t("actions.confirm") }}</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script>
 import EventForm from "./EventForm";
 import { mapGetters } from "vuex";
-import Calendar from "./Calendar";
 export default {
   name: "EventTable",
-  components: { "event-form": EventForm, calendar: Calendar },
+  components: { "event-form": EventForm },
   mounted() {
     this.tableLoading = true;
     this.$http.get("/api/v1/events/?return_group=all").then(resp => {
@@ -503,6 +486,10 @@ export default {
         }
       }
       return name;
+    },
+
+    navigateToEvent(id) {
+      this.$router.push({ path: "/event/" + id });
     },
 
     eventOngoing(event) {

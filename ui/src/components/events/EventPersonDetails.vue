@@ -98,7 +98,7 @@
             ></entity-search>
           </div>
           <v-textarea
-            rows="3"
+            rows="1"
             v-model="addPersonDialog.description"
             v-bind:label="$t('events.persons.description')"
             name="description"

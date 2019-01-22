@@ -52,7 +52,7 @@ export default {
           class:
             new Date(resp.data[event].end) < currentDate ? "leisure" : "sport",
           content:
-            `<a href="/events/${resp.data[event].id}">${resp.data[event].title}</a>`
+            `<a href="/event/${resp.data[event].id}">${resp.data[event].title}</a>`
         });
       }
     });
@@ -79,7 +79,7 @@ export default {
     goToEvent() {
       this.dialog.show = false;
       let routeData = this.$router.resolve({
-        path: "/events/" + this.dialog.event.id
+        path: "/event/" + this.dialog.event.id
       });
       window.open(routeData.href, "_blank");
     }

@@ -21,7 +21,7 @@
           <div class="ml-4">
             <b>{{ $t("events.attendance") }}: </b>
             <span v-if="event.attendance != null">{{ event.attendance }}</span>
-            <span v-else>None</span>
+            <span v-else>{{ $t("events.attendance-none") }}</span>
             <v-btn
               icon
               outline
@@ -54,7 +54,7 @@
               ripple
               color="primary"
               data-cy="navigate-to-participants"
-              v-on:click="navigateTo('/participants')"
+              :to="'/event/' + $route.params.event + '/participants'"
             >
               <v-icon>person</v-icon>&nbsp;{{ $t("events.participants.title") }}
             </v-btn>
@@ -341,12 +341,6 @@ export default {
         day: "numeric",
         hour: "2-digit",
         minute: "2-digit"
-      });
-    },
-
-    navigateTo(path) {
-      this.$router.push({
-        path: "/events/" + this.$route.params.event + path
       });
     },
 
