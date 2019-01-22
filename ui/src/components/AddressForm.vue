@@ -10,6 +10,7 @@
           v-validate="'required'"
           :error-messages="errors.collect('address')"
           clearable
+          :disabled="formDisabled"
         ></v-text-field>
 
         <v-layout row>
@@ -22,18 +23,19 @@
               v-validate="'required'"
               :error-messages="errors.collect('city')"
               clearable
+              :disabled="formDisabled"
             ></v-text-field>
           </v-flex>
 
           <v-flex shrink>
-            <v-btn flat icon @click="queryAddress('address')"
+            <v-btn flat icon @click="queryAddress('address')" :disabled="formDisabled"
               ><v-icon>search</v-icon></v-btn
             >
           </v-flex>
         </v-layout>
 
         <span body-2 v-if="addressErr" class="red--text"
-          >Your address returned no results.</span
+          >{{ $t("places.messages.no-results") }}</span
         >
         <gmap-map
           ref="map"
@@ -42,27 +44,30 @@
           style="width:400px;  height: 250px;"
           data-cy="gmap"
           @click="markLocation"
+          :disabled="formDisabled"
         >
           <gmap-marker :position="marker"></gmap-marker>
         </gmap-map>
 
         <v-text-field
           name="name"
-          v-model="address.name"
+          v-model="address.address_name"
           v-bind:label="$t('places.address.name')"
+          :disabled="formDisabled"
         ></v-text-field>
 
         <v-textarea
           name="description"
           v-model="address.description"
           v-bind:label="$t('places.location.description')"
+          :disabled="formDisabled"
         ></v-textarea>
       </v-layout>
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn flat color="secondary" @click="closeAddressForm">Cancel</v-btn>
-      <v-btn raised color="primary">Save</v-btn>
+      <v-btn flat color="secondary" @click="cancelAddressForm" :disabled="formDisabled">{{ $t("actions.cancel") }}</v-btn>
+      <v-btn raised color="primary" @click="saveAddressForm" :loading="formDisabled" :disabled="formDisabled">{{ $t("actions.save") }}</v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -70,34 +75,49 @@
 <script>
 export default {
   name: "AddressForm",
-  props: {
-    title: {
-      type: String,
-      required: false,
-      default: "Create an Address"
-    }
-  },
   data: function() {
     return {
       address: {
-        name: "",
+        address_name: "",
         description: "",
         address: "",
         city: "",
         latitude: "",
-        longitude: ""
+        longitude: "",
+        country_code: "",
+        area_name: ""
       },
       center: { lat: -2.90548355117024, lng: -79.02949294174876 },
       marker: { lat: 0, lng: 0 },
       map: null,
       addressErr: false,
-      showPlacePicker: false
+      showPlacePicker: false,
+      formDisabled: false,
+      title: this.$t("places.create-address"),
     };
   },
   methods: {
-    closeAddressForm() {
+    cancelAddressForm() {
       // emit false to close form
       this.$emit("cancel", false);
+    },
+
+    saveAddressForm() {
+      this.formDisabled = true;
+      this.$http.post("/api/v1/places/locations", this.address).then(resp => {
+        console.log(resp);
+        this.$emit("saved", resp.data);
+      })
+      .then(() => { 
+        console.log("reached");
+        this.formDisabled = false
+        this.cancelAddressForm();
+      })
+      .catch(err => { 
+        console.log(err);
+        console.log("FAILED", err) 
+        this.formDisabled = false;
+      });
     },
 
     async queryAddress(type) {
@@ -129,11 +149,26 @@ export default {
               this.addressErr = true;
               return;
             } else {
+              console.log(response.results[0]);
               this.addressErr = false;
+              console.log(response.results[0]);
               let addr = response.results[0];
               this.address.address = addr.formatted_address;
               this.address.latitude = addr.geometry.location.lat;
               this.address.longitude = addr.geometry.location.lng;
+              let addrcomps = addr.address_components;
+              for(let comp of addrcomps) {
+                for(type of comp.types) {
+                  if(type === "country") {
+                    this.address.country_code = comp.short_name;
+                  } else if(type === "locality") {
+                    this.address.city = comp.long_name;
+                  } else if(type === "administrative_area_level_1" ||
+                            type === "administrative_area_level_2") {
+                    this.address.area_name = comp.long_name;
+                  }
+                }
+              }
               this.marker = {
                 lat: this.address.latitude,
                 lng: this.address.longitude

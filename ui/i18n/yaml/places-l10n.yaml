@@ -1,4 +1,7 @@
 places:
+  create-address:
+    en: Create an Address
+    es: Crear una Dirección
   address:
     name:
       en: Name
@@ -19,3 +22,7 @@ places:
     description:
       en: Description
       es: Descripción
+  messages:
+    no-results:
+      en: Your address returned no results.
+      es: Tu dirección no devolvió resultados

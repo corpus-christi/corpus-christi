@@ -24,6 +24,7 @@
       "username": "Username"
     },
     "actions": {
+      "add-address": "Add Address",
       "add-another": "Add Another",
       "add-event": "Add Event",
       "add-person": "Add Person",
@@ -209,8 +210,12 @@
         "longitude": "Longitude",
         "name": "Name"
       },
+      "create-address": "Create an Address",
       "location": {
         "description": "Description"
+      },
+      "messages": {
+        "no-results": "Your address returned no results."
       }
     },
     "public": {
@@ -267,6 +272,7 @@
       "username": "Nombre de usuario"
     },
     "actions": {
+      "add-address": "A\u00f1adir Dirreci\u00f3n",
       "add-another": "A\u00f1adir Otro",
       "add-event": "A\u00f1adir Evento",
       "add-person": "A\u00f1adir Persona",
@@ -452,8 +458,12 @@
         "longitude": "Longitud",
         "name": "Nombre"
       },
+      "create-address": "Crear una Direcci\u00f3n",
       "location": {
         "description": "Descripci\u00f3n"
+      },
+      "messages": {
+        "no-results": "Tu direcci\u00f3n no devolvi\u00f3 resultados"
       }
     },
     "public": {

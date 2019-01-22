@@ -28,11 +28,12 @@
               name="location"
               v-bind:error-messages="errors.first('location')"
               :disabled="showAddressCreator"
+              :key="currentAddress"
             />
           </v-flex>
           <v-flex shrink>
             <v-btn flat color="primary" small @click="showAddressCreator = true"
-              >Add Address</v-btn
+              >{{ $t("actions.add-address") }}</v-btn
             >
           </v-flex>
         </v-layout>
@@ -41,6 +42,7 @@
           <address-form
             v-if="showAddressCreator"
             @cancel="showAddressCreator = false"
+            @saved="updateEntitySearch"
           ></address-form>
         </v-expand-transition>
 
@@ -438,6 +440,12 @@ export default {
           this.endTime = "";
         }
       }
+    },
+
+    updateEntitySearch(address) {
+      console.log(address);
+      this.event.location = address;
+      this.currentAddress = address.address_id;
     }
   },
   props: {
@@ -467,7 +475,8 @@ export default {
       showEndDatePicker: false,
       startTimeModal: false,
       endTimeModal: false,
-      showAddressCreator: false
+      showAddressCreator: false,
+      currentAddress: 0
     };
   }
 };

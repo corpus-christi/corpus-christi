@@ -7,6 +7,10 @@ actions:
     _desc: Save a newly created item; clear data (e.g., on a form)
     en: Add Another
     es: Añadir Otro
+  add-address:
+    _desc: Add a new address
+    en: Add Address
+    es: Añadir Dirreción
   add-person:
     _desc: Add a person to the database
     en: Add Person
