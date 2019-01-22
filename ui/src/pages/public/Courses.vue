@@ -1,5 +1,5 @@
 <template>
-  <v-container grid-list-md> 
+  <v-container grid-list-md>
     <v-layout row wrap>
       <v-flex xs12 sm12 md4>
         <h1 style="margin-left: 25px;">
@@ -23,14 +23,11 @@
     </v-layout>
   </v-container>
 </template>
-      
-
 
 <script>
 import CourseCard from "../../components/public/CourseCard";
 import { mapGetters } from "vuex";
 import { isEmpty } from "lodash";
-
 
 export default {
   name: "Courses",
@@ -41,7 +38,7 @@ export default {
     return {
       courses: [],
       course: {},
-      pageLoaded: false,
+      pageLoaded: false
     };
   },
   mounted() {
@@ -52,20 +49,18 @@ export default {
       this.pageLoaded = true;
     });
   },
-  
+
   computed: {
     offeredCourses: function() {
-      return this.courses.filter((course) => {
-        return !isEmpty(course.course_offerings)
-       })
+      return this.courses.filter(course => {
+        return !isEmpty(course.course_offerings);
+      });
     },
 
-    ...mapGetters(["currentLanguageCode"]),
+    ...mapGetters(["currentLanguageCode"])
   },
-  
-  methods: {
-  
-  }
+
+  methods: {}
 };
 </script>
 

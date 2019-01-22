@@ -9,37 +9,38 @@
         </v-toolbar>
         <v-list style="padding-top: 0px; z-index: 0">
           <v-expansion-panel>
+            <!-- TODO: filter events that have course offerings -->
+            <!-- TODO: add register button function -->
             <v-expansion-panel-content
-              v-for="(course,idx) in offeredCourses"
+              v-for="(course, idx) in offeredCourses"
               v-bind:key="idx"
-            >
-              <div slot="header">
-                {{ course.name }}
-                <br>
-                <span class="grey--text">
-                  <div>date</div>
-                </span>
-              </div>
+              ><div slot="header">{{ course.name }}</div>
               <v-card>
-                <v-card-text>{{ course.description }}</v-card-text>
+                <span class="grey--text">
+                  <v-card-text>{{ course.description }}</v-card-text>
+                </span>
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                    <v-btn raised color="primary">{{ $t("public.course.register") }}</v-btn>
+                  <v-btn raised color="primary">{{
+                    $t("public.course.register")
+                  }}</v-btn>
                   <v-spacer></v-spacer>
                 </v-card-actions>
               </v-card>
             </v-expansion-panel-content>
           </v-expansion-panel>
-          <!-- <v-divider light></v-divider> -->
           <v-card>
             <v-card-actions>
-              <v-btn 
+              <v-btn
                 v-on:click="$router.push({ path: '/public/courses' })"
-                flat block outline color="primary">{{ $t("public.courses.view-all") }}
+                flat
+                block
+                outline
+                color="primary"
+                >{{ $t("public.courses.view-all") }}
               </v-btn>
             </v-card-actions>
           </v-card>
-
         </v-list>
       </v-flex>
 
@@ -121,10 +122,10 @@ export default {
 
   computed: {
     offeredCourses: function() {
-      return this.courses.filter((course) => {
-        return !isEmpty(course.course_offerings)
-       })
-    },
+      return this.courses.filter(course => {
+        return !isEmpty(course.course_offerings);
+      });
+    }
   },
 
   mounted() {
@@ -138,7 +139,7 @@ export default {
     this.$http.get("/api/v1/courses/courses").then(resp => {
       this.courses = resp.data;
       this.courses = this.courses.slice(0, 5);
-      // console.log(resp.data);
+      console.log(resp.data);
       this.pageLoaded = true;
     });
   },
@@ -170,7 +171,7 @@ export default {
           }
         })
         .catch(err => console.log("FAILED", err));
-    },
+    }
   }
 };
 </script>
