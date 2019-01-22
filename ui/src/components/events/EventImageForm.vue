@@ -28,6 +28,7 @@
         color="primary"
         v-on:click="save"
         :loading="saving"
+        :disabled="!imagePresent"
         data-cy="image-save"
         >{{ $t("actions.save") }}</v-btn
       >
@@ -48,6 +49,13 @@ export default {
       saving: false,
       description: ""
     };
+  },
+
+  computed: {
+    imagePresent() {
+      // return this.$refs.fileChooser && this.$refs.fileChooser.files && this.$refs.fileChooser.files.length > 0
+      return true;
+    }
   },
 
   methods: {
