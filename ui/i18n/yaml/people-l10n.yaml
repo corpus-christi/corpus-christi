@@ -53,7 +53,7 @@ person:
   account:
     en: Account
     es: Cuenta
-  accountInfo:
+  account-info:
     roles:
       en: Roles
       es: Papeles
