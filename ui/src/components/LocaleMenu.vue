@@ -33,7 +33,7 @@ export default {
   },
 
   mounted() {
-    this.getTranslationsForLocale();
+    this.getTranslationsForLocale(this.$i18n.locale);
   },
 
   methods: {
@@ -42,8 +42,11 @@ export default {
     setCurrentLocale(locale) {
       // Set the current locale.
       this.setCurrentLocaleCode(locale.code);
-      this.$i18n.locale = splitLocaleCode(locale.code).languageCode;
-      this.getTranslationsForLocale();
+      this.getTranslationsForLocale(
+        splitLocaleCode(locale.code).languageCode
+      ).then(() => {
+        this.$i18n.locale = splitLocaleCode(locale.code).languageCode;
+      });
     },
 
     displayLocale(locale) {
@@ -54,8 +57,7 @@ export default {
       return flagForLocale(locale.code) + locale.desc;
     },
 
-    getTranslationsForLocale() {
-      this.translations = {};
+    getTranslationsForLocale(localCode) {
       return this.$http
         .get(`/api/v1/i18n/values/${store.state.currentLocaleCode}`)
         .then(response => {
@@ -63,7 +65,7 @@ export default {
           for (let item of response.data) {
             dotProp.set(translations, item.key_id, item.gloss);
           }
-          this.$i18n.mergeLocaleMessage(this.$i18n.locale, translations);
+          this.$i18n.mergeLocaleMessage(localCode, translations);
         })
         .catch(err => console.error("FAILURE", err.response));
     }
