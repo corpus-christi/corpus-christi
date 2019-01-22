@@ -88,11 +88,15 @@
       "add-meeting-failed": "Failed to add meeting(s)",
       "added": "Course added",
       "archived": "Course archived",
-      "choose-time": "Choose Time",
+      "choose-offering": "Choose Offering",
+      "choose-time": "Time",
       "confirm-archive": "Are you sure you want to archive this course?",
+      "confirm-student": "Would you like to confirm or reject this student?",
       "course": "Courses",
       "course-offering": "Course Offerings",
-      "dates": "Choose Dates",
+      "create-new-person": "Create a new person",
+      "date": "Date",
+      "dates": "Dates",
       "description": "Description",
       "enrolled": "Number Enrolled",
       "info-meeting-dates": "You can choose multiple dates to create many meetings.",
@@ -103,10 +107,15 @@
       "meeting-updated": "Meeting updated",
       "new": "New Course",
       "new-meeting": "New Meeting",
-      "new-offering": "New Course Offering",
+      "new-offering": "New Offering",
+      "new-offering-short": "New Offering",
       "no-prerequisites": "This course has no prerequisites.",
       "prerequisites": "Prerequisites",
       "reactivated": "Course unarchived",
+      "register": "Register",
+      "register-for-course": "Register for this course",
+      "register-success": "Successfully Registered",
+      "reject": "Reject",
       "schedule": "Schedule",
       "students": "Students",
       "teacher": "Teacher",
@@ -227,13 +236,16 @@
       "settings": "Settings for {person}"
     },
     "public": {
+      "courses": {
+        "view-all": "View All Courses"
+      },
       "events": {
         "join": "Join Event",
         "view-all": "View All Events"
       },
       "headers": {
         "home-church": "Find a Home Church",
-        "upcoming-classes": "Upcoming Clases",
+        "upcoming-classes": "Upcoming Courses",
         "upcoming-events": "Upcoming Events"
       },
       "title": "Public"
@@ -369,11 +381,15 @@
       "add-meeting-failed": "Se fall\u00f3 a a\u00f1adir los reuniones",
       "added": "Curso a\u00f1adido",
       "archived": "Curso archivado",
-      "choose-time": "Elegir Tiempo",
+      "choose-offering": "Elegir Oferta",
+      "choose-time": "Tiempo",
       "confirm-archive": "\u00bfEst\u00e1s seguro que quieres archivar este curso?",
+      "confirm-student": "\u00bfTe gustar\u00edas confirmar o rechazar este estudiante?",
       "course": "Cursos",
       "course-offering": "Ofertas de Cursos",
-      "dates": "Elegir Fechas",
+      "create-new-person": "Crear una nueva persona",
+      "date": "Fecha",
+      "dates": "Fechas",
       "description": "Descripci\u00f3n",
       "enrolled": "N\u00famero Registrado",
       "info-meeting-dates": "Puede elegir fechas m\u00faltiples para crear muchos reuniones.",
@@ -384,10 +400,15 @@
       "meeting-updated": "Reuni\u00f3n actualizado",
       "new": "Nuevo Curso",
       "new-meeting": "Nuevo Reuni\u00f3n",
-      "new-offering": "Nuevo Oferta de Curso",
+      "new-offering": "Nuevo Oferta",
+      "new-offering-short": "Nueva Oferta",
       "no-prerequisites": "Este curso no tiene prerrequisitos.",
       "prerequisites": "Prerrequisitos",
       "reactivated": "Curso desarchivado",
+      "register": "Registrar",
+      "register-for-course": "Registrar para este curso",
+      "register-success": "Registrado con \u00c9xito",
+      "reject": "Rechazar",
       "schedule": "Horario",
       "students": "Estudiantes",
       "teacher": "Maestro",
@@ -508,13 +529,16 @@
       "settings": "Configuraci\u00f3n de la {person}"
     },
     "public": {
+      "courses": {
+        "view-all": "Ver Todos Cursos"
+      },
       "events": {
         "join": "Juntarse Evento",
         "view-all": "Ver Todos Eventos"
       },
       "headers": {
         "home-church": "Encontrar una Iglesia Hogar",
-        "upcoming-classes": "Pr\u00f3ximas Clases",
+        "upcoming-classes": "Pr\u00f3ximas Cursos",
         "upcoming-events": "Pr\u00f3ximos Eventos"
       },
       "title": "P\u00fablico"
