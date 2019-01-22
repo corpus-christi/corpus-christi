@@ -12,7 +12,7 @@ matrix:
                 - language: node_js
                   node_js: "11"
                   install:
-                          #- yarn cache clean
+                          #- yarn  cache clean
                   #install:
                         - yarn install --latest
                         - yarn update 
