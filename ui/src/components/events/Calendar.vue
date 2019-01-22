@@ -23,13 +23,13 @@ export default {
   },
   mounted() {
     this.tableLoading = true;
-    this.$http.get("/api/v1/events/?return_group=all").then(resp => {
+    this.$http.get("/api/v1/events/").then(resp => {
       var currentDate = new Date();
       for (let event of resp.data) {
         this.events.push({
           event: event,
-          start: this.getDate(event.start),
-          end: this.getDate(event.end),
+          start: this.getDatetime(event.start),
+          end: this.getDatetime(event.end),
           description: event.description,
           class: new Date(event.end) < currentDate ? "leisure" : "sport",
           content: this.getTemplate(event)
@@ -47,9 +47,10 @@ export default {
   },
 
   methods: {
-    getDate(obj) {
-      var d = new Date(obj);
-      return obj.slice(0, 10) + " " + d.getUTCHours() + ":" + d.getUTCMinutes();
+    getDatetime(ts) {
+      let date = this.getDateFromTimestamp(ts);
+      let time = this.getTimeFromTimestamp(ts)
+      return `${date} ${time}`;
     },
 
     getTemplate(event) {
@@ -58,7 +59,33 @@ export default {
 
     goToEvent(e) {
       this.$router.push({ path: "/event/" + e.event.id + "/details" });
-    }
+    },
+
+    getDateFromTimestamp(ts) {
+      let date = new Date(ts);
+      if (date.getTime() < 86400000) {
+        //ms in a day
+        return "";
+      }
+      let yr = date.toLocaleDateString(this.currentLanguageCode, {
+        year: "numeric"
+      });
+      let mo = date.toLocaleDateString(this.currentLanguageCode, {
+        month: "2-digit"
+      });
+      let da = date.toLocaleDateString(this.currentLanguageCode, {
+        day: "2-digit"
+      });
+      return `${yr}-${mo}-${da}`;
+    },
+
+    getTimeFromTimestamp(ts) {
+      let date = new Date(ts);
+      let hr = String(date.getHours()).padStart(2, "0");
+      let min = String(date.getMinutes()).padStart(2, "0");
+      return `${hr}:${min}`;
+    },
+
   }
 };
 </script>
