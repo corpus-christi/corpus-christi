@@ -362,7 +362,7 @@ def update_diploma(diploma_id):
         del request.json['courses'] 
 
     try:
-        valid_diploma = diploma_schema.load(request.json)
+        valid_diploma = diploma_schema.load(request.json, partial=True)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
@@ -621,8 +621,8 @@ def create_class_meeting(course_offering_id):
 
     meetingInDB = db.session.query(Class_Meeting).filter_by(
         offering_id=course_offering_id,
-        teacher_id=request.json['teacherId'],
-        when=request.json['when'] ).first() # Todo: make sure when is datetime obj
+        teacher_id=valid_class_meeting['teacher_id'],
+        when=valid_class_meeting['when'] ).first()
 
     # If a class meeting for a course offering DNE
     if meetingInDB is None:
@@ -683,12 +683,9 @@ def update_class_meeting(course_offering_id, class_meeting_id):
     if class_meeting is None:
            return "Class meeting not found", 404 
 
-    for attr in 'location_id', 'teacher_id', 'when':
-        if attr in request.json:
-            if attr == 'when':
-                # For example, the following line requires datetime input to be "2019-02-01 10:01:30"
-                request.json['when'] = datetime.strptime(request.json['when'], '%Y-%m-%d %H:%M:%S')
-            setattr(class_meeting, attr, request.json[attr])
+    to_update = class_meeting_schema.load(request.json, partial=True)
+    for key, val in to_update.items():
+        setattr(class_meeting, key, val)
 
     db.session.commit()
     return jsonify(class_meeting_schema.dump(class_meeting))

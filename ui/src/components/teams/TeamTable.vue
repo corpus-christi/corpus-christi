@@ -3,7 +3,7 @@
     <v-toolbar class="pa-1">
       <v-layout align-center justify-space-between fill-height>
         <v-flex md2>
-          <v-toolbar-title>{{ $t("events.teams.title") }}</v-toolbar-title>
+          <v-toolbar-title>{{ $t("teams.title") }}</v-toolbar-title>
         </v-flex>
         <v-flex md2>
           <v-text-field
@@ -23,7 +23,8 @@
             :items="viewOptions"
             v-model="viewStatus"
             data-cy="view-status-select"
-          ></v-select>
+          >
+          </v-select>
         </v-flex>
         <v-flex shrink justify-self-end>
           <v-btn
@@ -33,7 +34,7 @@
             data-cy="add-team"
           >
             <v-icon dark left>add</v-icon>
-            {{ $t("events.teams.new") }}
+            {{ $t("teams.new") }}
           </v-btn>
         </v-flex>
       </v-layout>
@@ -64,6 +65,7 @@
                 color="primary"
                 slot="activator"
                 v-on:click="editTeam(props.item)"
+                data-cy="edit-team"
               >
                 <v-icon small>edit</v-icon>
               </v-btn>
@@ -77,6 +79,7 @@
                 color="primary"
                 slot="activator"
                 v-on:click="duplicate(props.item)"
+                data-cy="duplicate"
               >
                 <v-icon small>filter_none</v-icon>
               </v-btn>
@@ -90,6 +93,7 @@
                 color="primary"
                 slot="activator"
                 v-on:click="confirmArchive(props.item)"
+                data-cy="archive"
               >
                 <v-icon small>archive</v-icon>
               </v-btn>
@@ -106,6 +110,7 @@
                 slot="activator"
                 v-on:click="unarchive(props.item)"
                 :loading="props.item.unarchiving"
+                data-cy="unarchive"
               >
                 <v-icon small>undo</v-icon>
               </v-btn>
@@ -118,9 +123,9 @@
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false">{{
-        $t("actions.close")
-      }}</v-btn>
+      <v-btn flat @click="snackbar.show = false">
+        {{ $t("actions.close") }}
+      </v-btn>
     </v-snackbar>
 
     <!-- New/Edit dialog -->
@@ -139,18 +144,22 @@
     <!-- Archive dialog -->
     <v-dialog v-model="archiveDialog.show" max-width="350px">
       <v-card>
-        <v-card-text>{{ $t("events.teams.confirm-archive") }}</v-card-text>
+        <v-card-text>{{ $t("teams.confirm-archive") }}</v-card-text>
         <v-card-actions>
-          <v-btn v-on:click="cancelArchive" color="secondary" flat data-cy>
-            {{ $t("actions.cancel") }}
-          </v-btn>
+          <v-btn
+            v-on:click="cancelArchive"
+            color="secondary"
+            flat
+            data-cy="cancel-archive"
+            >{{ $t("actions.cancel") }}</v-btn
+          >
           <v-spacer></v-spacer>
           <v-btn
             v-on:click="archiveTeam"
             color="primary"
             raised
             :loading="archiveDialog.loading"
-            data-cy
+            data-cy="confirm-archive"
             >{{ $t("actions.confirm") }}</v-btn
           >
         </v-card-actions>
@@ -168,8 +177,9 @@ export default {
   components: { "team-form": TeamForm },
   mounted() {
     this.tableLoading = true;
-    this.$http.get(`/api/v1/teams/`).then(resp => {
+    this.$http.get(`/api/v1/teams/?return_group=all`).then(resp => {
       this.teams = resp.data;
+      console.log(resp.data);
       this.tableLoading = false;
     });
   },
@@ -202,7 +212,7 @@ export default {
         show: false,
         text: ""
       },
-      viewStatus: "viewAll",
+      viewStatus: "viewActive",
 
       windowSize: {
         x: 0,
@@ -215,11 +225,11 @@ export default {
     headers() {
       return [
         {
-          text: this.$t("events.teams.description"),
+          text: this.$t("teams.description"),
           value: "description",
           width: "40%"
         },
-        { text: this.$t("events.actions"), sortable: false, width: "20%" }
+        { text: this.$t("actions.header"), sortable: false, width: "20%" }
       ];
     },
 
@@ -280,13 +290,13 @@ export default {
           this.teams[idx].active = false;
           this.archiveDialog.loading = false;
           this.archiveDialog.show = false;
-          this.showSnackbar(this.$t("events.teams.team-archived"));
+          this.showSnackbar(this.$t("teams.team-archived"));
         })
         .catch(err => {
           console.error("ARCHIVE FALURE", err.response);
           this.archiveDialog.loading = false;
           this.archiveDialog.show = false;
-          this.showSnackbar(this.$t("events.teams.error-archiving-team"));
+          this.showSnackbar(this.$t("teams.error-archiving-team"));
         });
 
       // this.archiveDialog.show = false;
@@ -305,12 +315,12 @@ export default {
           console.log("UNARCHIVED", resp);
           delete team.unarchiving;
           Object.assign(this.teams[idx], resp.data);
-          this.showSnackbar(this.$t("events.teams.team-unarchived"));
+          this.showSnackbar(this.$t("teams.team-unarchived"));
         })
         .catch(err => {
           delete team.unarchiving;
           console.error("UNARCHIVE FALURE", err.response);
-          this.showSnackbar(this.$t("events.teams.error-unarchiving-team"));
+          this.showSnackbar(this.$t("teams.error-unarchiving-team"));
         });
     },
 
@@ -351,13 +361,13 @@ export default {
             Object.assign(this.teams[idx], resp.data);
             this.teamDialog.show = false;
             this.teamDialog.saveLoading = false;
-            this.showSnackbar(this.$t("events.teams.team-edited"));
+            this.showSnackbar(this.$t("teams.team-edited"));
             this.clearTeam();
           })
           .catch(err => {
             console.error("PUT FALURE", err.response);
             this.teamDialog.saveLoading = false;
-            this.showSnackbar(this.$t("events.teams.error-editing-team"));
+            this.showSnackbar(this.$t("teams.error-editing-team"));
           });
       } else {
         let newTeam = JSON.parse(JSON.stringify(team));
@@ -378,13 +388,13 @@ export default {
             this.teams.push(resp.data);
             this.teamDialog.show = false;
             this.teamDialog.saveLoading = false;
-            this.showSnackbar(this.$t("events.teams.team-added"));
+            this.showSnackbar(this.$t("teams.team-added"));
             this.clearTeam();
           })
           .catch(err => {
             console.error("POST FAILURE", err.response);
             this.teamDialog.saveLoading = false;
-            this.showSnackbar(this.$t("events.teams.error-adding-team"));
+            this.showSnackbar(this.$t("teams.error-adding-team"));
           });
       }
     },
@@ -399,12 +409,12 @@ export default {
           this.teams.push(resp.data);
           this.teamDialog.show = false;
           this.teamDialog.saveLoading = false;
-          this.showSnackbar(this.$t("events.teams.team-added"));
+          this.showSnackbar(this.$t("teams.team-added"));
         })
         .catch(err => {
           console.error("FAILURE", err.response);
           this.teamDialog.saveLoading = false;
-          this.showSnackbar(this.$t("events.teams.error-adding-team"));
+          this.showSnackbar(this.$t("teams.error-adding-team"));
         });
     },
 
