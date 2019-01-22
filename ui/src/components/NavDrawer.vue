@@ -47,6 +47,10 @@ export default {
             {
               title: this.$t("diplomas.diploma"),
               route: "diplomas-admin"
+            },
+            {
+              title: this.$t("transcripts.transcript"),
+              route: "transcripts"
             }
           ]
         },
