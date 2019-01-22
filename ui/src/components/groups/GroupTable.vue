@@ -31,7 +31,7 @@
             color="primary"
             raised
             v-on:click.stop="newGroup"
-            data-cy="add-event"
+            data-cy="add-group"
           >
             <v-icon dark left>add</v-icon>
             {{ $t("actions.add-group") }}
@@ -145,7 +145,7 @@
     <!-- Archive dialog -->
     <v-dialog v-model="archiveDialog.show" max-width="350px">
       <v-card>
-        <v-card-text>{{ $t("groups.confirm-archive") }}</v-card-text>
+        <v-card-text>{{ $t("groups.messages.confirm-archive") }}</v-card-text>
         <v-card-actions>
           <v-btn
             v-on:click="cancelArchive"
@@ -252,8 +252,8 @@ export default {
     headers() {
       return [
         { text: this.$t("groups.name"), value: "name" },
-        { text: this.$t("groups.decription"), value: "description" },
-        { text: this.$t("groups.actions"), sortable: false }
+        { text: this.$t("groups.description"), value: "description" },
+        { text: this.$t("actions.header"), sortable: false }
       ];
     },
   },
@@ -292,12 +292,12 @@ export default {
             Object.assign(this.groups[idx], resp.data);
             this.groupDialog.show = false;
             this.groupDialog.saveLoading = false;
-            this.showSnackbar(this.$t("groups.group-edited"));
+            this.showSnackbar(this.$t("groups.messages.group-edited"));
           })
           .catch(err => {
             console.error("PUT FALURE", err.response);
             this.groupDialog.saveLoading = false;
-            this.showSnackbar(this.$t("groups.error-editing-group"));
+            this.showSnackbar(this.$t("groups.messages.error-editing-group"));
           });
       } else {
         this.$http
@@ -307,12 +307,12 @@ export default {
             this.groups.push(resp.data);
             this.groupDialog.show = false;
             this.groupDialog.saveLoading = false;
-            this.showSnackbar(this.$t("groups.event-added"));
+            this.showSnackbar(this.$t("groups.messages.group-added"));
           })
           .catch(err => {
             console.error("POST FAILURE", err.response);
             this.groupDialog.saveLoading = false;
-            this.showSnackbar(this.$t("groups.error-adding-event"));
+            this.showSnackbar(this.$t("groups.messages.error-adding-group"));
           });
       }
     },
@@ -346,13 +346,13 @@ export default {
           this.groups[idx].active = false;
           this.archiveDialog.loading = false;
           this.archiveDialog.show = false;
-          this.showSnackbar(this.$t("groups.group-archived"));
+          this.showSnackbar(this.$t("groups.messages.group-archived"));
         })
         .catch(err => {
           console.error("ARCHIVE FALURE", err.response);
           this.archiveDialog.loading = false;
           this.archiveDialog.show = false;
-          this.showSnackbar(this.$t("groups.error-archiving-group"));
+          this.showSnackbar(this.$t("groups.messages.error-archiving-group"));
         });
     },
 
@@ -365,11 +365,11 @@ export default {
         .then(resp => {
           console.log("UNARCHIVED", resp);
           Object.assign(this.groups[idx], resp.data);
-          this.showSnackbar(this.$t("events.event-unarchived"));
+          this.showSnackbar(this.$t("groups.messages.group-unarchived"));
         })
         .catch(err => {
           console.error("UNARCHIVE FALURE", err.response);
-          this.showSnackbar(this.$t("events.error-unarchiving-event"));
+          this.showSnackbar(this.$t("groups.messages.error-unarchiving-gropu"));
         });
     },
 

@@ -71,8 +71,8 @@ export default {
       else if (this.person) return this.$t("actions.search-people");
       else if (this.course) return this.$t("actions.search-courses");
       else if (this.team) return this.$t("events.teams.title");
-      else if (this.address) return this.$t("actions-search-addresses");
-      else if (this.manager) return this.$t("actions-search-managers");
+      else if (this.address) return this.$t("actions.search-addresses");
+      else if (this.manager) return this.$t("actions.search-managers");
       else return "";
     },
     idField() {
