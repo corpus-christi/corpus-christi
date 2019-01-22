@@ -737,6 +737,59 @@ def test_create_location_invalid(auth_client):
     # THEN expect no locations to be created
     assert auth_client.sqla.query(Location).count() == 0
 
+@pytest.mark.smoke
+def test_create_location_nested(auth_client):
+    # GIVEN with some countries
+    Country.load_from_file()
+    # WHEN we send a request with nested information
+    payload = {
+            'country_code': 'US',
+            'area_name': 'area name',
+            'latitude': 0,
+            'longitude': 0,
+            'city': 'Upland',
+            'address': '236 W. Reade Ave.',
+            'address_name': 'Taylor University',
+            'description': 'Euler 217'
+    }
+    resp = auth_client.post(url_for('places.create_location'), json = payload)
+    # THEN we expect the correct status code
+    assert resp.status_code == 201
+    # WHEN we expect an area being created
+    assert auth_client.sqla.query(Area).count() == 1
+    # THEN we expect an address to be created
+    assert auth_client.sqla.query(Address).count() == 1
+    # THEN we expect a location to be created
+    assert auth_client.sqla.query(Location).count() == 1
+
+    # WHEN we send another request with existing area and addresses
+    resp = auth_client.post(url_for('places.create_location'), json = payload)
+    # THEN we expect the correct status code
+    assert resp.status_code == 201
+    # WHEN we expect no area being created
+    assert auth_client.sqla.query(Area).count() == 1
+    # THEN we expect no address to be created
+    assert auth_client.sqla.query(Address).count() == 1
+    # THEN we expect 2 locations in total in the database
+    assert auth_client.sqla.query(Location).count() == 2
+
+    # WHEN we send an incomplete request
+    incomplete_payload = {
+            'country_code': 'US',
+            'latitude': 0,
+            'longitude': 0,
+            'city': 'Upland',
+            'address': '236 W. Reade Ave.',
+            'address_name': 'Taylor University',
+            'description': 'Euler 217'
+    }
+    resp = auth_client.post(url_for('places.create_location'), json = incomplete_payload)
+    # THEN we expect an error
+    assert resp.status_code == 422
+    
+
+
+
 
 @pytest.mark.smoke
 def test_read_all_locations(auth_client):
