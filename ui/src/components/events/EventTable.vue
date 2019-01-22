@@ -327,22 +327,29 @@ export default {
     },
 
     duplicate(event) {
-      //TODO maintain duration for date select
-      const copyEvent = JSON.parse(JSON.stringify(event));
-      copyEvent.start = new Date(copyEvent.start);
-      copyEvent.end = new Date(copyEvent.end);
-      const startDate = copyEvent.start.toDateString();
-      const endDate = copyEvent.end.toDateString();
-      if (startDate != endDate) {
-        const diff = copyEvent.end - copyEvent.start;
-        copyEvent.dayDuration = Math.ceil(diff / 86400000);
-      }
-      copyEvent.start = new Date(copyEvent.start).getTime();
-      copyEvent.end = new Date(copyEvent.end).getTime();
-      copyEvent.start %= 86400000; //ms in a day
-      copyEvent.end %= 86400000; //ms in a day
-      delete copyEvent.id;
-      this.activateEventDialog(copyEvent);
+      //TODO loading logic
+      let id = event.id
+      this.$http
+        .get(
+          `/api/v1/events/${id}?include_teams=1&include_assets=1&include_persons=1`
+        ).then(resp => {
+          const copyEvent = JSON.parse(JSON.stringify(resp.data));
+          copyEvent.start = new Date(copyEvent.start);
+          copyEvent.end = new Date(copyEvent.end);
+          const startDate = copyEvent.start.toDateString();
+          const endDate = copyEvent.end.toDateString();
+          if (startDate != endDate) {
+            const diff = copyEvent.end - copyEvent.start;
+            copyEvent.dayDuration = Math.ceil(diff / 86400000);
+          }
+          copyEvent.start = new Date(copyEvent.start).getTime();
+          copyEvent.end = new Date(copyEvent.end).getTime();
+          copyEvent.start %= 86400000; //ms in a day
+          copyEvent.end %= 86400000; //ms in a day
+          delete copyEvent.id;
+          this.activateEventDialog(copyEvent);
+        })
+        .catch(err => console.log("DUPLICATE ERROR", err))
     },
 
     archiveEvent() {
@@ -394,9 +401,14 @@ export default {
 
     cancelEvent() {
       this.eventDialog.show = false;
+      this.eventDialog.editMode = false;
+      this.eventDialog.saveLoading = false;
+      this.eventDialog.addMoreLoading = false;
+      this.eventDialog.event = {};
     },
 
     saveEvent(event) {
+      console.log(event)
       this.eventDialog.saveLoading = true;
       if (event.location) {
         event.location_id = event.location.id;
@@ -405,6 +417,8 @@ export default {
       delete newEvent.location;
       delete newEvent.dayDuration;
       delete newEvent.id;
+      delete newEvent.aggregate;
+      delete newEvent.attendance;
       if (this.eventDialog.editMode) {
         const eventId = event.id;
         const idx = this.events.findIndex(ev => ev.id === event.id);
@@ -413,8 +427,7 @@ export default {
           .then(resp => {
             console.log("EDITED", resp);
             Object.assign(this.events[idx], resp.data);
-            this.eventDialog.show = false;
-            this.eventDialog.saveLoading = false;
+            this.cancelEvent();
             this.showSnackbar(this.$t("events.event-edited"));
           })
           .catch(err => {
@@ -423,13 +436,28 @@ export default {
             this.showSnackbar(this.$t("events.error-editing-event"));
           });
       } else {
+        let newTeams = newEvent.teams;
+        delete newEvent.teams;
+        let newPersons = newEvent.persons;
+        delete newEvent.persons;
+        let newAssets = newEvent.assets;
+        delete newEvent.assets;
         this.$http
           .post("/api/v1/events/", newEvent)
           .then(resp => {
+            let promises = this.getDuplicationPromises(resp.data.id, newTeams, newPersons, newAssets)
+            if (promises) {
+              Promise.all(promises).then(values => {
+                console.log(values);
+                return resp;
+              })
+            }
+            return resp;
+          })
+          .then( resp => {
             console.log("ADDED", resp);
             this.events.push(resp.data);
-            this.eventDialog.show = false;
-            this.eventDialog.saveLoading = false;
+            this.cancelEvent();
             this.showSnackbar(this.$t("events.event-added"));
           })
           .catch(err => {
@@ -438,6 +466,45 @@ export default {
             this.showSnackbar(this.$t("events.error-adding-event"));
           });
       }
+    },
+
+    getDuplicationPromises(eventId, newTeams, newPersons, newAssets) {
+      if (!newTeams && !newPersons && !newAssets) return null;
+      let promises = [];
+      if (newTeams) {
+        for (let t of newTeams) {
+          let promise = this.postEventTeam(eventId, t.team_id)
+          promises.push(promise);
+        }
+      }
+      if (newPersons) {
+        for (let p of newPersons) {
+          let promise = this.postEventPerson(eventId, p.person_id, p.description)
+          promises.push(promise);
+        }
+      }
+      if (newAssets) {
+        for (let a of newAssets) {
+          let promise = this.postEventAsset(eventId, a.asset_id)
+          promises.push(promise);
+        }
+      }
+      return promises;
+    },
+
+    postEventTeam(eventId, teamId) {
+      return this.$http
+        .post(`/api/v1/events/${eventId}/teams/${teamId}`)
+    },
+    postEventAsset(eventId, assetId) {
+      return this.$http
+        .post(`/api/v1/events/${eventId}/assets/${assetId}`)
+
+    },
+    postEventPerson(eventId, personId, description) {
+      return this.$http.post(
+          `/api/v1/events/${eventId}/individuals/${personId}`,
+          {description});
     },
 
     addAnotherEvent(event) {

@@ -78,7 +78,7 @@
               :teams="event.teams"
               :loaded="teamsLoaded"
               v-on:snackbar="showSnackbar($event)"
-              v-on:team-added="getEvent()"
+              v-on:team-added="reloadTeams()"
             ></event-team-details>
           </v-flex>
           <v-flex>
@@ -86,7 +86,7 @@
               :persons="event.persons"
               :loaded="personsLoaded"
               v-on:snackbar="showSnackbar($event)"
-              v-on:person-added="getEvent()"
+              v-on:person-added="reloadPersons()"
             ></event-person-details>
           </v-flex>
         </v-layout>
@@ -96,7 +96,7 @@
           :assets="event.assets"
           :loaded="assetsLoaded"
           v-on:snackbar="showSnackbar($event)"
-          v-on:asset-added="getEvent()"
+          v-on:asset-added="reloadAssets()"
         ></event-asset-details>
       </v-flex>
     </v-layout>
