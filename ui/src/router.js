@@ -41,7 +41,8 @@ const router = new VueRouter({
       name: "admin",
       path: "/admin",
       meta: { authRequired: true },
-      component: () => import("@/pages/Admin")
+      // component: () => import("@/pages/Admin")
+      component: () => import("@/components/events/Dashboard")
     },
     {
       name: "people",

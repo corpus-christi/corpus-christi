@@ -8,7 +8,10 @@
               $t("events.dashboard.headers.location-attendance")
             }}</v-toolbar-title>
           </v-toolbar>
-          <ve-ring :data="locationAttendanceData" :legend-visible="false"></ve-ring>
+          <ve-ring
+            :data="locationAttendanceData"
+            :legend-visible="false"
+          ></ve-ring>
         </v-card>
       </v-flex>
       <v-flex>
@@ -28,7 +31,10 @@
               $t("events.dashboard.headers.yearly-attendance")
             }}</v-toolbar-title>
           </v-toolbar>
-          <ve-line :data="yearlyAttendanceData" :settings="attendanceLineSettings"></ve-line>
+          <ve-line
+            :data="yearlyAttendanceData"
+            :settings="attendanceLineSettings"
+          ></ve-line>
         </v-card>
       </v-flex>
     </v-layout>
@@ -41,9 +47,15 @@ export default {
   name: "Dashboard",
   watch: {
     currentLocale() {
-      this.homeGroupPercentageData.rows[0].homeGroups = this.$t("events.dashboard.charts.home-groups");
-      this.attendanceLineSettings.labelMap.campus = this.$t("events.dashboard.charts.campus");
-      this.attendanceLineSettings.labelMap.attendance = this.$t("events.dashboard.charts.attendance");
+      this.homeGroupPercentageData.rows[0].homeGroups = this.$t(
+        "events.dashboard.charts.home-groups"
+      );
+      this.attendanceLineSettings.labelMap.campus = this.$t(
+        "events.dashboard.charts.campus"
+      );
+      this.attendanceLineSettings.labelMap.attendance = this.$t(
+        "events.dashboard.charts.attendance"
+      );
     }
   },
   computed: {
