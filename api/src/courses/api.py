@@ -599,11 +599,16 @@ def get_all_students():
 @courses.route('/students/<int:student_id>')
 @jwt_required
 def read_one_student(student_id):
+    """ Read transcript of a student that contains:
+            - details of the student
+            - diplomas awarded and in progress
+            - courses required for diploma
+            - list of courses taken and in progress
+            - list of course offerings enrolled in for each course 
+    """
     result = db.session.query(Student, Person, Course_Offering, Course) \
                         .filter_by(student_id=student_id).join(Person, Course_Offering, Course) \
                         .all()
-    
-
     if result == []:
         return 'Student not found', 404
 
@@ -613,10 +618,7 @@ def read_one_student(student_id):
     r['diplomaList'] = []
     for i in result[0].Person.diplomas_awarded:
         # Query to get diploma attributes
-        d = db.session.query(Diploma) \
-                        .filter_by(id=i.diploma_id) \
-                        .first()
-        
+        d = db.session.query(Diploma).filter_by(id=i.diploma_id).first()
         if d is None:
             return 'Diploma not found', 404
         d = diploma_schema.dump(d)
@@ -663,6 +665,14 @@ def read_one_student(student_id):
         r['courses'].append(course_schema.dump(i.Course))
     for i in r['courses']:
         i['courseOfferings'] = []
+        # Query to see if course completion entry exists
+        completion_query = db.session.query(Course_Completion).filter_by(course_id=i['id'], person_id=r['person']['id']).first()
+        completion_query = course_completion_schema.dump(completion_query)
+        if completion_query: # If the student has completed the course
+            i['courseCompleted'] = True
+        else: # Student has not completed the course
+            i['courseCompleted'] = False
+
         for j in result:
             if(j.Course_Offering.course_id == i['id']):
                 co = course_offering_schema.dump(j.Course_Offering)
@@ -703,7 +713,7 @@ def create_course_completion(courses_id):
         valid_course_completion = course_completion_schema.load(request.json, partial=True)
     except ValidationError as err:
         return jsonify(err.messages), 422
-    
+
     person_id = request.json['personId']
 
     # Query into DB to ensure person is enrolled in a course offering with course_id
@@ -711,17 +721,17 @@ def create_course_completion(courses_id):
                         .filter_by(id=person_id).join(Student, Course_Offering) \
                         .filter_by(course_id=courses_id).join(Course) \
                         .first()
-    
+
     # Query into DB to ensure person has not already completed the course
     personCompleted = db.session.query(Course_Completion) \
                         .filter_by(course_id=courses_id, person_id=person_id) \
                         .first()
-    
+
     if personEnrolled is None:
         return jsonify(f'Person #{person_id} is not enrolled in any course offerings with course #{courses_id}.'), 404
-    elif personCompleted: 
+    elif personCompleted:
         return jsonify(f'Entry for Person #{person_id} with completed course #{courses_id} already exists.'), 403
-    else: 
+    else:
         # Create and add course completion entry for person
         new_course_completion = Course_Completion(**{'person_id':person_id, 'course_id': courses_id})
         db.session.add(new_course_completion)
@@ -750,9 +760,9 @@ class_meeting_schema = Class_MeetingSchema()
 @courses.route('/course_offerings/<int:course_offering_id>/class_meetings', methods=['POST'])
 @jwt_required
 def create_class_meeting(course_offering_id):
-    """ Create and add class meeting into course offering. 
-    
-    Note: Python datetime obj violates ISO 8601 and does not add timezone. 
+    """ Create and add class meeting into course offering.
+
+    Note: Python datetime obj violates ISO 8601 and does not add timezone.
     Don't worry about timezones for now. """
     try:
         valid_class_meeting = class_meeting_schema.load(request.json)
