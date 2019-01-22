@@ -184,7 +184,7 @@ class Student(Base):
 
 
 class StudentSchema(Schema):
-    id = fields.Integer(required=True, validate=Range(min=1))
+    id = fields.Integer(validate=Range(min=1))
     offering_id = fields.Integer(data_key='offeringId', required=True)
     student_id = fields.Integer(data_key='studentId', required=True)
     confirmed = fields.Boolean(required=True, default=False)
