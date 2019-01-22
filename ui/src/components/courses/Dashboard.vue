@@ -74,7 +74,7 @@ export default {
         self.courseData.rows.push({
           course: courseName,
           enrolled: enrollmentData[courseName],
-          graduated: 15 // FIXME: graduationValue 
+          graduated: graduationValue
         });
       });
     }

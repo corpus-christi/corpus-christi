@@ -22,7 +22,10 @@
               $t("events.dashboard.headers.home-group-percentage")
             }}</v-toolbar-title>
           </v-toolbar>
-          <ve-liquidfill :data="homeGroupPercentageData" align-center></ve-liquidfill>
+          <ve-liquidfill
+            :data="homeGroupPercentageData"
+            align-center
+          ></ve-liquidfill>
         </v-card>
       </v-flex>
       <v-flex xs12 sm12 md12 lg12 xl12>
