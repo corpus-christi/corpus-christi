@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "dot-prop": "^4.2.0",
     "lodash": "^4.17.11",
     "vee-validate": "^2.1.4",
     "vue": "^2.5.17",

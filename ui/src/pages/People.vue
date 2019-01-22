@@ -2,7 +2,8 @@
   <v-container>
     <v-tabs color="transparent" slider-color="accent">
       <v-tab ripple data-cy="person-table-tab">
-        <v-icon>person</v-icon>&nbsp;{{ $t("people.title") }}
+        <v-icon>person</v-icon>
+        &nbsp;{{ $t("people.title") }}
       </v-tab>
       <v-tab-item>
         <PersonTable
@@ -13,7 +14,8 @@
         />
       </v-tab-item>
       <v-tab ripple data-cy="roles-table-tab">
-        <v-icon>supervisor_account</v-icon>&nbsp;{{ $t("people.title-roles") }}
+        <v-icon>supervisor_account</v-icon>
+        &nbsp;{{ $t("people.title-roles") }}
       </v-tab>
       <v-tab-item>
         <RolesTable
@@ -66,7 +68,7 @@ export default {
           let roles = [];
           for (var role of resp.data) {
             roles.push({
-              text: role.nameI18n,
+              text: this.$t(role.nameI18n),
               value: role.id
             });
           }

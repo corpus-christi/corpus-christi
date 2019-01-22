@@ -21,12 +21,19 @@
 <script>
 import { mapGetters, mapMutations, mapState } from "vuex";
 import { flagForLocale, splitLocaleCode } from "../helpers";
+import dotProp from "dot-prop";
+import store from "./../store";
+
 export default {
   name: "LocaleMenu",
 
   computed: {
     ...mapState(["locales"]),
     ...mapGetters(["currentLocale"])
+  },
+
+  mounted() {
+    this.getTranslationsForLocale();
   },
 
   methods: {
@@ -36,6 +43,7 @@ export default {
       // Set the current locale.
       this.setCurrentLocaleCode(locale.code);
       this.$i18n.locale = splitLocaleCode(locale.code).languageCode;
+      this.getTranslationsForLocale();
     },
 
     displayLocale(locale) {
@@ -44,6 +52,20 @@ export default {
         return "";
       }
       return flagForLocale(locale.code) + locale.desc;
+    },
+
+    getTranslationsForLocale() {
+      this.translations = {};
+      return this.$http
+        .get(`/api/v1/i18n/values/${store.state.currentLocaleCode}`)
+        .then(response => {
+          let translations = {};
+          for (let item of response.data) {
+            dotProp.set(translations, item.key_id, item.gloss);
+          }
+          this.$i18n.mergeLocaleMessage(this.$i18n.locale, translations);
+        })
+        .catch(err => console.error("FAILURE", err.response));
     }
   }
 };

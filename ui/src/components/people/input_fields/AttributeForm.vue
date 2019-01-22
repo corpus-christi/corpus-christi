@@ -11,7 +11,6 @@
 </template>
 
 <script>
-import store from "./../../../store.js";
 import Date from "./Date.vue";
 import Float from "./Float.vue";
 import Integer from "./Integer.vue";
@@ -27,14 +26,8 @@ export default {
   data() {
     return {
       formData: this.value || {},
-      attributes: [],
-      translations: {}
+      attributes: []
     };
-  },
-  computed: {
-    getCurrentLocaleCode() {
-      return store.state.currentLocaleCode;
-    }
   },
   watch: {
     existingAttributes() {
@@ -47,22 +40,15 @@ export default {
           );
         }
       }
-    },
-    getCurrentLocaleCode() {
-      this.getAllTranslations().then(() => {
-        this.setupAttributes(this.attributes);
-      });
     }
   },
   mounted() {
-    Promise.all([this.getAttributesInfo(), this.getAllTranslations()]).then(
-      () => {
-        this.attributes.sort((a, b) => {
-          return a.seq - b.seq;
-        });
-        this.setupAttributes(this.attributes);
-      }
-    );
+    this.getAttributesInfo().then(() => {
+      this.attributes.sort((a, b) => {
+        return a.seq - b.seq;
+      });
+      this.setupAttributes(this.attributes);
+    });
   },
   methods: {
     getAttributesInfo() {
@@ -72,18 +58,6 @@ export default {
           this.attributes = resp.data.person_attributes;
         })
         .catch(err => console.error("FAILURE", err));
-    },
-
-    getAllTranslations() {
-      this.translations = {};
-      return this.$http
-        .get(`/api/v1/i18n/values/${store.state.currentLocaleCode}`)
-        .then(resp => {
-          for (let item of resp.data) {
-            this.translations[item.key_id] = item.gloss;
-          }
-        })
-        .catch(err => console.error("FAILURE", err.response));
     },
 
     getExistingAttribute(attributeId) {
@@ -105,11 +79,11 @@ export default {
 
     setupAttributes(attributes) {
       for (let attr of attributes) {
-        this.$set(attr, "name", this.translate(attr.nameI18n));
+        this.$set(attr, "name", this.$t(attr.nameI18n));
         this.$set(attr, "type", this.componentType(attr.typeI18n));
         this.$set(attr, "value", null);
         for (let enumval of attr.enumerated_values) {
-          this.$set(enumval, "value", this.translate(enumval.valueI18n));
+          this.$set(enumval, "value", this.$t(enumval.valueI18n));
         }
         this.$set(this.formData, attr.id.toString(), {
           personId: this.personId ? this.personId : 0,
@@ -118,12 +92,6 @@ export default {
           stringValue: ""
         });
       }
-    },
-
-    translate(key) {
-      return this.translations[key]
-        ? this.translations[key]
-        : `No translation found for key ${key}`;
     },
 
     updateForm(attributeId, attributeIdx, value) {

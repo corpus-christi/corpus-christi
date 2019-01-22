@@ -13,7 +13,7 @@ const ACCOUNT_KEY = "cc-account";
 export default new Vuex.Store({
   state: {
     // Current locale code (e.g., `es-EC`, `en-US`)
-    currentLocaleCode: "",
+    currentLocaleCode: "es-EC",
     // All available locales.
     locales: [],
 

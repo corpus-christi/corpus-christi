@@ -20,8 +20,13 @@
         </v-flex>
         <v-flex md3>
           <div data-cy="roles-dropdown">
-            <v-select hide-details solo single-line :items="rolesList">
-            </v-select>
+            <v-select
+              hide-details
+              solo
+              single-line
+              :label="$t('people.title-roles')"
+              :items="rolesList"
+            ></v-select>
           </div>
         </v-flex>
       </v-layout>
@@ -75,9 +80,8 @@
             v-for="role in props.item.accountInfo.roles"
             :key="role.id"
             small
+            >{{ role.nameI18n }}</v-chip
           >
-            {{ role.nameI18n }}
-          </v-chip>
         </td>
 
         <td class="text-no-wrap">
@@ -101,9 +105,9 @@
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false" data-cy>
-        {{ $t("actions.close") }}
-      </v-btn>
+      <v-btn flat @click="snackbar.show = false" data-cy>{{
+        $t("actions.close")
+      }}</v-btn>
     </v-snackbar>
 
     <!-- Person admin dialog -->
