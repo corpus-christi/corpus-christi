@@ -8,7 +8,10 @@ from ..auth.utils import jwt_not_required
 
 from . import people
 from .models import Person, Account, AccountSchema, Role, PersonSchema, RoleSchema, Manager, ManagerSchema
+from ..events.models import EventPerson, EventParticipant #TeamMember
 from ..attributes.models import Attribute, AttributeSchema, EnumeratedValue, EnumeratedValueSchema, PersonAttribute, PersonAttributeSchema
+from ..courses.models import Student, Class_Meeting
+
 from .. import db
 
 # ---- Person
@@ -43,7 +46,6 @@ def read_person_fields():
 
 
 @people.route('/persons', methods=['POST'])
-@jwt_required
 def create_person():
     request.json['person']['active'] = True
 
@@ -162,13 +164,33 @@ def activate_person(person_id):
     return jsonify(person_schema.dump(person))
 
 
+@people.route('/persons/delete/<person_id>', methods=['DELETE'])
+@jwt_required
+def delete_person(person_id):
+    person = db.session.query(Person).filter_by(id=person_id).first()
+
+    if person is None:
+        return jsonify(msg="Person not found"), 404
+
+    db.session.query(TeamMember).filter_by(member_id=person_id).delete()
+    db.session.query(EventParticipant).filter_by(person_id=person_id).delete()
+    db.session.query(EventPerson).filter_by(person_id=person_id).delete()
+    db.session.query(Student).filter_by(student_id=person_id).delete()
+    db.session.query(Account).filter_by(person_id=person_id).delete()
+    db.session.query(PersonAttribute).filter_by(person_id=person_id).delete()
+    # TODO delete any instance of Class_Attendance that references deleted class_meeting
+    db.session.query(Class_Meeting).filter_by(teacher=person_id).delete()
+    db.session.delete(person)
+    db.session.commit()
+    return jsonify(msg=f"Person {person_id} was deleted."), 200
+
+
 # ---- Account
 
 account_schema = AccountSchema()
 
 
 @people.route('/accounts', methods=['POST'])
-@jwt_required
 def create_account():
     request.json["active"] = True
     try:
@@ -239,13 +261,13 @@ def update_account(account_id):
     for field in 'password', 'username', 'active':
         if field in request.json:
             setattr(account, field, request.json[field])
-    
+
     if roles_to_add is not None:
         role_objects = []
         for role in roles_to_add:
             role_object = db.session.query(Role).filter_by(id=role).first()
             role_objects.append(role_object)
-    
+
     account.roles = role_objects
 
     db.session.commit()

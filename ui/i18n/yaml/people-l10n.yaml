@@ -8,6 +8,24 @@ people:
   attributes:
     en: Attributes
     es: Atributas
+  personal-information:
+    en: Personal Information
+    es: Informacion personal
+  account-information:
+    en: Account Information
+    es: Información de la cuenta
+  additional-information:
+    en: Additional Information
+    es: Información Adicional
+  optional:
+    en: Optional
+    es: Opcional
+  next:
+    en: Next
+    es: Siguiente
+  previous:
+    en: Previous
+    es: Anterior
 
 account:
   username:
@@ -115,3 +133,10 @@ person:
     person-save-error:
       en: Person was not saved
       es: La persona no fue salvada
+    confirm:
+      activate:
+        en: Are you sure you want to restore this person?
+        es: ¿Estás seguro de que quieres restaurar a esta persona?
+      deactivate:
+        en: Are you sure you want to archive this person?
+        es: ¿Estás seguro de que quieres archivar a esta persona?

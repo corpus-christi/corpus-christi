@@ -125,7 +125,7 @@
               small
               color="primary"
               slot="activator"
-              v-on:click="deactivatePerson(props.item)"
+              v-on:click="showConfirmDialog('deactivate', props.item)"
               data-cy="deactivate-person"
             >
               <v-icon small>archive</v-icon>
@@ -140,7 +140,7 @@
               small
               color="primary"
               slot="activator"
-              v-on:click="activatePerson(props.item)"
+              v-on:click="showConfirmDialog('activate', props.item)"
               data-cy="reactivate-person"
             >
               <v-icon small>undo</v-icon>
@@ -153,9 +153,9 @@
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false" data-cy>{{
-        $t("actions.close")
-      }}</v-btn>
+      <v-btn flat @click="snackbar.show = false" data-cy>
+        {{ $t("actions.close") }}
+      </v-btn>
     </v-snackbar>
 
     <!-- New/Edit dialog -->
@@ -163,17 +163,27 @@
       scrollable
       persistent
       v-model="personDialog.show"
-      max-width="500px"
+      max-width="1000px"
     >
-      <PersonForm
-        v-bind:initialData="personDialog.person"
-        v-bind:title="personDialog.title"
-        v-bind:addAnotherEnabled="personDialog.addAnotherEnabled"
-        v-bind:saveButtonText="personDialog.saveButtonText"
-        v-on:cancel="cancelPerson"
-        v-on:saved="savePerson"
-        v-on:added-another="addAnother"
-      />
+      <v-layout column>
+        <v-card>
+          <v-layout align-center justify-center row fill-height>
+            <v-card-title class="headline">
+              {{ $t(personDialog.title) }}
+            </v-card-title>
+          </v-layout>
+        </v-card>
+        <PersonForm
+          v-bind:initialData="personDialog.person"
+          v-bind:addAnotherEnabled="personDialog.addAnotherEnabled"
+          v-bind:saveButtonText="personDialog.saveButtonText"
+          v-bind:showAccountInfo="personDialog.showAccountInfo"
+          v-bind:isAccountRequired="false"
+          v-on:cancel="cancelPerson"
+          v-on:saved="savePerson"
+          v-on:added-another="addAnother"
+        />
+      </v-layout>
     </v-dialog>
 
     <!-- Person admin dialog -->
@@ -194,6 +204,36 @@
         v-on:reactivateAccount="reactivateAccount"
         v-on:close="closeAdmin"
       />
+    </v-dialog>
+
+    <v-dialog
+      v-model="confirmDialog.show"
+      max-width="350px"
+      data-cy="person-table-confirmation"
+    >
+      <v-card>
+        <v-card-text>{{ $t(confirmDialog.title) }}</v-card-text>
+        <v-card-actions>
+          <v-btn
+            v-on:click="cancelAction"
+            color="secondary"
+            flat
+            :disabled="confirmDialog.loading"
+            >{{ $t("actions.cancel") }}</v-btn
+          >
+          <v-spacer></v-spacer>
+          <v-btn
+            v-on:click="
+              confirmAction(confirmDialog.action, confirmDialog.person)
+            "
+            color="primary"
+            raised
+            :disabled="confirmDialog.loading"
+            :loading="confirmDialog.loading"
+            >{{ $t("actions.confirm") }}</v-btn
+          >
+        </v-card-actions>
+      </v-card>
     </v-dialog>
   </div>
 </template>
@@ -232,6 +272,14 @@ export default {
         person: {},
         account: {},
         rolesEnabled: false
+      },
+
+      confirmDialog: {
+        show: false,
+        action: "",
+        person: {},
+        title: "",
+        loading: false
       },
 
       snackbar: {
@@ -325,6 +373,7 @@ export default {
       this.personDialog.title = isEditTitle
         ? this.$t("person.actions.edit")
         : this.$t("person.actions.new");
+      this.personDialog.showAccountInfo = !isEditTitle;
       this.personDialog.addAnotherEnabled = !isEditTitle;
       this.personDialog.person = person;
       this.personDialog.show = true;
@@ -366,6 +415,25 @@ export default {
     },
 
     // ---- Account Administration
+
+    showConfirmDialog(action, person) {
+      this.confirmDialog.title = "person.messages.confirm." + action;
+      this.confirmDialog.action = action;
+      this.confirmDialog.person = person;
+      this.confirmDialog.show = true;
+    },
+
+    confirmAction(action, person) {
+      if (action == "deactivate") {
+        this.deactivatePerson(person);
+      } else if (action == "activate") {
+        this.activatePerson(person);
+      }
+    },
+
+    cancelAction() {
+      this.confirmDialog.show = false;
+    },
 
     adminPerson(person) {
       // Pass along the current person.
@@ -436,7 +504,11 @@ export default {
           this.showSnackbar(this.$t("person.messages.person-activate"));
         })
         .then(() => this.refreshPeopleList())
-        .catch(err => console.error("FAILURE", err.response));
+        .catch(err => console.error("FAILURE", err.response))
+        .finally(() => {
+          this.confirmDialog.loading = false;
+          this.confirmDialog.show = false;
+        });
     },
 
     deactivatePerson(person) {
@@ -452,7 +524,11 @@ export default {
             this.deactivateAccount(person.accountInfo.id);
           }
         })
-        .catch(err => console.error("FAILURE", err.response));
+        .catch(err => console.error("FAILURE", err.response))
+        .finally(() => {
+          this.confirmDialog.loading = false;
+          this.confirmDialog.show = false;
+        });
     },
 
     refreshPeopleList() {

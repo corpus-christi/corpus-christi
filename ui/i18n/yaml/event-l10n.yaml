@@ -26,9 +26,9 @@ events:
   location:
     en: Location
     es: Ubicación
-  actions:
-    en: Actions
-    es: Comportamiento
+  all-events:
+    en: All Events
+    es: Todos Eventos
   edit-event:
     en: Edit Event
     es: Editar Evento
@@ -62,7 +62,6 @@ events:
   error-adding-event:
     en: Error while adding event
     es: Error al agregar evento
-
   details:
     title:
       en: Details
@@ -71,6 +70,9 @@ events:
     title:
       en: Participants
       es: Participantes
+    add:
+      en: Add Participants
+      es: Añadir participantes
     added:
       en: Participants added
       es: Participantes agregado
@@ -86,53 +88,43 @@ events:
     confirm-remove:
       en: Are you sure you want to remove this participant?
       es: ¿Estás seguro de que quieres eliminar a este participante?
-  teams:
+  persons:
     title:
-      en: Teams
-      es: Equipos
-    description:
-      en: Description
-      es: Descripción
+      en: Event People
+      es: Personas del Evento
     new:
-      en: Add Team
-      es: Añadir Equipo
-    create-team:
-      en: Create Team
-      es: Crear Equipo
-    edit-team:
-      en: Edit Team
-      es: Editar Equipo
-    confirm-archive:
-      en: Are you sure you want to archive this team?
-      es: ¿Seguro que quieres archivar este equipo?
+      en: Add Person
+      es: Añadir Persona
+    edit:
+      en: Edit Person
+      es: Editar Persona
+    description:
+      en: Role Description
+      es: Descripción del Rol
     confirm-remove-from-event:
-      en: Are you sure you want to remove this team from this event?
-      es: ¿Estás seguro de que quieres eliminar a este equipo de este evento?
-    team-removed:
-      en: Team removed
-      es: Equipo eliminado
-    error-removing-team:
-      en: Error while removing team 
-      es: Error al eliminadar este equipo
-    error-unarchiving-team:
-      en: Error while unarchiving team 
-      es: Error al desarchivar equipo
-    team-edited:
-      en: Team edited
-      es: Equipo editado   # ?
-    error-editing-team:
-      en: Error while editing team
-      es: Error al editar equipo
-    team-added:
-      en: Team added
-      es: Equipo agregado
-    error-adding-team:
-      en: Error while adding team
-      es: Error al agregar equipo
-    error-team-assigned:
-      en: That team is assigned to a conflicting event.
-      es: Ese equipo está asignado a un evento conflictivo.
-    team-on-event:
-      en: That team is already assigned to this event.
-      es: Ese equipo ya está asignado a este evento.
-    
+      en: Are you sure you want to remove this person from this event?
+      es: ¿Está seguro de que desea eliminar este persona de este evento?
+    person-on-event:
+      en: That person is already assigned to this event.
+      es: Ese persona ya está asignado a este evento.
+    person-added:
+      en: Person added
+      es: Persona agregado
+    person-edited:
+      en: Person edited
+      es: Persona editado
+    person-removed:
+      en: Person removed
+      es: Persona eliminado
+    error-person-assigned:
+      en: That person is assigned to a conflicting event.
+      es: Ese persona está asignado a un evento conflictivo.
+    error-adding-person:
+      en: Error while adding person
+      es: Error al agregar persona
+    error-removing-person:
+      en: Error while removing person 
+      es: Error al eliminadar este persona
+    none-assigned:
+      en: No people assigned.
+      es: No hay personas asignados.

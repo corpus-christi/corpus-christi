@@ -69,6 +69,12 @@ const router = new VueRouter({
           component: () => import("@/components/events/EventTable")
         },
         {
+          name: "events-calendar",
+          path: "calendar",
+          meta: { authRequired: true },
+          component: () => import("@/components/events/Calendar")
+        },
+        {
           name: "event",
           path: ":event",
           meta: { authRequired: true },
