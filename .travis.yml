@@ -43,11 +43,12 @@ matrix:
                   script:
                         - createuser arco
                         - createdb --owner=arco cc-staging
-                        - cat > private.py << END
-                                PASS = 'DFGjhfdhGf5434H'
-                                SECRET_KEY1 = 'oi5uy5tred3434fgh'
-                                SECRET_KEY2 = 'mnbavc4xs4dfghj34kiuytres'
-                          END 
+                          #                        - cp thing in to private.py
+                        - cat << EOF > ./private.py
+                          PASS = "rtyuirt34f" 
+                          SECRET_KEY1 = 'oi5uy5tred3434fgh'
+                          SECRET_KEY2 = 'mnbavc4xs4dfghj34kiuytres'
+                          EOF
                         - flask db upgrade
                         - flask data load-all
                         - sudo nginx -t
