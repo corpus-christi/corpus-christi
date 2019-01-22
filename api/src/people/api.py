@@ -464,6 +464,8 @@ def create_manager():
 @jwt_required
 def read_all_managers():
     result = db.session.query(Manager).all()
+    for r in result:
+        r.person = r.account.person
     return jsonify(manager_schema.dump(result, many=True))
 
 
@@ -471,6 +473,7 @@ def read_all_managers():
 @jwt_required
 def read_one_manager(manager_id):
     result = db.session.query(Manager).filter_by(id=manager_id).first()
+    result.person = result.account.person
     return jsonify(manager_schema.dump(result))
 
 

@@ -124,22 +124,28 @@ def update_group(group_id):
 
     old_person_ids = [ member.person_id for member in group.members ]
     print(f"old person ids: {old_person_ids}")
+    print(f"new person ids: {update_person_ids}")
+
 
     today = datetime.datetime.today().strftime('%Y-%m-%d')
 
     # for each update_person_id, if it already exists, skip, otherwise, add
     # this way it keeps the original member_id unchanged
-    for update_person_id in update_person_ids:
-        if update_person_id not in old_person_ids:
-            new_member = generate_member(group.id, update_person_id, today, True)
-            print(f"adding person with id {update_person_id}")
-            db.session.add(new_member)
+    if update_person_ids != []:
+        for update_person_id in update_person_ids:
+            if update_person_id not in old_person_ids:
+                new_member = generate_member(group.id, update_person_id, today, True)
+                db.session.add(new_member)
+            else:
+                print(f"NEW ID: {update_person_id}")
+                new_member = db.session.query(Member).filter_by(person_id=update_person_id, group_id=group_id).first()
+                setattr(new_member,'active', True)
 
-    for old_person_id in old_person_ids:
-        if old_person_id not in update_person_ids:
-            print(f"removing person with id {old_person_id}")
-            delete_member = db.session.query(Member).filter_by(group_id=group.id, person_id=old_person_id).first()
-            db.session.delete(delete_member)
+    if update_person_ids != []:
+        for old_person_id in old_person_ids:
+            if old_person_id not in update_person_ids:
+                delete_member = db.session.query(Member).filter_by(group_id=group.id, person_id=old_person_id).first()
+                setattr(delete_member, 'active', False)
 
     # set other attributes
     for key, val in valid_group.items():
@@ -158,6 +164,7 @@ def activate_group(group_id):
         return jsonify(msg="Group not found"), 404
 
     setattr(group, 'active', True)
+    db.session.commit()
     return jsonify(group_schema.dump(group))
 
 
@@ -170,6 +177,7 @@ def deactivate_group(group_id):
         return jsonify(msg="Group not found"), 404
 
     setattr(group, 'active', False)
+    db.session.commit()
     return jsonify(group_schema.dump(group))
 
 
@@ -197,6 +205,12 @@ def create_meeting():
 @groups.route('/meetings')
 def read_all_meetings():
     result = db.session.query(Meeting).all()
+
+    if result == []:
+        return jsonify(msg="No meetings found"), 404
+
+    for r in result:
+        r.address = r.address
     return jsonify(meeting_schema.dump(result, many=True))
 
 @groups.route('/meetings/group/<group_id>')
@@ -206,6 +220,9 @@ def read_all_meetings_by_group(group_id):
 
     if len(result) == 0:
             return jsonify(msg="No meetings found"), 404
+
+    for r in result:
+        r.address = r.address
 
     return jsonify(meeting_schema.dump(result, many=True))
 
@@ -228,6 +245,8 @@ def read_one_meeting(meeting_id):
 
     if result is None:
         return jsonify(msg="Meeting not found"), 404
+
+    result.address = result.address
 
     return jsonify(meeting_schema.dump(result))
 
@@ -278,6 +297,7 @@ def activate_meeting(meeting_id):
         return jsonify(msg="Meeting not found"), 404
 
     setattr(meeting, 'active', True)
+    db.session.commit()
     return jsonify(meeting_schema.dump(meeting))
 
 
@@ -290,6 +310,7 @@ def deactivate_meeting(meeting_id):
         return jsonify(msg="Meeting not found"), 404
 
     setattr(meeting, 'active', False)
+    db.session.commit()
     return jsonify(meeting_schema.dump(meeting))
 
 
@@ -335,6 +356,9 @@ def create_member():
 def read_all_members():
     result = db.session.query(Member).all()
 
+    if result == []:
+        return jsonify(msg="No members found"), 404
+
     return jsonify(member_schema.dump(result, many=True))
 
 
@@ -369,6 +393,32 @@ def update_member(member_id):
     return jsonify(member_schema.dump(member))
 
 
+@groups.route('/members/activate/<member_id>', methods=['PUT'])
+@jwt_required
+def activate_member(member_id):
+    member = db.session.query(Member).filter_by(id=member_id).first()
+    
+    if member is None:
+        return jsonify(msg="Member not found"), 404
+
+    setattr(member, 'active', True)
+    db.session.commit()
+    return jsonify(member_schema.dump(member))
+
+
+@groups.route('/members/deactivate/<member_id>', methods=['PUT'])
+@jwt_required
+def deactivate_member(member_id):
+    member = db.session.query(Member).filter_by(id=member_id).first()
+    
+    if member is None:
+        return jsonify(msg="Member not found"), 404
+
+    setattr(member, 'active', False)
+    db.session.commit()
+    return jsonify(member_schema.dump(member))
+
+
 # ---- Attendance
 
 attendance_schema = AttendanceSchema()
@@ -399,6 +449,9 @@ def create_attendance():
 def read_all_attendance():
     result = db.session.query(Attendance).all()
 
+    if result == []:
+        return jsonify(msg="No attendance records found"), 404
+
     return jsonify(attendance_schema.dump(result, many=True))
 
 
@@ -407,7 +460,7 @@ def read_all_attendance():
 def read_attendance_by_meeting(meeting_id):
     result = db.session.query(Attendance).filter_by(meeting_id=meeting_id).all()
 
-    if len(result) == 0:
+    if result == []:
         return jsonify(msg="No attendance records found"), 404
 
     return jsonify(attendance_schema.dump(result, many=True))
@@ -417,7 +470,7 @@ def read_attendance_by_meeting(meeting_id):
 def read_attendance_by_member(member_id):
     result = db.session.query(Attendance).filter_by(member_id=member_id).all()
 
-    if len(result) == 0:
+    if result == []:
         return jsonify(msg="No attendance records found"), 404
 
     return jsonify(attendance_schema.dump(result, many=True))

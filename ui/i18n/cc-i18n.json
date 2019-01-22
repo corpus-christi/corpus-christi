@@ -31,6 +31,7 @@
       "add-address": "Add Address",
       "add-another": "Add Another",
       "add-event": "Add Event",
+      "add-group": "Add Group",
       "add-person": "Add Person",
       "back": "Back",
       "cancel": "Cancel",
@@ -46,6 +47,8 @@
       "open-map": "Open Map",
       "save": "Save",
       "search": "Search",
+      "search-addresses": "Search Addresses",
+      "search-managers": "Search Managers",
       "search-people": "Search People",
       "signup": "Signup",
       "tooltips": {
@@ -172,6 +175,38 @@
       "title": "Event Title"
     },
     "groups": {
+      "create-group": "Create Group",
+      "description": "Description",
+      "details": {
+        "title": "Details"
+      },
+      "edit-group": "Edit Group",
+      "group-description": "Group Description",
+      "header": "Groups",
+      "manager": "Manager",
+      "meetings": {
+        "title": "Meetings"
+      },
+      "members": {
+        "title": "Members"
+      },
+      "messages": {
+        "confirm-archive": "Are you sure you want to archive this group?",
+        "error-adding-group": "Error while adding group",
+        "error-adding-members": "Error while adding members",
+        "error-archiving-group": "Error while archiving group",
+        "error-archiving-member": "Error while unarchiving member",
+        "error-editing-group": "Error while editing group",
+        "group-added": "Group added",
+        "group-archived": "Group archived",
+        "group-edited": "Group edited",
+        "group-unarchived": "Group unarchived",
+        "group-unarchiving-group": "Error while unarchiving group",
+        "member-archived": "Member archived",
+        "member-unarchived": "Member unarchived",
+        "members-added": "Members added"
+      },
+      "name": "Name",
       "title": "Home Churches"
     },
     "login": {
@@ -335,6 +370,7 @@
       "add-address": "A\u00f1adir Dirreci\u00f3n",
       "add-another": "A\u00f1adir Otro",
       "add-event": "A\u00f1adir Evento",
+      "add-group": "A\u00f1adir grupo",
       "add-person": "A\u00f1adir Persona",
       "back": "Regresar",
       "cancel": "Cancelar",
@@ -350,6 +386,8 @@
       "open-map": "Abrir Mapa",
       "save": "Salvar",
       "search": "Buscar",
+      "search-addresses": "Buscar Direcciones",
+      "search-managers": "Gestores de B\u00fasqueda",
       "search-people": "Buscar Personas",
       "signup": "Reg\u00edstrate",
       "tooltips": {
@@ -476,6 +514,38 @@
       "title": "T\u00edtulo del Evento"
     },
     "groups": {
+      "create-group": "Crea un Grupo",
+      "description": "Descripci\u00f3n",
+      "details": {
+        "title": "Detalles"
+      },
+      "edit-group": "Grupo de Edici\u00f3n",
+      "group-description": "Descripci\u00f3n del Grupo",
+      "header": "Grupos",
+      "manager": "Gerente",
+      "meetings": {
+        "title": "Reuniones"
+      },
+      "members": {
+        "title": "Miembros"
+      },
+      "messages": {
+        "confirm-archive": "\u00bfSeguro que quieres archivar este groupos?",
+        "error-adding-group": "Error al agregar grupo",
+        "error-adding-members": "Error al agregar miembros",
+        "error-archiving-group": "Error al archivar el grupo",
+        "error-archiving-member": "Error al desarchivar miembro",
+        "error-editing-group": "Error al editar grupo",
+        "group-added": "Grupo agregado",
+        "group-archived": "Grupo archivado",
+        "group-edited": "Grupo editado",
+        "group-unarchived": "Grupo desarchivado",
+        "group-unarchiving-group": "Error al desarchivar el grupo",
+        "member-archived": "Miembro archivado",
+        "member-unarchived": "Miembro desarchivado",
+        "members-added": "Miembros agregados"
+      },
+      "name": "Nombre",
       "title": "Iglesias Hogar"
     },
     "login": {

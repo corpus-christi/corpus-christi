@@ -130,9 +130,17 @@ def create_multiple_members(sqla, n):
     new_members= []
     for i in range(n):
         valid_member = member_schema.load(member_object_factory(sqla))
-        new_members.append(Member(**valid_member))
-    sqla.add_all(new_members)
-    sqla.commit()
+        member = Member(**valid_member)
+        # Don't put someone in a group they are already in
+        group = sqla.query(Group).filter_by(id=member.group_id).first()
+        person_ids = []
+        for group_member in group.members:
+            person_ids.append(group_member.person_id)
+        
+        if member.person_id not in person_ids:
+            new_members.append(Member(**valid_member))
+            sqla.add(member)
+            sqla.commit()
 
 def create_attendance(sqla, fraction=0.75):
     """Create data for attendance with member/meeting"""

@@ -11,6 +11,9 @@ actions:
     _desc: Add a new address
     en: Add Address
     es: Añadir Dirreción
+  add-group:
+     en: Add Group
+     es: Añadir grupo
   add-person:
     _desc: Add a person to the database
     en: Add Person
@@ -67,6 +70,12 @@ actions:
     _desc: Search for something
     en: Search
     es: Buscar
+  search-addresses:
+    en: Search Addresses
+    es: Buscar Direcciones
+  search-managers:
+    en: Search Managers
+    es: Gestores de Búsqueda
   search-people:
     _desc: Search for people
     en: Search People
