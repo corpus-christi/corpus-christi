@@ -199,6 +199,7 @@
       "title": "Public"
     },
     "teams": {
+      "all-teams": "All Teams",
       "confirm-archive": "Are you sure you want to archive this team?",
       "confirm-remove-from-event": "Are you sure you want to remove this team from this event?",
       "create-team": "Create Team",
@@ -441,6 +442,7 @@
       "title": "P\u00fablico"
     },
     "teams": {
+      "all-teams": "Todos Equipos",
       "confirm-archive": "\u00bfSeguro que quieres archivar este equipo?",
       "confirm-remove-from-event": "\u00bfEst\u00e1s seguro de que quieres eliminar a este equipo de este evento?",
       "create-team": "Crear Equipo",

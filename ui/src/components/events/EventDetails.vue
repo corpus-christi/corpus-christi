@@ -345,6 +345,7 @@ export default {
       delete newEvent.dayDuration;
       delete newEvent.teams;
       delete newEvent.id;
+      delete newEvent.images;
       const eventId = event.id;
       this.$http
         .put(`/api/v1/events/${eventId}`, newEvent)
