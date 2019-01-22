@@ -11,19 +11,12 @@ matrix:
         include:
                 - language: node_js
                   node_js: "11"
-                  #before_install:
-                  script:
-                        - cd ui/
+                  before_install:
                         - yarn cache clean
-                        - yarn add cypress
-                          #install:
+                  install:
                         - yarn install
-                 #script:
-                          #- cd ui/
+                  script:
                         - yarn build
-                        - cd ../  
-                          #- echo "Done with Node_js"  
-                          #- cd ../
                 - language: python
                   python: "3.7"
                   dist: "xenial"
