@@ -1,9 +1,11 @@
 <template>
   <v-card>
-    <v-card-title>Register for this course</v-card-title>
+    <v-card-title>
+      <span class="headline">Register for this course ($t me)</span>
+    </v-card-title>
     <v-card-text>
       <v-form>
-        <v-text-field
+        <!-- <v-text-field
           v-model="username"
           v-bind:label="$t('account.username')"
           prepend-icon="person"
@@ -18,11 +20,15 @@
           name="password"
           type="password"
           data-cy="register-password"
-        ></v-text-field>
+        ></v-text-field> -->
         <!-- TODO: add create-person-form -->
     
         <v-spacer></v-spacer>
-        <v-radio-group  v-model="selectedOffering">
+        <v-radio-group
+          v-model="selectedOffering"
+          v-validate="'required'"
+          name="offering"
+          v-bind:error-messages="errors.first('offering')">
         <span>{{ $t("courses.register.choose-offering") }}</span>
           <v-radio
             v-for="offering in course.course_offerings"
@@ -40,10 +46,10 @@
     <!-- cancel and register buttons -->
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn color="primary" v-on:click="cancel" data-cy="cancel">{{
+      <v-btn color="primary" v-on:click="cancel" data-cy="cancel" :disabled="loading">{{
         $t("actions.cancel")
       }}</v-btn>
-      <v-btn color="primary" v-on:click="registerPerson" data-cy="register">{{
+      <v-btn color="primary" v-on:click="registerPerson" data-cy="register" :loading="loading">{{
         $t("actions.login")
       }}</v-btn>
     </v-card-actions>
@@ -63,6 +69,7 @@ export default {
     return {
       username: "",
       password: "",
+      loading: false,
       selectedOffering: null,
       newStudent: {},
       showExpansion: [false]
@@ -77,6 +84,7 @@ export default {
   methods: {
     cancel() {
       this.clear();
+      this.$validator.reset();
       this.$emit("cancel");
     },
     register() {
@@ -95,40 +103,38 @@ export default {
     },
 
     registerPerson() {
-      console.log(this.currentAccount.username)
-        
-    },
-
-    saveNewStudent(newStudent) {
-      this.newStudentDialog.saving = true;
-      
-      const personObject = newStudent;
-      newStudent = {};
-            
-      newStudent.confirmed = true;
-      newStudent.offeringId = this.offeringId;
-      newStudent.studentId = personObject.id;
-      newStudent.active = true;
-        
-      this.$http
-        .post(`/api/v1/courses/course_offerings/${newStudent.studentId}`, newStudent)
-        .then(resp => {
-          console.log("ADDED", resp);
-          this.students.push(resp.data);
-          
-          this.snackbar.text = this.$t("courses.added");
-          this.snackbar.show = true;
-        })
-        .catch(err => {
-           console.error("FAILURE", err.response);
-           this.snackbar.text = this.$t("courses.add-failed");
-           this.snackbar.show = true;
-        })
-        .finally(() => {
-          this.newStudentDialog.show = false;
-          this.newStudentDialog.saving = false;
-        });
-    },
+      //temporary for presentation! fix me later!!
+      this.$validator.validateAll().then(() => {
+        if (!this.errors.any()) {
+          console.log('b')
+          this.loading = true;
+          let my_username = this.currentAccount.username;
+          this.$http.get(`/api/v1/people/accounts/username/${my_username}`)
+            .then(resp => {
+              let id = resp.data.id
+              let newStudent = {};
+              newStudent.confirmed = true;
+              newStudent.offeringId = this.selectedOffering;
+              newStudent.studentId = id;
+              newStudent.active = true;
+              return newStudent;
+            })
+            .then(student => {
+              return this.$http.post(`/api/v1/courses/course_offerings/${student.studentId}`, student);
+            })
+            .then(resp => {
+              this.loading = false;
+              console.log("ADDED", resp);
+              this.$emit('snackbar', 'successfully registered ($t me)')
+              this.cancel();
+            })
+            .catch(err => {
+              this.loading = false;              
+              console.log(err)
+            });
+        }
+      })
+    }
   }
 };
 </script>

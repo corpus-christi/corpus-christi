@@ -22,6 +22,7 @@
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn
+                round
                 raised
                 color="primary"
                 @click="registrationFormDialog.show = true"
@@ -35,11 +36,18 @@
       </div>
     </v-card>
     <v-dialog v-model="registrationFormDialog.show" max-width="500px">
-      <courseRegistrationForm 
-        v-on:cancel="cancel" 
+      <CourseRegistrationForm 
+        v-on:cancel="cancel"
+        v-on:snackbar="showSnackbar($event)"
         :course="course" 
         v-on:registered="registeredPerson"/>
     </v-dialog>
+    <v-snackbar v-model="snackbar.show">
+      {{ snackbar.text }}
+      <v-btn flat @click="snackbar.show = false">
+        {{ $t("actions.close") }}
+      </v-btn>
+    </v-snackbar>
   </div>
 </template>
 
@@ -52,7 +60,7 @@ export default {
     course: {}
   },
   components: {
-    courseRegistrationForm
+    CourseRegistrationForm
   },
   data() {
     return {
@@ -61,6 +69,10 @@ export default {
         editMode: false,
         saving: false,
         courseOffering: {}
+      },
+      snackbar: {
+        show: false,
+        message: ""
       }
     };
   },
@@ -69,7 +81,13 @@ export default {
     cancel() {
       this.registrationFormDialog.show = false;
     },
-    registeredPerson() {}
+    registeredPerson() {},
+
+    showSnackbar(message) {
+      this.snackbar.text = message;
+      this.snackbar.show = true;
+    },
+
   }
 };
 </script>
