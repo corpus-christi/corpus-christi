@@ -90,10 +90,10 @@ def load_all():
     create_multiple_people(db.session, 17)
     create_multiple_accounts(db.session, 0.25)
     create_multiple_courses(db.session, 12)
-    create_multiple_course_offerings(db.session, 6)
+    create_multiple_course_offerings(db.session, 25)
     create_multiple_prerequisites(db.session)
     create_multiple_diplomas(db.session, 30)
-    create_multiple_students(db.session, 30)
+    create_multiple_students(db.session, 60)
     create_class_meetings(db.session, 30)
     create_events_test_data(db.session)
     # create_diploma_awards(db.session, 30)
@@ -180,9 +180,16 @@ def create_course(name, description, prereq, offering):
     # Create the Course and Prereq Courses; commit to DB so we get ID
     course = Course(name=name, description=description)
 
-    for i in range(num_prereqs):
-        course.prerequisites.append(Course(name=f"prereq course{i}",
-                description=f"here we are using the command line.{i}"))
+    if prereq is not None:
+        if str.isnumeric(prereq):
+            for i in range(int(prereq)):
+                course.prerequisites.append(Course(name=f"prereq course{i}",
+                        description=f"here we are using the command line.{i}"))
+        else:
+            prereq_course = db.session.query(Course).filter_by(name=prereq).first()
+            print(prereq_course)
+            course.prerequisites.append(prereq_course)
+
     if offering is not None:
         course_offering = Course_Offering(course_id=course.id,
                         description=offering, max_size=2, active=True)

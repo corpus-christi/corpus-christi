@@ -54,8 +54,7 @@ export default {
     existingEntities: Array,
     value: null,
     searchEndpoint: String,
-    errorMessages: String,
-    label: String
+    errorMessages: String
   },
   data() {
     return {
@@ -65,10 +64,10 @@ export default {
       isLoading: false
     };
   },
+
   computed: {
     getLabel() {
-      if (this.label) return this.label;
-      else if (this.location) return this.$t("events.event-location");
+      if (this.location) return this.$t("events.event-location");
       else if (this.person) return this.$t("actions.search-people");
       else if (this.course) return this.$t("actions.search-courses");
       else if (this.team) return this.$t("teams.title");

@@ -26,10 +26,10 @@ const router = new VueRouter({
       component: () => import("@/pages/public/Events")
     },
     {
-      name: "public-events",
-      path: "/public/events",
+      name: "public-courses",
+      path: "/public/courses",
       meta: { authRequired: false },
-      component: () => import("@/pages/public/Events")
+      component: () => import("@/pages/public/Courses")
     },
     {
       name: "login",
@@ -146,7 +146,45 @@ const router = new VueRouter({
       name: "diplomas-admin",
       path: "/diplomas",
       meta: { authRequired: true },
-      component: () => import("@/pages/Diplomas")
+      component: () => import("@/pages/Diplomas"),
+      redirect: { name: "all-diplomas" },
+      children: [
+        {
+          name: "all-diplomas",
+          path: "all",
+          meta: { authRequired: true },
+          component: () => import("@/components/diplomas/DiplomasTable")
+        },
+        {
+          name: "diploma-details",
+          path: ":diplomaId",
+          meta: { authRequired: true },
+          props: true,
+          component: () => import("@/components/diplomas/DiplomaDetails")
+        }
+      ]
+    },
+    {
+      name: "transcripts",
+      path: "/transcripts",
+      meta: { authRequired: true },
+      component: () => import("@/pages/Transcripts"),
+      redirect: { name: "all-transcripts" },
+      children: [
+        {
+          name: "all-transcripts",
+          path: "all",
+          meta: { authRequired: true },
+          component: () => import("@/components/transcripts/TranscriptsTable")
+        },
+        {
+          name: "transcript-details",
+          path: ":studentId",
+          meta: { authRequired: true },
+          props: true,
+          component: () => import("@/components/transcripts/TranscriptDetails")
+        }
+      ]
     },
     {
       name: "courses",
@@ -189,14 +227,16 @@ const router = new VueRouter({
               path: "students",
               meta: { authRequired: true },
               props: true,
-              component: () => import("@/components/courses/CourseOfferingStudents")
+              component: () =>
+                import("@/components/courses/CourseOfferingStudents")
             },
             {
               name: "course-offering-meetings",
               path: "meetings",
               meta: { authRequired: true },
               props: true,
-              component: () => import("@/components/courses/CourseOfferingMeetings")
+              component: () =>
+                import("@/components/courses/CourseOfferingMeetings")
             }
           ]
         }

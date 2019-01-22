@@ -10,11 +10,7 @@
       </v-list-tile-action>
       <v-list-tile-title>{{ item.title }}</v-list-tile-title>
     </v-list-tile>
-    <v-list-group
-      v-else
-      :sub-group="isChild"
-      no-action
-    >
+    <v-list-group v-else :sub-group="isChild" no-action>
       <v-list-tile
         slot="activator"
         :to="{ name: item.route }"
@@ -49,9 +45,7 @@ export default {
       default: false
     }
   }
-  
-}
+};
 </script>
 
-<style>
-</style>
+<style></style>

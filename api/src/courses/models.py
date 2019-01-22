@@ -142,7 +142,7 @@ class Diploma(Base):
     __tablename__ = 'courses_diploma'
     id = Column(Integer, primary_key=True)
     name = Column(StringTypes.MEDIUM_STRING, nullable=False)
-    description = Column(StringTypes.LONG_STRING, nullable=False)
+    description = Column(StringTypes.LONG_STRING, nullable=True)
     active = Column(Boolean, nullable=False, default=True)
     courses = relationship('Course', secondary=Diploma_Course,
                            back_populates='diplomas', lazy=True)
@@ -156,7 +156,7 @@ class Diploma(Base):
 class DiplomaSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     name = fields.String(required=True, validate=Length(min=1))
-    description = fields.String(required=True, validate=Length(min=1))
+    description = fields.String(allow_none=True)
     active = fields.Boolean(required=False, default=True)
     courseList = fields.Nested('CourseSchema', many=True)
     studentList = fields.Nested('StudentSchema', many=True)
