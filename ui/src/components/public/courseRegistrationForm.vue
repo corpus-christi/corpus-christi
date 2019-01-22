@@ -52,10 +52,10 @@
 
 <script>
 import PersonForm from "../people/PersonForm";
-import mapGetters from "vuex";
+import {mapGetters} from "vuex";
 
 export default {
-  name: "courseRegistrationForm",
+  name: "CourseRegistrationForm",
   components: {
     PersonForm
   },
@@ -71,7 +71,8 @@ export default {
   props: {
     course: {}
   },
-  computed: mapGetters(["isLoggedaIn","currentAccount"]),
+
+  computed: mapGetters(["isLoggedIn","currentAccount"]),
 
   methods: {
     cancel() {
@@ -94,7 +95,8 @@ export default {
     },
 
     registerPerson() {
-      
+      console.log(this.currentAccount.username)
+        
     },
 
     saveNewStudent(newStudent) {

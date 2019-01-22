@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import courseRegistrationForm from "./courseRegistrationForm";
+import CourseRegistrationForm from "./CourseRegistrationForm";
 
 export default {
   name: "CourseCard",
