@@ -48,6 +48,7 @@
     <v-card-title>{{ $t("person.actions.assign-roles") }}</v-card-title>
     <v-card-text>
       <v-select
+        v-model="currentRoles"
         :items="rolesList"
         label="$tRoles"
         chips
@@ -118,6 +119,7 @@ export default {
       username: "",
       password: "",
       repeat_password: "",
+      currentRoles: [],
 
       snackbar: {
         show: false,
@@ -153,9 +155,19 @@ export default {
               personId: this.person.id
             });
           } else {
-            this.$emit("updateAccount", this.account.id, {
-              password: this.password
-            });
+            var roles = [];
+            for (var role of this.currentRoles) {
+              roles.push(role.value);
+            }
+            console.log(roles);
+            this.$emit(
+              "updateAccount",
+              this.account.id,
+              { roles: roles },
+              {
+                password: this.password
+              }
+            );
           }
           this.close();
         }

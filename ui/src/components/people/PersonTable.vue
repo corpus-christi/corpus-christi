@@ -152,9 +152,9 @@
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false" data-cy>
-        {{ $t("actions.close") }}
-      </v-btn>
+      <v-btn flat @click="snackbar.show = false" data-cy>{{
+        $t("actions.close")
+      }}</v-btn>
     </v-snackbar>
 
     <!-- New/Edit dialog -->
@@ -162,19 +162,27 @@
       scrollable
       persistent
       v-model="personDialog.show"
-      max-width="500px"
+      max-width="1000px"
     >
-      <PersonForm
-        v-bind:initialData="personDialog.person"
-        v-bind:title="personDialog.title"
-        v-bind:addAnotherEnabled="personDialog.addAnotherEnabled"
-        v-bind:saveButtonText="personDialog.saveButtonText"
-        v-bind:showAccountInfo="personDialog.showAccountInfo"
-        v-bind:isAccountRequired="false"
-        v-on:cancel="cancelPerson"
-        v-on:saved="savePerson"
-        v-on:added-another="addAnother"
-      />
+      <v-layout column>
+        <v-card>
+          <v-layout align-center justify-center row fill-height>
+            <v-card-title class="headline">{{
+              $t(personDialog.title)
+            }}</v-card-title>
+          </v-layout>
+        </v-card>
+        <PersonForm
+          v-bind:initialData="personDialog.person"
+          v-bind:addAnotherEnabled="personDialog.addAnotherEnabled"
+          v-bind:saveButtonText="personDialog.saveButtonText"
+          v-bind:showAccountInfo="personDialog.showAccountInfo"
+          v-bind:isAccountRequired="false"
+          v-on:cancel="cancelPerson"
+          v-on:saved="savePerson"
+          v-on:added-another="addAnother"
+        />
+      </v-layout>
     </v-dialog>
 
     <!-- Person admin dialog -->

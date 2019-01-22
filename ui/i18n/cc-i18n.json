@@ -167,6 +167,24 @@
       },
       "start-date": "Start Date",
       "start-time": "Start Time",
+      "teams": {
+        "confirm-archive": "Are you sure you want to archive this team?",
+        "confirm-remove-from-event": "Are you sure you want to remove this team from this event?",
+        "create-team": "Create Team",
+        "description": "Description",
+        "edit-team": "Edit Team",
+        "error-adding-team": "Error while adding team",
+        "error-editing-team": "Error while editing team",
+        "error-removing-team": "Error while removing team",
+        "error-team-assigned": "That team is assigned to a conflicting event.",
+        "error-unarchiving-team": "Error while unarchiving team",
+        "new": "Add Team",
+        "team-added": "Team added",
+        "team-edited": "Team edited",
+        "team-on-event": "That team is already assigned to this event.",
+        "team-removed": "Team removed",
+        "title": "Teams"
+      },
       "title": "Event Title"
     },
     "groups": {
@@ -179,7 +197,13 @@
       }
     },
     "people": {
+      "account-information": "Account Information",
+      "additional-information": "Additional Information",
       "attributes": "Attributes",
+      "next": "Next",
+      "optional": "Optional",
+      "personal-information": "Personal Information",
+      "previous": "Previous",
       "title": "People",
       "title-roles": "Roles"
     },
@@ -451,7 +475,13 @@
       }
     },
     "people": {
+      "account-information": "Informaci\u00f3n de la cuenta",
+      "additional-information": "Informaci\u00f3n Adicional",
       "attributes": "Atributas",
+      "next": "Siguiente",
+      "optional": "Opcional",
+      "personal-information": "Informacion personal",
+      "previous": "Anterior",
       "title": "Personas",
       "title-roles": "Papeles"
     },

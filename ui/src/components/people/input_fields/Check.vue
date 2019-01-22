@@ -1,15 +1,17 @@
 <template>
   <v-container>
-    <span class="title">{{ label }}</span>
+    <span class="title">{{ attribute.name }}</span>
     <v-layout row>
       <v-checkbox
-        v-for="(field, index) in options"
+        v-for="(enumeratedValue, index) in attribute.enumerated_values"
         :key="index"
-        :label="field.label"
-        :name="field.name"
-        :value="field.value"
+        :label="enumeratedValue.value"
+        :name="enumeratedValue.value"
+        :value="enumeratedValue.id"
         v-model="selected"
-        @change="$emit('input', selected)"
+        @change="
+          $emit('input', { stringValue: selected.toString(), enumValueId: 0 })
+        "
       ></v-checkbox>
     </v-layout>
   </v-container>
@@ -19,21 +21,9 @@
 export default {
   name: "Check",
   props: {
-    options: {
-      type: Array,
+    attribute: {
+      type: Object,
       required: true
-    },
-    label: {
-      type: String,
-      required: true
-    },
-    name: {
-      type: String,
-      required: true
-    },
-    value: {
-      type: Array,
-      required: false
     }
   },
   data() {
@@ -41,10 +31,22 @@ export default {
       selected: []
     };
   },
-
+  computed: {
+    getAttributeValue() {
+      return this.attribute.value;
+    }
+  },
   watch: {
-    value(val) {
-      this.selected = val;
+    getAttributeValue() {
+      if (this.attribute.value) {
+        let value = this.attribute.value.split(",");
+        for (let index in value) {
+          value[index] = Number(value[index]);
+        }
+        this.selected = value;
+      } else {
+        this.selected = [];
+      }
     }
   }
 };
