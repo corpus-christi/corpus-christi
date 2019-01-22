@@ -43,7 +43,7 @@ matrix:
                   script:
                         - createuser arco
                         - createdb --owner=arco cc-staging
-                          #                        - cp thing in to private.py
+                          # - cp thing in to private.py
                         - cat << EOF > ./private.py
                           PASS = "rtyuirt34f" 
                           SECRET_KEY1 = 'oi5uy5tred3434fgh'
