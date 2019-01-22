@@ -124,7 +124,7 @@ export default {
     translate(key) {
       return this.translations[key]
         ? this.translations[key]
-        : `No translation found for key: ${key}`;
+        : `No translation found for key ${key}`;
     },
 
     updateForm(attributeId, attributeIdx, value) {
