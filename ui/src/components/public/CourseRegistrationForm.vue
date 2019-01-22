@@ -58,7 +58,7 @@
         v-on:click="registerPerson"
         data-cy="register"
         :loading="loading"
-        >{{ $t("actions.login") }}</v-btn
+        >{{ $t("courses.register") }}</v-btn
       >
     </v-card-actions>
   </v-card>
