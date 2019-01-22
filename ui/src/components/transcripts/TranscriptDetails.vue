@@ -28,7 +28,7 @@
                                 </v-toolbar>
                                 <v-list three-line>
                                     <v-subheader >
-                                        {{ $t("transcripts.student-information") }}:
+                                        <h2>{{ $t("transcripts.student-information") }}:</h2>
                                     </v-subheader>
                                     <v-layout row>
                                         <v-flex xs12 sm10 offset-sm1>
@@ -53,7 +53,7 @@
                                     </v-flex>
                                 </v-layout>
                                 <v-subheader >
-                                    {{ $t("diplomas.diplomas") }}:
+                                    <h2>{{ $t("diplomas.diplomas") }}:</h2>
                                     <v-spacer></v-spacer>
                                         <v-btn
                                             color="primary"
@@ -77,7 +77,7 @@
                                 </template>
 
                                 <v-subheader >
-                                    {{ $t("transcripts.courses") }}:
+                                    <h2>{{ $t("transcripts.courses-in-progress-or-completed") }}:</h2>
                                 </v-subheader>
                                 <template v-for="(course, index) in transcript.courses">
                                     <!-- making a composite key to avoid duplicate key issue: https://github.com/vuejs/vue/issues/7323 -->
