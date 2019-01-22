@@ -91,6 +91,8 @@
     },
     "events": {
       "all-events": "All Events",
+      "attendance": "Attendance",
+      "attendance-label": "Enter a number",
       "confirm-archive": "Are you sure you want to archive this event?",
       "create-event": "Create Event",
       "details": {
@@ -324,6 +326,8 @@
     },
     "events": {
       "all-events": "Todos Eventos",
+      "attendance": "Concurrencia",
+      "attendance-label": "Ingrese un numero",
       "confirm-archive": "\u00bfSeguro que quieres archivar este evento?",
       "create-event": "Crear Evento",
       "details": {

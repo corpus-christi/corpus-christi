@@ -7,7 +7,13 @@ events:
     es: Título del Evento
   event-description:
     en: Event Description
-    es: Descripción del Evento
+    es: Descripción del Evento 
+  attendance:
+    en: Attendance
+    es: Concurrencia
+  attendance-label:
+    en: Enter a number
+    es: Ingrese un numero
   start-date:
     en: Start Date
     es: Fecha de Inicio

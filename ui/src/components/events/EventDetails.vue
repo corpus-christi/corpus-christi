@@ -18,6 +18,21 @@
               </v-btn>
             </v-layout>
           </v-container>
+          <div class="ml-4">
+            <b>{{ $t("events.attendance") }}: </b>
+            <span v-if="event.attendance != null">{{ event.attendance }}</span>
+            <span v-else>None</span>
+            <v-btn
+              icon
+              outline
+              small
+              color="primary"
+              data-cy="edit-attendance"
+              v-on:click="openAttendanceDialog()"
+            >
+              <v-icon small color="primary">edit</v-icon>
+            </v-btn>
+          </div>
           <v-card-text class="pa-4">
             <div v-if="event.location">
               <b>{{ $t("events.location") }}: </b>
@@ -103,6 +118,16 @@
         v-on:save="saveEvent"
       />
     </v-dialog>
+
+    <!-- Attendance dialog -->
+    <v-dialog v-model="attendanceDialog.show" persistent max-width="250px">
+      <event-attendance-form
+        v-bind:attendance="attendanceDialog.number"
+        v-bind:saving="attendanceDialog.saving"
+        v-on:cancel="attendanceDialog.show = false"
+        v-on:save-attendance="saveAttendance($event)"
+      ></event-attendance-form>
+    </v-dialog>
   </v-layout>
 </template>
 
@@ -112,6 +137,7 @@ import { mapGetters } from "vuex";
 import EventTeamDetails from "./EventTeamDetails";
 import EventAssetDetails from "./EventAssetDetails";
 import EventPersonDetails from "./EventPersonDetails";
+import EventAttendanceForm from "./EventAttendanceForm";
 
 export default {
   name: "EventDetails",
@@ -119,7 +145,8 @@ export default {
     "event-form": EventForm,
     "event-team-details": EventTeamDetails,
     "event-asset-details": EventAssetDetails,
-    "event-person-details": EventPersonDetails
+    "event-person-details": EventPersonDetails,
+    "event-attendance-form": EventAttendanceForm
   },
 
   data() {
@@ -129,6 +156,12 @@ export default {
         show: false,
         saveLoading: false,
         event: {}
+      },
+
+      attendanceDialog: {
+        show: false,
+        saving: false,
+        number: null
       },
 
       snackbar: {
@@ -270,6 +303,33 @@ export default {
           console.error("PUT FALURE", err.response);
           this.eventDialog.saveLoading = false;
           this.showSnackbar(this.$t("events.error-editing-event"));
+        });
+    },
+
+    openAttendanceDialog() {
+      this.attendanceDialog.show = true;
+      this.attendanceDialog.saving = false;
+      this.attendanceDialog.number = this.event.attendance;
+    },
+
+    closeAttendanceDialog() {
+      this.attendanceDialog.show = false;
+      this.attendanceDialog.saving = false;
+      this.attendanceDialog.number = null;
+    },
+
+    saveAttendance(number) {
+      const id = this.$route.params.event;
+      this.$http
+        .patch(`/api/v1/events/${id}`, { attendance: number })
+        .then(resp => {
+          console.log(resp);
+          this.event.attendance = resp.data.attendance;
+          this.closeAttendanceDialog();
+        })
+        .catch(err => {
+          console.error("ATTENDANCE PATCH FAILURE", err.response);
+          this.attendanceDialog.saving = false;
         });
     },
 
