@@ -164,7 +164,7 @@ export default {
 
   mounted() {
     this.$http.get("/api/v1/courses/courses").then(resp => {
-      this.courses = resp.data;
+      this.courses = resp.data.filter(course => course.active);
       this.courses = this.courses.slice(0, 5);
       console.log(resp.data);
     });
