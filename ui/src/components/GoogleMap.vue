@@ -18,8 +18,8 @@
         @closeclick="close(m)"
       >
         <div>
-          <h2>{{m.data.name}}</h2>
-          <p>{{m.data.description}}</p>
+          <h2>{{ m.data.name }}</h2>
+          <p>{{ m.data.description }}</p>
         </div>
       </GmapInfoWindow>
     </gmap-marker>
@@ -32,12 +32,12 @@ export default {
   data() {
     return {
       center: { lat: -2.90548355117024, lng: -79.02949294174876 },
-      zoom: 13,
+      zoom: 13
     };
   },
   methods: {
     markerSelected(m) {
-      for(let marker of this.$props.markers) {
+      for (let marker of this.$props.markers) {
         marker.opened = false;
       }
       this.$refs.gmap.$mapPromise.then(map => {

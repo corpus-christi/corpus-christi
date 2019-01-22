@@ -140,11 +140,11 @@ export default {
     },
 
     populateHomegroupData(meetings, addresses, groups) {
-      for(let m of meetings) {
-        for(let a of addresses) {
+      for (let m of meetings) {
+        for (let a of addresses) {
           if (m.address_id === a.id) {
-            for(let g of groups) {
-              if(m.group_id === g.id) {
+            for (let g of groups) {
+              if (m.group_id === g.id) {
                 this.homegroups.push({
                   position: {
                     lat: a.latitude,
