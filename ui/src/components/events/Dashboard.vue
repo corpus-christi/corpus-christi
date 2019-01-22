@@ -28,7 +28,7 @@
               $t("events.dashboard.headers.yearly-attendance")
             }}</v-toolbar-title>
           </v-toolbar>
-          <ve-line :data="yearlyAttendanceData"></ve-line>
+          <ve-line :data="yearlyAttendanceData" :settings="attendanceLineSettings"></ve-line>
         </v-card>
       </v-flex>
     </v-layout>
@@ -36,8 +36,20 @@
 </template>
 
 <script>
+import { mapGetters, mapState } from "vuex";
 export default {
   name: "Dashboard",
+  watch: {
+    currentLocale() {
+      this.homeGroupPercentageData.rows[0].homeGroups = this.$t("events.dashboard.charts.home-groups");
+      this.attendanceLineSettings.labelMap.campus = this.$t("events.dashboard.charts.campus");
+      this.attendanceLineSettings.labelMap.attendance = this.$t("events.dashboard.charts.attendance");
+    }
+  },
+  computed: {
+    ...mapState(["locales"]),
+    ...mapGetters(["currentLocale"])
+  },
   data: function() {
     // Get attendance data
     var today = new Date();
@@ -148,10 +160,16 @@ export default {
         columns: ["homeGroups", "percent"],
         rows: [
           {
-            homeGroups: "Home Groups",
+            homeGroups: this.$t("events.dashboard.charts.home-groups"),
             percent: 1
           }
         ]
+      },
+      attendanceLineSettings: {
+        labelMap: {
+          campus: this.$t("events.dashboard.charts.campus"),
+          attendance: this.$t("events.dashboard.charts.attendance")
+        }
       }
     };
   }

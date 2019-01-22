@@ -5,7 +5,7 @@
         <v-card>
           <v-toolbar class="pa-1">
             <v-toolbar-title>{{
-              $t("courses.dashboard.headers.course-attendance")
+              $t("courses.dashboard.headers.course-retention")
             }}</v-toolbar-title>
           </v-toolbar>
           <ve-sankey
@@ -18,10 +18,10 @@
         <v-card>
           <v-toolbar class="pa-1">
             <v-toolbar-title>{{
-              $t("courses.dashboard.headers.enrollment")
+              $t("courses.dashboard.headers.course-success")
             }}</v-toolbar-title>
           </v-toolbar>
-          <ve-bar :data="courseData"></ve-bar>
+          <ve-bar :data="courseData" :settings="enrollmentBarSettings"></ve-bar>
         </v-card>
       </v-flex>
     </v-layout>
@@ -31,6 +31,19 @@
 <script>
 export default {
   name: "Dashboard",
+  watch: {
+    currentLocale() {
+      this.enrollmentBarSettings.labelMap.course = this.$t("courses.dashboard.charts.course");
+      this.enrollmentBarSettings.labelMap.enrollment = this.$t("courses.dashboard.charts.enrollment");
+      this.enrollmentBarSettings.labelMap.graduationRate = this.$t("courses.dashboard.charts.graduation-rate");
+
+      // TODO: Regenerate locale info for sankey
+    }
+  },
+  computed: {
+    ...mapState(["locales"]),
+    ...mapGetters(["currentLocale"])
+  },
   data: function() {
     var totalCourseEnrollment = 0;
     var totalStudentsAttended = 0;
@@ -150,10 +163,10 @@ export default {
           { status: "Course C", count: 29 },
           { status: "Course D", count: 8 },
           { status: "Course E", count: 4 },
-          { status: "Attended", count: 80 },
-          { status: "Did Not Attend", count: 20 },
-          { status: "Graduated", count: 75 },
-          { status: "Did Not Graduate", count: 25 }
+          { status: this.$t("courses.dashboard.charts.attended"), count: 80 },
+          { status: this.$t("courses.dashboard.charts.did-not-attend"), count: 20 },
+          { status: this.$t("courses.dashboard.charts.graduated"), count: 75 },
+          { status: this.$t("courses.dashboard.charts.did-not-graduate"), count: 25 }
         ]
       },
       courseData: {
@@ -162,21 +175,28 @@ export default {
       },
       attendanceSankeySettings: {
         links: [
-          { source: "Course A", target: "Attended", value: 24 },
-          { source: "Course A", target: "Did Not Attend", value: 8 },
-          { source: "Course B", target: "Attended", value: 22 },
-          { source: "Course B", target: "Did Not Attend", value: 5 },
-          { source: "Course C", target: "Attended", value: 26 },
-          { source: "Course C", target: "Did Not Attend", value: 3 },
-          { source: "Course D", target: "Attended", value: 5 },
-          { source: "Course D", target: "Did Not Attend", value: 3 },
-          { source: "Course E", target: "Attended", value: 3 },
-          { source: "Course E", target: "Did Not Attend", value: 1 },
-          { source: "Attended", target: "Graduated", value: 75 },
-          { source: "Attended", target: "Did Not Graduate", value: 5 },
-          { source: "Did Not Attend", target: "Did Not Graduate", value: 20 }
+          { source: "Course A", target: this.$t("courses.dashboard.charts.attended"), value: 24 },
+          { source: "Course A", target: this.$t("courses.dashboard.charts.did-not-attend"), value: 8 },
+          { source: "Course B", target: this.$t("courses.dashboard.charts.attended"), value: 22 },
+          { source: "Course B", target: this.$t("courses.dashboard.charts.did-not-attend"), value: 5 },
+          { source: "Course C", target: this.$t("courses.dashboard.charts.attended"), value: 26 },
+          { source: "Course C", target: this.$t("courses.dashboard.charts.did-not-attend"), value: 3 },
+          { source: "Course D", target: this.$t("courses.dashboard.charts.attended"), value: 5 },
+          { source: "Course D", target: this.$t("courses.dashboard.charts.did-not-attend"), value: 3 },
+          { source: "Course E", target: this.$t("courses.dashboard.charts.attended"), value: 3 },
+          { source: "Course E", target: this.$t("courses.dashboard.charts.did-not-attend"), value: 1 },
+          { source: this.$t("courses.dashboard.charts.attended"), target: this.$t("courses.dashboard.charts.graduated"), value: 75 },
+          { source: this.$t("courses.dashboard.charts.attended"), target: this.$t("courses.dashboard.charts.did-not-graduate"), value: 5 },
+          { source: this.$t("courses.dashboard.charts.did-not-attend"), target: this.$t("courses.dashboard.charts.did-not-graduate"), value: 20 }
         ],
         dataType: ["normal", "normal"]
+      },
+      enrollmentBarSettings: {
+        labelMap: {
+          course: this.$t("courses.dashboard.charts.course"),
+          enrollment: this.$t("courses.dashboard.charts.enrollment"),
+          graduationRate: this.$t("courses.dashboard.charts.graduation-rate")
+        }
       }
     };
   }

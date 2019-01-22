@@ -10,6 +10,17 @@ courses:
         course-success:
           en: Course Success
           es: Éxito del Curso
+    charts:
+      course:
+        en: Course
+        es: Curso
+      enrollment:
+        en: Enrollment
+        es: Inscripción
+      graduation-rate:
+        en: Graduation Rate
+        es: Tasa de Graduación
+      attendended:
   course:
     en: Courses
     es: Cursos
