@@ -21,12 +21,26 @@
                 </span>
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn raised color="primary">{{
-                    $t("public.course.register")
-                  }}</v-btn>
+                  <v-btn raised color="primary" v-on:click="registrationFormDialog.show = true">
+                    {{ $t("courses.register") }}
+                  </v-btn>
                   <v-spacer></v-spacer>
                 </v-card-actions>
               </v-card>
+              
+              <v-dialog v-model="registrationFormDialog.show" max-width="500px">
+                <CourseRegistrationForm 
+                  v-on:cancel="cancel"
+                  v-on:snackbar="showSnackbar($event)"
+                  :course="course"
+                  v-on:registered="registeredPerson"/>
+              </v-dialog>
+              <v-snackbar v-model="snackbar.show">
+                {{ snackbar.text }}
+                <v-btn flat @click="snackbar.show = false">
+                  {{ $t("actions.close") }}
+                </v-btn>
+              </v-snackbar>
             </v-expansion-panel-content>
           </v-expansion-panel>
           <v-card>
@@ -107,19 +121,32 @@
 <script>
 import GoogleMap from "../components/GoogleMap";
 import { isEmpty } from "lodash";
+import CourseRegistrationForm from "../components/public/CourseRegistrationForm";
 
 export default {
   name: "Public",
-  components: { GoogleMap },
+  components: { GoogleMap, CourseRegistrationForm },
   data() {
     return {
       events: [],
       courses: [],
       pageLoaded: false,
-      groupLocations: []
+      groupLocations: [],
+      
+      registrationFormDialog: {
+        show: false,
+        editMode: false,
+        saving: false,
+        courseOffering: {}
+      },
+      
+      snackbar: {
+        show: false,
+        message: ""
+      }
     };
   },
-
+  
   computed: {
     offeredCourses: function() {
       return this.courses.filter(course => {
@@ -171,6 +198,19 @@ export default {
           }
         })
         .catch(err => console.log("FAILED", err));
+    },
+    
+    cancel() {
+      this.registrationFormDialog.show = false;
+    },
+    
+    registeredPerson() {
+      this.registrationFormDialog.show = false;
+    },
+    
+    showSnackbar(message) {
+      this.snackbar.text = message;
+      this.snackbar.show = true;
     }
   }
 };

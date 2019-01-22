@@ -27,7 +27,7 @@
                 color="primary"
                 @click="registrationFormDialog.show = true"
               >
-                {{ $t("courses.course.register") }}
+                {{ $t("courses.register") }}
               </v-btn>
               <v-spacer></v-spacer>
             </v-card-actions>
@@ -81,7 +81,9 @@ export default {
     cancel() {
       this.registrationFormDialog.show = false;
     },
-    registeredPerson() {},
+    registeredPerson() {
+      this.registrationFormDialog.show = false;
+    },
 
     showSnackbar(message) {
       this.snackbar.text = message;

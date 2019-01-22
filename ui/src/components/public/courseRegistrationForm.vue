@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-title>
-      <span class="headline">Register for this course ($t me)</span>
+      <span class="headline">{{ $t("courses.register-for-course") }}</span>
     </v-card-title>
     <v-card-text>
       <v-form>
@@ -29,9 +29,9 @@
           v-validate="'required'"
           name="offering"
           v-bind:error-messages="errors.first('offering')">
-        <span>{{ $t("courses.register.choose-offering") }}</span>
+        <span>{{ $t("courses.choose-offering") }}</span>
           <v-radio
-            v-for="offering in course.course_offerings"
+            v-for="offering in activeOfferings"
             :key="offering.id"
             :value="offering.id"
             :label="`${offering.description}`"
@@ -40,7 +40,6 @@
           ></v-radio>
         </v-radio-group>
       </v-form>
-      {{ selectedOffering }}
     </v-card-text>
 
     <!-- cancel and register buttons -->
@@ -72,7 +71,8 @@ export default {
       loading: false,
       selectedOffering: null,
       newStudent: {},
-      showExpansion: [false]
+      showExpansion: [false],
+      activeOfferings: []
     };
   },
   props: {
@@ -80,7 +80,11 @@ export default {
   },
 
   computed: mapGetters(["isLoggedIn","currentAccount"]),
-
+  
+  mounted() {
+    this.activeOfferings = this.course.course_offerings.filter(course => course.active);
+  },
+  
   methods: {
     cancel() {
       this.clear();
@@ -112,7 +116,7 @@ export default {
             .then(resp => {
               let id = resp.data.id
               let newStudent = {};
-              newStudent.confirmed = true;
+              newStudent.confirmed = false;
               newStudent.offeringId = this.selectedOffering;
               newStudent.studentId = id;
               newStudent.active = true;
@@ -124,7 +128,7 @@ export default {
             .then(resp => {
               this.loading = false;
               console.log("ADDED", resp);
-              this.$emit('snackbar', 'successfully registered ($t me)')
+              this.$emit('snackbar', this.$t("courses.register-success"));
               this.cancel();
             })
             .catch(err => {
@@ -139,4 +143,3 @@ export default {
 </script>
 
 <style></style>
-

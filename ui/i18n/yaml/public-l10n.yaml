@@ -4,8 +4,8 @@ public:
     es: Público
   headers:
     upcoming-classes:
-      en: Upcoming Classes
-      es: Próximas Clases
+      en: Upcoming Courses
+      es: Próximas Cursos
     upcoming-events:
       en: Upcoming Events
       es: Próximos Eventos
@@ -19,3 +19,7 @@ public:
     view-all:
       en: View All Events
       es: Ver Todos Eventos
+  courses:
+    view-all:
+      en: View All Courses
+      es: Ver Todos Cursos

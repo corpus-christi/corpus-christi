@@ -82,6 +82,7 @@
       "add-meeting-failed": "Failed to add meeting(s)",
       "added": "Course added",
       "archived": "Course archived",
+      "choose-offering": "Choose Offering",
       "choose-time": "Choose Time",
       "confirm-archive": "Are you sure you want to archive this course?",
       "course": "Courses",
@@ -101,6 +102,9 @@
       "no-prerequisites": "This course has no prerequisites.",
       "prerequisites": "Prerequisites",
       "reactivated": "Course unarchived",
+      "register": "Register",
+      "register-for-course": "Register for this course",
+      "register-success": "Successfully Registered",
       "schedule": "Schedule",
       "students": "Students",
       "teacher": "Teacher",
@@ -172,7 +176,7 @@
         "team-removed": "Team removed",
         "title": "Teams"
       },
-      "title": "Events"
+      "title": "Event Title"
     },
     "groups": {
       "title": "Home Churches"
@@ -184,9 +188,9 @@
       }
     },
     "people": {
+      "attributes": "Attributes",
       "title": "People",
-      "title-roles": "Roles",
-      "attributes": "Attributes"
+      "title-roles": "Roles"
     },
     "person": {
       "actions": {
@@ -223,13 +227,16 @@
       "settings": "Settings for {person}"
     },
     "public": {
+      "courses": {
+        "view-all": "View All Courses"
+      },
       "events": {
         "join": "Join Event",
         "view-all": "View All Events"
       },
       "headers": {
         "home-church": "Find a Home Church",
-        "upcoming-classes": "Upcoming Classes",
+        "upcoming-classes": "Upcoming Courses",
         "upcoming-events": "Upcoming Events"
       },
       "title": "Public"
@@ -334,6 +341,7 @@
       "add-meeting-failed": "Se fall\u00f3 a a\u00f1adir los reuniones",
       "added": "Curso a\u00f1adido",
       "archived": "Curso archivado",
+      "choose-offering": "Elegir Oferta",
       "choose-time": "Elegir Tiempo",
       "confirm-archive": "\u00bfEst\u00e1s seguro que quieres archivar este curso?",
       "course": "Cursos",
@@ -353,6 +361,9 @@
       "no-prerequisites": "Este curso no tiene prerrequisitos.",
       "prerequisites": "Prerrequisitos",
       "reactivated": "Curso desarchivado",
+      "register": "Registrar",
+      "register-for-course": "Registrar para este curso",
+      "register-success": "Registrado con \u00c9xito",
       "schedule": "Horario",
       "students": "Estudiantes",
       "teacher": "Maestro",
@@ -436,9 +447,9 @@
       }
     },
     "people": {
+      "attributes": "Atributas",
       "title": "Personas",
-      "title-roles": "Papeles",
-      "attributes": "Atributas"
+      "title-roles": "Papeles"
     },
     "person": {
       "actions": {
@@ -475,13 +486,16 @@
       "settings": "Configuraci\u00f3n de la {person}"
     },
     "public": {
+      "courses": {
+        "view-all": "Ver Todos Cursos"
+      },
       "events": {
         "join": "Juntarse Evento",
         "view-all": "Ver Todos Eventos"
       },
       "headers": {
         "home-church": "Encontrar una Iglesia Hogar",
-        "upcoming-classes": "Pr\u00f3ximas Clases",
+        "upcoming-classes": "Pr\u00f3ximas Cursos",
         "upcoming-events": "Pr\u00f3ximos Eventos"
       },
       "title": "P\u00fablico"
