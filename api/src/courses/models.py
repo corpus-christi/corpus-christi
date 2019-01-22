@@ -156,7 +156,7 @@ class Diploma(Base):
 class DiplomaSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     name = fields.String(required=True, validate=Length(min=1))
-    description = fields.String(required=True, validate=Length(min=1))
+    description = fields.String(validate=Length(min=1))
     active = fields.Boolean(required=False, default=True)
     courseList = fields.Nested('CourseSchema', many=True)
     studentList = fields.Nested('StudentSchema', many=True)
