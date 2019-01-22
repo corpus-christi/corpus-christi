@@ -8,7 +8,7 @@
               $t("events.dashboard.headers.location-attendance")
             }}</v-toolbar-title>
           </v-toolbar>
-          <ve-ring :data="locationAttendanceData"></ve-ring>
+          <ve-ring :data="locationAttendanceData" :legend-visible="false"></ve-ring>
         </v-card>
       </v-flex>
       <v-flex>

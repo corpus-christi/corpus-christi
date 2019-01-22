@@ -2,3 +2,14 @@ groups:
   title:
     en: Home Churches
     es: Iglesias Hogar
+  dashboard:
+    title:
+      en: Dashboard
+      es: Tablero
+    headers:
+        course-retention:
+          en: Course Retention
+          es: Retención del Curso
+        course-success:
+          en: Course Success
+          es: Éxito del Curso

@@ -6,10 +6,10 @@ courses:
     headers:
         course-retention:
           en: Course Retention
-          es: Asistencia Anual
-        course-enrollment:
-          en: Course Data
-          es: Porcentaje de Feligreses en un Grupo de Hogar
+          es: Retención del Curso
+        course-success:
+          en: Course Success
+          es: Éxito del Curso
   course:
     en: Courses
     es: Cursos
