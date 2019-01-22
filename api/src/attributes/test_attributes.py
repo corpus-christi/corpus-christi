@@ -283,7 +283,7 @@ def test_read_all_attributes(auth_client):
 
 
 def test_update_attribute(auth_client):
-    # GIVEN a DB with an attributes and enumerated values
+    # GIVEN a DB with attributes and enumerated values
     create_multiple_attributes(auth_client.sqla, 10)
     attribute_id = auth_client.sqla.query(Attribute.id).first().id
 
@@ -355,6 +355,8 @@ def test_deactivate_attribute(auth_client):
 
     updated_attribute = auth_client.sqla.query(
         Attribute).filter_by(id=attribute_id).first()
+
+    #THEN the attribute is deactivated
     assert updated_attribute is not None
     assert updated_attribute.active == False
 
@@ -364,13 +366,15 @@ def test_activate_attribute(auth_client):
     create_multiple_attributes(auth_client.sqla, 1, 0)
     attribute_id = auth_client.sqla.query(Attribute.id).first().id
 
-    # WHEN we call deactivate
+    # WHEN we call activate
     resp = auth_client.patch(url_for(
         'attributes.activate_attribute', attribute_id=attribute_id))
     assert resp.status_code == 200
 
     updated_attribute = auth_client.sqla.query(
         Attribute).filter_by(id=attribute_id).first()
+
+    #THEN we have an active attribute
     assert updated_attribute is not None
     assert updated_attribute.active == True
 
@@ -471,6 +475,8 @@ def test_update_enumerated_value(auth_client):
 
     updated_enumerated_value = auth_client.sqla.query(
         EnumeratedValue).filter_by(id=enumerated_value_id).first()
+
+    #THEN we have an updated enumerated value
     assert updated_enumerated_value is not None
     assert updated_enumerated_value.value_i18n == payload['valueI18n']
     assert updated_enumerated_value.active == payload['active']
@@ -504,6 +510,8 @@ def test_deactivate_enumerated_value(auth_client):
 
     updated_enumerated_value = auth_client.sqla.query(
         EnumeratedValue).filter_by(id=enumerated_value_id).first()
+
+    # THEN the enumerated value is deactivated
     assert updated_enumerated_value is not None
     assert updated_enumerated_value.active == False
 
@@ -515,13 +523,15 @@ def test_activate_enumerated_value(auth_client):
     enumerated_value_id = auth_client.sqla.query(
         EnumeratedValue.id).first().id
 
-    # WHEN we call deactivate
+    # WHEN we call activate
     resp = auth_client.patch(url_for(
         'attributes.activate_enumerated_value', enumerated_value_id=enumerated_value_id))
     assert resp.status_code == 200
 
     updated_enumerated_value = auth_client.sqla.query(
         EnumeratedValue).filter_by(id=enumerated_value_id).first()
+
+    #THEN we have an activated enumerated value
     assert updated_enumerated_value is not None
     assert updated_enumerated_value.active == True
 
