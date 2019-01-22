@@ -49,9 +49,13 @@ export default {
         this.studentsAmt = resp.data.filter(student => student.active).length;
         this.$http.get(`/api/v1/courses/course_offerings/${id}`).then(resp => {
           this.courseOffering = resp.data;
-          this.pageLoaded = true;
         });
       });
+      
+    this.$http.get(`/api/v1/courses/course_offerings/${id}`).then(resp => {
+      this.courseOffering = resp.data;
+      this.pageLoaded = true;
+    }); 
   },
 
   computed: {

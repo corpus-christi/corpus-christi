@@ -561,8 +561,8 @@ def read_all_course_offering_students(course_offering_id):
     if co is None:
         return 'Course Offering NOT found', 404
     students = db.session.query(Student, Person).filter_by(offering_id=course_offering_id).join(Person).all()
-    if students == []:
-        return 'No students enrolled in this course', 404
+    # if students == []:
+    #     return 'No students enrolled in this course', 404
     student_list = []
     for i in students:
         s = student_schema.dump(i.Student)
