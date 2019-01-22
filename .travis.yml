@@ -15,7 +15,7 @@ matrix:
                           #- yarn cache clean
                   #install:
                         - yarn install --latest
-                        - yarn add cypres
+                        - yarn update 
                   script:
                         - yarn build
                 - language: python
