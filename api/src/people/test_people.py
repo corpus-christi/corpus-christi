@@ -143,14 +143,6 @@ def create_roles(sqla, n):
     return role_ids
 
 
-def account_role_object_factory(account_id, role_id):
-    accountrole = {
-        'account_id': account_id,
-        'role_id': role_id
-    }
-    return accountrole
-
-
 def create_accounts_roles(sqla, fraction=0.75):
     new_accounts_roles = []
     all_accounts_roles = sqla.query(Account, Role).all()
@@ -282,14 +274,6 @@ def test_read_person_fields(auth_client):
 
     # THEN we get the correct attributes
     assert resp.json['person_attributes'] != []
-    print(resp.json['person_attributes'])
-
-    print("sloopy")
-    print(Person.__table__.columns.keys())
-    print(resp.json.keys())
-    # assert resp.json['person_attributes'] == []
-    print(resp.json['person_attributes'])
-    # assert False
 
 
 @pytest.mark.smoke
@@ -433,6 +417,15 @@ def test_update_person(auth_client):
     assert the_man.last_name  == new_last_name
     assert the_man.second_last_name == new_second_last_name
 
+@pytest.mark.slow
+def test_test_boys_and_girl(auth_client):
+    tim = "cool"
+    will = "smart"
+    sarah = "not mean"
+    assert tim == "cool"
+    assert will == "smart"
+    assert sarah == "not mean"
+
 
 @pytest.mark.smoke
 def test_update_person_add_attribute(auth_client):
@@ -466,9 +459,6 @@ def test_update_person_add_attribute(auth_client):
             mod['email'] = new_person['email']
 
         # WHEN a people are updated with data and an attribute
-        #resp = auth_client.patch(url_for('people.update_person', person_id = person.id) json = {'person': mod, 'attributesInfo': [person_attribute_enumerated_factory(auth_client.sqla)]})
-
-        #print({'person': mod, 'attributesInfo': [person_attribute_string_factory(auth_client.sqla)]})
         resp = auth_client.put(url_for('people.update_person', person_id = person.id), json={'person': mod, 'attributesInfo': [person_attribute_string_factory(auth_client.sqla)]})
         
         # THEN expect the update to run OK
@@ -582,7 +572,6 @@ def test_deactivate_person(auth_client):
     current_person = random.choice(all_people)
 
     # WHEN we call deactivate
-    print("ID = ", current_person.id)
     resp = auth_client.put(url_for(
         'people.deactivate_person', person_id=current_person.id))
     assert resp.status_code == 200
@@ -663,15 +652,14 @@ def test_create_account(auth_client):
     # THEN we get an error
     nasty_account = {
         'username': username_factory(),
-        # 'password': fake.password(),
         'personId': "slks"
     }
+
     resp = auth_client.post(url_for('people.create_account'), json=nasty_account)
     assert resp.status_code == 422
-    print(resp.status_code)
-    # assert "asshole" == "will"
 
-@pytest.mark.slow
+
+@pytest.mark.smoke
 def test_read_all_accounts(auth_client):
     # GIVEN a collection of accounts
     account_count = random.randint(10, 20)
@@ -684,6 +672,7 @@ def test_read_all_accounts(auth_client):
     # THEN the count matches the number of entries in the database
     assert resp.status_code == 200
     assert len(resp.json) == account_count
+
 
 @pytest.mark.smoke
 def test_read_one_account(auth_client):
@@ -893,13 +882,11 @@ def test_update_account_invalid(auth_client):
     # GIVEN bad modification data
     for account in accounts:
         mod = {}
-        flips = (flip(), flip(), flip())
+        flips = (flip(), flip())
         if flips[0]:
             mod['username'] = None
-        if flips[1]:
-            mod['password'] = None
-        if flips[2] or not (flips[0] or flips[1]):
-            mod[fake.word()] = fake.word()
+        if flips[1] or not flips[0]:
+           mod[fake.word()] = fake.word()
         
         # WHEN account is requested to be updated with bad data
         resp = auth_client.patch(url_for('people.update_account', account_id = account.id), json = mod)
@@ -939,11 +926,10 @@ def test_deactivate_account(auth_client):
     # WHEN we choose a person at random
     all_accounts = auth_client.sqla.query(Account).all()
     current_account = random.choice(all_accounts)
-    # person_id = auth_client.sqla.query(Person.id).first().id
+
     # GIVEN a DB with an enumerated_value.
 
     # WHEN we call deactivate
-    print("ID = ", current_account.id)
     resp = auth_client.put(url_for(
         'people.deactivate_account', account_id=current_account.id))
     assert resp.status_code == 200
@@ -1357,7 +1343,6 @@ def test_read_one_manager_invalid(auth_client):
 
     # THEN expect requested manager not to be found
     assert resp.status_code == 404
-    assert resp.json is None
 
 
 @pytest.mark.smoke
@@ -1575,7 +1560,6 @@ def test_update_person_attributes_enumerated(auth_client):
             }
 
         else:
-            print("Before enum is updated: ", current_person_attribute.enum_value_id)
             if current_person_attribute.enum_value_id == 1:
                 current_person_attribute.enum_value_id = 2
             else:
@@ -1588,12 +1572,11 @@ def test_update_person_attributes_enumerated(auth_client):
         attribute_list.append(update_json)
 
     valid_person = PersonSchema().load({'firstName': 'Rita', 'lastName': 'Smith', 'gender': 'F', 'active': True })
-    valid_person_attributes = PersonAttributeSchema().load(
-        update_json)
+    valid_person_attributes = PersonAttributeSchema().load(update_json)
 
     resp = auth_client.put(url_for('people.update_person', person_id=update_person.id), json={
-
                                 'person':{'firstName': 'Rita', 'lastName': 'Smith', 'gender': 'F', 'active': True }, 'attributesInfo': attribute_list})
+
     # THEN people attributes will be updated for each individual person
     assert resp.status_code == 200
 
