@@ -32,6 +32,13 @@ account:
     es: Inactivo
 
 person:
+  account:
+    en: Account
+    es: Cuenta
+  accountInfo:
+    roles:
+      en: Roles
+      es: Papeles
   name:
     first:
       en: First Name

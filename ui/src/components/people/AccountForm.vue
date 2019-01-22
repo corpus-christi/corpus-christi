@@ -45,27 +45,28 @@
         data-cy="confirm-password"
       ></v-text-field>
     </v-card-text>
-    <v-card-title>{{ $t("person.actions.assign-roles") }}</v-card-title>
-    <v-card-text>
-      <v-select
-        v-model="currentRoles"
-        :items="rolesList"
-        label="$tRoles"
-        chips
-        deletable-chips
-        clearable
-        solo
-        multiple
-        hide-selected
-        return-object
-        item-value="value"
-        item-text="text"
-        :menu-props="{ closeOnContentClick: true }"
-        data-cy="account-form-roles"
-      >
-      </v-select>
-    </v-card-text>
-
+    <div v-if="rolesEnabled">
+      <v-card-title>{{ $t("person.actions.assign-roles") }}</v-card-title>
+      <v-card-text>
+        <v-select
+          v-model="currentRoles"
+          :items="rolesList"
+          v-bind:label="$t('person.accountInfo.roles')"
+          chips
+          deletable-chips
+          clearable
+          solo
+          multiple
+          hide-selected
+          return-object
+          item-value="value"
+          item-text="text"
+          :menu-props="{ closeOnContentClick: true }"
+          data-cy="account-form-roles"
+        >
+        </v-select>
+      </v-card-text>
+    </div>
     <v-card-actions>
       <v-spacer v-if="!person.accountInfo"></v-spacer>
       <v-btn color="secondary" flat v-on:click="close" data-cy="cancel-button">
@@ -112,7 +113,11 @@ export default {
   props: {
     person: { type: Object, required: true },
     account: { type: Object, required: true },
-    rolesList: Array
+    rolesList: Array,
+    rolesEnabled: {
+      type: Boolean,
+      required: false
+    }
   },
   data() {
     return {
@@ -120,12 +125,20 @@ export default {
       password: "",
       repeat_password: "",
       currentRoles: [],
-
       snackbar: {
         show: false,
         text: ""
       }
     };
+  },
+  watch: {
+    person(new_person) {
+      if (isEmpty(new_person)) {
+        this.clear();
+      } else {
+        this.clearForm(new_person);
+      }
+    }
   },
   computed: {
     // Are we adding an account (vs. updating an existing one)?
@@ -157,9 +170,12 @@ export default {
           } else {
             var roles = [];
             for (var role of this.currentRoles) {
-              roles.push(role.value);
+              if (role.value) {
+                roles.push(role.value);
+              } else {
+                roles.push(role);
+              }
             }
-            console.log(roles);
             this.$emit(
               "updateAccount",
               this.account.id,
@@ -173,6 +189,15 @@ export default {
         }
       });
     },
+    clearForm(new_person) {
+      this.username = this.password = this.repeat_password = "";
+      if (this.person.accountInfo) {
+        this.currentRoles = [];
+        for (var role of new_person.accountInfo.roles) {
+          this.currentRoles.push(role.id);
+        }
+      }
+    },
     deactivateAccount() {
       this.$emit("deactivateAccount", this.account.id);
       this.close();
@@ -183,7 +208,7 @@ export default {
     },
     close() {
       this.$validator.reset();
-      this.username = this.password = this.repeat_password = "";
+      this.clearForm(this.person);
       this.$emit("close");
     }
   }

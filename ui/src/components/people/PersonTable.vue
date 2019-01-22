@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Header -->
-    <v-toolbar class="pa-1">
+    <v-toolbar class="pa-1" data-cy="person-toolbar">
       <v-layout align-center justify-space-between fill-height>
         <v-flex md2>
           <v-toolbar-title>{{ $t("people.title") }}</v-toolbar-title>
@@ -49,6 +49,7 @@
       :headers="headers"
       :items="peopleToDisplay"
       :search="search"
+      :loading="!tableLoaded"
       class="elevation-1"
       data-cy="person-table"
     >
@@ -185,6 +186,7 @@
       <PersonAdminForm
         v-bind:person="adminDialog.person"
         v-bind:account="adminDialog.account"
+        v-bind:rolesEnabled="adminDialog.rolesEnabled"
         v-bind:rolesList="rolesList"
         v-on:addAccount="addAccount"
         v-on:updateAccount="updateAccount"
@@ -211,7 +213,8 @@ export default {
     rolesList: {
       type: Array,
       required: true
-    }
+    },
+    tableLoaded: Boolean
   },
   data() {
     return {
@@ -227,7 +230,8 @@ export default {
       adminDialog: {
         show: false,
         person: {},
-        account: {}
+        account: {},
+        rolesEnabled: false
       },
 
       snackbar: {
@@ -250,7 +254,7 @@ export default {
     headers() {
       return [
         {
-          text: "Account",
+          text: this.$t("person.account"),
           value: "person.accountInfo",
           align: "left",
           sortable: false
@@ -308,6 +312,9 @@ export default {
     },
     rolesList(all_roles) {
       this.rolesList = all_roles;
+    },
+    tableLoaded(loading) {
+      this.tableLoaded = loading;
     }
   },
 
@@ -451,10 +458,6 @@ export default {
     refreshPeopleList() {
       this.$emit("fetchPeopleList");
     }
-  },
-
-  mounted: function() {
-    this.refreshPeopleList();
   }
 };
 </script>
