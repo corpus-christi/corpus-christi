@@ -1,40 +1,37 @@
 <template>
   <div>
-    <v-btn
-      outline
-      color="primary"
-      v-on:click="$router.push({ path: '/teams/all' })"
-      ><v-icon>arrow_back</v-icon>Back</v-btn
+    <v-btn outline color="primary" :to="{ path: '/teams/all' }"
+      ><v-icon>arrow_back</v-icon>{{ $t("events.all-events") }}</v-btn
     >
     <v-layout class="vertical-spacer">
-    <v-flex xs12 sm12>
-      <v-card>
-        <template v-if="pageLoaded">
-          <v-container fill-height fluid>
-            <v-flex xs9 sm9 align-end flexbox>
-              <span class="headline">{{ team.description }}</span>
-            </v-flex>
-            <v-layout xs3 sm3 align-end justify-end>
-              <v-btn flat color="primary" v-on:click="editTeam(team)">
-                <v-icon>edit</v-icon>&nbsp;{{ $t("actions.edit") }}
-              </v-btn>
-            </v-layout>
-          </v-container>
-        </template>
-        <v-layout v-else justify-center height="500px">
-          <div class="ma-5 pa-5">
-            <v-progress-circular
-              indeterminate
-              color="primary"
-            ></v-progress-circular>
-          </div>
-        </v-layout>
-      </v-card>
-    </v-flex>
+      <v-flex xs12 sm12>
+        <v-card>
+          <template v-if="pageLoaded">
+            <v-container fill-height fluid>
+              <v-flex xs9 sm9 align-end flexbox>
+                <span class="headline">{{ team.description }}</span>
+              </v-flex>
+              <v-layout xs3 sm3 align-end justify-end>
+                <v-btn flat color="primary" v-on:click="editTeam(team)">
+                  <v-icon>edit</v-icon>&nbsp;{{ $t("actions.edit") }}
+                </v-btn>
+              </v-layout>
+            </v-container>
+          </template>
+          <v-layout v-else justify-center height="500px">
+            <div class="ma-5 pa-5">
+              <v-progress-circular
+                indeterminate
+                color="primary"
+              ></v-progress-circular>
+            </div>
+          </v-layout>
+        </v-card>
+      </v-flex>
     </v-layout>
 
     <v-toolbar>
-      <v-toolbar-title>{{ $t("events.participants.title") }}</v-toolbar-title>
+      <v-toolbar-title>{{ $t("teams.members.title") }}</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-text-field
         v-model="search"
@@ -48,10 +45,10 @@
         color="primary"
         raised
         v-on:click="openParticipantDialog"
-        data-cy="add-participant"
+        data-cy="add-team-member"
       >
         <v-icon dark left>add</v-icon>
-        {{ $t("actions.add-person") }}
+        {{ $t("teams.members.add") }}
       </v-btn>
     </v-toolbar>
     <v-data-table
@@ -69,6 +66,7 @@
         <td>{{ props.item.member.phone }}</td>
         <td>
           <template v-if="props.item.active">
+            <!-- TODO change archive to remove -->
             <v-tooltip bottom>
               <v-btn
                 icon
@@ -77,6 +75,7 @@
                 color="primary"
                 slot="activator"
                 v-on:click="confirmArchive(props.item)"
+                data-cy="archive"
               >
                 <v-icon small>archive</v-icon>
               </v-btn>
@@ -93,6 +92,7 @@
                 slot="activator"
                 v-on:click="unarchive(props.item)"
                 :loading="props.item.unarchiving"
+                data-cy="unarchive"
               >
                 <v-icon small>undo</v-icon>
               </v-btn>
@@ -114,7 +114,7 @@
     <!-- Archive dialog -->
     <v-dialog v-model="archiveDialog.show" max-width="350px">
       <v-card>
-        <v-card-text>{{ $t("assets.confirm-archive") }}</v-card-text>
+        <v-card-text>{{ $t("team.members.confirm-remove") }}</v-card-text>
         <v-card-actions>
           <v-btn v-on:click="cancelArchive" color="secondary" flat data-cy="">{{
             $t("actions.cancel")
@@ -125,7 +125,7 @@
             color="primary"
             raised
             :loading="archiveDialog.loading"
-            data-cy=""
+            data-cy="confirm-archive"
             >{{ $t("actions.confirm") }}</v-btn
           >
         </v-card-actions>
@@ -133,6 +133,7 @@
     </v-dialog>
 
     <!-- New/Edit dialog -->
+    <!-- TODO: This doesn't need to be in its own file -->
     <v-dialog v-model="teamDialog.show" max-width="500px">
       <team-form
         v-bind:editMode="teamDialog.editMode"
@@ -144,40 +145,34 @@
       />
     </v-dialog>
 
-    <!-- Add Participant Dialog -->
+    <!-- Add Member Dialog -->
     <v-dialog v-model="addMemberDialog.show" max-width="350px">
       <v-card>
         <v-card-title primary-title>
           <div>
-            <h3 class="headline mb-0">
-              {{ $t("person.actions.add-participant") }}
-            </h3>
+            <h3 class="headline mb-0">{{ $t("teams.members.add") }}</h3>
           </div>
         </v-card-title>
         <v-card-text>
-          <entity-search
-            multiple
-            person
-            v-model="addMemberDialog.newParticipants"
-          />
+          <entity-search multiple person v-model="addMemberDialog.newMembers" />
         </v-card-text>
         <v-card-actions>
           <v-btn
             v-on:click="cancelNewParticipantDialog"
             color="secondary"
             flat
-            data-cy=""
+            data-cy="cancel-participant"
             >{{ $t("actions.cancel") }}</v-btn
           >
           <v-spacer></v-spacer>
           <v-btn
             v-on:click="addParticipants"
-            :disabled="addMemberDialog.newParticipants.length == 0"
+            :disabled="addMemberDialog.newMembers.length == 0"
             color="primary"
             raised
             :loading="addMemberDialog.loading"
-            data-cy=""
-            >Add Participants</v-btn
+            data-cy="confirm-participant"
+            >{{ $t("teams.members.add") }}</v-btn
           >
         </v-card-actions>
       </v-card>
@@ -190,7 +185,7 @@ import TeamForm from "./TeamForm";
 import EntitySearch from "../EntitySearch";
 export default {
   name: "Team",
-    components: { "team-form": TeamForm, "entity-search": EntitySearch },
+  components: { "team-form": TeamForm, "entity-search": EntitySearch },
   data() {
     return {
       rowsPerPageItem: [
@@ -221,19 +216,19 @@ export default {
 
       addMemberDialog: {
         show: false,
-        newParticipants: [],
+        newMembers: [],
         loading: false
       },
       snackbar: {
         show: false,
         text: ""
-      },
+      }
     };
   },
 
   mounted() {
     this.pageLoaded = false;
-    this.reloadTeam()
+    this.reloadTeam();
   },
 
   computed: {
@@ -253,13 +248,12 @@ export default {
   },
 
   methods: {
-
     reloadTeam() {
       const id = this.$route.params.team;
       this.$http.get(`/api/v1/teams/${id}?include_members=1`).then(resp => {
         this.team = resp.data;
-        console.log(this.team)
-        this.members = resp.data.members
+        console.log(this.team);
+        this.members = resp.data.members;
         this.pageLoaded = true;
       });
     },
@@ -296,11 +290,12 @@ export default {
           this.archiveDialog.show = false;
           this.showSnackbar(this.$t("assets.error-archiving-asset"));
         });
-
     },
 
     unarchive(member) {
-      const idx = this.members.findIndex(as => as.member_id === member.member_id);
+      const idx = this.members.findIndex(
+        as => as.member_id === member.member_id
+      );
       const copyMember = JSON.parse(JSON.stringify(member));
       member.unarchiving = true;
       copyMember.active = true;
@@ -321,7 +316,6 @@ export default {
         });
     },
 
-
     activateNewParticipantDialog() {
       this.addMemberDialog.show = true;
     },
@@ -336,7 +330,7 @@ export default {
       this.addMemberDialog.loading = true;
       let promises = [];
 
-      for (let person of this.addMemberDialog.newParticipants) {
+      for (let person of this.addMemberDialog.newMembers) {
         const idx = this.members.findIndex(
           ev_pe => ev_pe.person_id === person.id
         );
@@ -350,8 +344,8 @@ export default {
           this.showSnackbar(this.$t("events.participants.added"));
           this.addMemberDialog.loading = false;
           this.addMemberDialog.show = false;
-          this.addMemberDialog.newParticipants = [];
-          this.reloadTeam()
+          this.addMemberDialog.newMembers = [];
+          this.reloadTeam();
         })
         .catch(err => {
           console.log(err);
@@ -391,30 +385,29 @@ export default {
         })
         .then(resp => {
           console.log("EDITED", resp);
-          this.team = resp.data
+          this.team = resp.data;
           this.teamDialog.show = false;
           this.teamDialog.saveLoading = false;
-          this.showSnackbar(this.$t("events.teams.team-edited"));
+          this.showSnackbar(this.$t("teams.team-edited"));
         })
         .catch(err => {
           console.error("PUT FALURE", err.response);
-          console.log(err)
+          console.log(err);
           this.teamDialog.saveLoading = false;
-          this.showSnackbar(this.$t("events.teams.error-editing-team"));
+          this.showSnackbar(this.$t("teams.error-editing-team"));
         });
     },
 
     showSnackbar(message) {
       this.snackbar.text = message;
       this.snackbar.show = true;
-    },
-
+    }
   }
 };
 </script>
 
 <style scoped>
 .vertical-spacer {
-  margin-bottom: 20px
+  margin-bottom: 20px;
 }
 </style>

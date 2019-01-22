@@ -17,7 +17,13 @@ const router = new VueRouter({
       name: "public",
       path: "/public",
       meta: { layout: "arco" },
-      component: () => import("@/pages/Public"),
+      component: () => import("@/pages/Public")
+    },
+    {
+      name: "public-events",
+      path: "/public/events",
+      meta: { authRequired: false },
+      component: () => import("@/pages/public/Events")
     },
     {
       name: "public-events",
@@ -30,6 +36,12 @@ const router = new VueRouter({
       path: "/login",
       meta: { layout: "arco" },
       component: () => import("@/pages/Login")
+    },
+    {
+      name: "signup",
+      path: "/signup",
+      meta: { layout: "arco" },
+      component: () => import("@/pages/Signup")
     },
     {
       name: "admin",
@@ -61,6 +73,12 @@ const router = new VueRouter({
           path: "all",
           meta: { authRequired: true },
           component: () => import("@/components/events/EventTable")
+        },
+        {
+          name: "events-calendar",
+          path: "calendar",
+          meta: { authRequired: true },
+          component: () => import("@/components/events/Calendar")
         },
         {
           name: "event",
@@ -163,7 +181,8 @@ const router = new VueRouter({
               path: "details",
               meta: { authRequired: true },
               props: true,
-              component: () => import("@/components/courses/CourseOfferingDetails")
+              component: () =>
+                import("@/components/courses/CourseOfferingDetails")
             },
             {
               name: "course-offering-students",
@@ -171,6 +190,13 @@ const router = new VueRouter({
               meta: { authRequired: true },
               props: true,
               component: () => import("@/components/courses/CourseOfferingStudents")
+            },
+            {
+              name: "course-offering-meetings",
+              path: "meetings",
+              meta: { authRequired: true },
+              props: true,
+              component: () => import("@/components/courses/CourseOfferingMeetings")
             }
           ]
         }

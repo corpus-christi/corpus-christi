@@ -206,7 +206,10 @@ export default {
 
   methods: {
     clickThrough(course) {
-      this.$router.push({ name: 'course-details', params: { courseId: course.id }})
+      this.$router.push({
+        name: "course-details",
+        params: { courseId: course.id }
+      });
     },
 
     dispatchAction(actionName, course) {
@@ -379,7 +382,7 @@ export default {
 </script>
 
 <style scoped>
-  .hover-hand {
-    cursor: pointer;
-  }
+.hover-hand {
+  cursor: pointer;
+}
 </style>

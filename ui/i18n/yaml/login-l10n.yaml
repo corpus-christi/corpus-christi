@@ -2,3 +2,7 @@ login:
   header:
     en: Log In
     es: Iniciar Sesión
+  messages:
+    incorrect-login:
+      en: Username or password is incorrect
+      es: Nombre de usuario o contraseña incorrecta

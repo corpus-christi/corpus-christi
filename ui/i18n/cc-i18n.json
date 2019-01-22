@@ -15,15 +15,19 @@
       "noDataText": "No data available"
     },
     "account": {
+      "active": "Active",
+      "inactive": "Inactive",
       "messages": {
         "added-ok": "Account added successfully",
         "updated-ok": "Account updated successfully"
       },
+      "no-account": "Don't have an account?",
       "password": "Password",
       "repeat-password": "Repeat Password",
       "username": "Username"
     },
     "actions": {
+      "activate-account": "Activate",
       "add-another": "Add Another",
       "add-event": "Add Event",
       "add-person": "Add Person",
@@ -32,6 +36,7 @@
       "clear": "Clear",
       "close": "Close",
       "confirm": "Confirm",
+      "deactivate-account": "Deactivate",
       "duplicate": "Duplicate",
       "edit": "Edit",
       "header": "Actions",
@@ -40,6 +45,7 @@
       "save": "Save",
       "search": "Search",
       "search-people": "Search People",
+      "signup": "Signup",
       "tooltips": {
         "activate": "Activate",
         "archive": "Archive",
@@ -57,25 +63,31 @@
       "asset-added": "Asset added",
       "asset-archived": "Asset archived",
       "asset-edited": "Asset edited",
+      "asset-on-event": "That asset is already assigned to this event.",
+      "asset-removed": "Asset removed",
       "asset-unarchived": "Asset unarchived",
       "confirm-archive": "Are you sure you want to archive this asset?",
+      "confirm-remove-from-event": "Are you sure you want to remove this asset from this event?",
       "create-asset": "Create Asset",
       "description": "Description",
       "edit-asset": "Edit Asset",
       "error-adding-asset": "Error while adding asset",
       "error-archiving-asset": "Error while archiving asset",
+      "error-asset-assigned": "That asset is assigned to a conflicting event.",
       "error-editing-asset": "Error while editing asset",
+      "error-removing-asset": "Error while removing asset",
       "error-unarchiving-asset": "Error while unarchiving asset",
       "location": "Location",
       "new": "Add Asset",
+      "none-assigned": "No assets assigned.",
       "title": "Assets"
     },
     "courses": {
       "add-failed": "Failed to add course",
+      "add-meeting": "Add Meeting",
+      "add-meeting-failed": "Failed to add meeting(s)",
       "added": "Course added",
       "archived": "Course archived",
-      "choose-location": "Location",
-      "choose-teacher": "Teacher",
       "choose-time": "Choose Time",
       "confirm-archive": "Are you sure you want to archive this course?",
       "course": "Courses",
@@ -83,17 +95,26 @@
       "dates": "Choose Dates",
       "description": "Description",
       "enrolled": "Number Enrolled",
+      "info-meeting-dates": "You can choose multiple dates to create many meetings.",
       "is-archived": "This course is archived",
+      "location": "Location",
       "max-size": "Max Number of Students",
+      "meeting-added": "Meeting(s) added",
+      "meeting-updated": "Meeting updated",
       "new": "New Course",
+      "new-meeting": "New Meeting",
       "new-offering": "New Course Offering",
       "no-prerequisites": "This course has no prerequisites.",
       "prerequisites": "Prerequisites",
       "reactivated": "Course unarchived",
+      "schedule": "Schedule",
       "students": "Students",
+      "teacher": "Teacher",
       "title": "Title",
       "update-failed": "Failed to update course",
-      "updated": "Course updated"
+      "update-meeting-failed": "Failed to update meeting",
+      "updated": "Course updated",
+      "when": "When"
     },
     "diplomas": {
       "archived": "Diploma archived",
@@ -108,7 +129,7 @@
       "updated": "Diploma updated"
     },
     "events": {
-      "actions": "Actions",
+      "all-events": "All Events",
       "confirm-archive": "Are you sure you want to archive this event?",
       "create-event": "Create Event",
       "details": {
@@ -130,6 +151,7 @@
       "header": "Events",
       "location": "Location",
       "participants": {
+        "add": "Add Participants",
         "added": "Participants added",
         "confirm-remove": "Are you sure you want to remove this participant?",
         "error-adding": "Error adding participant",
@@ -137,42 +159,44 @@
         "removed": "Removed participant",
         "title": "Participants"
       },
+      "persons": {
+        "confirm-remove-from-event": "Are you sure you want to remove this person from this event?",
+        "description": "Role Description",
+        "edit": "Edit Person",
+        "error-adding-person": "Error while adding person",
+        "error-person-assigned": "That person is assigned to a conflicting event.",
+        "error-removing-person": "Error while removing person",
+        "new": "Add Person",
+        "none-assigned": "No people assigned.",
+        "person-added": "Person added",
+        "person-edited": "Person edited",
+        "person-on-event": "That person is already assigned to this event.",
+        "person-removed": "Person removed",
+        "title": "Event People"
+      },
       "start-date": "Start Date",
       "start-time": "Start Time",
-      "teams": {
-        "confirm-archive": "Are you sure you want to archive this team?",
-        "confirm-remove-from-event": "Are you sure you want to remove this team from this event?",
-        "create-team": "Create Team",
-        "description": "Description",
-        "edit-team": "Edit Team",
-        "error-adding-team": "Error while adding team",
-        "error-editing-team": "Error while editing team",
-        "error-removing-team": "Error while removing team",
-        "error-team-assigned": "That team is assigned to a conflicting event.",
-        "error-unarchiving-team": "Error while unarchiving team",
-        "new": "Add Team",
-        "team-added": "Team added",
-        "team-edited": "Team edited",
-        "team-on-event": "That team is already assigned to this event.",
-        "team-removed": "Team removed",
-        "title": "Teams"
-      },
       "title": "Event Title"
     },
     "groups": {
       "title": "Home Churches"
     },
     "login": {
-      "header": "Log In"
+      "header": "Log In",
+      "messages": {
+        "incorrect-login": "Username or password is incorrect"
+      }
     },
     "people": {
       "attributes": "Attributes",
-      "title": "People"
+      "title": "People",
+      "title-roles": "Roles"
     },
     "person": {
       "actions": {
         "add-account": "Add Account",
         "add-participant": "Add a Participant",
+        "assign-roles": "Assign Roles",
         "edit": "Edit Person",
         "new": "New Person",
         "reset-password": "Reset Password"
@@ -185,6 +209,8 @@
       "gender": "Gender",
       "male": "Male",
       "messages": {
+        "account-activate": "Account activated",
+        "account-deactivate": "Account deactivated",
         "canceled": "Canceled add new person",
         "person-activate": "Person activated",
         "person-add": "New person added",
@@ -194,7 +220,8 @@
       },
       "name": {
         "first": "First Name",
-        "last": "Last Name"
+        "last": "Last Name",
+        "second-last": "Second Last Name"
       },
       "phone": "Phone",
       "settings": "Settings for {person}"
@@ -211,6 +238,30 @@
       },
       "title": "Public"
     },
+    "teams": {
+      "confirm-archive": "Are you sure you want to archive this team?",
+      "confirm-remove-from-event": "Are you sure you want to remove this team from this event?",
+      "create-team": "Create Team",
+      "description": "Description",
+      "edit-team": "Edit Team",
+      "error-adding-team": "Error while adding team",
+      "error-editing-team": "Error while editing team",
+      "error-removing-team": "Error while removing team",
+      "error-team-assigned": "That team is assigned to a conflicting event.",
+      "error-unarchiving-team": "Error while unarchiving team",
+      "members": {
+        "add": "Add Team Members",
+        "confirm-remove": "Are you sure you want to remove this member?",
+        "title": "Team Members"
+      },
+      "new": "Add Team",
+      "none-assigned": "No teams assigned.",
+      "team-added": "Team added",
+      "team-edited": "Team edited",
+      "team-on-event": "That team is already assigned to this event.",
+      "team-removed": "Team removed",
+      "title": "Teams"
+    },
     "validation": {
       "attributes": {
         "email": "email",
@@ -219,6 +270,7 @@
         "lastName": "last name",
         "location": "location",
         "startDate": "start date",
+        "team-description": "team description",
         "title": "title"
       },
       "messages": {
@@ -244,15 +296,19 @@
       "noDataText": "Datos no disponibles"
     },
     "account": {
+      "active": "Activo",
+      "inactive": "Inactivo",
       "messages": {
         "added-ok": "Cuenta agregada exitosamente",
         "updated-ok": "Cuenta actualizada con \u00e9xito"
       },
+      "no-account": "\u00bfNo tienes una cuenta?",
       "password": "Contrase\u00f1a",
       "repeat-password": "Repite la contrase\u00f1a",
       "username": "Nombre de usuario"
     },
     "actions": {
+      "activate-account": "Activar",
       "add-another": "A\u00f1adir Otro",
       "add-event": "A\u00f1adir Evento",
       "add-person": "A\u00f1adir Persona",
@@ -261,6 +317,7 @@
       "clear": "Despejar",
       "close": "Cerrar",
       "confirm": "Confirmar",
+      "deactivate-account": "Desactivar",
       "duplicate": "Duplicar",
       "edit": "Editar",
       "header": "Acciones",
@@ -269,6 +326,7 @@
       "save": "Salvar",
       "search": "Buscar",
       "search-people": "Buscar Personas",
+      "signup": "Reg\u00edstrate",
       "tooltips": {
         "activate": "Activar",
         "archive": "Archivar",
@@ -286,25 +344,31 @@
       "asset-added": "Insumo agregado",
       "asset-archived": "Insumo archivado",
       "asset-edited": "Insumo editado",
+      "asset-on-event": "Ese insumo ya est\u00e1 asignado a este evento.",
+      "asset-removed": "Insumo eliminado",
       "asset-unarchived": "Insumo desarchivado",
       "confirm-archive": "\u00bfSeguro que quieres archivar este insumo?",
+      "confirm-remove-from-event": "\u00bfEst\u00e1 seguro de que desea eliminar este insumo de este evento?",
       "create-asset": "Crear Insumo",
       "description": "Descripci\u00f3n",
       "edit-asset": "Editar Insumo",
       "error-adding-asset": "Error al agregar insumo",
       "error-archiving-asset": "Error al archivar este insumo",
+      "error-asset-assigned": "Ese insumo est\u00e1 asignado a un evento conflictivo.",
       "error-editing-asset": "Error al editar insumo",
+      "error-removing-asset": "Error al eliminadar este insumo",
       "error-unarchiving-asset": "Error al desarchivar insumo",
       "location": "Ubicaci\u00f3n",
       "new": "A\u00f1adir Insumo",
+      "none-assigned": "No hay insumos asignados.",
       "title": "Insumos"
     },
     "courses": {
       "add-failed": "Se fall\u00f3 a a\u00f1adir el curso",
+      "add-meeting": "A\u00f1adir Reuni\u00f3n",
+      "add-meeting-failed": "Se fall\u00f3 a a\u00f1adir los reuniones",
       "added": "Curso a\u00f1adido",
       "archived": "Curso archivado",
-      "choose-location": "Ubicaci\u00f3n",
-      "choose-teacher": "Maestro",
       "choose-time": "Elegir Tiempo",
       "confirm-archive": "\u00bfEst\u00e1s seguro que quieres archivar este curso?",
       "course": "Cursos",
@@ -312,17 +376,26 @@
       "dates": "Elegir Fechas",
       "description": "Descripci\u00f3n",
       "enrolled": "N\u00famero Registrado",
+      "info-meeting-dates": "Puede elegir fechas m\u00faltiples para crear muchos reuniones.",
       "is-archived": "Este curso est\u00e1 archivado",
+      "location": "Ubicaci\u00f3n",
       "max-size": "N\u00famero M\u00e1ximo de Estudiantes",
+      "meeting-added": "Reuniones a\u00f1adido",
+      "meeting-updated": "Reuni\u00f3n actualizado",
       "new": "Nuevo Curso",
+      "new-meeting": "Nuevo Reuni\u00f3n",
       "new-offering": "Nuevo Oferta de Curso",
       "no-prerequisites": "Este curso no tiene prerrequisitos.",
       "prerequisites": "Prerrequisitos",
       "reactivated": "Curso desarchivado",
+      "schedule": "Horario",
       "students": "Estudiantes",
+      "teacher": "Maestro",
       "title": "T\u00edtulo",
       "update-failed": "Se fall\u00f3 a actualizar el curso",
-      "updated": "Curso actualizado"
+      "update-meeting-failed": "Se fall\u00f3 a actualizar el reuni\u00f3n",
+      "updated": "Curso actualizado",
+      "when": "Cu\u00e1ndo"
     },
     "diplomas": {
       "archived": "Diploma archivado",
@@ -337,7 +410,7 @@
       "updated": "Diploma actualizado"
     },
     "events": {
-      "actions": "Comportamiento",
+      "all-events": "Todos Eventos",
       "confirm-archive": "\u00bfSeguro que quieres archivar este evento?",
       "create-event": "Crear Evento",
       "details": {
@@ -359,6 +432,7 @@
       "header": "Eventos",
       "location": "Ubicaci\u00f3n",
       "participants": {
+        "add": "A\u00f1adir participantes",
         "added": "Participantes agregado",
         "confirm-remove": "\u00bfEst\u00e1s seguro de que quieres eliminar a este participante?",
         "error-adding": "Error al agregar participante",
@@ -366,42 +440,44 @@
         "removed": "Participante eliminado",
         "title": "Participantes"
       },
+      "persons": {
+        "confirm-remove-from-event": "\u00bfEst\u00e1 seguro de que desea eliminar este persona de este evento?",
+        "description": "Descripci\u00f3n del Rol",
+        "edit": "Editar Persona",
+        "error-adding-person": "Error al agregar persona",
+        "error-person-assigned": "Ese persona est\u00e1 asignado a un evento conflictivo.",
+        "error-removing-person": "Error al eliminadar este persona",
+        "new": "A\u00f1adir Persona",
+        "none-assigned": "No hay personas asignados.",
+        "person-added": "Persona agregado",
+        "person-edited": "Persona editado",
+        "person-on-event": "Ese persona ya est\u00e1 asignado a este evento.",
+        "person-removed": "Persona eliminado",
+        "title": "Personas del Evento"
+      },
       "start-date": "Fecha de Inicio",
       "start-time": "Hora de Inicio",
-      "teams": {
-        "confirm-archive": "\u00bfSeguro que quieres archivar este equipo?",
-        "confirm-remove-from-event": "\u00bfEst\u00e1s seguro de que quieres eliminar a este equipo de este evento?",
-        "create-team": "Crear Equipo",
-        "description": "Descripci\u00f3n",
-        "edit-team": "Editar Equipo",
-        "error-adding-team": "Error al agregar equipo",
-        "error-editing-team": "Error al editar equipo",
-        "error-removing-team": "Error al eliminadar este equipo",
-        "error-team-assigned": "Ese equipo est\u00e1 asignado a un evento conflictivo.",
-        "error-unarchiving-team": "Error al desarchivar equipo",
-        "new": "A\u00f1adir Equipo",
-        "team-added": "Equipo agregado",
-        "team-edited": "Equipo editado",
-        "team-on-event": "Ese equipo ya est\u00e1 asignado a este evento.",
-        "team-removed": "Equipo eliminado",
-        "title": "Equipos"
-      },
       "title": "T\u00edtulo del Evento"
     },
     "groups": {
       "title": "Iglesias Hogar"
     },
     "login": {
-      "header": "Iniciar Sesi\u00f3n"
+      "header": "Iniciar Sesi\u00f3n",
+      "messages": {
+        "incorrect-login": "Nombre de usuario o contrase\u00f1a incorrecta"
+      }
     },
     "people": {
       "attributes": "Atributas",
-      "title": "Personas"
+      "title": "Personas",
+      "title-roles": "Papeles"
     },
     "person": {
       "actions": {
         "add-account": "A\u00f1adir cuenta",
         "add-participant": "A\u00f1adir Part\u00edcipe",
+        "assign-roles": "Asigne Papeles",
         "edit": "Editar persona",
         "new": "Persona Nueva",
         "reset-password": "Restablecer la contrase\u00f1a"
@@ -414,6 +490,8 @@
       "gender": "G\u00e9nero",
       "male": "Hombre",
       "messages": {
+        "account-activate": "Cuenta activada",
+        "account-deactivate": "Cuenta desactivada",
         "canceled": "Cancelado a\u00f1adir nueva persona",
         "person-activate": "Persona activada",
         "person-add": "Nueva persona agregada",
@@ -423,7 +501,8 @@
       },
       "name": {
         "first": "Nombre de pila",
-        "last": "Apellido"
+        "last": "Apellido",
+        "second-last": "Segundo Apellido"
       },
       "phone": "Tel\u00e9fono",
       "settings": "Configuraci\u00f3n de la {person}"
@@ -440,6 +519,30 @@
       },
       "title": "P\u00fablico"
     },
+    "teams": {
+      "confirm-archive": "\u00bfSeguro que quieres archivar este equipo?",
+      "confirm-remove-from-event": "\u00bfEst\u00e1s seguro de que quieres eliminar a este equipo de este evento?",
+      "create-team": "Crear Equipo",
+      "description": "Descripci\u00f3n",
+      "edit-team": "Editar Equipo",
+      "error-adding-team": "Error al agregar equipo",
+      "error-editing-team": "Error al editar equipo",
+      "error-removing-team": "Error al eliminadar este equipo",
+      "error-team-assigned": "Ese equipo est\u00e1 asignado a un evento conflictivo.",
+      "error-unarchiving-team": "Error al desarchivar equipo",
+      "members": {
+        "add": "A\u00f1adir Miembros",
+        "confirm-remove": "\u00bfSeguro que quieres eliminar este miembro?",
+        "title": "Miembros del Equipo"
+      },
+      "new": "A\u00f1adir Equipo",
+      "none-assigned": "No hay equipos asignados.",
+      "team-added": "Equipo agregado",
+      "team-edited": "Equipo editado",
+      "team-on-event": "Ese equipo ya est\u00e1 asignado a este evento.",
+      "team-removed": "Equipo eliminado",
+      "title": "Equipos"
+    },
     "validation": {
       "attributes": {
         "email": "correo electr\u00f3nico",
@@ -448,6 +551,7 @@
         "lastName": "appellido",
         "location": "ubicaci\u00f3n",
         "startDate": "fecha de inicio",
+        "team-description": "descripci\u00f3n del equipo",
         "title": "t\u00edtulo"
       },
       "messages": {

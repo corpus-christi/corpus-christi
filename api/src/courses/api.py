@@ -1,7 +1,6 @@
 import json
 
 from flask import request
-#from flask_api import status
 from flask.json import jsonify, dumps
 from flask_jwt_extended import jwt_required
 from marshmallow import ValidationError
@@ -11,6 +10,7 @@ from datetime import datetime
 
 from . import courses
 from ..people.models import Person, PersonSchema
+from ..places.models import Location, LocationSchema
 from .models import Course, CourseSchema, \
     Course_Offering, Course_OfferingSchema, \
     Student, StudentSchema, \
@@ -25,6 +25,8 @@ from src.people.models import Person
 from .. import db
 
 course_schema = CourseSchema()
+location_schema = LocationSchema()
+person_schema = PersonSchema()
 
 
 @courses.route('/courses', methods=['POST'])
@@ -277,14 +279,13 @@ def read_active_state_course_offerings(active_state):
 @jwt_required
 # @authorize(["role.superuser", "role.registrar"])
 def update_course_offering(course_offering_id):
-    course_offering = db.session.query(
-        Course_Offering).filter_by(id=course_offering_id).first()
+    course_offering = db.session.query(Course_Offering).filter_by(id=course_offering_id).first()
     if course_offering is None:
         return "Course Offering NOT Found", 404
 
-    for attr in 'description', 'active', 'max_size':
-        if attr in request.json:
-            setattr(course_offering, attr, request.json[attr])
+    course_offering_json = course_offering_schema.load(request.json)
+    for attr in course_offering_json.keys():
+        setattr(course_offering, attr, course_offering_json[attr])
 
     db.session.commit()
     return jsonify(course_offering_schema.dump(course_offering))
@@ -359,7 +360,7 @@ def update_diploma(diploma_id):
         del request.json['courses'] 
 
     try:
-        valid_diploma = diploma_schema.load(request.json)
+        valid_diploma = diploma_schema.load(request.json, partial=True)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
@@ -610,8 +611,8 @@ def create_course_completion(courses_id):
     person_id = request.json['personId']
 
     # Query into DB to ensure person is enrolled in a course offering with course_id
-    personEnrolled = db.session.query(Person, Student, Course_Offering, Course)
-                        .filter_by(id=person_id).join(Student, Course_Offering)
+    personEnrolled = db.session.query(Person, Student, Course_Offering, Course) \
+                        .filter_by(id=person_id).join(Student, Course_Offering) \
                         .filter_by(course_id=courses_id).join(Course) \
                         .first()
     
@@ -664,8 +665,8 @@ def create_class_meeting(course_offering_id):
 
     meetingInDB = db.session.query(Class_Meeting).filter_by(
         offering_id=course_offering_id,
-        teacher_id=request.json['teacherId'],
-        when=request.json['when']).first()
+        teacher_id=valid_class_meeting['teacher_id'],
+        when=valid_class_meeting['when'] ).first()
 
     # If a class meeting for a course offering DNE
     if meetingInDB is None:
@@ -679,6 +680,22 @@ def create_class_meeting(course_offering_id):
         # then don't create new class meeting
         return 'Class meeting already exists in course offering', 208
 
+"""
+Helper function applies location and teacher to a
+class meeting object
+"""
+def get_loc_and_person_for_meeting(meeting):
+    print(meeting)
+    location = location_schema.dump(db.session.query(Location).filter_by(id=meeting['locationId']).first())
+    teacher = person_schema.dump(db.session.query(Person).filter_by(id=meeting['teacherId']).first())
+    if location is None:
+        return 'Could not find specified location', 404
+    if teacher is None:
+        return 'Could not find specified person', 404
+
+    meeting['location'] = location
+    meeting['teacher'] = teacher
+    return meeting
 
 @courses.route('/course_offerings/<int:course_offering_id>/class_meetings')
 @jwt_required
@@ -686,7 +703,10 @@ def read_all_class_meetings(course_offering_id):
     result = db.session.query(Class_Meeting).filter_by(offering_id=course_offering_id).all()
     if result == []:
         return 'No class meetings found for this course offering', 404
-    return jsonify(class_meeting_schema.dump(result, many=True))
+    result = class_meeting_schema.dump(result, many=True)
+    for i in result:
+        get_loc_and_person_for_meeting(i)
+    return jsonify(result)
 
 
 @courses.route('/course_offerings/<int:course_offering_id>/<int:class_meeting_id>')
@@ -695,25 +715,33 @@ def read_one_class_meeting(course_offering_id, class_meeting_id):
     result = db.session.query(Class_Meeting).filter_by(id=class_meeting_id, offering_id=course_offering_id).first()
     if result is None:
         return 'Specified class meeting does not exist for this course offering', 404
-    return jsonify(class_meeting_schema.dump(result))
+    result = class_meeting_schema.dump(result)
+    get_loc_and_person_for_meeting(result)
+    return jsonify(result)
 
 
 @courses.route('/course_offerings/<int:course_offering_id>/<int:class_meeting_id>', methods=['PATCH'])
 @jwt_required
 def update_class_meeting(course_offering_id, class_meeting_id):
-    class_meeting = db.session.query(Class_Meeting).filter_by(id=class_meeting_id, offering_id=course_offering_id).first()
-    if class_meeting is None:
-           return "Class meeting not found", 404 
+    try:
+        valid_class_meeting = class_meeting_schema.load(request.json, partial=True)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
 
+    class_meeting = db.session.query(Class_Meeting).filter_by(id=class_meeting_id, offering_id=course_offering_id).first()
+    # Cannot update class meeting with offering_id that DNE
+    if class_meeting is None:
+        return "Class meeting not found", 404 
+
+    # Update existing class meeting with offering_id
     for attr in 'location_id', 'teacher_id', 'when':
-        if attr in request.json:
+        if attr in valid_class_meeting.keys():
             if attr == 'when':
-                # For example, the following line requires datetime input to be "2019-02-01 10:01:30"
+                # Python datetime does not accept timezone
                 request.json['when'] = datetime.fromisoformat(request.json['when'])
             setattr(class_meeting, attr, request.json[attr])
-
-    db.session.commit()
-    return jsonify(class_meeting_schema.dump(class_meeting))
+            db.session.commit()
+            return jsonify(class_meeting_schema.dump(class_meeting))
 
 @courses.route('/course_offerings/<int:course_offering_id>/<int:class_meeting_id>', methods=['DELETE'])
 @jwt_required
