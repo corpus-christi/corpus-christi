@@ -28,15 +28,19 @@
           </v-flex>
 
           <v-flex shrink>
-            <v-btn flat icon @click="queryAddress('address')" :disabled="formDisabled"
+            <v-btn
+              flat
+              icon
+              @click="queryAddress('address')"
+              :disabled="formDisabled"
               ><v-icon>search</v-icon></v-btn
             >
           </v-flex>
         </v-layout>
 
-        <span body-2 v-if="addressErr" class="red--text"
-          >{{ $t("places.messages.no-results") }}</span
-        >
+        <span body-2 v-if="addressErr" class="red--text">{{
+          $t("places.messages.no-results")
+        }}</span>
         <gmap-map
           ref="map"
           v-bind:center="center"
@@ -66,8 +70,21 @@
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn flat color="secondary" @click="cancelAddressForm" :disabled="formDisabled">{{ $t("actions.cancel") }}</v-btn>
-      <v-btn raised color="primary" @click="saveAddressForm" :loading="formDisabled" :disabled="formDisabled">{{ $t("actions.save") }}</v-btn>
+      <v-btn
+        flat
+        color="secondary"
+        @click="cancelAddressForm"
+        :disabled="formDisabled"
+        >{{ $t("actions.cancel") }}</v-btn
+      >
+      <v-btn
+        raised
+        color="primary"
+        @click="saveAddressForm"
+        :loading="formDisabled"
+        :disabled="formDisabled"
+        >{{ $t("actions.save") }}</v-btn
+      >
     </v-card-actions>
   </v-card>
 </template>
@@ -93,7 +110,7 @@ export default {
       addressErr: false,
       showPlacePicker: false,
       formDisabled: false,
-      title: this.$t("places.create-address"),
+      title: this.$t("places.create-address")
     };
   },
   methods: {
@@ -104,8 +121,8 @@ export default {
 
     async saveAddressForm() {
       this.formDisabled = true;
-      if(this.address.latitude === "" || this.address.longitude === "") {
-        await this.queryAddress('address');
+      if (this.address.latitude === "" || this.address.longitude === "") {
+        await this.queryAddress("address");
         this.sendData();
       } else {
         this.sendData();
@@ -113,17 +130,19 @@ export default {
     },
 
     sendData() {
-      this.$http.post("/api/v1/places/locations", this.address).then(resp => {
-        this.$emit("saved", resp.data);
-      })
-      .then(() => { 
-        this.formDisabled = false
-        this.cancelAddressForm();
-      })
-      .catch(err => { 
-        console.log("FAILED", err) 
-        this.formDisabled = false;
-      });
+      this.$http
+        .post("/api/v1/places/locations", this.address)
+        .then(resp => {
+          this.$emit("saved", resp.data);
+        })
+        .then(() => {
+          this.formDisabled = false;
+          this.cancelAddressForm();
+        })
+        .catch(err => {
+          console.log("FAILED", err);
+          this.formDisabled = false;
+        });
     },
 
     async queryAddress(type) {
@@ -131,7 +150,7 @@ export default {
       if (!isValid) {
         return;
       } else {
-        return new Promise((resolve,reject) => {
+        return new Promise((resolve, reject) => {
           this.$geocoder.setDefaultMode(type);
 
           var addressObj;
@@ -161,15 +180,17 @@ export default {
                 this.address.latitude = addr.geometry.location.lat;
                 this.address.longitude = addr.geometry.location.lng;
                 let addrcomps = addr.address_components;
-                for(let comp of addrcomps) {
-                  for(type of comp.types) {
-                    if(type === "country") {
+                for (let comp of addrcomps) {
+                  for (type of comp.types) {
+                    if (type === "country") {
                       this.address.country_code = comp.short_name;
                       this.address.area_name = comp.long_name;
-                    } else if(type === "locality") {
+                    } else if (type === "locality") {
                       this.address.city = comp.long_name;
-                    } else if(type === "administrative_area_level_1" ||
-                              type === "administrative_area_level_2") {
+                    } else if (
+                      type === "administrative_area_level_1" ||
+                      type === "administrative_area_level_2"
+                    ) {
                       this.address.area_name = comp.long_name;
                     }
                   }

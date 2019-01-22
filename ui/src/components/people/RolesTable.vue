@@ -25,7 +25,7 @@
               solo
               single-line
               :label="$t('people.title-roles')"
-              :items="rolesList"
+              :items="translatedRoles"
             ></v-select>
           </div>
         </v-flex>
@@ -105,9 +105,9 @@
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false" data-cy>{{
-        $t("actions.close")
-      }}</v-btn>
+      <v-btn flat @click="snackbar.show = false" data-cy>
+        {{ $t("actions.close") }}
+      </v-btn>
     </v-snackbar>
 
     <!-- Person admin dialog -->
@@ -212,6 +212,14 @@ export default {
     },
     peopleToDisplay() {
       return this.allAccount;
+    },
+    translatedRoles() {
+      return this.rolesList.map(element => {
+        return {
+          text: this.$t(element.text),
+          value: element.value
+        };
+      });
     }
   },
 

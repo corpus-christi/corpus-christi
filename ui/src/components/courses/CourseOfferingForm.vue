@@ -149,14 +149,10 @@
 
 <script>
 import { isEmpty } from "lodash";
-import EntitySearch from "../EntitySearch";
 import { mapGetters } from "vuex";
 
 export default {
   name: "CourseOfferingForm",
-  components: {
-    EntitySearch
-  },
   data: function() {
     return {
       availableCourses: [],
