@@ -179,10 +179,10 @@ export default {
             this.$emit(
               "updateAccount",
               this.account.id,
-              { roles: roles },
               {
                 password: this.password
-              }
+              },
+              { roles: roles },
             );
           }
           this.close();

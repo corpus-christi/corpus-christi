@@ -28,16 +28,18 @@ describe("Ensures the Add-person works", function() {
   it("Then: The user should show up in the database with the correct information", () => {
     cy.get("[data-cy=search]").type("Pepsi");
     //goes through the info to ensure it is correct
-    cy.get("tbody > :nth-child(1) > :nth-child(2)").should("contain", "Pepsi");
-    cy.get("tbody > :nth-child(1) > :nth-child(3)").should("contain", "Cola");
-    cy.get("tbody > :nth-child(1) > :nth-child(4)").should(
-      "contain",
-      "SoftDrink@gmail.com"
-    );
-    cy.get("tbody > :nth-child(1) > :nth-child(5)").should(
-      "contain",
-      "123-456-7890"
-    );
+    cy.get("[data-cy=person-table").within(() => {
+      cy.get("tbody > :nth-child(1) > :nth-child(2)").should("contain", "Pepsi");
+      cy.get("tbody > :nth-child(1) > :nth-child(3)").should("contain", "Cola");
+      cy.get("tbody > :nth-child(1) > :nth-child(4)").should(
+        "contain",
+        "SoftDrink@gmail.com"
+      );
+      cy.get("tbody > :nth-child(1) > :nth-child(5)").should(
+        "contain",
+        "123-456-7890"
+      );
+    });
   });
 });
 describe("Tests the add-person form to ensure proper functionality", () => {

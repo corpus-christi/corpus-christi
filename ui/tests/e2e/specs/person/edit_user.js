@@ -1,45 +1,3 @@
-// https://docs.cypress.io/api/introduction/api.html
-/*
-describe("Admin edits user settings", function() {
-  it("GIVEN: Admin loads PersonTable", function() {
-    cy.login();
-    cy.url().should("include", "/admin");
-    cy.get("[data-cy=toggle-nav-drawer]").click(); //open nav drawer
-    cy.get("[data-cy=people]").click(); //goes to the people page
-    cy.get("[data-cy=search]").type("Quality");
-  });
-  it("WHEN: Clicking on the edit button", () => {
-    cy.get("[data-cy=edit-person").click();
-  });
-  it("THEN: The person's information can be cleared", () => {
-    cy.get("[data-cy=clear").click();
-  });
-  it("AND: The person's Name can be entered", () => {
-    cy.get("[data-cy=first-name]").type("Quality");
-    cy.get("[data-cy=last-name]").type("Assurance");
-  });
-  it("AND: The person's gender can be checked", () => {
-    cy.get("[data-cy=radio-gender]").within(() => {
-      cy.get(".v-label")
-        .last()
-        .click();
-      cy.get(".v-label")
-        .first()
-        .click();
-    });
-  });
-  it("AND: The person's birthday can be entered", () => {
-    cy.get("[data-cy=birthday]").click();
-    cy.contains("5").click();
-  });
-  it("AND: The person's email & phone # can be entered", () => {
-    cy.get("[data-cy=email]").type("test@aol.com");
-    cy.get("[data-cy=phone]").type("1113334444");
-  });
-  it("FINALLY: The person's new information can be saved", () => {
-    cy.get("[data-cy=save]").click();
-  });
-});*/
 
 describe("Admin edits user information", function() {
   it("Given: logs in, navigates to people page", function() {
@@ -50,19 +8,21 @@ describe("Admin edits user information", function() {
   });
   it("When: The edit information button is pressed:", function() {
     cy.get("[data-cy=search]").type("Quality");
-    cy.get("tbody > :nth-child(1) > :nth-child(2)")
-      .invoke("text")
-      .as("firstName");
-    cy.get("tbody > :nth-child(1) > :nth-child(3)")
-      .invoke("text")
-      .as("lastName");
-    cy.get("tbody > :nth-child(1) > :nth-child(4)")
-      .invoke("text")
-      .as("email");
-    cy.get("tbody > :nth-child(1) > :nth-child(5)")
-      .invoke("text")
-      .as("phone");
-    cy.get("[data-cy=edit-person").click();
+    cy.get("[data-cy=person-table").within(() => {
+      cy.get("tbody > :nth-child(1) > :nth-child(2)")
+        .invoke("text")
+        .as("firstName");
+      cy.get("tbody > :nth-child(1) > :nth-child(3)")
+        .invoke("text")
+        .as("lastName");
+      cy.get("tbody > :nth-child(1) > :nth-child(4)")
+        .invoke("text")
+        .as("email");
+      cy.get("tbody > :nth-child(1) > :nth-child(5)")
+        .invoke("text")
+        .as("phone");
+      cy.get("[data-cy=edit-person").click();
+    });
   });
   it("Then: The information showing on the form should be the same as what was showing on the table", function() {
     cy.get("[data-cy=first-name]").should("have.value", this.firstName);
@@ -70,13 +30,7 @@ describe("Admin edits user information", function() {
     cy.get("[data-cy=email]").should("have.value", this.email);
     cy.get("[data-cy=phone]").should("have.value", this.phone);
   });
-  /*it("And: The clear button should work & fields should be saved", function() {
-    cy.get("[data-cy=first-name]").clear().type("TESTME");
-    cy.get("[data-cy=last-name]").clear().type("LASTNAME");
-    cy.get("[data-cy=radio-gender]").within(() => {//Enters the gender radio button field
-      cy.get(".v-label").last().click();//Female
-      cy.get(".v-label").first().click();//Male
-    });*/
+
   it("And: The information should be mutable", function() {
     cy.get("[data-cy=first-name")
       .clear()
@@ -97,37 +51,46 @@ describe("Admin edits user information", function() {
         .first()
         .click(); //Male
     });
-    cy.get("[data-cy=save").click();
-    cy.get("[data-cy=search")
-      .clear()
-      .type("TESTME");
-    cy.get("tbody > :nth-child(1) > :nth-child(2)").should("contain", "TESTME");
-    cy.get("tbody > :nth-child(1) > :nth-child(3)").should(
-      "contain",
-      "LASTNAME"
-    );
-    cy.get("tbody > :nth-child(1) > :nth-child(4)").should(
-      "contain",
-      "editMe@gmail.com"
-    );
-    cy.get("tbody > :nth-child(1) > :nth-child(5)").should(
-      "contain",
-      "123-456-7890"
-    );
-    cy.get("[data-cy=edit-person]").click();
-    cy.get("[data-cy=first-name")
+    /*cy.get('[data-cy=save]').click();
+    cy.get('[data-cy=search]').clear().type("TESTME");
+    cy.get("[data-cy=person-table").within(() => {
+    cy.get('tbody > :nth-child(1) > :nth-child(2)').should('contain', 'TESTME');
+    cy.get('tbody > :nth-child(1) > :nth-child(3)').should('contain', 'LASTNAME');
+    cy.get('tbody > :nth-child(1) > :nth-child(4)').should('contain', 'editMe@gmail.com');
+    cy.get('tbody > :nth-child(1) > :nth-child(5)').should('contain', '123-456-7890');*/
+    cy.get("[data-cy=save]").click();
+    cy.get("[data-cy=search]").clear().type("TESTME");
+    cy.get("[data-cy=person-table").within(() => {
+      cy.get("tbody > :nth-child(1) > :nth-child(2)").should("contain", "TESTME");
+      cy.get("tbody > :nth-child(1) > :nth-child(3)").should(
+        "contain",
+        "LASTNAME"
+      );
+      cy.get("tbody > :nth-child(1) > :nth-child(4)").should(
+        "contain",
+        "editMe@gmail.com"
+      );
+      cy.get("tbody > :nth-child(1) > :nth-child(5)").should(
+        "contain",
+        "123-456-7890"
+      );
+      cy.get("[data-cy=edit-person]").click();
+    });
+    cy.get("[data-cy=first-name]")
       .clear()
       .type("Quality");
-    cy.get("[data-cy=last-name")
+    cy.get("[data-cy=last-name]")
       .clear()
       .type("Assurance");
     cy.get("[data-cy=save]").click();
-    cy.get("[data-cy=search")
+    cy.get("[data-cy=search]")
       .clear()
       .type("Quality");
   });
   it("And: The clear button should work as well", function() {
-    cy.get("[data-cy=edit-person").click();
+    cy.get("[data-cy=person-table").within(() => {
+      cy.get("[data-cy=edit-person").click();
+    });
     cy.get("[data-cy=clear]").click();
     cy.get("[data-cy=first-name]").should("be.empty");
     cy.get("[data-cy=last-name]").should("be.empty");
