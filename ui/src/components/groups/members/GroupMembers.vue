@@ -35,7 +35,6 @@
         <td>{{ props.item.person.email }}</td>
         <td>{{ props.item.person.phone }}</td>
         <td>
-          {{props.item.active}}
           <template v-if="props.item.active">
             <v-tooltip bottom>
               <v-btn

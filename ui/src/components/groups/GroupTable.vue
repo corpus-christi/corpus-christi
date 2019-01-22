@@ -63,6 +63,12 @@
         >
           {{ props.item.description }}
         </td>
+        <td
+          class="hover-hand"
+          v-on:click="$router.push({ path: '/groups/' + props.item.id })"
+        >
+          {{ '' }}
+        </td>
         <td>
           <template v-if="props.item.active">
             <v-tooltip bottom>
@@ -253,12 +259,18 @@ export default {
       return [
         { text: this.$t("groups.name"), value: "name" },
         { text: this.$t("groups.decription"), value: "description" },
+        { text: this.$t("groups.manager"), value: "managerInfo" },
         { text: this.$t("groups.actions"), sortable: false }
       ];
     },
   },
 
   methods: {
+    getManagerName(managerInfo) {
+      var man = managerInfo.person
+      return man.firstName + " " + man.lastName + " " + ((man.secondLastName) ? man.secondLastName : '')
+    },
+
     activateGroupDialog(group = {}, editMode = false) {
       this.groupDialog.editMode = editMode;
       this.groupDialog.group = group;
@@ -304,6 +316,8 @@ export default {
             this.showSnackbar(this.$t("groups.error-editing-group"));
           });
       } else {
+        delete newGroup.memberList
+        delete newGroup.managerInfo
         this.$http
           .post("/api/v1/groups/groups", newGroup)
           .then(resp => {

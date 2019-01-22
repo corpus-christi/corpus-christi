@@ -20,7 +20,6 @@
           name="description"
           data-cy="description"
         ></v-textarea>
-
         <entity-search
           manager
           v-model="group.manager"

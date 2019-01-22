@@ -19,12 +19,12 @@
       >
         <v-icon>person </v-icon>&nbsp;{{ $t("groups.members.title") }}
       </v-tab>
-      <v-tab
+      <!-- <v-tab
         ripple
         :to="{ path: '/groups/' + $route.params.group + '/meetings' }"
       >
         <v-icon>devices_other</v-icon>&nbsp;{{ $t("groups.meetings.title") }}
-      </v-tab>
+      </v-tab> -->
     </v-tabs>
     <hr class="vertical-spacer" />
     <router-view></router-view>
