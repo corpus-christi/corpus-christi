@@ -243,7 +243,7 @@ export default {
     deactivate(diploma) {
       this.deactivateDialog.loading = true;
       this.$http
-        .put(`/api/v1/courses/diplomas/deactivate/${diploma.id}`)
+        .patch(`/api/v1/courses/diplomas/deactivate/${diploma.id}`)
         .then(resp => {
           console.log("diploma deactivated", resp);
           let returnedDiploma = resp.data;
@@ -264,7 +264,7 @@ export default {
 
     activate(diploma) {
       this.$http
-        .put(`/api/v1/courses/diplomas/activate/${diploma.id}`)
+        .patch(`/api/v1/courses/diplomas/activate/${diploma.id}`)
         .then(resp => {
           console.log("diploma activated", resp);
           let returnedDiploma = resp.data;

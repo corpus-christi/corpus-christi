@@ -1,11 +1,7 @@
 <template>
   <v-navigation-drawer app v-model="drawerVisible">
     <v-list>
-      <NavItem
-        v-for="item in menuItems"
-        :key="item.route"
-        :item="item"
-      />
+      <NavItem v-for="item in menuItems" :key="item.route" :item="item" />
     </v-list>
   </v-navigation-drawer>
 </template>
@@ -60,7 +56,7 @@ export default {
           icon: "event"
         },
         {
-          title: this.$t("events.teams.title"),
+          title: this.$t("teams.title"),
           route: "teams",
           icon: "group"
         },

@@ -50,8 +50,8 @@ courses:
     en: Course Offerings
     es: Ofertas de Cursos
   choose-time:
-    en: Choose Time
-    es: Elegir Tiempo
+    en: Time
+    es: Tiempo
   teacher:
     en: Teacher
     es: Maestro
@@ -62,14 +62,27 @@ courses:
     en: Max Number of Students
     es: Número Máximo de Estudiantes
   dates:
-    en: Choose Dates
-    es: Elegir Fechas
+    en: Dates
+    es: Fechas
+  date:
+    en: Date
+    es: Fecha
+  new-offering-short:
+    _desc: Action for creating a new course offering, short version for buttons
+    en: New Offering
+    es: Nueva Oferta
   new-offering:
-    en: New Course Offering
-    es: Nuevo Oferta de Curso
+    en: New Offering
+    es: Nuevo Oferta
   students:
     en: Students
     es: Estudiantes
+  reject:
+    en: Reject
+    es: Rechazar
+  confirm-student:
+    en: Would you like to confirm or reject this student?
+    es: ¿Te gustarías confirmar o rechazar este estudiante?
   schedule:
     en: Schedule
     es: Horario
@@ -98,3 +111,18 @@ courses:
   update-meeting-failed:
     en: Failed to update meeting
     es: Se falló a actualizar el reunión
+  register:
+    en: Register
+    es: Registrar
+  register-success:
+    en: Successfully Registered
+    es: Registrado con Éxito
+  register-for-course:
+    en: Register for this course
+    es: Registrar para este curso
+  choose-offering:
+    en: Choose Offering
+    es: Elegir Oferta
+  create-new-person:
+    en: Create a new person
+    es: Crear una nueva persona

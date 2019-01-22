@@ -2,30 +2,65 @@
   <v-container>
     <v-layout row>
       <v-flex xs12 sm6 md5>
-        <v-card>
-          <v-toolbar color="cyan" dark>
-            <v-toolbar-title>
-              {{ $t("public.headers.upcoming-classes") }}
-            </v-toolbar-title>
-          </v-toolbar>
-          <v-list>
-            <template v-for="(item, idx) in classes">
-              <v-list-tile avatar v-bind:key="idx">
-                <v-list-tile-avatar>
-                  <v-icon>calendar_today</v-icon>
-                </v-list-tile-avatar>
-                <v-list-tile-content>
-                  <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-                  <v-list-tile-sub-title>{{ item.date }}</v-list-tile-sub-title>
-                </v-list-tile-content>
-              </v-list-tile>
-              <v-divider
-                v-if="idx + 1 < classes.length"
-                v-bind:key="'div' + idx"
-              ></v-divider>
-            </template>
-          </v-list>
-        </v-card>
+        <v-toolbar color="cyan" dark style="z-index: 1">
+          <v-toolbar-title>
+            {{ $t("public.headers.upcoming-classes") }}
+          </v-toolbar-title>
+        </v-toolbar>
+        <v-list style="padding-top: 0px; z-index: 0">
+          <v-expansion-panel>
+            <!-- TODO: filter events that have course offerings -->
+            <!-- TODO: add register button function -->
+            <v-expansion-panel-content
+              v-for="(course, idx) in offeredCourses"
+              v-bind:key="idx"
+              ><div slot="header">{{ course.name }}</div>
+              <v-card>
+                <span class="grey--text">
+                  <v-card-text>{{ course.description }}</v-card-text>
+                </span>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    raised
+                    color="primary"
+                    v-on:click="registrationFormDialog.show = true"
+                  >
+                    {{ $t("courses.register") }}
+                  </v-btn>
+                  <v-spacer></v-spacer>
+                </v-card-actions>
+              </v-card>
+
+              <v-dialog v-model="registrationFormDialog.show" max-width="500px">
+                <CourseRegistrationForm
+                  v-on:cancel="cancel"
+                  v-on:snackbar="showSnackbar($event)"
+                  :course="course"
+                  v-on:registered="registeredPerson"
+                />
+              </v-dialog>
+              <v-snackbar v-model="snackbar.show">
+                {{ snackbar.text }}
+                <v-btn flat @click="snackbar.show = false">
+                  {{ $t("actions.close") }}
+                </v-btn>
+              </v-snackbar>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+          <v-card>
+            <v-card-actions>
+              <v-btn
+                v-on:click="$router.push({ path: '/public/courses' })"
+                flat
+                block
+                outline
+                color="primary"
+                >{{ $t("public.courses.view-all") }}
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-list>
       </v-flex>
 
       <v-flex xs12 sm6 md5 offset-md2>
@@ -67,8 +102,8 @@
                 block
                 outline
                 color="primary"
-                >{{ $t("public.events.view-all") }}</v-btn
-              >
+                >{{ $t("public.events.view-all") }}
+              </v-btn>
             </v-card-actions>
           </v-card>
         </v-list>
@@ -90,21 +125,66 @@
 
 <script>
 import GoogleMap from "../components/GoogleMap";
+import { isEmpty } from "lodash";
+import CourseRegistrationForm from "../components/public/CourseRegistrationForm";
+
 export default {
   name: "Public",
-  components: { GoogleMap },
+  components: { GoogleMap, CourseRegistrationForm },
   data() {
     return {
-      classes: [
-        { title: "Intro to New Testament", date: "2019-01-03" },
-        { title: "Christian Parenting 1", date: "2019-01-12" },
-        { title: "Christian Parenting 2", date: "2019-01-19" }
-      ],
       events: [],
+      courses: [],
       pageLoaded: false,
-      groupLocations: []
+      groupLocations: [],
+
+      registrationFormDialog: {
+        show: false,
+        editMode: false,
+        saving: false,
+        courseOffering: {}
+      },
+
+      snackbar: {
+        show: false,
+        message: ""
+      }
     };
   },
+
+  computed: {
+    offeredCourses: function() {
+      return this.courses.filter(course => {
+        return !isEmpty(course.course_offerings);
+      });
+    }
+  },
+
+  mounted() {
+    this.pageLoaded = false;
+    this.$http.get(`/api/v1/events/?return_group=all`).then(resp => {
+      this.events = resp.data;
+      this.events = this.events.slice(0, 5);
+      console.log(resp.data);
+    });
+
+    this.$http.get("/api/v1/courses/courses").then(resp => {
+      this.courses = resp.data;
+      this.courses = this.courses.slice(0, 5);
+      console.log(resp.data);
+    });
+
+    this.pageLoaded = false;
+    this.getHomegroupLocations();
+    this.getEventData();
+    this.$http.get(`/api/v1/events/?return_group=all&sort=start`).then(resp => {
+      this.events = resp.data;
+      this.events = this.events.slice(0, 5);
+      console.log(resp.data);
+      this.pageLoaded = true;
+    });
+  },
+
   methods: {
     getDisplayDate(ts) {
       let date = new Date(ts);
@@ -133,7 +213,7 @@ export default {
         })
         .catch(err => console.log("FAILED", err));
     },
-
+    
     getEventData() {
       this.pageLoaded = false;
       this.$http.get(`/api/v1/events/?return_group=all`).then(resp => {
@@ -142,11 +222,20 @@ export default {
         console.log(resp.data);
         this.pageLoaded = true;
       });
+    },
+    
+    cancel() {
+      this.registrationFormDialog.show = false;
+    },
+
+    registeredPerson() {
+      this.registrationFormDialog.show = false;
+    },
+
+    showSnackbar(message) {
+      this.snackbar.text = message;
+      this.snackbar.show = true;
     }
-  },
-  mounted: function() {
-    this.getHomegroupLocations();
-    this.getEventData();
   }
 };
 </script>

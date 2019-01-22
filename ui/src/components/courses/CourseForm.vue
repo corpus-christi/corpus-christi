@@ -1,5 +1,7 @@
 <template>
   <form>
+    <!-- creating new course -->
+    <!-- TODO: make description required -->
     <v-text-field
       v-model="course.name"
       v-bind:label="$t('courses.title')"

@@ -26,13 +26,37 @@
       <template slot="items" slot-scope="props">
         <td>{{ getDisplayDate(props.item.when) }}</td>
         <td>{{ props.item.location.description }}</td>
-        <td>{{ props.item.teacher.firstName }} {{ props.item.teacher.lastName }}</td>
-        <td></td>
+        <td>
+          {{ props.item.teacher.firstName }} {{ props.item.teacher.lastName }}
+        </td>
+        <td>
+          <v-layout align-center justify-end>
+            <v-tooltip bottom>
+              <v-btn
+                flat
+                icon
+                outline
+                small
+                color="primary"
+                slot="activator"
+                @click="editClassMeeting(props.item)"
+              >
+                <v-icon small>edit</v-icon>
+              </v-btn>
+              <span>{{ $t("actions.edit") }}</span>
+            </v-tooltip>
+          </v-layout>
+        </td>
       </template>
     </v-data-table>
 
     <!-- New/Edit dialog -->
-    <v-dialog persistent scrollable v-model="classMeetingDialog.show" max-width="500px">
+    <v-dialog
+      persistent
+      scrollable
+      v-model="classMeetingDialog.show"
+      max-width="500px"
+    >
       <ClassMeetingForm
         v-bind:editMode="classMeetingDialog.editMode"
         v-bind:initialData="classMeetingDialog.classMeeting"
@@ -44,13 +68,15 @@
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false">{{ $t("actions.close") }}</v-btn>
+      <v-btn flat @click="snackbar.show = false">{{
+        $t("actions.close")
+      }}</v-btn>
     </v-snackbar>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters } from "vuex";
 import ClassMeetingForm from "./ClassMeetingForm";
 
 export default {
@@ -76,7 +102,7 @@ export default {
       snackbar: {
         show: false,
         text: ""
-      },
+      }
     };
   },
 
@@ -100,14 +126,17 @@ export default {
   },
 
   watch: {
-    "$route":  "loadMeetings"
+    $route: "loadMeetings"
   },
 
   methods: {
     loadMeetings() {
       this.loading = true;
       this.loadingFailed = false;
-      this.$http.get(`/api/v1/courses/course_offerings/${this.offeringId}/class_meetings`)
+      this.$http
+        .get(
+          `/api/v1/courses/course_offerings/${this.offeringId}/class_meetings`
+        )
         .then(resp => {
           this.meetings = resp.data;
         })
@@ -138,18 +167,21 @@ export default {
     },
 
     saveClassMeeting(meetings) {
-      if (meetings instanceof Error) { 
-        this.snackbar.text = 
-          this.classMeetingDialog.editMode ?
-            this.$t("courses.update-meeting-failed")
-            : this.$t("courses.add-meeting-failed");
+      if (meetings instanceof Error) {
+        this.snackbar.text = this.classMeetingDialog.editMode
+          ? this.$t("courses.update-meeting-failed")
+          : this.$t("courses.add-meeting-failed");
         this.snackbar.show = true;
         this.classMeetingDialog.show = false;
         return;
       }
 
       if (this.classMeetingDialog.editMode) {
-
+        // Locate the record we're updating in the table.
+        let meeting = meetings[0]; // Editing just updates a single meeting
+        const idx = this.meetings.findIndex(c => c.id === meeting.id);
+        Object.assign(this.meetings[idx], meeting);
+        this.snackbar.text = this.$t("courses.meeting-updated");
       } else {
         this.meetings.push(...meetings);
         this.snackbar.text = this.$t("courses.meeting-added");
@@ -174,9 +206,7 @@ export default {
   mounted() {
     this.loadMeetings();
   }
-}
+};
 </script>
 
-<style>
-
-</style>
+<style></style>
