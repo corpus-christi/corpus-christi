@@ -111,6 +111,18 @@ courses:
   update-meeting-failed:
     en: Failed to update meeting
     es: Se falló a actualizar el reunión
+  register:
+    en: Register
+    es: Registrar
+  register-success:
+    en: Successfully Registered
+    es: Registrado con Éxito
+  register-for-course:
+    en: Register for this course
+    es: Registrar para este curso
+  choose-offering:
+    en: Choose Offering
+    es: Elegir Oferta
   create-new-person:
     en: Create a new person
     es: Crear una nueva persona

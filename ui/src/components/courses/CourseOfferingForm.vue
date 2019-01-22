@@ -49,9 +49,9 @@
               </v-date-picker>
             </v-menu>
           </v-flex> -->
-          
-          <!-- time -->
-          <!-- <v-flex xs12 md4 ml-4>
+
+        <!-- time -->
+        <!-- <v-flex xs12 md4 ml-4>
             <v-dialog
               ref="dialog1"
               v-model="timeModal"
@@ -94,13 +94,19 @@
             </v-dialog>
         </v-flex>
         </v-layout> -->
-       
+
         <!-- teacher -->
-        <v-text-field v-bind:label="$t('courses.choose-teacher')" name="teacher"></v-text-field>
+        <v-text-field
+          v-bind:label="$t('courses.choose-teacher')"
+          name="teacher"
+        ></v-text-field>
 
         <!-- location -->
-        <v-text-field v-bind:label="$t('courses.choose-location')" name="location"></v-text-field>
-        
+        <v-text-field
+          v-bind:label="$t('courses.choose-location')"
+          name="location"
+        ></v-text-field>
+
         <v-flex xs7 md7>
           <v-text-field
             v-model="courseOffering.maxSize"
@@ -134,9 +140,7 @@
 </template>
 
 <script>
-
 import { isEmpty, cloneDeep } from "lodash";
-import { mapGetters } from "vuex";
 
 export default {
   name: "CourseOfferingForm",
@@ -144,7 +148,7 @@ export default {
     return {
       saving: false,
 
-      courseOffering: {},
+      courseOffering: {}
     };
   },
   computed: {
@@ -152,7 +156,7 @@ export default {
       return this.editMode
         ? this.$t("actions.edit")
         : this.$t("courses.new-offering");
-    },
+    }
   },
 
   watch: {
@@ -215,7 +219,10 @@ export default {
         delete courseOffering.id;
 
         this.$http
-          .patch(`/api/v1/courses/course_offerings/${courseOfferingId}`, courseOffering)
+          .patch(
+            `/api/v1/courses/course_offerings/${courseOfferingId}`,
+            courseOffering
+          )
           .then(resp => {
             console.log("EDITED", resp);
             courseOffering = resp.data;

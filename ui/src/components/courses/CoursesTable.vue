@@ -19,18 +19,18 @@
             <span class="mr-1"> {{ $t("courses.new") }} </span>
           </v-btn>
           <v-btn
-           class="hidden-sm-and-up"
-           color="primary"
-           raised
-           fab
-           v-on:click.stop="newCourse"
-           data-cy="add-courseOffering-small"
-           >
+            class="hidden-sm-and-up"
+            color="primary"
+            raised
+            fab
+            v-on:click.stop="newCourse"
+            data-cy="add-courseOffering-small"
+          >
             <v-icon dark>add</v-icon>
           </v-btn>
-         </v-flex>
-        </v-layout>
-      
+        </v-flex>
+      </v-layout>
+
       <v-layout row slot="extension" justify-space-between align-center>
         <v-text-field
           v-model="search"
@@ -172,14 +172,14 @@ export default {
         show: false,
         text: ""
       },
-      
+
       rowsPerPageItem: [
         10,
         15,
         25,
         { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 }
       ],
-      
+
       paginationInfo: {
         sortBy: "start",
         rowsPerPage: 10,
@@ -409,7 +409,7 @@ export default {
 .hover-hand {
   cursor: pointer;
 }
-  
+
 .max-width-250 {
   max-width: 250px;
 }

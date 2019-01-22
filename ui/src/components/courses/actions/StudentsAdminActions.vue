@@ -28,7 +28,13 @@
           {{ student.active ? "archive" : "undo" }}
         </v-icon>
       </v-btn>
-      <span>{{ $t(student.active ? "actions.tooltips.archive" : "actions.tooltips.unarchive") }}</span>
+      <span>{{
+        $t(
+          student.active
+            ? "actions.tooltips.archive"
+            : "actions.tooltips.unarchive"
+        )
+      }}</span>
     </v-tooltip>
   </v-layout>
 </template>

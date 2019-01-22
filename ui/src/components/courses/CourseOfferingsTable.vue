@@ -16,21 +16,22 @@
       </v-layout>
       <v-layout row slot="extension" justify-space-between align-center>
         <v-flex>
-           <v-text-field
-             v-model="search"
-             append-icon="search"
-             v-bind:label="$t('actions.search')"
-             single-line
-             hide-details
-             class="max-width-250 mr-2"
-           ></v-text-field>  
+          <v-text-field
+            v-model="search"
+            append-icon="search"
+            v-bind:label="$t('actions.search')"
+            single-line
+            hide-details
+            class="max-width-250 mr-2"
+          ></v-text-field>
         </v-flex>
-        <v-select 
-          v-model="viewStatus" 
-          :items="options" 
-          solo hide-details
+        <v-select
+          v-model="viewStatus"
+          :items="options"
+          solo
+          hide-details
           class="max-width-250 mr-2"
-          >
+        >
         </v-select>
       </v-layout>
     </v-toolbar>
@@ -165,7 +166,7 @@ export default {
         rowsPerPage: 10,
         page: 1
       },
-      
+
       courseOfferings: [],
 
       selected: [],
@@ -311,10 +312,9 @@ export default {
 
     saveCourseOffering(courseOffering) {
       if (courseOffering instanceof Error) {
-        this.snackbar.text =
-          this.courseOfferingDialog.editMode ?
-            this.$t("courses.update-failed")
-            : this.$t("courses.add-failed");
+        this.snackbar.text = this.courseOfferingDialog.editMode
+          ? this.$t("courses.update-failed")
+          : this.$t("courses.add-failed");
         this.snackbar.show = true;
 
         this.courseOfferingDialog.show = false;
@@ -324,7 +324,9 @@ export default {
 
       if (this.courseOfferingDialog.editMode) {
         // Locate the record we're updating in the table.
-        const idx = this.courseOfferings.findIndex(c => c.id === courseOffering.id);
+        const idx = this.courseOfferings.findIndex(
+          c => c.id === courseOffering.id
+        );
         Object.assign(this.courseOfferings[idx], courseOffering);
         this.snackbar.text = this.$t("courses.updated");
       } else {

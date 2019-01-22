@@ -16,6 +16,14 @@
               </v-card-text>
             </v-layout>
           </v-container>
+          <v-card-text class="pa-4">
+            <b>{{ $t("courses.description") }}:</b>
+            <div class="ml-2">{{ courseOffering.description }}</div>
+            <b>{{ $t("courses.enrolled") }}:</b>
+            <div class="ml-2">
+              {{ studentsAmt + " / " + courseOffering.maxSize }}
+            </div>
+          </v-card-text>
         </template>
         <v-layout v-else justify-center height="500px">
           <div class="ma-5 pa-5">
@@ -39,10 +47,17 @@ export default {
   mounted() {
     this.pageLoaded = false;
     const id = this.offeringId;
-    this.$http.get(`/api/v1/courses/course_offerings/${id}`).then(resp => {
-      this.courseOffering = resp.data;
-      this.pageLoaded = true;
-    });
+
+    this.$http
+      .get(`/api/v1/courses/course_offerings/${id}/students`)
+      .then(resp => {
+        //TODO make call in parent or Promise.all
+        this.studentsAmt = resp.data.length;
+        this.$http.get(`/api/v1/courses/course_offerings/${id}`).then(resp => {
+          this.courseOffering = resp.data;
+          this.pageLoaded = true;
+        });
+      });
   },
 
   computed: {
@@ -58,7 +73,7 @@ export default {
         saving: false,
         courseOffering: {}
       },
-
+      studentsAmt: 0,
       snackbar: {
         show: false,
         text: ""
@@ -67,7 +82,7 @@ export default {
     };
   },
   props: {
-    offeringId: 0
+    offeringId: null
   },
   methods: {
     getDisplayDate(ts) {

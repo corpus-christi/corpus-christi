@@ -6,13 +6,14 @@
           <v-toolbar-title>{{ $t("courses.students") }}</v-toolbar-title>
         </v-flex>
         <v-spacer></v-spacer>
-        
+
         <v-flex shrink justify-self-end>
-          <v-btn 
-            color="primary" 
-            raised 
+          <v-btn
+            color="primary"
+            raised
             v-on:click.stop="newStudent"
-            class="hidden-xs-only mr-2">
+            class="hidden-xs-only mr-2"
+          >
             <v-icon dark left>add</v-icon>
             <span class="mr-1"> {{ $t("actions.add-person") }} </span>
           </v-btn>
@@ -23,9 +24,9 @@
             fab
             v-on:click.stop="newStudent"
             data-cy="add-student-small"
-            >
+          >
             <v-icon dark>add</v-icon>
-          </v-btn> 
+          </v-btn>
         </v-flex>
       </v-layout>
       <v-layout row slot="extension" justify-space-between align-center>
@@ -39,12 +40,13 @@
             class="max-width-250 mr-2"
           ></v-text-field>
         </v-flex>
-        <v-select 
-         v-model="viewStatus" 
-         :items="options" 
-         solo hide-details
-         class="max-width-250 mr-2"
-         >
+        <v-select
+          v-model="viewStatus"
+          :items="options"
+          solo
+          hide-details
+          class="max-width-250 mr-2"
+        >
         </v-select>
       </v-layout>
     </v-toolbar>
@@ -69,13 +71,14 @@
           />
         </td>
       </template>
-      
-      <template slot="students" slot-scope="props">
-        
-      </template>
     </v-data-table>
-    
-    <v-dialog persistent scrollable v-model="newStudentDialog.show" max-width="500px">
+
+    <v-dialog
+      persistent
+      scrollable
+      v-model="newStudentDialog.show"
+      max-width="500px"
+    >
       <StudentsForm
         v-bind:initialData="newStudentDialog.newStudent"
         v-bind:saving="newStudentDialog.saving"
@@ -83,7 +86,7 @@
         v-on:save="saveNewStudent"
       />
     </v-dialog>
-    
+
     <!-- Deactivate/archive confirmation -->
     <v-dialog v-model="deactivateDialog.show" max-width="350px">
       <v-card>
@@ -95,7 +98,8 @@
             flat
             :disabled="deactivateDialog.loading"
             data-cy
-          >{{ $t("actions.cancel") }}</v-btn>
+            >{{ $t("actions.cancel") }}</v-btn
+          >
           <v-spacer></v-spacer>
           <v-btn
             v-on:click="deactivate(deactivateDialog.student)"
@@ -104,11 +108,12 @@
             :disabled="deactivateDialog.loading"
             :loading="deactivateDialog.loading"
             data-cy
-          >{{ $t("actions.confirm") }}</v-btn>
+            >{{ $t("actions.confirm") }}</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>
-    
+
     <!-- Confirm Dialog -->
     <v-dialog v-model="confirmDialog.show" max-width="400px">
       <v-card>
@@ -120,7 +125,8 @@
             flat
             :disabled="confirmDialog.confirming"
             data-cy
-          >{{ $t("actions.cancel") }}</v-btn>
+            >{{ $t("actions.cancel") }}</v-btn
+          >
           <v-spacer></v-spacer>
           <v-btn
             v-on:click="rejectStudent(confirmDialog.student)"
@@ -128,7 +134,8 @@
             raised
             :loading="confirmDialog.confirming"
             data-cy
-          >{{ $t("courses.reject") }}</v-btn>
+            >{{ $t("courses.reject") }}</v-btn
+          >
           <v-btn
             v-on:click="confirmStudent(confirmDialog.student)"
             color="primary"
@@ -136,7 +143,8 @@
             :disabled="confirmDialog.confirming"
             :loading="confirmDialog.confirming"
             data-cy
-          >{{ $t("actions.confirm") }}</v-btn>
+            >{{ $t("actions.confirm") }}</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -144,13 +152,11 @@
 </template>
 
 <script>
-import EntitySearch from "../EntitySearch";
 import StudentsForm from "./StudentsForm";
 import StudentsAdminActions from "./actions/StudentsAdminActions";
 
 export default {
-  components: { 
-    "entity-search": EntitySearch,
+  components: {
     StudentsForm,
     StudentsAdminActions
   },
@@ -167,44 +173,43 @@ export default {
         newStudent: {},
         saving: false
       },
-      
+
       deactivateDialog: {
         show: false,
         student: {},
         loading: false
       },
-      
+
       confirmDialog: {
         show: false,
         student: {},
         confirming: false
       },
-      
+
       snackbar: {
         show: false,
         text: ""
       },
-      
+
       rowsPerPageItem: [
         10,
         15,
         25,
         { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 }
       ],
-      
+
       paginationInfo: {
         sortBy: "start",
         rowsPerPage: 10,
         page: 1
       }
-      
     };
   },
-  
+
   props: {
-    offeringId: 0
+    offeringId: null
   },
-  
+
   computed: {
     headers() {
       return [
@@ -219,7 +224,7 @@ export default {
         { text: this.$t("actions.header"), sortable: false }
       ];
     },
-    
+
     options() {
       return [
         { text: this.$t("actions.view-active"), value: "active" },
@@ -227,7 +232,7 @@ export default {
         { text: this.$t("actions.view-all"), value: "all" }
       ];
     },
-    
+
     showStudents() {
       switch (this.viewStatus) {
         case "active":
@@ -237,7 +242,6 @@ export default {
         case "all":
         default:
           return this.students;
-          break;
       }
     }
   },
@@ -258,56 +262,59 @@ export default {
     },
     saveNewStudent(newStudent) {
       this.newStudentDialog.saving = true;
-      
+
       const personObject = newStudent;
       newStudent = {};
-            
+
       newStudent.confirmed = true;
       newStudent.offeringId = this.offeringId;
       newStudent.studentId = personObject.id;
       newStudent.active = true;
-        
+
       this.$http
-        .post(`/api/v1/courses/course_offerings/${newStudent.studentId}`, newStudent)
+        .post(
+          `/api/v1/courses/course_offerings/${newStudent.studentId}`,
+          newStudent
+        )
         .then(resp => {
           console.log("ADDED", resp);
           this.students.push(resp.data);
-          
+
           this.snackbar.text = this.$t("courses.added");
           this.snackbar.show = true;
         })
         .catch(err => {
-           console.error("FAILURE", err.response);
-           this.snackbar.text = this.$t("courses.add-failed");
-           this.snackbar.show = true;
+          console.error("FAILURE", err.response);
+          this.snackbar.text = this.$t("courses.add-failed");
+          this.snackbar.show = true;
         })
         .finally(() => {
           this.newStudentDialog.show = false;
           this.newStudentDialog.saving = false;
         });
     },
-    
+
     dispatchAction(actionName, student) {
       switch (actionName) {
-         case "deactivate":
-           this.confirmDeactivate(student);
-           break;
-         case "activate":
-           this.activate(student);
-           break;
-         case "confirm":
-           this.showConfirmDialog(student);
-           break;
-         default:
-           break;
+        case "deactivate":
+          this.confirmDeactivate(student);
+          break;
+        case "activate":
+          this.activate(student);
+          break;
+        case "confirm":
+          this.showConfirmDialog(student);
+          break;
+        default:
+          break;
       }
     },
-    
+
     showConfirmDialog(student) {
       this.confirmDialog.show = true;
       this.confirmDialog.student = student;
     },
-    
+
     rejectStudent(student) {
       this.confirmDialog.confirming = true;
       this.$http
@@ -327,7 +334,7 @@ export default {
           this.confirmDialog.show = false;
         });
     },
-    
+
     confirmStudent(student) {
       this.$http
         .patch(`/api/v1/courses/students/${student.id}`, { confirmed: true })
@@ -346,11 +353,11 @@ export default {
           this.confirmDialog.confirming = false;
         });
     },
-    
+
     cancelConfirmDialog() {
       this.confirmDialog.show = false;
     },
-    
+
     confirmDeactivate(student) {
       this.deactivateDialog.show = true;
       this.deactivateDialog.student = student;
@@ -398,9 +405,11 @@ export default {
 
   mounted: function() {
     const id = this.offeringId;
-    this.$http.get(`/api/v1/courses/course_offerings/${id}/students`).then(resp => {
-      this.students = resp.data;
-    });
+    this.$http
+      .get(`/api/v1/courses/course_offerings/${id}/students`)
+      .then(resp => {
+        this.students = resp.data;
+      });
   }
 };
 </script>
