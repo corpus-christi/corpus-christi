@@ -14,13 +14,21 @@ courses:
       course:
         en: Course
         es: Curso
-      enrollment:
-        en: Enrollment
-        es: Inscripción
-      graduation-rate:
-        en: Graduation Rate
-        es: Tasa de Graduación
-      attendended:
+      enrolled:
+        en: Enrolled
+        es: Inscrito
+      attended:
+        en: Attended
+        es: Asistió
+      did-not-attend:
+        en: Did Not Attend
+        es: No Asistió
+      graduated:
+        en: Graduated
+        es: Se Graduó
+      did-not-graduate:
+        en: Did Not Graduate
+        es: No Se Graduó
   course:
     en: Courses
     es: Cursos

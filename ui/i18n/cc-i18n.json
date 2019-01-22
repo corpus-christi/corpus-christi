@@ -1,11 +1,4 @@
 {
-  "attendended": {
-    "courses": {
-      "dashboard": {
-        "charts": null
-      }
-    }
-  },
   "en": {
     "$vuetify": {
       "dataIterator": {
@@ -101,9 +94,12 @@
       "course-offering": "Course Offerings",
       "dashboard": {
         "charts": {
+          "attended": "Attended",
           "course": "Course",
-          "enrollment": "Enrollment",
-          "graduation-rate": "Graduation Rate"
+          "did-not-attend": "Did Not Attend",
+          "did-not-graduate": "Did Not Graduate",
+          "enrolled": "Enrolled",
+          "graduated": "Graduated"
         },
         "headers": {
           "course-retention": "Course Retention",
@@ -398,9 +394,12 @@
       "course-offering": "Ofertas de Cursos",
       "dashboard": {
         "charts": {
+          "attended": "Asisti\u00f3",
           "course": "Curso",
-          "enrollment": "Inscripci\u00f3n",
-          "graduation-rate": "Tasa de Graduaci\u00f3n"
+          "did-not-attend": "No Asisti\u00f3",
+          "did-not-graduate": "No Se Gradu\u00f3",
+          "enrolled": "Inscrito",
+          "graduated": "Se Gradu\u00f3"
         },
         "headers": {
           "course-retention": "Retenci\u00f3n del Curso",

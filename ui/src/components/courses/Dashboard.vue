@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-layout column>
-      <v-flex>
+      <v-flex xs12 sm12 md12 lg12 xl12>
         <v-card>
           <v-toolbar class="pa-1">
             <v-toolbar-title>{{
@@ -14,7 +14,7 @@
           ></ve-sankey>
         </v-card>
       </v-flex>
-      <v-flex>
+      <v-flex xs12 sm12 md12 lg12 xl12>
         <v-card>
           <v-toolbar class="pa-1">
             <v-toolbar-title>{{
@@ -37,11 +37,11 @@ export default {
       this.enrollmentBarSettings.labelMap.course = this.$t(
         "courses.dashboard.charts.course"
       );
-      this.enrollmentBarSettings.labelMap.enrollment = this.$t(
-        "courses.dashboard.charts.enrollment"
+      this.enrollmentBarSettings.labelMap.enrolled = this.$t(
+        "courses.dashboard.charts.enrolled"
       );
-      this.enrollmentBarSettings.labelMap.graduationRate = this.$t(
-        "courses.dashboard.charts.graduation-rate"
+      this.enrollmentBarSettings.labelMap.graduated = this.$t(
+        "courses.dashboard.charts.graduated"
       );
 
       // TODO: Regenerate locale info for sankey
@@ -58,23 +58,23 @@ export default {
     var totalStudentsGraduated = 0;
 
     var enrollmentData = Object();
-    var graduationRateData = Object();
+    var graduationData = Object();
     var attendanceData = Object();
     var enrollmentSubdataCount = 0;
     var attendanceSubdataCount = 0;
-    var graduationRateSubdataCount = 0; // TODO: Graduation rate API endpoints aren't done; finish later
+    var graduationSubdataCount = 0; // TODO: Graduation rate API endpoints aren't done; finish later
 
     function enrollmentAndGraduationDataComplete(self) {
       Object.keys(enrollmentData).forEach(courseName => {
         totalCourseEnrollment += enrollmentData[courseName];
-        var graduationRateValue = 0;
-        if (graduationRateData[courseName]) {
-          graduationRateValue = graduationRateData[courseName];
+        var graduationValue = 0;
+        if (graduationData[courseName]) {
+          graduationValue = graduationData[courseName];
         }
         self.courseData.rows.push({
           course: courseName,
-          enrollment: enrollmentData[courseName],
-          graduationRate: graduationRateValue
+          enrolled: enrollmentData[courseName],
+          graduated: 15 // FIXME: graduationValue 
         });
       });
     }
@@ -99,8 +99,8 @@ export default {
           if (!enrollmentData[courseName]) {
             enrollmentData[courseName] = 0;
           }
-          if (!graduationRateData[courseName]) {
-            graduationRateData[courseName] = 0;
+          if (!graduationData[courseName]) {
+            graduationData[courseName] = 0;
           }
 
           this.$http
@@ -112,7 +112,7 @@ export default {
               if (
                 ++enrollmentSubdataCount ==
                 resp.data
-                  .length /* FIXME: && graduationRateSubdataCount == resp.data.length */
+                  .length /* FIXME: && graduationSubdataCount == resp.data.length */
               ) {
                 enrollmentAndGraduationDataComplete(this);
 
@@ -149,7 +149,7 @@ export default {
                 if (
                   ++attendanceSubdataCount == resp.data.length &&
                   enrollmentSubdataCount == resp.data.length &&
-                  graduationRateSubdataCount == resp.data.length
+                  graduationSubdataCount == resp.data.length
                 ) {
                   courseAttendanceDataComplete(this);
                 }
@@ -186,7 +186,7 @@ export default {
         ]
       },
       courseData: {
-        columns: ["course", "enrollment", "graduationRate"],
+        columns: ["course", "enrolled", "graduated"],
         rows: []
       },
       attendanceSankeySettings: {
@@ -262,8 +262,8 @@ export default {
       enrollmentBarSettings: {
         labelMap: {
           course: this.$t("courses.dashboard.charts.course"),
-          enrollment: this.$t("courses.dashboard.charts.enrollment"),
-          graduationRate: this.$t("courses.dashboard.charts.graduation-rate")
+          enrolled: this.$t("courses.dashboard.charts.enrolled"),
+          graduated: this.$t("courses.dashboard.charts.graduated")
         }
       }
     };
