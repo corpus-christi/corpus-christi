@@ -1,6 +1,5 @@
 <template>
   <div>
-    <span class="headline">{{ $t("people.attributes") }}</span>
     <component
       v-for="(attribute, index) in attributes"
       :key="index"

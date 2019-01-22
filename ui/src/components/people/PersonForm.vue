@@ -3,17 +3,17 @@
     <v-stepper v-model="currentStep">
       <v-stepper-header>
         <v-stepper-step step="1">
-          <span v-bind:class="{ 'red--text': stepOneErrors }">{{
-            $t("people.personal-information")
-          }}</span>
+          <span v-bind:class="{ 'red--text': stepOneErrors }">
+            {{ $t("people.personal-information") }}
+          </span>
         </v-stepper-step>
 
         <v-divider></v-divider>
 
         <v-stepper-step step="2">
-          <span v-bind:class="{ 'red--text': stepTwoErrors }">{{
-            $t("people.account-information")
-          }}</span>
+          <span v-bind:class="{ 'red--text': stepTwoErrors }">
+            {{ $t("people.account-information") }}
+          </span>
           <small
             v-if="!isAccountRequired"
             v-bind:class="{ 'red--text': stepTwoErrors }"
@@ -24,19 +24,19 @@
         <v-divider></v-divider>
 
         <v-stepper-step step="3">
-          <span v-bind:class="{ 'red--text': stepThreeErrors }">{{
-            $t("people.additional-information")
-          }}</span>
-          <small v-bind:class="{ 'red--text': stepThreeErrors }">{{
-            $t("people.optional")
-          }}</small>
+          <span v-bind:class="{ 'red--text': stepThreeErrors }">
+            {{ $t("people.additional-information") }}
+          </span>
+          <small v-bind:class="{ 'red--text': stepThreeErrors }">
+            {{ $t("people.optional") }}
+          </small>
         </v-stepper-step>
       </v-stepper-header>
       <v-stepper-items>
         <v-stepper-content step="1" class="formSteps">
           <v-text-field
             v-model="person.firstName"
-            v-bind:label="$t('person.name.first')"
+            v-bind:label="$t('person.name.first') + ' *'"
             name="firstName"
             v-validate="'required|alpha_spaces'"
             v-bind:error-messages="errors.collect('firstName')"
@@ -46,7 +46,7 @@
 
           <v-text-field
             v-model="person.lastName"
-            v-bind:label="$t('person.name.last')"
+            v-bind:label="$t('person.name.last') + ' *'"
             name="lastName"
             v-validate="'required|alpha_spaces'"
             v-bind:error-messages="errors.collect('lastName')"
@@ -131,7 +131,9 @@
           <v-text-field
             v-if="showAccountInfo"
             v-model="account.username"
-            v-bind:label="$t('account.username')"
+            v-bind:label="
+              $t('account.username') + (isAccountRequired ? ' *' : '')
+            "
             name="username"
             v-validate="{
               required: isAccountRequired,
@@ -149,7 +151,9 @@
             v-model="account.password"
             type="password"
             ref="pwdField"
-            v-bind:label="$t('account.password')"
+            v-bind:label="
+              $t('account.password') + (isAccountRequired ? ' *' : '')
+            "
             name="password"
             v-validate="{ required: isAccountRequired, min: 8 }"
             v-bind:error-messages="errors.collect('password')"
@@ -191,9 +195,9 @@
             >{{ $t("actions.cancel") }}</v-btn
           >
           <v-spacer></v-spacer>
-          <v-btn color="primary" raised v-on:click="next" data-cy="next">{{
-            $t("people.next")
-          }}</v-btn>
+          <v-btn color="primary" raised v-on:click="next" data-cy="next">
+            {{ $t("people.next") }}
+          </v-btn>
         </v-layout>
       </v-stepper-content>
       <v-stepper-content step="2">
@@ -214,9 +218,9 @@
             data-cy="previous"
             >{{ $t("people.previous") }}</v-btn
           >
-          <v-btn color="primary" raised v-on:click="next" data-cy="next">{{
-            $t("people.next")
-          }}</v-btn>
+          <v-btn color="primary" raised v-on:click="next" data-cy="next">
+            {{ $t("people.next") }}
+          </v-btn>
         </v-layout>
       </v-stepper-content>
 
@@ -233,13 +237,6 @@
           <v-spacer></v-spacer>
           <v-btn
             color="primary"
-            raised
-            v-on:click="previous"
-            data-cy="previous"
-            >{{ $t("people.previous") }}</v-btn
-          >
-          <v-btn
-            color="primary"
             outline
             v-on:click="addMore"
             v-if="addAnotherEnabled"
@@ -247,6 +244,13 @@
             :disabled="formDisabled"
             data-cy="add-another"
             >{{ $t("actions.add-another") }}</v-btn
+          >
+          <v-btn
+            color="primary"
+            raised
+            v-on:click="previous"
+            data-cy="previous"
+            >{{ $t("people.previous") }}</v-btn
           >
           <v-btn
             color="primary"
