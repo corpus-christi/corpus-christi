@@ -77,8 +77,8 @@ export default {
     headers() {
       return [
         { text: this.$t("person.name.last"), value: "lastName", width: "40%" },
-        { text: this.$t("person.name.first"), value: "firstName", width: "60%" },
-        { text: this.$t("actions.header"), sortable: false }
+        { text: this.$t("person.name.first"), value: "firstName", width: "60%" }//,
+        //{ text: this.$t("actions.header"), sortable: false }
       ];
     },
     /*

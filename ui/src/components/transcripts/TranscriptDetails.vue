@@ -52,6 +52,19 @@
                                         </div>
                                     </v-flex>
                                 </v-layout>
+                                <v-subheader >
+                                    {{ $t("diplomas.diplomas") }}:
+                                </v-subheader>
+                                <template v-for="(diploma, diplomaIndex) in transcript.diplomaList">
+                                    <v-list-tile
+                                        :key=diplomaIndex
+                                    >
+                                    <v-list-tile-content>
+                                        <v-list-tile-title v-html="diploma.name"></v-list-tile-title>
+                                        <v-list-tile-sub-title v-html="diploma.description"></v-list-tile-sub-title>
+                                    </v-list-tile-content>
+                                    </v-list-tile>
+                                </template>
 
                                 <v-subheader >
                                     {{ $t("transcripts.courses") }}:
