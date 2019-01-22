@@ -8,6 +8,24 @@ people:
   attributes:
     en: Attributes
     es: Atributas
+  personal-information:
+    en: Personal Information
+    es: Informacion personal
+  account-information:
+    en: Account Information
+    es: Información de la cuenta
+  additional-information:
+    en: Additional Information
+    es: Información Adicional
+  optional:
+    en: Optional
+    es: Opcional
+  next:
+    en: Next
+    es: Siguiente
+  previous:
+    en: Previous
+    es: Anterior
 
 account:
   username:

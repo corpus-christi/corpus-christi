@@ -1,14 +1,14 @@
 <template>
-  <v-card>
+  <v-layout align-center justify-center column>
+    <v-card-title class="headline">{{ $t("actions.signup") }}</v-card-title>
     <PersonForm
       v-bind:initialData="{}"
-      v-bind:title="$t('actions.signup')"
       v-bind:addAnotherEnabled="false"
       v-bind:saveButtonText="'actions.signup'"
       v-on:cancel="cancel"
       v-on:saved="save"
     />
-  </v-card>
+  </v-layout>
 </template>
 
 <script>

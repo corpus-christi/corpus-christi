@@ -175,7 +175,13 @@
       }
     },
     "people": {
+      "account-information": "Account Information",
+      "additional-information": "Additional Information",
       "attributes": "Attributes",
+      "next": "Next",
+      "optional": "Optional",
+      "personal-information": "Personal Information",
+      "previous": "Previous",
       "title": "People",
       "title-roles": "Roles"
     },
@@ -422,7 +428,13 @@
       }
     },
     "people": {
+      "account-information": "Informaci\u00f3n de la cuenta",
+      "additional-information": "Informaci\u00f3n Adicional",
       "attributes": "Atributas",
+      "next": "Siguiente",
+      "optional": "Opcional",
+      "personal-information": "Informacion personal",
+      "previous": "Anterior",
       "title": "Personas",
       "title-roles": "Papeles"
     },
