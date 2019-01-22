@@ -79,7 +79,7 @@ export default {
 
 <style scoped>
 .picture {
-  max-height: 300px;
+  max-height: 200px;
   min-height: 200px;
 }
 
