@@ -40,7 +40,7 @@ export default {
   name: 'GroupDetails',
   data() {
     return {
-      group: null,
+      group: {},
       pageLoaded: false
     };
   },
