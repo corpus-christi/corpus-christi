@@ -104,7 +104,7 @@ def load_all():
 
     create_multiple_people_attributes(db.session, 5)
     create_multiple_managers(db.session, 2, 'Group Overseer')
-    create_multiple_managers(db.session, 5, 'Group Leader', 'Group Overseer')
+    create_multiple_managers(db.session, 5, 'Group Leader')
     create_group_test_data(db.session)
 
 
