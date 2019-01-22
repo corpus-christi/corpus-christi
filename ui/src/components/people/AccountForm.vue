@@ -50,7 +50,7 @@
       <v-card-text>
         <v-select
           v-model="currentRoles"
-          :items="rolesList"
+          :items="translatedRoles"
           v-bind:label="$t('person.account-info.roles')"
           chips
           deletable-chips
@@ -154,6 +154,14 @@ export default {
       return this.addingAccount
         ? this.$t("person.actions.add-account")
         : this.$t("person.actions.reset-password");
+    },
+    translatedRoles() {
+      return this.rolesList.map(element => {
+        return {
+          text: this.$t(element.text),
+          value: element.value
+        };
+      });
     }
   },
   methods: {
