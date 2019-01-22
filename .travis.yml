@@ -12,9 +12,9 @@ matrix:
                 - language: node_js
                   node_js: "11"
                   before_install:
-                        - yarn cache clean
+                          #- yarn cache clean
                   #install:
-                        - yarn install@lastest
+                        - yarn install --latest
                   script:
                         - yarn build
                 - language: python
