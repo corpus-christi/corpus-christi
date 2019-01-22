@@ -43,7 +43,7 @@ matrix:
                   script:
                         - createuser arco
                         - createdb --owner=arco cc-staging
-                          # - cp thing in to private.py
+                          # -  cp thing in to private.py
                         - ls
                         - ./private-ci.sh
                         - flask db upgrade
