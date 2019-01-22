@@ -29,7 +29,10 @@ describe("Ensures the Add-person works", function() {
     cy.get("[data-cy=search]").type("Pepsi");
     //goes through the info to ensure it is correct
     cy.get("[data-cy=person-table").within(() => {
-      cy.get("tbody > :nth-child(1) > :nth-child(2)").should("contain", "Pepsi");
+      cy.get("tbody > :nth-child(1) > :nth-child(2)").should(
+        "contain",
+        "Pepsi"
+      );
       cy.get("tbody > :nth-child(1) > :nth-child(3)").should("contain", "Cola");
       cy.get("tbody > :nth-child(1) > :nth-child(4)").should(
         "contain",

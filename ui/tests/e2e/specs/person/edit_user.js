@@ -1,4 +1,3 @@
-
 describe("Admin edits user information", function() {
   it("Given: logs in, navigates to people page", function() {
     cy.login();
@@ -59,9 +58,14 @@ describe("Admin edits user information", function() {
     cy.get('tbody > :nth-child(1) > :nth-child(4)').should('contain', 'editMe@gmail.com');
     cy.get('tbody > :nth-child(1) > :nth-child(5)').should('contain', '123-456-7890');*/
     cy.get("[data-cy=save]").click();
-    cy.get("[data-cy=search]").clear().type("TESTME");
+    cy.get("[data-cy=search]")
+      .clear()
+      .type("TESTME");
     cy.get("[data-cy=person-table").within(() => {
-      cy.get("tbody > :nth-child(1) > :nth-child(2)").should("contain", "TESTME");
+      cy.get("tbody > :nth-child(1) > :nth-child(2)").should(
+        "contain",
+        "TESTME"
+      );
       cy.get("tbody > :nth-child(1) > :nth-child(3)").should(
         "contain",
         "LASTNAME"

@@ -266,7 +266,7 @@ def update_account(account_id):
         return 'Account not found', 404
 
     roles_to_add = []
-    if 'roles' in request.json.keys():
+    if 'roles' in request.json:
         roles_to_add = request.json['roles']
 
     # Only these fields can be meaningfully updated.

@@ -68,7 +68,7 @@ export default {
           let roles = [];
           for (var role of resp.data) {
             roles.push({
-              text: this.$t(role.nameI18n),
+              text: role.nameI18n,
               value: role.id
             });
           }

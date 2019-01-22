@@ -51,7 +51,7 @@
         <v-select
           v-model="currentRoles"
           :items="rolesList"
-          v-bind:label="$t('person.accountInfo.roles')"
+          v-bind:label="$t('person.account-info.roles')"
           chips
           deletable-chips
           clearable
@@ -175,14 +175,14 @@ export default {
               } else {
                 roles.push(role);
               }
+              console.log(roles);
             }
             this.$emit(
               "updateAccount",
               this.account.id,
-              {
-                password: this.password
+              { roles: roles,
+                password: this.password,
               },
-              { roles: roles },
             );
           }
           this.close();

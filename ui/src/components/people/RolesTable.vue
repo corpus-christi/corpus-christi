@@ -25,7 +25,7 @@
               solo
               single-line
               :label="$t('people.title-roles')"
-              :items="rolesList"
+              :items="translatedRoles"
             ></v-select>
           </div>
         </v-flex>
@@ -105,9 +105,9 @@
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false" data-cy>{{
-        $t("actions.close")
-      }}</v-btn>
+      <v-btn flat @click="snackbar.show = false" data-cy>
+        {{ $t("actions.close") }}
+      </v-btn>
     </v-snackbar>
 
     <!-- Person admin dialog -->
@@ -212,6 +212,14 @@ export default {
     },
     peopleToDisplay() {
       return this.allAccount;
+    },
+    translatedRoles() {
+      return this.rolesList.map(element => {
+        return {
+          text: this.$t(element.text),
+          value: element.value
+        };
+      });
     }
   },
 
@@ -289,8 +297,10 @@ export default {
     },
 
     updateAccount(accountId, account, roles) {
+      console.log("ROLES");
+      console.log(roles);
       this.$http
-        .patch(`/api/v1/people/accounts/${accountId}`, account, roles)
+        .patch(`/api/v1/people/accounts/${accountId}`, account)
         .then(resp => {
           console.log("PATCHED", resp);
           this.refreshPeopleList();
