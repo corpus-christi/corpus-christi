@@ -589,9 +589,8 @@ def read_one_student(student_id):
     result = db.session.query(Student).filter_by(id=student_id).first()
     if result is None:
         return 'Student not found', 404
-
     diplomas = []
-    for da in result.diplomas_awarded:
+    for da in result.person.diplomas_awarded:
         diplomas.append(da.diplomas)
     result.diplomaList = diplomas
 
@@ -651,9 +650,9 @@ def get_loc_and_person_for_meeting(meeting):
     print(meeting)
     location = location_schema.dump(db.session.query(Location).filter_by(id=meeting['locationId']).first())
     teacher = person_schema.dump(db.session.query(Person).filter_by(id=meeting['teacherId']).first())
-    if location is None:
+    if location == {}:
         return 'Could not find specified location', 404
-    if teacher is None:
+    if teacher == {}:
         return 'Could not find specified person', 404
 
     meeting['location'] = location
@@ -741,6 +740,7 @@ def add_class_attendance(course_offering_id, class_meeting_id):
     new_attendance = []
     for i in request.json['attendance']:
         student = db.session.query(Student).filter_by(id=i, offering_id=course_offering_id).first()
+        print(student)
         if student is None:
             continue # Student isn't enrolled in course offering or doesn't exist
         student.attendance.append(class_meeting)
