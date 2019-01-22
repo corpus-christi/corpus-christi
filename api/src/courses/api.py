@@ -361,7 +361,7 @@ def update_diploma(diploma_id):
         del request.json['courses'] 
 
     try:
-        valid_diploma = diploma_schema.load(request.json)
+        valid_diploma = diploma_schema.load(request.json, partial=True)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
