@@ -181,13 +181,18 @@
       "messages": {
         "confirm-archive": "Are you sure you want to archive this group?",
         "error-adding-group": "Error while adding group",
+        "error-adding-members": "Error while adding members",
         "error-archiving-group": "Error while archiving group",
+        "error-archiving-member": "Error while unarchiving member",
         "error-editing-group": "Error while editing group",
         "group-added": "Group added",
-        "group-archived": "group archived",
+        "group-archived": "Group archived",
         "group-edited": "Group edited",
         "group-unarchived": "Group unarchived",
-        "group-unarchiving-group": "Error while unarchiving group"
+        "group-unarchiving-group": "Error while unarchiving group",
+        "member-archived": "Member archived",
+        "member-unarchived": "Member unarchived",
+        "members-added": "Members added"
       },
       "name": "Name",
       "title": "Home Churches"
@@ -441,13 +446,18 @@
       "messages": {
         "confirm-archive": "\u00bfSeguro que quieres archivar este groupos?",
         "error-adding-group": "Error al agregar grupo",
+        "error-adding-members": "Error al agregar miembros",
         "error-archiving-group": "Error al archivar el grupo",
+        "error-archiving-member": "Error al desarchivar miembro",
         "error-editing-group": "Error al editar grupo",
         "group-added": "Grupo agregado",
         "group-archived": "Grupo archivado",
         "group-edited": "Grupo editado",
         "group-unarchived": "Grupo desarchivado",
-        "group-unarchiving-group": "Error al desarchivar el grupo"
+        "group-unarchiving-group": "Error al desarchivar el grupo",
+        "member-archived": "Miembro archivado",
+        "member-unarchived": "Miembro desarchivado",
+        "members-added": "Miembros agregados"
       },
       "name": "Nombre",
       "title": "Iglesias Hogar"

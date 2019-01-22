@@ -35,12 +35,13 @@ groups:
     title:
       en: Members
       es: Miembros
+
   messages:
     confirm-archive:
       en: Are you sure you want to archive this group?
       es: ¿Seguro que quieres archivar este groupos?
     group-archived:
-      en: group archived
+      en: Group archived
       es: Grupo archivado
     error-archiving-group:
       en: Error while archiving group 
@@ -63,4 +64,23 @@ groups:
     error-adding-group:
       en: Error while adding group
       es: Error al agregar grupo
+    members-added:
+      en: Members added
+      es: Miembros agregados
+    error-adding-members:
+      en: Error while adding members
+      es: Error al agregar miembros
+    member-archived:
+      en: Member archived
+      es: Miembro archivado
+    error-archiving-member:
+      en: Error while archiving member
+      es: Error al archivar miembro
+    member-unarchived:
+      en: Member unarchived
+      es: Miembro desarchivado   # probably not right 
+    error-archiving-member:
+      en: Error while unarchiving member
+      es: Error al desarchivar miembro  
+    
     

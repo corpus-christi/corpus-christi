@@ -75,7 +75,7 @@
     <!-- Archive dialog -->
     <v-dialog v-model="archiveDialog.show" max-width="350px">
       <v-card>
-        <v-card-text>{{ $t("groups.confirm-archive") }}</v-card-text>
+        <v-card-text>{{ $t("groups.messages.confirm-archive") }}</v-card-text>
         <v-card-actions>
           <v-btn
             v-on:click="cancelArchive"
@@ -252,7 +252,7 @@ export default {
 
       Promise.all(promises)
         .then(() => {
-          this.showSnackbar(this.$t("groups.members.added"));
+          this.showSnackbar(this.$t("groups.messages.members-added"));
           this.addParticipantDialog.loading = false;
           this.addParticipantDialog.show = false;
           this.addParticipantDialog.newParticipants = [];
@@ -261,7 +261,7 @@ export default {
         .catch(err => {
           console.log(err);
           this.addParticipantDialog.loading = false;
-          this.showSnackbar(this.$t("groups.members.error-adding"));
+          this.showSnackbar(this.$t("groups.messages.error-adding-members"));
         });
     },
 
@@ -342,13 +342,13 @@ export default {
           this.members[idx].active = false;
           this.archiveDialog.loading = false;
           this.archiveDialog.show = false;
-          this.showSnackbar(this.$t("groups.member-archived"));
+          this.showSnackbar(this.$t("groups.messages.member-archived"));
         })
         .catch(err => {
           console.error("ARCHIVE FALURE", err.response);
           this.archiveDialog.loading = false;
           this.archiveDialog.show = false;
-          this.showSnackbar(this.$t("groups.error-archiving-member"));
+          this.showSnackbar(this.$t("groups.messages.error-archiving-member"));
         });
     },
 
@@ -361,11 +361,13 @@ export default {
         .then(resp => {
           console.log("UNARCHIVED", resp);
           Object.assign(this.members[idx], resp.data);
-          this.showSnackbar(this.$t("groups.member-unarchived"));
+          this.showSnackbar(this.$t("groups.messages.member-unarchived"));
         })
         .catch(err => {
           console.error("UNARCHIVE FALURE", err.response);
-          this.showSnackbar(this.$t("groups.error-unarchiving-member"));
+          this.showSnackbar(
+            this.$t("groups.messages.error-unarchiving-member")
+          );
         });
     },
 

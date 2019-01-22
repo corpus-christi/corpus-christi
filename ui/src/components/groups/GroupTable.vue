@@ -258,9 +258,9 @@ export default {
     headers() {
       return [
         { text: this.$t("groups.name"), value: "name" },
-        { text: this.$t("groups.decription"), value: "description" },
+        { text: this.$t("groups.description"), value: "description" },
         { text: this.$t("groups.manager"), value: "managerInfo" },
-        { text: this.$t("groups.actions"), sortable: false }
+        { text: this.$t("actions.header"), sortable: false }
       ];
     }
   },
