@@ -37,6 +37,7 @@
       "header": "Actions",
       "login": "Log In",
       "logout": "Log Out",
+      "open-map": "Open Map",
       "save": "Save",
       "search": "Search",
       "search-people": "Search People",
@@ -194,10 +195,23 @@
       },
       "name": {
         "first": "First Name",
-        "last": "Last Name"
+        "last": "Last Name",
+        "second-last": "Second Last Name"
       },
       "phone": "Phone",
       "settings": "Settings for {person}"
+    },
+    "places": {
+      "address": {
+        "address": "Address",
+        "city": "City",
+        "latitude": "Latitude",
+        "longitude": "Longitude",
+        "name": "Name"
+      },
+      "location": {
+        "description": "Description"
+      }
     },
     "public": {
       "events": {
@@ -266,6 +280,7 @@
       "header": "Acciones",
       "login": "Acceder",
       "logout": "Cerrar sesi\u00f3n",
+      "open-map": "Abrir Mapa",
       "save": "Salvar",
       "search": "Buscar",
       "search-people": "Buscar Personas",
@@ -423,10 +438,23 @@
       },
       "name": {
         "first": "Nombre de pila",
-        "last": "Apellido"
+        "last": "Apellido",
+        "second-last": "Segundo Apellido"
       },
       "phone": "Tel\u00e9fono",
       "settings": "Configuraci\u00f3n de la {person}"
+    },
+    "places": {
+      "address": {
+        "address": "Direcci\u00f3n",
+        "city": "Ciudad",
+        "latitude": "Latitud",
+        "longitude": "Longitud",
+        "name": "Nombre"
+      },
+      "location": {
+        "description": "Descripci\u00f3n"
+      }
     },
     "public": {
       "events": {

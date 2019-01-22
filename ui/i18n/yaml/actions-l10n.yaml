@@ -44,6 +44,9 @@ actions:
   logout:
     en: Log Out
     es: Cerrar sesión
+  open-map:
+    en: Open Map
+    es: Abrir Mapa
   save:
     _desc: Save a newly created item
     en: Save

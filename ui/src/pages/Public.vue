@@ -89,7 +89,7 @@
 </template>
 
 <script>
-import GoogleMap from "../components/GoogleMap";
+import GoogleMap from "../components/public/GoogleMap";
 export default {
   name: "Public",
   components: { GoogleMap },
