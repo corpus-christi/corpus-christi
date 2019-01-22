@@ -37,6 +37,9 @@ export default {
   },
   methods: {
     markerSelected(m) {
+      for(let marker of this.$props.markers) {
+        marker.opened = false;
+      }
       this.$refs.gmap.$mapPromise.then(map => {
         map.panTo(m.position);
       });
