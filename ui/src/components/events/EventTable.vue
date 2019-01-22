@@ -408,7 +408,6 @@ export default {
     },
 
     saveEvent(event) {
-      console.log(event)
       this.eventDialog.saveLoading = true;
       if (event.location) {
         event.location_id = event.location.id;

@@ -49,15 +49,26 @@
             <div class="mt-2">{{ event.description }}</div>
           </v-card-text>
           <v-card-actions>
-            <v-btn
-              flat
-              ripple
-              color="primary"
-              data-cy="navigate-to-participants"
-              :to="'/event/' + $route.params.event + '/participants'"
-            >
-              <v-icon>person</v-icon>&nbsp;{{ $t("events.participants.title") }}
-            </v-btn>
+            <v-layout justify-space-between>
+              <v-btn
+                flat
+                ripple
+                color="primary"
+                data-cy="navigate-to-participants"
+                :to="'/event/' + $route.params.event + '/participants'"
+              >
+                <v-icon>person</v-icon>&nbsp;{{ $t("events.participants.title") }}
+              </v-btn>
+              <v-btn
+                flat
+                ripple
+                color="primary"
+                data-cy="upload-image"
+                v-on:click="openImageDialog"
+              >
+                <v-icon>image</v-icon>&nbsp;{{ $t("events.upload-image") }}
+              </v-btn>
+            </v-layout>
           </v-card-actions>
         </template>
         <v-layout v-else justify-center height="500px">
@@ -128,6 +139,16 @@
         v-on:save-attendance="saveAttendance($event)"
       ></event-attendance-form>
     </v-dialog>
+
+    <!-- Image dialog -->
+    <v-dialog v-model="imageDialog.show" persistent max-width="400px">
+      <event-image-form
+        v-bind:eventId="event.id"
+        v-on:cancel="closeImageDialog"
+        v-on:saved="closeImageDialog"
+      ></event-image-form>
+    </v-dialog>
+
   </v-layout>
 </template>
 
@@ -138,6 +159,7 @@ import EventTeamDetails from "./EventTeamDetails";
 import EventAssetDetails from "./EventAssetDetails";
 import EventPersonDetails from "./EventPersonDetails";
 import EventAttendanceForm from "./EventAttendanceForm";
+import EventImageForm from "./EventImageForm";
 
 export default {
   name: "EventDetails",
@@ -146,7 +168,8 @@ export default {
     "event-team-details": EventTeamDetails,
     "event-asset-details": EventAssetDetails,
     "event-person-details": EventPersonDetails,
-    "event-attendance-form": EventAttendanceForm
+    "event-attendance-form": EventAttendanceForm,
+    "event-image-form": EventImageForm
   },
 
   data() {
@@ -162,6 +185,10 @@ export default {
         show: false,
         saving: false,
         number: null
+      },
+
+      imageDialog: {
+        show: false,
       },
 
       snackbar: {
@@ -331,6 +358,14 @@ export default {
           console.error("ATTENDANCE PATCH FAILURE", err.response);
           this.attendanceDialog.saving = false;
         });
+    },
+
+    openImageDialog() {
+      this.imageDialog.show = true;
+    },
+
+    closeImageDialog() {
+      this.imageDialog.show = false;
     },
 
     getDisplayDate(ts) {

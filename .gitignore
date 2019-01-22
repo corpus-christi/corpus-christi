@@ -9,6 +9,7 @@ test-db.sqlite
 venv/
 credentials.py
 credentials.sh
+api/data/images/
 
 # UI
 node_modules/
