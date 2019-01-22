@@ -340,6 +340,8 @@ def read_all_roles():
 @jwt_required
 def get_roles_for_account(account_id):
     account = db.session.query(Account).filter_by(id=account_id).first()
+    if account is None:
+        return jsonify("accounts does not exist"), 404
     result = []
     for role in account.roles:
         role = role_schema.dump(role)
@@ -351,6 +353,8 @@ def get_roles_for_account(account_id):
 @jwt_required
 def read_one_role(role_id):
     result = db.session.query(Role).filter_by(id=role_id).first()
+    if result is None:
+        return jsonify("Role does not exist"), 404
     return jsonify(role_schema.dump(result))
 
 
@@ -363,6 +367,9 @@ def update_role(role_id):
         return jsonify(err.messages), 422
 
     role = db.session.query(Role).filter_by(id=role_id).first()
+
+    if role is None:
+        return jsonify("Role does not exist"), 404
 
     for key, val in valid_role.items():
         setattr(role, key, val)
@@ -464,8 +471,6 @@ def create_manager():
 @jwt_required
 def read_all_managers():
     result = db.session.query(Manager).all()
-    for r in result:
-        r.person = r.account.person
     return jsonify(manager_schema.dump(result, many=True))
 
 
@@ -473,7 +478,8 @@ def read_all_managers():
 @jwt_required
 def read_one_manager(manager_id):
     result = db.session.query(Manager).filter_by(id=manager_id).first()
-    result.person = result.account.person
+    if result is None:
+        return jsonify("Manager does not exist"), 404
     return jsonify(manager_schema.dump(result))
 
 
@@ -508,4 +514,4 @@ def delete_manager(manager_id):
     db.session.delete(manager)
     db.session.commit()
 
-    return jsonify(manager_schema.dump(manager))
+    return jsonify(manager_schema.dump(manager)), 204
