@@ -27,7 +27,24 @@
         <td>{{ getDisplayDate(props.item.when) }}</td>
         <td>{{ props.item.location.description }}</td>
         <td>{{ props.item.teacher.firstName }} {{ props.item.teacher.lastName }}</td>
-        <td></td>
+        <td>
+          <v-layout align-center justify-end>
+            <v-tooltip bottom>
+              <v-btn
+                flat
+                icon
+                outline
+                small
+                color="primary"
+                slot="activator"
+                @click="editClassMeeting(props.item)"
+              >
+                <v-icon small>edit</v-icon>
+              </v-btn>
+              <span>{{ $t("actions.edit") }}</span>
+            </v-tooltip>
+          </v-layout>
+        </td>
       </template>
     </v-data-table>
 
@@ -149,7 +166,11 @@ export default {
       }
 
       if (this.classMeetingDialog.editMode) {
-
+        // Locate the record we're updating in the table.
+        let meeting = meetings[0]; // Editing just updates a single meeting
+        const idx = this.meetings.findIndex(c => c.id === meeting.id);
+        Object.assign(this.meetings[idx], meeting);
+        this.snackbar.text = this.$t("courses.meeting-updated");
       } else {
         this.meetings.push(...meetings);
         this.snackbar.text = this.$t("courses.meeting-added");

@@ -2,13 +2,14 @@ from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_mail import Mail
 
-from config import config
+from config import config, BASE_DIR
 from .db import DbConfig
 
 db = DbConfig()
 jwt = JWTManager()
 mail = Mail()
 
+BASE_DIR = BASE_DIR
 
 def create_app(config_name):
     """Application factory for the API."""
@@ -65,5 +66,7 @@ def create_app(config_name):
     from .places import places as places_blueprint
     app.register_blueprint(places_blueprint, url_prefix='/api/v1/places')
 
+    from .images import images as images_blueprint
+    app.register_blueprint(images_blueprint, url_prefix='/api/v1/images')
 
     return app
