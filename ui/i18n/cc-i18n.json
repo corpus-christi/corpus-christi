@@ -186,6 +186,10 @@
       "title-roles": "Roles"
     },
     "person": {
+      "account": "Account",
+      "accountInfo": {
+        "roles": "Roles"
+      },
       "actions": {
         "add-account": "Add Account",
         "add-participant": "Add a Participant",
@@ -435,6 +439,10 @@
       "title-roles": "Papeles"
     },
     "person": {
+      "account": "Cuenta",
+      "accountInfo": {
+        "roles": "Papeles"
+      },
       "actions": {
         "add-account": "A\u00f1adir cuenta",
         "add-participant": "A\u00f1adir Part\u00edcipe",
