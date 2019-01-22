@@ -21,7 +21,7 @@ from src.attributes.test_attributes import create_multiple_attributes, create_mu
 from src.people.test_people import create_multiple_people, create_multiple_accounts, create_multiple_managers, create_multiple_people_attributes
 from src.places.test_places import create_multiple_areas, create_multiple_addresses, create_multiple_locations
 from src.places.models import Country
-from src.courses.models import Course
+from src.courses.models import Course, Course_Offering, Diploma
 from src.courses.test_courses import create_multiple_courses, create_multiple_course_offerings,\
     create_multiple_diplomas, create_multiple_students, create_class_meetings,\
     create_diploma_awards, create_class_attendance, create_multiple_prerequisites, create_course_completion
@@ -166,23 +166,53 @@ course_cli = AppGroup('course', help="Maintain course data.")
 @click.argument('name')
 @click.argument('description')
 @click.option('--prereq', help="Number of prerequisites to make")
-def create_account(name, description, prereq):
-    num_prereqs = int(prereq or 0)
+@click.option('--offering', help="Name of offering to make for course")
+def create_course(name, description, prereq, offering):
 
     # Create the Course and Prereq Courses; commit to DB so we get ID
     course = Course(name=name, description=description)
 
-    for i in range(num_prereqs):
-        course.prerequisites.append(Course(name=f"prereq course{i}",
-                description=f"here we are using the command line lol.{i}"))
+    if prereq is not None:
+        if str.isnumeric(prereq):
+            for i in range(int(prereq)):
+                course.prerequisites.append(Course(name=f"prereq course{i}",
+                        description=f"here we are using the command line.{i}"))
+        else:
+            prereq_course = db.session.query(Course).filter_by(name=prereq).first()
+            print(prereq_course)
+            course.prerequisites.append(prereq_course)
+
+    if offering is not None:
+        course_offering = Course_Offering(course_id=course.id,
+                        description=offering, max_size=2, active=True)
+        course.courses_offered.append(course_offering)
     db.session.add(course)
     db.session.commit()
     print(f"Created {course}")
     print(f"Created Prerequisites {course.prerequisites}")
+    print(f"Created Course Offering {course.courses_offered}")
 
 
 app.cli.add_command(course_cli)
 
+
+# ---- Diploma
+
+diploma_cli = AppGroup('diploma', help="Maintain diploma data.")
+
+
+@diploma_cli.command('new', help="Create new diploma")
+@click.argument('name')
+@click.argument('description')
+def create_diploma(name, description):
+    # Create the diploma; commit to DB so we get ID
+    diploma = Diploma(name=name, description=description)
+    db.session.add(diploma)
+    db.session.commit()
+    print(f"Created Diploma {diploma}")
+
+
+app.cli.add_command(diploma_cli)
 
 # ---- Maintainence
 
