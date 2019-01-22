@@ -133,7 +133,9 @@
     <!-- Mail Dialog -->
     <v-dialog v-model="mailDialog.show" max-width="400px">
       <v-card>
-        <v-card-title> <span class="headline">Send Mail</span> </v-card-title>
+        <v-card-title>
+          <span class="headline">Send Mail (in progress)</span>
+        </v-card-title>
         <v-card-text>
           <v-text-field
             v-model="mailDialog.recipients"

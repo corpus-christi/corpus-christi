@@ -14,6 +14,8 @@ from .models import Location, Address, Area, Country, AreaSchema, LocationSchema
 
 
 area_schema = AreaSchema()
+location_schema = LocationSchema()
+address_schema = AddressSchema()
 
 @pytest.mark.smoke
 @pytest.mark.parametrize('code, name', [('US', 'United States'),
@@ -88,8 +90,8 @@ def address_factory(sqla):
         'city': addresslines[1].split(",")[0],
         'area_id': current_area.id,
         'country_code': current_area.country_code,
-        'latitude':random.random() * 360 - 180,
-        'longitude': random.random() * 360 - 180
+        'latitude':random.random() * 0.064116 + -2.933783,
+        'longitude': random.random() * 0.09952 + -79.055411
     }
     return address
 
@@ -133,6 +135,98 @@ def create_multiple_locations(sqla, n):
         valid_location = location_schema.load(location_factory(sqla))
         new_locations.append(Location(**valid_location))
     sqla.add_all(new_locations)
+    sqla.commit()
+
+# the addresses won't have latitude and longitude
+def create_location_nested(sqla, address, address_name, description, country_code='EC', area_name='Azuay', city='Cuenca'):
+    #{
+    #------- Country related
+    #        'country_code': 'US',                  # required for nesting
+    #------- Area related
+    #        'area_name': 'area name',              # required for nesting
+    #------- Address related
+    #        'city': 'Upland',                      # required if address doesn't exist in database
+    #        'address': '236 W. Reade Ave.',        # required if address doesn't exist in database
+    #        'address_name': 'Taylor University',   # required if address doesn't exist in database
+    #------- Location related
+    #        'description': 'Euler 217'             # optional
+    #}
+    # This method tries to link existing entries in Country, Area, Address table if possible, otherwise create
+    # When there is at least a certain table related field in the payload, the foreign key specified in the payload for that table will be overridden by the fields given
+    def debugPrint(msg):
+        print(msg)
+    resolving_keys = ('country_code', 'area_name', 'city', 'address', 'address_name')
+    payload_data = locals()
+    # process country information
+    resolve_needed = True
+    location_payload = {}
+
+    if resolve_needed:
+        debugPrint("starting to resolve")
+        debugPrint(payload_data)
+        # resolve country
+        if 'country_code' not in payload_data:
+            print("'country_code not specified in request body', 422")
+            return 
+        country = sqla.query(Country).filter_by(code=payload_data['country_code']).first()
+        if not country:
+            print(f"no country code found in database matching {payload_data['country_code']}")
+            return 
+        country_code = country.code
+        debugPrint(f"Country code resolved: {country_code}")
+        # resolve area
+        if 'area_name' not in payload_data:
+            print("'area_name not specified in request body', 422")
+            return 
+        area = sqla.query(Area).filter_by(country_code=country_code, name=payload_data['area_name']).first()
+        area_id = None
+        if area:
+            area_id = area.id
+            debugPrint(f"fetched existing area_id {area_id}")
+        else:
+            debugPrint(f"creating new area")
+            area_payload = {
+                    'name': payload_data['area_name'],
+                    'country_code': country_code
+            }
+            valid_area = area_schema.load(area_payload)
+            area = Area(**valid_area)
+            sqla.add(area)
+            sqla.flush()
+            area_id = area.id
+            debugPrint(f"new_area created with id {area_id}")
+        # resolve address
+        address_name_transform = {'address_name': 'name'}
+        address_keys = ('city', 'address', 'address_name')
+        address_payload = {k if k not in address_name_transform else address_name_transform[k]:v 
+                for k, v in payload_data.items() if k in address_keys}
+        address_payload['area_id'] = area_id
+        address_payload['country_code'] = country_code
+        address = sqla.query(Address).filter_by(**address_payload).first()
+        address_id = None
+        if address:
+            address_id = address.id
+            debugPrint(f"fetched existing address id {address_id}")
+        else:
+            debugPrint(f"creating new address")
+            debugPrint(f"address payload {address_payload}")
+            valid_address = address_schema.load(address_payload)
+            address = Address(**valid_address)
+            sqla.add(address)
+            sqla.flush()
+            address_id = address.id
+            debugPrint(f"new_address created with id {address_id}")
+        # setting the request for location with the address_id obtained
+        location_payload['address_id'] = address_id
+        location_payload['description'] = description
+    else:
+        debugPrint("no need to resolve")
+
+    debugPrint(f"final request for location: {location_payload} ")
+    valid_location = location_schema.load(location_payload)
+
+    new_location = Location(**valid_location)
+    sqla.add(new_location)
     sqla.commit()
 
 def prep_database(sqla):

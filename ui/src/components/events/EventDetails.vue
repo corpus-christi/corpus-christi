@@ -1,8 +1,8 @@
 <template>
   <v-layout column>
     <v-layout row wrap>
-      <v-flex xs12 sm8>
-        <v-card class="ma-1" max-height="410px">
+      <v-flex xs12>
+        <v-card class="ma-1">
           <template v-if="eventLoaded">
             <v-container fill-height fluid>
               <v-flex xs9 sm9 align-end flexbox>
@@ -19,40 +19,64 @@
                 </v-btn>
               </v-layout>
             </v-container>
-            <div class="ml-4">
-              <b>{{ $t("events.attendance") }}: </b>
-              <span v-if="event.attendance != null">{{
-                event.attendance
-              }}</span>
-              <span v-else>{{ $t("events.attendance-none") }}</span>
-              <v-btn
-                icon
-                outline
-                small
-                color="primary"
-                data-cy="edit-attendance"
-                v-on:click="openAttendanceDialog()"
-              >
-                <v-icon small color="primary">edit</v-icon>
-              </v-btn>
-            </div>
             <v-card-text class="pa-4">
-              <div v-if="event.location">
-                <b>{{ $t("events.location") }}: </b>
-                <div class="multi-line ml-2">{{ displayLocation }}</div>
-              </div>
-              <div>
-                <b>{{ $t("events.start-time") }}: </b
-                >{{ getDisplayDate(event.start) }}
-              </div>
-              <div>
-                <b>{{ $t("events.end-time") }}: </b
-                >{{ getDisplayDate(event.end) }}
-              </div>
-              <div class="mt-2">{{ event.description }}</div>
+              <v-layout row wrap>
+                <v-flex xs12 sm6>
+                  <div>
+                    <b>{{ $t("events.attendance") }}: </b>
+                    <span v-if="event.attendance != null">{{
+                      event.attendance
+                    }}</span>
+                    <span v-else>{{ $t("events.attendance-none") }}</span>
+                    <v-btn
+                      icon
+                      outline
+                      small
+                      color="primary"
+                      data-cy="edit-attendance"
+                      v-on:click="openAttendanceDialog()"
+                    >
+                      <v-icon small color="primary">edit</v-icon>
+                    </v-btn>
+                  </div>
+                  <div v-if="event.location">
+                    <b>{{ $t("events.location") }}: </b>
+                    <div class="multi-line ml-2">{{ displayLocation }}</div>
+                  </div>
+                  <div>
+                    <b>{{ $t("events.start-time") }}: </b
+                    >{{ getDisplayDate(event.start) }}
+                  </div>
+                  <div>
+                    <b>{{ $t("events.end-time") }}: </b
+                    >{{ getDisplayDate(event.end) }}
+                  </div>
+                  <div class="mt-2 mb-2">{{ event.description }}</div>
+                </v-flex>
+                <v-flex xs12 sm6>
+                  <!-- Image -->
+                  <template v-if="event.images && event.images.length > 0">
+                    <v-img
+                      max-height="400px"
+                      class="image picture"
+                      :src="'/api/v1/images/' + event.images[0].image.id"
+                    >
+                    </v-img>
+                  </template>
+
+                  <!-- Placeholder if no image uploaded -->
+                  <template v-else>
+                    <v-img
+                      class="picture"
+                      src="https://i.ytimg.com/vi/LQ1ZMvqlqYA/maxresdefault.jpg"
+                    >
+                    </v-img>
+                  </template>
+                </v-flex>
+              </v-layout>
             </v-card-text>
             <v-card-actions>
-              <v-layout justify-space-between>
+              <v-layout justify-space-between wrap>
                 <v-btn
                   flat
                   ripple
@@ -65,6 +89,7 @@
                   }}
                 </v-btn>
                 <v-btn
+                  class="ma-0"
                   flat
                   ripple
                   color="primary"
@@ -84,28 +109,6 @@
               ></v-progress-circular>
             </div>
           </v-layout>
-        </v-card>
-      </v-flex>
-      <v-flex xs12 sm4>
-        <v-card class="ma-1" max-height="410px">
-          <!-- Image -->
-          <template v-if="event.images && event.images.length > 0">
-            <v-img
-              style="max-height: 410px"
-              class="image picture"
-              :src="'/api/v1/images/' + event.images[0].image.id"
-            >
-            </v-img>
-          </template>
-
-          <!-- Placeholder if no image uploaded -->
-          <template v-else>
-            <v-img
-              class="picture"
-              src="https://i.ytimg.com/vi/LQ1ZMvqlqYA/maxresdefault.jpg"
-            >
-            </v-img>
-          </template>
         </v-card>
       </v-flex>
     </v-layout>
@@ -343,6 +346,7 @@ export default {
       delete newEvent.dayDuration;
       delete newEvent.teams;
       delete newEvent.id;
+      delete newEvent.images;
       const eventId = event.id;
       this.$http
         .put(`/api/v1/events/${eventId}`, newEvent)

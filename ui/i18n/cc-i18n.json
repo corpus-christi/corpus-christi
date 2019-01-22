@@ -15,22 +15,28 @@
       "noDataText": "No data available"
     },
     "account": {
+      "active": "Active",
+      "inactive": "Inactive",
       "messages": {
         "added-ok": "Account added successfully",
         "updated-ok": "Account updated successfully"
       },
+      "no-account": "Don't have an account?",
       "password": "Password",
       "repeat-password": "Repeat Password",
       "username": "Username"
     },
     "actions": {
+      "activate-account": "Activate",
       "add-another": "Add Another",
       "add-event": "Add Event",
       "add-person": "Add Person",
+      "back": "Back",
       "cancel": "Cancel",
       "clear": "Clear",
       "close": "Close",
       "confirm": "Confirm",
+      "deactivate-account": "Deactivate",
       "duplicate": "Duplicate",
       "edit": "Edit",
       "header": "Actions",
@@ -39,11 +45,13 @@
       "save": "Save",
       "search": "Search",
       "search-people": "Search People",
+      "signup": "Signup",
       "tooltips": {
         "activate": "Activate",
         "archive": "Archive",
         "remove": "Remove",
-        "settings": "Settings"
+        "settings": "Settings",
+        "unarchive": "Unarchive"
       },
       "view-active": "View Active",
       "view-all": "View All",
@@ -78,16 +86,53 @@
       "add-failed": "Failed to add course",
       "added": "Course added",
       "archived": "Course archived",
+      "choose-location": "Location",
+      "choose-teacher": "Teacher",
+      "choose-time": "Choose Time",
       "confirm-archive": "Are you sure you want to archive this course?",
       "course": "Courses",
+      "course-offering": "Course Offerings",
+      "dashboard": {
+        "charts": {
+          "attended": "Attended",
+          "course": "Course",
+          "did-not-attend": "Did Not Attend",
+          "did-not-graduate": "Did Not Graduate",
+          "enrolled": "Enrolled",
+          "graduated": "Graduated"
+        },
+        "headers": {
+          "course-retention": "Course Retention",
+          "course-success": "Course Success"
+        },
+        "title": "Dashboard"
+      },
+      "dates": "Choose Dates",
       "description": "Description",
       "enrolled": "Number Enrolled",
+      "is-archived": "This course is archived",
+      "max-size": "Max Number of Students",
       "new": "New Course",
+      "new-offering": "New Course Offering",
+      "no-prerequisites": "This course has no prerequisites.",
       "prerequisites": "Prerequisites",
       "reactivated": "Course unarchived",
+      "students": "Students",
       "title": "Title",
       "update-failed": "Failed to update course",
       "updated": "Course updated"
+    },
+    "diplomas": {
+      "archived": "Diploma archived",
+      "confirm-archive": "Are you sure you want to archive this diploma?",
+      "courses": "Courses",
+      "courses-this-diploma": "Courses for this Diploma",
+      "description": "Description",
+      "diploma": "Diplomas",
+      "new": "New Diploma",
+      "reactivated": "Diploma unarchived",
+      "title": "Title",
+      "updated": "Diploma updated"
     },
     "events": {
       "all-events": "All Events",
@@ -99,6 +144,19 @@
       },
       "confirm-archive": "Are you sure you want to archive this event?",
       "create-event": "Create Event",
+      "dashboard": {
+        "charts": {
+          "attendance": "Attendance",
+          "campus": "Campus",
+          "home-groups": "Home Groups"
+        },
+        "headers": {
+          "home-group-percentage": "Percentage of Churchgoers in a Home Group",
+          "location-attendance": "Attendance by Location",
+          "yearly-attendance": "Yearly Attendance"
+        },
+        "title": "Dashboard"
+      },
       "details": {
         "title": "Event Details"
       },
@@ -151,15 +209,21 @@
       "title": "Home Churches"
     },
     "login": {
-      "header": "Log In"
+      "header": "Log In",
+      "messages": {
+        "incorrect-login": "Username or password is incorrect"
+      }
     },
     "people": {
-      "title": "People"
+      "attributes": "Attributes",
+      "title": "People",
+      "title-roles": "Roles"
     },
     "person": {
       "actions": {
         "add-account": "Add Account",
         "add-participant": "Add a Participant",
+        "assign-roles": "Assign Roles",
         "edit": "Edit Person",
         "new": "New Person",
         "reset-password": "Reset Password"
@@ -172,6 +236,8 @@
       "gender": "Gender",
       "male": "Male",
       "messages": {
+        "account-activate": "Account activated",
+        "account-deactivate": "Account deactivated",
         "canceled": "Canceled add new person",
         "person-activate": "Person activated",
         "person-add": "New person added",
@@ -181,7 +247,8 @@
       },
       "name": {
         "first": "First Name",
-        "last": "Last Name"
+        "last": "Last Name",
+        "second-last": "Second Last Name"
       },
       "phone": "Phone",
       "settings": "Settings for {person}"
@@ -199,6 +266,7 @@
       "title": "Public"
     },
     "teams": {
+      "all-teams": "All Teams",
       "confirm-archive": "Are you sure you want to archive this team?",
       "confirm-remove-from-event": "Are you sure you want to remove this team from this event?",
       "create-team": "Create Team",
@@ -257,22 +325,28 @@
       "noDataText": "Datos no disponibles"
     },
     "account": {
+      "active": "Activo",
+      "inactive": "Inactivo",
       "messages": {
         "added-ok": "Cuenta agregada exitosamente",
         "updated-ok": "Cuenta actualizada con \u00e9xito"
       },
+      "no-account": "\u00bfNo tienes una cuenta?",
       "password": "Contrase\u00f1a",
       "repeat-password": "Repite la contrase\u00f1a",
       "username": "Nombre de usuario"
     },
     "actions": {
+      "activate-account": "Activar",
       "add-another": "A\u00f1adir Otro",
       "add-event": "A\u00f1adir Evento",
       "add-person": "A\u00f1adir Persona",
+      "back": "Regresar",
       "cancel": "Cancelar",
       "clear": "Despejar",
       "close": "Cerrar",
       "confirm": "Confirmar",
+      "deactivate-account": "Desactivar",
       "duplicate": "Duplicar",
       "edit": "Editar",
       "header": "Acciones",
@@ -281,11 +355,13 @@
       "save": "Salvar",
       "search": "Buscar",
       "search-people": "Buscar Personas",
+      "signup": "Reg\u00edstrate",
       "tooltips": {
         "activate": "Activar",
         "archive": "Archivar",
         "remove": "Retirar",
-        "settings": "Ajustes"
+        "settings": "Ajustes",
+        "unarchive": "Desarchivar"
       },
       "view-active": "Ver Activo",
       "view-all": "Ver Todo",
@@ -320,16 +396,53 @@
       "add-failed": "Se fall\u00f3 a a\u00f1adir el curso",
       "added": "Curso a\u00f1adido",
       "archived": "Curso archivado",
+      "choose-location": "Ubicaci\u00f3n",
+      "choose-teacher": "Maestro",
+      "choose-time": "Elegir Tiempo",
       "confirm-archive": "\u00bfEst\u00e1s seguro que quieres archivar este curso?",
       "course": "Cursos",
+      "course-offering": "Ofertas de Cursos",
+      "dashboard": {
+        "charts": {
+          "attended": "Asisti\u00f3",
+          "course": "Curso",
+          "did-not-attend": "No Asisti\u00f3",
+          "did-not-graduate": "No Se Gradu\u00f3",
+          "enrolled": "Inscrito",
+          "graduated": "Se Gradu\u00f3"
+        },
+        "headers": {
+          "course-retention": "Retenci\u00f3n del Curso",
+          "course-success": "\u00c9xito del Curso"
+        },
+        "title": "Tablero"
+      },
+      "dates": "Elegir Fechas",
       "description": "Descripci\u00f3n",
       "enrolled": "N\u00famero Registrado",
+      "is-archived": "Este curso est\u00e1 archivado",
+      "max-size": "N\u00famero M\u00e1ximo de Estudiantes",
       "new": "Nuevo Curso",
+      "new-offering": "Nuevo Oferta de Curso",
+      "no-prerequisites": "Este curso no tiene prerrequisitos.",
       "prerequisites": "Prerrequisitos",
       "reactivated": "Curso desarchivado",
+      "students": "Estudiantes",
       "title": "T\u00edtulo",
       "update-failed": "Se fall\u00f3 a actualizar el curso",
       "updated": "Curso actualizado"
+    },
+    "diplomas": {
+      "archived": "Diploma archivado",
+      "confirm-archive": "\u00bfEst\u00e1s seguro que quieres archivar esta diploma?",
+      "courses": "Cursos",
+      "courses-this-diploma": "Cursos para esta Diploma",
+      "description": "Descripci\u00f3n",
+      "diploma": "Diplomas",
+      "new": "Nueva Diploma",
+      "reactivated": "Diploma desarchivado",
+      "title": "T\u00edtulo",
+      "updated": "Diploma actualizado"
     },
     "events": {
       "all-events": "Todos Eventos",
@@ -341,6 +454,19 @@
       },
       "confirm-archive": "\u00bfSeguro que quieres archivar este evento?",
       "create-event": "Crear Evento",
+      "dashboard": {
+        "charts": {
+          "attendance": "Asistencia",
+          "campus": "Campus",
+          "home-groups": "Iglesias Hogares"
+        },
+        "headers": {
+          "home-group-percentage": "Porcentaje de Feligreses en un Grupo de Hogar",
+          "location-attendance": "Asistencia por Ubicaci\u00f3n",
+          "yearly-attendance": "Asistencia Anual"
+        },
+        "title": "Tablero"
+      },
       "details": {
         "title": "Detalles del Evento"
       },
@@ -393,15 +519,21 @@
       "title": "Iglesias Hogar"
     },
     "login": {
-      "header": "Iniciar Sesi\u00f3n"
+      "header": "Iniciar Sesi\u00f3n",
+      "messages": {
+        "incorrect-login": "Nombre de usuario o contrase\u00f1a incorrecta"
+      }
     },
     "people": {
-      "title": "Personas"
+      "attributes": "Atributas",
+      "title": "Personas",
+      "title-roles": "Papeles"
     },
     "person": {
       "actions": {
         "add-account": "A\u00f1adir cuenta",
         "add-participant": "A\u00f1adir Part\u00edcipe",
+        "assign-roles": "Asigne Papeles",
         "edit": "Editar persona",
         "new": "Persona Nueva",
         "reset-password": "Restablecer la contrase\u00f1a"
@@ -414,6 +546,8 @@
       "gender": "G\u00e9nero",
       "male": "Hombre",
       "messages": {
+        "account-activate": "Cuenta activada",
+        "account-deactivate": "Cuenta desactivada",
         "canceled": "Cancelado a\u00f1adir nueva persona",
         "person-activate": "Persona activada",
         "person-add": "Nueva persona agregada",
@@ -423,7 +557,8 @@
       },
       "name": {
         "first": "Nombre de pila",
-        "last": "Apellido"
+        "last": "Apellido",
+        "second-last": "Segundo Apellido"
       },
       "phone": "Tel\u00e9fono",
       "settings": "Configuraci\u00f3n de la {person}"
@@ -441,6 +576,7 @@
       "title": "P\u00fablico"
     },
     "teams": {
+      "all-teams": "Todos Equipos",
       "confirm-archive": "\u00bfSeguro que quieres archivar este equipo?",
       "confirm-remove-from-event": "\u00bfEst\u00e1s seguro de que quieres eliminar a este equipo de este evento?",
       "create-team": "Crear Equipo",

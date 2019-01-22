@@ -32,10 +32,17 @@ const router = new VueRouter({
       component: () => import("@/pages/Login")
     },
     {
+      name: "signup",
+      path: "/signup",
+      meta: { layout: "arco" },
+      component: () => import("@/pages/Signup")
+    },
+    {
       name: "admin",
       path: "/admin",
       meta: { authRequired: true },
-      component: () => import("@/pages/Admin")
+      // component: () => import("@/pages/Admin")
+      component: () => import("@/components/events/Dashboard")
     },
     {
       name: "people",
@@ -61,6 +68,12 @@ const router = new VueRouter({
           path: "all",
           meta: { authRequired: true },
           component: () => import("@/components/events/EventTable")
+        },
+        {
+          name: "events-dashboard",
+          path: "dashboard",
+          meta: { authRequired: true },
+          component: () => import("@/components/events/Dashboard")
         },
         {
           name: "events-calendar",
@@ -125,10 +138,64 @@ const router = new VueRouter({
       component: () => import("@/pages/Locale")
     },
     {
-      name: "courses-admin",
+      name: "diplomas-admin",
+      path: "/diplomas",
+      meta: { authRequired: true },
+      component: () => import("@/pages/Diplomas")
+    },
+    {
+      name: "courses",
       path: "/courses",
       meta: { authRequired: true },
-      component: () => import("@/pages/Courses")
+      component: () => import("@/pages/Courses"),
+      redirect: { name: "all-courses" },
+      children: [
+        {
+          name: "courses-dashboard",
+          path: "dashboard",
+          meta: { authRequired: true },
+          component: () => import("@/components/courses/Dashboard")
+        },
+        {
+          name: "all-courses",
+          path: "all",
+          meta: { authRequired: true },
+          component: () => import("@/components/courses/CoursesTable")
+        },
+        {
+          name: "course-details",
+          path: ":courseId",
+          meta: { authRequired: true },
+          props: true,
+          component: () => import("@/components/courses/CourseDetails")
+        },
+        {
+          name: "course-offering",
+          path: ":courseId/offering/:offeringId",
+          meta: { authRequired: true },
+          props: true,
+          redirect: { name: "course-offering-details" },
+          component: () => import("@/components/courses/CourseOffering"),
+          children: [
+            {
+              name: "course-offering-details",
+              path: "details",
+              meta: { authRequired: true },
+              props: true,
+              component: () =>
+                import("@/components/courses/CourseOfferingDetails")
+            },
+            {
+              name: "course-offering-students",
+              path: "students",
+              meta: { authRequired: true },
+              props: true,
+              component: () =>
+                import("@/components/courses/CourseOfferingStudents")
+            }
+          ]
+        }
+      ]
     }
   ]
 });

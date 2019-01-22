@@ -11,13 +11,21 @@
 //
 // -- This is a parent command --
 // Cypress.Commands.add("login", (email, password) => { ... })
+
 Cypress.Commands.add("login", function() {
   cy.visit("/login");
-  cy.get("[data-cy=username]").type("lpratico");
-  cy.get("[data-cy=password]").type("Qwerty1234");
+  cy.get("[data-cy=username]").type("Cytest");
+  cy.get("[data-cy=password]").type("password");
   cy.get("[data-cy=login]").click();
+
+  // Wait after pressing login to not redirect back to login
+  cy.wait(250);
 });
-//
+
+Cypress.Commands.add("course_page", function() {
+  cy.get("[data-cy=toggle-nav-drawer]").click();
+  cy.get("[data-cy=courses]").click();
+});
 //
 // -- This is a child command --
 // Cypress.Commands.add("drag", { prevSubject: 'element'}, (subject, options) => { ... })
@@ -29,16 +37,6 @@ Cypress.Commands.add("login", function() {
 //
 // -- This is will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
-
-// Does the login process as 'Quality Assurance'
-Cypress.Commands.add("login", function() {
-  cy.visit("/login");
-  cy.get("[data-cy=username]").type("Cytest");
-  cy.get("[data-cy=password]").type("password");
-  cy.get("[data-cy=login]").click();
-  // Wait after pressing login to not redirect back to login
-  cy.wait(250);
-});
 
 // TODO: Eventually bypass logging in before each test
 // import store from "../../../src/store"

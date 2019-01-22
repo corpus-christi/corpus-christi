@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-btn outline color="primary" :to="{ path: '/teams/all' }"
-      ><v-icon>arrow_back</v-icon>{{ $t("events.all-events") }}</v-btn
+      ><v-icon>arrow_back</v-icon>{{ $t("teams.all-teams") }}</v-btn
     >
     <v-layout class="vertical-spacer">
       <v-flex xs12 sm12>
