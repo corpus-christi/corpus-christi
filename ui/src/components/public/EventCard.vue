@@ -1,8 +1,9 @@
 <template>
   <v-card class="card elevation-10">
     <!-- Image -->
-    <template v-if="image.length > 0">
-      <v-img class="image picture" v-for="src in image" :src="src" :key="src">
+    <template v-if="event.images.length > 0">
+      <!-- {{ event.images[0] }} -->
+      <v-img class="image picture" :src="'/api/v1/images/' + event.images[0].image.id">
       </v-img>
     </template>
 
@@ -61,11 +62,6 @@ export default {
   props: {
     event: {}
   },
-  data() {
-    return {
-      image: []
-    };
-  },
   methods: {
     getDisplayDate(ts) {
       let date = new Date(ts);
@@ -83,7 +79,7 @@ export default {
 
 <style scoped>
 .picture {
-  max-height: 300px;
+  max-height: 200px;
   min-height: 200px;
 }
 

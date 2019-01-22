@@ -19,6 +19,7 @@
           location
           name="location"
           v-model="asset.location"
+          v-validate="'required'"
           v-bind:error-messages="errors.first('location')"
         />
       </form>
