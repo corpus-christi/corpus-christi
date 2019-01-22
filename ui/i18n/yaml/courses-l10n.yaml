@@ -72,12 +72,17 @@ courses:
     en: New Offering
     es: Nueva Oferta
   new-offering:
-    _desc: Action for creating a new course offering, full phrase
-    en: New Course Offering
-    es: Nueva Oferta de Curso
+    en: New Offering
+    es: Nuevo Oferta
   students:
     en: Students
     es: Estudiantes
+  reject:
+    en: Reject
+    es: Rechazar
+  confirm-student:
+    en: Would you like to confirm or reject this student?
+    es: ¿Te gustarías confirmar o rechazar este estudiante?
   schedule:
     en: Schedule
     es: Horario
@@ -106,3 +111,18 @@ courses:
   update-meeting-failed:
     en: Failed to update meeting
     es: Se falló a actualizar el reunión
+  register:
+    en: Register
+    es: Registrar
+  register-success:
+    en: Successfully Registered
+    es: Registrado con Éxito
+  register-for-course:
+    en: Register for this course
+    es: Registrar para este curso
+  choose-offering:
+    en: Choose Offering
+    es: Elegir Oferta
+  create-new-person:
+    en: Create a new person
+    es: Crear una nueva persona

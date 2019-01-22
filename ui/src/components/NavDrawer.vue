@@ -1,11 +1,7 @@
 <template>
   <v-navigation-drawer app v-model="drawerVisible">
     <v-list>
-      <NavItem
-        v-for="item in menuItems"
-        :key="item.route"
-        :item="item"
-      />
+      <NavItem v-for="item in menuItems" :key="item.route" :item="item" />
     </v-list>
   </v-navigation-drawer>
 </template>
@@ -51,6 +47,10 @@ export default {
             {
               title: this.$t("diplomas.diploma"),
               route: "diplomas-admin"
+            },
+            {
+              title: this.$t("transcripts.transcript"),
+              route: "transcripts"
             }
           ]
         },
