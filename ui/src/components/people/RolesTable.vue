@@ -80,7 +80,7 @@
             v-for="role in props.item.accountInfo.roles"
             :key="role.id"
             small
-            >{{ role.nameI18n }}</v-chip
+            >{{ $t(role.nameI18n) }}</v-chip
           >
         </td>
 
@@ -273,12 +273,12 @@ export default {
       this.$http
         .get(`/api/v1/people/persons/${person.id}/account`)
         .then(resp => {
-          console.log("FETCHED", resp);
+          console.log("FETCHED ACCOUNT", resp);
           this.adminDialog.account = resp.data;
           this.adminDialog.rolesEnabled = true;
           this.adminDialog.show = true;
         })
-        .catch(err => console.error("FAILURE Haaha", err.response));
+        .catch(err => console.error("FAILURE", err.response));
     },
     closeAdmin() {
       this.adminDialog.show = false;
@@ -289,7 +289,7 @@ export default {
       this.$http
         .post("/api/v1/people/accounts", account)
         .then(resp => {
-          console.log("ADDED", resp);
+          console.log("ADDED ACCOUNT", resp);
           this.refreshPeopleList();
           this.showSnackbar(this.$t("account.messages.added-ok"));
         })
@@ -297,12 +297,10 @@ export default {
     },
 
     updateAccount(accountId, account, roles) {
-      console.log("ROLES");
-      console.log(roles);
       this.$http
         .patch(`/api/v1/people/accounts/${accountId}`, account)
         .then(resp => {
-          console.log("PATCHED", resp);
+          console.log("PATCHED ACCOUNT", resp);
           this.refreshPeopleList();
           this.showSnackbar(this.$t("account.messages.updated-ok"));
         })

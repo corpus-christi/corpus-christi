@@ -442,7 +442,7 @@ export default {
       this.$http
         .get(`/api/v1/people/persons/${person.id}/account`)
         .then(resp => {
-          console.log("FETCHED", resp);
+          console.log("FETCHED ACCOUNT", resp);
           this.adminDialog.account = resp.data;
           this.adminDialog.show = true;
         })
@@ -456,7 +456,7 @@ export default {
       this.$http
         .post("/api/v1/people/accounts", account)
         .then(resp => {
-          console.log("ADDED", resp);
+          console.log("ADDED ACCOUNT", resp);
           this.refreshPeopleList();
           this.showSnackbar(this.$t("account.messages.added-ok"));
         })
@@ -467,7 +467,7 @@ export default {
       this.$http
         .patch(`/api/v1/people/accounts/${accountId}`, account)
         .then(resp => {
-          console.log("PATCHED", resp);
+          console.log("PATCHED ACCOUNT", resp);
           this.refreshPeopleList();
           this.showSnackbar(this.$t("account.messages.updated-ok"));
         })
