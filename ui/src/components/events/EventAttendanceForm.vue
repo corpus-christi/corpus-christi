@@ -26,7 +26,7 @@
         color="primary"
         v-on:click="changeAttendance"
         :loading="saving"
-        data-cy="attendance-cancel"
+        data-cy="attendance-save"
         >{{ $t("actions.save") }}</v-btn
       >
     </v-card-actions>
