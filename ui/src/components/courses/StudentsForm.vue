@@ -11,16 +11,6 @@
       <form>
         <entity-search person v-model="newStudent" />
       </form>
-      
-      <v-expansion-panel v-model="showExpansion" expand>
-        <v-expansion-panel-content>
-          <div slot="header">{{ $t("courses.create-new-person") }}</div>
-          <PersonForm 
-            v-bind:initialData="{}"
-            v-on:cancel="cancelNewPerson"
-            v-on:saved="savedNewPerson"/>
-        </v-expansion-panel-content>
-      </v-expansion-panel>
     </v-card-text>
       
     <v-card-actions>
@@ -61,7 +51,6 @@ export default {
   data: function() {
     return {
       newStudent: {},
-      showExpansion: [false]
     };
   },
   
@@ -96,16 +85,6 @@ export default {
   },
   
   methods: {
-    
-    cancelNewPerson() {
-      this.showExpansion = [false];
-    },
-    
-    savedNewPerson(person) {
-      this.newStudent = person;
-      this.showExpansion = [false];
-    },
-    
     // Abandon ship.
    cancel() {
      this.clear();

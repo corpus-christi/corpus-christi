@@ -10,7 +10,7 @@
         <v-flex shrink justify-self-end>
           <v-btn color="primary" raised v-on:click.stop="newCourseOffering">
             <v-icon left>library_add</v-icon>
-            {{ $t("courses.new") }}
+            {{ $t("courses.new-offering") }}
           </v-btn>
         </v-flex>
       </v-layout>
