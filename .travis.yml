@@ -44,7 +44,7 @@ matrix:
                         - createuser arco
                         - createdb --owner=arco cc-staging
                           # - cp thing in to private.py
-                        - private-ci.sh
+                        - ./private-ci.sh
                         - flask db upgrade
                         - flask data load-all
                         - sudo nginx -t
