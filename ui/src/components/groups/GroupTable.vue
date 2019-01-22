@@ -274,7 +274,6 @@ export default {
 
     saveGroup(group) {
       this.groupDialog.saveLoading = true;
-      console.log(group)
       if (group.manager) {
         group.manager_id = group.manager.id;
       }
@@ -284,6 +283,11 @@ export default {
       if (this.groupDialog.editMode) {
         const groupId = group.id;
         delete newGroup.managerInfo;
+        delete newGroup.memberList
+        // for(var member of newGroup.memberList){
+        //   delete member.id
+        // }
+        console.log(newGroup)
         const idx = this.groups.findIndex(ev => ev.id === group.id);
         this.$http
           .patch(`/api/v1/groups/groups/${groupId}`, newGroup)
