@@ -84,6 +84,7 @@ def read_all_persons():
         r.accountInfo = r.account
         if r.account:
             r.accountInfo.roles = r.account.roles
+
     return jsonify(person_schema.dump(result, many=True))
 
 
@@ -100,7 +101,7 @@ def read_one_person(person_id):
 @jwt_required
 def update_person(person_id):
     try:
-        valid_person = person_schema.load(request.json['person'])
+        valid_person = person_schema.load(request.json['person'], partial=True)
         valid_person_attributes = person_attribute_schema.load(
             request.json['attributesInfo'], many=True)
     except ValidationError as err:
@@ -125,6 +126,9 @@ def update_person(person_id):
             db.session.add(new_person_attribute)
 
     person = db.session.query(Person).filter_by(id=person_id).first()
+
+    if person is None:
+        return jsonify("Person does not exist"), 404
 
     for key, val in valid_person.items():
         setattr(person, key, val)
@@ -156,7 +160,8 @@ def deactivate_person(person_id):
 @jwt_required
 def activate_person(person_id):
     person = db.session.query(Person).filter_by(id=person_id).first()
-
+    if person is None:
+        return jsonify("person does not exist"), 404
     setattr(person, 'active', True)
 
     db.session.commit()
@@ -172,17 +177,17 @@ def delete_person(person_id):
     if person is None:
         return jsonify(msg="Person not found"), 404
 
-    db.session.query(TeamMember).filter_by(member_id=person_id).delete()
+    # db.session.query(TeamMember).filter_by(member_id=person_id).delete()
     db.session.query(EventParticipant).filter_by(person_id=person_id).delete()
     db.session.query(EventPerson).filter_by(person_id=person_id).delete()
     db.session.query(Student).filter_by(student_id=person_id).delete()
     db.session.query(Account).filter_by(person_id=person_id).delete()
     db.session.query(PersonAttribute).filter_by(person_id=person_id).delete()
     # TODO delete any instance of Class_Attendance that references deleted class_meeting
-    db.session.query(Class_Meeting).filter_by(teacher=person_id).delete()
+    # db.session.query(Class_Meeting).filter_by(teacher=person_id).delete()
     db.session.delete(person)
     db.session.commit()
-    return jsonify(msg=f"Person {person_id} was deleted."), 200
+    return jsonify(msg=f"Person {person_id} was deleted."), 204
 
 
 # ---- Account
@@ -249,6 +254,13 @@ def get_accounts_by_role(role_id):
 @people.route('/accounts/<account_id>', methods=['PATCH'])
 @jwt_required
 def update_account(account_id):
+    try:
+        account_request = request.json.copy()
+        account_request.pop('roles', None)
+        account_schema.load(account_request, partial=True)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+
     account = db.session.query(Account).filter_by(id=account_id).first()
     if account is None:
         return 'Account not found', 404
@@ -324,7 +336,7 @@ def read_all_roles():
     return jsonify(role_schema.dump(result, many=True))
 
 
-@people.route('/role/<account_id>')
+@people.route('/role/account/<account_id>')
 @jwt_required
 def get_roles_for_account(account_id):
     account = db.session.query(Account).filter_by(id=account_id).first()
@@ -414,7 +426,8 @@ def remove_role_from_account(account_id, role_id):
     role_to_remove = db.session.query(Role).filter_by(id=role_id).first()
 
     if role_to_remove not in account.roles:
-        return 'That accout does not have that role', 404
+        return 'That account does not have that role', 404
+
 
     account.roles.remove(role_to_remove)
     db.session.commit()
@@ -423,9 +436,9 @@ def remove_role_from_account(account_id, role_id):
     # roles = db.session.query(Role).join(Account, Role.accounts).filter_by(id=account_id).filter_by(active=True).all()
     # for r in roles:
     #     user_roles.append(role_schema.dump(r)['nameI18n'])
-
+    #
     # return jsonify(user_roles)
-    return jsonify(role_to_remove)
+    return jsonify(role_schema.dump(role_to_remove))
 
 
 # ---- Manager
