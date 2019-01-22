@@ -75,6 +75,12 @@ const router = new VueRouter({
           component: () => import("@/components/events/EventTable")
         },
         {
+          name: "events-calendar",
+          path: "calendar",
+          meta: { authRequired: true },
+          component: () => import("@/components/events/Calendar")
+        },
+        {
           name: "event",
           path: ":event",
           meta: { authRequired: true },
@@ -183,14 +189,16 @@ const router = new VueRouter({
               path: "students",
               meta: { authRequired: true },
               props: true,
-              component: () => import("@/components/courses/CourseOfferingStudents")
+              component: () =>
+                import("@/components/courses/CourseOfferingStudents")
             },
             {
               name: "course-offering-meetings",
               path: "meetings",
               meta: { authRequired: true },
               props: true,
-              component: () => import("@/components/courses/CourseOfferingMeetings")
+              component: () =>
+                import("@/components/courses/CourseOfferingMeetings")
             }
           ]
         }

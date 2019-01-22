@@ -21,19 +21,24 @@
                 </span>
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn raised color="primary" v-on:click="registrationFormDialog.show = true">
+                  <v-btn
+                    raised
+                    color="primary"
+                    v-on:click="registrationFormDialog.show = true"
+                  >
                     {{ $t("courses.register") }}
                   </v-btn>
                   <v-spacer></v-spacer>
                 </v-card-actions>
               </v-card>
-              
+
               <v-dialog v-model="registrationFormDialog.show" max-width="500px">
-                <CourseRegistrationForm 
+                <CourseRegistrationForm
                   v-on:cancel="cancel"
                   v-on:snackbar="showSnackbar($event)"
                   :course="course"
-                  v-on:registered="registeredPerson"/>
+                  v-on:registered="registeredPerson"
+                />
               </v-dialog>
               <v-snackbar v-model="snackbar.show">
                 {{ snackbar.text }}
@@ -97,8 +102,8 @@
                 block
                 outline
                 color="primary"
-                >{{ $t("public.events.view-all") }}</v-btn
-              >
+                >{{ $t("public.events.view-all") }}
+              </v-btn>
             </v-card-actions>
           </v-card>
         </v-list>
@@ -132,21 +137,21 @@ export default {
       courses: [],
       pageLoaded: false,
       groupLocations: [],
-      
+
       registrationFormDialog: {
         show: false,
         editMode: false,
         saving: false,
         courseOffering: {}
       },
-      
+
       snackbar: {
         show: false,
         message: ""
       }
     };
   },
-  
+
   computed: {
     offeredCourses: function() {
       return this.courses.filter(course => {
@@ -166,6 +171,15 @@ export default {
     this.$http.get("/api/v1/courses/courses").then(resp => {
       this.courses = resp.data;
       this.courses = this.courses.slice(0, 5);
+      console.log(resp.data);
+    });
+
+    this.pageLoaded = false;
+    this.getHomegroupLocations();
+    this.getEventData();
+    this.$http.get(`/api/v1/events/?return_group=all&sort=start`).then(resp => {
+      this.events = resp.data;
+      this.events = this.events.slice(0, 5);
       console.log(resp.data);
       this.pageLoaded = true;
     });
@@ -199,15 +213,15 @@ export default {
         })
         .catch(err => console.log("FAILED", err));
     },
-    
+
     cancel() {
       this.registrationFormDialog.show = false;
     },
-    
+
     registeredPerson() {
       this.registrationFormDialog.show = false;
     },
-    
+
     showSnackbar(message) {
       this.snackbar.text = message;
       this.snackbar.show = true;

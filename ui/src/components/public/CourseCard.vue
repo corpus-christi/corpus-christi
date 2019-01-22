@@ -36,11 +36,12 @@
       </div>
     </v-card>
     <v-dialog v-model="registrationFormDialog.show" max-width="500px">
-      <CourseRegistrationForm 
+      <CourseRegistrationForm
         v-on:cancel="cancel"
         v-on:snackbar="showSnackbar($event)"
-        :course="course" 
-        v-on:registered="registeredPerson"/>
+        :course="course"
+        v-on:registered="registeredPerson"
+      />
     </v-dialog>
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
@@ -88,8 +89,7 @@ export default {
     showSnackbar(message) {
       this.snackbar.text = message;
       this.snackbar.show = true;
-    },
-
+    }
   }
 };
 </script>

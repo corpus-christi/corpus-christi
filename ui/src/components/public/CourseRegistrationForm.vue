@@ -22,14 +22,15 @@
           data-cy="register-password"
         ></v-text-field> -->
         <!-- TODO: add create-person-form -->
-    
+
         <v-spacer></v-spacer>
         <v-radio-group
           v-model="selectedOffering"
           v-validate="'required'"
           name="offering"
-          v-bind:error-messages="errors.first('offering')">
-        <span>{{ $t("courses.choose-offering") }}</span>
+          v-bind:error-messages="errors.first('offering')"
+        >
+          <span>{{ $t("courses.choose-offering") }}</span>
           <v-radio
             v-for="offering in activeOfferings"
             :key="offering.id"
@@ -45,25 +46,29 @@
     <!-- cancel and register buttons -->
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn color="primary" v-on:click="cancel" data-cy="cancel" :disabled="loading">{{
-        $t("actions.cancel")
-      }}</v-btn>
-      <v-btn color="primary" v-on:click="registerPerson" data-cy="register" :loading="loading">{{
-        $t("actions.login")
-      }}</v-btn>
+      <v-btn
+        color="primary"
+        v-on:click="cancel"
+        data-cy="cancel"
+        :disabled="loading"
+        >{{ $t("actions.cancel") }}</v-btn
+      >
+      <v-btn
+        color="primary"
+        v-on:click="registerPerson"
+        data-cy="register"
+        :loading="loading"
+        >{{ $t("actions.login") }}</v-btn
+      >
     </v-card-actions>
   </v-card>
 </template>
 
 <script>
-import PersonForm from "../people/PersonForm";
-import {mapGetters} from "vuex";
+import { mapGetters } from "vuex";
 
 export default {
   name: "CourseRegistrationForm",
-  components: {
-    PersonForm
-  },
   data() {
     return {
       username: "",
@@ -79,12 +84,14 @@ export default {
     course: {}
   },
 
-  computed: mapGetters(["isLoggedIn","currentAccount"]),
-  
+  computed: mapGetters(["isLoggedIn", "currentAccount"]),
+
   mounted() {
-    this.activeOfferings = this.course.course_offerings.filter(course => course.active);
+    this.activeOfferings = this.course.course_offerings.filter(
+      course => course.active
+    );
   },
-  
+
   methods: {
     cancel() {
       this.clear();
@@ -100,9 +107,9 @@ export default {
     cancelNewPerson() {
       this.showExpansion = [false];
     },
-    
+
     savedNewPerson(person) {
-      this.newStudent = "person";
+      this.newStudent = person;
       this.showExpansion = [false];
     },
 
@@ -112,9 +119,10 @@ export default {
         if (!this.errors.any()) {
           this.loading = true;
           let my_username = this.currentAccount.username;
-          this.$http.get(`/api/v1/people/accounts/username/${my_username}`)
+          this.$http
+            .get(`/api/v1/people/accounts/username/${my_username}`)
             .then(resp => {
-              let id = resp.data.id
+              let id = resp.data.id;
               let newStudent = {};
               newStudent.confirmed = false;
               newStudent.offeringId = this.selectedOffering;
@@ -123,20 +131,23 @@ export default {
               return newStudent;
             })
             .then(student => {
-              return this.$http.post(`/api/v1/courses/course_offerings/${student.studentId}`, student);
+              return this.$http.post(
+                `/api/v1/courses/course_offerings/${student.studentId}`,
+                student
+              );
             })
             .then(resp => {
               this.loading = false;
               console.log("ADDED", resp);
-              this.$emit('snackbar', this.$t("courses.register-success"));
+              this.$emit("snackbar", this.$t("courses.register-success"));
               this.cancel();
             })
             .catch(err => {
-              this.loading = false;              
-              console.log(err)
+              this.loading = false;
+              console.log(err);
             });
         }
-      })
+      });
     }
   }
 };
