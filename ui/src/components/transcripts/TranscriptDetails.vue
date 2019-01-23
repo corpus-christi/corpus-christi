@@ -26,6 +26,7 @@
                                         <span v-if="transcript.person.secondLastName">{{ transcript.person.secondLastName }}</span>
                                     </v-toolbar-title>
                                 </v-toolbar>
+                            
                                 <v-list three-line>
                                     <v-subheader >
                                         <h2>{{ $t("transcripts.student-information") }}:</h2>
@@ -71,7 +72,11 @@
                                     >
                                     <v-list-tile-content>
                                         <v-list-tile-title><span class="font-weight-bold">{{diploma.name}}</span></v-list-tile-title>
-                                        - ...list of courses required to complete this diploma... -
+                                        <ul>
+                                            <li v-for="diplomaCourse in diploma.courses" :key="diplomaCourse+`${diplomaCourse.id}`">
+                                                {{diplomaCourse.name}}
+                                            </li>
+                                        </ul>
                                     </v-list-tile-content>
                                     </v-list-tile>
                                 </template>
@@ -89,7 +94,7 @@
 
                                         </v-list-tile-title>
                                         <ul>
-                                            <li v-for="courseOffering in course.courseOfferings" :key="courseOffering.id">
+                                            <li v-for="courseOffering in course.courseOfferings" :key="courseOffering+`${courseOffering.id}`">
                                                 {{courseOffering.description}}
                                             </li>
                                         </ul>
