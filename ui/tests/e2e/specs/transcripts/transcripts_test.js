@@ -54,12 +54,13 @@ describe('Transcript for student', () => {
     it('Student transcript details', () => {
         cy.get('tbody > :nth-child(1) > :nth-child(1)').click()
         cy.url().should('include', '/transcripts/1')
+        cy.wait(500)
     })
 })
 
-describe('Back button', () => {
-    it('Go back to all students', () => {
-        cy.get('.row > :nth-child(1) > .v-btn').click()
-        cy.url().should('include', '/transcripts/all')
-    })
-})
+// describe('Back button', () => {
+//     it('Go back to all students', () => {
+//         cy.get('.row > :nth-child(1) > .v-btn').click()
+//         cy.url().should('include', '/transcripts/all')
+//     })
+// })
