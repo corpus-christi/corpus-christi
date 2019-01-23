@@ -430,6 +430,8 @@ def remove_course_from_diploma(diploma_id, course_id):
 @jwt_required
 def activate_diploma(diploma_id):
     diploma = db.session.query(Diploma).filter_by(id=diploma_id).first()
+    if diploma is None:
+        return 'Not Found', 404
     setattr(diploma, 'active', True)
     return jsonify(diploma_schema.dump(diploma))
 
@@ -438,6 +440,8 @@ def activate_diploma(diploma_id):
 @jwt_required
 def deactivate_diploma(diploma_id):
     diploma = db.session.query(Diploma).filter_by(id=diploma_id).first()
+    if diploma is None:
+        return 'Not Found', 404
     setattr(diploma, 'active', False)
     return jsonify(diploma_schema.dump(diploma))
 
@@ -520,13 +524,13 @@ def update_diploma_awarded(diploma_id,person_id):
     return jsonify(diploma_awarded_schema.dump(diploma_awarded))
 
 
-@courses.route('/diplomas_awarded/<int:diploma_id>/<int:student_id>', methods=['DELETE'])
+@courses.route('/diplomas_awarded/<int:diploma_id>/<int:person_id>', methods=['DELETE'])
 @jwt_required
-def delete_diploma_awarded(diploma_id, student_id):
+def delete_diploma_awarded(diploma_id, person_id):
     diploma_awarded = db.session.query(Diploma_Awarded)\
-            .filter_by(diploma_id=diploma_id, student_id=student_id).first()
+            .filter_by(diploma_id=diploma_id, person_id=person_id).first()
     if diploma_awarded is None:
-        return jsonify(msg=f"That diploma #{diploma_id} for student #{student_id} does not exist"), 404
+        return jsonify(msg=f"That diploma #{diploma_id} for student #{person_id} does not exist"), 404
     db.session.delete(diploma_awarded)
     db.session.commit()
     return jsonify(diploma_awarded_schema.dump(diploma_awarded))
@@ -598,8 +602,6 @@ def get_all_students():
         diplomas = i.Person.diplomas_awarded
         for j in diplomas:
             d = db.session.query(Diploma).filter_by(id=j.diploma_id).first()
-            if d is None:
-                return 'Diploma not found', 404
             d = diploma_schema.dump(d)
             d['diplomaIsActive'] = d.pop('active')
             p['diplomaList'].append(d)
@@ -636,8 +638,6 @@ def read_one_student(student_id):
     for i in result[0].Person.diplomas_awarded:
         # Query to get diploma attributes
         d = db.session.query(Diploma).filter_by(id=i.diploma_id).first()
-        # if d is None:
-        #     return 'Diploma not found', 404
         d = diploma_schema.dump(d)
         d['diplomaIsActive'] = d.pop('active')
         # Query to find when award was given or if in progress (null value)
