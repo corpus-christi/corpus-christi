@@ -18,19 +18,23 @@ describe("Testing Editing User Information", () => {
     cy.get("[data-cy=search]").type("Quality");
   });
   it("Then: The table should list entries in which any category contains the searched keyword", () => {
-    cy.get("tbody > :nth-child(1) > :nth-child(2)").should(
-      "contain",
-      "Quality"
-    );
-    cy.get("tbody > :nth-child(1) > :nth-child(3)").should(
-      "contain",
-      "Assurance"
-    );
+    cy.get("[data-cy=person-table").within(() => {
+      cy.get("tbody > :nth-child(1) > :nth-child(2)").should(
+        "contain",
+        "Quality"
+      );
+      cy.get("tbody > :nth-child(1) > :nth-child(3)").should(
+        "contain",
+        "Assurance"
+      );
+    });
   });
   it("And: When searching for something that does not exist, it should let the user know", () => {
     cy.get("[data-cy=search]")
       .clear()
       .type("foobar");
-    cy.get("tbody > :nth-child(1) > :nth-child(2)").should("not.exist");
+    cy.get("[data-cy=person-table").within(() => {
+      cy.get("tbody > :nth-child(1) > :nth-child(2)").should("not.exist");
+    });
   });
 });

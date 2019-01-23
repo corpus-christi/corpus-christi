@@ -118,7 +118,7 @@
             {{ $t("public.headers.home-church") }}
           </v-toolbar-title>
         </v-toolbar>
-        <GoogleMap v-bind:markers="groupLocations"></GoogleMap>
+        <GoogleMap v-bind:markers="homegroups"></GoogleMap>
       </v-flex>
     </v-layout>
   </v-container>
@@ -150,7 +150,9 @@ export default {
       snackbar: {
         show: false,
         message: ""
-      }
+      },
+      
+      homegroups: []
     };
   },
 
@@ -189,22 +191,6 @@ export default {
         minute: "2-digit"
       });
     },
-
-    getHomegroupLocations() {
-      this.$httpNoAuth
-        .get("/api/v1/places/locations")
-        .then(resp => {
-          for (let loc of resp.data) {
-            this.groupLocations.push({
-              position: {
-                lat: loc.address.latitude,
-                lng: loc.address.longitude
-              }
-            });
-          }
-        })
-        .catch(err => console.log("FAILED", err));
-    },
     
     getEventData() {
       this.pageLoaded = false;
@@ -234,6 +220,40 @@ export default {
     showSnackbar(message) {
       this.snackbar.text = message;
       this.snackbar.show = true;
+    },
+
+    async getHomegroupLocations() {
+      let resp = await this.$httpNoAuth.get("/api/v1/groups/meetings");
+      let meetings = resp.data;
+      resp = await this.$httpNoAuth.get("/api/v1/places/addresses");
+      let addresses = resp.data;
+      resp = await this.$httpNoAuth.get("/api/v1/groups/groups");
+      let groups = resp.data;
+      this.populateHomegroupData(meetings, addresses, groups);
+    },
+
+    populateHomegroupData(meetings, addresses, groups) {
+      for (let m of meetings) {
+        for (let a of addresses) {
+          if (m.address_id === a.id) {
+            for (let g of groups) {
+              if (m.group_id === g.id) {
+                this.homegroups.push({
+                  position: {
+                    lat: a.latitude,
+                    lng: a.longitude
+                  },
+                  data: {
+                    name: g.name,
+                    description: g.description
+                  },
+                  opened: false
+                });
+              }
+            }
+          }
+        }
+      }
     }
   }
 };
