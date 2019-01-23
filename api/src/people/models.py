@@ -35,6 +35,7 @@ class Person(Base):
     # events_par refers to the participated events (linked via events_eventparticipant table)
     events_par = relationship("EventParticipant", back_populates="person")
     teams = relationship("TeamMember", back_populates="member")
+    members = relationship('Member', back_populates='person', lazy=True)
 
 
 
@@ -173,7 +174,7 @@ class Role(Base):
                 db.session.commit()
             return count
 
-        return 0
+        # return 0
 
 
 class RoleSchema(Schema):
@@ -187,12 +188,15 @@ class RoleSchema(Schema):
 class Manager(Base):
     __tablename__ = 'people_manager'
     id = Column(Integer, primary_key=True)
-    person_id = Column(Integer, ForeignKey('people_person.id'), nullable=False)
+    account_id = Column(Integer, ForeignKey('people_account.id'), nullable=False)
     manager_id = Column(Integer, ForeignKey('people_manager.id'))
     description_i18n = Column(StringTypes.I18N_KEY,
                               ForeignKey('i18n_key.id'), nullable=False)
     manager = relationship('Manager', backref='subordinates',
                            lazy=True, remote_side=[id])
+    groups = relationship('Group', back_populates='manager', lazy=True)
+    account = relationship("Account", backref=backref("manager", uselist=False))
+
 
     def __repr__(self):
         return f"<Manager(id={self.id})>"
@@ -201,8 +205,10 @@ class Manager(Base):
 class ManagerSchema(Schema):
     id = fields.Integer(dump_only=True, data_key='id',
                         required=True, validate=Range(min=1))
-    person_id = fields.Integer(
-        data_key='person_id', required=True, validate=Range(min=1))
+    account_id = fields.Integer(
+        data_key='account_id', required=True, validate=Range(min=1))
     manager_id = fields.Integer(data_key='manager_id', validate=Range(min=1))
     description_i18n = fields.String(
         data_key='description_i18n', required=True)
+    person = fields.Nested('PersonSchema')
+    

@@ -20,13 +20,35 @@
           name="description"
           data-cy="description"
         ></v-textarea>
+        <v-layout align-center justify-space-around>
+          <v-flex>
+            <entity-search
+              location
+              v-model="event.location"
+              name="location"
+              v-bind:error-messages="errors.first('location')"
+              :disabled="showAddressCreator"
+              :key="currentAddress"
+            />
+          </v-flex>
+          <v-flex shrink>
+            <v-btn
+              flat
+              color="primary"
+              small
+              @click="showAddressCreator = true"
+              >{{ $t("actions.add-address") }}</v-btn
+            >
+          </v-flex>
+        </v-layout>
 
-        <entity-search
-          location
-          v-model="event.location"
-          name="location"
-          v-bind:error-messages="errors.first('location')"
-        />
+        <v-expand-transition>
+          <address-form
+            v-if="showAddressCreator"
+            @cancel="showAddressCreator = false"
+            @saved="updateEntitySearch"
+          ></address-form>
+        </v-expand-transition>
 
         <v-layout>
           <v-flex xs12 md6>
@@ -253,11 +275,10 @@
 import { isEmpty } from "lodash";
 import { mapGetters } from "vuex";
 import EntitySearch from "../EntitySearch";
+import AddressForm from "../AddressForm.vue";
 
 export default {
-  components: {
-    "entity-search": EntitySearch
-  },
+  components: { "entity-search": EntitySearch, "address-form": AddressForm },
   name: "EventForm",
   watch: {
     // Make sure data stays in sync with any changes to `initialData` from parent.
@@ -424,6 +445,12 @@ export default {
           this.endTime = "";
         }
       }
+    },
+
+    updateEntitySearch(address) {
+      console.log(address);
+      this.event.location = address;
+      this.currentAddress = address.address_id;
     }
   },
   props: {
@@ -452,7 +479,9 @@ export default {
       showStartDatePicker: false,
       showEndDatePicker: false,
       startTimeModal: false,
-      endTimeModal: false
+      endTimeModal: false,
+      showAddressCreator: false,
+      currentAddress: 0
     };
   }
 };

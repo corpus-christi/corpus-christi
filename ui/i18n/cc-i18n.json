@@ -28,8 +28,10 @@
     },
     "actions": {
       "activate-account": "Activate",
+      "add-address": "Add Address",
       "add-another": "Add Another",
       "add-event": "Add Event",
+      "add-group": "Add Group",
       "add-person": "Add Person",
       "back": "Back",
       "cancel": "Cancel",
@@ -42,8 +44,11 @@
       "header": "Actions",
       "login": "Log In",
       "logout": "Log Out",
+      "open-map": "Open Map",
       "save": "Save",
       "search": "Search",
+      "search-addresses": "Search Addresses",
+      "search-managers": "Search Managers",
       "search-people": "Search People",
       "signup": "Signup",
       "tooltips": {
@@ -206,6 +211,38 @@
       "upload-image": "Upload Image"
     },
     "groups": {
+      "create-group": "Create Group",
+      "description": "Description",
+      "details": {
+        "title": "Details"
+      },
+      "edit-group": "Edit Group",
+      "group-description": "Group Description",
+      "header": "Groups",
+      "manager": "Manager",
+      "meetings": {
+        "title": "Meetings"
+      },
+      "members": {
+        "title": "Members"
+      },
+      "messages": {
+        "confirm-archive": "Are you sure you want to archive this group?",
+        "error-adding-group": "Error while adding group",
+        "error-adding-members": "Error while adding members",
+        "error-archiving-group": "Error while archiving group",
+        "error-archiving-member": "Error while unarchiving member",
+        "error-editing-group": "Error while editing group",
+        "group-added": "Group added",
+        "group-archived": "Group archived",
+        "group-edited": "Group edited",
+        "group-unarchived": "Group unarchived",
+        "group-unarchiving-group": "Error while unarchiving group",
+        "member-archived": "Member archived",
+        "member-unarchived": "Member unarchived",
+        "members-added": "Members added"
+      },
+      "name": "Name",
       "title": "Home Churches"
     },
     "login": {
@@ -215,11 +252,21 @@
       }
     },
     "people": {
+      "account-information": "Account Information",
+      "additional-information": "Additional Information",
       "attributes": "Attributes",
+      "next": "Next",
+      "optional": "Optional",
+      "personal-information": "Personal Information",
+      "previous": "Previous",
       "title": "People",
       "title-roles": "Roles"
     },
     "person": {
+      "account": "Account",
+      "account-info": {
+        "roles": "Roles"
+      },
       "actions": {
         "add-account": "Add Account",
         "add-participant": "Add a Participant",
@@ -239,6 +286,10 @@
         "account-activate": "Account activated",
         "account-deactivate": "Account deactivated",
         "canceled": "Canceled add new person",
+        "confirm": {
+          "activate": "Are you sure you want to restore this person?",
+          "deactivate": "Are you sure you want to archive this person?"
+        },
         "person-activate": "Person activated",
         "person-add": "New person added",
         "person-deactivate": "Person deactivated",
@@ -252,6 +303,22 @@
       },
       "phone": "Phone",
       "settings": "Settings for {person}"
+    },
+    "places": {
+      "address": {
+        "address": "Address",
+        "city": "City",
+        "latitude": "Latitude",
+        "longitude": "Longitude",
+        "name": "Name"
+      },
+      "create-address": "Create an Address",
+      "location": {
+        "description": "Description"
+      },
+      "messages": {
+        "no-results": "Your address returned no results."
+      }
     },
     "public": {
       "events": {
@@ -338,8 +405,10 @@
     },
     "actions": {
       "activate-account": "Activar",
+      "add-address": "A\u00f1adir Dirreci\u00f3n",
       "add-another": "A\u00f1adir Otro",
       "add-event": "A\u00f1adir Evento",
+      "add-group": "A\u00f1adir grupo",
       "add-person": "A\u00f1adir Persona",
       "back": "Regresar",
       "cancel": "Cancelar",
@@ -352,8 +421,11 @@
       "header": "Acciones",
       "login": "Acceder",
       "logout": "Cerrar sesi\u00f3n",
+      "open-map": "Abrir Mapa",
       "save": "Salvar",
       "search": "Buscar",
+      "search-addresses": "Buscar Direcciones",
+      "search-managers": "Gestores de B\u00fasqueda",
       "search-people": "Buscar Personas",
       "signup": "Reg\u00edstrate",
       "tooltips": {
@@ -516,6 +588,38 @@
       "upload-image": "Cargar Imagen"
     },
     "groups": {
+      "create-group": "Crea un Grupo",
+      "description": "Descripci\u00f3n",
+      "details": {
+        "title": "Detalles"
+      },
+      "edit-group": "Grupo de Edici\u00f3n",
+      "group-description": "Descripci\u00f3n del Grupo",
+      "header": "Grupos",
+      "manager": "Gerente",
+      "meetings": {
+        "title": "Reuniones"
+      },
+      "members": {
+        "title": "Miembros"
+      },
+      "messages": {
+        "confirm-archive": "\u00bfSeguro que quieres archivar este groupos?",
+        "error-adding-group": "Error al agregar grupo",
+        "error-adding-members": "Error al agregar miembros",
+        "error-archiving-group": "Error al archivar el grupo",
+        "error-archiving-member": "Error al desarchivar miembro",
+        "error-editing-group": "Error al editar grupo",
+        "group-added": "Grupo agregado",
+        "group-archived": "Grupo archivado",
+        "group-edited": "Grupo editado",
+        "group-unarchived": "Grupo desarchivado",
+        "group-unarchiving-group": "Error al desarchivar el grupo",
+        "member-archived": "Miembro archivado",
+        "member-unarchived": "Miembro desarchivado",
+        "members-added": "Miembros agregados"
+      },
+      "name": "Nombre",
       "title": "Iglesias Hogar"
     },
     "login": {
@@ -525,11 +629,21 @@
       }
     },
     "people": {
+      "account-information": "Informaci\u00f3n de la cuenta",
+      "additional-information": "Informaci\u00f3n Adicional",
       "attributes": "Atributas",
+      "next": "Siguiente",
+      "optional": "Opcional",
+      "personal-information": "Informacion personal",
+      "previous": "Anterior",
       "title": "Personas",
       "title-roles": "Papeles"
     },
     "person": {
+      "account": "Cuenta",
+      "account-info": {
+        "roles": "Papeles"
+      },
       "actions": {
         "add-account": "A\u00f1adir cuenta",
         "add-participant": "A\u00f1adir Part\u00edcipe",
@@ -549,6 +663,10 @@
         "account-activate": "Cuenta activada",
         "account-deactivate": "Cuenta desactivada",
         "canceled": "Cancelado a\u00f1adir nueva persona",
+        "confirm": {
+          "activate": "\u00bfEst\u00e1s seguro de que quieres restaurar a esta persona?",
+          "deactivate": "\u00bfEst\u00e1s seguro de que quieres archivar a esta persona?"
+        },
         "person-activate": "Persona activada",
         "person-add": "Nueva persona agregada",
         "person-deactivate": "Persona desactivada",
@@ -562,6 +680,22 @@
       },
       "phone": "Tel\u00e9fono",
       "settings": "Configuraci\u00f3n de la {person}"
+    },
+    "places": {
+      "address": {
+        "address": "Direcci\u00f3n",
+        "city": "Ciudad",
+        "latitude": "Latitud",
+        "longitude": "Longitud",
+        "name": "Nombre"
+      },
+      "create-address": "Crear una Direcci\u00f3n",
+      "location": {
+        "description": "Descripci\u00f3n"
+      },
+      "messages": {
+        "no-results": "Tu direcci\u00f3n no devolvi\u00f3 resultados"
+      }
     },
     "public": {
       "events": {

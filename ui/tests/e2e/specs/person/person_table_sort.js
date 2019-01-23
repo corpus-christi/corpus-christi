@@ -1,19 +1,14 @@
 // https://docs.cypress.io/api/introduction/api.html
-
+//this is a bad test
+//It uses hard coded expectations, however, they change every time ./reset-database is run
+//Ideally I can come up with a way to fix this, but I currently don't have time.
+//Sorry to whoever is reading this in hopes of running/fixing this test -AD
 describe("Testing Editing User Information", () => {
   it(
     "Given: Visits the app root url, logs into an account, and navigates " +
       "to the people page",
     () => {
-      cy.visit("/");
-      //Clicks on the Account button
-      cy.get("[data-cy=account-button]").click();
-      //Enters the Username
-      cy.get("[data-cy=username]").type("Cytest");
-      //Enters the password
-      cy.get("[data-cy=password]").type("password");
-      //Clicks the log in button
-      cy.get("[data-cy=login]").click();
+      cy.login();
       //Making sure we're in the right place
       cy.url().should("include", "/admin");
       //open nav drawer
@@ -23,30 +18,40 @@ describe("Testing Editing User Information", () => {
     }
   );
   it("When: clicking on a sorting method: last name descending", () => {
-    cy.get("thead > :nth-child(1) > :nth-child(3)").click();
+    cy.get("[data-cy=person-table").within(() => {
+      cy.get("thead > :nth-child(1) > :nth-child(3)").click();
+    });
   });
   it("Then: The table should resort itself based on what was being sorted", () => {
-    cy.get("tbody > :nth-child(1) > :nth-child(3)").contains("Arellano");
+    cy.get("[data-cy=person-table").within(() => {
+      cy.get("tbody > :nth-child(1) > :nth-child(3)").contains("Arellano");
+    });
   });
 
   it("And: When clicked again should change the sorting method: last name ascending", () => {
-    cy.get("thead > :nth-child(1) > :nth-child(3)").click();
-    cy.get("tbody > :nth-child(1) > :nth-child(3)").contains("Ziffle");
+    cy.get("[data-cy=person-table").within(() => {
+      cy.get("thead > :nth-child(1) > :nth-child(3)").click();
+      cy.get("tbody > :nth-child(1) > :nth-child(3)").contains("Ziffle");
+    });
   });
   it("And: When clicked again should change the sorting method: last name by user_id", () => {
-    cy.get("thead > :nth-child(1) > :nth-child(3)").click();
-    cy.get("tbody > :nth-child(1) > :nth-child(3)").contains("Brown");
+    cy.get("[data-cy=person-table").within(() => {
+      cy.get("thead > :nth-child(1) > :nth-child(3)").click();
+      cy.get("tbody > :nth-child(1) > :nth-child(3)").contains("Brown");
+    });
   });
   it("And: The other sorting buttons should be clickable and work as well", () => {
-    cy.get("thead > :nth-child(1) > :nth-child(2)").click();
-    cy.get("tbody > :nth-child(1) > :nth-child(2)").contains("Andrew");
-    cy.get("thead > :nth-child(1) > :nth-child(4)")
-      .click()
-      .click();
-    cy.get("tbody > :nth-child(1) > :nth-child(4)").contains(
-      "xdiaz@industrias.com"
-    );
-    cy.get("thead > :nth-child(1) > :nth-child(5)").click();
-    cy.get("tbody > :nth-child(1) > :nth-child(5)").should("be.empty");
+    cy.get("[data-cy=person-table").within(() => {
+      cy.get("thead > :nth-child(1) > :nth-child(2)").click();
+      cy.get("tbody > :nth-child(1) > :nth-child(2)").contains("Andrew");
+      cy.get("thead > :nth-child(1) > :nth-child(4)")
+        .click()
+        .click();
+      cy.get("tbody > :nth-child(1) > :nth-child(4)").contains(
+        "xdiaz@industrias.com"
+      );
+      cy.get("thead > :nth-child(1) > :nth-child(5)").click();
+      cy.get("tbody > :nth-child(1) > :nth-child(5)").should("be.empty");
+    });
   });
 });
