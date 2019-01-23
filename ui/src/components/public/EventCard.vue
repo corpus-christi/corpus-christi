@@ -3,7 +3,7 @@
     <!-- Image -->
     <template v-if="event.images.length > 0">
       <v-img
-        class="image picture"
+        class="picture"
         :src="'/api/v1/images/' + event.images[0].image.id"
       >
       </v-img>

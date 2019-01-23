@@ -21,7 +21,6 @@ image_schema = ImageSchema()
 image_schema_partial = ImageSchema(partial=('id', 'path'))
 
 @images.route('/<image_id>')
-# @jwt_required
 def download_image(image_id):
     base_dir = BASE_DIR + '/'
     image = db.session.query(Image).filter_by(id=image_id).first()
@@ -48,6 +47,7 @@ def upload_image():
     else:
         return 'No image selected', 422
 
+    # Grab a description from the request if there is one
     valid_desc = None
     if request.form:
         if request.form['data']:
@@ -57,8 +57,10 @@ def upload_image():
             except ValidationError as err:
                 return jsonify(err.messages), 422
 
+    # Safely convert the filename into an ASCII only string
     filename = secure_filename(image.filename)
 
+    # Check to make sure the file is of an acceptable type
     if is_allowed_file(filename):
         file_hash = get_hash(filename)
         folder = file_hash[0:2]
@@ -66,6 +68,7 @@ def upload_image():
 
         folder_path = os.path.join('data/', folder)
 
+        # Create a folder that is the first two characters of the file hash
         if not os.path.exists(os.path.join(base_dir, folder_path)):
             os.makedirs(os.path.join(base_dir, folder_path))
 
@@ -75,11 +78,13 @@ def upload_image():
         if image_already_in_db:
             return 'Image with same name already exists', 422
 
+        # Save the image into the file system
         full_path = os.path.join(base_dir, path_to_image)
         image.save(full_path)
     else:
         return 'Invalid file type', 422
     
+    # Create and store the image object into the db
     valid_image = dict()
     valid_image['path'] = path_to_image
     if valid_desc:
@@ -97,7 +102,7 @@ def upload_image():
 @images.route('/<image_id>', methods=['PATCH'])
 @jwt_required
 def update_image(image_id):
-    # PATCH can only be used to update an image's description
+    # -- PATCH can only be used to update an image's description
     try: 
         valid_attributes = image_schema_partial.load(request.json)
     except ValidationError as err:
