@@ -42,7 +42,7 @@
       data-cy="roles-table"
     >
       <template slot="items" slot-scope="props">
-        <td>
+        <td class="text-xs-center">
           <span v-if="props.item.accountInfo">
             <span v-if="props.item.accountInfo.active">
               <v-tooltip bottom>
@@ -189,6 +189,8 @@ export default {
         {
           text: this.$t("person.account"),
           value: "person.accountInfo",
+          align: "center",
+          width: "3%",
           sortable: false
         },
         {
@@ -203,11 +205,11 @@ export default {
           width: "15%"
         },
         {
-          text: this.$t("person.accountInfo.roles"),
+          text: this.$t("people.title-roles"),
           value: "accountInfo.roles",
-          width: "30%"
+          width: "35%"
         },
-        { text: this.$t("actions.header"), width: "20%", sortable: false }
+        { text: this.$t("actions.header"), width: "17%", sortable: false }
       ];
     },
     peopleToDisplay() {
@@ -269,20 +271,19 @@ export default {
     adminPerson(person) {
       // Pass along the current person.
       this.adminDialog.person = person;
+      this.adminDialog.rolesEnabled = true;
       // Fetch the person's account information (if any) before activating the dialog.
       this.$http
         .get(`/api/v1/people/persons/${person.id}/account`)
         .then(resp => {
           console.log("FETCHED ACCOUNT", resp);
           this.adminDialog.account = resp.data;
-          this.adminDialog.rolesEnabled = true;
           this.adminDialog.show = true;
         })
         .catch(err => console.error("FAILURE", err.response));
     },
     closeAdmin() {
       this.adminDialog.show = false;
-      this.adminDialog.rolesEnabled = false;
     },
 
     addAccount(account) {
@@ -296,7 +297,7 @@ export default {
         .catch(err => console.error("FAILURE", err.response));
     },
 
-    updateAccount(accountId, account, roles) {
+    updateAccount(accountId, account) {
       this.$http
         .patch(`/api/v1/people/accounts/${accountId}`, account)
         .then(resp => {
@@ -333,6 +334,7 @@ export default {
       this.$http
         .get("/api/v1/people/persons/fields")
         .then(resp => {
+          console.log("FETCHED ATTRIBUTES", resp);
           if (resp.data.person_attributes) {
             this.personDialog.attributes = resp.data.person_attributes;
           }
