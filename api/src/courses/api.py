@@ -839,15 +839,12 @@ def update_class_meeting(course_offering_id, class_meeting_id):
     if class_meeting is None:
         return "Class meeting not found", 404
 
-    # Update existing class meeting with offering_id
-    for attr in 'location_id', 'teacher_id', 'when':
-        if attr in valid_class_meeting.keys():
-            if attr == 'when':
-                # Python datetime does not accept timezone
-                request.json['when'] = datetime.fromisoformat(request.json['when'])
-            setattr(class_meeting, attr, request.json[attr])
-            db.session.commit()
-            return jsonify(class_meeting_schema.dump(class_meeting))
+    to_update = class_meeting_schema.load(request.json, partial=True)
+    for key, val in to_update.items():
+        setattr(class_meeting, key, val)
+
+    db.session.commit()
+    return jsonify(class_meeting_schema.dump(class_meeting))
 
 @courses.route('/course_offerings/<int:course_offering_id>/<int:class_meeting_id>', methods=['DELETE'])
 @jwt_required
