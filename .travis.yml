@@ -15,6 +15,7 @@ matrix:
                           #- yarn  cache clean
                   #install:
                         - cd ui/
+                        - ./eslintrc-ci.sh
                         - yarn install
                         - yarn add cypress 
                   script:
