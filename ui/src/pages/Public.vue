@@ -32,22 +32,24 @@
                 </v-card-actions>
               </v-card>
 
-              <v-dialog v-model="registrationFormDialog.show" max-width="500px">
-                <CourseRegistrationForm
-                  v-on:cancel="cancel"
-                  v-on:snackbar="showSnackbar($event)"
-                  :course="course"
-                  v-on:registered="registeredPerson"
-                />
-              </v-dialog>
-              <v-snackbar v-model="snackbar.show">
-                {{ snackbar.text }}
-                <v-btn flat @click="snackbar.show = false">
-                  {{ $t("actions.close") }}
-                </v-btn>
-              </v-snackbar>
+               <v-dialog v-model="registrationFormDialog.show" max-width="500px">
+                 <CourseRegistrationForm
+                   v-on:cancel="cancel"
+                   v-on:snackbar="showSnackbar($event)"
+                   :course="course"
+                   v-on:registered="registeredPerson"
+                 />
+               </v-dialog>
+               <v-snackbar v-model="snackbar.show">
+                 {{ snackbar.text }}
+                 <v-btn flat @click="snackbar.show = false">
+                   {{ $t("actions.close") }}
+                 </v-btn>
+               </v-snackbar>
+               
             </v-expansion-panel-content>
           </v-expansion-panel>
+          
           <v-card>
             <v-card-actions>
               <v-btn
@@ -161,15 +163,8 @@ export default {
   },
 
   mounted() {
-    this.pageLoaded = false;
-    this.$http.get(`/api/v1/events/?return_group=all`).then(resp => {
-      this.events = resp.data;
-      this.events = this.events.slice(0, 5);
-      console.log(resp.data);
-    });
-
     this.$http.get("/api/v1/courses/courses").then(resp => {
-      this.courses = resp.data;
+      this.courses = resp.data.filter(course => course.active);
       this.courses = this.courses.slice(0, 5);
       console.log(resp.data);
     });
@@ -231,7 +226,7 @@ export default {
     registeredPerson() {
       this.registrationFormDialog.show = false;
     },
-
+    
     showSnackbar(message) {
       this.snackbar.text = message;
       this.snackbar.show = true;
