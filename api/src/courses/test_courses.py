@@ -951,10 +951,10 @@ def test_read_one_student(auth_client):
     assert resp.status_code == 404
     """Test with populated database"""
     # GIVEN a student is in the database
-    setup_dependencies_of_student(auth_client, 1)
-    create_multiple_students(auth_client.sqla, 1)
-    create_multiple_diplomas(auth_client.sqla, 5)
-    create_diploma_awards(auth_client.sqla, 5)
+    setup_dependencies_of_student(auth_client, 20)
+    create_multiple_students(auth_client.sqla, 20)
+    create_multiple_diplomas(auth_client.sqla, 20)
+    create_diploma_awards(auth_client.sqla, 20)
     # WHEN that student needs to be read
     student = auth_client.sqla.query(Student).first()
     # THEN read that student

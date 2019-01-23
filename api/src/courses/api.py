@@ -621,12 +621,12 @@ def read_one_student(student_id):
         return 'Student not found', 404
     diplomas = []
     print(result)
-    for da in result[1].diplomas_awarded:
+    for da in result[0].Person.diplomas_awarded:
         diplomas.append(da.diplomas)
-    result[0].diplomaList = diplomas
+    result[0].Student.diplomaList = diplomas
 
-    r = student_schema.dump(result[0])
-    r['person'] = person_schema.dump(result[1])
+    r = student_schema.dump(result[0].Student)
+    r['person'] = person_schema.dump(result[0].Person)
     r['courses'] = []
     r['diplomaList'] = []
     for i in result[0].Person.diplomas_awarded:
