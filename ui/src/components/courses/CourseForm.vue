@@ -32,6 +32,7 @@
       item-value="id"
       item-text="name"
       :menu-props="{ closeOnContentClick: true }"
+      :loading="loading"
       data-cy="course-form-prerequisites"
     >
     </v-select>
@@ -49,8 +50,29 @@ export default {
     }
   },
   props: {
-    course: Object,
-    coursesPool: Array
+    course: Object
+  },
+  data() {
+    return {
+      coursesPool: [],
+      loading: false
+    };
+  },
+  methods: {
+    loadCoursesPool() {
+      this.loading = true;
+      this.$http.get(`/api/v1/courses/courses`)
+        .then(resp => {
+          this.coursesPool = resp.data;
+          this.loading = false;
+        });
+    }
+  },
+  watch: {
+    course: "loadCoursesPool"
+  },
+  mounted() {
+    this.loadCoursesPool();
   }
 };
 </script>

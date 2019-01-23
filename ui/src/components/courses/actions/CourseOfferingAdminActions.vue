@@ -31,8 +31,8 @@
       <span>{{
         $t(
           courseOffering.active
-            ? "actions.tooltips.deactivate"
-            : "actions.tooltips.reactivate"
+            ? "actions.tooltips.archive"
+            : "actions.tooltips.unarchive"
         )
       }}</span>
     </v-tooltip>
