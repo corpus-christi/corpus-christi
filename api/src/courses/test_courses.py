@@ -964,14 +964,43 @@ def test_read_all_course_offering_students(auth_client):
     assert resp.status_code == 200
     assert len(resp.json) == count
 
-"""
-@pytest.mark.xfail()
+
+@pytest.mark.smoke
 def test_get_all_students(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
-"""
+    # GIVEN a set of students
+    count = random.randint(3, 6)
+    setup_dependencies_of_student(auth_client, count)
+    create_multiple_students(auth_client.sqla, count)
+    create_multiple_diplomas(auth_client.sqla, count)
+    create_diploma_awards(auth_client.sqla, count)
+
+    students = auth_client.sqla.query(Student).all()
+
+    # WHEN all students are requested to be read
+    resp = auth_client.get(url_for('courses.get_all_students'))
+
+    # THEN expect the request to run OK
+    assert resp.status_code == 200
+   
+    # THEN expect the right number of students to come back
+    assert len(resp.json) == count
+
+    # THEN expect each student to have the right number of diplomas
+    for i in range(count):
+        person = auth_client.sqla.query(Person).filter_by(id = students[i].student_id).first()
+        assert len(resp.json[i]['diplomaList']) == len(person.diplomas_awarded)
+
+
+@pytest.mark.smoke
+def test_get_all_students_no_exist(auth_client):
+    # GIVEN an empty database
+
+    # WHEN students are requested to be read
+    resp = auth_client.get(url_for('courses.get_all_students'))
+
+    # THEN expect no students to be found
+    assert resp.status_code == 404
+
 
 def test_read_one_student(auth_client):
     """Test with invalid student"""
