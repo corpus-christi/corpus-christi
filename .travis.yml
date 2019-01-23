@@ -19,7 +19,7 @@ matrix:
                         - yarn add cypress 
                         - yarn upgrade cypress
                           #- ./eslintrc-ci.sh
-                          #- yarn build
+                        - yarn build
                         - cd ../
                 - language: python
                   python: "3.7"
