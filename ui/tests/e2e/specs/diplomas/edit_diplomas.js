@@ -15,7 +15,7 @@ describe("Edit Diploma Page", () => {
         cy.get(':nth-child(1) > :nth-child(3) > .layout > :nth-child(1) > span > .v-btn').click()
     });
     it("Edit Title", () => {
-        cy.get('.v-input--has-state > .v-input__control > .v-input__slot > .v-text-field__slot > input').type('Test Diploma')
+        cy.get('.v-form > :nth-child(1) > .v-input__control > .v-input__slot > .v-text-field__slot > input').type('Test Diploma')
     });
     it("Edit Description", () => {
         cy.get('textarea').type('Test description of diploma')
@@ -33,7 +33,7 @@ describe("Edit Diploma Page", () => {
     })
     it("Save Diploma Page", () => {
         cy.get(':nth-child(1) > :nth-child(3) > .layout > :nth-child(1) > span > .v-btn').click()
-        cy.get('.v-input--has-state > .v-input__control > .v-input__slot > .v-text-field__slot > input').type('Test Diploma')
-        cy.get('.v-dialog__content--active > .v-dialog > .v-card > .v-card__actions > .primary').click()
+        cy.get('.v-form > :nth-child(1) > .v-input__control > .v-input__slot > .v-text-field__slot > input').type('Test Diploma')
+        cy.get('.v-dialog__content--active > .v-dialog > .v-card > .v-card__actions > .primary').click()   
     });
 });

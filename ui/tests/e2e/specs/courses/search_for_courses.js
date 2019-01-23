@@ -14,10 +14,10 @@ describe("Get to Courses Page", () => {
 
 describe("search for courses that exist", () => {
   it("When: course name is typed", () => {
-    cy.get("[data-cy=courses-table-search]").type("COS");
+    cy.get("[data-cy=courses-table-search]").type("Alone");
   });
   it("Then: should find course name", () => {
-    cy.get("tbody > :nth-child(1) > :nth-child(1)").contains("COS");
+    cy.get("tbody > :nth-child(1) > :nth-child(1)").contains("Alone");
   });
 });
 
@@ -25,7 +25,7 @@ describe("search for courses that does not exist", () => {
   it("When: course name is typed", () => {
     cy.get("[data-cy=courses-table-search]")
       .clear()
-      .type("Help");
+      .type("Not Here");
   });
   it("Then: should find nothing", () => {
     cy.get("tbody > :nth-child(1) > :nth-child(1)").contains(
