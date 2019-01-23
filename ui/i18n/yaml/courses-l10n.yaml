@@ -1,4 +1,34 @@
 courses:
+  dashboard:
+    title:
+      en: Dashboard
+      es: Tablero
+    headers:
+        course-retention:
+          en: Course Retention
+          es: Retención del Curso
+        course-success:
+          en: Course Success
+          es: Éxito del Curso
+    charts:
+      course:
+        en: Course
+        es: Curso
+      enrolled:
+        en: Enrolled
+        es: Inscrito
+      attended:
+        en: Attended
+        es: Asistió
+      did-not-attend:
+        en: Did Not Attend
+        es: No Asistió
+      graduated:
+        en: Graduated
+        es: Se Graduó
+      did-not-graduate:
+        en: Did Not Graduate
+        es: No Se Graduó
   course:
     en: Courses
     es: Cursos

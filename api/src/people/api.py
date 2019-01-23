@@ -8,9 +8,10 @@ from ..auth.utils import jwt_not_required
 
 from . import people
 from .models import Person, Account, AccountSchema, Role, PersonSchema, RoleSchema, Manager, ManagerSchema
-from ..events.models import EventPerson, EventParticipant #TeamMember
+from ..events.models import EventPerson, EventParticipant  # TeamMember
 from ..attributes.models import Attribute, AttributeSchema, EnumeratedValue, EnumeratedValueSchema, PersonAttribute, PersonAttributeSchema
 from ..courses.models import Student, Class_Meeting
+from ..auth.blacklist_helpers import revoke_tokens_of_account
 
 from .. import db
 
@@ -84,6 +85,7 @@ def read_all_persons():
         r.accountInfo = r.account
         if r.account:
             r.accountInfo.roles = r.account.roles
+
     return jsonify(person_schema.dump(result, many=True))
 
 
@@ -102,7 +104,7 @@ def read_one_person(person_id):
 @jwt_required
 def update_person(person_id):
     try:
-        valid_person = person_schema.load(request.json['person'])
+        valid_person = person_schema.load(request.json['person'], partial=True)
         valid_person_attributes = person_attribute_schema.load(
             request.json['attributesInfo'], many=True)
     except ValidationError as err:
@@ -130,6 +132,9 @@ def update_person(person_id):
     if person is None:
         return 'Person specified was NOT found', 404
 
+    if person is None:
+        return jsonify("Person does not exist"), 404
+
     for key, val in valid_person.items():
         setattr(person, key, val)
 
@@ -148,7 +153,8 @@ def deactivate_person(person_id):
         return 'Person specified was NOT found', 404
 
     if person.account:
-        account = db.session.query(Account).filter_by(id=person.account.id).first()
+        account = db.session.query(Account).filter_by(
+            id=person.account.id).first()
         if account is None:
             return 'Account specified was NOT found', 404
         setattr(account, 'active', False)
@@ -164,8 +170,7 @@ def deactivate_person(person_id):
 def activate_person(person_id):
     person = db.session.query(Person).filter_by(id=person_id).first()
     if person is None:
-        return 'Person specified was NOT found', 404
-
+        return jsonify("person does not exist"), 404
     setattr(person, 'active', True)
 
     db.session.commit()
@@ -181,17 +186,17 @@ def delete_person(person_id):
     if person is None:
         return jsonify(msg="Person not found"), 404
 
-    db.session.query(TeamMember).filter_by(member_id=person_id).delete()
+    # db.session.query(TeamMember).filter_by(member_id=person_id).delete()
     db.session.query(EventParticipant).filter_by(person_id=person_id).delete()
     db.session.query(EventPerson).filter_by(person_id=person_id).delete()
     db.session.query(Student).filter_by(student_id=person_id).delete()
     db.session.query(Account).filter_by(person_id=person_id).delete()
     db.session.query(PersonAttribute).filter_by(person_id=person_id).delete()
     # TODO delete any instance of Class_Attendance that references deleted class_meeting
-    db.session.query(Class_Meeting).filter_by(teacher=person_id).delete()
+    # db.session.query(Class_Meeting).filter_by(teacher=person_id).delete()
     db.session.delete(person)
     db.session.commit()
-    return jsonify(msg=f"Person {person_id} was deleted."), 200
+    return jsonify(msg=f"Person {person_id} was deleted."), 204
 
 
 # ---- Account
@@ -266,12 +271,19 @@ def get_accounts_by_role(role_id):
 @people.route('/accounts/<account_id>', methods=['PATCH'])
 @jwt_required
 def update_account(account_id):
+    try:
+        account_request = request.json.copy()
+        account_request.pop('roles', None)
+        account_schema.load(account_request, partial=True)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+
     account = db.session.query(Account).filter_by(id=account_id).first()
     if account is None:
         return 'Account specified was NOT found', 404
 
     roles_to_add = []
-    if 'roles' in request.json.keys():
+    if 'roles' in request.json:
         roles_to_add = request.json['roles']
 
     # Only these fields can be meaningfully updated.
@@ -284,6 +296,7 @@ def update_account(account_id):
         for role in roles_to_add:
             role_object = db.session.query(Role).filter_by(id=role).first()
             role_objects.append(role_object)
+        revoke_tokens_of_account(account.id)
 
     account.roles = role_objects
 
@@ -362,10 +375,12 @@ def read_all_roles():
     return jsonify(role_schema.dump(result, many=True))
 
 
-@people.route('/role/<account_id>')
+@people.route('/role/account/<account_id>')
 @jwt_required
 def get_roles_for_account(account_id):
     account = db.session.query(Account).filter_by(id=account_id).first()
+    if account is None:
+        return jsonify("accounts does not exist"), 404
     result = []
     for role in account.roles:
         role = role_schema.dump(role)
@@ -377,6 +392,8 @@ def get_roles_for_account(account_id):
 @jwt_required
 def read_one_role(role_id):
     result = db.session.query(Role).filter_by(id=role_id).first()
+    if result is None:
+        return jsonify("Role does not exist"), 404
     return jsonify(role_schema.dump(result))
 
 
@@ -391,6 +408,9 @@ def update_role(role_id):
     role = db.session.query(Role).filter_by(id=role_id).first()
     if role is None:
         return 'Role specified was NOT found', 404
+
+    if role is None:
+        return jsonify("Role does not exist"), 404
 
     for key, val in valid_role.items():
         setattr(role, key, val)
@@ -434,6 +454,8 @@ def add_role_to_account(account_id, role_id):
     db.session.add(account)
     db.session.commit()
 
+    revoke_tokens_of_account(account.id)
+
     user_roles = []
     roles = db.session.query(Role).join(Account, Role.accounts).filter_by(
         id=account_id).filter_by(active=True).all()
@@ -455,18 +477,19 @@ def remove_role_from_account(account_id, role_id):
         return 'Role specified was NOT found', 404
 
     if role_to_remove not in account.roles:
-        return 'That accout does not have that role', 404
+        return 'That account does not have that role', 404
 
     account.roles.remove(role_to_remove)
     db.session.commit()
+    revoke_tokens_of_account(account_id)
 
     # user_roles = []
     # roles = db.session.query(Role).join(Account, Role.accounts).filter_by(id=account_id).filter_by(active=True).all()
     # for r in roles:
     #     user_roles.append(role_schema.dump(r)['nameI18n'])
-
+    #
     # return jsonify(user_roles)
-    return jsonify(role_to_remove)
+    return jsonify(role_schema.dump(role_to_remove))
 
 
 # ---- Manager
@@ -499,6 +522,8 @@ def read_all_managers():
 @jwt_required
 def read_one_manager(manager_id):
     result = db.session.query(Manager).filter_by(id=manager_id).first()
+    if result is None:
+        return jsonify("Manager does not exist"), 404
     return jsonify(manager_schema.dump(result))
 
 
@@ -533,4 +558,4 @@ def delete_manager(manager_id):
     db.session.delete(manager)
     db.session.commit()
 
-    return jsonify(manager_schema.dump(manager))
+    return jsonify(manager_schema.dump(manager)), 204

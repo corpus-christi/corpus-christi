@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Header -->
-    <v-toolbar class="pa-1">
+    <v-toolbar class="pa-1" data-cy="roles-toolbar">
       <v-layout align-center justify-space-between fill-height>
         <v-flex md2>
           <v-toolbar-title>{{ $t("people.title-roles") }}</v-toolbar-title>
@@ -15,13 +15,18 @@
             clearable
             single-line
             box
-            data-cy="search"
+            data-cy="roles-search"
           ></v-text-field>
         </v-flex>
         <v-flex md3>
           <div data-cy="roles-dropdown">
-            <v-select hide-details solo single-line :items="rolesList">
-            </v-select>
+            <v-select
+              hide-details
+              solo
+              single-line
+              :label="$t('people.title-roles')"
+              :items="translatedRoles"
+            ></v-select>
           </div>
         </v-flex>
       </v-layout>
@@ -32,11 +37,12 @@
       :headers="headers"
       :items="peopleToDisplay"
       :search="search"
+      :loading="!tableLoaded"
       class="elevation-1"
       data-cy="roles-table"
     >
       <template slot="items" slot-scope="props">
-        <td>
+        <td class="text-xs-center">
           <span v-if="props.item.accountInfo">
             <span v-if="props.item.accountInfo.active">
               <v-tooltip bottom>
@@ -66,12 +72,16 @@
         <td :data-cy="'last-name-' + props.item.id">
           {{ props.item.lastName }}
         </td>
-        <td class="hidden-sm-and-down" :data-cy="'email-' + props.item.id">
-          {{ props.item.email }}
-        </td>
-        <!-- <td :data-cy="'phone-' + props.item.id">{{ props.item.phone }}</td> -->
-        <td class="hidden-sm-and-down" :data-cy="'username-' + props.item.id">
+        <td :data-cy="'username-' + props.item.id">
           {{ props.item.accountInfo.username }}
+        </td>
+        <td :data-cy="'roles-' + props.item.id">
+          <v-chip
+            v-for="role in props.item.accountInfo.roles"
+            :key="role.id"
+            small
+            >{{ $t(role.nameI18n) }}</v-chip
+          >
         </td>
 
         <td class="text-no-wrap">
@@ -82,22 +92,8 @@
               small
               color="primary"
               slot="activator"
-              v-on:click="editPerson(props.item)"
-              data-cy="edit-person"
-            >
-              <v-icon small>edit</v-icon>
-            </v-btn>
-            <span>{{ $t("actions.edit") }}</span>
-          </v-tooltip>
-          <v-tooltip bottom>
-            <v-btn
-              icon
-              outline
-              small
-              color="primary"
-              slot="activator"
               v-on:click="adminPerson(props.item)"
-              data-cy="account-settings"
+              data-cy="roles-settings"
             >
               <v-icon small>settings</v-icon>
             </v-btn>
@@ -114,25 +110,6 @@
       </v-btn>
     </v-snackbar>
 
-    <!-- New/Edit dialog -->
-    <v-dialog
-      scrollable
-      persistent
-      v-model="personDialog.show"
-      max-width="500px"
-    >
-      <PersonForm
-        v-bind:editMode="personDialog.editMode"
-        v-bind:initialData="personDialog.person"
-        v-bind:saveLoading="personDialog.saveLoading"
-        v-bind:addMoreLoading="personDialog.addMoreLoading"
-        v-bind:attributes="personDialog.attributes"
-        v-on:cancel="cancelPerson"
-        v-on:save="savePerson"
-        v-on:add-another="addAnother"
-      />
-    </v-dialog>
-
     <!-- Person admin dialog -->
     <v-dialog
       scrollable
@@ -143,6 +120,7 @@
       <PersonAdminForm
         v-bind:person="adminDialog.person"
         v-bind:account="adminDialog.account"
+        v-bind:rolesEnabled="adminDialog.rolesEnabled"
         v-bind:rolesList="rolesList"
         v-on:addAccount="addAccount"
         v-on:updateAccount="updateAccount"
@@ -155,12 +133,11 @@
 </template>
 
 <script>
-import PersonForm from "./PersonForm";
 import PersonAdminForm from "./AccountForm";
 
 export default {
   name: "RolesTable",
-  components: { PersonAdminForm, PersonForm },
+  components: { PersonAdminForm },
   props: {
     peopleList: {
       type: Array,
@@ -169,11 +146,13 @@ export default {
     rolesList: {
       type: Array,
       required: true
-    }
+    },
+    tableLoaded: Boolean
   },
 
   data() {
     return {
+      personRoles: [],
       personDialog: {
         show: false,
         editMode: false,
@@ -187,7 +166,7 @@ export default {
         show: false,
         person: {},
         account: {},
-        roles: []
+        rolesEnabled: false
       },
 
       snackbar: {
@@ -208,33 +187,41 @@ export default {
     headers() {
       return [
         {
-          text: "Account",
+          text: this.$t("person.account"),
           value: "person.accountInfo",
-          align: "left",
+          align: "center",
+          width: "3%",
           sortable: false
         },
         {
           text: this.$t("person.name.first"),
           value: "firstName",
-          width: "10%"
-        },
-        { text: this.$t("person.name.last"), value: "lastName", width: "20%" },
-        {
-          text: this.$t("person.email"),
-          value: "email",
-          width: "15%",
-          class: "hidden-sm-and-down"
-        },
-        {
-          text: this.$t("person.accountInfo.username"),
-          value: "username",
           width: "15%"
         },
-        { text: this.$t("actions.header"), sortable: false }
+        { text: this.$t("person.name.last"), value: "lastName", width: "15%" },
+        {
+          text: this.$t("account.username"),
+          value: "accountInfo.username",
+          width: "15%"
+        },
+        {
+          text: this.$t("people.title-roles"),
+          value: "accountInfo.roles",
+          width: "35%"
+        },
+        { text: this.$t("actions.header"), width: "17%", sortable: false }
       ];
     },
     peopleToDisplay() {
       return this.allAccount;
+    },
+    translatedRoles() {
+      return this.rolesList.map(element => {
+        return {
+          text: this.$t(element.text),
+          value: element.value
+        };
+      });
     }
   },
 
@@ -245,9 +232,11 @@ export default {
         person => person.accountInfo && person.active
       );
     },
-
     rolesList(all_roles) {
       this.rolesList = all_roles;
+    },
+    tableLoaded(loading) {
+      this.tableLoaded = loading;
     }
   },
 
@@ -272,86 +261,6 @@ export default {
       this.personDialog.show = false;
     },
 
-    savePerson(person) {
-      this.personDialog.saveLoading = true;
-      if (this.personDialog.editMode) {
-        // Hang on to the ID of the person being updated.
-        const person_id = person.id;
-        // Locate the person we're updating in the table.
-        const idx = this.allPeople.findIndex(p => p.id === person.id);
-        // Get rid of the ID; not for consumption by endpoint.
-        delete person.id;
-
-        console.log(person);
-        this.data = this.constructPersonData(person);
-        console.log(this.data);
-        this.$http
-          .put(`/api/v1/people/persons/${person_id}`, this.data)
-          .then(resp => {
-            console.log("EDITED", resp);
-            Object.assign(this.allPeople[idx], person);
-            this.personDialog.show = false;
-            this.personDialog.saveLoading = false;
-            this.showSnackbar(this.$t("person.messages.person-edit"));
-          })
-          .catch(err => {
-            console.error("FALURE", err.response);
-            this.personDialog.saveLoading = false;
-            this.showSnackbar(this.$t("person.messages.person-save-error"));
-          });
-      } else {
-        console.log(person);
-        this.data = this.constructPersonData(person);
-        console.log(this.data);
-        this.$http
-          .post("/api/v1/people/persons", this.data)
-          .then(resp => {
-            console.log("ADDED", resp);
-            this.refreshPeopleList();
-            this.personDialog.show = false;
-            this.personDialog.saveLoading = false;
-            this.showSnackbar(this.$t("person.messages.person-add"));
-          })
-          .catch(err => {
-            console.error("FAILURE", err.response);
-            this.personDialog.saveLoading = false;
-            this.showSnackbar(this.$t("person.messages.person-save-error"));
-          });
-      }
-    },
-
-    constructPersonData(person) {
-      var attributes = [];
-      if (person.attributesInfo) {
-        attributes = person.attributesInfo;
-      }
-      delete person["attributesInfo"];
-      delete person["accountInfo"];
-      return {
-        person: person,
-        attributesInfo: attributes
-      };
-    },
-
-    addAnother(person) {
-      this.personDialog.addMoreLoading = true;
-      this.data = this.constructPersonData(person);
-      this.$http
-        .post("/api/v1/people/persons", this.data)
-        .then(resp => {
-          console.log("ADDED", resp);
-          this.refreshPeopleList();
-          this.activatePersonDialog();
-          this.personDialog.addMoreLoading = false;
-          this.showSnackbar(this.$t("person.messages.person-add"));
-        })
-        .catch(err => {
-          console.error("FAILURE", err.response);
-          this.personDialog.addMoreLoading = false;
-          this.showSnackbar(this.$t("person.messages.person-save-error"));
-        });
-    },
-
     showSnackbar(message) {
       this.snackbar.text = message;
       this.snackbar.show = true;
@@ -362,16 +271,16 @@ export default {
     adminPerson(person) {
       // Pass along the current person.
       this.adminDialog.person = person;
+      this.adminDialog.rolesEnabled = true;
       // Fetch the person's account information (if any) before activating the dialog.
       this.$http
         .get(`/api/v1/people/persons/${person.id}/account`)
         .then(resp => {
-          console.log("FETCHED", resp);
+          console.log("FETCHED ACCOUNT", resp);
           this.adminDialog.account = resp.data;
-          this.adminDialog.roles = this.rolesList;
           this.adminDialog.show = true;
         })
-        .catch(err => console.error("FAILURE Haaha", err.response));
+        .catch(err => console.error("FAILURE", err.response));
     },
     closeAdmin() {
       this.adminDialog.show = false;
@@ -381,7 +290,7 @@ export default {
       this.$http
         .post("/api/v1/people/accounts", account)
         .then(resp => {
-          console.log("ADDED", resp);
+          console.log("ADDED ACCOUNT", resp);
           this.refreshPeopleList();
           this.showSnackbar(this.$t("account.messages.added-ok"));
         })
@@ -392,7 +301,7 @@ export default {
       this.$http
         .patch(`/api/v1/people/accounts/${accountId}`, account)
         .then(resp => {
-          console.log("PATCHED", resp);
+          console.log("PATCHED ACCOUNT", resp);
           this.refreshPeopleList();
           this.showSnackbar(this.$t("account.messages.updated-ok"));
         })
@@ -425,6 +334,7 @@ export default {
       this.$http
         .get("/api/v1/people/persons/fields")
         .then(resp => {
+          console.log("FETCHED ATTRIBUTES", resp);
           if (resp.data.person_attributes) {
             this.personDialog.attributes = resp.data.person_attributes;
           }
@@ -435,14 +345,6 @@ export default {
     refreshPeopleList() {
       this.$emit("fetchPeopleList");
     }
-  },
-
-  mounted: function() {
-    this.getAttributesInfo();
   }
 };
-/*
-@TODO:
-  Make the search be able to use username as a search parameter.
-*/
 </script>

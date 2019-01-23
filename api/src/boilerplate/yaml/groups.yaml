@@ -24,6 +24,10 @@ entities:
         type: boolean
         required: true
         default: true
+      - name: manager_id
+        type: integer
+        foreign-key: people_manager.id
+        required: true
   - name: Meeting
     singular: meeting
     plural: meetings
@@ -41,15 +45,15 @@ entities:
         type: integer
         required: true
         foreign-key: groups_group.id
-      - name: location_id
+      - name: address_id
         type: integer
-        foreign-key: places_location.id
+        foreign-key: places_address.id
     relationships:
       - name: group
         related-model: Group
         backref: meetings
-      - name: location
-        related-model: Location
+      - name: address
+        related-model: Address
         backref: meetings
   - name: Member
     singular: member
@@ -76,9 +80,6 @@ entities:
         type: integer
         required: true
         foreign-key: people_person.id
-      - name: role_id
-        type: integer
-        foreign-key: roles_role.id
     relationships:
       - name: group
         related-model: Group

@@ -6,10 +6,14 @@ from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identi
 
 from . import auth
 from .utils import jwt_not_required
-from .. import db
-from .. import jwt
+from .. import jwt, db
 from ..people.models import Account, AccountSchema, Person, PersonSchema, Role, RoleSchema
+from .blacklist_helpers import (
+    is_token_revoked, add_token_to_database, get_user_tokens,
+    revoke_token, unrevoke_token,
+    prune_database)
 
+blacklist = set()
 
 @auth.route('/login', methods=['POST'])
 # @jwt_not_required
@@ -46,9 +50,16 @@ def login():
 
     print(datetime)
     access_token = create_access_token(identity=username)
+    # Add token to database for revokability
+    add_token_to_database(access_token, current_app.config['JWT_IDENTITY_CLAIM'])
     return jsonify(jwt=access_token, username=account.username,
                    firstName=person.first_name, lastName=person.last_name)
 
+
+# Define our callback function to check if a token has been revoked or not
+@jwt.token_in_blacklist_loader
+def check_if_token_revoked(decoded_token):
+    return is_token_revoked(decoded_token)
 
 @jwt.user_claims_loader
 def add_claims_to_access_token(identity):
@@ -109,3 +120,40 @@ def login_test():
     response['status'] = 'success' if success else 'failure'
 
     return jsonify(response)
+
+
+# Provide a way for a user to look at their tokens
+@auth.route('/auth/token', methods=['GET'])
+@jwt_required
+def get_tokens():
+    user_identity = get_jwt_identity()
+    all_tokens = get_user_tokens(user_identity)
+    ret = [token.to_dict() for token in all_tokens]
+    return jsonify(ret), 200
+
+
+# Provide a way for a user to revoke/unrevoke their tokens
+@auth.route('/auth/token/<token_id>', methods=['PUT'])
+@jwt_required
+def modify_token(token_id):
+    # Get and verify the desired revoked status from the body
+    json_data = request.get_json(silent=True)
+    if not json_data:
+        return jsonify(msg="Missing 'revoke' in body"), 400
+    revoke = json_data.get('revoke', None)
+    if revoke is None:
+        return jsonify(msg="Missing 'revoke' in body"), 400
+    if not isinstance(revoke, bool):
+        return jsonify(msg="'revoke' must be a boolean"), 400
+
+    # Revoke or unrevoke the token based on what was passed to this function
+    user_identity = get_jwt_identity()
+    try:
+        if revoke:
+            revoke_token(token_id, user_identity)
+            return jsonify(msg='Token revoked'), 200
+        else:
+            unrevoke_token(token_id, user_identity)
+            return jsonify(msg='Token unrevoked'), 200
+    except TokenNotFound:
+        return jsonify(msg='The specified token was not found'), 404
