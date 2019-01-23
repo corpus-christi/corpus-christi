@@ -72,11 +72,11 @@ describe("Search Diplomas", () => {
 describe("Open and Close Details for Diplomas", () => {
   it("Open diploma details", () => {
     cy.get('tbody > :nth-child(1) ').click()
-    cy.get('.v-datatable__expand-content > .v-card > .v-card__text').should('be.visible')
+    cy.url().should("include", "/diplomas/31");
+
   });
   it('Close diploma details', () => {
-    cy.get('tbody > :nth-child(1) ').click()
-    cy.get('.v-datatable__expand-content > .v-card > .v-card__text').not('be.visible')
+    cy.get('.wrap > :nth-child(1) > .v-btn').click()
   })
 });
 

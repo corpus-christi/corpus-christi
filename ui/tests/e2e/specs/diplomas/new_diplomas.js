@@ -57,6 +57,6 @@ describe('Add Diploma', () => {
     it('checking the added diploma', () => {
         cy.get('[data-cy=diplomas-table-search]').type(new_diploma)
         cy.get('tbody > :nth-child(1) ').click()
-        cy.get('.v-datatable__expand-content > .v-card > .v-card__text').should('be.visible')
+        cy.url().should("include", "/diplomas/33");
     })
 })
