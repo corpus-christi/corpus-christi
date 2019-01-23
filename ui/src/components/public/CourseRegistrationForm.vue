@@ -5,24 +5,6 @@
     </v-card-title>
     <v-card-text>
       <v-form>
-        <!-- <v-text-field
-          v-model="username"
-          v-bind:label="$t('account.username')"
-          prepend-icon="person"
-          type="text"
-          name="username"
-          data-cy="register-username"
-        ></v-text-field>
-        <v-text-field
-          v-model="password"
-          v-bind:label="$t('account.password')"
-          prepend-icon="lock"
-          name="password"
-          type="password"
-          data-cy="register-password"
-        ></v-text-field> -->
-        <!-- TODO: add create-person-form -->
-
         <v-spacer></v-spacer>
         <v-radio-group
           v-model="selectedOffering"
@@ -77,20 +59,14 @@ export default {
       selectedOffering: null,
       newStudent: {},
       showExpansion: [false],
-      activeOfferings: []
     };
   },
+  
   props: {
-    course: {}
+    activeOfferings: null
   },
 
   computed: mapGetters(["isLoggedIn", "currentAccount"]),
-
-  mounted() {
-    this.activeOfferings = this.course.course_offerings.filter(
-      course => course.active
-    );
-  },
 
   methods: {
     cancel() {
@@ -122,7 +98,7 @@ export default {
           this.$http
             .get(`/api/v1/people/accounts/username/${my_username}`)
             .then(resp => {
-              let id = resp.data.id;
+              let id = resp.data.personId;
               let newStudent = {};
               newStudent.confirmed = false;
               newStudent.offeringId = this.selectedOffering;
