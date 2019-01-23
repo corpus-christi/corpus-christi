@@ -116,7 +116,7 @@ export default {
         );
         promises.push(
           this.$http.patch(
-            `/api/v1/courses/courses/prerequisites/${course_id}`,
+            `/api/v1/courses/courses/${course_id}/prerequisites`,
             { prerequisites: prerequisites.map(prereq => prereq.id) } // API expects array of IDs
           )
         );
@@ -147,7 +147,7 @@ export default {
 
             // Now that course created, add prerequisites to it
             return this.$http.patch(
-              `/api/v1/courses/courses/prerequisites/${newCourse.id}`,
+              `/api/v1/courses/courses/${newCourse.id}/prerequisites`,
               { prerequisites: prerequisites.map(prereq => prereq.id) } // API expects array of IDs
             );
           })
