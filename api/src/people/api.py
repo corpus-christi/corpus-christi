@@ -8,7 +8,7 @@ from ..auth.utils import jwt_not_required
 
 from . import people
 from .models import Person, Account, AccountSchema, Role, PersonSchema, RoleSchema, Manager, ManagerSchema
-from ..events.models import EventPerson, EventParticipant #TeamMember
+#from ..events.models import EventPerson, EventParticipant #TeamMember
 from ..attributes.models import Attribute, AttributeSchema, EnumeratedValue, EnumeratedValueSchema, PersonAttribute, PersonAttributeSchema
 from ..courses.models import Student, Class_Meeting
 
@@ -173,8 +173,8 @@ def delete_person(person_id):
         return jsonify(msg="Person not found"), 404
 
     db.session.query(TeamMember).filter_by(member_id=person_id).delete()
-    db.session.query(EventParticipant).filter_by(person_id=person_id).delete()
-    db.session.query(EventPerson).filter_by(person_id=person_id).delete()
+    #db.session.query(EventParticipant).filter_by(person_id=person_id).delete()
+    #db.session.query(EventPerson).filter_by(person_id=person_id).delete()
     db.session.query(Student).filter_by(student_id=person_id).delete()
     db.session.query(Account).filter_by(person_id=person_id).delete()
     db.session.query(PersonAttribute).filter_by(person_id=person_id).delete()
