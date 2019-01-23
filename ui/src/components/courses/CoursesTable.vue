@@ -104,7 +104,6 @@
       <CourseEditor
         v-bind:editMode="courseDialog.editMode"
         v-bind:initialData="courseDialog.course"
-        v-bind:coursesPool="courses"
         v-on:cancel="cancelCourse"
         v-on:save="saveCourse"
       />

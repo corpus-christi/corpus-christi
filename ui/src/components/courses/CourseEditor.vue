@@ -4,7 +4,7 @@
       <span class="headline">{{ title }}</span>
     </v-card-title>
     <v-card-text>
-      <CourseForm ref="form" :course="course" :coursesPool="coursesPool" />
+      <CourseForm ref="form" :course="course" />
     </v-card-text>
     <v-card-actions data-cy="course-editor-actions">
       <v-btn color="secondary" flat :disabled="saving" v-on:click="cancel">
@@ -44,10 +44,6 @@ export default {
     initialData: {
       type: Object,
       required: true
-    },
-    coursesPool: {
-      type: Array,
-      default: () => []
     }
   },
   data: function() {
