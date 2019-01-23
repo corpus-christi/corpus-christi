@@ -14,6 +14,7 @@ from ..assets.models import Asset, AssetSchema
 from ..teams.models import Team, TeamMember, TeamSchema, TeamMemberSchema
 from ..places.models import Location
 from ..people.models import Person
+from ..images.models import Image, ImageSchema
 
 from .models import EventAsset, EventAssetSchema, EventTeam, EventTeamSchema
 
@@ -346,3 +347,27 @@ def create_event_participant(sqla, event_id, person_id, confirmed=True):
     sqla.commit()
     return event_participant_payload
 
+
+def create_images(sqla):
+    image_schema = ImageSchema()
+    new_images = []
+
+    valid_image = image_schema.load({'path': 'image/a1/casa.jpg', 'description': 'Civil authority rich coach answer total general.'})
+    new_images.append(Image(**valid_image))
+    valid_image = image_schema.load({'path': 'image/a1/coffee_house.jpg'})
+    new_images.append(Image(**valid_image))
+    valid_image = image_schema.load({'path': 'image/a1/park.jpg'})
+    new_images.append(Image(**valid_image))
+    valid_image = image_schema.load({'path': 'image/a1/verbo.jpg'})
+    new_images.append(Image(**valid_image))
+    valid_image = image_schema.load({'path': 'image/m5/downtown.jpg'})
+    new_images.append(Image(**valid_image))
+    valid_image = image_schema.load({'path': 'image/m5/park.jpg', 'description': 'Explicabo doloremque voluptatibus quaerat repellat libero.'})
+    new_images.append(Image(**valid_image))
+    valid_image = image_schema.load({'path': 'image/m5/broken_bridge.jpg'})
+    new_images.append(Image(**valid_image))
+    valid_image = image_schema.load({'path': 'image/m5/tree.jpg', 'description': 'Factor rate forget research today hand.'})
+    new_images.append(Image(**valid_image))
+    
+    sqla.add_all(new_images)
+    sqla.commit()
