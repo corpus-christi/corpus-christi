@@ -879,6 +879,12 @@ def setup_dependencies_of_student(auth_client, n):
     create_multiple_course_offerings_active(auth_client.sqla, n)
 
 def test_add_student_to_course_offering(auth_client):
+    """Test with incalid student"""
+    # GIVEN empty database
+    # WHEN databse queried
+    resp = auth_client.patch(url_for('courses.add_student_to_course_offering', s_id=1))
+    # THEN assert error code
+    assert resp.status_code == 404
     """Test adding an invalid student"""
     # GIVEN an invalid student
     setup_dependencies_of_student(auth_client,1)
