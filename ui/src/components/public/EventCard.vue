@@ -1,19 +1,18 @@
 <template>
   <v-card class="card elevation-10">
-    <!-- TODO: Replace with actual event image -->
-    <v-img
-      v-if="event.image"
-      src="https://i.ytimg.com/vi/LQ1ZMvqlqYA/maxresdefault.jpg"
-      class="image"
-    >
-    </v-img>
-    <!-- Placeholder for if they don't add images -->
-    <v-img
-      v-else
-      src="https://i.ytimg.com/vi/LQ1ZMvqlqYA/maxresdefault.jpg"
-      class="image"
-    >
-    </v-img>
+    <!-- Image -->
+    <template v-if="event.images.length > 0">
+      <v-img
+        class="picture"
+        :src="'/api/v1/images/' + event.images[0].image.id"
+      >
+      </v-img>
+    </template>
+
+    <!-- Placeholder if no image uploaded -->
+    <template v-else>
+      <v-img class="picture" :src="arcoPlaceholder"> </v-img>
+    </template>
     <v-divider></v-divider>
     <div class="body">
       <v-card-title>
@@ -46,7 +45,9 @@
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn raised color="primary">{{ $t("public.events.join") }}</v-btn>
+        <v-btn raised round color="primary">{{
+          $t("public.events.join")
+        }}</v-btn>
         <v-spacer></v-spacer>
       </v-card-actions>
     </div>
@@ -54,14 +55,20 @@
 </template>
 
 <script>
+import "viewerjs/dist/viewer.css";
+import arcoPlaceholder from "../../../assets/arco-placeholder.jpg";
+
 export default {
   name: "EventCard",
   props: {
     event: {}
   },
   data() {
-    return {};
+    return {
+      arcoPlaceholder
+    };
   },
+
   methods: {
     getDisplayDate(ts) {
       let date = new Date(ts);
@@ -78,8 +85,8 @@ export default {
 </script>
 
 <style scoped>
-.image {
-  max-height: 300px;
+.picture {
+  max-height: 200px;
   min-height: 200px;
 }
 

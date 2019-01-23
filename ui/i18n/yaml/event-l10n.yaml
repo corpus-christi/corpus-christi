@@ -31,7 +31,20 @@ events:
     es: Título del Evento
   event-description:
     en: Event Description
-    es: Descripción del Evento
+    es: Descripción del Evento 
+  attendance:
+    en: Attendance
+    es: Concurrencia
+  attendance-label:
+    en: Enter a number
+    es: Ingrese un numero
+  attendance-none:
+    en: None
+    es: Ninguno
+  calendar:
+    title:
+      en: Calendar
+      es: Calendario
   start-date:
     en: Start Date
     es: Fecha de Inicio
@@ -50,6 +63,12 @@ events:
   location:
     en: Location
     es: Ubicación
+  upload-image:
+    en: Upload Image
+    es: Cargar Imagen
+  image-description:
+    en: Image Description
+    es: Descripción de la Imagen
   all-events:
     en: All Events
     es: Todos Eventos
@@ -88,8 +107,8 @@ events:
     es: Error al agregar evento
   details:
     title:
-      en: Details
-      es: Detalles
+      en: Event Details
+      es: Detalles del Evento
   participants:
     title:
       en: Participants

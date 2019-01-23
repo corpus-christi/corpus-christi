@@ -5,6 +5,9 @@ teams:
   description:
     en: Description
     es: Descripción
+  all-teams:
+    en: All Teams
+    es: Todos Equipos
   new:
     en: Add Team
     es: Añadir Equipo

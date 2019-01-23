@@ -17,6 +17,8 @@ fake = Faker()
 
 @pytest.mark.smoke
 def test_send_email(auth_client):
+    # this test is intended to fail without proper credentials
+
     # GIVEN nothing
 
     # WHEN we try to send an email

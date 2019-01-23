@@ -11,6 +11,7 @@
         hide-details
       ></v-text-field>
       <v-spacer></v-spacer>
+      <v-spacer></v-spacer>
       <v-btn
         color="primary"
         raised
@@ -155,6 +156,7 @@ export default {
         participantId: -1,
         loading: false
       },
+
       snackbar: {
         show: false,
         text: ""

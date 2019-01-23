@@ -73,7 +73,7 @@
         <v-list style="padding-top: 0px; z-index: 0">
           <v-expansion-panel>
             <v-expansion-panel-content
-              v-for="(event, idx) in events"
+              v-for="(event, idx) in filteredEvents"
               v-bind:key="idx"
             >
               <div slot="header">
@@ -137,7 +137,6 @@ export default {
       events: [],
       courses: [],
       pageLoaded: false,
-      groupLocations: [],
       activeOfferings: [],
       
       registrationFormDialog: {
@@ -152,7 +151,10 @@ export default {
         message: ""
       },
       
-      homegroups: []
+      filterStart: "",
+      filterEnd: "",
+      homegroups: [],
+      groupLocations: []
     };
   },
 
@@ -173,11 +175,28 @@ export default {
     this.pageLoaded = false;
     this.getHomegroupLocations();
     this.getEventData();
-    this.$http.get(`/api/v1/events/?return_group=all&sort=start`).then(resp => {
-      this.events = resp.data;
-      this.events = this.events.slice(0, 5);
-      this.pageLoaded = true;
-    });
+
+    this.filterStart = this.today;
+    this.filterEnd = this.addDaystoDate(this.today, 30);
+  },
+
+  computed: {
+    today() {
+      return this.getDateFromTimestamp(Date.now());
+    },
+
+    filteredEvents() {
+      const start = this.getTimestamp(this.filterStart);
+      const end = this.getTimestamp(this.addDaystoDate(this.filterEnd, 1));
+
+      // eslint-disable-next-line
+      this.events = this.events.filter(
+        ev => new Date(ev.start) <= end && new Date(ev.start) >= start
+      );
+      return this.events.slice(0, 5);
+    },
+
+    ...mapGetters(["currentLanguageCode"])
   },
 
   methods: {
@@ -220,6 +239,47 @@ export default {
     showSnackbar(message) {
       this.snackbar.text = message;
       this.snackbar.show = true;
+    },
+
+    getEventData() {
+      this.pageLoaded = false;
+      this.$http
+        .get(`/api/v1/events/?return_group=all&sort=start`)
+        .then(resp => {
+          this.events = resp.data;
+          // console.log(resp.data);
+          this.pageLoaded = true;
+        });
+    },
+
+    getDateFromTimestamp(ts) {
+      let date = new Date(ts);
+      if (date.getTime() < 86400000) {
+        //ms in a day
+        return "";
+      }
+      let yr = date.toLocaleDateString(this.currentLanguageCode, {
+        year: "numeric"
+      });
+      let mo = date.toLocaleDateString(this.currentLanguageCode, {
+        month: "2-digit"
+      });
+      let da = date.toLocaleDateString(this.currentLanguageCode, {
+        day: "2-digit"
+      });
+      return `${yr}-${mo}-${da}`;
+    },
+
+    getTimestamp(date) {
+      let datems = new Date(date).getTime();
+      let tzoffset = new Date().getTimezoneOffset() * 60000;
+      return new Date(datems + tzoffset);
+    },
+
+    addDaystoDate(date, dayDuration) {
+      let date1 = this.getTimestamp(date);
+      date1.setDate(date1.getDate() + dayDuration);
+      return this.getDateFromTimestamp(date1);
     },
 
     async getHomegroupLocations() {

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-toolbar app>
+    <v-toolbar app style="z-index: 50">
       <v-toolbar-side-icon
         v-on:click="toggleNavDrawer"
         data-cy="toggle-nav-drawer"
@@ -16,7 +16,7 @@
       <LocaleMenu data-cy="cur-locale"></LocaleMenu>
     </v-toolbar>
 
-    <NavDrawer ref="drawer"></NavDrawer>
+    <NavDrawer style="z-index: 100" ref="drawer"></NavDrawer>
   </div>
 </template>
 
