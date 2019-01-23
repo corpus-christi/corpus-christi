@@ -13,7 +13,7 @@
     <template v-else>
       <v-img
         class="picture"
-        src="https://i.ytimg.com/vi/LQ1ZMvqlqYA/maxresdefault.jpg"
+        :src="arcoPlaceholder"
       >
       </v-img>
     </template>
@@ -60,12 +60,20 @@
 
 <script>
 import "viewerjs/dist/viewer.css";
+import arcoPlaceholder from "../../../assets/arco-placeholder.jpg";
+
 
 export default {
   name: "EventCard",
   props: {
     event: {}
   },
+  data() {
+    return {
+      arcoPlaceholder
+    }
+  },
+  
   methods: {
     getDisplayDate(ts) {
       let date = new Date(ts);
