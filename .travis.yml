@@ -13,10 +13,10 @@ matrix:
                   node_js: "11"
                   install:
                         - cd ui/
-                          #- yarn cache clean
+                        - yarn cache clean
                         - yarn install
                   script:
-                        - yarn add cypress 
+                          #- yarn add cypress 
                           #- ./eslintrc-ci.sh
                           #- yarn build
                         - cd ../
