@@ -15,11 +15,11 @@ matrix:
                           #- yarn  cache clean
                   #install:
                         - cd ui/
-                        - yarn add cypress 
+                          #- yarn add cypress 
                         - yarn install
                   script:
-                        - ./eslintrc-ci.sh
-                        - yarn build
+                          #- ./eslintrc-ci.sh
+                          #- yarn build
                         - cd ../
                 - language: python
                   python: "3.7"
