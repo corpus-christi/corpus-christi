@@ -45,6 +45,20 @@
               </v-btn>
               <span>{{ $t("actions.edit") }}</span>
             </v-tooltip>
+            <v-tooltip bottom>
+              <v-btn
+                flat
+                icon
+                outline
+                small
+                color="primary"
+                slot="activator"
+                @click="openAttendance(props.item)"
+              >
+                <v-icon small>assignment_ind</v-icon>
+              </v-btn>
+              <span>{{ $t("courses.class-attendance") }}</span>
+            </v-tooltip>
           </v-layout>
         </td>
       </template>
@@ -66,6 +80,15 @@
       />
     </v-dialog>
 
+    <!-- Attendance dialog -->
+    <v-dialog persistent scrollable v-model="attendanceDialog.show" max-width="500px">
+      <ClassAttendance
+        :classMeeting="attendanceDialog.classMeeting"
+        @cancel="cancelAttendance"
+        @save="saveAttendance"
+      />
+    </v-dialog>
+
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
       <v-btn flat @click="snackbar.show = false">{{
@@ -78,12 +101,14 @@
 <script>
 import { mapGetters } from "vuex";
 import ClassMeetingForm from "./ClassMeetingForm";
+import ClassAttendance from  "./ClassAttendance";
 
 export default {
   name: "CourseOfferingMeetings",
 
   components: {
-    ClassMeetingForm
+    ClassMeetingForm,
+    ClassAttendance
   },
 
   data() {
@@ -96,6 +121,11 @@ export default {
       classMeetingDialog: {
         show: false,
         editMode: false,
+        classMeeting: {}
+      },
+
+      attendanceDialog: {
+        show: false,
         classMeeting: {}
       },
 
@@ -189,6 +219,26 @@ export default {
 
       this.snackbar.show = true;
       this.classMeetingDialog.show = false;
+    },
+
+    openAttendance(meeting) {
+      this.attendanceDialog.classMeeting = meeting;
+      this.attendanceDialog.show = true;
+    },
+
+    cancelAttendance() {
+      this.attendanceDialog.show = false;
+    },
+
+    saveAttendance(attendance) {
+      if (attendance instanceof Error) {
+        this.snackbar.text = this.$t("courses.class-attendance-update-failed");
+      } else {
+        this.snackbar.text = this.$t("courses.class-attendance-updated");
+      }
+      
+      this.snackbar.show = true;
+      this.attendanceDialog.show = false;
     },
 
     getDisplayDate(ts) {
