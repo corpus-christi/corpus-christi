@@ -41,19 +41,19 @@ describe('Number of students shown', () =>{
     })
 })
 
-// let student = 'Lara'
+let student = 'Fisher'
 
-// describe('Search for students', () => {
-//     it('search for student', () => {
-//         cy.get('[data-cy=transcripts-table-search]').type(student)
-//         cy.get('tbody > :nth-child(1) > :nth-child(1)').contains(student)
-//     })
-// })
+describe('Search for students', () => {
+    it('search for student', () => {
+        cy.get('[data-cy=transcripts-table-search]').type(student)
+        cy.get('tbody > :nth-child(1) > :nth-child(1)').contains(student)
+    })
+})
 
 describe('Transcript for student', () => {
     it('Student transcript details', () => {
         cy.get('tbody > :nth-child(1) > :nth-child(1)').click()
-        cy.url().should('include', '/transcripts/1')
+        cy.url().should('include', '/transcripts/3')
         cy.wait(500)
     })
 })
@@ -62,7 +62,7 @@ describe('Add diploma to student', () => {
     it('add diploma to student form', () => {
         cy.get('[data-cy=add-diploma-this-student]').click()
         cy.get('.v-input__slot').click()
-        cy.get('.v-card__actions > .v-btn--flat').click()//save
+        cy.get('.v-card__actions > .v-btn--flat').click()//cancel
     })
 })
 
