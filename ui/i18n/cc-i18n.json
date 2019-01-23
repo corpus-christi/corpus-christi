@@ -281,6 +281,7 @@
       "title": "Teams"
     },
     "transcripts": {
+      "add-diploma-this-student": "Add Diploma",
       "courses": "Courses",
       "courses-in-progress-or-completed": "Courses (in Progress or Completed)",
       "courses-this-diploma": "Courses for this Diploma",
@@ -589,6 +590,7 @@
       "title": "Equipos"
     },
     "transcripts": {
+      "add-diploma-this-student": "A\u00f1adir Diploma",
       "courses": "Cursos",
       "courses-in-progress-or-completed": "Cursos (en Progreso o Terminados)",
       "courses-this-diploma": "Cursos para esta Diploma",

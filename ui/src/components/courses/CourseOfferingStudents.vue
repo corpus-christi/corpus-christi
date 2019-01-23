@@ -54,6 +54,7 @@
       :headers="headers"
       :items="showStudents"
       :search="search"
+      :loading="loading"
       class="elevation-1"
       :rows-per-page-items="rowsPerPageItem"
       :pagination.sync="paginationInfo"
@@ -167,6 +168,7 @@ export default {
       search: "",
       students: [],
       viewStatus: "active",
+      loading: false,
 
       newStudentDialog: {
         show: false,
@@ -215,12 +217,12 @@ export default {
       return [
         {
           text: this.$t("person.name.first"),
-          value: "firstName",
+          value: "person.firstName",
           width: "20%"
         },
-        { text: this.$t("person.name.last"), value: "lastName", width: "20%" },
-        { text: this.$t("person.email"), value: "email", width: "22.5%" },
-        { text: this.$t("person.phone"), value: "phone", width: "22.5%" },
+        { text: this.$t("person.name.last"), value: "person.lastName", width: "20%" },
+        { text: this.$t("person.email"), value: "person.email", width: "22.5%" },
+        { text: this.$t("person.phone"), value: "person.phone", width: "22.5%" },
         { text: this.$t("actions.header"), sortable: false }
       ];
     },
@@ -405,10 +407,12 @@ export default {
 
   mounted: function() {
     const id = this.offeringId;
+    this.loading = true;
     this.$http
       .get(`/api/v1/courses/course_offerings/${id}/students`)
       .then(resp => {
         this.students = resp.data;
+        this.loading = false;
       });
   }
 };

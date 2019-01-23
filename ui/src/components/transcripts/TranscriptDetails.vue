@@ -26,6 +26,7 @@
                                         <span v-if="transcript.person.secondLastName">{{ transcript.person.secondLastName }}</span>
                                     </v-toolbar-title>
                                 </v-toolbar>
+                            
                                 <v-list three-line>
                                     <v-subheader >
                                         <h2>{{ $t("transcripts.student-information") }}:</h2>
@@ -62,7 +63,7 @@
                                             data-cy="add-diploma-this-student"
                                         >
                                             <v-icon left>library_add</v-icon>
-                                            {{ $t("diplomas.new") }}
+                                            {{ $t("transcripts.add-diploma-this-student") }}
                                         </v-btn>
                                 </v-subheader>
                                 <template v-for="(diploma, diplomaIndex) in transcript.diplomaList">
@@ -71,7 +72,11 @@
                                     >
                                     <v-list-tile-content>
                                         <v-list-tile-title><span class="font-weight-bold">{{diploma.name}}</span></v-list-tile-title>
-                                        - ...list of courses required to complete this diploma... -
+                                        <ul>
+                                            <li v-for="diplomaCourse in diploma.courses" :key="diplomaCourse+`${diplomaCourse.id}`">
+                                                {{diplomaCourse.name}}
+                                            </li>
+                                        </ul>
                                     </v-list-tile-content>
                                     </v-list-tile>
                                 </template>
@@ -89,7 +94,7 @@
 
                                         </v-list-tile-title>
                                         <ul>
-                                            <li v-for="courseOffering in course.courseOfferings" :key="courseOffering.id">
+                                            <li v-for="courseOffering in course.courseOfferings" :key="courseOffering+`${courseOffering.id}`">
                                                 {{courseOffering.description}}
                                             </li>
                                         </ul>
@@ -103,84 +108,25 @@
                 </template>
             </v-card>
         </v-flex>
+        <!-- New/Edit dialog -->
+        <v-dialog v-model="diplomaDialog.show" max-width="500px" persistent>
+            <AddDiplomaEditor
+                v-bind:saving="diplomaDialog.saving"
+                v-bind:diplomasThisStudent="diplomasThisStudent"
+                v-on:cancel="cancelDiploma"
+                v-on:save="saveDiploma"
+            />
+        </v-dialog>
     </v-layout>
+    
 </template>
-<!--
-<template>
-  
-    <v-flex xs12 sm8 offset-sm2>
-      <v-card>
-        <template v-if="loading">
-          <v-container fill-height fluid>
-            <v-layout xs12 align-center justify-center>
-              <v-progress-circular color="primary" indeterminate/>
-            </v-layout>
-          </v-container>
-        </template>
-        <template v-else>
-            <v-container>
-                <v-layout xs12 align-center justify-center>
-                    <v-card-title primary-title>
-                        <h3 class="headline mb-0">
-                            {{ $t("transcripts.page-title")}} {{ transcript.person.firstName }} {{ transcript.person.lastName }}
-                        </h3>
-                    </v-card-title>
-                </v-layout>
-            </v-container>
-            
-
-            <v-card-text>
-                <h4>
-                    {{ $t("transcripts.student-information") }}
-                </h4>
-               
-                <div> 
-                    {{ $t("person.name.first") }}:  {{ transcript.person.firstName }} 
-                </div>
-                <div>
-                    {{ $t("person.name.last") }}:  {{ transcript.person.lastName }} 
-                </div>
-                <div> 
-                    {{ $t("person.email") }}:  {{ transcript.person.email }} 
-                </div>
-                <div> 
-                    {{ $t("person.phone") }}:  {{ transcript.person.phone }} 
-                </div>
-                <div> 
-                    {{ $t("person.date.birthday") }}:  {{ transcript.person.birthday }} 
-                </div>
-                
-
-
-     "active": true,
-          
-          
-          "gender": "M",
-          "id": 1,
-          
-          "locationId": null,
-          "phone": "410-122-9419x6396"
-        
-
-                <v-divider></v-divider>
-
-            </v-card-text>    
-            <v-card-actions>
-            <v-btn flat color="orange">Share</v-btn>
-            <v-btn flat color="orange">Explore</v-btn>
-            </v-card-actions>
-        </template>
-      </v-card>
-    </v-flex>
-  </v-layout>
-</template>
-
--->
 
 <script>
+import AddDiplomaEditor from "./AddDiplomaEditor";
 export default {
   name: "TranscriptDetails",
   components: {
+    AddDiplomaEditor
   },
   props: {
     studentId: {
@@ -190,7 +136,12 @@ export default {
   },
   data() {
     return {
-      transcript: { }, //prerequisites: [] },
+      diplomaDialog: {
+        show: false,
+        saving: false,
+      },
+      diplomasThisStudent: [],
+      transcript: { }, 
       personalInformation: [],
       loading: true,
       loadingFailed: false
@@ -218,8 +169,43 @@ export default {
           this.loading = false;
         });
     },
+    activateDiplomaDialog() {
+      this.transcript.diplomaList.forEach(diploma => {
+          this.diplomasThisStudent.push(diploma.id);
+      });
+      this.diplomaDialog.show = true;
+    },
     newDiploma() {
-        console.log('add diploma');
+      this.activateDiplomaDialog();
+    },
+    cancelDiploma() {
+      this.diplomaDialog.show = false;
+    },
+    saveDiploma(diploma) {
+        console.log('save diploma');
+        let diplomaAwarded = {
+            personId: this.transcript.person.id,
+            diplomaId: diploma.id,
+            when: null
+        };
+        this.$http
+        .post("/api/v1/courses/diplomas_awarded", diplomaAwarded)
+        .then(resp => {
+            console.log("ADDED", resp);
+            let newDiploma = resp.data;
+            this.loadTranscript();
+            //this.diplomas.push(newDiploma);
+            //console.log('new diploma list: ', this.diplomas);
+        })
+        .catch(err => {
+            console.error("FAILURE", err);
+            this.snackbar.text = this.$t("diplomas.add-failed");
+            this.snackbar.show = true;
+        })
+        .finally(() => {
+            this.diplomaDialog.show = false;
+            this.diplomaDialog.saving = false;
+        });
     }
   }
 }
