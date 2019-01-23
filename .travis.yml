@@ -14,8 +14,9 @@ matrix:
                   install:
                         - cd ui/
                           #- yarn cache clean
-                        - yarn check
+                          #- yarn check
                           #- yarn install
+                        - yarn upgrade
                         - yarn add cypress 
                           # - yarn upgrade cypress
                   script:
