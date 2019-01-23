@@ -12,9 +12,8 @@ matrix:
                 - language: node_js
                   node_js: "11"
                   install:
-                          #- yarn  cache clean
-                  #install:
                         - cd ui/
+                        - yarn  cache clean
                         - yarn install
                         - yarn add cypress 
                   script:
