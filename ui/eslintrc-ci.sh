@@ -1,4 +1,5 @@
 #!bin/bash
+cat << EOF > .eslintrc.js
 module.exports = {
   root: true,
   env: {
@@ -13,3 +14,4 @@ module.exports = {
     parser: "babel-eslint"
   }
 };
+EOF
