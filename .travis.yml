@@ -11,14 +11,14 @@ matrix:
         include:
                 - language: node_js
                   node_js: "11"
-                  #install:
-                  script:
+                  install:
                         - cd ui/
                         - yarn cache clean
                         - yarn install
                         - yarn add cypress 
                         - yarn upgrade cypress
-                          #- ./eslintrc-ci.sh
+                  script:
+                          # ./eslintrc-ci.sh
                         - yarn build
                         - cd ../
                 - language: python
