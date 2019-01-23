@@ -585,7 +585,7 @@ def get_all_students():
     for i in people:
         p = person_schema.dump(i)
         p['diplomaList'] = []
-        diplomas = i.Person.diplomas_awarded
+        diplomas = i.diplomas_awarded
         for j in diplomas:
             d = db.session.query(Diploma).filter_by(id=j.diploma_id).first()
             d = diploma_schema.dump(d)

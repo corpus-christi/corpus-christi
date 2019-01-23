@@ -127,6 +127,7 @@
 <script>
 import GoogleMap from "../components/GoogleMap";
 import { isEmpty } from "lodash";
+import { mapGetters } from "vuex";
 import CourseRegistrationForm from "../components/public/CourseRegistrationForm";
 
 export default {
@@ -158,14 +159,6 @@ export default {
     };
   },
 
-  computed: {
-    offeredCourses: function() {
-      return this.courses.filter(course => {
-        return !isEmpty(course.course_offerings);
-      });
-    }
-  },
-
   mounted() {
     this.$http.get("/api/v1/courses/courses").then(resp => {
       this.courses = resp.data.filter(course => course.active);
@@ -194,6 +187,12 @@ export default {
         ev => new Date(ev.start) <= end && new Date(ev.start) >= start
       );
       return this.events.slice(0, 5);
+    },
+
+    offeredCourses: function() {
+      return this.courses.filter(course => {
+        return !isEmpty(course.course_offerings);
+      });
     },
 
     ...mapGetters(["currentLanguageCode"])
@@ -239,17 +238,6 @@ export default {
     showSnackbar(message) {
       this.snackbar.text = message;
       this.snackbar.show = true;
-    },
-
-    getEventData() {
-      this.pageLoaded = false;
-      this.$http
-        .get(`/api/v1/events/?return_group=all&sort=start`)
-        .then(resp => {
-          this.events = resp.data;
-          // console.log(resp.data);
-          this.pageLoaded = true;
-        });
     },
 
     getDateFromTimestamp(ts) {
