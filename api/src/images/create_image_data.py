@@ -27,7 +27,7 @@ rl_fake = RandomLocaleFaker('en_US', 'es_MX')
 fake = Faker()  # Generic faker; random-locale ones don't implement everything.
 
 #Sample images
-valid_paths = ['data/a1/casa.jpg', 'data/a1/coffee_house.jpg', 'data/a1/park.jpg', 'data/a1/verbo.jpg', 'data/m5/downtown.jpg', 'data/m5/park.jpg', 'data/m5/broken_bridge.jpg', 'data/m5/tree.jpg']
+valid_paths = ['image/a1/casa.jpg', 'image/a1/coffee_house.jpg', 'image/a1/park.jpg', 'image/a1/verbo.jpg', 'image/m5/downtown.jpg', 'image/m5/park.jpg', 'image/m5/broken_bridge.jpg', 'image/m5/tree.jpg']
 paths_taken = [False, False, False, False, False, False, False, False]
 
 #Used in create_multiple_images to guarentee that the program won't die due to an IndexOutOfRange with uneven array lengths

@@ -18,17 +18,18 @@ from .models import Image, ImageSchema, ImageEvent, ImageEventSchema
 # ---- Image
 
 image_schema = ImageSchema()
-image_schema_partial = ImageSchema(partial=True)
+image_schema_partial = ImageSchema(partial=('id', 'path'))
 
 @images.route('/<image_id>')
 # @jwt_required
 def download_image(image_id):
+    base_dir = BASE_DIR + '/'
     image = db.session.query(Image).filter_by(id=image_id).first()
 
     if not image:
         return jsonify(f"Image with id #{image_id} does not exist."), 404
 
-    image_path = os.path.join(BASE_DIR + '/', image.path)
+    image_path = os.path.join(base_dir, image.path)
 
     return send_file(image_path, mimetype='image/jpg')
 
@@ -36,8 +37,9 @@ def download_image(image_id):
 @images.route('/', methods=['POST'])
 @jwt_required
 def upload_image():
-    # -- POST request should be sent with image in request.files['image'] &
+    # -- POST request should be sent with image in request.files['file'] &
     # description in request.form['data'] as a json object (e.g. {'description': 'this is a picture.'})
+    base_dir = BASE_DIR + '/'
     if request.files:
         if request.files['file']:
             image = request.files['file']
@@ -51,7 +53,7 @@ def upload_image():
         if request.form['data']:
             data = json.loads(request.form['data'])
             try:
-                valid_desc = image_schema.load(data, partial=('path', 'id'))
+                valid_desc = image_schema_partial.load(data)
             except ValidationError as err:
                 return jsonify(err.messages), 422
 
@@ -59,15 +61,21 @@ def upload_image():
 
     if is_allowed_file(filename):
         file_hash = get_hash(filename)
+        folder = file_hash[0:2]
         new_filename = file_hash + '.' + get_file_extension(filename)
-        folder_path = 'data/images/'
+
+        folder_path = os.path.join('data/', folder)
+
+        if not os.path.exists(os.path.join(base_dir, folder_path)):
+            os.makedirs(os.path.join(base_dir, folder_path))
+
         path_to_image = os.path.join(folder_path, new_filename)
         image_already_in_db = db.session.query(Image).filter_by(path=path_to_image).first()
 
         if image_already_in_db:
             return 'Image with same name already exists', 422
 
-        full_path = os.path.join(BASE_DIR + '/', path_to_image)
+        full_path = os.path.join(base_dir, path_to_image)
         image.save(full_path)
     else:
         return 'Invalid file type', 422
@@ -91,7 +99,7 @@ def upload_image():
 def update_image(image_id):
     # PATCH can only be used to update an image's description
     try: 
-        valid_attributes = image_schema.load(request.json, partial=(id, path))
+        valid_attributes = image_schema_partial.load(request.json)
     except ValidationError as err:
         return jsonify(err.messages), 422
                 
