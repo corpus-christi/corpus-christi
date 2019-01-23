@@ -25,18 +25,20 @@ describe("Edit course section", () => {
     ).click();
   });
   it("Edit description", () => {
-    cy.get("textarea").type("Hello world part 3");
+    cy.get('[data-cy=course-offering-description]').type("Hello world part 3");
   });
-  it("Edit date", () => {
-    cy.get(
-      ".v-menu__activator > .v-input > .v-input__control > .v-input__slot > .v-select__slot > .v-select__selections > input"
-    ).click();
-    cy.get(":nth-child(5) > :nth-child(2) > .v-btn").click();
-    cy.get(".v-picker__actions > :nth-child(2)").click(); //cancel button
-    cy.get(
-      ".v-menu__activator > .v-input > .v-input__control > .v-input__slot > .v-select__slot > .v-select__selections > input"
-    ).click();
-    cy.get(":nth-child(5) > :nth-child(2) > .v-btn").click();
-    cy.get(".v-picker__actions > :nth-child(3)").click(); //save button
-  });
+  // it("Edit date", () => {
+  //   cy.get(
+  //     ".v-menu__activator > .v-input > .v-input__control > .v-input__slot > .v-select__slot > .v-select__selections > input"
+  //   ).click();
+  //   cy.get(":nth-child(5) > :nth-child(2) > .v-btn").click();
+  //   cy.get(".v-picker__actions > :nth-child(2)").click(); //cancel button
+  //   cy.get(
+  //     ".v-menu__activator > .v-input > .v-input__control > .v-input__slot > .v-select__slot > .v-select__selections > input"
+  //   ).click();
+  //   cy.get(":nth-child(5) > :nth-child(2) > .v-btn").click();
+  //   cy.get(".v-picker__actions > :nth-child(3)").click(); //save button
+  // });
 });
+
+

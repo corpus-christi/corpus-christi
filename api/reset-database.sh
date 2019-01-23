@@ -18,4 +18,6 @@ flask course new --offering="This is the late offering!" "Family Life" "Helps le
 flask course new --prereq="Family Life" --offering="Lunch meeting time." "Family Life II" "For those that want to explore the relational nature of Christ in family."
 flask course new --offering="Walk and Talk" "Child of God" "For people young in their faith that want to learn about the inheritence that is given to them in heaven."
 flask account new --first="Fred" --last="Ziffle" username password
+flask course new --prereq=6 --offering="Around happy fast" "Alone low investment" "blah blah blah"
+flask diploma new "Above" "blah blah blah"
 flask account new --first="Quality" --last="Assurance" Cytest password

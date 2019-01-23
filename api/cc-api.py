@@ -266,6 +266,7 @@ course_cli = AppGroup('course', help="Maintain course data.")
 @click.option('--prereq', help="Number of prerequisites to make")
 @click.option('--offering', help="Name of offering to make for course")
 def create_course(name, description, prereq, offering):
+    num_prereqs = int(prereq or 0)
 
     # Create the Course and Prereq Courses; commit to DB so we get ID
     course = Course(name=name, description=description)

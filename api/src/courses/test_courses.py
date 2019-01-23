@@ -247,10 +247,11 @@ def create_diploma_awards(sqla, n):
     diplomas = sqla.query(Diploma).all()
     diploma_award_schema = Diploma_AwardedSchema()
     new_diploma_awards = []
-    for person in people:
-        diploma = diplomas[random.randint(0,len(diplomas)-1)]
-        valid_diploma_awarded = diploma_award_schema.load(diploma_award_object_factory(diploma.id,person.id))
-        new_diploma_awards.append(Diploma_Awarded(**valid_diploma_awarded))
+    for i in range(n):
+        for person in people:
+            diploma = diplomas[i]
+            valid_diploma_awarded = diploma_award_schema.load(diploma_award_object_factory(diploma.id,person.id))
+            new_diploma_awards.append(Diploma_Awarded(**valid_diploma_awarded))
     sqla.add_all(new_diploma_awards)
     sqla.commit()
 
@@ -315,9 +316,9 @@ def create_class_attendance(sqla, n):
     new_class_attendance = []
     for i in range(n):
         class_meeting = class_meetings[random.randint(0, len(class_meetings)-1)]
-        student = students[random.randint(0, len(students)-1)]
-        while class_meeting in student.attendance:
-            student = students[random.randint(0, len(students)-1)]
+        student = students[i]
+        # while class_meeting in student.attendance:
+        #     student = students[random.randint(0, len(students)-1)]
         student.attendance.append(class_meeting)
         new_class_attendance.append(student)
     sqla.add_all(new_class_attendance)
@@ -631,7 +632,7 @@ def test_update_course_offering(auth_client):
     # WHEN course offering needs to update existing information
     for course_offering in course_offerings:
         resp = auth_client.patch(url_for('courses.update_course_offering', course_offering_id=course_offering.id),
-            json={'max_size': 1, 'description':'test_descr', 'active':False})
+            json={'maxSize': 1, 'description':'test_descr', 'active':False})
         # THEN assert changes to course offering reflect update
         assert resp.status_code == 200
         assert resp.json['maxSize'] == 1
@@ -641,91 +642,332 @@ def test_update_course_offering(auth_client):
 # ---- Diploma
 
 def test_create_diploma(auth_client):
-    ''' Test for good diploma '''
-    # GIVEN some existing courses
+    """Test with invalid diploma"""
+    # GIVEN invalid diploma to add
     create_multiple_courses(auth_client.sqla, 10)
+    broken_diploma = {}
+    # WHEN database queried
+    resp = auth_client.post(url_for('courses.create_diploma'), json=broken_diploma)
+    # THEN assert error code
+    assert resp.status_code == 422
+    """Test for good diploma"""
+    # GIVEN some existing courses
     # WHEN we create a diploma and add courses to add
     diploma = courses_diploma_object_factory(10)
-    diploma['courses'] = [1,2,3]
+    diploma['courseList'] = [1,2,3]
     resp = auth_client.post(url_for('courses.create_diploma'), json=diploma)
     # THEN the diploma is added to the db
     assert resp.status_code == 201
     assert auth_client.sqla.query(Diploma).count() == 1
 
-
 def test_read_all_diplomas(auth_client):
+    """Test with empty database"""
+    # GIVEN empty database
+    # WHEN databse queried
+    resp = auth_client.get(url_for('courses.read_all_diplomas'))
+    # THEN assert error code
+    assert resp.status_code == 404
+    """Test with populated database"""
     # GIVEN 50 courses and 15 diplomas
     create_multiple_courses(auth_client.sqla, 50)
     create_multiple_diplomas(auth_client.sqla, 15)
+    setup_dependencies_of_student(auth_client, 15)
+    create_multiple_students(auth_client.sqla, 15)
+    create_diploma_awards(auth_client.sqla, 15)
     # WHEN we read the diplomas
     resp = auth_client.get(url_for('courses.read_all_diplomas'))
     # THEN we should receive 15 diplomas
     assert resp.status_code == 200
     assert len(resp.json) == 15
 
-
-@pytest.mark.xfail()
-def test_read_one_diploma(client, db):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
-
-
-def test_read_all_diplomas(auth_client):
-    # GIVEN 50 courses and 15 diplomas
-    create_multiple_courses(auth_client.sqla, 50)
-    create_multiple_diplomas(auth_client.sqla, 15)
-    # WHEN we read the diplomas
-    resp = auth_client.get(url_for('courses.read_all_diplomas'))
-    # THEN we should receive 15 diplomas
-    assert resp.status_code == 200
-    assert len(resp.json) == 15
-""""
-@pytest.mark.xfail()
 def test_read_one_diploma(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
+    """Test with invalid diploma"""
+    # GIVEN empty database
+    # WHEN databse queried
+    resp = auth_client.get(url_for('courses.read_one_diploma', diploma_id = 1))
+    # THEN assert error code
+    assert resp.status_code == 404
+    """Test with populated database"""
+    # GIVEN one course in the database
+    count = random.randint(3,11)
+    create_multiple_courses(auth_client.sqla, count)
+    create_multiple_diplomas(auth_client.sqla, count)
+    setup_dependencies_of_student(auth_client, count)
+    create_multiple_students(auth_client.sqla, count)
+    create_diploma_awards(auth_client.sqla, count)
+    # WHEN call to database
+    diplomas = auth_client.sqla.query(Diploma).all()
+    # THEN assert entry called is only entry returned
+    for diploma in diplomas:
+        resp = auth_client.get(url_for('courses.read_one_diploma', diploma_id=diploma.id))
+        # THEN we find a matching class
+        assert resp.status_code == 200
+        assert resp.json['name'] == diploma.name
+        assert resp.json['description'] == diploma.description
+        assert resp.json['active'] == diploma.active
 
-@pytest.mark.xfail()
 def test_update_diploma(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
+    """Test with invalid diploma"""
+    # GIVEN empty database
+    # WHEN databse queried
+    resp = auth_client.patch(url_for('courses.update_diploma', diploma_id = 1))
+    # THEN assert error code
+    assert resp.status_code == 404
+    """Test with populated database"""
+    # GIVEN diploma in database
+    count = random.randint(3,11)
+    create_multiple_courses(auth_client.sqla, count)
+    create_multiple_diplomas(auth_client.sqla, count)
+    diplomas = auth_client.sqla.query(Course).all()
+    # WHEN diploma information updated
+    for diploma in diplomas:
+        resp = auth_client.patch(url_for('courses.update_diploma', diploma_id=diploma.id),
+            json={'name':'test_name', 'description':'test_descr', 'active':False, 'courseList':[1,2,3]})
+        # THEN assert diploma reflects new detail(s)
+        assert resp.status_code == 200
+        assert resp.json['name'] == 'test_name'
+        assert resp.json['description'] == 'test_descr'
+        assert resp.json['active'] == False
+        for i in range(len(resp.json['courseList'])):
+            assert resp.json['courseList'][i]['id'] == i + 1
+    """Test without fake attribute"""
+    # GIVEN diploma in database
+    # WHEN some fake attribute is to be updated
+    resp = auth_client.patch(url_for('courses.update_diploma', diploma_id=diploma.id),
+            json={'fake_attr':'fake_attr'})
+    #THEN assert error code
+    assert resp.status_code == 422
+
+
+def test_add_course_to_diploma(auth_client):
+    """Test with populated database"""
+    # GIVEN courses and diplomas in database
+    count = random.randint(3,15)
+    create_multiple_courses(auth_client.sqla, count)
+    create_multiple_diplomas(auth_client.sqla, 1)
+    diploma = auth_client.sqla.query(Diploma).first()
+    diploma_courses = []
+    diploma_courses.append(diploma.courses)
+    create_multiple_courses(auth_client.sqla, 1)
+    new_course = auth_client.sqla.query(Course).all()[count]
+    # WHEN query database
+    resp = auth_client.put(url_for('courses.add_course_to_diploma', diploma_id=diploma.id, course_id=new_course.id))
+    # THEN assert course is now added
+    diploma_courses.append(new_course.id)
+    assert resp.status_code == 200
+    assert len(resp.json['courseList']) == len(diploma_courses)
+    """Add course already in diploma"""
+    # GIVEN course already in diploma's courses
+    # WHEN asked to add it again
+    resp = auth_client.put(url_for('courses.add_course_to_diploma', diploma_id=diploma.id, course_id=new_course.id))
+    # THEN assert error code
+    assert resp.status_code == 409
+
+
+def test_remove_course_from_diploma(auth_client):
+    """Test with populated database"""
+    # GIVEN courses and diplomas in database
+    count = random.randint(3,15)
+    create_multiple_courses(auth_client.sqla, count)
+    create_multiple_diplomas(auth_client.sqla, 1)
+    diploma = auth_client.sqla.query(Diploma).first()
+    diploma_courses = []
+    diploma_courses.append(diploma.courses)
+    course_to_remove = diploma.courses[0]
+    # WHEN query database
+    resp = auth_client.delete(url_for('courses.remove_course_from_diploma', diploma_id=diploma.id, course_id=course_to_remove.id))
+    # THEN assert course is now removed
+    assert resp.status_code == 200
+    diploma = auth_client.sqla.query(Diploma).first()
+    assert len(diploma.courses) == len(diploma_courses) -1
+    """Remove course not in diploma"""
+    # GIVEN course not in diploma's courses
+    # WHEN asked to reomve it again
+    resp = auth_client.delete(url_for('courses.remove_course_from_diploma', diploma_id=diploma.id, course_id=course_to_remove.id))
+    # THEN assert error code
+    assert resp.status_code == 404
+    """Attempt to remove course from diploma that has been awarded"""
+    # GIVEN diploma that has been awarded
+    create_multiple_people(auth_client.sqla, 1)
+    create_diploma_awards(auth_client.sqla, 1)
+    auth_client.put(url_for('courses.add_course_to_diploma', diploma_id=diploma.id, course_id=course_to_remove.id))
+    resp = auth_client.delete(url_for('courses.remove_course_from_diploma', diploma_id=diploma.id, course_id=course_to_remove.id))
+    assert resp.status_code == 403
+
+
+def test_activate_diploma(auth_client):
+    """Test with invalid diploma"""
+    # GIVEN empty database
+    # WHEN asked to deactivate diploma
+    resp = auth_client.patch(url_for('courses.activate_diploma', diploma_id=1))
+    # THEN assert error code
+    assert resp.status_code == 404
+    """Test with populated database"""
+    # GIVEN diploma in database
+    count = random.randint(3,15)
+    create_multiple_courses(auth_client.sqla, count)
+    create_multiple_diplomas(auth_client.sqla, 1)
+    diploma = auth_client.sqla.query(Diploma).first()
+    auth_client.patch(url_for('courses.deactivate_diploma', diploma_id=diploma.id))
+    # WHEN requested to activate
+    resp = auth_client.patch(url_for('courses.activate_diploma', diploma_id=diploma.id))
+    # THEN assert it worked
+    assert resp.status_code == 200
+    assert auth_client.sqla.query(Diploma).first().active == True
+
+def test_deactivate_diploma(auth_client):
+    """Test with invalid diploma"""
+    # GIVEN empty database
+    # WHEN asked to deactivate diploma
+    resp = auth_client.patch(url_for('courses.deactivate_diploma', diploma_id=1))
+    # THEN assert error code
+    assert resp.status_code == 404
+    """Test with populated database"""
+    # GIVEN diploma in database
+    count = random.randint(3,15)
+    create_multiple_courses(auth_client.sqla, count)
+    create_multiple_diplomas(auth_client.sqla, 1)
+    diploma = auth_client.sqla.query(Diploma).first()
+    # WHEN requested to deactivate
+    resp = auth_client.patch(url_for('courses.deactivate_diploma', diploma_id=diploma.id))
+    # THEN assert it worked
+    assert resp.status_code == 200
+    assert auth_client.sqla.query(Diploma).first().active == False
 
 # ---- Diploma_Awarded
 
-@pytest.mark.xfail()
 def test_create_diploma_awarded(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
+    """Test creating invalid diploma awarded"""
+    # GIVEN invalid diploma awarded to put in database
+    broken_diploma_awarded = {}
+    # WHEN database queried
+    resp = auth_client.post(url_for('courses.create_diploma_awarded'), json=broken_diploma_awarded)
+    # THEN assert exception thrown
+    assert resp.status_code == 422
+    """Test creating valid diploma awarded"""
+    # GIVEN diploma awarded to put in database
+    count = random.randint(8,19)
+    setup_dependencies_of_student(auth_client, 1)
+    create_multiple_students(auth_client.sqla, 1)
+    create_multiple_diplomas(auth_client.sqla, count)
+    # WHEN database does not contain entry
+    for i in range(count):
+        resp = auth_client.post(url_for('courses.create_diploma_awarded'), json=diploma_award_object_factory(i+1,1))
+        assert resp.status_code == 201
+    # THEN assert that entry is now in database
+    assert auth_client.sqla.query(Diploma_Awarded).count() == count
+    """Test creating an already existing diploma awarded"""
+    resp = auth_client.post(url_for('courses.create_diploma_awarded'), json=diploma_award_object_factory(1,1))
+    assert resp.status_code == 409
 
-@pytest.mark.xfail()
 def test_read_all_diplomas_awarded(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
+    """Test with empty database"""
+    # GIVEN empty database
+    # WHEN databse queried
+    resp = auth_client.get(url_for('courses.read_all_diplomas_awarded'))
+    # THEN assert error code
+    assert resp.status_code == 404
+    """Test with populated database"""
+    # GIVEN existing (active and inactive) courses in database
+    count = random.randint(3,11)
+    setup_dependencies_of_student(auth_client, count)
+    create_multiple_students(auth_client.sqla, count)
+    create_multiple_diplomas(auth_client.sqla, count)
+    create_diploma_awards(auth_client.sqla, count)
+    # WHEN call to database
+    resp = auth_client.get(url_for('courses.read_all_diplomas_awarded'))
+    # THEN assert all entries from database are called
+    assert resp.status_code == 200
+    assert len(resp.json) == count*count
 
-@pytest.mark.xfail()
 def test_read_one_diploma_awarded(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
+    #Test with invalid diploma awarded
+    # GIVEN empty database
+    # WHEN databse queried
+    resp = auth_client.get(url_for('courses.read_one_diploma_awarded', diploma_id = 1))
+    # THEN assert error code
+    assert resp.status_code == 404
+    #Test with populated database
+    # GIVEN one course in the database
+    count = random.randint(3,11)
+    setup_dependencies_of_student(auth_client, 1)
+    create_multiple_students(auth_client.sqla, 1)
+    create_multiple_diplomas(auth_client.sqla, count)
+    create_diploma_awards(auth_client.sqla, count)
+    # WHEN call to database
+    diplomas_awarded = auth_client.sqla.query(Diploma_Awarded).all()
+    # THEN assert entry called is only entry returned
+    for diploma_awarded in diplomas_awarded:
+        resp = auth_client.get(url_for('courses.read_one_diploma_awarded', diploma_id=diploma_awarded.diploma_id))
+        # THEN we find a matching class
+        assert resp.status_code == 200
+        assert resp.json['personId'] == diploma_awarded.person_id
+        assert resp.json['diplomaId'] == diploma_awarded.diploma_id
+        assert datetime.strptime(resp.json['when'], '%Y-%m-%d').date() == diploma_awarded.when
 
+"""
+# May not end up implemented, has no path
 @pytest.mark.xfail()
-def test_update_diploma_awarded(auth_client):
+def test_read_all_students_diploma_awarded(auth_client):
     # GIVEN
     # WHEN
     # THEN
     assert True == False
 """
+ 
+def test_update_diploma_awarded(auth_client):
+    """Test with invalid diploma awarded"""
+    # GIVEN empty database
+    # WHEN databse queried
+    resp = auth_client.patch(url_for('courses.update_diploma_awarded', diploma_id=1, person_id=1))
+    # THEN assert error code
+    assert resp.status_code == 404
+    """Test with populated database"""
+    # GIVEN class meeting in database
+    count = random.randint(3,11)
+    setup_dependencies_of_student(auth_client, 1)
+    create_multiple_students(auth_client.sqla, 1)
+    create_multiple_diplomas(auth_client.sqla, count)
+    create_diploma_awards(auth_client.sqla, count)
+    diplomas_awarded = auth_client.sqla.query(Diploma_Awarded).all()
+    fake = Faker()
+    time = str(fake.past_date(start_date="-30d"))
+    # WHEN course information updated
+    for diploma_awarded in diplomas_awarded:
+        resp = auth_client.patch(url_for('courses.update_diploma_awarded', diploma_id = diploma_awarded.diploma_id, person_id = diploma_awarded.person_id),
+            json={'when':time})
+        # THEN assert meeting reflectts new detail(s)
+        assert resp.status_code == 200
+        assert datetime.strptime(resp.json['when'], '%Y-%m-%d') == datetime.strptime(time, '%Y-%m-%d')
+    """Test with fake attribute"""
+    # GIVEN diploma awarded in database
+    # WHEN some fake attribute is to be updated
+    resp = auth_client.patch(url_for('courses.update_diploma_awarded', diploma_id = diploma_awarded.diploma_id, person_id = diploma_awarded.person_id),
+            json={'fake_attr':'fake_attr'})
+    #THEN assert error code
+    assert resp.status_code == 422
+
+def test_delete_diploma_awarded(auth_client):
+    """Test with invalid diploma awarded"""
+    # GIVEN empty database
+    # WHEN databse queried
+    resp = auth_client.delete(url_for('courses.delete_diploma_awarded', diploma_id=1, person_id=1))
+    # THEN assert error code
+    assert resp.status_code == 404
+    """Test with populated database"""
+    # GIVEN diploma awarded in database
+    setup_dependencies_of_student(auth_client, 1)
+    create_multiple_students(auth_client.sqla, 1)
+    create_multiple_diplomas(auth_client.sqla, 1)
+    create_diploma_awards(auth_client.sqla, 1)
+    diploma_awarded = auth_client.sqla.query(Diploma_Awarded).first()
+    # WHEN deleted
+    resp = auth_client.delete(url_for('courses.delete_diploma_awarded', diploma_id=diploma_awarded.diploma_id, person_id=diploma_awarded.person_id))
+    # THEN assert it is gone
+    assert resp.status_code == 200
+    assert auth_client.sqla.query(Diploma_Awarded).all() == []
+
+
 # ---- Student
 
 def setup_dependencies_of_student(auth_client, n):
@@ -734,6 +976,12 @@ def setup_dependencies_of_student(auth_client, n):
     create_multiple_course_offerings_active(auth_client.sqla, n)
 
 def test_add_student_to_course_offering(auth_client):
+    """Test with incalid student"""
+    # GIVEN empty database
+    # WHEN databse queried
+    resp = auth_client.patch(url_for('courses.add_student_to_course_offering', s_id=1))
+    # THEN assert error code
+    assert resp.status_code == 404
     """Test adding an invalid student"""
     # GIVEN an invalid student
     setup_dependencies_of_student(auth_client,1)
@@ -789,6 +1037,44 @@ def test_read_all_course_offering_students(auth_client):
     assert resp.status_code == 200
     assert len(resp.json) == count
 
+
+@pytest.mark.smoke
+def test_get_all_students(auth_client):
+    # GIVEN a set of students
+    count = random.randint(3, 6)
+    setup_dependencies_of_student(auth_client, count)
+    create_multiple_students(auth_client.sqla, count)
+    create_multiple_diplomas(auth_client.sqla, count)
+    create_diploma_awards(auth_client.sqla, count)
+
+    students = auth_client.sqla.query(Student).all()
+
+    # WHEN all students are requested to be read
+    resp = auth_client.get(url_for('courses.get_all_students'))
+
+    # THEN expect the request to run OK
+    assert resp.status_code == 200
+   
+    # THEN expect the right number of students to come back
+    assert len(resp.json) == count
+
+    # THEN expect each student to have the right number of diplomas
+    for i in range(count):
+        person = auth_client.sqla.query(Person).filter_by(id = students[i].student_id).first()
+        assert len(resp.json[i]['diplomaList']) == len(person.diplomas_awarded)
+
+
+@pytest.mark.smoke
+def test_get_all_students_no_exist(auth_client):
+    # GIVEN an empty database
+
+    # WHEN students are requested to be read
+    resp = auth_client.get(url_for('courses.get_all_students'))
+
+    # THEN expect no students to be found
+    assert resp.status_code == 404
+
+
 def test_read_one_student(auth_client):
     """Test with invalid student"""
     # GIVEN empty database
@@ -797,12 +1083,13 @@ def test_read_one_student(auth_client):
     # THEN assert error code
     assert resp.status_code == 404
     """Test with populated database"""
-    """Test with populated database"""
     # GIVEN a student is in the database
-    setup_dependencies_of_student(auth_client, 1)
-    create_multiple_students(auth_client.sqla, 1)
+    setup_dependencies_of_student(auth_client, 20)
+    create_multiple_students(auth_client.sqla, 20)
+    create_multiple_diplomas(auth_client.sqla, 20)
+    create_diploma_awards(auth_client.sqla, 20)
     # WHEN that student needs to be read
-    student = auth_client.sqla.query(Student).one()
+    student = auth_client.sqla.query(Student).first()
     # THEN read that student
     resp = auth_client.get(url_for('courses.read_one_student', student_id=student.id))
     assert resp.status_code == 200
@@ -834,28 +1121,70 @@ def test_update_student(auth_client):
     assert resp.status_code == 404
 
 # ---- Class_Attendance
-"""
-@pytest.mark.xfail()
-def test_create_class_attendance(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
 
-@pytest.mark.xfail()
-def test_read_all_class_attendance(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
+def setup_dependencies_of_class_attendance(auth_client, n):
+    setup_dependencies_of_class_meeting(auth_client, 1)
+    create_class_meetings(auth_client.sqla, 1)
+    create_multiple_students(auth_client.sqla, n)
 
-@pytest.mark.xfail()
+def test_add_class_attendance(auth_client):
+    """Test creating valid class attendance"""
+    # GIVEN course entry to put in database
+    count = random.randint(8,19)
+    setup_dependencies_of_class_attendance(auth_client, count)
+    students = auth_client.sqla.query(Student).all()
+    # WHEN database does not contain entry
+    for i in range(len(students)+1):
+        resp = auth_client.post(url_for('courses.add_class_attendance', course_offering_id=1, class_meeting_id=1), json={'attendance':[i+1]})
+        assert resp.status_code == 200
+    # THEN assert that entry is now in database
+    assert auth_client.sqla.query(Class_Attendance).count() == len(students)
+
 def test_read_one_class_attendance(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
+    """Test with invalid class offering"""
+    # GIVEN empty database
+    # WHEN databse queried
+    resp = auth_client.get(url_for('courses.read_one_class_attendance', course_offering_id = 1))
+    # THEN assert error code
+    assert resp.status_code == 404
+    """Test with populated database"""
+    #GIVEN course offerings in database
+    count = random.randint(3,15)
+    setup_dependencies_of_class_attendance(auth_client, count)
+    create_class_attendance(auth_client.sqla, count)
+    #WHEN that course offering has attendance
+    class_attendance = auth_client.sqla.query(Class_Attendance).first()
+    students = auth_client.sqla.query(Student).all()
+    #THEN list all prerequisites of given course
+    resp = auth_client.get(url_for('courses.read_one_class_attendance', course_offering_id=class_attendance.class_id))
+    assert resp.status_code == 200
+    for i in range(count):
+        assert resp.json[0]['attendance'][i]['studentId'] == students[i].id
 
+def test_read_one_meeting_attendance(auth_client):
+    """Test with invalid class meeting"""
+    # GIVEN empty database
+    count = random.randint(3,15)
+    setup_dependencies_of_class_meeting(auth_client, 1)
+    # WHEN databse queried
+    resp = auth_client.get(url_for('courses.read_one_meeting_attendance', course_offering_id = 1, class_meeting_id=1))
+    # THEN assert error code
+    assert resp.status_code == 404
+    """Test with populated database"""
+    #GIVEN course offerings in database
+    create_class_meetings(auth_client.sqla, 1)
+    create_multiple_students(auth_client.sqla, count)
+    create_class_attendance(auth_client.sqla, count)
+    #WHEN that course offering has attendance
+    class_attendance = auth_client.sqla.query(Class_Attendance).first()
+    students = auth_client.sqla.query(Student).all()
+    #THEN list all prerequisites of given course
+    resp = auth_client.get(url_for('courses.read_one_meeting_attendance', course_offering_id=class_attendance.class_id, class_meeting_id=1))
+    assert resp.status_code == 200
+    for i in range(count):
+        assert resp.json['attendance'][i]['studentId'] == students[i].id
+
+"""
 @pytest.mark.xfail()
 def test_update_class_attendance(auth_client):
     # GIVEN
@@ -901,23 +1230,52 @@ def test_create_class_meeting(auth_client):
     assert resp.status_code == 208
 
 def test_read_all_class_meetings(auth_client):
-    """Test with empty database"""
+    """Test with no meetings"""
     # GIVEN empty database
     # WHEN database queried
     resp = auth_client.get(url_for('courses.read_all_class_meetings', course_offering_id=1))
     # THEN assert error code
     assert resp.status_code == 404
+    """Test with no locations"""
+    # GIVEN empty database
+    class_meeting_schema = Class_MeetingSchema()
+    create_multiple_courses(auth_client.sqla, 1)
+    create_multiple_course_offerings(auth_client.sqla, 1)
+    meeting_no_location = class_meeting_schema.load(class_meeting_object_factory(1, 1, 1))
+    class_meeting = Class_Meeting(**meeting_no_location)
+    auth_client.sqla.add(class_meeting)
+    auth_client.sqla.commit()
+    meeting_no_location = auth_client.sqla.query(Class_Meeting).all()[0]
+    # WHEN database queried
+    resp = auth_client.get(url_for('courses.read_all_class_meetings', course_offering_id=meeting_no_location.id))
+    # THEN assert error code
+    assert resp.status_code == 404
+    """Test with no teacher"""
+    # GIVEN empty database
+    Country.load_from_file()
+    create_multiple_areas(auth_client.sqla, 1)
+    create_multiple_addresses(auth_client.sqla, 1)
+    create_multiple_locations(auth_client.sqla, 1)
+    meeting_no_teacher = class_meeting_schema.load(class_meeting_object_factory(1, 1, 1))
+    class_meeting = Class_Meeting(**meeting_no_teacher)
+    auth_client.sqla.add(class_meeting)
+    auth_client.sqla.commit()
+    meeting_no_teacher = auth_client.sqla.query(Class_Meeting).all()[1]
+    # WHEN database queried
+    resp = auth_client.get(url_for('courses.read_all_class_meetings', course_offering_id=meeting_no_teacher.id))
+    # THEN assert error code
+    assert resp.status_code == 404
     """Test with populated database"""
     # GIVEN existing class meetings in database
-    setup_dependencies_of_class_meeting(auth_client, 1)
+    create_multiple_people(auth_client.sqla, 1)
     count = random.randint(3,11)
     create_class_meetings(auth_client.sqla, count)
     # WHEN call to database
     resp = auth_client.get(url_for('courses.read_all_class_meetings', course_offering_id=1))
     # THEN assert all entries from database are called
     assert resp.status_code == 200
-    assert len(resp.json) == count
-
+    assert len(resp.json) == count + 2
+    
 def test_read_one_class_meeting(auth_client):
     """Test with invalid class meeting"""
     # GIVEN empty database
@@ -925,9 +1283,38 @@ def test_read_one_class_meeting(auth_client):
     resp = auth_client.get(url_for('courses.read_one_class_meeting', course_offering_id=1, class_meeting_id = 1))
     # THEN assert error code
     assert resp.status_code == 404
+    """Teast with no location"""
+    # GIVEN empty database
+    class_meeting_schema = Class_MeetingSchema()
+    create_multiple_courses(auth_client.sqla, 1)
+    create_multiple_course_offerings(auth_client.sqla, 1)
+    meeting_no_location = class_meeting_schema.load(class_meeting_object_factory(1, 1, 1))
+    class_meeting = Class_Meeting(**meeting_no_location)
+    auth_client.sqla.add(class_meeting)
+    auth_client.sqla.commit()
+    meeting_no_location = auth_client.sqla.query(Class_Meeting).all()[0]
+    # WHEN database queried
+    resp = auth_client.get(url_for('courses.read_one_class_meeting', course_offering_id=meeting_no_location.offering_id, class_meeting_id = meeting_no_location.id))
+    # THEN assert error code
+    assert resp.status_code == 404
+    """Test with no teacher"""
+    # GIVEN empty database
+    Country.load_from_file()
+    create_multiple_areas(auth_client.sqla, 1)
+    create_multiple_addresses(auth_client.sqla, 1)
+    create_multiple_locations(auth_client.sqla, 1)
+    meeting_no_teacher = class_meeting_schema.load(class_meeting_object_factory(1, 1, 1))
+    class_meeting = Class_Meeting(**meeting_no_teacher)
+    auth_client.sqla.add(class_meeting)
+    auth_client.sqla.commit()
+    meeting_no_teacher = auth_client.sqla.query(Class_Meeting).all()[1]
+    # WHEN database queried
+    resp = auth_client.get(url_for('courses.read_one_class_meeting', course_offering_id=meeting_no_teacher.offering_id, class_meeting_id = meeting_no_teacher.id))
+    # THEN assert error code
+    assert resp.status_code == 404
     """Test with populated database"""
     # GIVEN one course in the database
-    setup_dependencies_of_class_meeting(auth_client, 1)
+    create_multiple_people(auth_client.sqla, 1)
     count = random.randint(3,11)
     create_class_meetings(auth_client.sqla, count)
     # WHEN call to database
@@ -960,12 +1347,19 @@ def test_update_class_meeting(auth_client):
     # WHEN course information updated
     for meeting in meetings:
         resp = auth_client.patch(url_for('courses.update_class_meeting', course_offering_id = meeting.offering_id, class_meeting_id = meeting.id),
-            json={'teacher_id':1, 'when':time, 'location_id':1})
+            json={'teacherId':1, 'when':time, 'locationId':1})
         # THEN assert meeting reflectts new detail(s)
         assert resp.status_code == 200
         assert resp.json['teacherId'] == 1
         assert datetime.strptime(resp.json['when'], '%Y-%m-%dT%H:%M:%S+00:00') == datetime.strptime(time, '%Y-%m-%d %H:%M:%S')
         assert resp.json['locationId'] == 1
+    """Test without fake attribute"""
+    # GIVEN class meeting in database
+    # WHEN some fake attribute is to be updated
+    resp = auth_client.patch(url_for('courses.update_class_meeting', course_offering_id = meeting.offering_id, class_meeting_id = meeting.id),
+            json={'fake_attr':'fake_attr'})
+    #THEN assert error code
+    assert resp.status_code == 422
 
 def test_delete_class_meeting(auth_client):
     """Test with invalid meeting"""
@@ -997,5 +1391,35 @@ def test_delete_class_meeting(auth_client):
     resp = auth_client.delete(url_for('courses.delete_class_meeting', course_offering_id=1, class_meeting_id=1))
     # THEN assert error code
     assert resp.status_code == 403
+
+# ---- Course_Completion
+"""
+@pytest.mark.xfail()
+def test_create_course_completion(auth_client):
+    # GIVEN
+    # WHEN
+    # THEN
+    assert True == False
+"""
+
+def test_delete_course_completion(auth_client):
+    """Test with invalid course completion"""
+    # GIVEN empty database
+    # WHEN databse queried
+    resp = auth_client.delete(url_for('courses.delete_course_completion', courses_id = 1), json={'personId':1})
+    # THEN assert error code
+    assert resp.status_code == 404
+    """Test with populated database"""
+    # GIVEN diploma awarded in database
+    create_multiple_people(auth_client.sqla, 1)
+    create_multiple_courses(auth_client.sqla, 1)
+    course = auth_client.sqla.query(Course).first()
+    create_course_completion(auth_client.sqla, 1)
+    # WHEN deleted
+    resp = auth_client.delete(url_for('courses.delete_course_completion', courses_id=course.id), json={'personId':1})
+    # THEN assert it is gone
+    assert resp.status_code == 200
+    assert auth_client.sqla.query(Course_Completion).all() == []
+
 
 open
