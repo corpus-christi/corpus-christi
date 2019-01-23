@@ -35,7 +35,6 @@ describe("Check Team Members Test", () => {
         cy.get(
           ":nth-child(4) > .v-list__tile > .v-list__tile__content > .v-list__tile__title"
         ).click();
-        cy.scrollTo(0, 0);
         cy.wait(1000);
         cy.get(".v-btn--router > .v-btn__content").click();
         getAllTeamsOnPage();
