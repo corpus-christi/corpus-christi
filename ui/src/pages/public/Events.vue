@@ -107,7 +107,6 @@ export default {
       .get(`/api/v1/events/?return_group=all&include_images=1&sort=start`)
       .then(resp => {
         this.events = resp.data;
-        // console.log(this.events);
         this.pageLoaded = true;
       });
 
