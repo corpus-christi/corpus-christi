@@ -308,7 +308,7 @@ def create_diploma():
         del request.json['courseList']
 
     try:
-        valid_diploma = diploma_schema.load(request.json, partial=True)
+        valid_diploma = diploma_schema.load(request.json)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
@@ -495,6 +495,10 @@ def read_all_students_diploma_awarded(diploma_id):
 @courses.route('/diplomas_awarded/<int:diploma_id>/<int:person_id>', methods=['PATCH'])
 @jwt_required
 def update_diploma_awarded(diploma_id,person_id):
+    diploma_awarded = db.session.query(Diploma_Awarded).filter_by(diploma_id=diploma_id, person_id=person_id).first()
+    if diploma_awarded is None:
+        return 'Not Found', 404
+
     if 'personId' not in request.json:
         request.json['personId'] = person_id
     if 'diplomaId' not in request.json:
@@ -564,12 +568,12 @@ def add_student_to_course_offering(s_id):
 def read_all_course_offering_students(course_offering_id):
     """ This function lists all students by a specific course offering.
         Students are listed regardless of confirmed or active state. """
-    co = db.session.query(Course_Offering).filter_by(id=course_offering_id)
+    co = db.session.query(Course_Offering).filter_by(id=course_offering_id).first()
     if co is None:
         return 'Course Offering NOT found', 404
     students = db.session.query(Student, Person).filter_by(offering_id=course_offering_id).join(Person).all()
-    # if students == []:
-    #     return 'No students enrolled in this course', 404
+    if students == []:
+        return 'No students enrolled in this course', 404
     student_list = []
     for i in students:
         s = student_schema.dump(i.Student)
@@ -632,8 +636,8 @@ def read_one_student(student_id):
     for i in result[0].Person.diplomas_awarded:
         # Query to get diploma attributes
         d = db.session.query(Diploma).filter_by(id=i.diploma_id).first()
-        if d is None:
-            return 'Diploma not found', 404
+        # if d is None:
+        #     return 'Diploma not found', 404
         d = diploma_schema.dump(d)
         d['diplomaIsActive'] = d.pop('active')
         # Query to find when award was given or if in progress (null value)
@@ -723,7 +727,7 @@ def create_course_completion(courses_id):
     valid courses_id and person_id in json request. """
 
     try:
-        valid_course_completion = course_completion_schema.load(request.json, partial=True)
+        valid_course_completion = course_completion_schema.load(request.json)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
@@ -862,7 +866,7 @@ def update_class_meeting(course_offering_id, class_meeting_id):
 def delete_class_meeting(course_offering_id, class_meeting_id):
     class_meeting = db.session.query(Class_Meeting).filter_by(id=class_meeting_id, offering_id=course_offering_id).first()
     class_attended = db.session.query(Class_Attendance).filter_by(class_id=class_meeting_id).first()
-
+    
     # If class meeting exists with no class attendance, then delete meeting
     if class_meeting is not None and class_attended is None:
         db.session.delete(class_meeting)
