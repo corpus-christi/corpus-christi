@@ -350,7 +350,7 @@ export default {
         delete newAsset.id;
         delete newAsset.event_count;
         this.$http
-          .patch(`/api/v1/assets/${assetId}`, newAsset)
+          .patch(`/api/v1/assets/${assetId}?include_location=1`, newAsset)
           .then(resp => {
             console.log("EDITED", resp);
             Object.assign(this.assets[idx], resp.data);
@@ -368,7 +368,7 @@ export default {
         delete newAsset.event_count;
         newAsset.active = true;
         this.$http
-          .post("/api/v1/assets/", newAsset)
+          .post("/api/v1/assets/?include_location=1", newAsset)
           .then(resp => {
             console.log("ADDED", resp);
             this.assets.push(resp.data);
@@ -390,7 +390,7 @@ export default {
       let newAsset = JSON.parse(JSON.stringify(asset));
       delete newAsset.location;
       this.$http
-        .post("/api/v1/assets", newAsset)
+        .post("/api/v1/assets/?include_location=1", newAsset)
         .then(resp => {
           console.log("ADDED", resp);
           this.assets.push(resp.data);

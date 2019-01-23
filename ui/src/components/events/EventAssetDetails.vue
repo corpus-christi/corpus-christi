@@ -62,6 +62,7 @@
           <span class="headline">{{ $t("assets.new") }}</span>
         </v-card-title>
         <v-card-text>
+          <!-- TODO: make multiple -->
           <entity-search
             data-cy="asset-entity-search"
             v-model="addAssetDialog.asset"
