@@ -45,10 +45,10 @@
           <template slot="items" slot-scope="props">
             <tr>
               <td class="hover-hand" @click="clickThrough(props.item)">
-                {{ props.item.person.lastName }}
+                {{ props.item.lastName }}
               </td>
               <td class="hover-hand" @click="clickThrough(props.item)">
-                {{ props.item.person.firstName }}
+                {{ props.item.firstName }}
               </td>
             </tr>
           </template>
@@ -110,7 +110,7 @@ export default {
   methods: {
     clickThrough(transcript) {
       console.log(transcript);
-      this.$router.push({ name: 'transcript-details', params: { studentId: transcript.person.id }})
+      this.$router.push({ name: 'transcript-details', params: { studentId: transcript.id }})
     },
   },
   mounted: function() {

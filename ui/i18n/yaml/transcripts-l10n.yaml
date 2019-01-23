@@ -24,3 +24,6 @@ transcripts:
   add-diploma-this-student:
     en: Add Diploma
     es: Añadir Diploma
+  course-completed:
+    en: Completed
+    es: Terminado

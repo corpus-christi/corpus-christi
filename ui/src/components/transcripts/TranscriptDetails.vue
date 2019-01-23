@@ -67,12 +67,13 @@
                                 </v-subheader>
                                 <v-layout row>
                                     <v-flex xs12 sm10 offset-sm1>
-                                        <div v-for="diploma in transcript.diplomaList" :key="diploma+`${diploma.id}`">
+                                        <div v-for="diploma in transcript.diplomaList" :key="`diploma-`+`${diploma.id}`">
                                             <!-- making a composite key to avoid duplicate key issue: https://github.com/vuejs/vue/issues/7323 -->
                                             <h3>{{diploma.name}}:</h3>
                                             <ul class="mb-2">
-                                            <li v-for="diplomaCourse in diploma.courses" :key="diplomaCourse+`${diplomaCourse.id}`">
+                                            <li v-for="(diplomaCourse, diplomaCourseIndex) in diploma.courses" :key="`diplomaCourse-`+`${diplomaCourseIndex}`">
                                                 {{diplomaCourse.name}}
+                                                <span v-if="diplomaCourse.courseCompleted" class="green--text">{{ $t("transcripts.course-completed")}}</span>
                                             </li>
                                         </ul>
                                         </div>
@@ -83,11 +84,14 @@
                                 </v-subheader>
                                 <v-layout row>
                                     <v-flex xs12 sm10 offset-sm1>
-                                        <div v-for="course in transcript.courses" :key="course+`${course.id}`">
+                                        <div v-for="(course, courseIndex) in transcript.courses" :key="`course-`+`${courseIndex}`">
                                             <!-- making a composite key to avoid duplicate key issue: https://github.com/vuejs/vue/issues/7323 -->
-                                            <h3>{{course.name}}:</h3>
+                                            <h3>
+                                                {{course.name}}: 
+                                                <span v-if="course.courseCompleted" class="green--text">{{ $t("transcripts.course-completed")}}</span>
+                                            </h3>
                                             <ul class="mb-2">
-                                                <li v-for="courseOffering in course.courseOfferings" :key="courseOffering+`${courseOffering.id}`">
+                                                <li v-for="(courseOffering, index) in course.courseOfferings" :key="`courseOffering-`+`${index}`">
                                                     {{courseOffering.description}}
                                                 </li>
                                             </ul>
