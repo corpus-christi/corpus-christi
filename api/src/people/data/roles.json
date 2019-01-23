@@ -8,5 +8,6 @@
   {"name": "group-overseer", "locales":[{"locale_code":"en-US","name":"group overseer"},{"locale_code":"es-EC","name":"supervisor de grupo"}]},
   {"name": "registrar", "locales":[{"locale_code":"en-US","name":"registrar"},{"locale_code":"es-EC","name":"registrador"}]},
   {"name": "teaching-assistant", "locales":[{"locale_code":"en-US","name":"teaching assistant"},{"locale_code":"es-EC","name":"asistente de enseñanza"}]},
-  {"name": "event-planner", "locales":[{"locale_code":"en-US","name":"event planner"},{"locale_code":"es-EC","name":"organizador de eventos"}]}
+  {"name": "event-planner", "locales":[{"locale_code":"en-US","name":"event planner"},{"locale_code":"es-EC","name":"organizador de eventos"}]},
+  {"name": "visitor", "locales":[{"locale_code":"en-US","name":"visitor"},{"locale_code":"es-EC","name":"visitante"}]}
 ]
