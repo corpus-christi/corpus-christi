@@ -182,11 +182,11 @@ def create_multiple_events(sqla, n):
     event_schema = EventSchema()
     new_events = []
     for i in range(n):
-        factory = event_object_factory_approx_one_week_ago
+        factory = event_object_factory
         if flip():
-            factory = event_object_factory
-        elif flip():
             factory = event_object_factory_long_ago
+        elif flip():
+            factory = event_object_factory_approx_one_week_ago
         valid_events = event_schema.load(factory(sqla))
         new_events.append(Event(**valid_events))
     sqla.add_all(new_events)
@@ -275,7 +275,7 @@ def create_teams_members(sqla, fraction=0.75):
 
 def create_events_test_data(sqla):
     """The function that creates test data in the correct order """
-    create_multiple_events(sqla, 1000)
+    create_multiple_events(sqla, 300)
     create_multiple_assets(sqla, 12)
     create_multiple_teams(sqla, 13)
     create_events_assets(sqla, 0.75)

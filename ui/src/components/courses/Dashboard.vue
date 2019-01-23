@@ -74,7 +74,7 @@ export default {
         self.courseData.rows.push({
           course: courseName,
           enrolled: enrollmentData[courseName],
-          graduated: graduationValue
+          graduated: 20 // graduationValue
         });
       });
     }
