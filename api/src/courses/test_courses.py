@@ -324,15 +324,6 @@ def create_class_attendance(sqla, n):
     sqla.add_all(new_class_attendance)
     sqla.commit()
 
-"""
-@pytest.mark.xfail()
-def test_update_class_attendance(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
-"""
-
 # ---- Course
 
 # Test course creation
