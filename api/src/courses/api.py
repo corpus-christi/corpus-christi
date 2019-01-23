@@ -17,8 +17,8 @@ from .models import Course, CourseSchema, \
                     Diploma, DiplomaSchema, \
                     Diploma_Course, Diploma_CourseSchema, \
                     Diploma_Awarded, Diploma_AwardedSchema, \
-                    Class_Attendance, Class_AttendanceSchema \
-                    Class_Meeting, Class_MeetingSchema \
+                    Class_Attendance, Class_AttendanceSchema, \
+                    Class_Meeting, Class_MeetingSchema, \
                     Course_Completion, Course_CompletionSchema
 
 
@@ -98,7 +98,7 @@ def read_all_courses():
     return jsonify(with_prereqs)
 
 
-@courses.route('/<str:active_state>/courses')
+@courses.route('/<string:active_state>/courses')
 @jwt_required
 # @authorize(["role.superuser", "role.registrar", "role.public"])
 def read_active_state_of_courses(active_state):
@@ -253,7 +253,7 @@ def read_one_course_offering(course_offering_id):
     return jsonify(result)
 
 
-@courses.route('/<str:active_state>/course_offerings')
+@courses.route('/<string:active_state>/course_offerings')
 @jwt_required
 def read_active_state_course_offerings(active_state):
     result = db.session.query(Course_Offering)
@@ -445,18 +445,35 @@ def read_all_diplomas_awarded():
     # Currently does not show student objects for each student.. may want to show
     return jsonify(diploma_awarded_schema.dump(result, many=True))
 
-
+# MIGHT NOT NEED?
 @courses.route('/diplomas_awarded/<int:diploma_id>')
 @jwt_required
-def read_one_diploma_awarded(diploma_awarded_id):
+def read_one_diploma_awarded(diploma_id):
+    """ Get details of the diploma awarded. """
     result = db.session.query(Diploma_Awarded).filter_by(id=diploma_awarded_id).first()
+    if result is None:
+        return jsonify(f'Diploma #{diploma_awarded_id} not found', 404)
     return jsonify(diploma_awarded_schema.dump(result))
 
 
+@courses.route('/diplomas_awarded/<int:diploma_id>/students')
+@jwt_required
 def read_all_students_diploma_awarded(diploma_id):
     """ Read all students that were awarded with the diploma id. """
-    result = db.session.query(Diploma_Awarded).filter_by(diploma_id=diploma_id).all()
-    return jsonify(diploma_awarded_schema.dump(result, many=True))
+    result = db.session.query(Diploma, Diploma_Awarded, Person).filter_by(id=diploma_id).join(Diploma_Awarded, Person).all()
+    if result == []:
+        return jsonify(f'No results for diploma with id #{diploma_id} found', 404)
+    # print("result: ", result)
+    diploma = diploma_schema.dump(result[0].Diploma)
+    diploma['students'] = []
+    for i in result:
+        p = person_schema.dump(i.Person)
+        p['diplomaAwarded'] = diploma_awarded_schema.dump(i.Diploma_Awarded)['when']
+        # print("\n\n", p)
+        diploma['students'].append(p)
+    # result = db.session.query(Diploma_Awarded).filter_by(diploma_id=diploma_id).all()
+    # print(diploma)
+    return jsonify(diploma)
 
 
 @courses.route('/diplomas_awarded/<int:diploma_id>/<int:student_id>', methods=['PATCH'])
