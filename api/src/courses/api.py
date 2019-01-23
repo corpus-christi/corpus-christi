@@ -796,8 +796,8 @@ def create_class_meeting(course_offering_id):
 def read_all_class_meetings(course_offering_id):
     """ Read all class meetings associtated with a course offering """
     result = db.session.query(Class_Meeting).filter_by(offering_id=course_offering_id).all()
-    if result == []:
-        return 'No class meetings found for this course offering', 404
+    # if result == []:
+    #     return 'No class meetings found for this course offering', 404
     result = class_meeting_schema.dump(result, many=True)
     for i in result:
         get_loc_and_person_for_meeting(i)
