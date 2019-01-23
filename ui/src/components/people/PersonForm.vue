@@ -33,7 +33,7 @@
         </v-stepper-step>
       </v-stepper-header>
       <v-stepper-items>
-        <v-stepper-content step="1" class="formSteps">
+        <v-stepper-content step="1">
           <v-text-field
             v-model="person.firstName"
             v-bind:label="$t('person.name.first') + ' *'"
@@ -126,7 +126,7 @@
             :readonly="formDisabled"
           ></v-text-field>
         </v-stepper-content>
-        <v-stepper-content step="2" class="formSteps" v-if="showAccountInfo">
+        <v-stepper-content step="2" v-if="showAccountInfo">
           <!-- User name (for creating new account) -->
           <v-text-field
             v-if="showAccountInfo"
@@ -175,14 +175,37 @@
         </v-stepper-content>
         <v-stepper-content
           v-bind:step="showAccountInfo ? 3 : 2"
-          class="formSteps"
         >
-          <AttributeForm
+          <attribute-form
             :personId="person.id"
             :existingAttributes="person.attributesInfo"
             v-model="attributeFormData"
             ref="attributeForm"
-          ></AttributeForm>
+          ></attribute-form>
+          <v-layout row justify-start align-center>
+            <v-flex shrink>
+              <v-btn
+                small
+                color="primary"
+                flat
+                :disabled="addressWasSaved"
+                @click="changeAddressView(true)"
+              >
+              {{ $t("actions.add-address") }}
+              </v-btn>
+            </v-flex>
+            <v-flex v-show="addressSaved">
+              <span>{{ $t("places.messages.saved") }}</span>
+            </v-flex>
+          </v-layout>
+          <v-expand-transition>
+            <address-form
+              v-if="showAddressForm"
+              @cancel="changeAddressView"
+              @saved="saveAddress"
+            >
+            </address-form>
+          </v-expand-transition>
         </v-stepper-content>
       </v-stepper-items>
     </v-stepper>
@@ -252,6 +275,7 @@
             color="primary"
             raised
             v-on:click="previous"
+            :disabled="showAddressForm"
             data-cy="previous"
             >{{ $t("people.previous") }}</v-btn
           >
@@ -274,10 +298,11 @@
 import { mapGetters } from "vuex";
 import AttributeForm from "./input_fields/AttributeForm.vue";
 import { isEmpty } from "lodash";
+import AddressForm from "../AddressForm.vue";
 
 export default {
   name: "PersonForm",
-  components: { AttributeForm },
+  components: { "attribute-form": AttributeForm, "address-form": AddressForm },
   props: {
     initialData: {
       type: Object,
@@ -307,8 +332,10 @@ export default {
   data: function() {
     return {
       showBirthdayPicker: false,
+      showAddressForm: false,
       saveIsLoading: false,
       addMoreIsLoading: false,
+      addressWasSaved: false,
 
       person: {
         id: 0,
@@ -321,7 +348,7 @@ export default {
         email: "",
         phone: "",
         locationId: 0,
-        attributesInfo: []
+        attributesInfo: [],
       },
 
       account: {
@@ -347,7 +374,7 @@ export default {
     ...mapGetters(["currentLanguageCode"]),
 
     formDisabled() {
-      return this.saveIsLoading || this.addMoreIsLoading;
+      return this.saveIsLoading || this.addMoreIsLoading || this.showAddressForm;
     },
 
     getTodayString() {
@@ -360,6 +387,10 @@ export default {
         useGrouping: false
       })}`;
       return str;
+    },
+
+    addressSaved() {
+      return this.addressWasSaved;
     }
   },
 
@@ -382,6 +413,7 @@ export default {
       this.stepTwoErrors = false;
       this.stepThreeErrors = false;
       this.resetForm();
+      this.removeLocationFromDatabase();
       this.$emit("cancel");
     },
 
@@ -391,6 +423,8 @@ export default {
         this.person[key] = "";
       }
       this.$refs.attributeForm.clear();
+      this.showAddressForm = false;
+      this.addressWasSaved = false;
       this.$validator.reset();
     },
 
@@ -430,6 +464,12 @@ export default {
       this.savePerson("saved");
     },
 
+    saveAddress(resp) {
+      this.person.locationId = resp.id;
+      this.addressWasSaved = true;
+      this.showAddressForm = false;
+    },
+
     setErrors() {
       this.stepOneErrors =
         this.errors.items.findIndex(element => {
@@ -462,6 +502,10 @@ export default {
             element.field != "brithday"
           );
         }) != -1;
+    },
+
+    changeAddressView(show) {
+      this.showAddressForm = show;
     },
 
     savePerson(emitMessage) {
@@ -541,13 +585,13 @@ export default {
           this.resetForm();
           console.error("FAILURE", err.response);
         });
+    },
+
+    removeLocationFromDatabase() {
+      if(this.person.locationId != 0 || this.person.locationId != "") {
+        this.$http.post
+      }
     }
   }
 };
 </script>
-<style scoped>
-.formSteps {
-  height: 550px;
-  overflow-y: scroll;
-}
-</style>

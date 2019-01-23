@@ -281,7 +281,8 @@
         "description": "Description"
       },
       "messages": {
-        "no-results": "Your address returned no results."
+        "no-results": "Your address returned no results.",
+        "saved": "Your address has been saved."
       }
     },
     "public": {
@@ -620,7 +621,8 @@
         "description": "Descripci\u00f3n"
       },
       "messages": {
-        "no-results": "Tu direcci\u00f3n no devolvi\u00f3 resultados"
+        "no-results": "Tu direcci\u00f3n no devolvi\u00f3 resultados.",
+        "saved": "Su direcci\u00f3n ha sido guardada."
       }
     },
     "public": {
