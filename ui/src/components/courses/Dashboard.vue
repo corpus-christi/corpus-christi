@@ -52,10 +52,9 @@ export default {
     ...mapGetters(["currentLocale"])
   },
   data: function() {
-    // eslint-disable-next-line
-    var totalCourseEnrollment = 0; // eslint-disable-next-line
-    var totalStudentsAttended = 0; // eslint-disable-next-line
-    var totalStudentsGraduated = 0;
+    var totalCourseEnrollment = 0; // eslint-disable-line
+    var totalStudentsAttended = 0; // eslint-disable-line
+    var totalStudentsGraduated = 0; // eslint-disable-line
 
     var enrollmentData = Object();
     var graduationData = Object();
@@ -79,16 +78,15 @@ export default {
       });
     }
 
-    // eslint-disable-next-line
-    function courseAttendanceDataComplete(self) {
+    function courseAttendanceDataComplete(self) { // eslint-disable-line
       // TODO:
     }
 
-    // eslint-disable-next-line
-    function courseFlowDataComplete(self) {
+    function courseFlowDataComplete(self) { // eslint-disable-line
       // TODO:
     }
 
+    // Get course data
     this.$http
       .get(`/api/v1/courses/course_offerings`)
       .then(resp => {
@@ -103,6 +101,7 @@ export default {
             graduationData[courseName] = 0;
           }
 
+          // Get enrollment data
           this.$http
             .get(`/api/v1/courses/course_offerings/${offering.id}/students`)
             .then(studentResp => {
@@ -110,9 +109,8 @@ export default {
               enrollmentData[courseName] += studentResp.data.length;
 
               if (
-                ++enrollmentSubdataCount ==
-                resp.data
-                  .length /* FIXME: && graduationSubdataCount == resp.data.length */
+                ++enrollmentSubdataCount == resp.data.length 
+                /* FIXME: && graduationSubdataCount == resp.data.length */
               ) {
                 enrollmentAndGraduationDataComplete(this);
 
@@ -125,6 +123,7 @@ export default {
               console.error("GET FALURE", err.response);
             });
 
+          // Get graduation data
           /*this.$http
           .get(`/api/v1/courses/FIXME:`)
           .then(graduationResp => {
@@ -134,6 +133,7 @@ export default {
             console.error("GET FALURE", err.response);
           });*/
 
+          // Get attendance data
           this.$http
             .get(
               `/api/v1/courses/course_offerings/${offering.id}/class_attendance`
@@ -190,7 +190,7 @@ export default {
         rows: []
       },
       attendanceSankeySettings: {
-        links: [
+        links: [ // NOTE: This is stub data and should be changed
           {
             source: "Course A",
             target: this.$t("courses.dashboard.charts.attended"),
