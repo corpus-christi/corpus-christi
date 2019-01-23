@@ -58,9 +58,17 @@ describe('Transcript for student', () => {
     })
 })
 
-// describe('Back button', () => {
-//     it('Go back to all students', () => {
-//         cy.get('.row > :nth-child(1) > .v-btn').click()
-//         cy.url().should('include', '/transcripts/all')
-//     })
-// })
+describe('Add diploma to student', () => {
+    it('add diploma to student form', () => {
+        cy.get('[data-cy=add-diploma-this-student]').click()
+        cy.get('.v-input__slot').click()
+        cy.get('.v-card__actions > .v-btn--flat').click()//save
+    })
+})
+
+describe('Back button', () => {
+    it('Go back to all students', () => {
+        cy.get('.row > :nth-child(1) > .v-btn').click()
+        cy.url().should('include', '/transcripts/all')
+    })
+})
