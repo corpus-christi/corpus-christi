@@ -15,7 +15,7 @@ matrix:
                         - cd ui/
                           #- yarn cache clean
                           #- yarn check
-                        - yarn install
+                        - sudo apt install yarn
                           #- yarn upgrade
                         - yarn add cypress 
                           # - yarn upgrade cypress
