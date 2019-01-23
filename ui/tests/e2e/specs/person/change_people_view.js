@@ -17,8 +17,9 @@ describe("Tests the Person table Archived/active user filter", function() {
     cy.get("[data-cy=person-table]").within(() => {
       cy.get("tbody > :nth-child(1) > :nth-child(2)").invoke("text").as("firstName");
       cy.get("tbody > :nth-child(1) [data-cy = deactivate-person]").click();
-      cy.root();
     });
+    cy.get(".v-dialog__content--active > .v-dialog > .v-card > :nth-child(2) > :nth-child(3)").click();
+
   });
 
   it("When: The dropdown is clicked, and an archived users is selected", function() {
@@ -69,5 +70,11 @@ describe("Tests the Person table Archived/active user filter", function() {
     cy.get("[data-cy=person-table]").within( () => {
       cy.get("[data-cy=reactivate-person]").click();
     });
-  })
+    cy.get(".v-dialog__content--active > .v-dialog > .v-card > :nth-child(2) > :nth-child(3)").click();
+    cy.get("[data-cy=view-dropdown]").click(); // open dropdown
+    cy.get(dropdown)
+      .find(":nth-child(1)")
+      .first()
+      .click();
+  });
 });
