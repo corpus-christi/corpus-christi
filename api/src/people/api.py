@@ -11,6 +11,7 @@ from .models import Person, Account, AccountSchema, Role, PersonSchema, RoleSche
 from ..events.models import EventPerson, EventParticipant #TeamMember
 from ..attributes.models import Attribute, AttributeSchema, EnumeratedValue, EnumeratedValueSchema, PersonAttribute, PersonAttributeSchema
 from ..courses.models import Student, Class_Meeting
+from ..auth.blacklist_helpers import revoke_tokens_of_account
 
 from .. import db
 
@@ -279,6 +280,7 @@ def update_account(account_id):
         for role in roles_to_add:
             role_object = db.session.query(Role).filter_by(id=role).first()
             role_objects.append(role_object)
+        revoke_tokens_of_account(account.id)
 
     account.roles = role_objects
 
@@ -412,6 +414,8 @@ def add_role_to_account(account_id, role_id):
     account.roles.append(role_to_add)
     db.session.add(account)
     db.session.commit()
+    
+    revoke_tokens_of_account(account.id)
 
     user_roles = []
     roles = db.session.query(Role).join(Account, Role.accounts).filter_by(
@@ -438,6 +442,7 @@ def remove_role_from_account(account_id, role_id):
 
     account.roles.remove(role_to_remove)
     db.session.commit()
+    revoke_tokens_of_account(account_id)
 
     # user_roles = []
     # roles = db.session.query(Role).join(Account, Role.accounts).filter_by(id=account_id).filter_by(active=True).all()
