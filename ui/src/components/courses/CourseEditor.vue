@@ -4,7 +4,7 @@
       <span class="headline">{{ title }}</span>
     </v-card-title>
     <v-card-text>
-      <CourseForm ref="form" :course="course" :coursesPool="coursesPool" />
+      <CourseForm ref="form" :course="course" />
     </v-card-text>
     <v-card-actions data-cy="course-editor-actions">
       <v-btn color="secondary" flat :disabled="saving" v-on:click="cancel">
@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { isEmpty } from "lodash";
+import { isEmpty, cloneDeep } from "lodash";
 import CourseForm from "./CourseForm";
 
 export default {
@@ -44,19 +44,12 @@ export default {
     initialData: {
       type: Object,
       required: true
-    },
-    saving: {
-      type: Boolean,
-      default: false
-    },
-    coursesPool: {
-      type: Array,
-      default: () => []
     }
   },
   data: function() {
     return {
-      course: {}
+      course: {},
+      saving: false
     };
   },
   computed: {
@@ -93,9 +86,83 @@ export default {
     save() {
       this.$refs.form.$validator.validateAll().then(() => {
         if (!this.$refs.form.errors.any()) {
-          this.$emit("save", this.course);
+          this.saving = true;
+          let course = cloneDeep(this.course);
+          this.saveCourse(course);
         }
       });
+    },
+
+    saveCourse(course) {
+      // Hang onto the prereqs of the course
+      const prerequisites = course.prerequisites || [];
+      // Get rid of the prereqs; not for consumption by the endpoint
+      delete course.prerequisites;
+
+      if (this.editMode) {
+        // Hang on to the ID of the course being updated.
+        const course_id = course.id;
+        // Get rid of the ID; not for consumption by endpoint.
+        delete course.id;
+
+        let promises = [];
+        promises.push(
+          this.$http
+            .patch(`/api/v1/courses/courses/${course_id}`, course)
+            .then(resp => {
+              console.log("EDITED", resp);
+              return resp;
+            })
+        );
+        promises.push(
+          this.$http.patch(
+            `/api/v1/courses/courses/prerequisites/${course_id}`,
+            { prerequisites: prerequisites.map(prereq => prereq.id) } // API expects array of IDs
+          )
+        );
+
+        Promise.all(promises)
+          .then(resps => {
+            let newCourse = resps[0].data;
+            newCourse.prerequisites = prerequisites; // Re-attach prereqs so they show up in UI
+            this.$emit("save", newCourse);
+          })
+          .catch(err => {
+            console.error("FALURE", err.response);
+            this.$emit("save", err);
+          })
+          .finally(() => {
+            this.saving = false;
+          });
+      } else {
+        // All new courses are active
+        course.active = true;
+        let newCourse;
+        this.$http
+          .post("/api/v1/courses/courses", course)
+          .then(resp => {
+            console.log("ADDED", resp);
+            newCourse = resp.data;
+            newCourse.prerequisites = prerequisites; // Re-attach prereqs so they show up in UI
+
+            // Now that course created, add prerequisites to it
+            return this.$http.patch(
+              `/api/v1/courses/courses/prerequisites/${newCourse.id}`,
+              { prerequisites: prerequisites.map(prereq => prereq.id) } // API expects array of IDs
+            );
+          })
+          .then(resp => {
+            console.log("PREREQS", resp);
+            this.$emit("save", newCourse);
+          })
+          .catch(err => {
+            console.error("FAILURE", err);
+            this.$emit("save", err);
+          })
+          .finally(() => {
+            this.saving = false;
+          });
+      }
     }
   }
 };
