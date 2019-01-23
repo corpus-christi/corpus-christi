@@ -14,7 +14,7 @@ from ..assets.models import Asset, AssetSchema
 from ..teams.models import Team, TeamMember, TeamSchema, TeamMemberSchema
 from ..places.models import Location
 from ..people.models import Person
-from ..images.models import Image, ImageSchema
+from ..images.models import Image, ImageSchema, ImageEvent, ImageEventSchema
 
 from .models import EventAsset, EventAssetSchema, EventTeam, EventTeamSchema
 
@@ -371,3 +371,24 @@ def create_images(sqla):
     
     sqla.add_all(new_images)
     sqla.commit()
+
+
+def create_event_images(sqla):
+    image_event_schema = ImageEventSchema()
+    events = sqla.query(Event).all()
+    images = sqla.query(Image).all()
+
+    count = len(events)
+    if len(images) < len(events):
+        count = len(images)
+
+    new_event_images = []
+
+    for i in range(count):
+        valid_event_image = image_event_schema.load({'event_id': events[i].id, 'image_id': images[i].id})
+        new_event_images.append(ImageEvent(**valid_event_image))
+
+    sqla.add_all(new_event_images)
+    sqla.commit()
+
+
