@@ -10,23 +10,23 @@ describe("Get to Courses Page", () => {
   });
 });
 
-let course = "course: Career president us.";
+let course = "course: Energy.";
 
 describe("Get more details on a course", () => {
   it("Click into details of course", () => {
     cy.get("tbody")
       .contains(course)
       .click();
-    cy.url().should("include", "/courses/8");
+    cy.url().should("include", "/courses/9");
   });
 });
 
-let section = "course offering: Group";
+let section = "Testing";
 
 describe('Get more section details on a course', () =>{
   it('Click into details of a section', () =>{
     cy.get('tbody').contains(section).click()
-    cy.url().should("include", "/courses/8/offering/5/details");
+    cy.url().should("include", "/courses/9/offering/30/details");
   })
 })
 
@@ -35,7 +35,7 @@ describe('Check Scheduled times', () => {
     cy.get(':nth-child(4) > .v-tabs__item').click()
   })
   it('Add meeting time form', () => {
-    cy.get('[courseid="8"] > .v-toolbar > .v-toolbar__content > .v-btn').click()//add meeting button
+    cy.get('[courseid="9"] > .v-toolbar > .v-toolbar__content > .v-btn').click()//add meeting button
   })
   //Cancel button 
   it('Add meeting time form - DATE Cancel button', () => {
@@ -67,24 +67,24 @@ describe('Check Scheduled times', () => {
   })
   it('Add meeting form - Teacher', () => {
     cy.get('[data-cy=course-offering-teacher]').click()
-    cy.contains('Timothy').click()
+    cy.contains('Scott').click()
   })
   it('Add meeting form - Location', () => {
     cy.get('[data-cy=course-offering-location]').click()
-    cy.contains('James').click()
+    cy.contains('Sara').click()
   })
   it('Save form', () => {
 
-    cy.get('.v-card__actions > .primary').click()
-    cy.get('.v-toolbar__content > .v-input > .v-input__control > .v-input__slot > .v-text-field__slot > input').type('30')
-    cy.get('.v-datatable > tbody > tr > :nth(0)').contains('30')
+    cy.get('.v-dialog__content--active > .v-dialog > .v-card > .v-card__actions > .primary').click()
+    cy.get('.v-toolbar__content > .v-input > .v-input__control > .v-input__slot > .v-text-field__slot > input').type('Sara')
+    //cy.get('.v-dialog__content--active > .v-dialog > .v-card > .v-card__actions > .primary').contains('Sara')
   })
 })
 
 describe('Check students in section', () =>{
   it('Click into students', () =>{
     cy.get(':nth-child(3) > .v-tabs__item').click()
-    cy.url().should("include", "/courses/8/offering/5/students");
+    cy.url().should("include", "/courses/9/offering/30/students");
   })
 })
 
@@ -131,16 +131,16 @@ describe("Number of students on page", () => {
 describe("Get back to course details", () => {
   it("Click back to course details", () => {
     cy.get('.container > [data-v-6bac62c4=""] > :nth-child(1)').click(); //back button
-    cy.url().should("include", "/courses/8");
+    cy.url().should("include", "/courses/9");
   });
 });
 
 describe("Search for course section", () => {
   it("section box", () => {
-    cy.get('.layout > .flex > .v-input > .v-input__control > .v-input__slot > .v-text-field__slot > input').type("Group");
+    cy.get('.layout > .flex > .v-input > .v-input__control > .v-input__slot > .v-text-field__slot > input').type("Test");
   });
   it("should find match", () => {
-    cy.get("tbody > tr > :nth-child(1)").contains("Group");
+    cy.get("tbody > tr > :nth-child(1)").contains("Testing");
   });
   it("clears search bar", () => {
     cy.get('.layout > .flex > .v-input > .v-input__control > .v-input__slot > .v-text-field__slot > input').clear();

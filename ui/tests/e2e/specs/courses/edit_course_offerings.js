@@ -25,7 +25,7 @@ describe("Edit course section", () => {
     ).click();
   });
   it("Edit description", () => {
-    cy.get("textarea").type("Hello world part 3");
+    cy.get('[data-cy=course-offering-description]').type("Hello world part 3");
   });
   // it("Edit date", () => {
   //   cy.get(
