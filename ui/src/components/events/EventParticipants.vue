@@ -11,15 +11,6 @@
         hide-details
       ></v-text-field>
       <v-spacer></v-spacer>
-      <v-btn
-        color="primary"
-        raised
-        v-on:click="openMailDialog"
-        data-cy="open-mail-dialog"
-      >
-        <v-icon dark left>mail</v-icon>
-        Mail
-      </v-btn>
       <v-spacer></v-spacer>
       <v-btn
         color="primary"
@@ -130,44 +121,6 @@
       </v-card>
     </v-dialog>
 
-    <!-- Mail Dialog -->
-    <v-dialog v-model="mailDialog.show" max-width="400px">
-      <v-card>
-        <v-card-title>
-          <span class="headline">Send Mail (in progress)</span>
-        </v-card-title>
-        <v-card-text>
-          <v-text-field
-            v-model="mailDialog.recipients"
-            label="Recipients"
-          ></v-text-field>
-          <v-text-field
-            v-model="mailDialog.subject"
-            label="Subject"
-          ></v-text-field>
-          <v-textarea v-model="mailDialog.body" label="Body"></v-textarea>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn
-            v-on:click="closeMailDialog"
-            color="secondary"
-            flat
-            data-cy="cancel-mail"
-            >{{ $t("actions.cancel") }}</v-btn
-          >
-          <v-spacer></v-spacer>
-          <v-btn
-            v-on:click="sendMail"
-            color="primary"
-            raised
-            :loading="mailDialog.loading"
-            data-cy="confirm-delete"
-            >{{ $t("actions.confirm") }}</v-btn
-          >
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
       <v-btn flat @click="snackbar.show = false">
@@ -202,14 +155,6 @@ export default {
         show: false,
         participantId: -1,
         loading: false
-      },
-
-      mailDialog: {
-        show: false,
-        loading: false,
-        subject: "",
-        body: "",
-        recipients: []
       },
 
       snackbar: {
@@ -327,21 +272,6 @@ export default {
           this.people = event.participants;
           this.tableLoading = false;
         });
-    },
-
-    openMailDialog() {
-      this.mailDialog.show = true;
-      this.mailDialog.loading = false;
-    },
-
-    closeMailDialog() {
-      this.mailDialog.show = false;
-      this.mailDialog.loading = false;
-    },
-
-    sendMail() {
-      console.log(this.mailDialog.body);
-      this.closeMailDialog();
     }
   },
 
