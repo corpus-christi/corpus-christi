@@ -98,6 +98,7 @@
       v-model="courseDialog.show"
       max-width="500px"
       persistent
+      scrollable
       data-cy="courses-table-editor"
     >
       <CourseEditor
