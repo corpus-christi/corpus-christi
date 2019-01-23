@@ -151,5 +151,4 @@ describe("Admin edits user information", function() {
     cy.get("[data-cy=cancel").click();
     cy.get(".v-dialog__content--active > .v-dialog").should("not.exist");
   });
-
 });

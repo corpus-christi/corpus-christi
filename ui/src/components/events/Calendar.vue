@@ -5,21 +5,9 @@
       default-view="week"
       events-on-month-view
       :events="calendarEvents"
+      v-on:event-focus="goToEvent"
     >
     </vue-cal>
-    <v-dialog v-model="dialog.show" width="500">
-      <v-card>
-        <v-card-title class="headline" primary-title>
-          {{ dialog.event ? dialog.event.title : "" }}
-        </v-card-title>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="primary" flat v-on:click="goToEvent">
-            Go to Event
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
   </div>
 </template>
 <script>
@@ -30,28 +18,21 @@ export default {
   components: { "vue-cal": Vuecal },
   data() {
     return {
-      originalEvents: [],
-      events: [],
-      dialog: {
-        show: false,
-        event: null
-      }
+      events: []
     };
   },
   mounted() {
     this.tableLoading = true;
-    this.$http.get("/api/v1/events/?return_group=all").then(resp => {
-      this.originalEvents = resp.data;
+    this.$http.get("/api/v1/events/").then(resp => {
       var currentDate = new Date();
-      for (let event in resp.data) {
+      for (let event of resp.data) {
         this.events.push({
-          event: resp.data[event],
-          start: this.getDate(resp.data[event].start),
-          end: this.getDate(resp.data[event].end),
-          description: resp.data[event].description,
-          class:
-            new Date(resp.data[event].end) < currentDate ? "leisure" : "sport",
-          content: this.getTemplate(resp.data[event])
+          event: event,
+          start: this.getDatetime(event.start),
+          end: this.getDatetime(event.end),
+          description: event.description,
+          class: new Date(event.end) < currentDate ? "leisure" : "sport",
+          content: this.getTemplate(event)
         });
       }
     });
@@ -66,24 +47,43 @@ export default {
   },
 
   methods: {
-    getDate(obj) {
-      var d = new Date(obj);
-      return obj.slice(0, 10) + " " + d.getUTCHours() + ":" + d.getUTCMinutes();
+    getDatetime(ts) {
+      let date = this.getDateFromTimestamp(ts);
+      let time = this.getTimeFromTimestamp(ts);
+      return `${date} ${time}`;
     },
-    logEvents(text, event) {
-      console.log(text, event);
-      this.dialog.show = true;
-      this.dialog.event = event.event;
-    },
-    goToEvent() {
-      this.dialog.show = false;
-      let routeData = this.$router.resolve({
-        path: "/events/" + this.dialog.event.id
-      });
-      window.open(routeData.href, "_blank");
-    },
+
     getTemplate(event) {
-      return `<a href="/events/${event.id}">${event.title}</a>`;
+      return `<span data-cy="cal-event-${event.id}">${event.title}</span>`;
+    },
+
+    goToEvent(e) {
+      this.$router.push({ path: "/event/" + e.event.id + "/details" });
+    },
+
+    getDateFromTimestamp(ts) {
+      let date = new Date(ts);
+      if (date.getTime() < 86400000) {
+        //ms in a day
+        return "";
+      }
+      let yr = date.toLocaleDateString(this.currentLanguageCode, {
+        year: "numeric"
+      });
+      let mo = date.toLocaleDateString(this.currentLanguageCode, {
+        month: "2-digit"
+      });
+      let da = date.toLocaleDateString(this.currentLanguageCode, {
+        day: "2-digit"
+      });
+      return `${yr}-${mo}-${da}`;
+    },
+
+    getTimeFromTimestamp(ts) {
+      let date = new Date(ts);
+      let hr = String(date.getHours()).padStart(2, "0");
+      let min = String(date.getMinutes()).padStart(2, "0");
+      return `${hr}:${min}`;
     }
   }
 };

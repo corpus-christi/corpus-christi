@@ -37,7 +37,7 @@
         <v-list style="padding-top: 0px; z-index: 0">
           <v-expansion-panel>
             <v-expansion-panel-content
-              v-for="(event, idx) in events"
+              v-for="(event, idx) in filteredEvents"
               v-bind:key="idx"
             >
               <div slot="header">
@@ -89,6 +89,7 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import GoogleMap from "../components/public/GoogleMap";
 export default {
   name: "Public",
@@ -101,20 +102,39 @@ export default {
         { title: "Christian Parenting 2", date: "2019-01-19" }
       ],
       events: [],
+      pageLoaded: false,
+      filterStart: "",
+      filterEnd: "",
       homegroups: [],
-      pageLoaded: false
+      groupLocations: []
     };
   },
   mounted() {
     this.pageLoaded = false;
     this.getHomegroupLocations();
     this.getEventData();
-    this.$http.get(`/api/v1/events/?return_group=all&sort=start`).then(resp => {
-      this.events = resp.data;
-      this.events = this.events.slice(0, 5);
-      console.log(resp.data);
-      this.pageLoaded = true;
-    });
+
+    this.filterStart = this.today;
+    this.filterEnd = this.addDaystoDate(this.today, 30);
+  },
+
+  computed: {
+    today() {
+      return this.getDateFromTimestamp(Date.now());
+    },
+
+    filteredEvents() {
+      const start = this.getTimestamp(this.filterStart);
+      const end = this.getTimestamp(this.addDaystoDate(this.filterEnd, 1));
+
+      // eslint-disable-next-line
+      this.events = this.events.filter(
+        ev => new Date(ev.start) <= end && new Date(ev.start) >= start
+      );
+      return this.events.slice(0, 5);
+    },
+
+    ...mapGetters(["currentLanguageCode"])
   },
 
   methods: {
@@ -127,6 +147,47 @@ export default {
         hour: "2-digit",
         minute: "2-digit"
       });
+    },
+
+    getEventData() {
+      this.pageLoaded = false;
+      this.$http
+        .get(`/api/v1/events/?return_group=all&sort=start`)
+        .then(resp => {
+          this.events = resp.data;
+          // console.log(resp.data);
+          this.pageLoaded = true;
+        });
+    },
+
+    getDateFromTimestamp(ts) {
+      let date = new Date(ts);
+      if (date.getTime() < 86400000) {
+        //ms in a day
+        return "";
+      }
+      let yr = date.toLocaleDateString(this.currentLanguageCode, {
+        year: "numeric"
+      });
+      let mo = date.toLocaleDateString(this.currentLanguageCode, {
+        month: "2-digit"
+      });
+      let da = date.toLocaleDateString(this.currentLanguageCode, {
+        day: "2-digit"
+      });
+      return `${yr}-${mo}-${da}`;
+    },
+
+    getTimestamp(date) {
+      let datems = new Date(date).getTime();
+      let tzoffset = new Date().getTimezoneOffset() * 60000;
+      return new Date(datems + tzoffset);
+    },
+
+    addDaystoDate(date, dayDuration) {
+      let date1 = this.getTimestamp(date);
+      date1.setDate(date1.getDate() + dayDuration);
+      return this.getDateFromTimestamp(date1);
     },
 
     async getHomegroupLocations() {

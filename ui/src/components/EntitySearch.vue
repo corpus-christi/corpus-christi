@@ -84,7 +84,7 @@ export default {
     },
     searchableEntities() {
       if (this.existingEntities) {
-        this.entities = this.entities.filter(ent => {
+        return this.entities.filter(ent => {
           for (let otherEnt of this.existingEntities) {
             if (ent[this.idField] == otherEnt[this.idField]) {
               return false;

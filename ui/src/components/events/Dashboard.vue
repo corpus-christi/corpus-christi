@@ -22,7 +22,10 @@
               $t("events.dashboard.headers.home-group-percentage")
             }}</v-toolbar-title>
           </v-toolbar>
-          <ve-liquidfill :data="homeGroupPercentageData" align-center></ve-liquidfill>
+          <ve-liquidfill
+            :data="homeGroupPercentageData"
+            align-center
+          ></ve-liquidfill>
         </v-card>
       </v-flex>
       <v-flex xs12 sm12 md12 lg12 xl12>
@@ -148,8 +151,8 @@ export default {
           .get(`/api/v1/groups/members`)
           .then(resp => {
             console.log("GOT DATA", resp);
-            this.homeGroupPercentageData.rows[0].percent =
-              resp.data.length / arr[arr.length - 1].attendance;
+            this.homeGroupPercentageData.rows[0].percent = 0.5;
+            // resp.data.length / arr[arr.length - 1].attendance;
             this.loading = false;
           })
           .catch(err => {
@@ -174,7 +177,7 @@ export default {
         rows: [
           {
             homeGroups: this.$t("events.dashboard.charts.home-groups"),
-            percent: 1
+            percent: 0
           }
         ]
       },
