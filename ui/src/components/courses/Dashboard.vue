@@ -109,7 +109,7 @@ export default {
               enrollmentData[courseName] += studentResp.data.length;
 
               if (
-                ++enrollmentSubdataCount == resp.data.length 
+                ++enrollmentSubdataCount == resp.data.length
                 /* FIXME: && graduationSubdataCount == resp.data.length */
               ) {
                 enrollmentAndGraduationDataComplete(this);
@@ -190,7 +190,8 @@ export default {
         rows: []
       },
       attendanceSankeySettings: {
-        links: [ // NOTE: This is stub data and should be changed
+        links: [
+          // NOTE: This is stub data and should be changed
           {
             source: "Course A",
             target: this.$t("courses.dashboard.charts.attended"),
