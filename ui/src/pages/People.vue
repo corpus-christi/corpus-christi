@@ -1,23 +1,27 @@
 <template>
   <v-container>
     <v-tabs color="transparent" slider-color="accent">
-      <v-tab ripple>
-        <v-icon>person</v-icon>&nbsp;{{ $t("people.title") }}
+      <v-tab ripple data-cy="person-table-tab">
+        <v-icon>person</v-icon>
+        &nbsp;{{ $t("people.title") }}
       </v-tab>
       <v-tab-item>
         <PersonTable
           v-bind:peopleList="peopleList"
           v-bind:rolesList="rolesList"
+          v-bind:tableLoaded="tableLoaded"
           v-on:fetchPeopleList="fetchPeopleList"
         />
       </v-tab-item>
-      <v-tab ripple>
-        <v-icon>supervisor_account</v-icon>&nbsp;{{ $t("people.title-roles") }}
+      <v-tab ripple data-cy="roles-table-tab">
+        <v-icon>supervisor_account</v-icon>
+        &nbsp;{{ $t("people.title-roles") }}
       </v-tab>
       <v-tab-item>
         <RolesTable
           v-bind:peopleList="peopleList"
           v-bind:rolesList="rolesList"
+          v-bind:tableLoaded="tableLoaded"
           v-on:fetchPeopleList="fetchPeopleList"
         />
       </v-tab-item>
@@ -38,17 +42,20 @@ export default {
   data() {
     return {
       peopleList: [],
-      rolesList: []
+      rolesList: [],
+      tableLoaded: false
     };
   },
 
   methods: {
     fetchPeopleList() {
+      this.tableLoaded = false;
       this.$http
         .get("/api/v1/people/persons")
         .then(resp => {
           console.log("FETCHED PEOPLE", resp);
           this.peopleList = resp.data;
+          this.tableLoaded = true;
         })
         .catch(err => console.error("FAILURE", err.response));
     },
@@ -72,8 +79,8 @@ export default {
   },
 
   mounted: function() {
-    this.fetchPeopleList();
     this.fetchRolesList();
+    this.fetchPeopleList();
   }
 };
 </script>

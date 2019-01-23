@@ -7,7 +7,7 @@ from flask_jwt_extended import create_access_token
 
 from flask import jsonify
 
-#Needed for pruning events
+# Needed for pruning events
 from datetime import datetime, timedelta
 
 from src import create_app
@@ -27,6 +27,7 @@ from src.courses.models import Course, Course_Offering, Diploma
 from src.courses.test_courses import create_multiple_courses, create_multiple_course_offerings,\
     create_multiple_diplomas, create_multiple_students, create_class_meetings,\
     create_diploma_awards, create_class_attendance, create_multiple_prerequisites, create_course_completion
+from src.groups.create_group_data import create_group_test_data
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 
@@ -63,6 +64,7 @@ def load_languages():
 def load_roles():
     Role.load_from_file()
 
+
 @data_cli.command('load-attribute-types', help='Load attribute types')
 def load_attribute_types():
     Attribute.load_types_from_file()
@@ -84,7 +86,6 @@ def load_all():
     create_multiple_addresses(db.session, 10)
     create_multiple_locations(db.session, 20)
 
-
     create_images_test_data(db.session)
 
     create_multiple_people(db.session, 17)
@@ -104,7 +105,8 @@ def load_all():
 
     create_multiple_people_attributes(db.session, 5)
     create_multiple_managers(db.session, 2, 'Group Overseer')
-    create_multiple_managers(db.session, 5, 'Group Leader', 'Group Overseer')
+    create_multiple_managers(db.session, 5, 'Group Leader')
+    create_group_test_data(db.session)
 
 
 @data_cli.command('test', help='Load everything')
@@ -161,6 +163,7 @@ def update_password(username, password):
     db.session.commit()
     print(f"Password for '{username}' updated")
 
+
 app.cli.add_command(user_cli)
 
 
@@ -183,15 +186,16 @@ def create_course(name, description, prereq, offering):
         if str.isnumeric(prereq):
             for i in range(int(prereq)):
                 course.prerequisites.append(Course(name=f"prereq course{i}",
-                        description=f"here we are using the command line.{i}"))
+                                                   description=f"here we are using the command line.{i}"))
         else:
-            prereq_course = db.session.query(Course).filter_by(name=prereq).first()
+            prereq_course = db.session.query(
+                Course).filter_by(name=prereq).first()
             print(prereq_course)
             course.prerequisites.append(prereq_course)
 
     if offering is not None:
         course_offering = Course_Offering(course_id=course.id,
-                        description=offering, max_size=2, active=True)
+                                          description=offering, max_size=2, active=True)
         course.courses_offered.append(course_offering)
     db.session.add(course)
     db.session.commit()
@@ -225,6 +229,7 @@ app.cli.add_command(diploma_cli)
 
 maintain_cli = AppGroup('maintain', help="Mantaining the database.")
 
+
 @maintain_cli.command('prune-events', help="Sets events that have ended before <pruningOffset> to inactive")
 def prune_events():
     events = db.session.query(Event).filter_by(active=True).all()
@@ -233,5 +238,6 @@ def prune_events():
         if(event.end < pruningOffset):
             event.active = False
     db.session.commit()
+
 
 app.cli.add_command(maintain_cli)

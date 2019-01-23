@@ -1,13 +1,17 @@
 <template>
   <v-container>
-    <span class="title">{{ label }}</span>
-    <v-radio-group row :value="value" @change="$emit('input', $event)">
+    <span class="title">{{ $t(attribute.name) }}</span>
+    <v-radio-group
+      row
+      :value="attribute.value"
+      @change="$emit('input', { stringValue: '', enumValueId: $event })"
+    >
       <v-radio
-        v-for="(option, index) in options"
+        v-for="(enumerateValue, index) in attribute.enumerated_values"
         :key="index"
-        :label="option.label"
-        :name="option.name"
-        :value="option.value"
+        :label="$t(enumerateValue.value)"
+        :name="$t(enumerateValue.value)"
+        :value="enumerateValue.id"
       ></v-radio>
     </v-radio-group>
   </v-container>
@@ -17,20 +21,8 @@
 export default {
   name: "Radio",
   props: {
-    options: {
-      type: Array,
-      required: true
-    },
-    label: {
-      type: String,
-      required: true
-    },
-    name: {
-      type: String,
-      required: true
-    },
-    value: {
-      type: Number,
+    attribute: {
+      type: Object,
       required: true
     }
   }
