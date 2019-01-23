@@ -945,3 +945,30 @@ def test_update_location_no_exist(auth_client):
     
     # THEN expect the location not to be found
     assert resp.status_code == 404
+
+
+#   -----   __repr__
+
+
+@pytest.mark.smoke
+def test_repr_country(auth_client):
+    country = Country()
+    country.__repr__()
+
+
+@pytest.mark.smoke
+def test_repr_area(auth_client):
+    area = Area()
+    area.__repr__()
+
+
+@pytest.mark.smoke
+def test_repr_location(auth_client):
+    location = Location()
+    location.__repr__()
+
+
+@pytest.mark.smoke
+def test_repr_address(auth_client):
+    address = Address()
+    address.__repr__()
