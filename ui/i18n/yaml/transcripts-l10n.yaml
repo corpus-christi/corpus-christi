@@ -21,3 +21,6 @@ transcripts:
     _desc: List of courses for a given diploma
     en: Courses for this Diploma
     es: Cursos para esta Diploma
+  add-diploma-this-student:
+    en: Add Diploma
+    es: Añadir Diploma

@@ -24,11 +24,9 @@
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
-        <td>{{ getDisplayDate(props.item.when) }}</td>
+        <td>{{ props.item.displayDate }}</td>
         <td>{{ props.item.location.description }}</td>
-        <td>
-          {{ props.item.teacher.firstName }} {{ props.item.teacher.lastName }}
-        </td>
+        <td>{{ props.item.teacher.compositeName }}</td>
         <td>
           <v-layout align-center justify-end>
             <v-tooltip bottom>
@@ -146,9 +144,9 @@ export default {
   computed: {
     headers() {
       return [
-        { text: this.$t("courses.when"), value: "when", width: "25%" },
-        { text: this.$t("courses.location"), value: "location", width: "25%" },
-        { text: this.$t("courses.teacher"), value: "teacher", width: "25%" },
+        { text: this.$t("courses.when"), value: "displayDate", width: "33%" },
+        { text: this.$t("courses.location"), value: "location.description", width: "33%" },
+        { text: this.$t("courses.teacher"), value: "teacher.compositeName", width: "33%" },
         { text: this.$t("actions.header"), sortable: false }
       ];
     },
@@ -156,7 +154,8 @@ export default {
   },
 
   watch: {
-    $route: "loadMeetings"
+    $route: "loadMeetings",
+    currentLanguageCode: "updateCompositeProperties"
   },
 
   methods: {
@@ -169,13 +168,24 @@ export default {
         )
         .then(resp => {
           this.meetings = resp.data;
+          this.updateCompositeProperties();
         })
-        .catch(() => {
+        .catch(err => {
+          console.log("LOAD MEETINGS ERR", err);
           this.loadingFailed = true;
         })
         .finally(() => {
           this.loading = false;
         });
+    },
+
+    updateCompositeProperties() {
+      this.meetings.forEach(meeting => {
+        // TODO if better, localized way to get a person's full name, use that instead of just appending names together
+        meeting.teacher.compositeName = meeting.teacher.firstName + " " + meeting.teacher.lastName;
+        meeting.displayDate = this.getDisplayDate(meeting.when);
+        return meeting;
+      });
     },
 
     activateClassMeetingDialog(classMeeting = {}, editMode = false) {

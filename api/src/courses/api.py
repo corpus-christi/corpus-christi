@@ -338,7 +338,6 @@ def read_all_diplomas():
         diploma.studentList = students
     return jsonify(diploma_schema.dump(result, many=True))
 
-
 @courses.route('/diplomas/<int:diploma_id>')
 @jwt_required
 def read_one_diploma(diploma_id):
@@ -450,6 +449,7 @@ diploma_awarded_schema = Diploma_AwardedSchema()
 @jwt_required
 def create_diploma_awarded():
     try:
+        print(request.json)
         valid_diploma_awarded = diploma_awarded_schema.load(request.json)
     except ValidationError as err:
         return jsonify(err.messages), 422
