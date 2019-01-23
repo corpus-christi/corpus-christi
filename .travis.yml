@@ -14,11 +14,13 @@ matrix:
                   install:
                           #- yarn  cache clean
                   #install:
+                        - cd ui/
                         - yarn install 
                   script:
                          
                           #- yarn upgrade --latest 
                         - yarn build
+                        - cd ../
                 - language: python
                   python: "3.7"
                   dist: "xenial"
