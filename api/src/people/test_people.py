@@ -813,3 +813,21 @@ def test_read_all_persons(auth_client):
     assert resp.status_code == 200
     assert len(resp.json) == person_count
 
+def create_person(sqla, first_name, last_name, gender, birthday, phone, email, active=True, address_id=None):
+    person_schema = PersonSchema()
+    person_payload = {
+            'firstName': first_name, 
+            'lastName': last_name, 
+            'gender': gender, 
+            'birthday': str(birthday), 
+            'phone': phone, 
+            'email': email, 
+            'active': active
+    }
+    if address_id:
+        person_payload['address_id'] = address_id
+    valid_person = person_schema.load(person_payload)
+    person = Person(**valid_person)
+    sqla.add(person)
+    sqla.commit()
+    return person.id

@@ -9,6 +9,8 @@ test-db.sqlite
 venv/
 credentials.py
 credentials.sh
+data/
+
 
 # UI
 node_modules/
@@ -22,3 +24,4 @@ screenshots/
 dist/
 .vscode/
 .DS_Store
+*.swp

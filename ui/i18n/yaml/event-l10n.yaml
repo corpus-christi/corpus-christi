@@ -1,4 +1,28 @@
 events:
+  dashboard:
+    title:
+      en: Dashboard
+      es: Tablero
+    headers:
+      location-attendance:
+        en: Attendance by Location
+        es: Asistencia por Ubicación
+      yearly-attendance:
+        en: Yearly Attendance
+        es: Asistencia Anual
+      home-group-percentage:
+        en: Percentage of Churchgoers in a Home Group
+        es: Porcentaje de Feligreses en un Grupo de Hogar
+    charts:
+      home-groups:
+        en: Home Groups
+        es: Iglesias Hogares
+      campus:
+        en: Campus
+        es: Campus
+      attendance:
+        en: Attendance
+        es: Asistencia
   header:
     en: Events
     es: Eventos
@@ -7,7 +31,20 @@ events:
     es: Título del Evento
   event-description:
     en: Event Description
-    es: Descripción del Evento
+    es: Descripción del Evento 
+  attendance:
+    en: Attendance
+    es: Concurrencia
+  attendance-label:
+    en: Enter a number
+    es: Ingrese un numero
+  attendance-none:
+    en: None
+    es: Ninguno
+  calendar:
+    title:
+      en: Calendar
+      es: Calendario
   start-date:
     en: Start Date
     es: Fecha de Inicio
@@ -26,6 +63,12 @@ events:
   location:
     en: Location
     es: Ubicación
+  upload-image:
+    en: Upload Image
+    es: Cargar Imagen
+  image-description:
+    en: Image Description
+    es: Descripción de la Imagen
   all-events:
     en: All Events
     es: Todos Eventos
@@ -64,8 +107,8 @@ events:
     es: Error al agregar evento
   details:
     title:
-      en: Details
-      es: Detalles
+      en: Event Details
+      es: Detalles del Evento
   participants:
     title:
       en: Participants

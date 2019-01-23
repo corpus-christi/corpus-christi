@@ -59,6 +59,48 @@ def event_object_factory(sqla):
         event['attendance'] = random.randint(0, 1500)
     return event
 
+def event_object_factory_approx_one_week_ago(sqla):
+    """Cook up a fake event."""
+    event = {
+        'title': rl_fake().word(),
+        'start': str(rl_fake().date_time_between(start_date="-1w", end_date="-3d", tzinfo=None)),
+        'end': str(rl_fake().date_time_between(start_date="-3d", end_date="+0d", tzinfo=None)),
+        'active': flip(),
+        'aggregate': flip()
+    }
+
+    # These are all optional in the DB. Over time, we'll try all possibilities.
+    if flip():
+        event['description'] = rl_fake().sentences(nb=1)[0]
+    if flip():
+        all_locations = sqla.query(Location).all()
+        if len(all_locations) > 0:
+            event['location_id'] = all_locations[random.randint(0, len(all_locations)-1)].id
+    if flip():
+        event['attendance'] = random.randint(0, 1500)
+    return event
+
+def event_object_factory_long_ago(sqla):
+    """Cook up a fake event."""
+    event = {
+        'title': rl_fake().word(),
+        'start': str(rl_fake().date_time_between(start_date="-11y", end_date="-1m", tzinfo=None)),
+        'end': str(rl_fake().date_time_between(start_date="-1m", end_date="+0d", tzinfo=None)),
+        'active': flip(),
+        'aggregate': flip()
+    }
+
+    # These are all optional in the DB. Over time, we'll try all possibilities.
+    if flip():
+        event['description'] = rl_fake().sentences(nb=1)[0]
+    if flip():
+        all_locations = sqla.query(Location).all()
+        if len(all_locations) > 0:
+            event['location_id'] = all_locations[random.randint(0, len(all_locations)-1)].id
+    if flip():
+        event['attendance'] = random.randint(0, 1500)
+    return event
+
 
 def asset_object_factory(sqla):
     """Cook up a fake asset."""
@@ -140,7 +182,12 @@ def create_multiple_events(sqla, n):
     event_schema = EventSchema()
     new_events = []
     for i in range(n):
-        valid_events = event_schema.load(event_object_factory(sqla))
+        factory = event_object_factory
+        if flip():
+            factory = event_object_factory_long_ago
+        elif flip():
+            factory = event_object_factory_approx_one_week_ago
+        valid_events = event_schema.load(factory(sqla))
         new_events.append(Event(**valid_events))
     sqla.add_all(new_events)
     sqla.commit()
@@ -228,7 +275,7 @@ def create_teams_members(sqla, fraction=0.75):
 
 def create_events_test_data(sqla):
     """The function that creates test data in the correct order """
-    create_multiple_events(sqla, 18)
+    create_multiple_events(sqla, 300)
     create_multiple_assets(sqla, 12)
     create_multiple_teams(sqla, 13)
     create_events_assets(sqla, 0.75)
@@ -242,4 +289,60 @@ def get_team_ids(teams):
     for team in teams:
         ids.append(team['id'])
     return ids
+
+# Create a team in database, return the id
+def create_team(sqla, description, active=True):
+    team_schema = TeamSchema()
+    team_payload = {
+            'description': description,
+            'active': active
+    }
+    valid_team = team_schema.load(team_payload)
+    team = Team(**valid_team)
+    sqla.add(team)
+    sqla.commit()
+    return team.id
+
+def create_event(sqla, title, description, start, end, location_id = None, active=True):
+    event_schema = EventSchema()
+    event_payload = {
+            'title': title,
+            'description': description,
+            'start': str(start),
+            'end': str(end),
+            'active': active
+    }
+    if location_id:
+        event_payload['location_id'] = location_id
+    valid_event = event_schema.load(event_payload)
+    event = Event(**valid_event)
+    sqla.add(event)
+    sqla.commit()
+    return event.id
+
+def create_event_person(sqla, event_id, person_id, description):
+    event_person_schema = EventPersonSchema()
+    event_person_payload = {
+            'event_id': event_id,
+            'person_id': person_id,
+            'description': description
+    }
+    valid_event_person = event_person_schema.load(event_person_payload)
+    event_person = EventPerson(**valid_event_person)
+    sqla.add(event_person)
+    sqla.commit()
+    return event_person_payload
+
+def create_event_participant(sqla, event_id, person_id, confirmed=True):
+    event_participant_schema = EventParticipantSchema()
+    event_participant_payload = {
+            'event_id': event_id,
+            'person_id': person_id,
+            'confirmed': confirmed
+    }
+    valid_event_participant = event_participant_schema.load(event_participant_payload)
+    event_participant = EventParticipant(**valid_event_participant)
+    sqla.add(event_participant)
+    sqla.commit()
+    return event_participant_payload
 

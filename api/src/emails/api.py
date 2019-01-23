@@ -17,6 +17,7 @@ from .. import mail
 @emails.route('/', methods=['POST'])
 @jwt_required
 def send_email():
+    # this route is intended to fail without proper credentials
     email_schema = EmailSchema()
     try:
         valid_email_request = email_schema.load(request.json)

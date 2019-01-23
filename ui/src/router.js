@@ -41,7 +41,8 @@ const router = new VueRouter({
       name: "admin",
       path: "/admin",
       meta: { authRequired: true },
-      component: () => import("@/pages/Admin")
+      // component: () => import("@/pages/Admin")
+      component: () => import("@/components/events/Dashboard")
     },
     {
       name: "people",
@@ -69,37 +70,37 @@ const router = new VueRouter({
           component: () => import("@/components/events/EventTable")
         },
         {
+          name: "events-dashboard",
+          path: "dashboard",
+          meta: { authRequired: true },
+          component: () => import("@/components/events/Dashboard")
+        },
+        {
           name: "events-calendar",
           path: "calendar",
           meta: { authRequired: true },
           component: () => import("@/components/events/Calendar")
+        }
+      ]
+    },
+    {
+      name: "event",
+      path: "/event/:event",
+      meta: { authRequired: true },
+      redirect: { name: "event-details" },
+      component: () => import("@/components/events/Event"),
+      children: [
+        {
+          name: "event-details",
+          path: "details",
+          meta: { authRequired: true },
+          component: () => import("@/components/events/EventDetails")
         },
         {
-          name: "event",
-          path: ":event",
+          name: "event-participants",
+          path: "participants",
           meta: { authRequired: true },
-          redirect: { name: "event-details" },
-          component: () => import("@/components/events/Event"),
-          children: [
-            {
-              name: "event-details",
-              path: "details",
-              meta: { authRequired: true },
-              component: () => import("@/components/events/EventDetails")
-            },
-            {
-              name: "event-participants",
-              path: "participants",
-              meta: { authRequired: true },
-              component: () => import("@/components/events/EventParticipants")
-            },
-            {
-              name: "event-assets",
-              path: "assets",
-              meta: { authRequired: true },
-              component: () => import("@/components/events/assets/EventAssets")
-            }
-          ]
+          component: () => import("@/components/events/EventParticipants")
         }
       ]
     },
@@ -149,6 +150,12 @@ const router = new VueRouter({
       component: () => import("@/pages/Courses"),
       redirect: { name: "all-courses" },
       children: [
+        {
+          name: "courses-dashboard",
+          path: "dashboard",
+          meta: { authRequired: true },
+          component: () => import("@/components/courses/Dashboard")
+        },
         {
           name: "all-courses",
           path: "all",

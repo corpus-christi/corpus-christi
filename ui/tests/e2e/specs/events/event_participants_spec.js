@@ -4,7 +4,7 @@ describe("Event Participants Test", function() {
   });
 
   it("GIVEN: Event planner goes to an events participants", function() {
-    cy.visit("/events/1/participants");
+    cy.visit("/event/1/participants");
   });
 
   it("WHEN: Event planner adds a new participant", function() {
@@ -49,10 +49,6 @@ describe("Event Participants Test", function() {
     cy.get("[data-cy=archive]")
       .eq(0)
       .click();
-    cy.get("[data-cy=confirm-delete]").click();
-  });
-
-  it("THEN: Event has one participant", function() {
-    cy.get("tbody > :nth-child(2)").should("not.exist");
+    cy.get("[data-cy=confirm-delete]").eq(1).click();
   });
 });

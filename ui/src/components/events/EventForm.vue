@@ -207,6 +207,7 @@
         />
       </form>
     </v-card-text>
+    <v-divider></v-divider>
     <v-card-actions>
       <v-btn
         color="secondary"
@@ -252,8 +253,11 @@
 import { isEmpty } from "lodash";
 import { mapGetters } from "vuex";
 import EntitySearch from "../EntitySearch";
+
 export default {
-  components: { "entity-search": EntitySearch },
+  components: {
+    "entity-search": EntitySearch
+  },
   name: "EventForm",
   watch: {
     // Make sure data stays in sync with any changes to `initialData` from parent.

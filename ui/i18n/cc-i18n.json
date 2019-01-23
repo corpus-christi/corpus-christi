@@ -92,6 +92,21 @@
       "confirm-archive": "Are you sure you want to archive this course?",
       "course": "Courses",
       "course-offering": "Course Offerings",
+      "dashboard": {
+        "charts": {
+          "attended": "Attended",
+          "course": "Course",
+          "did-not-attend": "Did Not Attend",
+          "did-not-graduate": "Did Not Graduate",
+          "enrolled": "Enrolled",
+          "graduated": "Graduated"
+        },
+        "headers": {
+          "course-retention": "Course Retention",
+          "course-success": "Course Success"
+        },
+        "title": "Dashboard"
+      },
       "dates": "Choose Dates",
       "description": "Description",
       "enrolled": "Number Enrolled",
@@ -121,10 +136,29 @@
     },
     "events": {
       "all-events": "All Events",
+      "attendance": "Attendance",
+      "attendance-label": "Enter a number",
+      "attendance-none": "None",
+      "calendar": {
+        "title": "Calendar"
+      },
       "confirm-archive": "Are you sure you want to archive this event?",
       "create-event": "Create Event",
+      "dashboard": {
+        "charts": {
+          "attendance": "Attendance",
+          "campus": "Campus",
+          "home-groups": "Home Groups"
+        },
+        "headers": {
+          "home-group-percentage": "Percentage of Churchgoers in a Home Group",
+          "location-attendance": "Attendance by Location",
+          "yearly-attendance": "Yearly Attendance"
+        },
+        "title": "Dashboard"
+      },
       "details": {
-        "title": "Details"
+        "title": "Event Details"
       },
       "edit-event": "Edit Event",
       "end-date": "End Date",
@@ -140,6 +174,7 @@
       "event-location": "Event Location",
       "event-unarchived": "Event unarchived",
       "header": "Events",
+      "image-description": "Image Description",
       "location": "Location",
       "participants": {
         "add": "Add Participants",
@@ -167,7 +202,8 @@
       },
       "start-date": "Start Date",
       "start-time": "Start Time",
-      "title": "Event Title"
+      "title": "Event Title",
+      "upload-image": "Upload Image"
     },
     "groups": {
       "title": "Home Churches"
@@ -230,6 +266,7 @@
       "title": "Public"
     },
     "teams": {
+      "all-teams": "All Teams",
       "confirm-archive": "Are you sure you want to archive this team?",
       "confirm-remove-from-event": "Are you sure you want to remove this team from this event?",
       "create-team": "Create Team",
@@ -255,6 +292,7 @@
     },
     "validation": {
       "attributes": {
+        "attendance": "attendance",
         "email": "email",
         "endDate": "end date",
         "firstName": "first name",
@@ -364,6 +402,21 @@
       "confirm-archive": "\u00bfEst\u00e1s seguro que quieres archivar este curso?",
       "course": "Cursos",
       "course-offering": "Ofertas de Cursos",
+      "dashboard": {
+        "charts": {
+          "attended": "Asisti\u00f3",
+          "course": "Curso",
+          "did-not-attend": "No Asisti\u00f3",
+          "did-not-graduate": "No Se Gradu\u00f3",
+          "enrolled": "Inscrito",
+          "graduated": "Se Gradu\u00f3"
+        },
+        "headers": {
+          "course-retention": "Retenci\u00f3n del Curso",
+          "course-success": "\u00c9xito del Curso"
+        },
+        "title": "Tablero"
+      },
       "dates": "Elegir Fechas",
       "description": "Descripci\u00f3n",
       "enrolled": "N\u00famero Registrado",
@@ -393,10 +446,29 @@
     },
     "events": {
       "all-events": "Todos Eventos",
+      "attendance": "Concurrencia",
+      "attendance-label": "Ingrese un numero",
+      "attendance-none": "Ninguno",
+      "calendar": {
+        "title": "Calendario"
+      },
       "confirm-archive": "\u00bfSeguro que quieres archivar este evento?",
       "create-event": "Crear Evento",
+      "dashboard": {
+        "charts": {
+          "attendance": "Asistencia",
+          "campus": "Campus",
+          "home-groups": "Iglesias Hogares"
+        },
+        "headers": {
+          "home-group-percentage": "Porcentaje de Feligreses en un Grupo de Hogar",
+          "location-attendance": "Asistencia por Ubicaci\u00f3n",
+          "yearly-attendance": "Asistencia Anual"
+        },
+        "title": "Tablero"
+      },
       "details": {
-        "title": "Detalles"
+        "title": "Detalles del Evento"
       },
       "edit-event": "Editar Evento",
       "end-date": "Fecha Final",
@@ -412,6 +484,7 @@
       "event-location": "Ubicaci\u00f3n de Evento",
       "event-unarchived": "Evento desarchivado",
       "header": "Eventos",
+      "image-description": "Descripci\u00f3n de la Imagen",
       "location": "Ubicaci\u00f3n",
       "participants": {
         "add": "A\u00f1adir participantes",
@@ -439,7 +512,8 @@
       },
       "start-date": "Fecha de Inicio",
       "start-time": "Hora de Inicio",
-      "title": "T\u00edtulo del Evento"
+      "title": "T\u00edtulo del Evento",
+      "upload-image": "Cargar Imagen"
     },
     "groups": {
       "title": "Iglesias Hogar"
@@ -502,6 +576,7 @@
       "title": "P\u00fablico"
     },
     "teams": {
+      "all-teams": "Todos Equipos",
       "confirm-archive": "\u00bfSeguro que quieres archivar este equipo?",
       "confirm-remove-from-event": "\u00bfEst\u00e1s seguro de que quieres eliminar a este equipo de este evento?",
       "create-team": "Crear Equipo",
@@ -527,6 +602,7 @@
     },
     "validation": {
       "attributes": {
+        "attendance": "concurrencia",
         "email": "correo electr\u00f3nico",
         "endDate": "fecha final",
         "firstName": "nombre de pila",
