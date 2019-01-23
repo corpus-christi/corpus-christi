@@ -28,7 +28,7 @@
                                 </v-toolbar>
                                 <v-list three-line>
                                     <v-subheader >
-                                        {{ $t("transcripts.student-information") }}:
+                                        <h2>{{ $t("transcripts.student-information") }}:</h2>
                                     </v-subheader>
                                     <v-layout row>
                                         <v-flex xs12 sm10 offset-sm1>
@@ -52,17 +52,47 @@
                                         </div>
                                     </v-flex>
                                 </v-layout>
-
                                 <v-subheader >
-                                    {{ $t("transcripts.courses") }}:
+                                    <h2>{{ $t("diplomas.diplomas") }}:</h2>
+                                    <v-spacer></v-spacer>
+                                        <v-btn
+                                            color="primary"
+                                            raised
+                                            v-on:click.stop="newDiploma"
+                                            data-cy="add-diploma-this-student"
+                                        >
+                                            <v-icon left>library_add</v-icon>
+                                            {{ $t("diplomas.new") }}
+                                        </v-btn>
                                 </v-subheader>
-                                <template v-for="(course, index) in transcript.courses">
+                                <template v-for="(diploma, diplomaIndex) in transcript.diplomaList">
                                     <v-list-tile
-                                        :key=index
+                                        :key=diplomaIndex
                                     >
                                     <v-list-tile-content>
-                                        <v-list-tile-title v-html="course.name"></v-list-tile-title>
-                                        <v-list-tile-sub-title v-html="course.description"></v-list-tile-sub-title>
+                                        <v-list-tile-title><span class="font-weight-bold">{{diploma.name}}</span></v-list-tile-title>
+                                        - ...list of courses required to complete this diploma... -
+                                    </v-list-tile-content>
+                                    </v-list-tile>
+                                </template>
+
+                                <v-subheader >
+                                    <h2>{{ $t("transcripts.courses-in-progress-or-completed") }}:</h2>
+                                </v-subheader>
+                                <template v-for="(course, index) in transcript.courses">
+                                    <!-- making a composite key to avoid duplicate key issue: https://github.com/vuejs/vue/issues/7323 -->
+                                    <v-list-tile
+                                        :key="course+`${index}`"
+                                    >
+                                    <v-list-tile-content>
+                                        <v-list-tile-title><span class="font-weight-bold">{{course.name}}:</span> {{course.description}}
+
+                                        </v-list-tile-title>
+                                        <ul>
+                                            <li v-for="courseOffering in course.courseOfferings" :key="courseOffering.id">
+                                                {{courseOffering.description}}
+                                            </li>
+                                        </ul>
                                     </v-list-tile-content>
                                     </v-list-tile>
                                 </template>
@@ -187,6 +217,9 @@ export default {
         .finally(() => {
           this.loading = false;
         });
+    },
+    newDiploma() {
+        console.log('add diploma');
     }
   }
 }
