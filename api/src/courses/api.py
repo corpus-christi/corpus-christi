@@ -287,7 +287,7 @@ def update_course_offering(course_offering_id):
     if course_offering is None:
         return "Course Offering NOT Found", 404
 
-    course_offering_json = course_offering_schema.load(request.json)
+    course_offering_json = course_offering_schema.load(request.json, partial=True)
     for attr in course_offering_json.keys():
         setattr(course_offering, attr, course_offering_json[attr])
 
@@ -560,8 +560,8 @@ def read_all_course_offering_students(course_offering_id):
     if co is None:
         return 'Course Offering NOT found', 404
     students = db.session.query(Student, Person).filter_by(offering_id=course_offering_id).join(Person).all()
-    if students == []:
-        return 'No students enrolled in this course', 404
+    # if students == []:
+    #     return 'No students enrolled in this course', 404
     student_list = []
     for i in students:
         s = student_schema.dump(i.Student)
