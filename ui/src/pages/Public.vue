@@ -16,7 +16,7 @@
               v-bind:key="idx"
               ><div slot="header">{{ course.name }}</div>
               <v-card>
-                <span class="grey--text">
+                <span>
                   <v-card-text>{{ course.description }}</v-card-text>
                 </span>
                 <v-card-actions>

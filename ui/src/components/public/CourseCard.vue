@@ -26,7 +26,7 @@
                 round
                 raised
                 color="primary"
-                @click="registrationFormDialog.show = true"
+                @click="registerClicked(course)"
               >
                 {{ $t("courses.register") }}
               </v-btn>
@@ -40,7 +40,7 @@
       <CourseRegistrationForm
         v-on:cancel="cancel"
         v-on:snackbar="showSnackbar($event)"
-        :course="course"
+        :activeOfferings="activeOfferings"
         v-on:registered="registeredPerson"
       />
     </v-dialog>
@@ -75,7 +75,9 @@ export default {
       snackbar: {
         show: false,
         message: ""
-      }
+      },
+      
+      activeOfferings: null
     };
   },
 
@@ -90,6 +92,14 @@ export default {
     showSnackbar(message) {
       this.snackbar.text = message;
       this.snackbar.show = true;
+    },
+    
+    registerClicked(course) {
+      this.activeOfferings = course.course_offerings.filter(
+        courseOffering => courseOffering.active
+      );
+            
+      this.registrationFormDialog.show = true;
     }
   }
 };

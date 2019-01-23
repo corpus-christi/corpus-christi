@@ -12,6 +12,8 @@
           name="description"
           rows="3"
           data-cy="course-offering-description"
+          v-validate="'required'"
+          v-bind:error-messages="errors.collect('description')"
         ></v-textarea>
 
         <v-flex xs7 md7>
@@ -20,7 +22,8 @@
             v-bind:label="$t('courses.max-size')"
             name="max-size"
             type="number"
-            v-validate="'integer'"
+            v-validate="'required'"
+            v-bind:error-messages="errors.collect('max-size')"
             data-cy="course-offering-max-size"
           ></v-text-field>
         </v-flex>

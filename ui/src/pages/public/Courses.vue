@@ -45,7 +45,6 @@ export default {
     this.pageLoaded = false;
     this.$http.get("/api/v1/courses/courses").then(resp => {
       this.courses = resp.data.filter(course => course.active);
-      console.log(resp.data);
       this.pageLoaded = true;
     });
   },
