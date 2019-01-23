@@ -1,60 +1,104 @@
 <template>
   <v-layout column>
-    <v-flex xs12>
-      <v-card class="ma-1">
-        <template v-if="eventLoaded">
-          <v-container fill-height fluid>
-            <v-flex xs9 sm9 align-end flexbox>
-              <span class="headline">{{ event.title }}</span>
-            </v-flex>
-            <v-layout xs3 sm3 align-end justify-end>
-              <v-btn
-                flat
+    <v-layout row wrap>
+      <v-flex xs12>
+        <v-card class="ma-1">
+          <template v-if="eventLoaded">
+            <v-container fill-height fluid>
+              <v-flex xs9 sm9 align-end flexbox>
+                <span class="headline">{{ event.title }}</span>
+              </v-flex>
+              <v-layout xs3 sm3 align-end justify-end>
+                <v-btn
+                  flat
+                  color="primary"
+                  data-cy="edit-event"
+                  v-on:click="editEvent(event)"
+                >
+                  <v-icon>edit</v-icon>&nbsp;{{ $t("actions.edit") }}
+                </v-btn>
+              </v-layout>
+            </v-container>
+            <v-card-text class="pa-4">
+              <v-layout row wrap>
+                <v-flex xs12 sm6>
+                  <div>
+                    <b>{{ $t("events.attendance") }}: </b>
+                    <span v-if="event.attendance != null">{{
+                      event.attendance
+                    }}</span>
+                    <span v-else>{{ $t("events.attendance-none") }}</span>
+                    <v-btn
+                      icon
+                      outline
+                      small
+                      color="primary"
+                      data-cy="edit-attendance"
+                      v-on:click="openAttendanceDialog()"
+                    >
+                      <v-icon small color="primary">edit</v-icon>
+                    </v-btn>
+                  </div>
+                  <div v-if="event.location">
+                    <b>{{ $t("events.location") }}: </b>
+                    <div class="multi-line ml-2">{{ displayLocation }}</div>
+                  </div>
+                  <div>
+                    <b>{{ $t("events.start-time") }}: </b
+                    >{{ getDisplayDate(event.start) }}
+                  </div>
+                  <div>
+                    <b>{{ $t("events.end-time") }}: </b
+                    >{{ getDisplayDate(event.end) }}
+                  </div>
+                  <div class="mt-2 mb-2">{{ event.description }}</div>
+                </v-flex>
+                <v-flex xs12 sm6>
+                  <!-- Image -->
+                  <template v-if="event.images && event.images.length > 0">
+                    <v-img
+                      max-height="400px"
+                      class="image picture"
+                      :src="'/api/v1/images/' + event.images[0].image.id"
+                    >
+                    </v-img>
+                  </template>
+
+                  <!-- Placeholder if no image uploaded -->
+                  <template v-else>
+                    <v-img class="picture" :src="arcoPlaceholder"> </v-img>
+                  </template>
+                </v-flex>
+              </v-layout>
+            </v-card-text>
+            <v-card-actions>
+              <v-layout justify-space-between wrap>
+                <v-btn
+                  flat
+                  ripple
+                  color="primary"
+                  data-cy="navigate-to-participants"
+                  :to="'/event/' + $route.params.event + '/participants'"
+                >
+                  <v-icon>person</v-icon>&nbsp;{{
+                    $t("events.participants.title")
+                  }}
+                </v-btn>
+              </v-layout>
+            </v-card-actions>
+          </template>
+          <v-layout v-else justify-center height="500px">
+            <div class="ma-5 pa-5">
+              <v-progress-circular
+                indeterminate
                 color="primary"
-                data-cy="edit-event"
-                v-on:click="editEvent(event)"
-              >
-                <v-icon>edit</v-icon>&nbsp;{{ $t("actions.edit") }}
-              </v-btn>
-            </v-layout>
-          </v-container>
-          <v-card-text class="pa-4">
-            <div v-if="event.location">
-              <b>{{ $t("events.location") }}: </b>
-              <div class="multi-line ml-2">{{ displayLocation }}</div>
+              ></v-progress-circular>
             </div>
-            <div>
-              <b>{{ $t("events.start-time") }}: </b
-              >{{ getDisplayDate(event.start) }}
-            </div>
-            <div>
-              <b>{{ $t("events.end-time") }}: </b
-              >{{ getDisplayDate(event.end) }}
-            </div>
-            <div class="mt-2">{{ event.description }}</div>
-          </v-card-text>
-          <v-card-actions>
-            <v-btn
-              flat
-              ripple
-              color="primary"
-              data-cy="navigate-to-participants"
-              v-on:click="navigateTo('/participants')"
-            >
-              <v-icon>person</v-icon>&nbsp;{{ $t("events.participants.title") }}
-            </v-btn>
-          </v-card-actions>
-        </template>
-        <v-layout v-else justify-center height="500px">
-          <div class="ma-5 pa-5">
-            <v-progress-circular
-              indeterminate
-              color="primary"
-            ></v-progress-circular>
-          </div>
-        </v-layout>
-      </v-card>
-    </v-flex>
+          </v-layout>
+        </v-card>
+      </v-flex>
+    </v-layout>
+
     <v-layout row wrap>
       <v-flex xs12 lg6>
         <v-layout column>
@@ -63,7 +107,7 @@
               :teams="event.teams"
               :loaded="teamsLoaded"
               v-on:snackbar="showSnackbar($event)"
-              v-on:team-added="getEvent()"
+              v-on:team-added="reloadTeams()"
             ></event-team-details>
           </v-flex>
           <v-flex>
@@ -71,7 +115,7 @@
               :persons="event.persons"
               :loaded="personsLoaded"
               v-on:snackbar="showSnackbar($event)"
-              v-on:person-added="getEvent()"
+              v-on:person-added="reloadPersons()"
             ></event-person-details>
           </v-flex>
         </v-layout>
@@ -81,7 +125,7 @@
           :assets="event.assets"
           :loaded="assetsLoaded"
           v-on:snackbar="showSnackbar($event)"
-          v-on:asset-added="getEvent()"
+          v-on:asset-added="reloadAssets()"
         ></event-asset-details>
       </v-flex>
     </v-layout>
@@ -103,6 +147,16 @@
         v-on:save="saveEvent"
       />
     </v-dialog>
+
+    <!-- Attendance dialog -->
+    <v-dialog v-model="attendanceDialog.show" persistent max-width="250px">
+      <event-attendance-form
+        v-bind:attendance="attendanceDialog.number"
+        v-bind:saving="attendanceDialog.saving"
+        v-on:cancel="attendanceDialog.show = false"
+        v-on:save-attendance="saveAttendance($event)"
+      ></event-attendance-form>
+    </v-dialog>
   </v-layout>
 </template>
 
@@ -112,6 +166,8 @@ import { mapGetters } from "vuex";
 import EventTeamDetails from "./EventTeamDetails";
 import EventAssetDetails from "./EventAssetDetails";
 import EventPersonDetails from "./EventPersonDetails";
+import EventAttendanceForm from "./EventAttendanceForm";
+import arcoPlaceholder from "../../../assets/arco-placeholder.jpg";
 
 export default {
   name: "EventDetails",
@@ -119,7 +175,8 @@ export default {
     "event-form": EventForm,
     "event-team-details": EventTeamDetails,
     "event-asset-details": EventAssetDetails,
-    "event-person-details": EventPersonDetails
+    "event-person-details": EventPersonDetails,
+    "event-attendance-form": EventAttendanceForm
   },
 
   data() {
@@ -131,6 +188,12 @@ export default {
         event: {}
       },
 
+      attendanceDialog: {
+        show: false,
+        saving: false,
+        number: null
+      },
+
       snackbar: {
         show: false,
         text: ""
@@ -138,7 +201,8 @@ export default {
       eventLoaded: false,
       teamsLoaded: false,
       assetsLoaded: false,
-      personsLoaded: false
+      personsLoaded: false,
+      arcoPlaceholder
     };
   },
 
@@ -178,7 +242,7 @@ export default {
       const id = this.$route.params.event;
       return this.$http
         .get(
-          `/api/v1/events/${id}?include_teams=1&include_assets=1&include_persons=1`
+          `/api/v1/events/${id}?include_teams=1&include_assets=1&include_persons=1&include_images=1`
         )
         .then(resp => {
           this.event = resp.data;
@@ -255,6 +319,7 @@ export default {
       delete newEvent.dayDuration;
       delete newEvent.teams;
       delete newEvent.id;
+      delete newEvent.images;
       const eventId = event.id;
       this.$http
         .put(`/api/v1/events/${eventId}`, newEvent)
@@ -273,6 +338,33 @@ export default {
         });
     },
 
+    openAttendanceDialog() {
+      this.attendanceDialog.show = true;
+      this.attendanceDialog.saving = false;
+      this.attendanceDialog.number = this.event.attendance;
+    },
+
+    closeAttendanceDialog() {
+      this.attendanceDialog.show = false;
+      this.attendanceDialog.saving = false;
+      this.attendanceDialog.number = null;
+    },
+
+    saveAttendance(number) {
+      const id = this.$route.params.event;
+      this.$http
+        .patch(`/api/v1/events/${id}`, { attendance: number })
+        .then(resp => {
+          console.log(resp);
+          this.event.attendance = resp.data.attendance;
+          this.closeAttendanceDialog();
+        })
+        .catch(err => {
+          console.error("ATTENDANCE PATCH FAILURE", err.response);
+          this.attendanceDialog.saving = false;
+        });
+    },
+
     getDisplayDate(ts) {
       let date = new Date(ts);
       return date.toLocaleTimeString(this.currentLanguageCode, {
@@ -281,12 +373,6 @@ export default {
         day: "numeric",
         hour: "2-digit",
         minute: "2-digit"
-      });
-    },
-
-    navigateTo(path) {
-      this.$router.push({
-        path: "/events/" + this.$route.params.event + path
       });
     },
 

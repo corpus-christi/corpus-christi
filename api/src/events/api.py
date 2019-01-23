@@ -389,13 +389,13 @@ def add_event_images(event_id, image_id):
         db.session.add(new_entry)
         db.session.commit()
 
-    return jsonify(f"Image with id #{image_id} successfully added to Event with id #{event_id}.")
+    return jsonify(f"Image with id #{image_id} successfully added to Event with id #{event_id}."), 201
 
 @events.route('/<event_id>/images/<image_id>', methods=['DELETE'])
 @jwt_required
 def delete_event_image(event_id, image_id):
     event_image = db.session.query(ImageEvent).filter_by(event_id=event_id,image_id=image_id).first()
-
+    
     if not event_image:
         return jsonify(f"Image with id #{image_id} is not assigned to Event with id #{event_id}."), 404
 

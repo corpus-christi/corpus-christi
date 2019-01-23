@@ -27,6 +27,9 @@ validation:
     team-description:
       en: team description
       es: descripción del equipo
+    attendance:
+      en: attendance
+      es: concurrencia
   messages:
     _default:
       en: Error

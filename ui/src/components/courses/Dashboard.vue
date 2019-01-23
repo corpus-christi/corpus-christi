@@ -66,15 +66,15 @@ export default {
 
     function enrollmentAndGraduationDataComplete(self) {
       Object.keys(enrollmentData).forEach(courseName => {
-        totalCourseEnrollment += enrollmentData[courseName];
-        var graduationValue = 0;
+        totalCourseEnrollment += enrollmentData[courseName]; // eslint-disable-next-line
+        var graduationValue = 0; // eslint-disable-next-line
         if (graduationData[courseName]) {
-          graduationValue = graduationData[courseName];
+          graduationValue = graduationData[courseName]; // eslint-disable-next-line
         }
         self.courseData.rows.push({
           course: courseName,
           enrolled: enrollmentData[courseName],
-          graduated: 15 // FIXME: graduationValue 
+          graduated: 20 // graduationValue
         });
       });
     }

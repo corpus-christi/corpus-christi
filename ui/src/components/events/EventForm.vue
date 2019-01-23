@@ -229,6 +229,7 @@
         />
       </form>
     </v-card-text>
+    <v-divider></v-divider>
     <v-card-actions>
       <v-btn
         color="secondary"

@@ -19,7 +19,7 @@ describe("Testing Editing User Information", () => {
     });
   });
   it("Then: The person's password can be changed", () => {
-    cy.get(".v-dialog__content--active > .v-dialog > .v-card").within(()=> {
+    cy.get(".v-dialog__content--active > .v-dialog > .v-card").within(() => {
       cy.get("[data-cy=new-update-password]").type("foobar123");
       cy.get("[data-cy=confirm-password]").type("foobar123");
       cy.get("[data-cy=confirm-button]").click();
@@ -45,7 +45,7 @@ describe("Testing Editing User Information", () => {
       cy.get("[data-cy=person-table").within(() => {
         cy.get("[data-cy=account-settings]").click();
       });
-      cy.get(".v-dialog__content--active > .v-dialog > .v-card").within(()=> {
+      cy.get(".v-dialog__content--active > .v-dialog > .v-card").within(() => {
         cy.get("[data-cy=new-update-password]").type("test");
         cy.get(
           ":nth-child(1) > .v-input__control > .v-text-field__details"
@@ -68,7 +68,7 @@ describe("Testing Editing User Information", () => {
     cy.get("[data-cy=person-table]").within(() => {
       cy.get("[data-cy=account-settings]").click();
     });
-    cy.get(".v-dialog__content--active > .v-dialog > .v-card").within(()=> {
+    cy.get(".v-dialog__content--active > .v-dialog > .v-card").within(() => {
       cy.get("[data-cy=cancel-button]").click();
       cy.get(".v-dialog__content--active > .v-dialog").should("not.exist");
     });
