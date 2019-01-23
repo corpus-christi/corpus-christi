@@ -1,0 +1,28 @@
+places:
+  create-address:
+    en: Create an Address
+    es: Crear una Dirección
+  address:
+    name:
+      en: Name
+      es: Nombre
+    address:
+      en: Address
+      es: Dirección
+    city:
+      en: City
+      es: Ciudad
+    latitude:
+      en: Latitude
+      es: Latitud
+    longitude:
+      en: Longitude
+      es: Longitud
+  location:
+    description:
+      en: Description
+      es: Descripción
+  messages:
+    no-results:
+      en: Your address returned no results.
+      es: Tu dirección no devolvió resultados

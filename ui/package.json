@@ -12,6 +12,7 @@
     "localize": "cd ./i18n && ./localize.sh"
   },
   "dependencies": {
+    "@pderas/vue2-geocoder": "^1.0.2",
     "axios": "^0.18.0",
     "@babel/core": "^7.0.0-0",
     "echarts": "^4.1.0",

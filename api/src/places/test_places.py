@@ -156,13 +156,13 @@ def test_create_area(auth_client):
     # GIVEN areas with good data
     for i in range(count):
         new_area = area_factory(auth_client.sqla)
-    
+
         # WHEN areas are attempted to be created
         resp = auth_client.post(url_for('places.create_area'), json = new_area)
-        
+
         # THEN expect creates to run OK
         assert resp.status_code == 201
-    
+
     # THEN expect rows to be created
     assert auth_client.sqla.query(Area).count() == count
 
@@ -182,7 +182,7 @@ def test_create_area_invalid(auth_client):
             new_area['country_code'] = None
         if not (new_area['name'] is None or new_area['country_code'] is None):
             new_area[fake.word()] = fake.word()
-        
+
         # WHEN areas with bad data are attempted to be created
         resp = auth_client.post(url_for('places.create_area'), json = new_area)
 
@@ -268,7 +268,7 @@ def test_replace_area_invalid(auth_client):
     Country.load_from_file()
     count = random.randint(3, 6)
     create_multiple_areas(auth_client.sqla, count)
-    
+
     areas = auth_client.sqla.query(Area).all()
 
     # GIVEN new areas with bad data
@@ -294,7 +294,7 @@ def test_update_area(auth_client):
     Country.load_from_file()
     count = random.randint(3, 6)
     create_multiple_areas(auth_client.sqla, count)
-    
+
     areas = auth_client.sqla.query(Area).all()
 
     # GIVEN good modifcation data
@@ -331,7 +331,7 @@ def test_update_area_invalid(auth_client):
     Country.load_from_file()
     count = random.randint(3, 6)
     create_multiple_areas(auth_client.sqla, count)
-    
+
     areas = auth_client.sqla.query(Area).all()
 
     # GIVEN bad modification data
@@ -360,7 +360,7 @@ def test_delete_area(auth_client):
     create_multiple_areas(auth_client.sqla, count)
 
     areas = auth_client.sqla.query(Area).all()
-    
+
     # WHEN areas are deleted
     deleted = 0
     for area in areas:
@@ -377,10 +377,10 @@ def test_delete_area(auth_client):
 @pytest.mark.smoke
 def test_delete_area_no_exist(auth_client):
     # GIVEN an empty database
-    
+
     # WHEN an area is requested to be deleted
     resp = auth_client.delete(url_for('places.delete_area', area_id = random.randint(1, 8)))
-    
+
     # THEN expect row not to be found
     assert resp.status_code == 404
 
@@ -816,6 +816,59 @@ def test_create_location_invalid(auth_client):
     # THEN expect no locations to be created
     assert auth_client.sqla.query(Location).count() == 0
 
+@pytest.mark.smoke
+def test_create_location_nested(auth_client):
+    # GIVEN with some countries
+    Country.load_from_file()
+    # WHEN we send a request with nested information
+    payload = {
+            'country_code': 'US',
+            'area_name': 'area name',
+            'latitude': 0,
+            'longitude': 0,
+            'city': 'Upland',
+            'address': '236 W. Reade Ave.',
+            'address_name': 'Taylor University',
+            'description': 'Euler 217'
+    }
+    resp = auth_client.post(url_for('places.create_location'), json = payload)
+    # THEN we expect the correct status code
+    assert resp.status_code == 201
+    # WHEN we expect an area being created
+    assert auth_client.sqla.query(Area).count() == 1
+    # THEN we expect an address to be created
+    assert auth_client.sqla.query(Address).count() == 1
+    # THEN we expect a location to be created
+    assert auth_client.sqla.query(Location).count() == 1
+
+    # WHEN we send another request with existing area and addresses
+    resp = auth_client.post(url_for('places.create_location'), json = payload)
+    # THEN we expect the correct status code
+    assert resp.status_code == 201
+    # WHEN we expect no area being created
+    assert auth_client.sqla.query(Area).count() == 1
+    # THEN we expect no address to be created
+    assert auth_client.sqla.query(Address).count() == 1
+    # THEN we expect 2 locations in total in the database
+    assert auth_client.sqla.query(Location).count() == 2
+
+    # WHEN we send an incomplete request
+    incomplete_payload = {
+            'country_code': 'US',
+            'latitude': 0,
+            'longitude': 0,
+            'city': 'Upland',
+            'address': '236 W. Reade Ave.',
+            'address_name': 'Taylor University',
+            'description': 'Euler 217'
+    }
+    resp = auth_client.post(url_for('places.create_location'), json = incomplete_payload)
+    # THEN we expect an error
+    assert resp.status_code == 422
+
+
+
+
 
 @pytest.mark.smoke
 def test_read_all_locations(auth_client):
@@ -1024,3 +1077,28 @@ def test_update_location_no_exist(auth_client):
     assert resp.status_code == 404
 
 
+#   -----   __repr__
+
+
+@pytest.mark.smoke
+def test_repr_country(auth_client):
+    country = Country()
+    country.__repr__()
+
+
+@pytest.mark.smoke
+def test_repr_area(auth_client):
+    area = Area()
+    area.__repr__()
+
+
+@pytest.mark.smoke
+def test_repr_location(auth_client):
+    location = Location()
+    location.__repr__()
+
+
+@pytest.mark.smoke
+def test_repr_address(auth_client):
+    address = Address()
+    address.__repr__()

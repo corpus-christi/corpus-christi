@@ -704,6 +704,11 @@
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/@nodelib/fs.stat/-/fs.stat-1.1.3.tgz#2b5a3ab3f918cca48a8c754c08168e3f03eba61b"
 
+"@pderas/vue2-geocoder@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@pderas/vue2-geocoder/-/vue2-geocoder-1.0.2.tgz#c2706fb3ca7fae2a612c9175a517e44ee560002d"
+  integrity sha512-QS1z486etzE8h0RwvvLG7A+R5Cx9Q+iYBb+WwwX6MJgLBHAH9BkR6+carRHxvT7ozV68hwoJCnKGY1RAouhBcA==
+
 "@types/blob-util@1.3.3":
   version "1.3.3"
   resolved "https://registry.yarnpkg.com/@types/blob-util/-/blob-util-1.3.3.tgz#adba644ae34f88e1dd9a5864c66ad651caaf628a"
