@@ -97,6 +97,21 @@
       "confirm-archive": "Are you sure you want to archive this course?",
       "course": "Courses",
       "course-offering": "Course Offerings",
+      "dashboard": {
+        "charts": {
+          "attended": "Attended",
+          "course": "Course",
+          "did-not-attend": "Did Not Attend",
+          "did-not-graduate": "Did Not Graduate",
+          "enrolled": "Enrolled",
+          "graduated": "Graduated"
+        },
+        "headers": {
+          "course-retention": "Course Retention",
+          "course-success": "Course Success"
+        },
+        "title": "Dashboard"
+      },
       "dates": "Choose Dates",
       "description": "Description",
       "enrolled": "Number Enrolled",
@@ -128,6 +143,19 @@
       "all-events": "All Events",
       "confirm-archive": "Are you sure you want to archive this event?",
       "create-event": "Create Event",
+      "dashboard": {
+        "charts": {
+          "attendance": "Attendance",
+          "campus": "Campus",
+          "home-groups": "Home Groups"
+        },
+        "headers": {
+          "home-group-percentage": "Percentage of Churchgoers in a Home Group",
+          "location-attendance": "Attendance by Location",
+          "yearly-attendance": "Yearly Attendance"
+        },
+        "title": "Dashboard"
+      },
       "details": {
         "title": "Details"
       },
@@ -436,6 +464,21 @@
       "confirm-archive": "\u00bfEst\u00e1s seguro que quieres archivar este curso?",
       "course": "Cursos",
       "course-offering": "Ofertas de Cursos",
+      "dashboard": {
+        "charts": {
+          "attended": "Asisti\u00f3",
+          "course": "Curso",
+          "did-not-attend": "No Asisti\u00f3",
+          "did-not-graduate": "No Se Gradu\u00f3",
+          "enrolled": "Inscrito",
+          "graduated": "Se Gradu\u00f3"
+        },
+        "headers": {
+          "course-retention": "Retenci\u00f3n del Curso",
+          "course-success": "\u00c9xito del Curso"
+        },
+        "title": "Tablero"
+      },
       "dates": "Elegir Fechas",
       "description": "Descripci\u00f3n",
       "enrolled": "N\u00famero Registrado",
@@ -467,6 +510,19 @@
       "all-events": "Todos Eventos",
       "confirm-archive": "\u00bfSeguro que quieres archivar este evento?",
       "create-event": "Crear Evento",
+      "dashboard": {
+        "charts": {
+          "attendance": "Asistencia",
+          "campus": "Campus",
+          "home-groups": "Iglesias Hogares"
+        },
+        "headers": {
+          "home-group-percentage": "Porcentaje de Feligreses en un Grupo de Hogar",
+          "location-attendance": "Asistencia por Ubicaci\u00f3n",
+          "yearly-attendance": "Asistencia Anual"
+        },
+        "title": "Tablero"
+      },
       "details": {
         "title": "Detalles"
       },
