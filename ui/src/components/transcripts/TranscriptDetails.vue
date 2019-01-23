@@ -26,8 +26,7 @@
                                         <span v-if="transcript.person.secondLastName">{{ transcript.person.secondLastName }}</span>
                                     </v-toolbar-title>
                                 </v-toolbar>
-                            
-                                <v-list three-line>
+
                                     <v-subheader >
                                         <h2>{{ $t("transcripts.student-information") }}:</h2>
                                     </v-subheader>
@@ -66,42 +65,40 @@
                                             {{ $t("transcripts.add-diploma-this-student") }}
                                         </v-btn>
                                 </v-subheader>
-                                <template v-for="(diploma, diplomaIndex) in transcript.diplomaList">
-                                    <v-list-tile
-                                        :key=diplomaIndex
-                                    >
-                                    <v-list-tile-content>
-                                        <v-list-tile-title><span class="font-weight-bold">{{diploma.name}}</span></v-list-tile-title>
-                                        <ul>
-                                            <li v-for="diplomaCourse in diploma.courses" :key="diplomaCourse+`${diplomaCourse.id}`">
+                                <v-layout row>
+                                    <v-flex xs12 sm10 offset-sm1>
+                                        <div v-for="diploma in transcript.diplomaList" :key="`diploma-`+`${diploma.id}`">
+                                            <!-- making a composite key to avoid duplicate key issue: https://github.com/vuejs/vue/issues/7323 -->
+                                            <h3>{{diploma.name}}:</h3>
+                                            <ul class="mb-2">
+                                            <li v-for="(diplomaCourse, diplomaCourseIndex) in diploma.courses" :key="`diplomaCourse-`+`${diplomaCourseIndex}`">
                                                 {{diplomaCourse.name}}
+                                                <span v-if="diplomaCourse.courseCompleted" class="green--text">{{ $t("transcripts.course-completed")}}</span>
                                             </li>
                                         </ul>
-                                    </v-list-tile-content>
-                                    </v-list-tile>
-                                </template>
-
+                                        </div>
+                                    </v-flex>
+                                </v-layout>
                                 <v-subheader >
                                     <h2>{{ $t("transcripts.courses-in-progress-or-completed") }}:</h2>
                                 </v-subheader>
-                                <template v-for="(course, index) in transcript.courses">
-                                    <!-- making a composite key to avoid duplicate key issue: https://github.com/vuejs/vue/issues/7323 -->
-                                    <v-list-tile
-                                        :key="course+`${index}`"
-                                    >
-                                    <v-list-tile-content>
-                                        <v-list-tile-title><span class="font-weight-bold">{{course.name}}:</span> {{course.description}}
+                                <v-layout row>
+                                    <v-flex xs12 sm10 offset-sm1>
+                                        <div v-for="(course, courseIndex) in transcript.courses" :key="`course-`+`${courseIndex}`">
+                                            <!-- making a composite key to avoid duplicate key issue: https://github.com/vuejs/vue/issues/7323 -->
+                                            <h3>
+                                                {{course.name}}: 
+                                                <span v-if="course.courseCompleted" class="green--text">{{ $t("transcripts.course-completed")}}</span>
+                                            </h3>
+                                            <ul class="mb-2">
+                                                <li v-for="(courseOffering, index) in course.courseOfferings" :key="`courseOffering-`+`${index}`">
+                                                    {{courseOffering.description}}
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </v-flex>
+                                </v-layout>
 
-                                        </v-list-tile-title>
-                                        <ul>
-                                            <li v-for="courseOffering in course.courseOfferings" :key="courseOffering+`${courseOffering.id}`">
-                                                {{courseOffering.description}}
-                                            </li>
-                                        </ul>
-                                    </v-list-tile-content>
-                                    </v-list-tile>
-                                </template>
-                                </v-list>
                             </v-card>
                         </v-flex>
                     </v-layout>
@@ -194,8 +191,6 @@ export default {
             console.log("ADDED", resp);
             let newDiploma = resp.data;
             this.loadTranscript();
-            //this.diplomas.push(newDiploma);
-            //console.log('new diploma list: ', this.diplomas);
         })
         .catch(err => {
             console.error("FAILURE", err);

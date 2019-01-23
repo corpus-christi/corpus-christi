@@ -34,11 +34,6 @@
           $t("actions.cancel")
         }}</v-btn>
         <v-spacer></v-spacer>
-        <!--
-        <v-btn color="primary" flat :disabled="saving" v-on:click="clear">{{
-          $t("actions.clear")
-        }}</v-btn>
-        -->
         <v-btn
           color="primary"
           raised
@@ -93,19 +88,11 @@ export default {
       this.diploma = {};
       this.$emit("cancel");
     },
-
-    /*
-    async clear() {
-      this.$refs.obs.reset();
-      this.$emit("clearForm");
-      
-      
-    },
-    */
     async save() {
       const result = await this.$refs.obs.validate();
-      console.log("result: ", result);
+      //console.log("result: ", result);
       if (result) {
+        this.$refs.obs.reset();
         this.$emit("save", this.diploma);
       }
     }
@@ -117,14 +104,14 @@ export default {
       .then(resp => 
         {
             this.diplomasPool = [];
-            console.log('diplomas fetched: ', resp);
+            //console.log('diplomas fetched: ', resp);
             resp.data.forEach(diploma => {
                 this.diplomasPool.push({
                     name: diploma.name,
                     id: diploma.id
                 });
             });
-            console.log('diplomasPool: ', this.diplomasPool);
+            //console.log('diplomasPool: ', this.diplomasPool);
             this.$refs.obs.validate();
         });
   }
