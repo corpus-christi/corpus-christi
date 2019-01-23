@@ -182,7 +182,7 @@ Route reads all prerequisites in database
 # @authorize(["role.superuser", "role.registrar", "role.public"])
 def read_all_prerequisites():
     result = db.session.query(Course).all()  # Get courses to get prereq's
-    if result is []:
+    if result == []:
         return 'No courses found', 404
     results = []  # new list
     for i in result:
@@ -248,7 +248,7 @@ def create_course_offering():
 # @authorize(["role.superuser", "role.registrar", "role.public"])
 def read_all_course_offerings():
     result = db.session.query(Course_Offering).all()
-    if result is []:
+    if result == []:
         return 'No Course Offerings found', 404
     results = course_offering_schema.dump(result, many=True)
     for r in results:
@@ -359,8 +359,12 @@ def read_one_diploma(diploma_id):
 @courses.route('/diplomas/<int:diploma_id>', methods=['PATCH'])
 @jwt_required
 def update_diploma(diploma_id):
+    diploma = db.session.query(Diploma).filter_by(id=diploma_id).first()
+    if diploma is None:
+        return 'Not Found', 404
+
     courseList = []
-    if 'courseList' in request.json:
+    if 'courseList' in request.json: 
         courseList = request.json['courseList']
         del request.json['courseList']
 
@@ -616,12 +620,13 @@ def read_one_student(student_id):
     if result == []:
         return 'Student not found', 404
     diplomas = []
-    for da in result.person.diplomas_awarded:
+    print(result)
+    for da in result[1].diplomas_awarded:
         diplomas.append(da.diplomas)
-    result.diplomaList = diplomas
+    result[0].diplomaList = diplomas
 
-    r = student_schema.dump(result[0].Student)
-    r['person'] = person_schema.dump(result[0].Person)
+    r = student_schema.dump(result[0])
+    r['person'] = person_schema.dump(result[1])
     r['courses'] = []
     r['diplomaList'] = []
     for i in result[0].Person.diplomas_awarded:
@@ -799,17 +804,13 @@ Helper function applies location and teacher to a
 class meeting object
 """
 def get_loc_and_person_for_meeting(meeting):
-    print(meeting)
     location = location_schema.dump(db.session.query(Location).filter_by(id=meeting['locationId']).first())
     teacher = person_schema.dump(db.session.query(Person).filter_by(id=meeting['teacherId']).first())
-    if location == {}:
-        return 'Could not find specified location', 404
-    if teacher == {}:
-        return 'Could not find specified person', 404
-
+    if location == {} or teacher == {}:
+        return False
     meeting['location'] = location
     meeting['teacher'] = teacher
-    return meeting
+    return True
 
 @courses.route('/course_offerings/<int:course_offering_id>/class_meetings')
 @jwt_required
@@ -819,7 +820,8 @@ def read_all_class_meetings(course_offering_id):
         return 'No class meetings found for this course offering', 404
     result = class_meeting_schema.dump(result, many=True)
     for i in result:
-        get_loc_and_person_for_meeting(i)
+        if (get_loc_and_person_for_meeting(i) == False):
+            return 'Could not find specified person or location', 404
     return jsonify(result)
 
 
@@ -830,27 +832,28 @@ def read_one_class_meeting(course_offering_id, class_meeting_id):
     if result is None:
         return 'Specified class meeting does not exist for this course offering', 404
     result = class_meeting_schema.dump(result)
-    get_loc_and_person_for_meeting(result)
+    if (get_loc_and_person_for_meeting(result) == False):
+        return 'Could not find specified person or location', 404
     return jsonify(result)
 
 
 @courses.route('/course_offerings/<int:course_offering_id>/<int:class_meeting_id>', methods=['PATCH'])
 @jwt_required
 def update_class_meeting(course_offering_id, class_meeting_id):
-    try:
-        valid_class_meeting = class_meeting_schema.load(request.json, partial=True)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
 
     class_meeting = db.session.query(Class_Meeting).filter_by(id=class_meeting_id, offering_id=course_offering_id).first()
     # Cannot update class meeting with offering_id that DNE
     if class_meeting is None:
         return "Class meeting not found", 404
 
-    to_update = class_meeting_schema.load(request.json, partial=True)
-    for key, val in to_update.items():
-        setattr(class_meeting, key, val)
+    try:
+        valid_class_meeting = class_meeting_schema.load(request.json, partial=True)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
 
+    # Update existing class meeting with offering_id
+    for key, val in valid_class_meeting.items():
+        setattr(class_meeting, key, val)
     db.session.commit()
     return jsonify(class_meeting_schema.dump(class_meeting))
 
