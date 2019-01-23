@@ -26,8 +26,8 @@
                                         <span v-if="transcript.person.secondLastName">{{ transcript.person.secondLastName }}</span>
                                     </v-toolbar-title>
                                 </v-toolbar>
-                            
-                                <v-list three-line>
+                    
+                                <!--<v-list three-line>-->
                                     <v-subheader >
                                         <h2>{{ $t("transcripts.student-information") }}:</h2>
                                     </v-subheader>
@@ -66,7 +66,20 @@
                                             {{ $t("transcripts.add-diploma-this-student") }}
                                         </v-btn>
                                 </v-subheader>
-                                <template v-for="(diploma, diplomaIndex) in transcript.diplomaList">
+                                <v-layout row>
+                                    <v-flex xs12 sm10 offset-sm1>
+                                        <div v-for="diploma in transcript.diplomaList" :key="diploma+`${diploma.id}`">
+                                            <!-- making a composite key to avoid duplicate key issue: https://github.com/vuejs/vue/issues/7323 -->
+                                            <h3>{{diploma.name}}:</h3>
+                                            <ul class="mb-2">
+                                            <li v-for="diplomaCourse in diploma.courses" :key="diplomaCourse+`${diplomaCourse.id}`">
+                                                {{diplomaCourse.name}}
+                                            </li>
+                                        </ul>
+                                        </div>
+                                    </v-flex>
+                                </v-layout>
+                                <!--<template v-for="(diploma, diplomaIndex) in transcript.diplomaList">
                                     <v-list-tile
                                         :key=diplomaIndex
                                     >
@@ -80,28 +93,25 @@
                                     </v-list-tile-content>
                                     </v-list-tile>
                                 </template>
-
+-->
                                 <v-subheader >
                                     <h2>{{ $t("transcripts.courses-in-progress-or-completed") }}:</h2>
                                 </v-subheader>
-                                <template v-for="(course, index) in transcript.courses">
-                                    <!-- making a composite key to avoid duplicate key issue: https://github.com/vuejs/vue/issues/7323 -->
-                                    <v-list-tile
-                                        :key="course+`${index}`"
-                                    >
-                                    <v-list-tile-content>
-                                        <v-list-tile-title><span class="font-weight-bold">{{course.name}}:</span> {{course.description}}
+                                <v-layout row>
+                                    <v-flex xs12 sm10 offset-sm1>
+                                        <div v-for="course in transcript.courses" :key="course+`${course.id}`">
+                                            <!-- making a composite key to avoid duplicate key issue: https://github.com/vuejs/vue/issues/7323 -->
+                                            <h3>{{course.name}}:</h3>
+                                            <ul class="mb-2">
+                                                <li v-for="courseOffering in course.courseOfferings" :key="courseOffering+`${courseOffering.id}`">
+                                                    {{courseOffering.description}}
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </v-flex>
+                                </v-layout>
+                                <!--</v-list>-->
 
-                                        </v-list-tile-title>
-                                        <ul>
-                                            <li v-for="courseOffering in course.courseOfferings" :key="courseOffering+`${courseOffering.id}`">
-                                                {{courseOffering.description}}
-                                            </li>
-                                        </ul>
-                                    </v-list-tile-content>
-                                    </v-list-tile>
-                                </template>
-                                </v-list>
                             </v-card>
                         </v-flex>
                     </v-layout>

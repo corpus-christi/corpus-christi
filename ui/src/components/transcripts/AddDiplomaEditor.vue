@@ -106,6 +106,7 @@ export default {
       const result = await this.$refs.obs.validate();
       console.log("result: ", result);
       if (result) {
+        this.$refs.obs.reset();
         this.$emit("save", this.diploma);
       }
     }
