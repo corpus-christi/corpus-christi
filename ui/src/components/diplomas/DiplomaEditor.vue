@@ -129,7 +129,13 @@ export default {
   mounted() {
     this.$http
       .get("/api/v1/courses/courses")
-      .then(resp => (this.coursesPool = resp.data));
+      .then(resp => 
+        {
+          console.log('courses fetched');
+          this.coursesPool = resp.data;
+          this.$refs.obs.validate();
+        });
   }
+
 };
 </script>

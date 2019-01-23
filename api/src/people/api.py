@@ -240,7 +240,7 @@ def read_one_account(account_id):
 def read_one_account_by_username(username):
     """Read one account by its (unique) user name."""
     result = db.session.query(Account).filter_by(username=username).first()
-    if account is None:
+    if result is None:
         return 'Account specified was NOT found', 404
     return jsonify(account_schema.dump(result))
 

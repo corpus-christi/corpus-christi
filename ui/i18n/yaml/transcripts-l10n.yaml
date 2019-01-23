@@ -14,6 +14,9 @@ transcripts:
   courses:
     en: Courses
     es: Cursos
+  courses-in-progress-or-completed:
+    en: Courses (in Progress or Completed)
+    es: Cursos (en Progreso o Terminados)
   courses-this-diploma:
     _desc: List of courses for a given diploma
     en: Courses for this Diploma
