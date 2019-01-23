@@ -152,7 +152,7 @@ export default {
       this.$httpNoAuth
         .get("/api/v1/places/locations")
         .then(resp => {
-          console.log(resp);
+          // console.log(resp);
           for (let loc of resp.data) {
             this.groupLocations.push({
               position: {
@@ -171,7 +171,7 @@ export default {
         .get(`/api/v1/events/?return_group=all&sort=start`)
         .then(resp => {
           this.events = resp.data;
-          console.log(resp.data);
+          // console.log(resp.data);
           this.pageLoaded = true;
         });
     },
