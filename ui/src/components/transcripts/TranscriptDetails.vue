@@ -26,8 +26,7 @@
                                         <span v-if="transcript.person.secondLastName">{{ transcript.person.secondLastName }}</span>
                                     </v-toolbar-title>
                                 </v-toolbar>
-                    
-                                <!--<v-list three-line>-->
+
                                     <v-subheader >
                                         <h2>{{ $t("transcripts.student-information") }}:</h2>
                                     </v-subheader>
@@ -79,21 +78,6 @@
                                         </div>
                                     </v-flex>
                                 </v-layout>
-                                <!--<template v-for="(diploma, diplomaIndex) in transcript.diplomaList">
-                                    <v-list-tile
-                                        :key=diplomaIndex
-                                    >
-                                    <v-list-tile-content>
-                                        <v-list-tile-title><span class="font-weight-bold">{{diploma.name}}</span></v-list-tile-title>
-                                        <ul>
-                                            <li v-for="diplomaCourse in diploma.courses" :key="diplomaCourse+`${diplomaCourse.id}`">
-                                                {{diplomaCourse.name}}
-                                            </li>
-                                        </ul>
-                                    </v-list-tile-content>
-                                    </v-list-tile>
-                                </template>
--->
                                 <v-subheader >
                                     <h2>{{ $t("transcripts.courses-in-progress-or-completed") }}:</h2>
                                 </v-subheader>
@@ -110,7 +94,6 @@
                                         </div>
                                     </v-flex>
                                 </v-layout>
-                                <!--</v-list>-->
 
                             </v-card>
                         </v-flex>
@@ -204,8 +187,6 @@ export default {
             console.log("ADDED", resp);
             let newDiploma = resp.data;
             this.loadTranscript();
-            //this.diplomas.push(newDiploma);
-            //console.log('new diploma list: ', this.diplomas);
         })
         .catch(err => {
             console.error("FAILURE", err);

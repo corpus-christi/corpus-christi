@@ -68,43 +68,6 @@
           </td>
         </tr>
       </template>
-
-
-<!--
-      <template slot="items" slot-scope="props">
-        <tr @click="props.expanded = !props.expanded">
-          <td>{{ props.item.name }}</td>
-          <td>{{ props.item.description }}</td>
-          <td>
-            <DiplomaAdminActions
-              v-bind:diploma="props.item"
-              display-context="compact"
-              v-on:action="dispatchAction($event, props.item)"
-            />
-          </td>
-        </tr>
-      </template>
-      -->
-      <!--
-      <template slot="expand" slot-scope="props">
-        <v-card flat>
-          <v-card-text>
-            <span class="font-weight-bold"
-              >{{ $t("diplomas.courses-this-diploma") }}:</span
-            >
-            <ul>
-              <li
-                v-for="course in props.item.courseList"
-                v-bind:key="course.id"
-              >
-                <span class="font-weight-bold">{{ course.name }}:</span>
-                {{ course.description }}
-              </li>
-            </ul>
-          </v-card-text>
-        </v-card>
-      </template>
-      -->
     </v-data-table>
 
     <v-snackbar v-model="snackbar.show">
