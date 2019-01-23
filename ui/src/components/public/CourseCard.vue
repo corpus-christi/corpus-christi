@@ -3,7 +3,7 @@
     <v-card class="card elevation-10">
       <div class="body">
         <!-- Display course title, description and register button -->
-        <v-card-title style="text-align: center">
+        <v-card-title style="text-align: center" class="title">
           <v-layout row align-center justify-center>
             <v-flex shrink>
               <span class="headline mb-3">{{ course.name }}</span>
@@ -19,7 +19,7 @@
           </v-card-text>
         </v-layout>
         <v-layout>
-          <v-flex>
+          <v-flex align-self-baseline>
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn
@@ -107,13 +107,20 @@ export default {
 
 <style scoped>
 .text {
-  max-height: 150px;
-  min-height: 150px;
+  max-height: 125px;
+  min-height: 125px;
+}
+
+.title {
+  max-height: 105px;
+  min-height: 105px;
 }
 
 .card {
   margin: 25px;
   border-radius: 30px;
+  max-height: 350px;
+  min-height: 350px;
 }
 
 .body {
