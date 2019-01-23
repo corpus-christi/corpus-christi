@@ -29,21 +29,24 @@
                   data-cy="password"
                 ></v-text-field>
               </v-form>
-            </v-card-text>
-            <v-card-actions>
-              <div>
+              <v-flex>
                 {{ $t("account.no-account") }}
                 <router-link v-bind:to="{ name: 'signup' }" data-cy="signup">
                   <a class="href" v-text="$t('actions.signup')" />
                 </router-link>
-              </div>
-              <v-spacer></v-spacer>
-              <v-btn color="primary" v-on:click="cancel" data-cy="cancel">{{
-                $t("actions.cancel")
-              }}</v-btn>
-              <v-btn color="primary" v-on:click="login" data-cy="login">{{
-                $t("actions.login")
-              }}</v-btn>
+              </v-flex>
+            </v-card-text>
+            <v-card-actions>
+              <v-layout fill-height justify-end align-end column xs12>
+                <v-flex>
+                  <v-btn flat v-on:click="cancel" data-cy="cancel">{{
+                    $t("actions.cancel")
+                  }}</v-btn>
+                  <v-btn color="primary" v-on:click="login" data-cy="login">{{
+                    $t("actions.login")
+                  }}</v-btn>
+                </v-flex>
+              </v-layout>
             </v-card-actions>
           </v-card>
         </v-flex>
