@@ -66,11 +66,7 @@
 
                   <!-- Placeholder if no image uploaded -->
                   <template v-else>
-                    <v-img
-                      class="picture"
-                      :src="arcoPlaceholder"
-                    >
-                    </v-img>
+                    <v-img class="picture" :src="arcoPlaceholder"> </v-img>
                   </template>
                 </v-flex>
               </v-layout>
@@ -191,7 +187,7 @@ import EventAssetDetails from "./EventAssetDetails";
 import EventPersonDetails from "./EventPersonDetails";
 import EventAttendanceForm from "./EventAttendanceForm";
 import EventImageForm from "./EventImageForm";
-import arcoPlaceholder from "../../../assets/arco-placeholder.jpg"
+import arcoPlaceholder from "../../../assets/arco-placeholder.jpg";
 
 export default {
   name: "EventDetails",

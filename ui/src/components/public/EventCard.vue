@@ -11,11 +11,7 @@
 
     <!-- Placeholder if no image uploaded -->
     <template v-else>
-      <v-img
-        class="picture"
-        :src="arcoPlaceholder"
-      >
-      </v-img>
+      <v-img class="picture" :src="arcoPlaceholder"> </v-img>
     </template>
     <v-divider></v-divider>
     <div class="body">
@@ -62,7 +58,6 @@
 import "viewerjs/dist/viewer.css";
 import arcoPlaceholder from "../../../assets/arco-placeholder.jpg";
 
-
 export default {
   name: "EventCard",
   props: {
@@ -71,9 +66,9 @@ export default {
   data() {
     return {
       arcoPlaceholder
-    }
+    };
   },
-  
+
   methods: {
     getDisplayDate(ts) {
       let date = new Date(ts);
