@@ -126,3 +126,18 @@ courses:
   create-new-person:
     en: Create a new person
     es: Crear una nueva persona
+  class-attendance:
+    en: Attendance
+    es: Asistencia
+  class-attendance-for:
+    en: Attendance for
+    es: Asistencia para
+  class-attendance-load-failed:
+    en: Failed to load class attendance
+    es: Se falló a conseguir la asistencia
+  class-attendance-updated:
+    en: Class attendance updated
+    es: Asistencia actualizado
+  class-attendance-update-failed:
+    en: Failed to update attendance
+    es: Se falló a actualizar la asistencia
