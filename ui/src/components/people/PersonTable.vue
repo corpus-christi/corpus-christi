@@ -54,7 +54,7 @@
       data-cy="person-table"
     >
       <template slot="items" slot-scope="props">
-        <td>
+        <td class="text-xs-center">
           <span v-if="props.item.accountInfo">
             <span v-if="props.item.accountInfo.active">
               <v-tooltip bottom>
@@ -304,23 +304,24 @@ export default {
         {
           text: this.$t("person.account"),
           value: "person.accountInfo",
-          align: "left",
+          align: "center",
+          width: "3%",
           sortable: false
         },
         {
           text: this.$t("person.name.first"),
           value: "firstName",
-          width: "10%"
+          width: "20%"
         },
         { text: this.$t("person.name.last"), value: "lastName", width: "20%" },
         {
           text: this.$t("person.email"),
           value: "email",
-          width: "15%",
+          width: "20%",
           class: "hidden-sm-and-down"
         },
-        { text: this.$t("person.phone"), value: "phone", width: "15%" },
-        { text: this.$t("actions.header"), sortable: false }
+        { text: this.$t("person.phone"), value: "phone", width: "20%" },
+        { text: this.$t("actions.header"), width: "17%", sortable: false }
       ];
     },
     viewOptions() {
@@ -438,6 +439,7 @@ export default {
     adminPerson(person) {
       // Pass along the current person.
       this.adminDialog.person = person;
+      this.rolesEnabled = false;
       // Fetch the person's account information (if any) before activating the dialog.
       this.$http
         .get(`/api/v1/people/persons/${person.id}/account`)

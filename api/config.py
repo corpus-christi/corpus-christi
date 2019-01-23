@@ -18,6 +18,8 @@ class Config:
 
     JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY') or 'jwt super secret key'
     JWT_ACCESS_TOKEN_EXPIRES = datetime.timedelta(hours=8)
+    JWT_BLACKLIST_ENABLED = True
+    JWT_BLACKLIST_TOKEN_CHECKS = ['access']
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_RECORD_QUERIES = True
@@ -38,7 +40,7 @@ class Config:
 class TestingConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DB_URL') or SQLITE_TEST
-
+    JWT_BLACKLIST_ENABLED = False
 
 class DevelopmentConfig(Config):
     TESTING = True

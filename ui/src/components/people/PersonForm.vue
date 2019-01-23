@@ -155,7 +155,7 @@
               $t('account.password') + (isAccountRequired ? ' *' : '')
             "
             name="password"
-            v-validate="{ required: isAccountRequired, min: 8 }"
+            v-validate="`${hasUsername}|min:8`"
             v-bind:error-messages="errors.collect('password')"
             prepend-icon="lock"
             data-cy="password"
@@ -167,7 +167,7 @@
             type="password"
             v-bind:label="$t('account.repeat-password')"
             name="repeat-password"
-            v-validate="'confirmed:pwdField'"
+            v-validate="`confirmed:pwdField|${hasUsername}`"
             v-bind:error-messages="errors.collect('repeat-password')"
             prepend-icon="lock"
             data-cy="confirm-password"
@@ -371,12 +371,18 @@ export default {
       return Object.keys(this.person);
     },
 
+    accountKeys() {
+      return Object.keys(this.account);
+    },
+
     ...mapGetters(["currentLanguageCode"]),
 
     formDisabled() {
       return this.saveIsLoading || this.addMoreIsLoading || this.showAddressForm;
     },
-
+    hasUsername() {
+      return this.account.username.length ? "required" : "";
+    },
     getTodayString() {
       let today = new Date();
       let str = `${today.getFullYear()}-${(today.getMonth() + 1).toLocaleString(
@@ -421,6 +427,9 @@ export default {
     clear() {
       for (let key of this.personKeys) {
         this.person[key] = "";
+      }
+      for (let key of this.accountKeys) {
+        this.account[key] = "";
       }
       this.$refs.attributeForm.clear();
       this.showAddressForm = false;

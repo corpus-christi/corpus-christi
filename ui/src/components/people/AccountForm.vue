@@ -6,45 +6,47 @@
         {{ $t("person.settings", { person: this.fullName }) }}
       </h3>
     </v-card-title>
+    <div v-if="!rolesEnabled">
+      <v-card-title> {{ title }} </v-card-title>
+      <v-card-text>
+        <!-- User name (for creating new account) -->
+        <v-text-field
+          v-if="addingAccount"
+          v-model="username"
+          v-bind:label="$t('account.username')"
+          name="username"
+          v-validate="'required|alpha_dash|min:6'"
+          v-bind:error-messages="errors.collect('username')"
+          prepend-icon="person"
+          data-cy="new-account-username"
+        ></v-text-field>
 
-    <v-card-title> {{ title }} </v-card-title>
-    <v-card-text>
-      <!-- User name (for creating new account) -->
-      <v-text-field
-        v-if="addingAccount"
-        v-model="username"
-        v-bind:label="$t('account.username')"
-        name="username"
-        v-validate="'required|alpha_dash|min:6'"
-        v-bind:error-messages="errors.collect('username')"
-        prepend-icon="person"
-        data-cy="new-account-username"
-      ></v-text-field>
-
-      <!-- Password (new or update) -->
-      <v-text-field
-        v-model="password"
-        type="password"
-        ref="pwdField"
-        v-bind:label="$t('account.password')"
-        name="password"
-        v-validate="'min:8'"
-        v-bind:error-messages="errors.collect('password')"
-        prepend-icon="lock"
-        data-cy="new-update-password"
-      ></v-text-field>
-      <!-- Password confirmation (new or update) -->
-      <v-text-field
-        v-model="repeat_password"
-        type="password"
-        v-bind:label="$t('account.repeat-password')"
-        name="repeat-password"
-        v-validate="'confirmed:pwdField'"
-        v-bind:error-messages="errors.collect('repeat-password')"
-        prepend-icon="lock"
-        data-cy="confirm-password"
-      ></v-text-field>
-    </v-card-text>
+        <!-- Password (new or update) -->
+        <v-text-field
+          v-model="password"
+          type="password"
+          ref="pwdField"
+          v-bind:label="$t('account.password')"
+          name="password"
+          v-validate="'required|min:8'"
+          data-vv-validate-on="change"
+          v-bind:error-messages="errors.collect('password')"
+          prepend-icon="lock"
+          data-cy="new-update-password"
+        ></v-text-field>
+        <!-- Password confirmation (new or update) -->
+        <v-text-field
+          v-model="repeat_password"
+          type="password"
+          v-bind:label="$t('account.repeat-password')"
+          name="repeat-password"
+          v-validate="'confirmed:pwdField|required'"
+          v-bind:error-messages="errors.collect('repeat-password')"
+          prepend-icon="lock"
+          data-cy="confirm-password"
+        ></v-text-field>
+      </v-card-text>
+    </div>
     <div v-if="rolesEnabled">
       <v-card-title>{{ $t("person.actions.assign-roles") }}</v-card-title>
       <v-card-text>
@@ -55,7 +57,7 @@
           chips
           deletable-chips
           clearable
-          solo
+          outline
           multiple
           hide-selected
           return-object
@@ -183,15 +185,14 @@ export default {
               } else {
                 roles.push(role);
               }
-              console.log(roles);
             }
-            this.$emit(
-              "updateAccount",
-              this.account.id,
-              { roles: roles,
-                password: this.password,
-              },
-            );
+            if (this.rolesEnabled) {
+              this.$emit("updateAccount", this.account.id, { roles: roles });
+            } else {
+              this.$emit("updateAccount", this.account.id, {
+                password: this.password
+              });
+            }
           }
           this.close();
         }

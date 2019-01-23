@@ -16,7 +16,6 @@ def ping():
         'os': os.name,
         'cwd': os.getcwd(),
         'pid': os.getpid(),
-        'uid': os.getuid(),
         'now': datetime.now(),
         'utc': datetime.utcnow()
     })

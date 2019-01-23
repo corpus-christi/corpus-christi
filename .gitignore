@@ -22,3 +22,4 @@ screenshots/
 dist/
 .vscode/
 .DS_Store
+*.swp

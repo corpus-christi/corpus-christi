@@ -35,6 +35,17 @@ groups:
     title:
       en: Members
       es: Miembros
+  # dashboard:
+  #   title:
+  #     en: Dashboard
+  #     es: Tablero
+  #   headers:
+  #       course-retention:
+  #         en: Course Retention
+  #         es: Retención del Curso
+  #       course-success:
+  #         en: Course Success
+  #         es: Éxito del Curso
 
   messages:
     confirm-archive:
@@ -44,13 +55,13 @@ groups:
       en: Group archived
       es: Grupo archivado
     error-archiving-group:
-      en: Error while archiving group 
+      en: Error while archiving group
       es: Error al archivar el grupo
     group-unarchived:
       en: Group unarchived
       es: Grupo desarchivado   # probably not right
     group-unarchiving-group:
-      en: Error while unarchiving group 
+      en: Error while unarchiving group
       es: Error al desarchivar el grupo
     group-edited:
       en: Group edited
@@ -78,9 +89,8 @@ groups:
       es: Error al archivar miembro
     member-unarchived:
       en: Member unarchived
-      es: Miembro desarchivado   # probably not right 
+      es: Miembro desarchivado   # probably not right
     error-archiving-member:
       en: Error while unarchiving member
-      es: Error al desarchivar miembro  
-    
-    
+      es: Error al desarchivar miembro
+

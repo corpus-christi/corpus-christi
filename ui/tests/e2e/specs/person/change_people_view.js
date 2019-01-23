@@ -15,12 +15,10 @@ describe("Tests the Person table Archived/active user filter", function() {
     cy.get("[data-cy=people]").click();
     cy.get("[data-cy=view-dropdown]").should("contain", "Ver Activo");
     cy.get("[data-cy=person-table]").within(() => {
-      cy.get("tbody > :nth-child(1) > :nth-child(2)")
-        .invoke("text")
-        .as("firstName");
       cy.get("tbody > :nth-child(1) [data-cy = deactivate-person]").click();
-      cy.root();
     });
+    cy.get(".v-dialog__content--active > .v-dialog > .v-card > :nth-child(2) > :nth-child(3)").click();
+
   });
 
   it("When: The dropdown is clicked, and an archived users is selected", function() {
@@ -34,11 +32,8 @@ describe("Tests the Person table Archived/active user filter", function() {
 
   it("Then: The archived user should appear in archived, & all, but not active", function() {
     let dropdown = ".menuable__content__active > .v-select-list > .v-list"; // path to dropdown child elements
-    cy.get("[data-cy=person-table]").within(() => {
-      cy.get("tbody > :nth-child(1) > :nth-child(2)").should(
-        "contain",
-        this.firstName
-      );
+    cy.get("[data-cy=person-table]").within( () => {
+      cy.get("tbody > :nth-child(1) > :nth-child(2)").should("contain", this.firstName);
       cy.get("[data-cy=deactivate-person]").should("not.exist");
     });
     cy.get("[data-cy=view-dropdown]").click(); // open dropdown
@@ -76,5 +71,12 @@ describe("Tests the Person table Archived/active user filter", function() {
     cy.get("[data-cy=person-table]").within(() => {
       cy.get("[data-cy=reactivate-person]").click();
     });
+    cy.get(".v-dialog__content--active > .v-dialog > .v-card > :nth-child(2) > :nth-child(3)").click();
+    cy.get("[data-cy=view-dropdown]").click(); // open dropdown
+    cy.get(dropdown)
+      .find(":nth-child(1)")
+      .first()
+      .click();
   });
+
 });
