@@ -339,7 +339,6 @@ def read_all_diplomas():
         diploma.studentList = students
     return jsonify(diploma_schema.dump(result, many=True))
 
-
 @courses.route('/diplomas/<int:diploma_id>')
 @jwt_required
 def read_one_diploma(diploma_id):
@@ -449,6 +448,7 @@ diploma_awarded_schema = Diploma_AwardedSchema()
 @jwt_required
 def create_diploma_awarded():
     try:
+        print(request.json)
         valid_diploma_awarded = diploma_awarded_schema.load(request.json)
     except ValidationError as err:
         return jsonify(err.messages), 422
@@ -458,7 +458,7 @@ def create_diploma_awarded():
     check = db.session.query(Diploma_Awarded).filter_by(person_id=new_diploma_awarded.person_id,\
                                         diploma_id=new_diploma_awarded.diploma_id).first()
     if check:
-        return jsonify(msg=f'Diploma #{diploma_id} already awarded to student #{student_id}'), 409
+        return jsonify(msg=f'Diploma #{new_diploma_awarded.diploma_id} already awarded to person #{new_diploma_awarded.person_id}'), 409
 
     db.session.add(new_diploma_awarded)
     db.session.commit()
