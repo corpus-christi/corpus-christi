@@ -3,7 +3,7 @@
     <v-card class="card elevation-10">
       <div class="body">
         <!-- Display course title, description and register button -->
-        <v-card-title style="text-align: center">
+        <v-card-title style="text-align: center" class="title">
           <v-layout row align-center justify-center>
             <v-flex shrink>
               <span class="headline mb-3">{{ course.name }}</span>
@@ -19,14 +19,14 @@
           </v-card-text>
         </v-layout>
         <v-layout>
-          <v-flex>
+          <v-flex align-self-baseline>
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn
                 round
                 raised
                 color="primary"
-                @click="registrationFormDialog.show = true"
+                @click="registerClicked(course)"
               >
                 {{ $t("courses.register") }}
               </v-btn>
@@ -40,7 +40,7 @@
       <CourseRegistrationForm
         v-on:cancel="cancel"
         v-on:snackbar="showSnackbar($event)"
-        :course="course"
+        :activeOfferings="activeOfferings"
         v-on:registered="registeredPerson"
       />
     </v-dialog>
@@ -75,7 +75,9 @@ export default {
       snackbar: {
         show: false,
         message: ""
-      }
+      },
+      
+      activeOfferings: null
     };
   },
 
@@ -90,6 +92,14 @@ export default {
     showSnackbar(message) {
       this.snackbar.text = message;
       this.snackbar.show = true;
+    },
+    
+    registerClicked(course) {
+      this.activeOfferings = course.course_offerings.filter(
+        courseOffering => courseOffering.active
+      );
+            
+      this.registrationFormDialog.show = true;
     }
   }
 };
@@ -97,13 +107,20 @@ export default {
 
 <style scoped>
 .text {
-  max-height: 150px;
-  min-height: 150px;
+  max-height: 125px;
+  min-height: 125px;
+}
+
+.title {
+  max-height: 105px;
+  min-height: 105px;
 }
 
 .card {
   margin: 25px;
   border-radius: 30px;
+  max-height: 350px;
+  min-height: 350px;
 }
 
 .body {

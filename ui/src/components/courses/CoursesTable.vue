@@ -98,13 +98,12 @@
       v-model="courseDialog.show"
       max-width="500px"
       persistent
+      scrollable
       data-cy="courses-table-editor"
     >
       <CourseEditor
         v-bind:editMode="courseDialog.editMode"
         v-bind:initialData="courseDialog.course"
-        v-bind:saving="courseDialog.saving"
-        v-bind:coursesPool="courses"
         v-on:cancel="cancelCourse"
         v-on:save="saveCourse"
       />
@@ -158,7 +157,6 @@ export default {
       courseDialog: {
         show: false,
         editMode: false,
-        saving: false,
         course: {}
       },
 
@@ -315,84 +313,30 @@ export default {
     },
 
     saveCourse(course) {
-      this.courseDialog.saving = true;
-
-      // Hang onto the prereqs of the course
-      const prerequisites = course.prerequisites || [];
-      // Get rid of the prereqs; not for consumption by the endpoint
-      delete course.prerequisites;
+      if (course instanceof Error) {
+        this.snackbar.text = 
+          this.courseDialog.editMode ?
+            this.$t("courses.update-failed")
+            : this.$t("courses.add-failed");
+        this.snackbar.show = true;
+        this.courseDialog.show = false;
+        return;
+      }
 
       if (this.courseDialog.editMode) {
-        // Hang on to the ID of the course being updated.
-        const course_id = course.id;
-        // Locate the course we're updating in the table.
-        const idx = this.courses.findIndex(c => c.id === course.id);
-        // Get rid of the ID; not for consumption by endpoint.
-        delete course.id;
-
-        let promises = [];
-        promises.push(
-          this.$http
-            .patch(`/api/v1/courses/courses/${course_id}`, course)
-            .then(resp => {
-              console.log("EDITED", resp);
-              Object.assign(this.courses[idx], course);
-            })
+        // Locate the record we're updating in the table.
+        const idx = this.courses.findIndex(
+          c => c.id === course.id
         );
-        promises.push(
-          this.$http.patch(
-            `/api/v1/courses/courses/prerequisites/${course_id}`,
-            { prerequisites: prerequisites.map(prereq => prereq.id) }
-          ) // API expects array of IDs
-        );
-
-        Promise.all(promises)
-          .then(() => {
-            this.courses[idx].prerequisites = prerequisites;
-            this.snackbar.text = this.$t("courses.updated");
-            this.snackbar.show = true;
-          })
-          .catch(err => {
-            console.error("FALURE", err.response);
-            this.snackbar.text = this.$t("courses.update-failed");
-            this.snackbar.show = true;
-          })
-          .finally(() => {
-            this.courseDialog.show = false;
-            this.courseDialog.saving = false;
-          });
+        Object.assign(this.courses[idx], course);
+        this.snackbar.text = this.$t("courses.updated");
       } else {
-        // All new courses are active
-        course.active = true;
-        this.$http
-          .post("/api/v1/courses/courses", course)
-          .then(resp => {
-            console.log("ADDED", resp);
-            let newCourse = resp.data;
-            newCourse.prerequisites = prerequisites; // Re-attach prereqs so they show up in UI
-            this.courses.push(newCourse);
-
-            // Now that course created, add prerequisites to it
-            return this.$http.patch(
-              `/api/v1/courses/courses/prerequisites/${newCourse.id}`,
-              { prerequisites: prerequisites.map(prereq => prereq.id) }
-            ); // API expects array of IDs
-          })
-          .then(resp => {
-            console.log("PREREQS", resp);
-            this.snackbar.text = this.$t("courses.added");
-            this.snackbar.show = true;
-          })
-          .catch(err => {
-            console.error("FAILURE", err);
-            this.snackbar.text = this.$t("courses.add-failed");
-            this.snackbar.show = true;
-          })
-          .finally(() => {
-            this.courseDialog.show = false;
-            this.courseDialog.saving = false;
-          });
+        this.courses.push(course);
+        this.snackbar.text = this.$t("courses.added");
       }
+
+      this.snackbar.show = true;
+      this.courseDialog.show = false;
     }
   },
 

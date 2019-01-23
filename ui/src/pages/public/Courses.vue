@@ -44,8 +44,7 @@ export default {
   mounted() {
     this.pageLoaded = false;
     this.$http.get("/api/v1/courses/courses").then(resp => {
-      this.courses = resp.data;
-      console.log(resp.data);
+      this.courses = resp.data.filter(course => course.active);
       this.pageLoaded = true;
     });
   },

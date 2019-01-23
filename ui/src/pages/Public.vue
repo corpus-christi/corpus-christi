@@ -16,7 +16,7 @@
               v-bind:key="idx"
               ><div slot="header">{{ course.name }}</div>
               <v-card>
-                <span class="grey--text">
+                <span>
                   <v-card-text>{{ course.description }}</v-card-text>
                 </span>
                 <v-card-actions>
@@ -24,29 +24,13 @@
                   <v-btn
                     raised
                     color="primary"
-                    v-on:click="registrationFormDialog.show = true"
+                    v-on:click="registerClicked(course)"
                   >
                     {{ $t("courses.register") }}
                   </v-btn>
                   <v-spacer></v-spacer>
                 </v-card-actions>
               </v-card>
-
-               <v-dialog v-model="registrationFormDialog.show" max-width="500px">
-                 <CourseRegistrationForm
-                   v-on:cancel="cancel"
-                   v-on:snackbar="showSnackbar($event)"
-                   :course="course"
-                   v-on:registered="registeredPerson"
-                 />
-               </v-dialog>
-               <v-snackbar v-model="snackbar.show">
-                 {{ snackbar.text }}
-                 <v-btn flat @click="snackbar.show = false">
-                   {{ $t("actions.close") }}
-                 </v-btn>
-               </v-snackbar>
-               
             </v-expansion-panel-content>
           </v-expansion-panel>
           
@@ -64,6 +48,21 @@
           </v-card>
         </v-list>
       </v-flex>
+
+      <v-dialog v-model="registrationFormDialog.show" max-width="500px">
+        <CourseRegistrationForm
+          v-on:cancel="cancel"
+          v-on:snackbar="showSnackbar($event)"
+          :activeOfferings="activeOfferings"
+          v-on:registered="registeredPerson"
+        />
+      </v-dialog>
+      <v-snackbar v-model="snackbar.show">
+        {{ snackbar.text }}
+        <v-btn flat @click="snackbar.show = false">
+          {{ $t("actions.close") }}
+        </v-btn>
+      </v-snackbar>
 
       <v-flex xs12 sm6 md5 offset-md2>
         <v-toolbar color="blue" dark style="z-index: 1">
@@ -139,7 +138,8 @@ export default {
       courses: [],
       pageLoaded: false,
       groupLocations: [],
-
+      activeOfferings: [],
+      
       registrationFormDialog: {
         show: false,
         editMode: false,
@@ -164,9 +164,8 @@ export default {
 
   mounted() {
     this.$http.get("/api/v1/courses/courses").then(resp => {
-      this.courses = resp.data;
+      this.courses = resp.data.filter(course => course.active);
       this.courses = this.courses.slice(0, 5);
-      console.log(resp.data);
     });
 
     this.pageLoaded = false;
@@ -175,7 +174,6 @@ export default {
     this.$http.get(`/api/v1/events/?return_group=all&sort=start`).then(resp => {
       this.events = resp.data;
       this.events = this.events.slice(0, 5);
-      console.log(resp.data);
       this.pageLoaded = true;
     });
   },
@@ -196,7 +194,6 @@ export default {
       this.$httpNoAuth
         .get("/api/v1/places/locations")
         .then(resp => {
-          console.log(resp);
           for (let loc of resp.data) {
             this.groupLocations.push({
               position: {
@@ -214,7 +211,6 @@ export default {
       this.$http.get(`/api/v1/events/?return_group=all`).then(resp => {
         this.events = resp.data;
         this.events = this.events.slice(0, 5);
-        console.log(resp.data);
         this.pageLoaded = true;
       });
     },
@@ -225,6 +221,14 @@ export default {
 
     registeredPerson() {
       this.registrationFormDialog.show = false;
+    },
+    
+    registerClicked(course) {
+      this.activeOfferings = course.course_offerings.filter(
+        courseOffering => courseOffering.active
+      );
+            
+      this.registrationFormDialog.show = true;
     },
     
     showSnackbar(message) {
