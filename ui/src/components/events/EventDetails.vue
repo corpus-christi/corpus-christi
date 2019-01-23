@@ -68,7 +68,7 @@
                   <template v-else>
                     <v-img
                       class="picture"
-                      src="https://i.ytimg.com/vi/LQ1ZMvqlqYA/maxresdefault.jpg"
+                      :src="arcoPlaceholder"
                     >
                     </v-img>
                   </template>
@@ -191,6 +191,7 @@ import EventAssetDetails from "./EventAssetDetails";
 import EventPersonDetails from "./EventPersonDetails";
 import EventAttendanceForm from "./EventAttendanceForm";
 import EventImageForm from "./EventImageForm";
+import arcoPlaceholder from "../../../assets/arco-placeholder.jpg"
 
 export default {
   name: "EventDetails",
@@ -229,7 +230,8 @@ export default {
       eventLoaded: false,
       teamsLoaded: false,
       assetsLoaded: false,
-      personsLoaded: false
+      personsLoaded: false,
+      arcoPlaceholder
     };
   },
 
