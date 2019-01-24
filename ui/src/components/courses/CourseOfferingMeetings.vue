@@ -223,6 +223,10 @@ export default {
         Object.assign(this.meetings[idx], meeting);
         this.snackbar.text = this.$t("courses.meeting-updated");
       } else {
+        for (let meeting of meetings) {
+          meeting.displayDate = this.getDisplayDate(meeting.when);
+          meeting.teacher.compositeName = meeting.teacher.firstName + " " + meeting.teacher.lastName;
+        }
         this.meetings.push(...meetings);
         this.snackbar.text = this.$t("courses.meeting-added");
       }

@@ -325,6 +325,7 @@ def read_all_diplomas():
         diploma.studentList = students
     return jsonify(diploma_schema.dump(result, many=True))
 
+
 @courses.route('/diplomas/<int:diploma_id>')
 @jwt_required
 def read_one_diploma(diploma_id):
@@ -804,18 +805,6 @@ def create_class_meeting(course_offering_id):
         # then don't create new class meeting
         return 'Class meeting already exists in course offering', 208
 
-"""
-Helper function applies location and teacher to a
-class meeting object
-"""
-def get_loc_and_person_for_meeting(meeting):
-    location = location_schema.dump(db.session.query(Location).filter_by(id=meeting['locationId']).first())
-    teacher = person_schema.dump(db.session.query(Person).filter_by(id=meeting['teacherId']).first())
-    if location == {} or teacher == {}:
-        return False
-    meeting['location'] = location
-    meeting['teacher'] = teacher
-    return True
 
 @courses.route('/course_offerings/<int:course_offering_id>/class_meetings')
 @jwt_required
@@ -857,11 +846,6 @@ def update_class_meeting(course_offering_id, class_meeting_id):
     # Cannot update class meeting with offering_id that DNE
     if class_meeting is None:
         return "Class meeting not found", 404
-
-    try:
-        valid_class_meeting = class_meeting_schema.load(request.json, partial=True)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
 
     # Update existing class meeting with offering_id
     for key, val in valid_class_meeting.items():
