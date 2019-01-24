@@ -94,21 +94,16 @@ export default {
     },
 
     saveCourse(course) {
-      // Hang onto the prereqs of the course
-      const prerequisites = course.prerequisites || [];
-      // Get rid of the prereqs; not for consumption by the endpoint
-      delete course.prerequisites;
+      let courseAttrs = {
+        description: course.description,
+        name: course.name
+      };
 
       if (this.editMode) {
-        // Hang on to the ID of the course being updated.
-        const course_id = course.id;
-        // Get rid of the ID; not for consumption by endpoint.
-        delete course.id;
-
         let promises = [];
         promises.push(
           this.$http
-            .patch(`/api/v1/courses/courses/${course_id}`, course)
+            .patch(`/api/v1/courses/courses/${course.id}`, courseAttrs)
             .then(resp => {
               console.log("EDITED", resp);
               return resp;
@@ -116,15 +111,15 @@ export default {
         );
         promises.push(
           this.$http.patch(
-            `/api/v1/courses/courses/${course_id}/prerequisites`,
-            { prerequisites: prerequisites.map(prereq => prereq.id) } // API expects array of IDs
+            `/api/v1/courses/courses/${course.id}/prerequisites`,
+            { prerequisites: course.prerequisites.map(prereq => prereq.id) } // API expects array of IDs
           )
         );
 
         Promise.all(promises)
           .then(resps => {
             let newCourse = resps[0].data;
-            newCourse.prerequisites = prerequisites; // Re-attach prereqs so they show up in UI
+            newCourse.prerequisites = course.prerequisites; // Re-attach prereqs so they show up in UI
             this.$emit("save", newCourse);
           })
           .catch(err => {
@@ -136,19 +131,19 @@ export default {
           });
       } else {
         // All new courses are active
-        course.active = true;
+        courseAttrs.active = true;
         let newCourse;
         this.$http
-          .post("/api/v1/courses/courses", course)
+          .post("/api/v1/courses/courses", courseAttrs)
           .then(resp => {
             console.log("ADDED", resp);
             newCourse = resp.data;
-            newCourse.prerequisites = prerequisites; // Re-attach prereqs so they show up in UI
+            newCourse.prerequisites = course.prerequisites; // Re-attach prereqs so they show up in UI
 
             // Now that course created, add prerequisites to it
             return this.$http.patch(
               `/api/v1/courses/courses/${newCourse.id}/prerequisites`,
-              { prerequisites: prerequisites.map(prereq => prereq.id) } // API expects array of IDs
+              { prerequisites: course.prerequisites.map(prereq => prereq.id) } // API expects array of IDs
             );
           })
           .then(resp => {
