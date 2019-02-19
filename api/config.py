@@ -1,33 +1,28 @@
 import datetime
 import os
+import sys
+from contextlib import redirect_stdout
+
 try:
     import private
-except:
-    print("Private.py not needed for CI testing")
+except ImportError:
+    with redirect_stdout(sys.stderr):
+        print("Can't find 'private.py' configuration file")
+        sys.exit(1)
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
-SQLITE_TEST = 'sqlite:///' + os.path.join(BASE_DIR, 'test-db.sqlite')
-SQLITE_DEV = 'sqlite:///' + os.path.join(BASE_DIR, 'dev-db.sqlite')
-SQLITE_MEM = 'sqlite://'
-
-PSQL_TEST = 'postgresql://arco@localhost:5432/cc-test'
-PSQL_DEV = 'postgresql://arco@localhost:5432/cc-dev'
-try:
-    PSQL_STAGING = 'postgresql://arco:' + private.PASS + '@localhost:5432/cc-staging'
-except:
-    print("Private.py not needed for CI testing")
-PSQL_STAGING_CI = 'postgresql://arco@localhost:5432/cc-staging'
-PSQL_PROD = 'postgresql://arco@localhost:5432/cc-prod'
+PSQL_COMMON = f'postgresql://{private.PSQL_USER}:{private.PSQL_PASS}@{private.PSQL_HOST}/'
+PSQL_TEST = PSQL_COMMON + 'cc-test'
+PSQL_DEV = PSQL_COMMON + 'cc-dev'
+PSQL_STAGING = PSQL_COMMON + 'cc-staging'
+PSQL_PROD = PSQL_COMMON + 'cc-prod'
 
 
 class Config:
-    try:
-        SECRET_KEY = os.environ.get(private.SECRET_KEY1) or private.SECRET_KEY2
-    except: 
-        print("Private.py not needed for CI testing")
+    SECRET_KEY = os.environ.get(private.FLASK_SECRET_KEY) or private.FLASK_SECRET_KEY
 
-    JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY') or 'jwt super secret key'
+    JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY') or private.JWT_SECRET_KEY
     JWT_ACCESS_TOKEN_EXPIRES = datetime.timedelta(hours=8)
     JWT_BLACKLIST_ENABLED = True
     JWT_BLACKLIST_TOKEN_CHECKS = ['access']
@@ -50,13 +45,14 @@ class Config:
 
 class TestingConfig(Config):
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DB_URL') or SQLITE_TEST
+    SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DB_URL') or PSQL_TEST
     JWT_BLACKLIST_ENABLED = False
+
 
 class DevelopmentConfig(Config):
     TESTING = True
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DB_URL') or SQLITE_DEV
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DB_URL') or PSQL_DEV
 
 
 class StagingConfig(Config):
@@ -64,10 +60,6 @@ class StagingConfig(Config):
     DEBUG = False
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DB_URL') or PSQL_STAGING
 
-class StagingConfigCI(Config):
-    TESTING = False
-    DEBUG = False
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DB_URL') or PSQL_STAGING_CI
 
 class ProductionConfig(Config):
     TESTING = False
@@ -79,7 +71,6 @@ config = {
     'dev': DevelopmentConfig,
     'test': TestingConfig,
     'staging': StagingConfig,
-    'staging-ci': StagingConfigCI,
     'prod': ProductionConfig,
     'default': DevelopmentConfig
 }
