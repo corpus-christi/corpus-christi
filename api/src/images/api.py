@@ -18,7 +18,7 @@ from .models import Image, ImageSchema, ImageEvent, ImageEventSchema
 # ---- Image
 
 image_schema = ImageSchema()
-image_schema_partial = ImageSchema(partial=('id', 'path'))
+image_schema_partial = ImageSchema(partial=('id', 'path', 'events'))
 
 @images.route('/<image_id>')
 def download_image(image_id):

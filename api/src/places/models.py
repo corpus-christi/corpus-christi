@@ -18,7 +18,8 @@ class Country(Base):
     """Country; uses ISO 3166-1 country codes"""
     __tablename__ = 'places_country'
     code = Column(String(2), primary_key=True)
-    name_i18n = Column(StringTypes.I18N_KEY, ForeignKey('i18n_key.id'), nullable=False)
+    name_i18n = Column(StringTypes.I18N_KEY, ForeignKey(
+        'i18n_key.id'), nullable=False)
     key = relationship('I18NKey', backref='countries', lazy=True)
 
     def __repr__(self):
@@ -27,7 +28,8 @@ class Country(Base):
     @classmethod
     def load_from_file(cls, file_name='country-codes.json'):
         count = 0
-        file_path = os.path.abspath(os.path.join(__file__, os.path.pardir, 'data', file_name))
+        file_path = os.path.abspath(os.path.join(
+            __file__, os.path.pardir, 'data', file_name))
 
         with open(file_path, 'r') as fp:
             countries = json.load(fp)
@@ -51,18 +53,21 @@ class Country(Base):
             db.session.commit()
         return count
 
+
 class CountrySchema(Schema):
     code = fields.String()
     name_i18n = fields.String()
 
 # ---- Area
 
+
 class Area(Base):
     """Generic area within country (e.g., state, province)"""
     __tablename__ = 'places_area'
     id = Column(Integer, primary_key=True)
     name = Column(StringTypes.MEDIUM_STRING, nullable=False)
-    country_code = Column(String(2), ForeignKey('places_country.code'), nullable=False)
+    country_code = Column(String(2), ForeignKey(
+        'places_country.code'), nullable=False)
 
     addresses = relationship('Address', backref='areas', passive_deletes=True)
     country = relationship('Country', backref='areas', lazy=True)
@@ -83,7 +88,8 @@ class Location(Base):
     __tablename__ = 'places_location'
     id = Column(Integer, primary_key=True, nullable=False)
     description = Column(StringTypes.MEDIUM_STRING)
-    address_id = Column(Integer, ForeignKey('places_address.id'), nullable=False)
+    address_id = Column(Integer, ForeignKey(
+        'places_address.id'), nullable=False)
     address = relationship('Address', back_populates='locations', lazy=True)
     events = relationship('Event', back_populates="location")
     assets = relationship('Asset', back_populates="location")
@@ -97,13 +103,15 @@ class Location(Base):
         as_string = ",".join(attributes)
         return f"<Location({as_string})>"
 
+
 class LocationSchema(Schema):
-    id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
-    description = fields.String(validate=Length(min=1))
+    id = fields.Integer(dump_only=True, required=False, validate=Range(min=1))
+    description = fields.String(required=False)
     address_id = fields.Integer(required=True, validate=Range(min=1))
     address = fields.Nested('AddressSchema')
 
 # ---- Address
+
 
 class Address(Base):
     __tablename__ = 'places_address'
@@ -111,8 +119,10 @@ class Address(Base):
     name = Column(StringTypes.MEDIUM_STRING, nullable=False)
     address = Column(StringTypes.LONG_STRING, nullable=False)
     city = Column(StringTypes.MEDIUM_STRING, nullable=False)
-    area_id = Column(Integer, ForeignKey('places_area.id', ondelete='CASCADE'), nullable=False)
-    country_code = Column(StringTypes.SHORT_STRING, ForeignKey('places_country.code'), nullable=False)
+    area_id = Column(Integer, ForeignKey(
+        'places_area.id', ondelete='CASCADE'), nullable=False)
+    country_code = Column(StringTypes.SHORT_STRING, ForeignKey(
+        'places_country.code'), nullable=False)
     latitude = Column(Float)
     longitude = Column(Float)
     # area = relationship('Area', backref='addresses', lazy=True)
@@ -129,8 +139,9 @@ class Address(Base):
         as_string = ",".join(attributes)
         return f"<Address({as_string})>"
 
+
 class AddressSchema(Schema):
-    id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
+    id = fields.Integer(dump_only=True, required=False, validate=Range(min=1))
     name = fields.String(required=True, validate=Length(min=1))
     address = fields.String(required=True, validate=Length(min=1))
     city = fields.String(required=True, validate=Length(min=1))
