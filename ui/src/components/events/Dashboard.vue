@@ -119,6 +119,7 @@ export default {
         console.error("GET FALURE", err.response);
       });
 
+    // Get historic attendance data
     this.$http
       .get(`/api/v1/events/?include_participants=1&sort=start`)
       .then(resp => {
@@ -147,6 +148,8 @@ export default {
           });
         });
         this.yearlyAttendanceData.rows = arr;
+
+        // Get home group membership data
         this.$http
           .get(`/api/v1/groups/members`)
           .then(resp => {
@@ -163,6 +166,7 @@ export default {
         console.error("GET FALURE", err.response);
       });
 
+    // Make these data structures available as part of `this`
     return {
       locationAttendanceData: {
         columns: ["campus", "attendance"],
