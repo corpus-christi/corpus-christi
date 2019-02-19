@@ -14,7 +14,7 @@ from ..teams.models import Team, TeamMember, TeamSchema, TeamMemberSchema
 from ..emails.models import EmailSchema
 from ..places.models import Location, Country
 from ..people.models import Person
-from ..images.models import Image
+from ..images.models import Image, ImageEvent
 from .create_event_data import flip, fake, create_multiple_events, event_object_factory, email_object_factory, create_multiple_assets, create_multiple_teams, create_events_assets, create_events_teams, create_events_persons, create_events_participants, create_teams_members, get_team_ids, asset_object_factory, team_object_factory, create_images, create_event_images
 from ..places.test_places import create_multiple_locations, create_multiple_addresses, create_multiple_areas
 from ..people.test_people import create_multiple_people
@@ -705,8 +705,6 @@ def test_add_event_images(auth_client):
     events = auth_client.sqla.query(Event).all()
     images = auth_client.sqla.query(Image).all()
     
-    print(events)
-    print(images)
     # WHEN an image is requested to be tied to each event
     for i in range(count):
         print(i)
@@ -717,6 +715,48 @@ def test_add_event_images(auth_client):
 
         # THEN expect the event to have a single image
         assert len(auth_client.sqla.query(Event).filter_by(id = events[i].id).first().images) == 1
+
+
+@pytest.mark.smoke
+def test_add_event_images_no_exist(auth_client):
+    # GIVEN a set of events and images
+    count = random.randint(3, 6)
+    create_multiple_events(auth_client.sqla, count)
+    create_images(auth_client.sqla)
+
+    events = auth_client.sqla.query(Event).all()
+    images = auth_client.sqla.query(Image).all()
+    
+    # WHEN a no existant image is requested to be tied to an event
+    resp = auth_client.post(url_for('events.add_event_images', event_id = 1, image_id = len(images) + 1))
+
+    # THEN expect the image not to be found
+    assert resp.status_code == 404
+
+    # WHEN an image is requested to be tied to a no existant event
+    resp = auth_client.post(url_for('events.add_event_images', event_id = count + 1, image_id = 1))
+
+    # THEN expect the event not to be found
+    assert resp.status_code == 404
+
+
+@pytest.mark.smoke
+def test_add_event_images_already_exist(auth_client):
+    # GIVEN a set of events, images, and event_image relationships
+    count = random.randint(3, 6)
+    create_multiple_events(auth_client.sqla, count)
+    create_images(auth_client.sqla)
+    create_event_images(auth_client.sqla)
+
+    event_images = auth_client.sqla.query(ImageEvent).all()
+
+    # WHEN existing event_image relationships are requested to be created
+    for event_image in event_images:
+        resp = auth_client.post(url_for('events.add_event_images', event_id = event_image.event_id, image_id = event_image.image_id))
+
+        # THEN expect the request to be unprocessable
+        assert resp.status_code == 422
+
 
 
 @pytest.mark.smoke
@@ -736,3 +776,16 @@ def test_delete_event_image(auth_client):
 
         # THEN expect the delete to run OK
         assert resp.status_code == 204
+
+
+@pytest.mark.smoke
+def test_delete_event_image_no_exist(auth_client):
+    # GIVEN an empty database
+
+    # WHEN an event_image relationship is requested to be deleted
+    resp = auth_client.delete(url_for('events.delete_event_image', event_id = random.randint(1, 8), image_id = random.randint(1, 8)))
+
+    # THEN expect the requested row to not be found
+    assert resp.status_code == 404
+
+

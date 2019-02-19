@@ -37,14 +37,22 @@ def flip():
     """Return true or false randomly."""
     return random.choice((True, False))
 
+def reset_paths_taken():
+    for i in range(0,len(paths_taken)):
+        paths_taken[i] = False
 
 def image_object_factory(sqla):
     """Cook up a fake image."""
     
-    #Getting a valid path name
+    # Getting a valid path name
     i = 0;
+
     while(paths_taken[i]):
         i += 1
+        if i == len(paths_taken):
+            reset_paths_taken()
+            continue
+
     paths_taken[i] = True
 
     image = {
