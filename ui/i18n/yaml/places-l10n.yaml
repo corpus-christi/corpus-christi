@@ -25,4 +25,7 @@ places:
   messages:
     no-results:
       en: Your address returned no results.
-      es: Tu dirección no devolvió resultados
+      es: Tu dirección no devolvió resultados.
+    saved:
+      en: Your address has been saved.
+      es: Su dirección ha sido guardada.

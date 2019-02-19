@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-text>
-      <span class="headling"> {{ title }} </span>
+      <span class="headling">{{ title }}</span>
       <v-layout column>
         <v-text-field
           name="address"
@@ -33,14 +33,15 @@
               icon
               @click="queryAddress('address')"
               :disabled="formDisabled"
-              ><v-icon>search</v-icon></v-btn
             >
+              <v-icon>search</v-icon>
+            </v-btn>
           </v-flex>
         </v-layout>
 
-        <span body-2 v-if="addressErr" class="red--text">{{
-          $t("places.messages.no-results")
-        }}</span>
+        <span body-2 v-if="addressErr" class="red--text">
+          {{ $t("places.messages.no-results") }}
+        </span>
         <gmap-map
           ref="map"
           v-bind:center="center"
@@ -120,13 +121,18 @@ export default {
     },
 
     async saveAddressForm() {
-      this.formDisabled = true;
-      if (this.address.latitude === "" || this.address.longitude === "") {
-        await this.queryAddress("address");
-        this.sendData();
-      } else {
-        this.sendData();
-      }
+      this.$validator.validateAll().then(() => {
+        if (!this.errors.any()) {
+          this.formDisabled = true;
+          if (this.address.latitude === "" || this.address.longitude === "") {
+            this.queryAddress("address").then(() => {
+              this.sendData();
+            });
+          } else {
+            this.sendData();
+          }
+        }
+      });
     },
 
     sendData() {
