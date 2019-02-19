@@ -1,0 +1,64 @@
+assets:
+  title: 
+    en: Assets
+    es: Insumos
+  description:
+    en: Description
+    es: Descripción
+  location:
+    en: Location
+    es: Ubicación
+  new:
+    en: Add Asset
+    es: Añadir Insumo
+  create-asset:
+    en: Create Asset
+    es: Crear Insumo
+  edit-asset:
+    en: Edit Asset
+    es: Editar Insumo
+  confirm-archive:
+    en: Are you sure you want to archive this asset?
+    es: ¿Seguro que quieres archivar este insumo?
+  confirm-remove-from-event:
+    en: Are you sure you want to remove this asset from this event?
+    es: ¿Está seguro de que desea eliminar este insumo de este evento?
+  asset-removed:
+    en: Asset removed
+    es: Insumo eliminado
+  error-removing-asset:
+    en: Error while removing asset 
+    es: Error al eliminadar este insumo
+  asset-archived:
+    en: Asset archived
+    es: Insumo archivado
+  error-archiving-asset:
+    en: Error while archiving asset 
+    es: Error al archivar este insumo
+  asset-unarchived:
+    en: Asset unarchived
+    es: Insumo desarchivado   # probably not right
+  error-unarchiving-asset:
+    en: Error while unarchiving asset 
+    es: Error al desarchivar insumo
+  asset-edited:
+    en: Asset edited
+    es: Insumo editado   # ?
+  error-editing-asset:
+    en: Error while editing asset
+    es: Error al editar insumo
+  asset-added:
+    en: Asset added
+    es: Insumo agregado
+  error-adding-asset:
+    en: Error while adding asset
+    es: Error al agregar insumo
+  error-asset-assigned:
+    en: That asset is assigned to a conflicting event.
+    es: Ese insumo está asignado a un evento conflictivo.
+  asset-on-event:
+    en: That asset is already assigned to this event.
+    es: Ese insumo ya está asignado a este evento.
+  none-assigned:
+    en: No assets assigned.
+    es: No hay insumos asignados.

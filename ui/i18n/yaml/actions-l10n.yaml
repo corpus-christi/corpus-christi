@@ -2,15 +2,34 @@ actions:
   header:
     _desc: Header for a table, etc.
     en: Actions
-    es: Comportamiento
+    es: Acciones
   add-another:
     _desc: Save a newly created item; clear data (e.g., on a form)
     en: Add Another
     es: Añadir Otro
+  add-address:
+    _desc: Add a new address
+    en: Add Address
+    es: Añadir Dirreción
+  add-group:
+     en: Add Group
+     es: Añadir grupo
   add-person:
     _desc: Add a person to the database
     en: Add Person
     es: Añadir Persona
+  add-event:
+    _desc: Add an event to the database
+    en: Add Event
+    es: Añadir Evento
+  activate-account:
+    _desc: Activate account
+    en: Activate
+    es: Activar
+  deactivate-account:
+    _desc: Deactivate account
+    en: Deactivate
+    es: Desactivar
   cancel:
     _desc: Cancel a pending action
     en: Cancel
@@ -27,6 +46,10 @@ actions:
     _desc: Confirm some action (e.g., updating a password)
     en: Confirm
     es: Confirmar
+  duplicate:
+    _desc: Duplicate some action (e.g., duplicating an event)
+    en: Duplicate
+    es: Duplicar
   edit:
     en: Edit
     es: Editar
@@ -36,6 +59,9 @@ actions:
   logout:
     en: Log Out
     es: Cerrar sesión
+  open-map:
+    en: Open Map
+    es: Abrir Mapa
   save:
     _desc: Save a newly created item
     en: Save
@@ -44,10 +70,27 @@ actions:
     _desc: Search for something
     en: Search
     es: Buscar
+  search-addresses:
+    en: Search Addresses
+    es: Buscar Direcciones
+  search-managers:
+    en: Search Managers
+    es: Gestores de Búsqueda
+  search-people:
+    _desc: Search for people
+    en: Search People
+    es: Buscar Personas
+  signup:
+    en: Signup
+    es: Regístrate
+  view-inactive:
+    _desc: View all inactive people
+    en: View Inactive
+    es: Ver Inactivo
   view-archived:
     _desc: View all inactive
     en: View Archived
-    es: Ver Archivo
+    es: Ver Archivado
   view-active:
     _desc: View all active
     en: View Active
@@ -56,11 +99,39 @@ actions:
     _desc: View all
     en: View All
     es: Ver Todo
+  search-people:
+    _desc: Search for people
+    en: Search People
+    es: Buscar Personas
+  view-inactive:
+    _desc: View all inactive people
+    en: View Inactive
+    es: Ver Inactivo
+  back:
+    _desc: Back to a previous view
+    en: Back
+    es: Regresar
+  view-past:
+    _desc: View past events
+    en: View Past
+    es: Ver Pasados
   tooltips:
     settings:
       _desc: Change settings
       en: Settings
       es: Ajustes
-    deactivate:
+    archive:
       en: Archive
-      es: Archivo
+      es: Archivar
+    unarchive:
+      en: Unarchive
+      es: Desarchivar
+    activate:
+      en: Activate
+      es: Activar
+    remove:
+      en: Remove
+      es: Retirar
+    unarchive:
+      en: Unarchive
+      es: Desarchivar

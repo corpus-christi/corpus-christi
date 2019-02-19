@@ -1,0 +1,173 @@
+events:
+  dashboard:
+    title:
+      en: Dashboard
+      es: Tablero
+    headers:
+      location-attendance:
+        en: Attendance by Location
+        es: Asistencia por Ubicación
+      yearly-attendance:
+        en: Yearly Attendance
+        es: Asistencia Anual
+      home-group-percentage:
+        en: Percentage of Churchgoers in a Home Group
+        es: Porcentaje de Feligreses en un Grupo de Hogar
+    charts:
+      home-groups:
+        en: Home Groups
+        es: Iglesias Hogares
+      campus:
+        en: Campus
+        es: Campus
+      attendance:
+        en: Attendance
+        es: Asistencia
+  header:
+    en: Events
+    es: Eventos
+  title:
+    en: Event Title
+    es: Título del Evento
+  event-description:
+    en: Event Description
+    es: Descripción del Evento 
+  attendance:
+    en: Attendance
+    es: Concurrencia
+  attendance-label:
+    en: Enter a number
+    es: Ingrese un numero
+  attendance-none:
+    en: None
+    es: Ninguno
+  calendar:
+    title:
+      en: Calendar
+      es: Calendario
+  start-date:
+    en: Start Date
+    es: Fecha de Inicio
+  end-date:
+    en: End Date
+    es: Fecha Final
+  start-time:
+    en: Start Time
+    es: Hora de Inicio
+  end-time:
+    en: End Time
+    es: Hora de Finalización
+  event-location:
+    en: Event Location
+    es: Ubicación de Evento
+  location:
+    en: Location
+    es: Ubicación
+  upload-image:
+    en: Upload Image
+    es: Cargar Imagen
+  image-description:
+    en: Image Description
+    es: Descripción de la Imagen
+  all-events:
+    en: All Events
+    es: Todos Eventos
+  edit-event:
+    en: Edit Event
+    es: Editar Evento
+  create-event:
+    en: Create Event
+    es: Crear Evento
+  confirm-archive:
+    en: Are you sure you want to archive this event?
+    es: ¿Seguro que quieres archivar este evento?
+  event-archived:
+    en: Event archived
+    es: Evento archivado
+  error-archiving-event:
+    en: Error while archiving event 
+    es: Error al archivar el evento
+  event-unarchived:
+    en: Event unarchived
+    es: Evento desarchivado   # probably not right
+  error-unarchiving-event:
+    en: Error while unarchiving event 
+    es: Error al desarchivar el evento
+  event-edited:
+    en: Event edited
+    es: Evento editado
+  error-editing-event:
+    en: Error while editing event
+    es: Error al editar evento
+  event-added:
+    en: Event added
+    es: Evento agregado
+  error-adding-event:
+    en: Error while adding event
+    es: Error al agregar evento
+  details:
+    title:
+      en: Event Details
+      es: Detalles del Evento
+  participants:
+    title:
+      en: Participants
+      es: Participantes
+    add:
+      en: Add Participants
+      es: Añadir participantes
+    added:
+      en: Participants added
+      es: Participantes agregado
+    error-adding:
+      en: Error adding participant
+      es: Error al agregar participante
+    removed:
+      en: Removed participant
+      es: Participante eliminado
+    error-removing:
+      en: Error removing participant
+      es: Error al eliminadar el participante
+    confirm-remove:
+      en: Are you sure you want to remove this participant?
+      es: ¿Estás seguro de que quieres eliminar a este participante?
+  persons:
+    title:
+      en: Event People
+      es: Personas del Evento
+    new:
+      en: Add Person
+      es: Añadir Persona
+    edit:
+      en: Edit Person
+      es: Editar Persona
+    description:
+      en: Role Description
+      es: Descripción del Rol
+    confirm-remove-from-event:
+      en: Are you sure you want to remove this person from this event?
+      es: ¿Está seguro de que desea eliminar este persona de este evento?
+    person-on-event:
+      en: That person is already assigned to this event.
+      es: Ese persona ya está asignado a este evento.
+    person-added:
+      en: Person added
+      es: Persona agregado
+    person-edited:
+      en: Person edited
+      es: Persona editado
+    person-removed:
+      en: Person removed
+      es: Persona eliminado
+    error-person-assigned:
+      en: That person is assigned to a conflicting event.
+      es: Ese persona está asignado a un evento conflictivo.
+    error-adding-person:
+      en: Error while adding person
+      es: Error al agregar persona
+    error-removing-person:
+      en: Error while removing person 
+      es: Error al eliminadar este persona
+    none-assigned:
+      en: No people assigned.
+      es: No hay personas asignados.

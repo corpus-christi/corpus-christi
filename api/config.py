@@ -29,9 +29,19 @@ class Config:
 
     JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY') or 'jwt super secret key'
     JWT_ACCESS_TOKEN_EXPIRES = datetime.timedelta(hours=8)
+    JWT_BLACKLIST_ENABLED = True
+    JWT_BLACKLIST_TOKEN_CHECKS = ['access']
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_RECORD_QUERIES = True
+
+    MAIL_SERVER = 'smtp.gmail.com'
+    MAIL_PORT = 465
+    MAIL_USE_TLS = False
+    MAIL_USE_SSL = True
+    MAIL_USERNAME = os.environ.get('EMAIL_USERNAME')
+    MAIL_PASSWORD = os.environ.get('EMAIL_PASSWORD')
+    MAIL_SUPPRESS_SEND = False
 
     @staticmethod
     def init_app(app):
@@ -41,7 +51,7 @@ class Config:
 class TestingConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DB_URL') or SQLITE_TEST
-
+    JWT_BLACKLIST_ENABLED = False
 
 class DevelopmentConfig(Config):
     TESTING = True

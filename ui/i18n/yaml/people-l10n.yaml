@@ -2,6 +2,30 @@ people:
   title:
     en: People
     es: Personas
+  title-roles:
+    en: Roles
+    es: Papeles
+  attributes:
+    en: Attributes
+    es: Atributas
+  personal-information:
+    en: Personal Information
+    es: Informacion personal
+  account-information:
+    en: Account Information
+    es: Información de la cuenta
+  additional-information:
+    en: Additional Information
+    es: Información Adicional
+  optional:
+    en: Optional
+    es: Opcional
+  next:
+    en: Next
+    es: Siguiente
+  previous:
+    en: Previous
+    es: Anterior
 
 account:
   username:
@@ -13,8 +37,26 @@ account:
   repeat-password:
     en: Repeat Password
     es: Repite la contraseña
+  no-account:
+    en: Don't have an account?
+    es: ¿No tienes una cuenta?
+  active:
+    _desc: Account status active
+    en: Active
+    es: Activo
+  inactive:
+    _desc: Account status inactive
+    en: Inactive
+    es: Inactivo
 
 person:
+  account:
+    en: Account
+    es: Cuenta
+  account-info:
+    roles:
+      en: Roles
+      es: Papeles
   name:
     first:
       en: First Name
@@ -22,6 +64,9 @@ person:
     last:
       en: Last Name
       es: Apellido
+    second-last:
+      en: Second Last Name
+      es: Segundo Apellido
   gender:
     es: Género
     en: Gender
@@ -51,13 +96,25 @@ person:
     edit:
       en: Edit Person
       es: Editar persona
+    add-participant:
+      en: Add a Participant
+      es: Añadir Partícipe
     add-account:
       en: Add Account
       es: Añadir cuenta
     reset-password:
       en: Reset Password
       es: Restablecer la contraseña
+    assign-roles:
+      en: Assign Roles
+      es: Asigne Papeles
   messages:
+    account-activate:
+      en: Account activated
+      es: Cuenta activada
+    account-deactivate:
+      en: Account deactivated
+      es: Cuenta desactivada
     canceled:
       en: Canceled add new person
       es: Cancelado añadir nueva persona
@@ -76,3 +133,10 @@ person:
     person-save-error:
       en: Person was not saved
       es: La persona no fue salvada
+    confirm:
+      activate:
+        en: Are you sure you want to restore this person?
+        es: ¿Estás seguro de que quieres restaurar a esta persona?
+      deactivate:
+        en: Are you sure you want to archive this person?
+        es: ¿Estás seguro de que quieres archivar a esta persona?

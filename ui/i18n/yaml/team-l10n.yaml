@@ -1,0 +1,65 @@
+teams:
+  title:
+    en: Teams
+    es: Equipos
+  description:
+    en: Description
+    es: Descripción
+  all-teams:
+    en: All Teams
+    es: Todos Equipos
+  new:
+    en: Add Team
+    es: Añadir Equipo
+  create-team:
+    en: Create Team
+    es: Crear Equipo
+  edit-team:
+    en: Edit Team
+    es: Editar Equipo
+  confirm-archive:
+    en: Are you sure you want to archive this team?
+    es: ¿Seguro que quieres archivar este equipo?
+  confirm-remove-from-event:
+    en: Are you sure you want to remove this team from this event?
+    es: ¿Estás seguro de que quieres eliminar a este equipo de este evento?
+  team-removed:
+    en: Team removed
+    es: Equipo eliminado
+  error-removing-team:
+    en: Error while removing team 
+    es: Error al eliminadar este equipo
+  error-unarchiving-team:
+    en: Error while unarchiving team 
+    es: Error al desarchivar equipo
+  team-edited:
+    en: Team edited
+    es: Equipo editado   # ?
+  error-editing-team:
+    en: Error while editing team
+    es: Error al editar equipo
+  team-added:
+    en: Team added
+    es: Equipo agregado
+  error-adding-team:
+    en: Error while adding team
+    es: Error al agregar equipo
+  error-team-assigned:
+    en: That team is assigned to a conflicting event.
+    es: Ese equipo está asignado a un evento conflictivo.
+  team-on-event:
+    en: That team is already assigned to this event.
+    es: Ese equipo ya está asignado a este evento.
+  none-assigned:
+    en: No teams assigned.
+    es: No hay equipos asignados.
+  members:
+    title:
+      en: Team Members
+      es: Miembros del Equipo
+    add:
+      en: Add Team Members
+      es: Añadir Miembros
+    confirm-remove:
+      en: Are you sure you want to remove this member?
+      es: ¿Seguro que quieres eliminar este miembro?

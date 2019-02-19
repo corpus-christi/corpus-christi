@@ -7,7 +7,12 @@ dev-db.sqlite
 htmlcov/
 test-db.sqlite
 venv/
+<<<<<<< HEAD
 private.py
+=======
+credentials.py
+credentials.sh
+data/
 
 # UI
 node_modules/
@@ -21,6 +26,7 @@ screenshots/
 dist/
 .vscode/
 .DS_Store
+<<<<<<< HEAD
 
 #ETC
 *.swp

@@ -1,0 +1,173 @@
+courses:
+  dashboard:
+    title:
+      en: Dashboard
+      es: Tablero
+    headers:
+        course-retention:
+          en: Course Retention
+          es: Retención del Curso
+        course-success:
+          en: Course Success
+          es: Éxito del Curso
+    charts:
+      course:
+        en: Course
+        es: Curso
+      enrolled:
+        en: Enrolled
+        es: Inscrito
+      attended:
+        en: Attended
+        es: Asistió
+      did-not-attend:
+        en: Did Not Attend
+        es: No Asistió
+      graduated:
+        en: Graduated
+        es: Se Graduó
+      did-not-graduate:
+        en: Did Not Graduate
+        es: No Se Graduó
+  course:
+    en: Courses
+    es: Cursos
+  enrolled:
+    en: Number Enrolled
+    es: Número Registrado
+  title:
+    en: Title
+    es: Título
+  description:
+    en: Description
+    es: Descripción
+  new:
+    en: New Course
+    es: Nuevo Curso
+  prerequisites:
+    en: Prerequisites
+    es: Prerrequisitos
+  no-prerequisites:
+    _desc: For indicating that a course has no prerequisites
+    en: This course has no prerequisites.
+    es: Este curso no tiene prerrequisitos.
+  added:
+    en: Course added
+    es: Curso añadido
+  updated:
+    en: Course updated
+    es: Curso actualizado
+  add-failed:
+    en: Failed to add course
+    es: Se falló a añadir el curso
+  update-failed:
+    en: Failed to update course
+    es: Se falló a actualizar el curso
+  archived:
+    en: Course archived
+    es: Curso archivado
+  reactivated:
+    en: Course unarchived
+    es: Curso desarchivado
+  confirm-archive:
+    en: Are you sure you want to archive this course?
+    es: ¿Estás seguro que quieres archivar este curso?
+  is-archived:
+    _desc: For indicating that a course is currently archived
+    en: This course is archived
+    es: Este curso está archivado
+  course-offering:
+    en: Course Offerings
+    es: Ofertas de Cursos
+  choose-time:
+    en: Time
+    es: Tiempo
+  teacher:
+    en: Teacher
+    es: Maestro
+  location:
+    en: Location
+    es: Ubicación
+  max-size:
+    en: Max Number of Students
+    es: Número Máximo de Estudiantes
+  dates:
+    en: Dates
+    es: Fechas
+  date:
+    en: Date
+    es: Fecha
+  new-offering-short:
+    _desc: Action for creating a new course offering, short version for buttons
+    en: New Offering
+    es: Nueva Oferta
+  new-offering:
+    en: New Offering
+    es: Nuevo Oferta
+  students:
+    en: Students
+    es: Estudiantes
+  reject:
+    en: Reject
+    es: Rechazar
+  confirm-student:
+    en: Would you like to confirm or reject this student?
+    es: ¿Te gustarías confirmar o rechazar este estudiante?
+  schedule:
+    en: Schedule
+    es: Horario
+  new-meeting:
+    en: New Meeting
+    es: Nuevo Reunión
+  add-meeting:
+    en: Add Meeting
+    es: Añadir Reunión
+  when:
+    en: When
+    es: Cuándo
+  info-meeting-dates:
+    _desc: Inform the user they can select multiple dates for a class meeting
+    en: You can choose multiple dates to create many meetings.
+    es: Puede elegir fechas múltiples para crear muchos reuniones.
+  meeting-added:
+    en: Meeting(s) added
+    es: Reuniones añadido
+  meeting-updated:
+    en: Meeting updated
+    es: Reunión actualizado
+  add-meeting-failed:
+    en: Failed to add meeting(s)
+    es: Se falló a añadir los reuniones
+  update-meeting-failed:
+    en: Failed to update meeting
+    es: Se falló a actualizar el reunión
+  register:
+    en: Register
+    es: Registrar
+  register-success:
+    en: Successfully Registered
+    es: Registrado con Éxito
+  register-for-course:
+    en: Register for this course
+    es: Registrar para este curso
+  choose-offering:
+    en: Choose Offering
+    es: Elegir Oferta
+  create-new-person:
+    en: Create a new person
+    es: Crear una nueva persona
+  class-attendance:
+    en: Attendance
+    es: Asistencia
+  class-attendance-for:
+    en: Attendance for
+    es: Asistencia para
+  class-attendance-load-failed:
+    en: Failed to load class attendance
+    es: Se falló a conseguir la asistencia
+  class-attendance-updated:
+    en: Class attendance updated
+    es: Asistencia actualizado
+  class-attendance-update-failed:
+    en: Failed to update attendance
+    es: Se falló a actualizar la asistencia

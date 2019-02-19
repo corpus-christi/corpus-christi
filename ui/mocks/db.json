@@ -1,0 +1,248 @@
+{
+  "courses": [
+    {
+      "id": 1,
+      "name": "Intro to the Old Testament",
+      "description": "A survey of the Old Testament",
+      "active": true
+    },
+    {
+      "id": 2,
+      "name": "Intro to New Testament",
+      "description": "A survey of the New Testament",
+      "active": true
+    },
+    {
+      "id": 3,
+      "name": "Survey of the Minor Prophets",
+      "description": "All you'd want to know and more!",
+      "active": true
+    },
+    {
+      "title": "Old Testament",
+      "description": "typicod",
+      "active": true,
+      "id": 4,
+      "name": "hello"
+    },
+    {
+      "name": "test foo",
+      "description": "test",
+      "id": 5,
+      "active": true
+    },
+    {
+      "name": "testing ",
+      "description": "123",
+      "id": 6,
+      "active": false
+    }
+  ],
+  "course_offering": [
+    {
+      "name": "Intro to New Testament",
+      "description": "typicode here",
+      "active": true,
+      "id": 1
+    },
+    {
+      "id": 2,
+      "name": "Intro to Old Testament",
+      "description": "typicode",
+      "active": false
+    },
+    {
+      "id": 3,
+      "name": "New Testament",
+      "description": "typicode",
+      "active": false
+    },
+    {
+      "title": "Old Testament",
+      "description": "typicod",
+      "active": true,
+      "id": 4,
+      "name": "Old Testament"
+    },
+    {
+      "name": "test foo",
+      "description": "test",
+      "id": 5,
+      "name": "Predestination and other cool topics",
+      "description": "Not actually the P in TULIP...it's the U.",
+      "active": true
+    },
+    {
+      "id": 6,
+      "name": "TULIP, the course",
+      "description": "The whole shootin match....",
+      "active": true
+    }
+  ],
+  "diplomas": [
+    {
+      "id": 1,
+      "name": "Survey of the Bible",
+      "description": "A survey of the entire Bible, through three courses.",
+      "active": false,
+      "courses": [
+        {
+          "id": 1,
+          "name": "Intro to the Old Testament",
+          "description": "A survey of the Old Testament",
+          "active": true
+        },
+        {
+          "id": 2,
+          "name": "Intro to New Testament",
+          "description": "A survey of the New Testament",
+          "active": true
+        },
+        {
+          "id": 3,
+          "name": "Survey of the Minor Prophets",
+          "description": "All you'd want to know and more!",
+          "active": true
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Covenant Theology",
+      "description": "A comprehensive study of reformed doctrine, with applications.",
+      "active": true,
+      "courses": [
+        {
+          "id": 4,
+          "name": "Calvin's Institutes",
+          "description": "Two large volumes...get reading :)",
+          "active": true
+        },
+        {
+          "id": 5,
+          "name": "Predestination",
+          "description": "Not actually the P in TULIP...it's the U.",
+          "active": true
+        },
+        {
+          "id": 6,
+          "name": "TULIP, the course",
+          "description": "The whole shootin match....",
+          "active": true
+        }
+      ]
+    }
+  ],
+  "students": [
+    {
+      "active": true,
+      "confirmed": false,
+      "diplomalist": [
+          {
+              "diplomaIsActive": true,
+              "description": "Staff go writer it two. Unit maintain push activity left.",
+              "id": 3,
+              "name": "People ability see.",
+              "when": null,
+              "courses": [
+                {
+                  "id": 1,
+                  "name": "Historic Christian Belief",
+                  "courseCompleted": true
+                },
+                {
+                  "id": 2,
+                  "name": "Contemp",
+                  "courseCompleted": false
+                },
+                {
+                  "id": 3,
+                  "name": "Bib Lit II",
+                  "courseCompleted": false
+                }
+              ]
+          },
+          {
+            "diplomaIsActive": true,
+            "description": "Staff maintain push activity left.",
+            "id": 3,
+            "name": "People very much ability see very good.",
+            "when": "2018-04-26T13:51:50.417-07:00",
+            "courses": [
+              {
+                "id": 4,
+                "name": "Bib Lit I",
+                "courseCompleted": true
+              },
+              {
+                "id": 5,
+                "name": "Art as Experience",
+                "courseCompleted": true
+              },
+              {
+                "id": 6,
+                "name": "Bib Lit IV",
+                "courseCompleted": true
+              }
+            ]
+        }
+      ],
+      "courses": [
+        {
+          "id": 1,
+          "name": "Historic Christian Belief",
+          "description": "A survey of HCB",
+          "courseCompleted": true,
+          "active": true,
+          "courseOfferings": [
+            {
+              "description": "Saturday afternoon, Spring of 2018",
+              "courseIsActive": true,
+              "courseOfferingIsActive": true,
+              "maxSize": 25
+            },
+            {
+              "description": "Monday and Tuesday nights, Fall of 2019",
+              "courseIsActive": true,
+              "courseOfferingIsActive": true,
+              "maxSize": 25
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "name": "Bib Lit II",
+          "description": "Survey of the OT",
+          "courseCompleted": false,
+          "active": true,
+          "courseOfferings": [
+            {
+              "description": "Saturday nights, Spring of 2016",
+              "courseIsActive": true,
+              "courseOfferingIsActive": true,
+              "maxSize": 25
+            },
+            {
+              "description": "Wednesday mornings, Spring of 2017",
+              "courseIsActive": true,
+              "courseOfferingIsActive": true,
+              "maxSize": 25
+            }
+          ]
+        }
+      ],
+      "person": {
+          "active": true,
+          "birthday": "1989-05-29",
+          "email": "amayamauricio@despacho.com",
+          "firstName": "Amanda",
+          "gender": "M",
+          "id": 1,
+          "lastName": "Angulo",
+          "locationId": null,
+          "phone": "410-122-9419x6396"
+      }
+    }
+   
+  ]
+}

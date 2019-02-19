@@ -1,14 +1,14 @@
 <template>
   <div>
     <v-menu offset-y v-if="isLoggedIn">
-      <v-btn id="cur-locale" flat slot="activator" data-cy="cur-locale">
+      <v-btn id="cur-locale" flat slot="activator">
         {{ currentAccount.fullName() }}
+        <v-icon>arrow_drop_down</v-icon>
       </v-btn>
+
       <v-list>
-        <v-list-tile>
-          <v-list-tile-title v-on:click="logAccountOut" data-cy="logout">
-            {{ $t("actions.logout") }}
-          </v-list-tile-title>
+        <v-list-tile v-on:click="logAccountOut" data-cy="logout">
+          <v-list-tile-title> {{ $t("actions.logout") }} </v-list-tile-title>
         </v-list-tile>
       </v-list>
     </v-menu>

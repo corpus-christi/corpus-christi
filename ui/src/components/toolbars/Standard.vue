@@ -1,9 +1,9 @@
 <template>
   <div>
-    <v-toolbar app>
+    <v-toolbar app style="z-index: 50">
       <v-toolbar-side-icon
         v-on:click="toggleNavDrawer"
-        data-cy="open-navigation"
+        data-cy="toggle-nav-drawer"
       ></v-toolbar-side-icon>
 
       <v-toolbar-title class="headline text-uppercase">
@@ -12,11 +12,11 @@
 
       <v-spacer></v-spacer>
 
-      <AccountMenu></AccountMenu>
-      <LocaleMenu></LocaleMenu>
+      <AccountMenu data-cy="account-menu"></AccountMenu>
+      <LocaleMenu data-cy="cur-locale"></LocaleMenu>
     </v-toolbar>
 
-    <NavDrawer ref="drawer"></NavDrawer>
+    <NavDrawer style="z-index: 100" ref="drawer"></NavDrawer>
   </div>
 </template>
 

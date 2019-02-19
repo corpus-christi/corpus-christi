@@ -1,0 +1,36 @@
+diplomas:
+  diplomas:
+    en: Diplomas
+    es: Diplomas
+  diploma:
+    en: Diploma
+    es: Diploma
+  title:
+    en: Title
+    es: Título
+  description:
+    en: Description
+    es: Descripción
+  new:
+    en: New Diploma
+    es: Nueva Diploma
+  courses:
+    en: Courses
+    es: Cursos
+  courses-this-diploma:
+    _desc: List of courses for a given diploma
+    en: Courses for this Diploma
+    es: Cursos para esta Diploma
+  confirm-archive:
+    en: Are you sure you want to archive this diploma?
+    es: ¿Estás seguro que quieres archivar esta diploma?
+  updated:
+    en: Diploma updated
+    es: Diploma actualizado
+  archived:
+    en: Diploma archived
+    es: Diploma archivado
+  reactivated:
+    en: Diploma unarchived
+    es: Diploma desarchivado
+
