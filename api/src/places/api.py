@@ -18,16 +18,16 @@ def modify_entity(entity_type, schema, id, new_value_dict):
 
     for key, val in new_value_dict.items():
         setattr(item, key, val)
-    
+
     db.session.commit()
 
     return jsonify(schema.dump(item)), 200
 
 
-
 class CountryListSchema(Schema):
     code = fields.String(required=True, validate=Length(equal=2))
-    name = fields.String(attribute="gloss", required=True, validate=Length(min=1))
+    name = fields.String(attribute="gloss", required=True,
+                         validate=Length(min=1))
 
 
 country_list_schema = CountryListSchema()
@@ -93,22 +93,22 @@ def read_one_area(area_id):
 @places.route('/areas/<area_id>', methods=['PUT'])
 @jwt_required
 def replace_area(area_id):
-    try: 
+    try:
         valid_attributes = area_schema.load(request.json)
     except ValidationError as err:
         return jsonify(err.messages), 422
-                
+
     return modify_area(area_id, valid_attributes)
 
 
 @places.route('/areas/<area_id>', methods=['PATCH'])
 @jwt_required
 def update_area(area_id):
-    try: 
+    try:
         valid_attributes = area_schema.load(request.json, partial=True)
     except ValidationError as err:
         return jsonify(err.messages), 422
-                
+
     return modify_area(area_id, valid_attributes)
 
 
@@ -131,6 +131,7 @@ def modify_area(area_id, area_object):
     return modify_entity(Area, area_schema, area_id, area_object)
 
 # ---- Address
+
 
 address_schema = AddressSchema()
 
@@ -176,7 +177,7 @@ def read_all_addresses():
     area_filter = request.args.get('area_id')
     if area_filter:
         query = query.filter_by(area_id=area_filter)
-        
+
     # -- country_code --
     # Filter country_code on a wildcard country_code string
     country_filter = request.args.get('country_code')
@@ -216,22 +217,22 @@ def read_one_address(address_id):
 @places.route('/addresses/<address_id>', methods=['PUT'])
 @jwt_required
 def replace_address(address_id):
-    try: 
+    try:
         valid_attributes = address_schema.load(request.json)
     except ValidationError as err:
         return jsonify(err.messages), 422
-                
+
     return modify_address(address_id, valid_attributes)
 
 
 @places.route('/addresses/<address_id>', methods=['PATCH'])
 @jwt_required
 def update_address(address_id):
-    try: 
+    try:
         valid_attributes = address_schema.load(request.json, partial=True)
     except ValidationError as err:
         return jsonify(err.messages), 422
-                
+
     return modify_address(address_id, valid_attributes)
 
 
@@ -263,26 +264,27 @@ location_schema = LocationSchema()
 @jwt_required
 def create_location():
     # Example payload for nested resolving
-    #{
-    #------- Country related
+    # {
+    # ------- Country related
     #        'country_code': 'US',                  # required for nesting
-    #------- Area related
+    # ------- Area related
     #        'area_name': 'area name',              # required for nesting
-    #------- Address related
+    # ------- Address related
     #        'latitude': 0,                         # optional
     #        'longitude': 0,                        # optional
     #        'city': 'Upland',                      # required if address doesn't exist in database
     #        'address': '236 W. Reade Ave.',        # required if address doesn't exist in database
     #        'address_name': 'Taylor University',   # required if address doesn't exist in database
-    #------- Location related
+    # ------- Location related
     #        'description': 'Euler 217'             # optional
-    #}
+    # }
     # This method tries to link existing entries in Country, Area, Address table if possible, otherwise create
     # When there is at least a certain table related field in the payload, the foreign key specified in the payload for that table will be overridden by the fields given
     def debugPrint(msg):
         pass
-        #print(msg)
-    resolving_keys = ('country_code', 'area_name', 'latitude', 'longitude', 'city', 'address', 'address_name')
+        print(msg)
+    resolving_keys = ('country_code', 'area_name', 'latitude',
+                      'longitude', 'city', 'address', 'address_name')
     payload_data = {}
     # process country information
     resolve_needed = False
@@ -298,7 +300,8 @@ def create_location():
         # resolve country
         if 'country_code' not in payload_data:
             return 'country_code not specified in request body', 422
-        country = db.session.query(Country).filter_by(code=payload_data['country_code']).first()
+        country = db.session.query(Country).filter_by(
+            code=payload_data['country_code']).first()
         if not country:
             return f'no country code found in database matching {payload_data["country_code"]}', 404
         country_code = country.code
@@ -306,7 +309,8 @@ def create_location():
         # resolve area
         if 'area_name' not in payload_data:
             return 'area_name not specified in request body', 422
-        area = db.session.query(Area).filter_by(country_code=country_code, name=payload_data['area_name']).first()
+        area = db.session.query(Area).filter_by(
+            country_code=country_code, name=payload_data['area_name']).first()
         area_id = None
         if area:
             area_id = area.id
@@ -314,8 +318,8 @@ def create_location():
         else:
             debugPrint(f"creating new area")
             area_payload = {
-                    'name': payload_data['area_name'],
-                    'country_code': country_code
+                'name': payload_data['area_name'],
+                'country_code': country_code
             }
             try:
                 valid_area = area_schema.load(area_payload)
@@ -328,12 +332,14 @@ def create_location():
             debugPrint(f"new_area created with id {area_id}")
         # resolve address
         address_name_transform = {'address_name': 'name'}
-        address_keys = ('latitude', 'longitude', 'city', 'address', 'address_name')
-        address_payload = {k if k not in address_name_transform else address_name_transform[k]:v 
-                for k, v in payload_data.items() if k in address_keys}
+        address_keys = ('latitude', 'longitude', 'city',
+                        'address', 'address_name')
+        address_payload = {k if k not in address_name_transform else address_name_transform[k]: v
+                           for k, v in payload_data.items() if k in address_keys}
         address_payload['area_id'] = area_id
         address_payload['country_code'] = country_code
-        address = db.session.query(Address).filter_by(**address_payload).first()
+        address = db.session.query(Address).filter_by(
+            **address_payload).first()
         address_id = None
         if address:
             address_id = address.id
@@ -341,6 +347,8 @@ def create_location():
         else:
             debugPrint(f"creating new address")
             debugPrint(f"address payload {address_payload}")
+            if(address_payload['name'] == ''):
+                address_payload['name'] = address_payload['address']
             try:
                 valid_address = address_schema.load(address_payload)
             except ValidationError as err:
@@ -395,11 +403,11 @@ def replace_location(location_id):
 @places.route('/locations/<location_id>', methods=['PATCH'])
 @jwt_required
 def update_location(location_id):
-    try: 
+    try:
         valid_attributes = location_schema.load(request.json, partial=True)
     except ValidationError as err:
         return jsonify(err.messages), 422
-                
+
     return modify_location(location_id, valid_attributes)
 
 

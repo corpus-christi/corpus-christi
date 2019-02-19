@@ -1,11 +1,9 @@
 // This is how to target the bottommost bar in the form
 //    form > :nth-child(2) > [style=""]
 
-
 //Tests adding people to the people page
 
 describe("Ensures the Add-person works", function() {
-
   it("Given: logs in, navigates to people page", function() {
     cy.login();
     cy.get("[data-cy=toggle-nav-drawer]").click();
@@ -31,15 +29,16 @@ describe("Ensures the Add-person works", function() {
     cy.get("[data-cy=email]").type("SoftDrink@gmail.com"); //email
     cy.get("[data-cy=phone]").type("123-456-7890"); //phone
     //This is where the test diverges
-    cy.get("form > :nth-child(2) > [style=\"\"]").within(() => {
+    cy.get('form > :nth-child(2) > [style=""]').within(() => {
       cy.get("[data-cy=next]").click();
     });
     //cy.scrollTo(0, 50);
     cy.get('[style=""] > .v-stepper__wrapper > .layout').within(() => {
-
-      cy.get("[data-cy=next]").eq(1).click();
+      cy.get("[data-cy=next]")
+        .eq(1)
+        .click();
     });
-    cy.get("form > :nth-child(2) > [style=\"\"]").within(() => {
+    cy.get('form > :nth-child(2) > [style=""]').within(() => {
       cy.get("[data-cy=save]").click();
     });
   });
@@ -52,8 +51,14 @@ describe("Ensures the Add-person works", function() {
         "Pepsi"
       );
       cy.get("tbody > :nth-child(1) > :nth-child(3)").should("contain", "Cola");
-      cy.get("tbody > :nth-child(1) > :nth-child(4)").should("contain","SoftDrink@gmail.com");
-      cy.get("tbody > :nth-child(1) > :nth-child(5)").should("contain","123-456-7890");
+      cy.get("tbody > :nth-child(1) > :nth-child(4)").should(
+        "contain",
+        "SoftDrink@gmail.com"
+      );
+      cy.get("tbody > :nth-child(1) > :nth-child(5)").should(
+        "contain",
+        "123-456-7890"
+      );
     });
   });
 });
@@ -84,15 +89,16 @@ describe("Tests the add-person form to ensure proper functionality", () => {
       "válido"
     );
 
-    cy.get("form > :nth-child(2) > [style=\"\"]").within(() => {
+    cy.get('form > :nth-child(2) > [style=""]').within(() => {
       cy.get("[data-cy=next]").click();
     });
     //cy.scrollTo(0, 50);
     cy.get('[style=""] > .v-stepper__wrapper > .layout').within(() => {
-
-      cy.get("[data-cy=next]").eq(1).click();
+      cy.get("[data-cy=next]")
+        .eq(1)
+        .click();
     });
-    cy.get("form > :nth-child(2) > [style=\"\"]").within(() => {
+    cy.get('form > :nth-child(2) > [style=""]').within(() => {
       cy.get("[data-cy=save]").click();
     });
     cy.get(
@@ -104,23 +110,23 @@ describe("Tests the add-person form to ensure proper functionality", () => {
     cy.get("[data-cy=first-name]").type("Test"); //first name
     cy.get("[data-cy=last-name]").type("Me"); //last name
     cy.get(
-      "[style=\"\"] > .v-stepper__wrapper > :nth-child(1) > .v-input__control > .v-text-field__details > .v-messages"
-    ).should("not.contain","obligatorio");
+      '[style=""] > .v-stepper__wrapper > :nth-child(1) > .v-input__control > .v-text-field__details > .v-messages'
+    ).should("not.contain", "obligatorio");
     cy.get(
-      "[style=\"\"] > .v-stepper__wrapper > :nth-child(2) > .v-input__control > .v-text-field__details > .v-messages"
-    ).should("not.contain","obligatorio");
-
+      '[style=""] > .v-stepper__wrapper > :nth-child(2) > .v-input__control > .v-text-field__details > .v-messages'
+    ).should("not.contain", "obligatorio");
   });
   it("Finally: Fields should be valid before add another is allowed to work & after pressed, fields should be cleared", function() {
-    cy.get("form > :nth-child(2) > [style=\"\"]").within(() => {
+    cy.get('form > :nth-child(2) > [style=""]').within(() => {
       cy.get("[data-cy=next]").click();
     });
     //cy.scrollTo(0, 50);
     cy.get('[style=""] > .v-stepper__wrapper > .layout').within(() => {
-
-      cy.get("[data-cy=next]").eq(1).click();
+      cy.get("[data-cy=next]")
+        .eq(1)
+        .click();
     });
-    cy.get("form > :nth-child(2) > [style=\"\"]").within(() => {
+    cy.get('form > :nth-child(2) > [style=""]').within(() => {
       cy.get("[data-cy=add-another]").click();
     });
     cy.get("[data-cy=first-name]").should("be.empty");
@@ -128,9 +134,9 @@ describe("Tests the add-person form to ensure proper functionality", () => {
     cy.get("[data-cy=phone]").should("be.empty");
     cy.get("[data-cy=email]").should("be.empty");
 
-    cy.get("[data-cy=cancel").first().click();
+    cy.get("[data-cy=cancel")
+      .first()
+      .click();
     cy.get(".v-dialog__content--active > .v-dialog").should("not.exist");
   });
-
 });
-

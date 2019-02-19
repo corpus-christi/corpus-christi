@@ -173,9 +173,7 @@
             data-cy="confirm-password"
           ></v-text-field>
         </v-stepper-content>
-        <v-stepper-content
-          v-bind:step="showAccountInfo ? 3 : 2"
-        >
+        <v-stepper-content v-bind:step="showAccountInfo ? 3 : 2">
           <attribute-form
             :personId="person.id"
             :existingAttributes="person.attributesInfo"
@@ -191,7 +189,7 @@
                 :disabled="addressWasSaved"
                 @click="changeAddressView(true)"
               >
-              {{ $t("actions.add-address") }}
+                {{ $t("actions.add-address") }}
               </v-btn>
             </v-flex>
             <v-flex v-show="addressSaved">
@@ -348,7 +346,7 @@ export default {
         email: "",
         phone: "",
         locationId: 0,
-        attributesInfo: [],
+        attributesInfo: []
       },
 
       account: {
@@ -378,7 +376,9 @@ export default {
     ...mapGetters(["currentLanguageCode"]),
 
     formDisabled() {
-      return this.saveIsLoading || this.addMoreIsLoading || this.showAddressForm;
+      return (
+        this.saveIsLoading || this.addMoreIsLoading || this.showAddressForm
+      );
     },
     hasUsername() {
       return this.account.username.length ? "required" : "";
@@ -597,8 +597,8 @@ export default {
     },
 
     removeLocationFromDatabase() {
-      if(this.person.locationId != 0 || this.person.locationId != "") {
-        this.$http.post
+      if (this.person.locationId != 0 || this.person.locationId != "") {
+        this.$http.post;
       }
     }
   }
