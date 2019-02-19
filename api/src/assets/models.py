@@ -1,11 +1,11 @@
-from marshmallow import fields, Schema, pre_load
-from marshmallow.validate import Length, Range, OneOf
-from sqlalchemy import Column, DateTime, Integer, String, Date, ForeignKey, Boolean
-from sqlalchemy.orm import relationship, backref
-from werkzeug.security import generate_password_hash, check_password_hash
+from marshmallow import fields, Schema
+from marshmallow.validate import Range
+from sqlalchemy import Column, Integer, ForeignKey, Boolean
+from sqlalchemy.orm import relationship
 
 from ..db import Base
 from ..shared.models import StringTypes
+
 
 # ---- Asset
 
@@ -21,6 +21,7 @@ class Asset(Base):
 
     def __repr__(self):
         return f"<Asset(id={self.id})>"
+
 
 class AssetSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))

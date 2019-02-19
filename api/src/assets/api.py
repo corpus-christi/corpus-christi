@@ -1,18 +1,15 @@
-import json
-from datetime import datetime, timedelta
-
 from flask import request
 from flask.json import jsonify
-from flask_jwt_extended import jwt_required, get_raw_jwt, jwt_optional
-from flask_mail import Message
+from flask_jwt_extended import jwt_required
 from marshmallow import ValidationError
 from sqlalchemy import func
 
-from .models import Asset, AssetSchema
-from ..events.models import EventAsset, EventAssetSchema
 from . import assets
+from .models import Asset, AssetSchema
 from .. import db
 from ..etc.helper import modify_entity, get_exclusion_list
+from ..events.models import EventAsset
+
 
 # ---- Asset
 
@@ -29,7 +26,7 @@ def create_asset():
     db.session.add(new_asset)
     db.session.commit()
     return jsonify(asset_schema.dump(new_asset)), 201
-    
+
 
 @assets.route('/')
 @jwt_required
@@ -43,7 +40,7 @@ def read_all_assets():
     if return_group == 'inactive':
         query = query.filter_by(active=False)
     elif return_group in ('all', 'both'):
-        pass # Don't filter
+        pass  # Don't filter
     else:
         query = query.filter_by(active=True)
 
@@ -80,12 +77,14 @@ def read_all_assets():
 
     return jsonify(asset_schema.dump(temp_result, many=True))
 
+
 @assets.route('/<asset_id>')
 @jwt_required
 def read_one_asset(asset_id):
     asset_schema = AssetSchema(exclude=get_exclusion_list(request.args, ['location']))
-    asset = db.session.query(Asset).filter_by(id=asset_id).add_columns(func.count(EventAsset.event_id).label('event_count')).join(EventAsset, isouter=True).group_by(Asset.id).first()
-    
+    asset = db.session.query(Asset).filter_by(id=asset_id).add_columns(
+        func.count(EventAsset.event_id).label('event_count')).join(EventAsset, isouter=True).group_by(Asset.id).first()
+
     if not asset:
         return jsonify(f"Asset with id #{asset_id} does not exist."), 404
 
@@ -105,19 +104,19 @@ def replace_asset(asset_id):
         return jsonify(err.messages), 422
 
     return modify_entity(Asset, asset_schema, asset_id, valid_asset)
-    
+
 
 @assets.route('/<asset_id>', methods=['PATCH'])
 @jwt_required
 def update_asset(asset_id):
     asset_schema = AssetSchema(exclude=get_exclusion_list(request.args, ['location']))
-    try: 
+    try:
         valid_attributes = asset_schema.load(request.json, partial=True)
     except ValidationError as err:
         return jsonify(err.messages), 422
-                
+
     return modify_entity(Asset, asset_schema, asset_id, valid_attributes)
-    
+
 
 @assets.route('/<asset_id>', methods=['DELETE'])
 @jwt_required
@@ -126,9 +125,9 @@ def delete_asset(asset_id):
 
     if not asset:
         return jsonify(f"Event with id #{asset_id} does not exist."), 404
-        
+
     setattr(asset, 'active', False)
     db.session.commit()
-    
+
     # 204 codes don't respond with any content
     return 'Successfully deleted asset', 204

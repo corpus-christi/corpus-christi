@@ -1,33 +1,29 @@
 import os
+# Needed for pruning events
+from datetime import datetime, timedelta, date
 
 import click
 from click import BadParameter
 from flask.cli import AppGroup
 from flask_jwt_extended import create_access_token
 
-from flask import jsonify
-
-# Needed for pruning events
-from datetime import datetime, timedelta, date
-
 from src import create_app
 from src import db
-from src.i18n.models import Language, I18NLocale
-from src.people.models import Person, Account, Role
-from src.people.test_people import create_multiple_people, create_multiple_accounts
-from src.images.create_image_data import create_images_test_data
-from src.events.models import Event
-from src.events.create_event_data import create_events_test_data
-from src.attributes.models import Attribute, PersonAttribute, EnumeratedValue
-from src.attributes.test_attributes import create_multiple_attributes, create_multiple_enumerated_values, create_multiple_person_attribute_enumerated, create_multiple_person_attribute_strings
-from src.people.test_people import create_multiple_people, create_multiple_accounts, create_multiple_managers, create_multiple_people_attributes
-from src.places.test_places import create_multiple_areas, create_multiple_addresses, create_multiple_locations
-from src.places.models import Country
+from src.attributes.models import Attribute
 from src.courses.models import Course, Course_Offering, Diploma
-from src.courses.test_courses import create_multiple_courses, create_multiple_course_offerings,\
-    create_multiple_diplomas, create_multiple_students, create_class_meetings,\
+from src.courses.test_courses import create_multiple_courses, create_multiple_course_offerings, \
+    create_multiple_diplomas, create_multiple_students, create_class_meetings, \
     create_diploma_awards, create_class_attendance, create_multiple_prerequisites, create_course_completion
+from src.events.create_event_data import create_events_test_data
+from src.events.models import Event
 from src.groups.create_group_data import create_group_test_data
+from src.i18n.models import Language, I18NLocale
+from src.images.create_image_data import create_images_test_data
+from src.people.models import Person, Account, Role
+from src.people.test_people import create_multiple_people, create_multiple_accounts, create_multiple_managers, \
+    create_multiple_people_attributes
+from src.places.models import Country
+from src.places.test_places import create_multiple_areas, create_multiple_addresses, create_multiple_locations
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 
@@ -254,7 +250,6 @@ def update_password(username, password):
 
 app.cli.add_command(user_cli)
 
-
 # ---- Courses and Relating to Courses
 
 course_cli = AppGroup('course', help="Maintain course data.")
@@ -293,7 +288,6 @@ def create_course(name, description, prereq, offering):
 
 app.cli.add_command(course_cli)
 
-
 # ---- Diploma
 
 diploma_cli = AppGroup('diploma', help="Maintain diploma data.")
@@ -322,7 +316,7 @@ def prune_events():
     events = db.session.query(Event).filter_by(active=True).all()
     pruningOffset = datetime.now() - timedelta(days=30)
     for event in events:
-        if(event.end < pruningOffset):
+        if (event.end < pruningOffset):
             event.active = False
     db.session.commit()
 
