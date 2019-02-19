@@ -1,7 +1,5 @@
 <template>
-  <v-container>
-    <h1>{{ $t("groups.title") }}</h1>
-  </v-container>
+  <v-container> <router-view></router-view> </v-container>
 </template>
 
 <script>

@@ -1,26 +1,20 @@
 <template>
-  <v-text-field
-    :label="label"
-    :name="name"
-    :value="value"
-    @input="$emit('input', $event)"
-  ></v-text-field>
+  <div>
+    <v-text-field
+      :label="$t(attribute.name)"
+      :name="$t(attribute.name)"
+      :value="attribute.value"
+      @input="$emit('input', { stringValue: $event, enumValueId: 0 })"
+    ></v-text-field>
+  </div>
 </template>
 
 <script>
 export default {
   name: "String",
   props: {
-    label: {
-      type: String,
-      required: true
-    },
-    name: {
-      type: String,
-      required: true
-    },
-    value: {
-      type: String,
+    attribute: {
+      type: Object,
       required: true
     }
   }

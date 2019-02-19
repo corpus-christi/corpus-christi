@@ -28,8 +28,10 @@
     },
     "actions": {
       "activate-account": "Activate",
+      "add-address": "Add Address",
       "add-another": "Add Another",
       "add-event": "Add Event",
+      "add-group": "Add Group",
       "add-person": "Add Person",
       "back": "Back",
       "cancel": "Cancel",
@@ -42,8 +44,11 @@
       "header": "Actions",
       "login": "Log In",
       "logout": "Log Out",
+      "open-map": "Open Map",
       "save": "Save",
       "search": "Search",
+      "search-addresses": "Search Addresses",
+      "search-managers": "Search Managers",
       "search-people": "Search People",
       "signup": "Signup",
       "tooltips": {
@@ -84,14 +89,22 @@
     },
     "courses": {
       "add-failed": "Failed to add course",
+      "add-meeting": "Add Meeting",
+      "add-meeting-failed": "Failed to add meeting(s)",
       "added": "Course added",
       "archived": "Course archived",
-      "choose-location": "Location",
-      "choose-teacher": "Teacher",
-      "choose-time": "Choose Time",
+      "choose-offering": "Choose Offering",
+      "choose-time": "Time",
+      "class-attendance": "Attendance",
+      "class-attendance-for": "Attendance for",
+      "class-attendance-load-failed": "Failed to load class attendance",
+      "class-attendance-update-failed": "Failed to update attendance",
+      "class-attendance-updated": "Class attendance updated",
       "confirm-archive": "Are you sure you want to archive this course?",
+      "confirm-student": "Would you like to confirm or reject this student?",
       "course": "Courses",
       "course-offering": "Course Offerings",
+      "create-new-person": "Create a new person",
       "dashboard": {
         "charts": {
           "attended": "Attended",
@@ -107,20 +120,35 @@
         },
         "title": "Dashboard"
       },
-      "dates": "Choose Dates",
+      "date": "Date",
+      "dates": "Dates",
       "description": "Description",
       "enrolled": "Number Enrolled",
+      "info-meeting-dates": "You can choose multiple dates to create many meetings.",
       "is-archived": "This course is archived",
+      "location": "Location",
       "max-size": "Max Number of Students",
+      "meeting-added": "Meeting(s) added",
+      "meeting-updated": "Meeting updated",
       "new": "New Course",
-      "new-offering": "New Course Offering",
+      "new-meeting": "New Meeting",
+      "new-offering": "New Offering",
+      "new-offering-short": "New Offering",
       "no-prerequisites": "This course has no prerequisites.",
       "prerequisites": "Prerequisites",
       "reactivated": "Course unarchived",
+      "register": "Register",
+      "register-for-course": "Register for this course",
+      "register-success": "Successfully Registered",
+      "reject": "Reject",
+      "schedule": "Schedule",
       "students": "Students",
+      "teacher": "Teacher",
       "title": "Title",
       "update-failed": "Failed to update course",
-      "updated": "Course updated"
+      "update-meeting-failed": "Failed to update meeting",
+      "updated": "Course updated",
+      "when": "When"
     },
     "diplomas": {
       "archived": "Diploma archived",
@@ -128,7 +156,8 @@
       "courses": "Courses",
       "courses-this-diploma": "Courses for this Diploma",
       "description": "Description",
-      "diploma": "Diplomas",
+      "diploma": "Diploma",
+      "diplomas": "Diplomas",
       "new": "New Diploma",
       "reactivated": "Diploma unarchived",
       "title": "Title",
@@ -206,6 +235,38 @@
       "upload-image": "Upload Image"
     },
     "groups": {
+      "create-group": "Create Group",
+      "description": "Description",
+      "details": {
+        "title": "Details"
+      },
+      "edit-group": "Edit Group",
+      "group-description": "Group Description",
+      "header": "Groups",
+      "manager": "Manager",
+      "meetings": {
+        "title": "Meetings"
+      },
+      "members": {
+        "title": "Members"
+      },
+      "messages": {
+        "confirm-archive": "Are you sure you want to archive this group?",
+        "error-adding-group": "Error while adding group",
+        "error-adding-members": "Error while adding members",
+        "error-archiving-group": "Error while archiving group",
+        "error-archiving-member": "Error while unarchiving member",
+        "error-editing-group": "Error while editing group",
+        "group-added": "Group added",
+        "group-archived": "Group archived",
+        "group-edited": "Group edited",
+        "group-unarchived": "Group unarchived",
+        "group-unarchiving-group": "Error while unarchiving group",
+        "member-archived": "Member archived",
+        "member-unarchived": "Member unarchived",
+        "members-added": "Members added"
+      },
+      "name": "Name",
       "title": "Home Churches"
     },
     "login": {
@@ -215,11 +276,21 @@
       }
     },
     "people": {
+      "account-information": "Account Information",
+      "additional-information": "Additional Information",
       "attributes": "Attributes",
+      "next": "Next",
+      "optional": "Optional",
+      "personal-information": "Personal Information",
+      "previous": "Previous",
       "title": "People",
       "title-roles": "Roles"
     },
     "person": {
+      "account": "Account",
+      "account-info": {
+        "roles": "Roles"
+      },
       "actions": {
         "add-account": "Add Account",
         "add-participant": "Add a Participant",
@@ -239,6 +310,10 @@
         "account-activate": "Account activated",
         "account-deactivate": "Account deactivated",
         "canceled": "Canceled add new person",
+        "confirm": {
+          "activate": "Are you sure you want to restore this person?",
+          "deactivate": "Are you sure you want to archive this person?"
+        },
         "person-activate": "Person activated",
         "person-add": "New person added",
         "person-deactivate": "Person deactivated",
@@ -253,14 +328,33 @@
       "phone": "Phone",
       "settings": "Settings for {person}"
     },
+    "places": {
+      "address": {
+        "address": "Address",
+        "city": "City",
+        "latitude": "Latitude",
+        "longitude": "Longitude",
+        "name": "Name"
+      },
+      "create-address": "Create an Address",
+      "location": {
+        "description": "Description"
+      },
+      "messages": {
+        "no-results": "Your address returned no results."
+      }
+    },
     "public": {
+      "courses": {
+        "view-all": "View All Courses"
+      },
       "events": {
         "join": "Join Event",
         "view-all": "View All Events"
       },
       "headers": {
         "home-church": "Find a Home Church",
-        "upcoming-classes": "Upcoming Clases",
+        "upcoming-classes": "Upcoming Courses",
         "upcoming-events": "Upcoming Events"
       },
       "title": "Public"
@@ -289,6 +383,17 @@
       "team-on-event": "That team is already assigned to this event.",
       "team-removed": "Team removed",
       "title": "Teams"
+    },
+    "transcripts": {
+      "add-diploma-this-student": "Add Diploma",
+      "course-completed": "Completed",
+      "courses": "Courses",
+      "courses-in-progress-or-completed": "Courses (in Progress or Completed)",
+      "courses-this-diploma": "Courses for this Diploma",
+      "description": "Description",
+      "page-title": "Student Transcript -",
+      "student-information": "Information",
+      "transcript": "Transcripts"
     },
     "validation": {
       "attributes": {
@@ -338,8 +443,10 @@
     },
     "actions": {
       "activate-account": "Activar",
+      "add-address": "A\u00f1adir Dirreci\u00f3n",
       "add-another": "A\u00f1adir Otro",
       "add-event": "A\u00f1adir Evento",
+      "add-group": "A\u00f1adir grupo",
       "add-person": "A\u00f1adir Persona",
       "back": "Regresar",
       "cancel": "Cancelar",
@@ -352,8 +459,11 @@
       "header": "Acciones",
       "login": "Acceder",
       "logout": "Cerrar sesi\u00f3n",
+      "open-map": "Abrir Mapa",
       "save": "Salvar",
       "search": "Buscar",
+      "search-addresses": "Buscar Direcciones",
+      "search-managers": "Gestores de B\u00fasqueda",
       "search-people": "Buscar Personas",
       "signup": "Reg\u00edstrate",
       "tooltips": {
@@ -394,14 +504,22 @@
     },
     "courses": {
       "add-failed": "Se fall\u00f3 a a\u00f1adir el curso",
+      "add-meeting": "A\u00f1adir Reuni\u00f3n",
+      "add-meeting-failed": "Se fall\u00f3 a a\u00f1adir los reuniones",
       "added": "Curso a\u00f1adido",
       "archived": "Curso archivado",
-      "choose-location": "Ubicaci\u00f3n",
-      "choose-teacher": "Maestro",
-      "choose-time": "Elegir Tiempo",
+      "choose-offering": "Elegir Oferta",
+      "choose-time": "Tiempo",
+      "class-attendance": "Asistencia",
+      "class-attendance-for": "Asistencia para",
+      "class-attendance-load-failed": "Se fall\u00f3 a conseguir la asistencia",
+      "class-attendance-update-failed": "Se fall\u00f3 a actualizar la asistencia",
+      "class-attendance-updated": "Asistencia actualizado",
       "confirm-archive": "\u00bfEst\u00e1s seguro que quieres archivar este curso?",
+      "confirm-student": "\u00bfTe gustar\u00edas confirmar o rechazar este estudiante?",
       "course": "Cursos",
       "course-offering": "Ofertas de Cursos",
+      "create-new-person": "Crear una nueva persona",
       "dashboard": {
         "charts": {
           "attended": "Asisti\u00f3",
@@ -417,20 +535,35 @@
         },
         "title": "Tablero"
       },
-      "dates": "Elegir Fechas",
+      "date": "Fecha",
+      "dates": "Fechas",
       "description": "Descripci\u00f3n",
       "enrolled": "N\u00famero Registrado",
+      "info-meeting-dates": "Puede elegir fechas m\u00faltiples para crear muchos reuniones.",
       "is-archived": "Este curso est\u00e1 archivado",
+      "location": "Ubicaci\u00f3n",
       "max-size": "N\u00famero M\u00e1ximo de Estudiantes",
+      "meeting-added": "Reuniones a\u00f1adido",
+      "meeting-updated": "Reuni\u00f3n actualizado",
       "new": "Nuevo Curso",
-      "new-offering": "Nuevo Oferta de Curso",
+      "new-meeting": "Nuevo Reuni\u00f3n",
+      "new-offering": "Nuevo Oferta",
+      "new-offering-short": "Nueva Oferta",
       "no-prerequisites": "Este curso no tiene prerrequisitos.",
       "prerequisites": "Prerrequisitos",
       "reactivated": "Curso desarchivado",
+      "register": "Registrar",
+      "register-for-course": "Registrar para este curso",
+      "register-success": "Registrado con \u00c9xito",
+      "reject": "Rechazar",
+      "schedule": "Horario",
       "students": "Estudiantes",
+      "teacher": "Maestro",
       "title": "T\u00edtulo",
       "update-failed": "Se fall\u00f3 a actualizar el curso",
-      "updated": "Curso actualizado"
+      "update-meeting-failed": "Se fall\u00f3 a actualizar el reuni\u00f3n",
+      "updated": "Curso actualizado",
+      "when": "Cu\u00e1ndo"
     },
     "diplomas": {
       "archived": "Diploma archivado",
@@ -438,7 +571,8 @@
       "courses": "Cursos",
       "courses-this-diploma": "Cursos para esta Diploma",
       "description": "Descripci\u00f3n",
-      "diploma": "Diplomas",
+      "diploma": "Diploma",
+      "diplomas": "Diplomas",
       "new": "Nueva Diploma",
       "reactivated": "Diploma desarchivado",
       "title": "T\u00edtulo",
@@ -516,6 +650,38 @@
       "upload-image": "Cargar Imagen"
     },
     "groups": {
+      "create-group": "Crea un Grupo",
+      "description": "Descripci\u00f3n",
+      "details": {
+        "title": "Detalles"
+      },
+      "edit-group": "Grupo de Edici\u00f3n",
+      "group-description": "Descripci\u00f3n del Grupo",
+      "header": "Grupos",
+      "manager": "Gerente",
+      "meetings": {
+        "title": "Reuniones"
+      },
+      "members": {
+        "title": "Miembros"
+      },
+      "messages": {
+        "confirm-archive": "\u00bfSeguro que quieres archivar este groupos?",
+        "error-adding-group": "Error al agregar grupo",
+        "error-adding-members": "Error al agregar miembros",
+        "error-archiving-group": "Error al archivar el grupo",
+        "error-archiving-member": "Error al desarchivar miembro",
+        "error-editing-group": "Error al editar grupo",
+        "group-added": "Grupo agregado",
+        "group-archived": "Grupo archivado",
+        "group-edited": "Grupo editado",
+        "group-unarchived": "Grupo desarchivado",
+        "group-unarchiving-group": "Error al desarchivar el grupo",
+        "member-archived": "Miembro archivado",
+        "member-unarchived": "Miembro desarchivado",
+        "members-added": "Miembros agregados"
+      },
+      "name": "Nombre",
       "title": "Iglesias Hogar"
     },
     "login": {
@@ -525,11 +691,21 @@
       }
     },
     "people": {
+      "account-information": "Informaci\u00f3n de la cuenta",
+      "additional-information": "Informaci\u00f3n Adicional",
       "attributes": "Atributas",
+      "next": "Siguiente",
+      "optional": "Opcional",
+      "personal-information": "Informacion personal",
+      "previous": "Anterior",
       "title": "Personas",
       "title-roles": "Papeles"
     },
     "person": {
+      "account": "Cuenta",
+      "account-info": {
+        "roles": "Papeles"
+      },
       "actions": {
         "add-account": "A\u00f1adir cuenta",
         "add-participant": "A\u00f1adir Part\u00edcipe",
@@ -549,6 +725,10 @@
         "account-activate": "Cuenta activada",
         "account-deactivate": "Cuenta desactivada",
         "canceled": "Cancelado a\u00f1adir nueva persona",
+        "confirm": {
+          "activate": "\u00bfEst\u00e1s seguro de que quieres restaurar a esta persona?",
+          "deactivate": "\u00bfEst\u00e1s seguro de que quieres archivar a esta persona?"
+        },
         "person-activate": "Persona activada",
         "person-add": "Nueva persona agregada",
         "person-deactivate": "Persona desactivada",
@@ -563,14 +743,33 @@
       "phone": "Tel\u00e9fono",
       "settings": "Configuraci\u00f3n de la {person}"
     },
+    "places": {
+      "address": {
+        "address": "Direcci\u00f3n",
+        "city": "Ciudad",
+        "latitude": "Latitud",
+        "longitude": "Longitud",
+        "name": "Nombre"
+      },
+      "create-address": "Crear una Direcci\u00f3n",
+      "location": {
+        "description": "Descripci\u00f3n"
+      },
+      "messages": {
+        "no-results": "Tu direcci\u00f3n no devolvi\u00f3 resultados"
+      }
+    },
     "public": {
+      "courses": {
+        "view-all": "Ver Todos Cursos"
+      },
       "events": {
         "join": "Juntarse Evento",
         "view-all": "Ver Todos Eventos"
       },
       "headers": {
         "home-church": "Encontrar una Iglesia Hogar",
-        "upcoming-classes": "Pr\u00f3ximas Clases",
+        "upcoming-classes": "Pr\u00f3ximas Cursos",
         "upcoming-events": "Pr\u00f3ximos Eventos"
       },
       "title": "P\u00fablico"
@@ -599,6 +798,17 @@
       "team-on-event": "Ese equipo ya est\u00e1 asignado a este evento.",
       "team-removed": "Equipo eliminado",
       "title": "Equipos"
+    },
+    "transcripts": {
+      "add-diploma-this-student": "A\u00f1adir Diploma",
+      "course-completed": "Terminado",
+      "courses": "Cursos",
+      "courses-in-progress-or-completed": "Cursos (en Progreso o Terminados)",
+      "courses-this-diploma": "Cursos para esta Diploma",
+      "description": "Descripci\u00f3n",
+      "page-title": "Transcripci\u00f3n para",
+      "student-information": "Datos",
+      "transcript": "Transcripci\u00f3nes"
     },
     "validation": {
       "attributes": {

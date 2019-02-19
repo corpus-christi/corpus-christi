@@ -1,29 +1,19 @@
 <template>
-  <v-navigation-drawer app v-model="drawerVisible" width="200">
+  <v-navigation-drawer app v-model="drawerVisible">
     <v-list>
-      <template v-for="item in menuItems">
-        <v-list-tile
-          v-bind:key="item.route"
-          v-bind:to="{ name: item.route }"
-          v-bind:data-cy="item.route"
-        >
-          <v-list-tile-action>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-        </v-list-tile>
-        <v-divider
-          v-if="item.divider"
-          v-bind:key="'div-' + item.route"
-        ></v-divider>
-      </template>
+      <NavItem v-for="item in menuItems" :key="item.route" :item="item" />
     </v-list>
   </v-navigation-drawer>
 </template>
 
 <script>
+import NavItem from "./NavItem";
+
 export default {
   name: "NavDrawer",
+  components: {
+    NavItem
+  },
   data() {
     return {
       drawerVisible: false
@@ -52,12 +42,17 @@ export default {
         {
           title: this.$t("courses.course"),
           route: "courses",
-          icon: "school"
-        },
-        {
-          title: this.$t("diplomas.diploma"),
-          route: "diplomas-admin",
-          icon: "school"
+          icon: "school",
+          children: [
+            {
+              title: this.$t("diplomas.diploma"),
+              route: "diplomas-admin"
+            },
+            {
+              title: this.$t("transcripts.transcript"),
+              route: "transcripts"
+            }
+          ]
         },
         {
           title: this.$t("events.header"),

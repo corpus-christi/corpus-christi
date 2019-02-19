@@ -66,11 +66,7 @@
 
                   <!-- Placeholder if no image uploaded -->
                   <template v-else>
-                    <v-img
-                      class="picture"
-                      :src="arcoPlaceholder"
-                    >
-                    </v-img>
+                    <v-img class="picture" :src="arcoPlaceholder"> </v-img>
                   </template>
                 </v-flex>
               </v-layout>
@@ -87,16 +83,6 @@
                   <v-icon>person</v-icon>&nbsp;{{
                     $t("events.participants.title")
                   }}
-                </v-btn>
-                <v-btn
-                  class="ma-0"
-                  flat
-                  ripple
-                  color="primary"
-                  data-cy="upload-image"
-                  v-on:click="openImageDialog"
-                >
-                  <v-icon>image</v-icon>&nbsp;{{ $t("events.upload-image") }}
                 </v-btn>
               </v-layout>
             </v-card-actions>
@@ -171,15 +157,6 @@
         v-on:save-attendance="saveAttendance($event)"
       ></event-attendance-form>
     </v-dialog>
-
-    <!-- Image dialog -->
-    <v-dialog v-model="imageDialog.show" persistent max-width="400px">
-      <event-image-form
-        v-bind:eventId="event.id"
-        v-on:cancel="closeImageDialog"
-        v-on:saved="updateImage"
-      ></event-image-form>
-    </v-dialog>
   </v-layout>
 </template>
 
@@ -190,8 +167,7 @@ import EventTeamDetails from "./EventTeamDetails";
 import EventAssetDetails from "./EventAssetDetails";
 import EventPersonDetails from "./EventPersonDetails";
 import EventAttendanceForm from "./EventAttendanceForm";
-import EventImageForm from "./EventImageForm";
-import arcoPlaceholder from "../../../assets/arco-placeholder.jpg"
+import arcoPlaceholder from "../../../assets/arco-placeholder.jpg";
 
 export default {
   name: "EventDetails",
@@ -200,8 +176,7 @@ export default {
     "event-team-details": EventTeamDetails,
     "event-asset-details": EventAssetDetails,
     "event-person-details": EventPersonDetails,
-    "event-attendance-form": EventAttendanceForm,
-    "event-image-form": EventImageForm
+    "event-attendance-form": EventAttendanceForm
   },
 
   data() {
@@ -217,10 +192,6 @@ export default {
         show: false,
         saving: false,
         number: null
-      },
-
-      imageDialog: {
-        show: false
       },
 
       snackbar: {
@@ -392,19 +363,6 @@ export default {
           console.error("ATTENDANCE PATCH FAILURE", err.response);
           this.attendanceDialog.saving = false;
         });
-    },
-
-    openImageDialog() {
-      this.imageDialog.show = true;
-    },
-
-    closeImageDialog() {
-      this.imageDialog.show = false;
-    },
-
-    updateImage() {
-      this.closeImageDialog();
-      this.getEvent();
     },
 
     getDisplayDate(ts) {

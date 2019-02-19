@@ -90,8 +90,8 @@ def attribute_factory(sqla, name, locale_code='en-US', active=1):
 
 def enumerated_value_factory(sqla):
     """Create a fake enumerated value."""
-    count = random.randint(5, 15)
-    create_multiple_attributes(sqla, 3, 1)
+    # count = random.randint(5, 15)
+    # create_multiple_attributes(sqla, 3, 1)
     attributes = sqla.query(Attribute).all()
 
     value_string = rl_fake().name()
@@ -210,6 +210,7 @@ def prep_database(sqla):
 @pytest.mark.smoke
 def test_create_attribute(auth_client):
     # GIVEN an empty database
+    Attribute.load_types_from_file()
     count = random.randint(5, 15)
     # WHEN we create a random number of new attributes
     for i in range(count):
@@ -219,15 +220,31 @@ def test_create_attribute(auth_client):
     assert auth_client.sqla.query(Attribute).count() == count
 
 @pytest.mark.smoke
+def test_create_attribute_no_exist(auth_client):
+    # GIVEN an empty database
+    create_multiple_attributes(auth_client.sqla, 5)
+
+    # WHEN a attribute is requested to be created but is sent in an incorrect format
+    resp = auth_client.post(url_for('attributes.create_attribute'), json={"attribute": ['bad attribute'], "enumeratedValues":[]})
+
+    # THEN expect the request to be not found
+    assert resp.status_code == 422
+
+@pytest.mark.smoke
 def test_create_enumerated_attribute(auth_client):
     # GIVEN an empty database
+    create_multiple_attributes(auth_client.sqla, 1, 1)
     count = random.randint(5, 15)
     # WHEN we create a random number of new attributes
     for i in range(count):
-        resp = auth_client.post(url_for('attributes.create_attribute'), json={"attribute": attribute_factory(auth_client.sqla, 'name', 'en-US'), "enumeratedValues":[]})
+        resp = auth_client.post(url_for('attributes.create_attribute'),
+                                json={"attribute": attribute_factory(auth_client.sqla, 'name', 'en-US'), "enumeratedValues":[enumerated_value_factory(auth_client.sqla)]})
         assert resp.status_code == 201
-    # THEN we end up with the proper number of attributes in the database
-    assert auth_client.sqla.query(Attribute).count() == count
+    # THEN we end up with the proper number of enumerated attributes in the database
+
+    # One attribute must be created initially before creating Enumerated Values, hence the plus one below
+    assert auth_client.sqla.query(Attribute).count() == count + 1
+    assert auth_client.sqla.query(EnumeratedValue).count() == count
 
 
 def test_read_one_attributes(auth_client):
@@ -266,28 +283,64 @@ def test_read_all_attributes(auth_client):
 
 
 def test_update_attribute(auth_client):
-    # GIVEN a DB with an attribute.
-    create_multiple_attributes(auth_client.sqla, 1)
+    # GIVEN a DB with attributes and enumerated values
+    create_multiple_attributes(auth_client.sqla, 10)
     attribute_id = auth_client.sqla.query(Attribute.id).first().id
 
-    # WHEN we update its fields
+    create_multiple_enumerated_values(auth_client.sqla, 5)
+    enumerated_values = auth_client.sqla.query(EnumeratedValue).all()
+    current_enumerated_value = random.choice(enumerated_values)
+    current_enumerated_value_id = current_enumerated_value.attribute_id
+
+    update_enumerated_value = {
+        'id': current_enumerated_value.id,
+        'attributeId': current_enumerated_value.attribute_id,
+        'valueI18n': current_enumerated_value.value_i18n,
+        'active': True
+    }
+
     payload = {}
 
     payload['nameI18n'] = 'updated_name'
     payload['typeI18n'] = 'updated_type'
     payload['seq'] = 0
     payload['active'] = False
-    resp = auth_client.patch(url_for(
-        'attributes.update_attribute', attribute_id=attribute_id), json={'attribute': payload, 'enumeratedValues': []})
-    assert resp.status_code == 200
 
-    updated_attribute = auth_client.sqla.query(
-        Attribute).filter_by(id=attribute_id).first()
-    assert updated_attribute is not None
-    assert updated_attribute.name_i18n == payload['nameI18n']
-    assert updated_attribute.type_i18n == payload['typeI18n']
-    assert updated_attribute.seq == payload['seq']
-    assert updated_attribute.active == payload['active']
+    # WHEN we update attributes with both a new enumerated value and an updated enumerated value
+    for i in range(2):
+        if i == 0:
+            resp = auth_client.patch(url_for(
+                'attributes.update_attribute', attribute_id=attribute_id), json={'attribute': payload, 'enumeratedValues': [enumerated_value_factory(auth_client.sqla)]})
+            assert resp.status_code == 200
+        if i == 1:
+            resp = auth_client.patch(url_for(
+                'attributes.update_attribute', attribute_id=current_enumerated_value_id),
+                json={'attribute': payload, 'enumeratedValues': [update_enumerated_value]})
+
+            assert resp.status_code == 200
+
+        updated_attribute = auth_client.sqla.query(
+            Attribute).filter_by(id=attribute_id).first()
+
+        #THEN attributes are updated
+        assert updated_attribute is not None
+        assert updated_attribute.name_i18n == payload['nameI18n']
+        assert updated_attribute.type_i18n == payload['typeI18n']
+        assert updated_attribute.seq == payload['seq']
+        assert updated_attribute.active == payload['active']
+
+@pytest.mark.smoke
+def test_update_attribute_no_exist(auth_client):
+    # GIVEN an empty database
+    create_multiple_attributes(auth_client.sqla, 5)
+
+    # WHEN a attribute is requested to be updated and is in the incorrect format
+    resp = auth_client.patch(url_for('attributes.update_attribute', attribute_id=3), json={'attribute': ['bad attribute'], 'enumeratedValues': [enumerated_value_factory(auth_client.sqla)]})
+
+    # THEN expect the request to be not found
+    assert resp.status_code == 422
+
+
 
 
 def test_deactivate_attribute(auth_client):
@@ -302,6 +355,8 @@ def test_deactivate_attribute(auth_client):
 
     updated_attribute = auth_client.sqla.query(
         Attribute).filter_by(id=attribute_id).first()
+
+    #THEN the attribute is deactivated
     assert updated_attribute is not None
     assert updated_attribute.active == False
 
@@ -311,13 +366,15 @@ def test_activate_attribute(auth_client):
     create_multiple_attributes(auth_client.sqla, 1, 0)
     attribute_id = auth_client.sqla.query(Attribute.id).first().id
 
-    # WHEN we call deactivate
+    # WHEN we call activate
     resp = auth_client.patch(url_for(
         'attributes.activate_attribute', attribute_id=attribute_id))
     assert resp.status_code == 200
 
     updated_attribute = auth_client.sqla.query(
         Attribute).filter_by(id=attribute_id).first()
+
+    #THEN we have an active attribute
     assert updated_attribute is not None
     assert updated_attribute.active == True
 
@@ -327,6 +384,7 @@ def test_activate_attribute(auth_client):
 
 def create_multiple_enumerated_values(sqla, n):
     """Commit `n` new enumerated values to the database. Return their IDs."""
+    create_multiple_attributes(sqla, 10)
     enumerated_value_schema = EnumeratedValueSchema(exclude=['id'])
     new_enumerated_values = []
     for i in range(n):
@@ -340,6 +398,7 @@ def create_multiple_enumerated_values(sqla, n):
 
 def test_create_enumerated_value(auth_client):
     # GIVEN an empty database
+    create_multiple_attributes(auth_client.sqla, 1)
     count = random.randint(5, 15)
     # WHEN we create a random number of new enumerated values
     for i in range(count):
@@ -349,9 +408,21 @@ def test_create_enumerated_value(auth_client):
     # THEN we end up with the proper number of enumerated values in the database
     assert auth_client.sqla.query(EnumeratedValue).count() == count
 
+@pytest.mark.smoke
+def test_create_enumerated_value_no_exist(auth_client):
+    # GIVEN an empty database
+    create_multiple_attributes(auth_client.sqla, 5)
+
+    # WHEN an enumerated value is requested to be added and is sent in an incorrect format
+    resp = auth_client.post(url_for('attributes.create_enumerated_value'), json=['bad value'])
+
+    # THEN expect the request to be not found
+    assert resp.status_code == 422
+
 
 def test_read_one_enumerated_values(auth_client):
     # GIVEN a DB with a collection of enumerated values.
+    create_multiple_attributes(auth_client.sqla, 10)
     count = random.randint(3, 11)
     create_multiple_enumerated_values(auth_client.sqla, count)
 
@@ -373,6 +444,7 @@ def test_read_one_enumerated_values(auth_client):
 @pytest.mark.slow
 def test_read_all_enumerated_values(auth_client):
     # GIVEN a DB with a collection of enumerated values.
+    create_multiple_attributes(auth_client.sqla, 10)
     count = random.randint(3, 11)
     create_multiple_enumerated_values(auth_client.sqla, count)
     assert count > 0
@@ -386,6 +458,7 @@ def test_read_all_enumerated_values(auth_client):
 
 def test_update_enumerated_value(auth_client):
     # GIVEN a DB with an enumerated value.
+    create_multiple_attributes(auth_client.sqla, 10)
     count = random.randint(3, 11)
     create_multiple_enumerated_values(auth_client.sqla, count)
     enumerated_value_id = auth_client.sqla.query(
@@ -402,13 +475,30 @@ def test_update_enumerated_value(auth_client):
 
     updated_enumerated_value = auth_client.sqla.query(
         EnumeratedValue).filter_by(id=enumerated_value_id).first()
+
+    #THEN we have an updated enumerated value
     assert updated_enumerated_value is not None
     assert updated_enumerated_value.value_i18n == payload['valueI18n']
     assert updated_enumerated_value.active == payload['active']
 
+@pytest.mark.smoke
+def test_update_enumerated_value_no_exist(auth_client):
+    # GIVEN an empty database
+    create_multiple_attributes(auth_client.sqla, 5)
+    create_multiple_enumerated_values(auth_client.sqla, 5)
+    enumerated_value_id = auth_client.sqla.query(
+        EnumeratedValue.id).first().id
+
+    # WHEN a enumerated value is requested to be updated and the value is in an incorrect format
+    resp = auth_client.patch(url_for('attributes.update_enumerated_value', enumerated_value_id=enumerated_value_id), json=['bad attribute'])
+
+    # THEN expect the request to be not found
+    assert resp.status_code == 422
+
 
 def test_deactivate_enumerated_value(auth_client):
     # GIVEN a DB with an enumerated_value.
+    create_multiple_attributes(auth_client.sqla, 10)
     create_multiple_enumerated_values(auth_client.sqla, 1)
     enumerated_value_id = auth_client.sqla.query(
         EnumeratedValue.id).first().id
@@ -420,23 +510,28 @@ def test_deactivate_enumerated_value(auth_client):
 
     updated_enumerated_value = auth_client.sqla.query(
         EnumeratedValue).filter_by(id=enumerated_value_id).first()
+
+    # THEN the enumerated value is deactivated
     assert updated_enumerated_value is not None
     assert updated_enumerated_value.active == False
 
 
 def test_activate_enumerated_value(auth_client):
     # GIVEN a DB with an enumerated_value.
+    create_multiple_attributes(auth_client.sqla, 10)
     create_multiple_enumerated_values(auth_client.sqla, 1)
     enumerated_value_id = auth_client.sqla.query(
         EnumeratedValue.id).first().id
 
-    # WHEN we call deactivate
+    # WHEN we call activate
     resp = auth_client.patch(url_for(
         'attributes.activate_enumerated_value', enumerated_value_id=enumerated_value_id))
     assert resp.status_code == 200
 
     updated_enumerated_value = auth_client.sqla.query(
         EnumeratedValue).filter_by(id=enumerated_value_id).first()
+
+    #THEN we have an activated enumerated value
     assert updated_enumerated_value is not None
     assert updated_enumerated_value.active == True
 

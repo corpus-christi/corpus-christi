@@ -49,6 +49,8 @@ describe("Event Participants Test", function() {
     cy.get("[data-cy=archive]")
       .eq(0)
       .click();
-    cy.get("[data-cy=confirm-delete]").eq(1).click();
+    cy.get("[data-cy=confirm-delete]")
+      .eq(1)
+      .click();
   });
 });
