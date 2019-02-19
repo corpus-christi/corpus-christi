@@ -21,5 +21,5 @@ clean-all:
 	$(RM) test-db.sqlite
 	$(RM) dev-db.sqlite
 	$(RM) .coverage
-	$(RM) .pytest_cache
+	$(RM) -r .pytest_cache
 	$(RM) -r htmlcov
