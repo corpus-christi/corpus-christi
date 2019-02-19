@@ -1,15 +1,10 @@
 <template>
-  <v-container> <DiplomasTable v-bind:course="course" /> </v-container>
+  <v-container> <router-view></router-view> </v-container>
 </template>
 
 <script>
-import DiplomasTable from "../components/diplomas/DiplomasTable";
 export default {
   name: "Diplomas",
-  components: {
-    DiplomasTable
-  },
-  props: ["course"]
 };
 </script>
 

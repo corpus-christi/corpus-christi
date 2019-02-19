@@ -22,10 +22,24 @@ Cypress.Commands.add("login", function() {
   cy.wait(250);
 });
 
-Cypress.Commands.add("course_page", function() {
-  cy.get("[data-cy=toggle-nav-drawer]").click();
-  cy.get("[data-cy=courses]").click();
-});
+Cypress.Commands.add("course_page", function (){
+  cy.get('[data-cy=toggle-nav-drawer]').click();
+  cy.get('[data-cy=courses]').click();
+})
+
+Cypress.Commands.add('deploma_page', function (){
+  cy.get('[data-cy=toggle-nav-drawer]').click();
+  cy.get('.v-list__group__header__append-icon').click()
+  cy.get('[data-cy=diplomas-admin]').click();
+})
+
+Cypress.Commands.add('transcript_page', function (){
+  cy.get('[data-cy=toggle-nav-drawer]').click();
+  cy.get('.v-list__group__header__append-icon').click()
+  cy.get('[data-cy=transcripts]').click();
+})
+
+
 //
 // -- This is a child command --
 // Cypress.Commands.add("drag", { prevSubject: 'element'}, (subject, options) => { ... })

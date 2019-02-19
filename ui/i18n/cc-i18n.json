@@ -89,14 +89,22 @@
     },
     "courses": {
       "add-failed": "Failed to add course",
+      "add-meeting": "Add Meeting",
+      "add-meeting-failed": "Failed to add meeting(s)",
       "added": "Course added",
       "archived": "Course archived",
-      "choose-location": "Location",
-      "choose-teacher": "Teacher",
-      "choose-time": "Choose Time",
+      "choose-offering": "Choose Offering",
+      "choose-time": "Time",
+      "class-attendance": "Attendance",
+      "class-attendance-for": "Attendance for",
+      "class-attendance-load-failed": "Failed to load class attendance",
+      "class-attendance-update-failed": "Failed to update attendance",
+      "class-attendance-updated": "Class attendance updated",
       "confirm-archive": "Are you sure you want to archive this course?",
+      "confirm-student": "Would you like to confirm or reject this student?",
       "course": "Courses",
       "course-offering": "Course Offerings",
+      "create-new-person": "Create a new person",
       "dashboard": {
         "charts": {
           "attended": "Attended",
@@ -112,20 +120,35 @@
         },
         "title": "Dashboard"
       },
-      "dates": "Choose Dates",
+      "date": "Date",
+      "dates": "Dates",
       "description": "Description",
       "enrolled": "Number Enrolled",
+      "info-meeting-dates": "You can choose multiple dates to create many meetings.",
       "is-archived": "This course is archived",
+      "location": "Location",
       "max-size": "Max Number of Students",
+      "meeting-added": "Meeting(s) added",
+      "meeting-updated": "Meeting updated",
       "new": "New Course",
-      "new-offering": "New Course Offering",
+      "new-meeting": "New Meeting",
+      "new-offering": "New Offering",
+      "new-offering-short": "New Offering",
       "no-prerequisites": "This course has no prerequisites.",
       "prerequisites": "Prerequisites",
       "reactivated": "Course unarchived",
+      "register": "Register",
+      "register-for-course": "Register for this course",
+      "register-success": "Successfully Registered",
+      "reject": "Reject",
+      "schedule": "Schedule",
       "students": "Students",
+      "teacher": "Teacher",
       "title": "Title",
       "update-failed": "Failed to update course",
-      "updated": "Course updated"
+      "update-meeting-failed": "Failed to update meeting",
+      "updated": "Course updated",
+      "when": "When"
     },
     "diplomas": {
       "archived": "Diploma archived",
@@ -133,7 +156,8 @@
       "courses": "Courses",
       "courses-this-diploma": "Courses for this Diploma",
       "description": "Description",
-      "diploma": "Diplomas",
+      "diploma": "Diploma",
+      "diplomas": "Diplomas",
       "new": "New Diploma",
       "reactivated": "Diploma unarchived",
       "title": "Title",
@@ -141,6 +165,12 @@
     },
     "events": {
       "all-events": "All Events",
+      "attendance": "Attendance",
+      "attendance-label": "Enter a number",
+      "attendance-none": "None",
+      "calendar": {
+        "title": "Calendar"
+      },
       "confirm-archive": "Are you sure you want to archive this event?",
       "create-event": "Create Event",
       "dashboard": {
@@ -157,7 +187,7 @@
         "title": "Dashboard"
       },
       "details": {
-        "title": "Details"
+        "title": "Event Details"
       },
       "edit-event": "Edit Event",
       "end-date": "End Date",
@@ -173,6 +203,7 @@
       "event-location": "Event Location",
       "event-unarchived": "Event unarchived",
       "header": "Events",
+      "image-description": "Image Description",
       "location": "Location",
       "participants": {
         "add": "Add Participants",
@@ -200,7 +231,8 @@
       },
       "start-date": "Start Date",
       "start-time": "Start Time",
-      "title": "Event Title"
+      "title": "Event Title",
+      "upload-image": "Upload Image"
     },
     "groups": {
       "create-group": "Create Group",
@@ -314,18 +346,22 @@
       }
     },
     "public": {
+      "courses": {
+        "view-all": "View All Courses"
+      },
       "events": {
         "join": "Join Event",
         "view-all": "View All Events"
       },
       "headers": {
         "home-church": "Find a Home Church",
-        "upcoming-classes": "Upcoming Clases",
+        "upcoming-classes": "Upcoming Courses",
         "upcoming-events": "Upcoming Events"
       },
       "title": "Public"
     },
     "teams": {
+      "all-teams": "All Teams",
       "confirm-archive": "Are you sure you want to archive this team?",
       "confirm-remove-from-event": "Are you sure you want to remove this team from this event?",
       "create-team": "Create Team",
@@ -349,8 +385,20 @@
       "team-removed": "Team removed",
       "title": "Teams"
     },
+    "transcripts": {
+      "add-diploma-this-student": "Add Diploma",
+      "course-completed": "Completed",
+      "courses": "Courses",
+      "courses-in-progress-or-completed": "Courses (in Progress or Completed)",
+      "courses-this-diploma": "Courses for this Diploma",
+      "description": "Description",
+      "page-title": "Student Transcript -",
+      "student-information": "Information",
+      "transcript": "Transcripts"
+    },
     "validation": {
       "attributes": {
+        "attendance": "attendance",
         "email": "email",
         "endDate": "end date",
         "firstName": "first name",
@@ -457,14 +505,22 @@
     },
     "courses": {
       "add-failed": "Se fall\u00f3 a a\u00f1adir el curso",
+      "add-meeting": "A\u00f1adir Reuni\u00f3n",
+      "add-meeting-failed": "Se fall\u00f3 a a\u00f1adir los reuniones",
       "added": "Curso a\u00f1adido",
       "archived": "Curso archivado",
-      "choose-location": "Ubicaci\u00f3n",
-      "choose-teacher": "Maestro",
-      "choose-time": "Elegir Tiempo",
+      "choose-offering": "Elegir Oferta",
+      "choose-time": "Tiempo",
+      "class-attendance": "Asistencia",
+      "class-attendance-for": "Asistencia para",
+      "class-attendance-load-failed": "Se fall\u00f3 a conseguir la asistencia",
+      "class-attendance-update-failed": "Se fall\u00f3 a actualizar la asistencia",
+      "class-attendance-updated": "Asistencia actualizado",
       "confirm-archive": "\u00bfEst\u00e1s seguro que quieres archivar este curso?",
+      "confirm-student": "\u00bfTe gustar\u00edas confirmar o rechazar este estudiante?",
       "course": "Cursos",
       "course-offering": "Ofertas de Cursos",
+      "create-new-person": "Crear una nueva persona",
       "dashboard": {
         "charts": {
           "attended": "Asisti\u00f3",
@@ -480,20 +536,35 @@
         },
         "title": "Tablero"
       },
-      "dates": "Elegir Fechas",
+      "date": "Fecha",
+      "dates": "Fechas",
       "description": "Descripci\u00f3n",
       "enrolled": "N\u00famero Registrado",
+      "info-meeting-dates": "Puede elegir fechas m\u00faltiples para crear muchos reuniones.",
       "is-archived": "Este curso est\u00e1 archivado",
+      "location": "Ubicaci\u00f3n",
       "max-size": "N\u00famero M\u00e1ximo de Estudiantes",
+      "meeting-added": "Reuniones a\u00f1adido",
+      "meeting-updated": "Reuni\u00f3n actualizado",
       "new": "Nuevo Curso",
-      "new-offering": "Nuevo Oferta de Curso",
+      "new-meeting": "Nuevo Reuni\u00f3n",
+      "new-offering": "Nuevo Oferta",
+      "new-offering-short": "Nueva Oferta",
       "no-prerequisites": "Este curso no tiene prerrequisitos.",
       "prerequisites": "Prerrequisitos",
       "reactivated": "Curso desarchivado",
+      "register": "Registrar",
+      "register-for-course": "Registrar para este curso",
+      "register-success": "Registrado con \u00c9xito",
+      "reject": "Rechazar",
+      "schedule": "Horario",
       "students": "Estudiantes",
+      "teacher": "Maestro",
       "title": "T\u00edtulo",
       "update-failed": "Se fall\u00f3 a actualizar el curso",
-      "updated": "Curso actualizado"
+      "update-meeting-failed": "Se fall\u00f3 a actualizar el reuni\u00f3n",
+      "updated": "Curso actualizado",
+      "when": "Cu\u00e1ndo"
     },
     "diplomas": {
       "archived": "Diploma archivado",
@@ -501,7 +572,8 @@
       "courses": "Cursos",
       "courses-this-diploma": "Cursos para esta Diploma",
       "description": "Descripci\u00f3n",
-      "diploma": "Diplomas",
+      "diploma": "Diploma",
+      "diplomas": "Diplomas",
       "new": "Nueva Diploma",
       "reactivated": "Diploma desarchivado",
       "title": "T\u00edtulo",
@@ -509,6 +581,12 @@
     },
     "events": {
       "all-events": "Todos Eventos",
+      "attendance": "Concurrencia",
+      "attendance-label": "Ingrese un numero",
+      "attendance-none": "Ninguno",
+      "calendar": {
+        "title": "Calendario"
+      },
       "confirm-archive": "\u00bfSeguro que quieres archivar este evento?",
       "create-event": "Crear Evento",
       "dashboard": {
@@ -525,7 +603,7 @@
         "title": "Tablero"
       },
       "details": {
-        "title": "Detalles"
+        "title": "Detalles del Evento"
       },
       "edit-event": "Editar Evento",
       "end-date": "Fecha Final",
@@ -541,6 +619,7 @@
       "event-location": "Ubicaci\u00f3n de Evento",
       "event-unarchived": "Evento desarchivado",
       "header": "Eventos",
+      "image-description": "Descripci\u00f3n de la Imagen",
       "location": "Ubicaci\u00f3n",
       "participants": {
         "add": "A\u00f1adir participantes",
@@ -568,7 +647,8 @@
       },
       "start-date": "Fecha de Inicio",
       "start-time": "Hora de Inicio",
-      "title": "T\u00edtulo del Evento"
+      "title": "T\u00edtulo del Evento",
+      "upload-image": "Cargar Imagen"
     },
     "groups": {
       "create-group": "Crea un Grupo",
@@ -682,18 +762,22 @@
       }
     },
     "public": {
+      "courses": {
+        "view-all": "Ver Todos Cursos"
+      },
       "events": {
         "join": "Juntarse Evento",
         "view-all": "Ver Todos Eventos"
       },
       "headers": {
         "home-church": "Encontrar una Iglesia Hogar",
-        "upcoming-classes": "Pr\u00f3ximas Clases",
+        "upcoming-classes": "Pr\u00f3ximas Cursos",
         "upcoming-events": "Pr\u00f3ximos Eventos"
       },
       "title": "P\u00fablico"
     },
     "teams": {
+      "all-teams": "Todos Equipos",
       "confirm-archive": "\u00bfSeguro que quieres archivar este equipo?",
       "confirm-remove-from-event": "\u00bfEst\u00e1s seguro de que quieres eliminar a este equipo de este evento?",
       "create-team": "Crear Equipo",
@@ -717,8 +801,20 @@
       "team-removed": "Equipo eliminado",
       "title": "Equipos"
     },
+    "transcripts": {
+      "add-diploma-this-student": "A\u00f1adir Diploma",
+      "course-completed": "Terminado",
+      "courses": "Cursos",
+      "courses-in-progress-or-completed": "Cursos (en Progreso o Terminados)",
+      "courses-this-diploma": "Cursos para esta Diploma",
+      "description": "Descripci\u00f3n",
+      "page-title": "Transcripci\u00f3n para",
+      "student-information": "Datos",
+      "transcript": "Transcripci\u00f3nes"
+    },
     "validation": {
       "attributes": {
+        "attendance": "concurrencia",
         "email": "correo electr\u00f3nico",
         "endDate": "fecha final",
         "firstName": "nombre de pila",

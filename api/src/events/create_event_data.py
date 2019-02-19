@@ -14,6 +14,7 @@ from ..assets.models import Asset, AssetSchema
 from ..teams.models import Team, TeamMember, TeamSchema, TeamMemberSchema
 from ..places.models import Location
 from ..people.models import Person
+from ..images.models import Image, ImageSchema, ImageEvent, ImageEventSchema
 
 from .models import EventAsset, EventAssetSchema, EventTeam, EventTeamSchema
 
@@ -182,11 +183,11 @@ def create_multiple_events(sqla, n):
     event_schema = EventSchema()
     new_events = []
     for i in range(n):
-        factory = event_object_factory_approx_one_week_ago
+        factory = event_object_factory
         if flip():
-            factory = event_object_factory
-        elif flip():
             factory = event_object_factory_long_ago
+        elif flip():
+            factory = event_object_factory_approx_one_week_ago
         valid_events = event_schema.load(factory(sqla))
         new_events.append(Event(**valid_events))
     sqla.add_all(new_events)
@@ -275,7 +276,7 @@ def create_teams_members(sqla, fraction=0.75):
 
 def create_events_test_data(sqla):
     """The function that creates test data in the correct order """
-    create_multiple_events(sqla, 1000)
+    create_multiple_events(sqla, 300)
     create_multiple_assets(sqla, 12)
     create_multiple_teams(sqla, 13)
     create_events_assets(sqla, 0.75)
@@ -289,4 +290,105 @@ def get_team_ids(teams):
     for team in teams:
         ids.append(team['id'])
     return ids
+
+# Create a team in database, return the id
+def create_team(sqla, description, active=True):
+    team_schema = TeamSchema()
+    team_payload = {
+            'description': description,
+            'active': active
+    }
+    valid_team = team_schema.load(team_payload)
+    team = Team(**valid_team)
+    sqla.add(team)
+    sqla.commit()
+    return team.id
+
+def create_event(sqla, title, description, start, end, location_id = None, active=True):
+    event_schema = EventSchema()
+    event_payload = {
+            'title': title,
+            'description': description,
+            'start': str(start),
+            'end': str(end),
+            'active': active
+    }
+    if location_id:
+        event_payload['location_id'] = location_id
+    valid_event = event_schema.load(event_payload)
+    event = Event(**valid_event)
+    sqla.add(event)
+    sqla.commit()
+    return event.id
+
+def create_event_person(sqla, event_id, person_id, description):
+    event_person_schema = EventPersonSchema()
+    event_person_payload = {
+            'event_id': event_id,
+            'person_id': person_id,
+            'description': description
+    }
+    valid_event_person = event_person_schema.load(event_person_payload)
+    event_person = EventPerson(**valid_event_person)
+    sqla.add(event_person)
+    sqla.commit()
+    return event_person_payload
+
+def create_event_participant(sqla, event_id, person_id, confirmed=True):
+    event_participant_schema = EventParticipantSchema()
+    event_participant_payload = {
+            'event_id': event_id,
+            'person_id': person_id,
+            'confirmed': confirmed
+    }
+    valid_event_participant = event_participant_schema.load(event_participant_payload)
+    event_participant = EventParticipant(**valid_event_participant)
+    sqla.add(event_participant)
+    sqla.commit()
+    return event_participant_payload
+
+
+def create_images(sqla):
+    image_schema = ImageSchema()
+    new_images = []
+
+    valid_image = image_schema.load({'path': 'image/a1/casa.jpg', 'description': 'Civil authority rich coach answer total general.'})
+    new_images.append(Image(**valid_image))
+    valid_image = image_schema.load({'path': 'image/a1/coffee_house.jpg'})
+    new_images.append(Image(**valid_image))
+    valid_image = image_schema.load({'path': 'image/a1/park.jpg'})
+    new_images.append(Image(**valid_image))
+    valid_image = image_schema.load({'path': 'image/a1/verbo.jpg'})
+    new_images.append(Image(**valid_image))
+    valid_image = image_schema.load({'path': 'image/m5/downtown.jpg'})
+    new_images.append(Image(**valid_image))
+    valid_image = image_schema.load({'path': 'image/m5/park.jpg', 'description': 'Explicabo doloremque voluptatibus quaerat repellat libero.'})
+    new_images.append(Image(**valid_image))
+    valid_image = image_schema.load({'path': 'image/m5/broken_bridge.jpg'})
+    new_images.append(Image(**valid_image))
+    valid_image = image_schema.load({'path': 'image/m5/tree.jpg', 'description': 'Factor rate forget research today hand.'})
+    new_images.append(Image(**valid_image))
+    
+    sqla.add_all(new_images)
+    sqla.commit()
+
+
+def create_event_images(sqla):
+    image_event_schema = ImageEventSchema()
+    events = sqla.query(Event).all()
+    images = sqla.query(Image).all()
+
+    count = len(events)
+    if len(images) < len(events):
+        count = len(images)
+
+    new_event_images = []
+
+    for i in range(count):
+        valid_event_image = image_event_schema.load({'event_id': events[i].id, 'image_id': images[i].id})
+        new_event_images.append(ImageEvent(**valid_event_image))
+
+    sqla.add_all(new_event_images)
+    sqla.commit()
+
 

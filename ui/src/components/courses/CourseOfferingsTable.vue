@@ -1,39 +1,38 @@
 <template>
   <div>
     <!-- Header -->
-    <v-toolbar>
-      <v-layout align-center justify-space-between fill-height>
-        <v-flex md2>
+    <v-toolbar class="pa-1" extension-height="64px">
+      <v-layout justify-space-between>
+        <v-flex shrink align-self-center>
           <v-toolbar-title>{{ $t("courses.course-offering") }}</v-toolbar-title>
         </v-flex>
         <v-spacer></v-spacer>
-        <v-flex md3>
+        <v-flex shrink justify-self-end>
+          <v-btn color="primary" raised v-on:click.stop="newCourseOffering">
+            <v-icon left>library_add</v-icon>
+            {{ $t("courses.new-offering") }}
+          </v-btn>
+        </v-flex>
+      </v-layout>
+      <v-layout row slot="extension" justify-space-between align-center>
+        <v-flex>
           <v-text-field
             v-model="search"
             append-icon="search"
             v-bind:label="$t('actions.search')"
             single-line
-            box
             hide-details
+            class="max-width-250 mr-2"
           ></v-text-field>
         </v-flex>
-        <v-spacer></v-spacer>
-
-        <v-flex md3>
-          <v-select
-            v-model="viewStatus"
-            :items="options"
-            solo
-            hide-details
-          ></v-select>
-        </v-flex>
-
-        <v-flex shrink justify-self-end>
-          <v-btn color="primary" raised v-on:click.stop="newCourseOffering">
-            <v-icon left>library_add</v-icon>
-            {{ $t("courses.new") }}
-          </v-btn>
-        </v-flex>
+        <v-select
+          v-model="viewStatus"
+          :items="options"
+          solo
+          hide-details
+          class="max-width-250 mr-2"
+        >
+        </v-select>
       </v-layout>
     </v-toolbar>
 
@@ -43,6 +42,8 @@
       :search="search"
       :items="showCourseOfferings"
       class="elevation-1"
+      :rows-per-page-items="rowsPerPageItem"
+      :pagination.sync="paginationInfo"
     >
       <v-progress-linear
         slot="progress"
@@ -83,7 +84,7 @@
       <CourseOfferingForm
         v-bind:editMode="courseOfferingDialog.editMode"
         v-bind:initialData="courseOfferingDialog.courseOffering"
-        v-bind:saving="courseOfferingDialog.saving"
+        v-bind:course="course"
         v-on:cancel="cancelCourseOffering"
         v-on:save="saveCourseOffering"
       />
@@ -139,7 +140,6 @@ export default {
       courseOfferingDialog: {
         show: false,
         editMode: false,
-        saving: false,
         courseOffering: {}
       },
 
@@ -152,6 +152,19 @@ export default {
       snackbar: {
         show: false,
         text: ""
+      },
+
+      rowsPerPageItem: [
+        10,
+        15,
+        25,
+        { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 }
+      ],
+
+      paginationInfo: {
+        sortBy: "start",
+        rowsPerPage: 10,
+        page: 1
       },
 
       courseOfferings: [],
@@ -298,62 +311,30 @@ export default {
     },
 
     saveCourseOffering(courseOffering) {
-      this.courseOfferingDialog.saving = true;
+      if (courseOffering instanceof Error) {
+        this.snackbar.text = this.courseOfferingDialog.editMode
+          ? this.$t("courses.update-failed")
+          : this.$t("courses.add-failed");
+        this.snackbar.show = true;
 
-      courseOffering.courseId = this.course.id;
+        this.courseOfferingDialog.show = false;
+
+        return;
+      }
 
       if (this.courseOfferingDialog.editMode) {
-        // Hang on to the ID of the record being updated.
-        const courseOffering_id = courseOffering.id;
-
         // Locate the record we're updating in the table.
         const idx = this.courseOfferings.findIndex(
           c => c.id === courseOffering.id
         );
-        // Get rid of the ID; not for consumption by endpoint.
-        delete courseOffering.id;
-
-        this.$http
-          .patch(
-            `/api/v1/courses/course_offerings/${courseOffering_id}`,
-            courseOffering
-          )
-          .then(resp => {
-            console.log("EDITED", resp);
-            Object.assign(this.courseOfferings[idx], courseOffering);
-            this.snackbar.text = this.$t("courses.updated");
-            this.snackbar.show = true;
-          })
-          .catch(err => {
-            console.error("FALURE", err.response);
-            this.snackbar.text = this.$t("courses.update-failed");
-            this.snackbar.show = true;
-          })
-          .finally(() => {
-            this.courseOfferingDialog.show = false;
-            this.courseOfferingDialog.saving = false;
-          });
+        Object.assign(this.courseOfferings[idx], courseOffering);
+        this.snackbar.text = this.$t("courses.updated");
       } else {
-        courseOffering.active = true;
-        this.$http
-          .post("/api/v1/courses/course_offerings", courseOffering)
-          .then(resp => {
-            console.log("ADDED", resp);
-            this.courseOfferings.push(resp.data);
-
-            this.snackbar.text = this.$t("courses.added");
-            this.snackbar.show = true;
-          })
-          .catch(err => {
-            console.error("FAILURE", err.response);
-            this.snackbar.text = this.$t("courses.add-failed");
-            this.snackbar.show = true;
-          })
-          .finally(() => {
-            this.courseOfferingDialog.show = false;
-            this.courseOfferingDialog.saving = false;
-          });
+        this.courseOfferings.push(courseOffering);
+        this.snackbar.text = this.$t("courses.added");
       }
+
+      this.snackbar.show = true;
 
       this.courseOfferingDialog.show = false;
     }
@@ -364,5 +345,9 @@ export default {
 <style scoped>
 .hover-hand {
   cursor: pointer;
+}
+
+.max-width-250 {
+  max-width: 250px;
 }
 </style>

@@ -4,7 +4,7 @@
     <v-toolbar>
       <v-layout align-center justify-space-between fill-height>
         <v-flex md2>
-          <v-toolbar-title>{{ $t("diplomas.diploma") }}</v-toolbar-title>
+          <v-toolbar-title>{{ $t("diplomas.diplomas") }}</v-toolbar-title>
         </v-flex>
         <v-spacer></v-spacer>
         <v-flex md3>
@@ -52,10 +52,14 @@
       data-cy="diplomas-table"
     >
       <template slot="items" slot-scope="props">
-        <tr @click="props.expanded = !props.expanded">
-          <td>{{ props.item.name }}</td>
-          <td>{{ props.item.description }}</td>
-          <td>
+        <tr>
+          <td class="hover-hand" @click="clickThrough(props.item)">
+            {{ props.item.name }}
+          </td>
+          <td class="hover-hand" @click="clickThrough(props.item)">
+            {{ props.item.description }}
+          </td>
+          <td class="hover-hand" @click="clickThrough(props.item)">
             <DiplomaAdminActions
               v-bind:diploma="props.item"
               display-context="compact"
@@ -63,24 +67,6 @@
             />
           </td>
         </tr>
-      </template>
-      <template slot="expand" slot-scope="props">
-        <v-card flat>
-          <v-card-text>
-            <span class="font-weight-bold"
-              >{{ $t("diplomas.courses-this-diploma") }}:</span
-            >
-            <ul>
-              <li
-                v-for="course in props.item.courseList"
-                v-bind:key="course.id"
-              >
-                <span class="font-weight-bold">{{ course.name }}:</span>
-                {{ course.description }}
-              </li>
-            </ul>
-          </v-card-text>
-        </v-card>
       </template>
     </v-data-table>
 
@@ -138,6 +124,7 @@
 import DiplomaEditor from "./DiplomaEditor";
 import DiplomaAdminActions from "./DiplomaAdminActions";
 import { cloneDeep } from "lodash";
+import { scrypt } from 'crypto';
 export default {
   name: "DiplomasTable",
   components: {
@@ -243,7 +230,7 @@ export default {
     deactivate(diploma) {
       this.deactivateDialog.loading = true;
       this.$http
-        .put(`/api/v1/courses/diplomas/deactivate/${diploma.id}`)
+        .patch(`/api/v1/courses/diplomas/deactivate/${diploma.id}`)
         .then(resp => {
           console.log("diploma deactivated", resp);
           let returnedDiploma = resp.data;
@@ -264,7 +251,7 @@ export default {
 
     activate(diploma) {
       this.$http
-        .put(`/api/v1/courses/diplomas/activate/${diploma.id}`)
+        .patch(`/api/v1/courses/diplomas/activate/${diploma.id}`)
         .then(resp => {
           console.log("diploma activated", resp);
           let returnedDiploma = resp.data;
@@ -277,6 +264,11 @@ export default {
           this.snackbar.text = this.$t("diplomas.update-failed");
           this.snackbar.show = true;
         });
+    },
+
+    clickThrough(diploma) {
+      console.log(diploma);
+      this.$router.push({ name: 'diploma-details', params: { diplomaId: diploma.id }})
     },
 
     saveDiploma(diploma) {
@@ -292,7 +284,7 @@ export default {
       // Get rid of the courseList, which is an array of objects
       delete diplomaClone.courseList;
       // the api is expecting an array of course IDs, so add that property to diplomaClone
-      diplomaClone.courses = courseIDList;
+      diplomaClone.courseList = courseIDList;
       console.log("diplomaClone: ", diplomaClone);
 
       console.log("all diplomas: ", this.diplomas);
@@ -359,4 +351,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+  .hover-hand {
+      cursor: pointer;
+    }
+</style>

@@ -58,6 +58,7 @@ export default {
     value: null,
     searchEndpoint: String,
     errorMessages: String,
+    label: String,
     disabled: Boolean
   },
   data() {
@@ -68,9 +69,11 @@ export default {
       isLoading: false
     };
   },
+
   computed: {
     getLabel() {
-      if (this.location) return this.$t("events.event-location");
+      if (this.label) return this.label;
+      else if (this.location) return this.$t("events.event-location");
       else if (this.person) return this.$t("actions.search-people");
       else if (this.course) return this.$t("actions.search-courses");
       else if (this.team) return this.$t("events.teams.title");
@@ -84,7 +87,7 @@ export default {
     },
     searchableEntities() {
       if (this.existingEntities) {
-        this.entities = this.entities.filter(ent => {
+        return this.entities.filter(ent => {
           for (let otherEnt of this.existingEntities) {
             if (ent[this.idField] == otherEnt[this.idField]) {
               return false;
@@ -96,6 +99,7 @@ export default {
       return this.entities;
     }
   },
+
   methods: {
     selectionContains(entity) {
       if (!this.value || !this.value.length) return;

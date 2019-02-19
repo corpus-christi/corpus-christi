@@ -1,0 +1,29 @@
+transcripts:
+  transcript:
+    en: Transcripts
+    es: Transcripciónes
+  page-title:
+    en: Student Transcript -
+    es: Transcripción para 
+  student-information:
+    en: Information
+    es: Datos 
+  description:
+    en: Description
+    es: Descripción
+  courses:
+    en: Courses
+    es: Cursos
+  courses-in-progress-or-completed:
+    en: Courses (in Progress or Completed)
+    es: Cursos (en Progreso o Terminados)
+  courses-this-diploma:
+    _desc: List of courses for a given diploma
+    en: Courses for this Diploma
+    es: Cursos para esta Diploma
+  add-diploma-this-student:
+    en: Add Diploma
+    es: Añadir Diploma
+  course-completed:
+    en: Completed
+    es: Terminado

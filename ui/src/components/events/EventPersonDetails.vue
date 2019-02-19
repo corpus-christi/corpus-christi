@@ -21,36 +21,44 @@
           <template v-for="person in persons">
             <v-divider v-bind:key="'personDivider' + person.id"></v-divider>
             <v-list-tile v-bind:key="person.id">
-              <v-list-tile-content class="pr-0">
-                {{ getFullName(person.person) }}
-                <template v-if="person.description">
-                  - {{ person.description }}</template
-                >
+              <v-list-tile-content>
+                <v-container fluid class="pa-0">
+                  <v-layout align-center row justify-space-between>
+                    <v-flex>
+                      {{ getFullName(person.person) }}
+                      <template v-if="person.description">
+                        - {{ person.description }}</template
+                      >
+                    </v-flex>
+                    <v-flex shrink>
+                      <v-layout>
+                        <v-flex xs6>
+                          <v-btn
+                            icon
+                            outline
+                            flat
+                            color="primary"
+                            v-on:click="openEditDialog(person)"
+                            :data-cy="'editPerson-' + person.id"
+                            ><v-icon>edit</v-icon>
+                          </v-btn>
+                        </v-flex>
+                        <v-flex xs6>
+                          <v-btn
+                            icon
+                            outline
+                            flat
+                            color="primary"
+                            v-on:click="showDeletePersonDialog(person.id)"
+                            :data-cy="'deletePerson-' + person.id"
+                            ><v-icon>delete</v-icon>
+                          </v-btn>
+                        </v-flex>
+                      </v-layout>
+                    </v-flex>
+                  </v-layout>
+                </v-container>
               </v-list-tile-content>
-              <v-list-tile-action>
-                <v-layout row>
-                  <v-flex>
-                    <v-btn
-                      icon
-                      flat
-                      color="primary"
-                      v-on:click="openEditDialog(person)"
-                      :data-cy="'editPerson-' + person.id"
-                      ><v-icon>edit</v-icon>
-                    </v-btn>
-                  </v-flex>
-                  <v-flex>
-                    <v-btn
-                      icon
-                      flat
-                      color="primary"
-                      v-on:click="showDeletePersonDialog(person.id)"
-                      :data-cy="'deletePerson-' + person.id"
-                      ><v-icon>delete</v-icon>
-                    </v-btn>
-                  </v-flex>
-                </v-layout>
-              </v-list-tile-action>
             </v-list-tile>
           </template>
         </v-list>
@@ -90,7 +98,7 @@
             ></entity-search>
           </div>
           <v-textarea
-            rows="3"
+            rows="1"
             v-model="addPersonDialog.description"
             v-bind:label="$t('events.persons.description')"
             name="description"

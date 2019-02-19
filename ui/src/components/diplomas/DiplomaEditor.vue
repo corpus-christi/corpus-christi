@@ -9,15 +9,16 @@
         <v-form>
           <ValidationProvider name="Name" rules="required|max:128">
             <v-text-field
-              slot-scope="{ errors, valid }"
-              v-model="diploma.name"
-              :counter="128"
-              :error-messages="errors"
-              :success="valid"
-              v-bind:label="$t('diplomas.title')"
-              name="name"
-              required
-            ></v-text-field>
+                slot-scope="{
+                  errors
+                }"
+                v-model="diploma.name"
+                :counter="128"
+                :error-messages="errors"
+                v-bind:label="$t('diplomas.title')"
+                name="name"
+                required
+              ></v-text-field>
           </ValidationProvider>
           <v-textarea
             v-model="diploma.description"
@@ -120,6 +121,8 @@ export default {
       const result = await this.$refs.obs.validate();
       console.log("result: ", result);
       if (result) {
+        //this.$validator.reset();
+        this.$refs.obs.reset();
         this.$emit("save", this.diploma);
       }
     }

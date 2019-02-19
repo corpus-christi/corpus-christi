@@ -103,11 +103,12 @@ export default {
   },
   mounted() {
     this.pageLoaded = false;
-    this.$http.get(`/api/v1/events/?return_group=all&sort=start`).then(resp => {
-      this.events = resp.data;
-      console.log(resp.data);
-      this.pageLoaded = true;
-    });
+    this.$http
+      .get(`/api/v1/events/?return_group=all&include_images=1&sort=start`)
+      .then(resp => {
+        this.events = resp.data;
+        this.pageLoaded = true;
+      });
 
     this.filterStart = this.today;
     this.filterEnd = this.addDaystoDate(this.today, 30);
