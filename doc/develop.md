@@ -97,7 +97,7 @@ set up your `bash` shell
 as follows:
 ```bash
 $ cd corpus-christi/api
-$ source ./set-up-bash.sh
+$ source ./bin/set-up-bash.sh
 ```
 This script will
 1. Activate your virtual environment
@@ -110,10 +110,49 @@ in which you intend to work with the API.
 
 Be sure you have [set up your shell](#bash-setup-for-flask-api).
 
-For testing and development,
-CC is configured to use a local
-[SQLite](https://www.sqlite.org/index.html) database.
-(In production, it uses [PostgreSQL](https://www.postgresql.org/).)
+CC uses uses [PostgreSQL](https://www.postgresql.org/).
+You will need access to a Postgres server,
+which can be either a network resource
+or you can install a server on your own machine.
+
+If you use a Mac,
+use either [Homebrew](https://formulae.brew.sh/formula/postgresql)
+or [Postgres.App](https://postgresapp.com/).
+
+Once Postgres is installed,
+you need to create a user and a database.
+An easy way to do this is to use the shell commands 
+that come with Postgres.
+Create a user:
+```bash
+$ createuser --password arco 
+```
+You will be prompted for a password.
+For a production system, use a good password.
+For testing or development, use `password`.
+
+Create a database:
+```bash
+$ createdb --owner=arco cc-dev 
+```
+This will create a database called `cc-dev`,
+which is used by the default `development` configuration.
+Other possibilities are:
+- Testing: `cc-test`
+- Staging: `cc-staging`
+- Production: `cc-prod`
+
+The values that you supply for Postgres user, password, host, etc.
+should match the values supplied in the `api/private.py` file.
+A default file is included with the CC repository
+that should work with the preceding configuration.
+Update it as appropriate for your use case.
+If you are configuring CC for production use,
+*do not* commit the updated `private.py` file
+to a public Git repository.
+The file is included in the CC `.gitignore` file,
+so it should not be added to commits.
+
 Use the `flask` command to initialize your development database:
 ```bash
 $ flask db upgrade
