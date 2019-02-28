@@ -102,7 +102,7 @@ class PersonAttribute(Base):
     attribute_id = Column(Integer, ForeignKey(
         'people_attributes.id'), primary_key=True)
     enum_value_id = Column(Integer, ForeignKey('people_enumerated_value.id'))
-    string_value = Column(StringTypes.LOCALE_CODE)
+    string_value = Column(StringTypes.LONG_STRING)
     person = relationship('Person', backref='person_attributes', lazy=True)
     attribute = relationship(
         'Attribute', backref='person_attributes', lazy=True)
@@ -114,8 +114,7 @@ class PersonAttribute(Base):
 
 
 class PersonAttributeSchema(Schema):
-     person_id = fields.Integer(data_key='personId', required=True)
-     attribute_id = fields.Integer(data_key='attributeId', required=True)
-     enum_value_id = fields.Integer(data_key='enumValueId')
-     string_value = fields.String(data_key='stringValue')
-
+    person_id = fields.Integer(data_key='personId', required=True)
+    attribute_id = fields.Integer(data_key='attributeId', required=True)
+    enum_value_id = fields.Integer(data_key='enumValueId')
+    string_value = fields.String(data_key='stringValue')

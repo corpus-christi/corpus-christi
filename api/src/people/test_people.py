@@ -228,7 +228,7 @@ def create_multiple_people_attributes(sqla, n):
 
 def manager_object_factory(sqla, description, next_level=None, locale_code='en-US'):
     """Cook up a fake person."""
-    description_i18n = f'manager.description.{description.replace(" ", "_")}'
+    description_i18n = f'manager.description.{description.replace(" ", "_")}'[:32]
 
     if not sqla.query(I18NLocale).get(locale_code):
         sqla.add(I18NLocale(code=locale_code, desc='English US'))
