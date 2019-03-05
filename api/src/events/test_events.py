@@ -464,7 +464,7 @@ def test_remove_unbooked_asset_from_event(auth_client):
     create_events_assets(auth_client.sqla, 1)
     link_count = auth_client.sqla.query(EventAsset).count()
     # WHEN we unlink an asset from an event
-    invalid_event_id = 15000000000
+    invalid_event_id = 30
     asset_id = auth_client.sqla.query(Asset.id).first()[0]
     url = url_for('events.remove_asset_from_event', event_id=invalid_event_id, asset_id=asset_id)
     resp = auth_client.delete(url)
