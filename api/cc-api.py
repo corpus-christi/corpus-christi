@@ -258,22 +258,17 @@ course_cli = AppGroup('course', help="Maintain course data.")
 @course_cli.command('new', help="Create new course")
 @click.argument('name')
 @click.argument('description')
-@click.option('--prereq', help="Number of prerequisites to make")
+@click.option('--prereq', help="Name of prerequisite")
 @click.option('--offering', help="Name of offering to make for course")
 def create_course(name, description, prereq, offering):
     # Create the Course and Prereq Courses; commit to DB so we get ID
     course = Course(name=name, description=description)
 
     if prereq is not None:
-        if str.isnumeric(prereq):
-            for i in range(int(prereq)):
-                course.prerequisites.append(Course(name=f"prereq course{i}",
-                                                   description=f"here we are using the command line.{i}"))
-        else:
-            prereq_course = db.session.query(
-                Course).filter_by(name=prereq).first()
-            print(prereq_course)
-            course.prerequisites.append(prereq_course)
+        prereq_course = db.session.query(
+            Course).filter_by(name=prereq).first()
+        print(prereq_course)
+        course.prerequisites.append(prereq_course)
 
     if offering is not None:
         course_offering = Course_Offering(course_id=course.id,

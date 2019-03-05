@@ -60,6 +60,7 @@ class Attribute(Base):
                                 locale['name'], description=f"Attribute type {attribute_name}")
                 count += 1
             db.session.commit()
+            fp.close()
             return count
 
 
