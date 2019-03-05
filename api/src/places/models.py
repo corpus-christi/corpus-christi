@@ -51,6 +51,7 @@ class Country(Base):
                 db.session.add(cls(code=country_code, name_i18n=name_i18n))
                 count += 1
             db.session.commit()
+        fp.close()
         return count
 
 

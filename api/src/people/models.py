@@ -173,6 +173,7 @@ class Role(Base):
                         cls(name_i18n=name_i18n, active=True))
                     count += 1
                 db.session.commit()
+            fp.close()
             return count
 
         # return 0

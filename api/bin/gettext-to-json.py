@@ -16,3 +16,4 @@ with open(sys.argv[1], 'r') as fp:
             line = line.replace('msgstr ', '')
             print(f'"es": {line}')
             print('},')
+fp.close()
