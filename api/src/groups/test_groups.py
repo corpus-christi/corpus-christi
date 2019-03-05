@@ -110,7 +110,7 @@ def test_read_one_group(auth_client):
         assert resp.status_code == 200
         assert resp.json['name'] == group.name
 
-    resp = auth_client.get(url_for('groups.read_one_group', group_id='None'))
+    resp = auth_client.get(url_for('groups.read_one_group', group_id=500))
     assert resp.status_code == 404
 
 
@@ -200,7 +200,7 @@ def test_activate_group(auth_client):
         assert resp.status_code == 200
         assert resp.json['active'] == True
 
-    resp = auth_client.put(url_for('groups.activate_group', group_id='None'), json={'active': True})
+    resp = auth_client.put(url_for('groups.activate_group', group_id=500), json={'active': True})
     # THEN assert group is not found
     assert resp.status_code == 404
 
@@ -222,17 +222,9 @@ def test_deactivate_group(auth_client):
         assert resp.status_code == 200
         assert resp.json['active'] == False
 
-    resp = auth_client.put(url_for('groups.deactivate_group', group_id='None'), json={'active': False})
+    resp = auth_client.put(url_for('groups.deactivate_group', group_id=500), json={'active': False})
     # THEN assert group is not found
     assert resp.status_code == 404
-
-# Waiting on API
-# @pytest.mark.xfail()
-# def test_delete_group(auth_client):
-#     # GIVEN
-#     # WHEN
-#     # THEN
-#     assert True == False
 
 
 # ---- Meeting
@@ -442,7 +434,7 @@ def test_update_meeting(auth_client):
     assert resp.json['group_id'] == payload['group_id']
     assert parser.parse(resp.json['when']).replace(tzinfo=None) == parser.parse(payload['when']).replace(tzinfo=None)
 
-    resp = auth_client.patch(url_for('groups.update_meeting', meeting_id='None'), json=payload)
+    resp = auth_client.patch(url_for('groups.update_meeting', meeting_id=500), json=payload)
     assert resp.status_code == 404
 
 
@@ -684,7 +676,7 @@ def test_activate_member(auth_client):
         assert resp.status_code == 200
         assert resp.json['active'] == True
 
-    resp = auth_client.put(url_for('groups.activate_member', member_id='None'))
+    resp = auth_client.put(url_for('groups.activate_member', member_id=500))
     # THEN assert group is not found
     assert resp.status_code == 404
 
@@ -707,7 +699,7 @@ def test_deactivate_member(auth_client):
         assert resp.status_code == 200
         assert resp.json['active'] == False
 
-    resp = auth_client.put(url_for('groups.activate_member', member_id='None'))
+    resp = auth_client.put(url_for('groups.activate_member', member_id=500))
     # THEN assert group is not found
     assert resp.status_code == 404
 
@@ -786,7 +778,7 @@ def test_read_all_attendance(auth_client):
 
 def test_read_attendance_by_member(auth_client):
     # Testing an empty Database
-    resp = auth_client.get(url_for('groups.read_attendance_by_member', member_id='None'))
+    resp = auth_client.get(url_for('groups.read_attendance_by_member', member_id=500))
     assert resp.status_code == 404
     # GIVEN a database with some attendances
     generate_managers(auth_client)
@@ -810,7 +802,7 @@ def test_read_attendance_by_member(auth_client):
 
 def test_read_attendance_by_meeting(auth_client):
     # Testing an empty Database
-    resp = auth_client.get(url_for('groups.read_attendance_by_meeting', meeting_id='None'))
+    resp = auth_client.get(url_for('groups.read_attendance_by_meeting', meeting_id=599))
     assert resp.status_code == 404
     # GIVEN a database with some attendances
     generate_managers(auth_client)
