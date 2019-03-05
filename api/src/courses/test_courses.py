@@ -216,14 +216,17 @@ def student_object_factory(offering_id, student_id):
     }
     return course_student
 
-def create_multiple_students(sqla, n=6):
+def create_multiple_students(sqla, n=6, course_offering_id=None):
     """Commits the number of students to the DB."""
     students = sqla.query(Person).all()
     course_offering = sqla.query(Course_Offering).all()
     course_students_schema = StudentSchema()
     new_students = []
     for i in range(n):
-        valid_student = course_students_schema.load(student_object_factory(course_offering[i%len(course_offering)].id, students[i%len(students)].id))
+        if not course_offering_id:
+            valid_student = course_students_schema.load(student_object_factory(course_offering[i%len(course_offering)].id, students[i%len(students)].id))
+        else:
+            valid_student = course_students_schema.load(student_object_factory(course_offering_id, students[i%len(students)].id))
         student = Student(**valid_student)
         new_students.append(student)
     sqla.add_all(new_students)
@@ -560,13 +563,6 @@ def test_create_course_offering(auth_client):
     assert auth_client.sqla.query(Course_Offering).count() == count
 
 def test_read_all_course_offerings(auth_client):
-    """Test with empty database"""
-    # GIVEN empty database
-    # WHEN databse queried
-    resp = auth_client.get(url_for('courses.read_all_course_offerings'))
-    # THEN assert error code
-    assert resp.status_code == 404
-    """Test with populated database"""
     # GIVEN existing (active and inactive) course offerings
     create_multiple_courses(auth_client.sqla,1)
     count = random.randint(8,19)
@@ -884,7 +880,7 @@ def test_read_one_diploma_awarded(auth_client):
     #Test with invalid diploma awarded
     # GIVEN empty database
     # WHEN databse queried
-    resp = auth_client.get(url_for('courses.read_one_diploma_awarded', diploma_id = 1))
+    resp = auth_client.get(url_for('courses.read_one_diploma_awarded', person_id = 1, diploma_id = 1))
     # THEN assert error code
     assert resp.status_code == 404
     #Test with populated database
@@ -898,22 +894,13 @@ def test_read_one_diploma_awarded(auth_client):
     diplomas_awarded = auth_client.sqla.query(Diploma_Awarded).all()
     # THEN assert entry called is only entry returned
     for diploma_awarded in diplomas_awarded:
-        resp = auth_client.get(url_for('courses.read_one_diploma_awarded', diploma_id=diploma_awarded.diploma_id))
+        resp = auth_client.get(url_for('courses.read_one_diploma_awarded', diploma_id=diploma_awarded.diploma_id, person_id=1))
         # THEN we find a matching class
         assert resp.status_code == 200
         assert resp.json['personId'] == diploma_awarded.person_id
         assert resp.json['diplomaId'] == diploma_awarded.diploma_id
         assert datetime.strptime(resp.json['when'], '%Y-%m-%d').date() == diploma_awarded.when
 
-"""
-# May not end up implemented, has no path
-@pytest.mark.xfail()
-def test_read_all_students_diploma_awarded(auth_client):
-    # GIVEN
-    # WHEN
-    # THEN
-    assert True == False
-"""
  
 def test_update_diploma_awarded(auth_client):
     """Test with invalid diploma awarded"""
@@ -979,7 +966,7 @@ def test_add_student_to_course_offering(auth_client):
     """Test with incalid student"""
     # GIVEN empty database
     # WHEN databse queried
-    resp = auth_client.patch(url_for('courses.add_student_to_course_offering', s_id=1))
+    resp = auth_client.patch(url_for('courses.add_student_to_course_offering', person_id=1))
     # THEN assert error code
     assert resp.status_code == 404
     """Test adding an invalid student"""
@@ -991,7 +978,7 @@ def test_add_student_to_course_offering(auth_client):
     del student['confirmed']
     # WHEN requested to create student
     resp = auth_client.post(url_for('courses.add_student_to_course_offering',
-    s_id=person.id), json=student)
+    person_id=person.id), json=student)
     # THEN the response code should be 422
     assert resp.status_code == 422
     """Test adding a valid student"""
@@ -999,7 +986,7 @@ def test_add_student_to_course_offering(auth_client):
     student = student_object_factory(course_offering.id, person.id)
     # WHEN a person wants to enroll in a course offering they become a student
     resp = auth_client.post(url_for('courses.add_student_to_course_offering',
-        s_id=person.id), json=student)
+        person_id=person.id), json=student)
     # THEN the person should be a student in that course
     course_offering = auth_client.sqla.query(Course_Offering).one()
     assert resp.status_code == 201
@@ -1009,28 +996,16 @@ def test_add_student_to_course_offering(auth_client):
     student = student_object_factory(course_offering.id, person.id)
     # WHEN a person tries to register them again
     resp = auth_client.post(url_for('courses.add_student_to_course_offering',
-        s_id=person.id), json=student)
+        person_id=person.id), json=student)
     # THEN it will throw a 208 error
     assert resp.status_code == 208
 
 def test_read_all_course_offering_students(auth_client):
-    """Test with empty database"""
-    # GIVEN empty database
-    # WHEN database queried
-    resp = auth_client.get(url_for('courses.read_all_course_offering_students', course_offering_id=1))
-    # THEN assert error code
-    assert resp.status_code == 404
-    """Test with no students"""
-    # GIVEN course offering with no students
-    setup_dependencies_of_student(auth_client, 1)
-    # WHEN database queried
-    resp = auth_client.get(url_for('courses.read_all_course_offering_students', course_offering_id=1))
-    # THEN assert error code
-    assert resp.status_code == 404
     """Test with populated database"""
     # GIVEN existing course offering in database
     count = random.randint(3,14)
-    create_multiple_students(auth_client.sqla, count)
+    setup_dependencies_of_student(auth_client, count)
+    create_multiple_students(auth_client.sqla, count, 1)
     # WHEN call to database
     resp = auth_client.get(url_for('courses.read_all_course_offering_students', course_offering_id=1))
     # THEN assert all entries from database are called
@@ -1062,17 +1037,6 @@ def test_get_all_students(auth_client):
     for i in range(count):
         person = auth_client.sqla.query(Person).filter_by(id = students[i].student_id).first()
         assert len(resp.json[i]['diplomaList']) == len(person.diplomas_awarded)
-
-
-@pytest.mark.smoke
-def test_get_all_students_no_exist(auth_client):
-    # GIVEN an empty database
-
-    # WHEN students are requested to be read
-    resp = auth_client.get(url_for('courses.get_all_students'))
-
-    # THEN expect no students to be found
-    assert resp.status_code == 404
 
 
 def test_read_one_student(auth_client):
@@ -1195,13 +1159,13 @@ def test_update_class_attendance(auth_client):
 # ---- Class_Meeting
 
 def setup_dependencies_of_class_meeting(auth_client, n):
-    create_multiple_people(auth_client.sqla, n)
-    create_multiple_courses(auth_client.sqla, n)
-    create_multiple_course_offerings(auth_client.sqla, n)
     Country.load_from_file()
     create_multiple_areas(auth_client.sqla, n)
     create_multiple_addresses(auth_client.sqla, n)
     create_multiple_locations(auth_client.sqla, n)
+    create_multiple_people(auth_client.sqla, n)
+    create_multiple_courses(auth_client.sqla, n)
+    create_multiple_course_offerings(auth_client.sqla, n)
 
 def test_create_class_meeting(auth_client):
     """Test creating invalid class meeting"""
@@ -1230,51 +1194,15 @@ def test_create_class_meeting(auth_client):
     assert resp.status_code == 208
 
 def test_read_all_class_meetings(auth_client):
-    """Test with no meetings"""
-    # GIVEN empty database
-    # WHEN database queried
-    resp = auth_client.get(url_for('courses.read_all_class_meetings', course_offering_id=1))
-    # THEN assert error code
-    assert resp.status_code == 404
-    """Test with no locations"""
-    # GIVEN empty database
-    class_meeting_schema = Class_MeetingSchema()
-    create_multiple_courses(auth_client.sqla, 1)
-    create_multiple_course_offerings(auth_client.sqla, 1)
-    meeting_no_location = class_meeting_schema.load(class_meeting_object_factory(1, 1, 1))
-    class_meeting = Class_Meeting(**meeting_no_location)
-    auth_client.sqla.add(class_meeting)
-    auth_client.sqla.commit()
-    meeting_no_location = auth_client.sqla.query(Class_Meeting).all()[0]
-    # WHEN database queried
-    resp = auth_client.get(url_for('courses.read_all_class_meetings', course_offering_id=meeting_no_location.id))
-    # THEN assert error code
-    assert resp.status_code == 404
-    """Test with no teacher"""
-    # GIVEN empty database
-    Country.load_from_file()
-    create_multiple_areas(auth_client.sqla, 1)
-    create_multiple_addresses(auth_client.sqla, 1)
-    create_multiple_locations(auth_client.sqla, 1)
-    meeting_no_teacher = class_meeting_schema.load(class_meeting_object_factory(1, 1, 1))
-    class_meeting = Class_Meeting(**meeting_no_teacher)
-    auth_client.sqla.add(class_meeting)
-    auth_client.sqla.commit()
-    meeting_no_teacher = auth_client.sqla.query(Class_Meeting).all()[1]
-    # WHEN database queried
-    resp = auth_client.get(url_for('courses.read_all_class_meetings', course_offering_id=meeting_no_teacher.id))
-    # THEN assert error code
-    assert resp.status_code == 404
-    """Test with populated database"""
     # GIVEN existing class meetings in database
-    create_multiple_people(auth_client.sqla, 1)
+    setup_dependencies_of_class_meeting(auth_client, 1)
     count = random.randint(3,11)
     create_class_meetings(auth_client.sqla, count)
     # WHEN call to database
     resp = auth_client.get(url_for('courses.read_all_class_meetings', course_offering_id=1))
     # THEN assert all entries from database are called
     assert resp.status_code == 200
-    assert len(resp.json) == count + 2
+    assert len(resp.json) == count
     
 def test_read_one_class_meeting(auth_client):
     """Test with invalid class meeting"""
@@ -1283,38 +1211,9 @@ def test_read_one_class_meeting(auth_client):
     resp = auth_client.get(url_for('courses.read_one_class_meeting', course_offering_id=1, class_meeting_id = 1))
     # THEN assert error code
     assert resp.status_code == 404
-    """Teast with no location"""
-    # GIVEN empty database
-    class_meeting_schema = Class_MeetingSchema()
-    create_multiple_courses(auth_client.sqla, 1)
-    create_multiple_course_offerings(auth_client.sqla, 1)
-    meeting_no_location = class_meeting_schema.load(class_meeting_object_factory(1, 1, 1))
-    class_meeting = Class_Meeting(**meeting_no_location)
-    auth_client.sqla.add(class_meeting)
-    auth_client.sqla.commit()
-    meeting_no_location = auth_client.sqla.query(Class_Meeting).all()[0]
-    # WHEN database queried
-    resp = auth_client.get(url_for('courses.read_one_class_meeting', course_offering_id=meeting_no_location.offering_id, class_meeting_id = meeting_no_location.id))
-    # THEN assert error code
-    assert resp.status_code == 404
-    """Test with no teacher"""
-    # GIVEN empty database
-    Country.load_from_file()
-    create_multiple_areas(auth_client.sqla, 1)
-    create_multiple_addresses(auth_client.sqla, 1)
-    create_multiple_locations(auth_client.sqla, 1)
-    meeting_no_teacher = class_meeting_schema.load(class_meeting_object_factory(1, 1, 1))
-    class_meeting = Class_Meeting(**meeting_no_teacher)
-    auth_client.sqla.add(class_meeting)
-    auth_client.sqla.commit()
-    meeting_no_teacher = auth_client.sqla.query(Class_Meeting).all()[1]
-    # WHEN database queried
-    resp = auth_client.get(url_for('courses.read_one_class_meeting', course_offering_id=meeting_no_teacher.offering_id, class_meeting_id = meeting_no_teacher.id))
-    # THEN assert error code
-    assert resp.status_code == 404
     """Test with populated database"""
     # GIVEN one course in the database
-    create_multiple_people(auth_client.sqla, 1)
+    setup_dependencies_of_class_meeting(auth_client, 5)
     count = random.randint(3,11)
     create_class_meetings(auth_client.sqla, count)
     # WHEN call to database
@@ -1388,7 +1287,7 @@ def test_delete_class_meeting(auth_client):
     create_class_attendance(auth_client.sqla, 1)
     meeting = auth_client.sqla.query(Class_Meeting).first()
     # WHEN database queried
-    resp = auth_client.delete(url_for('courses.delete_class_meeting', course_offering_id=1, class_meeting_id=1))
+    resp = auth_client.delete(url_for('courses.delete_class_meeting', course_offering_id=meeting.offering_id, class_meeting_id=meeting.id))
     # THEN assert error code
     assert resp.status_code == 403
 
