@@ -54,7 +54,8 @@ class I18NKeySchema(Schema):
     @validates('id')
     def validate_id(self, id):
         if not re.fullmatch(r'[a-z]+[a-z.]*[a-z]', id, re.IGNORECASE):
-            raise ValidationError("Invalid id; should be of form 'abc.def.xyz'")
+            raise ValidationError(
+                "Invalid id; should be of form 'abc.def.xyz'")
 
 
 # ---- Value
@@ -62,8 +63,10 @@ class I18NKeySchema(Schema):
 class I18NValue(Base):
     """Language-specific value for a given I18NKey."""
     __tablename__ = 'i18n_value'
-    key_id = Column(StringTypes.I18N_KEY, ForeignKey('i18n_key.id'), primary_key=True)
-    locale_code = Column(StringTypes.LOCALE_CODE, ForeignKey('i18n_locale.code'), primary_key=True)
+    key_id = Column(StringTypes.I18N_KEY, ForeignKey(
+        'i18n_key.id'), primary_key=True)
+    locale_code = Column(StringTypes.LOCALE_CODE, ForeignKey(
+        'i18n_locale.code'), primary_key=True)
     gloss = Column(Text(), nullable=False)
 
     key = relationship('I18NKey', backref='values', lazy=True)
@@ -85,7 +88,8 @@ class Language(Base):
     """Language by ISO 639-1 language code"""
     __tablename__ = 'i18n_language'
     code = Column(String(2), primary_key=True)
-    name_i18n = Column(StringTypes.I18N_KEY, ForeignKey('i18n_key.id'), nullable=False)
+    name_i18n = Column(StringTypes.I18N_KEY, ForeignKey(
+        'i18n_key.id'), nullable=False)
     key = relationship('I18NKey', backref='languages', lazy=True)
 
     def __repr__(self):
@@ -94,7 +98,8 @@ class Language(Base):
     @classmethod
     def load_from_file(cls, file_name='language-codes.json', locale_code='en-US'):
         count = 0
-        file_path = os.path.abspath(os.path.join(__file__, os.path.pardir, 'data', file_name))
+        file_path = os.path.abspath(os.path.join(
+            __file__, os.path.pardir, 'data', file_name))
 
         if not db.session.query(I18NLocale).get(locale_code):
             db.session.add(I18NLocale(code=locale_code, desc='English US'))
@@ -106,7 +111,7 @@ class Language(Base):
                 language_code = language['alpha2']
                 language_name = language['English']
 
-                name_i18n = f'language.name.{language_code}'
+                name_i18n = f'language.name.{language_code}'[:32]
                 i18n_create(name_i18n, locale_code,
                             language_name, description=f"Language {language_name}")
 
@@ -125,6 +130,7 @@ def i18n_create(key_id, locale_code, gloss, description=None):
     In most cases, `description` can be omitted. It's only required
     if the I18NKey doesn't already exist.
     """
+    key_id = key_id[:32]
     result = i18n_check(key_id, locale_code)
     if result is not None:
         # Already in the DB, so we can't create it.
@@ -139,11 +145,13 @@ def i18n_create(key_id, locale_code, gloss, description=None):
         key = db.session.query(I18NKey).get(key_id)
         if key is None:
             if description is None:
-                raise RuntimeError(f"Won't create key {key_id} without description")
+                raise RuntimeError(
+                    f"Won't create key {key_id} without description")
             db.session.add(I18NKey(id=key_id, desc=description))
 
         # Add the value
-        db.session.add(I18NValue(key_id=key_id, locale_code=locale_code, gloss=gloss))
+        db.session.add(
+            I18NValue(key_id=key_id, locale_code=locale_code, gloss=gloss))
 
         db.session.commit()
     except Exception:

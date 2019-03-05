@@ -95,7 +95,7 @@ def enumerated_value_factory(sqla):
     attributes = sqla.query(Attribute).all()
 
     value_string = rl_fake().name()
-    value_i18n = f'enumerated.{value_string}'
+    value_i18n = f'enumerated.{value_string}'[:32]
 
     locale_code = 'en-US'
     if not sqla.query(I18NLocale).get(locale_code):

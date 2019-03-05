@@ -8,7 +8,8 @@ from ..auth.utils import jwt_not_required
 
 from . import people
 from .models import Person, Account, AccountSchema, Role, PersonSchema, RoleSchema, Manager, ManagerSchema
-from ..events.models import EventPerson, EventParticipant  # TeamMember
+from ..events.models import EventPerson, EventParticipant
+from ..teams.models import TeamMember
 from ..attributes.models import Attribute, AttributeSchema, EnumeratedValue, EnumeratedValueSchema, PersonAttribute, PersonAttributeSchema
 from ..courses.models import Student, Class_Meeting
 from ..auth.blacklist_helpers import revoke_tokens_of_account
@@ -473,7 +474,7 @@ def remove_role_from_account(account_id, role_id):
         return 'Account not found', 404
 
     role_to_remove = db.session.query(Role).filter_by(id=role_id).first()
-    if role is None:
+    if role_to_remove is None:
         return 'Role specified was NOT found', 404
 
     if role_to_remove not in account.roles:

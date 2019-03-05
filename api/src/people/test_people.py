@@ -123,7 +123,7 @@ def prep_database(sqla):
 def role_object_factory(role_name='role.test_role'):
     """Cook up a fake role."""
     role = {
-        'nameI18n': role_name,
+        'nameI18n': role_name[:32],
         'active': 1
     }
     return role
@@ -737,9 +737,7 @@ def test_read_one_account_by_username(auth_client):
     impossible_account_name = "BigChungus&UgandianKnuckles4Lyfe"
     # WHEN the api call is made for the non-existent username
     resp = auth_client.get(url_for('people.read_one_account_by_username', username=impossible_account_name))
-    assert resp.status_code == 200  # check response
-    # THEN the api should respond with an empty json respnse
-    assert resp.json == {}
+    assert resp.status_code == 404  # check response
 
 
 @pytest.mark.smoke
