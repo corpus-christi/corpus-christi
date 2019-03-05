@@ -66,6 +66,9 @@ def image_object_factory(sqla):
         'path': valid_paths[i]
     }
 
+    file = open(valid_paths[i], 'w')
+    file.close()
+
     # These are all optional in the DB. Over time, we'll try all possibilities.
     if flip():
         image['description'] = rl_fake().sentences(nb=1)[0]
