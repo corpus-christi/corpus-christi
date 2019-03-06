@@ -105,7 +105,7 @@ def test_read_one_team(auth_client):
     assert resp.json["description"] == team.description
     assert resp.json["active"] == team.active
     # WHEN we read a missing team
-    resp = auth_client.get(url_for('teams.read_one_team', team_id = 9999999999))
+    resp = auth_client.get(url_for('teams.read_one_team', team_id = 42))
     # THEN the response should be an error
     assert resp.status_code == 404
     
@@ -205,7 +205,7 @@ def test_delete_team(auth_client):
     isActive = auth_client.sqla.query(Team.active).filter(Team.id == deleting_id).first()[0]
     assert isActive == False
     # WHEN we delete a missing team
-    resp = auth_client.delete(url_for('teams.delete_team', team_id = 999999999))
+    resp = auth_client.delete(url_for('teams.delete_team', team_id = 42))
     # THEN the response should be an error
     assert resp.status_code == 404
 
@@ -269,7 +269,7 @@ def test_add_team_member(auth_client):
     # THEN we expect an error status code
     assert resp.status_code == 422
     # WHEN we link an invalid person
-    resp = auth_client.post(url_for('teams.add_team_member', team_id=team_id, member_id=999999999), json={'active': flip()})
+    resp = auth_client.post(url_for('teams.add_team_member', team_id=team_id, member_id=42), json={'active': flip()})
     # THEN we expect an error status code
     assert resp.status_code == 404
 
@@ -323,7 +323,7 @@ def test_modify_team_member_invalid(auth_client):
         assert resp.status_code == 422
 
     # WHEN we modify a team member that doesn't exist
-    resp = auth_client.patch(url_for('teams.modify_team_member', team_id = 999999999, member_id = 9999999999), json = {'active': flip()})
+    resp = auth_client.patch(url_for('teams.modify_team_member', team_id = 42, member_id = 429), json = {'active': flip()})
     # THEN the response should be an errror
     assert resp.status_code == 404
 
@@ -350,6 +350,6 @@ def test_delete_team_member(auth_client):
     # THEN we expect an error
     assert resp.status_code == 422
     # WHEN we unlink using an invalid person
-    resp = auth_client.delete(url_for('teams.delete_team_member', team_id=9999999999, member_id=team_member.member_id))
+    resp = auth_client.delete(url_for('teams.delete_team_member', team_id=429, member_id=team_member.member_id))
     # THEN we expect an error
     assert resp.status_code == 404
