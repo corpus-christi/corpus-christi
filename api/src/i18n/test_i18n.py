@@ -113,7 +113,7 @@ def test_create_bogus_locale(auth_client, code):
     # GIVEN any set of locales
     # WHEN we try to create one with a bogus code
     resp = auth_client.post(url_for('i18n.create_locale'),
-                       json={'code': code, 'desc': code * 2})
+                            json={'code': code, 'desc': code * 2})
     # THEN result is "Unprocessable"
     assert resp.status_code == 422
 
@@ -122,7 +122,8 @@ def test_create_bogus_locale(auth_client, code):
 def test_create_valid_locale(auth_client, code, desc):
     # GIVEN empty locale table
     # WHEN one local added
-    resp = auth_client.post(url_for('i18n.create_locale'), json={'code': code, 'desc': desc})
+    resp = auth_client.post(url_for('i18n.create_locale'), json={
+                            'code': code, 'desc': desc})
 
     # THEN result is "Created"
     assert resp.status_code == 201
@@ -140,7 +141,8 @@ def test_delete_one_locale(auth_client, code, desc):
     create_locales(auth_client.sqla)
 
     # WHEN one locale deleted
-    resp = auth_client.delete(url_for('i18n.delete_one_locale', locale_code=code))
+    resp = auth_client.delete(
+        url_for('i18n.delete_one_locale', locale_code=code))
 
     # THEN result is "No content"
     assert resp.status_code == 204
@@ -180,21 +182,21 @@ def test_read_nonexistent_key(auth_client, id):
 @pytest.mark.parametrize('id', ['', 'a', 'a-', '-a', 'aa-', 'aaa-', 'aa-a'])
 def test_create_bogus_key(auth_client, id):
     resp = auth_client.post(url_for('i18n.create_key'),
-                       json={'id': id, 'desc': id * 2})
+                            json={'id': id, 'desc': id * 2})
     assert resp.status_code == 422
 
 
 @pytest.mark.parametrize('id,desc', key_tuples)
 def test_create_valid_key(auth_client, id, desc):
     resp = auth_client.post(url_for('i18n.create_key'),
-                       json={'id': id, 'desc': desc})
+                            json={'id': id, 'desc': desc})
     assert resp.status_code == 201
 
 
-# ---- Values
+# # ---- Values
 
 def test_read_all_values(auth_client):
-    create_values(auth_client.sqla)
+    seed_database(auth_client.sqla)
     resp = auth_client.get(url_for('i18n.read_all_values'))
     assert resp.status_code == 200
     assert len(resp.json) == len(locale_data) * len(key_data)
@@ -222,7 +224,8 @@ def test_one_locale_as_list(auth_client, format, code):
 
 @pytest.mark.smoke
 def test_bogus_xlation_locale(auth_client):
-    resp = auth_client.get(url_for('i18n.read_xlation', locale_code='not-a-real-locale'))
+    resp = auth_client.get(
+        url_for('i18n.read_xlation', locale_code='not-a-real-locale'))
     assert resp.status_code == 404
 
 
@@ -230,8 +233,8 @@ def test_bogus_xlation_locale(auth_client):
 def test_bogus_xlation_format(auth_client):
     create_locales(auth_client.sqla)
     resp = auth_client.get(url_for('i18n.read_xlation',
-                              locale_code=locale_codes[0],
-                              format='not-a-valid-format'))
+                                   locale_code=locale_codes[0],
+                                   format='not-a-valid-format'))
     assert resp.status_code == 400
 
 
@@ -244,14 +247,14 @@ def test_goofy_tree_structure(auth_client):
     bogus_key_id = 'btn.cancel.bogus'
     auth_client.sqla.add(I18NKey(id=bogus_key_id, desc='Invalid key'))
     auth_client.sqla.add(I18NValue(locale_code=locale_data[0]['code'],
-                             key_id=bogus_key_id,
-                             gloss="Bogus Gloss"))
+                                   key_id=bogus_key_id,
+                                   gloss="Bogus Gloss"))
     auth_client.sqla.commit()
 
     # Ask the API for a valid tree. It shouldn't comply.
     resp = auth_client.get(url_for('i18n.read_xlation',
-                              locale_code=locale_codes[0],
-                              format='tree'))
+                                   locale_code=locale_codes[0],
+                                   format='tree'))
     assert resp.status_code == 400
 
 
@@ -269,7 +272,8 @@ def test_one_locale_as_tree(auth_client, code):
     # GIVEN i18n test data
     seed_database(auth_client.sqla)
     # WHEN asking for a tree of translation information
-    resp = auth_client.get(url_for('i18n.read_xlation', locale_code=code, format='tree'))
+    resp = auth_client.get(
+        url_for('i18n.read_xlation', locale_code=code, format='tree'))
     # THEN response should be 'Ok'
     assert resp.status_code == 200
     # AND tree should have proper number of top-level entries
@@ -280,7 +284,7 @@ def test_one_locale_as_tree(auth_client, code):
     assert resp.json['label']['name']['first'].startswith('Label for a first')
 
 
-# ---- Languages
+# # ---- Languages
 
 @pytest.mark.slow
 @pytest.mark.parametrize('code, name', [('en', 'English'),
@@ -289,7 +293,8 @@ def test_one_locale_as_tree(auth_client, code):
 def test_read_language(auth_client, code, name):
     count = Language.load_from_file()
     assert count > 0
-    resp = auth_client.get(url_for('i18n.read_languages', language_code=code, locale='en-US'))
+    resp = auth_client.get(
+        url_for('i18n.read_languages', language_code=code, locale='en-US'))
     assert resp.status_code == 200
     assert resp.json['name'] == name
 
@@ -307,8 +312,9 @@ def test_read_all_languages(auth_client):
 
 @pytest.mark.smoke
 def test_good_crud_read(auth_client):
+    create_locales(auth_client.sqla)
     id = 'foo.bar'
-    locale = 'xx-YY'
+    locale = 'en-US'
     gloss = 'Zippy'
 
     auth_client.sqla.add_all([
@@ -319,14 +325,15 @@ def test_good_crud_read(auth_client):
     assert i18n_read(id, locale).gloss == gloss
 
 
-def test_bad_crud_read():
+def test_bad_crud_read(auth_client):
     with pytest.raises(RuntimeError):
-        i18n_read('bogus', 'bogus')
+        i18n_read('key_id', 'key_id')
 
 
 def test_good_crud_update(auth_client):
+    create_locales(auth_client.sqla)
     id = 'foo.bar'
-    locale = 'xx-YY'
+    locale = 'en-US'
     first_gloss = 'Zippy'
     new_gloss = 'Flippy'
 
@@ -344,20 +351,21 @@ def test_good_crud_update(auth_client):
 
 
 @pytest.mark.smoke
-def test_bad_crud_update():
+def test_bad_crud_update(auth_client):
     with pytest.raises(RuntimeError):
-        i18n_read('bogus', 'bogus')
+        i18n_update('key_id', 'key_id', 'key_id')
 
 
-def test_bad_crud_delete():
+def test_bad_crud_delete(auth_client):
     with pytest.raises(RuntimeError):
-        i18n_read('bogus', 'bogus')
+        i18n_delete('key_id', 'key_id')
 
 
 @pytest.mark.smoke
 def test_good_crud_delete(auth_client):
+    create_locales(auth_client.sqla)
     id = 'foo.bar'
-    locale = 'xx-YY'
+    locale = 'en-US'
     gloss = 'Zippy'
 
     auth_client.sqla.add_all([
