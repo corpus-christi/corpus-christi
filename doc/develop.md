@@ -110,14 +110,28 @@ in which you intend to work with the API.
 
 Be sure you have [set up your shell](#bash-setup-for-flask-api).
 
+#### PostgresSQL
+
 CC uses uses [PostgreSQL](https://www.postgresql.org/).
 You will need access to a Postgres server,
 which can be either a network resource
 or you can install a server on your own machine.
 
-If you use a Mac,
-use either [Homebrew](https://formulae.brew.sh/formula/postgresql)
-or [Postgres.App](https://postgresapp.com/).
+Locate installers for Postgres 
+on the [official downloads page](https://www.postgresql.org/download/).
+1. For the [**Mac**](https://www.postgresql.org/download/macosx/),
+   I have had good luck with both [Postgres.app](https://postgresapp.com/),
+   which is super simple and _just works_,
+   and the Homebrew version (which is my preference).
+   The latter requires that you first [install Homebrew](https://brew.sh/)
+   and then use Homebrew to install Postgres (`brew install postgresql`).
+1. There are several installers for [**Windows**](https://www.postgresql.org/download/windows/).
+   If you have experience or preferences here,
+   please feel free to update this documentation with your recommendations.
+1. For **Linux**, choose the appropriate distribution
+   from the [main downloads page](https://www.postgresql.org/download/).
+
+#### Configure Database
 
 Once Postgres is installed,
 you need to create a user and a database.
