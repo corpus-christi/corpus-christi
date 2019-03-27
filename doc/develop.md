@@ -203,7 +203,7 @@ when things go haywire.
 1. Start the API server
    (be sure you have [set up your shell](#bash-setup-for-flask-api))
     ```base
-    $ cd corpus-christi/api
+    $ cd corpus-christi/api/bin
     $ ./run-dev-server.sh 
     ```
    You should see a few lines indicating that
