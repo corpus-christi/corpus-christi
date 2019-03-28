@@ -178,7 +178,7 @@ export default {
     "event-person-details": EventPersonDetails,
     "event-attendance-form": EventAttendanceForm
   },
-
+  
   data() {
     return {
       event: {},
