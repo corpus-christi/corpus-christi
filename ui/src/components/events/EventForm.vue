@@ -20,6 +20,12 @@
           name="description"
           data-cy="description"
         ></v-textarea>
+        <v-layout align-center>
+          <v-btn flat color="primary" small>
+            Choose Image
+          </v-btn>
+          <span>{{ imageMessage }}</span>
+        </v-layout>
         <v-layout align-center justify-space-around>
           <v-flex>
             <entity-search
@@ -301,7 +307,8 @@ export default {
       startTimeModal: false,
       endTimeModal: false,
       showAddressCreator: false,
-      currentAddress: 0
+      currentAddress: 0,
+      imageMessage: "No image selected."
     };
   },
 
@@ -367,6 +374,10 @@ export default {
 
     formDisabled() {
       return this.saveLoading || this.addMoreLoading;
+    },
+
+    imageMessage() {
+      this.imageMessage = "No image selected."
     },
 
     ...mapGetters(["currentLanguageCode"])
