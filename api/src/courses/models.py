@@ -123,6 +123,7 @@ class Course(Base):
                                  back_populates='depends', lazy=True)
     diplomas = relationship(
         'Diploma', secondary=Diploma_Course, back_populates='courses', lazy=True)
+    images = relationship("ImageCourse", back_populates="image")
 
     def __repr__(self):
         return f"<Course(id={self.id})>"
