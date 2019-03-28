@@ -139,11 +139,11 @@ An easy way to do this is to use the shell commands
 that come with Postgres.
 Create a user:
 ```bash
-$ createuser --password arco 
+$ createuser arco 
 ```
-You will be prompted for a password.
+Note that this creates a database user with **no password**.
+This is **only** suitable for local development!
 For a production system, use a good password.
-For testing or development, use `password`.
 
 Create a database:
 ```bash

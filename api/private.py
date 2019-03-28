@@ -2,9 +2,9 @@
 #
 # DO NOT COMMIT PRODUCTION SETTINGS TO VERSION CONTROL!
 
-PSQL_HOST = 'localhost'
+PSQL_HOST = '127.0.0.1'
 PSQL_USER = 'arco'
-PSQL_PASS = 'password'
+PSQL_PASS = ''
 
 FLASK_SECRET_KEY = 'big secret'
 JWT_SECRET_KEY = 'super secret'
