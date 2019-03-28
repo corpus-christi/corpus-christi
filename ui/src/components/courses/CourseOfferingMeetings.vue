@@ -79,7 +79,12 @@
     </v-dialog>
 
     <!-- Attendance dialog -->
-    <v-dialog persistent scrollable v-model="attendanceDialog.show" max-width="500px">
+    <v-dialog
+      persistent
+      scrollable
+      v-model="attendanceDialog.show"
+      max-width="500px"
+    >
       <ClassAttendance
         :classMeeting="attendanceDialog.classMeeting"
         @cancel="cancelAttendance"
@@ -99,7 +104,7 @@
 <script>
 import { mapGetters } from "vuex";
 import ClassMeetingForm from "./ClassMeetingForm";
-import ClassAttendance from  "./ClassAttendance";
+import ClassAttendance from "./ClassAttendance";
 
 export default {
   name: "CourseOfferingMeetings",
@@ -145,8 +150,16 @@ export default {
     headers() {
       return [
         { text: this.$t("courses.when"), value: "displayDate", width: "33%" },
-        { text: this.$t("courses.location"), value: "location.description", width: "33%" },
-        { text: this.$t("courses.teacher"), value: "teacher.compositeName", width: "33%" },
+        {
+          text: this.$t("courses.location"),
+          value: "location.description",
+          width: "33%"
+        },
+        {
+          text: this.$t("courses.teacher"),
+          value: "teacher.compositeName",
+          width: "33%"
+        },
         { text: this.$t("actions.header"), sortable: false }
       ];
     },
@@ -182,7 +195,8 @@ export default {
     updateCompositeProperties() {
       this.meetings.forEach(meeting => {
         // TODO if better, localized way to get a person's full name, use that instead of just appending names together
-        meeting.teacher.compositeName = meeting.teacher.firstName + " " + meeting.teacher.lastName;
+        meeting.teacher.compositeName =
+          meeting.teacher.firstName + " " + meeting.teacher.lastName;
         meeting.displayDate = this.getDisplayDate(meeting.when);
         return meeting;
       });
@@ -225,7 +239,8 @@ export default {
       } else {
         for (let meeting of meetings) {
           meeting.displayDate = this.getDisplayDate(meeting.when);
-          meeting.teacher.compositeName = meeting.teacher.firstName + " " + meeting.teacher.lastName;
+          meeting.teacher.compositeName =
+            meeting.teacher.firstName + " " + meeting.teacher.lastName;
         }
         this.meetings.push(...meetings);
         this.snackbar.text = this.$t("courses.meeting-added");
@@ -250,7 +265,7 @@ export default {
       } else {
         this.snackbar.text = this.$t("courses.class-attendance-updated");
       }
-      
+
       this.snackbar.show = true;
       this.attendanceDialog.show = false;
     },

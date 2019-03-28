@@ -314,10 +314,9 @@ export default {
 
     saveCourse(course) {
       if (course instanceof Error) {
-        this.snackbar.text = 
-          this.courseDialog.editMode ?
-            this.$t("courses.update-failed")
-            : this.$t("courses.add-failed");
+        this.snackbar.text = this.courseDialog.editMode
+          ? this.$t("courses.update-failed")
+          : this.$t("courses.add-failed");
         this.snackbar.show = true;
         this.courseDialog.show = false;
         return;
@@ -325,9 +324,7 @@ export default {
 
       if (this.courseDialog.editMode) {
         // Locate the record we're updating in the table.
-        const idx = this.courses.findIndex(
-          c => c.id === course.id
-        );
+        const idx = this.courses.findIndex(c => c.id === course.id);
         Object.assign(this.courses[idx], course);
         this.snackbar.text = this.$t("courses.updated");
       } else {

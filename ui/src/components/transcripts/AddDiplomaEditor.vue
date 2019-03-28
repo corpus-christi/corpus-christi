@@ -8,24 +8,18 @@
       <v-card-text>
         <v-form>
           <ValidationProvider name="select" rules="required">
-            
-                <v-select
-                    slot-scope="{
-                        errors,
-                        valid
-                    }"
-                    v-model="diploma.id"
-                    :items="items"
-                    v-bind:label="$t('diplomas.diploma')"
-                    outline
-                    item-value="id"
-                    item-text="name"
-                    
-                    :success="valid"
-                    :menu-props="{ closeOnContentClick: true }"
-                    required
-                ></v-select>
-           
+            <v-select
+              slot-scope="{ errors, valid }"
+              v-model="diploma.id"
+              :items="items"
+              v-bind:label="$t('diplomas.diploma')"
+              outline
+              item-value="id"
+              item-text="name"
+              :success="valid"
+              :menu-props="{ closeOnContentClick: true }"
+              required
+            ></v-select>
           </ValidationProvider>
         </v-form>
       </v-card-text>
@@ -78,7 +72,9 @@ export default {
       return this.$t("diplomas.new");
     },
     items() {
-      return this.diplomasPool.filter(diploma => !this.diplomasThisStudent.includes(diploma.id));
+      return this.diplomasPool.filter(
+        diploma => !this.diplomasThisStudent.includes(diploma.id)
+      );
     }
   },
 
@@ -99,22 +95,18 @@ export default {
   },
 
   mounted() {
-    this.$http
-      .get("/api/v1/courses/diplomas")
-      .then(resp => 
-        {
-            this.diplomasPool = [];
-            //console.log('diplomas fetched: ', resp);
-            resp.data.forEach(diploma => {
-                this.diplomasPool.push({
-                    name: diploma.name,
-                    id: diploma.id
-                });
-            });
-            //console.log('diplomasPool: ', this.diplomasPool);
-            this.$refs.obs.validate();
+    this.$http.get("/api/v1/courses/diplomas").then(resp => {
+      this.diplomasPool = [];
+      //console.log('diplomas fetched: ', resp);
+      resp.data.forEach(diploma => {
+        this.diplomasPool.push({
+          name: diploma.name,
+          id: diploma.id
         });
+      });
+      //console.log('diplomasPool: ', this.diplomasPool);
+      this.$refs.obs.validate();
+    });
   }
-
 };
 </script>

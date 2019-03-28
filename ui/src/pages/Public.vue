@@ -33,7 +33,7 @@
               </v-card>
             </v-expansion-panel-content>
           </v-expansion-panel>
-          
+
           <v-card>
             <v-card-actions>
               <v-btn
@@ -139,7 +139,7 @@ export default {
       courses: [],
       pageLoaded: false,
       activeOfferings: [],
-      
+
       registrationFormDialog: {
         show: false,
         editMode: false,
@@ -151,7 +151,7 @@ export default {
         show: false,
         message: ""
       },
-      
+
       filterStart: "",
       filterEnd: "",
       homegroups: [],
@@ -209,7 +209,7 @@ export default {
         minute: "2-digit"
       });
     },
-    
+
     getEventData() {
       this.pageLoaded = false;
       this.$http.get(`/api/v1/events/?return_group=all`).then(resp => {
@@ -218,7 +218,7 @@ export default {
         this.pageLoaded = true;
       });
     },
-    
+
     cancel() {
       this.registrationFormDialog.show = false;
     },
@@ -226,15 +226,15 @@ export default {
     registeredPerson() {
       this.registrationFormDialog.show = false;
     },
-    
+
     registerClicked(course) {
       this.activeOfferings = course.course_offerings.filter(
         courseOffering => courseOffering.active
       );
-            
+
       this.registrationFormDialog.show = true;
     },
-    
+
     showSnackbar(message) {
       this.snackbar.text = message;
       this.snackbar.show = true;
