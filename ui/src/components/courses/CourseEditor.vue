@@ -11,6 +11,15 @@
       <v-spacer></v-spacer>
       <v-btn
         color="primary"
+        outline
+        v-on:click="save"
+        v-if="!editMode"
+        :disabled="saving"
+        data-cy="add-another"
+        >{{ $t("actions.add-another") }}</v-btn
+      >
+      <v-btn
+        color="primary"
         raised
         :disabled="saving"
         :loading="saving"
@@ -143,11 +152,11 @@ export default {
           })
           .then(resp => {
             console.log("PREREQS", resp);
-            this.$emit("save", newCourse);
+            this.$emit("addMore", newCourse);
           })
           .catch(err => {
             console.error("FAILURE", err);
-            this.$emit("save", err);
+            this.$emit("addMore", err);
           })
           .finally(() => {
             this.saving = false;

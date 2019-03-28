@@ -106,6 +106,7 @@
         v-bind:initialData="courseDialog.course"
         v-on:cancel="cancelCourse"
         v-on:save="saveCourse"
+        v-on:addMore="addMore"
       />
     </v-dialog>
 
@@ -187,6 +188,7 @@ export default {
       courses: [],
 
       tableLoaded: false,
+      addAnother: false,
       selected: [],
       search: "",
       viewStatus: "active"
@@ -312,7 +314,13 @@ export default {
         });
     },
 
+    addMore(course) {
+      this.addAnother = true;
+      this.saveCourse(course);
+    },
+
     saveCourse(course) {
+
       if (course instanceof Error) {
         this.snackbar.text = this.courseDialog.editMode
           ? this.$t("courses.update-failed")
@@ -333,7 +341,12 @@ export default {
       }
 
       this.snackbar.show = true;
-      this.courseDialog.show = false;
+      if (this.addAnother) {
+        console.log("Add Another")
+        this.addAnother = false;
+      } else {
+        this.courseDialog.show = false;
+      }
     }
   },
 

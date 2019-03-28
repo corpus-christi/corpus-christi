@@ -1,7 +1,6 @@
 <template>
   <form>
     <!-- creating new course -->
-    <!-- TODO: make description required -->
     <v-text-field
       v-model="course.name"
       v-bind:label="$t('courses.title')"
@@ -15,9 +14,11 @@
       v-model="course.description"
       v-bind:label="$t('courses.description')"
       name="description"
+      v-validate="'required'"
+      v-bind:error-messages="errors.collect('description')"
       data-cy="course-form-description"
     ></v-textarea>
-
+    <br />
     <v-select
       v-model="course.prerequisites"
       :items="items"
