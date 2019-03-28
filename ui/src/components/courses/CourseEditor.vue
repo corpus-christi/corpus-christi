@@ -9,9 +9,6 @@
         {{ $t("actions.cancel") }}
       </v-btn>
       <v-spacer></v-spacer>
-      <v-btn color="primary" flat :disabled="saving" v-on:click="clear">
-        {{ $t("actions.clear") }}
-      </v-btn>
       <v-btn
         color="primary"
         raised

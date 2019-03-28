@@ -95,16 +95,6 @@ describe("Admin edits user information", function() {
       .clear()
       .type("Quality");
   });
-  it("And: The clear button should work as well", function() {
-    cy.get("[data-cy=person-table]").within(() => {
-      cy.get("[data-cy=edit-person]").click();
-    });
-    cy.get("[data-cy=clear]").click();
-    cy.get("[data-cy=first-name]").should("be.empty");
-    cy.get("[data-cy=last-name]").should("be.empty");
-    cy.get("[data-cy=phone]").should("be.empty");
-    cy.get("[data-cy=email]").should("be.empty");
-  });
   it("And: Ensure form fields work as they should", () => {
     //cy.get("[data-cy=edit-person]").click();
     //Making sure that name fields do not allow numbers
