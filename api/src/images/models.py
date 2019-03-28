@@ -18,6 +18,7 @@ class Image(Base):
     description = Column(StringTypes.LONG_STRING, default=None)
 
     events = relationship("ImageEvent", back_populates="image")
+    people = relationship("ImagePeople", back_populates="image")
 
 
 class ImageSchema(Schema):
@@ -43,3 +44,19 @@ class ImageEventSchema(Schema):
 
     event = fields.Nested('EventSchema', dump_only=True)
     image = fields.Nested('ImageSchema', exclude=['events'], dump_only=True)
+
+class ImagePerson(Base):
+    __tablename__ = 'images_imageperson'
+    image_id = Column(Integer, ForeignKey("images_image.id"), primary_key=True)
+    persion_id = Column(Integer, ForeignKey("people_person.id"), primary_key=True)
+
+    image = relationship("Image", back_populates="people")
+    person = relationship("Person", back_populates="people")
+
+
+class ImagePersonSchema(Schema):
+    image_id = fields.Integer(required=True, min=1)
+    person_id = fields.Integer(required=True, min=1)
+
+    person = fields.Nested('PersonSchema', dump_only=True)
+    image = fields.Nested('ImageSchema', exclude=['people'], dump_only=True)
