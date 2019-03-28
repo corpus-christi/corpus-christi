@@ -242,14 +242,6 @@
       <v-spacer></v-spacer>
       <v-btn
         color="primary"
-        data-cy="form-clear"
-        flat
-        v-on:click="clear"
-        :disabled="formDisabled"
-        >{{ $t("actions.clear") }}</v-btn
-      >
-      <v-btn
-        color="primary"
         outline
         v-on:click="addAnother"
         v-if="editMode === false"
