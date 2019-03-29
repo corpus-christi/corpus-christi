@@ -12,7 +12,7 @@
       <v-btn
         color="primary"
         outline
-        v-on:click="save"
+        v-on:click="addMore"
         v-if="!editMode"
         :disabled="saving"
         data-cy="add-another"
@@ -53,6 +53,7 @@ export default {
   data: function() {
     return {
       course: {},
+      addAnother: false,
       saving: false
     };
   },
@@ -86,6 +87,11 @@ export default {
       this.$refs.form.$validator.reset();
     },
 
+    addMore() {
+      this.addAnother = true;
+      this.save();
+    },
+
     // Trigger a save event, returning the updated `Course`.
     save() {
       this.$refs.form.$validator.validateAll().then(() => {
@@ -93,6 +99,8 @@ export default {
           this.saving = true;
           let course = cloneDeep(this.course);
           this.saveCourse(course);
+        } else {
+          this.addAnother = false;
         }
       });
     },
@@ -102,6 +110,11 @@ export default {
         description: course.description,
         name: course.name
       };
+
+      var prereqMap = {};
+      if (course.prerequisites) {
+        prereqMap = course.prerequisites.map(prereq => prereq.id);
+      }
 
       if (this.editMode) {
         let promises = [];
@@ -116,7 +129,7 @@ export default {
         promises.push(
           this.$http.patch(
             `/api/v1/courses/courses/${course.id}/prerequisites`,
-            { prerequisites: course.prerequisites.map(prereq => prereq.id) } // API expects array of IDs
+            { prerequisites: prereqMap } // API expects array of IDs
           )
         );
 
@@ -147,19 +160,23 @@ export default {
             // Now that course created, add prerequisites to it
             return this.$http.patch(
               `/api/v1/courses/courses/${newCourse.id}/prerequisites`,
-              { prerequisites: course.prerequisites.map(prereq => prereq.id) } // API expects array of IDs
+              { prerequisites: prereqMap } // API expects array of IDs
             );
           })
           .then(resp => {
             console.log("PREREQS", resp);
-            this.$emit("addMore", newCourse);
+            if (this.addAnother) this.$emit("addMore", newCourse);
+            else this.$emit("save", newCourse);
           })
           .catch(err => {
             console.error("FAILURE", err);
-            this.$emit("addMore", err);
+            if (this.addAnother) this.$emit("addMore", newCourse);
+            else this.$emit("save", newCourse);
           })
           .finally(() => {
             this.saving = false;
+            this.addAnother = false;
+            this.clear();
           });
       }
     }

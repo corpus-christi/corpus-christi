@@ -320,7 +320,6 @@ export default {
     },
 
     saveCourse(course) {
-
       if (course instanceof Error) {
         this.snackbar.text = this.courseDialog.editMode
           ? this.$t("courses.update-failed")
@@ -342,7 +341,6 @@ export default {
 
       this.snackbar.show = true;
       if (this.addAnother) {
-        console.log("Add Another")
         this.addAnother = false;
       } else {
         this.courseDialog.show = false;
