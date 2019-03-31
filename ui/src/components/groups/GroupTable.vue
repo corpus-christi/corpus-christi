@@ -314,6 +314,9 @@ export default {
           .post("/api/v1/groups/groups", newGroup)
           .then(resp => {
             console.log("ADDED", resp);
+            resp.data.managerInfo.fullName = this.getManagerName(
+              resp.data.managerInfo
+            );
             this.groups.push(resp.data);
             this.groupDialog.show = false;
             this.groupDialog.saveLoading = false;
