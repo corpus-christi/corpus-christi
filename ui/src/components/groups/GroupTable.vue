@@ -55,7 +55,7 @@
         <td
           class="hover-hand"
           v-on:click="$router.push({ path: '/groups/' + props.item.id })"
-        >{{ getManagerName(props.item.managerInfo) }}</td>
+        >{{ props.item.managerInfo.fullName }}</td>
         <td>
           <template v-if="props.item.active">
             <v-tooltip bottom>
@@ -174,6 +174,9 @@ export default {
     this.tableLoading = true;
     this.$http.get("/api/v1/groups/groups").then(resp => {
       this.groups = resp.data;
+      this.groups.forEach(group => {
+        group.managerInfo.fullName = this.getManagerName(group.managerInfo);
+      });
       this.tableLoading = false;
     });
     this.onResize();
@@ -242,7 +245,7 @@ export default {
       return [
         { text: this.$t("groups.name"), value: "name" },
         { text: this.$t("groups.description"), value: "description" },
-        { text: this.$t("groups.manager"), value: "managerInfo" },
+        { text: this.$t("groups.manager"), value: "managerInfo.fullName" },
         { text: this.$t("actions.header"), sortable: false }
       ];
     }
