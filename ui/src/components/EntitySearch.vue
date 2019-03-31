@@ -18,9 +18,11 @@
       color="secondary"
       :disabled="disabled"
     >
-      <template v-if="!multiple" slot="selection" slot-scope="data">
-        {{ getEntityDescription(data.item, 100) }}
-      </template>
+      <template
+        v-if="!multiple"
+        slot="selection"
+        slot-scope="data"
+      >{{ getEntityDescription(data.item, 100) }}</template>
       <template slot="item" slot-scope="data">
         <span v-if="multiple && selectionContains(data.item)">
           <v-icon>clear</v-icon>
@@ -34,9 +36,7 @@
           close
           @input="remove(entity)"
           :data-cy="'chip-' + entity[idField]"
-        >
-          {{ getEntityDescription(entity) }}
-        </v-chip>
+        >{{ getEntityDescription(entity) }}</v-chip>
       </div>
     </template>
   </div>
@@ -175,7 +175,7 @@ export default {
     else if (this.team) endpoint = "/api/v1/teams/";
     else if (this.asset) endpoint = "/api/v1/assets/";
     else if (this.address) endpoint = "/api/v1/places/addresses";
-    else if (this.manager) endpoint = "/api/v1/people/manager";
+    else if (this.manager) endpoint = "/api/v1/people/managers";
     this.$http
       .get(endpoint)
       .then(resp => {

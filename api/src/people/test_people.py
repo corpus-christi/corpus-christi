@@ -227,7 +227,7 @@ def create_multiple_people_attributes(sqla, n):
 
 
 def manager_object_factory(sqla, description, next_level=None, locale_code='en-US'):
-    """Cook up a fake person."""
+    """Cook up a fake manager."""
     description_i18n = f'manager.description.{description.replace(" ", "_")}'[:32]
 
     if not sqla.query(I18NLocale).get(locale_code):
@@ -237,11 +237,11 @@ def manager_object_factory(sqla, description, next_level=None, locale_code='en-U
         i18n_create(description_i18n, 'en-US',
                     description, description=f"Manager {description}")
 
-    all_accounts = sqla.query(Account).all()
+    all_people = sqla.query(Person).all()
 
     manager = {
 
-        'account_id': random.choice(all_accounts).id,
+        'person_id': random.choice(all_people).id,
         'description_i18n': description_i18n
     }
     all_managers = sqla.query(Manager).all()
@@ -697,7 +697,7 @@ def test_read_all_accounts(auth_client):
     create_multiple_people(auth_client.sqla, account_count)
     create_multiple_accounts(auth_client.sqla, 1.0)
 
-    # WHEN we request all managers from the api
+    # WHEN we request all accounts from the api
     resp = auth_client.get(url_for('people.read_all_accounts', locale='en-US'))
 
     # THEN the count matches the number of entries in the database
@@ -1365,7 +1365,7 @@ def test_read_one_manager(auth_client):
         resp = auth_client.get(url_for('people.read_one_manager', manager_id=manager.id, locale='en-US'))
         # THEN we find a matching manager
         assert resp.status_code == 200
-        assert resp.json['account_id'] == manager.account_id
+        assert resp.json['person_id'] == manager.person_id
         assert resp.json['manager_id'] == manager.manager_id
         assert resp.json['description_i18n'] == manager.description_i18n
 
@@ -1391,20 +1391,20 @@ def test_update_manager(auth_client):
     create_multiple_managers(auth_client.sqla, manager_count)
 
     managers = auth_client.sqla.query(Manager).all()
-    accounts = auth_client.sqla.query(Account).all()
+    people = auth_client.sqla.query(Person).all()
 
     update_manager = random.choice(managers)
 
-    new_account_id = update_manager.account_id
-    while new_account_id == update_manager.account_id:
-        new_account_id = random.choice(accounts).id
+    new_person_id = update_manager.person_id
+    while new_person_id == update_manager.person_id:
+        new_person_id = random.choice(people).id
 
     new_manager_id = update_manager.manager_id
     while new_manager_id == update_manager.manager_id or new_manager_id == update_manager.id:
         new_manager_id = random.choice(managers).id
 
     update_json = {
-        'account_id': new_account_id,
+        'person_id': new_person_id,
         'manager_id': new_manager_id,
         'description_i18n': update_manager.description_i18n
     }
@@ -1413,7 +1413,7 @@ def test_update_manager(auth_client):
     resp = auth_client.patch(url_for('people.update_manager', manager_id=update_manager.id), json=update_json)
     # THEN
     assert resp.status_code == 200
-    assert resp.json['account_id'] == new_account_id
+    assert resp.json['person_id'] == new_person_id
     assert resp.json['manager_id'] == new_manager_id
 
 
@@ -1432,7 +1432,7 @@ def test_update_manager_invalid(auth_client):
         mod = {}
         flips = (flip(), flip(), flip())
         if flips[0]:
-            mod['account_id'] = None
+            mod['person_id'] = None
         if flips[1]:
             mod['description_i18n'] = None
         if flips[2] or not (flips[0] or flips[1]):

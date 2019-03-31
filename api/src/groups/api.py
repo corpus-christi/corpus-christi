@@ -15,7 +15,7 @@ group_schema = GroupSchema()
 
 def group_dump(group):
     group.managerInfo = group.manager
-    group.managerInfo.person = group.manager.account.person
+    group.managerInfo.person = group.manager.person
     group.memberList = group.members
     return jsonify(group_schema.dump(group))
 
@@ -52,14 +52,14 @@ def create_group():
             db.session.add(new_member)
 
     group_overseer = db.session.query(Role).filter_by(name_i18n="role.group-overseer").first()
-    manager_roles = new_group.manager.account.roles
+    manager_roles = new_group.manager.person.account.roles
 
     if group_overseer:
         if group_overseer not in manager_roles:
             print("adding role", end='\n\n\n')
             manager_roles.append(group_overseer)
 
-    db.session.add(new_group.manager.account)
+    db.session.add(new_group.manager.person.account)
     db.session.commit()
     return group_dump(new_group), 201
 
@@ -70,7 +70,7 @@ def read_all_groups():
     for group in result:
         group.memberList = group.members
         group.managerInfo = group.manager
-        group.managerInfo.person = group.manager.account.person
+        group.managerInfo.person = group.manager.person
     return jsonify(group_schema.dump(result, many=True))
 
 
@@ -114,7 +114,7 @@ def update_group(group_id):
         group_overseer = db.session.query(Role).filter_by(name_i18n="role.group-overseer").first()
         if group_overseer:
             manager = db.session.query(Manager).filter_by(id=new_manager_id).first()
-            manager_roles = manager.account.roles
+            manager_roles = manager.person.account.roles
             if group_overseer not in manager_roles:
                 manager_roles.append(group_overseer)
 

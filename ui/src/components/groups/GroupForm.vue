@@ -35,8 +35,7 @@
         v-on:click="cancel"
         :disabled="formDisabled"
         data-cy="form-cancel"
-        >{{ $t("actions.cancel") }}</v-btn
-      >
+      >{{ $t("actions.cancel") }}</v-btn>
       <v-spacer></v-spacer>
       <v-btn
         color="primary"
@@ -46,8 +45,7 @@
         :loading="addMoreLoading"
         :disabled="formDisabled"
         data-cy="form-addanother"
-        >{{ $t("actions.add-another") }}</v-btn
-      >
+      >{{ $t("actions.add-another") }}</v-btn>
       <v-btn
         color="primary"
         raised
@@ -55,8 +53,7 @@
         :loading="saveLoading"
         :disabled="formDisabled"
         data-cy="form-save"
-        >{{ $t("actions.save") }}</v-btn
-      >
+      >{{ $t("actions.save") }}</v-btn>
     </v-card-actions>
   </v-card>
 </template>

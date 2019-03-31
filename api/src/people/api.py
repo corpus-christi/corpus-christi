@@ -512,7 +512,7 @@ def create_manager():
     return jsonify(manager_schema.dump(new_manager)), 201
 
 
-@people.route('/manager')
+@people.route('/managers')
 @jwt_required
 def read_all_managers():
     result = db.session.query(Manager).all()

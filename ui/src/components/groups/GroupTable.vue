@@ -23,16 +23,10 @@
             :items="viewOptions"
             v-model="viewStatus"
             data-cy="view-status-select"
-          >
-          </v-select>
+          ></v-select>
         </v-flex>
         <v-flex shrink justify-self-end>
-          <v-btn
-            color="primary"
-            raised
-            v-on:click.stop="newGroup"
-            data-cy="add-group"
-          >
+          <v-btn color="primary" raised v-on:click.stop="newGroup" data-cy="add-group">
             <v-icon dark left>add</v-icon>
             {{ $t("actions.add-group") }}
           </v-btn>
@@ -51,24 +45,17 @@
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
-        <td
-          class="hover-hand"
-          v-on:click="$router.push({ path: '/groups/' + props.item.id })"
-        >
-          <span> {{ props.item.name }}</span>
+        <td class="hover-hand" v-on:click="$router.push({ path: '/groups/' + props.item.id })">
+          <span>{{ props.item.name }}</span>
         </td>
         <td
           class="hover-hand"
           v-on:click="$router.push({ path: '/groups/' + props.item.id })"
-        >
-          {{ props.item.description }}
-        </td>
+        >{{ props.item.description }}</td>
         <td
           class="hover-hand"
           v-on:click="$router.push({ path: '/groups/' + props.item.id })"
-        >
-          {{ getManagerName(props.item.managerInfo) }}
-        </td>
+        >{{ getManagerName(props.item.managerInfo) }}</td>
         <td>
           <template v-if="props.item.active">
             <v-tooltip bottom>
@@ -158,8 +145,7 @@
             color="secondary"
             flat
             data-cy="cancel-archive"
-            >{{ $t("actions.cancel") }}</v-btn
-          >
+          >{{ $t("actions.cancel") }}</v-btn>
           <v-spacer></v-spacer>
           <v-btn
             v-on:click="archiveGroup"
@@ -167,17 +153,14 @@
             raised
             :loading="archiveDialog.loading"
             data-cy="confirm-archive"
-            >{{ $t("actions.confirm") }}</v-btn
-          >
+          >{{ $t("actions.confirm") }}</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false">
-        {{ $t("actions.close") }}
-      </v-btn>
+      <v-btn flat @click="snackbar.show = false">{{ $t("actions.close") }}</v-btn>
     </v-snackbar>
   </div>
 </template>
