@@ -20,6 +20,14 @@
           name="description"
           data-cy="description"
         ></v-textarea>
+        <v-layout align-center>
+          <v-btn flat color="primary" small @click="openFileChooser">
+            Choose Image <!-- TODO: change to i18n version -->
+          </v-btn>
+          <span v-if="!imageSelected">{{ imageMessage }} <!-- TODO: change to i18n version --> </span>
+          <input type="file" hidden ref="image_chooser" @change="uploadSelectedImage"/>
+          <img ref="preview" style="max-width:200px"/>
+        </v-layout>
         <v-layout align-center justify-space-around>
           <v-flex>
             <entity-search
@@ -443,6 +451,29 @@ export default {
       console.log(address);
       this.event.location = address;
       this.currentAddress = address.address_id;
+    },
+
+    openFileChooser($event) {
+      const imageInput = this.$refs.image_chooser;
+      imageInput.click();
+    },
+
+    uploadSelectedImage($event) {
+      console.log($event.target.files);
+      if($event.target.files.length > 0) {
+        const img = $event.target.files[0];
+        const preview = this.$refs.preview;
+        
+        preview.file = img;
+        const reader = new FileReader();
+        reader.onload = (function(aImg) { return function(e) { aImg.src = e.target.result; }; })(preview);
+        reader.readAsDataURL(img);
+        this.imageSelected = true;
+      } else {
+        const preview = this.$refs.preview;
+        preview.src = null;
+        this.imageSelected = false;
+      }
     }
   },
   props: {
@@ -473,7 +504,9 @@ export default {
       startTimeModal: false,
       endTimeModal: false,
       showAddressCreator: false,
-      currentAddress: 0
+      imageSelected: false,
+      currentAddress: 0,
+      imageMessage: "No image selected.",
     };
   }
 };
