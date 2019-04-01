@@ -18,7 +18,7 @@ class Image(Base):
     description = Column(StringTypes.LONG_STRING, default=None)
 
     events = relationship("ImageEvent", back_populates="image")
-    people = relationship("ImagePeople", back_populates="image")
+    people = relationship("ImagePerson", back_populates="image")
     courses = relationship("ImageCourse", back_populates="image")
     groups = relationship("ImageGroup", back_populates="image")
     locations = relationship("ImageLocation", back_populates="image")
@@ -54,7 +54,7 @@ class ImagePerson(Base):
     persion_id = Column(Integer, ForeignKey("people_person.id"), primary_key=True)
 
     image = relationship("Image", back_populates="people")
-    person = relationship("Person", back_populates="people")
+    person = relationship("Person", back_populates="images")
 
 
 class ImagePersonSchema(Schema):
@@ -70,14 +70,14 @@ class ImageCourse(Base):
     course_id = Column(Integer, ForeignKey("courses_course.id"), primary_key=True)
 
     image = relationship("Image", back_populates="courses")
-    event = relationship("Course", back_populates="images")
+    course = relationship("Course", back_populates="images")
 
 
 class ImageCourseSchema(Schema):
     image_id = fields.Integer(required=True, min=1)
     course_id = fields.Integer(required=True, min=1)
 
-    event = fields.Nested('CourseSchema', dump_only=True)
+    course = fields.Nested('CourseSchema', dump_only=True)
     image = fields.Nested('ImageSchema', exclude=['courses'], dump_only=True)
 
 class ImageGroup(Base):
@@ -91,18 +91,18 @@ class ImageGroup(Base):
 
 class ImageGroupSchema(Schema):
     image_id = fields.Integer(required=True, min=1)
-    course_id = fields.Integer(required=True, min=1)
+    group_id = fields.Integer(required=True, min=1)
 
-    event = fields.Nested('GroupSchema', dump_only=True)
+    group = fields.Nested('GroupSchema', dump_only=True)
     image = fields.Nested('ImageSchema', exclude=['groups'], dump_only=True)
 
 class ImageLocation(Base):
     __tablename__ = 'images_imagelocation'
-    image_id = Column(Integer, ForeignKey("places_location.id"), primary_key=True)
-    location_id = Column(Integer, ForeignKey("groups_group.id"), primary_key=True)
+    image_id = Column(Integer, ForeignKey("images_image.id"), primary_key=True)
+    location_id = Column(Integer, ForeignKey("places_location.id"), primary_key=True)
 
     image = relationship("Image", back_populates="locations")
-    location = relationship("Locaiton", back_populates="images")
+    location = relationship("Location", back_populates="images")
 
 
 class ImageLocationSchema(Schema):
