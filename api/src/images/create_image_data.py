@@ -9,8 +9,12 @@ from flask_jwt_extended import create_access_token
 from werkzeug.datastructures import Headers
 from werkzeug.security import check_password_hash
 
-from .models import Image, ImageSchema, ImageEvent, ImageEventSchema
+from .models import Image, ImageSchema, ImageEvent, ImageEventSchema, ImagePerson, ImagePersonSchema, ImageCourse, ImageCourseSchema, ImageGroup, ImageGroupSchema, ImageLocation, ImageLocationSchema
 from ..events.models import Event, EventSchema
+from ..people.models import Person, PersonSchema
+from ..courses.models import Course, CourseSchema
+from ..groups.models import Group, GroupSchema
+from ..places.models import Location, LocationSchema
 
 
 class RandomLocaleFaker:
@@ -84,6 +88,42 @@ def image_event_object_factory(image_id, event_id):
     return eventimage
 
 
+def image_person_object_factory(image_id, person_id):
+    """Cook up a fake imageperson json object from given ids."""
+    personimage = {
+        'image_id': image_id,
+        'person_id': person_id
+    }
+    return personimage
+
+
+def image_course_object_factory(image_id, course_id):
+    """Cook up a fake imagecourse json object from given ids."""
+    courseimage = {
+        'image_id': image_id,
+        'course_id': course_id
+    }
+    return courseimage
+
+
+def image_group_object_factory(image_id, group_id):
+    """Cook up a fake imagegroup json object from given ids."""
+    groupimage = {
+        'image_id': image_id,
+        'group_id': group_id
+    }
+    return groupimage
+
+
+def image_location_object_factory(image_id, location_id):
+    """Cook up a fake imagelocation json object from given ids."""
+    locationimage = {
+        'image_id': image_id,
+        'location_id': location_id
+    }
+    return locationimage
+
+
 def create_multiple_images(sqla, n):
     """Commit `n` new images (up to len(valid_paths) to the database. Return their IDs."""
     image_schema = ImageSchema()
@@ -110,8 +150,71 @@ def create_images_events(sqla, fraction=0.75):
     sqla.add_all(new_images_events)
     sqla.commit()
 
+def create_images_people(sqla, fraction=0.75):
+    """Create data in the linking table between images and people """
+    image_person_schema = ImagePersonSchema()
+    new_images_people = []
+    all_images_people = sqla.query(Image, Person).all()
+    sample_images_people = random.sample(
+        all_images_people, math.floor(len(all_images_people) * fraction))
+    for image_person in sample_images_people:
+        valid_image_person = image_person_schema.load(
+            image_person_object_factory(image_person[0].id, image_person[1].id))
+        new_images_people.append(ImagePerson(**valid_image_person))
+    sqla.add_all(new_images_people)
+    sqla.commit()
+
+
+def create_images_courses(sqla, fraction=0.75):
+    """Create data in the linking table between images and images"""
+    image_course_schema = ImageCourseSchema()
+    new_images_courses = []
+    all_images_courses = sqla.query(Image, Course).all()
+    sample_images_courses = random.sample(
+        all_images_courses, math.floor(len(all_images_courses) * fraction))
+    for image_course in sample_images_courses:
+        valid_image_course = image_course_schema.load(
+            image_course_object_factory(image_course[0].id, image_course[1].id))
+        new_images_courses.append(ImageCourse(**valid_image_course))
+    sqla.add_all(new_images_courses)
+    sqla.commit()
+
+
+def create_images_groups(sqla, fraction=0.75):
+    """Create data in the linking table between images and groups"""
+    image_group_schema = ImageGroupSchema()
+    new_images_groups = []
+    all_images_groups = sqla.query(Image, Group).all()
+    sample_images_groups = random.sample(
+        all_images_groups, math.floor(len(all_images_groups) * fraction))
+    for image_group in sample_images_groups:
+        valid_image_group = image_group_schema.load(
+            image_group_object_factory(image_group[0].id, image_group[1].id))
+        new_images_groups.append(ImageGroup(**valid_image_group))
+    sqla.add_all(new_images_groups)
+    sqla.commit()
+
+
+def create_images_locations(sqla, fraction=0.75):
+    """Create data in the linking table between images and locations"""
+    image_location_schema = ImageLocationSchema()
+    new_images_locations = []
+    all_images_locations = sqla.query(Image, Location).all()
+    sample_images_locations = random.sample(
+        all_images_locations, math.floor(len(all_images_locations) * fraction))
+    for image_location in sample_images_locations:
+        valid_image_location = image_location_schema.load(
+            image_location_object_factory(image_location[0].id, image_location[1].id))
+        new_images_locations.append(ImageLocation(**valid_image_location))
+    sqla.add_all(new_images_locations)
+    sqla.commit()
+
 
 def create_images_test_data(sqla):
     """The function that creates test data in the correct order """
     create_multiple_images(sqla, 15)
     create_images_events(sqla, 0.75)
+    create_images_people(sqla, 0.75)
+    create_images_courses(sqla, 0.75)
+    create_images_groups(sqla, 0.75)
+    create_images_locations(sqla, 0.75)
