@@ -46,11 +46,13 @@ describe("Add Course with a Prereq", () => {
   it("Given: New Course Form", () => {
     cy.get("[data-cy=courses-table-new]").click();
   });
-  it('When: Form is filled out', ()=>{
-    cy.get('[data-cy=course-form-name]').type('COS 113')
-    cy.get('[data-cy=course-form-description]').type('Hello World')
-    cy.get(':nth-child(4) > .v-input__icon > .v-icon').click()
-    cy.get('.menuable__content__active > .v-select-list > .v-list > :nth-child(4) > .v-list__tile > .v-list__tile__content').click()
+  it("When: Form is filled out", () => {
+    cy.get("[data-cy=course-form-name]").type("COS 113");
+    cy.get("[data-cy=course-form-description]").type("Hello World");
+    cy.get(":nth-child(4) > .v-input__icon > .v-icon").click();
+    cy.get(
+      ".menuable__content__active > .v-select-list > .v-list > :nth-child(4) > .v-list__tile > .v-list__tile__content"
+    ).click();
   });
   it("Then: Click add button", () => {
     cy.get("[data-cy=course-editor-actions] > .primary").click();

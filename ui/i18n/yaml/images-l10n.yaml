@@ -1,0 +1,6 @@
+images:
+  messages:
+    no-image:
+      _desc: Display when no image is selected
+      en: No image selected.
+      es: Ninguna imagen seleccionada.

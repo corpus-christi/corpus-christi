@@ -39,18 +39,22 @@ describe("Archive Courses", () => {
     ).click(); //confirm click
   });
   it("check archive course", () => {
-    cy.get('.v-text-field--solo > .v-input__control > .v-input__slot').click()//switch from active to archive
-    cy.get('.menuable__content__active > .v-select-list > .v-list > :nth-child(2) > .v-list__tile').click()//select archive in drop down
+    cy.get(".v-text-field--solo > .v-input__control > .v-input__slot").click(); //switch from active to archive
+    cy.get(
+      ".menuable__content__active > .v-select-list > .v-list > :nth-child(2) > .v-list__tile"
+    ).click(); //select archive in drop down
     cy.get("tbody").contains(course_name);
   });
 });
 
 describe("Activate archive courses", () => {
   it("click activate button", () => {
-    cy.get(':nth-child(1) > :nth-child(3) > .layout > :nth-child(2) > span > .v-btn').click();
+    cy.get(
+      ":nth-child(1) > :nth-child(3) > .layout > :nth-child(2) > span > .v-btn"
+    ).click();
   });
   it("Get back to active courses", () => {
-    cy.get('.v-text-field--solo > .v-input__control > .v-input__slot').click();
+    cy.get(".v-text-field--solo > .v-input__control > .v-input__slot").click();
     cy.get(
       ".menuable__content__active > .v-select-list > .v-list > :nth-child(1) > .v-list__tile"
     ).click();
