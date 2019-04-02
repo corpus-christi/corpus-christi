@@ -51,7 +51,7 @@ class ImageEventSchema(Schema):
 class ImagePerson(Base):
     __tablename__ = 'images_imageperson'
     image_id = Column(Integer, ForeignKey("images_image.id"), primary_key=True)
-    persion_id = Column(Integer, ForeignKey("people_person.id"), primary_key=True)
+    person_id = Column(Integer, ForeignKey("people_person.id"), primary_key=True)
 
     image = relationship("Image", back_populates="people")
     person = relationship("Person", back_populates="images")

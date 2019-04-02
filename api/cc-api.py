@@ -82,8 +82,6 @@ def load_all():
     create_multiple_addresses(db.session, 10)
     create_multiple_locations(db.session, 20)
 
-    create_images_test_data(db.session)
-
     create_multiple_people(db.session, 17)
     create_multiple_accounts(db.session, 0.25)
     create_multiple_courses(db.session, 12)
@@ -93,7 +91,6 @@ def load_all():
     create_multiple_students(db.session, 60)
     create_class_meetings(db.session, 30)
     create_events_test_data(db.session)
-    create_images_test_data(db.session)
     # create_diploma_awards(db.session, 30)
     # create_class_attendance(db.session, 30)
     create_diploma_awards(db.session, 30)
@@ -104,6 +101,9 @@ def load_all():
     create_multiple_managers(db.session, 2, 'Group Overseer')
     create_multiple_managers(db.session, 5, 'Group Leader')
     create_group_test_data(db.session)
+
+    # Always put this close to last (since it has dependancies in all of the major modules)
+    create_images_test_data(db.session)
 
 
 @data_cli.command('test', help='Load everything')
