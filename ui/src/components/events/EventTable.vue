@@ -221,10 +221,12 @@ export default {
   components: { "event-form": EventForm },
   mounted() {
     this.tableLoading = true;
-    this.$http.get("/api/v1/events/?return_group=all").then(resp => {
-      this.events = resp.data;
-      this.tableLoading = false;
-    });
+    this.$http
+      .get("/api/v1/events/?return_group=all&include_images=1")
+      .then(resp => {
+        this.events = resp.data;
+        this.tableLoading = false;
+      });
     this.onResize();
   },
 
@@ -257,6 +259,8 @@ export default {
         loading: false
       },
       search: "",
+
+      imageId: 0, // not the best way to do this, but works for now -- maybe rewrite?
 
       snackbar: {
         show: false,
@@ -413,12 +417,16 @@ export default {
       if (event.location) {
         event.location_id = event.location.id;
       }
+
+      this.imageId = event.imageId;
+
       let newEvent = JSON.parse(JSON.stringify(event));
       delete newEvent.location;
       delete newEvent.dayDuration;
       delete newEvent.id;
       delete newEvent.aggregate;
       delete newEvent.attendance;
+      delete newEvent.imageId;
       if (this.eventDialog.editMode) {
         const eventId = event.id;
         const idx = this.events.findIndex(ev => ev.id === event.id);
@@ -464,6 +472,17 @@ export default {
             this.events.push(resp.data);
             this.cancelEvent();
             this.showSnackbar(this.$t("events.event-added"));
+            return resp.data.id;
+          })
+          .then(event_id => {
+            this.$http
+              .post(`/api/v1/events/${event_id}/images/${this.imageId}`)
+              .then(resp => {
+                console.log(resp);
+              })
+              .catch(err => {
+                console.error("EVENT/IMAGE PAIR FAILED", err.response);
+              });
           })
           .catch(err => {
             console.error("POST FAILURE", err.response);

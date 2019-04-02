@@ -21,12 +21,28 @@
           data-cy="description"
         ></v-textarea>
         <v-layout align-center>
-          <v-btn flat color="primary" small @click="openFileChooser">
-            Choose Image <!-- TODO: change to i18n version -->
-          </v-btn>
-          <span v-if="!imageSelected">{{ imageMessage }} <!-- TODO: change to i18n version --> </span>
-          <input type="file" hidden ref="image_chooser" @change="uploadSelectedImage"/>
-          <img ref="preview" style="max-width:200px"/>
+          <form method="POST" ref="imageForm">
+            <v-btn flat color="primary" small @click="openFileChooser">
+              {{ $t("actions.choose-image") }}
+            </v-btn>
+            <span v-if="!imageSelected">{{
+              $t("images.messages.no-image")
+            }}</span>
+            <input
+              type="file"
+              hidden
+              ref="image_chooser"
+              @change="uploadSelectedImage"
+              name="file"
+            />
+            <span v-if="event.images && event.images.length > 0">
+              <img
+                ref="preview"
+                style="max-height:200px; max-width:300px;"
+                :src="'/api/v1/images/' + event.images[0].image.id"
+              />
+            </span>
+          </form>
         </v-layout>
         <v-layout align-center justify-space-around>
           <v-flex>
@@ -297,6 +313,9 @@ export default {
           this.endDate = this.getDateFromTimestamp(this.event.end);
           this.endTime = this.getTimeFromTimestamp(this.event.end);
         }
+        if (this.event.images && this.event.images.length > 0) {
+          this.imageSelected = true;
+        }
       }
     },
 
@@ -358,6 +377,9 @@ export default {
       for (let key of this.eventKeys) {
         this.event[key] = "";
       }
+      if (this.$refs.preview) {
+        this.$refs.preview.src = "";
+      }
       delete this.event.location;
       this.startTime = "";
       this.startDate = "";
@@ -367,7 +389,7 @@ export default {
       this.showEndDatePicker = false;
       this.startTimeModal = false;
       this.endTimeModal = false;
-
+      this.imageSelected = false;
       this.$validator.reset();
     },
     save() {
@@ -453,27 +475,34 @@ export default {
       this.currentAddress = address.address_id;
     },
 
-    openFileChooser($event) {
+    openFileChooser() {
       const imageInput = this.$refs.image_chooser;
       imageInput.click();
     },
 
     uploadSelectedImage($event) {
-      console.log($event.target.files);
-      if($event.target.files.length > 0) {
-        const img = $event.target.files[0];
-        const preview = this.$refs.preview;
-        
-        preview.file = img;
-        const reader = new FileReader();
-        reader.onload = (function(aImg) { return function(e) { aImg.src = e.target.result; }; })(preview);
-        reader.readAsDataURL(img);
-        this.imageSelected = true;
-      } else {
-        const preview = this.$refs.preview;
-        preview.src = null;
-        this.imageSelected = false;
+      console.log("onchange");
+      if ($event.target.files.length > 0) {
+        const formData = new FormData(this.$refs.imageForm);
+        this.$http
+          .post("/api/v1/images/", formData)
+          .then(resp => {
+            this.event.imageId = resp.data.id;
+            if (!this.event.images) {
+              this.event.images = [];
+            } else {
+              this.event.images.shift();
+              console.log(this.event.images);
+            }
+            this.event.images.unshift({ image: { id: resp.data.id } });
+            console.log(this.event.images);
+            this.imageSelected = true;
+          })
+          .catch(err => {
+            console.error("IMAGE ERROR", err.response);
+          });
       }
+      this.$forceUpdate();
     }
   },
   props: {
@@ -505,8 +534,7 @@ export default {
       endTimeModal: false,
       showAddressCreator: false,
       imageSelected: false,
-      currentAddress: 0,
-      imageMessage: "No image selected.",
+      currentAddress: 0
     };
   }
 };

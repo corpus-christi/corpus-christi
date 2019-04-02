@@ -61,11 +61,10 @@ export default {
   methods: {
     loadCoursesPool() {
       this.loading = true;
-      this.$http.get(`/api/v1/courses/courses`)
-        .then(resp => {
-          this.coursesPool = resp.data;
-          this.loading = false;
-        });
+      this.$http.get(`/api/v1/courses/courses`).then(resp => {
+        this.coursesPool = resp.data;
+        this.loading = false;
+      });
     }
   },
   watch: {

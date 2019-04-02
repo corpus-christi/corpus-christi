@@ -124,7 +124,7 @@
 import DiplomaEditor from "./DiplomaEditor";
 import DiplomaAdminActions from "./DiplomaAdminActions";
 import { cloneDeep } from "lodash";
-import { scrypt } from 'crypto';
+//  import { scrypt } from "crypto";
 export default {
   name: "DiplomasTable",
   components: {
@@ -268,7 +268,10 @@ export default {
 
     clickThrough(diploma) {
       console.log(diploma);
-      this.$router.push({ name: 'diploma-details', params: { diplomaId: diploma.id }})
+      this.$router.push({
+        name: "diploma-details",
+        params: { diplomaId: diploma.id }
+      });
     },
 
     saveDiploma(diploma) {
@@ -352,7 +355,7 @@ export default {
 </script>
 
 <style scoped>
-  .hover-hand {
-      cursor: pointer;
-    }
+.hover-hand {
+  cursor: pointer;
+}
 </style>

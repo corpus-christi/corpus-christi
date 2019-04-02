@@ -25,7 +25,7 @@ describe("Edit course section", () => {
     ).click();
   });
   it("Edit description", () => {
-    cy.get('[data-cy=course-offering-description]').type("Hello world part 3");
+    cy.get("[data-cy=course-offering-description]").type("Hello world part 3");
   });
   // it("Edit date", () => {
   //   cy.get(
@@ -40,5 +40,3 @@ describe("Edit course section", () => {
   //   cy.get(".v-picker__actions > :nth-child(3)").click(); //save button
   // });
 });
-
-

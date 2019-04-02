@@ -35,6 +35,7 @@
       "add-person": "Add Person",
       "back": "Back",
       "cancel": "Cancel",
+      "choose-image": "Choose Image",
       "clear": "Clear",
       "close": "Close",
       "confirm": "Confirm",
@@ -269,6 +270,11 @@
       "name": "Name",
       "title": "Home Churches"
     },
+    "images": {
+      "messages": {
+        "no-image": "No image selected."
+      }
+    },
     "login": {
       "header": "Log In",
       "messages": {
@@ -451,6 +457,7 @@
       "add-person": "A\u00f1adir Persona",
       "back": "Regresar",
       "cancel": "Cancelar",
+      "choose-image": "Elegir Imagen",
       "clear": "Despejar",
       "close": "Cerrar",
       "confirm": "Confirmar",
@@ -684,6 +691,11 @@
       },
       "name": "Nombre",
       "title": "Iglesias Hogar"
+    },
+    "images": {
+      "messages": {
+        "no-image": "Ninguna imagen seleccionada."
+      }
     },
     "login": {
       "header": "Iniciar Sesi\u00f3n",

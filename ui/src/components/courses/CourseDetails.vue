@@ -158,7 +158,7 @@ export default {
 
     saveCourse(course) {
       if (course instanceof Error) {
-        this.snackbar.text = this.$t("courses.update-failed")
+        this.snackbar.text = this.$t("courses.update-failed");
       } else {
         Object.assign(this.course, course);
       }

@@ -58,10 +58,10 @@ export default {
       loading: false,
       selectedOffering: null,
       newStudent: {},
-      showExpansion: [false],
+      showExpansion: [false]
     };
   },
-  
+
   props: {
     activeOfferings: null
   },

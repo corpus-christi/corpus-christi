@@ -34,6 +34,10 @@ actions:
     _desc: Cancel a pending action
     en: Cancel
     es: Cancelar
+  choose-image:
+    _desc: Choose an image to upload
+    en: Choose Image
+    es: Elegir Imagen
   clear:
     _desc: Clear data (e.g., on a form)
     en: Clear

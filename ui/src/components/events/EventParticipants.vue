@@ -172,9 +172,21 @@ export default {
           value: "person.firstName",
           width: "20%"
         },
-        { text: this.$t("person.name.last"), value: "person.lastName", width: "20%" },
-        { text: this.$t("person.email"), value: "person.email", width: "22.5%" },
-        { text: this.$t("person.phone"), value: "person.phone", width: "22.5%" },
+        {
+          text: this.$t("person.name.last"),
+          value: "person.lastName",
+          width: "20%"
+        },
+        {
+          text: this.$t("person.email"),
+          value: "person.email",
+          width: "22.5%"
+        },
+        {
+          text: this.$t("person.phone"),
+          value: "person.phone",
+          width: "22.5%"
+        },
         { text: this.$t("actions.header"), sortable: false }
       ];
     }

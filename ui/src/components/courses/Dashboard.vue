@@ -4,15 +4,22 @@
       <v-flex xs12 sm12 md12 lg12 xl12>
         <v-card>
           <v-toolbar class="pa-1">
-            <v-toolbar-title>{{ $t("courses.dashboard.headers.course-retention") }}</v-toolbar-title>
+            <v-toolbar-title>{{
+              $t("courses.dashboard.headers.course-retention")
+            }}</v-toolbar-title>
           </v-toolbar>
-          <ve-sankey :data="courseAttendanceData" :settings="attendanceSankeySettings"></ve-sankey>
+          <ve-sankey
+            :data="courseAttendanceData"
+            :settings="attendanceSankeySettings"
+          ></ve-sankey>
         </v-card>
       </v-flex>
       <v-flex xs12 sm12 md12 lg12 xl12>
         <v-card>
           <v-toolbar class="pa-1">
-            <v-toolbar-title>{{ $t("courses.dashboard.headers.course-success") }}</v-toolbar-title>
+            <v-toolbar-title>{{
+              $t("courses.dashboard.headers.course-success")
+            }}</v-toolbar-title>
           </v-toolbar>
           <ve-bar :data="courseData" :settings="enrollmentBarSettings"></ve-bar>
         </v-card>

@@ -76,7 +76,7 @@ export default {
         show: false,
         message: ""
       },
-      
+
       activeOfferings: null
     };
   },
@@ -93,12 +93,12 @@ export default {
       this.snackbar.text = message;
       this.snackbar.show = true;
     },
-    
+
     registerClicked(course) {
       this.activeOfferings = course.course_offerings.filter(
         courseOffering => courseOffering.active
       );
-            
+
       this.registrationFormDialog.show = true;
     }
   }
