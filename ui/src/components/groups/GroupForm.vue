@@ -20,12 +20,26 @@
           name="description"
           data-cy="description"
         ></v-textarea>
-        <entity-search
-          manager
+        <v-autocomplete
+          data-cy="entity-search-field"
           v-model="group.manager"
-          name="address"
-          v-bind:error-messages="errors.first('address')"
-        />
+          v-bind:label="$t('actions.search-people')"
+          prepend-icon="search"
+          :filter="filter"
+          :items="people"
+          :loading="autoCompleteLoading"
+          return-object
+          menu-props="closeOnClick, closeOnContentClick"
+        >
+          <template
+            slot="selection"
+            slot-scope="data"
+          >{{data.item.firstName}} {{data.item.lastName}} {{data.item.secondLastName}}</template>
+          <template
+            slot="item"
+            slot-scope="data"
+          >{{data.item.firstName}} {{data.item.lastName}} {{data.item.secondLastName}}</template>
+        </v-autocomplete>
       </form>
     </v-card-text>
     <v-card-actions>
@@ -61,9 +75,7 @@
 <script>
 import { isEmpty } from "lodash";
 import { mapGetters } from "vuex";
-import EntitySearch from "../EntitySearch";
 export default {
-  components: { "entity-search": EntitySearch },
   name: "GroupForm",
   watch: {
     initialData(groupProp) {
@@ -74,6 +86,22 @@ export default {
         this.group.manager = groupProp.managerInfo;
       }
     }
+  },
+  mounted() {
+    this.autoCompleteLoading = true;
+    this.$http
+      .get("/api/v1/people/persons")
+      .then(resp => {
+        this.people = resp.data;
+        this.people = this.people.filter(person => {
+          return person.accountInfo !== null;
+        });
+        this.autoCompleteLoading = false;
+      })
+      .catch(error => {
+        console.log(error);
+        this.autoCompleteLoading = false;
+      });
   },
   computed: {
     groupKeys() {
@@ -105,6 +133,13 @@ export default {
       }
       delete this.group.address;
       this.$validator.reset();
+    },
+
+    filter(item, searchText) {
+      searchText = searchText.toLowerCase().trim();
+      name = item.firstName + item.lastName + item.secondaryLastName;
+      name = name.toLowerCase();
+      return name.includes(searchText);
     },
 
     save() {
@@ -145,7 +180,9 @@ export default {
   },
   data: function() {
     return {
-      group: {}
+      group: {},
+      people: [],
+      autoCompleteLoading: false
     };
   }
 };

@@ -51,16 +51,16 @@ def create_group():
             new_member = generate_member(new_group.id, member, today, True)
             db.session.add(new_member)
 
-    group_overseer = db.session.query(Role).filter_by(name_i18n="role.group-overseer").first()
-    manager_roles = new_group.manager.person.account.roles
+        group_overseer = db.session.query(Role).filter_by(name_i18n="role.group-overseer").first()
+        manager_roles = new_group.manager.person.account.roles
 
-    if group_overseer:
-        if group_overseer not in manager_roles:
-            print("adding role", end='\n\n\n')
-            manager_roles.append(group_overseer)
+        if group_overseer:
+            if group_overseer not in manager_roles:
+                print("adding role", end='\n\n\n')
+                manager_roles.append(group_overseer)
 
-    db.session.add(new_group.manager.person.account)
-    db.session.commit()
+        db.session.add(new_group.manager.person.account)
+        db.session.commit()
     return group_dump(new_group), 201
 
 
