@@ -5,24 +5,30 @@
     </v-card-title>
     <v-card-text> <CourseForm ref="form" :course="course" /> </v-card-text>
     <v-card-actions data-cy="course-editor-actions">
-      <v-btn color="secondary" flat :disabled="saving" v-on:click="cancel">
+      <v-btn
+        color="secondary"
+        flat
+        :disabled="formDisabled"
+        v-on:click="cancel"
+      >
         {{ $t("actions.cancel") }}
       </v-btn>
       <v-spacer></v-spacer>
       <v-btn
         color="primary"
         outline
-        v-on:click="addMore"
+        v-on:click="addAnother"
         v-if="!editMode"
-        :disabled="saving"
+        :loading="addMoreLoading"
+        :disabled="formDisabled"
         data-cy="add-another"
         >{{ $t("actions.add-another") }}</v-btn
       >
       <v-btn
         color="primary"
         raised
-        :disabled="saving"
-        :loading="saving"
+        :loading="saveLoading"
+        :disabled="formDisabled"
         v-on:click="save"
       >
         {{ $t("actions.save") }}
@@ -48,18 +54,26 @@ export default {
     initialData: {
       type: Object,
       required: true
+    },
+    saveLoading: {
+      type: Boolean
+    },
+    addMoreLoading: {
+      type: Boolean
     }
   },
   data: function() {
     return {
       course: {},
-      addAnother: false,
-      saving: false
+      addMore: false
     };
   },
   computed: {
     title() {
       return this.editMode ? this.$t("actions.edit") : this.$t("courses.new");
+    },
+    formDisabled() {
+      return this.saveLoading || this.addMoreLoading;
     }
   },
 
@@ -87,98 +101,20 @@ export default {
       this.$refs.form.$validator.reset();
     },
 
-    addMore() {
-      this.addAnother = true;
+    addAnother() {
+      this.addMore = true;
       this.save();
     },
 
-    // Trigger a save event, returning the updated `Course`.
     save() {
       this.$refs.form.$validator.validateAll().then(() => {
         if (!this.$refs.form.errors.any()) {
-          this.saving = true;
           let course = cloneDeep(this.course);
-          this.saveCourse(course);
-        } else {
-          this.addAnother = false;
+          if (this.addMore) this.$emit("addAnother", course);
+          else this.$emit("save", course);
         }
+        this.addMore = false;
       });
-    },
-
-    saveCourse(course) {
-      let courseAttrs = {
-        description: course.description,
-        name: course.name
-      };
-
-      var prereqMap = {};
-      if (course.prerequisites) {
-        prereqMap = course.prerequisites.map(prereq => prereq.id);
-      }
-
-      if (this.editMode) {
-        let promises = [];
-        promises.push(
-          this.$http
-            .patch(`/api/v1/courses/courses/${course.id}`, courseAttrs)
-            .then(resp => {
-              console.log("EDITED", resp);
-              return resp;
-            })
-        );
-        promises.push(
-          this.$http.patch(
-            `/api/v1/courses/courses/${course.id}/prerequisites`,
-            { prerequisites: prereqMap } // API expects array of IDs
-          )
-        );
-
-        Promise.all(promises)
-          .then(resps => {
-            let newCourse = resps[0].data;
-            newCourse.prerequisites = course.prerequisites; // Re-attach prereqs so they show up in UI
-            this.$emit("save", newCourse);
-          })
-          .catch(err => {
-            console.error("FALURE", err.response);
-            this.$emit("save", err);
-          })
-          .finally(() => {
-            this.saving = false;
-          });
-      } else {
-        // All new courses are active
-        courseAttrs.active = true;
-        let newCourse;
-        this.$http
-          .post("/api/v1/courses/courses", courseAttrs)
-          .then(resp => {
-            console.log("ADDED", resp);
-            newCourse = resp.data;
-            newCourse.prerequisites = course.prerequisites; // Re-attach prereqs so they show up in UI
-
-            // Now that course created, add prerequisites to it
-            return this.$http.patch(
-              `/api/v1/courses/courses/${newCourse.id}/prerequisites`,
-              { prerequisites: prereqMap } // API expects array of IDs
-            );
-          })
-          .then(resp => {
-            console.log("PREREQS", resp);
-            if (this.addAnother) this.$emit("addMore", newCourse);
-            else this.$emit("save", newCourse);
-          })
-          .catch(err => {
-            console.error("FAILURE", err);
-            if (this.addAnother) this.$emit("addMore", newCourse);
-            else this.$emit("save", newCourse);
-          })
-          .finally(() => {
-            this.saving = false;
-            this.addAnother = false;
-            this.clear();
-          });
-      }
     }
   }
 };
