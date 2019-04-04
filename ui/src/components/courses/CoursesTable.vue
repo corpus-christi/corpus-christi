@@ -101,9 +101,10 @@
       scrollable
       data-cy="courses-table-editor"
     >
-      <CourseEditor
+      <CourseForm
         v-bind:editMode="courseDialog.editMode"
         v-bind:initialData="courseDialog.course"
+        v-bind:courses="courses"
         v-on:cancel="cancelCourse"
         v-on:save="save"
         v-on:addAnother="addAnother"
@@ -146,13 +147,13 @@
 </template>
 
 <script>
-import CourseEditor from "./CourseEditor";
+import CourseForm from "./CourseForm";
 import CourseAdminActions from "./actions/CourseAdminActions";
 
 export default {
   name: "CoursesTable",
   components: {
-    CourseEditor,
+    CourseForm,
     CourseAdminActions
   },
   data() {

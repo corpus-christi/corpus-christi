@@ -77,7 +77,7 @@
       scrollable
       data-cy="course-editor"
     >
-      <CourseEditor
+      <CourseForm
         :editMode="true"
         :initialData="courseDialog.course"
         @cancel="cancelCourse"
@@ -96,12 +96,12 @@
 
 <script>
 import CourseOfferingsTable from "./CourseOfferingsTable";
-import CourseEditor from "./CourseEditor";
+import CourseForm from "./CourseForm";
 export default {
   name: "CourseDetails",
   components: {
     CourseOfferingsTable,
-    CourseEditor
+    CourseForm
   },
   props: {
     courseId: {
