@@ -291,11 +291,11 @@ export default {
         .then(resp => {
           console.log("EDITED", resp);
           Object.assign(course, resp.data);
-          this.snackbar.text = this.$t("courses.archived");
+          this.showSnackbar(this.$t("courses.archived"));
           this.snackbar.show = true;
         })
         .catch(() => {
-          this.snackbar.text = this.$t("courses.update-failed");
+          this.showSnackbar(this.$t("courses.update-failed"));
           this.snackbar.show = true;
         })
         .finally(() => {
@@ -310,11 +310,11 @@ export default {
         .then(resp => {
           console.log("EDITED", resp);
           Object.assign(course, resp.data);
-          this.snackbar.text = this.$t("courses.reactivated");
+          this.showSnackbar(this.$t("courses.reactivated"));
           this.snackbar.show = true;
         })
         .catch(() => {
-          this.snackbar.text = this.$t("courses.update-failed");
+          this.showSnackbar(this.$t("courses.update-failed"));
           this.snackbar.show = true;
         });
     },
@@ -364,11 +364,11 @@ export default {
             newCourse.prerequisites = course.prerequisites; // Re-attach prereqs so they show up in UI
             const idx = this.courses.findIndex(c => c.id === course.id);
             Object.assign(this.courses[idx], course);
-            this.snackbar.text = this.$t("courses.updated");
+            this.showSnackbar(this.$t("courses.updated"));
           })
           .catch(err => {
             console.error("FALURE", err.response);
-            this.snackbar.text = this.$t("courses.update-failed");
+            this.showSnackbar(this.$t("courses.update-failed"));
           })
           .finally(() => {
             this.snackbar.show = true;
@@ -396,25 +396,29 @@ export default {
           .then(resp => {
             console.log("PREREQS", resp);
             this.courses.push(course);
-            this.snackbar.text = this.$t("courses.added");
-          })
-          .catch(err => {
-            console.error("FAILURE", err);
-            this.snackbar.text = this.$t("courses.add-failed");
-          })
-          .finally(() => {
-            this.snackbar.show = true;
-            this.courseDialog.addMoreLoading = false;
-            this.courseDialog.saveLoading = false;
+            this.showSnackbar(this.$t("courses.added"));
             if (this.addMore) {
               this.courseDialog.course = {};
-              this.addMore = false;
             } else {
               this.courseDialog.show = false;
             }
+          })
+          .catch(err => {
+            console.error("FAILURE", err);
+            this.showSnackbar(this.$t("courses.add-failed"));
+          })
+          .finally(() => {
+            this.addMore = false;
+            this.courseDialog.addMoreLoading = false;
+            this.courseDialog.saveLoading = false;
             this.refreshCourseList();
           });
       }
+    },
+
+    showSnackbar(message) {
+      this.snackbar.text = message;
+      this.snackbar.show = true;
     },
 
     refreshCourseList() {
