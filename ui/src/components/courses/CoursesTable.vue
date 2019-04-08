@@ -271,10 +271,6 @@ export default {
       this.activateCourseDialog();
     },
 
-    cancelCourse() {
-      this.courseDialog.show = false;
-    },
-
     confirmDeactivate(course) {
       this.deactivateDialog.show = true;
       this.deactivateDialog.course = course;
@@ -317,6 +313,20 @@ export default {
           this.showSnackbar(this.$t("courses.update-failed"));
           this.snackbar.show = true;
         });
+    },
+
+    clearCourse() {
+      this.addMore = false;
+      this.courseDialog.saveLoading = false;
+      this.courseDialog.addMoreLoading = false;
+      this.courseDialog.course = {};
+    },
+
+    cancelCourse() {
+      this.addMore = false;
+      this.courseDialog.show = false;
+      this.courseDialog.saveLoading = false;
+      this.courseDialog.addMoreLoading = false;
     },
 
     addAnother(course) {
@@ -364,17 +374,14 @@ export default {
             newCourse.prerequisites = course.prerequisites; // Re-attach prereqs so they show up in UI
             const idx = this.courses.findIndex(c => c.id === course.id);
             Object.assign(this.courses[idx], course);
+            this.cancelCourse();
+            this.refreshCourseList();
             this.showSnackbar(this.$t("courses.updated"));
           })
           .catch(err => {
             console.error("FALURE", err.response);
-            this.showSnackbar(this.$t("courses.update-failed"));
-          })
-          .finally(() => {
-            this.snackbar.show = true;
-            this.courseDialog.show = false;
             this.courseDialog.saveLoading = false;
-            this.refreshCourseList();
+            this.showSnackbar(this.$t("courses.update-failed"));
           });
       } else {
         // All new courses are active
@@ -398,20 +405,16 @@ export default {
             this.courses.push(course);
             this.showSnackbar(this.$t("courses.added"));
             if (this.addMore) {
-              this.courseDialog.course = {};
+              this.clearCourse();
             } else {
-              this.courseDialog.show = false;
+              this.cancelCourse();
             }
+            this.refreshCourseList();
           })
           .catch(err => {
             console.error("FAILURE", err);
-            this.showSnackbar(this.$t("courses.add-failed"));
-          })
-          .finally(() => {
-            this.addMore = false;
-            this.courseDialog.addMoreLoading = false;
             this.courseDialog.saveLoading = false;
-            this.refreshCourseList();
+            this.showSnackbar(this.$t("courses.add-failed"));
           });
       }
     },

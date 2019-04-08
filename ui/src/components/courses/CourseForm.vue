@@ -135,7 +135,6 @@ export default {
   methods: {
     // Abandon ship.
     cancel() {
-      this.clear();
       this.$emit("cancel");
     },
 

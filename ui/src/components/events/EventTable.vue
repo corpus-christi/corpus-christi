@@ -392,12 +392,18 @@ export default {
       this.activateEventDialog();
     },
 
-    cancelEvent() {
-      this.eventDialog.show = false;
-      this.eventDialog.editMode = false;
+    clearEvent() {
+      this.addMore = false;
       this.eventDialog.saveLoading = false;
       this.eventDialog.addMoreLoading = false;
       this.eventDialog.event = {};
+    },
+
+    cancelEvent() {
+      this.addMore = false;
+      this.eventDialog.show = false;
+      this.eventDialog.saveLoading = false;
+      this.eventDialog.addMoreLoading = false;
     },
 
     addAnother(event) {
@@ -465,7 +471,7 @@ export default {
             console.log("ADDED", resp);
             this.events.push(resp.data);
             if (this.addMore) {
-              this.eventDialog.event = {};
+              this.clearEvent();
             } else {
               this.cancelEvent();
             }
@@ -475,11 +481,6 @@ export default {
             console.error("POST FAILURE", err.response);
             this.eventDialog.saveLoading = false;
             this.showSnackbar(this.$t("events.error-adding-event"));
-          })
-          .finally(() => {
-            this.addMore = false;
-            this.eventDialog.addMoreLoading = false;
-            this.eventDialog.saveLoading = false;
           });
       }
     },

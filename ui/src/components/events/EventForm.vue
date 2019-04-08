@@ -357,10 +357,6 @@ export default {
       } else return "24hr";
     },
 
-    formDisabled() {
-      return this.saveLoading || this.addMoreLoading;
-    },
-
     today() {
       return this.getDateFromTimestamp(Date.now());
     },
@@ -369,12 +365,15 @@ export default {
       return this.startDate && this.startTime;
     },
 
+    formDisabled() {
+      return this.saveLoading || this.addMoreLoading;
+    },
+
     ...mapGetters(["currentLanguageCode"])
   },
 
   methods: {
     cancel() {
-      this.clear();
       this.$emit("cancel");
     },
 
