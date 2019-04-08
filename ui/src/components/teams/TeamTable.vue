@@ -129,14 +129,14 @@
     </v-snackbar>
 
     <!-- New/Edit dialog -->
-    <v-dialog v-model="teamDialog.show" max-width="500px">
+    <v-dialog v-model="teamDialog.show" max-width="500px" persistent>
       <team-form
         v-bind:editMode="teamDialog.editMode"
         v-bind:initialData="teamDialog.team"
         v-bind:saveLoading="teamDialog.saveLoading"
         v-bind:addMoreLoading="teamDialog.addMoreLoading"
-        v-on:add-another="addAnotherTeam"
-        v-on:save="saveTeam"
+        v-on:addAnother="addAnother"
+        v-on:save="save"
         v-on:cancel="cancelTeam"
       />
     </v-dialog>
@@ -201,6 +201,7 @@ export default {
         addMoreLoading: false,
         team: {}
       },
+
       archiveDialog: {
         show: false,
         teamId: -1,
@@ -212,6 +213,7 @@ export default {
         show: false,
         text: ""
       },
+      addMore: false,
       viewStatus: "viewActive",
 
       windowSize: {
@@ -298,8 +300,6 @@ export default {
           this.archiveDialog.show = false;
           this.showSnackbar(this.$t("teams.error-archiving-team"));
         });
-
-      // this.archiveDialog.show = false;
     },
 
     unarchive(team) {
@@ -332,22 +332,34 @@ export default {
       this.activateTeamDialog();
     },
 
-    cancelTeam() {
-      this.teamDialog.show = false;
+    clearTeam() {
+      this.addMore = false;
+      this.teamDialog.editMode = false;
+      this.teamDialog.saveLoading = false;
+      this.teamDialog.addMoreLoading = false;
+      this.teamDialog.team = {};
     },
 
-    clearTeam() {
-      this.teamDialog = {
-        show: false,
-        editMode: false,
-        saveLoading: false,
-        addMoreLoading: false,
-        team: {}
-      };
+    cancelTeam() {
+      this.addMore = false;
+      this.teamDialog.show = false;
+      this.teamDialog.editMode = false;
+      this.teamDialog.saveLoading = false;
+      this.teamDialog.addMoreLoading = false;
+    },
+
+    addAnother(team) {
+      this.addMore = true;
+      this.teamDialog.addMoreLoading = true;
+      this.saveTeam(team);
+    },
+
+    save(team) {
+      this.teamDialog.saveLoading = true;
+      this.saveTeam(team);
     },
 
     saveTeam(team) {
-      this.teamDialog.saveLoading = true;
       if (this.teamDialog.editMode) {
         const teamId = team.id;
         const idx = this.teams.findIndex(te => te.id === team.id);
@@ -359,10 +371,8 @@ export default {
           .then(resp => {
             console.log("EDITED", resp);
             Object.assign(this.teams[idx], resp.data);
-            this.teamDialog.show = false;
-            this.teamDialog.saveLoading = false;
+            this.cancelTeam();
             this.showSnackbar(this.$t("teams.team-edited"));
-            this.clearTeam();
           })
           .catch(err => {
             console.error("PUT FALURE", err.response);
@@ -380,42 +390,22 @@ export default {
         //     member: newTeam.members[i]
         //   }
         // }
-        console.log(newTeam);
         this.$http
           .post("/api/v1/teams/", newTeam)
           .then(resp => {
             console.log("ADDED", resp);
             this.teams.push(resp.data);
-            this.teamDialog.show = false;
-            this.teamDialog.saveLoading = false;
+            if (this.addMore) this.clearTeam();
+            else this.cancelTeam();
             this.showSnackbar(this.$t("teams.team-added"));
-            this.clearTeam();
           })
           .catch(err => {
             console.error("POST FAILURE", err.response);
             this.teamDialog.saveLoading = false;
+            this.teamDialog.addMoreLoading = false;
             this.showSnackbar(this.$t("teams.error-adding-team"));
           });
       }
-    },
-
-    addAnotherTeam(team) {
-      this.teamDialog.addMoreLoading = true;
-      let newTeam = JSON.parse(JSON.stringify(team));
-      this.$http
-        .post("/api/v1/teams", newTeam)
-        .then(resp => {
-          console.log("ADDED", resp);
-          this.teams.push(resp.data);
-          this.teamDialog.show = false;
-          this.teamDialog.saveLoading = false;
-          this.showSnackbar(this.$t("teams.team-added"));
-        })
-        .catch(err => {
-          console.error("FAILURE", err.response);
-          this.teamDialog.saveLoading = false;
-          this.showSnackbar(this.$t("teams.error-adding-team"));
-        });
     },
 
     showSnackbar(message) {
