@@ -25,5 +25,7 @@ dist/
 .vscode/
 .DS_Store
 
+db-*.json
+
 #ETC
 *.swp
