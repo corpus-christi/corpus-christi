@@ -124,14 +124,14 @@
     </v-snackbar>
 
     <!-- New/Edit dialog -->
-    <v-dialog v-model="assetDialog.show" max-width="500px">
+    <v-dialog v-model="assetDialog.show" max-width="500px" persistent>
       <asset-form
         v-bind:editMode="assetDialog.editMode"
         v-bind:initialData="assetDialog.asset"
         v-bind:saveLoading="assetDialog.saveLoading"
         v-bind:addMoreLoading="assetDialog.addMoreLoading"
-        v-on:add-another="addAnotherAsset"
-        v-on:save="saveAsset"
+        v-on:addAnother="addAnother"
+        v-on:save="save"
         v-on:cancel="cancelAsset"
       />
     </v-dialog>
@@ -214,7 +214,8 @@ export default {
         x: 0,
         y: 0,
         screen
-      }
+      },
+      addMore: false
     };
   },
   computed: {
@@ -338,8 +339,18 @@ export default {
       this.assetDialog.show = false;
     },
 
-    saveAsset(asset) {
+    addAnother(asset){
+      this.addMore = true;
+      this.assetDialog.addMoreLoading = true;
+      this.saveAsset(asset);
+    },
+
+    save(asset){
       this.assetDialog.saveLoading = true;
+      this.saveAsset(asset);
+    },
+
+    saveAsset(asset) {
       asset.location_id = asset.location.id;
       let newAsset = JSON.parse(JSON.stringify(asset));
       delete newAsset.location;
@@ -354,8 +365,7 @@ export default {
           .then(resp => {
             console.log("EDITED", resp);
             Object.assign(this.assets[idx], resp.data);
-            this.assetDialog.show = false;
-            this.assetDialog.saveLoading = false;
+            this.cancelAsset();
             this.showSnackbar(this.$t("assets.asset-edited"));
           })
           .catch(err => {
@@ -366,22 +376,36 @@ export default {
       } else {
         console.log(newAsset);
         delete newAsset.event_count;
-        newAsset.active = true;
         this.$http
           .post("/api/v1/assets/?include_location=1", newAsset)
           .then(resp => {
             console.log("ADDED", resp);
             this.assets.push(resp.data);
-            this.assetDialog.show = false;
-            this.assetDialog.saveLoading = false;
+            if (this.addMore) this.clearAsset();
+            else this.cancelAsset();
             this.showSnackbar(this.$t("assets.asset-added"));
           })
           .catch(err => {
             console.error("POST FAILURE", err.response);
             this.assetDialog.saveLoading = false;
+            this.assetDialog.addMoreLoading = false;
             this.showSnackbar(this.$t("assets.error-adding-asset"));
           });
       }
+    },
+
+    clearAsset() {
+      this.addMore = false;
+      this.assetDialog.saveLoading = false;
+      this.assetDialog.addMoreLoading = false;
+      this.assetDialog.event = {};
+    },
+
+    cancelAsset() {
+      this.addMore = false;
+      this.assetDialog.show = false;
+      this.assetDialog.saveLoading = false;
+      this.assetDialog.addMoreLoading = false;
     },
 
     addAnotherAsset(asset) {

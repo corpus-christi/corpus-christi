@@ -91,7 +91,6 @@ export default {
 
   methods: {
     cancel() {
-      this.clear();
       this.$emit("cancel");
     },
 
@@ -108,17 +107,18 @@ export default {
     save() {
       this.$validator.validateAll().then(() => {
         if (!this.errors.any()) {
-          this.$emit("save", this.asset);
+          // this.$emit("save", this.asset);
+          this.asset.active = true;
+          if (this.addMore) this.$emit("addAnother", this.asset)
+          else this.$emit("save", this.asset)
         }
+        this.addMore = false
       });
     },
 
     addAnother() {
-      this.$validator.validateAll().then(() => {
-        if (!this.errors.any()) {
-          this.$emit("add-another", this.asset);
-        }
-      });
+      this.addMore = true;
+      this.save();
     }
   },
 
@@ -142,7 +142,8 @@ export default {
     return {
       asset: {},
       save_loading: false,
-      add_more_loading: false
+      add_more_loading: false,
+      addMore: false
     };
   }
 };
