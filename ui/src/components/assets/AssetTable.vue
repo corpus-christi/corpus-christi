@@ -335,17 +335,13 @@ export default {
       this.activateAssetDialog();
     },
 
-    cancelAsset() {
-      this.assetDialog.show = false;
-    },
-
-    addAnother(asset){
+    addAnother(asset) {
       this.addMore = true;
       this.assetDialog.addMoreLoading = true;
       this.saveAsset(asset);
     },
 
-    save(asset){
+    save(asset) {
       this.assetDialog.saveLoading = true;
       this.saveAsset(asset);
     },
@@ -398,7 +394,7 @@ export default {
       this.addMore = false;
       this.assetDialog.saveLoading = false;
       this.assetDialog.addMoreLoading = false;
-      this.assetDialog.event = {};
+      this.assetDialog.asset = {};
     },
 
     cancelAsset() {

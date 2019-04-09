@@ -63,6 +63,31 @@ import EntitySearch from "../EntitySearch";
 export default {
   components: { "entity-search": EntitySearch },
   name: "AssetForm",
+  props: {
+    editMode: {
+      type: Boolean,
+      required: true
+    },
+    initialData: {
+      type: Object,
+      required: true
+    },
+    saveLoading: {
+      type: Boolean
+    },
+    addMoreLoading: {
+      type: Boolean
+    }
+  },
+  data: function() {
+    return {
+      asset: {},
+      save_loading: false,
+      add_more_loading: false,
+      addMore: false
+    };
+  },
+
   watch: {
     // Make sure data stays in sync with any changes to `initialData` from parent.
     initialData(assetProp) {
@@ -107,12 +132,11 @@ export default {
     save() {
       this.$validator.validateAll().then(() => {
         if (!this.errors.any()) {
-          // this.$emit("save", this.asset);
           this.asset.active = true;
-          if (this.addMore) this.$emit("addAnother", this.asset)
-          else this.$emit("save", this.asset)
+          if (this.addMore) this.$emit("addAnother", this.asset);
+          else this.$emit("save", this.asset);
         }
-        this.addMore = false
+        this.addMore = false;
       });
     },
 
@@ -120,31 +144,6 @@ export default {
       this.addMore = true;
       this.save();
     }
-  },
-
-  props: {
-    editMode: {
-      type: Boolean,
-      required: true
-    },
-    initialData: {
-      type: Object,
-      required: true
-    },
-    saveLoading: {
-      type: Boolean
-    },
-    addMoreLoading: {
-      type: Boolean
-    }
-  },
-  data: function() {
-    return {
-      asset: {},
-      save_loading: false,
-      add_more_loading: false,
-      addMore: false
-    };
   }
 };
 </script>

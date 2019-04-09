@@ -44,7 +44,7 @@
       <v-btn
         color="primary"
         raised
-        v-on:click="openParticipantDialog"
+        v-on:click="activateNewParticipantDialog"
         data-cy="add-team-member"
       >
         <v-icon dark left>add</v-icon>
@@ -146,7 +146,7 @@
     </v-dialog>
 
     <!-- Add Member Dialog -->
-    <v-dialog v-model="addMemberDialog.show" max-width="350px">
+    <v-dialog v-model="addMemberDialog.show" max-width="350px" persistent>
       <v-card>
         <v-card-title primary-title>
           <div>
@@ -252,7 +252,6 @@ export default {
       const id = this.$route.params.team;
       this.$http.get(`/api/v1/teams/${id}?include_members=1`).then(resp => {
         this.team = resp.data;
-        console.log(this.team);
         this.members = resp.data.members;
         this.pageLoaded = true;
       });
@@ -317,11 +316,10 @@ export default {
     },
 
     activateNewParticipantDialog() {
+      this.addMemberDialog.newMembers = [];
       this.addMemberDialog.show = true;
     },
-    openParticipantDialog() {
-      this.activateNewParticipantDialog();
-    },
+
     cancelNewParticipantDialog() {
       this.addMemberDialog.show = false;
     },
@@ -332,7 +330,7 @@ export default {
 
       for (let person of this.addMemberDialog.newMembers) {
         const idx = this.members.findIndex(
-          ev_pe => ev_pe.person_id === person.id
+          ev_pe => ev_pe.member_id === person.id
         );
         if (idx === -1) {
           promises.push(this.addParticipant(person.id));
