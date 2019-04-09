@@ -19,6 +19,7 @@ class Group(Base):
     manager = relationship('Manager', back_populates='groups', lazy=True)
     members = relationship('Member', back_populates='group', lazy=True)
     meetings = relationship('Meeting', back_populates='group', lazy=True)
+    events = relationship('EventGroup', back_populates='group', lazy=True)
 
     def __repr__(self):
         return f"<Group(id={self.id})>"

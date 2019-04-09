@@ -9,12 +9,13 @@ from flask_jwt_extended import create_access_token
 from werkzeug.datastructures import Headers
 from werkzeug.security import check_password_hash
 
-from .models import Event, EventPerson, EventAsset, EventParticipant, EventTeam, EventSchema, EventTeamSchema, EventPersonSchema, EventParticipantSchema
+from .models import Event, EventPerson, EventAsset, EventParticipant, EventTeam, EventGroup, EventSchema, EventTeamSchema, EventPersonSchema, EventParticipantSchema, EventGroupSchema
 from ..assets.models import Asset, AssetSchema
 from ..teams.models import Team, TeamMember, TeamSchema, TeamMemberSchema
 from ..places.models import Location
 from ..people.models import Person
 from ..images.models import Image, ImageSchema, ImageEvent, ImageEventSchema
+from ..groups.models import Group, GroupSchema
 
 from .models import EventAsset, EventAssetSchema, EventTeam, EventTeamSchema
 
@@ -177,6 +178,15 @@ def team_member_object_factory(team_id, member_id):
         'active': flip()
     }
     return teammember
+
+def event_groups_object_factory(event_id, group_id):
+    """Cook up a fake eventteam json object from given ids."""
+    eventgroup = {
+        'event_id': event_id,
+        'group_id': group_id,
+        'active': flip()
+    }
+    return eventgroup
 
 def create_multiple_events(sqla, n):
     """Commit `n` new events to the database. Return their IDs."""
@@ -390,5 +400,3 @@ def create_event_images(sqla):
 
     sqla.add_all(new_event_images)
     sqla.commit()
-
-

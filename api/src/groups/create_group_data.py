@@ -182,3 +182,17 @@ def create_group_test_data(sqla):
     create_multiple_meetings(sqla, 12)
     create_multiple_members(sqla, 13)
     create_attendance(sqla, 0.75)
+    create_events_groups(sqla, 0.75)
+
+
+def create_events_groups(sqla, fraction=0.75):
+    """Create data in the link table between events and groups"""
+    event_groups_schema = EventGroupSchema()
+    new_events_groups = []
+    all_events_groups = sqla.query(Event, Group).all()
+    sample_events_groups = random.sample(all_events_groups, math.floor(len(all_events_groups) * fraction))
+    for events_groups in sample_events_groups:
+        valid_events_groups = event_groups_schema.load(event_groups_object_factory(events_groups[0].id,events_groups[1].id))
+        new_events_groups.append(EventGroup(**valid_events_groups))
+    sqla.add_all(new_events_groups)
+    sqla.commit()
