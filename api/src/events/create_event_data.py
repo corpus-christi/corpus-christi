@@ -10,7 +10,7 @@ from werkzeug.datastructures import Headers
 from werkzeug.security import check_password_hash
 
 from .models import Event, EventPerson, EventAsset, EventParticipant, EventTeam, EventSchema, EventTeamSchema, EventPersonSchema, EventParticipantSchema
-from ..assets.models import Asset, AssetSchema
+from ..assets.models import Asset, AssetSchema, Collection, CollectionSchema, AssetCollection, AssetCollectionSchema
 from ..teams.models import Team, TeamMember, TeamSchema, TeamMemberSchema
 from ..places.models import Location
 from ..people.models import Person
@@ -114,6 +114,13 @@ def asset_object_factory(sqla):
     }
     return asset
 
+def collection_object_factory(sqla):
+    """Cook up a fake collection."""
+    fake = Faker()  # Use a generic one; others may not have all methods.
+    collection = {
+        'description': rl_fake().sentences(nb=1)[0],
+    }
+    return collection
 
 def team_object_factory():
     """Cook up a fake asset."""
@@ -178,6 +185,14 @@ def team_member_object_factory(team_id, member_id):
     }
     return teammember
 
+def asset_collection_object_factory(asset_id, collection_id):
+    """Cook up a fake assetcollection json object from given ids."""
+    assetcollection = {
+        'asset_id': asset_id,
+        'collection_id': collection_id,
+    }
+    return assetcollection
+
 def create_multiple_events(sqla, n):
     """Commit `n` new events to the database. Return their IDs."""
     event_schema = EventSchema()
@@ -211,6 +226,16 @@ def create_multiple_assets(sqla, n):
         valid_assets = asset_schema.load(asset_object_factory(sqla))
         new_assets.append(Asset(**valid_assets))
     sqla.add_all(new_assets)
+    sqla.commit()
+
+def create_multiple_collections(sqla, n):
+    """Commit `n` new collections to the database. Return their IDs."""
+    collection_schema = CollectionSchema()
+    new_collections = []
+    for i in range(n):
+        valid_collections = collection_schema.load(collection_object_factory(sqla))
+        new_collections.append(Collection(**valid_collections))
+    sqla.add_all(new_collections)
     sqla.commit()
 
 def create_events_assets(sqla, fraction=0.75):
@@ -274,16 +299,17 @@ def create_teams_members(sqla, fraction=0.75):
     sqla.add_all(new_teams_members)
     sqla.commit()
 
-def create_events_test_data(sqla):
-    """The function that creates test data in the correct order """
-    create_multiple_events(sqla, 300)
-    create_multiple_assets(sqla, 12)
-    create_multiple_teams(sqla, 13)
-    create_events_assets(sqla, 0.75)
-    create_events_teams(sqla, 0.75)
-    create_events_participants(sqla, 0.75)
-    create_events_persons(sqla, 0.75)
-    create_teams_members(sqla, 0.75)
+def create_assets_collections(sqla, fraction=0.75):
+    """Create data in the linking table between assets and collections """
+    asset_collection_schema = AssetCollectionSchema()
+    new_assets_collections = []
+    all_assets_collections = sqla.query(Asset, Collection).all()
+    sample_assets_collections = random.sample(all_assets_collections, math.floor(len(all_assets_collections) * fraction))
+    for assets_collections in sample_assets_collections:
+        valid_assets_collections = asset_collection_schema.load(asset_collection_object_factory(assets_collections[0].id,assets_collections[1].id))
+        new_assets_collections.append(AssetCollection(**valid_assets_collections))
+    sqla.add_all(new_assets_collections)
+    sqla.commit()
 
 def get_team_ids(teams):
     ids = []
@@ -390,5 +416,19 @@ def create_event_images(sqla):
 
     sqla.add_all(new_event_images)
     sqla.commit()
+
+
+def create_events_test_data(sqla):
+    """The function that creates test data in the correct order """
+    create_multiple_events(sqla, 300)
+    create_multiple_assets(sqla, 12)
+    create_multiple_teams(sqla, 13)
+    create_multiple_collections(sqla, 15)
+    create_events_assets(sqla, 0.75)
+    create_events_teams(sqla, 0.75)
+    create_events_participants(sqla, 0.75)
+    create_events_persons(sqla, 0.75)
+    create_teams_members(sqla, 0.75)
+    create_assets_collections(sqla, 0.75)
 
 
