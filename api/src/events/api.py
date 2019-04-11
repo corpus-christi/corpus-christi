@@ -383,7 +383,7 @@ def add_event_images(event_id, image_id):
 
     # If image is already attached to the event
     if event_image:
-        return jsonify(f"Image with id#{image_id} is already attached to event with id#{event_id}."), 422
+        return jsonify(f"Image with id #{image_id} is already attached to event with id #{event_id}."), 422
     else:
         new_entry = ImageEvent(**{'event_id': event_id, 'image_id': image_id})
         db.session.add(new_entry)
