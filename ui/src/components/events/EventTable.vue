@@ -447,34 +447,79 @@ export default {
       if (this.eventDialog.editMode) {
         const eventId = event.id;
         const idx = this.events.findIndex(ev => ev.id === event.id);
-        this.$http
-          .put(
-            `/api/v1/events/${eventId}/images/${this.imageId}?old=${
-              this.oldImageId > -1 ? this.oldImageId : false
-            }`
-          )
-          .then(resp => {
-            console.log("IMAGE EDITED", resp);
-            this.$http
-              .put(`/api/v1/events/${eventId}`, newEvent)
-              .then(resp => {
-                console.log("EDITED", resp);
-                Object.assign(this.events[idx], resp.data);
-                this.events[idx].images[0].image.id = event.imageId;
-                this.cancelEvent();
-                this.showSnackbar(this.$t("events.event-edited"));
-              })
-              .catch(err => {
-                console.error("PUT FALURE", err.response);
-                this.eventDialog.saveLoading = false;
-                this.showSnackbar(this.$t("events.error-editing-event"));
-              });
-          })
-          .catch(err => {
-            console.error("PUT FALURE", err.response);
-            this.eventDialog.saveLoading = false;
-            this.showSnackbar(this.$t("events.error-editing-event"));
-          });
+        if (this.imageId > -1) {
+          this.$http
+            .put(
+              `/api/v1/events/${eventId}/images/${this.imageId}?old=${
+                this.oldImageId > -1 ? this.oldImageId : false
+              }`
+            )
+            .then(resp => {
+              console.log("IMAGE EDITED", resp);
+              this.$http
+                .put(`/api/v1/events/${eventId}`, newEvent)
+                .then(resp => {
+                  console.log("EDITED", resp);
+                  Object.assign(this.events[idx], resp.data);
+                  const image = {
+                    image: {
+                      id: event.imageId
+                    }
+                  };
+                  this.events[idx].images.push(image);
+                  // if(this.events[idx].images) {
+                  //   this.events[idx].images[0].image.id = event.imageId;
+                  // } else {
+                  //   imageArr = [];
+                  //   imageArr.push(
+                  //     {
+                  //       image: {
+                  //         id: event.imageId
+                  //       }
+                  //     }
+                  //   );
+                  //   this.events[idx].images = imageArr;
+                  // }
+                  this.cancelEvent();
+                  this.showSnackbar(this.$t("events.event-edited"));
+                })
+                .catch(err => {
+                  console.log(err);
+                  console.error("PUT FALURE", err.response);
+                  this.eventDialog.saveLoading = false;
+                  this.showSnackbar(this.$t("events.error-editing-event"));
+                });
+            })
+            .catch(err => {
+              console.error("PUT FALURE", err.response);
+              this.eventDialog.saveLoading = false;
+              this.showSnackbar(this.$t("events.error-editing-event"));
+            });
+        } else {
+          // no image selected, delete previous entry
+          this.$http
+            .delete(`/api/v1/events/${eventId}/images/${this.oldImageId}`)
+            .then(resp => {
+              console.log("IMAGE REMOVED", resp);
+              this.$http
+                .put(`/api/v1/events/${eventId}`, newEvent)
+                .then(resp => {
+                  console.log("EDITED", resp);
+                  Object.assign(this.events[idx], resp.data);
+                  this.events[idx].images.shift();
+                  this.cancelEvent();
+                  this.showSnackbar(this.$t("events.event-edited"));
+                })
+                .catch(err => {
+                  console.error("PUT FALURE", err.response);
+                  this.eventDialog.saveLoading = false;
+                  this.showSnackbar(this.$t("events.error-editing-event"));
+                });
+            })
+            .catch(err => {
+              console.error("DELETE IMAGEEVENT FAILURE", err.response);
+            });
+        }
       } else {
         let newTeams = newEvent.teams;
         delete newEvent.teams;
@@ -511,14 +556,17 @@ export default {
             return resp.data.id;
           })
           .then(event_id => {
-            this.$http
-              .post(`/api/v1/events/${event_id}/images/${this.imageId}`)
-              .then(resp => {
-                console.log(resp);
-              })
-              .catch(err => {
-                console.error("EVENT/IMAGE PAIR FAILED", err.response);
-              });
+            if (this.imageId > -1) {
+              // no image selected
+              this.$http
+                .post(`/api/v1/events/${event_id}/images/${this.imageId}`)
+                .then(resp => {
+                  console.log(resp);
+                })
+                .catch(err => {
+                  console.error("EVENT/IMAGE PAIR FAILED", err.response);
+                });
+            }
           })
           .then(() => {
             this.refreshEventsTable();
