@@ -62,7 +62,7 @@ def upload_image():
 
     # Check to make sure the file is of an acceptable type
     if is_allowed_file(filename):
-        file_hash = get_hash(filename)
+        file_hash = get_hash(image)
         folder = file_hash[0:2]
         new_filename = file_hash + '.' + get_file_extension(filename)
 
@@ -75,8 +75,12 @@ def upload_image():
         path_to_image = os.path.join(folder_path, new_filename)
         image_already_in_db = db.session.query(Image).filter_by(path=path_to_image).first()
 
+        # return a directive to look up the existing image
         if image_already_in_db:
-            return 'Image with same name already exists', 422
+            return jsonify({
+                'message': 'Identical image already exists',
+                'id': image_already_in_db.id
+                }), 303
 
         # Save the image into the file system
         full_path = os.path.join(base_dir, path_to_image)
