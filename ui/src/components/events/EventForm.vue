@@ -20,28 +20,50 @@
           name="description"
           data-cy="description"
         ></v-textarea>
-        <v-layout align-center>
+        <v-layout align-space-around justify-space-between column fill-height>
           <form method="POST" ref="imageForm">
-            <v-btn flat color="primary" small @click="openFileChooser">
-              {{ $t("actions.choose-image") }}
-            </v-btn>
-            <span v-if="!imageSelected">{{
-              $t("images.messages.no-image")
-            }}</span>
-            <input
-              type="file"
-              hidden
-              ref="image_chooser"
-              @change="uploadSelectedImage"
-              name="file"
-            />
-            <span v-if="imageId > -1">
-              <img
-                ref="preview"
-                style="max-height:200px; max-width:300px;"
-                :src="fetchImage"
+            <v-flex class="text-xs-center">
+              <v-btn flat color="primary" small @click="openFileChooser">
+                {{ $t("actions.choose-image") }}
+              </v-btn>
+            </v-flex>
+            <v-flex v-if="!imageSelected" class="text-xs-center">
+              <span>{{ $t("images.messages.no-image") }}</span>
+            </v-flex>
+            <v-flex hidden>
+              <input
+                type="file"
+                hidden
+                ref="image_chooser"
+                @change="uploadSelectedImage"
+                name="file"
               />
-            </span>
+            </v-flex>
+            <v-flex v-if="imageId > -1">
+              <v-hover>
+                <div slot-scope="{ hover }" d-inline-block>
+                  <v-img
+                    max-height="200px"
+                    ref="preview"
+                    contain
+                    @click="deleteSelectedImage"
+                    :src="fetchImage"
+                  >
+                    <v-layout justify-center fill-height align-center>
+                      <v-expand-transition>
+                        <div
+                          v-if="hover"
+                          class="d-flex transition-fast-in-fast-out grey darken-4 display-3 white--text"
+                          style="opacity:0.75;"
+                        >
+                          <v-icon dark style="font-size: 100px;">close</v-icon>
+                        </div>
+                      </v-expand-transition>
+                    </v-layout>
+                  </v-img>
+                </div>
+              </v-hover>
+            </v-flex>
           </form>
         </v-layout>
         <v-layout align-center justify-space-around>
@@ -314,7 +336,6 @@ export default {
           this.endTime = this.getTimeFromTimestamp(this.event.end);
         }
         if (this.event.images && this.event.images.length > 0) {
-          console.log(this.event.images);
           this.imageId = this.event.images[0].image.id;
           this.event.oldImageId = this.event.images[0].image.id;
           this.imageSelected = true;
@@ -355,7 +376,6 @@ export default {
     },
 
     fetchImage() {
-      console.log("fetching...", this.imageId);
       return `/api/v1/images/${this.imageId}?${Math.random()}`;
     },
 
@@ -384,9 +404,6 @@ export default {
     clear() {
       for (let key of this.eventKeys) {
         this.event[key] = "";
-      }
-      if (this.$refs.preview) {
-        this.$refs.preview.src = "";
       }
       delete this.event.location;
       this.startTime = "";
@@ -491,7 +508,6 @@ export default {
     },
 
     uploadSelectedImage($event) {
-      console.log("onchange");
       if ($event.target.files.length > 0) {
         const formData = new FormData(this.$refs.imageForm);
         this.$http
@@ -514,6 +530,12 @@ export default {
           });
       }
       this.$forceUpdate();
+    },
+
+    deleteSelectedImage() {
+      this.imageSelected = false;
+      this.imageId = -1;
+      this.oldImageId = -1;
     }
   },
   props: {
