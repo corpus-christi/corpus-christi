@@ -250,6 +250,7 @@ export default {
       search: "",
 
       imageId: 0, // not the best way to do this, but works for now -- maybe rewrite?
+      oldImageId: -1,
 
       snackbar: {
         show: false,
@@ -425,6 +426,15 @@ export default {
       }
 
       this.imageId = event.imageId;
+      if (this.eventDialog.editMode) {
+        if (event.oldImageId) {
+          this.oldImageId = event.oldImageId;
+        } else {
+          this.oldImageId = -1;
+        }
+      }
+
+      delete event.images;
 
       let newEvent = JSON.parse(JSON.stringify(event));
       delete newEvent.location;
@@ -433,16 +443,32 @@ export default {
       delete newEvent.aggregate;
       delete newEvent.attendance;
       delete newEvent.imageId;
+      delete newEvent.oldImageId;
       if (this.eventDialog.editMode) {
         const eventId = event.id;
         const idx = this.events.findIndex(ev => ev.id === event.id);
         this.$http
-          .put(`/api/v1/events/${eventId}`, newEvent)
+          .put(
+            `/api/v1/events/${eventId}/images/${this.imageId}?old=${
+              this.oldImageId > -1 ? this.oldImageId : false
+            }`
+          )
           .then(resp => {
-            console.log("EDITED", resp);
-            Object.assign(this.events[idx], resp.data);
-            this.cancelEvent();
-            this.showSnackbar(this.$t("events.event-edited"));
+            console.log("IMAGE EDITED", resp);
+            this.$http
+              .put(`/api/v1/events/${eventId}`, newEvent)
+              .then(resp => {
+                console.log("EDITED", resp);
+                Object.assign(this.events[idx], resp.data);
+                this.events[idx].images[0].image.id = event.imageId;
+                this.cancelEvent();
+                this.showSnackbar(this.$t("events.event-edited"));
+              })
+              .catch(err => {
+                console.error("PUT FALURE", err.response);
+                this.eventDialog.saveLoading = false;
+                this.showSnackbar(this.$t("events.error-editing-event"));
+              });
           })
           .catch(err => {
             console.error("PUT FALURE", err.response);
@@ -475,7 +501,7 @@ export default {
           })
           .then(resp => {
             console.log("ADDED", resp);
-            this.events.push(resp.data);
+            // this.events.push(resp.data);
             if (this.addMore) {
               this.clearEvent();
             } else {
@@ -494,6 +520,9 @@ export default {
                 console.error("EVENT/IMAGE PAIR FAILED", err.response);
               });
           })
+          .then(() => {
+            this.refreshEventsTable();
+          })
           .catch(err => {
             console.error("POST FAILURE", err.response);
             this.eventDialog.saveLoading = false;
@@ -501,6 +530,17 @@ export default {
             this.showSnackbar(this.$t("events.error-adding-event"));
           });
       }
+    },
+
+    refreshEventsTable() {
+      this.tableLoading = true;
+      this.$http
+        .get("/api/v1/events/?return_group=all&include_images=1")
+        .then(resp => {
+          this.events = resp.data;
+          this.tableLoading = false;
+        });
+      this.onResize();
     },
 
     getDuplicationPromises(eventId, newTeams, newPersons, newAssets) {

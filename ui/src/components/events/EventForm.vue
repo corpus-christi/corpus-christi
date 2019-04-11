@@ -35,11 +35,11 @@
               @change="uploadSelectedImage"
               name="file"
             />
-            <span v-if="event.images && event.images.length > 0">
+            <span v-if="imageId > -1">
               <img
                 ref="preview"
                 style="max-height:200px; max-width:300px;"
-                :src="'/api/v1/images/' + event.images[0].image.id"
+                :src="fetchImage"
               />
             </span>
           </form>
@@ -325,7 +325,10 @@ export default {
       startTimeModal: false,
       endTimeModal: false,
       showAddressCreator: false,
+      imageSelected: false,
       currentAddress: 0,
+      imageId: -1,
+      oldImageId: -1,
       imageMessage: "No image selected."
     };
   },
@@ -348,6 +351,9 @@ export default {
           this.endTime = this.getTimeFromTimestamp(this.event.end);
         }
         if (this.event.images && this.event.images.length > 0) {
+          console.log(this.event.images);
+          this.imageId = this.event.images[0].image.id;
+          this.event.oldImageId = this.event.images[0].image.id;
           this.imageSelected = true;
         }
       }
@@ -383,6 +389,15 @@ export default {
       if (this.currentLanguageCode.substring(0, 2) == "en") {
         return "ampm";
       } else return "24hr";
+    },
+
+    fetchImage() {
+      console.log("fetching...", this.imageId);
+      return `/api/v1/images/${this.imageId}?${Math.random()}`;
+    },
+
+    formDisabled() {
+      return this.saveLoading || this.addMoreLoading;
     },
 
     today() {
@@ -427,6 +442,8 @@ export default {
       this.startTimeModal = false;
       this.endTimeModal = false;
       this.imageSelected = false;
+      this.imageId = -1;
+      this.oldImageId = -1;
       this.$validator.reset();
     },
 
@@ -521,58 +538,24 @@ export default {
         this.$http
           .post("/api/v1/images/", formData)
           .then(resp => {
+            console.log(resp);
             this.event.imageId = resp.data.id;
-            if (!this.event.images) {
-              this.event.images = [];
-            } else {
-              this.event.images.shift();
-              console.log(this.event.images);
-            }
-            this.event.images.unshift({ image: { id: resp.data.id } });
-            console.log(this.event.images);
+            this.imageId = resp.data.id;
             this.imageSelected = true;
           })
           .catch(err => {
-            console.error("IMAGE ERROR", err.response);
+            const resp = err.response;
+            if (resp.status == 303) {
+              this.event.imageId = resp.data.id;
+              this.imageId = resp.data.id;
+              this.imageSelected = true;
+            } else {
+              console.error("IMAGE ERROR", err.response);
+            }
           });
       }
       this.$forceUpdate();
     }
-<<<<<<< d2fe01607acb38484b1cb67f945dcd410499fc31
-=======
-  },
-  props: {
-    editMode: {
-      type: Boolean,
-      required: true
-    },
-    initialData: {
-      type: Object,
-      required: true
-    },
-    saveLoading: {
-      type: Boolean
-    },
-    addMoreLoading: {
-      type: Boolean
-    }
-  },
-  data: function() {
-    return {
-      event: {},
-      startTime: "",
-      startDate: "",
-      endTime: "",
-      endDate: "",
-      showStartDatePicker: false,
-      showEndDatePicker: false,
-      startTimeModal: false,
-      endTimeModal: false,
-      showAddressCreator: false,
-      imageSelected: false,
-      currentAddress: 0
-    };
->>>>>>> work on uploading images -- more work needed on viewing existing images
   }
 };
 </script>

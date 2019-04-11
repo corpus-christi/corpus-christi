@@ -391,6 +391,22 @@ def add_event_images(event_id, image_id):
 
     return jsonify(f"Image with id #{image_id} successfully added to Event with id #{event_id}."), 201
 
+@events.route('/<event_id>/images/<image_id>', methods=['PUT'])
+@jwt_required
+def put_event_images(event_id, image_id):
+    # check for old image id in parameter list (?old=<id>)
+    old_image_id = request.args['old']
+    new_image_id = image_id
+
+    if old_image_id == 'false':
+        post_resp = add_event_images(event_id, new_image_id)
+        return jsonify({'deleted': 'No image to delete', 'posted': str(post_resp[0].data, "utf-8") })
+    else:
+        del_resp = delete_event_image(event_id, old_image_id)
+        post_resp = add_event_images(event_id, new_image_id)
+
+        return jsonify({'deleted': del_resp[0], 'posted': str(post_resp[0].data, "utf-8") })
+
 @events.route('/<event_id>/images/<image_id>', methods=['DELETE'])
 @jwt_required
 def delete_event_image(event_id, image_id):
