@@ -9,12 +9,13 @@ from marshmallow import ValidationError
 from sqlalchemy import func
 
 from . import events
-from .models import Event, EventPerson, EventAsset, EventParticipant, EventTeam, EventSchema, EventTeamSchema, EventPersonSchema, EventParticipantSchema
+from .models import Event, EventPerson, EventAsset, EventParticipant, EventTeam, EventGroup, EventSchema, EventTeamSchema, EventPersonSchema, EventParticipantSchema, EventGroupSchema
 from ..assets.models import Asset, AssetSchema
 from ..teams.models import Team, TeamMember, TeamSchema, TeamMemberSchema
 from ..emails.models import EmailSchema
 from ..people.models import Person, PersonSchema
 from ..images.models import Image, ImageSchema, ImageEvent, ImageEventSchema
+from ..groups.models import Group, GroupSchema
 from .. import db, mail
 from ..etc.helper import modify_entity, get_exclusion_list
 
@@ -404,3 +405,35 @@ def delete_event_image(event_id, image_id):
 
     # 204 codes don't respond with any content
     return 'Successfully removed image', 204
+
+
+# --- Groups
+@evetns.route('/<event_id>/groups/<group_id>', methods=['POST'])
+@jwt_required
+def add_event_group(event_id, group_id):
+    event = db.session.query(Event).filter_by(id=event_id).first()
+    group = db.session.query(Group).filter_by(id=group_id).first()
+
+    event_group = db.session.query(EventGroup).filter_by(id=event_id, id=group_id).first()
+    if not event:
+        return jsonify(f"Event with id #{event_id} does not exist."), 404
+    if not group:
+        return jsonify(f"Group with id #{group_id} does not exist."), 404
+    if event_group:
+        return jsonify(f"Group with id #{group_id} is already attached to event with id #{event_id}."), 422
+    else:
+        new_entry = EventGroup(**{'event_id': event_id, 'group_id': group_id, 'active': True})
+        db.session.add(new_entry)
+        db.session.commit()
+    return jsonify(f"Group with id #{group_id} successfully attached to event with id #{event_id}."), 201
+
+@evetns.route('/<event_id>/groups/<group_id>', methods=['DELETE'])
+@jwt_required
+def delete_event_group(event_id, group_id):
+    event_group = db.session.query(EventGroup).filter_by(id=event_id, id=group_id).first()
+    if not event_group:
+        return jsonify(f"Group with id #{group_id} is not attached to event with id #{event_id}."), 404
+
+    setattr(event_group,'active', False)
+    db.session.commit()
+    return "Image deleted from event", 204

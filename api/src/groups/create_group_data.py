@@ -6,6 +6,7 @@ from faker import Faker
 from ..places.models import Address
 from ..people.models import Person, Manager, Role, RoleSchema
 from ..groups.models import Group, Meeting, Attendance, Member, GroupSchema, MeetingSchema, AttendanceSchema, MemberSchema
+from ..events.models import EventGroup, EventGroupSchema, Event
 
 
 class RandomLocaleFaker:
@@ -102,6 +103,15 @@ def role_object_factory(role_name):
         'active': 1
     }
     return role
+
+def event_groups_object_factory(event_id, group_id):
+    """Cook up a fake eventteam json object from given ids."""
+    eventgroup = {
+        'event_id': event_id,
+        'group_id': group_id,
+        'active': flip()
+    }
+    return eventgroup
 
 # ---------End of Factories
 
