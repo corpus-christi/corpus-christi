@@ -40,29 +40,18 @@
               />
             </v-flex>
             <v-flex v-if="imageId > -1">
-              <v-hover>
-                <div slot-scope="{ hover }" d-inline-block>
-                  <v-img
-                    max-height="200px"
-                    ref="preview"
-                    contain
+              <v-img min-width="100%" ref="preview" :src="fetchImage">
+                <v-layout justify-end fill-height align-start>
+                  <v-btn
+                    flat
+                    icon
+                    class="d-flex grey darken-4 display-3 white--text"
                     @click="deleteSelectedImage"
-                    :src="fetchImage"
                   >
-                    <v-layout justify-center fill-height align-center>
-                      <v-expand-transition>
-                        <div
-                          v-if="hover"
-                          class="d-flex transition-fast-in-fast-out grey darken-4 display-3 white--text"
-                          style="opacity:0.75;"
-                        >
-                          <v-icon dark style="font-size: 100px;">close</v-icon>
-                        </div>
-                      </v-expand-transition>
-                    </v-layout>
-                  </v-img>
-                </div>
-              </v-hover>
+                    <v-icon>close</v-icon>
+                  </v-btn>
+                </v-layout>
+              </v-img>
             </v-flex>
           </form>
         </v-layout>
