@@ -13,6 +13,8 @@ from .models import Person, PersonSchema, AccountSchema, Account, RoleSchema, Ro
 from ..i18n.models import I18NKey, i18n_create, I18NLocale
 from ..attributes.models import Attribute, PersonAttribute, EnumeratedValue, PersonAttributeSchema, AttributeSchema, \
     EnumeratedValueSchema
+from ..images.models import Image, ImageSchema, ImagePerson, ImagePersonSchema
+from ..images.create_image_data import create_test_images, create_images_people
 from ..attributes.test_attributes import person_attribute_string_factory, person_attribute_enumerated_factory, \
     create_multiple_attributes, add_i18n_code
 
@@ -1725,3 +1727,100 @@ def create_person(sqla, first_name, last_name, gender, birthday, phone, email, a
     sqla.add(person)
     sqla.commit()
     return person.id
+
+# --- Images
+
+@pytest.mark.smoke
+def test_add_people_images(auth_client):
+    # GIVEN a set of people and images
+    count = random.randint(3, 6)
+    create_multiple_people(auth_client.sqla, count)
+    create_test_images(auth_client.sqla)
+
+    people = auth_client.sqla.query(Person).all()
+    images = auth_client.sqla.query(Image).all()
+    
+    # WHEN an image is requested to be tied to each person
+    for i in range(count):
+        print(i)
+        resp = auth_client.post(url_for('people.add_people_images', person_id = people[i].id, image_id = images[i].id))
+
+        # THEN expect the request to run OK
+        assert resp.status_code == 201
+
+        # THEN expect the person to have a single image
+        assert len(auth_client.sqla.query(Person).filter_by(id = people[i].id).first().images) == 1
+
+
+@pytest.mark.smoke
+def test_add_people_images_no_exist(auth_client):
+    # GIVEN a set of people and images
+    count = random.randint(3, 6)
+    create_multiple_people(auth_client.sqla, count)
+    create_test_images(auth_client.sqla)
+
+    people = auth_client.sqla.query(Person).all()
+    images = auth_client.sqla.query(Image).all()
+    
+    # WHEN a no existant image is requested to be tied to an person
+    resp = auth_client.post(url_for('people.add_people_images', person_id = 1, image_id = len(images) + 1))
+
+    # THEN expect the image not to be found
+    assert resp.status_code == 404
+
+    # WHEN an image is requested to be tied to a no existant person
+    resp = auth_client.post(url_for('people.add_people_images', person_id = count + 1, image_id = 1))
+
+    # THEN expect the person not to be found
+    assert resp.status_code == 404
+
+
+@pytest.mark.smoke
+def test_add_people_images_already_exist(auth_client):
+    # GIVEN a set of people, images, and person_image relationships
+    count = random.randint(3, 6)
+    create_multiple_people(auth_client.sqla, count)
+    create_test_images(auth_client.sqla)
+    create_images_people(auth_client.sqla)
+
+    person_images = auth_client.sqla.query(ImagePerson).all()
+
+    # WHEN existing person_image relationships are requested to be created
+    for person_image in person_images:
+        resp = auth_client.post(url_for('people.add_people_images', person_id = person_image.person_id, image_id = person_image.image_id))
+
+        # THEN expect the request to be unprocessable
+        assert resp.status_code == 422
+
+
+
+@pytest.mark.smoke
+def test_delete_person_image(auth_client):
+    # GIVEN a set of people, images, and person_image relationships
+    count = random.randint(3, 6)
+    create_multiple_people(auth_client.sqla, count)
+    create_test_images(auth_client.sqla)
+    create_images_people(auth_client.sqla)
+
+    people = auth_client.sqla.query(Person).all()
+    images = auth_client.sqla.query(Image).all()
+
+    # WHEN the person_image relationships are requested to be deleted
+    for i in range(count):
+        resp = auth_client.delete(url_for('people.delete_person_image', person_id = people[i].id, image_id = images[i].id))
+
+        # THEN expect the delete to run OK
+        assert resp.status_code == 204
+
+
+@pytest.mark.smoke
+def test_delete_person_image_no_exist(auth_client):
+    # GIVEN an empty database
+
+    # WHEN a person_image relationship is requested to be deleted
+    resp = auth_client.delete(url_for('people.delete_person_image', person_id = random.randint(1, 8), image_id = random.randint(1, 8)))
+
+    # THEN expect the requested row to not be found
+    assert resp.status_code == 404
+
+
