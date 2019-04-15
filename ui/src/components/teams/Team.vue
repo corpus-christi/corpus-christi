@@ -154,7 +154,13 @@
           </div>
         </v-card-title>
         <v-card-text>
-          <entity-search multiple person v-model="addMemberDialog.newMembers" />
+          <entity-search
+            multiple
+            person
+            exisiting-entities="members.member_id"
+            :value-comparator="members.member_id"
+            v-model="addMemberDialog.newMembers"
+          />
         </v-card-text>
         <v-card-actions>
           <v-btn
@@ -253,6 +259,7 @@ export default {
       this.$http.get(`/api/v1/teams/${id}?include_members=1`).then(resp => {
         this.team = resp.data;
         this.members = resp.data.members;
+        for (let m of this.members) console.log(m);
         this.pageLoaded = true;
       });
     },

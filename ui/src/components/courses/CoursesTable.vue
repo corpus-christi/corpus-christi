@@ -414,6 +414,7 @@ export default {
           .catch(err => {
             console.error("FAILURE", err);
             this.courseDialog.saveLoading = false;
+            this.courseDialog.addMoreLoading = false;
             this.showSnackbar(this.$t("courses.add-failed"));
           });
       }

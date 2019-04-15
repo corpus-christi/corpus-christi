@@ -480,6 +480,7 @@ export default {
           .catch(err => {
             console.error("POST FAILURE", err.response);
             this.eventDialog.saveLoading = false;
+            this.eventDialog.addMoreLoading = false;
             this.showSnackbar(this.$t("events.error-adding-event"));
           });
       }
