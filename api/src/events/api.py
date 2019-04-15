@@ -15,7 +15,7 @@ from ..teams.models import Team, TeamMember, TeamSchema, TeamMemberSchema
 from ..emails.models import EmailSchema
 from ..people.models import Person, PersonSchema
 from ..images.models import Image, ImageSchema, ImageEvent, ImageEventSchema
-from ..groups.models import Group, GroupSchema, GroupMember, GroupMemberSchema
+from ..groups.models import Group, GroupSchema, Member, MemberSchema
 from .. import db, mail
 from ..etc.helper import modify_entity, get_exclusion_list
 
@@ -24,7 +24,7 @@ from ..etc.helper import modify_entity, get_exclusion_list
 @events.route('/', methods=['POST'])
 @jwt_required
 def create_event():
-    event_schema = EventSchema(exclude=get_exclusion_list(request.args, ['assets', 'participants', 'persons', 'teams', 'images']))
+    event_schema = EventSchema(exclude=get_exclusion_list(request.args, ['assets', 'participants', 'persons', 'teams', 'images', 'groups']))
     try:
         valid_event = event_schema.load(request.json)
     except ValidationError as err:
@@ -38,7 +38,7 @@ def create_event():
 
 @events.route('/')
 def read_all_events():
-    event_schema = EventSchema(exclude=get_exclusion_list(request.args, ['assets', 'participants', 'persons', 'teams', 'images']))
+    event_schema = EventSchema(exclude=get_exclusion_list(request.args, ['assets', 'participants', 'persons', 'teams', 'images', 'groups']))
     query = db.session.query(Event)
 
     # -- return_inactives --
@@ -97,7 +97,7 @@ def read_all_events():
 @events.route('/<event_id>')
 @jwt_required
 def read_one_event(event_id):
-    event_schema = EventSchema(exclude=get_exclusion_list(request.args, ['assets', 'participants', 'persons', 'teams', 'images']))
+    event_schema = EventSchema(exclude=get_exclusion_list(request.args, ['assets', 'participants', 'persons', 'teams', 'images', 'groups']))
     event = db.session.query(Event).filter_by(id=event_id).first()
 
     if not event:
@@ -115,7 +115,7 @@ def replace_event(event_id):
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    event_schema = EventSchema(exclude=get_exclusion_list(request.args, ['assets', 'participants', 'persons', 'teams', 'images']))
+    event_schema = EventSchema(exclude=get_exclusion_list(request.args, ['assets', 'participants', 'persons', 'teams', 'images', 'groups']))
 
     return modify_entity(Event, event_schema, event_id, valid_event)
 
@@ -129,7 +129,7 @@ def update_event(event_id):
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    event_schema = EventSchema(exclude=get_exclusion_list(request.args, ['assets', 'participants', 'persons', 'teams', 'images']))
+    event_schema = EventSchema(exclude=get_exclusion_list(request.args, ['assets', 'participants', 'persons', 'teams', 'images', 'groups']))
                 
     return modify_entity(Event, event_schema, event_id, valid_attributes)
 
@@ -445,12 +445,12 @@ def add_event_group(event_id, group_id):
         db.session.commit()
     return jsonify(f"Group with id #{group_id} successfully attached to event with id #{event_id}."), 201
 
-@evetns.route('/<event_id>/groups/<group_id>', methods=['DELETE'])
+@events.route('/<event_id>/groups/<group_id>', methods=['DELETE'])
 @jwt_required
 def delete_event_group(event_id, group_id):
     event_group = db.session.query(EventGroup).filter_by(event_id=event_id, group_id=group_id).first()
-    if not event_group:
-        return jsonify(f"Group with id #{group_id} is not attached to event with id #{event_id}."), 404
+    if not event_group or event_group.active == False:
+        return jsonify(f"Group with id #{group_id} is not currently attached to event with id #{event_id}."), 404
 
     setattr(event_group,'active', False)
     db.session.commit()
