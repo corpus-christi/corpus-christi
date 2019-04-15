@@ -405,7 +405,10 @@ def put_event_images(event_id, image_id):
         del_resp = delete_event_image(event_id, old_image_id)
         post_resp = add_event_images(event_id, new_image_id)
 
-        return jsonify({'deleted': del_resp[0], 'posted': str(post_resp[0].data, "utf-8") })
+        if(del_resp[1] == 404):
+            return jsonify({'deleted': str(del_resp[0].data, "utf-8"), 'posted': str(post_resp[0].data, "utf-8") })
+        else:
+            return jsonify({'deleted': del_resp[0], 'posted': str(post_resp[0].data, "utf-8") })
 
 @events.route('/<event_id>/images/<image_id>', methods=['DELETE'])
 @jwt_required

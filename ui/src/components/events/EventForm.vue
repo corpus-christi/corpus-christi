@@ -20,41 +20,11 @@
           name="description"
           data-cy="description"
         ></v-textarea>
-        <v-layout align-space-around justify-space-between column fill-height>
-          <form method="POST" ref="imageForm">
-            <v-flex class="text-xs-center">
-              <v-btn flat color="primary" small @click="openFileChooser">
-                {{ $t("actions.choose-image") }}
-              </v-btn>
-            </v-flex>
-            <v-flex v-if="!imageSelected" class="text-xs-center">
-              <span>{{ $t("images.messages.no-image") }}</span>
-            </v-flex>
-            <v-flex hidden>
-              <input
-                type="file"
-                hidden
-                ref="image_chooser"
-                @change="uploadSelectedImage"
-                name="file"
-              />
-            </v-flex>
-            <v-flex v-if="imageId > -1">
-              <v-img min-width="100%" ref="preview" :src="fetchImage">
-                <v-layout justify-end fill-height align-start>
-                  <v-btn
-                    flat
-                    icon
-                    class="d-flex grey darken-4 display-3 white--text"
-                    @click="deleteSelectedImage"
-                  >
-                    <v-icon>close</v-icon>
-                  </v-btn>
-                </v-layout>
-              </v-img>
-            </v-flex>
-          </form>
-        </v-layout>
+        <image-chooser
+          :oldImageId="oldImageId"
+          v-on:selected="chooseImage"
+          v-on:deleted="deleteImage"
+        />
         <v-layout align-center justify-space-around>
           <v-flex>
             <entity-search
@@ -302,10 +272,15 @@
 import { isEmpty } from "lodash";
 import { mapGetters } from "vuex";
 import EntitySearch from "../EntitySearch";
-import AddressForm from "../AddressForm.vue";
+import AddressForm from "../AddressForm";
+import ImageChooser from "../images/ImageChooser";
 
 export default {
-  components: { "entity-search": EntitySearch, "address-form": AddressForm },
+  components: {
+    "entity-search": EntitySearch,
+    "address-form": AddressForm,
+    "image-chooser": ImageChooser
+  },
   name: "EventForm",
   watch: {
     // Make sure data stays in sync with any changes to `initialData` from parent.
@@ -326,8 +301,7 @@ export default {
         }
         if (this.event.images && this.event.images.length > 0) {
           this.imageId = this.event.images[0].image.id;
-          this.event.oldImageId = this.event.images[0].image.id;
-          this.imageSelected = true;
+          this.oldImageId = this.event.images[0].image.id;
         }
       }
     },
@@ -362,10 +336,6 @@ export default {
       if (this.currentLanguageCode.substring(0, 2) == "en") {
         return "ampm";
       } else return "24hr";
-    },
-
-    fetchImage() {
-      return `/api/v1/images/${this.imageId}?${Math.random()}`;
     },
 
     formDisabled() {
@@ -403,7 +373,6 @@ export default {
       this.showEndDatePicker = false;
       this.startTimeModal = false;
       this.endTimeModal = false;
-      this.imageSelected = false;
       this.imageId = -1;
       this.oldImageId = -1;
       this.$validator.reset();
@@ -414,6 +383,8 @@ export default {
           this.event.start = this.getTimestamp(this.startDate, this.startTime);
           this.event.end = this.getTimestamp(this.endDate, this.endTime);
           this.event.active = true;
+          this.event.imageId = this.imageId;
+          this.event.oldImageId = this.oldImageId;
           this.$emit("save", this.event);
         }
       });
@@ -491,40 +462,14 @@ export default {
       this.currentAddress = address.address_id;
     },
 
-    openFileChooser() {
-      const imageInput = this.$refs.image_chooser;
-      imageInput.click();
+    chooseImage(id) {
+      this.imageId = id;
+      console.log(this.imageId);
     },
 
-    uploadSelectedImage($event) {
-      if ($event.target.files.length > 0) {
-        const formData = new FormData(this.$refs.imageForm);
-        this.$http
-          .post("/api/v1/images/", formData)
-          .then(resp => {
-            console.log(resp);
-            this.event.imageId = resp.data.id;
-            this.imageId = resp.data.id;
-            this.imageSelected = true;
-          })
-          .catch(err => {
-            const resp = err.response;
-            if (resp.status == 303) {
-              this.event.imageId = resp.data.id;
-              this.imageId = resp.data.id;
-              this.imageSelected = true;
-            } else {
-              console.error("IMAGE ERROR", err.response);
-            }
-          });
-      }
-      this.$forceUpdate();
-    },
-
-    deleteSelectedImage() {
-      this.imageSelected = false;
+    deleteImage() {
       this.imageId = -1;
-      this.oldImageId = -1;
+      console.log(this.imageId);
     }
   },
   props: {
@@ -557,7 +502,6 @@ export default {
       startTimeModal: false,
       endTimeModal: false,
       showAddressCreator: false,
-      imageSelected: false,
       currentAddress: 0
     };
   }
