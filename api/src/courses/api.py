@@ -421,6 +421,8 @@ def activate_diploma(diploma_id):
     if diploma is None:
         return 'Not Found', 404
     setattr(diploma, 'active', True)
+    db.session.commit()
+
     return jsonify(diploma_schema.dump(diploma))
 
 
@@ -432,6 +434,8 @@ def deactivate_diploma(diploma_id):
     if diploma is None:
         return 'Not Found', 404
     setattr(diploma, 'active', False)
+    db.session.commit()
+    
     return jsonify(diploma_schema.dump(diploma))
 
 
