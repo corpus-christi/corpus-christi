@@ -1,7 +1,7 @@
 import json
 from datetime import datetime, timedelta
 
-from flask import request
+from flask import request, url_for, redirect
 from flask.json import jsonify
 from flask_jwt_extended import jwt_required, get_raw_jwt, jwt_optional
 from flask_mail import Message
@@ -15,7 +15,7 @@ from ..teams.models import Team, TeamMember, TeamSchema, TeamMemberSchema
 from ..emails.models import EmailSchema
 from ..people.models import Person, PersonSchema
 from ..images.models import Image, ImageSchema, ImageEvent, ImageEventSchema
-from ..groups.models import Group, GroupSchema
+from ..groups.models import Group, GroupSchema, GroupMember, GroupMemberSchema
 from .. import db, mail
 from ..etc.helper import modify_entity, get_exclusion_list
 
@@ -408,13 +408,13 @@ def delete_event_image(event_id, image_id):
 
 
 # --- Groups
-@evetns.route('/<event_id>/groups/<group_id>', methods=['POST'])
+@events.route('/<event_id>/groups/<group_id>', methods=['POST'])
 @jwt_required
 def add_event_group(event_id, group_id):
     event = db.session.query(Event).filter_by(id=event_id).first()
     group = db.session.query(Group).filter_by(id=group_id).first()
 
-    event_group = db.session.query(EventGroup).filter_by(id=event_id, id=group_id).first()
+    event_group = db.session.query(EventGroup).filter_by(event_id=event_id, group_id=group_id).first()
     if not event:
         return jsonify(f"Event with id #{event_id} does not exist."), 404
     if not group:
@@ -423,6 +423,24 @@ def add_event_group(event_id, group_id):
         return jsonify(f"Group with id #{group_id} is already attached to event with id #{event_id}."), 422
     else:
         new_entry = EventGroup(**{'event_id': event_id, 'group_id': group_id, 'active': True})
+
+        group_members = db.session.queury(GroupMember).filter_by(group_id = group_id, active = True).all()
+        for group_member in group_members:
+            person_id = group_member.person_id
+            if db.session.query(EventParticipant).filter_by(event_id=event.id, person_id=person_id).first():
+                return jsonify(f"Person with id #{person_id} is already attached to event with id #{event_id}."), 422
+            else:
+                new_participant = EventParticipant(**{'event_id' : event_id, 'person_id' : person_id, 'confimed' : True})
+                db.session.add(new_participant)
+                # send notification
+                # make multilinguable later
+                person_email = db.session.query(Person.email).filter_by(id=person_id).first()
+                if person_email: 
+                    msg = Message("Event Booking Notification", sender='tumissionscomputing@gmail.com', recipients=[person_email])
+                    link = f"<a href=\"url_for('read_one_event', event_id = {event_id})\">click here</a>"
+                    msg.body = f"You have been book for event {event.title}. For more information about the event {link}."
+                    mail.send(msg)
+
         db.session.add(new_entry)
         db.session.commit()
     return jsonify(f"Group with id #{group_id} successfully attached to event with id #{event_id}."), 201
@@ -430,7 +448,7 @@ def add_event_group(event_id, group_id):
 @evetns.route('/<event_id>/groups/<group_id>', methods=['DELETE'])
 @jwt_required
 def delete_event_group(event_id, group_id):
-    event_group = db.session.query(EventGroup).filter_by(id=event_id, id=group_id).first()
+    event_group = db.session.query(EventGroup).filter_by(event_id=event_id, group_id=group_id).first()
     if not event_group:
         return jsonify(f"Group with id #{group_id} is not attached to event with id #{event_id}."), 404
 
