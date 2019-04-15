@@ -51,6 +51,32 @@ def reset_paths_taken():
         paths_taken[i] = False
 
 
+#Used to create the test images in the database; pulled from Events
+def create_test_images(sqla):
+    image_schema = ImageSchema()
+    new_images = []
+
+    valid_image = image_schema.load({'path': 'image/a1/casa.jpg', 'description': 'Civil authority rich coach answer total general.'})
+    new_images.append(Image(**valid_image))
+    valid_image = image_schema.load({'path': 'image/a1/coffee_house.jpg'})
+    new_images.append(Image(**valid_image))
+    valid_image = image_schema.load({'path': 'image/a1/park.jpg'})
+    new_images.append(Image(**valid_image))
+    valid_image = image_schema.load({'path': 'image/a1/verbo.jpg'})
+    new_images.append(Image(**valid_image))
+    valid_image = image_schema.load({'path': 'image/m5/downtown.jpg'})
+    new_images.append(Image(**valid_image))
+    valid_image = image_schema.load({'path': 'image/m5/park.jpg', 'description': 'Explicabo doloremque voluptatibus quaerat repellat libero.'})
+    new_images.append(Image(**valid_image))
+    valid_image = image_schema.load({'path': 'image/m5/broken_bridge.jpg'})
+    new_images.append(Image(**valid_image))
+    valid_image = image_schema.load({'path': 'image/m5/tree.jpg', 'description': 'Factor rate forget research today hand.'})
+    new_images.append(Image(**valid_image))
+    
+    sqla.add_all(new_images)
+    sqla.commit()
+
+
 def image_object_factory(sqla):
     """Cook up a fake image."""
 

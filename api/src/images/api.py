@@ -132,5 +132,3 @@ def delete_image(image_id):
     return "Deleted successfully", 204
 
 
-
-
