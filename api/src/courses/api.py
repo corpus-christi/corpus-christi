@@ -11,6 +11,7 @@ from .. import db
 from . import courses
 from ..people.models import Person, PersonSchema
 from ..places.models import Location, LocationSchema
+from ..images.models import Image, ImageSchema, ImageCourse, ImageCourseSchema
 from .models import Course, CourseSchema, \
                     Course_Offering, Course_OfferingSchema, \
                     Student, StudentSchema, \
@@ -945,3 +946,59 @@ def update_class_attendance(course_offering_id, class_meeting_id):
     db.session.add_all(updates)
     db.session.commit() # Commit all new changes
     return jsonify(add_attendance_to_meetings(class_meeting_schema.dump(class_meeting)))
+
+# ---- Image
+
+@courses.route('/<course_id>/images/<image_id>', methods=['POST'])
+@jwt_required
+def add_course_images(course_id, image_id):
+    course = db.session.query(Course).filter_by(id=course_id).first()
+    image = db.session.query(Image).filter_by(id=image_id).first()
+
+    course_image = db.session.query(ImageCourse).filter_by(course_id=course_id,image_id=image_id).first()
+
+    if not course:
+        return jsonify(f"Course with id #{course_id} does not exist."), 404
+
+    if not image:
+        return jsonify(f"Image with id #{image_id} does not exist."), 404
+
+    # If image is already attached to the course
+    if course_image:
+        return jsonify(f"Image with id#{image_id} is already attached to course with id#{course_id}."), 422
+    else:
+        new_entry = ImageCourse(**{'course_id': course_id, 'image_id': image_id})
+        db.session.add(new_entry)
+        db.session.commit()
+
+    return jsonify(f"Image with id #{image_id} successfully added to Course with id #{course_id}."), 201
+
+@courses.route('/<course_id>/images/<image_id>', methods=['PUT'])
+@jwt_required
+def put_course_images(course_id, image_id):
+    # check for old image id in parameter list (?old=<id>)
+    old_image_id = request.args['old']
+    new_image_id = image_id
+
+    if old_image_id == 'false':
+        post_resp = add_course_images(course_id, new_image_id)
+        return jsonify({'deleted': 'No image to delete', 'posted': str(post_resp[0].data, "utf-8") })
+    else:
+        del_resp = delete_course_image(course_id, old_image_id)
+        post_resp = add_course_images(course_id, new_image_id)
+
+        return jsonify({'deleted': del_resp[0], 'posted': str(post_resp[0].data, "utf-8") })
+
+@courses.route('/<course_id>/images/<image_id>', methods=['DELETE'])
+@jwt_required
+def delete_course_image(course_id, image_id):
+    course_image = db.session.query(ImageCourse).filter_by(course_id=course_id,image_id=image_id).first()
+    
+    if not course_image:
+        return jsonify(f"Image with id #{image_id} is not assigned to Course with id #{course_id}."), 404
+
+    db.session.delete(course_image)
+    db.session.commit()
+
+    # 204 codes don't respond with any content
+    return 'Successfully removed image', 204
