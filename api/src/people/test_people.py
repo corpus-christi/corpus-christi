@@ -1793,7 +1793,6 @@ def test_add_people_images_already_exist(auth_client):
         assert resp.status_code == 422
 
 
-
 @pytest.mark.smoke
 def test_delete_person_image(auth_client):
     # GIVEN a set of people, images, and person_image relationships
@@ -1802,15 +1801,15 @@ def test_delete_person_image(auth_client):
     create_test_images(auth_client.sqla)
     create_images_people(auth_client.sqla)
 
-    people = auth_client.sqla.query(Person).all()
-    images = auth_client.sqla.query(Image).all()
+    valid_image_person = auth_client.sqla.query(ImagePerson).first()
+
+    print(valid_image_person.person_id)
 
     # WHEN the person_image relationships are requested to be deleted
-    for i in range(count):
-        resp = auth_client.delete(url_for('people.delete_person_image', person_id = people[i].id, image_id = images[i].id))
+    resp = auth_client.delete(url_for('people.delete_person_image', person_id = valid_image_person.person_id, image_id = valid_image_person.image_id))
 
-        # THEN expect the delete to run OK
-        assert resp.status_code == 204
+    # THEN expect the delete to run OK
+    assert resp.status_code == 204
 
 
 @pytest.mark.smoke

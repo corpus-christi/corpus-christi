@@ -11,9 +11,11 @@ from .models import Course, CourseSchema, Course_Offering, Class_Meeting,\
         Class_Meeting, Class_MeetingSchema, Diploma_Awarded, Diploma_AwardedSchema,\
         Class_Attendance, Class_AttendanceSchema, Course_Completion, Course_CompletionSchema
 from ..people.models import Person
+from ..images.models import Image, ImageSchema, ImageCourse, ImageCourseSchema
 from ..places.models import Country, Location
 from ..people.test_people import create_multiple_people
 from ..places.test_places import create_multiple_areas, create_multiple_addresses, create_multiple_locations
+from ..images.create_image_data import create_test_images, create_images_courses
 
 
 def flip():
@@ -1292,14 +1294,13 @@ def test_delete_class_meeting(auth_client):
     assert resp.status_code == 403
 
 # ---- Course_Completion
-"""
 @pytest.mark.xfail()
 def test_create_course_completion(auth_client):
     # GIVEN
     # WHEN
     # THEN
     assert True == False
-"""
+
 
 def test_delete_course_completion(auth_client):
     """Test with invalid course completion"""
@@ -1320,5 +1321,91 @@ def test_delete_course_completion(auth_client):
     assert resp.status_code == 200
     assert auth_client.sqla.query(Course_Completion).all() == []
 
+@pytest.mark.smoke
+def test_add_course_images(auth_client):
+    # GIVEN a set of courses and images
+    count = random.randint(3, 6)
+    create_multiple_courses(auth_client.sqla, count)
+    create_test_images(auth_client.sqla)
 
-open
+    courses = auth_client.sqla.query(Course).all()
+    images = auth_client.sqla.query(Image).all()
+    
+    # WHEN an image is requested to be tied to each course
+    for i in range(count):
+        print(i)
+        resp = auth_client.post(url_for('courses.add_course_images', course_id = courses[i].id, image_id = images[i].id))
+
+        # THEN expect the request to run OK
+        assert resp.status_code == 201
+
+        # THEN expect the course to have a single image
+        assert len(auth_client.sqla.query(Course).filter_by(id = courses[i].id).first().images) == 1
+
+
+@pytest.mark.smoke
+def test_add_course_images_no_exist(auth_client):
+    # GIVEN a set of courses and images
+    count = random.randint(3, 6)
+    create_multiple_courses(auth_client.sqla, count)
+    create_test_images(auth_client.sqla)
+
+    courses = auth_client.sqla.query(Course).all()
+    images = auth_client.sqla.query(Image).all()
+    
+    # WHEN a no existant image is requested to be tied to an course
+    resp = auth_client.post(url_for('courses.add_course_images', course_id = 1, image_id = len(images) + 1))
+
+    # THEN expect the image not to be found
+    assert resp.status_code == 404
+
+    # WHEN an image is requested to be tied to a no existant course
+    resp = auth_client.post(url_for('courses.add_course_images', course_id = count + 1, image_id = 1))
+
+    # THEN expect the course not to be found
+    assert resp.status_code == 404
+
+
+@pytest.mark.smoke
+def test_add_course_images_already_exist(auth_client):
+    # GIVEN a set of courses, images, and course_image relationships
+    count = random.randint(3, 6)
+    create_multiple_courses(auth_client.sqla, count)
+    create_test_images(auth_client.sqla)
+    create_images_courses(auth_client.sqla)
+
+    course_images = auth_client.sqla.query(ImageCourse).all()
+
+    # WHEN existing course_image relationships are requested to be created
+    for course_image in course_images:
+        resp = auth_client.post(url_for('courses.add_course_images', course_id = course_image.course_id, image_id = course_image.image_id))
+
+        # THEN expect the request to be unprocessable
+        assert resp.status_code == 422
+
+@pytest.mark.smoke
+def test_delete_course_image(auth_client):
+    # GIVEN a set of courses, images, and course_image relationships
+    count = random.randint(3, 6)
+    create_multiple_courses(auth_client.sqla, count)
+    create_test_images(auth_client.sqla)
+    create_images_courses(auth_client.sqla)
+
+    valid_course_image = auth_client.sqla.query(ImageCourse).first()
+
+    # WHEN the course_image relationships are requested to be deleted
+    resp = auth_client.delete(url_for('courses.delete_course_image', course_id = valid_course_image.course_id, image_id = valid_course_image.image_id))
+
+    # THEN expect the delete to run OK
+    assert resp.status_code == 204
+
+
+@pytest.mark.smoke
+def test_delete_course_image_no_exist(auth_client):
+    # GIVEN an empty database
+
+    # WHEN a course_image relationship is requested to be deleted
+    resp = auth_client.delete(url_for('courses.delete_course_image', course_id = random.randint(1, 8), image_id = random.randint(1, 8)))
+
+    # THEN expect the requested row to not be found
+    assert resp.status_code == 404
