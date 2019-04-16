@@ -272,7 +272,8 @@
     },
     "images": {
       "messages": {
-        "no-image": "No image selected."
+        "no-image": "No image selected.",
+        "not-found": "Image not found."
       }
     },
     "login": {
@@ -694,7 +695,8 @@
     },
     "images": {
       "messages": {
-        "no-image": "Ninguna imagen seleccionada."
+        "no-image": "Ninguna imagen seleccionada.",
+        "not-found": "Imagen no encontrada."
       }
     },
     "login": {

@@ -421,13 +421,10 @@ export default {
 
       this.imageId = event.imageId;
       if (this.eventDialog.editMode) {
-        if (event.oldImageId) {
+        if (event.oldImageId != -1) {
           this.oldImageId = event.oldImageId;
-        } else {
-          this.oldImageId = -1;
         }
       }
-
       delete event.images;
 
       let newEvent = JSON.parse(JSON.stringify(event));
@@ -455,25 +452,7 @@ export default {
                 .then(resp => {
                   console.log("EDITED", resp);
                   Object.assign(this.events[idx], resp.data);
-                  const image = {
-                    image: {
-                      id: event.imageId
-                    }
-                  };
-                  this.events[idx].images.push(image);
-                  // if(this.events[idx].images) {
-                  //   this.events[idx].images[0].image.id = event.imageId;
-                  // } else {
-                  //   imageArr = [];
-                  //   imageArr.push(
-                  //     {
-                  //       image: {
-                  //         id: event.imageId
-                  //       }
-                  //     }
-                  //   );
-                  //   this.events[idx].images = imageArr;
-                  // }
+                  this.refreshEventsTable();
                   this.cancelEvent();
                   this.showSnackbar(this.$t("events.event-edited"));
                 })
@@ -500,7 +479,7 @@ export default {
                 .then(resp => {
                   console.log("EDITED", resp);
                   Object.assign(this.events[idx], resp.data);
-                  this.events[idx].images.shift();
+                  this.refreshEventsTable();
                   this.cancelEvent();
                   this.showSnackbar(this.$t("events.event-edited"));
                 })
