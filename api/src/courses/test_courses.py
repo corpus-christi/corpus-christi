@@ -15,7 +15,7 @@ from ..images.models import Image, ImageSchema, ImageCourse, ImageCourseSchema
 from ..places.models import Country, Location
 from ..people.test_people import create_multiple_people
 from ..places.test_places import create_multiple_areas, create_multiple_addresses, create_multiple_locations
-from ..images.create_image_data import create_test_images, create_images_courses
+from ..images.create_image_data import create_test_images
 
 
 def flip():

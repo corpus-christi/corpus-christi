@@ -6,6 +6,7 @@ from faker import Faker
 from ..places.models import Address
 from ..people.models import Person, Manager, Role, RoleSchema
 from ..groups.models import Group, Meeting, Attendance, Member, GroupSchema, MeetingSchema, AttendanceSchema, MemberSchema
+from ..people.test_people import create_multiple_managers
 
 
 class RandomLocaleFaker:
@@ -108,6 +109,10 @@ def role_object_factory(role_name):
 
 def create_multiple_groups(sqla, n):
     """Commit `n` new groups to the database. Return their IDs."""
+    all_managers = sqla.query(Manager).all()
+    if not all_managers:
+        create_multiple_managers(sqla, random.randint(3, 6))
+        all_managers = sqla.query(Manager).all()
     group_schema = GroupSchema()
     new_groups = []
     for i in range(n):

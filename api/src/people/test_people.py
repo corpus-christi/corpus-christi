@@ -101,6 +101,9 @@ def create_multiple_accounts(sqla, fraction=0.75):
         raise RuntimeError(f"Fraction ({fraction}) is out of bounds")
 
     all_people = sqla.query(Person).all()
+    if not all_people:
+        create_multiple_people(sqla, random.randint(3, 6))
+        all_people = sqla.query(Person).all()
     sample_people = random.sample(
         all_people, math.floor(len(all_people) * fraction))
 
@@ -240,6 +243,9 @@ def manager_object_factory(sqla, description, next_level=None, locale_code='en-U
                     description, description=f"Manager {description}")
 
     all_accounts = sqla.query(Account).all()
+    if not all_accounts:
+        create_multiple_accounts(sqla)
+        all_accounts = sqla.query(Account).all()
 
     manager = {
 
