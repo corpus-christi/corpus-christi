@@ -7,6 +7,7 @@ from marshmallow import ValidationError
 from . import groups
 from .models import GroupSchema, Group, Attendance, Member, MemberSchema, Meeting, MeetingSchema, AttendanceSchema
 from ..people.models import Role, Manager
+from ..images.models import Image, ImageSchema, ImageGroup, ImageGroupSchema
 from .. import db
 
 # ---- Group
@@ -498,3 +499,59 @@ def delete_attendance():
 
     # 204 codes don't respond with any content
     return jsonify(attendance_schema.dump(valid_attendance)), 204
+
+# ---- Image
+
+@groups.route('/<group_id>/images/<image_id>', methods=['POST'])
+@jwt_required
+def add_group_images(group_id, image_id):
+    group = db.session.query(Group).filter_by(id=group_id).first()
+    image = db.session.query(Image).filter_by(id=image_id).first()
+
+    group_image = db.session.query(ImageGroup).filter_by(group_id=group_id,image_id=image_id).first()
+
+    if not group:
+        return jsonify(f"Group with id #{group_id} does not exist."), 404
+
+    if not image:
+        return jsonify(f"Image with id #{image_id} does not exist."), 404
+
+    # If image is already attached to the group
+    if group_image:
+        return jsonify(f"Image with id#{image_id} is already attached to group with id#{group_id}."), 422
+    else:
+        new_entry = ImageGroup(**{'group_id': group_id, 'image_id': image_id})
+        db.session.add(new_entry)
+        db.session.commit()
+
+    return jsonify(f"Image with id #{image_id} successfully added to Group with id #{group_id}."), 201
+
+@groups.route('/<group_id>/images/<image_id>', methods=['PUT'])
+@jwt_required
+def put_group_images(group_id, image_id):
+    # check for old image id in parameter list (?old=<id>)
+    old_image_id = request.args['old']
+    new_image_id = image_id
+
+    if old_image_id == 'false':
+        post_resp = add_group_images(group_id, new_image_id)
+        return jsonify({'deleted': 'No image to delete', 'posted': str(post_resp[0].data, "utf-8") })
+    else:
+        del_resp = delete_group_image(group_id, old_image_id)
+        post_resp = add_group_images(group_id, new_image_id)
+
+        return jsonify({'deleted': del_resp[0], 'posted': str(post_resp[0].data, "utf-8") })
+
+@groups.route('/<group_id>/images/<image_id>', methods=['DELETE'])
+@jwt_required
+def delete_group_image(group_id, image_id):
+    group_image = db.session.query(ImageGroup).filter_by(group_id=group_id,image_id=image_id).first()
+    
+    if not group_image:
+        return jsonify(f"Image with id #{image_id} is not assigned to Group with id #{group_id}."), 404
+
+    db.session.delete(group_image)
+    db.session.commit()
+
+    # 204 codes don't respond with any content
+    return 'Successfully removed image', 204
