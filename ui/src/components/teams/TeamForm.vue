@@ -30,7 +30,7 @@
         color="primary"
         outline
         v-on:click="addAnother"
-        v-if="editMode === false"
+        v-if="!editMode"
         :loading="addMoreLoading"
         :disabled="formDisabled"
         data-cy="form-addanother"
@@ -54,6 +54,29 @@ import { isEmpty } from "lodash";
 // import { mapGetters } from "vuex";
 export default {
   name: "TeamForm",
+  props: {
+    editMode: {
+      type: Boolean,
+      required: true
+    },
+    initialData: {
+      type: Object,
+      required: true
+    },
+    saveLoading: {
+      type: Boolean
+    },
+    addMoreLoading: {
+      type: Boolean
+    }
+  },
+  data: function() {
+    return {
+      team: {},
+      addMore: false
+    };
+  },
+
   watch: {
     // Make sure data stays in sync with any changes to `initialData` from parent.
     initialData(teamProp) {
@@ -84,7 +107,6 @@ export default {
 
   methods: {
     cancel() {
-      this.clear();
       this.$emit("cancel");
     },
 
@@ -97,44 +119,21 @@ export default {
       this.$validator.reset();
     },
 
+    addAnother() {
+      this.addMore = true;
+      this.save();
+    },
+
     save() {
       this.$validator.validateAll().then(() => {
         if (!this.errors.any()) {
-          // this.team.active = true;
-          this.$emit("save", this.team);
+          this.team.active = true;
+          if (this.addMore) this.$emit("addAnother", this.team);
+          else this.$emit("save", this.team);
         }
+        this.addMore = false;
       });
-    },
-
-    addAnother() {
-      this.$validator.validateAll();
-      if (!this.errors.any()) {
-        this.$emit("add-another", this.team);
-      }
     }
-  },
-  props: {
-    editMode: {
-      type: Boolean,
-      required: true
-    },
-    initialData: {
-      type: Object,
-      required: true
-    },
-    saveLoading: {
-      type: Boolean
-    },
-    addMoreLoading: {
-      type: Boolean
-    }
-  },
-  data: function() {
-    return {
-      team: {},
-      save_loading: false,
-      add_more_loading: false
-    };
   }
 };
 </script>

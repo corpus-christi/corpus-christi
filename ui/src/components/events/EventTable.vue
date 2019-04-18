@@ -182,7 +182,7 @@
         v-bind:addMoreLoading="eventDialog.addMoreLoading"
         v-on:cancel="cancelEvent"
         v-on:save="saveEvent"
-        v-on:add-another="addAnotherEvent"
+        v-on:addAnother="addAnother"
       />
     </v-dialog>
 
@@ -219,15 +219,6 @@ import { mapGetters } from "vuex";
 export default {
   name: "EventTable",
   components: { "event-form": EventForm },
-  mounted() {
-    this.tableLoading = true;
-    this.$http.get("/api/v1/events/?return_group=all").then(resp => {
-      this.events = resp.data;
-      this.tableLoading = false;
-    });
-    this.onResize();
-  },
-
   data() {
     return {
       active: 0,
@@ -262,6 +253,7 @@ export default {
         show: false,
         text: ""
       },
+      addMore: false,
       viewStatus: "viewActive",
       viewPast: false,
       windowSize: {
@@ -400,16 +392,32 @@ export default {
       this.activateEventDialog();
     },
 
-    cancelEvent() {
-      this.eventDialog.show = false;
-      this.eventDialog.editMode = false;
+    clearEvent() {
+      this.addMore = false;
       this.eventDialog.saveLoading = false;
       this.eventDialog.addMoreLoading = false;
       this.eventDialog.event = {};
     },
 
-    saveEvent(event) {
+    cancelEvent() {
+      this.addMore = false;
+      this.eventDialog.show = false;
+      this.eventDialog.saveLoading = false;
+      this.eventDialog.addMoreLoading = false;
+    },
+
+    addAnother(event) {
+      this.addMore = true;
+      this.eventDialog.addMoreLoading = true;
+      this.saveEvent(event);
+    },
+
+    save(event) {
       this.eventDialog.saveLoading = true;
+      this.saveEvent(event);
+    },
+
+    saveEvent(event) {
       if (event.location) {
         event.location_id = event.location.id;
       }
@@ -462,12 +470,17 @@ export default {
           .then(resp => {
             console.log("ADDED", resp);
             this.events.push(resp.data);
-            this.cancelEvent();
+            if (this.addMore) {
+              this.clearEvent();
+            } else {
+              this.cancelEvent();
+            }
             this.showSnackbar(this.$t("events.event-added"));
           })
           .catch(err => {
             console.error("POST FAILURE", err.response);
             this.eventDialog.saveLoading = false;
+            this.eventDialog.addMoreLoading = false;
             this.showSnackbar(this.$t("events.error-adding-event"));
           });
       }
@@ -514,31 +527,11 @@ export default {
       );
     },
 
-    addAnotherEvent(event) {
-      this.eventDialog.addMoreLoading = true;
-      event.location_id = event.location.id;
-      let newEvent = JSON.parse(JSON.stringify(event));
-      delete newEvent.location;
-      this.$http
-        .post("/api/v1/events/", newEvent)
-        .then(resp => {
-          console.log("ADDED", resp);
-          this.events.push(resp.data);
-          this.eventDialog.show = false;
-          this.eventDialog.saveLoading = false;
-          this.showSnackbar(this.$t("events.event-added"));
-        })
-        .catch(err => {
-          console.error("FAILURE", err.response);
-          this.eventDialog.saveLoading = false;
-          this.showSnackbar(this.$t("events.error-adding-event"));
-        });
-    },
-
     showSnackbar(message) {
       this.snackbar.text = message;
       this.snackbar.show = true;
     },
+
     getDisplayDate(dateString) {
       let date = new Date(dateString);
       return date.toLocaleTimeString(this.currentLanguageCode, {
@@ -549,6 +542,7 @@ export default {
         minute: "2-digit"
       });
     },
+
     getDisplayLocation(location, length = 20) {
       if (location && location.description) {
         let name = location.description;
@@ -580,6 +574,15 @@ export default {
         this.windowSize.small = false;
       }
     }
+  },
+
+  mounted() {
+    this.tableLoading = true;
+    this.$http.get("/api/v1/events/?return_group=all").then(resp => {
+      this.events = resp.data;
+      this.tableLoading = false;
+    });
+    this.onResize();
   }
 };
 </script>
