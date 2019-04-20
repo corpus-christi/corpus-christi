@@ -313,7 +313,7 @@ export default {
       showAddressCreator: false,
       currentAddress: 0,
       imageId: -1,
-      oldImageId: -1,
+      oldImageId: -1
     };
   },
 
@@ -385,14 +385,6 @@ export default {
       return this.startDate && this.startTime;
     },
 
-    formDisabled() {
-      return this.saveLoading || this.addMoreLoading;
-    },
-
-    imageMessage() {
-      this.imageMessage = "No image selected."
-    },
-
     ...mapGetters(["currentLanguageCode"])
   },
 
@@ -416,7 +408,7 @@ export default {
       this.startTimeModal = false;
       this.endTimeModal = false;
       this.imageId = -1;
-      this.oldImageId = -1;
+      this.oldImageId--; // we do the decrement operator here to make sure that ImageChooser's watch method gets called.
       this.$validator.reset();
     },
     save() {
@@ -427,27 +419,16 @@ export default {
           this.event.active = true;
           this.event.imageId = this.imageId;
           this.event.oldImageId = this.oldImageId;
-          this.$emit("save", this.event);
+          if (this.addMore) this.$emit("addAnother", this.event);
+          else this.$emit("save", this.event);
         }
+        this.addMore = false;
       });
     },
 
     addAnother() {
       this.addMore = true;
       this.save();
-    },
-
-    save() {
-      this.$validator.validateAll().then(() => {
-        if (!this.errors.any()) {
-          this.event.start = this.getTimestamp(this.startDate, this.startTime);
-          this.event.end = this.getTimestamp(this.endDate, this.endTime);
-          this.event.active = true;
-          if (this.addMore) this.$emit("addAnother", this.event);
-          else this.$emit("save", this.event);
-        }
-        this.addMore = false;
-      });
     },
 
     getTimestamp(date, time) {

@@ -249,7 +249,7 @@ export default {
       },
       search: "",
 
-      imageId: 0, // not the best way to do this, but works for now -- maybe rewrite?
+      imageId: -1, // not the best way to do this, but works for now -- maybe rewrite?
       oldImageId: -1,
 
       snackbar: {
@@ -463,7 +463,6 @@ export default {
                   this.showSnackbar(this.$t("events.event-edited"));
                 })
                 .catch(err => {
-                  console.log(err);
                   console.error("PUT FALURE", err.response);
                   this.eventDialog.saveLoading = false;
                   this.showSnackbar(this.$t("events.error-editing-event"));
@@ -661,12 +660,7 @@ export default {
   },
 
   mounted() {
-    this.tableLoading = true;
-    this.$http.get("/api/v1/events/?return_group=all").then(resp => {
-      this.events = resp.data;
-      this.tableLoading = false;
-    });
-    this.onResize();
+    this.refreshEventsTable();
   }
 };
 </script>
