@@ -341,6 +341,7 @@ export default {
     },
 
     saveCourse(course) {
+<<<<<<< HEAD
       let courseAttrs = {
         description: course.description,
         name: course.name
@@ -383,6 +384,22 @@ export default {
             this.courseDialog.saveLoading = false;
             this.showSnackbar(this.$t("courses.update-failed"));
           });
+=======
+      if (course instanceof Error) {
+        this.snackbar.text = this.courseDialog.editMode
+          ? this.$t("courses.update-failed")
+          : this.$t("courses.add-failed");
+        this.snackbar.show = true;
+        this.courseDialog.show = false;
+        return;
+      }
+
+      if (this.courseDialog.editMode) {
+        // Locate the record we're updating in the table.
+        const idx = this.courses.findIndex(c => c.id === course.id);
+        Object.assign(this.courses[idx], course);
+        this.snackbar.text = this.$t("courses.updated");
+>>>>>>> 4845f37fa1f017eb32b3357739b1469d71a849cc
       } else {
         // All new courses are active
         courseAttrs.active = true;

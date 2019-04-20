@@ -161,6 +161,7 @@ export default {
     },
 
     loadCoursesPool() {
+<<<<<<< HEAD
       if (!this.courses) {
         this.loading = true;
         this.$http.get(`/api/v1/courses/courses`).then(resp => {
@@ -170,6 +171,13 @@ export default {
       } else {
         this.coursesPool = this.courses;
       }
+=======
+      this.loading = true;
+      this.$http.get(`/api/v1/courses/courses`).then(resp => {
+        this.coursesPool = resp.data;
+        this.loading = false;
+      });
+>>>>>>> 4845f37fa1f017eb32b3357739b1469d71a849cc
     }
   },
 
