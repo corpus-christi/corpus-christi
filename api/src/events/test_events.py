@@ -16,7 +16,7 @@ from ..places.models import Location, Country
 from ..people.models import Person
 from ..images.models import Image, ImageEvent
 from .create_event_data import flip, fake, create_multiple_events, event_object_factory, email_object_factory, create_multiple_assets, create_multiple_teams, create_events_assets, create_events_teams, create_events_persons, create_events_participants, create_teams_members, get_team_ids, asset_object_factory, team_object_factory, create_event_images
-from ..images.create_image_data import create_test_images
+from ..images.create_image_data import create_test_images, create_images_events
 from ..places.test_places import create_multiple_locations, create_multiple_addresses, create_multiple_areas
 from ..people.test_people import create_multiple_people
 
@@ -766,17 +766,15 @@ def test_delete_event_image(auth_client):
     count = random.randint(3, 6)
     create_multiple_events(auth_client.sqla, count)
     create_test_images(auth_client.sqla)
-    create_event_images(auth_client.sqla)
+    create_images_events(auth_client.sqla)
 
-    events = auth_client.sqla.query(Event).all()
-    images = auth_client.sqla.query(Image).all()
+    valid_event_image = auth_client.sqla.query(ImageEvent).first()
 
     # WHEN the event_image relationships are requested to be deleted
-    for i in range(count):
-        resp = auth_client.delete(url_for('events.delete_event_image', event_id = events[i].id, image_id = images[i].id))
+    resp = auth_client.delete(url_for('events.delete_event_image', event_id = valid_event_image.event_id, image_id = valid_event_image.image_id))
 
-        # THEN expect the delete to run OK
-        assert resp.status_code == 204
+    # THEN expect the delete to run OK
+    assert resp.status_code == 204
 
 
 @pytest.mark.smoke

@@ -13,9 +13,9 @@ from .models import Event, EventPerson, EventAsset, EventParticipant, EventTeam,
 from ..assets.models import Asset, AssetSchema
 from ..teams.models import Team, TeamMember, TeamSchema, TeamMemberSchema
 from ..places.models import Location
-from ..people.models import Person
 from ..images.models import Image, ImageSchema, ImageEvent, ImageEventSchema
 from ..images.create_image_data import create_test_images
+from ..people.models import Person
 
 from .models import EventAsset, EventAssetSchema, EventTeam, EventTeamSchema
 

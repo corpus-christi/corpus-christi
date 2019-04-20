@@ -11,6 +11,8 @@ from werkzeug.security import check_password_hash
 from .. import db
 
 from .models import Location, Address, Area, Country, AreaSchema, LocationSchema, AddressSchema
+from ..images.create_image_data import create_images_locations, create_test_images
+from ..images.models import Image, ImageSchema, ImageLocation, ImageLocationSchema
 
 
 area_schema = AreaSchema()
@@ -68,6 +70,9 @@ def flip():
 def area_factory(sqla):
     """Create a fake area."""
     countries = sqla.query(Country).all()
+    if not countries:
+        Country.load_from_file()
+        countries = sqla.query(Country).all()
     area = {
         #using last_name for testing purposes, will be area name
         'name': rl_fake().last_name(),
@@ -82,6 +87,9 @@ def address_factory(sqla):
     fake = Faker()  # Use a generic one; others may not have all methods.
     addresslines = fake.address().splitlines()
     areas = sqla.query(Area).all()
+    if not areas:
+        create_multiple_areas(sqla, random.randint(3, 6))
+        areas = sqla.query(Area).all()
     current_area = random.choice(areas)
 
     address = {
@@ -99,6 +107,9 @@ def location_factory(sqla):
     """Create a fake location"""
     fake = Faker()  # Use a generic one; others may not have all methods.
     addresses = sqla.query(Address).all()
+    if not addresses:
+        create_multiple_addresses(sqla, random.randint(3, 6))
+        addresses = sqla.query(Address).all()
     current_address = random.choice(addresses)
 
     location = {
@@ -1196,3 +1207,97 @@ def test_repr_location(auth_client):
 def test_repr_address(auth_client):
     address = Address()
     address.__repr__()
+
+
+@pytest.mark.smoke
+def test_add_location_images(auth_client):
+    # GIVEN a set of locations and images
+    count = random.randint(3, 6)
+    create_multiple_locations(auth_client.sqla, count)
+    create_test_images(auth_client.sqla)
+
+    locations = auth_client.sqla.query(Location).all()
+    images = auth_client.sqla.query(Image).all()
+    
+    # WHEN an image is requested to be tied to each location
+    for i in range(count):
+        print(i)
+        resp = auth_client.post(url_for('places.add_location_images', location_id = locations[i].id, image_id = images[i].id))
+
+        # THEN expect the request to run OK
+        assert resp.status_code == 201
+
+        # THEN expect the location to have a single image
+        assert len(auth_client.sqla.query(Location).filter_by(id = locations[i].id).first().images) == 1
+
+
+@pytest.mark.smoke
+def test_add_location_images_no_exist(auth_client):
+    # GIVEN a set of locations and images
+    count = random.randint(3, 6)
+    create_multiple_locations(auth_client.sqla, count)
+    create_test_images(auth_client.sqla)
+
+    locations = auth_client.sqla.query(Location).all()
+    images = auth_client.sqla.query(Image).all()
+    
+    # WHEN a no existant image is requested to be tied to an location
+    resp = auth_client.post(url_for('places.add_location_images', location_id = 1, image_id = len(images) + 1))
+
+    # THEN expect the image not to be found
+    assert resp.status_code == 404
+
+    # WHEN an image is requested to be tied to a no existant location
+    resp = auth_client.post(url_for('places.add_location_images', location_id = count + 1, image_id = 1))
+
+    # THEN expect the location not to be found
+    assert resp.status_code == 404
+
+
+@pytest.mark.smoke
+def test_add_location_images_already_exist(auth_client):
+    # GIVEN a set of locations, images, and location_image relationships
+    count = random.randint(3, 6)
+    create_multiple_locations(auth_client.sqla, count)
+    create_test_images(auth_client.sqla)
+    create_images_locations(auth_client.sqla)
+
+    location_images = auth_client.sqla.query(ImageLocation).all()
+
+    # WHEN existing location_image relationships are requested to be created
+    for location_image in location_images:
+        resp = auth_client.post(url_for('places.add_location_images', location_id = location_image.location_id, image_id = location_image.image_id))
+
+        # THEN expect the request to be unprocessable
+        assert resp.status_code == 422
+
+
+
+@pytest.mark.smoke
+def test_delete_location_image(auth_client):
+    # GIVEN a set of locations, images, and location_image relationships
+    count = random.randint(3, 6)
+    create_multiple_locations(auth_client.sqla, count)
+    create_test_images(auth_client.sqla)
+    create_images_locations(auth_client.sqla)
+
+    valid_location_image = auth_client.sqla.query(ImageLocation).first()
+
+    # WHEN the location_image relationships are requested to be deleted
+    resp = auth_client.delete(url_for('places.delete_location_image', location_id = valid_location_image.location_id, image_id = valid_location_image.image_id))
+
+    # THEN expect the delete to run OK
+    assert resp.status_code == 204
+
+
+@pytest.mark.smoke
+def test_delete_location_image_no_exist(auth_client):
+    # GIVEN an empty database
+
+    # WHEN an location_image relationship is requested to be deleted
+    resp = auth_client.delete(url_for('places.delete_location_image', location_id = random.randint(1, 8), image_id = random.randint(1, 8)))
+
+    # THEN expect the requested row to not be found
+    assert resp.status_code == 404
+
+
