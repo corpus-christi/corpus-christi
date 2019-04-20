@@ -6,8 +6,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from ..db import Base
 from ..shared.models import StringTypes
-from ..people.models import Person
-from ..images.models import Image
 
 # ---- Event
 

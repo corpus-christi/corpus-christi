@@ -131,4 +131,3 @@ def delete_image(image_id):
     # 204 codes don't respond with any content
     return "Deleted successfully", 204
 
-
