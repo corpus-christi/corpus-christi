@@ -72,7 +72,7 @@
     </v-card-text>
     <v-card-actions v-if="!imageSaved">
       <v-spacer />
-      <v-btn flat> {{ $t("actions.cancel") }} </v-btn>
+      <v-btn flat @click="cancelDialog"> {{ $t("actions.cancel") }} </v-btn>
       <v-btn color="primary" @click="uploadSelectedImage">
         {{ $t("actions.save") }}
       </v-btn>
@@ -158,6 +158,9 @@ export default {
       this.imageSelected = false;
       this.imageNotFound = true;
       this.imageSaved = false;
+    },
+    cancelDialog() {
+      this.$emit("cancel");
     }
   },
   props: {

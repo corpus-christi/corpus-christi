@@ -5,26 +5,35 @@
     </v-card-title>
     <v-card-text>
       <form>
-        <v-text-field
-          v-model="event.title"
-          v-bind:label="$t('events.title')"
-          name="title"
-          v-validate="'required'"
-          v-bind:error-messages="errors.first('title')"
-          data-cy="title"
-        ></v-text-field>
-        <v-textarea
-          rows="3"
-          v-model="event.description"
-          v-bind:label="$t('events.event-description')"
-          name="description"
-          data-cy="description"
-        ></v-textarea>
-        <image-chooser
-          :oldImageId="oldImageId"
-          v-on:selected="chooseImage"
-          v-on:deleted="deleteImage"
-        />
+        <v-layout align-space-around justify-center column fill-height>
+          <v-text-field
+            v-model="event.title"
+            v-bind:label="$t('events.title')"
+            name="title"
+            v-validate="'required'"
+            v-bind:error-messages="errors.first('title')"
+            data-cy="title"
+          ></v-text-field>
+          <v-textarea
+            rows="3"
+            v-model="event.description"
+            v-bind:label="$t('events.event-description')"
+            name="description"
+            data-cy="description"
+          ></v-textarea>
+          <v-btn class="text-xs-center" color="primary" flat small @click="showImageChooser = true" :disabled="showImageChooser">
+            {{ $t("images.actions.add-image") }}
+          </v-btn>
+          <v-expand-transition>
+            <image-chooser
+              v-if="showImageChooser"
+              :oldImageId="oldImageId"
+              v-on:selected="chooseImage"
+              v-on:deleted="deleteImage"
+              v-on:cancel="cancelImageChooser"
+            />
+          </v-expand-transition>
+        </v-layout>
         <v-layout align-center justify-space-around>
           <v-flex>
             <entity-search
@@ -311,6 +320,8 @@ export default {
       startTimeModal: false,
       endTimeModal: false,
       showAddressCreator: false,
+      showImageChooser: false,
+      imageSaved: false,
       currentAddress: 0,
       imageId: -1,
       oldImageId: -1
@@ -338,6 +349,8 @@ export default {
           console.log(this.event.images[0].image.id);
           this.imageId = this.event.images[0].image.id;
           this.oldImageId = this.event.images[0].image.id;
+          this.imageSaved = true;
+          this.showImageChooser = true;
         } else {
           this.imageId = -1;
           this.oldImageId = -1;
@@ -378,7 +391,7 @@ export default {
     },
 
     formDisabled() {
-      return this.saveLoading || this.addMoreLoading;
+      return this.saveLoading || this.addMoreLoading || this.showAddressCreator || (this.showImageChooser && !this.imageSaved);
     },
 
     today() {
@@ -411,6 +424,8 @@ export default {
       this.showEndDatePicker = false;
       this.startTimeModal = false;
       this.endTimeModal = false;
+      this.showImageChooser = false;
+      this.imageSaved = false;
       this.imageId = -1;
       this.oldImageId--; // we do the decrement operator here to make sure that ImageChooser's watch method gets called.
       this.$validator.reset();
@@ -498,12 +513,17 @@ export default {
 
     chooseImage(id) {
       this.imageId = id;
+      this.imageSaved = true;
       // console.log(this.imageId);
     },
 
     deleteImage() {
       this.imageId = -1;
-      // console.log(this.imageId);
+      this.imageSaved = false;
+    },
+
+    cancelImageChooser() {
+      this.showImageChooser = false;
     }
   }
 };
