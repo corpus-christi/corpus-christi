@@ -335,8 +335,12 @@ export default {
           this.endTime = this.getTimeFromTimestamp(this.event.end);
         }
         if (this.event.images && this.event.images.length > 0) {
+          console.log(this.event.images[0].image.id);
           this.imageId = this.event.images[0].image.id;
           this.oldImageId = this.event.images[0].image.id;
+        } else {
+          this.imageId = -1;
+          this.oldImageId = -1;
         }
       }
     },
@@ -494,12 +498,12 @@ export default {
 
     chooseImage(id) {
       this.imageId = id;
-      console.log(this.imageId);
+      // console.log(this.imageId);
     },
 
     deleteImage() {
       this.imageId = -1;
-      console.log(this.imageId);
+      // console.log(this.imageId);
     }
   }
 };
