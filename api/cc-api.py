@@ -10,6 +10,7 @@ from flask_jwt_extended import create_access_token
 from src import create_app
 from src import db
 from src.attributes.models import Attribute
+from src.attributes.test_attributes import create_multiple_people_attributes
 from src.courses.models import Course, Course_Offering, Diploma
 from src.courses.test_courses import create_multiple_courses, create_multiple_course_offerings, \
     create_multiple_diplomas, create_multiple_students, create_class_meetings, \
@@ -20,8 +21,8 @@ from src.groups.create_group_data import create_group_test_data
 from src.i18n.models import Language, I18NLocale
 from src.images.create_image_data import create_images_test_data
 from src.people.models import Person, Account, Role
-from src.people.test_people import create_multiple_people, create_multiple_accounts, create_multiple_managers, \
-    create_multiple_people_attributes
+from src.people.test_people import create_multiple_people, create_multiple_accounts, create_multiple_managers
+    
 from src.places.models import Country
 from src.places.test_places import create_multiple_areas, create_multiple_addresses, create_multiple_locations
 
