@@ -1,4 +1,3 @@
-
 import math
 import random
 
@@ -10,8 +9,8 @@ from werkzeug.datastructures import Headers
 from werkzeug.security import check_password_hash
 
 from src.i18n.models import i18n_create, I18NLocale, I18NKey, I18NValue
-from src.people.models import Person
-# from src.people.test_people import create_multiple_people
+from src.people.models import Person, PersonSchema
+from src.people.test_people import create_multiple_people, person_object_factory
 
 from .. import db
 
@@ -90,10 +89,10 @@ def attribute_factory(sqla, name, locale_code='en-US', active=1):
 
 def enumerated_value_factory(sqla):
     """Create a fake enumerated value."""
-    # count = random.randint(5, 15)
-    # create_multiple_attributes(sqla, 3, 1)
     attributes = sqla.query(Attribute).all()
-
+    if not attributes:
+        create_multiple_attributes(sqla, 5, 1)
+        attributes = sqla.query(Attribute).all()
     value_string = rl_fake().name()
     value_i18n = f'enumerated.{value_string}'[:32]
 
@@ -119,6 +118,9 @@ def person_attribute_enumerated_factory(sqla):
     create_multiple_attributes(sqla, 5, 1)
     create_multiple_enumerated_values(sqla, 10)
     people = sqla.query(Person).all()
+    if not people:
+        create_multiple_people(sqla, random.randint(3, 6))
+        people = sqla.query(Person).all()
     current_person = random.choice(people)
     enumerated_values = sqla.query(EnumeratedValue).all()
     current_enumerated_value = random.choice(enumerated_values)
@@ -135,6 +137,9 @@ def person_attribute_string_factory(sqla):
     # create_multiple_people(sqla, 17)
     create_multiple_attributes(sqla, 5, 1)
     people = sqla.query(Person).all()
+    if not people:
+        create_multiple_people(sqla, random.randint(3, 6))
+        people = sqla.query(Person).all()
     current_person = random.choice(people)
     nonenumerated_values = sqla.query(Attribute).all()
     current_nonenumerated_value = random.choice(nonenumerated_values)
@@ -193,6 +198,69 @@ def create_multiple_person_attribute_enumerated(sqla, n):
     sqla.add_all(new_person_attribute)
     sqla.commit()
 
+
+def create_multiple_people_attributes(sqla, n):
+    """Commit `n` new people with attributes to the database."""
+    person_schema = PersonSchema()
+    attribute_schema = AttributeSchema()
+    person_attribute_schema = PersonAttributeSchema()
+    enumerated_value_schema = EnumeratedValueSchema()
+    new_people = []
+    for i in range(n):
+        valid_person = person_schema.load(person_object_factory())
+        new_people.append(Person(**valid_person))
+    sqla.add_all(new_people)
+    new_attributes = [{'nameI18n': add_i18n_code('Marital Status', sqla, 'en-US', f'attribute.married'),
+                       'typeI18n': add_i18n_code('attribute.radio', sqla, 'en-US', f'attribute.radio'), 'seq': 2,
+                       'active': 1},
+                      {'nameI18n': add_i18n_code('Home Group Name', sqla, 'en-US', f'attribute.HomeGroupName'),
+                       'typeI18n': add_i18n_code('attribute.string', sqla, 'en-US', f'attribute.string'), 'seq': 1,
+                       'active': 1},
+                      {'nameI18n': add_i18n_code('Baptism Date', sqla, 'en-US', f'attribute.BaptismDate'),
+                       'typeI18n': add_i18n_code('attribute.date', sqla, 'en-US', f'attribute.date'), 'seq': 3,
+                       'active': 1}]
+    new_enumerated_values = [
+        {'id': 1, 'attributeId': 1, 'valueI18n': add_i18n_code('married', sqla, 'en-US', f'personAttribute.married'),
+         'active': 1},
+        {'id': 2, 'attributeId': 1, 'valueI18n': add_i18n_code('single', sqla, 'en-US', f'personAttribute.single'),
+         'active': 1}]
+
+    add_i18n_code('Estado Civil', sqla, 'es-EC', f'attribute.married')
+    add_i18n_code('Nombre del grupo de origen', sqla, 'es-EC', f'attribute.HomeGroupName')
+    add_i18n_code('Fecha de bautismo', sqla, 'es-EC', f'attribute.BaptismDate')
+    add_i18n_code('casado', sqla, 'es-EC', f'personAttribute.married')
+    add_i18n_code('soltero', sqla, 'es-EC', f'personAttribute.single')
+
+    valid_attributes = []
+    for attribute in new_attributes:
+        valid_attribute = attribute_schema.load(attribute)
+        valid_attributes.append(Attribute(**valid_attribute))
+    sqla.add_all(valid_attributes)
+    sqla.commit()
+
+    valid_enumerated_values = []
+    for enumerated_value in new_enumerated_values:
+        valid_enumerated_value = enumerated_value_schema.load(enumerated_value)
+        valid_enumerated_values.append(EnumeratedValue(**valid_enumerated_value))
+    sqla.add_all(valid_enumerated_values)
+    sqla.commit()
+
+    all_people = sqla.query(Person).all()
+    count = 1
+    for i in range(n):
+        # current_person = random.choice(all_people)
+        # person_id = current_person.id
+        new_person_attributes = [{'personId': count, 'attributeId': 1, 'enumValueId': 1},
+                                 {'personId': count, 'attributeId': 2, 'stringValue': "Home Group 1"},
+                                 {'personId': count, 'attributeId': 3, 'stringValue': '1-15-2019'}]
+
+        valid_person_attributes = []
+        count = count + 1
+        for person_attribute in new_person_attributes:
+            valid_person_attribute = person_attribute_schema.load(person_attribute)
+            valid_person_attributes.append(PersonAttribute(**valid_person_attribute))
+        sqla.add_all(valid_person_attributes)
+        sqla.commit()
 
 def prep_database(sqla):
     """Prepare the database with a random number of attributes, some of which are enumerated, some are string.
@@ -550,4 +618,84 @@ def test_repr_person_attribute(auth_client):
     person_attribute = PersonAttribute()
     person_attribute.__repr__()
 
+# ---- PersonAttributes
 
+@pytest.mark.smoke
+def test_create_person_with_attributes_enumerated(auth_client):
+    # GIVEN an empty database
+    create_multiple_people(auth_client.sqla, 17)
+    count = random.randint(5, 15)
+    # WHEN we create a random number of new people
+    for i in range(count):
+        resp = auth_client.post(url_for('people.create_person'), json={
+            'person': person_object_factory(),
+            'attributesInfo': [person_attribute_enumerated_factory(auth_client.sqla)]})
+        assert resp.status_code == 201
+    # THEN we end up with the proper number of people attributes that are enumerated in the database
+    assert auth_client.sqla.query(PersonAttribute).count() == count
+
+
+@pytest.mark.smoke
+def test_create_person_with_attributes_string(auth_client):
+    # GIVEN an empty database
+    create_multiple_people(auth_client.sqla, 17)
+    count = random.randint(5, 15)
+    # WHEN we create a random number of new people attributes
+    for i in range(count):
+        resp = auth_client.post(url_for('people.create_person'), json={
+            'person': person_object_factory(), 'attributesInfo': [person_attribute_string_factory(auth_client.sqla)]})
+        assert resp.status_code == 201
+    # THEN we end up with the proper number of people attributes of the string type in the database
+    assert auth_client.sqla.query(PersonAttribute).count() == count
+
+
+def test_update_person_attributes_enumerated(auth_client):
+    # GIVEN an empty database
+
+    create_multiple_people_attributes(auth_client.sqla, 15)
+
+    all_people = auth_client.sqla.query(Person).all()
+
+    update_person = random.choice(all_people)
+    person_attributes = auth_client.sqla.query(PersonAttribute).filter(
+        PersonAttribute.person_id == update_person.id).all()
+
+    # WHEN we update person attributes
+    attribute_list = []
+    for current_person_attribute in person_attributes:
+        if current_person_attribute.enum_value_id == None:
+            update_json = {
+                'personId': update_person.id,
+                'attributeId': current_person_attribute.attribute_id,
+                'stringValue': 'update'
+            }
+
+        else:
+            if current_person_attribute.enum_value_id == 1:
+                current_person_attribute.enum_value_id = 2
+            else:
+                current_person_attribute.enum_value_id = 1
+            update_json = {
+                'personId': update_person.id,
+                'attributeId': current_person_attribute.attribute_id,
+                'enumValueId': current_person_attribute.enum_value_id
+            }
+        attribute_list.append(update_json)
+
+    valid_person = PersonSchema().load({'firstName': 'Rita', 'lastName': 'Smith', 'gender': 'F', 'active': True})
+    valid_person_attributes = PersonAttributeSchema().load(update_json)
+
+    resp = auth_client.put(url_for('people.update_person', person_id=update_person.id), json={
+        'person': {'firstName': 'Rita', 'lastName': 'Smith', 'gender': 'F', 'active': True},
+        'attributesInfo': attribute_list})
+
+    # THEN people attributes will be updated for each individual person
+    assert resp.status_code == 200
+
+    assert resp.json['id'] == update_person.id
+    for i in range(len(person_attributes)):
+        assert resp.json['attributesInfo'][i]['attributeId'] == person_attributes[i].attribute_id
+        if person_attributes[i].enum_value_id is not None:
+            assert resp.json['attributesInfo'][i]['enumValueId'] == person_attributes[i].enum_value_id
+        else:
+            assert resp.json['attributesInfo'][i]['stringValue'] == 'update'
