@@ -210,36 +210,6 @@ def create_multiple_managers(sqla, n, next_level=None):
 
 # ---- Person
 
-@pytest.mark.smoke
-def test_read_person_fields(auth_client):
-    # GIVEN an empty data base
-
-    # WHEN read_person_fields is called by the api
-    resp = auth_client.get(url_for('people.read_person_fields'))
-    assert resp.status_code == 200
-
-    # THEN the person field structure is returned
-    assert resp.json['person'][0]['id'] == 'INTEGER'
-    assert resp.json['person'][1]['first_name'] == 'VARCHAR(64)'
-    assert resp.json['person'][2]['last_name'] == 'VARCHAR(64)'
-    assert resp.json['person'][3]['second_last_name'] == 'VARCHAR(64)'
-    assert resp.json['person'][4]['gender'] == 'VARCHAR(1)'
-    assert resp.json['person'][5]['birthday'] == 'DATE'
-    assert resp.json['person'][6]['phone'] == 'VARCHAR(64)'
-    assert resp.json['person'][7]['email'] == 'VARCHAR(64)'
-    assert resp.json['person'][8]['active'] == 'BOOLEAN'
-    assert resp.json['person'][9]['location_id'] == 'INTEGER'
-    assert resp.json['person_attributes'] == []
-
-    # GIVEN a DB with actual attributes
-    create_multiple_people(auth_client.sqla, 15)
-    create_multiple_people_attributes(auth_client.sqla, 15)
-
-    # WHEN we use the api to call the read person fields
-    resp = auth_client.get(url_for('people.read_person_fields'))
-
-    # THEN we get the correct attributes
-    assert resp.json['person_attributes'] != []
 
 
 @pytest.mark.smoke
@@ -393,84 +363,6 @@ def test_test_boys_and_girl(auth_client):
     assert tim == "cool"
     assert will == "smart"
     assert sarah == "not mean"
-
-
-@pytest.mark.smoke
-def test_update_person_add_attribute(auth_client):
-    # GIVEN a set of attributes and people
-    count = random.randint(3, 6)
-    create_multiple_attributes(auth_client.sqla, count)
-    create_multiple_people(auth_client.sqla, count)
-
-    people = auth_client.sqla.query(Person).all()
-
-    # GIVEN modification data
-    for person in people:
-        new_person = person_object_factory()
-        mod = {}
-        flips = (flip(), flip(), flip(), flip(), flip(), flip(), flip(), flip())
-        if flips[0]:
-            mod['firstName'] = new_person['firstName']
-        if flips[1]:
-            mod['lastName'] = new_person['lastName']
-        if flips[2]:
-            mod['secondLastName'] = new_person['secondLastName']
-        if flips[3]:
-            mod['gender'] = new_person['gender']
-        if flips[4]:
-            mod['active'] = new_person['active']
-        if flips[5] and 'birthday' in new_person.keys():
-            mod['birthday'] = new_person['birthday']
-        if flips[6] and 'phone' in new_person.keys():
-            mod['phone'] = new_person['phone']
-        if flips[7] and 'email' in new_person.keys():
-            mod['email'] = new_person['email']
-
-        # WHEN a people are updated with data and an attribute
-        resp = auth_client.put(url_for('people.update_person', person_id=person.id), json={'person': mod,
-                                                                                           'attributesInfo': [
-                                                                                               person_attribute_string_factory(
-                                                                                                   auth_client.sqla)]})
-
-        # THEN expect the update to run OK
-        assert resp.status_code == 200
-
-        # THEN expect the person to be updated and have an attribute
-        assert resp.json['id'] == person.id
-        if 'firstName' in mod.keys() and mod['firstName'] != person.first_name:
-            resp.json['firstName'] != person.first_name
-        else:
-            resp.json['firstName'] == person.first_name
-        if 'lastName' in mod.keys() and mod['lastName'] != person.last_name:
-            resp.json['lastName'] != person.last_name
-        else:
-            resp.json['lastName'] == person.last_name
-        if 'secondLastName' in mod.keys() and mod['secondLastName'] != person.second_last_name:
-            resp.json['secondLastName'] != person.second_last_name
-        else:
-            resp.json['secondLastName'] == person.second_last_name
-        if 'gender' in mod.keys() and mod['gender'] != person.gender:
-            resp.json['gender'] != person.gender
-        else:
-            resp.json['gender'] == person.gender
-        if 'active' in mod.keys() and mod['active'] != person.active:
-            resp.json['active'] != person.active
-        else:
-            resp.json['active'] == person.active
-        if 'birthday' in mod.keys() and mod['birthday'] != person.birthday:
-            resp.json['birthday'] != person.birthday
-        else:
-            resp.json['birthday'] == person.birthday
-        if 'phone' in mod.keys() and mod['phone'] != person.phone:
-            resp.json['phone'] != person.phone
-        else:
-            resp.json['phone'] == person.phone
-        if 'email' in mod.keys() and mod['email'] != person.email:
-            resp.json['email'] != person.email
-        else:
-            resp.json['email'] == person.email
-
-        assert len(resp.json['attributesInfo']) == 1
 
 
 @pytest.mark.smoke
