@@ -59,7 +59,7 @@
                     <v-img
                       max-height="400px"
                       class="image picture"
-                      :src="'/api/v1/images/' + event.images[0].image.id"
+                      :src="fetchImage"
                     >
                     </v-img>
                   </template>
@@ -232,6 +232,10 @@ export default {
         }
       }
       return str;
+    },
+
+    fetchImage() {
+      return `/api/v1/images/${this.event.images[0].image.id}?${Math.random()}`;
     },
 
     ...mapGetters(["currentLanguageCode"])

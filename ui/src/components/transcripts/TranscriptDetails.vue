@@ -230,7 +230,7 @@ export default {
         .post("/api/v1/courses/diplomas_awarded", diplomaAwarded)
         .then(resp => {
           console.log("ADDED", resp);
-          // let newDiploma = resp.data;
+          // Not used?? let newDiploma = resp.data;
           this.loadTranscript();
         })
         .catch(err => {

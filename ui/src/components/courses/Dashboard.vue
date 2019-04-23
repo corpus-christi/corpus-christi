@@ -78,13 +78,17 @@ export default {
       });
     }
 
-    function courseAttendanceDataComplete(self) { // eslint-disable-line
+    function courseAttendanceDataComplete(/* self */) {
+      // eslint-disable-line
       // TODO:
     }
 
-    function courseFlowDataComplete(self) { // eslint-disable-line
+    /*
+    function courseFlowDataComplete(self) {
+      // eslint-disable-line
       // TODO:
     }
+     */
 
     // Get course data
     this.$http

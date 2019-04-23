@@ -249,7 +249,7 @@
         color="primary"
         outline
         v-on:click="addAnother"
-        v-if="editMode === false"
+        v-if="!editMode"
         :loading="addMoreLoading"
         :disabled="formDisabled"
         data-cy="form-addanother"
@@ -282,6 +282,41 @@ export default {
     "image-chooser": ImageChooser
   },
   name: "EventForm",
+  props: {
+    editMode: {
+      type: Boolean,
+      required: true
+    },
+    initialData: {
+      type: Object,
+      required: true
+    },
+    saveLoading: {
+      type: Boolean
+    },
+    addMoreLoading: {
+      type: Boolean
+    }
+  },
+  data: function() {
+    return {
+      event: {},
+      startTime: "",
+      startDate: "",
+      endTime: "",
+      endDate: "",
+      addMore: false,
+      showStartDatePicker: false,
+      showEndDatePicker: false,
+      startTimeModal: false,
+      endTimeModal: false,
+      showAddressCreator: false,
+      currentAddress: 0,
+      imageId: -1,
+      oldImageId: -1
+    };
+  },
+
   watch: {
     // Make sure data stays in sync with any changes to `initialData` from parent.
     initialData(eventProp) {
@@ -355,7 +390,6 @@ export default {
 
   methods: {
     cancel() {
-      this.clear();
       this.$emit("cancel");
     },
 
@@ -374,7 +408,7 @@ export default {
       this.startTimeModal = false;
       this.endTimeModal = false;
       this.imageId = -1;
-      this.oldImageId = -1;
+      this.oldImageId--; // we do the decrement operator here to make sure that ImageChooser's watch method gets called.
       this.$validator.reset();
     },
     save() {
@@ -385,20 +419,16 @@ export default {
           this.event.active = true;
           this.event.imageId = this.imageId;
           this.event.oldImageId = this.oldImageId;
-          this.$emit("save", this.event);
+          if (this.addMore) this.$emit("addAnother", this.event);
+          else this.$emit("save", this.event);
         }
+        this.addMore = false;
       });
     },
 
     addAnother() {
-      this.$validator.validateAll().then(() => {
-        if (!this.errors.any()) {
-          this.event.start = this.getTimestamp(this.startDate, this.startTime);
-          this.event.end = this.getTimestamp(this.endDate, this.endTime);
-          this.event.active = true;
-          this.$emit("add-another", this.event);
-        }
-      });
+      this.addMore = true;
+      this.save();
     },
 
     getTimestamp(date, time) {
@@ -471,39 +501,6 @@ export default {
       this.imageId = -1;
       console.log(this.imageId);
     }
-  },
-  props: {
-    editMode: {
-      type: Boolean,
-      required: true
-    },
-    initialData: {
-      type: Object,
-      required: true
-    },
-    saveLoading: {
-      type: Boolean
-    },
-    addMoreLoading: {
-      type: Boolean
-    }
-  },
-  data: function() {
-    return {
-      event: {},
-      startTime: "",
-      startDate: "",
-      endTime: "",
-      endDate: "",
-      imageId: -1,
-      oldImageId: -1,
-      showStartDatePicker: false,
-      showEndDatePicker: false,
-      startTimeModal: false,
-      endTimeModal: false,
-      showAddressCreator: false,
-      currentAddress: 0
-    };
   }
 };
 </script>
