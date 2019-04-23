@@ -274,6 +274,10 @@
       "title": "Home Churches"
     },
     "images": {
+      "actions": {
+        "add-image": "Add Image"
+      },
+      "image-description": "Image description",
       "messages": {
         "no-image": "No image selected.",
         "not-found": "Image not found."
@@ -700,6 +704,10 @@
       "title": "Iglesias Hogar"
     },
     "images": {
+      "actions": {
+        "add-image": "A\u00f1adir Imagen"
+      },
+      "image-description": "Descripci\u00f3n de la imagen",
       "messages": {
         "no-image": "Ninguna imagen seleccionada.",
         "not-found": "Imagen no encontrada."

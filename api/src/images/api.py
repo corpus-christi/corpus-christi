@@ -50,12 +50,8 @@ def upload_image():
     # Grab a description from the request if there is one
     valid_desc = None
     if request.form:
-        if request.form['data']:
-            data = json.loads(request.form['data'])
-            try:
-                valid_desc = image_schema_partial.load(data)
-            except ValidationError as err:
-                return jsonify(err.messages), 422
+        if request.form['description']:
+            valid_desc = True
 
     # Safely convert the filename into an ASCII only string
     filename = secure_filename(image.filename)
@@ -92,7 +88,7 @@ def upload_image():
     valid_image = dict()
     valid_image['path'] = path_to_image
     if valid_desc:
-        valid_image['description'] = data['description']
+        valid_image['description'] = request.form['description']
 
     valid_image = image_schema.load(valid_image, partial=True)
 
