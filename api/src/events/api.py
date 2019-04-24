@@ -408,6 +408,7 @@ def delete_event_image(event_id, image_id):
 
 
 # --- Groups
+
 @events.route('/<event_id>/groups/<group_id>', methods=['POST'])
 @jwt_required
 def add_event_group(event_id, group_id):
@@ -420,29 +421,34 @@ def add_event_group(event_id, group_id):
     if not group:
         return jsonify(f"Group with id #{group_id} does not exist."), 404
     if event_group:
-        return jsonify(f"Group with id #{group_id} is already attached to event with id #{event_id}."), 422
+        if event_group.active == True:
+            return jsonify(f"Group with id #{group_id} is already attached to event with id #{event_id}."), 422
+        else:
+            setattr(event_group,'active', True)
     else:
         new_entry = EventGroup(**{'event_id': event_id, 'group_id': group_id, 'active': True})
-
-        group_members = db.session.queury(GroupMember).filter_by(group_id = group_id, active = True).all()
-        for group_member in group_members:
-            person_id = group_member.person_id
-            if db.session.query(EventParticipant).filter_by(event_id=event.id, person_id=person_id).first():
-                return jsonify(f"Person with id #{person_id} is already attached to event with id #{event_id}."), 422
-            else:
-                new_participant = EventParticipant(**{'event_id' : event_id, 'person_id' : person_id, 'confimed' : True})
-                db.session.add(new_participant)
-                # send notification
-                # make multilinguable later
-                person_email = db.session.query(Person.email).filter_by(id=person_id).first()
-                if person_email: 
-                    msg = Message("Event Booking Notification", sender='tumissionscomputing@gmail.com', recipients=[person_email])
-                    link = f"<a href=\"url_for('read_one_event', event_id = {event_id})\">click here</a>"
-                    msg.body = f"You have been book for event {event.title}. For more information about the event {link}."
-                    mail.send(msg)
-
         db.session.add(new_entry)
-        db.session.commit()
+
+    group_members = db.session.query(Member).filter_by(group_id = group_id, active = True).all()
+
+    for group_member in group_members:
+        person_id = group_member.person_id
+        if not db.session.query(EventParticipant).filter_by(event_id=event.id, person_id=person_id).first():
+            new_participant = EventParticipant(**{'event_id' : event_id, 'person_id' : person_id, 'confirmed' : True})
+            db.session.add(new_participant)
+            # send notification
+            # internationalize later
+            person = db.session.query(Person).filter_by(id=person_id).first()
+            person_email = person.email
+            if person_email:
+                msg = Message("Event Booking Notification", sender='tumissionscomputing@gmail.com', recipients=[person_email])
+                #link = url_for('events.read_one_event', event_id = event_id)
+                ip = "http://localhost:8080"
+                link = f"{ip}/event/{event_id}/details"
+                msg.html = f"You have been booked for event <b>{event.title}</b> <a href={link}>click</a>"
+                mail.send(msg)
+
+    db.session.commit()
     return jsonify(f"Group with id #{group_id} successfully attached to event with id #{event_id}."), 201
 
 @events.route('/<event_id>/groups/<group_id>', methods=['DELETE'])
