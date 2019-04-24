@@ -151,6 +151,8 @@
       "when": "When"
     },
     "diplomas": {
+      "add-failed": "Failed to add diploma",
+      "added": "Diploma added",
       "archived": "Diploma archived",
       "confirm-archive": "Are you sure you want to archive this diploma?",
       "courses": "Courses",
@@ -161,6 +163,7 @@
       "new": "New Diploma",
       "reactivated": "Diploma unarchived",
       "title": "Title",
+      "update-failed": "Failed to update diploma",
       "updated": "Diploma updated"
     },
     "events": {
@@ -567,6 +570,8 @@
       "when": "Cu\u00e1ndo"
     },
     "diplomas": {
+      "add-failed": "Se fall\u00f3 a a\u00f1adir el diploma",
+      "added": "Diploma a\u00f1adido",
       "archived": "Diploma archivado",
       "confirm-archive": "\u00bfEst\u00e1s seguro que quieres archivar esta diploma?",
       "courses": "Cursos",
@@ -577,6 +582,7 @@
       "new": "Nueva Diploma",
       "reactivated": "Diploma desarchivado",
       "title": "T\u00edtulo",
+      "update-failed": "Se fall\u00f3 a actualizar el diploma",
       "updated": "Diploma actualizado"
     },
     "events": {

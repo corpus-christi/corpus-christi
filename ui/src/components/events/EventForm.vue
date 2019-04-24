@@ -244,7 +244,7 @@
         color="primary"
         outline
         v-on:click="addAnother"
-        v-if="editMode === false"
+        v-if="!editMode"
         :loading="addMoreLoading"
         :disabled="formDisabled"
         data-cy="form-addanother"
@@ -272,6 +272,39 @@ import AddressForm from "../AddressForm.vue";
 export default {
   components: { "entity-search": EntitySearch, "address-form": AddressForm },
   name: "EventForm",
+  props: {
+    editMode: {
+      type: Boolean,
+      required: true
+    },
+    initialData: {
+      type: Object,
+      required: true
+    },
+    saveLoading: {
+      type: Boolean
+    },
+    addMoreLoading: {
+      type: Boolean
+    }
+  },
+  data: function() {
+    return {
+      event: {},
+      startTime: "",
+      startDate: "",
+      endTime: "",
+      endDate: "",
+      addMore: false,
+      showStartDatePicker: false,
+      showEndDatePicker: false,
+      startTimeModal: false,
+      endTimeModal: false,
+      showAddressCreator: false,
+      currentAddress: 0
+    };
+  },
+
   watch: {
     // Make sure data stays in sync with any changes to `initialData` from parent.
     initialData(eventProp) {
@@ -324,10 +357,6 @@ export default {
       } else return "24hr";
     },
 
-    formDisabled() {
-      return this.saveLoading || this.addMoreLoading;
-    },
-
     today() {
       return this.getDateFromTimestamp(Date.now());
     },
@@ -336,12 +365,15 @@ export default {
       return this.startDate && this.startTime;
     },
 
+    formDisabled() {
+      return this.saveLoading || this.addMoreLoading;
+    },
+
     ...mapGetters(["currentLanguageCode"])
   },
 
   methods: {
     cancel() {
-      this.clear();
       this.$emit("cancel");
     },
 
@@ -362,25 +394,22 @@ export default {
 
       this.$validator.reset();
     },
+
+    addAnother() {
+      this.addMore = true;
+      this.save();
+    },
+
     save() {
       this.$validator.validateAll().then(() => {
         if (!this.errors.any()) {
           this.event.start = this.getTimestamp(this.startDate, this.startTime);
           this.event.end = this.getTimestamp(this.endDate, this.endTime);
           this.event.active = true;
-          this.$emit("save", this.event);
+          if (this.addMore) this.$emit("addAnother", this.event);
+          else this.$emit("save", this.event);
         }
-      });
-    },
-
-    addAnother() {
-      this.$validator.validateAll().then(() => {
-        if (!this.errors.any()) {
-          this.event.start = this.getTimestamp(this.startDate, this.startTime);
-          this.event.end = this.getTimestamp(this.endDate, this.endTime);
-          this.event.active = true;
-          this.$emit("add-another", this.event);
-        }
+        this.addMore = false;
       });
     },
 
@@ -444,37 +473,6 @@ export default {
       this.event.location = address;
       this.currentAddress = address.address_id;
     }
-  },
-  props: {
-    editMode: {
-      type: Boolean,
-      required: true
-    },
-    initialData: {
-      type: Object,
-      required: true
-    },
-    saveLoading: {
-      type: Boolean
-    },
-    addMoreLoading: {
-      type: Boolean
-    }
-  },
-  data: function() {
-    return {
-      event: {},
-      startTime: "",
-      startDate: "",
-      endTime: "",
-      endDate: "",
-      showStartDatePicker: false,
-      showEndDatePicker: false,
-      startTimeModal: false,
-      endTimeModal: false,
-      showAddressCreator: false,
-      currentAddress: 0
-    };
   }
 };
 </script>

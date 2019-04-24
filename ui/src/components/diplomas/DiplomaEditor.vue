@@ -1,125 +1,152 @@
 <template>
   <!-- https://codesandbox.io/s/mjy97x85py?from-embed -->
-  <ValidationObserver ref="obs">
-    <v-card slot-scope="{ invalid, validated }">
-      <v-card-title>
-        <span class="headline">{{ name }}</span>
-      </v-card-title>
-      <v-card-text>
-        <v-form>
-          <ValidationProvider name="Name" rules="required|max:128">
-            <v-text-field
-              slot-scope="{ errors }"
-              v-model="diploma.name"
-              :counter="128"
-              :error-messages="errors"
-              v-bind:label="$t('diplomas.title')"
-              name="name"
-              required
-            ></v-text-field>
-          </ValidationProvider>
-          <v-textarea
-            v-model="diploma.description"
-            v-bind:label="$t('diplomas.description')"
-            name="description"
-          ></v-textarea>
-
-          <v-select
-            v-model="diploma.courseList"
-            :items="items"
-            v-bind:label="$t('diplomas.courses')"
-            chips
-            deletable-chips
-            clearable
-            outline
-            multiple
-            hide-selected
-            return-object
-            item-value="id"
-            item-text="name"
-            :menu-props="{ closeOnContentClick: true }"
-          ></v-select>
-        </v-form>
-      </v-card-text>
-      <v-card-actions>
-        <v-btn color="secondary" flat :disabled="saving" v-on:click="cancel">{{
-          $t("actions.cancel")
-        }}</v-btn>
-        <v-spacer></v-spacer>
-        <v-btn
-          color="primary"
-          raised
-          :disabled="saving || invalid || !validated"
-          :loading="saving"
-          v-on:click="save"
-          >{{ $t("actions.save") }}</v-btn
-        >
-      </v-card-actions>
-    </v-card>
-  </ValidationObserver>
+  <v-card>
+    <v-card-title>
+      <span class="headline">{{ title }}</span>
+    </v-card-title>
+    <v-card-text>
+      <form>
+        <v-text-field
+          v-model="diploma.name"
+          v-bind:label="$t('diplomas.title')"
+          name="title"
+          v-validate="'required'"
+          v-bind:error-messages="errors.collect('title')"
+          data-cy="diplomas-form-name"
+        ></v-text-field>
+        <v-textarea
+          v-model="diploma.description"
+          v-bind:label="$t('diplomas.description')"
+          name="description"
+          v-validate="'required'"
+          v-bind:error-messages="errors.collect('description')"
+          data-cy="diploma-form-description"
+        ></v-textarea>
+        <br />
+        <v-select
+          v-model="diploma.courseList"
+          :items="items"
+          v-bind:label="$t('diplomas.courses')"
+          chips
+          deletable-chips
+          clearable
+          outline
+          multiple
+          hide-selected
+          return-object
+          item-value="id"
+          item-text="name"
+          :menu-props="{ closeOnContentClick: true }"
+        ></v-select>
+      </form>
+    </v-card-text>
+    <v-card-actions>
+      <v-btn
+        color="secondary"
+        flat
+        :disabled="formDisabled"
+        v-on:click="cancel"
+        >{{ $t("actions.cancel") }}</v-btn
+      >
+      <v-spacer></v-spacer>
+      <v-btn
+        color="primary"
+        outline
+        v-on:click="addAnother"
+        v-if="!editMode"
+        :loading="addMoreLoading"
+        :disabled="formDisabled"
+        data-cy="form-addanother"
+        >{{ $t("actions.add-another") }}</v-btn
+      >
+      <v-btn
+        color="primary"
+        raised
+        :disabled="formDisabled"
+        :loading="saveLoading"
+        data-cy="form-save"
+        v-on:click="save"
+        >{{ $t("actions.save") }}</v-btn
+      >
+    </v-card-actions>
+  </v-card>
 </template>
 
 <script>
-import { ValidationObserver, ValidationProvider } from "vee-validate";
+import { isEmpty } from "lodash";
 
 export default {
   name: "DiplomaEditor",
-
-  components: {
-    ValidationProvider,
-    ValidationObserver
-  },
-
   props: {
-    diploma: Object,
-    saving: {
-      type: Boolean,
-      default: false
+    initialData: {
+      type: Object,
+      required: true
     },
     editMode: {
       type: Boolean,
       required: true
+    },
+    saveLoading: {
+      type: Boolean
+    },
+    addMoreLoading: {
+      type: Boolean
     }
   },
-
   data: function() {
     return {
-      coursesPool: [] // courses for this diploma (the list of courses for this diploma)
+      coursesPool: [], // courses for this diploma (the list of courses for this diploma)
+      diploma: {},
+      addMore: false
     };
   },
 
   computed: {
-    name() {
+    title() {
       return this.editMode ? this.$t("actions.edit") : this.$t("diplomas.new");
     },
     items() {
       return this.coursesPool;
+    },
+    formDisabled() {
+      return this.saveLoading || this.addMoreLoading;
+    }
+  },
+
+  watch: {
+    initialData(diplomaProp) {
+      if (isEmpty(diplomaProp)) {
+        this.clear();
+      } else {
+        this.diploma = diplomaProp;
+      }
     }
   },
 
   methods: {
     cancel() {
-      this.clear();
       this.$emit("cancel");
     },
 
-    async clear() {
-      this.$refs.obs.reset();
-      this.$emit("clearForm");
-      /*
-      this.$nextTick(() => {
-        this.$refs.obs.reset();
-      });
-      */
+    clear() {
+      this.diploma = {};
+      this.$validator.reset();
     },
-    async save() {
-      const result = await this.$refs.obs.validate();
-      console.log("result: ", result);
-      if (result) {
-        //this.$validator.reset();
-        this.$refs.obs.reset();
-        this.$emit("save", this.diploma);
-      }
+
+    addAnother() {
+      this.addMore = true;
+      this.save();
+    },
+
+    save() {
+      this.$validator.validateAll().then(() => {
+        if (!this.errors.any()) {
+          this.$validator.reset();
+          if (this.addMore) this.$emit("addAnother", this.diploma);
+          else this.$emit("save", this.diploma);
+        }
+        this.addMore = false;
+      });
     }
   },
 
