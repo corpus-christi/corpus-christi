@@ -13,6 +13,7 @@ from .models import Event, EventPerson, EventAsset, EventParticipant, EventTeam,
 from ..assets.models import Asset, AssetSchema
 from ..teams.models import Team, TeamMember, TeamSchema, TeamMemberSchema
 from ..places.models import Location
+from ..places.test_places import create_multiple_locations
 from ..images.models import Image, ImageSchema, ImageEvent, ImageEventSchema
 from ..images.create_image_data import create_test_images
 from ..people.models import Person
@@ -108,6 +109,9 @@ def asset_object_factory(sqla):
     """Cook up a fake asset."""
     fake = Faker()  # Use a generic one; others may not have all methods.
     all_locations = sqla.query(Location).all()
+    if not all_locations:
+        create_multiple_locations(sqla, random.randint(3, 6))
+        all_locations = sqla.query(Location).all()
     asset = {
         'description': rl_fake().sentences(nb=1)[0],
         'location_id': all_locations[random.randint(0, len(all_locations)-1)].id,
@@ -352,7 +356,13 @@ def create_event_participant(sqla, event_id, person_id, confirmed=True):
 def create_event_images(sqla):
     image_event_schema = ImageEventSchema()
     events = sqla.query(Event).all()
+    if not events:
+        create_multiple_events(sqla, random.randint(3, 6))
+        events = sqla.query(Event).all()
     images = sqla.query(Image).all()
+    if not images:
+        create_multiple_images(sqla, random.randint(3, 6))
+        events = sqla.query(Event).all()
 
     count = len(events)
     if len(images) < len(events):
