@@ -1,34 +1,37 @@
 describe("Get to Courses Page", () => {
-  it("Given: Successfull login", () => {
+  it("GIVEN: Successful login", () => {
     cy.login();
   });
-  it("When: clicking to course page", () => {
+  it("WHEN: clicking to course page", () => {
     cy.course_page();
   });
-  it("Then: should be in course page", () => {
+  it("THEN: should be in course page", () => {
     cy.url().should("include", "/courses");
   });
 });
 
-let course = "course: Energy.";
+let course = "course: Director";
 
 describe("Get more details on a course", () => {
   it("Click into details of course", () => {
+    cy.get("[data-cy=table-search]")
+    .clear()
+    .type("course: Director");
     cy.get("tbody")
       .contains(course)
       .click();
-    cy.url().should("include", "/courses/9");
+    cy.url().should("include", "/courses/1");
   });
 });
 
-let section = "Testing";
+// let section = "Testing";
 
-describe('Get more section details on a course', () =>{
-  it('Click into details of a section', () =>{
-    cy.get('tbody').contains(section).click()
-    cy.url().should("include", "/courses/9/offering/30/details");
-  })
-})
+// describe('Get more section details on a course', () =>{
+//   it('Click into details of a section', () =>{
+//     cy.get('tbody').contains(section).click()
+//     cy.url().should("include", "/courses/9/offering/30/details");
+//   })
+// })
 
 describe('Check Scheduled times', () => {
   it('Click schedule tab', () => {

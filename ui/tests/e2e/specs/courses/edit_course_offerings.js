@@ -1,13 +1,13 @@
 let course = "Alone low investment";
 
 describe("Get to details of a course page", () => {
-  it("Given: Successfull login", () => {
+  it("GIVEN: Successful login", () => {
     cy.login();
   });
-  it("When: clicking to course page", () => {
+  it("WHEN: clicking to course page", () => {
     cy.course_page();
   });
-  it("Then: should be in course page", () => {
+  it("THEN: should be in course page", () => {
     cy.url().should("include", "/courses");
   });
   it("Click into details of course", () => {

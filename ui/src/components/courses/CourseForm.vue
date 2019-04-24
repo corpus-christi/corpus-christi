@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-card-title data-cy="course-form-title">
+    <v-card-title data-cy="title">
       <span class="headline">{{ title }}</span>
     </v-card-title>
     <v-card-text>
@@ -11,7 +11,7 @@
           name="title"
           v-validate="'required'"
           v-bind:error-messages="errors.collect('title')"
-          data-cy="course-form-name"
+          data-cy="name"
         ></v-text-field>
 
         <v-textarea
@@ -20,9 +20,10 @@
           name="description"
           v-validate="'required'"
           v-bind:error-messages="errors.collect('description')"
-          data-cy="course-form-description"
+          data-cy="description"
         ></v-textarea>
         <br />
+        <div data-cy="prerequisites">
         <v-select
           v-model="course.prerequisites"
           :items="items"
@@ -37,17 +38,18 @@
           item-value="id"
           item-text="name"
           :menu-props="{ closeOnContentClick: true }"
-          data-cy="course-form-prerequisites"
         >
         </v-select>
+        </div>
       </form>
     </v-card-text>
-    <v-card-actions data-cy="course-form-actions">
+    <v-card-actions data-cy="actions">
       <v-btn
         color="secondary"
         flat
         :disabled="formDisabled"
         v-on:click="cancel"
+        data-cy="cancel"
       >
         {{ $t("actions.cancel") }}
       </v-btn>
@@ -68,6 +70,7 @@
         :loading="saveLoading"
         :disabled="formDisabled"
         v-on:click="save"
+        data-cy="save"
       >
         {{ $t("actions.save") }}
       </v-btn>

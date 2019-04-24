@@ -12,7 +12,7 @@
             color="primary"
             raised
             v-on:click.stop="newCourse"
-            data-cy="courses-table-new"
+            data-cy="new-course"
             class="hidden-xs-only mr-2"
           >
             <v-icon left>library_add</v-icon>
@@ -24,7 +24,7 @@
             raised
             fab
             v-on:click.stop="newCourse"
-            data-cy="add-courseOffering-small"
+            data-cy="new-course-small"
           >
             <v-icon dark>add</v-icon>
           </v-btn>
@@ -38,7 +38,7 @@
           v-bind:label="$t('actions.search')"
           single-line
           hide-details
-          data-cy="courses-table-search"
+          data-cy="table-search"
           class="max-width-250 mr-2"
         ></v-text-field>
 
@@ -47,7 +47,7 @@
           :items="options"
           solo
           hide-details
-          data-cy="courses-table-viewstatus"
+          data-cy="view-status"
           class="max-width-250 mr-2"
         ></v-select>
       </v-layout>
@@ -62,7 +62,7 @@
       :rows-per-page-items="rowsPerPageItem"
       :pagination.sync="paginationInfo"
       class="elevation-1"
-      data-cy="courses-table"
+      data-cy="table"
     >
       <v-progress-linear
         slot="progress"
@@ -86,7 +86,7 @@
       </template>
     </v-data-table>
 
-    <v-snackbar v-model="snackbar.show" data-cy="courses-table-snackbar">
+    <v-snackbar v-model="snackbar.show" data-cy="table-snackbar">
       {{ snackbar.text }}
       <v-btn flat @click="snackbar.show = false">{{
         $t("actions.close")
@@ -99,7 +99,7 @@
       max-width="500px"
       persistent
       scrollable
-      data-cy="courses-table-editor"
+      data-cy="course-form"
     >
       <CourseForm
         v-bind:editMode="courseDialog.editMode"
@@ -117,7 +117,7 @@
     <v-dialog
       v-model="deactivateDialog.show"
       max-width="350px"
-      data-cy="courses-table-confirmation"
+      data-cy="table-confirmation"
     >
       <v-card>
         <v-card-text>{{ $t("courses.confirm-archive") }}</v-card-text>
@@ -127,6 +127,7 @@
             color="secondary"
             flat
             :disabled="deactivateDialog.loading"
+            data-cy="cancel-archive"
           >
             {{ $t("actions.cancel") }}
           </v-btn>
@@ -137,6 +138,7 @@
             raised
             :disabled="deactivateDialog.loading"
             :loading="deactivateDialog.loading"
+            data-cy="confirm-archive"
           >
             {{ $t("actions.confirm") }}
           </v-btn>

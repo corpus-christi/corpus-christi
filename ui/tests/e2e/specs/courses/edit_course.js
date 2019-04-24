@@ -1,13 +1,17 @@
+import { unique_id } from '../../support/helpers';
+
+var course_name = unique_id();
+
 describe("Get to Courses Page", () => {
-  it("Given Successfull login", () => {
+  it("GIVEN Successful login", () => {
     cy.login();
   });
 
-  it("When: clicking to course page", () => {
+  it("WHEN: clicking to course page", () => {
     cy.get("[data-cy=toggle-nav-drawer]").click();
     cy.get("[data-cy=courses]").click();
   });
-  it("Then: should be in course page", () => {
+  it("THEN: should be in course page", () => {
     cy.url().should("include", "/courses");
   });
 });
@@ -19,11 +23,14 @@ describe("Edit courses", () => {
     ).click();
   });
   it("change course title", () => {
-    cy.get("[data-cy=course-form-name]")
+    cy.get("[data-cy=name]")
       .clear()
-      .type("Alone low investment");
+      .type(course_name);
   });
   it("save changes", () => {
-    cy.get("[data-cy=course-editor-actions] > .primary").click();
+    cy.get("[data-cy=actions] > .primary").click();
+    cy.get("[data-cy=save]").click();
+    cy.get("[data-cy=table-search]").type(course_name);
+    cy.get("tbody").contains(course_name);
   });
 });

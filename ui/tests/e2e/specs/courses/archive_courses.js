@@ -1,59 +1,56 @@
+import { unique_id } from '../../support/helpers';
+
+let course = unique_id();
+
 describe("Get to Courses Page", () => {
-  it("Given Successfull login", () => {
+  it("GIVEN: Successful login", () => {
     cy.login();
   });
 
-  it("When: clicking to course page", () => {
+  it("WHEN: clicking to course page", () => {
     cy.get("[data-cy=toggle-nav-drawer]").click();
     cy.get("[data-cy=courses]").click();
   });
-  it("Then: should be in course page", () => {
+  it("THEN: should be in course page", () => {
     cy.url().should("include", "/courses");
   });
 });
 
-let course_name = "New title";
-
 describe("Add Course", () => {
-  it("Given: New Course Form", () => {
-    cy.get("[data-cy=courses-table-new]").click();
+  it("GIVEN: New Course Form", () => {
+    cy.get("[data-cy=new-course]").click();
   });
-  it("When: Form is filled out", () => {
-    cy.get("[data-cy=course-form-name]").type(course_name);
-    cy.get("[data-cy=course-form-description]").type("This should work!");
+  it("WHEN: Form is filled out", () => {
+    cy.get("[data-cy=name]").type(course);
+    cy.get("[data-cy=description]").type("Hello World");
   });
-  it("Then: Click add button", () => {
-    cy.get("[data-cy=course-editor-actions] > .primary").click();
+  it("THEN: Click save button", () => {
+    cy.get("[data-cy=save]").click();
   });
 });
 
-describe("Archive Courses", () => {
-  it("click archive button", () => {
-    cy.get("[data-cy=courses-table-search]").type(course_name);
-    //cy.contains('Debate until.').click()
-    cy.get(
-      ":nth-child(1) > :nth-child(3) > .layout > :nth-child(2) > span > .v-btn"
-    ).click(); //click archive
-    cy.get(
-      ".v-dialog__content--active > .v-dialog > .v-card > .v-card__actions > .primary"
-    ).click(); //confirm click
+describe("Archive Course", () => {
+  it("Click archive button", () => {
+    cy.get("[data-cy=table-search]").type(course);
+    cy.get("[data-cy=archive-toggle]").click(); //click archive
+    cy.get("[data-cy=confirm-archive]").click(); //confirm click
   });
-  it("check archive course", () => {
+  it("View archived Courses", () => {
     cy.get('.v-text-field--solo > .v-input__control > .v-input__slot').click()//switch from active to archive
     cy.get('.menuable__content__active > .v-select-list > .v-list > :nth-child(2) > .v-list__tile').click()//select archive in drop down
-    cy.get("tbody").contains(course_name);
+    cy.get("tbody > tr > :nth-child(1)").contains(course);
   });
 });
 
-describe("Activate archive courses", () => {
-  it("click activate button", () => {
-    cy.get(':nth-child(1) > :nth-child(3) > .layout > :nth-child(2) > span > .v-btn').click();
+describe("Unarchive Course", () => {
+  it("Click unarchive button", () => {
+    cy.get('[data-cy=archive-toggle]').click();
   });
-  it("Get back to active courses", () => {
+  it("Return to active courses", () => {
     cy.get('.v-text-field--solo > .v-input__control > .v-input__slot').click();
     cy.get(
       ".menuable__content__active > .v-select-list > .v-list > :nth-child(1) > .v-list__tile"
     ).click();
-    cy.get("tbody > tr > :nth-child(1)").contains(course_name);
+    cy.get("tbody > tr > :nth-child(1)").contains(course);
   });
 });
