@@ -130,6 +130,9 @@ def course_offerings_object_factory_inactive(course_id):
 def create_multiple_course_offerings(sqla, n=3):
     """Commits the number of course offering to the DB."""
     courses = sqla.query(Course).all()
+    if not courses:
+        create_multiple_courses(sqla, random.randint(3, 6))
+        courses = sqla.query(Course).all()
     course_offerings_schema = Course_OfferingSchema()
     new_course_offerings = []
     for i in range(n):
@@ -142,6 +145,9 @@ def create_multiple_course_offerings(sqla, n=3):
 def create_multiple_course_offerings_active(sqla, n=3):
     """Commits the number of course offering to the DB."""
     course = sqla.query(Course).first()
+    if not course:
+        create_multiple_courses(sqla, random.randint(3, 6))
+        course = sqla.query(Course).all()
     course_offerings_schema = Course_OfferingSchema()
     new_course_offerings = []
     for i in range(n):
@@ -153,6 +159,9 @@ def create_multiple_course_offerings_active(sqla, n=3):
 def create_multiple_course_offerings_inactive(sqla, n=3):
     """Commits the number of course offering to the DB."""
     course = sqla.query(Course).first()
+    if not course:
+        create_multiple_courses(sqla, random.randint(3, 6))
+        course = sqla.query(Course).all()
     course_offerings_schema = Course_OfferingSchema()
     new_course_offerings = []
     for i in range(n):
@@ -174,6 +183,9 @@ def prerequisite_object_factory(course_id, prereq_id):
 def create_multiple_prerequisites(sqla):
     """Commits the courses - 1 number of prerequisites to the DB."""
     courses = sqla.query(Course).all()
+    if not courses:
+        create_multiple_courses(sqla, random.randint(3, 6))
+        courses = sqla.query(Course).all()
     new_prerequisites = []
     for i in range(len(courses)-1):
         courses[i].prerequisites.append(courses[i+1])
@@ -196,6 +208,9 @@ def courses_diploma_object_factory(num_courses):
 def create_multiple_diplomas(sqla, n=20):
     """Commits the number of diplomas to the DB."""
     courses = sqla.query(Course).all()
+    if not courses:
+        create_multiple_courses(sqla, random.randint(3, 6))
+        courses = sqla.query(Course).all()
     course_diploma_schema = DiplomaSchema()
     new_courses = []
     for i in range(n):
@@ -222,6 +237,9 @@ def create_multiple_students(sqla, n=6, course_offering_id=None):
     """Commits the number of students to the DB."""
     students = sqla.query(Person).all()
     course_offering = sqla.query(Course_Offering).all()
+    if not course_offering:
+        create_multiple_course_offerings(sqla, random.randint(3, 6))
+        course_offering = sqla.query(Course_Offering).all()
     course_students_schema = StudentSchema()
     new_students = []
     for i in range(n):
@@ -249,7 +267,13 @@ def diploma_award_object_factory(diploma_id, people_id):
 def create_diploma_awards(sqla, n):
     """Commits the number of diploma awards to the DB."""
     people = sqla.query(Person).all()
+    if not people:
+        create_multiple_people(sqla, random.randint(3, 6))
+        people = sqla.query(Person).all()
     diplomas = sqla.query(Diploma).all()
+    if not diplomas:
+        create_multiple_diplomas(sqla, random.randint(3, 6))
+        diplomas = sqla.query(Person).all()
     diploma_award_schema = Diploma_AwardedSchema()
     new_diploma_awards = []
     for i in range(n):
@@ -271,7 +295,13 @@ def course_completion_object_factory(person_id, course_id):
 def create_course_completion(sqla, n):
     """Commits the number of course completions to the DB."""
     people = sqla.query(Person).all()
+    if not people:
+        create_multiple_people(sqla, random.randint(3, 6))
+        people = sqla.query(Person).all()
     courses = sqla.query(Course).all()
+    if not courses:
+        create_multiple_courses(sqla, random.randint(3, 6))
+        courses = sqla.query(Course).all()
     course_completion_schema = Course_CompletionSchema()
     new_course_completion = []
     for person in people:
@@ -299,8 +329,17 @@ def class_meeting_object_factory(teacher_id, offering_id, location_id=1):
 def create_class_meetings(sqla, n=6):
     """Commits the number of class meetings to the DB."""
     people = sqla.query(Person).all()
+    if not people:
+        create_multiple_people(sqla, random.randint(3, 6))
+        people = sqla.query(Person).all()
     course_offerings = sqla.query(Course_Offering).all()
+    if not course_offerings:
+        create_multiple_course_offerings(sqla, random.randint(3, 6))
+        course_offerings = sqla.query(Course_Offering).all()
     locations = sqla.query(Location).all()
+    if not locations:
+        create_multiple_locations(sqla, random.randint(3, 6))
+        locations = sqla.query(Location).all()
     class_meeting_schema = Class_MeetingSchema()
     new_class_meetings = []
     for i in range(n):
@@ -317,7 +356,13 @@ def create_class_meetings(sqla, n=6):
 def create_class_attendance(sqla, n):
     """Commits the number of class attendances to the DB."""
     students = sqla.query(Student).all()
+    if not students:
+        create_multiple_students(sqla, random.randint(3, 6))
+        students = sqla.query(Student)
     class_meetings = sqla.query(Class_Meeting).all()
+    if not class_meetings:
+        create_multiple_class_meetings(sqla, random.randint(3, 6))
+        class_meetings = sqla.query(Class_Meeting).all()
     new_class_attendance = []
     for i in range(n):
         class_meeting = class_meetings[random.randint(0, len(class_meetings)-1)]
