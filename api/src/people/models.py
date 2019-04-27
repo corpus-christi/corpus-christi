@@ -27,7 +27,7 @@ class Person(Base):
     phone = Column(StringTypes.MEDIUM_STRING)
     email = Column(StringTypes.MEDIUM_STRING)
     active = Column(Boolean, nullable=False, default=True)
-    location_id = Column(Integer, ForeignKey('places_location.id'))
+    location_id = Column(Integer, ForeignKey('places_location.id'), nullable=True, default=None)
 
     address = relationship(Location, backref='people', lazy=True)
     # events_per refers to the events led by the person (linked via events_eventperson table)

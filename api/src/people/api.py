@@ -52,7 +52,7 @@ def create_person():
     request.json['person']['active'] = True
 
     for key, value in request.json['person'].items():
-        if request.json['person'][key] is "":
+        if request.json['person'][key] is "" or request.json['person'][key] is 0:
             request.json['person'][key] = None
 
     try:
@@ -67,6 +67,8 @@ def create_person():
     db.session.commit()
 
     for person_attribute in valid_person_attributes:
+        if (person_attribute['enum_value_id'] is 0):
+            person_attribute['enum_value_id'] = None
         person_attribute = PersonAttribute(**person_attribute)
         person_attribute.person_id = new_person.id
         db.session.add(person_attribute)
