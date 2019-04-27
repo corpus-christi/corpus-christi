@@ -19,6 +19,7 @@ from ..groups.models import Group, GroupSchema, Member, MemberSchema
 from .. import db, mail
 from ..etc.helper import modify_entity, get_exclusion_list
 
+
 # ---- Event
 
 @events.route('/', methods=['POST'])
@@ -420,6 +421,8 @@ def add_event_group(event_id, group_id):
         return jsonify(f"Event with id #{event_id} does not exist."), 404
     if not group:
         return jsonify(f"Group with id #{group_id} does not exist."), 404
+    if not group.active:
+        return jsonify(f"Group with id #{group_id} is not an active group. Activate the group before attaching it to an event."), 422
     if event_group:
         if event_group.active == True:
             return jsonify(f"Group with id #{group_id} is already attached to event with id #{event_id}."), 422
@@ -441,15 +444,25 @@ def add_event_group(event_id, group_id):
             person = db.session.query(Person).filter_by(id=person_id).first()
             person_email = person.email
             if person_email:
-                msg = Message("Event Booking Notification", sender='tumissionscomputing@gmail.com', recipients=[person_email])
-                #link = url_for('events.read_one_event', event_id = event_id)
-                ip = "http://localhost:8080"
-                link = f"{ip}/event/{event_id}/details"
-                msg.html = f"You have been booked for event <b>{event.title}</b> <a href={link}>click</a>"
-                mail.send(msg)
+                send_notification_email(person_email, event)
 
     db.session.commit()
     return jsonify(f"Group with id #{group_id} successfully attached to event with id #{event_id}."), 201
+
+def send_notification_email(person_email, event):
+    # with open('../../../ui/i18n/cc-i18n.json') as json_file:  
+    #     data = json.load(json_file)
+    #     for key in data['emails']:
+    #         print(key)
+
+    msg = Message("Event Booking Notification", sender='tumissionscomputing@gmail.com', recipients=[person_email])
+    #link = url_for('events.read_one_event', event_id = event_id)
+    ip = "http://localhost:8080"
+    link = f"{ip}/event/{event.id}/details"
+    msg.html = f"You have been booked for event <b>{event.title}</b>. Click <a href={link}>here</a> for more details."
+    mail.send(msg)
+
+    
 
 @events.route('/<event_id>/groups/<group_id>', methods=['DELETE'])
 @jwt_required

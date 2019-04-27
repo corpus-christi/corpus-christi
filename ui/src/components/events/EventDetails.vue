@@ -121,12 +121,24 @@
         </v-layout>
       </v-flex>
       <v-flex xs12 lg6>
-        <event-asset-details
-          :assets="event.assets"
-          :loaded="assetsLoaded"
-          v-on:snackbar="showSnackbar($event)"
-          v-on:asset-added="reloadAssets()"
-        ></event-asset-details>
+        <v-layout column>
+          <v-flex>
+            <event-asset-details
+              :assets="event.assets"
+              :loaded="assetsLoaded"
+              v-on:snackbar="showSnackbar($event)"
+              v-on:asset-added="reloadAssets()"
+            ></event-asset-details>
+          </v-flex>
+          <v-flex>
+            <event-group-details
+              :groups="event.groups"
+              :loaded="groupsLoaded"
+              v-on:snackbar="showSnackbar($event)"
+              v-on:group-added="reloadGroups()"
+            ></event-group-details>
+          </v-flex>
+        </v-layout>
       </v-flex>
     </v-layout>
 
@@ -166,6 +178,7 @@ import { mapGetters } from "vuex";
 import EventTeamDetails from "./EventTeamDetails";
 import EventAssetDetails from "./EventAssetDetails";
 import EventPersonDetails from "./EventPersonDetails";
+import EventGroupDetails from "./EventGroupDetails";
 import EventAttendanceForm from "./EventAttendanceForm";
 import arcoPlaceholder from "../../../assets/arco-placeholder.jpg";
 
@@ -176,6 +189,7 @@ export default {
     "event-team-details": EventTeamDetails,
     "event-asset-details": EventAssetDetails,
     "event-person-details": EventPersonDetails,
+    "event-group-details": EventGroupDetails,
     "event-attendance-form": EventAttendanceForm
   },
 
@@ -200,6 +214,7 @@ export default {
       },
       eventLoaded: false,
       teamsLoaded: false,
+      groupsLoaded: false,
       assetsLoaded: false,
       personsLoaded: false,
       arcoPlaceholder
@@ -209,11 +224,13 @@ export default {
   mounted() {
     this.eventLoaded = false;
     this.teamsLoaded = false;
+    this.groupsLoaded = false;
     this.assetsLoaded = false;
     this.personsLoaded = false;
     this.getEvent().then(() => {
       this.eventLoaded = true;
       this.teamsLoaded = true;
+      this.groupsLoaded = true;
       this.assetsLoaded = true;
       this.personsLoaded = true;
     });
@@ -242,7 +259,7 @@ export default {
       const id = this.$route.params.event;
       return this.$http
         .get(
-          `/api/v1/events/${id}?include_teams=1&include_assets=1&include_persons=1&include_images=1`
+          `/api/v1/events/${id}?include_teams=1&include_assets=1&include_persons=1&include_images=1&include_groups=1`
         )
         .then(resp => {
           this.event = resp.data;
@@ -252,6 +269,13 @@ export default {
           this.event.assets = !this.event.assets
             ? []
             : this.event.assets.map(a => a.asset);
+          this.event.groups = !this.event.groups
+            ? []
+            : this.event.groups.filter(function(g) {
+                // make sure the group is active
+                // and the group has an active relationship to the event
+                return g.group.active && g.active;
+              }).map(g => g.group);
           // conserve description on EventPersons
           this.event.persons = !this.event.persons
             ? []
@@ -297,6 +321,22 @@ export default {
       });
     },
 
+    reloadGroups() {
+      this.groupsLoaded = false;
+      const id = this.$route.params.event;
+      this.$http.get(`/api/v1/events/${id}?include_groups=1`).then(resp => {
+        let eventData = resp.data;
+        this.event.groups = !eventData.groups
+          ? []
+          : this.event.groups.filter(function(g) {
+              // make sure the group is active
+              // and the group has an active relationship to the event
+              return g.group.active && g.active;
+            }).map(g => g.group);
+        this.groupsLoaded = true;
+      });
+    },
+
     editEvent(event) {
       this.eventDialog.event = JSON.parse(JSON.stringify(event));
       this.eventDialog.show = true;
@@ -315,9 +355,9 @@ export default {
       delete newEvent.location;
       delete newEvent.assets;
       delete newEvent.teams;
+      delete newEvent.groups;
       delete newEvent.persons;
       delete newEvent.dayDuration;
-      delete newEvent.teams;
       delete newEvent.id;
       delete newEvent.images;
       const eventId = event.id;
