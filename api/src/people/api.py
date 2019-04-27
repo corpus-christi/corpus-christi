@@ -76,6 +76,7 @@ def create_person():
     db.session.commit()
     result = db.session.query(Person).filter_by(id=new_person.id).first()
     result.attributesInfo = result.person_attributes
+
     return jsonify(person_schema.dump(result)), 201
 
 
