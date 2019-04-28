@@ -158,6 +158,12 @@ def create_multiple_meetings(sqla, n):
 def create_multiple_members(sqla, n):
     """Commit `n` new members to the database. Return their IDs."""
     member_schema = MemberSchema()
+    all_managers = sqla.query(Manager).all()
+    if not all_managers:
+        create_multiple_managers(sqla, random.randint(3, 6))
+        all_managers = sqla.query(Manager).all()
+    if not sqla.query(Group).all():
+        create_multiple_groups(sqla, random.randint(3, 6))
     new_members = []
     for i in range(n):
         valid_member = member_schema.load(member_object_factory(sqla))
@@ -178,6 +184,10 @@ def create_attendance(sqla, fraction=0.75):
     """Create data for attendance with member/meeting"""
     attendance_schema = AttendanceSchema()
     new_attendances = []
+    if not sqla.query(Member).all():
+        create_multiple_people(sqla, random.randint(3, 6))
+    if not sqla.query(Meeting).all():
+        create_multiple_meetings(sqla, random.randint(3, 6))
     all_attendances = sqla.query(Member, Meeting).all()
     sample_attendances = random.sample(
         all_attendances, math.floor(len(all_attendances) * fraction))

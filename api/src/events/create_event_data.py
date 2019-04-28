@@ -222,6 +222,14 @@ def create_events_assets(sqla, fraction=0.75):
     """Create data in the linking table between events and assets """
     event_asset_schema = EventAssetSchema()
     new_events_assets = []
+    all_events = sqla.query(Event).all()
+    if not all_events:
+        create_multiple_events(sqla, random.randint(3, 6))
+        all_events = sqla.query(Event).all()
+    all_assets = sqla.query(Asset).all()
+    if not all_assets:
+        create_multiple_assets(sqla, random.randint(3, 6))
+        all_assets = sqla.query(Asset).all()
     all_events_assets = sqla.query(Event, Asset).all()
     sample_events_assets = random.sample(all_events_assets, math.floor(len(all_events_assets) * fraction))
     for events_assets in sample_events_assets:
@@ -235,6 +243,14 @@ def create_events_teams(sqla, fraction=0.75):
     """Create data in the linking table between events and teams """
     event_team_schema = EventTeamSchema()
     new_events_teams = []
+    all_events = sqla.query(Event).all()
+    if not all_events:
+        create_multiple_events(sqla, random.randint(3, 6))
+        all_events = sqla.query(Event).all()
+    all_teams = sqla.query(Team).all()
+    if not all_teams:
+        create_multiple_teams(sqla, random.randint(3, 6))
+        all_assets = sqla.query(Team).all()
     all_events_teams = sqla.query(Event, Team).all()
     sample_events_teams = random.sample(all_events_teams, math.floor(len(all_events_teams) * fraction))
     for events_teams in sample_events_teams:
@@ -247,6 +263,14 @@ def create_events_participants(sqla, fraction=0.75):
     """Create data in the linking table between events and participants """
     event_participant_schema = EventParticipantSchema()
     new_events_participants = []
+    all_events = sqla.query(Event).all()
+    if not all_events:
+        create_multiple_events(sqla, random.randint(3, 6))
+        all_events = sqla.query(Event).all()
+    all_participants = sqla.query(Person).all()
+    if not all_participants:
+        create_multiple_people(sqla, random.randint(3, 6))
+        all_participants = sqla.query(Person).all()
     all_events_participants = sqla.query(Event, Person).all()
     sample_events_participants = random.sample(all_events_participants, math.floor(len(all_events_participants) * fraction))
     for events_participants in sample_events_participants:
@@ -259,6 +283,14 @@ def create_events_persons(sqla, fraction=0.75):
     """Create data in the linking table between events and persons """
     event_person_schema = EventPersonSchema()
     new_events_persons = []
+    all_events = sqla.query(Event).all()
+    if not all_events:
+        create_multiple_events(sqla, random.randint(3, 6))
+        all_events = sqla.query(Event).all()
+    all_people = sqla.query(Person).all()
+    if not all_people:
+        create_multiple_people(sqla, random.randint(3, 6))
+        all_people = sqla.query(Person).all()
     all_events_persons = sqla.query(Event, Person).all()
     sample_events_persons = random.sample(all_events_persons, math.floor(len(all_events_persons) * fraction))
     for events_persons in sample_events_persons:

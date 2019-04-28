@@ -114,7 +114,6 @@ def enumerated_value_factory(sqla):
 
 def person_attribute_enumerated_factory(sqla):
     """Create a fake person attribute that is enumerated."""
-    # create_multiple_people(sqla, 17)
     create_multiple_attributes(sqla, 5, 1)
     create_multiple_enumerated_values(sqla, 10)
     people = sqla.query(Person).all()
@@ -123,6 +122,9 @@ def person_attribute_enumerated_factory(sqla):
         people = sqla.query(Person).all()
     current_person = random.choice(people)
     enumerated_values = sqla.query(EnumeratedValue).all()
+    if not enumerated_values:
+        create_multiple_enumerated_values(sqla, random.randint(3, 6))
+        enumerated_values = sqla.query(EnumeratedValue).all()
     current_enumerated_value = random.choice(enumerated_values)
     person_attribute = {
         'personId': current_person.id,
@@ -134,7 +136,6 @@ def person_attribute_enumerated_factory(sqla):
 
 def person_attribute_string_factory(sqla):
     """Create a fake person attribute that is enumerated."""
-    # create_multiple_people(sqla, 17)
     create_multiple_attributes(sqla, 5, 1)
     people = sqla.query(Person).all()
     if not people:
@@ -142,6 +143,9 @@ def person_attribute_string_factory(sqla):
         people = sqla.query(Person).all()
     current_person = random.choice(people)
     nonenumerated_values = sqla.query(Attribute).all()
+    if not nonenumerated_values:
+        create_multiple_nonenumerated_values(sqla, random.randint(3, 6))
+        nonenumerated_values = sqla.query(Attribute).all()
     current_nonenumerated_value = random.choice(nonenumerated_values)
     person_attribute = {
         'personId': current_person.id,
@@ -246,6 +250,10 @@ def create_multiple_people_attributes(sqla, n):
     sqla.commit()
 
     all_people = sqla.query(Person).all()
+    if not all_people:
+        create_multiple_people(sqla, random.randint(3, 6))
+        all_people = sqla.query(Person).all()
+
     count = 1
     for i in range(n):
         # current_person = random.choice(all_people)

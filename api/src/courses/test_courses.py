@@ -236,6 +236,9 @@ def student_object_factory(offering_id, student_id):
 def create_multiple_students(sqla, n=6, course_offering_id=None):
     """Commits the number of students to the DB."""
     students = sqla.query(Person).all()
+    if not students:
+        create_multiple_stuedents(sqla, random.randint(3, 6))
+        students = sqla.query(Student).all()
     course_offering = sqla.query(Course_Offering).all()
     if not course_offering:
         create_multiple_course_offerings(sqla, random.randint(3, 6))
