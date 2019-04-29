@@ -1,86 +1,74 @@
+import { unique_id } from '../../support/helpers';
+
+let diploma_title = unique_id();
+
 describe("Get to Diplomas Page", () => {
-  it("Given Successfull login", () => {
+  it("GIVEN: Successfull login", () => {
     cy.login();
   });
-  it("When: clicking to diplomas page", () => {
+  it("WHEN: Clicking to diplomas page", () => {
     cy.deploma_page();
   });
-  it("Then: should be in diplomas page", () => {
+  it("THEN: Should be in diplomas page", () => {
     cy.url().should("include", "/diplomas");
   });
 });
 
-describe("Fill out New Diploma Form", () => {
-  it("New Diploma Button", () => {
+describe("Fill out new diploma form and cancel", () => {
+  it("GIVEN: Form is loaded", () => {
     cy.get("[data-cy=diplomas-table-new]").click();
   });
-  it("Fill out new diploma form", () => {
-    cy.get(
-      ".v-form > :nth-child(1) > .v-input__control > .v-input__slot > .v-text-field__slot > input"
-    ).type("Its Friday!!!");
-    cy.get("textarea").type("Epic Dance Party");
-    cy.get(
-      ".v-form > .v-text-field--enclosed > .v-input__control > .v-input__slot > .v-select__slot"
-    ).click(); //lists of prereqs
-    cy.get(
-      ".menuable__content__active > .v-select-list > .v-list > :nth-child(1) > .v-list__tile"
-    ).click(); //alone low investment
-    cy.get(
-      ".v-form > .v-text-field--enclosed > .v-input__control > .v-input__slot > .v-select__slot > .v-select__selections"
-    ).click();
-    cy.get(
-      ".menuable__content__active > .v-select-list > .v-list > :nth-child(2) > .v-list__tile"
-    ).click();
+
+  it("WHEN: Fill-out new diploma form", () => {
+    cy.get("[data-cy=diplomas-form-name]").type(diploma_title); // Title
+    cy.get("[data-cy=diploma-form-description]").type("Epic Dance Party"); // Description
+    cy.get(":nth-child(4) > .v-input__icon > .v-icon").click(); // Click drop down
+    cy.get(".menuable__content__active > .v-select-list > .v-list > :nth-child(1) > .v-list__tile").click(); // Select an item from the drop down
+    cy.get(":nth-child(4) > .v-input__icon > .v-icon").click(); // Click drop down
+    cy.get(".menuable__content__active > .v-select-list > .v-list > :nth-child(1) > .v-list__tile").click(); // Select another item from the drop down
   });
-  it("Cancel new diploma", () => {
-    cy.get(
-      ".v-dialog__content--active > .v-dialog > .v-card > .v-card__actions > .secondary--text"
-    ).click();
+
+  it("THEN: Test cancel diploma", () => {
+    cy.get("[data-cy=cancel-new-diploma]").click();
   });
 });
 
-describe("Fill out New Diploma Form half way", () => {
-  it("New Diploma Button", () => {
+describe("Fill-out incomplete diploma", () => {
+  it("GIVEN: Form is loaded", () => {
     cy.get("[data-cy=diplomas-table-new]").click();
   });
-  it("Fill out new diploma form", () => {
-    cy.get(
-      ".v-form > :nth-child(1) > .v-input__control > .v-input__slot > .v-text-field__slot > input"
-    ).type("Half way gone!!");
-    cy.get(
-      ".v-dialog__content--active > .v-dialog > .v-card > .v-card__actions > .primary"
-    ).click();
+
+  it("WHEN: Form is filled-out with missing title & sescription", () => {
+    // cy.get("[data-cy=diplomas-form-name]").type(diploma_title); // Title
+    // cy.get("[data-cy=diploma-form-description]").type("Epic Dance Party"); // Description
+    cy.get(":nth-child(4) > .v-input__icon > .v-icon").click(); // Click drop down
+    cy.get(".menuable__content__active > .v-select-list > .v-list > :nth-child(1) > .v-list__tile"
+      ).click(); // Select an item from the drop down
+    cy.get(":nth-child(4) > .v-input__icon > .v-icon").click(); // Click drop down
+    cy.get(".menuable__content__active > .v-select-list > .v-list > :nth-child(1) > .v-list__tile"
+      ).click(); // Select another item from the drop down
+  });
+
+  it("THEN: Try to save an incomplete form", () => {
+    cy.get("[data-cy=form-save]").click(); // Click save button
+    cy.get(".v-messages__message"); // Check to get error message
+    cy.get(".v-textarea > .v-input__control > .v-text-field__details > .v-messages > .v-messages__wrapper > .v-messages__message"); // Check to get error message
   });
 });
 
-let new_diploma = "Its Friday!!!";
-
-describe("Add Diploma", () => {
-  it("Filling out new diploma form", () => {
-    cy.get("[data-cy=diplomas-table-new]").click();
-    cy.get(
-      ".v-form > :nth-child(1) > .v-input__control > .v-input__slot > .v-text-field__slot > input"
-    ).type(new_diploma);
-    cy.get("textarea").type("Epic Dance Party");
-    cy.get(
-      ".v-form > .v-text-field--enclosed > .v-input__control > .v-input__slot > .v-select__slot"
-    ).click(); //lists of prereqs
-    cy.get(
-      ".menuable__content__active > .v-select-list > .v-list > :nth-child(1) > .v-list__tile"
-    ).click(); //alone low investment
-    cy.get(
-      ".v-form > .v-text-field--enclosed > .v-input__control > .v-input__slot > .v-select__slot > .v-select__selections"
-    ).click();
-    cy.get(
-      ".menuable__content__active > .v-select-list > .v-list > :nth-child(2) > .v-list__tile"
-    ).click();
-    cy.get(
-      ".v-dialog__content--active > .v-dialog > .v-card > .v-card__actions > .primary"
-    ).click();
+describe("Add diploma", () => {
+  it("GIVEN: Finish Filling-out New Diploma Form", () => {
+    cy.get("[data-cy=diplomas-form-name]").type(diploma_title); // Title
+    cy.get("[data-cy=diploma-form-description]").type("Epic Dance Party"); // Description
   });
-  it("checking the added diploma", () => {
-    cy.get("[data-cy=diplomas-table-search]").type(new_diploma);
+
+  it("WHEN: Saving diploma", () => {
+    cy.get("[data-cy=form-save]").click();
+  });
+
+  it("THEN: Checking the added diploma", () => {
+    cy.get("[data-cy=diplomas-table-search]").type(diploma_title);
     cy.get("tbody > :nth-child(1) ").click();
-    cy.url().should("include", "/diplomas/33");
+    cy.url().should("include", "/diplomas/");
   });
 });

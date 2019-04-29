@@ -46,6 +46,7 @@
         flat
         :disabled="formDisabled"
         v-on:click="cancel"
+        data-cy="cancel-new-diploma"
         >{{ $t("actions.cancel") }}</v-btn
       >
       <v-spacer></v-spacer>
