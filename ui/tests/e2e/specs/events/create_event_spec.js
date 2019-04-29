@@ -1,3 +1,7 @@
+import { unique_id } from '../../support/helpers';
+
+let event = unique_id();
+
 describe("Create Event Test", function() {
   before(() => {
     cy.login();
@@ -9,9 +13,9 @@ describe("Create Event Test", function() {
 
   it("WHEN: Event Planner adds a new event and fills out details correctly", function() {
     cy.get("[data-cy=add-event]").click();
-    cy.get("[data-cy=title]").type("New Event");
+    cy.get("[data-cy=title]").type(event);
 
-    cy.get("[data-cy=description]").type("A neat description of something.");
+    cy.get("[data-cy=description]").type("Description");
 
     // Get first location in the search
     cy.get("[data-cy=entity-search-field]").click();
@@ -21,8 +25,9 @@ describe("Create Event Test", function() {
 
     cy.get("[data-cy=start-date-menu]").click();
     // Get cypress to click on a certain position on the calendar
+    cy.get("[data-cy=start-date-picker] > .v-picker__body > :nth-child(1) > .v-date-picker-header > :nth-child(3").click();
     cy.get(
-      "tbody > :nth-child(5) > :nth-child(1) > .v-btn > .v-btn__content"
+      "[data-cy=start-date-picker] > .v-picker__body > :nth-child(1) > .v-date-picker-table > .tab-transition-enter-active > tbody > :nth-child(5) > :nth-child(1) > .v-btn > .v-btn__content"
     ).click();
 
     cy.get("[data-cy=start-time-dialog]").click();
@@ -59,7 +64,7 @@ describe("Create Event Test", function() {
     ).click();
     cy.contains("Todos").click();
 
-    cy.get("tbody").contains("New Event");
+    cy.get("tbody").contains(event);
   });
 
   it("WHEN: Event planner adds a new event and fills out a blank form", function() {

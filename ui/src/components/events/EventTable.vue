@@ -20,7 +20,7 @@
           v-bind:label="$t('actions.search')"
           single-line
           hide-details
-          data-cy="form-search"
+          data-cy="table-search"
         ></v-text-field>
         <v-flex shrink justify-self-end>
           <v-btn
