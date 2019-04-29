@@ -100,7 +100,7 @@ def create_multiple_accounts(sqla, fraction=0.75):
 
     all_people = sqla.query(Person).all()
     if not all_people:
-        create_multiple_people(sqla, random.randint(3, 6))
+        create_multiple_people(sqla, random.randint(5, 10))
         all_people = sqla.query(Person).all()
     sample_people = random.sample(
         all_people, math.floor(len(all_people) * fraction))
