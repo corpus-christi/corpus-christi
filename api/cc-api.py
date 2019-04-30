@@ -21,7 +21,7 @@ from src.groups.create_group_data import create_group_test_data
 from src.i18n.models import Language, I18NLocale
 from src.images.create_image_data import create_images_test_data
 from src.people.models import Person, Account, Role
-from src.people.test_people import create_multiple_people, create_multiple_accounts, create_multiple_managers
+from src.people.test_people import create_multiple_people, create_multiple_accounts, create_multiple_managers, create_accounts_roles
     
 from src.places.models import Country
 from src.places.test_places import create_multiple_areas, create_multiple_addresses, create_multiple_locations
@@ -77,6 +77,7 @@ def load_all():
     Attribute.load_types_from_file()
     create_multiple_people(db.session, 17)
     create_multiple_accounts(db.session, 0.25)
+    create_accounts_roles(db.session, 0.75)
     access_token = create_access_token(identity='test-user')
 
     create_multiple_areas(db.session, 5)

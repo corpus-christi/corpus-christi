@@ -100,7 +100,7 @@ def create_multiple_accounts(sqla, fraction=0.75):
 
     all_people = sqla.query(Person).all()
     if not all_people:
-        create_multiple_people(sqla, random.randint(3, 6))
+        create_multiple_people(sqla, random.randint(5, 10))
         all_people = sqla.query(Person).all()
     sample_people = random.sample(
         all_people, math.floor(len(all_people) * fraction))
@@ -156,6 +156,10 @@ def create_roles(sqla, n):
 
 def create_accounts_roles(sqla, fraction=0.75):
     new_accounts_roles = []
+    if not sqla.query(Account).all():
+        create_multiple_accounts(sqla)
+    if not sqla.query(Role).all():
+        create_roles(sqla, random.randint(3, 6))
     all_accounts_roles = sqla.query(Account, Role).all()
     sample_accounts_roles = random.sample(all_accounts_roles, math.floor(len(all_accounts_roles) * fraction))
     for accounts_roles in sample_accounts_roles:

@@ -166,6 +166,10 @@ def create_images_events(sqla, fraction=0.75):
     """Create data in the linking table between images and events """
     image_event_schema = ImageEventSchema()
     new_images_events = []
+    if not sqla.query(Image).all():
+        create_multiple_images(sqla, random.randint(3, 6))
+    if not sqla.query(Event).all():
+        create_multiple_events(sqla, random.randint(3, 6))
     all_images_events = sqla.query(Image, Event).all()
     sample_images_events = random.sample(
         all_images_events, math.floor(len(all_images_events) * fraction))
@@ -180,6 +184,10 @@ def create_images_people(sqla, fraction=0.75):
     """Create data in the linking table between images and people """
     image_person_schema = ImagePersonSchema()
     new_images_people = []
+    if not sqla.query(Image).all():
+        create_multiple_images(sqla, random.randint(3, 6))
+    if not sqla.query(Person).all():
+        create_multiple_people(sqla, random.randint(3, 6))
     all_images_people = sqla.query(Image, Person).all()
     sample_images_people = random.sample(
         all_images_people, math.floor(len(all_images_people) * fraction))
@@ -195,6 +203,10 @@ def create_images_courses(sqla, fraction=0.75):
     """Create data in the linking table between images and images"""
     image_course_schema = ImageCourseSchema()
     new_images_courses = []
+    if not sqla.query(Image).all():
+        create_multiple_images(sqla, random.randint(3, 6))
+    if not sqla.query(Course).all():
+        create_multiple_courses(sqla, random.randint(3, 6))
     all_images_courses = sqla.query(Image, Course).all()
     sample_images_courses = random.sample(
         all_images_courses, math.floor(len(all_images_courses) * fraction))
@@ -210,6 +222,10 @@ def create_images_groups(sqla, fraction=0.75):
     """Create data in the linking table between images and groups"""
     image_group_schema = ImageGroupSchema()
     new_images_groups = []
+    if not sqla.query(Image).all():
+        create_multiple_images(sqla, random.randint(3, 6))
+    if not sqla.query(Group).all():
+        create_multiple_groups(sqla, random.randint(3, 6))
     all_images_groups = sqla.query(Image, Group).all()
     sample_images_groups = random.sample(
         all_images_groups, math.floor(len(all_images_groups) * fraction))
@@ -225,6 +241,10 @@ def create_images_locations(sqla, fraction=0.75):
     """Create data in the linking table between images and locations"""
     image_location_schema = ImageLocationSchema()
     new_images_locations = []
+    if not sqla.query(Image).all():
+        create_multiple_images(sqla, random.randint(3, 6))
+    if not sqla.query(Location).all():
+        create_multiple_locations(sqla, random.randint(3, 6))
     all_images_locations = sqla.query(Image, Location).all()
     sample_images_locations = random.sample(
         all_images_locations, math.floor(len(all_images_locations) * fraction))
