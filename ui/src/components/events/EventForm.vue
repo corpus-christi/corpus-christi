@@ -21,16 +21,24 @@
             name="description"
             data-cy="description"
           ></v-textarea>
-          <v-btn class="text-xs-center" color="primary" flat small @click="showImageChooser = true" :disabled="showImageChooser">
+          <v-btn
+            class="text-xs-center"
+            color="primary"
+            flat
+            small
+            @click="showImageChooser = true"
+            :disabled="showImageChooser"
+          >
             {{ $t("images.actions.add-image") }}
           </v-btn>
           <v-expand-transition>
             <image-chooser
               v-if="showImageChooser"
-              :oldImageId="oldImageId"
-              v-on:selected="chooseImage"
+              :imageId="getImageId"
+              v-on:saved="chooseImage"
               v-on:deleted="deleteImage"
               v-on:cancel="cancelImageChooser"
+              v-on:missing="missingImage"
             />
           </v-expand-transition>
         </v-layout>
@@ -322,9 +330,7 @@ export default {
       showAddressCreator: false,
       showImageChooser: false,
       imageSaved: false,
-      currentAddress: 0,
-      imageId: -1,
-      oldImageId: -1
+      currentAddress: 0
     };
   },
 
@@ -346,14 +352,11 @@ export default {
           this.endTime = this.getTimeFromTimestamp(this.event.end);
         }
         if (this.event.images && this.event.images.length > 0) {
-          console.log(this.event.images[0].image.id);
-          this.imageId = this.event.images[0].image.id;
-          this.oldImageId = this.event.images[0].image.id;
-          this.imageSaved = true;
           this.showImageChooser = true;
+          this.imageSaved = true;
         } else {
-          this.imageId = -1;
-          this.oldImageId = -1;
+          this.showImageChooser = false;
+          this.imageSaved = false;
         }
       }
     },
@@ -391,7 +394,12 @@ export default {
     },
 
     formDisabled() {
-      return this.saveLoading || this.addMoreLoading || this.showAddressCreator || (this.showImageChooser && !this.imageSaved);
+      return (
+        this.saveLoading ||
+        this.addMoreLoading ||
+        this.showAddressCreator ||
+        (this.showImageChooser && !this.imageSaved)
+      );
     },
 
     today() {
@@ -400,6 +408,16 @@ export default {
 
     startDateTimeSelected() {
       return this.startDate && this.startTime;
+    },
+
+    getImageId() {
+      if (this.event.images) {
+        return this.event.images.length > 0
+          ? this.event.images[0].image_id
+          : -1;
+      } else {
+        return -1;
+      }
     },
 
     ...mapGetters(["currentLanguageCode"])
@@ -425,9 +443,7 @@ export default {
       this.startTimeModal = false;
       this.endTimeModal = false;
       this.showImageChooser = false;
-      this.imageSaved = false;
-      this.imageId = -1;
-      this.oldImageId--; // we do the decrement operator here to make sure that ImageChooser's watch method gets called.
+      this.showAddressCreator = false;
       this.$validator.reset();
     },
     save() {
@@ -436,8 +452,6 @@ export default {
           this.event.start = this.getTimestamp(this.startDate, this.startTime);
           this.event.end = this.getTimestamp(this.endDate, this.endTime);
           this.event.active = true;
-          this.event.imageId = this.imageId;
-          this.event.oldImageId = this.oldImageId;
           if (this.addMore) this.$emit("addAnother", this.event);
           else this.$emit("save", this.event);
         }
@@ -512,18 +526,23 @@ export default {
     },
 
     chooseImage(id) {
-      this.imageId = id;
+      this.event.newImageId = id;
       this.imageSaved = true;
-      // console.log(this.imageId);
     },
 
     deleteImage() {
-      this.imageId = -1;
+      this.showImageChooser = false;
+      delete this.event.newImageId;
+      this.event.images = [];
       this.imageSaved = false;
     },
 
     cancelImageChooser() {
       this.showImageChooser = false;
+    },
+
+    missingImage() {
+      this.imageSaved = false;
     }
   }
 };
