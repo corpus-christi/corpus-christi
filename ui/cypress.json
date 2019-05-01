@@ -1,5 +1,16 @@
 {
   "baseUrl": "http://localhost:8080",
   "projectId": "ewdbxb",
-  "pluginsFile": "tests/e2e/plugins/index.js"
+  "pluginsFile": "tests/e2e/plugins/index.js",
+  "testFiles": "**/*.*",
+  "ignoreTestFiles": [
+    "/**/events/add_person_to_event_spec.js",
+    "/**/events/asset_to_event_spec.js",
+    "/**/events/calendar_spec.js",
+    "/**/events/event_teams_spec.js",
+    "/**/events/public_list_by_date_spec.js",
+    "/**/events/add_team_member_spec.js",
+
+    "/**/courses/course_offering_detail_test.js"
+  ]
 }
