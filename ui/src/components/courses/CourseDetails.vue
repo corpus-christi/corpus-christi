@@ -27,6 +27,7 @@
               </span>
             </v-card-title>
             <v-card-text> {{ course.description }} </v-card-text>
+            <v-card-text> <v-img :src="fetchImage"> </v-img> </v-card-text>
             <v-card-actions>
               <v-btn
                 flat
@@ -124,6 +125,17 @@ export default {
       }
     };
   },
+  computed: {
+    fetchImage() {
+      if (this.course.images && this.course.images.length > 0) {
+        return `/api/v1/images/${
+          this.course.images[0].image.id
+        }?${Math.random()}`;
+      } else {
+        return "";
+      }
+    }
+  },
   mounted() {
     this.loadCourse();
   },
@@ -156,15 +168,110 @@ export default {
       this.courseDialog.show = false;
     },
 
-    saveCourse(course) {
+    async saveCourse(course) {
+      this.courseDialog.saveLoading = true;
       if (course instanceof Error) {
         this.snackbar.text = this.$t("courses.update-failed");
+        this.courseDialog.saveLoading = false;
       } else {
-        Object.assign(this.course, course);
+        let courseAttrs = {
+          description: course.description,
+          name: course.name
+        };
+
+        let newImageId = course.newImageId;
+        let oldImageId = await this.getOldImageId(course.id);
+
+        var prereqMap = {};
+        if (course.prerequisites) {
+          prereqMap = course.prerequisites.map(prereq => prereq.id);
+        }
+
+        let promises = [];
+        promises.push(
+          this.$http
+            .patch(`/api/v1/courses/courses/${course.id}`, courseAttrs)
+            .then(resp => {
+              console.log("EDITED", resp);
+              return resp;
+            })
+        );
+
+        if (newImageId) {
+          // an image was added or edited
+          if (oldImageId) {
+            // an image was edited (PUT)
+            promises.push(
+              this.$http.put(
+                `/api/v1/courses/${
+                  course.id
+                }/images/${newImageId}?old=${oldImageId}`
+              )
+            );
+          } else {
+            // an image was added (POST)
+            promises.push(
+              this.$http.post(
+                `/api/v1/courses/${course.id}/images/${newImageId}`
+              )
+            );
+          }
+        } else {
+          // no image existed or was deleted
+          if (oldImageId) {
+            // an image was removed (DELETE)
+            promises.push(
+              this.$http.delete(
+                `/api/v1/courses/${course.id}/images/${oldImageId}`
+              )
+            );
+          } else {
+            // an image never existed and never was added (NOTHING)
+            // case put in for readability
+          }
+        }
+
+        promises.push(
+          this.$http.patch(
+            `/api/v1/courses/courses/${course.id}/prerequisites`,
+            { prerequisites: prereqMap } // API expects array of IDs
+          )
+        );
+
+        Promise.all(promises)
+          .then(resps => {
+            let newCourse = resps[0].data;
+            newCourse.prerequisites = course.prerequisites; // Re-attach prereqs so they show up in UI
+            this.cancelCourse();
+            this.courseDialog.saveLoading = false;
+            this.loadCourse();
+            this.snackbar.text = this.$t("courses.updated");
+          })
+          .catch(err => {
+            console.error("FALURE", err.response);
+            this.courseDialog.saveLoading = false;
+            this.snackbar.text = this.$t("courses.update-failed");
+          });
       }
-      this.snackbar.text = this.$t("courses.updated");
-      this.snackbar.show = true;
-      this.courseDialog.show = false;
+    },
+
+    async getOldImageId(id) {
+      if (!id) {
+        return null;
+      }
+      return await this.$http
+        .get(`/api/v1/courses/courses/${id}?include_images=1`)
+        .then(resp => {
+          if (resp.data.images && resp.data.images.length > 0) {
+            return resp.data.images[0].image_id;
+          } else {
+            return null;
+          }
+        })
+        .catch(err => {
+          console.error("ERROR FETCHING COURSE", err);
+          return null;
+        });
     }
   }
 };
