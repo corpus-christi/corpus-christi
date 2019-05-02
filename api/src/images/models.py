@@ -44,8 +44,8 @@ class ImageEventSchema(Schema):
     image_id = fields.Integer(required=True, min=1)
     event_id = fields.Integer(required=True, min=1)
 
+    image = fields.Nested('ImageSchema', dump_only=True)
     event = fields.Nested('EventSchema', dump_only=True)
-    image = fields.Nested('ImageSchema', exclude=['events'], dump_only=True)
 
 class ImagePerson(Base):
     __tablename__ = 'images_imageperson'
@@ -60,8 +60,8 @@ class ImagePersonSchema(Schema):
     image_id = fields.Integer(required=True, min=1)
     person_id = fields.Integer(required=True, min=1)
 
+    image = fields.Nested('ImageSchema', dump_only=True)
     person = fields.Nested('PersonSchema', dump_only=True)
-    image = fields.Nested('ImageSchema', exclude=['people'], dump_only=True)
 
 class ImageCourse(Base):
     __tablename__ = 'images_imagecourse'
@@ -76,8 +76,8 @@ class ImageCourseSchema(Schema):
     image_id = fields.Integer(required=True, min=1)
     course_id = fields.Integer(required=True, min=1)
 
-    course = fields.Nested('CourseSchema', dump_only=True)
     image = fields.Nested('ImageSchema', dump_only=True)
+    course = fields.Nested('CourseSchema', dump_only=True)
 
 class ImageGroup(Base):
     __tablename__ = 'images_imagegroup'
@@ -92,8 +92,8 @@ class ImageGroupSchema(Schema):
     image_id = fields.Integer(required=True, min=1)
     group_id = fields.Integer(required=True, min=1)
 
+    image = fields.Nested('ImageSchema', dump_only=True)
     group = fields.Nested('GroupSchema', dump_only=True)
-    image = fields.Nested('ImageSchema', exclude=['groups'], dump_only=True)
 
 class ImageLocation(Base):
     __tablename__ = 'images_imagelocation'
@@ -108,5 +108,5 @@ class ImageLocationSchema(Schema):
     image_id = fields.Integer(required=True, min=1)
     location_id = fields.Integer(required=True, min=1)
 
+    image = fields.Nested('ImageSchema', dump_only=True)
     location = fields.Nested('LocationSchema', dump_only=True)
-    image = fields.Nested('ImageSchema', exclude=['locations'], dump_only=True)
