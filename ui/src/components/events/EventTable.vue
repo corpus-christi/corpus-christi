@@ -650,7 +650,9 @@ export default {
     },
 
     async getOldImageId(id) {
-      if(!id) { return null; }
+      if (!id) {
+        return null;
+      }
       return await this.$http
         .get(`/api/v1/events/${id}?include_images=1`)
         .then(resp => {
