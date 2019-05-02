@@ -105,8 +105,10 @@
             color="secondary"
             flat
             :disabled="deactivateDialog.loading"
-            >{{ $t("actions.cancel") }}</v-btn
+            data-cy="cancel-archive"
           >
+            {{ $t("actions.cancel") }}
+          </v-btn>
           <v-spacer></v-spacer>
           <v-btn
             v-on:click="deactivate(deactivateDialog.diploma)"
@@ -114,8 +116,10 @@
             raised
             :disabled="deactivateDialog.loading"
             :loading="deactivateDialog.loading"
-            >{{ $t("actions.confirm") }}</v-btn
+            data-cy="confirm-archive"
           >
+            {{ $t("actions.confirm") }}
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
