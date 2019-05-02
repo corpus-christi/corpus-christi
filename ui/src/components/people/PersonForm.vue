@@ -487,7 +487,7 @@ export default {
             element.field == "lastName" ||
             element.field == "secondLastName" ||
             element.field == "email" ||
-            element.field == "brithday"
+            element.field == "birthday"
           );
         }) != -1;
       this.stepTwoErrors =
@@ -508,7 +508,7 @@ export default {
             element.field != "lastName" &&
             element.field != "secondLastName" &&
             element.field != "email" &&
-            element.field != "brithday"
+            element.field != "birthday"
           );
         }) != -1;
     },

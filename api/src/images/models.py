@@ -77,7 +77,7 @@ class ImageCourseSchema(Schema):
     course_id = fields.Integer(required=True, min=1)
 
     course = fields.Nested('CourseSchema', dump_only=True)
-    image = fields.Nested('ImageSchema', exclude=['courses'], dump_only=True)
+    image = fields.Nested('ImageSchema', dump_only=True)
 
 class ImageGroup(Base):
     __tablename__ = 'images_imagegroup'

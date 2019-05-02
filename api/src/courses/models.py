@@ -135,7 +135,7 @@ class CourseSchema(Schema):
     description = fields.String(required=True, validate=Length(min=1))
     active = fields.Boolean(required=True, default=True)
     diplomaList = fields.Nested('DiplomaSchema', many=True)
-
+    images = fields.Nested('ImageCourseSchema', many=True, exclude=['course'], dump_only=True)
 
 # ---- Diploma
 
