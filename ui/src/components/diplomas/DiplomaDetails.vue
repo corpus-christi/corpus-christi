@@ -5,8 +5,10 @@
         outline
         color="primary"
         v-on:click="$router.push({ name: 'all-diplomas' })"
-        ><v-icon>arrow_back</v-icon>{{ $t("actions.back") }}</v-btn
-      >
+        data-cy="arrow_back_button"
+        >
+        <v-icon>arrow_back</v-icon>{{ $t("actions.back") }}
+      </v-btn>
     </v-flex>
     <v-flex xs12 sm8 offset-sm2>
       <v-card>
