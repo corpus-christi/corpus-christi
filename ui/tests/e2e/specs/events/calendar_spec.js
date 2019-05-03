@@ -1,3 +1,5 @@
+// Inactive or broken test. See "ignoreTestFiles" in cypress.json
+
 // NOTE: Requires specific data
 describe("Calendar Test", function() {
   before(() => {

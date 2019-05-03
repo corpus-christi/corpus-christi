@@ -10,9 +10,8 @@ describe("Event Participants Test", function() {
   it("WHEN: Event planner adds a new participant", function() {
     cy.get("[data-cy=add-participant]").click();
 
-    // Wait for the form to fully load
-    cy.wait(250);
-
+    // Wait for form to load
+    cy.wait(300);
     // Pick the first person in the list
     cy.get("[data-cy=entity-search-field]").click();
     cy.get(
@@ -29,9 +28,8 @@ describe("Event Participants Test", function() {
   it("AND: Event planner adds another participant", function() {
     cy.get("[data-cy=add-participant]").click();
 
-    // Wait for the form to fully load
-    cy.wait(250);
-
+    // Wait for form to load
+    cy.wait(300);
     // Pick the second person in the list
     cy.get("[data-cy=entity-search-field]").click();
     cy.get(
@@ -49,8 +47,6 @@ describe("Event Participants Test", function() {
     cy.get("[data-cy=archive]")
       .eq(0)
       .click();
-    cy.get("[data-cy=confirm-delete]")
-      .eq(1)
-      .click();
+    cy.get("[data-cy=confirm-delete]").click();
   });
 });

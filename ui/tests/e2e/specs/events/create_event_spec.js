@@ -58,12 +58,7 @@ describe("Create Event Test", function() {
   });
 
   it("THEN: A new event is listed in the table", function() {
-    // Switch to see all events on one page
-    cy.get(
-      ".v-datatable__actions__select > .v-input > .v-input__control > .v-input__slot > .v-select__slot"
-    ).click();
-    cy.contains("Todos").click();
-
+    cy.get("[data-cy=table-search]").clear().type(event);
     cy.get("tbody").contains(event);
   });
 

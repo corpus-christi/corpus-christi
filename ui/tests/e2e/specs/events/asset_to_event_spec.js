@@ -1,3 +1,5 @@
+// Inactive or broken test. See "ignoreTestFiles" in cypress.json
+
 // NOTE: Requires no assets assigned to events
 describe("Add Asset to Event Test", function() {
   before(() => {

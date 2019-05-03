@@ -1,3 +1,5 @@
+// Inactive or broken test. See "ignoreTestFiles" in cypress.json
+
 // NOTE: Needs specific dates to pass tests
 describe("Public List by Date Test", function() {
   it("GIVEN: User navigates to events page", function() {

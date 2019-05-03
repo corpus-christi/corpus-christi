@@ -8,8 +8,8 @@ describe("Add Another Event Test", function() {
     cy.login();
   });
 
-  it("GIVEN: Get to the Event page", function() {
-    cy.visit("/events/all");
+  it("GIVEN: Events Page", function() {
+    cy.visit("/events");
   });
 
   it("WHEN: Adding Two Events", function() {
@@ -56,8 +56,6 @@ describe("Add Another Event Test", function() {
       .eq(1)
       .click();
     cy.get("[data-cy=end-time-ok]").click();
-
-
 
     // Add Another Event
     cy.get("[data-cy=form-add-another]").click();

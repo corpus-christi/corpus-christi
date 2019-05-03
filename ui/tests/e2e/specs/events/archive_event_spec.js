@@ -3,8 +3,8 @@ describe("Archive Event Test", function() {
     cy.login();
   });
 
-  it("GIVEN: Event Planner goes to Event page", function() {
-    cy.visit("/events/all");
+  it("GIVEN: Events Page", function() {
+    cy.visit("/events");
   });
 
   it("WHEN: Event Planner wants to deactivate an event", function() {

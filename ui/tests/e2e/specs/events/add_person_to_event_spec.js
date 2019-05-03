@@ -1,3 +1,5 @@
+// Inactive or broken test. See "ignoreTestFiles" in cypress.json
+
 // NOTE: Requires that no people are tied to other events
 describe("Event Person Test", function() {
   before(() => {

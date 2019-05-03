@@ -1,9 +1,14 @@
+import { unique_id } from '../../support/helpers';
+
+let event = unique_id();
+let description = unique_id();
+
 describe("Update Event Test", function() {
   before(() => {
     cy.login();
   });
 
-  it("GIVEN: Event Planner goes to Event page", function() {
+  it("GIVEN: Event Page", function() {
     cy.visit("/events/all");
   });
 
@@ -12,24 +17,17 @@ describe("Update Event Test", function() {
     cy.get("[data-cy=edit]")
       .eq(0)
       .click();
-    cy.get("[data-cy=title]").type(" V2");
+    cy.get("[data-cy=title]").clear().type(event);
 
     // Rewrite a new description of the event
-    cy.get("[data-cy=description]").clear();
-    cy.get("[data-cy=description]").type("A whole new description.");
+    cy.get("[data-cy=description]").clear().type(description);
 
     cy.get("[data-cy=form-save]").click();
   });
 
   it("THEN: Event title should be updated", function() {
-    // Switch to see all events on one page
-    cy.get(
-      ".v-datatable__actions__select > .v-input > .v-input__control > .v-input__slot > .v-select__slot"
-    ).click();
-    cy.contains("Todos").click();
-
-    // Check for new title in table
-    cy.get(":nth-child(1) > :nth-child(1)").contains(" V2");
+    cy.get("[data-cy=table-search]").clear().type(event);
+    cy.get("tbody").contains(event);
   });
 
   it("AND: The event description should be updated", function() {
@@ -39,7 +37,7 @@ describe("Update Event Test", function() {
 
     cy.get("[data-cy=description]").should(
       "have.value",
-      "A whole new description."
+      description
     );
   });
 });

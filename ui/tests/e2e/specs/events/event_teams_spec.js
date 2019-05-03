@@ -1,3 +1,5 @@
+// Inactive or broken test. See "ignoreTestFiles" in cypress.json
+
 // NOTE: Requires no teams assigned to any events
 describe("Event Teams Test", function() {
   before(() => {
@@ -11,7 +13,7 @@ describe("Event Teams Test", function() {
   it("WHEN: Event planner adds a team to an event", function() {
     cy.get("[data-cy=add-team-dialog]").click();
 
-    cy.wait(250);
+    cy.wait(300);
 
     cy.get("[data-cy=entity-search-field]")
       .eq(3)
@@ -32,7 +34,7 @@ describe("Event Teams Test", function() {
   it("AND: Event planner adds another team", function() {
     cy.get("[data-cy=add-team-dialog]").click();
 
-    cy.wait(250);
+    cy.wait(300);
 
     cy.get("[data-cy=entity-search-field]")
       .eq(0)
