@@ -597,11 +597,11 @@ def put_people_images(person_id, image_id):
     new_image_id = image_id
 
     if old_image_id == 'false':
-        post_resp = add_person_images(person_id, new_image_id)
+        post_resp = add_people_images(person_id, new_image_id)
         return jsonify({'deleted': 'No image to delete', 'posted': str(post_resp[0].data, "utf-8") })
     else:
         del_resp = delete_person_image(person_id, old_image_id)
-        post_resp = add_person_images(person_id, new_image_id)
+        post_resp = add_people_images(person_id, new_image_id)
 
         return jsonify({'deleted': del_resp[0], 'posted': str(post_resp[0].data, "utf-8") })
 
