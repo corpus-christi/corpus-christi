@@ -25,6 +25,8 @@ dist/
 .vscode/
 .DS_Store
 
+migrations/versions/*
+
 db-*.json
 
 #ETC
