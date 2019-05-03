@@ -5,9 +5,8 @@ from flask.json import jsonify
 from flask_jwt_extended import jwt_required, get_raw_jwt, jwt_optional
 from marshmallow import ValidationError
 from ..auth.utils import jwt_not_required
-
 from . import people
-from .models import Person, Account, AccountSchema, Role, PersonSchema, RoleSchema, Manager, ManagerSchema
+from .models import func, Person, Account, AccountSchema, Role, PersonSchema, RoleSchema, Manager, ManagerSchema
 from ..events.models import EventPerson, EventParticipant
 from ..teams.models import TeamMember
 from ..attributes.models import Attribute, AttributeSchema, EnumeratedValue, EnumeratedValueSchema, PersonAttribute, PersonAttributeSchema
@@ -518,7 +517,14 @@ def create_manager():
 @people.route('/manager')
 @jwt_required
 def read_all_managers():
-    result = db.session.query(Manager).all()
+    show_unique_persons_only = request.args.get('show_unique_persons_only')
+
+    # Remove duplicate persons
+    if show_unique_persons_only == 'Y':
+        result = db.session.query(Manager).distinct(Manager.person_id).all()
+    else:
+        result = db.session.query(Manager)
+
     return jsonify(manager_schema.dump(result, many=True))
 
 

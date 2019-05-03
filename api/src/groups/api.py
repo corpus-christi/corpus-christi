@@ -6,7 +6,7 @@ from marshmallow import ValidationError
 
 from . import groups
 from .models import GroupSchema, Group, Attendance, Member, MemberSchema, Meeting, MeetingSchema, AttendanceSchema
-from ..people.models import Role, Manager
+from ..people.models import Role, Manager, Account
 from .. import db
 
 # ---- Group
@@ -15,7 +15,7 @@ group_schema = GroupSchema()
 
 def group_dump(group):
     group.managerInfo = group.manager
-    group.managerInfo.person = group.manager.account.person
+    group.managerInfo.person = group.manager.person
     group.memberList = group.members
     return jsonify(group_schema.dump(group))
 
@@ -25,7 +25,6 @@ def group_dump(group):
 @jwt_required
 def create_group():
     request.json['active'] = True
-
     members_to_add = None
     if 'person_ids' in request.json.keys():
         members_to_add = request.json['person_ids']
@@ -42,7 +41,6 @@ def create_group():
         return jsonify(msg="Manager not found"), 404
     
     db.session.add(new_group)
-    db.session.commit()
 
     today = datetime.datetime.today().strftime('%Y-%m-%d')
 
@@ -51,15 +49,19 @@ def create_group():
             new_member = generate_member(new_group.id, member, today, True)
             db.session.add(new_member)
 
+    # Add group_overseer role to the existing manager account -> if they have an account
     group_overseer = db.session.query(Role).filter_by(name_i18n="role.group-overseer").first()
-    manager_roles = new_group.manager.account.roles
+    subq = db.session.query(Manager.person_id).filter_by(id=new_group.manager_id).subquery()
+    manager_account = db.session.query(Account).filter(Account.person_id.in_(subq)).first()
+    
+    if manager_account:
+        manager_roles = manager_account.roles
+        if group_overseer and group_overseer not in manager_roles:
+                manager_roles.append(group_overseer)
+                setattr(manager_account, 'roles', manager_roles)
+                print("adding group overseer role", end='\n\n\n')
 
-    if group_overseer:
-        if group_overseer not in manager_roles:
-            print("adding role", end='\n\n\n')
-            manager_roles.append(group_overseer)
-
-    db.session.add(new_group.manager.account)
+    # db.session.add(manager_account)
     db.session.commit()
     return group_dump(new_group), 201
 
@@ -70,7 +72,7 @@ def read_all_groups():
     for group in result:
         group.memberList = group.members
         group.managerInfo = group.manager
-        group.managerInfo.person = group.manager.account.person
+        group.managerInfo.person = group.manager.person
     return jsonify(group_schema.dump(result, many=True))
 
 
@@ -114,9 +116,13 @@ def update_group(group_id):
         group_overseer = db.session.query(Role).filter_by(name_i18n="role.group-overseer").first()
         if group_overseer:
             manager = db.session.query(Manager).filter_by(id=new_manager_id).first()
-            manager_roles = manager.account.roles
-            if group_overseer not in manager_roles:
-                manager_roles.append(group_overseer)
+            manager_account = db.session.query(Account).filter_by(person_id=manager.person_id).first()
+            if manager_account:
+                manager_roles = manager_account.roles
+                if group_overseer not in manager_roles:
+                    manager_roles.append(group_overseer)
+                    setattr(manager_account, 'roles', manager_roles)
+                    print("adding group overseer role", end='\n\n\n')
 
     old_member_joined_dates = []
     for member in group.members:

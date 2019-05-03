@@ -450,11 +450,8 @@ def add_event_group(event_id, group_id):
     return jsonify(f"Group with id #{group_id} successfully attached to event with id #{event_id}."), 201
 
 def send_notification_email(person_email, event):
-    # with open('../../../ui/i18n/cc-i18n.json') as json_file:  
-    #     data = json.load(json_file)
-    #     for key in data['emails']:
-    #         print(key)
-
+  
+    # Make Python class/module that has methods like getTranslation(), getLocaleCode() 
     msg = Message("Event Booking Notification", sender='tumissionscomputing@gmail.com', recipients=[person_email])
     #link = url_for('events.read_one_event', event_id = event_id)
     ip = "http://localhost:8080"

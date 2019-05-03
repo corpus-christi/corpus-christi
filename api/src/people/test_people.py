@@ -237,11 +237,11 @@ def manager_object_factory(sqla, description, next_level=None, locale_code='en-U
         i18n_create(description_i18n, 'en-US',
                     description, description=f"Manager {description}")
 
-    all_accounts = sqla.query(Account).all()
+    all_persons = sqla.query(Person).all()
 
     manager = {
 
-        'account_id': random.choice(all_accounts).id,
+        'person_id': random.choice(all_persons).id,
         'description_i18n': description_i18n
     }
     all_managers = sqla.query(Manager).all()

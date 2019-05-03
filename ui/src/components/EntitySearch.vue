@@ -175,7 +175,7 @@ export default {
     else if (this.team) endpoint = "/api/v1/teams/";
     else if (this.asset) endpoint = "/api/v1/assets/";
     else if (this.address) endpoint = "/api/v1/places/addresses";
-    else if (this.manager) endpoint = "/api/v1/people/manager";
+    else if (this.manager) endpoint = "/api/v1/people/manager?show_unique_persons_only=Y";
     this.$http
       .get(endpoint)
       .then(resp => {
