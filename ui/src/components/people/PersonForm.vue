@@ -203,9 +203,9 @@
               </v-btn>
             </v-flex>
           </v-layout>
-            <v-flex v-show="addressSaved">
-              <span>{{ $t("places.messages.saved") }}</span>
-            </v-flex>
+          <v-flex v-show="addressSaved">
+            <span>{{ $t("places.messages.saved") }}</span>
+          </v-flex>
           <v-expand-transition>
             <address-form
               v-if="showAddressForm"
@@ -321,7 +321,11 @@ import ImageChooser from "../images/ImageChooser";
 
 export default {
   name: "PersonForm",
-  components: { "attribute-form": AttributeForm, "address-form": AddressForm, 'image-chooser': ImageChooser },
+  components: {
+    "attribute-form": AttributeForm,
+    "address-form": AddressForm,
+    "image-chooser": ImageChooser
+  },
   props: {
     initialData: {
       type: Object,
@@ -400,7 +404,10 @@ export default {
 
     formDisabled() {
       return (
-        this.saveIsLoading || this.addMoreIsLoading || this.showAddressForm || (this.showImageChooser && !this.imageSaved)
+        this.saveIsLoading ||
+        this.addMoreIsLoading ||
+        this.showAddressForm ||
+        (this.showImageChooser && !this.imageSaved)
       );
     },
     hasUsername() {
@@ -430,7 +437,7 @@ export default {
       } else {
         return -1;
       }
-    },
+    }
   },
 
   watch: {
@@ -588,7 +595,7 @@ export default {
 
     async updatePerson(data, personId, emitMessage) {
       let newImageId = null;
-      if(this.person.newImageId) {
+      if (this.person.newImageId) {
         newImageId = this.person.newImageId;
       }
       delete this.person.newImageId;
@@ -597,9 +604,14 @@ export default {
       let oldImageId = await this.getOldImageId(personId);
 
       console.log(newImageId, oldImageId);
-      if (newImageId) { // a new image was added to the form
-        if (oldImageId) { // an image was edited (PUT)
-          this.$http.put(`/api/v1/people/${personId}/images/${newImageId}?old=${oldImageId}`)
+      if (newImageId) {
+        // a new image was added to the form
+        if (oldImageId) {
+          // an image was edited (PUT)
+          this.$http
+            .put(
+              `/api/v1/people/${personId}/images/${newImageId}?old=${oldImageId}`
+            )
             .then(resp => {
               console.log("PUT IMAGE ON PERSON", resp);
               this.$http
@@ -617,8 +629,10 @@ export default {
             .catch(err => {
               console.error("ERROR PUTTING IMAGE", err.response);
             });
-        } else { // an image was added (POST)
-          this.$http.post(`/api/v1/people/${personId}/images/${newImageId}`)
+        } else {
+          // an image was added (POST)
+          this.$http
+            .post(`/api/v1/people/${personId}/images/${newImageId}`)
             .then(resp => {
               console.log("POST IMAGE ON PERSON", resp);
               this.$http
@@ -638,8 +652,10 @@ export default {
             });
         }
       } else {
-        if (oldImageId) { // an image was removed (DELETE)
-          this.$http.delete(`/api/v1/people/${personId}/images/${oldImageId}`)
+        if (oldImageId) {
+          // an image was removed (DELETE)
+          this.$http
+            .delete(`/api/v1/people/${personId}/images/${oldImageId}`)
             .then(resp => {
               console.log("DELETED IMAGE ON PERSON", resp);
               this.$http
@@ -657,7 +673,8 @@ export default {
             .catch(err => {
               console.error("ERROR DELETING IMAGE", err.response);
             });
-        } else { // an image didn't happen (NOTHING)
+        } else {
+          // an image didn't happen (NOTHING)
           this.$http
             .put(`/api/v1/people/persons/${personId}`, data)
             .then(response => {
@@ -675,7 +692,7 @@ export default {
 
     addPerson(data, emitMessage) {
       let imageId = -1;
-      if(this.person.newImageId) {
+      if (this.person.newImageId) {
         imageId = this.person.newImageId;
       }
       delete this.person.newImageId;
@@ -719,7 +736,8 @@ export default {
     },
 
     addImage(personId, imageId) {
-      return this.$http.post(`/api/v1/people/${personId}/images/${imageId}`)
+      return this.$http
+        .post(`/api/v1/people/${personId}/images/${imageId}`)
         .then(resp => {
           console.log("IMAGE ADDED TO PERSON", resp);
         })
