@@ -29,7 +29,8 @@ class Attribute(Base):
         'attribute.float', 'attribute.integer', 'attribute.string', 'attribute.date']
 
     enumerated_values = relationship(
-        'EnumeratedValue', backref='attribute', lazy=True)
+        'EnumeratedValue', backref='attributes', lazy=True)
+    events = relationship('EventAttribute', back_populates='attribute')
 
     def __repr__(self):
         return f"<Attribute(id={self.id})>"

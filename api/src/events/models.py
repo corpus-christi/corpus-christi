@@ -1,7 +1,7 @@
 from marshmallow import fields, Schema, pre_load
 from marshmallow.validate import Length, Range, OneOf
 from sqlalchemy import Column, DateTime, Integer, String, Date, ForeignKey, Boolean
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from ..db import Base
@@ -29,6 +29,7 @@ class Event(Base):
     participants = relationship("EventParticipant", back_populates="event")
     location = relationship("Location", back_populates="events")
     images = relationship("ImageEvent", back_populates="event")
+    attributes = relationship("EventAttribute", back_populates="event")
 
     def __repr__(self):
         return f"<Event(id={self.id})>"
@@ -51,6 +52,7 @@ class EventSchema(Schema):
     teams = fields.Nested('EventTeamSchema', many=True, exclude=['event'], dump_only=True)
     assets = fields.Nested('EventAssetSchema', many=True, exclude=['event'], dump_only=True)
     images = fields.Nested('ImageEventSchema', many=True, exclude=['event'], dump_only=True)
+    attributes = fields.Nested('EventAttributeSchema', many=True, exclude=['event'], dump_only=True)
 
 
 # ---- EventAsset
@@ -70,8 +72,7 @@ class EventAssetSchema(Schema):
     event_id = fields.Integer(required=True, min=1)
     asset_id = fields.Integer(required=True, min=1)
 
-# ---- EventTeam
-
+# ---- EventTeam 
 class EventTeam(Base):
     __tablename__ = 'events_eventteam'
     event_id = Column(Integer, ForeignKey('events_event.id'), primary_key=True)
@@ -124,3 +125,20 @@ class EventParticipantSchema(Schema):
 
     event = fields.Nested('EventSchema', dump_only=True)
     person = fields.Nested('PersonSchema', dump_only=True)
+
+# ---- EventAttribute
+
+class EventAttribute(Base):
+    __tablename__ = 'events_eventattribute'
+    event_id = Column(Integer, ForeignKey('events_event.id'), primary_key=True)
+    attribute_id = Column(Integer, ForeignKey('people_attributes.id'), primary_key=True)
+
+    event = relationship("Event", back_populates="attributes")
+    attribute = relationship("Attribute", back_populates="events")
+
+class EventAttriuteSchema(Schema):
+    event_id = fields.Integer(required=True, min=1)
+    attribute_id = fields.Integer(required=True, min=1)
+
+    event = fields.Nested('EventSchema', dump_only=True)
+    attribute = fields.Nested('AttributeSchema', dump_only=True)
