@@ -136,7 +136,7 @@ class EventAttribute(Base):
     event = relationship("Event", back_populates="attributes")
     attribute = relationship("Attribute", back_populates="events")
 
-class EventAttriuteSchema(Schema):
+class EventAttributeSchema(Schema):
     event_id = fields.Integer(required=True, min=1)
     attribute_id = fields.Integer(required=True, min=1)
 

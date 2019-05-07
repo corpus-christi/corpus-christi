@@ -9,12 +9,14 @@ from flask_jwt_extended import create_access_token
 from werkzeug.datastructures import Headers
 from werkzeug.security import check_password_hash
 
-from .models import Event, EventPerson, EventAsset, EventParticipant, EventTeam, EventSchema, EventTeamSchema, EventPersonSchema, EventParticipantSchema
+from .models import Event, EventPerson, EventAsset, EventParticipant, EventTeam, EventSchema, EventTeamSchema, EventPersonSchema, EventParticipantSchema, EventAttribute, EventAttributeSchema
 from ..assets.models import Asset, AssetSchema
+from ..attributes.models import Attribute
 from ..teams.models import Team, TeamMember, TeamSchema, TeamMemberSchema
 from ..places.models import Location
 from ..people.models import Person
 from ..images.models import Image, ImageSchema, ImageEvent, ImageEventSchema
+from ..attributes.test_attributes import create_multiple_attributes
 
 from .models import EventAsset, EventAssetSchema, EventTeam, EventTeamSchema
 
@@ -169,6 +171,14 @@ def event_person_object_factory(event_id, person_id):
     }
     return eventperson
 
+def event_attribute_object_factory(event_id, attribute_id):
+    """Cook up a fake eventasset json object from given ids."""
+    eventattribute = {
+        'event_id': event_id,
+        'attribute_id': attribute_id
+    }
+    return eventattribute
+
 def team_member_object_factory(team_id, member_id):
     """Cook up a fake eventteam json object from given ids."""
     teammember = {
@@ -262,6 +272,26 @@ def create_events_persons(sqla, fraction=0.75):
     sqla.add_all(new_events_persons)
     sqla.commit()
 
+def create_events_attributes(sqla, fraction=0.75):
+    """Create data in the linking table between events and attributes """
+    event_attribute_schema = EventAttributeSchema()
+    new_events_attributes = []
+    all_events = sqla.query(Event).all()
+    if not all_events:
+        create_multiple_events(sqla, random.randint(3, 6))
+        all_events = sqla.query(Event).all()
+    all_attributes = sqla.query(Attribute).all()
+    if not all_attributes:
+        create_multiple_attributes(sqla, random.randint(3, 6))
+        all_attributes = sqla.query(Attribute).all()
+    all_events_attributes = sqla.query(Event, Attribute).all()
+    sample_events_attributes = random.sample(all_events_attributes, math.floor(len(all_events_attributes) * fraction))
+    for events_attributes in sample_events_attributes:
+        valid_events_attributes = event_attribute_schema.load(event_attribute_object_factory(events_attributes[0].id,events_attributes[1].id))
+        new_events_attributes.append(EventAttribute(**valid_events_attributes))
+    sqla.add_all(new_events_attributes)
+    sqla.commit()
+
 def create_teams_members(sqla, fraction=0.75):
     """Create data in the linking table between teams and members """
     team_member_schema = TeamMemberSchema()
@@ -282,6 +312,7 @@ def create_events_test_data(sqla):
     create_events_assets(sqla, 0.75)
     create_events_teams(sqla, 0.75)
     create_events_participants(sqla, 0.75)
+    create_events_attributes(sqla, 0.75)
     create_events_persons(sqla, 0.75)
     create_teams_members(sqla, 0.75)
 
