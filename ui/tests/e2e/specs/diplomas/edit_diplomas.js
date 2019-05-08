@@ -1,51 +1,69 @@
+import { unique_id } from '../../support/helpers';
+
+let new_diploma_title = unique_id();
+let new_diploma_title_1 = unique_id();
+
 describe("Get to Diplomas Page", () => {
-  it("Given Successfull login", () => {
+  it("GIVEN: Successful login", () => {
     cy.login();
   });
-  it("When: clicking to diplomas page", () => {
+  it("WHEN: clicking to diplomas page", () => {
     cy.deploma_page();
   });
-  it("Then: should be in diplomas page", () => {
+  it("THEN: should be in diplomas page", () => {
     cy.url().should("include", "/diplomas");
   });
 });
 
 describe("Edit Diploma Page", () => {
-  it("Get to Edit Diploma Page", () => {
+  it("GIVEN:  Edit Diploma Page", () => {
     cy.get(
-      ":nth-child(1) > :nth-child(3) > .layout > :nth-child(1) > span > .v-btn"
+      ":nth-child(1) > :nth-child(3) > .layout > :nth-child(1) > span > .v-btn > .v-btn__content > .v-icon"
     ).click();
   });
+
   it("Edit Title", () => {
-    cy.get(
-      ".v-form > :nth-child(1) > .v-input__control > .v-input__slot > .v-text-field__slot > input"
-    ).type("Test Diploma");
+    cy.get("[data-cy=diplomas-form-name]").clear();
+    cy.get("[data-cy=diplomas-form-name]").type(new_diploma_title + " Test Diploma");
   });
+
   it("Edit Description", () => {
-    cy.get("textarea").type("Test description of diploma");
+    cy.get("textarea").clear();
+    cy.get("textarea").type(new_diploma_title);
   });
+
   it("Change Prereqs for diploma", () => {
-    cy.get(
-      ".v-form > .v-text-field--enclosed > .v-input__control > .v-input__slot > .v-select__slot > .v-select__selections"
-    ).click();
-    cy.get(
-      ".menuable__content__active > .v-select-list > .v-list > :nth-child(1) > .v-list__tile > .v-list__tile__content"
-    ).click();
+    cy.get(":nth-child(3) > .v-input__icon > .v-icon").click(); // Clear Prereqs
+    cy.get(":nth-child(4) > .v-input__icon > .v-icon").click(); // Click drop down
+    cy.get(".menuable__content__active > .v-select-list > .v-list > :nth-child(1) > .v-list__tile"
+      ).click(); // Select an item from the drop down
+    cy.get("[data-cy=form-save]").click(); // Click save button
   });
-  it("Cancel Edit Diploma Page", () => {
-    cy.get(
-      ".v-dialog__content--active > .v-dialog > .v-card > .v-card__actions > .secondary--text"
-    ).click();
+
+  it("Find edited diploma", () => {
+    cy.get("[data-cy=diplomas-table-search]").type(new_diploma_title + " Test Diploma"); // Search for edited diploma
+    cy.get("tbody > tr > :nth-child(1)").click(); // View Diploma details
+    cy.get("[data-cy=diploma-name]").contains(new_diploma_title + " Test Diploma");
+    cy.get("[data-cy=diploma-description]").contains(new_diploma_title);
+    cy.url().should("include", "/diplomas/");
+    cy.get("[data-cy=arrow_back_button]").click();
+    cy.url().should("include", "/diplomas");
+  })
+});
+
+describe("Cancel button functionality test", () => {
+  it("GIVEN: Edited diploma", () => {
+    cy.get(":nth-child(1) > :nth-child(3) > .layout > :nth-child(1) > span > .v-btn").click();
+    cy.get("[data-cy=diplomas-form-name]").clear();
   });
-  it("Save Diploma Page", () => {
-    cy.get(
-      ":nth-child(1) > :nth-child(3) > .layout > :nth-child(1) > span > .v-btn"
-    ).click();
-    cy.get(
-      ".v-form > :nth-child(1) > .v-input__control > .v-input__slot > .v-text-field__slot > input"
-    ).type("Test Diploma");
-    cy.get(
-      ".v-dialog__content--active > .v-dialog > .v-card > .v-card__actions > .primary"
-    ).click();
+
+  it("WHEN: User decides to not save changes", () => {
+    cy.get("[data-cy=diplomas-form-name]").type(new_diploma_title_1); // This should not save
+    cy.get("[data-cy=cancel-new-diploma]").click();
+  });
+
+  it("THEN: Make sure it was not saved", () => {
+    cy.get("[data-cy=diplomas-table-search]").type(new_diploma_title_1);
+    cy.get(".text-xs-center");
   });
 });

@@ -24,12 +24,12 @@
             <v-flex xs12>
               <v-card>
                 <v-toolbar primary>
-                  <v-toolbar-title>
+                  <v-toolbar-title data-cy="diploma-name">
                     {{ $t("diplomas.diploma") }}: {{ diploma.name }}
                   </v-toolbar-title>
                 </v-toolbar>
                 <v-list three-line>
-                  <v-subheader> {{ diploma.description }} </v-subheader>
+                  <v-subheader data-cy="diploma-description"> {{ diploma.description }} </v-subheader>
                   <v-subheader
                     >{{ $t("diplomas.courses-this-diploma") }}:</v-subheader
                   >
