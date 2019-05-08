@@ -9,6 +9,7 @@
         slot="activator"
         v-bind:small="displayContext === 'compact'"
         @click="emitAction('edit')"
+        data-cy="edit-offering"
       >
         <v-icon v-bind:small="displayContext === 'compact'">edit</v-icon>
       </v-btn>
@@ -23,6 +24,7 @@
         slot="activator"
         v-bind:small="displayContext === 'compact'"
         @click="emitAction(courseOffering.active ? 'deactivate' : 'activate')"
+        data-cy="archive-offering-toggle"
       >
         <v-icon v-bind:small="displayContext === 'compact'">
           {{ courseOffering.active ? "archive" : "undo" }}

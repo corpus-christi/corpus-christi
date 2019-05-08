@@ -2,7 +2,7 @@
   "baseUrl": "http://localhost:8080",
   "projectId": "ewdbxb",
   "pluginsFile": "tests/e2e/plugins/index.js",
-  "testFiles": "**/events/*.*",
+  "testFiles": "**/*.*",
   "ignoreTestFiles": [
     "/**/events/add_person_to_event_spec.js",
     "/**/events/asset_to_event_spec.js",

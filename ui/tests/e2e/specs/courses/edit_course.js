@@ -1,36 +1,26 @@
 import { unique_id } from '../../support/helpers';
 
-var course_name = unique_id();
+var course = unique_id();
 
-describe("Get to Courses Page", () => {
-  it("GIVEN Successful login", () => {
+describe("Edit Course", () => {
+  before(() => {
     cy.login();
+    cy.visit("/courses");
   });
-
-  it("WHEN: clicking to course page", () => {
-    cy.get("[data-cy=toggle-nav-drawer]").click();
-    cy.get("[data-cy=courses]").click();
+  it("GIVEN: Course Form", () => {
+    cy.get("[data-cy=edit]").eq(0).click();
   });
-  it("THEN: should be in course page", () => {
-    cy.url().should("include", "/courses");
-  });
-});
-
-describe("Edit courses", () => {
-  it("Open edit course", () => {
-    cy.get(
-      ":nth-child(1) > :nth-child(3) > .layout > :nth-child(1) > span > .v-btn"
-    ).click();
-  });
-  it("change course title", () => {
+  it("WHEN: Editing course", () => {
     cy.get("[data-cy=name]")
       .clear()
-      .type(course_name);
+      .type(course);
+    cy.get("[data-cy=description]").clear().type("Description");
+    cy.get('[data-cy=prerequisites]').click();
+    cy.get('.menuable__content__active > .v-select-list > .v-list > :nth-child(1)').click();
   });
-  it("save changes", () => {
-    cy.get("[data-cy=actions] > .primary").click();
+  it("THEN: Changes are saved", () => {
     cy.get("[data-cy=save]").click();
-    cy.get("[data-cy=table-search]").type(course_name);
-    cy.get("tbody").contains(course_name);
+    cy.get("[data-cy=table-search]").type(course);
+    cy.get("tbody").contains(course);
   });
 });

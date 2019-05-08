@@ -1,44 +1,32 @@
-let course = "Alone low investment";
+import { unique_id } from '../../support/helpers';
 
-describe("Get to details of a course page", () => {
-  it("GIVEN: Successful login", () => {
+let description = unique_id();
+let description2 = unique_id();
+
+describe("Get to details of a course", () => {
+  before(() => {
     cy.login();
+    cy.visit("/courses");
   });
-  it("WHEN: clicking to course page", () => {
-    cy.course_page();
+  it("GIVEN: Course Details", () => {
+    cy.get("[data-cy=table-search]").clear().type("Alone");
+    cy.get("tbody").contains("Alone").click();
+    cy.url().should("include", "/courses/");
   });
-  it("THEN: should be in course page", () => {
-    cy.url().should("include", "/courses");
+  it("WHEN: Creating new course section", () => {
+    cy.get("[data-cy=new-offering]").click();
+    cy.get("[data-cy=offering-description]").type(description);
+    cy.get("[data-cy=offering-size]").type(27);
+    cy.get("[data-cy=save-offering]").click();
   });
-  it("Click into details of course", () => {
-    cy.get("tbody")
-      .contains(course)
-      .click();
-    cy.url().should("include", "/courses/1");
+  it("THEN: Edit existing course section", () => {
+    cy.get("[data-cy=edit-offering]").eq(0).click();
+    cy.get("[data-cy=offering-description]").clear().type(description2);
+    cy.get("[data-cy=offering-size]").clear().type(16);
+    cy.get("[data-cy=save-offering]").click();
+  });
+  it("AND: Check if edited", () => {
+    cy.get("[data-cy=offering-search]").clear().type(description2);
+    cy.get("tbody").contains(description2);
   });
 });
-
-describe("Edit course section", () => {
-  it("edit existing course section", () => {
-    cy.get(
-      ":nth-child(1) > :nth-child(3) > .layout > :nth-child(1) > span > .v-btn"
-    ).click();
-  });
-  it("Edit description", () => {
-    cy.get('[data-cy=course-offering-description]').type("Hello world part 3");
-  });
-  // it("Edit date", () => {
-  //   cy.get(
-  //     ".v-menu__activator > .v-input > .v-input__control > .v-input__slot > .v-select__slot > .v-select__selections > input"
-  //   ).click();
-  //   cy.get(":nth-child(5) > :nth-child(2) > .v-btn").click();
-  //   cy.get(".v-picker__actions > :nth-child(2)").click(); //cancel button
-  //   cy.get(
-  //     ".v-menu__activator > .v-input > .v-input__control > .v-input__slot > .v-select__slot > .v-select__selections > input"
-  //   ).click();
-  //   cy.get(":nth-child(5) > :nth-child(2) > .v-btn").click();
-  //   cy.get(".v-picker__actions > :nth-child(3)").click(); //save button
-  // });
-});
-
-
