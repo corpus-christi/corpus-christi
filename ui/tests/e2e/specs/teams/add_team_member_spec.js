@@ -2,16 +2,16 @@
 describe("Add Team Member Test", function() {
   before(() => {
     cy.login();
+    cy.visit("/teams");
   });
 
-  it("GIVEN: Event planner goes to a specific team", function() {
-    cy.visit("/teams/1");
+  it("GIVEN: Team Detail Page", function() {
+    cy.get("tbody").eq(0).click();
   });
 
-  it("WHEN: Event planner adds a new person to the team", function() {
+  it("WHEN: Adding a new person to the team", function() {
     cy.get("[data-cy=add-team-member]").click();
-
-    cy.wait(250);
+    cy.wait(350);
 
     cy.get("[data-cy=entity-search-field]").click();
     cy.get(

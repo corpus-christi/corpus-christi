@@ -29,6 +29,15 @@ teams:
   error-removing-team:
     en: Error while removing team 
     es: Error al eliminadar este equipo
+  team-archived:
+    en: Team archived
+    es: Equipo archivado
+  error-archiving-team:
+    en: Error while archiving event 
+    es: Error al archivar el equipo
+  team-unarchived:
+    en: Team unarchived
+    es: Equipo desarchivado   # probably not right
   error-unarchiving-team:
     en: Error while unarchiving team 
     es: Error al desarchivar equipo

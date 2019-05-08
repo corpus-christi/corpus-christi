@@ -3,11 +3,11 @@ describe("Archive Team Test", function() {
     cy.login();
   });
 
-  it("GIVEN: Event planner goes to teams page", function() {
+  it("GIVEN: Team Page", function() {
     cy.visit("/teams/all");
   });
 
-  it("WHEN: Event planner archives a team", function() {
+  it("WHEN: Archiving a team", function() {
     // Change view to see both archived and active teams
     cy.get(".md3 > .v-input > .v-input__control > .v-input__slot").click();
     cy.get(
