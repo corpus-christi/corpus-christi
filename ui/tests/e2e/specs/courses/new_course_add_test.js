@@ -4,21 +4,11 @@ let course1 = unique_id();
 let course2 = unique_id();
 let course3 = unique_id();
 
-describe("Get to Courses Page", () => {
-  it("GIVEN: Successful login", () => {
-    cy.login();
-  });
-
-  it("WHEN: clicking to course page", () => {
-    cy.get("[data-cy=toggle-nav-drawer]").click();
-    cy.get("[data-cy=courses]").click();
-  });
-  it("THEN: should be in course page", () => {
-    cy.url().should("include", "/courses");
-  });
-});
-
 describe("Add Course", () => {
+  before(() => {
+    cy.login();
+    cy.visit("/courses");
+  });
   it("GIVEN: New Course Form", () => {
     cy.get("[data-cy=new-course]").click();
   });

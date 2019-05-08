@@ -11,7 +11,7 @@
           v-bind:label="$t('courses.description')"
           name="description"
           rows="3"
-          data-cy="course-offering-description"
+          data-cy="offering-description"
           v-validate="'required'"
           v-bind:error-messages="errors.collect('description')"
         ></v-textarea>
@@ -24,13 +24,13 @@
             type="number"
             v-validate="'required'"
             v-bind:error-messages="errors.collect('max-size')"
-            data-cy="course-offering-max-size"
+            data-cy="offering-size"
           ></v-text-field>
         </v-flex>
       </form>
     </v-card-text>
     <v-card-actions>
-      <v-btn color="secondary" flat :disabled="saving" v-on:click="cancel">
+      <v-btn color="secondary" flat :disabled="saving" v-on:click="cancel" data-cy="cancel-offering">
         {{ $t("actions.cancel") }}
       </v-btn>
       <v-spacer></v-spacer>
@@ -40,6 +40,7 @@
         :disabled="saving"
         :loading="saving"
         v-on:click="save"
+        data-cy="save-offering"
         >{{ $t("actions.save") }}</v-btn
       >
     </v-card-actions>

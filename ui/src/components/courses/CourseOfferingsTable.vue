@@ -8,7 +8,7 @@
         </v-flex>
         <v-spacer></v-spacer>
         <v-flex shrink justify-self-end>
-          <v-btn color="primary" raised v-on:click.stop="newCourseOffering">
+          <v-btn color="primary" raised v-on:click.stop="newCourseOffering" data-cy="new-offering">
             <v-icon left>library_add</v-icon>
             {{ $t("courses.new-offering") }}
           </v-btn>
@@ -23,6 +23,7 @@
             single-line
             hide-details
             class="max-width-250 mr-2"
+            data-cy="offering-search"
           ></v-text-field>
         </v-flex>
         <v-select
@@ -31,6 +32,7 @@
           solo
           hide-details
           class="max-width-250 mr-2"
+          data-cy="view-status"
         >
         </v-select>
       </v-layout>
