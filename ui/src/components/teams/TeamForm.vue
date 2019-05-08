@@ -33,7 +33,7 @@
         v-if="!editMode"
         :loading="addMoreLoading"
         :disabled="formDisabled"
-        data-cy="form-addanother"
+        data-cy="form-add-another"
         >{{ $t("actions.add-another") }}</v-btn
       >
       <v-btn
