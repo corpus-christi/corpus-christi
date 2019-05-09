@@ -180,7 +180,7 @@
             v-model="attributeFormData"
             ref="attributeForm"
           ></attribute-form>
-          <v-layout row justify-start align-center>
+          <v-layout row justify-center align-space-around>
             <v-flex shrink>
               <v-btn
                 small
@@ -191,11 +191,21 @@
               >
                 {{ $t("actions.add-address") }}
               </v-btn>
-            </v-flex>
-            <v-flex v-show="addressSaved">
-              <span>{{ $t("places.messages.saved") }}</span>
+              <v-btn
+                class="text-xs-center"
+                color="primary"
+                flat
+                small
+                @click="showImageChooser = true"
+                :disabled="showImageChooser"
+              >
+                {{ $t("images.actions.add-image") }}
+              </v-btn>
             </v-flex>
           </v-layout>
+          <v-flex v-show="addressSaved">
+            <span>{{ $t("places.messages.saved") }}</span>
+          </v-flex>
           <v-expand-transition>
             <address-form
               v-if="showAddressForm"
@@ -203,6 +213,16 @@
               @saved="saveAddress"
             >
             </address-form>
+          </v-expand-transition>
+          <v-expand-transition>
+            <image-chooser
+              v-if="showImageChooser"
+              :imageId="getImageId"
+              v-on:saved="chooseImage"
+              v-on:deleted="deleteImage"
+              v-on:cancel="cancelImageChooser"
+              v-on:missing="missingImage"
+            />
           </v-expand-transition>
         </v-stepper-content>
       </v-stepper-items>
@@ -297,10 +317,15 @@ import { mapGetters } from "vuex";
 import AttributeForm from "./input_fields/AttributeForm.vue";
 import { isEmpty } from "lodash";
 import AddressForm from "../AddressForm.vue";
+import ImageChooser from "../images/ImageChooser";
 
 export default {
   name: "PersonForm",
-  components: { "attribute-form": AttributeForm, "address-form": AddressForm },
+  components: {
+    "attribute-form": AttributeForm,
+    "address-form": AddressForm,
+    "image-chooser": ImageChooser
+  },
   props: {
     initialData: {
       type: Object,
@@ -331,6 +356,8 @@ export default {
     return {
       showBirthdayPicker: false,
       showAddressForm: false,
+      showImageChooser: false,
+      imageSaved: false,
       saveIsLoading: false,
       addMoreIsLoading: false,
       addressWasSaved: false,
@@ -377,7 +404,10 @@ export default {
 
     formDisabled() {
       return (
-        this.saveIsLoading || this.addMoreIsLoading || this.showAddressForm
+        this.saveIsLoading ||
+        this.addMoreIsLoading ||
+        this.showAddressForm ||
+        (this.showImageChooser && !this.imageSaved)
       );
     },
     hasUsername() {
@@ -397,6 +427,16 @@ export default {
 
     addressSaved() {
       return this.addressWasSaved;
+    },
+
+    getImageId() {
+      if (this.person.images) {
+        return this.person.images.length > 0
+          ? this.person.images[0].image_id
+          : -1;
+      } else {
+        return -1;
+      }
     }
   },
 
@@ -407,6 +447,13 @@ export default {
         this.clear();
       } else {
         this.person = personProp;
+        if (this.person.images && this.person.images.length > 0) {
+          this.showImageChooser = true;
+          this.imageSaved = true;
+        } else {
+          this.showImageChooser = false;
+          this.imageSaved = false;
+        }
       }
     }
   },
@@ -433,6 +480,7 @@ export default {
       }
       this.$refs.attributeForm.clear();
       this.showAddressForm = false;
+      this.showImageChooser = false;
       this.addressWasSaved = false;
       this.$validator.reset();
     },
@@ -487,7 +535,7 @@ export default {
             element.field == "lastName" ||
             element.field == "secondLastName" ||
             element.field == "email" ||
-            element.field == "brithday"
+            element.field == "birthday"
           );
         }) != -1;
       this.stepTwoErrors =
@@ -508,7 +556,7 @@ export default {
             element.field != "lastName" &&
             element.field != "secondLastName" &&
             element.field != "email" &&
-            element.field != "brithday"
+            element.field != "birthday"
           );
         }) != -1;
     },
@@ -545,24 +593,115 @@ export default {
       });
     },
 
-    updatePerson(data, personId, emitMessage) {
-      this.$http
-        .put(`/api/v1/people/persons/${personId}`, data)
-        .then(response => {
-          this.$emit(emitMessage, response.data);
-          this.resetForm();
-          this.saveIsLoading = false;
-        })
-        .catch(err => {
-          this.saveIsLoading = false;
-          console.error("FALURE", err.response);
-        });
+    async updatePerson(data, personId, emitMessage) {
+      let newImageId = null;
+      if (this.person.newImageId) {
+        newImageId = this.person.newImageId;
+      }
+      delete this.person.newImageId;
+      delete this.person.images;
+
+      let oldImageId = await this.getOldImageId(personId);
+
+      console.log(newImageId, oldImageId);
+      if (newImageId) {
+        // a new image was added to the form
+        if (oldImageId) {
+          // an image was edited (PUT)
+          this.$http
+            .put(
+              `/api/v1/people/${personId}/images/${newImageId}?old=${oldImageId}`
+            )
+            .then(resp => {
+              console.log("PUT IMAGE ON PERSON", resp);
+              this.$http
+                .put(`/api/v1/people/persons/${personId}`, data)
+                .then(response => {
+                  this.$emit(emitMessage, response.data);
+                  this.resetForm();
+                  this.saveIsLoading = false;
+                })
+                .catch(err => {
+                  this.saveIsLoading = false;
+                  console.error("FALURE", err.response);
+                });
+            })
+            .catch(err => {
+              console.error("ERROR PUTTING IMAGE", err.response);
+            });
+        } else {
+          // an image was added (POST)
+          this.$http
+            .post(`/api/v1/people/${personId}/images/${newImageId}`)
+            .then(resp => {
+              console.log("POST IMAGE ON PERSON", resp);
+              this.$http
+                .put(`/api/v1/people/persons/${personId}`, data)
+                .then(response => {
+                  this.$emit(emitMessage, response.data);
+                  this.resetForm();
+                  this.saveIsLoading = false;
+                })
+                .catch(err => {
+                  this.saveIsLoading = false;
+                  console.error("FALURE", err.response);
+                });
+            })
+            .catch(err => {
+              console.error("ERROR POSTING IMAGE", err.response);
+            });
+        }
+      } else {
+        if (oldImageId) {
+          // an image was removed (DELETE)
+          this.$http
+            .delete(`/api/v1/people/${personId}/images/${oldImageId}`)
+            .then(resp => {
+              console.log("DELETED IMAGE ON PERSON", resp);
+              this.$http
+                .put(`/api/v1/people/persons/${personId}`, data)
+                .then(response => {
+                  this.$emit(emitMessage, response.data);
+                  this.resetForm();
+                  this.saveIsLoading = false;
+                })
+                .catch(err => {
+                  this.saveIsLoading = false;
+                  console.error("FALURE", err.response);
+                });
+            })
+            .catch(err => {
+              console.error("ERROR DELETING IMAGE", err.response);
+            });
+        } else {
+          // an image didn't happen (NOTHING)
+          this.$http
+            .put(`/api/v1/people/persons/${personId}`, data)
+            .then(response => {
+              this.$emit(emitMessage, response.data);
+              this.resetForm();
+              this.saveIsLoading = false;
+            })
+            .catch(err => {
+              this.saveIsLoading = false;
+              console.error("FALURE", err.response);
+            });
+        }
+      }
     },
 
     addPerson(data, emitMessage) {
+      let imageId = -1;
+      if (this.person.newImageId) {
+        imageId = this.person.newImageId;
+      }
+      delete this.person.newImageId;
       this.$http
         .post("/api/v1/people/persons", data)
-        .then(response => {
+        .then(async response => {
+          if (imageId > -1) {
+            await this.addImage(response.data.id, imageId);
+          }
           if (this.account.username && this.account.password) {
             this.addAccount(response.data.id).then(() => {
               this.$emit(emitMessage, response.data);
@@ -596,10 +735,61 @@ export default {
         });
     },
 
+    addImage(personId, imageId) {
+      return this.$http
+        .post(`/api/v1/people/${personId}/images/${imageId}`)
+        .then(resp => {
+          console.log("IMAGE ADDED TO PERSON", resp);
+        })
+        .catch(err => {
+          console.error("FAILURE TO ADD IMAGE", err.response);
+        });
+    },
+
+    getOldImageId(id) {
+      if (!id) {
+        return null;
+      }
+      return this.$http
+        .get(`/api/v1/people/persons/${id}?include_images=1`)
+        .then(resp => {
+          console.log(resp);
+          if (resp.data.images && resp.data.images.length > 0) {
+            return resp.data.images[0].image_id;
+          } else {
+            return null;
+          }
+        })
+        .catch(err => {
+          console.error("ERROR FETCHING IMAGE", err);
+          return null;
+        });
+    },
+
     removeLocationFromDatabase() {
       if (this.person.locationId != 0 || this.person.locationId != "") {
         this.$http.post;
       }
+    },
+
+    chooseImage(id) {
+      this.person.newImageId = id;
+      this.imageSaved = true;
+    },
+
+    deleteImage() {
+      this.showImageChooser = false;
+      delete this.person.newImageId;
+      this.person.images = [];
+      this.imageSaved = false;
+    },
+
+    cancelImageChooser() {
+      this.showImageChooser = false;
+    },
+
+    missingImage() {
+      this.imageSaved = false;
     }
   }
 };

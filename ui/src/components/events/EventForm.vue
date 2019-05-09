@@ -5,21 +5,43 @@
     </v-card-title>
     <v-card-text>
       <form>
-        <v-text-field
-          v-model="event.title"
-          v-bind:label="$t('events.title')"
-          name="title"
-          v-validate="'required'"
-          v-bind:error-messages="errors.first('title')"
-          data-cy="title"
-        ></v-text-field>
-        <v-textarea
-          rows="3"
-          v-model="event.description"
-          v-bind:label="$t('events.event-description')"
-          name="description"
-          data-cy="description"
-        ></v-textarea>
+        <v-layout align-space-around justify-center column fill-height>
+          <v-text-field
+            v-model="event.title"
+            v-bind:label="$t('events.title')"
+            name="title"
+            v-validate="'required'"
+            v-bind:error-messages="errors.first('title')"
+            data-cy="title"
+          ></v-text-field>
+          <v-textarea
+            rows="3"
+            v-model="event.description"
+            v-bind:label="$t('events.event-description')"
+            name="description"
+            data-cy="description"
+          ></v-textarea>
+          <v-btn
+            class="text-xs-center"
+            color="primary"
+            flat
+            small
+            @click="showImageChooser = true"
+            :disabled="showImageChooser"
+          >
+            {{ $t("images.actions.add-image") }}
+          </v-btn>
+          <v-expand-transition>
+            <image-chooser
+              v-if="showImageChooser"
+              :imageId="getImageId"
+              v-on:saved="chooseImage"
+              v-on:deleted="deleteImage"
+              v-on:cancel="cancelImageChooser"
+              v-on:missing="missingImage"
+            />
+          </v-expand-transition>
+        </v-layout>
         <v-layout align-center justify-space-around>
           <v-flex>
             <entity-search
@@ -244,7 +266,7 @@
         color="primary"
         outline
         v-on:click="addAnother"
-        v-if="editMode === false"
+        v-if="!editMode"
         :loading="addMoreLoading"
         :disabled="formDisabled"
         data-cy="form-addanother"
@@ -267,11 +289,51 @@
 import { isEmpty } from "lodash";
 import { mapGetters } from "vuex";
 import EntitySearch from "../EntitySearch";
-import AddressForm from "../AddressForm.vue";
+import AddressForm from "../AddressForm";
+import ImageChooser from "../images/ImageChooser";
 
 export default {
-  components: { "entity-search": EntitySearch, "address-form": AddressForm },
+  components: {
+    "entity-search": EntitySearch,
+    "address-form": AddressForm,
+    "image-chooser": ImageChooser
+  },
   name: "EventForm",
+  props: {
+    editMode: {
+      type: Boolean,
+      required: true
+    },
+    initialData: {
+      type: Object,
+      required: true
+    },
+    saveLoading: {
+      type: Boolean
+    },
+    addMoreLoading: {
+      type: Boolean
+    }
+  },
+  data: function() {
+    return {
+      event: {},
+      startTime: "",
+      startDate: "",
+      endTime: "",
+      endDate: "",
+      addMore: false,
+      showStartDatePicker: false,
+      showEndDatePicker: false,
+      startTimeModal: false,
+      endTimeModal: false,
+      showAddressCreator: false,
+      showImageChooser: false,
+      imageSaved: false,
+      currentAddress: 0
+    };
+  },
+
   watch: {
     // Make sure data stays in sync with any changes to `initialData` from parent.
     initialData(eventProp) {
@@ -288,6 +350,13 @@ export default {
           this.event.end = new Date(this.event.end);
           this.endDate = this.getDateFromTimestamp(this.event.end);
           this.endTime = this.getTimeFromTimestamp(this.event.end);
+        }
+        if (this.event.images && this.event.images.length > 0) {
+          this.showImageChooser = true;
+          this.imageSaved = true;
+        } else {
+          this.showImageChooser = false;
+          this.imageSaved = false;
         }
       }
     },
@@ -325,7 +394,12 @@ export default {
     },
 
     formDisabled() {
-      return this.saveLoading || this.addMoreLoading;
+      return (
+        this.saveLoading ||
+        this.addMoreLoading ||
+        this.showAddressCreator ||
+        (this.showImageChooser && !this.imageSaved)
+      );
     },
 
     today() {
@@ -336,12 +410,21 @@ export default {
       return this.startDate && this.startTime;
     },
 
+    getImageId() {
+      if (this.event.images) {
+        return this.event.images.length > 0
+          ? this.event.images[0].image_id
+          : -1;
+      } else {
+        return -1;
+      }
+    },
+
     ...mapGetters(["currentLanguageCode"])
   },
 
   methods: {
     cancel() {
-      this.clear();
       this.$emit("cancel");
     },
 
@@ -359,7 +442,8 @@ export default {
       this.showEndDatePicker = false;
       this.startTimeModal = false;
       this.endTimeModal = false;
-
+      this.showImageChooser = false;
+      this.showAddressCreator = false;
       this.$validator.reset();
     },
     save() {
@@ -368,20 +452,16 @@ export default {
           this.event.start = this.getTimestamp(this.startDate, this.startTime);
           this.event.end = this.getTimestamp(this.endDate, this.endTime);
           this.event.active = true;
-          this.$emit("save", this.event);
+          if (this.addMore) this.$emit("addAnother", this.event);
+          else this.$emit("save", this.event);
         }
+        this.addMore = false;
       });
     },
 
     addAnother() {
-      this.$validator.validateAll().then(() => {
-        if (!this.errors.any()) {
-          this.event.start = this.getTimestamp(this.startDate, this.startTime);
-          this.event.end = this.getTimestamp(this.endDate, this.endTime);
-          this.event.active = true;
-          this.$emit("add-another", this.event);
-        }
-      });
+      this.addMore = true;
+      this.save();
     },
 
     getTimestamp(date, time) {
@@ -443,38 +523,27 @@ export default {
       console.log(address);
       this.event.location = address;
       this.currentAddress = address.address_id;
+    },
+
+    chooseImage(id) {
+      this.event.newImageId = id;
+      this.imageSaved = true;
+    },
+
+    deleteImage() {
+      this.showImageChooser = false;
+      delete this.event.newImageId;
+      this.event.images = [];
+      this.imageSaved = false;
+    },
+
+    cancelImageChooser() {
+      this.showImageChooser = false;
+    },
+
+    missingImage() {
+      this.imageSaved = false;
     }
-  },
-  props: {
-    editMode: {
-      type: Boolean,
-      required: true
-    },
-    initialData: {
-      type: Object,
-      required: true
-    },
-    saveLoading: {
-      type: Boolean
-    },
-    addMoreLoading: {
-      type: Boolean
-    }
-  },
-  data: function() {
-    return {
-      event: {},
-      startTime: "",
-      startDate: "",
-      endTime: "",
-      endDate: "",
-      showStartDatePicker: false,
-      showEndDatePicker: false,
-      startTimeModal: false,
-      endTimeModal: false,
-      showAddressCreator: false,
-      currentAddress: 0
-    };
   }
 };
 </script>

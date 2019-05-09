@@ -11,9 +11,11 @@ from .models import Course, CourseSchema, Course_Offering, Class_Meeting,\
         Class_Meeting, Class_MeetingSchema, Diploma_Awarded, Diploma_AwardedSchema,\
         Class_Attendance, Class_AttendanceSchema, Course_Completion, Course_CompletionSchema
 from ..people.models import Person
+from ..images.models import Image, ImageSchema, ImageCourse, ImageCourseSchema
 from ..places.models import Country, Location
 from ..people.test_people import create_multiple_people
 from ..places.test_places import create_multiple_areas, create_multiple_addresses, create_multiple_locations
+from ..images.create_image_data import create_test_images, create_images_courses
 
 
 def flip():
@@ -128,6 +130,9 @@ def course_offerings_object_factory_inactive(course_id):
 def create_multiple_course_offerings(sqla, n=3):
     """Commits the number of course offering to the DB."""
     courses = sqla.query(Course).all()
+    if not courses:
+        create_multiple_courses(sqla, random.randint(3, 6))
+        courses = sqla.query(Course).all()
     course_offerings_schema = Course_OfferingSchema()
     new_course_offerings = []
     for i in range(n):
@@ -140,6 +145,9 @@ def create_multiple_course_offerings(sqla, n=3):
 def create_multiple_course_offerings_active(sqla, n=3):
     """Commits the number of course offering to the DB."""
     course = sqla.query(Course).first()
+    if not course:
+        create_multiple_courses(sqla, random.randint(3, 6))
+        course = sqla.query(Course).all()
     course_offerings_schema = Course_OfferingSchema()
     new_course_offerings = []
     for i in range(n):
@@ -151,6 +159,9 @@ def create_multiple_course_offerings_active(sqla, n=3):
 def create_multiple_course_offerings_inactive(sqla, n=3):
     """Commits the number of course offering to the DB."""
     course = sqla.query(Course).first()
+    if not course:
+        create_multiple_courses(sqla, random.randint(3, 6))
+        course = sqla.query(Course).all()
     course_offerings_schema = Course_OfferingSchema()
     new_course_offerings = []
     for i in range(n):
@@ -172,6 +183,9 @@ def prerequisite_object_factory(course_id, prereq_id):
 def create_multiple_prerequisites(sqla):
     """Commits the courses - 1 number of prerequisites to the DB."""
     courses = sqla.query(Course).all()
+    if not courses:
+        create_multiple_courses(sqla, random.randint(3, 6))
+        courses = sqla.query(Course).all()
     new_prerequisites = []
     for i in range(len(courses)-1):
         courses[i].prerequisites.append(courses[i+1])
@@ -194,6 +208,9 @@ def courses_diploma_object_factory(num_courses):
 def create_multiple_diplomas(sqla, n=20):
     """Commits the number of diplomas to the DB."""
     courses = sqla.query(Course).all()
+    if not courses:
+        create_multiple_courses(sqla, random.randint(3, 6))
+        courses = sqla.query(Course).all()
     course_diploma_schema = DiplomaSchema()
     new_courses = []
     for i in range(n):
@@ -219,7 +236,13 @@ def student_object_factory(offering_id, student_id):
 def create_multiple_students(sqla, n=6, course_offering_id=None):
     """Commits the number of students to the DB."""
     students = sqla.query(Person).all()
+    if not students:
+        create_multiple_stuedents(sqla, random.randint(3, 6))
+        students = sqla.query(Student).all()
     course_offering = sqla.query(Course_Offering).all()
+    if not course_offering:
+        create_multiple_course_offerings(sqla, random.randint(3, 6))
+        course_offering = sqla.query(Course_Offering).all()
     course_students_schema = StudentSchema()
     new_students = []
     for i in range(n):
@@ -247,7 +270,13 @@ def diploma_award_object_factory(diploma_id, people_id):
 def create_diploma_awards(sqla, n):
     """Commits the number of diploma awards to the DB."""
     people = sqla.query(Person).all()
+    if not people:
+        create_multiple_people(sqla, random.randint(3, 6))
+        people = sqla.query(Person).all()
     diplomas = sqla.query(Diploma).all()
+    if not diplomas:
+        create_multiple_diplomas(sqla, random.randint(3, 6))
+        diplomas = sqla.query(Person).all()
     diploma_award_schema = Diploma_AwardedSchema()
     new_diploma_awards = []
     for i in range(n):
@@ -269,7 +298,13 @@ def course_completion_object_factory(person_id, course_id):
 def create_course_completion(sqla, n):
     """Commits the number of course completions to the DB."""
     people = sqla.query(Person).all()
+    if not people:
+        create_multiple_people(sqla, random.randint(3, 6))
+        people = sqla.query(Person).all()
     courses = sqla.query(Course).all()
+    if not courses:
+        create_multiple_courses(sqla, random.randint(3, 6))
+        courses = sqla.query(Course).all()
     course_completion_schema = Course_CompletionSchema()
     new_course_completion = []
     for person in people:
@@ -297,8 +332,17 @@ def class_meeting_object_factory(teacher_id, offering_id, location_id=1):
 def create_class_meetings(sqla, n=6):
     """Commits the number of class meetings to the DB."""
     people = sqla.query(Person).all()
+    if not people:
+        create_multiple_people(sqla, random.randint(3, 6))
+        people = sqla.query(Person).all()
     course_offerings = sqla.query(Course_Offering).all()
+    if not course_offerings:
+        create_multiple_course_offerings(sqla, random.randint(3, 6))
+        course_offerings = sqla.query(Course_Offering).all()
     locations = sqla.query(Location).all()
+    if not locations:
+        create_multiple_locations(sqla, random.randint(3, 6))
+        locations = sqla.query(Location).all()
     class_meeting_schema = Class_MeetingSchema()
     new_class_meetings = []
     for i in range(n):
@@ -315,7 +359,13 @@ def create_class_meetings(sqla, n=6):
 def create_class_attendance(sqla, n):
     """Commits the number of class attendances to the DB."""
     students = sqla.query(Student).all()
+    if not students:
+        create_multiple_students(sqla, random.randint(3, 6))
+        students = sqla.query(Student)
     class_meetings = sqla.query(Class_Meeting).all()
+    if not class_meetings:
+        create_multiple_class_meetings(sqla, random.randint(3, 6))
+        class_meetings = sqla.query(Class_Meeting).all()
     new_class_attendance = []
     for i in range(n):
         class_meeting = class_meetings[random.randint(0, len(class_meetings)-1)]
@@ -1292,14 +1342,13 @@ def test_delete_class_meeting(auth_client):
     assert resp.status_code == 403
 
 # ---- Course_Completion
-"""
 @pytest.mark.xfail()
 def test_create_course_completion(auth_client):
     # GIVEN
     # WHEN
     # THEN
     assert True == False
-"""
+
 
 def test_delete_course_completion(auth_client):
     """Test with invalid course completion"""
@@ -1320,5 +1369,91 @@ def test_delete_course_completion(auth_client):
     assert resp.status_code == 200
     assert auth_client.sqla.query(Course_Completion).all() == []
 
+@pytest.mark.smoke
+def test_add_course_images(auth_client):
+    # GIVEN a set of courses and images
+    count = random.randint(3, 6)
+    create_multiple_courses(auth_client.sqla, count)
+    create_test_images(auth_client.sqla)
 
-open
+    courses = auth_client.sqla.query(Course).all()
+    images = auth_client.sqla.query(Image).all()
+    
+    # WHEN an image is requested to be tied to each course
+    for i in range(count):
+        print(i)
+        resp = auth_client.post(url_for('courses.add_course_images', course_id = courses[i].id, image_id = images[i].id))
+
+        # THEN expect the request to run OK
+        assert resp.status_code == 201
+
+        # THEN expect the course to have a single image
+        assert len(auth_client.sqla.query(Course).filter_by(id = courses[i].id).first().images) == 1
+
+
+@pytest.mark.smoke
+def test_add_course_images_no_exist(auth_client):
+    # GIVEN a set of courses and images
+    count = random.randint(3, 6)
+    create_multiple_courses(auth_client.sqla, count)
+    create_test_images(auth_client.sqla)
+
+    courses = auth_client.sqla.query(Course).all()
+    images = auth_client.sqla.query(Image).all()
+    
+    # WHEN a no existant image is requested to be tied to an course
+    resp = auth_client.post(url_for('courses.add_course_images', course_id = 1, image_id = len(images) + 1))
+
+    # THEN expect the image not to be found
+    assert resp.status_code == 404
+
+    # WHEN an image is requested to be tied to a no existant course
+    resp = auth_client.post(url_for('courses.add_course_images', course_id = count + 1, image_id = 1))
+
+    # THEN expect the course not to be found
+    assert resp.status_code == 404
+
+
+@pytest.mark.smoke
+def test_add_course_images_already_exist(auth_client):
+    # GIVEN a set of courses, images, and course_image relationships
+    count = random.randint(3, 6)
+    create_multiple_courses(auth_client.sqla, count)
+    create_test_images(auth_client.sqla)
+    create_images_courses(auth_client.sqla)
+
+    course_images = auth_client.sqla.query(ImageCourse).all()
+
+    # WHEN existing course_image relationships are requested to be created
+    for course_image in course_images:
+        resp = auth_client.post(url_for('courses.add_course_images', course_id = course_image.course_id, image_id = course_image.image_id))
+
+        # THEN expect the request to be unprocessable
+        assert resp.status_code == 422
+
+@pytest.mark.smoke
+def test_delete_course_image(auth_client):
+    # GIVEN a set of courses, images, and course_image relationships
+    count = random.randint(3, 6)
+    create_multiple_courses(auth_client.sqla, count)
+    create_test_images(auth_client.sqla)
+    create_images_courses(auth_client.sqla)
+
+    valid_course_image = auth_client.sqla.query(ImageCourse).first()
+
+    # WHEN the course_image relationships are requested to be deleted
+    resp = auth_client.delete(url_for('courses.delete_course_image', course_id = valid_course_image.course_id, image_id = valid_course_image.image_id))
+
+    # THEN expect the delete to run OK
+    assert resp.status_code == 204
+
+
+@pytest.mark.smoke
+def test_delete_course_image_no_exist(auth_client):
+    # GIVEN an empty database
+
+    # WHEN a course_image relationship is requested to be deleted
+    resp = auth_client.delete(url_for('courses.delete_course_image', course_id = random.randint(1, 8), image_id = random.randint(1, 8)))
+
+    # THEN expect the requested row to not be found
+    assert resp.status_code == 404

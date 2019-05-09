@@ -59,7 +59,7 @@
                     <v-img
                       max-height="400px"
                       class="image picture"
-                      :src="'/api/v1/images/' + event.images[0].image.id"
+                      :src="fetchImage"
                     >
                     </v-img>
                   </template>
@@ -234,6 +234,10 @@ export default {
       return str;
     },
 
+    fetchImage() {
+      return `/api/v1/images/${this.event.images[0].image.id}?${Math.random()}`;
+    },
+
     ...mapGetters(["currentLanguageCode"])
   },
 
@@ -306,12 +310,15 @@ export default {
       this.eventDialog.show = false;
     },
 
-    saveEvent(event) {
+    async saveEvent(event) {
       this.eventDialog.saveLoading = true;
       if (event.location) {
         event.location_id = event.location.id;
       }
       let newEvent = JSON.parse(JSON.stringify(event));
+      const oldImageId = await this.getOldImageId(event.id);
+      const newImageId = newEvent.newImageId;
+      delete newEvent.newImageId;
       delete newEvent.location;
       delete newEvent.assets;
       delete newEvent.teams;
@@ -321,20 +328,132 @@ export default {
       delete newEvent.id;
       delete newEvent.images;
       const eventId = event.id;
-      this.$http
-        .put(`/api/v1/events/${eventId}`, newEvent)
+
+      if (newImageId) {
+        // a new image was added to the event
+        if (oldImageId) {
+          // an image should be updated (PUT)
+          this.$http
+            .put(
+              `/api/v1/events/${eventId}/images/${newImageId}?old=${oldImageId}`
+            )
+            .then(resp => {
+              console.log("PUTTED", resp.data);
+              this.$http
+                .put(`/api/v1/events/${eventId}`, newEvent)
+                .then(resp => {
+                  console.log("EDITED", resp);
+                  this.eventDialog.show = false;
+                  this.eventDialog.saveLoading = false;
+                  this.eventLoaded = false;
+                  this.getEvent().then(() => (this.eventLoaded = true));
+                  this.showSnackbar(this.$t("events.event-edited"));
+                })
+                .catch(err => {
+                  console.error("PUT FALURE", err.response);
+                  this.eventDialog.saveLoading = false;
+                  this.showSnackbar(this.$t("events.error-editing-event"));
+                });
+            })
+            .catch(err => {
+              console.error("ERROR PUTTING IMAGEEVENT", err.response);
+              this.eventDialog.saveLoading = false;
+              this.showSnackbar(this.$t("events.error-editing-event"));
+            });
+        } else {
+          // an image should be added (POST)
+          this.$http
+            .post(`/api/v1/events/${eventId}/images/${newImageId}`)
+            .then(resp => {
+              console.log("POSTED", resp.data);
+              this.$http
+                .put(`/api/v1/events/${eventId}`, newEvent)
+                .then(resp => {
+                  console.log("EDITED", resp);
+                  this.eventDialog.show = false;
+                  this.eventDialog.saveLoading = false;
+                  this.eventLoaded = false;
+                  this.getEvent().then(() => (this.eventLoaded = true));
+                  this.showSnackbar(this.$t("events.event-edited"));
+                })
+                .catch(err => {
+                  console.error("PUT FALURE", err.response);
+                  this.eventDialog.saveLoading = false;
+                  this.showSnackbar(this.$t("events.error-editing-event"));
+                });
+            })
+            .catch(err => {
+              console.error("ERROR POSTING IMAGEEVENT", err.response);
+              this.eventDialog.saveLoading = false;
+              this.showSnackbar(this.$t("events.error-editing-event"));
+            });
+        }
+      } else {
+        // an image never existed or was deleted
+        if (oldImageId) {
+          // an image should be removed (DELETE)
+          this.$http
+            .delete(`/api/v1/events/${eventId}/images/${oldImageId}`)
+            .then(resp => {
+              console.log("DELETED", resp.data);
+              this.$http
+                .put(`/api/v1/events/${eventId}`, newEvent)
+                .then(resp => {
+                  console.log("EDITED", resp);
+                  this.eventDialog.show = false;
+                  this.eventDialog.saveLoading = false;
+                  this.eventLoaded = false;
+                  this.getEvent().then(() => (this.eventLoaded = true));
+                  this.showSnackbar(this.$t("events.event-edited"));
+                })
+                .catch(err => {
+                  console.error("PUT FALURE", err.response);
+                  this.eventDialog.saveLoading = false;
+                  this.showSnackbar(this.$t("events.error-editing-event"));
+                });
+            })
+            .catch(err => {
+              console.error("ERROR DELETING IMAGEEVENT", err.response);
+              this.eventDialog.saveLoading = false;
+              this.showSnackbar(this.$t("events.error-editing-event"));
+            });
+        } else {
+          // nothing should happen
+          this.$http
+            .put(`/api/v1/events/${eventId}`, newEvent)
+            .then(resp => {
+              console.log("EDITED", resp);
+              this.eventDialog.show = false;
+              this.eventDialog.saveLoading = false;
+              this.eventLoaded = false;
+              this.getEvent().then(() => (this.eventLoaded = true));
+              this.showSnackbar(this.$t("events.event-edited"));
+            })
+            .catch(err => {
+              console.error("PUT FALURE", err.response);
+              this.eventDialog.saveLoading = false;
+              this.showSnackbar(this.$t("events.error-editing-event"));
+            });
+        }
+      }
+    },
+
+    async getOldImageId(id) {
+      if (!id) {
+        return null;
+      }
+      return await this.$http
+        .get(`/api/v1/events/${id}?include_images=1`)
         .then(resp => {
-          console.log("EDITED", resp);
-          this.eventDialog.show = false;
-          this.eventDialog.saveLoading = false;
-          this.eventLoaded = false;
-          this.getEvent().then(() => (this.eventLoaded = true));
-          this.showSnackbar(this.$t("events.event-edited"));
+          if (resp.data.images && resp.data.images.length > 0) {
+            return resp.data.images[0].image_id;
+          } else {
+            return null;
+          }
         })
         .catch(err => {
-          console.error("PUT FALURE", err.response);
-          this.eventDialog.saveLoading = false;
-          this.showSnackbar(this.$t("events.error-editing-event"));
+          console.error("ERROR FETCHING EVENT", err);
+          return null;
         });
     },
 

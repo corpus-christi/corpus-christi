@@ -1,0 +1,19 @@
+images:
+  messages:
+    no-image:
+      _desc: Display when no image is selected
+      en: No image selected.
+      es: Ninguna imagen seleccionada.
+    not-found:
+      _desc: Display when an image is not found
+      en: Image not found.
+      es: Imagen no encontrada.
+  actions:
+    add-image:
+      _desc: Use in parent component to open the image chooser card
+      en: Add Image
+      es: Añadir Imagen
+  image-description:
+    _desc: placeholder text for a textfield
+    en: Image description
+    es: Descripción de la imagen

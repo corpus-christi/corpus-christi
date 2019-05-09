@@ -24,9 +24,18 @@ diplomas:
   confirm-archive:
     en: Are you sure you want to archive this diploma?
     es: ¿Estás seguro que quieres archivar esta diploma?
+  added:
+    en: Diploma added
+    es: Diploma añadido
   updated:
     en: Diploma updated
     es: Diploma actualizado
+  add-failed:
+    en: Failed to add diploma
+    es: Se falló a añadir el diploma
+  update-failed:
+    en: Failed to update diploma
+    es: Se falló a actualizar el diploma
   archived:
     en: Diploma archived
     es: Diploma archivado

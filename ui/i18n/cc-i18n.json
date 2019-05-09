@@ -35,6 +35,7 @@
       "add-person": "Add Person",
       "back": "Back",
       "cancel": "Cancel",
+      "choose-image": "Choose Image",
       "clear": "Clear",
       "close": "Close",
       "confirm": "Confirm",
@@ -151,6 +152,8 @@
       "when": "When"
     },
     "diplomas": {
+      "add-failed": "Failed to add diploma",
+      "added": "Diploma added",
       "archived": "Diploma archived",
       "confirm-archive": "Are you sure you want to archive this diploma?",
       "courses": "Courses",
@@ -161,6 +164,7 @@
       "new": "New Diploma",
       "reactivated": "Diploma unarchived",
       "title": "Title",
+      "update-failed": "Failed to update diploma",
       "updated": "Diploma updated"
     },
     "events": {
@@ -268,6 +272,16 @@
       },
       "name": "Name",
       "title": "Home Churches"
+    },
+    "images": {
+      "actions": {
+        "add-image": "Add Image"
+      },
+      "image-description": "Image description",
+      "messages": {
+        "no-image": "No image selected.",
+        "not-found": "Image not found."
+      }
     },
     "login": {
       "header": "Log In",
@@ -451,6 +465,7 @@
       "add-person": "A\u00f1adir Persona",
       "back": "Regresar",
       "cancel": "Cancelar",
+      "choose-image": "Elegir Imagen",
       "clear": "Despejar",
       "close": "Cerrar",
       "confirm": "Confirmar",
@@ -567,6 +582,8 @@
       "when": "Cu\u00e1ndo"
     },
     "diplomas": {
+      "add-failed": "Se fall\u00f3 a a\u00f1adir el diploma",
+      "added": "Diploma a\u00f1adido",
       "archived": "Diploma archivado",
       "confirm-archive": "\u00bfEst\u00e1s seguro que quieres archivar esta diploma?",
       "courses": "Cursos",
@@ -577,6 +594,7 @@
       "new": "Nueva Diploma",
       "reactivated": "Diploma desarchivado",
       "title": "T\u00edtulo",
+      "update-failed": "Se fall\u00f3 a actualizar el diploma",
       "updated": "Diploma actualizado"
     },
     "events": {
@@ -684,6 +702,16 @@
       },
       "name": "Nombre",
       "title": "Iglesias Hogar"
+    },
+    "images": {
+      "actions": {
+        "add-image": "A\u00f1adir Imagen"
+      },
+      "image-description": "Descripci\u00f3n de la imagen",
+      "messages": {
+        "no-image": "Ninguna imagen seleccionada.",
+        "not-found": "Imagen no encontrada."
+      }
     },
     "login": {
       "header": "Iniciar Sesi\u00f3n",
