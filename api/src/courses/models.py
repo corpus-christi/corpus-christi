@@ -123,6 +123,7 @@ class Course(Base):
                                  back_populates='depends', lazy=True)
     diplomas = relationship(
         'Diploma', secondary=Diploma_Course, back_populates='courses', lazy=True)
+    images = relationship("ImageCourse", back_populates="course")
 
     def __repr__(self):
         return f"<Course(id={self.id})>"
@@ -134,7 +135,7 @@ class CourseSchema(Schema):
     description = fields.String(required=True, validate=Length(min=1))
     active = fields.Boolean(required=True, default=True)
     diplomaList = fields.Nested('DiplomaSchema', many=True)
-
+    images = fields.Nested('ImageCourseSchema', many=True, exclude=['course'], dump_only=True)
 
 # ---- Diploma
 

@@ -43,10 +43,12 @@ def test_download_invalid_image(auth_client):
 
 @pytest.mark.smoke
 def test_upload_image(auth_client):
-    # GIVEN some randomly created images
-    # WHEN
-    # THEN
-    assert True == True
+    # GIVEN an empty database
+    # WHEN we upload an image
+    create_multiple_images(auth_client.sqla, 1)
+    # THEN we can see an image in the database
+    resp = auth_client.get(url_for('images.download_image', image_id = 1));
+    assert resp.status_code == 200
 
 
 @pytest.mark.smoke

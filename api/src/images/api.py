@@ -50,19 +50,15 @@ def upload_image():
     # Grab a description from the request if there is one
     valid_desc = None
     if request.form:
-        if request.form['data']:
-            data = json.loads(request.form['data'])
-            try:
-                valid_desc = image_schema_partial.load(data)
-            except ValidationError as err:
-                return jsonify(err.messages), 422
+        if request.form['description']:
+            valid_desc = True
 
     # Safely convert the filename into an ASCII only string
     filename = secure_filename(image.filename)
 
     # Check to make sure the file is of an acceptable type
     if is_allowed_file(filename):
-        file_hash = get_hash(filename)
+        file_hash = get_hash(image)
         folder = file_hash[0:2]
         new_filename = file_hash + '.' + get_file_extension(filename)
 
@@ -75,8 +71,12 @@ def upload_image():
         path_to_image = os.path.join(folder_path, new_filename)
         image_already_in_db = db.session.query(Image).filter_by(path=path_to_image).first()
 
+        # return a directive to look up the existing image
         if image_already_in_db:
-            return 'Image with same name already exists', 422
+            return jsonify({
+                'message': 'Identical image already exists',
+                'id': image_already_in_db.id
+                }), 303
 
         # Save the image into the file system
         full_path = os.path.join(base_dir, path_to_image)
@@ -88,7 +88,7 @@ def upload_image():
     valid_image = dict()
     valid_image['path'] = path_to_image
     if valid_desc:
-        valid_image['description'] = data['description']
+        valid_image['description'] = request.form['description']
 
     valid_image = image_schema.load(valid_image, partial=True)
 
@@ -126,7 +126,4 @@ def delete_image(image_id):
 
     # 204 codes don't respond with any content
     return "Deleted successfully", 204
-
-
-
 

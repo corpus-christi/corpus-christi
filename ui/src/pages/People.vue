@@ -51,7 +51,7 @@ export default {
     fetchPeopleList() {
       this.tableLoaded = false;
       this.$http
-        .get("/api/v1/people/persons")
+        .get("/api/v1/people/persons?include_images=1")
         .then(resp => {
           console.log("FETCHED PEOPLE", resp);
           this.peopleList = resp.data;
