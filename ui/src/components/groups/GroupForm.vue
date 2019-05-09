@@ -137,7 +137,7 @@ export default {
 
     filter(item, searchText) {
       searchText = searchText.toLowerCase().trim();
-      name = item.firstName + item.lastName + item.secondaryLastName;
+      let name = item.firstName + item.lastName + item.secondaryLastName;
       name = name.toLowerCase();
       return name.includes(searchText);
     },

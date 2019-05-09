@@ -284,10 +284,10 @@ export default {
       let newGroup = JSON.parse(JSON.stringify(group));
       delete newGroup.manager;
       delete newGroup.id;
+      delete newGroup.memberList;
+      delete newGroup.managerInfo;
       if (this.groupDialog.editMode) {
         const groupId = group.id;
-        delete newGroup.managerInfo;
-        delete newGroup.memberList;
         // for(var member of newGroup.memberList){
         //   delete member.id
         // }
@@ -308,8 +308,6 @@ export default {
             this.showSnackbar(this.$t("groups.messages.error-editing-group"));
           });
       } else {
-        delete newGroup.memberList;
-        delete newGroup.managerInfo;
         this.$http
           .post("/api/v1/groups/groups", newGroup)
           .then(resp => {
