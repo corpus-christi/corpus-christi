@@ -1,25 +1,25 @@
 //Cicking Arco logo while on home page
 describe("Click Arco from home page", function() {
-  it("Given: successfully loads", function() {
+  it("GIVEN: Home Page", function() {
     cy.visit("/");
   });
-  it("When: clicks arco home button", () => {
+  it("WHEN: clicks arco home button", () => {
     cy.get("[data-cy=home-logo] > img").click();
   });
-  it("Then: checks url", () => {
-    cy.url().should("include", "/public");
+  it("THEN: Check url", () => {
+    cy.url().should("eq", "http://localhost:8080/");
   });
 });
 
 //Clicking Arco logo while on login page
 describe("Click Arco from login page", function() {
-  it("Given: loads login page successfully", function() {
+  it("GIVEN: Login Page", function() {
     cy.visit("/login");
   });
-  it("When: clicks arco home button", () => {
+  it("WHEN: Clicking arco home button", () => {
     cy.get("[data-cy=home-logo] > img").click();
   });
-  it("Then: checks url", () => {
-    cy.url().should("include", "/public");
+  it("THEN: Check Url", () => {
+    cy.url().should("eq", "http://localhost:8080/");
   });
 });

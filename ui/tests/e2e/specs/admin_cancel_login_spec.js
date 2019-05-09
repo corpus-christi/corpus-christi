@@ -10,6 +10,6 @@ describe("Admin Cancel Login Test", function() {
   });
 
   it("THEN: Returned to home page", function() {
-    cy.url().should("include", "/public");
+    cy.url().should("eq", "http://localhost:8080/");
   });
 });

@@ -1,32 +1,26 @@
 //Tests logging into account and then clicking homepage
 describe("Clicking home after logging in", function() {
-  it("Given: logs in successfully", function() {
-    cy.visit("/login");
-    cy.get("[data-cy=username]").type("Cytest");
-    cy.get("[data-cy=password]").type("password");
-    cy.get("[data-cy=login]").click();
+  it("GIVEN: Successful Login", function() {
+    cy.login();
     cy.url().should("include", "/admin");
   });
-  it("When: homebutton is pressed", function() {
-    cy.get(".v-btn__content > .v-icon").click();
-    cy.get(
-      ".v-navigation-drawer > .v-list > :nth-child(1) > .v-list__tile"
-    ).click();
+  it("WHEN: Home Button is pressed", function() {
+    cy.get("[data-cy=toggle-nav-drawer]").click();
+    cy.get("[data-cy=public]").click();
   });
-  it("Then: url should have /public", function() {
-    cy.url().should("include", "/public");
+  it("THEN: Check for Home Page", function() {
+    cy.url().should("eq", "http://localhost:8080/");
   });
 });
 
-//Tests click person and checking that they are still logged in
 describe("Clicking person and still logged it", function() {
-  it("Given: on homepage after login", function() {
-    cy.url().should("include", "/public");
+  it("GIVEN: Homepage after login", function() {
+    cy.url().should("eq", "http://localhost:8080/");
   });
-  it("When: person bubble is clicked", function() {
-    cy.get(".v-btn__content > .v-icon").click();
+  it("WHEN: Account bubble is clicked", function() {
+    cy.get("[data-cy=account-button]").click();
   });
-  it("Then: url should be admin", function() {
+  it("THEN: Check for Admin Dashboard", function() {
     cy.url().should("include", "/admin");
   });
 });
