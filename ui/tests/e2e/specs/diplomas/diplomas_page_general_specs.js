@@ -1,18 +1,17 @@
-describe("Diplomas Page General Testing", () => { // Tests button funcitonality 
+describe("Diplomas Page General Testing", () => { // Tests button functionality 
   it("GIVEN: Successfull login", () => {
     cy.login();
   });
 
   it("WHEN: clicking to diplomas page", () => {
-    cy.deploma_page()
+    cy.get('[data-cy=toggle-nav-drawer]').click();
+    cy.get('.v-list__group__header__append-icon').click()
+    cy.get('[data-cy=diplomas-admin]').click();
   });
   it("THEN: should be in diplomas page", () => {
     cy.url().should("include", "/diplomas");
   });
 });
-
-// Tough to apply GivenWhenThen methodology here as it 
-//     tests individual pieces of the diplomas page. 
 
 describe("Flipping through Diploma Page", () => {
   it("Next Diploma Page", () => {

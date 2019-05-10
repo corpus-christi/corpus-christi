@@ -4,20 +4,12 @@ let diploma_title_1 = unique_id();
 let diploma_title_2 = unique_id();
 let diploma_title_3 = unique_id();
 
-describe("Get to Diplomas Page", () => {
-  it("GIVEN: Successfull login", () => {
-    cy.login();
-  });
-  it("WHEN: Clicking to diplomas page", () => {
-    cy.deploma_page();
-  });
-  it("THEN: Should be in diplomas page", () => {
-    cy.url().should("include", "/diplomas");
-  });
-});
-
 describe("Fill out new diploma form and add another", () => {
-  it("GIVEN: Form is loaded", () => {
+  before(() => {
+    cy.login();
+    cy.visit("/diplomas");
+  });
+  it("GIVEN: New Diploma dialog", () => {
     cy.get("[data-cy=diplomas-table-new]").click();
   });
 
@@ -32,7 +24,6 @@ describe("Fill out new diploma form and add another", () => {
 
   it("THEN: Test add another button", () => {
     cy.get("[data-cy=form-addanother]").click();
-    
   });
 });
 

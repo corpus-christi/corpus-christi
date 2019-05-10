@@ -2,24 +2,16 @@ import { unique_id } from '../../support/helpers';
 
 let diploma_title = unique_id();
 
-describe("Get to Diplomas Page", () => {
-  it("GIVEN: Successfull login", () => {
-    cy.login();
-  });
-  it("WHEN: Clicking to diplomas page", () => {
-    cy.deploma_page();
-  });
-  it("THEN: Should be in diplomas page", () => {
-    cy.url().should("include", "/diplomas");
-  });
-});
-
 describe("Fill out new diploma form and cancel", () => {
-  it("GIVEN: Form is loaded", () => {
+  before(() => {
+    cy.login();
+    cy.visit("/diplomas");
+  });
+  it("GIVEN: New Diploma Form", () => {
     cy.get("[data-cy=diplomas-table-new]").click();
   });
 
-  it("WHEN: Fill-out new diploma form", () => {
+  it("WHEN: Filling out new diploma form", () => {
     cy.get("[data-cy=diplomas-form-name]").type(diploma_title); // Title
     cy.get("[data-cy=diploma-form-description]").type("Epic Dance Party"); // Description
     cy.get(":nth-child(4) > .v-input__icon > .v-icon").click(); // Click drop down
@@ -34,7 +26,7 @@ describe("Fill out new diploma form and cancel", () => {
 });
 
 describe("Fill-out incomplete diploma", () => {
-  it("GIVEN: Form is loaded", () => {
+  it("GIVEN: New Diploma Form", () => {
     cy.get("[data-cy=diplomas-table-new]").click();
   });
 

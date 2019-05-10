@@ -9,6 +9,7 @@
         slot="activator"
         v-bind:small="displayContext === 'compact'"
         v-on:click.stop="emitAction('edit')"
+        data-cy="edit"
       >
         <v-icon v-bind:small="displayContext === 'compact'">edit</v-icon>
       </v-btn>
@@ -23,6 +24,7 @@
         slot="activator"
         v-bind:small="displayContext === 'compact'"
         @click.stop="emitAction(diploma.active ? 'deactivate' : 'activate')"
+        data-cy="toggle-archive"
       >
         <v-icon v-bind:small="displayContext === 'compact'">
           {{ diploma.active ? "archive" : "undo" }}
