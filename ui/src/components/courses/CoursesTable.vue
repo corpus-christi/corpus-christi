@@ -340,11 +340,14 @@ export default {
       this.saveCourse(course);
     },
 
-    saveCourse(course) {
+    async saveCourse(course) {
       let courseAttrs = {
         description: course.description,
         name: course.name
       };
+
+      let newImageId = course.newImageId;
+      let oldImageId = await this.getOldImageId(course.id);
 
       var prereqMap = {};
       if (course.prerequisites) {
@@ -361,6 +364,41 @@ export default {
               return resp;
             })
         );
+
+        if (newImageId) {
+          // an image was added or edited
+          if (oldImageId) {
+            // an image was edited (PUT)
+            promises.push(
+              this.$http.put(
+                `/api/v1/courses/${
+                  course.id
+                }/images/${newImageId}?old=${oldImageId}`
+              )
+            );
+          } else {
+            // an image was added (POST)
+            promises.push(
+              this.$http.post(
+                `/api/v1/courses/${course.id}/images/${newImageId}`
+              )
+            );
+          }
+        } else {
+          // no image existed or was deleted
+          if (oldImageId) {
+            // an image was removed (DELETE)
+            promises.push(
+              this.$http.delete(
+                `/api/v1/courses/${course.id}/images/${oldImageId}`
+              )
+            );
+          } else {
+            // an image never existed and never was added (NOTHING)
+            // case put in for readability
+          }
+        }
+
         promises.push(
           this.$http.patch(
             `/api/v1/courses/courses/${course.id}/prerequisites`,
@@ -384,6 +422,7 @@ export default {
             this.showSnackbar(this.$t("courses.update-failed"));
           });
       } else {
+        // creating a new course
         // All new courses are active
         courseAttrs.active = true;
         let newCourse;
@@ -402,6 +441,14 @@ export default {
           })
           .then(resp => {
             console.log("PREREQS", resp);
+            return newImageId
+              ? this.$http.post(
+                  `/api/v1/courses/${newCourse.id}/images/${newImageId}`
+                )
+              : null;
+          })
+          .then(resp => {
+            console.log("IMAGE ADDED TO COURSE", resp);
             this.courses.push(course);
             this.showSnackbar(this.$t("courses.added"));
             if (this.addMore) {
@@ -420,13 +467,32 @@ export default {
       }
     },
 
+    async getOldImageId(id) {
+      if (!id) {
+        return null;
+      }
+      return await this.$http
+        .get(`/api/v1/courses/courses/${id}?include_images=1`)
+        .then(resp => {
+          if (resp.data.images && resp.data.images.length > 0) {
+            return resp.data.images[0].image_id;
+          } else {
+            return null;
+          }
+        })
+        .catch(err => {
+          console.error("ERROR FETCHING COURSE", err);
+          return null;
+        });
+    },
+
     showSnackbar(message) {
       this.snackbar.text = message;
       this.snackbar.show = true;
     },
 
     refreshCourseList() {
-      this.$http.get("/api/v1/courses/courses").then(resp => {
+      this.$http.get("/api/v1/courses/courses?include_images=1").then(resp => {
         this.courses = resp.data;
         this.tableLoaded = true;
       });

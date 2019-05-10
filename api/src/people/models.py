@@ -36,9 +36,9 @@ class Person(Base):
     # events_par refers to the participated events (linked via events_eventparticipant table)
     events_par = relationship("EventParticipant", back_populates="person")
     teams = relationship("TeamMember", back_populates="member")
-    diplomas_awarded = relationship(
-        'Diploma_Awarded', back_populates='students', lazy=True, uselist=True)
+    diplomas_awarded = relationship('Diploma_Awarded', back_populates='students', lazy=True, uselist=True)
     members = relationship('Member', back_populates='person', lazy=True)
+    images = relationship('ImagePerson', back_populates='person')
 
     def _init(self, accountInfo):
         self.accountInfo = accountInfo
@@ -70,6 +70,8 @@ class PersonSchema(Schema):
         'AccountSchema', allow_none=True, only=['username', 'id', 'active', 'roles'])
 
     attributesInfo = fields.Nested('PersonAttributeSchema', many=True)
+    images = fields.Nested('ImagePersonSchema', many=True, exclude=['person'], dump_only=True)
+
 
 # Defines join table for people_account and people_role
 

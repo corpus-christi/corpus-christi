@@ -10,6 +10,7 @@ from .models import func, Person, Account, AccountSchema, Role, PersonSchema, Ro
 from ..events.models import EventPerson, EventParticipant
 from ..teams.models import TeamMember
 from ..attributes.models import Attribute, AttributeSchema, EnumeratedValue, EnumeratedValueSchema, PersonAttribute, PersonAttributeSchema
+from ..images.models import Image, ImageSchema, ImagePerson, ImagePersonSchema
 from ..courses.models import Student, Class_Meeting
 from ..auth.blacklist_helpers import revoke_tokens_of_account
 
@@ -569,3 +570,60 @@ def delete_manager(manager_id):
     db.session.commit()
 
     return jsonify(manager_schema.dump(manager)), 204
+
+
+# ---- Image
+
+@people.route('/<person_id>/images/<image_id>', methods=['POST'])
+@jwt_required
+def add_people_images(person_id, image_id):
+    person = db.session.query(Person).filter_by(id=person_id).first()
+    image = db.session.query(Image).filter_by(id=image_id).first()
+
+    person_image = db.session.query(ImagePerson).filter_by(person_id=person_id,image_id=image_id).first()
+
+    if not person:
+        return jsonify(f"Person with id #{person_id} does not exist."), 404
+
+    if not image:
+        return jsonify(f"Image with id #{image_id} does not exist."), 404
+
+    # If image is already attached to the person
+    if person_image:
+        return jsonify(f"Image with id#{image_id} is already attached to person with id#{person_id}."), 422
+    else:
+        new_entry = ImagePerson(**{'person_id': person_id, 'image_id': image_id})
+        db.session.add(new_entry)
+        db.session.commit()
+
+    return jsonify(f"Image with id #{image_id} successfully added to Person with id #{person_id}."), 201
+
+@people.route('/<person_id>/images/<image_id>', methods=['PUT'])
+@jwt_required
+def put_people_images(person_id, image_id):
+    # check for old image id in parameter list (?old=<id>)
+    old_image_id = request.args['old']
+    new_image_id = image_id
+
+    if old_image_id == 'false':
+        post_resp = add_people_images(person_id, new_image_id)
+        return jsonify({'deleted': 'No image to delete', 'posted': str(post_resp[0].data, "utf-8") })
+    else:
+        del_resp = delete_person_image(person_id, old_image_id)
+        post_resp = add_people_images(person_id, new_image_id)
+
+        return jsonify({'deleted': del_resp[0], 'posted': str(post_resp[0].data, "utf-8") })
+
+@people.route('/<person_id>/images/<image_id>', methods=['DELETE'])
+@jwt_required
+def delete_person_image(person_id, image_id):
+    person_image = db.session.query(ImagePerson).filter_by(person_id=person_id,image_id=image_id).first()
+    
+    if not person_image:
+        return jsonify(f"Image with id #{image_id} is not assigned to Person with id #{person_id}."), 404
+
+    db.session.delete(person_image)
+    db.session.commit()
+
+    # 204 codes don't respond with any content
+    return 'Successfully removed image', 204

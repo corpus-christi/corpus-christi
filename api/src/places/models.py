@@ -94,6 +94,7 @@ class Location(Base):
     address = relationship('Address', back_populates='locations', lazy=True)
     events = relationship('Event', back_populates="location")
     assets = relationship('Asset', back_populates="location")
+    images = relationship('ImageLocation', back_populates="location")
 
     def __repr__(self):
         attributes = [f"id='{self.id}'"]

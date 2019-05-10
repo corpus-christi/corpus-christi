@@ -7,6 +7,8 @@ from ..places.models import Address
 from ..people.models import Person, Manager, Role, RoleSchema
 from ..groups.models import Group, Meeting, Attendance, Member, GroupSchema, MeetingSchema, AttendanceSchema, MemberSchema
 from ..events.models import EventGroup, EventGroupSchema, Event
+from ..places.test_places import create_multiple_addresses
+from ..people.test_people import create_multiple_managers, create_multiple_people
 
 
 class RandomLocaleFaker:
@@ -32,6 +34,9 @@ def flip():
 def group_object_factory(sqla):
     """Cook up a fake group."""
     all_managers = sqla.query(Manager).all()
+    if not all_managers:
+        create_multiple_managers(sqla, random.randint(3, 6))
+        all_managers = sqla.query(Manager).all()
     group = {
         'name': rl_fake().word(),
         'description': rl_fake().sentences(nb=1)[0],
@@ -44,14 +49,20 @@ def group_object_factory(sqla):
 def group_object_factory_with_members(sqla, fraction=0.75):
     """Cook up a fake group."""
     all_managers = sqla.query(Manager).all()
-    all_persons = sqla.query(Person).all()
+    if not all_managers:
+        create_multiple_managers(sqla, random.randint(3, 6))
+        all_managers = sqla.query(Manager).all()
+    all_people = sqla.query(Person).all()
+    if not all_people:
+        create_multiple_people(sqla, random.randint(3, 6))
+        all_people = sqla.query(Person).all()
     group = {
         'name': rl_fake().word(),
         'description': rl_fake().sentences(nb=1)[0],
         'active': flip(),
         'manager_id': all_managers[random.randint(0, len(all_managers)-1)].id,
     }
-    all_person_ids = [member.id for member in all_persons]
+    all_person_ids = [member.id for member in all_people]
     group['person_ids'] = random.sample(
         all_person_ids, math.floor(len(all_person_ids) * fraction))
     return group
@@ -60,12 +71,18 @@ def group_object_factory_with_members(sqla, fraction=0.75):
 def meeting_object_factory(sqla):
     """Cook up a fake meeting."""
     all_groups = sqla.query(Group).all()
+    if not all_groups:
+        create_multiple_groups(sqla, random.randint(3, 6))
+        all_groups = sqla.query(Group).all()
     all_addresses = sqla.query(Address).all()
+    if not all_addresses:
+        create_multiple_addresses(sqla, random.randint(3, 6))
+        all_addresses = sqla.query(Address).all()
     meeting = {
         'when': str(rl_fake().future_datetime(end_date="+6h")),
         'group_id': all_groups[random.randint(0, len(all_groups)-1)].id,
-        'active': flip()
-        # 'address_id': all_addresses[random.randint(0, len(all_addresses) - 1)].id
+        'active': flip(),
+        'address_id': all_addresses[random.randint(0, len(all_addresses) - 1)].id
     }
     if len(all_addresses) > 0:
         meeting["address_id"] = all_addresses[random.randint(
@@ -77,7 +94,13 @@ def meeting_object_factory(sqla):
 def member_object_factory(sqla):
     """Cook up a fake member."""
     all_groups = sqla.query(Group).all()
+    if not all_groups:
+        create_multiple_groups(sqla, random.randint(3, 6))
+        all_groups = sqla.query(Group).all()
     all_people = sqla.query(Person).all()
+    if not all_people:
+        create_multiple_people(sqla, random.randint(3, 6))
+        all_people = sqla.query(Person).all()
     member = {
         'joined': str(rl_fake().future_date(end_date="+6d")),
         'active': flip(),
@@ -118,6 +141,10 @@ def event_groups_object_factory(event_id, group_id):
 
 def create_multiple_groups(sqla, n):
     """Commit `n` new groups to the database. Return their IDs."""
+    all_managers = sqla.query(Manager).all()
+    if not all_managers:
+        create_multiple_managers(sqla, random.randint(3, 6))
+        all_managers = sqla.query(Manager).all()
     group_schema = GroupSchema()
     new_groups = []
     for i in range(n):
@@ -141,6 +168,12 @@ def create_multiple_meetings(sqla, n):
 def create_multiple_members(sqla, n):
     """Commit `n` new members to the database. Return their IDs."""
     member_schema = MemberSchema()
+    all_managers = sqla.query(Manager).all()
+    if not all_managers:
+        create_multiple_managers(sqla, random.randint(3, 6))
+        all_managers = sqla.query(Manager).all()
+    if not sqla.query(Group).all():
+        create_multiple_groups(sqla, random.randint(3, 6))
     new_members = []
     for i in range(n):
         valid_member = member_schema.load(member_object_factory(sqla))
@@ -161,6 +194,10 @@ def create_attendance(sqla, fraction=0.75):
     """Create data for attendance with member/meeting"""
     attendance_schema = AttendanceSchema()
     new_attendances = []
+    if not sqla.query(Member).all():
+        create_multiple_people(sqla, random.randint(3, 6))
+    if not sqla.query(Meeting).all():
+        create_multiple_meetings(sqla, random.randint(3, 6))
     all_attendances = sqla.query(Member, Meeting).all()
     sample_attendances = random.sample(
         all_attendances, math.floor(len(all_attendances) * fraction))
