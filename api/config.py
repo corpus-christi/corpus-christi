@@ -34,8 +34,13 @@ class Config:
     MAIL_PORT = 465
     MAIL_USE_TLS = False
     MAIL_USE_SSL = True
-    MAIL_USERNAME = private.EMAIL_USERNAME
-    MAIL_PASSWORD = private.EMAIL_PASSWORD
+    try:
+        MAIL_USERNAME = private.EMAIL_USERNAME
+        MAIL_PASSWORD = private.EMAIL_PASSWORD
+    except AttributeError:
+        MAIL_USERNAME = ""
+        MAIL_PASSWORD = ""
+
     MAIL_SUPPRESS_SEND = False
 
     @staticmethod
