@@ -68,12 +68,21 @@ def create_group():
 
 @groups.route('/groups')
 def read_all_groups():
-    result = db.session.query(Group).all()
-    for group in result:
+    query = db.session.query(Group)
+    return_group = request.args.get('return_group')
+    if return_group == 'inactive':
+        query = query.filter_by(active=False)
+    elif return_group in ('all', 'both'):
+        pass # Don't filter
+    else:
+        query = query.filter_by(active=True)
+    query = query.all()
+    
+    for group in query:
         group.memberList = group.members
         group.managerInfo = group.manager
         group.managerInfo.person = group.manager.person
-    return jsonify(group_schema.dump(result, many=True))
+    return jsonify(group_schema.dump(query, many=True))
 
 
 @groups.route('/groups/<group_id>')

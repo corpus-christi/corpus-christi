@@ -16,7 +16,7 @@ from ..emails.models import EmailSchema
 from ..people.models import Person, PersonSchema
 from ..images.models import Image, ImageSchema, ImageEvent, ImageEventSchema
 from ..groups.models import Group, GroupSchema, Member, MemberSchema
-from .. import db, mail
+from .. import db, mail, translate
 from ..etc.helper import modify_entity, get_exclusion_list
 
 
@@ -414,6 +414,7 @@ def delete_event_image(event_id, image_id):
 @jwt_required
 def add_event_group(event_id, group_id):
     event = db.session.query(Event).filter_by(id=event_id).first()
+
     group = db.session.query(Group).filter_by(id=group_id).first()
 
     event_group = db.session.query(EventGroup).filter_by(event_id=event_id, group_id=group_id).first()
@@ -444,7 +445,10 @@ def add_event_group(event_id, group_id):
             person = db.session.query(Person).filter_by(id=person_id).first()
             person_email = person.email
             if person_email:
-                send_notification_email(person_email, event)
+                print("email would be sent")
+                # send_notification_email(person_email, event)
+
+    print(translate.getTranslation('en-US','country.name.CX'))
 
     db.session.commit()
     return jsonify(f"Group with id #{group_id} successfully attached to event with id #{event_id}."), 201
@@ -452,11 +456,14 @@ def add_event_group(event_id, group_id):
 def send_notification_email(person_email, event):
   
     # Make Python class/module that has methods like getTranslation(), getLocaleCode() 
-    msg = Message("Event Booking Notification", sender='tumissionscomputing@gmail.com', recipients=[person_email])
+    subj = translate.getTranslation('en-US','email.group-added-to-event.subject').gloss
+    body = translate.getTranslation('en-US','email.group-added-to-event.body').gloss
+    msg = Message(subj, sender='tumissionscomputing@gmail.com', recipients=[person_email])
     #link = url_for('events.read_one_event', event_id = event_id)
     ip = "http://localhost:8080"
     link = f"{ip}/event/{event.id}/details"
-    msg.html = f"You have been booked for event <b>{event.title}</b>. Click <a href={link}>here</a> for more details."
+    print(subj,body)
+    msg.html = f""+body
     mail.send(msg)
 
     

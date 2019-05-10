@@ -77,7 +77,7 @@ export default {
       else if (this.location) return this.$t("events.event-location");
       else if (this.person) return this.$t("actions.search-people");
       else if (this.course) return this.$t("actions.search-courses");
-      else if (this.team) return this.$t("events.teams.title");
+      else if (this.team) return this.$t("teams.title");
       else if (this.address) return this.$t("actions.search-addresses");
       else if (this.manager) return this.$t("actions.search-managers");
       else if (this.asset) return this.$t("assets.title");
@@ -176,8 +176,8 @@ export default {
     if (this.location) endpoint = "/api/v1/places/locations";
     else if (this.person) endpoint = "/api/v1/people/persons";
     else if (this.course) endpoint = "/api/v1/courses/courses";
-    else if (this.team) endpoint = "/api/v1/teams";
-    else if (this.asset) endpoint = "/api/v1/assets";
+    else if (this.team) endpoint = "/api/v1/teams/";
+    else if (this.asset) endpoint = "/api/v1/assets/";
     else if (this.address) endpoint = "/api/v1/places/addresses";
     else if (this.manager) endpoint = "/api/v1/people/manager?show_unique_persons_only=Y";
     else if (this.group) endpoint = "/api/v1/groups/groups"
@@ -185,7 +185,6 @@ export default {
       .get(endpoint)
       .then(resp => {
         this.entities = resp.data;
-        // console.log(resp.data);
         this.isLoading = false;
       })
       .catch(error => {
