@@ -9,7 +9,6 @@ test-db.sqlite
 venv/
 private.py
 credentials.py
-credentials.sh
 data/
 
 # UI
@@ -24,6 +23,8 @@ screenshots/
 dist/
 .vscode/
 .DS_Store
+
+db-*.json
 
 #ETC
 *.swp

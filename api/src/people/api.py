@@ -5,9 +5,8 @@ from flask.json import jsonify
 from flask_jwt_extended import jwt_required, get_raw_jwt, jwt_optional
 from marshmallow import ValidationError
 from ..auth.utils import jwt_not_required
-
 from . import people
-from .models import Person, Account, AccountSchema, Role, PersonSchema, RoleSchema, Manager, ManagerSchema
+from .models import func, Person, Account, AccountSchema, Role, PersonSchema, RoleSchema, Manager, ManagerSchema
 from ..events.models import EventPerson, EventParticipant
 from ..teams.models import TeamMember
 from ..attributes.models import Attribute, AttributeSchema, EnumeratedValue, EnumeratedValueSchema, PersonAttribute, PersonAttributeSchema
@@ -53,7 +52,7 @@ def create_person():
     request.json['person']['active'] = True
 
     for key, value in request.json['person'].items():
-        if request.json['person'][key] is "":
+        if request.json['person'][key] is "" or request.json['person'][key] is 0:
             request.json['person'][key] = None
 
     try:
@@ -68,6 +67,8 @@ def create_person():
     db.session.commit()
 
     for person_attribute in valid_person_attributes:
+        if (person_attribute['enum_value_id'] is 0):
+            person_attribute['enum_value_id'] = None
         person_attribute = PersonAttribute(**person_attribute)
         person_attribute.person_id = new_person.id
         db.session.add(person_attribute)
@@ -75,6 +76,7 @@ def create_person():
     db.session.commit()
     result = db.session.query(Person).filter_by(id=new_person.id).first()
     result.attributesInfo = result.person_attributes
+
     return jsonify(person_schema.dump(result)), 201
 
 
@@ -516,7 +518,14 @@ def create_manager():
 @people.route('/manager')
 @jwt_required
 def read_all_managers():
-    result = db.session.query(Manager).all()
+    show_unique_persons_only = request.args.get('show_unique_persons_only')
+
+    # Remove duplicate persons
+    if show_unique_persons_only == 'Y':
+        result = db.session.query(Manager).distinct(Manager.person_id).all()
+    else:
+        result = db.session.query(Manager)
+
     return jsonify(manager_schema.dump(result, many=True))
 
 

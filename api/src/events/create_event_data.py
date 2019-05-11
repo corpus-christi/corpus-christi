@@ -15,6 +15,7 @@ from ..teams.models import Team, TeamMember, TeamSchema, TeamMemberSchema
 from ..places.models import Location
 from ..places.test_places import create_multiple_locations
 from ..images.models import Image, ImageSchema, ImageEvent, ImageEventSchema
+from ..groups.models import Group, GroupSchema
 from ..images.create_image_data import create_test_images
 from ..people.models import Person
 
@@ -183,8 +184,9 @@ def team_member_object_factory(team_id, member_id):
     }
     return teammember
 
+
 def create_multiple_events(sqla, n):
-    """Commit `n` new events to the database. Return their IDs."""
+    """Commit `n` nfw events to the database. Return their IDs."""
     event_schema = EventSchema()
     new_events = []
     for i in range(n):
@@ -408,5 +410,3 @@ def create_event_images(sqla):
 
     sqla.add_all(new_event_images)
     sqla.commit()
-
-

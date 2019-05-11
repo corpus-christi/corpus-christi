@@ -5,6 +5,7 @@ from marshmallow import fields, Schema, pre_load
 from marshmallow.validate import Length, Range, OneOf
 from sqlalchemy import Column, Integer, String, Date, ForeignKey, Boolean, Table
 from sqlalchemy.orm import relationship, backref
+from sqlalchemy.sql.expression import func
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from ..db import Base
@@ -27,7 +28,7 @@ class Person(Base):
     phone = Column(StringTypes.MEDIUM_STRING)
     email = Column(StringTypes.MEDIUM_STRING)
     active = Column(Boolean, nullable=False, default=True)
-    location_id = Column(Integer, ForeignKey('places_location.id'))
+    location_id = Column(Integer, ForeignKey('places_location.id'), nullable=True, default=None)
 
     address = relationship(Location, backref='people', lazy=True)
     # events_per refers to the events led by the person (linked via events_eventperson table)
@@ -192,16 +193,15 @@ class RoleSchema(Schema):
 class Manager(Base):
     __tablename__ = 'people_manager'
     id = Column(Integer, primary_key=True)
-    account_id = Column(Integer, ForeignKey(
-        'people_account.id'), nullable=False)
+    person_id = Column(Integer, ForeignKey(
+        'people_person.id'), nullable=False)
     manager_id = Column(Integer, ForeignKey('people_manager.id'))
     description_i18n = Column(StringTypes.I18N_KEY,
                               ForeignKey('i18n_key.id'), nullable=False)
     manager = relationship('Manager', backref='subordinates',
                            lazy=True, remote_side=[id])
     groups = relationship('Group', back_populates='manager', lazy=True)
-    account = relationship(
-        "Account", backref=backref("manager", uselist=False))
+    person = relationship("Person", backref=backref("manager", uselist=False))
 
     def __repr__(self):
         return f"<Manager(id={self.id})>"
@@ -210,9 +210,9 @@ class Manager(Base):
 class ManagerSchema(Schema):
     id = fields.Integer(dump_only=True, data_key='id',
                         required=True, validate=Range(min=1))
-    account_id = fields.Integer(
-        data_key='account_id', required=True, validate=Range(min=1))
+    person_id = fields.Integer(
+        data_key='person_id', required=True, validate=Range(min=1))
     manager_id = fields.Integer(data_key='manager_id', validate=Range(min=1))
     description_i18n = fields.String(
         data_key='description_i18n', required=True)
-    person = fields.Nested('PersonSchema')
+    person = fields.Nested('PersonSchema', dump_only=True)

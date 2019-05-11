@@ -180,6 +180,7 @@ def manager_object_factory(sqla, description, next_level=None, locale_code='en-U
         i18n_create(description_i18n, 'en-US',
                     description, description=f"Manager {description}")
 
+    all_persons = sqla.query(Person).all()
     all_accounts = sqla.query(Account).all()
     if not all_accounts:
         create_multiple_accounts(sqla)
@@ -187,7 +188,7 @@ def manager_object_factory(sqla, description, next_level=None, locale_code='en-U
 
     manager = {
 
-        'account_id': random.choice(all_accounts).id,
+        'person_id': random.choice(all_persons).id,
         'description_i18n': description_i18n
     }
     all_managers = sqla.query(Manager).all()

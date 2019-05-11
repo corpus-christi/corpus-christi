@@ -239,13 +239,16 @@
       "upload-image": "Upload Image"
     },
     "groups": {
+      "confirm-remove-from-event": "Are you sure you want to remove this group from this event?",
       "create-group": "Create Group",
       "description": "Description",
       "details": {
         "title": "Details"
       },
       "edit-group": "Edit Group",
+      "error-removing-group": "Error while removing group",
       "group-description": "Group Description",
+      "group-removed": "Group removed",
       "header": "Groups",
       "manager": "Manager",
       "meetings": {
@@ -271,6 +274,7 @@
         "members-added": "Members added"
       },
       "name": "Name",
+      "none-assigned": "No groups assigned.",
       "title": "Home Churches"
     },
     "images": {
@@ -669,13 +673,16 @@
       "upload-image": "Cargar Imagen"
     },
     "groups": {
+      "confirm-remove-from-event": "\u00bfEst\u00e1s seguro de que quieres eliminar a este grupo de este evento?",
       "create-group": "Crea un Grupo",
       "description": "Descripci\u00f3n",
       "details": {
         "title": "Detalles"
       },
       "edit-group": "Grupo de Edici\u00f3n",
+      "error-removing-group": "Error al eliminadar este grupo",
       "group-description": "Descripci\u00f3n del Grupo",
+      "group-removed": "Grupo eliminado",
       "header": "Grupos",
       "manager": "Gerente",
       "meetings": {
@@ -701,6 +708,7 @@
         "members-added": "Miembros agregados"
       },
       "name": "Nombre",
+      "none-assigned": "No hay grupos asignados.",
       "title": "Iglesias Hogar"
     },
     "images": {

@@ -69,14 +69,17 @@ export default {
     },
 
     getManagerName() {
-      var man = this.group.managerInfo.person;
-      return (
-        man.firstName +
-        " " +
-        man.lastName +
-        " " +
-        (man.secondLastName ? man.secondLastName : "")
-      );
+      if(this.group.managerInfo){
+        var man = this.group.managerInfo.person;
+        return (
+          man.firstName +
+          " " +
+          man.lastName +
+          " " +
+          (man.secondLastName ? man.secondLastName : "")
+        );
+      }
+      return true;
     }
   }
 };

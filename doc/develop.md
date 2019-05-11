@@ -128,6 +128,7 @@ on the [official downloads page](https://www.postgresql.org/download/).
 1. There are several installers for [**Windows**](https://www.postgresql.org/download/windows/).
    If you have experience or preferences here,
    please feel free to update this documentation with your recommendations.
+   * If you are using a Windows Subsystem for Linux (e.g. Ubuntu for Windows) or something of the like, follow this [**tutorial**](https://github.com/corpus-christi/corpus-christi/blob/development/doc/postgres-windows.md)).
 1. For **Linux**, choose the appropriate distribution
    from the [main downloads page](https://www.postgresql.org/download/).
 

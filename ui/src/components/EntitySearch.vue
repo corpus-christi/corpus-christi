@@ -53,6 +53,7 @@ export default {
     address: Boolean,
     manager: Boolean,
     asset: Boolean,
+    group: Boolean,
     multiple: { type: Boolean, default: false },
     existingEntities: Array,
     value: null,
@@ -76,10 +77,11 @@ export default {
       else if (this.location) return this.$t("events.event-location");
       else if (this.person) return this.$t("actions.search-people");
       else if (this.course) return this.$t("actions.search-courses");
-      else if (this.team) return this.$t("events.teams.title");
+      else if (this.team) return this.$t("teams.title");
       else if (this.address) return this.$t("actions.search-addresses");
       else if (this.manager) return this.$t("actions.search-managers");
       else if (this.asset) return this.$t("assets.title");
+      else if (this.group) return this.$t("groups.title");
       else return "";
     },
     idField() {
@@ -139,6 +141,8 @@ export default {
           (person.secondLastName ? person.secondLastName : "");
       } else if (this.asset) {
         entityDescriptor = entity.description;
+      } else if (this.group){
+        entityDescriptor = entity.description;
       }
       if (entityDescriptor.length > letterLimit) {
         //TODO don't do this here, it limits search functionality
@@ -175,7 +179,8 @@ export default {
     else if (this.team) endpoint = "/api/v1/teams/";
     else if (this.asset) endpoint = "/api/v1/assets/";
     else if (this.address) endpoint = "/api/v1/places/addresses";
-    else if (this.manager) endpoint = "/api/v1/people/manager";
+    else if (this.manager) endpoint = "/api/v1/people/manager?show_unique_persons_only=Y";
+    else if (this.group) endpoint = "/api/v1/groups/groups"
     this.$http
       .get(endpoint)
       .then(resp => {

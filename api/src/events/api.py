@@ -1,7 +1,7 @@
 import json
 from datetime import datetime, timedelta
 
-from flask import request
+from flask import request, url_for, redirect
 from flask.json import jsonify
 from flask_jwt_extended import jwt_required, get_raw_jwt, jwt_optional
 from flask_mail import Message
@@ -9,21 +9,23 @@ from marshmallow import ValidationError
 from sqlalchemy import func
 
 from . import events
-from .models import Event, EventPerson, EventAsset, EventParticipant, EventTeam, EventSchema, EventTeamSchema, EventPersonSchema, EventParticipantSchema
+from .models import Event, EventPerson, EventAsset, EventParticipant, EventTeam, EventGroup, EventSchema, EventTeamSchema, EventPersonSchema, EventParticipantSchema, EventGroupSchema
 from ..assets.models import Asset, AssetSchema
 from ..teams.models import Team, TeamMember, TeamSchema, TeamMemberSchema
 from ..emails.models import EmailSchema
 from ..people.models import Person, PersonSchema
 from ..images.models import Image, ImageSchema, ImageEvent, ImageEventSchema
-from .. import db, mail
+from ..groups.models import Group, GroupSchema, Member, MemberSchema
+from .. import db, mail, translate
 from ..etc.helper import modify_entity, get_exclusion_list
+
 
 # ---- Event
 
 @events.route('/', methods=['POST'])
 @jwt_required
 def create_event():
-    event_schema = EventSchema(exclude=get_exclusion_list(request.args, ['assets', 'participants', 'persons', 'teams', 'images']))
+    event_schema = EventSchema(exclude=get_exclusion_list(request.args, ['assets', 'participants', 'persons', 'teams', 'images', 'groups']))
     try:
         valid_event = event_schema.load(request.json)
     except ValidationError as err:
@@ -37,7 +39,7 @@ def create_event():
 
 @events.route('/')
 def read_all_events():
-    event_schema = EventSchema(exclude=get_exclusion_list(request.args, ['assets', 'participants', 'persons', 'teams', 'images']))
+    event_schema = EventSchema(exclude=get_exclusion_list(request.args, ['assets', 'participants', 'persons', 'teams', 'images', 'groups']))
     query = db.session.query(Event)
 
     # -- return_inactives --
@@ -96,7 +98,7 @@ def read_all_events():
 @events.route('/<event_id>')
 @jwt_required
 def read_one_event(event_id):
-    event_schema = EventSchema(exclude=get_exclusion_list(request.args, ['assets', 'participants', 'persons', 'teams', 'images']))
+    event_schema = EventSchema(exclude=get_exclusion_list(request.args, ['assets', 'participants', 'persons', 'teams', 'images', 'groups']))
     event = db.session.query(Event).filter_by(id=event_id).first()
 
     if not event:
@@ -114,7 +116,7 @@ def replace_event(event_id):
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    event_schema = EventSchema(exclude=get_exclusion_list(request.args, ['assets', 'participants', 'persons', 'teams', 'images']))
+    event_schema = EventSchema(exclude=get_exclusion_list(request.args, ['assets', 'participants', 'persons', 'teams', 'images', 'groups']))
 
     return modify_entity(Event, event_schema, event_id, valid_event)
 
@@ -128,7 +130,7 @@ def update_event(event_id):
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    event_schema = EventSchema(exclude=get_exclusion_list(request.args, ['assets', 'participants', 'persons', 'teams', 'images']))
+    event_schema = EventSchema(exclude=get_exclusion_list(request.args, ['assets', 'participants', 'persons', 'teams', 'images', 'groups']))
                 
     return modify_entity(Event, event_schema, event_id, valid_attributes)
 
@@ -383,7 +385,7 @@ def add_event_images(event_id, image_id):
 
     # If image is already attached to the event
     if event_image:
-        return jsonify(f"Image with id#{image_id} is already attached to event with id#{event_id}."), 422
+        return jsonify(f"Image with id #{image_id} is already attached to event with id #{event_id}."), 422
     else:
         new_entry = ImageEvent(**{'event_id': event_id, 'image_id': image_id})
         db.session.add(new_entry)
@@ -423,3 +425,75 @@ def delete_event_image(event_id, image_id):
 
     # 204 codes don't respond with any content
     return 'Successfully removed image', 204
+
+
+# --- Groups
+
+@events.route('/<event_id>/groups/<group_id>', methods=['POST'])
+@jwt_required
+def add_event_group(event_id, group_id):
+    event = db.session.query(Event).filter_by(id=event_id).first()
+
+    group = db.session.query(Group).filter_by(id=group_id).first()
+
+    event_group = db.session.query(EventGroup).filter_by(event_id=event_id, group_id=group_id).first()
+    if not event:
+        return jsonify(f"Event with id #{event_id} does not exist."), 404
+    if not group:
+        return jsonify(f"Group with id #{group_id} does not exist."), 404
+    if not group.active:
+        return jsonify(f"Group with id #{group_id} is not an active group. Activate the group before attaching it to an event."), 422
+    if event_group:
+        if event_group.active == True:
+            return jsonify(f"Group with id #{group_id} is already attached to event with id #{event_id}."), 422
+        else:
+            setattr(event_group,'active', True)
+    else:
+        new_entry = EventGroup(**{'event_id': event_id, 'group_id': group_id, 'active': True})
+        db.session.add(new_entry)
+
+    group_members = db.session.query(Member).filter_by(group_id = group_id, active = True).all()
+
+    for group_member in group_members:
+        person_id = group_member.person_id
+        if not db.session.query(EventParticipant).filter_by(event_id=event.id, person_id=person_id).first():
+            new_participant = EventParticipant(**{'event_id' : event_id, 'person_id' : person_id, 'confirmed' : True})
+            db.session.add(new_participant)
+            # send notification
+            # internationalize later
+            person = db.session.query(Person).filter_by(id=person_id).first()
+            person_email = person.email
+            if person_email:
+                print("email would be sent")
+                # send_notification_email(person_email, event)
+
+    print(translate.getTranslation('en-US','country.name.CX'))
+
+    db.session.commit()
+    return jsonify(f"Group with id #{group_id} successfully attached to event with id #{event_id}."), 201
+
+def send_notification_email(person_email, event):
+  
+    # Make Python class/module that has methods like getTranslation(), getLocaleCode() 
+    subj = translate.getTranslation('en-US','email.group-added-to-event.subject').gloss
+    body = translate.getTranslation('en-US','email.group-added-to-event.body').gloss
+    msg = Message(subj, sender='tumissionscomputing@gmail.com', recipients=[person_email])
+    #link = url_for('events.read_one_event', event_id = event_id)
+    ip = "http://localhost:8080"
+    link = f"{ip}/event/{event.id}/details"
+    print(subj,body)
+    msg.html = f""+body
+    mail.send(msg)
+
+    
+
+@events.route('/<event_id>/groups/<group_id>', methods=['DELETE'])
+@jwt_required
+def delete_event_group(event_id, group_id):
+    event_group = db.session.query(EventGroup).filter_by(event_id=event_id, group_id=group_id).first()
+    if not event_group or event_group.active == False:
+        return jsonify(f"Group with id #{group_id} is not currently attached to event with id #{event_id}."), 404
+
+    setattr(event_group,'active', False)
+    db.session.commit()
+    return "Image deleted from event", 204

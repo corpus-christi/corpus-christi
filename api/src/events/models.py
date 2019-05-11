@@ -27,6 +27,7 @@ class Event(Base):
     participants = relationship("EventParticipant", back_populates="event")
     location = relationship("Location", back_populates="events")
     images = relationship("ImageEvent", back_populates="event")
+    groups = relationship("EventGroup", back_populates="event")
 
     def __repr__(self):
         return f"<Event(id={self.id})>"
@@ -49,7 +50,7 @@ class EventSchema(Schema):
     teams = fields.Nested('EventTeamSchema', many=True, exclude=['event'], dump_only=True)
     assets = fields.Nested('EventAssetSchema', many=True, exclude=['event'], dump_only=True)
     images = fields.Nested('ImageEventSchema', many=True, exclude=['event'], dump_only=True)
-
+    groups = fields.Nested('EventGroupSchema', many=True, exclude=['event'], dump_only=True)
 
 # ---- EventAsset
 
@@ -122,3 +123,23 @@ class EventParticipantSchema(Schema):
 
     event = fields.Nested('EventSchema', dump_only=True)
     person = fields.Nested('PersonSchema', dump_only=True)
+
+
+# ---- EventGroup
+
+class EventGroup(Base):
+    __tablename__ = 'events_eventgroup'
+    event_id = Column(Integer, ForeignKey('events_event.id'), primary_key=True)
+    group_id = Column(Integer, ForeignKey('groups_group.id'), primary_key=True)
+    active = Column(Boolean, default=True)
+
+    event = relationship("Event", back_populates="groups")
+    group = relationship("Group", back_populates="events")
+
+class EventGroupSchema(Schema):
+    event_id = fields.Integer(required=True, min=1)
+    group_id = fields.Integer(required=True, min=1)
+    active = fields.Boolean()
+
+    event = fields.Nested('EventSchema', dump_only=True)
+    group = fields.Nested('GroupSchema', dump_only=True)

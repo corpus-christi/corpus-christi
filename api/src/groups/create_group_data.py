@@ -6,6 +6,7 @@ from faker import Faker
 from ..places.models import Address
 from ..people.models import Person, Manager, Role, RoleSchema
 from ..groups.models import Group, Meeting, Attendance, Member, GroupSchema, MeetingSchema, AttendanceSchema, MemberSchema
+from ..events.models import EventGroup, EventGroupSchema, Event
 from ..places.test_places import create_multiple_addresses
 from ..people.test_people import create_multiple_managers, create_multiple_people
 
@@ -126,6 +127,15 @@ def role_object_factory(role_name):
     }
     return role
 
+def event_groups_object_factory(event_id, group_id):
+    """Cook up a fake eventteam json object from given ids."""
+    eventgroup = {
+        'event_id': event_id,
+        'group_id': group_id,
+        'active': flip()
+    }
+    return eventgroup
+
 # ---------End of Factories
 
 
@@ -219,3 +229,17 @@ def create_group_test_data(sqla):
     create_multiple_meetings(sqla, 12)
     create_multiple_members(sqla, 13)
     create_attendance(sqla, 0.75)
+    create_events_groups(sqla, 0.75)
+
+
+def create_events_groups(sqla, fraction=0.75):
+    """Create data in the link table between events and groups"""
+    event_groups_schema = EventGroupSchema()
+    new_events_groups = []
+    all_events_groups = sqla.query(Event, Group).all()
+    sample_events_groups = random.sample(all_events_groups, math.floor(len(all_events_groups) * fraction))
+    for events_groups in sample_events_groups:
+        valid_events_groups = event_groups_schema.load(event_groups_object_factory(events_groups[0].id,events_groups[1].id))
+        new_events_groups.append(EventGroup(**valid_events_groups))
+    sqla.add_all(new_events_groups)
+    sqla.commit()

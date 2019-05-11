@@ -35,6 +35,18 @@ groups:
     title:
       en: Members
       es: Miembros
+  confirm-remove-from-event:
+    en: Are you sure you want to remove this group from this event?
+    es: ¿Estás seguro de que quieres eliminar a este grupo de este evento?
+  none-assigned:
+    en: No groups assigned.
+    es: No hay grupos asignados.
+  group-removed:
+    en: Group removed
+    es: Grupo eliminado
+  error-removing-group:
+    en: Error while removing group 
+    es: Error al eliminadar este grupo
   # dashboard:
   #   title:
   #     en: Dashboard
