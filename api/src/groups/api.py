@@ -6,8 +6,9 @@ from marshmallow import ValidationError
 
 from . import groups
 from .models import GroupSchema, Group, Attendance, Member, MemberSchema, Meeting, MeetingSchema, AttendanceSchema
-from ..people.models import Role, Manager
 from ..images.models import Image, ImageSchema, ImageGroup, ImageGroupSchema
+from ..people.models import Role, Manager, ManagerSchema
+from ..i18n.models import I18NKey
 from .. import db
 
 # ---- Group
@@ -25,6 +26,7 @@ def group_dump(group):
 @groups.route('/groups', methods=['POST'])
 @jwt_required
 def create_group():
+    manager_schema = ManagerSchema()
     request.json['active'] = True
 
     members_to_add = None
@@ -38,9 +40,14 @@ def create_group():
         return jsonify(err.messages), 422
 
     new_group = Group(**valid_group)
+    manager = db.session.query(Manager).filter_by(person_id=new_group.manager_id).first()
+    if manager is None:
+        manager = manager_schema.load({ 'person_id': new_group.manager_id })
+        db.session.add(Manager(**manager))
+        db.session.commit()
 
-    if db.session.query(Manager).filter_by(id=new_group.manager_id).first() is None:
-        return jsonify(msg="Manager not found"), 404
+    manager = db.session.query(Manager).filter_by(person_id=new_group.manager_id).first()
+    new_group.manager_id = manager.id
     
     db.session.add(new_group)
     db.session.commit()
