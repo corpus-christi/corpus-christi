@@ -10,7 +10,7 @@
           v-bind:label="$t('groups.name')"
           name="title"
           v-validate="'required'"
-          v-bind:error-messages="errors.first('')"
+          v-bind:error-messages="errors.first('title')"
           data-cy="title"
         ></v-text-field>
         <v-textarea
@@ -21,9 +21,12 @@
           data-cy="description"
         ></v-textarea>
         <v-autocomplete
+          name="manager"
           data-cy="entity-search-field"
           v-model="group.manager"
           v-bind:label="$t('actions.search-people')"
+          v-validate="'required'"
+          v-bind:error-messages="errors.first('manager')"
           prepend-icon="search"
           :filter="filter"
           :items="people"
