@@ -196,7 +196,7 @@ class Manager(Base):
         'people_person.id'), nullable=False)
     manager_id = Column(Integer, ForeignKey('people_manager.id'))
     description_i18n = Column(StringTypes.I18N_KEY,
-                              ForeignKey('i18n_key.id'), nullable=False)
+                              ForeignKey('i18n_key.id'), nullable=True)
     manager = relationship('Manager', backref='subordinates',
                            lazy=True, remote_side=[id])
     groups = relationship('Group', back_populates='manager', lazy=True)
@@ -214,5 +214,5 @@ class ManagerSchema(Schema):
         data_key='person_id', required=True, validate=Range(min=1))
     manager_id = fields.Integer(data_key='manager_id', validate=Range(min=1))
     description_i18n = fields.String(
-        data_key='description_i18n', required=True)
+        data_key='description_i18n', required=False)
     person = fields.Nested('PersonSchema')

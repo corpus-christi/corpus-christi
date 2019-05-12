@@ -13,7 +13,7 @@ class Group(Base):
     __tablename__ = 'groups_group'
     id = Column(Integer, primary_key=True)
     name = Column(StringTypes.MEDIUM_STRING, nullable=False)
-    description = Column(StringTypes.LONG_STRING, nullable=False)
+    description = Column(StringTypes.LONG_STRING, nullable=True)
     active = Column(Boolean, nullable=False, default=True)
     manager_id = Column(Integer, ForeignKey('people_manager.id'), nullable=False)
     manager = relationship('Manager', back_populates='groups', lazy=True)
@@ -28,7 +28,7 @@ class Group(Base):
 class GroupSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     name = fields.String(required=True, validate=Length(min=1))
-    description = fields.String(required=True, validate=Length(min=1))
+    description = fields.String(required=False)
     active = fields.Boolean(nullable=False)
     manager_id = fields.Integer(data_key='manager_id', required=True)
     memberList = fields.Nested('MemberSchema', many=True, only=['person','joined','active','id'])
