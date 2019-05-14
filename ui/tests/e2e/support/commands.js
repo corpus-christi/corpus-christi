@@ -14,31 +14,13 @@
 
 Cypress.Commands.add("login", function() {
   cy.visit("/login");
-  cy.get("[data-cy=username]").type("Cytest");
+  cy.get("[data-cy=username]").type("username");
   cy.get("[data-cy=password]").type("password");
   cy.get("[data-cy=login]").click();
 
   // Wait after pressing login to not redirect back to login
   cy.wait(250);
 });
-
-Cypress.Commands.add("course_page", function (){
-  cy.get('[data-cy=toggle-nav-drawer]').click();
-  cy.get('[data-cy=courses]').click();
-})
-
-Cypress.Commands.add('deploma_page', function (){
-  cy.get('[data-cy=toggle-nav-drawer]').click();
-  cy.get('.v-list__group__header__append-icon').click()
-  cy.get('[data-cy=diplomas-admin]').click();
-})
-
-Cypress.Commands.add('transcript_page', function (){
-  cy.get('[data-cy=toggle-nav-drawer]').click();
-  cy.get('.v-list__group__header__append-icon').click()
-  cy.get('[data-cy=transcripts]').click();
-})
-
 
 //
 // -- This is a child command --

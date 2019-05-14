@@ -1,17 +1,23 @@
 import { unique_id } from '../../support/helpers';
 
+let course = unique_id();
 let description = unique_id();
 let description2 = unique_id();
 
-describe("Get to details of a course", () => {
+describe("Edit Course on Details Page", () => {
   before(() => {
     cy.login();
     cy.visit("/courses");
   });
-  it("GIVEN: Course Details", () => {
-    cy.get("[data-cy=table-search]").clear().type("Alone");
-    cy.get("tbody").contains("Alone").click();
-    cy.url().should("include", "/courses/");
+  it("Create New Course for Test", () => {
+    cy.get("[data-cy=new-course]").click();
+    cy.get("[data-cy=name]").type(course);
+    cy.get("[data-cy=description]").type(description);
+    cy.get("[data-cy=save]").click();
+  });
+  it("GIVEN: New Course", () => {
+    cy.get("[data-cy=table-search]").type(course);
+    cy.get("tbody").eq(0).click();
   });
   it("WHEN: Creating new course section", () => {
     cy.get("[data-cy=new-offering]").click();

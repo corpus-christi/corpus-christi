@@ -4,6 +4,7 @@
       <v-btn
         outline
         color="primary"
+        data-cy="back-button"
         v-on:click="$router.push({ name: 'all-transcripts' })"
         ><v-icon>arrow_back</v-icon>{{ $t("actions.back") }}</v-btn
       >
@@ -21,7 +22,7 @@
           <v-layout row>
             <v-flex xs12>
               <v-card>
-                <v-toolbar primary>
+                <v-toolbar primary data-cy="student-details">
                   <v-toolbar-title>
                     {{ $t("transcripts.page-title") }}
                     {{ transcript.person.firstName }}

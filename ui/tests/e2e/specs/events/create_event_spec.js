@@ -25,7 +25,7 @@ describe("Create Event Test", function() {
 
     cy.get("[data-cy=start-date-menu]").click();
     // Get cypress to click on a certain position on the calendar
-    cy.get("[data-cy=start-date-picker] > .v-picker__body > :nth-child(1) > .v-date-picker-header > :nth-child(3").click();
+    cy.get("[data-cy=start-date-picker] > .v-picker__body > :nth-child(1) > .v-date-picker-header > :nth-child(3)").click();
     cy.get(
       "[data-cy=start-date-picker] > .v-picker__body > :nth-child(1) > .v-date-picker-table > .tab-transition-enter-active > tbody > :nth-child(5) > :nth-child(1) > .v-btn > .v-btn__content"
     ).click();

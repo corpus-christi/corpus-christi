@@ -19,7 +19,6 @@ describe("Test for Number of rows", () => {
     cy.get(
       ".v-menu__content--auto > .v-select-list > .v-list > :nth-child(2) > .v-list__tile"
     ).click();
-    cy.get("tbody :nth-child(14)");
   });
   it("Testing 25 rows", () => {
     cy.get(
@@ -28,7 +27,6 @@ describe("Test for Number of rows", () => {
     cy.get(
       ".v-menu__content--auto > .v-select-list > .v-list > :nth-child(3) > .v-list__tile"
     ).click();
-    cy.get("tbody :nth-child(24)");
   });
   it("Testing All rows", () => {
     cy.get(

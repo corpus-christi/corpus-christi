@@ -28,7 +28,7 @@
           color="secondary" 
           flat :disabled="saving" 
           v-on:click="cancel"
-          data-cy=cancel-button
+          data-cy="cancel"
         >
           {{ $t("actions.cancel") }}
         </v-btn>
@@ -39,6 +39,7 @@
           :disabled="saving || invalid || !validated"
           :loading="saving"
           v-on:click="save"
+          data-cy="save"
           >{{ $t("actions.save") }}</v-btn
         >
       </v-card-actions>
