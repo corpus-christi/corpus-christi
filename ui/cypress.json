@@ -11,6 +11,14 @@
     "/**/events/public_list_by_date_spec.js",
     "/**/events/add_team_member_spec.js",
 
+    "/**/person/create_account.js",
+    "/**/person/edit_password.js",
+    "/**/person/edit_user.js",
+    "/**/person/people_per_page.js",
+    "/**/person/person_table_sort.js",
+    "/**/person/search_bar.js",
+    "/**/person/change_people_view.js",
+
     "/**/courses/course_offering_detail_test.js"
   ]
 }

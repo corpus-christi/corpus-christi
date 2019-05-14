@@ -1,3 +1,5 @@
+// Inactive or broken test. See "ignoreTestFiles" in cypress.json
+
 //So, here's the deal with this test
 //It was working at one point, and then the UI changed.
 //For reference on how to get it working again, it is very similar to how add_person works

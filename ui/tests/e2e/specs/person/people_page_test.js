@@ -1,14 +1,13 @@
-//Tests logging in and going to the people page
-describe("Tests the user navigation to the people page", function() {
-  it("Given: logs in successfully", function() {
+describe("Get to People Page", () => {
+  it("GIVEN Successful login", () => {
     cy.login();
-    cy.url().should("include", "/admin");
   });
-  it("When: people tab is pressed", function() {
-    cy.get(".v-btn__content > .v-icon").click();
+
+  it("WHEN: Clicking to course page", () => {
+    cy.get("[data-cy=toggle-nav-drawer]").click();
     cy.get("[data-cy=people]").click();
   });
-  it("Then: url should have /people", function() {
+  it("THEN: Should be in people page", () => {
     cy.url().should("include", "/people");
   });
 });

@@ -1,3 +1,5 @@
+// Inactive or broken test. See "ignoreTestFiles" in cypress.json
+
 //Tests adding people to the people page
 //This test is not currently functioning
 //It needs to test adding an account for a person that already exists, and test adding a new person & creating an account for them

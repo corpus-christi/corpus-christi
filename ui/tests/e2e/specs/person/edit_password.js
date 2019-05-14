@@ -1,3 +1,5 @@
+// Inactive or broken test. See "ignoreTestFiles" in cypress.json
+
 describe("Testing Editing User Information", () => {
   it(
     "Given: Visits the app root url, logs into an account, navigates" +

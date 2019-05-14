@@ -1,22 +1,17 @@
+// Inactive or broken test. See "ignoreTestFiles" in cypress.json
+
 // https://docs.cypress.io/api/introduction/api.html
 //this is a bad test
 //It uses hard coded expectations, however, they change every time ./reset-database is run
 //Ideally I can come up with a way to fix this, but I currently don't have time.
 //Sorry to whoever is reading this in hopes of running/fixing this test -AD
 describe("Testing Editing User Information", () => {
-  it(
-    "Given: Visits the app root url, logs into an account, and navigates " +
-      "to the people page",
-    () => {
-      cy.login();
-      //Making sure we're in the right place
-      cy.url().should("include", "/admin");
-      //open nav drawer
-      cy.get("[data-cy=toggle-nav-drawer]").click();
-      //goes to the people page
-      cy.get("[data-cy=people]").click();
-    }
-  );
+  before(() => {
+    cy.login();
+  });
+  it("Given: People Page", () => {
+    cy.visit("/people");
+  });
   it("When: clicking on a sorting method: last name descending", () => {
     cy.get("[data-cy=person-table").within(() => {
       cy.get("thead > :nth-child(1) > :nth-child(3)").click();

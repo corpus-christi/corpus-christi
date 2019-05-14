@@ -1,11 +1,11 @@
+// Inactive or broken test. See "ignoreTestFiles" in cypress.json
+
 describe("PersonTable Test", function() {
-  it("GIVEN: Admin loads PersonTable", function() {
+  before(() => {
     cy.login();
-    cy.url().should("include", "/admin");
-    //open nav drawer
-    cy.get("[data-cy=toggle-nav-drawer]").click();
-    //goes to the people page
-    cy.get("[data-cy=people]").click();
+  });
+  it("GIVEN: Admin loads PersonTable", function() {
+    cy.visit("/people");
   });
   it("WHEN: Admin changes table view", function() {
     cy.get("[data-cy=person-table]").within(() => {

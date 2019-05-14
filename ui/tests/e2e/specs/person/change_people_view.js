@@ -1,3 +1,5 @@
+// Inactive or broken test. See "ignoreTestFiles" in cypress.json
+
 //Has been revised to work with the new page -AD
 /*
 describe("Seed for test", () => {
