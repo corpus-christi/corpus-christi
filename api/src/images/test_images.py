@@ -47,7 +47,7 @@ def test_upload_image(auth_client):
     # WHEN we upload an image
     create_multiple_images(auth_client.sqla, 1)
     # THEN we can see an image in the database
-    resp = auth_client.get(url_for('images.download_image', image_id = 1));
+    resp = auth_client.get(url_for('images.download_image', image_id=1))
     assert resp.status_code == 200
 
 

@@ -22,7 +22,7 @@ from src.i18n.models import Language, I18NLocale
 from src.images.create_image_data import create_images_test_data
 from src.people.models import Person, Account, Role
 from src.people.test_people import create_multiple_people, create_multiple_accounts, create_multiple_managers, create_accounts_roles
-    
+
 from src.places.models import Country
 from src.places.test_places import create_multiple_areas, create_multiple_addresses, create_multiple_locations
 

@@ -47,10 +47,12 @@ class ImageEventSchema(Schema):
     image = fields.Nested('ImageSchema', dump_only=True)
     event = fields.Nested('EventSchema', dump_only=True)
 
+
 class ImagePerson(Base):
     __tablename__ = 'images_imageperson'
     image_id = Column(Integer, ForeignKey("images_image.id"), primary_key=True)
-    person_id = Column(Integer, ForeignKey("people_person.id"), primary_key=True)
+    person_id = Column(Integer, ForeignKey(
+        "people_person.id"), primary_key=True)
 
     image = relationship("Image", back_populates="people")
     person = relationship("Person", back_populates="images")
@@ -63,10 +65,12 @@ class ImagePersonSchema(Schema):
     image = fields.Nested('ImageSchema', dump_only=True)
     person = fields.Nested('PersonSchema', dump_only=True)
 
+
 class ImageCourse(Base):
     __tablename__ = 'images_imagecourse'
     image_id = Column(Integer, ForeignKey("images_image.id"), primary_key=True)
-    course_id = Column(Integer, ForeignKey("courses_course.id"), primary_key=True)
+    course_id = Column(Integer, ForeignKey(
+        "courses_course.id"), primary_key=True)
 
     image = relationship("Image", back_populates="courses")
     course = relationship("Course", back_populates="images")
@@ -78,6 +82,7 @@ class ImageCourseSchema(Schema):
 
     image = fields.Nested('ImageSchema', dump_only=True)
     course = fields.Nested('CourseSchema', dump_only=True)
+
 
 class ImageGroup(Base):
     __tablename__ = 'images_imagegroup'
@@ -95,10 +100,12 @@ class ImageGroupSchema(Schema):
     image = fields.Nested('ImageSchema', dump_only=True)
     group = fields.Nested('GroupSchema', dump_only=True)
 
+
 class ImageLocation(Base):
     __tablename__ = 'images_imagelocation'
     image_id = Column(Integer, ForeignKey("images_image.id"), primary_key=True)
-    location_id = Column(Integer, ForeignKey("places_location.id"), primary_key=True)
+    location_id = Column(Integer, ForeignKey(
+        "places_location.id"), primary_key=True)
 
     image = relationship("Image", back_populates="locations")
     location = relationship("Location", back_populates="images")

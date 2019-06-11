@@ -3,13 +3,12 @@
 # API
 .coverage
 __pycache__/
-dev-db.sqlite
 htmlcov/
-test-db.sqlite
 venv/
 private.py
 credentials.py
 data/
+**/migrations/versions/
 
 # UI
 node_modules/
@@ -26,5 +25,5 @@ dist/
 
 db-*.json
 
-#ETC
+# ETC
 *.swp

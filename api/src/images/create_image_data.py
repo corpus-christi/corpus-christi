@@ -1,20 +1,23 @@
+import datetime
 import math
 import random
 
 import pytest
-import datetime
 from faker import Faker
 from flask import url_for
 from flask_jwt_extended import create_access_token
 from werkzeug.datastructures import Headers
 from werkzeug.security import check_password_hash
 
-from .models import Image, ImageSchema, ImageEvent, ImageEventSchema, ImagePerson, ImagePersonSchema, ImageCourse, ImageCourseSchema, ImageGroup, ImageGroupSchema, ImageLocation, ImageLocationSchema
-from ..events.models import Event, EventSchema
-from ..people.models import Person, PersonSchema
 from ..courses.models import Course, CourseSchema
+from ..events.models import Event, EventSchema
 from ..groups.models import Group, GroupSchema
+from ..people.models import Person, PersonSchema
 from ..places.models import Location, LocationSchema
+from .models import (Image, ImageCourse, ImageCourseSchema, ImageEvent,
+                     ImageEventSchema, ImageGroup, ImageGroupSchema,
+                     ImageLocation, ImageLocationSchema, ImagePerson,
+                     ImagePersonSchema, ImageSchema)
 
 
 class RandomLocaleFaker:
@@ -51,12 +54,13 @@ def reset_paths_taken():
         paths_taken[i] = False
 
 
-#Used to create the test images in the database; pulled from Events
+# Used to create the test images in the database; pulled from Events
 def create_test_images(sqla):
     image_schema = ImageSchema()
     new_images = []
 
-    valid_image = image_schema.load({'path': 'image/a1/casa.jpg', 'description': 'Civil authority rich coach answer total general.'})
+    valid_image = image_schema.load(
+        {'path': 'image/a1/casa.jpg', 'description': 'Civil authority rich coach answer total general.'})
     new_images.append(Image(**valid_image))
     valid_image = image_schema.load({'path': 'image/a1/coffee_house.jpg'})
     new_images.append(Image(**valid_image))
@@ -66,13 +70,15 @@ def create_test_images(sqla):
     new_images.append(Image(**valid_image))
     valid_image = image_schema.load({'path': 'image/m5/downtown.jpg'})
     new_images.append(Image(**valid_image))
-    valid_image = image_schema.load({'path': 'image/m5/park.jpg', 'description': 'Explicabo doloremque voluptatibus quaerat repellat libero.'})
+    valid_image = image_schema.load(
+        {'path': 'image/m5/park.jpg', 'description': 'Explicabo doloremque voluptatibus quaerat repellat libero.'})
     new_images.append(Image(**valid_image))
     valid_image = image_schema.load({'path': 'image/m5/broken_bridge.jpg'})
     new_images.append(Image(**valid_image))
-    valid_image = image_schema.load({'path': 'image/m5/tree.jpg', 'description': 'Factor rate forget research today hand.'})
+    valid_image = image_schema.load(
+        {'path': 'image/m5/tree.jpg', 'description': 'Factor rate forget research today hand.'})
     new_images.append(Image(**valid_image))
-    
+
     sqla.add_all(new_images)
     sqla.commit()
 
@@ -179,6 +185,7 @@ def create_images_events(sqla, fraction=0.75):
         new_images_events.append(ImageEvent(**valid_image_event))
     sqla.add_all(new_images_events)
     sqla.commit()
+
 
 def create_images_people(sqla, fraction=0.75):
     """Create data in the linking table between images and people """
