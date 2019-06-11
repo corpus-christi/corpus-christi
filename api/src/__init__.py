@@ -11,6 +11,7 @@ mail = Mail()
 
 BASE_DIR = BASE_DIR
 
+
 def create_app(config_name):
     """Application factory for the API."""
     print("config_name = ", config_name)

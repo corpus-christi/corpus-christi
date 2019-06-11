@@ -2,12 +2,9 @@
 
 source ./venv/bin/activate
 
-#Use this line if using sqlite
-#rm dev-db.sqlite
-
-#Use this block if using psql
 flask db downgrade
-while [ $? -eq 0 ];do
+while [ $? -eq 0 ]
+do
     flask db downgrade
 done
 
@@ -16,7 +13,7 @@ rm migrations/versions/*.py
 flask db migrate
 flask db upgrade
 flask data load-all
-flask account new --first="Fred" --last="Ziffle" username password
+flask account new --first="Fred" --last="Ziffle" fred password
 flask account new --first="Quality" --last="Assurance" Cytest password
 
 ## Creating More readable courses and diplomas (commented out because some of these commands are broken)

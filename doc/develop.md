@@ -1,6 +1,6 @@
 # Developing Corpus Christi
 
-This document lays out the details 
+This document lays out the details
 of the development tools and environment
 you will need to contribute to Corpus Christi (CC).
 
@@ -20,14 +20,14 @@ _About Bash_: These instructions assume that you use
 a `bash` shell. If you are using Windows command line
 or other non-`bash` shell,
 your actual mileage may vary.
-You may want to try installing 
+You may want to try installing
 the [Cygwin](https://www.cygwin.com/)
 environment,
 which provides a workable implementation
 of many Unix/Linux commands on Windows,
-_including_ `bash`. 
- 
-## Set Up CC
+_including_ `bash`.
+
+## Install CC
 
 Instructions for installing and configuring CC.
 
@@ -41,10 +41,10 @@ we'll refer to the top-level directory as `corpus-christi`
 ### UI Dependencies
 
 Install the UI dependencies, of which there are _many_.
-Installation takes several minutes. 
+Installation takes several minutes.
 ```bash
 $ cd corpus-christi/ui
-$ yarn install 
+$ yarn install
 ```
 
 ### Vue Dev Tools
@@ -87,7 +87,7 @@ $ deactivate
 ```
 This will remove the virtual environment from your shell.
 
-### Bash Setup for Flask API
+## Bash Setup for Flask
 
 Flask (on which the API is written)
 includes a handy utility command
@@ -106,18 +106,18 @@ This script will
 Do this whenever you start a new `bash`
 in which you intend to work with the API.
 
-### Database Setup
+## Database Setup
 
 Be sure you have [set up your shell](#bash-setup-for-flask-api).
 
-#### PostgresSQL
+### PostgreSQL
 
-CC uses uses [PostgreSQL](https://www.postgresql.org/).
+CC uses [PostgreSQL](https://www.postgresql.org/).
 You will need access to a Postgres server,
 which can be either a network resource
 or you can install a server on your own machine.
 
-Locate installers for Postgres 
+Locate installers for Postgres
 on the [official downloads page](https://www.postgresql.org/download/).
 1. For the [**Mac**](https://www.postgresql.org/download/macosx/),
    I have had good luck with both [Postgres.app](https://postgresapp.com/),
@@ -132,15 +132,15 @@ on the [official downloads page](https://www.postgresql.org/download/).
 1. For **Linux**, choose the appropriate distribution
    from the [main downloads page](https://www.postgresql.org/download/).
 
-#### Configure Database
+### Create Database User and Database
 
 Once Postgres is installed,
 you need to create a user and a database.
-An easy way to do this is to use the shell commands 
+An easy way to do this is to use the shell commands
 that come with Postgres.
 Create a user:
 ```bash
-$ createuser arco 
+$ createuser arco
 ```
 Note that this creates a database user with **no password**.
 This is **only** suitable for local development!
@@ -148,7 +148,7 @@ For a production system, use a good password.
 
 Create a database:
 ```bash
-$ createdb --owner=arco cc-dev 
+$ createdb --owner=arco cc-dev
 ```
 This will create a database called `cc-dev`,
 which is used by the default `development` configuration.
@@ -157,10 +157,50 @@ Other possibilities are:
 - Staging: `cc-staging`
 - Production: `cc-prod`
 
+### PostgreSQL with Docker
+
+If your machine runs [Docker](https://www.docker.com/),
+you may prefer to run Postgres in a Docker container.
+The `docker-compose.yaml` file contains a simple configuration
+that should spin up a Postgres database server
+when you run
+```bash
+$ docker-compose up --detach
+```
+from the directory containing the `docker-compose.yaml` file.
+
+The configuration exposes port `5432`
+(the Postgres default port) from the container,
+allowing you to connect to the database using `psql`
+or another Postgres database client
+(e.g., [DataGrip](https://www.jetbrains.com/datagrip/)).
+
+To connect from `psql` with the configuration found in `docker-compose.yaml`, run:
+```bash
+$ psql --host=localhost --user=arco cc-dev
+```
+and provide `password` as the password when prompted.
+
+Note that you **must** provide the `--host` argument
+in order to force `psql` to connect over a TCP socket.
+By default, `psql` uses a Unix-domain socket,
+which works great for a local Postgres server
+but not for one running in a Docker container.
+
+Important notes:
+
+1. You do _not_ need to set up a Postgres user or database manually
+   when using docker.
+   They will be created automatically
+   according to the configuration in the `docker-compose.yaml` file.
+1. Be careful not to run two Postgres servers listening on the same port.
+
+### Database Connection
+
 The values that you supply for Postgres user, password, host, etc.
 should match the values supplied in the `api/private.py` file.
 A default file is included with the CC repository
-that should work with the preceding configuration.
+that should work with the default configuration.
 Update it as appropriate for your use case.
 If you are configuring CC for production use,
 *do not* commit the updated `private.py` file
@@ -168,11 +208,17 @@ to a public Git repository.
 The file is included in the CC `.gitignore` file,
 so it should not be added to commits.
 
+### Database Initialization
+
 Use the `flask` command to initialize your development database:
 ```bash
+$ flask db migrate
 $ flask db upgrade
 $ flask data load-all
 ```
+
+To completely reset the database during development,
+the script `bin/reset-db.sh` may be of use.
 
 Once the database is initialized,
 create a test account for yourself.
@@ -205,17 +251,17 @@ when things go haywire.
    (be sure you have [set up your shell](#bash-setup-for-flask-api))
     ```base
     $ cd corpus-christi/api/bin
-    $ ./run-dev-server.sh 
+    $ ./run-dev-server.sh
     ```
    You should see a few lines indicating that
-   Flask is serving the application. 
+   Flask is serving the application.
    (You can also use `flask` directly; the script above is just
    a thin wrapper around the `flask` command.)
 1. Start the Vue CLI service
     ```bash
     $ cd corpus-christi/ui
     $ yarn serve
-    ``` 
+    ```
    You should see the application being built
    then a `Compiled successfully` message
    and the URLs where you can connect to the UI.
@@ -237,7 +283,7 @@ The structure of the CC source code is as follows:
       - `etc/` - Endpoints that don't fit anywhere else.
       - `groups/` - Endpoints for the home groups module
       - `i18n/` - API endpoints for Internationalization;
-        like most directories under `src`, 
+        like most directories under `src`,
         contains the following files:
         - `__init__.py` marks this directory as a Python _package_;
           includes initialization code to help integrate
@@ -295,7 +341,7 @@ The structure of the CC source code is as follows:
       based on [Vue Router](https://router.vuejs.org/)
     - `store.js` - UI global state,
       using [Vuex](https://vuex.vuejs.org/)
-  - `tests/` contains end-to-end tests using 
+  - `tests/` contains end-to-end tests using
     [Cypress](https://www.cypress.io/)
   - `*.config.js`, `*rc.js`, `*.json` - Configuration files for various modules
   - `package.json` - NPM configuration file for the UI;
@@ -304,7 +350,7 @@ The structure of the CC source code is as follows:
   code formatting consistency
 - `.gitignore` - Patterns of files and directories
   to be excluded from Git
-  
+
 ## Boilerplate
 
 In the API of any CRUD application,
@@ -323,7 +369,7 @@ The idea is this:
    1. Test functions
 1. Use the output from `boil.py` as a _starting place_
    for coding the API
-   
+
 Find the `boil.py` program and some configuration files
 in `api/src/boilerplate`.
 
@@ -339,7 +385,7 @@ The `boil.py` program validates the YAML input files
 using (JSON Schema)[http://json-schema.org/].
 The schema is self-documenting;
 refer to the `schema` structure
-in `boil.py` for details on the proper format for 
+in `boil.py` for details on the proper format for
 the YAML input file.
 
 To process the YAML file, run:
@@ -399,7 +445,7 @@ localization data by the top-level modules
 
 ### Data
 
-The data used by Vue I18n 
+The data used by Vue I18n
 is formatted as nested JavaScript objects.
 The keys of the top-level object
 are language identifiers (e.g., `en` for English
@@ -489,3 +535,20 @@ there are two Flask client objects:
 1. `auth_client` includes a JWT for testing authenticated endpoints
 1. `plain_client` does _not_ have a JWT and is used to test unauthenticated endpoints
 Using the wrong client results an an exception from the endpoint.
+
+## Visual Studio Code
+
+For development with Visual Studio Code,
+consider installing the `ms-python.python` extension.
+To make full use of the extension,
+be sure to install Python modules as follows
+_in the virtual environment_.
+
+1. `pip install pylint`
+1. `pip install autopep8`
+
+Note that, as of this writing,
+you must run these `install` commands manually.
+Choosing `Install` from the VS Code popup
+installs them in the wrong place.
+

@@ -1,0 +1,12 @@
+version: '3.4'
+
+services:
+  cc-db:
+    image: postgres:11
+    container_name: cc-db
+    environment:
+      POSTGRES_DB: cc-dev
+      POSTGRES_USER: arco
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
