@@ -1,7 +1,7 @@
 import pytest
 from flask import url_for
 
-from src.auth.utils import jwt_not_required
+from .auth.utils import jwt_not_required
 
 
 @pytest.mark.smoke

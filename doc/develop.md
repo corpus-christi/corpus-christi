@@ -8,6 +8,30 @@ For more details on the development methodology
 of the core team (including learning resources),
 refer to `doc/sdm.md`.
 
+- [Developing Corpus Christi](#developing-corpus-christi)
+  - [Requirements](#requirements)
+  - [Install CC](#install-cc)
+    - [Clone](#clone)
+    - [UI Dependencies](#ui-dependencies)
+    - [Vue Dev Tools](#vue-dev-tools)
+    - [API Dependencies](#api-dependencies)
+  - [Bash Setup for Flask](#bash-setup-for-flask)
+  - [Database Setup](#database-setup)
+    - [PostgreSQL](#postgresql)
+    - [Create Database User and Database](#create-database-user-and-database)
+    - [PostgreSQL with Docker](#postgresql-with-docker)
+    - [Database Connection](#database-connection)
+    - [Database Initialization](#database-initialization)
+  - [Run CC](#run-cc)
+  - [Source Code Structure](#source-code-structure)
+  - [Boilerplate](#boilerplate)
+  - [User Interface Internationalization](#user-interface-internationalization)
+    - [Code](#code)
+    - [Data](#data)
+    - [Tooling](#tooling)
+  - [Authentication with JSON Web Tokens](#authentication-with-json-web-tokens)
+  - [Visual Studio Code](#visual-studio-code)
+
 ## Requirements
 
 The development tool chain requires the following software.

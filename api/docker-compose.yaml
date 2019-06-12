@@ -1,11 +1,23 @@
 version: '3.4'
 
 services:
-  cc-db:
+  # Development database server.
+  cc-dev:
     image: postgres:11
-    container_name: cc-db
+    container_name: cc-dev
     environment:
       POSTGRES_DB: cc-dev
+      POSTGRES_USER: arco
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+
+  # Test database server.
+  cc-test:
+    image: postgres:11
+    container_name: cc-test
+    environment:
+      POSTGRES_DB: cc-test
       POSTGRES_USER: arco
       POSTGRES_PASSWORD: password
     ports:
