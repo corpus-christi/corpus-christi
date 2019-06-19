@@ -1,11 +1,11 @@
-from marshmallow import fields, Schema, pre_load
-from marshmallow.validate import Length, Range, OneOf
-from sqlalchemy import Column, DateTime, Integer, String, Date, ForeignKey, Boolean
-from sqlalchemy.orm import relationship, backref
-from werkzeug.security import generate_password_hash, check_password_hash
+from marshmallow import fields, Schema
+from marshmallow.validate import Length, Range
+from sqlalchemy import Column, DateTime, Integer, ForeignKey, Boolean
+from sqlalchemy.orm import relationship
 
 from ..db import Base
 from ..shared.models import StringTypes
+
 
 # ---- Event
 
@@ -31,7 +31,7 @@ class Event(Base):
 
     def __repr__(self):
         return f"<Event(id={self.id})>"
-    
+
 
 class EventSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
@@ -52,22 +52,25 @@ class EventSchema(Schema):
     images = fields.Nested('ImageEventSchema', many=True, exclude=['event'], dump_only=True)
     groups = fields.Nested('EventGroupSchema', many=True, exclude=['event'], dump_only=True)
 
+
 # ---- EventAsset
 
 class EventAsset(Base):
     __tablename__ = 'events_eventasset'
     event_id = Column(Integer, ForeignKey('events_event.id'), primary_key=True)
     asset_id = Column(Integer, ForeignKey('events_asset.id'), primary_key=True)
-    
+
     event = relationship("Event", back_populates="assets")
     asset = relationship("Asset", back_populates="events")
+
 
 class EventAssetSchema(Schema):
     event = fields.Nested('EventSchema', dump_only=True)
     asset = fields.Nested('AssetSchema', dump_only=True)
-    
+
     event_id = fields.Integer(required=True, min=1)
     asset_id = fields.Integer(required=True, min=1)
+
 
 # ---- EventTeam
 
@@ -79,12 +82,14 @@ class EventTeam(Base):
     event = relationship("Event", back_populates="teams")
     team = relationship("Team", back_populates="events")
 
+
 class EventTeamSchema(Schema):
     event_id = fields.Integer(required=True, min=1)
     team_id = fields.Integer(required=True, min=1)
 
     event = fields.Nested('EventSchema', dump_only=True)
     team = fields.Nested('TeamSchema', exclude=['events'], dump_only=True)
+
 
 # ---- EventPerson
 
@@ -97,6 +102,7 @@ class EventPerson(Base):
     event = relationship("Event", back_populates="persons")
     person = relationship("Person", back_populates="events_per")
 
+
 class EventPersonSchema(Schema):
     event_id = fields.Integer(required=True, min=1)
     person_id = fields.Integer(required=True, min=1)
@@ -104,6 +110,7 @@ class EventPersonSchema(Schema):
 
     event = fields.Nested('EventSchema', dump_only=True)
     person = fields.Nested('PersonSchema', dump_only=True)
+
 
 # ---- EventParticipant
 
@@ -115,6 +122,7 @@ class EventParticipant(Base):
 
     event = relationship("Event", back_populates="participants")
     person = relationship("Person", back_populates="events_par")
+
 
 class EventParticipantSchema(Schema):
     event_id = fields.Integer(required=True, min=1)
@@ -135,6 +143,7 @@ class EventGroup(Base):
 
     event = relationship("Event", back_populates="groups")
     group = relationship("Group", back_populates="events")
+
 
 class EventGroupSchema(Schema):
     event_id = fields.Integer(required=True, min=1)

@@ -6,12 +6,14 @@ from flask_jwt_extended import jwt_required, get_raw_jwt, jwt_optional
 from marshmallow import ValidationError
 from ..auth.utils import jwt_not_required
 from . import people
-from .models import func, Person, Account, AccountSchema, Role, PersonSchema, RoleSchema, Manager, ManagerSchema
+from .models import func, Person, Account, AccountSchema, Role, PersonSchema, \
+    RoleSchema, Manager, ManagerSchema
 from ..events.models import EventPerson, EventParticipant
 from ..teams.models import TeamMember
-from ..attributes.models import Attribute, AttributeSchema, EnumeratedValue, EnumeratedValueSchema, PersonAttribute, PersonAttributeSchema
+from ..attributes.models import Attribute, AttributeSchema, EnumeratedValue, \
+    EnumeratedValueSchema, PersonAttribute, PersonAttributeSchema
 from ..images.models import Image, ImageSchema, ImagePerson, ImagePersonSchema
-from ..courses.models import Student, Class_Meeting
+from ..courses.models import Student, ClassMeeting
 from ..auth.blacklist_helpers import revoke_tokens_of_account
 
 from .. import db
@@ -580,7 +582,7 @@ def add_people_images(person_id, image_id):
     person = db.session.query(Person).filter_by(id=person_id).first()
     image = db.session.query(Image).filter_by(id=image_id).first()
 
-    person_image = db.session.query(ImagePerson).filter_by(person_id=person_id,image_id=image_id).first()
+    person_image = db.session.query(ImagePerson).filter_by(person_id=person_id, image_id=image_id).first()
 
     if not person:
         return jsonify(f"Person with id #{person_id} does not exist."), 404
@@ -592,11 +594,13 @@ def add_people_images(person_id, image_id):
     if person_image:
         return jsonify(f"Image with id#{image_id} is already attached to person with id#{person_id}."), 422
     else:
-        new_entry = ImagePerson(**{'person_id': person_id, 'image_id': image_id})
+        new_entry = ImagePerson(
+            **{'person_id': person_id, 'image_id': image_id})
         db.session.add(new_entry)
         db.session.commit()
 
     return jsonify(f"Image with id #{image_id} successfully added to Person with id #{person_id}."), 201
+
 
 @people.route('/<person_id>/images/<image_id>', methods=['PUT'])
 @jwt_required
@@ -607,18 +611,20 @@ def put_people_images(person_id, image_id):
 
     if old_image_id == 'false':
         post_resp = add_people_images(person_id, new_image_id)
-        return jsonify({'deleted': 'No image to delete', 'posted': str(post_resp[0].data, "utf-8") })
+        return jsonify({'deleted': 'No image to delete', 'posted': str(post_resp[0].data, "utf-8")})
     else:
         del_resp = delete_person_image(person_id, old_image_id)
         post_resp = add_people_images(person_id, new_image_id)
 
-        return jsonify({'deleted': del_resp[0], 'posted': str(post_resp[0].data, "utf-8") })
+        return jsonify({'deleted': del_resp[0], 'posted': str(post_resp[0].data, "utf-8")})
+
 
 @people.route('/<person_id>/images/<image_id>', methods=['DELETE'])
 @jwt_required
 def delete_person_image(person_id, image_id):
-    person_image = db.session.query(ImagePerson).filter_by(person_id=person_id,image_id=image_id).first()
-    
+    person_image = db.session.query(ImagePerson).filter_by(
+        person_id=person_id, image_id=image_id).first()
+
     if not person_image:
         return jsonify(f"Image with id #{image_id} is not assigned to Person with id #{person_id}."), 404
 

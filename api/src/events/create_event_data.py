@@ -1,25 +1,16 @@
 import math
 import random
 
-import pytest
-import datetime
 from faker import Faker
-from flask import url_for
-from flask_jwt_extended import create_access_token
-from werkzeug.datastructures import Headers
-from werkzeug.security import check_password_hash
 
-from .models import Event, EventPerson, EventAsset, EventParticipant, EventTeam, EventSchema, EventTeamSchema, EventPersonSchema, EventParticipantSchema
+from .models import Event, EventPerson, EventParticipant, EventSchema, EventPersonSchema, EventParticipantSchema
+from .models import EventAsset, EventAssetSchema, EventTeam, EventTeamSchema
 from ..assets.models import Asset, AssetSchema
-from ..teams.models import Team, TeamMember, TeamSchema, TeamMemberSchema
+from ..images.models import Image, ImageEvent, ImageEventSchema
+from ..people.models import Person
 from ..places.models import Location
 from ..places.test_places import create_multiple_locations
-from ..images.models import Image, ImageSchema, ImageEvent, ImageEventSchema
-from ..groups.models import Group, GroupSchema
-from ..images.create_image_data import create_test_images
-from ..people.models import Person
-
-from .models import EventAsset, EventAssetSchema, EventTeam, EventTeamSchema
+from ..teams.models import Team, TeamMember, TeamSchema, TeamMemberSchema
 
 
 class RandomLocaleFaker:
@@ -58,10 +49,11 @@ def event_object_factory(sqla):
     if flip():
         all_locations = sqla.query(Location).all()
         if len(all_locations) > 0:
-            event['location_id'] = all_locations[random.randint(0, len(all_locations)-1)].id
+            event['location_id'] = all_locations[random.randint(0, len(all_locations) - 1)].id
     if flip():
         event['attendance'] = random.randint(0, 1500)
     return event
+
 
 def event_object_factory_approx_one_week_ago(sqla):
     """Cook up a fake event."""
@@ -79,10 +71,11 @@ def event_object_factory_approx_one_week_ago(sqla):
     if flip():
         all_locations = sqla.query(Location).all()
         if len(all_locations) > 0:
-            event['location_id'] = all_locations[random.randint(0, len(all_locations)-1)].id
+            event['location_id'] = all_locations[random.randint(0, len(all_locations) - 1)].id
     if flip():
         event['attendance'] = random.randint(0, 1500)
     return event
+
 
 def event_object_factory_long_ago(sqla):
     """Cook up a fake event."""
@@ -100,7 +93,7 @@ def event_object_factory_long_ago(sqla):
     if flip():
         all_locations = sqla.query(Location).all()
         if len(all_locations) > 0:
-            event['location_id'] = all_locations[random.randint(0, len(all_locations)-1)].id
+            event['location_id'] = all_locations[random.randint(0, len(all_locations) - 1)].id
     if flip():
         event['attendance'] = random.randint(0, 1500)
     return event
@@ -115,7 +108,7 @@ def asset_object_factory(sqla):
         all_locations = sqla.query(Location).all()
     asset = {
         'description': rl_fake().sentences(nb=1)[0],
-        'location_id': all_locations[random.randint(0, len(all_locations)-1)].id,
+        'location_id': all_locations[random.randint(0, len(all_locations) - 1)].id,
         'active': flip()
     }
     return asset
@@ -149,6 +142,7 @@ def event_asset_object_factory(event_id, asset_id):
     }
     return eventasset
 
+
 def event_team_object_factory(event_id, team_id):
     """Cook up a fake eventteam json object from given ids."""
     eventteam = {
@@ -156,6 +150,7 @@ def event_team_object_factory(event_id, team_id):
         'team_id': team_id
     }
     return eventteam
+
 
 def event_participant_object_factory(event_id, person_id):
     """Cook up a fake eventteam json object from given ids."""
@@ -166,6 +161,7 @@ def event_participant_object_factory(event_id, person_id):
     }
     return eventparticipant
 
+
 def event_person_object_factory(event_id, person_id):
     """Cook up a fake eventteam json object from given ids."""
     eventperson = {
@@ -174,6 +170,7 @@ def event_person_object_factory(event_id, person_id):
         'description': rl_fake().sentences(nb=1)[0],
     }
     return eventperson
+
 
 def team_member_object_factory(team_id, member_id):
     """Cook up a fake eventteam json object from given ids."""
@@ -200,6 +197,7 @@ def create_multiple_events(sqla, n):
     sqla.add_all(new_events)
     sqla.commit()
 
+
 def create_multiple_teams(sqla, n):
     """Commit `n` new teams to the database. Return their IDs."""
     team_schema = TeamSchema()
@@ -210,6 +208,7 @@ def create_multiple_teams(sqla, n):
     sqla.add_all(new_teams)
     sqla.commit()
 
+
 def create_multiple_assets(sqla, n):
     """Commit `n` new assets to the database. Return their IDs."""
     asset_schema = AssetSchema()
@@ -219,6 +218,7 @@ def create_multiple_assets(sqla, n):
         new_assets.append(Asset(**valid_assets))
     sqla.add_all(new_assets)
     sqla.commit()
+
 
 def create_events_assets(sqla, fraction=0.75):
     """Create data in the linking table between events and assets """
@@ -235,7 +235,8 @@ def create_events_assets(sqla, fraction=0.75):
     all_events_assets = sqla.query(Event, Asset).all()
     sample_events_assets = random.sample(all_events_assets, math.floor(len(all_events_assets) * fraction))
     for events_assets in sample_events_assets:
-        valid_events_assets = event_asset_schema.load(event_asset_object_factory(events_assets[0].id,events_assets[1].id))
+        valid_events_assets = event_asset_schema.load(
+            event_asset_object_factory(events_assets[0].id, events_assets[1].id))
         new_events_assets.append(EventAsset(**valid_events_assets))
     sqla.add_all(new_events_assets)
     sqla.commit()
@@ -256,10 +257,11 @@ def create_events_teams(sqla, fraction=0.75):
     all_events_teams = sqla.query(Event, Team).all()
     sample_events_teams = random.sample(all_events_teams, math.floor(len(all_events_teams) * fraction))
     for events_teams in sample_events_teams:
-        valid_events_teams = event_team_schema.load(event_team_object_factory(events_teams[0].id,events_teams[1].id))
+        valid_events_teams = event_team_schema.load(event_team_object_factory(events_teams[0].id, events_teams[1].id))
         new_events_teams.append(EventTeam(**valid_events_teams))
     sqla.add_all(new_events_teams)
     sqla.commit()
+
 
 def create_events_participants(sqla, fraction=0.75):
     """Create data in the linking table between events and participants """
@@ -274,12 +276,15 @@ def create_events_participants(sqla, fraction=0.75):
         create_multiple_people(sqla, random.randint(3, 6))
         all_participants = sqla.query(Person).all()
     all_events_participants = sqla.query(Event, Person).all()
-    sample_events_participants = random.sample(all_events_participants, math.floor(len(all_events_participants) * fraction))
+    sample_events_participants = random.sample(all_events_participants,
+                                               math.floor(len(all_events_participants) * fraction))
     for events_participants in sample_events_participants:
-        valid_events_participants = event_participant_schema.load(event_participant_object_factory(events_participants[0].id,events_participants[1].id))
+        valid_events_participants = event_participant_schema.load(
+            event_participant_object_factory(events_participants[0].id, events_participants[1].id))
         new_events_participants.append(EventParticipant(**valid_events_participants))
     sqla.add_all(new_events_participants)
     sqla.commit()
+
 
 def create_events_persons(sqla, fraction=0.75):
     """Create data in the linking table between events and persons """
@@ -296,10 +301,12 @@ def create_events_persons(sqla, fraction=0.75):
     all_events_persons = sqla.query(Event, Person).all()
     sample_events_persons = random.sample(all_events_persons, math.floor(len(all_events_persons) * fraction))
     for events_persons in sample_events_persons:
-        valid_events_persons = event_person_schema.load(event_person_object_factory(events_persons[0].id,events_persons[1].id))
+        valid_events_persons = event_person_schema.load(
+            event_person_object_factory(events_persons[0].id, events_persons[1].id))
         new_events_persons.append(EventPerson(**valid_events_persons))
     sqla.add_all(new_events_persons)
     sqla.commit()
+
 
 def create_teams_members(sqla, fraction=0.75):
     """Create data in the linking table between teams and members """
@@ -308,10 +315,12 @@ def create_teams_members(sqla, fraction=0.75):
     all_teams_members = sqla.query(Team, Person).all()
     sample_teams_members = random.sample(all_teams_members, math.floor(len(all_teams_members) * fraction))
     for teams_members in sample_teams_members:
-        valid_teams_members = team_member_schema.load(team_member_object_factory(teams_members[0].id,teams_members[1].id))
+        valid_teams_members = team_member_schema.load(
+            team_member_object_factory(teams_members[0].id, teams_members[1].id))
         new_teams_members.append(TeamMember(**valid_teams_members))
     sqla.add_all(new_teams_members)
     sqla.commit()
+
 
 def create_events_test_data(sqla):
     """The function that creates test data in the correct order """
@@ -324,18 +333,20 @@ def create_events_test_data(sqla):
     create_events_persons(sqla, 0.75)
     create_teams_members(sqla, 0.75)
 
+
 def get_team_ids(teams):
     ids = []
     for team in teams:
         ids.append(team['id'])
     return ids
 
+
 # Create a team in database, return the id
 def create_team(sqla, description, active=True):
     team_schema = TeamSchema()
     team_payload = {
-            'description': description,
-            'active': active
+        'description': description,
+        'active': active
     }
     valid_team = team_schema.load(team_payload)
     team = Team(**valid_team)
@@ -343,14 +354,15 @@ def create_team(sqla, description, active=True):
     sqla.commit()
     return team.id
 
-def create_event(sqla, title, description, start, end, location_id = None, active=True):
+
+def create_event(sqla, title, description, start, end, location_id=None, active=True):
     event_schema = EventSchema()
     event_payload = {
-            'title': title,
-            'description': description,
-            'start': str(start),
-            'end': str(end),
-            'active': active
+        'title': title,
+        'description': description,
+        'start': str(start),
+        'end': str(end),
+        'active': active
     }
     if location_id:
         event_payload['location_id'] = location_id
@@ -360,12 +372,13 @@ def create_event(sqla, title, description, start, end, location_id = None, activ
     sqla.commit()
     return event.id
 
+
 def create_event_person(sqla, event_id, person_id, description):
     event_person_schema = EventPersonSchema()
     event_person_payload = {
-            'event_id': event_id,
-            'person_id': person_id,
-            'description': description
+        'event_id': event_id,
+        'person_id': person_id,
+        'description': description
     }
     valid_event_person = event_person_schema.load(event_person_payload)
     event_person = EventPerson(**valid_event_person)
@@ -373,12 +386,13 @@ def create_event_person(sqla, event_id, person_id, description):
     sqla.commit()
     return event_person_payload
 
+
 def create_event_participant(sqla, event_id, person_id, confirmed=True):
     event_participant_schema = EventParticipantSchema()
     event_participant_payload = {
-            'event_id': event_id,
-            'person_id': person_id,
-            'confirmed': confirmed
+        'event_id': event_id,
+        'person_id': person_id,
+        'confirmed': confirmed
     }
     valid_event_participant = event_participant_schema.load(event_participant_payload)
     event_participant = EventParticipant(**valid_event_participant)

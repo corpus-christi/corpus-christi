@@ -1,10 +1,13 @@
 {
 	"folders": [
 		{
-			"path": "."
+			"name": "API",
+			"path": "api"
+		},
+		{
+			"name": "UI",
+			"path": "ui"
 		}
 	],
-	"settings": {
-		"markdown.extension.toc.githubCompatibility": true
-	}
+	"settings": {}
 }

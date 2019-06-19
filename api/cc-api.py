@@ -7,8 +7,7 @@ from click import BadParameter
 from flask.cli import AppGroup
 from flask_jwt_extended import create_access_token
 
-from src import create_app
-from src import db
+from src import create_app, db
 from src.attributes.models import Attribute
 from src.attributes.test_attributes import create_multiple_people_attributes
 from src.courses.models import Course, Course_Offering, Diploma
