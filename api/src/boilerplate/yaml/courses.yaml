@@ -45,7 +45,7 @@ entities:
       - name: prereq
         related-model: Course
         backref: prerequisites
-  - name: Diploma_Course
+  - name: DiplomaCourse
     singular: diploma_course
     plural: diploma_courses
     uri: /diploma_courses
@@ -83,7 +83,7 @@ entities:
         type: boolean
         required: true
         default: true
-  - name: Diploma_Awarded
+  - name: DiplomaAwarded
     singular: diploma_awarded
     plural: diplomas_awarded
     uri: /diplomas_awarded
@@ -175,7 +175,7 @@ entities:
         type: integer
         primary-key: true
         foreign-key: courses_student.id
-  - name: Class_Meeting
+  - name: ClassMeeting
     singular: class_meeting
     plural: class_meetings
     uri: /class_meetings

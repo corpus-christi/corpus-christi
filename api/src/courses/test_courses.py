@@ -1,22 +1,21 @@
-import pytest
 import random
-
-from faker import Faker
-from flask import url_for
-from src.db import Base
 from datetime import datetime
 
-from .models import Course, CourseSchema, Course_Offering, ClassMeeting, \
-    Course_OfferingSchema, Diploma, DiplomaSchema, Student, StudentSchema, \
-    ClassMeeting, Class_MeetingSchema, DiplomaAwarded, DiplomaAwardedSchema, \
-    ClassAttendance, ClassAttendanceSchema, CourseCompletion, CourseCompletionSchema
+import pytest
+from faker import Faker
+from flask import url_for
+
+from .models import Course, CourseSchema, Course_Offering, CourseOfferingSchema, \
+    Diploma, DiplomaSchema, Student, StudentSchema, \
+    ClassMeeting, ClassMeetingSchema, DiplomaAwarded, DiplomaAwardedSchema, \
+    ClassAttendance, CourseCompletion, CourseCompletionSchema
+from ..images.create_image_data import create_test_images, create_images_courses
+from ..images.models import Image, ImageCourse
 from ..people.models import Person
-from ..images.models import Image, ImageSchema, ImageCourse, ImageCourseSchema
-from ..places.models import Country, Location
 from ..people.test_people import create_multiple_people
+from ..places.models import Country, Location
 from ..places.test_places import create_multiple_areas, \
     create_multiple_addresses, create_multiple_locations
-from ..images.create_image_data import create_test_images, create_images_courses
 
 
 def flip():
@@ -144,7 +143,7 @@ def create_multiple_course_offerings(sqla, n=3):
     if not courses:
         create_multiple_courses(sqla, random.randint(3, 6))
         courses = sqla.query(Course).all()
-    course_offerings_schema = Course_OfferingSchema()
+    course_offerings_schema = CourseOfferingSchema()
     new_course_offerings = []
     for i in range(n):
         c = random.randint(1, len(courses))
@@ -161,7 +160,7 @@ def create_multiple_course_offerings_active(sqla, n=3):
     if not course:
         create_multiple_courses(sqla, random.randint(3, 6))
         course = sqla.query(Course).all()
-    course_offerings_schema = Course_OfferingSchema()
+    course_offerings_schema = CourseOfferingSchema()
     new_course_offerings = []
     for i in range(n):
         valid_course_offering = course_offerings_schema.load(
@@ -177,7 +176,7 @@ def create_multiple_course_offerings_inactive(sqla, n=3):
     if not course:
         create_multiple_courses(sqla, random.randint(3, 6))
         course = sqla.query(Course).all()
-    course_offerings_schema = Course_OfferingSchema()
+    course_offerings_schema = CourseOfferingSchema()
     new_course_offerings = []
     for i in range(n):
         valid_course_offering = course_offerings_schema.load(
@@ -351,7 +350,7 @@ def create_course_completion(sqla, n):
     sqla.commit()
 
 
-# --- Class_Meeting
+# --- ClassMeeting
 
 def class_meeting_object_factory(teacher_id, offering_id, location_id=1):
     # Cook up a fake class meeting
@@ -379,7 +378,7 @@ def create_class_meetings(sqla, n=6):
     if not locations:
         create_multiple_locations(sqla, random.randint(3, 6))
         locations = sqla.query(Location).all()
-    class_meeting_schema = Class_MeetingSchema()
+    class_meeting_schema = ClassMeetingSchema()
     new_class_meetings = []
     for i in range(n):
         teacher = people[random.randint(0, len(people) - 1)].id
@@ -987,7 +986,7 @@ def test_deactivate_diploma(auth_client):
     assert auth_client.sqla.query(Diploma).first().active == False
 
 
-# ---- Diploma_Awarded
+# ---- DiplomaAwarded
 
 
 def test_create_diploma_awarded(auth_client):
@@ -1342,7 +1341,7 @@ def test_read_one_meeting_attendance(auth_client):
         assert resp.json['attendance'][i]['studentId'] == students[i].id
 
 
-# ---- Class_Meeting
+# ---- ClassMeeting
 
 
 def setup_dependencies_of_class_meeting(auth_client, n):

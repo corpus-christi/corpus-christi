@@ -20,13 +20,13 @@ class PrerequisiteSchema(Schema):
     prereq_id = fields.Integer(
         dump_only=True, data_key='prereqId', required=True)
 
-# ---- Diploma_Course
+# ---- DiplomaCourse
 
 
-Diploma_Course = Table('courses_diploma_course', Base.metadata,
-                       Column('course_id', Integer, ForeignKey(
+DiplomaCourse = Table('courses_diploma_course', Base.metadata,
+                      Column('course_id', Integer, ForeignKey(
                            'courses_course.id'), primary_key=True),
-                       Column('diploma_id', Integer, ForeignKey('courses_diploma.id'), primary_key=True))
+                      Column('diploma_id', Integer, ForeignKey('courses_diploma.id'), primary_key=True))
 
 
 class DiplomaCourseSchema(Schema):
@@ -35,7 +35,7 @@ class DiplomaCourseSchema(Schema):
     diploma_id = fields.Integer(
         dump_only=True, data_key='diplomaId', required=True)
 
-# ---- Diploma_Awarded
+# ---- DiplomaAwarded
 
 
 class DiplomaAwarded(Base):
@@ -52,7 +52,7 @@ class DiplomaAwarded(Base):
         'Diploma', back_populates='diplomas_awarded', lazy=True)
 
     def __repr__(self):
-        return f"<Diploma_Awarded(student_id={self.person_id},diploma_id={self.diploma_id})>"
+        return f"<DiplomaAwarded(student_id={self.person_id},diploma_id={self.diploma_id})>"
 
 
 class DiplomaAwardedSchema(Schema):
@@ -120,7 +120,7 @@ class Course(Base):
                                      Prerequisite.c.course_id, Prerequisite.c.prereq_id],
                                  back_populates='depends', lazy=True)
     diplomas = relationship(
-        'Diploma', secondary=Diploma_Course, back_populates='courses', lazy=True)
+        'Diploma', secondary=DiplomaCourse, back_populates='courses', lazy=True)
     images = relationship("ImageCourse", back_populates="course")
 
     def __repr__(self):
@@ -145,9 +145,9 @@ class Diploma(Base):
     name = Column(StringTypes.MEDIUM_STRING, nullable=False)
     description = Column(StringTypes.LONG_STRING, nullable=True)
     active = Column(Boolean, nullable=False, default=True)
-    courses = relationship('Course', secondary=Diploma_Course,
+    courses = relationship('Course', secondary=DiplomaCourse,
                            back_populates='diplomas', lazy=True)
-    diplomas_awarded = relationship('Diploma_Awarded',
+    diplomas_awarded = relationship('DiplomaAwarded',
                                     back_populates='diplomas', lazy=True)
 
     def __repr__(self):
@@ -177,7 +177,7 @@ class Student(Base):
     courses_offered = relationship(
         'Course_Offering', back_populates='students', lazy=True)
     person = relationship('Person', backref='students', lazy=True)
-    attendance = relationship('Class_Meeting', secondary=ClassAttendance,
+    attendance = relationship('ClassMeeting', secondary=ClassAttendance,
                               back_populates='students', lazy=True)
 
     def __repr__(self):
@@ -211,7 +211,7 @@ class Course_Offering(Base):
         return f"<Course_Offering(id={self.id})>"
 
 
-class Course_OfferingSchema(Schema):
+class CourseOfferingSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     course_id = fields.Integer(data_key='courseId', required=False)
     description = fields.String(required=True, validate=Length(min=1))
@@ -240,10 +240,10 @@ class ClassMeeting(Base):
                             back_populates='attendance', lazy=True)
 
     def __repr__(self):
-        return f"<Class_Meeting(id={self.id})>"
+        return f"<ClassMeeting(id={self.id})>"
 
 
-class Class_MeetingSchema(Schema):
+class ClassMeetingSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     offering_id = fields.Integer(data_key='offeringId', required=True)
     location_id = fields.Integer(data_key='locationId', required=True)
