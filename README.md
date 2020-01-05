@@ -16,4 +16,3 @@ at
 ## Documentation
 
 - See the [doc directory](doc/README.md) for links to official documentation.
-- Find a boatload of great tutorial information on the [Project Wiki](https://github.com/corpus-christi/corpus-christi/wiki)
