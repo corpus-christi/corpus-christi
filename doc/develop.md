@@ -44,12 +44,12 @@ _About Bash_: These instructions assume that you use
 a `bash` shell. If you are using Windows command line
 or other non-`bash` shell,
 your actual mileage may vary.
-You may want to try installing
-the [Cygwin](https://www.cygwin.com/)
-environment,
-which provides a workable implementation
-of many Unix/Linux commands on Windows,
-_including_ `bash`.
+You may want to try one of:
+1. The [Cygwin](https://www.cygwin.com/) environment,
+   which provides a workable implementation
+   of many Unix/Linux commands on Windows,
+   _including_ `bash`
+1. The [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/about)
 
 ## Install CC
 
@@ -75,9 +75,9 @@ $ yarn install
 
 Install the [Vue Development Tools](https://github.com/vuejs/vue-devtools),
 an extension for your browser that helps with Vue debugging.
-Native extensions are available for Chrome and Firefox.
-There is a standalone Electron app,
-but you are _strongly_ encouraged to install Chrome or Firefox
+Native extensions are available for Chrome (and hence, Brave) and Firefox.
+There is also a standalone Electron app,
+but you are _strongly_ encouraged to install Chrome, Brave, or Firefox
 and the native extension.
 
 ### API Dependencies
