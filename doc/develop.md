@@ -68,7 +68,7 @@ Install the UI dependencies, of which there are _many_.
 Installation takes several minutes.
 ```bash
 $ cd corpus-christi/ui
-$ yarn install
+$ yarn
 ```
 
 ### Vue Dev Tools
@@ -124,35 +124,42 @@ $ cd corpus-christi/api
 $ source ./bin/set-up-bash.sh
 ```
 This script will
-1. Activate your virtual environment
+1. Activate your virtual environment;
+   no need to separately `source the` `activate` command
 1. Configure Flask properly for development
 1. Allow you to run the `flask` command from the command line.
+
 Do this whenever you start a new `bash`
 in which you intend to work with the API.
 
 ## Database Setup
 
-Be sure you have [set up your shell](#bash-setup-for-flask-api).
+Be sure you have [set up your shell](#bash-setup-for-flask).
 
 ### PostgreSQL
 
 CC uses [PostgreSQL](https://www.postgresql.org/).
 You will need access to a Postgres server,
-which can be either a network resource
-or you can install a server on your own machine.
+which can be a network resource
+or you can install PostgreSQL on your own machine.
 
-Locate installers for Postgres
+If you want to install PostgreSQL on your own box,
+find installers
 on the [official downloads page](https://www.postgresql.org/download/).
 1. For the [**Mac**](https://www.postgresql.org/download/macosx/),
-   I have had good luck with both [Postgres.app](https://postgresapp.com/),
-   which is super simple and _just works_,
-   and the Homebrew version (which is my preference).
-   The latter requires that you first [install Homebrew](https://brew.sh/)
-   and then use Homebrew to install Postgres (`brew install postgresql`).
+   I have had good luck with:
+   * [Postgres.app](https://postgresapp.com/),
+     which is super simple and _just works_,
+   * Homebrew (my preference)
+     requires that you first [install Homebrew](https://brew.sh/),
+     then use Homebrew to install Postgres (`brew install postgresql`).
 1. There are several installers for [**Windows**](https://www.postgresql.org/download/windows/).
    If you have experience or preferences here,
-   please feel free to update this documentation with your recommendations.
-   * If you are using a Windows Subsystem for Linux (e.g. Ubuntu for Windows) or something of the like, follow this [**tutorial**](https://github.com/corpus-christi/corpus-christi/blob/development/doc/postgres-windows.md)).
+   please feel free to update this documentation 
+   with your recommendations.
+   * If you are using a Windows Subsystem for Linux
+   (e.g. Ubuntu for Windows or similar),
+    follow [this tutorial](https://github.com/corpus-christi/corpus-christi/blob/development/doc/postgres-windows.md)).
 1. For **Linux**, choose the appropriate distribution
    from the [main downloads page](https://www.postgresql.org/download/).
 
@@ -162,6 +169,13 @@ Once Postgres is installed,
 you need to create a user and a database.
 An easy way to do this is to use the shell commands
 that come with Postgres.
+
+#### Local Postgres Installation
+
+If you run Postgres locally,
+you should have access to Postgres-provided
+executables that create users and databases.
+
 Create a user:
 ```bash
 $ createuser arco
@@ -180,6 +194,11 @@ Other possibilities are:
 - Testing: `cc-test`
 - Staging: `cc-staging`
 - Production: `cc-prod`
+
+#### Network Postgres Access
+
+If you are accessing Postgres over a network connection,
+consult your local Postgres expert. 
 
 ### PostgreSQL with Docker
 
@@ -217,7 +236,8 @@ Important notes:
    when using docker.
    They will be created automatically
    according to the configuration in the `docker-compose.yaml` file.
-1. Be careful not to run two Postgres servers listening on the same port.
+1. Take care not to try to run 
+   two Postgres servers listening on the same port.
 
 ### Database Connection
 
@@ -226,11 +246,14 @@ should match the values supplied in the `api/private.py` file.
 A default file is included with the CC repository
 that should work with the default configuration.
 Update it as appropriate for your use case.
+
 If you are configuring CC for production use,
 *do not* commit the updated `private.py` file
-to a public Git repository.
-The file is included in the CC `.gitignore` file,
-so it should not be added to commits.
+to a public Git repository!
+In an attempt to avoid accidental commits
+of private data,
+`private.py` is listed in the CC `.gitignore` file.
+Still, use caution!
 
 ### Database Initialization
 
@@ -245,7 +268,7 @@ To completely reset the database during development,
 the script `bin/reset-db.sh` may be of use.
 
 Once the database is initialized,
-create a test account for yourself.
+create a CC test account for yourself.
 ```bash
 $ flask account new --first="Fred" --last="Ziffle" username password
 ```
@@ -272,16 +295,16 @@ The servers produce useful debugging information
 when things go haywire.
 
 1. Start the API server
-   (be sure you have [set up your shell](#bash-setup-for-flask-api))
+   (be sure you have [set up your shell](#bash-setup-for-flask))
     ```base
-    $ cd corpus-christi/api/bin
-    $ ./run-dev-server.sh
+    $ cd corpus-christi/api
+    $ ./bin/run-dev-server.sh
     ```
    You should see a few lines indicating that
    Flask is serving the application.
    (You can also use `flask` directly; the script above is just
    a thin wrapper around the `flask` command.)
-1. Start the Vue CLI service
+1. **In a separate shell**, start the Vue CLI service
     ```bash
     $ cd corpus-christi/ui
     $ yarn serve
