@@ -1,19 +1,16 @@
 # Project Documentation
 
-## Set Up
+## Tooling
 
 1. [Development Environment](develop.md) - download, install, and run the software
 1. [Tool Chain](tool-chain.md)
-
-## Development
-
 1. [Command-Line Interface](command-line-interface.md)
-1. [Coding Practices](coding.md)
-1. [Testing Guidance](testing.md)
 
-## Management
+## Practices
 
 1. [Software Development Methodology](sdm.md)
+1. [Coding Practices](coding.md)
+1. [Testing Guidance](testing.md)
 
 ## Architecture
 
