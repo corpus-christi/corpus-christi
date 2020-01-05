@@ -14,7 +14,7 @@
   "dependencies": {
     "@babel/core": "^7.0.0-0",
     "@pderas/vue2-geocoder": "^1.0.2",
-    "axios": "^0.18.0",
+    "axios": "^0.18.1",
     "echarts": "^4.1.0",
     "lodash": "^4.17.11",
     "v-charts": "^1.19.0",
