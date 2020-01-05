@@ -80,16 +80,6 @@ Most days we hold two [stand-up meetings](https://en.wikipedia.org/wiki/Stand-up
    on each layer of the tech stack
    across functional teams.
 
-## Daily Schedule
-
-- 08:30	Devotions (Church staff, team members)
-- 09:00	Stand-up (Module teams)
-- 09:15	Work	 
-- 12:00	Lunch
-- 13:00	Stand-up (Functional teams)
-- 13:15	Work	 
-- 16:00	End of work day	 
-
 ## Process
 
 ### User Stories
