@@ -1,3 +1,7 @@
+# Data Model
+
+Find the [CC ERD on Lucidchart](https://www.lucidchart.com/invitations/accept/72a6a6ac-3f31-42f9-9021-6b6cf27168f6).
+
 # Data Dictionary
 
 ## Conventions

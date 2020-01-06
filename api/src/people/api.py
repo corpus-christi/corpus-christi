@@ -1,22 +1,19 @@
-import json
-
 from flask import request
 from flask.json import jsonify
-from flask_jwt_extended import jwt_required, get_raw_jwt, jwt_optional
+from flask_jwt_extended import jwt_required
 from marshmallow import ValidationError
-from ..auth.utils import jwt_not_required
+
 from . import people
-from .models import func, Person, Account, AccountSchema, Role, PersonSchema, \
+from .models import Person, Account, AccountSchema, Role, PersonSchema, \
     RoleSchema, Manager, ManagerSchema
-from ..events.models import EventPerson, EventParticipant
-from ..teams.models import TeamMember
+from .. import db
 from ..attributes.models import Attribute, AttributeSchema, EnumeratedValue, \
     EnumeratedValueSchema, PersonAttribute, PersonAttributeSchema
-from ..images.models import Image, ImageSchema, ImagePerson, ImagePersonSchema
-from ..courses.models import Student, ClassMeeting
 from ..auth.blacklist_helpers import revoke_tokens_of_account
-
-from .. import db
+from ..courses.models import Student
+from ..events.models import EventPerson, EventParticipant
+from ..images.models import Image, ImagePerson
+from ..teams.models import TeamMember
 
 # ---- Person
 
