@@ -10,7 +10,7 @@
       v-for="(m, index) in markers"
       :position="m.position"
       @click="centerMapOnMarker"
-    ></gmap-marker>
+    />
   </gmap-map>
 </template>
 

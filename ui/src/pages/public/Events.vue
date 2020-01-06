@@ -6,7 +6,7 @@
           {{ $t("public.headers.upcoming-events") }}
         </h1>
       </v-flex>
-      <v-spacer></v-spacer>
+      <v-spacer />
 
       <!-- Start Date -->
       <v-flex xs12 sm4 md3>
@@ -27,12 +27,12 @@
             v-bind:label="$t('events.start-date')"
             prepend-icon="event"
             readonly
-          ></v-text-field>
+          />
           <v-date-picker
             v-model="filterStart"
             @input="showStartDatePicker = false"
             v-bind:locale="currentLanguageCode"
-          ></v-date-picker>
+          />
         </v-menu>
       </v-flex>
 
@@ -55,13 +55,13 @@
             v-bind:label="$t('events.end-date')"
             prepend-icon="event"
             readonly
-          ></v-text-field>
+          />
           <v-date-picker
             v-model="filterEnd"
             @input="showEndDatePicker = false"
             v-bind:locale="currentLanguageCode"
             :min="filterStart"
-          ></v-date-picker>
+          />
         </v-menu>
       </v-flex>
     </v-layout>
@@ -76,7 +76,7 @@
         v-for="event in filteredEvents"
         v-bind:key="event.id"
       >
-        <EventCard :event="event"></EventCard>
+        <EventCard :event="event" />
       </v-flex>
     </v-layout>
   </v-container>
@@ -164,5 +164,3 @@ export default {
   }
 };
 </script>
-
-<style scoped></style>
