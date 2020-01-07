@@ -1,5 +1,7 @@
 import hashlib
+
 from flask.json import jsonify
+
 from .. import db
 
 
@@ -29,7 +31,7 @@ def get_exclusion_list(query_object, default_exclusion_list):
 
 def is_allowed_file(filename):
     return '.' in filename and \
-        get_file_extension(filename) in set(['png', 'jpg', 'jpeg', 'gif'])
+           get_file_extension(filename) in set(['png', 'jpg', 'jpeg', 'gif'])
 
 
 def get_file_extension(filename):

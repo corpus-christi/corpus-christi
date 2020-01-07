@@ -1,11 +1,12 @@
 from datetime import datetime
 
-from sqlalchemy.orm.exc import NoResultFound
 from flask_jwt_extended import decode_token
+from sqlalchemy.orm.exc import NoResultFound
 
+from .exceptions import TokenNotFound
 from .models import TokenBlacklist
-from ..people.models import Account
 from .. import db
+from ..people.models import Account
 
 
 def _epoch_utc_to_datetime(epoch_utc):
@@ -86,7 +87,8 @@ def revoke_tokens_of_account(account_id):
             token.revoked = True
         db.session.commit()
     except NoResultFound:
-        raise TokenNotFound("Could not find the token {}".format(token_id))
+        # raise TokenNotFound("Could not find the token {}".format(token_id))
+        raise TokenNotFound("Could not find token")
 
 
 def unrevoke_token(token_id, user):
@@ -114,4 +116,3 @@ def prune_database():
     for token in expired:
         db.session.delete(token)
     db.session.commit()
-    

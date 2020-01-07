@@ -1,19 +1,20 @@
-from datetime import datetime
 import datetime
+from datetime import datetime
 
 from flask import jsonify, request, current_app
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_raw_jwt, get_jwt_claims
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_raw_jwt
 
 from . import auth
-from .utils import jwt_not_required
-from .. import jwt, db
-from ..people.models import Account, AccountSchema, Person, PersonSchema, Role, RoleSchema
 from .blacklist_helpers import (
     is_token_revoked, add_token_to_database, get_user_tokens,
-    revoke_token, unrevoke_token,
-    prune_database)
+    revoke_token, unrevoke_token)
+from .utils import jwt_not_required
+from .. import jwt, db
+from ..auth.exceptions import TokenNotFound
+from ..people.models import Account, AccountSchema, Person, PersonSchema, Role, RoleSchema
 
 blacklist = set()
+
 
 @auth.route('/login', methods=['POST'])
 # @jwt_not_required
@@ -60,6 +61,7 @@ def login():
 @jwt.token_in_blacklist_loader
 def check_if_token_revoked(decoded_token):
     return is_token_revoked(decoded_token)
+
 
 @jwt.user_claims_loader
 def add_claims_to_access_token(identity):

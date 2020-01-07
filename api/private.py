@@ -8,3 +8,6 @@ PSQL_PASS = 'password'
 
 FLASK_SECRET_KEY = 'big secret'
 JWT_SECRET_KEY = 'super secret'
+
+EMAIL_USERNAME = 'test@example.com'
+EMAIL_PASSWORD = 'password'

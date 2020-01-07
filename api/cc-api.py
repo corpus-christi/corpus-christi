@@ -6,7 +6,6 @@ import click
 from click import BadParameter
 from flask.cli import AppGroup
 from flask_jwt_extended import create_access_token
-
 from src import create_app, db
 from src.attributes.models import Attribute
 from src.attributes.test_attributes import create_multiple_people_attributes
@@ -20,8 +19,8 @@ from src.groups.create_group_data import create_group_test_data
 from src.i18n.models import Language, I18NLocale
 from src.images.create_image_data import create_images_test_data
 from src.people.models import Person, Account, Role
-from src.people.test_people import create_multiple_people, create_multiple_accounts, create_multiple_managers, create_accounts_roles
-
+from src.people.test_people import create_multiple_people, create_multiple_accounts, create_multiple_managers, \
+    create_accounts_roles
 from src.places.models import Country
 from src.places.test_places import create_multiple_areas, create_multiple_addresses, create_multiple_locations
 

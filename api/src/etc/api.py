@@ -3,8 +3,8 @@ from datetime import datetime
 
 from flask import jsonify
 
-from ..auth.utils import jwt_not_required
 from . import etc
+from ..auth.utils import jwt_not_required
 
 
 @etc.route('/ping')
@@ -19,6 +19,8 @@ def ping():
         'now': datetime.now(),
         'utc': datetime.utcnow()
     })
+
+
 """
 @courses.route('/courses/<course_id>', methods=['PUT'])
 @jwt_not_required

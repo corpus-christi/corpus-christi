@@ -5,7 +5,7 @@ from marshmallow import fields, Schema, pre_load
 from marshmallow.validate import Length, Range, OneOf
 from sqlalchemy import Column, Integer, String, Date, ForeignKey, Boolean, Table
 from sqlalchemy.orm import relationship, backref
-from src.i18n.models import i18n_create, I18NLocale
+from ..i18n.models import i18n_create, I18NLocale
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from .. import db
