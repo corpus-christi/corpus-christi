@@ -361,7 +361,9 @@
       "messages": {
         "no-results": "Your address returned no results.",
         "saved": "Your address has been saved."
-      }
+      },
+      "new": "Add Location",
+      "title": "Places"
     },
     "public": {
       "courses": {
@@ -795,7 +797,9 @@
       "messages": {
         "no-results": "Tu direcci\u00f3n no devolvi\u00f3 resultados.",
         "saved": "Su direcci\u00f3n ha sido guardada."
-      }
+      },
+      "new": "A\u00f1adir Lugares",
+      "title": "Lugares"
     },
     "public": {
       "courses": {

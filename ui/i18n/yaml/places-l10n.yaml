@@ -1,4 +1,7 @@
 places:
+  title:
+    en: Places
+    es: Lugares
   create-address:
     en: Create an Address
     es: Crear una Dirección
@@ -29,3 +32,6 @@ places:
     saved:
       en: Your address has been saved.
       es: Su dirección ha sido guardada.
+  new:
+    en: Add Location
+    es: Añadir Lugares
