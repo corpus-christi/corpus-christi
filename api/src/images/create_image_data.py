@@ -1,23 +1,17 @@
-import datetime
 import math
 import random
 
-import pytest
 from faker import Faker
-from flask import url_for
-from flask_jwt_extended import create_access_token
-from werkzeug.datastructures import Headers
-from werkzeug.security import check_password_hash
 
-from ..courses.models import Course, CourseSchema
-from ..events.models import Event, EventSchema
-from ..groups.models import Group, GroupSchema
-from ..people.models import Person, PersonSchema
-from ..places.models import Location, LocationSchema
 from .models import (Image, ImageCourse, ImageCourseSchema, ImageEvent,
                      ImageEventSchema, ImageGroup, ImageGroupSchema,
                      ImageLocation, ImageLocationSchema, ImagePerson,
                      ImagePersonSchema, ImageSchema)
+from ..courses.models import Course
+from ..events.models import Event
+from ..groups.models import Group
+from ..people.models import Person
+from ..places.models import Location
 
 
 class RandomLocaleFaker:
@@ -89,7 +83,7 @@ def image_object_factory(sqla):
     # Getting a valid path name
     i = 0
 
-    while(paths_taken[i]):
+    while (paths_taken[i]):
         i += 1
         if i == len(paths_taken):
             i = 0

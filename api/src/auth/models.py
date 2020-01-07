@@ -1,10 +1,7 @@
-import os
-import json
-
-from sqlalchemy import Column, Integer, String, Date, ForeignKey, Boolean, DateTime
+from sqlalchemy import Column, Integer, String, Boolean, DateTime
 
 from ..db import Base
-from .. import db
+
 
 class TokenBlacklist(Base):
     __tablename__ = 'auth_blacklist'

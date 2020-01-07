@@ -123,7 +123,7 @@ def test_create_valid_locale(auth_client, code, desc):
     # GIVEN empty locale table
     # WHEN one local added
     resp = auth_client.post(url_for('i18n.create_locale'), json={
-                            'code': code, 'desc': desc})
+        'code': code, 'desc': desc})
 
     # THEN result is "Created"
     assert resp.status_code == 201

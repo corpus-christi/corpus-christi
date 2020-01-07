@@ -5,7 +5,6 @@ from sqlalchemy.orm import relationship
 from src.db import Base
 from src.shared.models import StringTypes
 
-
 # ---- Prerequisite
 
 Prerequisite = Table('courses_prerequisite', Base.metadata,
@@ -20,12 +19,13 @@ class PrerequisiteSchema(Schema):
     prereq_id = fields.Integer(
         dump_only=True, data_key='prereqId', required=True)
 
+
 # ---- DiplomaCourse
 
 
 DiplomaCourse = Table('courses_diploma_course', Base.metadata,
                       Column('course_id', Integer, ForeignKey(
-                           'courses_course.id'), primary_key=True),
+                          'courses_course.id'), primary_key=True),
                       Column('diploma_id', Integer, ForeignKey('courses_diploma.id'), primary_key=True))
 
 
@@ -34,6 +34,7 @@ class DiplomaCourseSchema(Schema):
         dump_only=True, data_key='courseId', required=True)
     diploma_id = fields.Integer(
         dump_only=True, data_key='diplomaId', required=True)
+
 
 # ---- DiplomaAwarded
 
@@ -62,6 +63,7 @@ class DiplomaAwardedSchema(Schema):
         data_key='diplomaId', required=True, validate=Range(min=1))
     when = fields.Date(required=True, allow_none=True)
 
+
 # ---- Class_Attendance
 
 
@@ -76,6 +78,7 @@ class ClassAttendanceSchema(Schema):
         dump_only=True, data_key='classId', required=True)
     student_id = fields.Integer(
         dump_only=True, data_key='studentId', required=True)
+
 
 # --- Course_Completion
 
@@ -98,6 +101,7 @@ class CourseCompletionSchema(Schema):
     course_id = fields.Integer(data_key='courseId', required=True)
     person_id = fields.Integer(data_key='personId', required=True)
 
+
 # ---- Course
 
 
@@ -112,7 +116,7 @@ class Course(Base):
                                          Prerequisite.c.prereq_id],
                            primaryjoin=Prerequisite.c.prereq_id == id,
                            secondaryjoin=Prerequisite.c.course_id == id,
-                           back_populates='prerequisites',  lazy=True)
+                           back_populates='prerequisites', lazy=True)
     prerequisites = relationship('Course', secondary=Prerequisite,
                                  primaryjoin=Prerequisite.c.course_id == id,
                                  secondaryjoin=Prerequisite.c.prereq_id == id,
@@ -135,6 +139,7 @@ class CourseSchema(Schema):
     diplomaList = fields.Nested('DiplomaSchema', many=True)
     images = fields.Nested('ImageCourseSchema', many=True,
                            exclude=['course'], dump_only=True)
+
 
 # ---- Diploma
 
@@ -161,6 +166,7 @@ class DiplomaSchema(Schema):
     active = fields.Boolean(required=False, default=True)
     courseList = fields.Nested('CourseSchema', many=True)
     studentList = fields.Nested('StudentSchema', many=True)
+
 
 # ---- Student
 
@@ -192,6 +198,7 @@ class StudentSchema(Schema):
     active = fields.Boolean(required=True, default=True)
     diplomaList = fields.Nested('DiplomaSchema', many=True)
 
+
 # ---- Course_Offering
 
 
@@ -218,6 +225,7 @@ class CourseOfferingSchema(Schema):
     max_size = fields.Integer(
         data_key='maxSize', required=True, validate=Range(min=1))
     active = fields.Boolean(required=False, default=True)
+
 
 # ---- ClassMeeting
 

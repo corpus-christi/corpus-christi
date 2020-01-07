@@ -32,8 +32,8 @@ class GroupSchema(Schema):
     description = fields.String(required=True, validate=Length(min=1))
     active = fields.Boolean(nullable=False)
     manager_id = fields.Integer(data_key='manager_id', required=True)
-    memberList = fields.Nested('MemberSchema', many=True, only=['person','joined','active','id'])
-    managerInfo = fields.Nested('ManagerSchema', only=['description_i18n','person'])
+    memberList = fields.Nested('MemberSchema', many=True, only=['person', 'joined', 'active', 'id'])
+    managerInfo = fields.Nested('ManagerSchema', only=['description_i18n', 'person'])
 
 
 # ---- Meeting
@@ -60,7 +60,6 @@ class MeetingSchema(Schema):
     address_id = fields.Integer(data_key='address_id')
     address = fields.Nested('AddressSchema')
     active = fields.Boolean(nullable=False)
-    
 
 
 # ---- Member

@@ -1,11 +1,11 @@
 from flask import request, jsonify
-from flask_jwt_extended import jwt_required, get_raw_jwt, jwt_optional
+from flask_jwt_extended import jwt_required
 from marshmallow import ValidationError, Schema, fields
 from marshmallow.validate import Length
 
-from ..import db
 from . import i18n
 from .models import I18NLocale, I18NLocaleSchema, I18NKeySchema, I18NKey, I18NValue, I18NValueSchema, Language
+from .. import db
 
 # ---- I18N Locale
 

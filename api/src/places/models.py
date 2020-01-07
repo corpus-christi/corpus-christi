@@ -4,10 +4,10 @@ from flask import json
 from marshmallow import Schema, fields
 from marshmallow.validate import Length, Range
 from sqlalchemy import Column, String, ForeignKey, Integer, Float
-from sqlalchemy.orm import relationship, backref
-
+from sqlalchemy.orm import relationship
 from src.db import Base
 from src.i18n.models import i18n_create, I18NLocale
+
 from .. import db
 from ..shared.models import StringTypes
 
@@ -58,6 +58,7 @@ class Country(Base):
 class CountrySchema(Schema):
     code = fields.String()
     name_i18n = fields.String()
+
 
 # ---- Area
 
@@ -111,6 +112,7 @@ class LocationSchema(Schema):
     description = fields.String(required=False)
     address_id = fields.Integer(required=True, validate=Range(min=1))
     address = fields.Nested('AddressSchema')
+
 
 # ---- Address
 

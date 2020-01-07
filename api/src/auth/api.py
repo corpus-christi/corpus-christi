@@ -3,12 +3,12 @@ from datetime import datetime
 
 from flask import jsonify, request, current_app
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_raw_jwt
+from src.auth.utils import jwt_not_required
 
 from . import auth
 from .blacklist_helpers import (
     is_token_revoked, add_token_to_database, get_user_tokens,
     revoke_token, unrevoke_token)
-from .utils import jwt_not_required
 from .. import jwt, db
 from ..auth.exceptions import TokenNotFound
 from ..people.models import Account, AccountSchema, Person, PersonSchema, Role, RoleSchema

@@ -1,11 +1,15 @@
-import pytest
-import random
 import os
-from io import StringIO, BytesIO
+import random
+from io import BytesIO
+
+import pytest
 from flask import url_for
-from .models import Image, ImageSchema, ImageEvent, ImageEventSchema
-from .create_image_data import fake, flip, create_images_test_data, create_images_events, create_multiple_images, image_event_object_factory, image_object_factory
+
+from .create_image_data import fake, flip, create_multiple_images
+from .models import Image
 from .. import BASE_DIR
+
+
 # ---- Group
 
 

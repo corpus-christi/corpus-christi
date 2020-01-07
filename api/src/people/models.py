@@ -5,12 +5,11 @@ from marshmallow import fields, Schema, pre_load
 from marshmallow.validate import Length, Range, OneOf
 from sqlalchemy import Column, Integer, String, Date, ForeignKey, Boolean, Table
 from sqlalchemy.orm import relationship, backref
-from sqlalchemy.sql.expression import func
+from src.i18n.models import i18n_create, I18NLocale
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from ..db import Base
-from src.i18n.models import i18n_create, I18NLocale
 from .. import db
+from ..db import Base
 from ..places.models import Location
 from ..shared.models import StringTypes
 
@@ -82,6 +81,7 @@ people_account_role = Table('account_role', Base.metadata,
                             Column('people_role_id', Integer, ForeignKey(
                                 'people_role.id'), primary_key=True)
                             )
+
 
 # ---- Account
 

@@ -1,14 +1,14 @@
 from flask import request, jsonify
+from flask_jwt_extended import jwt_required
 from marshmallow import Schema, fields
-from marshmallow.validate import Length
 from marshmallow import ValidationError
-from flask_jwt_extended import jwt_required, get_raw_jwt, jwt_optional
+from marshmallow.validate import Length
 
-from .. import db
-from ..i18n.models import I18NValue, I18NKey
 from . import places
 from .models import Country, Address, AddressSchema, Area, AreaSchema, Location, LocationSchema
-from ..images.models import Image, ImageSchema, ImageLocation, ImageLocationSchema
+from .. import db
+from ..i18n.models import I18NValue, I18NKey
+from ..images.models import Image, ImageLocation
 
 
 def modify_entity(entity_type, schema, id, new_value_dict):
@@ -130,6 +130,7 @@ def delete_area(area_id):
 
 def modify_area(area_id, area_object):
     return modify_entity(Area, area_schema, area_id, area_object)
+
 
 # ---- Address
 
@@ -284,6 +285,7 @@ def create_location():
     def debugPrint(msg):
         pass
         print(msg)
+
     resolving_keys = ('country_code', 'area_name', 'latitude',
                       'longitude', 'city', 'address', 'address_name')
     payload_data = {}
@@ -348,7 +350,7 @@ def create_location():
         else:
             debugPrint(f"creating new address")
             debugPrint(f"address payload {address_payload}")
-            if(address_payload['name'] == ''):
+            if (address_payload['name'] == ''):
                 address_payload['name'] = address_payload['address']
             try:
                 valid_address = address_schema.load(address_payload)
@@ -430,6 +432,7 @@ def delete_location(location_id):
 def modify_location(location_id, location_object):
     return modify_entity(Location, location_schema, location_id, location_object)
 
+
 # ---- Image
 
 @places.route('/<location_id>/images/<image_id>', methods=['POST'])
@@ -438,7 +441,7 @@ def add_location_images(location_id, image_id):
     location = db.session.query(Location).filter_by(id=location_id).first()
     image = db.session.query(Image).filter_by(id=image_id).first()
 
-    location_image = db.session.query(ImageLocation).filter_by(location_id=location_id,image_id=image_id).first()
+    location_image = db.session.query(ImageLocation).filter_by(location_id=location_id, image_id=image_id).first()
 
     if not location:
         return jsonify(f"Location with id #{location_id} does not exist."), 404
@@ -456,6 +459,7 @@ def add_location_images(location_id, image_id):
 
     return jsonify(f"Image with id #{image_id} successfully added to Location with id #{location_id}."), 201
 
+
 @places.route('/<location_id>/images/<image_id>', methods=['PUT'])
 @jwt_required
 def put_location_images(location_id, image_id):
@@ -465,18 +469,19 @@ def put_location_images(location_id, image_id):
 
     if old_image_id == 'false':
         post_resp = add_location_images(location_id, new_image_id)
-        return jsonify({'deleted': 'No image to delete', 'posted': str(post_resp[0].data, "utf-8") })
+        return jsonify({'deleted': 'No image to delete', 'posted': str(post_resp[0].data, "utf-8")})
     else:
         del_resp = delete_location_image(location_id, old_image_id)
         post_resp = add_location_images(location_id, new_image_id)
 
-        return jsonify({'deleted': del_resp[0], 'posted': str(post_resp[0].data, "utf-8") })
+        return jsonify({'deleted': del_resp[0], 'posted': str(post_resp[0].data, "utf-8")})
+
 
 @places.route('/<location_id>/images/<image_id>', methods=['DELETE'])
 @jwt_required
 def delete_location_image(location_id, image_id):
-    location_image = db.session.query(ImageLocation).filter_by(location_id=location_id,image_id=image_id).first()
-    
+    location_image = db.session.query(ImageLocation).filter_by(location_id=location_id, image_id=image_id).first()
+
     if not location_image:
         return jsonify(f"Image with id #{image_id} is not assigned to Location with id #{location_id}."), 404
 

@@ -6,7 +6,6 @@ from sqlalchemy.orm.exc import NoResultFound
 from .exceptions import TokenNotFound
 from .models import TokenBlacklist
 from .. import db
-from ..people.models import Account
 
 
 def _epoch_utc_to_datetime(epoch_utc):
@@ -81,6 +80,9 @@ def revoke_tokens_of_account(account_id):
     Revoke all tokens belonging to an account
     """
     try:
+        # If we do this at the top level, it creates a circular import.
+        from src.people.models import Account
+
         account = db.session.query(Account).filter_by(id=account_id).first()
         account_tokens = db.session.query(TokenBlacklist).filter_by(user_identity=account.username).all()
         for token in account_tokens:

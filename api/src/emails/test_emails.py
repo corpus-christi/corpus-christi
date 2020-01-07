@@ -1,5 +1,6 @@
-import pytest
 import random
+
+import pytest
 from faker import Faker
 from flask import url_for
 

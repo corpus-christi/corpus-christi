@@ -1,14 +1,11 @@
-import math
-import random
-import click
 import os
-import pytest
 
-from src.people.models import Person, Account, Role
-from src.courses.models import Course, Diploma
-from src.places.models import Country
-from src.i18n.models import Language, I18NLocale, I18NValue
+import pytest
 from src import db, create_app
+from src.courses.models import Course, Diploma
+from src.i18n.models import Language, I18NValue
+from src.people.models import Role
+from src.places.models import Country
 
 ccapi = __import__("cc-api")
 
@@ -43,6 +40,7 @@ def test_load_roles():
     runner.invoke(ccapi.load_roles)
     assert db.session.query(Role).count() > 0
 
+
 # ---- Course CLI
 
 
@@ -72,7 +70,7 @@ def test_course_cli():
     offering_name = 'course1'
     # WHEN call is invoked
     result = runner.invoke(ccapi.create_course, [
-                           name, '', '--offering', offering_name])
+        name, '', '--offering', offering_name])
     # THEN help message is printed
     course = db.session.query(Course).filter_by(name=name).first()
     assert course.name == name

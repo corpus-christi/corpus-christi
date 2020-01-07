@@ -8,7 +8,6 @@ from flask.cli import AppGroup
 from flask_jwt_extended import create_access_token
 from src import create_app, db
 from src.attributes.models import Attribute
-from src.attributes.test_attributes import create_multiple_people_attributes
 from src.courses.models import Course, Course_Offering, Diploma
 from src.courses.test_courses import create_multiple_courses, create_multiple_course_offerings, \
     create_multiple_diplomas, create_multiple_students, create_class_meetings, \
@@ -97,7 +96,7 @@ def load_all():
     create_class_attendance(db.session, 30)
     create_course_completion(db.session, 30)
 
-    create_multiple_people_attributes(db.session, 5)
+    # create_multiple_people_attributes(db.session, 5)
     create_multiple_managers(db.session, 2, 'Group Overseer')
     create_multiple_managers(db.session, 5, 'Group Leader')
     create_group_test_data(db.session)

@@ -1,24 +1,21 @@
-import json
 import os
-from datetime import datetime, timedelta
 
-from flask import request, send_file, url_for, redirect
-from werkzeug.utils import secure_filename
+from flask import request, send_file
 from flask.json import jsonify
-from flask_jwt_extended import jwt_required, get_raw_jwt, jwt_optional
-from flask_mail import Message
+from flask_jwt_extended import jwt_required
 from marshmallow import ValidationError
-from sqlalchemy import func
+from werkzeug.utils import secure_filename
 
 from . import images
-from .. import db, mail, BASE_DIR
-from ..etc.helper import modify_entity, get_exclusion_list, is_allowed_file, get_file_extension, get_hash
-from .models import Image, ImageSchema, ImageEvent, ImageEventSchema
+from .models import Image, ImageSchema
+from .. import db, BASE_DIR
+from ..etc.helper import modify_entity, is_allowed_file, get_file_extension, get_hash
 
 # ---- Image
 
 image_schema = ImageSchema()
 image_schema_partial = ImageSchema(partial=('id', 'path', 'events'))
+
 
 @images.route('/<image_id>')
 def download_image(image_id):
@@ -76,14 +73,14 @@ def upload_image():
             return jsonify({
                 'message': 'Identical image already exists',
                 'id': image_already_in_db.id
-                }), 303
+            }), 303
 
         # Save the image into the file system
         full_path = os.path.join(base_dir, path_to_image)
         image.save(full_path)
     else:
         return 'Invalid file type', 422
-    
+
     # Create and store the image object into the db
     valid_image = dict()
     valid_image['path'] = path_to_image
@@ -97,17 +94,17 @@ def upload_image():
     db.session.commit()
 
     return jsonify(image_schema.dump(new_image)), 201
-    
+
 
 @images.route('/<image_id>', methods=['PATCH'])
 @jwt_required
 def update_image(image_id):
     # -- PATCH can only be used to update an image's description
-    try: 
+    try:
         valid_attributes = image_schema_partial.load(request.json)
     except ValidationError as err:
         return jsonify(err.messages), 422
-                
+
     return modify_entity(Image, image_schema_partial, image_id, valid_attributes)
 
 
@@ -115,15 +112,14 @@ def update_image(image_id):
 @jwt_required
 def delete_image(image_id):
     image = db.session.query(Image).filter_by(id=image_id).first()
-    
+
     if not image:
         return jsonify(f"Image with id #{image_id} does not exist."), 404
 
     os.remove(os.path.join(BASE_DIR, image.path))
-    
+
     db.session.delete(image)
     db.session.commit()
 
     # 204 codes don't respond with any content
     return "Deleted successfully", 204
-

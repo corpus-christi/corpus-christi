@@ -1,15 +1,11 @@
-import json
-
 from flask import request
 from flask.json import jsonify
-from flask_jwt_extended import jwt_required, get_raw_jwt, jwt_optional
+from flask_jwt_extended import jwt_required
 from marshmallow import ValidationError
 
 from . import attributes
-from ..people.models import Person, Account
-from .models import Attribute, AttributeSchema, EnumeratedValue, EnumeratedValueSchema, PersonAttribute, PersonAttributeSchema
+from .models import Attribute, AttributeSchema, EnumeratedValue, EnumeratedValueSchema
 from .. import db
-
 
 # ---- Attribute
 
@@ -196,6 +192,3 @@ def activate_enumerated_value(enumerated_value_id):
     db.session.commit()
 
     return jsonify(enumerated_value_schema.dump(enumerated_value))
-
-
-

@@ -1,16 +1,14 @@
-import os
 import json
+import os
 
-from marshmallow import fields, Schema, pre_load
-from marshmallow.validate import Length, Range, OneOf
-from sqlalchemy import Column, Integer, String, Date, ForeignKey, Boolean
-from sqlalchemy.orm import relationship, backref
-from werkzeug.security import generate_password_hash, check_password_hash
-
-from ..db import Base
-from .. import db
+from marshmallow import fields, Schema
+from marshmallow.validate import Range
+from sqlalchemy import Column, Integer, ForeignKey, Boolean
+from sqlalchemy.orm import relationship
 from src.i18n.models import i18n_create, I18NLocale
-from ..places.models import Location
+
+from .. import db
+from ..db import Base
 from ..shared.models import StringTypes
 
 
@@ -73,6 +71,7 @@ class AttributeSchema(Schema):
 
     enumerated_values = fields.Nested('EnumeratedValueSchema', many=True)
 
+
 # ---- EnumeratedValue
 
 
@@ -92,6 +91,7 @@ class EnumeratedValueSchema(Schema):
     attribute_id = fields.Integer(data_key='attributeId')
     value_i18n = fields.String(data_key='valueI18n')
     active = fields.Boolean(required=True)
+
 
 # ---- Person-Attribute
 

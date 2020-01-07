@@ -1,6 +1,7 @@
+from flask.json import jsonify
+
 from . import db
 from .i18n.models import I18NValue, I18NValueSchema
-from flask.json import jsonify
 
 
 def getTranslation(locale_code, i18n_key):

@@ -10,7 +10,7 @@ from .models import Course, CourseSchema, \
     DiplomaCourse, DiplomaAwarded, DiplomaAwardedSchema, \
     ClassAttendance, ClassAttendanceSchema, \
     ClassMeetingSchema, \
-    CourseCompletion, CourseCompletionSchema
+    CourseCompletion, CourseCompletionSchema, ClassMeeting
 from .. import db
 from ..images.models import Image, ImageCourse
 from ..people.models import Person, PersonSchema
