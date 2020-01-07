@@ -8,7 +8,7 @@ venv/
 private.py
 credentials.py
 data/
-**/migrations/versions/ddd09c004cdd_.py
+**/migrations/versions/*_.py
 api/images
 
 # UI
