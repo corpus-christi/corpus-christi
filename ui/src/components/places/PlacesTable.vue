@@ -1,4 +1,5 @@
 <template>
+  <div>
     <v-toolbar class="pa-1">
       <v-layout align-center justify-space-between fill-height>
         <v-flex md2>
@@ -39,18 +40,49 @@
       </v-layout>
     </v-toolbar>
 
-
-
-
-
+    <v-data-table
+      :rows-per-page-items="rowsPerPageItem"
+      :headers="headers"
+      :items="visiblePlaces"
+      :search="search"
+      :loading="tableLoading"
+      class="elevation-1"
+    >
+      <template slot="items" slot-scope="props">
+        <td>{{ props.item.name }}</td>
+        <td>{{ getDisplayLocation(props.item.address) }}</td>
+        <td>{{ props.item.latitude }}</td>
+        <td>{{ props.item.longitude }}</td>
+      </template>
+    </v-data-table>
+  </div>
 </template>
 
 <script>
-    export default {
-    name: "PlacesTable.vue"
+export default {
+  name: "PlacesTable.vue",
+
+  computed: {
+    headers() {
+      return [
+        {
+          text: this.$t("places.address.name"),
+          value: name,
+          // width: "17%",
+          sortable: false
+        },
+        { text: this.$t("places.address.address"), sortable: false },
+        { text: this.$t("places.address.latitude"), sortable: false },
+        { text: this.$t("places.address.longitude"), sortable: false },
+
+        { text: this.$t("actions.header"), sortable: false }
+      ];
+    },
+    visiblePlaces() {
+      return this.assets;
     }
+  }
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
