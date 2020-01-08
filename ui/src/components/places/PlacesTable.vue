@@ -61,8 +61,12 @@
 <script>
 export default {
   name: "PlacesTable.vue",
-
-  computed: {
+  props: {
+    addresses: Array,
+    areas: Array,
+    locations: Array
+  },
+    computed: {
     headers() {
       return [
         {
@@ -81,7 +85,7 @@ export default {
     visiblePlaces() {
       return this.assets;
     }
-  }
+
 };
 </script>
 
