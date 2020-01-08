@@ -30,7 +30,7 @@
           <v-btn
             color="primary"
             raised
-            v-on:click.stop="newAsset"
+            v-on:click.stop="newPlace"
             data-cy="add-asset"
           >
             <v-icon dark left>add</v-icon>
@@ -68,22 +68,46 @@
         <span>{{ $t("actions.edit") }}</span>
       </template>
     </v-data-table>
+
+    <v-dialog
+      scrollable
+      persistent
+      v-model="placeDialog.show"
+      max-width="1000px"
+    >
+      <v-layout column>
+        <v-card>
+          <v-layout align-center justify-center row fill-height>
+            <v-card-title class="headline">
+              {{ $t(placeDialog.title)}}
+            </v-card-title>
+          </v-layout>
+        </v-card>
+        <PlaceForm
+          v-on:cancel="cancelPlace"
+          v-on:saved="refreshPlacesList"
+          v-bind:initialData="placeDialog.places"
+        />
+      </v-layout>
+    </v-dialog>
   </div>
 </template>
 
 <script>
+import PlaceForm from "./PlacesForm";
 export default {
   name: "PlacesTable.vue",
-  props: {
+    components: {PlaceForm},
+    props: {
     addresses: Array,
     areas: Array,
     locations: Array
   },
 
-
   data() {
     return {
       placeDialog: {
+        title: "",
         show: false,
         editMode: false,
         saveLoading: false,
@@ -122,14 +146,28 @@ export default {
     }
   },
   methods: {
-    activePlaceDialog(asset = {}, editMode = false) {
-      this.placeDialog.editMode = editMode;
-      this.placeDialog.asset = asset;
+    activatePlaceDialog(places = {}, editMode = false) {
+      this.placeDialog.title = editMode
+        ? this.$t("places.edit")
+        : this.$t("places.new");
+      this.placeDialog.places = places;
       this.placeDialog.show = true;
     },
 
     editPlace(place) {
       this.activatePlaceDialog({ ...place }, true);
+    },
+
+    newPlace() {
+      this.activatePlaceDialog();
+    },
+
+    cancelPlace() {
+      this.placeDialog.show = false;
+    },
+
+    refreshPlacesList() {
+        this.$emit("fetchPlacesList");
     }
   }
 };

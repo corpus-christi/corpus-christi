@@ -4,6 +4,7 @@
       v-bind:addresses="addressList"
       v-bind:areas="areaList"
       v-bind:locations="locationList"
+      v-on:fetchPlacesList="fetchPlacesList"
     ></PlacesTable>
   </v-container>
 </template>
@@ -23,7 +24,12 @@ export default {
   },
 
   mounted() {
-    this.$http.get("/api/v1/places/addresses").then(resp => {
+    this.fetchPlacesList();
+  },
+
+  methods: {
+    fetchPlacesList() {
+      this.$http.get("/api/v1/places/addresses").then(resp => {
       this.addressList = resp.data;
     });
     this.$http.get("/api/v1/places/areas").then(resp => {
@@ -32,6 +38,7 @@ export default {
     this.$http.get("/api/v1/places/locations").then(resp => {
       this.locationList = resp.data;
     });
+    }
   }
 };
 </script>
