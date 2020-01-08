@@ -355,6 +355,7 @@
         "name": "Name"
       },
       "create-address": "Create an Address",
+      "edit": "Edit Location",
       "location": {
         "description": "Description"
       },
@@ -791,6 +792,7 @@
         "name": "Nombre"
       },
       "create-address": "Crear una Direcci\u00f3n",
+      "edit": "Editar Ubicaci\u00f3n",
       "location": {
         "description": "Descripci\u00f3n"
       },

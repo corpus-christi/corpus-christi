@@ -35,3 +35,7 @@ places:
   new:
     en: Add Place
     es: Añadir Lugares
+  edit:
+    en: Edit Location
+    es: Editar Ubicación
+

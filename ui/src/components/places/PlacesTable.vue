@@ -87,7 +87,28 @@
       </template>
     </v-data-table>
 
-   <v-layout class="mt-3">
+    <v-dialog
+      scrollable
+      persistent
+      v-model="placeDialog.show"
+      max-width="1000px"
+    >
+      <v-layout column>
+        <v-card>
+          <v-layout align-center justify-center row fill-height>
+            <v-card-title class="headline">
+              {{ $t(placeDialog.title)}}
+            </v-card-title>
+          </v-layout>
+        </v-card>
+        <PlaceForm
+          v-on:cancel="cancelPlace"
+          v-on:saved="refreshPlacesList"
+          v-bind:initialData="placeDialog.places"
+        />
+      </v-layout>
+    </v-dialog>
+     <v-layout class="mt-3">
       <v-flex>
         <v-toolbar color="blue" dark>
           <v-toolbar-title data-cy="church-sentence">
@@ -104,11 +125,12 @@
 </template>
 
 <script>
+import PlaceForm from "./PlacesForm";
 import GoogleMap from "../../components/GoogleMap";
 export default {
   name: "PlacesTable.vue",
-  components: { GoogleMap },
-  props: {
+    components: {PlaceForm, GoogleMap},
+    props: {
     addresses: Array,
     areas: Array,
     locations: Array
@@ -117,6 +139,7 @@ export default {
   data() {
     return {
       placeDialog: {
+        title: "",
         show: false,
         editMode: false,
         saveLoading: false,
@@ -131,7 +154,7 @@ export default {
 
     mounted(){
       this.getHomegroupLocations();
-      
+
     },
   computed: {
     headers() {
@@ -169,14 +192,28 @@ export default {
     }
   },
   methods: {
-    activePlaceDialog(asset = {}, editMode = false) {
-      this.placeDialog.editMode = editMode;
-      this.placeDialog.asset = asset;
+    activatePlaceDialog(places = {}, editMode = false) {
+      this.placeDialog.title = editMode
+        ? this.$t("places.edit")
+        : this.$t("places.new");
+      this.placeDialog.places = places;
       this.placeDialog.show = true;
     },
 
     editPlace(place) {
       this.activatePlaceDialog({ ...place }, true);
+    },
+
+    newPlace() {
+      this.activatePlaceDialog();
+    },
+
+    cancelPlace() {
+      this.placeDialog.show = false;
+    },
+
+    refreshPlacesList() {
+        this.$emit("fetchPlacesList");
     }
   }
 };
