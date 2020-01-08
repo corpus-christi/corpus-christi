@@ -114,22 +114,24 @@ export default {
       return [
         {
           text: this.$t("places.address.name"),
-          value: name,
-          // width: "17%",
-          sortable: false
+          value: "name",
+          width: "20%"
         },
-        { text: this.$t("places.address.address"), sortable: false },
+        {
+          text: this.$t("places.address.address"),
+          value: "address",
+          width: "30%"
+        },
         {
           text: this.$t("places.address.latitude"),
           width: "4%",
-          sortable: false
+          value: "latitude"
         },
         {
           text: this.$t("places.address.longitude"),
           width: "4%",
-          sortable: false
+          value: "longitude"
         },
-
         { text: this.$t("actions.header"), width: "17%", sortable: false }
       ];
     },
