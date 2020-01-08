@@ -39,6 +39,27 @@
           </v-flex>
         </v-layout>
 
+        <v-layout row>
+          <v-flex>
+            <v-text-field
+              name="area"
+              v-model="address.area_name"
+              v-bind:label="$t('places.area')"
+              :disabled="formDisabled"
+            ></v-text-field>
+          </v-flex>
+
+          <v-flex shrink>
+            <v-btn
+              flat
+              icon
+              :disabled="formDisabled"
+            >
+              <v-icon>search</v-icon>
+            </v-btn>
+          </v-flex>
+        </v-layout>
+
         <span body-2 v-if="addressErr" class="red--text">
           {{ $t("places.messages.no-results") }}
         </span>

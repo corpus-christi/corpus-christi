@@ -354,6 +354,7 @@
         "longitude": "Longitude",
         "name": "Name"
       },
+      "area": "Area",
       "create-address": "Create an Address",
       "edit": "Edit Location",
       "location": {
@@ -791,6 +792,7 @@
         "longitude": "Longitud",
         "name": "Nombre"
       },
+      "area": "Zona",
       "create-address": "Crear una Direcci\u00f3n",
       "edit": "Editar Ubicaci\u00f3n",
       "location": {
