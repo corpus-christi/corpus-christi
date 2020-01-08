@@ -43,16 +43,29 @@
     <v-data-table
       :rows-per-page-items="rowsPerPageItem"
       :headers="headers"
-      :items="visiblePlaces"
+      :items="addresses"
       :search="search"
       :loading="tableLoading"
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
         <td>{{ props.item.name }}</td>
-        <td>{{ getDisplayLocation(props.item.address) }}</td>
+        <td>{{ props.item.address }}</td>
         <td>{{ props.item.latitude }}</td>
         <td>{{ props.item.longitude }}</td>
+
+        <v-btn
+          icon
+          outline
+          small
+          color="primary"
+          slot="activator"
+          v-on:click="editPlace(props.item)"
+          data-cy="edit-place"
+        >
+          <v-icon small>edit</v-icon>
+        </v-btn>
+        <span>{{ $t("actions.edit") }}</span>
       </template>
     </v-data-table>
   </div>
@@ -66,7 +79,21 @@ export default {
     areas: Array,
     locations: Array
   },
-    computed: {
+
+
+  data() {
+    return {
+      placeDialog: {
+        show: false,
+        editMode: false,
+        saveLoading: false,
+        addMoreLoading: false,
+        places: {}
+      }
+    };
+  },
+
+  computed: {
     headers() {
       return [
         {
@@ -76,16 +103,35 @@ export default {
           sortable: false
         },
         { text: this.$t("places.address.address"), sortable: false },
-        { text: this.$t("places.address.latitude"), sortable: false },
-        { text: this.$t("places.address.longitude"), sortable: false },
+        {
+          text: this.$t("places.address.latitude"),
+          width: "4%",
+          sortable: false
+        },
+        {
+          text: this.$t("places.address.longitude"),
+          width: "4%",
+          sortable: false
+        },
 
-        { text: this.$t("actions.header"), sortable: false }
+        { text: this.$t("actions.header"), width: "17%", sortable: false }
       ];
     },
     visiblePlaces() {
       return this.assets;
     }
+  },
+  methods: {
+    activePlaceDialog(asset = {}, editMode = false) {
+      this.placeDialog.editMode = editMode;
+      this.placeDialog.asset = asset;
+      this.placeDialog.show = true;
+    },
 
+    editPlace(place) {
+      this.activatePlaceDialog({ ...place }, true);
+    }
+  }
 };
 </script>
 
