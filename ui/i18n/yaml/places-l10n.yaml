@@ -33,7 +33,7 @@ places:
       en: Your address has been saved.
       es: Su dirección ha sido guardada.
   new:
-    en: Add Location
+    en: Add Place
     es: Añadir Lugares
   edit:
     en: Edit Location

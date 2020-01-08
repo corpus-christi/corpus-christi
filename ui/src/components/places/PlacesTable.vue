@@ -54,18 +54,35 @@
         <td>{{ props.item.latitude }}</td>
         <td>{{ props.item.longitude }}</td>
 
-        <v-btn
-          icon
-          outline
-          small
-          color="primary"
-          slot="activator"
-          v-on:click="editPlace(props.item)"
-          data-cy="edit-place"
-        >
-          <v-icon small>edit</v-icon>
-        </v-btn>
-        <span>{{ $t("actions.edit") }}</span>
+        <v-tooltip bottom>
+          <v-btn
+            icon
+            outline
+            small
+            color="primary"
+            slot="activator"
+            v-on:click="editPlace(props.item)"
+            data-cy="edit-place"
+          >
+            <v-icon small>edit</v-icon>
+          </v-btn>
+          <span>{{ $t("actions.edit") }}</span>
+        </v-tooltip>
+
+        <v-tooltip bottom>
+          <v-btn
+            icon
+            outline
+            small
+            color="primary"
+            slot="activator"
+            v-on:click="duplicate(props.item)"
+            data-cy="duplicate-place"
+          >
+            <v-icon small>filter_none</v-icon>
+          </v-btn>
+          <span>{{ $t("actions.duplicate") }}</span>
+        </v-tooltip>
       </template>
     </v-data-table>
 
@@ -122,22 +139,24 @@ export default {
       return [
         {
           text: this.$t("places.address.name"),
-          value: name,
-          // width: "17%",
-          sortable: false
+          value: "name",
+          width: "20%"
         },
-        { text: this.$t("places.address.address"), sortable: false },
+        {
+          text: this.$t("places.address.address"),
+          value: "address",
+          width: "30%"
+        },
         {
           text: this.$t("places.address.latitude"),
           width: "4%",
-          sortable: false
+          value: "latitude"
         },
         {
           text: this.$t("places.address.longitude"),
           width: "4%",
-          sortable: false
+          value: "longitude"
         },
-
         { text: this.$t("actions.header"), width: "17%", sortable: false }
       ];
     },
