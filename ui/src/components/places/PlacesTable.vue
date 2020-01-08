@@ -30,7 +30,7 @@
           <v-btn
             color="primary"
             raised
-            v-on:click.stop="newAsset"
+            v-on:click.stop="newPlace"
             data-cy="add-asset"
           >
             <v-icon dark left>add</v-icon>
@@ -54,18 +54,35 @@
         <td>{{ props.item.latitude }}</td>
         <td>{{ props.item.longitude }}</td>
 
-        <v-btn
-          icon
-          outline
-          small
-          color="primary"
-          slot="activator"
-          v-on:click="editPlace(props.item)"
-          data-cy="edit-place"
-        >
-          <v-icon small>edit</v-icon>
-        </v-btn>
-        <span>{{ $t("actions.edit") }}</span>
+        <v-tooltip bottom>
+          <v-btn
+            icon
+            outline
+            small
+            color="primary"
+            slot="activator"
+            v-on:click="editPlace(props.item)"
+            data-cy="edit-place"
+          >
+            <v-icon small>edit</v-icon>
+          </v-btn>
+          <span>{{ $t("actions.edit") }}</span>
+        </v-tooltip>
+
+        <v-tooltip bottom>
+          <v-btn
+            icon
+            outline
+            small
+            color="primary"
+            slot="activator"
+            v-on:click="duplicate(props.item)"
+            data-cy="duplicate-place"
+          >
+            <v-icon small>filter_none</v-icon>
+          </v-btn>
+          <span>{{ $t("actions.duplicate") }}</span>
+        </v-tooltip>
       </template>
     </v-data-table>
   </div>
@@ -79,7 +96,6 @@ export default {
     areas: Array,
     locations: Array
   },
-
 
   data() {
     return {
