@@ -51,6 +51,7 @@
       <template slot="items" slot-scope="props">
         <td>{{ props.item.name }}</td>
         <td>{{ props.item.address }}</td>
+        <td>{{ props.item.city }}</td>
         <td>{{ props.item.latitude }}</td>
         <td>{{ props.item.longitude }}</td>
 
@@ -107,14 +108,28 @@
         />
       </v-layout>
     </v-dialog>
+     <v-layout class="mt-3">
+      <v-flex>
+        <v-toolbar color="blue" dark>
+          <v-toolbar-title data-cy="church-sentence">
+            {{ $t("Places") }}
+          </v-toolbar-title>
+        </v-toolbar>
+        <GoogleMap v-bind:markers="homegroups"></GoogleMap>
+      </v-flex>
+    </v-layout>
+
   </div>
+
+
 </template>
 
 <script>
 import PlaceForm from "./PlacesForm";
+import GoogleMap from "../../components/GoogleMap";
 export default {
   name: "PlacesTable.vue",
-    components: {PlaceForm},
+    components: {PlaceForm, GoogleMap},
     props: {
     addresses: Array,
     areas: Array,
@@ -130,10 +145,17 @@ export default {
         saveLoading: false,
         addMoreLoading: false,
         places: {}
-      }
+      },
+      search: "",
+        homegroups: [],
+        groupLocations: []
     };
   },
 
+    mounted(){
+      this.getHomegroupLocations();
+
+    },
   computed: {
     headers() {
       return [
@@ -146,6 +168,11 @@ export default {
           text: this.$t("places.address.address"),
           value: "address",
           width: "30%"
+        },
+        {
+          text: this.$t("places.address.city"),
+          value: "city",
+          width: "20%"
         },
         {
           text: this.$t("places.address.latitude"),
