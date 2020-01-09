@@ -22,7 +22,8 @@
         ></v-textarea>
         <entity-search
           manager
-          v-model="group.manager"
+          :pre-selected-entity="group.manager"
+          v-on:input="group.manager.id"
           name="address"
           v-bind:error-messages="errors.first('address')"
         />
@@ -73,9 +74,21 @@ export default {
       if (isEmpty(groupProp)) {
         this.clear();
       } else {
+        console.log("groupProp");
+        console.log(groupProp);
         this.group = groupProp;
+        console.log("this.group.manager");
+        console.log(this.group.manager);
         this.group.manager = groupProp.managerInfo;
+        console.log("managerInfo");
+        console.log(this.group.managerInfo);
+        this.group.manager.id = groupProp.manager_id;
       }
+    },
+    group(val) {
+      console.log("val.manager:");
+      console.log(val.manager);
+      console.log(val.manager.id);
     }
   },
   computed: {
@@ -98,7 +111,7 @@ export default {
 
   methods: {
     cancel() {
-      this.clear();
+      // this.clear();
       this.$emit("cancel");
     },
 
@@ -148,8 +161,8 @@ export default {
   },
   data: function() {
     return {
-      group: {}
-    };
+      group: null
+    }
   }
 };
 </script>

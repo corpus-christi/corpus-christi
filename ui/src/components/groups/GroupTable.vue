@@ -138,10 +138,10 @@
     <!-- New/Edit dialog -->
     <v-dialog v-model="groupDialog.show" max-width="500px" persistent>
       <group-form
-        v-bind:editMode="groupDialog.editMode"
-        v-bind:initialData="groupDialog.group"
-        v-bind:saveLoading="groupDialog.saveLoading"
-        v-bind:addMoreLoading="groupDialog.addMoreLoading"
+        v-bind:edit-mode="groupDialog.editMode"
+        v-bind:initial-data="groupDialog.group"
+        v-bind:save-loading="groupDialog.saveLoading"
+        v-bind:add-more-loading="groupDialog.addMoreLoading"
         v-on:cancel="cancelGroup"
         v-on:save="saveGroup"
         v-on:add-another="addAnotherGroup"
@@ -191,6 +191,8 @@ export default {
     this.tableLoading = true;
     this.$http.get("/api/v1/groups/groups").then(resp => {
       this.groups = resp.data;
+      console.log("large groups");
+      console.log(this.groups);
       this.tableLoading = false;
     });
     this.onResize();
@@ -279,6 +281,8 @@ export default {
 
     activateGroupDialog(group = {}, editMode = false) {
       this.groupDialog.editMode = editMode;
+      console.log("groupDialog");
+      console.log(this.groupDialog);
       this.groupDialog.group = group;
       this.groupDialog.show = true;
     },
@@ -399,6 +403,9 @@ export default {
 
     duplicate(group) {
       const copyGroup = JSON.parse(JSON.stringify(group));
+      // console.log(group);
+      // console.log("copyGroup");
+      // console.log(copyGroup);
       delete copyGroup.id;
       this.activateGroupDialog(copyGroup);
     },

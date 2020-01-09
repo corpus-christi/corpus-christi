@@ -6,7 +6,7 @@
       prepend-icon="search"
       :items="searchableEntities"
       :loading="isLoading"
-      v-bind:value="value"
+      :value="parsedPreselectedEntity"
       v-on:input="setSelected"
       :search-input.sync="searchInput"
       v-bind:error-messages="errorMessages"
@@ -19,13 +19,13 @@
       :disabled="disabled"
     >
       <template v-if="!multiple" slot="selection" slot-scope="data">
-        {{ getEntityDescription(data.item, 100) }}
+        {{ getEntityText(data.item, 100) }}
       </template>
       <template slot="item" slot-scope="data">
         <span v-if="multiple && selectionContains(data.item)">
           <v-icon>clear</v-icon>
         </span>
-        {{ getEntityDescription(data.item) }}
+        {{ getEntityText(data.item) }}
       </template>
     </v-autocomplete>
     <template v-if="multiple">
@@ -35,7 +35,7 @@
           @input="remove(entity)"
           :data-cy="'chip-' + entity[idField]"
         >
-          {{ getEntityDescription(entity) }}
+          {{ getEntityText(entity) }}
         </v-chip>
       </div>
     </template>
@@ -57,6 +57,7 @@ export default {
     multiple: { type: Boolean, default: false },
     existingEntities: Array,
     value: null,
+    preSelectedEntity: Object,
     searchEndpoint: String,
     errorMessages: String,
     label: String,
@@ -72,6 +73,17 @@ export default {
   },
 
   computed: {
+    parsedPreselectedEntity() {
+      console.log('this.preSelectedEntity');
+      console.log(this.preSelectedEntity);
+      let preselected = this.parseEntity(this.preSelectedEntity);
+      console.log('preselected');
+      console.log(preselected);
+      if (!preselected.text) {
+        return null;
+      }
+      return preselected;
+    },
     getLabel() {
       if (this.label) return this.label;
       else if (this.location) return this.$t("events.event-location");
@@ -99,10 +111,59 @@ export default {
         });
       }
       return this.entities;
+
+      // if (this.manager) {
+      //   let newEnts = [];
+      //   for (let ent of this.entities) {
+      //     newEnts.push(ent.person);
+      //   }
+      //   console.log(newEnts)
+      //   return newEnts;
+      // }
     }
   },
 
+  watch: {
+    value(val) {
+      console.log(val);
+      // this.$emit("update:searchInput", val);
+    }
+  },
+  // created() {
+  //   var person = this.value.person;
+  //   let entityDescriptor =
+  //     person.firstName +
+  //     " " +
+  //     person.lastName +
+  //     " " +
+  //     (person.secondLastName ? person.secondLastName : "");
+  //   console.log(entityDescriptor);
+  //   this.searchInput = entityDescriptor;
+  //   this.setSelected(this.value);
+  // },
+  // watch: {
+  //   value(val) {
+  //     // this.setSelected(val);
+  //     var person = val.person;
+  //     let entityDescriptor =
+  //       person.firstName +
+  //       " " +
+  //       person.lastName +
+  //       " " +
+  //       (person.secondLastName ? person.secondLastName : "");
+  //     console.log(entityDescriptor);
+  //     this.searchInput = entityDescriptor;
+  //   }
+  // },
   methods: {
+    parseEntity(entity) {
+      let parsed = {
+        'text': this.getEntityDescription(entity),
+        'value': this.getEntityValue(entity)
+      };
+      console.log(parsed);
+      return parsed;
+    },
     selectionContains(entity) {
       if (!this.value || !this.value.length) return;
       var idx = this.value.findIndex(
@@ -111,7 +172,12 @@ export default {
       return idx > -1;
     },
     setSelected(entity) {
-      this.$emit("input", entity);
+      console.log("setSelected entityValue");
+      console.log(entity);
+      // this.value = this.getEntityValue(entity);
+      // this.searchInput = this.getEntityDescription(entity.manager);
+      this.$emit("input", this.getEntityValue(entity));
+      // this.$emit("input", entityValue);
     },
     getEntityDescription(entity, letterLimit = this.descriptionLimit) {
       if (!entity) return;
@@ -141,7 +207,7 @@ export default {
           (person.secondLastName ? person.secondLastName : "");
       } else if (this.asset) {
         entityDescriptor = entity.description;
-      } else if (this.group){
+      } else if (this.group) {
         entityDescriptor = entity.description;
       }
       if (entityDescriptor.length > letterLimit) {
@@ -150,8 +216,20 @@ export default {
       }
       return entityDescriptor;
     },
+    getEntityValue(entity) {
+      let entityValue = 0;
+      if (this.manager) {
+        entityValue = entity.id;
+      }
+      return entityValue;
+    },
+    getEntityText(entity) {
+      console.log("entity.text");
+      console.log(entity.text);
+      return entity.text;
+    },
     customFilter(item, queryText) {
-      const itemDesc = this.getEntityDescription(item).toLowerCase();
+      const itemDesc = this.getEntityText(item).toLowerCase();
       const searchText = queryText.toLowerCase();
       return itemDesc.indexOf(searchText) > -1;
     },
@@ -179,12 +257,13 @@ export default {
     else if (this.team) endpoint = "/api/v1/teams/";
     else if (this.asset) endpoint = "/api/v1/assets/";
     else if (this.address) endpoint = "/api/v1/places/addresses";
-    else if (this.manager) endpoint = "/api/v1/people/manager?show_unique_persons_only=Y";
-    else if (this.group) endpoint = "/api/v1/groups/groups"
+    else if (this.manager)
+      endpoint = "/api/v1/people/manager?show_unique_persons_only=Y";
+    else if (this.group) endpoint = "/api/v1/groups/groups";
     this.$http
       .get(endpoint)
       .then(resp => {
-        this.entities = resp.data;
+        this.entities = resp.data.map(entity => this.parseEntity(entity));
         this.isLoading = false;
       })
       .catch(error => {
