@@ -3,27 +3,11 @@ development:
     ubuntu-desktop:
       ansible_user: tom
       ansible_host: 10.211.55.53
-      server_name: ubuntu
-  vars:
-    nginx_config: nginx-simple.conf
 
 staging:
   hosts:
     cc-staging:
-      ansible_user: tom
-      ansible_host: 10.211.55.53
-      server_name: ubuntu
-  vars:
-    node_env: production
-    nginx_config: nginx-production.conf
+      ansible_user: tnurkkala
+      ansible_host: 45.79.222.23
 
 production:
-  hosts:
-    cc-production:
-      ansible_user: tnurkkala
-      ansible_host: localhost
-      ansible_port: 2222
-      server_name: "galilee.cse.taylor.edu"
-  vars:
-    node_env: production
-    nginx_config: nginx-production.conf
