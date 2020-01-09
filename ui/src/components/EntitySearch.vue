@@ -54,6 +54,7 @@ export default {
     manager: Boolean,
     asset: Boolean,
     group: Boolean,
+    meeting: Boolean,
     multiple: { type: Boolean, default: false },
     existingEntities: Array,
     value: null,
@@ -82,6 +83,7 @@ export default {
       else if (this.manager) return this.$t("actions.search-managers");
       else if (this.asset) return this.$t("assets.title");
       else if (this.group) return this.$t("groups.title");
+      else if (this.meeting) return this.$t("groups.meetings.title");
       else return "";
     },
     idField() {
@@ -143,6 +145,8 @@ export default {
         entityDescriptor = entity.description;
       } else if (this.group){
         entityDescriptor = entity.description;
+      } else if (this.meeting) {
+        entityDescriptor = entity.description;
       }
       if (entityDescriptor.length > letterLimit) {
         //TODO don't do this here, it limits search functionality
@@ -180,7 +184,8 @@ export default {
     else if (this.asset) endpoint = "/api/v1/assets/";
     else if (this.address) endpoint = "/api/v1/places/addresses";
     else if (this.manager) endpoint = "/api/v1/people/manager?show_unique_persons_only=Y";
-    else if (this.group) endpoint = "/api/v1/groups/groups"
+    else if (this.group) endpoint = "/api/v1/groups/groups";
+    else if (this.meeting) endpoint = "/api/v1/groups/meetings";
     this.$http
       .get(endpoint)
       .then(resp => {
