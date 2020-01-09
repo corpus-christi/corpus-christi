@@ -245,7 +245,7 @@ export default {
       return [
         { text: this.$t("actions.view-active"), value: "viewActive" },
         { text: this.$t("actions.view-archived"), value: "viewArchived" },
-        { text: this.$t("actions.view-all"), value: "viewAll" },
+        { text: this.$t("actions.view-all"), value: "viewAll" }
       ];
     },
 
