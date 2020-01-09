@@ -44,7 +44,7 @@ The development tool chain requires the following software.
 Windows additional downloads:
 
   - The [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
-    + Note, downloading from the Microsoft store works well.
+    + Note that downloading from the Microsoft store works well.
 
 _About Bash_: These instructions assume that you use
 a `bash` shell. If you are using Windows command line
@@ -93,7 +93,7 @@ and the native extension.
     $ cd corpus-christi/api
     $ python3 -m venv venv
     ```
-    - Note that the `python3` command may not have the correct version.  If you have errors with this, run `python3 --version`, if that is not the desired version, try running `python --version`.  If this is your desired version, replace "python3" with "python" in the above bash commands.
+    - Note that the `python3` command may not have the correct version.  If you have errors with this, run `python3 --version`, if that is not the desired version, try running `python --version`.  If this is your desired version, replace `python3` with `python` in the above bash commands.  If you are still struggling (and using Windows), you will need to adjust the [environmental variables](https://www.architectryan.com/2018/08/31/how-to-change-environment-variables-on-windows-10/) and update PATH by finding the location of where python is downloaded.  Open the base python folder, copy that path/link and add it to PATH in the system variables.
 
 1. Activate the virtual environment;
    you need to do this _whenever_ you start a new shell
@@ -165,7 +165,7 @@ on the [official downloads page](https://www.postgresql.org/download/).
    * Homebrew (my preference)
      requires that you first [install Homebrew](https://brew.sh/),
      then use Homebrew to install Postgres (`brew install postgresql`).
-1. For Windows (if using a Windows Subsystem for Linux), switch to [this tutorial](./postgres-windows.md)).
+1. For **Windows** (if using a Windows Subsystem for Linux), switch to [this tutorial](./postgres-windows.md)).
 <!-- https://github.com/corpus-christi/corpus-christi/blob/development/doc/postgres-windows.md -->
 There are several installers for [**Windows**](https://www.postgresql.org/download/windows/).
 1. For **Linux**, choose the appropriate distribution
@@ -207,7 +207,7 @@ Windows:
 ```bash
 CREATE DATABASE "cc-dev" OWNER arco;
 ```
-- Windows: if errors, check the postgreSQL WSL installation tutorial [Tips/Debugging](./postgres-windows.md) section for help.
+- Windows: if errors, check the postgreSQL WSL installation tutorial [Tips/Debugging](./postgres-windows.md#tips--debugging) section for help.
 - In psql you can run `\l` (lowercase L) to see all of the databases and owners.
 
 This will create a database called `cc-dev`,
@@ -311,7 +311,7 @@ $ flask account new --first="Billy Bob" --last="Smith" bbob bob-pass
 
 ## Run CC
 
-For development, you need to run two servers
+For development, you need to run *two* servers
 to work with CC.
 Run each process in _it's own_ shell
 and leave these shell windows open.

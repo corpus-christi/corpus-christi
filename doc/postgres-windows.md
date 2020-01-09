@@ -20,6 +20,7 @@ For this tutorial, we will be installing Postgres through the Ubuntu command lin
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
 sudo apt-get update
 ```
+- Note that if you are stuggling with copy and pasting in bash or the Linux Subsystem, try `right click` to paste.  `(Ctrl and or Shift) + (insert or V)` may also work.
 This will add postgresql 11 to your repositories so you can install the lastest version. Press `enter` when the last line pops up.
 
 6. After the update is complete, enter in this line `sudo apt-get install postgresql-11` and press `y` when prompted.
@@ -44,7 +45,11 @@ You should get a prompt asking for your password. If this doesn't work, then you
 1. Switch users to postgres by typing `su - postgres`.
 2. Type `psql`.
 
-When this is successful you will see the command line change to look like this `postgres=#`
+- When this is successful you will see the command line change to look like this `postgres=#`
+- Note that if command line is `postgres-#` (notice `-` instead of `=`), then you forgot the simicolin (`;`) at the end of the line and postgres is waiting for you to finish the command.  To fix this simply type a semicolin to end your statement and press enter.
+
+After this is completed, switch back to the [develop.md](./develop.md#database-setup) documentation for the database setup
+
 
 ## Tips / Debugging
 
