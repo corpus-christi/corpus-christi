@@ -2,7 +2,7 @@ import hashlib
 
 from flask.json import jsonify
 
-from .. import db
+from src import db
 
 
 def modify_entity(entity_type, schema, id, new_value_dict):

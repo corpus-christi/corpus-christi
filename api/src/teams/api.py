@@ -1,18 +1,13 @@
-import json
-from datetime import datetime, timedelta
-
 from flask import request
 from flask.json import jsonify
-from flask_jwt_extended import jwt_required, get_raw_jwt, jwt_optional
-from flask_mail import Message
+from flask_jwt_extended import jwt_required
 from marshmallow import ValidationError
-from sqlalchemy import func
 
 from ..people.models import Person, PersonSchema
 from .models import Team, TeamMember, TeamSchema, TeamMemberSchema
 from . import teams
 from .. import db
-from ..etc.helper import modify_entity, get_exclusion_list
+from src.shared.helpers import modify_entity, get_exclusion_list
 
 # ---- Team
 

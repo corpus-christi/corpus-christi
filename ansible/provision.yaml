@@ -1,0 +1,111 @@
+- name: ensure ubuntu packages
+  hosts: staging, production
+  tags: apt
+  become: yes
+  tasks:
+    - name: add key for yarn PPA
+      apt_key:
+        url: https://dl.yarnpkg.com/debian/pubkey.gpg
+        state: present
+
+    - name: configure yarn PPA
+      apt_repository:
+        repo: deb https://dl.yarnpkg.com/debian/ stable main
+        filename: yarnpkg
+        state: present
+
+    - name: add key for node PPA
+      apt_key:
+        url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+        state: present
+
+    - name: configure node PPA
+      apt_repository:
+        repo: deb https://deb.nodesource.com/node_12.x bionic main
+        filename: nodesource
+        state: present
+
+    - name: install apt packages
+      apt:
+        pkg: "{{ item }}"
+        update_cache: yes
+      loop:
+        - git
+        - nodejs
+        - yarn
+        - nginx
+        - postgresql
+        - python3-venv
+        - python3-psycopg2
+        - htop
+        - tree
+        - silversearcher-ag
+        - multitail
+
+- name: create corpus-christi account
+  hosts: staging, production
+  tags: cc
+  become: yes
+  vars_files:
+    - private.yaml
+  tasks:
+    - name: create corpus-christi user
+      user:
+        name: cc
+        password: "{{ cc_password | password_hash('sha512') }}"
+        shell: /bin/bash
+
+- name: provision database
+  hosts: staging, production
+  tags: db
+  become: yes
+  become_user: postgres
+  vars_files:
+    - private.yaml
+  tasks:
+    - name: create database user
+      postgresql_user:
+        name: "{{ postgres.username }}"
+        password: "{{ postgres.password }}"
+
+    - name: create database
+      postgresql_db:
+        name: "{{ postgres.database }}"
+        owner: "{{ postgres.username }}"
+
+- name: clone repository
+  hosts: all
+  tags: git, build, update
+  become: yes
+  become_user: "{{ cc_username }}"
+  vars_files:
+    - public.yaml
+  tasks:
+    - name: clone application from GitHub
+      git:
+        repo: "{{ cc_repo }}"
+        dest: "{{ cc_abs_dir }}"
+        version: master
+
+- name: prepare python
+  hosts: all
+  tags: python, build, update
+  become: yes
+  become_user: "{{ cc_username }}"
+  vars_files:
+    - public.yaml
+  tasks:
+    - name: create python venv
+      command:
+        chdir: "{{ cc_api_abs_dir }}"
+        cmd: "{{ python3 }} -m venv venv"
+        creates: venv/pyvenv.cfg
+
+    - name: populate python venv
+      environment:
+        PATH
+      pip:
+        chdir: "{{ cc_api_abs_dir }}"
+        executable: venv/bin/pip3
+        requirements: requirements.txt
+
