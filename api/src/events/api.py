@@ -10,7 +10,7 @@ from . import events
 from .models import Event, EventPerson, EventAsset, EventParticipant, EventTeam, EventGroup, EventSchema, \
     EventPersonSchema, EventParticipantSchema
 from .. import db, mail, translate
-from ..etc.helper import modify_entity, get_exclusion_list
+from src.shared.helpers import modify_entity, get_exclusion_list
 from ..groups.models import Group, Member
 from ..images.models import Image, ImageEvent
 from ..people.models import Person
