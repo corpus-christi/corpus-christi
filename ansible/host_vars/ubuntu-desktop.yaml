@@ -1,0 +1,15 @@
+# Ubuntu desktop
+
+mail:
+  host: localhost
+  from: "Tom Nurkkala <tnurkkala@cse.taylor.edu>"
+
+postgres:
+  host: localhost
+  database: capernaum
+  username: capernaum
+  password: password
+
+url:
+  websocket: ws://10.211.55.53/graphql
+  http: http://10.211.55.53/graphql

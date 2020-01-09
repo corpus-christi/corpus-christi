@@ -1,0 +1,195 @@
+---
+- name: ensure ubuntu packages
+  hosts: staging, production
+  tags: packages
+  become: yes
+  tasks:
+    - name: add key for yarn PPA
+      apt_key:
+        url: https://dl.yarnpkg.com/debian/pubkey.gpg
+        state: present
+
+    - name: configure yarn PPA
+      apt_repository:
+        repo: deb https://dl.yarnpkg.com/debian/ stable main
+        filename: yarnpkg
+        state: present
+
+    - name: add key for node PPA
+      apt_key:
+        url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+        state: present
+
+    - name: configure node PPA
+      apt_repository:
+        repo: deb https://deb.nodesource.com/node_12.x bionic main
+        filename: nodesource
+        state: present
+
+    - name: install apt packages
+      apt:
+        pkg: "{{ item }}"
+        update_cache: yes
+      loop:
+        - yarn
+        - git
+        - nodejs
+        - nginx
+        - postgresql
+        - python3-psycopg2
+        - texlive-pictures
+        - htop
+        - tree
+        - silversearcher-ag
+        - multitail
+
+- name: provision capernaum
+  hosts: all
+  tags: capernaum
+  become: yes
+  become_user: "{{ cap_username }}"
+  vars_files:
+    - public.yaml
+    - private.yaml
+  tasks:
+    - name: create capernaum user
+      when: inventory_hostname not in groups.development
+      become_user: root
+      user:
+        name: "{{ cap_username }}"
+        password: "{{ cap_password | password_hash('sha512') }}"
+        shell: /bin/bash
+
+    - name: create directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        mode: 0755
+      loop:
+        - "{{ cap_static_abs_dir }}/{{ cap_upload_rel_dir }}"
+        - "{{ cap_static_abs_dir }}/{{ cap_pdf_rel_dir }}"
+
+- name: provision database
+  hosts: staging, production
+  tags: database
+  become: yes
+  become_user: postgres
+  vars_files:
+    - private.yaml
+  tasks:
+    - name: create database user
+      postgresql_user:
+        name: "{{ postgres.username }}"
+        password: "{{ postgres.password }}"
+
+    - name: create database
+      postgresql_db:
+        name: "{{ postgres.database }}"
+        owner: "{{ postgres.username }}"
+
+- name: build everything
+  hosts: all
+  tags: build, update
+  become: yes
+  become_user: "{{ cap_username }}"
+  vars_files:
+    - public.yaml
+    - private.yaml
+  tasks:
+    - name: clone application from GitHub
+      git:
+        repo: "{{ cap_repo }}"
+        dest: "{{ cap_app_abs_dir }}"
+        version: master
+
+    - name: create server .env file
+      tags: dot-env
+      template:
+        src: templates/dot-env.server
+        dest: "{{ cap_server_abs_dir }}/.env"
+        mode: 0400
+
+    - name: create ui .env file
+      tags: dot-env
+      template:
+        src: templates/dot-env.ui
+        dest: "{{ cap_ui_abs_dir }}/.env"
+        mode: 0400
+
+    - name: install node modules for user interface
+      yarn:
+        path: "{{ cap_ui_abs_dir }}"
+
+    - name: install node modules for server
+      yarn:
+        path: "{{ cap_server_abs_dir }}"
+
+    - name: build production ui
+      command:
+        chdir: "{{ cap_ui_abs_dir }}"
+        cmd: yarn build
+
+    - name: build production server
+      command:
+        chdir: "{{ cap_server_abs_dir }}"
+        cmd: yarn build
+
+- name: provision process manager
+  hosts: production, staging
+  tags: pm2, update
+  become: yes
+  become_user: "{{ cap_username }}"
+  vars_files:
+    - public.yaml
+    - private.yaml
+  tasks:
+    - name: install pm2 # run as root, installs in /usr/local/bin
+      become_user: root
+      yarn:
+        name: pm2
+        global: yes
+
+    - name: create pm2 directory
+      file:
+        path: "{{ cap_pm2_abs_dir }}"
+        state: directory
+        mode: 0755
+
+    - name: configure pm2
+      template:
+        src: templates/ecosystem.config.js
+        dest: "{{ cap_pm2_abs_dir }}/ecosystem.config.js"
+        mode: 0444
+
+    - name: start capernaum server
+      command: pm2 start "{{ cap_pm2_abs_dir }}/ecosystem.config.js"
+
+- name: provision nginx
+  hosts: production, staging
+  tags: nginx, update
+  become: yes
+  vars_files:
+    - public.yaml
+    - private.yaml
+  tasks:
+    - name: disable nginx default configuration
+      file:
+        path: "{{ nginx_enabled_abs_dir }}/default"
+        state: absent
+
+    - name: copy nginx config file
+      template:
+        src: "templates/{{ nginx_config }}"
+        dest: "{{ nginx_available_abs_dir }}/{{ nginx_conf_file }}"
+        mode: 0444
+
+    - name: enable nginx configuration
+      file:
+        src: "{{ nginx_available_abs_dir }}/{{ nginx_conf_file }}"
+        dest: "{{ nginx_enabled_abs_dir }}/{{ nginx_conf_file }}"
+        state: link
+
+    - name: restart nginx
+      service:
+        name: nginx
+        state: restarted

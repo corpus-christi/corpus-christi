@@ -1,0 +1,5 @@
+
+nginx_base_abs_dir: "/etc/nginx"
+nginx_available_abs_dir: "{{ nginx_base_abs_dir}}/sites-available"
+nginx_enabled_abs_dir: "{{ nginx_base_abs_dir}}/sites-enabled"
+nginx_conf_file: "corpus-christi.conf"
