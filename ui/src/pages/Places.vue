@@ -2,7 +2,6 @@
   <v-container>
     <v-tabs color="transparent" slider-color="accent">
       <v-tab ripple data-cy="places-table-tab">
-        <!--        <v-icon>address</v-icon>-->
         {{ $t("places.address.address") }}
       </v-tab>
       <v-tab-item>
@@ -13,7 +12,9 @@
           v-on:fetchPlacesList="fetchPlacesList"
         ></PlacesTable>
       </v-tab-item>
-      <v-tab ripple data-cy="area-table-tab"> {{ $t("places.area") }} </v-tab>
+      <v-tab ripple data-cy="area-table-tab">
+        {{ $t("places.area.area") }}
+      </v-tab>
       <v-tab-item>
         <AreaTable
           v-bind:addresses="addressList"
@@ -22,7 +23,9 @@
           v-on:fetchPlacesList="fetchPlacesList"
         ></AreaTable>
       </v-tab-item>
-      <v-tab ripple data-cy="locations-table-tab"> {{ $t("places.location.location") }} </v-tab>
+      <v-tab ripple data-cy="locations-table-tab"
+        >{{ $t("places.location.location") }}
+      </v-tab>
       <v-tab-item>
         <AreaTable
           v-bind:addresses="addressList"
@@ -37,10 +40,11 @@
 
 <script>
 import PlacesTable from "../components/places/PlacesTable";
+import AreaTable from "../components/places/AreaTable";
 
 export default {
   name: "Places",
-  components: { PlacesTable },
+  components: { PlacesTable, AreaTable },
   data() {
     return {
       addressList: [],

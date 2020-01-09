@@ -15,6 +15,9 @@ places:
     city:
       en: City
       es: Ciudad
+    country:
+      en: Country
+      es: País
     latitude:
       en: Latitude
       es: Latitud
@@ -45,6 +48,10 @@ places:
     en: Edit Location
     es: Editar Ubicación
   area:
-    en: Area
-    es: Zona
+    area:
+      en: Area
+      es: Zona
+    new:
+      en: Add Area
+      es: Añadir Zona
 

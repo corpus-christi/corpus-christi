@@ -21,7 +21,7 @@
             color="primary"
             raised
             v-on:click.stop="newPlace"
-            data-cy="add-asset"
+            data-cy="add-place"
           >
             <v-icon dark left>add</v-icon>
             {{ $t("places.address.new") }}

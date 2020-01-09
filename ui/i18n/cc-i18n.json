@@ -350,12 +350,16 @@
       "address": {
         "address": "Address",
         "city": "City",
+        "country": "Country",
         "latitude": "Latitude",
         "longitude": "Longitude",
         "name": "Name",
         "new": "Add Address"
       },
-      "area": "Area",
+      "area": {
+        "area": "Area",
+        "new": "Add Area"
+      },
       "create-address": "Create an Address",
       "edit": "Edit Location",
       "location": {
@@ -790,12 +794,16 @@
       "address": {
         "address": "Direcci\u00f3n",
         "city": "Ciudad",
+        "country": "Pa\u00eds",
         "latitude": "Latitud",
         "longitude": "Longitud",
         "name": "Nombre",
         "new": "A\u00f1adir direcci\u00f3n"
       },
-      "area": "Zona",
+      "area": {
+        "area": "Zona",
+        "new": "A\u00f1adir Zona"
+      },
       "create-address": "Crear una Direcci\u00f3n",
       "edit": "Editar Ubicaci\u00f3n",
       "location": {
