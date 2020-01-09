@@ -10,7 +10,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from .. import db
 from ..db import Base
-from ..places.models import Location
+from ..places.models import Address
 from ..shared.models import StringTypes
 
 
@@ -32,9 +32,9 @@ class Person(Base):
     confirmed = Column(Boolean, nullable=False, default=True)
     #end of account fields being merged
     active = Column(Boolean, nullable=False, default=True)
-    location_id = Column(Integer, ForeignKey('places_location.id'), nullable=True, default=None)
+    address_id = Column(Integer, ForeignKey('places_address.id'), nullable=True, default=None)
 
-    address = relationship(Location, backref='people', lazy=True)
+    address = relationship(Address, backref='people', lazy=True)
     # events_per refers to the events led by the person (linked via events_eventperson table)
     events_per = relationship("EventPerson", back_populates="person")
     # events_par refers to the participated events (linked via events_eventparticipant table)
@@ -93,7 +93,7 @@ class PersonSchema(Schema):
     confirmed = fields.Boolean()
     #the end of the important fields from account
     active = fields.Boolean(required=True)
-    location_id = fields.Integer(data_key='locationId', allow_none=True)
+    address_id = fields.Integer(data_key='addressId', allow_none=True)
 
 #    accountInfo = fields.Nested( #temperarily removing because of the merge of the account table
  #       'AccountSchema', allow_none=True, only=['username', 'id', 'active', 'roles'])
@@ -112,11 +112,11 @@ class PersonSchema(Schema):
 # Defines join table for people_person and people_role
 
 
-people_person_role = Table('people_role', Base.metadata,
+people_person_role = Table('person_role', Base.metadata,
                             Column('people_person_id', Integer, ForeignKey(
                                 'people_person.id'), primary_key=True),
-                            Column('people_role_id', Integer, ForeignKey(
-                                'people_role.id'), primary_key=True)
+                            Column('person_role_id', Integer, ForeignKey(
+                                'person_role.id'), primary_key=True)
                             )
 
 

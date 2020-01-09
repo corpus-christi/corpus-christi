@@ -4,7 +4,7 @@ from flask_jwt_extended import jwt_required
 from marshmallow import ValidationError
 
 from . import people
-from .models import Person, Account, AccountSchema, Role, PersonSchema, \
+from .models import Person, Role, PersonSchema, \ 
     RoleSchema, Manager, ManagerSchema
 from .. import db
 from ..attributes.models import Attribute, AttributeSchema, EnumeratedValue, \
@@ -15,6 +15,7 @@ from ..events.models import EventPerson, EventParticipant
 from ..images.models import Image, ImagePerson
 from ..teams.models import TeamMember
 
+# removed  Account, AccountSchema, from line seven after person and before role
 # ---- Person
 
 person_schema = PersonSchema()
@@ -25,7 +26,7 @@ enumerated_value_schema = EnumeratedValueSchema(exclude=['active'])
 
 @people.route('/persons/fields', methods=['GET'])
 def read_person_fields():
-    response = {'person': [], 'person_attributes': []}
+    response = {'person': [], 'person_attributes': []} 
 
     person_columns = Person.__table__.columns
     attributes = db.session.query(Attribute).filter_by(active=True).all()
@@ -78,16 +79,16 @@ def create_person():
 
     return jsonify(person_schema.dump(result)), 201
 
-
+#account info needs to be looked into more, is currently commented out because it isn't needed since the merge, not sure about this function now
 @people.route('/persons')
 @jwt_required
 def read_all_persons():
     result = db.session.query(Person).all()
     for r in result:
         r.attributesInfo = r.person_attributes
-        r.accountInfo = r.account
-        if r.account:
-            r.accountInfo.roles = r.account.roles
+#   #      r.accountInfo = r.person #info is irrelavant since the merge of account and person
+#         if r.person:
+#             r.accountInfo.roles = r.person.roles
 
     return jsonify(person_schema.dump(result, many=True))
 
@@ -99,7 +100,7 @@ def read_one_person(person_id):
     if result is None:
         return 'Person specified was NOT found', 404
     result.attributesInfo = result.person_attributes
-    result.accountInfo = result.account
+#not needed hopefully?    result.accountInfo = result.person #? I think that is a reference to the account table, now swapped to result.person
     return jsonify(person_schema.dump(result))
 
 
@@ -155,12 +156,13 @@ def deactivate_person(person_id):
     if person is None:
         return 'Person specified was NOT found', 404
 
-    if person.account:
-        account = db.session.query(Account).filter_by(
-            id=person.account.id).first()
-        if account is None:
-            return 'Account specified was NOT found', 404
-        setattr(account, 'active', False)
+    ## I don't think any of this is needed since it is a part of person now
+    # if person.account:
+    #     account = db.session.query(Account).filter_by(
+    #         id=person.account.id).first()
+    #     if account is None:
+    #         return 'Account specified was NOT found', 404
+    #     setattr(account, 'active', False)
     setattr(person, 'active', False)
 
     db.session.commit()
@@ -193,8 +195,9 @@ def delete_person(person_id):
     db.session.query(EventParticipant).filter_by(person_id=person_id).delete()
     db.session.query(EventPerson).filter_by(person_id=person_id).delete()
     db.session.query(Student).filter_by(student_id=person_id).delete()
-    db.session.query(Account).filter_by(person_id=person_id).delete()
+  #  db.session.query(Account).filter_by(person_id=person_id).delete() #won't matter, no longer a table
     db.session.query(PersonAttribute).filter_by(person_id=person_id).delete()
+    # TODO delete the roles tied to a person
     # TODO delete any instance of Class_Attendance that references deleted class_meeting
     # db.session.query(ClassMeeting).filter_by(teacher=person_id).delete()
     db.session.delete(person)
@@ -202,57 +205,57 @@ def delete_person(person_id):
     return jsonify(msg=f"Person {person_id} was deleted."), 204
 
 
-# ---- Account
+# ---- Account # possibly no longer needed
 
-account_schema = AccountSchema()
-
-
-@people.route('/accounts', methods=['POST'])
-def create_account():
-    request.json["active"] = True
-    try:
-        valid_account = account_schema.load(request.json)
-    except ValidationError as err:
-        print("ERR", err)
-        return jsonify(err.messages), 422
-
-    public_user_role = db.session.query(Role).filter_by(id=1).first()
-
-    new_account = Account(**valid_account)
-    new_account.active = True
-    new_account.roles.append(public_user_role)
-    db.session.add(new_account)
-    db.session.commit()
-    return jsonify(account_schema.dump(new_account)), 201
+# account_schema = AccountSchema()
 
 
-@people.route('/accounts')
+# @people.route('/accounts', methods=['POST'])
+# def create_account():
+#     request.json["active"] = True
+#     try:
+#         valid_account = account_schema.load(request.json)
+#     except ValidationError as err:
+#         print("ERR", err)
+#         return jsonify(err.messages), 422
+
+#     public_user_role = db.session.query(Role).filter_by(id=1).first()
+
+#     new_account = Account(**valid_account)
+#     new_account.active = True
+#     new_account.roles.append(public_user_role)
+#     db.session.add(new_account)
+#     db.session.commit()
+#     return jsonify(account_schema.dump(new_account)), 201
+
+##replaced by read all people?
+# @people.route('/accounts')
+# @jwt_required
+# def read_all_accounts():
+#     result = db.session.query(Account).all()
+#     return jsonify(account_schema.dump(result, many=True))
+
+# #no longer needed as it will be linked to the person_id
+# @people.route('/accounts/<account_id>')
+# @jwt_required
+# def read_one_account(account_id):
+#     """Read one account by ID."""
+#     result = db.session.query(Account).filter_by(id=account_id).first()
+#     if result is None:
+#         return 'Account specified was NOT found', 404
+#     return jsonify(account_schema.dump(result))
+
+
+@people.route('/persons/username/<username>')
 @jwt_required
-def read_all_accounts():
-    result = db.session.query(Account).all()
-    return jsonify(account_schema.dump(result, many=True))
-
-
-@people.route('/accounts/<account_id>')
-@jwt_required
-def read_one_account(account_id):
-    """Read one account by ID."""
-    result = db.session.query(Account).filter_by(id=account_id).first()
+def read_one_person_by_username(username): #account was seperate before it got merged with the person table account -> person
+    """Read one person by its (unique) user name."""
+    result = db.session.query(Person).filter_by(username=username).first()
     if result is None:
-        return 'Account specified was NOT found', 404
-    return jsonify(account_schema.dump(result))
+        return 'Person specified was NOT found', 404
+    return jsonify(person_schema.dump(result))
 
-
-@people.route('/accounts/username/<username>')
-@jwt_required
-def read_one_account_by_username(username):
-    """Read one account by its (unique) user name."""
-    result = db.session.query(Account).filter_by(username=username).first()
-    if result is None:
-        return 'Account specified was NOT found', 404
-    return jsonify(account_schema.dump(result))
-
-
+#not sure how neccesary this next function is
 @people.route('/persons/<person_id>/account')
 @jwt_required
 def read_person_account(person_id):
@@ -261,14 +264,14 @@ def read_person_account(person_id):
         return 'Account specified was NOT found', 404
     return jsonify(account_schema.dump(account))
 
-
-@people.route('/role/<role_id>/accounts')
+#changed account and accounts to person and persons
+@people.route('/role/<role_id>/persons') 
 @jwt_required
-def get_accounts_by_role(role_id):
+def get_persons_by_role(role_id):
     role = db.session.query(Role).filter_by(id=role_id).first()
     if role is None:
         return 'Role specified was NOT found', 404
-    return jsonify(account_schema.dump(role.accounts, many=True))
+    return jsonify(person_schema.dump(role.persons, many=True))
 
 
 @people.route('/accounts/<account_id>', methods=['PATCH'])
@@ -410,7 +413,7 @@ def update_role(role_id):
 
     role = db.session.query(Role).filter_by(id=role_id).first()
     if role is None:
-        return 'Role specified was NOT found', 404
+        return 'Role specified was NOT found', 404https://realpython.com/prevent-python-sql-injection/
 
     if role is None:
         return jsonify("Role does not exist"), 404
@@ -566,7 +569,7 @@ def delete_manager(manager_id):
         setattr(subordinate, 'manager_id', None)
 
     db.session.delete(manager)
-    db.session.commit()
+    db.session.commit()https://realpython.com/prevent-python-sql-injection/
 
     return jsonify(manager_schema.dump(manager)), 204
 
