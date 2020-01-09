@@ -129,9 +129,10 @@
 <script>
 export default {
   name: "PlaceForm",
-  prop: {
+  props: {
     initialData: {
-        type: Object
+      type: Object,
+      required: true
     }
   },
   data: function() {
@@ -153,6 +154,13 @@ export default {
       showPlacePicker: false,
       formDisabled: false
     };
+  },
+  watch: {
+    // Make sure data stays in sync with any changes to `initialData` from parent.
+    initialData(placeProp) {
+      console.log(placeProp);
+      this.address = placeProp;
+    }
   },
   methods: {
     cancelPlaceForm() {
