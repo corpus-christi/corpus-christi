@@ -3,8 +3,8 @@
 # DO NOT COMMIT PRODUCTION SETTINGS TO VERSION CONTROL!
 
 PSQL_HOST = 'faraday.cse.taylor.edu'
-PSQL_USER = 'elizabeth_mcmasters'
-PSQL_PASS = 'nohohibu'
+PSQL_USER = 'john_khol'
+PSQL_PASS = 'civirova'
 
 FLASK_SECRET_KEY = 'big secret'
 JWT_SECRET_KEY = 'super secret'
