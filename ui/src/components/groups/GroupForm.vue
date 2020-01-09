@@ -120,14 +120,12 @@ export default {
     },
 
     addAnother() {
-      // this.$validator.validateAll().then(() => {
-      //   if (!this.errors.any()) {
-      //     this.event.start = this.getTimestamp(this.startDate, this.startTime);
-      //     this.event.end = this.getTimestamp(this.endDate, this.endTime);
-      //     this.event.active = true;
-      //     this.$emit("add-another", this.event);
-      //   }
-      // });
+      this.$validator.validateAll().then(() => {
+        if (!this.errors.any()) {
+          this.group.active = true;
+          this.$emit("add-another", this.group);
+        }
+      });
     }
   },
   props: {
