@@ -93,6 +93,7 @@
         </v-card>
         <PlaceForm
           v-bind:initialData="placeDialog.places"
+          v-bind:areas="areas"
           v-on:cancel="cancelPlace"
           v-on:saved="refreshPlacesList"
         />

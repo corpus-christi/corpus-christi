@@ -41,12 +41,21 @@
 
         <v-layout row>
           <v-flex>
-            <v-text-field
+           <!-- <v-text-field
               name="area"
               v-model="address.area_name"
               v-bind:label="$t('places.area')"
               :disabled="formDisabled"
-            ></v-text-field>
+            ></v-text-field>-->
+            <div>
+              <v-select
+                hide-details
+                solo
+                single-line
+                :label="$t('places.area')"
+                :items="dropdownList"
+              ></v-select>
+            </div>
           </v-flex>
 
           <v-flex shrink>
@@ -143,6 +152,9 @@ export default {
     initialData: {
       type: Object,
       required: true
+    },
+    areas: {
+      type: Array
     }
   },
   data: function() {
@@ -167,14 +179,21 @@ export default {
     };
   },
   computed: {
-    showLatLng: function () {
-        return this.latLng;
+    showLatLng: function() {
+      return this.latLng;
+    },
+    dropdownList() {
+      return this.areas.map(element => {
+        return {
+          text: element.name,
+          value: element.id
+        };
+      });
     }
   },
   watch: {
     // Make sure data stays in sync with any changes to `initialData` from parent.
     initialData(placeProp) {
-      console.log(placeProp);
       this.address = placeProp;
     }
   },
@@ -200,7 +219,6 @@ export default {
         }
       });
     },
-
     sendData() {
       this.$http
         .post("/api/v1/places/locations", this.address)
