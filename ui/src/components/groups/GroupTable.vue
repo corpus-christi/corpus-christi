@@ -55,7 +55,7 @@
           class="hover-hand"
           v-on:click="$router.push({ path: '/groups/' + props.item.id })"
         >
-          <span> {{ props.item.name }}</span>
+          {{ props.item.name }}
         </td>
         <td
           class="hover-hand"
@@ -68,6 +68,12 @@
           v-on:click="$router.push({ path: '/groups/' + props.item.id })"
         >
           {{ getManagerName(props.item.managerInfo) }}
+        </td>
+        <td
+          class="hover-hand"
+          v-on:click="$router.push({ path: '/groups/' + props.item.id })"
+        >
+          {{ props.item.memberList.length + 1 }}
         </td>
         <td>
           <template v-if="props.item.active">
@@ -239,7 +245,7 @@ export default {
       return [
         { text: this.$t("actions.view-active"), value: "viewActive" },
         { text: this.$t("actions.view-archived"), value: "viewArchived" },
-        { text: this.$t("actions.view-all"), value: "viewAll" }
+        { text: this.$t("actions.view-all"), value: "viewAll" },
       ];
     },
 
@@ -260,6 +266,7 @@ export default {
         { text: this.$t("groups.name"), value: "name" },
         { text: this.$t("groups.description"), value: "description" },
         { text: this.$t("groups.manager"), value: "managerInfo" },
+        { text: this.$t("groups.member-count"), value: "memberList.length" },
         { text: this.$t("actions.header"), sortable: false }
       ];
     }
