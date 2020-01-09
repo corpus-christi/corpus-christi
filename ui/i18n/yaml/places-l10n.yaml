@@ -21,7 +21,13 @@ places:
     longitude:
       en: Longitude
       es: Longitud
+    new:
+      en: Add Address
+      es: Añadir dirección
   location:
+    location:
+      en: Location
+      es: Ubicación
     description:
       en: Description
       es: Descripción
@@ -38,4 +44,7 @@ places:
   edit:
     en: Edit Location
     es: Editar Ubicación
+  area:
+    en: Area
+    es: Zona
 

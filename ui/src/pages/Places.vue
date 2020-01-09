@@ -1,11 +1,37 @@
 <template>
   <v-container>
-    <PlacesTable
-      v-bind:addresses="addressList"
-      v-bind:areas="areaList"
-      v-bind:locations="locationList"
-      v-on:fetchPlacesList="fetchPlacesList"
-    ></PlacesTable>
+    <v-tabs color="transparent" slider-color="accent">
+      <v-tab ripple data-cy="places-table-tab">
+        <!--        <v-icon>address</v-icon>-->
+        {{ $t("places.address.address") }}
+      </v-tab>
+      <v-tab-item>
+        <PlacesTable
+          v-bind:addresses="addressList"
+          v-bind:areas="areaList"
+          v-bind:locations="locationList"
+          v-on:fetchPlacesList="fetchPlacesList"
+        ></PlacesTable>
+      </v-tab-item>
+      <v-tab ripple data-cy="area-table-tab"> {{ $t("places.area") }} </v-tab>
+      <v-tab-item>
+        <AreaTable
+          v-bind:addresses="addressList"
+          v-bind:areas="areaList"
+          v-bind:locations="locationList"
+          v-on:fetchPlacesList="fetchPlacesList"
+        ></AreaTable>
+      </v-tab-item>
+      <v-tab ripple data-cy="locations-table-tab"> {{ $t("places.location.location") }} </v-tab>
+      <v-tab-item>
+        <AreaTable
+          v-bind:addresses="addressList"
+          v-bind:areas="areaList"
+          v-bind:locations="locationList"
+          v-on:fetchPlacesList="fetchPlacesList"
+        ></AreaTable>
+      </v-tab-item>
+    </v-tabs>
   </v-container>
 </template>
 
@@ -30,14 +56,14 @@ export default {
   methods: {
     fetchPlacesList() {
       this.$http.get("/api/v1/places/addresses").then(resp => {
-      this.addressList = resp.data;
-    });
-    this.$http.get("/api/v1/places/areas").then(resp => {
-      this.areaList = resp.data;
-    });
-    this.$http.get("/api/v1/places/locations").then(resp => {
-      this.locationList = resp.data;
-    });
+        this.addressList = resp.data;
+      });
+      this.$http.get("/api/v1/places/areas").then(resp => {
+        this.areaList = resp.data;
+      });
+      this.$http.get("/api/v1/places/locations").then(resp => {
+        this.locationList = resp.data;
+      });
     }
   }
 };

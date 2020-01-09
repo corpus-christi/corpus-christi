@@ -3,7 +3,7 @@
     <v-toolbar class="pa-1">
       <v-layout align-center justify-space-between fill-height>
         <v-flex md2>
-          <v-toolbar-title>{{ $t("places.title") }}</v-toolbar-title>
+          <v-toolbar-title>{{ $t("places.address.address") }}</v-toolbar-title>
         </v-flex>
         <v-flex md2>
           <v-text-field
@@ -15,17 +15,7 @@
             data-cy="form-search"
           ></v-text-field>
         </v-flex>
-        <v-flex md3>
-          <v-select
-            hide-details
-            solo
-            single-line
-            :items="viewOptions"
-            v-model="viewStatus"
-            data-cy="view-status-select"
-          >
-          </v-select>
-        </v-flex>
+
         <v-flex shrink justify-self-end>
           <v-btn
             color="primary"
@@ -34,7 +24,7 @@
             data-cy="add-asset"
           >
             <v-icon dark left>add</v-icon>
-            {{ $t("places.new") }}
+            {{ $t("places.address.new") }}
           </v-btn>
         </v-flex>
       </v-layout>
@@ -97,7 +87,7 @@
         <v-card>
           <v-layout align-center justify-center row fill-height>
             <v-card-title class="headline">
-              {{ $t(placeDialog.title)}}
+              {{ $t(placeDialog.title) }}
             </v-card-title>
           </v-layout>
         </v-card>
@@ -108,20 +98,17 @@
         />
       </v-layout>
     </v-dialog>
-     <v-layout class="mt-3">
+    <v-layout class="mt-3">
       <v-flex>
         <v-toolbar color="blue" dark>
           <v-toolbar-title data-cy="church-sentence">
-            {{ $t("Places") }}
+            {{ $t("places.address.address") }}
           </v-toolbar-title>
         </v-toolbar>
         <GoogleMap v-bind:markers="homegroups"></GoogleMap>
       </v-flex>
     </v-layout>
-
   </div>
-
-
 </template>
 
 <script>
@@ -129,8 +116,8 @@ import PlaceForm from "./PlacesForm";
 import GoogleMap from "../../components/GoogleMap";
 export default {
   name: "PlacesTable.vue",
-    components: {PlaceForm, GoogleMap},
-    props: {
+  components: { PlaceForm, GoogleMap },
+  props: {
     addresses: Array,
     areas: Array,
     locations: Array
@@ -147,15 +134,14 @@ export default {
         places: {}
       },
       search: "",
-        homegroups: [],
-        groupLocations: []
+      homegroups: [],
+      groupLocations: []
     };
   },
 
-    mounted(){
-      this.getHomegroupLocations();
-
-    },
+  mounted() {
+    this.getHomegroupLocations();
+  },
   computed: {
     headers() {
       return [
@@ -213,7 +199,7 @@ export default {
     },
 
     refreshPlacesList() {
-        this.$emit("fetchPlacesList");
+      this.$emit("fetchPlacesList");
     }
   }
 };

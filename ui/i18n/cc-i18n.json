@@ -352,12 +352,15 @@
         "city": "City",
         "latitude": "Latitude",
         "longitude": "Longitude",
-        "name": "Name"
+        "name": "Name",
+        "new": "Add Address"
       },
+      "area": "Area",
       "create-address": "Create an Address",
       "edit": "Edit Location",
       "location": {
-        "description": "Description"
+        "description": "Description",
+        "location": "Location"
       },
       "messages": {
         "no-results": "Your address returned no results.",
@@ -789,12 +792,15 @@
         "city": "Ciudad",
         "latitude": "Latitud",
         "longitude": "Longitud",
-        "name": "Nombre"
+        "name": "Nombre",
+        "new": "A\u00f1adir direcci\u00f3n"
       },
+      "area": "Zona",
       "create-address": "Crear una Direcci\u00f3n",
       "edit": "Editar Ubicaci\u00f3n",
       "location": {
-        "description": "Descripci\u00f3n"
+        "description": "Descripci\u00f3n",
+        "location": "Ubicaci\u00f3n"
       },
       "messages": {
         "no-results": "Tu direcci\u00f3n no devolvi\u00f3 resultados.",
