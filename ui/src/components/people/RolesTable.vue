@@ -26,6 +26,7 @@
               single-line
               :label="$t('people.title-roles')"
               :items="translatedRoles"
+              v-model="viewStatus"
             ></v-select>
           </div>
         </v-flex>
@@ -152,6 +153,7 @@ export default {
 
   data() {
     return {
+      viewStatus: this.allAccount,
       personRoles: [],
       personDialog: {
         show: false,
@@ -213,7 +215,32 @@ export default {
       ];
     },
     peopleToDisplay() {
-      return this.allAccount;
+      switch (this.viewStatus) {
+        case 1:
+          return this.rolePublic;
+        case 2:
+          return this.roleInfrastructure;
+        case 3:
+          return this.roleSuperuser;
+        case 4:
+          return this.roleTranslator;
+        case 5:
+          return this.roleGroupAdmin;
+        case 6:
+          return this.roleGroupLeader;
+        case 7:
+          return this.roleGroupOverseer;
+        case 8:
+          return this.roleRegistrar;
+        case 9:
+          return this.roleTeachingAssistant;
+        case 10:
+          return this.roleEventPlanner;
+        case 11:
+          return this.roleVisitor;
+        default:
+          return this.allAccount;
+      }
     },
     translatedRoles() {
       return this.rolesList.map(element => {
@@ -231,6 +258,23 @@ export default {
       this.allAccount = this.allPeople.filter(
         person => person.accountInfo && person.active
       );
+      this.rolePublic = this.allPeople.filter(
+        person =>
+          person.accountInfo && person.accountInfo.roles === 1 && person.active
+      );
+      this.roleInfrastructure = this.allPeople.filter(
+        person =>
+          person.accountInfo && person.account.rolesList === 2 && person.active
+      );
+      this.roleSuperuser = this.allPeople.filter();
+      this.roleTranslator = this.allPeople.filter();
+      this.roleGroupAdmin = this.allPeople.filter();
+      this.roleGroupLeader = this.allPeople.filter();
+      this.roleGroupOverseer = this.allPeople.filter();
+      this.roleRegistrar = this.allPeople.filter();
+      this.roleTeachingAssistant = this.allPeople.filter();
+      this.roleEventPlanner = this.allPeople.filter();
+      this.roleVisitor = this.allPeople.filter();
     },
     rolesList(all_roles) {
       this.rolesList = all_roles;
