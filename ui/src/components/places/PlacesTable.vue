@@ -182,7 +182,6 @@ export default {
       this.placeDialog.title = editMode
         ? this.$t("places.edit")
         : this.$t("places.new");
-      console.log(places);
       this.placeDialog.places = {
         address_name: places.name,
         description: "",

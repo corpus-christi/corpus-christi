@@ -54,4 +54,16 @@ places:
     new:
       en: Add Area
       es: Añadir Zona
+    name:
+      en: Area Name
+      es: Nombre del Área
+    create-area:
+      en: Create New Area
+      es: Crear nueva Área
+    edit:
+      en: Edit Area
+      es: Área de Edición
+
+
+
 

@@ -20,7 +20,7 @@
           <v-btn
             color="primary"
             raised
-            v-on:click.stop="newPlace"
+            v-on:click.stop="newArea"
             data-cy="add-area"
           >
             <v-icon dark left>add</v-icon>
@@ -49,7 +49,7 @@
             small
             color="primary"
             slot="activator"
-            v-on:click="editPlace(props.item)"
+            v-on:click="editArea(props.item)"
             data-cy="edit-place"
           >
             <v-icon small>edit</v-icon>
@@ -77,21 +77,21 @@
     <v-dialog
       scrollable
       persistent
-      v-model="placeDialog.show"
+      v-model="areaDialog.show"
       max-width="1000px"
     >
       <v-layout column>
         <v-card>
           <v-layout align-center justify-center row fill-height>
             <v-card-title class="headline">
-              {{ $t(placeDialog.title) }}
+              {{ $t(areaDialog.title) }}
             </v-card-title>
           </v-layout>
         </v-card>
-        <PlaceForm
-          v-on:cancel="cancelPlace"
+        <AreaForm
+          v-on:cancel="cancelArea"
           v-on:saved="refreshPlacesList"
-          v-bind:initialData="placeDialog.places"
+          v-bind:initialData="areaDialog.area"
         />
       </v-layout>
     </v-dialog>
@@ -109,11 +109,11 @@
 </template>
 
 <script>
-import PlaceForm from "./PlacesForm";
+import AreaForm from "./AreaForm";
 import GoogleMap from "../../components/GoogleMap";
 export default {
   name: "AreaTable.vue",
-  components: { PlaceForm ,GoogleMap },
+  components: { AreaForm ,GoogleMap },
   props: {
     addresses: Array,
     areas: Array,
@@ -122,13 +122,13 @@ export default {
 
   data() {
     return {
-      placeDialog: {
+      areaDialog: {
         title: "",
         show: false,
         editMode: false,
         saveLoading: false,
         addMoreLoading: false,
-        places: {}
+        area: {}
       },
       search: "",
       homegroups: [],
@@ -161,24 +161,28 @@ export default {
     }
   },
   methods: {
-    activatePlaceDialog(places = {}, editMode = false) {
-      this.placeDialog.title = editMode
-        ? this.$t("places.edit")
-        : this.$t("places.new");
-      this.placeDialog.places = places;
-      this.placeDialog.show = true;
+    activateAreaDialog(area = {}, editMode = false) {
+      this.areaDialog.title = editMode
+        ? this.$t("places.area.edit")
+        : this.$t("places.area.new");
+      this.areaDialog.area = {
+        id: area.id,
+        name: area.name,
+        country_code: area.country_code
+      };
+      this.areaDialog.show = true;
     },
 
-    editPlace(place) {
-      this.activatePlaceDialog({ ...place }, true);
+    editArea(area) {
+      this.activateAreaDialog({ ...area }, true);
     },
 
-    newPlace() {
-      this.activatePlaceDialog();
+    newArea() {
+      this.activateAreaDialog();
     },
 
-    cancelPlace() {
-      this.placeDialog.show = false;
+    cancelArea() {
+      this.areaDialog.show = false;
     },
 
     refreshPlacesList() {

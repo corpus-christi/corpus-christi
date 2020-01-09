@@ -358,6 +358,9 @@
       },
       "area": {
         "area": "Area",
+        "create-area": "Create New Area",
+        "edit": "Edit Area",
+        "name": "Area Name",
         "new": "Add Area"
       },
       "create-address": "Create an Address",
@@ -802,6 +805,9 @@
       },
       "area": {
         "area": "Zona",
+        "create-area": "Crear nueva \u00c1rea",
+        "edit": "\u00c1rea de Edici\u00f3n",
+        "name": "Nombre del \u00c1rea",
         "new": "A\u00f1adir Zona"
       },
       "create-address": "Crear una Direcci\u00f3n",

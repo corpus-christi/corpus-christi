@@ -167,8 +167,8 @@ export default {
     };
   },
   computed: {
-    showLatLng: function () {
-        return this.latLng;
+    showLatLng: function() {
+      return this.latLng;
     }
   },
   watch: {
