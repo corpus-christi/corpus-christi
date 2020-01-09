@@ -75,6 +75,14 @@
           <gmap-marker :position="marker"></gmap-marker>
         </gmap-map>
 
+        <v-checkbox
+        name="toggleCheckbox"
+        label="Show Latitude and Longitude"
+        v-on:change="toggleLatLng"
+        :disabled="formDisabled"
+        >
+
+        </v-checkbox>
         <v-text-field
           name="name"
           v-model="address.address_name"
@@ -92,6 +100,7 @@
         <v-text-field
           name="latitude"
           v-model="address.latitude"
+          v-show="latLng"
           v-bind:label="$t('places.address.latitude')"
           :disabled="formDisabled"
         ></v-text-field>
@@ -99,6 +108,7 @@
         <v-text-field
           name="longitude"
           v-model="address.longitude"
+          v-show="latLng"
           v-bind:label="$t('places.address.longitude')"
           :disabled="formDisabled"
         ></v-text-field>
@@ -152,8 +162,14 @@ export default {
       map: null,
       addressErr: false,
       showPlacePicker: false,
-      formDisabled: false
+      formDisabled: false,
+      latLng: false
     };
+  },
+  computed: {
+    showLatLng: function () {
+        return this.latLng;
+    }
   },
   watch: {
     // Make sure data stays in sync with any changes to `initialData` from parent.
@@ -167,7 +183,9 @@ export default {
       // emit false to close form
       this.$emit("cancel", false);
     },
-
+    toggleLatLng() {
+      this.latLng = !this.latLng;
+    },
     async savePlaceForm() {
       this.$validator.validateAll().then(() => {
         if (!this.errors.any()) {
