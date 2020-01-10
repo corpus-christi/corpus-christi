@@ -192,6 +192,7 @@ export default {
   methods: {
     cancelAddressForm() {
       // emit false to close form
+      this.selectedArea = 0;
       this.$emit("cancel", false);
     },
     toggleLatLng() {
