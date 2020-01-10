@@ -147,7 +147,7 @@ export default {
   },
   data: function() {
     return {
-      selectedArea: {text: "", value: 0},
+      selectedArea: 0,
       address: {
         id: 0,
         name: "",
@@ -184,6 +184,9 @@ export default {
     // Make sure data stays in sync with any changes to `initialData` from parent.
     initialData(placeProp) {
       this.address = placeProp;
+      if (placeProp.area_id > 0){
+        this.selectedArea = placeProp.area_id;
+      }
     }
   },
   methods: {
@@ -206,7 +209,7 @@ export default {
         latitude: this.address.latitude,
         longitude: this.address.longitude,
         country_code: this.address.country_code,
-        area_id: this.address.area_id
+        area_id: this.selectedArea
       };
       if (addressId) {
         this.updateAddress(addressData, addressId, emitMessage);
@@ -215,8 +218,6 @@ export default {
       }
     },
     addAddress(addressData, emitMessage) {
-      console.log(addressData);
-      this.address.area_id = this.selectedArea.value;
       this.$http
         .post("/api/v1/places/addresses", addressData)
         .then(resp => {
@@ -232,7 +233,6 @@ export default {
         });
     },
     updateAddress(addressData, addressId, emitMessage) {
-      console.log(addressData);
       this.$http
         .put(`/api/v1/places/addresses/${addressId}`, addressData)
         .then(resp => {
