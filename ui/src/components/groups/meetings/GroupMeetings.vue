@@ -18,7 +18,7 @@
         data-cy="add-meeting"
       >
         <v-icon dark left>add</v-icon>
-        {{ $t("groups.actions.add-meeting") }}
+        {{ $t("groups.meetings.add-meeting") }}
       </v-btn>
     </v-toolbar>
     <v-data-table
@@ -103,7 +103,7 @@
         <v-card-title primary-title>
           <div>
             <h3 class="headline mb-0">
-              {{ $t("groups.actions.add-meeting") }}
+              {{ $t("groups.meetings.add-meeting") }}
             </h3>
           </div>
         </v-card-title>
