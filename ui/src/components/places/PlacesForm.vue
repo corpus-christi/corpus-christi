@@ -51,7 +51,7 @@
                 hide-details
                 solo
                 single-line
-                :label="$t('places.area')"
+                :label="$t('places.area.area')"
                 :items="dropdownList"
                 v-model="selectedArea"
                 v-validate="'required'"

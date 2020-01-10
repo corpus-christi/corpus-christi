@@ -31,11 +31,9 @@
     </v-toolbar>
 
     <v-data-table
-      :rows-per-page-items="rowsPerPageItem"
       :headers="headers"
       :items="addresses"
       :search="search"
-      :loading="tableLoading"
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
@@ -116,7 +114,7 @@
 import PlaceForm from "./PlacesForm";
 import GoogleMap from "../../components/GoogleMap";
 export default {
-  name: "PlacesTable.vue",
+  name: "PlacesTable",
   components: { PlaceForm, GoogleMap },
   props: {
     addresses: Array,
@@ -138,10 +136,6 @@ export default {
       homegroups: [],
       groupLocations: []
     };
-  },
-
-  mounted() {
-    this.getHomegroupLocations();
   },
   computed: {
     headers() {

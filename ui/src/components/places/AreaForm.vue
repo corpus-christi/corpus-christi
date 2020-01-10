@@ -52,7 +52,7 @@ export default {
       required: true
     }
   },
-  data: function () {
+  data: function() {
     return {
       area: {
         id: 0,
@@ -89,7 +89,7 @@ export default {
         this.addArea(areaData, emitMessage);
       }
     },
-    addArea(areaData, emitMessage){
+    addArea(areaData, emitMessage) {
       this.$http
         .post("/api/v1/places/areas", areaData)
         .then(resp => {

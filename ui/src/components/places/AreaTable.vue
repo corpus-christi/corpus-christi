@@ -31,11 +31,9 @@
     </v-toolbar>
 
     <v-data-table
-      :rows-per-page-items="rowsPerPageItem"
       :headers="headers"
       :items="areas"
       :search="search"
-      :loading="tableLoading"
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
@@ -112,8 +110,8 @@
 import AreaForm from "./AreaForm";
 import GoogleMap from "../../components/GoogleMap";
 export default {
-  name: "AreaTable.vue",
-  components: { AreaForm ,GoogleMap },
+  name: "AreaTable",
+  components: { AreaForm, GoogleMap },
   props: {
     addresses: Array,
     areas: Array,
@@ -134,10 +132,6 @@ export default {
       homegroups: [],
       groupLocations: []
     };
-  },
-
-  mounted() {
-    this.getHomegroupLocations();
   },
   computed: {
     headers() {
