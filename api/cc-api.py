@@ -17,7 +17,7 @@ from src.events.models import Event
 from src.groups.create_group_data import create_group_test_data
 from src.i18n.models import Language, I18NLocale
 from src.images.create_image_data import create_images_test_data
-from src.people.models import Person, Account, Role
+from src.people.models import Person, Role
 from src.people.test_people import create_multiple_people, create_multiple_accounts, create_multiple_managers, \
     create_accounts_roles
 from src.places.models import Country
@@ -208,46 +208,49 @@ app.cli.add_command(data_cli)
 
 # ---- Users and Accounts
 
-user_cli = AppGroup('account', help="Maintain account data.")
+# user_cli = AppGroup('account', help="Maintain account data.")
+
+# #this has to be redone
+# #------------------------------------------------------------------------------------------------------------------------------------------------
+# @user_cli.command('new', help="Create new account")
+# @click.argument('username')
+# @click.argument('password')
+# @click.option('--first', help="First name")
+# @click.option('--last', help="Last name")
+# def create_account(username, password, first, last):
+#     first_name = first or 'Test'
+#     last_name = last or 'User'
+
+#     # Make sure no existing user.
+#     person = db.session.query(Account).filter_by(username=username).first()
+#     if person is not None:
+#         raise BadParameter(f"Already an account with username '{username}'")
+
+#     # Create the Person; commit to DB so we get ID
+#     person = Person(first_name=first_name, last_name=last_name)
+#     account = Account(username=username, password=password, person=person)
+#     db.session.add(account)
+#     db.session.commit()
+#     print(f"Created {person}")
+#     print(f"Created {account}")
 
 
-@user_cli.command('new', help="Create new account")
-@click.argument('username')
-@click.argument('password')
-@click.option('--first', help="First name")
-@click.option('--last', help="Last name")
-def create_account(username, password, first, last):
-    first_name = first or 'Test'
-    last_name = last or 'User'
+# @user_cli.command('password', help="Set password")
+# @click.argument('username')
+# @click.argument('password')
+# def update_password(username, password):
+#     person = db.session.query(Account).filter_by(username=username).first()
+#     if person is None:
+#         raise BadParameter(f"No account with username '{username}'")
 
-    # Make sure no existing user.
-    person = db.session.query(Account).filter_by(username=username).first()
-    if person is not None:
-        raise BadParameter(f"Already an account with username '{username}'")
-
-    # Create the Person; commit to DB so we get ID
-    person = Person(first_name=first_name, last_name=last_name)
-    account = Account(username=username, password=password, person=person)
-    db.session.add(account)
-    db.session.commit()
-    print(f"Created {person}")
-    print(f"Created {account}")
+#     person.password = password
+#     db.session.commit()
+#     print(f"Password for '{username}' updated")
 
 
-@user_cli.command('password', help="Set password")
-@click.argument('username')
-@click.argument('password')
-def update_password(username, password):
-    person = db.session.query(Account).filter_by(username=username).first()
-    if person is None:
-        raise BadParameter(f"No account with username '{username}'")
+# app.cli.add_command(user_cli)
 
-    person.password = password
-    db.session.commit()
-    print(f"Password for '{username}' updated")
-
-
-app.cli.add_command(user_cli)
+# #-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # ---- Courses and Relating to Courses
 

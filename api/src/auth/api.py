@@ -11,7 +11,9 @@ from .blacklist_helpers import (
     revoke_token, unrevoke_token)
 from .. import jwt, db
 from ..auth.exceptions import TokenNotFound
-from ..people.models import Account, AccountSchema, Person, PersonSchema, Role, RoleSchema
+from ..people.models import Person, PersonSchema, Role, RoleSchema
+
+#removed Account, AccountSchema,  from line 14
 
 blacklist = set()
 
@@ -41,19 +43,20 @@ def login():
     badCred = {'login': ['Invalid credentials']}
 
     # Return to the caller all the account information needed.
-    account = db.session.query(Account).filter_by(username=username).first()
-    if account is None or not account.verify_password(password):
+    person = db.session.query(Person).filter_by(username=username).first()
+    if person is None or not person.verify_password(password):
         return jsonify(badCred), 404
 
-    person = db.session.query(Person).filter_by(id=account.person_id).first()
-    if person is None:
-        return jsonify(badCred), 404
+#dont think this is neccesary anymore
+    # person = db.session.query(Person).filter_by(id=account.person_id).first()
+    # if person is None:
+    #     return jsonify(badCred), 404
 
     print(datetime)
     access_token = create_access_token(identity=username)
     # Add token to database for revokability
     add_token_to_database(access_token, current_app.config['JWT_IDENTITY_CLAIM'])
-    return jsonify(jwt=access_token, username=account.username,
+    return jsonify(jwt=access_token, username=person.username,
                    firstName=person.first_name, lastName=person.last_name)
 
 
@@ -65,7 +68,7 @@ def check_if_token_revoked(decoded_token):
 
 @jwt.user_claims_loader
 def add_claims_to_access_token(identity):
-    roles = db.session.query(Role).join(Account, Role.accounts).filter_by(
+    roles = db.session.query(Role).join(Person, Role.persons).filter_by( #not certain whether it should be Role.persons or Role.person
         username=identity).filter_by(active=True).all()
     role_schema = RoleSchema()
     user_roles = []
@@ -102,19 +105,20 @@ def login_test():
     username = response['username'] = get_jwt_identity()
 
     success = True
-    account = db.session.query(Account).filter_by(username=username).first()
-    if account is None:
-        success = False
-        response['account'] = f"Can't fetch <Account(username='{username}')>"
-    else:
-        account_schema = AccountSchema()
-        response['account'] = account_schema.dump(account)
+    person = db.session.query(Person).filter_by(username=username).first()
+    #dont think this is needed
+    # if account is None:
+    #     success = False
+    #     response['account'] = f"Can't fetch <Account(username='{username}')>"
+    # else:
+    #     account_schema = AccountSchema()
+    #     response['account'] = account_schema.dump(account)
 
-        person = db.session.query(Person).filter_by(
-            id=account.person_id).first()
+    #     person = db.session.query(Person).filter_by(
+    #         id=account.person_id).first()
         if person is None:
             success = False
-            response['person'] = f"Can't fetch <Person(id={account.person_id})>"
+            response['person'] = f"Can't fetch <Person(username='{username}')>"
         else:
             person_schema = PersonSchema()
             response['person'] = person_schema.dump(person)

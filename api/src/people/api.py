@@ -4,8 +4,7 @@ from flask_jwt_extended import jwt_required
 from marshmallow import ValidationError
 
 from . import people
-from .models import Person, Role, PersonSchema, \ 
-    RoleSchema, Manager, ManagerSchema
+from .models import Person, Role, PersonSchema, RoleSchema, Manager, ManagerSchema
 from .. import db
 from ..attributes.models import Attribute, AttributeSchema, EnumeratedValue, \
     EnumeratedValueSchema, PersonAttribute, PersonAttributeSchema
@@ -206,9 +205,9 @@ def delete_person(person_id):
 
 
 # ---- Account # possibly no longer needed
-
-# account_schema = AccountSchema()
-
+#-----------------------------------------------------------------------------------------------------------------------
+person_schema2 = PersonSchema()
+#-----------------------------------------------------------------------------------------------------------------------
 
 # @people.route('/accounts', methods=['POST'])
 # def create_account():
@@ -253,16 +252,17 @@ def read_one_person_by_username(username): #account was seperate before it got m
     result = db.session.query(Person).filter_by(username=username).first()
     if result is None:
         return 'Person specified was NOT found', 404
-    return jsonify(person_schema.dump(result))
+    return jsonify(person_schema2.dump(result))
 
-#not sure how neccesary this next function is
-@people.route('/persons/<person_id>/account')
-@jwt_required
-def read_person_account(person_id):
-    account = db.session.query(Account).filter_by(person_id=person_id).first()
-    if account is None:
-        return 'Account specified was NOT found', 404
-    return jsonify(account_schema.dump(account))
+#TEMPORARY REMOVAL
+# #not sure how neccesary this next function is
+# @people.route('/persons/<person_id>/account')
+# @jwt_required
+# def read_person_account(person_id):
+#     account = db.session.query(Account).filter_by(person_id=person_id).first()
+#     if account is None:
+#         return 'Account specified was NOT found', 404
+#     return jsonify(account_schema.dump(account))
 
 #changed account and accounts to person and persons
 @people.route('/role/<role_id>/persons') 
@@ -271,22 +271,23 @@ def get_persons_by_role(role_id):
     role = db.session.query(Role).filter_by(id=role_id).first()
     if role is None:
         return 'Role specified was NOT found', 404
-    return jsonify(person_schema.dump(role.persons, many=True))
+    return jsonify(person_schema2.dump(role.persons, many=True))
 
-
+##COME BACK TO THIS/ATTEMPTING A BANDAID SOLUTION ON ALL PARTS AFTER THIS TO ONLY CHANGE THE BACKEND WHILE BREAKING AS LITTLE UI AND API CALLS AS POSSIBLE
+#----------------------------------------------------------------------------------------------------------------------------------------------------------------
 @people.route('/accounts/<account_id>', methods=['PATCH'])
 @jwt_required
-def update_account(account_id):
+def update_account(person_id):
     try:
         account_request = request.json.copy()
         account_request.pop('roles', None)
-        account_schema.load(account_request, partial=True)
+        person_schema2.load(account_request, partial=True)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    account = db.session.query(Account).filter_by(id=account_id).first()
-    if account is None:
-        return 'Account specified was NOT found', 404
+    person = db.session.query(Person).filter_by(id=person_id).first()
+    if person is None:
+        return 'Person specified was NOT found', 404
 
     roles_to_add = []
     if 'roles' in request.json:
@@ -295,65 +296,66 @@ def update_account(account_id):
     # Only these fields can be meaningfully updated.
     for field in 'password', 'username', 'active':
         if field in request.json:
-            setattr(account, field, request.json[field])
+            setattr(person, field, request.json[field])
 
     if roles_to_add is not None:
         role_objects = []
         for role in roles_to_add:
             role_object = db.session.query(Role).filter_by(id=role).first()
             role_objects.append(role_object)
-        revoke_tokens_of_account(account.id)
+        revoke_tokens_of_account(person.id)
 
-    account.roles = role_objects
+    person.roles = role_objects
 
     db.session.commit()
-    return jsonify(account_schema.dump(account))
-
+    return jsonify(person_schema2.dump(person))
+#----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @people.route('/accounts/deactivate/<account_id>', methods=['PUT'])
 @jwt_required
-def deactivate_account(account_id):
-    account = db.session.query(Account).filter_by(id=account_id).first()
-    if account is None:
-        return 'Account specified was NOT found', 404
+def deactivate_account(person_id):
+    person = db.session.query(Person).filter_by(id=person_id).first()
+    if person is None:
+        return 'Person specified was NOT found', 404
 
-    setattr(account, 'active', False)
+    setattr(person, 'active', False)
 
     db.session.commit()
 
-    return jsonify(account_schema.dump(account))
+    return jsonify(person_schema2.dump(person))
 
 
 @people.route('/accounts/activate/<account_id>', methods=['PUT'])
 @jwt_required
-def activate_account(account_id):
-    account = db.session.query(Account).filter_by(id=account_id).first()
-    if account is None:
-        return 'Account specified was NOT found', 404
+def activate_account(person_id):
+    person = db.session.query(Person).filter_by(id=person_id).first()
+    if person is None:
+        return 'Person specified was NOT found', 404
 
-    setattr(account, 'active', True)
+    setattr(person, 'active', True)
 
     db.session.commit()
 
-    return jsonify(account_schema.dump(account))
+    return jsonify(person_schema2.dump(person))
 
 
 @people.route('/accounts/<account_id>/confirm')
 @jwt_required
 # @authorize(['role.superuser, role.infrastructure']) # <-- Only these people can confirm an account
-def confirm_user_account(account_id):
+def confirm_user_account(person_id):
     """ Confirm a user's account (ADMIN ACTION ONLY) """
-    account = db.session.query(Account).filter_by(id=account_id).first()
-    if account is None:
-        return 'Account to confirm was NOT found', 404
+    person = db.session.query(Person).filter_by(id=person_id).first()
+    if person is None:
+        return 'Person to confirm was NOT found', 404
 
-    setattr(account, 'confirmed', True)
+    setattr(person, 'confirmed', True)
 
     db.session.commit()
 
-    return jsonify(account_schema.dump(account))
+    return jsonify(person_schema2.dump(person))
 
-
+#end of first major bandaid area
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # ---- Roles
 
 
@@ -380,15 +382,15 @@ def read_all_roles():
     result = db.session.query(Role).all()
     return jsonify(role_schema.dump(result, many=True))
 
-
+#maybe will replace with a person call or path, not sure yet
 @people.route('/role/account/<account_id>')
 @jwt_required
-def get_roles_for_account(account_id):
-    account = db.session.query(Account).filter_by(id=account_id).first()
-    if account is None:
-        return jsonify("accounts does not exist"), 404
+def get_roles_for_account(person_id):
+    person = db.session.query(Person).filter_by(id=person_id).first()
+    if person is None:
+        return jsonify("persons does not exist"), 404
     result = []
-    for role in account.roles:
+    for role in person.roles:
         role = role_schema.dump(role)
         result.append(role["nameI18n"])
     return jsonify(result)
@@ -413,7 +415,7 @@ def update_role(role_id):
 
     role = db.session.query(Role).filter_by(id=role_id).first()
     if role is None:
-        return 'Role specified was NOT found', 404https://realpython.com/prevent-python-sql-injection/
+        return 'Role specified was NOT found', 404
 
     if role is None:
         return jsonify("Role does not exist"), 404
@@ -445,56 +447,59 @@ def deactivate_role(role_id):
 
     return jsonify(role_schema.dump(role))
 
-
+#link role to person instead of account
 @people.route('/role/<account_id>&<role_id>', methods=['POST'])
 @jwt_required
-def add_role_to_account(account_id, role_id):
-    account = db.session.query(Account).filter_by(id=account_id).first()
+def add_role_to_account(person_id, role_id):
+    person = db.session.query(Person).filter_by(id=person_id).first()
 
-    if account is None:
-        return 'Account not found', 404
+    if person is None:
+        return 'Person not found', 404
 
     role_to_add = db.session.query(Role).filter_by(id=role_id).first()
 
-    account.roles.append(role_to_add)
-    db.session.add(account)
+    person.roles.append(role_to_add)
+    db.session.add(person)
     db.session.commit()
 
-    revoke_tokens_of_account(account.id)
+    revoke_tokens_of_account(person.id)
 
     user_roles = []
-    roles = db.session.query(Role).join(Account, Role.accounts).filter_by(
-        id=account_id).filter_by(active=True).all()
+    roles = db.session.query(Role).join(Person, Role.persons).filter_by(
+        id=person_id).filter_by(active=True).all()
     for r in roles:
         user_roles.append(role_schema.dump(r)['nameI18n'])
 
     return jsonify(user_roles)
 
-
+#remove role from person instead of account
 @people.route('/role/<account_id>&<role_id>', methods=['DELETE'])
 @jwt_required
-def remove_role_from_account(account_id, role_id):
-    account = db.session.query(Account).filter_by(id=account_id).first()
-    if account is None:
-        return 'Account not found', 404
+def remove_role_from_account(person_id, role_id):
+    person = db.session.query(Person).filter_by(id=person_id).first()
+    if person is None:
+        return 'Person not found', 404
 
     role_to_remove = db.session.query(Role).filter_by(id=role_id).first()
     if role_to_remove is None:
         return 'Role specified was NOT found', 404
 
-    if role_to_remove not in account.roles:
-        return 'That account does not have that role', 404
+    if role_to_remove not in person.roles:
+        return 'That Person does not have that role', 404
 
-    account.roles.remove(role_to_remove)
+    person.roles.remove(role_to_remove)
     db.session.commit()
-    revoke_tokens_of_account(account_id)
+    revoke_tokens_of_account(person_id)
 
+    #this part was already commented out
+    #--------------------------------------------
     # user_roles = []
-    # roles = db.session.query(Role).join(Account, Role.accounts).filter_by(id=account_id).filter_by(active=True).all()
+    # roles = db.session.query(Role).join(Person, Role.person).filter_by(id=person_id).filter_by(active=True).all()
     # for r in roles:
     #     user_roles.append(role_schema.dump(r)['nameI18n'])
     #
     # return jsonify(user_roles)
+    #--------------------------------------------
     return jsonify(role_schema.dump(role_to_remove))
 
 
@@ -569,7 +574,7 @@ def delete_manager(manager_id):
         setattr(subordinate, 'manager_id', None)
 
     db.session.delete(manager)
-    db.session.commit()https://realpython.com/prevent-python-sql-injection/
+    db.session.commit()
 
     return jsonify(manager_schema.dump(manager)), 204
 

@@ -14,6 +14,18 @@ from ..places.models import Address
 from ..shared.models import StringTypes
 
 
+
+# Defines join table for people_person and people_role
+
+
+people_person_role = Table('person_role', Base.metadata,
+                            Column('people_person_id', Integer, ForeignKey(
+                                'people_person.id'), primary_key=True),
+                            Column('person_role_id', Integer, ForeignKey(
+                                'person_role.id'), primary_key=True)
+                            )
+
+
 # ---- Person
 
 class Person(Base):
@@ -101,7 +113,7 @@ class PersonSchema(Schema):
     attributesInfo = fields.Nested('PersonAttributeSchema', many=True)
     images = fields.Nested('ImagePersonSchema', many=True, exclude=['person'], dump_only=True)
 
-        @pre_load
+    @pre_load
     def hash_password(self, data):
         """Make sure the password is properly hashed when creating a new account."""
         if 'password' in data.keys():
@@ -109,15 +121,6 @@ class PersonSchema(Schema):
         return data
 
 
-# Defines join table for people_person and people_role
-
-
-people_person_role = Table('person_role', Base.metadata,
-                            Column('people_person_id', Integer, ForeignKey(
-                                'people_person.id'), primary_key=True),
-                            Column('person_role_id', Integer, ForeignKey(
-                                'person_role.id'), primary_key=True)
-                            )
 
 
 # ---- Account
