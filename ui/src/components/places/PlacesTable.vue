@@ -184,14 +184,14 @@ export default {
         ? this.$t("places.edit")
         : this.$t("places.new");
       this.placeDialog.places = {
-        address_name: places.name,
-        description: "",
+        id: places.id,
+        name: places.name,
         address: places.address,
         city: places.city,
         latitude: places.latitude,
         longitude: places.longitude,
         country_code: places.country_code,
-        area_name: places.area_id
+        area_id: places.area_id
       };
       this.placeDialog.show = true;
     },
