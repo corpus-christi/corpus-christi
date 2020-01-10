@@ -6,9 +6,14 @@
           <v-toolbar-title>{{ $t("groups.header") }}</v-toolbar-title>
         </v-flex>
         <v-flex md2>
-          <v-text-field v-model="search" append-icon="search"
-          v-bind:label="$t('actions.search')" single-line hide-details
-          data-cy="form-search" / >
+          <v-text-field
+            v-model="search"
+            append-icon="search"
+            v-bind:label="$t('actions.search')"
+            single-line
+            hide-details
+            data-cy="form-search"
+          />
         </v-flex>
         <v-flex md3>
           <v-select

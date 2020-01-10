@@ -75,7 +75,9 @@
     <!-- Archive dialog -->
     <v-dialog v-model="archiveDialog.show" max-width="350px">
       <v-card>
-        <v-card-text>{{ $t("groups.messages.confirm-member-archive") }}</v-card-text>
+        <v-card-text>{{
+          $t("groups.messages.confirm-member-archive")
+        }}</v-card-text>
         <v-card-actions>
           <v-btn
             v-on:click="cancelArchive"
@@ -218,18 +220,22 @@ export default {
           value: "person.firstName",
           width: "20%"
         },
-        { text: this.$t("person.name.last"),
+        {
+          text: this.$t("person.name.last"),
           value: "person.lastName",
-          width: "20%" },
-        { text: this.$t("person.email"),
+          width: "20%"
+        },
+        {
+          text: this.$t("person.email"),
           value: "person.email",
           width: "22.5%"
         },
-        { text: this.$t("person.phone"),
+        {
+          text: this.$t("person.phone"),
           value: "person.phone",
           width: "22.5%"
         },
-        { 
+        {
           text: this.$t("actions.header"),
           sortable: false
         }
