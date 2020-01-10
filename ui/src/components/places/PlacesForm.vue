@@ -202,9 +202,28 @@ export default {
     }
   },
   methods: {
+    resetForm() {
+      // reset address values back to defaults
+      this.selectedArea = 0;
+      this.address.id = 0;
+      this.address.name = "";
+      this.address.address = "";
+      this.address.city = "";
+      this.address.latitude = "";
+      this.address.longitude = "";
+      this.address.country_code = "";
+      this.address.area_id = "";
+      this.center = { lat: -2.90548355117024, lng: -79.02949294174876 };
+      this.marker = { lat: 0, lng: 0 };
+      this.map = null;
+      this.addressErr = false;
+      this.showPlacePicker = false;
+      this.formDisabled = false;
+      this.latLng = false;
+    },
     cancelAddressForm() {
       // emit false to close form
-      this.selectedArea = 0;
+      this.resetForm();
       this.$validator.reset();
       this.$emit("cancel", false);
     },
