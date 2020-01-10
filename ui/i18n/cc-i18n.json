@@ -254,6 +254,7 @@
       "meetings": {
         "title": "Meetings"
       },
+      "member-count": "Member Count",
       "members": {
         "title": "Members"
       },
@@ -689,6 +690,7 @@
       "meetings": {
         "title": "Reuniones"
       },
+      "member-count": "Recuento de Miembros",
       "members": {
         "title": "Miembros"
       },

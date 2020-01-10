@@ -6,14 +6,9 @@
           <v-toolbar-title>{{ $t("groups.header") }}</v-toolbar-title>
         </v-flex>
         <v-flex md2>
-          <v-text-field
-            v-model="search"
-            append-icon="search"
-            v-bind:label="$t('actions.search')"
-            single-line
-            hide-details
-            data-cy="form-search"
-          ></v-text-field>
+          <v-text-field v-model="search" append-icon="search"
+          v-bind:label="$t('actions.search')" single-line hide-details
+          data-cy="form-search" / >
         </v-flex>
         <v-flex md3>
           <v-select
@@ -55,7 +50,7 @@
           class="hover-hand"
           v-on:click="$router.push({ path: '/groups/' + props.item.id })"
         >
-          <span> {{ props.item.name }}</span>
+          {{ props.item.name }}
         </td>
         <td
           class="hover-hand"
@@ -68,6 +63,12 @@
           v-on:click="$router.push({ path: '/groups/' + props.item.id })"
         >
           {{ getManagerName(props.item.managerInfo) }}
+        </td>
+        <td
+          class="hover-hand"
+          v-on:click="$router.push({ path: '/groups/' + props.item.id })"
+        >
+          {{ props.item.memberList.length + 1 }}
         </td>
         <td>
           <template v-if="props.item.active">
@@ -160,7 +161,7 @@
             data-cy="cancel-archive"
             >{{ $t("actions.cancel") }}</v-btn
           >
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="archiveGroup"
             color="primary"
@@ -246,9 +247,9 @@ export default {
     visibleGroups() {
       let list = this.groups;
 
-      if (this.viewStatus == "viewActive") {
+      if (this.viewStatus === "viewActive") {
         return list.filter(ev => ev.active);
-      } else if (this.viewStatus == "viewArchived") {
+      } else if (this.viewStatus === "viewArchived") {
         return list.filter(ev => !ev.active);
       } else {
         return list;
@@ -259,10 +260,8 @@ export default {
       return [
         { text: this.$t("groups.name"), value: "name" },
         { text: this.$t("groups.description"), value: "description" },
-        {
-          text: this.$t("groups.manager"),
-          value: "managerInfo.person.lastName"
-        },
+        { text: this.$t("groups.manager"), value: "managerInfo" },
+        { text: this.$t("groups.member-count"), value: "memberList.length" },
         { text: this.$t("actions.header"), sortable: false }
       ];
     }
