@@ -49,12 +49,16 @@
             ></v-text-field>-->
             <div>
               <v-select
+                name="area"
                 hide-details
                 solo
                 single-line
                 :label="$t('places.area')"
                 :items="dropdownList"
                 v-model="selectedArea"
+                v-validate="'required'"
+                :error-messages="errors.collect('area')"
+                :disabled="formDisabled"
               ></v-select>
             </div>
           </v-flex>
@@ -92,6 +96,8 @@
           name="name"
           v-model="address.name"
           v-bind:label="$t('places.address.name')"
+          v-validate="'required'"
+          :error-messages="errors.collect('name')"
           :disabled="formDisabled"
         ></v-text-field>
 
@@ -192,6 +198,7 @@ export default {
   methods: {
     cancelAddressForm() {
       // emit false to close form
+      this.selectedArea = 0;
       this.$emit("cancel", false);
     },
     toggleLatLng() {
