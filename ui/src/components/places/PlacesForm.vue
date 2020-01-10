@@ -8,7 +8,7 @@
           v-model="address.address"
           v-bind:label="$t('places.address.address')"
           v-validate="'required'"
-          :error-messages="errors.collect('address')"
+          v-bind:error-messages="errors.collect('address')"
           clearable
           :disabled="formDisabled"
         ></v-text-field>
@@ -16,14 +16,12 @@
         <v-layout row>
           <v-flex>
             <v-text-field
-              slot="activator"
               name="city"
               v-model="address.city"
               v-bind:label="$t('places.address.city')"
-              v-validate="'required'"
-              :error-messages="errors.collect('city')"
-              clearable
-              :disabled="formDisabled"
+              v-validate="'required|alpha_spaces'"
+              v-bind:error-messages="errors.collect('city')"
+              v-bind:readonly="formDisabled"
             ></v-text-field>
           </v-flex>
 
@@ -32,7 +30,7 @@
               flat
               icon
               @click="queryAddress('address')"
-              :disabled="formDisabled"
+              v-bind:disabled="formDisabled"
             >
               <v-icon>search</v-icon>
             </v-btn>
@@ -98,7 +96,7 @@
           v-bind:label="$t('places.address.name')"
           v-validate="'required'"
           :error-messages="errors.collect('name')"
-          :disabled="formDisabled"
+          :readonly="formDisabled"
         ></v-text-field>
 
         <v-text-field
@@ -140,6 +138,8 @@
 </template>
 
 <script>
+import { isEmpty } from "lodash";
+
 export default {
   name: "PlaceForm",
   props: {
@@ -189,9 +189,15 @@ export default {
   watch: {
     // Make sure data stays in sync with any changes to `initialData` from parent.
     initialData(placeProp) {
-      this.address = placeProp;
-      if (placeProp.area_id > 0){
-        this.selectedArea = placeProp.area_id;
+      console.log("DATA BEING PASSED TO ADDRESS FORM");
+      console.log(placeProp);
+      if (isEmpty(placeProp)) {
+        this.$validator.reset();
+      } else {
+        this.address = placeProp;
+        if (placeProp.area_id > 0) {
+          this.selectedArea = placeProp.area_id;
+        }
       }
     }
   },
@@ -199,6 +205,7 @@ export default {
     cancelAddressForm() {
       // emit false to close form
       this.selectedArea = 0;
+      this.$validator.reset();
       this.$emit("cancel", false);
     },
     toggleLatLng() {
@@ -208,21 +215,27 @@ export default {
       this.saveAddress("saved");
     },
     saveAddress(emitMessage) {
-      let addressId = this.address.id;
-      let addressData = {
-        name: this.address.name,
-        address: this.address.address,
-        city: this.address.city,
-        latitude: this.address.latitude,
-        longitude: this.address.longitude,
-        country_code: this.address.country_code,
-        area_id: this.selectedArea
-      };
-      if (addressId) {
-        this.updateAddress(addressData, addressId, emitMessage);
-      } else {
-        this.addAddress(addressData, emitMessage);
-      }
+      this.$validator.validateAll().then(() => {
+        if (!this.errors.any()) {
+          let addressId = this.address.id;
+          let addressData = {
+            name: this.address.name,
+            address: this.address.address,
+            city: this.address.city,
+            latitude: this.address.latitude,
+            longitude: this.address.longitude,
+            country_code: this.address.country_code,
+            area_id: this.selectedArea
+          };
+          if (addressId) {
+            this.updateAddress(addressData, addressId, emitMessage);
+          } else {
+            this.addAddress(addressData, emitMessage);
+          }
+        } else {
+          console.log("there were errors");
+        }
+      });
     },
     addAddress(addressData, emitMessage) {
       this.$http
