@@ -14,6 +14,16 @@
       <v-btn
         color="primary"
         raised
+        v-on:click=""
+        data-cy=""
+      >
+        <v-icon dark left>email</v-icon>
+        {{ "Send Email" }}
+      </v-btn>
+
+      <v-btn
+        color="primary"
+        raised
         v-on:click="openParticipantDialog"
         data-cy="add-participant"
       >
@@ -22,6 +32,8 @@
       </v-btn>
     </v-toolbar>
     <v-data-table
+      select-all
+      v-model="selected"
       :rows-per-page-items="rowsPerPageItem"
       :headers="headers"
       :items="members"
@@ -30,6 +42,13 @@
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
+        <td>
+            <v-checkbox 
+              v-model="props.selected"
+              primary
+              hide-details
+             ></v-checkbox>
+        </td>
         <td>{{ props.item.person.firstName }}</td>
         <td>{{ props.item.person.lastName }}</td>
         <td>{{ props.item.person.email }}</td>
@@ -190,6 +209,7 @@ export default {
       tableLoading: false,
       search: "",
       members: [],
+      selected: [],
       addParticipantDialog: {
         show: false,
         newParticipants: [],
