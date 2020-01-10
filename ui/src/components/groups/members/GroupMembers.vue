@@ -14,25 +14,44 @@
       <v-btn
         color="primary"
         raised
+        v-on:click="toggleSelect"
+        data-cy=""
+      >
+        {{ "Select" }}
+      </v-btn>
+      <v-btn
+        color="primary"
+        raised
         v-on:click=""
         data-cy=""
+        v-if="select"
       >
         <v-icon dark left>email</v-icon>
         {{ "Send Email" }}
       </v-btn>
-
+      <v-btn
+        color="primary"
+        raised
+        v-on:click=""
+        data-cy=""
+        v-if="select"
+      >
+        <v-icon dark left>archive</v-icon>
+        {{ $t("actions.tooltips.archive") }}
+      </v-btn>
       <v-btn
         color="primary"
         raised
         v-on:click="openParticipantDialog"
         data-cy="add-participant"
+        v-if="!select"
       >
         <v-icon dark left>add</v-icon>
         {{ $t("actions.add-person") }}
       </v-btn>
     </v-toolbar>
-    <v-data-table
-      select-all
+    <v-data-table 
+      :select-all="select"
       v-model="selected"
       :rows-per-page-items="rowsPerPageItem"
       :headers="headers"
@@ -42,12 +61,12 @@
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
-        <td>
+        <td v-if="select">
             <v-checkbox 
               v-model="props.selected"
               primary
               hide-details
-             ></v-checkbox>
+            ></v-checkbox>
         </td>
         <td>{{ props.item.person.firstName }}</td>
         <td>{{ props.item.person.lastName }}</td>
@@ -210,6 +229,7 @@ export default {
       search: "",
       members: [],
       selected: [],
+      select: false,
       addParticipantDialog: {
         show: false,
         newParticipants: [],
@@ -230,6 +250,12 @@ export default {
         text: ""
       }
     };
+  },
+
+  watch: {
+    selected(val) {
+	if (val[0]) console.log(val);
+    }
   },
 
   computed: {
@@ -300,6 +326,15 @@ export default {
           this.addParticipantDialog.loading = false;
           this.showSnackbar(this.$t("groups.messages.error-adding-members"));
         });
+    },
+
+    toggleSelect() {
+      this.select = !this.select;
+      //this.button.text = this.toggleSelect ? 'Compose Email' : 'Send Email';
+    },
+
+    sendEmail(selected) {
+
     },
 
     addParticipant(id) {
