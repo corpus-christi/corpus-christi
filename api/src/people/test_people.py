@@ -6,11 +6,12 @@ from faker import Faker
 from flask import url_for
 from werkzeug.security import check_password_hash
 
-from .models import Person, PersonSchema, AccountSchema, Account, RoleSchema, Role, Manager, ManagerSchema
+from .models import Person, PersonSchema, RoleSchema, Role, Manager, ManagerSchema
 from ..i18n.models import I18NKey, i18n_create, I18NLocale
 from ..images.create_image_data import create_test_images, create_images_people
 from ..images.models import Image, ImagePerson
 
+#removed  AccountSchema, Account, from line 9
 
 class RandomLocaleFaker:
     """Generate multiple fakers for different locales."""
@@ -62,7 +63,7 @@ def person_object_factory():
 def username_factory():
     return f"{fake.pystr(min_chars=5, max_chars=15)}{fake.pyint()}"
 
-
+#still needed? put with person creation info
 def account_object_factory(person_id):
     """Cook up a fake account."""
     fake = Faker()  # Use a generic one; others may not have all methods.
@@ -87,7 +88,7 @@ def create_multiple_people(sqla, n, inactive=False):
     sqla.commit()
     return new_people
 
-
+#This shouldn't still be needed
 def create_multiple_accounts(sqla, fraction=0.75):
     """Commit accounts for `fraction` of `people` in DB."""
     if fraction < 0.1 or fraction > 1.0:
@@ -109,7 +110,7 @@ def create_multiple_accounts(sqla, fraction=0.75):
     sqla.commit()
 
 
-def prep_database(sqla):
+def prep_database(sqla):#? shouldn't be needed anymore
     """Prepare the database with a random number of people, some of which have accounts.
     Returns list of IDs of the new accounts.
     """
@@ -148,7 +149,7 @@ def create_roles(sqla, n):
 
     return role_ids
 
-
+#needs to be updated to person
 def create_accounts_roles(sqla, fraction=0.75):
     new_accounts_roles = []
     if not sqla.query(Account).all():
@@ -163,7 +164,7 @@ def create_accounts_roles(sqla, fraction=0.75):
     sqla.add_all(new_accounts_roles)
     sqla.commit()
 
-
+#tweak
 def manager_object_factory(sqla, description, next_level=None, locale_code='en-US'):
     """Cook up a fake person."""
     description_i18n = f'manager.description.{description.replace(" ", "_")}'[:32]
@@ -274,7 +275,7 @@ def test_create_person_invalid(auth_client):
     assert auth_client.sqla.query(Person).count() == 0
 
 
-@pytest.mark.smoke
+@pytest.mark.smoke #not sure on this one
 def test_read_all_persons(auth_client):
     # GIVEN a DB with a collection people.
 
@@ -478,66 +479,66 @@ def test_activate_person_no_exist(auth_client):
 
 
 # ---- Account
+#parts of this need to moved to create person
+# def test_create_account(auth_client):
+#     # GIVEN some randomly created people
+#     count = random.randint(8, 19)
+#     create_multiple_people(auth_client.sqla, count)
+#     create_role(auth_client.sqla)
 
-def test_create_account(auth_client):
-    # GIVEN some randomly created people
-    count = random.randint(8, 19)
-    create_multiple_people(auth_client.sqla, count)
-    create_role(auth_client.sqla)
+#     # WHEN we retrieve them all
+#     people = auth_client.sqla.query(Person).all()
+#     # THEN we get the expected number
+#     assert len(people) == count
 
-    # WHEN we retrieve them all
-    people = auth_client.sqla.query(Person).all()
-    # THEN we get the expected number
-    assert len(people) == count
+#     # WHEN we create accounts for each person
+#     for person in people:
+#         account = account_object_factory(person.id)
+#         resp = auth_client.post(url_for('people.create_account'), json=account)
+#         # THEN we expect them to be created
+#         assert resp.status_code == 201
+#         # AND the account exists in the database
+#         new_account = auth_client.sqla.query(
+#             Account).filter_by(person_id=person.id).first()
+#         assert new_account is not None
+#         # And the password is properly hashed (refer to docs for generate_password_hash)
+#         method, salt, hash = new_account.password_hash.split('$')
+#         key_deriv, hash_func, iters = method.split(':')
+#         assert key_deriv == 'pbkdf2'
+#         assert hash_func == 'sha256'
+#         assert int(iters) >= 50000
+#         assert len(salt) == 8
+#         assert len(hash) == 64  # SHA 256 / 4 bits per hex value
+#     # AND we end up with the proper number of accounts.
+#     assert auth_client.sqla.query(Account).count() == count
 
-    # WHEN we create accounts for each person
-    for person in people:
-        account = account_object_factory(person.id)
-        resp = auth_client.post(url_for('people.create_account'), json=account)
-        # THEN we expect them to be created
-        assert resp.status_code == 201
-        # AND the account exists in the database
-        new_account = auth_client.sqla.query(
-            Account).filter_by(person_id=person.id).first()
-        assert new_account is not None
-        # And the password is properly hashed (refer to docs for generate_password_hash)
-        method, salt, hash = new_account.password_hash.split('$')
-        key_deriv, hash_func, iters = method.split(':')
-        assert key_deriv == 'pbkdf2'
-        assert hash_func == 'sha256'
-        assert int(iters) >= 50000
-        assert len(salt) == 8
-        assert len(hash) == 64  # SHA 256 / 4 bits per hex value
-    # AND we end up with the proper number of accounts.
-    assert auth_client.sqla.query(Account).count() == count
+#     # GIVEN an invalid json object of bad things
+#     # WHEN we try to pass that to the api to create account
+#     # THEN we get an error
+#     nasty_account = {
+#         'username': username_factory(),
+#         'personId': "slks"
+#     }
 
-    # GIVEN an invalid json object of bad things
-    # WHEN we try to pass that to the api to create account
-    # THEN we get an error
-    nasty_account = {
-        'username': username_factory(),
-        'personId': "slks"
-    }
+#     resp = auth_client.post(url_for('people.create_account'), json=nasty_account)
+#     assert resp.status_code == 422
 
-    resp = auth_client.post(url_for('people.create_account'), json=nasty_account)
-    assert resp.status_code == 422
+#should be a part of the read all people test
+# @pytest.mark.smoke
+# def test_read_all_accounts(auth_client):
+#     # GIVEN a collection of accounts
+#     account_count = random.randint(10, 20)
+#     create_multiple_people(auth_client.sqla, account_count)
+#     create_multiple_accounts(auth_client.sqla, 1.0)
 
+#     # WHEN we request all managers from the api
+#     resp = auth_client.get(url_for('people.read_all_accounts', locale='en-US'))
 
-@pytest.mark.smoke
-def test_read_all_accounts(auth_client):
-    # GIVEN a collection of accounts
-    account_count = random.randint(10, 20)
-    create_multiple_people(auth_client.sqla, account_count)
-    create_multiple_accounts(auth_client.sqla, 1.0)
+#     # THEN the count matches the number of entries in the database
+#     assert resp.status_code == 200
+#     assert len(resp.json) == account_count
 
-    # WHEN we request all managers from the api
-    resp = auth_client.get(url_for('people.read_all_accounts', locale='en-US'))
-
-    # THEN the count matches the number of entries in the database
-    assert resp.status_code == 200
-    assert len(resp.json) == account_count
-
-
+#tweak to reference person
 @pytest.mark.smoke
 def test_read_one_account(auth_client):
     # GIVEN a collection of accounts
@@ -554,6 +555,7 @@ def test_read_one_account(auth_client):
         assert resp.json['active'] == True
 
 
+#tweak to reference person
 @pytest.mark.smoke
 def test_read_one_account_by_username(auth_client):
     # GIVEN an account from the database of accounts
@@ -573,6 +575,7 @@ def test_read_one_account_by_username(auth_client):
     assert resp.status_code == 404  # check response
 
 
+#not sure yet
 @pytest.mark.smoke
 def test_read_person_account(auth_client):
     # GIVEN an account with a person

@@ -116,12 +116,12 @@ def login_test():
 
     #     person = db.session.query(Person).filter_by(
     #         id=account.person_id).first()
-        if person is None:
-            success = False
-            response['person'] = f"Can't fetch <Person(username='{username}')>"
-        else:
-            person_schema = PersonSchema()
-            response['person'] = person_schema.dump(person)
+    if person is None:
+        success = False
+        response['person'] = f"Can't fetch <Person(username='{username}')>"
+    else:
+        person_schema = PersonSchema()
+        response['person'] = person_schema.dump(person)
 
     response['status'] = 'success' if success else 'failure'
 
