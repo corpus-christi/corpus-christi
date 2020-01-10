@@ -54,6 +54,7 @@
                 single-line
                 :label="$t('places.area')"
                 :items="dropdownList"
+                v-model="selectedArea"
               ></v-select>
             </div>
           </v-flex>
@@ -159,6 +160,7 @@ export default {
   },
   data: function() {
     return {
+      selectedArea: {text: "", value: 0},
       address: {
         address_name: "",
         description: "",
@@ -167,7 +169,7 @@ export default {
         latitude: "",
         longitude: "",
         country_code: "",
-        area_name: ""
+        area_id: ""
       },
       center: { lat: -2.90548355117024, lng: -79.02949294174876 },
       marker: { lat: 0, lng: 0 },
@@ -220,6 +222,8 @@ export default {
       });
     },
     sendData() {
+      this.address.area_id = this.selectedArea.value;
+      this.selectedArea = {text: "", value: 0};
       this.$http
         .post("/api/v1/places/locations", this.address)
         .then(resp => {
