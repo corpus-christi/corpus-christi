@@ -71,6 +71,9 @@ entities:
       - name: country
         related-model: Country
         backref: addresses
+      - name: meeting
+        related-model: Meeting
+        backref: addresses
   - name: Area
     singular: area
     plural: areas

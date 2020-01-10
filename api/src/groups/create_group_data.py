@@ -80,10 +80,12 @@ def meeting_object_factory(sqla):
         create_multiple_addresses(sqla, random.randint(3, 6))
         all_addresses = sqla.query(Address).all()
     meeting = {
-        'when': str(rl_fake().future_datetime(end_date="+6h")),
         'group_id': all_groups[random.randint(0, len(all_groups) - 1)].id,
-        'active': flip(),
-        'address_id': all_addresses[random.randint(0, len(all_addresses) - 1)].id
+        'address_id': all_addresses[random.randint(0, len(all_addresses) - 1)].id,
+        'start_time': str(rl_fake().future_datetime(end_date=f'+{random.randint(3,6)}h')),
+        'stop_time': str(rl_fake().future_datetime(end_date=f'+ {random.randint(7, 20)}h')),
+        'description': rl_fake().sentences(nb=1)[0],
+        'active': flip()
     }
     if len(all_addresses) > 0:
         meeting["address_id"] = all_addresses[random.randint(

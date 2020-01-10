@@ -11,8 +11,8 @@ from src.i18n.models import i18n_create, I18NLocale
 from .. import db
 from ..shared.models import StringTypes
 
-
 # ---- Country
+
 
 class Country(Base):
     """Country; uses ISO 3166-1 country codes"""
@@ -59,19 +59,15 @@ class CountrySchema(Schema):
     code = fields.String()
     name_i18n = fields.String()
 
-
-# ---- Area
+    # ---- Area
 
 
 class Area(Base):
-    """Generic area within country (e.g., state, province)"""
     __tablename__ = 'places_area'
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, nullable=False)
     name = Column(StringTypes.MEDIUM_STRING, nullable=False)
-    country_code = Column(String(2), ForeignKey(
+    country_code = Column(StringTypes.SHORT_STRING, ForeignKey(
         'places_country.code'), nullable=False)
-
-    addresses = relationship('Address', backref='areas', passive_deletes=True)
     country = relationship('Country', backref='areas', lazy=True)
 
     def __repr__(self):
@@ -81,10 +77,11 @@ class Area(Base):
 class AreaSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     name = fields.String(required=True, validate=Length(min=1))
-    country_code = fields.String(required=True, validate=Length(min=1))
+    country_code = fields.String(data_key='countryCode', required=True)
 
 
 # ---- Location
+
 
 class Location(Base):
     __tablename__ = 'places_location'
@@ -92,10 +89,7 @@ class Location(Base):
     description = Column(StringTypes.MEDIUM_STRING)
     address_id = Column(Integer, ForeignKey(
         'places_address.id'), nullable=False)
-    address = relationship('Address', back_populates='locations', lazy=True)
-    events = relationship('Event', back_populates="location")
-    assets = relationship('Asset', back_populates="location")
-    images = relationship('ImageLocation', back_populates="location")
+    address = relationship('Address', backref='locations', lazy=True)
 
     def __repr__(self):
         attributes = [f"id='{self.id}'"]
@@ -108,11 +102,10 @@ class Location(Base):
 
 
 class LocationSchema(Schema):
-    id = fields.Integer(dump_only=True, required=False, validate=Range(min=1))
-    description = fields.String(required=False)
-    address_id = fields.Integer(required=True, validate=Range(min=1))
-    address = fields.Nested('AddressSchema')
-
+    id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
+    description = fields.String(validate=Length(min=1))
+    address_id = fields.Integer(
+        data_key='addressId', required=True, validate=Range(min=1))
 
 # ---- Address
 
@@ -123,16 +116,14 @@ class Address(Base):
     name = Column(StringTypes.MEDIUM_STRING, nullable=False)
     address = Column(StringTypes.LONG_STRING, nullable=False)
     city = Column(StringTypes.MEDIUM_STRING, nullable=False)
-    area_id = Column(Integer, ForeignKey(
-        'places_area.id', ondelete='CASCADE'), nullable=False)
+    area_id = Column(Integer, ForeignKey('places_area.id'), nullable=False)
     country_code = Column(StringTypes.SHORT_STRING, ForeignKey(
-        'places_country.code'), nullable=False)
+    'places_country.code'), nullable=False)
     latitude = Column(Float)
     longitude = Column(Float)
-    # area = relationship('Area', backref='addresses', lazy=True)
+    area = relationship('Area', backref='addresses', lazy=True)
     country = relationship('Country', backref='addresses', lazy=True)
-    meetings = relationship('Meeting', back_populates='address', lazy=True)
-    locations = relationship('Location', back_populates='address', lazy=True)
+    meeting = relationship('Meeting', backref='addresses', lazy=True)
 
     def __repr__(self):
         attributes = [f"id='{self.id}'"]
@@ -145,13 +136,12 @@ class Address(Base):
 
 
 class AddressSchema(Schema):
-    id = fields.Integer(dump_only=True, required=False, validate=Range(min=1))
+    id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     name = fields.String(required=True, validate=Length(min=1))
     address = fields.String(required=True, validate=Length(min=1))
     city = fields.String(required=True, validate=Length(min=1))
-    area_id = fields.Integer(required=True, validate=Range(min=1))
-    country_code = fields.String(required=True)
+    area_id = fields.Integer(
+        data_key='areaId', required=True, validate=Range(min=1))
+    country_code = fields.String(data_key='countryCode', required=True)
     latitude = fields.Float()
     longitude = fields.Float()
-    area = fields.Nested('AreaSchema')
-    country = fields.Nested('CountrySchema')

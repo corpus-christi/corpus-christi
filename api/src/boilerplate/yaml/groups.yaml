@@ -28,6 +28,10 @@ entities:
         type: integer
         foreign-key: people_manager.id
         required: true
+    relationships:
+      - name: meeting
+        related-model: Meeting
+        backref: groups
   - name: Meeting
     singular: meeting
     plural: meetings
@@ -38,9 +42,6 @@ entities:
         type: integer
         primary-key: true
         min: 1
-      - name: when
-        type: datetime
-        required: true
       - name: group_id
         type: integer
         required: true
@@ -48,12 +49,24 @@ entities:
       - name: address_id
         type: integer
         foreign-key: places_address.id
+      - name: start_time
+        type: datetime
+        required: true
+      - name: stop_time
+        type: datetime
+        required: true
+      - name: description
+        type: string
+        min-length: 1
+        required: true
+        length: long
+      - name: active
+        type: boolean
+        required: true
+        default: true
     relationships:
-      - name: group
-        related-model: Group
-        backref: meetings
-      - name: address
-        related-model: Address
+      - name: attendance
+        related-model: Attendance
         backref: meetings
   - name: Member
     singular: member
@@ -86,7 +99,10 @@ entities:
         backref: members
       - name: person
         related-model: Person
-        backref: memberships
+        backref: members
+      - name: attendance
+        related-model: Attendance
+        backref: members
   - name: Attendance
     singular: attendance
     plural: attendance
