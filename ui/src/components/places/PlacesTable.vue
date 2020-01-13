@@ -96,6 +96,7 @@
           v-bind:areas="areas"
           v-on:cancel="cancelPlace"
           v-on:saved="refreshPlacesList"
+          v-on:subFormSaved="refreshPlacesList"
         />
       </v-layout>
     </v-dialog>

@@ -39,12 +39,6 @@
 
         <v-layout row>
           <v-flex>
-            <!-- <v-text-field
-              name="area"
-              v-model="address.area_name"
-              v-bind:label="$t('places.area')"
-              :disabled="formDisabled"
-            ></v-text-field>-->
             <div>
               <v-select
                 name="area"
@@ -62,10 +56,31 @@
           </v-flex>
 
           <v-flex shrink>
-            <v-btn flat icon :disabled="formDisabled">
-              <v-icon>search</v-icon>
+            <v-btn flat icon :disabled="formDisabled" @click="openAreaSubForm">
+              <v-icon>add</v-icon>
             </v-btn>
           </v-flex>
+          <v-dialog
+            scrollable
+            persistent
+            v-model="areaDialog.show"
+            max-width="1000px"
+          >
+            <v-layout column>
+              <v-card>
+                <v-layout align-center justify-center row fill-height>
+                  <v-card-title class="headline">
+                    {{ $t(areaDialog.title) }}
+                  </v-card-title>
+                </v-layout>
+              </v-card>
+              <AreaForm
+                v-on:cancel="cancelArea"
+                v-on:saved="refreshPlacesList"
+                v-bind:initialData="areaDialog.area"
+              />
+            </v-layout>
+          </v-dialog>
         </v-layout>
 
         <span body-2 v-if="addressErr" class="red--text">
@@ -139,9 +154,11 @@
 
 <script>
 import { isEmpty } from "lodash";
+import AreaForm from "./AreaForm";
 
 export default {
   name: "PlaceForm",
+  components: { AreaForm },
   props: {
     initialData: {
       type: Object,
@@ -164,13 +181,22 @@ export default {
         country_code: "",
         area_id: ""
       },
+      areaDialog: {
+        title: "",
+        show: false,
+        editMode: false,
+        saveLoading: false,
+        addMoreLoading: false,
+        area: {}
+      },
       center: { lat: -2.90548355117024, lng: -79.02949294174876 },
       marker: { lat: 0, lng: 0 },
       map: null,
       addressErr: false,
       showPlacePicker: false,
       formDisabled: false,
-      latLng: false
+      latLng: false,
+      showAreaForm: false
     };
   },
   computed: {
@@ -220,6 +246,26 @@ export default {
       this.showPlacePicker = false;
       this.formDisabled = false;
       this.latLng = false;
+    },
+    openAreaSubForm() {
+      this.activateAreaDialog();
+    },
+    activateAreaDialog(area = {}, editMode = false) {
+      this.areaDialog.title = editMode
+        ? this.$t("places.area.edit")
+        : this.$t("places.area.new");
+      this.areaDialog.area = {
+        id: area.id,
+        name: area.name,
+        country_code: area.country_code
+      };
+      this.areaDialog.show = true;
+    },
+    cancelArea() {
+      this.areaDialog.show = false;
+    },
+    refreshPlacesList() {
+      this.$emit("subFormSaved");
     },
     cancelAddressForm() {
       // emit false to close form
