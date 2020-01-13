@@ -23,17 +23,6 @@
           v-on:fetchPlacesList="fetchPlacesList"
         ></AreaTable>
       </v-tab-item>
-      <v-tab ripple data-cy="locations-table-tab"
-        >{{ $t("places.location.location") }}
-      </v-tab>
-      <v-tab-item>
-        <AreaTable
-          v-bind:addresses="addressList"
-          v-bind:areas="areaList"
-          v-bind:locations="locationList"
-          v-on:fetchPlacesList="fetchPlacesList"
-        ></AreaTable>
-      </v-tab-item>
     </v-tabs>
   </v-container>
 </template>
