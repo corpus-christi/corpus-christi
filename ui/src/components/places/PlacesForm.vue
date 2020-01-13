@@ -8,7 +8,7 @@
           v-model="address.address"
           v-bind:label="$t('places.address.address')"
           v-validate="'required'"
-          :error-messages="errors.collect('address')"
+          v-bind:error-messages="errors.collect('address')"
           clearable
           :disabled="formDisabled"
         ></v-text-field>
@@ -16,14 +16,12 @@
         <v-layout row>
           <v-flex>
             <v-text-field
-              slot="activator"
               name="city"
               v-model="address.city"
               v-bind:label="$t('places.address.city')"
-              v-validate="'required'"
-              :error-messages="errors.collect('city')"
-              clearable
-              :disabled="formDisabled"
+              v-validate="'required|alpha_spaces'"
+              v-bind:error-messages="errors.collect('city')"
+              v-bind:readonly="formDisabled"
             ></v-text-field>
           </v-flex>
 
@@ -32,7 +30,7 @@
               flat
               icon
               @click="queryAddress('address')"
-              :disabled="formDisabled"
+              v-bind:disabled="formDisabled"
             >
               <v-icon>search</v-icon>
             </v-btn>
@@ -41,7 +39,7 @@
 
         <v-layout row>
           <v-flex>
-           <!-- <v-text-field
+            <!-- <v-text-field
               name="area"
               v-model="address.area_name"
               v-bind:label="$t('places.area')"
@@ -49,21 +47,22 @@
             ></v-text-field>-->
             <div>
               <v-select
+                name="area"
                 hide-details
                 solo
                 single-line
                 :label="$t('places.area')"
                 :items="dropdownList"
+                v-model="selectedArea"
+                v-validate="'required'"
+                :error-messages="errors.collect('area')"
+                :disabled="formDisabled"
               ></v-select>
             </div>
           </v-flex>
 
           <v-flex shrink>
-            <v-btn
-              flat
-              icon
-              :disabled="formDisabled"
-            >
+            <v-btn flat icon :disabled="formDisabled">
               <v-icon>search</v-icon>
             </v-btn>
           </v-flex>
@@ -85,26 +84,20 @@
         </gmap-map>
 
         <v-checkbox
-        name="toggleCheckbox"
-        label="Show Latitude and Longitude"
-        v-on:change="toggleLatLng"
-        :disabled="formDisabled"
+          name="toggleCheckbox"
+          label="Show Latitude and Longitude"
+          v-on:change="toggleLatLng"
+          :disabled="formDisabled"
         >
-
         </v-checkbox>
         <v-text-field
           name="name"
-          v-model="address.address_name"
+          v-model="address.name"
           v-bind:label="$t('places.address.name')"
-          :disabled="formDisabled"
+          v-validate="'required'"
+          :error-messages="errors.collect('name')"
+          :readonly="formDisabled"
         ></v-text-field>
-
-        <v-textarea
-          name="description"
-          v-model="address.description"
-          v-bind:label="$t('places.location.description')"
-          :disabled="formDisabled"
-        ></v-textarea>
 
         <v-text-field
           name="latitude"
@@ -121,7 +114,6 @@
           v-bind:label="$t('places.address.longitude')"
           :disabled="formDisabled"
         ></v-text-field>
-
       </v-layout>
     </v-card-text>
     <v-card-actions>
@@ -129,14 +121,14 @@
       <v-btn
         flat
         color="secondary"
-        @click="cancelPlaceForm"
+        @click="cancelAddressForm"
         :disabled="formDisabled"
         >{{ $t("actions.cancel") }}</v-btn
       >
       <v-btn
         raised
         color="primary"
-        @click="savePlaceForm"
+        @click="saveAddressForm"
         :loading="formDisabled"
         :disabled="formDisabled"
         >{{ $t("actions.save") }}</v-btn
@@ -146,6 +138,8 @@
 </template>
 
 <script>
+import { isEmpty } from "lodash";
+
 export default {
   name: "PlaceForm",
   props: {
@@ -159,15 +153,16 @@ export default {
   },
   data: function() {
     return {
+      selectedArea: 0,
       address: {
-        address_name: "",
-        description: "",
+        id: 0,
+        name: "",
         address: "",
         city: "",
         latitude: "",
         longitude: "",
         country_code: "",
-        area_name: ""
+        area_id: ""
       },
       center: { lat: -2.90548355117024, lng: -79.02949294174876 },
       marker: { lat: 0, lng: 0 },
@@ -194,47 +189,103 @@ export default {
   watch: {
     // Make sure data stays in sync with any changes to `initialData` from parent.
     initialData(placeProp) {
-      this.address = placeProp;
+      console.log("DATA BEING PASSED TO ADDRESS FORM");
+      console.log(placeProp);
+      if (isEmpty(placeProp)) {
+        this.$validator.reset();
+      } else {
+        this.address = placeProp;
+        if (placeProp.area_id > 0) {
+          this.selectedArea = placeProp.area_id;
+        }
+      }
     }
   },
   methods: {
-    cancelPlaceForm() {
+    resetForm() {
+      // reset address values back to defaults
+      this.selectedArea = 0;
+      this.address.id = 0;
+      this.address.name = "";
+      this.address.address = "";
+      this.address.city = "";
+      this.address.latitude = "";
+      this.address.longitude = "";
+      this.address.country_code = "";
+      this.address.area_id = "";
+      this.center = { lat: -2.90548355117024, lng: -79.02949294174876 };
+      this.marker = { lat: 0, lng: 0 };
+      this.map = null;
+      this.addressErr = false;
+      this.showPlacePicker = false;
+      this.formDisabled = false;
+      this.latLng = false;
+    },
+    cancelAddressForm() {
       // emit false to close form
+      this.resetForm();
+      this.$validator.reset();
       this.$emit("cancel", false);
     },
     toggleLatLng() {
       this.latLng = !this.latLng;
     },
-    async savePlaceForm() {
+    saveAddressForm() {
+      this.saveAddress("saved");
+    },
+    saveAddress(emitMessage) {
       this.$validator.validateAll().then(() => {
         if (!this.errors.any()) {
-          this.formDisabled = true;
-          if (this.address.latitude === "" || this.address.longitude === "") {
-            this.queryAddress("address").then(() => {
-              this.sendData();
-            });
+          let addressId = this.address.id;
+          let addressData = {
+            name: this.address.name,
+            address: this.address.address,
+            city: this.address.city,
+            latitude: this.address.latitude,
+            longitude: this.address.longitude,
+            country_code: this.address.country_code,
+            area_id: this.selectedArea
+          };
+          if (addressId) {
+            this.updateAddress(addressData, addressId, emitMessage);
           } else {
-            this.sendData();
+            this.addAddress(addressData, emitMessage);
           }
+        } else {
+          console.log("there were errors");
         }
       });
     },
-    sendData() {
+    addAddress(addressData, emitMessage) {
       this.$http
-        .post("/api/v1/places/locations", this.address)
+        .post("/api/v1/places/addresses", addressData)
         .then(resp => {
-          this.$emit("saved", resp.data);
+          this.$emit(emitMessage, resp.data);
         })
         .then(() => {
           this.formDisabled = false;
-          this.cancelPlaceForm();
+          this.cancelAddressForm();
         })
         .catch(err => {
           console.log("FAILED", err);
           this.formDisabled = false;
         });
     },
-
+    updateAddress(addressData, addressId, emitMessage) {
+      this.$http
+        .put(`/api/v1/places/addresses/${addressId}`, addressData)
+        .then(resp => {
+          this.$emit(emitMessage, resp.data);
+        })
+        .then(() => {
+          this.formDisabled = false;
+          this.cancelAddressForm();
+        })
+        .catch(err => {
+          console.log("FAILED", err);
+          this.formDisabled = false;
+        });
+    },
     async queryAddress(type) {
       const isValid = await this.$validator.validateAll();
       if (!isValid) {
