@@ -252,9 +252,9 @@
       "header": "Groups",
       "manager": "Manager",
       "meetings": {
+        "add-meeting": "Add Meeting",
         "title": "Meetings"
       },
-      "member-count": "Member Count",
       "members": {
         "title": "Members"
       },
@@ -688,9 +688,9 @@
       "header": "Grupos",
       "manager": "Gerente",
       "meetings": {
+        "add-meeting": "Agregar Reuni\u00f3n",
         "title": "Reuniones"
       },
-      "member-count": "Recuento de Miembros",
       "members": {
         "title": "Miembros"
       },

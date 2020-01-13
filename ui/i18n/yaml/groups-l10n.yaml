@@ -34,6 +34,9 @@ groups:
     title:
       en: Meetings
       es: Reuniones
+    add-meeting: 
+      en: Add Meeting
+      es: Agregar Reunión
   members:
     title:
       en: Members
