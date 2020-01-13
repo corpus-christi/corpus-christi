@@ -21,8 +21,8 @@ from ..shared.models import StringTypes
 people_person_role = Table('person_role', Base.metadata,
                             Column('people_person_id', Integer, ForeignKey(
                                 'people_person.id'), primary_key=True),
-                            Column('person_role_id', Integer, ForeignKey(
-                                'person_role.id'), primary_key=True)
+                            Column('id', Integer, ForeignKey(
+                                'people_role.id'), primary_key=True)
                             )
 
 
@@ -41,7 +41,7 @@ class Person(Base):
     #start of account fields being merged
     username = Column(StringTypes.MEDIUM_STRING, nullable=False, unique=True)
     password_hash = Column(StringTypes.PASSWORD_HASH, nullable=False)
-    confirmed = Column(Boolean, nullable=False, default=True)
+    confirmed = Column(Boolean, nullable=False, default=False)
     #end of account fields being merged
     active = Column(Boolean, nullable=False, default=True)
     address_id = Column(Integer, ForeignKey('places_address.id'), nullable=True, default=None)

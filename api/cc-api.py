@@ -75,7 +75,7 @@ def load_all():
     Role.load_from_file()
     Attribute.load_types_from_file()
     create_multiple_people(db.session, 17)
-    create_multiple_accounts(db.session, 0.25)
+    #create_multiple_accounts(db.session, 0.25)
     create_accounts_roles(db.session, 0.75)
     access_token = create_access_token(identity='test-user')
 
@@ -84,7 +84,7 @@ def load_all():
     create_multiple_locations(db.session, 20)
 
     create_multiple_people(db.session, 17)
-    create_multiple_accounts(db.session, 0.25)
+    #create_multiple_accounts(db.session, 0.25)
     create_multiple_courses(db.session, 12)
     create_multiple_course_offerings(db.session, 25)
     create_multiple_prerequisites(db.session)
