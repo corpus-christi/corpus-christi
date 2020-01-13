@@ -41,6 +41,29 @@ groups:
     title:
       en: Members
       es: Miembros
+    email:
+      compose:
+        en: Compose Email
+        es: Redactar Correo Electrónico
+      send:
+        en: Send
+        es: Enviar
+      to:
+        en: To
+        es: Para
+      cc:
+        en: Cc
+        es: Cc
+      bcc:
+        en: Bcc
+        es: Cco
+      subject:
+        en: Subject
+        es: Asunto
+      body:
+        en: Body
+        es: Cuerpo
+
   confirm-remove-from-event:
     en: Are you sure you want to remove this group from this event?
     es: ¿Estás seguro de que quieres eliminar a este grupo de este evento?

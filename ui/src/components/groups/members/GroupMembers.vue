@@ -1,8 +1,10 @@
 <template>
   <div>
     <v-toolbar>
-      <v-toolbar-title>{{ $t("events.participants.title") }}</v-toolbar-title>
-      <v-spacer></v-spacer>
+      <!--
+        <v-toolbar-title>{{ $t("events.participants.title") }}</v-toolbar-title>
+        <v-spacer></v-spacer>
+      -->
       <v-text-field
         v-model="search"
         append-icon="search"
@@ -14,44 +16,35 @@
       <v-btn
         color="primary"
         raised
-        v-on:click="toggleSelect"
+        v-on:click="toggleEmailDialog"
         data-cy=""
+        v-if="select"
+        fab small
       >
-        {{ "Select" }}
+        <v-icon dark>email</v-icon>
       </v-btn>
       <v-btn
         color="primary"
         raised
         v-on:click=""
-        data-cy=""
+        data-cy="archive"
         v-if="select"
+        fab small
       >
-        <v-icon dark left>email</v-icon>
-        {{ "Send Email" }}
-      </v-btn>
-      <v-btn
-        color="primary"
-        raised
-        v-on:click=""
-        data-cy=""
-        v-if="select"
-      >
-        <v-icon dark left>archive</v-icon>
-        {{ $t("actions.tooltips.archive") }}
+        <v-icon dark>archive</v-icon>
       </v-btn>
       <v-btn
         color="primary"
         raised
         v-on:click="openParticipantDialog"
         data-cy="add-participant"
-        v-if="!select"
       >
         <v-icon dark left>add</v-icon>
         {{ $t("actions.add-person") }}
       </v-btn>
     </v-toolbar>
     <v-data-table 
-      :select-all="select"
+      select-all
       v-model="selected"
       :rows-per-page-items="rowsPerPageItem"
       :headers="headers"
@@ -61,7 +54,7 @@
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
-        <td v-if="select">
+        <td>
             <v-checkbox 
               v-model="props.selected"
               primary
@@ -203,6 +196,83 @@
       </v-card>
     </v-dialog>
 
+    <!-- Email dialog -->
+    <v-dialog v-model="emailDialog.show" max-width="700px">
+      <v-card>
+        <v-card-title primary-title>
+          <div>
+            <h3 class="headline mb-0">
+              {{ $t("groups.members.email.compose") }}
+            </h3>
+          </div>
+          </v-card-title>
+       <!--
+            <v-card-text>
+            {{ $t("groups.members.email.to") }}
+            <entity-search
+              multiple
+              person
+              v-model="email.recipients"
+            />
+          </v-card-text>
+        -->
+        <v-card-text>
+          To: {{ email.recipients }}
+        </v-card-text>
+        <v-card-text>
+          {{ $t("groups.members.email.cc") }}
+          <entity-search
+            multiple
+            person
+            v-model="email.cc"
+          />
+        </v-card-text>
+        <v-card-text>
+          {{ $t("groups.members.email.bcc") }}
+          <entity-search
+            multiple
+            person
+            v-model="email.bcc"
+          />
+        </v-card-text>
+        <v-card-text>
+          <v-text-field
+            :label="$t('groups.members.email.subject')"
+            v-model="email.subject"
+          >
+          </v-text-field>
+        </v-card-text>
+        <v-card-text>
+          <v-text-field
+            :label="$t('groups.members.email.body')"
+            v-model="email.body"
+          >
+          </v-text-field>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-btn
+            v-on:click="toggleEmailDialog"
+            color="secondary"
+            flat
+            data-cy=""
+            >{{ $t("actions.cancel") }}</v-btn
+          >
+          <v-spacer></v-spacer>
+          <v-btn
+            v-on:click="sendEmail"
+            :disabled="email.recipients.length == 0"
+            color="primary"
+            raised
+            :loading="sendEmail.loading"
+            data-cy="confirm-email"
+	    >{{ $t("groups.members.email.send") }}</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
       <v-btn flat @click="snackbar.show = false">
@@ -230,6 +300,19 @@ export default {
       members: [],
       selected: [],
       select: false,
+      email: {
+        subject: "",
+        body: "",
+        recipients: [],
+        cc: [],
+        bcc: [],
+        managerName: "",
+        managerEmail: ""
+      },
+      emailDialog: {
+        show: false,
+        loading: false
+      },
       addParticipantDialog: {
         show: false,
         newParticipants: [],
@@ -253,8 +336,11 @@ export default {
   },
 
   watch: {
-    selected(val) {
-	if (val[0]) console.log(val);
+    selected() {
+      if (this.selected.length > 0) {
+        //console.log(this.selected);
+        this.select = true;
+      } else this.select = false;
     }
   },
 
@@ -328,15 +414,31 @@ export default {
         });
     },
 
-    toggleSelect() {
-      this.select = !this.select;
-      //this.button.text = this.toggleSelect ? 'Compose Email' : 'Send Email';
+    getEmailRecipients() {
+      return this.selected.map(p => p.person.email);
     },
 
-    sendEmail(selected) {
-
+    sendEmail() {
+      this.email.recipients = [ 'elliot_wirrick@taylor.edu' ];
+      console.log(this.email);
+      this.$http
+        .post(`/api/v1/emails/`, this.email)
+        .then(() => {
+          console.log("email sent successfully");
+          this.toggleEmailDialog();
+        })
+        .catch(err => {
+          console.log(err);
+        }); 
     },
 
+    toggleEmailDialog() {
+      if (this.email.recipients.length == 0) {
+        this.email.recipients = this.getEmailRecipients();
+      } else this.email.recipients = [];
+      this.emailDialog.show = !this.emailDialog.show;
+    },
+    
     addParticipant(id) {
       const groupId = this.$route.params.group;
       for (var member of this.members) {
@@ -447,6 +549,10 @@ export default {
       this.tableLoading = true;
       const id = this.$route.params.group;
       this.$http.get(`/api/v1/groups/groups/${id}`).then(resp => {
+        this.email.managerName = resp.data.managerInfo.person.firstName + " " 
+                            + resp.data.managerInfo.person.lastName + " "
+                            + resp.data.managerInfo.person.secondLastName;
+        this.email.managerEmail = resp.data.managerInfo.person.email;
         this.members = resp.data.memberList;
         this.tableLoading = false;
       });
