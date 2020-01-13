@@ -105,4 +105,10 @@ groups:
     error-archiving-member:
       en: Error while unarchiving member
       es: Error al desarchivar miembro
+    already-exists:
+      en: Group already exists
+      es: El grupo ya existe
+    required-fields:
+      en: Please fill out all required fields
+      es: Por favor llene todos los campos requeridos
 
