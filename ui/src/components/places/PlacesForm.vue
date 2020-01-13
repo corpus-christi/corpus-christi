@@ -45,7 +45,7 @@
                 hide-details
                 solo
                 single-line
-                :label="$t('places.area')"
+                :label="$t('places.area.area')"
                 :items="dropdownList"
                 v-model="selectedArea"
                 v-validate="'required'"
@@ -100,8 +100,8 @@
 
         <v-checkbox
           name="toggleCheckbox"
-          label="Show Latitude and Longitude"
-          v-on:change="toggleLatLng"
+          label="Find Address with Latitude and Longitude"
+          v-model="latLng"
           :disabled="formDisabled"
         >
         </v-checkbox>
@@ -129,6 +129,16 @@
           v-bind:label="$t('places.address.longitude')"
           :disabled="formDisabled"
         ></v-text-field>
+
+        <v-btn
+          flat
+          color="primary"
+          @click="findAddressLatLng"
+          :loading="formDisabled"
+          :disabled="formDisabled"
+          v-show="latLng"
+          >Find Address</v-btn
+        >
       </v-layout>
     </v-card-text>
     <v-card-actions>
@@ -196,7 +206,7 @@ export default {
       showPlacePicker: false,
       formDisabled: false,
       latLng: false,
-      showAreaForm: false
+      addressMode: "lat-lng"
     };
   },
   computed: {
@@ -241,7 +251,6 @@ export default {
       this.address.area_id = "";
       this.center = { lat: -2.90548355117024, lng: -79.02949294174876 };
       this.marker = { lat: 0, lng: 0 };
-      this.map = null;
       this.addressErr = false;
       this.showPlacePicker = false;
       this.formDisabled = false;
@@ -276,26 +285,35 @@ export default {
     toggleLatLng() {
       this.latLng = !this.latLng;
     },
+    save(emitMessage) {
+      let addressId = this.address.id;
+      let addressData = {
+        name: this.address.name,
+        address: this.address.address,
+        city: this.address.city,
+        latitude: this.address.latitude,
+        longitude: this.address.longitude,
+        country_code: this.address.country_code,
+        area_id: this.selectedArea
+      };
+      if (addressId) {
+        this.updateAddress(addressData, addressId, emitMessage);
+      } else {
+        this.addAddress(addressData, emitMessage);
+      }
+    },
     saveAddressForm() {
       this.saveAddress("saved");
     },
     saveAddress(emitMessage) {
       this.$validator.validateAll().then(() => {
         if (!this.errors.any()) {
-          let addressId = this.address.id;
-          let addressData = {
-            name: this.address.name,
-            address: this.address.address,
-            city: this.address.city,
-            latitude: this.address.latitude,
-            longitude: this.address.longitude,
-            country_code: this.address.country_code,
-            area_id: this.selectedArea
-          };
-          if (addressId) {
-            this.updateAddress(addressData, addressId, emitMessage);
+          if (this.address.latitude === "" || this.address.longitude === "") {
+            this.queryAddress("address").then(() => {
+              this.save(emitMessage);
+            });
           } else {
-            this.addAddress(addressData, emitMessage);
+            this.save(emitMessage);
           }
         } else {
           console.log("there were errors");
@@ -332,72 +350,89 @@ export default {
           this.formDisabled = false;
         });
     },
-    async queryAddress(type) {
-      const isValid = await this.$validator.validateAll();
-      if (!isValid) {
-        return;
-      } else {
-        return new Promise((resolve, reject) => {
-          this.$geocoder.setDefaultMode(type);
+    findAddressLatLng() {
+      this.queryAddress("lat-lng");
+    },
+    async getMapInfo(type) {
+      return new Promise((resolve, reject) => {
+        this.$geocoder.setDefaultMode(type);
 
-          var addressObj;
-          if (type === "address") {
-            addressObj = {
-              address_line_1: this.address.address,
-              city: this.address.city
-            };
-          } else if (type === "lat-lng") {
-            addressObj = {
-              lat: this.address.latitude,
-              lng: this.address.longitude
-            };
-          } else {
-            return;
-          }
+        var addressObj;
+        if (type === "address") {
+          addressObj = {
+            address_line_1: this.address.address,
+            city: this.address.city
+          };
+        } else if (type === "lat-lng") {
+          addressObj = {
+            lat: this.address.latitude,
+            lng: this.address.longitude
+          };
+        } else {
+          return;
+        }
 
-          try {
-            this.$geocoder.send(addressObj, response => {
-              if (response.status === "ZERO_RESULTS") {
-                this.addressErr = true;
-                return;
-              } else {
-                this.addressErr = false;
-                let addr = response.results[0];
-                this.address.address = addr.formatted_address;
-                this.address.latitude = addr.geometry.location.lat;
-                this.address.longitude = addr.geometry.location.lng;
-                let addrcomps = addr.address_components;
-                for (let comp of addrcomps) {
-                  for (type of comp.types) {
-                    if (type === "country") {
-                      this.address.country_code = comp.short_name;
-                      this.address.area_name = comp.long_name;
-                    } else if (type === "locality") {
-                      this.address.city = comp.long_name;
-                    } else if (
-                      type === "administrative_area_level_1" ||
-                      type === "administrative_area_level_2"
-                    ) {
-                      this.address.area_name = comp.long_name;
-                    }
+        console.log("ADDRESSOBJ CREATED: ");
+        console.log(addressObj);
+        try {
+          this.$geocoder.send(addressObj, response => {
+            if (response.status === "ZERO_RESULTS") {
+              console.log("NO ADDRESS RESULTS");
+              this.addressErr = true;
+              return;
+            } else {
+              this.addressErr = false;
+              console.log("RESPONSE: ");
+              console.log(response);
+              let addr = response.results[0];
+              console.log("addr variable: ");
+              console.log(addr);
+              this.address.address = addr.formatted_address;
+              this.address.latitude = addr.geometry.location.lat;
+              this.address.longitude = addr.geometry.location.lng;
+              let addrcomps = addr.address_components;
+              for (let comp of addrcomps) {
+                for (type of comp.types) {
+                  if (type === "country") {
+                    this.address.country_code = comp.short_name;
+                    this.address.area_name = comp.long_name;
+                  } else if (type === "locality") {
+                    this.address.city = comp.long_name;
+                  } else if (
+                    type === "administrative_area_level_1" ||
+                    type === "administrative_area_level_2"
+                  ) {
+                    this.address.area_name = comp.long_name;
                   }
                 }
-                this.marker = {
-                  lat: this.address.latitude,
-                  lng: this.address.longitude
-                };
-                this.centerMapOnMarker();
-                resolve();
               }
-            });
-          } catch (err) {
-            console.log(err);
-            reject(err);
-          }
-        });
+              this.marker = {
+                lat: this.address.latitude,
+                lng: this.address.longitude
+              };
+              this.centerMapOnMarker();
+              resolve();
+            }
+          });
+        } catch (err) {
+          console.log(err);
+          reject(err);
+        }
+      });
+    },
+    queryAddress(type) {
+      if (type === "address") {
+        const isValid = this.$validator.validateAll();
+        if (!isValid) {
+          console.log("QueryAddress: NOT VALID");
+          return;
+        } else {
+          this.getMapInfo(type);
+        }
+      } else {
+        this.getMapInfo(type);
       }
     },
-
     markLocation(location) {
       this.address.address = "Selected Address";
       this.address.city = "Selected City";
@@ -406,7 +441,7 @@ export default {
       this.marker = location.latLng;
       this.centerMapOnMarker();
 
-      this.queryAddress("lat-lng");
+      this.queryAddress(this.addressMode);
     },
 
     centerMapOnMarker() {
