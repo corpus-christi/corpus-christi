@@ -27,6 +27,15 @@ places:
     new:
       en: Add Address
       es: Añadir dirección
+    find-address:
+      en: Find Address
+      es: Encuentra la Dirección
+    valid-address:
+      en: Use Valid Street Address
+      es: Usar dirección Válida
+    find-address-lat-lng:
+      en: Find Address using Latitude and Longitude
+      es: Buscar Dirección usando Latitud y Longitud
   location:
     location:
       en: Location
@@ -63,7 +72,5 @@ places:
     edit:
       en: Edit Area
       es: Área de Edición
-
-
 
 

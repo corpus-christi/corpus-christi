@@ -100,11 +100,19 @@
 
         <v-checkbox
           name="toggleCheckbox"
-          label="Find Address with Latitude and Longitude"
+          :label="$t('places.address.find-address-lat-lng')"
           v-model="latLng"
           :disabled="formDisabled"
         >
         </v-checkbox>
+
+        <v-checkbox
+          name="toggleAddressMode"
+          :label="$t('places.address.valid-address')"
+          v-model="addressValid"
+          :disabled="formDisabled"
+        ></v-checkbox>
+
         <v-text-field
           name="name"
           v-model="address.name"
@@ -137,7 +145,17 @@
           :loading="formDisabled"
           :disabled="formDisabled"
           v-show="latLng"
-          >Find Address</v-btn
+          >{{ $t("places.address.find-address")}}</v-btn
+        >
+
+        <v-btn
+          flat
+          color="primary"
+          @click="findAddress"
+          :loading="formDisabled"
+          :disabled="formDisabled"
+          v-show="!latLng"
+          >{{ $t("places.address.find-address")}}</v-btn
         >
       </v-layout>
     </v-card-text>
@@ -206,13 +224,10 @@ export default {
       showPlacePicker: false,
       formDisabled: false,
       latLng: false,
-      addressMode: "lat-lng"
+      addressValid: true
     };
   },
   computed: {
-    showLatLng: function() {
-      return this.latLng;
-    },
     dropdownList() {
       return this.areas.map(element => {
         return {
@@ -282,9 +297,6 @@ export default {
       this.$validator.reset();
       this.$emit("cancel", false);
     },
-    toggleLatLng() {
-      this.latLng = !this.latLng;
-    },
     save(emitMessage) {
       let addressId = this.address.id;
       let addressData = {
@@ -305,16 +317,10 @@ export default {
     saveAddressForm() {
       this.saveAddress("saved");
     },
-    saveAddress(emitMessage) {
+    async saveAddress(emitMessage) {
       this.$validator.validateAll().then(() => {
         if (!this.errors.any()) {
-          if (this.address.latitude === "" || this.address.longitude === "") {
-            this.queryAddress("address").then(() => {
-              this.save(emitMessage);
-            });
-          } else {
-            this.save(emitMessage);
-          }
+          this.save(emitMessage);
         } else {
           console.log("there were errors");
         }
@@ -349,6 +355,9 @@ export default {
           console.log("FAILED", err);
           this.formDisabled = false;
         });
+    },
+    findAddress() {
+      this.queryAddress("address");
     },
     findAddressLatLng() {
       this.queryAddress("lat-lng");
@@ -394,6 +403,7 @@ export default {
               for (let comp of addrcomps) {
                 for (type of comp.types) {
                   if (type === "country") {
+                    // look through dropdown for longname in list
                     this.address.country_code = comp.short_name;
                     this.address.area_name = comp.long_name;
                   } else if (type === "locality") {
@@ -440,8 +450,11 @@ export default {
       this.address.longitude = location.latLng.lng();
       this.marker = location.latLng;
       this.centerMapOnMarker();
-
-      this.queryAddress(this.addressMode);
+      if (this.addressValid) {
+        this.queryAddress("lat-lng");
+      } else {
+        this.queryAddress("address");
+      }
     },
 
     centerMapOnMarker() {

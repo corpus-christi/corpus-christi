@@ -351,10 +351,13 @@
         "address": "Address",
         "city": "City",
         "country": "Country",
+        "find-address": "Find Address",
+        "find-address-lat-lng": "Find Address using Latitude and Longitude",
         "latitude": "Latitude",
         "longitude": "Longitude",
         "name": "Name",
-        "new": "Add Address"
+        "new": "Add Address",
+        "valid-address": "Use Valid Street Address"
       },
       "area": {
         "area": "Area",
@@ -798,10 +801,13 @@
         "address": "Direcci\u00f3n",
         "city": "Ciudad",
         "country": "Pa\u00eds",
+        "find-address": "Encuentra la Direcci\u00f3n",
+        "find-address-lat-lng": "Buscar Direcci\u00f3n usando Latitud y Longitud",
         "latitude": "Latitud",
         "longitude": "Longitud",
         "name": "Nombre",
-        "new": "A\u00f1adir direcci\u00f3n"
+        "new": "A\u00f1adir direcci\u00f3n",
+        "valid-address": "Usar direcci\u00f3n V\u00e1lida"
       },
       "area": {
         "area": "Zona",
