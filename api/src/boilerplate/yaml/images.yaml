@@ -1,0 +1,103 @@
+module: images
+entities:
+  - name: Image
+    singular: image
+    plural: images
+    uri: /images
+    table: images_image
+    attributes:
+      - name: id
+        type: integer
+        primary-key: true
+        min: 1
+      - name: path
+        type: string
+        min-length: 1
+        required: true
+        length: long
+      - name: description
+        type: string
+        min-length: 1
+        required: true
+        length: long
+    relationships:
+      - name: groups
+        related-model: ImageGroup
+        backref: images
+      - name: courses
+        related-model: ImageCourse
+        backref: images
+      - name: locations
+        related-model: ImageLocation
+        backref: images
+      - name: people
+        related-model: ImagePerson
+        backref: images
+      - name: events
+        related-model: ImageEvents
+        backref: images
+  - name: ImageGroup
+    singular: imagegroup
+    plural: imagegroups
+    table: images_imagegroup
+    attributes:
+      - name: image_id
+        type: integer
+        primary-key: true
+        foreign-key: images_image.id
+      - name: group_id
+        type: integer
+        primary-key: true
+        foreign-key: groups_group.id
+  - name: ImageCourse
+    singular: imagecourse
+    plural: imagecourses
+    table: images_imagecourse
+    attributes:
+      - name: image_id
+        type: integer
+        primary-key: true
+        foreign-key: images_image.id
+      - name: course_id
+        type: integer
+        primary-key: true
+        foreign-key: courses_course.id
+  - name: ImageLocation
+    singular: imagelocation
+    plural: imagelocations
+    table: images_imagelocation
+    attributes:
+      - name: image_id
+        type: integer
+        primary-key: true
+        foreign-key: images_image.id
+      - name: location_id
+        type: integer
+        primary-key: true
+        foreign-key: places_location.id
+  - name: ImagePerson
+    singular: imageperson
+    plural: imagepeople
+    table: images_imageperson
+    attributes:
+      - name: image_id
+        type: integer
+        primary-key: true
+        foreign-key: images_image.id
+      - name: location_id
+        type: integer
+        primary-key: true
+        foreign-key: people_person.id
+  - name: ImageEvent
+    singular: imageevent
+    plural: imageevents
+    table: images_imageevent
+    attributes:
+      - name: image_id
+        type: integer
+        primary-key: true
+        foreign-key: images_image.id
+      - name: event_id
+        type: integer
+        primary-key: true
+        foreign-key: events_event.id
