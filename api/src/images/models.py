@@ -8,6 +8,7 @@ from ..shared.models import StringTypes
 
 # ---- Image
 
+
 class Image(Base):
     __tablename__ = 'images_image'
     id = Column(Integer, primary_key=True)
@@ -29,6 +30,7 @@ class ImageSchema(Schema):
     description = fields.String(required=True, validate=Length(min=1))
 
     events = fields.Nested('EventSchema', dump_only=True)
+
 
 # ---- ImageGroup
 
@@ -57,6 +59,7 @@ class ImageGroupSchema(Schema):
 
 # ---- ImageCourse
 
+
 class ImageCourse(Base):
     __tablename__ = 'images_imagecourse'
     image_id = Column(Integer, ForeignKey(
@@ -77,6 +80,7 @@ class ImageCourseSchema(Schema):
     # TODO: if commenting these out doesn't break anything delete them
     # image = fields.Nested('ImageSchema', dump_only=True)
     # course = fields.Nested('CourseSchema', dump_only=True)
+
 
 # ---- ImageLocation
 
@@ -102,7 +106,9 @@ class ImageLocationSchema(Schema):
     # image = fields.Nested('ImageSchema', dump_only=True)
     # location = fields.Nested('LocationSchema', dump_only=True)
 
+
 # ---- ImagePerson
+
 
 class ImagePerson(Base):
     __tablename__ = 'images_imageperson'
@@ -125,7 +131,9 @@ class ImagePersonSchema(Schema):
     # image = fields.Nested('ImageSchema', dump_only=True)
     # person = fields.Nested('PersonSchema', dump_only=True)
 
+
 # ---- ImageEvent
+
 
 class ImageEvent(Base):
     __tablename__ = 'images_imageevent'
