@@ -419,8 +419,6 @@ export default {
     },
 
     sendEmail() {
-      this.email.recipients = [ 'elliot_wirrick@taylor.edu' ];
-      console.log(this.email);
       this.$http
         .post(`/api/v1/emails/`, this.email)
         .then(() => {
