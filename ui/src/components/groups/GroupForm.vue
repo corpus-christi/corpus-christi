@@ -58,6 +58,13 @@
         >{{ $t("actions.save") }}</v-btn
       >
     </v-card-actions>
+
+    <v-snackbar v-model="snackbar.show">
+      {{ snackbar.text }}
+      <v-btn flat @click="snackbar.show = false" data-cy>
+        {{ $t("actions.close") }}
+      </v-btn>
+    </v-snackbar>
   </v-card>
 </template>
 
@@ -97,6 +104,30 @@ export default {
   },
 
   methods: {
+    validateGroup(group, operation) {
+      if(group.name == undefined || group.description == undefined || group.manager == undefined) {
+        this.showSnackbar(this.$t("groups.messages.required-fields"));
+      }
+      else {
+        this.$http.get(`/api/v1/groups/find_group/${group.name}/${group.manager.id}`).then((response) => {
+          if(response.data == 0){
+            this.$validator.validateAll().then(() => {
+              operation();
+            });
+          }
+          else {
+            this.showSnackbar(this.$t("groups.messages.already-exists"));
+          }
+        });
+      }
+      
+    },
+
+    showSnackbar(message) {
+      this.snackbar.text = message;
+      this.snackbar.show = true;
+    },
+
     cancel() {
       this.clear();
       this.$emit("cancel");
@@ -111,23 +142,19 @@ export default {
     },
 
     save() {
-      this.$validator.validateAll().then(() => {
-        if (!this.errors.any()) {
+      this.validateGroup(this.group, () => {
+        this.group.active = true;
           this.group.active = true;
           this.$emit("save", this.group);
-        }
       });
     },
 
     addAnother() {
-      // this.$validator.validateAll().then(() => {
-      //   if (!this.errors.any()) {
-      //     this.event.start = this.getTimestamp(this.startDate, this.startTime);
-      //     this.event.end = this.getTimestamp(this.endDate, this.endTime);
-      //     this.event.active = true;
-      //     this.$emit("add-another", this.event);
-      //   }
-      // });
+      this.validateGroup(this.group, () => {
+        this.group.active = true;
+          this.$emit("add-another", this.group);
+          this.group = {};
+      });
     }
   },
   props: {
@@ -148,7 +175,11 @@ export default {
   },
   data: function() {
     return {
-      group: {}
+      group: {},
+      snackbar: {
+        show: false,
+        text: ""
+      },
     };
   }
 };

@@ -297,7 +297,7 @@ export default {
       this.groupDialog.show = false;
     },
 
-    saveGroup(group) {
+    saveGroup(group, closeDialog = true) {
       this.groupDialog.saveLoading = true;
       if (group.manager) {
         group.manager_id = group.manager.id;
@@ -305,47 +305,53 @@ export default {
       let newGroup = JSON.parse(JSON.stringify(group));
       delete newGroup.manager;
       delete newGroup.id;
+      delete newGroup.memberList;
+      delete newGroup.managerInfo;
       if (this.groupDialog.editMode) {
-        const groupId = group.id;
-        delete newGroup.managerInfo;
-        delete newGroup.memberList;
-        // for(var member of newGroup.memberList){
-        //   delete member.id
-        // }
-        console.log(newGroup);
-        const idx = this.groups.findIndex(ev => ev.id === group.id);
-        this.$http
-          .patch(`/api/v1/groups/groups/${groupId}`, newGroup)
-          .then(resp => {
-            console.log("EDITED", resp);
-            Object.assign(this.groups[idx], resp.data);
-            this.groupDialog.show = false;
-            this.groupDialog.saveLoading = false;
-            this.showSnackbar(this.$t("groups.messages.group-edited"));
-          })
-          .catch(err => {
-            console.error("PUT FALURE", err.response);
-            this.groupDialog.saveLoading = false;
-            this.showSnackbar(this.$t("groups.messages.error-editing-group"));
-          });
-      } else {
-        delete newGroup.memberList;
-        delete newGroup.managerInfo;
-        this.$http
-          .post("/api/v1/groups/groups", newGroup)
-          .then(resp => {
-            console.log("ADDED", resp);
-            this.groups.push(resp.data);
-            this.groupDialog.show = false;
-            this.groupDialog.saveLoading = false;
-            this.showSnackbar(this.$t("groups.messages.group-added"));
-          })
-          .catch(err => {
-            console.error("POST FAILURE", err.response);
-            this.groupDialog.saveLoading = false;
-            this.showSnackbar(this.$t("groups.messages.error-adding-group"));
-          });
+        this.putGroup(group, newGroup);
       }
+      else {
+        this.postGroup(newGroup);
+      }
+      if(closeDialog) {
+        this.closeDialog();
+      }
+    },
+
+    putGroup(group, newGroup) {
+      const groupId = group.id;
+      const idx = this.groups.findIndex(ev => ev.id === group.id);
+      this.$http
+        .patch(`/api/v1/groups/groups/${groupId}`, newGroup)
+        .then(resp => {
+          Object.assign(this.groups[idx], resp.data);
+          this.groupDialog.saveLoading = false;
+          this.showSnackbar(this.$t("groups.messages.group-edited"));
+        })
+        .catch(err => {
+          console.error("PUT FALURE", err.response);
+          this.groupDialog.saveLoading = false;
+          this.showSnackbar(this.$t("groups.messages.error-editing-group"));
+        });
+    },
+
+    postGroup(newGroup) {
+      this.$http
+        .post("/api/v1/groups/groups", newGroup)
+        .then(resp => {
+          this.groups.push(resp.data);
+          this.groupDialog.saveLoading = false;
+          this.showSnackbar(this.$t("groups.messages.group-added"));
+        })
+        .catch(err => {
+          console.error("POST FAILURE", err.response);
+          this.groupDialog.saveLoading = false;
+          this.showSnackbar(this.$t("groups.messages.error-adding-group"));
+        });
+    },
+
+    closeDialog() {
+      this.groupDialog.show = false;
     },
 
     editGroup(group) {
@@ -410,7 +416,9 @@ export default {
       this.activateGroupDialog(copyGroup);
     },
 
-    addAnotherGroup() {},
+    addAnotherGroup(group) {
+      this.saveGroup(group, false);
+    },
 
     onResize() {
       this.windowSize = { x: window.innerWidth, y: window.innerHeight };
