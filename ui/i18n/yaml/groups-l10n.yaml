@@ -11,6 +11,9 @@ groups:
   description:
     en: Description
     es: Descripción
+  member-count:
+    en: Member Count
+    es: Recuento de Miembros
   manager:
     en: Manager
     es: Gerente
