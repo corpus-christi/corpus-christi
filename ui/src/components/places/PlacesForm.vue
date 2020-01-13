@@ -83,6 +83,15 @@
           </v-dialog>
         </v-layout>
 
+        <v-btn
+          flat
+          color="primary"
+          @click="findAddress"
+          :loading="formDisabled"
+          :disabled="formDisabled"
+          v-show="!latLng"
+          >{{ $t("places.address.find-address") }}</v-btn
+        >
         <span body-2 v-if="addressErr" class="red--text">
           {{ $t("places.messages.no-results") }}
         </span>
@@ -147,16 +156,6 @@
           v-show="latLng"
           >{{ $t("places.address.find-address")}}</v-btn
         >
-
-        <v-btn
-          flat
-          color="primary"
-          @click="findAddress"
-          :loading="formDisabled"
-          :disabled="formDisabled"
-          v-show="!latLng"
-          >{{ $t("places.address.find-address")}}</v-btn
-        >
       </v-layout>
     </v-card-text>
     <v-card-actions>
@@ -173,7 +172,7 @@
         color="primary"
         @click="saveAddressForm"
         :loading="formDisabled"
-        :disabled="formDisabled"
+        :disabled="formDisabled || disableSave"
         >{{ $t("actions.save") }}</v-btn
       >
     </v-card-actions>
@@ -235,6 +234,14 @@ export default {
           value: element.id
         };
       });
+    },
+    disableSave() {
+      return (
+        this.address.address === "" ||
+        this.address.city === "" ||
+        this.address.name === "" ||
+        this.selectedArea === 0
+      );
     }
   },
   watch: {
@@ -432,7 +439,7 @@ export default {
     },
     queryAddress(type) {
       if (type === "address") {
-        const isValid = this.$validator.validateAll();
+        const isValid = this.$validator.validate("address") && this.$validator.validate("city");
         if (!isValid) {
           console.log("QueryAddress: NOT VALID");
           return;
