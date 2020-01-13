@@ -33,48 +33,61 @@
     <v-data-table
       :rows-per-page-items="rowsPerPageItem"
       :headers="headers"
-      :items="addresses"
+      :items="AddressesLocationsData()"
       :search="search"
       :loading="tableLoading"
+      :single-expand="singleExpand"
+      :expand.sync="expanded"
+      item-key="id"
+      show-expand
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
-        <td>{{ props.item.name }}</td>
-        <td>{{ props.item.address }}</td>
-        <td>{{ props.item.city }}</td>
-        <td>{{ props.item.latitude }}</td>
-        <td>{{ props.item.longitude }}</td>
-
-        <v-tooltip bottom>
-          <v-btn
-            icon
-            outline
-            small
-            color="primary"
-            slot="activator"
-            v-on:click="editPlace(props.item)"
-            data-cy="edit-place"
-          >
-            <v-icon small>edit</v-icon>
-          </v-btn>
-          <span>{{ $t("actions.edit") }}</span>
-        </v-tooltip>
-
-        <v-tooltip bottom>
-          <v-btn
-            icon
-            outline
-            small
-            color="primary"
-            slot="activator"
-            v-on:click="duplicate(props.item)"
-            data-cy="duplicate-place"
-          >
-            <v-icon small>filter_none</v-icon>
-          </v-btn>
-          <span>{{ $t("actions.duplicate") }}</span>
-        </v-tooltip>
+        <tr @click="props.expanded = !props.expanded">
+          <td>{{ props.item.name }}</td>
+          <td>{{ props.item.address }}</td>
+          <td>{{ props.item.city }}</td>
+          <td>{{ props.item.latitude }}</td>
+          <td>{{ props.item.longitude }}</td>
+          <v-tooltip bottom>
+            <v-btn
+              icon
+              outline
+              small
+              color="primary"
+              slot="activator"
+              v-on:click="editPlace(props.item)"
+              data-cy="edit-place"
+            >
+              <v-icon small>edit</v-icon>
+            </v-btn>
+            <span>{{ $t("actions.edit") }}</span>
+          </v-tooltip>
+          <v-tooltip bottom>
+            <v-btn
+              icon
+              outline
+              small
+              color="primary"
+              slot="activator"
+              v-on:click="duplicate(props.item)"
+              data-cy="duplicate-place"
+            >
+              <v-icon small>filter_none</v-icon>
+            </v-btn>
+            <span>{{ $t("actions.duplicate") }}</span>
+          </v-tooltip>
+        </tr>
       </template>
+      <template slot="expand" slot-scope="props">
+        <td>{{ $t("places.location.location") }}: </td>
+        <template v-for="l in props.item.locations">
+          <td>{{ l.description }}</td>
+        </template>
+      </template>
+
+
+
     </v-data-table>
 
     <v-dialog
@@ -126,6 +139,8 @@ export default {
 
   data() {
     return {
+      expanded: [],
+      singleExpand: true,
       placeDialog: {
         title: "",
         show: false,
@@ -136,7 +151,8 @@ export default {
       },
       search: "",
       homegroups: [],
-      groupLocations: []
+      groupLocations: [],
+      opened: []
     };
   },
 
@@ -186,7 +202,6 @@ export default {
       this.placeDialog.places = places;
       this.placeDialog.show = true;
     },
-
     editPlace(place) {
       this.activatePlaceDialog({ ...place }, true);
     },
@@ -201,6 +216,18 @@ export default {
 
     refreshPlacesList() {
       this.$emit("fetchPlacesList");
+    },
+    AddressesLocationsData(){
+      let c = []
+      for( let i=0; i<this.addresses.length; i++){
+        c.push(this.addresses[i]);
+        c[i]["locations"] = [];
+        for( let j=0; j<this.locations.length; j++)
+          if(c[i].id == this.locations[j].address_id){
+            c[i].locations.push({id:this.locations[j].id, description:this.locations[j].description});
+          }
+      }
+      return c;
     }
   }
 };
