@@ -40,7 +40,7 @@
     >
       <template slot="items" slot-scope="props">
         <td>{{ props.item.name }}</td>
-        <td>{{ props.item.country_code }}</td>
+        <td>{{ $t(props.item.country.name_i18n) }}</td>
 
         <v-tooltip bottom>
           <v-btn
