@@ -35,12 +35,19 @@ def flip():
     return random.choice((True, False))
 
 
+#moved to above the person_object_factory
+def username_factory():
+    return f"{fake.pystr(min_chars=5, max_chars=15)}{fake.pyint()}"
+
+
 def person_object_factory():
     """Cook up a fake person."""
     person = {
         'lastName': rl_fake().last_name(),
         'secondLastName': rl_fake().last_name(),
         'gender': random.choice(('M', 'F')),
+        'username': username_factory(), #added these 2 from account, removing personId
+        'password': fake.password(),
         'active': flip()
     }
 
@@ -59,20 +66,16 @@ def person_object_factory():
         person['email'] = rl_fake().email()
     return person
 
-
-def username_factory():
-    return f"{fake.pystr(min_chars=5, max_chars=15)}{fake.pyint()}"
-
-#still needed? put with person creation info
-def account_object_factory(person_id):
-    """Cook up a fake account."""
-    fake = Faker()  # Use a generic one; others may not have all methods.
-    account = {
-        'username': username_factory(),
-        'password': fake.password(),
-        'personId': person_id
-    }
-    return account
+# # still needed? added the body to the person_object_factory()
+# def account_object_factory(person_id):
+#     """Cook up a fake account."""
+#     fake = Faker()  # Use a generic one; others may not have all methods.
+#     account = {
+#         'username': username_factory(),
+#         'password': fake.password(),
+#         'personId': person_id
+#     }
+#     return account
 
 
 def create_multiple_people(sqla, n, inactive=False):
@@ -88,35 +91,35 @@ def create_multiple_people(sqla, n, inactive=False):
     sqla.commit()
     return new_people
 
-#This shouldn't still be needed
-def create_multiple_accounts(sqla, fraction=0.75):
-    """Commit accounts for `fraction` of `people` in DB."""
-    if fraction < 0.1 or fraction > 1.0:
-        raise RuntimeError(f"Fraction ({fraction}) is out of bounds")
+# #This shouldn't still be needed
+# def create_multiple_accounts(sqla, fraction=0.75):
+#     """Commit accounts for `fraction` of `people` in DB."""
+#     if fraction < 0.1 or fraction > 1.0:
+#         raise RuntimeError(f"Fraction ({fraction}) is out of bounds")
 
-    all_people = sqla.query(Person).all()
-    if not all_people:
-        create_multiple_people(sqla, random.randint(5, 10))
-        all_people = sqla.query(Person).all()
-    sample_people = random.sample(
-        all_people, math.floor(len(all_people) * fraction))
+#     all_people = sqla.query(Person).all()
+#     if not all_people:
+#         create_multiple_people(sqla, random.randint(5, 10))
+#         all_people = sqla.query(Person).all()
+#     sample_people = random.sample(
+#         all_people, math.floor(len(all_people) * fraction))
 
-    account_schema = AccountSchema()
-    new_accounts = []
-    for person in sample_people:
-        valid_account = account_schema.load(account_object_factory(person.id))
-        new_accounts.append(Account(**valid_account))
-    sqla.add_all(new_accounts)
-    sqla.commit()
+#     account_schema = AccountSchema()
+#     new_accounts = []
+#     for person in sample_people:
+#         valid_account = account_schema.load(account_object_factory(person.id))
+#         new_accounts.append(Account(**valid_account))
+#     sqla.add_all(new_accounts)
+#     sqla.commit()
 
 
-def prep_database(sqla):#? shouldn't be needed anymore
-    """Prepare the database with a random number of people, some of which have accounts.
-    Returns list of IDs of the new accounts.
-    """
-    create_multiple_people(sqla, random.randint(5, 15))
-    create_multiple_accounts(sqla)
-    return [account.id for account in sqla.query(Account.id).all()]
+# def prep_database(sqla):#? shouldn't be needed anymore
+#     """Prepare the database with a random number of people, some of which have accounts.
+#     Returns list of IDs of the new accounts.
+#     """
+#     create_multiple_people(sqla, random.randint(5, 15))
+#     create_multiple_accounts(sqla)
+#     return [account.id for account in sqla.query(Account.id).all()]
 
 
 def role_object_factory(role_name='role.test_role'):
@@ -151,17 +154,17 @@ def create_roles(sqla, n):
 
 #needs to be updated to person
 def create_accounts_roles(sqla, fraction=0.75):
-    new_accounts_roles = []
-    if not sqla.query(Account).all():
-        create_multiple_accounts(sqla)
+    new_person_roles = []
+    # if not sqla.query(Person).all():
+    #     create_multiple_accounts(sqla)
     if not sqla.query(Role).all():
         create_roles(sqla, random.randint(3, 6))
-    all_accounts_roles = sqla.query(Account, Role).all()
-    sample_accounts_roles = random.sample(all_accounts_roles, math.floor(len(all_accounts_roles) * fraction))
-    for accounts_roles in sample_accounts_roles:
-        accounts_roles[0].roles.append(accounts_roles[1])
-        new_accounts_roles.append(accounts_roles[0])
-    sqla.add_all(new_accounts_roles)
+    all_persons_roles = sqla.query(Person, Role).all()
+    sample_persons_roles = random.sample(all_persons_roles, math.floor(len(all_persons_roles) * fraction))
+    for persons_roles in sample_persons_roles:
+        persons_roles[0].roles.append(persons_roles[1])
+        new_person_roles.append(persons_roles[0])
+    sqla.add_all(new_person_roles)
     sqla.commit()
 
 #tweak
@@ -177,10 +180,10 @@ def manager_object_factory(sqla, description, next_level=None, locale_code='en-U
                     description, description=f"Manager {description}")
 
     all_persons = sqla.query(Person).all()
-    all_accounts = sqla.query(Account).all()
-    if not all_accounts:
-        create_multiple_accounts(sqla)
-        all_accounts = sqla.query(Account).all()
+    # all_accounts = sqla.query(Account).all()
+    # if not all_accounts:
+    #     create_multiple_accounts(sqla)
+    #     all_accounts = sqla.query(Account).all()
 
     manager = {
 
@@ -283,14 +286,14 @@ def test_read_all_persons(auth_client):
     create_roles(auth_client.sqla, role_count)  # Create x Roles and return their id's
     people_count = random.randint(30, 55)
     create_multiple_people(auth_client.sqla, people_count)  # create random people
-    create_multiple_accounts(auth_client.sqla, 1.0)  # create accounts for all people
+    #create_multiple_accounts(auth_client.sqla, 1.0)  # create accounts for all people
 
     roles = auth_client.sqla.query(Role).all()
-    accounts = auth_client.sqla.query(Account).all()
+    persons = auth_client.sqla.query(Person).all()
 
-    for account in accounts:
-        account.roles.append(roles[random.randint(0, len(roles) - 1)])  # assign roles to accounts
-        auth_client.sqla.add(account)
+    for person in persons:
+        person.roles.append(roles[random.randint(0, len(roles) - 1)])  # assign roles to accounts
+        auth_client.sqla.add(person)
     auth_client.sqla.commit()
 
     # WHEN the api call is made for read all persons
@@ -430,7 +433,7 @@ def test_deactivate_person(auth_client):
     # GIVEN a DB with a collection people.
     count = random.randint(3, 11)
     create_multiple_people(auth_client.sqla, count)
-    create_multiple_accounts(auth_client.sqla, 1)
+    #create_multiple_accounts(auth_client.sqla, 1)
 
     # WHEN we choose a person at random
     all_people = auth_client.sqla.query(Person).all()
@@ -477,7 +480,9 @@ def test_activate_person_no_exist(auth_client):
     # THEN expect requested person to not exist
     assert resp.status_code == 404
 
-
+#-----------------------------------------------------------------------------------------------------------------------------------------------------
+# all of these are actually tests that are made for person, so now the question is do the fields need to be put in to the person tests
+#-----------------------------------------------------------------------------------------------------------------------------------------------------
 # ---- Account
 #parts of this need to moved to create person
 # def test_create_account(auth_client):
@@ -538,165 +543,165 @@ def test_activate_person_no_exist(auth_client):
 #     assert resp.status_code == 200
 #     assert len(resp.json) == account_count
 
-#tweak to reference person
-@pytest.mark.smoke
-def test_read_one_account(auth_client):
-    # GIVEN a collection of accounts
-    prep_database(auth_client.sqla)
+# #merge with test_read_one_person/maybe just leave commented out for now
+# @pytest.mark.smoke
+# def test_read_one_account(auth_client):
+#     # GIVEN a collection of accounts
+#     prep_database(auth_client.sqla)
 
-    for account in auth_client.sqla.query(Account).all():
-        # WHEN we request one
-        resp = auth_client.get(
-            url_for('people.read_one_account', account_id=account.id))
-        # THEN we find the matching account
-        assert resp.status_code == 200
-        assert resp.json['username'] == account.username
-        assert 'password' not in resp.json  # Shouldn't be exposed by API
-        assert resp.json['active'] == True
-
-
-#tweak to reference person
-@pytest.mark.smoke
-def test_read_one_account_by_username(auth_client):
-    # GIVEN an account from the database of accounts
-    account_ids = prep_database(auth_client.sqla)
-    random_id = account_ids[random.randint(0, len(account_ids) - 1)]  # Random account id to test
-    account = auth_client.sqla.query(Account).get(random_id)
-    # WHEN searched for by username
-    resp = auth_client.get(url_for('people.read_one_account_by_username', username=account.username))
-    assert resp.status_code == 200  # check response
-    # THEN the api response matches the database account
-    assert account.id == resp.json['id']  # check db id vs api id
-
-    # GIVEN an account name that doesn't exist in the database
-    impossible_account_name = "BigChungus&UgandianKnuckles4Lyfe"
-    # WHEN the api call is made for the non-existent username
-    resp = auth_client.get(url_for('people.read_one_account_by_username', username=impossible_account_name))
-    assert resp.status_code == 404  # check response
+#     for account in auth_client.sqla.query(Account).all():
+#         # WHEN we request one
+#         resp = auth_client.get(
+#             url_for('people.read_one_account', account_id=account.id))
+#         # THEN we find the matching account
+#         assert resp.status_code == 200
+#         assert resp.json['username'] == account.username
+#         assert 'password' not in resp.json  # Shouldn't be exposed by API
+#         assert resp.json['active'] == True
 
 
-#not sure yet
-@pytest.mark.smoke
-def test_read_person_account(auth_client):
-    # GIVEN an account with a person
-    account_ids = prep_database(auth_client.sqla)
-    random_id = account_ids[random.randint(0, len(account_ids) - 1)]  # Random account id to test
-    account = auth_client.sqla.query(Account).get(random_id)
 
-    # WHEN the api call for reading the person account is made
-    resp = auth_client.get(url_for('people.read_person_account', person_id=account.person.id))
-    assert resp.status_code == 200  # check response
-    # THEN the details match those of the db
-    account = auth_client.sqla.query(Account).get(random_id)
-    assert resp.json['id'] == account.id
-    assert resp.json['username'] == account.username
-    assert resp.json["personId"] == account.person.id
+# @pytest.mark.smoke
+# def test_read_one_account_by_username(auth_client):
+#     # GIVEN an account from the database of accounts
+#     account_ids = prep_database(auth_client.sqla)
+#     random_id = account_ids[random.randint(0, len(account_ids) - 1)]  # Random account id to test
+#     account = auth_client.sqla.query(Account).get(random_id)
+#     # WHEN searched for by username
+#     resp = auth_client.get(url_for('people.read_one_account_by_username', username=account.username))
+#     assert resp.status_code == 200  # check response
+#     # THEN the api response matches the database account
+#     assert account.id == resp.json['id']  # check db id vs api id
 
-
-def test_get_accounts_by_role(auth_client):
-    # GIVEN an account with a role
-    role_count = random.randint(3, 7)
-    create_roles(auth_client.sqla, role_count)  # Create x Roles and return their id's
-    people_count = random.randint(30, 55)
-    create_multiple_people(auth_client.sqla, people_count)  # create random people
-    create_multiple_accounts(auth_client.sqla, 1.0)  # create accounts for all people
-
-    roles = auth_client.sqla.query(Role).all()
-    accounts = auth_client.sqla.query(Account).all()
-
-    for account in accounts:
-        account.roles.append(roles[random.randint(0, len(roles) - 1)])  # assign roles to accounts
-        auth_client.sqla.add(account)
-    auth_client.sqla.commit()
-
-    for role in roles:  # Iterate through roles and use api to compare to db
-        # WHEN the api call for getting accounts by role is called
-        resp = auth_client.get(url_for('people.get_accounts_by_role', role_id=role.id))
-        assert resp.status_code == 200  # check response
-
-        account_count = 0
-        for account in accounts:  # count the accounts that have this specific role
-            if role in account.roles:
-                account_count += 1
-        # THEN the number of accounts returned by role matches the DB
-        assert account_count == len(resp.json)  # account_count is equal to number of entries in get_account_by_role
+#     # GIVEN an account name that doesn't exist in the database
+#     impossible_account_name = "BigChungus&UgandianKnuckles4Lyfe"
+#     # WHEN the api call is made for the non-existent username
+#     resp = auth_client.get(url_for('people.read_one_account_by_username', username=impossible_account_name))
+#     assert resp.status_code == 404  # check response
 
 
-def test_update_account(auth_client):
-    """Test that we can update the password"""
-    # Seed the database and fetch the IDs for the new accounts.
-    account_ids = prep_database(auth_client.sqla)
+# #not sure yet
+# @pytest.mark.smoke
+# def test_read_person_account(auth_client):
+#     # GIVEN an account with a person
+#     account_ids = prep_database(auth_client.sqla)
+#     random_id = account_ids[random.randint(0, len(account_ids) - 1)]  # Random account id to test
+#     account = auth_client.sqla.query(Account).get(random_id)
 
-    # Create different passwords for each account.
-    password_by_id = {}
+#     # WHEN the api call for reading the person account is made
+#     resp = auth_client.get(url_for('people.read_person_account', person_id=account.person.id))
+#     assert resp.status_code == 200  # check response
+#     # THEN the details match those of the db
+#     account = auth_client.sqla.query(Account).get(random_id)
+#     assert resp.json['id'] == account.id
+#     assert resp.json['username'] == account.username
+#     assert resp.json["personId"] == account.person.id
 
-    # GIVEN a collection of accounts
-    for account_id in account_ids:
-        # WHEN we update the password via the API
-        new_password = password_by_id[account_id] = fake.password()
-        resp = auth_client.patch(url_for('people.update_account', account_id=account_id),
-                                 json={'password': new_password})
-        # THEN the update worked
-        assert resp.status_code == 200
-        # AND the password was not returned
-        assert 'password' not in resp.json
 
-    # GIVEN a collection of accounts
-    for account_id in account_ids:
-        # WHEN we retrieve account details from the database
-        updated_account = auth_client.sqla.query(
-            Account).filter_by(id=account_id).first()
-        assert updated_account is not None
-        # THEN the (account-specific) password is properly hashed
-        password_hash = updated_account.password_hash
-        assert check_password_hash(password_hash, password_by_id[account_id])
+# def test_get_accounts_by_role(auth_client):
+#     # GIVEN an account with a role
+#     role_count = random.randint(3, 7)
+#     create_roles(auth_client.sqla, role_count)  # Create x Roles and return their id's
+#     people_count = random.randint(30, 55)
+#     create_multiple_people(auth_client.sqla, people_count)  # create random people
+#     #create_multiple_accounts(auth_client.sqla, 1.0)  # create accounts for all people
 
-    """Test that we can update fields _other_ than password."""
-    account_ids = prep_database(auth_client.sqla)
+#     roles = auth_client.sqla.query(Role).all()
+#     accounts = auth_client.sqla.query(Account).all()
 
-    # For each of the accounts, grab the current value of the "other" fields.
-    expected_by_id = {}
-    for account_id in account_ids:
-        current_account = auth_client.sqla.query(
-            Account).filter_by(id=account_id).first()
-        expected_by_id[account_id] = {
-            'username': current_account.username,
-            'active': current_account.active
-        }
+#     for account in accounts:
+#         account.roles.append(roles[random.randint(0, len(roles) - 1)])  # assign roles to accounts
+#         auth_client.sqla.add(account)
+#     auth_client.sqla.commit()
 
-    for account_id in account_ids:
-        payload = {}
+#     for role in roles:  # Iterate through roles and use api to compare to db
+#         # WHEN the api call for getting accounts by role is called
+#         resp = auth_client.get(url_for('people.get_accounts_by_role', role_id=role.id))
+#         assert resp.status_code == 200  # check response
 
-        if flip():
-            # Randomly update the username.
-            new_username = username_factory()
-            expected_by_id[account_id]['username'] = new_username
-            payload['username'] = new_username
-        if flip():
-            # Randomly update the active flag.
-            new_active = flip()
-            expected_by_id[account_id]['active'] = new_active
-            payload['active'] = new_active
+#         account_count = 0
+#         for account in accounts:  # count the accounts that have this specific role
+#             if role in account.roles:
+#                 account_count += 1
+#         # THEN the number of accounts returned by role matches the DB
+#         assert account_count == len(resp.json)  # account_count is equal to number of entries in get_account_by_role
 
-        # At this point, we'll have constructed a payload that might have zero of more
-        # of the fields. This lets us test various combinations of update requests.
-        # The expected_by_id dictionary stores the values we expect to see in the database,
-        # whether the original value retrieve earlier or the newly updated on just
-        # created.
 
-        # It's possible that none of the fields will have been selected for update,
-        # which doesn't make much sense, but we'll still test for that possibility.
+# def test_update_account(auth_client):
+#     """Test that we can update the password"""
+#     # Seed the database and fetch the IDs for the new accounts.
+#     account_ids = prep_database(auth_client.sqla)
 
-        resp = auth_client.patch(
-            url_for('people.update_account', account_id=account_id), json=payload)
-        assert resp.status_code == 200
+#     # Create different passwords for each account.
+#     password_by_id = {}
 
-    for account_id in account_ids:
-        updated_account = auth_client.sqla.query(
-            Account).filter_by(id=account_id).first()
-        assert updated_account is not None
-        assert updated_account.username == expected_by_id[account_id]['username']
-        assert updated_account.active == expected_by_id[account_id]['active']
+#     # GIVEN a collection of accounts
+#     for account_id in account_ids:
+#         # WHEN we update the password via the API
+#         new_password = password_by_id[account_id] = fake.password()
+#         resp = auth_client.patch(url_for('people.update_account', account_id=account_id),
+#                                  json={'password': new_password})
+#         # THEN the update worked
+#         assert resp.status_code == 200
+#         # AND the password was not returned
+#         assert 'password' not in resp.json
+
+#     # GIVEN a collection of accounts
+#     for account_id in account_ids:
+#         # WHEN we retrieve account details from the database
+#         updated_account = auth_client.sqla.query(
+#             Account).filter_by(id=account_id).first()
+#         assert updated_account is not None
+#         # THEN the (account-specific) password is properly hashed
+#         password_hash = updated_account.password_hash
+#         assert check_password_hash(password_hash, password_by_id[account_id])
+
+#     """Test that we can update fields _other_ than password."""
+#     account_ids = prep_database(auth_client.sqla)
+
+#     # For each of the accounts, grab the current value of the "other" fields.
+#     expected_by_id = {}
+#     for account_id in account_ids:
+#         current_account = auth_client.sqla.query(
+#             Account).filter_by(id=account_id).first()
+#         expected_by_id[account_id] = {
+#             'username': current_account.username,
+#             'active': current_account.active
+#         }
+
+#     for account_id in account_ids:
+#         payload = {}
+
+#         if flip():
+#             # Randomly update the username.
+#             new_username = username_factory()
+#             expected_by_id[account_id]['username'] = new_username
+#             payload['username'] = new_username
+#         if flip():
+#             # Randomly update the active flag.
+#             new_active = flip()
+#             expected_by_id[account_id]['active'] = new_active
+#             payload['active'] = new_active
+
+#         # At this point, we'll have constructed a payload that might have zero of more
+#         # of the fields. This lets us test various combinations of update requests.
+#         # The expected_by_id dictionary stores the values we expect to see in the database,
+#         # whether the original value retrieve earlier or the newly updated on just
+#         # created.
+
+#         # It's possible that none of the fields will have been selected for update,
+#         # which doesn't make much sense, but we'll still test for that possibility.
+
+#         resp = auth_client.patch(
+#             url_for('people.update_account', account_id=account_id), json=payload)
+#         assert resp.status_code == 200
+
+#     for account_id in account_ids:
+#         updated_account = auth_client.sqla.query(
+#             Account).filter_by(id=account_id).first()
+#         assert updated_account is not None
+#         assert updated_account.username == expected_by_id[account_id]['username']
+#         assert updated_account.active == expected_by_id[account_id]['active']
 
 
 @pytest.mark.smoke
@@ -704,21 +709,21 @@ def test_update_account_add_roles(auth_client):
     # GIVEN a set of people, accounts and roles
     count = random.randint(3, 6)
     create_multiple_people(auth_client.sqla, count)
-    create_multiple_accounts(auth_client.sqla, 1)
+    #create_multiple_accounts(auth_client.sqla, 1)
     create_roles(auth_client.sqla, count)
 
-    accounts = auth_client.sqla.query(Account).all()
+    persons = auth_client.sqla.query(Person).all()
     roles = auth_client.sqla.query(Role).all()
 
     # GIVEN modification data with roles
-    for account in accounts:
-        new_account = account_object_factory(0)
+    for person in persons:
+        new_person = person_object_factory()
         mod = {}
         flips = (flip(), flip())
         if flips[0]:
-            mod['username'] = new_account['username']
+            mod['username'] = new_person['username']
         if flips[1]:
-            mod['password'] = new_account['password']
+            mod['password'] = new_person['password']
 
         sample_roles = random.sample(roles, math.floor(len(roles) * 0.75))
         mod['roles'] = []
@@ -726,14 +731,14 @@ def test_update_account_add_roles(auth_client):
             mod['roles'].append(role.id)
 
         # WHEN account is requested to be updated
-        resp = auth_client.patch(url_for('people.update_account', account_id=account.id), json=mod)
+        resp = auth_client.patch(url_for('people.update_person', person_id=person.id), json=mod)
 
         # THEN expect the update to run OK
         assert resp.status_code == 200
 
         # THEN expect the number of roles for the account is correct
-        account_roles = auth_client.sqla.query(Account).filter_by(id=account.id).first().roles
-        assert len(account_roles) == len(mod['roles'])
+        person_roles = auth_client.sqla.query(Person).filter_by(id=person.id).first().roles
+        assert len(person_roles) == len(mod['roles'])
 
 
 @pytest.mark.smoke
@@ -741,14 +746,14 @@ def test_update_account_invalid(auth_client):
     # GIVEN a set of people, accounts and roles
     count = random.randint(3, 6)
     create_multiple_people(auth_client.sqla, count)
-    create_multiple_accounts(auth_client.sqla, 1)
+    #create_multiple_accounts(auth_client.sqla, 1)
     create_roles(auth_client.sqla, count)
 
-    accounts = auth_client.sqla.query(Account).all()
+    persons = auth_client.sqla.query(Person).all()
     roles = auth_client.sqla.query(Role).all()
 
     # GIVEN bad modification data
-    for account in accounts:
+    for person in persons:
         mod = {}
         flips = (flip(), flip())
         if flips[0]:
@@ -757,7 +762,7 @@ def test_update_account_invalid(auth_client):
             mod[fake.word()] = fake.word()
 
         # WHEN account is requested to be updated with bad data
-        resp = auth_client.patch(url_for('people.update_account', account_id=account.id), json=mod)
+        resp = auth_client.patch(url_for('people.update_person', person_id=person.id), json=mod)
 
         # THEN expect the request to be unprocessable
         assert resp.status_code == 422
@@ -768,16 +773,16 @@ def test_update_account_no_exist(auth_client):
     # GIVEN a empty database
 
     # GIVEN modification data
-    new_account = account_object_factory(0)
+    new_person = person_object_factory()
     mod = {}
     flips = (flip(), flip())
     if flips[0]:
-        mod['username'] = new_account['username']
+        mod['username'] = new_person['username']
     if flips[1] or not flips[0]:
-        mod['password'] = new_account['password']
+        mod['password'] = new_person['password']
 
     # WHEN a row is requested to be updated with the data
-    resp = auth_client.patch(url_for('people.update_account', account_id=random.randint(1, 8)), json=mod)
+    resp = auth_client.patch(url_for('people.update_person', person_id=random.randint(1, 8)), json=mod)
 
     # THEN expect the requested account to not be found
     assert resp.status_code == 404
@@ -788,40 +793,40 @@ def test_deactivate_account(auth_client):
     # GIVEN a DB with a collection people.
     count = random.randint(3, 11)
     create_multiple_people(auth_client.sqla, count)
-    create_multiple_accounts(auth_client.sqla)
+    #create_multiple_accounts(auth_client.sqla)
 
     # WHEN we choose a person at random
-    all_accounts = auth_client.sqla.query(Account).all()
-    current_account = random.choice(all_accounts)
+    all_persons = auth_client.sqla.query(Person).all()
+    current_person = random.choice(all_persons)
 
     # GIVEN a DB with an enumerated_value.
 
     # WHEN we call deactivate
     resp = auth_client.put(url_for(
-        'people.deactivate_account', account_id=current_account.id))
+        'people.deactivate_person', person_id=current_person.id))
     assert resp.status_code == 200
 
-    updated_account = auth_client.sqla.query(
-        Account).filter_by(id=current_account.id).first()
-    assert updated_account is not None
-    assert updated_account.active == False
-    return current_account.id
+    updated_person = auth_client.sqla.query(
+        Person).filter_by(id=current_person.id).first()
+    assert updated_person is not None
+    assert updated_person.active == False
+    return current_person.id
 
 
 def test_activate_account(auth_client):
     # GIVEN a DB with a collection people and accounts.
-    current_account_id = test_deactivate_account(auth_client)
+    current_person_id = test_deactivate_person(auth_client)
 
     # WHEN we choose an account who has been deactivated
     resp = auth_client.put(url_for(
-        'people.activate_account', account_id=current_account_id))
+        'people.activate_person', person_id=current_person_id))
     assert resp.status_code == 200
 
     # THEN they are reactivated
-    updated_account = auth_client.sqla.query(
-        Account).filter_by(id=current_account_id).first()
-    assert updated_account is not None
-    assert updated_account.active == True
+    updated_person = auth_client.sqla.query(
+        Person).filter_by(id=current_person_id).first()
+    assert updated_person is not None
+    assert updated_person.active == True
 
 
 #   -----   Roles
@@ -875,22 +880,22 @@ def test_get_roles_for_account(auth_client):
     # GIVEN a set of people, accounts, roles and account-role relationships
     count = random.randint(3, 6)
     create_multiple_people(auth_client.sqla, count)
-    create_multiple_accounts(auth_client.sqla, 1)
+    #create_multiple_accounts(auth_client.sqla, 1)
     create_roles(auth_client.sqla, count)
     create_accounts_roles(auth_client.sqla)
 
-    accounts = auth_client.sqla.query(Account).all()
+    persons = auth_client.sqla.query(Person).all()
 
     # WHEN the roles for each account are requested
-    for account in accounts:
-        resp = auth_client.get(url_for('people.get_roles_for_account', account_id=account.id))
+    for person in persons:
+        resp = auth_client.get(url_for('people.get_roles_for_person', preson_id=person.id))
 
         # THEN expect the request to run OK
         assert resp.status_code == 200
 
         # THEN expect the right roles to be returned for the account
-        for i in range(len(account.roles)):
-            assert resp.json[i] == account.roles[i].name_i18n
+        for i in range(len(person.roles)):
+            assert resp.json[i] == person.roles[i].name_i18n
 
 
 @pytest.mark.smoke
@@ -1047,16 +1052,16 @@ def test_add_role_to_account(auth_client):
     # GIVEN a DB populated with people, accounts, and roles
     prep_database(auth_client.sqla)
     Role.load_from_file()
-    all_accounts = auth_client.sqla.query(Account).all()
-    current_account = random.choice(all_accounts)
+    all_persons = auth_client.sqla.query(Person).all()
+    current_person = random.choice(all_persons)
     all_roles = auth_client.sqla.query(Role).all()
     current_role = random.choice(all_roles)
 
     # WHEN account and a role are specified
     resp = auth_client.post(url_for(
-        'people.add_role_to_account', account_id=current_account.id, role_id=current_role.id))
+        'people.add_role_to_person', person_id=current_person.id, role_id=current_role.id))
     assert resp.status_code == 200
-    role_namei18n = auth_client.sqla.query(Account).filter(Account.id == current_account.id).first().roles[0].name_i18n
+    role_namei18n = auth_client.sqla.query(Person).filter(Person.id == current_person.id).first().roles[0].name_i18n
 
     assert resp.json == [role_namei18n]
 
@@ -1078,26 +1083,26 @@ def test_remove_role_from_account(auth_client):
     # GIVEN a DB populated with people, accounts, and roles
     prep_database(auth_client.sqla)
     Role.load_from_file()
-    all_accounts = auth_client.sqla.query(Account).all()
-    current_account = random.choice(all_accounts)
+    all_persons = auth_client.sqla.query(Person).all()
+    current_person = random.choice(all_persons)
     all_roles = auth_client.sqla.query(Role).all()
     current_role = random.choice(all_roles)
 
     # WHEN account and a role are added
     resp = auth_client.post(url_for(
-        'people.add_role_to_account', account_id=current_account.id, role_id=current_role.id))
+        'people.add_role_to_person', person_id=current_person.id, role_id=current_role.id))
     assert resp.status_code == 200
-    role_namei18n = auth_client.sqla.query(Account).filter(Account.id == current_account.id).first().roles[0].name_i18n
+    role_namei18n = auth_client.sqla.query(Person).filter(Person.id == current_person.id).first().roles[0].name_i18n
 
     assert resp.json == [role_namei18n]
 
     # WHEN role is removed from account
     resp = auth_client.delete(url_for(
-        'people.remove_role_from_account', account_id=current_account.id, role_id=current_role.id))
+        'people.remove_role_from_account', account_id=current_person.id, role_id=current_role.id))
     assert resp.status_code == 200
 
     # THEN account no longer is associated with the given role
-    updated_role = auth_client.sqla.query(Account).filter(Account.id == current_account.id).first().roles
+    updated_role = auth_client.sqla.query(Person).filter(Person.id == current_person.id).first().roles
     assert updated_role == []
     assert resp.json != updated_role
 
@@ -1115,7 +1120,7 @@ def test_remove_role_from_account(auth_client):
     # just try to remove the role we just removed
     # WHEN you try to remove that role
     resp = auth_client.delete(url_for(
-        'people.remove_role_from_account', account_id=current_account.id, role_id=current_role.id))
+        'people.remove_role_from_account', account_id=current_person.id, role_id=current_role.id))
 
     # THEN you get a 'That account does not have that role' 404 error
     assert resp.status_code == 404
@@ -1131,7 +1136,7 @@ def test_create_manager(auth_client):
 
     # WHEN we create a random number of new managers and managers in the database
     create_multiple_people(auth_client.sqla, person_count)
-    create_multiple_accounts(auth_client.sqla, 1)
+    #create_multiple_accounts(auth_client.sqla, 1)
 
     for i in range(manager_count):
         resp = auth_client.post(url_for('people.create_manager'),
@@ -1147,12 +1152,12 @@ def test_create_manager_invalid(auth_client):
     # GIVEN a set of people and accounts
     count = random.randint(3, 6)
     create_multiple_people(auth_client.sqla, count)
-    create_multiple_accounts(auth_client.sqla, 1)
+    #create_multiple_accounts(auth_client.sqla, 1)
 
-    accounts = auth_client.sqla.query(Account).all()
+    persons = auth_client.sqla.query(Person).all()
 
     # GIVEN managers with bad data for each account
-    for account in accounts:
+    for person in persons:
         new_manager = manager_object_factory(auth_client.sqla, fake.sentences(nb=1)[0])
         new_manager[fake.word()] = fake.word()
 
@@ -1172,7 +1177,7 @@ def test_read_all_managers(auth_client):
     person_count = random.randint(10, 20)
     manager_count = random.randint(5, person_count)
     create_multiple_people(auth_client.sqla, person_count)
-    create_multiple_accounts(auth_client.sqla, 1)
+    #create_multiple_accounts(auth_client.sqla, 1)
     create_multiple_managers(auth_client.sqla, manager_count)
     # WHEN we request all managers from the server
     resp = auth_client.get(url_for('people.read_all_managers', locale='en-US'))
@@ -1187,7 +1192,7 @@ def test_read_one_manager(auth_client):
     person_count = random.randint(10, 20)
     manager_count = random.randint(5, person_count)
     create_multiple_people(auth_client.sqla, person_count)
-    create_multiple_accounts(auth_client.sqla, 1)
+    #create_multiple_accounts(auth_client.sqla, 1)
     create_multiple_managers(auth_client.sqla, manager_count)
 
     # WHEN we ask for them all
@@ -1201,7 +1206,7 @@ def test_read_one_manager(auth_client):
         resp = auth_client.get(url_for('people.read_one_manager', manager_id=manager.id, locale='en-US'))
         # THEN we find a matching manager
         assert resp.status_code == 200
-        assert resp.json['account_id'] == manager.account_id
+        assert resp.json['person_id'] == manager.person_id
         assert resp.json['manager_id'] == manager.manager_id
         assert resp.json['description_i18n'] == manager.description_i18n
 
@@ -1223,24 +1228,24 @@ def test_update_manager(auth_client):
     person_count = random.randint(10, 20)
     manager_count = random.randint(5, person_count)
     create_multiple_people(auth_client.sqla, person_count)
-    create_multiple_accounts(auth_client.sqla, 1)
+    #create_multiple_accounts(auth_client.sqla, 1)
     create_multiple_managers(auth_client.sqla, manager_count)
 
     managers = auth_client.sqla.query(Manager).all()
-    accounts = auth_client.sqla.query(Account).all()
+    persons = auth_client.sqla.query(Person).all()
 
     update_manager = random.choice(managers)
 
-    new_account_id = update_manager.account_id
-    while new_account_id == update_manager.account_id:
-        new_account_id = random.choice(accounts).id
+    new_person_id = update_manager.person_id
+    while new_person_id == update_manager.person_id:
+        new_person_id = random.choice(persons).id
 
     new_manager_id = update_manager.manager_id
     while new_manager_id == update_manager.manager_id or new_manager_id == update_manager.id:
         new_manager_id = random.choice(managers).id
 
     update_json = {
-        'account_id': new_account_id,
+        'person_id': new_person_id,
         'manager_id': new_manager_id,
         'description_i18n': update_manager.description_i18n
     }
@@ -1249,7 +1254,7 @@ def test_update_manager(auth_client):
     resp = auth_client.patch(url_for('people.update_manager', manager_id=update_manager.id), json=update_json)
     # THEN
     assert resp.status_code == 200
-    assert resp.json['account_id'] == new_account_id
+    assert resp.json['person_id'] == new_person_id
     assert resp.json['manager_id'] == new_manager_id
 
 
@@ -1258,7 +1263,7 @@ def test_update_manager_invalid(auth_client):
     # GIVEN a set of people, accounts, and managers
     count = random.randint(3, 6)
     create_multiple_people(auth_client.sqla, count)
-    create_multiple_accounts(auth_client.sqla, 1)
+    #create_multiple_accounts(auth_client.sqla, 1)
     create_multiple_managers(auth_client.sqla, count)
 
     managers = auth_client.sqla.query(Manager).all()
@@ -1268,7 +1273,7 @@ def test_update_manager_invalid(auth_client):
         mod = {}
         flips = (flip(), flip(), flip())
         if flips[0]:
-            mod['account_id'] = None
+            mod['person_id'] = None
         if flips[1]:
             mod['description_i18n'] = None
         if flips[2] or not (flips[0] or flips[1]):
@@ -1287,11 +1292,11 @@ def test_delete_manager(auth_client):
     person_count = random.randint(10, 20)
     manager_count = random.randint(5, person_count)
     create_multiple_people(auth_client.sqla, person_count)
-    create_multiple_accounts(auth_client.sqla, 1)
+    #create_multiple_accounts(auth_client.sqla, 1)
     create_multiple_managers(auth_client.sqla, manager_count)
 
     managers = auth_client.sqla.query(Manager).all()
-    accounts = auth_client.sqla.query(Account).all()
+    persons = auth_client.sqla.query(Person).all()
 
     delete_manager = managers[0]
     subordinate = managers[1]
@@ -1326,7 +1331,7 @@ def test_delete_manager_with_subordinate(auth_client):
     # GIVEN a set of people, accounts, and managers
     count = random.randint(3, 6)
     create_multiple_people(auth_client.sqla, count * 2)
-    create_multiple_accounts(auth_client.sqla, 1)
+    #create_multiple_accounts(auth_client.sqla, 1)
     create_multiple_managers(auth_client.sqla, count * 2)
 
     # GIVEN half of the managers are subordinates of the others
@@ -1353,7 +1358,7 @@ def test_create_manager_with_superior(auth_client):
     # GIVEN a set of people, accounts, and managers
     count = random.randint(3, 6)
     create_multiple_people(auth_client.sqla, count * 2)
-    create_multiple_accounts(auth_client.sqla, 1)
+    #create_multiple_accounts(auth_client.sqla, 1)
     create_multiple_managers(auth_client.sqla, count)
 
     superiors = auth_client.sqla.query(Manager).all()
@@ -1377,7 +1382,7 @@ def test_create_manager_with_superior(auth_client):
 def test_repr_manager(auth_client):
     # GIVEN a DB with a manager
     create_multiple_people(auth_client.sqla, 1)
-    create_multiple_accounts(auth_client.sqla, 1)
+    #create_multiple_accounts(auth_client.sqla, 1)
     create_multiple_managers(auth_client.sqla, 1)
     managers = auth_client.sqla.query(Manager).all()
     managers[0].__repr__()
@@ -1424,9 +1429,9 @@ def test_repr_person(auth_client):
 @pytest.mark.smoke
 def test_repr_account(auth_client):
     create_multiple_people(auth_client.sqla, 4)
-    create_multiple_accounts(auth_client.sqla, 1)
-    account = auth_client.sqla.query(Account).all()
-    account[0].__repr__()
+    #create_multiple_accounts(auth_client.sqla, 1)
+    person = auth_client.sqla.query(Person).all()
+    person[0].__repr__()
 
 
 @pytest.mark.smoke
@@ -1446,7 +1451,7 @@ def test_init_person(auth_client):
 #   -----   Account Passwords
 @pytest.mark.smoke
 def test_password_account(auth_client):
-    account = Account()
+    account = Person()
     try:
         account.password()
     except:
@@ -1456,12 +1461,12 @@ def test_password_account(auth_client):
 @pytest.mark.smoke
 def test_verify_password_account(auth_client):
     create_multiple_people(auth_client.sqla, 4)
-    create_multiple_accounts(auth_client.sqla, 1)
-    account = auth_client.sqla.query(Account).all()
+    #create_multiple_accounts(auth_client.sqla, 1)
+    account = auth_client.sqla.query(Person).all()
     account[0].password = "test"
     account[0].verify_password("test")
 
-
+#MAYBE ADD ACCOUNT INFO TO THIS
 def create_person(sqla, first_name, last_name, gender, birthday, phone, email, active=True, address_id=None):
     person_schema = PersonSchema()
     person_payload = {
