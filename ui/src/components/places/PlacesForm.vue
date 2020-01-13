@@ -308,75 +308,86 @@ export default {
     findAddressLatLng() {
       this.queryAddress("lat-lng");
     },
-    async queryAddress(type) {
+    async getMapInfo(type) {
+      return new Promise((resolve, reject) => {
+        this.$geocoder.setDefaultMode(type);
+
+        var addressObj;
+        if (type === "address") {
+          addressObj = {
+            address_line_1: this.address.address,
+            city: this.address.city
+          };
+        } else if (type === "lat-lng") {
+          addressObj = {
+            lat: this.address.latitude,
+            lng: this.address.longitude
+          };
+        } else {
+          return;
+        }
+
+        console.log("ADDRESSOBJ CREATED: ");
+        console.log(addressObj);
+        try {
+          this.$geocoder.send(addressObj, response => {
+            if (response.status === "ZERO_RESULTS") {
+              console.log("NO ADDRESS RESULTS");
+              this.addressErr = true;
+              return;
+            } else {
+              this.addressErr = false;
+              console.log("RESPONSE: ");
+              console.log(response);
+              let addr = response.results[0];
+              console.log("addr variable: ");
+              console.log(addr);
+              this.address.address = addr.formatted_address;
+              this.address.latitude = addr.geometry.location.lat;
+              this.address.longitude = addr.geometry.location.lng;
+              let addrcomps = addr.address_components;
+              for (let comp of addrcomps) {
+                for (type of comp.types) {
+                  if (type === "country") {
+                    this.address.country_code = comp.short_name;
+                    this.address.area_name = comp.long_name;
+                  } else if (type === "locality") {
+                    this.address.city = comp.long_name;
+                  } else if (
+                    type === "administrative_area_level_1" ||
+                    type === "administrative_area_level_2"
+                  ) {
+                    this.address.area_name = comp.long_name;
+                  }
+                }
+              }
+              this.marker = {
+                lat: this.address.latitude,
+                lng: this.address.longitude
+              };
+              this.centerMapOnMarker();
+              resolve();
+            }
+          });
+        } catch (err) {
+          console.log(err);
+          reject(err);
+        }
+      });
+    },
+    queryAddress(type) {
       if (type === "address") {
-        const isValid = await this.$validator.validateAll();
+        const isValid = this.$validator.validateAll();
         if (!isValid) {
           console.log("QueryAddress: NOT VALID");
           return;
+        } else {
+          this.getMapInfo(type);
         }
       } else {
-        return new Promise((resolve, reject) => {
-          this.$geocoder.setDefaultMode(type);
-
-          var addressObj;
-          if (type === "address") {
-            addressObj = {
-              address_line_1: this.address.address,
-              city: this.address.city
-            };
-          } else if (type === "lat-lng") {
-            addressObj = {
-              lat: this.address.latitude,
-              lng: this.address.longitude
-            };
-          } else {
-            return;
-          }
-
-          try {
-            this.$geocoder.send(addressObj, response => {
-              if (response.status === "ZERO_RESULTS") {
-                this.addressErr = true;
-                return;
-              } else {
-                this.addressErr = false;
-                let addr = response.results[0];
-                this.address.address = addr.formatted_address;
-                this.address.latitude = addr.geometry.location.lat;
-                this.address.longitude = addr.geometry.location.lng;
-                let addrcomps = addr.address_components;
-                for (let comp of addrcomps) {
-                  for (type of comp.types) {
-                    if (type === "country") {
-                      this.address.country_code = comp.short_name;
-                      this.address.area_name = comp.long_name;
-                    } else if (type === "locality") {
-                      this.address.city = comp.long_name;
-                    } else if (
-                      type === "administrative_area_level_1" ||
-                      type === "administrative_area_level_2"
-                    ) {
-                      this.address.area_name = comp.long_name;
-                    }
-                  }
-                }
-                this.marker = {
-                  lat: this.address.latitude,
-                  lng: this.address.longitude
-                };
-                this.centerMapOnMarker();
-                resolve();
-              }
-            });
-          } catch (err) {
-            console.log(err);
-            reject(err);
-          }
-        });
+        this.getMapInfo(type);
       }
     },
-
     markLocation(location) {
       this.address.address = "Selected Address";
       this.address.city = "Selected City";

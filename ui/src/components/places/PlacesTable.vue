@@ -31,11 +31,9 @@
     </v-toolbar>
 
     <v-data-table
-      :rows-per-page-items="rowsPerPageItem"
       :headers="headers"
       :items="AddressesLocationsData()"
       :search="search"
-      :loading="tableLoading"
       :single-expand="singleExpand"
       :expand.sync="expanded"
       item-key="id"
