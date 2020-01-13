@@ -9,29 +9,6 @@
             <div>Manager: {{ getManagerName() }}</div>
           </div>
         </v-card-title>
-
-        <v-card-actions>
-          <v-btn
-            flat
-            ripple
-            color="primary"
-            data-cy="navigate-to-members"
-            v-on:click="navigateTo('/members')"
-          >
-            <v-icon>person</v-icon>&nbsp;{{ $t("groups.members.title") }}
-          </v-btn>
-          <v-btn
-            flat
-            ripple
-            color="primary"
-            data-cy="navigate-to-meetings"
-            v-on:click="navigateTo('/meetings')"
-          >
-            <v-icon>devices_other</v-icon>&nbsp;{{
-              $t("groups.meetings.title")
-            }}
-          </v-btn>
-        </v-card-actions>
       </v-card>
     </v-flex>
   </v-layout>

@@ -252,6 +252,7 @@
       "header": "Groups",
       "manager": "Manager",
       "meetings": {
+        "add-meeting": "Add Meeting",
         "title": "Meetings"
       },
       "members": {
@@ -260,6 +261,7 @@
       "messages": {
         "already-exists": "Group already exists",
         "confirm-archive": "Are you sure you want to archive this group?",
+        "confirm-member-archive": "Are you sure you want to archive this group member?",
         "error-adding-group": "Error while adding group",
         "error-adding-members": "Error while adding members",
         "error-archiving-group": "Error while archiving group",
@@ -688,6 +690,7 @@
       "header": "Grupos",
       "manager": "Gerente",
       "meetings": {
+        "add-meeting": "Agregar Reuni\u00f3n",
         "title": "Reuniones"
       },
       "members": {

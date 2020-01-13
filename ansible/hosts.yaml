@@ -1,0 +1,11 @@
+development:
+  hosts:
+    ubuntu-desktop:
+
+staging:
+  hosts:
+    cc-staging:
+
+production:
+  hosts:
+    cc-production:

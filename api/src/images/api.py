@@ -9,7 +9,7 @@ from werkzeug.utils import secure_filename
 from . import images
 from .models import Image, ImageSchema
 from .. import db, BASE_DIR
-from ..etc.helper import modify_entity, is_allowed_file, get_file_extension, get_hash
+from src.shared.helpers import modify_entity, is_allowed_file, get_file_extension, get_hash
 
 # ---- Image
 

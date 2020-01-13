@@ -11,6 +11,9 @@ groups:
   description:
     en: Description
     es: Descripción
+  member-count:
+    en: Member Count
+    es: Recuento de Miembros
   manager:
     en: Manager
     es: Gerente
@@ -31,6 +34,9 @@ groups:
     title:
       en: Meetings
       es: Reuniones
+    add-meeting: 
+      en: Add Meeting
+      es: Agregar Reunión
   members:
     title:
       en: Members
@@ -63,6 +69,9 @@ groups:
     confirm-archive:
       en: Are you sure you want to archive this group?
       es: ¿Seguro que quieres archivar este groupos?
+    confirm-member-archive:
+      en: Are you sure you want to archive this group member?
+      es: ¿Estás seguro de que deseas archivar a este miembro del grupo?
     group-archived:
       en: Group archived
       es: Grupo archivado
