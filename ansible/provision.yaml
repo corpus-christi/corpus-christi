@@ -42,36 +42,16 @@
         - silversearcher-ag
         - multitail
 
-- name: create corpus-christi account
+- name: create accounts
   hosts: staging, production
   tags: cc
   become: yes
-  vars_files:
-    - private.yaml
   tasks:
     - name: create corpus-christi user
       user:
-        name: cc
+        name: "{{ cc_username }}"
         password: "{{ cc_password | password_hash('sha512') }}"
         shell: /bin/bash
-
-- name: provision database
-  hosts: staging, production
-  tags: db
-  become: yes
-  become_user: postgres
-  vars_files:
-    - private.yaml
-  tasks:
-    - name: create database user
-      postgresql_user:
-        name: "{{ postgres.username }}"
-        password: "{{ postgres.password }}"
-
-    - name: create database
-      postgresql_db:
-        name: "{{ postgres.database }}"
-        owner: "{{ postgres.username }}"
 
 - name: clone repository
   hosts: all
@@ -87,6 +67,36 @@
         dest: "{{ cc_abs_dir }}"
         version: master
 
+- name: create private files
+  hosts: all
+  tags: config
+  become: yes
+  vars_files:
+    - public.yaml
+  become_user: "{{ cc_username }}"
+  tasks:
+    - name: create private.py file
+      template:
+        src: templates/private.py
+        dest: "{{ cc_api_abs_dir }}/private.py"
+        mode: 0400
+
+- name: provision database
+  hosts: staging, production
+  tags: db
+  become: yes
+  become_user: postgres
+  tasks:
+    - name: create database user
+      postgresql_user:
+        name: "{{ postgres.username }}"
+        password: "{{ postgres.password }}"
+
+    - name: create database
+      postgresql_db:
+        name: "{{ postgres.database }}"
+        owner: "{{ postgres.username }}"
+
 - name: prepare python
   hosts: all
   tags: python, build, update
@@ -95,17 +105,28 @@
   vars_files:
     - public.yaml
   tasks:
-    - name: create python venv
-      command:
-        chdir: "{{ cc_api_abs_dir }}"
-        cmd: "{{ python3 }} -m venv venv"
-        creates: venv/pyvenv.cfg
-
-    - name: populate python venv
-      environment:
-        PATH
+    - name: create and populate python venv
       pip:
-        chdir: "{{ cc_api_abs_dir }}"
-        executable: venv/bin/pip3
-        requirements: requirements.txt
+        virtualenv: "{{ cc_api_abs_dir }}/venv"
+        virtualenv_command: "{{ python3 }} -m venv venv"
+        requirements: "{{ cc_api_abs_dir }}/requirements.txt"
 
+- name: set up database
+  hosts: all
+  tags: db, build, update
+  become: yes
+  become_user: "{{ cc_username }}"
+  vars_files:
+    - public.yaml
+  environment:
+    - FLASK_APP: "{{ cc_api_abs_dir }}/cc-api.py"
+  tasks:
+    - name: create migration
+      command:
+        cmd: "{{ venv_abs_dir }}/bin/flask db migrate"
+        chdir: "{{ cc_api_abs_dir }}"
+
+    - name: upgrade database
+      command:
+        cmd: "{{ venv_abs_dir }}/bin/flask db upgrade"
+        chdir: "{{ cc_api_abs_dir }}"
