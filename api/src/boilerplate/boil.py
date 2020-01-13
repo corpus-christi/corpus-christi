@@ -35,7 +35,7 @@ def camel_case(s):
 
 
 def tab(string, n=1):
-    print(" " * n * 4, string)
+    print(f'{" " * n * 4}{string}')
 
 
 def rule(n, char='='):
@@ -421,7 +421,7 @@ schema = {
                         }
                     }
                 },
-                "required": ["name", "singular", "plural", "uri", "table", "attributes"],
+                "required": ["name", "singular", "plural", "table", "attributes"],
                 "additionalProperties": False
             }
         }
@@ -455,7 +455,10 @@ for file_name in sys.argv[1:]:
     banner("APIs", True)
     for entity in entities:
         comment(entity['name'])
-        generate_api(module, entity)
+        if ('uri' in entity):
+            generate_api(module, entity)
+        else:
+            print("No URI found for this entity, so no API boilerplate produced.")
 
     banner("Tests", True)
     for entity in entities:
