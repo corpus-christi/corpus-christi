@@ -67,7 +67,7 @@ def load_attribute_types():
 
 @data_cli.command('load-all', help='Load everything')
 def load_all():
-    access_token = create_access_token(identity='test-user')
+    #access_token = create_access_token(identity='test-user')
     _load_locales()
     Country.load_from_file()
     Language.load_from_file()
@@ -76,7 +76,7 @@ def load_all():
     create_multiple_people(db.session, 17)
     #create_multiple_accounts(db.session, 0.25)
     create_accounts_roles(db.session, 0.75)
-    access_token = create_access_token(identity='test-user')
+    #access_token = create_access_token(identity='test-user')
 
     create_multiple_areas(db.session, 5)
     create_multiple_addresses(db.session, 10)
