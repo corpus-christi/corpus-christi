@@ -130,9 +130,9 @@
           <!-- User name (for creating new account) -->
           <v-text-field
             v-if="showAccountInfo"
-            v-model="account.username"
+            v-model="person.username"
             v-bind:label="
-              $t('account.username') + (isAccountRequired ? ' *' : '')
+              $t('person.username') + (isAccountRequired ? ' *' : '')
             "
             name="username"
             v-validate="{
@@ -148,11 +148,11 @@
           <!-- Password (new or update) -->
           <v-text-field
             v-if="showAccountInfo"
-            v-model="account.password"
+            v-model="person.password"
             type="password"
             ref="pwdField"
             v-bind:label="
-              $t('account.password') + (isAccountRequired ? ' *' : '')
+              $t('person.password') + (isAccountRequired ? ' *' : '')
             "
             name="password"
             v-validate="`${hasUsername}|min:8`"
@@ -163,9 +163,9 @@
           <!-- Password confirmation (new or update) -->
           <v-text-field
             v-if="showAccountInfo"
-            v-model="account.repeatPassword"
+            v-model="person.repeatPassword"
             type="password"
-            v-bind:label="$t('account.repeat-password')"
+            v-bind:label="$t('person.repeat-password')"
             name="repeat-password"
             v-validate="`confirmed:pwdField|${hasUsername}`"
             v-bind:error-messages="errors.collect('repeat-password')"
@@ -371,15 +371,12 @@ export default {
         gender: "",
         birthday: "",
         email: "",
+        username: "",
+        password: "",
+        repeatPassword: "",
         phone: "",
         locationId: 0,
         attributesInfo: []
-      },
-
-      account: {
-        username: "",
-        password: "",
-        repeatPassword: ""
       },
 
       attributeFormData: {},
@@ -396,9 +393,9 @@ export default {
       return Object.keys(this.person);
     },
 
-    accountKeys() {
-      return Object.keys(this.account);
-    },
+    // accountKeys() {
+    //   return Object.keys(this.account);
+    // },
 
     ...mapGetters(["currentLanguageCode"]),
 
@@ -411,7 +408,7 @@ export default {
       );
     },
     hasUsername() {
-      return this.account.username.length ? "required" : "";
+      return this.person.username.length ? "required" : "";
     },
     getTodayString() {
       let today = new Date();
@@ -475,9 +472,9 @@ export default {
       for (let key of this.personKeys) {
         this.person[key] = "";
       }
-      for (let key of this.accountKeys) {
-        this.account[key] = "";
-      }
+      // for (let key of this.accountKeys) {
+      //   this.account[key] = "";
+      // }
       this.$refs.attributeForm.clear();
       this.showAddressForm = false;
       this.showImageChooser = false;
@@ -702,12 +699,12 @@ export default {
           if (imageId > -1) {
             await this.addImage(response.data.id, imageId);
           }
-          if (this.account.username && this.account.password) {
-            this.addAccount(response.data.id).then(() => {
-              this.$emit(emitMessage, response.data);
-              this.resetForm();
-            });
-          } else {
+          // if (this.account.username && this.account.password) {
+          //   this.addAccount(response.data.id).then(() => {
+          //     this.$emit(emitMessage, response.data);
+          //     this.resetForm();
+          //   });          } 
+          else {
             this.$emit(emitMessage, response.data);
             this.resetForm();
           }
@@ -718,22 +715,22 @@ export default {
         });
     },
 
-    addAccount(personId) {
-      return this.$http
-        .post("/api/v1/people/accounts", {
-          username: this.account.username,
-          password: this.account.password,
-          active: true,
-          personId: personId
-        })
-        .then(resp => {
-          console.log("ADDED", resp);
-        })
-        .catch(err => {
-          this.resetForm();
-          console.error("FAILURE", err.response);
-        });
-    },
+    // addAccount(personId) {
+    //   return this.$http
+    //     .post("/api/v1/people/accounts", {
+    //       username: this.account.username,
+    //       password: this.account.password,
+    //       active: true,
+    //       personId: personId
+    //     })
+    //     .then(resp => {
+    //       console.log("ADDED", resp);
+    //     })
+    //     .catch(err => {
+    //       this.resetForm();
+    //       console.error("FAILURE", err.response);
+    //     });
+    //},
 
     addImage(personId, imageId) {
       return this.$http
