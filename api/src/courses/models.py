@@ -121,13 +121,15 @@ class Student(Base):
     id = Column(Integer, primary_key=True)
     offering_id = Column(Integer, ForeignKey(
         'courses_course_offering.id'), nullable=False)
-    student_id = Column(Integer, ForeignKey(
-        'people_person.id'), nullable=False)
+    person_id = Column(Integer, ForeignKey('people_person.id'), nullable=False)
     confirmed = Column(Boolean, nullable=False)
     active = Column(Boolean, nullable=False, default=True)
-    course_offerings = relationship(
-        'Course_Offering', backref='offerings', lazy=True)
-    people = relationship('Person', backref='students', lazy=True)
+    class_attendances = relationship(
+        'Class_Attendance', backref='students', lazy=True)
+    diplomas_awarded = relationship(
+        'DiplomaAwarded', backref='students', lazy=True)
+    courses_completed = relationship(
+        'CourseCompletion', backref='students', lazy=True)
 
     def __repr__(self):
             return f"<Student(id={self.id})>"
@@ -136,7 +138,7 @@ class Student(Base):
 class StudentSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     offering_id = fields.Integer(data_key='offeringId', required=True)
-    student_id = fields.Integer(data_key='studentId', required=True)
+    person_id = fields.Integer(data_key='personId', required=True)
     confirmed = fields.Boolean(required=True)
     active = fields.Boolean(required=True)
 
@@ -151,10 +153,10 @@ class Course_Offering(Base):
     description = Column(StringTypes.LONG_STRING, nullable=False)
     max_size = Column(Integer, nullable=False)
     active = Column(Boolean, nullable=False, default=True)
-    classmeetings = relationship(
+    class_meetings = relationship(
         'ClassMeeting', backref='course_offerings', lazy=True)
-    classattendances = relationship(
-        'ClassAttendance', backref='course_offerings', lazy=True)
+    class_attendances = relationship(
+        'Class_Attendance', backref='course_offerings', lazy=True)
 
     def __repr__(self):
             return f"<Course_Offering(id={self.id})>"
@@ -200,8 +202,8 @@ class ClassMeeting(Base):
     teacher_id = Column(Integer, ForeignKey(
         'people_person.id'), nullable=False)
     when = Column(Datetime, nullable=False)
-    classattendances = relationship(
-        'ClassAttendance', backref='class_meetings', lazy=True)
+    class_attendances = relationship(
+        'Class_Attendance', backref='class_meetings', lazy=True)
 
     def __repr__(self):
             return f"<ClassMeeting(id={self.id})>"
@@ -221,15 +223,15 @@ class CourseCompletion(Base):
     __tablename__ = 'courses_course_completion'
     course_id = Column(Integer, ForeignKey(
         'courses_course.id'), primary_key=True)
-    person_id = Column(Integer, ForeignKey(
-        'people_person.id'), primary_key=True)
+    student_id = Column(Integer, ForeignKey(
+        'courses_student.id'), primary_key=True)
 
     def __repr__(self):
-            return f"<CourseCompletion(course_id={self.course_id},person_id={self.person_id})>"
+            return f"<CourseCompletion(course_id={self.course_id},student_id={self.student_id})>"
 
 
 class CourseCompletionSchema(Schema):
     course_id = fields.Integer(
         dump_only=True, data_key='courseId', required=True)
-    person_id = fields.Integer(
-        dump_only=True, data_key='personId', required=True)
+    student_id = fields.Integer(
+        dump_only=True, data_key='studentId', required=True)
