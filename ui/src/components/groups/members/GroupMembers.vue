@@ -43,6 +43,22 @@
                 small
                 color="primary"
                 slot="activator"
+                v-on:click=""
+                data-cy="edit"
+              >
+                <v-icon small>edit</v-icon>
+              </v-btn>
+              <span>{{ $t("actions.edit") }}</span>
+            </v-tooltip>
+          </template>
+          <template v-if="props.item.active">
+            <v-tooltip bottom>
+              <v-btn
+                icon
+                outline
+                small
+                color="primary"
+                slot="activator"
                 v-on:click="confirmArchive(props.item)"
                 data-cy="archive"
               >
