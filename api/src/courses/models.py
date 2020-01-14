@@ -8,13 +8,17 @@ from src.shared.models import StringTypes
 
 # ---- Course
 
-
 class Course(Base):
     __tablename__ = 'courses_course'
     id = Column(Integer, primary_key=True)
     name = Column(StringTypes.MEDIUM_STRING, nullable=False)
     description = Column(StringTypes.LONG_STRING, nullable=False)
     active = Column(Boolean, nullable=False, default=True)
+    completions = relationship(
+        'CourseCompletion', backref='courses', lazy=True)
+    diplomas = relationship('DiplomaCourse', backref='courses', lazy=True)
+    prerequisites = relationship('Prerequisite', backref='courses', lazy=True)
+    offerings = relationship('CourseOffering', backref='courses', lazy=True)
     images = relationship('ImageCourse', backref='courses', lazy=True)
 
     def __repr__(self):
@@ -27,7 +31,6 @@ class CourseSchema(Schema):
     description = fields.String(required=True, validate=Length(min=1))
     active = fields.Boolean(required=True)
 
-
 # ---- Prerequisite
 
 
@@ -37,8 +40,6 @@ class Prerequisite(Base):
         'courses_course.id'), primary_key=True)
     prereq_id = Column(Integer, ForeignKey(
         'courses_course.id'), primary_key=True)
-    courses = relationship('Course', backref='prerequisites', lazy=True)
-    prereqs = relationship('Course', backref='prerequisites', lazy=True)
 
     def __repr__(self):
             return f"<Prerequisite(course_id={self.course_id},prereq_id={self.prereq_id})>"
@@ -90,7 +91,6 @@ class DiplomaSchema(Schema):
     description = fields.String(required=True, validate=Length(min=1))
     active = fields.Boolean(required=True)
 
-
 # ---- DiplomaAwarded
 
 
@@ -113,12 +113,6 @@ class DiplomaAwardedSchema(Schema):
         dump_only=True, data_key='diplomaId', required=True, validate=Range(min=1))
     when = fields.Date(required=True)
 
-
-
-
-
-
-
 # ---- Student
 
 
@@ -130,9 +124,10 @@ class Student(Base):
     student_id = Column(Integer, ForeignKey(
         'people_person.id'), nullable=False)
     confirmed = Column(Boolean, nullable=False)
-    course_offerings = relationship(
+    active = Column(Boolean, nullable=False, default=True)
+    course_offering = relationship(
         'Course_Offering', backref='offerings', lazy=True)
-    people = relationship('Person', backref='students', lazy=True)
+    person = relationship('Person', backref='students', lazy=True)
 
     def __repr__(self):
             return f"<Student(id={self.id})>"
@@ -143,6 +138,7 @@ class StudentSchema(Schema):
     offering_id = fields.Integer(data_key='offeringId', required=True)
     student_id = fields.Integer(data_key='studentId', required=True)
     confirmed = fields.Boolean(required=True)
+    active = fields.Boolean(required=True)
 
 # ---- Course_Offering
 
@@ -155,7 +151,10 @@ class Course_Offering(Base):
     description = Column(StringTypes.LONG_STRING, nullable=False)
     max_size = Column(Integer, nullable=False)
     active = Column(Boolean, nullable=False, default=True)
-    courses = relationship('Course', backref='courses_offered', lazy=True)
+    classmeeting = relationship(
+        'ClassMeeting', backref='course_offerings', lazy=True)
+    classattendance = relationship(
+        'ClassAttendance', backref='course_offerings', lazy=True)
 
     def __repr__(self):
             return f"<Course_Offering(id={self.id})>"
@@ -188,7 +187,6 @@ class Class_AttendanceSchema(Schema):
     student_id = fields.Integer(
         dump_only=True, data_key='studentId', required=True)
 
-
 # ---- ClassMeeting
 
 
@@ -197,14 +195,13 @@ class ClassMeeting(Base):
     id = Column(Integer, primary_key=True)
     offering_id = Column(Integer, ForeignKey(
         'courses_course_offering.id'), nullable=False)
-    location = Column(Integer, ForeignKey(
+    location_id = Column(Integer, ForeignKey(
         'places_location.id'), nullable=False)
-    teacher = Column(Integer, ForeignKey('people_person.id'), nullable=False)
+    teacher_id = Column(Integer, ForeignKey(
+        'people_person.id'), nullable=False)
     when = Column(Datetime, nullable=False)
-    course_offerings = relationship(
-        'Course_Offering', backref='class_meeting', lazy=True)
-    locations = relationship('Location', backref='meeting_location', lazy=True)
-    people = relationship('Person', backref='teacher', lazy=True)
+    classattendance = relationship(
+        'ClassAttendance', backref='class_meetings', lazy=True)
 
     def __repr__(self):
             return f"<ClassMeeting(id={self.id})>"
@@ -213,22 +210,22 @@ class ClassMeeting(Base):
 class ClassMeetingSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     offering_id = fields.Integer(data_key='offeringId', required=True)
-    location = fields.Integer(required=True)
-    teacher = fields.Integer(required=True)
+    location_id = fields.Integer(data_key='locationId', required=True)
+    teacher_id = fields.Integer(data_key='teacherId', required=True)
     when = fields.DateTime(required=True)
 
 # ---- CourseCompletion
 
 
 class CourseCompletion(Base):
-    __tablename__ = 'courses_course_completion'
+    __tablename__ = 'courses_coursecompletion'
     course_id = Column(Integer, ForeignKey(
         'courses_course.id'), primary_key=True)
     person_id = Column(Integer, ForeignKey(
         'people_person.id'), primary_key=True)
 
     def __repr__(self):
-        return f"<CourseCompletion(course_id={self.course_id},person_id={self.person_id})>"
+            return f"<CourseCompletion(course_id={self.course_id},person_id={self.person_id})>"
 
 
 class CourseCompletionSchema(Schema):
