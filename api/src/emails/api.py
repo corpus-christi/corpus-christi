@@ -23,7 +23,9 @@ def send_email():
 
     msg = Message(valid_email_request['subject'], sender=(valid_email_request['managerName'], valid_email_request['managerEmail']), 
                                                   reply_to=valid_email_request['managerEmail'],
-                                                  recipients=valid_email_request['recipients']);
+                                                  recipients=valid_email_request['recipients'],
+                                                  cc=valid_email_request['cc'],
+                                                  bcc=valid_email_request['bcc']);
     msg.body = valid_email_request['body']
     mail.send(msg)
 

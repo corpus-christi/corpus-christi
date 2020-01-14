@@ -152,3 +152,6 @@ groups:
     error-archived-not-selected:
       en: No archived members are selected 
       es: No hay miembros archivados seleccionados
+    no-remaining-members:
+      en: No remaining members
+      es: Ningún miembro restante

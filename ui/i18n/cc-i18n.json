@@ -288,6 +288,7 @@
         "member-archived": "Member archived",
         "member-unarchived": "Member unarchived",
         "members-added": "Members added",
+        "no-remaining-members": "No remaining members",
         "required-fields": "Please fill out all required fields"
       },
       "name": "Name",
@@ -739,6 +740,7 @@
         "member-archived": "Miembro archivado",
         "member-unarchived": "Miembro desarchivado",
         "members-added": "Miembros agregados",
+        "no-remaining-members": "Ning\u00fan miembro restante",
         "required-fields": "Por favor llene todos los campos requeridos"
       },
       "name": "Nombre",

@@ -213,35 +213,44 @@
               {{ $t("groups.members.email.compose") }}
             </h3>
           </div>
-          </v-card-title>
-       <!--
-            <v-card-text>
-            {{ $t("groups.members.email.to") }}
-            <entity-search
-              multiple
-              person
-              v-model="email.recipients"
-            />
-          </v-card-text>
-        -->
+        </v-card-title>
         <v-card-text>
-          To: {{ email.recipients }}
+	  <v-select
+            v-model="email.recipients"
+            :label="$t('groups.members.email.to')"
+            :items="parsedMembers"
+            multiple
+            chips
+            deletable-chips
+            hide-selected
+            :no-data-text="$t('groups.messages.no-remaining-members')"
+          >
+          </v-select>
         </v-card-text>
         <v-card-text>
-          {{ $t("groups.members.email.cc") }}
-          <entity-search
-            multiple
-            person
+	  <v-select
             v-model="email.cc"
-          />
+            :label="$t('groups.members.email.cc')"
+            :items="parsedMembers"
+            multiple
+            chips
+            deletable-chips
+            hide-selected
+            :no-data-text="$t('groups.messages.no-remaining-members')"
+          >
+          </v-select>
         </v-card-text>
         <v-card-text>
-          {{ $t("groups.members.email.bcc") }}
-          <entity-search
-            multiple
-            person
+	  <v-select
             v-model="email.bcc"
-          />
+            :label="$t('groups.members.email.bcc')"
+            :items="parsedMembers"
+            multiple
+            chips
+            deletable-chips
+            :no-data-text="$t('groups.messages.no-remaining-members')"
+          >
+          </v-select>
         </v-card-text>
         <v-card-text>
           <v-text-field
@@ -251,13 +260,12 @@
           </v-text-field>
         </v-card-text>
         <v-card-text>
-          <v-text-field
+          <v-textarea
             :label="$t('groups.members.email.body')"
             v-model="email.body"
           >
-          </v-text-field>
+          </v-textarea>
         </v-card-text>
-
         <v-card-actions>
           <v-btn
             v-on:click="toggleEmailDialog"
@@ -306,6 +314,7 @@ export default {
       tableLoading: false,
       search: "",
       members: [],
+      parsedMembers: [],
       selected: [],
       select: false,
       archiveSelect: false,
@@ -388,6 +397,18 @@ export default {
   },
 
   methods: {
+    parseMembers() {
+      this.members.map(e => {
+        if (e.person.email) {
+          this.parsedMembers.push({ 
+            'text': e.person.firstName + " " + e.person.lastName,
+            'value': e.person.email
+          }); 
+        }
+      });
+      //console.log(this.parsedMembers);
+    },
+
     activateNewParticipantDialog() {
       this.addParticipantDialog.show = true;
     },
@@ -433,7 +454,6 @@ export default {
     },
 
     sendEmail() {
-      this.email.recipients = [ "elliot_wirrick@taylor.edu" ];
       this.$http
         .post(`/api/v1/emails/`, this.email)
         .then(() => {
@@ -441,6 +461,8 @@ export default {
           this.selected = [];
           this.email.subject = "";
           this.email.body = "";
+          this.email.cc = "";
+          this.email.bcc = "";
           this.showSnackbar(this.$t("groups.messages.email-sent"));
         })
         .catch(err => {
@@ -450,9 +472,10 @@ export default {
     },
 
     toggleEmailDialog() {
-      if (this.email.recipients.length > 0) {
+      if (this.selected.length > 0) {
+        this.email.recipients = this.getEmailRecipients();
         this.emailDialog.show = !this.emailDialog.show;
-      }
+      } else this.showSnackbar("No valid email addresses are selected");
     },
     
     addParticipant(id) {
@@ -614,6 +637,7 @@ export default {
                             + resp.data.managerInfo.person.secondLastName;
         this.email.managerEmail = resp.data.managerInfo.person.email;
         this.members = resp.data.memberList;
+        this.parseMembers();
         this.tableLoading = false;
       });
     }
