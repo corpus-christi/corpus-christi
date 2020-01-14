@@ -146,13 +146,9 @@ export default {
         places: {}
       },
       search: "",
-      markers: [],
       groupLocations: [],
       opened: []
     };
-  },
-  mounted() {
-    this.populateAddressMarkerData(this.addresses);
   },
   computed: {
     headers() {
@@ -187,6 +183,20 @@ export default {
     },
     visiblePlaces() {
       return this.assets;
+    },
+    markers(){
+      return this.addresses.map(element => {
+        return {
+          position: {
+            lat: element.latitude,
+            lng: element.longitude
+          },
+          data: {
+            name: element.name
+          },
+          opened: false
+        }
+      });
     }
   },
   methods: {
@@ -224,20 +234,6 @@ export default {
       }
       return c;
     },
-    populateAddressMarkerData(addresses){
-      for (let a of addresses){
-        this.markers.push({
-          position: {
-            lat: a.latitude,
-            lng: a.longitude
-          },
-          data: {
-            name: a.name
-          },
-          opened: false
-        });
-      }
-    }
   }
 };
 </script>
