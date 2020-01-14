@@ -5,6 +5,29 @@ from sqlalchemy.orm import relationship
 from src.db import Base
 from src.shared.models import StringTypes
 
+
+# ---- Course
+
+
+class Course(Base):
+    __tablename__ = 'courses_course'
+    id = Column(Integer, primary_key=True)
+    name = Column(StringTypes.MEDIUM_STRING, nullable=False)
+    description = Column(StringTypes.LONG_STRING, nullable=False)
+    active = Column(Boolean, nullable=False, default=True)
+    images = relationship('ImageCourse', backref='courses', lazy=True)
+
+    def __repr__(self):
+            return f"<Course(id={self.id})>"
+
+
+class CourseSchema(Schema):
+    id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
+    name = fields.String(required=True, validate=Length(min=1))
+    description = fields.String(required=True, validate=Length(min=1))
+    active = fields.Boolean(required=True)
+
+
 # ---- Prerequisite
 
 
@@ -108,26 +131,6 @@ class CourseCompletionSchema(Schema):
         dump_only=True, data_key='courseId', required=True)
     person_id = fields.Integer(
         dump_only=True, data_key='personId', required=True)
-# ---- Course
-
-
-class Course(Base):
-    __tablename__ = 'courses_course'
-    id = Column(Integer, primary_key=True)
-    name = Column(StringTypes.MEDIUM_STRING, nullable=False)
-    description = Column(StringTypes.LONG_STRING, nullable=False)
-    active = Column(Boolean, nullable=False, default=True)
-    images = relationship('ImageCourse', backref='courses', lazy=True)
-
-    def __repr__(self):
-            return f"<Course(id={self.id})>"
-
-
-class CourseSchema(Schema):
-    id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
-    name = fields.String(required=True, validate=Length(min=1))
-    description = fields.String(required=True, validate=Length(min=1))
-    active = fields.Boolean(required=True)
 
 
 # ---- Diploma
