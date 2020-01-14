@@ -83,9 +83,6 @@
           <td>{{ l.description }}</td>
         </template>
       </template>
-
-
-
     </v-data-table>
 
     <v-dialog
@@ -118,7 +115,7 @@
             {{ $t("places.address.address") }}
           </v-toolbar-title>
         </v-toolbar>
-        <GoogleMap v-bind:markers="homegroups"></GoogleMap>
+        <GoogleMap v-bind:markers="markers"></GoogleMap>
       </v-flex>
     </v-layout>
   </div>
@@ -149,10 +146,13 @@ export default {
         places: {}
       },
       search: "",
-      homegroups: [],
+      markers: [],
       groupLocations: [],
       opened: []
     };
+  },
+  mounted() {
+    this.populateAddressMarkerData(this.addresses);
   },
   computed: {
     headers() {
@@ -223,6 +223,20 @@ export default {
           }
       }
       return c;
+    },
+    populateAddressMarkerData(addresses){
+      for (let a of addresses){
+        this.markers.push({
+          position: {
+            lat: a.latitude,
+            lng: a.longitude
+          },
+          data: {
+            name: a.name
+          },
+          opened: false
+        });
+      }
     }
   }
 };
