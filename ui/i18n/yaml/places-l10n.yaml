@@ -43,6 +43,9 @@ places:
     description:
       en: Description
       es: Descripción
+    new:
+      en: Add Location
+      es: Añadir Ubicación
   messages:
     no-results:
       en: Your address returned no results.

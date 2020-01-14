@@ -78,14 +78,47 @@
         </tr>
       </template>
       <template slot="expand" slot-scope="props">
-        <td>{{ $t("places.location.location") }}: </td>
-        <template v-for="l in props.item.locations">
-          <td>{{ l.description }}</td>
-        </template>
+        <v-container class="grey lighten-3">
+          <v-layout>
+            <v-flex md2>
+              {{ $t("places.location.location") }}:
+            </v-flex>
+            <v-flex>
+              <v-chip v-for="l in props.item.locations" :key="l.id" small
+                >{{ l.description }}
+              </v-chip>
+            </v-flex>
+            <v-flex md2>
+              <v-tooltip bottom>
+                <v-btn
+                  icon
+                  outline
+                  small
+                  color="primary"
+                  slot="activator"
+                  data-cy="edit-locations"
+                >
+                  <v-icon small>edit</v-icon>
+                </v-btn>
+                <span>{{ $t("actions.edit") }}</span>
+              </v-tooltip>
+              <v-tooltip bottom>
+                <v-btn
+                  icon
+                  outline
+                  small
+                  color="primary"
+                  slot="activator"
+                  data-cy="add-location"
+                >
+                  <v-icon small>add</v-icon>
+                </v-btn>
+                <span>{{ $t("places.location.new") }}</span>
+              </v-tooltip>
+            </v-flex>
+          </v-layout>
+        </v-container>
       </template>
-
-
-
     </v-data-table>
 
     <v-dialog
@@ -118,7 +151,7 @@
             {{ $t("places.address.address") }}
           </v-toolbar-title>
         </v-toolbar>
-        <GoogleMap v-bind:markers="homegroups"></GoogleMap>
+        <GoogleMap v-bind:markers="markers"></GoogleMap>
       </v-flex>
     </v-layout>
   </div>
@@ -149,7 +182,6 @@ export default {
         places: {}
       },
       search: "",
-      homegroups: [],
       groupLocations: [],
       opened: []
     };
@@ -187,6 +219,20 @@ export default {
     },
     visiblePlaces() {
       return this.assets;
+    },
+    markers(){
+      return this.addresses.map(element => {
+        return {
+          position: {
+            lat: element.latitude,
+            lng: element.longitude
+          },
+          data: {
+            name: element.name
+          },
+          opened: false
+        }
+      });
     }
   },
   methods: {
@@ -223,7 +269,7 @@ export default {
           }
       }
       return c;
-    }
+    },
   }
 };
 </script>

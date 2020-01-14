@@ -370,7 +370,8 @@
       "edit": "Edit Location",
       "location": {
         "description": "Description",
-        "location": "Location"
+        "location": "Location",
+        "new": "Add Location"
       },
       "messages": {
         "find-address-err": "Latitude and Longitude are required to find an address",
@@ -821,7 +822,8 @@
       "edit": "Editar Ubicaci\u00f3n",
       "location": {
         "description": "Descripci\u00f3n",
-        "location": "Ubicaci\u00f3n"
+        "location": "Ubicaci\u00f3n",
+        "new": "A\u00f1adir Ubicaci\u00f3n"
       },
       "messages": {
         "find-address-err": "Se requiere latitud y longitud para encontrar una direcci\u00f3n",
