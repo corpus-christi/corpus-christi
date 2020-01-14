@@ -1,18 +1,9 @@
 <template>
   <div>
     <v-toolbar>
-      <!--
-        <v-toolbar-title>{{ $t("events.participants.title") }}</v-toolbar-title>
-        <v-spacer></v-spacer>
-      -->
-      <v-text-field
-        v-model="search"
-        append-icon="search"
-        v-bind:label="$t('actions.search')"
-        single-line
-        hide-details
-      ></v-text-field>
-      <v-spacer></v-spacer>
+      <v-toolbar-title v-if="!select">
+        {{ $t("events.participants.title") }}
+      </v-toolbar-title>
       <v-btn
         color="primary"
         raised
@@ -26,13 +17,22 @@
       <v-btn
         color="primary"
         raised
-        v-on:click=""
+        v-on:click="massArchive"
         data-cy="archive"
         v-if="select"
         fab small
       >
         <v-icon dark>archive</v-icon>
       </v-btn>
+      <v-spacer></v-spacer>
+      <v-text-field
+        v-model="search"
+        append-icon="search"
+        v-bind:label="$t('actions.search')"
+        single-line
+        hide-details
+      ></v-text-field>
+      <v-spacer></v-spacer>
       <v-btn
         color="primary"
         raised
@@ -341,6 +341,8 @@ export default {
         //console.log(this.selected);
         this.select = true;
       } else this.select = false;
+
+      this.email.recipients = this.getEmailRecipients();
     }
   },
 
@@ -415,26 +417,32 @@ export default {
     },
 
     getEmailRecipients() {
-      return this.selected.map(p => p.person.email);
+      return this.selected.map(e => e.person.email).filter(function (e){
+        return e !=null;
+      });
     },
 
     sendEmail() {
+      this.email.recipients = [ "elliot_wirrick@taylor.edu" ];
       this.$http
         .post(`/api/v1/emails/`, this.email)
         .then(() => {
           console.log("email sent successfully");
           this.toggleEmailDialog();
+          this.selected = [];
+          this.email.subject = "";
+          this.email.body = "";
         })
         .catch(err => {
+          console.log(this.email);
           console.log(err);
         }); 
     },
 
     toggleEmailDialog() {
-      if (this.email.recipients.length == 0) {
-        this.email.recipients = this.getEmailRecipients();
-      } else this.email.recipients = [];
-      this.emailDialog.show = !this.emailDialog.show;
+      if (this.email.recipients.length > 0) {
+        this.emailDialog.show = !this.emailDialog.show;
+      }
     },
     
     addParticipant(id) {
@@ -485,6 +493,10 @@ export default {
     showSnackbar(message) {
       this.snackbar.text = message;
       this.snackbar.show = true;
+    },
+
+    massArchive() {
+     if (this.selected.length == 1) this.activateArchiveDialog(this.selected[0].person.id);
     },
 
     activateArchiveDialog(memberId) {
