@@ -143,4 +143,12 @@ groups:
     required-fields:
       en: Please fill out all required fields
       es: Por favor llene todos los campos requeridos
-
+    email-sent:
+      en: Email sent
+      es: Correo electrónico enviado
+    error-active-not-selected: 
+      en: No active members are selected
+      es: No hay miembros activos seleccionados
+    error-archived-not-selected:
+      en: No archived members are selected 
+      es: No hay miembros archivados seleccionados

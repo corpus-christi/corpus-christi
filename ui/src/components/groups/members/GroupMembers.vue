@@ -8,7 +8,6 @@
         color="primary"
         raised
         v-on:click="toggleEmailDialog"
-        data-cy=""
         v-if="select"
         fab small
       >
@@ -17,12 +16,21 @@
       <v-btn
         color="primary"
         raised
-        v-on:click="massArchive"
+        v-on:click="activateSelectArchiveDialog"
         data-cy="archive"
         v-if="select"
         fab small
       >
         <v-icon dark>archive</v-icon>
+      </v-btn>
+      <v-btn
+        color="primary"
+        raised
+        v-on:click="unarchiveFab"
+        v-if="select"
+        fab small
+      >
+        <v-icon dark>undo</v-icon>
       </v-btn>
       <v-spacer></v-spacer>
       <v-text-field
@@ -90,7 +98,7 @@
                 small
                 color="primary"
                 slot="activator"
-                v-on:click="unarchive(props.item)"
+                v-on:click="massUnarchive(props.item)"
                 :loading="props.item.id < 0"
                 data-cy="unarchive"
               >
@@ -119,7 +127,7 @@
           >
           <v-spacer></v-spacer>
           <v-btn
-            v-on:click="archiveGroup"
+            v-on:click="massArchive"
             color="primary"
             raised
             :loading="archiveDialog.loading"
@@ -300,6 +308,8 @@ export default {
       members: [],
       selected: [],
       select: false,
+      archiveSelect: false,
+      unarchiveSelect: false,
       email: {
         subject: "",
         body: "",
@@ -338,7 +348,7 @@ export default {
   watch: {
     selected() {
       if (this.selected.length > 0) {
-        //console.log(this.selected);
+        console.log(this.selected);
         this.select = true;
       } else this.select = false;
 
@@ -427,11 +437,11 @@ export default {
       this.$http
         .post(`/api/v1/emails/`, this.email)
         .then(() => {
-          console.log("email sent successfully");
           this.toggleEmailDialog();
           this.selected = [];
           this.email.subject = "";
           this.email.body = "";
+          this.showSnackbar(this.$t("groups.messages.email-sent"));
         })
         .catch(err => {
           console.log(this.email);
@@ -495,8 +505,31 @@ export default {
       this.snackbar.show = true;
     },
 
+    containsActive() {
+      let isActive = false;
+      this.selected.map(e => {
+        if (e.active) isActive = true;
+      });
+      return isActive;
+    },
+
     massArchive() {
-     if (this.selected.length == 1) this.activateArchiveDialog(this.selected[0].person.id);
+      if (this.archiveSelect) {
+        this.selected.map(e => {
+          this.archiveDialog.memberId = e.id; 
+          this.archiveGroup();
+        });
+        this.archiveSelect = false;
+      } else this.archiveGroup();
+    },
+
+    activateSelectArchiveDialog() {
+      if (this.containsActive()) {
+        if (this.selected.length == 1) {
+          this.activateArchiveDialog(this.selected[0].person.id);
+        } else this.archiveDialog.show = true;;
+        this.archiveSelect = true;
+      } else this.showSnackbar(this.$t("groups.messages.error-active-not-selected"));
     },
 
     activateArchiveDialog(memberId) {
@@ -511,6 +544,7 @@ export default {
 
     cancelArchive() {
       this.archiveDialog.show = false;
+      this.archiveSelect = false;
     },
 
     archiveGroup() {
@@ -534,6 +568,22 @@ export default {
           this.archiveDialog.show = false;
           this.showSnackbar(this.$t("groups.messages.error-archiving-member"));
         });
+    },
+
+    unarchiveFab() {
+      if (!this.containsActive()) {
+        this.unarchiveSelect = true;
+        this.massUnarchive();
+      } else this.showSnackbar(this.$t("groups.messages.error-archived-not-selected"));
+    },
+
+    massUnarchive(member) {
+      if (this.unarchiveSelect) {
+        this.selected.map(e => {
+          this.unarchive(e);
+        });
+        this.unarchiveSelect = false;
+      } else this.unarchive(member);
     },
 
     unarchive(member) {
