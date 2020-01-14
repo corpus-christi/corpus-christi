@@ -41,6 +41,7 @@
           <v-flex>
             <div>
               <v-autocomplete
+                v-bind:countries="countries"
                 name="area"
                 hide-details
                 solo
@@ -77,6 +78,7 @@
               <AreaForm
                 v-on:cancel="cancelArea"
                 v-on:saved="refreshPlacesList"
+                v-bind:countries="countries"
                 v-bind:initialData="areaDialog.area"
               />
             </v-layout>
@@ -192,6 +194,9 @@ export default {
       required: true
     },
     areas: {
+      type: Array
+    },
+    countries:{
       type: Array
     }
   },

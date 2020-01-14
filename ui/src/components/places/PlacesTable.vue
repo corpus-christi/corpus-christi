@@ -138,6 +138,7 @@
         <PlaceForm
           v-bind:initialData="placeDialog.places"
           v-bind:areas="areas"
+          v-bind:countries="countries"
           v-on:cancel="cancelPlace"
           v-on:saved="refreshPlacesList"
           v-on:subFormSaved="refreshPlacesList"
@@ -166,7 +167,8 @@ export default {
   props: {
     addresses: Array,
     areas: Array,
-    locations: Array
+    locations: Array,
+    countries: Array,
   },
 
   data() {

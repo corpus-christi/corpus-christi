@@ -5,7 +5,7 @@ from marshmallow import ValidationError
 from marshmallow.validate import Length
 
 from . import places
-from .models import Country, Address, AddressSchema, Area, AreaSchema, Location, LocationSchema
+from .models import Country, CountrySchema, Address, AddressSchema, Area, AreaSchema, Location, LocationSchema
 from .. import db
 from ..i18n.models import I18NValue, I18NKey
 from ..images.models import Image, ImageLocation
@@ -32,9 +32,15 @@ class CountryListSchema(Schema):
 
 
 country_list_schema = CountryListSchema()
+country_schema = CountrySchema()
 
 
 @places.route('/countries')
+# @jwt_required
+def read_all_countries():
+    result = db.session.query(Country).all()
+    return jsonify(country_schema.dump(result, many=True))
+
 @places.route('/countries/<country_code>')
 def read_countries(country_code=None):
     locale_code = request.args.get('locale')
