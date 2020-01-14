@@ -24,6 +24,9 @@ entities:
       - name: address
         related-model: Address
         backref: locations
+      - name: images
+        related-model: ImageLocation
+        backref: locations
   - name: Address
     singular: address
     plural: addresses
