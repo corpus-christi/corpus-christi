@@ -242,7 +242,8 @@ export default {
       return (
         this.address.address === "" ||
         this.address.city === "" ||
-        this.selectedArea === 0
+        this.selectedArea === 0 ||
+        this.address.name === ""
       );
     }
   },
@@ -442,7 +443,7 @@ export default {
                     if (type === "country") {
                       // look through dropdown for longname in list
                       this.address.country_code = comp.short_name;
-                      this.address.area_name = comp.long_name;
+                      //this.address.area_name = comp.long_name;
                     } else if (type === "locality") {
                       this.address.city = comp.long_name;
                     } else if (
