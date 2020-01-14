@@ -50,6 +50,9 @@ places:
     saved:
       en: Your address has been saved.
       es: Su dirección ha sido guardada.
+    find-address-err:
+      en: Latitude and Longitude are required to find an address
+      es: Se requiere latitud y longitud para encontrar una dirección
   new:
     en: Add Place
     es: Añadir Lugares

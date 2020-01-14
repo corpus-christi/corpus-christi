@@ -6,7 +6,7 @@
         <v-text-field
           name="address"
           v-model="address.address"
-          v-bind:label="$t('places.address.address')"
+          v-bind:label="$t('places.address.address') + ' *'"
           v-validate="'required'"
           v-bind:error-messages="errors.collect('address')"
           clearable
@@ -18,7 +18,7 @@
             <v-text-field
               name="city"
               v-model="address.city"
-              v-bind:label="$t('places.address.city')"
+              v-bind:label="$t('places.address.city') + ' *'"
               v-validate="'required|alpha_spaces'"
               v-bind:error-messages="errors.collect('city')"
               v-bind:readonly="formDisabled"
@@ -45,7 +45,7 @@
                 hide-details
                 solo
                 single-line
-                :label="$t('places.area.area')"
+                :label="$t('places.area.area') + ' *'"
                 :items="dropdownList"
                 v-model="selectedArea"
                 v-validate="'required'"
@@ -83,15 +83,6 @@
           </v-dialog>
         </v-layout>
 
-        <v-btn
-          flat
-          color="primary"
-          @click="findAddress"
-          :loading="formDisabled"
-          :disabled="formDisabled"
-          v-show="!latLng"
-          >{{ $t("places.address.find-address") }}</v-btn
-        >
         <span body-2 v-if="addressErr" class="red--text">
           {{ $t("places.messages.no-results") }}
         </span>
@@ -125,18 +116,19 @@
         <v-text-field
           name="name"
           v-model="address.name"
-          v-bind:label="$t('places.address.name')"
-          v-validate="'required'"
-          :error-messages="errors.collect('name')"
+          v-bind:label="$t('places.address.name') + ' *'"
           :readonly="formDisabled"
         ></v-text-field>
+
+        <span body-2 v-if="findAddressLatLngErr && latLng" class="red--text">
+          {{ $t("places.messages.find-address-err") }}
+        </span>
 
         <v-text-field
           name="latitude"
           v-model="address.latitude"
           v-show="latLng"
           v-bind:label="$t('places.address.latitude')"
-          :disabled="formDisabled"
         ></v-text-field>
 
         <v-text-field
@@ -144,8 +136,11 @@
           v-model="address.longitude"
           v-show="latLng"
           v-bind:label="$t('places.address.longitude')"
-          :disabled="formDisabled"
         ></v-text-field>
+
+        <span body-2 v-if="latLngErr" class="red--text">
+          {{ $t("places.messages.lat-lng-err") }}
+        </span>
 
         <v-btn
           flat
@@ -154,7 +149,7 @@
           :loading="formDisabled"
           :disabled="formDisabled"
           v-show="latLng"
-          >{{ $t("places.address.find-address")}}</v-btn
+          >{{ $t("places.address.find-address") }}</v-btn
         >
       </v-layout>
     </v-card-text>
@@ -220,6 +215,9 @@ export default {
       marker: { lat: 0, lng: 0 },
       map: null,
       addressErr: false,
+      findAddressErr: false,
+      findAddressLatLngErr: false,
+      latLngErr: false,
       showPlacePicker: false,
       formDisabled: false,
       latLng: false,
@@ -239,7 +237,6 @@ export default {
       return (
         this.address.address === "" ||
         this.address.city === "" ||
-        this.address.name === "" ||
         this.selectedArea === 0
       );
     }
@@ -277,6 +274,9 @@ export default {
       this.showPlacePicker = false;
       this.formDisabled = false;
       this.latLng = false;
+      this.findAddressErr = false;
+      this.findAddressLatLngErr = false;
+      this.latLngErr = false;
     },
     openAreaSubForm() {
       this.activateAreaDialog();
@@ -304,32 +304,45 @@ export default {
       this.$validator.reset();
       this.$emit("cancel", false);
     },
-    save(emitMessage) {
-      let addressId = this.address.id;
-      let addressData = {
-        name: this.address.name,
-        address: this.address.address,
-        city: this.address.city,
-        latitude: this.address.latitude,
-        longitude: this.address.longitude,
-        country_code: this.address.country_code,
-        area_id: this.selectedArea
-      };
-      if (addressId) {
-        this.updateAddress(addressData, addressId, emitMessage);
-      } else {
-        this.addAddress(addressData, emitMessage);
-      }
-    },
-    saveAddressForm() {
-      this.saveAddress("saved");
-    },
-    async saveAddress(emitMessage) {
+    async saveAddressForm() {
       this.$validator.validateAll().then(() => {
         if (!this.errors.any()) {
-          this.save(emitMessage);
-        } else {
-          console.log("there were errors");
+          this.formDisabled = true;
+          if (this.address.latitude === "" || this.address.longitude === "") {
+            this.queryAddress("address").then(() => {
+              let addressId = this.address.id;
+              let addressData = {
+                name: this.address.name,
+                address: this.address.address,
+                city: this.address.city,
+                latitude: this.address.latitude,
+                longitude: this.address.longitude,
+                country_code: this.address.country_code,
+                area_id: this.selectedArea
+              };
+              if (addressId) {
+                this.updateAddress(addressData, addressId, "saved");
+              } else {
+                this.addAddress(addressData, "saved");
+              }
+            });
+          } else {
+            let addressId = this.address.id;
+            let addressData = {
+              name: this.address.name,
+              address: this.address.address,
+              city: this.address.city,
+              latitude: this.address.latitude,
+              longitude: this.address.longitude,
+              country_code: this.address.country_code,
+              area_id: this.selectedArea
+            };
+            if (addressId) {
+              this.updateAddress(addressData, addressId, "saved");
+            } else {
+              this.addAddress(addressData, "saved");
+            }
+          }
         }
       });
     },
@@ -363,91 +376,94 @@ export default {
           this.formDisabled = false;
         });
     },
-    findAddress() {
-      this.queryAddress("address");
-    },
     findAddressLatLng() {
+      this.address.city = "";
       this.queryAddress("lat-lng");
     },
-    async getMapInfo(type) {
-      return new Promise((resolve, reject) => {
-        this.$geocoder.setDefaultMode(type);
-
-        var addressObj;
-        if (type === "address") {
-          addressObj = {
-            address_line_1: this.address.address,
-            city: this.address.city
-          };
-        } else if (type === "lat-lng") {
-          addressObj = {
-            lat: this.address.latitude,
-            lng: this.address.longitude
-          };
+    async queryAddress(type) {
+      let isValid;
+      if(this.latLng) {
+        if (this.address.latitude === "" || this.address.longitude === "") {
+          this.findAddressLatLngErr = true;
+          isValid = false;
         } else {
-          return;
-        }
-
-        console.log("ADDRESSOBJ CREATED: ");
-        console.log(addressObj);
-        try {
-          this.$geocoder.send(addressObj, response => {
-            if (response.status === "ZERO_RESULTS") {
-              console.log("NO ADDRESS RESULTS");
-              this.addressErr = true;
-              return;
-            } else {
-              this.addressErr = false;
-              console.log("RESPONSE: ");
-              console.log(response);
-              let addr = response.results[0];
-              console.log("addr variable: ");
-              console.log(addr);
-              this.address.address = addr.formatted_address;
-              this.address.latitude = addr.geometry.location.lat;
-              this.address.longitude = addr.geometry.location.lng;
-              let addrcomps = addr.address_components;
-              for (let comp of addrcomps) {
-                for (type of comp.types) {
-                  if (type === "country") {
-                    // look through dropdown for longname in list
-                    this.address.country_code = comp.short_name;
-                    this.address.area_name = comp.long_name;
-                  } else if (type === "locality") {
-                    this.address.city = comp.long_name;
-                  } else if (
-                    type === "administrative_area_level_1" ||
-                    type === "administrative_area_level_2"
-                  ) {
-                    this.address.area_name = comp.long_name;
-                  }
-                }
-              }
-              this.marker = {
-                lat: this.address.latitude,
-                lng: this.address.longitude
-              };
-              this.centerMapOnMarker();
-              resolve();
-            }
-          });
-        } catch (err) {
-          console.log(err);
-          reject(err);
-        }
-      });
-    },
-    queryAddress(type) {
-      if (type === "address") {
-        const isValid = this.$validator.validate("address") && this.$validator.validate("city");
-        if (!isValid) {
-          console.log("QueryAddress: NOT VALID");
-          return;
-        } else {
-          this.getMapInfo(type);
+          this.findAddressLatLngErr = false;
+          isValid = true;
         }
       } else {
-        this.getMapInfo(type);
+        isValid = await this.$validator.validateAll();
+      }
+      if (!isValid) {
+        return;
+      } else {
+        return new Promise((resolve, reject) => {
+          this.$geocoder.setDefaultMode(type);
+
+          var addressObj;
+          if (type === "address") {
+            addressObj = {
+              address_line_1: this.address.address,
+              city: this.address.city
+            };
+          } else if (type === "lat-lng") {
+            addressObj = {
+              lat: this.address.latitude,
+              lng: this.address.longitude
+            };
+          } else {
+            return;
+          }
+          console.log("ADDRESSOBJ CREATED: ");
+          console.log(addressObj);
+          try {
+            this.$geocoder.send(addressObj, response => {
+              if (response.status === "ZERO_RESULTS") {
+                console.log("NO ADDRESS RESULTS");
+                this.addressErr = true;
+                return;
+              } else {
+                this.addressErr = false;
+                console.log("RESPONSE: ");
+                console.log(response);
+                let addr = response.results[0];
+                console.log("addr variable: ");
+                console.log(addr);
+                this.address.address = addr.formatted_address;
+                this.address.latitude = addr.geometry.location.lat;
+                this.address.longitude = addr.geometry.location.lng;
+                let addrcomps = addr.address_components;
+                for (let comp of addrcomps) {
+                  for (type of comp.types) {
+                    if (type === "country") {
+                      // look through dropdown for longname in list
+                      this.address.country_code = comp.short_name;
+                      this.address.area_name = comp.long_name;
+                    } else if (type === "locality") {
+                      this.address.city = comp.long_name;
+                    } else if (
+                      type === "administrative_area_level_1" ||
+                      type === "administrative_area_level_2"
+                    ) {
+                      this.address.area_name = comp.long_name;
+                    }
+                  }
+                }
+                if (this.address.city === "") {
+                  this.address.city = "Selected City";
+                }
+                this.marker = {
+                  lat: this.address.latitude,
+                  lng: this.address.longitude
+                };
+                this.centerMapOnMarker();
+                resolve();
+              }
+            });
+          } catch (err) {
+            console.log(err);
+            reject(err);
+          }
+        });
       }
     },
     markLocation(location) {
