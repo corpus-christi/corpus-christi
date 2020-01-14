@@ -48,9 +48,29 @@ entities:
         type: integer
         foreign-key: places_location.id
     relationships:
+      # internal
+      - name: manager
+        related-model: Manager
+        backref: persons
+      - name: roles
+        related-model: PersonRole
+        backref: persons
+      - name: attributes
+        related-model: PersonAttribute
+        backref: persons
+      # external
       - name: address
         related-model: Location
-        backref: people
+        backref: persons
+      - name: images
+        related-model: ImagePerson
+        backref: persons
+      - name: course_completions
+        related-model: CourseCompletions
+        backref: persons
+      - name: diplomas_awarded
+        related-model: DiplomaAwarded
+        backref: persons
   - name: Account
     singular: account
     plural: accounts
