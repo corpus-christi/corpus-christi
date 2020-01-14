@@ -24,6 +24,24 @@ entities:
         type: boolean
         required: true
         default: true
+    relationships:
+      # internal
+      - name: completions
+        related-model: CourseCompletion
+        backref: courses
+      - name: diplomas
+        related-model: DiplomaCourse
+        backref: courses
+      - name: prerequisites
+        related-model: Prerequisite
+        backref: courses
+      - name: offerings
+        related-model: CourseOffering
+        backref: courses
+      # external
+      - name: images
+        related-model: ImageCourse
+        backref: courses
   - name: Prerequisite
     singular: prerequisite
     plural: prerequisites
@@ -38,13 +56,6 @@ entities:
         type: integer
         primary-key: true
         foreign-key: courses_course.id
-    relationships:
-      - name: course
-        related-model: Course
-        backref: prerequisites
-      - name: prereq
-        related-model: Course
-        backref: prerequisites
   - name: DiplomaCourse
     singular: diploma_course
     plural: diploma_courses
@@ -116,7 +127,7 @@ entities:
         type: integer
         foreign-key: courses_course_offering.id
         required: true
-      - name: student_id
+      - name: person_id
         type: integer
         foreign-key: people_person.id
         required: true
@@ -124,12 +135,19 @@ entities:
         type: boolean
         required: true
         default: false
+      - name: active
+        type: boolean
+        required: true
+        default: true
     relationships:
-      - name: course_offering
-        related-model: Course_Offering
-        backref: offerings
-      - name: person
-        related-model: Person
+      - name: class_attendances
+        related-model: Class_Attendance
+        backref: students
+      - name: diplomas_awarded
+        related-model: DiplomaAwarded
+        backref: students
+      - name: courses_completed
+        related-model: CourseCompletion
         backref: students
   - name: Course_Offering
     singular: course_offering
@@ -158,9 +176,12 @@ entities:
         required: true
         default: true
     relationships:
-      - name: course
-        related-model: Course
-        backref: courses_offered
+      - name: class_meetings
+        related-model: ClassMeeting
+        backref: course_offerings
+      - name: class_attendances
+        related-model: Class_Attendance
+        backref: course_offerings
   - name: Class_Attendance
     singular: class_attendance
     plural: class_attendance
@@ -189,11 +210,11 @@ entities:
         type: integer
         required: true
         foreign-key: courses_course_offering.id
-      - name: location
+      - name: location_id
         type: integer
         required: true
         foreign-key: places_location.id
-      - name: teacher
+      - name: teacher_id
         type: integer
         required: true
         foreign-key: people_person.id
@@ -201,12 +222,20 @@ entities:
         type: datetime
         required: true
     relationships:
-      - name: course_offering
-        related-model: Course_Offering
-        backref: class_meeting
-      - name: location
-        related-model: Location
-        backref: meeting_location
-      - name: person
-        related-model: Person
-        backref: teacher
+      - name: class_attendances
+        related-model: Class_Attendance
+        backref: class_meetings
+  - name: CourseCompletion
+    singular: coursecompletion
+    plural: coursecompletions
+    uri: /course_completion
+    table: courses_course_completion
+    attributes:
+      - name: course_id
+        type: integer
+        primary-key: true
+        foreign-key: courses_course.id
+      - name: student_id
+        type: integer
+        primary-key: true
+        foreign-key: courses_student.id
