@@ -370,7 +370,8 @@
       "edit": "Edit Location",
       "location": {
         "description": "Description",
-        "location": "Location"
+        "location": "Location",
+        "new": "Add Location"
       },
       "messages": {
         "no-results": "Your address returned no results.",
@@ -820,7 +821,8 @@
       "edit": "Editar Ubicaci\u00f3n",
       "location": {
         "description": "Descripci\u00f3n",
-        "location": "Ubicaci\u00f3n"
+        "location": "Ubicaci\u00f3n",
+        "new": "A\u00f1adir Ubicaci\u00f3n"
       },
       "messages": {
         "no-results": "Tu direcci\u00f3n no devolvi\u00f3 resultados.",
