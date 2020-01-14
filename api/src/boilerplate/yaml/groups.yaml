@@ -20,17 +20,23 @@ entities:
         min-length: 1
         required: true
         length: long
-      - name: active
-        type: boolean
-        required: true
-        default: true
       - name: manager_id
         type: integer
         foreign-key: people_manager.id
         required: true
+      - name: active
+        type: boolean
+        required: true
+        default: true
     relationships:
-      - name: meeting
+      - name: meetings
         related-model: Meeting
+        backref: groups
+      - name: members
+        related-model: Member
+        backref: groups
+      - name: images
+        related-model: ImageGroup
         backref: groups
   - name: Meeting
     singular: meeting
@@ -65,7 +71,7 @@ entities:
         required: true
         default: true
     relationships:
-      - name: attendance
+      - name: attendances
         related-model: Attendance
         backref: meetings
   - name: Member
@@ -78,13 +84,6 @@ entities:
         type: integer
         primary-key: true
         min: 1
-      - name: joined
-        type: date
-        required: true
-      - name: active
-        type: boolean
-        required: true
-        default: true
       - name: group_id
         type: integer
         required: true
@@ -93,14 +92,15 @@ entities:
         type: integer
         required: true
         foreign-key: people_person.id
+      - name: joined
+        type: date
+        required: true
+      - name: active
+        type: boolean
+        required: true
+        default: true
     relationships:
-      - name: group
-        related-model: Group
-        backref: members
-      - name: person
-        related-model: Person
-        backref: members
-      - name: attendance
+      - name: attendances
         related-model: Attendance
         backref: members
   - name: Attendance
