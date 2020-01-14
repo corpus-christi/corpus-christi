@@ -30,6 +30,10 @@ entities:
       - name: active
         type: boolean
         default: true
+    relationships:
+      - name: images
+        related-model: ImageEvent
+        backref: events
   - name: Asset
     singular: asset
     plural: assets
