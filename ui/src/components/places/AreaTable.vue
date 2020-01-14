@@ -87,6 +87,7 @@
           </v-layout>
         </v-card>
         <AreaForm
+          v-bind:countries="countries"
           v-on:cancel="cancelArea"
           v-on:saved="refreshPlacesList"
           v-bind:initialData="areaDialog.area"
@@ -115,7 +116,8 @@ export default {
   props: {
     addresses: Array,
     areas: Array,
-    locations: Array
+    locations: Array,
+    countries: Array
   },
 
   data() {
