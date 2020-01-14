@@ -50,6 +50,26 @@ class PrerequisiteSchema(Schema):
     prereq_id = fields.Integer(
         dump_only=True, data_key='prereqId', required=True)
 
+# ---- Diploma
+
+
+class Diploma(Base):
+    __tablename__ = 'courses_diploma'
+    id = Column(Integer, primary_key=True)
+    name = Column(StringTypes.MEDIUM_STRING, nullable=False)
+    description = Column(StringTypes.LONG_STRING, nullable=False)
+    active = Column(Boolean, nullable=False, default=True)
+
+    def __repr__(self):
+            return f"<Diploma(id={self.id})>"
+
+
+class DiplomaSchema(Schema):
+    id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
+    name = fields.String(required=True, validate=Length(min=1))
+    description = fields.String(required=True, validate=Length(min=1))
+    active = fields.Boolean(required=True)
+
 
 # ---- DiplomaCourse
 
@@ -131,27 +151,6 @@ class CourseCompletionSchema(Schema):
         dump_only=True, data_key='courseId', required=True)
     person_id = fields.Integer(
         dump_only=True, data_key='personId', required=True)
-
-
-# ---- Diploma
-
-
-class Diploma(Base):
-    __tablename__ = 'courses_diploma'
-    id = Column(Integer, primary_key=True)
-    name = Column(StringTypes.MEDIUM_STRING, nullable=False)
-    description = Column(StringTypes.LONG_STRING, nullable=False)
-    active = Column(Boolean, nullable=False, default=True)
-
-    def __repr__(self):
-            return f"<Diploma(id={self.id})>"
-
-
-class DiplomaSchema(Schema):
-    id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
-    name = fields.String(required=True, validate=Length(min=1))
-    description = fields.String(required=True, validate=Length(min=1))
-    active = fields.Boolean(required=True)
 
 
 
