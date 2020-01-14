@@ -40,7 +40,7 @@
         <v-layout row>
           <v-flex>
             <div>
-              <v-select
+              <v-autocomplete
                 name="area"
                 hide-details
                 solo
@@ -51,7 +51,7 @@
                 v-validate="'required'"
                 :error-messages="errors.collect('area')"
                 :disabled="formDisabled"
-              ></v-select>
+              ></v-autocomplete>
             </div>
           </v-flex>
 
