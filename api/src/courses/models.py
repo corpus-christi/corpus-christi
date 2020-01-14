@@ -90,47 +90,6 @@ class DiplomaSchema(Schema):
     description = fields.String(required=True, validate=Length(min=1))
     active = fields.Boolean(required=True)
 
-# ---- Class_Attendance
-
-
-class Class_Attendance(Base):
-    __tablename__ = 'courses_class_attendance'
-    class_id = Column(Integer, ForeignKey(
-        'courses_class_meeting.id'), primary_key=True)
-    student_id = Column(Integer, ForeignKey(
-        'courses_student.id'), primary_key=True)
-
-    def __repr__(self):
-            return f"<Class_Attendance(class_id={self.class_id},student_id={self.student_id})>"
-
-
-class Class_AttendanceSchema(Schema):
-    class_id = fields.Integer(
-        dump_only=True, data_key='classId', required=True)
-    student_id = fields.Integer(
-        dump_only=True, data_key='studentId', required=True)
-
-
-# ---- CourseCompletion
-
-
-class CourseCompletion(Base):
-    __tablename__ = 'courses_course_completion'
-    course_id = Column(Integer, ForeignKey(
-        'courses_course.id'), primary_key=True)
-    person_id = Column(Integer, ForeignKey(
-        'people_person.id'), primary_key=True)
-
-    def __repr__(self):
-        return f"<CourseCompletion(course_id={self.course_id},person_id={self.person_id})>"
-
-
-class CourseCompletionSchema(Schema):
-    course_id = fields.Integer(
-        dump_only=True, data_key='courseId', required=True)
-    person_id = fields.Integer(
-        dump_only=True, data_key='personId', required=True)
-
 
 # ---- DiplomaAwarded
 
@@ -209,6 +168,26 @@ class Course_OfferingSchema(Schema):
     max_size = fields.Integer(data_key='maxSize', required=True)
     active = fields.Boolean(required=True)
 
+# ---- Class_Attendance
+
+
+class Class_Attendance(Base):
+    __tablename__ = 'courses_class_attendance'
+    class_id = Column(Integer, ForeignKey(
+        'courses_class_meeting.id'), primary_key=True)
+    student_id = Column(Integer, ForeignKey(
+        'courses_student.id'), primary_key=True)
+
+    def __repr__(self):
+            return f"<Class_Attendance(class_id={self.class_id},student_id={self.student_id})>"
+
+
+class Class_AttendanceSchema(Schema):
+    class_id = fields.Integer(
+        dump_only=True, data_key='classId', required=True)
+    student_id = fields.Integer(
+        dump_only=True, data_key='studentId', required=True)
+
 
 # ---- ClassMeeting
 
@@ -237,3 +216,23 @@ class ClassMeetingSchema(Schema):
     location = fields.Integer(required=True)
     teacher = fields.Integer(required=True)
     when = fields.DateTime(required=True)
+
+# ---- CourseCompletion
+
+
+class CourseCompletion(Base):
+    __tablename__ = 'courses_course_completion'
+    course_id = Column(Integer, ForeignKey(
+        'courses_course.id'), primary_key=True)
+    person_id = Column(Integer, ForeignKey(
+        'people_person.id'), primary_key=True)
+
+    def __repr__(self):
+        return f"<CourseCompletion(course_id={self.course_id},person_id={self.person_id})>"
+
+
+class CourseCompletionSchema(Schema):
+    course_id = fields.Integer(
+        dump_only=True, data_key='courseId', required=True)
+    person_id = fields.Integer(
+        dump_only=True, data_key='personId', required=True)
