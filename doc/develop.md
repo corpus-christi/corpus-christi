@@ -277,6 +277,26 @@ of private data,
 `private.py` is listed in the CC `.gitignore` file.
 Still, use caution!
 
+**During development and testing**,
+you can override the database connection 
+by defining environment variables in `bash`.
+For example:
+```bash
+export DEV_DB_URL="postgresql://PSQL_USER:PSQL_PASS@PSQL_HOST/PSQL_DB"
+```
+tells CC how to connect to your development database (the `DEV` part of the environment variable)
+where:
+   * `PSQL_USER` is your Postgres user name
+   * `PSQL_PASS` is your Postgres password
+     (if you haven't set a password, omit this field _and_ the colon
+     that separates it from `PSQL_USER`)
+   * `PSQL_HOST` is the host where the Postgres server is running
+     (DNS name or `localhost` if running on your workstation)
+   * `PSQL_DB` is your Postgres database name
+
+Similarly, you can define `TEST_DB_URL` for your test database (for use with `pytest`)
+or `PROD_DB_URL` for your production database.
+
 ### Database Initialization
 
 - Windows: run the rest of the commands in bash and not WSL.  Make sure the `api/private.py` has the correct password (password used in psql).  If errors, check the postgreSQL WSL installation tutorial [Tips/Debugging](./postgres-windows.md) section for help. 
