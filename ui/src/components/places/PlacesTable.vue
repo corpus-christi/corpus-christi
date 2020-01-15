@@ -183,7 +183,7 @@ export default {
       },
       search: "",
       groupLocations: [],
-      opened: []
+      opened: [],
     };
   },
   computed: {
@@ -207,7 +207,7 @@ export default {
         {
           text: this.$t("places.address.latitude"),
           width: "4%",
-          value: "latitude"
+          value: "latitude",
         },
         {
           text: this.$t("places.address.longitude"),
@@ -247,7 +247,6 @@ export default {
     editPlace(place) {
       this.activatePlaceDialog({ ...place }, true);
     },
-
     newPlace() {
       this.activatePlaceDialog();
     },
@@ -255,7 +254,6 @@ export default {
     cancelPlace() {
       this.placeDialog.show = false;
     },
-
     refreshPlacesList() {
       this.$emit("fetchPlacesList");
     },

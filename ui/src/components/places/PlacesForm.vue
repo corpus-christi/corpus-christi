@@ -85,6 +85,13 @@
           </v-dialog>
         </v-layout>
 
+        <v-text-field
+          name="name"
+          v-model="address.name"
+          v-bind:label="$t('places.address.name') + ' *'"
+          :readonly="formDisabled"
+        ></v-text-field>
+
         <span body-2 v-if="addressErr" class="red--text">
           {{ $t("places.messages.no-results") }}
         </span>
@@ -101,26 +108,19 @@
         </gmap-map>
 
         <v-checkbox
-          name="toggleCheckbox"
-          :label="$t('places.address.find-address-lat-lng')"
-          v-model="latLng"
-          :disabled="formDisabled"
-        >
-        </v-checkbox>
-
-        <v-checkbox
           name="toggleAddressMode"
           :label="$t('places.address.valid-address')"
           v-model="addressValid"
           :disabled="formDisabled"
         ></v-checkbox>
 
-        <v-text-field
-          name="name"
-          v-model="address.name"
-          v-bind:label="$t('places.address.name') + ' *'"
-          :readonly="formDisabled"
-        ></v-text-field>
+        <v-checkbox
+          name="toggleCheckbox"
+          :label="$t('places.address.find-address-lat-lng')"
+          v-model="latLng"
+          :disabled="formDisabled"
+        >
+        </v-checkbox>
 
         <span body-2 v-if="findAddressLatLngErr && latLng" class="red--text">
           {{ $t("places.messages.find-address-err") }}
