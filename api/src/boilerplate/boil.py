@@ -79,10 +79,12 @@ def generate_model(entity):
     for attr in entity['attributes']:
         details = []
 
-        if attr['type'] in ('integer', 'date', 'boolean', 'datetime', 'float'):
+        if attr['type'] in ('integer', 'date', 'boolean', 'float'):
             details.append(attr['type'].capitalize())
         elif attr['type'] == 'string':
             details.append(model_string(attr))
+        elif attr['type'] == 'datetime':
+            details.append('DateTime');
         else:
             raise ValidationError(f"Unknown type: {attr['type']}")
 
