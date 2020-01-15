@@ -61,8 +61,8 @@ export default {
         this.locationList = resp.data;
       });
       this.$http.get("/api/v1/places/countries").then(resp => {
-          this.countryList = resp.data;
-      })
+        this.countryList = resp.data;
+      });
     }
   }
 };

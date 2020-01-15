@@ -191,7 +191,7 @@ export default {
     areas: {
       type: Array
     },
-    countries:{
+    countries: {
       type: Array
     }
   },
@@ -388,7 +388,7 @@ export default {
     },
     async queryAddress(type) {
       let isValid;
-      if(this.latLng) {
+      if (this.latLng) {
         if (this.address.latitude === "" || this.address.longitude === "") {
           this.findAddressLatLngErr = true;
           isValid = false;
