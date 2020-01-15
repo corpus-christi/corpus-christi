@@ -238,6 +238,8 @@ export default {
           return this.roleEventPlanner;
         case 11:
           return this.roleVisitor;
+        case "allRoles":
+          return this.allAccount;
         default:
           return this.allAccount;
       }
@@ -405,13 +407,6 @@ export default {
             this.personDialog.attributes = resp.data.person_attributes;
           }
         })
-        .catch(err => console.error("FAILURE", err.response));
-    },
-
-    getRoles(accountId) {
-      this.$http
-        .get(`/api/v1/people/role/account/${accountId}`)
-        .then(console.log("FETCHED ROLES"))
         .catch(err => console.error("FAILURE", err.response));
     },
 
