@@ -1,4 +1,6 @@
 from marshmallow import fields, Schema
+from marshmallow.validate import Range
+from marshmallow.validate import Length
 from sqlalchemy import Column, Integer, ForeignKey
 from sqlalchemy.orm import relationship
 
