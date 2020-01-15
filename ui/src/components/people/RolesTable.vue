@@ -25,7 +25,8 @@
               solo
               single-line
               :label="$t('people.title-roles')"
-              :items="translatedRoles"
+              :items="translatedRoles.concat(viewOption)"
+              v-model="viewStatus"
             ></v-select>
           </div>
         </v-flex>
@@ -152,6 +153,7 @@ export default {
 
   data() {
     return {
+      viewStatus: this.allAccount,
       personRoles: [],
       personDialog: {
         show: false,
@@ -213,7 +215,34 @@ export default {
       ];
     },
     peopleToDisplay() {
-      return this.allAccount;
+      switch (this.viewStatus) {
+        case 1:
+          return this.rolePublic;
+        case 2:
+          return this.roleInfrastructure;
+        case 3:
+          return this.roleSuperuser;
+        case 4:
+          return this.roleTranslator;
+        case 5:
+          return this.roleGroupAdmin;
+        case 6:
+          return this.roleGroupLeader;
+        case 7:
+          return this.roleGroupOverseer;
+        case 8:
+          return this.roleRegistrar;
+        case 9:
+          return this.roleTeachingAssistant;
+        case 10:
+          return this.roleEventPlanner;
+        case 11:
+          return this.roleVisitor;
+        case "allRoles":
+          return this.allAccount;
+        default:
+          return this.allAccount;
+      }
     },
     translatedRoles() {
       return this.rolesList.map(element => {
@@ -222,6 +251,14 @@ export default {
           value: element.value
         };
       });
+    },
+    viewOption() {
+      return [
+        {
+          text: this.$t("people.dropdown-roles"),
+          value: "allRoles"
+        }
+      ];
     }
   },
 
@@ -231,9 +268,39 @@ export default {
       this.allAccount = this.allPeople.filter(
         person => person.accountInfo && person.active
       );
-    },
-    rolesList(all_roles) {
-      this.rolesList = all_roles;
+      this.rolePublic = this.allAccount.filter(person =>
+        person.accountInfo.roles.some(role => role.id === 1)
+      );
+      this.roleInfrastructure = this.allAccount.filter(person =>
+        person.accountInfo.roles.some(role => role.id === 2)
+      );
+      this.roleSuperuser = this.allAccount.filter(person =>
+        person.accountInfo.roles.some(role => role.id === 3)
+      );
+      this.roleTranslator = this.allAccount.filter(person =>
+        person.accountInfo.roles.some(role => role.id === 4)
+      );
+      this.roleGroupAdmin = this.allAccount.filter(person =>
+        person.accountInfo.roles.some(role => role.id === 5)
+      );
+      this.roleGroupLeader = this.allAccount.filter(person =>
+        person.accountInfo.roles.some(role => role.id === 6)
+      );
+      this.roleGroupOverseer = this.allAccount.filter(person =>
+        person.accountInfo.roles.some(role => role.id === 7)
+      );
+      this.roleRegistrar = this.allAccount.filter(person =>
+        person.accountInfo.roles.some(role => role.id === 8)
+      );
+      this.roleTeachingAssistant = this.allAccount.filter(person =>
+        person.accountInfo.roles.some(role => role.id === 9)
+      );
+      this.roleEventPlanner = this.allAccount.filter(person =>
+        person.accountInfo.roles.some(role => role.id === 10)
+      );
+      this.roleVisitor = this.allAccount.filter(person =>
+        person.accountInfo.roles.some(role => role.id === 11)
+      );
     },
     tableLoaded(loading) {
       this.tableLoaded = loading;
@@ -242,6 +309,7 @@ export default {
 
   methods: {
     // ---- Person Administration
+    verifyPublicRole() {},
 
     activatePersonDialog(person = {}, editMode = false) {
       this.personDialog.editMode = editMode;
