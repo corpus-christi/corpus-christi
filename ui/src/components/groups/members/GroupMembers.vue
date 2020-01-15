@@ -1,73 +1,99 @@
 <template>
   <div>
     <v-toolbar>
-      <v-toolbar-title v-if="!select">
-        {{ $t("events.participants.title") }}
-      </v-toolbar-title>
-      <v-btn
-        color="primary"
-        raised
-        v-on:click="toggleEmailDialog"
-        v-if="select"
-        fab small
-      >
-        <v-icon dark>email</v-icon>
-      </v-btn>
-      <v-btn
-        color="primary"
-        raised
-        v-on:click="activateSelectArchiveDialog"
-        data-cy="archive"
-        v-if="select"
-        fab small
-      >
-        <v-icon dark>archive</v-icon>
-      </v-btn>
-      <v-btn
-        color="primary"
-        raised
-        v-on:click="unarchiveFab"
-        v-if="select"
-        fab small
-      >
-        <v-icon dark>undo</v-icon>
-      </v-btn>
-      <v-spacer></v-spacer>
-      <v-text-field
-        v-model="search"
-        append-icon="search"
-        v-bind:label="$t('actions.search')"
-        single-line
-        hide-details
-      ></v-text-field>
-      <v-spacer></v-spacer>
-      <v-btn
-        color="primary"
-        raised
-        v-on:click="openParticipantDialog"
-        data-cy="add-participant"
-      >
-        <v-icon dark left>add</v-icon>
-        {{ $t("actions.add-person") }}
-      </v-btn>
+      <v-layout align-center justify-space-between fill-height>
+        <v-flex md2>
+          <v-toolbar-title>{{
+            $t("events.participants.title")
+          }}</v-toolbar-title>
+        </v-flex>
+        <v-flex md1>
+          <v-btn
+            color="primary"
+            raised
+            v-on:click="toggleEmailDialog"
+            v-if="select"
+            fab
+            small
+          >
+            <v-icon dark>email</v-icon>
+          </v-btn>
+        </v-flex>
+        <v-flex md1>
+          <v-btn
+            color="primary"
+            raised
+            v-on:click="activateSelectArchiveDialog"
+            data-cy="archive"
+            v-if="select"
+            fab
+            small
+          >
+            <v-icon dark>archive</v-icon>
+          </v-btn>
+        </v-flex>
+        <v-flex md1>
+          <v-btn
+            color="primary"
+            raised
+            v-on:click="unarchiveFab"
+            v-if="select"
+            fab
+            small
+          >
+            <v-icon dark>undo</v-icon>
+          </v-btn>
+        </v-flex>
+        <v-flex md1>
+          <v-text-field
+            v-model="search"
+            append-icon="search"
+            v-bind:label="$t('actions.search')"
+            single-line
+            hide-details
+          ></v-text-field>
+        </v-flex>
+        <v-flex md1>
+          <v-select
+            hide-details
+            solo
+            single-line
+            :items="viewOptions"
+            v-model="viewStatus"
+            data-cy="view-status-select"
+          >
+          </v-select>
+        </v-flex>
+        <v-flex shrink justify-self-end>
+          <v-btn
+            color="primary"
+            raised
+            v-on:click="openParticipantDialog"
+            data-cy="add-participant"
+          >
+            <v-icon dark left>add</v-icon>
+            {{ $t("actions.add-person") }}
+          </v-btn>
+        </v-flex>
+      </v-layout>
     </v-toolbar>
-    <v-data-table 
+    <v-data-table
       select-all
       v-model="selected"
       :rows-per-page-items="rowsPerPageItem"
       :headers="headers"
-      :items="members"
+      :items="visibleMembers"
       :search="search"
       :loading="tableLoading"
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
         <td>
-            <v-checkbox 
-              v-model="props.selected"
-              primary
-              hide-details
-            ></v-checkbox>
+          <v-checkbox
+            v-model="props.selected"
+            primary
+            hide-details
+          ></v-checkbox>
         </td>
         <td>{{ props.item.person.firstName }}</td>
         <td>{{ props.item.person.lastName }}</td>
@@ -215,7 +241,7 @@
           </div>
         </v-card-title>
         <v-card-text>
-	  <v-select
+          <v-select
             v-model="email.recipients"
             :label="$t('groups.members.email.to')"
             :items="parsedMembers"
@@ -228,7 +254,7 @@
           </v-select>
         </v-card-text>
         <v-card-text>
-	  <v-select
+          <v-select
             v-model="email.cc"
             :label="$t('groups.members.email.cc')"
             :items="parsedMembers"
@@ -241,7 +267,7 @@
           </v-select>
         </v-card-text>
         <v-card-text>
-	  <v-select
+          <v-select
             v-model="email.bcc"
             :label="$t('groups.members.email.bcc')"
             :items="parsedMembers"
@@ -282,12 +308,11 @@
             raised
             :loading="sendEmail.loading"
             data-cy="confirm-email"
-	    >{{ $t("groups.members.email.send") }}</v-btn
+            >{{ $t("groups.members.email.send") }}</v-btn
           >
         </v-card-actions>
       </v-card>
     </v-dialog>
-
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
@@ -350,7 +375,8 @@ export default {
       snackbar: {
         show: false,
         text: ""
-      }
+      },
+      viewStatus: "viewActive"
     };
   },
 
@@ -366,6 +392,14 @@ export default {
   },
 
   computed: {
+    viewOptions() {
+      return [
+        { text: this.$t("actions.view-active"), value: "viewActive" },
+        { text: this.$t("actions.view-archived"), value: "viewArchived" },
+        { text: this.$t("actions.view-all"), value: "viewAll" }
+      ];
+    },
+
     headers() {
       return [
         {
@@ -393,6 +427,18 @@ export default {
           sortable: false
         }
       ];
+    },
+
+    visibleMembers() {
+      let list = this.members;
+
+      if (this.viewStatus === "viewActive") {
+        return list.filter(ev => ev.active);
+      } else if (this.viewStatus === "viewArchived") {
+        return list.filter(ev => !ev.active);
+      } else {
+        return list;
+      }
     }
   },
 
@@ -400,10 +446,10 @@ export default {
     parseMembers() {
       this.members.map(e => {
         if (e.person.email) {
-          this.parsedMembers.push({ 
-            'text': e.person.firstName + " " + e.person.lastName,
-            'value': e.person.email
-          }); 
+          this.parsedMembers.push({
+            text: e.person.firstName + " " + e.person.lastName,
+            value: e.person.email
+          });
         }
       });
       //console.log(this.parsedMembers);
@@ -448,9 +494,11 @@ export default {
     },
 
     getEmailRecipients() {
-      return this.selected.map(e => e.person.email).filter(function (e){
-        return e !=null;
-      });
+      return this.selected
+        .map(e => e.person.email)
+        .filter(function(e) {
+          return e != null;
+        });
     },
 
     sendEmail() {
@@ -468,7 +516,7 @@ export default {
         .catch(err => {
           console.log(this.email);
           console.log(err);
-        }); 
+        });
     },
 
     toggleEmailDialog() {
@@ -477,7 +525,7 @@ export default {
         this.emailDialog.show = !this.emailDialog.show;
       } else this.showSnackbar("No valid email addresses are selected");
     },
-    
+
     addParticipant(id) {
       const groupId = this.$route.params.group;
       for (var member of this.members) {
@@ -539,7 +587,7 @@ export default {
     massArchive() {
       if (this.archiveSelect) {
         this.selected.map(e => {
-          this.archiveDialog.memberId = e.id; 
+          this.archiveDialog.memberId = e.id;
           this.archiveGroup();
         });
         this.archiveSelect = false;
@@ -550,9 +598,10 @@ export default {
       if (this.containsActive()) {
         if (this.selected.length == 1) {
           this.activateArchiveDialog(this.selected[0].person.id);
-        } else this.archiveDialog.show = true;;
+        } else this.archiveDialog.show = true;
         this.archiveSelect = true;
-      } else this.showSnackbar(this.$t("groups.messages.error-active-not-selected"));
+      } else
+        this.showSnackbar(this.$t("groups.messages.error-active-not-selected"));
     },
 
     activateArchiveDialog(memberId) {
@@ -597,7 +646,10 @@ export default {
       if (!this.containsActive()) {
         this.unarchiveSelect = true;
         this.massUnarchive();
-      } else this.showSnackbar(this.$t("groups.messages.error-archived-not-selected"));
+      } else
+        this.showSnackbar(
+          this.$t("groups.messages.error-archived-not-selected")
+        );
     },
 
     massUnarchive(member) {
@@ -632,9 +684,12 @@ export default {
       this.tableLoading = true;
       const id = this.$route.params.group;
       this.$http.get(`/api/v1/groups/groups/${id}`).then(resp => {
-        this.email.managerName = resp.data.managerInfo.person.firstName + " " 
-                            + resp.data.managerInfo.person.lastName + " "
-                            + resp.data.managerInfo.person.secondLastName;
+        this.email.managerName =
+          resp.data.managerInfo.person.firstName +
+          " " +
+          resp.data.managerInfo.person.lastName +
+          " " +
+          resp.data.managerInfo.person.secondLastName;
         this.email.managerEmail = resp.data.managerInfo.person.email;
         this.members = resp.data.memberList;
         this.parseMembers();
