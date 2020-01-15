@@ -163,9 +163,9 @@
           <!-- Password confirmation (new or update) -->
           <v-text-field
             v-if="showAccountInfo"
-            v-model="person.repeatPassword"
+            v-model="repeatPassword"
             type="password"
-            v-bind:label="$t('person.repeat-password')"
+            v-bind:label="$t('repeat-password')"
             name="repeat-password"
             v-validate="`confirmed:pwdField|${hasUsername}`"
             v-bind:error-messages="errors.collect('repeat-password')"
@@ -373,11 +373,12 @@ export default {
         email: "",
         username: "",
         password: "",
-        repeatPassword: "",
         phone: "",
-        locationId: 0,
+        addressId: 0,
         attributesInfo: []
       },
+
+      repeatPassword: "",
 
       attributeFormData: {},
 
@@ -519,7 +520,7 @@ export default {
     },
 
     saveAddress(resp) {
-      this.person.locationId = resp.id;
+      this.person.addressId = resp.id;
       this.addressWasSaved = true;
       this.showAddressForm = false;
     },
@@ -764,7 +765,7 @@ export default {
     },
 
     removeLocationFromDatabase() {
-      if (this.person.locationId != 0 || this.person.locationId != "") {
+      if (this.person.addressId != 0 || this.person.addressId != "") {
         this.$http.post;
       }
     },

@@ -45,6 +45,8 @@ def login():
     # Return to the caller all the account information needed.
     person = db.session.query(Person).filter_by(username=username).first()
     if person is None or not person.verify_password(password):
+        #print(password)
+        #print(person.hash_password)
         return jsonify(badCred), 404
 
 #dont think this is neccesary anymore
@@ -68,7 +70,7 @@ def check_if_token_revoked(decoded_token):
 
 @jwt.user_claims_loader
 def add_claims_to_access_token(identity):
-    roles = db.session.query(Role).join(Person, Role.persons).filter_by( #not certain whether it should be Role.persons or Role.person
+    roles = db.session.query(Role).join(Person, Role.person).filter_by(
         username=identity).filter_by(active=True).all()
     role_schema = RoleSchema()
     user_roles = []

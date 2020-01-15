@@ -50,7 +50,7 @@ def read_person_fields():
 def create_person():
     request.json['person']['active'] = True
 
-    for key, value in request.json['person'].items():
+    for key, value in request.json['person'].items(): #don't know why value needs to be here, but without it we get an internal server error when this function is called
         if request.json['person'][key] is "" or request.json['person'][key] is 0:
             request.json['person'][key] = None
 
