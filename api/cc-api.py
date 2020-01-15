@@ -8,7 +8,7 @@ from flask.cli import AppGroup
 from flask_jwt_extended import create_access_token
 from src import create_app, db
 from src.attributes.models import Attribute
-from src.courses.models import Course, Course_Offering, Diploma
+from src.courses.models import Course, CourseOffering, Diploma
 from src.courses.test_courses import create_multiple_courses, create_multiple_course_offerings, \
     create_multiple_diplomas, create_multiple_students, create_class_meetings, \
     create_diploma_awards, create_class_attendance, create_multiple_prerequisites, create_course_completion
@@ -270,7 +270,7 @@ def create_course(name, description, prereq, offering):
         course.prerequisites.append(prereq_course)
 
     if offering is not None:
-        course_offering = Course_Offering(course_id=course.id,
+        course_offering = CourseOffering(course_id=course.id,
                                           description=offering, max_size=2, active=True)
         course.courses_offered.append(course_offering)
     db.session.add(course)
