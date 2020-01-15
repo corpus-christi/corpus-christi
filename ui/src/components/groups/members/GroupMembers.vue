@@ -3,11 +3,9 @@
     <v-toolbar>
       <v-layout align-center justify-space-between fill-height>
         <v-flex md2>
-          <v-toolbar-title>{{
+          <v-toolbar-title v-if="!select">{{
             $t("events.participants.title")
           }}</v-toolbar-title>
-        </v-flex>
-        <v-flex md1>
           <v-btn
             color="primary"
             raised
@@ -18,8 +16,6 @@
           >
             <v-icon dark>email</v-icon>
           </v-btn>
-        </v-flex>
-        <v-flex md1>
           <v-btn
             color="primary"
             raised
@@ -31,8 +27,6 @@
           >
             <v-icon dark>archive</v-icon>
           </v-btn>
-        </v-flex>
-        <v-flex md1>
           <v-btn
             color="primary"
             raised
@@ -44,7 +38,7 @@
             <v-icon dark>undo</v-icon>
           </v-btn>
         </v-flex>
-        <v-flex md1>
+        <v-flex md2>
           <v-text-field
             v-model="search"
             append-icon="search"
@@ -53,7 +47,7 @@
             hide-details
           ></v-text-field>
         </v-flex>
-        <v-flex md1>
+        <v-flex md2>
           <v-select
             hide-details
             solo
