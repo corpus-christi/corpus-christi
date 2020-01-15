@@ -12,12 +12,13 @@
 
         <v-layout row>
           <v-flex>
-            <v-text-field
+            <v-autocomplete
               name="country_code"
               v-model="area.country_code"
               v-bind:label="$t('places.address.country')"
               :disabled="formDisabled"
-            ></v-text-field>
+              :items="dropdownList"
+            ></v-autocomplete>
           </v-flex>
         </v-layout>
       </v-layout>
@@ -50,6 +51,9 @@ export default {
     initialData: {
       type: Object,
       required: true
+    },
+    countries: {
+      type: Array
     }
   },
   data: function() {
@@ -62,6 +66,16 @@ export default {
       formDisabled: false,
       saveIsLoading: false
     };
+  },
+  computed: {
+    dropdownList() {
+      return this.countries.map(element => {
+        return {
+          text: this.$t(element.name_i18n),
+          value: element.code
+        };
+      });
+    }
   },
   watch: {
     // Make sure data stays in sync with any changes to `initialData` from parent.
@@ -94,6 +108,7 @@ export default {
         .post("/api/v1/places/areas", areaData)
         .then(resp => {
           this.$emit(emitMessage, resp.data);
+          console.log(areaData);
         })
         .then(() => {
           this.formDisabled = false;

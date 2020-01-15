@@ -9,6 +9,7 @@
           v-bind:addresses="addressList"
           v-bind:areas="areaList"
           v-bind:locations="locationList"
+          v-bind:countries="countryList"
           v-on:fetchPlacesList="fetchPlacesList"
         ></PlacesTable>
       </v-tab-item>
@@ -20,6 +21,7 @@
           v-bind:addresses="addressList"
           v-bind:areas="areaList"
           v-bind:locations="locationList"
+          v-bind:countries="countryList"
           v-on:fetchPlacesList="fetchPlacesList"
         ></AreaTable>
       </v-tab-item>
@@ -38,7 +40,8 @@ export default {
     return {
       addressList: [],
       areaList: [],
-      locationList: []
+      locationList: [],
+      countryList: []
     };
   },
 
@@ -56,6 +59,9 @@ export default {
       });
       this.$http.get("/api/v1/places/locations").then(resp => {
         this.locationList = resp.data;
+      });
+      this.$http.get("/api/v1/places/countries").then(resp => {
+        this.countryList = resp.data;
       });
     }
   }

@@ -80,9 +80,7 @@
       <template slot="expand" slot-scope="props">
         <v-container class="grey lighten-3">
           <v-layout>
-            <v-flex md2>
-              {{ $t("places.location.location") }}:
-            </v-flex>
+            <v-flex md2> {{ $t("places.location.location") }}: </v-flex>
             <v-flex>
               <v-chip v-for="l in props.item.locations" :key="l.id" small
                 >{{ l.description }}
@@ -138,6 +136,7 @@
         <PlaceForm
           v-bind:initialData="placeDialog.places"
           v-bind:areas="areas"
+          v-bind:countries="countries"
           v-on:cancel="cancelPlace"
           v-on:saved="refreshPlacesList"
           v-on:subFormSaved="refreshPlacesList"
@@ -166,7 +165,8 @@ export default {
   props: {
     addresses: Array,
     areas: Array,
-    locations: Array
+    locations: Array,
+    countries: Array
   },
 
   data() {
@@ -220,7 +220,7 @@ export default {
     visiblePlaces() {
       return this.assets;
     },
-    markers(){
+    markers() {
       return this.addresses.map(element => {
         return {
           position: {
@@ -231,7 +231,7 @@ export default {
             name: element.name
           },
           opened: false
-        }
+        };
       });
     }
   },
@@ -258,18 +258,21 @@ export default {
     refreshPlacesList() {
       this.$emit("fetchPlacesList");
     },
-    AddressesLocationsData(){
-      let c = []
-      for( let i=0; i<this.addresses.length; i++){
+    AddressesLocationsData() {
+      let c = [];
+      for (let i = 0; i < this.addresses.length; i++) {
         c.push(this.addresses[i]);
         c[i]["locations"] = [];
-        for( let j=0; j<this.locations.length; j++)
-          if(c[i].id == this.locations[j].address_id){
-            c[i].locations.push({id:this.locations[j].id, description:this.locations[j].description});
+        for (let j = 0; j < this.locations.length; j++)
+          if (c[i].id == this.locations[j].address_id) {
+            c[i].locations.push({
+              id: this.locations[j].id,
+              description: this.locations[j].description
+            });
           }
       }
       return c;
-    },
+    }
   }
 };
 </script>
