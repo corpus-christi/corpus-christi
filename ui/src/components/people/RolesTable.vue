@@ -249,6 +249,14 @@ export default {
           value: element.value
         };
       });
+    },
+    viewOption() {
+      return [
+        {
+          text: this.$t("people.title-roles"),
+          value: "allRoles"
+        }
+      ];
     }
   },
 
@@ -258,26 +266,39 @@ export default {
       this.allAccount = this.allPeople.filter(
         person => person.accountInfo && person.active
       );
-      this.rolePublic = this.allPeople.filter(
-        person =>
-          person.accountInfo && person.accountInfo.roles === 1 && person.active
+      this.rolePublic = this.allAccount.filter(person =>
+        person.accountInfo.roles.some(role => role.id === 1)
       );
-      this.roleInfrastructure = this.allPeople.filter(
-        person =>
-          person.accountInfo && person.account.rolesList === 2 && person.active
+      this.roleInfrastructure = this.allAccount.filter(person =>
+        person.accountInfo.roles.some(role => role.id === 2)
       );
-      this.roleSuperuser = this.allPeople.filter();
-      this.roleTranslator = this.allPeople.filter();
-      this.roleGroupAdmin = this.allPeople.filter();
-      this.roleGroupLeader = this.allPeople.filter();
-      this.roleGroupOverseer = this.allPeople.filter();
-      this.roleRegistrar = this.allPeople.filter();
-      this.roleTeachingAssistant = this.allPeople.filter();
-      this.roleEventPlanner = this.allPeople.filter();
-      this.roleVisitor = this.allPeople.filter();
-    },
-    rolesList(all_roles) {
-      this.rolesList = all_roles;
+      this.roleSuperuser = this.allAccount.filter(person =>
+        person.accountInfo.roles.some(role => role.id === 3)
+      );
+      this.roleTranslator = this.allAccount.filter(person =>
+        person.accountInfo.roles.some(role => role.id === 4)
+      );
+      this.roleGroupAdmin = this.allAccount.filter(person =>
+        person.accountInfo.roles.some(role => role.id === 5)
+      );
+      this.roleGroupLeader = this.allAccount.filter(person =>
+        person.accountInfo.roles.some(role => role.id === 6)
+      );
+      this.roleGroupOverseer = this.allAccount.filter(person =>
+        person.accountInfo.roles.some(role => role.id === 7)
+      );
+      this.roleRegistrar = this.allAccount.filter(person =>
+        person.accountInfo.roles.some(role => role.id === 8)
+      );
+      this.roleTeachingAssistant = this.allAccount.filter(person =>
+        person.accountInfo.roles.some(role => role.id === 9)
+      );
+      this.roleEventPlanner = this.allAccount.filter(person =>
+        person.accountInfo.roles.some(role => role.id === 10)
+      );
+      this.roleVisitor = this.allAccount.filter(person =>
+        person.accountInfo.roles.some(role => role.id === 11)
+      );
     },
     tableLoaded(loading) {
       this.tableLoaded = loading;
@@ -286,6 +307,7 @@ export default {
 
   methods: {
     // ---- Person Administration
+    verifyPublicRole() {},
 
     activatePersonDialog(person = {}, editMode = false) {
       this.personDialog.editMode = editMode;
@@ -383,6 +405,13 @@ export default {
             this.personDialog.attributes = resp.data.person_attributes;
           }
         })
+        .catch(err => console.error("FAILURE", err.response));
+    },
+
+    getRoles(accountId) {
+      this.$http
+        .get(`/api/v1/people/role/account/${accountId}`)
+        .then(console.log("FETCHED ROLES"))
         .catch(err => console.error("FAILURE", err.response));
     },
 

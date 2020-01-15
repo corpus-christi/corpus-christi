@@ -177,8 +177,8 @@ export default {
               personId: this.person.id
             });
           } else {
-            var roles = [];
-            for (var role of this.currentRoles) {
+            const roles = [];
+            for (const role of this.currentRoles) {
               if (role.value) {
                 roles.push(role.value);
               } else {
@@ -201,7 +201,7 @@ export default {
       this.username = this.password = this.repeat_password = "";
       if (this.person.accountInfo) {
         this.currentRoles = [];
-        for (var role of new_person.accountInfo.roles) {
+        for (const role of new_person.accountInfo.roles) {
           this.currentRoles.push(role.id);
         }
       }
