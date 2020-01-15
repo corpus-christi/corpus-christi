@@ -18,6 +18,7 @@
       @closeclick="infoWindow.open = false"
     >
       {{ infoWindow.name }} <br>
+      {{ infoWindow.address }} <br>
       {{ infoWindow.description }}
     </gmap-info-window>
   </gmap-map>
@@ -42,6 +43,7 @@ export default {
       this.centerMapOnMarker(item.position);
       this.infoWindow.name = item.data.name;
       this.infoWindow.description = item.data.description;
+      this.infoWindow.address = item.data.address;
     }
   },
   data() {

@@ -228,7 +228,8 @@ export default {
             lng: element.longitude
           },
           data: {
-            name: element.name
+            name: element.name,
+            address: element.address
           },
           opened: false
         };
