@@ -88,7 +88,6 @@ export default {
     cancelPerson() {
       this.personDialog.show = false;
       this.$emit('cancel');
-      this.$emit("refreshPeople");
     },
 
     savePerson() {
@@ -99,6 +98,7 @@ export default {
 	this.$emit("snack", this.$t("person.messages.person-edit"));
       }
       this.cancelPerson();
+      this.$emit("refreshPeople");
     },
 
     addAnother() {
