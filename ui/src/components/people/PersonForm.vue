@@ -58,7 +58,7 @@
             v-model="person.secondLastName"
             v-bind:label="$t('person.name.second-last')"
             name="secondLastName"
-            v-validate="'required: false,regex:/[A-Za-zs\'-]$/'"
+            v-validate="'alpha_dash'"
             v-bind:error-messages="errors.collect('secondLastName')"
             :readonly="formDisabled"
             data-cy="second-last-name"
