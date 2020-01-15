@@ -34,7 +34,7 @@ entities:
         related-model: ImagePerson
         backref: images
       - name: events
-        related-model: ImageEvents
+        related-model: ImageEvent
         backref: images
   - name: ImageGroup
     singular: imagegroup
