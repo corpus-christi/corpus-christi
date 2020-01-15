@@ -21,13 +21,12 @@ class Event(Base):
     attendance = Column(Integer)
     aggregate = Column(Boolean, default=True)
 
-    assets = relationship("EventAsset", back_populates="event")
-    teams = relationship("EventTeam", back_populates="event")
-    persons = relationship("EventPerson", back_populates="event")
-    participants = relationship("EventParticipant", back_populates="event")
-    location = relationship("Location", back_populates="events")
-    images = relationship("ImageEvent", back_populates="event")
-    groups = relationship("EventGroup", back_populates="event")
+    assets = relationship("EventAsset", backref="event")
+    teams = relationship("EventTeam", backref="event")
+    persons = relationship("EventPerson", backref="event")
+    participants = relationship("EventParticipant", backref="event")
+    images = relationship("ImageEvent", backref="event")
+    groups = relationship("EventGroup", backref="event")
 
     def __repr__(self):
         return f"<Event(id={self.id})>"
@@ -60,14 +59,7 @@ class EventAsset(Base):
     event_id = Column(Integer, ForeignKey('events_event.id'), primary_key=True)
     asset_id = Column(Integer, ForeignKey('events_asset.id'), primary_key=True)
 
-    event = relationship("Event", back_populates="assets")
-    asset = relationship("Asset", back_populates="events")
-
-
 class EventAssetSchema(Schema):
-    event = fields.Nested('EventSchema', dump_only=True)
-    asset = fields.Nested('AssetSchema', dump_only=True)
-
     event_id = fields.Integer(required=True, min=1)
     asset_id = fields.Integer(required=True, min=1)
 
@@ -79,17 +71,9 @@ class EventTeam(Base):
     event_id = Column(Integer, ForeignKey('events_event.id'), primary_key=True)
     team_id = Column(Integer, ForeignKey('events_team.id'), primary_key=True)
 
-    event = relationship("Event", back_populates="teams")
-    team = relationship("Team", back_populates="events")
-
-
 class EventTeamSchema(Schema):
     event_id = fields.Integer(required=True, min=1)
     team_id = fields.Integer(required=True, min=1)
-
-    event = fields.Nested('EventSchema', dump_only=True)
-    team = fields.Nested('TeamSchema', exclude=['events'], dump_only=True)
-
 
 # ---- EventPerson
 
@@ -99,18 +83,10 @@ class EventPerson(Base):
     person_id = Column(Integer, ForeignKey('people_person.id'), primary_key=True)
     description = Column(StringTypes.LONG_STRING, nullable=False)
 
-    event = relationship("Event", back_populates="persons")
-    person = relationship("Person", back_populates="events_per")
-
-
 class EventPersonSchema(Schema):
     event_id = fields.Integer(required=True, min=1)
     person_id = fields.Integer(required=True, min=1)
     description = fields.String(required=True)
-
-    event = fields.Nested('EventSchema', dump_only=True)
-    person = fields.Nested('PersonSchema', dump_only=True)
-
 
 # ---- EventParticipant
 
@@ -120,18 +96,10 @@ class EventParticipant(Base):
     person_id = Column(Integer, ForeignKey('people_person.id'), primary_key=True)
     confirmed = Column(Boolean, default=True)
 
-    event = relationship("Event", back_populates="participants")
-    person = relationship("Person", back_populates="events_par")
-
-
 class EventParticipantSchema(Schema):
     event_id = fields.Integer(required=True, min=1)
     person_id = fields.Integer(required=True, min=1)
     confirmed = fields.Boolean()
-
-    event = fields.Nested('EventSchema', dump_only=True)
-    person = fields.Nested('PersonSchema', dump_only=True)
-
 
 # ---- EventGroup
 
@@ -141,14 +109,7 @@ class EventGroup(Base):
     group_id = Column(Integer, ForeignKey('groups_group.id'), primary_key=True)
     active = Column(Boolean, default=True)
 
-    event = relationship("Event", back_populates="groups")
-    group = relationship("Group", back_populates="events")
-
-
 class EventGroupSchema(Schema):
     event_id = fields.Integer(required=True, min=1)
     group_id = fields.Integer(required=True, min=1)
     active = fields.Boolean()
-
-    event = fields.Nested('EventSchema', dump_only=True)
-    group = fields.Nested('GroupSchema', dump_only=True)

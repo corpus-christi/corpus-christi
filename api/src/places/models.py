@@ -40,6 +40,9 @@ class Country(Base):
 
                 name_i18n = f'country.name.{country_code}'
 
+                print('country code')
+                print(country_code)
+
                 for locale in country['locales']:
                     locale_code = locale['locale_code']
                     if not db.session.query(I18NLocale).get(locale_code):

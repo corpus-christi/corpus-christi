@@ -5,7 +5,7 @@ from marshmallow import ValidationError
 
 from . import courses
 from .models import Course, CourseSchema, \
-    Course_Offering, Student, StudentSchema, \
+    CourseOffering, Student, StudentSchema, \
     Diploma, DiplomaSchema, CourseOfferingSchema, \
     DiplomaCourse, DiplomaAwarded, DiplomaAwardedSchema, \
     ClassAttendance, ClassAttendanceSchema, \

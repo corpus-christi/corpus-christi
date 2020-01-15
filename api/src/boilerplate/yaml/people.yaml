@@ -68,9 +68,9 @@ entities:
       - name: course_completions
         related-model: CourseCompletions
         backref: persons
-      - name: diplomas_awarded
-        related-model: DiplomaAwarded
-        backref: persons
+      - name: student
+        related-model: Student
+        backref: student
   - name: Account
     singular: account
     plural: accounts

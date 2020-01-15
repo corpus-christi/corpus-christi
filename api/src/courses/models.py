@@ -160,8 +160,6 @@ class CourseOffering(Base):
     active = Column(Boolean, nullable=False, default=True)
     class_meetings = relationship(
         'ClassMeeting', backref='course_offerings', lazy=True)
-    class_attendances = relationship(
-        'ClassAttendance', backref='course_offerings', lazy=True)
 
     def __repr__(self):
             return f"<CourseOffering(id={self.id})>"

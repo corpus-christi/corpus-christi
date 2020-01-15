@@ -5,7 +5,7 @@ import pytest
 from faker import Faker
 from flask import url_for
 
-from .models import Course, CourseSchema, Course_Offering, CourseOfferingSchema, \
+from .models import Course, CourseSchema, CourseOffering, CourseOfferingSchema, \
     Diploma, DiplomaSchema, Student, StudentSchema, \
     ClassMeeting, ClassMeetingSchema, DiplomaAwarded, DiplomaAwardedSchema, \
     ClassAttendance, CourseCompletion, CourseCompletionSchema

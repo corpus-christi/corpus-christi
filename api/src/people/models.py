@@ -31,13 +31,12 @@ class Person(Base):
 
     address = relationship(Location, backref='people', lazy=True)
     # events_per refers to the events led by the person (linked via events_eventperson table)
-    events_per = relationship("EventPerson", back_populates="person")
+    events_per = relationship("EventPerson", backref="person")
     # events_par refers to the participated events (linked via events_eventparticipant table)
-    events_par = relationship("EventParticipant", back_populates="person")
-    teams = relationship("TeamMember", back_populates="member")
-    diplomas_awarded = relationship('DiplomaAwarded', back_populates='students', lazy=True, uselist=True)
-    members = relationship('Member', back_populates='person', lazy=True)
-    images = relationship('ImagePerson', back_populates='person')
+    events_par = relationship("EventParticipant", backref="person")
+    teams = relationship("TeamMember", backref="member")
+    members = relationship('Member', backref='person', lazy=True)
+    images = relationship('ImagePerson', backref='person')
 
     def _init(self, accountInfo):
         self.accountInfo = accountInfo
@@ -200,7 +199,7 @@ class Manager(Base):
                               ForeignKey('i18n_key.id'), nullable=False)
     manager = relationship('Manager', backref='subordinates',
                            lazy=True, remote_side=[id])
-    groups = relationship('Group', back_populates='manager', lazy=True)
+    groups = relationship('Group', backref='manager', lazy=True)
     person = relationship("Person", backref=backref("manager", uselist=False))
 
     def __repr__(self):
