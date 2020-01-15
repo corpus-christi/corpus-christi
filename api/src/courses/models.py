@@ -122,7 +122,7 @@ class DiplomaAwardedSchema(Schema):
 
 
 class Student(Base):
-    __tablename__ = 'courses_students'
+    __tablename__ = 'courses_student'
     id = Column(Integer, primary_key=True)
     offering_id = Column(Integer, ForeignKey(
         'courses_course_offering.id'), nullable=False)

@@ -32,9 +32,12 @@ entities:
       - name: diplomas
         related-model: DiplomaCourse
         backref: courses
+      - name: depends
+        related-model: Prerequisite
+        backref: prerequisites
       - name: prerequisites
         related-model: Prerequisite
-        backref: courses
+        backref: depends
       - name: offerings
         related-model: CourseOffering
         backref: courses
@@ -117,7 +120,7 @@ entities:
     singular: student
     plural: students
     uri: /students
-    table: courses_students
+    table: courses_student
     attributes:
       - name: id
         type: integer
@@ -141,7 +144,7 @@ entities:
         default: true
     relationships:
       - name: class_attendances
-        related-model: Class_Attendance
+        related-model: ClassAttendance
         backref: students
       - name: diplomas_awarded
         related-model: DiplomaAwarded
@@ -149,7 +152,7 @@ entities:
       - name: courses_completed
         related-model: CourseCompletion
         backref: students
-  - name: Course_Offering
+  - name: CourseOffering
     singular: course_offering
     plural: course_offerings
     uri: /course_offerings
@@ -179,10 +182,7 @@ entities:
       - name: class_meetings
         related-model: ClassMeeting
         backref: course_offerings
-      - name: class_attendances
-        related-model: Class_Attendance
-        backref: course_offerings
-  - name: Class_Attendance
+  - name: ClassAttendance
     singular: class_attendance
     plural: class_attendance
     uri: /class_attendance
@@ -223,7 +223,7 @@ entities:
         required: true
     relationships:
       - name: class_attendances
-        related-model: Class_Attendance
+        related-model: ClassAttendance
         backref: class_meetings
   - name: CourseCompletion
     singular: coursecompletion
