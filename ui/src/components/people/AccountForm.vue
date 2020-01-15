@@ -57,7 +57,6 @@
           chips
           deletable-chips
           clearable
-          outline
           multiple
           hide-selected
           return-object
