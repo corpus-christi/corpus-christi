@@ -263,6 +263,7 @@ export default {
   },
 
   watch: {
+    //This needs cleaned up in the future
     peopleList(all_people) {
       this.allPeople = all_people;
       this.allAccount = this.allPeople.filter(
