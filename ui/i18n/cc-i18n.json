@@ -243,6 +243,8 @@
       "create-group": "Create Group",
       "description": "Description",
       "details": {
+        "class-title": "Title",
+        "member-count": "Member count",
         "title": "Details"
       },
       "edit-group": "Edit Group",
@@ -255,6 +257,7 @@
         "add-meeting": "Add Meeting",
         "title": "Meetings"
       },
+      "member-count": "Member Count",
       "members": {
         "title": "Members"
       },
@@ -681,6 +684,8 @@
       "create-group": "Crea un Grupo",
       "description": "Descripci\u00c3\u00b3n",
       "details": {
+        "class-title": "T\u00c3\u00adtulo",
+        "member-count": "Cuenta de miembro",
         "title": "Detalles"
       },
       "edit-group": "Grupo de Edici\u00c3\u00b3n",
@@ -690,15 +695,17 @@
       "header": "Grupos",
       "manager": "Gerente",
       "meetings": {
-        "add-meeting": "Agregar Reuni\u00f3n",
+        "add-meeting": "Agregar Reuni\u00c3\u00b3n",
         "title": "Reuniones"
       },
+      "member-count": "Recuento de Miembros",
       "members": {
         "title": "Miembros"
       },
       "messages": {
         "already-exists": "El grupo ya existe",
         "confirm-archive": "\u00c2\u00bfSeguro que quieres archivar este groupos?",
+        "confirm-member-archive": "\u00c2\u00bfEst\u00c3\u00a1s seguro de que deseas archivar a este miembro del grupo?",
         "error-adding-group": "Error al agregar grupo",
         "error-adding-members": "Error al agregar miembros",
         "error-archiving-group": "Error al archivar el grupo",
