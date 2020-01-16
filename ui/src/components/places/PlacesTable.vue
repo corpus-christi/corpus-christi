@@ -34,7 +34,6 @@
       :headers="headers"
       :items="AddressesLocationsData()"
       :search="search"
-      :single-expand="singleExpand"
       :expand.sync="expanded"
       item-key="id"
       show-expand
@@ -94,7 +93,9 @@
                   small
                   color="primary"
                   slot="activator"
+                  v-on:click="editLocation({address_id: props.item.id, allLocations: props.item.locations, editMode: true})"
                   data-cy="edit-locations"
+                  :disabled="!props.item.locations.length"
                 >
                   <v-icon small>edit</v-icon>
                 </v-btn>
@@ -107,6 +108,7 @@
                   small
                   color="primary"
                   slot="activator"
+                  v-on:click="newLocation({address_id: props.item.id, allLocations: [], editMode: false})"
                   data-cy="add-location"
                 >
                   <v-icon small>add</v-icon>
@@ -143,6 +145,28 @@
         />
       </v-layout>
     </v-dialog>
+    <v-dialog
+      scrollable
+      persistent
+      v-model="locationDialog.show"
+      max-width="1000px"
+    >
+      <v-layout column>
+        <v-card>
+          <v-layout align-center justify-center row fill-height>
+            <v-card-title class="headline">
+              {{ $t(locationDialog.title) }}
+            </v-card-title>
+          </v-layout>
+        </v-card>
+        <LocationsForm
+          v-bind:initialData="locationDialog.locationsInfo"
+          v-on:cancel="cancelLocation"
+          v-on:saved="refreshPlacesList"
+          v-on:subFormSaved="refreshPlacesList"
+        />
+      </v-layout>
+    </v-dialog>
     <v-layout class="mt-3">
       <v-flex>
         <v-toolbar color="blue" dark>
@@ -158,10 +182,11 @@
 
 <script>
 import PlaceForm from "./PlacesForm";
+import LocationsForm from "./LocationsForm";
 import GoogleMap from "../../components/GoogleMap";
 export default {
   name: "PlacesTable",
-  components: { PlaceForm, GoogleMap },
+  components: { PlaceForm, LocationsForm, GoogleMap },
   props: {
     addresses: Array,
     areas: Array,
@@ -172,7 +197,6 @@ export default {
   data() {
     return {
       expanded: [],
-      singleExpand: true,
       placeDialog: {
         title: "",
         show: false,
@@ -180,6 +204,14 @@ export default {
         saveLoading: false,
         addMoreLoading: false,
         places: {}
+      },
+      locationDialog: {
+        title: "",
+        show: false,
+        editMode: false,
+        saveLoading: false,
+        addMoreLoading: false,
+        locationsInfo: {}
       },
       search: "",
       groupLocations: [],
@@ -257,13 +289,29 @@ export default {
     refreshPlacesList() {
       this.$emit("fetchPlacesList");
     },
+    activateLocationDialog(locationInfo = {}, editMode = false) {
+      this.locationDialog.title = editMode
+        ? this.$t("places.edit")
+        : this.$t("places.location.new");
+      this.locationDialog.locationsInfo = locationInfo;
+      this.locationDialog.show = true;
+    },
+    editLocation(location) {
+      this.activateLocationDialog({ ...location }, true);
+    },
+    newLocation(location) {
+      this.activateLocationDialog({ ...location }, false);
+    },
+    cancelLocation() {
+      this.locationDialog.show = false;
+    },
     AddressesLocationsData() {
       let c = [];
       for (let i = 0; i < this.addresses.length; i++) {
         c.push(this.addresses[i]);
         c[i]["locations"] = [];
         for (let j = 0; j < this.locations.length; j++)
-          if (c[i].id == this.locations[j].address_id) {
+          if (c[i].id === this.locations[j].address_id) {
             c[i].locations.push({
               id: this.locations[j].id,
               description: this.locations[j].description
