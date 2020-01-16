@@ -24,8 +24,7 @@
         ></v-textarea>
         <entity-search
           manager
-          v-model="group.manager"
-          name="address"
+          :value="manager"
           v-bind:error-messages="errors.first('address')"
         />
       </form>
@@ -83,7 +82,9 @@ export default {
         this.clear();
       } else {
         this.group = groupProp;
+        this.manager = this.parseGroup(this.group);
         this.group.manager = groupProp.managerInfo;
+        console.log(this.group);
       }
     }
   },
@@ -106,10 +107,31 @@ export default {
   },
 
   methods: {
+    getManagerName(managerInfo) {
+      var man = managerInfo.person;
+      return (
+        man.firstName +
+        " " +
+        man.lastName +
+        " " +
+        (man.secondLastName ? man.secondLastName : "")
+      );
+    },
+
+    parseGroup(obj) {
+      return {
+	'description_i18n': 'manager.description.Major_glass_',
+	'id': obj.manager_id,
+        'manager_id': null,
+        'person': obj.managerInfo.person,
+        'person_id': obj.managerInfo.person.id
+      };
+    },
+
     validateGroup(group, operation) {
       this.$validator.validateAll().then((isValid) => {
         if(isValid){
-          this.$http.get(`/api/v1/groups/find_group/${group.name}/${group.manager.id}`).then((response) => {
+          this.$http.get(`/api/v1/groups/find_group/${group.name}/${group.manager_id}`).then((response) => {
             if(response.data == 0){
               operation();
             }
@@ -175,6 +197,7 @@ export default {
   data: function() {
     return {
       group: {},
+      manager: {},
       snackbar: {
         show: false,
         text: ""
