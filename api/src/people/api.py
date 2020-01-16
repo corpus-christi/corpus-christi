@@ -88,7 +88,7 @@ def read_all_persons():
     result = db.session.query(Person).all()
     for r in result:
         r.attributesInfo = r.person_attributes
-#   #      r.accountInfo = r.person #info is irrelavant since the merge of account and person
+#         r.accountInfo = r.person #info is irrelavant since the merge of account and person
 #         if r.person:
 #             r.accountInfo.roles = r.person.roles
 

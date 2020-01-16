@@ -43,30 +43,6 @@
       data-cy="roles-table"
     >
       <template slot="items" slot-scope="props">
-        <td class="text-xs-center">
-          <span v-if="props.item">
-            <span v-if="props.item.active">
-              <v-tooltip bottom>
-                <v-icon size="16" slot="activator" data-cy="account-active-icon"
-                  >account_circle</v-icon
-                >
-                {{ $t("account.active") }}
-              </v-tooltip>
-            </span>
-
-            <span v-if="!props.item.active">
-              <v-tooltip bottom>
-                <v-icon
-                  size="16"
-                  slot="activator"
-                  data-cy="account-inactive-icon"
-                  >person_outline</v-icon
-                >
-                {{ $t("account.inactive") }}
-              </v-tooltip>
-            </span>
-          </span>
-        </td>
         <td :data-cy="'first-name-' + props.item.id">
           {{ props.item.firstName }}
         </td>
@@ -188,20 +164,13 @@ export default {
     headers() {
       return [
         {
-          text: this.$t("person.account"),
-          value: "person.accountInfo",
-          align: "center",
-          width: "3%",
-          sortable: false
-        },
-        {
           text: this.$t("person.name.first"),
           value: "firstName",
           width: "15%"
         },
         { text: this.$t("person.name.last"), value: "lastName", width: "15%" },
         {
-          text: this.$t("account.username"),
+          text: this.$t("person.username"),
           value: "person.username",
           width: "15%"
         },

@@ -165,7 +165,7 @@
             v-if="showAccountInfo"
             v-model="repeatPassword"
             type="password"
-            v-bind:label="$t('repeat-password')"
+            v-bind:label="$t('person.repeat-password')"
             name="repeat-password"
             v-validate="`confirmed:pwdField|${hasUsername}`"
             v-bind:error-messages="errors.collect('repeat-password')"
