@@ -16,9 +16,9 @@ group_schema = GroupSchema()
 
 
 def group_dump(group):
-    group.managerInfo = group.manager
-    group.managerInfo.person = group.manager.person
-    group.memberList = group.members
+    group.manager_info = group.manager
+    group.manager_info.person = group.manager.person
+    group.member_list = group.members
     return jsonify(group_schema.dump(group))
 
 
@@ -80,9 +80,9 @@ def read_all_groups():
     query = query.all()
 
     for group in query:
-        group.memberList = group.members
-        group.managerInfo = group.manager
-        group.managerInfo.person = group.manager.person
+        group.member_list = group.members
+        group.manager_info = group.manager
+        group.manager_info.person = group.manager.person
     return jsonify(group_schema.dump(query, many=True))
 
 
