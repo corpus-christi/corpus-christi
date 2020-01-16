@@ -16,7 +16,7 @@
             single-line
             box
             data-cy="roles-search"
-          ></v-text-field>
+          />
         </v-flex>
         <v-flex md3>
           <div data-cy="roles-dropdown">
@@ -26,7 +26,7 @@
               single-line
               :label="$t('people.title-roles')"
               :items="translatedRoles"
-            ></v-select>
+            />
           </div>
         </v-flex>
       </v-layout>

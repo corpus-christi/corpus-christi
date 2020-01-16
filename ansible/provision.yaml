@@ -111,7 +111,7 @@
         virtualenv_command: "{{ python3 }} -m venv venv"
         requirements: "{{ cc_api_abs_dir }}/requirements.txt"
 
-- name: set up database
+- name: migrate database
   hosts: all
   tags: db, build, update
   become: yes
@@ -120,6 +120,9 @@
     - public.yaml
   environment:
     - FLASK_APP: "{{ cc_api_abs_dir }}/cc-api.py"
+    - FLASK_ENV: production
+    - FLASK_DEBUG: 0
+    - CC_CONFIG: prod
   tasks:
     - name: create migration
       command:

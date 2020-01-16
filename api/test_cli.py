@@ -12,7 +12,7 @@ ccapi = __import__("cc-api")
 
 @pytest.fixture
 def init_app():
-    app = create_app(os.getenv('FLASK_CONFIG') or 'test')
+    app = create_app(os.getenv('CC_CONFIG') or 'test')
     app.testing = True  # Make sure exceptions percolate out
 
     db.drop_all()
