@@ -21,8 +21,11 @@ def send_email():
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    msg = Message(valid_email_request['subject'], sender='tumissionscomputing@gmail.com',
-                  recipients=valid_email_request['recipients'])
+    msg = Message(valid_email_request['subject'], sender=(valid_email_request['managerName'], valid_email_request['managerEmail']), 
+                                                  reply_to=valid_email_request['managerEmail'],
+                                                  recipients=valid_email_request['recipients'],
+                                                  cc=valid_email_request['cc'],
+                                                  bcc=valid_email_request['bcc']);
     msg.body = valid_email_request['body']
     mail.send(msg)
 

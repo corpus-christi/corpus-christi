@@ -243,6 +243,8 @@
       "create-group": "Create Group",
       "description": "Description",
       "details": {
+        "class-title": "Title",
+        "member-count": "Member count",
         "title": "Details"
       },
       "edit-group": "Edit Group",
@@ -255,15 +257,28 @@
         "add-meeting": "Add Meeting",
         "title": "Meetings"
       },
+      "member-count": "Member Count",
       "members": {
+        "email": {
+          "bcc": "Bcc",
+          "body": "Body",
+          "cc": "Cc",
+          "compose": "Compose Email",
+          "send": "Send",
+          "subject": "Subject",
+          "to": "To"
+        },
         "title": "Members"
       },
       "messages": {
         "already-exists": "Group already exists",
         "confirm-archive": "Are you sure you want to archive this group?",
         "confirm-member-archive": "Are you sure you want to archive this group member?",
+        "email-sent": "Email sent",
+        "error-active-not-selected": "No active members are selected",
         "error-adding-group": "Error while adding group",
         "error-adding-members": "Error while adding members",
+        "error-archived-not-selected": "No archived members are selected",
         "error-archiving-group": "Error while archiving group",
         "error-archiving-member": "Error while unarchiving member",
         "error-editing-group": "Error while editing group",
@@ -275,6 +290,7 @@
         "member-archived": "Member archived",
         "member-unarchived": "Member unarchived",
         "members-added": "Members added",
+        "no-remaining-members": "No remaining members",
         "required-fields": "Please fill out all required fields"
       },
       "name": "Name",
@@ -440,15 +456,15 @@
   "es": {
     "$vuetify": {
       "dataIterator": {
-        "nextPage": "Siguiente p\u00c3\u00a1gina",
+        "nextPage": "Siguiente p\u00e1gina",
         "noResultsText": "No se encontraron registros coincidentes",
         "pageText": "{0}-{1} de {2}",
         "prevPage": "Pagina anterior",
         "rowsPerPageAll": "Todos",
-        "rowsPerPageText": "Art\u00c3\u00adculos por p\u00c3\u00a1gina:"
+        "rowsPerPageText": "Art\u00edculos por p\u00e1gina:"
       },
       "dataTable": {
-        "rowsPerPageText": "Filas por p\u00c3\u00a1gina:"
+        "rowsPerPageText": "Filas por p\u00e1gina:"
       },
       "noDataText": "Datos no disponibles"
     },
@@ -457,20 +473,20 @@
       "inactive": "Inactivo",
       "messages": {
         "added-ok": "Cuenta agregada exitosamente",
-        "updated-ok": "Cuenta actualizada con \u00c3\u00a9xito"
+        "updated-ok": "Cuenta actualizada con \u00e9xito"
       },
-      "no-account": "\u00c2\u00bfNo tienes una cuenta?",
-      "password": "Contrase\u00c3\u00b1a",
-      "repeat-password": "Repite la contrase\u00c3\u00b1a",
+      "no-account": "\u00bfNo tienes una cuenta?",
+      "password": "Contrase\u00f1a",
+      "repeat-password": "Repite la contrase\u00f1a",
       "username": "Nombre de usuario"
     },
     "actions": {
       "activate-account": "Activar",
-      "add-address": "A\u00c3\u00b1adir Dirreci\u00c3\u00b3n",
-      "add-another": "A\u00c3\u00b1adir Otro",
-      "add-event": "A\u00c3\u00b1adir Evento",
-      "add-group": "A\u00c3\u00b1adir grupo",
-      "add-person": "A\u00c3\u00b1adir Persona",
+      "add-address": "A\u00f1adir Dirreci\u00f3n",
+      "add-another": "A\u00f1adir Otro",
+      "add-event": "A\u00f1adir Evento",
+      "add-group": "A\u00f1adir grupo",
+      "add-person": "A\u00f1adir Persona",
       "back": "Regresar",
       "cancel": "Cancelar",
       "choose-image": "Elegir Imagen",
@@ -482,14 +498,14 @@
       "edit": "Editar",
       "header": "Acciones",
       "login": "Acceder",
-      "logout": "Cerrar sesi\u00c3\u00b3n",
+      "logout": "Cerrar sesi\u00f3n",
       "open-map": "Abrir Mapa",
       "save": "Salvar",
       "search": "Buscar",
       "search-addresses": "Buscar Direcciones",
-      "search-managers": "Gestores de B\u00c3\u00basqueda",
+      "search-managers": "Gestores de B\u00fasqueda",
       "search-people": "Buscar Personas",
-      "signup": "Reg\u00c3\u00adstrate",
+      "signup": "Reg\u00edstrate",
       "tooltips": {
         "activate": "Activar",
         "archive": "Archivar",
@@ -507,70 +523,70 @@
       "asset-added": "Insumo agregado",
       "asset-archived": "Insumo archivado",
       "asset-edited": "Insumo editado",
-      "asset-on-event": "Ese insumo ya est\u00c3\u00a1 asignado a este evento.",
+      "asset-on-event": "Ese insumo ya est\u00e1 asignado a este evento.",
       "asset-removed": "Insumo eliminado",
       "asset-unarchived": "Insumo desarchivado",
-      "confirm-archive": "\u00c2\u00bfSeguro que quieres archivar este insumo?",
-      "confirm-remove-from-event": "\u00c2\u00bfEst\u00c3\u00a1 seguro de que desea eliminar este insumo de este evento?",
+      "confirm-archive": "\u00bfSeguro que quieres archivar este insumo?",
+      "confirm-remove-from-event": "\u00bfEst\u00e1 seguro de que desea eliminar este insumo de este evento?",
       "create-asset": "Crear Insumo",
-      "description": "Descripci\u00c3\u00b3n",
+      "description": "Descripci\u00f3n",
       "edit-asset": "Editar Insumo",
       "error-adding-asset": "Error al agregar insumo",
       "error-archiving-asset": "Error al archivar este insumo",
-      "error-asset-assigned": "Ese insumo est\u00c3\u00a1 asignado a un evento conflictivo.",
+      "error-asset-assigned": "Ese insumo est\u00e1 asignado a un evento conflictivo.",
       "error-editing-asset": "Error al editar insumo",
       "error-removing-asset": "Error al eliminadar este insumo",
       "error-unarchiving-asset": "Error al desarchivar insumo",
-      "location": "Ubicaci\u00c3\u00b3n",
-      "new": "A\u00c3\u00b1adir Insumo",
+      "location": "Ubicaci\u00f3n",
+      "new": "A\u00f1adir Insumo",
       "none-assigned": "No hay insumos asignados.",
       "title": "Insumos"
     },
     "courses": {
-      "add-failed": "Se fall\u00c3\u00b3 a a\u00c3\u00b1adir el curso",
-      "add-meeting": "A\u00c3\u00b1adir Reuni\u00c3\u00b3n",
-      "add-meeting-failed": "Se fall\u00c3\u00b3 a a\u00c3\u00b1adir los reuniones",
-      "added": "Curso a\u00c3\u00b1adido",
+      "add-failed": "Se fall\u00f3 a a\u00f1adir el curso",
+      "add-meeting": "A\u00f1adir Reuni\u00f3n",
+      "add-meeting-failed": "Se fall\u00f3 a a\u00f1adir los reuniones",
+      "added": "Curso a\u00f1adido",
       "archived": "Curso archivado",
       "choose-offering": "Elegir Oferta",
       "choose-time": "Tiempo",
       "class-attendance": "Asistencia",
       "class-attendance-for": "Asistencia para",
-      "class-attendance-load-failed": "Se fall\u00c3\u00b3 a conseguir la asistencia",
-      "class-attendance-update-failed": "Se fall\u00c3\u00b3 a actualizar la asistencia",
+      "class-attendance-load-failed": "Se fall\u00f3 a conseguir la asistencia",
+      "class-attendance-update-failed": "Se fall\u00f3 a actualizar la asistencia",
       "class-attendance-updated": "Asistencia actualizado",
-      "confirm-archive": "\u00c2\u00bfEst\u00c3\u00a1s seguro que quieres archivar este curso?",
-      "confirm-student": "\u00c2\u00bfTe gustar\u00c3\u00adas confirmar o rechazar este estudiante?",
+      "confirm-archive": "\u00bfEst\u00e1s seguro que quieres archivar este curso?",
+      "confirm-student": "\u00bfTe gustar\u00edas confirmar o rechazar este estudiante?",
       "course": "Cursos",
       "course-offering": "Ofertas de Cursos",
       "create-new-person": "Crear una nueva persona",
       "dashboard": {
         "charts": {
-          "attended": "Asisti\u00c3\u00b3",
+          "attended": "Asisti\u00f3",
           "course": "Curso",
-          "did-not-attend": "No Asisti\u00c3\u00b3",
-          "did-not-graduate": "No Se Gradu\u00c3\u00b3",
+          "did-not-attend": "No Asisti\u00f3",
+          "did-not-graduate": "No Se Gradu\u00f3",
           "enrolled": "Inscrito",
-          "graduated": "Se Gradu\u00c3\u00b3"
+          "graduated": "Se Gradu\u00f3"
         },
         "headers": {
-          "course-retention": "Retenci\u00c3\u00b3n del Curso",
-          "course-success": "\u00c3\u2030xito del Curso"
+          "course-retention": "Retenci\u00f3n del Curso",
+          "course-success": "\u00c9xito del Curso"
         },
         "title": "Tablero"
       },
       "date": "Fecha",
       "dates": "Fechas",
-      "description": "Descripci\u00c3\u00b3n",
-      "enrolled": "N\u00c3\u00bamero Registrado",
-      "info-meeting-dates": "Puede elegir fechas m\u00c3\u00baltiples para crear muchos reuniones.",
-      "is-archived": "Este curso est\u00c3\u00a1 archivado",
-      "location": "Ubicaci\u00c3\u00b3n",
-      "max-size": "N\u00c3\u00bamero M\u00c3\u00a1ximo de Estudiantes",
-      "meeting-added": "Reuniones a\u00c3\u00b1adido",
-      "meeting-updated": "Reuni\u00c3\u00b3n actualizado",
+      "description": "Descripci\u00f3n",
+      "enrolled": "N\u00famero Registrado",
+      "info-meeting-dates": "Puede elegir fechas m\u00faltiples para crear muchos reuniones.",
+      "is-archived": "Este curso est\u00e1 archivado",
+      "location": "Ubicaci\u00f3n",
+      "max-size": "N\u00famero M\u00e1ximo de Estudiantes",
+      "meeting-added": "Reuniones a\u00f1adido",
+      "meeting-updated": "Reuni\u00f3n actualizado",
       "new": "Nuevo Curso",
-      "new-meeting": "Nuevo Reuni\u00c3\u00b3n",
+      "new-meeting": "Nuevo Reuni\u00f3n",
       "new-offering": "Nuevo Oferta",
       "new-offering-short": "Nueva Oferta",
       "no-prerequisites": "Este curso no tiene prerrequisitos.",
@@ -578,31 +594,31 @@
       "reactivated": "Curso desarchivado",
       "register": "Registrar",
       "register-for-course": "Registrar para este curso",
-      "register-success": "Registrado con \u00c3\u2030xito",
+      "register-success": "Registrado con \u00c9xito",
       "reject": "Rechazar",
       "schedule": "Horario",
       "students": "Estudiantes",
       "teacher": "Maestro",
-      "title": "T\u00c3\u00adtulo",
-      "update-failed": "Se fall\u00c3\u00b3 a actualizar el curso",
-      "update-meeting-failed": "Se fall\u00c3\u00b3 a actualizar el reuni\u00c3\u00b3n",
+      "title": "T\u00edtulo",
+      "update-failed": "Se fall\u00f3 a actualizar el curso",
+      "update-meeting-failed": "Se fall\u00f3 a actualizar el reuni\u00f3n",
       "updated": "Curso actualizado",
-      "when": "Cu\u00c3\u00a1ndo"
+      "when": "Cu\u00e1ndo"
     },
     "diplomas": {
-      "add-failed": "Se fall\u00c3\u00b3 a a\u00c3\u00b1adir el diploma",
-      "added": "Diploma a\u00c3\u00b1adido",
+      "add-failed": "Se fall\u00f3 a a\u00f1adir el diploma",
+      "added": "Diploma a\u00f1adido",
       "archived": "Diploma archivado",
-      "confirm-archive": "\u00c2\u00bfEst\u00c3\u00a1s seguro que quieres archivar esta diploma?",
+      "confirm-archive": "\u00bfEst\u00e1s seguro que quieres archivar esta diploma?",
       "courses": "Cursos",
       "courses-this-diploma": "Cursos para esta Diploma",
-      "description": "Descripci\u00c3\u00b3n",
+      "description": "Descripci\u00f3n",
       "diploma": "Diploma",
       "diplomas": "Diplomas",
       "new": "Nueva Diploma",
       "reactivated": "Diploma desarchivado",
-      "title": "T\u00c3\u00adtulo",
-      "update-failed": "Se fall\u00c3\u00b3 a actualizar el diploma",
+      "title": "T\u00edtulo",
+      "update-failed": "Se fall\u00f3 a actualizar el diploma",
       "updated": "Diploma actualizado"
     },
     "events": {
@@ -613,7 +629,7 @@
       "calendar": {
         "title": "Calendario"
       },
-      "confirm-archive": "\u00c2\u00bfSeguro que quieres archivar este evento?",
+      "confirm-archive": "\u00bfSeguro que quieres archivar este evento?",
       "create-event": "Crear Evento",
       "dashboard": {
         "charts": {
@@ -623,7 +639,7 @@
         },
         "headers": {
           "home-group-percentage": "Porcentaje de Feligreses en un Grupo de Hogar",
-          "location-attendance": "Asistencia por Ubicaci\u00c3\u00b3n",
+          "location-attendance": "Asistencia por Ubicaci\u00f3n",
           "yearly-attendance": "Asistencia Anual"
         },
         "title": "Tablero"
@@ -633,74 +649,88 @@
       },
       "edit-event": "Editar Evento",
       "end-date": "Fecha Final",
-      "end-time": "Hora de Finalizaci\u00c3\u00b3n",
+      "end-time": "Hora de Finalizaci\u00f3n",
       "error-adding-event": "Error al agregar evento",
       "error-archiving-event": "Error al archivar el evento",
       "error-editing-event": "Error al editar evento",
       "error-unarchiving-event": "Error al desarchivar el evento",
       "event-added": "Evento agregado",
       "event-archived": "Evento archivado",
-      "event-description": "Descripci\u00c3\u00b3n del Evento",
+      "event-description": "Descripci\u00f3n del Evento",
       "event-edited": "Evento editado",
-      "event-location": "Ubicaci\u00c3\u00b3n de Evento",
+      "event-location": "Ubicaci\u00f3n de Evento",
       "event-unarchived": "Evento desarchivado",
       "header": "Eventos",
-      "image-description": "Descripci\u00c3\u00b3n de la Imagen",
-      "location": "Ubicaci\u00c3\u00b3n",
+      "image-description": "Descripci\u00f3n de la Imagen",
+      "location": "Ubicaci\u00f3n",
       "participants": {
-        "add": "A\u00c3\u00b1adir participantes",
+        "add": "A\u00f1adir participantes",
         "added": "Participantes agregado",
-        "confirm-remove": "\u00c2\u00bfEst\u00c3\u00a1s seguro de que quieres eliminar a este participante?",
+        "confirm-remove": "\u00bfEst\u00e1s seguro de que quieres eliminar a este participante?",
         "error-adding": "Error al agregar participante",
         "error-removing": "Error al eliminadar el participante",
         "removed": "Participante eliminado",
         "title": "Participantes"
       },
       "persons": {
-        "confirm-remove-from-event": "\u00c2\u00bfEst\u00c3\u00a1 seguro de que desea eliminar este persona de este evento?",
-        "description": "Descripci\u00c3\u00b3n del Rol",
+        "confirm-remove-from-event": "\u00bfEst\u00e1 seguro de que desea eliminar este persona de este evento?",
+        "description": "Descripci\u00f3n del Rol",
         "edit": "Editar Persona",
         "error-adding-person": "Error al agregar persona",
-        "error-person-assigned": "Ese persona est\u00c3\u00a1 asignado a un evento conflictivo.",
+        "error-person-assigned": "Ese persona est\u00e1 asignado a un evento conflictivo.",
         "error-removing-person": "Error al eliminadar este persona",
-        "new": "A\u00c3\u00b1adir Persona",
+        "new": "A\u00f1adir Persona",
         "none-assigned": "No hay personas asignados.",
         "person-added": "Persona agregado",
         "person-edited": "Persona editado",
-        "person-on-event": "Ese persona ya est\u00c3\u00a1 asignado a este evento.",
+        "person-on-event": "Ese persona ya est\u00e1 asignado a este evento.",
         "person-removed": "Persona eliminado",
         "title": "Personas del Evento"
       },
       "start-date": "Fecha de Inicio",
       "start-time": "Hora de Inicio",
-      "title": "T\u00c3\u00adtulo del Evento",
+      "title": "T\u00edtulo del Evento",
       "upload-image": "Cargar Imagen"
     },
     "groups": {
-      "confirm-remove-from-event": "\u00c2\u00bfEst\u00c3\u00a1s seguro de que quieres eliminar a este grupo de este evento?",
+      "confirm-remove-from-event": "\u00bfEst\u00e1s seguro de que quieres eliminar a este grupo de este evento?",
       "create-group": "Crea un Grupo",
-      "description": "Descripci\u00c3\u00b3n",
+      "description": "Descripci\u00f3n",
       "details": {
+        "class-title": "T\u00c3\u00adtulo",
+        "member-count": "Cuenta de miembro",
         "title": "Detalles"
       },
-      "edit-group": "Grupo de Edici\u00c3\u00b3n",
+      "edit-group": "Grupo de Edici\u00f3n",
       "error-removing-group": "Error al eliminadar este grupo",
-      "group-description": "Descripci\u00c3\u00b3n del Grupo",
+      "group-description": "Descripci\u00f3n del Grupo",
       "group-removed": "Grupo eliminado",
       "header": "Grupos",
       "manager": "Gerente",
       "meetings": {
-        "add-meeting": "Agregar Reuni\u00f3n",
+        "add-meeting": "Agregar Reuni\u00c3\u00b3n",
         "title": "Reuniones"
       },
+      "member-count": "Recuento de Miembros",
       "members": {
+        "email": {
+          "bcc": "Cco",
+          "body": "Cuerpo",
+          "cc": "Cc",
+          "compose": "Redactar Correo Electr\u00f3nico",
+          "send": "Enviar",
+          "subject": "Asunto",
+          "to": "Para"
+        },
         "title": "Miembros"
       },
       "messages": {
         "already-exists": "El grupo ya existe",
         "confirm-archive": "\u00c2\u00bfSeguro que quieres archivar este groupos?",
+        "confirm-member-archive": "\u00c2\u00bfEst\u00c3\u00a1s seguro de que deseas archivar a este miembro del grupo?",
         "error-adding-group": "Error al agregar grupo",
         "error-adding-members": "Error al agregar miembros",
+        "error-archived-not-selected": "No hay miembros archivados seleccionados",
         "error-archiving-group": "Error al archivar el grupo",
         "error-archiving-member": "Error al desarchivar miembro",
         "error-editing-group": "Error al editar grupo",
@@ -712,6 +742,7 @@
         "member-archived": "Miembro archivado",
         "member-unarchived": "Miembro desarchivado",
         "members-added": "Miembros agregados",
+        "no-remaining-members": "Ning\u00fan miembro restante",
         "required-fields": "Por favor llene todos los campos requeridos"
       },
       "name": "Nombre",
@@ -720,23 +751,23 @@
     },
     "images": {
       "actions": {
-        "add-image": "A\u00c3\u00b1adir Imagen"
+        "add-image": "A\u00f1adir Imagen"
       },
-      "image-description": "Descripci\u00c3\u00b3n de la imagen",
+      "image-description": "Descripci\u00f3n de la imagen",
       "messages": {
         "no-image": "Ninguna imagen seleccionada.",
         "not-found": "Imagen no encontrada."
       }
     },
     "login": {
-      "header": "Iniciar Sesi\u00c3\u00b3n",
+      "header": "Iniciar Sesi\u00f3n",
       "messages": {
-        "incorrect-login": "Nombre de usuario o contrase\u00c3\u00b1a incorrecta"
+        "incorrect-login": "Nombre de usuario o contrase\u00f1a incorrecta"
       }
     },
     "people": {
-      "account-information": "Informaci\u00c3\u00b3n de la cuenta",
-      "additional-information": "Informaci\u00c3\u00b3n Adicional",
+      "account-information": "Informaci\u00f3n de la cuenta",
+      "additional-information": "Informaci\u00f3n Adicional",
       "attributes": "Atributas",
       "next": "Siguiente",
       "optional": "Opcional",
@@ -751,27 +782,27 @@
         "roles": "Papeles"
       },
       "actions": {
-        "add-account": "A\u00c3\u00b1adir cuenta",
-        "add-participant": "A\u00c3\u00b1adir Part\u00c3\u00adcipe",
+        "add-account": "A\u00f1adir cuenta",
+        "add-participant": "A\u00f1adir Part\u00edcipe",
         "assign-roles": "Asigne Papeles",
         "edit": "Editar persona",
         "new": "Persona Nueva",
-        "reset-password": "Restablecer la contrase\u00c3\u00b1a"
+        "reset-password": "Restablecer la contrase\u00f1a"
       },
       "date": {
-        "birthday": "Cumplea\u00c3\u00b1os"
+        "birthday": "Cumplea\u00f1os"
       },
-      "email": "Correo electr\u00c3\u00b3nico",
+      "email": "Correo electr\u00f3nico",
       "female": "Mujer",
-      "gender": "G\u00c3\u00a9nero",
+      "gender": "G\u00e9nero",
       "male": "Hombre",
       "messages": {
         "account-activate": "Cuenta activada",
         "account-deactivate": "Cuenta desactivada",
-        "canceled": "Cancelado a\u00c3\u00b1adir nueva persona",
+        "canceled": "Cancelado a\u00f1adir nueva persona",
         "confirm": {
-          "activate": "\u00c2\u00bfEst\u00c3\u00a1s seguro de que quieres restaurar a esta persona?",
-          "deactivate": "\u00c2\u00bfEst\u00c3\u00a1s seguro de que quieres archivar a esta persona?"
+          "activate": "\u00bfEst\u00e1s seguro de que quieres restaurar a esta persona?",
+          "deactivate": "\u00bfEst\u00e1s seguro de que quieres archivar a esta persona?"
         },
         "person-activate": "Persona activada",
         "person-add": "Nueva persona agregada",
@@ -784,24 +815,24 @@
         "last": "Apellido",
         "second-last": "Segundo Apellido"
       },
-      "phone": "Tel\u00c3\u00a9fono",
-      "settings": "Configuraci\u00c3\u00b3n de la {person}"
+      "phone": "Tel\u00e9fono",
+      "settings": "Configuraci\u00f3n de la {person}"
     },
     "places": {
       "address": {
-        "address": "Direcci\u00c3\u00b3n",
+        "address": "Direcci\u00f3n",
         "city": "Ciudad",
         "latitude": "Latitud",
         "longitude": "Longitud",
         "name": "Nombre"
       },
-      "create-address": "Crear una Direcci\u00c3\u00b3n",
+      "create-address": "Crear una Direcci\u00f3n",
       "location": {
-        "description": "Descripci\u00c3\u00b3n"
+        "description": "Descripci\u00f3n"
       },
       "messages": {
-        "no-results": "Tu direcci\u00c3\u00b3n no devolvi\u00c3\u00b3 resultados.",
-        "saved": "Su direcci\u00c3\u00b3n ha sido guardada."
+        "no-results": "Tu direcci\u00f3n no devolvi\u00f3 resultados.",
+        "saved": "Su direcci\u00f3n ha sido guardada."
       }
     },
     "public": {
@@ -814,58 +845,58 @@
       },
       "headers": {
         "home-church": "Encontrar una Iglesia Hogar",
-        "upcoming-classes": "Pr\u00c3\u00b3ximas Cursos",
-        "upcoming-events": "Pr\u00c3\u00b3ximos Eventos"
+        "upcoming-classes": "Pr\u00f3ximas Cursos",
+        "upcoming-events": "Pr\u00f3ximos Eventos"
       },
-      "title": "P\u00c3\u00bablico"
+      "title": "P\u00fablico"
     },
     "teams": {
       "all-teams": "Todos Equipos",
-      "confirm-archive": "\u00c2\u00bfSeguro que quieres archivar este equipo?",
-      "confirm-remove-from-event": "\u00c2\u00bfEst\u00c3\u00a1s seguro de que quieres eliminar a este equipo de este evento?",
+      "confirm-archive": "\u00bfSeguro que quieres archivar este equipo?",
+      "confirm-remove-from-event": "\u00bfEst\u00e1s seguro de que quieres eliminar a este equipo de este evento?",
       "create-team": "Crear Equipo",
-      "description": "Descripci\u00c3\u00b3n",
+      "description": "Descripci\u00f3n",
       "edit-team": "Editar Equipo",
       "error-adding-team": "Error al agregar equipo",
       "error-editing-team": "Error al editar equipo",
       "error-removing-team": "Error al eliminadar este equipo",
-      "error-team-assigned": "Ese equipo est\u00c3\u00a1 asignado a un evento conflictivo.",
+      "error-team-assigned": "Ese equipo est\u00e1 asignado a un evento conflictivo.",
       "error-unarchiving-team": "Error al desarchivar equipo",
       "members": {
-        "add": "A\u00c3\u00b1adir Miembros",
-        "confirm-remove": "\u00c2\u00bfSeguro que quieres eliminar este miembro?",
+        "add": "A\u00f1adir Miembros",
+        "confirm-remove": "\u00bfSeguro que quieres eliminar este miembro?",
         "title": "Miembros del Equipo"
       },
-      "new": "A\u00c3\u00b1adir Equipo",
+      "new": "A\u00f1adir Equipo",
       "none-assigned": "No hay equipos asignados.",
       "team-added": "Equipo agregado",
       "team-edited": "Equipo editado",
-      "team-on-event": "Ese equipo ya est\u00c3\u00a1 asignado a este evento.",
+      "team-on-event": "Ese equipo ya est\u00e1 asignado a este evento.",
       "team-removed": "Equipo eliminado",
       "title": "Equipos"
     },
     "transcripts": {
-      "add-diploma-this-student": "A\u00c3\u00b1adir Diploma",
+      "add-diploma-this-student": "A\u00f1adir Diploma",
       "course-completed": "Terminado",
       "courses": "Cursos",
       "courses-in-progress-or-completed": "Cursos (en Progreso o Terminados)",
       "courses-this-diploma": "Cursos para esta Diploma",
-      "description": "Descripci\u00c3\u00b3n",
-      "page-title": "Transcripci\u00c3\u00b3n para",
+      "description": "Descripci\u00f3n",
+      "page-title": "Transcripci\u00f3n para",
       "student-information": "Datos",
-      "transcript": "Transcripci\u00c3\u00b3nes"
+      "transcript": "Transcripci\u00f3nes"
     },
     "validation": {
       "attributes": {
         "attendance": "concurrencia",
-        "email": "correo electr\u00c3\u00b3nico",
+        "email": "correo electr\u00f3nico",
         "endDate": "fecha final",
         "firstName": "nombre de pila",
         "lastName": "appellido",
-        "location": "ubicaci\u00c3\u00b3n",
+        "location": "ubicaci\u00f3n",
         "startDate": "fecha de inicio",
-        "team-description": "descripci\u00c3\u00b3n del equipo",
-        "title": "t\u00c3\u00adtulo"
+        "team-description": "descripci\u00f3n del equipo",
+        "title": "t\u00edtulo"
       },
       "messages": {
         "_default": "Error",

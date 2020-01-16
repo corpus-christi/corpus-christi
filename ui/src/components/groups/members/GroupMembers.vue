@@ -1,35 +1,94 @@
 <template>
   <div>
     <v-toolbar>
-      <v-toolbar-title>{{ $t("events.participants.title") }}</v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-text-field
-        v-model="search"
-        append-icon="search"
-        v-bind:label="$t('actions.search')"
-        single-line
-        hide-details
-      ></v-text-field>
-      <v-spacer></v-spacer>
-      <v-btn
-        color="primary"
-        raised
-        v-on:click="openParticipantDialog"
-        data-cy="add-participant"
-      >
-        <v-icon dark left>add</v-icon>
-        {{ $t("actions.add-person") }}
-      </v-btn>
+      <v-layout align-center justify-space-between fill-height>
+        <v-flex md2>
+          <v-toolbar-title v-if="!select">{{
+            $t("events.participants.title")
+          }}</v-toolbar-title>
+          <v-btn
+            color="primary"
+            raised
+            v-on:click="toggleEmailDialog"
+            v-if="select"
+            fab
+            small
+          >
+            <v-icon dark>email</v-icon>
+          </v-btn>
+          <v-btn
+            color="primary"
+            raised
+            v-on:click="activateSelectArchiveDialog"
+            data-cy="archive"
+            v-if="select"
+            fab
+            small
+          >
+            <v-icon dark>archive</v-icon>
+          </v-btn>
+          <v-btn
+            color="primary"
+            raised
+            v-on:click="unarchiveFab"
+            v-if="select"
+            fab
+            small
+          >
+            <v-icon dark>undo</v-icon>
+          </v-btn>
+        </v-flex>
+        <v-flex md2>
+          <v-text-field
+            v-model="search"
+            append-icon="search"
+            v-bind:label="$t('actions.search')"
+            single-line
+            hide-details
+          ></v-text-field>
+        </v-flex>
+        <v-flex md2>
+          <v-select
+            hide-details
+            solo
+            single-line
+            :items="viewOptions"
+            v-model="viewStatus"
+            data-cy="view-status-select"
+          >
+          </v-select>
+        </v-flex>
+        <v-flex shrink justify-self-end>
+          <v-btn
+            color="primary"
+            raised
+            v-on:click="openParticipantDialog"
+            data-cy="add-participant"
+          >
+            <v-icon dark left>add</v-icon>
+            {{ $t("actions.add-person") }}
+          </v-btn>
+        </v-flex>
+      </v-layout>
     </v-toolbar>
     <v-data-table
+      select-all
+      v-model="selected"
       :rows-per-page-items="rowsPerPageItem"
       :headers="headers"
-      :items="members"
+      :items="visibleMembers"
       :search="search"
       :loading="tableLoading"
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
+        <td>
+          <v-checkbox
+            v-model="props.selected"
+            primary
+            hide-details
+          ></v-checkbox>
+        </td>
         <td>{{ props.item.person.firstName }}</td>
         <td>{{ props.item.person.lastName }}</td>
         <td>{{ props.item.person.email }}</td>
@@ -59,7 +118,7 @@
                 small
                 color="primary"
                 slot="activator"
-                v-on:click="unarchive(props.item)"
+                v-on:click="massUnarchive(props.item)"
                 :loading="props.item.id < 0"
                 data-cy="unarchive"
               >
@@ -88,7 +147,7 @@
           >
           <v-spacer></v-spacer>
           <v-btn
-            v-on:click="archiveGroup"
+            v-on:click="massArchive"
             color="primary"
             raised
             :loading="archiveDialog.loading"
@@ -165,6 +224,90 @@
       </v-card>
     </v-dialog>
 
+    <!-- Email dialog -->
+    <v-dialog v-model="emailDialog.show" max-width="700px">
+      <v-card>
+        <v-card-title primary-title>
+          <div>
+            <h3 class="headline mb-0">
+              {{ $t("groups.members.email.compose") }}
+            </h3>
+          </div>
+        </v-card-title>
+        <v-card-text>
+          <v-select
+            v-model="email.recipients"
+            :label="$t('groups.members.email.to')"
+            :items="parsedMembers"
+            multiple
+            chips
+            deletable-chips
+            hide-selected
+            :no-data-text="$t('groups.messages.no-remaining-members')"
+          >
+          </v-select>
+        </v-card-text>
+        <v-card-text>
+          <v-select
+            v-model="email.cc"
+            :label="$t('groups.members.email.cc')"
+            :items="parsedMembers"
+            multiple
+            chips
+            deletable-chips
+            hide-selected
+            :no-data-text="$t('groups.messages.no-remaining-members')"
+          >
+          </v-select>
+        </v-card-text>
+        <v-card-text>
+          <v-select
+            v-model="email.bcc"
+            :label="$t('groups.members.email.bcc')"
+            :items="parsedMembers"
+            multiple
+            chips
+            deletable-chips
+            :no-data-text="$t('groups.messages.no-remaining-members')"
+          >
+          </v-select>
+        </v-card-text>
+        <v-card-text>
+          <v-text-field
+            :label="$t('groups.members.email.subject')"
+            v-model="email.subject"
+          >
+          </v-text-field>
+        </v-card-text>
+        <v-card-text>
+          <v-textarea
+            :label="$t('groups.members.email.body')"
+            v-model="email.body"
+          >
+          </v-textarea>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn
+            v-on:click="toggleEmailDialog"
+            color="secondary"
+            flat
+            data-cy=""
+            >{{ $t("actions.cancel") }}</v-btn
+          >
+          <v-spacer></v-spacer>
+          <v-btn
+            v-on:click="sendEmail"
+            :disabled="email.recipients.length == 0"
+            color="primary"
+            raised
+            :loading="sendEmail.loading"
+            data-cy="confirm-email"
+            >{{ $t("groups.members.email.send") }}</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
       <v-btn flat @click="snackbar.show = false">
@@ -190,6 +333,24 @@ export default {
       tableLoading: false,
       search: "",
       members: [],
+      parsedMembers: [],
+      selected: [],
+      select: false,
+      archiveSelect: false,
+      unarchiveSelect: false,
+      email: {
+        subject: "",
+        body: "",
+        recipients: [],
+        cc: [],
+        bcc: [],
+        managerName: "",
+        managerEmail: ""
+      },
+      emailDialog: {
+        show: false,
+        loading: false
+      },
       addParticipantDialog: {
         show: false,
         newParticipants: [],
@@ -208,11 +369,31 @@ export default {
       snackbar: {
         show: false,
         text: ""
-      }
+      },
+      viewStatus: "viewActive"
     };
   },
 
+  watch: {
+    selected() {
+      if (this.selected.length > 0) {
+        console.log(this.selected);
+        this.select = true;
+      } else this.select = false;
+
+      this.email.recipients = this.getEmailRecipients();
+    }
+  },
+
   computed: {
+    viewOptions() {
+      return [
+        { text: this.$t("actions.view-active"), value: "viewActive" },
+        { text: this.$t("actions.view-archived"), value: "viewArchived" },
+        { text: this.$t("actions.view-all"), value: "viewAll" }
+      ];
+    },
+
     headers() {
       return [
         {
@@ -240,10 +421,34 @@ export default {
           sortable: false
         }
       ];
+    },
+
+    visibleMembers() {
+      let list = this.members;
+
+      if (this.viewStatus === "viewActive") {
+        return list.filter(ev => ev.active);
+      } else if (this.viewStatus === "viewArchived") {
+        return list.filter(ev => !ev.active);
+      } else {
+        return list;
+      }
     }
   },
 
   methods: {
+    parseMembers() {
+      this.members.map(e => {
+        if (e.person.email) {
+          this.parsedMembers.push({
+            text: e.person.firstName + " " + e.person.lastName,
+            value: e.person.email
+          });
+        }
+      });
+      //console.log(this.parsedMembers);
+    },
+
     activateNewParticipantDialog() {
       this.addParticipantDialog.show = true;
     },
@@ -280,6 +485,39 @@ export default {
           this.addParticipantDialog.loading = false;
           this.showSnackbar(this.$t("groups.messages.error-adding-members"));
         });
+    },
+
+    getEmailRecipients() {
+      return this.selected
+        .map(e => e.person.email)
+        .filter(function(e) {
+          return e != null;
+        });
+    },
+
+    sendEmail() {
+      this.$http
+        .post(`/api/v1/emails/`, this.email)
+        .then(() => {
+          this.toggleEmailDialog();
+          this.selected = [];
+          this.email.subject = "";
+          this.email.body = "";
+          this.email.cc = "";
+          this.email.bcc = "";
+          this.showSnackbar(this.$t("groups.messages.email-sent"));
+        })
+        .catch(err => {
+          console.log(this.email);
+          console.log(err);
+        });
+    },
+
+    toggleEmailDialog() {
+      if (this.selected.length > 0) {
+        this.email.recipients = this.getEmailRecipients();
+        this.emailDialog.show = !this.emailDialog.show;
+      } else this.showSnackbar("No valid email addresses are selected");
     },
 
     addParticipant(id) {
@@ -332,6 +570,34 @@ export default {
       this.snackbar.show = true;
     },
 
+    containsActive() {
+      let isActive = false;
+      this.selected.map(e => {
+        if (e.active) isActive = true;
+      });
+      return isActive;
+    },
+
+    massArchive() {
+      if (this.archiveSelect) {
+        this.selected.map(e => {
+          this.archiveDialog.memberId = e.id;
+          this.archiveGroup();
+        });
+        this.archiveSelect = false;
+      } else this.archiveGroup();
+    },
+
+    activateSelectArchiveDialog() {
+      if (this.containsActive()) {
+        if (this.selected.length == 1) {
+          this.activateArchiveDialog(this.selected[0].person.id);
+        } else this.archiveDialog.show = true;
+        this.archiveSelect = true;
+      } else
+        this.showSnackbar(this.$t("groups.messages.error-active-not-selected"));
+    },
+
     activateArchiveDialog(memberId) {
       this.archiveDialog.show = true;
       this.archiveDialog.memberId = memberId;
@@ -344,6 +610,7 @@ export default {
 
     cancelArchive() {
       this.archiveDialog.show = false;
+      this.archiveSelect = false;
     },
 
     archiveGroup() {
@@ -369,6 +636,25 @@ export default {
         });
     },
 
+    unarchiveFab() {
+      if (!this.containsActive()) {
+        this.unarchiveSelect = true;
+        this.massUnarchive();
+      } else
+        this.showSnackbar(
+          this.$t("groups.messages.error-archived-not-selected")
+        );
+    },
+
+    massUnarchive(member) {
+      if (this.unarchiveSelect) {
+        this.selected.map(e => {
+          this.unarchive(e);
+        });
+        this.unarchiveSelect = false;
+      } else this.unarchive(member);
+    },
+
     unarchive(member) {
       const idx = this.members.findIndex(ev => ev.id === member.id);
       const memberId = member.id;
@@ -392,7 +678,15 @@ export default {
       this.tableLoading = true;
       const id = this.$route.params.group;
       this.$http.get(`/api/v1/groups/groups/${id}`).then(resp => {
+        this.email.managerName =
+          resp.data.managerInfo.person.firstName +
+          " " +
+          resp.data.managerInfo.person.lastName +
+          " " +
+          resp.data.managerInfo.person.secondLastName;
+        this.email.managerEmail = resp.data.managerInfo.person.email;
         this.members = resp.data.memberList;
+        this.parseMembers();
         this.tableLoading = false;
       });
     }
