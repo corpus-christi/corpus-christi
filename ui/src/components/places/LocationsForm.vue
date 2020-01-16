@@ -5,7 +5,7 @@
       <span class="heading" v-else>{{ $t("places.location.new") }}</span>
       <v-flex>
         <div>
-          <v-select
+          <v-autocomplete
             v-if="this.locationInfo.editMode"
             name="area"
             hide-details
@@ -17,8 +17,8 @@
             v-validate="'required'"
             :error-messages="errors.collect('location')"
             :disabled="formDisabled"
-            v-on:change="updateDescription()"
-          ></v-select>
+            v-on:change="updateDescription() + isDisabled()"
+          ></v-autocomplete>
         </div>
       </v-flex>
       <v-text-field
@@ -43,7 +43,7 @@
         color="primary"
         @click="saveLocationForm"
         :loading="formDisabled"
-        :disabled="formDisabled"
+        :disabled="subDisabled"
         >{{ $t("actions.save") }}</v-btn
       >
     </v-card-actions>
@@ -92,23 +92,12 @@ export default {
   watch: {
     initialData(locationProp) {
       this.locationInfo = locationProp;
-      if (this.locationInfo.allLocations.length > 0) {
-        this.selectedLocation = this.locationInfo.allLocations[0].id;
-        // this.location.id = ;
-        // console.log(this.locationInfo.allLocations.length, this.selectedLocation);
-        for (let i = 0; i < this.locationInfo.allLocations.length; i++) {
-          if (this.locationInfo.allLocations[i].id === this.selectedLocation) {
-            this.location.description = this.locationInfo.allLocations[i].description;
-          }
-        }
-      }
     }
   },
   methods: {
     isDisabled() {
       this.subDisabled =
-        this.formDisabled || (!this.editMode || this.selectedLocation);
-      console.log(this.subDisabled);
+        this.formDisabled || !(this.editMode || this.selectedLocation);
     },
     updateDescription() {
       for (let i = 0; i < this.locationInfo.allLocations.length; i++) {

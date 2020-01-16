@@ -34,7 +34,7 @@
       :headers="headers"
       :items="AddressesLocationsData()"
       :search="search"
-      :expand.sync="expanded"
+      expand
       item-key="id"
       show-expand
       class="elevation-1"
@@ -79,7 +79,7 @@
       <template slot="expand" slot-scope="props">
         <v-container class="grey lighten-3">
           <v-layout>
-            <v-flex md2> {{ $t("places.location.location") }}: </v-flex>
+            <v-flex md2>{{ $t("places.location.location") }}: </v-flex>
             <v-flex>
               <v-chip v-for="l in props.item.locations" :key="l.id" small
                 >{{ l.description }}
@@ -215,7 +215,7 @@ export default {
       },
       search: "",
       groupLocations: [],
-      opened: [],
+      opened: []
     };
   },
   computed: {
