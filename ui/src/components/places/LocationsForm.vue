@@ -17,6 +17,7 @@
             v-validate="'required'"
             :error-messages="errors.collect('location')"
             :disabled="formDisabled"
+            v-on:change="updateDescription()"
           ></v-select>
         </div>
       </v-flex>
@@ -74,7 +75,8 @@ export default {
       },
       formDisabled: false,
       saveIsLoading: false,
-      subDisabled: true
+      subDisabled: true,
+      dropList: {}
     };
   },
   computed: {
@@ -93,8 +95,9 @@ export default {
       if (this.locationInfo.allLocations.length > 0) {
         this.selectedLocation = 1;
         this.location.id = 1;
+        console.log(this.locationInfo.allLocations.length, this.selectedLocation);
         for (let i = 0; i < this.locationInfo.allLocations.length; i++) {
-          if (this.locationInfo.allLocations[i].id === this.selectedLocation) {
+          if (this.locationInfo.allLocations[i].id === 1) {
             this.location.description = this.locationInfo.allLocations[i].description;
           }
         }
@@ -107,7 +110,15 @@ export default {
         this.formDisabled || (!this.editMode || this.selectedLocation);
       console.log(this.subDisabled);
     },
+    updateDescription() {
+      for (let i = 0; i < this.locationInfo.allLocations.length; i++) {
+        if (this.locationInfo.allLocations[i].id === this.selectedLocation) {
+          this.location.description = this.locationInfo.allLocations[i].description;
+        }
+      }
+    },
     cancelLocationForm() {
+      this.location.description = "";
       this.$emit("cancel", false);
     },
     saveLocationForm() {
