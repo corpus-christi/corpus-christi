@@ -370,18 +370,36 @@
       "address": {
         "address": "Address",
         "city": "City",
+        "country": "Country",
+        "find-address": "Find Address",
+        "find-address-lat-lng": "Find Address using Latitude and Longitude",
         "latitude": "Latitude",
         "longitude": "Longitude",
-        "name": "Name"
+        "name": "Name",
+        "new": "Add Address",
+        "valid-address": "Use Valid Street Address"
+      },
+      "area": {
+        "area": "Area",
+        "create-area": "Create New Area",
+        "edit": "Edit Area",
+        "name": "Area Name",
+        "new": "Add Area"
       },
       "create-address": "Create an Address",
+      "edit": "Edit Location",
       "location": {
-        "description": "Description"
+        "description": "Description",
+        "location": "Location",
+        "new": "Add Location"
       },
       "messages": {
+        "find-address-err": "Latitude and Longitude are required to find an address",
         "no-results": "Your address returned no results.",
         "saved": "Your address has been saved."
-      }
+      },
+      "new": "Add Place",
+      "title": "Places"
     },
     "public": {
       "courses": {
@@ -822,18 +840,36 @@
       "address": {
         "address": "Direcci\u00f3n",
         "city": "Ciudad",
+        "country": "Pa\u00eds",
+        "find-address": "Encuentra la Direcci\u00f3n",
+        "find-address-lat-lng": "Buscar Direcci\u00f3n usando Latitud y Longitud",
         "latitude": "Latitud",
         "longitude": "Longitud",
-        "name": "Nombre"
+        "name": "Nombre",
+        "new": "A\u00f1adir direcci\u00f3n",
+        "valid-address": "Usar direcci\u00f3n V\u00e1lida"
+      },
+      "area": {
+        "area": "Zona",
+        "create-area": "Crear nueva \u00c1rea",
+        "edit": "\u00c1rea de Edici\u00f3n",
+        "name": "Nombre del \u00c1rea",
+        "new": "A\u00f1adir Zona"
       },
       "create-address": "Crear una Direcci\u00f3n",
+      "edit": "Editar Ubicaci\u00f3n",
       "location": {
-        "description": "Descripci\u00f3n"
+        "description": "Descripci\u00f3n",
+        "location": "Ubicaci\u00f3n",
+        "new": "A\u00f1adir Ubicaci\u00f3n"
       },
       "messages": {
+        "find-address-err": "Se requiere latitud y longitud para encontrar una direcci\u00f3n",
         "no-results": "Tu direcci\u00f3n no devolvi\u00f3 resultados.",
         "saved": "Su direcci\u00f3n ha sido guardada."
-      }
+      },
+      "new": "A\u00f1adir Lugares",
+      "title": "Lugares"
     },
     "public": {
       "courses": {

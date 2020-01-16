@@ -1,4 +1,7 @@
 places:
+  title:
+    en: Places
+    es: Lugares
   create-address:
     en: Create an Address
     es: Crear una Dirección
@@ -12,16 +15,37 @@ places:
     city:
       en: City
       es: Ciudad
+    country:
+      en: Country
+      es: País
     latitude:
       en: Latitude
       es: Latitud
     longitude:
       en: Longitude
       es: Longitud
+    new:
+      en: Add Address
+      es: Añadir dirección
+    find-address:
+      en: Find Address
+      es: Encuentra la Dirección
+    valid-address:
+      en: Use Valid Street Address
+      es: Usar dirección Válida
+    find-address-lat-lng:
+      en: Find Address using Latitude and Longitude
+      es: Buscar Dirección usando Latitud y Longitud
   location:
+    location:
+      en: Location
+      es: Ubicación
     description:
       en: Description
       es: Descripción
+    new:
+      en: Add Location
+      es: Añadir Ubicación
   messages:
     no-results:
       en: Your address returned no results.
@@ -29,3 +53,30 @@ places:
     saved:
       en: Your address has been saved.
       es: Su dirección ha sido guardada.
+    find-address-err:
+      en: Latitude and Longitude are required to find an address
+      es: Se requiere latitud y longitud para encontrar una dirección
+  new:
+    en: Add Place
+    es: Añadir Lugares
+  edit:
+    en: Edit Location
+    es: Editar Ubicación
+  area:
+    area:
+      en: Area
+      es: Zona
+    new:
+      en: Add Area
+      es: Añadir Zona
+    name:
+      en: Area Name
+      es: Nombre del Área
+    create-area:
+      en: Create New Area
+      es: Crear nueva Área
+    edit:
+      en: Edit Area
+      es: Área de Edición
+
+
