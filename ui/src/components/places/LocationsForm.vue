@@ -75,7 +75,7 @@ export default {
       },
       formDisabled: false,
       saveIsLoading: false,
-      subDisabled: true,
+      subDisabled: false,
       dropList: {}
     };
   },
@@ -92,12 +92,14 @@ export default {
   watch: {
     initialData(locationProp) {
       this.locationInfo = locationProp;
+      this.subDisabled =
+        this.formDisabled || !(!this.editMode || this.selectedLocation);
     }
   },
   methods: {
     isDisabled() {
       this.subDisabled =
-        this.formDisabled || !(this.editMode || this.selectedLocation);
+        this.formDisabled || !(!this.editMode || this.selectedLocation);
     },
     updateDescription() {
       for (let i = 0; i < this.locationInfo.allLocations.length; i++) {
@@ -108,6 +110,7 @@ export default {
     },
     cancelLocationForm() {
       this.location.description = "";
+      this.selectedLocation = 0;
       this.$emit("cancel", false);
     },
     saveLocationForm() {
@@ -124,6 +127,7 @@ export default {
       } else {
         this.addLocation(locationData, emitMessage);
       }
+      this.selectedLocation = 0;
     },
     addLocation(locationData, emitMessage) {
       this.$http
