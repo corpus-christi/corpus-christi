@@ -73,7 +73,7 @@
           class="hover-hand"
           v-on:click="$router.push({ path: '/groups/' + props.item.id })"
         >
-          {{ props.item.memberList.length + 1 }}
+          {{ props.item.memberList.filter(ev => ev.active).length }}
         </td>
         <td>
           <template v-if="props.item.active">
