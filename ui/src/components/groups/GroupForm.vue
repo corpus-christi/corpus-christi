@@ -10,7 +10,7 @@
           v-bind:label="$t('groups.name')"
           name="title"
           v-validate="'required'"
-          v-bind:error-messages="errors.first('')"
+          v-bind:error-messages="errors.first('title')"
           data-cy="title"
         ></v-text-field>
         <v-textarea
@@ -18,6 +18,8 @@
           v-model="group.description"
           v-bind:label="$t('groups.group-description')"
           name="description"
+          v-validate="'required'"
+          v-bind:error-messages="errors.collect('description')"
           data-cy="description"
         ></v-textarea>
         <entity-search
@@ -105,22 +107,18 @@ export default {
 
   methods: {
     validateGroup(group, operation) {
-      if(group.name == undefined || group.description == undefined || group.manager == undefined) {
-        this.showSnackbar(this.$t("groups.messages.required-fields"));
-      }
-      else {
-        this.$http.get(`/api/v1/groups/find_group/${group.name}/${group.manager.id}`).then((response) => {
-          if(response.data == 0){
-            this.$validator.validateAll().then(() => {
+      this.$validator.validateAll().then((isValid) => {
+        if(isValid){
+          this.$http.get(`/api/v1/groups/find_group/${group.name}/${group.manager.id}`).then((response) => {
+            if(response.data == 0){
               operation();
-            });
-          }
-          else {
-            this.showSnackbar(this.$t("groups.messages.already-exists"));
-          }
-        });
-      }
-      
+            }
+            else {
+              this.showSnackbar(this.$t("groups.messages.already-exists"));
+            }
+          });
+        }
+      });
     },
 
     showSnackbar(message) {
@@ -130,6 +128,7 @@ export default {
 
     cancel() {
       this.clear();
+      this.$validator.reset();
       this.$emit("cancel");
     },
 
