@@ -93,11 +93,11 @@ export default {
     initialData(locationProp) {
       this.locationInfo = locationProp;
       if (this.locationInfo.allLocations.length > 0) {
-        this.selectedLocation = 1;
-        this.location.id = 1;
-        console.log(this.locationInfo.allLocations.length, this.selectedLocation);
+        this.selectedLocation = this.locationInfo.allLocations[0].id;
+        // this.location.id = ;
+        // console.log(this.locationInfo.allLocations.length, this.selectedLocation);
         for (let i = 0; i < this.locationInfo.allLocations.length; i++) {
-          if (this.locationInfo.allLocations[i].id === 1) {
+          if (this.locationInfo.allLocations[i].id === this.selectedLocation) {
             this.location.description = this.locationInfo.allLocations[i].description;
           }
         }
