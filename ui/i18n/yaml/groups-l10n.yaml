@@ -27,9 +27,15 @@ groups:
     en: Create Group
     es: Crea un Grupo
   details:
+    class-title:
+      en: Title
+      es: Título
     title:
       en: Details
       es: Detalles
+    member-count:
+      en: Member count
+      es: Cuenta de miembro
   meetings:
     title:
       en: Meetings

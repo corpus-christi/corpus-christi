@@ -243,6 +243,8 @@
       "create-group": "Create Group",
       "description": "Description",
       "details": {
+        "class-title": "Title",
+        "member-count": "Member count",
         "title": "Details"
       },
       "edit-group": "Edit Group",
@@ -695,6 +697,8 @@
       "create-group": "Crea un Grupo",
       "description": "Descripci\u00f3n",
       "details": {
+        "class-title": "T\u00c3\u00adtulo",
+        "member-count": "Cuenta de miembro",
         "title": "Detalles"
       },
       "edit-group": "Grupo de Edici\u00f3n",
@@ -704,7 +708,7 @@
       "header": "Grupos",
       "manager": "Gerente",
       "meetings": {
-        "add-meeting": "Agregar Reuni\u00f3n",
+        "add-meeting": "Agregar Reuni\u00c3\u00b3n",
         "title": "Reuniones"
       },
       "member-count": "Recuento de Miembros",
@@ -722,10 +726,8 @@
       },
       "messages": {
         "already-exists": "El grupo ya existe",
-        "confirm-archive": "\u00bfSeguro que quieres archivar este groupos?",
-        "confirm-member-archive": "\u00bfEst\u00e1s seguro de que deseas archivar a este miembro del grupo?",
-        "email-sent": "Correo electr\u00f3nico enviado",
-        "error-active-not-selected": "No hay miembros activos seleccionados",
+        "confirm-archive": "\u00c2\u00bfSeguro que quieres archivar este groupos?",
+        "confirm-member-archive": "\u00c2\u00bfEst\u00c3\u00a1s seguro de que deseas archivar a este miembro del grupo?",
         "error-adding-group": "Error al agregar grupo",
         "error-adding-members": "Error al agregar miembros",
         "error-archived-not-selected": "No hay miembros archivados seleccionados",

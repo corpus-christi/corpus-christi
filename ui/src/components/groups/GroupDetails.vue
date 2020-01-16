@@ -1,12 +1,21 @@
-<template>
+<template v-else>
   <v-layout>
-    <v-flex xs12>
+    <v-flex xs12 sm4>
       <v-card>
         <v-card-title primary-title>
           <div>
-            <h3 class="headline mb-0">{{ group.name }}</h3>
+            <h3 class="headline mb-0">{{ $t("groups.details.class-title") }}: {{ group.name }}</h3>
             <div>{{ group.description }}</div>
-            <div>Manager: {{ getManagerName() }}</div>
+          </div>
+        </v-card-title>
+      </v-card>
+
+      <v-card class="mt-2" v-if="!loading">
+        <v-card-title primary-title>
+          <div>
+            <h3 class="headline mb-0">{{ $t("groups.details.title") }}</h3>
+            <div>{{ $t("groups.manager") }}: {{ getManagerName() }}</div>
+            <div>{{ $t("groups.details.member-count") }}: {{group.memberList.length}}</div>
           </div>
         </v-card-title>
       </v-card>
@@ -36,6 +45,7 @@ export default {
       const id = this.$route.params.group;
       return this.$http.get(`/api/v1/groups/groups/${id}`).then(resp => {
         this.group = resp.data;
+        console.log(this.group);
       });
     },
 
