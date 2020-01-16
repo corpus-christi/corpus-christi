@@ -30,10 +30,9 @@
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
-        <td>{{ props.item.person.firstName }}</td>
-        <td>{{ props.item.person.lastName }}</td>
-        <td>{{ props.item.person.email }}</td>
-        <td>{{ props.item.person.phone }}</td>
+        <td>{{ props.item.description }}</td>
+        <td>{{ props.item.startTime }}</td>
+        <td>{{ props.item.stopTime }}</td>
         <td>
           <template v-if="props.item.active">
             <v-tooltip bottom>
@@ -75,7 +74,9 @@
     <!-- Archive dialog -->
     <v-dialog v-model="archiveDialog.show" max-width="350px">
       <v-card>
-        <v-card-text>{{ $t("groups.messages.confirm-member-archive") }}</v-card-text>
+        <v-card-text>{{
+          $t("groups.messages.confirm-member-archive")
+        }}</v-card-text>
         <v-card-actions>
           <v-btn
             v-on:click="cancelArchive"
@@ -214,13 +215,12 @@ export default {
     headers() {
       return [
         {
-          text: this.$t("person.name.first"),
-          value: "firstName",
+          text: this.$t("groups.description"),
+          value: "description",
           width: "20%"
         },
-        { text: this.$t("person.name.last"), value: "lastName", width: "20%" },
-        { text: this.$t("person.email"), value: "email", width: "22.5%" },
-        { text: this.$t("person.phone"), value: "phone", width: "22.5%" },
+        { text: this.$t("events.start-time"), value: "lastName", width: "20%" },
+        { text: this.$t("events.stop-time"), value: "email", width: "22.5%" },
         { text: this.$t("actions.header"), sortable: false }
       ];
     }
@@ -256,7 +256,7 @@ export default {
           this.addMeetingDialog.loading = false;
           this.addMeetingDialog.show = false;
           this.addMeetingDialog.newMeetings = [];
-          this.getMembers();
+          this.getMeetings();
         })
         .catch(err => {
           console.log(err);
@@ -371,10 +371,10 @@ export default {
         });
     },
 
-    getMembers() {
+    getMeetings() {
       this.tableLoading = true;
       const id = this.$route.params.group;
-      this.$http.get(`/api/v1/groups/groups/${id}`).then(resp => {
+      this.$http.get(`/api/v1/groups/meetings/group/${id}`).then(resp => {
         this.members = resp.data.memberList;
         this.tableLoading = false;
       });
@@ -382,8 +382,7 @@ export default {
   },
 
   mounted: function() {
-    this.getMembers();
+    this.getMeetings();
   }
 };
 </script>
-
