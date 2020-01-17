@@ -75,7 +75,7 @@
         >
           {{ props.item.memberList.length + 1 }}
         </td>
-        <td>
+        <td class="text-no-wrap">
           <template v-if="props.item.active">
             <v-tooltip bottom>
               <v-btn
