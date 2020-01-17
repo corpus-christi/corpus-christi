@@ -748,3 +748,9 @@ export default {
   }
 };
 </script>
+
+<style>
+  .v-icon {
+    display: inline-flex !important;
+  }
+</style>
