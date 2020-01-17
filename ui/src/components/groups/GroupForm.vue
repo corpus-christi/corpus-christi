@@ -128,7 +128,9 @@ export default {
     updateSelection(obj) {
       if (obj.person) {
         this.group.manager_id = obj.id;
+        if (!this.group.manager) this.group.manager = {};
         this.group.manager.person = obj.person;
+        if (!this.group.managerInfo) this.group.managerInfo = {};
         this.group.managerInfo.person = obj.person;
       }
       //console.log("updateSelection");
@@ -159,6 +161,7 @@ export default {
       this.clear();
       this.$validator.reset();
       this.$emit("cancel");
+      this.manager = {};
     },
 
     clear() {
@@ -175,6 +178,7 @@ export default {
           this.group.active = true;
           this.$emit("save", this.group);
       });
+      this.manager = {};
     },
 
     addAnother() {
