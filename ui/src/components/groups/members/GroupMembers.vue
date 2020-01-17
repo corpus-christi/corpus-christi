@@ -556,6 +556,7 @@ export default {
           this.showSnackbar(this.$t("groups.messages.email-sent"));
         })
         .catch(err => {
+          this.showSnackbar(this.$t("groups.messages.error-no-manager-email"));
           console.log(this.email);
           console.log(err);
         });
