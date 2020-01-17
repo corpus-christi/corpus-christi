@@ -74,6 +74,36 @@
             </v-btn>
             <span>{{ $t("actions.duplicate") }}</span>
           </v-tooltip>
+          <v-tooltip bottom>
+            <v-btn
+              v-if="props.item.active === true"
+              icon
+              outline
+              small
+              color="primary"
+              slot="activator"
+              v-on:click="showConfirmDialog('deactivate', props.item)"
+              data-cy="deactivate-person"
+            >
+              <v-icon small>archive</v-icon>
+            </v-btn>
+            <span>{{ $t("actions.tooltips.archive") }}</span>
+          </v-tooltip>
+          <v-tooltip bottom>
+            <v-btn
+              v-if="props.item.active === false"
+              icon
+              outline
+              small
+              color="primary"
+              slot="activator"
+              v-on:click="showConfirmDialog('activate', props.item)"
+              data-cy="reactivate-person"
+            >
+              <v-icon small>undo</v-icon>
+            </v-btn>
+            <span>{{ $t("actions.tooltips.activate") }}</span>
+          </v-tooltip>
         </tr>
       </template>
       <template slot="expand" slot-scope="props">
@@ -177,6 +207,35 @@
         <GoogleMap v-bind:markers="markers"></GoogleMap>
       </v-flex>
     </v-layout>
+    <v-dialog
+      v-model="confirmDialog.show"
+      max-width="350px"
+      data-cy="place-table-confirmation"
+    >
+      <v-card>
+        <v-card-text>{{ $t(confirmDialog.title) }}</v-card-text>
+        <v-card-actions>
+          <v-btn
+            v-on:click="cancelAction"
+            color="secondary"
+            flat
+            :disabled="confirmDialog.loading"
+            >{{ $t("actions.cancel") }}</v-btn
+          >
+          <v-spacer></v-spacer>
+          <v-btn
+            v-on:click="
+              confirmAction(confirmDialog.action, confirmDialog.place)
+            "
+            color="primary"
+            raised
+            :disabled="confirmDialog.loading"
+            :loading="confirmDialog.loading"
+            >{{ $t("actions.confirm") }}</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -212,6 +271,13 @@ export default {
         saveLoading: false,
         addMoreLoading: false,
         locationsInfo: {}
+      },
+      confirmDialog: {
+        show: false,
+        action: "",
+        place: {},
+        title: "",
+        loading: false
       },
       search: "",
       groupLocations: [],
@@ -319,6 +385,57 @@ export default {
           }
       }
       return c;
+    },
+    showConfirmDialog(action, place) {
+      this.confirmDialog.title = "places.messages.confirm." + action;
+      this.confirmDialog.action = action;
+      this.confirmDialog.place = place;
+      this.confirmDialog.show = true;
+    },
+    confirmAction(action, place) {
+      if (action === "deactivate") {
+        this.deactivateAddress(place);
+      } else if (action === "activate") {
+        this.activateAddress(place);
+      }
+    },
+    cancelAction() {
+      this.confirmDialog.show = false;
+    },
+    deactivateAddress(place) {
+      console.log(place);
+      this.$http
+        .patch(`/api/v1/places/addresses/${place.id}`, { active: false })
+        .then(resp => {
+          console.log("DEACTIVATED ADDRESS", resp);
+        })
+        .then(() => {
+          this.refreshPlacesList();
+        })
+        .catch(err => {
+          console.log("FAILED", err);
+        })
+        .finally(() => {
+          this.confirmDialog.loading = false;
+          this.confirmDialog.show = false;
+        });
+    },
+    activateAddress(place) {
+      this.$http
+        .patch(`/api/v1/places/addresses/${place.id}`, { active: true })
+        .then(resp => {
+          console.log("ACTIVATED ADDRESS", resp);
+        })
+        .then(() => {
+          this.refreshPlacesList();
+        })
+        .catch(err => {
+          console.log("FAILED", err);
+        })
+        .finally(() => {
+          this.confirmDialog.loading = false;
+          this.confirmDialog.show = false;
+        });
     }
   }
 };
