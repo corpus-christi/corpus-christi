@@ -25,6 +25,7 @@
         <entity-search
           manager
           :value="manager"
+	  @selection="updateSelection"
           v-bind:error-messages="errors.first('address')"
         />
       </form>
@@ -38,12 +39,12 @@
         data-cy="form-cancel"
         >{{ $t("actions.cancel") }}</v-btn
       >
-      <v-spacer></v-spacer>
+      <v-spacer/>
       <v-btn
         color="primary"
         outline
         v-on:click="addAnother"
-        v-if="editMode === false"
+        v-if="!editMode"
         :loading="addMoreLoading"
         :disabled="formDisabled"
         data-cy="form-addanother"
@@ -84,10 +85,10 @@ export default {
         this.group = groupProp;
         this.manager = this.parseGroup(this.group);
         this.group.manager = groupProp.managerInfo;
-        console.log(this.group);
       }
     }
   },
+
   computed: {
     groupKeys() {
       return Object.keys(this.group);
@@ -120,19 +121,25 @@ export default {
 
     parseGroup(obj) {
       return {
-	'description_i18n': 'manager.description.Major_glass_',
 	'id': obj.manager_id,
-        'manager_id': null,
-        'person': obj.managerInfo.person,
-        'person_id': obj.managerInfo.person.id
       };
+    },
+
+    updateSelection(obj) {
+      if (obj.person) {
+        this.group.manager_id = obj.id;
+        this.group.manager.person = obj.person;
+        this.group.managerInfo.person = obj.person;
+      }
+      //console.log("updateSelection");
+      //console.log(this.group);
     },
 
     validateGroup(group, operation) {
       this.$validator.validateAll().then((isValid) => {
         if(isValid){
           this.$http.get(`/api/v1/groups/find_group/${group.name}/${group.manager_id}`).then((response) => {
-            if(response.data == 0){
+            if(response.data == 0 || this.editMode){
               operation();
             }
             else {
@@ -163,8 +170,8 @@ export default {
     },
 
     save() {
+      //console.log(this.group);
       this.validateGroup(this.group, () => {
-        this.group.active = true;
           this.group.active = true;
           this.$emit("save", this.group);
       });

@@ -68,7 +68,7 @@ export default {
       descriptionLimit: 50,
       entities: [],
       searchInput: "",
-      isLoading: false
+      isLoading: false,
     };
   },
 
@@ -119,7 +119,7 @@ export default {
       return idx > -1;
     },
     setSelected(entity) {
-      console.log(entity);
+      this.$emit("selection", entity);
       this.$emit("input", entity);
     },
     getEntityDescription(entity, letterLimit = this.descriptionLimit) {
