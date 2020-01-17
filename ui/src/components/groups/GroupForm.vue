@@ -25,8 +25,9 @@
         <entity-search
           manager
           v-model="group.manager"
-          name="address"
-          v-bind:error-messages="errors.first('address')"
+          name="manager"
+          v-validate="'required'"
+          v-bind:error-messages="errors.first('manager')"
         />
       </form>
     </v-card-text>
@@ -107,16 +108,17 @@ export default {
 
   methods: {
     validateGroup(group, operation) {
-      this.$validator.validateAll().then((isValid) => {
-        if(isValid){
-          this.$http.get(`/api/v1/groups/find_group/${group.name}/${group.manager.id}`).then((response) => {
-            if(response.data == 0){
-              operation();
-            }
-            else {
-              this.showSnackbar(this.$t("groups.messages.already-exists"));
-            }
-          });
+      this.$validator.validateAll().then(isValid => {
+        if (isValid) {
+          this.$http
+            .get(`/api/v1/groups/find_group/${group.name}/${group.manager.id}`)
+            .then(response => {
+              if (response.data == 0) {
+                operation();
+              } else {
+                this.showSnackbar(this.$t("groups.messages.already-exists"));
+              }
+            });
         }
       });
     },
@@ -143,16 +145,16 @@ export default {
     save() {
       this.validateGroup(this.group, () => {
         this.group.active = true;
-          this.group.active = true;
-          this.$emit("save", this.group);
+        this.group.active = true;
+        this.$emit("save", this.group);
       });
     },
 
     addAnother() {
       this.validateGroup(this.group, () => {
         this.group.active = true;
-          this.$emit("add-another", this.group);
-          this.group = {};
+        this.$emit("add-another", this.group);
+        this.group = {};
       });
     }
   },
@@ -178,7 +180,7 @@ export default {
       snackbar: {
         show: false,
         text: ""
-      },
+      }
     };
   }
 };
