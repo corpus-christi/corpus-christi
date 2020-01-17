@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Header -->
-    <v-toolbar class="pa-1" data-cy="person-toolbar">
+    <toolbar class="pa-1" data-cy="person-toolbar">
       <v-layout align-center justify-space-between fill-height>
         <v-flex md2>
           <v-toolbar-title>{{ $t("people.title") }}</v-toolbar-title>
@@ -42,7 +42,7 @@
           </v-btn>
         </v-flex>
       </v-layout>
-    </v-toolbar>
+    </toolbar>
 
     <!-- Table of existing people -->
     <v-data-table
