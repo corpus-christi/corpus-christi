@@ -3,7 +3,7 @@ import os
 from flask import json
 from marshmallow import Schema, fields
 from marshmallow.validate import Length, Range
-from sqlalchemy import Column, String, ForeignKey, Integer, Float
+from sqlalchemy import Column, String, ForeignKey, Integer, Float, Boolean
 from sqlalchemy.orm import relationship
 from src.db import Base
 from src.i18n.models import i18n_create, I18NLocale
@@ -73,6 +73,7 @@ class Area(Base):
 
     addresses = relationship('Address', backref='areas', passive_deletes=True)
     country = relationship('Country', backref='areas', lazy=True)
+    active = Column(Boolean, nullable=False, default=True)
 
     def __repr__(self):
         return f"<Area(name={self.name},Country Code='{self.country_code}')>"
@@ -82,6 +83,7 @@ class AreaSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     name = fields.String(required=True, validate=Length(min=1))
     country_code = fields.String(required=True, validate=Length(min=1))
+    active = fields.Boolean(missing=1)
     country = fields.Nested('CountrySchema')
 
 
@@ -97,6 +99,7 @@ class Location(Base):
     events = relationship('Event', back_populates="location")
     assets = relationship('Asset', back_populates="location")
     images = relationship('ImageLocation', back_populates="location")
+    active = Column(Boolean, nullable=False, default=True)
 
     def __repr__(self):
         attributes = [f"id='{self.id}'"]
@@ -112,6 +115,7 @@ class LocationSchema(Schema):
     id = fields.Integer(dump_only=True, required=False, validate=Range(min=1))
     description = fields.String(required=False)
     address_id = fields.Integer(required=True, validate=Range(min=1))
+    active = fields.Boolean(missing=1)
     address = fields.Nested('AddressSchema')
 
 
@@ -134,6 +138,7 @@ class Address(Base):
     country = relationship('Country', backref='addresses', lazy=True)
     meetings = relationship('Meeting', back_populates='address', lazy=True)
     locations = relationship('Location', back_populates='address', lazy=True)
+    active = Column(Boolean, nullable=False, default=True)
 
     def __repr__(self):
         attributes = [f"id='{self.id}'"]
@@ -154,5 +159,6 @@ class AddressSchema(Schema):
     country_code = fields.String(required=True)
     latitude = fields.Float()
     longitude = fields.Float()
+    active = fields.Boolean(missing=1)
     area = fields.Nested('AreaSchema')
     country = fields.Nested('CountrySchema')
