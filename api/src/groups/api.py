@@ -73,10 +73,10 @@ def read_all_groups():
     return_group = request.args.get('return_group')
     if return_group == 'inactive':
         query = query.filter_by(active=False)
-    elif return_group in ('all', 'both'):
-        pass  # Don't filter
-    else:
+    elif return_group == 'active':
         query = query.filter_by(active=True)
+    else:
+        pass  # Don't filter
     query = query.all()
 
     for group in query:
