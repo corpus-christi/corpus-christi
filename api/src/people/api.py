@@ -278,7 +278,7 @@ def get_persons_by_role(role_id):
 
 ##COME BACK TO THIS/ATTEMPTING A BANDAID SOLUTION ON ALL PARTS AFTER THIS TO ONLY CHANGE THE BACKEND WHILE BREAKING AS LITTLE UI AND API CALLS AS POSSIBLE
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------
-@people.route('/accounts/<account_id>', methods=['PATCH'])
+@people.route('/accounts/<person_id>', methods=['PATCH'])
 @jwt_required
 def update_account(person_id):
     try:
