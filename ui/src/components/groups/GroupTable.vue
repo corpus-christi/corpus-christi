@@ -75,7 +75,7 @@
         >
           {{ props.item.memberList.filter(ev => ev.active).length }}
         </td>
-        <td>
+        <td class="text-no-wrap">
           <template v-if="props.item.active">
             <v-tooltip bottom>
               <v-btn
@@ -265,7 +265,7 @@ export default {
       return [
         { text: this.$t("groups.name"), value: "name" },
         { text: this.$t("groups.description"), value: "description" },
-        { text: this.$t("groups.manager"), value: "managerInfo" },
+        { text: this.$t("groups.manager"), value: "managerInfo.person.lastName" },
         { text: this.$t("groups.member-count"), value: "memberList.length" },
         { text: this.$t("actions.header"), sortable: false }
       ];

@@ -161,3 +161,6 @@ groups:
     no-remaining-members:
       en: No remaining members
       es: Ningún miembro restante
+    error-no-manager-email:
+      en: Your email address is not defined
+      es: Su dirección de correo electrónico no está definida
