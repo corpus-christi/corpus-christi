@@ -306,13 +306,33 @@ export default {
     },
     initialData: {
       type: Object,
-      required: true
+      default: null
     },
     saveLoading: {
       type: Boolean
     },
     addMoreLoading: {
       type: Boolean
+    },
+    headerField: {
+      type: String,
+      required: false,
+      default: "events.edit-event"
+    },
+    titleField: {
+      type: String,
+      required: false,
+      default: "events.create-event"
+    },
+    descriptionField: {
+      type: String,
+      required: false,
+      default: "events.event-description"
+    },
+    locationField: {
+      type: String,
+      required: false,
+      default: "events.event-location"
     }
   },
   data: function() {
@@ -382,9 +402,7 @@ export default {
       return Object.keys(this.event);
     },
     title() {
-      return this.editMode
-        ? this.$t("events.edit-event")
-        : this.$t("events.create-event");
+      return this.editMode ? this.$t(this.editText) : this.$t(this.createText);
     },
 
     timeFormat() {

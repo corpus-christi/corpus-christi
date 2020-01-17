@@ -14,7 +14,7 @@
       <v-btn
         color="primary"
         raised
-        v-on:click="openMeetingDialog"
+        v-on:click="activateCreateMeetingDialog"
         data-cy="add-meeting"
       >
         <v-icon dark left>add</v-icon>
@@ -24,15 +24,15 @@
     <v-data-table
       :rows-per-page-items="rowsPerPageItem"
       :headers="headers"
-      :items="members"
+      :items="meetings"
       :search="search"
       :loading="tableLoading"
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
         <td>{{ props.item.description }}</td>
-        <td>{{ props.item.startTime }}</td>
-        <td>{{ props.item.stopTime }}</td>
+        <td>{{ props.item.startTime | formatDate }}</td>
+        <td>{{ props.item.stopTime | formatDate }}</td>
         <td>
           <template v-if="props.item.active">
             <v-tooltip bottom>
@@ -98,43 +98,15 @@
       </v-card>
     </v-dialog>
 
-    <!-- Add Meeting Dialog -->
-    <v-dialog v-model="addMeetingDialog.show" max-width="350px">
-      <v-card>
-        <v-card-title primary-title>
-          <div>
-            <h3 class="headline mb-0">
-              {{ $t("groups.meetings.add-meeting") }}
-            </h3>
-          </div>
-        </v-card-title>
-        <v-card-text>
-          <entity-search
-            multiple
-            meeting
-            v-model="addMeetingDialog.newMeetings"
-          />
-        </v-card-text>
-        <v-card-actions>
-          <v-btn
-            v-on:click="cancelNewMeetingDialog"
-            color="secondary"
-            flat
-            data-cy=""
-            >{{ $t("actions.cancel") }}</v-btn
-          >
-          <v-spacer></v-spacer>
-          <v-btn
-            v-on:click="addMeetings"
-            :disabled="addMeetingDialog.newMeetings.length == 0"
-            color="primary"
-            raised
-            :loading="addMeetingDialog.loading"
-            data-cy="confirm-participant"
-            >Add Participants</v-btn
-          >
-        </v-card-actions>
-      </v-card>
+    <!-- Add/Edit Meeting Dialog -->
+    <v-dialog v-model="meetingDialog.show" persistent max-width="500px">
+      <event-form
+        :edit-mode="false"
+        :initial-data="meetingDialog.meeting"
+        :save-loading="meetingDialog.saveLoading"
+        v-on:cancel="cancelMeetingDialog"
+        v-on:save="saveMeeting"
+      ></event-form>
     </v-dialog>
 
     <!-- Delete dialog -->
@@ -174,9 +146,10 @@
 </template>
 
 <script>
+import EventForm from "../../events/EventForm";
 import EntitySearch from "../../EntitySearch";
 export default {
-  components: { "entity-search": EntitySearch },
+  components: { "entity-search": EntitySearch, "event-form": EventForm },
   name: "GroupMeetings",
   data() {
     return {
@@ -188,12 +161,12 @@ export default {
       ],
       tableLoading: false,
       search: "",
-      members: [],
-      addMeetingDialog: {
+      meetingDialog: {
         show: false,
-        newMeetings: [],
-        loading: false
+        meeting: null,
+        saveLoading: false
       },
+      meetings: [],
       deleteDialog: {
         show: false,
         participantId: -1,
@@ -219,40 +192,62 @@ export default {
           value: "description",
           width: "20%"
         },
-        { text: this.$t("events.start-time"), value: "lastName", width: "20%" },
-        { text: this.$t("events.stop-time"), value: "email", width: "22.5%" },
+        {
+          text: this.$t("events.start-time"),
+          value: "startTime",
+          width: "20%"
+        },
+        {
+          text: this.$t("events.stop-time"),
+          value: "stopTime",
+          width: "22.5%"
+        },
         { text: this.$t("actions.header"), sortable: false }
       ];
     }
   },
 
   methods: {
-    activateNewMeetingDialog() {
-      this.addMeetingDialog.show = true;
+    activateEditMeetingDialog() {
+      this.meetingDialog.editMode = true;
+      this.activateMeetingDialog();
     },
-    openMeetingDialog() {
-      this.activateNewMeetingDialog();
+    activateCreateMeetingDialog() {
+      this.meetingDialog.editMode = false;
+      this.activateMeetingDialog();
     },
-    cancelNewMeetingDialog() {
-      this.addMeetingDialog.show = false;
+    activateMeetingDialog() {
+      this.meetingDialog.show = true;
     },
-
-    addMeetings() {
-      this.addMeetingDialog.loading = true;
+    cancelMeetingDialog() {
+      this.meetingDialog.show = false;
+    },
+    saveMeeting(meeting) {
+      console.log("saveMeeting meeting");
+      console.log(meeting);
+      this.meetingDialog.loading = true;
       let promises = [];
 
-      for (let person of this.addMeetingDialog.newMeetings) {
-        const idx = this.members.findIndex(
-          gr_pe => gr_pe.person.person_id === person.id
-        );
-        if (idx === -1) {
-          promises.push(this.addParticipant(person.id));
-        }
+      const existingMeeting = this.meetings.find(({ id }) => id === meeting.id);
+      if (typeof existingMeeting === "undefined") {
+        // create a new meeting
+        this.createNewMeeting(meeting);
+      } else {
+        // update the exiting meeting
+        this.updateExistingMeeting(meeeting);
       }
+      // for (let person of this.meetingDialog.newMeetings) {
+      //   const idx = this.meetings.findIndex(
+      //     gr_pe => gr_pe.person.person_id === person.id
+      //   );
+      //   if (idx === -1) {
+      //     promises.push(this.addParticipant(person.id));
+      //   }
+      // }
 
       Promise.all(promises)
         .then(() => {
-          this.showSnackbar(this.$t("groups.messages.members-added"));
+          this.showSnackbar(this.$t("groups.messages.meeting-added"));
           this.addMeetingDialog.loading = false;
           this.addMeetingDialog.show = false;
           this.addMeetingDialog.newMeetings = [];
@@ -261,18 +256,18 @@ export default {
         .catch(err => {
           console.log(err);
           this.addMeetingDialog.loading = false;
-          this.showSnackbar(this.$t("groups.messages.error-adding-members"));
+          this.showSnackbar(this.$t("groups.messages.error-adding-meeting"));
         });
     },
 
     addParticipant(id) {
       const groupId = this.$route.params.group;
-      for (var member of this.members) {
-        if (id == member.person.id) {
+      for (const meeting of this.meetings) {
+        if (id == meeting.person.id) {
           return true;
         }
       }
-      return this.$http.post(`/api/v1/groups/members`, {
+      return this.$http.post(`/api/v1/groups/meetings`, {
         group_id: groupId,
         person_id: id,
         joined: "2018-12-25"
@@ -334,12 +329,12 @@ export default {
       this.archiveDialog.loading = true;
       const memberId = this.archiveDialog.memberId;
       console.log(this.archiveDialog.memberId);
-      const idx = this.members.findIndex(ev => ev.id === memberId);
+      const idx = this.meetings.findIndex(ev => ev.id === memberId);
       this.$http
         .put(`/api/v1/groups/members/deactivate/${memberId}`)
         .then(resp => {
           console.log("ARCHIVE", resp);
-          this.members[idx].active = false;
+          this.meetings[idx].active = false;
           this.archiveDialog.loading = false;
           this.archiveDialog.show = false;
           this.showSnackbar(this.$t("groups.messages.member-archived"));
@@ -353,14 +348,14 @@ export default {
     },
 
     unarchive(member) {
-      const idx = this.members.findIndex(ev => ev.id === member.id);
+      const idx = this.meetings.findIndex(ev => ev.id === member.id);
       const memberId = member.id;
       member.id *= -1; // to show loading spinner
       this.$http
         .put(`/api/v1/groups/members/activate/${memberId}`)
         .then(resp => {
           console.log("UNARCHIVED", resp);
-          Object.assign(this.members[idx], resp.data);
+          Object.assign(this.meetings[idx], resp.data);
           this.showSnackbar(this.$t("groups.messages.member-unarchived"));
         })
         .catch(err => {
@@ -375,7 +370,8 @@ export default {
       this.tableLoading = true;
       const id = this.$route.params.group;
       this.$http.get(`/api/v1/groups/meetings/group/${id}`).then(resp => {
-        this.members = resp.data.memberList;
+        this.meetings = resp.data;
+        console.log(this.meetings);
         this.tableLoading = false;
       });
     }
