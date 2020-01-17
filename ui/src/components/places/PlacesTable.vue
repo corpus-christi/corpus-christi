@@ -15,7 +15,17 @@
             data-cy="form-search"
           ></v-text-field>
         </v-flex>
-
+        <v-flex md3>
+          <div data-cy="view-dropdown">
+            <v-select
+              hide-details
+              solo
+              single-line
+              :items="viewOptions"
+              v-model="viewStatus"
+            ></v-select>
+          </div>
+        </v-flex>
         <v-flex shrink justify-self-end>
           <v-btn
             color="primary"
@@ -32,7 +42,7 @@
 
     <v-data-table
       :headers="headers"
-      :items="AddressesLocationsData()"
+      :items="addressesToDisplay"
       :search="search"
       expand
       item-key="id"
@@ -281,7 +291,11 @@ export default {
       },
       search: "",
       groupLocations: [],
-      opened: []
+      opened: [],
+      viewStatus: "viewActive",
+      allAddresses: [],
+      activeAddresses: [],
+      archivedAddresses: []
     };
   },
   computed: {
@@ -318,6 +332,33 @@ export default {
     visiblePlaces() {
       return this.assets;
     },
+    viewOptions() {
+      return [
+        {
+          text: this.$t("actions.view-active"),
+          value: "viewActive",
+          class: "view-active"
+        },
+        {
+          text: this.$t("actions.view-archived"),
+          value: "viewArchived",
+          class: "view-archived"
+        },
+        { text: this.$t("actions.view-all"), value: "viewAll" }
+      ];
+    },
+    addressesToDisplay() {
+      switch (this.viewStatus) {
+        case "viewActive":
+          return this.activeAddresses;
+        case "viewArchived":
+          return this.archivedAddresses;
+        case "viewAll":
+          return this.allAddresses;
+        default:
+          return this.activeAddresses;
+      }
+    },
     markers() {
       return this.addresses.map(element => {
         return {
@@ -332,6 +373,13 @@ export default {
           opened: false
         };
       });
+    }
+  },
+  watch: {
+    addresses(all_addresses) {
+      this.allAddresses = this.AddressesLocationsData(all_addresses);
+      this.activeAddresses = this.AddressesLocationsData(this.allAddresses.filter(person => person.active));
+      this.archivedAddresses = this.AddressesLocationsData(this.allAddresses.filter(person => !person.active));
     }
   },
   methods: {
@@ -371,10 +419,10 @@ export default {
     cancelLocation() {
       this.locationDialog.show = false;
     },
-    AddressesLocationsData() {
+    AddressesLocationsData(addArr) {
       let c = [];
-      for (let i = 0; i < this.addresses.length; i++) {
-        c.push(this.addresses[i]);
+      for (let i = 0; i < addArr.length; i++) {
+        c.push(addArr[i]);
         c[i]["locations"] = [];
         for (let j = 0; j < this.locations.length; j++)
           if (c[i].id === this.locations[j].address_id) {
