@@ -3,8 +3,8 @@ import random
 
 from faker import Faker
 
-from .models import Event, EventPerson, EventParticipant, EventSchema, EventPersonSchema, EventParticipantSchema, EventGroup, EventGroupSchema, EventAsset, EventAssetSchema, EventTeam, EventTeamSchema
-from ..groups.models import Group, GroupSchema
+from .models import Event, EventPerson, EventParticipant, EventSchema, EventPersonSchema, EventParticipantSchema
+from .models import EventAsset, EventAssetSchema, EventTeam, EventTeamSchema
 from ..assets.models import Asset, AssetSchema
 from ..images.models import Image, ImageEvent, ImageEventSchema
 from ..people.models import Person
@@ -97,16 +97,6 @@ def event_object_factory_long_ago(sqla):
     if flip():
         event['attendance'] = random.randint(0, 1500)
     return event
-
-
-def event_groups_object_factory(event_id, group_id):
-    """Cook up a fake eventgroup json object from given ids."""
-    eventgroup = {
-        'eventId': event_id,
-        'groupId': group_id,
-        'active': flip()
-    }
-    return eventgroup
 
 
 def asset_object_factory(sqla):
@@ -342,7 +332,6 @@ def create_events_test_data(sqla):
     create_events_participants(sqla, 0.75)
     create_events_persons(sqla, 0.75)
     create_teams_members(sqla, 0.75)
-    create_events_groups(sqla, 0.75)
 
 
 def get_team_ids(teams):
@@ -434,18 +423,4 @@ def create_event_images(sqla):
         new_event_images.append(ImageEvent(**valid_event_image))
 
     sqla.add_all(new_event_images)
-    sqla.commit()
-
-def create_events_groups(sqla, fraction=0.75):
-    """Create data in the link table between events and groups"""
-    event_groups_schema = EventGroupSchema()
-    new_events_groups = []
-    all_events_groups = sqla.query(Event, Group).all()
-    sample_events_groups = random.sample(
-        all_events_groups, math.floor(len(all_events_groups) * fraction))
-    for events_groups in sample_events_groups:
-        valid_events_groups = event_groups_schema.load(
-            event_groups_object_factory(events_groups[0].id, events_groups[1].id))
-        new_events_groups.append(EventGroup(**valid_events_groups))
-    sqla.add_all(new_events_groups)
     sqla.commit()
