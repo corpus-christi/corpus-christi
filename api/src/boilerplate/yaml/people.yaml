@@ -127,7 +127,14 @@ entities:
         length: i18n
         required: true
         foreign-key: i18n_key.id
+      - name: group_id
+        type: integer
+        required: true
+        foreign-key: groups_groupmanager.group_id
     relationships:
       - name: manager
         related-model: Manager
         backref: subordinate
+      - name: groups
+        related-model: GroupManager
+        backref: managers

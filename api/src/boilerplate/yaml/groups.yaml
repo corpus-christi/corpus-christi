@@ -28,6 +28,10 @@ entities:
         type: integer
         foreign-key: people_manager.id
         required: true
+    relationships:
+      - name: managers
+        related-model: GroupManager
+        backref: groups
   - name: Meeting
     singular: meeting
     plural: meetings
@@ -101,3 +105,17 @@ entities:
         type: integer
         primary-key: true
         foreign-key: groups_member.id
+  - name: GroupManager
+    singular: groupmanager
+    plural: groupmanagers
+    uri: /groupmanager
+    table: groups_groupmanager
+    attributes:
+      - name: group_id
+        type: integer
+        primary-key: true
+        foreign-key: groups_group.id
+      - name: manager_id
+        type: integer
+        primary-key: true
+        foreign-key: groups_manager.id

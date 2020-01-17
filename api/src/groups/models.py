@@ -17,7 +17,7 @@ class Group(Base):
     manager_id = Column(Integer, ForeignKey(
         'people_manager.id'), nullable=False)
     active = Column(Boolean, nullable=False, default=True)
-    manager = relationship('Manager', back_populates='groups', lazy=True)
+    managers = relationship('GroupManager', backref='groups', lazy=True)
     members = relationship('Member', backref='group', lazy=True)
     meetings = relationship('Meeting', backref='group', lazy=True)
     events = relationship('EventGroup', back_populates='group', lazy=True)
@@ -108,3 +108,23 @@ class Attendance(Base):
 class AttendanceSchema(Schema):
     meeting_id = fields.Integer(data_key='meetingId', required=True)
     member_id = fields.Integer(data_key='memberId', required=True)
+
+
+# ---- GroupManager
+
+class GroupManager(Base):
+    __tablename__ = 'groups_groupmanager'
+    group_id = Column(Integer, ForeignKey(
+        'groups_group.id'), primary_key=True)
+    manager_id = Column(Integer, ForeignKey(
+        'groups_manager.id'), primary_key=True)
+
+    def __repr__(self):
+        return f"<GroupManager(group_id={self.group_id},manager_id={self.manager_id})>"
+
+
+class GroupManagerSchema(Schema):
+    group_id = fields.Integer(
+        dump_only=True, data_key='groupId', required=True)
+    manager_id = fields.Integer(
+        dump_only=True, data_key='managerId', required=True)
