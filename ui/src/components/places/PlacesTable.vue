@@ -5,6 +5,13 @@
         <v-flex md2>
           <v-toolbar-title>{{ $t("places.address.address") }}</v-toolbar-title>
         </v-flex>
+          <v-flex md2>
+            <v-switch
+              label="Expand All"
+              v-model="expandToggle"
+              v-on:change="toggleExpandedRows()"
+            ></v-switch>
+          </v-flex>
         <v-flex md2>
           <v-text-field
             v-model="search"
@@ -13,6 +20,7 @@
             single-line
             hide-details
             data-cy="form-search"
+            ref="addressTable"
           ></v-text-field>
         </v-flex>
 
@@ -36,7 +44,6 @@
       :search="search"
       expand
       item-key="id"
-      show-expand
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
@@ -74,6 +81,7 @@
             </v-btn>
             <span>{{ $t("actions.duplicate") }}</span>
           </v-tooltip>
+          <td>{{props.expanded}}</td>
         </tr>
       </template>
       <template slot="expand" slot-scope="props">
@@ -120,7 +128,6 @@
         </v-container>
       </template>
     </v-data-table>
-
     <v-dialog
       scrollable
       persistent
@@ -193,10 +200,10 @@ export default {
     locations: Array,
     countries: Array
   },
-
   data() {
     return {
-      expanded: [],
+      // expanded: [],
+      expandToggle: false,
       placeDialog: {
         title: "",
         show: false,
@@ -268,6 +275,14 @@ export default {
       });
     }
   },
+  // mounted: {
+  //   toggleExpandedRows() {
+  //     console.log("called")
+  //     for (let i = 0; i < this.addresses. length; i++){
+  //       this.$set(this.$refs.addressTable.expanded, this.addresses[i], true);
+  //     }
+  //   }
+  // },
   methods: {
     activatePlaceDialog(places = {}, editMode = false) {
       this.placeDialog.title = editMode
@@ -282,7 +297,6 @@ export default {
     newPlace() {
       this.activatePlaceDialog();
     },
-
     cancelPlace() {
       this.placeDialog.show = false;
     },
@@ -319,6 +333,12 @@ export default {
           }
       }
       return c;
+    },
+    toggleExpandedRows() {
+      console.log("called");
+      for (let i = 0; i < this.addresses.length; i++) {
+        this.$set(this.$refs.addressTable.expanded, this.addresses[i], true);
+      }
     }
   }
 };
