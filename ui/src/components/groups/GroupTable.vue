@@ -298,12 +298,7 @@ export default {
     },
 
     saveGroup(group, closeDialog = true) {
-      /*
-        if (group.manager) {
-          group.manager_id = group.manager.id;
-        }
-      */
-      console.log(group);
+      this.groupDialog.saveLoading = true;
       let newGroup = JSON.parse(JSON.stringify(group));
       delete newGroup.manager;
       delete newGroup.id;

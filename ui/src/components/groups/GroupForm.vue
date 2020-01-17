@@ -25,7 +25,7 @@
         <entity-search
           manager
           :value="manager"
-	  @selection="updateSelection"
+          @selection="updateSelection"
           v-bind:error-messages="errors.first('address')"
         />
       </form>

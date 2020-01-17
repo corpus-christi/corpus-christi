@@ -68,7 +68,7 @@ export default {
       descriptionLimit: 50,
       entities: [],
       searchInput: "",
-      isLoading: false,
+      isLoading: false
     };
   },
 
