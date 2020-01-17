@@ -6,7 +6,7 @@
       prepend-icon="search"
       :items="searchableEntities"
       :loading="isLoading"
-      v-bind:value="value"
+      :value="value"
       v-on:input="setSelected"
       :search-input.sync="searchInput"
       v-bind:error-messages="errorMessages"
@@ -70,6 +70,12 @@ export default {
       searchInput: "",
       isLoading: false
     };
+  },
+
+  watch: {
+    value(val) {
+      this.setSelected(val); 
+    }
   },
 
   computed: {

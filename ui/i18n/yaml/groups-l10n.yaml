@@ -29,7 +29,7 @@ groups:
   details:
     class-title:
       en: Title
-      es: Título
+      es: Título 
     title:
       en: Details
       es: Detalles
@@ -42,7 +42,7 @@ groups:
       es: Reuniones
     add-meeting: 
       en: Add Meeting
-      es: Agregar Reunión
+      es: Agregar reunión
   members:
     title:
       en: Members
@@ -161,3 +161,6 @@ groups:
     no-remaining-members:
       en: No remaining members
       es: Ningún miembro restante
+    error-no-manager-email:
+      en: Your email address is not defined
+      es: Su dirección de correo electrónico no está definida

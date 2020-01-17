@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -uxo pipefail
+
 source ./venv/bin/activate
 
 flask db downgrade
@@ -7,11 +9,12 @@ while [ $? -eq 0 ]
 do
     flask db downgrade
 done
-
 rm migrations/versions/*.py
 
 flask db migrate
 flask db upgrade
+
+set -e
 flask data load-all
 flask account new --first="Fred" --last="Ziffle" fred password
 flask account new --first="Quality" --last="Assurance" Cytest password

@@ -40,12 +40,12 @@
         data-cy="form-cancel"
         >{{ $t("actions.cancel") }}</v-btn
       >
-      <v-spacer></v-spacer>
+      <v-spacer/>
       <v-btn
         color="primary"
         outline
         v-on:click="addAnother"
-        v-if="editMode === false"
+        v-if="!editMode"
         :loading="addMoreLoading"
         :disabled="formDisabled"
         data-cy="form-addanother"
@@ -84,10 +84,12 @@ export default {
         this.clear();
       } else {
         this.group = groupProp;
+        this.manager = this.parseGroup(this.group);
         this.group.manager = groupProp.managerInfo;
       }
     }
   },
+
   computed: {
     groupKeys() {
       return Object.keys(this.group);
@@ -107,6 +109,35 @@ export default {
   },
 
   methods: {
+    getManagerName(managerInfo) {
+      var man = managerInfo.person;
+      return (
+        man.firstName +
+        " " +
+        man.lastName +
+        " " +
+        (man.secondLastName ? man.secondLastName : "")
+      );
+    },
+
+    parseGroup(obj) {
+      return {
+	'id': obj.managerId,
+      };
+    },
+
+    updateSelection(obj) {
+      if (obj.person) {
+        this.group.managerId = obj.id;
+        if (!this.group.manager) this.group.manager = {};
+        this.group.manager.person = obj.person;
+        if (!this.group.managerInfo) this.group.managerInfo = {};
+        this.group.managerInfo.person = obj.person;
+      }
+      //console.log("updateSelection");
+      //console.log(this.group);
+    },
+
     validateGroup(group, operation) {
       this.$validator.validateAll().then(isValid => {
         if (isValid) {
@@ -132,6 +163,7 @@ export default {
       this.clear();
       this.$validator.reset();
       this.$emit("cancel");
+      this.manager = {};
     },
 
     clear() {
@@ -143,11 +175,13 @@ export default {
     },
 
     save() {
+      //console.log(this.group);
       this.validateGroup(this.group, () => {
         this.group.active = true;
         this.group.active = true;
         this.$emit("save", this.group);
       });
+      this.manager = {};
     },
 
     addAnother() {
@@ -177,6 +211,7 @@ export default {
   data: function() {
     return {
       group: {},
+      manager: {},
       snackbar: {
         show: false,
         text: ""
