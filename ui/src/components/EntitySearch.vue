@@ -119,7 +119,6 @@ export default {
       return idx > -1;
     },
     setSelected(entity) {
-      this.$emit("selection", entity);
       this.$emit("input", entity);
     },
     getEntityDescription(entity, letterLimit = this.descriptionLimit) {
