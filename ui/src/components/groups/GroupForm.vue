@@ -121,13 +121,13 @@ export default {
 
     parseGroup(obj) {
       return {
-	'id': obj.manager_id,
+	'id': obj.managerId,
       };
     },
 
     updateSelection(obj) {
       if (obj.person) {
-        this.group.manager_id = obj.id;
+        this.group.managerId = obj.id;
         if (!this.group.manager) this.group.manager = {};
         this.group.manager.person = obj.person;
         if (!this.group.managerInfo) this.group.managerInfo = {};
@@ -140,7 +140,7 @@ export default {
     validateGroup(group, operation) {
       this.$validator.validateAll().then((isValid) => {
         if(isValid){
-          this.$http.get(`/api/v1/groups/find_group/${group.name}/${group.manager_id}`).then((response) => {
+          this.$http.get(`/api/v1/groups/find_group/${group.name}/${group.managerId}`).then((response) => {
             if(response.data == 0 || this.editMode){
               operation();
             }
