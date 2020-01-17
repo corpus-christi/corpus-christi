@@ -113,7 +113,7 @@ export default {
   name: "AccountForm",
   props: {
     person: { type: Object, required: true },
-    account: { type: Object, required: true },
+    account: { type: Object, required: false },
     rolesList: Array,
     rolesEnabled: {
       type: Boolean,

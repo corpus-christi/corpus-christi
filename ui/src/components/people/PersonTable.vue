@@ -171,7 +171,7 @@
     >
       <PersonAdminForm
         v-bind:person="adminDialog.person"
-        v-bind:account="adminDialog.account"
+        //v-bind:account="adminDialog.account"
         v-bind:rolesEnabled="adminDialog.rolesEnabled"
         v-bind:rolesList="rolesList"
         v-on:addAccount="addAccount"
@@ -216,7 +216,7 @@
 
 <script>
 import PersonForm from "./PersonForm";
-import PersonAdminForm from "./AccountForm";
+import PersonAdminForm from "./AccountForm"; //trying to get rid of this and everything it's touching
 
 export default {
   name: "PersonTable",

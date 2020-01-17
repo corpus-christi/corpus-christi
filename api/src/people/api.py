@@ -60,13 +60,16 @@ def create_person():
             request.json['attributesInfo'], many=True)
     except ValidationError as err:
         print(err)
+        #print(valid_person)
         return jsonify(err.messages), 422
 
     new_person = Person(**valid_person)
-    db.session.add(new_person)
   #  db.session.commit()
+    print(new_person)
+
     public_user_role = db.session.query(Role).filter_by(id=1).first() ##FIXME don't filter by id = 1
     new_person.roles.append(public_user_role)
+    db.session.add(new_person)
 
     for person_attribute in valid_person_attributes:
         if (person_attribute['enum_value_id'] is 0):
