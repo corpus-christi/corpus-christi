@@ -2,7 +2,7 @@
   <div>
     <v-toolbar>
       <v-layout align-center justify-space-between fill-height>
-        <v-flex md2>
+        <v-flex md3 class="text-no-wrap">
           <v-toolbar-title v-if="!select">{{
             $t("events.participants.title")
           }}</v-toolbar-title>
@@ -47,7 +47,7 @@
             hide-details
           ></v-text-field>
         </v-flex>
-        <v-flex md2>
+        <v-flex md1>
           <v-select
             hide-details
             solo
