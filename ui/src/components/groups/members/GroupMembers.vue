@@ -102,6 +102,22 @@
                 small
                 color="primary"
                 slot="activator"
+                v-on:click="editPerson(props.item.person)"
+                data-cy="edit"
+              >
+                <v-icon small>edit</v-icon>
+              </v-btn>
+              <span>{{ $t("actions.edit") }}</span>
+            </v-tooltip>
+          </template>
+          <template v-if="props.item.active">
+            <v-tooltip bottom>
+              <v-btn
+                icon
+                outline
+                small
+                color="primary"
+                slot="activator"
                 v-on:click="confirmArchive(props.item)"
                 data-cy="archive"
               >
@@ -196,6 +212,16 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- New/Edit dialog -->
+    <person-dialog 
+      @snack="showSnackbar" 
+      @cancel="cancelPerson"
+      @refreshPeople="getMembers"
+      :dialog-state="dialogState"
+      :all-people="people"
+      :person="person"
+    />
 
     <!-- Delete dialog -->
     <v-dialog v-model="deleteDialog.show" max-width="350px">
@@ -319,8 +345,9 @@
 
 <script>
 import EntitySearch from "../../EntitySearch";
+import PersonDialog from "../../PersonDialog";
 export default {
-  components: { "entity-search": EntitySearch },
+  components: {EntitySearch, PersonDialog},
   name: "GroupMembers",
   data() {
     return {
@@ -331,8 +358,11 @@ export default {
         { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 }
       ],
       tableLoading: false,
+      dialogState: "",
       search: "",
       members: [],
+      people: [],
+      person: {},
       parsedMembers: [],
       selected: [],
       select: false,
@@ -355,6 +385,13 @@ export default {
         show: false,
         newParticipants: [],
         loading: false
+      },
+      personDialog: {
+        show: false,
+        title: "",
+        person: {},
+        addAnotherEnabled: false,
+        saveButtonText: "actions.save"
       },
       deleteDialog: {
         show: false,
@@ -452,11 +489,22 @@ export default {
     activateNewParticipantDialog() {
       this.addParticipantDialog.show = true;
     },
+	   
     openParticipantDialog() {
       this.activateNewParticipantDialog();
     },
+	   
     cancelNewParticipantDialog() {
       this.addParticipantDialog.show = false;
+    },
+
+    editPerson(person) {
+      this.dialogState= "edit";
+      this.person = person;
+    },
+
+    cancelPerson() {
+      this.dialogState = "";
     },
 
     addParticipants() {
@@ -561,10 +609,12 @@ export default {
     cancelDelete() {
       this.deleteDialog.show = false;
     },
+
     activateDeleteDialog(participantId) {
       this.deleteDialog.show = true;
       this.deleteDialog.participantId = participantId;
     },
+
     showSnackbar(message) {
       this.snackbar.text = message;
       this.snackbar.show = true;
@@ -686,6 +736,7 @@ export default {
           resp.data.managerInfo.person.secondLastName;
         this.email.managerEmail = resp.data.managerInfo.person.email;
         this.members = resp.data.memberList;
+        this.people = this.members.map(e => e.person);
         this.parseMembers();
         this.tableLoading = false;
       });
