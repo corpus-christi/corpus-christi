@@ -122,13 +122,13 @@ export default {
 
     parseGroup(obj) {
       return {
-	'id': obj.manager_id,
+	'id': obj.managerId,
       };
     },
 
     updateSelection(obj) {
       if (obj.person) {
-        this.group.manager_id = obj.id;
+        this.group.managerId = obj.id;
         if (!this.group.manager) this.group.manager = {};
         this.group.manager.person = obj.person;
         if (!this.group.managerInfo) this.group.managerInfo = {};

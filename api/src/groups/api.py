@@ -120,8 +120,8 @@ def update_group(group_id):
 
     new_manager_id = None
     # fetch 'manager_id' from the request object
-    if 'manager_id' in request.json.keys():
-        new_manager_id = request.json['manager_id']
+    if 'managerId' in request.json.keys():
+        new_manager_id = request.json['managerId']
     if db.session.query(Manager).filter_by(id=new_manager_id).first() is None:
         return jsonify(msg="Manager not found"), 404
 
