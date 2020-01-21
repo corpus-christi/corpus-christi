@@ -27,7 +27,8 @@ class Person(Base):
     phone = Column(StringTypes.MEDIUM_STRING)
     email = Column(StringTypes.MEDIUM_STRING)
     active = Column(Boolean, nullable=False, default=True)
-    location_id = Column(Integer, ForeignKey('places_location.id'), nullable=True, default=None)
+    location_id = Column(Integer, ForeignKey(
+        'places_location.id'), nullable=True, default=None)
 
     address = relationship(Location, backref='people', lazy=True)
     # events_per refers to the events led by the person (linked via events_eventperson table)
@@ -35,7 +36,8 @@ class Person(Base):
     # events_par refers to the participated events (linked via events_eventparticipant table)
     events_par = relationship("EventParticipant", back_populates="person")
     teams = relationship("TeamMember", back_populates="member")
-    diplomas_awarded = relationship('DiplomaAwarded', back_populates='students', lazy=True, uselist=True)
+    diplomas_awarded = relationship(
+        'DiplomaAwarded', back_populates='students', lazy=True, uselist=True)
     members = relationship('Member', back_populates='person', lazy=True)
     images = relationship('ImagePerson', back_populates='person')
 
@@ -69,7 +71,8 @@ class PersonSchema(Schema):
         'AccountSchema', allow_none=True, only=['username', 'id', 'active', 'roles'])
 
     attributesInfo = fields.Nested('PersonAttributeSchema', many=True)
-    images = fields.Nested('ImagePersonSchema', many=True, exclude=['person'], dump_only=True)
+    images = fields.Nested('ImagePersonSchema', many=True,
+                           exclude=['person'], dump_only=True)
 
 
 # Defines join table for people_account and people_role
@@ -198,11 +201,10 @@ class Manager(Base):
     manager_id = Column(Integer, ForeignKey('people_manager.id'))
     description_i18n = Column(StringTypes.I18N_KEY,
                               ForeignKey('i18n_key.id'), nullable=False)
-    manager = relationship('Manager', backref='subordinates',
+    manager = relationship("Manager", backref="subordinates",
                            lazy=True, remote_side=[id])
     groups = relationship('GroupManager', backref='managers', lazy=True)
     person = relationship("Person", backref=backref("manager", uselist=False))
-    manager = relationship("Manager", backref="subordinate", lazy=True, remote_side="Manager.id")
 
     def __repr__(self):
         return f"<Manager(id={self.id})>"
