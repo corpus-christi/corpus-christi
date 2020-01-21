@@ -100,13 +100,17 @@
 
     <!-- Add/Edit Meeting Dialog -->
     <v-dialog v-model="meetingDialog.show" persistent max-width="500px">
-      <event-form
+      <meeting-form
         :edit-mode="false"
         :initial-data="meetingDialog.meeting"
         :save-loading="meetingDialog.saveLoading"
+        descriptionLabel="Description Label"
+        locationLabel="Location Label"
+        startDateTimeField
+        endDateTimeField
         v-on:cancel="cancelMeetingDialog"
         v-on:save="saveMeeting"
-      ></event-form>
+      ></meeting-form>
     </v-dialog>
 
     <!-- Delete dialog -->
@@ -146,10 +150,10 @@
 </template>
 
 <script>
-import EventForm from "../../events/EventForm";
+import CustomForm from "../../CustomForm";
 import EntitySearch from "../../EntitySearch";
 export default {
-  components: { "entity-search": EntitySearch, "event-form": EventForm },
+  components: { "entity-search": EntitySearch, "meeting-form": CustomForm },
   name: "GroupMeetings",
   data() {
     return {
