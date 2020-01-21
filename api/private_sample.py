@@ -1,9 +1,11 @@
-# Sample data; replace with your own settings
+# Sample configuration:
+# 1. Replace with your own settings
+# 2. Save as `private.py`
 #
 # DO NOT COMMIT PRODUCTION SETTINGS TO VERSION CONTROL!
 
 PSQL_HOST = '127.0.0.1'
-PSQL_USER = 'arco'
+PSQL_USER = 'user'
 PSQL_PASS = 'password'
 
 FLASK_SECRET_KEY = 'big secret'
