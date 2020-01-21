@@ -36,12 +36,11 @@
       :items="AddressesLocationsData()"
       :search="search"
       expand
-      isExpanded
       item-key="id"
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
-        <tr @click="props.expanded = !props.expanded">
+        <tr>
           <td>{{ props.item.name }}</td>
           <td>{{ props.item.address }}</td>
           <td>{{ props.item.city }}</td>
@@ -77,7 +76,7 @@
           </v-tooltip>
           <td v-if="!props.expanded">
             <v-tooltip bottom>
-              <v-btn icon slot="activator">
+              <v-btn icon slot="activator" @click="props.expanded = !props.expanded">
                 <v-icon medium>expand_more</v-icon>
               </v-btn>
               <span>{{ $t("places.expand") }}</span>
@@ -85,7 +84,7 @@
           </td>
           <td v-else>
             <v-tooltip bottom>
-              <v-btn icon slot="activator">
+              <v-btn icon slot="activator" @click="props.expanded = !props.expanded">
                 <v-icon medium>expand_less</v-icon>
               </v-btn>
               <span>{{ $t("places.close") }}</span>
@@ -228,8 +227,6 @@ export default {
   data() {
     return {
       expanded: [],
-      isExpanded: false,
-      expandToggle: false,
       placeDialog: {
         title: "",
         show: false,
@@ -280,7 +277,7 @@ export default {
           value: "longitude"
         },
         { text: this.$t("actions.header"), width: "5%", sortable: false },
-        { text: "", width: "5%" }
+        { text: "", width: "5%", sortable: false }
       ];
     },
     visiblePlaces() {
