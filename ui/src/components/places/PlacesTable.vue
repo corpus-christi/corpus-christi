@@ -5,13 +5,6 @@
         <v-flex md2>
           <v-toolbar-title>{{ $t("places.address.address") }}</v-toolbar-title>
         </v-flex>
-          <v-flex md2>
-            <v-switch
-              label="Expand All"
-              v-model="expandToggle"
-              v-on:change="toggleExpandedRows()"
-            ></v-switch>
-          </v-flex>
         <v-flex md2>
           <v-text-field
             v-model="search"
@@ -43,6 +36,7 @@
       :items="AddressesLocationsData()"
       :search="search"
       expand
+      isExpanded
       item-key="id"
       class="elevation-1"
     >
@@ -81,15 +75,34 @@
             </v-btn>
             <span>{{ $t("actions.duplicate") }}</span>
           </v-tooltip>
-          <td>{{props.expanded}}</td>
+          <td v-if="!props.expanded">
+            <v-tooltip bottom>
+              <v-btn icon slot="activator">
+                <v-icon medium>expand_more</v-icon>
+              </v-btn>
+              <span>{{ $t("places.expand") }}</span>
+            </v-tooltip>
+          </td>
+          <td v-else>
+            <v-tooltip bottom>
+              <v-btn icon slot="activator">
+                <v-icon medium>expand_less</v-icon>
+              </v-btn>
+              <span>{{ $t("places.close") }}</span>
+            </v-tooltip>
+          </td>
         </tr>
       </template>
-      <template slot="expand" slot-scope="props">
+      <template slot="expand" slot-scope="props" class="grey lighten-3">
         <v-container class="grey lighten-3">
           <v-layout>
             <v-flex md2>{{ $t("places.location.location") }}: </v-flex>
             <v-flex>
-              <v-chip v-for="l in props.item.locations" :key="l.id" small
+              <v-chip
+                v-for="l in props.item.locations"
+                :key="l.id"
+                small
+                color="white"
                 >{{ l.description }}
               </v-chip>
             </v-flex>
@@ -101,13 +114,19 @@
                   small
                   color="primary"
                   slot="activator"
-                  v-on:click="editLocation({address_id: props.item.id, allLocations: props.item.locations, editMode: true})"
+                  v-on:click="
+                    editLocation({
+                      address_id: props.item.id,
+                      allLocations: props.item.locations,
+                      editMode: true
+                    })
+                  "
                   data-cy="edit-locations"
                   :disabled="!props.item.locations.length"
                 >
                   <v-icon small>edit</v-icon>
                 </v-btn>
-                <span>{{ $t("actions.edit") }}</span>
+                <span>{{ $t("places.edit") }}</span>
               </v-tooltip>
               <v-tooltip bottom>
                 <v-btn
@@ -116,7 +135,13 @@
                   small
                   color="primary"
                   slot="activator"
-                  v-on:click="newLocation({address_id: props.item.id, allLocations: [], editMode: false})"
+                  v-on:click="
+                    newLocation({
+                      address_id: props.item.id,
+                      allLocations: [],
+                      editMode: false
+                    })
+                  "
                   data-cy="add-location"
                 >
                   <v-icon small>add</v-icon>
@@ -202,7 +227,8 @@ export default {
   },
   data() {
     return {
-      // expanded: [],
+      expanded: [],
+      isExpanded: false,
       expandToggle: false,
       placeDialog: {
         title: "",
@@ -236,7 +262,7 @@ export default {
         {
           text: this.$t("places.address.address"),
           value: "address",
-          width: "30%"
+          width: "25%"
         },
         {
           text: this.$t("places.address.city"),
@@ -245,15 +271,16 @@ export default {
         },
         {
           text: this.$t("places.address.latitude"),
-          width: "4%",
-          value: "latitude",
+          width: "6%",
+          value: "latitude"
         },
         {
           text: this.$t("places.address.longitude"),
-          width: "4%",
+          width: "6%",
           value: "longitude"
         },
-        { text: this.$t("actions.header"), width: "17%", sortable: false }
+        { text: this.$t("actions.header"), width: "5%", sortable: false },
+        { text: "", width: "5%" }
       ];
     },
     visiblePlaces() {
@@ -275,14 +302,6 @@ export default {
       });
     }
   },
-  // mounted: {
-  //   toggleExpandedRows() {
-  //     console.log("called")
-  //     for (let i = 0; i < this.addresses. length; i++){
-  //       this.$set(this.$refs.addressTable.expanded, this.addresses[i], true);
-  //     }
-  //   }
-  // },
   methods: {
     activatePlaceDialog(places = {}, editMode = false) {
       this.placeDialog.title = editMode
@@ -333,12 +352,6 @@ export default {
           }
       }
       return c;
-    },
-    toggleExpandedRows() {
-      console.log("called");
-      for (let i = 0; i < this.addresses.length; i++) {
-        this.$set(this.$refs.addressTable.expanded, this.addresses[i], true);
-      }
     }
   }
 };
