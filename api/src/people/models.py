@@ -121,8 +121,8 @@ class PersonSchema(Schema):
             data['password'] = generate_password_hash(data['password'])
         return data
 
-    class Meta:
-        exclude = ("roles", "confirmed")
+#    class Meta:
+#        exclude = ("roles", "confirmed")
 
 
 

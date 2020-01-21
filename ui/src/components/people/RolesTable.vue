@@ -326,7 +326,7 @@ export default {
         .then(resp => {
           console.log("Person ADDED", resp);
           this.refreshPeopleList();
-          this.showSnackbar(this.$t("person.messages.added-ok")); //Noah help me remeber how we fixed this with the yamls
+          this.showSnackbar(this.$t("account.messages.added-ok"));
         })
         .catch(err => console.error("FAILURE", err.response));
     },
@@ -337,7 +337,7 @@ export default {
         .then(resp => {
           console.log("PATCHED ACCOUNT", resp);
           this.refreshPeopleList();
-          this.showSnackbar(this.$t("person.messages.updated-ok")); //Noah help me remeber how we fixed this with the yamls
+          this.showSnackbar(this.$t("account.messages.updated-ok"));
         })
         .catch(err => console.error("FAILURE", err.response));
     },

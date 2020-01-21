@@ -171,7 +171,7 @@
     >
       <PersonAdminForm
         v-bind:person="adminDialog.person"
-        //v-bind:account="adminDialog.account"
+        v-bind:account="adminDialog.account"
         v-bind:rolesEnabled="adminDialog.rolesEnabled"
         v-bind:rolesList="rolesList"
         v-on:addAccount="addAccount"
