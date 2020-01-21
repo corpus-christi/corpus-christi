@@ -309,11 +309,10 @@ export default {
       delete newGroup.managerInfo;
       if (this.groupDialog.editMode) {
         this.putGroup(group, newGroup);
-      }
-      else {
+      } else {
         this.postGroup(newGroup);
       }
-      if(closeDialog) {
+      if (closeDialog) {
         this.closeDialog();
       }
     },

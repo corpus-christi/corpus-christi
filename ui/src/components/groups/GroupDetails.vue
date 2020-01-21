@@ -1,10 +1,12 @@
-<template v-else>
+<template>
   <v-layout>
     <v-flex xs12 sm4>
       <v-card>
         <v-card-title primary-title>
           <div>
-            <h3 class="headline mb-0">{{ $t("groups.details.class-title") }}: {{ group.name }}</h3>
+            <h3 class="headline mb-0">
+              {{ $t("groups.details.class-title") }}: {{ group.name }}
+            </h3>
             <div>{{ group.description }}</div>
           </div>
         </v-card-title>
@@ -15,7 +17,10 @@
           <div>
             <h3 class="headline mb-0">{{ $t("groups.details.title") }}</h3>
             <div>{{ $t("groups.manager") }}: {{ getManagerName() }}</div>
-            <div>{{ $t("groups.details.member-count") }}: {{group.memberList.length}}</div>
+            <div>
+              {{ $t("groups.details.member-count") }}:
+              {{ group.memberList.length }}
+            </div>
           </div>
         </v-card-title>
       </v-card>
@@ -56,7 +61,7 @@ export default {
     },
 
     getManagerName() {
-      if(this.group.managerInfo){
+      if (this.group.managerInfo) {
         var man = this.group.managerInfo.person;
         return (
           man.firstName +
