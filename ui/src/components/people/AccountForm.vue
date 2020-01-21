@@ -186,9 +186,9 @@ export default {
               }
             }
             if (this.rolesEnabled) {
-              this.$emit("updateAccount", this.account.id, { roles: roles });
+              this.$emit("updateAccount", this.person.id, { roles: roles });
             } else {
-              this.$emit("updateAccount", this.account.id, {
+              this.$emit("updateAccount", this.person.id, {
                 password: this.password
               });
             }
@@ -199,9 +199,9 @@ export default {
     },
     clearForm(new_person) {
       this.username = this.password = this.repeat_password = "";
-      if (this.person.accountInfo) {
+      if (this.person.active) {
         this.currentRoles = [];
-        for (const role of new_person.accountInfo.roles) {
+        for (const role of new_person.roles) {
           this.currentRoles.push(role.id);
         }
       }
