@@ -316,7 +316,6 @@ export default {
     },
 
     putGroup(group, newGroup) {
-      console.log(group);
       const groupId = group.id;
       const idx = this.groups.findIndex(ev => ev.id === group.id);
       this.$http
@@ -368,7 +367,6 @@ export default {
     cancelArchive() {
       this.archiveDialog.show = false;
     },
-
     archiveGroup() {
       console.log("Archived group");
       this.archiveDialog.loading = true;
@@ -390,7 +388,6 @@ export default {
           this.showSnackbar(this.$t("groups.messages.error-archiving-group"));
         });
     },
-
     unarchive(group) {
       const idx = this.groups.findIndex(ev => ev.id === group.id);
       const groupId = group.id;
@@ -407,17 +404,14 @@ export default {
           this.showSnackbar(this.$t("groups.messages.error-unarchiving-gropu"));
         });
     },
-
     duplicate(group) {
       const copyGroup = JSON.parse(JSON.stringify(group));
       delete copyGroup.id;
       this.activateGroupDialog(copyGroup);
     },
-
     addAnotherGroup(group) {
       this.saveGroup(group, false);
     },
-
     onResize() {
       this.windowSize = { x: window.innerWidth, y: window.innerHeight };
       if (this.windowSize.x <= 960) {
@@ -426,7 +420,6 @@ export default {
         this.windowSize.small = false;
       }
     },
-
     showSnackbar(message) {
       this.snackbar.text = message;
       this.snackbar.show = true;

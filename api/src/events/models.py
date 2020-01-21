@@ -7,6 +7,7 @@ from ..db import Base
 from ..shared.models import StringTypes
 
 
+
 # ---- Event
 
 class Event(Base):
@@ -146,8 +147,8 @@ class EventGroup(Base):
 
 
 class EventGroupSchema(Schema):
-    event_id = fields.Integer(required=True, min=1)
-    group_id = fields.Integer(required=True, min=1)
+    event_id = fields.Integer(required=True, data_key="eventId", min=1)
+    group_id = fields.Integer(required=True, data_key="groupId", min=1)
     active = fields.Boolean()
 
     event = fields.Nested('EventSchema', dump_only=True)

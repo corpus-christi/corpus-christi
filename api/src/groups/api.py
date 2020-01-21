@@ -10,15 +10,16 @@ from .. import db
 from ..images.models import Image, ImageGroup
 from ..people.models import Role, Manager, Account
 
+
 # ---- Group
 
 group_schema = GroupSchema()
 
 
 def group_dump(group):
-    group.managerInfo = group.manager
-    group.managerInfo.person = group.manager.person
-    group.memberList = group.members
+    group.manager_info = group.manager
+    group.manager_info.person = group.manager.person
+    group.member_list = group.members
     return jsonify(group_schema.dump(group))
 
 
@@ -73,16 +74,16 @@ def read_all_groups():
     return_group = request.args.get('return_group')
     if return_group == 'inactive':
         query = query.filter_by(active=False)
-    elif return_group == 'active':
-        query = query.filter_by(active=True)
-    else:
+    elif return_group in ('all', 'both'):
         pass  # Don't filter
+    else:
+        query = query.filter_by(active=True)
     query = query.all()
 
     for group in query:
-        group.memberList = group.members
-        group.managerInfo = group.manager
-        group.managerInfo.person = group.manager.person
+        group.member_list = group.members
+        group.manager_info = group.manager
+        group.manager_info.person = group.manager.person
     return jsonify(group_schema.dump(query, many=True))
 
 
@@ -120,8 +121,8 @@ def update_group(group_id):
 
     new_manager_id = None
     # fetch 'manager_id' from the request object
-    if 'managerId' in request.json.keys():
-        new_manager_id = request.json['managerId']
+    if 'manager_id' in request.json.keys():
+        new_manager_id = request.json['manager_id']
     if db.session.query(Manager).filter_by(id=new_manager_id).first() is None:
         return jsonify(msg="Manager not found"), 404
 

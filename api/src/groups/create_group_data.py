@@ -12,6 +12,7 @@ from ..places.models import Address
 from ..places.test_places import create_multiple_addresses
 
 
+
 class RandomLocaleFaker:
     """Generate multiple fakers for different locales."""
 
@@ -42,7 +43,7 @@ def group_object_factory(sqla):
         'name': rl_fake().word(),
         'description': rl_fake().sentences(nb=1)[0],
         'active': flip(),
-        'manager_id': all_managers[random.randint(0, len(all_managers) - 1)].id
+        'managerId': all_managers[random.randint(0, len(all_managers) - 1)].id
     }
     return group
 
@@ -61,11 +62,11 @@ def group_object_factory_with_members(sqla, fraction=0.75):
         'name': rl_fake().word(),
         'description': rl_fake().sentences(nb=1)[0],
         'active': flip(),
-        'manager_id': all_managers[random.randint(0, len(all_managers) - 1)].id,
+        'managerId': all_managers[random.randint(0, len(all_managers) - 1)].id,
     }
-    all_person_ids = [member.id for member in all_people]
-    group['person_ids'] = random.sample(
-        all_person_ids, math.floor(len(all_person_ids) * fraction))
+    # all_person_ids = [member.id for member in all_people]
+    # group['person_ids'] = random.sample(
+    #     all_person_ids, math.floor(len(all_person_ids) * fraction))
     return group
 
 
@@ -80,13 +81,15 @@ def meeting_object_factory(sqla):
         create_multiple_addresses(sqla, random.randint(3, 6))
         all_addresses = sqla.query(Address).all()
     meeting = {
-        'when': str(rl_fake().future_datetime(end_date="+6h")),
-        'group_id': all_groups[random.randint(0, len(all_groups) - 1)].id,
-        'active': flip(),
-        'address_id': all_addresses[random.randint(0, len(all_addresses) - 1)].id
+        'groupId': all_groups[random.randint(0, len(all_groups) - 1)].id,
+        'addressId': all_addresses[random.randint(0, len(all_addresses) - 1)].id,
+        'startTime': str(rl_fake().future_datetime(end_date=f'+{random.randint(3,6)}h')),
+        'stopTime': str(rl_fake().future_datetime(end_date=f'+{random.randint(7, 20)}h')),
+        'description': rl_fake().sentences(nb=1)[0],
+        'active': flip()
     }
     if len(all_addresses) > 0:
-        meeting["address_id"] = all_addresses[random.randint(
+        meeting["addressId"] = all_addresses[random.randint(
             0, len(all_addresses) - 1)].id
 
     return meeting
@@ -105,8 +108,8 @@ def member_object_factory(sqla):
     member = {
         'joined': str(rl_fake().future_date(end_date="+6d")),
         'active': flip(),
-        'group_id': all_groups[random.randint(0, len(all_groups) - 1)].id,
-        'person_id': all_people[random.randint(0, len(all_people) - 1)].id
+        'groupId': all_groups[random.randint(0, len(all_groups) - 1)].id,
+        'personId': all_people[random.randint(0, len(all_people) - 1)].id
     }
     return member
 
@@ -114,8 +117,8 @@ def member_object_factory(sqla):
 def attendance_object_factory(meeting_id, member_id):
     """Cook up a fake attendance json object from given ids."""
     attendance = {
-        'meeting_id': meeting_id,
-        'member_id': member_id
+        'meetingId': meeting_id,
+        'memberId': member_id
     }
     return attendance
 
@@ -127,16 +130,6 @@ def role_object_factory(role_name):
         'active': 1
     }
     return role
-
-
-def event_groups_object_factory(event_id, group_id):
-    """Cook up a fake eventteam json object from given ids."""
-    eventgroup = {
-        'event_id': event_id,
-        'group_id': group_id,
-        'active': flip()
-    }
-    return eventgroup
 
 
 # ---------End of Factories
@@ -232,18 +225,4 @@ def create_group_test_data(sqla):
     create_multiple_meetings(sqla, 12)
     create_multiple_members(sqla, 13)
     create_attendance(sqla, 0.75)
-    create_events_groups(sqla, 0.75)
 
-
-def create_events_groups(sqla, fraction=0.75):
-    """Create data in the link table between events and groups"""
-    event_groups_schema = EventGroupSchema()
-    new_events_groups = []
-    all_events_groups = sqla.query(Event, Group).all()
-    sample_events_groups = random.sample(all_events_groups, math.floor(len(all_events_groups) * fraction))
-    for events_groups in sample_events_groups:
-        valid_events_groups = event_groups_schema.load(
-            event_groups_object_factory(events_groups[0].id, events_groups[1].id))
-        new_events_groups.append(EventGroup(**valid_events_groups))
-    sqla.add_all(new_events_groups)
-    sqla.commit()
