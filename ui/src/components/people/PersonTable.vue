@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Header -->
-    <v-toolbar class="pa-1" data-cy="person-toolbar">
+    <toolbar class="pa-1" data-cy="person-toolbar">
       <v-layout align-center justify-space-between fill-height>
         <v-flex md2>
           <v-toolbar-title>{{ $t("people.title") }}</v-toolbar-title>
@@ -42,7 +42,7 @@
           </v-btn>
         </v-flex>
       </v-layout>
-    </v-toolbar>
+    </toolbar>
 
     <!-- Table of existing people -->
     <v-data-table
@@ -157,34 +157,16 @@
         {{ $t("actions.close") }}
       </v-btn>
     </v-snackbar>
-
+    
     <!-- New/Edit dialog -->
-    <v-dialog
-      scrollable
-      persistent
-      v-model="personDialog.show"
-      max-width="1000px"
-    >
-      <v-layout column>
-        <v-card>
-          <v-layout align-center justify-center row fill-height>
-            <v-card-title class="headline">
-              {{ $t(personDialog.title) }}
-            </v-card-title>
-          </v-layout>
-        </v-card>
-        <PersonForm
-          v-bind:initialData="personDialog.person"
-          v-bind:addAnotherEnabled="personDialog.addAnotherEnabled"
-          v-bind:saveButtonText="personDialog.saveButtonText"
-          v-bind:showAccountInfo="personDialog.showAccountInfo"
-          v-bind:isAccountRequired="false"
-          v-on:cancel="cancelPerson"
-          v-on:saved="savePerson"
-          v-on:added-another="addAnother"
-        />
-      </v-layout>
-    </v-dialog>
+    <person-dialog 
+      @snack="showSnackbar" 
+      @cancel="cancelPerson"
+      @refreshPeople="refreshPeopleList"
+      :dialog-state="dialogState"
+      :all-people="allPeople"
+      :person="person"
+    />
 
     <!-- Person admin dialog -->
     <v-dialog
@@ -239,12 +221,12 @@
 </template>
 
 <script>
-import PersonForm from "./PersonForm";
+import PersonDialog from "../PersonDialog";
 import PersonAdminForm from "./AccountForm";
 
 export default {
   name: "PersonTable",
-  components: { PersonAdminForm, PersonForm },
+  components: { PersonDialog, PersonAdminForm },
   props: {
     peopleList: {
       type: Array,
@@ -254,19 +236,11 @@ export default {
       type: Array,
       required: true
     },
-    tableLoaded: Boolean
+    tableLoaded: Boolean,
   },
   data() {
     return {
       viewStatus: "viewActive",
-      personDialog: {
-        show: false,
-        title: "",
-        person: {},
-        addAnotherEnabled: false,
-        saveButtonText: "actions.save"
-      },
-
       adminDialog: {
         show: false,
         person: {},
@@ -289,6 +263,8 @@ export default {
 
       showingArchived: false,
       selected: [],
+      dialogState: "",
+      person: {},
       allPeople: [],
       activePeople: [],
       archivedPeople: [],
@@ -370,44 +346,17 @@ export default {
   methods: {
     // ---- Person Administration
 
-    activatePersonDialog(person = {}, isEditTitle = false) {
-      this.personDialog.title = isEditTitle
-        ? this.$t("person.actions.edit")
-        : this.$t("person.actions.new");
-      this.personDialog.showAccountInfo = !isEditTitle;
-      this.personDialog.addAnotherEnabled = !isEditTitle;
-      this.personDialog.person = person;
-      this.personDialog.show = true;
-    },
-
     editPerson(person) {
-      this.activatePersonDialog({ ...person }, true);
+      this.dialogState = "edit";
+      this.person = person;
     },
 
     newPerson() {
-      this.activatePersonDialog();
+      this.dialogState = "new";
     },
 
     cancelPerson() {
-      this.personDialog.show = false;
-    },
-
-    savePerson(person) {
-      let idx = this.allPeople.findIndex(p => p.id === person.id);
-      if (idx !== -1) {
-        Object.assign(this.allPeople[idx], person);
-        this.showSnackbar(this.$t("person.messages.person-edit"));
-      } else {
-        this.refreshPeopleList();
-        this.showSnackbar(this.$t("person.messages.person-add"));
-      }
-      this.personDialog.show = false;
-    },
-
-    addAnother() {
-      this.refreshPeopleList();
-      this.activatePersonDialog();
-      this.showSnackbar(this.$t("person.messages.person-add"));
+      this.dialogState = "";
     },
 
     showSnackbar(message) {

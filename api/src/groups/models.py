@@ -15,14 +15,13 @@ class Group(Base):
     id = Column(Integer, primary_key=True)
     name = Column(StringTypes.MEDIUM_STRING, nullable=False)
     description = Column(StringTypes.LONG_STRING, nullable=False)
-    manager_id = Column(Integer, ForeignKey(
-        'people_manager.id'), nullable=False)
     active = Column(Boolean, nullable=False, default=True)
+    manager_id = Column(Integer, ForeignKey('people_manager.id'), nullable=False)
     manager = relationship('Manager', back_populates='groups', lazy=True)
-    members = relationship('Member', backref='group', lazy=True)
-    meetings = relationship('Meeting', backref='group', lazy=True)
+    members = relationship('Member', back_populates='group', lazy=True)
+    meetings = relationship('Meeting', back_populates='group', lazy=True)
     events = relationship('EventGroup', back_populates='group', lazy=True)
-    images = relationship('ImageGroup', back_populates='group', lazy=True)
+    images = relationship('ImageGroup', back_populates='group')
 
     def __repr__(self):
         return f"<Group(id={self.id})>"
@@ -32,12 +31,10 @@ class GroupSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     name = fields.String(required=True, validate=Length(min=1))
     description = fields.String(required=True, validate=Length(min=1))
-    active = fields.Boolean(required=True)
+    active = fields.Boolean(nullable=False)
     manager_id = fields.Integer(data_key='managerId', required=True)
-    member_list = fields.Nested('MemberSchema', data_key="memberList", many=True, only=[
-                                'person', 'joined', 'active', 'id'])
-    manager_info = fields.Nested('ManagerSchema', data_key="managerInfo", only=[
-                                 'description_i18n', 'person'])
+    memberList = fields.Nested('MemberSchema', many=True, only=['person', 'joined', 'active', 'id'])
+    managerInfo = fields.Nested('ManagerSchema', only=['description_i18n', 'person'])
 
 
 # ---- Meeting
@@ -45,14 +42,13 @@ class GroupSchema(Schema):
 class Meeting(Base):
     __tablename__ = 'groups_meeting'
     id = Column(Integer, primary_key=True)
+    when = Column(DateTime, nullable=False)
     group_id = Column(Integer, ForeignKey('groups_group.id'), nullable=False)
     address_id = Column(Integer, ForeignKey('places_address.id'))
-    start_time = Column(DateTime, nullable=False)
-    stop_time = Column(DateTime, nullable=False)
-    description = Column(StringTypes.LONG_STRING, nullable=False)
-    active = Column(Boolean, nullable=False, default=True)
+    active = Column(Boolean, nullable=False)
+    group = relationship('Group', back_populates='meetings', lazy=True)
     address = relationship('Address', back_populates='meetings', lazy=True)
-    attendances = relationship('Attendance', backref='meeting', lazy=True)
+    members = relationship('Attendance', back_populates='meeting', lazy=True)
 
     def __repr__(self):
         return f"<Meeting(id={self.id})>"
@@ -60,12 +56,11 @@ class Meeting(Base):
 
 class MeetingSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
-    group_id = fields.Integer(data_key='groupId', required=True)
-    address_id = fields.Integer(data_key='addressId')
-    start_time = fields.DateTime(data_key='startTime', required=True)
-    stop_time = fields.DateTime(data_key='stopTime', required=True)
-    description = fields.String(required=True, validate=Length(min=1))
-    active = fields.Boolean(required=True)
+    when = fields.DateTime(required=True)
+    group_id = fields.Integer(data_key='group_id', required=True)
+    address_id = fields.Integer(data_key='address_id')
+    address = fields.Nested('AddressSchema')
+    active = fields.Boolean(nullable=False)
 
 
 # ---- Member
@@ -73,12 +68,13 @@ class MeetingSchema(Schema):
 class Member(Base):
     __tablename__ = 'groups_member'
     id = Column(Integer, primary_key=True)
-    group_id = Column(Integer, ForeignKey('groups_group.id'), nullable=False)
-    person_id = Column(Integer, ForeignKey('people_person.id'), nullable=False)
     joined = Column(Date, nullable=False)
     active = Column(Boolean, nullable=False, default=True)
+    group_id = Column(Integer, ForeignKey('groups_group.id'), nullable=False)
+    person_id = Column(Integer, ForeignKey('people_person.id'), nullable=False)
+    group = relationship('Group', back_populates='members', lazy=True)
     person = relationship('Person', back_populates='members', lazy=True)
-    meetings = relationship('Attendance', backref='member', lazy=True)
+    meetings = relationship('Attendance', back_populates='member', lazy=True)
 
     def __repr__(self):
         return f"<Member(id={self.id})>"
@@ -86,10 +82,10 @@ class Member(Base):
 
 class MemberSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
-    group_id = fields.Integer(data_key='groupId', required=True)
-    person_id = fields.Integer(data_key='personId', required=True)
     joined = fields.Date(required=True)
     active = fields.Boolean(required=True)
+    group_id = fields.Integer(data_key='group_id', required=True)
+    person_id = fields.Integer(data_key='person_id', required=True)
     person = fields.Nested('PersonSchema')
 
 
@@ -97,15 +93,15 @@ class MemberSchema(Schema):
 
 class Attendance(Base):
     __tablename__ = 'groups_attendance'
-    meeting_id = Column(Integer, ForeignKey(
-        'groups_meeting.id'), primary_key=True)
-    member_id = Column(Integer, ForeignKey(
-        'groups_member.id'), primary_key=True)
+    meeting_id = Column(Integer, ForeignKey('groups_meeting.id'), primary_key=True)
+    member_id = Column(Integer, ForeignKey('groups_member.id'), primary_key=True)
+    meeting = relationship('Meeting', back_populates='members', lazy=True)
+    member = relationship('Member', back_populates='meetings', lazy=True)
 
     def __repr__(self):
         return f"<Attendance(meeting_id={self.meeting_id},member_id={self.member_id})>"
 
 
 class AttendanceSchema(Schema):
-    meeting_id = fields.Integer(data_key='meetingId', required=True)
-    member_id = fields.Integer(data_key='memberId', required=True)
+    meeting_id = fields.Integer(data_key='meeting_id', required=True)
+    member_id = fields.Integer(data_key='member_id', required=True)

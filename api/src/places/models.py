@@ -82,6 +82,7 @@ class AreaSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     name = fields.String(required=True, validate=Length(min=1))
     country_code = fields.String(required=True, validate=Length(min=1))
+    country = fields.Nested('CountrySchema')
 
 
 # ---- Location

@@ -293,6 +293,7 @@ export default {
                   },
                   data: {
                     name: g.name,
+                    address: a.address,
                     description: g.description
                   },
                   opened: false
