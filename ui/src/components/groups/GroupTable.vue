@@ -316,7 +316,6 @@ export default {
     },
 
     putGroup(group, newGroup) {
-      console.log(group);
       const groupId = group.id;
       const idx = this.groups.findIndex(ev => ev.id === group.id);
       this.$http
