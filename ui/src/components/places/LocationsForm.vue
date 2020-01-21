@@ -26,6 +26,7 @@
         v-bind:label="$t('places.location.description')"
         v-model="location.description"
         clearable
+        v-validate="'max:2'"
         :disabled="formDisabled"
       ></v-text-field>
     </v-card-text>
