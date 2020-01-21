@@ -24,9 +24,9 @@
         ></v-textarea>
         <entity-search
           manager
-          v-model="group.manager"
+          :value="manager"
+          @input="updateSelection"
           name="manager"
-          v-validate="'required'"
           v-bind:error-messages="errors.first('manager')"
         />
       </form>
@@ -142,9 +142,9 @@ export default {
       this.$validator.validateAll().then(isValid => {
         if (isValid) {
           this.$http
-            .get(`/api/v1/groups/find_group/${group.name}/${group.manager.id}`)
+            .get(`/api/v1/groups/find_group/${group.name}/${group.managerId}`)
             .then(response => {
-              if (response.data == 0) {
+              if (response.data == 0 || this.editMode) {
                 operation();
               } else {
                 this.showSnackbar(this.$t("groups.messages.already-exists"));
@@ -177,7 +177,6 @@ export default {
     save() {
       //console.log(this.group);
       this.validateGroup(this.group, () => {
-        this.group.active = true;
         this.group.active = true;
         this.$emit("save", this.group);
       });

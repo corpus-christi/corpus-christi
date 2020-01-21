@@ -31,7 +31,7 @@ class GroupSchema(Schema):
     name = fields.String(required=True, validate=Length(min=1))
     description = fields.String(required=True, validate=Length(min=1))
     active = fields.Boolean(nullable=False)
-    manager_id = fields.Integer(data_key='manager_id', required=True)
+    manager_id = fields.Integer(data_key='managerId', required=True)
     memberList = fields.Nested('MemberSchema', many=True, only=['person', 'joined', 'active', 'id'])
     managerInfo = fields.Nested('ManagerSchema', only=['description_i18n', 'person'])
 
