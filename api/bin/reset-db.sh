@@ -1,14 +1,17 @@
 #!/usr/bin/env bash
 
-set -uxo pipefail
+set -uo pipefail
 
 source ./venv/bin/activate
 
-flask db downgrade
+(set -x; flask db downgrade)
+
 while [ $? -eq 0 ]
 do
-    flask db downgrade
+    (set -x; flask db downgrade)
 done
+
+set -x
 rm migrations/versions/*.py
 
 flask db migrate
