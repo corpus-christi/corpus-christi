@@ -13,7 +13,7 @@
             single-line
             hide-details
             data-cy="form-search"
-          ></v-text-field>
+          />
         </v-flex>
         <v-flex md3>
           <v-select
@@ -55,7 +55,7 @@
           class="hover-hand"
           v-on:click="$router.push({ path: '/groups/' + props.item.id })"
         >
-          <span> {{ props.item.name }}</span>
+          {{ props.item.name }}
         </td>
         <td
           class="hover-hand"
@@ -69,7 +69,13 @@
         >
           {{ getManagerName(props.item.managerInfo) }}
         </td>
-        <td>
+        <td
+          class="hover-hand"
+          v-on:click="$router.push({ path: '/groups/' + props.item.id })"
+        >
+          {{ props.item.memberList.filter(ev => ev.active).length }}
+        </td>
+        <td class="text-no-wrap">
           <template v-if="props.item.active">
             <v-tooltip bottom>
               <v-btn
@@ -160,7 +166,7 @@
             data-cy="cancel-archive"
             >{{ $t("actions.cancel") }}</v-btn
           >
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="archiveGroup"
             color="primary"
@@ -246,9 +252,9 @@ export default {
     visibleGroups() {
       let list = this.groups;
 
-      if (this.viewStatus == "viewActive") {
+      if (this.viewStatus === "viewActive") {
         return list.filter(ev => ev.active);
-      } else if (this.viewStatus == "viewArchived") {
+      } else if (this.viewStatus === "viewArchived") {
         return list.filter(ev => !ev.active);
       } else {
         return list;
@@ -259,7 +265,8 @@ export default {
       return [
         { text: this.$t("groups.name"), value: "name" },
         { text: this.$t("groups.description"), value: "description" },
-        { text: this.$t("groups.manager"), value: "managerInfo" },
+        { text: this.$t("groups.manager"), value: "managerInfo.person.lastName" },
+        { text: this.$t("groups.member-count"), value: "memberList.length" },
         { text: this.$t("actions.header"), sortable: false }
       ];
     }
@@ -290,55 +297,58 @@ export default {
       this.groupDialog.show = false;
     },
 
-    saveGroup(group) {
+    saveGroup(group, closeDialog = true) {
       this.groupDialog.saveLoading = true;
-      if (group.manager) {
-        group.manager_id = group.manager.id;
-      }
       let newGroup = JSON.parse(JSON.stringify(group));
       delete newGroup.manager;
       delete newGroup.id;
+      delete newGroup.memberList;
+      delete newGroup.managerInfo;
       if (this.groupDialog.editMode) {
-        const groupId = group.id;
-        delete newGroup.managerInfo;
-        delete newGroup.memberList;
-        // for(var member of newGroup.memberList){
-        //   delete member.id
-        // }
-        console.log(newGroup);
-        const idx = this.groups.findIndex(ev => ev.id === group.id);
-        this.$http
-          .patch(`/api/v1/groups/groups/${groupId}`, newGroup)
-          .then(resp => {
-            console.log("EDITED", resp);
-            Object.assign(this.groups[idx], resp.data);
-            this.groupDialog.show = false;
-            this.groupDialog.saveLoading = false;
-            this.showSnackbar(this.$t("groups.messages.group-edited"));
-          })
-          .catch(err => {
-            console.error("PUT FALURE", err.response);
-            this.groupDialog.saveLoading = false;
-            this.showSnackbar(this.$t("groups.messages.error-editing-group"));
-          });
-      } else {
-        delete newGroup.memberList;
-        delete newGroup.managerInfo;
-        this.$http
-          .post("/api/v1/groups/groups", newGroup)
-          .then(resp => {
-            console.log("ADDED", resp);
-            this.groups.push(resp.data);
-            this.groupDialog.show = false;
-            this.groupDialog.saveLoading = false;
-            this.showSnackbar(this.$t("groups.messages.group-added"));
-          })
-          .catch(err => {
-            console.error("POST FAILURE", err.response);
-            this.groupDialog.saveLoading = false;
-            this.showSnackbar(this.$t("groups.messages.error-adding-group"));
-          });
+        this.putGroup(group, newGroup);
       }
+      else {
+        this.postGroup(newGroup);
+      }
+      if(closeDialog) {
+        this.closeDialog();
+      }
+    },
+
+    putGroup(group, newGroup) {
+      const groupId = group.id;
+      const idx = this.groups.findIndex(ev => ev.id === group.id);
+      this.$http
+        .patch(`/api/v1/groups/groups/${groupId}`, newGroup)
+        .then(resp => {
+          Object.assign(this.groups[idx], resp.data);
+          this.groupDialog.saveLoading = false;
+          this.showSnackbar(this.$t("groups.messages.group-edited"));
+        })
+        .catch(err => {
+          console.error("PUT FALURE", err.response);
+          this.groupDialog.saveLoading = false;
+          this.showSnackbar(this.$t("groups.messages.error-editing-group"));
+        });
+    },
+
+    postGroup(newGroup) {
+      this.$http
+        .post("/api/v1/groups/groups", newGroup)
+        .then(resp => {
+          this.groups.push(resp.data);
+          this.groupDialog.saveLoading = false;
+          this.showSnackbar(this.$t("groups.messages.group-added"));
+        })
+        .catch(err => {
+          console.error("POST FAILURE", err.response);
+          this.groupDialog.saveLoading = false;
+          this.showSnackbar(this.$t("groups.messages.error-adding-group"));
+        });
+    },
+
+    closeDialog() {
+      this.groupDialog.show = false;
     },
 
     editGroup(group) {
@@ -357,7 +367,6 @@ export default {
     cancelArchive() {
       this.archiveDialog.show = false;
     },
-
     archiveGroup() {
       console.log("Archived group");
       this.archiveDialog.loading = true;
@@ -379,7 +388,6 @@ export default {
           this.showSnackbar(this.$t("groups.messages.error-archiving-group"));
         });
     },
-
     unarchive(group) {
       const idx = this.groups.findIndex(ev => ev.id === group.id);
       const groupId = group.id;
@@ -396,15 +404,14 @@ export default {
           this.showSnackbar(this.$t("groups.messages.error-unarchiving-gropu"));
         });
     },
-
     duplicate(group) {
       const copyGroup = JSON.parse(JSON.stringify(group));
       delete copyGroup.id;
       this.activateGroupDialog(copyGroup);
     },
-
-    addAnotherGroup() {},
-
+    addAnotherGroup(group) {
+      this.saveGroup(group, false);
+    },
     onResize() {
       this.windowSize = { x: window.innerWidth, y: window.innerHeight };
       if (this.windowSize.x <= 960) {
@@ -413,7 +420,6 @@ export default {
         this.windowSize.small = false;
       }
     },
-
     showSnackbar(message) {
       this.snackbar.text = message;
       this.snackbar.show = true;

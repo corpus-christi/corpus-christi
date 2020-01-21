@@ -22,9 +22,8 @@ from src.people.test_people import create_multiple_people, create_multiple_manag
 from src.places.models import Country
 from src.places.test_places import create_multiple_areas, create_multiple_addresses, create_multiple_locations
 
-#removed  create_multiple_accounts, from line 21
 
-app = create_app(os.getenv('FLASK_CONFIG') or 'default')
+app = create_app(os.getenv('CC_CONFIG') or 'default')
 
 # ---- Data
 

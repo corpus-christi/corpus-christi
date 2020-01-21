@@ -35,11 +35,11 @@ def camel_case(s):
 
 
 def tab(string, n=1):
-    print(" " * n * 4, string)
+    print(f'{" " * n * 4}{string}')
 
 
 def rule(n, char='='):
-    return char * n;
+    return char * n
 
 
 def banner(string, fat=False):
@@ -79,10 +79,12 @@ def generate_model(entity):
     for attr in entity['attributes']:
         details = []
 
-        if attr['type'] in ('integer', 'date', 'boolean', 'datetime', 'float'):
+        if attr['type'] in ('integer', 'date', 'boolean', 'float'):
             details.append(attr['type'].capitalize())
         elif attr['type'] == 'string':
             details.append(model_string(attr))
+        elif attr['type'] == 'datetime':
+            details.append('DateTime');
         else:
             raise ValidationError(f"Unknown type: {attr['type']}")
 
@@ -421,7 +423,7 @@ schema = {
                         }
                     }
                 },
-                "required": ["name", "singular", "plural", "uri", "table", "attributes"],
+                "required": ["name", "singular", "plural", "table", "attributes"],
                 "additionalProperties": False
             }
         }
@@ -455,7 +457,10 @@ for file_name in sys.argv[1:]:
     banner("APIs", True)
     for entity in entities:
         comment(entity['name'])
-        generate_api(module, entity)
+        if ('uri' in entity):
+            generate_api(module, entity)
+        else:
+            print("No URI found for this entity, so no API boilerplate produced.")
 
     banner("Tests", True)
     for entity in entities:

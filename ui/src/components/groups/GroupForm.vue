@@ -10,7 +10,7 @@
           v-bind:label="$t('groups.name')"
           name="title"
           v-validate="'required'"
-          v-bind:error-messages="errors.first('')"
+          v-bind:error-messages="errors.first('title')"
           data-cy="title"
         ></v-text-field>
         <v-textarea
@@ -18,13 +18,16 @@
           v-model="group.description"
           v-bind:label="$t('groups.group-description')"
           name="description"
+          v-validate="'required'"
+          v-bind:error-messages="errors.collect('description')"
           data-cy="description"
         ></v-textarea>
         <entity-search
           manager
-          v-model="group.manager"
-          name="address"
-          v-bind:error-messages="errors.first('address')"
+          :value="manager"
+          @input="updateSelection"
+          name="manager"
+          v-bind:error-messages="errors.first('manager')"
         />
       </form>
     </v-card-text>
@@ -37,12 +40,12 @@
         data-cy="form-cancel"
         >{{ $t("actions.cancel") }}</v-btn
       >
-      <v-spacer></v-spacer>
+      <v-spacer/>
       <v-btn
         color="primary"
         outline
         v-on:click="addAnother"
-        v-if="editMode === false"
+        v-if="!editMode"
         :loading="addMoreLoading"
         :disabled="formDisabled"
         data-cy="form-addanother"
@@ -58,6 +61,13 @@
         >{{ $t("actions.save") }}</v-btn
       >
     </v-card-actions>
+
+    <v-snackbar v-model="snackbar.show">
+      {{ snackbar.text }}
+      <v-btn flat @click="snackbar.show = false" data-cy>
+        {{ $t("actions.close") }}
+      </v-btn>
+    </v-snackbar>
   </v-card>
 </template>
 
@@ -74,10 +84,12 @@ export default {
         this.clear();
       } else {
         this.group = groupProp;
+        this.manager = this.parseGroup(this.group);
         this.group.manager = groupProp.managerInfo;
       }
     }
   },
+
   computed: {
     groupKeys() {
       return Object.keys(this.group);
@@ -97,9 +109,61 @@ export default {
   },
 
   methods: {
+    getManagerName(managerInfo) {
+      var man = managerInfo.person;
+      return (
+        man.firstName +
+        " " +
+        man.lastName +
+        " " +
+        (man.secondLastName ? man.secondLastName : "")
+      );
+    },
+
+    parseGroup(obj) {
+      return {
+	'id': obj.managerId,
+      };
+    },
+
+    updateSelection(obj) {
+      if (obj.person) {
+        this.group.managerId = obj.id;
+        if (!this.group.manager) this.group.manager = {};
+        this.group.manager.person = obj.person;
+        if (!this.group.managerInfo) this.group.managerInfo = {};
+        this.group.managerInfo.person = obj.person;
+      }
+      //console.log("updateSelection");
+      //console.log(this.group);
+    },
+
+    validateGroup(group, operation) {
+      this.$validator.validateAll().then(isValid => {
+        if (isValid) {
+          this.$http
+            .get(`/api/v1/groups/find_group/${group.name}/${group.managerId}`)
+            .then(response => {
+              if (response.data == 0 || this.editMode) {
+                operation();
+              } else {
+                this.showSnackbar(this.$t("groups.messages.already-exists"));
+              }
+            });
+        }
+      });
+    },
+
+    showSnackbar(message) {
+      this.snackbar.text = message;
+      this.snackbar.show = true;
+    },
+
     cancel() {
       this.clear();
+      this.$validator.reset();
       this.$emit("cancel");
+      this.manager = {};
     },
 
     clear() {
@@ -111,23 +175,20 @@ export default {
     },
 
     save() {
-      this.$validator.validateAll().then(() => {
-        if (!this.errors.any()) {
-          this.group.active = true;
-          this.$emit("save", this.group);
-        }
+      //console.log(this.group);
+      this.validateGroup(this.group, () => {
+        this.group.active = true;
+        this.$emit("save", this.group);
       });
+      this.manager = {};
     },
 
     addAnother() {
-      // this.$validator.validateAll().then(() => {
-      //   if (!this.errors.any()) {
-      //     this.event.start = this.getTimestamp(this.startDate, this.startTime);
-      //     this.event.end = this.getTimestamp(this.endDate, this.endTime);
-      //     this.event.active = true;
-      //     this.$emit("add-another", this.event);
-      //   }
-      // });
+      this.validateGroup(this.group, () => {
+        this.group.active = true;
+        this.$emit("add-another", this.group);
+        this.group = {};
+      });
     }
   },
   props: {
@@ -148,7 +209,12 @@ export default {
   },
   data: function() {
     return {
-      group: {}
+      group: {},
+      manager: {},
+      snackbar: {
+        show: false,
+        text: ""
+      }
     };
   }
 };

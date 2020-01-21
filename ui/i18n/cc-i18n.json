@@ -237,6 +237,8 @@
       "create-group": "Create Group",
       "description": "Description",
       "details": {
+        "class-title": "Title",
+        "member-count": "Member count",
         "title": "Details"
       },
       "edit-group": "Edit Group",
@@ -246,18 +248,35 @@
       "header": "Groups",
       "manager": "Manager",
       "meetings": {
+        "add-meeting": "Add Meeting",
         "title": "Meetings"
       },
+      "member-count": "Member Count",
       "members": {
+        "email": {
+          "bcc": "Bcc",
+          "body": "Body",
+          "cc": "Cc",
+          "compose": "Compose Email",
+          "send": "Send",
+          "subject": "Subject",
+          "to": "To"
+        },
         "title": "Members"
       },
       "messages": {
+        "already-exists": "Group already exists",
         "confirm-archive": "Are you sure you want to archive this group?",
+        "confirm-member-archive": "Are you sure you want to archive this group member?",
+        "email-sent": "Email sent",
+        "error-active-not-selected": "No active members are selected",
         "error-adding-group": "Error while adding group",
         "error-adding-members": "Error while adding members",
+        "error-archived-not-selected": "No archived members are selected",
         "error-archiving-group": "Error while archiving group",
         "error-archiving-member": "Error while unarchiving member",
         "error-editing-group": "Error while editing group",
+        "error-no-manager-email": "Your email address is not defined",
         "group-added": "Group added",
         "group-archived": "Group archived",
         "group-edited": "Group edited",
@@ -265,7 +284,9 @@
         "group-unarchiving-group": "Error while unarchiving group",
         "member-archived": "Member archived",
         "member-unarchived": "Member unarchived",
-        "members-added": "Members added"
+        "members-added": "Members added",
+        "no-remaining-members": "No remaining members",
+        "required-fields": "Please fill out all required fields"
       },
       "name": "Name",
       "none-assigned": "No groups assigned.",
@@ -349,18 +370,36 @@
       "address": {
         "address": "Address",
         "city": "City",
+        "country": "Country",
+        "find-address": "Find Address",
+        "find-address-lat-lng": "Find Address using Latitude and Longitude",
         "latitude": "Latitude",
         "longitude": "Longitude",
-        "name": "Name"
+        "name": "Name",
+        "new": "Add Address",
+        "valid-address": "Use Valid Street Address"
+      },
+      "area": {
+        "area": "Area",
+        "create-area": "Create New Area",
+        "edit": "Edit Area",
+        "name": "Area Name",
+        "new": "Add Area"
       },
       "create-address": "Create an Address",
+      "edit": "Edit Location",
       "location": {
-        "description": "Description"
+        "description": "Description",
+        "location": "Location",
+        "new": "Add Location"
       },
       "messages": {
+        "find-address-err": "Latitude and Longitude are required to find an address",
         "no-results": "Your address returned no results.",
         "saved": "Your address has been saved."
-      }
+      },
+      "new": "Add Place",
+      "title": "Places"
     },
     "public": {
       "courses": {
@@ -670,6 +709,8 @@
       "create-group": "Crea un Grupo",
       "description": "Descripci\u00f3n",
       "details": {
+        "class-title": "T\u00edtulo",
+        "member-count": "Cuenta de miembro",
         "title": "Detalles"
       },
       "edit-group": "Grupo de Edici\u00f3n",
@@ -679,18 +720,35 @@
       "header": "Grupos",
       "manager": "Gerente",
       "meetings": {
+        "add-meeting": "Agregar reuni\u00f3n",
         "title": "Reuniones"
       },
+      "member-count": "Recuento de Miembros",
       "members": {
+        "email": {
+          "bcc": "Cco",
+          "body": "Cuerpo",
+          "cc": "Cc",
+          "compose": "Redactar Correo Electr\u00f3nico",
+          "send": "Enviar",
+          "subject": "Asunto",
+          "to": "Para"
+        },
         "title": "Miembros"
       },
       "messages": {
+        "already-exists": "El grupo ya existe",
         "confirm-archive": "\u00bfSeguro que quieres archivar este groupos?",
+        "confirm-member-archive": "\u00bfEst\u00e1s seguro de que deseas archivar a este miembro del grupo?",
+        "email-sent": "Correo electr\u00f3nico enviado",
+        "error-active-not-selected": "No hay miembros activos seleccionados",
         "error-adding-group": "Error al agregar grupo",
         "error-adding-members": "Error al agregar miembros",
+        "error-archived-not-selected": "No hay miembros archivados seleccionados",
         "error-archiving-group": "Error al archivar el grupo",
         "error-archiving-member": "Error al desarchivar miembro",
         "error-editing-group": "Error al editar grupo",
+        "error-no-manager-email": "Su direcci\u00f3n de correo electr\u00f3nico no est\u00e1 definida",
         "group-added": "Grupo agregado",
         "group-archived": "Grupo archivado",
         "group-edited": "Grupo editado",
@@ -698,7 +756,9 @@
         "group-unarchiving-group": "Error al desarchivar el grupo",
         "member-archived": "Miembro archivado",
         "member-unarchived": "Miembro desarchivado",
-        "members-added": "Miembros agregados"
+        "members-added": "Miembros agregados",
+        "no-remaining-members": "Ning\u00fan miembro restante",
+        "required-fields": "Por favor llene todos los campos requeridos"
       },
       "name": "Nombre",
       "none-assigned": "No hay grupos asignados.",
@@ -782,18 +842,36 @@
       "address": {
         "address": "Direcci\u00f3n",
         "city": "Ciudad",
+        "country": "Pa\u00eds",
+        "find-address": "Encuentra la Direcci\u00f3n",
+        "find-address-lat-lng": "Buscar Direcci\u00f3n usando Latitud y Longitud",
         "latitude": "Latitud",
         "longitude": "Longitud",
-        "name": "Nombre"
+        "name": "Nombre",
+        "new": "A\u00f1adir direcci\u00f3n",
+        "valid-address": "Usar direcci\u00f3n V\u00e1lida"
+      },
+      "area": {
+        "area": "Zona",
+        "create-area": "Crear nueva \u00c1rea",
+        "edit": "\u00c1rea de Edici\u00f3n",
+        "name": "Nombre del \u00c1rea",
+        "new": "A\u00f1adir Zona"
       },
       "create-address": "Crear una Direcci\u00f3n",
+      "edit": "Editar Ubicaci\u00f3n",
       "location": {
-        "description": "Descripci\u00f3n"
+        "description": "Descripci\u00f3n",
+        "location": "Ubicaci\u00f3n",
+        "new": "A\u00f1adir Ubicaci\u00f3n"
       },
       "messages": {
+        "find-address-err": "Se requiere latitud y longitud para encontrar una direcci\u00f3n",
         "no-results": "Tu direcci\u00f3n no devolvi\u00f3 resultados.",
         "saved": "Su direcci\u00f3n ha sido guardada."
-      }
+      },
+      "new": "A\u00f1adir Lugares",
+      "title": "Lugares"
     },
     "public": {
       "courses": {
