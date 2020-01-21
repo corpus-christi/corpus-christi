@@ -36,6 +36,40 @@ places:
     find-address-lat-lng:
       en: Find Address using Latitude and Longitude
       es: Buscar Dirección usando Latitud y Longitud
+    filters:
+      address_filters:
+        en: Address Filters
+        es: Filtros de Direcciones
+      apply:
+        en: Apply Filters
+        es: Aplicar Filtros
+      startLat:
+        en: Start Latitude
+        es: Iniciar Latitude
+      endLat:
+        en: End Latitude
+        es: Fin de la Latitud
+      startLng:
+        en: Start Longitude
+        es: Comenzar Longitud
+      endLng:
+        en: End Longitude
+        es: Longitud Final
+      distanceFromLatLng:
+        en: Distance from specified Latitude and Longitude
+        es: Distancia desde la Latitud y Longitud especificadas
+      distanceFromAddress:
+        en: Distance from specified Address
+        es: Distancia desde la Dirección especificada
+      range:
+        en: Filter between a range of Latitudes and Longitudes
+        es: Filtrar entre un rango de Latitudes y Longitudes
+      distance-ll:
+        en: Filter by distance from a specific Latitude and Longitude
+        es: Filtrar por distancia desde una Latitud y Longitud específicas
+      distance-addr:
+        en: Filter by distance from a specific address
+        es: Filtrar por distancia desde una dirección específica
   location:
     location:
       en: Location

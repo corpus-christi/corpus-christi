@@ -19,7 +19,7 @@
         <v-flex md2>
           <v-btn color="primary" raised v-on:click.stop="activateFilterDialog">
             <v-icon dark left>sort</v-icon>
-            Address Filters
+            {{ $t("places.address.filters.address_filters") }}
           </v-btn>
         </v-flex>
 
@@ -192,19 +192,19 @@
         <v-layout column>
           <v-card>
             <v-layout align-center justify-center row fill-height>
-              <v-card-title class="headline"> Address Filters </v-card-title>
+              <v-card-title class="headline"> {{$t("places.address.filters.address_filters")}} </v-card-title>
             </v-layout>
           </v-card>
           <v-card>
             <v-card-text>
               <v-layout column>
-                <div>Filter between a range of latitudes and longitudes</div>
+                <div>{{$t("places.address.filters.range")}}</div>
                 <v-layout row>
                   <v-flex md6>
                     <v-text-field
                       name="startLatitude"
                       v-model="filters.startLatitude"
-                      label="Start Latitude"
+                      :label="$t('places.address.filters.startLat')"
                     ></v-text-field>
                   </v-flex>
 
@@ -212,7 +212,7 @@
                     <v-text-field
                       name="endLatitude"
                       v-model="filters.endLatitude"
-                      label="End Latitude"
+                      :label="$t('places.address.filters.endLat')"
                     ></v-text-field>
                   </v-flex>
                 </v-layout>
@@ -222,27 +222,25 @@
                     <v-text-field
                       name="startLongitude"
                       v-model="filters.startLongitude"
-                      label="Start Longitude"
+                      :label="$t('places.address.filters.startLng')"
                     ></v-text-field>
                   </v-flex>
                   <v-flex md6>
                     <v-text-field
                       name="endLongitude"
                       v-model="filters.endLongitude"
-                      label="End Longitude"
+                      :label="$t('places.address.filters.endLng')"
                     ></v-text-field>
                   </v-flex>
                 </v-layout>
                 <v-divider></v-divider>
-                <div>
-                  Filter by distance from a specific latitude and longitude
-                </div>
+                <div>{{$t("places.address.filters.distance-ll")}}</div>
                 <v-layout row>
                   <v-flex md6>
                     <v-text-field
                       name="specificLatitude"
                       v-model="filters.specificLatitude"
-                      label="Latitude"
+                      :label="$t('places.address.latitude')"
                     ></v-text-field>
                   </v-flex>
 
@@ -250,7 +248,7 @@
                     <v-text-field
                       name="specificLongitude"
                       v-model="filters.specificLongitude"
-                      label="Longitude"
+                      :label="$t('places.address.longitude')"
                     ></v-text-field>
                   </v-flex>
                 </v-layout>
@@ -260,17 +258,17 @@
                     <v-text-field
                       name="distance"
                       v-model="filters.distance"
-                      label="Distance from Latitude & Longitude"
+                      :label="$t('places.address.filters.distanceFromLatLng')"
                     ></v-text-field>
                   </v-flex>
                 </v-layout>
                 <v-divider></v-divider>
-                <div>Filter by distance from a specific address</div>
+                <div>{{$t("places.address.filters.distance-addr")}}</div>
                 <v-layout row>
                   <v-flex md6>
                     <v-autocomplete
                       name="addressDropdown"
-                      label="Address"
+                      :label="$t('places.address.address')"
                       v-model="filters.address"
                       :items="dropdownList"
                     ></v-autocomplete>
@@ -280,7 +278,7 @@
                     <v-text-field
                       name="addressDistance"
                       v-model="filters.addressDistance"
-                      label="Distance from Address"
+                      :label="$t('places.address.filters.distanceFromAddress')"
                     ></v-text-field>
                   </v-flex>
                 </v-layout>
@@ -289,11 +287,11 @@
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn flat color="secondary" @click="cancelFilterDialog"
-                >Cancel</v-btn
+                >{{$t("actions.cancel")}}</v-btn
               >
 
               <v-btn flat color="primary" @click="applyFilters"
-                >Apply Filters</v-btn
+                >{{$t("places.address.filters.apply")}}</v-btn
               >
             </v-card-actions>
           </v-card>
