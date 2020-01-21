@@ -113,6 +113,19 @@
         name: "{{ postgres.database }}"
         owner: "{{ postgres.username }}"
 
+- name: provision application
+  hosts: staging, production
+  tags: build, update, flask
+  become: yes
+  become_user: "{{ cc_username }}"
+  vars_files:
+    - public.yaml
+  environment:
+    - FLASK_APP: "{{ cc_api_abs_dir }}/cc-api.py"
+    - FLASK_ENV: production
+    - FLASK_DEBUG: 0
+    - CC_CONFIG: prod
+  tasks:
     - name: create migration
       command:
         cmd: "{{ venv_abs_dir }}/bin/flask db migrate"
@@ -166,7 +179,7 @@
         dest: "{{ cc_pm2_abs_dir }}/ecosystem.config.js"
         mode: 0444
 
-    - name: start capernaum server
+    - name: start server
       command: pm2 start "{{ cc_pm2_abs_dir }}/ecosystem.config.js"
 
 - name: provision nginx
