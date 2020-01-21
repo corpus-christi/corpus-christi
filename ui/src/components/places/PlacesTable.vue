@@ -16,6 +16,13 @@
           ></v-text-field>
         </v-flex>
 
+        <v-flex md2>
+          <v-btn color="primary" raised v-on:click.stop="activateFilterDialog">
+            <v-icon dark left>sort</v-icon>
+            Address Filters
+          </v-btn>
+        </v-flex>
+
         <v-flex shrink justify-self-end>
           <v-btn
             color="primary"
@@ -93,7 +100,13 @@
                   small
                   color="primary"
                   slot="activator"
-                  v-on:click="editLocation({address_id: props.item.id, allLocations: props.item.locations, editMode: true})"
+                  v-on:click="
+                    editLocation({
+                      address_id: props.item.id,
+                      allLocations: props.item.locations,
+                      editMode: true
+                    })
+                  "
                   data-cy="edit-locations"
                   :disabled="!props.item.locations.length"
                 >
@@ -108,7 +121,13 @@
                   small
                   color="primary"
                   slot="activator"
-                  v-on:click="newLocation({address_id: props.item.id, allLocations: [], editMode: false})"
+                  v-on:click="
+                    newLocation({
+                      address_id: props.item.id,
+                      allLocations: [],
+                      editMode: false
+                    })
+                  "
                   data-cy="add-location"
                 >
                   <v-icon small>add</v-icon>
@@ -167,6 +186,120 @@
         />
       </v-layout>
     </v-dialog>
+
+    <v-dialog persistent v-model="filterDialog" max-width="800px">
+      <v-container grid-list-md>
+        <v-layout column>
+          <v-card>
+            <v-layout align-center justify-center row fill-height>
+              <v-card-title class="headline"> Address Filters </v-card-title>
+            </v-layout>
+          </v-card>
+          <v-card>
+            <v-card-text>
+              <v-layout column>
+                <div>Filter between a range of latitudes and longitudes</div>
+                <v-layout row>
+                  <v-flex md6>
+                    <v-text-field
+                      name="startLatitude"
+                      v-model="filters.startLatitude"
+                      label="Start Latitude"
+                    ></v-text-field>
+                  </v-flex>
+
+                  <v-flex md6>
+                    <v-text-field
+                      name="endLatitude"
+                      v-model="filters.endLatitude"
+                      label="End Latitude"
+                    ></v-text-field>
+                  </v-flex>
+                </v-layout>
+
+                <v-layout row>
+                  <v-flex md6>
+                    <v-text-field
+                      name="startLongitude"
+                      v-model="filters.startLongitude"
+                      label="Start Longitude"
+                    ></v-text-field>
+                  </v-flex>
+                  <v-flex md6>
+                    <v-text-field
+                      name="endLongitude"
+                      v-model="filters.endLongitude"
+                      label="End Longitude"
+                    ></v-text-field>
+                  </v-flex>
+                </v-layout>
+                <v-divider></v-divider>
+                <div>
+                  Filter by distance from a specific latitude and longitude
+                </div>
+                <v-layout row>
+                  <v-flex md6>
+                    <v-text-field
+                      name="specificLatitude"
+                      v-model="filters.specificLatitude"
+                      label="Latitude"
+                    ></v-text-field>
+                  </v-flex>
+
+                  <v-flex md6>
+                    <v-text-field
+                      name="specificLongitude"
+                      v-model="filters.specificLongitude"
+                      label="Longitude"
+                    ></v-text-field>
+                  </v-flex>
+                </v-layout>
+
+                <v-layout row>
+                  <v-flex>
+                    <v-text-field
+                      name="distance"
+                      v-model="filters.distance"
+                      label="Distance from Latitude & Longitude"
+                    ></v-text-field>
+                  </v-flex>
+                </v-layout>
+                <v-divider></v-divider>
+                <div>Filter by distance from a specific address</div>
+                <v-layout row>
+                  <v-flex md6>
+                    <v-autocomplete
+                      name="addressDropdown"
+                      label="Address"
+                      v-model="filters.address"
+                      :items="dropdownList"
+                    ></v-autocomplete>
+                  </v-flex>
+
+                  <v-flex md6>
+                    <v-text-field
+                      name="addressDistance"
+                      v-model="filters.addressDistance"
+                      label="Distance from Address"
+                    ></v-text-field>
+                  </v-flex>
+                </v-layout>
+              </v-layout>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn flat color="secondary" @click="cancelFilterDialog"
+                >Cancel</v-btn
+              >
+
+              <v-btn flat color="primary" @click="applyFilters"
+                >Apply Filters</v-btn
+              >
+            </v-card-actions>
+          </v-card>
+        </v-layout>
+      </v-container>
+    </v-dialog>
     <v-layout class="mt-3">
       <v-flex>
         <v-toolbar color="blue" dark>
@@ -184,6 +317,8 @@
 import PlaceForm from "./PlacesForm";
 import LocationsForm from "./LocationsForm";
 import GoogleMap from "../../components/GoogleMap";
+import { isEmpty } from "lodash";
+
 export default {
   name: "PlacesTable",
   components: { PlaceForm, LocationsForm, GoogleMap },
@@ -213,9 +348,21 @@ export default {
         addMoreLoading: false,
         locationsInfo: {}
       },
+      filters: {
+        startLatitude: "",
+        endLatitude: "",
+        startLongitude: "",
+        endLongitude: "",
+        specificLatitude: "",
+        specificLongitude: "",
+        distance: "",
+        addressDistance: "",
+        address: {}
+      },
       search: "",
       groupLocations: [],
-      opened: []
+      opened: [],
+      filterDialog: false
     };
   },
   computed: {
@@ -239,7 +386,7 @@ export default {
         {
           text: this.$t("places.address.latitude"),
           width: "4%",
-          value: "latitude",
+          value: "latitude"
         },
         {
           text: this.$t("places.address.longitude"),
@@ -266,6 +413,14 @@ export default {
           opened: false
         };
       });
+    },
+    dropdownList() {
+      return this.addresses.map(element => {
+        return {
+          text: element.address,
+          value: element
+        };
+      });
     }
   },
   methods: {
@@ -276,13 +431,44 @@ export default {
       this.placeDialog.places = places;
       this.placeDialog.show = true;
     },
+    activateFilterDialog() {
+      this.filterDialog = true;
+    },
+    isFilterEmpty() {
+      return (
+        this.filters.startLatitude === "" &&
+        this.filters.endLatitude === "" &&
+        this.filters.startLongitude === "" &&
+        this.filters.endLongitude === "" &&
+        this.filters.specificLatitude === "" &&
+        this.filters.specificLongitude === "" &&
+        this.filters.distance === "" &&
+        this.filters.addressDistance === "" &&
+        isEmpty(this.filters.address)
+      );
+    },
+    applyFilters() {
+      // console.log(this.filters);
+      if (this.isFilterEmpty()) {
+        this.$emit("fetchPlacesList");
+      } else {
+        // console.log(parseFloat(this.filters.startLongitude));
+        // console.log(parseFloat(this.filters.endLongitude));
+        // console.log(parseFloat(this.filters.startLatitude));
+        // console.log(parseFloat(this.filters.endLatitude));
+        this.$emit("fetchPlacesList", this.filters);
+      }
+      this.filterDialog = false;
+    },
     editPlace(place) {
       this.activatePlaceDialog({ ...place }, true);
     },
     newPlace() {
       this.activatePlaceDialog();
     },
-
+    cancelFilterDialog() {
+      this.filterDialog = false;
+    },
     cancelPlace() {
       this.placeDialog.show = false;
     },
