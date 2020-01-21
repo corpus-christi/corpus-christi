@@ -7,6 +7,7 @@ from ..db import Base
 from ..shared.models import StringTypes
 
 
+
 # ---- Event
 
 class Event(Base):

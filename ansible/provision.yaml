@@ -42,7 +42,7 @@
         - silversearcher-ag
         - multitail
 
-- name: create accounts
+- name: create account
   hosts: staging, production
   tags: cc
   become: yes
@@ -67,7 +67,21 @@
         dest: "{{ cc_abs_dir }}"
         version: master
 
-- name: create private files
+- name: prepare python
+  hosts: all
+  tags: python, build, update
+  become: yes
+  become_user: "{{ cc_username }}"
+  vars_files:
+    - public.yaml
+  tasks:
+    - name: create and populate python venv
+      pip:
+        virtualenv: "{{ cc_api_abs_dir }}/venv"
+        virtualenv_command: "{{ python3 }} -m venv venv"
+        requirements: "{{ cc_api_abs_dir }}/requirements.txt"
+
+- name: create private file
   hosts: all
   tags: config
   become: yes
@@ -83,9 +97,11 @@
 
 - name: provision database
   hosts: staging, production
-  tags: db
+  tags: db, build, update
   become: yes
   become_user: postgres
+  vars_files:
+    - public.yaml
   tasks:
     - name: create database user
       postgresql_user:
@@ -97,33 +113,6 @@
         name: "{{ postgres.database }}"
         owner: "{{ postgres.username }}"
 
-- name: prepare python
-  hosts: all
-  tags: python, build, update
-  become: yes
-  become_user: "{{ cc_username }}"
-  vars_files:
-    - public.yaml
-  tasks:
-    - name: create and populate python venv
-      pip:
-        virtualenv: "{{ cc_api_abs_dir }}/venv"
-        virtualenv_command: "{{ python3 }} -m venv venv"
-        requirements: "{{ cc_api_abs_dir }}/requirements.txt"
-
-- name: migrate database
-  hosts: all
-  tags: db, build, update
-  become: yes
-  become_user: "{{ cc_username }}"
-  vars_files:
-    - public.yaml
-  environment:
-    - FLASK_APP: "{{ cc_api_abs_dir }}/cc-api.py"
-    - FLASK_ENV: production
-    - FLASK_DEBUG: 0
-    - CC_CONFIG: prod
-  tasks:
     - name: create migration
       command:
         cmd: "{{ venv_abs_dir }}/bin/flask db migrate"
@@ -133,3 +122,78 @@
       command:
         cmd: "{{ venv_abs_dir }}/bin/flask db upgrade"
         chdir: "{{ cc_api_abs_dir }}"
+
+- name: build user interface
+  hosts: all
+  tags: build, update
+  become: yes
+  become_user: "{{ cc_username }}"
+  vars_files:
+    - public.yaml
+  tasks:
+    - name: install node modules for ui
+      yarn:
+        path: "{{ cc_ui_abs_dir }}"
+
+    - name: build production ui
+      command:
+        chdir: "{{ cc_ui_abs_dir }}"
+        cmd: yarn build
+
+- name: provision process manager
+  hosts: production, staging
+  tags: pm2, update
+  become: yes
+  become_user: "{{ cc_username }}"
+  vars_files:
+    - public.yaml
+  tasks:
+    - name: install pm2 # run as root, installs in /usr/local/bin
+      become_user: root
+      yarn:
+        name: pm2
+        global: yes
+
+    - name: create pm2 directory
+      file:
+        path: "{{ cc_pm2_abs_dir }}"
+        state: directory
+        mode: 0755
+
+    - name: configure pm2
+      template:
+        src: templates/ecosystem.config.js
+        dest: "{{ cc_pm2_abs_dir }}/ecosystem.config.js"
+        mode: 0444
+
+    - name: start capernaum server
+      command: pm2 start "{{ cc_pm2_abs_dir }}/ecosystem.config.js"
+
+- name: provision nginx
+  hosts: production, staging
+  tags: nginx, update
+  become: yes
+  vars_files:
+    - public.yaml
+  tasks:
+    - name: disable nginx default configuration
+      file:
+        path: "{{ nginx_enabled_abs_dir }}/default"
+        state: absent
+
+    - name: copy nginx config file
+      template:
+        src: "templates/{{ nginx_config }}"
+        dest: "{{ nginx_available_abs_dir }}/{{ nginx_conf_file }}"
+        mode: 0444
+
+    - name: enable nginx configuration
+      file:
+        src: "{{ nginx_available_abs_dir }}/{{ nginx_conf_file }}"
+        dest: "{{ nginx_enabled_abs_dir }}/{{ nginx_conf_file }}"
+        state: link
+
+    - name: restart nginx
+      service:
+        name: nginx
+        state: restarted

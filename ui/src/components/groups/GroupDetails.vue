@@ -10,12 +10,12 @@
         </v-card-title>
       </v-card>
 
-      <v-card class="mt-2" v-if="!loading">
+      <v-card class="mt-2" v-if="pageLoaded">
         <v-card-title primary-title>
           <div>
             <h3 class="headline mb-0">{{ $t("groups.details.title") }}</h3>
             <div>{{ $t("groups.manager") }}: {{ getManagerName() }}</div>
-            <div>{{ $t("groups.details.member-count") }}: {{group.memberList.length}}</div>
+	    <div>{{ $t("groups.details.member-count") }}: {{group.memberList.filter(ev => ev.active).length}}</div>
           </div>
         </v-card-title>
       </v-card>
