@@ -13,6 +13,7 @@ from ..places.test_places import create_multiple_locations
 from ..teams.models import Team, TeamMember, TeamSchema, TeamMemberSchema
 
 
+
 class RandomLocaleFaker:
     """Generate multiple fakers for different locales."""
 

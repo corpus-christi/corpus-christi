@@ -10,6 +10,7 @@ from .. import db
 from ..images.models import Image, ImageGroup
 from ..people.models import Role, Manager, Account
 
+
 # ---- Group
 
 group_schema = GroupSchema()
