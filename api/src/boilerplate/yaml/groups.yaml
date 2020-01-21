@@ -24,10 +24,6 @@ entities:
         type: boolean
         required: true
         default: true
-      - name: manager_id
-        type: integer
-        foreign-key: people_manager.id
-        required: true
     relationships:
       - name: managers
         related-model: GroupManager
@@ -118,4 +114,4 @@ entities:
       - name: manager_id
         type: integer
         primary-key: true
-        foreign-key: groups_manager.id
+        foreign-key: people_manager.id

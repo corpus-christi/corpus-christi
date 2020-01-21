@@ -14,8 +14,6 @@ class Group(Base):
     id = Column(Integer, primary_key=True)
     name = Column(StringTypes.MEDIUM_STRING, nullable=False)
     description = Column(StringTypes.LONG_STRING, nullable=False)
-    manager_id = Column(Integer, ForeignKey(
-        'people_manager.id'), nullable=False)
     active = Column(Boolean, nullable=False, default=True)
     managers = relationship('GroupManager', backref='groups', lazy=True)
     members = relationship('Member', backref='group', lazy=True)
@@ -32,7 +30,6 @@ class GroupSchema(Schema):
     name = fields.String(required=True, validate=Length(min=1))
     description = fields.String(required=True, validate=Length(min=1))
     active = fields.Boolean(required=True)
-    manager_id = fields.Integer(data_key='managerId', required=True)
     member_list = fields.Nested('MemberSchema', data_key="memberList", many=True, only=[
                                 'person', 'joined', 'active', 'id'])
     manager_info = fields.Nested('ManagerSchema', data_key="managerInfo", only=[
@@ -117,7 +114,7 @@ class GroupManager(Base):
     group_id = Column(Integer, ForeignKey(
         'groups_group.id'), primary_key=True)
     manager_id = Column(Integer, ForeignKey(
-        'groups_manager.id'), primary_key=True)
+        'people_manager.id'), primary_key=True)
 
     def __repr__(self):
         return f"<GroupManager(group_id={self.group_id},manager_id={self.manager_id})>"

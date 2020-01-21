@@ -202,6 +202,7 @@ class Manager(Base):
                            lazy=True, remote_side=[id])
     groups = relationship('GroupManager', backref='managers', lazy=True)
     person = relationship("Person", backref=backref("manager", uselist=False))
+    manager = relationship("Manager", backref="subordinate", lazy=True, remote_side="Manager.id")
 
     def __repr__(self):
         return f"<Manager(id={self.id})>"
@@ -216,4 +217,3 @@ class ManagerSchema(Schema):
     description_i18n = fields.String(
         data_key='description_i18n', required=True)
     person = fields.Nested('PersonSchema', dump_only=True)
-    group_id = fields.Integer(data_key='groupId', required=True)
