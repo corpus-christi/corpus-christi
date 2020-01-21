@@ -38,7 +38,7 @@
             v-model="person.firstName"
             v-bind:label="$t('person.name.first') + ' *'"
             name="firstName"
-            v-validate="'required|alpha_spaces'"
+            v-validate="'required: true, regex:/[A-Za-zs\'-]$'"
             v-bind:error-messages="errors.collect('firstName')"
             :readonly="formDisabled"
             data-cy="first-name"
@@ -48,7 +48,7 @@
             v-model="person.lastName"
             v-bind:label="$t('person.name.last') + ' *'"
             name="lastName"
-            v-validate="'required|alpha_spaces'"
+            v-validate="'required: true, regex:/[A-Za-z\s\'-]$/'"
             v-bind:error-messages="errors.collect('lastName')"
             :readonly="formDisabled"
             data-cy="last-name"
@@ -58,7 +58,7 @@
             v-model="person.secondLastName"
             v-bind:label="$t('person.name.second-last')"
             name="secondLastName"
-            v-validate="'alpha_spaces'"
+            v-validate="'alpha_dash'"
             v-bind:error-messages="errors.collect('secondLastName')"
             :readonly="formDisabled"
             data-cy="second-last-name"
@@ -130,9 +130,9 @@
           <!-- User name (for creating new account) -->
           <v-text-field
             v-if="showAccountInfo"
-            v-model="account.username"
+            v-model="person.username"
             v-bind:label="
-              $t('account.username') + (isAccountRequired ? ' *' : '')
+              $t('person.username') + (isAccountRequired ? ' *' : '')
             "
             name="username"
             v-validate="{
@@ -148,11 +148,11 @@
           <!-- Password (new or update) -->
           <v-text-field
             v-if="showAccountInfo"
-            v-model="account.password"
+            v-model="person.password"
             type="password"
             ref="pwdField"
             v-bind:label="
-              $t('account.password') + (isAccountRequired ? ' *' : '')
+              $t('person.password') + (isAccountRequired ? ' *' : '')
             "
             name="password"
             v-validate="`${hasUsername}|min:8`"
@@ -163,9 +163,9 @@
           <!-- Password confirmation (new or update) -->
           <v-text-field
             v-if="showAccountInfo"
-            v-model="account.repeatPassword"
+            v-model="repeatPassword"
             type="password"
-            v-bind:label="$t('account.repeat-password')"
+            v-bind:label="$t('person.repeat-password')"
             name="repeat-password"
             v-validate="`confirmed:pwdField|${hasUsername}`"
             v-bind:error-messages="errors.collect('repeat-password')"
@@ -371,16 +371,14 @@ export default {
         gender: "",
         birthday: "",
         email: "",
+        username: "",
+        password: "",
         phone: "",
-        locationId: 0,
+        addressId: 0,
         attributesInfo: []
       },
 
-      account: {
-        username: "",
-        password: "",
-        repeatPassword: ""
-      },
+      repeatPassword: "",
 
       attributeFormData: {},
 
@@ -396,9 +394,9 @@ export default {
       return Object.keys(this.person);
     },
 
-    accountKeys() {
-      return Object.keys(this.account);
-    },
+    // accountKeys() {
+    //   return Object.keys(this.account);
+    // },
 
     ...mapGetters(["currentLanguageCode"]),
 
@@ -411,7 +409,7 @@ export default {
       );
     },
     hasUsername() {
-      return this.account.username.length ? "required" : "";
+      return this.person.username.length ? "required" : "";
     },
     getTodayString() {
       let today = new Date();
@@ -475,9 +473,9 @@ export default {
       for (let key of this.personKeys) {
         this.person[key] = "";
       }
-      for (let key of this.accountKeys) {
-        this.account[key] = "";
-      }
+      // for (let key of this.accountKeys) {
+      //   this.account[key] = "";
+      // }
       this.$refs.attributeForm.clear();
       this.showAddressForm = false;
       this.showImageChooser = false;
@@ -522,7 +520,7 @@ export default {
     },
 
     saveAddress(resp) {
-      this.person.locationId = resp.id;
+      this.person.addressId = resp.id;
       this.addressWasSaved = true;
       this.showAddressForm = false;
     },
@@ -702,12 +700,12 @@ export default {
           if (imageId > -1) {
             await this.addImage(response.data.id, imageId);
           }
-          if (this.account.username && this.account.password) {
-            this.addAccount(response.data.id).then(() => {
-              this.$emit(emitMessage, response.data);
-              this.resetForm();
-            });
-          } else {
+          // if (this.account.username && this.account.password) {
+          //   this.addAccount(response.data.id).then(() => {
+          //     this.$emit(emitMessage, response.data);
+          //     this.resetForm();
+          //   });          } 
+          else {
             this.$emit(emitMessage, response.data);
             this.resetForm();
           }
@@ -718,22 +716,22 @@ export default {
         });
     },
 
-    addAccount(personId) {
-      return this.$http
-        .post("/api/v1/people/accounts", {
-          username: this.account.username,
-          password: this.account.password,
-          active: true,
-          personId: personId
-        })
-        .then(resp => {
-          console.log("ADDED", resp);
-        })
-        .catch(err => {
-          this.resetForm();
-          console.error("FAILURE", err.response);
-        });
-    },
+    // addAccount(personId) {
+    //   return this.$http
+    //     .post("/api/v1/people/accounts", {
+    //       username: this.account.username,
+    //       password: this.account.password,
+    //       active: true,
+    //       personId: personId
+    //     })
+    //     .then(resp => {
+    //       console.log("ADDED", resp);
+    //     })
+    //     .catch(err => {
+    //       this.resetForm();
+    //       console.error("FAILURE", err.response);
+    //     });
+    //},
 
     addImage(personId, imageId) {
       return this.$http
@@ -767,7 +765,7 @@ export default {
     },
 
     removeLocationFromDatabase() {
-      if (this.person.locationId != 0 || this.person.locationId != "") {
+      if (this.person.addressId != 0 || this.person.addressId != "") {
         this.$http.post;
       }
     },

@@ -19,8 +19,8 @@ flask db upgrade
 
 set -e
 flask data load-all
-flask account new --first="Fred" --last="Ziffle" fred password
-flask account new --first="Quality" --last="Assurance" Cytest password
+#flask account new --first="Fred" --last="Ziffle" fred password
+#flask account new --first="Quality" --last="Assurance" Cytest password
 
 ## Creating More readable courses and diplomas (commented out because some of these commands are broken)
 #flask course new --prereq=6 "Alone low investment" "This is a fake course."

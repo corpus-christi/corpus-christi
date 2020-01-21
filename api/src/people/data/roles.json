@@ -4,11 +4,11 @@
     "locales": [
       {
         "locale_code": "en-US",
-        "name": "public"
+        "name": "Public"
       },
       {
         "locale_code": "es-EC",
-        "name": "público"
+        "name": "Público"
       }
     ]
   },
@@ -17,11 +17,11 @@
     "locales": [
       {
         "locale_code": "en-US",
-        "name": "infrastructure"
+        "name": "Infrastructure"
       },
       {
         "locale_code": "es-EC",
-        "name": "infraestructura"
+        "name": "Infraestructura"
       }
     ]
   },
@@ -30,11 +30,11 @@
     "locales": [
       {
         "locale_code": "en-US",
-        "name": "superuser"
+        "name": "Superuser"
       },
       {
         "locale_code": "es-EC",
-        "name": "superusuario"
+        "name": "Superusuario"
       }
     ]
   },
@@ -43,11 +43,11 @@
     "locales": [
       {
         "locale_code": "en-US",
-        "name": "translator"
+        "name": "Translator"
       },
       {
         "locale_code": "es-EC",
-        "name": "traductor"
+        "name": "Traductor"
       }
     ]
   },
@@ -56,11 +56,11 @@
     "locales": [
       {
         "locale_code": "en-US",
-        "name": "group administrator"
+        "name": "Group Administrator"
       },
       {
         "locale_code": "es-EC",
-        "name": "administrador del grupo"
+        "name": "Administrador del Grupo"
       }
     ]
   },
@@ -69,11 +69,11 @@
     "locales": [
       {
         "locale_code": "en-US",
-        "name": "group leader"
+        "name": "Group Leader"
       },
       {
         "locale_code": "es-EC",
-        "name": "lider de grupo"
+        "name": "Lider de Grupo"
       }
     ]
   },
@@ -82,11 +82,11 @@
     "locales": [
       {
         "locale_code": "en-US",
-        "name": "group overseer"
+        "name": "Group Overseer"
       },
       {
         "locale_code": "es-EC",
-        "name": "supervisor de grupo"
+        "name": "Supervisor de Grupo"
       }
     ]
   },
@@ -95,11 +95,11 @@
     "locales": [
       {
         "locale_code": "en-US",
-        "name": "registrar"
+        "name": "Registrar"
       },
       {
         "locale_code": "es-EC",
-        "name": "registrador"
+        "name": "Registrador"
       }
     ]
   },
@@ -108,11 +108,11 @@
     "locales": [
       {
         "locale_code": "en-US",
-        "name": "teaching assistant"
+        "name": "Teaching Assistant"
       },
       {
         "locale_code": "es-EC",
-        "name": "asistente de enseñanza"
+        "name": "Asistente de Enseñanza"
       }
     ]
   },
@@ -121,11 +121,11 @@
     "locales": [
       {
         "locale_code": "en-US",
-        "name": "event planner"
+        "name": "Event Planner"
       },
       {
         "locale_code": "es-EC",
-        "name": "organizador de eventos"
+        "name": "Organizador de Eventos"
       }
     ]
   },
@@ -134,11 +134,11 @@
     "locales": [
       {
         "locale_code": "en-US",
-        "name": "visitor"
+        "name": "Visitor"
       },
       {
         "locale_code": "es-EC",
-        "name": "visitante"
+        "name": "Visitante"
       }
     ]
   }

@@ -15,16 +15,10 @@
       "noDataText": "No data available"
     },
     "account": {
-      "active": "Active",
-      "inactive": "Inactive",
       "messages": {
         "added-ok": "Account added successfully",
         "updated-ok": "Account updated successfully"
-      },
-      "no-account": "Don't have an account?",
-      "password": "Password",
-      "repeat-password": "Repeat Password",
-      "username": "Username"
+      }
     },
     "actions": {
       "activate-account": "Activate",
@@ -318,6 +312,7 @@
       "account-information": "Account Information",
       "additional-information": "Additional Information",
       "attributes": "Attributes",
+      "dropdown-roles": "All Roles",
       "next": "Next",
       "optional": "Optional",
       "personal-information": "Personal Information",
@@ -364,8 +359,12 @@
         "last": "Last Name",
         "second-last": "Second Last Name"
       },
+      "no-account": "Don't have an account?",
+      "password": "Password",
       "phone": "Phone",
-      "settings": "Settings for {person}"
+      "repeat-password": "Repeat Password",
+      "settings": "Settings for {person}",
+      "username": "Username"
     },
     "places": {
       "address": {
@@ -488,16 +487,10 @@
       "noDataText": "Datos no disponibles"
     },
     "account": {
-      "active": "Activo",
-      "inactive": "Inactivo",
       "messages": {
         "added-ok": "Cuenta agregada exitosamente",
         "updated-ok": "Cuenta actualizada con \u00e9xito"
-      },
-      "no-account": "\u00bfNo tienes una cuenta?",
-      "password": "Contrase\u00f1a",
-      "repeat-password": "Repite la contrase\u00f1a",
-      "username": "Nombre de usuario"
+      }
     },
     "actions": {
       "activate-account": "Activar",
@@ -791,6 +784,7 @@
       "account-information": "Informaci\u00f3n de la cuenta",
       "additional-information": "Informaci\u00f3n Adicional",
       "attributes": "Atributas",
+      "dropdown-roles": "Todos los Papeles",
       "next": "Siguiente",
       "optional": "Opcional",
       "personal-information": "Informacion personal",
@@ -837,8 +831,12 @@
         "last": "Apellido",
         "second-last": "Segundo Apellido"
       },
+      "no-account": "\u00bfNo tienes una cuenta?",
+      "password": "Contrase\u00f1a",
       "phone": "Tel\u00e9fono",
-      "settings": "Configuraci\u00f3n de la {person}"
+      "repeat-password": "Repite la contrase\u00f1a",
+      "settings": "Configuraci\u00f3n de la {person}",
+      "username": "Nombre de usuario"
     },
     "places": {
       "address": {

@@ -54,30 +54,6 @@
       data-cy="person-table"
     >
       <template slot="items" slot-scope="props">
-        <td class="text-xs-center">
-          <span v-if="props.item.accountInfo">
-            <span v-if="props.item.accountInfo.active">
-              <v-tooltip bottom>
-                <v-icon size="16" slot="activator" data-cy="account-active-icon"
-                  >account_circle</v-icon
-                >
-                {{ $t("account.active") }}
-              </v-tooltip>
-            </span>
-
-            <span v-if="!props.item.accountInfo.active">
-              <v-tooltip bottom>
-                <v-icon
-                  size="16"
-                  slot="activator"
-                  data-cy="account-inactive-icon"
-                  >person_outline</v-icon
-                >
-                {{ $t("account.inactive") }}
-              </v-tooltip>
-            </span>
-          </span>
-        </td>
         <td :data-cy="'first-name-' + props.item.id">
           {{ props.item.firstName }}
         </td>
@@ -221,6 +197,7 @@
 </template>
 
 <script>
+import PersonForm from "./PersonForm";
 import PersonDialog from "../PersonDialog";
 import PersonAdminForm from "./AccountForm";
 
@@ -244,7 +221,6 @@ export default {
       adminDialog: {
         show: false,
         person: {},
-        account: {},
         rolesEnabled: false
       },
 
@@ -278,13 +254,6 @@ export default {
     headers() {
       return [
         {
-          text: this.$t("person.account"),
-          value: "person.accountInfo",
-          align: "center",
-          width: "3%",
-          sortable: false
-        },
-        {
           text: this.$t("person.name.first"),
           value: "firstName",
           width: "20%"
@@ -297,7 +266,7 @@ export default {
           class: "hidden-sm-and-down"
         },
         { text: this.$t("person.phone"), value: "phone", width: "20%" },
-        { text: this.$t("actions.header"), width: "17%", sortable: false }
+        { text: this.$t("actions.header"), width: "20%", sortable: false }
       ];
     },
     viewOptions() {
@@ -391,7 +360,7 @@ export default {
       this.rolesEnabled = false;
       // Fetch the person's account information (if any) before activating the dialog.
       this.$http
-        .get(`/api/v1/people/persons/${person.id}/account`)
+        .get(`/api/v1/people/persons/${person.id}`)
         .then(resp => {
           console.log("FETCHED ACCOUNT", resp);
           this.adminDialog.account = resp.data;

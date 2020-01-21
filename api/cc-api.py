@@ -17,11 +17,11 @@ from src.events.models import Event
 from src.groups.create_group_data import create_group_test_data
 from src.i18n.models import Language, I18NLocale
 from src.images.create_image_data import create_images_test_data
-from src.people.models import Person, Account, Role
-from src.people.test_people import create_multiple_people, create_multiple_accounts, create_multiple_managers, \
-    create_accounts_roles
+from src.people.models import Person, Role
+from src.people.test_people import create_multiple_people, create_multiple_managers, create_accounts_roles
 from src.places.models import Country
 from src.places.test_places import create_multiple_areas, create_multiple_addresses, create_multiple_locations
+
 
 app = create_app(os.getenv('CC_CONFIG') or 'default')
 
@@ -66,23 +66,23 @@ def load_attribute_types():
 
 @data_cli.command('load-all', help='Load everything')
 def load_all():
-    access_token = create_access_token(identity='test-user')
+    #access_token = create_access_token(identity='test-user')
     _load_locales()
     Country.load_from_file()
     Language.load_from_file()
     Role.load_from_file()
     Attribute.load_types_from_file()
     create_multiple_people(db.session, 17)
-    create_multiple_accounts(db.session, 0.25)
+    #create_multiple_accounts(db.session, 0.25)
     create_accounts_roles(db.session, 0.75)
-    access_token = create_access_token(identity='test-user')
+    #access_token = create_access_token(identity='test-user')
 
     create_multiple_areas(db.session, 5)
     create_multiple_addresses(db.session, 10)
     create_multiple_locations(db.session, 20)
 
     create_multiple_people(db.session, 17)
-    create_multiple_accounts(db.session, 0.25)
+    #create_multiple_accounts(db.session, 0.25)
     create_multiple_courses(db.session, 12)
     create_multiple_course_offerings(db.session, 25)
     create_multiple_prerequisites(db.session)
@@ -208,46 +208,49 @@ app.cli.add_command(data_cli)
 
 # ---- Users and Accounts
 
-user_cli = AppGroup('account', help="Maintain account data.")
+# user_cli = AppGroup('account', help="Maintain account data.")
+
+# #this has to be redone
+# #------------------------------------------------------------------------------------------------------------------------------------------------
+# @user_cli.command('new', help="Create new account")
+# @click.argument('username')
+# @click.argument('password')
+# @click.option('--first', help="First name")
+# @click.option('--last', help="Last name")
+# def create_account(username, password, first, last):
+#     first_name = first or 'Test'
+#     last_name = last or 'User'
+
+#     # Make sure no existing user.
+#     person = db.session.query(Account).filter_by(username=username).first()
+#     if person is not None:
+#         raise BadParameter(f"Already an account with username '{username}'")
+
+#     # Create the Person; commit to DB so we get ID
+#     person = Person(first_name=first_name, last_name=last_name)
+#     account = Account(username=username, password=password, person=person)
+#     db.session.add(account)
+#     db.session.commit()
+#     print(f"Created {person}")
+#     print(f"Created {account}")
 
 
-@user_cli.command('new', help="Create new account")
-@click.argument('username')
-@click.argument('password')
-@click.option('--first', help="First name")
-@click.option('--last', help="Last name")
-def create_account(username, password, first, last):
-    first_name = first or 'Test'
-    last_name = last or 'User'
+# @user_cli.command('password', help="Set password")
+# @click.argument('username')
+# @click.argument('password')
+# def update_password(username, password):
+#     person = db.session.query(Account).filter_by(username=username).first()
+#     if person is None:
+#         raise BadParameter(f"No account with username '{username}'")
 
-    # Make sure no existing user.
-    person = db.session.query(Account).filter_by(username=username).first()
-    if person is not None:
-        raise BadParameter(f"Already an account with username '{username}'")
-
-    # Create the Person; commit to DB so we get ID
-    person = Person(first_name=first_name, last_name=last_name)
-    account = Account(username=username, password=password, person=person)
-    db.session.add(account)
-    db.session.commit()
-    print(f"Created {person}")
-    print(f"Created {account}")
+#     person.password = password
+#     db.session.commit()
+#     print(f"Password for '{username}' updated")
 
 
-@user_cli.command('password', help="Set password")
-@click.argument('username')
-@click.argument('password')
-def update_password(username, password):
-    person = db.session.query(Account).filter_by(username=username).first()
-    if person is None:
-        raise BadParameter(f"No account with username '{username}'")
+# app.cli.add_command(user_cli)
 
-    person.password = password
-    db.session.commit()
-    print(f"Password for '{username}' updated")
-
-
-app.cli.add_command(user_cli)
+# #-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # ---- Courses and Relating to Courses
 

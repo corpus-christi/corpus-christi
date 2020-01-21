@@ -25,8 +25,9 @@
               solo
               single-line
               :label="$t('people.title-roles')"
-              :items="translatedRoles"
-            />
+              :items="translatedRoles.concat(viewOption)"
+              v-model="viewStatus"
+            ></v-select>
           </div>
         </v-flex>
       </v-layout>
@@ -42,30 +43,6 @@
       data-cy="roles-table"
     >
       <template slot="items" slot-scope="props">
-        <td class="text-xs-center">
-          <span v-if="props.item.accountInfo">
-            <span v-if="props.item.accountInfo.active">
-              <v-tooltip bottom>
-                <v-icon size="16" slot="activator" data-cy="account-active-icon"
-                  >account_circle</v-icon
-                >
-                {{ $t("account.active") }}
-              </v-tooltip>
-            </span>
-
-            <span v-if="!props.item.accountInfo.active">
-              <v-tooltip bottom>
-                <v-icon
-                  size="16"
-                  slot="activator"
-                  data-cy="account-inactive-icon"
-                  >person_outline</v-icon
-                >
-                {{ $t("account.inactive") }}
-              </v-tooltip>
-            </span>
-          </span>
-        </td>
         <td :data-cy="'first-name-' + props.item.id">
           {{ props.item.firstName }}
         </td>
@@ -73,11 +50,11 @@
           {{ props.item.lastName }}
         </td>
         <td :data-cy="'username-' + props.item.id">
-          {{ props.item.accountInfo.username }}
+          {{ props.item.username }}
         </td>
         <td :data-cy="'roles-' + props.item.id">
           <v-chip
-            v-for="role in props.item.accountInfo.roles"
+            v-for="role in props.item.roles"
             :key="role.id"
             small
             >{{ $t(role.nameI18n) }}</v-chip
@@ -152,6 +129,7 @@ export default {
 
   data() {
     return {
+      viewStatus: this.allPeople,
       personRoles: [],
       personDialog: {
         show: false,
@@ -177,7 +155,6 @@ export default {
       showingArchived: false,
       selected: [],
       allPeople: [],
-      allAccount: [],
       search: "",
       data: {}
     };
@@ -187,33 +164,53 @@ export default {
     headers() {
       return [
         {
-          text: this.$t("person.account"),
-          value: "person.accountInfo",
-          align: "center",
-          width: "3%",
-          sortable: false
-        },
-        {
           text: this.$t("person.name.first"),
           value: "firstName",
           width: "15%"
         },
         { text: this.$t("person.name.last"), value: "lastName", width: "15%" },
         {
-          text: this.$t("account.username"),
-          value: "accountInfo.username",
+          text: this.$t("person.username"),
+          value: "person.username",
           width: "15%"
         },
         {
           text: this.$t("people.title-roles"),
-          value: "accountInfo.roles",
+          value: "person.roles",
           width: "35%"
         },
         { text: this.$t("actions.header"), width: "17%", sortable: false }
       ];
     },
     peopleToDisplay() {
-      return this.allAccount;
+      switch (this.viewStatus) {
+        case 1:
+          return this.rolePublic;
+        case 2:
+          return this.roleInfrastructure;
+        case 3:
+          return this.roleSuperuser;
+        case 4:
+          return this.roleTranslator;
+        case 5:
+          return this.roleGroupAdmin;
+        case 6:
+          return this.roleGroupLeader;
+        case 7:
+          return this.roleGroupOverseer;
+        case 8:
+          return this.roleRegistrar;
+        case 9:
+          return this.roleTeachingAssistant;
+        case 10:
+          return this.roleEventPlanner;
+        case 11:
+          return this.roleVisitor;
+        case "allRoles":
+          return this.allPeople;
+        default:
+          return this.allPeople;
+      }
     },
     translatedRoles() {
       return this.rolesList.map(element => {
@@ -222,18 +219,54 @@ export default {
           value: element.value
         };
       });
+    },
+    viewOption() {
+      return [
+        {
+          text: this.$t("people.dropdown-roles"),
+          value: "allRoles"
+        }
+      ];
     }
   },
 
   watch: {
+    //This needs cleaned up in the future
     peopleList(all_people) {
       this.allPeople = all_people;
-      this.allAccount = this.allPeople.filter(
-        person => person.accountInfo && person.active
+      this.rolePublic = this.allPeople.filter(person =>
+        person.roles.some(role => role.id === 1)
       );
-    },
-    rolesList(all_roles) {
-      this.rolesList = all_roles;
+      this.roleInfrastructure = this.allPeople.filter(person =>
+        person.roles.some(role => role.id === 2)
+      );
+      this.roleSuperuser = this.allPeople.filter(person =>
+        person.roles.some(role => role.id === 3)
+      );
+      this.roleTranslator = this.allPeople.filter(person =>
+        person.roles.some(role => role.id === 4)
+      );
+      this.roleGroupAdmin = this.allPeople.filter(person =>
+        person.roles.some(role => role.id === 5)
+      );
+      this.roleGroupLeader = this.allPeople.filter(person =>
+        person.roles.some(role => role.id === 6)
+      );
+      this.roleGroupOverseer = this.allPeople.filter(person =>
+        person.roles.some(role => role.id === 7)
+      );
+      this.roleRegistrar = this.allPeople.filter(person =>
+        person.roles.some(role => role.id === 8)
+      );
+      this.roleTeachingAssistant = this.allPeople.filter(person =>
+        person.roles.some(role => role.id === 9)
+      );
+      this.roleEventPlanner = this.allPeople.filter(person =>
+        person.roles.some(role => role.id === 10)
+      );
+      this.roleVisitor = this.allPeople.filter(person =>
+        person.roles.some(role => role.id === 11)
+      );
     },
     tableLoaded(loading) {
       this.tableLoaded = loading;
@@ -242,6 +275,7 @@ export default {
 
   methods: {
     // ---- Person Administration
+    verifyPublicRole() {},
 
     activatePersonDialog(person = {}, editMode = false) {
       this.personDialog.editMode = editMode;
@@ -274,7 +308,7 @@ export default {
       this.adminDialog.rolesEnabled = true;
       // Fetch the person's account information (if any) before activating the dialog.
       this.$http
-        .get(`/api/v1/people/persons/${person.id}/account`)
+        .get(`/api/v1/people/persons/${person.id}`)
         .then(resp => {
           console.log("FETCHED ACCOUNT", resp);
           this.adminDialog.account = resp.data;
@@ -286,20 +320,20 @@ export default {
       this.adminDialog.show = false;
     },
 
-    addAccount(account) {
+    addAccount(person) {
       this.$http
-        .post("/api/v1/people/accounts", account)
+        .post("/api/v1/people/persons", person)
         .then(resp => {
-          console.log("ADDED ACCOUNT", resp);
+          console.log("Person ADDED", resp);
           this.refreshPeopleList();
           this.showSnackbar(this.$t("account.messages.added-ok"));
         })
         .catch(err => console.error("FAILURE", err.response));
     },
 
-    updateAccount(accountId, account) {
+    updateAccount(personId, person) {
       this.$http
-        .patch(`/api/v1/people/accounts/${accountId}`, account)
+        .patch(`/api/v1/people/accounts/${personId}`, person)
         .then(resp => {
           console.log("PATCHED ACCOUNT", resp);
           this.refreshPeopleList();
@@ -308,9 +342,9 @@ export default {
         .catch(err => console.error("FAILURE", err.response));
     },
 
-    deactivateAccount(accountId) {
+    deactivateAccount(personId) {
       this.$http
-        .put(`/api/v1/people/accounts/deactivate/${accountId}`)
+        .put(`/api/v1/people/accounts/deactivate/${personId}`)
         .then(resp => {
           console.log("DEACTIVATED ACCOUNT", resp);
           this.showSnackbar(this.$t("person.messages.account-deactivate"));
@@ -319,9 +353,9 @@ export default {
         .catch(err => console.error("FAILURE", err.response));
     },
 
-    reactivateAccount(accountId) {
+    reactivateAccount(personId) {
       this.$http
-        .put(`/api/v1/people/accounts/activate/${accountId}`)
+        .put(`/api/v1/people/accounts/activate/${personId}`)
         .then(resp => {
           console.log("REACTIVATED ACCOUNT", resp);
           this.refreshPeopleList();
