@@ -7,6 +7,7 @@
 PSQL_HOST = '127.0.0.1'
 PSQL_USER = 'user'
 PSQL_PASS = 'password'
+PSQL_DB = 'dbname'
 
 FLASK_SECRET_KEY = 'big secret'
 JWT_SECRET_KEY = 'super secret'
