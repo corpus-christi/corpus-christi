@@ -1,7 +1,7 @@
 import os
 
 from flask import json
-from marshmallow import fields, Schema, pre_load
+from marshmallow import fields, Schema, pre_load, INCLUDE
 from marshmallow.validate import Length, Range, OneOf
 from sqlalchemy import Column, Integer, String, Date, ForeignKey, Boolean, Table
 from sqlalchemy.orm import relationship, backref
@@ -102,7 +102,7 @@ class PersonSchema(Schema):
     username = fields.String(required=True, validate=Length(min=1))
     password = fields.String(attribute='password_hash', load_only=True,
                              required=True, validate=Length(min=6))
-    confirmed = fields.Boolean()
+    confirmed = fields.Boolean()#dump_only=True)
     #the end of the important fields from account
     active = fields.Boolean(required=True)
     address_id = fields.Integer(data_key='addressId', allow_none=True)
@@ -111,8 +111,8 @@ class PersonSchema(Schema):
  #       'AccountSchema', allow_none=True, only=['username', 'id', 'active', 'roles'])
 
     attributesInfo = fields.Nested('PersonAttributeSchema', many=True)
-    images = fields.Nested('ImagePersonSchema', many=True, exclude=['person'], dump_only=True)
-    roles = fields.Nested('RoleSchema', many=True)
+    images = fields.Nested('ImagePersonSchema', many=True, exclude=['person'])#, dump_only=True)
+    roles = fields.Nested('RoleSchema', many=True, dump_only=True)
 
     @pre_load
     def hash_password(self, data):
@@ -121,8 +121,10 @@ class PersonSchema(Schema):
             data['password'] = generate_password_hash(data['password'])
         return data
 
-#    class Meta:
-#        exclude = ("roles", "confirmed")
+    class Meta:
+        unknown = INCLUDE
+    #    exclude = ("roles", "confirmed")
+    #    dump_only = ['role']
 
 
 
