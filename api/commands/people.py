@@ -6,9 +6,9 @@ from src.people.models import Person
 
 
 def create_account_cli(app):
-    user_cli = AppGroup('accounts', help="Maintain accounts.")
+    user_cli = AppGroup('people', help="Maintain accounts.")
 
-    @user_cli.command('new', help="Create new account")
+    @user_cli.command('new', help="Create new person")
     @click.argument('username')
     @click.argument('password')
     @click.option('--first', help="First name")
@@ -28,7 +28,7 @@ def create_account_cli(app):
         db.session.commit()
         print(f"Created {person}")
 
-    @user_cli.command('password', help="Set password")
+    @user_cli.command('password', help="Change password")
     @click.argument('username')
     @click.argument('password')
     def update_password(username, password):

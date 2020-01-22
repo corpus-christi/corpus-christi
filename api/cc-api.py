@@ -1,6 +1,6 @@
 import os
 
-from commands.accounts import create_account_cli
+from commands.people import create_account_cli
 from commands.app import create_app_cli
 from commands.courses import create_course_cli
 from commands.events import create_event_cli
