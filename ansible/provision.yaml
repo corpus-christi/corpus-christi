@@ -37,6 +37,7 @@
         - postgresql
         - python3-venv
         - python3-psycopg2
+        - supervisor
         - htop
         - tree
         - silversearcher-ag
@@ -113,29 +114,6 @@
         name: "{{ postgres.database }}"
         owner: "{{ postgres.username }}"
 
-- name: provision application
-  hosts: staging, production
-  tags: build, update, flask
-  become: yes
-  become_user: "{{ cc_username }}"
-  vars_files:
-    - public.yaml
-  environment:
-    - FLASK_APP: "{{ cc_api_abs_dir }}/cc-api.py"
-    - FLASK_ENV: production
-    - FLASK_DEBUG: 0
-    - CC_CONFIG: prod
-  tasks:
-    - name: create migration
-      command:
-        cmd: "{{ venv_abs_dir }}/bin/flask db migrate"
-        chdir: "{{ cc_api_abs_dir }}"
-
-    - name: upgrade database
-      command:
-        cmd: "{{ venv_abs_dir }}/bin/flask db upgrade"
-        chdir: "{{ cc_api_abs_dir }}"
-
 - name: build user interface
   hosts: all
   tags: build, update
@@ -153,34 +131,55 @@
         chdir: "{{ cc_ui_abs_dir }}"
         cmd: yarn build
 
-- name: provision process manager
-  hosts: production, staging
-  tags: pm2, update
+- name: provision application
+  hosts: staging, production
+  tags: build, update, flask
   become: yes
   become_user: "{{ cc_username }}"
   vars_files:
     - public.yaml
+  environment:
+    - FLASK_APP: "{{ cc_api_abs_dir }}/cc-api.py"
+    - FLASK_ENV: production
+    - FLASK_DEBUG: 0
+    - CC_CONFIG: prod
   tasks:
-    - name: install pm2 # run as root, installs in /usr/local/bin
-      become_user: root
-      yarn:
-        name: pm2
-        global: yes
+    - name: create migration
+      command:
+        cmd: "{{ venv_abs_dir }}/bin/flask {{ item }}"
+        chdir: "{{ cc_api_abs_dir }}"
+      loop:
+        - db migrate
+        - db upgrade
+        - data load-attribute-types
+        - data load-countries
+        - data load-languages
+        - data load-locales
+        - data load-roles
 
-    - name: create pm2 directory
+- name: provision supervisor
+  hosts: production, staging
+  tags: supervisor, update
+  become: yes
+  vars_files:
+    - public.yaml
+  tasks:
+    - name: instantiate supervisor template
+      template:
+        src: templates/supervisor.conf
+        dest: "{{ supervisor_conf_abs_dir }}/corpus-christi.conf"
+        mode: 0444
+
+    - name: ensure log directory exists
       file:
-        path: "{{ cc_pm2_abs_dir }}"
+        path: "{{ cc_log_abs_dir }}"
         state: directory
         mode: 0755
 
-    - name: configure pm2
-      template:
-        src: templates/ecosystem.config.js
-        dest: "{{ cc_pm2_abs_dir }}/ecosystem.config.js"
-        mode: 0444
-
     - name: start server
-      command: pm2 start "{{ cc_pm2_abs_dir }}/ecosystem.config.js"
+      supervisorctl:
+        name: corpus-christi
+        state: restarted
 
 - name: provision nginx
   hosts: production, staging

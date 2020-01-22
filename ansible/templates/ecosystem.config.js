@@ -2,7 +2,8 @@ module.exports = {
   apps: [
     {
       name: "cc-server",
-      script: "dist/main.js",
+      cwd: "{{ venv_abs_dir }}",
+      script: "./bin/flask run",
       autorestart: false,
       watch: false,
       env: {
@@ -11,7 +12,6 @@ module.exports = {
         FLASK_DEBUG: 0,
         CC_CONFIG: "prod"
       },
-      cwd: "{{ venv_abs_dir }}/bin/flask run"
     }
   ]
 };
