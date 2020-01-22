@@ -85,5 +85,12 @@ places:
     edit:
       en: Edit Area
       es: Área de Edición
+    confirm:
+      activate:
+        en: Are you sure you want to restore this area?
+        es: ¿Estás seguro de que deseas restaurar esta zona?
+      deactivate:
+        en: Are you sure you want to archive this area?
+        es: ¿Estás seguro de que deseas archivar esta zona?
 
 
