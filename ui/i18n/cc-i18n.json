@@ -361,6 +361,10 @@
       },
       "area": {
         "area": "Area",
+        "confirm": {
+          "activate": "Are you sure you want to restore this area?",
+          "deactivate": "Are you sure you want to archive this area?"
+        },
         "create-area": "Create New Area",
         "edit": "Edit Area",
         "name": "Area Name",
@@ -817,6 +821,10 @@
       },
       "area": {
         "area": "Zona",
+        "confirm": {
+          "activate": "\u00bfEst\u00e1s seguro de que deseas restaurar esta zona?",
+          "deactivate": "\u00bfEst\u00e1s seguro de que deseas archivar esta zona?"
+        },
         "create-area": "Crear nueva \u00c1rea",
         "edit": "\u00c1rea de Edici\u00f3n",
         "name": "Nombre del \u00c1rea",

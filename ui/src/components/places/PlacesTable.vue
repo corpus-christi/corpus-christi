@@ -133,7 +133,13 @@
                   small
                   color="primary"
                   slot="activator"
-                  v-on:click="editLocation({address_id: props.item.id, allLocations: props.item.locations, editMode: true})"
+                  v-on:click="
+                    editLocation({
+                      address_id: props.item.id,
+                      allLocations: props.item.locations,
+                      editMode: true
+                    })
+                  "
                   data-cy="edit-locations"
                   :disabled="!props.item.locations.length"
                 >
@@ -148,7 +154,13 @@
                   small
                   color="primary"
                   slot="activator"
-                  v-on:click="newLocation({address_id: props.item.id, allLocations: [], editMode: false})"
+                  v-on:click="
+                    newLocation({
+                      address_id: props.item.id,
+                      allLocations: [],
+                      editMode: false
+                    })
+                  "
                   data-cy="add-location"
                 >
                   <v-icon small>add</v-icon>
@@ -391,7 +403,7 @@ export default {
         {
           text: this.$t("places.address.latitude"),
           width: "4%",
-          value: "latitude",
+          value: "latitude"
         },
         {
           text: this.$t("places.address.longitude"),
