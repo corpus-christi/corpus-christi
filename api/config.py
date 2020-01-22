@@ -16,7 +16,7 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 def psql_url(db_config):
     url_prefix = f'postgresql://{private.PSQL_USER}:{private.PSQL_PASS}@{private.PSQL_HOST}/'
 
-    if private.PSQL_DB:
+    if  hasattr(private, "PSQL_DB"):
         return url_prefix + private.PSQL_DB
     elif db_config == 'test':
         return url_prefix + 'cc-test'
