@@ -8,7 +8,7 @@
           </span>
         </v-stepper-step>
 
-        <v-divider></v-divider>
+        <v-divider />
 
         <v-stepper-step editable step="2" v-if="showAccountInfo">
           <span v-bind:class="{ 'red--text': stepTwoErrors }">
@@ -21,7 +21,7 @@
           >
         </v-stepper-step>
 
-        <v-divider></v-divider>
+        <v-divider />
 
         <v-stepper-step editable v-bind:step="showAccountInfo ? 3 : 2">
           <span v-bind:class="{ 'red--text': stepThreeErrors }">
@@ -42,7 +42,7 @@
             v-bind:error-messages="errors.collect('firstName')"
             :readonly="formDisabled"
             data-cy="first-name"
-          ></v-text-field>
+          />
 
           <v-text-field
             v-model="person.lastName"
@@ -52,7 +52,7 @@
             v-bind:error-messages="errors.collect('lastName')"
             :readonly="formDisabled"
             data-cy="last-name"
-          ></v-text-field>
+          />
 
           <v-text-field
             v-model="person.secondLastName"
@@ -62,7 +62,7 @@
             v-bind:error-messages="errors.collect('secondLastName')"
             :readonly="formDisabled"
             data-cy="second-last-name"
-          ></v-text-field>
+          />
 
           <v-radio-group
             v-model="person.gender"
@@ -70,8 +70,8 @@
             row
             data-cy="radio-gender"
           >
-            <v-radio v-bind:label="$t('person.male')" value="M"></v-radio>
-            <v-radio v-bind:label="$t('person.female')" value="F"></v-radio>
+            <v-radio v-bind:label="$t('person.male')" value="M" />
+            <v-radio v-bind:label="$t('person.female')" value="F" />
           </v-radio-group>
 
           <v-menu
@@ -97,14 +97,14 @@
               data-vv-validate-on="input"
               v-validate="'date_format:YYYY-MM-DD'"
               v-bind:error-messages="errors.collect('birthday')"
-            ></v-text-field>
+            />
             <v-date-picker
               v-bind:locale="currentLanguageCode"
               :max="getTodayString"
               v-model="person.birthday"
               @input="showBirthdayPicker = false"
               data-cy="birthday-picker"
-            ></v-date-picker>
+            />
           </v-menu>
 
           <v-text-field
@@ -117,14 +117,14 @@
             prepend-icon="email"
             data-cy="email"
             :readonly="formDisabled"
-          ></v-text-field>
+          />
           <v-text-field
             v-model="person.phone"
             v-bind:label="$t('person.phone')"
             prepend-icon="phone"
             data-cy="phone"
             :readonly="formDisabled"
-          ></v-text-field>
+          />
         </v-stepper-content>
         <v-stepper-content step="2" v-if="showAccountInfo">
           <!-- User name (for creating new account) -->
@@ -143,7 +143,7 @@
             v-bind:error-messages="errors.collect('username')"
             prepend-icon="person"
             data-cy="username"
-          ></v-text-field>
+          />
 
           <!-- Password (new or update) -->
           <v-text-field
@@ -159,7 +159,7 @@
             v-bind:error-messages="errors.collect('password')"
             prepend-icon="lock"
             data-cy="password"
-          ></v-text-field>
+          />
           <!-- Password confirmation (new or update) -->
           <v-text-field
             v-if="showAccountInfo"
@@ -171,7 +171,7 @@
             v-bind:error-messages="errors.collect('repeat-password')"
             prepend-icon="lock"
             data-cy="confirm-password"
-          ></v-text-field>
+          />
         </v-stepper-content>
         <v-stepper-content v-bind:step="showAccountInfo ? 3 : 2">
           <attribute-form
@@ -179,7 +179,7 @@
             :existingAttributes="person.attributesInfo"
             v-model="attributeFormData"
             ref="attributeForm"
-          ></attribute-form>
+          />
           <v-layout row justify-center align-space-around>
             <v-flex shrink>
               <v-btn
@@ -238,7 +238,7 @@
             data-cy="cancel"
             >{{ $t("actions.cancel") }}</v-btn
           >
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn color="primary" raised v-on:click="next" data-cy="next">
             {{ $t("people.next") }}
           </v-btn>
@@ -254,7 +254,7 @@
             data-cy="cancel"
             >{{ $t("actions.cancel") }}</v-btn
           >
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             color="primary"
             raised
@@ -278,7 +278,7 @@
             data-cy="cancel"
             >{{ $t("actions.cancel") }}</v-btn
           >
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             color="primary"
             outline
@@ -413,14 +413,13 @@ export default {
     },
     getTodayString() {
       let today = new Date();
-      let str = `${today.getFullYear()}-${(today.getMonth() + 1).toLocaleString(
+      return `${today.getFullYear()}-${(today.getMonth() + 1).toLocaleString(
         "en-US",
         { minimumIntegerDigits: 2, useGrouping: false }
       )}-${today.getDate().toLocaleString("en-US", {
         minimumIntegerDigits: 2,
         useGrouping: false
       })}`;
-      return str;
     },
 
     addressSaved() {
@@ -529,34 +528,34 @@ export default {
       this.stepOneErrors =
         this.errors.items.findIndex(element => {
           return (
-            element.field == "firstName" ||
-            element.field == "lastName" ||
-            element.field == "secondLastName" ||
-            element.field == "email" ||
-            element.field == "birthday"
+            element.field === "firstName" ||
+            element.field === "lastName" ||
+            element.field === "secondLastName" ||
+            element.field === "email" ||
+            element.field === "birthday"
           );
-        }) != -1;
+        }) !== -1;
       this.stepTwoErrors =
         this.errors.items.findIndex(element => {
           return (
-            element.field == "username" ||
-            element.field == "password" ||
-            element.field == "confirm-password"
+            element.field === "username" ||
+            element.field === "password" ||
+            element.field === "confirm-password"
           );
-        }) != -1;
+        }) !== -1;
       this.stepThreeErrors =
         this.errors.items.findIndex(element => {
           return (
-            element.field != "username" &&
-            element.field != "password" &&
-            element.field != "confirm-password" &&
-            element.field != "firstName" &&
-            element.field != "lastName" &&
-            element.field != "secondLastName" &&
-            element.field != "email" &&
-            element.field != "birthday"
+            element.field !== "username" &&
+            element.field !== "password" &&
+            element.field !== "confirm-password" &&
+            element.field !== "firstName" &&
+            element.field !== "lastName" &&
+            element.field !== "secondLastName" &&
+            element.field !== "email" &&
+            element.field !== "birthday"
           );
-        }) != -1;
+        }) !== -1;
     },
 
     changeAddressView(show) {
@@ -704,7 +703,7 @@ export default {
           //   this.addAccount(response.data.id).then(() => {
           //     this.$emit(emitMessage, response.data);
           //     this.resetForm();
-          //   });          } 
+          //   });          }
           else {
             this.$emit(emitMessage, response.data);
             this.resetForm();
@@ -765,7 +764,7 @@ export default {
     },
 
     removeLocationFromDatabase() {
-      if (this.person.addressId != 0 || this.person.addressId != "") {
+      if (this.person.addressId !== 0 || this.person.addressId !== "") {
         this.$http.post;
       }
     },

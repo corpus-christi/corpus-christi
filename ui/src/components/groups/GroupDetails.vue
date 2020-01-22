@@ -8,7 +8,8 @@
               {{ $t("groups.details.class-title") }}: {{ group.name }}
             </h3>
             <div>{{ group.description }}</div>
-          </div>Group
+          </div>
+          Group
         </v-card-title>
       </v-card>
 

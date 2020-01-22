@@ -45,7 +45,7 @@
             v-bind:label="$t('actions.search')"
             single-line
             hide-details
-          ></v-text-field>
+          />
         </v-flex>
         <v-flex md1>
           <v-select
@@ -82,13 +82,7 @@
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
-        <td>
-          <v-checkbox
-            v-model="props.selected"
-            primary
-            hide-details
-          ></v-checkbox>
-        </td>
+        <td><v-checkbox v-model="props.selected" primary hide-details /></td>
         <td>{{ props.item.person.firstName }}</td>
         <td>{{ props.item.person.lastName }}</td>
         <td>{{ props.item.person.email }}</td>
@@ -161,7 +155,7 @@
             data-cy="cancel-archive"
             >{{ $t("actions.cancel") }}</v-btn
           >
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="massArchive"
             color="primary"
@@ -199,10 +193,10 @@
             data-cy=""
             >{{ $t("actions.cancel") }}</v-btn
           >
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="addParticipants"
-            :disabled="addParticipantDialog.newParticipants.length == 0"
+            :disabled="addParticipantDialog.newParticipants.length === 0"
             color="primary"
             raised
             :loading="addParticipantDialog.loading"
@@ -214,8 +208,8 @@
     </v-dialog>
 
     <!-- New/Edit dialog -->
-    <person-dialog 
-      @snack="showSnackbar" 
+    <person-dialog
+      @snack="showSnackbar"
       @cancel="cancelPerson"
       @refreshPeople="getMembers"
       :dialog-state="dialogState"
@@ -347,7 +341,7 @@
 import EntitySearch from "../../EntitySearch";
 import PersonDialog from "../../PersonDialog";
 export default {
-  components: {EntitySearch, PersonDialog},
+  components: { EntitySearch, PersonDialog },
   name: "GroupMembers",
   data() {
     return {
@@ -489,17 +483,17 @@ export default {
     activateNewParticipantDialog() {
       this.addParticipantDialog.show = true;
     },
-	   
+
     openParticipantDialog() {
       this.activateNewParticipantDialog();
     },
-	   
+
     cancelNewParticipantDialog() {
       this.addParticipantDialog.show = false;
     },
 
     editPerson(person) {
-      this.dialogState= "edit";
+      this.dialogState = "edit";
       this.person = person;
     },
 
@@ -751,7 +745,7 @@ export default {
 </script>
 
 <style>
-  .v-icon {
-    display: inline-flex !important;
-  }
+.v-icon {
+  display: inline-flex !important;
+}
 </style>

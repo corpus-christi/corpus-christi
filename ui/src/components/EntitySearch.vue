@@ -74,7 +74,7 @@ export default {
 
   watch: {
     value(val) {
-      this.setSelected(val); 
+      this.setSelected(val);
     }
   },
 
@@ -99,7 +99,7 @@ export default {
       if (this.existingEntities) {
         return this.entities.filter(ent => {
           for (let otherEnt of this.existingEntities) {
-            if (ent[this.idField] == otherEnt[this.idField]) {
+            if (ent[this.idField] === otherEnt[this.idField]) {
               return false;
             }
           }
@@ -176,7 +176,7 @@ export default {
     },
     compare(a, b) {
       if (!a || !b) return false;
-      return a[this.idField] == b[this.idField];
+      return a[this.idField] === b[this.idField];
     }
   },
   mounted() {

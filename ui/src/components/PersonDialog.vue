@@ -1,5 +1,5 @@
 <template>
-<!-- New/Edit dialog -->
+  <!-- New/Edit dialog -->
   <v-dialog
     scrollable
     persistent
@@ -34,7 +34,7 @@ import PersonForm from "./people/PersonForm";
 export default {
   name: "PersonDialog",
   components: { PersonForm },
-  props: { 
+  props: {
     dialogState: {
       type: String,
       required: true
@@ -54,20 +54,20 @@ export default {
         show: false,
         title: "",
         person: {},
-        addAnotherEnabled: false,
+        addAnotherEnabled: false
       }
-    }
+    };
   },
 
   watch: {
     dialogState(val) {
-       if (val === "edit") this.editPerson(this.person);
-       if (val === "new") this.newPerson();
-    },
+      if (val === "edit") this.editPerson(this.person);
+      if (val === "new") this.newPerson();
+    }
   },
 
   methods: {
-      activatePersonDialog(person = {}, isEditTitle = false) {
+    activatePersonDialog(person = {}, isEditTitle = false) {
       this.personDialog.title = isEditTitle
         ? this.$t("person.actions.edit")
         : this.$t("person.actions.new");
@@ -87,7 +87,7 @@ export default {
 
     cancelPerson() {
       this.personDialog.show = false;
-      this.$emit('cancel');
+      this.$emit("cancel");
     },
 
     savePerson() {
@@ -95,7 +95,7 @@ export default {
       if (idx === -1) {
         this.$emit("snack", this.$t("person.messages.person-add"));
       } else {
-	this.$emit("snack", this.$t("person.messages.person-edit"));
+        this.$emit("snack", this.$t("person.messages.person-edit"));
       }
       this.cancelPerson();
       this.$emit("refreshPeople");
@@ -107,6 +107,5 @@ export default {
       this.$emit("snack", this.$t("person.messages.person-add"));
     }
   }
-}
-
+};
 </script>

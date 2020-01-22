@@ -16,7 +16,7 @@
             single-line
             box
             data-cy="search"
-          ></v-text-field>
+          />
         </v-flex>
         <v-flex md3>
           <div data-cy="view-dropdown">
@@ -26,7 +26,7 @@
               single-line
               :items="viewOptions"
               v-model="viewStatus"
-            ></v-select>
+            />
           </div>
         </v-flex>
         <v-flex shrink justify-self-end>
@@ -133,10 +133,10 @@
         {{ $t("actions.close") }}
       </v-btn>
     </v-snackbar>
-    
+
     <!-- New/Edit dialog -->
-    <person-dialog 
-      @snack="showSnackbar" 
+    <person-dialog
+      @snack="showSnackbar"
       @cancel="cancelPerson"
       @refreshPeople="refreshPeopleList"
       :dialog-state="dialogState"
@@ -179,7 +179,7 @@
             :disabled="confirmDialog.loading"
             >{{ $t("actions.cancel") }}</v-btn
           >
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="
               confirmAction(confirmDialog.action, confirmDialog.person)
@@ -197,7 +197,6 @@
 </template>
 
 <script>
-import PersonForm from "./PersonForm";
 import PersonDialog from "../PersonDialog";
 import PersonAdminForm from "./AccountForm";
 
@@ -213,7 +212,7 @@ export default {
       type: Array,
       required: true
     },
-    tableLoaded: Boolean,
+    tableLoaded: Boolean
   },
   data() {
     return {
@@ -343,9 +342,9 @@ export default {
     },
 
     confirmAction(action, person) {
-      if (action == "deactivate") {
+      if (action === "deactivate") {
         this.deactivatePerson(person);
-      } else if (action == "activate") {
+      } else if (action === "activate") {
         this.activatePerson(person);
       }
     },
