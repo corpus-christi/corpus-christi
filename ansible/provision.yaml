@@ -45,7 +45,7 @@
 
 - name: create account
   hosts: staging, production
-  tags: cc
+  tags: accounts
   become: yes
   tasks:
     - name: create corpus-christi user
@@ -55,8 +55,8 @@
         shell: /bin/bash
 
 - name: clone repository
-  hosts: all
-  tags: git, build, update
+  hosts: staging, production
+  tags: git, update
   become: yes
   become_user: "{{ cc_username }}"
   vars_files:
@@ -69,8 +69,8 @@
         version: master
 
 - name: prepare python
-  hosts: all
-  tags: python, build, update
+  hosts: staging, production
+  tags: python, update
   become: yes
   become_user: "{{ cc_username }}"
   vars_files:
@@ -82,8 +82,8 @@
         virtualenv_command: "{{ python3 }} -m venv venv"
         requirements: "{{ cc_api_abs_dir }}/requirements.txt"
 
-- name: create private file
-  hosts: all
+- name: instantiate private config
+  hosts: staging, production
   tags: config
   become: yes
   vars_files:
@@ -98,7 +98,7 @@
 
 - name: provision database
   hosts: staging, production
-  tags: db, build, update
+  tags: db
   become: yes
   become_user: postgres
   vars_files:
@@ -115,8 +115,8 @@
         owner: "{{ postgres.username }}"
 
 - name: build user interface
-  hosts: all
-  tags: build, update
+  hosts: staging, production
+  tags: ui, update
   become: yes
   become_user: "{{ cc_username }}"
   vars_files:
@@ -133,7 +133,7 @@
 
 - name: provision application
   hosts: staging, production
-  tags: build, update, flask
+  tags: flask
   become: yes
   become_user: "{{ cc_username }}"
   vars_files:
@@ -151,15 +151,15 @@
       loop:
         - db migrate
         - db upgrade
-        - data load-attribute-types
-        - data load-countries
-        - data load-languages
-        - data load-locales
-        - data load-roles
+        - app load-locales
+        - app load-countries
+        - app load-languages
+        - app load-roles
+        - app load-attribute-types
 
 - name: provision supervisor
-  hosts: production, staging
-  tags: supervisor, update
+  hosts: staging, production
+  tags: supervisor
   become: yes
   vars_files:
     - public.yaml
@@ -182,8 +182,8 @@
         state: restarted
 
 - name: provision nginx
-  hosts: production, staging
-  tags: nginx, update
+  hosts: staging, production
+  tags: nginx
   become: yes
   vars_files:
     - public.yaml
