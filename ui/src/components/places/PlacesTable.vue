@@ -155,6 +155,34 @@
                 </v-btn>
                 <span>{{ $t("places.location.new") }}</span>
               </v-tooltip>
+              <v-tooltip bottom>
+                <v-btn
+                  icon
+                  outline
+                  small
+                  color="primary"
+                  slot="activator"
+                  data-cy="deactivate-person"
+                  v-on:click="showLocationConfirmDialog('deactivate')"
+                >
+                  <v-icon small>archive</v-icon>
+                </v-btn>
+                <span>{{ $t("actions.tooltips.archive") }}</span>
+              </v-tooltip>
+              <v-tooltip bottom>
+                <v-btn
+                  icon
+                  outline
+                  small
+                  color="primary"
+                  slot="activator"
+                  data-cy="reactivate-person"
+                  v-on:click="showLocationConfirmDialog('activate')"
+                >
+                  <v-icon small>undo</v-icon>
+                </v-btn>
+                <span>{{ $t("actions.tooltips.activate") }}</span>
+              </v-tooltip>
             </v-flex>
           </v-layout>
         </v-container>
@@ -246,6 +274,41 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="confirmLocationDialog.show"
+      max-width="350px">
+      <v-card>
+        <v-card-text>{{ $t(confirmDialog.title) }}</v-card-text>
+        <v-autocomplete
+          name="location"
+          hide-details
+          solo
+          single-line
+          :label="$t('places.location.location')"
+          :items="confirmLocationDialog.locationInfo.allLocations"
+          v-model="confirmLocationDialog.selectedLocation"
+          v-validate="'required'"
+          :error-messages="errors.collect('location')"
+        ></v-autocomplete>
+        <v-card-actions>
+          <v-btn
+            v-on:click="cancelAction"
+            color="secondary"
+            flat
+            :disabled="confirmDialog.loading"
+            >{{ $t("actions.cancel") }}</v-btn
+          >
+          <v-spacer></v-spacer>
+          <v-btn
+            v-on:click="confirmActionLocation(confirmDialog.action, confirmDialog.selectedLocation)"
+            color="primary"
+            raised
+            :disabled="confirmDialog.loading"
+            :loading="confirmDialog.loading"
+            >{{ $t("actions.confirm") }}</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -288,6 +351,15 @@ export default {
         place: {},
         title: "",
         loading: false
+      },
+      confirmLocationDialog: {
+        show: false,
+        action: "",
+        locationInfo: {
+          address_id: 0,
+          allLocations: []
+        },
+        selectedLocation: 0
       },
       search: "",
       groupLocations: [],
@@ -360,7 +432,7 @@ export default {
       }
     },
     markers() {
-      return this.addresses.map(element => {
+      return this.addressesToDisplay.map(element => {
         return {
           position: {
             lat: element.latitude,
@@ -377,9 +449,10 @@ export default {
   },
   watch: {
     addresses(all_addresses) {
-      this.allAddresses = this.AddressesLocationsData(all_addresses);
-      this.activeAddresses = this.AddressesLocationsData(this.allAddresses.filter(person => person.active));
-      this.archivedAddresses = this.AddressesLocationsData(this.allAddresses.filter(person => !person.active));
+      this.makeAddressLists(all_addresses);
+    },
+    locations() {
+      this.makeAddressLists(this.addresses);
     }
   },
   methods: {
@@ -419,6 +492,11 @@ export default {
     cancelLocation() {
       this.locationDialog.show = false;
     },
+    makeAddressLists(all_addresses) {
+      this.allAddresses = this.AddressesLocationsData(all_addresses);
+      this.activeAddresses = this.AddressesLocationsData(this.allAddresses.filter(person => person.active));
+      this.archivedAddresses = this.AddressesLocationsData(this.allAddresses.filter(person => !person.active));
+    },
     AddressesLocationsData(addArr) {
       let c = [];
       for (let i = 0; i < addArr.length; i++) {
@@ -440,6 +518,11 @@ export default {
       this.confirmDialog.place = place;
       this.confirmDialog.show = true;
     },
+    showLocationConfirmDialog(action) {
+      this.confirmLocationDialog.title = "places.messages.confirm." + action;
+      this.confirmLocationDialog.action = action;
+      this.confirmLocationDialog.show = true;
+    },
     confirmAction(action, place) {
       if (action === "deactivate") {
         this.deactivateAddress(place);
@@ -447,8 +530,16 @@ export default {
         this.activateAddress(place);
       }
     },
+    confirmActionLocation(action, location){
+      if (action === "deactivate") {
+        this.deactivateLocation(location);
+      } else if (action === "activate") {
+        this.activateLocation(location);
+      }
+    },
     cancelAction() {
       this.confirmDialog.show = false;
+      this.confirmLocationDialog.show = false;
     },
     deactivateAddress(place) {
       console.log(place);
@@ -483,6 +574,41 @@ export default {
         .finally(() => {
           this.confirmDialog.loading = false;
           this.confirmDialog.show = false;
+        });
+    },
+    deactivateLocation(location) {
+      console.log(location);
+      this.$http
+        .patch(`/api/v1/places/locations/${location}`, { active: false })
+        .then(resp => {
+          console.log("DEACTIVATED LOCATION", resp);
+        })
+        .then(() => {
+          this.refreshPlacesList();
+        })
+        .catch(err => {
+          console.log("FAILED", err);
+        })
+        .finally(() => {
+          this.confirmLocationDialog.loading = false;
+          this.confirmLocationDialog.show = false;
+        });
+    },
+    activateLocation(location) {
+      this.$http
+        .patch(`/api/v1/places/locations/${location}`, { active: true })
+        .then(resp => {
+          console.log("ACTIVATED LOCATION", resp);
+        })
+        .then(() => {
+          this.refreshPlacesList();
+        })
+        .catch(err => {
+          console.log("FAILED", err);
+        })
+        .finally(() => {
+          this.confirmLocationDialog.loading = false;
+          this.confirmLocationDialog.show = false;
         });
     }
   }
