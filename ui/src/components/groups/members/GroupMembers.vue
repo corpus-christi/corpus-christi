@@ -93,7 +93,7 @@
         <td>{{ props.item.person.lastName }}</td>
         <td>{{ props.item.person.email }}</td>
         <td>{{ props.item.person.phone }}</td>
-        <td>
+        <td class="text-no-wrap">
           <template v-if="props.item.active">
             <v-tooltip bottom>
               <v-btn
