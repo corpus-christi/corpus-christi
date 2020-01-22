@@ -55,7 +55,7 @@ def create_person():
             request.json['person'][key] = None
 
     try:
-        valid_person = person_schema.load(request.json['person'])
+        valid_person = person_schema.load(request.json['person'], partial=True)
         valid_person_attributes = person_attribute_schema.load(
             request.json['attributesInfo'], many=True)
     except ValidationError as err:
@@ -117,6 +117,7 @@ def update_person(person_id):
         valid_person_attributes = person_attribute_schema.load(
             request.json['attributesInfo'], many=True)
     except ValidationError as err:
+        print(err)
         return jsonify(err.messages), 422
     for new_person_attribute in valid_person_attributes:
         old_person_attribute = db.session.query(PersonAttribute).filter_by(
