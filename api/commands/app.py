@@ -1,5 +1,4 @@
-# Needed for pruning events
-
+import click
 from flask.cli import AppGroup
 from src import db
 from src.attributes.models import Attribute
@@ -7,6 +6,14 @@ from src.i18n.models import Language, I18NLocale
 from src.people.models import Role
 from src.places.models import Country
 
+
+def no_rows(model):
+    count = db.session.query(model).count()
+    if count:
+        click.echo(f"{model.__name__} count is {count}; skipping")
+    else:
+        click.echo(f"No {model.__name__}; loading")
+    return count == 0
 
 
 def create_app_cli(app):
@@ -22,31 +29,28 @@ def create_app_cli(app):
 
     @app_cli.command('load-locales', help="Load locales")
     def load_locales():
-        _load_locales()
+        if no_rows(I18NLocale):
+            _load_locales()
 
     @app_cli.command('load-countries', help='Load country codes')
     def load_countries():
-        Country.load_from_file()
+        if no_rows(Country):
+            Country.load_from_file()
 
     @app_cli.command('load-languages', help='Load language codes')
     def load_languages():
-        Language.load_from_file()
+        if no_rows(Language):
+            Language.load_from_file()
 
     @app_cli.command('load-roles', help='Load roles')
     def load_roles():
-        Role.load_from_file()
+        if no_rows(Role):
+            Role.load_from_file()
 
     @app_cli.command('load-attribute-types', help='Load attribute types')
     def load_attribute_types():
-        Attribute.load_types_from_file()
-
-    @app_cli.command('load-all', help='Load everything')
-    def load_all():
-        _load_locales()
-        Country.load_from_file()
-        Language.load_from_file()
-        Role.load_from_file()
-        Attribute.load_types_from_file()
+        if no_rows(Attribute):
+            Attribute.load_types_from_file()
 
     @app_cli.command('clear-all', help="Clear ALL data - DANGEROUS")
     def clear():

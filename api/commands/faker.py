@@ -54,13 +54,4 @@ def create_faker_cli(app):
         # Always put this close to last (since it has dependencies in all of the major modules)
         create_images_test_data(db.session)
 
-    @faker_cli.command("all", help="Add all the fakes")
-    def fake_all():
-        fake_people()
-        fake_places()
-        fake_courses()
-        fake_events()
-        fake_groups()
-        fake_images()
-
     app.cli.add_command(faker_cli)
