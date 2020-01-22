@@ -25,7 +25,7 @@
               solo
               single-line
               :label="$t('people.title-roles')"
-              :items="translatedRoles"
+              :items="translatedRoles.concat(viewOption)"
               v-model="viewStatus"
             ></v-select>
           </div>
@@ -255,7 +255,7 @@ export default {
     viewOption() {
       return [
         {
-          text: this.$t("people.title-roles"),
+          text: this.$t("people.dropdown-roles"),
           value: "allRoles"
         }
       ];
