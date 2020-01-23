@@ -403,8 +403,10 @@
         "name": "Area Name",
         "new": "Add Area"
       },
+      "close": "close",
       "create-address": "Create an Address",
       "edit": "Edit Location",
+      "expand": "expand",
       "location": {
         "description": "Description",
         "location": "Location",
@@ -896,8 +898,10 @@
         "name": "Nombre del \u00c1rea",
         "new": "A\u00f1adir Zona"
       },
+      "close": "cerca",
       "create-address": "Crear una Direcci\u00f3n",
       "edit": "Editar Ubicaci\u00f3n",
+      "expand": "expandir",
       "location": {
         "description": "Descripci\u00f3n",
         "location": "Ubicaci\u00f3n",

@@ -13,7 +13,8 @@
             single-line
             hide-details
             data-cy="form-search"
-          />
+            ref="addressTable"
+          ></v-text-field>
         </v-flex>
 
         <v-flex md2>
@@ -53,11 +54,10 @@
       :search="search"
       expand
       item-key="id"
-      show-expand
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
-        <tr @click="props.expanded = !props.expanded">
+        <tr>
           <td>{{ props.item.name }}</td>
           <td>{{ props.item.address }}</td>
           <td>{{ props.item.city }}</td>
@@ -121,14 +121,30 @@
             </v-btn>
             <span>{{ $t("actions.tooltips.activate") }}</span>
           </v-tooltip>
+          <td v-if="!props.expanded">
+            <v-tooltip bottom>
+              <v-btn icon slot="activator" @click="props.expanded = !props.expanded">
+                <v-icon medium>expand_more</v-icon>
+              </v-btn>
+              <span>{{ $t("places.expand") }}</span>
+            </v-tooltip>
+          </td>
+          <td v-else>
+            <v-tooltip bottom>
+              <v-btn icon slot="activator" @click="props.expanded = !props.expanded">
+                <v-icon medium>expand_less</v-icon>
+              </v-btn>
+              <span>{{ $t("places.close") }}</span>
+            </v-tooltip>
+          </td>
         </tr>
       </template>
-      <template slot="expand" slot-scope="props">
+      <template slot="expand" slot-scope="props" class="grey lighten-3">
         <v-container class="grey lighten-3">
           <v-layout>
             <v-flex md2>{{ $t("places.location.location") }}: </v-flex>
             <v-flex>
-              <v-chip v-for="l in locationsToDisplay('deactivate', props.item.locations)" :key="l.value" small
+              <v-chip v-for="l in locationsToDisplay('deactivate', props.item.locations)" :key="l.value" small color="white"
                 >{{ l.text }}
               </v-chip>
             </v-flex>
@@ -152,7 +168,7 @@
                 >
                   <v-icon small>edit</v-icon>
                 </v-btn>
-                <span>{{ $t("actions.edit") }}</span>
+                <span>{{ $t("places.edit") }}</span>
               </v-tooltip>
               <v-tooltip bottom>
                 <v-btn
@@ -207,7 +223,6 @@
         </v-container>
       </template>
     </v-data-table>
-
     <v-dialog
       scrollable
       persistent
@@ -458,7 +473,6 @@ export default {
     locations: Array,
     countries: Array
   },
-
   data() {
     return {
       expanded: [],
@@ -526,7 +540,7 @@ export default {
         {
           text: this.$t("places.address.address"),
           value: "address",
-          width: "30%"
+          width: "25%"
         },
         {
           text: this.$t("places.address.city"),
@@ -535,15 +549,16 @@ export default {
         },
         {
           text: this.$t("places.address.latitude"),
-          width: "4%",
+          width: "6%",
           value: "latitude"
         },
         {
           text: this.$t("places.address.longitude"),
-          width: "4%",
+          width: "6%",
           value: "longitude"
         },
-        { text: this.$t("actions.header"), width: "17%", sortable: false }
+        { text: this.$t("actions.header"), width: "5%", sortable: false },
+        { text: "", width: "5%", sortable: false }
       ];
     },
     visiblePlaces() {

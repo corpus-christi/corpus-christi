@@ -127,4 +127,10 @@ places:
         en: Are you sure you want to archive this area?
         es: ¿Estás seguro de que deseas archivar esta zona?
 
+  expand:
+      en: expand
+      es: expandir
+  close:
+      en: close
+      es: cerca
 
