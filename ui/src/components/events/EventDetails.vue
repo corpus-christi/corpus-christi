@@ -157,6 +157,12 @@
         v-bind:saveLoading="eventDialog.saveLoading"
         v-on:cancel="cancelEvent"
         v-on:save="saveEvent"
+        addImageField
+        endDateTimeField
+        startDateTimeField
+        v-bind:titleLabel="$t('events.title')"
+        v-bind:descriptionLabel="$t('events.event-description')"
+        v-bind:locationLabel="$t('events.event-location')"
       />
     </v-dialog>
 
@@ -173,7 +179,7 @@
 </template>
 
 <script>
-import EventForm from "./EventForm";
+import CustomForm from "../CustomForm";
 import { mapGetters } from "vuex";
 import EventTeamDetails from "./EventTeamDetails";
 import EventAssetDetails from "./EventAssetDetails";
@@ -185,7 +191,7 @@ import arcoPlaceholder from "../../../assets/arco-placeholder.jpg";
 export default {
   name: "EventDetails",
   components: {
-    "event-form": EventForm,
+    "event-form": CustomForm,
     "event-team-details": EventTeamDetails,
     "event-asset-details": EventAssetDetails,
     "event-person-details": EventPersonDetails,
