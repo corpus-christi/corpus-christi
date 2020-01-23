@@ -18,7 +18,8 @@ flask db migrate
 flask db upgrade
 
 set -e
-flask data load-all
+./bin/load-all-app-data.sh
+
 #flask account new --first="Fred" --last="Ziffle" fred password
 #flask account new --first="Quality" --last="Assurance" Cytest password
 
