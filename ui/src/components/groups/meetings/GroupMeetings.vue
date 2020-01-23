@@ -33,6 +33,7 @@
         <td>{{ props.item.description }}</td>
         <td>{{ props.item.startTime | formatDate }}</td>
         <td>{{ props.item.stopTime | formatDate }}</td>
+	<td>{{ getDisplayLocation(props.item.location) }}</td>
         <td>
           <template v-if="props.item.active">
             <v-tooltip bottom>
@@ -206,6 +207,7 @@ export default {
           value: "stopTime",
           width: "22.5%"
         },
+        { text: this.$t("events.event-location"), value: "location_name" },
         { text: this.$t("actions.header"), sortable: false }
       ];
     }
@@ -216,52 +218,68 @@ export default {
       this.meetingDialog.editMode = true;
       this.activateMeetingDialog();
     },
+
     activateCreateMeetingDialog() {
       this.meetingDialog.editMode = false;
       this.activateMeetingDialog();
     },
+
     activateMeetingDialog() {
       this.meetingDialog.show = true;
     },
+
     cancelMeetingDialog() {
       this.meetingDialog.show = false;
     },
+
     saveMeeting(meeting) {
-      console.log("saveMeeting meeting");
+      this.meetingDialog.saveLoading = true;
+
+      meeting.groupId = this.$route.params.group;
+      meeting.addressId = meeting.location.address.id;
+      meeting.startTime = meeting.start;
+      meeting.stopTime = meeting.end;
+
+      delete meeting.location;
+      delete meeting.start;
+      delete meeting.end;
       console.log(meeting);
-      this.meetingDialog.loading = true;
-      let promises = [];
 
       const existingMeeting = this.meetings.find(({ id }) => id === meeting.id);
       if (typeof existingMeeting === "undefined") {
-        // create a new meeting
-        this.createNewMeeting(meeting);
+        this.createMeeting(meeting);
       } else {
-        // update the exiting meeting
-        this.updateExistingMeeting(meeeting);
-      }
-      // for (let person of this.meetingDialog.newMeetings) {
-      //   const idx = this.meetings.findIndex(
-      //     gr_pe => gr_pe.person.person_id === person.id
-      //   );
-      //   if (idx === -1) {
-      //     promises.push(this.addParticipant(person.id));
-      //   }
-      // }
+        this.updateMeeting(meeting);
+        }
+    },
 
-      Promise.all(promises)
+    createMeeting(meeting) {
+      return this.$http.post(`/api/v1/groups/meetings`, meeting)
         .then(() => {
+          console.log("meeting created");
           this.showSnackbar(this.$t("groups.messages.meeting-added"));
-          this.addMeetingDialog.loading = false;
-          this.addMeetingDialog.show = false;
-          this.addMeetingDialog.newMeetings = [];
+          this.meetingDialog.saveLoading = false;
+          this.meetingDialog.show = false;
           this.getMeetings();
         })
         .catch(err => {
           console.log(err);
-          this.addMeetingDialog.loading = false;
+          this.meetingDialog.saveLoading = false;
           this.showSnackbar(this.$t("groups.messages.error-adding-meeting"));
         });
+    },
+
+    getDisplayLocation(location, length = 20) {
+      if (location && location.description) {
+        let name = location.description;
+        if (name && name.length && name.length > 0) {
+          if (name.length > length) {
+            return `${name.substring(0, length - 3)}...`;
+          }
+          return name;
+        }
+      }
+      return name;
     },
 
     addParticipant(id) {
@@ -374,7 +392,9 @@ export default {
       this.tableLoading = true;
       const id = this.$route.params.group;
       this.$http.get(`/api/v1/groups/meetings/group/${id}`).then(resp => {
-        this.meetings = resp.data;
+        if (!resp.data.msg) {
+          this.meetings = resp.data;
+        }
         console.log(this.meetings);
         this.tableLoading = false;
       });
