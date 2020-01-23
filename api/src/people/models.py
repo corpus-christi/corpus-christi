@@ -41,7 +41,7 @@ class Person(Base):
     #start of account fields being merged
     username = Column(StringTypes.MEDIUM_STRING, nullable=False, unique=True)
     password_hash = Column(StringTypes.PASSWORD_HASH, nullable=False)
-    confirmed = Column(Boolean, nullable=False, default=False)
+    confirmed = Column(Boolean, nullable=True, default=False)
     #end of account fields being merged
     active = Column(Boolean, nullable=False, default=True)
     address_id = Column(Integer, ForeignKey('places_address.id'), nullable=True, default=None)
@@ -102,7 +102,7 @@ class PersonSchema(Schema):
     username = fields.String(required=True, validate=Length(min=1))
     password = fields.String(attribute='password_hash', load_only=True,
                              required=True, validate=Length(min=6))
-    confirmed = fields.Boolean()#dump_only=True)
+    confirmed = fields.Boolean(dump_only=True)
     #the end of the important fields from account
     active = fields.Boolean(required=True)
     address_id = fields.Integer(data_key='addressId', allow_none=True)
@@ -111,7 +111,7 @@ class PersonSchema(Schema):
  #       'AccountSchema', allow_none=True, only=['username', 'id', 'active', 'roles'])
 
     attributesInfo = fields.Nested('PersonAttributeSchema', many=True)
-    images = fields.Nested('ImagePersonSchema', many=True, exclude=['person'])#, dump_only=True)
+    images = fields.Nested('ImagePersonSchema', many=True, exclude=['person'], dump_only=True)
     roles = fields.Nested('RoleSchema', many=True, dump_only=True)
 
     @pre_load
