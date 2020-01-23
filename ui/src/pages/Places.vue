@@ -83,6 +83,7 @@ export default {
       });
       this.$http.get("/api/v1/places/locations").then(resp => {
         this.locationList = resp.data;
+        console.log(this.locationList);
       });
       this.$http.get("/api/v1/places/countries").then(resp => {
         this.countryList = resp.data;

@@ -22,7 +22,17 @@
             {{ $t("places.address.filters.address_filters") }}
           </v-btn>
         </v-flex>
-
+        <v-flex md3>
+          <div data-cy="view-dropdown">
+            <v-select
+              hide-details
+              solo
+              single-line
+              :items="viewOptions"
+              v-model="viewStatus"
+            ></v-select>
+          </div>
+        </v-flex>
         <v-flex shrink justify-self-end>
           <v-btn
             color="primary"
@@ -39,7 +49,7 @@
 
     <v-data-table
       :headers="headers"
-      :items="AddressesLocationsData()"
+      :items="addressesToDisplay"
       :search="search"
       expand
       item-key="id"
@@ -81,6 +91,36 @@
             </v-btn>
             <span>{{ $t("actions.duplicate") }}</span>
           </v-tooltip>
+          <v-tooltip bottom>
+            <v-btn
+              v-if="props.item.active === true"
+              icon
+              outline
+              small
+              color="primary"
+              slot="activator"
+              v-on:click="showConfirmDialog('deactivate', props.item)"
+              data-cy="deactivate-person"
+            >
+              <v-icon small>archive</v-icon>
+            </v-btn>
+            <span>{{ $t("actions.tooltips.archive") }}</span>
+          </v-tooltip>
+          <v-tooltip bottom>
+            <v-btn
+              v-if="props.item.active === false"
+              icon
+              outline
+              small
+              color="primary"
+              slot="activator"
+              v-on:click="showConfirmDialog('activate', props.item)"
+              data-cy="reactivate-person"
+            >
+              <v-icon small>undo</v-icon>
+            </v-btn>
+            <span>{{ $t("actions.tooltips.activate") }}</span>
+          </v-tooltip>
         </tr>
       </template>
       <template slot="expand" slot-scope="props">
@@ -88,8 +128,8 @@
           <v-layout>
             <v-flex md2>{{ $t("places.location.location") }}: </v-flex>
             <v-flex>
-              <v-chip v-for="l in props.item.locations" :key="l.id" small
-                >{{ l.description }}
+              <v-chip v-for="l in locationsToDisplay('deactivate', props.item.locations)" :key="l.value" small
+                >{{ l.text }}
               </v-chip>
             </v-flex>
             <v-flex md2>
@@ -133,6 +173,34 @@
                   <v-icon small>add</v-icon>
                 </v-btn>
                 <span>{{ $t("places.location.new") }}</span>
+              </v-tooltip>
+              <v-tooltip bottom>
+                <v-btn
+                  icon
+                  outline
+                  small
+                  color="primary"
+                  slot="activator"
+                  data-cy="deactivate-person"
+                  v-on:click="showLocationConfirmDialog('deactivate', props.item)"
+                >
+                  <v-icon small>archive</v-icon>
+                </v-btn>
+                <span>{{ $t("actions.tooltips.archive") }}</span>
+              </v-tooltip>
+              <v-tooltip bottom>
+                <v-btn
+                  icon
+                  outline
+                  small
+                  color="primary"
+                  slot="activator"
+                  data-cy="reactivate-person"
+                  v-on:click="showLocationConfirmDialog('activate', props.item)"
+                >
+                  <v-icon small>undo</v-icon>
+                </v-btn>
+                <span>{{ $t("actions.tooltips.activate") }}</span>
               </v-tooltip>
             </v-flex>
           </v-layout>
@@ -308,6 +376,70 @@
         <GoogleMap v-bind:markers="markers" />
       </v-flex>
     </v-layout>
+    <v-dialog
+      v-model="confirmDialog.show"
+      max-width="350px"
+      data-cy="place-table-confirmation"
+    >
+      <v-card>
+        <v-card-text>{{ $t(confirmDialog.title) }}</v-card-text>
+        <v-card-actions>
+          <v-btn
+            v-on:click="cancelAction"
+            color="secondary"
+            flat
+            :disabled="confirmDialog.loading"
+            >{{ $t("actions.cancel") }}</v-btn
+          >
+          <v-spacer></v-spacer>
+          <v-btn
+            v-on:click="
+              confirmAction(confirmDialog.action, confirmDialog.place)
+            "
+            color="primary"
+            raised
+            :disabled="confirmDialog.loading"
+            :loading="confirmDialog.loading"
+            >{{ $t("actions.confirm") }}</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="confirmLocationDialog.show"
+      max-width="350px">
+      <v-card>
+        <v-card-text>{{ $t(confirmLocationDialog.title) }}</v-card-text>
+        <v-autocomplete
+          name="location"
+          hide-details
+          solo
+          single-line
+          :label="$t('places.location.location')"
+          :items="locationsToDisplay(confirmLocationDialog.action, confirmLocationDialog.locationInfo.allLocations)"
+          v-model="confirmLocationDialog.selectedLocation"
+          v-validate="'required'"
+          :error-messages="errors.collect('location')"
+        ></v-autocomplete>
+        <v-card-actions>
+          <v-btn
+            v-on:click="cancelAction"
+            color="secondary"
+            flat
+            :disabled="confirmLocationDialog.loading"
+            >{{ $t("actions.cancel") }}</v-btn
+          >
+          <v-spacer></v-spacer>
+          <v-btn
+            v-on:click="confirmActionLocation(confirmLocationDialog.action, confirmLocationDialog.selectedLocation)"
+            color="primary"
+            raised
+            :disabled="confirmLocationDialog.loading"
+            :loading="confirmLocationDialog.loading"
+            >{{ $t("actions.confirm") }}</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -357,10 +489,30 @@ export default {
         addressDistance: "",
         address: {}
       },
+      confirmDialog: {
+        show: false,
+        action: "",
+        place: {},
+        title: "",
+        loading: false
+      },
+      confirmLocationDialog: {
+        show: false,
+        action: "",
+        locationInfo: {
+          address_id: 0,
+          allLocations: []
+        },
+        selectedLocation: 0
+      },
       search: "",
       groupLocations: [],
       opened: [],
-      filterDialog: false
+      filterDialog: false,
+      viewStatus: "viewActive",
+      allAddresses: [],
+      activeAddresses: [],
+      archivedAddresses: []
     };
   },
   computed: {
@@ -397,8 +549,35 @@ export default {
     visiblePlaces() {
       return this.assets;
     },
+    viewOptions() {
+      return [
+        {
+          text: this.$t("actions.view-active"),
+          value: "viewActive",
+          class: "view-active"
+        },
+        {
+          text: this.$t("actions.view-archived"),
+          value: "viewArchived",
+          class: "view-archived"
+        },
+        { text: this.$t("actions.view-all"), value: "viewAll" }
+      ];
+    },
+    addressesToDisplay() {
+      switch (this.viewStatus) {
+        case "viewActive":
+          return this.activeAddresses;
+        case "viewArchived":
+          return this.archivedAddresses;
+        case "viewAll":
+          return this.allAddresses;
+        default:
+          return this.activeAddresses;
+      }
+    },
     markers() {
-      return this.addresses.map(element => {
+      return this.addressesToDisplay.map(element => {
         return {
           position: {
             lat: element.latitude,
@@ -419,6 +598,14 @@ export default {
           value: element
         };
       });
+    }
+  },
+  watch: {
+    addresses(all_addresses) {
+      this.makeAddressLists(all_addresses);
+    },
+    locations() {
+      this.makeAddressLists(this.addresses);
     }
   },
   methods: {
@@ -489,20 +676,156 @@ export default {
     cancelLocation() {
       this.locationDialog.show = false;
     },
-    AddressesLocationsData() {
+    makeAddressLists(all_addresses) {
+      this.allAddresses = this.AddressesLocationsData(all_addresses);
+      this.activeAddresses = this.AddressesLocationsData(this.allAddresses.filter(person => person.active));
+      this.archivedAddresses = this.AddressesLocationsData(this.allAddresses.filter(person => !person.active));
+    },
+    AddressesLocationsData(addArr) {
       let c = [];
-      for (let i = 0; i < this.addresses.length; i++) {
-        c.push(this.addresses[i]);
+      for (let i = 0; i < addArr.length; i++) {
+        c.push(addArr[i]);
         c[i]["locations"] = [];
         for (let j = 0; j < this.locations.length; j++)
           if (c[i].id === this.locations[j].address_id) {
             c[i].locations.push({
               id: this.locations[j].id,
-              description: this.locations[j].description
+              description: this.locations[j].description,
+              active: this.locations[j].active
             });
           }
       }
       return c;
+    },
+    locationsToDisplay(action, locationsList) {
+      if (action === "deactivate") {
+        return locationsList
+          .filter(location => location.active)
+          .map(element => {
+            return {
+              text: this.$t(element.description),
+              value: element.id
+            };
+          });
+      } else {
+        return locationsList
+          .filter(location => !location.active)
+          .map(element => {
+            return {
+              text: this.$t(element.description),
+              value: element.id
+            };
+          });
+      }
+    },
+    showConfirmDialog(action, place) {
+      this.confirmDialog.title = "places.messages.confirm." + action;
+      this.confirmDialog.action = action;
+      this.confirmDialog.place = place;
+      this.confirmDialog.show = true;
+    },
+    showLocationConfirmDialog(action, place) {
+      this.confirmLocationDialog.title = "places.messages.confirm." + action;
+      this.confirmLocationDialog.action = action;
+      this.confirmLocationDialog.selectedLocation = 0;
+      this.confirmLocationDialog.locationInfo = {
+        address_id: place.id,
+        allLocations: place.locations
+      };
+      this.confirmLocationDialog.show = true;
+    },
+    confirmAction(action, place) {
+      if (action === "deactivate") {
+        this.deactivateAddress(place);
+      } else if (action === "activate") {
+        this.activateAddress(place);
+      }
+    },
+    confirmActionLocation(action, location) {
+      if (action === "deactivate") {
+        this.deactivateLocation(location);
+      } else if (action === "activate") {
+        this.activateLocation(location);
+      }
+    },
+    cancelAction() {
+      this.confirmDialog.show = false;
+      this.confirmLocationDialog.show = false;
+    },
+    deactivateAddress(place) {
+      this.$http
+        .patch(`/api/v1/places/addresses/${place.id}`, { active: false })
+        .then(resp => {
+          console.log("DEACTIVATED ADDRESS", resp);
+        })
+        .then(() => {
+          this.refreshPlacesList();
+        })
+        .then(() => {
+          for (let loc = 0; loc < place.locations.length; loc++) {
+            if (place.locations[loc].active) {
+              this.deactivateLocation(place.locations[loc].id);
+            }
+          }
+        })
+        .catch(err => {
+          console.log("FAILED", err);
+        })
+        .finally(() => {
+          this.confirmDialog.loading = false;
+          this.confirmDialog.show = false;
+        });
+    },
+    activateAddress(place) {
+      this.$http
+        .patch(`/api/v1/places/addresses/${place.id}`, { active: true })
+        .then(resp => {
+          console.log("ACTIVATED ADDRESS", resp);
+        })
+        .then(() => {
+          this.refreshPlacesList();
+        })
+        .catch(err => {
+          console.log("FAILED", err);
+        })
+        .finally(() => {
+          this.confirmDialog.loading = false;
+          this.confirmDialog.show = false;
+        });
+    },
+    deactivateLocation(location) {
+      this.$http
+        .patch(`/api/v1/places/locations/${location}`, { active: false })
+        .then(resp => {
+          console.log("DEACTIVATED LOCATION", resp);
+        })
+        .then(() => {
+          this.refreshPlacesList();
+        })
+        .catch(err => {
+          console.log("FAILED", err);
+        })
+        .finally(() => {
+          this.confirmLocationDialog.loading = false;
+          this.confirmLocationDialog.show = false;
+        });
+    },
+    activateLocation(location) {
+      this.$http
+        .patch(`/api/v1/places/locations/${location}`, { active: true })
+        .then(resp => {
+          console.log("ACTIVATED LOCATION", resp);
+        })
+        .then(() => {
+          this.refreshPlacesList();
+        })
+        .catch(err => {
+          console.log("FAILED", err);
+        })
+        .finally(() => {
+          this.confirmLocationDialog.loading = false;
+          this.confirmLocationDialog.show = false;
+        });
     }
   }
 };

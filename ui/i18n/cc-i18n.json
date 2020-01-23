@@ -394,6 +394,10 @@
       },
       "area": {
         "area": "Area",
+        "confirm": {
+          "activate": "Are you sure you want to restore this area?",
+          "deactivate": "Are you sure you want to archive this area?"
+        },
         "create-area": "Create New Area",
         "edit": "Edit Area",
         "name": "Area Name",
@@ -407,6 +411,10 @@
         "new": "Add Location"
       },
       "messages": {
+        "confirm": {
+          "activate": "Are you sure you want to restore this address?",
+          "deactivate": "Are you sure you want to archive this address?"
+        },
         "find-address-err": "Latitude and Longitude are required to find an address",
         "no-results": "Your address returned no results.",
         "saved": "Your address has been saved."
@@ -879,6 +887,10 @@
       },
       "area": {
         "area": "Zona",
+        "confirm": {
+          "activate": "\u00bfEst\u00e1s seguro de que deseas restaurar esta zona?",
+          "deactivate": "\u00bfEst\u00e1s seguro de que deseas archivar esta zona?"
+        },
         "create-area": "Crear nueva \u00c1rea",
         "edit": "\u00c1rea de Edici\u00f3n",
         "name": "Nombre del \u00c1rea",
@@ -892,6 +904,10 @@
         "new": "A\u00f1adir Ubicaci\u00f3n"
       },
       "messages": {
+        "confirm": {
+          "activate": "\u00bfEst\u00e1s seguro de que deseas restaurar esta direcci\u00f3n?",
+          "deactivate": "\u00bfEst\u00e1s seguro de que deseas archivar esta direcci\u00f3n?"
+        },
         "find-address-err": "Se requiere latitud y longitud para encontrar una direcci\u00f3n",
         "no-results": "Tu direcci\u00f3n no devolvi\u00f3 resultados.",
         "saved": "Su direcci\u00f3n ha sido guardada."

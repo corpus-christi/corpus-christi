@@ -90,6 +90,13 @@ places:
     find-address-err:
       en: Latitude and Longitude are required to find an address
       es: Se requiere latitud y longitud para encontrar una dirección
+    confirm:
+      activate:
+        en: Are you sure you want to restore this address?
+        es: ¿Estás seguro de que deseas restaurar esta dirección?
+      deactivate:
+        en: Are you sure you want to archive this address?
+        es: ¿Estás seguro de que deseas archivar esta dirección?
   new:
     en: Add Place
     es: Añadir Lugares
@@ -112,5 +119,12 @@ places:
     edit:
       en: Edit Area
       es: Área de Edición
+    confirm:
+      activate:
+        en: Are you sure you want to restore this area?
+        es: ¿Estás seguro de que deseas restaurar esta zona?
+      deactivate:
+        en: Are you sure you want to archive this area?
+        es: ¿Estás seguro de que deseas archivar esta zona?
 
 
