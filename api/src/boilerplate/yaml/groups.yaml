@@ -24,10 +24,23 @@ entities:
         type: boolean
         required: true
         default: true
-      - name: manager_id
+      - name: group_type_id
         type: integer
-        foreign-key: people_manager.id
         required: true
+        foreign-key: groups_group_type.id
+    relationships:
+      - name: memberships
+        related-model: Membership
+        backref: groups
+      - name: managements
+        related-model: Management
+        backref: groups
+      - name: meetings
+        related-model: Meeting
+        backref: groups
+      - name: images
+        related-model: Image
+        backref: groups
   - name: Meeting
     singular: meeting
     plural: meetings
@@ -55,16 +68,22 @@ entities:
       - name: address
         related-model: Address
         backref: meetings
-  - name: Member
-    singular: member
-    plural: members
-    uri: /members
-    table: groups_member
+  - name: Membership
+    singular: membership
+    plural: memberships
+    uri: /memberships
+    table: groups_membership
     attributes:
-      - name: id
+      - name: group_id
         type: integer
         primary-key: true
-        min: 1
+        required: true
+        foreign-key: groups_group.id
+      - name: person_id
+        type: integer
+        primary-key: true
+        required: true
+        foreign-key: people_person.id
       - name: joined
         type: date
         required: true
@@ -72,14 +91,6 @@ entities:
         type: boolean
         required: true
         default: true
-      - name: group_id
-        type: integer
-        required: true
-        foreign-key: groups_group.id
-      - name: person_id
-        type: integer
-        required: true
-        foreign-key: people_person.id
     relationships:
       - name: group
         related-model: Group
@@ -101,3 +112,64 @@ entities:
         type: integer
         primary-key: true
         foreign-key: groups_member.id
+  - name: Management
+    singular: management
+    plural: managements
+    uri: /managements
+    table: groups_management
+    attributes:
+      - name: person_id
+        type: integer
+        min: 1
+        required: true
+        foreign-key: people_person.id
+      - name: group_id
+        type: integer
+        primary-key: true
+        min: 1
+        foreign-key: groups_group.id
+      - name: management_type_id
+        type: integer
+        min: 1
+        required: false
+        foreign-key: groups_management_type.id
+      - name: active
+        type: boolean
+        required: true
+        default: true
+  - name: ManagementType
+    singular: management_type
+    plural: management_types
+    uri: /management_types
+    table: groups_management_type
+    attributes:
+      - name: id
+        type: integer
+        required: true
+        primary-key: true
+      - name: name
+        type: string
+        length: medium
+        required: true
+    relationships:
+      - name: managements
+        related-model: Management
+        backref: management_types
+  - name: GroupType
+    singular: group_type
+    plural: group_types
+    uri: /group_types
+    table: groups_group_type
+    attributes:
+      - name: id
+        type: integer
+        required: true
+        primary-key: true
+      - name: name
+        type: string
+        length: medium
+        required: true
+    relationships:
+      - name: groups
+        related-model: Group
+        backref: group_types
