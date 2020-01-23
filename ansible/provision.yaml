@@ -1,0 +1,211 @@
+- name: ensure ubuntu packages
+  hosts: staging, production
+  tags: apt
+  become: yes
+  tasks:
+    - name: add key for yarn PPA
+      apt_key:
+        url: https://dl.yarnpkg.com/debian/pubkey.gpg
+        state: present
+
+    - name: configure yarn PPA
+      apt_repository:
+        repo: deb https://dl.yarnpkg.com/debian/ stable main
+        filename: yarnpkg
+        state: present
+
+    - name: add key for node PPA
+      apt_key:
+        url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+        state: present
+
+    - name: configure node PPA
+      apt_repository:
+        repo: deb https://deb.nodesource.com/node_12.x bionic main
+        filename: nodesource
+        state: present
+
+    - name: install apt packages
+      apt:
+        pkg: "{{ item }}"
+        update_cache: yes
+      loop:
+        - git
+        - nodejs
+        - yarn
+        - nginx
+        - postgresql
+        - python3-venv
+        - python3-psycopg2
+        - supervisor
+        - htop
+        - tree
+        - silversearcher-ag
+        - multitail
+
+- name: create account
+  hosts: staging, production
+  tags: accounts
+  become: yes
+  tasks:
+    - name: create corpus-christi user
+      user:
+        name: "{{ cc_username }}"
+        password: "{{ cc_password | password_hash('sha512') }}"
+        shell: /bin/bash
+
+- name: clone repository
+  hosts: staging, production
+  tags: git, update
+  become: yes
+  become_user: "{{ cc_username }}"
+  vars_files:
+    - public.yaml
+  tasks:
+    - name: clone application from GitHub
+      git:
+        repo: "{{ cc_repo }}"
+        dest: "{{ cc_abs_dir }}"
+        version: master
+
+- name: prepare python
+  hosts: staging, production
+  tags: python, update
+  become: yes
+  become_user: "{{ cc_username }}"
+  vars_files:
+    - public.yaml
+  tasks:
+    - name: create and populate python venv
+      pip:
+        virtualenv: "{{ cc_api_abs_dir }}/venv"
+        virtualenv_command: "{{ python3 }} -m venv venv"
+        requirements: "{{ cc_api_abs_dir }}/requirements.txt"
+
+- name: instantiate private config
+  hosts: staging, production
+  tags: config
+  become: yes
+  vars_files:
+    - public.yaml
+  become_user: "{{ cc_username }}"
+  tasks:
+    - name: create private.py file
+      template:
+        src: templates/private.py
+        dest: "{{ cc_api_abs_dir }}/private.py"
+        mode: 0400
+
+- name: provision database
+  hosts: staging, production
+  tags: db
+  become: yes
+  become_user: postgres
+  vars_files:
+    - public.yaml
+  tasks:
+    - name: create database user
+      postgresql_user:
+        name: "{{ postgres.username }}"
+        password: "{{ postgres.password }}"
+
+    - name: create database
+      postgresql_db:
+        name: "{{ postgres.database }}"
+        owner: "{{ postgres.username }}"
+
+- name: build user interface
+  hosts: staging, production
+  tags: ui, update
+  become: yes
+  become_user: "{{ cc_username }}"
+  vars_files:
+    - public.yaml
+  tasks:
+    - name: install node modules for ui
+      yarn:
+        path: "{{ cc_ui_abs_dir }}"
+
+    - name: build production ui
+      command:
+        chdir: "{{ cc_ui_abs_dir }}"
+        cmd: yarn build
+
+- name: provision application
+  hosts: staging, production
+  tags: flask
+  become: yes
+  become_user: "{{ cc_username }}"
+  vars_files:
+    - public.yaml
+  environment:
+    - FLASK_APP: "{{ cc_api_abs_dir }}/cc-api.py"
+    - FLASK_ENV: production
+    - FLASK_DEBUG: 0
+    - CC_CONFIG: prod
+  tasks:
+    - name: create migration
+      command:
+        cmd: "{{ venv_abs_dir }}/bin/flask {{ item }}"
+        chdir: "{{ cc_api_abs_dir }}"
+      loop:
+        - db migrate
+        - db upgrade
+        - app load-locales
+        - app load-countries
+        - app load-languages
+        - app load-roles
+        - app load-attribute-types
+
+- name: provision supervisor
+  hosts: staging, production
+  tags: supervisor
+  become: yes
+  vars_files:
+    - public.yaml
+  tasks:
+    - name: instantiate supervisor template
+      template:
+        src: templates/supervisor.conf
+        dest: "{{ supervisor_conf_abs_dir }}/corpus-christi.conf"
+        mode: 0444
+
+    - name: ensure log directory exists
+      file:
+        path: "{{ cc_log_abs_dir }}"
+        state: directory
+        mode: 0755
+
+    - name: start server
+      supervisorctl:
+        name: corpus-christi
+        state: restarted
+
+- name: provision nginx
+  hosts: staging, production
+  tags: nginx
+  become: yes
+  vars_files:
+    - public.yaml
+  tasks:
+    - name: disable nginx default configuration
+      file:
+        path: "{{ nginx_enabled_abs_dir }}/default"
+        state: absent
+
+    - name: copy nginx config file
+      template:
+        src: "templates/{{ nginx_config }}"
+        dest: "{{ nginx_available_abs_dir }}/{{ nginx_conf_file }}"
+        mode: 0444
+
+    - name: enable nginx configuration
+      file:
+        src: "{{ nginx_available_abs_dir }}/{{ nginx_conf_file }}"
+        dest: "{{ nginx_enabled_abs_dir }}/{{ nginx_conf_file }}"
+        state: link
+
+    - name: restart nginx
+      service:
+        name: nginx
+        state: restarted

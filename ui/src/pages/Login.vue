@@ -12,7 +12,7 @@
               <v-form>
                 <v-text-field
                   v-model="username"
-                  v-bind:label="$t('account.username')"
+                  v-bind:label="$t('person.username')"
                   prepend-icon="person"
                   name="login"
                   type="text"
@@ -21,7 +21,7 @@
                 ></v-text-field>
                 <v-text-field
                   v-model="password"
-                  v-bind:label="$t('account.password')"
+                  v-bind:label="$t('person.password')"
                   prepend-icon="lock"
                   name="password"
                   type="password"
@@ -30,7 +30,7 @@
                 ></v-text-field>
               </v-form>
               <v-flex>
-                {{ $t("account.no-account") }}
+                {{ $t("person.no-account") }}
                 <router-link v-bind:to="{ name: 'signup' }" data-cy="signup">
                   <a class="href" v-text="$t('actions.signup')" />
                 </router-link>

@@ -13,7 +13,7 @@
             single-line
             hide-details
             data-cy="form-search"
-          ></v-text-field>
+          />
         </v-flex>
 
         <v-flex md2>
@@ -305,7 +305,7 @@
             {{ $t("places.address.address") }}
           </v-toolbar-title>
         </v-toolbar>
-        <GoogleMap v-bind:markers="markers"></GoogleMap>
+        <GoogleMap v-bind:markers="markers" />
       </v-flex>
     </v-layout>
   </div>
@@ -507,5 +507,3 @@ export default {
   }
 };
 </script>
-
-<style scoped></style>

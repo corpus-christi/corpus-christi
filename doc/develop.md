@@ -35,10 +35,16 @@ refer to `doc/sdm.md`.
 ## Requirements
 
 The development tool chain requires the following software.
-- [Python](https://www.python.org/) 3.7 or later
-- [Node](https://nodejs.org/) 10 LTS or later
-- [Yarn](https://yarnpkg.com/) current version
-- [Bash](https://www.gnu.org/software/bash/) current version
+
+  - [Python](https://www.python.org/) 3.7 to before 3.8 (greater than version 3.7, less than version 3.8)
+  - [Node](https://nodejs.org/) 10 LTS or later
+  - [Yarn](https://yarnpkg.com/) current version
+  - [Bash](https://www.gnu.org/software/bash/) current version
+
+Windows additional downloads:
+
+  - The [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
+    + Note that downloading from the Microsoft store works well.
 
 _About Bash_: These instructions assume that you use
 a `bash` shell. If you are using Windows command line
@@ -87,12 +93,16 @@ and the native extension.
     $ cd corpus-christi/api
     $ python3 -m venv venv
     ```
+    - Note that the `python3` command may not have the correct version.  If you have errors with this, run `python3 --version`, if that is not the desired version, try running `python --version`.  If this is your desired version, replace `python3` with `python` in the above bash commands.  If you are still struggling (and using Windows), you will need to adjust the [environmental variables](https://www.architectryan.com/2018/08/31/how-to-change-environment-variables-on-windows-10/) and update PATH by finding the location of where python is downloaded.  Open the base python folder, copy that path/link and add it to PATH in the system variables.
+
 1. Activate the virtual environment;
    you need to do this _whenever_ you start a new shell
    in which you want to work on CC.
     ```bash
     $ source venv/bin/activate
     ```
+      - Note that if this is causing errors, try `source venv/Scripts/activate`
+
 1. Check that your virtual environment is set up properly
     ```bash
     $ which pip
@@ -129,6 +139,8 @@ This script will
 1. Configure Flask properly for development
 1. Allow you to run the `flask` command from the command line.
 
+  - If errors, open the file and change line three to source ./venv/Scripts/activate
+
 Do this whenever you start a new `bash`
 in which you intend to work with the API.
 
@@ -153,13 +165,9 @@ on the [official downloads page](https://www.postgresql.org/download/).
    * Homebrew (my preference)
      requires that you first [install Homebrew](https://brew.sh/),
      then use Homebrew to install Postgres (`brew install postgresql`).
-1. There are several installers for [**Windows**](https://www.postgresql.org/download/windows/).
-   If you have experience or preferences here,
-   please feel free to update this documentation 
-   with your recommendations.
-   * If you are using a Windows Subsystem for Linux
-   (e.g. Ubuntu for Windows or similar),
-    follow [this tutorial](https://github.com/corpus-christi/corpus-christi/blob/development/doc/postgres-windows.md)).
+1. For **Windows** (if using a Windows Subsystem for Linux), switch to [this tutorial](./postgres-windows.md)).
+<!-- https://github.com/corpus-christi/corpus-christi/blob/development/doc/postgres-windows.md -->
+There are several installers for [**Windows**](https://www.postgresql.org/download/windows/).
 1. For **Linux**, choose the appropriate distribution
    from the [main downloads page](https://www.postgresql.org/download/).
 
@@ -180,6 +188,12 @@ Create a user:
 ```bash
 $ createuser arco
 ```
+
+Windows people (in the Subsystem, in psql):
+```bash
+$ CREATE USER arco;
+```
+
 Note that this creates a database user with **no password**.
 This is **only** suitable for local development!
 For a production system, use a good password.
@@ -188,6 +202,14 @@ Create a database:
 ```bash
 $ createdb --owner=arco cc-dev
 ```
+
+Windows:
+```bash
+CREATE DATABASE "cc-dev" OWNER arco;
+```
+- Windows: if errors, check the postgreSQL WSL installation tutorial [Tips/Debugging](./postgres-windows.md#tips--debugging) section for help.
+- In psql you can run `\l` (lowercase L) to see all of the databases and owners.
+
 This will create a database called `cc-dev`,
 which is used by the default `development` configuration.
 Other possibilities are:
@@ -255,7 +277,29 @@ of private data,
 `private.py` is listed in the CC `.gitignore` file.
 Still, use caution!
 
+**During development and testing**,
+you can override the database connection 
+by defining environment variables in `bash`.
+For example:
+```bash
+export DEV_DB_URL="postgresql://PSQL_USER:PSQL_PASS@PSQL_HOST/PSQL_DB"
+```
+tells CC how to connect to your development database (the `DEV` part of the environment variable)
+where:
+   * `PSQL_USER` is your Postgres user name
+   * `PSQL_PASS` is your Postgres password
+     (if you haven't set a password, omit this field _and_ the colon
+     that separates it from `PSQL_USER`)
+   * `PSQL_HOST` is the host where the Postgres server is running
+     (DNS name or `localhost` if running on your workstation)
+   * `PSQL_DB` is your Postgres database name
+
+Similarly, you can define `TEST_DB_URL` for your test database (for use with `pytest`)
+or `PROD_DB_URL` for your production database.
+
 ### Database Initialization
+
+- Windows: run the rest of the commands in bash and not WSL.  Make sure the `api/private.py` has the correct password (password used in psql).  If errors, check the postgreSQL WSL installation tutorial [Tips/Debugging](./postgres-windows.md) section for help. 
 
 Use the `flask` command to initialize your development database:
 ```bash
@@ -287,7 +331,7 @@ $ flask account new --first="Billy Bob" --last="Smith" bbob bob-pass
 
 ## Run CC
 
-For development, you need to run two servers
+For development, you need to run *two* servers
 to work with CC.
 Run each process in _it's own_ shell
 and leave these shell windows open.

@@ -19,7 +19,7 @@ class AuthClient(FlaskClient):
 
 
 def client_factory(client_class):
-    app = create_app(os.getenv('FLASK_CONFIG') or 'test')
+    app = create_app(os.getenv('CC_CONFIG') or 'test')
     app.testing = True  # Make sure exceptions percolate out
     app.test_client_class = client_class
 

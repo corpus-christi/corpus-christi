@@ -1,7 +1,9 @@
 <template>
   <v-card>
     <v-card-text>
-      <span class="heading" v-if="this.locationInfo.editMode">{{ $t("places.location.location") }}</span>
+      <span class="heading" v-if="this.locationInfo.editMode">{{
+        $t("places.location.location")
+      }}</span>
       <span class="heading" v-else>{{ $t("places.location.new") }}</span>
       <v-flex>
         <div>
@@ -18,7 +20,7 @@
             :error-messages="errors.collect('location')"
             :disabled="formDisabled"
             v-on:change="updateDescription() + isDisabled()"
-          ></v-autocomplete>
+          />
         </div>
       </v-flex>
       <v-text-field
@@ -28,10 +30,10 @@
         clearable
         v-validate="'max:2'"
         :disabled="formDisabled"
-      ></v-text-field>
+      />
     </v-card-text>
     <v-card-actions>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn
         flat
         color="secondary"
@@ -105,7 +107,9 @@ export default {
     updateDescription() {
       for (let i = 0; i < this.locationInfo.allLocations.length; i++) {
         if (this.locationInfo.allLocations[i].id === this.selectedLocation) {
-          this.location.description = this.locationInfo.allLocations[i].description;
+          this.location.description = this.locationInfo.allLocations[
+            i
+          ].description;
         }
       }
     },

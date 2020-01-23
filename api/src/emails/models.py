@@ -9,3 +9,5 @@ class EmailSchema(Schema):
     recipients = fields.List(fields.String(), required=True)
     cc = fields.List(fields.String())
     bcc = fields.List(fields.String())
+    managerName = fields.String()
+    managerEmail = fields.String()

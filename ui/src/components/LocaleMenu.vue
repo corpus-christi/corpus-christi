@@ -66,7 +66,7 @@ export default {
             let lastLevel = translations;
             for (let i in keys) {
               let key = keys[i];
-              if (i == keys.length - 1) {
+              if (i === keys.length - 1) {
                 lastLevel[key] = item.gloss;
               } else if (!Object.keys(lastLevel).includes(key)) {
                 lastLevel[key] = {};

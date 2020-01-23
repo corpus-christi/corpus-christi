@@ -15,16 +15,10 @@
       "noDataText": "No data available"
     },
     "account": {
-      "active": "Active",
-      "inactive": "Inactive",
       "messages": {
         "added-ok": "Account added successfully",
         "updated-ok": "Account updated successfully"
-      },
-      "no-account": "Don't have an account?",
-      "password": "Password",
-      "repeat-password": "Repeat Password",
-      "username": "Username"
+      }
     },
     "actions": {
       "activate-account": "Activate",
@@ -243,6 +237,8 @@
       "create-group": "Create Group",
       "description": "Description",
       "details": {
+        "class-title": "Title",
+        "member-count": "Member count",
         "title": "Details"
       },
       "edit-group": "Edit Group",
@@ -252,18 +248,35 @@
       "header": "Groups",
       "manager": "Manager",
       "meetings": {
+        "add-meeting": "Add Meeting",
         "title": "Meetings"
       },
+      "member-count": "Member Count",
       "members": {
+        "email": {
+          "bcc": "Bcc",
+          "body": "Body",
+          "cc": "Cc",
+          "compose": "Compose Email",
+          "send": "Send",
+          "subject": "Subject",
+          "to": "To"
+        },
         "title": "Members"
       },
       "messages": {
+        "already-exists": "Group already exists",
         "confirm-archive": "Are you sure you want to archive this group?",
+        "confirm-member-archive": "Are you sure you want to archive this group member?",
+        "email-sent": "Email sent",
+        "error-active-not-selected": "No active members are selected",
         "error-adding-group": "Error while adding group",
         "error-adding-members": "Error while adding members",
+        "error-archived-not-selected": "No archived members are selected",
         "error-archiving-group": "Error while archiving group",
         "error-archiving-member": "Error while unarchiving member",
         "error-editing-group": "Error while editing group",
+        "error-no-manager-email": "Your email address is not defined",
         "group-added": "Group added",
         "group-archived": "Group archived",
         "group-edited": "Group edited",
@@ -271,7 +284,9 @@
         "group-unarchiving-group": "Error while unarchiving group",
         "member-archived": "Member archived",
         "member-unarchived": "Member unarchived",
-        "members-added": "Members added"
+        "members-added": "Members added",
+        "no-remaining-members": "No remaining members",
+        "required-fields": "Please fill out all required fields"
       },
       "name": "Name",
       "none-assigned": "No groups assigned.",
@@ -297,6 +312,7 @@
       "account-information": "Account Information",
       "additional-information": "Additional Information",
       "attributes": "Attributes",
+      "dropdown-roles": "All Roles",
       "next": "Next",
       "optional": "Optional",
       "personal-information": "Personal Information",
@@ -343,8 +359,12 @@
         "last": "Last Name",
         "second-last": "Second Last Name"
       },
+      "no-account": "Don't have an account?",
+      "password": "Password",
       "phone": "Phone",
-      "settings": "Settings for {person}"
+      "repeat-password": "Repeat Password",
+      "settings": "Settings for {person}",
+      "username": "Username"
     },
     "places": {
       "address": {
@@ -480,16 +500,10 @@
       "noDataText": "Datos no disponibles"
     },
     "account": {
-      "active": "Activo",
-      "inactive": "Inactivo",
       "messages": {
         "added-ok": "Cuenta agregada exitosamente",
         "updated-ok": "Cuenta actualizada con \u00e9xito"
-      },
-      "no-account": "\u00bfNo tienes una cuenta?",
-      "password": "Contrase\u00f1a",
-      "repeat-password": "Repite la contrase\u00f1a",
-      "username": "Nombre de usuario"
+      }
     },
     "actions": {
       "activate-account": "Activar",
@@ -708,6 +722,8 @@
       "create-group": "Crea un Grupo",
       "description": "Descripci\u00f3n",
       "details": {
+        "class-title": "T\u00edtulo",
+        "member-count": "Cuenta de miembro",
         "title": "Detalles"
       },
       "edit-group": "Grupo de Edici\u00f3n",
@@ -717,18 +733,35 @@
       "header": "Grupos",
       "manager": "Gerente",
       "meetings": {
+        "add-meeting": "Agregar reuni\u00f3n",
         "title": "Reuniones"
       },
+      "member-count": "Recuento de Miembros",
       "members": {
+        "email": {
+          "bcc": "Cco",
+          "body": "Cuerpo",
+          "cc": "Cc",
+          "compose": "Redactar Correo Electr\u00f3nico",
+          "send": "Enviar",
+          "subject": "Asunto",
+          "to": "Para"
+        },
         "title": "Miembros"
       },
       "messages": {
+        "already-exists": "El grupo ya existe",
         "confirm-archive": "\u00bfSeguro que quieres archivar este groupos?",
+        "confirm-member-archive": "\u00bfEst\u00e1s seguro de que deseas archivar a este miembro del grupo?",
+        "email-sent": "Correo electr\u00f3nico enviado",
+        "error-active-not-selected": "No hay miembros activos seleccionados",
         "error-adding-group": "Error al agregar grupo",
         "error-adding-members": "Error al agregar miembros",
+        "error-archived-not-selected": "No hay miembros archivados seleccionados",
         "error-archiving-group": "Error al archivar el grupo",
         "error-archiving-member": "Error al desarchivar miembro",
         "error-editing-group": "Error al editar grupo",
+        "error-no-manager-email": "Su direcci\u00f3n de correo electr\u00f3nico no est\u00e1 definida",
         "group-added": "Grupo agregado",
         "group-archived": "Grupo archivado",
         "group-edited": "Grupo editado",
@@ -736,7 +769,9 @@
         "group-unarchiving-group": "Error al desarchivar el grupo",
         "member-archived": "Miembro archivado",
         "member-unarchived": "Miembro desarchivado",
-        "members-added": "Miembros agregados"
+        "members-added": "Miembros agregados",
+        "no-remaining-members": "Ning\u00fan miembro restante",
+        "required-fields": "Por favor llene todos los campos requeridos"
       },
       "name": "Nombre",
       "none-assigned": "No hay grupos asignados.",
@@ -762,6 +797,7 @@
       "account-information": "Informaci\u00f3n de la cuenta",
       "additional-information": "Informaci\u00f3n Adicional",
       "attributes": "Atributas",
+      "dropdown-roles": "Todos los Papeles",
       "next": "Siguiente",
       "optional": "Opcional",
       "personal-information": "Informacion personal",
@@ -808,8 +844,12 @@
         "last": "Apellido",
         "second-last": "Segundo Apellido"
       },
+      "no-account": "\u00bfNo tienes una cuenta?",
+      "password": "Contrase\u00f1a",
       "phone": "Tel\u00e9fono",
-      "settings": "Configuraci\u00f3n de la {person}"
+      "repeat-password": "Repite la contrase\u00f1a",
+      "settings": "Configuraci\u00f3n de la {person}",
+      "username": "Nombre de usuario"
     },
     "places": {
       "address": {

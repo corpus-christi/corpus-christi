@@ -6,7 +6,7 @@
       prepend-icon="search"
       :items="searchableEntities"
       :loading="isLoading"
-      v-bind:value="value"
+      :value="value"
       v-on:input="setSelected"
       :search-input.sync="searchInput"
       v-bind:error-messages="errorMessages"
@@ -54,6 +54,7 @@ export default {
     manager: Boolean,
     asset: Boolean,
     group: Boolean,
+    meeting: Boolean,
     multiple: { type: Boolean, default: false },
     existingEntities: Array,
     value: null,
@@ -71,6 +72,12 @@ export default {
     };
   },
 
+  watch: {
+    value(val) {
+      this.setSelected(val);
+    }
+  },
+
   computed: {
     getLabel() {
       if (this.label) return this.label;
@@ -82,6 +89,7 @@ export default {
       else if (this.manager) return this.$t("actions.search-managers");
       else if (this.asset) return this.$t("assets.title");
       else if (this.group) return this.$t("groups.title");
+      else if (this.meeting) return this.$t("groups.meetings.title");
       else return "";
     },
     idField() {
@@ -91,7 +99,7 @@ export default {
       if (this.existingEntities) {
         return this.entities.filter(ent => {
           for (let otherEnt of this.existingEntities) {
-            if (ent[this.idField] == otherEnt[this.idField]) {
+            if (ent[this.idField] === otherEnt[this.idField]) {
               return false;
             }
           }
@@ -141,7 +149,9 @@ export default {
           (person.secondLastName ? person.secondLastName : "");
       } else if (this.asset) {
         entityDescriptor = entity.description;
-      } else if (this.group){
+      } else if (this.group) {
+        entityDescriptor = entity.description;
+      } else if (this.meeting) {
         entityDescriptor = entity.description;
       }
       if (entityDescriptor.length > letterLimit) {
@@ -166,7 +176,7 @@ export default {
     },
     compare(a, b) {
       if (!a || !b) return false;
-      return a[this.idField] == b[this.idField];
+      return a[this.idField] === b[this.idField];
     }
   },
   mounted() {
@@ -179,8 +189,10 @@ export default {
     else if (this.team) endpoint = "/api/v1/teams/";
     else if (this.asset) endpoint = "/api/v1/assets/";
     else if (this.address) endpoint = "/api/v1/places/addresses";
-    else if (this.manager) endpoint = "/api/v1/people/manager?show_unique_persons_only=Y";
-    else if (this.group) endpoint = "/api/v1/groups/groups"
+    else if (this.manager)
+      endpoint = "/api/v1/people/manager?show_unique_persons_only=Y";
+    else if (this.group) endpoint = "/api/v1/groups/groups";
+    else if (this.meeting) endpoint = "/api/v1/groups/meetings";
     this.$http
       .get(endpoint)
       .then(resp => {

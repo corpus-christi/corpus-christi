@@ -16,7 +16,7 @@
             single-line
             box
             data-cy="search"
-          ></v-text-field>
+          />
         </v-flex>
         <v-flex md3>
           <div data-cy="view-dropdown">
@@ -26,7 +26,7 @@
               single-line
               :items="viewOptions"
               v-model="viewStatus"
-            ></v-select>
+            />
           </div>
         </v-flex>
         <v-flex shrink justify-self-end>
@@ -54,30 +54,6 @@
       data-cy="person-table"
     >
       <template slot="items" slot-scope="props">
-        <td class="text-xs-center">
-          <span v-if="props.item.accountInfo">
-            <span v-if="props.item.accountInfo.active">
-              <v-tooltip bottom>
-                <v-icon size="16" slot="activator" data-cy="account-active-icon"
-                  >account_circle</v-icon
-                >
-                {{ $t("account.active") }}
-              </v-tooltip>
-            </span>
-
-            <span v-if="!props.item.accountInfo.active">
-              <v-tooltip bottom>
-                <v-icon
-                  size="16"
-                  slot="activator"
-                  data-cy="account-inactive-icon"
-                  >person_outline</v-icon
-                >
-                {{ $t("account.inactive") }}
-              </v-tooltip>
-            </span>
-          </span>
-        </td>
         <td :data-cy="'first-name-' + props.item.id">
           {{ props.item.firstName }}
         </td>
@@ -159,32 +135,14 @@
     </v-snackbar>
 
     <!-- New/Edit dialog -->
-    <v-dialog
-      scrollable
-      persistent
-      v-model="personDialog.show"
-      max-width="1000px"
-    >
-      <v-layout column>
-        <v-card>
-          <v-layout align-center justify-center row fill-height>
-            <v-card-title class="headline">
-              {{ $t(personDialog.title) }}
-            </v-card-title>
-          </v-layout>
-        </v-card>
-        <PersonForm
-          v-bind:initialData="personDialog.person"
-          v-bind:addAnotherEnabled="personDialog.addAnotherEnabled"
-          v-bind:saveButtonText="personDialog.saveButtonText"
-          v-bind:showAccountInfo="personDialog.showAccountInfo"
-          v-bind:isAccountRequired="false"
-          v-on:cancel="cancelPerson"
-          v-on:saved="savePerson"
-          v-on:added-another="addAnother"
-        />
-      </v-layout>
-    </v-dialog>
+    <person-dialog
+      @snack="showSnackbar"
+      @cancel="cancelPerson"
+      @refreshPeople="refreshPeopleList"
+      :dialog-state="dialogState"
+      :all-people="allPeople"
+      :person="person"
+    />
 
     <!-- Person admin dialog -->
     <v-dialog
@@ -221,7 +179,7 @@
             :disabled="confirmDialog.loading"
             >{{ $t("actions.cancel") }}</v-btn
           >
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="
               confirmAction(confirmDialog.action, confirmDialog.person)
@@ -239,12 +197,12 @@
 </template>
 
 <script>
-import PersonForm from "./PersonForm";
+import PersonDialog from "../PersonDialog";
 import PersonAdminForm from "./AccountForm";
 
 export default {
   name: "PersonTable",
-  components: { PersonAdminForm, PersonForm },
+  components: { PersonDialog, PersonAdminForm },
   props: {
     peopleList: {
       type: Array,
@@ -259,18 +217,9 @@ export default {
   data() {
     return {
       viewStatus: "viewActive",
-      personDialog: {
-        show: false,
-        title: "",
-        person: {},
-        addAnotherEnabled: false,
-        saveButtonText: "actions.save"
-      },
-
       adminDialog: {
         show: false,
         person: {},
-        account: {},
         rolesEnabled: false
       },
 
@@ -289,6 +238,8 @@ export default {
 
       showingArchived: false,
       selected: [],
+      dialogState: "",
+      person: {},
       allPeople: [],
       activePeople: [],
       archivedPeople: [],
@@ -302,13 +253,6 @@ export default {
     headers() {
       return [
         {
-          text: this.$t("person.account"),
-          value: "person.accountInfo",
-          align: "center",
-          width: "3%",
-          sortable: false
-        },
-        {
           text: this.$t("person.name.first"),
           value: "firstName",
           width: "20%"
@@ -321,7 +265,7 @@ export default {
           class: "hidden-sm-and-down"
         },
         { text: this.$t("person.phone"), value: "phone", width: "20%" },
-        { text: this.$t("actions.header"), width: "17%", sortable: false }
+        { text: this.$t("actions.header"), width: "20%", sortable: false }
       ];
     },
     viewOptions() {
@@ -370,44 +314,17 @@ export default {
   methods: {
     // ---- Person Administration
 
-    activatePersonDialog(person = {}, isEditTitle = false) {
-      this.personDialog.title = isEditTitle
-        ? this.$t("person.actions.edit")
-        : this.$t("person.actions.new");
-      this.personDialog.showAccountInfo = !isEditTitle;
-      this.personDialog.addAnotherEnabled = !isEditTitle;
-      this.personDialog.person = person;
-      this.personDialog.show = true;
-    },
-
     editPerson(person) {
-      this.activatePersonDialog({ ...person }, true);
+      this.dialogState = "edit";
+      this.person = person;
     },
 
     newPerson() {
-      this.activatePersonDialog();
+      this.dialogState = "new";
     },
 
     cancelPerson() {
-      this.personDialog.show = false;
-    },
-
-    savePerson(person) {
-      let idx = this.allPeople.findIndex(p => p.id === person.id);
-      if (idx !== -1) {
-        Object.assign(this.allPeople[idx], person);
-        this.showSnackbar(this.$t("person.messages.person-edit"));
-      } else {
-        this.refreshPeopleList();
-        this.showSnackbar(this.$t("person.messages.person-add"));
-      }
-      this.personDialog.show = false;
-    },
-
-    addAnother() {
-      this.refreshPeopleList();
-      this.activatePersonDialog();
-      this.showSnackbar(this.$t("person.messages.person-add"));
+      this.dialogState = "";
     },
 
     showSnackbar(message) {
@@ -425,9 +342,9 @@ export default {
     },
 
     confirmAction(action, person) {
-      if (action == "deactivate") {
+      if (action === "deactivate") {
         this.deactivatePerson(person);
-      } else if (action == "activate") {
+      } else if (action === "activate") {
         this.activatePerson(person);
       }
     },
@@ -442,7 +359,7 @@ export default {
       this.rolesEnabled = false;
       // Fetch the person's account information (if any) before activating the dialog.
       this.$http
-        .get(`/api/v1/people/persons/${person.id}/account`)
+        .get(`/api/v1/people/persons/${person.id}`)
         .then(resp => {
           console.log("FETCHED ACCOUNT", resp);
           this.adminDialog.account = resp.data;

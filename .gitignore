@@ -19,9 +19,9 @@ proxy-config.js
 screenshots/
 
 # Other
-.idea/
+/.idea/
+/.vscode/
 dist/
-.vscode/
 .DS_Store
 
 db-*.json

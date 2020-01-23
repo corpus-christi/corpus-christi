@@ -1,8 +1,8 @@
 <template>
   <v-app>
-    <Toolbar></Toolbar>
-    <v-content> <router-view></router-view> </v-content>
-    <Footer></Footer>
+    <Toolbar />
+    <v-content> <router-view /> </v-content>
+    <Footer />
   </v-app>
 </template>
 
@@ -18,6 +18,7 @@ export default {
   components: { Footer, Toolbar },
   computed: mapGetters(["currentJWT"]),
   methods: mapMutations(["setLocales", "setCurrentLocaleCode"]),
+
   created: function() {
     // Initialize early application stuff
 

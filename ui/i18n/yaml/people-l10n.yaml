@@ -5,6 +5,9 @@ people:
   title-roles:
     en: Roles
     es: Papeles
+  dropdown-roles:
+    en: All Roles
+    es: Todos los Papeles
   attributes:
     en: Attributes
     es: Atributas
@@ -27,7 +30,7 @@ people:
     en: Previous
     es: Anterior
 
-account:
+person:
   username:
     en: Username
     es: Nombre de usuario
@@ -40,16 +43,6 @@ account:
   no-account:
     en: Don't have an account?
     es: ¿No tienes una cuenta?
-  active:
-    _desc: Account status active
-    en: Active
-    es: Activo
-  inactive:
-    _desc: Account status inactive
-    en: Inactive
-    es: Inactivo
-
-person:
   account:
     en: Account
     es: Cuenta

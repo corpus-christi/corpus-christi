@@ -12,11 +12,22 @@ except ImportError:
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
-PSQL_COMMON = f'postgresql://{private.PSQL_USER}:{private.PSQL_PASS}@{private.PSQL_HOST}/'
-PSQL_TEST = PSQL_COMMON + 'cc-test'
-PSQL_DEV = PSQL_COMMON + 'cc-dev'
-PSQL_STAGING = PSQL_COMMON + 'cc-staging'
-PSQL_PROD = PSQL_COMMON + 'cc-prod'
+
+def psql_url(db_config):
+    url_prefix = f'postgresql://{private.PSQL_USER}:{private.PSQL_PASS}@{private.PSQL_HOST}/'
+
+    if  hasattr(private, "PSQL_DB"):
+        return url_prefix + private.PSQL_DB
+    elif db_config == 'test':
+        return url_prefix + 'cc-test'
+    elif db_config == 'dev':
+        return url_prefix + 'cc-dev'
+    elif db_config == 'staging':
+        return url_prefix + 'cc-staging'
+    elif db_config == 'prod':
+        return url_prefix + 'cc-prod'
+    else:
+        raise RuntimeError(f"Can't determine Postgres URL with dbconfig '{db_config}'")
 
 
 class Config:
@@ -50,26 +61,26 @@ class Config:
 
 class TestingConfig(Config):
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DB_URL') or PSQL_TEST
+    SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DB_URL') or psql_url('test')
     JWT_BLACKLIST_ENABLED = False
 
 
 class DevelopmentConfig(Config):
     TESTING = True
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DB_URL') or PSQL_DEV
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DB_URL') or psql_url('dev')
 
 
 class StagingConfig(Config):
     TESTING = False
     DEBUG = False
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DB_URL') or PSQL_STAGING
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DB_URL') or psql_url('staging')
 
 
 class ProductionConfig(Config):
     TESTING = False
     DEBUG = False
-    SQLALCHEMY_DATABASE_URI = os.environ.get('PROD_DB_URL') or PSQL_PROD
+    SQLALCHEMY_DATABASE_URI = os.environ.get('PROD_DB_URL') or psql_url('prod')
 
 
 config = {

@@ -11,6 +11,9 @@ groups:
   description:
     en: Description
     es: Descripción
+  member-count:
+    en: Member Count
+    es: Recuento de Miembros
   manager:
     en: Manager
     es: Gerente
@@ -24,17 +27,49 @@ groups:
     en: Create Group
     es: Crea un Grupo
   details:
+    class-title:
+      en: Title
+      es: Título 
     title:
       en: Details
       es: Detalles
+    member-count:
+      en: Member count
+      es: Cuenta de miembro
   meetings:
     title:
       en: Meetings
       es: Reuniones
+    add-meeting: 
+      en: Add Meeting
+      es: Agregar reunión
   members:
     title:
       en: Members
       es: Miembros
+    email:
+      compose:
+        en: Compose Email
+        es: Redactar Correo Electrónico
+      send:
+        en: Send
+        es: Enviar
+      to:
+        en: To
+        es: Para
+      cc:
+        en: Cc
+        es: Cc
+      bcc:
+        en: Bcc
+        es: Cco
+      subject:
+        en: Subject
+        es: Asunto
+      body:
+        en: Body
+        es: Cuerpo
+
   confirm-remove-from-event:
     en: Are you sure you want to remove this group from this event?
     es: ¿Estás seguro de que quieres eliminar a este grupo de este evento?
@@ -63,6 +98,9 @@ groups:
     confirm-archive:
       en: Are you sure you want to archive this group?
       es: ¿Seguro que quieres archivar este groupos?
+    confirm-member-archive:
+      en: Are you sure you want to archive this group member?
+      es: ¿Estás seguro de que deseas archivar a este miembro del grupo?
     group-archived:
       en: Group archived
       es: Grupo archivado
@@ -105,4 +143,24 @@ groups:
     error-archiving-member:
       en: Error while unarchiving member
       es: Error al desarchivar miembro
-
+    already-exists:
+      en: Group already exists
+      es: El grupo ya existe
+    required-fields:
+      en: Please fill out all required fields
+      es: Por favor llene todos los campos requeridos
+    email-sent:
+      en: Email sent
+      es: Correo electrónico enviado
+    error-active-not-selected: 
+      en: No active members are selected
+      es: No hay miembros activos seleccionados
+    error-archived-not-selected:
+      en: No archived members are selected 
+      es: No hay miembros archivados seleccionados
+    no-remaining-members:
+      en: No remaining members
+      es: Ningún miembro restante
+    error-no-manager-email:
+      en: Your email address is not defined
+      es: Su dirección de correo electrónico no está definida

@@ -7,7 +7,7 @@ from sqlalchemy import func
 from . import assets
 from .models import Asset, AssetSchema
 from .. import db
-from ..etc.helper import modify_entity, get_exclusion_list
+from src.shared.helpers import modify_entity, get_exclusion_list
 from ..events.models import EventAsset
 
 

@@ -8,7 +8,8 @@ from . import groups
 from .models import GroupSchema, Group, Attendance, Member, MemberSchema, Meeting, MeetingSchema, AttendanceSchema
 from .. import db
 from ..images.models import Image, ImageGroup
-from ..people.models import Role, Manager, Account
+from ..people.models import Role, Manager, Person
+
 
 # ---- Group
 
@@ -16,9 +17,9 @@ group_schema = GroupSchema()
 
 
 def group_dump(group):
-    group.managerInfo = group.manager
-    group.managerInfo.person = group.manager.person
-    group.memberList = group.members
+    group.manager_info = group.manager
+    group.manager_info.person = group.manager.person
+    group.member_list = group.members
     return jsonify(group_schema.dump(group))
 
 
@@ -53,7 +54,7 @@ def create_group():
     # Add group_overseer role to the existing manager account -> if they have an account
     group_overseer = db.session.query(Role).filter_by(name_i18n="role.group-overseer").first()
     subq = db.session.query(Manager.person_id).filter_by(id=new_group.manager_id).subquery()
-    manager_account = db.session.query(Account).filter(Account.person_id.in_(subq)).first()
+    manager_account = db.session.query(Person).filter(Person.id.in_(subq)).first()
 
     if manager_account:
         manager_roles = manager_account.roles
@@ -80,9 +81,9 @@ def read_all_groups():
     query = query.all()
 
     for group in query:
-        group.memberList = group.members
-        group.managerInfo = group.manager
-        group.managerInfo.person = group.manager.person
+        group.member_list = group.members
+        group.manager_info = group.manager
+        group.manager_info.person = group.manager.person
     return jsonify(group_schema.dump(query, many=True))
 
 
@@ -94,6 +95,11 @@ def read_one_group(group_id):
         return jsonify(msg="Group not found"), 404
     return group_dump(result), 200
 
+@groups.route('/find_group/<group_name>/<manager>')
+@jwt_required
+def find_group(group_name=None, manager=None):
+    matching_group_count = db.session.query(Group).filter_by(name=group_name, manager_id=manager).count()
+    return jsonify(matching_group_count), 200
 
 @groups.route('/groups/<group_id>', methods=['PATCH'])
 @jwt_required
@@ -125,7 +131,7 @@ def update_group(group_id):
         group_overseer = db.session.query(Role).filter_by(name_i18n="role.group-overseer").first()
         if group_overseer:
             manager = db.session.query(Manager).filter_by(id=new_manager_id).first()
-            manager_account = db.session.query(Account).filter_by(person_id=manager.person_id).first()
+            manager_account = db.session.query(Person).filter_by(person_id=manager.person_id).first()
             if manager_account:
                 manager_roles = manager_account.roles
                 if group_overseer not in manager_roles:
