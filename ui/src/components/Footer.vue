@@ -2,7 +2,8 @@
   <v-footer app dark color="grey" class="pa-2">
     <v-spacer />
     <div>
-      &copy; {{ new Date().getFullYear() }} Taylor Center for Missions Computing
+      &copy; Copyright {{ new Date().getFullYear() }} Taylor Center for Missions
+      Computing
     </div>
   </v-footer>
 </template>

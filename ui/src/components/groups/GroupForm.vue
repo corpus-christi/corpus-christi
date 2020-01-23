@@ -12,7 +12,7 @@
           v-validate="'required'"
           v-bind:error-messages="errors.first('title')"
           data-cy="title"
-        ></v-text-field>
+        />
         <v-textarea
           rows="3"
           v-model="group.description"
@@ -21,7 +21,7 @@
           v-validate="'required'"
           v-bind:error-messages="errors.collect('description')"
           data-cy="description"
-        ></v-textarea>
+        />
         <entity-search
           manager
           :value="manager"
@@ -40,7 +40,7 @@
         data-cy="form-cancel"
         >{{ $t("actions.cancel") }}</v-btn
       >
-      <v-spacer/>
+      <v-spacer />
       <v-btn
         color="primary"
         outline
@@ -122,7 +122,7 @@ export default {
 
     parseGroup(obj) {
       return {
-	'id': obj.managerId,
+        id: obj.managerId
       };
     },
 
@@ -142,9 +142,9 @@ export default {
       this.$validator.validateAll().then(isValid => {
         if (isValid) {
           this.$http
-            .get(`/api/v1/groups/find_group/${group.name}/${group.managerId}`)
+            .get(`/api/v1/groups/find_group/${group.name}/${group.manager.id}`)
             .then(response => {
-              if (response.data == 0 || this.editMode) {
+              if (response.data == 0) {
                 operation();
               } else {
                 this.showSnackbar(this.$t("groups.messages.already-exists"));
@@ -177,6 +177,7 @@ export default {
     save() {
       //console.log(this.group);
       this.validateGroup(this.group, () => {
+        this.group.active = true;
         this.group.active = true;
         this.$emit("save", this.group);
       });

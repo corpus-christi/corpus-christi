@@ -27,7 +27,7 @@
               :label="$t('people.title-roles')"
               :items="translatedRoles.concat(viewOption)"
               v-model="viewStatus"
-            ></v-select>
+            />
           </div>
         </v-flex>
       </v-layout>
@@ -53,12 +53,9 @@
           {{ props.item.username }}
         </td>
         <td :data-cy="'roles-' + props.item.id">
-          <v-chip
-            v-for="role in props.item.roles"
-            :key="role.id"
-            small
-            >{{ $t(role.nameI18n) }}</v-chip
-          >
+          <v-chip v-for="role in props.item.roles" :key="role.id" small>{{
+            $t(role.nameI18n)
+          }}</v-chip>
         </td>
 
         <td class="text-no-wrap">

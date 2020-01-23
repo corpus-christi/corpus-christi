@@ -12,13 +12,13 @@
       @click="openInfoWindow(m)"
     />
     <gmap-info-window
-      :options="{maxWidth: 300}"
+      :options="{ maxWidth: 300 }"
       :position="infoWindow.position"
       :opened="infoWindow.open"
       @closeclick="infoWindow.open = false"
     >
-      {{ infoWindow.name }} <br>
-      {{ infoWindow.address }} <br>
+      {{ infoWindow.name }} <br />
+      {{ infoWindow.address }} <br />
       {{ infoWindow.description }}
     </gmap-info-window>
   </gmap-map>
@@ -52,7 +52,7 @@ export default {
       zoom: 15,
       map: "",
       infoWindow: {
-        position: {lat: 0, lng: 0},
+        position: { lat: 0, lng: 0 },
         open: false,
         address: "",
         name: "",
