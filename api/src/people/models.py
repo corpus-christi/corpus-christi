@@ -41,7 +41,7 @@ class Person(Base):
     #start of account fields being merged
     username = Column(StringTypes.MEDIUM_STRING, nullable=False, unique=True)
     password_hash = Column(StringTypes.PASSWORD_HASH, nullable=False)
-    confirmed = Column(Boolean, nullable=True, default=False)
+    confirmed = Column(Boolean, nullable=True, default=0)
     #end of account fields being merged
     active = Column(Boolean, nullable=False, default=True)
     address_id = Column(Integer, ForeignKey('places_address.id'), nullable=True, default=None)
