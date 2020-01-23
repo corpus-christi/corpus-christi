@@ -553,7 +553,6 @@ export default {
       this.confirmDialog.show = true;
     },
     showLocationConfirmDialog(action, place) {
-      console.log(place);
       this.confirmLocationDialog.title = "places.messages.confirm." + action;
       this.confirmLocationDialog.action = action;
       this.confirmLocationDialog.selectedLocation = 0;
@@ -571,7 +570,6 @@ export default {
       }
     },
     confirmActionLocation(action, location) {
-      console.log(location);
       if (action === "deactivate") {
         this.deactivateLocation(location);
       } else if (action === "activate") {
@@ -583,7 +581,6 @@ export default {
       this.confirmLocationDialog.show = false;
     },
     deactivateAddress(place) {
-      console.log(place);
       this.$http
         .patch(`/api/v1/places/addresses/${place.id}`, { active: false })
         .then(resp => {
@@ -591,6 +588,13 @@ export default {
         })
         .then(() => {
           this.refreshPlacesList();
+        })
+        .then(() => {
+          for (let loc = 0; loc < place.locations.length; loc++) {
+            if (place.locations[loc].active) {
+              this.deactivateLocation(place.locations[loc].id);
+            }
+          }
         })
         .catch(err => {
           console.log("FAILED", err);
@@ -618,7 +622,6 @@ export default {
         });
     },
     deactivateLocation(location) {
-      console.log(location);
       this.$http
         .patch(`/api/v1/places/locations/${location}`, { active: false })
         .then(resp => {
