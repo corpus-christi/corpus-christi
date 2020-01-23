@@ -121,8 +121,8 @@
           <v-layout>
             <v-flex md2>{{ $t("places.location.location") }}: </v-flex>
             <v-flex>
-              <v-chip v-for="l in props.item.locations" :key="l.id" small
-                >{{ l.description }}
+              <v-chip v-for="l in locationsToDisplay('deactivate', props.item.locations)" :key="l.value" small
+                >{{ l.text }}
               </v-chip>
             </v-flex>
             <v-flex md2>
@@ -175,7 +175,7 @@
                   color="primary"
                   slot="activator"
                   data-cy="deactivate-person"
-                  v-on:click="showLocationConfirmDialog('deactivate')"
+                  v-on:click="showLocationConfirmDialog('deactivate', props.item)"
                 >
                   <v-icon small>archive</v-icon>
                 </v-btn>
@@ -189,7 +189,7 @@
                   color="primary"
                   slot="activator"
                   data-cy="reactivate-person"
-                  v-on:click="showLocationConfirmDialog('activate')"
+                  v-on:click="showLocationConfirmDialog('activate', props.item)"
                 >
                   <v-icon small>undo</v-icon>
                 </v-btn>
@@ -289,14 +289,14 @@
     <v-dialog v-model="confirmLocationDialog.show"
       max-width="350px">
       <v-card>
-        <v-card-text>{{ $t(confirmDialog.title) }}</v-card-text>
+        <v-card-text>{{ $t(confirmLocationDialog.title) }}</v-card-text>
         <v-autocomplete
           name="location"
           hide-details
           solo
           single-line
           :label="$t('places.location.location')"
-          :items="confirmLocationDialog.locationInfo.allLocations"
+          :items="locationsToDisplay(confirmLocationDialog.action, confirmLocationDialog.locationInfo.allLocations)"
           v-model="confirmLocationDialog.selectedLocation"
           v-validate="'required'"
           :error-messages="errors.collect('location')"
@@ -306,16 +306,16 @@
             v-on:click="cancelAction"
             color="secondary"
             flat
-            :disabled="confirmDialog.loading"
+            :disabled="confirmLocationDialog.loading"
             >{{ $t("actions.cancel") }}</v-btn
           >
           <v-spacer></v-spacer>
           <v-btn
-            v-on:click="confirmActionLocation(confirmDialog.action, confirmDialog.selectedLocation)"
+            v-on:click="confirmActionLocation(confirmLocationDialog.action, confirmLocationDialog.selectedLocation)"
             color="primary"
             raised
-            :disabled="confirmDialog.loading"
-            :loading="confirmDialog.loading"
+            :disabled="confirmLocationDialog.loading"
+            :loading="confirmLocationDialog.loading"
             >{{ $t("actions.confirm") }}</v-btn
           >
         </v-card-actions>
@@ -518,11 +518,33 @@ export default {
           if (c[i].id === this.locations[j].address_id) {
             c[i].locations.push({
               id: this.locations[j].id,
-              description: this.locations[j].description
+              description: this.locations[j].description,
+              active: this.locations[j].active
             });
           }
       }
       return c;
+    },
+    locationsToDisplay(action, locationsList) {
+      if (action === "deactivate") {
+        return locationsList
+          .filter(location => location.active)
+          .map(element => {
+            return {
+              text: this.$t(element.description),
+              value: element.id
+            };
+          });
+      } else {
+        return locationsList
+          .filter(location => !location.active)
+          .map(element => {
+            return {
+              text: this.$t(element.description),
+              value: element.id
+            };
+          });
+      }
     },
     showConfirmDialog(action, place) {
       this.confirmDialog.title = "places.messages.confirm." + action;
@@ -530,9 +552,15 @@ export default {
       this.confirmDialog.place = place;
       this.confirmDialog.show = true;
     },
-    showLocationConfirmDialog(action) {
+    showLocationConfirmDialog(action, place) {
+      console.log(place);
       this.confirmLocationDialog.title = "places.messages.confirm." + action;
       this.confirmLocationDialog.action = action;
+      this.confirmLocationDialog.selectedLocation = 0;
+      this.confirmLocationDialog.locationInfo = {
+        address_id: place.id,
+        allLocations: place.locations
+      };
       this.confirmLocationDialog.show = true;
     },
     confirmAction(action, place) {
@@ -542,7 +570,8 @@ export default {
         this.activateAddress(place);
       }
     },
-    confirmActionLocation(action, location){
+    confirmActionLocation(action, location) {
+      console.log(location);
       if (action === "deactivate") {
         this.deactivateLocation(location);
       } else if (action === "activate") {
