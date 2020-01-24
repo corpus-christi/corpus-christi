@@ -146,7 +146,9 @@ def update_person(person_id):
         return jsonify("Person does not exist"), 404
 
     for key, val in valid_person.items():
-        setattr(person, key, val)
+        if key != 'roles':
+            # print('key: %s', key)
+            setattr(person, key, val)
 
     db.session.commit()
 
