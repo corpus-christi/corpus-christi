@@ -4,13 +4,12 @@ import random
 from faker import Faker
 
 from ..events.models import EventGroup, EventGroupSchema, Event
-from ..groups.models import Group, Meeting, Attendance, Member, GroupSchema, MeetingSchema, AttendanceSchema, \
-    MemberSchema
+from ..groups.models import Group, Meeting, Attendance, Membership, GroupSchema, MeetingSchema, AttendanceSchema, \
+    MembershipSchema
 from ..people.models import Person, Manager, Role, RoleSchema
 from ..people.test_people import create_multiple_managers, create_multiple_people
 from ..places.models import Address
 from ..places.test_places import create_multiple_addresses
-
 
 
 class RandomLocaleFaker:
@@ -225,4 +224,3 @@ def create_group_test_data(sqla):
     create_multiple_meetings(sqla, 12)
     create_multiple_members(sqla, 13)
     create_attendance(sqla, 0.75)
-

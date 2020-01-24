@@ -11,7 +11,7 @@ from .models import Event, EventPerson, EventAsset, EventParticipant, EventTeam,
     EventPersonSchema, EventParticipantSchema
 from .. import db, mail, translate
 from src.shared.helpers import modify_entity, get_exclusion_list
-from ..groups.models import Group, Member
+from ..groups.models import Group, Membership
 from ..images.models import Image, ImageEvent
 from ..people.models import Person
 

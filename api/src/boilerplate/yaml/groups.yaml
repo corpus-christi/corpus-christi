@@ -37,9 +37,12 @@ entities:
         backref: groups
       - name: meetings
         related-model: Meeting
-        backref: groups
+        backref: group
       - name: images
-        related-model: Image
+        related-model: ImageGroup
+        backref: groups
+      - name: events
+        related-model: EventGroup
         backref: groups
   - name: Meeting
     singular: meeting
@@ -49,11 +52,9 @@ entities:
     attributes:
       - name: id
         type: integer
+        required: true
         primary-key: true
         min: 1
-      - name: when
-        type: datetime
-        required: true
       - name: group_id
         type: integer
         required: true
@@ -61,19 +62,34 @@ entities:
       - name: address_id
         type: integer
         foreign-key: places_address.id
+      - name: start_time
+        type: datetime
+        required: true
+      - name: stop_time
+        type: datetime
+        required: true
+      - name: description
+        type: string
+        length: long
+        required: false
+      - name: active
+        type: boolean
+        required: false
+        default: true
     relationships:
-      - name: group
-        related-model: Group
-        backref: meetings
-      - name: address
-        related-model: Address
-        backref: meetings
+      - name: attendances
+        related-model: Attendance
+        backref: meeting
   - name: Membership
     singular: membership
     plural: memberships
     uri: /memberships
     table: groups_membership
     attributes:
+      - name: id
+        type: integer
+        required: true
+        primary-key: true
       - name: group_id
         type: integer
         primary-key: true
@@ -92,12 +108,9 @@ entities:
         required: true
         default: true
     relationships:
-      - name: group
-        related-model: Group
-        backref: members
-      - name: person
-        related-model: Person
-        backref: memberships
+      - name: attendances
+        related-model: Attendance
+        backref: membership
   - name: Attendance
     singular: attendance
     plural: attendance
@@ -108,10 +121,10 @@ entities:
         type: integer
         primary-key: true
         foreign-key: groups_meeting.id
-      - name: member_id
+      - name: membership_id
         type: integer
         primary-key: true
-        foreign-key: groups_member.id
+        foreign-key: groups_membership.id
   - name: Management
     singular: management
     plural: managements

@@ -1,6 +1,6 @@
 from marshmallow import Schema, fields
 from marshmallow.validate import Range, Length
-from sqlalchemy import Column, Integer, Boolean, ForeignKey, Date, DateTime
+from sqlalchemy import Column, Integer, Boolean, ForeignKey, Date, DateTime, UniqueConstraint
 from sqlalchemy.orm import relationship
 
 from src.db import Base
@@ -34,16 +34,16 @@ class GroupSchema(Schema):
     active = fields.Boolean(required=True)
     group_type_id = fields.Integer(data_key='groupTypeId', required=True)
     memberships = fields.Nested('MembershipSchema', data_key="memberships", many=True, only=[
-                                'person_id', 'joined', 'active'])
+        'person_id', 'joined', 'active'])
     managements = fields.Nested('ManagementSchema', data_key="managements", only=[
-                                'person_id', 'management_type_id', 'active'])
+        'person_id', 'management_type_id', 'active'])
 
 # ---- Meeting
 
 
 class Meeting(Base):
     __tablename__ = 'groups_meeting'
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, nullable=False)
     group_id = Column(Integer, ForeignKey('groups_group.id'), nullable=False)
     address_id = Column(Integer, ForeignKey('places_address.id'))
     start_time = Column(DateTime, nullable=False)
@@ -59,6 +59,7 @@ class Meeting(Base):
 
 class MeetingSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
+    when = fields.DateTime(required=True)
     group_id = fields.Integer(data_key='groupId', required=True)
     address_id = fields.Integer(data_key='addressId')
     start_time = fields.DateTime(data_key='startTime', required=True)
@@ -72,20 +73,23 @@ class MeetingSchema(Schema):
 
 class Membership(Base):
     __tablename__ = 'groups_membership'
+    id = Column(Integer, primary_key=True, nullable=False)
     group_id = Column(Integer, ForeignKey('groups_group.id'),
                       primary_key=True, nullable=False)
     person_id = Column(Integer, ForeignKey(
         'people_person.id'), primary_key=True, nullable=False)
     joined = Column(Date, nullable=False)
     active = Column(Boolean, nullable=False, default=True)
-    group = relationship('Group', backref='members', lazy=True)
-    person = relationship('Person', backref='memberships', lazy=True)
+    attendances = relationship('Attendance', backref='membership', lazy=True)
+    __table_args__ = (UniqueConstraint('group_id', 'person_id', name='_group_person_uc'),
+                      )
 
     def __repr__(self):
-        return f"<Membership(group_id={self.group_id},person_id={self.person_id})>"
+        return f"<Membership(id={self.id},group_id={self.group_id},person_id={self.person_id})>"
 
 
 class MembershipSchema(Schema):
+    id = fields.Integer(dump_only=True, required=True)
     group_id = fields.Integer(
         dump_only=True, data_key='groupId', required=True)
     person_id = fields.Integer(
@@ -100,18 +104,18 @@ class Attendance(Base):
     __tablename__ = 'groups_attendance'
     meeting_id = Column(Integer, ForeignKey(
         'groups_meeting.id'), primary_key=True)
-    member_id = Column(Integer, ForeignKey(
-        'groups_member.id'), primary_key=True)
+    membership_id = Column(Integer, ForeignKey(
+        'groups_membership.id'), primary_key=True)
 
     def __repr__(self):
-        return f"<Attendance(meeting_id={self.meeting_id},member_id={self.member_id})>"
+        return f"<Attendance(meeting_id={self.meeting_id},membership_id={self.membership_id})>"
 
 
 class AttendanceSchema(Schema):
     meeting_id = fields.Integer(
         dump_only=True, data_key='meetingId', required=True)
-    member_id = fields.Integer(
-        dump_only=True, data_key='memberId', required=True)
+    membership_id = fields.Integer(
+        dump_only=True, data_key='membershipId', required=True)
 
 # ---- Management
 

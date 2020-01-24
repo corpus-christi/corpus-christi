@@ -5,7 +5,7 @@ from flask_jwt_extended import jwt_required
 from marshmallow import ValidationError
 
 from . import groups
-from .models import GroupSchema, Group, Attendance, Member, MemberSchema, Meeting, MeetingSchema, AttendanceSchema
+from .models import GroupSchema, Group, Attendance, Membership, MembershipSchema, Meeting, MeetingSchema, AttendanceSchema
 from .. import db
 from ..images.models import Image, ImageGroup
 from ..people.models import Role, Manager, Account
@@ -337,7 +337,7 @@ def deactivate_meeting(meeting_id):
 
 # ---- Member
 
-member_schema = MemberSchema()
+member_schema = MembershipSchema()
 
 
 def generate_member(group_id, person_id, joined, active):
