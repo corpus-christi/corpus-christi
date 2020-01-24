@@ -13,17 +13,15 @@ from ..db import Base
 from ..places.models import Address
 from ..shared.models import StringTypes
 
-
-
 # Defines join table for people_person and people_role
 
 
 people_person_role = Table('person_role', Base.metadata,
-                            Column('people_person_id', Integer, ForeignKey(
-                                'people_person.id'), primary_key=True),
-                            Column('id', Integer, ForeignKey(
-                                'people_role.id'), primary_key=True)
-                            )
+                           Column('people_person_id', Integer, ForeignKey(
+                               'people_person.id'), primary_key=True),
+                           Column('id', Integer, ForeignKey(
+                               'people_role.id'), primary_key=True)
+                           )
 
 
 # ---- Person
@@ -38,11 +36,11 @@ class Person(Base):
     birthday = Column(Date)
     phone = Column(StringTypes.MEDIUM_STRING)
     email = Column(StringTypes.MEDIUM_STRING)
-    #start of account fields being merged
+    # start of account fields being merged
     username = Column(StringTypes.MEDIUM_STRING, nullable=False, unique=True)
     password_hash = Column(StringTypes.PASSWORD_HASH, nullable=False)
     confirmed = Column(Boolean, nullable=False, default=False)
-    #end of account fields being merged
+    # end of account fields being merged
     active = Column(Boolean, nullable=False, default=True)
     address_id = Column(Integer, ForeignKey('places_address.id'), nullable=True, default=None)
 
@@ -56,13 +54,13 @@ class Person(Base):
     members = relationship('Member', back_populates='person', lazy=True)
     images = relationship('ImagePerson', back_populates='person')
 
-    #next line brought over from accounts for merging links
+    # next line brought over from accounts for merging links
     roles = relationship("Role",
                          secondary=people_person_role, backref="person")
 
- #TEMP REMOVE because of merging accounts
- #   def _init(self, accountInfo):
- #       self.accountInfo = accountInfo
+    # TEMP REMOVE because of merging accounts
+    #   def _init(self, accountInfo):
+    #       self.accountInfo = accountInfo
 
     def __repr__(self):
         return f"<Person(id={self.id},name='{self.first_name} {self.last_name}')>"
@@ -71,6 +69,7 @@ class Person(Base):
         return f"{self.first_name} {self.last_name}"
 
         # From Flask Web Dev book
+
     @property
     def password(self):
         """Hashed passwords are 'write-only'."""
@@ -98,20 +97,20 @@ class PersonSchema(Schema):
     birthday = fields.Date(allow_none=True)
     phone = fields.String(allow_none=True)
     email = fields.String(allow_none=True)
-    #the start of merging accounts and person
+    # the start of merging accounts and person
     username = fields.String(required=True, validate=Length(min=1))
     password = fields.String(attribute='password_hash', load_only=True,
                              required=True, validate=Length(min=6))
-    confirmed = fields.Boolean()#dump_only=True)
-    #the end of the important fields from account
+    confirmed = fields.Boolean()  # dump_only=True)
+    # the end of the important fields from account
     active = fields.Boolean(required=True)
     address_id = fields.Integer(data_key='addressId', allow_none=True)
 
-#    accountInfo = fields.Nested( #temperarily removing because of the merge of the account table
- #       'AccountSchema', allow_none=True, only=['username', 'id', 'active', 'roles'])
+    #    accountInfo = fields.Nested( #temperarily removing because of the merge of the account table
+    #       'AccountSchema', allow_none=True, only=['username', 'id', 'active', 'roles'])
 
     attributesInfo = fields.Nested('PersonAttributeSchema', many=True)
-    images = fields.Nested('ImagePersonSchema', many=True, exclude=['person'])#, dump_only=True)
+    images = fields.Nested('ImagePersonSchema', many=True, exclude=['person'])  # , dump_only=True)
     roles = fields.Nested('RoleSchema', many=True, dump_only=True)
 
     @pre_load
@@ -125,8 +124,6 @@ class PersonSchema(Schema):
         unknown = INCLUDE
     #    exclude = ("roles", "confirmed")
     #    dump_only = ['role']
-
-
 
 
 # ---- Account
@@ -200,8 +197,7 @@ class Role(Base):
     @classmethod
     def load_from_file(cls, file_name='roles.json'):
         count = 0
-        file_path = os.path.abspath(os.path.join(
-            __file__, os.path.pardir, 'data', file_name))
+        file_path = os.path.abspath(os.path.join(__file__, os.path.pardir, 'data', file_name))
 
         with open(file_path, 'r') as fp:
             if db.session.query(Role).count() == 0:
@@ -225,8 +221,7 @@ class Role(Base):
                 db.session.commit()
             fp.close()
             return count
-
-        # return 0
+        return 0
 
 
 class RoleSchema(Schema):

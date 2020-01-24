@@ -22,6 +22,7 @@
 import { mapGetters, mapMutations, mapState } from "vuex";
 import { flagForLocale, splitLocaleCode } from "../helpers";
 import store from "./../store";
+import set from "lodash/set";
 
 export default {
   name: "LocaleMenu",
@@ -39,7 +40,6 @@ export default {
     ...mapMutations(["setCurrentLocaleCode"]),
 
     setCurrentLocale(locale) {
-      // Set the current locale.
       this.setCurrentLocaleCode(locale.code);
       this.getTranslationsForLocale(
         splitLocaleCode(locale.code).languageCode
@@ -56,25 +56,15 @@ export default {
       return flagForLocale(locale.code) + locale.desc;
     },
 
-    getTranslationsForLocale(localCode) {
+    getTranslationsForLocale(localeCode) {
       return this.$http
         .get(`/api/v1/i18n/values/${store.state.currentLocaleCode}`)
         .then(response => {
           let translations = {};
           for (let item of response.data) {
-            let keys = item.key_id.split(".");
-            let lastLevel = translations;
-            for (let i in keys) {
-              let key = keys[i];
-              if (i === keys.length - 1) {
-                lastLevel[key] = item.gloss;
-              } else if (!Object.keys(lastLevel).includes(key)) {
-                lastLevel[key] = {};
-              }
-              lastLevel = lastLevel[key];
-            }
+            set(translations, item.key_id, item.gloss);
           }
-          this.$i18n.mergeLocaleMessage(localCode, translations);
+          this.$i18n.mergeLocaleMessage(localeCode, translations);
         })
         .catch(err => console.error("FAILURE", err.response));
     }

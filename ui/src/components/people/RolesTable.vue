@@ -209,6 +209,7 @@ export default {
           return this.allPeople;
       }
     },
+
     translatedRoles() {
       return this.rolesList.map(element => {
         return {
@@ -217,6 +218,7 @@ export default {
         };
       });
     },
+
     viewOption() {
       return [
         {
