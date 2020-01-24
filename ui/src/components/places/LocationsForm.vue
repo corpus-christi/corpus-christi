@@ -28,8 +28,10 @@
         v-bind:label="$t('places.location.description')"
         v-model="location.description"
         clearable
+        v-validate="'max:100'"
         :disabled="formDisabled"
-      />
+      ></v-text-field>
+      <font color="red">{{ errors.first("description") }}</font>
     </v-card-text>
     <v-card-actions>
       <v-spacer />
@@ -45,7 +47,7 @@
         color="primary"
         @click="saveLocationForm"
         :loading="formDisabled"
-        :disabled="subDisabled"
+        :disabled="subDisabled || errors.first()"
         >{{ $t("actions.save") }}</v-btn
       >
     </v-card-actions>
@@ -94,6 +96,8 @@ export default {
   watch: {
     initialData(locationProp) {
       this.locationInfo = locationProp;
+      this.editMode = this.locationInfo.editMode;
+      this.selectedLocation = 0;
       this.subDisabled =
         this.formDisabled || !(!this.editMode || this.selectedLocation);
     }
@@ -106,9 +110,7 @@ export default {
     updateDescription() {
       for (let i = 0; i < this.locationInfo.allLocations.length; i++) {
         if (this.locationInfo.allLocations[i].id === this.selectedLocation) {
-          this.location.description = this.locationInfo.allLocations[
-            i
-          ].description;
+          this.location.description = this.locationInfo.allLocations[i].description;
         }
       }
     },

@@ -371,6 +371,19 @@
         "address": "Address",
         "city": "City",
         "country": "Country",
+        "filters": {
+          "address_filters": "Address Filters",
+          "apply": "Apply Filters",
+          "distance-addr": "Filter by distance from a specific address",
+          "distance-ll": "Filter by distance from a specific Latitude and Longitude",
+          "distanceFromAddress": "Distance from specified Address",
+          "distanceFromLatLng": "Distance from specified Latitude and Longitude",
+          "endLat": "End Latitude",
+          "endLng": "End Longitude",
+          "range": "Filter between a range of Latitudes and Longitudes",
+          "startLat": "Start Latitude",
+          "startLng": "Start Longitude"
+        },
         "find-address": "Find Address",
         "find-address-lat-lng": "Find Address using Latitude and Longitude",
         "latitude": "Latitude",
@@ -381,19 +394,29 @@
       },
       "area": {
         "area": "Area",
+        "confirm": {
+          "activate": "Are you sure you want to restore this area?",
+          "deactivate": "Are you sure you want to archive this area?"
+        },
         "create-area": "Create New Area",
         "edit": "Edit Area",
         "name": "Area Name",
         "new": "Add Area"
       },
+      "close": "close",
       "create-address": "Create an Address",
       "edit": "Edit Location",
+      "expand": "expand",
       "location": {
         "description": "Description",
         "location": "Location",
         "new": "Add Location"
       },
       "messages": {
+        "confirm": {
+          "activate": "Are you sure you want to restore this address?",
+          "deactivate": "Are you sure you want to archive this address?"
+        },
         "find-address-err": "Latitude and Longitude are required to find an address",
         "no-results": "Your address returned no results.",
         "saved": "Your address has been saved."
@@ -843,6 +866,19 @@
         "address": "Direcci\u00f3n",
         "city": "Ciudad",
         "country": "Pa\u00eds",
+        "filters": {
+          "address_filters": "Filtros de Direcciones",
+          "apply": "Aplicar Filtros",
+          "distance-addr": "Filtrar por distancia desde una direcci\u00f3n espec\u00edfica",
+          "distance-ll": "Filtrar por distancia desde una Latitud y Longitud espec\u00edficas",
+          "distanceFromAddress": "Distancia desde la Direcci\u00f3n especificada",
+          "distanceFromLatLng": "Distancia desde la Latitud y Longitud especificadas",
+          "endLat": "Fin de la Latitud",
+          "endLng": "Longitud Final",
+          "range": "Filtrar entre un rango de Latitudes y Longitudes",
+          "startLat": "Iniciar Latitude",
+          "startLng": "Comenzar Longitud"
+        },
         "find-address": "Encuentra la Direcci\u00f3n",
         "find-address-lat-lng": "Buscar Direcci\u00f3n usando Latitud y Longitud",
         "latitude": "Latitud",
@@ -853,19 +889,29 @@
       },
       "area": {
         "area": "Zona",
+        "confirm": {
+          "activate": "\u00bfEst\u00e1s seguro de que deseas restaurar esta zona?",
+          "deactivate": "\u00bfEst\u00e1s seguro de que deseas archivar esta zona?"
+        },
         "create-area": "Crear nueva \u00c1rea",
         "edit": "\u00c1rea de Edici\u00f3n",
         "name": "Nombre del \u00c1rea",
         "new": "A\u00f1adir Zona"
       },
+      "close": "cerca",
       "create-address": "Crear una Direcci\u00f3n",
       "edit": "Editar Ubicaci\u00f3n",
+      "expand": "expandir",
       "location": {
         "description": "Descripci\u00f3n",
         "location": "Ubicaci\u00f3n",
         "new": "A\u00f1adir Ubicaci\u00f3n"
       },
       "messages": {
+        "confirm": {
+          "activate": "\u00bfEst\u00e1s seguro de que deseas restaurar esta direcci\u00f3n?",
+          "deactivate": "\u00bfEst\u00e1s seguro de que deseas archivar esta direcci\u00f3n?"
+        },
         "find-address-err": "Se requiere latitud y longitud para encontrar una direcci\u00f3n",
         "no-results": "Tu direcci\u00f3n no devolvi\u00f3 resultados.",
         "saved": "Su direcci\u00f3n ha sido guardada."

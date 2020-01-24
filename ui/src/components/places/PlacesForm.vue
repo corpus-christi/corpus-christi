@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-text>
-      <span class="headling">{{ $t("places.create-address") }}</span>
+      <span class="heading">{{ $t("places.create-address") }}</span>
       <v-layout column>
         <v-text-field
           name="address"
