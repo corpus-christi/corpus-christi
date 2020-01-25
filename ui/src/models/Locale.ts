@@ -1,13 +1,13 @@
-export function assertValidLocaleString(localeString) {
+export function assertValidLocaleString(localeString: string) {
   if (!/^[A-Za-z]{2}-[A-Za-z]{2}$/.test(localeString)) {
     throw Error(`Invalid locale '${JSON.stringify(localeString)}'`);
   }
 }
 
 // Convert a single character of a country code to its Unicode regional indicator.
-function charToRegionalIndicator(ch) {
+function charToRegionalIndicator(char: string) {
   const regionalIndicatorA = 0x1f1e6;
-  ch = ch.toUpperCase();
+  const ch = char.toUpperCase();
 
   if (ch < "A" || ch > "Z") {
     return "X";
@@ -17,9 +17,9 @@ function charToRegionalIndicator(ch) {
 }
 
 // Convert all the characters in a string to their Unicode regional indicator.
-function strToRegionalIndicator(str) {
+function strToRegionalIndicator(str: string) {
   const values = str.split("").map(ch => charToRegionalIndicator(ch));
-  return String.fromCodePoint.apply(null, values);
+  return String.fromCodePoint.apply(values);
 }
 
 export class Locale {
@@ -50,13 +50,24 @@ export class Locale {
   }
 }
 
+export interface I18NValueSchema {
+  key_id: string;
+  locale_code: string;
+  gloss: string;
+}
+
+export interface I18NLocale {
+  code: string;
+  desc: string;
+}
+
 export class LocaleModel {
   private _locale: Locale;
   private _description: string;
 
-  constructor(localeModel) {
-    this._locale = new Locale(localeModel.code);
-    this._description = localeModel.desc;
+  constructor(i18NLocale: I18NLocale) {
+    this._locale = new Locale(i18NLocale.code);
+    this._description = i18NLocale.desc;
   }
 
   get locale() {

@@ -6,8 +6,8 @@
     </v-btn>
     <v-list data-cy="language-dropdown">
       <v-list-tile
-        v-for="localeModel in localeModels"
-        v-bind:key="localeModel.locale.toString()"
+        v-for="(localeModel, idx) in localeModels"
+        v-bind:key="idx"
         v-bind:data-cy="localeModel.code"
         v-on:click="changeLocale(localeModel)"
       >
@@ -19,18 +19,29 @@
   </v-menu>
 </template>
 
-<script>
-import { mapGetters, mapMutations, mapState } from "vuex";
+<script lang="ts">
+import Vue from "vue";
 import set from "lodash/set";
+import { I18NValueSchema, Locale, LocaleModel } from "@/models/Locale";
+import { AxiosResponse, AxiosError } from "axios";
 
-export default {
+export default Vue.extend({
   name: "LocaleMenu",
 
   computed: {
-    ...mapState(["currentLocale", "localeModels"]),
-    ...mapGetters(["currentLocaleModel"]),
+    currentLocale(): Locale {
+      return this.$store.state.currentLocale;
+    },
 
-    currentFlagAndDescription() {
+    localeModels(): LocaleModel[] {
+      return this.$store.state.localeModels;
+    },
+
+    currentLocaleModel(): LocaleModel {
+      return this.$store.getters.currentLocaleModel;
+    },
+
+    currentFlagAndDescription(): string {
       const localeModel = this.currentLocaleModel;
 
       if (localeModel) {
@@ -46,22 +57,24 @@ export default {
   },
 
   methods: {
-    ...mapMutations(["setCurrentLocale"]),
+    setCurrentLocale(locale: Locale) {
+      this.$store.commit("setCurrentLocale", locale);
+    },
 
-    changeLocale(localeModel) {
+    changeLocale(localeModel: LocaleModel) {
       console.log("CH LOC", localeModel);
       const locale = localeModel.locale;
       this.setCurrentLocale(locale);
       this.getTranslationsForLanguage(locale).then(() => {
-        this.$i18n.locale = locale;
+        this.$i18n.locale = locale.toString();
       });
     },
 
-    getTranslationsForLanguage(locale) {
+    getTranslationsForLanguage(locale: Locale): Promise<void> {
       console.log("GTFL", locale);
       return this.$http
         .get(`/api/v1/i18n/values/${locale}`)
-        .then(response => {
+        .then((response: AxiosResponse<I18NValueSchema[]>) => {
           let translations = {};
           for (let item of response.data) {
             set(translations, item.key_id, item.gloss);
@@ -70,8 +83,8 @@ export default {
           this.$i18n.mergeLocaleMessage(locale.languageCode, translations);
           console.log("GTFL XLATES", this.$i18n);
         })
-        .catch(err => console.error("FAILURE", err));
+        .catch((err: AxiosError) => console.error("FAILURE", err));
     }
   }
-};
+});
 </script>

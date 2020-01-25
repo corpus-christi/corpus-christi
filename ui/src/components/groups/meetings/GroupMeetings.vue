@@ -75,7 +75,9 @@
     <!-- Archive dialog -->
     <v-dialog v-model="archiveDialog.show" max-width="350px">
       <v-card>
-        <v-card-text>{{ $t("groups.messages.confirm-member-archive") }}</v-card-text>
+        <v-card-text>{{
+          $t("groups.messages.confirm-member-archive")
+        }}</v-card-text>
         <v-card-actions>
           <v-btn
             v-on:click="cancelArchive"
@@ -386,4 +388,3 @@ export default {
   }
 };
 </script>
-

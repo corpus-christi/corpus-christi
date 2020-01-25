@@ -110,7 +110,9 @@ export default {
     updateDescription() {
       for (let i = 0; i < this.locationInfo.allLocations.length; i++) {
         if (this.locationInfo.allLocations[i].id === this.selectedLocation) {
-          this.location.description = this.locationInfo.allLocations[i].description;
+          this.location.description = this.locationInfo.allLocations[
+            i
+          ].description;
         }
       }
     },

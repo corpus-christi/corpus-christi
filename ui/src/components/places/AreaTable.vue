@@ -162,9 +162,7 @@
           >
           <v-spacer></v-spacer>
           <v-btn
-            v-on:click="
-              confirmAction(confirmDialog.action, confirmDialog.area)
-            "
+            v-on:click="confirmAction(confirmDialog.action, confirmDialog.area)"
             color="primary"
             raised
             :disabled="confirmDialog.loading"

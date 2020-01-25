@@ -11,6 +11,7 @@ import Toolbar from "./components/Toolbar";
 import { mapGetters, mapMutations } from "vuex";
 import Footer from "./components/Footer";
 import { setJWT } from "./plugins/axios";
+import { Locale } from "./models/Locale";
 
 export default {
   name: "App",
@@ -26,12 +27,12 @@ export default {
       console.log("APP.VUE RESPONSE", response);
       const localeData = response.data;
 
-      if (localeData && localeData.length) {
+      if (localeData && localeData.length > 0) {
         this.setLocaleModels(localeData);
 
-        const firstLocaleDatum = localeData[0];
-        this.setCurrentLocale(firstLocaleDatum);
-        this.$i18n.locale = firstLocaleDatum.locale
+        const firstLocaleString = localeData[0].code;
+        this.setCurrentLocale(new Locale(firstLocaleString));
+        this.$i18n.locale = firstLocaleString;
         console.log("I18N LOCALE", this.$i18n);
       }
     });
