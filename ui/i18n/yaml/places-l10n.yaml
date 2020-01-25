@@ -1,136 +1,136 @@
 places:
   title:
-    en: Places
-    es: Lugares
+    en-US: Places
+    es-EC: Lugares
   create-address:
-    en: Create an Address
-    es: Crear una Dirección
+    en-US: Create an Address
+    es-EC: Crear una Dirección
   address:
     name:
-      en: Name
-      es: Nombre
+      en-US: Name
+      es-EC: Nombre
     address:
-      en: Address
-      es: Dirección
+      en-US: Address
+      es-EC: Dirección
     city:
-      en: City
-      es: Ciudad
+      en-US: City
+      es-EC: Ciudad
     country:
-      en: Country
-      es: País
+      en-US: Country
+      es-EC: País
     latitude:
-      en: Latitude
-      es: Latitud
+      en-US: Latitude
+      es-EC: Latitud
     longitude:
-      en: Longitude
-      es: Longitud
+      en-US: Longitude
+      es-EC: Longitud
     new:
-      en: Add Address
-      es: Añadir dirección
+      en-US: Add Address
+      es-EC: Añadir dirección
     find-address:
-      en: Find Address
-      es: Encuentra la Dirección
+      en-US: Find Address
+      es-EC: Encuentra la Dirección
     valid-address:
-      en: Use Valid Street Address
-      es: Usar dirección Válida
+      en-US: Use Valid Street Address
+      es-EC: Usar dirección Válida
     find-address-lat-lng:
-      en: Find Address using Latitude and Longitude
-      es: Buscar Dirección usando Latitud y Longitud
+      en-US: Find Address using Latitude and Longitude
+      es-EC: Buscar Dirección usando Latitud y Longitud
     filters:
       address_filters:
-        en: Address Filters
-        es: Filtros de Direcciones
+        en-US: Address Filters
+        es-EC: Filtros de Direcciones
       apply:
-        en: Apply Filters
-        es: Aplicar Filtros
+        en-US: Apply Filters
+        es-EC: Aplicar Filtros
       startLat:
-        en: Start Latitude
-        es: Iniciar Latitude
+        en-US: Start Latitude
+        es-EC: Iniciar Latitude
       endLat:
-        en: End Latitude
-        es: Fin de la Latitud
+        en-US: End Latitude
+        es-EC: Fin de la Latitud
       startLng:
-        en: Start Longitude
-        es: Comenzar Longitud
+        en-US: Start Longitude
+        es-EC: Comenzar Longitud
       endLng:
-        en: End Longitude
-        es: Longitud Final
+        en-US: End Longitude
+        es-EC: Longitud Final
       distanceFromLatLng:
-        en: Distance from specified Latitude and Longitude
-        es: Distancia desde la Latitud y Longitud especificadas
+        en-US: Distance from specified Latitude and Longitude
+        es-EC: Distancia desde la Latitud y Longitud especificadas
       distanceFromAddress:
-        en: Distance from specified Address
-        es: Distancia desde la Dirección especificada
+        en-US: Distance from specified Address
+        es-EC: Distancia desde la Dirección especificada
       range:
-        en: Filter between a range of Latitudes and Longitudes
-        es: Filtrar entre un rango de Latitudes y Longitudes
+        en-US: Filter between a range of Latitudes and Longitudes
+        es-EC: Filtrar entre un rango de Latitudes y Longitudes
       distance-ll:
-        en: Filter by distance from a specific Latitude and Longitude
-        es: Filtrar por distancia desde una Latitud y Longitud específicas
+        en-US: Filter by distance from a specific Latitude and Longitude
+        es-EC: Filtrar por distancia desde una Latitud y Longitud específicas
       distance-addr:
-        en: Filter by distance from a specific address
-        es: Filtrar por distancia desde una dirección específica
+        en-US: Filter by distance from a specific address
+        es-EC: Filtrar por distancia desde una dirección específica
   location:
     location:
-      en: Location
-      es: Ubicación
+      en-US: Location
+      es-EC: Ubicación
     description:
-      en: Description
-      es: Descripción
+      en-US: Description
+      es-EC: Descripción
     new:
-      en: Add Location
-      es: Añadir Ubicación
+      en-US: Add Location
+      es-EC: Añadir Ubicación
   messages:
     no-results:
-      en: Your address returned no results.
-      es: Tu dirección no devolvió resultados.
+      en-US: Your address returned no results.
+      es-EC: Tu dirección no devolvió resultados.
     saved:
-      en: Your address has been saved.
-      es: Su dirección ha sido guardada.
+      en-US: Your address has been saved.
+      es-EC: Su dirección ha sido guardada.
     find-address-err:
-      en: Latitude and Longitude are required to find an address
-      es: Se requiere latitud y longitud para encontrar una dirección
+      en-US: Latitude and Longitude are required to find an address
+      es-EC: Se requiere latitud y longitud para encontrar una dirección
     confirm:
       activate:
-        en: Are you sure you want to restore this address?
-        es: ¿Estás seguro de que deseas restaurar esta dirección?
+        en-US: Are you sure you want to restore this address?
+        es-EC: ¿Estás seguro de que deseas restaurar esta dirección?
       deactivate:
-        en: Are you sure you want to archive this address?
-        es: ¿Estás seguro de que deseas archivar esta dirección?
+        en-US: Are you sure you want to archive this address?
+        es-EC: ¿Estás seguro de que deseas archivar esta dirección?
   new:
-    en: Add Place
-    es: Añadir Lugares
+    en-US: Add Place
+    es-EC: Añadir Lugares
   edit:
-    en: Edit Location
-    es: Editar Ubicación
+    en-US: Edit Location
+    es-EC: Editar Ubicación
   area:
     area:
-      en: Area
-      es: Zona
+      en-US: Area
+      es-EC: Zona
     new:
-      en: Add Area
-      es: Añadir Zona
+      en-US: Add Area
+      es-EC: Añadir Zona
     name:
-      en: Area Name
-      es: Nombre del Área
+      en-US: Area Name
+      es-EC: Nombre del Área
     create-area:
-      en: Create New Area
-      es: Crear nueva Área
+      en-US: Create New Area
+      es-EC: Crear nueva Área
     edit:
-      en: Edit Area
-      es: Área de Edición
+      en-US: Edit Area
+      es-EC: Área de Edición
     confirm:
       activate:
-        en: Are you sure you want to restore this area?
-        es: ¿Estás seguro de que deseas restaurar esta zona?
+        en-US: Are you sure you want to restore this area?
+        es-EC: ¿Estás seguro de que deseas restaurar esta zona?
       deactivate:
-        en: Are you sure you want to archive this area?
-        es: ¿Estás seguro de que deseas archivar esta zona?
+        en-US: Are you sure you want to archive this area?
+        es-EC: ¿Estás seguro de que deseas archivar esta zona?
 
   expand:
-      en: expand
-      es: expandir
+      en-US: expand
+      es-EC: expandir
   close:
-      en: close
-      es: cerca
+      en-US: close
+      es-EC: cerca
 

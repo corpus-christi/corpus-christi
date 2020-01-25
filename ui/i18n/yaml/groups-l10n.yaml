@@ -1,166 +1,166 @@
 groups:
   title:
-    en: Home Churches
-    es: Iglesias Hogar
+    en-US: Home Churches
+    es-EC: Iglesias Hogar
   header:
-    en: Groups
-    es: Grupos
+    en-US: Groups
+    es-EC: Grupos
   name:
-    en: Name
-    es: Nombre
+    en-US: Name
+    es-EC: Nombre
   description:
-    en: Description
-    es: Descripción
+    en-US: Description
+    es-EC: Descripción
   member-count:
-    en: Member Count
-    es: Recuento de Miembros
+    en-US: Member Count
+    es-EC: Recuento de Miembros
   manager:
-    en: Manager
-    es: Gerente
+    en-US: Manager
+    es-EC: Gerente
   group-description:
-    en: Group Description
-    es: Descripción del Grupo
+    en-US: Group Description
+    es-EC: Descripción del Grupo
   edit-group:
-    en: Edit Group
-    es: Grupo de Edición
+    en-US: Edit Group
+    es-EC: Grupo de Edición
   create-group:
-    en: Create Group
-    es: Crea un Grupo
+    en-US: Create Group
+    es-EC: Crea un Grupo
   details:
     class-title:
-      en: Title
-      es: Título 
+      en-US: Title
+      es-EC: Título 
     title:
-      en: Details
-      es: Detalles
+      en-US: Details
+      es-EC: Detalles
     member-count:
-      en: Member count
-      es: Cuenta de miembro
+      en-US: Member count
+      es-EC: Cuenta de miembro
   meetings:
     title:
-      en: Meetings
-      es: Reuniones
+      en-US: Meetings
+      es-EC: Reuniones
     add-meeting: 
-      en: Add Meeting
-      es: Agregar reunión
+      en-US: Add Meeting
+      es-EC: Agregar reunión
   members:
     title:
-      en: Members
-      es: Miembros
+      en-US: Members
+      es-EC: Miembros
     email:
       compose:
-        en: Compose Email
-        es: Redactar Correo Electrónico
+        en-US: Compose Email
+        es-EC: Redactar Correo Electrónico
       send:
-        en: Send
-        es: Enviar
+        en-US: Send
+        es-EC: Enviar
       to:
-        en: To
-        es: Para
+        en-US: To
+        es-EC: Para
       cc:
-        en: Cc
-        es: Cc
+        en-US: Cc
+        es-EC: Cc
       bcc:
-        en: Bcc
-        es: Cco
+        en-US: Bcc
+        es-EC: Cco
       subject:
-        en: Subject
-        es: Asunto
+        en-US: Subject
+        es-EC: Asunto
       body:
-        en: Body
-        es: Cuerpo
+        en-US: Body
+        es-EC: Cuerpo
 
   confirm-remove-from-event:
-    en: Are you sure you want to remove this group from this event?
-    es: ¿Estás seguro de que quieres eliminar a este grupo de este evento?
+    en-US: Are you sure you want to remove this group from this event?
+    es-EC: ¿Estás seguro de que quieres eliminar a este grupo de este evento?
   none-assigned:
-    en: No groups assigned.
-    es: No hay grupos asignados.
+    en-US: No groups assigned.
+    es-EC: No hay grupos asignados.
   group-removed:
-    en: Group removed
-    es: Grupo eliminado
+    en-US: Group removed
+    es-EC: Grupo eliminado
   error-removing-group:
-    en: Error while removing group 
-    es: Error al eliminadar este grupo
+    en-US: Error while removing group 
+    es-EC: Error al eliminadar este grupo
   # dashboard:
   #   title:
-  #     en: Dashboard
-  #     es: Tablero
+  #     en-US: Dashboard
+  #     es-EC: Tablero
   #   headers:
   #       course-retention:
-  #         en: Course Retention
-  #         es: Retención del Curso
+  #         en-US: Course Retention
+  #         es-EC: Retención del Curso
   #       course-success:
-  #         en: Course Success
-  #         es: Éxito del Curso
+  #         en-US: Course Success
+  #         es-EC: Éxito del Curso
 
   messages:
     confirm-archive:
-      en: Are you sure you want to archive this group?
-      es: ¿Seguro que quieres archivar este groupos?
+      en-US: Are you sure you want to archive this group?
+      es-EC: ¿Seguro que quieres archivar este groupos?
     confirm-member-archive:
-      en: Are you sure you want to archive this group member?
-      es: ¿Estás seguro de que deseas archivar a este miembro del grupo?
+      en-US: Are you sure you want to archive this group member?
+      es-EC: ¿Estás seguro de que deseas archivar a este miembro del grupo?
     group-archived:
-      en: Group archived
-      es: Grupo archivado
+      en-US: Group archived
+      es-EC: Grupo archivado
     error-archiving-group:
-      en: Error while archiving group
-      es: Error al archivar el grupo
+      en-US: Error while archiving group
+      es-EC: Error al archivar el grupo
     group-unarchived:
-      en: Group unarchived
-      es: Grupo desarchivado   # probably not right
+      en-US: Group unarchived
+      es-EC: Grupo desarchivado   # probably not right
     group-unarchiving-group:
-      en: Error while unarchiving group
-      es: Error al desarchivar el grupo
+      en-US: Error while unarchiving group
+      es-EC: Error al desarchivar el grupo
     group-edited:
-      en: Group edited
-      es: Grupo editado
+      en-US: Group edited
+      es-EC: Grupo editado
     error-editing-group:
-      en: Error while editing group
-      es: Error al editar grupo
+      en-US: Error while editing group
+      es-EC: Error al editar grupo
     group-added:
-      en: Group added
-      es: Grupo agregado
+      en-US: Group added
+      es-EC: Grupo agregado
     error-adding-group:
-      en: Error while adding group
-      es: Error al agregar grupo
+      en-US: Error while adding group
+      es-EC: Error al agregar grupo
     members-added:
-      en: Members added
-      es: Miembros agregados
+      en-US: Members added
+      es-EC: Miembros agregados
     error-adding-members:
-      en: Error while adding members
-      es: Error al agregar miembros
+      en-US: Error while adding members
+      es-EC: Error al agregar miembros
     member-archived:
-      en: Member archived
-      es: Miembro archivado
+      en-US: Member archived
+      es-EC: Miembro archivado
     error-archiving-member:
-      en: Error while archiving member
-      es: Error al archivar miembro
+      en-US: Error while archiving member
+      es-EC: Error al archivar miembro
     member-unarchived:
-      en: Member unarchived
-      es: Miembro desarchivado   # probably not right
+      en-US: Member unarchived
+      es-EC: Miembro desarchivado   # probably not right
     error-archiving-member:
-      en: Error while unarchiving member
-      es: Error al desarchivar miembro
+      en-US: Error while unarchiving member
+      es-EC: Error al desarchivar miembro
     already-exists:
-      en: Group already exists
-      es: El grupo ya existe
+      en-US: Group already exists
+      es-EC: El grupo ya existe
     required-fields:
-      en: Please fill out all required fields
-      es: Por favor llene todos los campos requeridos
+      en-US: Please fill out all required fields
+      es-EC: Por favor llene todos los campos requeridos
     email-sent:
-      en: Email sent
-      es: Correo electrónico enviado
+      en-US: Email sent
+      es-EC: Correo electrónico enviado
     error-active-not-selected: 
-      en: No active members are selected
-      es: No hay miembros activos seleccionados
+      en-US: No active members are selected
+      es-EC: No hay miembros activos seleccionados
     error-archived-not-selected:
-      en: No archived members are selected 
-      es: No hay miembros archivados seleccionados
+      en-US: No archived members are selected 
+      es-EC: No hay miembros archivados seleccionados
     no-remaining-members:
-      en: No remaining members
-      es: Ningún miembro restante
+      en-US: No remaining members
+      es-EC: Ningún miembro restante
     error-no-manager-email:
-      en: Your email address is not defined
-      es: Su dirección de correo electrónico no está definida
+      en-US: Your email address is not defined
+      es-EC: Su dirección de correo electrónico no está definida

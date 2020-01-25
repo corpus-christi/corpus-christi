@@ -1,45 +1,45 @@
 diplomas:
   diplomas:
-    en: Diplomas
-    es: Diplomas
+    en-US: Diplomas
+    es-EC: Diplomas
   diploma:
-    en: Diploma
-    es: Diploma
+    en-US: Diploma
+    es-EC: Diploma
   title:
-    en: Title
-    es: Título
+    en-US: Title
+    es-EC: Título
   description:
-    en: Description
-    es: Descripción
+    en-US: Description
+    es-EC: Descripción
   new:
-    en: New Diploma
-    es: Nueva Diploma
+    en-US: New Diploma
+    es-EC: Nueva Diploma
   courses:
-    en: Courses
-    es: Cursos
+    en-US: Courses
+    es-EC: Cursos
   courses-this-diploma:
     _desc: List of courses for a given diploma
-    en: Courses for this Diploma
-    es: Cursos para esta Diploma
+    en-US: Courses for this Diploma
+    es-EC: Cursos para esta Diploma
   confirm-archive:
-    en: Are you sure you want to archive this diploma?
-    es: ¿Estás seguro que quieres archivar esta diploma?
+    en-US: Are you sure you want to archive this diploma?
+    es-EC: ¿Estás seguro que quieres archivar esta diploma?
   added:
-    en: Diploma added
-    es: Diploma añadido
+    en-US: Diploma added
+    es-EC: Diploma añadido
   updated:
-    en: Diploma updated
-    es: Diploma actualizado
+    en-US: Diploma updated
+    es-EC: Diploma actualizado
   add-failed:
-    en: Failed to add diploma
-    es: Se falló a añadir el diploma
+    en-US: Failed to add diploma
+    es-EC: Se falló a añadir el diploma
   update-failed:
-    en: Failed to update diploma
-    es: Se falló a actualizar el diploma
+    en-US: Failed to update diploma
+    es-EC: Se falló a actualizar el diploma
   archived:
-    en: Diploma archived
-    es: Diploma archivado
+    en-US: Diploma archived
+    es-EC: Diploma archivado
   reactivated:
-    en: Diploma unarchived
-    es: Diploma desarchivado
+    en-US: Diploma unarchived
+    es-EC: Diploma desarchivado
 

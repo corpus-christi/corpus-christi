@@ -1,5 +1,5 @@
 {
-  "en": {
+  "en-US": {
     "$vuetify": {
       "dataIterator": {
         "nextPage": "Next page",
@@ -494,7 +494,7 @@
       "required": "Required"
     }
   },
-  "es": {
+  "es-EC": {
     "$vuetify": {
       "dataIterator": {
         "nextPage": "Siguiente p\u00e1gina",
