@@ -23,7 +23,9 @@ function strToRegionalIndicator(str) {
 }
 
 export class Locale {
-  constructor(localeString) {
+  private _languageCode: string;
+  private _countryCode: string;
+  constructor(localeString: string) {
     assertValidLocaleString(localeString);
 
     const [languageCode, countryCode] = localeString.split("-");
@@ -49,6 +51,9 @@ export class Locale {
 }
 
 export class LocaleModel {
+  private _locale: Locale;
+  private _description: string;
+
   constructor(localeModel) {
     this._locale = new Locale(localeModel.code);
     this._description = localeModel.desc;

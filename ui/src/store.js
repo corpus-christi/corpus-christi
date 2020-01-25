@@ -56,7 +56,7 @@ export default new Vuex.Store({
     },
 
     currentLocaleModel(state) {
-      console.log("CUR LOC MODEL", state.localModels);
+      console.log("CUR LOC MODEL", state.localeModels);
       return state.localeModels.find(
         localeModel =>
           localeModel.languageCode === state.currentLocale.languageCode
