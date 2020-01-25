@@ -9,10 +9,10 @@ import i18n_data from "../../i18n/cc-i18n.json";
 Vue.use(VueI18n);
 
 const i18n = new VueI18n({
-  locale: "es",
-  // fallbackLocale: "en-US",
+  locale: "es-EC",
+  fallbackLocale: "en-US",
   messages: i18n_data,
-  silentTranslationWarn: false // Let warnings through.
+  silentTranslationWarn: true // Let warnings through.
 });
 
 Vue.use(VeeValidate, {

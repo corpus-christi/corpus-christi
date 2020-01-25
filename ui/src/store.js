@@ -4,6 +4,7 @@ import Vue from "vue";
 import Vuex from "vuex";
 import Account from "./models/Account";
 import { setJWT } from "./plugins/axios";
+import { Locale, LocaleModel } from "./models/Locale";
 
 Vue.use(Vuex);
 
@@ -13,16 +14,18 @@ const ACCOUNT_KEY = "cc-account";
 export default new Vuex.Store({
   state: {
     // Current locale code (e.g., `es-EC`, `en-US`)
-    currentLocaleCode: "es-EC",
-    // All available locales.
-    locales: [],
+    currentLocale: new Locale("es-EC"),
+
+    // All available I18NLocale instances (locale and description).
+    localeModels: [],
 
     // Current `Account` object if someone logged in.
     _currentAccount: null,
+
     // Current JSON Web Token if someone logged in.
     _currentJWT: null,
 
-    // All translations for the given currentLocaleCode
+    // All translations for the given currentLocale
     translations: []
   },
 
@@ -52,16 +55,20 @@ export default new Vuex.Store({
       return getters.currentJWT && getters.currentAccount;
     },
 
-    currentLocale(state) {
-      return state.locales.find(loc => loc.code === state.currentLocaleCode);
+    currentLocaleModel(state) {
+      console.log("CUR LOC MODEL", state.localModels);
+      return state.localeModels.find(
+        localeModel =>
+          localeModel.languageCode === state.currentLocale.languageCode
+      );
     },
 
     currentLanguageCode(state, getters) {
-      const current = getters.currentLocale;
-      if (current) {
-        return current.code.split("-")[0];
+      const currentLocaleModel = getters.currentLocaleModel;
+      if (currentLocaleModel) {
+        return currentLocaleModel.languageCode;
       } else {
-        return "";
+        throw Error("No current language code");
       }
     }
   },
@@ -82,12 +89,16 @@ export default new Vuex.Store({
       localStorage.removeItem(ACCOUNT_KEY);
     },
 
-    setCurrentLocaleCode(state, code) {
-      state.currentLocaleCode = code;
+    setCurrentLocale(state, locale) {
+      state.currentLocale = locale;
     },
 
-    setLocales(state, locales) {
-      state.locales = locales;
+    setLocaleModels(state, inputLocaleModels) {
+      console.log("SET LOCALE MODELS", inputLocaleModels);
+      state.localeModels = inputLocaleModels.map(
+        inputLocaleModel => new LocaleModel(inputLocaleModel)
+      );
+      console.log("LOCALE MODELS", state.localeModels);
     }
   }
 });
