@@ -15,7 +15,7 @@
             v-validate="'required'"
             v-bind:error-messages="errors.first('title')"
             data-cy="title"
-          ></v-text-field>
+          />
           <v-textarea
             rows="3"
             v-if="descriptionLabel"
@@ -23,7 +23,7 @@
             v-bind:label="descriptionLabel"
             name="description"
             data-cy="description"
-          ></v-textarea>
+          />
           <v-btn
             v-if="addImageField"
             class="text-xs-center"
@@ -74,7 +74,7 @@
             v-if="showAddressCreator"
             @cancel="showAddressCreator = false"
             @saved="updateEntitySearch"
-          ></address-form>
+          />
         </v-expand-transition>
 
         <v-layout v-if="startDateTimeField">
@@ -101,14 +101,14 @@
                 ref="startDate"
                 v-validate="'required'"
                 v-bind:error-messages="errors.first('startDate')"
-              ></v-text-field>
+              />
               <v-date-picker
                 v-bind:locale="currentLanguageCode"
                 v-model="startDate"
                 @input="showStartDatePicker = false"
                 :min="today"
                 data-cy="start-date-picker"
-              ></v-date-picker>
+              />
             </v-menu>
           </v-flex>
           <v-flex xs12 md6 ml-5>
@@ -185,7 +185,7 @@
                 v-bind:error-messages="errors.first('endDate')"
                 readonly
                 :disabled="!startDateTimeSelected"
-              ></v-text-field>
+              />
 
               <v-date-picker
                 v-bind:locale="currentLanguageCode"
@@ -193,7 +193,7 @@
                 @input="showEndDatePicker = false"
                 data-cy="end-date-picker"
                 :min="startDate || today"
-              ></v-date-picker>
+              />
             </v-menu>
           </v-flex>
           <v-flex xs12 md6 ml-5>
@@ -219,7 +219,7 @@
                 prepend-icon="update"
                 :disabled="!startDateTimeSelected"
                 readonly
-              ></v-text-field>
+              />
               <v-time-picker
                 v-if="endTimeModal"
                 :format="timeFormat"
@@ -227,7 +227,7 @@
                 :min="startDate == endDate ? startTime : null"
                 data-cy="end-time-picker"
               >
-                <v-spacer></v-spacer>
+                <v-spacer />
                 <v-btn
                   flat
                   color="primary"
@@ -256,7 +256,7 @@
         />
       </form>
     </v-card-text>
-    <v-divider></v-divider>
+    <v-divider />
     <v-card-actions>
       <v-btn
         color="secondary"
@@ -291,7 +291,7 @@
 </template>
 
 <script>
-//When using this component, pass the prop (label or boolean) for all fields you wish to display. 
+//When using this component, pass the prop (label or boolean) for all fields you wish to display.
 import { isEmpty } from "lodash";
 import { mapGetters } from "vuex";
 import EntitySearch from "./EntitySearch";
@@ -323,9 +323,9 @@ export default {
       required: true
     },
     endDateTimeField: {
-        type: Boolean,
-        required: false,
-        default: false
+      type: Boolean,
+      required: false,
+      default: false
     },
     locationLabel: {
       type: String,
@@ -339,9 +339,9 @@ export default {
       type: Boolean
     },
     startDateTimeField: {
-        type: Boolean,
-        required: false,
-        default: false
+      type: Boolean,
+      required: false,
+      default: false
     },
     titleLabel: {
       type: String,
@@ -419,7 +419,7 @@ export default {
     },
 
     timeFormat() {
-      if (this.currentLanguageCode.substring(0, 2) == "en") {
+      if (this.currentLanguageCode.substring(0, 2) === "en") {
         return "ampm";
       } else return "24hr";
     },
@@ -506,8 +506,7 @@ export default {
 
     getMinutesFromTime(time) {
       let timearr = time.split(":");
-      let mins = Number(timearr[0]) * 60 + Number(timearr[1]);
-      return mins;
+      return Number(timearr[0]) * 60 + Number(timearr[1]);
     },
 
     getDateFromTimestamp(ts) {
@@ -542,7 +541,7 @@ export default {
     },
 
     clearEndTimeIfInvalid() {
-      if (this.startDate == this.endDate) {
+      if (this.startDate === this.endDate) {
         let endMins = this.getMinutesFromTime(this.endTime);
         let startMins = this.getMinutesFromTime(this.startTime);
         if (endMins < startMins) {

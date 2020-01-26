@@ -33,7 +33,7 @@
         <td>{{ props.item.description }}</td>
         <td>{{ props.item.startTime | formatDate }}</td>
         <td>{{ props.item.stopTime | formatDate }}</td>
-	<td>{{ getDisplayLocation(props.item.location) }}</td>
+        <td>{{ getDisplayLocation(props.item.location) }}</td>
         <td>
           <template v-if="props.item.active">
             <v-tooltip bottom>
@@ -154,7 +154,7 @@
 import CustomForm from "../../CustomForm";
 import EntitySearch from "../../EntitySearch";
 export default {
-  components: { "entity-search": EntitySearch, "meeting-form": CustomForm },
+  components: { "meeting-form": CustomForm },
   name: "GroupMeetings",
   data() {
     return {
@@ -250,11 +250,12 @@ export default {
         this.createMeeting(meeting);
       } else {
         this.updateMeeting(meeting);
-        }
+      }
     },
 
     createMeeting(meeting) {
-      return this.$http.post(`/api/v1/groups/meetings`, meeting)
+      return this.$http
+        .post(`/api/v1/groups/meetings`, meeting)
         .then(() => {
           console.log("meeting created");
           this.showSnackbar(this.$t("groups.messages.meeting-added"));

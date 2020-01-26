@@ -372,8 +372,8 @@ export default {
       addressWasSaved: false,
 
       rules: {
-        required: value => !!value || 'Required.',
-        counter: value => value.length <= 64 || 'Max 64 characters',
+        required: value => !!value || "Required.",
+        counter: value => value.length <= 64 || "Max 64 characters"
       },
 
       person: {
