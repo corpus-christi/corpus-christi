@@ -8,17 +8,15 @@ module.exports = {
   extends: ["plugin:vue/essential", "@vue/prettier"],
 
   rules: {
-    "no-console": process.env.NODE_ENV === "production" ? "error" : "off",
+    // FIXME: Restore this setting after chasing out console calls.
+    // "no-console": process.env.NODE_ENV === "production" ? "error" : "off",
+    "no-console": "off",
     "no-debugger": process.env.NODE_ENV === "production" ? "error" : "off"
   },
 
   parserOptions: {
-    parser: '@typescript-eslint/parser'
+    parser: "@typescript-eslint/parser"
   },
 
-  'extends': [
-    'plugin:vue/essential',
-    '@vue/prettier',
-    '@vue/typescript'
-  ]
+  extends: ["plugin:vue/essential", "@vue/prettier", "@vue/typescript"]
 };
