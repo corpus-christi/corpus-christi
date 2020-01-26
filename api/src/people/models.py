@@ -29,6 +29,8 @@ people_person_role = Table('person_role', Base.metadata,
 class Person(Base):
     __tablename__ = 'people_person'
     id = Column(Integer, primary_key=True)
+
+    # Personal info
     first_name = Column(StringTypes.MEDIUM_STRING, nullable=False)
     last_name = Column(StringTypes.MEDIUM_STRING, nullable=False)
     second_last_name = Column(StringTypes.MEDIUM_STRING, nullable=True)
@@ -36,11 +38,12 @@ class Person(Base):
     birthday = Column(Date)
     phone = Column(StringTypes.MEDIUM_STRING)
     email = Column(StringTypes.MEDIUM_STRING)
-    # start of account fields being merged
+
+    # Account info
     username = Column(StringTypes.MEDIUM_STRING, nullable=False, unique=True)
     password_hash = Column(StringTypes.PASSWORD_HASH, nullable=False)
     confirmed = Column(Boolean, nullable=True, default=0)
-    # end of account fields being merged
+
     active = Column(Boolean, nullable=False, default=True)
     address_id = Column(Integer, ForeignKey('places_address.id'), nullable=True, default=None)
 
@@ -54,21 +57,13 @@ class Person(Base):
     members = relationship('Member', back_populates='person', lazy=True)
     images = relationship('ImagePerson', back_populates='person')
 
-    # next line brought over from accounts for merging links
-    roles = relationship("Role",
-                         secondary=people_person_role, backref="person")
-
-    # TEMP REMOVE because of merging accounts
-    #   def _init(self, accountInfo):
-    #       self.accountInfo = accountInfo
+    roles = relationship("Role", secondary=people_person_role, backref="person")
 
     def __repr__(self):
         return f"<Person(id={self.id},name='{self.first_name} {self.last_name}')>"
 
     def full_name(self):
         return f"{self.first_name} {self.last_name}"
-
-        # From Flask Web Dev book
 
     @property
     def password(self):
@@ -87,27 +82,21 @@ class Person(Base):
 
 class PersonSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
-    first_name = fields.String(
-        data_key='firstName', required=True, validate=Length(min=1))
-    last_name = fields.String(
-        data_key='lastName', required=True, validate=Length(min=1))
-    second_last_name = fields.String(
-        data_key='secondLastName', allow_none=True)
+
+    first_name = fields.String(data_key='firstName', required=True, validate=Length(min=1))
+    last_name = fields.String(data_key='lastName', required=True, validate=Length(min=1))
+    second_last_name = fields.String(data_key='secondLastName', allow_none=True)
     gender = fields.String(validate=OneOf(['M', 'F']), allow_none=True)
     birthday = fields.Date(allow_none=True)
     phone = fields.String(allow_none=True)
     email = fields.String(allow_none=True)
-    # the start of merging accounts and person
+
     username = fields.String(required=True, validate=Length(min=1))
-    password = fields.String(attribute='password_hash', load_only=True,
-                             required=True, validate=Length(min=6))
+    password = fields.String(attribute='password_hash', load_only=True, required=True, validate=Length(min=6))
     confirmed = fields.Boolean(dump_only=True)
-    # the end of the important fields from account
+
     active = fields.Boolean(required=True)
     address_id = fields.Integer(data_key='addressId', allow_none=True)
-
-    #    accountInfo = fields.Nested( #temperarily removing because of the merge of the account table
-    #       'AccountSchema', allow_none=True, only=['username', 'id', 'active', 'roles'])
 
     attributesInfo = fields.Nested('PersonAttributeSchema', many=True)
     images = fields.Nested('ImagePersonSchema', many=True, exclude=['person'], dump_only=True)
@@ -122,8 +111,6 @@ class PersonSchema(Schema):
 
     class Meta:
         unknown = INCLUDE
-    #    exclude = ("roles", "confirmed")
-    #    dump_only = ['role']
 
 
 # ---- Role
@@ -178,13 +165,10 @@ class RoleSchema(Schema):
 class Manager(Base):
     __tablename__ = 'people_manager'
     id = Column(Integer, primary_key=True)
-    person_id = Column(Integer, ForeignKey(
-        'people_person.id'), nullable=False)
+    person_id = Column(Integer, ForeignKey('people_person.id'), nullable=False)
     manager_id = Column(Integer, ForeignKey('people_manager.id'))
-    description_i18n = Column(StringTypes.I18N_KEY,
-                              ForeignKey('i18n_key.id'), nullable=False)
-    manager = relationship('Manager', backref='subordinates',
-                           lazy=True, remote_side=[id])
+    description_i18n = Column(StringTypes.I18N_KEY, ForeignKey('i18n_key.id'), nullable=False)
+    manager = relationship('Manager', backref='subordinates', lazy=True, remote_side=[id])
     groups = relationship('Group', back_populates='manager', lazy=True)
     person = relationship("Person", backref=backref("manager", uselist=False))
 
@@ -193,11 +177,8 @@ class Manager(Base):
 
 
 class ManagerSchema(Schema):
-    id = fields.Integer(dump_only=True, data_key='id',
-                        required=True, validate=Range(min=1))
-    person_id = fields.Integer(
-        data_key='person_id', required=True, validate=Range(min=1))
+    id = fields.Integer(dump_only=True, data_key='id', required=True, validate=Range(min=1))
+    person_id = fields.Integer(data_key='person_id', required=True, validate=Range(min=1))
     manager_id = fields.Integer(data_key='manager_id', validate=Range(min=1))
-    description_i18n = fields.String(
-        data_key='description_i18n', required=True)
+    description_i18n = fields.String(data_key='description_i18n', required=True)
     person = fields.Nested('PersonSchema', dump_only=True)

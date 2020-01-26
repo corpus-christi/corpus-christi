@@ -23,7 +23,7 @@
 import Vue from "vue";
 import set from "lodash/set";
 import { I18NValueSchema, Locale, LocaleModel } from "@/models/Locale";
-import { AxiosResponse, AxiosError } from "axios";
+import { AxiosError, AxiosResponse } from "axios";
 
 export default Vue.extend({
   name: "LocaleMenu",
@@ -62,7 +62,6 @@ export default Vue.extend({
     },
 
     changeLocale(localeModel: LocaleModel) {
-      console.log("CH LOC", localeModel);
       const locale = localeModel.locale;
       this.setCurrentLocale(locale);
       this.getTranslationsForLanguage(locale).then(() => {
@@ -71,7 +70,6 @@ export default Vue.extend({
     },
 
     getTranslationsForLanguage(locale: Locale): Promise<void> {
-      console.log("GTFL", locale);
       return this.$http
         .get(`/api/v1/i18n/values/${locale}`)
         .then((response: AxiosResponse<I18NValueSchema[]>) => {
@@ -79,7 +77,6 @@ export default Vue.extend({
           for (let item of response.data) {
             set(translations, item.key_id, item.gloss);
           }
-          console.log("THIS.I18N", this.$i18n);
           this.$i18n.mergeLocaleMessage(locale.languageCode, translations);
           console.log("GTFL XLATES", this.$i18n);
         })

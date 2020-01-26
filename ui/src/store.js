@@ -56,13 +56,10 @@ export default new Vuex.Store({
     },
 
     currentLocaleModel(state) {
-      console.log("CUR LOC MODEL", state.localeModels);
-      const result = state.localeModels.find(
+      return state.localeModels.find(
         localeModel =>
           localeModel.languageCode === state.currentLocale.languageCode
       );
-      console.log("RESULT", result);
-      return result;
     },
 
     currentLanguageCode(state, getters) {
@@ -96,11 +93,9 @@ export default new Vuex.Store({
     },
 
     setLocaleModels(state, inputLocaleModels) {
-      console.log("SET LOCALE MODELS", inputLocaleModels);
       state.localeModels = inputLocaleModels.map(
         inputLocaleModel => new LocaleModel(inputLocaleModel)
       );
-      console.log("LOCALE MODELS", state.localeModels);
     }
   }
 });

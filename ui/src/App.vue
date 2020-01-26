@@ -24,7 +24,6 @@ export default {
 
     // Locales
     this.$http.get("/api/v1/i18n/locales").then(response => {
-      console.log("APP.VUE RESPONSE", response);
       const localeData = response.data;
 
       if (localeData && localeData.length > 0) {
@@ -33,7 +32,6 @@ export default {
         const firstLocaleString = localeData[0].code;
         this.setCurrentLocale(new Locale(firstLocaleString));
         this.$i18n.locale = firstLocaleString;
-        console.log("I18N LOCALE", this.$i18n);
       }
     });
 

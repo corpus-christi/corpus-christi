@@ -30,3 +30,9 @@ Vue.prototype.$http = authAxios;
 export function setJWT(jwt: string) {
   authAxios.defaults.headers.common["Authorization"] = `Bearer ${jwt}`;
 }
+
+const plainAxios = axios.create({
+  baseURL: "/"
+});
+
+Vue.prototype.$httpNoAuth = plainAxios;
