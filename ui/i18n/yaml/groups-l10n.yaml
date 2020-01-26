@@ -141,14 +141,14 @@ groups:
       en-US: Member unarchived
       es-EC: Miembro desarchivado   # probably not right
     error-archiving-member:
-      en: Error while unarchiving member
-      es: Error al desarchivar miembro
+      en-US: Error while unarchiving member
+      es-EC: Error al desarchivar miembro
     meeting-added:
-      en: Meeting added
-      es: Reunión agregada
+      en-US: Meeting added
+      es-EC: Reunión agregada
     error-adding-meeting:
-      en: Error adding meeting
-      es: Error al agregar la reunión
+      en-US: Error adding meeting
+      es-EC: Error al agregar la reunión
     already-exists:
       en-US: Group already exists
       es-EC: El grupo ya existe
