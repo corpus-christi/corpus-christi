@@ -38,7 +38,10 @@
             v-model="person.firstName"
             v-bind:label="$t('person.name.first') + ' *'"
             name="firstName"
-            v-validate="'required: true, regex:/[A-Za-zs\'-]$'"
+            v-validate="'required: true, regex:/[A-Za-zs\'-]$, max:64'"
+            :rules="[rules.required, rules.counter]"
+            counter
+            maxlength="64"
             v-bind:error-messages="errors.collect('firstName')"
             :readonly="formDisabled"
             data-cy="first-name"
@@ -49,6 +52,9 @@
             v-bind:label="$t('person.name.last') + ' *'"
             name="lastName"
             v-validate="'required: true, regex:/[A-Za-z\s\'-]$/'"
+            :rules="[rules.required, rules.counter]"
+            counter
+            maxlength="64"
             v-bind:error-messages="errors.collect('lastName')"
             :readonly="formDisabled"
             data-cy="last-name"
@@ -60,6 +66,9 @@
             name="secondLastName"
             v-validate="'alpha_dash'"
             v-bind:error-messages="errors.collect('secondLastName')"
+            :rules="[rules.required, rules.counter]"
+            counter
+            maxlength="64"
             :readonly="formDisabled"
             data-cy="second-last-name"
           />
@@ -361,6 +370,11 @@ export default {
       saveIsLoading: false,
       addMoreIsLoading: false,
       addressWasSaved: false,
+
+      rules: {
+        required: value => !!value || 'Required.',
+        counter: value => value.length <= 64 || 'Max 64 characters',
+      },
 
       person: {
         id: 0,
