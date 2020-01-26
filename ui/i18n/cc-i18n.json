@@ -82,6 +82,15 @@
       "none-assigned": "No assets assigned.",
       "title": "Assets"
     },
+    "attribute": {
+      "check": "checkbox",
+      "date": "date",
+      "dropdown": "dropdown",
+      "float": "floating point",
+      "integer": "integer",
+      "radio": "radio button",
+      "string": "string"
+    },
     "country": {
       "AD": "Andorra",
       "AE": "United Arab Emirates",
@@ -840,6 +849,15 @@
       "new": "A\u00f1adir Insumo",
       "none-assigned": "No hay insumos asignados.",
       "title": "Insumos"
+    },
+    "attribute": {
+      "check": "casilla de verificaci\u00f3n",
+      "date": "fecha",
+      "dropdown": "desplegable",
+      "float": "punto flotante",
+      "integer": "entero",
+      "radio": "boton de radio",
+      "string": "texto"
     },
     "country": {
       "AF": "Afganist\u00c3\u00a1n",
