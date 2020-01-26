@@ -31,7 +31,7 @@ events:
     es: Título del Evento
   event-description:
     en: Event Description
-    es: Descripción del Evento 
+    es: Descripción del Evento
   attendance:
     en: Attendance
     es: Concurrencia
@@ -54,6 +54,9 @@ events:
   start-time:
     en: Start Time
     es: Hora de Inicio
+  stop-time:
+    en: Stop Time
+    es: Para el tiempo
   end-time:
     en: End Time
     es: Hora de Finalización
@@ -85,13 +88,13 @@ events:
     en: Event archived
     es: Evento archivado
   error-archiving-event:
-    en: Error while archiving event 
+    en: Error while archiving event
     es: Error al archivar el evento
   event-unarchived:
     en: Event unarchived
-    es: Evento desarchivado   # probably not right
+    es: Evento desarchivado # probably not right
   error-unarchiving-event:
-    en: Error while unarchiving event 
+    en: Error while unarchiving event
     es: Error al desarchivar el evento
   event-edited:
     en: Event edited
@@ -166,7 +169,7 @@ events:
       en: Error while adding person
       es: Error al agregar persona
     error-removing-person:
-      en: Error while removing person 
+      en: Error while removing person
       es: Error al eliminadar este persona
     none-assigned:
       en: No people assigned.

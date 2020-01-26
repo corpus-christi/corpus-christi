@@ -183,6 +183,12 @@
         v-on:cancel="cancelEvent"
         v-on:save="saveEvent"
         v-on:addAnother="addAnother"
+        addImageField
+        endDateTimeField
+        startDateTimeField
+        v-bind:titleLabel="$t('events.title')"
+        v-bind:descriptionLabel="$t('events.event-description')"
+        v-bind:locationLabel="$t('events.event-location')"
       />
     </v-dialog>
 
@@ -214,11 +220,11 @@
 </template>
 
 <script>
-import EventForm from "./EventForm";
+import CustomForm from "../CustomForm";
 import { mapGetters } from "vuex";
 export default {
   name: "EventTable",
-  components: { "event-form": EventForm },
+  components: { "event-form": CustomForm },
   data() {
     return {
       active: 0,

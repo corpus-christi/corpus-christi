@@ -240,7 +240,7 @@ def read_all_meetings_by_group(group_id):
     result = db.session.query(Meeting).filter_by(group_id=group_id).all()
 
     if len(result) == 0:
-        return jsonify(msg="No meetings found"), 404
+        return jsonify(msg="No meetings found"), 200
 
     for r in result:
         r.address = r.address

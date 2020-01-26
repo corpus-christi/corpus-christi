@@ -229,6 +229,7 @@
       },
       "start-date": "Start Date",
       "start-time": "Start Time",
+      "stop-time": "Stop Time",
       "title": "Event Title",
       "upload-image": "Upload Image"
     },
@@ -271,6 +272,7 @@
         "email-sent": "Email sent",
         "error-active-not-selected": "No active members are selected",
         "error-adding-group": "Error while adding group",
+        "error-adding-meeting": "Error adding meeting",
         "error-adding-members": "Error while adding members",
         "error-archived-not-selected": "No archived members are selected",
         "error-archiving-group": "Error while archiving group",
@@ -282,6 +284,7 @@
         "group-edited": "Group edited",
         "group-unarchived": "Group unarchived",
         "group-unarchiving-group": "Error while unarchiving group",
+        "meeting-added": "Meeting added",
         "member-archived": "Member archived",
         "member-unarchived": "Member unarchived",
         "members-added": "Members added",
@@ -724,6 +727,7 @@
       },
       "start-date": "Fecha de Inicio",
       "start-time": "Hora de Inicio",
+      "stop-time": "Para el tiempo",
       "title": "T\u00edtulo del Evento",
       "upload-image": "Cargar Imagen"
     },
@@ -743,7 +747,7 @@
       "header": "Grupos",
       "manager": "Gerente",
       "meetings": {
-        "add-meeting": "Agregar reuni\u00f3n",
+        "add-meeting": "Agregar Reuni\u00f3n",
         "title": "Reuniones"
       },
       "member-count": "Recuento de Miembros",
@@ -766,6 +770,7 @@
         "email-sent": "Correo electr\u00f3nico enviado",
         "error-active-not-selected": "No hay miembros activos seleccionados",
         "error-adding-group": "Error al agregar grupo",
+        "error-adding-meeting": "Error al agregar la reuni\u00f3n",
         "error-adding-members": "Error al agregar miembros",
         "error-archived-not-selected": "No hay miembros archivados seleccionados",
         "error-archiving-group": "Error al archivar el grupo",
@@ -777,6 +782,7 @@
         "group-edited": "Grupo editado",
         "group-unarchived": "Grupo desarchivado",
         "group-unarchiving-group": "Error al desarchivar el grupo",
+        "meeting-added": "Reuni\u00f3n agregada",
         "member-archived": "Miembro archivado",
         "member-unarchived": "Miembro desarchivado",
         "members-added": "Miembros agregados",

@@ -1,5 +1,6 @@
 <template>
   <v-card>
+    <!-- TODO: It would be ideal in the future to make these date pickers a component in themselves -->
     <v-card-title>
       <span class="headline">{{ title }}</span>
     </v-card-title>
@@ -7,8 +8,9 @@
       <form>
         <v-layout align-space-around justify-center column fill-height>
           <v-text-field
-            v-model="event.title"
-            v-bind:label="$t('events.title')"
+            v-if="titleLabel"
+            v-model="object.title"
+            v-bind:label="titleLabel"
             name="title"
             v-validate="'required'"
             v-bind:error-messages="errors.first('title')"
@@ -16,12 +18,14 @@
           ></v-text-field>
           <v-textarea
             rows="3"
-            v-model="event.description"
-            v-bind:label="$t('events.event-description')"
+            v-if="descriptionLabel"
+            v-model="object.description"
+            v-bind:label="descriptionLabel"
             name="description"
             data-cy="description"
           ></v-textarea>
           <v-btn
+            v-if="addImageField"
             class="text-xs-center"
             color="primary"
             flat
@@ -42,11 +46,12 @@
             />
           </v-expand-transition>
         </v-layout>
-        <v-layout align-center justify-space-around>
+        <v-layout align-center justify-space-around v-if="locationLabel">
           <v-flex>
             <entity-search
               location
-              v-model="event.location"
+              v-model="object.location"
+              v-bind:label="locationLabel"
               name="location"
               v-bind:error-messages="errors.first('location')"
               :disabled="showAddressCreator"
@@ -72,7 +77,7 @@
           ></address-form>
         </v-expand-transition>
 
-        <v-layout>
+        <v-layout v-if="startDateTimeField">
           <v-flex xs12 md6>
             <!-- Start Date -->
             <v-menu
@@ -154,7 +159,7 @@
             </v-dialog>
           </v-flex>
         </v-layout>
-        <v-layout>
+        <v-layout v-if="endDateTimeField">
           <v-flex xs12 md6>
             <!-- End Date -->
             <v-menu
@@ -286,11 +291,12 @@
 </template>
 
 <script>
+//When using this component, pass the prop (label or boolean) for all fields you wish to display. 
 import { isEmpty } from "lodash";
 import { mapGetters } from "vuex";
-import EntitySearch from "../EntitySearch";
-import AddressForm from "../AddressForm";
-import ImageChooser from "../images/ImageChooser";
+import EntitySearch from "./EntitySearch";
+import AddressForm from "./AddressForm";
+import ImageChooser from "./images/ImageChooser";
 
 export default {
   components: {
@@ -298,26 +304,53 @@ export default {
     "address-form": AddressForm,
     "image-chooser": ImageChooser
   },
-  name: "EventForm",
+  name: "CustomForm",
   props: {
+    addMoreLoading: {
+      type: Boolean
+    },
+    addImageField: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
+    descriptionLabel: {
+      type: String,
+      required: false
+    },
     editMode: {
       type: Boolean,
       required: true
     },
+    endDateTimeField: {
+        type: Boolean,
+        required: false,
+        default: false
+    },
+    locationLabel: {
+      type: String,
+      required: false
+    },
     initialData: {
       type: Object,
-      required: true
+      default: null
     },
     saveLoading: {
       type: Boolean
     },
-    addMoreLoading: {
-      type: Boolean
+    startDateTimeField: {
+        type: Boolean,
+        required: false,
+        default: false
+    },
+    titleLabel: {
+      type: String,
+      required: false
     }
   },
   data: function() {
     return {
-      event: {},
+      object: {},
       startTime: "",
       startDate: "",
       endTime: "",
@@ -340,18 +373,18 @@ export default {
       if (isEmpty(eventProp)) {
         this.clear();
       } else {
-        this.event = eventProp;
-        if (this.event.start != null) {
-          this.event.start = new Date(this.event.start);
-          this.startDate = this.getDateFromTimestamp(this.event.start);
-          this.startTime = this.getTimeFromTimestamp(this.event.start);
+        this.object = eventProp;
+        if (this.object.start != null) {
+          this.object.start = new Date(this.object.start);
+          this.startDate = this.getDateFromTimestamp(this.object.start);
+          this.startTime = this.getTimeFromTimestamp(this.object.start);
         }
-        if (this.event.end != null) {
-          this.event.end = new Date(this.event.end);
-          this.endDate = this.getDateFromTimestamp(this.event.end);
-          this.endTime = this.getTimeFromTimestamp(this.event.end);
+        if (this.object.end != null) {
+          this.object.end = new Date(this.object.end);
+          this.endDate = this.getDateFromTimestamp(this.object.end);
+          this.endTime = this.getTimeFromTimestamp(this.object.end);
         }
-        if (this.event.images && this.event.images.length > 0) {
+        if (this.object.images && this.object.images.length > 0) {
           this.showImageChooser = true;
           this.imageSaved = true;
         } else {
@@ -364,10 +397,10 @@ export default {
     startDate(date) {
       this.clearEndTimeIfInvalid();
       if (!this.endDate || new Date(this.endDate) < new Date(date)) {
-        if (!this.event.dayDuration) {
+        if (!this.object.dayDuration) {
           this.endDate = date;
         } else {
-          this.endDate = this.addDaystoDate(date, this.event.dayDuration);
+          this.endDate = this.addDaystoDate(date, this.object.dayDuration);
         }
       }
     },
@@ -379,12 +412,10 @@ export default {
   computed: {
     // List the keys in an Event record.
     eventKeys() {
-      return Object.keys(this.event);
+      return Object.keys(this.object);
     },
     title() {
-      return this.editMode
-        ? this.$t("events.edit-event")
-        : this.$t("events.create-event");
+      return this.editMode ? this.$t(this.editText) : this.$t(this.createText);
     },
 
     timeFormat() {
@@ -411,9 +442,9 @@ export default {
     },
 
     getImageId() {
-      if (this.event.images) {
-        return this.event.images.length > 0
-          ? this.event.images[0].image_id
+      if (this.object.images) {
+        return this.object.images.length > 0
+          ? this.object.images[0].image_id
           : -1;
       } else {
         return -1;
@@ -431,9 +462,9 @@ export default {
     // Clear the form and the validators.
     clear() {
       for (let key of this.eventKeys) {
-        this.event[key] = "";
+        this.object[key] = "";
       }
-      delete this.event.location;
+      delete this.object.location;
       this.startTime = "";
       this.startDate = "";
       this.endTime = "";
@@ -446,14 +477,15 @@ export default {
       this.showAddressCreator = false;
       this.$validator.reset();
     },
+
     save() {
       this.$validator.validateAll().then(() => {
         if (!this.errors.any()) {
-          this.event.start = this.getTimestamp(this.startDate, this.startTime);
-          this.event.end = this.getTimestamp(this.endDate, this.endTime);
-          this.event.active = true;
-          if (this.addMore) this.$emit("addAnother", this.event);
-          else this.$emit("save", this.event);
+          this.object.start = this.getTimestamp(this.startDate, this.startTime);
+          this.object.end = this.getTimestamp(this.endDate, this.endTime);
+          this.object.active = true;
+          if (this.addMore) this.$emit("addAnother", this.object);
+          else this.$emit("save", this.object);
         }
         this.addMore = false;
       });
@@ -521,19 +553,19 @@ export default {
 
     updateEntitySearch(address) {
       console.log(address);
-      this.event.location = address;
+      this.object.location = address;
       this.currentAddress = address.address_id;
     },
 
     chooseImage(id) {
-      this.event.newImageId = id;
+      this.object.newImageId = id;
       this.imageSaved = true;
     },
 
     deleteImage() {
       this.showImageChooser = false;
-      delete this.event.newImageId;
-      this.event.images = [];
+      delete this.object.newImageId;
+      this.object.images = [];
       this.imageSaved = false;
     },
 

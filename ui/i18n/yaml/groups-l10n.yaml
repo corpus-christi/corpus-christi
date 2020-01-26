@@ -143,6 +143,12 @@ groups:
     error-archiving-member:
       en: Error while unarchiving member
       es: Error al desarchivar miembro
+    meeting-added:
+      en: Meeting added
+      es: Reunión agregada
+    error-adding-meeting:
+      en: Error adding meeting
+      es: Error al agregar la reunión
     already-exists:
       en: Group already exists
       es: El grupo ya existe
