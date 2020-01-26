@@ -19,11 +19,11 @@ Vue.use(VeeValidate, {
   i18n,
   i18nRootKey: "i18n_data",
   dictionary: {
-    en: {
+    "en-US": {
       messages: enValidation.messages,
       attributes: i18n_data["en-US"].validation.attributes
     },
-    es: {
+    "es-EC": {
       messages: esValidation.messages,
       attributes: i18n_data["es-EC"].validation.attributes
     }

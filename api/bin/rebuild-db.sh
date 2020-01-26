@@ -11,7 +11,11 @@ else
   db=$1
 fi
 
-if [[ "$db" != "cc-testing" ]] && [[ "$db" != "cc-dev" ]] && [[ "$db" != "cc-staging" ]] && [[ "$db" != "cc-test" ]]; then
+if [[ "$db" != "cc-testing" ]] && \
+   [[ "$db" != "cc-dev" ]] && \
+   [[ "$db" != "cc-staging" ]] && \
+   [[ "$db" != "cc-test" ]]
+then
   echo "$db" is not a database that this script knows about. Are you sure you want to drop this database? [Y/n]
   read  -n 1 -p "$1 is not a database that this script knows about. Are you sure you want to drop this database? [Y/n]" confirmation
   if [[ "$confirmation" = "N" ]] || [[ "$confirmation" = "n" ]]; then
