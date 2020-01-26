@@ -1,5 +1,5 @@
 export function assertValidLocaleString(localeString: string) {
-  if (!/^[A-Za-z]{2}-[A-Za-z]{2}$/.test(localeString)) {
+  if (!/^[a-z]{2}-[A-Z]{2}$/.test(localeString)) {
     throw Error(`Invalid locale '${JSON.stringify(localeString)}'`);
   }
 }
@@ -10,7 +10,7 @@ function charToRegionalIndicator(char: string) {
   const ch = char.toUpperCase();
 
   if (ch < "A" || ch > "Z") {
-    return "X";
+    throw Error(`Invalid character '${char}'`);
   } else {
     return ch.charCodeAt(0) - "A".charCodeAt(0) + regionalIndicatorA;
   }
@@ -19,30 +19,23 @@ function charToRegionalIndicator(char: string) {
 // Convert all the characters in a string to their Unicode regional indicator.
 function strToRegionalIndicator(str: string) {
   const values = str.split("").map(ch => charToRegionalIndicator(ch));
-  return String.fromCodePoint.apply(values);
+  return String.fromCodePoint(...values);
 }
 
 export class Locale {
-  private _languageCode: string;
-  private _countryCode: string;
+  public readonly languageCode: string;
+  public readonly countryCode: string;
+
   constructor(localeString: string) {
     assertValidLocaleString(localeString);
 
     const [languageCode, countryCode] = localeString.split("-");
-    this._languageCode = languageCode;
-    this._countryCode = countryCode;
+    this.languageCode = languageCode;
+    this.countryCode = countryCode;
   }
 
   toString() {
-    return `${this._languageCode}-${this._countryCode}`;
-  }
-
-  get languageCode() {
-    return this._languageCode;
-  }
-
-  get countryCode() {
-    return this._countryCode;
+    return `${this.languageCode}-${this.countryCode}`;
   }
 
   get flag() {
@@ -62,31 +55,23 @@ export interface I18NLocale {
 }
 
 export class LocaleModel {
-  private _locale: Locale;
-  private _description: string;
+  public readonly locale: Locale;
+  public readonly description: string;
 
   constructor(i18NLocale: I18NLocale) {
-    this._locale = new Locale(i18NLocale.code);
-    this._description = i18NLocale.desc;
-  }
-
-  get locale() {
-    return this._locale;
+    this.locale = new Locale(i18NLocale.code);
+    this.description = i18NLocale.desc;
   }
 
   get languageCode() {
-    return this._locale.languageCode;
+    return this.locale.languageCode;
   }
 
   get countryCode() {
-    return this._locale.countryCode;
-  }
-
-  get description() {
-    return this._description;
+    return this.locale.countryCode;
   }
 
   get flagAndDescription() {
-    return this._locale.flag + this.description;
+    return `${this.locale.flag} ${this.description}`;
   }
 }
