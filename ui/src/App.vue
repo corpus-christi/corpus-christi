@@ -9,27 +9,30 @@
 <script>
 import Toolbar from "./components/Toolbar";
 import { mapGetters, mapMutations } from "vuex";
-import { splitLocaleCode } from "./helpers";
 import Footer from "./components/Footer";
 import { setJWT } from "./plugins/axios";
+import { Locale } from "./models/Locale";
 
 export default {
   name: "App",
   components: { Footer, Toolbar },
   computed: mapGetters(["currentJWT"]),
-  methods: mapMutations(["setLocales", "setCurrentLocaleCode"]),
+  methods: mapMutations(["setLocaleModels", "setCurrentLocale"]),
 
   created: function() {
     // Initialize early application stuff
 
     // Locales
     this.$http.get("/api/v1/i18n/locales").then(response => {
-      const locales = response.data;
-      this.setLocales(locales);
+      const localeData = response.data;
 
-      const firstLocale = locales[0];
-      this.setCurrentLocaleCode(firstLocale.code);
-      this.$i18n.locale = splitLocaleCode(firstLocale.code).languageCode;
+      if (localeData && localeData.length > 0) {
+        this.setLocaleModels(localeData);
+
+        const firstLocaleString = localeData[0].code;
+        this.setCurrentLocale(new Locale(firstLocaleString));
+        this.$i18n.locale = firstLocaleString;
+      }
     });
 
     // Authentication information in local storage.

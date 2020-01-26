@@ -11,7 +11,7 @@
           <ve-sankey
             :data="courseAttendanceData"
             :settings="attendanceSankeySettings"
-          ></ve-sankey>
+          />
         </v-card>
       </v-flex>
       <v-flex xs12 sm12 md12 lg12 xl12>
@@ -21,7 +21,7 @@
               $t("courses.dashboard.headers.course-success")
             }}</v-toolbar-title>
           </v-toolbar>
-          <ve-bar :data="courseData" :settings="enrollmentBarSettings"></ve-bar>
+          <ve-bar :data="courseData" :settings="enrollmentBarSettings" />
         </v-card>
       </v-flex>
     </v-layout>
@@ -33,7 +33,7 @@ import { mapGetters, mapState } from "vuex";
 export default {
   name: "Dashboard",
   watch: {
-    currentLocale() {
+    currentLocaleModel() {
       this.enrollmentBarSettings.labelMap.course = this.$t(
         "courses.dashboard.charts.course"
       );
@@ -49,7 +49,7 @@ export default {
   },
   computed: {
     ...mapState(["locales"]),
-    ...mapGetters(["currentLocale"])
+    ...mapGetters(["currentLocaleModel"])
   },
   data: function() {
     var totalCourseEnrollment = 0; // eslint-disable-line
@@ -73,7 +73,7 @@ export default {
         self.courseData.rows.push({
           course: courseName,
           enrolled: enrollmentData[courseName],
-          graduated: graduationValue == 0 ? graduationValue : 20 // FIXME: graduationValue
+          graduated: graduationValue === 0 ? graduationValue : 20 // FIXME: graduationValue
         });
       });
     }
@@ -94,8 +94,6 @@ export default {
     this.$http
       .get(`/api/v1/courses/course_offerings`)
       .then(resp => {
-        console.log("GOT DATA", resp);
-
         resp.data.forEach(offering => {
           var courseName = offering.course.name;
           if (!enrollmentData[courseName]) {
@@ -109,16 +107,15 @@ export default {
           this.$http
             .get(`/api/v1/courses/course_offerings/${offering.id}/students`)
             .then(studentResp => {
-              console.log("GOT ENROLLMENT SUBDATA", studentResp);
               enrollmentData[courseName] += studentResp.data.length;
 
               if (
-                ++enrollmentSubdataCount == resp.data.length
+                ++enrollmentSubdataCount === resp.data.length
                 /* FIXME: && graduationSubdataCount == resp.data.length */
               ) {
                 enrollmentAndGraduationDataComplete(this);
 
-                if (attendanceSubdataCount == resp.data.length) {
+                if (attendanceSubdataCount === resp.data.length) {
                   courseAttendanceDataComplete(this);
                 }
               }
@@ -143,7 +140,6 @@ export default {
               `/api/v1/courses/course_offerings/${offering.id}/class_attendance`
             )
             .then(attendanceResp => {
-              console.log("GOT ATTENDANCE SUBDATA", attendanceResp);
               attendanceResp.data.forEach(attendance => {
                 attendance.attendance.forEach(student => {
                   if (!attendanceData[student.studentId]) {
@@ -151,9 +147,9 @@ export default {
                   }
                 });
                 if (
-                  ++attendanceSubdataCount == resp.data.length &&
-                  enrollmentSubdataCount == resp.data.length &&
-                  graduationSubdataCount == resp.data.length
+                  ++attendanceSubdataCount === resp.data.length &&
+                  enrollmentSubdataCount === resp.data.length &&
+                  graduationSubdataCount === resp.data.length
                 ) {
                   courseAttendanceDataComplete(this);
                 }

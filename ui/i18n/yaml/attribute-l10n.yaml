@@ -1,0 +1,23 @@
+attribute:
+  check:
+    en-US: checkbox
+    es-EC: "casilla de verificaci\xF3n"
+  date:
+    en-US: date
+    es-EC: fecha
+  dropdown:
+    en-US: dropdown
+    es-EC: desplegable
+  float:
+    en-US: floating point
+    es-EC: punto flotante
+  integer:
+    en-US: integer
+    es-EC: entero
+  radio:
+    en-US: radio button
+    es-EC: boton de radio
+  string:
+    en-US: string
+    es-EC: texto
+

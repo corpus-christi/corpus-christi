@@ -1,135 +1,135 @@
 people:
   title:
-    en: People
-    es: Personas
+    en-US: People
+    es-EC: Personas
   title-roles:
-    en: Roles
-    es: Papeles
+    en-US: Roles
+    es-EC: Papeles
   dropdown-roles:
-    en: All Roles
-    es: Todos los Papeles
+    en-US: All Roles
+    es-EC: Todos los Papeles
   attributes:
-    en: Attributes
-    es: Atributas
+    en-US: Attributes
+    es-EC: Atributas
   personal-information:
-    en: Personal Information
-    es: Informacion personal
+    en-US: Personal Information
+    es-EC: Informacion personal
   account-information:
-    en: Account Information
-    es: Información de la cuenta
+    en-US: Account Information
+    es-EC: Información de la cuenta
   additional-information:
-    en: Additional Information
-    es: Información Adicional
+    en-US: Additional Information
+    es-EC: Información Adicional
   optional:
-    en: Optional
-    es: Opcional
+    en-US: Optional
+    es-EC: Opcional
   next:
-    en: Next
-    es: Siguiente
+    en-US: Next
+    es-EC: Siguiente
   previous:
-    en: Previous
-    es: Anterior
+    en-US: Previous
+    es-EC: Anterior
 
 person:
   username:
-    en: Username
-    es: Nombre de usuario
+    en-US: Username
+    es-EC: Nombre de usuario
   password:
-    en: Password
-    es: Contraseña
+    en-US: Password
+    es-EC: Contraseña
   repeat-password:
-    en: Repeat Password
-    es: Repite la contraseña
+    en-US: Repeat Password
+    es-EC: Repite la contraseña
   no-account:
-    en: Don't have an account?
-    es: ¿No tienes una cuenta?
+    en-US: Don't have an account?
+    es-EC: ¿No tienes una cuenta?
   account:
-    en: Account
-    es: Cuenta
+    en-US: Account
+    es-EC: Cuenta
   account-info:
     roles:
-      en: Roles
-      es: Papeles
+      en-US: Roles
+      es-EC: Papeles
   name:
     first:
-      en: First Name
-      es: Nombre de pila
+      en-US: First Name
+      es-EC: Nombre de pila
     last:
-      en: Last Name
-      es: Apellido
+      en-US: Last Name
+      es-EC: Apellido
     second-last:
-      en: Second Last Name
-      es: Segundo Apellido
+      en-US: Second Last Name
+      es-EC: Segundo Apellido
   gender:
-    es: Género
-    en: Gender
+    es-EC: Género
+    en-US: Gender
   male:
-    en: Male
-    es: Hombre
+    en-US: Male
+    es-EC: Hombre
   female:
-    en: Female
-    es: Mujer
+    en-US: Female
+    es-EC: Mujer
   date:
     birthday:
-      en: Birthday
-      es: Cumpleaños
+      en-US: Birthday
+      es-EC: Cumpleaños
   email:
-    en: Email
-    es: Correo electrónico
+    en-US: Email
+    es-EC: Correo electrónico
   phone:
-    en: Phone
-    es: Teléfono
+    en-US: Phone
+    es-EC: Teléfono
   settings:
-    en: Settings for {person}
-    es: Configuración de la {person}
+    en-US: Settings for {person}
+    es-EC: Configuración de la {person}
   actions:
     new:
-      en: New Person
-      es: Persona Nueva
+      en-US: New Person
+      es-EC: Persona Nueva
     edit:
-      en: Edit Person
-      es: Editar persona
+      en-US: Edit Person
+      es-EC: Editar persona
     add-participant:
-      en: Add a Participant
-      es: Añadir Partícipe
+      en-US: Add a Participant
+      es-EC: Añadir Partícipe
     add-account:
-      en: Add Account
-      es: Añadir cuenta
+      en-US: Add Account
+      es-EC: Añadir cuenta
     reset-password:
-      en: Reset Password
-      es: Restablecer la contraseña
+      en-US: Reset Password
+      es-EC: Restablecer la contraseña
     assign-roles:
-      en: Assign Roles
-      es: Asigne Papeles
+      en-US: Assign Roles
+      es-EC: Asigne Papeles
   messages:
     account-activate:
-      en: Account activated
-      es: Cuenta activada
+      en-US: Account activated
+      es-EC: Cuenta activada
     account-deactivate:
-      en: Account deactivated
-      es: Cuenta desactivada
+      en-US: Account deactivated
+      es-EC: Cuenta desactivada
     canceled:
-      en: Canceled add new person
-      es: Cancelado añadir nueva persona
+      en-US: Canceled add new person
+      es-EC: Cancelado añadir nueva persona
     person-add:
-      en: New person added
-      es: Nueva persona agregada
+      en-US: New person added
+      es-EC: Nueva persona agregada
     person-edit:
-      en: Person edited
-      es: Persona editada
+      en-US: Person edited
+      es-EC: Persona editada
     person-deactivate:
-      en: Person deactivated
-      es: Persona desactivada
+      en-US: Person deactivated
+      es-EC: Persona desactivada
     person-activate:
-      en: Person activated
-      es: Persona activada
+      en-US: Person activated
+      es-EC: Persona activada
     person-save-error:
-      en: Person was not saved
-      es: La persona no fue salvada
+      en-US: Person was not saved
+      es-EC: La persona no fue salvada
     confirm:
       activate:
-        en: Are you sure you want to restore this person?
-        es: ¿Estás seguro de que quieres restaurar a esta persona?
+        en-US: Are you sure you want to restore this person?
+        es-EC: ¿Estás seguro de que quieres restaurar a esta persona?
       deactivate:
-        en: Are you sure you want to archive this person?
-        es: ¿Estás seguro de que quieres archivar a esta persona?
+        en-US: Are you sure you want to archive this person?
+        es-EC: ¿Estás seguro de que quieres archivar a esta persona?

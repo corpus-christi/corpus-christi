@@ -50,7 +50,7 @@ import { mapGetters, mapState } from "vuex";
 export default {
   name: "Dashboard",
   watch: {
-    currentLocale() {
+    currentLocaleModel() {
       this.homeGroupPercentageData.rows[0].homeGroups = this.$t(
         "events.dashboard.charts.home-groups"
       );
@@ -64,7 +64,7 @@ export default {
   },
   computed: {
     ...mapState(["locales"]),
-    ...mapGetters(["currentLocale"])
+    ...mapGetters(["currentLocaleModel"])
   },
   data: function() {
     // Get attendance data

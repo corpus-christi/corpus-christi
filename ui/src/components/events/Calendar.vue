@@ -1,7 +1,7 @@
 <template>
   <div>
     <vue-cal
-      :locale="currentLocale.code.split('-')[0]"
+      :locale="currentLocaleModel.code.split('-')[0]"
       default-view="week"
       events-on-month-view
       :events="calendarEvents"
@@ -43,7 +43,7 @@ export default {
       return this.events;
     },
     ...mapState(["locales"]),
-    ...mapGetters(["currentLocale"])
+    ...mapGetters(["currentLocaleModel"])
   },
 
   methods: {

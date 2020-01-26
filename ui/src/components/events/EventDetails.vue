@@ -281,14 +281,16 @@ export default {
             : this.event.assets.map(a => a.asset);
           this.event.groups = !this.event.groups
             ? []
-            : this.event.groups.filter(function(g) {
-                // make sure the group is active
-                // and the group has an active relationship to the event
-                if (g.group) {
-                  return g.active && g.group.active;
-                }
-                return false;
-              }).map(g => g.group);
+            : this.event.groups
+                .filter(function(g) {
+                  // make sure the group is active
+                  // and the group has an active relationship to the event
+                  if (g.group) {
+                    return g.active && g.group.active;
+                  }
+                  return false;
+                })
+                .map(g => g.group);
           // conserve description on EventPersons
           this.event.persons = !this.event.persons
             ? []
@@ -339,17 +341,18 @@ export default {
       const id = this.$route.params.event;
       this.$http.get(`/api/v1/events/${id}?include_groups=1`).then(resp => {
         let eventData = resp.data;
-        this.event.groups =
-          (
-            !eventData.groups ? [] : eventData.groups.filter(function(g) {
+        this.event.groups = !eventData.groups
+          ? []
+          : eventData.groups
+              .filter(function(g) {
                 // make sure the group is active
                 // and the group has an active relationship to the event
                 if (g.group) {
                   return g.active && g.group.active;
                 }
                 return false;
-            }).map(g => g.group)
-          );
+              })
+              .map(g => g.group);
         this.groupsLoaded = true;
       });
     },

@@ -1,65 +1,65 @@
 teams:
   title:
-    en: Teams
-    es: Equipos
+    en-US: Teams
+    es-EC: Equipos
   description:
-    en: Description
-    es: Descripción
+    en-US: Description
+    es-EC: Descripción
   all-teams:
-    en: All Teams
-    es: Todos Equipos
+    en-US: All Teams
+    es-EC: Todos Equipos
   new:
-    en: Add Team
-    es: Añadir Equipo
+    en-US: Add Team
+    es-EC: Añadir Equipo
   create-team:
-    en: Create Team
-    es: Crear Equipo
+    en-US: Create Team
+    es-EC: Crear Equipo
   edit-team:
-    en: Edit Team
-    es: Editar Equipo
+    en-US: Edit Team
+    es-EC: Editar Equipo
   confirm-archive:
-    en: Are you sure you want to archive this team?
-    es: ¿Seguro que quieres archivar este equipo?
+    en-US: Are you sure you want to archive this team?
+    es-EC: ¿Seguro que quieres archivar este equipo?
   confirm-remove-from-event:
-    en: Are you sure you want to remove this team from this event?
-    es: ¿Estás seguro de que quieres eliminar a este equipo de este evento?
+    en-US: Are you sure you want to remove this team from this event?
+    es-EC: ¿Estás seguro de que quieres eliminar a este equipo de este evento?
   team-removed:
-    en: Team removed
-    es: Equipo eliminado
+    en-US: Team removed
+    es-EC: Equipo eliminado
   error-removing-team:
-    en: Error while removing team 
-    es: Error al eliminadar este equipo
+    en-US: Error while removing team 
+    es-EC: Error al eliminadar este equipo
   error-unarchiving-team:
-    en: Error while unarchiving team 
-    es: Error al desarchivar equipo
+    en-US: Error while unarchiving team 
+    es-EC: Error al desarchivar equipo
   team-edited:
-    en: Team edited
-    es: Equipo editado   # ?
+    en-US: Team edited
+    es-EC: Equipo editado   # ?
   error-editing-team:
-    en: Error while editing team
-    es: Error al editar equipo
+    en-US: Error while editing team
+    es-EC: Error al editar equipo
   team-added:
-    en: Team added
-    es: Equipo agregado
+    en-US: Team added
+    es-EC: Equipo agregado
   error-adding-team:
-    en: Error while adding team
-    es: Error al agregar equipo
+    en-US: Error while adding team
+    es-EC: Error al agregar equipo
   error-team-assigned:
-    en: That team is assigned to a conflicting event.
-    es: Ese equipo está asignado a un evento conflictivo.
+    en-US: That team is assigned to a conflicting event.
+    es-EC: Ese equipo está asignado a un evento conflictivo.
   team-on-event:
-    en: That team is already assigned to this event.
-    es: Ese equipo ya está asignado a este evento.
+    en-US: That team is already assigned to this event.
+    es-EC: Ese equipo ya está asignado a este evento.
   none-assigned:
-    en: No teams assigned.
-    es: No hay equipos asignados.
+    en-US: No teams assigned.
+    es-EC: No hay equipos asignados.
   members:
     title:
-      en: Team Members
-      es: Miembros del Equipo
+      en-US: Team Members
+      es-EC: Miembros del Equipo
     add:
-      en: Add Team Members
-      es: Añadir Miembros
+      en-US: Add Team Members
+      es-EC: Añadir Miembros
     confirm-remove:
-      en: Are you sure you want to remove this member?
-      es: ¿Seguro que quieres eliminar este miembro?
+      en-US: Are you sure you want to remove this member?
+      es-EC: ¿Seguro que quieres eliminar este miembro?

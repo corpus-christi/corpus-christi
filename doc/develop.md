@@ -424,7 +424,7 @@ The structure of the CC source code is as follows:
     - `plugins/` - Convenient gathering place for various
       additions to the base Vue configuration
     - `App.vue` - The top-level Vue module
-    - `helpers.js` - Assored JavaScript functions that don't really belong anywhere else
+    - `flags.js` - Assored JavaScript functions that don't really belong anywhere else
     - `main.js` - The main function that's invoked at UI startup;
       includes all the other pieces and parts,
       creates the main Vue object.

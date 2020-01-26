@@ -123,7 +123,11 @@
           </v-tooltip>
           <td v-if="!props.expanded">
             <v-tooltip bottom>
-              <v-btn icon slot="activator" @click="props.expanded = !props.expanded">
+              <v-btn
+                icon
+                slot="activator"
+                @click="props.expanded = !props.expanded"
+              >
                 <v-icon medium>expand_more</v-icon>
               </v-btn>
               <span>{{ $t("places.expand") }}</span>
@@ -131,7 +135,11 @@
           </td>
           <td v-else>
             <v-tooltip bottom>
-              <v-btn icon slot="activator" @click="props.expanded = !props.expanded">
+              <v-btn
+                icon
+                slot="activator"
+                @click="props.expanded = !props.expanded"
+              >
                 <v-icon medium>expand_less</v-icon>
               </v-btn>
               <span>{{ $t("places.close") }}</span>
@@ -144,7 +152,14 @@
           <v-layout>
             <v-flex md2>{{ $t("places.location.location") }}: </v-flex>
             <v-flex>
-              <v-chip v-for="l in locationsToDisplay('deactivate', props.item.locations)" :key="l.value" small color="white"
+              <v-chip
+                v-for="l in locationsToDisplay(
+                  'deactivate',
+                  props.item.locations
+                )"
+                :key="l.value"
+                small
+                color="white"
                 >{{ l.text }}
               </v-chip>
             </v-flex>
@@ -198,7 +213,9 @@
                   color="primary"
                   slot="activator"
                   data-cy="deactivate-person"
-                  v-on:click="showLocationConfirmDialog('deactivate', props.item)"
+                  v-on:click="
+                    showLocationConfirmDialog('deactivate', props.item)
+                  "
                 >
                   <v-icon small>archive</v-icon>
                 </v-btn>
@@ -275,13 +292,15 @@
         <v-layout column>
           <v-card>
             <v-layout align-center justify-center row fill-height>
-              <v-card-title class="headline"> {{$t("places.address.filters.address_filters")}} </v-card-title>
+              <v-card-title class="headline">
+                {{ $t("places.address.filters.address_filters") }}
+              </v-card-title>
             </v-layout>
           </v-card>
           <v-card>
             <v-card-text>
               <v-layout column>
-                <div>{{$t("places.address.filters.range")}}</div>
+                <div>{{ $t("places.address.filters.range") }}</div>
                 <v-layout row>
                   <v-flex md6>
                     <v-text-field
@@ -317,7 +336,7 @@
                   </v-flex>
                 </v-layout>
                 <v-divider></v-divider>
-                <div>{{$t("places.address.filters.distance-ll")}}</div>
+                <div>{{ $t("places.address.filters.distance-ll") }}</div>
                 <v-layout row>
                   <v-flex md6>
                     <v-text-field
@@ -346,7 +365,7 @@
                   </v-flex>
                 </v-layout>
                 <v-divider></v-divider>
-                <div>{{$t("places.address.filters.distance-addr")}}</div>
+                <div>{{ $t("places.address.filters.distance-addr") }}</div>
                 <v-layout row>
                   <v-flex md6>
                     <v-autocomplete
@@ -369,13 +388,13 @@
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn flat color="secondary" @click="cancelFilterDialog"
-                >{{$t("actions.cancel")}}</v-btn
-              >
+              <v-btn flat color="secondary" @click="cancelFilterDialog">{{
+                $t("actions.cancel")
+              }}</v-btn>
 
-              <v-btn flat color="primary" @click="applyFilters"
-                >{{$t("places.address.filters.apply")}}</v-btn
-              >
+              <v-btn flat color="primary" @click="applyFilters">{{
+                $t("places.address.filters.apply")
+              }}</v-btn>
             </v-card-actions>
           </v-card>
         </v-layout>
@@ -420,8 +439,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-dialog v-model="confirmLocationDialog.show"
-      max-width="350px">
+    <v-dialog v-model="confirmLocationDialog.show" max-width="350px">
       <v-card>
         <v-card-text>{{ $t(confirmLocationDialog.title) }}</v-card-text>
         <v-autocomplete
@@ -430,7 +448,12 @@
           solo
           single-line
           :label="$t('places.location.location')"
-          :items="locationsToDisplay(confirmLocationDialog.action, confirmLocationDialog.locationInfo.allLocations)"
+          :items="
+            locationsToDisplay(
+              confirmLocationDialog.action,
+              confirmLocationDialog.locationInfo.allLocations
+            )
+          "
           v-model="confirmLocationDialog.selectedLocation"
           v-validate="'required'"
           :error-messages="errors.collect('location')"
@@ -445,7 +468,12 @@
           >
           <v-spacer></v-spacer>
           <v-btn
-            v-on:click="confirmActionLocation(confirmLocationDialog.action, confirmLocationDialog.selectedLocation)"
+            v-on:click="
+              confirmActionLocation(
+                confirmLocationDialog.action,
+                confirmLocationDialog.selectedLocation
+              )
+            "
             color="primary"
             raised
             :disabled="confirmLocationDialog.loading"
@@ -693,8 +721,12 @@ export default {
     },
     makeAddressLists(all_addresses) {
       this.allAddresses = this.AddressesLocationsData(all_addresses);
-      this.activeAddresses = this.AddressesLocationsData(this.allAddresses.filter(person => person.active));
-      this.archivedAddresses = this.AddressesLocationsData(this.allAddresses.filter(person => !person.active));
+      this.activeAddresses = this.AddressesLocationsData(
+        this.allAddresses.filter(person => person.active)
+      );
+      this.archivedAddresses = this.AddressesLocationsData(
+        this.allAddresses.filter(person => !person.active)
+      );
     },
     AddressesLocationsData(addArr) {
       let c = [];

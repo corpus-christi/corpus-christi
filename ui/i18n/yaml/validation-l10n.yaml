@@ -1,39 +1,39 @@
 validation:
   required:
-    en: Required
-    es: Necesario
+    en-US: Required
+    es-EC: Necesario
   attributes:
     firstName:
-      en: first name
-      es: nombre de pila
+      en-US: first name
+      es-EC: nombre de pila
     lastName:
-      en: last name
-      es: appellido
+      en-US: last name
+      es-EC: appellido
     email:
-      en: email
-      es: correo electrónico
+      en-US: email
+      es-EC: correo electrónico
     title:
-      en: title
-      es: título
+      en-US: title
+      es-EC: título
     startDate:
-      en: start date
-      es: fecha de inicio
+      en-US: start date
+      es-EC: fecha de inicio
     endDate:
-      en: end date
-      es: fecha final
+      en-US: end date
+      es-EC: fecha final
     location:
-      en: location
-      es: ubicación
+      en-US: location
+      es-EC: ubicación
     team-description:
-      en: team description
-      es: descripción del equipo
+      en-US: team description
+      es-EC: descripción del equipo
     attendance:
-      en: attendance
-      es: concurrencia
+      en-US: attendance
+      es-EC: concurrencia
   messages:
     _default:
-      en: Error
-      es: Error
+      en-US: Error
+      es-EC: Error
     required:
-      en: Required
-      es: Necesario
+      en-US: Required
+      es-EC: Necesario
