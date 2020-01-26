@@ -12,7 +12,7 @@
           v-validate="'required'"
           v-bind:error-messages="errors.first('title')"
           data-cy="title"
-        ></v-text-field>
+        />
         <v-textarea
           rows="3"
           v-model="group.description"
@@ -21,12 +21,13 @@
           v-validate="'required'"
           v-bind:error-messages="errors.collect('description')"
           data-cy="description"
-        ></v-textarea>
+        />
         <entity-search
           manager
-          v-model="group.manager"
-          name="address"
-          v-bind:error-messages="errors.first('address')"
+          :value="manager"
+          @input="updateSelection"
+          name="manager"
+          v-bind:error-messages="errors.first('manager')"
         />
       </form>
     </v-card-text>
@@ -39,12 +40,12 @@
         data-cy="form-cancel"
         >{{ $t("actions.cancel") }}</v-btn
       >
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn
         color="primary"
         outline
         v-on:click="addAnother"
-        v-if="editMode === false"
+        v-if="!editMode"
         :loading="addMoreLoading"
         :disabled="formDisabled"
         data-cy="form-addanother"
@@ -83,10 +84,12 @@ export default {
         this.clear();
       } else {
         this.group = groupProp;
+        this.manager = this.parseGroup(this.group);
         this.group.manager = groupProp.managerInfo;
       }
     }
   },
+
   computed: {
     groupKeys() {
       return Object.keys(this.group);
@@ -106,17 +109,47 @@ export default {
   },
 
   methods: {
+    getManagerName(managerInfo) {
+      var man = managerInfo.person;
+      return (
+        man.firstName +
+        " " +
+        man.lastName +
+        " " +
+        (man.secondLastName ? man.secondLastName : "")
+      );
+    },
+
+    parseGroup(obj) {
+      return {
+        id: obj.managerId
+      };
+    },
+
+    updateSelection(obj) {
+      if (obj.person) {
+        this.group.managerId = obj.id;
+        if (!this.group.manager) this.group.manager = {};
+        this.group.manager.person = obj.person;
+        if (!this.group.managerInfo) this.group.managerInfo = {};
+        this.group.managerInfo.person = obj.person;
+      }
+      //console.log("updateSelection");
+      //console.log(this.group);
+    },
+
     validateGroup(group, operation) {
-      this.$validator.validateAll().then((isValid) => {
-        if(isValid){
-          this.$http.get(`/api/v1/groups/find_group/${group.name}/${group.manager.id}`).then((response) => {
-            if(response.data == 0){
-              operation();
-            }
-            else {
-              this.showSnackbar(this.$t("groups.messages.already-exists"));
-            }
-          });
+      this.$validator.validateAll().then(isValid => {
+        if (isValid) {
+          this.$http
+            .get(`/api/v1/groups/find_group/${group.name}/${group.manager.id}`)
+            .then(response => {
+              if (response.data == 0) {
+                operation();
+              } else {
+                this.showSnackbar(this.$t("groups.messages.already-exists"));
+              }
+            });
         }
       });
     },
@@ -130,6 +163,7 @@ export default {
       this.clear();
       this.$validator.reset();
       this.$emit("cancel");
+      this.manager = {};
     },
 
     clear() {
@@ -141,18 +175,20 @@ export default {
     },
 
     save() {
+      //console.log(this.group);
       this.validateGroup(this.group, () => {
         this.group.active = true;
-          this.group.active = true;
-          this.$emit("save", this.group);
+        this.group.active = true;
+        this.$emit("save", this.group);
       });
+      this.manager = {};
     },
 
     addAnother() {
       this.validateGroup(this.group, () => {
         this.group.active = true;
-          this.$emit("add-another", this.group);
-          this.group = {};
+        this.$emit("add-another", this.group);
+        this.group = {};
       });
     }
   },
@@ -175,10 +211,11 @@ export default {
   data: function() {
     return {
       group: {},
+      manager: {},
       snackbar: {
         show: false,
         text: ""
-      },
+      }
     };
   }
 };

@@ -5,7 +5,7 @@ from marshmallow import fields, Schema
 from marshmallow.validate import Range
 from sqlalchemy import Column, Integer, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
-from src.i18n.models import i18n_create, I18NLocale
+from src.i18n.models import i18n_create, I18NLocale, i18n_check
 
 from .. import db
 from ..db import Base
@@ -54,11 +54,11 @@ class Attribute(Base):
                     locale_code = locale['locale_code']
                     if not db.session.query(I18NLocale).get(locale_code):
                         db.session.add(I18NLocale(code=locale_code, desc=''))
-                    i18n_create(name_i18n, locale['locale_code'],
-                                locale['name'], description=f"Attribute type {attribute_name}")
+                    if not i18n_check(name_i18n, locale_code):
+                        i18n_create(name_i18n, locale_code,
+                                    locale['name'], description=f"Attribute type {attribute_name}")
                 count += 1
             db.session.commit()
-            fp.close()
             return count
 
 

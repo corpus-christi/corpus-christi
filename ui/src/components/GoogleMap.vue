@@ -9,8 +9,18 @@
       :key="index"
       v-for="(m, index) in markers"
       :position="m.position"
-      @click="centerMapOnMarker"
+      @click="openInfoWindow(m)"
     />
+    <gmap-info-window
+      :options="{ maxWidth: 300 }"
+      :position="infoWindow.position"
+      :opened="infoWindow.open"
+      @closeclick="infoWindow.open = false"
+    >
+      {{ infoWindow.name }} <br />
+      {{ infoWindow.address }} <br />
+      {{ infoWindow.description }}
+    </gmap-info-window>
   </gmap-map>
 </template>
 
@@ -25,14 +35,29 @@ export default {
   },
   methods: {
     centerMapOnMarker(position) {
-      this.map.panTo(position.latLng);
+      this.map.panTo(position);
+      this.infoWindow.position = position;
+      this.infoWindow.open = true;
+    },
+    openInfoWindow(item) {
+      this.centerMapOnMarker(item.position);
+      this.infoWindow.name = item.data.name;
+      this.infoWindow.description = item.data.description;
+      this.infoWindow.address = item.data.address;
     }
   },
   data() {
     return {
       center: { lat: -2.90548355117024, lng: -79.02949294174876 },
       zoom: 15,
-      map: ""
+      map: "",
+      infoWindow: {
+        position: { lat: 0, lng: 0 },
+        open: false,
+        address: "",
+        name: "",
+        description: ""
+      }
     };
   },
   mounted: function() {

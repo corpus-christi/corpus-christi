@@ -3,10 +3,10 @@ import os
 from flask import json
 from marshmallow import Schema, fields
 from marshmallow.validate import Length, Range
-from sqlalchemy import Column, String, ForeignKey, Integer, Float
+from sqlalchemy import Column, String, ForeignKey, Integer, Float, Boolean
 from sqlalchemy.orm import relationship
 from src.db import Base
-from src.i18n.models import i18n_create, I18NLocale
+from src.i18n.models import i18n_create, I18NLocale, i18n_check
 
 from .. import db
 from ..shared.models import StringTypes
@@ -18,8 +18,7 @@ class Country(Base):
     """Country; uses ISO 3166-1 country codes"""
     __tablename__ = 'places_country'
     code = Column(String(2), primary_key=True)
-    name_i18n = Column(StringTypes.I18N_KEY, ForeignKey(
-        'i18n_key.id'), nullable=False)
+    name_i18n = Column(StringTypes.I18N_KEY, ForeignKey('i18n_key.id'), nullable=False)
     key = relationship('I18NKey', backref='countries', lazy=True)
 
     def __repr__(self):
@@ -28,8 +27,7 @@ class Country(Base):
     @classmethod
     def load_from_file(cls, file_name='country-codes.json'):
         count = 0
-        file_path = os.path.abspath(os.path.join(
-            __file__, os.path.pardir, 'data', file_name))
+        file_path = os.path.abspath(os.path.join(__file__, os.path.pardir, 'data', file_name))
 
         with open(file_path, 'r') as fp:
             countries = json.load(fp)
@@ -41,15 +39,20 @@ class Country(Base):
                 name_i18n = f'country.name.{country_code}'
 
                 for locale in country['locales']:
-                    locale_code = locale['locale_code']
+                    locale_code = locale['locale_code'] # e.g., en-US
                     if not db.session.query(I18NLocale).get(locale_code):
+                        # Don't have this locale code
                         db.session.add(I18NLocale(code=locale_code, desc=''))
 
-                    i18n_create(name_i18n, locale_code,
-                                locale['name'], description=f"Country {country_name}")
+                    if not i18n_check(name_i18n, locale_code):
+                        # Don't have this country
+                        i18n_create(name_i18n, locale_code,
+                                    locale['name'], description=f"Country {country_name}")
 
-                db.session.add(cls(code=country_code, name_i18n=name_i18n))
-                count += 1
+                # Add to the Country table.
+                if not db.session.query(cls).filter_by(code=country_code).count():
+                    db.session.add(cls(code=country_code, name_i18n=name_i18n))
+                    count += 1
             db.session.commit()
         fp.close()
         return count
@@ -73,6 +76,7 @@ class Area(Base):
 
     addresses = relationship('Address', backref='areas', passive_deletes=True)
     country = relationship('Country', backref='areas', lazy=True)
+    active = Column(Boolean, nullable=False, default=True)
 
     def __repr__(self):
         return f"<Area(name={self.name},Country Code='{self.country_code}')>"
@@ -82,6 +86,8 @@ class AreaSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     name = fields.String(required=True, validate=Length(min=1))
     country_code = fields.String(required=True, validate=Length(min=1))
+    active = fields.Boolean(missing=1)
+    country = fields.Nested('CountrySchema')
 
 
 # ---- Location
@@ -96,6 +102,7 @@ class Location(Base):
     events = relationship('Event', back_populates="location")
     assets = relationship('Asset', back_populates="location")
     images = relationship('ImageLocation', back_populates="location")
+    active = Column(Boolean, nullable=False, default=True)
 
     def __repr__(self):
         attributes = [f"id='{self.id}'"]
@@ -111,6 +118,7 @@ class LocationSchema(Schema):
     id = fields.Integer(dump_only=True, required=False, validate=Range(min=1))
     description = fields.String(required=False)
     address_id = fields.Integer(required=True, validate=Range(min=1))
+    active = fields.Boolean(missing=1)
     address = fields.Nested('AddressSchema')
 
 
@@ -133,6 +141,7 @@ class Address(Base):
     country = relationship('Country', backref='addresses', lazy=True)
     meetings = relationship('Meeting', back_populates='address', lazy=True)
     locations = relationship('Location', back_populates='address', lazy=True)
+    active = Column(Boolean, nullable=False, default=True)
 
     def __repr__(self):
         attributes = [f"id='{self.id}'"]
@@ -153,5 +162,6 @@ class AddressSchema(Schema):
     country_code = fields.String(required=True)
     latitude = fields.Float()
     longitude = fields.Float()
+    active = fields.Boolean(missing=1)
     area = fields.Nested('AreaSchema')
     country = fields.Nested('CountrySchema')

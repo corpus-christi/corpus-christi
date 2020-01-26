@@ -12,6 +12,7 @@ from ..places.models import Address
 from ..places.test_places import create_multiple_addresses
 
 
+
 class RandomLocaleFaker:
     """Generate multiple fakers for different locales."""
 

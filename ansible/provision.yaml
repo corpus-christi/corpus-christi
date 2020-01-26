@@ -37,14 +37,15 @@
         - postgresql
         - python3-venv
         - python3-psycopg2
+        - supervisor
         - htop
         - tree
         - silversearcher-ag
         - multitail
 
-- name: create accounts
+- name: create account
   hosts: staging, production
-  tags: cc
+  tags: accounts
   become: yes
   tasks:
     - name: create corpus-christi user
@@ -54,8 +55,8 @@
         shell: /bin/bash
 
 - name: clone repository
-  hosts: all
-  tags: git, build, update
+  hosts: staging, production
+  tags: git, update
   become: yes
   become_user: "{{ cc_username }}"
   vars_files:
@@ -67,8 +68,22 @@
         dest: "{{ cc_abs_dir }}"
         version: master
 
-- name: create private files
-  hosts: all
+- name: prepare python
+  hosts: staging, production
+  tags: python, update
+  become: yes
+  become_user: "{{ cc_username }}"
+  vars_files:
+    - public.yaml
+  tasks:
+    - name: create and populate python venv
+      pip:
+        virtualenv: "{{ cc_api_abs_dir }}/venv"
+        virtualenv_command: "{{ python3 }} -m venv venv"
+        requirements: "{{ cc_api_abs_dir }}/requirements.txt"
+
+- name: instantiate private config
+  hosts: staging, production
   tags: config
   become: yes
   vars_files:
@@ -86,6 +101,8 @@
   tags: db
   become: yes
   become_user: postgres
+  vars_files:
+    - public.yaml
   tasks:
     - name: create database user
       postgresql_user:
@@ -97,23 +114,26 @@
         name: "{{ postgres.database }}"
         owner: "{{ postgres.username }}"
 
-- name: prepare python
-  hosts: all
-  tags: python, build, update
+- name: build user interface
+  hosts: staging, production
+  tags: ui, update
   become: yes
   become_user: "{{ cc_username }}"
   vars_files:
     - public.yaml
   tasks:
-    - name: create and populate python venv
-      pip:
-        virtualenv: "{{ cc_api_abs_dir }}/venv"
-        virtualenv_command: "{{ python3 }} -m venv venv"
-        requirements: "{{ cc_api_abs_dir }}/requirements.txt"
+    - name: install node modules for ui
+      yarn:
+        path: "{{ cc_ui_abs_dir }}"
 
-- name: migrate database
-  hosts: all
-  tags: db, build, update
+    - name: build production ui
+      command:
+        chdir: "{{ cc_ui_abs_dir }}"
+        cmd: yarn build
+
+- name: provision application
+  hosts: staging, production
+  tags: flask
   become: yes
   become_user: "{{ cc_username }}"
   vars_files:
@@ -126,10 +146,66 @@
   tasks:
     - name: create migration
       command:
-        cmd: "{{ venv_abs_dir }}/bin/flask db migrate"
+        cmd: "{{ venv_abs_dir }}/bin/flask {{ item }}"
         chdir: "{{ cc_api_abs_dir }}"
+      loop:
+        - db migrate
+        - db upgrade
+        - app load-locales
+        - app load-countries
+        - app load-languages
+        - app load-roles
+        - app load-attribute-types
 
-    - name: upgrade database
-      command:
-        cmd: "{{ venv_abs_dir }}/bin/flask db upgrade"
-        chdir: "{{ cc_api_abs_dir }}"
+- name: provision supervisor
+  hosts: staging, production
+  tags: supervisor
+  become: yes
+  vars_files:
+    - public.yaml
+  tasks:
+    - name: instantiate supervisor template
+      template:
+        src: templates/supervisor.conf
+        dest: "{{ supervisor_conf_abs_dir }}/corpus-christi.conf"
+        mode: 0444
+
+    - name: ensure log directory exists
+      file:
+        path: "{{ cc_log_abs_dir }}"
+        state: directory
+        mode: 0755
+
+    - name: start server
+      supervisorctl:
+        name: corpus-christi
+        state: restarted
+
+- name: provision nginx
+  hosts: staging, production
+  tags: nginx
+  become: yes
+  vars_files:
+    - public.yaml
+  tasks:
+    - name: disable nginx default configuration
+      file:
+        path: "{{ nginx_enabled_abs_dir }}/default"
+        state: absent
+
+    - name: copy nginx config file
+      template:
+        src: "templates/{{ nginx_config }}"
+        dest: "{{ nginx_available_abs_dir }}/{{ nginx_conf_file }}"
+        mode: 0444
+
+    - name: enable nginx configuration
+      file:
+        src: "{{ nginx_available_abs_dir }}/{{ nginx_conf_file }}"
+        dest: "{{ nginx_enabled_abs_dir }}/{{ nginx_conf_file }}"
+        state: link
+
+    - name: restart nginx
+      service:
+        name: nginx
+        state: restarted

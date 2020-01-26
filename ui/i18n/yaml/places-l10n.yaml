@@ -1,4 +1,7 @@
 places:
+  title:
+    en: Places
+    es: Lugares
   create-address:
     en: Create an Address
     es: Crear una Dirección
@@ -12,16 +15,71 @@ places:
     city:
       en: City
       es: Ciudad
+    country:
+      en: Country
+      es: País
     latitude:
       en: Latitude
       es: Latitud
     longitude:
       en: Longitude
       es: Longitud
+    new:
+      en: Add Address
+      es: Añadir dirección
+    find-address:
+      en: Find Address
+      es: Encuentra la Dirección
+    valid-address:
+      en: Use Valid Street Address
+      es: Usar dirección Válida
+    find-address-lat-lng:
+      en: Find Address using Latitude and Longitude
+      es: Buscar Dirección usando Latitud y Longitud
+    filters:
+      address_filters:
+        en: Address Filters
+        es: Filtros de Direcciones
+      apply:
+        en: Apply Filters
+        es: Aplicar Filtros
+      startLat:
+        en: Start Latitude
+        es: Iniciar Latitude
+      endLat:
+        en: End Latitude
+        es: Fin de la Latitud
+      startLng:
+        en: Start Longitude
+        es: Comenzar Longitud
+      endLng:
+        en: End Longitude
+        es: Longitud Final
+      distanceFromLatLng:
+        en: Distance from specified Latitude and Longitude
+        es: Distancia desde la Latitud y Longitud especificadas
+      distanceFromAddress:
+        en: Distance from specified Address
+        es: Distancia desde la Dirección especificada
+      range:
+        en: Filter between a range of Latitudes and Longitudes
+        es: Filtrar entre un rango de Latitudes y Longitudes
+      distance-ll:
+        en: Filter by distance from a specific Latitude and Longitude
+        es: Filtrar por distancia desde una Latitud y Longitud específicas
+      distance-addr:
+        en: Filter by distance from a specific address
+        es: Filtrar por distancia desde una dirección específica
   location:
+    location:
+      en: Location
+      es: Ubicación
     description:
       en: Description
       es: Descripción
+    new:
+      en: Add Location
+      es: Añadir Ubicación
   messages:
     no-results:
       en: Your address returned no results.
@@ -29,3 +87,50 @@ places:
     saved:
       en: Your address has been saved.
       es: Su dirección ha sido guardada.
+    find-address-err:
+      en: Latitude and Longitude are required to find an address
+      es: Se requiere latitud y longitud para encontrar una dirección
+    confirm:
+      activate:
+        en: Are you sure you want to restore this address?
+        es: ¿Estás seguro de que deseas restaurar esta dirección?
+      deactivate:
+        en: Are you sure you want to archive this address?
+        es: ¿Estás seguro de que deseas archivar esta dirección?
+  new:
+    en: Add Place
+    es: Añadir Lugares
+  edit:
+    en: Edit Location
+    es: Editar Ubicación
+  area:
+    area:
+      en: Area
+      es: Zona
+    new:
+      en: Add Area
+      es: Añadir Zona
+    name:
+      en: Area Name
+      es: Nombre del Área
+    create-area:
+      en: Create New Area
+      es: Crear nueva Área
+    edit:
+      en: Edit Area
+      es: Área de Edición
+    confirm:
+      activate:
+        en: Are you sure you want to restore this area?
+        es: ¿Estás seguro de que deseas restaurar esta zona?
+      deactivate:
+        en: Are you sure you want to archive this area?
+        es: ¿Estás seguro de que deseas archivar esta zona?
+
+  expand:
+      en: expand
+      es: expandir
+  close:
+      en: close
+      es: cerca
+

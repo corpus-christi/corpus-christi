@@ -98,8 +98,7 @@ class Language(Base):
     @classmethod
     def load_from_file(cls, file_name='language-codes.json', locale_code='en-US'):
         count = 0
-        file_path = os.path.abspath(os.path.join(
-            __file__, os.path.pardir, 'data', file_name))
+        file_path = os.path.abspath(os.path.join(__file__, os.path.pardir, 'data', file_name))
 
         if not db.session.query(I18NLocale).get(locale_code):
             db.session.add(I18NLocale(code=locale_code, desc='English US'))
@@ -112,11 +111,13 @@ class Language(Base):
                 language_name = language['English']
 
                 name_i18n = f'language.name.{language_code}'[:32]
-                i18n_create(name_i18n, locale_code,
-                            language_name, description=f"Language {language_name}")
+                if not i18n_check(name_i18n, locale_code):
+                    i18n_create(name_i18n, locale_code,
+                                language_name, description=f"Language {language_name}")
 
-                db.session.add(cls(code=language_code, name_i18n=name_i18n))
-                count += 1
+                if not db.session.query(cls).filter_by(code=language_code).count():
+                    db.session.add(cls(code=language_code, name_i18n=name_i18n))
+                    count += 1
             db.session.commit()
         fp.close()
         return count

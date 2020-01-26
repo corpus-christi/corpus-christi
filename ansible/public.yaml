@@ -2,7 +2,12 @@ cc_repo: https://github.com/corpus-christi/corpus-christi
 
 cc_api_abs_dir: "{{ cc_abs_dir }}/api"
 cc_ui_abs_dir: "{{ cc_abs_dir }}/ui"
+cc_log_abs_dir: "{{ cc_abs_dir }}/logs"
+
 venv_abs_dir: "{{ cc_api_abs_dir }}/venv"
+
+supervisor_abs_dir: /etc/supervisor
+supervisor_conf_abs_dir: "{{ supervisor_abs_dir }}/conf.d"
 
 nginx_base_abs_dir: "/etc/nginx"
 nginx_available_abs_dir: "{{ nginx_base_abs_dir}}/sites-available"

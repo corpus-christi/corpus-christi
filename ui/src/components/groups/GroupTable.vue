@@ -73,9 +73,9 @@
           class="hover-hand"
           v-on:click="$router.push({ path: '/groups/' + props.item.id })"
         >
-          {{ props.item.memberList.length + 1 }}
+          {{ props.item.memberList.filter(ev => ev.active).length }}
         </td>
-        <td>
+        <td class="text-no-wrap">
           <template v-if="props.item.active">
             <v-tooltip bottom>
               <v-btn
@@ -265,7 +265,10 @@ export default {
       return [
         { text: this.$t("groups.name"), value: "name" },
         { text: this.$t("groups.description"), value: "description" },
-        { text: this.$t("groups.manager"), value: "managerInfo" },
+        {
+          text: this.$t("groups.manager"),
+          value: "managerInfo.person.lastName"
+        },
         { text: this.$t("groups.member-count"), value: "memberList.length" },
         { text: this.$t("actions.header"), sortable: false }
       ];
@@ -299,9 +302,6 @@ export default {
 
     saveGroup(group, closeDialog = true) {
       this.groupDialog.saveLoading = true;
-      if (group.manager) {
-        group.managerId = group.manager.id;
-      }
       let newGroup = JSON.parse(JSON.stringify(group));
       delete newGroup.manager;
       delete newGroup.id;
@@ -309,11 +309,10 @@ export default {
       delete newGroup.managerInfo;
       if (this.groupDialog.editMode) {
         this.putGroup(group, newGroup);
-      }
-      else {
+      } else {
         this.postGroup(newGroup);
       }
-      if(closeDialog) {
+      if (closeDialog) {
         this.closeDialog();
       }
     },
@@ -370,7 +369,6 @@ export default {
     cancelArchive() {
       this.archiveDialog.show = false;
     },
-
     archiveGroup() {
       console.log("Archived group");
       this.archiveDialog.loading = true;
@@ -392,7 +390,6 @@ export default {
           this.showSnackbar(this.$t("groups.messages.error-archiving-group"));
         });
     },
-
     unarchive(group) {
       const idx = this.groups.findIndex(ev => ev.id === group.id);
       const groupId = group.id;
@@ -409,17 +406,14 @@ export default {
           this.showSnackbar(this.$t("groups.messages.error-unarchiving-gropu"));
         });
     },
-
     duplicate(group) {
       const copyGroup = JSON.parse(JSON.stringify(group));
       delete copyGroup.id;
       this.activateGroupDialog(copyGroup);
     },
-
     addAnotherGroup(group) {
       this.saveGroup(group, false);
     },
-
     onResize() {
       this.windowSize = { x: window.innerWidth, y: window.innerHeight };
       if (this.windowSize.x <= 960) {
@@ -428,7 +422,6 @@ export default {
         this.windowSize.small = false;
       }
     },
-
     showSnackbar(message) {
       this.snackbar.text = message;
       this.snackbar.show = true;

@@ -21,7 +21,7 @@ export default {
   },
   computed: {
     // Computed property so it's reactive.
-    menuItems() {
+    menuItems: function() {
       return [
         {
           title: this.$t("public.title"),
@@ -68,6 +68,11 @@ export default {
           title: this.$t("assets.title"),
           route: "assets",
           icon: "devices_other"
+        },
+        {
+          title: this.$t("places.title"),
+          route: "places",
+          icon: "places"
         }
       ];
     }

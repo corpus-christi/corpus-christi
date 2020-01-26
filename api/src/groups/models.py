@@ -7,6 +7,7 @@ from src.db import Base
 from src.shared.models import StringTypes
 
 
+
 # ---- Group
 
 class Group(Base):
