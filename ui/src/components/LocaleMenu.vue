@@ -1,83 +1,87 @@
 <template>
   <v-menu>
     <v-btn id="cur-locale" data-cy="cur-locale" flat slot="activator">
-      {{ displayLocale(currentLocale) }}
+      {{ currentFlagAndDescription }}
       <v-icon left>arrow_drop_down</v-icon>
     </v-btn>
     <v-list data-cy="language-dropdown">
       <v-list-tile
-        v-for="locale in locales"
-        v-bind:key="locale.code"
-        v-on:click="setCurrentLocale(locale)"
-        v-bind:id="locale.code"
-        v-bind:data-cy="locale.code"
+        v-for="(localeModel, idx) in localeModels"
+        v-bind:key="idx"
+        v-bind:data-cy="localeModel.code"
+        v-on:click="changeLocale(localeModel)"
       >
-        <v-list-tile-title>{{ displayLocale(locale) }}</v-list-tile-title>
+        <v-list-tile-title>
+          {{ localeModel.flagAndDescription }}
+        </v-list-tile-title>
       </v-list-tile>
     </v-list>
   </v-menu>
 </template>
 
-<script>
-import { mapGetters, mapMutations, mapState } from "vuex";
-import { flagForLocale, splitLocaleCode } from "../helpers";
-import store from "./../store";
+<script lang="ts">
+import Vue from "vue";
+import set from "lodash/set";
+import { I18NValueSchema, Locale, LocaleModel } from "@/models/Locale";
+import { AxiosError, AxiosResponse } from "axios";
 
-export default {
+export default Vue.extend({
   name: "LocaleMenu",
 
   computed: {
-    ...mapState(["locales"]),
-    ...mapGetters(["currentLocale"])
+    currentLocale(): Locale {
+      return this.$store.state.currentLocale;
+    },
+
+    localeModels(): LocaleModel[] {
+      return this.$store.state.localeModels;
+    },
+
+    currentLocaleModel(): LocaleModel {
+      return this.$store.getters.currentLocaleModel;
+    },
+
+    currentFlagAndDescription(): string {
+      const localeModel = this.currentLocaleModel;
+
+      if (localeModel) {
+        return localeModel.flagAndDescription;
+      } else {
+        return "NO LOCALE";
+      }
+    }
   },
 
   mounted() {
-    this.getTranslationsForLocale(this.$i18n.locale);
+    this.getTranslationsForLanguage(this.currentLocale);
   },
 
   methods: {
-    ...mapMutations(["setCurrentLocaleCode"]),
+    setCurrentLocale(locale: Locale) {
+      this.$store.commit("setCurrentLocale", locale);
+    },
 
-    setCurrentLocale(locale) {
-      // Set the current locale.
-      this.setCurrentLocaleCode(locale.code);
-      this.getTranslationsForLocale(
-        splitLocaleCode(locale.code).languageCode
-      ).then(() => {
-        this.$i18n.locale = splitLocaleCode(locale.code).languageCode;
+    changeLocale(localeModel: LocaleModel) {
+      const locale = localeModel.locale;
+      this.setCurrentLocale(locale);
+      this.getTranslationsForLanguage(locale).then(() => {
+        this.$i18n.locale = locale.toString();
       });
     },
 
-    displayLocale(locale) {
-      // Return a string that displays the current locale and its flag.
-      if (!locale) {
-        return "";
-      }
-      return flagForLocale(locale.code) + locale.desc;
-    },
-
-    getTranslationsForLocale(localCode) {
+    getTranslationsForLanguage(locale: Locale): Promise<void> {
       return this.$http
-        .get(`/api/v1/i18n/values/${store.state.currentLocaleCode}`)
-        .then(response => {
+        .get(`/api/v1/i18n/values/${locale}`)
+        .then((response: AxiosResponse<I18NValueSchema[]>) => {
           let translations = {};
           for (let item of response.data) {
-            let keys = item.key_id.split(".");
-            let lastLevel = translations;
-            for (let i in keys) {
-              let key = keys[i];
-              if (i === keys.length - 1) {
-                lastLevel[key] = item.gloss;
-              } else if (!Object.keys(lastLevel).includes(key)) {
-                lastLevel[key] = {};
-              }
-              lastLevel = lastLevel[key];
-            }
+            set(translations, item.key_id, item.gloss);
           }
-          this.$i18n.mergeLocaleMessage(localCode, translations);
+          this.$i18n.mergeLocaleMessage(locale.languageCode, translations);
+          console.log("GTFL XLATES", this.$i18n);
         })
-        .catch(err => console.error("FAILURE", err.response));
+        .catch((err: AxiosError) => console.error("FAILURE", err));
     }
   }
-};
+});
 </script>

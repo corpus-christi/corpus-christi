@@ -53,7 +53,6 @@ export default {
       this.$http
         .get("/api/v1/people/persons?include_images=1")
         .then(resp => {
-          console.log("FETCHED PEOPLE", resp);
           this.peopleList = resp.data;
           this.tableLoaded = true;
         })
@@ -64,7 +63,6 @@ export default {
       this.$http
         .get("/api/v1/people/role")
         .then(resp => {
-          console.log("FETCHED ROLES", resp);
           let roles = [];
           for (var role of resp.data) {
             roles.push({

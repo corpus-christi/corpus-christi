@@ -1,0 +1,6 @@
+node_modules/
+screenshots/
+dist/
+
+yarn-error.log
+proxy-config.js

@@ -1,0 +1,35 @@
+role:
+  event-planner:
+    en-US: Event Planner
+    es-EC: Organizador de Eventos
+  group-admin:
+    en-US: Group Administrator
+    es-EC: Administrador del Grupo
+  group-leader:
+    en-US: Group Leader
+    es-EC: Lider de Grupo
+  group-overseer:
+    en-US: Group Overseer
+    es-EC: Supervisor de Grupo
+  infrastructure:
+    en-US: Infrastructure
+    es-EC: Infraestructura
+  public:
+    en-US: Public
+    es-EC: "P\xFAblico"
+  registrar:
+    en-US: Registrar
+    es-EC: Registrador
+  superuser:
+    en-US: Superuser
+    es-EC: Superusuario
+  teaching-assistant:
+    en-US: Teaching Assistant
+    es-EC: "Asistente de Ense\xF1anza"
+  translator:
+    en-US: Translator
+    es-EC: Traductor
+  visitor:
+    en-US: Visitor
+    es-EC: Visitante
+

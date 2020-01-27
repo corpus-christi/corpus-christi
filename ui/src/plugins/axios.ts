@@ -3,7 +3,7 @@ import axios from "axios";
 import store from "../store.js";
 
 const authAxios = axios.create({
-  baseUrl: "/"
+  baseURL: "/"
   // headers: { "Authorization": "Bearer NOT SET" }
 });
 
@@ -16,8 +16,7 @@ authAxios.interceptors.response.use(
       console.log(error.config);
       store.commit("logOut");
       window.location.replace(
-        window.location,
-        "login?redirect=" + window.location.replace(/^\/*$/, "")
+        "login?redirect=" + window.location.toString().replace(/^\/*$/, "")
       );
       return Promise.reject(error);
     } else {
@@ -28,12 +27,12 @@ authAxios.interceptors.response.use(
 
 Vue.prototype.$http = authAxios;
 
-export function setJWT(jwt) {
-  const access_token = `Bearer ${jwt}`;
-  authAxios.defaults.headers.common["Authorization"] = access_token;
+export function setJWT(jwt: string) {
+  authAxios.defaults.headers.common["Authorization"] = `Bearer ${jwt}`;
 }
 
 const plainAxios = axios.create({
-  baseUrl: "/"
+  baseURL: "/"
 });
+
 Vue.prototype.$httpNoAuth = plainAxios;

@@ -1,25 +1,25 @@
 public:
   title:
-    en: Public
-    es: Público
+    en-US: Public
+    es-EC: Público
   headers:
     upcoming-classes:
-      en: Upcoming Courses
-      es: Próximas Cursos
+      en-US: Upcoming Courses
+      es-EC: Próximas Cursos
     upcoming-events:
-      en: Upcoming Events
-      es: Próximos Eventos
+      en-US: Upcoming Events
+      es-EC: Próximos Eventos
     home-church:
-      en: Find a Home Church
-      es: Encontrar una Iglesia Hogar
+      en-US: Find a Home Church
+      es-EC: Encontrar una Iglesia Hogar
   events:
     join:
-      en: Join Event
-      es: Juntarse Evento
+      en-US: Join Event
+      es-EC: Juntarse Evento
     view-all:
-      en: View All Events
-      es: Ver Todos Eventos
+      en-US: View All Events
+      es-EC: Ver Todos Eventos
   courses:
     view-all:
-      en: View All Courses
-      es: Ver Todos Cursos
+      en-US: View All Courses
+      es-EC: Ver Todos Cursos

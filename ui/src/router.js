@@ -178,12 +178,6 @@ const router = new VueRouter({
       component: () => import("@/pages/Places")
     },
     {
-      name: "locale",
-      path: "/locale",
-      meta: { authRequired: true },
-      component: () => import("@/pages/Locale")
-    },
-    {
       name: "diplomas-admin",
       path: "/diplomas",
       meta: { authRequired: true },

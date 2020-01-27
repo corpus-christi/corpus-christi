@@ -84,7 +84,7 @@
 
 - name: instantiate private config
   hosts: staging, production
-  tags: config
+  tags: config, update
   become: yes
   vars_files:
     - public.yaml

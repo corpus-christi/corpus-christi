@@ -1,0 +1,540 @@
+country:
+  AD:
+    en-US: Andorra
+  AE:
+    en-US: United Arab Emirates
+  AF:
+    en-US: Afghanistan
+    es-EC: "Afganist\xC3\xA1n"
+  AG:
+    en-US: Antigua and Barbuda
+  AI:
+    en-US: Anguilla
+  AL:
+    en-US: Albania
+    es-EC: Albania
+  AM:
+    en-US: Armenia
+  AO:
+    en-US: Angola
+  AQ:
+    en-US: Antarctica
+  AR:
+    en-US: Argentina
+    es-EC: Argentina
+  AS:
+    en-US: American Samoa
+    es-EC: Samoa Americana
+  AT:
+    en-US: Austria
+  AU:
+    en-US: Australia
+  AW:
+    en-US: Aruba
+  AX:
+    en-US: "\xC5land Islands"
+  AZ:
+    en-US: Azerbaijan
+  BA:
+    en-US: Bosnia and Herzegovina
+  BB:
+    en-US: Barbados
+    es-EC: Barbados
+  BD:
+    en-US: Bangladesh
+  BE:
+    en-US: Belgium
+  BF:
+    en-US: Burkina Faso
+  BG:
+    en-US: Bulgaria
+  BH:
+    en-US: Bahrain
+  BI:
+    en-US: Burundi
+  BJ:
+    en-US: Benin
+  BL:
+    en-US: "Saint Barth\xE9lemy"
+  BM:
+    en-US: Bermuda
+  BN:
+    en-US: Brunei Darussalam
+  BO:
+    en-US: Bolivia, Plurinational State of
+    es-EC: Bolivia, Estado Plurinacional de
+  BQ:
+    en-US: Bonaire, Sint Eustatius and Saba
+  BR:
+    en-US: Brazil
+    es-EC: Brasil
+  BS:
+    en-US: Bahamas
+    es-EC: Bahamas
+  BT:
+    en-US: Bhutan
+  BV:
+    en-US: Bouvet Island
+  BW:
+    en-US: Botswana
+  BY:
+    en-US: Belarus
+  BZ:
+    en-US: Belize
+    es-EC: Belice
+  CA:
+    en-US: Canada
+    es-EC: "Canad\xC3\xA1"
+  CC:
+    en-US: Cocos (Keeling) Islands
+  CD:
+    en-US: Congo, the Democratic Republic of the
+  CF:
+    en-US: Central African Republic
+  CG:
+    en-US: Congo
+  CH:
+    en-US: Switzerland
+  CI:
+    en-US: "C\xF4te d'Ivoire"
+  CK:
+    en-US: Cook Islands
+  CL:
+    en-US: Chile
+    es-EC: Chile
+  CM:
+    en-US: Cameroon
+  CN:
+    en-US: China
+  CO:
+    en-US: Colombia
+    es-EC: Colombia
+  CR:
+    en-US: Costa Rica
+    es-EC: Costa Rica
+  CU:
+    en-US: Cuba
+    es-EC: Cuba
+  CV:
+    en-US: Cape Verde
+  CW:
+    en-US: "Cura\xE7ao"
+  CX:
+    en-US: Christmas Island
+  CY:
+    en-US: Cyprus
+  CZ:
+    en-US: Czech Republic
+  DE:
+    en-US: Germany
+  DJ:
+    en-US: Djibouti
+  DK:
+    en-US: Denmark
+  DM:
+    en-US: Dominica
+    es-EC: Dominica
+  DO:
+    en-US: Dominican Republic
+    es-EC: "Rep\xC3\xBAblica Dominicana"
+  DZ:
+    en-US: Algeria
+    es-EC: Argelia
+  EC:
+    en-US: Ecuador
+    es-EC: Ecuador
+  EE:
+    en-US: Estonia
+  EG:
+    en-US: Egypt
+  EH:
+    en-US: Western Sahara
+  ER:
+    en-US: Eritrea
+  ES:
+    en-US: Spain
+  ET:
+    en-US: Ethiopia
+  FI:
+    en-US: Finland
+  FJ:
+    en-US: Fiji
+  FK:
+    en-US: Falkland Islands (Malvinas)
+    es-EC: Islas Malvinas
+  FM:
+    en-US: Micronesia, Federated States of
+  FO:
+    en-US: Faroe Islands
+  FR:
+    en-US: France
+  GA:
+    en-US: Gabon
+  GB:
+    en-US: United Kingdom
+  GD:
+    en-US: Grenada
+    es-EC: Grenada
+  GE:
+    en-US: Georgia
+  GF:
+    en-US: French Guiana
+    es-EC: Guayana Francesa
+  GG:
+    en-US: Guernsey
+  GH:
+    en-US: Ghana
+  GI:
+    en-US: Gibraltar
+  GL:
+    en-US: Greenland
+  GM:
+    en-US: Gambia
+  GN:
+    en-US: Guinea
+  GP:
+    en-US: Guadeloupe
+  GQ:
+    en-US: Equatorial Guinea
+  GR:
+    en-US: Greece
+  GS:
+    en-US: South Georgia and the South Sandwich Islands
+  GT:
+    en-US: Guatemala
+    es-EC: Guatemala
+  GU:
+    en-US: Guam
+  GW:
+    en-US: Guinea-Bissau
+  GY:
+    en-US: Guyana
+    es-EC: Guayana
+  HK:
+    en-US: Hong Kong
+  HM:
+    en-US: Heard Island and McDonald Islands
+  HN:
+    en-US: Honduras
+    es-EC: Honduras
+  HR:
+    en-US: Croatia
+  HT:
+    en-US: Haiti
+    es-EC: "Hait\xC3\xAD"
+  HU:
+    en-US: Hungary
+  ID:
+    en-US: Indonesia
+  IE:
+    en-US: Ireland
+  IL:
+    en-US: Israel
+  IM:
+    en-US: Isle of Man
+  IN:
+    en-US: India
+  IO:
+    en-US: British Indian Ocean Territory
+  IQ:
+    en-US: Iraq
+  IR:
+    en-US: Iran, Islamic Republic of
+  IS:
+    en-US: Iceland
+  IT:
+    en-US: Italy
+  JE:
+    en-US: Jersey
+  JM:
+    en-US: Jamaica
+  JO:
+    en-US: Jordan
+  JP:
+    en-US: Japan
+  KE:
+    en-US: Kenya
+  KG:
+    en-US: Kyrgyzstan
+  KH:
+    en-US: Cambodia
+  KI:
+    en-US: Kiribati
+  KM:
+    en-US: Comoros
+  KN:
+    en-US: Saint Kitts and Nevis
+  KP:
+    en-US: Korea, Democratic People's Republic of
+  KR:
+    en-US: Korea, Republic of
+  KW:
+    en-US: Kuwait
+  KY:
+    en-US: Cayman Islands
+  KZ:
+    en-US: Kazakhstan
+  LA:
+    en-US: Lao People's Democratic Republic
+  LB:
+    en-US: Lebanon
+  LC:
+    en-US: Saint Lucia
+    es-EC: "Santa Luc\xC3\xADa"
+  LI:
+    en-US: Liechtenstein
+  LK:
+    en-US: Sri Lanka
+  LR:
+    en-US: Liberia
+  LS:
+    en-US: Lesotho
+  LT:
+    en-US: Lithuania
+  LU:
+    en-US: Luxembourg
+  LV:
+    en-US: Latvia
+  LY:
+    en-US: Libya
+  MA:
+    en-US: Morocco
+  MC:
+    en-US: Monaco
+  MD:
+    en-US: Moldova, Republic of
+  ME:
+    en-US: Montenegro
+  MF:
+    en-US: Saint Martin (French part)
+  MG:
+    en-US: Madagascar
+  MH:
+    en-US: Marshall Islands
+  MK:
+    en-US: Macedonia, the Former Yugoslav Republic of
+  ML:
+    en-US: Mali
+  MM:
+    en-US: Myanmar
+  MN:
+    en-US: Mongolia
+  MO:
+    en-US: Macao
+  MP:
+    en-US: Northern Mariana Islands
+  MQ:
+    en-US: Martinique
+  MR:
+    en-US: Mauritania
+  MS:
+    en-US: Montserrat
+    es-EC: Montserrat
+  MT:
+    en-US: Malta
+  MU:
+    en-US: Mauritius
+  MV:
+    en-US: Maldives
+  MW:
+    en-US: Malawi
+  MX:
+    en-US: Mexico
+    es-EC: Mexico
+  MY:
+    en-US: Malaysia
+  MZ:
+    en-US: Mozambique
+  NA:
+    en-US: Namibia
+  NC:
+    en-US: New Caledonia
+  NE:
+    en-US: Niger
+  NF:
+    en-US: Norfolk Island
+  NG:
+    en-US: Nigeria
+  NI:
+    en-US: Nicaragua
+    es-EC: Nicaragua
+  NL:
+    en-US: Netherlands
+  'NO':
+    en-US: Norway
+  NP:
+    en-US: Nepal
+  NR:
+    en-US: Nauru
+  NU:
+    en-US: Niue
+  NZ:
+    en-US: New Zealand
+  OM:
+    en-US: Oman
+  PA:
+    en-US: Panama
+    es-EC: "Panam\xC3\xA1"
+  PE:
+    en-US: Peru
+    es-EC: "Per\xC3\xBA"
+  PF:
+    en-US: French Polynesia
+  PG:
+    en-US: Papua New Guinea
+  PH:
+    en-US: Philippines
+  PK:
+    en-US: Pakistan
+  PL:
+    en-US: Poland
+  PM:
+    en-US: Saint Pierre and Miquelon
+  PN:
+    en-US: Pitcairn
+  PR:
+    en-US: Puerto Rico
+    es-EC: Puerto Rico
+  PS:
+    en-US: Palestine, State of
+  PT:
+    en-US: Portugal
+  PW:
+    en-US: Palau
+  PY:
+    en-US: Paraguay
+    es-EC: Paraguay
+  QA:
+    en-US: Qatar
+  RE:
+    en-US: "R\xE9union"
+  RO:
+    en-US: Romania
+  RS:
+    en-US: Serbia
+  RU:
+    en-US: Russian Federation
+  RW:
+    en-US: Rwanda
+  SA:
+    en-US: Saudi Arabia
+  SB:
+    en-US: Solomon Islands
+  SC:
+    en-US: Seychelles
+  SD:
+    en-US: Sudan
+  SE:
+    en-US: Sweden
+  SG:
+    en-US: Singapore
+  SH:
+    en-US: Saint Helena, Ascension and Tristan da Cunha
+  SI:
+    en-US: Slovenia
+  SJ:
+    en-US: Svalbard and Jan Mayen
+  SK:
+    en-US: Slovakia
+  SL:
+    en-US: Sierra Leone
+  SM:
+    en-US: San Marino
+  SN:
+    en-US: Senegal
+  SO:
+    en-US: Somalia
+  SR:
+    en-US: Suriname
+    es-EC: Surinam
+  SS:
+    en-US: South Sudan
+  ST:
+    en-US: Sao Tome and Principe
+  SV:
+    en-US: El Salvador
+    es-EC: El Salvador
+  SX:
+    en-US: Sint Maarten (Dutch part)
+  SY:
+    en-US: Syrian Arab Republic
+  SZ:
+    en-US: Swaziland
+  TC:
+    en-US: Turks and Caicos Islands
+  TD:
+    en-US: Chad
+  TF:
+    en-US: French Southern Territories
+  TG:
+    en-US: Togo
+  TH:
+    en-US: Thailand
+  TJ:
+    en-US: Tajikistan
+  TK:
+    en-US: Tokelau
+  TL:
+    en-US: Timor-Leste
+  TM:
+    en-US: Turkmenistan
+  TN:
+    en-US: Tunisia
+  TO:
+    en-US: Tonga
+  TR:
+    en-US: Turkey
+  TT:
+    en-US: Trinidad and Tobago
+    es-EC: Trinidad y Tobago
+  TV:
+    en-US: Tuvalu
+  TW:
+    en-US: Taiwan, Province of China
+  TZ:
+    en-US: Tanzania, United Republic of
+  UA:
+    en-US: Ukraine
+  UG:
+    en-US: Uganda
+  UM:
+    en-US: United States Minor Outlying Islands
+  US:
+    en-US: United States
+    es-EC: Estados Unidos
+  UY:
+    en-US: Uruguay
+    es-EC: Uruguay
+  UZ:
+    en-US: Uzbekistan
+  VA:
+    en-US: Holy See (Vatican City State)
+  VC:
+    en-US: Saint Vincent and the Grenadines
+  VE:
+    en-US: Venezuela, Bolivarian Republic of
+    es-EC: "Venezuela, Rep\xC3\xBAblica Bolivariana de"
+  VG:
+    en-US: Virgin Islands, British
+    es-EC: "Islas V\xC3\xADrgenes Brit\xC3\xA1nicas"
+  VI:
+    en-US: Virgin Islands, U.S.
+  VN:
+    en-US: Viet Nam
+  VU:
+    en-US: Vanuatu
+  WF:
+    en-US: Wallis and Futuna
+  WS:
+    en-US: Samoa
+  YE:
+    en-US: Yemen
+  YT:
+    en-US: Mayotte
+  ZA:
+    en-US: South Africa
+  ZM:
+    en-US: Zambia
+  ZW:
+    en-US: Zimbabwe
+
