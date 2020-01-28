@@ -1,0 +1,8 @@
+__pycache__/
+htmlcov/
+venv/
+**/migrations/versions/*_.py
+api/images
+
+.coverage
+private.py

@@ -13,7 +13,7 @@
         <v-text-field
           v-if="addingAccount"
           v-model="username"
-          v-bind:label="$t('account.username')"
+          v-bind:label="$t('person.username')"
           name="username"
           v-validate="'required|alpha_dash|min:6'"
           v-bind:error-messages="errors.collect('username')"
@@ -26,7 +26,7 @@
           v-model="password"
           type="password"
           ref="pwdField"
-          v-bind:label="$t('account.password')"
+          v-bind:label="$t('person.password')"
           name="password"
           v-validate="'required|min:8'"
           data-vv-validate-on="change"
@@ -38,7 +38,7 @@
         <v-text-field
           v-model="repeat_password"
           type="password"
-          v-bind:label="$t('account.repeat-password')"
+          v-bind:label="$t('person.repeat-password')"
           name="repeat-password"
           v-validate="'confirmed:pwdField|required'"
           v-bind:error-messages="errors.collect('repeat-password')"
@@ -57,7 +57,6 @@
           chips
           deletable-chips
           clearable
-          outline
           multiple
           hide-selected
           return-object
@@ -114,7 +113,7 @@ export default {
   name: "AccountForm",
   props: {
     person: { type: Object, required: true },
-    account: { type: Object, required: true },
+    account: { type: Object, required: false },
     rolesList: Array,
     rolesEnabled: {
       type: Boolean,
@@ -178,8 +177,8 @@ export default {
               personId: this.person.id
             });
           } else {
-            var roles = [];
-            for (var role of this.currentRoles) {
+            const roles = [];
+            for (const role of this.currentRoles) {
               if (role.value) {
                 roles.push(role.value);
               } else {
@@ -187,9 +186,9 @@ export default {
               }
             }
             if (this.rolesEnabled) {
-              this.$emit("updateAccount", this.account.id, { roles: roles });
+              this.$emit("updateAccount", this.person.id, { roles: roles });
             } else {
-              this.$emit("updateAccount", this.account.id, {
+              this.$emit("updateAccount", this.person.id, {
                 password: this.password
               });
             }
@@ -200,9 +199,9 @@ export default {
     },
     clearForm(new_person) {
       this.username = this.password = this.repeat_password = "";
-      if (this.person.accountInfo) {
+      if (this.person.active) {
         this.currentRoles = [];
-        for (var role of new_person.accountInfo.roles) {
+        for (const role of new_person.roles) {
           this.currentRoles.push(role.id);
         }
       }

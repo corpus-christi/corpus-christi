@@ -15,7 +15,17 @@
             data-cy="form-search"
           ></v-text-field>
         </v-flex>
-
+        <v-flex md3>
+          <div data-cy="view-dropdown">
+            <v-select
+              hide-details
+              solo
+              single-line
+              :items="viewOptions"
+              v-model="viewStatus"
+            ></v-select>
+          </div>
+        </v-flex>
         <v-flex shrink justify-self-end>
           <v-btn
             color="primary"
@@ -32,7 +42,7 @@
 
     <v-data-table
       :headers="headers"
-      :items="areas"
+      :items="areasToDisplay"
       :search="search"
       class="elevation-1"
     >
@@ -69,6 +79,37 @@
           </v-btn>
           <span>{{ $t("actions.duplicate") }}</span>
         </v-tooltip>
+
+        <v-tooltip bottom>
+          <v-btn
+            v-if="props.item.active === true"
+            icon
+            outline
+            small
+            color="primary"
+            slot="activator"
+            v-on:click="showConfirmDialog('deactivate', props.item)"
+            data-cy="deactivate-area"
+          >
+            <v-icon small>archive</v-icon>
+          </v-btn>
+          <span>{{ $t("actions.tooltips.archive") }}</span>
+        </v-tooltip>
+        <v-tooltip bottom>
+          <v-btn
+            v-if="props.item.active === false"
+            icon
+            outline
+            small
+            color="primary"
+            slot="activator"
+            v-on:click="showConfirmDialog('activate', props.item)"
+            data-cy="reactivate-area"
+          >
+            <v-icon small>undo</v-icon>
+          </v-btn>
+          <span>{{ $t("actions.tooltips.activate") }}</span>
+        </v-tooltip>
       </template>
     </v-data-table>
 
@@ -104,6 +145,33 @@
         <GoogleMap v-bind:markers="homegroups"></GoogleMap>
       </v-flex>
     </v-layout>
+    <v-dialog
+      v-model="confirmDialog.show"
+      max-width="350px"
+      data-cy="place-table-confirmation"
+    >
+      <v-card>
+        <v-card-text>{{ $t(confirmDialog.title) }}</v-card-text>
+        <v-card-actions>
+          <v-btn
+            v-on:click="cancelAction"
+            color="secondary"
+            flat
+            :disabled="confirmDialog.loading"
+            >{{ $t("actions.cancel") }}</v-btn
+          >
+          <v-spacer></v-spacer>
+          <v-btn
+            v-on:click="confirmAction(confirmDialog.action, confirmDialog.area)"
+            color="primary"
+            raised
+            :disabled="confirmDialog.loading"
+            :loading="confirmDialog.loading"
+            >{{ $t("actions.confirm") }}</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -130,9 +198,20 @@ export default {
         addMoreLoading: false,
         area: {}
       },
+      confirmDialog: {
+        show: false,
+        action: "",
+        area: {},
+        title: "",
+        loading: false
+      },
       search: "",
       homegroups: [],
-      groupLocations: []
+      groupLocations: [],
+      viewStatus: "viewActive",
+      allAreas: [],
+      activeAreas: [],
+      archivedAreas: []
     };
   },
   computed: {
@@ -154,6 +233,40 @@ export default {
     },
     visiblePlaces() {
       return this.assets;
+    },
+    viewOptions() {
+      return [
+        {
+          text: this.$t("actions.view-active"),
+          value: "viewActive",
+          class: "view-active"
+        },
+        {
+          text: this.$t("actions.view-archived"),
+          value: "viewArchived",
+          class: "view-archived"
+        },
+        { text: this.$t("actions.view-all"), value: "viewAll" }
+      ];
+    },
+    areasToDisplay() {
+      switch (this.viewStatus) {
+        case "viewActive":
+          return this.activeAreas;
+        case "viewArchived":
+          return this.archivedAreas;
+        case "viewAll":
+          return this.allAreas;
+        default:
+          return this.activeAreas;
+      }
+    }
+  },
+  watch: {
+    areas(all_areas) {
+      this.allAreas = all_areas;
+      this.activeAreas = this.allAreas.filter(area => area.active);
+      this.archivedAreas = this.allAreas.filter(area => !area.active);
     }
   },
   methods: {
@@ -183,6 +296,58 @@ export default {
 
     refreshPlacesList() {
       this.$emit("fetchPlacesList");
+    },
+    showConfirmDialog(action, area) {
+      this.confirmDialog.title = "places.area.confirm." + action;
+      this.confirmDialog.action = action;
+      this.confirmDialog.area = area;
+      this.confirmDialog.show = true;
+    },
+    confirmAction(action, area) {
+      if (action === "deactivate") {
+        this.deactivateArea(area);
+      } else if (action === "activate") {
+        this.activateArea(area);
+      }
+    },
+    cancelAction() {
+      this.confirmDialog.show = false;
+    },
+    deactivateArea(area) {
+      console.log(area);
+      this.$http
+        .patch(`/api/v1/places/areas/${area.id}`, { active: false })
+        .then(resp => {
+          console.log("DEACTIVATED AREA", resp);
+        })
+        .then(() => {
+          this.refreshPlacesList();
+        })
+        .catch(err => {
+          console.log("FAILED", err);
+        })
+        .finally(() => {
+          this.confirmDialog.loading = false;
+          this.confirmDialog.show = false;
+        });
+    },
+    activateArea(area) {
+      console.log(area);
+      this.$http
+        .patch(`/api/v1/places/areas/${area.id}`, { active: true })
+        .then(resp => {
+          console.log("ACTIVATED AREA", resp);
+        })
+        .then(() => {
+          this.refreshPlacesList();
+        })
+        .catch(err => {
+          console.log("FAILED", err);
+        })
+        .finally(() => {
+          this.confirmDialog.loading = false;
+          this.confirmDialog.show = false;
+        });
     }
   }
 };

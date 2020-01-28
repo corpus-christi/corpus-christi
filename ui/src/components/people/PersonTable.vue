@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Header -->
-    <toolbar class="pa-1" data-cy="person-toolbar">
+    <v-toolbar class="pa-1" data-cy="person-toolbar">
       <v-layout align-center justify-space-between fill-height>
         <v-flex md2>
           <v-toolbar-title>{{ $t("people.title") }}</v-toolbar-title>
@@ -16,7 +16,7 @@
             single-line
             box
             data-cy="search"
-          ></v-text-field>
+          />
         </v-flex>
         <v-flex md3>
           <div data-cy="view-dropdown">
@@ -26,7 +26,7 @@
               single-line
               :items="viewOptions"
               v-model="viewStatus"
-            ></v-select>
+            />
           </div>
         </v-flex>
         <v-flex shrink justify-self-end>
@@ -42,7 +42,7 @@
           </v-btn>
         </v-flex>
       </v-layout>
-    </toolbar>
+    </v-toolbar>
 
     <!-- Table of existing people -->
     <v-data-table
@@ -54,30 +54,6 @@
       data-cy="person-table"
     >
       <template slot="items" slot-scope="props">
-        <td class="text-xs-center">
-          <span v-if="props.item.accountInfo">
-            <span v-if="props.item.accountInfo.active">
-              <v-tooltip bottom>
-                <v-icon size="16" slot="activator" data-cy="account-active-icon"
-                  >account_circle</v-icon
-                >
-                {{ $t("account.active") }}
-              </v-tooltip>
-            </span>
-
-            <span v-if="!props.item.accountInfo.active">
-              <v-tooltip bottom>
-                <v-icon
-                  size="16"
-                  slot="activator"
-                  data-cy="account-inactive-icon"
-                  >person_outline</v-icon
-                >
-                {{ $t("account.inactive") }}
-              </v-tooltip>
-            </span>
-          </span>
-        </td>
         <td :data-cy="'first-name-' + props.item.id">
           {{ props.item.firstName }}
         </td>
@@ -157,10 +133,10 @@
         {{ $t("actions.close") }}
       </v-btn>
     </v-snackbar>
-    
+
     <!-- New/Edit dialog -->
-    <person-dialog 
-      @snack="showSnackbar" 
+    <person-dialog
+      @snack="showSnackbar"
       @cancel="cancelPerson"
       @refreshPeople="refreshPeopleList"
       :dialog-state="dialogState"
@@ -203,7 +179,7 @@
             :disabled="confirmDialog.loading"
             >{{ $t("actions.cancel") }}</v-btn
           >
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="
               confirmAction(confirmDialog.action, confirmDialog.person)
@@ -236,7 +212,7 @@ export default {
       type: Array,
       required: true
     },
-    tableLoaded: Boolean,
+    tableLoaded: Boolean
   },
   data() {
     return {
@@ -244,7 +220,6 @@ export default {
       adminDialog: {
         show: false,
         person: {},
-        account: {},
         rolesEnabled: false
       },
 
@@ -278,13 +253,6 @@ export default {
     headers() {
       return [
         {
-          text: this.$t("person.account"),
-          value: "person.accountInfo",
-          align: "center",
-          width: "3%",
-          sortable: false
-        },
-        {
           text: this.$t("person.name.first"),
           value: "firstName",
           width: "20%"
@@ -297,7 +265,7 @@ export default {
           class: "hidden-sm-and-down"
         },
         { text: this.$t("person.phone"), value: "phone", width: "20%" },
-        { text: this.$t("actions.header"), width: "17%", sortable: false }
+        { text: this.$t("actions.header"), width: "20%", sortable: false }
       ];
     },
     viewOptions() {
@@ -374,9 +342,9 @@ export default {
     },
 
     confirmAction(action, person) {
-      if (action == "deactivate") {
+      if (action === "deactivate") {
         this.deactivatePerson(person);
-      } else if (action == "activate") {
+      } else if (action === "activate") {
         this.activatePerson(person);
       }
     },
@@ -391,7 +359,7 @@ export default {
       this.rolesEnabled = false;
       // Fetch the person's account information (if any) before activating the dialog.
       this.$http
-        .get(`/api/v1/people/persons/${person.id}/account`)
+        .get(`/api/v1/people/persons/${person.id}`)
         .then(resp => {
           console.log("FETCHED ACCOUNT", resp);
           this.adminDialog.account = resp.data;

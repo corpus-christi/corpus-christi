@@ -4,7 +4,7 @@
       <img v-bind:src="arcoLogo" height="40px" alt="Arco Logo" />
     </router-link>
 
-    <v-spacer></v-spacer>
+    <v-spacer />
 
     <v-btn
       flat
@@ -16,7 +16,7 @@
       <v-icon>account_circle</v-icon>
     </v-btn>
 
-    <LocaleMenu></LocaleMenu>
+    <LocaleMenu />
   </v-toolbar>
 </template>
 

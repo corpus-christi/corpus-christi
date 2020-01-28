@@ -157,6 +157,12 @@
         v-bind:saveLoading="eventDialog.saveLoading"
         v-on:cancel="cancelEvent"
         v-on:save="saveEvent"
+        addImageField
+        endDateTimeField
+        startDateTimeField
+        v-bind:titleLabel="$t('events.title')"
+        v-bind:descriptionLabel="$t('events.event-description')"
+        v-bind:locationLabel="$t('events.event-location')"
       />
     </v-dialog>
 
@@ -173,7 +179,7 @@
 </template>
 
 <script>
-import EventForm from "./EventForm";
+import CustomForm from "../CustomForm";
 import { mapGetters } from "vuex";
 import EventTeamDetails from "./EventTeamDetails";
 import EventAssetDetails from "./EventAssetDetails";
@@ -185,7 +191,7 @@ import arcoPlaceholder from "../../../assets/arco-placeholder.jpg";
 export default {
   name: "EventDetails",
   components: {
-    "event-form": EventForm,
+    "event-form": CustomForm,
     "event-team-details": EventTeamDetails,
     "event-asset-details": EventAssetDetails,
     "event-person-details": EventPersonDetails,
@@ -275,14 +281,16 @@ export default {
             : this.event.assets.map(a => a.asset);
           this.event.groups = !this.event.groups
             ? []
-            : this.event.groups.filter(function(g) {
-                // make sure the group is active
-                // and the group has an active relationship to the event
-                if (g.group) {
-                  return g.active && g.group.active;
-                }
-                return false;
-              }).map(g => g.group);
+            : this.event.groups
+                .filter(function(g) {
+                  // make sure the group is active
+                  // and the group has an active relationship to the event
+                  if (g.group) {
+                    return g.active && g.group.active;
+                  }
+                  return false;
+                })
+                .map(g => g.group);
           // conserve description on EventPersons
           this.event.persons = !this.event.persons
             ? []
@@ -333,17 +341,18 @@ export default {
       const id = this.$route.params.event;
       this.$http.get(`/api/v1/events/${id}?include_groups=1`).then(resp => {
         let eventData = resp.data;
-        this.event.groups =
-          (
-            !eventData.groups ? [] : eventData.groups.filter(function(g) {
+        this.event.groups = !eventData.groups
+          ? []
+          : eventData.groups
+              .filter(function(g) {
                 // make sure the group is active
                 // and the group has an active relationship to the event
                 if (g.group) {
                   return g.active && g.group.active;
                 }
                 return false;
-            }).map(g => g.group)
-          );
+              })
+              .map(g => g.group);
         this.groupsLoaded = true;
       });
     },

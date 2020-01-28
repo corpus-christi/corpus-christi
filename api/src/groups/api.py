@@ -8,7 +8,11 @@ from . import groups
 from .models import GroupSchema, Group, Attendance, Membership, MembershipSchema, Meeting, MeetingSchema, AttendanceSchema
 from .. import db
 from ..images.models import Image, ImageGroup
+<<<<<<< HEAD
 from ..people.models import Role, Account
+=======
+from ..people.models import Role, Manager, Person
+>>>>>>> development
 
 
 # ---- Group
@@ -54,7 +58,7 @@ def create_group():
     # Add group_overseer role to the existing manager account -> if they have an account
     group_overseer = db.session.query(Role).filter_by(name_i18n="role.group-overseer").first()
     subq = db.session.query(Manager.person_id).filter_by(id=new_group.manager_id).subquery()
-    manager_account = db.session.query(Account).filter(Account.person_id.in_(subq)).first()
+    manager_account = db.session.query(Person).filter(Person.id.in_(subq)).first()
 
     if manager_account:
         manager_roles = manager_account.roles
@@ -131,7 +135,7 @@ def update_group(group_id):
         group_overseer = db.session.query(Role).filter_by(name_i18n="role.group-overseer").first()
         if group_overseer:
             manager = db.session.query(Manager).filter_by(id=new_manager_id).first()
-            manager_account = db.session.query(Account).filter_by(person_id=manager.person_id).first()
+            manager_account = db.session.query(Person).filter_by(person_id=manager.person_id).first()
             if manager_account:
                 manager_roles = manager_account.roles
                 if group_overseer not in manager_roles:
@@ -240,7 +244,7 @@ def read_all_meetings_by_group(group_id):
     result = db.session.query(Meeting).filter_by(group_id=group_id).all()
 
     if len(result) == 0:
-        return jsonify(msg="No meetings found"), 404
+        return jsonify(msg="No meetings found"), 200
 
     for r in result:
         r.address = r.address

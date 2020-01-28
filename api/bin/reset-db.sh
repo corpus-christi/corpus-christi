@@ -1,23 +1,27 @@
 #!/usr/bin/env bash
 
-set -uxo pipefail
+set -uo pipefail
 
 source ./venv/bin/activate
 
-flask db downgrade
+(set -x; flask db downgrade)
+
 while [ $? -eq 0 ]
 do
-    flask db downgrade
+    (set -x; flask db downgrade)
 done
+
+set -x
 rm migrations/versions/*.py
 
 flask db migrate
 flask db upgrade
 
 set -e
-flask data load-all
-flask account new --first="Fred" --last="Ziffle" fred password
-flask account new --first="Quality" --last="Assurance" Cytest password
+./bin/load-all-app-data.sh
+
+#flask account new --first="Fred" --last="Ziffle" fred password
+#flask account new --first="Quality" --last="Assurance" Cytest password
 
 ## Creating More readable courses and diplomas (commented out because some of these commands are broken)
 #flask course new --prereq=6 "Alone low investment" "This is a fake course."

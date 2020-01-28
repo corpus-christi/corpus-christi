@@ -1,8 +1,8 @@
 login:
   header:
-    en: Log In
-    es: Iniciar Sesión
+    en-US: Log In
+    es-EC: Iniciar Sesión
   messages:
     incorrect-login:
-      en: Username or password is incorrect
-      es: Nombre de usuario o contraseña incorrecta
+      en-US: Username or password is incorrect
+      es-EC: Nombre de usuario o contraseña incorrecta

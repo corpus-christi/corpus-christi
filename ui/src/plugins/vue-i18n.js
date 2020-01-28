@@ -9,22 +9,23 @@ import i18n_data from "../../i18n/cc-i18n.json";
 Vue.use(VueI18n);
 
 const i18n = new VueI18n({
-  locale: "es",
+  locale: "es-EC",
+  fallbackLocale: "en-US",
   messages: i18n_data,
-  silentTranslationWarn: true
+  silentTranslationWarn: true // Let warnings through.
 });
 
 Vue.use(VeeValidate, {
   i18n,
   i18nRootKey: "i18n_data",
   dictionary: {
-    en: {
+    "en-US": {
       messages: enValidation.messages,
-      attributes: i18n_data.en.validation.attributes
+      attributes: i18n_data["en-US"].validation.attributes
     },
-    es: {
+    "es-EC": {
       messages: esValidation.messages,
-      attributes: i18n_data.es.validation.attributes
+      attributes: i18n_data["es-EC"].validation.attributes
     }
   }
 });

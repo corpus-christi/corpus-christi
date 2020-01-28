@@ -1,64 +1,64 @@
 assets:
   title: 
-    en: Assets
-    es: Insumos
+    en-US: Assets
+    es-EC: Insumos
   description:
-    en: Description
-    es: Descripción
+    en-US: Description
+    es-EC: Descripción
   location:
-    en: Location
-    es: Ubicación
+    en-US: Location
+    es-EC: Ubicación
   new:
-    en: Add Asset
-    es: Añadir Insumo
+    en-US: Add Asset
+    es-EC: Añadir Insumo
   create-asset:
-    en: Create Asset
-    es: Crear Insumo
+    en-US: Create Asset
+    es-EC: Crear Insumo
   edit-asset:
-    en: Edit Asset
-    es: Editar Insumo
+    en-US: Edit Asset
+    es-EC: Editar Insumo
   confirm-archive:
-    en: Are you sure you want to archive this asset?
-    es: ¿Seguro que quieres archivar este insumo?
+    en-US: Are you sure you want to archive this asset?
+    es-EC: ¿Seguro que quieres archivar este insumo?
   confirm-remove-from-event:
-    en: Are you sure you want to remove this asset from this event?
-    es: ¿Está seguro de que desea eliminar este insumo de este evento?
+    en-US: Are you sure you want to remove this asset from this event?
+    es-EC: ¿Está seguro de que desea eliminar este insumo de este evento?
   asset-removed:
-    en: Asset removed
-    es: Insumo eliminado
+    en-US: Asset removed
+    es-EC: Insumo eliminado
   error-removing-asset:
-    en: Error while removing asset 
-    es: Error al eliminadar este insumo
+    en-US: Error while removing asset 
+    es-EC: Error al eliminadar este insumo
   asset-archived:
-    en: Asset archived
-    es: Insumo archivado
+    en-US: Asset archived
+    es-EC: Insumo archivado
   error-archiving-asset:
-    en: Error while archiving asset 
-    es: Error al archivar este insumo
+    en-US: Error while archiving asset 
+    es-EC: Error al archivar este insumo
   asset-unarchived:
-    en: Asset unarchived
-    es: Insumo desarchivado   # probably not right
+    en-US: Asset unarchived
+    es-EC: Insumo desarchivado   # probably not right
   error-unarchiving-asset:
-    en: Error while unarchiving asset 
-    es: Error al desarchivar insumo
+    en-US: Error while unarchiving asset 
+    es-EC: Error al desarchivar insumo
   asset-edited:
-    en: Asset edited
-    es: Insumo editado   # ?
+    en-US: Asset edited
+    es-EC: Insumo editado   # ?
   error-editing-asset:
-    en: Error while editing asset
-    es: Error al editar insumo
+    en-US: Error while editing asset
+    es-EC: Error al editar insumo
   asset-added:
-    en: Asset added
-    es: Insumo agregado
+    en-US: Asset added
+    es-EC: Insumo agregado
   error-adding-asset:
-    en: Error while adding asset
-    es: Error al agregar insumo
+    en-US: Error while adding asset
+    es-EC: Error al agregar insumo
   error-asset-assigned:
-    en: That asset is assigned to a conflicting event.
-    es: Ese insumo está asignado a un evento conflictivo.
+    en-US: That asset is assigned to a conflicting event.
+    es-EC: Ese insumo está asignado a un evento conflictivo.
   asset-on-event:
-    en: That asset is already assigned to this event.
-    es: Ese insumo ya está asignado a este evento.
+    en-US: That asset is already assigned to this event.
+    es-EC: Ese insumo ya está asignado a este evento.
   none-assigned:
-    en: No assets assigned.
-    es: No hay insumos asignados.
+    en-US: No assets assigned.
+    es-EC: No hay insumos asignados.
