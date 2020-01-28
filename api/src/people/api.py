@@ -4,12 +4,7 @@ from flask_jwt_extended import jwt_required
 from marshmallow import ValidationError
 
 from . import people
-<<<<<<< HEAD
-from .models import Person, Account, AccountSchema, Role, PersonSchema, \
-    RoleSchema
-=======
-from .models import Person, Role, PersonSchema, RoleSchema, Manager, ManagerSchema
->>>>>>> development
+from .models import Person, Role, PersonSchema, RoleSchema
 from .. import db
 from ..attributes.models import Attribute, AttributeSchema, EnumeratedValue, \
     EnumeratedValueSchema, PersonAttribute, PersonAttributeSchema

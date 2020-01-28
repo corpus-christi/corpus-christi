@@ -45,8 +45,8 @@ class Person(Base):
     confirmed = Column(Boolean, nullable=True, default=0)
 
     active = Column(Boolean, nullable=False, default=True)
-    location_id = Column(Integer, ForeignKey(
-        'places_location.id'), nullable=True, default=None)
+    address_id = Column(Integer, ForeignKey(
+        'places_address.id'), nullable=True, default=None)
 
     address = relationship(Address, backref='people', lazy=True)
     # events_per refers to the events led by the person (linked via events_eventperson table)
