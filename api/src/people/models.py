@@ -69,64 +69,6 @@ class Person(Base):
     def full_name(self):
         return f"{self.first_name} {self.last_name}"
 
-
-class PersonSchema(Schema):
-    id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
-    first_name = fields.String(
-        data_key='firstName', required=True, validate=Length(min=1))
-    last_name = fields.String(
-        data_key='lastName', required=True, validate=Length(min=1))
-    second_last_name = fields.String(
-        data_key='secondLastName', allow_none=True)
-    gender = fields.String(validate=OneOf(['M', 'F']), allow_none=True)
-    birthday = fields.Date(allow_none=True)
-    phone = fields.String(allow_none=True)
-    email = fields.String(allow_none=True)
-
-    active = fields.Boolean(required=True)
-    location_id = fields.Integer(data_key='locationId', allow_none=True)
-
-    accountInfo = fields.Nested(
-        'AccountSchema', allow_none=True, only=['username', 'id', 'active', 'roles'])
-
-    attributesInfo = fields.Nested('PersonAttributeSchema', many=True)
-    images = fields.Nested('ImagePersonSchema', many=True,
-                           exclude=['person'], dump_only=True)
-
-
-# Defines join table for people_account and people_role
-
-
-people_account_role = Table('account_role', Base.metadata,
-                            Column('people_account_id', Integer, ForeignKey(
-                                'people_account.id'), primary_key=True),
-                            Column('people_role_id', Integer, ForeignKey(
-                                'people_role.id'), primary_key=True)
-                            )
-
-
-# ---- Account
-
-
-class Account(Base):
-    __tablename__ = 'people_account'
-    id = Column(Integer, primary_key=True)
-    username = Column(StringTypes.MEDIUM_STRING, nullable=False, unique=True)
-    password_hash = Column(StringTypes.PASSWORD_HASH, nullable=False)
-    active = Column(Boolean, nullable=False, default=True)
-    confirmed = Column(Boolean, nullable=False, default=True)
-    person_id = Column(Integer, ForeignKey('people_person.id'), nullable=False)
-
-    # One-to-one relationship; see https://docs.sqlalchemy.org/en/latest/orm/basic_relationships.html#one-to-one
-    person = relationship("Person", backref=backref("account", uselist=False))
-    roles = relationship("Role",
-                         secondary=people_account_role, backref="accounts")
-
-    def __repr__(self):
-        return "<Account(id={},username='{}',person='{}:{}')>" \
-            .format(self.id, self.username, self.person.id, self.person.full_name())
-
-    # From Flask Web Dev book
     @property
     def password(self):
         """Hashed passwords are 'write-only'."""
