@@ -5,13 +5,14 @@ from marshmallow import ValidationError
 
 from . import people
 from .models import Person, Account, AccountSchema, Role, PersonSchema, \
-    RoleSchema, Manager, ManagerSchema
+    RoleSchema
 from .. import db
 from ..attributes.models import Attribute, AttributeSchema, EnumeratedValue, \
     EnumeratedValueSchema, PersonAttribute, PersonAttributeSchema
 from ..auth.blacklist_helpers import revoke_tokens_of_account
 from ..courses.models import Student
 from ..events.models import EventPerson, EventParticipant
+from ..groups.models import Management, ManagementSchema
 from ..images.models import Image, ImagePerson
 from ..teams.models import TeamMember
 
@@ -497,7 +498,7 @@ def remove_role_from_account(account_id, role_id):
 
 # ---- Manager
 
-manager_schema = ManagerSchema()
+management_schema = ManagementSchema()
 
 
 @people.route('/manager', methods=['POST'])

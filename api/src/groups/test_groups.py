@@ -12,7 +12,6 @@ from .models import Group, Member, Meeting, MeetingSchema, Attendance
 from ..images.create_image_data import create_images_groups
 from ..images.create_image_data import create_test_images
 from ..images.models import Image, ImageGroup
-from ..people.models import Manager
 from ..people.test_people import create_multiple_accounts, create_multiple_people, create_multiple_managers
 from ..places.models import Address, Country
 from ..places.test_places import create_multiple_addresses, create_multiple_areas
