@@ -307,7 +307,7 @@
                       name="startLatitude"
                       v-model="filters.startLatitude"
                       :label="$t('places.address.filters.startLat')"
-                    ></v-text-field>
+                    />
                   </v-flex>
 
                   <v-flex md6>
@@ -315,7 +315,7 @@
                       name="endLatitude"
                       v-model="filters.endLatitude"
                       :label="$t('places.address.filters.endLat')"
-                    ></v-text-field>
+                    />
                   </v-flex>
                 </v-layout>
 
@@ -325,14 +325,14 @@
                       name="startLongitude"
                       v-model="filters.startLongitude"
                       :label="$t('places.address.filters.startLng')"
-                    ></v-text-field>
+                    />
                   </v-flex>
                   <v-flex md6>
                     <v-text-field
                       name="endLongitude"
                       v-model="filters.endLongitude"
                       :label="$t('places.address.filters.endLng')"
-                    ></v-text-field>
+                    />
                   </v-flex>
                 </v-layout>
                 <v-divider></v-divider>
@@ -343,7 +343,7 @@
                       name="specificLatitude"
                       v-model="filters.specificLatitude"
                       :label="$t('places.address.latitude')"
-                    ></v-text-field>
+                    />
                   </v-flex>
 
                   <v-flex md6>
@@ -351,7 +351,7 @@
                       name="specificLongitude"
                       v-model="filters.specificLongitude"
                       :label="$t('places.address.longitude')"
-                    ></v-text-field>
+                    />
                   </v-flex>
                 </v-layout>
 
@@ -361,7 +361,7 @@
                       name="distance"
                       v-model="filters.distance"
                       :label="$t('places.address.filters.distanceFromLatLng')"
-                    ></v-text-field>
+                    />
                   </v-flex>
                 </v-layout>
                 <v-divider></v-divider>
@@ -373,7 +373,7 @@
                       :label="$t('places.address.address')"
                       v-model="filters.address"
                       :items="dropdownList"
-                    ></v-autocomplete>
+                    />
                   </v-flex>
 
                   <v-flex md6>
@@ -381,7 +381,7 @@
                       name="addressDistance"
                       v-model="filters.addressDistance"
                       :label="$t('places.address.filters.distanceFromAddress')"
-                    ></v-text-field>
+                    />
                   </v-flex>
                 </v-layout>
               </v-layout>
@@ -389,22 +389,13 @@
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn flat color="primary" @click="resetFilters">
-                {{ $t("places.address.filters.reset-filters") }}</v-btn
-              >
-              <v-btn flat color="secondary" @click="cancelFilterDialog">
-                {{ $t("actions.cancel") }}</v-btn
-              >
-              <v-btn flat color="primary" @click="applyFilters">
-                {{ $t("places.address.filters.apply") }}</v-btn
-              >
+                {{ $t("places.address.filters.reset-filters") }}</v-btn>
               <v-btn flat color="secondary" @click="cancelFilterDialog">{{
                 $t("actions.cancel")
               }}</v-btn>
-
-              <v-btn flat color="primary" @click="applyFilters">{{
-                $t("places.address.filters.apply")
-              }}</v-btn>
-            </v-card-actions>
+              <v-btn flat color="primary" @click="applyFilters">
+                {{ $t("places.address.filters.apply") }}</v-btn>
+          </v-card-actions>
           </v-card>
         </v-layout>
       </v-container>
@@ -466,7 +457,7 @@
           v-model="confirmLocationDialog.selectedLocation"
           v-validate="'required'"
           :error-messages="errors.collect('location')"
-        ></v-autocomplete>
+        />
         <v-card-actions>
           <v-btn
             v-on:click="cancelAction"
