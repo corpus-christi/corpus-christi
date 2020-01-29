@@ -388,6 +388,15 @@
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
+              <v-btn flat color="primary" @click="resetFilters">
+                {{ $t("places.address.filters.reset-filters") }}</v-btn
+              >
+              <v-btn flat color="secondary" @click="cancelFilterDialog">
+                {{ $t("actions.cancel") }}</v-btn
+              >
+              <v-btn flat color="primary" @click="applyFilters">
+                {{ $t("places.address.filters.apply") }}</v-btn
+              >
               <v-btn flat color="secondary" @click="cancelFilterDialog">{{
                 $t("actions.cancel")
               }}</v-btn>
@@ -674,6 +683,18 @@ export default {
         this.filters.addressDistance === "" &&
         isEmpty(this.filters.address)
       );
+    },
+    resetFilters() {
+      this.filters.startLatitude = "";
+      this.filters.endLatitude = "";
+      this.filters.startLongitude = "";
+      this.filters.endLongitude = "";
+      this.filters.specificLatitude = "";
+      this.filters.specificLongitude = "";
+      this.filters.distance = "";
+      this.filters.addressDistance = "";
+      this.filters.address = {};
+      this.applyFilters();
     },
     applyFilters() {
       // console.log(this.filters);

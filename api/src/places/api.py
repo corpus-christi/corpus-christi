@@ -3,6 +3,7 @@ from flask_jwt_extended import jwt_required
 from marshmallow import Schema, fields
 from marshmallow import ValidationError
 from marshmallow.validate import Length
+from geoalchemy2 import functions as func
 
 from . import places
 from .models import Country, CountrySchema, Address, AddressSchema, Area, AreaSchema, Location, LocationSchema
@@ -209,6 +210,31 @@ def read_all_addresses():
         query = query.filter(Address.longitude >= lon_start_filter)
     if lon_end_filter:
         query = query.filter(Address.longitude <= lon_end_filter)
+
+    # -- distance from filters --
+    # Filter addresses by their distance from a specified latitude and longitude
+    dist_lat_filter = request.args.get('dist_lat')
+    dist_lng_filter = request.args.get('dist_lng')
+    dist_filter = request.args.get('dist')
+    if dist_lat_filter and dist_lng_filter and dist_filter:
+        query = query.filter(
+            func.ST_Distance(
+                func.ST_GeogFromWKB(func.ST_Point(Address.longitude, Address.latitude)),
+                func.ST_GeogFromWKB(func.ST_Point(dist_lng_filter, dist_lat_filter)))
+            < dist_filter
+        )
+        
+    # Filter addresses by their distance from a specified address
+    dist_addr_lat_filter = request.args.get('dist_addr_lat')
+    dist_addr_lng_filter = request.args.get('dist_addr_lng')
+    dist_addr_filter = request.args.get('dist_addr')
+    if dist_addr_lat_filter and dist_addr_lng_filter and dist_addr_filter:
+        query = query.filter(
+            func.ST_Distance(
+                func.ST_GeogFromWKB(func.ST_Point(Address.longitude, Address.latitude)),
+                func.ST_GeogFromWKB(func.ST_Point(dist_addr_lng_filter, dist_addr_lat_filter)))
+            < dist_addr_filter
+        )
 
     result = query.all()
 
