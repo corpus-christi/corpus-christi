@@ -508,6 +508,7 @@
       "group-removed": "Group removed",
       "header": "Groups",
       "manager": "Manager",
+      "managers": "Managers",
       "meetings": {
         "add-meeting": "Add Meeting",
         "title": "Meetings"
@@ -1070,6 +1071,7 @@
       "group-removed": "Grupo eliminado",
       "header": "Grupos",
       "manager": "Gerente",
+      "managers": "Gerentes",
       "meetings": {
         "add-meeting": "Agregar reuni\u00f3n",
         "title": "Reuniones"

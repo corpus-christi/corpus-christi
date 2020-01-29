@@ -17,6 +17,9 @@ groups:
   manager:
     en-US: Manager
     es-EC: Gerente
+  managers:
+    en-US: Managers
+    es-EC: Gerentes
   group-description:
     en-US: Group Description
     es-EC: Descripción del Grupo

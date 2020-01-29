@@ -338,6 +338,7 @@
 </template>
 
 <script>
+// TODO: remove concept of manager and add concept of managers
 import EntitySearch from "../../EntitySearch";
 import PersonDialog from "../../PersonDialog";
 export default {

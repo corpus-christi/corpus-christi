@@ -16,9 +16,9 @@ class Group(Base):
     description = Column(StringTypes.LONG_STRING, nullable=False)
     active = Column(Boolean, nullable=False, default=True)
     group_type_id = Column(Integer, ForeignKey(
-        'groups_group_type.id'), nullable=False)
-    memberships = relationship('Membership', backref='groups', lazy=True)
-    managements = relationship('Management', backref='groups', lazy=True)
+        'groups_group_type.id'), nullable=True)
+    members = relationship('Membership', backref='groups', lazy=True)
+    managers = relationship('Management', backref='groups', lazy=True)
     meetings = relationship('Meeting', backref='group', lazy=True)
     events = relationship('EventGroup', back_populates='group', lazy=True)
     images = relationship('ImageGroup', back_populates='group', lazy=True)
@@ -31,12 +31,14 @@ class GroupSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     name = fields.String(required=True, validate=Length(min=1))
     description = fields.String(required=True, validate=Length(min=1))
-    active = fields.Boolean(required=True)
-    group_type_id = fields.Integer(data_key='groupTypeId', required=True)
+    active = fields.Boolean(required=True, default=True)
+    group_type_id = fields.Integer(data_key='groupTypeId', required=False)
     memberships = fields.Nested('MembershipSchema', data_key="memberships", many=True, only=[
         'person_id', 'joined', 'active'])
     managements = fields.Nested('ManagementSchema', data_key="managements", only=[
         'person_id', 'management_type_id', 'active'])
+    members = fields.Nested('PersonSchema', data_key="members", many=True)
+    managers = fields.Nested('PersonSchema', data_key="managers", many=True)
 
 # ---- Meeting
 
@@ -75,14 +77,14 @@ class Membership(Base):
     __tablename__ = 'groups_membership'
     id = Column(Integer, primary_key=True, nullable=False)
     group_id = Column(Integer, ForeignKey('groups_group.id'),
-                      primary_key=True, nullable=False)
-    person_id = Column(Integer, ForeignKey(
-        'people_person.id'), primary_key=True, nullable=False)
+                      nullable=False)
+    person_id = Column(Integer, ForeignKey('people_person.id'),
+                       nullable=False)
     joined = Column(Date, nullable=False)
     active = Column(Boolean, nullable=False, default=True)
     attendances = relationship('Attendance', backref='membership', lazy=True)
-    __table_args__ = (UniqueConstraint('group_id', 'person_id', name='_group_person_uc'),
-                      )
+    __table_args__ = (UniqueConstraint(
+        'group_id', 'person_id', name='_group_person_uc'),)
 
     def __repr__(self):
         return f"<Membership(id={self.id},group_id={self.group_id},person_id={self.person_id})>"

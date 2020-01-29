@@ -1,11 +1,12 @@
 import datetime
+import copy
 
 from flask import request, jsonify
 from flask_jwt_extended import jwt_required
 from marshmallow import ValidationError
 
 from . import groups
-from .models import GroupSchema, Group, Attendance, Membership, MembershipSchema, Meeting, MeetingSchema, AttendanceSchema
+from .models import GroupSchema, Group, Attendance, Meeting, MeetingSchema, AttendanceSchema
 from .. import db
 from ..images.models import Image, ImageGroup
 from ..people.models import Role, Person
@@ -17,54 +18,81 @@ group_schema = GroupSchema()
 
 
 def group_dump(group):
-    group.manager_info = group.manager
-    group.manager_info.person = group.manager.person
-    group.member_list = group.members
     return jsonify(group_schema.dump(group))
 
 
 @groups.route('/groups', methods=['POST'])
 @jwt_required
 def create_group():
-    request.json['active'] = True
-    members_to_add = None
-    if 'person_ids' in request.json.keys():
-        members_to_add = request.json['person_ids']
-        del request.json['person_ids']
+    parsed_group = {}
+    parsed_group['name'] = request.json['name']
+    parsed_group['description'] = request.json['description']
+    # {
+    #     name: request.json['name'],
+    #     description: request.json['description']
+    # }
 
     try:
-        valid_group = group_schema.load(request.json)
+        valid_group = group_schema.load(parsed_group)
+        # dump(valid_group)
+        new_group = Group(**valid_group)
     except ValidationError as err:
         return jsonify(err.messages), 422
+    request.json['active'] = True
+    members_to_add = None
+    if 'members' in request.json.keys():
+        members_to_add = request.json['members']
+        del request.json['members']
 
-    new_group = Group(**valid_group)
+    if 'managers' in request.json.keys():
+        new_managers = request.json['managers']
 
-    if db.session.query(Manager).filter_by(id=new_group.manager_id).first() is None:
-        return jsonify(msg="Manager not found"), 404
+        for manager in new_managers:
+            new_manager = {}
+            if 'description' in manager:
+                new_manager = create_management(
+                    manager['person_id'], manager['description'])
+            else:
+                new_manager = create_management(manager['person_id'])
+            print(new_manager)
+            # db.session.add(new_manager)
+
+        del request.json['managers']
+
+    # group = {
+    #     ""
+    # }
+
+    
 
     db.session.add(new_group)
+    db.session.commit()
 
     today = datetime.datetime.today().strftime('%Y-%m-%d')
 
     if members_to_add is not None:
         for member in members_to_add:
-            new_member = generate_member(new_group.id, member, today, True)
+            new_member = generate_member(
+                new_group.id, member['id'], today, True)
             db.session.add(new_member)
+    db.session.commit()
 
     # Add group_overseer role to the existing manager account -> if they have an account
-    group_overseer = db.session.query(Role).filter_by(name_i18n="role.group-overseer").first()
-    subq = db.session.query(Manager.person_id).filter_by(id=new_group.manager_id).subquery()
-    manager_account = db.session.query(Person).filter(Person.id.in_(subq)).first()
+    # for manager in group.managers:
 
-    if manager_account:
-        manager_roles = manager_account.roles
-        if group_overseer and group_overseer not in manager_roles:
-            manager_roles.append(group_overseer)
-            setattr(manager_account, 'roles', manager_roles)
-            print("adding group overseer role", end='\n\n\n')
+    #     group_overseer = db.session.query(Role).filter_by(name_i18n="role.group-overseer").first()
+    #     # subq = db.session.query(Manager.person_id).filter_by(id=new_group.manager.id).subquery()
+    #     manager_account = db.session.query(Account).filter(Account.person_id.in_(subq)).first()
 
-    # db.session.add(manager_account)
-    db.session.commit()
+    #     if manager_account:
+    #         manager_roles = manager_account.roles
+    #         if group_overseer and group_overseer not in manager_roles:
+    #             manager_roles.append(group_overseer)
+    #             setattr(manager_account, 'roles', manager_roles)
+    #             print("adding group overseer role", end='\n\n\n')
+
+    # # db.session.add(manager_account)
+    # db.session.commit()
     return group_dump(new_group), 201
 
 
@@ -82,8 +110,7 @@ def read_all_groups():
 
     for group in query:
         group.member_list = group.members
-        group.manager_info = group.manager
-        group.manager_info.person = group.manager.person
+        group.managers = group.managers
     return jsonify(group_schema.dump(query, many=True))
 
 
@@ -95,11 +122,14 @@ def read_one_group(group_id):
         return jsonify(msg="Group not found"), 404
     return group_dump(result), 200
 
-@groups.route('/find_group/<group_name>/<manager>')
+
+@groups.route('/find_group/<group_name>')
 @jwt_required
-def find_group(group_name=None, manager=None):
-    matching_group_count = db.session.query(Group).filter_by(name=group_name, manager_id=manager).count()
+def find_group(group_name=None):
+    matching_group_count = db.session.query(
+        Group).filter_by(name=group_name).count()
     return jsonify(matching_group_count), 200
+
 
 @groups.route('/groups/<group_id>', methods=['PATCH'])
 @jwt_required
@@ -128,10 +158,13 @@ def update_group(group_id):
 
     # if the manager changed, then try to add the overseer role to the manager's account
     if new_manager_id and new_manager_id is not group.manager_id:
-        group_overseer = db.session.query(Role).filter_by(name_i18n="role.group-overseer").first()
+        group_overseer = db.session.query(Role).filter_by(
+            name_i18n="role.group-overseer").first()
         if group_overseer:
-            manager = db.session.query(Manager).filter_by(id=new_manager_id).first()
-            manager_account = db.session.query(Person).filter_by(person_id=manager.person_id).first()
+            manager = db.session.query(Manager).filter_by(
+                id=new_manager_id).first()
+            manager_account = db.session.query(Account).filter_by(
+                person_id=manager.person_id).first()
             if manager_account:
                 manager_roles = manager_account.roles
                 if group_overseer not in manager_roles:
@@ -154,17 +187,20 @@ def update_group(group_id):
     if update_person_ids != []:
         for update_person_id in update_person_ids:
             if update_person_id not in old_person_ids:
-                new_member = generate_member(group.id, update_person_id, today, True)
+                new_member = generate_member(
+                    group.id, update_person_id, today, True)
                 db.session.add(new_member)
             else:
                 print(f"NEW ID: {update_person_id}")
-                new_member = db.session.query(Member).filter_by(person_id=update_person_id, group_id=group_id).first()
+                new_member = db.session.query(Member).filter_by(
+                    person_id=update_person_id, group_id=group_id).first()
                 setattr(new_member, 'active', True)
 
     if update_person_ids != []:
         for old_person_id in old_person_ids:
             if old_person_id not in update_person_ids:
-                delete_member = db.session.query(Member).filter_by(group_id=group.id, person_id=old_person_id).first()
+                delete_member = db.session.query(Member).filter_by(
+                    group_id=group.id, person_id=old_person_id).first()
                 setattr(delete_member, 'active', False)
 
     # set other attributes
@@ -240,7 +276,7 @@ def read_all_meetings_by_group(group_id):
     result = db.session.query(Meeting).filter_by(group_id=group_id).all()
 
     if len(result) == 0:
-        return jsonify(msg="No meetings found"), 200
+        return jsonify(msg="No meetings found"), 404
 
     for r in result:
         r.address = r.address
@@ -337,13 +373,11 @@ def deactivate_meeting(meeting_id):
 
 # ---- Member
 
-member_schema = MembershipSchema()
-
 
 def generate_member(group_id, person_id, joined, active):
     member = {}
-    member['group_id'] = group_id
-    member['person_id'] = person_id
+    member['groupId'] = group_id
+    member['personId'] = person_id
     member['joined'] = joined
     member['active'] = active
     member = Member(**member_schema.load(member))
@@ -359,7 +393,7 @@ def create_member():
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    if db.session.query(Member).filter_by( \
+    if db.session.query(Member).filter_by(
             group_id=valid_member["group_id"],
             person_id=valid_member["person_id"]
     ).count() != 0:
@@ -452,7 +486,7 @@ def create_attendance():
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    if db.session.query(Attendance).filter_by( \
+    if db.session.query(Attendance).filter_by(
             meeting_id=valid_attendance["meeting_id"],
             member_id=valid_attendance["member_id"]
     ).count() != 0:
@@ -478,7 +512,8 @@ def read_all_attendance():
 @groups.route('/attendance/meeting/<meeting_id>')
 @jwt_required
 def read_attendance_by_meeting(meeting_id):
-    result = db.session.query(Attendance).filter_by(meeting_id=meeting_id).all()
+    result = db.session.query(Attendance).filter_by(
+        meeting_id=meeting_id).all()
 
     if result == []:
         return jsonify(msg="No attendance records found"), 404
@@ -508,7 +543,7 @@ def delete_attendance():
     meeting_id = valid_attendance["meeting_id"]
     member_id = valid_attendance["member_id"]
 
-    result = db.session.query(Attendance).filter_by(meeting_id=meeting_id, \
+    result = db.session.query(Attendance).filter_by(meeting_id=meeting_id,
                                                     member_id=member_id
                                                     ).first()
 
@@ -530,7 +565,8 @@ def add_group_images(group_id, image_id):
     group = db.session.query(Group).filter_by(id=group_id).first()
     image = db.session.query(Image).filter_by(id=image_id).first()
 
-    group_image = db.session.query(ImageGroup).filter_by(group_id=group_id, image_id=image_id).first()
+    group_image = db.session.query(ImageGroup).filter_by(
+        group_id=group_id, image_id=image_id).first()
 
     if not group:
         return jsonify(f"Group with id #{group_id} does not exist."), 404
@@ -569,7 +605,8 @@ def put_group_images(group_id, image_id):
 @groups.route('/<group_id>/images/<image_id>', methods=['DELETE'])
 @jwt_required
 def delete_group_image(group_id, image_id):
-    group_image = db.session.query(ImageGroup).filter_by(group_id=group_id, image_id=image_id).first()
+    group_image = db.session.query(ImageGroup).filter_by(
+        group_id=group_id, image_id=image_id).first()
 
     if not group_image:
         return jsonify(f"Image with id #{image_id} is not assigned to Group with id #{group_id}."), 404
@@ -579,3 +616,27 @@ def delete_group_image(group_id, image_id):
 
     # 204 codes don't respond with any content
     return 'Successfully removed image', 204
+
+# def create_management(person_id, description=None):
+#     if db.session.query(Manager).filter_by(person_id=person_id).count() == 1:
+#         return None # person is already a manager
+#     person = db.session.query(Person).filter_by(id=person_id)
+#     print("description")
+#     print(description)
+#     if description is not None:
+#         new_manager = Manager(person_id=person_id, description_i18n=description)
+#     else:
+#         new_manager = Manager(person_id=person_id)
+#     db.session.add(new_manager)
+#     db.session.commit()
+#     # return person.manager
+
+
+def create_management(person_id):
+    if db.session.query(Manager).filter_by(person_id=person_id).count() == 1:
+        return None  # person is already a manager
+    person = db.session.query(Person).filter_by(id=person_id)
+    new_manager = Manager(person_id=person_id)
+    db.session.add(new_manager)
+    db.session.commit()
+    return new_manager

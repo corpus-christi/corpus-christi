@@ -22,13 +22,18 @@
           v-bind:error-messages="errors.collect('description')"
           data-cy="description"
         />
-        <entity-search
-          manager
-          :value="manager"
-          @input="updateSelection"
-          name="manager"
-          v-bind:error-messages="errors.first('manager')"
-        />
+        <v-select
+          v-if="peopleFetched"
+          v-model="group.managers"
+          :label="$t('groups.managers')"
+          :items="people"
+          multiple
+          chips
+          deletable-chips
+          hide-selected
+          :no-data-text="$t('groups.messages.no-remaining-members')"
+        >
+        </v-select>
       </form>
     </v-card-text>
     <v-card-actions>
@@ -76,7 +81,6 @@ import { isEmpty } from "lodash";
 import { mapGetters } from "vuex";
 import EntitySearch from "../EntitySearch";
 export default {
-  components: { "entity-search": EntitySearch },
   name: "GroupForm",
   watch: {
     initialData(groupProp) {
@@ -89,7 +93,9 @@ export default {
       }
     }
   },
-
+  mounted: function() {
+    this.getAllPeople();
+  },
   computed: {
     groupKeys() {
       return Object.keys(this.group);
@@ -109,14 +115,20 @@ export default {
   },
 
   methods: {
-    getManagerName(managerInfo) {
-      var man = managerInfo.person;
+    parsePeople(unparsedPeople) {
+      return unparsedPeople.map(person => ({
+        text: this.getPersonName(person),
+        value: person.id
+      }));
+    },
+
+    getPersonName(person) {
       return (
-        man.firstName +
+        person.firstName +
         " " +
-        man.lastName +
+        person.lastName +
         " " +
-        (man.secondLastName ? man.secondLastName : "")
+        (person.secondLastName ? person.secondLastName : "")
       );
     },
 
@@ -176,11 +188,12 @@ export default {
 
     save() {
       //console.log(this.group);
-      this.validateGroup(this.group, () => {
-        this.group.active = true;
-        this.group.active = true;
-        this.$emit("save", this.group);
-      });
+      // this.validateGroup(this.group, () => {
+      //   this.group.active = true;
+      //   this.group.active = true;
+      //   this.$emit("save", this.group);
+      // });
+      this.$emit("save", this.group);
       this.manager = {};
     },
 
@@ -190,6 +203,18 @@ export default {
         this.$emit("add-another", this.group);
         this.group = {};
       });
+    },
+    getAllPeople() {
+      this.$http
+        .get(`/api/v1/people/persons`)
+        .then(resp => {
+          let parsedPeople = this.parsePeople(resp.data);
+          Object.assign(this.people, parsedPeople);
+          this.peopleFetched = true;
+        })
+        .catch(err => {
+          console.error("GET FAILURE: ALL PEOPLE", err);
+        });
     }
   },
   props: {
@@ -211,7 +236,8 @@ export default {
   data: function() {
     return {
       group: {},
-      manager: {},
+      people: [],
+      peopleFetched: false,
       snackbar: {
         show: false,
         text: ""
