@@ -66,7 +66,7 @@
             name="secondLastName"
             v-validate="'alpha_dash'"
             v-bind:error-messages="errors.collect('secondLastName')"
-            :rules="[rules.required, rules.counter]"
+            :rules="[rules.counter]"
             counter
             maxlength="64"
             :readonly="formDisabled"
