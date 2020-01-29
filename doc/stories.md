@@ -368,10 +368,13 @@ one or more instances of the _Person_ entity.
    - Use integrated Google Maps to pinpoint a location and 
      store the resulting latitude and longitude in the instance.
 1. Update an existing _Address_ using the methods detailed above.
+1. Deactivate or reactivate an _Address_.
 1. Create a new _Area_.
 1. Update an existing _Area_.
+1. Deactivate or reactivate an _Area_.
 1. Create a new _Location_ for an existing _Address_.
 1. Update an existing _Location_.
+1. Deactivate or reactivate a _Location_.
 1. List all _Address_'s; allow live filtering by:
    - `name`, `address`, `city`, _Area_, _Country_,
    - range of both `latitude` and `longitude` values,
