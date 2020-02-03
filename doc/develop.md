@@ -21,6 +21,7 @@ refer to `doc/sdm.md`.
     - [Create Database User and Database](#create-database-user-and-database)
     - [PostgreSQL with Docker](#postgresql-with-docker)
     - [Database Connection](#database-connection)
+    - [Setting up PostGIS](#setting-up-postgis)
     - [Database Initialization](#database-initialization)
   - [Run CC](#run-cc)
   - [Source Code Structure](#source-code-structure)
@@ -296,6 +297,37 @@ where:
 
 Similarly, you can define `TEST_DB_URL` for your test database (for use with `pytest`)
 or `PROD_DB_URL` for your production database.
+
+### Setting up PostGIS
+
+Make sure you have PostGIS installed. See http://postgis.net/install/ for installer packages for most operating systems.
+
+If you want to compile for source, visit http://postgis.net/source/
+
+More detailed installation information for specific versions is available here: http://postgis.net/documentation/ under the Stable Branch User Documentation. Select the PDF or HTML corresponding to your PostGIS version and look for PostGIS Installation.
+
+See the Enabling PostGIS section on http://postgis.net/install/ for instructions on enablng PostGIS on your database.
+
+Most likely the only extension needed is postgis. You can safely ignore other recommended extensions unless you have a specific use for them.
+
+**If you are using OSX Postgres.app**
+
+PostGIS comes packaged with the install of Postgres.app. Using these two commands from the terminal should enable PostGIS on the specified version of Postgres.app
+
+POSTGRES_VERSION = Version of Postgres you want to enable PostGIS on.
+
+POSTGIS_VERSION = Your installed version of PostGIS.
+
+```
+$ psql -d DATABASE_NAME -f /Application/Postgres.app/Contents/Versions/POSTGRES_VERSION/share/postgresql/contrib/POSTGIS_VERSION/postgis.sql
+```
+```
+$ psql -d DATABASE_NAME -f /Application/Postgres.app/Contents/Versions/POSTGRES_VERSION/share/postgresql/contrib/POSTGIS_VERSION/spatial_ref_sys.sql
+```
+
+**WARNING**
+
+Before you initialize the database make sure that after you run flask db migrate you check the python migration file (found under api/migrations/versions/<random_numbers>.py) to make sure the migration doesn't drop the spatial_ref_sys table added by PostGIS. Inside of the upgrade function, most likely near the end of the function, if there is a statement to drop the spatial_ref_sys table, delete that statement. Also check the downgrade function and delete any code generated to add a spatial_ref_sys table. After you have done this and saved the migration file it is ok to run flask db upgrade and load data
 
 ### Database Initialization
 

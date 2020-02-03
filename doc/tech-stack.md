@@ -38,10 +38,12 @@ Implemented with the following technologies.
 ## Data Persistence (Model)
 
 1. [PostgreSQL](https://www.postgresql.org/) - Relational Database Management System
+1. [PostGIS](http://postgis.net/documentation/) - Spatial Database Extender for [PostgreSQL](https://www.postgresql.org/)
 1. [SQL Alchemy](https://www.sqlalchemy.org/) - Python Object-Relational Mapper
     - [Object-Relational Tutorial](https://docs.sqlalchemy.org/en/latest/orm/tutorial.html)
     - [Essential SQLAlchemy](https://www.safaribooksonline.com/library/view/essential-sqlalchemy-2nd/9781491916544/) book
 1. [Flask SQLAlchemy](http://flask-sqlalchemy.pocoo.org/) - Integration with [SQL Alchemy](https://www.sqlalchemy.org/)
+1. [GeoAlchemy2](https://geoalchemy-2.readthedocs.io/en/latest/) - Extention to [SQL Alchemy](https://www.sqlalchemy.org/) for working with spatial databases.
 1. [Alembic](https://alembic.sqlalchemy.org/) - Database migration for SQL Alchemy
     - [Alembic Tutorial](https://alembic.sqlalchemy.org/en/latest/tutorial.html)
 1. [Flask Migrate](https://flask-migrate.readthedocs.io) - Integration with [Alembic](https://alembic.sqlalchemy.org/)
