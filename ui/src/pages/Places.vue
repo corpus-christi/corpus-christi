@@ -74,6 +74,28 @@ export default {
         if (!isNaN(parseFloat(filters.endLongitude))) {
           requestString += `&lon_end=${parseFloat(filters.endLongitude)}`;
         }
+        if (!isNaN(parseFloat(filters.specificLatitude))) {
+          requestString += `&dist_lat=${parseFloat(filters.specificLatitude)}`;
+        }
+        if (!isNaN(parseFloat(filters.specificLongitude))) {
+          requestString += `&dist_lng=${parseFloat(filters.specificLongitude)}`;
+        }
+        if (!isNaN(parseFloat(filters.distance))) {
+          requestString += `&dist=${parseFloat(filters.distance)}`;
+        }
+        if (
+          !isEmpty(filters.address) &&
+          !isNaN(parseFloat(filters.address.latitude)) &&
+          !isNaN(parseFloat(filters.address.longitude))
+        ) {
+          requestString += `&dist_addr_lat=${parseFloat(
+            filters.address.latitude
+          )}`;
+          requestString += `&dist_addr_lng=${parseFloat(
+            filters.address.longitude
+          )}`;
+          requestString += `&dist_addr=${parseFloat(filters.addressDistance)}`;
+        }
         this.$http.get(requestString).then(resp => {
           this.addressList = resp.data;
         });

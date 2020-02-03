@@ -37,6 +37,9 @@ places:
       en-US: Find Address using Latitude and Longitude
       es-EC: Buscar Dirección usando Latitud y Longitud
     filters:
+      reset-filters:
+        en: Reset Filters
+        es: Restablecer Filtros
       address_filters:
         en-US: Address Filters
         es-EC: Filtros de Direcciones
