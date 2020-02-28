@@ -16,7 +16,7 @@ class Group(Base):
     name = Column(StringTypes.MEDIUM_STRING, nullable=False)
     description = Column(StringTypes.LONG_STRING, nullable=False)
     manager_id = Column(Integer, ForeignKey(
-        'people_manager.id'), nullable=False)
+        'people_manager.id'), nullable=True)
     active = Column(Boolean, nullable=False, default=True)
     manager = relationship('Manager', back_populates='groups', lazy=True)
     members = relationship('Member', backref='group', lazy=True)
@@ -39,6 +39,19 @@ class GroupSchema(Schema):
     manager_info = fields.Nested('ManagerSchema', data_key="managerInfo", only=[
                                  'description_i18n', 'person'])
 
+# ---- Group Type
+
+class GroupType(Base):
+    __tablename__ = 'group_type'
+    id = Column(Integer, primary_key=True)
+    name = Column(StringTypes.MEDIUM_STRING, nullable=False)
+
+    def __repr__(self):
+        return f"<Type(id={self.id})>"
+
+class GroupTypeSchema(Schema):
+    id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
+    name = fields.String(required=True, validate=Length(min=1))
 
 # ---- Meeting
 
@@ -109,3 +122,39 @@ class Attendance(Base):
 class AttendanceSchema(Schema):
     meeting_id = fields.Integer(data_key='meetingId', required=True)
     member_id = fields.Integer(data_key='memberId', required=True)
+
+
+# ---- Management
+
+# class Management(Base):
+#     __tablename__ = 'groups_management'
+#     person_id = Column(Integer, ForeignKey('people_person.id'), primary_key=True)
+#     group_id = Column(Integer, ForeignKey('groups_group.id'), primary_key=True)
+#     management_type_id = Column(Integer, ForeignKey('', nullable=False))
+#     active = Column(Boolean, nullable=False, default=True)
+
+#     person = relationship('Person', back_populates='members', lazy=True)
+#     # group = relationship('Group', back_populates=)
+
+
+# class ManagementSchema(Schema):
+#     person_id = fields.Integer(data_key='personId', required=True)
+#     group_id = fields.Integer(data_key='groupId', required=True)
+#     management_type_id = fields.Integer(data_key='manageTypeId', required=True)
+#     active = fields.Boolean(required=True)
+
+
+# # ---- Management Type
+# class ManagementType(Base):
+#     __tablename__ = 'group_managementtype'
+#     id = Column(Integer, primary_key=True)
+#     name = Column(StringTypes.MEDIUM_STRING, nullable=False)
+
+#     def __repr__(self):
+#         return f"<Type(id={self.id})>"
+
+# class ManagemenyTypeSchema(Schema):
+#     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
+#     name = fields.String(required=True, validate=Length(min=1))
+
+
