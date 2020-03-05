@@ -15,10 +15,11 @@ class Group(Base):
     id = Column(Integer, primary_key=True)
     name = Column(StringTypes.MEDIUM_STRING, nullable=False)
     description = Column(StringTypes.LONG_STRING, nullable=False)
-    manager_id = Column(Integer, ForeignKey(
-        'people_manager.id'), nullable=True)
+    group_type_id = Column(Integer, ForeignKey('group_type.id'), nullable=False)
+    
     active = Column(Boolean, nullable=False, default=True)
-    manager = relationship('Manager', back_populates='groups', lazy=True)
+    groupType = relationship('GroupType', backref='group',lazy=True)
+    
     members = relationship('Member', backref='group', lazy=True)
     meetings = relationship('Meeting', backref='group', lazy=True)
     events = relationship('EventGroup', back_populates='group', lazy=True)
@@ -33,6 +34,7 @@ class GroupSchema(Schema):
     name = fields.String(required=True, validate=Length(min=1))
     description = fields.String(required=True, validate=Length(min=1))
     active = fields.Boolean(required=True)
+    group_type = fields.Integer(data_key='group_type_id', required=True)
     manager_id = fields.Integer(data_key='managerId', required=True)
     member_list = fields.Nested('MemberSchema', data_key="memberList", many=True, only=[
                                 'person', 'joined', 'active', 'id'])
@@ -126,35 +128,36 @@ class AttendanceSchema(Schema):
 
 # ---- Management
 
-# class Management(Base):
-#     __tablename__ = 'groups_management'
-#     person_id = Column(Integer, ForeignKey('people_person.id'), primary_key=True)
-#     group_id = Column(Integer, ForeignKey('groups_group.id'), primary_key=True)
-#     management_type_id = Column(Integer, ForeignKey('', nullable=False))
-#     active = Column(Boolean, nullable=False, default=True)
+class Management(Base):
+    __tablename__ = 'groups_management'
+    person_id = Column(Integer, ForeignKey('people_person.id'), primary_key=True, nullable=False)
+    group_id = Column(Integer, ForeignKey('groups_group.id'), primary_key=True, nullable=False)
+    management_type_id = Column(Integer, ForeignKey('group_management_type.id'), nullable=False)
+    active = Column(Boolean, nullable=False, default=True)
 
-#     person = relationship('Person', back_populates='members', lazy=True)
-#     # group = relationship('Group', back_populates=)
-
-
-# class ManagementSchema(Schema):
-#     person_id = fields.Integer(data_key='personId', required=True)
-#     group_id = fields.Integer(data_key='groupId', required=True)
-#     management_type_id = fields.Integer(data_key='manageTypeId', required=True)
-#     active = fields.Boolean(required=True)
+    person = relationship('Person', backref='management', lazy=True)
+    group = relationship('Group', backref='management', lazy=True)
+    management_type_id = relationship('ManagementType', backref='management', lazy=True)
 
 
-# # ---- Management Type
-# class ManagementType(Base):
-#     __tablename__ = 'group_managementtype'
-#     id = Column(Integer, primary_key=True)
-#     name = Column(StringTypes.MEDIUM_STRING, nullable=False)
+class ManagementSchema(Schema):
+    person_id = fields.Integer(data_key='personId', required=True)
+    group_id = fields.Integer(data_key='groupId', required=True)
+    management_type_id = fields.Integer(data_key='managementTypeId', required=True)
+    active = fields.Boolean(required=True)
 
-#     def __repr__(self):
-#         return f"<Type(id={self.id})>"
 
-# class ManagemenyTypeSchema(Schema):
-#     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
-#     name = fields.String(required=True, validate=Length(min=1))
+# ---- Management Type
+class ManagementType(Base):
+    __tablename__ = 'group_management_type'
+    id = Column(Integer, primary_key=True)
+    name = Column(StringTypes.MEDIUM_STRING, nullable=False)
+
+    def __repr__(self):
+        return f"<Type(id={self.id})>"
+
+class ManagementTypeSchema(Schema):
+    id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
+    name = fields.String(required=True, validate=Length(min=1))
 
 
