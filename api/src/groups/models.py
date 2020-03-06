@@ -114,8 +114,8 @@ class Attendance(Base):
     __tablename__ = 'groups_attendance'
     meeting_id = Column(Integer, ForeignKey(
         'groups_meeting.id'), primary_key=True)
-    member_id = Column(Integer, ForeignKey(
-        'groups_member.id'), primary_key=True)
+    person_id = Column(Integer, ForeignKey(
+        'people_person.id'), primary_key=True)
 
     def __repr__(self):
         return f"<Attendance(meeting_id={self.meeting_id},member_id={self.member_id})>"
@@ -123,7 +123,7 @@ class Attendance(Base):
 
 class AttendanceSchema(Schema):
     meeting_id = fields.Integer(data_key='meetingId', required=True)
-    member_id = fields.Integer(data_key='memberId', required=True)
+    person = fields.Nested('PersonSchema')
 
 
 # ---- Management
@@ -137,7 +137,7 @@ class Management(Base):
 
     person = relationship('Person', backref='management', lazy=True)
     group = relationship('Group', backref='management', lazy=True)
-    management_type_id = relationship('ManagementType', backref='management', lazy=True)
+    managementType = relationship('ManagementType', backref='management', lazy=True)
 
 
 class ManagementSchema(Schema):
