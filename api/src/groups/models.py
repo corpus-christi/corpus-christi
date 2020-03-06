@@ -35,11 +35,11 @@ class GroupSchema(Schema):
     description = fields.String(required=True, validate=Length(min=1))
     active = fields.Boolean(required=True)
     group_type = fields.Integer(data_key='group_type_id', required=True)
-    manager_id = fields.Integer(data_key='managerId', required=True)
+    # manager_id = fields.Integer(data_key='managerId', required=True)
     member_list = fields.Nested('MemberSchema', data_key="memberList", many=True, only=[
                                 'person', 'joined', 'active', 'id'])
-    manager_info = fields.Nested('ManagerSchema', data_key="managerInfo", only=[
-                                 'description_i18n', 'person'])
+    # manager_info = fields.Nested('ManagerSchema', data_key="managerInfo", only=[
+    #                              'description_i18n', 'person'])
 
 # ---- Group Type
 
@@ -92,8 +92,9 @@ class Member(Base):
     person_id = Column(Integer, ForeignKey('people_person.id'), nullable=False)
     joined = Column(Date, nullable=False)
     active = Column(Boolean, nullable=False, default=True)
-    person = relationship('Person', back_populates='members', lazy=True)
+    person = relationship('Person', back_populates='member', lazy=True)
     meetings = relationship('Attendance', backref='member', lazy=True)
+    # group = relationship('Group', backref='member', lazy=True)
 
     def __repr__(self):
         return f"<Member(id={self.id})>"

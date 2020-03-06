@@ -6,7 +6,8 @@ from faker import Faker
 from flask import url_for
 from werkzeug.security import check_password_hash
 
-from .models import Person, PersonSchema, RoleSchema, Role, Manager, ManagerSchema
+from .models import Person, PersonSchema, RoleSchema, Role
+# , Manager, ManagerSchema
 from ..i18n.models import I18NKey, i18n_create, I18NLocale
 from ..images.create_image_data import create_test_images, create_images_people
 from ..images.models import Image, ImagePerson

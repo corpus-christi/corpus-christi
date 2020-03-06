@@ -8,7 +8,7 @@ from . import groups
 from .models import GroupSchema, Group, Attendance, Member, MemberSchema, Meeting, MeetingSchema, AttendanceSchema
 from .. import db
 from ..images.models import Image, ImageGroup
-from ..people.models import Role, Manager, Person
+from ..people.models import Role, Person
 
 
 # ---- Group
