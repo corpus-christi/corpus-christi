@@ -54,7 +54,7 @@ class Person(Base):
     events_par = relationship("EventParticipant", back_populates="person")
     teams = relationship("TeamMember", back_populates="member")
     diplomas_awarded = relationship('DiplomaAwarded', back_populates='students', lazy=True, uselist=True)
-    members = relationship('Member', back_populates='person', lazy=True)
+    member = relationship('Member', back_populates='person', lazy=True)
     images = relationship('ImagePerson', back_populates='person')
 
     roles = relationship("Role", secondary=people_person_role, backref="person")

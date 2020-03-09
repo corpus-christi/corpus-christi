@@ -93,7 +93,7 @@ class Member(Base):
     joined = Column(Date, nullable=False)
     active = Column(Boolean, nullable=False, default=True)
     person = relationship('Person', back_populates='member', lazy=True)
-    meetings = relationship('Attendance', backref='member', lazy=True)
+    meeting = relationship('Attendance', backref='member', lazy=True)
     # group = relationship('Group', backref='member', lazy=True)
 
     def __repr__(self):
