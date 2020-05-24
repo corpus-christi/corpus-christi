@@ -1,3 +1,6 @@
+# ERD is desired. Right now the code does not represent it. It is a work in progress. 
+# The code is breaking when trying to form the relationship between management and management type
+
 import os
 
 from flask import json
@@ -158,27 +161,3 @@ class RoleSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     name_i18n = fields.String(data_key='nameI18n')
     active = fields.Boolean()
-
-
-# ---- Manager
-
-# class Manager(Base):
-#     __tablename__ = 'people_manager'
-#     id = Column(Integer, primary_key=True)
-#     person_id = Column(Integer, ForeignKey('people_person.id'), nullable=False)
-#     manager_id = Column(Integer, ForeignKey('people_manager.id'))
-#     description_i18n = Column(StringTypes.I18N_KEY, ForeignKey('i18n_key.id'), nullable=False)
-#     manager = relationship('Manager', backref='subordinates', lazy=True, remote_side=[id])
-#     groups = relationship('Group', backref='manager', lazy=True)
-#     person = relationship("Person", backref=backref("manager", uselist=False))
-
-#     def __repr__(self):
-#         return f"<Manager(id={self.id})>"
-
-
-# class ManagerSchema(Schema):
-#     id = fields.Integer(dump_only=True, data_key='id', required=True, validate=Range(min=1))
-#     person_id = fields.Integer(data_key='person_id', required=True, validate=Range(min=1))
-#     manager_id = fields.Integer(data_key='manager_id', validate=Range(min=1))
-#     description_i18n = fields.String(data_key='description_i18n', required=True)
-#     person = fields.Nested('PersonSchema', dump_only=True)

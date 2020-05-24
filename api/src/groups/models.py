@@ -1,3 +1,6 @@
+# ERD is desired. Right now the code does not represent it. It is a work in progress. 
+# The code is breaking when trying to form the relationship between management and management type
+
 from marshmallow import Schema, fields
 from marshmallow.validate import Range, Length
 from sqlalchemy import Column, Integer, Boolean, ForeignKey, Date, DateTime
@@ -16,10 +19,8 @@ class Group(Base):
     name = Column(StringTypes.MEDIUM_STRING, nullable=False)
     description = Column(StringTypes.LONG_STRING, nullable=False)
     group_type_id = Column(Integer, ForeignKey('group_type.id'), nullable=False)
-    
     active = Column(Boolean, nullable=False, default=True)
-    groupType = relationship('GroupType', backref='group',lazy=True)
-    
+    groupType = relationship('GroupType', backref='group', lazy=True) #Creating a relationship between group and group types
     members = relationship('Member', backref='group', lazy=True)
     meetings = relationship('Meeting', backref='group', lazy=True)
     events = relationship('EventGroup', back_populates='group', lazy=True)
@@ -35,11 +36,8 @@ class GroupSchema(Schema):
     description = fields.String(required=True, validate=Length(min=1))
     active = fields.Boolean(required=True)
     group_type = fields.Integer(data_key='group_type_id', required=True)
-    # manager_id = fields.Integer(data_key='managerId', required=True)
     member_list = fields.Nested('MemberSchema', data_key="memberList", many=True, only=[
                                 'person', 'joined', 'active', 'id'])
-    # manager_info = fields.Nested('ManagerSchema', data_key="managerInfo", only=[
-    #                              'description_i18n', 'person'])
 
 # ---- Group Type
 
@@ -113,10 +111,10 @@ class MemberSchema(Schema):
 
 class Attendance(Base):
     __tablename__ = 'groups_attendance'
-    meeting_id = Column(Integer, ForeignKey(
-        'groups_meeting.id'), primary_key=True)
-    person_id = Column(Integer, ForeignKey(
-        'people_person.id'), primary_key=True)
+    meeting_id = Column(Integer, ForeignKey('groups_meeting.id'), primary_key=True) # Creating table column for meeting_id on Attendence table
+    person_id = Column(Integer, ForeignKey('people_person.id'), primary_key=True) # Creating table column for person_id on Attendence table
+
+    meetings = relationship('Meeting', backref='attendance', lazy=True) # Creating relationship between attendence and meetings
 
     def __repr__(self):
         return f"<Attendance(meeting_id={self.meeting_id},member_id={self.member_id})>"
