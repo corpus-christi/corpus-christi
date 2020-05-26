@@ -306,7 +306,7 @@ If you want to compile for source, visit http://postgis.net/source/
 
 More detailed installation information for specific versions is available here: http://postgis.net/documentation/ under the Stable Branch User Documentation. Select the PDF or HTML corresponding to your PostGIS version and look for PostGIS Installation.
 
-See the Enabling PostGIS section on http://postgis.net/install/ for instructions on enablng PostGIS on your database.
+See the Enabling PostGIS section on http://postgis.net/install/ for instructions on enabling PostGIS on your database.
 
 Most likely the only extension needed is postgis. You can safely ignore other recommended extensions unless you have a specific use for them.
 
