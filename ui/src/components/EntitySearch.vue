@@ -190,7 +190,7 @@ export default {
     else if (this.asset) endpoint = "/api/v1/assets/";
     else if (this.address) endpoint = "/api/v1/places/addresses";
     else if (this.manager)
-      endpoint = "/api/v1/people/manager?show_unique_persons_only=Y";
+      endpoint = "/api/v1/groups/manager?show_unique_persons_only=Y";
     else if (this.group) endpoint = "/api/v1/groups/groups";
     else if (this.meeting) endpoint = "/api/v1/groups/meetings";
     this.$http

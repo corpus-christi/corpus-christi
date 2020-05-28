@@ -4,9 +4,9 @@ import random
 from faker import Faker
 
 from ..events.models import EventGroup, EventGroupSchema, Event
-from ..groups.models import Group, Meeting, Attendance, Member, GroupSchema, MeetingSchema, AttendanceSchema, \
+from ..groups.models import Manager, Group, Meeting, Attendance, Member, GroupSchema, MeetingSchema, AttendanceSchema, \
     MemberSchema
-from ..people.models import Person, Manager, Role, RoleSchema
+from ..people.models import Person, Role, RoleSchema
 from ..people.test_people import create_multiple_managers, create_multiple_people
 from ..places.models import Address
 from ..places.test_places import create_multiple_addresses
