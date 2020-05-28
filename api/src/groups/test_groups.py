@@ -7,13 +7,13 @@ from flask import url_for
 
 from .create_group_data import flip, create_role, group_object_factory, group_object_factory_with_members, \
     create_multiple_groups, member_object_factory, create_multiple_members, meeting_object_factory, \
-    create_multiple_meetings, create_attendance
-from .models import Group, Member, Meeting, MeetingSchema, Attendance
+    create_multiple_meetings, create_attendance, create_multiple_group_types, create_multiple_manager_types, \
+    group_type_object_factory
+from .models import Group, GroupType, Member, Meeting, MeetingSchema, Attendance, Manager, ManagerType, ManagerSchema
 from ..images.create_image_data import create_images_groups
 from ..images.create_image_data import create_test_images
 from ..images.models import Image, ImageGroup
-from ..people.models import Manager
-from ..people.test_people import create_multiple_accounts, create_multiple_people, create_multiple_managers
+from ..people.test_people import create_multiple_people
 from ..places.models import Address, Country
 from ..places.test_places import create_multiple_addresses, create_multiple_areas
 
@@ -23,7 +23,94 @@ fake = Faker()
 def generate_managers(auth_client):
     create_multiple_people(auth_client.sqla, 4)
     create_multiple_accounts(auth_client.sqla)
-    create_multiple_managers(auth_client.sqla, 4, "Manager")
+    # create_multiple_managers(auth_client.sqla, 4, "Manager")
+
+
+# ---- Group Type
+
+def test_create_group_type(auth_client):
+    # GIVEN an empty database
+    # WHEN we add in a group type
+    resp = auth_client.post(url_for('groups.create_group_type'), json = {'name':'group_type_1'})
+    # THEN expect the create to run OK
+    assert resp.status_code == 201
+
+    # WHEN we create an invalid group type
+    resp = auth_client.post(url_for('groups.create_group_type'), json = {'name':''})
+    # THEN we expect the request to be unprocessable
+    assert resp.status_code == 422
+
+    # THEN we expect the correct number of items in the database
+    assert auth_client.sqla.query(GroupType).count() == 1
+
+def test_read_one_group_type(auth_client):
+    # GIVEN a database with a number of group types
+    count = random.randint(3, 11)
+    create_multiple_group_types(auth_client.sqla, count)
+
+    group_types = auth_client.sqla.query(GroupType).all()
+
+    # WHEN we ask for the group_types one by one
+    for group_type in group_types:
+        # THEN we expect each of them to correspond to the group_type in the database
+        resp = auth_client.get(
+            url_for('groups.read_one_group_type', group_type_id=group_type.id))
+        assert resp.status_code == 200
+        assert resp.json['name'] == group_type.name
+    
+def test_read_all_group_types(auth_client):
+    # GIVEN a database with some group_types
+    count = random.randint(3, 11)
+    create_multiple_group_types(auth_client.sqla, count)
+
+    # WHEN we read all active group_types
+    resp = auth_client.get(url_for('groups.read_all_group_types'))
+    # THEN we expect the right status code
+    assert resp.status_code == 200
+    # THEN we expect the database has the same number of group_types as we created
+    group_types = auth_client.sqla.query(GroupType).all()
+    assert len(group_types) == count
+
+def test_update_group_type(auth_client):
+    # GIVEN a database with a number of group_types
+    count = random.randint(3, 11)
+    create_multiple_group_types(auth_client.sqla, count)
+
+    # WHEN we update one group_type
+    group_type = auth_client.sqla.query(GroupType).first()
+
+    payload = group_type_object_factory("new_name")
+
+    resp = auth_client.patch(
+        url_for('groups.update_group_type', group_type_id=group_type.id), json=payload)
+
+    # THEN we assume the correct status code
+    assert resp.status_code == 200
+    # THEN we assume the correct content in the returned object
+    assert resp.json['name'] == 'new_name'
+    # THEN we assume the correct content in the database
+    assert auth_client.sqla.query(GroupType).filter_by(id=group_type.id).first().name == 'new_name'
+
+
+def test_delete_group_type(auth_client):
+    # GIVEN a database with a number of group_types
+    count = random.randint(3, 11)
+    create_multiple_group_types(auth_client.sqla, count)
+
+    # WHEN we delete one of them
+    group_type = auth_client.sqla.query(GroupType).first()
+    resp = auth_client.delete(url_for('groups.delete_group_type', group_type_id = group_type.id))
+    # THEN we assume the correct status code
+    assert resp.status_code == 204
+
+    # WHEN we delete a non-existent item
+    resp = auth_client.delete(url_for('groups.delete_group_type', group_type_id = -1))
+    # THEN we expect an error
+    assert resp.status_code == 404
+
+    # THEN we assume the number of group_types in the database to be the correct number
+    group_types = auth_client.sqla.query(GroupType).all()
+    assert len(group_types) == count - 1
 
 
 # ---- Group
@@ -906,7 +993,7 @@ def test_repr_attendance(auth_client):
 def test_add_group_images(auth_client):
     # GIVEN a set of groups and images
     count = random.randint(3, 6)
-    create_multiple_managers(auth_client.sqla, count)
+    # create_multiple_managers(auth_client.sqla, count)
     create_multiple_groups(auth_client.sqla, count)
     create_test_images(auth_client.sqla)
 
@@ -995,3 +1082,265 @@ def test_delete_group_image_no_exist(auth_client):
 
     # THEN expect the requested row to not be found
     assert resp.status_code == 404
+
+
+# # ---- Manager: Moved from people module
+# 
+# @pytest.mark.smoke
+# def test_create_manager(auth_client):
+#     # GIVEN an empty database
+#     person_count = random.randint(10, 20)
+#     manager_count = random.randint(5, person_count)
+# 
+#     # WHEN we create a random number of new managers and managers in the database
+#     create_multiple_people(auth_client.sqla, person_count)
+#     #create_multiple_accounts(auth_client.sqla, 1)
+# 
+#     for i in range(manager_count):
+#         resp = auth_client.post(url_for('people.create_manager'),
+#                                 json=manager_object_factory(auth_client.sqla, 'first level'))
+#         assert resp.status_code == 201
+# 
+#     # THEN we end up with the proper number of managers in the database
+#     assert auth_client.sqla.query(Manager).count() == manager_count
+# 
+# 
+# @pytest.mark.smoke
+# def test_create_manager_invalid(auth_client):
+#     # GIVEN a set of people and accounts
+#     count = random.randint(3, 6)
+#     create_multiple_people(auth_client.sqla, count)
+#     #create_multiple_accounts(auth_client.sqla, 1)
+# 
+#     persons = auth_client.sqla.query(Person).all()
+# 
+#     # GIVEN managers with bad data for each account
+#     for person in persons:
+#         new_manager = manager_object_factory(auth_client.sqla, fake.sentences(nb=1)[0])
+#         new_manager[fake.word()] = fake.word()
+# 
+#         # WHEN a request is made to make a manager with bad data
+#         resp = auth_client.post(url_for('people.create_manager'), json=new_manager)
+# 
+#         # THEN expect request to be unprocessable
+#         assert resp.status_code == 422
+# 
+#     # THEN expect no managers to be created
+#     assert auth_client.sqla.query(Manager).count() == 0
+# 
+# 
+# @pytest.mark.smoke
+# def test_read_all_managers(auth_client):
+#     # GIVEN a DB with a collection of managers.
+#     person_count = random.randint(10, 20)
+#     manager_count = random.randint(5, person_count)
+#     create_multiple_people(auth_client.sqla, person_count)
+#     #create_multiple_accounts(auth_client.sqla, 1)
+#     create_multiple_managers(auth_client.sqla, manager_count)
+#     # WHEN we request all managers from the server
+#     resp = auth_client.get(url_for('people.read_all_managers', locale='en-US'))
+#     # THEN the count matches the number of entries in the database
+#     assert resp.status_code == 200
+#     assert len(resp.json) == manager_count
+# 
+# 
+# @pytest.mark.smoke
+# def test_read_one_manager(auth_client):
+#     # GIVEN a DB with a collection of managers.
+#     person_count = random.randint(10, 20)
+#     manager_count = random.randint(5, person_count)
+#     create_multiple_people(auth_client.sqla, person_count)
+#     #create_multiple_accounts(auth_client.sqla, 1)
+#     create_multiple_managers(auth_client.sqla, manager_count)
+# 
+#     # WHEN we ask for them all
+#     managers = auth_client.sqla.query(Manager).all()
+# 
+#     # THEN we expect the same number
+#     assert len(managers) == manager_count
+# 
+#     # WHEN we request each of them from the server
+#     for manager in managers:
+#         resp = auth_client.get(url_for('people.read_one_manager', manager_id=manager.id, locale='en-US'))
+#         # THEN we find a matching manager
+#         assert resp.status_code == 200
+#         assert resp.json['person_id'] == manager.person_id
+#         assert resp.json['manager_id'] == manager.manager_id
+#         assert resp.json['description_i18n'] == manager.description_i18n
+# 
+# 
+# @pytest.mark.smoke
+# def test_read_one_manager_invalid(auth_client):
+#     # GIVEN an empty database
+# 
+#     # WHEN a request is made to read a manager that does not exist
+#     resp = auth_client.get(url_for('people.read_one_manager', manager_id=random.randint(1, 8)))
+# 
+#     # THEN expect requested manager not to be found
+#     assert resp.status_code == 404
+# 
+# 
+# @pytest.mark.smoke
+# def test_update_manager(auth_client):
+#     # GIVEN a DB with a collection of managers.
+#     person_count = random.randint(10, 20)
+#     manager_count = random.randint(5, person_count)
+#     create_multiple_people(auth_client.sqla, person_count)
+#     #create_multiple_accounts(auth_client.sqla, 1)
+#     create_multiple_managers(auth_client.sqla, manager_count)
+# 
+#     managers = auth_client.sqla.query(Manager).all()
+#     persons = auth_client.sqla.query(Person).all()
+# 
+#     update_manager = random.choice(managers)
+# 
+#     new_person_id = update_manager.person_id
+#     while new_person_id == update_manager.person_id:
+#         new_person_id = random.choice(persons).id
+# 
+#     new_manager_id = update_manager.manager_id
+#     while new_manager_id == update_manager.manager_id or new_manager_id == update_manager.id:
+#         new_manager_id = random.choice(managers).id
+# 
+#     update_json = {
+#         'person_id': new_person_id,
+#         'manager_id': new_manager_id,
+#         'description_i18n': update_manager.description_i18n
+#     }
+# 
+#     # WHEN
+#     resp = auth_client.patch(url_for('people.update_manager', manager_id=update_manager.id), json=update_json)
+#     # THEN
+#     assert resp.status_code == 200
+#     assert resp.json['person_id'] == new_person_id
+#     assert resp.json['manager_id'] == new_manager_id
+# 
+# 
+# @pytest.mark.smoke
+# def test_update_manager_invalid(auth_client):
+#     # GIVEN a set of people, accounts, and managers
+#     count = random.randint(3, 6)
+#     create_multiple_people(auth_client.sqla, count)
+#     #create_multiple_accounts(auth_client.sqla, 1)
+#     create_multiple_managers(auth_client.sqla, count)
+# 
+#     managers = auth_client.sqla.query(Manager).all()
+# 
+#     # GIVEN bad modification data
+#     for manager in managers:
+#         mod = {}
+#         flips = (flip(), flip(), flip())
+#         if flips[0]:
+#             mod['person_id'] = None
+#         if flips[1]:
+#             mod['description_i18n'] = None
+#         if flips[2] or not (flips[0] or flips[1]):
+#             mod[fake.word()] = fake.word()
+# 
+#         # WHEN a manager is requested to be updated with bad data
+#         resp = auth_client.patch(url_for('people.update_manager', manager_id=manager.id), json=mod)
+# 
+#         # THEN expect the request to be unprocessable
+#         assert resp.status_code == 422
+# 
+# 
+# @pytest.mark.smoke
+# def test_delete_manager(auth_client):
+#     # GIVEN a DB with a collection of managers.
+#     person_count = random.randint(10, 20)
+#     manager_count = random.randint(5, person_count)
+#     create_multiple_people(auth_client.sqla, person_count)
+#     #create_multiple_accounts(auth_client.sqla, 1)
+#     create_multiple_managers(auth_client.sqla, manager_count)
+# 
+#     managers = auth_client.sqla.query(Manager).all()
+#     persons = auth_client.sqla.query(Person).all()
+# 
+#     delete_manager = managers[0]
+#     subordinate = managers[1]
+# 
+#     update_json = {
+#         'manager_id': delete_manager.id
+#     }
+#     auth_client.patch(url_for('people.update_manager', manager_id=subordinate.id), json=update_json)
+# 
+#     # WHEN we delete the manager
+#     resp = auth_client.delete(url_for('people.delete_manager', manager_id=delete_manager.id))
+# 
+#     # THEN the manager and all references to that manager are deleted
+#     assert resp.status_code == 204
+#     assert auth_client.sqla.query(Manager).filter_by(id=delete_manager.id).first() == None
+#     assert auth_client.sqla.query(Manager).filter_by(id=subordinate.id).first().manager_id == None
+# 
+# 
+# @pytest.mark.smoke
+# def test_delete_manager_no_exist(auth_client):
+#     # GIVEN an empty database
+# 
+#     # WHEN a manager is requested to be deleted
+#     resp = auth_client.delete(url_for('people.delete_manager', manager_id=random.randint(1, 8)))
+# 
+#     # THEN expect the manager not to be found
+#     assert resp.status_code == 404
+# 
+# 
+# @pytest.mark.smoke
+# def test_delete_manager_with_subordinate(auth_client):
+#     # GIVEN a set of people, accounts, and managers
+#     count = random.randint(3, 6)
+#     create_multiple_people(auth_client.sqla, count * 2)
+#     #create_multiple_accounts(auth_client.sqla, 1)
+#     create_multiple_managers(auth_client.sqla, count * 2)
+# 
+#     # GIVEN half of the managers are subordinates of the others
+#     for i in range(1, count + 1):
+#         auth_client.sqla.query(Manager).filter(Manager.id == i).update({"manager_id": i + count})
+#         auth_client.sqla.commit()
+# 
+#     # WHEN superiors are requested to be deleted
+#     for i in range(1, count + 1):
+#         resp = auth_client.delete(url_for('people.delete_manager', manager_id=i + count))
+# 
+#         # THEN expect the delete to run OK
+#         assert resp.status_code == 204
+# 
+#         # THEN expect that superior was deleted
+#         assert auth_client.sqla.query(Manager).count() == count * 2 - i
+# 
+#         # THEN expect relationship with subordinate to be broken
+#         assert auth_client.sqla.query(Manager).filter(Manager.id == i).first().manager_id is None
+# 
+# 
+# @pytest.mark.smoke
+# def test_create_manager_with_superior(auth_client):
+#     # GIVEN a set of people, accounts, and managers
+#     count = random.randint(3, 6)
+#     create_multiple_people(auth_client.sqla, count * 2)
+#     #create_multiple_accounts(auth_client.sqla, 1)
+#     create_multiple_managers(auth_client.sqla, count)
+# 
+#     superiors = auth_client.sqla.query(Manager).all()
+# 
+#     # GIVEN data for subordinate managers
+#     for superior in superiors:
+#         new_manager = manager_object_factory(auth_client.sqla, fake.sentences(nb=1)[0])
+#         new_manager['manager_id'] = superior.id
+# 
+#         # WHEN subordinates are requested to be created
+#         resp = auth_client.post(url_for('people.create_manager'), json=new_manager)
+# 
+#         # THEN expect the create to run OK
+#         resp.status_code == 201
+# 
+#     # THEN expect the right number of managers to be created
+#     assert auth_client.sqla.query(Manager).count() == count * 2
+# 
+# 
+# @pytest.mark.smoke
+# def test_repr_manager(auth_client):
+#     # GIVEN a DB with a manager
+#     create_multiple_people(auth_client.sqla, 1)
+#     #create_multiple_accounts(auth_client.sqla, 1)
+#     create_multiple_managers(auth_client.sqla, 1)
+#     managers = auth_client.sqla.query(Manager).all()
+#     managers[0].__repr__()

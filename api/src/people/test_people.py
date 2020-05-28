@@ -10,6 +10,7 @@ from .models import Person, PersonSchema, RoleSchema, Role
 from ..i18n.models import I18NKey, i18n_create, I18NLocale
 from ..images.create_image_data import create_test_images, create_images_people
 from ..images.models import Image, ImagePerson
+from ..groups.models import ManagerSchema
 
 #removed  AccountSchema, Account, from line 9
 
@@ -167,49 +168,6 @@ def create_accounts_roles(sqla, fraction=0.75):
     sqla.add_all(new_person_roles)
     sqla.commit()
 
-#tweak
-def manager_object_factory(sqla, description, next_level=None, locale_code='en-US'):
-    """Cook up a fake person."""
-    description_i18n = f'manager.description.{description.replace(" ", "_")}'[:32]
-
-    if not sqla.query(I18NLocale).get(locale_code):
-        sqla.add(I18NLocale(code=locale_code, desc='English US'))
-
-    if not sqla.query(I18NKey).get(description_i18n):
-        i18n_create(description_i18n, 'en-US',
-                    description, description=f"Manager {description}")
-
-    all_persons = sqla.query(Person).all()
-    # all_accounts = sqla.query(Account).all()
-    # if not all_accounts:
-    #     create_multiple_accounts(sqla)
-    #     all_accounts = sqla.query(Account).all()
-
-    manager = {
-
-        'person_id': random.choice(all_persons).id,
-        'description_i18n': description_i18n
-    }
-    all_managers = sqla.query(Manager).all()
-
-    if next_level is not None:
-        next_level_description_i18n = f'manager.description.{next_level.replace(" ", "_")}'
-        next_level_managers = sqla.query(Manager).filter(Manager.description_i18n == next_level_description_i18n).all()
-        if (len(next_level_managers) > 0):
-            manager['manager_id'] = random.choice(next_level_managers).id
-
-    return manager
-
-
-def create_multiple_managers(sqla, n, next_level=None):
-    """Commit `n` new people to the database. Return their IDs."""
-    manager_schema = ManagerSchema()
-    new_managers = []
-    for i in range(n):
-        valid_manager = manager_schema.load(manager_object_factory(sqla, fake.sentences(nb=1)[0], next_level))
-        new_managers.append(Manager(**valid_manager))
-    sqla.add_all(new_managers)
-    sqla.commit()
 
 
 # ---- Person

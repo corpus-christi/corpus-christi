@@ -5,16 +5,71 @@ from flask_jwt_extended import jwt_required
 from marshmallow import ValidationError
 
 from . import groups
-from .models import GroupSchema, Group, Attendance, Member, MemberSchema, Meeting, MeetingSchema, AttendanceSchema, Manager, ManagerSchema
+from .models import Group, GroupSchema, Attendance, Member, MemberSchema, Meeting, MeetingSchema, AttendanceSchema, Manager, ManagerSchema, GroupType, GroupTypeSchema, ManagerType, ManagerTypeSchema
 from .. import db
 from ..images.models import Image, ImageGroup
 from ..people.models import Role, Person
+from src.shared.helpers import modify_entity
+
+# ---- Group Type
+group_type_schema = GroupTypeSchema()
+
+@groups.route('/group-types', methods=['POST'])
+def create_group_type():
+    try:
+        valid_group_type = group_type_schema.load(request.json)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+
+    new_group_type = GroupType(**valid_group_type)
+    db.session.add(new_group_type)
+    db.session.commit()
+    return jsonify(group_type_schema.dump(new_group_type)), 201
+
+@groups.route('/group-types/<group_type_id>', methods=['GET'])
+def read_one_group_type(group_type_id):
+    group_type = db.session.query(GroupType).filter_by(id=group_type_id).first()
+    if not group_type:
+        return jsonify(f"GroupType with id #{group_type_id} does not exist."), 404
+
+    return jsonify(group_type_schema.dump(group_type))
+
+@groups.route('/group-types', methods=['GET'])
+def read_all_group_types():
+    group_types = db.session.query(GroupType).all()
+    return jsonify(group_type_schema.dump(group_types, many=True))
+
+@groups.route('/group-types/<group_type_id>', methods=['PATCH'])
+@jwt_required
+def update_group_type(group_type_id):
+    group_type_schema = GroupTypeSchema()
+
+    try:
+        valid_attributes = group_type_schema.load(request.json, partial=True)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+
+    return modify_entity(GroupType, group_type_schema, group_type_id, valid_attributes)
+
+
+@groups.route('/group-types/<group_type_id>', methods=['DELETE'])
+@jwt_required
+def delete_group_type(group_type_id):
+    group_type = db.session.query(GroupType).filter_by(id=group_type_id).first()
+
+    if not group_type:
+        return jsonify(f"GroupType with id #{group_type_id} does not exist."), 404
+
+    db.session.delete(group_type)
+    db.session.commit()
+
+    # 204 codes don't respond with any content
+    return "Deleted successfully", 204
 
 
 # ---- Group
 
 group_schema = GroupSchema()
-
 
 def group_dump(group):
     group.manager_info = group.manager
@@ -26,12 +81,6 @@ def group_dump(group):
 @groups.route('/groups', methods=['POST'])
 @jwt_required
 def create_group():
-    request.json['active'] = True
-    members_to_add = None
-    if 'person_ids' in request.json.keys():
-        members_to_add = request.json['person_ids']
-        del request.json['person_ids']
-
     try:
         valid_group = group_schema.load(request.json)
     except ValidationError as err:
@@ -39,33 +88,9 @@ def create_group():
 
     new_group = Group(**valid_group)
 
-    if db.session.query(Manager).filter_by(id=new_group.manager_id).first() is None:
-        return jsonify(msg="Manager not found"), 404
-
     db.session.add(new_group)
-
-    today = datetime.datetime.today().strftime('%Y-%m-%d')
-
-    if members_to_add is not None:
-        for member in members_to_add:
-            new_member = generate_member(new_group.id, member, today, True)
-            db.session.add(new_member)
-
-    # Add group_overseer role to the existing manager account -> if they have an account
-    group_overseer = db.session.query(Role).filter_by(name_i18n="role.group-overseer").first()
-    subq = db.session.query(Manager.person_id).filter_by(id=new_group.manager_id).subquery()
-    manager_account = db.session.query(Person).filter(Person.id.in_(subq)).first()
-
-    if manager_account:
-        manager_roles = manager_account.roles
-        if group_overseer and group_overseer not in manager_roles:
-            manager_roles.append(group_overseer)
-            setattr(manager_account, 'roles', manager_roles)
-            print("adding group overseer role", end='\n\n\n')
-
-    # db.session.add(manager_account)
     db.session.commit()
-    return group_dump(new_group), 201
+    return group_schema.dump(new_group), 201
 
 
 @groups.route('/groups')
