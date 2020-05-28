@@ -8,7 +8,7 @@ from src.courses.test_courses import create_multiple_courses, create_multiple_co
 from src.events.create_event_data import create_events_test_data
 from src.groups.create_group_data import create_group_test_data
 from src.images.create_image_data import create_images_test_data
-from src.people.test_people import create_multiple_people, create_multiple_managers, create_accounts_roles
+from src.people.test_people import create_multiple_people, create_accounts_roles
 from src.places.test_places import create_multiple_areas, create_multiple_addresses, create_multiple_locations
 
 
