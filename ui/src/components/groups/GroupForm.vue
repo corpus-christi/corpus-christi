@@ -1,3 +1,4 @@
+//add grooup button content
 <template>
   <v-card>
     <v-card-title>
@@ -38,7 +39,7 @@
         v-on:click="cancel"
         :disabled="formDisabled"
         data-cy="form-cancel"
-        >{{ $t("actions.cancel") }}</v-btn
+        >{{ $t("actions.cancel") }}ttt</v-btn
       >
       <v-spacer />
       <v-btn
@@ -49,8 +50,8 @@
         :loading="addMoreLoading"
         :disabled="formDisabled"
         data-cy="form-addanother"
-        >{{ $t("actions.add-another") }}</v-btn
-      >
+        >{{ $t("actions.add-another") }}qqqqq
+      </v-btn>
       <v-btn
         color="primary"
         raised
@@ -58,14 +59,14 @@
         :loading="saveLoading"
         :disabled="formDisabled"
         data-cy="form-save"
-        >{{ $t("actions.save") }}</v-btn
-      >
+        >{{ $t("actions.save") }}hhhh <!-- save botton - Add group -->
+      </v-btn>
     </v-card-actions>
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
       <v-btn flat @click="snackbar.show = false" data-cy>
-        {{ $t("actions.close") }}
+        {{ $t("actions.close") }}wwww
       </v-btn>
     </v-snackbar>
   </v-card>
@@ -139,13 +140,16 @@ export default {
     },
 
     validateGroup(group, operation) {
+      //console.log(group);
+      //console.log(group.manager.person);
       this.$validator.validateAll().then(isValid => {
         if (isValid) {
           this.$http
-            .get(`/api/v1/groups/find_group/${group.name}/${group.manager.id}`)
+            .get(`/api/v1/groups/find_group/${group.name}/${group.manager.person.id}`)
             .then(response => {
               if (response.data == 0) {
                 operation();
+                console.log("reachinng ---");
               } else {
                 this.showSnackbar(this.$t("groups.messages.already-exists"));
               }
@@ -174,12 +178,13 @@ export default {
       this.$validator.reset();
     },
 
-    save() {
+    save() { //save add group
+      //console.log(this.group);
       //console.log(this.group);
       this.validateGroup(this.group, () => {
         this.group.active = true;
-        this.group.active = true;
-        this.$emit("save", this.group);
+        //this.group.active = true;
+        this.$emit("save", this.group);//where is this sending to?
       });
       this.manager = {};
     },
