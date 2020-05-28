@@ -16,6 +16,7 @@ refer to `doc/sdm.md`.
     - [Vue Dev Tools](#vue-dev-tools)
     - [API Dependencies](#api-dependencies)
   - [Bash Setup for Flask](#bash-setup-for-flask)
+  - [Command-Line Interface](#command-line-interface)
   - [Database Setup](#database-setup)
     - [PostgreSQL](#postgresql)
     - [Create Database User and Database](#create-database-user-and-database)
@@ -82,7 +83,8 @@ $ yarn
 
 Install the [Vue Development Tools](https://github.com/vuejs/vue-devtools),
 an extension for your browser that helps with Vue debugging.
-Native extensions are available for Chrome (and hence, Brave) and Firefox.
+Native extensions are available for Chrome (and hence, Brave) 
+and Firefox.
 There is also a standalone Electron app,
 but you are _strongly_ encouraged to install Chrome, Brave, or Firefox
 and the native extension.
@@ -94,7 +96,17 @@ and the native extension.
     $ cd corpus-christi/api
     $ python3 -m venv venv
     ```
-    - Note that the `python3` command may not have the correct version.  If you have errors with this, run `python3 --version`, if that is not the desired version, try running `python --version`.  If this is your desired version, replace `python3` with `python` in the above bash commands.  If you are still struggling (and using Windows), you will need to adjust the [environmental variables](https://www.architectryan.com/2018/08/31/how-to-change-environment-variables-on-windows-10/) and update PATH by finding the location of where python is downloaded.  Open the base python folder, copy that path/link and add it to PATH in the system variables.
+
+    Note that the `python3` command may not have the correct version.
+    If you have errors with this, run `python3 --version`,
+    if that is not the desired version, try running `python --version`. 
+    If this is your desired version, replace `python3` with `python` 
+    in the above bash commands.
+    If you are still struggling (and using Windows), 
+    you will need to adjust the [environmental variables](https://www.architectryan.com/2018/08/31/how-to-change-environment-variables-on-windows-10/) 
+    and update PATH by finding the location of where python is downloaded.
+    Open the base python folder, 
+    copy that path/link and add it to PATH in the system variables.
 
 1. Activate the virtual environment;
    you need to do this _whenever_ you start a new shell
@@ -136,14 +148,20 @@ $ source ./bin/set-up-bash.sh
 ```
 This script will
 1. Activate your virtual environment;
-   no need to separately `source the` `activate` command
+   no need to separately `source` the `activate` command
 1. Configure Flask properly for development
 1. Allow you to run the `flask` command from the command line.
 
-  - If errors, open the file and change line three to source ./venv/Scripts/activate
+On Windows, you may need to open the file
+and change line three to source `./venv/Scripts/activate`
 
 Do this whenever you start a new `bash`
 in which you intend to work with the API.
+
+## Command Line Interface
+
+CC extends the standard Flask Command-Line Interface (CLI).
+Refer to [the CLI documentation](./cli.md) for details.
 
 ## Database Setup
 
@@ -187,17 +205,16 @@ executables that create users and databases.
 
 Create a user:
 ```bash
-$ createuser arco
+$ createuser arco --password
 ```
+The command prompts you for a password.
+Enter your desired password.
 
-Windows people (in the Subsystem, in psql):
-```bash
-$ CREATE USER arco;
+In WSL, run the `psql` command and run this query:
 ```
-
-Note that this creates a database user with **no password**.
-This is **only** suitable for local development!
-For a production system, use a good password.
+CREATE USER arco WITH ENCRYPTED PASSWORD 'password';
+```
+Replace `password` with your desired password.
 
 Create a database:
 ```bash
@@ -205,10 +222,11 @@ $ createdb --owner=arco cc-dev
 ```
 
 Windows:
-```bash
+```
 CREATE DATABASE "cc-dev" OWNER arco;
 ```
-- Windows: if errors, check the postgreSQL WSL installation tutorial [Tips/Debugging](./postgres-windows.md#tips--debugging) section for help.
+- Windows: if errors, check the PostgreSQL WSL installation tutorial
+  [Tips/Debugging](./postgres-windows.md#tips--debugging) section for help.
 - In psql you can run `\l` (lowercase L) to see all of the databases and owners.
 
 This will create a database called `cc-dev`,
@@ -300,45 +318,69 @@ or `PROD_DB_URL` for your production database.
 
 ### Setting up PostGIS
 
-Make sure you have PostGIS installed. See http://postgis.net/install/ for installer packages for most operating systems.
+Make sure you have PostGIS installed. 
+See http://postgis.net/install/ for installer packages for most operating systems.
 
-If you want to compile for source, visit http://postgis.net/source/
+If you want to compile from source, visit http://postgis.net/source/
 
-More detailed installation information for specific versions is available here: http://postgis.net/documentation/ under the Stable Branch User Documentation. Select the PDF or HTML corresponding to your PostGIS version and look for PostGIS Installation.
+More detailed installation information for specific versions is available here: 
+http://postgis.net/documentation/ under the Stable Branch User Documentation. 
+Select the PDF or HTML corresponding to your PostGIS version and look for PostGIS Installation.
 
-See the Enabling PostGIS section on http://postgis.net/install/ for instructions on enabling PostGIS on your database.
+See the Enabling PostGIS section on http://postgis.net/install/ 
+for instructions on enabling PostGIS on your database.
 
-Most likely the only extension needed is postgis. You can safely ignore other recommended extensions unless you have a specific use for them.
+Most likely the only extension needed is `postgis`.
+You can safely ignore other recommended extensions unless you have a specific use for them.
 
-**If you are using OSX Postgres.app**
+#### If you are using OSX Postgres.app 
 
-PostGIS comes packaged with the install of Postgres.app. Using these two commands from the terminal should enable PostGIS on the specified version of Postgres.app
+PostGIS comes packaged with Postgres.app. 
+Using these two commands from the terminal should enable PostGIS
+on the specified version of Postgres.app
 
-POSTGRES_VERSION = Version of Postgres you want to enable PostGIS on.
-
-POSTGIS_VERSION = Your installed version of PostGIS.
-
-```
+```bash
+$ POSTGRES_VERSION = Version of Postgres you want to enable PostGIS on.
+$ POSTGIS_VERSION = Your installed version of PostGIS.
 $ psql -d DATABASE_NAME -f /Application/Postgres.app/Contents/Versions/POSTGRES_VERSION/share/postgresql/contrib/POSTGIS_VERSION/postgis.sql
-```
-```
 $ psql -d DATABASE_NAME -f /Application/Postgres.app/Contents/Versions/POSTGRES_VERSION/share/postgresql/contrib/POSTGIS_VERSION/spatial_ref_sys.sql
 ```
 
-**WARNING**
+#### WARNING
 
-Before you initialize the database make sure that after you run flask db migrate you check the python migration file (found under api/migrations/versions/<random_numbers>.py) to make sure the migration doesn't drop the spatial_ref_sys table added by PostGIS. Inside of the upgrade function, most likely near the end of the function, if there is a statement to drop the spatial_ref_sys table, delete that statement. Also check the downgrade function and delete any code generated to add a spatial_ref_sys table. After you have done this and saved the migration file it is ok to run flask db upgrade and load data
+_Before_ you initialize the database,
+make sure that after you run `flask db migrate`
+you check the python migration file
+(found under `api/migrations/versions/<random_numbers>.py`). 
+Make sure the migration doesn't drop the `spatial_ref_sys` table added by PostGIS. 
+Inside of the `upgrade` function (likely near the end), 
+if there is a statement to drop the `spatial_ref_sys` table, 
+delete that statement. 
+Also check the `downgrade` function 
+and delete any code generated to add a `spatial_ref_sys` table. 
+After you have done this and saved the migration file,
+it is ok to run `flask db upgrade` and load data
 
 ### Database Initialization
 
-- Windows: run the rest of the commands in bash and not WSL.  Make sure the `api/private.py` has the correct password (password used in psql).  If errors, check the postgreSQL WSL installation tutorial [Tips/Debugging](./postgres-windows.md) section for help. 
+*On Windows*: run the rest of the commands in bash and not WSL.
+Make sure `api/private.py` has the correct password (password used in `psql`).
+If errors, check the PostgreSQL WSL installation tutorial
+[Tips/Debugging](./postgres-windows.md) section for help. 
 
 Use the `flask` command to initialize your development database:
 ```bash
 $ flask db migrate
 $ flask db upgrade
-$ flask data load-all
 ```
+
+To initialize the data required by the application,
+you can either run a convenience shell script:
+```bash
+$ ./bin/load-all-app-data.sh
+```
+or use individual commands available
+through `flask app` (run `flask app --help` to see options).
 
 To completely reset the database during development,
 the script `bin/reset-db.sh` may be of use.
@@ -358,7 +400,7 @@ To include a first or last name with blanks or other
 characters special to the shell,
 enclose it in quotes. For example:
 ```bash
-$ flask account new --first="Billy Bob" --last="Smith" bbob bob-pass
+$ flask account new --first="Billy Bob" --last="Smith" bbob bbob-pass
 ```
 
 ## Run CC
