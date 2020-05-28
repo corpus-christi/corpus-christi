@@ -6,8 +6,6 @@ from sqlalchemy.orm import relationship
 from src.db import Base
 from src.shared.models import StringTypes
 
-
-
 # ---- Group
 
 class Group(Base):
@@ -15,11 +13,11 @@ class Group(Base):
     id = Column(Integer, primary_key=True)
     name = Column(StringTypes.MEDIUM_STRING, nullable=False)
     description = Column(StringTypes.LONG_STRING, nullable=False)
-    manager_id = Column(Integer, ForeignKey(
-        'people_manager.id'), nullable=False)
+    group_type_id = Column(Integer, ForeignKey(
+        'groups_group_type.id'), nullable=False)
     active = Column(Boolean, nullable=False, default=True)
-    manager = relationship('Manager', back_populates='groups', lazy=True)
     members = relationship('Member', backref='group', lazy=True)
+    managers = relationship('Manager', back_populates='group', lazy=True)
     meetings = relationship('Meeting', backref='group', lazy=True)
     events = relationship('EventGroup', back_populates='group', lazy=True)
     images = relationship('ImageGroup', back_populates='group', lazy=True)
@@ -32,13 +30,25 @@ class GroupSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     name = fields.String(required=True, validate=Length(min=1))
     description = fields.String(required=True, validate=Length(min=1))
+    group_type_id = fields.Integer(data_key='groupTypeId', required=True)
     active = fields.Boolean(required=True)
-    manager_id = fields.Integer(data_key='managerId', required=True)
-    member_list = fields.Nested('MemberSchema', data_key="memberList", many=True, only=[
-                                'person', 'joined', 'active', 'id'])
-    manager_info = fields.Nested('ManagerSchema', data_key="managerInfo", only=[
-                                 'description_i18n', 'person'])
 
+    members = fields.Nested('MemberSchema', many=True, only=['person', 'joined', 'active', 'id'])
+    managers = fields.Nested('ManagerSchema', many=True, only=['person', 'active', 'id'])
+    # TODO: verify that the actual key instead of data_key is used in 'only' keyword argument <2020-05-28, David Deng> #
+    meetings = fields.Nested('MeetingSchema', many=True, only=['group_id', 'address_id', 'start_time', 'stop_time', 'description', 'active'])
+
+# ---- Group Type
+
+class GroupType(Base):
+    __tablename__ = 'groups_group_type'
+    id = Column(Integer, primary_key=True)
+    name = Column(StringTypes.MEDIUM_STRING, nullable=False)
+
+class GroupTypeSchema(Schema):
+    id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
+    name = fields.String(required=True, validate=Length(min=1))
+        
 
 # ---- Meeting
 
@@ -91,6 +101,45 @@ class MemberSchema(Schema):
     joined = fields.Date(required=True)
     active = fields.Boolean(required=True)
     person = fields.Nested('PersonSchema')
+
+
+# ---- Manager
+
+class Manager(Base):
+    __tablename__ = 'groups_manager'
+    id = Column(Integer, primary_key=True)
+    person_id = Column(Integer, ForeignKey('people_person.id'), nullable=False)
+    group_id = Column(Integer, ForeignKey('groups_group.id'), nullable=False)
+    manager_type_id = Column(Integer, ForeignKey('groups_manager_type.id'), nullable=False)
+    active = Column(Boolean, nullable=False, default=True)
+    person = relationship('Person', back_populates='managers', lazy=True)
+    group = relationship('Group', back_populates='managers', lazy=True)
+
+    def __repr__(self):
+        return f"<Manager(id={self.id})>"
+
+
+class ManagerSchema(Schema):
+    id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
+    person_id = fields.Integer(data_key='personId', required=True)
+    group_id = fields.Integer(data_key='groupId', required=True)
+    manager_type_id = fields.Integer(data_key='managerTypeId', required=True)
+    active = fields.Boolean(required=True)
+    person = fields.Nested('PersonSchema')
+    group = fields.Nested('GroupSchema')
+
+
+# ---- Manager Type
+
+class ManagerType(Base):
+    __tablename__ = 'groups_manager_type'
+    id = Column(Integer, primary_key=True)
+    name = Column(StringTypes.MEDIUM_STRING, nullable=False)
+
+class ManagerTypeSchema(Schema):
+    id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
+    name = fields.String(required=True, validate=Length(min=1))
+
 
 
 # ---- Attendance

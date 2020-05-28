@@ -17,11 +17,11 @@ from ..shared.models import StringTypes
 
 
 people_person_role = Table('person_role', Base.metadata,
-                           Column('people_person_id', Integer, ForeignKey(
-                               'people_person.id'), primary_key=True),
-                           Column('id', Integer, ForeignKey(
-                               'people_role.id'), primary_key=True)
-                           )
+        Column('people_person_id', Integer, ForeignKey(
+            'people_person.id'), primary_key=True),
+        Column('id', Integer, ForeignKey(
+            'people_role.id'), primary_key=True)
+        )
 
 
 # ---- Person
@@ -55,6 +55,7 @@ class Person(Base):
     teams = relationship("TeamMember", back_populates="member")
     diplomas_awarded = relationship('DiplomaAwarded', back_populates='students', lazy=True, uselist=True)
     members = relationship('Member', back_populates='person', lazy=True)
+    managers = relationship('Manager', back_populates='person', lazy=True)
     images = relationship('ImagePerson', back_populates='person')
 
     roles = relationship("Role", secondary=people_person_role, backref="person")
