@@ -142,7 +142,7 @@ export default {
       this.$validator.validateAll().then(isValid => {
         if (isValid) {
           this.$http
-            .get(`/api/v1/groups/find_group/${group.name}/${group.manager.id}`)
+            .get(`/api/v1/groups/find_group/${group.name}/${group.manager.person.id}`)
             .then(response => {
               if (response.data == 0) {
                 operation();
