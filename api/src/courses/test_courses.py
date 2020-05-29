@@ -688,7 +688,7 @@ def test_create_course_offering(auth_client):
 
 def test_read_all_course_offerings(auth_client):
     # GIVEN existing (active and inactive) course offerings
-    create_multiple_courses(auth_client.sqla, 1)
+    create_multiple_(auth_client.sqla, 1)
     count = random.randint(8, 19)
     create_multiple_course_offerings(auth_client.sqla, count)
     # WHEN all sections needed
