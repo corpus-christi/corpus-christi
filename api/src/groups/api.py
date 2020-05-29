@@ -9,9 +9,9 @@ from .models import Group, GroupSchema, Attendance, Member, MemberSchema, Meetin
 from .. import db
 from ..images.models import Image, ImageGroup
 from ..people.models import Role, Person
-from src.shared.helpers import modify_entity
+from src.shared.helpers import modify_entity, get_all_queried_entities
 
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, DBAPIError
 
 # ---- Group Type
 
@@ -104,14 +104,14 @@ def create_group():
 @groups.route('/groups')
 def read_all_groups():
     query = db.session.query(Group)
-    # print(request.args.getlist('where'))
-    # try:
-    #     query = append_query_arguments(query, request.args)
-    # except ValueError as err:
-    #     return jsonify(repr(err)), 422
-
-    groups = query.all()
-    return jsonify(group_schema.dump(query, many=True))
+    try:
+        groups = get_all_queried_entities(query, request.args)
+    except ValueError as e:
+        return jsonify(repr(e)), 422
+    except Exception as e:
+        return jsonify("Failed executing the query"), 422
+    group_schema = GroupSchema()
+    return jsonify(group_schema.dump(groups, many=True)), 200
 
 
 @groups.route('/groups/<group_id>')

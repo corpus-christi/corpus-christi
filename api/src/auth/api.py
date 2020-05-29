@@ -65,6 +65,7 @@ def login():
 # Define our callback function to check if a token has been revoked or not
 @jwt.token_in_blacklist_loader
 def check_if_token_revoked(decoded_token):
+    # return False # for testing purpose
     return is_token_revoked(decoded_token)
 
 
