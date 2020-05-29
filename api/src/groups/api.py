@@ -11,6 +11,8 @@ from ..images.models import Image, ImageGroup
 from ..people.models import Role, Person
 from src.shared.helpers import modify_entity
 
+from sqlalchemy.exc import IntegrityError
+
 # ---- Group Type
 
 group_type_schema = GroupTypeSchema()
@@ -89,13 +91,25 @@ def create_group():
     new_group = Group(**valid_group)
 
     db.session.add(new_group)
-    db.session.commit()
+
+    try:
+        db.session.commit()
+    # when the foreign key given is invalid
+    except IntegrityError:
+        return jsonify('the foreign key in the payload does not correspond to an actual object in the database'), 404
+
     return group_schema.dump(new_group), 201
 
 
 @groups.route('/groups')
 def read_all_groups():
     query = db.session.query(Group)
+    offset = request.args.get('offset')
+    if offset:
+        query = query.offset(offset)
+    limit = request.args.get('limit')
+    if limit:
+        query = query.limit(limit)
     return_group = request.args.get('return_group')
     if return_group == 'inactive':
         query = query.filter_by(active=False)
