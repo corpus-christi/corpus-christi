@@ -125,12 +125,12 @@ def read_one_group(group_id):
 @groups.route('/groups/<group_id>', methods=['PATCH'])
 @jwt_required
 def update_group(group_id):
+    group_schema = GroupSchema()
     try:
         valid_attributes = group_schema.load(request.json, partial=True)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    group_schema = GroupSchema()
     return modify_entity(Group, group_schema, group_id, valid_attributes)
 
 
