@@ -32,7 +32,7 @@ def flip():
     return random.choice((True, False))
 
 
-def group_object_factory(sqla):
+def group_object_factory(group_type_id):
     """Cook up a fake group."""
     # all_managers = sqla.query(Manager).all()
     # if not all_managers:
@@ -42,6 +42,7 @@ def group_object_factory(sqla):
         'name': rl_fake().word(),
         'description': rl_fake().sentences(nb=1)[0],
         'active': flip(),
+        'groupTypeId': group_type_id
         # 'managerId': all_managers[random.randint(0, len(all_managers) - 1)].id
     }
     return group
@@ -189,8 +190,12 @@ def create_multiple_groups(sqla, n):
     #     all_managers = sqla.query(Manager).all()
     group_schema = GroupSchema()
     new_groups = []
+    group_type = sqla.query(GroupType).first()
+    if group_type is None:
+        create_multiple_group_types(sqla, 1)
+        group_type = sqla.query(GroupType).first()
     for i in range(n):
-        valid_group = group_schema.load(group_object_factory(sqla))
+        valid_group = group_schema.load(group_object_factory(group_type.id))
         new_groups.append(Group(**valid_group))
     sqla.add_all(new_groups)
     sqla.commit()
