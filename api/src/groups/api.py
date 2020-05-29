@@ -10,7 +10,6 @@ from .. import db
 from ..images.models import Image, ImageGroup
 from ..people.models import Role, Manager, Person
 
-
 # ---- Group
 
 group_schema = GroupSchema()
@@ -95,11 +94,13 @@ def read_one_group(group_id):
         return jsonify(msg="Group not found"), 404
     return group_dump(result), 200
 
+
 @groups.route('/find_group/<group_name>/<manager>')
 @jwt_required
 def find_group(group_name=None, manager=None):
     matching_group_count = db.session.query(Group).filter_by(name=group_name, manager_id=manager).count()
     return jsonify(matching_group_count), 200
+
 
 @groups.route('/groups/<group_id>', methods=['PATCH'])
 @jwt_required
