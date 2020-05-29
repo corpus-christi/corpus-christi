@@ -98,7 +98,7 @@ def create_group():
     except IntegrityError:
         return jsonify('the foreign key in the payload does not correspond to an actual object in the database'), 404
 
-    return group_schema.dump(new_group), 201
+    return jsonify(group_schema.dump(new_group)), 201
 
 
 @groups.route('/groups')
