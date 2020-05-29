@@ -125,101 +125,40 @@ def read_one_group(group_id):
 @groups.route('/groups/<group_id>', methods=['PATCH'])
 @jwt_required
 def update_group(group_id):
-    # fetch the optional 'person_ids' field in the request object
-    update_person_ids = []
-    if 'person_ids' in request.json.keys():
-        update_person_ids = request.json['person_ids']
-        del request.json['person_ids']
-
     try:
-        valid_group = group_schema.load(request.json)
+        valid_attributes = group_schema.load(request.json, partial=True)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    group = db.session.query(Group).filter_by(id=group_id).first()
-    if group is None:
-        return jsonify(msg="Group not found"), 404
-
-    new_manager_id = None
-    # fetch 'manager_id' from the request object
-    if 'manager_id' in request.json.keys():
-        new_manager_id = request.json['manager_id']
-    if db.session.query(Manager).filter_by(id=new_manager_id).first() is None:
-        return jsonify(msg="Manager not found"), 404
-
-    # if the manager changed, then try to add the overseer role to the manager's account
-    if new_manager_id and new_manager_id is not group.manager_id:
-        group_overseer = db.session.query(Role).filter_by(name_i18n="role.group-overseer").first()
-        if group_overseer:
-            manager = db.session.query(Manager).filter_by(id=new_manager_id).first()
-            manager_account = db.session.query(Person).filter_by(person_id=manager.person_id).first()
-            if manager_account:
-                manager_roles = manager_account.roles
-                if group_overseer not in manager_roles:
-                    manager_roles.append(group_overseer)
-                    setattr(manager_account, 'roles', manager_roles)
-                    print("adding group overseer role", end='\n\n\n')
-
-    old_member_joined_dates = []
-    for member in group.members:
-        old_member_joined_dates.append({member.person_id: member.joined})
-
-    old_person_ids = [member.person_id for member in group.members]
-    print(f"old person ids: {old_person_ids}")
-    print(f"new person ids: {update_person_ids}")
-
-    today = datetime.datetime.today().strftime('%Y-%m-%d')
-
-    # for each update_person_id, if it already exists, skip, otherwise, add
-    # this way it keeps the original member_id unchanged
-    if update_person_ids != []:
-        for update_person_id in update_person_ids:
-            if update_person_id not in old_person_ids:
-                new_member = generate_member(group.id, update_person_id, today, True)
-                db.session.add(new_member)
-            else:
-                print(f"NEW ID: {update_person_id}")
-                new_member = db.session.query(Member).filter_by(person_id=update_person_id, group_id=group_id).first()
-                setattr(new_member, 'active', True)
-
-    if update_person_ids != []:
-        for old_person_id in old_person_ids:
-            if old_person_id not in update_person_ids:
-                delete_member = db.session.query(Member).filter_by(group_id=group.id, person_id=old_person_id).first()
-                setattr(delete_member, 'active', False)
-
-    # set other attributes
-    for key, val in valid_group.items():
-        setattr(group, key, val)
-
-    db.session.commit()
-    return group_dump(group), 201
+    group_schema = GroupSchema()
+    return modify_entity(Group, group_schema, group_id, valid_attributes)
 
 
-@groups.route('/groups/activate/<group_id>', methods=['PUT'])
-@jwt_required
-def activate_group(group_id):
-    group = db.session.query(Group).filter_by(id=group_id).first()
-
-    if group is None:
-        return jsonify(msg="Group not found"), 404
-
-    setattr(group, 'active', True)
-    db.session.commit()
-    return jsonify(group_schema.dump(group))
-
-
-@groups.route('/groups/deactivate/<group_id>', methods=['PUT'])
-@jwt_required
-def deactivate_group(group_id):
-    group = db.session.query(Group).filter_by(id=group_id).first()
-
-    if group is None:
-        return jsonify(msg="Group not found"), 404
-
-    setattr(group, 'active', False)
-    db.session.commit()
-    return jsonify(group_schema.dump(group))
+# Redundant functionality, covered by update_group
+# @groups.route('/groups/activate/<group_id>', methods=['PUT'])
+# @jwt_required
+# def activate_group(group_id):
+#     group = db.session.query(Group).filter_by(id=group_id).first()
+# 
+#     if group is None:
+#         return jsonify(msg="Group not found"), 404
+# 
+#     setattr(group, 'active', True)
+#     db.session.commit()
+#     return jsonify(group_schema.dump(group))
+# 
+# 
+# @groups.route('/groups/deactivate/<group_id>', methods=['PUT'])
+# @jwt_required
+# def deactivate_group(group_id):
+#     group = db.session.query(Group).filter_by(id=group_id).first()
+# 
+#     if group is None:
+#         return jsonify(msg="Group not found"), 404
+# 
+#     setattr(group, 'active', False)
+#     db.session.commit()
+#     return jsonify(group_schema.dump(group))
 
 # ---- Manager Type
 
