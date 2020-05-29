@@ -118,25 +118,88 @@ def test_delete_group_type(auth_client):
     assert len(group_types) == count - 1
 
 # # ---- Group
-# @pytest.mark.smoke
-# def test_create_group(auth_client):
-#     pass
-# 
-# @pytest.mark.smoke
-# def test_create_invalid_group(auth_client):
-#     pass
-# 
-# @pytest.mark.smoke
-# def test_read_all_groups(auth_client):
-#     pass
-# 
-# @pytest.mark.smoke
-# def test_read_one_group(auth_client):
-#     pass
-# 
-# @pytest.mark.smoke
-# def test_update_group(auth_client):
-#     pass
+
+@pytest.mark.smoke
+def test_create_group(auth_client):
+    # Test creating invalid group
+    # GIVEN invalid group to put in database
+    broken_group = {}
+    # WHEN database queried
+    resp = auth_client.post(
+        url_for('groups.create_group'), json=broken_group)
+    # THEN assert exception thrown
+    assert resp.status_code == 422
+    # Test creating valid group
+    # GIVEN an existing group
+    count = random.randint(8, 19)
+    create_multiple_group_types(auth_client.sqla, 1)
+    group_type = auth_client.sqla.query(GroupType).first()
+    # WHEN one or more groups need a section
+    for i in range(count):
+        resp = auth_client.post(url_for(
+            'groups.create_group'), json=group_object_factory(group_type.id))
+        assert resp.status_code == 201
+    # THEN create new group section
+    assert auth_client.sqla.query(Group).count() == count
+    group_type.id = -1
+    resp = auth_client.post(url_for(
+                'groups.create_group'), json=group_object_factory(group_type.id))
+    assert resp.status_code == 404
+
+@pytest.mark.smoke
+def test_read_all_groups(auth_client):
+    # GIVEN existing (active and inactive) group
+    create_multiple_group_types(auth_client.sqla, 1)
+    count = random.randint(8, 19)
+    create_multiple_groups(auth_client.sqla, count)
+    # WHEN all sections needed
+    resp = auth_client.get(url_for('groups.create_group'))
+    # THEN list all group sections
+    assert len(resp.json) == count
+#
+@pytest.mark.smoke
+def test_read_one_group(auth_client):
+    # GIVEN an existing group
+    create_multiple_group_types(auth_client.sqla, 1)
+    count = random.randint(3, 11)
+    create_multiple_groups(auth_client.sqla, count)
+    # WHEN one group section needed
+    groups = auth_client.sqla.query(Group).all()
+    # THEN list one group section of group
+    for group in groups:
+        resp = auth_client.get(url_for(
+            'groups.read_one_group', group_id=group.id))
+        assert resp.status_code == 200
+        assert resp.json['name'] == group.name
+        assert resp.json['description'] == group.description
+        assert resp.json['active'] == group.active
+        assert resp.json['groupTypeId'] == group.group_type_id
+
+
+@pytest.mark.smoke
+def test_update_group(auth_client):
+    # Test with invalid group
+    # GIVEN empty database
+    # WHEN databse queried
+    resp = auth_client.patch(
+        url_for('groups.update_group', group_id=555))
+    # THEN assert error code
+    assert resp.status_code == 422
+    # Test with populated database
+    # GIVEN an existing (active or inactive) group
+    create_multiple_group_types(auth_client.sqla, 1)
+    count = random.randint(3, 11)
+    create_multiple_groups(auth_client.sqla, count)
+    groups = auth_client.sqla.query(Group).all()
+    # WHEN group needs to update existing information
+    for group in groups:
+        resp = auth_client.patch(url_for('groups.update_group', group_id=group.id),
+                                 json={'name': 'asd', 'description': 'test_descr', 'active': False})
+        # THEN assert changes to group  reflect update
+        assert resp.status_code == 200
+        assert resp.json['name'] == 'asd'
+        assert resp.json['description'] == 'test_descr'
+        assert resp.json['active'] == False
 # 
 # @pytest.mark.smoke
 # def test_invalid_update_group(auth_client):
