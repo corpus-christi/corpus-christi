@@ -45,6 +45,9 @@ class GroupType(Base):
     id = Column(Integer, primary_key=True)
     name = Column(StringTypes.MEDIUM_STRING, nullable=False)
 
+    def __repr__(self):
+        return f"<GroupType(id={self.id})>"
+
 class GroupTypeSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     name = fields.String(required=True, validate=Length(min=1))
@@ -135,6 +138,9 @@ class ManagerType(Base):
     __tablename__ = 'groups_manager_type'
     id = Column(Integer, primary_key=True)
     name = Column(StringTypes.MEDIUM_STRING, nullable=False)
+
+    def __repr__(self):
+        return f"<ManagerType(id={self.id})>"
 
 class ManagerTypeSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
