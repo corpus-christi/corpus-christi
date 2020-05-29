@@ -117,10 +117,10 @@ def read_all_groups():
 @groups.route('/groups/<group_id>')
 @jwt_required
 def read_one_group(group_id):
-    result = db.session.query(Group).filter_by(id=group_id).first()
-    if result is None:
-        return jsonify(msg="Group not found"), 404
-    return group_dump(result), 200
+    group = db.session.query(Group).filter_by(id=group_id).first()
+    if group is None:
+        return jsonify(f"Group with id {group_id} does not exist"), 404
+    return jsonify(group_schema.dump(group)), 200
 
 @groups.route('/find_group/<group_name>/<manager>')
 @jwt_required
