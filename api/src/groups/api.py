@@ -104,25 +104,13 @@ def create_group():
 @groups.route('/groups')
 def read_all_groups():
     query = db.session.query(Group)
-    offset = request.args.get('offset')
-    if offset:
-        query = query.offset(offset)
-    limit = request.args.get('limit')
-    if limit:
-        query = query.limit(limit)
-    return_group = request.args.get('return_group')
-    if return_group == 'inactive':
-        query = query.filter_by(active=False)
-    elif return_group in ('all', 'both'):
-        pass  # Don't filter
-    else:
-        query = query.filter_by(active=True)
-    query = query.all()
+    # print(request.args.getlist('where'))
+    # try:
+    #     query = append_query_arguments(query, request.args)
+    # except ValueError as err:
+    #     return jsonify(repr(err)), 422
 
-    for group in query:
-        group.member_list = group.members
-        group.manager_info = group.manager
-        group.manager_info.person = group.manager.person
+    groups = query.all()
     return jsonify(group_schema.dump(query, many=True))
 
 
