@@ -65,11 +65,10 @@ promoting the visitor to a **public** user.
 When registering as a **public** user,
 a church attendee submits personal data just once,
 simplifying course registration and event sign up in the future.
-Registration creates a _Person_ instance and an _Account_
-instance for the user.
+Registration creates a _Person_ instance for the user.
 
 During registration, a **public** user provides a username and password
-that are stored in the _Account_ entity and are used later
+that are stored in the _Person_ entity and are used later
 when the user wants to interact with the system.
 
 For example, 
@@ -121,6 +120,7 @@ For example:
 A **public** user may self register for:
 - A _Course Offering_
 - An _Event_
+
 The **public** user clicks on the offering or event
 then supplies his or her username and password.
 The system validates these login credentials
