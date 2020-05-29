@@ -8,7 +8,7 @@ from flask import url_for
 from .create_group_data import flip, create_role, group_object_factory, group_object_factory_with_members, \
     create_multiple_groups, member_object_factory, create_multiple_members, meeting_object_factory, \
     create_multiple_meetings, create_attendance, create_multiple_group_types, create_multiple_manager_types, \
-    group_type_object_factory
+    group_type_object_factory, manager_type_object_factory
 from .models import Group, GroupType, Member, Meeting, MeetingSchema, Attendance, Manager, ManagerType, ManagerSchema
 from ..images.create_image_data import create_images_groups
 from ..images.create_image_data import create_test_images
@@ -22,12 +22,13 @@ fake = Faker()
 
 def generate_managers(auth_client):
     create_multiple_people(auth_client.sqla, 4)
-    create_multiple_accounts(auth_client.sqla)
+    # create_multiple_accounts(auth_client.sqla)
     # create_multiple_managers(auth_client.sqla, 4, "Manager")
 
 
 # ---- Group Type
 
+@pytest.mark.smoke
 def test_create_group_type(auth_client):
     # GIVEN an empty database
     # WHEN we add in a group type
@@ -43,6 +44,7 @@ def test_create_group_type(auth_client):
     # THEN we expect the correct number of items in the database
     assert auth_client.sqla.query(GroupType).count() == 1
 
+@pytest.mark.smoke
 def test_read_one_group_type(auth_client):
     # GIVEN a database with a number of group types
     count = random.randint(3, 11)
@@ -58,6 +60,7 @@ def test_read_one_group_type(auth_client):
         assert resp.status_code == 200
         assert resp.json['name'] == group_type.name
     
+@pytest.mark.smoke
 def test_read_all_group_types(auth_client):
     # GIVEN a database with some group_types
     count = random.randint(3, 11)
@@ -71,6 +74,7 @@ def test_read_all_group_types(auth_client):
     group_types = auth_client.sqla.query(GroupType).all()
     assert len(group_types) == count
 
+@pytest.mark.smoke
 def test_update_group_type(auth_client):
     # GIVEN a database with a number of group_types
     count = random.randint(3, 11)
@@ -92,6 +96,7 @@ def test_update_group_type(auth_client):
     assert auth_client.sqla.query(GroupType).filter_by(id=group_type.id).first().name == 'new_name'
 
 
+@pytest.mark.smoke
 def test_delete_group_type(auth_client):
     # GIVEN a database with a number of group_types
     count = random.randint(3, 11)
@@ -118,7 +123,7 @@ def test_delete_group_type(auth_client):
 @pytest.mark.smoke
 def test_create_group(auth_client):
     # GIVEN an empty database
-    generate_managers(auth_client)
+    # generate_managers(auth_client)
     create_role(auth_client.sqla)
     # print(auth_client.sqla.query(Role).first().name_i18n)
     # WHEN we add in some events
@@ -142,7 +147,7 @@ def test_create_group(auth_client):
 @pytest.mark.smoke
 def test_create_invalid_group(auth_client):
     # GIVEN an empty database
-    generate_managers(auth_client)
+    # generate_managers(auth_client)
     # WHEN we attempt to add invalid events
     count = random.randint(5, 15)
 
@@ -166,7 +171,7 @@ def test_create_invalid_group(auth_client):
 def test_read_all_groups(auth_client):
     # GIVEN
     count = random.randint(3, 11)
-    generate_managers(auth_client)
+    # generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, count)
 
     # WHEN
@@ -186,7 +191,7 @@ def test_read_all_groups(auth_client):
 def test_read_one_group(auth_client):
     # GIVEN
     count = random.randint(3, 11)
-    generate_managers(auth_client)
+    # generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, count)
 
     # WHEN
@@ -206,7 +211,7 @@ def test_read_one_group(auth_client):
 def test_update_group(auth_client):
     # GIVEN a database with a number of groups
     count = random.randint(3, 11)
-    generate_managers(auth_client)
+    # generate_managers(auth_client)
     create_role(auth_client.sqla)
     create_multiple_groups(auth_client.sqla, count)
     create_multiple_members(auth_client.sqla, count * 3)
@@ -256,7 +261,7 @@ def test_update_group(auth_client):
 def test_invalid_update_group(auth_client):
     # GIVEN a database with a number of groups
     count = random.randint(3, 11)
-    generate_managers(auth_client)
+    # generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, count)
 
     original_group = auth_client.sqla.query(Group).first()
@@ -274,7 +279,7 @@ def test_invalid_update_group(auth_client):
 def test_activate_group(auth_client):
     # GIVEN group to deactivate
     count = random.randint(3, 11)
-    generate_managers(auth_client)
+    # generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, count)
 
     groups = auth_client.sqla.query(Group).all()
@@ -296,7 +301,7 @@ def test_activate_group(auth_client):
 def test_deactivate_group(auth_client):
     # GIVEN group to deactivate
     count = random.randint(3, 11)
-    generate_managers(auth_client)
+    # generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, count)
 
     groups = auth_client.sqla.query(Group).all()
@@ -320,7 +325,7 @@ def test_deactivate_group(auth_client):
 @pytest.mark.smoke
 def test_create_meeting(auth_client):
     # GIVEN an empty database
-    generate_managers(auth_client)
+    # generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, 1)
     # WHEN we add in some events
 
@@ -344,7 +349,7 @@ def test_create_meeting(auth_client):
 @pytest.mark.smoke
 def test_create_invalid_meeting(auth_client):
     # GIVEN an empty database
-    generate_managers(auth_client)
+    # generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, 1)
     # WHEN we attempt to add invalid events
     count = random.randint(5, 15)
@@ -368,7 +373,7 @@ def test_read_all_meetings(auth_client):
     assert resp.status_code == 404
     # GIVEN a database with a number of meetings
     count = random.randint(3, 11)
-    generate_managers(auth_client)
+    # generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, count)
     create_multiple_meetings(auth_client.sqla, count)
 
@@ -398,7 +403,7 @@ def generate_addresses(auth_client, count=1):
 def test_read_all_meetings_by_group(auth_client):
     # GIVEN a database with mutliple meetings connected with a particular group
     count = random.randint(3, 11)
-    generate_managers(auth_client)
+    # generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, 3)
     group_ids = [attr_tuple[0] for attr_tuple in auth_client.sqla.query(Group.id).all()]
     group_id_with_meetings = group_ids[0]
@@ -438,7 +443,7 @@ def test_read_all_meetings_by_location(auth_client):
     # GIVEN a database with multiple meetings with locations
     count = random.randint(3, 11)
     generate_addresses(auth_client, 2)
-    generate_managers(auth_client)
+    # generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, 3)
 
     address_ids = [attr_tuple[0] for attr_tuple in auth_client.sqla.query(Address.id).all()]
@@ -478,7 +483,7 @@ def test_read_all_meetings_by_location(auth_client):
 def test_read_one_meeting(auth_client):
     # GIVEN a database with a number of meetings
     count = random.randint(3, 11)
-    generate_managers(auth_client)
+    # generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, count)
     create_multiple_meetings(auth_client.sqla, count)
 
@@ -501,7 +506,7 @@ def test_read_one_meeting(auth_client):
 def test_update_meeting(auth_client):
     # GIVEN a database with a number of meetings
     count = random.randint(3, 11)
-    generate_managers(auth_client)
+    # generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, count)
     create_multiple_meetings(auth_client.sqla, count)
 
@@ -531,7 +536,7 @@ def test_update_meeting(auth_client):
 def test_invalid_update_meeting(auth_client):
     # GIVEN a database with a number of groups and meetings
     count = random.randint(3, 11)
-    generate_managers(auth_client)
+    # generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, count)
     create_multiple_meetings(auth_client.sqla, count)
 
@@ -552,11 +557,11 @@ def test_invalid_update_meeting(auth_client):
     # THEN we assume the incorrect status code
     assert resp.status_code == 422
 
-
+@pytest.mark.smoke
 def test_delete_meeting(auth_client):
     # GIVEN a database with meetings and attendances
     count = random.randint(3, 11)
-    generate_managers(auth_client)
+    # generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, count)
     create_multiple_members(auth_client.sqla, count)
     create_multiple_meetings(auth_client.sqla, count)
@@ -576,11 +581,11 @@ def test_delete_meeting(auth_client):
     # THEN we should get an error code
     assert resp.status_code == 404
 
-
+@pytest.mark.smoke
 def test_activate_meeting(auth_client):
     # GIVEN a database with inactive meetings and attendances
     count = random.randint(3, 11)
-    generate_managers(auth_client)
+    # generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, count)
     inactive_meetings = []
     for _ in range(count):
@@ -604,11 +609,11 @@ def test_activate_meeting(auth_client):
     # THEN we expect an error code
     assert resp.status_code == 404
 
-
+@pytest.mark.smoke
 def test_deactivate_meeting(auth_client):
     # GIVEN a database with active meetings and attendances
     count = random.randint(3, 11)
-    generate_managers(auth_client)
+    # generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, count)
     active_meetings = []
     for _ in range(count):
@@ -640,7 +645,7 @@ def test_deactivate_meeting(auth_client):
 def test_create_member(auth_client):
     # GIVEN database with some groups and people
     count = random.randint(3, 11)
-    generate_managers(auth_client)
+    # generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, 2)
 
     # WHEN we try to create a member
@@ -672,7 +677,7 @@ def test_read_all_members(auth_client):
     resp = auth_client.get(url_for('groups.read_all_members'))
     assert resp.status_code == 404
     # GIVEN a database with some members
-    generate_managers(auth_client)
+    # generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, 4)
     create_multiple_people(auth_client.sqla, 4)
     create_multiple_members(auth_client.sqla, 4)
@@ -694,7 +699,7 @@ def test_read_all_members(auth_client):
 def test_read_one_member(auth_client):
     # GIVEN a database with some members
     count = random.randint(3, 11)
-    generate_managers(auth_client)
+    # generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, count)
     create_multiple_members(auth_client.sqla, count)
 
@@ -719,7 +724,7 @@ def test_read_one_member(auth_client):
 def test_update_member(auth_client):
     # GIVEN a database with a number of members
     count = random.randint(3, 11)
-    generate_managers(auth_client)
+    # generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, 3)
     create_multiple_members(auth_client.sqla, count)
 
@@ -751,7 +756,7 @@ def test_update_member(auth_client):
 @pytest.mark.smoke
 def test_activate_member(auth_client):
     # GIVEN a database with a number of members
-    generate_managers(auth_client)
+    # generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, 4)
     create_multiple_people(auth_client.sqla, 4)
     create_multiple_members(auth_client.sqla, 4)
@@ -774,7 +779,7 @@ def test_activate_member(auth_client):
 @pytest.mark.smoke
 def test_deactivate_member(auth_client):
     # GIVEN a database with a number of members
-    generate_managers(auth_client)
+    # generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, 4)
     create_multiple_people(auth_client.sqla, 4)
     create_multiple_members(auth_client.sqla, 4)
@@ -800,7 +805,7 @@ def test_deactivate_member(auth_client):
 @pytest.mark.smoke
 def test_create_attendance(auth_client):
     # GIVEN a database with some members and meetings
-    generate_managers(auth_client)
+    # generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, 4)
     count_meetings = random.randint(15, 20)
     count_members = random.randint(3, 5)
@@ -844,7 +849,7 @@ def test_read_all_attendance(auth_client):
     resp = auth_client.get(url_for('groups.read_all_attendance'))
     assert resp.status_code == 404
     # GIVEN a database with some attendances
-    generate_managers(auth_client)
+    # generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, 4)
     create_multiple_people(auth_client.sqla, 4)
     create_multiple_members(auth_client.sqla, 4)
@@ -865,12 +870,14 @@ def test_read_all_attendance(auth_client):
             ).count() == 1
 
 
+
+@pytest.mark.smoke
 def test_read_attendance_by_member(auth_client):
     # Testing an empty Database
     resp = auth_client.get(url_for('groups.read_attendance_by_member', member_id=500))
     assert resp.status_code == 404
     # GIVEN a database with some attendances
-    generate_managers(auth_client)
+    # generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, 4)
     create_multiple_people(auth_client.sqla, 4)
     create_multiple_members(auth_client.sqla, 4)
@@ -890,12 +897,13 @@ def test_read_attendance_by_member(auth_client):
                                                                  meeting_id=attendance["meeting_id"]).count()
 
 
+@pytest.mark.smoke
 def test_read_attendance_by_meeting(auth_client):
     # Testing an empty Database
     resp = auth_client.get(url_for('groups.read_attendance_by_meeting', meeting_id=599))
     assert resp.status_code == 404
     # GIVEN a database with some attendances
-    generate_managers(auth_client)
+    # generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, 4)
     create_multiple_people(auth_client.sqla, 4)
     create_multiple_meetings(auth_client.sqla, 4)
@@ -915,9 +923,10 @@ def test_read_attendance_by_meeting(auth_client):
                                                                  member_id=attendance["member_id"]).count()
 
 
+@pytest.mark.smoke
 def test_delete_attendance(auth_client):
     # GIVEN a database with a number of attendance
-    generate_managers(auth_client)
+    # generate_managers(auth_client)
     create_multiple_groups(auth_client.sqla, 4)
     create_multiple_people(auth_client.sqla, 4)
     create_multiple_meetings(auth_client.sqla, 4)
@@ -1083,6 +1092,92 @@ def test_delete_group_image_no_exist(auth_client):
     # THEN expect the requested row to not be found
     assert resp.status_code == 404
 
+
+# ---- Manager Type
+
+def test_create_manager_type(auth_client):
+    # GIVEN an empty database
+    # WHEN we add in a manager type
+    resp = auth_client.post(url_for('groups.create_manager_type'), json = {'name':'manager_type_1'})
+    # THEN expect the create to run OK
+    assert resp.status_code == 201
+
+    # WHEN we create an invalid manager type
+    resp = auth_client.post(url_for('groups.create_manager_type'), json = {'name':''})
+    # THEN we expect the request to be unprocessable
+    assert resp.status_code == 422
+
+    # THEN we expect the correct number of items in the database
+    assert auth_client.sqla.query(ManagerType).count() == 1
+
+def test_read_one_manager_type(auth_client):
+    # GIVEN a database with a number of manager types
+    count = random.randint(3, 11)
+    create_multiple_manager_types(auth_client.sqla, count)
+
+    manager_types = auth_client.sqla.query(ManagerType).all()
+
+    # WHEN we ask for the manager_types one by one
+    for manager_type in manager_types:
+        # THEN we expect each of them to correspond to the manager_type in the database
+        resp = auth_client.get(
+            url_for('groups.read_one_manager_type', manager_type_id=manager_type.id))
+        assert resp.status_code == 200
+        assert resp.json['name'] == manager_type.name
+    
+def test_read_all_manager_types(auth_client):
+    # GIVEN a database with some manager_types
+    count = random.randint(3, 11)
+    create_multiple_manager_types(auth_client.sqla, count)
+
+    # WHEN we read all active manager_types
+    resp = auth_client.get(url_for('groups.read_all_manager_types'))
+    # THEN we expect the right status code
+    assert resp.status_code == 200
+    # THEN we expect the database has the same number of manager_types as we created
+    manager_types = auth_client.sqla.query(ManagerType).all()
+    assert len(manager_types) == count
+
+def test_update_manager_type(auth_client):
+    # GIVEN a database with a number of manager_types
+    count = random.randint(3, 11)
+    create_multiple_manager_types(auth_client.sqla, count)
+
+    # WHEN we update one manager_type
+    manager_type = auth_client.sqla.query(ManagerType).first()
+
+    payload = manager_type_object_factory("new_name")
+
+    resp = auth_client.patch(
+        url_for('groups.update_manager_type', manager_type_id=manager_type.id), json=payload)
+
+    # THEN we assume the correct status code
+    assert resp.status_code == 200
+    # THEN we assume the correct content in the returned object
+    assert resp.json['name'] == 'new_name'
+    # THEN we assume the correct content in the database
+    assert auth_client.sqla.query(ManagerType).filter_by(id=manager_type.id).first().name == 'new_name'
+
+
+def test_delete_manager_type(auth_client):
+    # GIVEN a database with a number of manager_types
+    count = random.randint(3, 11)
+    create_multiple_manager_types(auth_client.sqla, count)
+
+    # WHEN we delete one of them
+    manager_type = auth_client.sqla.query(ManagerType).first()
+    resp = auth_client.delete(url_for('groups.delete_manager_type', manager_type_id = manager_type.id))
+    # THEN we assume the correct status code
+    assert resp.status_code == 204
+
+    # WHEN we delete a non-existent item
+    resp = auth_client.delete(url_for('groups.delete_manager_type', manager_type_id = -1))
+    # THEN we expect an error
+    assert resp.status_code == 404
+
+    # THEN we assume the number of manager_types in the database to be the correct number
+    manager_types = auth_client.sqla.query(ManagerType).all()
+    assert len(manager_types) == count - 1
 
 # # ---- Manager: Moved from people module
 # 

@@ -12,6 +12,7 @@ from ..people.models import Role, Person
 from src.shared.helpers import modify_entity
 
 # ---- Group Type
+
 group_type_schema = GroupTypeSchema()
 
 @groups.route('/group-types', methods=['POST'])
@@ -65,7 +66,6 @@ def delete_group_type(group_type_id):
 
     # 204 codes don't respond with any content
     return "Deleted successfully", 204
-
 
 # ---- Group
 
@@ -224,6 +224,63 @@ def deactivate_group(group_id):
     setattr(group, 'active', False)
     db.session.commit()
     return jsonify(group_schema.dump(group))
+
+# ---- Manager Type
+
+manager_type_schema = ManagerTypeSchema()
+
+@groups.route('/manager-types', methods=['POST'])
+def create_manager_type():
+    try:
+        valid_manager_type = manager_type_schema.load(request.json)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+
+    new_manager_type = ManagerType(**valid_manager_type)
+    db.session.add(new_manager_type)
+    db.session.commit()
+    return jsonify(manager_type_schema.dump(new_manager_type)), 201
+
+@groups.route('/manager-types/<manager_type_id>', methods=['GET'])
+def read_one_manager_type(manager_type_id):
+    manager_type = db.session.query(ManagerType).filter_by(id=manager_type_id).first()
+    if not manager_type:
+        return jsonify(f"ManagerType with id #{manager_type_id} does not exist."), 404
+
+    return jsonify(manager_type_schema.dump(manager_type))
+
+@groups.route('/manager-types', methods=['GET'])
+def read_all_manager_types():
+    manager_types = db.session.query(ManagerType).all()
+    return jsonify(manager_type_schema.dump(manager_types, many=True))
+
+@groups.route('/manager-types/<manager_type_id>', methods=['PATCH'])
+@jwt_required
+def update_manager_type(manager_type_id):
+    manager_type_schema = ManagerTypeSchema()
+
+    try:
+        valid_attributes = manager_type_schema.load(request.json, partial=True)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+
+    return modify_entity(ManagerType, manager_type_schema, manager_type_id, valid_attributes)
+
+
+@groups.route('/manager-types/<manager_type_id>', methods=['DELETE'])
+@jwt_required
+def delete_manager_type(manager_type_id):
+    manager_type = db.session.query(ManagerType).filter_by(id=manager_type_id).first()
+
+    if not manager_type:
+        return jsonify(f"ManagerType with id #{manager_type_id} does not exist."), 404
+
+    db.session.delete(manager_type)
+    db.session.commit()
+
+    # 204 codes don't respond with any content
+    return "Deleted successfully", 204
+
 
 # ---- Manager
 
