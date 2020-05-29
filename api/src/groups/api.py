@@ -122,12 +122,6 @@ def read_one_group(group_id):
         return jsonify(f"Group with id {group_id} does not exist"), 404
     return jsonify(group_schema.dump(group)), 200
 
-@groups.route('/find_group/<group_name>/<manager>')
-@jwt_required
-def find_group(group_name=None, manager=None):
-    matching_group_count = db.session.query(Group).filter_by(name=group_name, manager_id=manager).count()
-    return jsonify(matching_group_count), 200
-
 @groups.route('/groups/<group_id>', methods=['PATCH'])
 @jwt_required
 def update_group(group_id):
