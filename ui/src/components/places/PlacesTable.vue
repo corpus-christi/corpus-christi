@@ -389,13 +389,15 @@
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn flat color="primary" @click="resetFilters">
-                {{ $t("places.address.filters.reset-filters") }}</v-btn>
+                {{ $t("places.address.filters.reset-filters") }}</v-btn
+              >
               <v-btn flat color="secondary" @click="cancelFilterDialog">{{
                 $t("actions.cancel")
               }}</v-btn>
               <v-btn flat color="primary" @click="applyFilters">
-                {{ $t("places.address.filters.apply") }}</v-btn>
-          </v-card-actions>
+                {{ $t("places.address.filters.apply") }}</v-btn
+              >
+            </v-card-actions>
           </v-card>
         </v-layout>
       </v-container>

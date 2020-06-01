@@ -1,4 +1,3 @@
-//add grooup button content
 <template>
   <v-card>
     <v-card-title>
@@ -59,7 +58,8 @@
         :loading="saveLoading"
         :disabled="formDisabled"
         data-cy="form-save"
-        >{{ $t("actions.save") }}hhhh <!-- save botton - Add group -->
+        >{{ $t("actions.save") }}hhhh
+        <!-- save botton - Add group -->
       </v-btn>
     </v-card-actions>
 
@@ -145,7 +145,11 @@ export default {
       this.$validator.validateAll().then(isValid => {
         if (isValid) {
           this.$http
-            .get(`/api/v1/groups/find_group/${group.name}/${group.manager.person.id}`)
+            .get(
+              `/api/v1/groups/find_group/${group.name}/${
+                group.manager.person.id
+              }`
+            )
             .then(response => {
               if (response.data == 0) {
                 operation();
@@ -178,13 +182,14 @@ export default {
       this.$validator.reset();
     },
 
-    save() { //save add group
+    save() {
+      //save add group
       //console.log(this.group);
       //console.log(this.group);
       this.validateGroup(this.group, () => {
         this.group.active = true;
         //this.group.active = true;
-        this.$emit("save", this.group);//where is this sending to?
+        this.$emit("save", this.group); //where is this sending to?
       });
       this.manager = {};
     },

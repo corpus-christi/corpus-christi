@@ -388,7 +388,7 @@ the script `bin/reset-db.sh` may be of use.
 Once the database is initialized,
 create a CC test account for yourself.
 ```bash
-$ flask account new --first="Fred" --last="Ziffle" username password
+$ flask people new --first="Fred" --last="Ziffle" username password
 ```
 where
 - `--first` is the user's first name
@@ -400,7 +400,7 @@ To include a first or last name with blanks or other
 characters special to the shell,
 enclose it in quotes. For example:
 ```bash
-$ flask account new --first="Billy Bob" --last="Smith" bbob bbob-pass
+$ flask people new --first="Billy Bob" --last="Smith" bbob bbob-pass
 ```
 
 ## Run CC

@@ -65,6 +65,7 @@
 <script>
 import { mapMutations } from "vuex";
 import Account from "../models/Account";
+import jwtDecode from "jwt-decode";
 
 export default {
   name: "Login",
@@ -97,11 +98,13 @@ export default {
           console.error(`JWT STATUS ${resp.status}`);
           return;
         } else {
+          const decodedJwt = jwtDecode(resp.data.jwt);
           this.logIn({
             account: new Account(
               resp.data.username,
               resp.data.firstName,
-              resp.data.lastName
+              resp.data.lastName,
+              decodedJwt.user_claims.roles
             ),
             jwt: resp.data.jwt
           });

@@ -6,14 +6,11 @@ from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identi
 from src.auth.utils import jwt_not_required
 
 from . import auth
-from .blacklist_helpers import (
-    is_token_revoked, add_token_to_database, get_user_tokens,
-    revoke_token, unrevoke_token)
+from .blacklist_helpers import (is_token_revoked, add_token_to_database, get_user_tokens,
+                                revoke_token, unrevoke_token)
 from .. import jwt, db
 from ..auth.exceptions import TokenNotFound
 from ..people.models import Person, PersonSchema, Role, RoleSchema
-
-#removed Account, AccountSchema,  from line 14
 
 blacklist = set()
 
@@ -45,21 +42,17 @@ def login():
     # Return to the caller all the account information needed.
     person = db.session.query(Person).filter_by(username=username).first()
     if person is None or not person.verify_password(password):
-        #print(password)
-        #print(person.hash_password)
         return jsonify(badCred), 404
 
-#dont think this is neccesary anymore
-    # person = db.session.query(Person).filter_by(id=account.person_id).first()
-    # if person is None:
-    #     return jsonify(badCred), 404
-
-    print(datetime)
     access_token = create_access_token(identity=username)
+
     # Add token to database for revokability
     add_token_to_database(access_token, current_app.config['JWT_IDENTITY_CLAIM'])
-    return jsonify(jwt=access_token, username=person.username,
-                   firstName=person.first_name, lastName=person.last_name)
+
+    return jsonify(jwt=access_token,
+                   username=person.username,
+                   firstName=person.first_name,
+                   lastName=person.last_name)
 
 
 # Define our callback function to check if a token has been revoked or not
@@ -108,16 +101,6 @@ def login_test():
 
     success = True
     person = db.session.query(Person).filter_by(username=username).first()
-    #dont think this is needed
-    # if account is None:
-    #     success = False
-    #     response['account'] = f"Can't fetch <Account(username='{username}')>"
-    # else:
-    #     account_schema = AccountSchema()
-    #     response['account'] = account_schema.dump(account)
-
-    #     person = db.session.query(Person).filter_by(
-    #         id=account.person_id).first()
     if person is None:
         success = False
         response['person'] = f"Can't fetch <Person(username='{username}')>"

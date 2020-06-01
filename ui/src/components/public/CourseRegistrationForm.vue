@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapState } from "vuex";
 
 export default {
   name: "CourseRegistrationForm",
@@ -66,7 +66,10 @@ export default {
     activeOfferings: null
   },
 
-  computed: mapGetters(["isLoggedIn", "currentAccount"]),
+  computed: {
+    ...mapState(["currentAccount"]),
+    ...mapGetters(["isLoggedIn"])
+  },
 
   methods: {
     cancel() {
