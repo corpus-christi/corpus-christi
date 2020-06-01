@@ -176,7 +176,7 @@ def create_multiple_members(sqla, n):
             sqla.add(member)
             sqla.commit()
 
-def create_multiple_managers(sqla, n):
+def create_multiple_managers(sqla, fraction=0.75):
     """Commit `n` new managers to the database """
     # set up environment for creating managers
     manager_schema = ManagerSchema()
@@ -188,21 +188,23 @@ def create_multiple_managers(sqla, n):
     all_groups = sqla.query(Group).all()
     if sqla.query(Person).count() == 0:
         create_multiple_people(sqla, random.randint(3, 6))
-    all_persons = sqla.query(Person).all()
+
+    all_managers = sqla.query(Person, Group).all()
+    sample_managers = random.sample(
+            all_managers, math.floor(len(all_managers) * fraction))
 
     new_managers = []
-    group_person_ids = [ (manager.group_id, manager.person_id) 
-            for manager in sqla.query(Manager).all() ]
-    for i in range(n):
+    # group_person_ids = [ (manager.group_id, manager.person_id) 
+    #         for manager in sqla.query(Manager).all() ]
+    for person, group in sample_managers:
         # generating non-existing group_id, person_id pair
-        while True:
-            group_id = random.choice(all_groups).id
-            person_id = random.choice(all_persons).id
-            if (group_id, person_id) not in group_person_ids:
-                group_person_ids.append((group_id, person_id))
-                break
+        # group_id = random.choice(all_groups).id
+        # person_id = random.choice(all_persons).id
+        #     if (group_id, person_id) not in group_person_ids:
+        #         group_person_ids.append((group_id, person_id))
+        #         break
         manager_type_id = random.choice(all_manager_types).id
-        valid_manager = manager_schema.load(manager_object_factory(person_id, group_id, manager_type_id))
+        valid_manager = manager_schema.load(manager_object_factory(person.id, group.id, manager_type_id))
         new_managers.append(Manager(**valid_manager))
     sqla.add_all(new_managers)
     sqla.commit()
