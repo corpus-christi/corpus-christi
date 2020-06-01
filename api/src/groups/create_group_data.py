@@ -269,7 +269,7 @@ def create_group_test_data(sqla):
     create_multiple_group_types(sqla, 5)
     create_multiple_manager_types(sqla, 5)
     create_multiple_groups(sqla, 4)
-    create_multiple_managers(sqla, 20)
+    create_multiple_managers(sqla, 0.75)
     # create_multiple_meetings(sqla, 12)
     # create_multiple_members(sqla, 13)
     # create_attendance(sqla, 0.75)
