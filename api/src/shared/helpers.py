@@ -6,6 +6,8 @@ from src import db
 
 from sqlalchemy.exc import DBAPIError
 
+from .models import QueryArgumentError
+
 
 def modify_entity(entity_type, schema, id, new_value_dict):
     item = db.session.query(entity_type).filter_by(id=id).first()
@@ -50,19 +52,16 @@ def get_all_queried_entities(query_object, request_query_arguments):
 
     Exceptions:
 
-    When the given query value is not in the correct form (e.g. the 'where' or 'order' query does not contain a ':' in the value), an ValueError with proper response will be raised
-
-    When any other error occurs when executing the statement (e.g. a string given to 'offset'), a DBAPIError will be raised
+    When the given query value is not in the correct form (e.g. the 'where' or 'order' query does not contain a ':' in the value), a QueryArgumentError with proper error message will be raised. More types of exceptions can be added in the future, but that will require the endpoints to include logic to handle those errors as well.
 
     This is intended to be used in most of the read_all_* endpoints
     
     """
-    # TODO: When the given query value is invalid, a database error will occur, and this needs to be detected <2020-05-29, David Deng> #
     def parse_kv_str(kv_str):
         """ return a list [k,v] from string 'k:v' """
         kv_lst = kv_str.split(':', 1)
         if len(kv_lst) != 2:
-            raise ValueError(f"The given value '{kv_str}' is not in the 'key:value' form")
+            raise QueryArgumentError(f"The given value '{kv_str}' is not in the 'key:value' form", 422)
         return kv_lst
 
     # offset
@@ -75,27 +74,44 @@ def get_all_queried_entities(query_object, request_query_arguments):
     if limit:
         query_object = query_object.limit(limit)
 
+    # Get the columns of current table
     columns = query_object.column_descriptions[0]['type'].__table__.columns
     columns_map = { c.key: c for c in columns }
-    print("columns_map: {}".format(columns_map))
 
-    # where
+    # where, can be a list of multiple values
     where_key_value_strings = request_query_arguments.getlist('where')
-    # sqlalchemy will automatically translate strings into boolean  and integer
+    # sqlalchemy will automatically translate strings into boolean and/or integer
     if where_key_value_strings:
-        where_dict = { kv_lst[0]: kv_lst[1] for kv_lst in [ parse_kv_str(kv_str) for kv_str in where_key_value_strings ] }
+        where_dict = {}
+        for kv_str in where_key_value_strings:
+            kv_lst = parse_kv_str(kv_str)
+            if kv_lst[0] not in columns_map:
+                raise QueryArgumentError(f"Error in 'where' query: There is no column named '{kv_lst[0]}'", 404)
+            where_dict[kv_lst[0]] = kv_lst[1]
         query_object = query_object.filter_by(**where_dict)
 
-    # # order
-    # order_key_value_string = request_query_arguments.get('order')
-    # if order_key_value_string:
-    #     order_kv_lst = parse_kv_str(order_key_value_string)
+    # order, can be a list of multiple values
+    order_key_value_strings = request_query_arguments.getlist('order')
+    if order_key_value_strings:
+        order_lst = []
+        for kv_str in order_key_value_strings:
+            kv_lst = parse_kv_str(kv_str)
+            if kv_lst[0] not in columns_map:
+                raise QueryArgumentError(f"Error in 'order' query: There is no column named '{kv_lst[0]}'", 404)
+            if kv_lst[1] == 'asc':
+                order_lst.append(columns_map[kv_lst[0]].asc())
+            elif kv_lst[1] == 'desc':
+                order_lst.append(columns_map[kv_lst[0]].desc())
+            else:
+                raise QueryArgumentError(f"Error in 'order' query: Invalid order type '{kv_lst[1]}', must be either 'asc' or 'desc'", 422)
+
+        query_object = query_object.order_by(*order_lst)
 
     try:
         all_entities = query_object.all()
-    except Exception as e:
-        print(e)
-        raise e
+    # catch errors raised from the database
+    except DBAPIError as e:
+        raise QueryArgumentError(repr(e), 422)
     return all_entities
 
 
