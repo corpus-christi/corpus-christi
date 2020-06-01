@@ -65,7 +65,6 @@ class Meeting(Base):
     description = Column(StringTypes.LONG_STRING, nullable=False)
     active = Column(Boolean, nullable=False, default=True)
     address = relationship('Address', back_populates='meetings', lazy=True)
-    attendances = relationship('Attendance', backref='meeting', lazy=True)
 
     def __repr__(self):
         return f"<Meeting(id={self.id})>"
@@ -85,20 +84,17 @@ class MeetingSchema(Schema):
 
 class Member(Base):
     __tablename__ = 'groups_member'
-    id = Column(Integer, primary_key=True)
-    group_id = Column(Integer, ForeignKey('groups_group.id'), nullable=False)
-    person_id = Column(Integer, ForeignKey('people_person.id'), nullable=False)
+    group_id = Column(Integer, ForeignKey('groups_group.id'), primary_key=True, nullable=False)
+    person_id = Column(Integer, ForeignKey('people_person.id'), primary_key=True, nullable=False)
     joined = Column(Date, nullable=False)
     active = Column(Boolean, nullable=False, default=True)
     person = relationship('Person', back_populates='members', lazy=True)
-    meetings = relationship('Attendance', backref='member', lazy=True)
 
     def __repr__(self):
-        return f"<Member(id={self.id})>"
+        return f"<Member(person_id={self.person_id}, group_id={self.group_id})>"
 
 
 class MemberSchema(Schema):
-    id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     group_id = fields.Integer(data_key='groupId', required=True)
     person_id = fields.Integer(data_key='personId', required=True)
     joined = fields.Date(required=True)
@@ -110,20 +106,18 @@ class MemberSchema(Schema):
 
 class Manager(Base):
     __tablename__ = 'groups_manager'
-    id = Column(Integer, primary_key=True)
-    person_id = Column(Integer, ForeignKey('people_person.id'), nullable=False)
-    group_id = Column(Integer, ForeignKey('groups_group.id'), nullable=False)
+    person_id = Column(Integer, ForeignKey('people_person.id'), primary_key=True, nullable=False)
+    group_id = Column(Integer, ForeignKey('groups_group.id'), primary_key=True, nullable=False)
     manager_type_id = Column(Integer, ForeignKey('groups_manager_type.id'), nullable=False)
     active = Column(Boolean, nullable=False, default=True)
     person = relationship('Person', back_populates='managers', lazy=True)
     group = relationship('Group', back_populates='managers', lazy=True)
 
     def __repr__(self):
-        return f"<Manager(id={self.id})>"
+        return f"<Manager(person_id={self.person_id}, group_id={self.group_id})>"
 
 
 class ManagerSchema(Schema):
-    id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     person_id = fields.Integer(data_key='personId', required=True)
     group_id = fields.Integer(data_key='groupId', required=True)
     manager_type_id = fields.Integer(data_key='managerTypeId', required=True)
@@ -154,11 +148,13 @@ class Attendance(Base):
     __tablename__ = 'groups_attendance'
     meeting_id = Column(Integer, ForeignKey(
         'groups_meeting.id'), primary_key=True)
-    member_id = Column(Integer, ForeignKey(
-        'groups_member.id'), primary_key=True)
+    person_id = Column(Integer, ForeignKey(
+        'people_person.id'), primary_key=True)
+    meeting = relationship('Meeting', backref='attendances', lazy=True)
+    person = relationship('Person', backref='attendances', lazy=True)
 
     def __repr__(self):
-        return f"<Attendance(meeting_id={self.meeting_id},member_id={self.member_id})>"
+        return f"<Attendance(meeting_id={self.meeting_id},person_id={self.person_id})>"
 
 
 class AttendanceSchema(Schema):
