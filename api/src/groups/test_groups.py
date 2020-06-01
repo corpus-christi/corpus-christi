@@ -540,9 +540,22 @@ def test_read_all_managers(auth_client):
     assert len(managers_numbers) == count
 
 
-# @pytest.mark.smoke
-# def test_read_one_manager(auth_client):
-#     pass
+@pytest.mark.smoke
+def test_read_one_manager(auth_client):
+    # GIVEN an empty database
+    # WHEN we add in managers
+    create_multiple_groups(auth_client.sqla,1)
+    create_multiple_manager_types(auth_client.sqla,1)
+    create_multiple_managers(auth_client.sqla, 0.75)
+    # WHEN we read an active manager
+    manager = auth_client.sqla.query(Manager).first()
+    print(manager)
+    print(url_for('groups.read_one_manager', group_id =manager.group_id, person_id = manager.person_id))
+    resp = auth_client.get(url_for('groups.read_one_manager', group_id =manager.group_id, person_id = manager.person_id))
+    print(resp.json)
+    assert resp.status_code == 200
+    assert resp.json['personId'] == manager.person_id
+
 # 
 # @pytest.mark.smoke
 # def test_read_one_manager_invalid(auth_client):
