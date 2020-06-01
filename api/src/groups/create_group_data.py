@@ -306,7 +306,7 @@ def create_group_test_data(sqla):
     """The function that creates test data in the correct order """
     create_multiple_group_types(sqla, 5)
     create_multiple_manager_types(sqla, 5)
-    # create_multiple_groups(sqla, 18)
+    create_multiple_groups(sqla, 18)
     # create_multiple_meetings(sqla, 12)
     # create_multiple_members(sqla, 13)
     # create_attendance(sqla, 0.75)
