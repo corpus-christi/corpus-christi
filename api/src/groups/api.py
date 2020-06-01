@@ -225,42 +225,44 @@ def read_all_managers(group_id):
     return jsonify(manager_schema.dump(managers, many=True))
 
 
-@groups.route('/groups/<group_id>/managers/<manager_id>')
+@groups.route('/groups/<group_id>/managers/<person_id>')
 @jwt_required
-def read_one_manager(manager_id):
-    result = db.session.query(Manager).filter_by(id=manager_id).first()
-    if result is None:
-        return jsonify("Manager does not exist"), 404
-    return jsonify(manager_schema.dump(result))
-
-
-@groups.route('/manager/<manager_id>', methods=['PATCH'])
-@jwt_required
-def update_manager(manager_id):
-    try:
-        valid_manager = manager_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    manager = db.session.query(Manager).filter_by(id=manager_id).first()
-
-    for key, val in valid_manager.items():
-        setattr(manager, key, val)
-
-    db.session.commit()
+def read_one_manager(group_id, person_id):
+    manager = db.session.query(Manager).filter_by(group_id=group_id, person_id=person_id).first()
+    if manager is None:
+        return jsonify("Manager with group_id #{group_id} and person_id #{person_id} does not exist"), 404
     return jsonify(manager_schema.dump(manager))
 
 
-@groups.route('/manager/<manager_id>', methods=['DELETE'])
+@groups.route('/groups/<group_id>/managers/<person_id>', methods=['PATCH'])
 @jwt_required
-def delete_manager(manager_id):
-    manager = db.session.query(Manager).filter_by(id=manager_id).first()
+def update_manager(group_id, person_id):
+    try:
+        valid_attributes = manager_schema.load(request.json, partial=True)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
+
+    manager = db.session.query(Manager).filter_by(group_id=group_id, person_id=person_id).first()
+    if manager is None:
+        return jsonify("Manager with group_id #{group_id} and person_id #{person_id} does not exist"), 404
+
+    for key, val in valid_attributes.items():
+        if key != 'group_id' and key != 'person_id':
+            setattr(manager, key, val)
+
+    db.session.add(manager)
+    db.session.commit()
+
+    return jsonify(manager_schema.dump(manager)), 200
+
+
+@groups.route('/groups/<group_id>/managers/<person_id>', methods=['DELETE'])
+@jwt_required
+def delete_manager(group_id, person_id):
+    manager = db.session.query(Manager).filter_by(group_id=group_id, person_id=person_id).first()
 
     if manager is None:
-        return 'Manager not found', 404
-
-    for subordinate in manager.subordinates:
-        setattr(subordinate, 'manager_id', None)
+        return jsonify("Manager with group_id #{group_id} and person_id #{person_id} does not exist"), 404
 
     db.session.delete(manager)
     db.session.commit()
