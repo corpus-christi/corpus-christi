@@ -204,7 +204,77 @@ def test_update_group(auth_client):
 # @pytest.mark.smoke
 # def test_invalid_update_group(auth_client):
 #     pass
-# 
+#
+@pytest.mark.smoke
+def test_subset_group(auth_client):
+    # Test with invalid subset with "offset"
+    # GIVEN empty database
+    # WHEN databse queried
+    create_multiple_group_types(auth_client.sqla, 1)
+    count = random.randint(3, 11)
+    create_multiple_groups(auth_client.sqla, count)
+    # Test with populated database
+    # GIVEN existing (active or inactive) groups
+    groups = auth_client.sqla.query(Group).all()
+    resp = auth_client.get(url_for('groups.create_group'))
+    resp_offset = auth_client.get(url_for('groups.read_all_groups', offset=2))
+    # WHEN there are difference between server and database assert error
+    assert resp_offset.json[0]['id'] == groups[2].id
+    #Test with invalid subset with "limit"
+    resp_limit = auth_client.get(url_for('groups.read_all_groups', limit=2))
+    assert len(resp_limit.json) == 2
+    # Test 'offset' and 'limit' together
+    resp_together = auth_client.get(url_for('groups.read_all_groups', offset=2, limit = 2))
+    # THEN assert when either 'offset' or 'limit' doesn't work
+    assert resp_together.json[0]['id'] == groups[2].id and len(resp_together.json)<=2
+
+    # Test with invalid subset with a single matching attribute
+    resp_a_attribute = auth_client.get(url_for('groups.read_all_groups', where='active:true'))
+    for attribute in resp_a_attribute.json:
+        assert attribute['active'] == True
+
+    # Test with invalid subset with multiple matching attribute
+    resp_multi_attribute = auth_client.get(url_for('groups.read_all_groups', where='active:true') + '&where=name:Not-exist-name')
+    for attribute in resp_multi_attribute.json:
+        assert attribute['active'] != True and attribute['name'] != 'Not-exist-name'
+
+    # Test with invalid subset with 'order'
+    res_order_attribute = auth_client.get(url_for('groups.read_all_groups', order='name:asc'))
+    first_letter=[]
+    sorted_first_letter=[]
+    # THEN put first letter into array
+    for person in res_order_attribute.json:
+        first_letter.append(person['name'][0])
+    # Test if the first letter array is sorted
+    sorted_first_letter = sorted(first_letter)
+    assert sorted_first_letter == first_letter
+
+    # Test with invalid subset with ascending group_type_id and descending id
+    resp_asc_des = auth_client.get(url_for('groups.read_all_groups', order='group_type_id:asc') + '&order=id:desc')
+    list_group_type_id = []
+    sorted_group_type_id = []
+    list_id = []
+    sorted_id = []
+    # THEN put group_type_id and id into array
+    for person in resp_asc_des.json:
+        list_group_type_id.append(person['groupTypeId'])
+        list_id.append(person['id'])
+    sorted_group_type_id = sorted(list_group_type_id)
+    # Test if the group_type_id is sorted in ascending
+    assert sorted_group_type_id == list_group_type_id
+    # Test if the id is in descending order if the group_type_id (s) are the same
+    right =  True
+    for i in range(1 , len(list_id)):
+        if sorted_group_type_id[i] == sorted_group_type_id[i-1] and list_id[i] <= list_id[i-1]:
+            right = True
+        else:
+            right = False
+    # Test if the id(s) are in descending order
+        assert right == True
+
+
+
+
 # @pytest.mark.smoke
 # def test_activate_group(auth_client):
 #     pass
