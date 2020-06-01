@@ -237,6 +237,7 @@ def read_one_manager(group_id, person_id):
 @groups.route('/groups/<group_id>/managers/<person_id>', methods=['PATCH'])
 @jwt_required
 def update_manager(group_id, person_id):
+    manager_schema = ManagerSchema(exclude=['group_id', 'person_id'])
     try:
         valid_attributes = manager_schema.load(request.json, partial=True)
     except ValidationError as err:
@@ -247,8 +248,7 @@ def update_manager(group_id, person_id):
         return jsonify("Manager with group_id #{group_id} and person_id #{person_id} does not exist"), 404
 
     for key, val in valid_attributes.items():
-        if key != 'group_id' and key != 'person_id':
-            setattr(manager, key, val)
+        setattr(manager, key, val)
 
     db.session.add(manager)
     db.session.commit()
