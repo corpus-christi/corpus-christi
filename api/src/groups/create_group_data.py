@@ -191,13 +191,19 @@ def create_multiple_managers(sqla, n):
     all_persons = sqla.query(Person).all()
 
     new_managers = []
+    group_person_ids = [ (manager.group_id, manager.person_id) 
+            for manager in sqla.query(Manager).all() ]
     for i in range(n):
+        # generating non-existing group_id, person_id pair
+        while True:
+            group_id = random.choice(all_groups).id
+            person_id = random.choice(all_persons).id
+            if (group_id, person_id) not in group_person_ids:
+                group_person_ids.append((group_id, person_id))
+                break
         manager_type_id = random.choice(all_manager_types).id
-        group_id = random.choice(all_groups).id
-        person_id = random.choice(all_persons).id
         valid_manager = manager_schema.load(manager_object_factory(person_id, group_id, manager_type_id))
         new_managers.append(Manager(**valid_manager))
-
     sqla.add_all(new_managers)
     sqla.commit()
 
