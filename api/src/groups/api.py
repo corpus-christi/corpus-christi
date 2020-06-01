@@ -79,13 +79,6 @@ def delete_group_type(group_type_id):
 
 group_schema = GroupSchema()
 
-def group_dump(group):
-    group.manager_info = group.manager
-    group.manager_info.person = group.manager.person
-    group.member_list = group.members
-    return jsonify(group_schema.dump(group))
-
-
 @groups.route('/groups', methods=['POST'])
 @jwt_required
 def create_group():
@@ -137,32 +130,6 @@ def update_group(group_id):
 
     return modify_entity(Group, group_schema, group_id, valid_attributes)
 
-
-# Redundant functionality, covered by update_group
-# @groups.route('/groups/activate/<group_id>', methods=['PUT'])
-# @jwt_required
-# def activate_group(group_id):
-#     group = db.session.query(Group).filter_by(id=group_id).first()
-# 
-#     if group is None:
-#         return jsonify(msg="Group not found"), 404
-# 
-#     setattr(group, 'active', True)
-#     db.session.commit()
-#     return jsonify(group_schema.dump(group))
-# 
-# 
-# @groups.route('/groups/deactivate/<group_id>', methods=['PUT'])
-# @jwt_required
-# def deactivate_group(group_id):
-#     group = db.session.query(Group).filter_by(id=group_id).first()
-# 
-#     if group is None:
-#         return jsonify(msg="Group not found"), 404
-# 
-#     setattr(group, 'active', False)
-#     db.session.commit()
-#     return jsonify(group_schema.dump(group))
 
 # ---- Manager Type
 
@@ -230,17 +197,20 @@ def delete_manager_type(manager_type_id):
 manager_schema = ManagerSchema()
 
 
-@groups.route('/manager', methods=['POST'])
+@groups.route('/groups/<group_id>/managers', methods=['POST'])
 @jwt_required
-def create_manager():
+def create_manager(group_id):
     try:
-        valid_manager = manager_schema.load(request.json)
+        valid_manager = manager_schema.load(request.json, partial=['group_id'])
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    new_manager = Manager(**valid_manager)
+    new_manager = Manager(group_id = group_id, **valid_manager)
     db.session.add(new_manager)
-    db.session.commit()
+    try:
+        db.session.commit()
+    except IntegrityError:
+        return jsonify('the foreign key in the payload does not correspond to an actual object in the database'), 404
     return jsonify(manager_schema.dump(new_manager)), 201
 
 
