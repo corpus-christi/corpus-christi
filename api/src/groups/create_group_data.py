@@ -34,39 +34,12 @@ def flip():
 
 def group_object_factory(group_type_id):
     """Cook up a fake group."""
-    # all_managers = sqla.query(Manager).all()
-    # if not all_managers:
-    #     create_multiple_managers(sqla, random.randint(3, 6))
-    #     all_managers = sqla.query(Manager).all()
     group = {
         'name': rl_fake().word(),
         'description': rl_fake().sentences(nb=1)[0],
         'active': flip(),
         'groupTypeId': group_type_id
-        # 'managerId': all_managers[random.randint(0, len(all_managers) - 1)].id
     }
-    return group
-
-
-def group_object_factory_with_members(sqla, fraction=0.75):
-    """Cook up a fake group."""
-    # all_managers = sqla.query(Manager).all()
-    # if not all_managers:
-    #     create_multiple_managers(sqla, random.randint(3, 6))
-    #     all_managers = sqla.query(Manager).all()
-    all_people = sqla.query(Person).all()
-    if not all_people:
-        create_multiple_people(sqla, random.randint(3, 6))
-        all_people = sqla.query(Person).all()
-    group = {
-        'name': rl_fake().word(),
-        'description': rl_fake().sentences(nb=1)[0],
-        'active': flip(),
-        # 'managerId': all_managers[random.randint(0, len(all_managers) - 1)].id,
-    }
-    # all_person_ids = [member.id for member in all_people]
-    # group['person_ids'] = random.sample(
-    #     all_person_ids, math.floor(len(all_person_ids) * fraction))
     return group
 
 
@@ -113,39 +86,15 @@ def member_object_factory(sqla):
     }
     return member
 
-# def manager_object_factory(sqla, description, next_level=None, locale_code='en-US'):
-#     """Cook up a fake person."""
-#     description_i18n = f'manager.description.{description.replace(" ", "_")}'[:32]
-# 
-#     if not sqla.query(I18NLocale).get(locale_code):
-#         sqla.add(I18NLocale(code=locale_code, desc='English US'))
-# 
-#     if not sqla.query(I18NKey).get(description_i18n):
-#         i18n_create(description_i18n, 'en-US',
-#                     description, description=f"Manager {description}")
-# 
-#     all_persons = sqla.query(Person).all()
-#     # all_accounts = sqla.query(Account).all()
-#     # if not all_accounts:
-#     #     create_multiple_accounts(sqla)
-#     #     all_accounts = sqla.query(Account).all()
-# 
-#     manager = {
-# 
-#         'person_id': random.choice(all_persons).id,
-#         'description_i18n': description_i18n
-#     }
-#     all_managers = sqla.query(Manager).all()
-# 
-#     if next_level is not None:
-#         next_level_description_i18n = f'manager.description.{next_level.replace(" ", "_")}'
-#         next_level_managers = sqla.query(Manager).filter(Manager.description_i18n == next_level_description_i18n).all()
-#         if (len(next_level_managers) > 0):
-#             manager['manager_id'] = random.choice(next_level_managers).id
-# 
-#     return manager
-
-
+def manager_object_factory(person_id, group_id, manager_type_id, active=True):
+    """Cook up a fake manager."""
+    manager = {
+            'personId': person_id,
+            'groupId': group_id,
+            'managerTypeId': manager_type_id,
+            'active': active,
+            }
+    return manager
 
 def attendance_object_factory(meeting_id, member_id):
     """Cook up a fake attendance json object from given ids."""
@@ -154,7 +103,6 @@ def attendance_object_factory(meeting_id, member_id):
         'memberId': member_id
     }
     return attendance
-
 
 def role_object_factory(role_name):
     """Cook up a fake role."""
@@ -184,10 +132,6 @@ def manager_type_object_factory(manager_type_name):
 
 def create_multiple_groups(sqla, n):
     """Commit `n` new groups to the database. Return their IDs."""
-    # all_managers = sqla.query(Manager).all()
-    # if not all_managers:
-    #     create_multiple_managers(sqla, random.randint(3, 6))
-    #     all_managers = sqla.query(Manager).all()
     group_schema = GroupSchema()
     new_groups = []
     group_type = sqla.query(GroupType).first()
@@ -215,10 +159,6 @@ def create_multiple_meetings(sqla, n):
 def create_multiple_members(sqla, n):
     """Commit `n` new members to the database. Return their IDs."""
     member_schema = MemberSchema()
-    # all_managers = sqla.query(Manager).all()
-    # if not all_managers:
-    #     create_multiple_managers(sqla, random.randint(3, 6))
-    #     all_managers = sqla.query(Manager).all()
     if not sqla.query(Group).all():
         create_multiple_groups(sqla, random.randint(3, 6))
     new_members = []
@@ -236,16 +176,30 @@ def create_multiple_members(sqla, n):
             sqla.add(member)
             sqla.commit()
 
+def create_multiple_managers(sqla, n):
+    """Commit `n` new managers to the database """
+    # set up environment for creating managers
+    manager_schema = ManagerSchema()
+    if sqla.query(ManagerType).count() == 0:
+        create_multiple_manager_types(sqla, random.randint(3, 6))
+    all_manager_types = sqla.query(ManagerType).all()
+    if sqla.query(Group).count() == 0:
+        create_multiple_groups(sqla, random.randint(3, 6))
+    all_groups = sqla.query(Group).all()
+    if sqla.query(Person).count() == 0:
+        create_multiple_people(sqla, random.randint(3, 6))
+    all_persons = sqla.query(Person).all()
 
-# def create_multiple_managers(sqla, n, next_level=None):
-#     """Commit `n` new people to the database. Return their IDs."""
-#     manager_schema = ManagerSchema()
-#     new_managers = []
-#     for i in range(n):
-#         valid_manager = manager_schema.load(manager_object_factory(sqla, fake.sentences(nb=1)[0], next_level))
-#         new_managers.append(Manager(**valid_manager))
-#     sqla.add_all(new_managers)
-#     sqla.commit()
+    new_managers = []
+    for i in range(n):
+        manager_type_id = random.choice(all_manager_types).id
+        group_id = random.choice(all_groups).id
+        person_id = random.choice(all_persons).id
+        valid_manager = manager_schema.load(manager_object_factory(person_id, group_id, manager_type_id))
+        new_managers.append(Manager(**valid_manager))
+
+    sqla.add_all(new_managers)
+    sqla.commit()
 
 
 def create_attendance(sqla, fraction=0.75):
@@ -306,7 +260,8 @@ def create_group_test_data(sqla):
     """The function that creates test data in the correct order """
     create_multiple_group_types(sqla, 5)
     create_multiple_manager_types(sqla, 5)
-    create_multiple_groups(sqla, 18)
+    create_multiple_groups(sqla, 4)
+    create_multiple_managers(sqla, 20)
     # create_multiple_meetings(sqla, 12)
     # create_multiple_members(sqla, 13)
     # create_attendance(sqla, 0.75)
