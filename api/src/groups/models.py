@@ -33,8 +33,8 @@ class GroupSchema(Schema):
     group_type_id = fields.Integer(data_key='groupTypeId', required=True)
     active = fields.Boolean(required=True)
 
-    members = fields.Nested('MemberSchema', many=True, only=['person', 'joined', 'active', 'id'])
-    managers = fields.Nested('ManagerSchema', many=True, only=['person', 'active', 'id'])
+    members = fields.Nested('MemberSchema', many=True, only=['person', 'joined', 'active'])
+    managers = fields.Nested('ManagerSchema', many=True, only=['person', 'active'])
     # TODO: verify that the actual key instead of data_key is used in 'only' keyword argument <2020-05-28, David Deng> #
     meetings = fields.Nested('MeetingSchema', many=True, only=['group_id', 'address_id', 'start_time', 'stop_time', 'description', 'active'])
 
