@@ -214,21 +214,18 @@ def create_manager(group_id):
     return jsonify(manager_schema.dump(new_manager)), 201
 
 
-@groups.route('/manager')
+@groups.route('/groups/<group_id>/managers')
 @jwt_required
-def read_all_managers():
-    show_unique_persons_only = request.args.get('show_unique_persons_only')
-
-    # Remove duplicate persons
-    if show_unique_persons_only == 'Y':
-        result = db.session.query(Manager).distinct(Manager.person_id).all()
-    else:
-        result = db.session.query(Manager)
-
-    return jsonify(manager_schema.dump(result, many=True))
+def read_all_managers(group_id):
+    query = db.session.query(Manager).filter_by(group_id=group_id)
+    try:
+        managers = get_all_queried_entities(query, request.args)
+    except QueryArgumentError as e:
+        return jsonify(e.message), e.code
+    return jsonify(manager_schema.dump(managers, many=True))
 
 
-@groups.route('/manager/<manager_id>')
+@groups.route('/groups/<group_id>/managers/<manager_id>')
 @jwt_required
 def read_one_manager(manager_id):
     result = db.session.query(Manager).filter_by(id=manager_id).first()
