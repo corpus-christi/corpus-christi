@@ -8,7 +8,7 @@ from flask import url_for
 from .create_group_data import flip, create_role, group_object_factory, \
     create_multiple_groups, member_object_factory, create_multiple_members, meeting_object_factory, \
     create_multiple_meetings, create_attendance, create_multiple_group_types, create_multiple_manager_types, \
-    group_type_object_factory, manager_type_object_factory
+    group_type_object_factory, manager_type_object_factory, create_multiple_managers
 from .models import Group, GroupType, Member, Meeting, MeetingSchema, Attendance, Manager, ManagerType, ManagerSchema
 from ..images.create_image_data import create_images_groups
 from ..images.create_image_data import create_test_images
@@ -216,11 +216,12 @@ def test_subset_group(auth_client):
     # Test with populated database
     # GIVEN existing (active or inactive) groups
     groups = auth_client.sqla.query(Group).all()
+    # WHEN there are difference between server and database assert error
     resp = auth_client.get(url_for('groups.create_group'))
     resp_offset = auth_client.get(url_for('groups.read_all_groups', offset=2))
-    # WHEN there are difference between server and database assert error
+    # Then give error if the response is invalid
     assert resp_offset.json[0]['id'] == groups[2].id
-    #Test with invalid subset with "limit"
+    # Test with invalid subset with "limit"
     resp_limit = auth_client.get(url_for('groups.read_all_groups', limit=2))
     assert len(resp_limit.json) == 2
     # Test 'offset' and 'limit' together
@@ -271,9 +272,6 @@ def test_subset_group(auth_client):
             right = False
     # Test if the id(s) are in descending order
         assert right == True
-
-
-
 
 # @pytest.mark.smoke
 # def test_activate_group(auth_client):
@@ -508,18 +506,40 @@ def test_delete_manager_type(auth_client):
 
 # ---- Manager: Moved from people module
 
-# @pytest.mark.smoke
-# def test_create_manager(auth_client):
-#     pass
-# 
-# @pytest.mark.smoke
-# def test_create_manager_invalid(auth_client):
-#     pass
-# 
-# @pytest.mark.smoke
-# def test_read_all_managers(auth_client):
-#     pass
-# 
+@pytest.mark.smoke
+def test_create_manager(auth_client):
+    # GIVEN an empty database
+    # WHEN we add in a manager
+    create_multiple_groups(auth_client.sqla,1)
+    create_multiple_manager_types(auth_client.sqla,1)
+    count = random.randint(3, 11)
+    create_multiple_managers(auth_client.sqla, count)
+    resp = auth_client.post(url_for('groups.create_manager', group_id = '1'), json = {'personId':'1', 'managerTypeId':'1', 'active':'True'})
+    # THEN expect the create to run OK
+    assert resp.status_code == 201
+
+    # WHEN we create an invalid manager
+    resp = auth_client.post(url_for('groups.create_manager_type'), json = {'personId':'-1', 'managerTypeId':'-1', 'active':'True'})
+    # THEN we expect the request to be unprocessable
+    assert resp.status_code == 422
+
+@pytest.mark.smoke
+def test_read_all_managers(auth_client):
+    # GIVEN an empty database
+    # WHEN we add in managers
+    create_multiple_groups(auth_client.sqla,1)
+    create_multiple_manager_types(auth_client.sqla,1)
+    count = random.randint(3, 11)
+    create_multiple_managers(auth_client.sqla, count)
+    # WHEN we read all active managers
+    resp = auth_client.get(url_for('groups.create_manager', group_id = '1'))
+    # THEN we expect the right status code
+    assert resp.status_code == 200
+    # THEN we expect the database has the same number of manager_types as we created
+    managers_numbers = auth_client.sqla.query(Manager).all()
+    assert len(managers_numbers) == count
+
+
 # @pytest.mark.smoke
 # def test_read_one_manager(auth_client):
 #     pass
