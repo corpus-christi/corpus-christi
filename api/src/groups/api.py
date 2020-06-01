@@ -41,7 +41,11 @@ def read_one_group_type(group_type_id):
 
 @groups.route('/group-types', methods=['GET'])
 def read_all_group_types():
-    group_types = db.session.query(GroupType).all()
+    query = db.session.query(GroupType)
+    try:
+        group_types = get_all_queried_entities(query, request.args)
+    except QueryArgumentError as e:
+        return jsonify(e.message), e.code
     return jsonify(group_type_schema.dump(group_types, many=True))
 
 @groups.route('/group-types/<group_type_id>', methods=['PATCH'])
@@ -186,7 +190,11 @@ def read_one_manager_type(manager_type_id):
 
 @groups.route('/manager-types', methods=['GET'])
 def read_all_manager_types():
-    manager_types = db.session.query(ManagerType).all()
+    query = db.session.query(ManagerType)
+    try:
+        manager_types = get_all_queried_entities(query, request.args)
+    except QueryArgumentError as e:
+        return jsonify(e.message), e.code
     return jsonify(manager_type_schema.dump(manager_types, many=True))
 
 @groups.route('/manager-types/<manager_type_id>', methods=['PATCH'])
