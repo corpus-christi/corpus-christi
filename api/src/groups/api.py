@@ -83,9 +83,12 @@ group_schema = GroupSchema()
 @jwt_required
 def create_group():
     try:
-        valid_group = group_schema.load(request.json)
+        valid_group = group_schema.load(request.json, partial=['active'])
     except ValidationError as err:
         return jsonify(err.messages), 422
+
+    if 'active' not in valid_group:
+        valid_group['active'] = True
 
     new_group = Group(**valid_group)
 
@@ -130,6 +133,19 @@ def update_group(group_id):
 
     return modify_entity(Group, group_schema, group_id, valid_attributes)
 
+@groups.route('/groups/<int:group_id>', methods=['DELETE'])
+@jwt_required
+def delete_group(group_id):
+    group = db.session.query(Group).filter_by(id=group_id).first()
+
+    if group is None:
+        return jsonify(f"Group with id #{group_id} does not exist"), 404
+
+    db.session.delete(group)
+    db.session.commit()
+
+    # no content should be in the response with 204 status code
+    return "Deleted successfully", 204
 
 # ---- Manager Type
 
@@ -203,7 +219,7 @@ def create_manager(group_id):
     # make group_id an invalid field in payload
     manager_schema = ManagerSchema(exclude=['group_id'])
     try:
-        valid_manager = manager_schema.load(request.json)
+        valid_manager = manager_schema.load(request.json, partial=['active'])
     except ValidationError as err:
         return jsonify(err.messages), 422
 
@@ -212,6 +228,9 @@ def create_manager(group_id):
     if db.session.query(Manager).filter_by(person_id=person_id, group_id=group_id).first():
         # if the same manager already exists
         return jsonify(f"Manager with group_id #{group_id} and person_id #{person_id} already exists"), 409
+
+    if 'active' not in valid_manager:
+        valid_manager['active'] = True
 
     new_manager = Manager(group_id=group_id, **valid_manager)
     db.session.add(new_manager)
@@ -286,131 +305,68 @@ meeting_schema = MeetingSchema()
 @groups.route('/meetings', methods=['POST'])
 @jwt_required
 def create_meeting():
-    if 'active' not in request.json.keys():
-        request.json['active'] = True
     try:
-        valid_meeting = meeting_schema.load(request.json)
+        valid_meeting = meeting_schema.load(request.json, partial=['active'])
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    new_meeting = Meeting(**valid_meeting)
-    db.session.add(new_meeting)
-    db.session.commit()
-    return jsonify(meeting_schema.dump(new_meeting)), 201
+    if 'active' not in valid_meeting:
+        valid_meeting['active'] = True
 
+    new_meeting = Meeting(**valid_meeting)
+
+    db.session.add(new_meeting)
+
+    try:
+        db.session.commit()
+    # when the foreign key given is invalid
+    except IntegrityError:
+        return jsonify('Payload contains an invalid foreign key'), 404
+
+    return jsonify(meeting_schema.dump(new_meeting)), 201
 
 @groups.route('/meetings')
 def read_all_meetings():
-    result = db.session.query(Meeting).all()
-
-    if result == []:
-        return jsonify(msg="No meetings found"), 404
-
-    for r in result:
-        r.address = r.address
-    return jsonify(meeting_schema.dump(result, many=True))
-
-
-@groups.route('/meetings/group/<int:group_id>')
-@jwt_required
-def read_all_meetings_by_group(group_id):
-    result = db.session.query(Meeting).filter_by(group_id=group_id).all()
-
-    if len(result) == 0:
-        return jsonify(msg="No meetings found"), 200
-
-    for r in result:
-        r.address = r.address
-
-    return jsonify(meeting_schema.dump(result, many=True))
-
-
-@groups.route('/meetings/address/<int:address_id>')
-@jwt_required
-def read_all_meetings_by_location(address_id):
-    result = db.session.query(Meeting).filter_by(address_id=address_id).all()
-
-    if len(result) == 0:
-        return jsonify(msg="No meetings found"), 404
-
-    return jsonify(meeting_schema.dump(result, many=True))
-
+    query = db.session.query(Meeting)
+    try:
+        meetings = get_all_queried_entities(query, request.args)
+    except QueryArgumentError as e:
+        return jsonify(e.message), e.code
+    meeting_schema = MeetingSchema()
+    return jsonify(meeting_schema.dump(meetings, many=True)), 200
 
 @groups.route('/meetings/<int:meeting_id>')
 @jwt_required
 def read_one_meeting(meeting_id):
-    result = db.session.query(Meeting).filter_by(id=meeting_id).first()
-
-    if result is None:
-        return jsonify(msg="Meeting not found"), 404
-
-    result.address = result.address
-
-    return jsonify(meeting_schema.dump(result))
-
+    meeting = db.session.query(Meeting).filter_by(id=meeting_id).first()
+    if meeting is None:
+        return jsonify(f"Meeting with id {meeting_id} does not exist"), 404
+    return jsonify(meeting_schema.dump(meeting)), 200
 
 @groups.route('/meetings/<int:meeting_id>', methods=['PATCH'])
 @jwt_required
 def update_meeting(meeting_id):
+    meeting_schema = MeetingSchema()
     try:
-        valid_meeting = meeting_schema.load(request.json)
+        valid_attributes = meeting_schema.load(request.json, partial=True)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    meeting = db.session.query(Meeting).filter_by(id=meeting_id).first()
+    return modify_entity(Meeting, meeting_schema, meeting_id, valid_attributes)
 
-    if meeting is None:
-        return jsonify(msg="Meeting not found"), 404
-
-    for key, val in valid_meeting.items():
-        setattr(meeting, key, val)
-
-    db.session.commit()
-    return jsonify(meeting_schema.dump(meeting))
-
-
-@groups.route('/meetings/delete/<int:meeting_id>', methods=['DELETE'])
+@groups.route('/meetings/<int:meeting_id>', methods=['DELETE'])
 @jwt_required
 def delete_meeting(meeting_id):
-    # USE WITH CARE!!! --- WILL DELETE MEETING AND ALL ATTENDANCE TO THAT MEETING
     meeting = db.session.query(Meeting).filter_by(id=meeting_id).first()
 
     if meeting is None:
-        return jsonify(msg='Meeting not found'), 404
+        return jsonify(f"Meeting with id #{meeting_id} does not exist"), 404
 
-    for member in meeting.members:
-        db.session.delete(member)
     db.session.delete(meeting)
     db.session.commit()
 
-    return jsonify(msg='Meeting ' + meeting_id + ' deleted'), 200
-
-
-@groups.route('/meetings/activate/<int:meeting_id>', methods=['PUT'])
-@jwt_required
-def activate_meeting(meeting_id):
-    meeting = db.session.query(Meeting).filter_by(id=meeting_id).first()
-
-    if meeting is None:
-        return jsonify(msg="Meeting not found"), 404
-
-    setattr(meeting, 'active', True)
-    db.session.commit()
-    return jsonify(meeting_schema.dump(meeting))
-
-
-@groups.route('/meetings/deactivate/<int:meeting_id>', methods=['PUT'])
-@jwt_required
-def deactivate_meeting(meeting_id):
-    meeting = db.session.query(Meeting).filter_by(id=meeting_id).first()
-
-    if meeting is None:
-        return jsonify(msg="Meeting not found"), 404
-
-    setattr(meeting, 'active', False)
-    db.session.commit()
-    return jsonify(meeting_schema.dump(meeting))
-
+    # no content should be in the response with 204 status code
+    return "Deleted successfully", 204
 
 # ---- Member
 
@@ -422,7 +378,7 @@ member_schema = MemberSchema()
 def create_member(group_id):
     member_schema = MemberSchema(exclude=['group_id'])
     try:
-        valid_member = member_schema.load(request.json, partial=['joined']) # make joined an optional field
+        valid_member = member_schema.load(request.json, partial=['joined', 'active']) # make joined and active optional fields
     except ValidationError as err:
         return jsonify(err.messages), 422
 
@@ -431,8 +387,11 @@ def create_member(group_id):
         # if the same member already exists
         return jsonify(f"Member with group_id #{group_id} and person_id #{person_id} already exists"), 409
 
-    if joined not in valid_member:
+    if 'joined' not in valid_member:
         valid_member['joined'] = datetime.date.today()
+
+    if 'active' not in valid_member:
+        valid_member['active'] = True
 
     new_member = Member(group_id=group_id, **valid_member)
     db.session.add(new_member)
