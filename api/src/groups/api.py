@@ -95,7 +95,7 @@ def create_group():
         db.session.commit()
     # when the foreign key given is invalid
     except IntegrityError:
-        return jsonify('the foreign key in the payload does not correspond to an actual object in the database'), 404
+        return jsonify('Payload contains an invalid foreign key'), 404
 
     return jsonify(group_schema.dump(new_group)), 201
 
@@ -200,17 +200,25 @@ manager_schema = ManagerSchema()
 @groups.route('/groups/<int:group_id>/managers', methods=['POST'])
 @jwt_required
 def create_manager(group_id):
+    # make group_id an invalid field in payload
+    manager_schema = ManagerSchema(exclude=['group_id'])
     try:
-        valid_manager = manager_schema.load(request.json, partial=['group_id'])
+        valid_manager = manager_schema.load(request.json)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    new_manager = Manager(group_id = group_id, **valid_manager)
+    person_id = valid_manager['person_id']
+
+    if db.session.query(Manager).filter_by(person_id=person_id, group_id=group_id).first():
+        # if the same manager already exists
+        return jsonify(f"Manager with group_id #{group_id} and person_id #{person_id} already exists"), 409
+
+    new_manager = Manager(group_id=group_id, **valid_manager)
     db.session.add(new_manager)
     try:
         db.session.commit()
     except IntegrityError:
-        return jsonify('the foreign key in the payload does not correspond to an actual object in the database'), 404
+        return jsonify('Payload contains an invalid foreign key'), 404
     return jsonify(manager_schema.dump(new_manager)), 201
 
 
@@ -230,7 +238,7 @@ def read_all_managers(group_id):
 def read_one_manager(group_id, person_id):
     manager = db.session.query(Manager).filter_by(group_id=group_id, person_id=person_id).first()
     if manager is None:
-        return jsonify("Manager with group_id #{group_id} and person_id #{person_id} does not exist"), 404
+        return jsonify(f"Manager with group_id #{group_id} and person_id #{person_id} does not exist"), 404
     return jsonify(manager_schema.dump(manager))
 
 
@@ -245,7 +253,7 @@ def update_manager(group_id, person_id):
 
     manager = db.session.query(Manager).filter_by(group_id=group_id, person_id=person_id).first()
     if manager is None:
-        return jsonify("Manager with group_id #{group_id} and person_id #{person_id} does not exist"), 404
+        return jsonify(f"Manager with group_id #{group_id} and person_id #{person_id} does not exist"), 404
 
     for key, val in valid_attributes.items():
         setattr(manager, key, val)
@@ -262,12 +270,13 @@ def delete_manager(group_id, person_id):
     manager = db.session.query(Manager).filter_by(group_id=group_id, person_id=person_id).first()
 
     if manager is None:
-        return jsonify("Manager with group_id #{group_id} and person_id #{person_id} does not exist"), 404
+        return jsonify(f"Manager with group_id #{group_id} and person_id #{person_id} does not exist"), 404
 
     db.session.delete(manager)
     db.session.commit()
 
-    return jsonify(manager_schema.dump(manager)), 204
+    # no content should be in the response with 204 status code
+    return "Deleted successfully", 204
 
 # ---- Meeting
 
@@ -408,104 +417,86 @@ def deactivate_meeting(meeting_id):
 member_schema = MemberSchema()
 
 
-def generate_member(group_id, person_id, joined, active):
-    member = {}
-    member['group_id'] = group_id
-    member['person_id'] = person_id
-    member['joined'] = joined
-    member['active'] = active
-    member = Member(**member_schema.load(member))
-    return member
-
-
-@groups.route('/members', methods=['POST'])
+@groups.route('/groups/<int:group_id>/members', methods=['POST'])
 @jwt_required
-def create_member():
-    request.json['active'] = True
+def create_member(group_id):
+    member_schema = MemberSchema(exclude=['group_id'])
     try:
-        valid_member = member_schema.load(request.json)
+        valid_member = member_schema.load(request.json, partial=['joined']) # make joined an optional field
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    if db.session.query(Member).filter_by( \
-            group_id=valid_member["group_id"],
-            person_id=valid_member["person_id"]
-    ).count() != 0:
-        return 'member already exists', 409
+    person_id = valid_member['person_id']
+    if db.session.query(Member).filter_by(person_id=person_id, group_id=group_id).first():
+        # if the same member already exists
+        return jsonify(f"Member with group_id #{group_id} and person_id #{person_id} already exists"), 409
 
-    new_member = Member(**valid_member)
+    if joined not in valid_member:
+        valid_member['joined'] = datetime.date.today()
+
+    new_member = Member(group_id=group_id, **valid_member)
     db.session.add(new_member)
-    db.session.commit()
+    try:
+        db.session.commit()
+    except IntegrityError:
+        return jsonify('Payload contains an invalid foreign key'), 404
     return jsonify(member_schema.dump(new_member)), 201
 
 
-@groups.route('/members')
+@groups.route('/groups/<int:group_id>/members')
 @jwt_required
-def read_all_members():
-    result = db.session.query(Member).all()
-
-    if result == []:
-        return jsonify(msg="No members found"), 404
-
-    return jsonify(member_schema.dump(result, many=True))
-
-
-@groups.route('/members/<int:member_id>')
-@jwt_required
-def read_one_member(member_id):
-    result = db.session.query(Member).filter_by(id=member_id).first()
-
-    if result is None:
-        return jsonify(msg="No members found"), 404
-
-    return jsonify(member_schema.dump(result))
-
-
-@groups.route('/members/<int:member_id>', methods=['PATCH'])
-@jwt_required
-def update_member(member_id):
+def read_all_members(group_id):
+    query = db.session.query(Member).filter_by(group_id=group_id)
     try:
-        valid_member = member_schema.load(request.json)
+        members = get_all_queried_entities(query, request.args)
+    except QueryArgumentError as e:
+        return jsonify(e.message), e.code
+    return jsonify(member_schema.dump(members, many=True))
+
+
+@groups.route('/groups/<int:group_id>/members/<int:person_id>')
+@jwt_required
+def read_one_member(group_id, person_id):
+    member = db.session.query(Member).filter_by(group_id=group_id, person_id=person_id).first()
+    if member is None:
+        return jsonify(f"Member with group_id #{group_id} and person_id #{person_id} does not exist"), 404
+    return jsonify(member_schema.dump(member))
+
+
+@groups.route('/groups/<int:group_id>/members/<int:person_id>', methods=['PATCH'])
+@jwt_required
+def update_member(group_id, person_id):
+    member_schema = MemberSchema(exclude=['group_id', 'person_id'])
+    try:
+        valid_attributes = member_schema.load(request.json, partial=True)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    member = db.session.query(Member).filter_by(id=member_id).first()
-
+    member = db.session.query(Member).filter_by(group_id=group_id, person_id=person_id).first()
     if member is None:
-        return jsonify(msg="No members found"), 404
+        return jsonify(f"Member with group_id #{group_id} and person_id #{person_id} does not exist"), 404
 
-    for key, val in valid_member.items():
+    for key, val in valid_attributes.items():
         setattr(member, key, val)
 
+    db.session.add(member)
     db.session.commit()
-    return jsonify(member_schema.dump(member))
+
+    return jsonify(member_schema.dump(member)), 200
 
 
-@groups.route('/members/activate/<int:member_id>', methods=['PUT'])
+@groups.route('/groups/<int:group_id>/members/<int:person_id>', methods=['DELETE'])
 @jwt_required
-def activate_member(member_id):
-    member = db.session.query(Member).filter_by(id=member_id).first()
+def delete_member(group_id, person_id):
+    member = db.session.query(Member).filter_by(group_id=group_id, person_id=person_id).first()
 
     if member is None:
-        return jsonify(msg="Member not found"), 404
+        return jsonify(f"Member with group_id #{group_id} and person_id #{person_id} does not exist"), 404
 
-    setattr(member, 'active', True)
+    db.session.delete(member)
     db.session.commit()
-    return jsonify(member_schema.dump(member))
 
-
-@groups.route('/members/deactivate/<int:member_id>', methods=['PUT'])
-@jwt_required
-def deactivate_member(member_id):
-    member = db.session.query(Member).filter_by(id=member_id).first()
-
-    if member is None:
-        return jsonify(msg="Member not found"), 404
-
-    setattr(member, 'active', False)
-    db.session.commit()
-    return jsonify(member_schema.dump(member))
-
+    return "Deleted successfully", 204
 
 # ---- Attendance
 
@@ -587,7 +578,7 @@ def delete_attendance():
     db.session.commit()
 
     # 204 codes don't respond with any content
-    return jsonify(attendance_schema.dump(valid_attendance)), 204
+    return "Deleted successfully", 204
 
 
 # ---- Image
