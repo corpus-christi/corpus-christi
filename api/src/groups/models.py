@@ -18,7 +18,7 @@ class Group(Base):
     active = Column(Boolean, nullable=False, default=True)
     members = relationship('Member', backref='group', lazy=True)
     managers = relationship('Manager', back_populates='group', lazy=True)
-    meetings = relationship('Meeting', backref='group', lazy=True)
+    meetings = relationship('Meeting', back_populates='group', lazy=True)
     events = relationship('EventGroup', back_populates='group', lazy=True)
     images = relationship('ImageGroup', back_populates='group', lazy=True)
 
@@ -64,7 +64,9 @@ class Meeting(Base):
     stop_time = Column(DateTime, nullable=False)
     description = Column(StringTypes.LONG_STRING, nullable=False)
     active = Column(Boolean, nullable=False, default=True)
+
     address = relationship('Address', back_populates='meetings', lazy=True)
+    group = relationship('Group', back_populates='meetings', lazy=True)
 
     def __repr__(self):
         return f"<Meeting(id={self.id})>"
@@ -78,6 +80,10 @@ class MeetingSchema(Schema):
     stop_time = fields.DateTime(data_key='stopTime', required=True)
     description = fields.String(required=True, validate=Length(min=1))
     active = fields.Boolean(required=True)
+
+    address = fields.Nested('AddressSchema')
+    group = fields.Nested('GroupSchema')
+
 
 
 # ---- Member
