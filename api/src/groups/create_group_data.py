@@ -1,3 +1,4 @@
+import datetime
 import math
 import random
 
@@ -68,22 +69,14 @@ def meeting_object_factory(sqla):
     return meeting
 
 
-def member_object_factory(sqla):
+def member_object_factory(person_id, group_id, active=True, joined=datetime.date.today()):
     """Cook up a fake member."""
-    all_groups = sqla.query(Group).all()
-    if not all_groups:
-        create_multiple_groups(sqla, random.randint(3, 6))
-        all_groups = sqla.query(Group).all()
-    all_people = sqla.query(Person).all()
-    if not all_people:
-        create_multiple_people(sqla, random.randint(3, 6))
-        all_people = sqla.query(Person).all()
     member = {
-        'joined': str(rl_fake().future_date(end_date="+6d")),
-        'active': flip(),
-        'groupId': all_groups[random.randint(0, len(all_groups) - 1)].id,
-        'personId': all_people[random.randint(0, len(all_people) - 1)].id
-    }
+            'personId': person_id,
+            'groupId': group_id,
+            'active': active,
+            'joined': joined
+            }
     return member
 
 def manager_object_factory(person_id, group_id, manager_type_id, active=True):
@@ -156,25 +149,26 @@ def create_multiple_meetings(sqla, n):
     sqla.commit()
 
 
-def create_multiple_members(sqla, n):
-    """Commit `n` new members to the database. Return their IDs."""
+def create_multiple_members(sqla, fraction=0.75):
+    # set up environment for creating members
     member_schema = MemberSchema()
-    if not sqla.query(Group).all():
+    if sqla.query(Group).count() == 0:
         create_multiple_groups(sqla, random.randint(3, 6))
-    new_members = []
-    for i in range(n):
-        valid_member = member_schema.load(member_object_factory(sqla))
-        member = Member(**valid_member)
-        # Don't put someone in a group they are already in
-        group = sqla.query(Group).filter_by(id=member.group_id).first()
-        person_ids = []
-        for group_member in group.members:
-            person_ids.append(group_member.person_id)
+    all_groups = sqla.query(Group).all()
+    if sqla.query(Person).count() == 0:
+        create_multiple_people(sqla, random.randint(3, 6))
 
-        if member.person_id not in person_ids:
-            new_members.append(Member(**valid_member))
-            sqla.add(member)
-            sqla.commit()
+    all_members = sqla.query(Person, Group).all()
+    sample_members = random.sample(
+            all_members, math.floor(len(all_members) * fraction))
+
+    new_members = []
+    for person, group in sample_members:
+        valid_member = member_schema.load(member_object_factory(
+            person.id, group.id, active=flip(), joined=fake.date()))
+        new_members.append(Member(**valid_member))
+    sqla.add_all(new_members)
+    sqla.commit()
 
 def create_multiple_managers(sqla, fraction=0.75):
     """Commit `n` new managers to the database """
@@ -194,15 +188,7 @@ def create_multiple_managers(sqla, fraction=0.75):
             all_managers, math.floor(len(all_managers) * fraction))
 
     new_managers = []
-    # group_person_ids = [ (manager.group_id, manager.person_id) 
-    #         for manager in sqla.query(Manager).all() ]
     for person, group in sample_managers:
-        # generating non-existing group_id, person_id pair
-        # group_id = random.choice(all_groups).id
-        # person_id = random.choice(all_persons).id
-        #     if (group_id, person_id) not in group_person_ids:
-        #         group_person_ids.append((group_id, person_id))
-        #         break
         manager_type_id = random.choice(all_manager_types).id
         valid_manager = manager_schema.load(manager_object_factory(person.id, group.id, manager_type_id))
         new_managers.append(Manager(**valid_manager))
@@ -270,7 +256,7 @@ def create_group_test_data(sqla):
     create_multiple_manager_types(sqla, 5)
     create_multiple_groups(sqla, 4)
     create_multiple_managers(sqla, 0.75)
+    create_multiple_members(sqla, 0.75)
     # create_multiple_meetings(sqla, 12)
-    # create_multiple_members(sqla, 13)
     # create_attendance(sqla, 0.75)
 
