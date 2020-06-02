@@ -31,7 +31,7 @@ def create_group_type():
     db.session.commit()
     return jsonify(group_type_schema.dump(new_group_type)), 201
 
-@groups.route('/group-types/<group_type_id>', methods=['GET'])
+@groups.route('/group-types/<int:group_type_id>', methods=['GET'])
 def read_one_group_type(group_type_id):
     group_type = db.session.query(GroupType).filter_by(id=group_type_id).first()
     if not group_type:
@@ -48,7 +48,7 @@ def read_all_group_types():
         return jsonify(e.message), e.code
     return jsonify(group_type_schema.dump(group_types, many=True))
 
-@groups.route('/group-types/<group_type_id>', methods=['PATCH'])
+@groups.route('/group-types/<int:group_type_id>', methods=['PATCH'])
 @jwt_required
 def update_group_type(group_type_id):
     group_type_schema = GroupTypeSchema()
@@ -61,7 +61,7 @@ def update_group_type(group_type_id):
     return modify_entity(GroupType, group_type_schema, group_type_id, valid_attributes)
 
 
-@groups.route('/group-types/<group_type_id>', methods=['DELETE'])
+@groups.route('/group-types/<int:group_type_id>', methods=['DELETE'])
 @jwt_required
 def delete_group_type(group_type_id):
     group_type = db.session.query(GroupType).filter_by(id=group_type_id).first()
@@ -111,7 +111,7 @@ def read_all_groups():
     return jsonify(group_schema.dump(groups, many=True)), 200
 
 
-@groups.route('/groups/<group_id>')
+@groups.route('/groups/<int:group_id>')
 @jwt_required
 def read_one_group(group_id):
     group = db.session.query(Group).filter_by(id=group_id).first()
@@ -119,7 +119,7 @@ def read_one_group(group_id):
         return jsonify(f"Group with id {group_id} does not exist"), 404
     return jsonify(group_schema.dump(group)), 200
 
-@groups.route('/groups/<group_id>', methods=['PATCH'])
+@groups.route('/groups/<int:group_id>', methods=['PATCH'])
 @jwt_required
 def update_group(group_id):
     group_schema = GroupSchema()
@@ -147,7 +147,7 @@ def create_manager_type():
     db.session.commit()
     return jsonify(manager_type_schema.dump(new_manager_type)), 201
 
-@groups.route('/manager-types/<manager_type_id>', methods=['GET'])
+@groups.route('/manager-types/<int:manager_type_id>', methods=['GET'])
 def read_one_manager_type(manager_type_id):
     manager_type = db.session.query(ManagerType).filter_by(id=manager_type_id).first()
     if not manager_type:
@@ -164,7 +164,7 @@ def read_all_manager_types():
         return jsonify(e.message), e.code
     return jsonify(manager_type_schema.dump(manager_types, many=True))
 
-@groups.route('/manager-types/<manager_type_id>', methods=['PATCH'])
+@groups.route('/manager-types/<int:manager_type_id>', methods=['PATCH'])
 @jwt_required
 def update_manager_type(manager_type_id):
     manager_type_schema = ManagerTypeSchema()
@@ -177,7 +177,7 @@ def update_manager_type(manager_type_id):
     return modify_entity(ManagerType, manager_type_schema, manager_type_id, valid_attributes)
 
 
-@groups.route('/manager-types/<manager_type_id>', methods=['DELETE'])
+@groups.route('/manager-types/<int:manager_type_id>', methods=['DELETE'])
 @jwt_required
 def delete_manager_type(manager_type_id):
     manager_type = db.session.query(ManagerType).filter_by(id=manager_type_id).first()
@@ -197,7 +197,7 @@ def delete_manager_type(manager_type_id):
 manager_schema = ManagerSchema()
 
 
-@groups.route('/groups/<group_id>/managers', methods=['POST'])
+@groups.route('/groups/<int:group_id>/managers', methods=['POST'])
 @jwt_required
 def create_manager(group_id):
     try:
@@ -214,7 +214,7 @@ def create_manager(group_id):
     return jsonify(manager_schema.dump(new_manager)), 201
 
 
-@groups.route('/groups/<group_id>/managers')
+@groups.route('/groups/<int:group_id>/managers')
 @jwt_required
 def read_all_managers(group_id):
     query = db.session.query(Manager).filter_by(group_id=group_id)
@@ -225,7 +225,7 @@ def read_all_managers(group_id):
     return jsonify(manager_schema.dump(managers, many=True))
 
 
-@groups.route('/groups/<group_id>/managers/<person_id>')
+@groups.route('/groups/<int:group_id>/managers/<int:person_id>')
 @jwt_required
 def read_one_manager(group_id, person_id):
     manager = db.session.query(Manager).filter_by(group_id=group_id, person_id=person_id).first()
@@ -234,7 +234,7 @@ def read_one_manager(group_id, person_id):
     return jsonify(manager_schema.dump(manager))
 
 
-@groups.route('/groups/<group_id>/managers/<person_id>', methods=['PATCH'])
+@groups.route('/groups/<int:group_id>/managers/<int:person_id>', methods=['PATCH'])
 @jwt_required
 def update_manager(group_id, person_id):
     manager_schema = ManagerSchema(exclude=['group_id', 'person_id'])
@@ -256,7 +256,7 @@ def update_manager(group_id, person_id):
     return jsonify(manager_schema.dump(manager)), 200
 
 
-@groups.route('/groups/<group_id>/managers/<person_id>', methods=['DELETE'])
+@groups.route('/groups/<int:group_id>/managers/<int:person_id>', methods=['DELETE'])
 @jwt_required
 def delete_manager(group_id, person_id):
     manager = db.session.query(Manager).filter_by(group_id=group_id, person_id=person_id).first()
@@ -302,7 +302,7 @@ def read_all_meetings():
     return jsonify(meeting_schema.dump(result, many=True))
 
 
-@groups.route('/meetings/group/<group_id>')
+@groups.route('/meetings/group/<int:group_id>')
 @jwt_required
 def read_all_meetings_by_group(group_id):
     result = db.session.query(Meeting).filter_by(group_id=group_id).all()
@@ -316,7 +316,7 @@ def read_all_meetings_by_group(group_id):
     return jsonify(meeting_schema.dump(result, many=True))
 
 
-@groups.route('/meetings/address/<address_id>')
+@groups.route('/meetings/address/<int:address_id>')
 @jwt_required
 def read_all_meetings_by_location(address_id):
     result = db.session.query(Meeting).filter_by(address_id=address_id).all()
@@ -327,7 +327,7 @@ def read_all_meetings_by_location(address_id):
     return jsonify(meeting_schema.dump(result, many=True))
 
 
-@groups.route('/meetings/<meeting_id>')
+@groups.route('/meetings/<int:meeting_id>')
 @jwt_required
 def read_one_meeting(meeting_id):
     result = db.session.query(Meeting).filter_by(id=meeting_id).first()
@@ -340,7 +340,7 @@ def read_one_meeting(meeting_id):
     return jsonify(meeting_schema.dump(result))
 
 
-@groups.route('/meetings/<meeting_id>', methods=['PATCH'])
+@groups.route('/meetings/<int:meeting_id>', methods=['PATCH'])
 @jwt_required
 def update_meeting(meeting_id):
     try:
@@ -360,7 +360,7 @@ def update_meeting(meeting_id):
     return jsonify(meeting_schema.dump(meeting))
 
 
-@groups.route('/meetings/delete/<meeting_id>', methods=['DELETE'])
+@groups.route('/meetings/delete/<int:meeting_id>', methods=['DELETE'])
 @jwt_required
 def delete_meeting(meeting_id):
     # USE WITH CARE!!! --- WILL DELETE MEETING AND ALL ATTENDANCE TO THAT MEETING
@@ -377,7 +377,7 @@ def delete_meeting(meeting_id):
     return jsonify(msg='Meeting ' + meeting_id + ' deleted'), 200
 
 
-@groups.route('/meetings/activate/<meeting_id>', methods=['PUT'])
+@groups.route('/meetings/activate/<int:meeting_id>', methods=['PUT'])
 @jwt_required
 def activate_meeting(meeting_id):
     meeting = db.session.query(Meeting).filter_by(id=meeting_id).first()
@@ -390,7 +390,7 @@ def activate_meeting(meeting_id):
     return jsonify(meeting_schema.dump(meeting))
 
 
-@groups.route('/meetings/deactivate/<meeting_id>', methods=['PUT'])
+@groups.route('/meetings/deactivate/<int:meeting_id>', methods=['PUT'])
 @jwt_required
 def deactivate_meeting(meeting_id):
     meeting = db.session.query(Meeting).filter_by(id=meeting_id).first()
@@ -450,7 +450,7 @@ def read_all_members():
     return jsonify(member_schema.dump(result, many=True))
 
 
-@groups.route('/members/<member_id>')
+@groups.route('/members/<int:member_id>')
 @jwt_required
 def read_one_member(member_id):
     result = db.session.query(Member).filter_by(id=member_id).first()
@@ -461,7 +461,7 @@ def read_one_member(member_id):
     return jsonify(member_schema.dump(result))
 
 
-@groups.route('/members/<member_id>', methods=['PATCH'])
+@groups.route('/members/<int:member_id>', methods=['PATCH'])
 @jwt_required
 def update_member(member_id):
     try:
@@ -481,7 +481,7 @@ def update_member(member_id):
     return jsonify(member_schema.dump(member))
 
 
-@groups.route('/members/activate/<member_id>', methods=['PUT'])
+@groups.route('/members/activate/<int:member_id>', methods=['PUT'])
 @jwt_required
 def activate_member(member_id):
     member = db.session.query(Member).filter_by(id=member_id).first()
@@ -494,7 +494,7 @@ def activate_member(member_id):
     return jsonify(member_schema.dump(member))
 
 
-@groups.route('/members/deactivate/<member_id>', methods=['PUT'])
+@groups.route('/members/deactivate/<int:member_id>', methods=['PUT'])
 @jwt_required
 def deactivate_member(member_id):
     member = db.session.query(Member).filter_by(id=member_id).first()
@@ -543,7 +543,7 @@ def read_all_attendance():
     return jsonify(attendance_schema.dump(result, many=True))
 
 
-@groups.route('/attendance/meeting/<meeting_id>')
+@groups.route('/attendance/meeting/<int:meeting_id>')
 @jwt_required
 def read_attendance_by_meeting(meeting_id):
     result = db.session.query(Attendance).filter_by(meeting_id=meeting_id).all()
@@ -554,7 +554,7 @@ def read_attendance_by_meeting(meeting_id):
     return jsonify(attendance_schema.dump(result, many=True))
 
 
-@groups.route('/attendance/member/<member_id>')
+@groups.route('/attendance/member/<int:member_id>')
 @jwt_required
 def read_attendance_by_member(member_id):
     result = db.session.query(Attendance).filter_by(member_id=member_id).all()
@@ -592,7 +592,7 @@ def delete_attendance():
 
 # ---- Image
 
-@groups.route('/<group_id>/images/<image_id>', methods=['POST'])
+@groups.route('/<int:group_id>/images/<int:image_id>', methods=['POST'])
 @jwt_required
 def add_group_images(group_id, image_id):
     group = db.session.query(Group).filter_by(id=group_id).first()
@@ -617,7 +617,7 @@ def add_group_images(group_id, image_id):
     return jsonify(f"Image with id #{image_id} successfully added to Group with id #{group_id}."), 201
 
 
-@groups.route('/<group_id>/images/<image_id>', methods=['PUT'])
+@groups.route('/<int:group_id>/images/<int:image_id>', methods=['PUT'])
 @jwt_required
 def put_group_images(group_id, image_id):
     # check for old image id in parameter list (?old=<id>)
@@ -634,7 +634,7 @@ def put_group_images(group_id, image_id):
         return jsonify({'deleted': del_resp[0], 'posted': str(post_resp[0].data, "utf-8")})
 
 
-@groups.route('/<group_id>/images/<image_id>', methods=['DELETE'])
+@groups.route('/<int:group_id>/images/<int:image_id>', methods=['DELETE'])
 @jwt_required
 def delete_group_image(group_id, image_id):
     group_image = db.session.query(ImageGroup).filter_by(group_id=group_id, image_id=image_id).first()
