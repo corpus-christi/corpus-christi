@@ -7,7 +7,7 @@ from flask import url_for
 
 from .create_group_data import flip, create_role, group_object_factory, \
     create_multiple_groups, member_object_factory, create_multiple_members, meeting_object_factory, \
-    create_multiple_meetings, create_attendance, create_multiple_group_types, create_multiple_manager_types, \
+    create_multiple_meetings, create_multiple_attendance, create_multiple_group_types, create_multiple_manager_types, \
     group_type_object_factory, manager_type_object_factory, create_multiple_managers
 from .models import Group, GroupType, Member, Meeting, MeetingSchema, Attendance, Manager, ManagerType, ManagerSchema
 from ..images.create_image_data import create_images_groups

@@ -165,4 +165,4 @@ class Attendance(Base):
 
 class AttendanceSchema(Schema):
     meeting_id = fields.Integer(data_key='meetingId', required=True)
-    member_id = fields.Integer(data_key='memberId', required=True)
+    person_id = fields.Integer(data_key='personId', required=True)

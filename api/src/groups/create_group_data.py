@@ -76,21 +76,13 @@ def manager_object_factory(person_id, group_id, manager_type_id, active=True):
             }
     return manager
 
-def attendance_object_factory(meeting_id, member_id):
+def attendance_object_factory(meeting_id, person_id):
     """Cook up a fake attendance json object from given ids."""
     attendance = {
         'meetingId': meeting_id,
-        'memberId': member_id
+        'personId': person_id
     }
     return attendance
-
-def role_object_factory(role_name):
-    """Cook up a fake role."""
-    role = {
-        'nameI18n': role_name,
-        'active': 1
-    }
-    return role
 
 def group_type_object_factory(group_type_name):
     """Cook up a fake group type """
@@ -195,7 +187,7 @@ def create_multiple_managers(sqla, fraction=0.75):
     sqla.commit()
 
 
-def create_attendance(sqla, fraction=0.75):
+def create_multiple_attendance(sqla, fraction=0.75):
     """Create data for attendance with member/meeting"""
     attendance_schema = AttendanceSchema()
     new_attendances = []
@@ -203,29 +195,17 @@ def create_attendance(sqla, fraction=0.75):
         create_multiple_people(sqla, random.randint(3, 6))
     if not sqla.query(Meeting).all():
         create_multiple_meetings(sqla, random.randint(3, 6))
-    all_attendances = sqla.query(Member, Meeting).all()
+    all_attendances = sqla.query(Person, Meeting).all()
     sample_attendances = random.sample(
         all_attendances, math.floor(len(all_attendances) * fraction))
     for attendance in sample_attendances:
         meeting_id = attendance[1].id
-        member_id = attendance[0].id
+        person_id = attendance[0].id
         valid_attendance = attendance_schema.load(
-            attendance_object_factory(meeting_id, member_id))
+            attendance_object_factory(meeting_id, person_id))
         new_attendances.append(Attendance(**valid_attendance))
     sqla.add_all(new_attendances)
     sqla.commit()
-
-
-def create_role(sqla):
-    """Commit new role to the database. Return ID."""
-    role_schema = RoleSchema()
-
-    valid_role_object = role_schema.load(role_object_factory(
-        "role.group-overseer"))  # fake role is fake job
-    valid_role_row = Role(**valid_role_object)
-    sqla.add(valid_role_row)
-    sqla.commit()
-    return valid_role_row.id
 
 
 def create_multiple_group_types(sqla, n):
@@ -257,5 +237,5 @@ def create_group_test_data(sqla):
     create_multiple_managers(sqla, 0.75)
     create_multiple_members(sqla, 0.75)
     create_multiple_meetings(sqla, 12)
-    # create_attendance(sqla, 0.75)
+    create_multiple_attendance(sqla, 0.75)
 
