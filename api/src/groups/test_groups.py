@@ -524,7 +524,7 @@ def test_delete_attendance(auth_client):
 
     # WHEN delete the not-exist attendance
     first_person = auth_client.sqla.query(Person).first()
-    resp = auth_client.delete(url_for('groups.delete_attendance', meeting_id = first_meeting.id, person_id = 99))
+    resp = auth_client.delete(url_for('groups.delete_attendance', meeting_id = first_meeting.id, person_id = first_person.id))
     # THEN expect error message
     assert resp.status_code == 404
 

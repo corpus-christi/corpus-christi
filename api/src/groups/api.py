@@ -464,10 +464,10 @@ attendance_schema = AttendanceSchema()
 @groups.route('/meetings/<int:meeting_id>/attendances/<int:person_id>', methods=['POST', 'PUT', 'PATCH'])
 @jwt_required
 def create_attendance(meeting_id, person_id):
-    if not db.session.query(Person).filter_by(person_id=person_id).first():
+    if not db.session.query(Person).filter_by(id=person_id).first():
         return jsonify(f"Person with person_id #{person_id} does not exist"), 404
 
-    if not db.session.query(Meeting).filter_by(meeting_id=meeting_id).first():
+    if not db.session.query(Meeting).filter_by(id=meeting_id).first():
         return jsonify(f"Meeting with meeting_id #{meeting_id} does not exist"), 404
 
     if db.session.query(Attendance).filter_by(person_id=person_id, meeting_id=meeting_id).first():
