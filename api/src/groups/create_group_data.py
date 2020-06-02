@@ -44,30 +44,17 @@ def group_object_factory(group_type_id):
     return group
 
 
-def meeting_object_factory(sqla):
+def meeting_object_factory(group_id, address_id):
     """Cook up a fake meeting."""
-    all_groups = sqla.query(Group).all()
-    if not all_groups:
-        create_multiple_groups(sqla, random.randint(3, 6))
-        all_groups = sqla.query(Group).all()
-    all_addresses = sqla.query(Address).all()
-    if not all_addresses:
-        create_multiple_addresses(sqla, random.randint(3, 6))
-        all_addresses = sqla.query(Address).all()
     meeting = {
-        'groupId': all_groups[random.randint(0, len(all_groups) - 1)].id,
-        'addressId': all_addresses[random.randint(0, len(all_addresses) - 1)].id,
-        'startTime': str(rl_fake().future_datetime(end_date=f'+{random.randint(3,6)}h')),
-        'stopTime': str(rl_fake().future_datetime(end_date=f'+{random.randint(7, 20)}h')),
-        'description': rl_fake().sentences(nb=1)[0],
-        'active': flip()
-    }
-    if len(all_addresses) > 0:
-        meeting["addressId"] = all_addresses[random.randint(
-            0, len(all_addresses) - 1)].id
-
+            'description': rl_fake().sentence(),
+            'active': flip(),
+            'groupId': group_id,
+            'addressId': address_id,
+            'startTime': str(rl_fake().future_datetime()),
+            'stopTime': str(rl_fake().future_datetime()),
+            }
     return meeting
-
 
 def member_object_factory(person_id, group_id, active=True, joined=datetime.date.today()):
     """Cook up a fake member."""
@@ -142,8 +129,19 @@ def create_multiple_meetings(sqla, n):
     """Commit `n` new meetings to the database. Return their IDs."""
     meeting_schema = MeetingSchema()
     new_meetings = []
+    if sqla.query(Group).count() == 0:
+        create_multiple_groups(sqla, random.randint(3, 6))
+    all_groups = sqla.query(Group).all()
+
+    if sqla.query(Address).count() == 0:
+        create_multiple_addresses(sqla, random.randint(3, 6))
+    all_addresses = sqla.query(Address).all()
+
     for i in range(n):
-        valid_meeting = meeting_schema.load(meeting_object_factory(sqla))
+        valid_meeting = meeting_schema.load(meeting_object_factory(
+            group_id=random.choice(all_groups).id,
+            address_id=random.choice(all_addresses).id,
+            ))
         new_meetings.append(Meeting(**valid_meeting))
     sqla.add_all(new_meetings)
     sqla.commit()
@@ -158,6 +156,7 @@ def create_multiple_members(sqla, fraction=0.75):
     if sqla.query(Person).count() == 0:
         create_multiple_people(sqla, random.randint(3, 6))
 
+    # TODO: query from non-existing members, so that multiple calls won't fail <2020-06-02, David Deng> #
     all_members = sqla.query(Person, Group).all()
     sample_members = random.sample(
             all_members, math.floor(len(all_members) * fraction))
@@ -257,6 +256,6 @@ def create_group_test_data(sqla):
     create_multiple_groups(sqla, 4)
     create_multiple_managers(sqla, 0.75)
     create_multiple_members(sqla, 0.75)
-    # create_multiple_meetings(sqla, 12)
+    create_multiple_meetings(sqla, 12)
     # create_attendance(sqla, 0.75)
 
