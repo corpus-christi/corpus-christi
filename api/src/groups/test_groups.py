@@ -462,7 +462,7 @@ def test_create_attendance(auth_client):
     print(first_meeting)
     print(first_person)
     # WHEN add attendance with perosn_id and meeting_id
-    print(url_for('groups.create_attendance', meeting_id = first_meeting.id, person_id = first_person.id))
+#     print(url_for('groups.create_attendance', meeting_id = first_meeting.id, person_id = first_person.id))
     resp = auth_client.post(url_for('groups.create_attendance', meeting_id = first_meeting.id, person_id = first_person.id))
     # THEN expect correct message
     assert resp.status_code == 201
@@ -514,9 +514,11 @@ def test_delete_attendance(auth_client):
     # WHEN we add in attendance
     create_multiple_meetings(auth_client.sqla, random.randint(3, 6))
     create_multiple_people(auth_client.sqla, random.randint(3, 6))
-    create_multiple_attendance(auth_client.sqla, fraction=0.75)
     first_meeting = auth_client.sqla.query(Meeting).first()
     first_person = auth_client.sqla.query(Person).first()
+    # WHEN add attendance with perosn_id and meeting_id
+    auth_client.sqla.add(Attendance(meeting_id = first_meeting.id, person_id = first_person.id))
+    auth_client.sqla.commit()
     # WHEN delete the first meeting
     resp = auth_client.delete(url_for('groups.delete_attendance', meeting_id = first_meeting.id, person_id = first_person.id))
     #THEN expect correct message
