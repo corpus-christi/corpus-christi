@@ -461,84 +461,47 @@ def delete_member(group_id, person_id):
 
 attendance_schema = AttendanceSchema()
 
-
-@groups.route('/attendance', methods=['POST'])
+@groups.route('/meetings/<int:meeting_id>/attendances/<int:person_id>', methods=['POST', 'PUT', 'PATCH'])
 @jwt_required
-def create_attendance():
-    try:
-        valid_attendance = attendance_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
+def create_attendance(meeting_id, person_id):
+    if not db.session.query(Person).filter_by(person_id=person_id).first():
+        return jsonify(f"Person with person_id #{person_id} does not exist"), 404
 
-    if db.session.query(Attendance).filter_by( \
-            meeting_id=valid_attendance["meeting_id"],
-            member_id=valid_attendance["member_id"]
-    ).count() != 0:
-        return 'attendance already exists', 409
+    if not db.session.query(Meeting).filter_by(meeting_id=meeting_id).first():
+        return jsonify(f"Meeting with meeting_id #{meeting_id} does not exist"), 404
 
-    new_attendance = Attendance(**valid_attendance)
+    if db.session.query(Attendance).filter_by(person_id=person_id, meeting_id=meeting_id).first():
+        # if the same attendance already exists
+        return jsonify(f"Attendance with meeting_id #{meeting_id} and person_id #{person_id} already exists"), 409
+
+    new_attendance = Attendance(meeting_id=meeting_id, person_id=person_id)
     db.session.add(new_attendance)
     db.session.commit()
+
     return jsonify(attendance_schema.dump(new_attendance)), 201
 
-
-@groups.route('/attendance')
+@groups.route('/meetings/<int:meeting_id>/attendances')
 @jwt_required
-def read_all_attendance():
-    result = db.session.query(Attendance).all()
-
-    if result == []:
-        return jsonify(msg="No attendance records found"), 404
-
-    return jsonify(attendance_schema.dump(result, many=True))
-
-
-@groups.route('/attendance/meeting/<int:meeting_id>')
-@jwt_required
-def read_attendance_by_meeting(meeting_id):
-    result = db.session.query(Attendance).filter_by(meeting_id=meeting_id).all()
-
-    if result == []:
-        return jsonify(msg="No attendance records found"), 404
-
-    return jsonify(attendance_schema.dump(result, many=True))
-
-
-@groups.route('/attendance/member/<int:member_id>')
-@jwt_required
-def read_attendance_by_member(member_id):
-    result = db.session.query(Attendance).filter_by(member_id=member_id).all()
-
-    if result == []:
-        return jsonify(msg="No attendance records found"), 404
-
-    return jsonify(attendance_schema.dump(result, many=True))
-
-
-@groups.route('/attendance', methods=['DELETE'])
-@jwt_required
-def delete_attendance():
+def read_all_attendances(meeting_id):
+    query = db.session.query(Attendance).filter_by(meeting_id=meeting_id)
     try:
-        valid_attendance = attendance_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
+        attendances = get_all_queried_entities(query, request.args)
+    except QueryArgumentError as e:
+        return jsonify(e.message), e.code
+    return jsonify(attendance_schema.dump(attendances, many=True))
 
-    meeting_id = valid_attendance["meeting_id"]
-    member_id = valid_attendance["member_id"]
+@groups.route('/meetings/<int:meeting_id>/attendances/<int:person_id>', methods=['DELETE'])
+@jwt_required
+def delete_attendance(meeting_id, person_id):
+    attendance = db.session.query(Attendance).filter_by(meeting_id=meeting_id, person_id=person_id).first()
 
-    result = db.session.query(Attendance).filter_by(meeting_id=meeting_id, \
-                                                    member_id=member_id
-                                                    ).first()
+    if attendance is None:
+        return jsonify(f"Attendance with meeting_id #{meeting_id} and person_id #{person_id} does not exist"), 404
 
-    if not result:
-        return f"Attendance with member_id {member_id} and meeting_id {meeting_id} doesn't exist", 404
-
-    db.session.delete(result)
+    db.session.delete(attendance)
     db.session.commit()
 
-    # 204 codes don't respond with any content
     return "Deleted successfully", 204
-
 
 # ---- Image
 
