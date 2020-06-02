@@ -13,8 +13,10 @@ BASE_DIR = BASE_DIR
 
 
 def create_app(config_name):
-    """Application factory for the API."""
-    print("config_name = ", config_name)
+    """
+    Application factory for the API.
+    """
+
     #  Initialize application.
     app = Flask(__name__)
     app.config.from_object(config[config_name])

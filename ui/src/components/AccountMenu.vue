@@ -20,12 +20,15 @@
 </template>
 
 <script>
-import { mapMutations, mapGetters } from "vuex";
+import { mapState, mapGetters, mapMutations } from "vuex";
 
 export default {
   name: "AccountMenu",
 
-  computed: mapGetters(["isLoggedIn", "currentAccount"]),
+  computed: {
+    ...mapState(["currentAccount"]),
+    ...mapGetters(["isLoggedIn"])
+  },
 
   methods: {
     ...mapMutations(["logOut"]),

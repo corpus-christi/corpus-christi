@@ -8,7 +8,7 @@
 
 <script>
 import Toolbar from "./components/Toolbar";
-import { mapGetters, mapMutations } from "vuex";
+import { mapMutations, mapState } from "vuex";
 import Footer from "./components/Footer";
 import { setJWT } from "./plugins/axios";
 import { Locale } from "./models/Locale";
@@ -16,7 +16,7 @@ import { Locale } from "./models/Locale";
 export default {
   name: "App",
   components: { Footer, Toolbar },
-  computed: mapGetters(["currentJWT"]),
+  computed: mapState(["currentJWT"]),
   methods: mapMutations(["setLocaleModels", "setCurrentLocale"]),
 
   created: function() {
