@@ -35,8 +35,8 @@ class GroupSchema(Schema):
 
     members = fields.Nested('MemberSchema', many=True, only=['person', 'joined', 'active'])
     managers = fields.Nested('ManagerSchema', many=True, only=['person', 'active'])
-    # TODO: verify that the actual key instead of data_key is used in 'only' keyword argument <2020-05-28, David Deng> #
     meetings = fields.Nested('MeetingSchema', many=True, only=['group_id', 'address_id', 'start_time', 'stop_time', 'description', 'active'])
+    images = fields.Pluck('ImageGroupSchema', 'image', many=True)
 
 # ---- Group Type
 

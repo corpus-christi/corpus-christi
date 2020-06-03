@@ -9,7 +9,8 @@ from werkzeug.utils import secure_filename
 from . import images
 from .models import Image, ImageSchema
 from .. import db, BASE_DIR
-from src.shared.helpers import modify_entity, is_allowed_file, get_file_extension, get_hash
+from src.shared.helpers import modify_entity, is_allowed_file, get_file_extension, \
+        get_hash, get_all_queried_entities
 
 # ---- Image
 
@@ -94,6 +95,16 @@ def upload_image():
     db.session.commit()
 
     return jsonify(image_schema.dump(new_image)), 201
+
+@images.route('/', methods=['GET'])
+@jwt_required
+def read_all_images():
+    query = db.session.query(Image)
+    try:
+        images = get_all_queried_entities(query, request.args)
+    except QueryArgumentError as e:
+        return jsonify(e.message), e.code
+    return jsonify(image_schema.dump(images, many=True))
 
 
 @images.route('/<image_id>', methods=['PATCH'])

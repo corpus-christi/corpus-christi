@@ -505,7 +505,7 @@ def delete_attendance(meeting_id, person_id):
 
 # ---- Image
 
-@groups.route('/<int:group_id>/images/<int:image_id>', methods=['POST'])
+@groups.route('/groups/<int:group_id>/images/<int:image_id>', methods=['POST'])
 @jwt_required
 def add_group_images(group_id, image_id):
     group = db.session.query(Group).filter_by(id=group_id).first()
@@ -530,7 +530,7 @@ def add_group_images(group_id, image_id):
     return jsonify(f"Image with id #{image_id} successfully added to Group with id #{group_id}."), 201
 
 
-@groups.route('/<int:group_id>/images/<int:image_id>', methods=['PUT'])
+@groups.route('/groups/<int:group_id>/images/<int:image_id>', methods=['PUT'])
 @jwt_required
 def put_group_images(group_id, image_id):
     # check for old image id in parameter list (?old=<id>)
@@ -547,7 +547,7 @@ def put_group_images(group_id, image_id):
         return jsonify({'deleted': del_resp[0], 'posted': str(post_resp[0].data, "utf-8")})
 
 
-@groups.route('/<int:group_id>/images/<int:image_id>', methods=['DELETE'])
+@groups.route('/groups/<int:group_id>/images/<int:image_id>', methods=['DELETE'])
 @jwt_required
 def delete_group_image(group_id, image_id):
     group_image = db.session.query(ImageGroup).filter_by(group_id=group_id, image_id=image_id).first()

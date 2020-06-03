@@ -21,13 +21,6 @@ from ..places.test_places import create_multiple_addresses, create_multiple_area
 
 fake = Faker()
 
-
-# def generate_managers(auth_client):
-#     create_multiple_people(auth_client.sqla, 4)
-#     # create_multiple_accounts(auth_client.sqla)
-#     # create_multiple_managers(auth_client.sqla, 4, "Manager")
-
-
 # ---- Group Type
 
 @pytest.mark.smoke
@@ -160,7 +153,7 @@ def test_read_all_groups(auth_client):
     resp = auth_client.get(url_for('groups.create_group'))
     # THEN list all group sections
     assert len(resp.json) == count
-#
+
 @pytest.mark.smoke
 def test_read_one_group(auth_client):
     # GIVEN an existing group
@@ -640,25 +633,93 @@ def test_repr_member(auth_client):
 def test_repr_attendance(auth_client):
     pass
 
-@pytest.mark.skip
+@pytest.mark.smoke
 def test_add_group_images(auth_client):
-    pass
+    # GIVEN a set of groups and images
+    count = random.randint(3, 6)
+    create_multiple_groups(auth_client.sqla, count)
+    create_test_images(auth_client.sqla)
 
-@pytest.mark.skip
+    groups = auth_client.sqla.query(Group).all()
+    images = auth_client.sqla.query(Image).all()
+
+    # WHEN an image is requested to be tied to each group
+    for i in range(count):
+        print(i)
+        resp = auth_client.post(url_for('groups.add_group_images', group_id=groups[i].id, image_id=images[i].id))
+
+        # THEN expect the request to run OK
+        assert resp.status_code == 201
+
+        # THEN expect the group to have a single image
+        assert len(auth_client.sqla.query(Group).filter_by(id=groups[i].id).first().images) == 1
+
+
 def test_add_group_images_no_exist(auth_client):
-    pass
+    # GIVEN a set of groups and images
+    count = random.randint(3, 6)
+    create_multiple_groups(auth_client.sqla, count)
+    create_test_images(auth_client.sqla)
 
-@pytest.mark.skip
+    groups = auth_client.sqla.query(Group).all()
+    images = auth_client.sqla.query(Image).all()
+
+    # WHEN a no existant image is requested to be tied to an group
+    resp = auth_client.post(url_for('groups.add_group_images', group_id=1, image_id=len(images) + 1))
+
+    # THEN expect the image not to be found
+    assert resp.status_code == 404
+
+    # WHEN an image is requested to be tied to a no existant group
+    resp = auth_client.post(url_for('groups.add_group_images', group_id=count + 1, image_id=1))
+
+    # THEN expect the group not to be found
+    assert resp.status_code == 404
+
+
 def test_add_group_images_already_exist(auth_client):
-    pass
+    # GIVEN a set of groups, images, and group_image relationships
+    count = random.randint(3, 6)
+    create_multiple_groups(auth_client.sqla, count)
+    create_test_images(auth_client.sqla)
+    create_images_groups(auth_client.sqla)
 
-@pytest.mark.skip
+    group_images = auth_client.sqla.query(ImageGroup).all()
+
+    # WHEN existing group_image relationships are requested to be created
+    for group_image in group_images:
+        resp = auth_client.post(
+            url_for('groups.add_group_images', group_id=group_image.group_id, image_id=group_image.image_id))
+
+        # THEN expect the request to be unprocessable
+        assert resp.status_code == 422
+
+@pytest.mark.smoke
 def test_delete_group_image(auth_client):
-    pass
+    # GIVEN a set of groups, images, and group_image relationships
+    count = random.randint(3, 6)
+    create_multiple_groups(auth_client.sqla, count)
+    create_test_images(auth_client.sqla)
+    create_images_groups(auth_client.sqla)
 
-@pytest.mark.skip
+    valid_group_image = auth_client.sqla.query(ImageGroup).first()
+
+    # WHEN the group_image relationships are requested to be deleted
+    resp = auth_client.delete(
+        url_for('groups.delete_group_image', group_id=valid_group_image.group_id, image_id=valid_group_image.image_id))
+
+    # THEN expect the delete to run OK
+    assert resp.status_code == 204
+
 def test_delete_group_image_no_exist(auth_client):
-    pass
+    # GIVEN an empty database
+
+    # WHEN a group_image relationship is requested to be deleted
+    resp = auth_client.delete(
+        url_for('groups.delete_group_image', group_id=random.randint(1, 8), image_id=random.randint(1, 8)))
+
+    # THEN expect the requested row to not be found
+    assert resp.status_code == 404
 
 
 
