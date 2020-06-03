@@ -45,8 +45,6 @@ def create_faker_cli(app):
 
     @faker_cli.command("groups", help="Fake groups")
     def fake_groups():
-        # create_multiple_managers(db.session, 2, 'Group Overseer')
-        # create_multiple_managers(db.session, 5, 'Group Leader')
         create_group_test_data(db.session)
 
     @faker_cli.command("images", help="Fake images")

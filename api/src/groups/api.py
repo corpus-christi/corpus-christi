@@ -103,7 +103,7 @@ def create_group():
     return jsonify(group_schema.dump(new_group)), 201
 
 
-@groups.route('/groups')
+@groups.route('/groups', methods=['GET'])
 def read_all_groups():
     query = db.session.query(Group)
     try:
@@ -114,7 +114,7 @@ def read_all_groups():
     return jsonify(group_schema.dump(groups, many=True)), 200
 
 
-@groups.route('/groups/<int:group_id>')
+@groups.route('/groups/<int:group_id>', methods=['GET'])
 @jwt_required
 def read_one_group(group_id):
     group = db.session.query(Group).filter_by(id=group_id).first()
@@ -241,7 +241,7 @@ def create_manager(group_id):
     return jsonify(manager_schema.dump(new_manager)), 201
 
 
-@groups.route('/groups/<int:group_id>/managers')
+@groups.route('/groups/<int:group_id>/managers', methods=['GET'])
 @jwt_required
 def read_all_managers(group_id):
     query = db.session.query(Manager).filter_by(group_id=group_id)
@@ -252,7 +252,7 @@ def read_all_managers(group_id):
     return jsonify(manager_schema.dump(managers, many=True))
 
 
-@groups.route('/groups/<int:group_id>/managers/<int:person_id>')
+@groups.route('/groups/<int:group_id>/managers/<int:person_id>', methods=['GET'])
 @jwt_required
 def read_one_manager(group_id, person_id):
     manager = db.session.query(Manager).filter_by(group_id=group_id, person_id=person_id).first()
@@ -325,7 +325,7 @@ def create_meeting():
 
     return jsonify(meeting_schema.dump(new_meeting)), 201
 
-@groups.route('/meetings')
+@groups.route('/meetings', methods=['GET'])
 def read_all_meetings():
     query = db.session.query(Meeting)
     try:
@@ -335,7 +335,7 @@ def read_all_meetings():
     meeting_schema = MeetingSchema()
     return jsonify(meeting_schema.dump(meetings, many=True)), 200
 
-@groups.route('/meetings/<int:meeting_id>')
+@groups.route('/meetings/<int:meeting_id>', methods=['GET'])
 @jwt_required
 def read_one_meeting(meeting_id):
     meeting = db.session.query(Meeting).filter_by(id=meeting_id).first()
@@ -402,7 +402,7 @@ def create_member(group_id):
     return jsonify(member_schema.dump(new_member)), 201
 
 
-@groups.route('/groups/<int:group_id>/members')
+@groups.route('/groups/<int:group_id>/members', methods=['GET'])
 @jwt_required
 def read_all_members(group_id):
     query = db.session.query(Member).filter_by(group_id=group_id)
@@ -413,7 +413,7 @@ def read_all_members(group_id):
     return jsonify(member_schema.dump(members, many=True))
 
 
-@groups.route('/groups/<int:group_id>/members/<int:person_id>')
+@groups.route('/groups/<int:group_id>/members/<int:person_id>', methods=['GET'])
 @jwt_required
 def read_one_member(group_id, person_id):
     member = db.session.query(Member).filter_by(group_id=group_id, person_id=person_id).first()
@@ -480,7 +480,7 @@ def create_attendance(meeting_id, person_id):
 
     return jsonify(attendance_schema.dump(new_attendance)), 201
 
-@groups.route('/meetings/<int:meeting_id>/attendances')
+@groups.route('/meetings/<int:meeting_id>/attendances', methods=['GET'])
 @jwt_required
 def read_all_attendances(meeting_id):
     query = db.session.query(Attendance).filter_by(meeting_id=meeting_id)

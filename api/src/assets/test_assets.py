@@ -42,18 +42,18 @@ def test_create_asset(auth_client):
     for attr in new_asset:
         assert new_asset[attr] == queried_asset.__dict__[attr]
 
-# # Currently will fail, since the api does not check for invalid location
-# def test_create_asset_with_invalid_location(auth_client):
-#     # GIVEN an empty database
-#     # WHEN we create an asset with some non-existing location id
-#     new_asset = {
-#             'description': fake.sentences(nb=1)[0],
-#             'active': flip(),
-#             'location_id': 1
-#     }
-#     resp = auth_client.post(url_for('assets.create_asset', include_location=True), json=new_asset)
-#     # THEN we expect the right status code
-#     assert resp.status_code == 404
+@pytest.mark.skip(reason="Currently will fail, since the api does not check for invalid location")
+def test_create_asset_with_invalid_location(auth_client):
+    # GIVEN an empty database
+    # WHEN we create an asset with some non-existing location id
+    new_asset = {
+            'description': fake.sentences(nb=1)[0],
+            'active': flip(),
+            'location_id': 1
+    }
+    resp = auth_client.post(url_for('assets.create_asset', include_location=True), json=new_asset)
+    # THEN we expect the right status code
+    assert resp.status_code == 404
 
 @pytest.mark.smoke
 def test_create_invalid_asset(auth_client):
