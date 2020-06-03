@@ -37,23 +37,22 @@ def test_create_group_type(auth_client):
     resp = auth_client.post(url_for('groups.create_group_type'), json = {'name':'group_type_1'})
     # THEN expect the create to run OK
     assert resp.status_code == 201
+    # THEN we expect the correct number of items in the database
+    assert auth_client.sqla.query(GroupType).count() == 1
 
-    # WHEN we create an invalid group type
+def test_create_invalid_group_type(auth_client):
+    # GIVEN an empty database
+    # WHEN we add in an invalid group type
     resp = auth_client.post(url_for('groups.create_group_type'), json = {'name':''})
     # THEN we expect the request to be unprocessable
     assert resp.status_code == 422
-
-    # THEN we expect the correct number of items in the database
-    assert auth_client.sqla.query(GroupType).count() == 1
 
 @pytest.mark.smoke
 def test_read_one_group_type(auth_client):
     # GIVEN a database with a number of group types
     count = random.randint(3, 11)
     create_multiple_group_types(auth_client.sqla, count)
-
     group_types = auth_client.sqla.query(GroupType).all()
-
     # WHEN we ask for the group_types one by one
     for group_type in group_types:
         # THEN we expect each of them to correspond to the group_type in the database
@@ -120,17 +119,7 @@ def test_delete_group_type(auth_client):
     assert len(group_types) == count - 1
 
 # # ---- Group
-
-@pytest.mark.smoke
-def test_create_group(auth_client):
-    # Test creating invalid group
-    # GIVEN invalid group to put in database
-    broken_group = {}
-    # WHEN database queried
-    resp = auth_client.post(
-        url_for('groups.create_group'), json=broken_group)
-    # THEN assert exception thrown
-    assert resp.status_code == 422
+def test_create_valid_group(auth_client):
     # Test creating valid group
     # GIVEN an existing group
     count = random.randint(8, 19)
@@ -141,12 +130,25 @@ def test_create_group(auth_client):
         resp = auth_client.post(url_for(
             'groups.create_group'), json=group_object_factory(group_type.id))
         assert resp.status_code == 201
-    # THEN create new group section
-    assert auth_client.sqla.query(Group).count() == count
+
+def test_create_invalid_group(auth_client):
+    # Test creating invalid group
+    # GIVEN invalid group to put in database
+    broken_group = {}
+    # WHEN database queried
+    resp = auth_client.post(
+        url_for('groups.create_group'), json=broken_group)
+    # THEN expect Unprocessable Entity response
+    assert resp.status_code == 422
+    create_multiple_group_types(auth_client.sqla, 1)
+    group_type = auth_client.sqla.query(GroupType).first()
+    # TEST with creating group invalid request
     group_type.id = -1
     resp = auth_client.post(url_for(
                 'groups.create_group'), json=group_object_factory(group_type.id))
+    # WHEN expect Not Found response
     assert resp.status_code == 404
+
 
 @pytest.mark.smoke
 def test_read_all_groups(auth_client):
@@ -180,14 +182,10 @@ def test_read_one_group(auth_client):
 
 @pytest.mark.smoke
 def test_update_group(auth_client):
-    # Test with invalid group
+    # TEST with valid group
     # GIVEN empty database
     # WHEN databse queried
-    resp = auth_client.patch(
-        url_for('groups.update_group', group_id=555))
-    # THEN assert error code
-    assert resp.status_code == 422
-    # Test with populated database
+    # TEST with populated database
     # GIVEN an existing (active or inactive) group
     create_multiple_group_types(auth_client.sqla, 1)
     count = random.randint(3, 11)
@@ -202,13 +200,18 @@ def test_update_group(auth_client):
         assert resp.json['name'] == 'asd'
         assert resp.json['description'] == 'test_descr'
         assert resp.json['active'] == False
-# 
-# @pytest.mark.smoke
-# def test_invalid_update_group(auth_client):
-#     pass
-#
-@pytest.mark.smoke
-def test_subset_group(auth_client):
+
+
+def test_invalid_update_group(auth_client):
+    # Test with invalid group
+    # GIVEN empty database
+    # WHEN databse queried
+    resp = auth_client.patch(
+        url_for('groups.update_group', group_id=555))
+    # THEN assert error code
+    assert resp.status_code == 422
+
+def test_invalid_subset_group(auth_client):
     # Test with invalid subset with "offset"
     # GIVEN empty database
     # WHEN databse queried
@@ -231,6 +234,13 @@ def test_subset_group(auth_client):
     # THEN assert when either 'offset' or 'limit' doesn't work
     assert resp_together.json[0]['id'] == groups[2].id and len(resp_together.json)<=2
 
+def test_subset_group_attributes(auth_client):
+    # Test with different attribute(s)
+    # GIVEN empty database
+    # WHEN databse queried
+    create_multiple_group_types(auth_client.sqla, 1)
+    count = random.randint(3, 11)
+    create_multiple_groups(auth_client.sqla, count)
     # Test with invalid subset with a single matching attribute
     resp_a_attribute = auth_client.get(url_for('groups.read_all_groups', where='active:true'))
     for attribute in resp_a_attribute.json:
@@ -241,18 +251,34 @@ def test_subset_group(auth_client):
     for attribute in resp_multi_attribute.json:
         assert attribute['active'] != True and attribute['name'] != 'Not-exist-name'
 
-    # Test with invalid subset with 'order'
+def test_subset_group_order(auth_client):
+    # TEST to sort results use order in the URL query string by single attribute: "order = name:asc"
+    # TEST retrieves all groups ordered ascending by name
+    # GIVEN empty database
+    # WHEN databse queried
+    create_multiple_group_types(auth_client.sqla, 1)
+    count = random.randint(3, 11)
+    create_multiple_groups(auth_client.sqla, count)
+    # TEST with invalid subset with 'order'
     res_order_attribute = auth_client.get(url_for('groups.read_all_groups', order='name:asc'))
     first_letter=[]
     sorted_first_letter=[]
     # THEN put first letter into array
     for person in res_order_attribute.json:
         first_letter.append(person['name'][0])
-    # Test if the first letter array is sorted
+    # TEST if the first letter array is sorted
     sorted_first_letter = sorted(first_letter)
     assert sorted_first_letter == first_letter
 
-    # Test with invalid subset with ascending group_type_id and descending id
+def test_subset_groups_descending_ascending(auth_client):
+    # TEST to sort results use order in the URL query string by multiple attribute:
+    # TEST retrieves all people, ordered ascending by last name, then descending by first name.
+    # GIVEN empty database
+    # WHEN databse queried
+    create_multiple_group_types(auth_client.sqla, 1)
+    count = random.randint(3, 11)
+    create_multiple_groups(auth_client.sqla, count)
+
     resp_asc_des = auth_client.get(url_for('groups.read_all_groups', order='group_type_id:asc') + '&order=id:desc')
     list_group_type_id = []
     sorted_group_type_id = []
@@ -263,9 +289,9 @@ def test_subset_group(auth_client):
         list_group_type_id.append(person['groupTypeId'])
         list_id.append(person['id'])
     sorted_group_type_id = sorted(list_group_type_id)
-    # Test if the group_type_id is sorted in ascending
+    # TEST if the group_type_id is sorted in ascending
     assert sorted_group_type_id == list_group_type_id
-    # Test if the id is in descending order if the group_type_id (s) are the same
+    # TEST if the id is in descending order if the group_type_id (s) are the same
     right =  True
     for i in range(1 , len(list_id)):
         if sorted_group_type_id[i] == sorted_group_type_id[i-1] and list_id[i] <= list_id[i-1]:
@@ -275,14 +301,43 @@ def test_subset_group(auth_client):
     # Test if the id(s) are in descending order
         assert right == True
 
-# @pytest.mark.smoke
-# def test_activate_group(auth_client):
-#     pass
-# 
-# @pytest.mark.smoke
-# def test_deactivate_group(auth_client):
-#     pass
-# 
+
+
+def test_activate_group(auth_client):
+    # TEST with activate group
+    # GIVEN empty database
+    # WHEN databse queried
+    # TEST with populated database
+    # GIVEN an existing (active or inactive) group
+    create_multiple_group_types(auth_client.sqla, 1)
+    count = random.randint(3, 11)
+    create_multiple_groups(auth_client.sqla, count)
+    groups = auth_client.sqla.query(Group).all()
+    # WHEN group needs to active existing information
+    for group in groups:
+        resp = auth_client.patch(url_for('groups.update_group', group_id=group.id),
+                                 json={'active': True})
+        # THEN expect active is assigned with True
+        assert resp.json['active'] == True
+
+
+def test_deactivate_group(auth_client):
+    # TEST with deactivate group
+    # GIVEN empty database
+    # WHEN databse queried
+    # TEST with populated database
+    # GIVEN an existing (active or inactive) group
+    create_multiple_group_types(auth_client.sqla, 1)
+    count = random.randint(3, 11)
+    create_multiple_groups(auth_client.sqla, count)
+    groups = auth_client.sqla.query(Group).all()
+    # WHEN group needs to deactive existing information
+    for group in groups:
+        resp = auth_client.patch(url_for('groups.update_group', group_id=group.id),
+                                 json={'active': False})
+        # THEN expect active is assigned with False
+        assert resp.json['active'] == False
+
 # # ---- Meeting
 @pytest.mark.smoke
 def test_create_meeting(auth_client):
@@ -299,7 +354,7 @@ def test_create_meeting(auth_client):
     # THEN expect the create to run OK
     assert resp.status_code == 201
 
-@pytest.mark.smoke
+
 def test_create_invalid_meeting(auth_client):
     # GIVEN an empty database
     # WHEN we create a invalid meeting
@@ -323,15 +378,15 @@ def test_read_all_meetings(auth_client):
     create_multiple_meetings(auth_client.sqla, 3)
     # WHEN we read all meetings
     resp = auth_client.get(url_for('groups.read_all_meetings'))
+    assert resp.status_code == 200
     # WHEN we get all the meetings from database
     meeting = auth_client.sqla.query(Meeting).all()
     # THEN expect the same number of meetings
     assert len(resp.json) == len(meeting)
-# 
-# def generate_addresses(auth_client, count=1):
-#     pass
-#
-# 
+
+
+
+
 @pytest.mark.smoke
 def test_read_one_meeting(auth_client):
     # GIVEN an empty database
@@ -345,7 +400,9 @@ def test_read_one_meeting(auth_client):
     resp = auth_client.get(url_for('groups.read_one_meeting', meeting_id=first_meeting.id))
     # THEN expect correct message
     assert resp.status_code == 200
-
+    #WHEN the meeting doesn't exist
+    resp = auth_client.get(url_for('groups.read_one_meeting', meeting_id=111))
+    assert resp.status_code == 404
 
 
 @pytest.mark.smoke
@@ -360,6 +417,7 @@ def test_update_meeting(auth_client):
     resp = auth_client.patch(url_for('groups.read_one_meeting', meeting_id=first_meeting.id), json= {'description': 'This is a tset'})
     # THEN expect correct message
     assert resp.json['description'] == 'This is a tset'
+
     #WHEN test activate meeting
     resp = auth_client.patch(url_for('groups.read_one_meeting', meeting_id=first_meeting.id), json= {'active': True})
     assert resp.json['active'] == True
@@ -367,33 +425,74 @@ def test_update_meeting(auth_client):
     resp = auth_client.patch(url_for('groups.read_one_meeting', meeting_id=first_meeting.id), json= {'active': False})
     assert resp.json['active'] == False
 
-#
-@pytest.mark.smoke
+
 def test_invalid_update_meeting(auth_client):
     # GIVEN an empty database
     # WHEN we update one meeting with invalid information
     create_multiple_groups(auth_client.sqla,1)
     create_multiple_meetings(auth_client.sqla, 3)
-    # WHEN we get one meeting
     first_meeting = auth_client.sqla.query(Meeting).first()
-    resp = auth_client.patch(url_for('groups.read_one_meeting', meeting_id=first_meeting.id), json= {'description': 123})
+    resp = auth_client.patch(url_for('groups.update_meeting', meeting_id=first_meeting.id), json= {'description': 123})
     assert resp.status_code == 422
+    # AND check if the meeting is exist
+    resp = auth_client.patch(url_for('groups.read_one_meeting', meeting_id=333), json= {'description': 'Hello'})
+    # THEN expect error code
+    assert resp.status_code == 404
 
 @pytest.mark.smoke
 def test_delete_meeting(auth_client):
+    # GIVEN an empty database
+    # WHEN we delete one meeting
+    create_multiple_groups(auth_client.sqla,1)
+    create_multiple_meetings(auth_client.sqla, 3)
+    # AND we get one meeting
+    first_meeting = auth_client.sqla.query(Meeting).first()
+    resp = auth_client.delete(url_for('groups.read_one_meeting', meeting_id=first_meeting.id))
+    all_meetings = auth_client.sqla.query(Meeting).all()
+    for one in all_meetings:
+    # THEN we expect error code
+        assert one.id != first_meeting.id
+
+def test_delete_invalid_meeting(auth_client):
     # GIVEN an empty database
     # WHEN we update one meeting with invalid information
     create_multiple_groups(auth_client.sqla,1)
     create_multiple_meetings(auth_client.sqla, 3)
     # WHEN we get one meeting
     first_meeting = auth_client.sqla.query(Meeting).first()
-    resp = auth_client.delete(url_for('groups.read_one_meeting', meeting_id=first_meeting.id))
-    all_meetings = auth_client.sqla.query(Meeting).all()
-    for one in all_meetings:
-        assert one.id != first_meeting.id
-# 
+    resp = auth_client.delete(url_for('groups.read_one_meeting', meeting_id=123))
+    assert resp.status_code == 404
 
-# 
+def test_activate_meeting(auth_client):
+    # GIVEN a database with active meetings and attendances
+     create_multiple_groups(auth_client.sqla,1)
+     create_multiple_meetings(auth_client.sqla, 3)
+     # WHEN we get one meeting
+     first_meeting = auth_client.sqla.query(Meeting).first()
+     # WHEN we activate one meeting
+     resp = auth_client.patch(url_for('groups.read_one_meeting', meeting_id=first_meeting.id), json= {'active': True})
+     # THEN we expect the meeting to be activated
+     assert resp.json['active'] == True
+     # WHEN we activate a non-existant meeting
+     resp = auth_client.patch(url_for('groups.read_one_meeting', meeting_id=-2), json= {'active': True})
+     # THEN we expect an error code
+     assert resp.status_code == 404
+
+def test_deactivate_meeting(auth_client):
+    # GIVEN a database with active meetings and attendances
+     create_multiple_groups(auth_client.sqla,1)
+     create_multiple_meetings(auth_client.sqla, 3)
+     # WHEN we get one meeting
+     first_meeting = auth_client.sqla.query(Meeting).first()
+     # WHEN we deactivate one meeting
+     resp = auth_client.patch(url_for('groups.read_one_meeting', meeting_id=first_meeting.id), json= {'active': False})
+     # THEN we expect the meeting to be deactivated
+     assert resp.json['active'] == False
+     # WHEN we deactivate a non-existant meeting
+     resp = auth_client.patch(url_for('groups.read_one_meeting', meeting_id=-2), json= {'active': False})
+     # THEN we expect an error code
+     assert resp.status_code == 404
+
 # # ---- Member
 @pytest.mark.smoke
 def test_create_member(auth_client):
@@ -406,7 +505,7 @@ def test_create_member(auth_client):
     resp = auth_client.post(url_for('groups.create_member', group_id = '1'), json = {'personId':personid, 'active':'True', 'joined':'2020-01-01'})
     # THEN expect the create to run OK
     assert resp.status_code == 201
-# 
+
 @pytest.mark.smoke
 def test_read_all_members(auth_client):
     # GIVEN an empty database
@@ -430,7 +529,6 @@ def test_read_one_member(auth_client):
     create_multiple_members(auth_client.sqla, fraction=0.75)
     # WHEN we read the first member
     first_member = auth_client.sqla.query(Member).first()
-    print(first_member)
     resp = auth_client.get(url_for('groups.read_one_member', group_id = first_member.group_id, person_id = first_member.person_id))
     # Then test both group_id and person_id
     assert first_member.group_id == resp.json['groupId']
@@ -445,11 +543,10 @@ def test_update_member(auth_client):
     create_multiple_members(auth_client.sqla, fraction=0.75)
     # WHEN we update the first member
     first_member = auth_client.sqla.query(Member).first()
-    print(first_member)
     # THEN we expect an correct message
     resp = auth_client.patch(url_for('groups.read_one_member', group_id = first_member.group_id, person_id = first_member.person_id), json = {'active':False})
     assert resp.status_code == 200
-# 
+
 # # ---- Attendance
 @pytest.mark.smoke
 def test_create_attendance(auth_client):
@@ -459,10 +556,7 @@ def test_create_attendance(auth_client):
     create_multiple_people(auth_client.sqla, random.randint(3, 6))
     first_meeting = auth_client.sqla.query(Meeting).first()
     first_person = auth_client.sqla.query(Person).first()
-    print(first_meeting)
-    print(first_person)
     # WHEN add attendance with perosn_id and meeting_id
-#     print(url_for('groups.create_attendance', meeting_id = first_meeting.id, person_id = first_person.id))
     resp = auth_client.post(url_for('groups.create_attendance', meeting_id = first_meeting.id, person_id = first_person.id))
     # THEN expect correct message
     assert resp.status_code == 201
@@ -496,18 +590,17 @@ def test_read_all_attendances(auth_client):
         if attendance.meeting_id == first_meeting.id:
             count+=1
     resp = auth_client.get(url_for('groups.read_all_attendances', meeting_id = first_meeting.id))
-    print(len(resp.json))
     # THEN expect the same number of attendacne
     assert len(resp.json) == count
-# 
-# @pytest.mark.smoke
-# def test_read_attendance_by_member(auth_client):
-#     pass
-# 
-# @pytest.mark.smoke
-# def test_read_attendance_by_meeting(auth_client):
-#     pass
-# 
+
+@pytest.mark.skip
+def test_read_attendance_by_member(auth_client):
+    pass
+
+@pytest.mark.skip
+def test_read_attendance_by_meeting(auth_client):
+    pass
+
 @pytest.mark.smoke
 def test_delete_attendance(auth_client):
     # GIVEN an empty database
@@ -530,42 +623,42 @@ def test_delete_attendance(auth_client):
     # THEN expect error message
     assert resp.status_code == 404
 
-# 
-# @pytest.mark.smoke
-# def test_repr_group(auth_client):
-#     pass
-# 
-# @pytest.mark.smoke
-# def test_repr_meeting(auth_client):
-#     pass
-# 
-# @pytest.mark.smoke
-# def test_repr_member(auth_client):
-#     pass
-# 
-# @pytest.mark.smoke
-# def test_repr_attendance(auth_client):
-#     pass
-# 
-# @pytest.mark.smoke
-# def test_add_group_images(auth_client):
-#     pass
-# 
-# @pytest.mark.smoke
-# def test_add_group_images_no_exist(auth_client):
-#     pass
-# 
-# @pytest.mark.smoke
-# def test_add_group_images_already_exist(auth_client):
-#     pass
-# 
-# @pytest.mark.smoke
-# def test_delete_group_image(auth_client):
-#     pass
-# 
-# @pytest.mark.smoke
-# def test_delete_group_image_no_exist(auth_client):
-#     pass
+
+@pytest.mark.skip
+def test_repr_group(auth_client):
+    pass
+
+@pytest.mark.skip
+def test_repr_meeting(auth_client):
+    pass
+
+@pytest.mark.skip
+def test_repr_member(auth_client):
+    pass
+
+@pytest.mark.skip
+def test_repr_attendance(auth_client):
+    pass
+
+@pytest.mark.skip
+def test_add_group_images(auth_client):
+    pass
+
+@pytest.mark.skip
+def test_add_group_images_no_exist(auth_client):
+    pass
+
+@pytest.mark.skip
+def test_add_group_images_already_exist(auth_client):
+    pass
+
+@pytest.mark.skip
+def test_delete_group_image(auth_client):
+    pass
+
+@pytest.mark.skip
+def test_delete_group_image_no_exist(auth_client):
+    pass
 
 
 
@@ -669,13 +762,11 @@ def test_create_manager(auth_client):
     # WHEN we are creating a manager, we need to find the one who is not a manager
     working_person = []
     for one in manager:
-        print(one)
         working_person.append(one.person_id)
     new_manager = None
     for available_person in range(len(people)):
         if people[available_person].id not in working_person:
             new_manager = people[available_person].id
-    print(new_manager)
     # Then we create a manager with the avaliable person
     resp = auth_client.post(url_for('groups.create_manager', group_id = manager[0].group_id), json = {'personId':new_manager, 'managerTypeId':'1', 'active':'True'})
     # THEN expect the create to run OK
@@ -684,11 +775,7 @@ def test_create_manager(auth_client):
     resp = auth_client.post(url_for('groups.create_manager', group_id = 1), json = {'personId':-1, 'managerTypeId':1, 'active':True})
     # THEN we expect the request to be unprocessable
     assert resp.status_code == 404
-    # WHEN we create an existing manager
-#     exist_manager = auth_client.sqla.query(Manager).first()
-#     print(exist_manager)
-#     resp = auth_client.post(url_for('groups.create_manager', group_id = exist_manager.group_id), json = {'personId':exist_manager.person_id, 'managerTypeId':1, 'active':True})
-#     assert resp.status_code == 409
+
 
 @pytest.mark.smoke
 def test_create_exist_manager(auth_client):
@@ -701,7 +788,6 @@ def test_create_exist_manager(auth_client):
     people = auth_client.sqla.query(Person).all()
     # WHEN we create an existing manager
     exist_manager = auth_client.sqla.query(Manager).first()
-    print(exist_manager)
     resp = auth_client.post(url_for('groups.create_manager', group_id = exist_manager.group_id), json = {'personId':exist_manager.person_id, 'managerTypeId':1, 'active':True})
     assert resp.status_code == 409
 
@@ -736,7 +822,6 @@ def test_read_one_manager(auth_client):
     assert resp.json['personId'] == manager.person_id
 
 
-@pytest.mark.smoke
 def test_read_one_manager_invalid(auth_client):
     # GIVEN an empty database
     # WHEN we add in managers
@@ -749,7 +834,7 @@ def test_read_one_manager_invalid(auth_client):
     # THEN we expect the request to be unprocessable
     assert resp.status_code == 404
 
-#
+
 @pytest.mark.smoke
 def test_update_manager(auth_client):
     # GIVEN an empty database
@@ -766,8 +851,7 @@ def test_update_manager(auth_client):
     # THEN we assume the correct status code
     assert resp.status_code == 200
 
-# 
-# @pytest.mark.smoke
+
 def test_update_manager_invalid(auth_client):
     # GIVEN an empty database
     # WHEN we add in managers
@@ -783,6 +867,8 @@ def test_update_manager_invalid(auth_client):
     assert resp.status_code == 404
 
 
+
+
 @pytest.mark.smoke
 def test_delete_manager(auth_client):
     # GIVEN an empty database
@@ -792,29 +878,25 @@ def test_delete_manager(auth_client):
     create_multiple_managers(auth_client.sqla, 0.75)
     # WHEN we get the first manager
     first_manager = auth_client.sqla.query(Manager).first()
-    # WHEN we delete one of the managers
-#     print(url_for('groups.delete_manager', group_id =first_manager.group_id, person_id =first_manager.person_id))
+    # AND we delete one of the managers
     resp = auth_client.delete(url_for('groups.delete_manager', group_id =first_manager.group_id, person_id =first_manager.person_id))
     # THEN we assume the correct status code
-#     assert resp.status_code == 204
+    assert resp.status_code == 204
 
 
+@pytest.mark.skip
+def test_delete_manager_no_exist(auth_client):
+    pass
 
-# 
-# @pytest.mark.smoke
-# def test_delete_manager_no_exist(auth_client):
-#     pass
+@pytest.mark.skip
+def test_delete_manager_with_subordinate(auth_client):
+    pass
 
-#
-# @pytest.mark.smoke
-# def test_delete_manager_with_subordinate(auth_client):
-#     pass
-# 
-# @pytest.mark.smoke
-# def test_create_manager_with_superior(auth_client):
-#     pass
-# 
-# @pytest.mark.smoke
-# def test_repr_manager(auth_client):
-#     pass
+@pytest.mark.skip
+def test_create_manager_with_superior(auth_client):
+    pass
+
+@pytest.mark.skip
+def test_repr_manager(auth_client):
+    pass
 
