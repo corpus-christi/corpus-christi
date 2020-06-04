@@ -1,6 +1,6 @@
 import datetime
 
-from flask import request, jsonify
+from flask import request, jsonify, current_app
 from flask_jwt_extended import jwt_required
 from marshmallow import ValidationError
 
@@ -24,6 +24,7 @@ def create_group_type():
     try:
         valid_group_type = group_type_schema.load(request.json)
     except ValidationError as err:
+        current_app.logger.warn(err.messages)
         return jsonify(err.messages), 422
 
     new_group_type = GroupType(**valid_group_type)
@@ -35,6 +36,7 @@ def create_group_type():
 def read_one_group_type(group_type_id):
     group_type = db.session.query(GroupType).filter_by(id=group_type_id).first()
     if not group_type:
+        current_app.logger.warn(f"GroupType with id #{group_type_id} does not exist.")
         return jsonify(f"GroupType with id #{group_type_id} does not exist."), 404
 
     return jsonify(group_type_schema.dump(group_type))
@@ -56,6 +58,7 @@ def update_group_type(group_type_id):
     try:
         valid_attributes = group_type_schema.load(request.json, partial=True)
     except ValidationError as err:
+        current_app.logger.warn(err.messages)
         return jsonify(err.messages), 422
 
     return modify_entity(GroupType, group_type_schema, group_type_id, valid_attributes)
@@ -67,6 +70,7 @@ def delete_group_type(group_type_id):
     group_type = db.session.query(GroupType).filter_by(id=group_type_id).first()
 
     if not group_type:
+        current_app.logger.warn(f"GroupType with id #{group_type_id} does not exist.")
         return jsonify(f"GroupType with id #{group_type_id} does not exist."), 404
 
     db.session.delete(group_type)
@@ -85,6 +89,7 @@ def create_group():
     try:
         valid_group = group_schema.load(request.json, partial=['active'])
     except ValidationError as err:
+        current_app.logger.warn(err.messages)
         return jsonify(err.messages), 422
 
     if 'active' not in valid_group:
@@ -98,6 +103,7 @@ def create_group():
         db.session.commit()
     # when the foreign key given is invalid
     except IntegrityError:
+        current_app.logger.warn('Payload contains an invalid group type')
         return jsonify('Payload contains an invalid group type'), 404
 
     return jsonify(group_schema.dump(new_group)), 201
@@ -119,6 +125,7 @@ def read_all_groups():
 def read_one_group(group_id):
     group = db.session.query(Group).filter_by(id=group_id).first()
     if group is None:
+        current_app.logger.warn(f"Group with id {group_id} does not exist")
         return jsonify(f"Group with id {group_id} does not exist"), 404
     return jsonify(group_schema.dump(group)), 200
 
@@ -129,6 +136,7 @@ def update_group(group_id):
     try:
         valid_attributes = group_schema.load(request.json, partial=True)
     except ValidationError as err:
+        current_app.logger.warn(err.messages)
         return jsonify(err.messages), 422
 
     return modify_entity(Group, group_schema, group_id, valid_attributes)
@@ -139,6 +147,7 @@ def delete_group(group_id):
     group = db.session.query(Group).filter_by(id=group_id).first()
 
     if group is None:
+        current_app.logger.warn(f"Group with id #{group_id} does not exist")
         return jsonify(f"Group with id #{group_id} does not exist"), 404
 
     db.session.delete(group)
@@ -156,6 +165,7 @@ def create_manager_type():
     try:
         valid_manager_type = manager_type_schema.load(request.json)
     except ValidationError as err:
+        current_app.logger.warn(err.messages)
         return jsonify(err.messages), 422
 
     new_manager_type = ManagerType(**valid_manager_type)
@@ -167,6 +177,7 @@ def create_manager_type():
 def read_one_manager_type(manager_type_id):
     manager_type = db.session.query(ManagerType).filter_by(id=manager_type_id).first()
     if not manager_type:
+        current_app.logger.warn(f"ManagerType name: #{manager_type.name} does not exist.")
         return jsonify(f"ManagerType name: #{manager_type.name} does not exist."), 404
 
     return jsonify(manager_type_schema.dump(manager_type))
@@ -188,6 +199,7 @@ def update_manager_type(manager_type_id):
     try:
         valid_attributes = manager_type_schema.load(request.json, partial=True)
     except ValidationError as err:
+        current_app.logger.warn(err.messages)
         return jsonify(err.messages), 422
 
     return modify_entity(ManagerType, manager_type_schema, manager_type_id, valid_attributes)
@@ -199,6 +211,7 @@ def delete_manager_type(manager_type_id):
     manager_type = db.session.query(ManagerType).filter_by(id=manager_type_id).first()
 
     if not manager_type:
+        current_app.logger.warn(f"ManagerType name: #{manager_type.name} does not exist.")
         return jsonify(f"ManagerType name: #{manager_type.name} does not exist."), 404
 
     db.session.delete(manager_type)
@@ -221,12 +234,14 @@ def create_manager(group_id):
     try:
         valid_manager = manager_schema.load(request.json, partial=['active'])
     except ValidationError as err:
+        current_app.logger.warn(err.messages)
         return jsonify(err.messages), 422
 
     person_id = valid_manager['person_id']
 
     if db.session.query(Manager).filter_by(person_id=person_id, group_id=group_id).first():
         # if the same manager already exists
+        current_app.logger.warn(f"Manager with group_id #{group_id} and person_id #{person_id} already exists")
         return jsonify(f"Manager with group_id #{group_id} and person_id #{person_id} already exists"), 409
 
     if 'active' not in valid_manager:
@@ -237,6 +252,7 @@ def create_manager(group_id):
     try:
         db.session.commit()
     except IntegrityError:
+        current_app.logger.warn('Payload contains an invalid group/person key')
         return jsonify('Payload contains an invalid group/person key'), 404
     return jsonify(manager_schema.dump(new_manager)), 201
 
@@ -257,6 +273,7 @@ def read_all_managers(group_id):
 def read_one_manager(group_id, person_id):
     manager = db.session.query(Manager).filter_by(group_id=group_id, person_id=person_id).first()
     if manager is None:
+        current_app.logger.warn(f"Manager with group name: #{group.name} and person's username #{person.username} does not exist")
         return jsonify(f"Manager with group name: #{group.name} and person's username #{person.username} does not exist"), 404
     return jsonify(manager_schema.dump(manager))
 
@@ -268,10 +285,12 @@ def update_manager(group_id, person_id):
     try:
         valid_attributes = manager_schema.load(request.json, partial=True)
     except ValidationError as err:
+        current_app.logger.warn(err.messages)
         return jsonify(err.messages), 422
 
     manager = db.session.query(Manager).filter_by(group_id=group_id, person_id=person_id).first()
     if manager is None:
+        current_app.logger.warn(f"Manager with group name: #{group.name} and person's username #{person.username} does not exist")
         return jsonify(f"Manager with group name: #{group.name} and person's username #{person.username} does not exist"), 404
 
     for key, val in valid_attributes.items():
@@ -289,6 +308,7 @@ def delete_manager(group_id, person_id):
     manager = db.session.query(Manager).filter_by(group_id=group_id, person_id=person_id).first()
 
     if manager is None:
+        current_app.logger.warn(f"Manager with group name: #{group.name} and person's username #{person.username} does not exist")
         return jsonify(f"Manager with group name: #{group.name} and person's username #{person.username} does not exist"), 404
 
     db.session.delete(manager)
@@ -308,6 +328,7 @@ def create_meeting():
     try:
         valid_meeting = meeting_schema.load(request.json, partial=['active'])
     except ValidationError as err:
+        current_app.logger.warn(err.messages)
         return jsonify(err.messages), 422
 
     if 'active' not in valid_meeting:
@@ -321,6 +342,7 @@ def create_meeting():
         db.session.commit()
     # when the foreign key given is invalid
     except IntegrityError:
+        current_app.logger.warn('Payload contains an invalid address/group key')
         return jsonify('Payload contains an invalid address/group key'), 404
 
     return jsonify(meeting_schema.dump(new_meeting)), 201
@@ -340,6 +362,7 @@ def read_all_meetings():
 def read_one_meeting(meeting_id):
     meeting = db.session.query(Meeting).filter_by(id=meeting_id).first()
     if meeting is None:
+        current_app.logger.warn(f"Meeting with description: {meeting.description} does not exist")
         return jsonify(f"Meeting with description: {meeting.description} does not exist"), 404
     return jsonify(meeting_schema.dump(meeting)), 200
 
@@ -350,6 +373,7 @@ def update_meeting(meeting_id):
     try:
         valid_attributes = meeting_schema.load(request.json, partial=True)
     except ValidationError as err:
+        current_app.logger.warn(err.messages)
         return jsonify(err.messages), 422
 
     return modify_entity(Meeting, meeting_schema, meeting_id, valid_attributes)
@@ -360,6 +384,7 @@ def delete_meeting(meeting_id):
     meeting = db.session.query(Meeting).filter_by(id=meeting_id).first()
 
     if meeting is None:
+        current_app.logger.warn(f"Meeting with description: #{meeting.description} does not exist")
         return jsonify(f"Meeting with description: #{meeting.description} does not exist"), 404
 
     db.session.delete(meeting)
@@ -380,11 +405,13 @@ def create_member(group_id):
     try:
         valid_member = member_schema.load(request.json, partial=['joined', 'active']) # make joined and active optional fields
     except ValidationError as err:
+        current_app.logger.warn(err.messages)
         return jsonify(err.messages), 422
 
     person_id = valid_member['person_id']
     if db.session.query(Member).filter_by(person_id=person_id, group_id=group_id).first():
         # if the same member already exists
+        current_app.logger.warn(f"Member with group_id #{group_id} and person_id #{person_id} already exists")
         return jsonify(f"Member with group_id #{group_id} and person_id #{person_id} already exists"), 409
 
     if 'joined' not in valid_member:
@@ -398,6 +425,7 @@ def create_member(group_id):
     try:
         db.session.commit()
     except IntegrityError:
+        current_app.logger.warn('Payload contains an invalid group/person key')
         return jsonify('Payload contains an invalid group/person key'), 404
     return jsonify(member_schema.dump(new_member)), 201
 
@@ -418,6 +446,7 @@ def read_all_members(group_id):
 def read_one_member(group_id, person_id):
     member = db.session.query(Member).filter_by(group_id=group_id, person_id=person_id).first()
     if member is None:
+        current_app.logger.warn(f"Member with group name: #{group.name} and person username: #{person.username} does not exist")
         return jsonify(f"Member with group name: #{group.name} and person username: #{person.username} does not exist"), 404
     return jsonify(member_schema.dump(member))
 
@@ -429,10 +458,12 @@ def update_member(group_id, person_id):
     try:
         valid_attributes = member_schema.load(request.json, partial=True)
     except ValidationError as err:
+        current_app.logger.warn(err.messages)
         return jsonify(err.messages), 422
 
     member = db.session.query(Member).filter_by(group_id=group_id, person_id=person_id).first()
     if member is None:
+        current_app.logger.warn(f"Member with group name: #{group.name} and person username: #{person.username} does not exist")
         return jsonify(f"Member with group name: #{group.name} and person username: #{person.username} does not exist"), 404
 
     for key, val in valid_attributes.items():
@@ -450,6 +481,7 @@ def delete_member(group_id, person_id):
     member = db.session.query(Member).filter_by(group_id=group_id, person_id=person_id).first()
 
     if member is None:
+        current_app.logger.warn(f"Member with group name: #{group.name} and person username: #{person.username} does not exist")
         return jsonify(f"Member with group name: #{group.name} and person username: #{person.username} does not exist"), 404
 
     db.session.delete(member)
@@ -465,13 +497,16 @@ attendance_schema = AttendanceSchema()
 @jwt_required
 def create_attendance(meeting_id, person_id):
     if not db.session.query(Person).filter_by(id=person_id).first():
+        current_app.logger.warn(f"Person with person username #{person.username} does not exist")
         return jsonify(f"Person with person username #{person.username} does not exist"), 404
 
     if not db.session.query(Meeting).filter_by(id=meeting_id).first():
+        current_app.logger.warn(f"Meeting with meeting description: #{meeting.description} does not exist")
         return jsonify(f"Meeting with meeting description: #{meeting.description} does not exist"), 404
 
     if db.session.query(Attendance).filter_by(person_id=person_id, meeting_id=meeting_id).first():
         # if the same attendance already exists
+        current_app.logger.warn(f"Attendance with meeting name: #{meeting.name} and person username #{person.username} already exists")
         return jsonify(f"Attendance with meeting name: #{meeting.name} and person username #{person.username} already exists"), 409
 
     new_attendance = Attendance(meeting_id=meeting_id, person_id=person_id)
@@ -496,6 +531,7 @@ def delete_attendance(meeting_id, person_id):
     attendance = db.session.query(Attendance).filter_by(meeting_id=meeting_id, person_id=person_id).first()
 
     if attendance is None:
+        current_app.logger.warn(f"Attendance with meeting name: #{meeting.name} and person username #{person.username} does not exist")
         return jsonify(f"Attendance with meeting name: #{meeting.name} and person username #{person.username} does not exist"), 404
 
     db.session.delete(attendance)
@@ -514,13 +550,16 @@ def add_group_images(group_id, image_id):
     group_image = db.session.query(ImageGroup).filter_by(group_id=group_id, image_id=image_id).first()
 
     if not group:
+        current_app.logger.warn(f"Group with name: #{group.name} does not exist.")
         return jsonify(f"Group with name: #{group.name} does not exist."), 404
 
     if not image:
+        current_app.logger.warn(f"Image with path #{image.path} does not exist.")
         return jsonify(f"Image with path #{image.path} does not exist."), 404
 
     # If image is already attached to the group
     if group_image:
+        current_app.logger.warn(f"Image with id#{image_id} is already attached to group with id#{group_id}.")
         return jsonify(f"Image with id#{image_id} is already attached to group with id#{group_id}."), 422
     else:
         new_entry = ImageGroup(**{'group_id': group_id, 'image_id': image_id})
@@ -553,6 +592,7 @@ def delete_group_image(group_id, image_id):
     group_image = db.session.query(ImageGroup).filter_by(group_id=group_id, image_id=image_id).first()
 
     if not group_image:
+        current_app.logger.warn(f"Image with path #{image.path} is not assigned to Group with name #{group.name}.")
         return jsonify(f"Image with path #{image.path} is not assigned to Group with name #{group.name}."), 404
 
     db.session.delete(group_image)
