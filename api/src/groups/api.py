@@ -35,7 +35,7 @@ def create_group_type():
 def read_one_group_type(group_type_id):
     group_type = db.session.query(GroupType).filter_by(id=group_type_id).first()
     if not group_type:
-        return jsonify(f"GroupType with id #{group_type_id} does not exist."), 404
+        return jsonify(f"GroupType name: #{group_type.name} does not exist."), 404
 
     return jsonify(group_type_schema.dump(group_type))
 
@@ -67,7 +67,7 @@ def delete_group_type(group_type_id):
     group_type = db.session.query(GroupType).filter_by(id=group_type_id).first()
 
     if not group_type:
-        return jsonify(f"GroupType with id #{group_type_id} does not exist."), 404
+        return jsonify(f"GroupType name #{group_type.name} does not exist."), 404
 
     db.session.delete(group_type)
     db.session.commit()
@@ -98,7 +98,7 @@ def create_group():
         db.session.commit()
     # when the foreign key given is invalid
     except IntegrityError:
-        return jsonify('Payload contains an invalid foreign key'), 404
+        return jsonify('Payload contains an invalid group type'), 404
 
     return jsonify(group_schema.dump(new_group)), 201
 
@@ -119,7 +119,7 @@ def read_all_groups():
 def read_one_group(group_id):
     group = db.session.query(Group).filter_by(id=group_id).first()
     if group is None:
-        return jsonify(f"Group with id {group_id} does not exist"), 404
+        return jsonify(f"Group name: {group.name} does not exist"), 404
     return jsonify(group_schema.dump(group)), 200
 
 @groups.route('/groups/<int:group_id>', methods=['PATCH'])
@@ -139,7 +139,7 @@ def delete_group(group_id):
     group = db.session.query(Group).filter_by(id=group_id).first()
 
     if group is None:
-        return jsonify(f"Group with id #{group_id} does not exist"), 404
+        return jsonify(f"Group name: #{group.name} does not exist"), 404
 
     db.session.delete(group)
     db.session.commit()
@@ -167,7 +167,7 @@ def create_manager_type():
 def read_one_manager_type(manager_type_id):
     manager_type = db.session.query(ManagerType).filter_by(id=manager_type_id).first()
     if not manager_type:
-        return jsonify(f"ManagerType with id #{manager_type_id} does not exist."), 404
+        return jsonify(f"ManagerType name: #{manager_type.name} does not exist."), 404
 
     return jsonify(manager_type_schema.dump(manager_type))
 
@@ -199,7 +199,7 @@ def delete_manager_type(manager_type_id):
     manager_type = db.session.query(ManagerType).filter_by(id=manager_type_id).first()
 
     if not manager_type:
-        return jsonify(f"ManagerType with id #{manager_type_id} does not exist."), 404
+        return jsonify(f"ManagerType name: #{manager_type.name} does not exist."), 404
 
     db.session.delete(manager_type)
     db.session.commit()
@@ -237,7 +237,7 @@ def create_manager(group_id):
     try:
         db.session.commit()
     except IntegrityError:
-        return jsonify('Payload contains an invalid foreign key'), 404
+        return jsonify('Payload contains an invalid group/person key'), 404
     return jsonify(manager_schema.dump(new_manager)), 201
 
 
@@ -257,7 +257,7 @@ def read_all_managers(group_id):
 def read_one_manager(group_id, person_id):
     manager = db.session.query(Manager).filter_by(group_id=group_id, person_id=person_id).first()
     if manager is None:
-        return jsonify(f"Manager with group_id #{group_id} and person_id #{person_id} does not exist"), 404
+        return jsonify(f"Manager with group name: #{group.name} and person's username #{person.username} does not exist"), 404
     return jsonify(manager_schema.dump(manager))
 
 
@@ -272,7 +272,7 @@ def update_manager(group_id, person_id):
 
     manager = db.session.query(Manager).filter_by(group_id=group_id, person_id=person_id).first()
     if manager is None:
-        return jsonify(f"Manager with group_id #{group_id} and person_id #{person_id} does not exist"), 404
+        return jsonify(f"Manager with group name: #{group.name} and person's username #{person.username} does not exist"), 404
 
     for key, val in valid_attributes.items():
         setattr(manager, key, val)
@@ -289,7 +289,7 @@ def delete_manager(group_id, person_id):
     manager = db.session.query(Manager).filter_by(group_id=group_id, person_id=person_id).first()
 
     if manager is None:
-        return jsonify(f"Manager with group_id #{group_id} and person_id #{person_id} does not exist"), 404
+        return jsonify(f"Manager with group name: #{group.name} and person's username #{person.username} does not exist"), 404
 
     db.session.delete(manager)
     db.session.commit()
@@ -321,7 +321,7 @@ def create_meeting():
         db.session.commit()
     # when the foreign key given is invalid
     except IntegrityError:
-        return jsonify('Payload contains an invalid foreign key'), 404
+        return jsonify('Payload contains an invalid address/group key'), 404
 
     return jsonify(meeting_schema.dump(new_meeting)), 201
 
@@ -340,7 +340,7 @@ def read_all_meetings():
 def read_one_meeting(meeting_id):
     meeting = db.session.query(Meeting).filter_by(id=meeting_id).first()
     if meeting is None:
-        return jsonify(f"Meeting with id {meeting_id} does not exist"), 404
+        return jsonify(f"Meeting with description: {meeting.description} does not exist"), 404
     return jsonify(meeting_schema.dump(meeting)), 200
 
 @groups.route('/meetings/<int:meeting_id>', methods=['PATCH'])
@@ -360,7 +360,7 @@ def delete_meeting(meeting_id):
     meeting = db.session.query(Meeting).filter_by(id=meeting_id).first()
 
     if meeting is None:
-        return jsonify(f"Meeting with id #{meeting_id} does not exist"), 404
+        return jsonify(f"Meeting with description: #{meeting.description} does not exist"), 404
 
     db.session.delete(meeting)
     db.session.commit()
@@ -398,7 +398,7 @@ def create_member(group_id):
     try:
         db.session.commit()
     except IntegrityError:
-        return jsonify('Payload contains an invalid foreign key'), 404
+        return jsonify('Payload contains an invalid group/person key'), 404
     return jsonify(member_schema.dump(new_member)), 201
 
 
@@ -418,7 +418,7 @@ def read_all_members(group_id):
 def read_one_member(group_id, person_id):
     member = db.session.query(Member).filter_by(group_id=group_id, person_id=person_id).first()
     if member is None:
-        return jsonify(f"Member with group_id #{group_id} and person_id #{person_id} does not exist"), 404
+        return jsonify(f"Member with group name: #{group.name} and person username: #{person.username} does not exist"), 404
     return jsonify(member_schema.dump(member))
 
 
@@ -433,7 +433,7 @@ def update_member(group_id, person_id):
 
     member = db.session.query(Member).filter_by(group_id=group_id, person_id=person_id).first()
     if member is None:
-        return jsonify(f"Member with group_id #{group_id} and person_id #{person_id} does not exist"), 404
+        return jsonify(f"Member with group name: #{group.name} and person username: #{person.username} does not exist"), 404
 
     for key, val in valid_attributes.items():
         setattr(member, key, val)
@@ -450,7 +450,7 @@ def delete_member(group_id, person_id):
     member = db.session.query(Member).filter_by(group_id=group_id, person_id=person_id).first()
 
     if member is None:
-        return jsonify(f"Member with group_id #{group_id} and person_id #{person_id} does not exist"), 404
+        return jsonify(f"Member with group name: #{group.name} and person username: #{person.username} does not exist"), 404
 
     db.session.delete(member)
     db.session.commit()
@@ -465,14 +465,14 @@ attendance_schema = AttendanceSchema()
 @jwt_required
 def create_attendance(meeting_id, person_id):
     if not db.session.query(Person).filter_by(id=person_id).first():
-        return jsonify(f"Person with person_id #{person_id} does not exist"), 404
+        return jsonify(f"Person with person username #{person.username} does not exist"), 404
 
     if not db.session.query(Meeting).filter_by(id=meeting_id).first():
-        return jsonify(f"Meeting with meeting_id #{meeting_id} does not exist"), 404
+        return jsonify(f"Meeting with meeting description: #{meeting.description} does not exist"), 404
 
     if db.session.query(Attendance).filter_by(person_id=person_id, meeting_id=meeting_id).first():
         # if the same attendance already exists
-        return jsonify(f"Attendance with meeting_id #{meeting_id} and person_id #{person_id} already exists"), 409
+        return jsonify(f"Attendance with meeting name: #{meeting.name} and person username #{person.username} already exists"), 409
 
     new_attendance = Attendance(meeting_id=meeting_id, person_id=person_id)
     db.session.add(new_attendance)
@@ -496,7 +496,7 @@ def delete_attendance(meeting_id, person_id):
     attendance = db.session.query(Attendance).filter_by(meeting_id=meeting_id, person_id=person_id).first()
 
     if attendance is None:
-        return jsonify(f"Attendance with meeting_id #{meeting_id} and person_id #{person_id} does not exist"), 404
+        return jsonify(f"Attendance with meeting name: #{meeting.name} and person username #{person.username} does not exist"), 404
 
     db.session.delete(attendance)
     db.session.commit()
@@ -514,10 +514,10 @@ def add_group_images(group_id, image_id):
     group_image = db.session.query(ImageGroup).filter_by(group_id=group_id, image_id=image_id).first()
 
     if not group:
-        return jsonify(f"Group with id #{group_id} does not exist."), 404
+        return jsonify(f"Group with name: #{group.name} does not exist."), 404
 
     if not image:
-        return jsonify(f"Image with id #{image_id} does not exist."), 404
+        return jsonify(f"Image with path #{image.path} does not exist."), 404
 
     # If image is already attached to the group
     if group_image:
@@ -553,7 +553,7 @@ def delete_group_image(group_id, image_id):
     group_image = db.session.query(ImageGroup).filter_by(group_id=group_id, image_id=image_id).first()
 
     if not group_image:
-        return jsonify(f"Image with id #{image_id} is not assigned to Group with id #{group_id}."), 404
+        return jsonify(f"Image with path #{image.path} is not assigned to Group with name #{group.name}."), 404
 
     db.session.delete(group_image)
     db.session.commit()
