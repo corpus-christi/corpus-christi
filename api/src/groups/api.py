@@ -21,6 +21,7 @@ group_type_schema = GroupTypeSchema()
 
 @groups.route('/group-types', methods=['POST'])
 def create_group_type():
+    current_app.logger.info("new request")
     try:
         valid_group_type = group_type_schema.load(request.json)
     except ValidationError as err:
@@ -34,6 +35,7 @@ def create_group_type():
 
 @groups.route('/group-types/<int:group_type_id>', methods=['GET'])
 def read_one_group_type(group_type_id):
+    current_app.logger.info("new request")
     group_type = db.session.query(GroupType).filter_by(id=group_type_id).first()
     if not group_type:
         current_app.logger.warn(f"GroupType with id #{group_type_id} does not exist.")
@@ -43,6 +45,7 @@ def read_one_group_type(group_type_id):
 
 @groups.route('/group-types', methods=['GET'])
 def read_all_group_types():
+    current_app.logger.info("new request")
     query = db.session.query(GroupType)
     try:
         group_types = get_all_queried_entities(query, request.args)
@@ -53,6 +56,7 @@ def read_all_group_types():
 @groups.route('/group-types/<int:group_type_id>', methods=['PATCH'])
 @jwt_required
 def update_group_type(group_type_id):
+    current_app.logger.info("new request")
     group_type_schema = GroupTypeSchema()
 
     try:
@@ -67,6 +71,7 @@ def update_group_type(group_type_id):
 @groups.route('/group-types/<int:group_type_id>', methods=['DELETE'])
 @jwt_required
 def delete_group_type(group_type_id):
+    current_app.logger.info("new request")
     group_type = db.session.query(GroupType).filter_by(id=group_type_id).first()
 
     if not group_type:
@@ -86,6 +91,7 @@ group_schema = GroupSchema()
 @groups.route('/groups', methods=['POST'])
 @jwt_required
 def create_group():
+    current_app.logger.info("new request")
     try:
         valid_group = group_schema.load(request.json, partial=['active'])
     except ValidationError as err:
@@ -111,6 +117,7 @@ def create_group():
 
 @groups.route('/groups', methods=['GET'])
 def read_all_groups():
+    current_app.logger.info("new request")
     query = db.session.query(Group)
     try:
         groups = get_all_queried_entities(query, request.args)
@@ -123,6 +130,7 @@ def read_all_groups():
 @groups.route('/groups/<int:group_id>', methods=['GET'])
 @jwt_required
 def read_one_group(group_id):
+    current_app.logger.info("new request")
     group = db.session.query(Group).filter_by(id=group_id).first()
     if group is None:
         current_app.logger.warn(f"Group with id {group_id} does not exist")
@@ -132,6 +140,7 @@ def read_one_group(group_id):
 @groups.route('/groups/<int:group_id>', methods=['PATCH'])
 @jwt_required
 def update_group(group_id):
+    current_app.logger.info("new request")
     group_schema = GroupSchema()
     try:
         valid_attributes = group_schema.load(request.json, partial=True)
@@ -144,6 +153,7 @@ def update_group(group_id):
 @groups.route('/groups/<int:group_id>', methods=['DELETE'])
 @jwt_required
 def delete_group(group_id):
+    current_app.logger.info("new request")
     group = db.session.query(Group).filter_by(id=group_id).first()
 
     if group is None:
@@ -162,6 +172,7 @@ manager_type_schema = ManagerTypeSchema()
 
 @groups.route('/manager-types', methods=['POST'])
 def create_manager_type():
+    current_app.logger.info("new request")
     try:
         valid_manager_type = manager_type_schema.load(request.json)
     except ValidationError as err:
@@ -175,6 +186,7 @@ def create_manager_type():
 
 @groups.route('/manager-types/<int:manager_type_id>', methods=['GET'])
 def read_one_manager_type(manager_type_id):
+    current_app.logger.info("new request")
     manager_type = db.session.query(ManagerType).filter_by(id=manager_type_id).first()
     if not manager_type:
         current_app.logger.warn(f"ManagerType name: #{manager_type.name} does not exist.")
@@ -184,6 +196,7 @@ def read_one_manager_type(manager_type_id):
 
 @groups.route('/manager-types', methods=['GET'])
 def read_all_manager_types():
+    current_app.logger.info("new request")
     query = db.session.query(ManagerType)
     try:
         manager_types = get_all_queried_entities(query, request.args)
@@ -194,6 +207,7 @@ def read_all_manager_types():
 @groups.route('/manager-types/<int:manager_type_id>', methods=['PATCH'])
 @jwt_required
 def update_manager_type(manager_type_id):
+    current_app.logger.info("new request")
     manager_type_schema = ManagerTypeSchema()
 
     try:
@@ -208,6 +222,7 @@ def update_manager_type(manager_type_id):
 @groups.route('/manager-types/<int:manager_type_id>', methods=['DELETE'])
 @jwt_required
 def delete_manager_type(manager_type_id):
+    current_app.logger.info("new request")
     manager_type = db.session.query(ManagerType).filter_by(id=manager_type_id).first()
 
     if not manager_type:
@@ -229,6 +244,7 @@ manager_schema = ManagerSchema()
 @groups.route('/groups/<int:group_id>/managers', methods=['POST'])
 @jwt_required
 def create_manager(group_id):
+    current_app.logger.info("new request")
     # make group_id an invalid field in payload
     manager_schema = ManagerSchema(exclude=['group_id'])
     try:
@@ -260,6 +276,7 @@ def create_manager(group_id):
 @groups.route('/groups/<int:group_id>/managers', methods=['GET'])
 @jwt_required
 def read_all_managers(group_id):
+    current_app.logger.info("new request")
     query = db.session.query(Manager).filter_by(group_id=group_id)
     try:
         managers = get_all_queried_entities(query, request.args)
@@ -271,6 +288,7 @@ def read_all_managers(group_id):
 @groups.route('/groups/<int:group_id>/managers/<int:person_id>', methods=['GET'])
 @jwt_required
 def read_one_manager(group_id, person_id):
+    current_app.logger.info("new request")
     manager = db.session.query(Manager).filter_by(group_id=group_id, person_id=person_id).first()
     if manager is None:
         current_app.logger.warn(f"Manager with group name: #{group.name} and person's username #{person.username} does not exist")
@@ -281,6 +299,7 @@ def read_one_manager(group_id, person_id):
 @groups.route('/groups/<int:group_id>/managers/<int:person_id>', methods=['PATCH'])
 @jwt_required
 def update_manager(group_id, person_id):
+    current_app.logger.info("new request")
     manager_schema = ManagerSchema(exclude=['group_id', 'person_id'])
     try:
         valid_attributes = manager_schema.load(request.json, partial=True)
@@ -305,6 +324,7 @@ def update_manager(group_id, person_id):
 @groups.route('/groups/<int:group_id>/managers/<int:person_id>', methods=['DELETE'])
 @jwt_required
 def delete_manager(group_id, person_id):
+    current_app.logger.info("new request")
     manager = db.session.query(Manager).filter_by(group_id=group_id, person_id=person_id).first()
 
     if manager is None:
@@ -325,6 +345,7 @@ meeting_schema = MeetingSchema()
 @groups.route('/meetings', methods=['POST'])
 @jwt_required
 def create_meeting():
+    current_app.logger.info("new request")
     try:
         valid_meeting = meeting_schema.load(request.json, partial=['active'])
     except ValidationError as err:
@@ -349,6 +370,7 @@ def create_meeting():
 
 @groups.route('/meetings', methods=['GET'])
 def read_all_meetings():
+    current_app.logger.info("new request")
     query = db.session.query(Meeting)
     try:
         meetings = get_all_queried_entities(query, request.args)
@@ -360,6 +382,7 @@ def read_all_meetings():
 @groups.route('/meetings/<int:meeting_id>', methods=['GET'])
 @jwt_required
 def read_one_meeting(meeting_id):
+    current_app.logger.info("new request")
     meeting = db.session.query(Meeting).filter_by(id=meeting_id).first()
     if meeting is None:
         current_app.logger.warn(f"Meeting with description: {meeting.description} does not exist")
@@ -369,6 +392,7 @@ def read_one_meeting(meeting_id):
 @groups.route('/meetings/<int:meeting_id>', methods=['PATCH'])
 @jwt_required
 def update_meeting(meeting_id):
+    current_app.logger.info("new request")
     meeting_schema = MeetingSchema()
     try:
         valid_attributes = meeting_schema.load(request.json, partial=True)
@@ -381,6 +405,7 @@ def update_meeting(meeting_id):
 @groups.route('/meetings/<int:meeting_id>', methods=['DELETE'])
 @jwt_required
 def delete_meeting(meeting_id):
+    current_app.logger.info("new request")
     meeting = db.session.query(Meeting).filter_by(id=meeting_id).first()
 
     if meeting is None:
@@ -401,6 +426,7 @@ member_schema = MemberSchema()
 @groups.route('/groups/<int:group_id>/members', methods=['POST'])
 @jwt_required
 def create_member(group_id):
+    current_app.logger.info("new request")
     member_schema = MemberSchema(exclude=['group_id'])
     try:
         valid_member = member_schema.load(request.json, partial=['joined', 'active']) # make joined and active optional fields
@@ -433,6 +459,7 @@ def create_member(group_id):
 @groups.route('/groups/<int:group_id>/members', methods=['GET'])
 @jwt_required
 def read_all_members(group_id):
+    current_app.logger.info("new request")
     query = db.session.query(Member).filter_by(group_id=group_id)
     try:
         members = get_all_queried_entities(query, request.args)
@@ -444,6 +471,7 @@ def read_all_members(group_id):
 @groups.route('/groups/<int:group_id>/members/<int:person_id>', methods=['GET'])
 @jwt_required
 def read_one_member(group_id, person_id):
+    current_app.logger.info("new request")
     member = db.session.query(Member).filter_by(group_id=group_id, person_id=person_id).first()
     if member is None:
         current_app.logger.warn(f"Member with group name: #{group.name} and person username: #{person.username} does not exist")
@@ -454,6 +482,7 @@ def read_one_member(group_id, person_id):
 @groups.route('/groups/<int:group_id>/members/<int:person_id>', methods=['PATCH'])
 @jwt_required
 def update_member(group_id, person_id):
+    current_app.logger.info("new request")
     member_schema = MemberSchema(exclude=['group_id', 'person_id'])
     try:
         valid_attributes = member_schema.load(request.json, partial=True)
@@ -478,6 +507,7 @@ def update_member(group_id, person_id):
 @groups.route('/groups/<int:group_id>/members/<int:person_id>', methods=['DELETE'])
 @jwt_required
 def delete_member(group_id, person_id):
+    current_app.logger.info("new request")
     member = db.session.query(Member).filter_by(group_id=group_id, person_id=person_id).first()
 
     if member is None:
@@ -496,6 +526,7 @@ attendance_schema = AttendanceSchema()
 @groups.route('/meetings/<int:meeting_id>/attendances/<int:person_id>', methods=['POST', 'PUT', 'PATCH'])
 @jwt_required
 def create_attendance(meeting_id, person_id):
+    current_app.logger.info("new request")
     if not db.session.query(Person).filter_by(id=person_id).first():
         current_app.logger.warn(f"Person with person username #{person.username} does not exist")
         return jsonify(f"Person with person username #{person.username} does not exist"), 404
@@ -518,6 +549,7 @@ def create_attendance(meeting_id, person_id):
 @groups.route('/meetings/<int:meeting_id>/attendances', methods=['GET'])
 @jwt_required
 def read_all_attendances(meeting_id):
+    current_app.logger.info("new request")
     query = db.session.query(Attendance).filter_by(meeting_id=meeting_id)
     try:
         attendances = get_all_queried_entities(query, request.args)
@@ -528,6 +560,7 @@ def read_all_attendances(meeting_id):
 @groups.route('/meetings/<int:meeting_id>/attendances/<int:person_id>', methods=['DELETE'])
 @jwt_required
 def delete_attendance(meeting_id, person_id):
+    current_app.logger.info("new request")
     attendance = db.session.query(Attendance).filter_by(meeting_id=meeting_id, person_id=person_id).first()
 
     if attendance is None:
@@ -544,6 +577,7 @@ def delete_attendance(meeting_id, person_id):
 @groups.route('/<int:group_id>/images/<int:image_id>', methods=['POST'])
 @jwt_required
 def add_group_images(group_id, image_id):
+    current_app.logger.info("new request")
     group = db.session.query(Group).filter_by(id=group_id).first()
     image = db.session.query(Image).filter_by(id=image_id).first()
 
@@ -572,6 +606,7 @@ def add_group_images(group_id, image_id):
 @groups.route('/<int:group_id>/images/<int:image_id>', methods=['PUT'])
 @jwt_required
 def put_group_images(group_id, image_id):
+    current_app.logger.info("new request")
     # check for old image id in parameter list (?old=<id>)
     old_image_id = request.args['old']
     new_image_id = image_id
@@ -589,6 +624,7 @@ def put_group_images(group_id, image_id):
 @groups.route('/<int:group_id>/images/<int:image_id>', methods=['DELETE'])
 @jwt_required
 def delete_group_image(group_id, image_id):
+    current_app.logger.info("new request")
     group_image = db.session.query(ImageGroup).filter_by(group_id=group_id, image_id=image_id).first()
 
     if not group_image:
