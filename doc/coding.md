@@ -25,6 +25,7 @@ Include examples.
    ```
    /groups/42
    ```
+4. Use `PATCH` unless you really want to something to go away, in which case use `DELETE`
 
 ### Create
 
