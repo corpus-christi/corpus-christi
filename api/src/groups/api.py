@@ -35,7 +35,7 @@ def create_group_type():
 def read_one_group_type(group_type_id):
     group_type = db.session.query(GroupType).filter_by(id=group_type_id).first()
     if not group_type:
-        return jsonify(f"GroupType name: #{group_type.name} does not exist."), 404
+        return jsonify(f"GroupType with id #{group_type_id} does not exist."), 404
 
     return jsonify(group_type_schema.dump(group_type))
 
@@ -67,7 +67,7 @@ def delete_group_type(group_type_id):
     group_type = db.session.query(GroupType).filter_by(id=group_type_id).first()
 
     if not group_type:
-        return jsonify(f"GroupType name #{group_type.name} does not exist."), 404
+        return jsonify(f"GroupType with id #{group_type_id} does not exist."), 404
 
     db.session.delete(group_type)
     db.session.commit()
@@ -119,7 +119,7 @@ def read_all_groups():
 def read_one_group(group_id):
     group = db.session.query(Group).filter_by(id=group_id).first()
     if group is None:
-        return jsonify(f"Group name: {group.name} does not exist"), 404
+        return jsonify(f"Group with id {group_id} does not exist"), 404
     return jsonify(group_schema.dump(group)), 200
 
 @groups.route('/groups/<int:group_id>', methods=['PATCH'])
@@ -139,7 +139,7 @@ def delete_group(group_id):
     group = db.session.query(Group).filter_by(id=group_id).first()
 
     if group is None:
-        return jsonify(f"Group name: #{group.name} does not exist"), 404
+        return jsonify(f"Group with id #{group_id} does not exist"), 404
 
     db.session.delete(group)
     db.session.commit()
