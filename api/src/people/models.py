@@ -15,13 +15,11 @@ from ..shared.models import StringTypes
 
 # Defines join table for people_person and people_role
 people_person_role = Table('person_role', Base.metadata,
-                           Column('people_person_id', Integer,
-                                  ForeignKey('people_person.id'),
-                                  primary_key=True),
-                           Column('id', Integer,
-                                  ForeignKey('people_role.id'),
-                                  primary_key=True))
-
+        Column('people_person_id', Integer, ForeignKey(
+            'people_person.id'), primary_key=True),
+        Column('id', Integer, ForeignKey(
+            'people_role.id'), primary_key=True)
+        )
 
 # ---- Person
 
@@ -54,6 +52,7 @@ class Person(Base):
     teams = relationship("TeamMember", back_populates="member")
     diplomas_awarded = relationship('DiplomaAwarded', back_populates='students', lazy=True, uselist=True)
     members = relationship('Member', back_populates='person', lazy=True)
+    managers = relationship('Manager', back_populates='person', lazy=True)
     images = relationship('ImagePerson', back_populates='person')
 
     roles = relationship("Role", secondary=people_person_role, backref="person")
@@ -159,25 +158,4 @@ class RoleSchema(Schema):
     active = fields.Boolean()
 
 
-# ---- Manager
-
-class Manager(Base):
-    __tablename__ = 'people_manager'
-    id = Column(Integer, primary_key=True)
-    person_id = Column(Integer, ForeignKey('people_person.id'), nullable=False)
-    manager_id = Column(Integer, ForeignKey('people_manager.id'))
-    description_i18n = Column(StringTypes.I18N_KEY, ForeignKey('i18n_key.id'), nullable=False)
-    manager = relationship('Manager', backref='subordinates', lazy=True, remote_side=[id])
-    groups = relationship('Group', back_populates='manager', lazy=True)
-    person = relationship("Person", backref=backref("manager", uselist=False))
-
-    def __repr__(self):
-        return f"<Manager(id={self.id})>"
-
-
-class ManagerSchema(Schema):
-    id = fields.Integer(dump_only=True, data_key='id', required=True, validate=Range(min=1))
-    person_id = fields.Integer(data_key='person_id', required=True, validate=Range(min=1))
-    manager_id = fields.Integer(data_key='manager_id', validate=Range(min=1))
-    description_i18n = fields.String(data_key='description_i18n', required=True)
-    person = fields.Nested('PersonSchema', dump_only=True)
+# ---- Manager moved to groups.models

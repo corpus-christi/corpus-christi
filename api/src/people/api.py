@@ -4,7 +4,7 @@ from flask_jwt_extended import jwt_required
 from marshmallow import ValidationError
 
 from . import people
-from .models import Person, Role, PersonSchema, RoleSchema, Manager, ManagerSchema
+from .models import Person, Role, PersonSchema, RoleSchema # , Manager, ManagerSchema
 from .. import db
 from ..attributes.models import Attribute, AttributeSchema, EnumeratedValue, \
     EnumeratedValueSchema, PersonAttribute, PersonAttributeSchema
@@ -511,82 +511,7 @@ def remove_role_from_account(person_id, role_id):
     #--------------------------------------------
     return jsonify(role_schema.dump(role_to_remove))
 
-
-# ---- Manager
-
-manager_schema = ManagerSchema()
-
-
-@people.route('/manager', methods=['POST'])
-@jwt_required
-def create_manager():
-    try:
-        valid_manager = manager_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    new_manager = Manager(**valid_manager)
-    db.session.add(new_manager)
-    db.session.commit()
-    return jsonify(manager_schema.dump(new_manager)), 201
-
-
-@people.route('/manager')
-@jwt_required
-def read_all_managers():
-    show_unique_persons_only = request.args.get('show_unique_persons_only')
-
-    # Remove duplicate persons
-    if show_unique_persons_only == 'Y':
-        result = db.session.query(Manager).distinct(Manager.person_id).all()
-    else:
-        result = db.session.query(Manager)
-
-    return jsonify(manager_schema.dump(result, many=True))
-
-
-@people.route('/manager/<manager_id>')
-@jwt_required
-def read_one_manager(manager_id):
-    result = db.session.query(Manager).filter_by(id=manager_id).first()
-    if result is None:
-        return jsonify("Manager does not exist"), 404
-    return jsonify(manager_schema.dump(result))
-
-
-@people.route('/manager/<manager_id>', methods=['PATCH'])
-@jwt_required
-def update_manager(manager_id):
-    try:
-        valid_manager = manager_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 422
-
-    manager = db.session.query(Manager).filter_by(id=manager_id).first()
-
-    for key, val in valid_manager.items():
-        setattr(manager, key, val)
-
-    db.session.commit()
-    return jsonify(manager_schema.dump(manager))
-
-
-@people.route('/manager/<manager_id>', methods=['DELETE'])
-@jwt_required
-def delete_manager(manager_id):
-    manager = db.session.query(Manager).filter_by(id=manager_id).first()
-
-    if manager is None:
-        return 'Manager not found', 404
-
-    for subordinate in manager.subordinates:
-        setattr(subordinate, 'manager_id', None)
-
-    db.session.delete(manager)
-    db.session.commit()
-
-    return jsonify(manager_schema.dump(manager)), 204
-
+# ---- Manager moved to groups
 
 # ---- Image
 

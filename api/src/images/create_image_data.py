@@ -260,8 +260,10 @@ def create_images_locations(sqla, fraction=0.75):
 def create_images_test_data(sqla):
     """The function that creates test data in the correct order """
     create_multiple_images(sqla, 15)
-    create_images_events(sqla, 0.75)
-    create_images_people(sqla, 0.75)
-    create_images_courses(sqla, 0.75)
-    create_images_groups(sqla, 0.75)
-    create_images_locations(sqla, 0.75)
+    # below will fail due to undefined "create_multiple_*" functions
+    # However importing them seems to cause circular import errors
+    # create_images_events(sqla, 0.75)
+    # create_images_people(sqla, 0.75)
+    # create_images_courses(sqla, 0.75)
+    # create_images_groups(sqla, 0.75)
+    # create_images_locations(sqla, 0.75)
