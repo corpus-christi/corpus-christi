@@ -125,16 +125,27 @@ def log(*args):
         the second argument is the status code
         
     calling with 1 argument:
-        the single argument is a 2-element tuple,
+        the single argument is a 2-element tuple:
         where the two elements correspond to the 2 arguments 
         in the 2-argument form of this function
+
+        the single argument is the returning object from the endpoint:
+        a status code of 200 will be used
+
+    This interface is semi-compatible with but less flexible than flask's
+    specification of endpoint's return value. But it can be extended to support
+    more forms of calling, if needed. For reference, see 
+    https://flask.palletsprojects.com/en/1.1.x/quickstart/#about-responses
     """
     if len(args) > 2:
         raise Exception("log can only take 1 or 2 arguments")
     if len(args) == 2:
         body, code = args
     else: # if len(args) == 1
-        body, code = args[0]
+        if isinstance(args[0], tuple):
+            body, code = args[0]
+        else: 
+            body, code = args[0], 200
 
     if current_app:
         if code >= 400:
