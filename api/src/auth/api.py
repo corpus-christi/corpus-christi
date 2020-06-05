@@ -78,6 +78,7 @@ def add_claims_to_access_token(identity):
 def get_test_jwt():
     if current_app.config['TESTING']:
         access_token = create_access_token(identity='test-user')
+        add_token_to_database(access_token, current_app.config['JWT_IDENTITY_CLAIM'])
         print("ACCESS TOKEN", access_token)
         return jsonify(jwt=access_token)
     else:
