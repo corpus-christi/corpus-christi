@@ -24,11 +24,12 @@
       multi-line
       top
     >
-      {{ snackBarObj.content }}
-      <v-btn flat color="normal" @click="snackBarObj.show = false"
-        >Dismiss</v-btn
-      >
-      <v-btn flat color="primary">Report Error(not implemented)</v-btn>
+      <!--{{ snackBarObj.content }}-->
+      {{ $t("events.Error-result-not-found") }}
+      <v-btn flat color="normal" @click="snackBarObj.show = false">
+        {{ $t("actions.dismiss") }}
+      </v-btn>
+      <v-btn flat color="primary">{{ $t("actions.Report-error") }}</v-btn>
     </v-snackbar>
   </div>
 </template>
@@ -42,7 +43,7 @@ export default {
         color: "normal",
         content: "",
         timeout: 12000,
-        show: false
+        show: true
       }
     };
   },
