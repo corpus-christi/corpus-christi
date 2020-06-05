@@ -5,6 +5,8 @@ from flask_mail import Mail
 from config import config, BASE_DIR
 from .db import DbConfig
 
+from . import conflogger
+
 db = DbConfig()
 jwt = JWTManager()
 mail = Mail()
@@ -71,5 +73,8 @@ def create_app(config_name):
 
     from .images import images as images_blueprint
     app.register_blueprint(images_blueprint, url_prefix='/api/v1/images')
+
+    from flask.logging import default_handler
+    app.logger.removeHandler(default_handler)
 
     return app
