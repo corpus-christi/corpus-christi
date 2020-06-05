@@ -41,12 +41,13 @@
       "login": "Log In",
       "logout": "Log Out",
       "open-map": "Open Map",
-      "Report-error": "Report Error(not implemented)",
+      "report-error": "Report Error(not implemented)",
       "save": "Save",
       "search": "Search",
       "search-addresses": "Search Addresses",
       "search-managers": "Search Managers",
       "search-people": "Search People",
+      "submit": "Sumbit",
       "signup": "Signup",
       "tooltips": {
         "activate": "Activate",
@@ -442,7 +443,9 @@
         "headers": {
           "home-group-percentage": "Percentage of Churchgoers in a Home Group",
           "location-attendance": "Attendance by Location",
-          "yearly-attendance": "Yearly Attendance"
+          "yearly-attendance": "Yearly Attendance",
+          "error-report": "Error Report",
+          "add-description": "Add Description"
         },
         "title": "Dashboard"
       },
@@ -453,7 +456,7 @@
       "end-date": "End Date",
       "end-time": "End Time",
       "error-adding-event": "Error while adding event",
-      "error-result-conflect": "Conflict",
+      "error-result-conflict": "Conflict",
       "error-result-not-found": "Result NOT found",
       "error-archiving-event": "Error while archiving event",
       "error-editing-event": "Error while editing event",
@@ -554,7 +557,8 @@
         "member-unarchived": "Member unarchived",
         "members-added": "Members added",
         "no-remaining-members": "No remaining members",
-        "required-fields": "Please fill out all required fields"
+        "required-fields": "Please fill out all required fields",
+        "make-description": "Make a description of your error"
       },
       "name": "Name",
       "none-assigned": "No groups assigned.",
@@ -817,12 +821,13 @@
       "login": "Acceder",
       "logout": "Cerrar sesi\u00f3n",
       "open-map": "Abrir Mapa",
-      "Report-error": "Informar error (no implementado)",
+      "report-error": "Informar error (no implementado)",
       "save": "Salvar",
       "search": "Buscar",
       "search-addresses": "Buscar Direcciones",
       "search-managers": "Gestores de B\u00fasqueda",
       "search-people": "Buscar Personas",
+      "submit": "Enviar",
       "signup": "Reg\u00edstrate",
       "tooltips": {
         "activate": "Activar",
@@ -1009,7 +1014,9 @@
         "headers": {
           "home-group-percentage": "Porcentaje de Feligreses en un Grupo de Hogar",
           "location-attendance": "Asistencia por Ubicaci\u00f3n",
-          "yearly-attendance": "Asistencia Anual"
+          "yearly-attendance": "Asistencia Anual",
+          "error-report": "Reporte de error",
+          "add-description": "agregar descripción"
         },
         "title": "Tablero"
       },
@@ -1023,7 +1030,7 @@
       "error-archiving-event": "Error al archivar el evento",
       "error-editing-event": "Error al editar evento",
       "error-unarchiving-event": "Error al desarchivar el evento",
-      "error-result-conflect": "Conflicto",
+      "error-result-conflict": "Conflicto",
       "error-result-not-found": "Resultado no encontrado",
       "error-result-forbidden": "Congelado",
       "event-added": "Evento agregado",
@@ -1121,7 +1128,8 @@
         "member-unarchived": "Miembro desarchivado",
         "members-added": "Miembros agregados",
         "no-remaining-members": "Ning\u00fan miembro restante",
-        "required-fields": "Por favor llene todos los campos requeridos"
+        "required-fields": "Por favor llene todos los campos requeridos",
+        "make-description": "Haga una descripción de su error."
       },
       "name": "Nombre",
       "none-assigned": "No hay grupos asignados.",
