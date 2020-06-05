@@ -24,13 +24,34 @@
       multi-line
       top
     >
-      <!--{{ snackBarObj.content }}-->
-      {{ $t("events.Error-result-not-found") }}
+      <blog-post v-if= "snackBarObj.content == '404'">{{ $t("events.error-result-not-found") }}</blog-post>
+      <blog-post v-if= "snackBarObj.content == '403'">{{ $t("events.Error-result-forbidden") }}</blog-post>
+      <blog-post v-if= "snackBarObj.content == '409'">{{ $t("events.Error-result-conflect") }}</blog-post>
+<!--      <blog-post v-else>{{ "Client Error"}}</blog-post>-->
       <v-btn flat color="normal" @click="snackBarObj.show = false">
         {{ $t("actions.dismiss") }}
       </v-btn>
-      <v-btn flat color="primary">{{ $t("actions.Report-error") }}</v-btn>
+      <v-btn flat color="primary" @click="reportFrom.show = true">{{ $t("actions.Report-error") }}</v-btn>
     </v-snackbar>
+    <v-card
+      v-show = reportFrom.show
+    >
+      <v-card-title>
+        Error Report
+      </v-card-title>
+      <v-card-text>
+        <form>
+          <v-col>
+            <v-text-field
+              label="Make a description of your error"
+              outlined
+            ></v-text-field>
+          </v-col>
+        </form>
+      </v-card-text>
+      <v-btn small rounded color="info">Submit</v-btn>
+      <v-btn small rounded color="primary" @click="reportFrom.show = false">Cancel</v-btn>
+    </v-card>
   </div>
 </template>
 
@@ -39,11 +60,17 @@ export default {
   props: ["bus"],
   data() {
     return {
+      isshow: false,
       snackBarObj: {
         color: "normal",
         content: "",
         timeout: 12000,
-        show: true
+        show: false
+      },
+      reportFrom:{
+        content: "",
+        timeout: 100,
+        show: false
       }
     };
   },
