@@ -1,8 +1,8 @@
 import hashlib
 
-from flask.json import jsonify, loads
+from flask.json import jsonify
 
-from flask import current_app, Response
+from flask import current_app
 
 from src import db
 
@@ -116,36 +116,15 @@ def get_all_queried_entities(query_object, request_query_arguments):
         raise QueryArgumentError(repr(e), 422)
     return all_entities
 
-def log(*args):
+def logged_response(body, code=200):
     """ intends to be used as a wrapper before an endpoint returns
     to log information to the console and file using app.logger
 
-    calling with 2 arguments:
-        the first argument is the returning object from the endpoint
-        the second argument is the status code
-        
-    calling with 1 argument:
-        the single argument is a 2-element tuple:
-        where the two elements correspond to the 2 arguments 
-        in the 2-argument form of this function
+    body: the body to be converted to a Response, 
+        if it is not a string, it will be 'jsonified'
+    code: the response status code, default to 200 be used
 
-        the single argument is the returning object from the endpoint:
-        a status code of 200 will be used
-
-    This interface is semi-compatible with but less flexible than flask's
-    specification of endpoint's return value. But it can be extended to support
-    more forms of calling, if needed. For reference, see 
-    https://flask.palletsprojects.com/en/1.1.x/quickstart/#about-responses
     """
-    if len(args) > 2:
-        raise Exception("log can only take 1 or 2 arguments")
-    if len(args) == 2:
-        body, code = args
-    else: # if len(args) == 1
-        if isinstance(args[0], tuple):
-            body, code = args[0]
-        else: 
-            body, code = args[0], 200
 
     if current_app:
         if code >= 400:
@@ -153,14 +132,8 @@ def log(*args):
         else:
             logger = current_app.logger.info
 
-        if isinstance(body, Response):
-            # if already jsonified
-            data = loads(body.data)
-        else:
-            data = body
-
-        logger(f"{str(data)} --- {code}")
-    return body, code
+        logger(f"{body} --- {code}")
+    return jsonify(body), code
 
 
 def is_allowed_file(filename):
