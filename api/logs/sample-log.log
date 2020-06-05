@@ -1,0 +1,2 @@
+[2020-06-05 13:34:20,148] WARNING PATCH  from <http://localhost:5000/api/v1/groups/group-types/2> (127.0.0.1): Item with id #2 does not exist. --- 404
+[2020-06-05 13:35:18,959] WARNING POST   from <http://localhost:5000/api/v1/groups/group-types> (127.0.0.1): {'invalid': ['Unknown field.']} --- 422
