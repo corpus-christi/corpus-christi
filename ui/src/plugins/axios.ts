@@ -15,7 +15,10 @@ authAxios.interceptors.response.use(
   },
   error => {
     if (error.response.status >= 400) {
-      /* display a snack bar with error */
+      /* display a snack bar with error, while enabling the user to submit a error report */
+      // TODO: Currently all failure reponses with 400+ status code will be displayed to the user.
+      // Is this too much? Should we put this error interceptor somewhere else to catch only those unhandled?
+      // <2020-06-08, David Deng> //
       eventBus.$emit("error", {
         content: getResponseErrorKey(error.response.status),
         action: {
@@ -23,7 +26,12 @@ authAxios.interceptors.response.use(
           func: (vm: Vue) =>
             vm.$router.push({
               name: "error-report",
-              query: { redirect: vm.$route.fullPath }
+              query: { redirect: vm.$route.fullPath },
+              params: {
+                time_stamp: new Date().toISOString(),
+                status_code: error.response.status,
+                endpoint: error.response.config.url
+              }
             })
         }
       });

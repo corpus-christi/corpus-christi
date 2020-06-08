@@ -12,10 +12,10 @@ class ErrorReport(Base):
     __tablename__ = 'error_report'
     id = Column(Integer, primary_key=True)
     description = Column(StringTypes.LONG_STRING, nullable=False)
-    time_stamp = Column(DateTime, nullable=False)
+    time_stamp = Column(DateTime)
     status_code = Column(Integer)
-    endpoint = Column(StringTypes.MEDIUM_STRING, nullable=False)
-    solved = Column(Boolean, default=True)
+    endpoint = Column(StringTypes.MEDIUM_STRING)
+    solved = Column(Boolean, default=False)
 
     def __repr__(self):
         return f"<Error-report(id={self.id})>"
@@ -24,7 +24,7 @@ class ErrorReport(Base):
 class ErrorReportSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     description = fields.String(required=True, validate=Length(min=1))
-    time_stamp = fields.DateTime(required=True)
-    status_code = fields.Integer(allow_none=True)
-    endpoint = fields.String(required=True, validate=Length(min=1))
+    time_stamp = fields.DateTime()
+    status_code = fields.Integer()
+    endpoint = fields.String()
     solved = fields.Boolean()

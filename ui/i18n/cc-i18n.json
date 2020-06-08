@@ -423,13 +423,14 @@
     },
     "error-report": {
         "actions": {
+            "cancel": "Cancel",
             "dismiss": "Dismiss",
             "report-error": "Report Error",
-            "submit": "Sumbit",
-            "cancel": "Cancel"
+            "submit": "Sumbit"
         },
         "display": {
             "add-description": "Add Description",
+            "feedback-successful": "Thank you, we have received your feedback!",
             "make-description": "Please make a description of how the error occurred"
         },
         "error-types": {
@@ -1004,13 +1005,14 @@
     },
     "error-report": {
         "actions": {
+            "cancel": "Cancelar",
             "dismiss": "Descartar",
             "report-error": "Informar error",
-            "submit": "Enviar",
-            "cancel": "Cancelar"
+            "submit": "Enviar"
         },
         "display": {
             "add-description": "agregar descripción",
+            "feedback-successful": "¡Gracias, hemos recibido sus comentarios!",
             "make-description": "Describa cómo se produjo el error"
         },
         "error-types": {

@@ -288,6 +288,7 @@ const router = new VueRouter({
       path: "/report",
       meta: { authRequired: true },
       component: () => import("@/pages/ErrorReport"),
+      props: true
     }
   ]
 });
