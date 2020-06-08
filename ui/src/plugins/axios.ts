@@ -2,6 +2,7 @@ import Vue from "vue";
 import axios from "axios";
 import store from "../store.js";
 import { eventBus } from "../plugins/event-bus.js";
+import { getResponseErrorKey } from "../plugins/vue-i18n.js";
 
 const authAxios = axios.create({
   baseURL: "/"
@@ -15,7 +16,18 @@ authAxios.interceptors.response.use(
   error => {
     if (error.response.status >= 400) {
       /* display a snack bar with error */
-      eventBus.$emit('error', error.response.data)
+      eventBus.$emit("error", {
+        content: getResponseErrorKey(error.response.status),
+        action: {
+          title: "error-report.actions.report-error",
+          func: (vm: Vue) =>
+            vm.$router.push({
+              name: "error-report",
+              query: { redirect: vm.$route.fullPath }
+            })
+        }
+      });
+      console.log(error.response);
     }
     if (error.response.status === 401) {
       console.log(error.config);
@@ -23,7 +35,7 @@ authAxios.interceptors.response.use(
       window.location.replace(
         "login?redirect=" + window.location.toString().replace(/^\/*$/, "")
       );
-    }     
+    }
     return Promise.reject(error);
   }
 );
