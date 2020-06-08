@@ -75,7 +75,7 @@ def create_app(config_name):
     app.register_blueprint(images_blueprint, url_prefix='/api/v1/images')
 
     from .error_report import error_report as error_report_blueprint
-    app.register_blueprint(error_report_blueprint, url_prefix='/api/v1/error_report')
+    app.register_blueprint(error_report_blueprint, url_prefix='/api/v1/error-report')
 
     from flask.logging import default_handler
     app.logger.removeHandler(default_handler)
