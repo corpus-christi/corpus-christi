@@ -1,9 +1,23 @@
 <template>
-  <!-- display a message or error to the end user
+  <!-- display a message or error to the end user, and optionally perform a customized action
     usage: <MessageSnackBar v-bind:bus="bus"></MessageSnackBar>
       where bus is a vue instance.
-    do bus.$emit('message', 'message to be displayed')
-    can replace 'message' with 'error' or 'notification' for different style of messages
+    To display the snackbar, do:
+      bus.$emit('message', config: {
+        content: '',
+        noTranslate: false,
+        action: {
+          title: '',
+          func: (vm) => {...}
+        })
+    can replace 'message' with 'error' or 'notification' for different style of messages.
+    in config, 
+      'content' is the content to be displayed, the component will try to localize the string based on current locale if possible.
+      setting a truthy value to 'noTranslate' will disable translation
+      setting 'action' to false will disable the action button (only show 'dismiss' in the snackbar)
+      'action.title' is the text to be displayed on the button
+      'action.func' is a function to perform the desired action when the button is clicked, the current Vue instance
+        is passed to the function to access relevant context
     for reference of the event bus model, see https://code.luasoftware.com/tutorials/vuejs/parent-call-child-component-method/
     -->
   <div>
@@ -13,7 +27,7 @@
     <v-btn
       color="primary"
       :text="true"
-      @click="$http.get('api/v1/groups/group-types/1')"
+      @click="$http.get('api/v1/groups/group-types/999')"
       >make an invalid request</v-btn
     >
     <!-- END: to be removed -->
@@ -24,34 +38,18 @@
       multi-line
       top
     >
-      <blog-post v-if= "snackBarObj.content == '404'">{{ $t("events.error-result-not-found") }}</blog-post>
-      <blog-post v-if= "snackBarObj.content == '403'">{{ $t("events.Error-result-forbidden") }}</blog-post>
-      <blog-post v-if= "snackBarObj.content == '409'">{{ $t("events.Error-result-conflect") }}</blog-post>
-<!--      <blog-post v-else>{{ "Client Error"}}</blog-post>-->
+      {{ localized(snackBarObj.config.content) }}
       <v-btn flat color="normal" @click="snackBarObj.show = false">
-        {{ $t("actions.dismiss") }}
+        {{ $t("error-report.actions.dismiss") }}
       </v-btn>
-      <v-btn flat color="primary" @click="reportFrom.show = true">{{ $t("actions.Report-error") }}</v-btn>
+      <v-btn
+        v-if="snackBarObj.config.action"
+        flat
+        color="primary"
+        @click="handleAction"
+        >{{ localized(snackBarObj.config.action.title) }}</v-btn
+      >
     </v-snackbar>
-    <v-card
-      v-show = reportFrom.show
-    >
-      <v-card-title>
-        Error Report
-      </v-card-title>
-      <v-card-text>
-        <form>
-          <v-col>
-            <v-text-field
-              label="Make a description of your error"
-              outlined
-            ></v-text-field>
-          </v-col>
-        </form>
-      </v-card-text>
-      <v-btn small rounded color="info">Submit</v-btn>
-      <v-btn small rounded color="primary" @click="reportFrom.show = false">Cancel</v-btn>
-    </v-card>
   </div>
 </template>
 
@@ -60,36 +58,46 @@ export default {
   props: ["bus"],
   data() {
     return {
-      isshow: false,
       snackBarObj: {
         color: "normal",
-        content: "",
+        config: {},
         timeout: 12000,
         show: false
       },
-      reportFrom:{
-        content: "",
-        timeout: 100,
+      reportFrom: {
         show: false
       }
     };
   },
+  computed: {},
   mounted() {
     this.bus.$on("message", this.showMessage);
     this.bus.$on("error", this.showError);
     this.bus.$on("notification", this.showNotification);
   },
   methods: {
-    showMessage(content, color = "green lighten-3") {
-      this.snackBarObj.content = content;
+    localized(text) {
+      return this.snackBarObj.config.noTranslate ? text : this.$t(text);
+    },
+    handleAction() {
+      if (
+        !this.snackBarObj.config.action ||
+        !this.snackBarObj.config.action.func
+      )
+        throw new Error("action unavailable");
+      this.snackBarObj.config.action.func(this);
+    },
+    /* show message handlers */
+    showMessage(config, color = "green lighten-1") {
+      this.snackBarObj.config = config;
       this.snackBarObj.color = color;
       this.snackBarObj.show = true;
     },
-    showError(content) {
-      this.showMessage(content, "red lighten-3");
+    showError(config) {
+      this.showMessage(config, "red lighten-1");
     },
-    showNotification(content) {
-      this.showMessage(content, "blue lighten-3");
+    showNotification(config) {
+      this.showMessage(config, "blue lighten-1");
     }
   }
 };
