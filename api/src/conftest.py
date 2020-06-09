@@ -3,6 +3,7 @@ import os
 import pytest
 from flask.testing import FlaskClient
 from flask_jwt_extended import create_access_token
+import logging
 
 from . import db, create_app
 
@@ -22,6 +23,7 @@ def client_factory(client_class):
     app = create_app(os.getenv('CC_CONFIG') or 'test')
     app.testing = True  # Make sure exceptions percolate out
     app.test_client_class = client_class
+    logging.disable(logging.CRITICAL) # disable logging
 
     db.drop_all()
     db.create_all()

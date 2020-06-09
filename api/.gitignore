@@ -3,6 +3,7 @@ htmlcov/
 venv/
 **/migrations/versions/*_.py
 api/images
+logs/*
 
 .coverage
 private.py

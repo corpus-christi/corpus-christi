@@ -22,7 +22,7 @@ class I18NLocale(Base):
     desc = Column(StringTypes.MEDIUM_STRING, nullable=False)
 
     def __repr__(self):
-        return f"<I18NLocale(id='{self.id}',desc='{self.desc}')>"
+        return f"<I18NLocale(id='{self.code}',desc='{self.desc}')>"
 
 
 class I18NLocaleSchema(Schema):

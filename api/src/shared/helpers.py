@@ -2,6 +2,8 @@ import hashlib
 
 from flask.json import jsonify
 
+from flask import current_app
+
 from src import db
 
 from sqlalchemy.exc import DBAPIError
@@ -114,6 +116,24 @@ def get_all_queried_entities(query_object, request_query_arguments):
         raise QueryArgumentError(repr(e), 422)
     return all_entities
 
+def logged_response(body, code=200):
+    """ intends to be used as a wrapper before an endpoint returns
+    to log information to the console and file using app.logger
+
+    body: the body to be converted to a Response, 
+        if it is not a string, it will be 'jsonified'
+    code: the response status code, default to 200 be used
+
+    """
+
+    if current_app:
+        if code >= 400:
+            logger = current_app.logger.warning
+        else:
+            logger = current_app.logger.info
+
+        logger(f"{body} --- {code}")
+    return jsonify(body), code
 
 
 def is_allowed_file(filename):

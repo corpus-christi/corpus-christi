@@ -1,7 +1,10 @@
 <template>
   <v-app>
     <Toolbar />
-    <v-content> <router-view /> </v-content>
+    <v-content>
+      <MessageSnackBar v-bind:bus="bus"></MessageSnackBar>
+      <router-view />
+    </v-content>
     <Footer />
   </v-app>
 </template>
@@ -12,10 +15,12 @@ import { mapMutations, mapState } from "vuex";
 import Footer from "./components/Footer";
 import { setJWT } from "./plugins/axios";
 import { Locale } from "./models/Locale";
+import MessageSnackBar from "./components/MessageSnackBar.vue";
+import { eventBus } from "./plugins/event-bus.js";
 
 export default {
   name: "App",
-  components: { Footer, Toolbar },
+  components: { Footer, Toolbar, MessageSnackBar },
   computed: mapState(["currentJWT"]),
   methods: mapMutations(["setLocaleModels", "setCurrentLocale"]),
 
@@ -37,6 +42,11 @@ export default {
 
     // Authentication information in local storage.
     setJWT(this.currentJWT);
+  },
+  data() {
+    return {
+      bus: eventBus
+    };
   }
 };
 </script>
