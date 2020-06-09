@@ -11,10 +11,8 @@ export const persistedStateOptions = {
   overwrite: true,
   getState(key, storage) {
     let value, states;
-    states =
-      (value = storage.getItem(key)) !== "undefined"
-        ? JSON.parse(value)
-        : undefined;
+    value = storage.getItem(key);
+    states = value ? JSON.parse(value) : undefined;
     for (let state in states) {
       let stateValue = states[state];
       if (Object.hasOwnProperty.call(stateValue, "__class__")) {
