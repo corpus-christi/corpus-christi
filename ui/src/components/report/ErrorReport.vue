@@ -10,17 +10,16 @@
       >
       </v-textarea>
     </v-form>
-    <v-btn color="info" @click="submitFeedback().then(redirect)">{{
+    <v-btn color="info" @click="submitFeedback()">{{
       $t("error-report.actions.submit")
     }}</v-btn>
-    <v-btn color="primary" @click="redirect">{{
+    <v-btn color="primary" @click="$emit('error-report-cancel')">{{
       $t("error-report.actions.cancel")
     }}</v-btn>
   </v-container>
 </template>
 
 <script>
-import { eventBus } from "../plugins/event-bus.js";
 export default {
   name: "ErrorReport",
   data() {
@@ -35,7 +34,7 @@ export default {
     },
     time_stamp: {
       type: String,
-      default: new Date().toISOString()
+      default: null
     },
     status_code: {
       type: Number,
@@ -52,19 +51,12 @@ export default {
           status_code: this.status_code
         })
         .then(() => {
-          eventBus.$emit("message", {
-            // TODO: currently if the redirected page produces an error, it will override this success message.
-            // has to do with displaying multiple messages in the MessageSnackBar component <2020-06-08, David Deng>
-            content: "Successfully sent feedback!",
-            noTranslate: true
-          });
+          this.userFeedback = "";
+          this.$emit("error-report-success");
+        })
+        .catch(err => {
+          this.$emit("error-report-fail", err);
         });
-    },
-    redirect() {
-      let target = this.$route.query.redirect
-        ? this.$route.query.redirect
-        : { name: "public" };
-      this.$router.push(target);
     }
   }
 };

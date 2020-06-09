@@ -2,7 +2,8 @@
   <v-app>
     <Toolbar />
     <v-content>
-      <MessageSnackBar v-bind:bus="bus"></MessageSnackBar>
+      <MessageSnackBar v-bind:bus="bus" />
+      <ErrorReportDialog v-bind:bus="bus" />
       <router-view />
     </v-content>
     <Footer />
@@ -16,11 +17,12 @@ import Footer from "./components/Footer";
 import { setJWT } from "./plugins/axios";
 import { Locale } from "./models/Locale";
 import MessageSnackBar from "./components/MessageSnackBar.vue";
+import ErrorReportDialog from "./components/report/ErrorReportDialog.vue";
 import { eventBus } from "./plugins/event-bus.js";
 
 export default {
   name: "App",
-  components: { Footer, Toolbar, MessageSnackBar },
+  components: { Footer, Toolbar, MessageSnackBar, ErrorReportDialog },
   computed: mapState(["currentJWT"]),
   methods: mapMutations(["setLocaleModels", "setCurrentLocale"]),
 

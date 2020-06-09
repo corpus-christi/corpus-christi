@@ -31,21 +31,22 @@ Vue.use(VeeValidate, {
 });
 
 export function getResponseErrorKey(statusCode) {
-  if (statusCode >= 500)
-    return "error-report.error-types.error-5xx";
+  if (statusCode >= 500) return "error-report.error-types.error-5xx";
   else if (statusCode >= 400)
     switch (statusCode) {
       case 400:
-        return "error-report.error-types.error-400"
+        return "error-report.error-types.error-400";
       case 401:
-        return "error-report.error-types.error-401"
+        return "error-report.error-types.error-401";
       case 404:
-        return "error-report.error-types.error-404"
+        return "error-report.error-types.error-404";
       default:
-        return "error-report.error-types.error-4xx"
+        return "error-report.error-types.error-4xx";
     }
   else {
-    throw new RangeError(`status code ${statusCode} does not correspond to an error`)
+    throw new RangeError(
+      `status code ${statusCode} does not correspond to an error`
+    );
   }
 }
 
