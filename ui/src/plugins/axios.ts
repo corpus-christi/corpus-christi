@@ -24,10 +24,8 @@ authAxios.interceptors.response.use(
         action: {
           title: "error-report.actions.report-error",
           func: (vm: Vue) =>
-            vm.$router.push({
-              name: "error-report",
-              query: { redirect: vm.$route.fullPath },
-              params: {
+            eventBus.$emit("show-error-report-dialog", {
+              props: {
                 time_stamp: new Date().toISOString(),
                 status_code: error.response.status,
                 endpoint: error.response.config.url
