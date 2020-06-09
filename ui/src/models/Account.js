@@ -41,4 +41,17 @@ export default class Account {
       this.roles.find(elt => elt === `${ROLE_PREFIX}${role}`)
     );
   }
+
+  /**
+   * Used to convert ordinary object to a class object
+   * after restoring them from localstorage
+   */
+  static fromObject(obj) {
+    return Object.assign(new Account(), {
+      username: obj.username,
+      firstName: obj.firstName,
+      lastName: obj.lastName,
+      roles: obj.roles
+    });
+  }
 }
