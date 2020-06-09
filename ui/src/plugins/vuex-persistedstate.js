@@ -18,7 +18,7 @@ export const persistedStateOptions = {
     for (let state in states) {
       let stateValue = states[state];
       if (Object.hasOwnProperty.call(stateValue, "__class__")) {
-        if (!stateValue.__class__ in objectMap)
+        if (!(stateValue.__class__ in objectMap))
           throw new Error(
             `class name ${stateValue.__class__} is not in objectMap`
           );

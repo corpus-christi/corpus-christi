@@ -42,7 +42,7 @@ export class Locale {
     return strToRegionalIndicator(this.countryCode.toUpperCase());
   }
 
-  static fromObject(obj) {
+  static fromObject(obj: { languageCode: String; countryCode: String }) {
     return new Locale(`${obj.languageCode}-${obj.countryCode}`);
   }
 }
