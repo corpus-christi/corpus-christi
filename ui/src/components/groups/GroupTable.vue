@@ -67,13 +67,13 @@
           class="hover-hand"
           v-on:click="$router.push({ path: '/groups/' + props.item.id })"
         >
-          {{ getManagerName(props.item.managerInfo) }}
+          Manager Name
         </td>
         <td
           class="hover-hand"
           v-on:click="$router.push({ path: '/groups/' + props.item.id })"
         >
-          {{ props.item.memberList.filter(ev => ev.active).length }}
+          {{ props.item.members.filter(ev => ev.active).length }}
         </td>
         <td class="text-no-wrap">
           <template v-if="props.item.active">
@@ -196,6 +196,7 @@ export default {
   mounted() {
     this.tableLoading = true;
     this.$http.get("/api/v1/groups/groups").then(resp => {
+      console.log(resp.data);
       this.groups = resp.data;
       this.tableLoading = false;
     });
@@ -269,7 +270,7 @@ export default {
           text: this.$t("groups.manager"),
           value: "managerInfo.person.lastName"
         },
-        { text: this.$t("groups.member-count"), value: "memberList.length" },
+        { text: this.$t("groups.member-count"), value: "members..length" },
         { text: this.$t("actions.header"), sortable: false }
       ];
     }
@@ -305,7 +306,7 @@ export default {
       let newGroup = JSON.parse(JSON.stringify(group));
       delete newGroup.manager;
       delete newGroup.id;
-      delete newGroup.memberList;
+      delete newGroup.members;
       delete newGroup.managerInfo;
       if (this.groupDialog.editMode) {
         this.putGroup(group, newGroup);

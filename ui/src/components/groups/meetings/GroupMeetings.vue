@@ -152,7 +152,6 @@
 
 <script>
 import CustomForm from "../../CustomForm";
-import EntitySearch from "../../EntitySearch";
 export default {
   components: { "meeting-form": CustomForm },
   name: "GroupMeetings",
@@ -392,13 +391,15 @@ export default {
     getMeetings() {
       this.tableLoading = true;
       const id = this.$route.params.group;
-      this.$http.get(`/api/v1/groups/meetings/group/${id}`).then(resp => {
-        if (!resp.data.msg) {
-          this.meetings = resp.data;
-        }
-        console.log(this.meetings);
-        this.tableLoading = false;
-      });
+      this.$http
+        .get(`/api/v1/groups/meetings?where=group_id:${id}`)
+        .then(resp => {
+          if (!resp.data.msg) {
+            this.meetings = resp.data;
+          }
+          console.log(this.meetings);
+          this.tableLoading = false;
+        });
     }
   },
 

@@ -723,14 +723,15 @@ export default {
       this.tableLoading = true;
       const id = this.$route.params.group;
       this.$http.get(`/api/v1/groups/groups/${id}`).then(resp => {
-        this.email.managerName =
-          resp.data.managerInfo.person.firstName +
-          " " +
-          resp.data.managerInfo.person.lastName +
-          " " +
-          resp.data.managerInfo.person.secondLastName;
-        this.email.managerEmail = resp.data.managerInfo.person.email;
-        this.members = resp.data.memberList;
+        // will break under the new groups model
+        // this.email.managerName =
+        //   resp.data.managerInfo.person.firstName +
+        //   " " +
+        //   resp.data.managerInfo.person.lastName +
+        //   " " +
+        //   resp.data.managerInfo.person.secondLastName;
+        // this.email.managerEmail = resp.data.managerInfo.person.email;
+        this.members = resp.data.members;
         this.people = this.members.map(e => e.person);
         this.parseMembers();
         this.tableLoading = false;

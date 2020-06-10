@@ -20,7 +20,7 @@
             <div>{{ $t("groups.manager") }}: {{ getManagerName() }}</div>
             <div>
               {{ $t("groups.details.member-count") }}:
-              {{ group.memberList.length }}
+              {{ group.members.length }}
             </div>
           </div>
         </v-card-title>

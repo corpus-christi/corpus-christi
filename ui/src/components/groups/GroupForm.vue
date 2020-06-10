@@ -1,4 +1,5 @@
 <template>
+  <!-- add a new group -->
   <v-card>
     <v-card-title>
       <span class="headline">{{ name }}</span>
@@ -38,7 +39,7 @@
         v-on:click="cancel"
         :disabled="formDisabled"
         data-cy="form-cancel"
-        >{{ $t("actions.cancel") }}ttt</v-btn
+        >{{ $t("actions.cancel") }}</v-btn
       >
       <v-spacer />
       <v-btn
@@ -49,7 +50,7 @@
         :loading="addMoreLoading"
         :disabled="formDisabled"
         data-cy="form-addanother"
-        >{{ $t("actions.add-another") }}qqqqq
+        >{{ $t("actions.add-another") }}
       </v-btn>
       <v-btn
         color="primary"
@@ -58,7 +59,7 @@
         :loading="saveLoading"
         :disabled="formDisabled"
         data-cy="form-save"
-        >{{ $t("actions.save") }}hhhh
+        >{{ $t("actions.save") }}
         <!-- save botton - Add group -->
       </v-btn>
     </v-card-actions>
@@ -66,7 +67,7 @@
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
       <v-btn flat @click="snackbar.show = false" data-cy>
-        {{ $t("actions.close") }}wwww
+        {{ $t("actions.close") }}
       </v-btn>
     </v-snackbar>
   </v-card>
