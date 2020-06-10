@@ -5,11 +5,12 @@ import Vuex from "vuex";
 import { setJWT } from "./plugins/axios";
 import { Locale, LocaleModel } from "./models/Locale";
 import createPersistedState from "vuex-persistedstate";
+import { persistedStateOptions } from "./plugins/vuex-persistedstate.js";
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
-  plugins: [createPersistedState()],
+  plugins: [createPersistedState(persistedStateOptions)],
 
   state: {
     // Current locale code (e.g., `es-EC`, `en-US`)
