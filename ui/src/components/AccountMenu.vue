@@ -2,7 +2,7 @@
   <div>
     <v-menu offset-y v-if="isLoggedIn">
       <v-btn id="cur-locale" flat slot="activator">
-        {{ currentAccount.firstName + ' ' + currentAccount.lastName }}
+        {{ currentAccount.fullName() }}
         <v-icon>arrow_drop_down</v-icon>
       </v-btn>
 

@@ -41,6 +41,10 @@ export class Locale {
   get flag() {
     return strToRegionalIndicator(this.countryCode.toUpperCase());
   }
+
+  static fromObject(obj: { languageCode: String; countryCode: String }) {
+    return new Locale(`${obj.languageCode}-${obj.countryCode}`);
+  }
 }
 
 export interface I18NValueSchema {

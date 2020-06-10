@@ -282,7 +282,7 @@ const router = new VueRouter({
           ]
         }
       ]
-    },
+    }
   ]
 });
 
