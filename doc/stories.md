@@ -462,9 +462,9 @@ _Only_ a superuser can modify such data.
    - Allow existing _Member_ s to be designated _Manager_ s with an existing _Manager Type_.
 1. Change the _Manager Type_ of a _Manager_.
 1. Demote a _Manager_ to a _Member_.
-1. Manage Meeting address, time(stop and start) and both active and deactive.
-1. Add or delete a group from a meeting.
-1. Show attendece of a meeting
+1. Manage _Meeting_ address, time(stop and start) and both active and deactive.
+1. Add or delete a _Group_ from a _Meeting_.
+1. Show attendece of a _Meeting_
 
 ---
 Enhancement
@@ -481,6 +481,7 @@ Enhancement
    (e.g., check box per group).
    Allow time scale to be changed (e.g., weekly, monthly, annually).
    Allow time range to be changed (e.g., year-to-date, past 12 months, specific dates, all time)
+1. View meeting locations on map (e.g., make visual information).
    
 ## Group Manager
 
