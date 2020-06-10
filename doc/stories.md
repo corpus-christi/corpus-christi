@@ -433,28 +433,44 @@ _Only_ a superuser can modify such data.
 
 ## Group Admin
 
+1. Manage _Group Type_ s.
+   - Create new _Group Type_ s.
+   - Read a list of _Group Type_ s.
+   - Update (rename) a _Group Type_.
+   - Delete a _Group Type_.
 1. Add a new _Group_. As part of the process:
-   - Allow an existing _Person_ to be designated a _Manager_ with `description` "Group leader".
-   - Allow new _Person_ to be created as the _Manager_ of the group.
-1. Update the name, description, and leader of an existing _Group_.
-1. Assign a _Manager_ (and associated _Person_) as the "Group leader".
-1. Set the "Group overseer" _Manager_ for this _Group_.
-1. Deactivate and reactivate a _Group_.     
-1. Add _Person_'s as _Group Member_'s of an existing group.
-   It should be easy to add multiple _Group Member_ instances.
-   New _Group Member_'s may be:
+   - Create new _Group Type_ s.
+   - Select an existing _Group Type_ for the new _Group_.
+1. List all groups, including the _Group Type_ and number of members.
+   Optionally, include inactive groups.
+1. Update the name, description, and _Group Type_ of an existing _Group_.
+1. Deactivate and reactivate a _Group_.
+1. Add _Person_ s as _Member_ s of an existing group.
+   It should be easy to add multiple _Member_ instances.
+   New _Member_'s may be:
    - An existing _Person_ who should be easy to find using filtering
    - A new _Person_ whose details should be easy to enter as part of adding the _Person_ 
-     as a _Group Member_ of the _Group_.
-1. Deactivate and reactivate a _Person_ as a _Group Member_ of the _Group_.
+     as a _Member_ of the _Group_.
+1. Deactivate and reactivate a _Group Member_ of a _Group_.
+1. Manage _Manager Type_ s.
+   - Create new _Manager Type_ s.
+   - Read a list of _Manager Type_ s.
+   - Update (rename) a _Manager Type_.
+   - Delete a _Manager Type_.
+1. Promote a _Member_ as a _Manager_. As part of the process:
+   - Create new _Manager Type_ s.
+   - Allow existing _Member_ s to be designated _Manager_ s with an existing _Manager Type_.
+1. Change the _Manager Type_ of a _Manager_.
+1. Demote a _Manager_ to a _Member_.
+---
+Enhancement
+
 1. Split a large group into two new, smaller groups.
    Create the two new _Group_'s (as detailed above)
    and choose the destination _Group_ for each of the members
    of the existing group.
    Deactivate the old group.
-1. Move a _Group Member_ from one _Group_ to another existing _Group_.
-1. List all groups, including group leader's name and number of members.
-   Optionally, include inactive groups.
+1. Move a _Member_ from one _Group_ to another existing _Group_.
 1. View report of group attendance (group name vs meeting date)
 1. View line graph of group attendance (attendees vs date).
    One line per group, allow groups to be filtered by name
@@ -462,9 +478,9 @@ _Only_ a superuser can modify such data.
    Allow time scale to be changed (e.g., weekly, monthly, annually).
    Allow time range to be changed (e.g., year-to-date, past 12 months, specific dates, all time)
    
-## Group Leader
+## Group Manager
 
-Group leaders work with exactly one group.
+Any _Person_ associated with a _Group_ via the _Manager_ table is a _Group Manager_ of that group.
 
 1. Schedule a _Meeting_ (create a _Meeting_ instance).
    Allow the meeting location to be chosen in the following ways:
