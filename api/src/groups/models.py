@@ -17,10 +17,12 @@ class Group(Base):
         'groups_group_type.id'), nullable=False)
     active = Column(Boolean, nullable=False, default=True)
     members = relationship('Member', backref='group', lazy=True)
+    group_type = relationship('GroupType', back_populates='groups', lazy=True)
     managers = relationship('Manager', back_populates='group', lazy=True)
     meetings = relationship('Meeting', back_populates='group', lazy=True)
     events = relationship('EventGroup', back_populates='group', lazy=True)
     images = relationship('ImageGroup', back_populates='group', lazy=True)
+
 
     def __repr__(self):
         return f"<Group(id={self.id})>"
@@ -37,6 +39,7 @@ class GroupSchema(Schema):
     managers = fields.Nested('ManagerSchema', many=True, only=['person', 'active'])
     meetings = fields.Nested('MeetingSchema', many=True, only=['group_id', 'address_id', 'start_time', 'stop_time', 'description', 'active'])
     images = fields.Pluck('ImageGroupSchema', 'image', many=True)
+    group_type = fields.Nested('GroupTypeSchema', only=['id', 'name'])
 
 # ---- Group Type
 
@@ -45,12 +48,16 @@ class GroupType(Base):
     id = Column(Integer, primary_key=True)
     name = Column(StringTypes.MEDIUM_STRING, nullable=False)
 
+    groups = relationship('Group', back_populates='group_type', lazy=True)
+
     def __repr__(self):
         return f"<GroupType(id={self.id})>"
 
 class GroupTypeSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     name = fields.String(required=True, validate=Length(min=1))
+
+    groups = fields.Nested('GroupSchema', many=True, only=['id', 'name'])
         
 
 # ---- Meeting

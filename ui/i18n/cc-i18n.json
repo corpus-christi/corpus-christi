@@ -526,6 +526,7 @@
       "error-removing-group": "Error while removing group",
       "group-description": "Group Description",
       "group-removed": "Group removed",
+      "group-type": "Group Type",
       "header": "Groups",
       "manager": "Manager",
       "meetings": {
@@ -1108,6 +1109,7 @@
       "error-removing-group": "Error al eliminadar este grupo",
       "group-description": "Descripci\u00f3n del Grupo",
       "group-removed": "Grupo eliminado",
+      "group-type": "Tipo de grupo",
       "header": "Grupos",
       "manager": "Gerente",
       "meetings": {
