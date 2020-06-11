@@ -43,7 +43,8 @@
       "save": "Save",
       "search": "Search",
       "search-addresses": "Search Addresses",
-      "search-managers": "Search Managers",
+      "search-group-types": "Search Group Types",
+      "search-manager-types": "Search Manager Types",
       "search-people": "Search People",
       "signup": "Signup",
       "tooltips": {
@@ -422,24 +423,24 @@
       "updated": "Diploma updated"
     },
     "error-report": {
-        "actions": {
-            "cancel": "Cancel",
-            "dismiss": "Dismiss",
-            "report-error": "Report Error",
-            "submit": "Sumbit"
-        },
-        "display": {
-            "add-description": "Add Description",
-            "feedback-successful": "Thank you, we have received your feedback!",
-            "make-description": "Please make a description of how the error occurred"
-        },
-        "error-types": {
-            "error-400": "The server received an invalid request",
-            "error-401": "The server received a conflicting request",
-            "error-404": "The server could not identify the resource requested",
-            "error-4xx": "A client error occurred",
-            "error-5xx": "A server error occurred"
-        }
+      "actions": {
+        "cancel": "Cancel",
+        "dismiss": "Dismiss",
+        "report-error": "Report Error",
+        "submit": "Sumbit"
+      },
+      "display": {
+        "add-description": "Add Description",
+        "feedback-successful": "Thank you, we have received your feedback!",
+        "make-description": "Please make a description of how the error occurred"
+      },
+      "error-types": {
+        "error-400": "The server received an invalid request",
+        "error-401": "The server received a conflicting request",
+        "error-404": "The server could not identify the resource requested",
+        "error-4xx": "A client error occurred",
+        "error-5xx": "A server error occurred"
+      }
     },
     "events": {
       "all-events": "All Events",
@@ -835,7 +836,8 @@
       "save": "Salvar",
       "search": "Buscar",
       "search-addresses": "Buscar Direcciones",
-      "search-managers": "Gestores de B\u00fasqueda",
+      "search-group-types": "Buscar Tipos de Grupos",
+      "search-manager-types": "Buscar Tipos de Gerente",
       "search-people": "Buscar Personas",
       "signup": "Reg\u00edstrate",
       "tooltips": {
@@ -1005,24 +1007,24 @@
       "updated": "Diploma actualizado"
     },
     "error-report": {
-        "actions": {
-            "cancel": "Cancelar",
-            "dismiss": "Descartar",
-            "report-error": "Informar error",
-            "submit": "Enviar"
-        },
-        "display": {
-            "add-description": "agregar descripción",
-            "feedback-successful": "¡Gracias, hemos recibido sus comentarios!",
-            "make-description": "Describa cómo se produjo el error"
-        },
-        "error-types": {
-            "error-400": "El servidor recibió una solicitud no válida",
-            "error-401": "El servidor recibió una solicitud en conflicto",
-            "error-404": "El servidor no pudo identificar el recurso solicitado",
-            "error-4xx": "Se produjo un error del cliente",
-            "error-5xx": "Ocurrió un error del servidor"
-        }
+      "actions": {
+        "cancel": "Cancelar",
+        "dismiss": "Descartar",
+        "report-error": "Informar error",
+        "submit": "Enviar"
+      },
+      "display": {
+        "add-description": "agregar descripción",
+        "feedback-successful": "¡Gracias, hemos recibido sus comentarios!",
+        "make-description": "Describa cómo se produjo el error"
+      },
+      "error-types": {
+        "error-400": "El servidor recibió una solicitud no válida",
+        "error-401": "El servidor recibió una solicitud en conflicto",
+        "error-404": "El servidor no pudo identificar el recurso solicitado",
+        "error-4xx": "Se produjo un error del cliente",
+        "error-5xx": "Ocurrió un error del servidor"
+      }
     },
     "events": {
       "all-events": "Todos Eventos",
