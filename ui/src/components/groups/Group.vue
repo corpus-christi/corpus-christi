@@ -25,6 +25,14 @@
       >
         <v-icon>list</v-icon>&nbsp;{{ $t("groups.details.title") }}
       </v-tab>
+
+      <v-tab
+        ripple
+        :to="{ path: '/groups/' + $route.params.group + '/managers' }"
+      >
+        <v-icon>list</v-icon>&nbsp;{{ $t("groups.details.manager") }}
+      </v-tab>
+
     </v-tabs>
     <hr class="vertical-spacer" />
     <router-view></router-view>

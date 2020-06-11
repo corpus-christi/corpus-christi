@@ -26,6 +26,7 @@
       "add-another": "Add Another",
       "add-event": "Add Event",
       "add-group": "Add Group",
+      "add-manager": "Add Manager",
       "add-person": "Add Person",
       "back": "Back",
       "cancel": "Cancel",
@@ -519,6 +520,7 @@
       "description": "Description",
       "details": {
         "class-title": "Title",
+        "manager" : "Managers",
         "member-count": "Member count",
         "title": "Details"
       },
@@ -528,6 +530,7 @@
       "group-removed": "Group removed",
       "group-type": "Group Type",
       "header": "Groups",
+      "header-manager": "Managers",
       "manager": "Manager",
       "meetings": {
         "add-meeting": "Add Meeting",
@@ -611,6 +614,7 @@
       },
       "actions": {
         "add-account": "Add Account",
+        "add-manager":"Add a manager",
         "add-participant": "Add a Participant",
         "assign-roles": "Assign Roles",
         "edit": "Edit Person",
@@ -818,6 +822,7 @@
       "add-another": "A\u00f1adir Otro",
       "add-event": "A\u00f1adir Evento",
       "add-group": "A\u00f1adir grupo",
+      "add-manager": "Añadir administrador",
       "add-person": "A\u00f1adir Persona",
       "back": "Regresar",
       "cancel": "Cancelar",
@@ -1102,6 +1107,7 @@
       "description": "Descripci\u00f3n",
       "details": {
         "class-title": "T\u00edtulo",
+        "manager" : "gerente",
         "member-count": "Cuenta de miembro",
         "title": "Detalles"
       },
@@ -1111,7 +1117,8 @@
       "group-removed": "Grupo eliminado",
       "group-type": "Tipo de grupo",
       "header": "Grupos",
-      "manager": "Gerente",
+      "header-manager": "Gerentes",
+      "manager": "Gerentes",
       "meetings": {
         "add-meeting": "Agregar reuni\u00f3n",
         "title": "Reuniones"
@@ -1194,6 +1201,7 @@
       },
       "actions": {
         "add-account": "A\u00f1adir cuenta",
+        "add-manager":"A\u00f1adir a gerente",
         "add-participant": "A\u00f1adir Part\u00edcipe",
         "assign-roles": "Asigne Papeles",
         "edit": "Editar persona",
