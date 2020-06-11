@@ -75,6 +75,12 @@
         >
           {{ props.item.members.filter(ev => ev.active).length }}
         </td>
+        <td
+          class="hover-hand"
+          v-on:click="$router.push({ path: '/group-types/' + props.item.id })"
+        >
+          {{ props.item.group_type.name}}
+        </td>
         <td class="text-no-wrap">
           <template v-if="props.item.active">
             <v-tooltip bottom>
@@ -271,6 +277,7 @@ export default {
           value: "managerInfo.person.lastName"
         },
         { text: this.$t("groups.member-count"), value: "members..length" },
+        { text: this.$t("groups.group-type"), value: "group-type"},
         { text: this.$t("actions.header"), sortable: false }
       ];
     }
