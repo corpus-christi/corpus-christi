@@ -67,12 +67,6 @@
           class="hover-hand"
           v-on:click="$router.push({ path: '/groups/' + props.item.id })"
         >
-          Manager Name
-        </td>
-        <td
-          class="hover-hand"
-          v-on:click="$router.push({ path: '/groups/' + props.item.id })"
-        >
           {{ props.item.members.filter(ev => ev.active).length }}
         </td>
         <td
@@ -272,10 +266,6 @@ export default {
       return [
         { text: this.$t("groups.name"), value: "name" },
         { text: this.$t("groups.description"), value: "description" },
-        {
-          text: this.$t("groups.manager"),
-          value: "managerInfo.person.lastName"
-        },
         { text: this.$t("groups.member-count"), value: "members..length" },
         { text: this.$t("groups.group-type"), value: "group-type"},
         { text: this.$t("actions.header"), sortable: false }

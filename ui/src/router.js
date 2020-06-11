@@ -91,6 +91,13 @@ const router = new VueRouter({
               meta: { authRequired: true },
               component: () =>
                 import("@/components/groups/meetings/GroupMeetings")
+            },
+            {
+              name: "group-managers",
+              path: "managers",
+              meta: { authRequired: true },
+              component: () =>
+                import("@/components/groups/GroupManagers")
             }
           ]
         }
