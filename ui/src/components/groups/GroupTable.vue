@@ -73,7 +73,7 @@
           class="hover-hand"
           v-on:click="$router.push({ path: '/group-types/' + props.item.id })"
         >
-          {{ props.item.group_type.name}}
+          {{ props.item.groupType.name }}
         </td>
         <td class="text-no-wrap">
           <template v-if="props.item.active">
@@ -178,18 +178,13 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-
-    <v-snackbar v-model="snackbar.show">
-      {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false">
-        {{ $t("actions.close") }}
-      </v-btn>
-    </v-snackbar>
   </div>
 </template>
 
 <script>
 import GroupForm from "./GroupForm";
+import { eventBus } from "../../plugins/event-bus.js";
+import { pick } from "lodash";
 export default {
   components: { "group-form": GroupForm },
   name: "GroupTable",
@@ -225,6 +220,7 @@ export default {
         editMode: false,
         saveLoading: false,
         addMoreLoading: false,
+        editingGroupId: null,
         group: {}
       },
 
@@ -232,11 +228,6 @@ export default {
         show: false,
         groupId: -1,
         loading: false
-      },
-
-      snackbar: {
-        show: false,
-        text: ""
       }
     };
   },
@@ -267,24 +258,13 @@ export default {
         { text: this.$t("groups.name"), value: "name" },
         { text: this.$t("groups.description"), value: "description" },
         { text: this.$t("groups.member-count"), value: "members..length" },
-        { text: this.$t("groups.group-type"), value: "group-type"},
+        { text: this.$t("groups.group-type"), value: "groupType" },
         { text: this.$t("actions.header"), sortable: false }
       ];
     }
   },
 
   methods: {
-    getManagerName(managerInfo) {
-      var man = managerInfo.person;
-      return (
-        man.firstName +
-        " " +
-        man.lastName +
-        " " +
-        (man.secondLastName ? man.secondLastName : "")
-      );
-    },
-
     activateGroupDialog(group = {}, editMode = false) {
       this.groupDialog.editMode = editMode;
       this.groupDialog.group = group;
@@ -300,50 +280,59 @@ export default {
 
     saveGroup(group, closeDialog = true) {
       this.groupDialog.saveLoading = true;
-      let newGroup = JSON.parse(JSON.stringify(group));
-      delete newGroup.manager;
-      delete newGroup.id;
-      delete newGroup.members;
-      delete newGroup.managerInfo;
+      let payload = pick(group, ["name", "description"]);
+      payload.groupTypeId = group.groupType.id;
       if (this.groupDialog.editMode) {
-        this.putGroup(group, newGroup);
+        this.patchGroup(payload, this.groupDialog.editingGroupId).then(() => {
+          let oldGroup = this.groups.find(
+            g => g.id === this.groupDialog.editingGroupId
+          );
+          Object.assign(oldGroup, group);
+        });
       } else {
-        this.postGroup(newGroup);
+        this.postGroup(payload);
       }
       if (closeDialog) {
         this.closeDialog();
       }
     },
 
-    putGroup(group, newGroup) {
-      const groupId = group.id;
-      const idx = this.groups.findIndex(ev => ev.id === group.id);
-      this.$http
-        .patch(`/api/v1/groups/groups/${groupId}`, newGroup)
+    patchGroup(group, groupId) {
+      return this.$http
+        .patch(`/api/v1/groups/groups/${groupId}`, group)
         .then(resp => {
-          Object.assign(this.groups[idx], resp.data);
           this.groupDialog.saveLoading = false;
-          this.showSnackbar(this.$t("groups.messages.group-edited"));
+          eventBus.$emit("message", {
+            content: this.$t("groups.messages.group-edited")
+          });
         })
         .catch(err => {
           console.error("PUT FALURE", err.response);
           this.groupDialog.saveLoading = false;
-          this.showSnackbar(this.$t("groups.messages.error-editing-group"));
+          eventBus.$emit("message", {
+            content: this.$t("groups.messages.error-editing-group")
+          });
         });
     },
 
     postGroup(newGroup) {
-      this.$http
-        .post("/api/v1/groups/groups", newGroup)
+      return this.$http
+        .post("/api/v1/groups/groups", newGroup, {
+          noErrorSnackBar: true
+        })
         .then(resp => {
           this.groups.push(resp.data);
           this.groupDialog.saveLoading = false;
-          this.showSnackbar(this.$t("groups.messages.group-added"));
+          eventBus.$emit("message", {
+            content: this.$t("groups.messages.group-added")
+          });
         })
         .catch(err => {
           console.error("POST FAILURE", err.response);
           this.groupDialog.saveLoading = false;
-          this.showSnackbar(this.$t("groups.messages.error-adding-group"));
+          eventBus.$emit("error", {
+            content: this.$t("groups.messages.error-adding-group")
+          });
         });
     },
 
@@ -352,7 +341,9 @@ export default {
     },
 
     editGroup(group) {
-      this.activateGroupDialog({ ...group }, true);
+      let groupInfo = pick(group, ["name", "description", "groupType"]);
+      this.groupDialog.editingGroupId = group.id; // save the group id
+      this.activateGroupDialog(groupInfo, true);
     },
 
     activateArchiveDialog(groupId) {
@@ -373,19 +364,23 @@ export default {
       const groupId = this.archiveDialog.groupId;
       const idx = this.groups.findIndex(ev => ev.id === groupId);
       this.$http
-        .put(`/api/v1/groups/groups/deactivate/${groupId}`)
+        .patch(`/api/v1/groups/groups/${groupId}`, { active: false })
         .then(resp => {
           console.log("ARCHIVE", resp);
           this.groups[idx].active = false;
           this.archiveDialog.loading = false;
           this.archiveDialog.show = false;
-          this.showSnackbar(this.$t("groups.messages.group-archived"));
+          eventBus.$emit("message", {
+            content: this.$t("groups.messages.group-archived")
+          });
         })
         .catch(err => {
           console.error("ARCHIVE FALURE", err.response);
           this.archiveDialog.loading = false;
           this.archiveDialog.show = false;
-          this.showSnackbar(this.$t("groups.messages.error-archiving-group"));
+          eventBus.$emit("message", {
+            content: this.$t("groups.messages.error-archiving-group")
+          });
         });
     },
     unarchive(group) {
@@ -393,15 +388,19 @@ export default {
       const groupId = group.id;
       group.id *= -1; // to show loading spinner
       this.$http
-        .put(`/api/v1/groups/groups/activate/${groupId}`)
+        .patch(`/api/v1/groups/groups/${groupId}`, { active: true })
         .then(resp => {
           console.log("UNARCHIVED", resp);
           Object.assign(this.groups[idx], resp.data);
-          this.showSnackbar(this.$t("groups.messages.group-unarchived"));
+          eventBus.$emit("message", {
+            content: this.$t("groups.messages.group-unarchived")
+          });
         })
         .catch(err => {
           console.error("UNARCHIVE FALURE", err.response);
-          this.showSnackbar(this.$t("groups.messages.error-unarchiving-gropu"));
+          eventBus.$emit("message", {
+            content: this.$t("groups.messages.error-unarchiving-gropu")
+          });
         });
     },
     duplicate(group) {
@@ -419,10 +418,6 @@ export default {
       } else {
         this.windowSize.small = false;
       }
-    },
-    showSnackbar(message) {
-      this.snackbar.text = message;
-      this.snackbar.show = true;
     }
   }
 };

@@ -39,7 +39,7 @@ class GroupSchema(Schema):
     managers = fields.Nested('ManagerSchema', many=True, only=['person', 'active'])
     meetings = fields.Nested('MeetingSchema', many=True, only=['group_id', 'address_id', 'start_time', 'stop_time', 'description', 'active'])
     images = fields.Pluck('ImageGroupSchema', 'image', many=True)
-    group_type = fields.Nested('GroupTypeSchema', only=['id', 'name'])
+    group_type = fields.Nested('GroupTypeSchema', data_key='groupType', only=['id', 'name'])
 
 # ---- Group Type
 
