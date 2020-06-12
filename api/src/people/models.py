@@ -99,6 +99,7 @@ class PersonSchema(Schema):
     attributesInfo = fields.Nested('PersonAttributeSchema', many=True)
     images = fields.Nested('ImagePersonSchema', many=True, exclude=['person'], dump_only=True)
     roles = fields.Nested('RoleSchema', many=True, dump_only=True)
+    managers = fields.Nested('ManagerSchema', only=['group_id', 'active'], many=True, dump_only=True)
 
     @pre_load
     def hash_password(self, data):

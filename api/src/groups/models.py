@@ -35,11 +35,11 @@ class GroupSchema(Schema):
     group_type_id = fields.Integer(data_key='groupTypeId', required=True)
     active = fields.Boolean(required=True)
 
-    members = fields.Nested('MemberSchema', many=True, only=['person', 'joined', 'active'])
-    managers = fields.Nested('ManagerSchema', many=True, only=['person', 'active'])
-    meetings = fields.Nested('MeetingSchema', many=True, only=['group_id', 'address_id', 'start_time', 'stop_time', 'description', 'active'])
+    members = fields.Nested('MemberSchema', dump_only=True, many=True, only=['person', 'joined', 'active'])
+    managers = fields.Nested('ManagerSchema', dump_only=True, many=True, only=['person', 'active'])
+    meetings = fields.Nested('MeetingSchema', dump_only=True, many=True, only=['group_id', 'address_id', 'start_time', 'stop_time', 'description', 'active'])
     images = fields.Pluck('ImageGroupSchema', 'image', many=True)
-    group_type = fields.Nested('GroupTypeSchema', data_key='groupType', only=['id', 'name'])
+    group_type = fields.Nested('GroupTypeSchema', dump_only=True, data_key='groupType', only=['id', 'name'])
 
 # ---- Group Type
 
@@ -57,7 +57,7 @@ class GroupTypeSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     name = fields.String(required=True, validate=Length(min=1))
 
-    groups = fields.Nested('GroupSchema', many=True, only=['id', 'name'])
+    groups = fields.Nested('GroupSchema', dump_only=True, many=True, only=['id', 'name'])
         
 
 # ---- Meeting
@@ -88,8 +88,8 @@ class MeetingSchema(Schema):
     description = fields.String(required=True, validate=Length(min=1))
     active = fields.Boolean(required=True)
 
-    address = fields.Nested('AddressSchema')
-    group = fields.Nested('GroupSchema')
+    address = fields.Nested('AddressSchema', dump_only=True)
+    group = fields.Nested('GroupSchema', dump_only=True)
 
 
 
@@ -112,7 +112,7 @@ class MemberSchema(Schema):
     person_id = fields.Integer(data_key='personId', required=True)
     joined = fields.Date(required=True)
     active = fields.Boolean(required=True)
-    person = fields.Nested('PersonSchema')
+    person = fields.Nested('PersonSchema', dump_only=True)
 
 
 # ---- Manager
@@ -135,8 +135,8 @@ class ManagerSchema(Schema):
     group_id = fields.Integer(data_key='groupId', required=True)
     manager_type_id = fields.Integer(data_key='managerTypeId', required=True)
     active = fields.Boolean(required=True)
-    person = fields.Nested('PersonSchema')
-    group = fields.Nested('GroupSchema')
+    person = fields.Nested('PersonSchema', dump_only=True)
+    group = fields.Nested('GroupSchema', dump_only=True)
 
 
 # ---- Manager Type
