@@ -26,7 +26,7 @@
           >
           </v-select>
         </v-flex>
-        <v-flex shrink justify-self-end>
+        <v-flex shrink>
           <v-btn
             color="primary"
             raised
@@ -35,6 +35,17 @@
           >
             <v-icon dark left>add</v-icon>
             {{ $t("actions.add-group") }}
+          </v-btn>
+        </v-flex>
+        <v-flex shrink justify-self-end>
+          <v-btn
+            color="success"
+            raised
+            :to="{ name: 'group-treeview' }"
+            data-cy="show-treeview"
+          >
+            <v-icon dark left>account_tree</v-icon>
+            {{ $t("groups.treeview.show-treeview") }}
           </v-btn>
         </v-flex>
       </v-layout>

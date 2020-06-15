@@ -521,7 +521,7 @@
       "description": "Description",
       "details": {
         "class-title": "Title",
-        "manager" : "Managers",
+        "manager": "Managers",
         "member-count": "Member count",
         "title": "Details"
       },
@@ -578,7 +578,21 @@
       },
       "name": "Name",
       "none-assigned": "No groups assigned.",
-      "title": "Home Churches"
+      "title": "Home Churches",
+      "treeview": {
+        "categories": {
+          "all-group-types": "All Group Types",
+          "managers": "Managers",
+          "members": "Members"
+        },
+        "select-placeholder": "Select groups to perform actions...",
+        "show-all": "Show All Groups",
+        "show-list": "Show Group List",
+        "show-managers": "Show Managers Only",
+        "show-members": "Show Members Only",
+        "show-treeview": "Show Group Treeview",
+        "title": "Group Treeview"
+      }
     },
     "images": {
       "actions": {
@@ -615,7 +629,7 @@
       },
       "actions": {
         "add-account": "Add Account",
-        "add-manager":"Add a manager",
+        "add-manager": "Add a manager",
         "add-participant": "Add a Participant",
         "assign-roles": "Assign Roles",
         "edit": "Edit Person",
@@ -1109,7 +1123,7 @@
       "description": "Descripci\u00f3n",
       "details": {
         "class-title": "T\u00edtulo",
-        "manager" : "gerente",
+        "manager": "gerente",
         "member-count": "Cuenta de miembro",
         "title": "Detalles"
       },
@@ -1166,7 +1180,21 @@
       },
       "name": "Nombre",
       "none-assigned": "No hay grupos asignados.",
-      "title": "Iglesias Hogar"
+      "title": "Iglesias Hogar",
+      "treeview": {
+        "categories": {
+          "all-group-types": "Todos Los Tipos de Grupo",
+          "managers": "Gerentes",
+          "members": "Miembros"
+        },
+        "select-placeholder": "Seleccionar grupos para realizar acciones ...",
+        "show-all": "Mostrar Todos Los Grupos",
+        "show-list": "Mostrar lista de grupos",
+        "show-managers": "Mostrar Solo Gerentes",
+        "show-members": "Mostrar Solo Miembros",
+        "show-treeview": "Mostrar Vista de Árbol",
+        "title": "Vista de Árbol Grupal"
+      }
     },
     "images": {
       "actions": {
@@ -1203,7 +1231,7 @@
       },
       "actions": {
         "add-account": "A\u00f1adir cuenta",
-        "add-manager":"A\u00f1adir a gerente",
+        "add-manager": "A\u00f1adir a gerente",
         "add-participant": "A\u00f1adir Part\u00edcipe",
         "assign-roles": "Asigne Papeles",
         "edit": "Editar persona",

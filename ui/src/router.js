@@ -66,6 +66,12 @@ const router = new VueRouter({
           component: () => import("@/components/groups/GroupTable")
         },
         {
+          name: "group-treeview",
+          path: "treeview",
+          meta: { authRequired: true },
+          component: () => import("@/components/groups/GroupTreeView")
+        },
+        {
           name: "group",
           path: ":group",
           meta: { authRequired: true },
@@ -96,8 +102,7 @@ const router = new VueRouter({
               name: "group-managers",
               path: "managers",
               meta: { authRequired: true },
-              component: () =>
-                import("@/components/groups/GroupManagers")
+              component: () => import("@/components/groups/GroupManagers")
             }
           ]
         }
