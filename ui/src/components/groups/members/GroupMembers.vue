@@ -251,6 +251,7 @@
           <div>
             <h3 class="headline mb-0">
               {{ $t("groups.members.email.compose") }}
+              <!--    "Compose Emial" title          -->
             </h3>
           </div>
         </v-card-title>
@@ -570,9 +571,8 @@ export default {
           return true;
         }
       }
-      return this.$http.post(`/api/v1/groups/members`, {
-        group_id: groupId,
-        person_id: id,
+      return this.$http.post(`/api/v1/groups/groups/${groupId}/members`, {
+        personId: id,
         joined: "2018-12-25"
       });
     },
@@ -735,6 +735,7 @@ export default {
         this.people = this.members.map(e => e.person);
         this.parseMembers();
         this.tableLoading = false;
+        console.log(resp);
       });
     }
   },

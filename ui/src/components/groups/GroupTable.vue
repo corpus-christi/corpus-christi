@@ -191,7 +191,6 @@ export default {
   mounted() {
     this.tableLoading = true;
     this.$http.get("/api/v1/groups/groups").then(resp => {
-      console.log(resp.data);
       this.groups = resp.data;
       this.tableLoading = false;
     });
