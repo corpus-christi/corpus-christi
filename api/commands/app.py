@@ -57,4 +57,17 @@ def create_app_cli(app):
         db.drop_all()
         db.create_all()
 
+    @app_cli.command('load-all', help="Load all meta data")
+    def load_all():
+        if no_rows(I18NLocale):
+            _load_locales()
+        if no_rows(Country):
+            Country.load_from_file()
+        if no_rows(Language):
+            Language.load_from_file()
+        if no_rows(Role):
+            Role.load_from_file()
+        if no_rows(Attribute):
+            Attribute.load_types_from_file()
+
     app.cli.add_command(app_cli)
