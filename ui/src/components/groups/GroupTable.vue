@@ -358,7 +358,6 @@ export default {
       this.archiveDialog.show = false;
     },
     archiveGroup() {
-      console.log("Archived group");
       this.archiveDialog.loading = true;
       const groupId = this.archiveDialog.groupId;
       const idx = this.groups.findIndex(ev => ev.id === groupId);

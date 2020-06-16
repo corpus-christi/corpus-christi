@@ -242,7 +242,6 @@ export default {
       delete meeting.location;
       delete meeting.start;
       delete meeting.end;
-      console.log(meeting);
 
       const existingMeeting = this.meetings.find(({ id }) => id === meeting.id);
       if (typeof existingMeeting === "undefined") {
@@ -256,7 +255,6 @@ export default {
       return this.$http
         .post(`/api/v1/groups/meetings`, meeting)
         .then(() => {
-          console.log("meeting created");
           this.showSnackbar(this.$t("groups.messages.meeting-added"));
           this.meetingDialog.saveLoading = false;
           this.meetingDialog.show = false;
@@ -338,7 +336,6 @@ export default {
     },
 
     confirmArchive(event) {
-      console.log(event);
       this.activateArchiveDialog(event.id);
     },
 
@@ -347,10 +344,8 @@ export default {
     },
 
     archiveGroup() {
-      console.log("Archived member");
       this.archiveDialog.loading = true;
       const memberId = this.archiveDialog.memberId;
-      console.log(this.archiveDialog.memberId);
       const idx = this.meetings.findIndex(ev => ev.id === memberId);
       this.$http
         .put(`/api/v1/groups/members/deactivate/${memberId}`)
@@ -397,7 +392,6 @@ export default {
           if (!resp.data.msg) {
             this.meetings = resp.data;
           }
-          console.log(this.meetings);
           this.tableLoading = false;
         });
     }

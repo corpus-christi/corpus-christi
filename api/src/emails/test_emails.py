@@ -25,9 +25,6 @@ def email_object_factory():
         'subject': 'Test Email',
         'recipients': ['qiang_wang@taylor.edu'],
         'body': 'This is a test email',
-#         'body': rl_fake().sentences(nb=1)[0],
-#         'managerName': 'qwang',
-#         'managerEmail': 'qiangwang121212@gmail.com',
 #         'cc': '',
 #         'bcc':''
     }
@@ -42,8 +39,6 @@ def test_send_email(auth_client):
     # GIVEN nothing
 
     # WHEN we try to send an email
-#     print(url_for('emails.send_email'))
-#     print(email_object_factory())
     resp = auth_client.post(url_for('emails.send_email'),
                             json=email_object_factory(),
                             )

@@ -201,7 +201,7 @@
             raised
             :loading="addParticipantDialog.loading"
             data-cy="confirm-participant"
-            >Add Participants</v-btn
+            >{{ $t("events.participants.add") }}</v-btn
           >
         </v-card-actions>
       </v-card>
@@ -251,7 +251,6 @@
           <div>
             <h3 class="headline mb-0">
               {{ $t("groups.members.email.compose") }}
-              <!--    "Compose Emial" title          -->
             </h3>
           </div>
         </v-card-title>
@@ -409,7 +408,6 @@ export default {
   watch: {
     selected() {
       if (this.selected.length > 0) {
-        console.log(this.selected);
         this.select = true;
       } else this.select = false;
 
@@ -478,7 +476,6 @@ export default {
           });
         }
       });
-      //console.log(this.parsedMembers);
     },
 
     activateNewParticipantDialog() {
@@ -505,7 +502,6 @@ export default {
     addParticipants() {
       this.addParticipantDialog.loading = true;
       let promises = [];
-
       for (let person of this.addParticipantDialog.newParticipants) {
         const idx = this.members.findIndex(
           gr_pe => gr_pe.person.person_id === person.id
@@ -552,7 +548,6 @@ export default {
         })
         .catch(err => {
           this.showSnackbar(this.$t("groups.messages.error-no-manager-email"));
-          console.log(this.email);
           console.log(err);
         });
     },
@@ -649,7 +644,6 @@ export default {
     },
 
     confirmArchive(event) {
-      console.log(event);
       this.activateArchiveDialog(event.id);
     },
 
@@ -662,7 +656,6 @@ export default {
       console.log("Archived member");
       this.archiveDialog.loading = true;
       const memberId = this.archiveDialog.memberId;
-      console.log(this.archiveDialog.memberId);
       const idx = this.members.findIndex(ev => ev.id === memberId);
       this.$http
         .put(`/api/v1/groups/members/deactivate/${memberId}`)
@@ -735,7 +728,6 @@ export default {
         this.people = this.members.map(e => e.person);
         this.parseMembers();
         this.tableLoading = false;
-        console.log(resp);
       });
     }
   },

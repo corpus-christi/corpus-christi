@@ -125,6 +125,7 @@ class Manager(Base):
     active = Column(Boolean, nullable=False, default=True)
     person = relationship('Person', back_populates='managers', lazy=True)
     group = relationship('Group', back_populates='managers', lazy=True)
+    manager_type = relationship('ManagerType', back_populates='managers', lazy=True)
 
     def __repr__(self):
         return f"<Manager(person_id={self.person_id}, group_id={self.group_id})>"
@@ -137,6 +138,7 @@ class ManagerSchema(Schema):
     active = fields.Boolean(required=True)
     person = fields.Nested('PersonSchema', dump_only=True)
     group = fields.Nested('GroupSchema', dump_only=True)
+    manager_type = fields.Nested('ManagerTypeSchema', dump_only=True, data_key='managerType', only=['id', 'name'])
 
 
 # ---- Manager Type
@@ -146,13 +148,15 @@ class ManagerType(Base):
     id = Column(Integer, primary_key=True)
     name = Column(StringTypes.MEDIUM_STRING, nullable=False)
 
+    managers = relationship('Manager', back_populates='manager_type', lazy=True)
+
     def __repr__(self):
         return f"<ManagerType(id={self.id})>"
 
 class ManagerTypeSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     name = fields.String(required=True, validate=Length(min=1))
-
+    managers = fields.Nested('ManagerSchema', dump_only=True, many=True, only=['id', 'name'])
 
 
 # ---- Attendance

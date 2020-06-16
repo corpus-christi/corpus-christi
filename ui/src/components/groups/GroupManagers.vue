@@ -85,8 +85,7 @@
         <td><v-checkbox v-model="props.selected" primary hide-details /></td>
         <td>{{ props.item.person.firstName }}</td>
         <td>{{ props.item.person.lastName }}</td>
-        <td>{{ props.item.person.email }}</td>
-        <td>{{ props.item.person.phone }}</td>
+        <td>{{ props.item.managerType.name }}</td>
         <td class="text-no-wrap">
           <template v-if="props.item.active">
             <v-tooltip bottom>
@@ -201,7 +200,7 @@
             raised
             :loading="addParticipantDialog.loading"
             data-cy="confirm-participant"
-          >Add Participants</v-btn
+          >{{ $t("actions.add-manager") }}</v-btn
           >
         </v-card-actions>
       </v-card>
@@ -340,6 +339,7 @@
 <script>
   import EntitySearch from "../EntitySearch";
   import PersonDialog from "../PersonDialog";
+  import { mapState } from "vuex";
   export default {
     components: { EntitySearch, PersonDialog },
     name: "GroupMembers",
@@ -354,7 +354,7 @@
         tableLoading: false,
         dialogState: "",
         search: "",
-        members: [],
+        managers: [],
         people: [],
         person: {},
         parsedMembers: [],
@@ -401,14 +401,13 @@
           show: false,
           text: ""
         },
-        viewStatus: "viewActive"
+        viewStatus: "viewActive",
       };
     },
 
     watch: {
       selected() {
         if (this.selected.length > 0) {
-          console.log(this.selected);
           this.select = true;
         } else this.select = false;
 
@@ -438,14 +437,9 @@
             width: "20%"
           },
           {
-            text: this.$t("person.email"),
-            value: "person.email",
-            width: "22.5%"
-          },
-          {
-            text: this.$t("person.phone"),
-            value: "person.phone",
-            width: "22.5%"
+            text: this.$t("person.manager-type"),
+            value: "person.manager-type",
+            width: "20%"
           },
           {
             text: this.$t("actions.header"),
@@ -454,8 +448,8 @@
         ];
       },
 
-      visibleMembers() {
-        let list = this.members;
+      visibleManagers() {
+        let list = this.managers;
 
         if (this.viewStatus === "viewActive") {
           return list.filter(ev => ev.active);
@@ -464,12 +458,13 @@
         } else {
           return list;
         }
-      }
+      },
+      ...mapState(['currentAccount'])
     },
 
     methods: {
       parseMembers() {
-        this.members.map(e => {
+        this.managers.map(e => {
           if (e.person.email) {
             this.parsedMembers.push({
               text: e.person.firstName + " " + e.person.lastName,
@@ -477,7 +472,6 @@
             });
           }
         });
-        //console.log(this.parsedMembers);
       },
 
       activateNewParticipantDialog() {
@@ -504,9 +498,8 @@
       addParticipants() {
         this.addParticipantDialog.loading = true;
         let promises = [];
-
         for (let person of this.addParticipantDialog.newParticipants) {
-          const idx = this.members.findIndex(
+          const idx = this.managers.findIndex(
             gr_pe => gr_pe.person.person_id === person.id
           );
           if (idx === -1) {
@@ -538,6 +531,7 @@
       },
 
       sendEmail() {
+        this.email['managerEmail'] = this.currentAccount.email;
         this.$http
           .post(`/api/v1/emails/`, this.email)
           .then(() => {
@@ -551,8 +545,6 @@
           })
           .catch(err => {
             this.showSnackbar(this.$t("groups.messages.error-no-manager-email"));
-            console.log(this.email);
-            console.log(err);
           });
       },
 
@@ -565,15 +557,14 @@
 
       addParticipant(id) {
         const groupId = this.$route.params.group;
-        for (var member of this.members) {
+        for (var member of this.managers) {
           if (id == member.person.id) {
             return true;
           }
-        }
-        return this.$http.post(`/api/v1/groups/members`, {
-          group_id: groupId,
-          person_id: id,
-          joined: "2018-12-25"
+        };
+        return this.$http.post(`/api/v1/groups/groups/${ groupId }/managers`, {
+          personId: id,
+          managerTypeId: 1
         });
       },
 
@@ -649,7 +640,6 @@
       },
 
       confirmArchive(event) {
-        console.log(event);
         this.activateArchiveDialog(event.id);
       },
 
@@ -659,10 +649,8 @@
       },
 
       archiveGroup() {
-        console.log("Archived member");
         this.archiveDialog.loading = true;
         const memberId = this.archiveDialog.memberId;
-        console.log(this.archiveDialog.memberId);
         const idx = this.members.findIndex(ev => ev.id === memberId);
         this.$http
           .put(`/api/v1/groups/members/deactivate/${memberId}`)
@@ -722,7 +710,7 @@
       getMembers() {
         this.tableLoading = true;
         const id = this.$route.params.group;
-        this.$http.get(`/api/v1/groups/groups/${id}`).then(resp => {
+        this.$http.get(`/api/v1/groups/groups/${id}/managers`).then(resp => {
           // will break under the new groups model
           // this.email.managerName =
           //   resp.data.managerInfo.person.firstName +
@@ -731,8 +719,8 @@
           //   " " +
           //   resp.data.managerInfo.person.secondLastName;
           // this.email.managerEmail = resp.data.managerInfo.person.email;
-          this.members = resp.data.members;
-          this.people = this.members.map(e => e.person);
+          this.managers = resp.data;
+          this.people = this.managers.map(e => e.person);
           this.parseMembers();
           this.tableLoading = false;
         });
