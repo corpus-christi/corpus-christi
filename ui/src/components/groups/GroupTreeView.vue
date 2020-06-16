@@ -1,13 +1,13 @@
 <template>
   <v-card>
-    <v-toolbar class="pa-1" :color="toolbarColor">
-      <v-layout align-center>
-        <v-flex md2
+    <v-toolbar extended class="pa-1" :color="toolbarColor">
+      <v-layout align-center justify-space-between>
+        <v-flex md4 xs7
           ><v-toolbar-title>{{
             $t("groups.treeview.title")
           }}</v-toolbar-title></v-flex
         >
-        <v-flex md4>
+        <v-flex md6 xs5 shrink>
           <v-text-field
             :append-icon="search ? 'clear' : 'search'"
             @click:append="search = ''"
@@ -16,27 +16,37 @@
           >
           </v-text-field>
         </v-flex>
-        <v-spacer></v-spacer>
+      </v-layout>
 
-        <v-layout align-center v-if="selection.length == 0">
-          <v-flex>
+      <template v-slot:extension>
+        <v-layout v-if="selection.length == 0" align-center justify-end>
+          <v-flex md4 sm6>
             <v-select :items="viewOptions" v-model="viewStatus"> </v-select>
           </v-flex>
           <v-spacer></v-spacer>
-          <v-flex>
+          <v-flex shrink>
             <v-btn color="primary" fab small @click="expandAll"
               ><v-icon>unfold_more</v-icon></v-btn
             >
           </v-flex>
-          <v-flex>
+          <v-flex shrink>
             <v-btn color="grey lighten-2" fab small @click="closeAll"
               ><v-icon>unfold_less</v-icon></v-btn
             >
           </v-flex>
-          <v-flex>
-            <v-btn color="primary" raised :to="{ name: 'all-groups' }">
-              <v-icon dark left>list</v-icon>
-              {{ $t("groups.treeview.show-list") }}
+          <v-flex shrink>
+            <v-btn
+              color="primary"
+              :fab="$vuetify.breakpoint.mdAndDown"
+              :small="$vuetify.breakpoint.mdAndDown"
+              :to="{ name: 'all-groups' }"
+            >
+              <v-icon>list</v-icon>
+              {{
+                $vuetify.breakpoint.mdAndDown
+                  ? ""
+                  : $t("groups.treeview.show-list")
+              }}
             </v-btn>
           </v-flex>
         </v-layout>
@@ -50,9 +60,9 @@
             </v-btn>
           </v-flex>
         </v-layout>
-      </v-layout>
+      </template>
     </v-toolbar>
-    <v-layout>
+    <v-layout wrap>
       <v-flex>
         <v-card-text>
           <v-treeview
@@ -81,8 +91,8 @@
           </v-treeview>
         </v-card-text>
       </v-flex>
-      <v-divider vertical></v-divider>
-      <v-flex cols="12" md6>
+      <v-divider class="hidden-sm-and-down" vertical></v-divider>
+      <v-flex md6 sm12>
         <v-card-text>
           <div
             v-if="selection.length == 0"
@@ -111,6 +121,16 @@ export default {
     });
   },
   computed: {
+    viewOptions() {
+      return [
+        { text: this.$t("groups.treeview.show-all"), value: "showAll" },
+        {
+          text: this.$t("groups.treeview.show-managers"),
+          value: "showManagers"
+        },
+        { text: this.$t("groups.treeview.show-members"), value: "showMembers" }
+      ];
+    },
     toolbarColor() {
       return this.selection.length == 0 ? undefined : "blue-grey";
     },
@@ -236,14 +256,6 @@ export default {
   },
   data() {
     return {
-      viewOptions: [
-        { text: this.$t("groups.treeview.show-all"), value: "showAll" },
-        {
-          text: this.$t("groups.treeview.show-managers"),
-          value: "showManagers"
-        },
-        { text: this.$t("groups.treeview.show-members"), value: "showMembers" }
-      ],
       viewStatus: "showAll",
       showManagers: true,
       showMembers: true,
