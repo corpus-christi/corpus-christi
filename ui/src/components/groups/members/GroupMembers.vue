@@ -340,6 +340,7 @@
 <script>
 import EntitySearch from "../../EntitySearch";
 import PersonDialog from "../../PersonDialog";
+import {mapState} from "vuex";
 export default {
   components: { EntitySearch, PersonDialog },
   name: "GroupMembers",
@@ -463,7 +464,8 @@ export default {
       } else {
         return list;
       }
-    }
+    },
+    ...mapState(['currentAccount'])
   },
 
   methods: {
@@ -535,6 +537,8 @@ export default {
     },
 
     sendEmail() {
+      console.log(this.email);
+      this.email['managerEmail'] = this.currentAccount.email;
       this.$http
         .post(`/api/v1/emails/`, this.email)
         .then(() => {

@@ -76,7 +76,7 @@
       v-model="selected"
       :rows-per-page-items="rowsPerPageItem"
       :headers="headers"
-      :items="visibleMembers"
+      :items="visibleManagers"
       :search="search"
       :loading="tableLoading"
       class="elevation-1"
