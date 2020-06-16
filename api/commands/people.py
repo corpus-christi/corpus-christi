@@ -13,7 +13,8 @@ def create_account_cli(app):
     @click.argument('password')
     @click.option('--first', help="First name")
     @click.option('--last', help="Last name")
-    def create_account(username, password, first, last):
+    @click.option('--email', help="Email address")
+    def create_account(username, password, first, last, email):
         first_name = first or 'Test'
         last_name = last or 'User'
 
@@ -23,7 +24,7 @@ def create_account_cli(app):
             raise BadParameter(f"Already an account with username '{username}'")
 
         # Create the Person; commit to DB so we get ID
-        person = Person(first_name=first_name, last_name=last_name, username=username, password=password)
+        person = Person(first_name=first_name, last_name=last_name, username=username, password=password, email = email)
         db.session.add(person)
         db.session.commit()
         print(f"Created {person}")

@@ -26,15 +26,32 @@
           >
           </v-select>
         </v-flex>
-        <v-flex shrink justify-self-end>
+        <v-flex shrink>
           <v-btn
             color="primary"
-            raised
+            :fab="$vuetify.breakpoint.mdAndDown"
+            :small="$vuetify.breakpoint.mdAndDown"
             v-on:click.stop="newGroup"
             data-cy="add-group"
           >
-            <v-icon dark left>add</v-icon>
-            {{ $t("actions.add-group") }}
+            <v-icon>add</v-icon>
+            {{ $vuetify.breakpoint.mdAndDown ? "" : $t("actions.add-group") }}
+          </v-btn>
+        </v-flex>
+        <v-flex shrink>
+          <v-btn
+            color="success"
+            :fab="$vuetify.breakpoint.mdAndDown"
+            :small="$vuetify.breakpoint.mdAndDown"
+            :to="{ name: 'group-treeview' }"
+            data-cy="show-treeview"
+          >
+            <v-icon>account_tree</v-icon>
+            {{
+              $vuetify.breakpoint.mdAndDown
+                ? ""
+                : $t("groups.treeview.show-treeview")
+            }}
           </v-btn>
         </v-flex>
       </v-layout>

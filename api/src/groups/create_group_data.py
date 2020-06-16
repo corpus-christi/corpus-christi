@@ -106,12 +106,12 @@ def create_multiple_groups(sqla, n):
     """Commit `n` new groups to the database. Return their IDs."""
     group_schema = GroupSchema()
     new_groups = []
-    group_type = sqla.query(GroupType).first()
-    if group_type is None:
-        create_multiple_group_types(sqla, 1)
-        group_type = sqla.query(GroupType).first()
+    group_types = sqla.query(GroupType).all()
+    if len(group_types) == 0:
+        create_multiple_group_types(sqla, 3)
+        group_types = sqla.query(GroupType).all()
     for i in range(n):
-        valid_group = group_schema.load(group_object_factory(group_type.id))
+        valid_group = group_schema.load(group_object_factory(random.choice(group_types).id))
         new_groups.append(Group(**valid_group))
     sqla.add_all(new_groups)
     sqla.commit()
@@ -211,10 +211,14 @@ def create_multiple_attendance(sqla, fraction=0.75):
 def create_multiple_group_types(sqla, n):
     """Commit `n` new group types to the database."""
     group_type_schema = GroupTypeSchema()
-    new_group_types = []
-    for i in range(n):
-        valid_group_type = group_type_schema.load(group_type_object_factory(" ".join(fake.words(2))))
-        new_group_types.append(GroupType(**valid_group_type))
+    group_type_samples = ['Worship Team', 'Logistics', 'Event Planning Team']
+    if n <= len(group_type_samples):
+        group_type_names = group_type_samples[:n]
+    else:
+        group_type_names = group_type_samples
+        for i in range(n-len(group_type_samples)):
+            group_type_names.append(" ".join(fake.words(2) + ['Team']))
+    new_group_types = [ GroupType(**group_type_schema.load(group_type_object_factory(name))) for name in group_type_names ]
     sqla.add_all(new_group_types)
     sqla.commit()
 
