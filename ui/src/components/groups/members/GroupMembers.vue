@@ -537,7 +537,6 @@ export default {
     },
 
     sendEmail() {
-      console.log(this.email);
       this.email['managerEmail'] = this.currentAccount.email;
       this.$http
         .post(`/api/v1/emails/`, this.email)
