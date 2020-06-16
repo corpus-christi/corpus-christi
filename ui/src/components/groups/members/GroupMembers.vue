@@ -201,7 +201,7 @@
             raised
             :loading="addParticipantDialog.loading"
             data-cy="confirm-participant"
-            >Add Participants</v-btn
+            >{{ $t("events.participants.add") }}</v-btn
           >
         </v-card-actions>
       </v-card>
@@ -504,7 +504,7 @@ export default {
     addParticipants() {
       this.addParticipantDialog.loading = true;
       let promises = [];
-
+      console.log(this.addParticipantDialog.newParticipants);
       for (let person of this.addParticipantDialog.newParticipants) {
         const idx = this.members.findIndex(
           gr_pe => gr_pe.person.person_id === person.id

@@ -51,7 +51,6 @@ export default {
       const id = this.$route.params.group;
       return this.$http.get(`/api/v1/groups/groups/${id}`).then(resp => {
         this.group = resp.data;
-        console.log(this.group);
       });
     },
 

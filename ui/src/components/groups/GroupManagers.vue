@@ -76,7 +76,7 @@
       v-model="selected"
       :rows-per-page-items="rowsPerPageItem"
       :headers="headers"
-      :items="managers"
+      :items="visibleMembers"
       :search="search"
       :loading="tableLoading"
       class="elevation-1"
@@ -200,7 +200,7 @@
             raised
             :loading="addParticipantDialog.loading"
             data-cy="confirm-participant"
-          >Add Participants</v-btn
+          >{{ $t("actions.add-manager") }}</v-btn
           >
         </v-card-actions>
       </v-card>
@@ -448,8 +448,8 @@
         ];
       },
 
-      visibleMembers() {
-        let list = this.members;
+      visibleManagers() {
+        let list = this.managers;
 
         if (this.viewStatus === "viewActive") {
           return list.filter(ev => ev.active);
@@ -462,7 +462,7 @@
       ...mapState(['currentAccount'])
     },
 
-    methods: {//push selected managers in to a palce
+    methods: {
       parseMembers() {
         this.managers.map(e => {
           if (e.person.email) {
@@ -498,11 +498,12 @@
       addParticipants() {
         this.addParticipantDialog.loading = true;
         let promises = [];
-
+        console.log(this.addParticipantDialog.newParticipants);
         for (let person of this.addParticipantDialog.newParticipants) {
-          const idx = this.members.findIndex(
+          const idx = this.managers.findIndex(
             gr_pe => gr_pe.person.person_id === person.id
           );
+          console.log(person.id);
           if (idx === -1) {
             promises.push(this.addParticipant(person.id));
           }
@@ -524,18 +525,15 @@
       },
 
       getEmailRecipients() {
-        console.log(this.selected);
         return this.selected
           .map(e => e.person.email)
           .filter(function(e) {
-            console.log(e);
             return e != null;
           });
       },
 
       sendEmail() {
         this.email['managerEmail'] = this.currentAccount.email;
-        console.log("----",this.email);
         this.$http
           .post(`/api/v1/emails/`, this.email)
           .then(() => {
@@ -549,8 +547,6 @@
           })
           .catch(err => {
             this.showSnackbar(this.$t("groups.messages.error-no-manager-email"));
-            console.log(this.email);
-            console.log(err);
           });
       },
 
@@ -563,14 +559,14 @@
 
       addParticipant(id) {
         const groupId = this.$route.params.group;
-        for (var member of this.members) {
+        for (var member of this.managers) {
           if (id == member.person.id) {
             return true;
           }
-        }
+        };
         return this.$http.post(`/api/v1/groups/groups/${ groupId }/managers`, {
           personId: id,
-          managerTypeId: 2
+          managerTypeId: 1
         });
       },
 
@@ -730,7 +726,6 @@
           // this.email.managerEmail = resp.data.managerInfo.person.email;
           this.managers = resp.data;
           this.people = this.managers.map(e => e.person);
-          // console.log(this.people);
           this.parseMembers();
           this.tableLoading = false;
         });
@@ -739,7 +734,6 @@
 
     mounted: function() {
       this.getMembers();
-      console.log(this.currentAccount);
     }
   };
 </script>

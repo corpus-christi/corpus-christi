@@ -99,7 +99,6 @@ export default {
           return;
         } else {
           const decodedJwt = jwtDecode(resp.data.jwt);
-          console.log(resp.data)
           this.logIn({
             account: new Account(
               resp.data.username,
