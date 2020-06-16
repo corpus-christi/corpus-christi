@@ -498,10 +498,12 @@
       addParticipants() {
         this.addParticipantDialog.loading = true;
         let promises = [];
+
         for (let person of this.addParticipantDialog.newParticipants) {
           const idx = this.managers.findIndex(
             gr_pe => gr_pe.person.person_id === person.id
           );
+          console.log(person.id);
           if (idx === -1) {
             promises.push(this.addParticipant(person.id));
           }
