@@ -99,12 +99,14 @@ export default {
           return;
         } else {
           const decodedJwt = jwtDecode(resp.data.jwt);
+          console.log(resp.data)
           this.logIn({
             account: new Account(
               resp.data.username,
               resp.data.firstName,
               resp.data.lastName,
-              decodedJwt.user_claims.roles
+              decodedJwt.user_claims.roles,
+              resp.data.email
             ),
             jwt: resp.data.jwt
           });

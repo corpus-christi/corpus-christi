@@ -251,7 +251,6 @@
           <div>
             <h3 class="headline mb-0">
               {{ $t("groups.members.email.compose") }}
-              <!--    "Compose Emial" title          -->
             </h3>
           </div>
         </v-card-title>
@@ -735,7 +734,6 @@ export default {
         this.people = this.members.map(e => e.person);
         this.parseMembers();
         this.tableLoading = false;
-        console.log(resp);
       });
     }
   },

@@ -52,7 +52,8 @@ def login():
     return jsonify(jwt=access_token,
                    username=person.username,
                    firstName=person.first_name,
-                   lastName=person.last_name)
+                   lastName=person.last_name,
+                   email=person.email)
 
 
 # Define our callback function to check if a token has been revoked or not

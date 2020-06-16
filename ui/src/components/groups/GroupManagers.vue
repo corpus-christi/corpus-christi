@@ -76,7 +76,7 @@
       v-model="selected"
       :rows-per-page-items="rowsPerPageItem"
       :headers="headers"
-      :items="visibleMembers"
+      :items="managers"
       :search="search"
       :loading="tableLoading"
       class="elevation-1"
@@ -85,8 +85,7 @@
         <td><v-checkbox v-model="props.selected" primary hide-details /></td>
         <td>{{ props.item.person.firstName }}</td>
         <td>{{ props.item.person.lastName }}</td>
-        <td>{{ props.item.person.email }}</td>
-        <td>{{ props.item.person.phone }}</td>
+        <td>{{ props.item.managerType.name }}</td>
         <td class="text-no-wrap">
           <template v-if="props.item.active">
             <v-tooltip bottom>
@@ -340,6 +339,7 @@
 <script>
   import EntitySearch from "../EntitySearch";
   import PersonDialog from "../PersonDialog";
+  import { mapState } from "vuex";
   export default {
     components: { EntitySearch, PersonDialog },
     name: "GroupMembers",
@@ -354,7 +354,7 @@
         tableLoading: false,
         dialogState: "",
         search: "",
-        members: [],
+        managers: [],
         people: [],
         person: {},
         parsedMembers: [],
@@ -401,14 +401,13 @@
           show: false,
           text: ""
         },
-        viewStatus: "viewActive"
+        viewStatus: "viewActive",
       };
     },
 
     watch: {
       selected() {
         if (this.selected.length > 0) {
-          console.log(this.selected);
           this.select = true;
         } else this.select = false;
 
@@ -438,14 +437,9 @@
             width: "20%"
           },
           {
-            text: this.$t("person.email"),
-            value: "person.email",
-            width: "22.5%"
-          },
-          {
-            text: this.$t("person.phone"),
-            value: "person.phone",
-            width: "22.5%"
+            text: this.$t("person.manager-type"),
+            value: "person.manager-type",
+            width: "20%"
           },
           {
             text: this.$t("actions.header"),
@@ -464,12 +458,13 @@
         } else {
           return list;
         }
-      }
+      },
+      ...mapState(['currentAccount'])
     },
 
-    methods: {
+    methods: {//push selected managers in to a palce
       parseMembers() {
-        this.members.map(e => {
+        this.managers.map(e => {
           if (e.person.email) {
             this.parsedMembers.push({
               text: e.person.firstName + " " + e.person.lastName,
@@ -477,7 +472,6 @@
             });
           }
         });
-        //console.log(this.parsedMembers);
       },
 
       activateNewParticipantDialog() {
@@ -530,14 +524,18 @@
       },
 
       getEmailRecipients() {
+        console.log(this.selected);
         return this.selected
           .map(e => e.person.email)
           .filter(function(e) {
+            console.log(e);
             return e != null;
           });
       },
 
       sendEmail() {
+        this.email['managerEmail'] = this.currentAccount.email;
+        console.log("----",this.email);
         this.$http
           .post(`/api/v1/emails/`, this.email)
           .then(() => {
@@ -570,10 +568,9 @@
             return true;
           }
         }
-        return this.$http.post(`/api/v1/groups/members`, {
-          group_id: groupId,
-          person_id: id,
-          joined: "2018-12-25"
+        return this.$http.post(`/api/v1/groups/groups/${ groupId }/managers`, {
+          personId: id,
+          managerTypeId: 2
         });
       },
 
@@ -722,7 +719,7 @@
       getMembers() {
         this.tableLoading = true;
         const id = this.$route.params.group;
-        this.$http.get(`/api/v1/groups/groups/${id}`).then(resp => {
+        this.$http.get(`/api/v1/groups/groups/${id}/managers`).then(resp => {
           // will break under the new groups model
           // this.email.managerName =
           //   resp.data.managerInfo.person.firstName +
@@ -731,8 +728,9 @@
           //   " " +
           //   resp.data.managerInfo.person.secondLastName;
           // this.email.managerEmail = resp.data.managerInfo.person.email;
-          this.members = resp.data.members;
-          this.people = this.members.map(e => e.person);
+          this.managers = resp.data;
+          this.people = this.managers.map(e => e.person);
+          // console.log(this.people);
           this.parseMembers();
           this.tableLoading = false;
         });
@@ -741,6 +739,7 @@
 
     mounted: function() {
       this.getMembers();
+      console.log(this.currentAccount);
     }
   };
 </script>

@@ -629,6 +629,7 @@
       "female": "Female",
       "gender": "Gender",
       "male": "Male",
+      "manager-type":"Manager Type",
       "messages": {
         "account-activate": "Account activated",
         "account-deactivate": "Account deactivated",
@@ -1217,6 +1218,7 @@
       "female": "Mujer",
       "gender": "G\u00e9nero",
       "male": "Hombre",
+      "manager-type":"Tipo de gerente\n",
       "messages": {
         "account-activate": "Cuenta activada",
         "account-deactivate": "Cuenta desactivada",
