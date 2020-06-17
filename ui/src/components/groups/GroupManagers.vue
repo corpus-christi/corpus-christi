@@ -381,7 +381,12 @@ export default {
       }
     },
     emailRecipients() {
-      return this.selected.map(m => m.person.email).filter(m => m);
+      return this.selected
+        .filter(m => m.person.email)
+        .map(m => ({
+          email: m.person.email,
+          name: `${m.person.firstName} ${m.person.lastName}`
+        }));
     },
     emailRecipientList() {
       return this.managers

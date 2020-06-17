@@ -18,8 +18,12 @@
         chips
         deletable-chips
         hide-selected
+        return-object
         :no-data-text="$t('groups.messages.no-remaining-members')"
       >
+        <template v-slot:item="{ item }">
+          {{ `${item.name} (${item.email})` }}
+        </template>
       </v-select>
     </v-card-text>
     <v-card-text>
@@ -34,7 +38,7 @@
       </v-textarea>
     </v-card-text>
     <v-card-actions>
-      <v-btn v-on:click="$emit('cancel')" color="secondary" flat>{{
+      <v-btn v-on:click="cancel" color="secondary" flat>{{
         $t("actions.cancel")
       }}</v-btn>
       <v-spacer></v-spacer>
@@ -57,8 +61,8 @@ export default {
   props: {
     initialData: {
       /* contains the following
-      'recipientList': [ { email: 'xxxx@xx.com', name: '...' }, ] // a list of possible recipients to be shown in selection
-      'recipients: [ 'xxxx@xx.com', ... ] // selected recipients
+      'recipientList': [ { email: 'xxxx@xx.com', name: '...' }, ... ] // a list of possible recipients to be shown in selection
+      'recipients: [ { email: 'xxxx@xx.com', name: '...' }, ... ] // selected recipients
       */
       type: Object,
       required: true
@@ -100,6 +104,10 @@ export default {
       this.email.bcc = [];
       this.email.managerName = "";
       this.email.managerEmail = "sender@xx.com";
+    },
+    cancel() {
+      this.resetEmail();
+      this.$emit("cancel");
     },
     sendEmail() {
       this.sendLoading = true;

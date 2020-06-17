@@ -149,6 +149,16 @@ export default {
     toolbarColor() {
       return this.selection.length == 0 ? undefined : "blue-grey";
     },
+    allPeople() {
+      // a duplicate-free list of persons in all groups
+      let groupParticipants = this.groups.map(g =>
+        unionBy(g.members, g.managers, m => m.person.id)
+      );
+      let all = unionBy(...groupParticipants, m => m.person.id).map(
+        m => m.person
+      );
+      return all;
+    },
     selection() {
       // a duplicate-free list of persons selected in the tree
       let selection = this.groupTypeTreeviewSelection.filter(
@@ -159,10 +169,19 @@ export default {
     },
     emailInitialData() {
       let selected = this.selection
-        .map(item => item.obj.email)
-        .filter(item => item);
+        .filter(item => item.obj.email)
+        .map(item => ({
+          ...item.obj,
+          name: `${item.obj.firstName} ${item.obj.lastName}`
+        }));
+      let all = this.allPeople
+        .filter(p => p.email)
+        .map(p => ({
+          ...p,
+          name: `${p.firstName} ${p.lastName}`
+        }));
       return {
-        recipientList: selected /* TODO: fetch a complete list of possible recipients and cc/bcc targets */,
+        recipientList: all,
         recipients: selected
       };
     },
