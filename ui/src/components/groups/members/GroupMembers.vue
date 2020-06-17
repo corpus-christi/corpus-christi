@@ -456,7 +456,6 @@ export default {
 
     visibleMembers() {
       let list = this.members;
-
       if (this.viewStatus === "viewActive") {
         return list.filter(ev => ev.active);
       } else if (this.viewStatus === "viewArchived") {
