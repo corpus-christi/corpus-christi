@@ -7,10 +7,51 @@
         <h3 class="headline mb-0">{{ $t("groups.members.email.compose") }}</h3>
       </div>
     </v-card-title>
-    <v-card-text v-for="selectField in selectFields" :key="selectField.key">
+    <!-- TODO: Can we use a loop to render the following 3 components?
+      Currently the issue is that v-model won't synchronize references
+      that are returned by computed properties <2020-06-17, David Deng> -->
+    <v-card-text>
       <v-select
-        v-model="selectField.model"
-        :label="selectField.label"
+        v-model="email.recipients"
+        :label="$t('groups.members.email.to')"
+        :items="initialData.recipientList"
+        item-text="name"
+        item-value="email"
+        multiple
+        chips
+        deletable-chips
+        hide-selected
+        return-object
+        :no-data-text="$t('groups.messages.no-remaining-members')"
+      >
+        <template v-slot:item="{ item }">
+          {{ `${item.name} (${item.email})` }}
+        </template>
+      </v-select>
+    </v-card-text>
+    <v-card-text>
+      <v-select
+        v-model="email.cc"
+        :label="$t('groups.members.email.cc')"
+        :items="initialData.recipientList"
+        item-text="name"
+        item-value="email"
+        multiple
+        chips
+        deletable-chips
+        hide-selected
+        return-object
+        :no-data-text="$t('groups.messages.no-remaining-members')"
+      >
+        <template v-slot:item="{ item }">
+          {{ `${item.name} (${item.email})` }}
+        </template>
+      </v-select>
+    </v-card-text>
+    <v-card-text>
+      <v-select
+        v-model="email.bcc"
+        :label="$t('groups.members.email.bcc')"
         :items="initialData.recipientList"
         item-text="name"
         item-value="email"
@@ -111,8 +152,15 @@ export default {
     },
     sendEmail() {
       this.sendLoading = true;
+      // transform data to compatible form
+      let email = {
+        ...this.email,
+        recipients: this.email.recipients.map(p => p.email),
+        cc: this.email.cc.map(p => p.email),
+        bcc: this.email.bcc.map(p => p.email)
+      };
       this.$http
-        .post(`/api/v1/emails/`, this.email, { noErrorSnackBar: true })
+        .post(`/api/v1/emails/`, email, { noErrorSnackBar: true })
         .then(() => {
           this.resetEmail();
           this.sendLoading = false;
