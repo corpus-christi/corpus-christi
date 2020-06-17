@@ -1,120 +1,135 @@
 <template>
-  <v-card>
-    <v-toolbar extended class="pa-1" :color="toolbarColor">
-      <v-layout align-center justify-space-between>
-        <v-flex md4 xs7
-          ><v-toolbar-title>{{
-            $t("groups.treeview.title")
-          }}</v-toolbar-title></v-flex
-        >
-        <v-flex md6 xs5 shrink>
-          <v-text-field
-            :append-icon="search ? 'clear' : 'search'"
-            @click:append="search = ''"
-            :label="$t('actions.search')"
-            v-model="search"
+  <div>
+    <v-card>
+      <v-toolbar extended class="pa-1" :color="toolbarColor">
+        <v-layout align-center justify-space-between>
+          <v-flex md4 xs7
+            ><v-toolbar-title>{{
+              $t("groups.treeview.title")
+            }}</v-toolbar-title></v-flex
           >
-          </v-text-field>
+          <v-flex md6 xs5 shrink>
+            <v-text-field
+              :append-icon="search ? 'clear' : 'search'"
+              @click:append="search = ''"
+              :label="$t('actions.search')"
+              v-model="search"
+            >
+            </v-text-field>
+          </v-flex>
+        </v-layout>
+
+        <template v-slot:extension>
+          <v-layout v-if="selection.length == 0" align-center justify-end>
+            <v-flex md4 sm6>
+              <v-select :items="viewOptions" v-model="viewStatus"> </v-select>
+            </v-flex>
+            <v-spacer></v-spacer>
+            <v-flex shrink>
+              <v-btn color="primary" fab small @click="expandAll"
+                ><v-icon>unfold_more</v-icon></v-btn
+              >
+            </v-flex>
+            <v-flex shrink>
+              <v-btn color="grey lighten-2" fab small @click="closeAll"
+                ><v-icon>unfold_less</v-icon></v-btn
+              >
+            </v-flex>
+            <v-flex shrink>
+              <v-btn
+                color="primary"
+                :fab="$vuetify.breakpoint.mdAndDown"
+                :small="$vuetify.breakpoint.mdAndDown"
+                :to="{ name: 'all-groups' }"
+              >
+                <v-icon>list</v-icon>
+                {{
+                  $vuetify.breakpoint.mdAndDown
+                    ? ""
+                    : $t("groups.treeview.show-list")
+                }}
+              </v-btn>
+            </v-flex>
+          </v-layout>
+          <v-layout v-else align-center justify-end>
+            <v-flex shrink>
+              <v-btn fab small @click="showEmailDialog"
+                ><v-icon> email </v-icon></v-btn
+              >
+            </v-flex>
+            <v-flex shrink>
+              <v-btn fab small @click="groupTypeTreeviewSelection = []">
+                <v-icon> close</v-icon>
+              </v-btn>
+            </v-flex>
+          </v-layout>
+        </template>
+      </v-toolbar>
+      <v-layout wrap>
+        <v-flex>
+          <v-card-text>
+            <v-treeview
+              v-model="groupTypeTreeviewSelection"
+              :search="search"
+              :items="groupTypeTreeviewItems"
+              selectable
+              transition
+              hoverable
+              open-on-click
+              return-object
+              ref="treeview"
+            >
+              <template v-slot:prepend="{ item }">
+                <v-icon v-if="item.id.match(/^group_member/)"> person </v-icon>
+                <v-icon v-else-if="item.id.match(/^group_manager/)">
+                  account_circle
+                </v-icon>
+                <v-icon v-else-if="item.id.match(/^_group_type/)">
+                  category</v-icon
+                >
+                <v-icon v-else-if="item.id.match(/^_group_[0-9]/)">
+                  group
+                </v-icon>
+              </template>
+            </v-treeview>
+          </v-card-text>
+        </v-flex>
+        <v-divider class="hidden-sm-and-down" vertical></v-divider>
+        <v-flex md6 sm12>
+          <v-card-text>
+            <div
+              v-if="selection.length == 0"
+              class="title pa-4 text-center grey--text"
+            >
+              {{ $t("groups.treeview.select-placeholder") }}
+            </div>
+            <v-scroll-x-transition group hide-on-leave>
+              <v-chip v-for="item in selection" :key="item.id">{{
+                item.name
+              }}</v-chip>
+            </v-scroll-x-transition>
+          </v-card-text>
         </v-flex>
       </v-layout>
-
-      <template v-slot:extension>
-        <v-layout v-if="selection.length == 0" align-center justify-end>
-          <v-flex md4 sm6>
-            <v-select :items="viewOptions" v-model="viewStatus"> </v-select>
-          </v-flex>
-          <v-spacer></v-spacer>
-          <v-flex shrink>
-            <v-btn color="primary" fab small @click="expandAll"
-              ><v-icon>unfold_more</v-icon></v-btn
-            >
-          </v-flex>
-          <v-flex shrink>
-            <v-btn color="grey lighten-2" fab small @click="closeAll"
-              ><v-icon>unfold_less</v-icon></v-btn
-            >
-          </v-flex>
-          <v-flex shrink>
-            <v-btn
-              color="primary"
-              :fab="$vuetify.breakpoint.mdAndDown"
-              :small="$vuetify.breakpoint.mdAndDown"
-              :to="{ name: 'all-groups' }"
-            >
-              <v-icon>list</v-icon>
-              {{
-                $vuetify.breakpoint.mdAndDown
-                  ? ""
-                  : $t("groups.treeview.show-list")
-              }}
-            </v-btn>
-          </v-flex>
-        </v-layout>
-        <v-layout v-else align-center justify-end>
-          <v-flex shrink>
-            <v-btn fab small><v-icon> email </v-icon></v-btn>
-          </v-flex>
-          <v-flex shrink>
-            <v-btn fab small @click="groupTypeTreeviewSelection = []">
-              <v-icon> close</v-icon>
-            </v-btn>
-          </v-flex>
-        </v-layout>
-      </template>
-    </v-toolbar>
-    <v-layout wrap>
-      <v-flex>
-        <v-card-text>
-          <v-treeview
-            v-model="groupTypeTreeviewSelection"
-            :search="search"
-            :items="groupTypeTreeviewItems"
-            selectable
-            transition
-            hoverable
-            open-on-click
-            return-object
-            ref="treeview"
-          >
-            <template v-slot:prepend="{ item }">
-              <v-icon v-if="item.id.match(/^group_member/)"> person </v-icon>
-              <v-icon v-else-if="item.id.match(/^group_manager/)">
-                account_circle
-              </v-icon>
-              <v-icon v-else-if="item.id.match(/^_group_type/)">
-                category</v-icon
-              >
-              <v-icon v-else-if="item.id.match(/^_group_[0-9]/)">
-                group
-              </v-icon>
-            </template>
-          </v-treeview>
-        </v-card-text>
-      </v-flex>
-      <v-divider class="hidden-sm-and-down" vertical></v-divider>
-      <v-flex md6 sm12>
-        <v-card-text>
-          <div
-            v-if="selection.length == 0"
-            class="title pa-4 text-center grey--text"
-          >
-            {{ $t("groups.treeview.select-placeholder") }}
-          </div>
-          <v-scroll-x-transition group hide-on-leave>
-            <v-chip v-for="item in selection" :key="item.id">{{
-              item.name
-            }}</v-chip>
-          </v-scroll-x-transition>
-        </v-card-text>
-      </v-flex>
-    </v-layout>
-  </v-card>
+    </v-card>
+    <!-- Email dialog -->
+    <v-dialog v-model="emailDialog.show" max-width="700px">
+      <email-form
+        :initialData="emailInitialData"
+        @sent="hideEmailDialog"
+        @error="hideEmailDialog"
+        @cancel="hideEmailDialog"
+      ></email-form>
+    </v-dialog>
+  </div>
 </template>
 
 <script>
 import { unionBy, uniqBy } from "lodash";
+import EmailForm from "../EmailForm";
 export default {
   name: "GroupTreeView",
+  components: { EmailForm },
   mounted() {
     this.$http.get("/api/v1/groups/groups").then(resp => {
       this.groups = resp.data;
@@ -141,6 +156,15 @@ export default {
       ); // get rid of intermediate nodes
       selection = uniqBy(selection, item => item.obj.id); // remove duplicate
       return selection;
+    },
+    emailInitialData() {
+      let selected = this.selection
+        .map(item => item.obj.email)
+        .filter(item => item);
+      return {
+        recipientList: selected /* TODO: fetch a complete list of possible recipients and cc/bcc targets */,
+        recipients: selected
+      };
     },
     groupTypeTreeviewItems() {
       // categorize groups by group type
@@ -252,6 +276,13 @@ export default {
     },
     closeAll() {
       this.$refs["treeview"].updateAll(false);
+    },
+    showEmailDialog() {
+      this.emailDialog.show = true;
+    },
+    hideEmailDialog() {
+      this.groupTypeTreeviewSelection = [];
+      this.emailDialog.show = false;
     }
   },
   data() {
@@ -259,6 +290,10 @@ export default {
       viewStatus: "showAll",
       showManagers: true,
       showMembers: true,
+      emailDialog: {
+        show: false,
+        loading: false
+      },
       groups: [],
       search: "",
       groupTypeTreeviewSelection: [],
