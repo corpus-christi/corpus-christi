@@ -88,8 +88,8 @@ const router = new VueRouter({
               name: "group-members",
               path: "members",
               meta: { authRequired: true },
-              component: () =>
-                import("@/components/groups/members/GroupMembers")
+              component: () => import("@/components/groups/GroupManagers"),
+              props: { participantType: "member" }
             },
             {
               name: "group-meetings",

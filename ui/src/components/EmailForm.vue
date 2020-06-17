@@ -147,7 +147,6 @@ export default {
       this.email.managerEmail = "sender@xx.com";
     },
     cancel() {
-      this.resetEmail();
       this.$emit("cancel");
     },
     sendEmail() {

@@ -553,6 +553,7 @@
       "messages": {
         "already-exists": "Group already exists",
         "confirm-archive": "Are you sure you want to archive this group?",
+        "confirm-manager-archive": "Are you sure you want to archive this group manager?",
         "confirm-member-archive": "Are you sure you want to archive this group member?",
         "email-sent": "Email sent",
         "error-active-not-selected": "No active members are selected",
@@ -1157,6 +1158,7 @@
       "messages": {
         "already-exists": "El grupo ya existe",
         "confirm-archive": "\u00bfSeguro que quieres archivar este groupos?",
+        "confirm-manager-archive": "¿Estás seguro de que deseas archivar este administrador de grupo?",
         "confirm-member-archive": "\u00bfEst\u00e1s seguro de que deseas archivar a este miembro del grupo?",
         "email-sent": "Correo electr\u00f3nico enviado",
         "error-active-not-selected": "No hay miembros activos seleccionados",

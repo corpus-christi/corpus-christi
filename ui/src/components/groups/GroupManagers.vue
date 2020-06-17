@@ -3,9 +3,7 @@
     <v-toolbar>
       <v-layout align-center justify-space-between fill-height>
         <v-flex md3 class="text-no-wrap">
-          <v-toolbar-title v-if="!select">{{
-            $t("groups.header-manager")
-          }}</v-toolbar-title>
+          <v-toolbar-title v-if="!select">{{ title }}</v-toolbar-title>
           <v-btn
             color="primary"
             raised
@@ -19,7 +17,7 @@
           <v-btn
             color="primary"
             raised
-            v-on:click="activateSelectArchiveDialog"
+            v-on:click="showSelectArchiveDialog"
             data-cy="archive"
             v-if="select"
             fab
@@ -30,7 +28,7 @@
           <v-btn
             color="primary"
             raised
-            v-on:click="unarchiveFab"
+            v-on:click="unarchiveSelected"
             v-if="select"
             fab
             small
@@ -76,7 +74,7 @@
       v-model="selected"
       :rows-per-page-items="rowsPerPageItem"
       :headers="headers"
-      :items="visibleManagers"
+      :items="visibleParticipants"
       item-key="person.id"
       :search="search"
       :loading="tableLoading"
@@ -87,7 +85,7 @@
         <td>{{ props.item.person.firstName }}</td>
         <td>{{ props.item.person.lastName }}</td>
         <td>{{ props.item.person.email }}</td>
-        <td>{{ props.item.managerType.name }}</td>
+        <td v-if="isManagerMode">{{ props.item.managerType.name }}</td>
         <td class="text-no-wrap">
           <template v-if="props.item.active">
             <v-tooltip bottom>
@@ -113,7 +111,7 @@
                 small
                 color="primary"
                 slot="activator"
-                v-on:click="confirmArchive(props.item)"
+                v-on:click="showArchiveDialog(props.item)"
                 data-cy="archive"
               >
                 <v-icon small>archive</v-icon>
@@ -129,7 +127,7 @@
                 small
                 color="primary"
                 slot="activator"
-                v-on:click="massUnarchive(props.item)"
+                v-on:click="unarchiveParticipant(props.item)"
                 :loading="props.item.id < 0"
                 data-cy="unarchive"
               >
@@ -146,11 +144,13 @@
     <v-dialog v-model="archiveDialog.show" max-width="350px">
       <v-card>
         <v-card-text>{{
-          $t("groups.messages.confirm-member-archive")
+          isManagerMode
+            ? $t("groups.messages.confirm-manager-archive")
+            : $t("groups.messages.confirm-member-archive")
         }}</v-card-text>
         <v-card-actions>
           <v-btn
-            v-on:click="cancelArchive"
+            v-on:click="hideArchiveDialog"
             color="secondary"
             flat
             data-cy="cancel-archive"
@@ -158,7 +158,7 @@
           >
           <v-spacer />
           <v-btn
-            v-on:click="massArchive"
+            v-on:click="massArchive()"
             color="primary"
             raised
             :loading="archiveDialog.loading"
@@ -208,43 +208,6 @@
       </v-card>
     </v-dialog>
 
-    <!-- New/Edit dialog -->
-    <person-dialog
-      @snack="showSnackbar"
-      @cancel="cancelPerson"
-      @refreshPeople="getMembers"
-      :dialog-state="dialogState"
-      :all-people="people"
-      :person="person"
-    />
-
-    <!-- Delete dialog -->
-    <v-dialog v-model="deleteDialog.show" max-width="350px">
-      <v-card>
-        <v-card-text>{{
-          $t("events.participants.confirm-remove")
-        }}</v-card-text>
-        <v-card-actions>
-          <v-btn
-            v-on:click="cancelDelete"
-            color="secondary"
-            flat
-            data-cy="cancel-delete"
-            >{{ $t("actions.cancel") }}</v-btn
-          >
-          <v-spacer></v-spacer>
-          <v-btn
-            v-on:click="deleteParticipant"
-            color="primary"
-            raised
-            :loading="deleteDialog.loading"
-            data-cy="confirm-delete"
-            >{{ $t("actions.confirm") }}</v-btn
-          >
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
     <!-- Email dialog -->
     <v-dialog v-model="emailDialog.show" max-width="700px">
       <email-form
@@ -266,12 +229,18 @@
 
 <script>
 import EntitySearch from "../EntitySearch";
-import PersonDialog from "../PersonDialog";
 import EmailForm from "../EmailForm";
 import { eventBus } from "../../plugins/event-bus.js";
 export default {
-  components: { EntitySearch, PersonDialog, EmailForm },
-  name: "GroupMembers",
+  components: { EntitySearch, EmailForm },
+  name: "GroupParticipants",
+  props: {
+    participantType: {
+      /* either 'manager' or 'member' */
+      type: String,
+      default: "manager"
+    }
+  },
   data() {
     return {
       rowsPerPageItem: [
@@ -283,12 +252,10 @@ export default {
       tableLoading: false,
       dialogState: "",
       search: "",
-      managers: [],
+      participants: [],
       people: [],
-      person: {},
       selected: [],
       select: false,
-      archiveSelect: false,
       unarchiveSelect: false,
       emailDialog: {
         show: false,
@@ -299,21 +266,9 @@ export default {
         newParticipants: [],
         loading: false
       },
-      personDialog: {
-        show: false,
-        title: "",
-        person: {},
-        addAnotherEnabled: false,
-        saveButtonText: "actions.save"
-      },
-      deleteDialog: {
-        show: false,
-        participantId: -1,
-        loading: false
-      },
       archiveDialog: {
         show: false,
-        memberId: -1,
+        participants: [],
         loading: false
       },
       snackbar: {
@@ -333,6 +288,12 @@ export default {
   },
 
   computed: {
+    id() {
+      return this.$route.params.group;
+    },
+    isManagerMode() {
+      return this.participantType == "manager";
+    },
     viewOptions() {
       return [
         { text: this.$t("actions.view-active"), value: "viewActive" },
@@ -340,37 +301,58 @@ export default {
         { text: this.$t("actions.view-all"), value: "viewAll" }
       ];
     },
-
-    headers() {
-      return [
-        {
-          text: this.$t("person.name.first"),
-          value: "person.firstName",
-          width: "20%"
-        },
-        {
-          text: this.$t("person.name.last"),
-          value: "person.lastName",
-          width: "20%"
-        },
-        {
-          text: this.$t("person.email"),
-          value: "person.email"
-        },
-        {
-          text: this.$t("person.manager-type"),
-          value: "person.manager-type",
-          width: "20%"
-        },
-        {
-          text: this.$t("actions.header"),
-          sortable: false
-        }
-      ];
+    title() {
+      return this.isManagerMode
+        ? this.$t("groups.header-manager")
+        : this.$t("events.participants.title");
     },
-
-    visibleManagers() {
-      let list = this.managers;
+    headers() {
+      if (this.isManagerMode) {
+        return [
+          {
+            text: this.$t("person.name.first"),
+            value: "person.firstName"
+          },
+          {
+            text: this.$t("person.name.last"),
+            value: "person.lastName"
+          },
+          {
+            text: this.$t("person.email"),
+            value: "person.email"
+          },
+          {
+            text: this.$t("person.manager-type"),
+            value: "person.manager-type"
+          },
+          {
+            text: this.$t("actions.header"),
+            sortable: false
+          }
+        ];
+      } else {
+        return [
+          {
+            text: this.$t("person.name.first"),
+            value: "person.firstName"
+          },
+          {
+            text: this.$t("person.name.last"),
+            value: "person.lastName"
+          },
+          {
+            text: this.$t("person.email"),
+            value: "person.email"
+          },
+          {
+            text: this.$t("actions.header"),
+            sortable: false
+          }
+        ];
+      }
+    },
+    visibleParticipants() {
+      let list = this.participants;
 
       if (this.viewStatus === "viewActive") {
         return list.filter(ev => ev.active);
@@ -389,7 +371,7 @@ export default {
         }));
     },
     emailRecipientList() {
-      return this.managers
+      return this.participants
         .filter(m => m.person.email)
         .map(m => ({
           email: m.person.email,
@@ -419,7 +401,6 @@ export default {
 
     editPerson(person) {
       this.dialogState = "edit";
-      this.person = person;
     },
 
     cancelPerson() {
@@ -431,7 +412,7 @@ export default {
       let promises = [];
 
       for (let person of this.addParticipantDialog.newParticipants) {
-        const idx = this.managers.findIndex(
+        const idx = this.participants.findIndex(
           gr_pe => gr_pe.person.person_id === person.id
         );
         if (idx === -1) {
@@ -441,16 +422,20 @@ export default {
 
       Promise.all(promises)
         .then(() => {
-          this.showSnackbar(this.$t("groups.messages.members-added"));
           this.addParticipantDialog.loading = false;
           this.addParticipantDialog.show = false;
           this.addParticipantDialog.newParticipants = [];
-          this.getMembers();
+          this.getParticipants();
+          eventBus.$emit("message", {
+            content: "groups.messages.members-added"
+          });
         })
         .catch(err => {
           console.log(err);
           this.addParticipantDialog.loading = false;
-          this.showSnackbar(this.$t("groups.messages.error-adding-members"));
+          eventBus.$emit("error", {
+            content: "groups.messages.error-adding-members"
+          });
         });
     },
 
@@ -468,175 +453,111 @@ export default {
       this.emailDialog.show = true;
     },
     hideEmailDialog() {
-      this.selected = [];
       this.emailDialog.show = false;
     },
 
     addParticipant(id) {
-      const groupId = this.$route.params.group;
-      for (var member of this.managers) {
-        if (id == member.person.id) {
+      for (var member of this.participants) {
+        if (this.id == member.person.id) {
           return true;
         }
       }
-      return this.$http.post(`/api/v1/groups/groups/${groupId}/managers`, {
+      return this.$http.post(`/api/v1/groups/groups/${this.id}/managers`, {
         personId: id,
         managerTypeId: 1
       });
-    },
-
-    confirmDelete(event) {
-      this.activateDeleteDialog(event.person_id);
-    },
-
-    deleteParticipant() {
-      this.deleteDialog.loading = true;
-      const participantId = this.deleteDialog.participantId;
-      const idx = this.people.findIndex(ev => ev.person.id === participantId);
-      const id = this.$route.params.event;
-      this.$http
-        .delete(`/api/v1/events/${id}/participants/${participantId}`)
-        .then(() => {
-          this.deleteDialog.loading = false;
-          this.deleteDialog.show = false;
-          this.people.splice(idx, 1);
-          this.showSnackbar(this.$t("events.participants.removed"));
-        })
-        .catch(err => {
-          console.log(err);
-          this.deleteDialog.loading = false;
-          this.deleteDialog.show = false;
-          this.showSnackbar(this.$t("events.participants.error-removing"));
-        });
-    },
-    cancelDelete() {
-      this.deleteDialog.show = false;
-    },
-
-    activateDeleteDialog(participantId) {
-      this.deleteDialog.show = true;
-      this.deleteDialog.participantId = participantId;
     },
 
     showSnackbar(message) {
       this.snackbar.text = message;
       this.snackbar.show = true;
     },
-
-    containsActive() {
-      let isActive = false;
-      this.selected.map(e => {
-        if (e.active) isActive = true;
-      });
-      return isActive;
-    },
-
-    massArchive() {
-      if (this.archiveSelect) {
-        this.selected.map(e => {
-          this.archiveDialog.memberId = e.id;
-          this.archiveGroup();
-        });
-        this.archiveSelect = false;
-      } else this.archiveGroup();
-    },
-
-    activateSelectArchiveDialog() {
-      if (this.containsActive()) {
-        if (this.selected.length == 1) {
-          this.activateArchiveDialog(this.selected[0].person.id);
-        } else this.archiveDialog.show = true;
-        this.archiveSelect = true;
-      } else
-        this.showSnackbar(this.$t("groups.messages.error-active-not-selected"));
-    },
-
-    activateArchiveDialog(memberId) {
-      this.archiveDialog.show = true;
-      this.archiveDialog.memberId = memberId;
-    },
-
-    confirmArchive(event) {
-      this.activateArchiveDialog(event.id);
-    },
-
-    cancelArchive() {
-      this.archiveDialog.show = false;
-      this.archiveSelect = false;
-    },
-
-    archiveGroup() {
+    massArchive(unarchive = false) {
+      let promises = [];
       this.archiveDialog.loading = true;
-      const memberId = this.archiveDialog.memberId;
-      const idx = this.members.findIndex(ev => ev.id === memberId);
-      this.$http
-        .put(`/api/v1/groups/members/deactivate/${memberId}`)
-        .then(resp => {
-          console.log("ARCHIVE", resp);
-          this.members[idx].active = false;
-          this.archiveDialog.loading = false;
-          this.archiveDialog.show = false;
-          this.showSnackbar(this.$t("groups.messages.member-archived"));
-        })
-        .catch(err => {
-          console.error("ARCHIVE FALURE", err.response);
-          this.archiveDialog.loading = false;
-          this.archiveDialog.show = false;
-          this.showSnackbar(this.$t("groups.messages.error-archiving-member"));
-        });
-    },
-
-    unarchiveFab() {
-      if (!this.containsActive()) {
-        this.unarchiveSelect = true;
-        this.massUnarchive();
-      } else
-        this.showSnackbar(
-          this.$t("groups.messages.error-archived-not-selected")
+      console.log(this.archiveDialog.participants);
+      for (let participant of this.archiveDialog.participants) {
+        const participantObj = this.participants.find(
+          p => p.person.id === participant.person.id
         );
-    },
-
-    massUnarchive(member) {
-      if (this.unarchiveSelect) {
-        this.selected.map(e => {
-          this.unarchive(e);
+        if (
+          (!unarchive && participantObj && participantObj.active) ||
+          (unarchive && participantObj && !participantObj.active)
+        ) {
+          // in archive mode, we want to pick active ones among the given participants, and vise versa.
+          promises.push(
+            this.$http.patch(
+              `/api/v1/groups/groups/${this.id}/${
+                this.isManagerMode ? "managers" : "members"
+              }/${participant.person.id}`,
+              { active: unarchive ? true : false },
+              { noErrorSnackBar: true }
+            )
+          );
+        }
+      }
+      if (promises.length == 0) {
+        eventBus.$emit("notification", {
+          content: unarchive
+            ? "groups.messages.error-archived-not-selected"
+            : "groups.messages.error-active-not-selected"
         });
-        this.unarchiveSelect = false;
-      } else this.unarchive(member);
-    },
-
-    unarchive(member) {
-      const idx = this.members.findIndex(ev => ev.id === member.id);
-      const memberId = member.id;
-      member.id *= -1; // to show loading spinner
-      this.$http
-        .put(`/api/v1/groups/members/activate/${memberId}`)
+        this.archiveDialog.loading = false;
+        return;
+      }
+      Promise.all(promises)
         .then(resp => {
-          console.log("UNARCHIVED", resp);
-          Object.assign(this.members[idx], resp.data);
-          this.showSnackbar(this.$t("groups.messages.member-unarchived"));
+          this.archiveDialog.loading = false;
+          this.archiveDialog.show = false;
+          this.getParticipants();
+          eventBus.$emit("message", {
+            content: "groups.messages.member-archived"
+          });
         })
         .catch(err => {
-          console.error("UNARCHIVE FALURE", err.response);
-          this.showSnackbar(
-            this.$t("groups.messages.error-unarchiving-member")
-          );
+          this.archiveDialog.loading = false;
+          this.archiveDialog.show = false;
+          eventBus.$emit("error", {
+            content: "groups.messages.error-archiving-member"
+          });
         });
     },
-
-    getMembers() {
+    showSelectArchiveDialog() {
+      this.archiveDialog.participants = this.selected;
+      this.archiveDialog.show = true;
+    },
+    showArchiveDialog(participant) {
+      this.archiveDialog.participants = [participant];
+      this.archiveDialog.show = true;
+    },
+    hideArchiveDialog() {
+      this.archiveDialog.show = false;
+    },
+    unarchiveSelected() {
+      this.archiveDialog.participants = this.selected;
+      this.massArchive(true);
+    },
+    unarchiveParticipant(participant) {
+      this.archiveDialog.participants = [participant];
+      this.massArchive(true);
+    },
+    getParticipants() {
       this.tableLoading = true;
-      const id = this.$route.params.group;
-      this.$http.get(`/api/v1/groups/groups/${id}/managers`).then(resp => {
-        this.managers = resp.data;
-        this.people = this.managers.map(e => e.person);
-        this.tableLoading = false;
-      });
+      this.$http
+        .get(
+          `/api/v1/groups/groups/${this.id}/${
+            this.isManagerMode ? "managers" : "members"
+          }`
+        )
+        .then(resp => {
+          this.participants = resp.data;
+          console.log(resp.data);
+          this.tableLoading = false;
+        });
     }
   },
-
   mounted: function() {
-    this.getMembers();
+    this.getParticipants();
   }
 };
 </script>
