@@ -566,6 +566,7 @@
         "error-archiving-member": "Error while unarchiving member",
         "error-editing-group": "Error while editing group",
         "error-no-manager-email": "Your email address is not defined",
+        "error-sending-email": "Error while sending email",
         "error-unarchiving-meeting": "Error unarchiiving meeting",
         "group-added": "Group added",
         "group-archived": "Group archived",
@@ -647,7 +648,7 @@
       "female": "Female",
       "gender": "Gender",
       "male": "Male",
-      "manager-type":"Manager Type",
+      "manager-type": "Manager Type",
       "messages": {
         "account-activate": "Account activated",
         "account-deactivate": "Account deactivated",
@@ -1173,6 +1174,7 @@
         "error-archiving-member": "Error al desarchivar miembro",
         "error-editing-group": "Error al editar grupo",
         "error-no-manager-email": "Su direcci\u00f3n de correo electr\u00f3nico no est\u00e1 definida",
+        "error-sending-email": "Error al enviar correo electrónico",
         "error-unarchiving-meeting": "Error al desarchivar la reunión",
         "group-added": "Grupo agregado",
         "group-archived": "Grupo archivado",
@@ -1254,7 +1256,7 @@
       "female": "Mujer",
       "gender": "G\u00e9nero",
       "male": "Hombre",
-      "manager-type":"Tipo de gerente",
+      "manager-type": "Tipo de gerente",
       "messages": {
         "account-activate": "Cuenta activada",
         "account-deactivate": "Cuenta desactivada",
