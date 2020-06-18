@@ -17,10 +17,12 @@ class Group(Base):
         'groups_group_type.id'), nullable=False)
     active = Column(Boolean, nullable=False, default=True)
     members = relationship('Member', backref='group', lazy=True)
+    group_type = relationship('GroupType', back_populates='groups', lazy=True)
     managers = relationship('Manager', back_populates='group', lazy=True)
     meetings = relationship('Meeting', back_populates='group', lazy=True)
     events = relationship('EventGroup', back_populates='group', lazy=True)
     images = relationship('ImageGroup', back_populates='group', lazy=True)
+
 
     def __repr__(self):
         return f"<Group(id={self.id})>"
@@ -33,10 +35,11 @@ class GroupSchema(Schema):
     group_type_id = fields.Integer(data_key='groupTypeId', required=True)
     active = fields.Boolean(required=True)
 
-    members = fields.Nested('MemberSchema', many=True, only=['person', 'joined', 'active'])
-    managers = fields.Nested('ManagerSchema', many=True, only=['person', 'active'])
-    meetings = fields.Nested('MeetingSchema', many=True, only=['group_id', 'address_id', 'start_time', 'stop_time', 'description', 'active'])
+    members = fields.Nested('MemberSchema', dump_only=True, many=True, only=['person', 'joined', 'active'])
+    managers = fields.Nested('ManagerSchema', dump_only=True, many=True, only=['person', 'active'])
+    meetings = fields.Nested('MeetingSchema', dump_only=True, many=True, only=['group_id', 'address_id', 'start_time', 'stop_time', 'description', 'active'])
     images = fields.Pluck('ImageGroupSchema', 'image', many=True)
+    group_type = fields.Nested('GroupTypeSchema', dump_only=True, data_key='groupType', only=['id', 'name'])
 
 # ---- Group Type
 
@@ -45,12 +48,16 @@ class GroupType(Base):
     id = Column(Integer, primary_key=True)
     name = Column(StringTypes.MEDIUM_STRING, nullable=False)
 
+    groups = relationship('Group', back_populates='group_type', lazy=True)
+
     def __repr__(self):
         return f"<GroupType(id={self.id})>"
 
 class GroupTypeSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     name = fields.String(required=True, validate=Length(min=1))
+
+    groups = fields.Nested('GroupSchema', dump_only=True, many=True, only=['id', 'name'])
         
 
 # ---- Meeting
@@ -81,8 +88,8 @@ class MeetingSchema(Schema):
     description = fields.String(required=True, validate=Length(min=1))
     active = fields.Boolean(required=True)
 
-    address = fields.Nested('AddressSchema')
-    group = fields.Nested('GroupSchema')
+    address = fields.Nested('AddressSchema', dump_only=True)
+    group = fields.Nested('GroupSchema', dump_only=True)
 
 
 
@@ -105,7 +112,7 @@ class MemberSchema(Schema):
     person_id = fields.Integer(data_key='personId', required=True)
     joined = fields.Date(required=True)
     active = fields.Boolean(required=True)
-    person = fields.Nested('PersonSchema')
+    person = fields.Nested('PersonSchema', dump_only=True)
 
 
 # ---- Manager
@@ -118,6 +125,7 @@ class Manager(Base):
     active = Column(Boolean, nullable=False, default=True)
     person = relationship('Person', back_populates='managers', lazy=True)
     group = relationship('Group', back_populates='managers', lazy=True)
+    manager_type = relationship('ManagerType', back_populates='managers', lazy=True)
 
     def __repr__(self):
         return f"<Manager(person_id={self.person_id}, group_id={self.group_id})>"
@@ -128,8 +136,9 @@ class ManagerSchema(Schema):
     group_id = fields.Integer(data_key='groupId', required=True)
     manager_type_id = fields.Integer(data_key='managerTypeId', required=True)
     active = fields.Boolean(required=True)
-    person = fields.Nested('PersonSchema')
-    group = fields.Nested('GroupSchema')
+    person = fields.Nested('PersonSchema', dump_only=True)
+    group = fields.Nested('GroupSchema', dump_only=True)
+    manager_type = fields.Nested('ManagerTypeSchema', dump_only=True, data_key='managerType', only=['id', 'name'])
 
 
 # ---- Manager Type
@@ -139,13 +148,15 @@ class ManagerType(Base):
     id = Column(Integer, primary_key=True)
     name = Column(StringTypes.MEDIUM_STRING, nullable=False)
 
+    managers = relationship('Manager', back_populates='manager_type', lazy=True)
+
     def __repr__(self):
         return f"<ManagerType(id={self.id})>"
 
 class ManagerTypeSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     name = fields.String(required=True, validate=Length(min=1))
-
+    managers = fields.Nested('ManagerSchema', dump_only=True, many=True, only=['id', 'name'])
 
 
 # ---- Attendance

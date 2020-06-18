@@ -20,7 +20,7 @@
             <div>{{ $t("groups.manager") }}: {{ getManagerName() }}</div>
             <div>
               {{ $t("groups.details.member-count") }}:
-              {{ group.memberList.length }}
+              {{ group.members.length }}
             </div>
           </div>
         </v-card-title>
@@ -51,7 +51,6 @@ export default {
       const id = this.$route.params.group;
       return this.$http.get(`/api/v1/groups/groups/${id}`).then(resp => {
         this.group = resp.data;
-        console.log(this.group);
       });
     },
 

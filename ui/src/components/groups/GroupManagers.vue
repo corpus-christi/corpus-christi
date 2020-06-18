@@ -4,12 +4,12 @@
       <v-layout align-center justify-space-between fill-height>
         <v-flex md3 class="text-no-wrap">
           <v-toolbar-title v-if="!select">{{
-            $t("events.participants.title")
+            $t("groups.header-manager")
           }}</v-toolbar-title>
           <v-btn
             color="primary"
             raised
-            v-on:click="toggleEmailDialog"
+            v-on:click="showEmailDialog"
             v-if="select"
             fab
             small
@@ -66,7 +66,7 @@
             data-cy="add-participant"
           >
             <v-icon dark left>add</v-icon>
-            {{ $t("actions.add-person") }}
+            {{ $t("actions.add-manager") }}
           </v-btn>
         </v-flex>
       </v-layout>
@@ -76,7 +76,8 @@
       v-model="selected"
       :rows-per-page-items="rowsPerPageItem"
       :headers="headers"
-      :items="visibleMembers"
+      :items="visibleManagers"
+      item-key="person.id"
       :search="search"
       :loading="tableLoading"
       class="elevation-1"
@@ -86,7 +87,7 @@
         <td>{{ props.item.person.firstName }}</td>
         <td>{{ props.item.person.lastName }}</td>
         <td>{{ props.item.person.email }}</td>
-        <td>{{ props.item.person.phone }}</td>
+        <td>{{ props.item.managerType.name }}</td>
         <td class="text-no-wrap">
           <template v-if="props.item.active">
             <v-tooltip bottom>
@@ -174,7 +175,7 @@
         <v-card-title primary-title>
           <div>
             <h3 class="headline mb-0">
-              {{ $t("person.actions.add-participant") }}
+              {{ $t("person.actions.add-manager") }}
             </h3>
           </div>
         </v-card-title>
@@ -201,7 +202,7 @@
             raised
             :loading="addParticipantDialog.loading"
             data-cy="confirm-participant"
-            >{{ $t("events.participants.add") }}</v-btn
+            >{{ $t("actions.add-manager") }}</v-btn
           >
         </v-card-actions>
       </v-card>
@@ -246,86 +247,12 @@
 
     <!-- Email dialog -->
     <v-dialog v-model="emailDialog.show" max-width="700px">
-      <v-card>
-        <v-card-title primary-title>
-          <div>
-            <h3 class="headline mb-0">
-              {{ $t("groups.members.email.compose") }}
-            </h3>
-          </div>
-        </v-card-title>
-        <v-card-text>
-          <v-select
-            v-model="email.recipients"
-            :label="$t('groups.members.email.to')"
-            :items="parsedMembers"
-            multiple
-            chips
-            deletable-chips
-            hide-selected
-            :no-data-text="$t('groups.messages.no-remaining-members')"
-          >
-          </v-select>
-        </v-card-text>
-        <v-card-text>
-          <v-select
-            v-model="email.cc"
-            :label="$t('groups.members.email.cc')"
-            :items="parsedMembers"
-            multiple
-            chips
-            deletable-chips
-            hide-selected
-            :no-data-text="$t('groups.messages.no-remaining-members')"
-          >
-          </v-select>
-        </v-card-text>
-        <v-card-text>
-          <v-select
-            v-model="email.bcc"
-            :label="$t('groups.members.email.bcc')"
-            :items="parsedMembers"
-            multiple
-            chips
-            deletable-chips
-            :no-data-text="$t('groups.messages.no-remaining-members')"
-          >
-          </v-select>
-        </v-card-text>
-        <v-card-text>
-          <v-text-field
-            :label="$t('groups.members.email.subject')"
-            v-model="email.subject"
-          >
-          </v-text-field>
-        </v-card-text>
-        <v-card-text>
-          <v-textarea
-            :label="$t('groups.members.email.body')"
-            v-model="email.body"
-          >
-          </v-textarea>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn
-            v-on:click="toggleEmailDialog"
-            color="secondary"
-            flat
-            data-cy=""
-            >{{ $t("actions.cancel") }}</v-btn
-          >
-          <v-spacer></v-spacer>
-          <v-btn
-            v-on:click="sendEmail"
-            :disabled="email.recipients.length == 0"
-            color="primary"
-            raised
-            :loading="sendEmail.loading"
-            data-cy="confirm-email"
-            >{{ $t("groups.members.email.send") }}</v-btn
-          >
-        </v-card-actions>
-      </v-card>
+      <email-form
+        :initialData="emailInitialData"
+        @sent="handleEmailSent"
+        @error="handleEmailError"
+        @cancel="handleEmailCancel"
+      ></email-form>
     </v-dialog>
 
     <v-snackbar v-model="snackbar.show">
@@ -338,11 +265,12 @@
 </template>
 
 <script>
-import EntitySearch from "../../EntitySearch";
-import PersonDialog from "../../PersonDialog";
-import {mapState} from "vuex";
+import EntitySearch from "../EntitySearch";
+import PersonDialog from "../PersonDialog";
+import EmailForm from "../EmailForm";
+import { eventBus } from "../../plugins/event-bus.js";
 export default {
-  components: { EntitySearch, PersonDialog },
+  components: { EntitySearch, PersonDialog, EmailForm },
   name: "GroupMembers",
   data() {
     return {
@@ -355,23 +283,13 @@ export default {
       tableLoading: false,
       dialogState: "",
       search: "",
-      members: [],
+      managers: [],
       people: [],
       person: {},
-      parsedMembers: [],
       selected: [],
       select: false,
       archiveSelect: false,
       unarchiveSelect: false,
-      email: {
-        subject: "",
-        body: "",
-        recipients: [],
-        cc: [],
-        bcc: [],
-        managerName: "",
-        managerEmail: ""
-      },
       emailDialog: {
         show: false,
         loading: false
@@ -411,8 +329,6 @@ export default {
       if (this.selected.length > 0) {
         this.select = true;
       } else this.select = false;
-
-      this.email.recipients = this.getEmailRecipients();
     }
   },
 
@@ -439,13 +355,12 @@ export default {
         },
         {
           text: this.$t("person.email"),
-          value: "person.email",
-          width: "22.5%"
+          value: "person.email"
         },
         {
-          text: this.$t("person.phone"),
-          value: "person.phone",
-          width: "22.5%"
+          text: this.$t("person.manager-type"),
+          value: "person.manager-type",
+          width: "20%"
         },
         {
           text: this.$t("actions.header"),
@@ -454,8 +369,9 @@ export default {
       ];
     },
 
-    visibleMembers() {
-      let list = this.members;
+    visibleManagers() {
+      let list = this.managers;
+
       if (this.viewStatus === "viewActive") {
         return list.filter(ev => ev.active);
       } else if (this.viewStatus === "viewArchived") {
@@ -464,21 +380,31 @@ export default {
         return list;
       }
     },
-    ...mapState(['currentAccount'])
+    emailRecipients() {
+      return this.selected
+        .filter(m => m.person.email)
+        .map(m => ({
+          email: m.person.email,
+          name: `${m.person.firstName} ${m.person.lastName}`
+        }));
+    },
+    emailRecipientList() {
+      return this.managers
+        .filter(m => m.person.email)
+        .map(m => ({
+          email: m.person.email,
+          name: `${m.person.firstName} ${m.person.lastName}`
+        }));
+    },
+    emailInitialData() {
+      return {
+        recipients: this.emailRecipients,
+        recipientList: this.emailRecipientList
+      };
+    }
   },
 
   methods: {
-    parseMembers() {
-      this.members.map(e => {
-        if (e.person.email) {
-          this.parsedMembers.push({
-            text: e.person.firstName + " " + e.person.lastName,
-            value: e.person.email
-          });
-        }
-      });
-    },
-
     activateNewParticipantDialog() {
       this.addParticipantDialog.show = true;
     },
@@ -503,8 +429,9 @@ export default {
     addParticipants() {
       this.addParticipantDialog.loading = true;
       let promises = [];
+
       for (let person of this.addParticipantDialog.newParticipants) {
-        const idx = this.members.findIndex(
+        const idx = this.managers.findIndex(
           gr_pe => gr_pe.person.person_id === person.id
         );
         if (idx === -1) {
@@ -527,50 +454,34 @@ export default {
         });
     },
 
-    getEmailRecipients() {
-      return this.selected
-        .map(e => e.person.email)
-        .filter(function(e) {
-          return e != null;
-        });
+    handleEmailSent() {
+      this.hideEmailDialog();
+    },
+    handleEmailCancel() {
+      this.hideEmailDialog();
+    },
+    handleEmailError() {
+      this.hideEmailDialog();
     },
 
-    sendEmail() {
-      this.email['managerEmail'] = this.currentAccount.email;
-      this.$http
-        .post(`/api/v1/emails/`, this.email)
-        .then(() => {
-          this.toggleEmailDialog();
-          this.selected = [];
-          this.email.subject = "";
-          this.email.body = "";
-          this.email.cc = "";
-          this.email.bcc = "";
-          this.showSnackbar(this.$t("groups.messages.email-sent"));
-        })
-        .catch(err => {
-          this.showSnackbar(this.$t("groups.messages.error-no-manager-email"));
-          console.log(err);
-        });
+    showEmailDialog() {
+      this.emailDialog.show = true;
     },
-
-    toggleEmailDialog() {
-      if (this.selected.length > 0) {
-        this.email.recipients = this.getEmailRecipients();
-        this.emailDialog.show = !this.emailDialog.show;
-      } else this.showSnackbar("No valid email addresses are selected");
+    hideEmailDialog() {
+      this.selected = [];
+      this.emailDialog.show = false;
     },
 
     addParticipant(id) {
       const groupId = this.$route.params.group;
-      for (var member of this.members) {
+      for (var member of this.managers) {
         if (id == member.person.id) {
           return true;
         }
       }
-      return this.$http.post(`/api/v1/groups/groups/${groupId}/members`, {
+      return this.$http.post(`/api/v1/groups/groups/${groupId}/managers`, {
         personId: id,
-        joined: "2018-12-25"
+        managerTypeId: 1
       });
     },
 
@@ -655,7 +566,6 @@ export default {
     },
 
     archiveGroup() {
-      console.log("Archived member");
       this.archiveDialog.loading = true;
       const memberId = this.archiveDialog.memberId;
       const idx = this.members.findIndex(ev => ev.id === memberId);
@@ -717,18 +627,9 @@ export default {
     getMembers() {
       this.tableLoading = true;
       const id = this.$route.params.group;
-      this.$http.get(`/api/v1/groups/groups/${id}`).then(resp => {
-        // will break under the new groups model
-        // this.email.managerName =
-        //   resp.data.managerInfo.person.firstName +
-        //   " " +
-        //   resp.data.managerInfo.person.lastName +
-        //   " " +
-        //   resp.data.managerInfo.person.secondLastName;
-        // this.email.managerEmail = resp.data.managerInfo.person.email;
-        this.members = resp.data.members;
-        this.people = this.members.map(e => e.person);
-        this.parseMembers();
+      this.$http.get(`/api/v1/groups/groups/${id}/managers`).then(resp => {
+        this.managers = resp.data;
+        this.people = this.managers.map(e => e.person);
         this.tableLoading = false;
       });
     }

@@ -23,39 +23,6 @@
   <div>
     <!-- TODO: add multiple messages support? 
       Currently new messages will override the old ones, and count down will not restart <2020-06-04, David Deng> -->
-    <!-- START: to be removed -->
-    <v-btn
-      color="primary"
-      :text="true"
-      @click="$http.get('api/v1/groups/group-types/999')"
-      >make an invalid request</v-btn
-    >
-    <v-btn
-      color="primary"
-      :text="true"
-      @click="
-        bus.$emit('message', {
-          content: 'This is a message with an optional action',
-          noTranslate: true,
-          action: {
-            title: 'Go to Events',
-            func: vm => vm.$router.push({ name: 'events' })
-          }
-        })
-      "
-      >Show success message</v-btn
-    >
-    <v-btn
-      color="primary"
-      :text="true"
-      @click="
-        bus.$emit('notification', {
-          content: 'This is how a notification looks like'
-        })
-      "
-      >Show notification</v-btn
-    >
-    <!-- END: to be removed -->
     <v-snackbar
       v-model="snackBarObj.show"
       v-bind:timeout="snackBarObj.timeout"

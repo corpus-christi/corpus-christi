@@ -26,6 +26,7 @@
       "add-another": "Add Another",
       "add-event": "Add Event",
       "add-group": "Add Group",
+      "add-manager": "Add Manager",
       "add-person": "Add Person",
       "back": "Back",
       "cancel": "Cancel",
@@ -43,7 +44,8 @@
       "save": "Save",
       "search": "Search",
       "search-addresses": "Search Addresses",
-      "search-managers": "Search Managers",
+      "search-group-types": "Search Group Types",
+      "search-manager-types": "Search Manager Types",
       "search-people": "Search People",
       "signup": "Signup",
       "tooltips": {
@@ -422,24 +424,24 @@
       "updated": "Diploma updated"
     },
     "error-report": {
-        "actions": {
-            "cancel": "Cancel",
-            "dismiss": "Dismiss",
-            "report-error": "Report Error",
-            "submit": "Sumbit"
-        },
-        "display": {
-            "add-description": "Add Description",
-            "feedback-successful": "Thank you, we have received your feedback!",
-            "make-description": "Please make a description of how the error occurred"
-        },
-        "error-types": {
-            "error-400": "The server received an invalid request",
-            "error-401": "The server received a conflicting request",
-            "error-404": "The server could not identify the resource requested",
-            "error-4xx": "A client error occurred",
-            "error-5xx": "A server error occurred"
-        }
+      "actions": {
+        "cancel": "Cancel",
+        "dismiss": "Dismiss",
+        "report-error": "Report Error",
+        "submit": "Sumbit"
+      },
+      "display": {
+        "add-description": "Add Description",
+        "feedback-successful": "Thank you, we have received your feedback!",
+        "make-description": "Please make a description of how the error occurred"
+      },
+      "error-types": {
+        "error-400": "The server received an invalid request",
+        "error-401": "The server received a conflicting request",
+        "error-404": "The server could not identify the resource requested",
+        "error-4xx": "A client error occurred",
+        "error-5xx": "A server error occurred"
+      }
     },
     "events": {
       "all-events": "All Events",
@@ -519,6 +521,7 @@
       "description": "Description",
       "details": {
         "class-title": "Title",
+        "manager": "Managers",
         "member-count": "Member count",
         "title": "Details"
       },
@@ -526,7 +529,9 @@
       "error-removing-group": "Error while removing group",
       "group-description": "Group Description",
       "group-removed": "Group removed",
+      "group-type": "Group Type",
       "header": "Groups",
+      "header-manager": "Managers",
       "manager": "Manager",
       "meetings": {
         "add-meeting": "Add Meeting",
@@ -548,6 +553,7 @@
       "messages": {
         "already-exists": "Group already exists",
         "confirm-archive": "Are you sure you want to archive this group?",
+        "confirm-meeting-archive": "Are you sure you want to archive this group meeting?",
         "confirm-member-archive": "Are you sure you want to archive this group member?",
         "email-sent": "Email sent",
         "error-active-not-selected": "No active members are selected",
@@ -556,15 +562,19 @@
         "error-adding-members": "Error while adding members",
         "error-archived-not-selected": "No archived members are selected",
         "error-archiving-group": "Error while archiving group",
+        "error-archiving-meeting":"Error while archiving meeting",
         "error-archiving-member": "Error while unarchiving member",
         "error-editing-group": "Error while editing group",
         "error-no-manager-email": "Your email address is not defined",
+        "error-sending-email": "Error while sending email",
+        "error-unarchiving-meeting": "Error unarchiiving meeting",
         "group-added": "Group added",
         "group-archived": "Group archived",
         "group-edited": "Group edited",
         "group-unarchived": "Group unarchived",
         "group-unarchiving-group": "Error while unarchiving group",
         "meeting-added": "Meeting added",
+        "meeting-archived": "Meeting archived",
         "member-archived": "Member archived",
         "member-unarchived": "Member unarchived",
         "members-added": "Members added",
@@ -573,7 +583,21 @@
       },
       "name": "Name",
       "none-assigned": "No groups assigned.",
-      "title": "Home Churches"
+      "title": "Home Churches",
+      "treeview": {
+        "categories": {
+          "all-group-types": "All Group Types",
+          "managers": "Managers",
+          "members": "Members"
+        },
+        "select-placeholder": "Select groups to perform actions...",
+        "show-all": "Show All Groups",
+        "show-list": "Show Group List",
+        "show-managers": "Show Managers Only",
+        "show-members": "Show Members Only",
+        "show-treeview": "Show Group Treeview",
+        "title": "Group Treeview"
+      }
     },
     "images": {
       "actions": {
@@ -610,6 +634,7 @@
       },
       "actions": {
         "add-account": "Add Account",
+        "add-manager": "Add a manager",
         "add-participant": "Add a Participant",
         "assign-roles": "Assign Roles",
         "edit": "Edit Person",
@@ -623,6 +648,7 @@
       "female": "Female",
       "gender": "Gender",
       "male": "Male",
+      "manager-type": "Manager Type",
       "messages": {
         "account-activate": "Account activated",
         "account-deactivate": "Account deactivated",
@@ -817,6 +843,7 @@
       "add-another": "A\u00f1adir Otro",
       "add-event": "A\u00f1adir Evento",
       "add-group": "A\u00f1adir grupo",
+      "add-manager": "Añadir administrador",
       "add-person": "A\u00f1adir Persona",
       "back": "Regresar",
       "cancel": "Cancelar",
@@ -834,7 +861,8 @@
       "save": "Salvar",
       "search": "Buscar",
       "search-addresses": "Buscar Direcciones",
-      "search-managers": "Gestores de B\u00fasqueda",
+      "search-group-types": "Buscar Tipos de Grupos",
+      "search-manager-types": "Buscar Tipos de Gerente",
       "search-people": "Buscar Personas",
       "signup": "Reg\u00edstrate",
       "tooltips": {
@@ -1004,24 +1032,24 @@
       "updated": "Diploma actualizado"
     },
     "error-report": {
-        "actions": {
-            "cancel": "Cancelar",
-            "dismiss": "Descartar",
-            "report-error": "Informar error",
-            "submit": "Enviar"
-        },
-        "display": {
-            "add-description": "agregar descripción",
-            "feedback-successful": "¡Gracias, hemos recibido sus comentarios!",
-            "make-description": "Describa cómo se produjo el error"
-        },
-        "error-types": {
-            "error-400": "El servidor recibió una solicitud no válida",
-            "error-401": "El servidor recibió una solicitud en conflicto",
-            "error-404": "El servidor no pudo identificar el recurso solicitado",
-            "error-4xx": "Se produjo un error del cliente",
-            "error-5xx": "Ocurrió un error del servidor"
-        }
+      "actions": {
+        "cancel": "Cancelar",
+        "dismiss": "Descartar",
+        "report-error": "Informar error",
+        "submit": "Enviar"
+      },
+      "display": {
+        "add-description": "agregar descripción",
+        "feedback-successful": "¡Gracias, hemos recibido sus comentarios!",
+        "make-description": "Describa cómo se produjo el error"
+      },
+      "error-types": {
+        "error-400": "El servidor recibió una solicitud no válida",
+        "error-401": "El servidor recibió una solicitud en conflicto",
+        "error-404": "El servidor no pudo identificar el recurso solicitado",
+        "error-4xx": "Se produjo un error del cliente",
+        "error-5xx": "Ocurrió un error del servidor"
+      }
     },
     "events": {
       "all-events": "Todos Eventos",
@@ -1101,6 +1129,7 @@
       "description": "Descripci\u00f3n",
       "details": {
         "class-title": "T\u00edtulo",
+        "manager": "gerente",
         "member-count": "Cuenta de miembro",
         "title": "Detalles"
       },
@@ -1108,8 +1137,10 @@
       "error-removing-group": "Error al eliminadar este grupo",
       "group-description": "Descripci\u00f3n del Grupo",
       "group-removed": "Grupo eliminado",
+      "group-type": "Tipo de grupo",
       "header": "Grupos",
-      "manager": "Gerente",
+      "header-manager": "Gerentes",
+      "manager": "Gerentes",
       "meetings": {
         "add-meeting": "Agregar reuni\u00f3n",
         "title": "Reuniones"
@@ -1130,6 +1161,7 @@
       "messages": {
         "already-exists": "El grupo ya existe",
         "confirm-archive": "\u00bfSeguro que quieres archivar este groupos?",
+        "confirm-meeting-archive": "¿Está seguro de que desea archivar esta reunión de grupo?",
         "confirm-member-archive": "\u00bfEst\u00e1s seguro de que deseas archivar a este miembro del grupo?",
         "email-sent": "Correo electr\u00f3nico enviado",
         "error-active-not-selected": "No hay miembros activos seleccionados",
@@ -1138,15 +1170,19 @@
         "error-adding-members": "Error al agregar miembros",
         "error-archived-not-selected": "No hay miembros archivados seleccionados",
         "error-archiving-group": "Error al archivar el grupo",
+        "error-archiving-meeting":"Error al archivar reunión",
         "error-archiving-member": "Error al desarchivar miembro",
         "error-editing-group": "Error al editar grupo",
         "error-no-manager-email": "Su direcci\u00f3n de correo electr\u00f3nico no est\u00e1 definida",
+        "error-sending-email": "Error al enviar correo electrónico",
+        "error-unarchiving-meeting": "Error al desarchivar la reunión",
         "group-added": "Grupo agregado",
         "group-archived": "Grupo archivado",
         "group-edited": "Grupo editado",
         "group-unarchived": "Grupo desarchivado",
         "group-unarchiving-group": "Error al desarchivar el grupo",
         "meeting-added": "Reuni\u00f3n agregada",
+        "meeting-archived": "reunión-archivo",
         "member-archived": "Miembro archivado",
         "member-unarchived": "Miembro desarchivado",
         "members-added": "Miembros agregados",
@@ -1155,7 +1191,21 @@
       },
       "name": "Nombre",
       "none-assigned": "No hay grupos asignados.",
-      "title": "Iglesias Hogar"
+      "title": "Iglesias Hogar",
+      "treeview": {
+        "categories": {
+          "all-group-types": "Todos Los Tipos de Grupo",
+          "managers": "Gerentes",
+          "members": "Miembros"
+        },
+        "select-placeholder": "Seleccionar grupos para realizar acciones ...",
+        "show-all": "Mostrar Todos Los Grupos",
+        "show-list": "Mostrar lista de grupos",
+        "show-managers": "Mostrar Solo Gerentes",
+        "show-members": "Mostrar Solo Miembros",
+        "show-treeview": "Mostrar Vista de Árbol",
+        "title": "Vista de Árbol Grupal"
+      }
     },
     "images": {
       "actions": {
@@ -1192,6 +1242,7 @@
       },
       "actions": {
         "add-account": "A\u00f1adir cuenta",
+        "add-manager": "A\u00f1adir a gerente",
         "add-participant": "A\u00f1adir Part\u00edcipe",
         "assign-roles": "Asigne Papeles",
         "edit": "Editar persona",
@@ -1205,6 +1256,7 @@
       "female": "Mujer",
       "gender": "G\u00e9nero",
       "male": "Hombre",
+      "manager-type": "Tipo de gerente",
       "messages": {
         "account-activate": "Cuenta activada",
         "account-deactivate": "Cuenta desactivada",

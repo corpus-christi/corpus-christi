@@ -1,30 +1,49 @@
 <template>
   <div>
     <v-toolbar>
-      <v-toolbar-title>{{ $t("groups.meetings.title") }}</v-toolbar-title>
+      <v-flex md3>
+        <v-toolbar-title>{{ $t("groups.meetings.title") }}</v-toolbar-title>
+      </v-flex>
       <v-spacer></v-spacer>
-      <v-text-field
+      <v-flex md2>
+        <v-text-field
         v-model="search"
         append-icon="search"
         v-bind:label="$t('actions.search')"
         single-line
         hide-details
-      ></v-text-field>
+        ></v-text-field>
+      </v-flex>
       <v-spacer></v-spacer>
-      <v-btn
-        color="primary"
-        raised
-        v-on:click="activateCreateMeetingDialog"
-        data-cy="add-meeting"
-      >
-        <v-icon dark left>add</v-icon>
-        {{ $t("groups.meetings.add-meeting") }}
-      </v-btn>
+      <v-flex md1>
+        <v-select
+          hide-details
+          solo
+          single-line
+          :items="viewOptions"
+          v-model="viewStatus"
+          data-cy="view-status-select"
+        >
+        </v-select>
+      </v-flex>
+
+      <v-spacer></v-spacer>
+      <v-flex>
+        <v-btn
+          color="primary"
+          raised
+          v-on:click="activateCreateMeetingDialog"
+          data-cy="add-meeting"
+        >
+          <v-icon dark left>add</v-icon>
+          {{ $t("groups.meetings.add-meeting") }}
+        </v-btn>
+      </v-flex>
     </v-toolbar>
     <v-data-table
       :rows-per-page-items="rowsPerPageItem"
       :headers="headers"
-      :items="meetings"
+      :items="visibleMeetings"
       :search="search"
       :loading="tableLoading"
       class="elevation-1"
@@ -33,7 +52,8 @@
         <td>{{ props.item.description }}</td>
         <td>{{ props.item.startTime | formatDate }}</td>
         <td>{{ props.item.stopTime | formatDate }}</td>
-        <td>{{ getDisplayLocation(props.item.location) }}</td>
+        <td>{{ props.item.address.address}}</td>
+<!--           <td>{{ getDisplayLocation(props.item.location) }}123</td>-->
         <td>
           <template v-if="props.item.active">
             <v-tooltip bottom>
@@ -76,7 +96,7 @@
     <v-dialog v-model="archiveDialog.show" max-width="350px">
       <v-card>
         <v-card-text>{{
-          $t("groups.messages.confirm-member-archive")
+          $t("groups.messages.confirm-meeting-archive")
         }}</v-card-text>
         <v-card-actions>
           <v-btn
@@ -152,7 +172,6 @@
 
 <script>
 import CustomForm from "../../CustomForm";
-import EntitySearch from "../../EntitySearch";
 export default {
   components: { "meeting-form": CustomForm },
   name: "GroupMeetings",
@@ -179,17 +198,39 @@ export default {
       },
       archiveDialog: {
         show: false,
-        memberId: -1,
+        meetingId: -1,
         loading: false
       },
       snackbar: {
         show: false,
         text: ""
-      }
+      },
+      meeting:{
+        active:''
+      },
+      viewStatus: "viewActive",
     };
   },
 
   computed: {
+    viewOptions() {
+      return [
+        { text: this.$t("actions.view-active"), value: "viewActive" },
+        { text: this.$t("actions.view-archived"), value: "viewArchived" },
+        { text: this.$t("actions.view-all"), value: "viewAll" }
+      ];
+    },
+    visibleMeetings() {
+      let list = this.meetings;
+
+      if (this.viewStatus === "viewActive") {
+        return list.filter(ev => ev.active);
+      } else if (this.viewStatus === "viewArchived") {
+        return list.filter(ev => !ev.active);
+      } else {
+        return list;
+      }
+    },
     headers() {
       return [
         {
@@ -243,7 +284,6 @@ export default {
       delete meeting.location;
       delete meeting.start;
       delete meeting.end;
-      console.log(meeting);
 
       const existingMeeting = this.meetings.find(({ id }) => id === meeting.id);
       if (typeof existingMeeting === "undefined") {
@@ -257,7 +297,6 @@ export default {
       return this.$http
         .post(`/api/v1/groups/meetings`, meeting)
         .then(() => {
-          console.log("meeting created");
           this.showSnackbar(this.$t("groups.messages.meeting-added"));
           this.meetingDialog.saveLoading = false;
           this.meetingDialog.show = false;
@@ -333,13 +372,12 @@ export default {
       this.snackbar.show = true;
     },
 
-    activateArchiveDialog(memberId) {
+    activateArchiveDialog(meetingId) {
       this.archiveDialog.show = true;
-      this.archiveDialog.memberId = memberId;
+      this.archiveDialog.meetingId = meetingId;
     },
 
     confirmArchive(event) {
-      console.log(event);
       this.activateArchiveDialog(event.id);
     },
 
@@ -348,43 +386,43 @@ export default {
     },
 
     archiveGroup() {
-      console.log("Archived member");
       this.archiveDialog.loading = true;
-      const memberId = this.archiveDialog.memberId;
-      console.log(this.archiveDialog.memberId);
-      const idx = this.meetings.findIndex(ev => ev.id === memberId);
+      const meetingId = this.archiveDialog.meetingId;
+      const idx = this.meetings.findIndex(ev => ev.id === meetingId);
+      this.meeting['active'] = 'false';
       this.$http
-        .put(`/api/v1/groups/members/deactivate/${memberId}`)
+        .patch(`/api/v1/groups/meetings/${meetingId}`, this.meeting)
         .then(resp => {
           console.log("ARCHIVE", resp);
           this.meetings[idx].active = false;
           this.archiveDialog.loading = false;
           this.archiveDialog.show = false;
-          this.showSnackbar(this.$t("groups.messages.member-archived"));
+          this.showSnackbar(this.$t("groups.messages.meeting-archived"));
         })
         .catch(err => {
           console.error("ARCHIVE FALURE", err.response);
           this.archiveDialog.loading = false;
           this.archiveDialog.show = false;
-          this.showSnackbar(this.$t("groups.messages.error-archiving-member"));
+          this.showSnackbar(this.$t("groups.messages.error-archiving-meeting"));
         });
     },
 
-    unarchive(member) {
-      const idx = this.meetings.findIndex(ev => ev.id === member.id);
-      const memberId = member.id;
-      member.id *= -1; // to show loading spinner
+    unarchive(meeting) {
+      const idx = this.meetings.findIndex(ev => ev.id === meeting.id);
+      const meetingId = meeting.id;
+      meeting.id *= -1; // to show loading spinner
+      this.meeting['active'] = 'true';
       this.$http
-        .put(`/api/v1/groups/members/activate/${memberId}`)
+        .patch(`/api/v1/groups/meetings/${meetingId}`, this.meeting)
         .then(resp => {
           console.log("UNARCHIVED", resp);
           Object.assign(this.meetings[idx], resp.data);
-          this.showSnackbar(this.$t("groups.messages.member-unarchived"));
+          this.showSnackbar(this.$t("groups.messages.meeting-unarchived"));
         })
         .catch(err => {
           console.error("UNARCHIVE FALURE", err.response);
           this.showSnackbar(
-            this.$t("groups.messages.error-unarchiving-member")
+            this.$t("groups.messages.error-unarchiving-meeting")
           );
         });
     },
@@ -392,13 +430,14 @@ export default {
     getMeetings() {
       this.tableLoading = true;
       const id = this.$route.params.group;
-      this.$http.get(`/api/v1/groups/meetings/group/${id}`).then(resp => {
-        if (!resp.data.msg) {
-          this.meetings = resp.data;
-        }
-        console.log(this.meetings);
-        this.tableLoading = false;
-      });
+      this.$http
+        .get(`/api/v1/groups/meetings?where=group_id:${id}`)
+        .then(resp => {
+          if (!resp.data.msg) {
+            this.meetings = resp.data;
+          }
+          this.tableLoading = false;
+        });
     }
   },
 

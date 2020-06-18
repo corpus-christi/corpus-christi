@@ -16,23 +16,28 @@ authAxios.interceptors.response.use(
   error => {
     if (error.response.status >= 400) {
       /* display a snack bar with error, while enabling the user to submit a error report */
-      // TODO: Currently all failure reponses with 400+ status code will be displayed to the user.
-      // Is this too much? Should we put this error interceptor somewhere else to catch only those unhandled?
-      // <2020-06-08, David Deng> //
-      eventBus.$emit("error", {
-        content: getResponseErrorKey(error.response.status),
-        action: {
-          title: "error-report.actions.report-error",
-          func: (vm: Vue) =>
-            eventBus.$emit("show-error-report-dialog", {
-              props: {
-                time_stamp: new Date().toISOString(),
-                status_code: error.response.status,
-                endpoint: error.response.config.url
-              }
-            })
-        }
-      });
+      /* to disable, include a 'noErrorSnackBar' in the request config. e.g.
+       *    authAxios
+       *    .post('some/url', payload, { noErrorSnackBar: true })
+       *    .then(handleSuccess)
+       *    .catch(handleErrorMyself)
+       */
+      if (!error.response.config.noErrorSnackBar) {
+        eventBus.$emit("error", {
+          content: getResponseErrorKey(error.response.status),
+          action: {
+            title: "error-report.actions.report-error",
+            func: (vm: Vue) =>
+              eventBus.$emit("show-error-report-dialog", {
+                props: {
+                  time_stamp: new Date().toISOString(),
+                  status_code: error.response.status,
+                  endpoint: error.response.config.url
+                }
+              })
+          }
+        });
+      }
       console.log(error.response);
     }
     if (error.response.status === 401) {

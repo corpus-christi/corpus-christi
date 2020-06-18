@@ -11,11 +11,12 @@ const ROLE_PREFIX = "role.";
 const ROLE_SUPERUSER = `${ROLE_PREFIX}superuser`;
 
 export default class Account {
-  constructor(username, firstName, lastName, roles) {
+  constructor(username, firstName, lastName, roles, email=null) {
     this.username = username;
     this.firstName = firstName;
     this.lastName = lastName;
     this.roles = roles;
+    this.email = email;
   }
 
   fullName() {
@@ -51,7 +52,8 @@ export default class Account {
       username: obj.username,
       firstName: obj.firstName,
       lastName: obj.lastName,
-      roles: obj.roles
+      roles: obj.roles,
+      email: obj.email
     });
   }
 }

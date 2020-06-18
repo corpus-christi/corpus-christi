@@ -1,4 +1,5 @@
 <template>
+  <!-- add a new group -->
   <v-card>
     <v-card-title>
       <span class="headline">{{ name }}</span>
@@ -23,12 +24,13 @@
           data-cy="description"
         />
         <entity-search
-          manager
-          :value="manager"
-          @input="updateSelection"
-          name="manager"
-          v-bind:error-messages="errors.first('manager')"
+          group-type
+          name="grouptype"
+          v-model="group.groupType"
+          v-validate="'required'"
+          v-bind:error-messages="errors.first('grouptype')"
         />
+        <!-- TODO: Internationalize field name in error message? <2020-06-11, David Deng> -->
       </form>
     </v-card-text>
     <v-card-actions>
@@ -38,7 +40,7 @@
         v-on:click="cancel"
         :disabled="formDisabled"
         data-cy="form-cancel"
-        >{{ $t("actions.cancel") }}ttt</v-btn
+        >{{ $t("actions.cancel") }}</v-btn
       >
       <v-spacer />
       <v-btn
@@ -46,10 +48,10 @@
         outline
         v-on:click="addAnother"
         v-if="!editMode"
-        :loading="addMoreLoading"
+        :loading="addAnotherLoading"
         :disabled="formDisabled"
         data-cy="form-addanother"
-        >{{ $t("actions.add-another") }}qqqqq
+        >{{ $t("actions.add-another") }}
       </v-btn>
       <v-btn
         color="primary"
@@ -58,17 +60,10 @@
         :loading="saveLoading"
         :disabled="formDisabled"
         data-cy="form-save"
-        >{{ $t("actions.save") }}hhhh
+        >{{ $t("actions.save") }}
         <!-- save botton - Add group -->
       </v-btn>
     </v-card-actions>
-
-    <v-snackbar v-model="snackbar.show">
-      {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false" data-cy>
-        {{ $t("actions.close") }}wwww
-      </v-btn>
-    </v-snackbar>
   </v-card>
 </template>
 
@@ -85,17 +80,11 @@ export default {
         this.clear();
       } else {
         this.group = groupProp;
-        this.manager = this.parseGroup(this.group);
-        this.group.manager = groupProp.managerInfo;
       }
     }
   },
 
   computed: {
-    groupKeys() {
-      return Object.keys(this.group);
-    },
-
     name() {
       return this.editMode
         ? this.$t("groups.edit-group")
@@ -103,102 +92,45 @@ export default {
     },
 
     formDisabled() {
-      return this.saveLoading || this.addMoreLoading;
+      return this.saveLoading || this.addAnotherLoading;
     },
 
     ...mapGetters(["currentLanguageCode"])
   },
 
   methods: {
-    getManagerName(managerInfo) {
-      var man = managerInfo.person;
-      return (
-        man.firstName +
-        " " +
-        man.lastName +
-        " " +
-        (man.secondLastName ? man.secondLastName : "")
-      );
-    },
-
-    parseGroup(obj) {
-      return {
-        id: obj.managerId
-      };
-    },
-
-    updateSelection(obj) {
-      if (obj.person) {
-        this.group.managerId = obj.id;
-        if (!this.group.manager) this.group.manager = {};
-        this.group.manager.person = obj.person;
-        if (!this.group.managerInfo) this.group.managerInfo = {};
-        this.group.managerInfo.person = obj.person;
-      }
-      //console.log("updateSelection");
-      //console.log(this.group);
-    },
-
-    validateGroup(group, operation) {
-      //console.log(group);
-      //console.log(group.manager.person);
-      this.$validator.validateAll().then(isValid => {
-        if (isValid) {
-          this.$http
-            .get(
-              `/api/v1/groups/find_group/${group.name}/${
-                group.manager.person.id
-              }`
-            )
-            .then(response => {
-              if (response.data == 0) {
-                operation();
-                console.log("reachinng ---");
-              } else {
-                this.showSnackbar(this.$t("groups.messages.already-exists"));
-              }
-            });
-        }
-      });
-    },
-
-    showSnackbar(message) {
-      this.snackbar.text = message;
-      this.snackbar.show = true;
+    validateGroup(group) {
+      return this.$validator.validateAll();
     },
 
     cancel() {
       this.clear();
-      this.$validator.reset();
       this.$emit("cancel");
-      this.manager = {};
     },
 
     clear() {
-      for (let key of this.groupKeys) {
-        this.group[key] = "";
-      }
-      delete this.group.address;
+      this.group = {};
       this.$validator.reset();
     },
 
     save() {
       //save add group
-      //console.log(this.group);
-      //console.log(this.group);
-      this.validateGroup(this.group, () => {
-        this.group.active = true;
-        //this.group.active = true;
-        this.$emit("save", this.group); //where is this sending to?
+      this.validateGroup(this.group).then(valid => {
+        if (valid) {
+          this.group.active = true;
+          this.$emit("save", this.group); // send to parent component
+        }
       });
-      this.manager = {};
     },
 
     addAnother() {
-      this.validateGroup(this.group, () => {
-        this.group.active = true;
-        this.$emit("add-another", this.group);
-        this.group = {};
+      this.validateGroup(this.group).then(valid => {
+        if (valid) {
+          this.group.active = true;
+          this.$emit("add-another", this.group);
+          this.group = {};
+          this.$validator.reset();
+        }
       });
     }
   },
@@ -214,18 +146,13 @@ export default {
     saveLoading: {
       type: Boolean
     },
-    addMoreLoading: {
+    addAnotherLoading: {
       type: Boolean
     }
   },
   data: function() {
     return {
-      group: {},
-      manager: {},
-      snackbar: {
-        show: false,
-        text: ""
-      }
+      group: {}
     };
   }
 };

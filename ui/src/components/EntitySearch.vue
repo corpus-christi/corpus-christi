@@ -13,7 +13,6 @@
       return-object
       :filter="customFilter"
       :multiple="multiple"
-      menu-props="closeOnClick, closeOnContentClick"
       :value-comparator="compare"
       color="secondary"
       :disabled="disabled"
@@ -51,10 +50,11 @@ export default {
     course: Boolean,
     team: Boolean,
     address: Boolean,
-    manager: Boolean,
     asset: Boolean,
     group: Boolean,
     meeting: Boolean,
+    groupType: Boolean,
+    managerType: Boolean,
     multiple: { type: Boolean, default: false },
     existingEntities: Array,
     value: null,
@@ -86,10 +86,11 @@ export default {
       else if (this.course) return this.$t("actions.search-courses");
       else if (this.team) return this.$t("teams.title");
       else if (this.address) return this.$t("actions.search-addresses");
-      else if (this.manager) return this.$t("actions.search-managers");
       else if (this.asset) return this.$t("assets.title");
       else if (this.group) return this.$t("groups.title");
       else if (this.meeting) return this.$t("groups.meetings.title");
+      else if (this.groupType) return this.$t("actions.search-group-types");
+      else if (this.managerType) return this.$t("actions.search-manager-types");
       else return "";
     },
     idField() {
@@ -139,20 +140,16 @@ export default {
         entityDescriptor = entity.description;
       } else if (this.address) {
         entityDescriptor = entity.name + ", " + entity.address;
-      } else if (this.manager) {
-        var person = entity.person;
-        entityDescriptor =
-          person.firstName +
-          " " +
-          person.lastName +
-          " " +
-          (person.secondLastName ? person.secondLastName : "");
       } else if (this.asset) {
         entityDescriptor = entity.description;
       } else if (this.group) {
-        entityDescriptor = entity.description;
+        entityDescriptor = entity.name + ": " + entity.description;
       } else if (this.meeting) {
         entityDescriptor = entity.description;
+      } else if (this.groupType) {
+        entityDescriptor = entity.name;
+      } else if (this.managerType) {
+        entityDescriptor = entity.name;
       }
       if (entityDescriptor.length > letterLimit) {
         //TODO don't do this here, it limits search functionality
@@ -189,10 +186,10 @@ export default {
     else if (this.team) endpoint = "/api/v1/teams/";
     else if (this.asset) endpoint = "/api/v1/assets/";
     else if (this.address) endpoint = "/api/v1/places/addresses";
-    else if (this.manager)
-      endpoint = "/api/v1/groups/manager?show_unique_persons_only=Y";
     else if (this.group) endpoint = "/api/v1/groups/groups";
     else if (this.meeting) endpoint = "/api/v1/groups/meetings";
+    else if (this.groupType) endpoint = "/api/v1/groups/group-types";
+    else if (this.managerType) endpoint = "/api/v1/groups/manager-types";
     this.$http
       .get(endpoint)
       .then(resp => {

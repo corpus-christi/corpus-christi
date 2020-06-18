@@ -427,7 +427,6 @@ def create_member(group_id):
         valid_member = member_schema.load(request.json, partial=['joined', 'active']) # make joined and active optional fields
     except ValidationError as err:
         return logged_response(err.messages, 422)
-
     person_id = valid_member['person_id']
     if db.session.query(Member).filter_by(person_id=person_id, group_id=group_id).first():
         # if the same member already exists

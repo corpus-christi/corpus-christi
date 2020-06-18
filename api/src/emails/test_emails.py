@@ -23,8 +23,10 @@ fake = Faker()
 def email_object_factory():
     email = {
         'subject': 'Test Email',
-        'body': rl_fake().sentences(nb=1)[0],
-        'recipients': ['tim_ours@taylor.edu']
+        'recipients': ['qiang_wang@taylor.edu'],
+        'body': 'This is a test email',
+#         'cc': '',
+#         'bcc':''
     }
 
     return email
@@ -38,7 +40,8 @@ def test_send_email(auth_client):
 
     # WHEN we try to send an email
     resp = auth_client.post(url_for('emails.send_email'),
-                            json=email_object_factory())
+                            json=email_object_factory(),
+                            )
 
     # THEN we expect the correct code
     assert resp.status_code == 200
