@@ -156,7 +156,7 @@ class ManagerType(Base):
 class ManagerTypeSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     name = fields.String(required=True, validate=Length(min=1))
-    managers = fields.Nested('ManagerSchema', dump_only=True, many=True, only=['id', 'name'])
+    managers = fields.Nested('ManagerSchema', dump_only=True, many=True, only=['person', 'group'])
 
 
 # ---- Attendance
