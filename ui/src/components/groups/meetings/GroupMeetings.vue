@@ -49,10 +49,21 @@
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
-        <td>{{ props.item.description }}</td>
-        <td>{{ props.item.startTime | formatDate }}</td>
-        <td>{{ props.item.stopTime | formatDate }}</td>
-        <td>{{ props.item.address.address}}</td>
+        <td
+          v-on:click="showAttendance()"
+        >{{ props.item.description }}</td>
+        <td
+          v-on:click="showAttendance()"
+        >{{ props.item.startTime | formatDate }}</td>
+        <td
+          v-on:click="showAttendance()"
+        >{{ props.item.stopTime | formatDate }}</td>
+        <td
+          v-on:click="showAttendance()"
+        >{{ attendances_number }}</td>
+        <td
+          v-on:click="showAttendance()"
+        >{{ props.item.address.address}}</td>
 <!--           <td>{{ getDisplayLocation(props.item.location) }}123</td>-->
         <td>
           <template v-if="props.item.active">
@@ -108,12 +119,51 @@
           >
           <v-spacer></v-spacer>
           <v-btn
-            v-on:click="archiveGroup"
+            v-on:click="archiveMeeting"
             color="primary"
             raised
             :loading="archiveDialog.loading"
             data-cy="confirm-archive"
             >{{ $t("actions.confirm") }}</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Attendance dialog -->
+    <v-dialog v-model="attendanceDialog.show" max-width="300px">
+      <v-card>
+        <v-card-title primary-title>
+          <div>
+            <h2>
+              {{ $t("events.attendance") }}
+            </h2>
+          </div>
+        </v-card-title>
+          <v-list v-model="attendance_list">
+              <div
+                v-for="(person, i) in attendance_list"
+                :key="i"
+              >
+                <v-btn color = "success" v-text="person"></v-btn>
+              </div>
+          </v-list>
+        <v-card-actions>
+          <v-btn
+            v-on:click="cancelShowAttendance"
+            color="secondary"
+            flat
+            data-cy="cancel-archive"
+          >{{ $t("actions.cancel") }}</v-btn
+          >
+          <v-spacer></v-spacer>
+          <v-btn
+            v-on:click="archiveMeeting"
+            color="primary"
+            raised
+            :loading="archiveDialog.loading"
+            data-cy="confirm-archive"
+          >{{ $t("actions.confirm") }}</v-btn
           >
         </v-card-actions>
       </v-card>
@@ -208,7 +258,12 @@ export default {
       meeting:{
         active:''
       },
+      attendanceDialog:{
+        show: false
+      },
       viewStatus: "viewActive",
+      attendances_number: 0,
+      attendance_list:[]
     };
   },
 
@@ -248,6 +303,7 @@ export default {
           value: "stopTime",
           width: "22.5%"
         },
+        { text: this.$t("events.attendance"), value: "attendance" },
         { text: this.$t("events.event-location"), value: "location_name" },
         { text: this.$t("actions.header"), sortable: false }
       ];
@@ -292,7 +348,6 @@ export default {
         this.updateMeeting(meeting);
       }
     },
-
     createMeeting(meeting) {
       return this.$http
         .post(`/api/v1/groups/meetings`, meeting)
@@ -385,7 +440,7 @@ export default {
       this.archiveDialog.show = false;
     },
 
-    archiveGroup() {
+    archiveMeeting() {
       this.archiveDialog.loading = true;
       const meetingId = this.archiveDialog.meetingId;
       const idx = this.meetings.findIndex(ev => ev.id === meetingId);
@@ -438,11 +493,34 @@ export default {
           }
           this.tableLoading = false;
         });
+    },
+    getAttendances(){
+      const groupId = this.$route.params.group;
+      this.$http
+        .get(`/api/v1/groups/meetings/${groupId}/attendances`)
+        .then(resp => {
+          this.attendances_number = resp.data.length;
+        });
+    },
+    showAttendance(){
+    //  need to get the attendance people in this meeting
+      const groupId = this.$route.params.group;
+      this.$http
+        .get(`/api/v1/groups/meetings/${groupId}/attendances`)
+        .then(resp => {
+          this.attendance_list = resp.data.map(p=> p.person.firstName);
+          console.log(this.attendance_list);
+        });
+      this.attendanceDialog.show = true;
+    },
+    cancelShowAttendance(){
+      this.attendanceDialog.show = false;
     }
   },
 
   mounted: function() {
     this.getMeetings();
+    this.getAttendances();
   }
 };
 </script>
