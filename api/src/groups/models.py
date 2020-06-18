@@ -177,3 +177,4 @@ class Attendance(Base):
 class AttendanceSchema(Schema):
     meeting_id = fields.Integer(data_key='meetingId', required=True)
     person_id = fields.Integer(data_key='personId', required=True)
+    person = fields.Nested('PersonSchema', dump_only=True, only=['id', 'first_name'])
