@@ -5,11 +5,11 @@
         <v-flex md3 class="text-no-wrap">
           <v-toolbar-title v-if="!select">{{
             $t("groups.header-manager")
-            }}</v-toolbar-title>
+          }}</v-toolbar-title>
           <v-btn
             color="primary"
             raised
-            v-on:click="toggleEmailDialog"
+            v-on:click="showEmailDialog"
             v-if="select"
             fab
             small
@@ -77,6 +77,7 @@
       :rows-per-page-items="rowsPerPageItem"
       :headers="headers"
       :items="visibleManagers"
+      item-key="person.id"
       :search="search"
       :loading="tableLoading"
       class="elevation-1"
@@ -85,6 +86,7 @@
         <td><v-checkbox v-model="props.selected" primary hide-details /></td>
         <td>{{ props.item.person.firstName }}</td>
         <td>{{ props.item.person.lastName }}</td>
+        <td>{{ props.item.person.email }}</td>
         <td>{{ props.item.managerType.name }}</td>
         <td class="text-no-wrap">
           <template v-if="props.item.active">
@@ -145,14 +147,14 @@
       <v-card>
         <v-card-text>{{
           $t("groups.messages.confirm-member-archive")
-          }}</v-card-text>
+        }}</v-card-text>
         <v-card-actions>
           <v-btn
             v-on:click="cancelArchive"
             color="secondary"
             flat
             data-cy="cancel-archive"
-          >{{ $t("actions.cancel") }}</v-btn
+            >{{ $t("actions.cancel") }}</v-btn
           >
           <v-spacer />
           <v-btn
@@ -161,7 +163,7 @@
             raised
             :loading="archiveDialog.loading"
             data-cy="confirm-archive"
-          >{{ $t("actions.confirm") }}</v-btn
+            >{{ $t("actions.confirm") }}</v-btn
           >
         </v-card-actions>
       </v-card>
@@ -190,7 +192,7 @@
             color="secondary"
             flat
             data-cy=""
-          >{{ $t("actions.cancel") }}</v-btn
+            >{{ $t("actions.cancel") }}</v-btn
           >
           <v-spacer />
           <v-btn
@@ -200,7 +202,7 @@
             raised
             :loading="addParticipantDialog.loading"
             data-cy="confirm-participant"
-          >{{ $t("actions.add-manager") }}</v-btn
+            >{{ $t("actions.add-manager") }}</v-btn
           >
         </v-card-actions>
       </v-card>
@@ -221,14 +223,14 @@
       <v-card>
         <v-card-text>{{
           $t("events.participants.confirm-remove")
-          }}</v-card-text>
+        }}</v-card-text>
         <v-card-actions>
           <v-btn
             v-on:click="cancelDelete"
             color="secondary"
             flat
             data-cy="cancel-delete"
-          >{{ $t("actions.cancel") }}</v-btn
+            >{{ $t("actions.cancel") }}</v-btn
           >
           <v-spacer></v-spacer>
           <v-btn
@@ -237,7 +239,7 @@
             raised
             :loading="deleteDialog.loading"
             data-cy="confirm-delete"
-          >{{ $t("actions.confirm") }}</v-btn
+            >{{ $t("actions.confirm") }}</v-btn
           >
         </v-card-actions>
       </v-card>
@@ -245,86 +247,12 @@
 
     <!-- Email dialog -->
     <v-dialog v-model="emailDialog.show" max-width="700px">
-      <v-card>
-        <v-card-title primary-title>
-          <div>
-            <h3 class="headline mb-0">
-              {{ $t("groups.members.email.compose") }}
-            </h3>
-          </div>
-        </v-card-title>
-        <v-card-text>
-          <v-select
-            v-model="email.recipients"
-            :label="$t('groups.members.email.to')"
-            :items="parsedMembers"
-            multiple
-            chips
-            deletable-chips
-            hide-selected
-            :no-data-text="$t('groups.messages.no-remaining-members')"
-          >
-          </v-select>
-        </v-card-text>
-        <v-card-text>
-          <v-select
-            v-model="email.cc"
-            :label="$t('groups.members.email.cc')"
-            :items="parsedMembers"
-            multiple
-            chips
-            deletable-chips
-            hide-selected
-            :no-data-text="$t('groups.messages.no-remaining-members')"
-          >
-          </v-select>
-        </v-card-text>
-        <v-card-text>
-          <v-select
-            v-model="email.bcc"
-            :label="$t('groups.members.email.bcc')"
-            :items="parsedMembers"
-            multiple
-            chips
-            deletable-chips
-            :no-data-text="$t('groups.messages.no-remaining-members')"
-          >
-          </v-select>
-        </v-card-text>
-        <v-card-text>
-          <v-text-field
-            :label="$t('groups.members.email.subject')"
-            v-model="email.subject"
-          >
-          </v-text-field>
-        </v-card-text>
-        <v-card-text>
-          <v-textarea
-            :label="$t('groups.members.email.body')"
-            v-model="email.body"
-          >
-          </v-textarea>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn
-            v-on:click="toggleEmailDialog"
-            color="secondary"
-            flat
-            data-cy=""
-          >{{ $t("actions.cancel") }}</v-btn
-          >
-          <v-spacer></v-spacer>
-          <v-btn
-            v-on:click="sendEmail"
-            :disabled="email.recipients.length == 0"
-            color="primary"
-            raised
-            :loading="sendEmail.loading"
-            data-cy="confirm-email"
-          >{{ $t("groups.members.email.send") }}</v-btn
-          >
-        </v-card-actions>
-      </v-card>
+      <email-form
+        :initialData="emailInitialData"
+        @sent="handleEmailSent"
+        @error="handleEmailError"
+        @cancel="handleEmailCancel"
+      ></email-form>
     </v-dialog>
 
     <v-snackbar v-model="snackbar.show">
@@ -337,405 +265,384 @@
 </template>
 
 <script>
-  import EntitySearch from "../EntitySearch";
-  import PersonDialog from "../PersonDialog";
-  import { mapState } from "vuex";
-  export default {
-    components: { EntitySearch, PersonDialog },
-    name: "GroupMembers",
-    data() {
-      return {
-        rowsPerPageItem: [
-          10,
-          15,
-          25,
-          { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 }
-        ],
-        tableLoading: false,
-        dialogState: "",
-        search: "",
-        managers: [],
-        people: [],
+import EntitySearch from "../EntitySearch";
+import PersonDialog from "../PersonDialog";
+import EmailForm from "../EmailForm";
+import { eventBus } from "../../plugins/event-bus.js";
+export default {
+  components: { EntitySearch, PersonDialog, EmailForm },
+  name: "GroupMembers",
+  data() {
+    return {
+      rowsPerPageItem: [
+        10,
+        15,
+        25,
+        { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 }
+      ],
+      tableLoading: false,
+      dialogState: "",
+      search: "",
+      managers: [],
+      people: [],
+      person: {},
+      selected: [],
+      select: false,
+      archiveSelect: false,
+      unarchiveSelect: false,
+      emailDialog: {
+        show: false,
+        loading: false
+      },
+      addParticipantDialog: {
+        show: false,
+        newParticipants: [],
+        loading: false
+      },
+      personDialog: {
+        show: false,
+        title: "",
         person: {},
-        parsedMembers: [],
-        selected: [],
-        select: false,
-        archiveSelect: false,
-        unarchiveSelect: false,
-        email: {
-          subject: "",
-          body: "",
-          recipients: [],
-          cc: [],
-          bcc: [],
-          managerName: "",
-          managerEmail: ""
-        },
-        emailDialog: {
-          show: false,
-          loading: false
-        },
-        addParticipantDialog: {
-          show: false,
-          newParticipants: [],
-          loading: false
-        },
-        personDialog: {
-          show: false,
-          title: "",
-          person: {},
-          addAnotherEnabled: false,
-          saveButtonText: "actions.save"
-        },
-        deleteDialog: {
-          show: false,
-          participantId: -1,
-          loading: false
-        },
-        archiveDialog: {
-          show: false,
-          memberId: -1,
-          loading: false
-        },
-        snackbar: {
-          show: false,
-          text: ""
-        },
-        viewStatus: "viewActive",
-      };
-    },
-
-    watch: {
-      selected() {
-        if (this.selected.length > 0) {
-          this.select = true;
-        } else this.select = false;
-
-        this.email.recipients = this.getEmailRecipients();
-      }
-    },
-
-    computed: {
-      viewOptions() {
-        return [
-          { text: this.$t("actions.view-active"), value: "viewActive" },
-          { text: this.$t("actions.view-archived"), value: "viewArchived" },
-          { text: this.$t("actions.view-all"), value: "viewAll" }
-        ];
+        addAnotherEnabled: false,
+        saveButtonText: "actions.save"
       },
-
-      headers() {
-        return [
-          {
-            text: this.$t("person.name.first"),
-            value: "person.firstName",
-            width: "20%"
-          },
-          {
-            text: this.$t("person.name.last"),
-            value: "person.lastName",
-            width: "20%"
-          },
-          {
-            text: this.$t("person.manager-type"),
-            value: "person.manager-type",
-            width: "20%"
-          },
-          {
-            text: this.$t("actions.header"),
-            sortable: false
-          }
-        ];
+      deleteDialog: {
+        show: false,
+        participantId: -1,
+        loading: false
       },
-
-      visibleManagers() {
-        let list = this.managers;
-
-        if (this.viewStatus === "viewActive") {
-          return list.filter(ev => ev.active);
-        } else if (this.viewStatus === "viewArchived") {
-          return list.filter(ev => !ev.active);
-        } else {
-          return list;
-        }
+      archiveDialog: {
+        show: false,
+        memberId: -1,
+        loading: false
       },
-      ...mapState(['currentAccount'])
-    },
-
-    methods: {
-      parseMembers() {
-        this.managers.map(e => {
-          if (e.person.email) {
-            this.parsedMembers.push({
-              text: e.person.firstName + " " + e.person.lastName,
-              value: e.person.email
-            });
-          }
-        });
+      snackbar: {
+        show: false,
+        text: ""
       },
+      viewStatus: "viewActive"
+    };
+  },
 
-      activateNewParticipantDialog() {
-        this.addParticipantDialog.show = true;
-      },
-
-      openParticipantDialog() {
-        this.activateNewParticipantDialog();
-      },
-
-      cancelNewParticipantDialog() {
-        this.addParticipantDialog.show = false;
-      },
-
-      editPerson(person) {
-        this.dialogState = "edit";
-        this.person = person;
-      },
-
-      cancelPerson() {
-        this.dialogState = "";
-      },
-
-      addParticipants() {
-        this.addParticipantDialog.loading = true;
-        let promises = [];
-
-        for (let person of this.addParticipantDialog.newParticipants) {
-          const idx = this.managers.findIndex(
-            gr_pe => gr_pe.person.person_id === person.id
-          );
-          if (idx === -1) {
-            promises.push(this.addParticipant(person.id));
-          }
-        }
-
-        Promise.all(promises)
-          .then(() => {
-            this.showSnackbar(this.$t("groups.messages.members-added"));
-            this.addParticipantDialog.loading = false;
-            this.addParticipantDialog.show = false;
-            this.addParticipantDialog.newParticipants = [];
-            this.getMembers();
-          })
-          .catch(err => {
-            console.log(err);
-            this.addParticipantDialog.loading = false;
-            this.showSnackbar(this.$t("groups.messages.error-adding-members"));
-          });
-      },
-
-      getEmailRecipients() {
-        return this.selected
-          .map(e => e.person.email)
-          .filter(function(e) {
-            return e != null;
-          });
-      },
-
-      sendEmail() {
-        this.email['managerEmail'] = this.currentAccount.email;
-        this.$http
-          .post(`/api/v1/emails/`, this.email)
-          .then(() => {
-            this.toggleEmailDialog();
-            this.selected = [];
-            this.email.subject = "";
-            this.email.body = "";
-            this.email.cc = "";
-            this.email.bcc = "";
-            this.showSnackbar(this.$t("groups.messages.email-sent"));
-          })
-          .catch(err => {
-            this.showSnackbar(this.$t("groups.messages.error-no-manager-email"));
-          });
-      },
-
-      toggleEmailDialog() {
-        if (this.selected.length > 0) {
-          this.email.recipients = this.getEmailRecipients();
-          this.emailDialog.show = !this.emailDialog.show;
-        } else this.showSnackbar("No valid email addresses are selected");
-      },
-
-      addParticipant(id) {
-        const groupId = this.$route.params.group;
-        for (var member of this.managers) {
-          if (id == member.person.id) {
-            return true;
-          }
-        };
-        return this.$http.post(`/api/v1/groups/groups/${ groupId }/managers`, {
-          personId: id,
-          managerTypeId: 1
-        });
-      },
-
-      confirmDelete(event) {
-        this.activateDeleteDialog(event.person_id);
-      },
-
-      deleteParticipant() {
-        this.deleteDialog.loading = true;
-        const participantId = this.deleteDialog.participantId;
-        const idx = this.people.findIndex(ev => ev.person.id === participantId);
-        const id = this.$route.params.event;
-        this.$http
-          .delete(`/api/v1/events/${id}/participants/${participantId}`)
-          .then(() => {
-            this.deleteDialog.loading = false;
-            this.deleteDialog.show = false;
-            this.people.splice(idx, 1);
-            this.showSnackbar(this.$t("events.participants.removed"));
-          })
-          .catch(err => {
-            console.log(err);
-            this.deleteDialog.loading = false;
-            this.deleteDialog.show = false;
-            this.showSnackbar(this.$t("events.participants.error-removing"));
-          });
-      },
-      cancelDelete() {
-        this.deleteDialog.show = false;
-      },
-
-      activateDeleteDialog(participantId) {
-        this.deleteDialog.show = true;
-        this.deleteDialog.participantId = participantId;
-      },
-
-      showSnackbar(message) {
-        this.snackbar.text = message;
-        this.snackbar.show = true;
-      },
-
-      containsActive() {
-        let isActive = false;
-        this.selected.map(e => {
-          if (e.active) isActive = true;
-        });
-        return isActive;
-      },
-
-      massArchive() {
-        if (this.archiveSelect) {
-          this.selected.map(e => {
-            this.archiveDialog.memberId = e.id;
-            this.archiveGroup();
-          });
-          this.archiveSelect = false;
-        } else this.archiveGroup();
-      },
-
-      activateSelectArchiveDialog() {
-        if (this.containsActive()) {
-          if (this.selected.length == 1) {
-            this.activateArchiveDialog(this.selected[0].person.id);
-          } else this.archiveDialog.show = true;
-          this.archiveSelect = true;
-        } else
-          this.showSnackbar(this.$t("groups.messages.error-active-not-selected"));
-      },
-
-      activateArchiveDialog(memberId) {
-        this.archiveDialog.show = true;
-        this.archiveDialog.memberId = memberId;
-      },
-
-      confirmArchive(event) {
-        this.activateArchiveDialog(event.id);
-      },
-
-      cancelArchive() {
-        this.archiveDialog.show = false;
-        this.archiveSelect = false;
-      },
-
-      archiveGroup() {
-        this.archiveDialog.loading = true;
-        const memberId = this.archiveDialog.memberId;
-        const idx = this.members.findIndex(ev => ev.id === memberId);
-        this.$http
-          .put(`/api/v1/groups/members/deactivate/${memberId}`)
-          .then(resp => {
-            console.log("ARCHIVE", resp);
-            this.members[idx].active = false;
-            this.archiveDialog.loading = false;
-            this.archiveDialog.show = false;
-            this.showSnackbar(this.$t("groups.messages.member-archived"));
-          })
-          .catch(err => {
-            console.error("ARCHIVE FALURE", err.response);
-            this.archiveDialog.loading = false;
-            this.archiveDialog.show = false;
-            this.showSnackbar(this.$t("groups.messages.error-archiving-member"));
-          });
-      },
-
-      unarchiveFab() {
-        if (!this.containsActive()) {
-          this.unarchiveSelect = true;
-          this.massUnarchive();
-        } else
-          this.showSnackbar(
-            this.$t("groups.messages.error-archived-not-selected")
-          );
-      },
-
-      massUnarchive(member) {
-        if (this.unarchiveSelect) {
-          this.selected.map(e => {
-            this.unarchive(e);
-          });
-          this.unarchiveSelect = false;
-        } else this.unarchive(member);
-      },
-
-      unarchive(member) {
-        const idx = this.members.findIndex(ev => ev.id === member.id);
-        const memberId = member.id;
-        member.id *= -1; // to show loading spinner
-        this.$http
-          .put(`/api/v1/groups/members/activate/${memberId}`)
-          .then(resp => {
-            console.log("UNARCHIVED", resp);
-            Object.assign(this.members[idx], resp.data);
-            this.showSnackbar(this.$t("groups.messages.member-unarchived"));
-          })
-          .catch(err => {
-            console.error("UNARCHIVE FALURE", err.response);
-            this.showSnackbar(
-              this.$t("groups.messages.error-unarchiving-member")
-            );
-          });
-      },
-
-      getMembers() {
-        this.tableLoading = true;
-        const id = this.$route.params.group;
-        this.$http.get(`/api/v1/groups/groups/${id}/managers`).then(resp => {
-          // will break under the new groups model
-          // this.email.managerName =
-          //   resp.data.managerInfo.person.firstName +
-          //   " " +
-          //   resp.data.managerInfo.person.lastName +
-          //   " " +
-          //   resp.data.managerInfo.person.secondLastName;
-          // this.email.managerEmail = resp.data.managerInfo.person.email;
-          this.managers = resp.data;
-          this.people = this.managers.map(e => e.person);
-          this.parseMembers();
-          this.tableLoading = false;
-        });
-      }
-    },
-
-    mounted: function() {
-      this.getMembers();
+  watch: {
+    selected() {
+      if (this.selected.length > 0) {
+        this.select = true;
+      } else this.select = false;
     }
-  };
+  },
+
+  computed: {
+    viewOptions() {
+      return [
+        { text: this.$t("actions.view-active"), value: "viewActive" },
+        { text: this.$t("actions.view-archived"), value: "viewArchived" },
+        { text: this.$t("actions.view-all"), value: "viewAll" }
+      ];
+    },
+
+    headers() {
+      return [
+        {
+          text: this.$t("person.name.first"),
+          value: "person.firstName",
+          width: "20%"
+        },
+        {
+          text: this.$t("person.name.last"),
+          value: "person.lastName",
+          width: "20%"
+        },
+        {
+          text: this.$t("person.email"),
+          value: "person.email"
+        },
+        {
+          text: this.$t("person.manager-type"),
+          value: "person.manager-type",
+          width: "20%"
+        },
+        {
+          text: this.$t("actions.header"),
+          sortable: false
+        }
+      ];
+    },
+
+    visibleManagers() {
+      let list = this.managers;
+
+      if (this.viewStatus === "viewActive") {
+        return list.filter(ev => ev.active);
+      } else if (this.viewStatus === "viewArchived") {
+        return list.filter(ev => !ev.active);
+      } else {
+        return list;
+      }
+    },
+    emailRecipients() {
+      return this.selected
+        .filter(m => m.person.email)
+        .map(m => ({
+          email: m.person.email,
+          name: `${m.person.firstName} ${m.person.lastName}`
+        }));
+    },
+    emailRecipientList() {
+      return this.managers
+        .filter(m => m.person.email)
+        .map(m => ({
+          email: m.person.email,
+          name: `${m.person.firstName} ${m.person.lastName}`
+        }));
+    },
+    emailInitialData() {
+      return {
+        recipients: this.emailRecipients,
+        recipientList: this.emailRecipientList
+      };
+    }
+  },
+
+  methods: {
+    activateNewParticipantDialog() {
+      this.addParticipantDialog.show = true;
+    },
+
+    openParticipantDialog() {
+      this.activateNewParticipantDialog();
+    },
+
+    cancelNewParticipantDialog() {
+      this.addParticipantDialog.show = false;
+    },
+
+    editPerson(person) {
+      this.dialogState = "edit";
+      this.person = person;
+    },
+
+    cancelPerson() {
+      this.dialogState = "";
+    },
+
+    addParticipants() {
+      this.addParticipantDialog.loading = true;
+      let promises = [];
+
+      for (let person of this.addParticipantDialog.newParticipants) {
+        const idx = this.managers.findIndex(
+          gr_pe => gr_pe.person.person_id === person.id
+        );
+        if (idx === -1) {
+          promises.push(this.addParticipant(person.id));
+        }
+      }
+
+      Promise.all(promises)
+        .then(() => {
+          this.showSnackbar(this.$t("groups.messages.members-added"));
+          this.addParticipantDialog.loading = false;
+          this.addParticipantDialog.show = false;
+          this.addParticipantDialog.newParticipants = [];
+          this.getMembers();
+        })
+        .catch(err => {
+          console.log(err);
+          this.addParticipantDialog.loading = false;
+          this.showSnackbar(this.$t("groups.messages.error-adding-members"));
+        });
+    },
+
+    handleEmailSent() {
+      this.hideEmailDialog();
+    },
+    handleEmailCancel() {
+      this.hideEmailDialog();
+    },
+    handleEmailError() {
+      this.hideEmailDialog();
+    },
+
+    showEmailDialog() {
+      this.emailDialog.show = true;
+    },
+    hideEmailDialog() {
+      this.selected = [];
+      this.emailDialog.show = false;
+    },
+
+    addParticipant(id) {
+      const groupId = this.$route.params.group;
+      for (var member of this.managers) {
+        if (id == member.person.id) {
+          return true;
+        }
+      }
+      return this.$http.post(`/api/v1/groups/groups/${groupId}/managers`, {
+        personId: id,
+        managerTypeId: 1
+      });
+    },
+
+    confirmDelete(event) {
+      this.activateDeleteDialog(event.person_id);
+    },
+
+    deleteParticipant() {
+      this.deleteDialog.loading = true;
+      const participantId = this.deleteDialog.participantId;
+      const idx = this.people.findIndex(ev => ev.person.id === participantId);
+      const id = this.$route.params.event;
+      this.$http
+        .delete(`/api/v1/events/${id}/participants/${participantId}`)
+        .then(() => {
+          this.deleteDialog.loading = false;
+          this.deleteDialog.show = false;
+          this.people.splice(idx, 1);
+          this.showSnackbar(this.$t("events.participants.removed"));
+        })
+        .catch(err => {
+          console.log(err);
+          this.deleteDialog.loading = false;
+          this.deleteDialog.show = false;
+          this.showSnackbar(this.$t("events.participants.error-removing"));
+        });
+    },
+    cancelDelete() {
+      this.deleteDialog.show = false;
+    },
+
+    activateDeleteDialog(participantId) {
+      this.deleteDialog.show = true;
+      this.deleteDialog.participantId = participantId;
+    },
+
+    showSnackbar(message) {
+      this.snackbar.text = message;
+      this.snackbar.show = true;
+    },
+
+    containsActive() {
+      let isActive = false;
+      this.selected.map(e => {
+        if (e.active) isActive = true;
+      });
+      return isActive;
+    },
+
+    massArchive() {
+      if (this.archiveSelect) {
+        this.selected.map(e => {
+          this.archiveDialog.memberId = e.id;
+          this.archiveGroup();
+        });
+        this.archiveSelect = false;
+      } else this.archiveGroup();
+    },
+
+    activateSelectArchiveDialog() {
+      if (this.containsActive()) {
+        if (this.selected.length == 1) {
+          this.activateArchiveDialog(this.selected[0].person.id);
+        } else this.archiveDialog.show = true;
+        this.archiveSelect = true;
+      } else
+        this.showSnackbar(this.$t("groups.messages.error-active-not-selected"));
+    },
+
+    activateArchiveDialog(memberId) {
+      this.archiveDialog.show = true;
+      this.archiveDialog.memberId = memberId;
+    },
+
+    confirmArchive(event) {
+      this.activateArchiveDialog(event.id);
+    },
+
+    cancelArchive() {
+      this.archiveDialog.show = false;
+      this.archiveSelect = false;
+    },
+
+    archiveGroup() {
+      this.archiveDialog.loading = true;
+      const memberId = this.archiveDialog.memberId;
+      const idx = this.members.findIndex(ev => ev.id === memberId);
+      this.$http
+        .put(`/api/v1/groups/members/deactivate/${memberId}`)
+        .then(resp => {
+          console.log("ARCHIVE", resp);
+          this.members[idx].active = false;
+          this.archiveDialog.loading = false;
+          this.archiveDialog.show = false;
+          this.showSnackbar(this.$t("groups.messages.member-archived"));
+        })
+        .catch(err => {
+          console.error("ARCHIVE FALURE", err.response);
+          this.archiveDialog.loading = false;
+          this.archiveDialog.show = false;
+          this.showSnackbar(this.$t("groups.messages.error-archiving-member"));
+        });
+    },
+
+    unarchiveFab() {
+      if (!this.containsActive()) {
+        this.unarchiveSelect = true;
+        this.massUnarchive();
+      } else
+        this.showSnackbar(
+          this.$t("groups.messages.error-archived-not-selected")
+        );
+    },
+
+    massUnarchive(member) {
+      if (this.unarchiveSelect) {
+        this.selected.map(e => {
+          this.unarchive(e);
+        });
+        this.unarchiveSelect = false;
+      } else this.unarchive(member);
+    },
+
+    unarchive(member) {
+      const idx = this.members.findIndex(ev => ev.id === member.id);
+      const memberId = member.id;
+      member.id *= -1; // to show loading spinner
+      this.$http
+        .put(`/api/v1/groups/members/activate/${memberId}`)
+        .then(resp => {
+          console.log("UNARCHIVED", resp);
+          Object.assign(this.members[idx], resp.data);
+          this.showSnackbar(this.$t("groups.messages.member-unarchived"));
+        })
+        .catch(err => {
+          console.error("UNARCHIVE FALURE", err.response);
+          this.showSnackbar(
+            this.$t("groups.messages.error-unarchiving-member")
+          );
+        });
+    },
+
+    getMembers() {
+      this.tableLoading = true;
+      const id = this.$route.params.group;
+      this.$http.get(`/api/v1/groups/groups/${id}/managers`).then(resp => {
+        this.managers = resp.data;
+        this.people = this.managers.map(e => e.person);
+        this.tableLoading = false;
+      });
+    }
+  },
+
+  mounted: function() {
+    this.getMembers();
+  }
+};
 </script>
 
 <style>
-  .v-icon {
-    display: inline-flex !important;
-  }
+.v-icon {
+  display: inline-flex !important;
+}
 </style>
