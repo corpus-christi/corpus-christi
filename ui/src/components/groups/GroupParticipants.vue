@@ -7,7 +7,17 @@
           <v-btn
             color="primary"
             raised
-            v-on:click="showEmailDialog"
+            v-on:click="showParticipantDialog"
+            v-if="select && isManagerMode"
+            fab
+            small
+          >
+            <v-icon dark>edit</v-icon>
+          </v-btn>
+          <v-btn
+            color="primary"
+            raised
+            v-on:click="showSelectEmailDialog"
             v-if="select"
             fab
             small
@@ -60,11 +70,11 @@
           <v-btn
             color="primary"
             raised
-            v-on:click="openParticipantDialog"
+            v-on:click="showParticipantDialog"
             data-cy="add-participant"
           >
             <v-icon dark left>add</v-icon>
-            {{ $t("actions.add-manager") }}
+            {{ isManagerMode ? $t("actions.add-manager") : "Add Members" }}
           </v-btn>
         </v-flex>
       </v-layout>
@@ -90,20 +100,19 @@
           <template v-if="props.item.active">
             <v-tooltip bottom>
               <v-btn
+                v-if="isManagerMode"
                 icon
                 outline
                 small
                 color="primary"
                 slot="activator"
-                v-on:click="editPerson(props.item.person)"
+                v-on:click="editParticipant(props.item)"
                 data-cy="edit"
               >
                 <v-icon small>edit</v-icon>
               </v-btn>
               <span>{{ $t("actions.edit") }}</span>
             </v-tooltip>
-          </template>
-          <template v-if="props.item.active">
             <v-tooltip bottom>
               <v-btn
                 icon
@@ -118,9 +127,23 @@
               </v-btn>
               <span>{{ $t("actions.tooltips.archive") }}</span>
             </v-tooltip>
+            <v-tooltip bottom>
+              <v-btn
+                icon
+                outline
+                small
+                color="primary"
+                slot="activator"
+                v-on:click="showEmailDialog(props.item)"
+                data-cy="email"
+              >
+                <v-icon small>email</v-icon>
+              </v-btn>
+              <span>{{ $t("actions.tooltips.email") }}</span>
+            </v-tooltip>
           </template>
           <template v-else>
-            <v-tooltip bottom v-if="!props.item.active">
+            <v-tooltip bottom>
               <v-btn
                 icon
                 outline
@@ -158,7 +181,7 @@
           >
           <v-spacer />
           <v-btn
-            v-on:click="massArchive()"
+            v-on:click="archiveParticipants()"
             color="primary"
             raised
             :loading="archiveDialog.loading"
@@ -169,13 +192,20 @@
       </v-card>
     </v-dialog>
 
-    <!-- Add Participant Dialog -->
-    <v-dialog v-model="addParticipantDialog.show" max-width="350px">
+    <!-- Participant Dialog -->
+    <v-dialog v-model="participantDialog.show" max-width="350px">
       <v-card>
         <v-card-title primary-title>
           <div>
-            <h3 class="headline mb-0">
-              {{ $t("person.actions.add-manager") }}
+            <h3 v-if="isManagerMode" class="headline mb-0">
+              {{
+                participantDialog.editMode
+                  ? "Edit Manager"
+                  : $t("person.actions.add-manager")
+              }}
+            </h3>
+            <h3 v-else class="headline mb-0">
+              {{ participantDialog.editMode ? "Edit Member" : "Add Member" }}
             </h3>
           </div>
         </v-card-title>
@@ -183,26 +213,28 @@
           <entity-search
             multiple
             person
-            v-model="addParticipantDialog.newParticipants"
+            v-model="participantDialog.participants"
+            :existing-entities="persons"
+            :disabled="participantDialog.editMode"
+          />
+          <entity-type-form
+            v-if="isManagerMode"
+            entity-type-name="manager"
+            v-model="participantDialog.participantType"
           />
         </v-card-text>
         <v-card-actions>
-          <v-btn
-            v-on:click="cancelNewParticipantDialog"
-            color="secondary"
-            flat
-            data-cy=""
-            >{{ $t("actions.cancel") }}</v-btn
-          >
+          <v-btn v-on:click="hideParticipantDialog" color="secondary" flat>{{
+            $t("actions.cancel")
+          }}</v-btn>
           <v-spacer />
           <v-btn
-            v-on:click="addParticipants"
-            :disabled="addParticipantDialog.newParticipants.length === 0"
+            v-on:click="updateParticipants"
+            :disabled="participantDialog.participants.length === 0"
             color="primary"
             raised
-            :loading="addParticipantDialog.loading"
-            data-cy="confirm-participant"
-            >{{ $t("actions.add-manager") }}</v-btn
+            :loading="participantDialog.loading"
+            >{{ $t("actions.save") }}</v-btn
           >
         </v-card-actions>
       </v-card>
@@ -217,22 +249,16 @@
         @cancel="handleEmailCancel"
       ></email-form>
     </v-dialog>
-
-    <v-snackbar v-model="snackbar.show">
-      {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false">
-        {{ $t("actions.close") }}
-      </v-btn>
-    </v-snackbar>
   </div>
 </template>
 
 <script>
 import EntitySearch from "../EntitySearch";
 import EmailForm from "../EmailForm";
+import EntityTypeForm from "./EntityTypeForm";
 import { eventBus } from "../../plugins/event-bus.js";
 export default {
-  components: { EntitySearch, EmailForm },
+  components: { EntitySearch, EmailForm, EntityTypeForm },
   name: "GroupParticipants",
   props: {
     participantType: {
@@ -255,15 +281,20 @@ export default {
       participants: [],
       people: [],
       selected: [],
-      select: false,
       unarchiveSelect: false,
       emailDialog: {
         show: false,
         loading: false
       },
-      addParticipantDialog: {
+      emailInitialData: {
+        recipients: [],
+        recipientList: []
+      },
+      participantDialog: {
         show: false,
-        newParticipants: [],
+        participants: [],
+        participantType: {},
+        editMode: false,
         loading: false
       },
       archiveDialog: {
@@ -271,20 +302,8 @@ export default {
         participants: [],
         loading: false
       },
-      snackbar: {
-        show: false,
-        text: ""
-      },
       viewStatus: "viewActive"
     };
-  },
-
-  watch: {
-    selected() {
-      if (this.selected.length > 0) {
-        this.select = true;
-      } else this.select = false;
-    }
   },
 
   computed: {
@@ -293,6 +312,14 @@ export default {
     },
     isManagerMode() {
       return this.participantType == "manager";
+    },
+    endpoint() {
+      return `/api/v1/groups/groups/${this.id}/${
+        this.isManagerMode ? "managers" : "members"
+      }`;
+    },
+    select() {
+      return this.selected.length > 0;
     },
     viewOptions() {
       return [
@@ -351,6 +378,9 @@ export default {
         ];
       }
     },
+    persons() {
+      return this.participants.map(m => m.person);
+    },
     visibleParticipants() {
       let list = this.participants;
 
@@ -362,7 +392,7 @@ export default {
         return list;
       }
     },
-    emailRecipients() {
+    selectedEmailRecipients() {
       return this.selected
         .filter(m => m.person.email)
         .map(m => ({
@@ -370,6 +400,7 @@ export default {
           name: `${m.person.firstName} ${m.person.lastName}`
         }));
     },
+    /* all possible recipient */
     emailRecipientList() {
       return this.participants
         .filter(m => m.person.email)
@@ -377,66 +408,27 @@ export default {
           email: m.person.email,
           name: `${m.person.firstName} ${m.person.lastName}`
         }));
-    },
-    emailInitialData() {
-      return {
-        recipients: this.emailRecipients,
-        recipientList: this.emailRecipientList
-      };
     }
   },
 
   methods: {
-    activateNewParticipantDialog() {
-      this.addParticipantDialog.show = true;
+    editParticipant(participant) {
+      this.participantDialog.editMode = true;
+      this.participantDialog.participants = [participant.person];
+      this.participantDialog.show = true;
     },
-
-    openParticipantDialog() {
-      this.activateNewParticipantDialog();
-    },
-
-    cancelNewParticipantDialog() {
-      this.addParticipantDialog.show = false;
-    },
-
-    editPerson(person) {
-      this.dialogState = "edit";
-    },
-
-    cancelPerson() {
-      this.dialogState = "";
-    },
-
-    addParticipants() {
-      this.addParticipantDialog.loading = true;
-      let promises = [];
-
-      for (let person of this.addParticipantDialog.newParticipants) {
-        const idx = this.participants.findIndex(
-          gr_pe => gr_pe.person.person_id === person.id
-        );
-        if (idx === -1) {
-          promises.push(this.addParticipant(person.id));
-        }
+    showParticipantDialog() {
+      if (this.select) {
+        this.participantDialog.editMode = true;
+        this.participantDialog.participants = this.selected.map(m => m.person);
+      } else {
+        this.participantDialog.editMode = false;
+        this.participantDialog.participants = [];
       }
-
-      Promise.all(promises)
-        .then(() => {
-          this.addParticipantDialog.loading = false;
-          this.addParticipantDialog.show = false;
-          this.addParticipantDialog.newParticipants = [];
-          this.getParticipants();
-          eventBus.$emit("message", {
-            content: "groups.messages.members-added"
-          });
-        })
-        .catch(err => {
-          console.log(err);
-          this.addParticipantDialog.loading = false;
-          eventBus.$emit("error", {
-            content: "groups.messages.error-adding-members"
-          });
-        });
+      this.participantDialog.show = true;
+    },
+    hideParticipantDialog() {
+      this.participantDialog.show = false;
     },
 
     handleEmailSent() {
@@ -449,33 +441,73 @@ export default {
       this.hideEmailDialog();
     },
 
-    showEmailDialog() {
+    /* FIXME: currently can't pass the appropriate emails to the email dialog */
+    showEmailDialog(participant) {
+      let recipient = {
+        email: participant.person.email,
+        name: `${participant.person.firstName} ${participant.person.lastName}`
+      };
+      this.emailInitialData.recipients = [recipient];
+      this.emailInitialData.recipientList = this.emailRecipientList;
       this.emailDialog.show = true;
     },
     hideEmailDialog() {
       this.emailDialog.show = false;
     },
+    showSelectEmailDialog() {
+      this.emailInitialData.recipients = this.selectedEmailRecipients;
+      this.emailInitialData.recipientList = this.emailRecipientList;
+      this.emailDialog.show = true;
+    },
 
-    addParticipant(id) {
-      for (var member of this.participants) {
-        if (this.id == member.person.id) {
-          return true;
-        }
+    /* add or update the persons in this.participantDialog.participants,
+       if isManagerMode, the added managers will be set to this.participantDialog.participantType */
+    updateParticipants() {
+      if (this.participantDialog.editMode && !this.isManagerMode) {
+        // ui should hide buttons as appropriate to prevent this case
+        console.error("There is nothing to edit for members");
+        return;
       }
-      return this.$http.post(`/api/v1/groups/groups/${this.id}/managers`, {
-        personId: id,
-        managerTypeId: 1
-      });
+      this.participantDialog.loading = true;
+      let promises = [];
+      for (let person of this.participantDialog.participants) {
+        let payload = {};
+        let endpoint = this.endpoint;
+        let method = this.$http.post;
+        if (this.participantDialog.editMode) {
+          endpoint = `${endpoint}/${person.id}`;
+          method = this.$http.patch;
+          console.log(endpoint);
+        } else {
+          payload.personId = person.id;
+        }
+        if (this.isManagerMode) {
+          payload.managerTypeId = this.participantDialog.participantType.id;
+        }
+        promises.push(method(endpoint, payload, { noErrorSnackBar: true }));
+      }
+      Promise.all(promises)
+        .then(() => {
+          this.participantDialog.loading = false;
+          this.participantDialog.show = false;
+          this.getParticipants();
+          eventBus.$emit("message", {
+            content: "groups.messages.members-added"
+          });
+        })
+        .catch(err => {
+          console.log(err);
+          this.participantDialog.loading = false;
+          eventBus.$emit("error", {
+            content: "groups.messages.error-adding-members"
+          });
+        });
     },
 
-    showSnackbar(message) {
-      this.snackbar.text = message;
-      this.snackbar.show = true;
-    },
-    massArchive(unarchive = false) {
+    /* archive or unarchive the participants in this.archiveDialog.participants */
+    archiveParticipants(unarchive = false) {
       let promises = [];
       this.archiveDialog.loading = true;
-      console.log(this.archiveDialog.participants);
       for (let participant of this.archiveDialog.participants) {
         const participantObj = this.participants.find(
           p => p.person.id === participant.person.id
@@ -487,9 +519,7 @@ export default {
           // in archive mode, we want to pick active ones among the given participants, and vise versa.
           promises.push(
             this.$http.patch(
-              `/api/v1/groups/groups/${this.id}/${
-                this.isManagerMode ? "managers" : "members"
-              }/${participant.person.id}`,
+              `${this.endpoint}/${participant.person.id}`,
               { active: unarchive ? true : false },
               { noErrorSnackBar: true }
             )
@@ -535,28 +565,22 @@ export default {
     },
     unarchiveSelected() {
       this.archiveDialog.participants = this.selected;
-      this.massArchive(true);
+      this.archiveParticipants(true);
     },
     unarchiveParticipant(participant) {
       this.archiveDialog.participants = [participant];
-      this.massArchive(true);
+      this.archiveParticipants(true);
     },
     getParticipants() {
       this.tableLoading = true;
-      this.$http
-        .get(
-          `/api/v1/groups/groups/${this.id}/${
-            this.isManagerMode ? "managers" : "members"
-          }`
-        )
-        .then(resp => {
-          this.participants = resp.data;
-          console.log(resp.data);
-          this.tableLoading = false;
-        });
+      this.$http.get(this.endpoint).then(resp => {
+        this.participants = resp.data;
+        console.log(resp.data);
+        this.tableLoading = false;
+      });
     }
   },
-  mounted: function() {
+  mounted() {
     this.getParticipants();
   }
 };

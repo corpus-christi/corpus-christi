@@ -30,7 +30,7 @@
     <template v-if="multiple">
       <div v-for="entity in value" v-bind:key="entity[idField]">
         <v-chip
-          close
+          :close="!disabled"
           @input="remove(entity)"
           :data-cy="'chip-' + entity[idField]"
         >
