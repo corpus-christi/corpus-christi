@@ -38,6 +38,7 @@
           </v-card-text>
           <v-card-actions>
             <v-btn small flat @click="hideEntityTypePanel">Close</v-btn>
+            <v-spacer />
             <v-btn small flat color="primary" @click="createEntityType"
               >Save</v-btn
             >
@@ -98,7 +99,7 @@ export default {
       }`;
     },
     newEntityTypeTextLabel() {
-      return this.isGroupTypeMode ? "group type name" : "manager type name";
+      return this.isGroupTypeMode ? "Group type name" : "Manager type name";
     }
   },
   data() {
