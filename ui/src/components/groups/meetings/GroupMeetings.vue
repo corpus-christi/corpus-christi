@@ -515,7 +515,6 @@ export default {
         const idx = this.attendance_list.findIndex(
           at_pe => at_pe.person.personId === person.id
         );
-      console.log("Person--> ",person);
         if (idx === -1) {
           promises.push(this.addMeetingParticipant(person.id));
         }
@@ -536,9 +535,8 @@ export default {
         });
     },
 
-    addMeetingParticipant(id) {//person id is here
+    addMeetingParticipant(id) {
       const groupId = this.$route.params.group;
-      // const groupId = id;
       for (const person of this.attendance_people_list) {
         if (id == person.personId) {
           return true;
@@ -608,7 +606,6 @@ export default {
     },
 
     confirmArchive(event) {
-      console.log("event", event);
       this.activateArchiveDialog(event.id);
     },
 
