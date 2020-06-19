@@ -74,6 +74,7 @@ class Meeting(Base):
 
     address = relationship('Address', back_populates='meetings', lazy=True)
     group = relationship('Group', back_populates='meetings', lazy=True)
+    attendances = relationship('Attendance', back_populates='meeting', lazy=True)
 
     def __repr__(self):
         return f"<Meeting(id={self.id})>"
@@ -90,6 +91,7 @@ class MeetingSchema(Schema):
 
     address = fields.Nested('AddressSchema', dump_only=True)
     group = fields.Nested('GroupSchema', dump_only=True)
+    attendances = fields.Nested('AttendanceSchema', many=True, dump_only=True, only=['person'])
 
 
 
@@ -167,7 +169,7 @@ class Attendance(Base):
         'groups_meeting.id'), primary_key=True)
     person_id = Column(Integer, ForeignKey(
         'people_person.id'), primary_key=True)
-    meeting = relationship('Meeting', backref='attendances', lazy=True)
+    meeting = relationship('Meeting', back_populates='attendances', lazy=True)
     person = relationship('Person', backref='attendances', lazy=True)
 
     def __repr__(self):
@@ -178,3 +180,4 @@ class AttendanceSchema(Schema):
     meeting_id = fields.Integer(data_key='meetingId', required=True)
     person_id = fields.Integer(data_key='personId', required=True)
     person = fields.Nested('PersonSchema', dump_only=True, only=['id', 'first_name'])
+    meeting = fields.Nested('AttendanceSchema', dump_only=True)

@@ -27,6 +27,7 @@
       "add-event": "Add Event",
       "add-group": "Add Group",
       "add-manager": "Add Manager",
+      "add-participant": "Add a Participant",
       "add-person": "Add Person",
       "back": "Back",
       "cancel": "Cancel",
@@ -53,7 +54,8 @@
         "archive": "Archive",
         "remove": "Remove",
         "settings": "Settings",
-        "unarchive": "Unarchive"
+        "unarchive": "Unarchive",
+        "view-attendance": "Show Attendance"
       },
       "view-active": "View Active",
       "view-all": "View All",
@@ -551,8 +553,10 @@
         "title": "Members"
       },
       "messages": {
+        "attendance-archived": "Attendance archived",
         "already-exists": "Group already exists",
         "confirm-archive": "Are you sure you want to archive this group?",
+        "confirm-attendance-archive": "Are you sure this person has an absence?",
         "confirm-meeting-archive": "Are you sure you want to archive this group meeting?",
         "confirm-member-archive": "Are you sure you want to archive this group member?",
         "email-sent": "Email sent",
@@ -579,6 +583,7 @@
         "member-unarchived": "Member unarchived",
         "members-added": "Members added",
         "no-remaining-members": "No remaining members",
+        "participant-added": "Participant added",
         "required-fields": "Please fill out all required fields"
       },
       "name": "Name",
@@ -844,6 +849,7 @@
       "add-event": "A\u00f1adir Evento",
       "add-group": "A\u00f1adir grupo",
       "add-manager": "Añadir administrador",
+      "add-participant": "Agregar una participante",
       "add-person": "A\u00f1adir Persona",
       "back": "Regresar",
       "cancel": "Cancelar",
@@ -870,7 +876,8 @@
         "archive": "Archivar",
         "remove": "Retirar",
         "settings": "Ajustes",
-        "unarchive": "Desarchivar"
+        "unarchive": "Desarchivar",
+        "view-attendance": "Mostrar asistencia"
       },
       "view-active": "Ver Activo",
       "view-all": "Ver Todo",
@@ -1159,8 +1166,10 @@
         "title": "Miembros"
       },
       "messages": {
+        "attendance-archived": "Asistencia archivada",
         "already-exists": "El grupo ya existe",
         "confirm-archive": "\u00bfSeguro que quieres archivar este groupos?",
+        "confirm-attendance-archive": "\n¿Estás seguro de que esta persona tiene una ausencia?",
         "confirm-meeting-archive": "¿Está seguro de que desea archivar esta reunión de grupo?",
         "confirm-member-archive": "\u00bfEst\u00e1s seguro de que deseas archivar a este miembro del grupo?",
         "email-sent": "Correo electr\u00f3nico enviado",
@@ -1187,6 +1196,7 @@
         "member-unarchived": "Miembro desarchivado",
         "members-added": "Miembros agregados",
         "no-remaining-members": "Ning\u00fan miembro restante",
+        "participant-added": "Participante agregado",
         "required-fields": "Por favor llene todos los campos requeridos"
       },
       "name": "Nombre",
