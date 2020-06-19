@@ -70,6 +70,7 @@
           <v-btn
             color="primary"
             raised
+            :disabled="select"
             v-on:click="showParticipantDialog"
             data-cy="add-participant"
           >
@@ -100,6 +101,7 @@
           <template v-if="props.item.active">
             <v-tooltip bottom>
               <v-btn
+                :disabled="select"
                 v-if="isManagerMode"
                 icon
                 outline
@@ -115,6 +117,7 @@
             </v-tooltip>
             <v-tooltip bottom>
               <v-btn
+                :disabled="select"
                 icon
                 outline
                 small
@@ -129,6 +132,7 @@
             </v-tooltip>
             <v-tooltip bottom>
               <v-btn
+                :disabled="select"
                 icon
                 outline
                 small
@@ -145,6 +149,7 @@
           <template v-else>
             <v-tooltip bottom>
               <v-btn
+                :disabled="select"
                 icon
                 outline
                 small
