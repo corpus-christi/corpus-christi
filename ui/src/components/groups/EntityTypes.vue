@@ -1,159 +1,258 @@
 <template>
-  <v-card>
-    <v-toolbar class="pa-1">
-      {{ selected }}
-      <v-btn @click="showChangeEntityTypeDialog">Change Group Types</v-btn>
-      <v-layout align-center justify-space-around>
-        <v-flex> <v-toolbar-title>Group Types</v-toolbar-title> </v-flex>
-        <v-flex>
-          <v-text-field
-            v-model="search"
-            append-icon="search"
-            v-bind:label="$t('actions.search')"
-          ></v-text-field>
-        </v-flex>
-        <v-flex justify-content-end>
-          <div class="text-xs-center">
+  <div>
+    <v-btn
+      class="mb-3"
+      outline
+      color="primary"
+      v-on:click="$router.push({ name: 'all-groups' })"
+      ><v-icon>arrow_back</v-icon>Back</v-btn
+    >
+    <v-card>
+      <v-toolbar :color="toolbarColor" class="pa-1">
+        <v-layout align-center justify-space-between>
+          <v-flex v-if="select">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-btn v-on:click="selected = {}" v-on="on" small fab>
+                  <v-icon>close</v-icon>
+                </v-btn>
+              </template>
+              {{ $t("actions.close") }}
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  color="primary"
+                  v-on:click="showChangeEntityTypeDialog"
+                  v-on="on"
+                  small
+                  fab
+                >
+                  <v-icon>low_priority</v-icon>
+                </v-btn>
+              </template>
+              {{ getTranslation("change-to-different") }}
+            </v-tooltip>
+          </v-flex>
+          <v-flex v-else>
+            <v-toolbar-title>{{ getTranslation("title") }}</v-toolbar-title>
+          </v-flex>
+          <v-flex md4>
+            <v-text-field
+              v-model="search"
+              append-icon="search"
+              v-bind:label="$t('actions.search')"
+            ></v-text-field>
+          </v-flex>
+          <v-flex md4 class="text-xs-right">
             <v-btn
+              :disabled="select"
               raised
               :fab="$vuetify.breakpoint.smAndDown"
               :small="$vuetify.breakpoint.smAndDown"
               color="primary"
               @click="showEntityTypeDialog()"
               ><v-icon>add</v-icon>
-              {{ $vuetify.breakpoint.smAndDown ? "" : "New Group Type" }}
+              {{ $vuetify.breakpoint.smAndDown ? "" : getTranslation("new") }}
             </v-btn>
-          </div>
-        </v-flex>
-      </v-layout>
-    </v-toolbar>
-    <v-card-text>
-      <v-data-table
-        expand
-        :loading="tableLoading"
-        :search="search"
-        :items="entityTypes"
-        :headers="headers"
-      >
-        <template v-slot:items="props">
-          <td>{{ props.item.name }}</td>
-          <td>
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on }">
-                <v-btn
-                  icon
-                  outline
-                  small
-                  color="primary"
-                  v-on:click="showEntityTypeDialog(props.item)"
-                  v-on="on"
-                >
-                  <v-icon small>edit</v-icon>
-                </v-btn>
-              </template>
-              {{ $t("actions.edit") }}
-            </v-tooltip>
-            <v-tooltip bottom v-if="props.item.groups.length == 0">
-              <template v-slot:activator="{ on }">
-                <v-btn
-                  icon
-                  outline
-                  small
-                  color="primary"
-                  v-on:click="showDeleteEntityTypeDialog(props.item.id)"
-                  v-on="on"
-                >
-                  <v-icon small>delete</v-icon>
-                </v-btn>
-              </template>
-              {{ $t("actions.tooltips.remove") }}
-            </v-tooltip>
-            <v-tooltip bottom v-else>
-              <template v-slot:activator="{ on }">
-                <v-btn
-                  icon
-                  outline
-                  small
-                  color="primary"
-                  v-on:click="props.expanded = !props.expanded"
-                  v-on="on"
-                >
-                  <v-icon v-if="!props.expanded" small>expand_more</v-icon>
-                  <v-icon v-else small>expand_less</v-icon>
-                </v-btn>
-              </template>
-              {{ props.expanded ? "Hide groups" : "Show groups" }}
-            </v-tooltip>
-          </td>
-        </template>
-        <template v-slot:expand="{ item }">
-          <v-list dense>
-            <v-list-tile avatar v-for="group in item.groups" :key="group.id">
-              <v-list-tile-avatar><v-icon>people</v-icon></v-list-tile-avatar>
-              <v-list-tile-content> {{ group.name }} </v-list-tile-content>
-              <v-list-tile-action>
-                <v-checkbox :value="group.id" v-model="selected"></v-checkbox
-              ></v-list-tile-action>
-            </v-list-tile>
-          </v-list>
-        </template>
-      </v-data-table>
-    </v-card-text>
-
-    <!-- change entityType dialog -->
-    <v-dialog max-width="350px" v-model="changeEntityTypeDialog.show">
-      <v-card> <entity-type-form></entity-type-form> </v-card>
-    </v-dialog>
-
-    <!-- add/edit entityType dialog -->
-    <v-dialog v-model="entityTypeDialog.show" max-width="350px">
-      <v-card>
-        <v-card-title>
-          <span class="headline">
-            {{
-              entityTypeDialog.editMode ? "Edit Group Type" : "New Group Type"
-            }}
-          </span>
-        </v-card-title>
-        <v-card-text>
-          <v-text-field
-            label="Group Type Name"
-            v-model="entityTypeDialog.entityType.name"
-          ></v-text-field>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn flat @click="hideEntityTypeDialog">Close</v-btn>
-          <v-btn flat color="primary" @click="saveEntityType">Save</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-    <!-- delete entityType dialog -->
-    <v-dialog v-model="deleteEntityTypeDialog.show" max-width="350px">
-      <v-card>
-        <v-card-text
-          >Are you sure you want to delete this group type?</v-card-text
+          </v-flex>
+        </v-layout>
+      </v-toolbar>
+      <v-card-text>
+        <v-data-table
+          expand
+          :loading="tableLoading"
+          :search="search"
+          :items="entityTypes"
+          :headers="headers"
         >
-        <v-card-actions>
-          <v-btn
-            flat
-            color="primary"
-            :loading="deleteEntityTypeDialog.loading"
-            @click="deleteEntityType"
-            >{{ $t("actions.confirm") }}</v-btn
-          >
-          <v-spacer />
-          <v-btn flat color="secondary" @click="hideDeleteEntityTypeDialog">{{
-            $t("actions.cancel")
-          }}</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </v-card>
+          <template v-slot:items="props">
+            <tr @click="props.expanded = !props.expanded">
+              <td><v-icon>category</v-icon> {{ props.item.name }}</td>
+              <td>
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on }">
+                    <v-btn
+                      icon
+                      outline
+                      small
+                      color="primary"
+                      v-on:click.stop="showEntityTypeDialog(props.item)"
+                      v-on="on"
+                    >
+                      <v-icon small>edit</v-icon>
+                    </v-btn>
+                  </template>
+                  {{ $t("actions.edit") }}
+                </v-tooltip>
+                <v-tooltip
+                  bottom
+                  v-if="
+                    (isGroupTypeMode ? props.item.groups : props.item.managers)
+                      .length === 0
+                  "
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-btn
+                      icon
+                      outline
+                      small
+                      color="primary"
+                      v-on:click.stop="
+                        showDeleteEntityTypeDialog(props.item.id)
+                      "
+                      v-on="on"
+                    >
+                      <v-icon small>delete</v-icon>
+                    </v-btn>
+                  </template>
+                  {{ $t("actions.tooltips.remove") }}
+                </v-tooltip>
+                <v-tooltip bottom v-else>
+                  <template v-slot:activator="{ on }">
+                    <v-btn
+                      icon
+                      outline
+                      small
+                      color="primary"
+                      v-on:click.stop="props.expanded = !props.expanded"
+                      v-on="on"
+                    >
+                      <v-icon v-if="!props.expanded" small>expand_more</v-icon>
+                      <v-icon v-else small>expand_less</v-icon>
+                    </v-btn>
+                  </template>
+                  {{
+                    props.expanded
+                      ? getTranslation("hide-expand")
+                      : getTranslation("show-expand")
+                  }}
+                </v-tooltip>
+              </td>
+            </tr>
+          </template>
+          <template v-slot:expand="{ item }">
+            <v-list
+              v-if="(isGroupTypeMode ? item.groups : item.managers).length != 0"
+              dense
+            >
+              <v-list-tile
+                @click="toggleEntitySelection(entity)"
+                v-for="entity in isGroupTypeMode ? item.groups : item.managers"
+                :key="entity.id"
+              >
+                <v-list-tile-action>
+                  <v-checkbox :value="entitySelected(entity)"></v-checkbox>
+                </v-list-tile-action>
+                <v-list-tile-avatar
+                  ><v-icon>{{
+                    isGroupTypeMode ? "people" : "account_circle"
+                  }}</v-icon></v-list-tile-avatar
+                >
+                <v-list-tile-content> {{ entity.name }} </v-list-tile-content>
+              </v-list-tile>
+            </v-list>
+          </template>
+        </v-data-table>
+      </v-card-text>
+
+      <!-- change entityType dialog -->
+      <v-dialog max-width="350px" v-model="changeEntityTypeDialog.show">
+        <v-card>
+          <v-card-title>
+            <span class="headline">{{
+              getTranslation("change-to-different")
+            }}</span>
+          </v-card-title>
+          <v-card-text>
+            <v-chip v-for="(value, key) in selected" :key="key">
+              <v-icon> people </v-icon>
+              {{ value.name }}</v-chip
+            >
+            <entity-type-form
+              :entity-type-name="entityTypeName"
+              :key="entityTypeFormKey"
+              v-model="changeEntityTypeDialog.entityType"
+            ></entity-type-form>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn flat @click="hideChangeEntityTypeDialog">{{
+              $t("actions.cancel")
+            }}</v-btn>
+            <v-btn
+              color="primary"
+              flat
+              :loading="changeEntityTypeDialog.loading"
+              :disabled="isEmpty(changeEntityTypeDialog.entityType)"
+              @click="
+                changeToEntityType(
+                  changeEntityTypeDialog.entityType.id,
+                  Object.values(selected)
+                ).then(() => (selected = {}))
+              "
+              >{{ $t("actions.confirm") }}</v-btn
+            >
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+      <!-- add/edit entityType dialog -->
+      <v-dialog v-model="entityTypeDialog.show" max-width="350px">
+        <v-card>
+          <v-card-title>
+            <span class="headline">
+              {{
+                entityTypeDialog.editMode
+                  ? getTranslation("edit")
+                  : getTranslation("new")
+              }}
+            </span>
+          </v-card-title>
+          <v-card-text>
+            <v-text-field
+              :label="getTranslation('name')"
+              v-model="entityTypeDialog.entityType.name"
+            ></v-text-field>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn flat @click="hideEntityTypeDialog">{{
+              $t("actions.close")
+            }}</v-btn>
+            <v-btn
+              flat
+              :disabled="entityTypeDialog.entityType.name === ''"
+              color="primary"
+              @click="saveEntityType"
+              >{{ $t("actions.save") }}</v-btn
+            >
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+      <!-- delete entityType dialog -->
+      <v-dialog v-model="deleteEntityTypeDialog.show" max-width="350px">
+        <v-card>
+          <v-card-text>{{ getTranslation("confirm-remove") }}</v-card-text>
+          <v-card-actions>
+            <v-btn flat color="secondary" @click="hideDeleteEntityTypeDialog">{{
+              $t("actions.cancel")
+            }}</v-btn>
+            <v-btn
+              flat
+              color="primary"
+              :loading="deleteEntityTypeDialog.loading"
+              @click="deleteEntityType"
+              >{{ $t("actions.confirm") }}</v-btn
+            >
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-card>
+  </div>
 </template>
 <script>
 import { eventBus } from "../../plugins/event-bus.js";
-// import { union } from "lodash";
+import { isEmpty } from "lodash";
 import EntityTypeForm from "./EntityTypeForm";
 export default {
   name: "EntityTypes",
@@ -165,16 +264,11 @@ export default {
       default: "groupType"
     }
   },
+
   computed: {
     isGroupTypeMode() {
       return this.entityTypeName == "groupType";
     },
-    // allEntities() {
-    //   return union(...this.entityTypes.map(et => et[this.isGroupTypeMode?"groups":"managers"]))
-    // },
-    // selectedEntities() {
-    //   return this.
-    // },
     endpoint() {
       return `/api/v1/groups/${
         this.isGroupTypeMode ? "group-types" : "manager-types"
@@ -184,22 +278,37 @@ export default {
       if (this.isGroupTypeMode) {
         return [
           { text: "Group Type Name", value: "name" },
-          { text: "Actions", value: "actions", sortable: false, width: "10%" }
+          { text: "Actions", value: "actions", sortable: false, width: "150px" }
         ];
       } else {
-        return [{ text: "Name", value: "name" }];
+        return [
+          { text: "Manager Type Name", value: "name" },
+          { text: "Actions", value: "actions", sortable: false, width: "150px" }
+        ];
       }
+    },
+    selectedIds() {
+      return Object.keys(this.selected);
+    },
+    select() {
+      return this.selectedIds.length != 0;
+    },
+    toolbarColor() {
+      return this.select ? "blue-grey" : undefined;
     }
   },
+
   data() {
     return {
       search: "",
       tableLoading: false,
       entityTypes: [],
-      selected: [],
+      selected: {},
+      entityTypeFormKey: -1,
       changeEntityTypeDialog: {
         loading: false,
-        show: false
+        show: false,
+        entityType: {}
       },
       deleteEntityTypeDialog: {
         loading: false,
@@ -217,19 +326,42 @@ export default {
       }
     };
   },
+
   methods: {
+    /* utility */
+    isEmpty,
     fetchEntityTypes() {
       this.tableLoading = true;
       this.$http.get(this.endpoint).then(resp => {
         this.tableLoading = false;
-        console.log(resp.data);
+        if (!this.isGroupTypeMode) {
+          for (let managerType of resp.data) {
+            // for each manager, create a unique pseudo-id and a human-readable name
+            managerType.managers.forEach(manager => {
+              manager.id = `g_${manager.group.id}_p_${manager.person.id}`;
+              manager.name = `${manager.person.firstName} ${
+                manager.person.lastName
+              } (${manager.group.name})`;
+            });
+          }
+        }
         this.entityTypes = resp.data;
       });
     },
+    getTranslation(key) {
+      return this.$t(
+        `groups.entity-types.${
+          this.isGroupTypeMode ? "group-types" : "manager-types"
+        }.${key}`
+      );
+    },
+
+    /* dialog related */
     showChangeEntityTypeDialog() {
       this.changeEntityTypeDialog.show = true;
     },
     hideChangeEntityTypeDialog() {
+      this.changeEntityTypeDialog.entityType = {};
       this.changeEntityTypeDialog.show = false;
     },
     showDeleteEntityTypeDialog(id) {
@@ -253,26 +385,39 @@ export default {
     hideEntityTypeDialog() {
       this.entityTypeDialog.show = false;
     },
+    toggleEntitySelection(entity) {
+      if (Object.prototype.hasOwnProperty.call(this.selected, entity.id)) {
+        this.$delete(this.selected, entity.id);
+      } else {
+        this.$set(this.selected, entity.id, entity);
+      }
+    },
+    entitySelected(entity) {
+      return Object.prototype.hasOwnProperty.call(this.selected, entity.id);
+    },
+
+    /* endpoint related */
     deleteEntityType() {
       this.deleteEntityTypeDialog.loading = true;
       let id = this.deleteEntityTypeDialog.entityTypeId;
       this.$http
         .delete(`${this.endpoint}/${id}`, { noErrorSnackBar: true })
         .then(() => {
+          this.entityTypeFormKey = `delete_${id}`; // refresh entity-type-form
           this.deleteEntityTypeDialog.loading = false;
           this.hideDeleteEntityTypeDialog();
           this.entityTypes = this.entityTypes.filter(
             entityType => entityType.id != id
           );
           eventBus.$emit("message", {
-            content: "Successfully removed group type"
+            content: this.getTranslation("success-remove")
           });
         })
         .catch(err => {
           this.deleteEntityTypeDialog.loading = false;
           this.hideDeleteEntityTypeDialog();
           eventBus.$emit("error", {
-            content: "Failed to remove the group type"
+            content: this.getTranslation("fail-remove")
           });
         });
     },
@@ -290,15 +435,16 @@ export default {
       this.entityTypeDialog.loading = true;
       this.$http
         .post(this.endpoint, { name: newName }, { noErrorSnackBar: true })
-        .then(() => {
+        .then(resp => {
+          this.entityTypeFormKey = `add_${resp.data.id}`; // refresh entity-type-form
           this.fetchEntityTypes();
           eventBus.$emit("message", {
-            content: "Successfully added group type name"
+            content: this.getTranslation("success-add")
           });
         })
         .catch(err => {
           eventBus.$emit("error", {
-            content: "Failed to add group type name"
+            content: this.getTranslation("fail-add")
           });
         })
         .finally(() => {
@@ -315,14 +461,15 @@ export default {
           { noErrorSnackBar: true }
         )
         .then(() => {
+          this.entityTypeFormKey = `update_${id}_${newName}`; // refresh entity-type-form
           this.fetchEntityTypes();
           eventBus.$emit("message", {
-            content: "Successfully updated group type name"
+            content: this.getTranslation("success-update")
           });
         })
         .catch(err => {
           eventBus.$emit("error", {
-            content: "Failed to update group type name"
+            content: this.getTranslation("fail-update")
           });
         })
         .finally(() => {
@@ -330,25 +477,45 @@ export default {
           this.hideEntityTypeDialog();
         });
     },
-    changeToEntityType(newEntityTypeId, entityIds) {
+    changeToEntityType(newEntityTypeId, entities) {
+      this.changeEntityTypeDialog.loading = true;
       let promises = [];
-      for (let entityId of entityIds) {
-        let endpoint = `/api/v1/groups/${
-          this.isGroupTypeMode ? "groups" : "managers"
-        }/${entityId}`;
+      for (let entity of entities) {
+        let endpoint;
+        if (this.isGroupTypeMode) {
+          endpoint = `/api/v1/groups/groups/${entity.id}`;
+        } else {
+          endpoint = `/api/v1/groups/groups/${entity.group.id}/managers/${
+            entity.person.id
+          }`;
+        }
         let payload = {};
         payload[
           this.isGroupTypeMode ? "groupTypeId" : "managerTypeId"
         ] = newEntityTypeId;
-        promises.push(this.$http.patch(endpoint, payload));
+        promises.push(
+          this.$http.patch(endpoint, payload, { noErrorSnackBar: true })
+        );
       }
-      Promise.all(promises).then(() => {
-        eventBus.$emit("message", {
-          content: "succesfully changed group types"
+      return Promise.all(promises)
+        .then(() => {
+          this.fetchEntityTypes();
+          eventBus.$emit("message", {
+            content: this.getTranslation("success-change")
+          });
+        })
+        .catch(() => {
+          eventBus.$emit("error", {
+            content: this.getTranslation("fail-change")
+          });
+        })
+        .finally(() => {
+          this.changeEntityTypeDialog.loading = false;
+          this.hideChangeEntityTypeDialog();
         });
-      });
     }
   },
+
   mounted() {
     this.fetchEntityTypes();
   }

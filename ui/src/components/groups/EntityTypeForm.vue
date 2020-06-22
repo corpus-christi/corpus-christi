@@ -20,28 +20,26 @@
         @click="showEntityTypePanel"
         :disabled="entityTypePanel.show"
       >
-        {{
-          isGroupTypeMode
-            ? "create a new group type"
-            : "create a new manager type"
-        }}
+        {{ getTranslation("create-new") }}
       </v-btn>
     </v-flex>
     <v-flex>
       <v-expand-transition>
-        <v-card v-if="entityTypePanel.show">
+        <v-card elevation="1" v-if="entityTypePanel.show">
           <v-card-text>
             <v-text-field
-              :label="newEntityTypeTextLabel"
+              :label="getTranslation('name')"
               v-model="newEntityTypeName"
             ></v-text-field>
           </v-card-text>
           <v-card-actions>
-            <v-btn small flat @click="hideEntityTypePanel">Close</v-btn>
+            <v-btn small flat @click="hideEntityTypePanel">{{
+              $t("close")
+            }}</v-btn>
             <v-spacer />
-            <v-btn small flat color="primary" @click="createEntityType"
-              >Save</v-btn
-            >
+            <v-btn small flat color="primary" @click="createEntityType">{{
+              $t("save")
+            }}</v-btn>
           </v-card-actions>
         </v-card>
       </v-expand-transition>
@@ -71,6 +69,13 @@ export default {
     }
   },
   methods: {
+    getTranslation(key) {
+      return this.$t(
+        `groups.entity-types.${
+          this.isGroupTypeMode ? "group-types" : "manager-types"
+        }.${key}`
+      );
+    },
     showEntityTypePanel() {
       this.entityTypePanel.show = true;
     },
@@ -97,9 +102,6 @@ export default {
       return `/api/v1/groups/${
         this.isGroupTypeMode ? "group-types" : "manager-types"
       }`;
-    },
-    newEntityTypeTextLabel() {
-      return this.isGroupTypeMode ? "Group type name" : "Manager type name";
     }
   },
   data() {

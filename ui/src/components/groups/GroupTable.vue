@@ -27,16 +27,41 @@
           </v-select>
         </v-flex>
         <v-flex shrink>
-          <v-btn
-            color="primary"
-            :fab="$vuetify.breakpoint.mdAndDown"
-            :small="$vuetify.breakpoint.mdAndDown"
-            v-on:click.stop="newGroup"
-            data-cy="add-group"
-          >
-            <v-icon>add</v-icon>
-            {{ $vuetify.breakpoint.mdAndDown ? "" : $t("actions.add-group") }}
-          </v-btn>
+          <v-menu open-on-hover offset-y bottom>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                color="primary"
+                :fab="$vuetify.breakpoint.mdAndDown"
+                :small="$vuetify.breakpoint.mdAndDown"
+                v-on="on"
+              >
+                <v-icon>supervised_user_circle</v-icon>
+                {{
+                  $vuetify.breakpoint.mdAndDown ? "" : $t("groups.admin-panel")
+                }}
+              </v-btn>
+            </template>
+            <v-list>
+              <v-list-tile @click.stop="activateGroupDialog()">
+                <v-icon color="primary">group_add</v-icon>
+                <v-list-tile-content>
+                  {{ $t("actions.add-group") }}
+                </v-list-tile-content>
+              </v-list-tile>
+              <v-list-tile :to="{ name: 'group-types' }">
+                <v-icon color="primary">view_list</v-icon>
+                <v-list-tile-content>
+                  {{ $t("groups.entity-types.group-types.manage") }}
+                </v-list-tile-content>
+              </v-list-tile>
+              <v-list-tile :to="{ name: 'manager-types' }">
+                <v-icon color="primary">view_list</v-icon>
+                <v-list-tile-content>
+                  {{ $t("groups.entity-types.manager-types.manage") }}
+                </v-list-tile-content>
+              </v-list-tile>
+            </v-list>
+          </v-menu>
         </v-flex>
         <v-flex shrink>
           <v-btn
@@ -286,10 +311,6 @@ export default {
       this.groupDialog.group = group;
       this.groupDialog.show = true;
     },
-    newGroup() {
-      this.activateGroupDialog();
-    },
-
     cancelGroup() {
       this.groupDialog.show = false;
     },
