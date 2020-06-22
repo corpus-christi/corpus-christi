@@ -56,7 +56,7 @@
         <td
         >{{ props.item.stopTime | formatDate }}</td>
         <td
-        >{{ props.item.attendances }}</td>
+        >{{ props.item.attendances.length }}</td>
         <td
         >{{ props.item.address.address}}</td>
         <td>
@@ -181,10 +181,11 @@
           <v-spacer></v-spacer>
           <v-btn class="mx-2" fab small color="primary">
             <v-icon
-              v-on:click="addParticipants"
+              v-on:click="addAttendances"
             >add</v-icon>
           </v-btn>
           <v-card-text>
+
             <entity-search
               multiple
               person
@@ -194,11 +195,11 @@
         </v-card-title>
           <v-data-table
             :headers="attendance_headers"
-            :items="attendance_people_list"
+            :items="attendanceDialog.attendances"
             class="elevation-1"
           >
             <template v-slot:items="props">
-              <td>{{ props.item }}</td>
+              <td>{{ props.item.person.firstName }}</td>
               <td>
                 <v-btn
                   icon
@@ -226,38 +227,6 @@
       </v-card>
     </v-dialog>
 
-    <!-- Add People from a Meeting Dialog -->
-    <v-dialog v-model="addPeronToMeeting.show" max-width="350px">
-      <v-card>
-        <v-card-title primary-title>
-          <div>
-            <h3 class="headline mb-0">
-              {{ $t("person.actions.add-participant") }}
-            </h3>
-          </div>
-        </v-card-title>
-        <v-card-actions>
-          <v-btn
-            v-on:click="cancelNewAttendanceDialog"
-            color="secondary"
-            flat
-            data-cy=""
-          >{{ $t("actions.cancel") }}</v-btn
-          >
-          <v-spacer />
-<!--          :disabled="addParticipantDialog.newParticipants.length === 0"-->
-<!--          :loading="addParticipantDialog.loading"-->
-
-          <v-btn
-            color="primary"
-            raised
-            data-cy="confirm-participant"
-            v-on:click="addParticipants"
-          >{{ $t("actions.add-participant") }}
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
 
     <!-- Add/Edit Meeting Dialog -->
     <v-dialog v-model="meetingDialog.show" persistent max-width="500px">
@@ -313,7 +282,7 @@
 <script>
 import CustomForm from "../../CustomForm";
 import EntitySearch from "../../EntitySearch";
-
+import { eventBus } from "../../../plugins/event-bus.js"
 export default {
   components: { "meeting-form": CustomForm, EntitySearch },
   name: "GroupMeetings",
@@ -365,18 +334,20 @@ export default {
         active:''
       },
       attendanceDialog:{
-        show: false
+        show: false,
+        attendances: []
       },
       viewStatus: "viewActive",
-      attendances_number: [],
       attendance_list:[],
       attendance_people_list:[],
-      currentMeetings:[],
       ViewingMeetingId: null
     };
   },
 
   computed: {
+    meetingDescriptions() {
+      return this.meetings.map(m=>m.description)
+    },
     viewOptions() {
       return [
         { text: this.$t("actions.view-active"), value: "viewActive" },
@@ -483,7 +454,7 @@ export default {
       return this.$http
         .post(`/api/v1/groups/meetings`, meeting)
         .then(() => {
-          this.showSnackbar(this.$t("groups.messages.meeting-added"));
+          eventBus.$emit('message', { content:this.$t("groups.messages.meeting-added") });
           this.meetingDialog.saveLoading = false;
           this.meetingDialog.show = false;
           this.getMeetings();
@@ -491,7 +462,7 @@ export default {
         .catch(err => {
           console.log(err);
           this.meetingDialog.saveLoading = false;
-          this.showSnackbar(this.$t("groups.messages.error-adding-meeting"));
+          eventBus.$emit('message', { content:this.$t("groups.messages.error-adding-meeting") });
         });
     },
 
@@ -508,7 +479,7 @@ export default {
       return name;
     },
 
-    addParticipants() {
+    addAttendances() {
       this.addAttendanceDialog.loading = true;
       let promises = [];
       for (let person of this.addAttendanceDialog.newParticipants) {
@@ -521,17 +492,16 @@ export default {
       }
       Promise.all(promises)
         .then(() => {
-          this.showSnackbar(this.$t("groups.messages.members-added"));
-          this.refreshAttendance(this.ViewingMeetingId);
+          eventBus.$emit('message', { content:this.$t("groups.messages.members-added") });
           this.addAttendanceDialog.loading = false;
           this.addAttendanceDialog.show = false;
           this.addAttendanceDialog.newParticipants = [];
-          this.getMembers();
+          this.refreshAttendance(this.ViewingMeetingId);
         })
         .catch(err => {
           console.log(err);
           this.addAttendanceDialog.loading = false;
-          this.showSnackbar(this.$t("groups.messages.error-adding-members"));
+          eventBus.$emit('message', { content:this.$t("groups.messages.error-adding-members") });
         });
     },
 
@@ -574,13 +544,13 @@ export default {
           this.deleteDialog.loading = false;
           this.deleteDialog.show = false;
           this.people.splice(idx, 1);
-          this.showSnackbar(this.$t("events.participants.removed"));
+          eventBus.$emit('message', { content:this.$t("events.participants.removed") });
         })
         .catch(err => {
           console.log(err);
           this.deleteDialog.loading = false;
           this.deleteDialog.show = false;
-          this.showSnackbar(this.$t("events.participants.error-removing"));
+          eventBus.$emit('message', { content:this.$t("events.participants.error-removing") });
         });
     },
     cancelDelete() {
@@ -589,10 +559,6 @@ export default {
     activateDeleteDialog(participantId) {
       this.deleteDialog.show = true;
       this.deleteDialog.participantId = participantId;
-    },
-    showSnackbar(message) {
-      this.snackbar.text = message;
-      this.snackbar.show = true;
     },
 
     activateArchiveDialog(meetingId) {
@@ -603,6 +569,7 @@ export default {
     activateArchiveAttendanceDialog(personID) {
       this.archiveAttendanceDialog.show = true;
       this.archiveAttendanceDialog.personId = personID;
+
     },
 
     confirmArchive(event) {
@@ -610,7 +577,7 @@ export default {
     },
 
     confirmArchiveAttendance(event) {
-      this.activateArchiveAttendanceDialog(this.attendance_list[event.item]);
+      this.activateArchiveAttendanceDialog(event.item.person.id);
     },
 
     cancelArchive() {
@@ -632,13 +599,13 @@ export default {
           this.meetings[idx].active = false;
           this.archiveDialog.loading = false;
           this.archiveDialog.show = false;
-          this.showSnackbar(this.$t("groups.messages.meeting-archived"));
+          eventBus.$emit('message', { content:this.$t("groups.messages.meeting-archived") });
         })
         .catch(err => {
           console.error("ARCHIVE FALURE", err.response);
           this.archiveDialog.loading = false;
           this.archiveDialog.show = false;
-          this.showSnackbar(this.$t("groups.messages.error-archiving-meeting"));
+          eventBus.$emit('message', { content:this.$t("groups.messages.error-archiving-meeting") });
         });
     },
 
@@ -653,13 +620,13 @@ export default {
             console.log("ARCHIVE", resp);
             this.archiveAttendanceDialog.loading = false;
             this.archiveAttendanceDialog.show = false;
-            this.showSnackbar(this.$t("groups.messages.attendance-archived"));
+            eventBus.$emit('message', { content:this.$t("groups.messages.attendance-archived") });
           })
           .catch(err => {
             console.error("ARCHIVE FALURE", err.response);
             this.archiveAttendanceDialog.loading = false;
             this.archiveAttendanceDialog.show = false;
-            this.showSnackbar(this.$t("groups.messages.error-archiving-attendance"));
+            eventBus.$emit('message', { content:this.$t("groups.messages.error-archiving-attendance") });
           });
     },
 
@@ -673,13 +640,11 @@ export default {
         .then(resp => {
           console.log("UNARCHIVED", resp);
           Object.assign(this.meetings[idx], resp.data);
-          this.showSnackbar(this.$t("groups.messages.meeting-unarchived"));
+          eventBus.$emit('message', { content:this.$t("groups.messages.meeting-unarchived") });
         })
         .catch(err => {
           console.error("UNARCHIVE FALURE", err.response);
-          this.showSnackbar(
-            this.$t("groups.messages.error-unarchiving-meeting")
-          );
+          eventBus.$emit('message', { content:this.$t("groups.messages.error-unarchiving-meeting") });
         });
     },
 
@@ -698,7 +663,7 @@ export default {
               this.$http
                 .get(`/api/v1/groups/meetings/${ meetingId[i] }/attendances`)
                 .then(resp1 => {
-                  resp.data[i].attendances = resp1.data.length;
+                  resp.data[i].attendances = resp1.data;
                 });
             }
             this.meetings = resp.data;
@@ -706,30 +671,46 @@ export default {
           this.tableLoading = false;
         });
     },
-    showAttendance(event){
-      const meetingId = event.id;
-      this.ViewingMeetingId = event.id;
-      this.$http
-        .get(`/api/v1/groups/meetings/${meetingId}/attendances`)
-        .then(resp => {
-          for (let i = 0; i < resp.data.length; i++){
-            this.attendance_list[resp.data[i].person.firstName] = resp.data[i].personId;
-            this.attendance_people_list = resp.data.map(p=> p.person.firstName);
-          }
-        });
+
+    showAttendance(meeting){
+      const meetingId = meeting.id;
+      this.ViewingMeetingId = meeting.id;
       this.attendanceDialog.show = true;
+      this.attendanceDialog.attendances = this.meetings.find(m => m.id == meetingId).attendances
     },
 
     refreshAttendance(id){
+      this.attendanceDialog.attendances = [];
+      this.tableLoading = true;
+      const groupId = this.$route.params.group;
       this.$http
-        .get(`/api/v1/groups/meetings/${id}/attendances`)
+        .get(`/api/v1/groups/meetings?where=group_id:${groupId}`)
         .then(resp => {
-          for (let i = 0; i < resp.data.length; i++){
-            this.attendance_list[resp.data[i].person.firstName] = resp.data[i].personId;
-            this.attendance_people_list = resp.data.map(p=> p.person.firstName);
+          if (!resp.data.msg) {
+            let meetingId = []
+            for (let i = 0; i < resp.data.length; i++){
+              meetingId.push(resp.data[i].id);
+            }
+            for (let i = 0; i < resp.data.length; i++){
+              this.$http
+                .get(`/api/v1/groups/meetings/${ meetingId[i] }/attendances`)
+                .then(resp1 => {
+                  resp.data[i].attendances = resp1.data;
+                });
+            }
+            this.meetings = resp.data;
           }
-        });
+          this.tableLoading = false;
+        }).then((value) => {
+          this.updateData();
+            }
+          );
+    },
+
+    updateData(){
+      const meetingId = this.ViewingMeetingId;
       this.attendanceDialog.show = true;
+      this.attendanceDialog.attendances = this.meetings.find(m => m.id == meetingId).attendances
     },
 
     cancelShowAttendance(){
