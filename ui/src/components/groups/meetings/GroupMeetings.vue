@@ -686,20 +686,18 @@ export default {
       this.$http
         .get(`/api/v1/groups/meetings?where=group_id:${groupId}`)
         .then(resp => {
-          if (!resp.data.msg) {
-            let meetingId = []
-            for (let i = 0; i < resp.data.length; i++){
-              meetingId.push(resp.data[i].id);
-            }
-            for (let i = 0; i < resp.data.length; i++){
-              this.$http
-                .get(`/api/v1/groups/meetings/${ meetingId[i] }/attendances`)
-                .then(resp1 => {
-                  resp.data[i].attendances = resp1.data;
-                });
-            }
-            this.meetings = resp.data;
+          let meetingId = []
+          for (let i = 0; i < resp.data.length; i++){
+            meetingId.push(resp.data[i].id);
           }
+          for (let i = 0; i < resp.data.length; i++){
+            this.$http
+              .get(`/api/v1/groups/meetings/${ meetingId[i] }/attendances`)
+              .then(resp1 => {
+                resp.data[i].attendances = resp1.data;
+              });
+          }
+          this.meetings = resp.data;
           this.tableLoading = false;
         }).then((value) => {
           this.updateData();
