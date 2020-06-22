@@ -221,6 +221,7 @@
             <v-btn
               flat
               :disabled="entityTypeDialog.entityType.name === ''"
+              :loading="entityTypeDialog.loading"
               color="primary"
               @click="saveEntityType"
               >{{ $t("actions.save") }}</v-btn
