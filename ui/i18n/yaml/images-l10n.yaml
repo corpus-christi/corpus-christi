@@ -4,16 +4,20 @@ images:
       _desc: Display when no image is selected
       en-US: No image selected.
       es-EC: Ninguna imagen seleccionada.
+      zh-CN: 未选择图像。
     not-found:
       _desc: Display when an image is not found
       en-US: Image not found.
       es-EC: Imagen no encontrada.
+      zh-CN: 找不到图片。
   actions:
     add-image:
       _desc: Use in parent component to open the image chooser card
       en-US: Add Image
       es-EC: Añadir Imagen
+      zh-CN: 添加图片
   image-description:
     _desc: placeholder text for a textfield
     en-US: Image description
     es-EC: Descripción de la imagen
+    zh-CN: 图片说明

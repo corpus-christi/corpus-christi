@@ -3,171 +3,226 @@ courses:
     title:
       en-US: Dashboard
       es-EC: Tablero
+      zh-CN: 仪表板
     headers:
-        course-retention:
-          en-US: Course Retention
-          es-EC: Retención del Curso
-        course-success:
-          en-US: Course Success
-          es-EC: Éxito del Curso
+      course-retention:
+        en-US: Course Retention
+        es-EC: Retención del Curso
+        zh-CN: 课程保留
+      course-success:
+        en-US: Course Success
+        es-EC: Éxito del Curso
+        zh-CN: 课程成功
     charts:
       course:
         en-US: Course
         es-EC: Curso
+        zh-CN: 课程
       enrolled:
         en-US: Enrolled
         es-EC: Inscrito
+        zh-CN: 已入学
       attended:
         en-US: Attended
         es-EC: Asistió
+        zh-CN: 参加
       did-not-attend:
         en-US: Did Not Attend
         es-EC: No Asistió
+        zh-CN: 没有参加
       graduated:
         en-US: Graduated
         es-EC: Se Graduó
+        zh-CN: 已毕业
       did-not-graduate:
         en-US: Did Not Graduate
         es-EC: No Se Graduó
+        zh-CN: 没有毕业
   course:
     en-US: Courses
     es-EC: Cursos
+    zh-CN: 培训班
   enrolled:
     en-US: Number Enrolled
     es-EC: Número Registrado
+    zh-CN: 报名人数
   title:
     en-US: Title
     es-EC: Título
+    zh-CN: 标题
   description:
     en-US: Description
     es-EC: Descripción
+    zh-CN: 描述
   new:
     en-US: New Course
     es-EC: Nuevo Curso
+    zh-CN: 新课程
   prerequisites:
     en-US: Prerequisites
     es-EC: Prerrequisitos
+    zh-CN: 先决条件
   no-prerequisites:
     _desc: For indicating that a course has no prerequisites
     en-US: This course has no prerequisites.
     es-EC: Este curso no tiene prerrequisitos.
+    zh-CN: 本课程没有任何先决条件。
   added:
     en-US: Course added
     es-EC: Curso añadido
+    zh-CN: 课程已添加
   updated:
     en-US: Course updated
     es-EC: Curso actualizado
+    zh-CN: 课程已更新
   add-failed:
     en-US: Failed to add course
     es-EC: Se falló a añadir el curso
+    zh-CN: 添加课程失败
   update-failed:
     en-US: Failed to update course
     es-EC: Se falló a actualizar el curso
+    zh-CN: 更新课程失败
   archived:
     en-US: Course archived
     es-EC: Curso archivado
+    zh-CN: 课程已存档
   reactivated:
     en-US: Course unarchived
     es-EC: Curso desarchivado
+    zh-CN: 课程未归档
   confirm-archive:
     en-US: Are you sure you want to archive this course?
     es-EC: ¿Estás seguro que quieres archivar este curso?
+    zh-CN: 您确定要存档此课程吗？
   is-archived:
     _desc: For indicating that a course is currently archived
     en-US: This course is archived
     es-EC: Este curso está archivado
+    zh-CN: 该课程已存档
   course-offering:
     en-US: Course Offerings
     es-EC: Ofertas de Cursos
+    zh-CN: 课程内容
   choose-time:
     en-US: Time
     es-EC: Tiempo
+    zh-CN: 时间
   teacher:
     en-US: Teacher
     es-EC: Maestro
+    zh-CN: 老师
   location:
     en-US: Location
     es-EC: Ubicación
+    zh-CN: 位置
   max-size:
     en-US: Max Number of Students
     es-EC: Número Máximo de Estudiantes
+    zh-CN: 最多学生数
   dates:
     en-US: Dates
     es-EC: Fechas
+    zh-CN: 日期
   date:
     en-US: Date
     es-EC: Fecha
+    zh-CN: 日期
   new-offering-short:
     _desc: Action for creating a new course offering, short version for buttons
     en-US: New Offering
     es-EC: Nueva Oferta
+    zh-CN: 新产品
   new-offering:
     en-US: New Offering
     es-EC: Nuevo Oferta
+    zh-CN: 新产品
   students:
     en-US: Students
     es-EC: Estudiantes
+    zh-CN: 学生们
   reject:
     en-US: Reject
     es-EC: Rechazar
+    zh-CN: 拒绝
   confirm-student:
     en-US: Would you like to confirm or reject this student?
     es-EC: ¿Te gustarías confirmar o rechazar este estudiante?
+    zh-CN: 您要确认还是拒绝该学生？
   schedule:
     en-US: Schedule
     es-EC: Horario
+    zh-CN: 时间表
   new-meeting:
     en-US: New Meeting
     es-EC: Nuevo Reunión
+    zh-CN: 新会议
   add-meeting:
     en-US: Add Meeting
     es-EC: Añadir Reunión
+    zh-CN: 添加会议
   when:
     en-US: When
     es-EC: Cuándo
+    zh-CN: 什么时候
   info-meeting-dates:
     _desc: Inform the user they can select multiple dates for a class meeting
     en-US: You can choose multiple dates to create many meetings.
     es-EC: Puede elegir fechas múltiples para crear muchos reuniones.
+    zh-CN: 您可以选择多个日期来创建多个会议。
   meeting-added:
     en-US: Meeting(s) added
     es-EC: Reuniones añadido
+    zh-CN: 会议已添加
   meeting-updated:
     en-US: Meeting updated
     es-EC: Reunión actualizado
+    zh-CN: 会议已更新
   add-meeting-failed:
     en-US: Failed to add meeting(s)
     es-EC: Se falló a añadir los reuniones
+    zh-CN: 无法添加会议
   update-meeting-failed:
     en-US: Failed to update meeting
     es-EC: Se falló a actualizar el reunión
+    zh-CN: 无法更新会议
   register:
     en-US: Register
     es-EC: Registrar
+    zh-CN: 寄存器
   register-success:
     en-US: Successfully Registered
     es-EC: Registrado con Éxito
+    zh-CN: 成功注册
   register-for-course:
     en-US: Register for this course
     es-EC: Registrar para este curso
+    zh-CN: 注册此课程
   choose-offering:
     en-US: Choose Offering
     es-EC: Elegir Oferta
+    zh-CN: 选择产品
   create-new-person:
     en-US: Create a new person
     es-EC: Crear una nueva persona
+    zh-CN: 创建一个新人
   class-attendance:
     en-US: Attendance
     es-EC: Asistencia
+    zh-CN: 出勤率
   class-attendance-for:
     en-US: Attendance for
     es-EC: Asistencia para
+    zh-CN: 出席
   class-attendance-load-failed:
     en-US: Failed to load class attendance
     es-EC: Se falló a conseguir la asistencia
+    zh-CN: 无法上课
   class-attendance-updated:
     en-US: Class attendance updated
     es-EC: Asistencia actualizado
+    zh-CN: 上课人数已更新
   class-attendance-update-failed:
     en-US: Failed to update attendance
     es-EC: Se falló a actualizar la asistencia
+    zh-CN: 无法更新出勤

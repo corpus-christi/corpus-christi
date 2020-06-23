@@ -75,7 +75,11 @@
             data-cy="add-participant"
           >
             <v-icon dark left>add</v-icon>
-            {{ isManagerMode ? $t("actions.add-manager") : "Add Members" }}
+            {{
+              isManagerMode
+                ? $t("groups.managers.add-manager")
+                : $t("groups.members.add-member")
+            }}
           </v-btn>
         </v-flex>
       </v-layout>
@@ -202,15 +206,19 @@
       <v-card>
         <v-card-title primary-title>
           <div>
-            <h3 v-if="isManagerMode" class="headline mb-0">
+            <h3 v-if="participantDialog.editMode" class="headline mb-0">
               {{
-                participantDialog.editMode
-                  ? "Edit Manager"
-                  : $t("person.actions.add-manager")
+                isManagerMode
+                  ? $t("groups.managers.edit-manager")
+                  : $t("groups.members.edit-member")
               }}
             </h3>
             <h3 v-else class="headline mb-0">
-              {{ participantDialog.editMode ? "Edit Member" : "Add Member" }}
+              {{
+                isManagerMode
+                  ? $t("groups.managers.add-manager")
+                  : $t("groups.members.add-member")
+              }}
             </h3>
           </div>
         </v-card-title>
@@ -354,8 +362,8 @@ export default {
             value: "person.email"
           },
           {
-            text: this.$t("person.manager-type"),
-            value: "person.manager-type"
+            text: this.$t("groups.managers.manager-type"),
+            value: "groups.managers.manager-type"
           },
           {
             text: this.$t("actions.header"),
