@@ -132,11 +132,14 @@ export default {
     ...mapState(["currentAccount"])
   },
   watch: {
-    initialData(newData) {
-      this.email.recipients = newData.recipients;
+    "initialData.recipients": function() {
+      this.syncInitialData();
     }
   },
   methods: {
+    syncInitialData() {
+      this.email.recipients = this.initialData.recipients;
+    },
     resetEmail() {
       this.email.subject = "";
       this.email.body = "";
@@ -148,6 +151,7 @@ export default {
     },
     cancel() {
       this.resetEmail();
+      this.syncInitialData();
       this.$emit("cancel");
     },
     sendEmail() {
