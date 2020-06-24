@@ -57,7 +57,7 @@ class GroupTypeSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     name = fields.String(required=True, validate=Length(min=1))
 
-    groups = fields.Nested('GroupSchema', dump_only=True, many=True, only=['id', 'name'])
+    groups = fields.Nested('GroupSchema', dump_only=True, many=True, only=['id', 'name', 'active'])
         
 
 # ---- Meeting
@@ -156,7 +156,7 @@ class ManagerType(Base):
 class ManagerTypeSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     name = fields.String(required=True, validate=Length(min=1))
-    managers = fields.Nested('ManagerSchema', dump_only=True, many=True, only=['person', 'group'])
+    managers = fields.Nested('ManagerSchema', dump_only=True, many=True, only=['person', 'group', 'active'])
 
 
 # ---- Attendance

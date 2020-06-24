@@ -186,8 +186,9 @@ export default {
     else if (this.team) endpoint = "/api/v1/teams/";
     else if (this.asset) endpoint = "/api/v1/assets/";
     else if (this.address) endpoint = "/api/v1/places/addresses";
-    else if (this.group) endpoint = "/api/v1/groups/groups";
-    else if (this.meeting) endpoint = "/api/v1/groups/meetings";
+    else if (this.group) endpoint = "/api/v1/groups/groups?where=active:true";
+    else if (this.meeting)
+      endpoint = "/api/v1/groups/meetings?where=active:true";
     else if (this.groupType) endpoint = "/api/v1/groups/group-types";
     else if (this.managerType) endpoint = "/api/v1/groups/manager-types";
     this.$http

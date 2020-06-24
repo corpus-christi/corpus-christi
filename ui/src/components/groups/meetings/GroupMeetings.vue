@@ -7,11 +7,11 @@
       <v-spacer></v-spacer>
       <v-flex md2>
         <v-text-field
-        v-model="search"
-        append-icon="search"
-        v-bind:label="$t('actions.search')"
-        single-line
-        hide-details
+          v-model="search"
+          append-icon="search"
+          v-bind:label="$t('actions.search')"
+          single-line
+          hide-details
         ></v-text-field>
       </v-flex>
       <v-spacer></v-spacer>
@@ -49,22 +49,16 @@
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
-        <td
-          v-on:click="showAttendance()"
-        >{{ props.item.description }}</td>
-        <td
-          v-on:click="showAttendance()"
-        >{{ props.item.startTime | formatDate }}</td>
-        <td
-          v-on:click="showAttendance()"
-        >{{ props.item.stopTime | formatDate }}</td>
-        <td
-          v-on:click="showAttendance()"
-        >{{ attendances_number }}</td>
-        <td
-          v-on:click="showAttendance()"
-        >{{ props.item.address.address}}</td>
-<!--           <td>{{ getDisplayLocation(props.item.location) }}123</td>-->
+        <td v-on:click="showAttendance()">{{ props.item.description }}</td>
+        <td v-on:click="showAttendance()">
+          {{ props.item.startTime | formatDate }}
+        </td>
+        <td v-on:click="showAttendance()">
+          {{ props.item.stopTime | formatDate }}
+        </td>
+        <td v-on:click="showAttendance()">{{ attendances_number }}</td>
+        <td v-on:click="showAttendance()">{{ props.item.address.address }}</td>
+        <!--           <td>{{ getDisplayLocation(props.item.location) }}123</td>-->
         <td>
           <template v-if="props.item.active">
             <v-tooltip bottom>
@@ -135,26 +129,21 @@
       <v-card>
         <v-card-title primary-title>
           <div>
-            <h2>
-              {{ $t("events.attendance") }}
-            </h2>
+            <h2>{{ $t("events.attendance") }}</h2>
           </div>
         </v-card-title>
-          <v-list v-model="attendance_list">
-              <div
-                v-for="(person, i) in attendance_list"
-                :key="i"
-              >
-                <v-btn color = "success" v-text="person"></v-btn>
-              </div>
-          </v-list>
+        <v-list v-model="attendance_list">
+          <div v-for="(person, i) in attendance_list" :key="i">
+            <v-btn color="success" v-text="person"></v-btn>
+          </div>
+        </v-list>
         <v-card-actions>
           <v-btn
             v-on:click="cancelShowAttendance"
             color="secondary"
             flat
             data-cy="cancel-archive"
-          >{{ $t("actions.cancel") }}</v-btn
+            >{{ $t("actions.cancel") }}</v-btn
           >
           <v-spacer></v-spacer>
           <v-btn
@@ -163,7 +152,7 @@
             raised
             :loading="archiveDialog.loading"
             data-cy="confirm-archive"
-          >{{ $t("actions.confirm") }}</v-btn
+            >{{ $t("actions.confirm") }}</v-btn
           >
         </v-card-actions>
       </v-card>
@@ -173,6 +162,7 @@
     <v-dialog v-model="meetingDialog.show" persistent max-width="500px">
       <meeting-form
         :edit-mode="false"
+        create-text="groups.meetings.add-meeting"
         :initial-data="meetingDialog.meeting"
         :save-loading="meetingDialog.saveLoading"
         descriptionLabel="Description Label"
@@ -255,15 +245,15 @@ export default {
         show: false,
         text: ""
       },
-      meeting:{
-        active:''
+      meeting: {
+        active: ""
       },
-      attendanceDialog:{
+      attendanceDialog: {
         show: false
       },
       viewStatus: "viewActive",
       attendances_number: 0,
-      attendance_list:[]
+      attendance_list: []
     };
   },
 
@@ -444,7 +434,7 @@ export default {
       this.archiveDialog.loading = true;
       const meetingId = this.archiveDialog.meetingId;
       const idx = this.meetings.findIndex(ev => ev.id === meetingId);
-      this.meeting['active'] = 'false';
+      this.meeting["active"] = "false";
       this.$http
         .patch(`/api/v1/groups/meetings/${meetingId}`, this.meeting)
         .then(resp => {
@@ -466,7 +456,7 @@ export default {
       const idx = this.meetings.findIndex(ev => ev.id === meeting.id);
       const meetingId = meeting.id;
       meeting.id *= -1; // to show loading spinner
-      this.meeting['active'] = 'true';
+      this.meeting["active"] = "true";
       this.$http
         .patch(`/api/v1/groups/meetings/${meetingId}`, this.meeting)
         .then(resp => {
@@ -494,7 +484,7 @@ export default {
           this.tableLoading = false;
         });
     },
-    getAttendances(){
+    getAttendances() {
       const groupId = this.$route.params.group;
       this.$http
         .get(`/api/v1/groups/meetings/${groupId}/attendances`)
@@ -502,18 +492,18 @@ export default {
           this.attendances_number = resp.data.length;
         });
     },
-    showAttendance(){
-    //  need to get the attendance people in this meeting
+    showAttendance() {
+      //  need to get the attendance people in this meeting
       const groupId = this.$route.params.group;
       this.$http
         .get(`/api/v1/groups/meetings/${groupId}/attendances`)
         .then(resp => {
-          this.attendance_list = resp.data.map(p=> p.person.firstName);
+          this.attendance_list = resp.data.map(p => p.person.firstName);
           console.log(this.attendance_list);
         });
       this.attendanceDialog.show = true;
     },
-    cancelShowAttendance(){
+    cancelShowAttendance() {
       this.attendanceDialog.show = false;
     }
   },

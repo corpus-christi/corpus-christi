@@ -245,6 +245,16 @@ groups:
       en-US: Show Group Treeview
       es-EC: Mostrar vista de árbol de grupo
       zh-CN: 显示组树视图
+    expand:
+      _desc: expand the nodes in treeview
+      en-US: Expand
+      es-EC: Expandir
+      zh-CN: 展开
+    collapse:
+      _desc: collapse the nodes in treeview
+      en-US: Collapse
+      es-EC: Colapso
+      zh-CN: 合并
     title:
       en-US: Group Treeview
       es-EC: Vista de árbol grupal
@@ -253,7 +263,7 @@ groups:
     title:
       en-US: Meetings
       es-EC: Reuniones
-      zh-CN: 会议会议
+      zh-CN: 会议
     add-meeting:
       en-US: Add Meeting
       es-EC: Agregar reunión
@@ -332,17 +342,17 @@ groups:
   error-removing-group:
     en-US: Error while removing group
     es-EC: Error al eliminadar este grupo
-  # dashboard:
-  #   title:
-  #     en-US: Dashboard
-  #     es-EC: Tablero
-  #   headers:
-  #       course-retention:
-  #         en-US: Course Retention
-  #         es-EC: Retención del Curso
-  #       course-success:
-  #         en-US: Course Success
-  #         es-EC: Éxito del Curso
+    # dashboard:
+    #   title:
+    #     en-US: Dashboard
+    #     es-EC: Tablero
+    #   headers:
+    #       course-retention:
+    #         en-US: Course Retention
+    #         es-EC: Retención del Curso
+    #       course-success:
+    #         en-US: Course Success
+    #         es-EC: Éxito del Curso
 
     zh-CN: 删除群组时出错
   messages:
@@ -377,7 +387,7 @@ groups:
     group-archived:
       en-US: Group archived
       es-EC: Grupo archivado
-      zh-CN: 群组已归档
+      zh-CN: 小组已归档
     error-archiving-group:
       en-US: Error while archiving group
       es-EC: Error al archivar el grupo
@@ -385,7 +395,7 @@ groups:
     group-unarchived:
       en-US: Group unarchived
       es-EC: Grupo desarchivado # probably not right
-      zh-CN: 小组未存档
+      zh-CN: 小组已恢复
     group-unarchiving-group:
       en-US: Error while unarchiving group
       es-EC: Error al desarchivar el grupo
