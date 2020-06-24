@@ -1,540 +1,997 @@
 country:
   AD:
     en-US: Andorra
+    es-EC: Andorra
+    zh-CN: 安道尔
   AE:
     en-US: United Arab Emirates
+    es-EC: Emiratos Árabes Unidos
+    zh-CN: 阿拉伯联合酋长国
   AF:
     en-US: Afghanistan
-    es-EC: "Afganist\xC3\xA1n"
+    es-EC: Afganistán
+    zh-CN: 阿富汗
   AG:
     en-US: Antigua and Barbuda
+    es-EC: Antigua y Barbuda
+    zh-CN: 安提瓜和巴布达
   AI:
     en-US: Anguilla
+    es-EC: Anguila
+    zh-CN: 安圭拉岛
   AL:
     en-US: Albania
     es-EC: Albania
+    zh-CN: 阿尔巴尼亚
   AM:
     en-US: Armenia
+    es-EC: Armenia
+    zh-CN: 亚美尼亚
   AO:
     en-US: Angola
+    es-EC: Angola
+    zh-CN: 安哥拉
   AQ:
     en-US: Antarctica
+    es-EC: Antártida
+    zh-CN: 南极洲
   AR:
     en-US: Argentina
     es-EC: Argentina
+    zh-CN: 阿根廷
   AS:
     en-US: American Samoa
     es-EC: Samoa Americana
+    zh-CN: 美属萨摩亚
   AT:
     en-US: Austria
+    es-EC: Austria
+    zh-CN: 奥地利
   AU:
     en-US: Australia
+    es-EC: Australia
+    zh-CN: 澳大利亚
   AW:
     en-US: Aruba
+    es-EC: Aruba
+    zh-CN: 阿鲁巴岛
   AX:
-    en-US: "\xC5land Islands"
+    en-US: Åland Islands
+    es-EC: Islas Aland
+    zh-CN: 奥兰群岛
   AZ:
     en-US: Azerbaijan
+    es-EC: Azerbaiyán
+    zh-CN: 阿塞拜疆
   BA:
     en-US: Bosnia and Herzegovina
+    es-EC: Bosnia y Herzegovina
+    zh-CN: 波斯尼亚和黑塞哥维那（简称：波黑
   BB:
     en-US: Barbados
     es-EC: Barbados
+    zh-CN: 巴巴多斯
   BD:
     en-US: Bangladesh
+    es-EC: Bangladesh
+    zh-CN: 孟加拉国
   BE:
     en-US: Belgium
+    es-EC: Bélgica
+    zh-CN: 比利时
   BF:
     en-US: Burkina Faso
+    es-EC: Burkina Faso
+    zh-CN: 布基纳法索
   BG:
     en-US: Bulgaria
+    es-EC: Bulgaria
+    zh-CN: 保加利亚
   BH:
     en-US: Bahrain
+    es-EC: Bahrein
+    zh-CN: 巴林
   BI:
     en-US: Burundi
+    es-EC: Burundi
+    zh-CN: 布隆迪
   BJ:
     en-US: Benin
+    es-EC: Benin
+    zh-CN: 贝宁
   BL:
-    en-US: "Saint Barth\xE9lemy"
+    en-US: Saint Barthélemy
+    es-EC: San Bartolomé
+    zh-CN: 圣巴托洛缪岛
   BM:
     en-US: Bermuda
+    es-EC: islas Bermudas
+    zh-CN: 百慕大
   BN:
     en-US: Brunei Darussalam
+    es-EC: Brunei Darussalam
+    zh-CN: 文莱达鲁萨兰国
   BO:
     en-US: Bolivia, Plurinational State of
     es-EC: Bolivia, Estado Plurinacional de
+    zh-CN: 玻利维亚多民族国
   BQ:
     en-US: Bonaire, Sint Eustatius and Saba
+    es-EC: Bonaire, San Eustaquio y Saba
+    zh-CN: 博内尔，圣尤斯特歇斯和萨巴
   BR:
     en-US: Brazil
     es-EC: Brasil
+    zh-CN: 巴西
   BS:
     en-US: Bahamas
     es-EC: Bahamas
+    zh-CN: 巴哈马
   BT:
     en-US: Bhutan
+    es-EC: Bután
+    zh-CN: 不丹
   BV:
     en-US: Bouvet Island
+    es-EC: Isla Bouvet
+    zh-CN: 布维岛
   BW:
     en-US: Botswana
+    es-EC: Botsuana
+    zh-CN: 博茨瓦纳
   BY:
     en-US: Belarus
+    es-EC: Bielorrusia
+    zh-CN: 白俄罗斯
   BZ:
     en-US: Belize
     es-EC: Belice
+    zh-CN: 伯利兹
   CA:
     en-US: Canada
-    es-EC: "Canad\xC3\xA1"
+    es-EC: Canadá
+    zh-CN: 加拿大
   CC:
     en-US: Cocos (Keeling) Islands
+    es-EC: Islas Cocos (Keeling)
+    zh-CN: 科科斯（基林）群岛
   CD:
     en-US: Congo, the Democratic Republic of the
+    es-EC: Congo, la República Democrática del
+    zh-CN: 刚果民主共和国
   CF:
     en-US: Central African Republic
+    es-EC: República Centroafricana
+    zh-CN: 中非共和国
   CG:
     en-US: Congo
+    es-EC: Congo
+    zh-CN: 刚果
   CH:
     en-US: Switzerland
+    es-EC: Suiza
+    zh-CN: 瑞士
   CI:
-    en-US: "C\xF4te d'Ivoire"
+    en-US: Côte d'Ivoire
+    es-EC: Costa de Marfil
+    zh-CN: 科特迪瓦
   CK:
     en-US: Cook Islands
+    es-EC: Islas Cook
+    zh-CN: 库克群岛
   CL:
     en-US: Chile
     es-EC: Chile
+    zh-CN: 智利
   CM:
     en-US: Cameroon
+    es-EC: Camerún
+    zh-CN: 喀麦隆
   CN:
     en-US: China
+    es-EC: China
+    zh-CN: 中国
   CO:
     en-US: Colombia
     es-EC: Colombia
+    zh-CN: 哥伦比亚
   CR:
     en-US: Costa Rica
     es-EC: Costa Rica
+    zh-CN: 哥斯达黎加
   CU:
     en-US: Cuba
     es-EC: Cuba
+    zh-CN: 古巴
   CV:
     en-US: Cape Verde
+    es-EC: Cabo Verde
+    zh-CN: 佛得角
   CW:
-    en-US: "Cura\xE7ao"
+    en-US: Curaçao
+    es-EC: Curazao
+    zh-CN: 库拉索
   CX:
     en-US: Christmas Island
+    es-EC: Isla de Navidad
+    zh-CN: 圣诞岛
   CY:
     en-US: Cyprus
+    es-EC: Chipre
+    zh-CN: 塞浦路斯
   CZ:
     en-US: Czech Republic
+    es-EC: Republica checa
+    zh-CN: 捷克共和国
   DE:
     en-US: Germany
+    es-EC: Alemania
+    zh-CN: 德国
   DJ:
     en-US: Djibouti
+    es-EC: Djibouti
+    zh-CN: 吉布地
   DK:
     en-US: Denmark
+    es-EC: Dinamarca
+    zh-CN: 丹麦
   DM:
     en-US: Dominica
     es-EC: Dominica
+    zh-CN: 多米尼加
   DO:
     en-US: Dominican Republic
-    es-EC: "Rep\xC3\xBAblica Dominicana"
+    es-EC: República Dominicana
+    zh-CN: 多明尼加共和国
   DZ:
     en-US: Algeria
     es-EC: Argelia
+    zh-CN: 阿尔及利亚
   EC:
     en-US: Ecuador
     es-EC: Ecuador
+    zh-CN: 厄瓜多尔
   EE:
     en-US: Estonia
+    es-EC: Estonia
+    zh-CN: 爱沙尼亚
   EG:
     en-US: Egypt
+    es-EC: Egipto
+    zh-CN: 埃及
   EH:
     en-US: Western Sahara
+    es-EC: Sahara Occidental
+    zh-CN: 西撒哈拉
   ER:
     en-US: Eritrea
+    es-EC: Eritrea
+    zh-CN: 厄立特里亚
   ES:
     en-US: Spain
+    es-EC: España
+    zh-CN: 西班牙
   ET:
     en-US: Ethiopia
+    es-EC: Etiopía
+    zh-CN: 埃塞俄比亚
   FI:
     en-US: Finland
+    es-EC: Finlandia
+    zh-CN: 芬兰
   FJ:
     en-US: Fiji
+    es-EC: Fiyi
+    zh-CN: 斐济
   FK:
     en-US: Falkland Islands (Malvinas)
-    es-EC: Islas Malvinas
+    es-EC: Islas Malvinas (Falkland Islands)
+    zh-CN: 福克兰群岛（马尔维纳斯）
   FM:
     en-US: Micronesia, Federated States of
+    es-EC: Micronesia, Estados Federados de
+    zh-CN: 密克罗尼西亚联邦
   FO:
     en-US: Faroe Islands
+    es-EC: Islas Faroe
+    zh-CN: 法罗群岛
   FR:
     en-US: France
+    es-EC: Francia
+    zh-CN: 法国
   GA:
     en-US: Gabon
+    es-EC: Gabón
+    zh-CN: 加蓬
   GB:
     en-US: United Kingdom
+    es-EC: Reino Unido
+    zh-CN: 英国
   GD:
     en-US: Grenada
-    es-EC: Grenada
+    es-EC: Granada
+    zh-CN: 格林纳达
   GE:
     en-US: Georgia
+    es-EC: Georgia
+    zh-CN: 佐治亚州
   GF:
     en-US: French Guiana
     es-EC: Guayana Francesa
+    zh-CN: 法属圭亚那
   GG:
     en-US: Guernsey
+    es-EC: Guernsey
+    zh-CN: 根西岛
   GH:
     en-US: Ghana
+    es-EC: Ghana
+    zh-CN: 加纳
   GI:
     en-US: Gibraltar
+    es-EC: Gibraltar
+    zh-CN: 直布罗陀
   GL:
     en-US: Greenland
+    es-EC: Groenlandia
+    zh-CN: 格陵兰
   GM:
     en-US: Gambia
+    es-EC: Gambia
+    zh-CN: 冈比亚
   GN:
     en-US: Guinea
+    es-EC: Guinea
+    zh-CN: 几内亚
   GP:
     en-US: Guadeloupe
+    es-EC: Guadalupe
+    zh-CN: 瓜德罗普岛
   GQ:
     en-US: Equatorial Guinea
+    es-EC: Guinea Ecuatorial
+    zh-CN: 赤道几内亚
   GR:
     en-US: Greece
+    es-EC: Grecia
+    zh-CN: 希腊
   GS:
     en-US: South Georgia and the South Sandwich Islands
+    es-EC: Georgia del sur y las islas Sandwich del sur
+    zh-CN: 南乔治亚岛和南桑威奇群岛
   GT:
     en-US: Guatemala
     es-EC: Guatemala
+    zh-CN: 危地马拉
   GU:
     en-US: Guam
+    es-EC: Guam
+    zh-CN: 关岛
   GW:
     en-US: Guinea-Bissau
+    es-EC: Guinea-Bissau
+    zh-CN: 几内亚比绍
   GY:
     en-US: Guyana
     es-EC: Guayana
+    zh-CN: 圭亚那
   HK:
     en-US: Hong Kong
+    es-EC: Hong Kong
+    zh-CN: 香港
   HM:
     en-US: Heard Island and McDonald Islands
+    es-EC: Islas Heard y McDonald
+    zh-CN: 希尔德岛和麦当劳群岛
   HN:
     en-US: Honduras
     es-EC: Honduras
+    zh-CN: 洪都拉斯
   HR:
     en-US: Croatia
+    es-EC: Croacia
+    zh-CN: 克罗地亚
   HT:
     en-US: Haiti
-    es-EC: "Hait\xC3\xAD"
+    es-EC: Haití
+    zh-CN: 海地
   HU:
     en-US: Hungary
+    es-EC: Hungría
+    zh-CN: 匈牙利
   ID:
     en-US: Indonesia
+    es-EC: Indonesia
+    zh-CN: 印度尼西亚
   IE:
     en-US: Ireland
+    es-EC: Irlanda
+    zh-CN: 爱尔兰
   IL:
     en-US: Israel
+    es-EC: Israel
+    zh-CN: 以色列
   IM:
     en-US: Isle of Man
+    es-EC: Isla del hombre
+    zh-CN: 马恩岛
   IN:
     en-US: India
+    es-EC: India
+    zh-CN: 印度
   IO:
     en-US: British Indian Ocean Territory
+    es-EC: Territorio Británico del Océano Índico
+    zh-CN: 英属印度洋领地
   IQ:
     en-US: Iraq
+    es-EC: Irak
+    zh-CN: 伊拉克
   IR:
     en-US: Iran, Islamic Republic of
+    es-EC: Irán (República Islámica de
+    zh-CN: 伊朗伊斯兰共和国
   IS:
     en-US: Iceland
+    es-EC: Islandia
+    zh-CN: 冰岛
   IT:
     en-US: Italy
+    es-EC: Italia
+    zh-CN: 意大利
   JE:
     en-US: Jersey
+    es-EC: Jersey
+    zh-CN: 泽西岛
   JM:
     en-US: Jamaica
+    es-EC: Jamaica
+    zh-CN: 牙买加
   JO:
     en-US: Jordan
+    es-EC: Jordán
+    zh-CN: 约旦
   JP:
     en-US: Japan
+    es-EC: Japón
+    zh-CN: 日本
   KE:
     en-US: Kenya
+    es-EC: Kenia
+    zh-CN: 肯尼亚
   KG:
     en-US: Kyrgyzstan
+    es-EC: Kirguistán
+    zh-CN: 吉尔吉斯斯坦
   KH:
     en-US: Cambodia
+    es-EC: Camboya
+    zh-CN: 柬埔寨
   KI:
     en-US: Kiribati
+    es-EC: Kiribati
+    zh-CN: 基里巴斯
   KM:
     en-US: Comoros
+    es-EC: Comoras
+    zh-CN: 科摩罗
   KN:
     en-US: Saint Kitts and Nevis
+    es-EC: San Cristóbal y Nieves
+    zh-CN: 圣基茨和尼维斯
   KP:
     en-US: Korea, Democratic People's Republic of
+    es-EC: República de Corea, Popular Democrática de
+    zh-CN: 韩国，朝鲜民主主义人民共和国
   KR:
     en-US: Korea, Republic of
+    es-EC: Corea, república de
+    zh-CN: 韩国
   KW:
     en-US: Kuwait
+    es-EC: Kuwait
+    zh-CN: 科威特
   KY:
     en-US: Cayman Islands
+    es-EC: Islas Caimán
+    zh-CN: 开曼群岛
   KZ:
     en-US: Kazakhstan
+    es-EC: Kazajstán
+    zh-CN: 哈萨克斯坦
   LA:
     en-US: Lao People's Democratic Republic
+    es-EC: República Democrática Popular Lao
+    zh-CN: 老挝人民民主共和国
   LB:
     en-US: Lebanon
+    es-EC: Líbano
+    zh-CN: 黎巴嫩
   LC:
     en-US: Saint Lucia
-    es-EC: "Santa Luc\xC3\xADa"
+    es-EC: Santa Lucía
+    zh-CN: 圣卢西亚
   LI:
     en-US: Liechtenstein
+    es-EC: Liechtenstein
+    zh-CN: 列支敦士登
   LK:
     en-US: Sri Lanka
+    es-EC: Sri Lanka
+    zh-CN: 斯里兰卡
   LR:
     en-US: Liberia
+    es-EC: Liberia
+    zh-CN: 利比里亚
   LS:
     en-US: Lesotho
+    es-EC: Lesoto
+    zh-CN: 莱索托
   LT:
     en-US: Lithuania
+    es-EC: Lituania
+    zh-CN: 立陶宛
   LU:
     en-US: Luxembourg
+    es-EC: Luxemburgo
+    zh-CN: 卢森堡
   LV:
     en-US: Latvia
+    es-EC: Letonia
+    zh-CN: 拉脱维亚
   LY:
     en-US: Libya
+    es-EC: Libia
+    zh-CN: 利比亚
   MA:
     en-US: Morocco
+    es-EC: Marruecos
+    zh-CN: 摩洛哥
   MC:
     en-US: Monaco
+    es-EC: Mónaco
+    zh-CN: 摩纳哥
   MD:
     en-US: Moldova, Republic of
+    es-EC: Moldavia, República de
+    zh-CN: 摩尔多瓦共和国
   ME:
     en-US: Montenegro
+    es-EC: Montenegro
+    zh-CN: 黑山共和国
   MF:
     en-US: Saint Martin (French part)
+    es-EC: San Martín (parte francesa)
+    zh-CN: 圣马丁（法语部分）
   MG:
     en-US: Madagascar
+    es-EC: Madagascar
+    zh-CN: 马达加斯加
   MH:
     en-US: Marshall Islands
+    es-EC: Islas Marshall
+    zh-CN: 马绍尔群岛
   MK:
     en-US: Macedonia, the Former Yugoslav Republic of
+    es-EC: Macedonia, la ex República Yugoslava de
+    zh-CN: 前南斯拉夫马其顿共和国
   ML:
     en-US: Mali
+    es-EC: Mali
+    zh-CN: 马里
   MM:
     en-US: Myanmar
+    es-EC: Myanmar
+    zh-CN: 缅甸
   MN:
     en-US: Mongolia
+    es-EC: Mongolia
+    zh-CN: 蒙古
   MO:
     en-US: Macao
+    es-EC: Macao
+    zh-CN: 澳门
   MP:
     en-US: Northern Mariana Islands
+    es-EC: Islas Marianas del Norte
+    zh-CN: 北马里亚纳群岛
   MQ:
     en-US: Martinique
+    es-EC: Martinica
+    zh-CN: 马提尼克岛
   MR:
     en-US: Mauritania
+    es-EC: Mauritania
+    zh-CN: 毛里塔尼亚
   MS:
     en-US: Montserrat
     es-EC: Montserrat
+    zh-CN: 蒙特塞拉特
   MT:
     en-US: Malta
+    es-EC: Malta
+    zh-CN: 马耳他
   MU:
     en-US: Mauritius
+    es-EC: Mauricio
+    zh-CN: 毛里求斯
   MV:
     en-US: Maldives
+    es-EC: Maldivas
+    zh-CN: 马尔代夫
   MW:
     en-US: Malawi
+    es-EC: Malawi
+    zh-CN: 马拉维
   MX:
     en-US: Mexico
     es-EC: Mexico
+    zh-CN: 墨西哥
   MY:
     en-US: Malaysia
+    es-EC: Malasia
+    zh-CN: 马来西亚
   MZ:
     en-US: Mozambique
+    es-EC: Mozambique
+    zh-CN: 莫桑比克
   NA:
     en-US: Namibia
+    es-EC: Namibia
+    zh-CN: 纳米比亚
   NC:
     en-US: New Caledonia
+    es-EC: Nueva Caledonia
+    zh-CN: 新喀里多尼亚
   NE:
     en-US: Niger
+    es-EC: Níger
+    zh-CN: 尼日尔
   NF:
     en-US: Norfolk Island
+    es-EC: Isla Norfolk
+    zh-CN: 诺福克岛
   NG:
     en-US: Nigeria
+    es-EC: Nigeria
+    zh-CN: 奈及利亚
   NI:
     en-US: Nicaragua
     es-EC: Nicaragua
+    zh-CN: 尼加拉瓜
   NL:
     en-US: Netherlands
-  'NO':
+    es-EC: Países Bajos
+    zh-CN: 荷兰
+  "NO":
     en-US: Norway
+    es-EC: Noruega
+    zh-CN: 挪威
   NP:
     en-US: Nepal
+    es-EC: Nepal
+    zh-CN: 尼泊尔
   NR:
     en-US: Nauru
+    es-EC: Nauru
+    zh-CN: 瑙鲁
   NU:
     en-US: Niue
+    es-EC: Niue
+    zh-CN: 纽埃
   NZ:
     en-US: New Zealand
+    es-EC: Nueva Zelanda
+    zh-CN: 新西兰
   OM:
     en-US: Oman
+    es-EC: Omán
+    zh-CN: 阿曼
   PA:
     en-US: Panama
-    es-EC: "Panam\xC3\xA1"
+    es-EC: Panamá
+    zh-CN: 巴拿马
   PE:
     en-US: Peru
-    es-EC: "Per\xC3\xBA"
+    es-EC: Perú
+    zh-CN: 秘鲁
   PF:
     en-US: French Polynesia
+    es-EC: Polinesia francés
+    zh-CN: 法属波利尼西亚
   PG:
     en-US: Papua New Guinea
+    es-EC: Papúa Nueva Guinea
+    zh-CN: 巴布亚新几内亚
   PH:
     en-US: Philippines
+    es-EC: Filipinas
+    zh-CN: 菲律宾
   PK:
     en-US: Pakistan
+    es-EC: Pakistán
+    zh-CN: 巴基斯坦
   PL:
     en-US: Poland
+    es-EC: Polonia
+    zh-CN: 波兰
   PM:
     en-US: Saint Pierre and Miquelon
+    es-EC: San Pedro y Miquelón
+    zh-CN: 圣皮埃尔和密克隆群岛
   PN:
     en-US: Pitcairn
+    es-EC: Pitcairn
+    zh-CN: 皮特凯恩
   PR:
     en-US: Puerto Rico
     es-EC: Puerto Rico
+    zh-CN: 波多黎各
   PS:
     en-US: Palestine, State of
+    es-EC: Palestina, Estado de
+    zh-CN: 巴勒斯坦国
   PT:
     en-US: Portugal
+    es-EC: Portugal
+    zh-CN: 葡萄牙
   PW:
     en-US: Palau
+    es-EC: Palau
+    zh-CN: u琉
   PY:
     en-US: Paraguay
     es-EC: Paraguay
+    zh-CN: 巴拉圭
   QA:
     en-US: Qatar
+    es-EC: Katar
+    zh-CN: 卡塔尔
   RE:
-    en-US: "R\xE9union"
+    en-US: Réunion
+    es-EC: Reunión
+    zh-CN: 团圆
   RO:
     en-US: Romania
+    es-EC: Rumania
+    zh-CN: 罗马尼亚
   RS:
     en-US: Serbia
+    es-EC: Serbia
+    zh-CN: 塞尔维亚
   RU:
     en-US: Russian Federation
+    es-EC: Federación Rusa
+    zh-CN: 俄罗斯联邦
   RW:
     en-US: Rwanda
+    es-EC: Ruanda
+    zh-CN: 卢旺达
   SA:
     en-US: Saudi Arabia
+    es-EC: Arabia Saudita
+    zh-CN: 沙特阿拉伯
   SB:
     en-US: Solomon Islands
+    es-EC: Islas Salomón
+    zh-CN: 所罗门群岛
   SC:
     en-US: Seychelles
+    es-EC: Seychelles
+    zh-CN: 塞舌尔
   SD:
     en-US: Sudan
+    es-EC: Sudán
+    zh-CN: 苏丹
   SE:
     en-US: Sweden
+    es-EC: Suecia
+    zh-CN: 瑞典
   SG:
     en-US: Singapore
+    es-EC: Singapur
+    zh-CN: 新加坡
   SH:
     en-US: Saint Helena, Ascension and Tristan da Cunha
+    es-EC: Santa Elena, Ascensión y Tristán de Cunha
+    zh-CN: 圣海伦娜，提升和特里斯坦达库尼亚
   SI:
     en-US: Slovenia
+    es-EC: Eslovenia
+    zh-CN: 斯洛文尼亚
   SJ:
     en-US: Svalbard and Jan Mayen
+    es-EC: Svalbard y Jan Mayen
+    zh-CN: 斯瓦尔巴和扬·马延
   SK:
     en-US: Slovakia
+    es-EC: Eslovaquia
+    zh-CN: 斯洛伐克
   SL:
     en-US: Sierra Leone
+    es-EC: Sierra Leona
+    zh-CN: 塞拉利昂
   SM:
     en-US: San Marino
+    es-EC: San Marino
+    zh-CN: 圣马力诺
   SN:
     en-US: Senegal
+    es-EC: Senegal
+    zh-CN: 塞内加尔
   SO:
     en-US: Somalia
+    es-EC: Somalia
+    zh-CN: 索马里
   SR:
     en-US: Suriname
     es-EC: Surinam
+    zh-CN: 苏里南
   SS:
     en-US: South Sudan
+    es-EC: Sudán del Sur
+    zh-CN: 南苏丹
   ST:
     en-US: Sao Tome and Principe
+    es-EC: Santo Tomé y Príncipe
+    zh-CN: 圣多美和普林西比
   SV:
     en-US: El Salvador
     es-EC: El Salvador
+    zh-CN: 萨尔瓦多
   SX:
     en-US: Sint Maarten (Dutch part)
+    es-EC: Sint Maarten (parte holandesa)
+    zh-CN: 圣马丁（荷兰语部分）
   SY:
     en-US: Syrian Arab Republic
+    es-EC: República Árabe Siria
+    zh-CN: 阿拉伯叙利亚共和国
   SZ:
     en-US: Swaziland
+    es-EC: Swazilandia
+    zh-CN: 斯威士兰
   TC:
     en-US: Turks and Caicos Islands
+    es-EC: Islas Turcas y Caicos
+    zh-CN: 特克斯和凯科斯群岛
   TD:
     en-US: Chad
+    es-EC: Chad
+    zh-CN: 乍得
   TF:
     en-US: French Southern Territories
+    es-EC: Territorios Franceses del Sur
+    zh-CN: 法属南部领地
   TG:
     en-US: Togo
+    es-EC: Ir
+    zh-CN: 多哥
   TH:
     en-US: Thailand
+    es-EC: Tailandia
+    zh-CN: 泰国
   TJ:
     en-US: Tajikistan
+    es-EC: Tayikistán
+    zh-CN: 塔吉克斯坦
   TK:
     en-US: Tokelau
+    es-EC: Tokelau
+    zh-CN: 托克劳
   TL:
     en-US: Timor-Leste
+    es-EC: Timor-Leste
+    zh-CN: 东帝汶
   TM:
     en-US: Turkmenistan
+    es-EC: Turkmenistán
+    zh-CN: 土库曼斯坦
   TN:
     en-US: Tunisia
+    es-EC: Túnez
+    zh-CN: 突尼斯
   TO:
     en-US: Tonga
+    es-EC: Tonga
+    zh-CN: 汤加
   TR:
     en-US: Turkey
+    es-EC: pavo
+    zh-CN: 火鸡
   TT:
     en-US: Trinidad and Tobago
     es-EC: Trinidad y Tobago
+    zh-CN: 特立尼达和多巴哥
   TV:
     en-US: Tuvalu
+    es-EC: Tuvalu
+    zh-CN: 图瓦卢
   TW:
     en-US: Taiwan, Province of China
+    es-EC: Taiwan, provincia de China
+    zh-CN: 中国台湾省
   TZ:
     en-US: Tanzania, United Republic of
+    es-EC: Tanzania, República Unida de
+    zh-CN: 坦桑尼亚联合共和国
   UA:
     en-US: Ukraine
+    es-EC: Ucrania
+    zh-CN: 乌克兰
   UG:
     en-US: Uganda
+    es-EC: Uganda
+    zh-CN: 乌干达
   UM:
     en-US: United States Minor Outlying Islands
+    es-EC: Islas ultramarinas menores de Estados Unidos
+    zh-CN: 美国本土外小岛屿
   US:
     en-US: United States
     es-EC: Estados Unidos
+    zh-CN: 美国
   UY:
     en-US: Uruguay
     es-EC: Uruguay
+    zh-CN: 乌拉圭
   UZ:
     en-US: Uzbekistan
+    es-EC: Uzbekistán
+    zh-CN: 乌兹别克斯坦
   VA:
     en-US: Holy See (Vatican City State)
+    es-EC: Santa Sede (Estado de la Ciudad del Vaticano)
+    zh-CN: 罗马教廷（梵蒂冈城国）
   VC:
     en-US: Saint Vincent and the Grenadines
+    es-EC: San Vicente y las Granadinas
+    zh-CN: 圣文森特和格林纳丁斯
   VE:
     en-US: Venezuela, Bolivarian Republic of
-    es-EC: "Venezuela, Rep\xC3\xBAblica Bolivariana de"
+    es-EC: Venezuela, República Bolivariana de
+    zh-CN: 委内瑞拉玻利瓦尔共和国
   VG:
     en-US: Virgin Islands, British
-    es-EC: "Islas V\xC3\xADrgenes Brit\xC3\xA1nicas"
+    es-EC: Islas Vírgenes Británicas
+    zh-CN: 英属维尔京群岛
   VI:
     en-US: Virgin Islands, U.S.
+    es-EC: Islas Vírgenes, EE. UU.
+    zh-CN: 美国维尔京群岛
   VN:
     en-US: Viet Nam
+    es-EC: Vietnam
+    zh-CN: 越南
   VU:
     en-US: Vanuatu
+    es-EC: Vanuatu
+    zh-CN: 瓦努阿图
   WF:
     en-US: Wallis and Futuna
+    es-EC: Wallis y Futuna
+    zh-CN: 瓦利斯和富图纳群岛
   WS:
     en-US: Samoa
+    es-EC: Samoa
+    zh-CN: 萨摩亚
   YE:
     en-US: Yemen
+    es-EC: Yemen
+    zh-CN: 也门
   YT:
     en-US: Mayotte
+    es-EC: Mayotte
+    zh-CN: 马约特岛
   ZA:
     en-US: South Africa
+    es-EC: Sudáfrica
+    zh-CN: 南非
   ZM:
     en-US: Zambia
+    es-EC: Zambia
+    zh-CN: 赞比亚
   ZW:
     en-US: Zimbabwe
-
+    es-EC: Zimbabue
+    zh-CN: 津巴布韦

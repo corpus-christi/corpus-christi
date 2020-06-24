@@ -2,7 +2,9 @@ login:
   header:
     en-US: Log In
     es-EC: Iniciar Sesión
+    zh-CN: 登录
   messages:
     incorrect-login:
       en-US: Username or password is incorrect
       es-EC: Nombre de usuario o contraseña incorrecta
+      zh-CN: 用户名或密码不正确

@@ -3,139 +3,167 @@ actions:
     _desc: Header for a table, etc.
     en-US: Actions
     es-EC: Acciones
+    zh-CN: 动作
   add-another:
     _desc: Save a newly created item; clear data (e.g., on a form)
     en-US: Add Another
     es-EC: Añadir Otro
+    zh-CN: 加上另一个
   add-address:
     _desc: Add a new address
     en-US: Add Address
     es-EC: Añadir Dirreción
+    zh-CN: 新增地址
   add-group:
-     en-US: Add Group
-     es-EC: Añadir grupo
+    en-US: Add Group
+    es-EC: Añadir grupo
+    zh-CN: 新增群组
   add-person:
     _desc: Add a person to the database
     en-US: Add Person
     es-EC: Añadir Persona
+    zh-CN: 加人
   add-event:
     _desc: Add an event to the database
     en-US: Add Event
     es-EC: Añadir Evento
+    zh-CN: 新增活动
   activate-account:
     _desc: Activate account
     en-US: Activate
     es-EC: Activar
+    zh-CN: 启用
   deactivate-account:
     _desc: Deactivate account
     en-US: Deactivate
     es-EC: Desactivar
+    zh-CN: 停用
   cancel:
     _desc: Cancel a pending action
     en-US: Cancel
     es-EC: Cancelar
+    zh-CN: 取消
   choose-image:
     _desc: Choose an image to upload
     en-US: Choose Image
     es-EC: Elegir Imagen
+    zh-CN: 选择图片
   clear:
     _desc: Clear data (e.g., on a form)
     en-US: Clear
     es-EC: Despejar
+    zh-CN: 明确
   close:
     _desc: Close something (e.g., a dialog box)
     en-US: Close
     es-EC: Cerrar
+    zh-CN: 关
   confirm:
     _desc: Confirm some action (e.g., updating a password)
     en-US: Confirm
     es-EC: Confirmar
+    zh-CN: 确认
   duplicate:
     _desc: Duplicate some action (e.g., duplicating an event)
     en-US: Duplicate
     es-EC: Duplicar
+    zh-CN: 重复
   edit:
     en-US: Edit
     es-EC: Editar
+    zh-CN: 编辑
   login:
     en-US: Log In
     es-EC: Acceder
+    zh-CN: 登录
   logout:
     en-US: Log Out
     es-EC: Cerrar sesión
+    zh-CN: 登出
   open-map:
     en-US: Open Map
     es-EC: Abrir Mapa
+    zh-CN: 打开地图
   save:
     _desc: Save a newly created item
     en-US: Save
     es-EC: Salvar
+    zh-CN: 保存
   search:
     _desc: Search for something
     en-US: Search
     es-EC: Buscar
+    zh-CN: 搜索
   search-addresses:
     en-US: Search Addresses
     es-EC: Buscar Direcciones
-  search-managers:
-    en-US: Search Managers
-    es-EC: Gestores de Búsqueda
+    zh-CN: 搜索地址
+  search-group-types:
+    en-US: Search Group Types
+    es-EC: Buscar tipos de grupos
+    zh-CN: 搜索组类型
+  search-manager-types:
+    en-US: Search Manager Types
+    es-EC: Tipos de administrador de búsqueda
+    zh-CN: 搜索管理器类型
   search-people:
     _desc: Search for people
     en-US: Search People
     es-EC: Buscar Personas
+    zh-CN: 搜索人
   signup:
     en-US: Signup
     es-EC: Regístrate
+    zh-CN: 注册
   view-inactive:
     _desc: View all inactive people
     en-US: View Inactive
     es-EC: Ver Inactivo
+    zh-CN: 查看无效
   view-archived:
     _desc: View all inactive
     en-US: View Archived
     es-EC: Ver Archivado
+    zh-CN: 查看已存档
   view-active:
     _desc: View all active
     en-US: View Active
     es-EC: Ver Activo
+    zh-CN: 查看活动
   view-all:
     _desc: View all
     en-US: View All
     es-EC: Ver Todo
-  search-people:
-    _desc: Search for people
-    en-US: Search People
-    es-EC: Buscar Personas
-  view-inactive:
-    _desc: View all inactive people
-    en-US: View Inactive
-    es-EC: Ver Inactivo
+    zh-CN: 查看全部
   back:
     _desc: Back to a previous view
     en-US: Back
     es-EC: Regresar
+    zh-CN: 背部
   view-past:
     _desc: View past events
     en-US: View Past
     es-EC: Ver Pasados
+    zh-CN: 查看过去
   tooltips:
     settings:
       _desc: Change settings
       en-US: Settings
       es-EC: Ajustes
+      zh-CN: 设定值
     archive:
       en-US: Archive
       es-EC: Archivar
+      zh-CN: 封存
     unarchive:
       en-US: Unarchive
       es-EC: Desarchivar
+      zh-CN: 取消存档
     activate:
       en-US: Activate
       es-EC: Activar
+      zh-CN: 启用
     remove:
       en-US: Remove
       es-EC: Retirar
-    unarchive:
-      en-US: Unarchive
-      es-EC: Desarchivar
+      zh-CN: 去掉

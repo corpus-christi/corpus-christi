@@ -2,134 +2,176 @@ people:
   title:
     en-US: People
     es-EC: Personas
+    zh-CN: 人
   title-roles:
     en-US: Roles
     es-EC: Papeles
+    zh-CN: 的角色
   dropdown-roles:
     en-US: All Roles
     es-EC: Todos los Papeles
+    zh-CN: 所有角色
   attributes:
     en-US: Attributes
     es-EC: Atributas
+    zh-CN: 属性
   personal-information:
     en-US: Personal Information
     es-EC: Informacion personal
+    zh-CN: 个人信息
   account-information:
     en-US: Account Information
     es-EC: Información de la cuenta
+    zh-CN: 帐户信息
   additional-information:
     en-US: Additional Information
     es-EC: Información Adicional
+    zh-CN: 附加信息
   optional:
     en-US: Optional
     es-EC: Opcional
+    zh-CN: 可选的
   next:
     en-US: Next
     es-EC: Siguiente
+    zh-CN: 下一个
   previous:
     en-US: Previous
     es-EC: Anterior
 
+    zh-CN: 以前
 person:
   username:
     en-US: Username
     es-EC: Nombre de usuario
+    zh-CN: 用户名
   password:
     en-US: Password
     es-EC: Contraseña
+    zh-CN: 密码
   repeat-password:
     en-US: Repeat Password
     es-EC: Repite la contraseña
+    zh-CN: 重复输入密码
   no-account:
     en-US: Don't have an account?
     es-EC: ¿No tienes una cuenta?
+    zh-CN: 还没有帐号？
   account:
     en-US: Account
     es-EC: Cuenta
+    zh-CN: 帐户
   account-info:
     roles:
       en-US: Roles
       es-EC: Papeles
+      zh-CN: 的角色
   name:
     first:
       en-US: First Name
       es-EC: Nombre de pila
+      zh-CN: 名字
     last:
       en-US: Last Name
       es-EC: Apellido
+      zh-CN: 姓
     second-last:
       en-US: Second Last Name
       es-EC: Segundo Apellido
+      zh-CN: 姓氏
   gender:
     es-EC: Género
     en-US: Gender
+    zh-CN: 性别
   male:
     en-US: Male
     es-EC: Hombre
+    zh-CN: 男
   female:
     en-US: Female
     es-EC: Mujer
+    zh-CN: 女
   date:
     birthday:
       en-US: Birthday
       es-EC: Cumpleaños
+      zh-CN: 生日
   email:
     en-US: Email
     es-EC: Correo electrónico
+    zh-CN: 电子邮件
   phone:
     en-US: Phone
     es-EC: Teléfono
+    zh-CN: 电话
   settings:
     en-US: Settings for {person}
     es-EC: Configuración de la {person}
+    zh-CN: '{person}的设置'
   actions:
     new:
       en-US: New Person
       es-EC: Persona Nueva
+      zh-CN: 新人
     edit:
       en-US: Edit Person
       es-EC: Editar persona
+      zh-CN: 编辑人
     add-participant:
       en-US: Add a Participant
       es-EC: Añadir Partícipe
+      zh-CN: 添加参与者
     add-account:
       en-US: Add Account
       es-EC: Añadir cuenta
+      zh-CN: 新增帐户
     reset-password:
       en-US: Reset Password
       es-EC: Restablecer la contraseña
+      zh-CN: 重设密码
     assign-roles:
       en-US: Assign Roles
       es-EC: Asigne Papeles
+      zh-CN: 分配角色
   messages:
     account-activate:
       en-US: Account activated
       es-EC: Cuenta activada
+      zh-CN: 帐户已激活
     account-deactivate:
       en-US: Account deactivated
       es-EC: Cuenta desactivada
+      zh-CN: 帐户已停用
     canceled:
       en-US: Canceled add new person
       es-EC: Cancelado añadir nueva persona
+      zh-CN: 取消添加新人
     person-add:
       en-US: New person added
       es-EC: Nueva persona agregada
+      zh-CN: 添加了新人
     person-edit:
       en-US: Person edited
       es-EC: Persona editada
+      zh-CN: 编辑者
     person-deactivate:
       en-US: Person deactivated
       es-EC: Persona desactivada
+      zh-CN: 人已停用
     person-activate:
       en-US: Person activated
       es-EC: Persona activada
+      zh-CN: 被激活的人
     person-save-error:
       en-US: Person was not saved
       es-EC: La persona no fue salvada
+      zh-CN: 人员未保存
     confirm:
       activate:
         en-US: Are you sure you want to restore this person?
         es-EC: ¿Estás seguro de que quieres restaurar a esta persona?
+        zh-CN: 您确定要还原此人吗？
       deactivate:
         en-US: Are you sure you want to archive this person?
         es-EC: ¿Estás seguro de que quieres archivar a esta persona?
+        zh-CN: 您确定要存档此人吗？
