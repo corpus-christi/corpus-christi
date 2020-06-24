@@ -139,7 +139,7 @@ actions:
     _desc: Back to a previous view
     en-US: Back
     es-EC: Regresar
-    zh-CN: 背部
+    zh-CN: 返回
   view-past:
     _desc: View past events
     en-US: View Past
@@ -167,3 +167,7 @@ actions:
       en-US: Remove
       es-EC: Retirar
       zh-CN: 去掉
+    email:
+      en-US: Send Email
+      es-EC: Enviar correo electrónico
+      zh-CN: 发电子邮件

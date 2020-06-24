@@ -34,11 +34,11 @@
           </v-card-text>
           <v-card-actions>
             <v-btn small flat @click="hideEntityTypePanel">{{
-              $t("close")
+              $t("actions.close")
             }}</v-btn>
             <v-spacer />
             <v-btn small flat color="primary" @click="createEntityType">{{
-              $t("save")
+              $t("actions.save")
             }}</v-btn>
           </v-card-actions>
         </v-card>

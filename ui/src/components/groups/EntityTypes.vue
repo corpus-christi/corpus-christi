@@ -4,8 +4,8 @@
       class="mb-3"
       outline
       color="primary"
-      v-on:click="$router.push({ name: 'all-groups' })"
-      ><v-icon>arrow_back</v-icon>Back</v-btn
+      v-on:click="$router.push({ path: '/groups/all' })"
+      ><v-icon>arrow_back</v-icon>{{ $t("actions.back") }}</v-btn
     >
     <v-card>
       <v-toolbar :color="toolbarColor" class="pa-1">
@@ -278,13 +278,29 @@ export default {
     headers() {
       if (this.isGroupTypeMode) {
         return [
-          { text: "Group Type Name", value: "name" },
-          { text: "Actions", value: "actions", sortable: false, width: "150px" }
+          {
+            text: this.$t("groups.entity-types.group-types.name"),
+            value: "name"
+          },
+          {
+            text: this.$t("actions.header"),
+            value: "actions",
+            sortable: false,
+            width: "150px"
+          }
         ];
       } else {
         return [
-          { text: "Manager Type Name", value: "name" },
-          { text: "Actions", value: "actions", sortable: false, width: "150px" }
+          {
+            text: this.$t("groups.entity-types.manager-types.name"),
+            value: "name"
+          },
+          {
+            text: this.$t("actions.header"),
+            value: "actions",
+            sortable: false,
+            width: "150px"
+          }
         ];
       }
     },
@@ -335,8 +351,17 @@ export default {
       this.tableLoading = true;
       this.$http.get(this.endpoint).then(resp => {
         this.tableLoading = false;
+        this.entityTypes = resp.data;
+        this.entityTypes.forEach(entityType => {
+          let entityName = this.isGroupTypeMode ? "groups" : "managers";
+          this.$set(
+            entityType,
+            entityName,
+            entityType[entityName].filter(entity => entity.active)
+          );
+        });
         if (!this.isGroupTypeMode) {
-          for (let managerType of resp.data) {
+          for (let managerType of this.entityTypes) {
             // for each manager, create a unique pseudo-id and a human-readable name
             managerType.managers.forEach(manager => {
               manager.id = `g_${manager.group.id}_p_${manager.person.id}`;
@@ -346,7 +371,6 @@ export default {
             });
           }
         }
-        this.entityTypes = resp.data;
       });
     },
     getTranslation(key) {

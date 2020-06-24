@@ -50,6 +50,7 @@
       "tooltips": {
         "activate": "Activate",
         "archive": "Archive",
+        "email": "Send Email",
         "remove": "Remove",
         "settings": "Settings",
         "unarchive": "Unarchive"
@@ -640,6 +641,8 @@
           "managers": "Managers",
           "members": "Members"
         },
+        "collapse": "Collapse",
+        "expand": "Expand",
         "select-placeholder": "Select groups to perform actions...",
         "show-all": "Show All Groups",
         "show-list": "Show Group List",
@@ -916,6 +919,7 @@
       "tooltips": {
         "activate": "Activar",
         "archive": "Archivar",
+        "email": "Enviar correo electr\u00f3nico",
         "remove": "Retirar",
         "settings": "Ajustes",
         "unarchive": "Desarchivar"
@@ -1506,6 +1510,8 @@
           "managers": "Gerentes",
           "members": "Miembros"
         },
+        "collapse": "Colapso",
+        "expand": "Expandir",
         "select-placeholder": "Seleccionar grupos para realizar acciones ...",
         "show-all": "Mostrar todos los grupos",
         "show-list": "Mostrar lista de grupos",
@@ -1759,7 +1765,7 @@
       "add-event": "\u65b0\u589e\u6d3b\u52a8",
       "add-group": "\u65b0\u589e\u7fa4\u7ec4",
       "add-person": "\u52a0\u4eba",
-      "back": "\u80cc\u90e8",
+      "back": "\u8fd4\u56de",
       "cancel": "\u53d6\u6d88",
       "choose-image": "\u9009\u62e9\u56fe\u7247",
       "clear": "\u660e\u786e",
@@ -1782,6 +1788,7 @@
       "tooltips": {
         "activate": "\u542f\u7528",
         "archive": "\u5c01\u5b58",
+        "email": "\u53d1\u7535\u5b50\u90ae\u4ef6",
         "remove": "\u53bb\u6389",
         "settings": "\u8bbe\u5b9a\u503c",
         "unarchive": "\u53d6\u6d88\u5b58\u6863"
@@ -2049,7 +2056,7 @@
       "TM": "\u571f\u5e93\u66fc\u65af\u5766",
       "TN": "\u7a81\u5c3c\u65af",
       "TO": "\u6c64\u52a0",
-      "TR": "\u706b\u9e21",
+      "TR": "\u571f\u8033\u5176",
       "TT": "\u7279\u7acb\u5c3c\u8fbe\u548c\u591a\u5df4\u54e5",
       "TV": "\u56fe\u74e6\u5362",
       "TW": "\u4e2d\u56fd\u53f0\u6e7e\u7701",
@@ -2314,7 +2321,7 @@
       },
       "meetings": {
         "add-meeting": "\u6dfb\u52a0\u4f1a\u8bae",
-        "title": "\u4f1a\u8bae\u4f1a\u8bae"
+        "title": "\u4f1a\u8bae"
       },
       "member-count": "\u4f1a\u5458\u4eba\u6570",
       "members": {
@@ -2351,9 +2358,9 @@
         "error-sending-email": "\u53d1\u9001\u7535\u5b50\u90ae\u4ef6\u65f6\u51fa\u9519",
         "error-unarchiving-meeting": "\u53d6\u6d88\u5b58\u6863\u4f1a\u8bae\u9519\u8bef",
         "group-added": "\u7ec4\u5df2\u6dfb\u52a0",
-        "group-archived": "\u7fa4\u7ec4\u5df2\u5f52\u6863",
+        "group-archived": "\u5c0f\u7ec4\u5df2\u5f52\u6863",
         "group-edited": "\u5c0f\u7ec4\u7f16\u8f91",
-        "group-unarchived": "\u5c0f\u7ec4\u672a\u5b58\u6863",
+        "group-unarchived": "\u5c0f\u7ec4\u5df2\u6062\u590d",
         "group-unarchiving-group": "\u53d6\u6d88\u5f52\u6863\u7ec4\u65f6\u51fa\u9519",
         "meeting-added": "\u4f1a\u8bae\u5df2\u6dfb\u52a0",
         "meeting-archived": "\u4f1a\u8bae\u5df2\u5b58\u6863",
@@ -2372,6 +2379,8 @@
           "managers": "\u7ba1\u7406\u4eba\u5458",
           "members": "\u4f1a\u5458"
         },
+        "collapse": "\u5408\u5e76",
+        "expand": "\u5c55\u5f00",
         "select-placeholder": "\u9009\u62e9\u8981\u6267\u884c\u64cd\u4f5c\u7684\u7ec4...",
         "show-all": "\u663e\u793a\u6240\u6709\u7fa4\u7ec4",
         "show-list": "\u663e\u793a\u7fa4\u7ec4\u6e05\u5355",

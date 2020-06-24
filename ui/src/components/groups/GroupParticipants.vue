@@ -4,47 +4,72 @@
       <v-layout align-center justify-space-between fill-height>
         <v-flex md3 class="text-no-wrap">
           <v-toolbar-title v-if="!select">{{ title }}</v-toolbar-title>
-          <v-btn
-            color="primary"
-            raised
-            v-on:click="showParticipantDialog"
-            v-if="select && isManagerMode"
-            fab
-            small
+          <v-tooltip bottom
+            ><template v-slot:activator="{ on }"
+              ><v-btn
+                color="primary"
+                raised
+                v-on:click="showParticipantDialog"
+                v-on="on"
+                v-if="select && isManagerMode"
+                fab
+                small
+              >
+                <v-icon dark>edit</v-icon>
+              </v-btn></template
+            >
+            {{ $t("actions.edit") }}
+          </v-tooltip>
+          <v-tooltip bottom
+            ><template v-slot:activator="{ on }"
+              ><v-btn
+                color="primary"
+                raised
+                v-on:click="showSelectEmailDialog"
+                v-on="on"
+                v-if="select"
+                fab
+                small
+              >
+                <v-icon dark>email</v-icon>
+              </v-btn></template
+            >
+            {{ $t("actions.tooltips.email") }}</v-tooltip
           >
-            <v-icon dark>edit</v-icon>
-          </v-btn>
-          <v-btn
-            color="primary"
-            raised
-            v-on:click="showSelectEmailDialog"
-            v-if="select"
-            fab
-            small
+          <v-tooltip bottom
+            ><template v-slot:activator="{ on }"
+              ><v-btn
+                color="primary"
+                raised
+                v-on:click="showSelectArchiveDialog"
+                v-on="on"
+                data-cy="archive"
+                v-if="select"
+                fab
+                small
+              >
+                <v-icon dark>archive</v-icon>
+              </v-btn></template
+            >
+            {{ $t("actions.tooltips.archive") }}</v-tooltip
           >
-            <v-icon dark>email</v-icon>
-          </v-btn>
-          <v-btn
-            color="primary"
-            raised
-            v-on:click="showSelectArchiveDialog"
-            data-cy="archive"
-            v-if="select"
-            fab
-            small
+          <v-tooltip bottom
+            ><template v-slot:activator="{ on }"
+              ><v-btn
+                color="primary"
+                raised
+                v-on:click="unarchiveSelected"
+                v-on="on"
+                v-if="select"
+                :loading="selectUnarchiveLoading"
+                fab
+                small
+              >
+                <v-icon dark>undo</v-icon>
+              </v-btn></template
+            >
+            {{ $t("actions.tooltips.activate") }}</v-tooltip
           >
-            <v-icon dark>archive</v-icon>
-          </v-btn>
-          <v-btn
-            color="primary"
-            raised
-            v-on:click="unarchiveSelected"
-            v-if="select"
-            fab
-            small
-          >
-            <v-icon dark>undo</v-icon>
-          </v-btn>
         </v-flex>
         <v-flex md2>
           <v-text-field
@@ -289,6 +314,7 @@ export default {
         { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 }
       ],
       tableLoading: false,
+      selectUnarchiveLoading: false,
       dialogState: "",
       search: "",
       participants: [],
@@ -363,7 +389,7 @@ export default {
           },
           {
             text: this.$t("groups.managers.manager-type"),
-            value: "groups.managers.manager-type"
+            value: "managerType.name"
           },
           {
             text: this.$t("actions.header"),
@@ -416,7 +442,7 @@ export default {
     /* all possible recipient */
     emailRecipientList() {
       return this.participants
-        .filter(m => m.person.email)
+        .filter(m => m.person.email && m.active)
         .map(m => ({
           email: m.person.email,
           name: `${m.person.firstName} ${m.person.lastName}`
@@ -453,8 +479,6 @@ export default {
     handleEmailError() {
       this.hideEmailDialog();
     },
-
-    /* FIXME: currently can't pass the appropriate emails to the email dialog */
     showEmailDialog(participant) {
       let recipient = {
         email: participant.person.email,
@@ -546,9 +570,9 @@ export default {
             : "groups.messages.error-active-not-selected"
         });
         this.archiveDialog.loading = false;
-        return;
+        return Promise.resolve();
       }
-      Promise.all(promises)
+      return Promise.all(promises)
         .then(resp => {
           this.archiveDialog.loading = false;
           this.archiveDialog.show = false;
@@ -577,12 +601,19 @@ export default {
       this.archiveDialog.show = false;
     },
     unarchiveSelected() {
+      this.selectUnarchiveLoading = true;
       this.archiveDialog.participants = this.selected;
-      this.archiveParticipants(true);
+      this.archiveParticipants(true).finally(() => {
+        this.selectUnarchiveLoading = false;
+      });
     },
     unarchiveParticipant(participant) {
+      const participantId = participant.id;
+      participant.id = -1; // show loading state
       this.archiveDialog.participants = [participant];
-      this.archiveParticipants(true);
+      this.archiveParticipants(true).finally(() => {
+        participant.id = participantId;
+      });
     },
     getParticipants() {
       this.tableLoading = true;
