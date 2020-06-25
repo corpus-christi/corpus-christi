@@ -55,7 +55,8 @@
         "remove": "Remove",
         "settings": "Settings",
         "unarchive": "Unarchive",
-        "view-attendance": "Show Attendance"
+        "take-attendance": "Take Attendance",
+        "delete": "Delete"
       },
       "view-active": "View Active",
       "view-all": "View All",
@@ -537,7 +538,8 @@
       "manager": "Manager",
       "meetings": {
         "add-meeting": "Add Meeting",
-        "title": "Meetings"
+        "title": "Meetings",
+        "meetings-participants": "Meeting Participants"
       },
       "member-count": "Member Count",
       "members": {
@@ -550,7 +552,8 @@
           "subject": "Subject",
           "to": "To"
         },
-        "title": "Members"
+        "title": "Members",
+        "title-visitor": "Visitor"
       },
       "messages": {
         "attendance-archived": "Attendance archived",
@@ -584,6 +587,7 @@
         "members-added": "Members added",
         "no-remaining-members": "No remaining members",
         "participant-added": "Participant added",
+        "participant-deleted": "Participant deleted",
         "required-fields": "Please fill out all required fields"
       },
       "name": "Name",
@@ -641,6 +645,7 @@
         "add-account": "Add Account",
         "add-manager": "Add a manager",
         "add-participant": "Add a Participant",
+        "add-visitor": "Add visitor",
         "assign-roles": "Assign Roles",
         "edit": "Edit Person",
         "new": "New Person",
@@ -877,7 +882,8 @@
         "remove": "Retirar",
         "settings": "Ajustes",
         "unarchive": "Desarchivar",
-        "view-attendance": "Mostrar asistencia"
+        "take-attendance": "Tomar la asistencia",
+        "delete": "Eliminar"
       },
       "view-active": "Ver Activo",
       "view-all": "Ver Todo",
@@ -1163,7 +1169,8 @@
           "subject": "Asunto",
           "to": "Para"
         },
-        "title": "Miembros"
+        "title": "Miembros",
+        "title-visitor": "Visitante"
       },
       "messages": {
         "attendance-archived": "Asistencia archivada",
@@ -1197,6 +1204,7 @@
         "members-added": "Miembros agregados",
         "no-remaining-members": "Ning\u00fan miembro restante",
         "participant-added": "Participante agregado",
+        "participant-deleted": "Participante eliminada",
         "required-fields": "Por favor llene todos los campos requeridos"
       },
       "name": "Nombre",

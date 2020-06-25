@@ -85,12 +85,12 @@
                 small
                 color="primary"
                 slot="activator"
-                v-on:click="showAttendance(props.item)"
+                :to="{name:'meeting-details', params: {meeting:props.item.id}}"
                 data-cy="viewAttendance"
               >
                 <v-icon small>people</v-icon>
               </v-btn>
-              <span>{{ $t("actions.tooltips.view-attendance") }}</span>
+              <span>{{ $t("actions.tooltips.take-attendance") }} </span>
             </v-tooltip>
           </template>
 
@@ -112,6 +112,8 @@
             </v-tooltip>
           </template>
         </td>
+
+
       </template>
     </v-data-table>
 
@@ -207,7 +209,7 @@
                   small
                   color="primary"
                   slot="activator"
-                  v-on:click="confirmArchiveAttendance(props)"
+                  v-on:click="archiveMeetingAttendance"
                   data-cy="archive"
                 >
                   <v-icon small>archive</v-icon>
@@ -340,7 +342,7 @@ export default {
       viewStatus: "viewActive",
       attendance_list:[],
       attendance_people_list:[],
-      ViewingMeetingId: null
+      ViewingMeetingId: null,
     };
   },
 
@@ -385,7 +387,7 @@ export default {
         },
         { text: this.$t("events.attendance"), value: "attendance" },
         { text: this.$t("events.event-location"), value: "location_name" },
-        { text: this.$t("actions.header"), sortable: false }
+        { text: this.$t("actions.header"), sortable: false },
       ];
     },
     attendance_headers(){
@@ -462,7 +464,7 @@ export default {
         .catch(err => {
           console.log(err);
           this.meetingDialog.saveLoading = false;
-          eventBus.$emit('message', { content:this.$t("groups.messages.error-adding-meeting") });
+          eventBus.$emit('error', { content:this.$t("groups.messages.error-adding-meeting") });
         });
     },
 
@@ -501,7 +503,7 @@ export default {
         .catch(err => {
           console.log(err);
           this.addAttendanceDialog.loading = false;
-          eventBus.$emit('message', { content:this.$t("groups.messages.error-adding-members") });
+          eventBus.$emit('error', { content:this.$t("groups.messages.error-adding-members") });
         });
     },
 
@@ -550,7 +552,7 @@ export default {
           console.log(err);
           this.deleteDialog.loading = false;
           this.deleteDialog.show = false;
-          eventBus.$emit('message', { content:this.$t("events.participants.error-removing") });
+          eventBus.$emit('error', { content:this.$t("events.participants.error-removing") });
         });
     },
     cancelDelete() {
@@ -605,7 +607,7 @@ export default {
           console.error("ARCHIVE FALURE", err.response);
           this.archiveDialog.loading = false;
           this.archiveDialog.show = false;
-          eventBus.$emit('message', { content:this.$t("groups.messages.error-archiving-meeting") });
+          eventBus.$emit('error', { content:this.$t("groups.messages.error-archiving-meeting") });
         });
     },
 
@@ -626,7 +628,7 @@ export default {
             console.error("ARCHIVE FALURE", err.response);
             this.archiveAttendanceDialog.loading = false;
             this.archiveAttendanceDialog.show = false;
-            eventBus.$emit('message', { content:this.$t("groups.messages.error-archiving-attendance") });
+            eventBus.$emit('error', { content:this.$t("groups.messages.error-archiving-attendance") });
           });
     },
 
@@ -644,7 +646,7 @@ export default {
         })
         .catch(err => {
           console.error("UNARCHIVE FALURE", err.response);
-          eventBus.$emit('message', { content:this.$t("groups.messages.error-unarchiving-meeting") });
+          eventBus.$emit('error', { content:this.$t("groups.messages.error-unarchiving-meeting") });
         });
     },
 
@@ -667,6 +669,7 @@ export default {
                 });
             }
             this.meetings = resp.data;
+            console.log("Meeting attendances", this.meetings);
           }
           this.tableLoading = false;
         });

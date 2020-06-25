@@ -72,6 +72,28 @@ const router = new VueRouter({
           component: () => import("@/components/groups/GroupTreeView")
         },
         {
+          name:"meeting-details",
+          path:"meetings/:meeting",
+          meta: { authRequired: true },
+          redirect: { name: "meeting-members" },
+          component: () =>
+            import("@/components/groups/MeetingDetails"),
+          children: [
+            {
+              name: "meeting-members",
+              path: "members",
+              meta: { authRequired: true },
+              component: () => import("@/components/groups/GroupMeetingMember")
+            },
+            {
+              name: "meeting-visitors",
+              path: "visitors",
+              meta: { authRequired: true },
+              component: () => import("@/components/groups/GroupMeetingVisitor")
+            }
+          ]
+        },
+        {
           name: "group",
           path: ":group",
           meta: { authRequired: true },
