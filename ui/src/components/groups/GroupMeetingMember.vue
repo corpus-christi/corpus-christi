@@ -85,7 +85,6 @@
             .get(`/api/v1/groups/groups/${this.currentGroupId}/members`)
             .then(resp => {
               this.attendance = resp.data.map(e => e.person);
-              console.log("All the group member", this.attendance);
               this.parseMembers();
             });
         },

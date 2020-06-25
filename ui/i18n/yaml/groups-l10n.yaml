@@ -98,6 +98,15 @@ groups:
     confirm-archive:
       en-US: Are you sure you want to archive this group?
       es-EC: ¿Seguro que quieres archivar este groupos?
+    confirm-attendance-archive:
+      en-US: Are you sure this person has an absence?
+      en-EC: ¿Estás seguro de que esta persona tiene una ausencia?
+    confirm-manager-archive:
+      en-US: Are you sure you want to archive this group manager?
+      en-EC: \u00bfEst\u00e1s seguro de que deseas archivar este administrador de grupo??
+    confirm-meeting-archive:
+      en-US: Are you sure you want to archive this group meeting?
+      en-EC: \u00bfEst\u00e1s seguro de que deseas archivar esta reuni\u00f3n de grupo?
     confirm-member-archive:
       en-US: Are you sure you want to archive this group member?
       es-EC: ¿Estás seguro de que deseas archivar a este miembro del grupo?
