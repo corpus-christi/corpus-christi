@@ -322,6 +322,14 @@ export default {
       type: Boolean,
       required: true
     },
+    createText: {
+      type: String,
+      default: ""
+    },
+    editText: {
+      type: String,
+      default: ""
+    },
     endDateTimeField: {
       type: Boolean,
       required: false,

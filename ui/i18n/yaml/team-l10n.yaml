@@ -2,64 +2,85 @@ teams:
   title:
     en-US: Teams
     es-EC: Equipos
+    zh-CN: 队伍
   description:
     en-US: Description
     es-EC: Descripción
+    zh-CN: 描述
   all-teams:
     en-US: All Teams
     es-EC: Todos Equipos
+    zh-CN: 所有队伍
   new:
     en-US: Add Team
     es-EC: Añadir Equipo
+    zh-CN: 新增团队
   create-team:
     en-US: Create Team
     es-EC: Crear Equipo
+    zh-CN: 建立团队
   edit-team:
     en-US: Edit Team
     es-EC: Editar Equipo
+    zh-CN: 编辑团队
   confirm-archive:
     en-US: Are you sure you want to archive this team?
     es-EC: ¿Seguro que quieres archivar este equipo?
+    zh-CN: 您确定要存档此团队吗？
   confirm-remove-from-event:
     en-US: Are you sure you want to remove this team from this event?
     es-EC: ¿Estás seguro de que quieres eliminar a este equipo de este evento?
+    zh-CN: 您确定要从此活动中删除该团队吗？
   team-removed:
     en-US: Team removed
     es-EC: Equipo eliminado
+    zh-CN: 团队已删除
   error-removing-team:
-    en-US: Error while removing team 
+    en-US: Error while removing team
     es-EC: Error al eliminadar este equipo
+    zh-CN: 删除团队时出错
   error-unarchiving-team:
-    en-US: Error while unarchiving team 
+    en-US: Error while unarchiving team
     es-EC: Error al desarchivar equipo
+    zh-CN: 取消归档团队时出错
   team-edited:
     en-US: Team edited
     es-EC: Equipo editado   # ?
+    zh-CN: 团队已编辑
   error-editing-team:
     en-US: Error while editing team
     es-EC: Error al editar equipo
+    zh-CN: 编辑团队时出错
   team-added:
     en-US: Team added
     es-EC: Equipo agregado
+    zh-CN: 团队加入
   error-adding-team:
     en-US: Error while adding team
     es-EC: Error al agregar equipo
+    zh-CN: 添加团队时出错
   error-team-assigned:
     en-US: That team is assigned to a conflicting event.
     es-EC: Ese equipo está asignado a un evento conflictivo.
+    zh-CN: 该团队被分配了一个冲突事件。
   team-on-event:
     en-US: That team is already assigned to this event.
     es-EC: Ese equipo ya está asignado a este evento.
+    zh-CN: 该团队已经分配给该活动。
   none-assigned:
     en-US: No teams assigned.
     es-EC: No hay equipos asignados.
+    zh-CN: 没有分配团队。
   members:
     title:
       en-US: Team Members
       es-EC: Miembros del Equipo
+      zh-CN: 团队成员
     add:
       en-US: Add Team Members
       es-EC: Añadir Miembros
+      zh-CN: 添加团队成员
     confirm-remove:
       en-US: Are you sure you want to remove this member?
       es-EC: ¿Seguro que quieres eliminar este miembro?
+      zh-CN: 您确定要删除此成员吗？

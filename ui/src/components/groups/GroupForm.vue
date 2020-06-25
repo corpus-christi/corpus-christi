@@ -6,31 +6,32 @@
     </v-card-title>
     <v-card-text>
       <form>
-        <v-text-field
-          v-model="group.name"
-          v-bind:label="$t('groups.name')"
-          name="title"
-          v-validate="'required'"
-          v-bind:error-messages="errors.first('title')"
-          data-cy="title"
-        />
-        <v-textarea
-          rows="3"
-          v-model="group.description"
-          v-bind:label="$t('groups.group-description')"
-          name="description"
-          v-validate="'required'"
-          v-bind:error-messages="errors.collect('description')"
-          data-cy="description"
-        />
-        <entity-search
-          group-type
-          name="grouptype"
-          v-model="group.groupType"
-          v-validate="'required'"
-          v-bind:error-messages="errors.first('grouptype')"
-        />
-        <!-- TODO: Internationalize field name in error message? <2020-06-11, David Deng> -->
+        <v-layout column justify-center>
+          <v-text-field
+            v-model="group.name"
+            v-bind:label="$t('groups.name')"
+            name="title"
+            v-validate="'required'"
+            v-bind:error-messages="errors.first('title')"
+            data-cy="title"
+          />
+          <v-textarea
+            rows="3"
+            v-model="group.description"
+            v-bind:label="$t('groups.group-description')"
+            name="description"
+            v-validate="'required'"
+            v-bind:error-messages="errors.collect('description')"
+            data-cy="description"
+          />
+          <entity-type-form
+            name="grouptype"
+            entity-type-name="groupType"
+            v-model="group.groupType"
+            v-validate="'required'"
+            v-bind:error-messages="errors.first('grouptype')"
+          ></entity-type-form>
+        </v-layout>
       </form>
     </v-card-text>
     <v-card-actions>
@@ -70,9 +71,9 @@
 <script>
 import { isEmpty } from "lodash";
 import { mapGetters } from "vuex";
-import EntitySearch from "../EntitySearch";
+import EntityTypeForm from "./EntityTypeForm";
 export default {
-  components: { "entity-search": EntitySearch },
+  components: { EntityTypeForm },
   name: "GroupForm",
   watch: {
     initialData(groupProp) {
@@ -83,7 +84,6 @@ export default {
       }
     }
   },
-
   computed: {
     name() {
       return this.editMode
