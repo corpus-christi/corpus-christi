@@ -85,7 +85,7 @@
       <v-spacer></v-spacer>
       <v-btn
         v-on:click="sendEmail"
-        :disabled="email.recipients.length == 0"
+        :disabled="!hasValidRecipients"
         color="primary"
         raised
         :loading="sendLoading"
@@ -110,33 +110,20 @@ export default {
     }
   },
   computed: {
-    selectFields() {
-      return [
-        {
-          key: "recipients",
-          model: this.email.recipients,
-          label: this.$t("groups.members.email.to")
-        },
-        {
-          key: "cc",
-          model: this.email.cc,
-          label: this.$t("groups.members.email.cc")
-        },
-        {
-          key: "bcc",
-          model: this.email.bcc,
-          label: this.$t("groups.members.email.bcc")
-        }
-      ];
+    hasValidRecipients() {
+      return this.email.recipients.some(recipient => recipient.email);
     },
     ...mapState(["currentAccount"])
   },
   watch: {
-    initialData(newData) {
-      this.email.recipients = newData.recipients;
+    "initialData.recipients": function() {
+      this.syncInitialData();
     }
   },
   methods: {
+    syncInitialData() {
+      this.email.recipients = this.initialData.recipients;
+    },
     resetEmail() {
       this.email.subject = "";
       this.email.body = "";
@@ -148,6 +135,7 @@ export default {
     },
     cancel() {
       this.resetEmail();
+      this.syncInitialData();
       this.$emit("cancel");
     },
     sendEmail() {

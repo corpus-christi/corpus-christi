@@ -27,16 +27,41 @@
           </v-select>
         </v-flex>
         <v-flex shrink>
-          <v-btn
-            color="primary"
-            :fab="$vuetify.breakpoint.mdAndDown"
-            :small="$vuetify.breakpoint.mdAndDown"
-            v-on:click.stop="newGroup"
-            data-cy="add-group"
-          >
-            <v-icon>add</v-icon>
-            {{ $vuetify.breakpoint.mdAndDown ? "" : $t("actions.add-group") }}
-          </v-btn>
+          <v-menu open-on-hover offset-y bottom>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                color="primary"
+                :fab="$vuetify.breakpoint.mdAndDown"
+                :small="$vuetify.breakpoint.mdAndDown"
+                v-on="on"
+              >
+                <v-icon>supervised_user_circle</v-icon>
+                {{
+                  $vuetify.breakpoint.mdAndDown ? "" : $t("groups.admin-panel")
+                }}
+              </v-btn>
+            </template>
+            <v-list>
+              <v-list-tile @click.stop="activateGroupDialog()">
+                <v-icon color="primary">group_add</v-icon>
+                <v-list-tile-content>
+                  {{ $t("actions.add-group") }}
+                </v-list-tile-content>
+              </v-list-tile>
+              <v-list-tile :to="{ name: 'group-types' }">
+                <v-icon color="primary">view_list</v-icon>
+                <v-list-tile-content>
+                  {{ $t("groups.entity-types.group-types.manage") }}
+                </v-list-tile-content>
+              </v-list-tile>
+              <v-list-tile :to="{ name: 'manager-types' }">
+                <v-icon color="primary">view_list</v-icon>
+                <v-list-tile-content>
+                  {{ $t("groups.entity-types.manager-types.manage") }}
+                </v-list-tile-content>
+              </v-list-tile>
+            </v-list>
+          </v-menu>
         </v-flex>
         <v-flex shrink>
           <v-btn
@@ -70,25 +95,45 @@
       <template slot="items" slot-scope="props">
         <td
           class="hover-hand"
-          v-on:click="$router.push({ path: '/groups/' + props.item.id })"
+          v-on:click="
+            $router.push({
+              name: 'group-details',
+              params: { group: props.item.id }
+            })
+          "
         >
           {{ props.item.name }}
         </td>
         <td
           class="hover-hand"
-          v-on:click="$router.push({ path: '/groups/' + props.item.id })"
+          v-on:click="
+            $router.push({
+              name: 'group-details',
+              params: { group: props.item.id }
+            })
+          "
         >
           {{ props.item.description }}
         </td>
         <td
           class="hover-hand"
-          v-on:click="$router.push({ path: '/groups/' + props.item.id })"
+          v-on:click="
+            $router.push({
+              name: 'group-details',
+              params: { group: props.item.id }
+            })
+          "
         >
-          {{ props.item.members.filter(ev => ev.active).length }}
+          {{ props.item.activeMembers.length }}
         </td>
         <td
           class="hover-hand"
-          v-on:click="$router.push({ path: '/group-types/' + props.item.id })"
+          v-on:click="
+            $router.push({
+              name: 'group-details',
+              params: { group: props.item.id }
+            })
+          "
         >
           {{ props.item.groupType.name }}
         </td>
@@ -209,9 +254,11 @@ export default {
     this.tableLoading = true;
     this.$http.get("/api/v1/groups/groups").then(resp => {
       this.groups = resp.data;
+      this.groups.forEach(group => {
+        group.activeMembers = group.members.filter(member => member.active);
+      });
       this.tableLoading = false;
     });
-    this.onResize();
   },
   data() {
     return {
@@ -222,7 +269,8 @@ export default {
         { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 }
       ],
       paginationInfo: {
-        sortBy: "start", //default sorted column
+        sortBy: "activeMembers.length", //default sorted column
+        descending: true,
         rowsPerPage: 10,
         page: 1
       },
@@ -273,8 +321,8 @@ export default {
       return [
         { text: this.$t("groups.name"), value: "name" },
         { text: this.$t("groups.description"), value: "description" },
-        { text: this.$t("groups.member-count"), value: "members..length" },
-        { text: this.$t("groups.group-type"), value: "groupType" },
+        { text: this.$t("groups.member-count"), value: "activeMembers.length" },
+        { text: this.$t("groups.group-type"), value: "groupType.name" },
         { text: this.$t("actions.header"), sortable: false }
       ];
     }
@@ -286,10 +334,6 @@ export default {
       this.groupDialog.group = group;
       this.groupDialog.show = true;
     },
-    newGroup() {
-      this.activateGroupDialog();
-    },
-
     cancelGroup() {
       this.groupDialog.show = false;
     },
@@ -381,7 +425,6 @@ export default {
       this.$http
         .patch(`/api/v1/groups/groups/${groupId}`, { active: false })
         .then(resp => {
-          console.log("ARCHIVE", resp);
           this.groups[idx].active = false;
           this.archiveDialog.loading = false;
           this.archiveDialog.show = false;
@@ -390,7 +433,6 @@ export default {
           });
         })
         .catch(err => {
-          console.error("ARCHIVE FALURE", err.response);
           this.archiveDialog.loading = false;
           this.archiveDialog.show = false;
           eventBus.$emit("message", {
@@ -401,19 +443,17 @@ export default {
     unarchive(group) {
       const idx = this.groups.findIndex(ev => ev.id === group.id);
       const groupId = group.id;
-      group.id *= -1; // to show loading spinner
+      group.id = -1; // to show loading spinner
       this.$http
         .patch(`/api/v1/groups/groups/${groupId}`, { active: true })
         .then(resp => {
-          console.log("UNARCHIVED", resp);
           Object.assign(this.groups[idx], resp.data);
           eventBus.$emit("message", {
             content: this.$t("groups.messages.group-unarchived")
           });
         })
         .catch(err => {
-          console.error("UNARCHIVE FALURE", err.response);
-          eventBus.$emit("message", {
+          eventBus.$emit("error", {
             content: this.$t("groups.messages.error-unarchiving-gropu")
           });
         });
@@ -425,14 +465,6 @@ export default {
     },
     addAnotherGroup(group) {
       this.saveGroup(group, false);
-    },
-    onResize() {
-      this.windowSize = { x: window.innerWidth, y: window.innerHeight };
-      if (this.windowSize.x <= 960) {
-        this.windowSize.small = true;
-      } else {
-        this.windowSize.small = false;
-      }
     }
   }
 };

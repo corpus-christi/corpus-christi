@@ -7,11 +7,11 @@
       <v-spacer></v-spacer>
       <v-flex md2>
         <v-text-field
-        v-model="search"
-        append-icon="search"
-        v-bind:label="$t('actions.search')"
-        single-line
-        hide-details
+          v-model="search"
+          append-icon="search"
+          v-bind:label="$t('actions.search')"
+          single-line
+          hide-details
         ></v-text-field>
       </v-flex>
       <v-spacer></v-spacer>
@@ -176,9 +176,7 @@
       <v-card>
         <v-card-title primary-title>
           <div>
-            <h2>
-              {{ $t("events.attendance") }}
-            </h2>
+            <h2>{{ $t("events.attendance") }}</h2>
           </div>
           <v-spacer></v-spacer>
           <v-btn class="mx-2" fab small color="primary">
@@ -223,7 +221,7 @@
             color="secondary"
             flat
             data-cy="cancel-archive"
-          >{{ $t("actions.cancel") }}</v-btn
+            >{{ $t("actions.cancel") }}</v-btn
           >
         </v-card-actions>
       </v-card>
@@ -234,6 +232,7 @@
     <v-dialog v-model="meetingDialog.show" persistent max-width="500px">
       <meeting-form
         :edit-mode="false"
+        create-text="groups.meetings.add-meeting"
         :initial-data="meetingDialog.meeting"
         :save-loading="meetingDialog.saveLoading"
         descriptionLabel="Description Label"
@@ -332,8 +331,8 @@ export default {
         show: false,
         text: ""
       },
-      meeting:{
-        active:''
+      meeting: {
+        active: ""
       },
       attendanceDialog:{
         show: false,
@@ -593,7 +592,7 @@ export default {
       this.archiveDialog.loading = true;
       const meetingId = this.archiveDialog.meetingId;
       const idx = this.meetings.findIndex(ev => ev.id === meetingId);
-      this.meeting['active'] = 'false';
+      this.meeting["active"] = "false";
       this.$http
         .patch(`/api/v1/groups/meetings/${meetingId}`, this.meeting)
         .then(resp => {

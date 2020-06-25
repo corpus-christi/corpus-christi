@@ -25,15 +25,30 @@
               <v-select :items="viewOptions" v-model="viewStatus"> </v-select>
             </v-flex>
             <v-spacer></v-spacer>
+            <v-tooltip bottom
+              ><template v-slot:activator="{ on }">
+                <v-flex shrink>
+                  <v-btn color="primary" fab small @click="expandAll" v-on="on"
+                    ><v-icon>unfold_more</v-icon></v-btn
+                  >
+                </v-flex>
+              </template>
+              {{ $t("groups.treeview.expand") }}
+            </v-tooltip>
             <v-flex shrink>
-              <v-btn color="primary" fab small @click="expandAll"
-                ><v-icon>unfold_more</v-icon></v-btn
-              >
-            </v-flex>
-            <v-flex shrink>
-              <v-btn color="grey lighten-2" fab small @click="closeAll"
-                ><v-icon>unfold_less</v-icon></v-btn
-              >
+              <v-tooltip bottom
+                ><template v-slot:activator="{ on }">
+                  <v-btn
+                    color="grey lighten-2"
+                    fab
+                    small
+                    @click="closeAll"
+                    v-on="on"
+                    ><v-icon>unfold_less</v-icon></v-btn
+                  >
+                </template>
+                {{ $t("groups.treeview.collapse") }}
+              </v-tooltip>
             </v-flex>
             <v-flex shrink>
               <v-btn
@@ -132,7 +147,11 @@ export default {
   components: { EmailForm },
   mounted() {
     this.$http.get("/api/v1/groups/groups").then(resp => {
-      this.groups = resp.data;
+      this.groups = resp.data.filter(group => group.active);
+      this.groups.forEach(group => {
+        group.members = group.members.filter(member => member.active);
+        group.managers = group.managers.filter(manager => manager.active);
+      });
     });
   },
   computed: {
