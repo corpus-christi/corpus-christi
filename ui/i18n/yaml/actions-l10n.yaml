@@ -27,7 +27,6 @@ actions:
     _desc: Add an event to the database
     en-US: Add Event
     es-EC: Añadir Evento
-<<<<<<< HEAD
   add-manager:
     _desc: Add a manager to the database
     en-US: Add Manager
