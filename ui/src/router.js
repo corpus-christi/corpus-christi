@@ -72,6 +72,20 @@ const router = new VueRouter({
           component: () => import("@/components/groups/GroupTreeView")
         },
         {
+          name: "group-types",
+          path: "group-types",
+          meta: { authRequired: true },
+          component: () => import("@/components/groups/EntityTypes"),
+          props: { entityTypeName: "groupType" }
+        },
+        {
+          name: "manager-types",
+          path: "manager-types",
+          meta: { authRequired: true },
+          component: () => import("@/components/groups/EntityTypes"),
+          props: { entityTypeName: "managerType" }
+        },
+        {
           name:"meeting-details",
           path:"meetings/:meeting",
           meta: { authRequired: true },
