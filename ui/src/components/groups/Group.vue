@@ -4,35 +4,21 @@
       outline
       color="primary"
       v-on:click="$router.push({ path: '/groups/all' })"
-      ><v-icon>arrow_back</v-icon>Back</v-btn
+      ><v-icon>arrow_back</v-icon>{{ $t("actions.back") }}</v-btn
     >
     <v-tabs color="transparent" slider-color="accent">
-      <v-tab
-        ripple
-        :to="{ path: '/groups/' + $route.params.group + '/members' }"
-      >
-        <v-icon>person</v-icon>&nbsp;{{ $t("groups.members.title") }}
+      <v-tab ripple :to="{ name: 'group-details' }">
+        <v-icon left>list</v-icon>{{ $t("groups.details.title") }}
       </v-tab>
-      <v-tab
-        ripple
-        :to="{ path: '/groups/' + $route.params.group + '/meetings' }"
-      >
-        <v-icon>devices_other</v-icon>&nbsp;{{ $t("groups.meetings.title") }}
+      <v-tab ripple :to="{ name: 'group-meetings' }">
+        <v-icon left>devices_other</v-icon>{{ $t("groups.meetings.title") }}
       </v-tab>
-      <v-tab
-        ripple
-        :to="{ path: '/groups/' + $route.params.group + '/details' }"
-      >
-        <v-icon>list</v-icon>&nbsp;{{ $t("groups.details.title") }}
+      <v-tab ripple :to="{ name: 'group-members' }">
+        <v-icon left>person</v-icon>{{ $t("groups.members.title") }}
       </v-tab>
-
-      <v-tab
-        ripple
-        :to="{ path: '/groups/' + $route.params.group + '/managers' }"
-      >
-        <v-icon>list</v-icon>&nbsp;{{ $t("groups.details.manager") }}
+      <v-tab ripple :to="{ name: 'group-managers' }">
+        <v-icon left>account_circle</v-icon>{{ $t("groups.details.manager") }}
       </v-tab>
-
     </v-tabs>
     <hr class="vertical-spacer" />
     <router-view></router-view>
@@ -59,4 +45,3 @@ export default {
   margin-bottom: 16px;
 }
 </style>
-

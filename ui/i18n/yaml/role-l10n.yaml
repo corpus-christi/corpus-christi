@@ -2,34 +2,45 @@ role:
   event-planner:
     en-US: Event Planner
     es-EC: Organizador de Eventos
+    zh-CN: 计划人，策划人
   group-admin:
     en-US: Group Administrator
     es-EC: Administrador del Grupo
+    zh-CN: 组管理员
   group-leader:
     en-US: Group Leader
     es-EC: Lider de Grupo
+    zh-CN: 组长
   group-overseer:
     en-US: Group Overseer
     es-EC: Supervisor de Grupo
+    zh-CN: 督军
   infrastructure:
     en-US: Infrastructure
     es-EC: Infraestructura
+    zh-CN: 基础设施
   public:
     en-US: Public
-    es-EC: "P\xFAblico"
+    es-EC: Público
+    zh-CN: 上市
   registrar:
     en-US: Registrar
     es-EC: Registrador
+    zh-CN: 登记员
   superuser:
     en-US: Superuser
     es-EC: Superusuario
+    zh-CN: 超级用户
   teaching-assistant:
     en-US: Teaching Assistant
-    es-EC: "Asistente de Ense\xF1anza"
+    es-EC: Asistente de Enseñanza
+    zh-CN: 教学助手
   translator:
     en-US: Translator
     es-EC: Traductor
+    zh-CN: 译者
   visitor:
     en-US: Visitor
     es-EC: Visitante
 
+    zh-CN: 游客

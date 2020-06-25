@@ -1,23 +1,30 @@
 attribute:
   check:
     en-US: checkbox
-    es-EC: "casilla de verificaci\xF3n"
+    es-EC: casilla de verificación
+    zh-CN: 复选框
   date:
     en-US: date
     es-EC: fecha
+    zh-CN: 日期
   dropdown:
     en-US: dropdown
     es-EC: desplegable
+    zh-CN: 落下
   float:
     en-US: floating point
     es-EC: punto flotante
+    zh-CN: 浮点
   integer:
     en-US: integer
     es-EC: entero
+    zh-CN: 整数
   radio:
     en-US: radio button
     es-EC: boton de radio
+    zh-CN: 单选按钮
   string:
     en-US: string
     es-EC: texto
 
+    zh-CN: 串

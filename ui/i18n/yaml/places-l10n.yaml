@@ -2,138 +2,181 @@ places:
   title:
     en-US: Places
     es-EC: Lugares
+    zh-CN: 地方
   create-address:
     en-US: Create an Address
     es-EC: Crear una Dirección
+    zh-CN: 创建一个地址
   address:
     name:
       en-US: Name
       es-EC: Nombre
+      zh-CN: 名称
     address:
       en-US: Address
       es-EC: Dirección
+      zh-CN: 地址
     city:
       en-US: City
       es-EC: Ciudad
+      zh-CN: 市
     country:
       en-US: Country
       es-EC: País
+      zh-CN: 国家
     latitude:
       en-US: Latitude
       es-EC: Latitud
+      zh-CN: 纬度
     longitude:
       en-US: Longitude
       es-EC: Longitud
+      zh-CN: 经度
     new:
       en-US: Add Address
       es-EC: Añadir dirección
+      zh-CN: 新增地址
     find-address:
       en-US: Find Address
       es-EC: Encuentra la Dirección
+      zh-CN: 查找地址
     valid-address:
       en-US: Use Valid Street Address
       es-EC: Usar dirección Válida
+      zh-CN: 使用有效的街道地址
     find-address-lat-lng:
       en-US: Find Address using Latitude and Longitude
       es-EC: Buscar Dirección usando Latitud y Longitud
+      zh-CN: 使用经度和纬度查找地址
     filters:
       reset-filters:
-        en: Reset Filters
-        es: Restablecer Filtros
+        en-US: Reset Filters
+        es-EC: Restablecer Filtros
+        zh-CN: 重置过滤器
       address_filters:
         en-US: Address Filters
         es-EC: Filtros de Direcciones
+        zh-CN: 地址过滤器
       apply:
         en-US: Apply Filters
         es-EC: Aplicar Filtros
+        zh-CN: 套用筛选器
       startLat:
         en-US: Start Latitude
         es-EC: Iniciar Latitude
+        zh-CN: 开始纬度
       endLat:
         en-US: End Latitude
         es-EC: Fin de la Latitud
+        zh-CN: 结束纬度
       startLng:
         en-US: Start Longitude
         es-EC: Comenzar Longitud
+        zh-CN: 开始经度
       endLng:
         en-US: End Longitude
         es-EC: Longitud Final
+        zh-CN: 结束经度
       distanceFromLatLng:
         en-US: Distance from specified Latitude and Longitude
         es-EC: Distancia desde la Latitud y Longitud especificadas
+        zh-CN: 距指定纬度和经度的距离
       distanceFromAddress:
         en-US: Distance from specified Address
         es-EC: Distancia desde la Dirección especificada
+        zh-CN: 距指定地址的距离
       range:
         en-US: Filter between a range of Latitudes and Longitudes
         es-EC: Filtrar entre un rango de Latitudes y Longitudes
+        zh-CN: 在一系列经度和纬度之间进行过滤
       distance-ll:
         en-US: Filter by distance from a specific Latitude and Longitude
         es-EC: Filtrar por distancia desde una Latitud y Longitud específicas
+        zh-CN: 按距离特定纬度和经度的距离进行过滤
       distance-addr:
         en-US: Filter by distance from a specific address
         es-EC: Filtrar por distancia desde una dirección específica
+        zh-CN: 按距特定地址的距离进行过滤
   location:
     location:
       en-US: Location
       es-EC: Ubicación
+      zh-CN: 位置
     description:
       en-US: Description
       es-EC: Descripción
+      zh-CN: 描述
     new:
       en-US: Add Location
       es-EC: Añadir Ubicación
+      zh-CN: 添加位置
   messages:
     no-results:
       en-US: Your address returned no results.
       es-EC: Tu dirección no devolvió resultados.
+      zh-CN: 您的地址未返回任何结果。
     saved:
       en-US: Your address has been saved.
       es-EC: Su dirección ha sido guardada.
+      zh-CN: 您的地址已保存。
     find-address-err:
       en-US: Latitude and Longitude are required to find an address
       es-EC: Se requiere latitud y longitud para encontrar una dirección
+      zh-CN: 需要纬度和经度才能找到地址
     confirm:
       activate:
         en-US: Are you sure you want to restore this address?
         es-EC: ¿Estás seguro de que deseas restaurar esta dirección?
+        zh-CN: 您确定要还原此地址吗？
       deactivate:
         en-US: Are you sure you want to archive this address?
         es-EC: ¿Estás seguro de que deseas archivar esta dirección?
+        zh-CN: 您确定要存档此地址吗？
   new:
     en-US: Add Place
     es-EC: Añadir Lugares
+    zh-CN: 新增地点
   edit:
     en-US: Edit Location
     es-EC: Editar Ubicación
+    zh-CN: 编辑位置
   area:
     area:
       en-US: Area
       es-EC: Zona
+      zh-CN: 区
     new:
       en-US: Add Area
       es-EC: Añadir Zona
+      zh-CN: 新增区域
     name:
       en-US: Area Name
       es-EC: Nombre del Área
+      zh-CN: 地区名称
     create-area:
       en-US: Create New Area
       es-EC: Crear nueva Área
+      zh-CN: 建立新区域
     edit:
       en-US: Edit Area
       es-EC: Área de Edición
+      zh-CN: 编辑区
     confirm:
       activate:
         en-US: Are you sure you want to restore this area?
         es-EC: ¿Estás seguro de que deseas restaurar esta zona?
+        zh-CN: 您确定要恢复该区域吗？
       deactivate:
         en-US: Are you sure you want to archive this area?
         es-EC: ¿Estás seguro de que deseas archivar esta zona?
 
+        zh-CN: 您确定要存档此区域吗？
   expand:
-      en-US: expand
-      es-EC: expandir
+    en-US: expand
+    es-EC: expandir
+    zh-CN: 扩大
   close:
-      en-US: close
-      es-EC: cerca
+    en-US: close
+    es-EC: cerca
 
+    zh-CN: 关

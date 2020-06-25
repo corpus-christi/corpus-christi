@@ -3,6 +3,8 @@ account:
     added-ok:
       en-US: Account added successfully
       es-EC: Cuenta agregada exitosamente
+      zh-CN: 帐户添加成功
     updated-ok:
       en-US: Account updated successfully
       es-EC: Cuenta actualizada con éxito
+      zh-CN: 帐户更新成功

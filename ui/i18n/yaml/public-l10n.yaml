@@ -2,24 +2,31 @@ public:
   title:
     en-US: Public
     es-EC: Público
+    zh-CN: 上市
   headers:
     upcoming-classes:
       en-US: Upcoming Courses
       es-EC: Próximas Cursos
+      zh-CN: 即将开设的课程
     upcoming-events:
       en-US: Upcoming Events
       es-EC: Próximos Eventos
+      zh-CN: 即将举行的活动
     home-church:
       en-US: Find a Home Church
       es-EC: Encontrar una Iglesia Hogar
+      zh-CN: 寻找家庭教会
   events:
     join:
       en-US: Join Event
       es-EC: Juntarse Evento
+      zh-CN: 参加活动
     view-all:
       en-US: View All Events
       es-EC: Ver Todos Eventos
+      zh-CN: 查看所有活动
   courses:
     view-all:
       en-US: View All Courses
       es-EC: Ver Todos Cursos
+      zh-CN: 查看所有课程

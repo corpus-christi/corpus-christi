@@ -3,174 +3,230 @@ events:
     title:
       en-US: Dashboard
       es-EC: Tablero
+      zh-CN: 仪表板
     headers:
       location-attendance:
         en-US: Attendance by Location
         es-EC: Asistencia por Ubicación
+        zh-CN: 按地区出席
       yearly-attendance:
         en-US: Yearly Attendance
         es-EC: Asistencia Anual
+        zh-CN: 每年出席
       home-group-percentage:
         en-US: Percentage of Churchgoers in a Home Group
         es-EC: Porcentaje de Feligreses en un Grupo de Hogar
+        zh-CN: 家庭组中信徒的百分比
     charts:
       home-groups:
         en-US: Home Groups
         es-EC: Iglesias Hogares
+        zh-CN: 家庭组
       campus:
         en-US: Campus
         es-EC: Campus
+        zh-CN: 校园
       attendance:
         en-US: Attendance
         es-EC: Asistencia
+        zh-CN: 出勤率
   header:
     en-US: Events
     es-EC: Eventos
+    zh-CN: 大事记
   title:
     en-US: Event Title
     es-EC: Título del Evento
+    zh-CN: 活动标题
   event-description:
     en-US: Event Description
-    es-EC: Descripción del Evento 
+    es-EC: Descripción del Evento
+    zh-CN: 活动说明
   attendance:
     en-US: Attendance
     es-EC: Concurrencia
+    zh-CN: 出勤率
   attendance-label:
     en-US: Enter a number
     es-EC: Ingrese un numero
+    zh-CN: 输入一个数字
   attendance-none:
     en-US: None
     es-EC: Ninguno
+    zh-CN: 没有
   calendar:
     title:
       en-US: Calendar
       es-EC: Calendario
+      zh-CN: 日历
   start-date:
     en-US: Start Date
     es-EC: Fecha de Inicio
+    zh-CN: 开始日期
   end-date:
     en-US: End Date
     es-EC: Fecha Final
+    zh-CN: 结束日期
   start-time:
     en-US: Start Time
     es-EC: Hora de Inicio
+    zh-CN: 开始时间
   stop-time:
     en-US: Stop Time
     es-EC: Para el tiempo
+    zh-CN: 停止时间
   end-time:
     en-US: End Time
     es-EC: Hora de Finalización
+    zh-CN: 时间结束
   event-location:
     en-US: Event Location
     es-EC: Ubicación de Evento
+    zh-CN: 活动地点
   location:
     en-US: Location
     es-EC: Ubicación
+    zh-CN: 位置
   upload-image:
     en-US: Upload Image
     es-EC: Cargar Imagen
+    zh-CN: 上传图片
   image-description:
     en-US: Image Description
     es-EC: Descripción de la Imagen
+    zh-CN: 图片说明
   all-events:
     en-US: All Events
     es-EC: Todos Eventos
+    zh-CN: 所有活动
   edit-event:
     en-US: Edit Event
     es-EC: Editar Evento
+    zh-CN: 编辑活动
   create-event:
     en-US: Create Event
     es-EC: Crear Evento
+    zh-CN: 建立活动
   confirm-archive:
     en-US: Are you sure you want to archive this event?
     es-EC: ¿Seguro que quieres archivar este evento?
+    zh-CN: 您确定要存档此事件吗？
   event-archived:
     en-US: Event archived
     es-EC: Evento archivado
+    zh-CN: 活动已存档
   error-archiving-event:
-    en-US: Error while archiving event 
+    en-US: Error while archiving event
     es-EC: Error al archivar el evento
+    zh-CN: 归档事件时出错
   event-unarchived:
     en-US: Event unarchived
     es-EC: Evento desarchivado   # probably not right
+    zh-CN: 活动未存档
   error-unarchiving-event:
-    en-US: Error while unarchiving event 
+    en-US: Error while unarchiving event
     es-EC: Error al desarchivar el evento
+    zh-CN: 取消存档事件时出错
   event-edited:
     en-US: Event edited
     es-EC: Evento editado
+    zh-CN: 活动已编辑
   error-editing-event:
     en-US: Error while editing event
     es-EC: Error al editar evento
+    zh-CN: 编辑事件时出错
   event-added:
     en-US: Event added
     es-EC: Evento agregado
+    zh-CN: 活动已添加
   error-adding-event:
     en-US: Error while adding event
     es-EC: Error al agregar evento
+    zh-CN: 添加事件时出错
   details:
     title:
       en-US: Event Details
       es-EC: Detalles del Evento
+      zh-CN: 活动详情
   participants:
     title:
       en-US: Participants
       es-EC: Participantes
+      zh-CN: 参加者
     add:
       en-US: Add Participants
       es-EC: Añadir participantes
+      zh-CN: 添加参与者
     added:
       en-US: Participants added
       es-EC: Participantes agregado
+      zh-CN: 参加者已添加
     error-adding:
       en-US: Error adding participant
       es-EC: Error al agregar participante
+      zh-CN: 添加参与者时出错
     removed:
       en-US: Removed participant
       es-EC: Participante eliminado
+      zh-CN: 已删除参与者
     error-removing:
       en-US: Error removing participant
       es-EC: Error al eliminadar el participante
+      zh-CN: 删除参与者时出错
     confirm-remove:
       en-US: Are you sure you want to remove this participant?
       es-EC: ¿Estás seguro de que quieres eliminar a este participante?
+      zh-CN: 您确定要删除此参与者吗？
   persons:
     title:
       en-US: Event People
       es-EC: Personas del Evento
+      zh-CN: 活动人物
     new:
       en-US: Add Person
       es-EC: Añadir Persona
+      zh-CN: 加人
     edit:
       en-US: Edit Person
       es-EC: Editar Persona
+      zh-CN: 编辑人
     description:
       en-US: Role Description
       es-EC: Descripción del Rol
+      zh-CN: 角色描述
     confirm-remove-from-event:
       en-US: Are you sure you want to remove this person from this event?
       es-EC: ¿Está seguro de que desea eliminar este persona de este evento?
+      zh-CN: 您确定要将此人从此活动中删除吗？
     person-on-event:
       en-US: That person is already assigned to this event.
       es-EC: Ese persona ya está asignado a este evento.
+      zh-CN: 该人已被分配参加此活动。
     person-added:
       en-US: Person added
       es-EC: Persona agregado
+      zh-CN: 添加的人
     person-edited:
       en-US: Person edited
       es-EC: Persona editado
+      zh-CN: 编辑者
     person-removed:
       en-US: Person removed
       es-EC: Persona eliminado
+      zh-CN: 删除人
     error-person-assigned:
       en-US: That person is assigned to a conflicting event.
       es-EC: Ese persona está asignado a un evento conflictivo.
+      zh-CN: 该人被分配了一个冲突事件。
     error-adding-person:
       en-US: Error while adding person
       es-EC: Error al agregar persona
+      zh-CN: 添加人时出错
     error-removing-person:
-      en-US: Error while removing person 
+      en-US: Error while removing person
       es-EC: Error al eliminadar este persona
+      zh-CN: 移除人时出错
     none-assigned:
       en-US: No people assigned.
       es-EC: No hay personas asignados.
+      zh-CN: 没有人员分配。
