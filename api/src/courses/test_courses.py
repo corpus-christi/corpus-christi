@@ -450,7 +450,7 @@ def test_read_all_courses(auth_client):
     # WHEN databse queried
     resp = auth_client.get(url_for('courses.read_all_courses'))
     # THEN assert error code
-    assert resp.status_code == 404
+    assert resp.json == []
     # Test with populated database
     # GIVEN existing (active and inactive) courses in database
     count = random.randint(3, 11)
