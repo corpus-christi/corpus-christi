@@ -27,6 +27,14 @@ actions:
     _desc: Add an event to the database
     en-US: Add Event
     es-EC: Añadir Evento
+  add-manager:
+    _desc: Add a manager to the database
+    en-US: Add Manager
+    es-EC: Añadir administrador
+  add-participant:
+    _desc: Add a person into a meeting/group
+    en-US: Add a Participant
+    es-EC: Agregar una participante
     zh-CN: 新增活动
   activate-account:
     _desc: Activate account

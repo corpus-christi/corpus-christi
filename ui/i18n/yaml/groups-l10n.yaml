@@ -371,7 +371,9 @@ groups:
     confirm-archive:
       en-US: Are you sure you want to archive this group?
       es-EC: ¿Seguro que quieres archivar este groupos?
-      zh-CN: 您确定要存档该组吗？
+    confirm-attendance-archive:
+      en-US: Are you sure this person has an absence?
+      en-EC: ¿Estás seguro de que esta persona tiene una ausencia?
     confirm-member-archive:
       en-US: Are you sure you want to archive this group member?
       es-EC: ¿Estás seguro de que deseas archivar a este miembro del grupo?
