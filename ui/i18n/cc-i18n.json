@@ -26,6 +26,8 @@
       "add-another": "Add Another",
       "add-event": "Add Event",
       "add-group": "Add Group",
+      "add-manager": "Add Manager",
+      "add-participant": "Add a Participant",
       "add-person": "Add Person",
       "back": "Back",
       "cancel": "Cancel",
@@ -53,7 +55,9 @@
         "email": "Send Email",
         "remove": "Remove",
         "settings": "Settings",
-        "unarchive": "Unarchive"
+        "unarchive": "Unarchive",
+        "take-attendance": "Take Attendance",
+        "delete": "Delete"
       },
       "view-active": "View Active",
       "view-all": "View All",
@@ -583,7 +587,8 @@
       },
       "meetings": {
         "add-meeting": "Add Meeting",
-        "title": "Meetings"
+        "title": "Meetings",
+        "meetings-participants": "Meeting Participants"
       },
       "member-count": "Member Count",
       "members": {
@@ -598,11 +603,14 @@
           "subject": "Subject",
           "to": "To"
         },
-        "title": "Members"
+        "title": "Members",
+        "title-visitor": "Visitor"
       },
       "messages": {
+        "attendance-archived": "Attendance archived",
         "already-exists": "Group already exists",
         "confirm-archive": "Are you sure you want to archive this group?",
+        "confirm-attendance-archive": "Are you sure this person has an absence?",
         "confirm-manager-archive": "Are you sure you want to archive this group manager?",
         "confirm-meeting-archive": "Are you sure you want to archive this group meeting?",
         "confirm-member-archive": "Are you sure you want to archive this group member?",
@@ -630,6 +638,8 @@
         "member-unarchived": "Member unarchived",
         "members-added": "Members added",
         "no-remaining-members": "No remaining members",
+        "participant-added": "Participant added",
+        "participant-deleted": "Participant deleted",
         "required-fields": "Please fill out all required fields"
       },
       "name": "Name",
@@ -688,6 +698,7 @@
       "actions": {
         "add-account": "Add Account",
         "add-participant": "Add a Participant",
+        "add-visitor": "Add visitor",
         "assign-roles": "Assign Roles",
         "edit": "Edit Person",
         "new": "New Person",
@@ -895,6 +906,8 @@
       "add-another": "A\u00f1adir Otro",
       "add-event": "A\u00f1adir Evento",
       "add-group": "A\u00f1adir grupo",
+      "add-manager": "Añadir administrador",
+      "add-participant": "Agregar una participante",
       "add-person": "A\u00f1adir Persona",
       "back": "Regresar",
       "cancel": "Cancelar",
@@ -922,7 +935,9 @@
         "email": "Enviar correo electr\u00f3nico",
         "remove": "Retirar",
         "settings": "Ajustes",
-        "unarchive": "Desarchivar"
+        "unarchive": "Desarchivar",
+        "take-attendance": "Tomar la asistencia",
+        "delete": "Eliminar"
       },
       "view-active": "Ver Activo",
       "view-all": "Ver Todo",
@@ -1467,11 +1482,14 @@
           "subject": "Asunto",
           "to": "Para"
         },
-        "title": "Miembros"
+        "title": "Miembros",
+        "title-visitor": "Visitante"
       },
       "messages": {
+        "attendance-archived": "Asistencia archivada",
         "already-exists": "El grupo ya existe",
         "confirm-archive": "\u00bfSeguro que quieres archivar este groupos?",
+        "confirm-attendance-archive": "¿Estás seguro de que esta persona tiene una ausencia?",
         "confirm-manager-archive": "\u00bfEst\u00e1s seguro de que deseas archivar este administrador de grupo?",
         "confirm-meeting-archive": "\u00bfEst\u00e1s seguro de que deseas archivar esta reuni\u00f3n de grupo?",
         "confirm-member-archive": "\u00bfEst\u00e1s seguro de que deseas archivar a este miembro del grupo?",
@@ -1499,6 +1517,8 @@
         "member-unarchived": "Miembro desarchivado",
         "members-added": "Miembros agregados",
         "no-remaining-members": "Ning\u00fan miembro restante",
+        "participant-added": "Participante agregado",
+        "participant-deleted": "Participante eliminada",
         "required-fields": "Por favor llene todos los campos requeridos"
       },
       "name": "Nombre",
