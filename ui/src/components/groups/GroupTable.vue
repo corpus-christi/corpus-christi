@@ -174,6 +174,20 @@
                 small
                 color="primary"
                 slot="activator"
+                v-on:click="showSplitGroupDialog(props.item)"
+                data-cy="split"
+              >
+                <v-icon small>call_split</v-icon>
+              </v-btn>
+              <span>{{ $t("groups.split.tooltip") }}</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <v-btn
+                icon
+                outline
+                small
+                color="primary"
+                slot="activator"
                 v-on:click="confirmArchive(props.item)"
                 data-cy="archive"
               >
@@ -240,25 +254,29 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- Split Group Dialog -->
+    <v-dialog v-model="splitGroupDialog.show" max-width="1300px" persistent>
+      <split-group-form
+        @cancel="hideSplitGroupDialog"
+        @success="handleSplitGroupSuccess"
+        @error="hideSplitGroupDialog"
+        :initial-data="splitGroupDialog.parentGroup"
+      />
+    </v-dialog>
   </div>
 </template>
 
 <script>
 import GroupForm from "./GroupForm";
+import SplitGroupForm from "./SplitGroupForm";
 import { eventBus } from "../../plugins/event-bus.js";
 import { pick } from "lodash";
 export default {
-  components: { "group-form": GroupForm },
+  components: { GroupForm, SplitGroupForm },
   name: "GroupTable",
   mounted() {
-    this.tableLoading = true;
-    this.$http.get("/api/v1/groups/groups").then(resp => {
-      this.groups = resp.data;
-      this.groups.forEach(group => {
-        group.activeMembers = group.members.filter(member => member.active);
-      });
-      this.tableLoading = false;
-    });
+    this.fetchGroups();
   },
   data() {
     return {
@@ -287,11 +305,14 @@ export default {
         editingGroupId: null,
         group: {}
       },
-
       archiveDialog: {
         show: false,
         groupId: -1,
         loading: false
+      },
+      splitGroupDialog: {
+        show: false,
+        parentGroup: {}
       }
     };
   },
@@ -329,6 +350,16 @@ export default {
   },
 
   methods: {
+    fetchGroups() {
+      this.tableLoading = true;
+      this.$http.get("/api/v1/groups/groups").then(resp => {
+        this.groups = resp.data;
+        this.groups.forEach(group => {
+          group.activeMembers = group.members.filter(member => member.active);
+        });
+        this.tableLoading = false;
+      });
+    },
     activateGroupDialog(group = {}, editMode = false) {
       this.groupDialog.editMode = editMode;
       this.groupDialog.group = group;
@@ -465,6 +496,18 @@ export default {
     },
     addAnotherGroup(group) {
       this.saveGroup(group, false);
+    },
+    showSplitGroupDialog(group) {
+      this.splitGroupDialog.parentGroup = group;
+      this.splitGroupDialog.show = true;
+    },
+    hideSplitGroupDialog() {
+      this.splitGroupDialog.parentGroup = {};
+      this.splitGroupDialog.show = false;
+    },
+    handleSplitGroupSuccess() {
+      this.hideSplitGroupDialog();
+      this.fetchGroups();
     }
   }
 };

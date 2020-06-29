@@ -93,9 +93,7 @@ export default {
 
     formDisabled() {
       return this.saveLoading || this.addAnotherLoading;
-    },
-
-    ...mapGetters(["currentLanguageCode"])
+    }
   },
 
   methods: {
