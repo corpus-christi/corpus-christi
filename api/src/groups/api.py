@@ -298,7 +298,7 @@ def read_one_manager(group_id, person_id):
 @groups.route('/groups/<int:group_id>/managers/<int:person_id>', methods=['PATCH'])
 @jwt_required
 def update_manager(group_id, person_id):
-    manager_schema = ManagerSchema(exclude=['group_id', 'person_id'])
+    manager_schema = ManagerSchema()
     try:
         valid_attributes = manager_schema.load(request.json, partial=True)
     except ValidationError as err:
@@ -307,6 +307,23 @@ def update_manager(group_id, person_id):
     manager = db.session.query(Manager).filter_by(group_id=group_id, person_id=person_id).first()
     if manager is None:
         return logged_response(f"Manager with group_id #{group_id} and person_id #{person_id} does not exist", 404)
+
+    new_group_id = valid_attributes.get('group_id')
+    new_person_id = valid_attributes.get('person_id')
+    # if modifying manager identity or belonging group
+    if new_group_id or new_person_id:
+        # check if entry already exists
+        if db.session.query(Manager).filter_by(
+                person_id=new_person_id or person_id, 
+                group_id=new_group_id or group_id).first():
+            return logged_response(f"Manager with group_id #{new_group_id} and person_id #{new_person_id} already exists", 409)
+        # check if the new group exists
+        if new_group_id and not db.session.query(Group).filter_by(id=new_group_id).first():
+            return logged_response(f"Group with group_id #{new_group_id} does not exist", 404)
+        # check if the new person exists
+        if new_person_id and not db.session.query(Person).filter_by(id=new_person_id).first():
+            return logged_response(f"Person with person_id #{new_person_id} does not exist", 404)
+
 
     for key, val in valid_attributes.items():
         setattr(manager, key, val)
@@ -470,7 +487,7 @@ def read_one_member(group_id, person_id):
 @groups.route('/groups/<int:group_id>/members/<int:person_id>', methods=['PATCH'])
 @jwt_required
 def update_member(group_id, person_id):
-    member_schema = MemberSchema(exclude=['group_id', 'person_id'])
+    member_schema = MemberSchema()
     try:
         valid_attributes = member_schema.load(request.json, partial=True)
     except ValidationError as err:
@@ -479,6 +496,22 @@ def update_member(group_id, person_id):
     member = db.session.query(Member).filter_by(group_id=group_id, person_id=person_id).first()
     if member is None:
         return logged_response(f"Member with group_id #{group_id} and person_id #{person_id} does not exist", 404)
+
+    new_group_id = valid_attributes.get('group_id')
+    new_person_id = valid_attributes.get('person_id')
+    # if modifying member identity or belonging group
+    if new_group_id or new_person_id:
+        # check if entry already exists
+        if db.session.query(Member).filter_by(
+                person_id=new_person_id or person_id, 
+                group_id=new_group_id or group_id).first():
+            return logged_response(f"Member with group_id #{new_group_id} and person_id #{new_person_id} already exists", 409)
+        # check if the new group exists
+        if new_group_id and not db.session.query(Group).filter_by(id=new_group_id).first():
+            return logged_response(f"Group with group_id #{new_group_id} does not exist", 404)
+        # check if the new person exists
+        if new_person_id and not db.session.query(Person).filter_by(id=new_person_id).first():
+            return logged_response(f"Person with person_id #{new_person_id} does not exist", 404)
 
     for key, val in valid_attributes.items():
         setattr(member, key, val)
