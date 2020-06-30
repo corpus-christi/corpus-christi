@@ -23,7 +23,6 @@ def send_email():
 
     msg = Message(valid_email_request['subject'], recipients=valid_email_request['recipients'],
                                                    sender=valid_email_request['managerEmail'],
-#                                                    reply_to='qiang_wang@taylor.edu')
                                                    reply_to=valid_email_request['reply_to'])
 #                                                   cc=valid_email_request['cc'],
 #                                                   bcc=valid_email_request['bcc'])
