@@ -294,6 +294,14 @@ groups:
       en-US: Members
       es-EC: Miembros
       zh-CN: 会员
+    email-reply-to:
+      en-US: Reply to
+      es-EC: Responder a
+      zh-CN: 回复到
+    email-dialog-footnote:
+      en-US: Click the circle to select the reply-to option
+      es-EC: Haga clic en el círculo para seleccionar la opción de respuesta
+      zh-CN: 点击圈子以选择回复选项
     email:
       compose:
         en-US: Compose Email
@@ -323,6 +331,15 @@ groups:
         en-US: Body
         es-EC: Cuerpo
         zh-CN: 身体
+      reply-to:
+        en-US: Reply to
+        es-EC: Responder a
+        zh-CN: 回复
+
+    default:
+      en-US: Default
+      es-EC: Defecto
+      zh-CN: 默认
   confirm-remove-from-event:
     en-US: Are you sure you want to remove this group from this event?
     es-EC: ¿Estás seguro de que quieres eliminar a este grupo de este evento?

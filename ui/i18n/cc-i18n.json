@@ -603,6 +603,9 @@
           "subject": "Subject",
           "to": "To"
         },
+        "email-dialog-footnote":"Click the circle to select the reply-to option",
+        "email-reply-to":"Reply to",
+        "default": "Default",
         "title": "Members",
         "title-visitor": "Visitor"
       },
@@ -1482,6 +1485,8 @@
           "subject": "Asunto",
           "to": "Para"
         },
+        "email-dialog-footnote": "Haga clic en el círculo para seleccionar la opción de respuesta",
+        "email-reply-to":"Responder a",
         "title": "Miembros",
         "title-visitor": "Visitante"
       },

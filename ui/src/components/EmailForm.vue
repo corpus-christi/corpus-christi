@@ -7,9 +7,6 @@
         <h3 class="headline mb-0">{{ $t("groups.members.email.compose") }}</h3>
       </div>
     </v-card-title>
-    <!-- TODO: Can we use a loop to render the following 3 components?
-      Currently the issue is that v-model won't synchronize references
-      that are returned by computed properties <2020-06-17, David Deng> -->
     <v-card-text>
       <v-select
         v-model="email.recipients"
@@ -78,11 +75,105 @@
       <v-textarea :label="$t('groups.members.email.body')" v-model="email.body">
       </v-textarea>
     </v-card-text>
+    <v-flex class="text-xs-center">
+      <v-btn
+        class="ma-2"
+        flat
+        small
+        color="primary"
+        @click="showEntityTypePanel"
+        :disabled="entityTypePanel.show"
+      >
+        {{ $t('actions.tooltips.settings') }}
+      </v-btn>
+    </v-flex>
+    <v-flex>
+      <!-- extention for email     -->
+      <v-expand-transition>
+        <v-card
+          v-if="entityTypePanel.show"
+          color="teal lighten-3"
+        >
+          <v-radio-group v-model="radioGroup">
+            <v-card-title>{{ $t('groups.members.email-reply-to') }} :   {{ radioGroup || 'null' }}</v-card-title>
+            <v-card-title text color="green"></v-card-title>
+            <v-radio
+              :label= "$t('groups.title')"
+              :key='1'
+              :value=homeChurchEmail
+            ></v-radio>
+              <v-radio
+                :label= "$t('groups.details.manager')"
+                @click="showManagerPanel"
+                :key='2'
+                :value = replyToOtherEmail
+              ></v-radio>
+              <v-expand-transition>
+                <v-card
+                  v-if="managerPanel.show"
+                >
+                  <v-card-text>
+                    <entity-search
+                      multiple
+                      person
+                      v-model="selectedPerson"
+                      :existing-entities="searchPeople"
+                    />
+<!--                    :existing-entities="attendance"-->
+                  </v-card-text>
+                  <v-btn v-on:click="hideManagerPanel" color="light-blue" flat>{{
+                    $t("actions.cancel")
+                    }}</v-btn>
+                  <v-btn v-on:click="setReplyTo" color="primary" flat>{{
+                    $t("actions.confirm")
+                    }}</v-btn>
+                </v-card>
+              </v-expand-transition>
+<!--            <v-expand-transition>-->
+<!--              <v-card-->
+<!--                v-if="managerPanel.show"-->
+<!--              >-->
+<!--                <v-btn v-on:click="hideManagerPanel" color="light-blue" flat>{{-->
+<!--                  $t("actions.cancel")-->
+<!--                  }}</v-btn>-->
+<!--                <v-btn v-on:click="showManagerPanel" color="primary" flat>{{-->
+<!--                  $t("actions.confirm")-->
+<!--                  }}</v-btn>-->
+<!--              </v-card>-->
+<!--            </v-expand-transition>-->
+            <v-radio
+              :label= "$t('groups.members.default')"
+              :key='4'
+              :value= "myEmail"
+            ></v-radio>
+          </v-radio-group>
+          <v-card-actions>
+            <v-btn small flat @click="hideEntityTypePanel">{{
+              $t("actions.close")
+              }}</v-btn>
+            <v-spacer></v-spacer>
+            <v-footer color="teal lighten-3" x-small>
+              {{ $t("groups.members.email-dialog-footnote")}}
+            </v-footer>
+            <v-spacer></v-spacer>
+            <v-btn small flat color="primary"
+                   @click="hideEntityTypePanel"
+            >{{
+              $t("actions.save")
+              }}</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-expand-transition>
+    </v-flex>
     <v-card-actions>
       <v-btn v-on:click="cancel" color="secondary" flat>{{
         $t("actions.cancel")
-      }}</v-btn>
+      }}123</v-btn>
+      <v-spacer>
+      </v-spacer>
+      <v-footer>{{replyToOtherEmail}}</v-footer>
       <v-spacer></v-spacer>
+      <!-- the expand section for the reply to feature advanced setting    -->
       <v-btn
         v-on:click="sendEmail"
         :disabled="!hasValidRecipients"
@@ -90,7 +181,7 @@
         raised
         :loading="sendLoading"
         data-cy="confirm-email"
-        >{{ $t("groups.members.email.send") }}</v-btn
+        >{{ $t("groups.members.email.send") }}123</v-btn
       >
     </v-card-actions>
   </v-card>
@@ -98,7 +189,11 @@
 <script>
 import { mapState } from "vuex";
 import { eventBus } from "../plugins/event-bus.js";
+import EntitySearch from "./EntitySearch";
+import PersonDialog from "./PersonDialog";
+
 export default {
+  components: {EntitySearch },
   props: {
     initialData: {
       /* contains the following
@@ -113,7 +208,7 @@ export default {
     hasValidRecipients() {
       return this.email.recipients.some(recipient => recipient.email);
     },
-    ...mapState(["currentAccount"])
+    ...mapState(["currentAccount"]),
   },
   watch: {
     "initialData.recipients": function() {
@@ -132,6 +227,7 @@ export default {
       this.email.bcc = [];
       this.email.managerName = "";
       this.email.managerEmail = "sender@xx.com";
+      this.email.reply_to="";
     },
     cancel() {
       this.resetEmail();
@@ -140,13 +236,14 @@ export default {
     },
     sendEmail() {
       this.sendLoading = true;
-      // transform data to compatible form
       let email = {
         ...this.email,
         recipients: this.email.recipients.map(p => p.email),
         cc: this.email.cc.map(p => p.email),
-        bcc: this.email.bcc.map(p => p.email)
+        bcc: this.email.bcc.map(p => p.email),
+        reply_to: this.replyToOtherEmail
       };
+      console.log("Reply to this email: ", email);
       this.$http
         .post(`/api/v1/emails/`, email, { noErrorSnackBar: true })
         .then(() => {
@@ -162,6 +259,57 @@ export default {
             content: "groups.messages.error-sending-email"
           });
         });
+    },
+    showEntityTypePanel() {
+      this.entityTypePanel.show = true;
+      this.radioGroup = this.myEmail;
+    },
+    hideEntityTypePanel() {
+      this.entityTypePanel.show = false;
+      console.log("To other email", this.replyToOtherEmail);
+      this.replyToOtherEmail = this.radioGroup;
+    },
+    showManagerPanel(){
+      this.managerPanel.show = true;
+    },
+    setReplyTo(){
+      console.log("SelectedPerson: ", this.selectedPerson);
+      if (this.selectedPerson != null && (this.selectedPerson)[1] === undefined){
+        this.replyToOtherEmail = (this.selectedPerson)[0].email;
+        this.managerPanel.show = false;
+        this.radioGroup = this.replyToOtherEmail;
+        console.log("radio group", this.radioGroup);
+      }
+      else{
+        eventBus.$emit("error", {
+          content: "Select one email"
+        });
+      }
+    },
+    hideManagerPanel(){
+      this.managerPanel.show = false;
+    },
+    getAllManagers(){
+    },
+    AllGroupManagers(){
+      let groupId = this.$route.params.group;
+      this.$http
+        .get(`/api/v1/people/persons`)
+        .then(resp => {
+          this.people = resp.data;
+          console.log("people ",this.people);
+          //all the people, pick the person who have email address in the search list
+        }).then(() => this.peronWithEmail())
+      ;
+    },
+    peronWithEmail(){
+      let i = 0
+      for (let i = 0; i< this.people.length; i++){
+        if ((this.people)[i].email === null){
+          this.searchPeople.push((this.people)[i]);
+        }
+      }
+      console.log(this.searchPeople);
     }
   },
   data() {
@@ -174,9 +322,33 @@ export default {
         cc: [],
         bcc: [],
         managerName: "", // TODO: use this field in the composed email later
-        managerEmail: "sender@xx.com" // TODO: ask the user to choose the sender email
-      }
+        managerEmail: "manager@xx.com", // TODO: ask the user to choose the sender email
+        reply_to:""
+      },
+      expand:false,
+      entityTypePanel: {
+        show: false
+      },
+      managerPanel: {
+        show: false
+      },
+      memberPanel: {
+        show: false
+      },
+      radioGroup: 'default@email.com',
+      replyToOtherEmail: null,
+      homeChurchEmail: 'homeChurh@email.com',
+      myEmail: 'default@email.com',
+      managers: null,
+      managerWithEmail:{},
+      selectedPerson:null,
+      people:[],
+      searchPeople:[],
     };
+  },
+  mounted: function(){
+    this.AllGroupManagers();
+    this.myEmail = this.currentAccount.email;
   }
 };
 </script>
