@@ -592,16 +592,20 @@
       "member-count": "Member Count",
       "members": {
         "add-member": "Add Member",
+        "default": "Default",
         "edit-member": "Edit Member",
         "email": {
           "bcc": "Bcc",
           "body": "Body",
           "cc": "Cc",
           "compose": "Compose Email",
+          "reply-to": "Reply to",
           "send": "Send",
           "subject": "Subject",
           "to": "To"
         },
+        "email-dialog-footnote": "Click the circle to select the reply-to option",
+        "email-reply-to": "Reply to",
         "title": "Members"
       },
       "messages": {
@@ -1479,16 +1483,20 @@
       "member-count": "Recuento de Miembros",
       "members": {
         "add-member": "A\u00f1adir miembro",
+        "default": "Defecto",
         "edit-member": "Editar miembro",
         "email": {
           "bcc": "Cco",
           "body": "Cuerpo",
           "cc": "Cc",
           "compose": "Redactar Correo Electr\u00f3nico",
+          "reply-to": "Responder a",
           "send": "Enviar",
           "subject": "Asunto",
           "to": "Para"
         },
+        "email-dialog-footnote": "Haga clic en el c\u00edrculo para seleccionar la opci\u00f3n de respuesta",
+        "email-reply-to": "Responder a",
         "title": "Miembros"
       },
       "messages": {
@@ -2366,16 +2374,20 @@
       "member-count": "\u4f1a\u5458\u4eba\u6570",
       "members": {
         "add-member": "\u65b0\u589e\u4f1a\u5458",
+        "default": "\u9ed8\u8ba4",
         "edit-member": "\u7f16\u8f91\u4f1a\u5458",
         "email": {
           "bcc": "\u5bc6\u4ef6\u6284\u9001",
           "body": "\u8eab\u4f53",
           "cc": "\u6284\u9001",
           "compose": "\u5199\u90ae\u4ef6",
+          "reply-to": "\u56de\u590d",
           "send": "\u53d1\u9001",
           "subject": "\u5b66\u79d1",
           "to": "\u81f3"
         },
+        "email-dialog-footnote": "\u70b9\u51fb\u5708\u5b50\u4ee5\u9009\u62e9\u56de\u590d\u9009\u9879",
+        "email-reply-to": "\u56de\u590d\u5230",
         "title": "\u4f1a\u5458"
       },
       "messages": {
