@@ -88,7 +88,6 @@
       </v-btn>
     </v-flex>
     <v-flex>
-      <!-- extention for email     -->
       <v-expand-transition>
         <v-card
           v-if="entityTypePanel.show"
@@ -119,7 +118,6 @@
                       v-model="selectedPerson"
                       :existing-entities="searchPeople"
                     />
-<!--                    :existing-entities="attendance"-->
                   </v-card-text>
                   <v-btn v-on:click="hideManagerPanel" color="light-blue" flat>{{
                     $t("actions.cancel")
@@ -129,18 +127,6 @@
                     }}</v-btn>
                 </v-card>
               </v-expand-transition>
-<!--            <v-expand-transition>-->
-<!--              <v-card-->
-<!--                v-if="managerPanel.show"-->
-<!--              >-->
-<!--                <v-btn v-on:click="hideManagerPanel" color="light-blue" flat>{{-->
-<!--                  $t("actions.cancel")-->
-<!--                  }}</v-btn>-->
-<!--                <v-btn v-on:click="showManagerPanel" color="primary" flat>{{-->
-<!--                  $t("actions.confirm")-->
-<!--                  }}</v-btn>-->
-<!--              </v-card>-->
-<!--            </v-expand-transition>-->
             <v-radio
               :label= "$t('groups.members.default')"
               :key='4'
@@ -168,12 +154,11 @@
     <v-card-actions>
       <v-btn v-on:click="cancel" color="secondary" flat>{{
         $t("actions.cancel")
-      }}123</v-btn>
+      }}</v-btn>
       <v-spacer>
       </v-spacer>
       <v-footer>{{replyToOtherEmail}}</v-footer>
-      <v-spacer></v-spacer>
-      <!-- the expand section for the reply to feature advanced setting    -->
+      <v-spacer />
       <v-btn
         v-on:click="sendEmail"
         :disabled="!hasValidRecipients"
@@ -181,7 +166,7 @@
         raised
         :loading="sendLoading"
         data-cy="confirm-email"
-        >{{ $t("groups.members.email.send") }}123</v-btn
+        >{{ $t("groups.members.email.send") }}</v-btn
       >
     </v-card-actions>
   </v-card>
@@ -314,8 +299,8 @@ export default {
         recipients: [],
         cc: [],
         bcc: [],
-        managerName: "", // TODO: use this field in the composed email later
-        managerEmail: "manager@xx.com", // TODO: ask the user to choose the sender email
+        managerName: "", 
+        managerEmail: "manager@xx.com",
         reply_to:""
       },
       expand:false,
