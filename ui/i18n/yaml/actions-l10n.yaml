@@ -27,10 +27,12 @@ actions:
     _desc: Add an event to the database
     en-US: Add Event
     es-EC: Añadir Evento
+    zh-CN: 新增活动
   add-manager:
     _desc: Add a manager to the database
     en-US: Add Manager
     es-EC: Añadir administrador
+    zh-CN: 新增管理员
   add-participant:
     _desc: Add a person into a meeting/group
     en-US: Add a Participant
@@ -148,6 +150,11 @@ actions:
     en-US: Back
     es-EC: Regresar
     zh-CN: 返回
+  continue:
+    _desc: Proceed to the next intermediate step
+    en-US: Continue
+    es-EC: Seguir
+    zh-CN: 继续
   view-past:
     _desc: View past events
     en-US: View Past

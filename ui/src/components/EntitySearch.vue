@@ -100,7 +100,8 @@ export default {
       if (this.existingEntities) {
         return this.entities.filter(ent => {
           for (let otherEnt of this.existingEntities) {
-            if (ent[this.idField] === otherEnt[this.idField]) {
+            // using double equal to convert string to numbers
+            if (ent[this.idField] == otherEnt[this.idField]) {
               return false;
             }
           }
