@@ -11,3 +11,4 @@ class EmailSchema(Schema):
     bcc = fields.List(fields.String())
     managerName = fields.String()
     managerEmail = fields.String()
+    reply_to = fields.String()
