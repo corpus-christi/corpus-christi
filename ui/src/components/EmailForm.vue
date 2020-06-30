@@ -243,7 +243,6 @@ export default {
         bcc: this.email.bcc.map(p => p.email),
         reply_to: this.replyToOtherEmail
       };
-      console.log("Reply to this email: ", email);
       this.$http
         .post(`/api/v1/emails/`, email, { noErrorSnackBar: true })
         .then(() => {
@@ -266,19 +265,16 @@ export default {
     },
     hideEntityTypePanel() {
       this.entityTypePanel.show = false;
-      console.log("To other email", this.replyToOtherEmail);
       this.replyToOtherEmail = this.radioGroup;
     },
     showManagerPanel(){
       this.managerPanel.show = true;
     },
     setReplyTo(){
-      console.log("SelectedPerson: ", this.selectedPerson);
       if (this.selectedPerson != null && (this.selectedPerson)[1] === undefined){
         this.replyToOtherEmail = (this.selectedPerson)[0].email;
         this.managerPanel.show = false;
         this.radioGroup = this.replyToOtherEmail;
-        console.log("radio group", this.radioGroup);
       }
       else{
         eventBus.$emit("error", {
@@ -297,8 +293,6 @@ export default {
         .get(`/api/v1/people/persons`)
         .then(resp => {
           this.people = resp.data;
-          console.log("people ",this.people);
-          //all the people, pick the person who have email address in the search list
         }).then(() => this.peronWithEmail())
       ;
     },
@@ -309,7 +303,6 @@ export default {
           this.searchPeople.push((this.people)[i]);
         }
       }
-      console.log(this.searchPeople);
     }
   },
   data() {
