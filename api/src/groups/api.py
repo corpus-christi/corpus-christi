@@ -316,7 +316,7 @@ def update_manager(group_id, person_id):
         if db.session.query(Manager).filter_by(
                 person_id=new_person_id or person_id, 
                 group_id=new_group_id or group_id).first():
-            return logged_response(f"Manager with group_id #{new_group_id} and person_id #{new_person_id} already exists", 409)
+            return logged_response(f"Manager with group_id #{new_group_id or group_id} and person_id #{new_person_id or person_id} already exists", 409)
         # check if the new group exists
         if new_group_id and not db.session.query(Group).filter_by(id=new_group_id).first():
             return logged_response(f"Group with group_id #{new_group_id} does not exist", 404)
@@ -505,7 +505,7 @@ def update_member(group_id, person_id):
         if db.session.query(Member).filter_by(
                 person_id=new_person_id or person_id, 
                 group_id=new_group_id or group_id).first():
-            return logged_response(f"Member with group_id #{new_group_id} and person_id #{new_person_id} already exists", 409)
+            return logged_response(f"Member with group_id #{new_group_id or group_id} and person_id #{new_person_id or person_id} already exists", 409)
         # check if the new group exists
         if new_group_id and not db.session.query(Group).filter_by(id=new_group_id).first():
             return logged_response(f"Group with group_id #{new_group_id} does not exist", 404)
