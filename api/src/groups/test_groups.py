@@ -540,6 +540,46 @@ def test_update_member(auth_client):
     resp = auth_client.patch(url_for('groups.read_one_member', group_id = first_member.group_id, person_id = first_member.person_id), json = {'active':False})
     assert resp.status_code == 200
 
+def test_update_member_identity(auth_client):
+    # GIVEN a database with person1, person2 in group1
+    create_multiple_groups(auth_client.sqla, 2)
+    group1, group2 = auth_client.sqla.query(Group).all()
+    create_multiple_people(auth_client.sqla, 2)
+    person1_id, person2_id = [ person.id for person in auth_client.sqla.query(Person).all() ]
+    group1.members += [
+            Member(person_id=person1_id, group_id=group1.id, joined=fake.date()),
+            Member(person_id=person2_id, group_id=group1.id, joined=fake.date())
+            ]
+    auth_client.sqla.add(group1)
+    auth_client.sqla.commit()
+    # WHEN we move person1 to group2
+    resp = auth_client.patch(url_for('groups.update_member', group_id=group1.id, person_id=person1_id), json = {'groupId': group2.id})
+    # THEN we expect the request to succeed
+    assert resp.status_code == 200
+    # THEN we expect person1 to be in group2
+    assert auth_client.sqla.query(Member).filter_by(group_id=group2.id, person_id=person1_id).first()
+    # THEN we expect person1 not to be in group1
+    assert not auth_client.sqla.query(Member).filter_by(group_id=group1.id, person_id=person1_id).first()
+
+    # WHEN we move change group2.person1's identity to person2
+    resp = auth_client.patch(url_for('groups.update_member', group_id=group2.id, person_id=person1_id), json = {'personId': person2_id})
+    # THEN we expect the request to succeed
+    assert resp.status_code == 200
+    # THEN we expect person2 to be in group2
+    assert auth_client.sqla.query(Member).filter_by(group_id=group2.id, person_id=person2_id).first()
+    # THEN we expect person1 not to be in group2
+    assert not auth_client.sqla.query(Member).filter_by(group_id=group2.id, person_id=person1_id).first()
+
+    # GIVEN person2 in group1 and group2
+    # WHEN we try to move person2 from group1 to group2
+    resp = auth_client.patch(url_for('groups.update_member', group_id=group1.id, person_id=person2_id), json = {'groupId': group2.id})
+    # THEN we expect an error code
+    assert resp.status_code == 409
+    # WHEN we try to move person2 to a non-existent group
+    resp = auth_client.patch(url_for('groups.update_member', group_id=group1.id, person_id=person2_id), json = {'groupId': -1})
+    # THEN we expect an error code
+    assert resp.status_code == 404
+
 # # ---- Attendance
 @pytest.mark.smoke
 def test_create_attendance(auth_client):
