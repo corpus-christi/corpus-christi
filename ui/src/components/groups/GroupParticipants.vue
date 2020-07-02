@@ -487,10 +487,10 @@ export default {
       return headers;
     },
     id() {
-      return this.$route.params.group;
+      return parseInt(this.$route.params.group);
     },
     isManagerMode() {
-      return this.participantType == "manager";
+      return this.participantType === "manager";
     },
     endpoint() {
       return `/api/v1/groups/groups/${this.id}/${
