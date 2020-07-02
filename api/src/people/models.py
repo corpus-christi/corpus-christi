@@ -99,6 +99,7 @@ class PersonSchema(Schema):
     attributesInfo = fields.Nested('PersonAttributeSchema', many=True)
     images = fields.Nested('ImagePersonSchema', many=True, exclude=['person'], dump_only=True)
     roles = fields.Nested('RoleSchema', many=True, dump_only=True)
+    members = fields.Nested('MemberSchema', only=['group_id', 'active'], many=True, dump_only=True)
     managers = fields.Nested('ManagerSchema', only=['group_id', 'active'], many=True, dump_only=True)
 
     @pre_load
@@ -152,11 +153,8 @@ class Role(Base):
             return count
         return 0
 
-
 class RoleSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     name_i18n = fields.String(data_key='nameI18n')
     active = fields.Boolean()
 
-
-# ---- Manager moved to groups.models

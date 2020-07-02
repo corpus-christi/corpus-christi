@@ -304,6 +304,45 @@ groups:
       en-US: Group Treeview
       es-EC: Vista de árbol grupal
       zh-CN: 组树视图
+  batch-actions:
+    title:
+      en-US: Batch Actions
+      es-EC: Acciones por lotes
+      zh-CN: 批处理动作
+    archive:
+      en-US: Archive
+      es-EC: Archivo
+      zh-CN: 封存
+    unarchive:
+      en-US: Unarchive
+      es-EC: Desarchivar
+      zh-CN: 取消存档
+    email:
+      en-US: Send Email
+      es-EC: Enviar correo electrónico
+      zh-CN: 发电子邮件
+    move:
+      en-US: Move
+      es-EC: Moverse
+      zh-CN: 移动
+    edit:
+      en-US: Edit
+      es-EC: Editar
+      zh-CN: 编辑
+    messages:
+      no-email:
+        en-US: The person does not have an email address
+        es-EC: La persona no tiene una dirección de correo electrónico.
+        zh-CN: 该人没有电子邮件地址
+      person-in-destination-group:
+        en-US: The person is already in the destination group
+        es-EC: La persona ya está en el grupo de destino.
+        zh-CN: 该人已经在目的地组中
+  tooltips:
+    move:
+      en-US: Move to Another Group
+      es-EC: Moverse a otro grupo
+      zh-CN: 移至另一个小组
   meetings:
     title:
       en-US: Meetings
@@ -482,14 +521,6 @@ groups:
       en-US: Error while adding group
       es-EC: Error al agregar grupo
       zh-CN: 添加群组时出错
-    members-added:
-      en-US: Members added
-      es-EC: Miembros agregados
-      zh-CN: 成员添加
-    error-adding-members:
-      en-US: Error while adding members
-      es-EC: Error al agregar miembros
-      zh-CN: 添加成员时出错
     member-archived:
       en-US: Member archived
       es-EC: Miembro archivado
@@ -542,3 +573,55 @@ groups:
       en-US: Your email address is not defined
       es-EC: Su dirección de correo electrónico no está definida
       zh-CN: 您的电子邮件地址未定义
+    select-destination-group:
+      en-US: Select a destination group
+      es-EC: Seleccione un grupo de destino
+      zh-CN: 选择目的地群组
+    members-moved:
+      en-US: Successfully moved member(s)
+      es-EC: Miembros movidos exitosamente
+      zh-CN: 成功移动成员
+    error-moving-members:
+      en-US: Error while moving member(s)
+      es-EC: Error al mover miembro (s)
+      zh-CN: 移动成员时出错
+    managers-moved:
+      en-US: Successfully moved manager(s)
+      es-EC: Gerentes movidos exitosamente
+      zh-CN: 成功调动经理
+    error-moving-managers:
+      en-US: Error while moving manager(s)
+      es-EC: Error al mover gerente (s)
+      zh-CN: 移动经理时出错
+    members-added:
+      en-US: Successfully added member(s)
+      es-EC: Miembro (s) agregado (s) correctamente
+      zh-CN: 成功添加成员
+    error-adding-members:
+      en-US: Error while adding member(s)
+      es-EC: Error al agregar miembro (s)
+      zh-CN: 添加成员时出错
+    managers-added:
+      en-US: Successfully added manager(s)
+      es-EC: Gerentes agregados con éxito
+      zh-CN: 成功添加经理
+    error-adding-managers:
+      en-US: Error while adding manager(s)
+      es-EC: Error al agregar administrador (es)
+      zh-CN: 添加管理员时出错
+    members-updated:
+      en-US: Successfully updated member(s)
+      es-EC: Miembros actualizados con éxito
+      zh-CN: 成功更新成员
+    error-updating-members:
+      en-US: Error while updating member(s)
+      es-EC: Error al actualizar miembro (s)
+      zh-CN: 更新会员时出错
+    managers-updated:
+      en-US: Successfully updated manager(s)
+      es-EC: Gerentes actualizados con éxito
+      zh-CN: 成功更新经理
+    error-updating-managers:
+      en-US: Error while updating manager(s)
+      es-EC: Error al actualizar administrador (es)
+      zh-CN: 更新管理员时出错

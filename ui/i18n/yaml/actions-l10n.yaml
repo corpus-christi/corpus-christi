@@ -160,6 +160,11 @@ actions:
     en-US: Back
     es-EC: Regresar
     zh-CN: 返回
+  continue:
+    _desc: Proceed to the next intermediate step
+    en-US: Continue
+    es-EC: Seguir
+    zh-CN: 继续
   view-past:
     _desc: View past events
     en-US: View Past
