@@ -33,10 +33,10 @@ def flip():
     return random.choice((True, False))
 
 
-def group_object_factory(group_type_id):
+def group_object_factory(group_type_id, name=None):
     """Cook up a fake group."""
     group = {
-        'name': rl_fake().word(),
+        'name': name or rl_fake().word(),
         'description': rl_fake().sentences(nb=1)[0],
         'active': flip(),
         'groupTypeId': group_type_id
@@ -105,14 +105,34 @@ def manager_type_object_factory(manager_type_name):
 def create_multiple_groups(sqla, n):
     """Commit `n` new groups to the database. Return their IDs."""
     group_schema = GroupSchema()
-    new_groups = []
+
     group_types = sqla.query(GroupType).all()
     if len(group_types) == 0:
         create_multiple_group_types(sqla, 3)
         group_types = sqla.query(GroupType).all()
-    for i in range(n):
-        valid_group = group_schema.load(group_object_factory(random.choice(group_types).id))
-        new_groups.append(Group(**valid_group))
+
+    group_name_samples = [
+            "Celebrate Recovery",
+            "Illness Support",
+            "Financial Peace",
+            "Divorce Care",
+            "Grief Share",
+            "Single and Solo Moms",
+            "Venezuelan Refugee Support",
+            "Iron Man - Men's Group",
+            "New Christians",
+            "Highschool Connect",
+            "Married With Kids",
+            "Women of Faith",
+            "Service Project",
+            "Praying for Todays Issues",
+            "Discovering Your Gifts"
+            ]
+    group_names = group_name_samples[:n]
+    new_groups = [ Group(**group_schema.load(group_object_factory(random.choice(group_types).id, name))) for name in group_names ]
+    for _ in range(n-len(group_name_samples)):
+        new_groups.append(Group(**group_schema.load(group_object_factory(random.choice(group_types).id))))
+
     sqla.add_all(new_groups)
     sqla.commit()
 
@@ -211,7 +231,7 @@ def create_multiple_attendance(sqla, fraction=0.75):
 def create_multiple_group_types(sqla, n):
     """Commit `n` new group types to the database."""
     group_type_schema = GroupTypeSchema()
-    group_type_samples = ['Worship Team', 'Logistics', 'Event Planning Team']
+    group_type_samples = ['Bible Study', 'Service Projects', 'Worship', 'Logistics', 'Event Planning']
     if n <= len(group_type_samples):
         group_type_names = group_type_samples[:n]
     else:
@@ -237,7 +257,7 @@ def create_group_test_data(sqla):
     """The function that creates test data in the correct order """
     create_multiple_group_types(sqla, 5)
     create_multiple_manager_types(sqla, 5)
-    create_multiple_groups(sqla, 4)
+    create_multiple_groups(sqla, 10)
     create_multiple_managers(sqla, 0.75)
     create_multiple_members(sqla, 0.75)
     create_multiple_meetings(sqla, 12)
