@@ -12,10 +12,25 @@ import "./plugins/google-maps";
 
 import App from "./App.vue";
 
-new Vue({
+const app = new Vue({
   el: "#app",
   store: store,
   router: router,
   i18n: i18n,
   render: h => h(App)
 });
+
+declare global {
+  interface Window {
+    Cypress: any;
+    app: Vue;
+  }
+}
+
+if (window.Cypress) {
+  // let cypress have access to the vue instance
+  console.log("cypress detected");
+  window.app = app;
+} else {
+  console.log("Cypress not detected");
+}

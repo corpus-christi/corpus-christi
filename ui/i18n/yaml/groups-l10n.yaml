@@ -207,6 +207,51 @@ groups:
         en-US: Manager Types
         es-EC: Tipos de gerente
         zh-CN: 经理类型
+  split:
+    title:
+      en-US: Split Group
+      es-EC: Grupo dividido
+      zh-CN: 拆分组
+    tooltip:
+      en-US: Split
+      es-EC: División
+      zh-CN: 分裂
+    parent-group:
+      en-US: Parent Group
+      es-EC: Grupo de padres
+      zh-CN: 家长小组
+    child-group:
+      en-US: Child Group
+      es-EC: Grupo de niños
+      zh-CN: 儿童组
+    group-information:
+      en-US: Group Information
+      es-EC: Información grupal
+      zh-CN: 团体信息
+    choose-members:
+      en-US: Choose Members
+      es-EC: Elegir miembros
+      zh-CN: 选择会员
+    choose-managers:
+      en-US: Choose Managers
+      es-EC: Elegir gerentes
+      zh-CN: 选择经理
+    no-members:
+      en-US: No members in parent group
+      es-EC: No hay miembros en el grupo de padres
+      zh-CN: 父组中没有成员
+    no-managers:
+      en-US: No managers in parent group
+      es-EC: No hay gerentes en el grupo principal
+      zh-CN: 父组中没有经理
+    success:
+      en-US: Successfully splitted group
+      es-EC: Grupo dividido con éxito
+      zh-CN: 小组成功分裂
+    error:
+      en-US: Error occurred while splitting the group
+      es-EC: Se produjo un error al dividir el grupo
+      zh-CN: 分割群组时发生错误
   treeview:
     categories:
       all-group-types:

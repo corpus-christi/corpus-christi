@@ -85,8 +85,6 @@ def create_course():
 def read_all_courses():
     """ List all active and inactive courses. """
     result = db.session.query(Course).all()
-    if (result == []):
-        return "Result NOT found", 404
     for course in result:
         course.diplomaList = course.diplomas
     with_prereqs = add_prereqs(result)

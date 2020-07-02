@@ -42,7 +42,9 @@
       "header": "Actions",
       "login": "Log In",
       "logout": "Log Out",
+      "next": "Next",
       "open-map": "Open Map",
+      "previous": "Previous",
       "save": "Save",
       "search": "Search",
       "search-addresses": "Search Addresses",
@@ -665,6 +667,19 @@
       },
       "name": "Name",
       "none-assigned": "No groups assigned.",
+      "split": {
+        "child-group": "Child Group",
+        "choose-managers": "Choose Managers",
+        "choose-members": "Choose Members",
+        "error": "Error occurred while splitting the group",
+        "group-information": "Group Information",
+        "no-managers": "No managers in parent group",
+        "no-members": "No members in parent group",
+        "parent-group": "Parent Group",
+        "success": "Successfully splitted group",
+        "title": "Split Group",
+        "tooltip": "Split"
+      },
       "title": "Home Churches",
       "tooltips": {
         "move": "Move to Another Group"
@@ -945,7 +960,9 @@
       "header": "Acciones",
       "login": "Acceder",
       "logout": "Cerrar sesi\u00f3n",
+      "next": "pr\u00f3ximo",
       "open-map": "Abrir Mapa",
+      "previous": "Anterior",
       "save": "Salvar",
       "search": "Buscar",
       "search-addresses": "Buscar Direcciones",
@@ -1568,6 +1585,19 @@
       },
       "name": "Nombre",
       "none-assigned": "No hay grupos asignados.",
+      "split": {
+        "child-group": "Grupo de ni\u00f1os",
+        "choose-managers": "Elegir gerentes",
+        "choose-members": "Elegir miembros",
+        "error": "Se produjo un error al dividir el grupo",
+        "group-information": "Informaci\u00f3n grupal",
+        "no-managers": "No hay gerentes en el grupo principal",
+        "no-members": "No hay miembros en el grupo de padres",
+        "parent-group": "Grupo de padres",
+        "success": "Grupo dividido con \u00e9xito",
+        "title": "Grupo dividido",
+        "tooltip": "Divisi\u00f3n"
+      },
       "title": "Iglesias Hogar",
       "tooltips": {
         "move": "Moverse a otro grupo"
@@ -1848,7 +1878,9 @@
       "header": "\u52a8\u4f5c",
       "login": "\u767b\u5f55",
       "logout": "\u767b\u51fa",
+      "next": "\u4e0b\u4e00\u4e2a",
       "open-map": "\u6253\u5f00\u5730\u56fe",
+      "previous": "\u4ee5\u524d",
       "save": "\u4fdd\u5b58",
       "search": "\u641c\u7d22",
       "search-addresses": "\u641c\u7d22\u5730\u5740",
@@ -2471,6 +2503,19 @@
       },
       "name": "\u540d\u79f0",
       "none-assigned": "\u672a\u5206\u914d\u7ec4\u3002",
+      "split": {
+        "child-group": "\u513f\u7ae5\u7ec4",
+        "choose-managers": "\u9009\u62e9\u7ecf\u7406",
+        "choose-members": "\u9009\u62e9\u4f1a\u5458",
+        "error": "\u5206\u5272\u7fa4\u7ec4\u65f6\u53d1\u751f\u9519\u8bef",
+        "group-information": "\u56e2\u4f53\u4fe1\u606f",
+        "no-managers": "\u7236\u7ec4\u4e2d\u6ca1\u6709\u7ecf\u7406",
+        "no-members": "\u7236\u7ec4\u4e2d\u6ca1\u6709\u6210\u5458",
+        "parent-group": "\u5bb6\u957f\u5c0f\u7ec4",
+        "success": "\u5c0f\u7ec4\u6210\u529f\u5206\u88c2",
+        "title": "\u62c6\u5206\u7ec4",
+        "tooltip": "\u5206\u88c2"
+      },
       "title": "\u5bb6\u5ead\u6559\u4f1a",
       "tooltips": {
         "move": "\u79fb\u81f3\u53e6\u4e00\u4e2a\u5c0f\u7ec4"

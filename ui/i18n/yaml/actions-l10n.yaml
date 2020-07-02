@@ -94,6 +94,16 @@ actions:
     en-US: Open Map
     es-EC: Abrir Mapa
     zh-CN: 打开地图
+  next:
+    _desc: Go to the next page or step
+    en-US: Next
+    es-EC: próximo
+    zh-CN: 下一个
+  previous:
+    _desc: Go to the previous page or step
+    en-US: Previous
+    es-EC: Anterior
+    zh-CN: 以前
   save:
     _desc: Save a newly created item
     en-US: Save
