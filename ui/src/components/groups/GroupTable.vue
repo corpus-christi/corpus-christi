@@ -87,7 +87,7 @@
           >
             <v-icon>multiline_chart</v-icon>
             {{
-            $t("groups.treeview.show-treeview")
+            $t("groups.treeview.show-linegraph")
             }}
           </v-btn>
 <!--          //need to be change to En and Spanish-->

@@ -229,6 +229,10 @@ groups:
       en-US: Show All Groups
       es-EC: Mostrar todos los grupos
       zh-CN: 显示所有群组
+    show-linegraph:
+      en-US: Mostrar gráfico de líneas,
+      es-EC: Show Line Graph
+      zh-CN: 显示折线图
     show-list:
       en-US: Show Group List
       es-EC: Mostrar lista de grupos
