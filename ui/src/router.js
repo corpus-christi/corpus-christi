@@ -72,6 +72,12 @@ const router = new VueRouter({
           component: () => import("@/components/groups/GroupTreeView")
         },
         {
+          name: "group-lineGraph",
+          path: "lineGraph",
+          meta: { authRequired: true },
+          component: () => import("@/components/groups/GroupLineGraph")
+        },
+        {
           name: "group-types",
           path: "group-types",
           meta: { authRequired: true },
