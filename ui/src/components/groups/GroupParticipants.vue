@@ -685,22 +685,23 @@ export default {
       this.participantDialog.show = false;
     },
     confirmParticipantDialog() {
+      if (editMode && !this.isManagerMode) {
+        // ui should hide buttons as appropriate to prevent this case
+        console.error("There is nothing to edit for members");
+        return;
+      }
       let editMode = this.participantDialog.editMode;
       this.participantDialog.loading = true;
-      let method = this.$http.post;
       let endpoint = this.endpoint;
-      let updatePayload = null;
-      if (editMode) {
-        if (!this.isManagerMode) {
-          // ui should hide buttons as appropriate to prevent this case
-          console.error("There is nothing to edit for members");
-          return;
-        }
-        updatePayload = {
-          managerTypeId: this.participantDialog.participantType.id
-        };
+      let payload = {};
+      if (this.isManagerMode) {
+        payload.managerTypeId = this.participantDialog.participantType.id;
       }
-      this.saveParticipants(this.participantDialog.persons, updatePayload)
+      this.saveParticipants(
+        this.participantDialog.persons,
+        editMode ? "patch" : "post",
+        payload
+      )
         .then(() => {
           this.fetchParticipants();
           eventBus.$emit("message", {
@@ -774,7 +775,7 @@ export default {
       }
     },
     batchMoveParticipants(participants) {
-      return this.saveParticipants(participants.map(p => p.person), {
+      return this.saveParticipants(participants.map(p => p.person), "patch", {
         groupId: this.moveDialog.destinationGroup.id
       })
         .then(() => {
@@ -796,20 +797,22 @@ export default {
     },
 
     /************* api methods ****************/
-    /* add or update the participants associated with current group and each person in persons,
-    according to updatePayload. If updatePayload is not given, the participants will be added with a post request */
-    saveParticipants(persons, updatePayload) {
+    /* add or update the participants associated with current group and each person in 'persons',
+    'method' is a string either being 'patch' or 'post', specifying whether to add or update the participants
+    'payload' is a dictionary specifying additional attributes (e.g. managerTypeId) to be used in the request payload */
+    saveParticipants(persons, method, payload = {}) {
       let promises = [];
+      let http = this.$http[method];
+      let endpoint = this.endpoint;
       for (let person of persons) {
-        let payload = { personId: person.id };
-        let endpoint = this.endpoint;
-        let method = this.$http.post;
-        if (updatePayload) {
-          payload = updatePayload;
+        if (method === "post") {
+          // if adding participants
+          payload.personId = person.id;
+        } else if (method === "patch") {
+          // if updating participants
           endpoint = `${endpoint}/${person.id}`;
-          method = this.$http.patch;
         }
-        promises.push(method(endpoint, payload, { noErrorSnackBar: true }));
+        promises.push(http(endpoint, payload, { noErrorSnackBar: true }));
       }
       return Promise.all(promises);
     },
