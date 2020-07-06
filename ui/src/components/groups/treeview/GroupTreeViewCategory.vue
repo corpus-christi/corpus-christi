@@ -1,14 +1,9 @@
 <template>
   <div>
-    <v-card>
-      <v-toolbar extended class="pa-1" :color="toolbarColor">
+    <v-card flat>
+      <v-toolbar card class="pa-1" :color="toolbarColor">
         <v-layout align-center justify-space-between>
-          <v-flex md4 xs7
-            ><v-toolbar-title>{{
-              $t("groups.treeview.title")
-            }}</v-toolbar-title></v-flex
-          >
-          <v-flex md6 xs5 shrink>
+          <v-flex md6 xs3>
             <v-text-field
               :append-icon="search ? 'clear' : 'search'"
               @click:append="search = ''"
@@ -17,24 +12,28 @@
             >
             </v-text-field>
           </v-flex>
-        </v-layout>
-
-        <template v-slot:extension>
-          <v-layout v-if="selection.length == 0" align-center justify-end>
-            <v-flex md4 sm6>
+          <v-spacer></v-spacer>
+          <template v-if="selection.length === 0">
+            <v-flex md3 xs4>
               <v-select :items="viewOptions" v-model="viewStatus"> </v-select>
             </v-flex>
-            <v-spacer></v-spacer>
-            <v-tooltip bottom
-              ><template v-slot:activator="{ on }">
-                <v-flex shrink>
-                  <v-btn color="primary" fab small @click="expandAll" v-on="on"
-                    ><v-icon>unfold_more</v-icon></v-btn
-                  >
-                </v-flex>
-              </template>
-              {{ $t("groups.treeview.expand") }}
-            </v-tooltip>
+            <v-flex shrink>
+              <v-tooltip bottom
+                ><template v-slot:activator="{ on }">
+                  <v-flex shrink>
+                    <v-btn
+                      color="primary"
+                      fab
+                      small
+                      @click="expandAll"
+                      v-on="on"
+                      ><v-icon>unfold_more</v-icon></v-btn
+                    >
+                  </v-flex>
+                </template>
+                {{ $t("groups.treeview.expand") }}
+              </v-tooltip>
+            </v-flex>
             <v-flex shrink>
               <v-tooltip bottom
                 ><template v-slot:activator="{ on }">
@@ -50,23 +49,8 @@
                 {{ $t("groups.treeview.collapse") }}
               </v-tooltip>
             </v-flex>
-            <v-flex shrink>
-              <v-btn
-                color="primary"
-                :fab="$vuetify.breakpoint.mdAndDown"
-                :small="$vuetify.breakpoint.mdAndDown"
-                :to="{ name: 'all-groups' }"
-              >
-                <v-icon>list</v-icon>
-                {{
-                  $vuetify.breakpoint.mdAndDown
-                    ? ""
-                    : $t("groups.treeview.show-list")
-                }}
-              </v-btn>
-            </v-flex>
-          </v-layout>
-          <v-layout v-else align-center justify-end>
+          </template>
+          <template v-if="selection.length != 0">
             <v-flex shrink>
               <v-btn fab small @click="showEmailDialog"
                 ><v-icon> email </v-icon></v-btn
@@ -77,8 +61,8 @@
                 <v-icon> close</v-icon>
               </v-btn>
             </v-flex>
-          </v-layout>
-        </template>
+          </template>
+        </v-layout>
       </v-toolbar>
       <v-layout wrap>
         <v-flex>
@@ -141,7 +125,7 @@
 
 <script>
 import { unionBy, uniqBy } from "lodash";
-import EmailForm from "../EmailForm";
+import EmailForm from "../../EmailForm";
 export default {
   name: "GroupTreeView",
   components: { EmailForm },

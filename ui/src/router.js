@@ -69,7 +69,24 @@ const router = new VueRouter({
           name: "group-treeview",
           path: "treeview",
           meta: { authRequired: true },
-          component: () => import("@/components/groups/GroupTreeView")
+          component: () => import("@/components/groups/treeview/GroupTreeView"),
+          redirect: { name: "group-treeview-category" },
+          children: [
+            {
+              name: "group-treeview-category",
+              path: "category",
+              meta: { authRequired: true },
+              component: () =>
+                import("@/components/groups/treeview/GroupTreeViewCategory")
+            },
+            {
+              name: "group-treeview-hierarchy",
+              path: "hierarchy",
+              meta: { authRequired: true },
+              component: () =>
+                import("@/components/groups/treeview/GroupTreeViewHierarchy")
+            }
+          ]
         },
         {
           name: "group-types",
@@ -86,12 +103,11 @@ const router = new VueRouter({
           props: { entityTypeName: "managerType" }
         },
         {
-          name:"meeting-details",
-          path:"meetings/:meeting",
+          name: "meeting-details",
+          path: "meetings/:meeting",
           meta: { authRequired: true },
           redirect: { name: "meeting-members" },
-          component: () =>
-            import("@/components/groups/MeetingDetails"),
+          component: () => import("@/components/groups/MeetingDetails"),
           children: [
             {
               name: "meeting-members",
