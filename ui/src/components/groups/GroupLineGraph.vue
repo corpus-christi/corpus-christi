@@ -57,7 +57,7 @@
         </v-flex>
         <v-spacer />
       </v-toolbar>
-    <canvas id="myChart2" width="400" height="180"></canvas>
+    <canvas id="myChart2" width="500" height="180"></canvas>
 
     <v-toolbar>
       <v-btn class="mx-2" fab small @click="decrease">
@@ -80,17 +80,18 @@
 <script>
   import Chart from 'chart.js';
   import moment from 'moment'
+  import { mapState } from "vuex";
 
   export default {
     components: {},
     data() {
       return {
-        timeScale: ['Weekly', 'Monthly', 'Annually'],
+        timeScale: ['Weekly', 'Monthly'],
         selectedGroups: [],
-        selectedGroupsStore:[],
         groups: [],
         selectedTimeScale:null,
         labels:["January", "Febrwuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+        weekLabels:[],
         currentYear: null,
         page: null,
         selectedYearMeeting:[],
@@ -108,7 +109,69 @@
       },
       fistSelectedGroup() {
         this.reloadGraph();
+        if (this.selectedTimeScale === 'Weekly'){
+          this.calculateWeekGroupData();
+        }
         return this.selectedGroups[0];
+      },
+      ...mapState(["currentAccount"]),
+    },
+    watch:{
+      selectedGroups(newValue,oldValue){
+        if (newValue.length === 0) {
+          if (this.selectedTimeScale === 'Monthly') {
+            let ctx2 = document.getElementById("myChart2");
+            let myChart2 = new Chart(ctx2, {
+              type: "line",
+              data: {
+                labels: this.week,
+                datasets: [
+                  {
+                    label: ["No group selected"],
+                    backgroundColor: "rgba(225,10,10,0.3)",
+                    borderColor: "rgba(225,103,110,1)",
+                    borderWidth: 1,
+                    pointStrokeColor: "#fff",
+                    pointStyle: "crossRot",
+                    data: [],
+                    cubicInterpolationMode: "monotone",
+                    spanGaps: "false",
+                    fill: "false"
+                  },
+                ]
+              },
+              options: {}
+            });
+            myChart2.update();
+          }
+          if (this.selectedTimeScale === 'Weekly') {
+            if (newValue.length === 0) {
+              let ctx2 = document.getElementById("myChart2");
+              let myChart2 = new Chart(ctx2, {
+                type: "line",
+                data: {
+                  labels: this.weekLabels,
+                  datasets: [
+                    {
+                      label: ["No group selected"],
+                      backgroundColor: "rgba(225,10,10,0.3)",
+                      borderColor: "rgb(225,103,110)",
+                      borderWidth: 1,
+                      pointStrokeColor: "#fff",
+                      pointStyle: "crossRot",
+                      data: [],
+                      cubicInterpolationMode: "monotone",
+                      spanGaps: "false",
+                      fill: "false"
+                    },
+                  ]
+                },
+                options: {}
+              });
+              myChart2.update();
+            }
+          }
+        }
       }
     },
 
@@ -173,15 +236,45 @@
 
       decrease() {
         this.currentYear = this.currentYear - 1;
+        this.selectedGroups = [];
+        this.clearGraph();
+        this.changePageLoadGraph();
       },
       increase (){
         this.currentYear = Number(this.currentYear) + 1;
       },
 
+      clearGraph(){
+        let ctx2 = document.getElementById("myChart2");
+        let myChart2 = new Chart(ctx2, {
+          type: "line",
+          data: {
+            labels: this.labels,
+            datasets: [
+              {
+                label: [],
+                backgroundColor: "rgba(225,10,10,0.3)",
+                borderColor: "rgba(225,103,110,1)",
+                borderWidth: 1,
+                pointStrokeColor: "#fff",
+                pointStyle: "crossRot",
+                data: [],
+                cubicInterpolationMode: "monotone",
+                spanGaps: "false",
+                fill: "false"
+              },
+            ]
+          },
+          options: {
+          }
+        });
+      },
+
       toggle () {
         this.$nextTick(() => {
           if (this.likesAllFruit) {
-            this.selectedGroups = []
+            this.selectedGroups = [];
+            this.loadGraph();
           } else {
             this.selectedGroups = this.groups.slice()
           }
@@ -206,16 +299,79 @@
       },
 
       changeTimeScale(){
-        if (this.selectedTimeScale === 'Annually'){
-          this.labels = ["January", "Febrwuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        if (this.selectedTimeScale === 'Weekly'){
+          this.weekLabels = [];
+          this.weekGenerator();
+          this.labels = this.weekLabels;
+          this.loadWeekGraph();
         }
         else if(this.selectedTimeScale === 'Monthly'){
-          this.labels = ["January", "Febrwuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+          this.labels = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
         }
+      },
+      weekGenerator(){
+        let numberOfWeeks = this.currentYear.toString();
+        for(let i=0; i<moment(numberOfWeeks).weeksInYear(); i++){
+          this.weekLabels.push("Week" + (i+1));
+        }
+      },
+      loadWeekGraph(){
+      if (this.selectedTimeScale === "Weekly" && this.selectedGroups.length == 0){
+          let ctx2 = document.getElementById("myChart2");
+          let myChart2 = new Chart(ctx2, {
+            type: "line",
+            data: {
+              labels: this.labels,
+              datasets: [
+                {
+                  label: ["No week group selected"],
+                  backgroundColor: "rgba(225,10,10,0.3)",
+                  borderColor: "rgba(225,103,110,1)",
+                  borderWidth: 1,
+                  pointStrokeColor: "#fff",
+                  pointStyle: "crossRot",
+                  data: [],
+                  cubicInterpolationMode: "monotone",
+                  spanGaps: "false",
+                  fill: "false"
+                },
+              ]
+            },
+            options: {
+            }
+          });
+        }
+      },
+
+      changePageLoadGraph(){
+        let ctx2 = document.getElementById("myChart2");
+        let myChart2 = new Chart(ctx2, {
+          type: "line",
+          data: {
+            labels: this.labels,
+            datasets: [
+              {
+                label: ["test1"],
+                backgroundColor: "rgba(225,10,10,0.3)",
+                borderColor: "rgba(225,103,110,1)",
+                borderWidth: 1,
+                pointStrokeColor: "#fff",
+                pointStyle: "crossRot",
+                data: this.data,
+                cubicInterpolationMode: "monotone",
+                spanGaps: "false",
+                fill: "false"
+              },
+            ]
+          },
+          options: {
+          }
+        });
       },
 
       loadGraph (){
         this.currentYear = moment().format('YYYY');
+
         if (this.selectedTimeScale === "Monthly" && this.selectedGroups.length == 0){
           let ctx2 = document.getElementById("myChart2");
           let myChart2 = new Chart(ctx2, {
@@ -238,6 +394,15 @@
               ]
             },
             options: {
+              tooltips: {
+                cornerRadius: 0,
+                caretSize: 0,
+                xPadding: 16,
+                yPadding: 10,
+                backgroundColor: 'rgba(0, 150, 100, 0.9)',
+                titleFontStyle: 'normal',
+                titleMarginBottom: 15
+              }
             }
           });
         }
@@ -268,9 +433,83 @@
         }
       },
 
-      reloadGraph(){
+      reloadGraph() {
+        if (this.selectedTimeScale === 'Monthly') {
+          let numberOfLines = this.selectedGroups.length;
+          let graphsNum = this.selectedGroups;
+          let ctx2 = document.getElementById("myChart2");
+          let myChart2 = new Chart(ctx2, {
+            type: "line",
+            data: {
+              labels: this.labels,
+              datasets: []
+            },
+            options: {}
+          });
+          if (numberOfLines > 0) {
+            for (let i = 0; i < numberOfLines; i++) {
+              myChart2.data.datasets.push(
+                {
+                  label: this.selectedGroups[i].name,
+                  backgroundColor: this.backgroundColorGenerator(),
+                  borderColor: this.borderColorGenerator(),
+                  borderWidth: 1,
+                  pointStrokeColor: "#000",
+                  pointStyle: "crossRot",
+                  data: this.calculateGraph(this.selectedGroups[i]),
+                  cubicInterpolationMode: "monotone",
+                  spanGaps: "false",
+                  fill: "false"
+                }
+              );
+            }
+          }
+          myChart2.update();
+        }
+        else if(this.selectedTimeScale === 'Weekly'){
+          let numberOfLines = this.selectedGroups.length;
+          let graphsNum = this.selectedGroups;
+          let ctx2 = document.getElementById("myChart2");
+          let myChart2 = new Chart(ctx2, {
+            type: "line",
+            data: {
+              labels: this.labels,
+              datasets: []
+            },
+            options: {}
+          });
+          if (numberOfLines > 0) {
+            for (let i = 0; i < numberOfLines; i++) {
+              myChart2.data.datasets.push(
+                {
+                  label: this.selectedGroups[i].name,
+                  backgroundColor: this.backgroundColorGenerator(),
+                  borderColor: this.borderColorGenerator(),
+                  borderWidth: 1,
+                  pointStrokeColor: "#000",
+                  pointStyle: "crossRot",
+                  data: this.FTgenerator(),
+                  cubicInterpolationMode: "monotone",
+                  spanGaps: "false",
+                  fill: "false"
+                }
+              );
+            }
+          }
+          myChart2.update();
+        }
+      },
+
+      calculateWeekGraph(group){
+        let initialData = this.FTgenerator();
+        for (let i = 0; i < group.meetings.length; i++){
+          initialData[(moment(group.meetings[i].startTime).isoWeek())-1] = initialData[(moment(group.meetings[i].startTime).isoWeek()) -1 ] + group.meetings[i].attendances.length;
+        }
+        return initialData;
+      },
+
+      calculateWeekGroupData(){
         let numberOfLines = this.selectedGroups.length;
-        let graphsNum = this.selectedGroups;
         let ctx2 = document.getElementById("myChart2");
         let myChart2 = new Chart(ctx2, {
           type: "line",
@@ -278,28 +517,44 @@
             labels: this.labels,
             datasets: []
           },
-          options: {
-          }
+          options: {}
         });
-
-        for (let i =0; i< numberOfLines; i++){
-          myChart2.data.datasets.push(
-            {
-              label: this.selectedGroups[i].name,
-              backgroundColor: this.backgroundColorGenerator(),
-              borderColor: this.borderColorGenerator(),
-              borderWidth: 1,
-              pointStrokeColor: "#000",
-              pointStyle: "crossRot",
-              data: this.calculateGraph(this.selectedGroups[i]),
-              cubicInterpolationMode: "monotone",
-              spanGaps: "false",
-              fill: "false"
-            }
-          );
+        if (numberOfLines > 0) {
+          for(let group of this.selectedGroups){
+            myChart2.data.datasets.push(
+              {
+                label: group.name,
+                backgroundColor: this.backgroundColorGenerator(),
+                borderColor: this.borderColorGenerator(),
+                borderWidth: 1,
+                pointStrokeColor: "#000",
+                pointStyle: "crossRot",
+                data: this.calculateWeekGraph(group),
+                cubicInterpolationMode: "monotone",
+                spanGaps: "false",
+                fill: "false"
+              }
+            );
+          }
         }
         myChart2.update();
       },
+
+      FTgenerator(){
+        for (var a=[],i=0;i<52;++i) a[i]=0;
+        function shuffle(array) {
+          let tmp, current, top = array.length;
+          if(top) while(--top) {
+            current = Math.floor(Math.random() * (top + 1));
+            tmp = array[current];
+            array[current] = array[top];
+            array[top] = tmp;
+          }
+          return array;
+        }
+        return a = shuffle(a);
+      },
+
       backgroundColorGenerator(){
         let red = Math.floor(Math.random() * 256);
         let green = Math.floor(Math.random() * 256);
@@ -307,6 +562,7 @@
         let Alpha = Math.floor(Math.random() * 256);
         return (`rgba(${ red }, ${ green }, ${ Blue }, ${ Alpha })`);
       },
+
       borderColorGenerator(){
         let red = Math.floor(Math.random() * 256);
         let green = Math.floor(Math.random() * 256);
