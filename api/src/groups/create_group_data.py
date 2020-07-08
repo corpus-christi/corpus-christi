@@ -264,7 +264,7 @@ def create_hierarchical_groups_and_participants(sqla):
 
     # create people
     people = []
-    for i in range(1, 13):
+    for i in range(1, 10):
         person_name = f"Person{i}"
         person = Person(**person_schema.load(person_object_factory(person_name)))
         sqla.add(person)
@@ -282,29 +282,30 @@ def create_hierarchical_groups_and_participants(sqla):
         print(group)
     sqla.commit()
 
-    # create members: (personIdx, groupIdx)
-    for personIdx, groupIdx in [
-            (1, 1),
-            (3, 1),
-            (4, 1),
-            (2, 2),
-            (5, 2),
-            (6, 3),
-            (2, 3),
-            (2, 4),
-            (9, 9),
+    # create members: (groupIdx, personIdx)
+    for groupIdx, personIdx in [
+            [1, 1],
+            [1, 3],
+            [1, 4],
+            [2, 2],
+            [2, 5],
+            [3, 6],
+            [3, 2],
+            [4, 2],
+            [9, 9]
             ]:
         member = Member(**member_schema.load(
             member_object_factory(people[personIdx-1].id, groups[groupIdx-1].id)))
         sqla.add(member)
         print(member)
 
-    # create managers: (personIdx, groupIdx)
-    for personIdx, groupIdx in [
-            (1, 1),
-            (1, 2),
-            (1, 3),
-            (6, 4),
+    # create managers: (groupIdx, personIdx)
+    for groupIdx, personIdx in [ 
+            [1, 1], 
+            [2, 1], 
+            [3, 1], 
+            [4, 6], 
+            [9, 8]
             ]:
         manager = Manager(**manager_schema.load(manager_object_factory(
             people[personIdx-1].id, 

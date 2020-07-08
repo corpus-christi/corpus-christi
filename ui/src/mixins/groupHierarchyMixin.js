@@ -1,37 +1,94 @@
-import { getAllSubNodes, Participant } from "../models/GroupHierarchyNode";
+import {
+  Group,
+  getAllSubNodes,
+  Participant,
+  count,
+  getTree,
+  isRootNode
+} from "../models/GroupHierarchyNode";
 
-const groupHierarchyMixin = groupsText => ({
-  // groupsText is a property on the component where a list of groups is found
+const groupHierarchyMixin = {
   data() {
     return {
-      [groupsText]: []
+      $_groupHierarchyMixin_groups: [],
+      $_groupHierarchyMixin_persons: [],
+      $_groupHierarchyMixin_loading: true
     };
   },
   mounted() {
-    // TODO: add logic to detect whether the property exists in the component, and disable fetch if so.
-    // currently this would make the component fetch twice if the component
-    // itself is also fetching a list of group in its mounted hook. <2020-07-03, David Deng> //
-    this.$http.get("api/v1/groups/groups").then(resp => {
-      console.log("Groups fetched from groupHierarchyMixin", resp.data);
-      this[groupsText] = resp.data;
-    });
+    this.$_groupHierarchyMixin_fetch();
   },
   computed: {
-    groupMap() {
+    $_groupHierarchyMixin_groupMap() {
       // turn the array into a map
-      return this[groupsText].reduce(
+      return this.$data.$_groupHierarchyMixin_groups.reduce(
         (acc, cur) => ({ ...acc, [cur.id]: cur }),
         {}
       );
+    },
+    /* get a composite tree with root groups and persons, shown in admin view */
+    $_groupHierarchyMixin_adminTree() {
+      let counter = count();
+      // get all root groups and root participants
+      let rootNodes = [
+        ...this.$data.$_groupHierarchyMixin_groups
+          .map(
+            groupObject =>
+              new Group(groupObject, this.$_groupHierarchyMixin_groupMap)
+          )
+          .filter(group => isRootNode(group)),
+        ...this.$data.$_groupHierarchyMixin_persons
+          .map(
+            person =>
+              new Participant({ person }, this.$_groupHierarchyMixin_groupMap)
+          )
+          .filter(participant => isRootNode(participant))
+      ];
+      const rootNode = { name: "Admin", children: [] };
+      rootNodes.forEach(group => {
+        rootNode.children.push(getTree(group, false, counter).map());
+      });
+      return JSON.parse(JSON.stringify([rootNode]));
     }
   },
   methods: {
-    getAllSubGroups(participant) {
-      return getAllSubNodes(new Participant(participant, this.groupMap))
+    $_groupHierarchyMixin_fetch() {
+      this.$_groupHierarchyMixin_loading = true;
+      Promise.all([
+        this.$http.get("api/v1/groups/groups"),
+        this.$http.get("api/v1/people/persons")
+      ]).then(([respGroup, respPeople]) => {
+        console.log("Groups fetched from groupHierarchyMixin", respGroup.data);
+        console.log("People fetched from groupHierarchyMixin", respPeople.data);
+        this.$data.$_groupHierarchyMixin_groups = respGroup.data; // access $ _ started variables with $data
+        this.$data.$_groupHierarchyMixin_persons = respPeople.data;
+        this.$data.$_groupHierarchyMixin_loading = false;
+      });
+    },
+
+    /* Functions below depend on the fetched groups, if used, should bind the result to 'computed' properties
+     * or add conditional rendering (v-if) on '$data.$_groupHierarchyMixin_loading'
+     * in the template to prevent rendering before the groups are fetched.
+     * If need to call function directly, use waitUntil to resolve the value asynchronously */
+
+    /* get all leading groups of (groups that are authorized to) a participant according to the leadership hierarchy */
+    $_groupHierarchyMixin_leadingGroups(participant) {
+      return getAllSubNodes(
+        new Participant(participant, this.$_groupHierarchyMixin_groupMap)
+      )
         .filter(hn => hn.nodeType === "Group")
         .map(hn => hn.getObject());
+    },
+
+    /* get a tree from the given person */
+    $_groupHierarchyMixin_getTree(person) {
+      let participant = new Participant(
+        { person },
+        this.$_groupHierarchyMixin_groupMap
+      );
+      return getTree(participant);
     }
   }
-});
+};
 
 export default groupHierarchyMixin;

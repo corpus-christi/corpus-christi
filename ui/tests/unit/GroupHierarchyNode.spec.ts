@@ -11,7 +11,8 @@ import {
   GroupParticipantObject,
   getTree,
   checkConnection,
-  HierarchyCycleError
+  HierarchyCycleError,
+  isRootNode
 } from "../../src/models/GroupHierarchyNode";
 
 interface PersonMap {
@@ -194,6 +195,21 @@ describe("Test case 1", () => {
     expect(() => {
       checkConnection(p2, g1);
     }).toThrow(`parent ${p2.toString()}`);
+  });
+
+  test("isRootNode functionality", () => {
+    // p1 is a rootNode, because it does not have any super node except itself
+    let p1: Participant = new Participant({ person: personMap[1] }, groupMap);
+    expect(isRootNode(p1)).toBe(true);
+
+    // p8 is a rootNode, because it does not have any super node above it
+    let p8: Participant = new Participant({ person: personMap[8] }, groupMap);
+    expect(isRootNode(p8)).toBe(true);
+
+    // g2 is not a rootNode, because p1 is above g2,
+    // and among p1's supernodes, g2 is not the only one
+    let g2: Group = new Group(groupMap[2], groupMap);
+    expect(isRootNode(g2)).toBe(false);
   });
 });
 

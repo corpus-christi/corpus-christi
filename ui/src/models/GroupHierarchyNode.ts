@@ -357,9 +357,19 @@ export function getTree(
 }
 
 /* checks whether a node is a root node
- * a root node is a node that does not have any super-node */
+ * a root node <r> is a node that either:
+ * 1. does not have any super-node, or
+ * 2. for all its immediate super-node <s> such that <r> is the only super-node of <s>
+ * except possibly itself at depth 2, caused by manager/member double identity */
 export function isRootNode(node: HierarchyNode): boolean {
-  return getAllSubNodes(node, 1, 1, true).length === 0;
+  let immediateSuperNodes = node.getSuperNodes();
+  for (let immediateSuperNode of immediateSuperNodes) {
+    let grandSuperNodes = immediateSuperNode.getSuperNodes();
+    if (!(grandSuperNodes.length === 1 && grandSuperNodes[0].equal(node))) {
+      return false;
+    }
+  }
+  return true;
 }
 
 /* checks whether connecting parentNode and childNode will not result in a cycle in existing tree
