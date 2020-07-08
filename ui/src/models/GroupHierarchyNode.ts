@@ -1,4 +1,5 @@
 /* This file contains algorithms needed to resolve group hierarchy permissions */
+import { intersectionWith } from "lodash";
 
 /* API response objects mappers */
 // The object nested in a person object, that indicates which group the participant belongs
@@ -35,6 +36,7 @@ export interface GroupMap {
 export abstract class HierarchyNode {
   constructor(public nodeType: string) {}
   abstract get id(): number | string;
+  abstract toString(): string;
   abstract equal(other: HierarchyNode): boolean;
   abstract getObject(): NodeObject;
   abstract getSubNodes(): HierarchyNode[];
@@ -59,15 +61,33 @@ export class Participant extends HierarchyNode {
   }
   getLeadingGroups(): Group[] {
     return this.participant.person.managers.map(
-      (m: PersonParticipantObject) =>
-        new Group(this.groupMap[m.groupId], this.groupMap)
+      (m: PersonParticipantObject) => {
+        if (!Object.prototype.hasOwnProperty.call(this.groupMap, m.groupId)) {
+          throw new Error(
+            `Cannot get leading group with id ${
+              m.groupId
+            } on participant with id ${
+              this.id
+            }: group does not exist in group map`
+          );
+        }
+        return new Group(this.groupMap[m.groupId], this.groupMap);
+      }
     );
   }
   getParticipatingGroups(): Group[] {
-    return this.participant.person.members.map(
-      (m: PersonParticipantObject) =>
-        new Group(this.groupMap[m.groupId], this.groupMap)
-    );
+    return this.participant.person.members.map((m: PersonParticipantObject) => {
+      if (!Object.prototype.hasOwnProperty.call(this.groupMap, m.groupId)) {
+        throw new Error(
+          `Cannot get participating group with id ${
+            m.groupId
+          } on participant with id ${
+            this.id
+          }: group does not exist in group map`
+        );
+      }
+      return new Group(this.groupMap[m.groupId], this.groupMap);
+    });
   }
   getSubNodes(): HierarchyNode[] {
     return this.getLeadingGroups();
@@ -122,8 +142,17 @@ export class Group extends HierarchyNode {
   }
 }
 
-/* wraps a HierarchyNode, enabling a graph representation */
-export class GraphNode {
+/* A tree node */
+export interface TreeNode {
+  name?: string;
+  id?: string | number;
+  children: TreeNode[];
+}
+
+/* A tree node class. wraps a HierarchyNode,
+ * enabling a graph representation,
+ * also provides useful attributes like parentPath */
+export class GraphNode implements TreeNode {
   // a 'cache' of nodes along the parent path
   private _parentPath: GraphNode[] = [];
   private _children: GraphNode[] = [];
@@ -134,7 +163,8 @@ export class GraphNode {
   constructor(
     public hierarchyNode: HierarchyNode,
     parentNode: GraphNode | null = null,
-    public id: string = ""
+    public id: string = "",
+    public name: string = ""
   ) {
     this.parentNode = parentNode;
   }
@@ -158,6 +188,38 @@ export class GraphNode {
       this._parentPath = [this._parentNode, ...this._parentNode.parentPath];
       this._parentNode.addChild(this);
     }
+  }
+  /* like Array.prototype.map, returns a new tree,
+   * where each node is transformed using 'mapFunc'
+   * and 'addChild' is called to add each childNode to the parentNode
+   * calling with default parameters will result in a simplified tree
+   * where each node has only 'id', 'name' and 'children' */
+  public map(
+    mapFunc: (gn: GraphNode) => TreeNode = ({ name, id }) => ({
+      id,
+      name,
+      children: []
+    }),
+    addChild: (parentNode: TreeNode, childNode: TreeNode) => void = (
+      parentNode,
+      childNode
+    ) => {
+      parentNode.children.push(childNode);
+    }
+  ): TreeNode {
+    let mappedNode: TreeNode = mapFunc(this);
+    this.children.forEach(child => {
+      let childNode: TreeNode = child.map(mapFunc, addChild);
+      addChild(mappedNode, childNode);
+    });
+    return mappedNode;
+  }
+  /* a hacky way to get rid of additional attributes like _parentPath.
+   * to recursively convert a GraphNode to a simple nested JSON object,
+   * do JSON.parse(JSON.stringify(graphNode)) on the root node of a tree */
+  public toJSON() {
+    let { hierarchyNode, children, id, name } = this;
+    return { hierarchyNode, children, id, name };
   }
 }
 
@@ -238,7 +300,10 @@ export function getAllSubNodes(
 }
 
 /* a generator to generate unique positive integers */
-function* count(start = 0, step = 1) {
+export function* count(
+  start = 0,
+  step = 1
+): Generator<number, undefined, undefined> {
   let i = start;
   while (true) {
     yield i;
@@ -258,9 +323,9 @@ export class HierarchyCycleError extends Error {
  * namely, each node will contain a unique id */
 export function getTree(
   node: HierarchyNode,
-  superNodes: boolean = false
+  superNodes: boolean = false,
+  counter: Generator<number | string, undefined, undefined> = count()
 ): GraphNode {
-  let counter = count();
   const rootNode = dfs(
     node,
     (node: HierarchyNode, parentPath: HierarchyNode[]) => {
@@ -283,6 +348,7 @@ export function getTree(
       if (next.done) {
         throw new Error("counter running out of elements");
       }
+      graphNode.name = graphNode.hierarchyNode.toString();
       graphNode.id = next.value.toString();
       return graphNode;
     }
@@ -290,9 +356,73 @@ export function getTree(
   return rootNode;
 }
 
-/* checks whether a group is a root group
- * a root group is a group that has sub-groups
- * but does not have any super-group */
-export function isRootGroup(group: Group): boolean {
+/* checks whether a node is a root node
+ * a root node is a node that does not have any super-node */
+export function isRootNode(node: HierarchyNode): boolean {
+  return getAllSubNodes(node, 1, 1, true).length === 0;
+}
+
+/* checks whether connecting parentNode and childNode will not result in a cycle in existing tree
+ * the logic is to check whether there is any ancestor node of parentNode
+ * that is also a descendent node of childNode.
+ * The fact that some person can be both a manager/member of a group
+ * cause the algorithm to ignore some of the closely connected nodes */
+export function checkConnection(
+  parentNode: HierarchyNode,
+  childNode: HierarchyNode
+): void {
+  let distantAncestors: HierarchyNode[] = []; // super-nodes with depth 2 and more
+  let allAncestors: HierarchyNode[] = []; // all super-nodes
+  let distantDescendents: HierarchyNode[] = []; // sub-nodes with depth 2 and more
+  let allDescendents: HierarchyNode[] = []; // all sub-nodes
+
+  dfs(parentNode, (currentNode, parentPath) => {
+    if (distantAncestors.some(node => node.equal(currentNode))) return [];
+    allAncestors.push(currentNode);
+    if (parentPath.length >= 2) {
+      distantAncestors.push(currentNode);
+    }
+    return currentNode.getSuperNodes();
+  });
+
+  dfs(childNode, (currentNode, parentPath) => {
+    if (distantDescendents.some(node => node.equal(currentNode))) return [];
+    allDescendents.push(currentNode);
+    if (parentPath.length >= 2) {
+      distantDescendents.push(currentNode);
+    }
+    return currentNode.getSubNodes();
+  });
+
+  /* above equivalent to following, only requires less search */
+  // distantAncestors = getAllSubNodes(parentNode, 2, 0, true);
+  // allAncestors = getAllSubNodes(parentNode, 0, 0, true);
+  // distantDescendents = getAllSubNodes(childNode, 2, 0, false);
+  // allDescendents = getAllSubNodes(childNode, 0, 0, false);
+
+  let equal = (a: HierarchyNode, b: HierarchyNode) => a.equal(b);
+  let cycleNodes: HierarchyNode[];
+  cycleNodes = [
+    ...intersectionWith(distantAncestors, allDescendents, equal),
+    ...intersectionWith(distantDescendents, allAncestors, equal)
+  ];
+  if (cycleNodes.length !== 0) {
+    throw new HierarchyCycleError(
+      `Connection of parent ${parentNode.toString()} with child ${childNode.toString()} will cause cycle on node ${cycleNodes[0].toString()}`,
+      new GraphNode(cycleNodes[0])
+    );
+  }
+}
+
+/* a wrapper for checkConnection that does not throw errors */
+export function isConnectionOkay(
+  parentNode: HierarchyNode,
+  childNode: HierarchyNode
+): boolean {
+  try {
+    checkConnection(parentNode, childNode);
+  } catch (HierarchyCycleError) {
+    return false;
+  }
   return true;
 }

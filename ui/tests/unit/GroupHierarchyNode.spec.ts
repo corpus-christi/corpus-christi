@@ -2,11 +2,16 @@ import {
   getAllSubNodes,
   HierarchyNode,
   GraphNode,
+  TreeNode,
   Group,
   GroupMap,
   Participant,
+  GroupObject,
   PersonObject,
-  getTree
+  GroupParticipantObject,
+  getTree,
+  checkConnection,
+  HierarchyCycleError
 } from "../../src/models/GroupHierarchyNode";
 
 interface PersonMap {
@@ -60,38 +65,27 @@ describe("Test case 1", () => {
   });
 
   test("hierarchy node subNodes and superNodes functionality", () => {
-    let participantObject = {
-      personId: 1,
-      groupId: 1,
-      person: personMap[1]
-    };
-    let participant = new Participant(participantObject, groupMap);
-    expect(participant.getSubNodes().length).toBe(3);
-    expect(participant.getSuperNodes().length).toBe(1);
+    let p1: HierarchyNode = new Participant({ person: personMap[1] }, groupMap);
+    expect(p1.getSubNodes().length).toBe(3);
+    expect(p1.getSuperNodes().length).toBe(1);
   });
 
   test("getAllSubNodes depth filtering", () => {
     let subNodes;
-    let participantObject = {
-      personId: 1,
-      groupId: 1,
-      person: personMap[1]
-    };
-    let participant = new Participant(participantObject, groupMap);
+    let p1: HierarchyNode = new Participant({ person: personMap[1] }, groupMap);
     // get those only with depth 1
-    subNodes = getAllSubNodes(participant, 1, 1);
+    subNodes = getAllSubNodes(p1, 1, 1);
     expect(subNodes.length).toBe(3);
 
     let g9: HierarchyNode = new Group(groupMap[9], groupMap);
-    let p1: HierarchyNode = new Participant({ person: personMap[1] }, groupMap);
     // get from depth 1 to depth 2
-    subNodes = getAllSubNodes(participant, 1, 2);
+    subNodes = getAllSubNodes(p1, 1, 2);
     expect(subNodes.length).toBe(9);
     expect(subNodes).not.toContainHierarchyNode(g9);
     expect(subNodes).toContainHierarchyNode(p1);
 
     // no range
-    subNodes = getAllSubNodes(participant);
+    subNodes = getAllSubNodes(p1);
     expect(subNodes.length).toBe(10);
     expect(subNodes).not.toContainHierarchyNode(g9);
     expect(subNodes).toContainHierarchyNode(p1);
@@ -135,6 +129,71 @@ describe("Test case 1", () => {
     expect(gnp1).not.toBeUndefined();
     // expect no more children in gnp1 to prevent infinite recursion
     expect(gnp1!.children.length).toBe(0);
+  });
+
+  test("GraphNode map method", () => {
+    interface labeledNode extends TreeNode {
+      label?: string;
+      children: labeledNode[];
+    }
+    let rootNode;
+    // get a tree branching down from Group 3
+    rootNode = getTree(new Group(groupMap[3], groupMap));
+    let mappedRootNode: labeledNode;
+    // using default map
+    mappedRootNode = rootNode.map();
+    expect(mappedRootNode.children.length).toBe(2);
+    // using customized mapper
+    mappedRootNode = rootNode.map(
+      graphNode => {
+        let mappedNode: labeledNode = { children: [] };
+        if (graphNode.hierarchyNode instanceof Group) {
+          mappedNode.label = `Group #${
+            (graphNode.hierarchyNode.getObject() as GroupObject).id
+          }`;
+        } else if (graphNode.hierarchyNode instanceof Participant) {
+          mappedNode.label = `Person #${
+            (graphNode.hierarchyNode.getObject() as GroupParticipantObject)
+              .person.id
+          }`;
+        }
+        return mappedNode;
+      },
+      (parentNode, childNode) => {
+        parentNode.children.push(childNode);
+      }
+    );
+    expect(mappedRootNode.children.length).toBe(2);
+    let p6: labeledNode | undefined = mappedRootNode.children.find(
+      child => child.label === "Person #6"
+    );
+    expect(p6).not.toBeUndefined();
+    expect(p6!.children.length).toBe(1);
+    expect(p6!.children[0].label === "Group #4");
+  });
+
+  test("checkConnection functionality", () => {
+    let p2: Participant = new Participant({ person: personMap[2] }, groupMap);
+    let g2: Group = new Group(groupMap[2], groupMap);
+
+    // making p2 a manager of g2 should be okay
+    expect(() => {
+      checkConnection(p2, g2);
+    }).not.toThrow();
+
+    let p1: Participant = new Participant({ person: personMap[1] }, groupMap);
+    let g4: Group = new Group(groupMap[4], groupMap);
+
+    // making p1 a member of g4 should create cycle, because p1 is above g4
+    expect(() => {
+      checkConnection(g4, p1);
+    }).toThrow(HierarchyCycleError);
+
+    // making p2 a leader of g1 should create cycle, because p1 is below g1 but above p2
+    let g1: Group = new Group(groupMap[1], groupMap);
+    expect(() => {
+      checkConnection(p2, g1);
+    }).toThrow(`parent ${p2.toString()}`);
   });
 });
 

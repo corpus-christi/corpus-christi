@@ -156,8 +156,8 @@
             </v-tooltip>
           </td>
           <td>{{ props.item.person.firstName }}</td>
-          <td>{{ getAllSubGroups(props.item).map(g => g.id) }}</td>
           <td>{{ props.item.person.lastName }}</td>
+          <td>{{ props.item.person.email }}</td>
           <td v-if="isManagerMode">{{ props.item.managerType.name }}</td>
           <td class="text-no-wrap">
             <template v-if="props.item.active">
@@ -380,12 +380,10 @@
 import EntitySearch from "../EntitySearch";
 import EmailForm from "../EmailForm";
 import EntityTypeForm from "./EntityTypeForm";
-import groupHierarchyMixin from "../../mixins/groupHierarchyMixin.js";
 import { eventBus } from "../../plugins/event-bus.js";
 import { isEmpty } from "lodash";
 export default {
   components: { EntitySearch, EmailForm, EntityTypeForm },
-  mixins: [groupHierarchyMixin("groups")],
   name: "GroupParticipants",
   props: {
     participantType: {

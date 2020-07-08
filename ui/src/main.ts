@@ -12,9 +12,6 @@ import "./plugins/google-maps";
 
 import App from "./App.vue";
 
-import { getAllSubNodes, GraphNode } from "./models/GroupHierarchyNode";
-console.log(GraphNode, getAllSubNodes);
-
 const app = new Vue({
   el: "#app",
   store: store,
