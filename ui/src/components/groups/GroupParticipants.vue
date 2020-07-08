@@ -389,8 +389,8 @@ export default {
     participantType: {
       /* either 'manager' or 'member' */
       type: String,
-      default: "manager"
-    }
+      default: "manager",
+    },
   },
 
   data() {
@@ -399,7 +399,7 @@ export default {
         10,
         15,
         25,
-        { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 }
+        { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 },
       ],
       tableLoading: false,
       search: "",
@@ -410,20 +410,20 @@ export default {
         loading: false,
         initialData: {
           recipients: [],
-          recipientList: []
-        }
+          recipientList: [],
+        },
       },
       participantDialog: {
         show: false,
         persons: [],
         participantType: {},
         editMode: false,
-        loading: false
+        loading: false,
       },
       archiveDialog: {
         show: false,
         participants: [],
-        loading: false
+        loading: false,
       },
       moveDialog: {
         /* if not empty, confirm on moveDialog will move this participant directly
@@ -431,11 +431,11 @@ export default {
         participant: null,
         loading: false,
         show: false,
-        destinationGroup: {}
+        destinationGroup: {},
       },
       viewStatus: "viewActive",
       selectionMode: "noSelect",
-      selectionLoading: false
+      selectionLoading: false,
     };
   },
 
@@ -445,7 +445,7 @@ export default {
       return [
         { text: this.$t("actions.view-active"), value: "viewActive" },
         { text: this.$t("actions.view-archived"), value: "viewArchived" },
-        { text: this.$t("actions.view-all"), value: "viewAll" }
+        { text: this.$t("actions.view-all"), value: "viewAll" },
       ];
     },
     title() {
@@ -457,31 +457,31 @@ export default {
       let headers = [
         {
           text: this.$t("person.name.first"),
-          value: "person.firstName"
+          value: "person.firstName",
         },
         {
           text: this.$t("person.name.last"),
-          value: "person.lastName"
+          value: "person.lastName",
         },
         {
           text: this.$t("person.email"),
-          value: "person.email"
+          value: "person.email",
         },
         {
           text: this.$t("actions.header"),
-          sortable: false
-        }
+          sortable: false,
+        },
       ];
       if (this.select) {
         headers.splice(0, 0, {
           text: "select", // used to customize the select header
-          sortable: false
+          sortable: false,
         });
       }
       if (this.isManagerMode) {
         headers.splice(3, 0, {
           text: this.$t("groups.managers.manager-type"),
-          value: "managerType.name"
+          value: "managerType.name",
         });
       }
       return headers;
@@ -503,7 +503,7 @@ export default {
       return this.selectionMode !== "noSelect";
     },
     selectable() {
-      return this.visibleParticipants.filter(p => !p.disabled);
+      return this.visibleParticipants.filter((p) => !p.disabled);
     },
     selectedSome() {
       return this.selected.length !== 0;
@@ -521,24 +521,24 @@ export default {
         /* options to be defined for each selectionMode */
         archive: {
           title: this.$t("groups.batch-actions.archive"), // the title to be displayed in selection mode
-          callback: this.showArchiveDialog // a callback function that takes the selected items as parameter
+          callback: this.showArchiveDialog, // a callback function that takes the selected items as parameter
         },
         unarchive: {
           title: this.$t("groups.batch-actions.unarchive"),
-          callback: this.unarchiveParticipants
+          callback: this.unarchiveParticipants,
         },
         email: {
           title: this.$t("groups.batch-actions.email"),
-          callback: this.showEmailDialog
+          callback: this.showEmailDialog,
         },
         move: {
           title: this.$t("groups.batch-actions.move"),
-          callback: this.batchMoveParticipants
+          callback: this.batchMoveParticipants,
         },
         edit: {
           title: this.$t("groups.batch-actions.edit"),
-          callback: this.showParticipantDialog
-        }
+          callback: this.showParticipantDialog,
+        },
       };
     },
     selectionOption() {
@@ -548,13 +548,13 @@ export default {
 
     /************* filters ****************/
     activeParticipants() {
-      return this.participants.filter(p => p.active);
+      return this.participants.filter((p) => p.active);
     },
     inactiveParticipants() {
-      return this.participants.filter(p => !p.active);
+      return this.participants.filter((p) => !p.active);
     },
     persons() {
-      return this.participants.map(m => m.person);
+      return this.participants.map((m) => m.person);
     },
     selectionArchiveParticipants() {
       return this.activeParticipants;
@@ -563,10 +563,10 @@ export default {
       return this.inactiveParticipants;
     },
     selectionEmailParticipants() {
-      return this.activeParticipants.map(p => ({
+      return this.activeParticipants.map((p) => ({
         disabled: !p.person.email,
         disabledText: this.$t("groups.batch-actions.messages.no-email"),
-        ...p
+        ...p,
       }));
     },
     selectionMoveParticipants() {
@@ -574,8 +574,8 @@ export default {
       create a cycle in the leadership hierarchy <2020-07-01, David Deng> */
       let destinationGroupPersonIds = this.moveDialog.destinationGroup[
         this.isManagerMode ? "managers" : "members"
-      ].map(p => p.person.id);
-      let movableParticipants = this.activeParticipants.map(p => {
+      ].map((p) => p.person.id);
+      let movableParticipants = this.activeParticipants.map((p) => {
         let participant = { ...p };
         if (destinationGroupPersonIds.includes(p.person.id)) {
           participant.disabled = true;
@@ -621,10 +621,10 @@ export default {
     /* all possible recipient */
     emailRecipientList() {
       return this.participants
-        .filter(m => m.person.email && m.active)
-        .map(m => ({
+        .filter((m) => m.person.email && m.active)
+        .map((m) => ({
           email: m.person.email,
-          name: `${m.person.firstName} ${m.person.lastName}`
+          name: `${m.person.firstName} ${m.person.lastName}`,
         }));
     },
     invalidDestinationGroups() {
@@ -634,11 +634,11 @@ export default {
         groups = groups.concat(
           this.moveDialog.participant.person[
             this.isManagerMode ? "managers" : "members"
-          ].map(m => ({ id: m.groupId }))
+          ].map((m) => ({ id: m.groupId }))
         );
       }
       return groups;
-    }
+    },
   },
 
   methods: {
@@ -674,7 +674,7 @@ export default {
     showParticipantDialog(participants) {
       if (participants) {
         this.participantDialog.editMode = true;
-        this.participantDialog.persons = participants.map(m => m.person);
+        this.participantDialog.persons = participants.map((m) => m.person);
       } else {
         this.participantDialog.editMode = false;
         this.participantDialog.persons = [];
@@ -697,7 +697,7 @@ export default {
           return;
         }
         updatePayload = {
-          managerTypeId: this.participantDialog.participantType.id
+          managerTypeId: this.participantDialog.participantType.id,
         };
       }
       this.saveParticipants(this.participantDialog.persons, updatePayload)
@@ -710,10 +710,10 @@ export default {
                 : "groups.messages.members-updated"
               : this.isManagerMode
               ? "groups.messages.managers-added"
-              : "groups.messages.members-added"
+              : "groups.messages.members-added",
           });
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
           eventBus.$emit("error", {
             content: editMode
@@ -722,7 +722,7 @@ export default {
                 : "groups.messages.error-updating-members"
               : this.isManagerMode
               ? "groups.messages.error-adding-managers"
-              : "groups.messages.error-adding-members"
+              : "groups.messages.error-adding-members",
           });
         })
         .finally(() => {
@@ -731,9 +731,9 @@ export default {
         });
     },
     showEmailDialog(participants) {
-      let recipients = participants.map(participant => ({
+      let recipients = participants.map((participant) => ({
         email: participant.person.email,
-        name: `${participant.person.firstName} ${participant.person.lastName}`
+        name: `${participant.person.firstName} ${participant.person.lastName}`,
       }));
       this.emailDialog.initialData.recipients = recipients;
       this.emailDialog.initialData.recipientList = this.emailRecipientList;
@@ -774,23 +774,26 @@ export default {
       }
     },
     batchMoveParticipants(participants) {
-      return this.saveParticipants(participants.map(p => p.person), {
-        groupId: this.moveDialog.destinationGroup.id
-      })
+      return this.saveParticipants(
+        participants.map((p) => p.person),
+        {
+          groupId: this.moveDialog.destinationGroup.id,
+        }
+      )
         .then(() => {
           this.fetchParticipants();
           eventBus.$emit("message", {
             content: this.isManagerMode
               ? "groups.messages.managers-moved"
-              : "groups.messages.members-moved"
+              : "groups.messages.members-moved",
           });
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
           eventBus.$emit("error", {
             content: this.isManagerMode
               ? "groups.messages.error-moving-managers"
-              : "groups.messages.error-moving-members"
+              : "groups.messages.error-moving-members",
           });
         });
     },
@@ -827,15 +830,15 @@ export default {
         );
       }
       return Promise.all(promises)
-        .then(resp => {
+        .then((resp) => {
           this.fetchParticipants();
           eventBus.$emit("message", {
-            content: "groups.messages.member-archived"
+            content: "groups.messages.member-archived",
           });
         })
-        .catch(err => {
+        .catch((err) => {
           eventBus.$emit("error", {
-            content: "groups.messages.error-archiving-member"
+            content: "groups.messages.error-archiving-member",
           });
         })
         .finally(() => {
@@ -855,16 +858,16 @@ export default {
     },
     fetchParticipants() {
       this.tableLoading = true;
-      this.$http.get(this.endpoint).then(resp => {
+      this.$http.get(this.endpoint).then((resp) => {
         this.participants = resp.data;
         console.log(resp.data);
         this.tableLoading = false;
       });
-    }
+    },
   },
   mounted() {
     this.fetchParticipants();
-  }
+  },
 };
 </script>
 

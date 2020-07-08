@@ -142,17 +142,17 @@ import EntitySearch from "../EntitySearch";
 export default {
   name: "EventGroupDetails",
   components: {
-    "entity-search": EntitySearch
+    "entity-search": EntitySearch,
   },
 
   props: {
     groups: {
-      required: true
+      required: true,
     },
     loaded: {
       type: Boolean,
-      required: true
-    }
+      required: true,
+    },
   },
 
   data() {
@@ -160,14 +160,14 @@ export default {
       addGroupDialog: {
         show: false,
         loading: false,
-        group: null
+        group: null,
       },
 
       deleteGroupDialog: {
         show: false,
         loading: false,
-        groupId: -1
-      }
+        groupId: -1,
+      },
     };
   },
 
@@ -181,7 +181,7 @@ export default {
     addGroup() {
       const eventId = this.$route.params.event;
       let groupId = this.addGroupDialog.group.id;
-      const idx = this.groups.findIndex(t => t.id === groupId);
+      const idx = this.groups.findIndex((t) => t.id === groupId);
       this.addGroupDialog.loading = true;
       if (idx > -1) {
         this.closeAddGroupDialog();
@@ -196,7 +196,7 @@ export default {
           this.closeAddGroupDialog();
           this.$emit("group-added");
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
           this.addGroupDialog.loading = false;
           if (err.response.status == 422) {
@@ -209,12 +209,12 @@ export default {
 
     deleteGroup() {
       let id = this.deleteGroupDialog.groupId;
-      const idx = this.groups.findIndex(t => t.id === id);
+      const idx = this.groups.findIndex((t) => t.id === id);
       this.deleteGroupDialog.loading = true;
       const eventId = this.$route.params.event;
       this.$http
         .delete(`/api/v1/events/${eventId}/groups/${id}`)
-        .then(resp => {
+        .then((resp) => {
           console.log("REMOVED", resp);
           this.deleteGroupDialog.show = false;
           this.deleteGroupDialog.loading = false;
@@ -222,7 +222,7 @@ export default {
           this.groups.splice(idx, 1); //TODO maybe fix me?
           this.showSnackbar(this.$t("groups.group-removed"));
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
           this.deleteGroupDialog.loading = false;
           this.showSnackbar(this.$t("groups.error-removing-group"));
@@ -236,7 +236,7 @@ export default {
 
     showSnackbar(message) {
       this.$emit("snackbar", message);
-    }
-  }
+    },
+  },
 };
 </script>

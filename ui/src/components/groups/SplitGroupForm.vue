@@ -189,8 +189,8 @@ export default {
   props: {
     initialData: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
   watch: {
     initialData(parentGroup) {
@@ -201,16 +201,16 @@ export default {
           "id",
           "name",
           "description",
-          "groupType"
+          "groupType",
         ]);
         this.members = parentGroup.members
-          .filter(m => m.active)
-          .map(m => ({ destination: "parent", ...m }));
+          .filter((m) => m.active)
+          .map((m) => ({ destination: "parent", ...m }));
         this.managers = parentGroup.managers
-          .filter(m => m.active)
-          .map(m => ({ destination: "parent", ...m }));
+          .filter((m) => m.active)
+          .map((m) => ({ destination: "parent", ...m }));
       }
-    }
+    },
   },
   computed: {
     hasMembers() {
@@ -223,16 +223,16 @@ export default {
       return {
         name: this.parentGroup.name,
         description: this.parentGroup.description,
-        groupTypeId: this.parentGroup.groupType.id
+        groupTypeId: this.parentGroup.groupType.id,
       };
     },
     childGroupPayload() {
       return {
         name: this.childGroup.name,
         description: this.childGroup.description,
-        groupTypeId: this.childGroup.groupType.id
+        groupTypeId: this.childGroup.groupType.id,
       };
-    }
+    },
   },
   methods: {
     getPersonFullName(person) {
@@ -263,42 +263,44 @@ export default {
             this.$http.patch(
               `api/v1/groups/groups/${this.parentGroup.id}`,
               this.parentGroupPayload
-            )
+            ),
           ])
-            .then(([{ data: { id: childGroupId } }]) => {
-              let promises = [];
-              for (let member of this.members) {
-                if (member.destination === "child") {
-                  promises.push(
-                    this.$http.patch(
-                      `api/v1/groups/groups/${this.parentGroup.id}/members/${
-                        member.person.id
-                      }`,
-                      { groupId: childGroupId }
-                    )
-                  );
+            .then(
+              ([
+                {
+                  data: { id: childGroupId },
+                },
+              ]) => {
+                let promises = [];
+                for (let member of this.members) {
+                  if (member.destination === "child") {
+                    promises.push(
+                      this.$http.patch(
+                        `api/v1/groups/groups/${this.parentGroup.id}/members/${member.person.id}`,
+                        { groupId: childGroupId }
+                      )
+                    );
+                  }
                 }
-              }
-              for (let manager of this.managers) {
-                if (manager.destination === "child") {
-                  promises.push(
-                    this.$http.patch(
-                      `api/v1/groups/groups/${this.parentGroup.id}/managers/${
-                        manager.person.id
-                      }`,
-                      { groupId: childGroupId }
-                    )
-                  );
+                for (let manager of this.managers) {
+                  if (manager.destination === "child") {
+                    promises.push(
+                      this.$http.patch(
+                        `api/v1/groups/groups/${this.parentGroup.id}/managers/${manager.person.id}`,
+                        { groupId: childGroupId }
+                      )
+                    );
+                  }
                 }
-              }
-              return Promise.all(promises).then(() => {
-                eventBus.$emit("message", {
-                  content: "groups.split.success"
+                return Promise.all(promises).then(() => {
+                  eventBus.$emit("message", {
+                    content: "groups.split.success",
+                  });
+                  this.$emit("success");
                 });
-                this.$emit("success");
-              });
-            })
-            .catch(err => {
+              }
+            )
+            .catch((err) => {
               console.log(err);
               eventBus.$emit("error", { content: "groups.split.error" });
             })
@@ -310,7 +312,7 @@ export default {
     },
     redirectToErrors() {
       this.currentStep = 1;
-    }
+    },
   },
   data() {
     return {
@@ -319,8 +321,8 @@ export default {
       childGroup: {},
       members: [],
       managers: [],
-      loading: false
+      loading: false,
     };
-  }
+  },
 };
 </script>

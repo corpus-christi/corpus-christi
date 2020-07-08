@@ -1,4 +1,4 @@
-<template>
+locale<template>
   <v-container> <AssetTable /> </v-container>
 </template>
 
@@ -7,7 +7,7 @@ import AssetTable from "../components/assets/AssetTable";
 
 export default {
   name: "Assets",
-  components: { AssetTable }
+  components: { AssetTable },
 };
 </script>
 

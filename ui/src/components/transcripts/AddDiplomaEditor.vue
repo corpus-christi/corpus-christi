@@ -49,21 +49,21 @@ export default {
 
   components: {
     ValidationProvider,
-    ValidationObserver
+    ValidationObserver,
   },
 
   props: {
     diplomasThisStudent: Array,
     saving: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
 
-  data: function() {
+  data: function () {
     return {
       diploma: {},
-      diplomasPool: [] // courses for this diploma (the list of courses for this diploma)
+      diplomasPool: [], // courses for this diploma (the list of courses for this diploma)
     };
   },
 
@@ -73,9 +73,9 @@ export default {
     },
     items() {
       return this.diplomasPool.filter(
-        diploma => !this.diplomasThisStudent.includes(diploma.id)
+        (diploma) => !this.diplomasThisStudent.includes(diploma.id)
       );
-    }
+    },
   },
 
   methods: {
@@ -91,22 +91,22 @@ export default {
         this.$refs.obs.reset();
         this.$emit("save", this.diploma);
       }
-    }
+    },
   },
 
   mounted() {
-    this.$http.get("/api/v1/courses/diplomas").then(resp => {
+    this.$http.get("/api/v1/courses/diplomas").then((resp) => {
       this.diplomasPool = [];
       //console.log('diplomas fetched: ', resp);
-      resp.data.forEach(diploma => {
+      resp.data.forEach((diploma) => {
         this.diplomasPool.push({
           name: diploma.name,
-          id: diploma.id
+          id: diploma.id,
         });
       });
       //console.log('diplomasPool: ', this.diplomasPool);
       this.$refs.obs.validate();
     });
-  }
+  },
 };
 </script>

@@ -117,8 +117,8 @@ export default {
     rolesList: Array,
     rolesEnabled: {
       type: Boolean,
-      required: false
-    }
+      required: false,
+    },
   },
   data() {
     return {
@@ -128,8 +128,8 @@ export default {
       currentRoles: [],
       snackbar: {
         show: false,
-        text: ""
-      }
+        text: "",
+      },
     };
   },
   watch: {
@@ -139,7 +139,7 @@ export default {
       } else {
         this.clearForm(new_person);
       }
-    }
+    },
   },
   computed: {
     // Are we adding an account (vs. updating an existing one)?
@@ -157,13 +157,13 @@ export default {
         : this.$t("person.actions.reset-password");
     },
     translatedRoles() {
-      return this.rolesList.map(element => {
+      return this.rolesList.map((element) => {
         return {
           text: this.$t(element.text),
-          value: element.value
+          value: element.value,
         };
       });
-    }
+    },
   },
   methods: {
     confirm() {
@@ -174,7 +174,7 @@ export default {
               username: this.username,
               password: this.password,
               active: true,
-              personId: this.person.id
+              personId: this.person.id,
             });
           } else {
             const roles = [];
@@ -189,7 +189,7 @@ export default {
               this.$emit("updateAccount", this.person.id, { roles: roles });
             } else {
               this.$emit("updateAccount", this.person.id, {
-                password: this.password
+                password: this.password,
               });
             }
           }
@@ -218,7 +218,7 @@ export default {
       this.$validator.reset();
       this.clearForm(this.person);
       this.$emit("close");
-    }
-  }
+    },
+  },
 };
 </script>

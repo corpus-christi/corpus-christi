@@ -3,7 +3,7 @@
     <v-card class="card elevation-10">
       <div class="body">
         <!-- Display course title, description and register button -->
-        <v-card-title style="text-align: center" class="title">
+        <v-card-title style="text-align: center;" class="title">
           <v-layout row align-center justify-center>
             <v-flex shrink>
               <span class="headline mb-3">{{ course.name }}</span>
@@ -11,7 +11,7 @@
           </v-layout>
         </v-card-title>
         <v-layout>
-          <v-card-text class="text" style="text-align: center">
+          <v-card-text class="text" style="text-align: center;">
             <v-flex>
               <b>{{ $t("courses.description") }}: </b>
               <div class="mb-3">{{ course.description }}</div>
@@ -59,10 +59,10 @@ import CourseRegistrationForm from "./CourseRegistrationForm";
 export default {
   name: "CourseCard",
   props: {
-    course: {}
+    course: {},
   },
   components: {
-    CourseRegistrationForm
+    CourseRegistrationForm,
   },
   data() {
     return {
@@ -70,14 +70,14 @@ export default {
         show: false,
         editMode: false,
         saving: false,
-        courseOffering: {}
+        courseOffering: {},
       },
       snackbar: {
         show: false,
-        message: ""
+        message: "",
       },
 
-      activeOfferings: null
+      activeOfferings: null,
     };
   },
 
@@ -96,12 +96,12 @@ export default {
 
     registerClicked(course) {
       this.activeOfferings = course.course_offerings.filter(
-        courseOffering => courseOffering.active
+        (courseOffering) => courseOffering.active
       );
 
       this.registrationFormDialog.show = true;
-    }
-  }
+    },
+  },
 };
 </script>
 

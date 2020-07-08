@@ -26,7 +26,7 @@ export default new Vuex.Store({
     currentJWT: null,
 
     // All translations for the currentLocale
-    translations: []
+    translations: [],
   },
 
   getters: {
@@ -37,7 +37,7 @@ export default new Vuex.Store({
 
     currentLocaleModel(state) {
       return state.localeModels.find(
-        localeModel =>
+        (localeModel) =>
           localeModel.languageCode === state.currentLocale.languageCode
       );
     },
@@ -49,7 +49,7 @@ export default new Vuex.Store({
       } else {
         throw Error("No current language code");
       }
-    }
+    },
   },
 
   mutations: {
@@ -70,8 +70,8 @@ export default new Vuex.Store({
 
     setLocaleModels(state, inputLocaleModels) {
       state.localeModels = inputLocaleModels.map(
-        inputLocaleModel => new LocaleModel(inputLocaleModel)
+        (inputLocaleModel) => new LocaleModel(inputLocaleModel)
       );
-    }
-  }
+    },
+  },
 });

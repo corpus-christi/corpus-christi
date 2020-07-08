@@ -76,8 +76,8 @@ export default {
 
       snackbar: {
         show: false,
-        text: ""
-      }
+        text: "",
+      },
     };
   },
 
@@ -92,7 +92,7 @@ export default {
       try {
         const resp = await this.$httpNoAuth.post("/api/v1/auth/login", {
           username: this.username,
-          password: this.password
+          password: this.password,
         });
         if (resp.status !== 200) {
           console.error(`JWT STATUS ${resp.status}`);
@@ -107,7 +107,7 @@ export default {
               decodedJwt.user_claims.roles,
               resp.data.email
             ),
-            jwt: resp.data.jwt
+            jwt: resp.data.jwt,
           });
 
           // Normally want to use `push`, but unlikely that
@@ -120,7 +120,7 @@ export default {
         this.snackbar.text = this.$t("login.messages.incorrect-login");
         this.snackbar.show = true;
       }
-    }
-  }
+    },
+  },
 };
 </script>

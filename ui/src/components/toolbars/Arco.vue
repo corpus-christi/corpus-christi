@@ -30,7 +30,7 @@ export default {
   components: { LocaleMenu },
   data() {
     return {
-      arcoLogo
+      arcoLogo,
     };
   },
   computed: {
@@ -41,7 +41,7 @@ export default {
       } else {
         return { name: "login" };
       }
-    }
-  }
+    },
+  },
 };
 </script>

@@ -56,17 +56,17 @@ export default {
     entityTypeName: {
       /* either groupType or managerType */
       type: String,
-      default: "groupType"
+      default: "groupType",
     },
     value: {
       /* { id: ..., name: ... } */
-      type: Object
-    }
+      type: Object,
+    },
   },
   watch: {
     value(newValue) {
       this.entityType = newValue;
-    }
+    },
   },
   methods: {
     getTranslation(key) {
@@ -85,14 +85,14 @@ export default {
     createEntityType() {
       this.$http
         .post(this.endpoint, { name: this.newEntityTypeName })
-        .then(resp => {
+        .then((resp) => {
           this.hideEntityTypePanel();
           this.newEntityTypeName = "";
           this.entitySearchKey = resp.data.id; // reload entity-search
           this.entityType = pick(resp.data, ["id", "name"]); // notify child
           this.$emit("input", this.entityType); // notify parent
         });
-    }
+    },
   },
   computed: {
     isGroupTypeMode() {
@@ -102,17 +102,17 @@ export default {
       return `/api/v1/groups/${
         this.isGroupTypeMode ? "group-types" : "manager-types"
       }`;
-    }
+    },
   },
   data() {
     return {
       newEntityTypeName: "",
       entityType: {},
       entityTypePanel: {
-        show: false
+        show: false,
       },
-      entitySearchKey: 0 // used to re-render the component
+      entitySearchKey: 0, // used to re-render the component
     };
-  }
+  },
 };
 </script>

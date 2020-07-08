@@ -18,7 +18,7 @@ function charToRegionalIndicator(char: string) {
 
 // Convert all the characters in a string to their Unicode regional indicator.
 function strToRegionalIndicator(str: string) {
-  const values = str.split("").map(ch => charToRegionalIndicator(ch));
+  const values = str.split("").map((ch) => charToRegionalIndicator(ch));
   return String.fromCodePoint(...values);
 }
 

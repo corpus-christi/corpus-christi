@@ -83,7 +83,7 @@ export default {
   computed: {
     fetchImage() {
       return `/api/v1/images/${this.id}?${Math.random()}`;
-    }
+    },
   },
   watch: {
     imageId(id) {
@@ -92,7 +92,7 @@ export default {
         this.id = id;
         this.saved = true;
       }
-    }
+    },
   },
   methods: {
     clear() {
@@ -125,11 +125,11 @@ export default {
         const formData = new FormData(this.$refs.imageForm);
         this.$http
           .post("/api/v1/images/", formData)
-          .then(resp => {
+          .then((resp) => {
             console.log(resp);
             this.saveSelectedImage(resp.data.id);
           })
-          .catch(err => {
+          .catch((err) => {
             const response = err.response;
             if (response) {
               if (response.status == 303) {
@@ -167,13 +167,13 @@ export default {
     },
     cancelDialog() {
       this.$emit("cancel");
-    }
+    },
   },
   props: {
     imageId: {
       type: Number,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
@@ -181,7 +181,7 @@ export default {
       filename: "",
       saved: false,
       preview: false,
-      missing: false
+      missing: false,
     };
   },
   mounted() {
@@ -190,6 +190,6 @@ export default {
       this.id = this.$props.imageId;
       this.saved = true;
     }
-  }
+  },
 };
 </script>

@@ -232,12 +232,12 @@ export default {
         10,
         15,
         25,
-        { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 }
+        { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 },
       ],
       paginationInfo: {
         sortBy: "start", //default sorted column
         rowsPerPage: 10,
-        page: 1
+        page: 1,
       },
       tableLoading: true,
       events: [],
@@ -246,12 +246,12 @@ export default {
         editMode: false,
         saveLoading: false,
         addMoreLoading: false,
-        event: {}
+        event: {},
       },
       archiveDialog: {
         show: false,
         eventId: -1,
-        loading: false
+        loading: false,
       },
       search: "",
 
@@ -260,7 +260,7 @@ export default {
 
       snackbar: {
         show: false,
-        text: ""
+        text: "",
       },
       addMore: false,
       viewStatus: "viewActive",
@@ -268,8 +268,8 @@ export default {
       windowSize: {
         x: 0,
         y: 0,
-        screen
-      }
+        screen,
+      },
     };
   },
   computed: {
@@ -279,7 +279,7 @@ export default {
         { text: this.$t("events.title"), value: "title" },
         { text: this.$t("events.start-time"), value: "start" },
         { text: this.$t("events.event-location"), value: "location_name" },
-        { text: this.$t("actions.header"), sortable: false }
+        { text: this.$t("actions.header"), sortable: false },
       ];
     },
 
@@ -287,7 +287,7 @@ export default {
       return [
         { text: this.$t("actions.view-active"), value: "viewActive" },
         { text: this.$t("actions.view-archived"), value: "viewArchived" },
-        { text: this.$t("actions.view-all"), value: "viewAll" }
+        { text: this.$t("actions.view-all"), value: "viewAll" },
       ];
     },
 
@@ -295,17 +295,17 @@ export default {
       let list = this.events;
       if (!this.viewPast) {
         let today = new Date();
-        list = this.events.filter(ev => new Date(ev.end) >= today);
+        list = this.events.filter((ev) => new Date(ev.end) >= today);
       }
       if (this.viewStatus == "viewActive") {
-        list = list.filter(ev => ev.active);
+        list = list.filter((ev) => ev.active);
       } else if (this.viewStatus == "viewArchived") {
-        list = list.filter(ev => !ev.active);
+        list = list.filter((ev) => !ev.active);
       }
       return list;
     },
 
-    ...mapGetters(["currentLanguageCode"])
+    ...mapGetters(["currentLanguageCode"]),
   },
   methods: {
     activateEventDialog(event = {}, editMode = false) {
@@ -334,7 +334,7 @@ export default {
         .get(
           `/api/v1/events/${id}?include_teams=1&include_assets=1&include_persons=1`
         )
-        .then(resp => {
+        .then((resp) => {
           const copyEvent = JSON.parse(JSON.stringify(resp.data));
           copyEvent.start = new Date(copyEvent.start);
           copyEvent.end = new Date(copyEvent.end);
@@ -351,24 +351,24 @@ export default {
           delete copyEvent.id;
           this.activateEventDialog(copyEvent);
         })
-        .catch(err => console.log("DUPLICATE ERROR", err));
+        .catch((err) => console.log("DUPLICATE ERROR", err));
     },
 
     archiveEvent() {
       console.log("Archived event");
       this.archiveDialog.loading = true;
       const eventId = this.archiveDialog.eventId;
-      const idx = this.events.findIndex(ev => ev.id === eventId);
+      const idx = this.events.findIndex((ev) => ev.id === eventId);
       this.$http
         .delete(`/api/v1/events/${eventId}`)
-        .then(resp => {
+        .then((resp) => {
           console.log("ARCHIVE", resp);
           this.events[idx].active = false;
           this.archiveDialog.loading = false;
           this.archiveDialog.show = false;
           this.showSnackbar(this.$t("events.event-archived"));
         })
-        .catch(err => {
+        .catch((err) => {
           console.error("ARCHIVE FALURE", err.response);
           this.archiveDialog.loading = false;
           this.archiveDialog.show = false;
@@ -377,17 +377,17 @@ export default {
     },
 
     unarchive(event) {
-      const idx = this.events.findIndex(ev => ev.id === event.id);
+      const idx = this.events.findIndex((ev) => ev.id === event.id);
       const patchId = event.id;
       event.id *= -1; // to show loading spinner
       this.$http
         .patch(`/api/v1/events/${patchId}`, { active: true })
-        .then(resp => {
+        .then((resp) => {
           console.log("UNARCHIVED", resp);
           Object.assign(this.events[idx], resp.data);
           this.showSnackbar(this.$t("events.event-unarchived"));
         })
-        .catch(err => {
+        .catch((err) => {
           console.error("UNARCHIVE FALURE", err.response);
           this.showSnackbar(this.$t("events.error-unarchiving-event"));
         });
@@ -454,23 +454,23 @@ export default {
               .put(
                 `/api/v1/events/${eventId}/images/${newImageId}?old=${oldImageId}`
               )
-              .then(resp => {
+              .then((resp) => {
                 console.log("IMAGEEVENT EDITED", resp);
                 this.$http
                   .put(`/api/v1/events/${eventId}`, newEvent)
-                  .then(resp => {
+                  .then((resp) => {
                     console.log("EDITED", resp);
                     this.refreshEventsTable();
                     this.cancelEvent();
                     this.showSnackbar(this.$t("events.event-edited"));
                   })
-                  .catch(err => {
+                  .catch((err) => {
                     console.error("PUT FALURE", err.response);
                     this.eventDialog.saveLoading = false;
                     this.showSnackbar(this.$t("events.error-editing-event"));
                   });
               })
-              .catch(err => {
+              .catch((err) => {
                 console.error("ERROR PUTTING IMAGE ON EVENT", err.response);
                 this.eventDialog.saveLoading = false;
                 this.showSnackbar(this.$t("events.error-editing-event"));
@@ -479,23 +479,23 @@ export default {
             // an image should be added (POST)
             this.$http
               .post(`/api/v1/events/${eventId}/images/${newImageId}`)
-              .then(resp => {
+              .then((resp) => {
                 console.log("IMAGEEVENT EDITED", resp);
                 this.$http
                   .put(`/api/v1/events/${eventId}`, newEvent)
-                  .then(resp => {
+                  .then((resp) => {
                     console.log("EDITED", resp);
                     this.refreshEventsTable();
                     this.cancelEvent();
                     this.showSnackbar(this.$t("events.event-edited"));
                   })
-                  .catch(err => {
+                  .catch((err) => {
                     console.error("PUT FALURE", err.response);
                     this.eventDialog.saveLoading = false;
                     this.showSnackbar(this.$t("events.error-editing-event"));
                   });
               })
-              .catch(err => {
+              .catch((err) => {
                 console.error("ERROR ADDING IMAGE TO EVENT", err.response);
                 this.eventDialog.saveLoading = false;
                 this.showSnackbar(this.$t("events.error-editing-event"));
@@ -507,23 +507,23 @@ export default {
             // an image should be deleted (DELETE)
             this.$http
               .delete(`/api/v1/events/${eventId}/images/${oldImageId}`)
-              .then(resp => {
+              .then((resp) => {
                 console.log("IMAGEEVENT EDITED", resp);
                 this.$http
                   .put(`/api/v1/events/${eventId}`, newEvent)
-                  .then(resp => {
+                  .then((resp) => {
                     console.log("EDITED", resp);
                     this.refreshEventsTable();
                     this.cancelEvent();
                     this.showSnackbar(this.$t("events.event-edited"));
                   })
-                  .catch(err => {
+                  .catch((err) => {
                     console.error("PUT FALURE", err.response);
                     this.eventDialog.saveLoading = false;
                     this.showSnackbar(this.$t("events.error-editing-event"));
                   });
               })
-              .catch(err => {
+              .catch((err) => {
                 console.error("ERROR DELETING IMAGE FROM EVENT", err.response);
                 this.eventDialog.saveLoading = false;
                 this.showSnackbar(this.$t("events.error-editing-event"));
@@ -532,13 +532,13 @@ export default {
             // no image call necessary (NOTHING)
             this.$http
               .put(`/api/v1/events/${eventId}`, newEvent)
-              .then(resp => {
+              .then((resp) => {
                 console.log("EDITED", resp);
                 this.refreshEventsTable();
                 this.cancelEvent();
                 this.showSnackbar(this.$t("events.event-edited"));
               })
-              .catch(err => {
+              .catch((err) => {
                 console.error("PUT FALURE", err.response);
                 this.eventDialog.saveLoading = false;
                 this.showSnackbar(this.$t("events.error-editing-event"));
@@ -554,7 +554,7 @@ export default {
         delete newEvent.assets;
         this.$http
           .post("/api/v1/events/", newEvent)
-          .then(resp => {
+          .then((resp) => {
             let promises = this.getDuplicationPromises(
               resp.data.id,
               newTeams,
@@ -563,14 +563,14 @@ export default {
               newImageId
             );
             if (promises) {
-              Promise.all(promises).then(values => {
+              Promise.all(promises).then((values) => {
                 console.log(values);
                 return resp;
               });
             }
             return resp;
           })
-          .then(resp => {
+          .then((resp) => {
             console.log("ADDED", resp);
             // this.events.push(resp.data);
             if (this.addMore) {
@@ -581,7 +581,7 @@ export default {
             this.showSnackbar(this.$t("events.event-added"));
             this.refreshEventsTable();
           })
-          .catch(err => {
+          .catch((err) => {
             console.error("POST FAILURE", err.response);
             this.eventDialog.saveLoading = false;
             this.eventDialog.addMoreLoading = false;
@@ -594,7 +594,7 @@ export default {
       this.tableLoading = true;
       this.$http
         .get("/api/v1/events/?return_group=all&include_images=1")
-        .then(resp => {
+        .then((resp) => {
           this.events = resp.data;
           this.tableLoading = false;
         });
@@ -661,14 +661,14 @@ export default {
       }
       return await this.$http
         .get(`/api/v1/events/${id}?include_images=1`)
-        .then(resp => {
+        .then((resp) => {
           if (resp.data.images && resp.data.images.length > 0) {
             return resp.data.images[0].image_id;
           } else {
             return null;
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.error("ERROR FETCHING EVENT", err);
           return null;
         });
@@ -686,7 +686,7 @@ export default {
         month: "numeric",
         day: "numeric",
         hour: "2-digit",
-        minute: "2-digit"
+        minute: "2-digit",
       });
     },
 
@@ -720,12 +720,12 @@ export default {
       } else {
         this.windowSize.small = false;
       }
-    }
+    },
   },
 
   mounted() {
     this.refreshEventsTable();
-  }
+  },
 };
 </script>
 

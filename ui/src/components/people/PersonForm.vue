@@ -147,7 +147,7 @@
             v-validate="{
               required: isAccountRequired,
               alpha_dash: true,
-              min: 6
+              min: 6,
             }"
             v-bind:error-messages="errors.collect('username')"
             prepend-icon="person"
@@ -333,35 +333,35 @@ export default {
   components: {
     "attribute-form": AttributeForm,
     "address-form": AddressForm,
-    "image-chooser": ImageChooser
+    "image-chooser": ImageChooser,
   },
   props: {
     initialData: {
       type: Object,
-      required: true
+      required: true,
     },
     addAnotherEnabled: {
       type: Boolean,
       required: false,
-      default: false
+      default: false,
     },
     saveButtonText: {
       type: String,
       required: false,
-      default: "actions.save"
+      default: "actions.save",
     },
     showAccountInfo: {
       type: Boolean,
       required: false,
-      default: true
+      default: true,
     },
     isAccountRequired: {
       type: Boolean,
       required: false,
-      default: true
-    }
+      default: true,
+    },
   },
-  data: function() {
+  data: function () {
     return {
       showBirthdayPicker: false,
       showAddressForm: false,
@@ -372,8 +372,8 @@ export default {
       addressWasSaved: false,
 
       rules: {
-        required: value => !!value || "Required.",
-        counter: value => value.length <= 64 || "Max 64 characters"
+        required: (value) => !!value || "Required.",
+        counter: (value) => value.length <= 64 || "Max 64 characters",
       },
 
       person: {
@@ -389,7 +389,7 @@ export default {
         password: "",
         phone: "",
         addressId: 0,
-        attributesInfo: []
+        attributesInfo: [],
       },
 
       repeatPassword: "",
@@ -399,7 +399,7 @@ export default {
       currentStep: 1,
       stepOneErrors: false,
       stepTwoErrors: false,
-      stepThreeErrors: false
+      stepThreeErrors: false,
     };
   },
   computed: {
@@ -429,10 +429,13 @@ export default {
       let today = new Date();
       return `${today.getFullYear()}-${(today.getMonth() + 1).toLocaleString(
         "en-US",
-        { minimumIntegerDigits: 2, useGrouping: false }
+        {
+          minimumIntegerDigits: 2,
+          useGrouping: false,
+        }
       )}-${today.getDate().toLocaleString("en-US", {
         minimumIntegerDigits: 2,
-        useGrouping: false
+        useGrouping: false,
       })}`;
     },
 
@@ -448,7 +451,7 @@ export default {
       } else {
         return -1;
       }
-    }
+    },
   },
 
   watch: {
@@ -466,7 +469,7 @@ export default {
           this.imageSaved = false;
         }
       }
-    }
+    },
   },
 
   methods: {
@@ -540,7 +543,7 @@ export default {
 
     setErrors() {
       this.stepOneErrors =
-        this.errors.items.findIndex(element => {
+        this.errors.items.findIndex((element) => {
           return (
             element.field === "firstName" ||
             element.field === "lastName" ||
@@ -550,7 +553,7 @@ export default {
           );
         }) !== -1;
       this.stepTwoErrors =
-        this.errors.items.findIndex(element => {
+        this.errors.items.findIndex((element) => {
           return (
             element.field === "username" ||
             element.field === "password" ||
@@ -558,7 +561,7 @@ export default {
           );
         }) !== -1;
       this.stepThreeErrors =
-        this.errors.items.findIndex(element => {
+        this.errors.items.findIndex((element) => {
           return (
             element.field !== "username" &&
             element.field !== "password" &&
@@ -589,7 +592,7 @@ export default {
           delete this.person["id"];
           let data = {
             person: this.person,
-            attributesInfo: attributes
+            attributesInfo: attributes,
           };
           if (personId) {
             this.updatePerson(data, personId, emitMessage);
@@ -623,42 +626,42 @@ export default {
             .put(
               `/api/v1/people/${personId}/images/${newImageId}?old=${oldImageId}`
             )
-            .then(resp => {
+            .then((resp) => {
               console.log("PUT IMAGE ON PERSON", resp);
               this.$http
                 .put(`/api/v1/people/persons/${personId}`, data)
-                .then(response => {
+                .then((response) => {
                   this.$emit(emitMessage, response.data);
                   this.resetForm();
                   this.saveIsLoading = false;
                 })
-                .catch(err => {
+                .catch((err) => {
                   this.saveIsLoading = false;
                   console.error("FALURE", err.response);
                 });
             })
-            .catch(err => {
+            .catch((err) => {
               console.error("ERROR PUTTING IMAGE", err.response);
             });
         } else {
           // an image was added (POST)
           this.$http
             .post(`/api/v1/people/${personId}/images/${newImageId}`)
-            .then(resp => {
+            .then((resp) => {
               console.log("POST IMAGE ON PERSON", resp);
               this.$http
                 .put(`/api/v1/people/persons/${personId}`, data)
-                .then(response => {
+                .then((response) => {
                   this.$emit(emitMessage, response.data);
                   this.resetForm();
                   this.saveIsLoading = false;
                 })
-                .catch(err => {
+                .catch((err) => {
                   this.saveIsLoading = false;
                   console.error("FALURE", err.response);
                 });
             })
-            .catch(err => {
+            .catch((err) => {
               console.error("ERROR POSTING IMAGE", err.response);
             });
         }
@@ -667,33 +670,33 @@ export default {
           // an image was removed (DELETE)
           this.$http
             .delete(`/api/v1/people/${personId}/images/${oldImageId}`)
-            .then(resp => {
+            .then((resp) => {
               console.log("DELETED IMAGE ON PERSON", resp);
               this.$http
                 .put(`/api/v1/people/persons/${personId}`, data)
-                .then(response => {
+                .then((response) => {
                   this.$emit(emitMessage, response.data);
                   this.resetForm();
                   this.saveIsLoading = false;
                 })
-                .catch(err => {
+                .catch((err) => {
                   this.saveIsLoading = false;
                   console.error("FALURE", err.response);
                 });
             })
-            .catch(err => {
+            .catch((err) => {
               console.error("ERROR DELETING IMAGE", err.response);
             });
         } else {
           // an image didn't happen (NOTHING)
           this.$http
             .put(`/api/v1/people/persons/${personId}`, data)
-            .then(response => {
+            .then((response) => {
               this.$emit(emitMessage, response.data);
               this.resetForm();
               this.saveIsLoading = false;
             })
-            .catch(err => {
+            .catch((err) => {
               this.saveIsLoading = false;
               console.error("FALURE", err.response);
             });
@@ -709,7 +712,7 @@ export default {
       delete this.person.newImageId;
       this.$http
         .post("/api/v1/people/persons", data)
-        .then(async response => {
+        .then(async (response) => {
           if (imageId > -1) {
             await this.addImage(response.data.id, imageId);
           }
@@ -723,7 +726,7 @@ export default {
             this.resetForm();
           }
         })
-        .catch(err => {
+        .catch((err) => {
           this.resetForm();
           console.error("FAILURE", err.response);
         });
@@ -749,10 +752,10 @@ export default {
     addImage(personId, imageId) {
       return this.$http
         .post(`/api/v1/people/${personId}/images/${imageId}`)
-        .then(resp => {
+        .then((resp) => {
           console.log("IMAGE ADDED TO PERSON", resp);
         })
-        .catch(err => {
+        .catch((err) => {
           console.error("FAILURE TO ADD IMAGE", err.response);
         });
     },
@@ -763,7 +766,7 @@ export default {
       }
       return this.$http
         .get(`/api/v1/people/persons/${id}?include_images=1`)
-        .then(resp => {
+        .then((resp) => {
           console.log(resp);
           if (resp.data.images && resp.data.images.length > 0) {
             return resp.data.images[0].image_id;
@@ -771,7 +774,7 @@ export default {
             return null;
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.error("ERROR FETCHING IMAGE", err);
           return null;
         });
@@ -801,7 +804,7 @@ export default {
 
     missingImage() {
       this.imageSaved = false;
-    }
-  }
+    },
+  },
 };
 </script>

@@ -99,7 +99,7 @@
           ref="map"
           v-bind:center="center"
           v-bind:zoom="10"
-          style="width:400px;  height: 250px;"
+          style="width: 400px; height: 250px;"
           data-cy="gmap"
           @click="markLocation"
           :disabled="formDisabled"
@@ -186,16 +186,16 @@ export default {
   props: {
     initialData: {
       type: Object,
-      required: true
+      required: true,
     },
     areas: {
-      type: Array
+      type: Array,
     },
     countries: {
-      type: Array
-    }
+      type: Array,
+    },
   },
-  data: function() {
+  data: function () {
     return {
       selectedArea: 0,
       address: {
@@ -206,7 +206,7 @@ export default {
         latitude: "",
         longitude: "",
         country_code: "",
-        area_id: ""
+        area_id: "",
       },
       areaDialog: {
         title: "",
@@ -214,7 +214,7 @@ export default {
         editMode: false,
         saveLoading: false,
         addMoreLoading: false,
-        area: {}
+        area: {},
       },
       center: { lat: -2.90548355117024, lng: -79.02949294174876 },
       marker: { lat: 0, lng: 0 },
@@ -226,15 +226,15 @@ export default {
       showPlacePicker: false,
       formDisabled: false,
       latLng: false,
-      addressValid: true
+      addressValid: true,
     };
   },
   computed: {
     dropdownList() {
-      return this.areas.map(element => {
+      return this.areas.map((element) => {
         return {
           text: element.name,
-          value: element.id
+          value: element.id,
         };
       });
     },
@@ -245,7 +245,7 @@ export default {
         this.selectedArea === 0 ||
         this.address.name === ""
       );
-    }
+    },
   },
   watch: {
     // Make sure data stays in sync with any changes to `initialData` from parent.
@@ -260,7 +260,7 @@ export default {
           this.selectedArea = placeProp.area_id;
         }
       }
-    }
+    },
   },
   methods: {
     resetForm() {
@@ -294,7 +294,7 @@ export default {
       this.areaDialog.area = {
         id: area.id,
         name: area.name,
-        country_code: area.country_code
+        country_code: area.country_code,
       };
       this.areaDialog.show = true;
     },
@@ -324,7 +324,7 @@ export default {
                 latitude: this.address.latitude,
                 longitude: this.address.longitude,
                 country_code: this.address.country_code,
-                area_id: this.selectedArea
+                area_id: this.selectedArea,
               };
               if (addressId) {
                 this.updateAddress(addressData, addressId, "saved");
@@ -341,7 +341,7 @@ export default {
               latitude: this.address.latitude,
               longitude: this.address.longitude,
               country_code: this.address.country_code,
-              area_id: this.selectedArea
+              area_id: this.selectedArea,
             };
             if (addressId) {
               this.updateAddress(addressData, addressId, "saved");
@@ -355,14 +355,14 @@ export default {
     addAddress(addressData, emitMessage) {
       this.$http
         .post("/api/v1/places/addresses", addressData)
-        .then(resp => {
+        .then((resp) => {
           this.$emit(emitMessage, resp.data);
         })
         .then(() => {
           this.formDisabled = false;
           this.cancelAddressForm();
         })
-        .catch(err => {
+        .catch((err) => {
           console.log("FAILED", err);
           this.formDisabled = false;
         });
@@ -370,14 +370,14 @@ export default {
     updateAddress(addressData, addressId, emitMessage) {
       this.$http
         .put(`/api/v1/places/addresses/${addressId}`, addressData)
-        .then(resp => {
+        .then((resp) => {
           this.$emit(emitMessage, resp.data);
         })
         .then(() => {
           this.formDisabled = false;
           this.cancelAddressForm();
         })
-        .catch(err => {
+        .catch((err) => {
           console.log("FAILED", err);
           this.formDisabled = false;
         });
@@ -409,12 +409,12 @@ export default {
           if (type === "address") {
             addressObj = {
               address_line_1: this.address.address,
-              city: this.address.city
+              city: this.address.city,
             };
           } else if (type === "lat-lng") {
             addressObj = {
               lat: this.address.latitude,
-              lng: this.address.longitude
+              lng: this.address.longitude,
             };
           } else {
             return;
@@ -422,7 +422,7 @@ export default {
           console.log("ADDRESSOBJ CREATED: ");
           console.log(addressObj);
           try {
-            this.$geocoder.send(addressObj, response => {
+            this.$geocoder.send(addressObj, (response) => {
               if (response.status === "ZERO_RESULTS") {
                 console.log("NO ADDRESS RESULTS");
                 this.addressErr = true;
@@ -459,7 +459,7 @@ export default {
                 }
                 this.marker = {
                   lat: this.address.latitude,
-                  lng: this.address.longitude
+                  lng: this.address.longitude,
                 };
                 this.centerMapOnMarker();
                 resolve();
@@ -488,13 +488,13 @@ export default {
 
     centerMapOnMarker() {
       this.map.panTo(this.marker);
-    }
+    },
   },
 
-  mounted: function() {
-    this.$refs.map.$mapPromise.then(m => {
+  mounted: function () {
+    this.$refs.map.$mapPromise.then((m) => {
       this.map = m;
     });
-  }
+  },
 };
 </script>

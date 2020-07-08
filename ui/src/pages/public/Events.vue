@@ -89,7 +89,7 @@ import { mapGetters } from "vuex";
 export default {
   name: "Events",
   components: {
-    EventCard
+    EventCard,
   },
   data() {
     return {
@@ -98,14 +98,14 @@ export default {
       filterStart: "",
       filterEnd: "",
       showStartDatePicker: false,
-      showEndDatePicker: false
+      showEndDatePicker: false,
     };
   },
   mounted() {
     this.pageLoaded = false;
     this.$http
       .get(`/api/v1/events/?return_group=all&include_images=1&sort=start`)
-      .then(resp => {
+      .then((resp) => {
         this.events = resp.data;
         this.pageLoaded = true;
       });
@@ -124,11 +124,11 @@ export default {
       const end = this.getTimestamp(this.addDaystoDate(this.filterEnd, 1));
 
       return this.events.filter(
-        ev => new Date(ev.start) <= end && new Date(ev.start) >= start
+        (ev) => new Date(ev.start) <= end && new Date(ev.start) >= start
       );
     },
 
-    ...mapGetters(["currentLanguageCode"])
+    ...mapGetters(["currentLanguageCode"]),
   },
 
   methods: {
@@ -139,13 +139,13 @@ export default {
         return "";
       }
       let yr = date.toLocaleDateString(this.currentLanguageCode, {
-        year: "numeric"
+        year: "numeric",
       });
       let mo = date.toLocaleDateString(this.currentLanguageCode, {
-        month: "2-digit"
+        month: "2-digit",
       });
       let da = date.toLocaleDateString(this.currentLanguageCode, {
-        day: "2-digit"
+        day: "2-digit",
       });
       return `${yr}-${mo}-${da}`;
     },
@@ -160,7 +160,7 @@ export default {
       let date1 = this.getTimestamp(date);
       date1.setDate(date1.getDate() + dayDuration);
       return this.getDateFromTimestamp(date1);
-    }
-  }
+    },
+  },
 };
 </script>

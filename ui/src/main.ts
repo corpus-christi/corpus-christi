@@ -17,7 +17,7 @@ const app = new Vue({
   store: store,
   router: router,
   i18n: i18n,
-  render: h => h(App)
+  render: (h) => h(App),
 });
 
 declare global {

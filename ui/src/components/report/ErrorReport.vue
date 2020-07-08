@@ -24,22 +24,22 @@ export default {
   name: "ErrorReport",
   data() {
     return {
-      userFeedback: ""
+      userFeedback: "",
     };
   },
   props: {
     endpoint: {
       type: String,
-      default: null
+      default: null,
     },
     time_stamp: {
       type: String,
-      default: null
+      default: null,
     },
     status_code: {
       type: Number,
-      default: null
-    }
+      default: null,
+    },
   },
   methods: {
     submitFeedback() {
@@ -48,16 +48,16 @@ export default {
           description: this.userFeedback,
           endpoint: this.endpoint,
           time_stamp: this.time_stamp,
-          status_code: this.status_code
+          status_code: this.status_code,
         })
         .then(() => {
           this.userFeedback = "";
           this.$emit("error-report-success");
         })
-        .catch(err => {
+        .catch((err) => {
           this.$emit("error-report-fail", err);
         });
-    }
-  }
+    },
+  },
 };
 </script>

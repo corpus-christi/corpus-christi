@@ -2,12 +2,12 @@
   <v-container>
     <v-layout row>
       <v-flex xs12 sm6 md5>
-        <v-toolbar color="cyan" dark style="z-index: 1">
+        <v-toolbar color="cyan" dark style="z-index: 1;">
           <v-toolbar-title>
             {{ $t("public.headers.upcoming-classes") }}
           </v-toolbar-title>
         </v-toolbar>
-        <v-list style="padding-top: 0px; z-index: 0">
+        <v-list style="padding-top: 0px; z-index: 0;">
           <v-expansion-panel>
             <!-- TODO: filter events that have course offerings -->
             <!-- TODO: add register button function -->
@@ -65,12 +65,12 @@
       </v-snackbar>
 
       <v-flex xs12 sm6 md5 offset-md2>
-        <v-toolbar color="blue" dark style="z-index: 1">
+        <v-toolbar color="blue" dark style="z-index: 1;">
           <v-toolbar-title>
             {{ $t("public.headers.upcoming-events") }}
           </v-toolbar-title>
         </v-toolbar>
-        <v-list style="padding-top: 0px; z-index: 0">
+        <v-list style="padding-top: 0px; z-index: 0;">
           <v-expansion-panel>
             <v-expansion-panel-content
               v-for="(event, idx) in filteredEvents"
@@ -144,24 +144,24 @@ export default {
         show: false,
         editMode: false,
         saving: false,
-        courseOffering: {}
+        courseOffering: {},
       },
 
       snackbar: {
         show: false,
-        message: ""
+        message: "",
       },
 
       filterStart: "",
       filterEnd: "",
       homegroups: [],
-      groupLocations: []
+      groupLocations: [],
     };
   },
 
   mounted() {
-    this.$http.get("/api/v1/courses/courses").then(resp => {
-      this.courses = resp.data.filter(course => course.active);
+    this.$http.get("/api/v1/courses/courses").then((resp) => {
+      this.courses = resp.data.filter((course) => course.active);
       this.courses = this.courses.slice(0, 5);
     });
 
@@ -184,18 +184,18 @@ export default {
 
       // eslint-disable-next-line
       this.events = this.events.filter(
-        ev => new Date(ev.start) <= end && new Date(ev.start) >= start
+        (ev) => new Date(ev.start) <= end && new Date(ev.start) >= start
       );
       return this.events.slice(0, 5);
     },
 
-    offeredCourses: function() {
-      return this.courses.filter(course => {
+    offeredCourses: function () {
+      return this.courses.filter((course) => {
         return !isEmpty(course.course_offerings);
       });
     },
 
-    ...mapGetters(["currentLanguageCode"])
+    ...mapGetters(["currentLanguageCode"]),
   },
 
   methods: {
@@ -206,13 +206,13 @@ export default {
         month: "numeric",
         day: "numeric",
         hour: "2-digit",
-        minute: "2-digit"
+        minute: "2-digit",
       });
     },
 
     getEventData() {
       this.pageLoaded = false;
-      this.$http.get(`/api/v1/events/?return_group=all`).then(resp => {
+      this.$http.get(`/api/v1/events/?return_group=all`).then((resp) => {
         this.events = resp.data;
         this.events = this.events.slice(0, 5);
         this.pageLoaded = true;
@@ -229,7 +229,7 @@ export default {
 
     registerClicked(course) {
       this.activeOfferings = course.course_offerings.filter(
-        courseOffering => courseOffering.active
+        (courseOffering) => courseOffering.active
       );
 
       this.registrationFormDialog.show = true;
@@ -247,13 +247,13 @@ export default {
         return "";
       }
       let yr = date.toLocaleDateString(this.currentLanguageCode, {
-        year: "numeric"
+        year: "numeric",
       });
       let mo = date.toLocaleDateString(this.currentLanguageCode, {
-        month: "2-digit"
+        month: "2-digit",
       });
       let da = date.toLocaleDateString(this.currentLanguageCode, {
-        day: "2-digit"
+        day: "2-digit",
       });
       return `${yr}-${mo}-${da}`;
     },
@@ -289,21 +289,21 @@ export default {
                 this.homegroups.push({
                   position: {
                     lat: a.latitude,
-                    lng: a.longitude
+                    lng: a.longitude,
                   },
                   data: {
                     name: g.name,
                     address: a.address,
-                    description: g.description
+                    description: g.description,
                   },
-                  opened: false
+                  opened: false,
                 });
               }
             }
           }
         }
       }
-    }
-  }
+    },
+  },
 };
 </script>

@@ -163,32 +163,32 @@ import AddDiplomaEditor from "./AddDiplomaEditor";
 export default {
   name: "TranscriptDetails",
   components: {
-    AddDiplomaEditor
+    AddDiplomaEditor,
   },
   props: {
     studentId: {
       type: [String, Number],
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
       diplomaDialog: {
         show: false,
-        saving: false
+        saving: false,
       },
       diplomasThisStudent: [],
       transcript: {},
       personalInformation: [],
       loading: true,
-      loadingFailed: false
+      loadingFailed: false,
     };
   },
   mounted() {
     this.loadTranscript();
   },
   watch: {
-    $route: "loadTranscript"
+    $route: "loadTranscript",
   },
   methods: {
     loadTranscript() {
@@ -196,7 +196,7 @@ export default {
       this.loadingFailed = false;
       this.$http
         .get(`/api/v1/courses/students/${this.studentId}`)
-        .then(resp => {
+        .then((resp) => {
           this.transcript = resp.data;
           console.log("transcript for this student: ", this.transcript);
         })
@@ -208,7 +208,7 @@ export default {
         });
     },
     activateDiplomaDialog() {
-      this.transcript.diplomaList.forEach(diploma => {
+      this.transcript.diplomaList.forEach((diploma) => {
         this.diplomasThisStudent.push(diploma.id);
       });
       this.diplomaDialog.show = true;
@@ -224,16 +224,16 @@ export default {
       let diplomaAwarded = {
         personId: this.transcript.person.id,
         diplomaId: diploma.id,
-        when: null
+        when: null,
       };
       this.$http
         .post("/api/v1/courses/diplomas_awarded", diplomaAwarded)
-        .then(resp => {
+        .then((resp) => {
           console.log("ADDED", resp);
           // Not used?? let newDiploma = resp.data;
           this.loadTranscript();
         })
-        .catch(err => {
+        .catch((err) => {
           console.error("FAILURE", err);
           this.snackbar.text = this.$t("diplomas.add-failed");
           this.snackbar.show = true;
@@ -242,8 +242,8 @@ export default {
           this.diplomaDialog.show = false;
           this.diplomaDialog.saving = false;
         });
-    }
-  }
+    },
+  },
 };
 </script>
 
