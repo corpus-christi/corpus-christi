@@ -66,25 +66,25 @@ export default {
   props: {
     editMode: {
       type: Boolean,
-      required: true
+      required: true,
     },
     initialData: {
       type: Object,
-      required: true
+      required: true,
     },
     saveLoading: {
-      type: Boolean
+      type: Boolean,
     },
     addMoreLoading: {
-      type: Boolean
-    }
+      type: Boolean,
+    },
   },
-  data: function() {
+  data: function () {
     return {
       asset: {},
       save_loading: false,
       add_more_loading: false,
-      addMore: false
+      addMore: false,
     };
   },
 
@@ -96,7 +96,7 @@ export default {
       } else {
         this.asset = assetProp;
       }
-    }
+    },
   },
   computed: {
     // List the keys in an Asset record.
@@ -111,7 +111,7 @@ export default {
 
     formDisabled() {
       return this.saveLoading || this.addMoreLoading;
-    }
+    },
   },
 
   methods: {
@@ -143,7 +143,7 @@ export default {
     addAnother() {
       this.addMore = true;
       this.save();
-    }
-  }
+    },
+  },
 };
 </script>

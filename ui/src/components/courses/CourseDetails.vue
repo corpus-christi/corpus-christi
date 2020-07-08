@@ -53,7 +53,7 @@
                   :key="prereq.id"
                   :to="{
                     name: 'course-details',
-                    params: { courseId: prereq.id }
+                    params: { courseId: prereq.id },
                   }"
                 >
                   {{ prereq.name }}
@@ -102,13 +102,13 @@ export default {
   name: "CourseDetails",
   components: {
     CourseOfferingsTable,
-    CourseForm
+    CourseForm,
   },
   props: {
     courseId: {
       type: [String, Number],
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
@@ -117,12 +117,12 @@ export default {
       loadingFailed: false,
       courseDialog: {
         show: false,
-        course: {}
+        course: {},
       },
       snackbar: {
         show: false,
-        text: ""
-      }
+        text: "",
+      },
     };
   },
   computed: {
@@ -134,13 +134,13 @@ export default {
       } else {
         return "";
       }
-    }
+    },
   },
   mounted() {
     this.loadCourse();
   },
   watch: {
-    $route: "loadCourse"
+    $route: "loadCourse",
   },
   methods: {
     loadCourse() {
@@ -148,7 +148,7 @@ export default {
       this.loadingFailed = false;
       this.$http
         .get(`/api/v1/courses/courses/${this.courseId}`)
-        .then(resp => {
+        .then((resp) => {
           this.course = resp.data;
         })
         .catch(() => {
@@ -176,7 +176,7 @@ export default {
       } else {
         let courseAttrs = {
           description: course.description,
-          name: course.name
+          name: course.name,
         };
 
         let newImageId = course.newImageId;
@@ -184,14 +184,14 @@ export default {
 
         var prereqMap = {};
         if (course.prerequisites) {
-          prereqMap = course.prerequisites.map(prereq => prereq.id);
+          prereqMap = course.prerequisites.map((prereq) => prereq.id);
         }
 
         let promises = [];
         promises.push(
           this.$http
             .patch(`/api/v1/courses/courses/${course.id}`, courseAttrs)
-            .then(resp => {
+            .then((resp) => {
               console.log("EDITED", resp);
               return resp;
             })
@@ -203,9 +203,7 @@ export default {
             // an image was edited (PUT)
             promises.push(
               this.$http.put(
-                `/api/v1/courses/${
-                  course.id
-                }/images/${newImageId}?old=${oldImageId}`
+                `/api/v1/courses/${course.id}/images/${newImageId}?old=${oldImageId}`
               )
             );
           } else {
@@ -239,7 +237,7 @@ export default {
         );
 
         Promise.all(promises)
-          .then(resps => {
+          .then((resps) => {
             let newCourse = resps[0].data;
             newCourse.prerequisites = course.prerequisites; // Re-attach prereqs so they show up in UI
             this.cancelCourse();
@@ -247,7 +245,7 @@ export default {
             this.loadCourse();
             this.snackbar.text = this.$t("courses.updated");
           })
-          .catch(err => {
+          .catch((err) => {
             console.error("FALURE", err.response);
             this.courseDialog.saveLoading = false;
             this.snackbar.text = this.$t("courses.update-failed");
@@ -261,19 +259,19 @@ export default {
       }
       return await this.$http
         .get(`/api/v1/courses/courses/${id}?include_images=1`)
-        .then(resp => {
+        .then((resp) => {
           if (resp.data.images && resp.data.images.length > 0) {
             return resp.data.images[0].image_id;
           } else {
             return null;
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.error("ERROR FETCHING COURSE", err);
           return null;
         });
-    }
-  }
+    },
+  },
 };
 </script>
 

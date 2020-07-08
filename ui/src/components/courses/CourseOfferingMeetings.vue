@@ -111,7 +111,7 @@ export default {
 
   components: {
     ClassMeetingForm,
-    ClassAttendance
+    ClassAttendance,
   },
 
   data() {
@@ -124,26 +124,26 @@ export default {
       classMeetingDialog: {
         show: false,
         editMode: false,
-        classMeeting: {}
+        classMeeting: {},
       },
 
       attendanceDialog: {
         show: false,
-        classMeeting: {}
+        classMeeting: {},
       },
 
       snackbar: {
         show: false,
-        text: ""
-      }
+        text: "",
+      },
     };
   },
 
   props: {
     offeringId: {
       type: [String, Number],
-      required: true
-    }
+      required: true,
+    },
   },
 
   computed: {
@@ -153,22 +153,22 @@ export default {
         {
           text: this.$t("courses.location"),
           value: "location.description",
-          width: "33%"
+          width: "33%",
         },
         {
           text: this.$t("courses.teacher"),
           value: "teacher.compositeName",
-          width: "33%"
+          width: "33%",
         },
-        { text: this.$t("actions.header"), sortable: false }
+        { text: this.$t("actions.header"), sortable: false },
       ];
     },
-    ...mapGetters(["currentLanguageCode"])
+    ...mapGetters(["currentLanguageCode"]),
   },
 
   watch: {
     $route: "loadMeetings",
-    currentLanguageCode: "updateCompositeProperties"
+    currentLanguageCode: "updateCompositeProperties",
   },
 
   methods: {
@@ -179,11 +179,11 @@ export default {
         .get(
           `/api/v1/courses/course_offerings/${this.offeringId}/class_meetings`
         )
-        .then(resp => {
+        .then((resp) => {
           this.meetings = resp.data;
           this.updateCompositeProperties();
         })
-        .catch(err => {
+        .catch((err) => {
           console.log("LOAD MEETINGS ERR", err);
           this.loadingFailed = true;
         })
@@ -193,7 +193,7 @@ export default {
     },
 
     updateCompositeProperties() {
-      this.meetings.forEach(meeting => {
+      this.meetings.forEach((meeting) => {
         // TODO if better, localized way to get a person's full name, use that instead of just appending names together
         meeting.teacher.compositeName =
           meeting.teacher.firstName + " " + meeting.teacher.lastName;
@@ -233,7 +233,7 @@ export default {
       if (this.classMeetingDialog.editMode) {
         // Locate the record we're updating in the table.
         let meeting = meetings[0]; // Editing just updates a single meeting
-        const idx = this.meetings.findIndex(c => c.id === meeting.id);
+        const idx = this.meetings.findIndex((c) => c.id === meeting.id);
         Object.assign(this.meetings[idx], meeting);
         this.snackbar.text = this.$t("courses.meeting-updated");
       } else {
@@ -277,14 +277,14 @@ export default {
         month: "numeric",
         day: "numeric",
         hour: "2-digit",
-        minute: "2-digit"
+        minute: "2-digit",
       });
-    }
+    },
   },
 
   mounted() {
     this.loadMeetings();
-  }
+  },
 };
 </script>
 

@@ -27,7 +27,7 @@ export default {
 
   computed: {
     ...mapState(["currentAccount"]),
-    ...mapGetters(["isLoggedIn"])
+    ...mapGetters(["isLoggedIn"]),
   },
 
   methods: {
@@ -36,7 +36,7 @@ export default {
     logAccountOut() {
       this.logOut();
       this.$router.push({ name: "public" });
-    }
-  }
+    },
+  },
 };
 </script>

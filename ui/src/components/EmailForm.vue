@@ -181,19 +181,19 @@ export default {
       'recipients: [ { email: 'xxxx@xx.com', name: '...' }, ... ] // selected recipients
       */
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
   computed: {
     hasValidRecipients() {
-      return this.email.recipients.some(recipient => recipient.email);
+      return this.email.recipients.some((recipient) => recipient.email);
     },
-    ...mapState(["currentAccount"])
+    ...mapState(["currentAccount"]),
   },
   watch: {
-    "initialData.recipients": function() {
+    "initialData.recipients": function () {
       this.syncInitialData();
-    }
+    },
   },
   methods: {
     syncInitialData() {
@@ -218,10 +218,10 @@ export default {
       this.sendLoading = true;
       let email = {
         ...this.email,
-        recipients: this.email.recipients.map(p => p.email),
-        cc: this.email.cc.map(p => p.email),
-        bcc: this.email.bcc.map(p => p.email),
-        reply_to: this.replyToOtherEmail
+        recipients: this.email.recipients.map((p) => p.email),
+        cc: this.email.cc.map((p) => p.email),
+        bcc: this.email.bcc.map((p) => p.email),
+        reply_to: this.replyToOtherEmail,
       };
       this.$http
         .post(`/api/v1/emails/`, email, { noErrorSnackBar: true })
@@ -231,11 +231,11 @@ export default {
           this.$emit("sent");
           eventBus.$emit("message", { content: "groups.messages.email-sent" });
         })
-        .catch(err => {
+        .catch((err) => {
           this.sendLoading = false;
           this.$emit("error");
           eventBus.$emit("error", {
-            content: "groups.messages.error-sending-email"
+            content: "groups.messages.error-sending-email",
           });
         });
     },
@@ -257,7 +257,7 @@ export default {
         this.radioGroup = this.replyToOtherEmail;
       } else {
         eventBus.$emit("error", {
-          content: "Select one email"
+          content: "Select one email",
         });
       }
     },
@@ -269,7 +269,7 @@ export default {
       let groupId = this.$route.params.group;
       this.$http
         .get(`/api/v1/people/persons`)
-        .then(resp => {
+        .then((resp) => {
           this.people = resp.data;
         })
         .then(() => this.peronWithEmail());
@@ -281,7 +281,7 @@ export default {
           this.searchPeople.push(this.people[i]);
         }
       }
-    }
+    },
   },
   data() {
     return {
@@ -294,17 +294,17 @@ export default {
         bcc: [],
         managerName: "",
         managerEmail: "manager@xx.com",
-        reply_to: ""
+        reply_to: "",
       },
       expand: false,
       entityTypePanel: {
-        show: false
+        show: false,
       },
       managerPanel: {
-        show: false
+        show: false,
       },
       memberPanel: {
-        show: false
+        show: false,
       },
       radioGroup: "default@email.com",
       replyToOtherEmail: null,
@@ -314,12 +314,12 @@ export default {
       managerWithEmail: {},
       selectedPerson: null,
       people: [],
-      searchPeople: []
+      searchPeople: [],
     };
   },
-  mounted: function() {
+  mounted: function () {
     this.AllGroupManagers();
     this.myEmail = this.currentAccount.email;
-  }
+  },
 };
 </script>

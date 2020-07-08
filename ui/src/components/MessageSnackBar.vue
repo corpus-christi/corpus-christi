@@ -54,11 +54,11 @@ export default {
         color: "normal",
         config: {},
         timeout: 12000,
-        show: false
+        show: false,
       },
       reportFrom: {
-        show: false
-      }
+        show: false,
+      },
     };
   },
   computed: {},
@@ -90,7 +90,7 @@ export default {
     },
     showNotification(config) {
       this.showMessage(config, "blue lighten-1");
-    }
-  }
+    },
+  },
 };
 </script>

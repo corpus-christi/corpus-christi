@@ -127,51 +127,51 @@ export default {
   name: "CourseOfferingsTable",
   components: {
     CourseOfferingForm,
-    CourseOfferingAdminActions
+    CourseOfferingAdminActions,
   },
   props: {
     course: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
       courseOfferingDialog: {
         show: false,
         editMode: false,
-        courseOffering: {}
+        courseOffering: {},
       },
 
       deactivateDialog: {
         show: false,
         courseOffering: {},
-        loading: false
+        loading: false,
       },
 
       snackbar: {
         show: false,
-        text: ""
+        text: "",
       },
 
       rowsPerPageItem: [
         10,
         15,
         25,
-        { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 }
+        { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 },
       ],
 
       paginationInfo: {
         sortBy: "start",
         rowsPerPage: 10,
-        page: 1
+        page: 1,
       },
 
       courseOfferings: [],
 
       selected: [],
       search: "",
-      viewStatus: "active"
+      viewStatus: "active",
     };
   },
   computed: {
@@ -181,14 +181,14 @@ export default {
         {
           text: this.$t("courses.description"),
           value: "description",
-          width: "80%"
+          width: "80%",
         },
         {
           text: this.$t("courses.max-size"),
           value: "maxSize",
-          width: "20%"
+          width: "20%",
         },
-        { text: this.$t("actions.header"), sortable: false }
+        { text: this.$t("actions.header"), sortable: false },
       ];
     },
 
@@ -196,24 +196,24 @@ export default {
       return [
         { text: this.$t("actions.view-active"), value: "active" },
         { text: this.$t("actions.view-archived"), value: "archived" },
-        { text: this.$t("actions.view-all"), value: "all" }
+        { text: this.$t("actions.view-all"), value: "all" },
       ];
     },
     showCourseOfferings() {
       switch (this.viewStatus) {
         case "active":
           return this.courseOfferings.filter(
-            courseOffering => courseOffering.active
+            (courseOffering) => courseOffering.active
           );
         case "archived":
           return this.courseOfferings.filter(
-            courseOffering => !courseOffering.active
+            (courseOffering) => !courseOffering.active
           );
         case "all":
         default:
           return this.courseOfferings;
       }
-    }
+    },
   },
 
   mounted() {
@@ -224,7 +224,7 @@ export default {
     clickThrough(courseOffering) {
       this.$router.push({
         name: "course-offering-details",
-        params: { offeringId: courseOffering.id }
+        params: { offeringId: courseOffering.id },
       });
     },
 
@@ -275,9 +275,9 @@ export default {
       this.deactivateDialog.loading = true;
       this.$http
         .patch(`/api/v1/courses/course_offerings/${courseOffering.id}`, {
-          active: false
+          active: false,
         })
-        .then(resp => {
+        .then((resp) => {
           console.log("EDITED", resp);
           Object.assign(courseOffering, resp.data);
           this.snackbar.text = this.$t("courses.archived");
@@ -296,9 +296,9 @@ export default {
     activate(courseOffering) {
       this.$http
         .patch(`/api/v1/courses/course_offerings/${courseOffering.id}`, {
-          active: true
+          active: true,
         })
-        .then(resp => {
+        .then((resp) => {
           console.log("EDITED", resp);
           Object.assign(courseOffering, resp.data);
           this.snackbar.text = this.$t("courses.reactivated");
@@ -325,7 +325,7 @@ export default {
       if (this.courseOfferingDialog.editMode) {
         // Locate the record we're updating in the table.
         const idx = this.courseOfferings.findIndex(
-          c => c.id === courseOffering.id
+          (c) => c.id === courseOffering.id
         );
         Object.assign(this.courseOfferings[idx], courseOffering);
         this.snackbar.text = this.$t("courses.updated");
@@ -337,8 +337,8 @@ export default {
       this.snackbar.show = true;
 
       this.courseOfferingDialog.show = false;
-    }
-  }
+    },
+  },
 };
 </script>
 

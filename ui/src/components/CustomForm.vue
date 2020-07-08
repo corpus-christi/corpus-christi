@@ -302,61 +302,61 @@ export default {
   components: {
     "entity-search": EntitySearch,
     "address-form": AddressForm,
-    "image-chooser": ImageChooser
+    "image-chooser": ImageChooser,
   },
   name: "CustomForm",
   props: {
     addMoreLoading: {
-      type: Boolean
+      type: Boolean,
     },
     addImageField: {
       type: Boolean,
       required: false,
-      default: false
+      default: false,
     },
     descriptionLabel: {
       type: String,
-      required: false
+      required: false,
     },
     editMode: {
       type: Boolean,
-      required: true
+      required: true,
     },
     createText: {
       type: String,
-      default: ""
+      default: "",
     },
     editText: {
       type: String,
-      default: ""
+      default: "",
     },
     endDateTimeField: {
       type: Boolean,
       required: false,
-      default: false
+      default: false,
     },
     locationLabel: {
       type: String,
-      required: false
+      required: false,
     },
     initialData: {
       type: Object,
-      default: null
+      default: null,
     },
     saveLoading: {
-      type: Boolean
+      type: Boolean,
     },
     startDateTimeField: {
       type: Boolean,
       required: false,
-      default: false
+      default: false,
     },
     titleLabel: {
       type: String,
-      required: false
-    }
+      required: false,
+    },
   },
-  data: function() {
+  data: function () {
     return {
       object: {},
       startTime: "",
@@ -371,7 +371,7 @@ export default {
       showAddressCreator: false,
       showImageChooser: false,
       imageSaved: false,
-      currentAddress: 0
+      currentAddress: 0,
     };
   },
 
@@ -415,7 +415,7 @@ export default {
 
     endDate() {
       this.clearEndTimeIfInvalid();
-    }
+    },
   },
   computed: {
     // List the keys in an Event record.
@@ -459,7 +459,7 @@ export default {
       }
     },
 
-    ...mapGetters(["currentLanguageCode"])
+    ...mapGetters(["currentLanguageCode"]),
   },
 
   methods: {
@@ -524,13 +524,13 @@ export default {
         return "";
       }
       let yr = date.toLocaleDateString(this.currentLanguageCode, {
-        year: "numeric"
+        year: "numeric",
       });
       let mo = date.toLocaleDateString(this.currentLanguageCode, {
-        month: "2-digit"
+        month: "2-digit",
       });
       let da = date.toLocaleDateString(this.currentLanguageCode, {
-        day: "2-digit"
+        day: "2-digit",
       });
       return `${yr}-${mo}-${da}`;
     },
@@ -582,7 +582,7 @@ export default {
 
     missingImage() {
       this.imageSaved = false;
-    }
-  }
+    },
+  },
 };
 </script>

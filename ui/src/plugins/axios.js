@@ -27,7 +27,7 @@ authAxios.interceptors.response.use(
           content: getResponseErrorKey(error.response.status),
           action: {
             title: "error-report.actions.report-error",
-            func: (vm: Vue) =>
+            func: (vm) =>
               eventBus.$emit("show-error-report-dialog", {
                 props: {
                   time_stamp: new Date().toISOString(),
@@ -53,7 +53,7 @@ authAxios.interceptors.response.use(
 
 Vue.prototype.$http = authAxios;
 
-export function setJWT(jwt: string) {
+export function setJWT(jwt) {
   authAxios.defaults.headers.common["Authorization"] = `Bearer ${jwt}`;
 }
 

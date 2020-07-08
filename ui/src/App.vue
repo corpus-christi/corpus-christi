@@ -26,11 +26,11 @@ export default {
   computed: mapState(["currentJWT"]),
   methods: mapMutations(["setLocaleModels", "setCurrentLocale"]),
 
-  created: function() {
+  created: function () {
     // Initialize early application stuff
 
     // Locales
-    this.$http.get("/api/v1/i18n/locales").then(response => {
+    this.$http.get("/api/v1/i18n/locales").then((response) => {
       const localeData = response.data;
 
       if (localeData && localeData.length > 0) {
@@ -47,8 +47,8 @@ export default {
   },
   data() {
     return {
-      bus: eventBus
+      bus: eventBus,
     };
-  }
+  },
 };
 </script>

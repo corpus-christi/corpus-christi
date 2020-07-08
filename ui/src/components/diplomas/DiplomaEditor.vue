@@ -80,24 +80,24 @@ export default {
   props: {
     initialData: {
       type: Object,
-      required: true
+      required: true,
     },
     editMode: {
       type: Boolean,
-      required: true
+      required: true,
     },
     saveLoading: {
-      type: Boolean
+      type: Boolean,
     },
     addMoreLoading: {
-      type: Boolean
-    }
+      type: Boolean,
+    },
   },
-  data: function() {
+  data: function () {
     return {
       coursesPool: [], // courses for this diploma (the list of courses for this diploma)
       diploma: {},
-      addMore: false
+      addMore: false,
     };
   },
 
@@ -110,7 +110,7 @@ export default {
     },
     formDisabled() {
       return this.saveLoading || this.addMoreLoading;
-    }
+    },
   },
 
   watch: {
@@ -120,7 +120,7 @@ export default {
       } else {
         this.diploma = diplomaProp;
       }
-    }
+    },
   },
 
   methods: {
@@ -147,13 +147,13 @@ export default {
         }
         this.addMore = false;
       });
-    }
+    },
   },
 
   mounted() {
     this.$http
       .get("/api/v1/courses/courses")
-      .then(resp => (this.coursesPool = resp.data));
-  }
+      .then((resp) => (this.coursesPool = resp.data));
+  },
 };
 </script>

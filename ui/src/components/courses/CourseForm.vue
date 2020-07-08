@@ -114,35 +114,35 @@ export default {
   props: {
     editMode: {
       type: Boolean,
-      required: true
+      required: true,
     },
     initialData: {
       type: Object,
-      required: true
+      required: true,
     },
     courses: {
-      type: Array
+      type: Array,
     },
     saveLoading: {
-      type: Boolean
+      type: Boolean,
     },
     addMoreLoading: {
-      type: Boolean
-    }
+      type: Boolean,
+    },
   },
-  data: function() {
+  data: function () {
     return {
       course: {},
       coursesPool: [],
       addMore: false,
       imageSaved: false,
-      showImageChooser: false
+      showImageChooser: false,
     };
   },
   computed: {
     items() {
       return this.coursesPool.filter(
-        item => item.active && item.id != this.course.id
+        (item) => item.active && item.id != this.course.id
       );
     },
     title() {
@@ -164,7 +164,7 @@ export default {
       } else {
         return -1;
       }
-    }
+    },
   },
 
   watch: {
@@ -184,7 +184,7 @@ export default {
         }
       }
     },
-    courses: "loadCoursesPool"
+    courses: "loadCoursesPool",
   },
 
   methods: {
@@ -219,7 +219,7 @@ export default {
     loadCoursesPool() {
       if (!this.courses) {
         this.loading = true;
-        this.$http.get(`/api/v1/courses/courses`).then(resp => {
+        this.$http.get(`/api/v1/courses/courses`).then((resp) => {
           this.coursesPool = resp.data;
           this.loading = false;
         });
@@ -246,11 +246,11 @@ export default {
 
     missingImage() {
       this.imageSaved = false;
-    }
+    },
   },
 
   mounted() {
     this.loadCoursesPool();
-  }
+  },
 };
 </script>

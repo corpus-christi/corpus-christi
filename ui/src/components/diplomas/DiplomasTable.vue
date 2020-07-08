@@ -130,7 +130,7 @@ export default {
   name: "DiplomasTable",
   components: {
     DiplomaEditor,
-    DiplomaAdminActions
+    DiplomaAdminActions,
   },
   data() {
     return {
@@ -140,23 +140,23 @@ export default {
         saveLoading: false,
         addMoreLoading: false,
         diploma: {},
-        courses: []
+        courses: [],
       },
       snackbar: {
         show: false,
-        text: ""
+        text: "",
       },
       deactivateDialog: {
         show: false,
         course: {},
-        loading: false
+        loading: false,
       },
       addMore: false,
       tableLoaded: false,
       selected: [],
       diplomas: [],
       search: "",
-      viewStatus: "active"
+      viewStatus: "active",
     };
   },
   computed: {
@@ -167,29 +167,29 @@ export default {
         {
           text: this.$t("diplomas.description"),
           value: "description",
-          width: "60%"
+          width: "60%",
         },
-        { text: this.$t("actions.header"), sortable: false }
+        { text: this.$t("actions.header"), sortable: false },
       ];
     },
     options() {
       return [
         { text: this.$t("actions.view-active"), value: "active" },
         { text: this.$t("actions.view-archived"), value: "archived" },
-        { text: this.$t("actions.view-all"), value: "all" }
+        { text: this.$t("actions.view-all"), value: "all" },
       ];
     },
     showDiplomas() {
       switch (this.viewStatus) {
         case "active":
-          return this.diplomas.filter(diploma => diploma.active);
+          return this.diplomas.filter((diploma) => diploma.active);
         case "archived":
-          return this.diplomas.filter(diploma => !diploma.active);
+          return this.diplomas.filter((diploma) => !diploma.active);
         case "all":
         default:
           return this.diplomas;
       }
-    }
+    },
   },
 
   methods: {
@@ -231,9 +231,11 @@ export default {
       this.deactivateDialog.loading = true;
       this.$http
         .patch(`/api/v1/courses/diplomas/deactivate/${diploma.id}`)
-        .then(resp => {
+        .then((resp) => {
           let returnedDiploma = resp.data;
-          const idx = this.diplomas.findIndex(d => d.id === returnedDiploma.id);
+          const idx = this.diplomas.findIndex(
+            (d) => d.id === returnedDiploma.id
+          );
           this.diplomas[idx].active = false;
           this.snackbar.text = this.$t("diplomas.archived");
           this.snackbar.show = true;
@@ -251,9 +253,11 @@ export default {
     activate(diploma) {
       this.$http
         .patch(`/api/v1/courses/diplomas/activate/${diploma.id}`)
-        .then(resp => {
+        .then((resp) => {
           let returnedDiploma = resp.data;
-          const idx = this.diplomas.findIndex(d => d.id === returnedDiploma.id);
+          const idx = this.diplomas.findIndex(
+            (d) => d.id === returnedDiploma.id
+          );
           this.diplomas[idx].active = true;
           this.snackbar.text = this.$t("diplomas.reactivated");
           this.snackbar.show = true;
@@ -267,7 +271,7 @@ export default {
     clickThrough(diploma) {
       this.$router.push({
         name: "diploma-details",
-        params: { diplomaId: diploma.id }
+        params: { diplomaId: diploma.id },
       });
     },
 
@@ -302,7 +306,7 @@ export default {
       // grab the courses
       const courses = diplomaClone.courseList || [];
       // create an array of course ids
-      const courseIDList = courses.map(course => course.id);
+      const courseIDList = courses.map((course) => course.id);
       // Get rid of the courseList, which is an array of objects
       delete diplomaClone.courseList;
       // the api is expecting an array of course IDs, so add that property to diplomaClone
@@ -311,20 +315,20 @@ export default {
         // Hang on to the ID of the diploma being updated.
         const diploma_id = diplomaClone.id;
         // Locate the diploma we're updating in the table.
-        const idx = this.diplomas.findIndex(d => d.id === diplomaClone.id);
+        const idx = this.diplomas.findIndex((d) => d.id === diplomaClone.id);
         // get rid of the id; not for consumption by the endpoint
         delete diplomaClone.id;
 
         this.$http
           .patch(`/api/v1/courses/diplomas/${diploma_id}`, diplomaClone)
-          .then(resp => {
+          .then((resp) => {
             console.log("UPDATED", resp);
             let updatedDiploma = resp.data;
             Object.assign(this.diplomas[idx], updatedDiploma);
             this.cancelDiploma();
             this.showSnackbar(this.$t("diplomas.updated"));
           })
-          .catch(err => {
+          .catch((err) => {
             console.error("FALURE", err.response);
             this.diplomaDialog.saveLoading = false;
             this.showSnackbar(this.$t("diplomas.update-failed"));
@@ -334,7 +338,7 @@ export default {
         diplomaClone.active = true;
         this.$http
           .post("/api/v1/courses/diplomas", diplomaClone)
-          .then(resp => {
+          .then((resp) => {
             console.log("ADDED", resp);
             let newDiploma = resp.data;
             this.diplomas.push(newDiploma);
@@ -345,7 +349,7 @@ export default {
             }
             this.showSnackbar(this.$t("diplomas.added"));
           })
-          .catch(err => {
+          .catch((err) => {
             console.error("FAILURE", err);
             this.diplomaDialog.saveLoading = false;
             this.diplomaDialog.addMoreLoading = false;
@@ -356,14 +360,14 @@ export default {
     showSnackbar(message) {
       this.snackbar.text = message;
       this.snackbar.show = true;
-    }
+    },
   },
-  mounted: function() {
-    this.$http.get("/api/v1/courses/diplomas").then(resp => {
+  mounted: function () {
+    this.$http.get("/api/v1/courses/diplomas").then((resp) => {
       this.diplomas = resp.data;
       this.tableLoaded = true;
     });
-  }
+  },
 };
 </script>
 

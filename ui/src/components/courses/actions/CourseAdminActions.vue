@@ -43,13 +43,13 @@
 export default {
   props: {
     course: Object,
-    displayContext: String
+    displayContext: String,
   },
   methods: {
     emitAction(actionName) {
       this.$emit("action", actionName);
-    }
-  }
+    },
+  },
 };
 </script>
 

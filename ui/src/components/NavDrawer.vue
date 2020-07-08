@@ -12,32 +12,32 @@ import NavItem from "./NavItem";
 export default {
   name: "NavDrawer",
   components: {
-    NavItem
+    NavItem,
   },
   data() {
     return {
-      drawerVisible: false
+      drawerVisible: false,
     };
   },
   computed: {
     // Computed property so it's reactive.
-    menuItems: function() {
+    menuItems: function () {
       return [
         {
           title: this.$t("public.title"),
           route: "public",
           icon: "home",
-          divider: true
+          divider: true,
         },
         {
           title: this.$t("people.title"),
           route: "people",
-          icon: "account_circle"
+          icon: "account_circle",
         },
         {
           title: this.$t("groups.title"),
           route: "groups",
-          icon: "group"
+          icon: "group",
         },
         {
           title: this.$t("courses.course"),
@@ -46,41 +46,41 @@ export default {
           children: [
             {
               title: this.$t("diplomas.diploma"),
-              route: "diplomas-admin"
+              route: "diplomas-admin",
             },
             {
               title: this.$t("transcripts.transcript"),
-              route: "transcripts"
-            }
-          ]
+              route: "transcripts",
+            },
+          ],
         },
         {
           title: this.$t("events.header"),
           route: "events",
-          icon: "event"
+          icon: "event",
         },
         {
           title: this.$t("teams.title"),
           route: "teams",
-          icon: "group"
+          icon: "group",
         },
         {
           title: this.$t("assets.title"),
           route: "assets",
-          icon: "devices_other"
+          icon: "devices_other",
         },
         {
           title: this.$t("places.title"),
           route: "places",
-          icon: "places"
-        }
+          icon: "places",
+        },
       ];
-    }
+    },
   },
   methods: {
     toggle() {
       this.drawerVisible = !this.drawerVisible;
-    }
-  }
+    },
+  },
 };
 </script>

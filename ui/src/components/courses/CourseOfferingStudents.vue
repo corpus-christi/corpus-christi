@@ -159,7 +159,7 @@ import StudentsAdminActions from "./actions/StudentsAdminActions";
 export default {
   components: {
     StudentsForm,
-    StudentsAdminActions
+    StudentsAdminActions,
   },
   name: "CourseOfferingStudents",
   data() {
@@ -173,43 +173,43 @@ export default {
       newStudentDialog: {
         show: false,
         newStudent: {},
-        saving: false
+        saving: false,
       },
 
       deactivateDialog: {
         show: false,
         student: {},
-        loading: false
+        loading: false,
       },
 
       confirmDialog: {
         show: false,
         student: {},
-        confirming: false
+        confirming: false,
       },
 
       snackbar: {
         show: false,
-        text: ""
+        text: "",
       },
 
       rowsPerPageItem: [
         10,
         15,
         25,
-        { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 }
+        { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 },
       ],
 
       paginationInfo: {
         sortBy: "start",
         rowsPerPage: 10,
-        page: 1
-      }
+        page: 1,
+      },
     };
   },
 
   props: {
-    offeringId: null
+    offeringId: null,
   },
 
   computed: {
@@ -218,24 +218,24 @@ export default {
         {
           text: this.$t("person.name.first"),
           value: "person.firstName",
-          width: "20%"
+          width: "20%",
         },
         {
           text: this.$t("person.name.last"),
           value: "person.lastName",
-          width: "20%"
+          width: "20%",
         },
         {
           text: this.$t("person.email"),
           value: "person.email",
-          width: "22.5%"
+          width: "22.5%",
         },
         {
           text: this.$t("person.phone"),
           value: "person.phone",
-          width: "22.5%"
+          width: "22.5%",
         },
-        { text: this.$t("actions.header"), sortable: false }
+        { text: this.$t("actions.header"), sortable: false },
       ];
     },
 
@@ -243,21 +243,21 @@ export default {
       return [
         { text: this.$t("actions.view-active"), value: "active" },
         { text: this.$t("actions.view-archived"), value: "archived" },
-        { text: this.$t("actions.view-all"), value: "all" }
+        { text: this.$t("actions.view-all"), value: "all" },
       ];
     },
 
     showStudents() {
       switch (this.viewStatus) {
         case "active":
-          return this.students.filter(student => student.active);
+          return this.students.filter((student) => student.active);
         case "archived":
-          return this.students.filter(student => !student.active);
+          return this.students.filter((student) => !student.active);
         case "all":
         default:
           return this.students;
       }
-    }
+    },
   },
 
   methods: {
@@ -290,14 +290,14 @@ export default {
           `/api/v1/courses/course_offerings/${newStudent.studentId}`,
           newStudent
         )
-        .then(resp => {
+        .then((resp) => {
           console.log("ADDED", resp);
           this.students.push(resp.data);
 
           this.snackbar.text = this.$t("courses.added");
           this.snackbar.show = true;
         })
-        .catch(err => {
+        .catch((err) => {
           console.error("FAILURE", err.response);
           this.snackbar.text = this.$t("courses.add-failed");
           this.snackbar.show = true;
@@ -333,7 +333,7 @@ export default {
       this.confirmDialog.confirming = true;
       this.$http
         .patch(`/api/v1/courses/students/${student.id}`, { active: false })
-        .then(resp => {
+        .then((resp) => {
           console.log("EDITED", resp);
           Object.assign(student, resp.data);
           this.snackbar.text = this.$t("courses.archived");
@@ -352,7 +352,7 @@ export default {
     confirmStudent(student) {
       this.$http
         .patch(`/api/v1/courses/students/${student.id}`, { confirmed: true })
-        .then(resp => {
+        .then((resp) => {
           console.log("EDITED", resp);
           Object.assign(student, resp.data);
           this.snackbar.text = this.$t("courses.reactivated");
@@ -385,7 +385,7 @@ export default {
       this.deactivateDialog.loading = true;
       this.$http
         .patch(`/api/v1/courses/students/${student.id}`, { active: false })
-        .then(resp => {
+        .then((resp) => {
           console.log("EDITED", resp);
           Object.assign(student, resp.data);
           this.snackbar.text = this.$t("courses.archived");
@@ -404,7 +404,7 @@ export default {
     activate(student) {
       this.$http
         .patch(`/api/v1/courses/students/${student.id}`, { active: true })
-        .then(resp => {
+        .then((resp) => {
           console.log("EDITED", resp);
           Object.assign(student, resp.data);
           this.snackbar.text = this.$t("courses.reactivated");
@@ -414,19 +414,19 @@ export default {
           this.snackbar.text = this.$t("courses.update-failed");
           this.snackbar.show = true;
         });
-    }
+    },
   },
 
-  mounted: function() {
+  mounted: function () {
     const id = this.offeringId;
     this.loading = true;
     this.$http
       .get(`/api/v1/courses/course_offerings/${id}/students`)
-      .then(resp => {
+      .then((resp) => {
         this.students = resp.data;
         this.loading = false;
       });
-  }
+  },
 };
 </script>
 

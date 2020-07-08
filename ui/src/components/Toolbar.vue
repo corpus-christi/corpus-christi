@@ -11,6 +11,6 @@ import StandardToolbar from "./toolbars/Standard";
 
 export default {
   name: "Toolbar",
-  components: { StandardToolbar, ArcoToolbar }
+  components: { StandardToolbar, ArcoToolbar },
 };
 </script>

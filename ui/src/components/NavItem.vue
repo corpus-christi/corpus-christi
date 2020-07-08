@@ -38,12 +38,12 @@ export default {
   props: {
     item: {
       type: Object,
-      required: true
+      required: true,
     },
     isChild: {
       type: Boolean,
-      default: false
-    }
-  }
+      default: false,
+    },
+  },
 };
 </script>
