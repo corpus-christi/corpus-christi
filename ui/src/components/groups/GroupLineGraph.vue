@@ -60,7 +60,7 @@
     <canvas id="myChart2" width="500" height="180"></canvas>
 
     <v-toolbar>
-      <v-btn class="mx-2" fab small @click="decrease">
+      <v-btn class="mx-2" fab small @click="decrease" :disabled="yearSwitch">
         <v-icon dark>navigate_before</v-icon>
       </v-btn>
       <v-chip
@@ -70,9 +70,129 @@
       >
         {{ currentYear }}
       </v-chip>
-      <v-btn class="mx-2" fab small @click="increase">
+      <v-btn class="mx-2" fab small @click="increase" :disabled="yearSwitch">
         <v-icon dark>navigate_next</v-icon>
       </v-btn>
+      <v-spacer />
+      <template
+      v-if="selectedTimeScale === 'Weekly'"
+      >
+        <v-flex md3>
+          <v-menu
+            ref="menu"
+            v-model="menu"
+            :close-on-content-click="false"
+            :return-value.sync="startDate"
+            transition="scale-transition"
+            offset-y
+            min-width="290px"
+            open-on-hover
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+                v-model="startDate"
+                label="Start"
+                prepend-icon="event"
+                readonly
+                v-bind="attrs"
+                v-on="on"
+              ></v-text-field>
+            </template>
+            <v-date-picker v-model="startDate" no-title scrollable range>
+              <v-spacer></v-spacer>
+              <v-btn text color="primary" @click="menu = false">Cancel</v-btn>
+              <v-btn text color="primary" @click="$refs.menu.save(startDate)">OK</v-btn>
+            </v-date-picker>
+          </v-menu>
+        </v-flex>
+        <v-flex md3>
+          <v-menu
+            ref="menu1"
+            v-model="menu1"
+            :close-on-content-click="false"
+            :return-value.sync="endDate"
+            transition="scale-transition"
+            offset-y
+            min-width="290px"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+                v-model="endDate"
+                label="end"
+                prepend-icon="event"
+                readonly
+                v-bind="attrs"
+                v-on="on"
+              ></v-text-field>
+            </template>
+            <v-date-picker v-model="endDate" no-title scrollable>
+              <v-spacer></v-spacer>
+              <v-btn text color="primary" @click="menu1 = false">Cancel</v-btn>
+              <v-btn text color="primary" @click="$refs.menu1.save(endDate)">OK</v-btn>
+            </v-date-picker>
+          </v-menu>
+        </v-flex>
+      </template>
+      <template
+        v-if="selectedTimeScale === 'Monthly'"
+      >
+        <v-flex md3>
+          <v-menu
+            ref="menu"
+            v-model="menu"
+            :close-on-content-click="false"
+            :return-value.sync="startMonth"
+            transition="scale-transition"
+            offset-y
+            min-width="290px"
+            open-on-hover
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+                v-model="startMonth"
+                label="Start"
+                prepend-icon="event"
+                readonly
+                v-bind="attrs"
+                v-on="on"
+              ></v-text-field>
+            </template>
+            <v-date-picker v-model="startMonth" no-title scrollable type="month">
+              <v-spacer></v-spacer>
+              <v-btn text color="primary" @click="menu = false">Cancel</v-btn>
+              <v-btn text color="primary" @click="$refs.menu.save(startMonth)">OK</v-btn>
+            </v-date-picker>
+          </v-menu>
+        </v-flex>
+        <v-flex md3>
+          <v-menu
+            ref="menu1"
+            v-model="menu1"
+            :close-on-content-click="false"
+            :return-value.sync="endMonth"
+            transition="scale-transition"
+            offset-y
+            min-width="290px"
+            open-on-hover
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+                v-model="endMonth"
+                label="end"
+                prepend-icon="event"
+                readonly
+                v-bind="attrs"
+                v-on="on"
+              ></v-text-field>
+            </template>
+            <v-date-picker v-model="endMonth" no-title scrollable type="month">
+              <v-spacer></v-spacer>
+              <v-btn text color="primary" @click="menu1 = false">Cancel</v-btn>
+              <v-btn text color="primary" @click="$refs.menu1.save(endMonth)">OK</v-btn>
+            </v-date-picker>
+          </v-menu>
+        </v-flex>
+      </template>
     </v-toolbar>
   </div>
 </template>
@@ -88,15 +208,25 @@
       return {
         timeScale: ['Weekly', 'Monthly'],
         selectedGroups: [],
+        selectedGroupsStore:[],
         groups: [],
         selectedTimeScale:null,
-        labels:["January", "Febrwuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+        labels:["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
         weekLabels:[],
         currentYear: null,
         page: null,
         selectedYearMeeting:[],
         currentYearGraph:[],
-        data:null
+        data:null,
+        startDate: new Date().toISOString().substr(0, 10),
+        endDate: new Date().toISOString().substr(0, 10),
+        startMonth: new Date().toISOString().substr(0, 7),
+        endMonth: new Date().toISOString().substr(0, 7),
+        menu: false,
+        menu1: false,
+        yearSwitch: false,
+        currentViewingGraphData: null,
+        currentViewingWeeklyGraphData: null
       }
     },
 
@@ -172,6 +302,52 @@
             }
           }
         }
+      },
+      startMonth(newValue, oldValue){
+        if (newValue.substr(0, 4) === this.endMonth.substr(0, 4)) {
+          if (newValue.substr(5,) - this.endMonth.substr(5,) < 0) {
+            this.yearSwitch = true;
+            this.updateStartGraph(newValue);
+          }
+          else if (newValue.substr(0, 4) - this.endMonth.substr(0, 4) === 0) {
+            this.currentYear = newValue.substr(0, 4);
+            this.yearSwitch = false;
+          }
+        }
+        else if (newValue.substr(0, 4) < this.endMonth.substr(0, 4)){
+          this.yearSwitch = true;
+        }
+      },
+      endMonth(newValue, oldValue){
+        if(newValue.substr(0, 4) === this.startMonth.substr(0, 4)){
+          if (newValue.substr(5,) - this.startMonth.substr(5,) < 0){
+            this.yearSwitch = true;
+          }
+          else if(newValue.substr(5,) - this.startMonth.substr(5,) === 0){
+            this.currentYear = newValue.substr(0, 4);
+            this.yearSwitch = false;
+          }
+          else if(newValue.substr(5,) - this.startMonth.substr(5,) > 0){
+            this.yearSwitch = true;
+            this.updateEndGraph(newValue);
+          }
+        }
+      },
+
+      startDate(newValue, oldValue){
+        if(newValue.substr(0, 4) === this.endDate.substr(0, 4)){
+          if (newValue.substr(5,7) <= this.endDate.substr(5,7 )){
+            this.updateStartWeeklyGraph(newValue);
+          }
+        }
+      },
+
+      endDate(newValue, oldValue){
+        if(newValue.substr(0, 4) === this.startDate.substr(0, 4)){
+          if (this.startDate.substr(5,7) <= newValue.substr(5,7 )){
+            this.updateEndWeeklyGraph(newValue);
+          }
+        }
       }
     },
 
@@ -180,52 +356,134 @@
     },
 
     methods: {
+      updateStartWeeklyGraph(newDate){
+        let ctx2 = document.getElementById("myChart2");
+        let filteredData = this.currentViewingWeeklyGraphData.map(a => Object.assign({}, a));
+        let start = moment(newDate).isoWeek();
+        let end = moment(this.endDate).isoWeek();
+        for(let line of filteredData){
+          line.data = line.data.slice(start-1, end);
+        }
+        let myChart2 = new Chart(ctx2, {
+          type: "line",
+          data: {
+            labels: this.labels.slice(start-1, end),
+            datasets: filteredData
+          },
+          options: {
+          }
+        });
+      },
+
+      updateEndWeeklyGraph(newDate){
+        let ctx2 = document.getElementById("myChart2");
+        let filteredData = this.currentViewingWeeklyGraphData.map(a => Object.assign({}, a));
+        let start = moment(this.startDate).isoWeek();
+        let end = moment(newDate).isoWeek();
+        for(let line of filteredData){
+          line.data = line.data.slice(start-1, end);
+        }
+        let myChart2 = new Chart(ctx2, {
+          type: "line",
+          data: {
+            labels: this.labels.slice(start-1, end),
+            datasets: filteredData
+          },
+          options: {
+          }
+        });
+      },
+
+
+      updateStartGraph(newMonth){
+        let ctx2 = document.getElementById("myChart2");
+        let filteredData = this.currentViewingGraphData.map(a => Object.assign({}, a));
+        let start = Number(newMonth.substr(5,));
+        let end = Number(this.endMonth.substr(5,))
+        for(let line of filteredData){
+          line.data = line.data.slice(start-1, end);
+        }
+        let myChart2 = new Chart(ctx2, {
+          type: "line",
+          data: {
+            labels: this.labels.slice(Number(newMonth.substr(5,))-1,Number(this.endMonth.substr(5,))),
+            datasets: filteredData
+          },
+          options: {
+          }
+        });
+      },
+      updateEndGraph(newMonth){
+        let ctx2 = document.getElementById("myChart2");
+        let filteredData = this.currentViewingGraphData.map(a => Object.assign({}, a));
+        let start = Number(this.startMonth.substr(5,));
+        let end = Number(newMonth.substr(5,))
+        for(let line of filteredData){
+          line.data = line.data.slice(start-1, end);
+        }
+        let myChart2 = new Chart(ctx2, {
+          type: "line",
+          data: {
+            labels: this.labels.slice(Number(this.startMonth.substr(5,))-1, Number(newMonth.substr(5,))),
+            datasets: filteredData
+          },
+          options: {
+          }
+        });
+      },
+
       calculateGraph(inputGroup){
         let template1 = [0,0,0,0,0,0,0,0,0,0,0,0];
+        let template = [];
         if (this.selectedTimeScale === "Monthly") {
           for (let i=0; i< inputGroup.meetings.length; i++){
               let meetingYear = this.parseYear(inputGroup.meetings[i].startTime)[0];
               let meetingMonth = this.parseYear(inputGroup.meetings[i].startTime)[1];
-              switch(meetingMonth){
-                case '01':
-                  template1[0] = template1[0] +  inputGroup.meetings[i].attendances.length;
-                  break;
-                case '02':
-                  template1[1] = template1[1] +  inputGroup.meetings[i].attendances.length;
-                  break;
-                case '03':
-                  template1[2] = template1[2] +  inputGroup.meetings[i].attendances.length;
-                  break;
-                case '04':
-                  template1[3] = template1[3] +  inputGroup.meetings[i].attendances.length;
-                  break;
-                case '05':
-                  template1[4] = template1[4] +  inputGroup.meetings[i].attendances.length;
-                  break;
-                case '06':
-                  template1[5] = template1[5] +  inputGroup.meetings[i].attendances.length;
-                  break;
-                case '07':
-                  template1[6] = template1[6] +  inputGroup.meetings[i].attendances.length;
-                  break;
-                case '08':
-                  template1[7] = template1[7] +  inputGroup.meetings[i].attendances.length;
-                  break;
-                case '09':
-                  template1[8] = template1[8] +  inputGroup.meetings[i].attendances.length;
-                  break;
-                case '10':
-                  template1[9] = template1[9] +  inputGroup.meetings[i].attendances.length;
-                  break;
-                case '11':
-                  template1[10] = template1[10] +  inputGroup.meetings[i].attendances.length;
-                  break;
-                case '12':
-                  template1[11] = template1[11] +  inputGroup.meetings[i].attendances.length;
-                  break;
+              if (!(meetingYear in template)){
+                template[meetingYear] = template1;
+              }
+              if(meetingYear in template){
+                switch(meetingMonth){
+                  case '01':
+                    template[meetingYear][0] = template[meetingYear][0] + inputGroup.meetings[i].attendances.length;
+                    break;
+                  case '02':
+                    template[meetingYear][1] = template[meetingYear][1] + inputGroup.meetings[i].attendances.length;
+                    break;
+                  case '03':
+                    template[meetingYear][2] = template[meetingYear][2] + inputGroup.meetings[i].attendances.length;
+                    break;
+                  case '04':
+                    template[meetingYear][3] = template[meetingYear][3] + inputGroup.meetings[i].attendances.length;
+                    break;
+                  case '05':
+                    template[meetingYear][4] = template[meetingYear][4] + inputGroup.meetings[i].attendances.length;
+                    break;
+                  case '06':
+                    template[meetingYear][5] = template[meetingYear][5] + inputGroup.meetings[i].attendances.length;
+                    break;
+                  case '07':
+                    template[meetingYear][6] = template[meetingYear][6] + inputGroup.meetings[i].attendances.length;
+                    break;
+                  case '08':
+                    template[meetingYear][7] = template[meetingYear][7] + inputGroup.meetings[i].attendances.length;
+                    break;
+                  case '09':
+                    template[meetingYear][8] = template[meetingYear][8] + inputGroup.meetings[i].attendances.length;
+                    break;
+                  case '10':
+                    template[meetingYear][9] = template[meetingYear][9] + inputGroup.meetings[i].attendances.length;
+                    break;
+                  case '11':
+                    template[meetingYear][10] = template[meetingYear][10] + inputGroup.meetings[i].attendances.length;
+                    break;
+                  case '12':
+                    template[meetingYear][11] = template[meetingYear][11] + inputGroup.meetings[i].attendances.length;
+                    break;
+                }
               }
           }
-          return template1;
+          return template[this.currentYear];
         };
       },
 
@@ -235,10 +493,11 @@
       },
 
       decrease() {
-        this.currentYear = this.currentYear - 1;
-        this.selectedGroups = [];
-        this.clearGraph();
-        this.changePageLoadGraph();
+        if(this.startMonth === this.endMonth){
+          this.currentYear = this.currentYear - 1;
+          this.clearGraph();
+          this.changePageLoadGraph();
+        }
       },
       increase (){
         this.currentYear = Number(this.currentYear) + 1;
@@ -436,7 +695,6 @@
       reloadGraph() {
         if (this.selectedTimeScale === 'Monthly') {
           let numberOfLines = this.selectedGroups.length;
-          let graphsNum = this.selectedGroups;
           let ctx2 = document.getElementById("myChart2");
           let myChart2 = new Chart(ctx2, {
             type: "line",
@@ -463,6 +721,7 @@
                 }
               );
             }
+            this.currentViewingGraphData = myChart2.data.datasets;
           }
           myChart2.update();
         }
@@ -536,6 +795,7 @@
               }
             );
           }
+          this.currentViewingWeeklyGraphData = myChart2.data.datasets;
         }
         myChart2.update();
       },
