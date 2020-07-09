@@ -962,9 +962,13 @@ export default {
       }
     },
     batchMoveParticipants(participants) {
-      return this.saveParticipants(participants.map(p => p.person), "patch", {
-        groupId: this.moveDialog.destinationGroup.id
-      })
+      return this.saveParticipants(
+        participants.map(p => p.person),
+        "patch",
+        {
+          groupId: this.moveDialog.destinationGroup.id
+        }
+      )
         .then(() => {
           this.fetchParticipants();
           this.fetchAllPersons();
@@ -992,16 +996,15 @@ export default {
     saveParticipants(persons, method, payload = {}) {
       let promises = [];
       let http = this.$http[method];
-      let endpoint = this.endpoint;
+      let endpoint =
+        method === "post" ? this.endpoint : `${this.endpoint}/${person.id}`;
       for (let person of persons) {
+        let body = { ...payload };
         if (method === "post") {
           // if adding participants
-          payload.personId = person.id;
-        } else if (method === "patch") {
-          // if updating participants
-          endpoint = `${endpoint}/${person.id}`;
+          body.personId = person.id;
         }
-        promises.push(http(endpoint, payload, { noErrorSnackBar: true }));
+        promises.push(http(endpoint, body, { noErrorSnackBar: true }));
       }
       return Promise.all(promises);
     },
