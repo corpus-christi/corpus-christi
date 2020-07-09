@@ -212,7 +212,10 @@ export default {
           name: group.name,
           children: managerMember
         });
-        if (this.viewStatus == "showAll" || this.viewStatus == "showMembers") {
+        if (
+          this.viewStatus === "showAll" ||
+          this.viewStatus === "showMembers"
+        ) {
           const members = [];
           managerMember.push({
             id: `_label_group_${group.id}_members`,
@@ -227,7 +230,10 @@ export default {
             });
           }
         }
-        if (this.viewStatus == "showAll" || this.viewStatus == "showManagers") {
+        if (
+          this.viewStatus === "showAll" ||
+          this.viewStatus === "showManagers"
+        ) {
           const managers = [];
           managerMember.push({
             id: `_label_group_${group.id}_managers`,
@@ -253,46 +259,6 @@ export default {
     getPersonFullName(person) {
       return `${person.firstName} ${person.lastName}`;
     },
-    getImmSubGroups(group) {
-      /* get immediate subgroups.
-      Immediate subgroups are defined as a unique collection of groups led by any of the members/managers of the current group.
-      group: {
-        id: 1,
-        members: [ { person: { managers: [ { groupId: 4, active: true }, ... ], ... }, ...}, ... ],
-        managers: [ { person: { managers: [ { groupId: 5, ... }, ... ], ... }, ...}, ... ],
-        ...
-      }
-       */
-      let people = group.members.concat(group.managers);
-      people = people.map(p => p.person.managers);
-      let uniqueGroups = unionBy(...people, g => g.groupId);
-      uniqueGroups = uniqueGroups.filter(g => g.active);
-      return uniqueGroups;
-    },
-    // getSubGroups(groups, group, subGroups = []) {
-    //   /* returns all groups in 'groups' subordinate to 'group', according to the leadership hierarchy
-    //   pseudocode:
-    //     for all `members` and `managers` in `group`, get their leading groups;
-    //     if all of their leading groups are in `subGroups`, then return `subGroups`.
-    //     Otherwise, build a new list of groups, `extraGroups`, consisting of unique leading groups that are not in `subGroups`;
-    //     return a list of unique groups consisting of groups in `subGroups` and getSubGroups(g) for g in extraGroups.
-    //   groups is an array of all groups, each group is an object of the following form:
-    //   group: {
-    //     id: 1,
-    //     members: [ { person: { managers: [ { groupId: 4, active: true }, ... ], ... }, ...}, ... ],
-    //     managers: [ { person: { managers: [ { groupId: 5, ... }, ... ], ... }, ...}, ... ],
-    //     ...
-    //   }
-    //    */
-    //   const groupsMap = {}; // build a dictionary so we can index with id
-    //   for (let g of groups) {
-    //     groupsMap[g.id] = g;
-    //   }
-    //   subGroupIds = subGroups.map(g => g.id);
-    // },
-    // _getSubGroupsIds(groups, groupId, subGroupIds) {
-    //   /* a helper function for getSubGroups, returns a list of ids */
-    // },
     expandAll() {
       this.$refs["treeview"].updateAll(true);
     },
@@ -303,7 +269,6 @@ export default {
       this.emailDialog.show = true;
     },
     hideEmailDialog() {
-      this.groupTypeTreeviewSelection = [];
       this.emailDialog.show = false;
     }
   },
