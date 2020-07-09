@@ -70,7 +70,7 @@
     </div>
     <v-card-actions>
       <v-spacer v-if="!person.accountInfo"></v-spacer>
-      <v-btn color="secondary" flat v-on:click="close" data-cy="cancel-button">
+      <v-btn color="secondary" text v-on:click="close" data-cy="cancel-button">
         {{ $t("actions.cancel") }}
       </v-btn>
       <v-spacer v-if="person.accountInfo"></v-spacer>

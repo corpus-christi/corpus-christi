@@ -30,7 +30,7 @@
             <v-card-text> <v-img :src="fetchImage"> </v-img> </v-card-text>
             <v-card-actions>
               <v-btn
-                flat
+                text
                 color="primary"
                 @click="editCourse"
                 data-cy="course-details-edit-button"

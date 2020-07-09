@@ -8,7 +8,7 @@
           </v-flex>
           <v-layout xs3 sm3 align-end justify-end>
             <v-btn
-              flat
+              text
               color="primary"
               data-cy="add-team-dialog"
               v-on:click="addTeamDialog.show = true"
@@ -32,7 +32,7 @@
                           <v-btn
                             icon
                             outline
-                            flat
+                            text
                             color="primary"
                             :to="{ path: '/teams/' + team.id }"
                             :data-cy="'view-team-' + team.id"
@@ -43,7 +43,7 @@
                           <v-btn
                             icon
                             outline
-                            flat
+                            text
                             color="primary"
                             v-on:click="showDeleteTeamDialog(team.id)"
                             :data-cy="'deleteTeam-' + team.id"
@@ -89,7 +89,7 @@
           <v-btn
             v-on:click="closeAddTeamDialog()"
             color="secondary"
-            flat
+            text
             :disabled="addTeamDialog.loading"
             data-cy="cancel-add"
             >{{ $t("actions.cancel") }}</v-btn
@@ -117,7 +117,7 @@
           <v-btn
             v-on:click="deleteTeamDialog.show = false"
             color="secondary"
-            flat
+            text
             :disabled="deleteTeamDialog.loading"
             data-cy="cancel-delete"
             >{{ $t("actions.cancel") }}</v-btn

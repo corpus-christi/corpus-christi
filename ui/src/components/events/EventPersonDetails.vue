@@ -8,7 +8,7 @@
           </v-flex>
           <v-layout xs3 sm3 align-end justify-end>
             <v-btn
-              flat
+              text
               color="primary"
               data-cy="add-person-dialog"
               v-on:click="addPersonDialog.show = true"
@@ -36,7 +36,7 @@
                           <v-btn
                             icon
                             outline
-                            flat
+                            text
                             color="primary"
                             v-on:click="openEditDialog(person)"
                             :data-cy="'editPerson-' + person.id"
@@ -47,7 +47,7 @@
                           <v-btn
                             icon
                             outline
-                            flat
+                            text
                             color="primary"
                             v-on:click="showDeletePersonDialog(person.id)"
                             :data-cy="'deletePerson-' + person.id"
@@ -109,7 +109,7 @@
           <v-btn
             v-on:click="closeAddPersonDialog()"
             color="secondary"
-            flat
+            text
             :disabled="addPersonDialog.loading"
             data-cy="cancel-add"
             >{{ $t("actions.cancel") }}</v-btn

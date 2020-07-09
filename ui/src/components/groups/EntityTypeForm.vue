@@ -15,7 +15,7 @@
     <v-flex class="text-xs-center">
       <v-btn
         color="primary"
-        flat
+        text
         small
         @click="showEntityTypePanel"
         :disabled="entityTypePanel.show"
@@ -33,11 +33,11 @@
             ></v-text-field>
           </v-card-text>
           <v-card-actions>
-            <v-btn small flat @click="hideEntityTypePanel">{{
+            <v-btn small text @click="hideEntityTypePanel">{{
               $t("actions.close")
             }}</v-btn>
             <v-spacer />
-            <v-btn small flat color="primary" @click="createEntityType">{{
+            <v-btn small text color="primary" @click="createEntityType">{{
               $t("actions.save")
             }}</v-btn>
           </v-card-actions>

@@ -8,7 +8,7 @@
           </v-flex>
           <v-layout xs3 sm3 align-end justify-end>
             <v-btn
-              flat
+              text
               color="primary"
               data-cy="add-group-dialog"
               v-on:click="addGroupDialog.show = true"
@@ -32,7 +32,7 @@
                           <v-btn
                             icon
                             outline
-                            flat
+                            text
                             color="primary"
                             :to="{ path: '/groups/' + group.id }"
                             :data-cy="'view-group-' + group.id"
@@ -43,7 +43,7 @@
                           <v-btn
                             icon
                             outline
-                            flat
+                            text
                             color="primary"
                             v-on:click="showDeleteGroupDialog(group.id)"
                             :data-cy="'deleteGroup-' + group.id"
@@ -89,7 +89,7 @@
           <v-btn
             v-on:click="closeAddGroupDialog()"
             color="secondary"
-            flat
+            text
             :disabled="addGroupDialog.loading"
             data-cy="cancel-add"
             >{{ $t("actions.cancel") }}</v-btn
@@ -117,7 +117,7 @@
           <v-btn
             v-on:click="deleteGroupDialog.show = false"
             color="secondary"
-            flat
+            text
             :disabled="deleteGroupDialog.loading"
             data-cy="cancel-delete"
             >{{ $t("actions.cancel") }}</v-btn

@@ -27,7 +27,7 @@
 
           <v-flex shrink>
             <v-btn
-              flat
+              text
               icon
               @click="queryAddress('address')"
               v-bind:disabled="formDisabled"
@@ -57,7 +57,7 @@
           </v-flex>
 
           <v-flex shrink>
-            <v-btn flat icon :disabled="formDisabled" @click="openAreaSubForm">
+            <v-btn text icon :disabled="formDisabled" @click="openAreaSubForm">
               <v-icon>add</v-icon>
             </v-btn>
           </v-flex>
@@ -145,7 +145,7 @@
         </span>
 
         <v-btn
-          flat
+          text
           color="primary"
           @click="findAddressLatLng"
           :loading="formDisabled"
@@ -158,7 +158,7 @@
     <v-card-actions>
       <v-spacer></v-spacer>
       <v-btn
-        flat
+        text
         color="secondary"
         @click="cancelAddressForm"
         :disabled="formDisabled"

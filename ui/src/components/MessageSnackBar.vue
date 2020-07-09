@@ -31,12 +31,12 @@
       top
     >
       {{ localized(snackBarObj.config.content) }}
-      <v-btn flat color="normal" @click="snackBarObj.show = false">
+      <v-btn text color="normal" @click="snackBarObj.show = false">
         {{ $t("error-report.actions.dismiss") }}
       </v-btn>
       <v-btn
         v-if="snackBarObj.config.action"
-        flat
+        text
         color="primary"
         @click="handleAction"
         >{{ localized(snackBarObj.config.action.title) }}</v-btn

@@ -120,13 +120,13 @@ describe("Archive and Activate diploma", () => {
     ).click();
     //archive above clearly million diploma
     cy.get(
-      ":nth-child(1) > :nth-child(3) > .layout > :nth-child(2) > span > .v-btn"
+      ":nth-child(1) > :nth-child(3) > .layouts > :nth-child(2) > span > .v-btn"
     ).click();
     cy.get(".v-card__actions > .primary").click(); //confirm button
   });
   it("activate diploma", () => {
     cy.get(
-      ":nth-child(1) > :nth-child(3) > .layout > :nth-child(2) > span > .v-btn"
+      ":nth-child(1) > :nth-child(3) > .layouts > :nth-child(2) > span > .v-btn"
     ).click();
   });
 });

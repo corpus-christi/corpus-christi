@@ -32,7 +32,7 @@ describe("Archive Courses", () => {
     cy.get("[data-cy=courses-table-search]").type(course_name);
     //cy.contains('Debate until.').click()
     cy.get(
-      ":nth-child(1) > :nth-child(3) > .layout > :nth-child(2) > span > .v-btn"
+      ":nth-child(1) > :nth-child(3) > .layouts > :nth-child(2) > span > .v-btn"
     ).click(); //click archive
     cy.get(
       ".v-dialog__content--active > .v-dialog > .v-card > .v-card__actions > .primary"
@@ -50,7 +50,7 @@ describe("Archive Courses", () => {
 describe("Activate archive courses", () => {
   it("click activate button", () => {
     cy.get(
-      ":nth-child(1) > :nth-child(3) > .layout > :nth-child(2) > span > .v-btn"
+      ":nth-child(1) > :nth-child(3) > .layouts > :nth-child(2) > span > .v-btn"
     ).click();
   });
   it("Get back to active courses", () => {

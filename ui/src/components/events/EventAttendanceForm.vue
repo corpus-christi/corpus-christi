@@ -15,7 +15,7 @@
     <v-card-actions>
       <v-btn
         color="secondary"
-        flat
+        text
         v-on:click="$emit('cancel')"
         :disabled="saving"
         data-cy="attendance-cancel"

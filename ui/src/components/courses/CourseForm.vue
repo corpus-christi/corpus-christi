@@ -29,7 +29,7 @@
           <v-btn
             class="text-xs-center"
             color="primary"
-            flat
+            text
             small
             @click="showImageChooser = true"
             :disabled="showImageChooser"
@@ -74,7 +74,7 @@
     <v-card-actions data-cy="course-form-actions">
       <v-btn
         color="secondary"
-        flat
+        text
         :disabled="formDisabled"
         v-on:click="cancel"
       >

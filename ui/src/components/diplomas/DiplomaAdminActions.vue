@@ -2,7 +2,7 @@
   <v-layout align-center justify-end>
     <v-tooltip bottom>
       <v-btn
-        flat
+        text
         icon
         outline
         color="primary"
@@ -16,7 +16,7 @@
     </v-tooltip>
     <v-tooltip bottom>
       <v-btn
-        flat
+        text
         icon
         outline
         color="primary"

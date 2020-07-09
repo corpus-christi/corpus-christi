@@ -48,7 +48,6 @@ export class LocaleModel {
   constructor(i18NLocale) {
     this.locale = new Locale(i18NLocale.code);
     this.description = i18NLocale.desc;
-
   }
 
   get languageCode() {

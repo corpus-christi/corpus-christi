@@ -39,7 +39,7 @@
             <v-card-actions>
               <v-layout fill-height justify-end align-end column xs12>
                 <v-flex>
-                  <v-btn flat v-on:click="cancel" data-cy="cancel">
+                  <v-btn text v-on:click="cancel" data-cy="cancel">
                     {{ $t("actions.cancel") }}
                   </v-btn>
                   <v-btn color="primary" v-on:click="login" data-cy="login">
@@ -55,7 +55,7 @@
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false" data-cy>
+      <v-btn text @click="snackbar.show = false" data-cy>
         {{ $t("actions.close") }}
       </v-btn>
     </v-snackbar>

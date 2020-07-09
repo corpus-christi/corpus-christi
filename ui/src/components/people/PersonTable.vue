@@ -14,7 +14,7 @@
             hide-details
             clearable
             single-line
-            box
+            filled
             data-cy="search"
           />
         </v-flex>
@@ -129,7 +129,7 @@
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false" data-cy>
+      <v-btn text @click="snackbar.show = false" data-cy>
         {{ $t("actions.close") }}
       </v-btn>
     </v-snackbar>
@@ -175,7 +175,7 @@
           <v-btn
             v-on:click="cancelAction"
             color="secondary"
-            flat
+            text
             :disabled="confirmDialog.loading"
             >{{ $t("actions.cancel") }}</v-btn
           >

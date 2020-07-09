@@ -8,7 +8,7 @@
           </v-flex>
           <v-layout xs3 sm3 align-end justify-end>
             <v-btn
-              flat
+              text
               color="primary"
               data-cy="add-asset-dialog"
               v-on:click="addAssetDialog.show = true"
@@ -29,7 +29,7 @@
                       <v-btn
                         icon
                         outline
-                        flat
+                        text
                         color="primary"
                         v-on:click="showDeleteAssetDialog(asset.id)"
                         :data-cy="'deleteAsset-' + asset.id"
@@ -74,7 +74,7 @@
           <v-btn
             v-on:click="closeAddAssetDialog()"
             color="secondary"
-            flat
+            text
             :disabled="addAssetDialog.loading"
             data-cy="cancel-add"
             >{{ $t("actions.cancel") }}</v-btn
@@ -102,7 +102,7 @@
           <v-btn
             v-on:click="deleteAssetDialog.show = false"
             color="secondary"
-            flat
+            text
             :disabled="deleteAssetDialog.loading"
             data-cy="cancel-delete"
             >{{ $t("actions.cancel") }}</v-btn

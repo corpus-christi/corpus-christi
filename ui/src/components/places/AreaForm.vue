@@ -26,7 +26,7 @@
     <v-card-actions>
       <v-spacer></v-spacer>
       <v-btn
-        flat
+        text
         color="secondary"
         @click="cancelAreaForm"
         :disabled="formDisabled"

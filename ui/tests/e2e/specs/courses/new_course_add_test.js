@@ -83,6 +83,6 @@ describe("Add Course with Muiltiple Prereq", () => {
     cy.get("[data-cy=courses-table-search]")
       .clear()
       .type("COS 115");
-    //cy.get(':nth-child(1) > :nth-child(3) > .layout > :nth-child(1) > span > .v-btn').click()
+    //cy.get(':nth-child(1) > :nth-child(3) > .layouts > :nth-child(1) > span > .v-btn').click()
   });
 });

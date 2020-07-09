@@ -69,7 +69,7 @@
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false">
+      <v-btn text @click="snackbar.show = false">
         {{ $t("actions.close") }}
       </v-btn>
     </v-snackbar>
@@ -98,7 +98,7 @@
           <v-btn
             v-on:click="cancelDeactivate"
             color="secondary"
-            flat
+            text
             :disabled="deactivateDialog.loading"
             data-cy
             >{{ $t("actions.cancel") }}</v-btn

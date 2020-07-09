@@ -194,7 +194,7 @@
               <v-btn
                 small
                 color="primary"
-                flat
+                text
                 :disabled="addressWasSaved"
                 @click="changeAddressView(true)"
               >
@@ -203,7 +203,7 @@
               <v-btn
                 class="text-xs-center"
                 color="primary"
-                flat
+                text
                 small
                 @click="showImageChooser = true"
                 :disabled="showImageChooser"
@@ -241,7 +241,7 @@
         <v-layout row>
           <v-btn
             color="secondary"
-            flat
+            text
             v-on:click="cancel"
             :disabled="formDisabled"
             data-cy="cancel"
@@ -257,7 +257,7 @@
         <v-layout row>
           <v-btn
             color="secondary"
-            flat
+            text
             v-on:click="cancel"
             :disabled="formDisabled"
             data-cy="cancel"
@@ -281,7 +281,7 @@
         <v-layout row>
           <v-btn
             color="secondary"
-            flat
+            text
             v-on:click="cancel"
             :disabled="formDisabled"
             data-cy="cancel"

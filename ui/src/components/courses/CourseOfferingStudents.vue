@@ -96,7 +96,7 @@
           <v-btn
             v-on:click="cancelDeactivate"
             color="secondary"
-            flat
+            text
             :disabled="deactivateDialog.loading"
             data-cy
             >{{ $t("actions.cancel") }}</v-btn
@@ -123,7 +123,7 @@
           <v-btn
             v-on:click="cancelConfirmDialog"
             color="secondary"
-            flat
+            text
             :disabled="confirmDialog.confirming"
             data-cy
             >{{ $t("actions.cancel") }}</v-btn

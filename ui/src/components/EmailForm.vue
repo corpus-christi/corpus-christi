@@ -78,7 +78,7 @@
     <v-flex class="text-xs-center">
       <v-btn
         class="ma-2"
-        flat
+        text
         small
         color="primary"
         @click="showEntityTypePanel"
@@ -117,10 +117,10 @@
                     :existing-entities="searchPeople"
                   />
                 </v-card-text>
-                <v-btn v-on:click="hideManagerPanel" color="light-blue" flat>{{
+                <v-btn v-on:click="hideManagerPanel" color="light-blue" text>{{
                   $t("actions.cancel")
                 }}</v-btn>
-                <v-btn v-on:click="setReplyTo" color="primary" flat>{{
+                <v-btn v-on:click="setReplyTo" color="primary" text>{{
                   $t("actions.confirm")
                 }}</v-btn>
               </v-card>
@@ -132,7 +132,7 @@
             ></v-radio>
           </v-radio-group>
           <v-card-actions>
-            <v-btn small flat @click="hideEntityTypePanel">{{
+            <v-btn small text @click="hideEntityTypePanel">{{
               $t("actions.close")
             }}</v-btn>
             <v-spacer></v-spacer>
@@ -140,7 +140,7 @@
               {{ $t("groups.members.email-dialog-footnote") }}
             </v-footer>
             <v-spacer></v-spacer>
-            <v-btn small flat color="primary" @click="hideEntityTypePanel">{{
+            <v-btn small text color="primary" @click="hideEntityTypePanel">{{
               $t("actions.save")
             }}</v-btn>
           </v-card-actions>
@@ -148,7 +148,7 @@
       </v-expand-transition>
     </v-flex>
     <v-card-actions>
-      <v-btn v-on:click="cancel" color="secondary" flat>{{
+      <v-btn v-on:click="cancel" color="secondary" text>{{
         $t("actions.cancel")
       }}</v-btn>
       <v-spacer> </v-spacer>

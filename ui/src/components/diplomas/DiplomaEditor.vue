@@ -43,7 +43,7 @@
     <v-card-actions>
       <v-btn
         color="secondary"
-        flat
+        text
         :disabled="formDisabled"
         v-on:click="cancel"
         >{{ $t("actions.cancel") }}</v-btn

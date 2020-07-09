@@ -238,7 +238,7 @@
           <v-btn
             v-on:click="cancelArchive"
             color="secondary"
-            flat
+            text
             data-cy="cancel-archive"
             >{{ $t("actions.cancel") }}</v-btn
           >

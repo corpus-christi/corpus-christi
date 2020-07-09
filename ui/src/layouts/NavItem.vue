@@ -1,26 +1,26 @@
 <template>
   <div>
-    <v-list-tile
+    <v-list-item
       v-if="!item.children || item.children.length === 0"
       :to="{ name: item.route }"
       :data-cy="item.route"
     >
-      <v-list-tile-action v-if="item.icon && !isChild">
+      <v-list-item-action v-if="item.icon && !isChild">
         <v-icon>{{ item.icon }}</v-icon>
-      </v-list-tile-action>
-      <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-    </v-list-tile>
+      </v-list-item-action>
+      <v-list-item-title>{{ item.title }}</v-list-item-title>
+    </v-list-item>
     <v-list-group v-else :sub-group="isChild" no-action>
-      <v-list-tile
+      <v-list-item
         slot="activator"
         :to="{ name: item.route }"
         :data-cy="item.route"
       >
-        <v-list-tile-action v-if="item.icon && !isChild">
+        <v-list-item-action v-if="item.icon && !isChild">
           <v-icon>{{ item.icon }}</v-icon>
-        </v-list-tile-action>
-        <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-      </v-list-tile>
+        </v-list-item-action>
+        <v-list-item-title>{{ item.title }}</v-list-item-title>
+      </v-list-item>
 
       <NavItem
         v-for="child in item.children"

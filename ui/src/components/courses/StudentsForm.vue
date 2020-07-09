@@ -14,7 +14,7 @@
     <v-card-actions>
       <v-btn
         color="secondary"
-        flat
+        text
         :disabled="saving"
         v-on:click="cancel"
         data-cy="studentform-cancel"

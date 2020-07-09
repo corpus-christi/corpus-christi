@@ -37,7 +37,7 @@
     <v-card-actions>
       <v-btn
         color="secondary"
-        flat
+        text
         v-on:click="cancel"
         :disabled="formDisabled"
         data-cy="form-cancel"

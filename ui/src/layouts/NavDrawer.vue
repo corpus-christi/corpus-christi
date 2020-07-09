@@ -1,7 +1,7 @@
 <template>
   <v-navigation-drawer app v-model="drawerVisible">
     <v-list>
-      <NavItem v-for="item in menuItems" :key="item.route" :item="item" />
+      <nav-item v-for="item in menuItems" :key="item.route" :item="item" />
     </v-list>
   </v-navigation-drawer>
 </template>
@@ -14,11 +14,13 @@ export default {
   components: {
     NavItem,
   },
+
   data() {
     return {
       drawerVisible: false,
     };
   },
+
   computed: {
     // Computed property so it's reactive.
     menuItems: function () {

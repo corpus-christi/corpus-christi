@@ -123,7 +123,7 @@
           <v-btn
             v-on:click="cancelArchive"
             color="secondary"
-            flat
+            text
             data-cy="cancel-archive"
             >{{ $t("actions.cancel") }}</v-btn
           >
@@ -150,7 +150,7 @@
           <v-btn
             v-on:click="cancelAttendanceArchive"
             color="secondary"
-            flat
+            text
             data-cy="cancel-archive"
             >{{ $t("actions.cancel") }}</v-btn
           >
@@ -212,7 +212,7 @@
           <v-btn
             v-on:click="cancelShowAttendance"
             color="secondary"
-            flat
+            text
             data-cy="cancel-archive"
             >{{ $t("actions.cancel") }}</v-btn
           >
@@ -246,7 +246,7 @@
           <v-btn
             v-on:click="cancelDelete"
             color="secondary"
-            flat
+            text
             data-cy="cancel-delete"
             >{{ $t("actions.cancel") }}</v-btn
           >
@@ -265,7 +265,7 @@
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false">
+      <v-btn text @click="snackbar.show = false">
         {{ $t("actions.close") }}
       </v-btn>
     </v-snackbar>

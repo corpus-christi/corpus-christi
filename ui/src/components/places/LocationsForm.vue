@@ -36,7 +36,7 @@
     <v-card-actions>
       <v-spacer />
       <v-btn
-        flat
+        text
         color="secondary"
         @click="cancelLocationForm"
         :disabled="formDisabled"

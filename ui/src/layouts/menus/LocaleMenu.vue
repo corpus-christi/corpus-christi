@@ -1,20 +1,25 @@
 <template>
   <v-menu>
-    <v-btn id="cur-locale" data-cy="cur-locale" flat slot="activator">
-      {{ currentFlagAndDescription }}
-      <v-icon left>arrow_drop_down</v-icon>
+    <v-btn id="cur-locale" data-cy="cur-locale">
+      <template v-slot:activator="{ on }">
+        <v-btn text v-on="on">
+          {{ currentFlagAndDescription }}
+        </v-btn>
+        <v-icon left>arrow_drop_down</v-icon>
+      </template>
     </v-btn>
+
     <v-list data-cy="language-dropdown">
-      <v-list-tile
+      <v-list-item
         v-for="(localeModel, idx) in localeModels"
         v-bind:key="idx"
         v-bind:data-cy="localeModel.code"
         v-on:click="changeLocale(localeModel)"
       >
-        <v-list-tile-title>
+        <v-list-item-title>
           {{ localeModel.flagAndDescription }}
-        </v-list-tile-title>
-      </v-list-tile>
+        </v-list-item-title>
+      </v-list-item>
     </v-list>
   </v-menu>
 </template>

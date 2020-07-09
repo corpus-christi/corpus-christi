@@ -24,7 +24,7 @@
         </v-form>
       </v-card-text>
       <v-card-actions>
-        <v-btn color="secondary" flat :disabled="saving" v-on:click="cancel">{{
+        <v-btn color="secondary" text :disabled="saving" v-on:click="cancel">{{
           $t("actions.cancel")
         }}</v-btn>
         <v-spacer></v-spacer>

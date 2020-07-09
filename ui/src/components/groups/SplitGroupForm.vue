@@ -84,7 +84,7 @@
             </v-flex>
           </v-layout>
           <v-layout>
-            <v-btn flat @click="cancel">{{ $t("actions.cancel") }}</v-btn>
+            <v-btn text @click="cancel">{{ $t("actions.cancel") }}</v-btn>
             <v-spacer></v-spacer>
             <v-btn color="primary" @click="currentStep = 2">{{
               $t("actions.next")
@@ -124,7 +124,7 @@
             </span>
           </v-layout>
           <v-layout>
-            <v-btn flat @click="currentStep = 1">{{
+            <v-btn text @click="currentStep = 1">{{
               $t("actions.previous")
             }}</v-btn>
             <v-spacer></v-spacer>
@@ -166,7 +166,7 @@
             </span>
           </v-layout>
           <v-layout>
-            <v-btn flat @click="currentStep = 2">{{
+            <v-btn text @click="currentStep = 2">{{
               $t("actions.previous")
             }}</v-btn>
             <v-spacer></v-spacer>

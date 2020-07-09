@@ -156,7 +156,7 @@
           <v-btn
             v-on:click="cancelAction"
             color="secondary"
-            flat
+            text
             :disabled="confirmDialog.loading"
             >{{ $t("actions.cancel") }}</v-btn
           >

@@ -28,7 +28,7 @@
             v-if="addImageField"
             class="text-xs-center"
             color="primary"
-            flat
+            text
             small
             @click="showImageChooser = true"
             :disabled="showImageChooser"
@@ -60,7 +60,7 @@
           </v-flex>
           <v-flex shrink>
             <v-btn
-              flat
+              text
               color="primary"
               small
               @click="showAddressCreator = true"
@@ -142,14 +142,14 @@
               >
                 <v-spacer></v-spacer>
                 <v-btn
-                  flat
+                  text
                   color="primary"
                   @click="startTimeModal = false"
                   data-cy="start-time-cancel"
                   >{{ $t("actions.cancel") }}</v-btn
                 >
                 <v-btn
-                  flat
+                  text
                   color="primary"
                   @click="$refs.dialog1.save(startTime)"
                   data-cy="start-time-ok"
@@ -229,14 +229,14 @@
               >
                 <v-spacer />
                 <v-btn
-                  flat
+                  text
                   color="primary"
                   @click="endTimeModal = false"
                   data-cy="end-time-cancel"
                   >{{ $t("actions.cancel") }}</v-btn
                 >
                 <v-btn
-                  flat
+                  text
                   color="primary"
                   @click="$refs.dialog2.save(endTime)"
                   data-cy="end-time-ok"
@@ -260,7 +260,7 @@
     <v-card-actions>
       <v-btn
         color="secondary"
-        flat
+        text
         v-on:click="cancel"
         :disabled="formDisabled"
         data-cy="form-cancel"

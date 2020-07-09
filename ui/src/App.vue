@@ -1,28 +1,19 @@
 <template>
-  <v-app>
-    <Toolbar />
-    <v-content>
-      <MessageSnackBar v-bind:bus="bus" />
-      <ErrorReportDialog v-bind:bus="bus" />
-      <router-view />
-    </v-content>
-    <Footer />
-  </v-app>
+  <default-layout />
 </template>
 
 <script>
-import Toolbar from "./components/Toolbar";
 import { mapMutations, mapState } from "vuex";
-import Footer from "./components/Footer";
 import { setJWT } from "./plugins/axios";
 import { Locale } from "./models/Locale";
-import MessageSnackBar from "./components/MessageSnackBar.vue";
-import ErrorReportDialog from "./components/report/ErrorReportDialog.vue";
 import { eventBus } from "./plugins/event-bus.js";
+import DefaultLayout from "./layouts/DefaultLayout";
 
 export default {
   name: "App",
-  components: { Footer, Toolbar, MessageSnackBar, ErrorReportDialog },
+  components: {
+    DefaultLayout,
+  },
   computed: mapState(["currentJWT"]),
   methods: mapMutations(["setLocaleModels", "setCurrentLocale"]),
 

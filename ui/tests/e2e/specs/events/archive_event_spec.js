@@ -10,7 +10,7 @@ describe("Archive Event Test", function() {
   it("WHEN: Event Planner wants to deactivate an event", function() {
     // See all archived, active, and past events
     cy.get(
-      ".layout > :nth-child(1) > .v-input > .v-input__control > .v-input__slot"
+      ".layouts > :nth-child(1) > .v-input > .v-input__control > .v-input__slot"
     ).click();
     cy.get(
       ".menuable__content__active > .v-select-list > .v-list > :nth-child(3) > .v-list__tile > .v-list__tile__content"

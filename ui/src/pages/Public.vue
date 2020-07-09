@@ -38,7 +38,7 @@
             <v-card-actions>
               <v-btn
                 v-on:click="$router.push({ path: '/public/courses' })"
-                flat
+                text
                 block
                 outline
                 color="primary"
@@ -59,7 +59,7 @@
       </v-dialog>
       <v-snackbar v-model="snackbar.show">
         {{ snackbar.text }}
-        <v-btn flat @click="snackbar.show = false">
+        <v-btn text @click="snackbar.show = false">
           {{ $t("actions.close") }}
         </v-btn>
       </v-snackbar>
@@ -99,7 +99,7 @@
             <v-card-actions>
               <v-btn
                 v-on:click="$router.push({ path: '/public/events' })"
-                flat
+                text
                 block
                 outline
                 color="primary"
