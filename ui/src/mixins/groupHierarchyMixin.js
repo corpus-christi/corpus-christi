@@ -3,7 +3,7 @@ import {
   getAllSubNodes,
   Participant,
   count,
-  getTree,
+  getInfoTree,
   isRootNode
 } from "../models/GroupHierarchyNode";
 
@@ -31,24 +31,21 @@ const groupHierarchyMixin = {
       let counter = count();
       // get all root groups and root participants
       let rootNodes = [
-        ...this.$data.$_groupHierarchyMixin_groups
-          .map(
-            groupObject =>
-              new Group(groupObject, this.$_groupHierarchyMixin_groupMap)
-          )
-          .filter(group => isRootNode(group)),
-        ...this.$data.$_groupHierarchyMixin_persons
-          .map(
-            person =>
-              new Participant({ person }, this.$_groupHierarchyMixin_groupMap)
-          )
-          .filter(participant => isRootNode(participant))
-      ];
-      const rootNode = { name: "Admin", children: [] };
-      rootNodes.forEach(group => {
-        rootNode.children.push(getTree(group, false, counter).map());
+        ...this.$data.$_groupHierarchyMixin_groups.map(
+          groupObject =>
+            new Group(groupObject, this.$_groupHierarchyMixin_groupMap)
+        ),
+        ...this.$data.$_groupHierarchyMixin_persons.map(
+          person =>
+            new Participant({ person }, this.$_groupHierarchyMixin_groupMap)
+        )
+      ].filter(node => isRootNode(node));
+      const adminNode = { name: "Admin", children: [] };
+      rootNodes.forEach(rootNode => {
+        adminNode.children.push(getInfoTree(rootNode, false, counter));
       });
-      return JSON.parse(JSON.stringify([rootNode]));
+      console.log("adminNode", adminNode);
+      return [adminNode];
     }
   },
   methods: {
@@ -66,7 +63,7 @@ const groupHierarchyMixin = {
       });
     },
 
-    /* Functions below depend on the fetched groups, if used, should bind the result to 'computed' properties
+    /* Functions below depend on the fetched groups; if used, should bind the result to 'computed' properties
      * or add conditional rendering (v-if) on '$data.$_groupHierarchyMixin_loading'
      * in the template to prevent rendering before the groups are fetched.
      * If need to call function directly, use waitUntil to resolve the value asynchronously */
@@ -86,7 +83,7 @@ const groupHierarchyMixin = {
         { person },
         this.$_groupHierarchyMixin_groupMap
       );
-      return getTree(participant);
+      return getInfoTree(participant);
     }
   }
 };

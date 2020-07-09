@@ -16,12 +16,15 @@ export interface PersonObject {
   id: number;
   managers: PersonParticipantObject[];
   members: PersonParticipantObject[];
+  firstName?: string;
+  lastName?: string;
 }
 
 export interface GroupObject {
   id: number;
   managers: GroupParticipantObject[];
   members: GroupParticipantObject[];
+  name?: string;
 }
 
 export type NodeObject =
@@ -149,6 +152,31 @@ export interface TreeNode {
   children: TreeNode[];
 }
 
+/* like Array.prototype.map, returns a new tree,
+ * where each node is transformed using 'mapFunc'
+ * and 'addChild' is called to add each childNode to the parentNode */
+export function mapTree<
+  TIn extends TreeNode = GraphNode,
+  TOut extends TreeNode = TreeNode
+>(
+  node: TIn,
+  mapFunc: (node: TIn) => TOut,
+  addChild: (parentNode: TOut, childNode: TOut) => void = (
+    parentNode,
+    childNode
+  ) => {
+    parentNode.children.push(childNode);
+  }
+): TOut {
+  let mappedNode: TOut = mapFunc(node);
+  node.children.forEach(child => {
+    // 'child as TIn' assumes children are of the same subtype as the parent
+    let childNode: TOut = mapTree(child as TIn, mapFunc, addChild);
+    addChild(mappedNode, childNode);
+  });
+  return mappedNode;
+}
+
 /* A tree node class. wraps a HierarchyNode,
  * enabling a graph representation,
  * also provides useful attributes like parentPath */
@@ -189,38 +217,6 @@ export class GraphNode implements TreeNode {
       this._parentNode.addChild(this);
     }
   }
-  /* like Array.prototype.map, returns a new tree,
-   * where each node is transformed using 'mapFunc'
-   * and 'addChild' is called to add each childNode to the parentNode
-   * calling with default parameters will result in a simplified tree
-   * where each node has only 'id', 'name' and 'children' */
-  public map(
-    mapFunc: (gn: GraphNode) => TreeNode = ({ name, id }) => ({
-      id,
-      name,
-      children: []
-    }),
-    addChild: (parentNode: TreeNode, childNode: TreeNode) => void = (
-      parentNode,
-      childNode
-    ) => {
-      parentNode.children.push(childNode);
-    }
-  ): TreeNode {
-    let mappedNode: TreeNode = mapFunc(this);
-    this.children.forEach(child => {
-      let childNode: TreeNode = child.map(mapFunc, addChild);
-      addChild(mappedNode, childNode);
-    });
-    return mappedNode;
-  }
-  /* a hacky way to get rid of additional attributes like _parentPath.
-   * to recursively convert a GraphNode to a simple nested JSON object,
-   * do JSON.parse(JSON.stringify(graphNode)) on the root node of a tree */
-  public toJSON() {
-    let { hierarchyNode, children, id, name } = this;
-    return { hierarchyNode, children, id, name };
-  }
 }
 
 /* Depth first search.
@@ -232,10 +228,6 @@ export class GraphNode implements TreeNode {
  * the callback also receives an optional second parameter 'parentPath'
  * which is an array representing the path all the way to the root node
  * the last element in the array is the root node.
- * 3. transform (optional): an optional filter to transform each of the GraphNode created
- * This can be useful to create custom id on each of the node.
- * Due to the order of traversal, each node passed to the callback (except the rootnode)
- * will have its 'parentNode' set, but not necessarily its children
  * returns:
  * a tree structure represented by a single root GraphNode */
 export function dfs(
@@ -243,11 +235,10 @@ export function dfs(
   getAdjacentNodes: (
     currentNode: HierarchyNode,
     parentPath: HierarchyNode[]
-  ) => HierarchyNode[],
-  transform: (node: GraphNode) => GraphNode = node => node
+  ) => HierarchyNode[]
 ): GraphNode {
   const stack: GraphNode[] = [];
-  const rootNode: GraphNode = transform(new GraphNode(node));
+  const rootNode: GraphNode = new GraphNode(node);
   let currentNode: GraphNode;
 
   stack.push(rootNode);
@@ -258,7 +249,7 @@ export function dfs(
       currentNode.parentPath.map(graphNode => graphNode.hierarchyNode)
     );
     for (let pendingNode of pendingNodes) {
-      stack.push(transform(new GraphNode(pendingNode, currentNode)));
+      stack.push(new GraphNode(pendingNode, currentNode));
     }
   }
   return rootNode;
@@ -313,47 +304,88 @@ export function* count(
 
 /* error object containing information about a (unexpected) cycle in the tree */
 export class HierarchyCycleError extends Error {
-  constructor(message: string, public node: GraphNode) {
+  constructor(message: string, public node: HierarchyNode) {
     super(message);
     this.name = "HierarchyCycleError";
   }
 }
 
-/* returns a tree that can be used to render a treeview component.
- * namely, each node will contain a unique id */
+/* returns a tree that represents the leadership hierarchy structure, represented by a root GraphNode */
 export function getTree(
   node: HierarchyNode,
-  superNodes: boolean = false,
-  counter: Generator<number | string, undefined, undefined> = count()
+  superNodes: boolean = false
 ): GraphNode {
+  // build the tree, detecting cycle as needed
   const rootNode = dfs(
     node,
     (node: HierarchyNode, parentPath: HierarchyNode[]) => {
-      if (parentPath.length >= 2 && parentPath[1].equal(node)) {
+      if (parentPath.length === 2 && parentPath[1].equal(node)) {
         return []; // prevent infinite loop from immediate cycle caused by manager-member double identity
       }
-      return node[superNodes ? "getSuperNodes" : "getSubNodes"]();
-    },
-    graphNode => {
       if (
-        graphNode.parentPath
+        parentPath.length > 2 &&
+        parentPath
           .slice(2) // ignore the immediate parent to allow someone to be both manager/member of a group
-          .some(parentNode =>
-            parentNode.hierarchyNode.equal(graphNode.hierarchyNode)
-          )
+          .some(parentNode => parentNode.equal(node))
       ) {
-        throw new HierarchyCycleError("Unexpected cycle in tree", graphNode);
+        throw new HierarchyCycleError("Unexpected cycle in tree", node);
       }
+      return node[superNodes ? "getSuperNodes" : "getSubNodes"]();
+    }
+  );
+  return rootNode;
+}
+
+// a tree node that also contains the underlying object and its type
+interface InfoTreeNode extends TreeNode {
+  nodeType: string;
+  info: NodeObject;
+}
+
+/* returns a tree that can be used to render a treeview component.
+ * unlike GraphNode, the nodes in this tree does not have any cross references
+ * also, each node will contain a unique 'id', an intuitive 'name',
+ * the underlying 'info' object, and its 'nodeType' */
+export function getInfoTree(
+  node: HierarchyNode,
+  superNodes: boolean = false,
+  counter: Generator<number | string, undefined, undefined> = count()
+): InfoTreeNode {
+  // map the tree to get rid of cross references, add id and name to each node
+  let infoRootNode = mapTree<GraphNode, InfoTreeNode>(
+    getTree(node, superNodes),
+    graphNode => {
       let next = counter.next();
       if (next.done) {
         throw new Error("counter running out of elements");
       }
-      graphNode.name = graphNode.hierarchyNode.toString();
-      graphNode.id = next.value.toString();
-      return graphNode;
+      let id: string = next.value.toString();
+      let { hierarchyNode } = graphNode;
+      let { nodeType } = hierarchyNode;
+      let info = hierarchyNode.getObject();
+      let name: string;
+      // set node's name
+      if (nodeType === "Group") {
+        name = (info as GroupObject).name!;
+      } else if (nodeType === "Participant") {
+        let { firstName, lastName } = (info as GroupParticipantObject).person;
+        name = `${firstName} ${lastName}`;
+      } else {
+        name = hierarchyNode.toString();
+      }
+      return {
+        id,
+        name,
+        info,
+        nodeType,
+        children: []
+      };
+    },
+    (parentNode, childNode) => {
+      parentNode.children.push(childNode);
     }
   );
-  return rootNode;
+  return infoRootNode;
 }
 
 /* checks whether a node is a root node
@@ -419,7 +451,7 @@ export function checkConnection(
   if (cycleNodes.length !== 0) {
     throw new HierarchyCycleError(
       `Connection of parent ${parentNode.toString()} with child ${childNode.toString()} will cause cycle on node ${cycleNodes[0].toString()}`,
-      new GraphNode(cycleNodes[0])
+      cycleNodes[0]
     );
   }
 }

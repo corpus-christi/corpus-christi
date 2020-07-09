@@ -3,6 +3,7 @@ import {
   HierarchyNode,
   GraphNode,
   TreeNode,
+  mapTree,
   Group,
   GroupMap,
   Participant,
@@ -47,7 +48,7 @@ expect.extend({
   }
 });
 
-describe("Test case 1", () => {
+describe("Test case 1, a valid hierarchy structure", () => {
   let groupMap: GroupMap, personMap: PersonMap;
   beforeAll(() => {
     let groupMembers = [
@@ -132,7 +133,7 @@ describe("Test case 1", () => {
     expect(gnp1!.children.length).toBe(0);
   });
 
-  test("GraphNode map method", () => {
+  test("map function on GraphNode", () => {
     interface labeledNode extends TreeNode {
       label?: string;
       children: labeledNode[];
@@ -140,12 +141,20 @@ describe("Test case 1", () => {
     let rootNode;
     // get a tree branching down from Group 3
     rootNode = getTree(new Group(groupMap[3], groupMap));
-    let mappedRootNode: labeledNode;
-    // using default map
-    mappedRootNode = rootNode.map();
-    expect(mappedRootNode.children.length).toBe(2);
+    let mappedTreeNode: TreeNode;
     // using customized mapper
-    mappedRootNode = rootNode.map(
+    mappedTreeNode = mapTree<GraphNode, TreeNode>(
+      rootNode,
+      node => ({ id: node.id, name: node.name, children: [] }),
+      (parentNode, childNode) => {
+        parentNode.children.push(childNode);
+      }
+    );
+    expect(mappedTreeNode.children.length).toBe(2);
+
+    let mappedLabeledNode: labeledNode;
+    mappedLabeledNode = mapTree(
+      rootNode,
       graphNode => {
         let mappedNode: labeledNode = { children: [] };
         if (graphNode.hierarchyNode instanceof Group) {
@@ -164,8 +173,8 @@ describe("Test case 1", () => {
         parentNode.children.push(childNode);
       }
     );
-    expect(mappedRootNode.children.length).toBe(2);
-    let p6: labeledNode | undefined = mappedRootNode.children.find(
+    expect(mappedLabeledNode.children.length).toBe(2);
+    let p6: labeledNode | undefined = mappedLabeledNode.children.find(
       child => child.label === "Person #6"
     );
     expect(p6).not.toBeUndefined();
@@ -210,6 +219,20 @@ describe("Test case 1", () => {
     // and among p1's supernodes, g2 is not the only one
     let g2: Group = new Group(groupMap[2], groupMap);
     expect(isRootNode(g2)).toBe(false);
+  });
+});
+
+describe("Test case 2, a tree that contains cycle", () => {
+  let groupMap: GroupMap, personMap: PersonMap;
+  beforeAll(() => {
+    let groupMembers = [[1, 1], [1, 2], [2, 3]];
+    let groupManagers = [[2, 1], [1, 3]];
+    ({ groupMap, personMap } = getMap(groupMembers, groupManagers));
+  });
+
+  test("getTree cycle detection", () => {
+    let g1: Group = new Group(groupMap[1], groupMap);
+    expect(() => getTree(g1)).toThrow("Unexpected cycle in tree");
   });
 });
 
