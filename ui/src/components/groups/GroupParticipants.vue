@@ -810,7 +810,7 @@ export default {
           payload.personId = person.id;
         } else if (method === "patch") {
           // if updating participants
-          endpoint = `${endpoint}/${person.id}`;
+          endpoint = `${this.endpoint}/${person.id}`;
         }
         promises.push(http(endpoint, payload, { noErrorSnackBar: true }));
       }
