@@ -10,7 +10,9 @@
 
       <v-list>
         <v-list-item v-on:click="logAccountOut" data-cy="logout">
-          <v-list-item-title> {{ $t("actions.logout") }} </v-list-item-title>
+          <v-list-item-title>
+            {{ $t("actions.logout") }}
+          </v-list-item-title>
         </v-list-item>
       </v-list>
     </v-menu>

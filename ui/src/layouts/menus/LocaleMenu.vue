@@ -1,13 +1,11 @@
 <template>
-  <v-menu>
-    <v-btn id="cur-locale" data-cy="cur-locale">
-      <template v-slot:activator="{ on }">
-        <v-btn text v-on="on">
-          {{ currentFlagAndDescription }}
-        </v-btn>
-        <v-icon left>arrow_drop_down</v-icon>
-      </template>
-    </v-btn>
+  <v-menu offset-y>
+    <template v-slot:activator="{ on }">
+      <v-btn id="cur-locale" data-cy="cur-locale" text v-on="on">
+        {{ currentFlagAndDescription }}
+        <v-icon>arrow_drop_down</v-icon>
+      </v-btn>
+    </template>
 
     <v-list data-cy="language-dropdown">
       <v-list-item

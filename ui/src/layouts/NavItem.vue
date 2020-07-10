@@ -1,34 +1,35 @@
 <template>
   <div>
-    <v-list-item
-      v-if="!item.children || item.children.length === 0"
-      :to="{ name: item.route }"
-      :data-cy="item.route"
-    >
-      <v-list-item-action v-if="item.icon && !isChild">
-        <v-icon>{{ item.icon }}</v-icon>
-      </v-list-item-action>
-      <v-list-item-title>{{ item.title }}</v-list-item-title>
-    </v-list-item>
-    <v-list-group v-else :sub-group="isChild" no-action>
-      <v-list-item
-        slot="activator"
-        :to="{ name: item.route }"
-        :data-cy="item.route"
-      >
-        <v-list-item-action v-if="item.icon && !isChild">
+    <!-- Interior node -->
+    <v-list-group v-if="isInterior">
+      <template v-slot:activator>
+        <v-list-item-icon>
           <v-icon>{{ item.icon }}</v-icon>
-        </v-list-item-action>
+        </v-list-item-icon>
         <v-list-item-title>{{ item.title }}</v-list-item-title>
-      </v-list-item>
+      </template>
 
-      <NavItem
+      <nav-item
         v-for="child in item.children"
         :key="child.route"
         :item="child"
         :isChild="true"
       />
     </v-list-group>
+
+    <!-- Leaf node   -->
+    <v-list-item
+      v-else-if="isLeaf"
+      :to="{ name: item.route }"
+      :data-cy="item.route"
+    >
+      <v-list-item-action v-if="item.icon">
+        <v-icon>{{ item.icon }}</v-icon>
+      </v-list-item-action>
+      <v-list-item-title>
+        {{ item.title }}
+      </v-list-item-title>
+    </v-list-item>
   </div>
 </template>
 
@@ -43,6 +44,16 @@ export default {
     isChild: {
       type: Boolean,
       default: false,
+    },
+  },
+  computed: {
+    isLeaf() {
+      return (
+        this.item.children === undefined || this.item.children.length === 0
+      );
+    },
+    isInterior() {
+      return !this.isLeaf;
     },
   },
 };
