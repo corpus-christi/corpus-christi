@@ -1,6 +1,7 @@
 import Vue from "vue";
-import VeeValidate from "vee-validate";
 import VueI18n from "vue-i18n";
+
+import VeeValidate from "vee-validate";
 import enValidation from "vee-validate/dist/locale/en";
 import esValidation from "vee-validate/dist/locale/es";
 

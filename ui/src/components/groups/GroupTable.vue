@@ -42,24 +42,24 @@
               </v-btn>
             </template>
             <v-list>
-              <v-list-tile @click.stop="activateGroupDialog()">
+              <v-list-item @click.stop="activateGroupDialog()">
                 <v-icon color="primary">group_add</v-icon>
-                <v-list-tile-content>
+                <v-list-item-content>
                   {{ $t("actions.add-group") }}
-                </v-list-tile-content>
-              </v-list-tile>
-              <v-list-tile :to="{ name: 'group-types' }">
+                </v-list-item-content>
+              </v-list-item>
+              <v-list-item :to="{ name: 'group-types' }">
                 <v-icon color="primary">view_list</v-icon>
-                <v-list-tile-content>
+                <v-list-item-content>
                   {{ $t("groups.entity-types.group-types.manage") }}
-                </v-list-tile-content>
-              </v-list-tile>
-              <v-list-tile :to="{ name: 'manager-types' }">
+                </v-list-item-content>
+              </v-list-item>
+              <v-list-item :to="{ name: 'manager-types' }">
                 <v-icon color="primary">view_list</v-icon>
-                <v-list-tile-content>
+                <v-list-item-content>
                   {{ $t("groups.entity-types.manager-types.manage") }}
-                </v-list-tile-content>
-              </v-list-tile>
+                </v-list-item-content>
+              </v-list-item>
             </v-list>
           </v-menu>
         </v-flex>
@@ -272,6 +272,7 @@ import GroupForm from "./GroupForm";
 import SplitGroupForm from "./SplitGroupForm";
 import { eventBus } from "../../plugins/event-bus.js";
 import { pick } from "lodash";
+
 export default {
   components: { GroupForm, SplitGroupForm },
   name: "GroupTable",

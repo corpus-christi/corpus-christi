@@ -1,7 +1,6 @@
 <template>
   <v-app>
-    <nav-drawer v-model="drawerVisible" />
-    <app-bar @toggleDrawer="toggleNavDrawer" />
+    <app-bar />
     <v-main>
       <message-snack-bar v-bind:bus="bus" />
       <error-report-dialog v-bind:bus="bus" />
@@ -13,25 +12,13 @@
 
 <script>
 import AppBar from "./AppBar";
-import NavDrawer from "./NavDrawer";
 import MessageSnackBar from "../components/MessageSnackBar";
 import ErrorReportDialog from "../components/report/ErrorReportDialog";
 import Footer from "./Footer";
 
 export default {
   name: "DefaultLayout",
-  components: { Footer, AppBar, NavDrawer, MessageSnackBar, ErrorReportDialog },
-
-  data() {
-    return {
-      drawerVisible: false,
-    };
-  },
-
-  methods: {
-    toggleNavDrawer() {
-      this.drawerVisible = !this.drawerVisible;
-    },
-  },
+  components: { Footer, AppBar, MessageSnackBar, ErrorReportDialog },
+  props: ["bus"],
 };
 </script>

@@ -1,5 +1,10 @@
 <template>
-  <v-navigation-drawer app v-model="drawerVisible">
+  <v-navigation-drawer
+    app
+    clipped
+    v-bind:value="value"
+    v-on:input="$emit('input', $event)"
+  >
     <v-list>
       <nav-item v-for="item in menuItems" :key="item.route" :item="item" />
     </v-list>
@@ -14,12 +19,7 @@ export default {
   components: {
     NavItem,
   },
-
-  data() {
-    return {
-      drawerVisible: false,
-    };
-  },
+  props: ["value"],
 
   computed: {
     // Computed property so it's reactive.
@@ -77,11 +77,6 @@ export default {
           icon: "places",
         },
       ];
-    },
-  },
-  methods: {
-    toggle() {
-      this.drawerVisible = !this.drawerVisible;
     },
   },
 };

@@ -1,5 +1,5 @@
 <template>
-  <default-layout />
+  <default-layout v-bind:bus="bus" />
 </template>
 
 <script>

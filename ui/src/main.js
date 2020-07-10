@@ -7,8 +7,9 @@ import store from "./store";
 import "./filters";
 
 import vuetify from "./plugins/vuetify";
-import "./plugins/axios";
 import i18n from "./plugins/vue-i18n";
+
+import "./plugins/axios";
 import "./plugins/google-maps";
 
 const app = new Vue({
