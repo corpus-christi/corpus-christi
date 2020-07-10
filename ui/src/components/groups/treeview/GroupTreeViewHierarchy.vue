@@ -52,7 +52,25 @@
           hoverable
           open-on-click
           return-object
-        ></v-treeview>
+        >
+          <template v-slot:prepend="{ item }">
+            <v-icon v-if="item.nodeType === 'Group'" color="primary"
+              >group</v-icon
+            >
+            <v-icon v-else-if="item.nodeType === 'Participant'">person</v-icon>
+            <v-icon v-else-if="item.nodeType === 'Admin'"
+              >supervised_user_circle</v-icon
+            >
+          </template>
+          <template v-slot:label="{ item }">
+            <router-link
+              v-if="item.nodeType === 'Group'"
+              :to="{ name: 'group', params: { group: item.info.id } }"
+              >{{ item.name }}</router-link
+            >
+            <span v-else>{{ item.name }}</span>
+          </template>
+        </v-treeview>
       </v-card-text>
     </v-card>
   </div>
@@ -109,7 +127,7 @@ export default {
       return [];
     },
     adminTree() {
-      const adminNode = { name: "Admin", children: [] };
+      const adminNode = { name: "Admin", children: [], nodeType: "Admin" };
       if (this.groups === null || this.persons === null) {
         return [adminNode];
       }

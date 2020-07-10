@@ -4,11 +4,13 @@ import { intersectionWith } from "lodash";
 /* API response objects mappers */
 // The object nested in a person object, that indicates which group the participant belongs
 export interface PersonParticipantObject {
+  active?: boolean;
   groupId: number;
 }
 
 // The object nested in a group object, that indicates which person the participant associates with
 export interface GroupParticipantObject {
+  active?: boolean;
   person: PersonObject;
 }
 
@@ -16,6 +18,7 @@ export interface PersonObject {
   id: number;
   managers: PersonParticipantObject[];
   members: PersonParticipantObject[];
+  active?: boolean;
   firstName?: string;
   lastName?: string;
 }
@@ -24,6 +27,7 @@ export interface GroupObject {
   id: number;
   managers: GroupParticipantObject[];
   members: GroupParticipantObject[];
+  active?: boolean;
   name?: string;
 }
 
@@ -68,8 +72,9 @@ export class Participant extends HierarchyNode {
     return this.participant;
   }
   getLeadingGroups(): Group[] {
-    return this.participant.person.managers.map(
-      (m: PersonParticipantObject) => {
+    return this.participant.person.managers
+      .filter(manager => manager.active) // only get the groups where the user is an active manager
+      .map((m: PersonParticipantObject) => {
         if (!Object.prototype.hasOwnProperty.call(this.groupMap, m.groupId)) {
           throw new Error(
             `Cannot get leading group with id ${
@@ -80,22 +85,25 @@ export class Participant extends HierarchyNode {
           );
         }
         return new Group(this.groupMap[m.groupId], this.groupMap);
-      }
-    );
+      })
+      .filter(group => group.getObject().active); // only get the active groups
   }
   getParticipatingGroups(): Group[] {
-    return this.participant.person.members.map((m: PersonParticipantObject) => {
-      if (!Object.prototype.hasOwnProperty.call(this.groupMap, m.groupId)) {
-        throw new Error(
-          `Cannot get participating group with id ${
-            m.groupId
-          } on participant with id ${
-            this.id
-          }: group does not exist in group map`
-        );
-      }
-      return new Group(this.groupMap[m.groupId], this.groupMap);
-    });
+    return this.participant.person.members
+      .filter(member => member.active) // only get the groups where the user is an active member
+      .map((m: PersonParticipantObject) => {
+        if (!Object.prototype.hasOwnProperty.call(this.groupMap, m.groupId)) {
+          throw new Error(
+            `Cannot get participating group with id ${
+              m.groupId
+            } on participant with id ${
+              this.id
+            }: group does not exist in group map`
+          );
+        }
+        return new Group(this.groupMap[m.groupId], this.groupMap);
+      })
+      .filter(group => group.getObject().active); // only get the active groups
   }
   getSubNodes(): HierarchyNode[] {
     return this.getLeadingGroups();
@@ -125,16 +133,20 @@ export class Group extends HierarchyNode {
     return this.group;
   }
   getMembers(): Participant[] {
-    return this.group.members.map(
-      (participant: GroupParticipantObject) =>
-        new Participant(participant, this.groupMap)
-    );
+    return this.group.members
+      .filter(member => member.active) // only get the active members
+      .map(
+        (participant: GroupParticipantObject) =>
+          new Participant(participant, this.groupMap)
+      );
   }
   getManagers(): Participant[] {
-    return this.group.managers.map(
-      (participant: GroupParticipantObject) =>
-        new Participant(participant, this.groupMap)
-    );
+    return this.group.managers
+      .filter(manager => manager.active) // only get the active managers
+      .map(
+        (participant: GroupParticipantObject) =>
+          new Participant(participant, this.groupMap)
+      );
   }
   getSubNodes(): HierarchyNode[] {
     return this.getMembers();

@@ -33,13 +33,14 @@ def flip():
     return random.choice((True, False))
 
 
-def group_object_factory(group_type_id, name=None):
+def group_object_factory(group_type_id, **attributes):
     """Cook up a fake group."""
     group = {
-        'name': name or rl_fake().word(),
+        'name': rl_fake().word(),
         'description': rl_fake().sentences(nb=1)[0],
         'active': flip(),
-        'groupTypeId': group_type_id
+        'groupTypeId': group_type_id,
+        **attributes
     }
     return group
 
@@ -129,7 +130,7 @@ def create_multiple_groups(sqla, n):
             "Discovering Your Gifts"
             ]
     group_names = group_name_samples[:n]
-    new_groups = [ Group(**group_schema.load(group_object_factory(random.choice(group_types).id, name))) for name in group_names ]
+    new_groups = [ Group(**group_schema.load(group_object_factory(random.choice(group_types).id, name=name))) for name in group_names ]
     for _ in range(n-len(group_name_samples)):
         new_groups.append(Group(**group_schema.load(group_object_factory(random.choice(group_types).id))))
 
@@ -276,7 +277,7 @@ def create_hierarchical_groups_and_participants(sqla):
     for i in range(1, 10):
         group_name = f"Group{i}"
         group = Group(**group_schema.load(
-            group_object_factory(group_type_id, group_name)))
+            group_object_factory(group_type_id, name=group_name, active=True)))
         sqla.add(group)
         groups.append(group)
         print(group)
