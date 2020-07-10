@@ -41,7 +41,7 @@ export interface GroupMap {
 }
 
 /* turn a list of groups to a group map */
-export function convertGroupMap(groupList: GroupObject[]) {
+export function convertToGroupMap(groupList: GroupObject[]) {
   return groupList.reduce((acc, cur) => ({ ...acc, [cur.id]: cur }), {});
 }
 
@@ -122,6 +122,11 @@ export class Participant extends HierarchyNode {
 export class Group extends HierarchyNode {
   constructor(protected group: GroupObject, protected groupMap: GroupMap) {
     super("Group");
+    if (!Object.prototype.hasOwnProperty.call(groupMap, group.id)) {
+      throw new Error(
+        `Can't construct Group instance when id ${group.id} is not in GroupMap`
+      );
+    }
   }
   get id(): number {
     return this.group.id;
@@ -480,8 +485,12 @@ export function isConnectionOkay(
 ): boolean {
   try {
     checkConnection(parentNode, childNode);
-  } catch (HierarchyCycleError) {
-    return false;
+  } catch (err) {
+    if (err instanceof HierarchyCycleError) {
+      return false;
+    } else {
+      throw err;
+    }
   }
   return true;
 }

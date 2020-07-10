@@ -301,7 +301,7 @@
             multiple
             person
             v-model="participantDialog.persons"
-            :existing-entities="persons"
+            :existing-entities="persons.concat(cyclingPersons)"
             :disabled="participantDialog.editMode"
           />
           <entity-type-form
@@ -382,6 +382,13 @@ import EmailForm from "../EmailForm";
 import EntityTypeForm from "./EntityTypeForm";
 import { eventBus } from "../../plugins/event-bus.js";
 import { isEmpty } from "lodash";
+import {
+  Group,
+  Participant,
+  checkConnection,
+  HierarchyCycleError,
+  convertToGroupMap
+} from "../../models/GroupHierarchyNode.ts";
 export default {
   components: { EntitySearch, EmailForm, EntityTypeForm },
   name: "GroupParticipants",
@@ -404,6 +411,9 @@ export default {
       tableLoading: false,
       search: "",
       participants: [],
+      // can we lazy-load the following 2 attributes upon access?
+      allPersons: [],
+      allGroups: [],
       selected: [],
       emailDialog: {
         show: false,
@@ -555,6 +565,38 @@ export default {
     },
     persons() {
       return this.participants.map(m => m.person);
+    },
+    groupMap() {
+      return convertToGroupMap(this.allGroups);
+    },
+    cyclingPersons() {
+      // persons whom, when added as a participant (either manager or member) of the current group,
+      // will create a cycle in the leadership hierarchy
+      let cyclingPersons = [];
+      if (!Object.prototype.hasOwnProperty.call(this.groupMap, this.id)) {
+        return cyclingPersons; // return immediately if groupMap is not loaded
+      }
+      let currentGroup = new Group(this.groupMap[this.id], this.groupMap);
+      this.allPersons
+        .map(person => new Participant({ person }, this.groupMap))
+        .forEach(participant => {
+          try {
+            this.isManagerMode
+              ? checkConnection(participant, currentGroup)
+              : checkConnection(currentGroup, participant);
+          } catch (err) {
+            if (err instanceof HierarchyCycleError) {
+              cyclingPersons.push({
+                ...participant.getObject().person,
+                cyclingNode: err.node,
+                cyclingMessage: err.message
+              });
+            } else {
+              throw err;
+            }
+          }
+        });
+      return cyclingPersons;
     },
     selectionArchiveParticipants() {
       return this.activeParticipants;
@@ -863,10 +905,22 @@ export default {
         console.log(resp.data);
         this.tableLoading = false;
       });
+    },
+    fetchAllPersons() {
+      this.$http.get("api/v1/people/persons").then(resp => {
+        this.allPersons = resp.data;
+      });
+    },
+    fetchAllGroups() {
+      this.$http.get("api/v1/groups/groups").then(resp => {
+        this.allGroups = resp.data;
+      });
     }
   },
   mounted() {
     this.fetchParticipants();
+    this.fetchAllPersons();
+    this.fetchAllGroups();
   }
 };
 </script>
@@ -876,3 +930,4 @@ export default {
   display: inline-flex !important;
 }
 </style>
+}

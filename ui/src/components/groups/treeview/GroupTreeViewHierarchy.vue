@@ -80,7 +80,7 @@ import {
   Group,
   Participant,
   count,
-  convertGroupMap,
+  convertToGroupMap,
   getInfoTree,
   isRootNode,
   getAllSubNodes
@@ -113,7 +113,7 @@ export default {
   },
   computed: {
     groupMap() {
-      return this.groups === null ? {} : convertGroupMap(this.groups);
+      return this.groups === null ? {} : convertToGroupMap(this.groups);
     },
     adminMode() {
       // TODO: check whether the current user is an admin */
