@@ -44,8 +44,7 @@
       </v-toolbar>
       <v-card-text>
         <v-treeview
-          v-if="!$data.$_groupHierarchyMixin_loading"
-          :items="$_groupHierarchyMixin_adminTree"
+          :items="adminTree"
           :search="search"
           ref="treeview"
           activatable
@@ -59,15 +58,34 @@
   </div>
 </template>
 <script>
-import groupHierarchyMixin from "../../../mixins/groupHierarchyMixin.js";
+import {
+  Group,
+  Participant,
+  count,
+  convertGroupMap,
+  getInfoTree,
+  isRootNode,
+  getAllSubNodes
+} from "../../../models/GroupHierarchyNode";
 export default {
-  mixins: [groupHierarchyMixin],
   data() {
     return {
-      search: ""
+      search: "",
+      groups: null /* mark initial state */,
+      persons: null
     };
   },
   methods: {
+    fetchGroups() {
+      return this.$http.get("api/v1/groups/groups").then(resp => {
+        this.groups = resp.data;
+      });
+    },
+    fetchPersons() {
+      return this.$http.get("api/v1/people/persons").then(resp => {
+        this.persons = resp.data;
+      });
+    },
     expandAll() {
       this.$refs["treeview"].updateAll(true);
     },
@@ -75,9 +93,48 @@ export default {
       this.$refs["treeview"].updateAll(false);
     }
   },
-  computed: {},
+  computed: {
+    groupMap() {
+      return this.groups === null ? {} : convertGroupMap(this.groups);
+    },
+    adminMode() {
+      // TODO: check whether the current user is an admin */
+      return true;
+    },
+    treeItems() {
+      return this.adminMode ? this.adminTree : this.managerTree;
+    },
+    managerTree() {
+      // TODO: returns a tree according to the current user's subgroups
+      return [];
+    },
+    adminTree() {
+      const adminNode = { name: "Admin", children: [] };
+      if (this.groups === null || this.persons === null) {
+        return [adminNode];
+      }
+      let counter = count();
+      // get all root groups and root participants
+      let rootNodes = [
+        ...this.groups.map(
+          groupObject => new Group(groupObject, this.groupMap)
+        ),
+        ...this.persons.map(
+          person => new Participant({ person }, this.groupMap)
+        )
+      ].filter(node => isRootNode(node));
+      rootNodes.forEach(rootNode => {
+        adminNode.children.push(getInfoTree(rootNode, false, counter));
+      });
+      console.log("adminNode", adminNode);
+      return [adminNode];
+    }
+  },
   mounted() {
-    console.log("treeview component mounted");
+    this.fetchGroups();
+    if (this.adminMode) {
+      this.fetchPersons();
+    }
   }
 };
 </script>

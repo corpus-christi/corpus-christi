@@ -36,6 +36,11 @@ export interface GroupMap {
   [id: number]: GroupObject;
 }
 
+/* turn a list of groups to a group map */
+export function convertGroupMap(groupList: GroupObject[]) {
+  return groupList.reduce((acc, cur) => ({ ...acc, [cur.id]: cur }), {});
+}
+
 export abstract class HierarchyNode {
   constructor(public nodeType: string) {}
   abstract get id(): number | string;
