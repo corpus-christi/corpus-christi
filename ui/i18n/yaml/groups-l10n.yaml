@@ -338,6 +338,10 @@ groups:
         en-US: The person is already in the destination group
         es-EC: La persona ya está en el grupo de destino.
         zh-CN: 该人已经在目的地组中
+      move-person-will-cause-cycle:
+        en-US: Moving this person will cause a cycle in leadership hierarchy
+        es-EC: Mover a esta persona provocará un ciclo en la jerarquía de liderazgo
+        zh-CN: 移动此人将导致领导层的循环
   tooltips:
     move:
       en-US: Move to Another Group
@@ -533,6 +537,26 @@ groups:
       en-US: Member unarchived
       es-EC: Miembro desarchivado # probably not right
       zh-CN: 成员未存档
+    error-unarchiving-member:
+      en-US: Error while unarchiving member
+      es-EC: Error al desarchivar miembro
+      zh-CN: 取消存档成员时出错
+    manager-archived:
+      en-US: Manager archived
+      es-EC: Gerente archivado
+      zh-CN: 经理已存档
+    error-archiving-manager:
+      en-US: Error while archiving manager
+      es-EC: Error al archivar administrador
+      zh-CN: 归档管理器时出错
+    manager-unarchived:
+      en-US: Manager unarchived
+      es-EC: Gerente sin archivar
+      zh-CN: 经理未存档
+    error-unarchiving-manager:
+      en-US: Error while unarchiving manager
+      es-EC: Error al desarchivar administrador
+      zh-CN: 取消存档管理器时出错
     meeting-added:
       en-US: Meeting added
       es-EC: Reunión agregada

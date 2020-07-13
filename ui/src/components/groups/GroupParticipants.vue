@@ -226,7 +226,7 @@
             <template v-else>
               <v-tooltip bottom>
                 <v-btn
-                  :disabled="select"
+                  :disabled="select || isCyclingPerson(props.item.person)"
                   icon
                   outline
                   small
@@ -238,7 +238,15 @@
                 >
                   <v-icon small>undo</v-icon>
                 </v-btn>
-                <span>{{ $t("actions.tooltips.activate") }}</span>
+                <span>
+                  {{
+                    isCyclingPerson(props.item.person)
+                      ? $t(
+                          "groups.batch-actions.messages.activate-person-will-cause-cycle"
+                        )
+                      : $t("actions.tooltips.activate")
+                  }}
+                </span>
               </v-tooltip>
             </template>
           </td>
@@ -572,37 +580,29 @@ export default {
     cyclingPersons() {
       // persons whom, when added as a participant (either manager or member) of the current group,
       // will create a cycle in the leadership hierarchy
-      let cyclingPersons = [];
       if (!Object.prototype.hasOwnProperty.call(this.groupMap, this.id)) {
-        return cyclingPersons; // return immediately if groupMap is not loaded
+        return [];
       }
-      let currentGroup = new Group(this.groupMap[this.id], this.groupMap);
-      this.allPersons
-        .map(person => new Participant({ person }, this.groupMap))
-        .forEach(participant => {
-          try {
-            this.isManagerMode
-              ? checkConnection(participant, currentGroup)
-              : checkConnection(currentGroup, participant);
-          } catch (err) {
-            if (err instanceof HierarchyCycleError) {
-              cyclingPersons.push({
-                ...participant.getObject().person,
-                cyclingNode: err.node,
-                cyclingMessage: err.message
-              });
-            } else {
-              throw err;
-            }
-          }
-        });
-      return cyclingPersons;
+      return this.getCyclingEntities(
+        this.groupMap[this.id],
+        true,
+        this.isManagerMode
+      );
     },
     selectionArchiveParticipants() {
       return this.activeParticipants;
     },
     selectionUnarchiveParticipants() {
-      return this.inactiveParticipants;
+      return this.inactiveParticipants.map(p => {
+        let participant = { ...p };
+        if (this.isCyclingPerson(p.person)) {
+          participant.disabled = true;
+          participant.disabledText = this.$t(
+            "groups.batch-actions.messages.activate-person-will-cause-cycle"
+          );
+        }
+        return participant;
+      });
     },
     selectionEmailParticipants() {
       return this.activeParticipants.map(p => ({
@@ -612,8 +612,6 @@ export default {
       }));
     },
     selectionMoveParticipants() {
-      /* TODO: also filter out movements that will
-      create a cycle in the leadership hierarchy <2020-07-01, David Deng> */
       let destinationGroupPersonIds = this.moveDialog.destinationGroup[
         this.isManagerMode ? "managers" : "members"
       ].map(p => p.person.id);
@@ -624,7 +622,31 @@ export default {
           participant.disabledText = this.$t(
             "groups.batch-actions.messages.person-in-destination-group"
           );
-        } // else if (moving participant will create cycle) {...}
+        } else {
+          // check whether moving moving participant will create cycle
+          try {
+            let participantInstance = new Participant(
+              { person: p.person },
+              this.groupMap
+            );
+            let groupInstance = new Group(
+              this.moveDialog.destinationGroup,
+              this.groupMap
+            );
+            this.isManagerMode
+              ? checkConnection(participantInstance, groupInstance)
+              : checkConnection(groupInstance, participantInstance);
+          } catch (err) {
+            if (err instanceof HierarchyCycleError) {
+              participant.disabled = true;
+              participant.disabledText = this.$t(
+                "groups.batch-actions.messages.move-person-will-cause-cycle"
+              );
+            } else {
+              throw err;
+            }
+          }
+        }
         return participant;
       });
       return movableParticipants;
@@ -678,6 +700,14 @@ export default {
             this.isManagerMode ? "managers" : "members"
           ].map(m => ({ id: m.groupId }))
         );
+        // also exclude groups that will cause a cycle
+        groups = groups.concat(
+          this.getCyclingEntities(
+            this.moveDialog.participant.person,
+            false,
+            this.isManagerMode
+          )
+        );
       }
       return groups;
     }
@@ -686,6 +716,121 @@ export default {
   methods: {
     /************* general ****************/
     isEmpty,
+
+    /************* hierarchy cycle helpers ****************/
+    /* update the local copy of participant with groupId and personId in allGroups and allPersons with 'payload'
+     the main use case is to mark participant as active/inactive after performing a change to reflect the updated hierarchy 
+     as an alternative to calling fetchAllGroups and fetchAllPersons again */
+    updateLocalParticipant(groupId, personId, payload) {
+      // TODO: test and use this method to replace most of fetch after api methods succeed
+      if (groupId === this.id) {
+        let participant = this.participants.find(
+          participant => participant.person.id === personId
+        );
+        if (participant) {
+          console.log("participant before", participant);
+          Object.assign(participant, payload);
+          console.log("participant after", participant);
+        }
+      }
+      let person = this.allPersons.find(person => person.id === personId);
+      if (person) {
+        let participants = person[this.isManagerMode ? "managers" : "members"];
+        participants.forEach(participant => {
+          if (participant.groupId === groupId) {
+            console.log("participant before", participant);
+            Object.assign(participant, payload);
+            console.log("participant after", participant);
+          }
+        });
+      }
+      let group = this.allGroups.find(group => group.id === groupId);
+      if (group) {
+        let participants = group[this.isManagerMode ? "managers" : "members"];
+        participants.forEach(participant => {
+          if (participant.person.id === personId) {
+            console.log("participant before", participant);
+            Object.assign(participant, payload);
+            console.log("participant after", participant);
+          }
+        });
+      }
+    },
+    updateLocalParticipants(persons, payload) {
+      persons.forEach(person => {
+        this.updateLocalParticipant(this.id, person.id, payload);
+      });
+    },
+
+    isCyclingPerson(person) {
+      return this.cyclingPersons.map(p => p.id).includes(person.id);
+    },
+    /* get entities that will cause a cycle when connected to 'subject'
+    'subject' can be a GroupObject or a PersonObject, indicated by 'subjectIsGroup'
+    if 'subject' is a Group, then comparison is made against this.allPersons,
+    if 'subject' is a Person, then comparison is made against this.allGroups.
+    if 'isManagerMode' is true, then each person will be connected to each group as a manager, vise versa.
+    returns a subset of this.allPersons or this.allGroups, depending on the 'subjectIsGroup' option.
+    each returned entry will also contain a 'cyclingNode' and 'cyclingMessage' attribute,
+    describing on which node cycle will occur. */
+    getCyclingEntities(
+      subject,
+      subjectIsGroup = true,
+      isManagerMode = this.isManagerMode
+    ) {
+      let cyclingEntities = [];
+      let comparisonObjects = subjectIsGroup ? this.allPersons : this.allGroups;
+      if (!comparisonObjects || !this.allGroups) {
+        return cyclingEntities; // return when there is no object to compare against, or when groups are not loaded
+      }
+      let subjectInstance = subjectIsGroup
+        ? new Group(subject, this.groupMap)
+        : new Participant({ person: subject }, this.groupMap);
+
+      comparisonObjects
+        .map(obj =>
+          subjectIsGroup
+            ? new Participant({ person: obj }, this.groupMap)
+            : new Group(obj, this.groupMap)
+        )
+        .forEach(objectInstance => {
+          try {
+            if (subjectIsGroup) {
+              // subjectInstance is a group, objectInstance is a participant
+              if (isManagerMode) {
+                // make objectInstance a manager of subjectInstance
+                checkConnection(objectInstance, subjectInstance);
+              } else {
+                // make objectInstance a member of subjectInstance
+                checkConnection(subjectInstance, objectInstance);
+              }
+            } else {
+              // subjectInstance is a participant, objectInstance is a group
+              if (isManagerMode) {
+                // make subjectInstance a manager of objectInstance
+                checkConnection(subjectInstance, objectInstance);
+              } else {
+                // make subjectInstance a member of objectInstance
+                checkConnection(objectInstance, subjectInstance);
+              }
+            }
+          } catch (err) {
+            if (err instanceof HierarchyCycleError) {
+              let obj = subjectIsGroup
+                ? objectInstance.getObject().person
+                : objectInstance.getObject();
+              cyclingEntities.push({
+                ...obj,
+                cyclingNode: err.node,
+                cyclingMessage: err.message
+              });
+            } else {
+              throw err;
+            }
+          }
+        });
+      return cyclingEntities;
+    },
 
     /************* selection helper methods ****************/
     proceedSelection(callback) {
@@ -822,6 +967,8 @@ export default {
       })
         .then(() => {
           this.fetchParticipants();
+          this.fetchAllPersons();
+          this.fetchAllGroups();
           eventBus.$emit("message", {
             content: this.isManagerMode
               ? "groups.messages.managers-moved"
@@ -860,6 +1007,7 @@ export default {
     },
     /* archive or unarchive the participants */
     archiveParticipants(participants, unarchive = false) {
+      // TODO: use saveParticipants to implement this method
       let promises = [];
       this.archiveDialog.loading = true;
       for (let participant of participants) {
@@ -875,12 +1023,24 @@ export default {
         .then(resp => {
           this.fetchParticipants();
           eventBus.$emit("message", {
-            content: "groups.messages.member-archived"
+            content: this.isManagerMode
+              ? unarchive
+                ? "groups.messages.manager-unarchived"
+                : "groups.messages.manager-archived"
+              : unarchive
+              ? "groups.messages.member-unarchived"
+              : "groups.messages.member-archived"
           });
         })
         .catch(err => {
           eventBus.$emit("error", {
-            content: "groups.messages.error-archiving-member"
+            content: this.isManagerMode
+              ? unarchive
+                ? "groups.messages.error-unarchiving-manager"
+                : "groups.messages.error-archiving-manager"
+              : unarchive
+              ? "groups.messages.error-unarchiving-member"
+              : "groups.messages.error-archiving-member"
           });
         })
         .finally(() => {
