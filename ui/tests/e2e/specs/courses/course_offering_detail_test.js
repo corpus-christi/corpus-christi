@@ -153,7 +153,7 @@ describe("Get back to course details", () => {
 describe("Search for course section", () => {
   it("section box", () => {
     cy.get(
-      ".layout > .flex > .v-input > .v-input__control > .v-input__slot > .v-text-field__slot > input"
+      ".layouts > .flex > .v-input > .v-input__control > .v-input__slot > .v-text-field__slot > input"
     ).type("Test");
   });
   it("should find match", () => {
@@ -161,7 +161,7 @@ describe("Search for course section", () => {
   });
   it("clears search bar", () => {
     cy.get(
-      ".layout > .flex > .v-input > .v-input__control > .v-input__slot > .v-text-field__slot > input"
+      ".layouts > .flex > .v-input > .v-input__control > .v-input__slot > .v-text-field__slot > input"
     ).clear();
   });
 });

@@ -26,7 +26,7 @@
     <v-card-actions>
       <v-spacer></v-spacer>
       <v-btn
-        flat
+        text
         color="secondary"
         @click="cancelAreaForm"
         :disabled="formDisabled"
@@ -50,38 +50,38 @@ export default {
   props: {
     initialData: {
       type: Object,
-      required: true
+      required: true,
     },
     countries: {
-      type: Array
-    }
+      type: Array,
+    },
   },
-  data: function() {
+  data: function () {
     return {
       area: {
         id: 0,
         name: "",
-        country_code: ""
+        country_code: "",
       },
       formDisabled: false,
-      saveIsLoading: false
+      saveIsLoading: false,
     };
   },
   computed: {
     dropdownList() {
-      return this.countries.map(element => {
+      return this.countries.map((element) => {
         return {
           text: this.$t(element.name_i18n),
-          value: element.code
+          value: element.code,
         };
       });
-    }
+    },
   },
   watch: {
     // Make sure data stays in sync with any changes to `initialData` from parent.
     initialData(areaProp) {
       this.area = areaProp;
-    }
+    },
   },
   methods: {
     cancelAreaForm() {
@@ -95,7 +95,7 @@ export default {
       let areaId = this.area.id;
       let areaData = {
         name: this.area.name,
-        country_code: this.area.country_code
+        country_code: this.area.country_code,
       };
       if (areaId) {
         this.updateArea(areaData, areaId, emitMessage);
@@ -106,7 +106,7 @@ export default {
     addArea(areaData, emitMessage) {
       this.$http
         .post("/api/v1/places/areas", areaData)
-        .then(resp => {
+        .then((resp) => {
           this.$emit(emitMessage, resp.data);
           console.log(areaData);
         })
@@ -114,7 +114,7 @@ export default {
           this.formDisabled = false;
           this.cancelAreaForm();
         })
-        .catch(err => {
+        .catch((err) => {
           console.log("FAILED", err);
           this.formDisabled = false;
         });
@@ -124,18 +124,18 @@ export default {
       console.log(areaId);
       this.$http
         .put(`/api/v1/places/areas/${areaId}`, areaData)
-        .then(resp => {
+        .then((resp) => {
           this.$emit(emitMessage, resp.data);
         })
         .then(() => {
           this.formDisabled = false;
           this.cancelAreaForm();
         })
-        .catch(err => {
+        .catch((err) => {
           console.log("FAILED", err);
           this.formDisabled = false;
         });
-    }
-  }
+    },
+  },
 };
 </script>

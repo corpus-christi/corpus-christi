@@ -11,7 +11,7 @@ const ROLE_PREFIX = "role.";
 const ROLE_SUPERUSER = `${ROLE_PREFIX}superuser`;
 
 export default class Account {
-  constructor(username, firstName, lastName, roles, email=null) {
+  constructor(username, firstName, lastName, roles, email = null) {
     this.username = username;
     this.firstName = firstName;
     this.lastName = lastName;
@@ -27,7 +27,7 @@ export default class Account {
    * Does this user have superuser permissions?
    */
   isSuperuser() {
-    this.roles.find(elt => elt === ROLE_SUPERUSER);
+    this.roles.find((elt) => elt === ROLE_SUPERUSER);
   }
 
   /**
@@ -39,7 +39,7 @@ export default class Account {
   hasRole(role) {
     return (
       this.isSuperuser() ||
-      this.roles.find(elt => elt === `${ROLE_PREFIX}${role}`)
+      this.roles.find((elt) => elt === `${ROLE_PREFIX}${role}`)
     );
   }
 
@@ -53,7 +53,7 @@ export default class Account {
       firstName: obj.firstName,
       lastName: obj.lastName,
       roles: obj.roles,
-      email: obj.email
+      email: obj.email,
     });
   }
 }

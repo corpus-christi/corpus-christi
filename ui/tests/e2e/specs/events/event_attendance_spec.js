@@ -17,6 +17,6 @@ describe("Attendance Test", function() {
   });
 
   it("THEN: Attendance number is updated", function() {
-    cy.get(".layout > :nth-child(1) > :nth-child(1) > span").contains("1234");
+    cy.get(".layouts > :nth-child(1) > :nth-child(1) > span").contains("1234");
   });
 });

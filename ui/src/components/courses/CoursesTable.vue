@@ -88,7 +88,7 @@
 
     <v-snackbar v-model="snackbar.show" data-cy="courses-table-snackbar">
       {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false">{{
+      <v-btn text @click="snackbar.show = false">{{
         $t("actions.close")
       }}</v-btn>
     </v-snackbar>
@@ -125,7 +125,7 @@
           <v-btn
             v-on:click="cancelDeactivate"
             color="secondary"
-            flat
+            text
             :disabled="deactivateDialog.loading"
           >
             {{ $t("actions.cancel") }}
@@ -154,7 +154,7 @@ export default {
   name: "CoursesTable",
   components: {
     CourseForm,
-    CourseAdminActions
+    CourseAdminActions,
   },
   data() {
     return {
@@ -163,31 +163,31 @@ export default {
         editMode: false,
         course: {},
         saveLoading: false,
-        addMoreLoading: false
+        addMoreLoading: false,
       },
 
       deactivateDialog: {
         show: false,
         course: {},
-        loading: false
+        loading: false,
       },
 
       snackbar: {
         show: false,
-        text: ""
+        text: "",
       },
 
       rowsPerPageItem: [
         10,
         15,
         25,
-        { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 }
+        { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 },
       ],
 
       paginationInfo: {
         sortBy: "start",
         rowsPerPage: 10,
-        page: 1
+        page: 1,
       },
 
       courses: [],
@@ -196,7 +196,7 @@ export default {
       addMore: false,
       selected: [],
       search: "",
-      viewStatus: "active"
+      viewStatus: "active",
     };
   },
   computed: {
@@ -207,9 +207,9 @@ export default {
         {
           text: this.$t("courses.description"),
           value: "description",
-          width: "60%"
+          width: "60%",
         },
-        { text: this.$t("actions.header"), sortable: false }
+        { text: this.$t("actions.header"), sortable: false },
       ];
     },
 
@@ -217,27 +217,27 @@ export default {
       return [
         { text: this.$t("actions.view-active"), value: "active" },
         { text: this.$t("actions.view-archived"), value: "archived" },
-        { text: this.$t("actions.view-all"), value: "all" }
+        { text: this.$t("actions.view-all"), value: "all" },
       ];
     },
     showCourses() {
       switch (this.viewStatus) {
         case "active":
-          return this.courses.filter(course => course.active);
+          return this.courses.filter((course) => course.active);
         case "archived":
-          return this.courses.filter(course => !course.active);
+          return this.courses.filter((course) => !course.active);
         case "all":
         default:
           return this.courses;
       }
-    }
+    },
   },
 
   methods: {
     clickThrough(course) {
       this.$router.push({
         name: "course-details",
-        params: { courseId: course.id }
+        params: { courseId: course.id },
       });
     },
 
@@ -284,7 +284,7 @@ export default {
       this.deactivateDialog.loading = true;
       this.$http
         .patch(`/api/v1/courses/courses/${course.id}`, { active: false })
-        .then(resp => {
+        .then((resp) => {
           console.log("EDITED", resp);
           Object.assign(course, resp.data);
           this.showSnackbar(this.$t("courses.archived"));
@@ -303,7 +303,7 @@ export default {
     activate(course) {
       this.$http
         .patch(`/api/v1/courses/courses/${course.id}`, { active: true })
-        .then(resp => {
+        .then((resp) => {
           console.log("EDITED", resp);
           Object.assign(course, resp.data);
           this.showSnackbar(this.$t("courses.reactivated"));
@@ -343,7 +343,7 @@ export default {
     async saveCourse(course) {
       let courseAttrs = {
         description: course.description,
-        name: course.name
+        name: course.name,
       };
 
       let newImageId = course.newImageId;
@@ -351,7 +351,7 @@ export default {
 
       var prereqMap = {};
       if (course.prerequisites) {
-        prereqMap = course.prerequisites.map(prereq => prereq.id);
+        prereqMap = course.prerequisites.map((prereq) => prereq.id);
       }
 
       if (this.courseDialog.editMode) {
@@ -359,7 +359,7 @@ export default {
         promises.push(
           this.$http
             .patch(`/api/v1/courses/courses/${course.id}`, courseAttrs)
-            .then(resp => {
+            .then((resp) => {
               console.log("EDITED", resp);
               return resp;
             })
@@ -371,9 +371,7 @@ export default {
             // an image was edited (PUT)
             promises.push(
               this.$http.put(
-                `/api/v1/courses/${
-                  course.id
-                }/images/${newImageId}?old=${oldImageId}`
+                `/api/v1/courses/${course.id}/images/${newImageId}?old=${oldImageId}`
               )
             );
           } else {
@@ -407,16 +405,16 @@ export default {
         );
 
         Promise.all(promises)
-          .then(resps => {
+          .then((resps) => {
             let newCourse = resps[0].data;
             newCourse.prerequisites = course.prerequisites; // Re-attach prereqs so they show up in UI
-            const idx = this.courses.findIndex(c => c.id === course.id);
+            const idx = this.courses.findIndex((c) => c.id === course.id);
             Object.assign(this.courses[idx], course);
             this.cancelCourse();
             this.refreshCourseList();
             this.showSnackbar(this.$t("courses.updated"));
           })
-          .catch(err => {
+          .catch((err) => {
             console.error("FALURE", err.response);
             this.courseDialog.saveLoading = false;
             this.showSnackbar(this.$t("courses.update-failed"));
@@ -428,7 +426,7 @@ export default {
         let newCourse;
         this.$http
           .post("/api/v1/courses/courses", courseAttrs)
-          .then(resp => {
+          .then((resp) => {
             console.log("ADDED", resp);
             newCourse = resp.data;
             newCourse.prerequisites = course.prerequisites; // Re-attach prereqs so they show up in UI
@@ -439,7 +437,7 @@ export default {
               { prerequisites: prereqMap } // API expects array of IDs
             );
           })
-          .then(resp => {
+          .then((resp) => {
             console.log("PREREQS", resp);
             return newImageId
               ? this.$http.post(
@@ -447,7 +445,7 @@ export default {
                 )
               : null;
           })
-          .then(resp => {
+          .then((resp) => {
             console.log("IMAGE ADDED TO COURSE", resp);
             this.courses.push(course);
             this.showSnackbar(this.$t("courses.added"));
@@ -458,7 +456,7 @@ export default {
             }
             this.refreshCourseList();
           })
-          .catch(err => {
+          .catch((err) => {
             console.error("FAILURE", err);
             this.courseDialog.saveLoading = false;
             this.courseDialog.addMoreLoading = false;
@@ -473,14 +471,14 @@ export default {
       }
       return await this.$http
         .get(`/api/v1/courses/courses/${id}?include_images=1`)
-        .then(resp => {
+        .then((resp) => {
           if (resp.data.images && resp.data.images.length > 0) {
             return resp.data.images[0].image_id;
           } else {
             return null;
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.error("ERROR FETCHING COURSE", err);
           return null;
         });
@@ -492,16 +490,18 @@ export default {
     },
 
     refreshCourseList() {
-      this.$http.get("/api/v1/courses/courses?include_images=1").then(resp => {
-        this.courses = resp.data;
-        this.tableLoaded = true;
-      });
-    }
+      this.$http
+        .get("/api/v1/courses/courses?include_images=1")
+        .then((resp) => {
+          this.courses = resp.data;
+          this.tableLoaded = true;
+        });
+    },
   },
 
-  mounted: function() {
+  mounted: function () {
     this.refreshCourseList();
-  }
+  },
 };
 </script>
 

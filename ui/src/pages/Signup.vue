@@ -25,7 +25,7 @@ export default {
     save() {
       let routeName = this.$route.query.redirect || "login";
       this.$router.replace({ name: routeName });
-    }
-  }
+    },
+  },
 };
 </script>

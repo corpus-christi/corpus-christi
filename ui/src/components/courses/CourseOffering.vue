@@ -32,13 +32,13 @@ export default {
   props: {
     courseId: {
       type: [String, Number],
-      required: true
+      required: true,
     },
     offeringId: {
       type: [String, Number],
-      required: true
-    }
-  }
+      required: true,
+    },
+  },
 };
 </script>
 

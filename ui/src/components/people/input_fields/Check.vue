@@ -23,18 +23,18 @@ export default {
   props: {
     attribute: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
-      selected: []
+      selected: [],
     };
   },
   computed: {
     getAttributeValue() {
       return this.attribute.value;
-    }
+    },
   },
   watch: {
     getAttributeValue() {
@@ -47,7 +47,7 @@ export default {
       } else {
         this.selected = [];
       }
-    }
-  }
+    },
+  },
 };
 </script>

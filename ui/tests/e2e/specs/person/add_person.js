@@ -33,7 +33,7 @@ describe("Ensures the Add-person works", function() {
       cy.get("[data-cy=next]").click();
     });
     //cy.scrollTo(0, 50);
-    cy.get('[style=""] > .v-stepper__wrapper > .layout').within(() => {
+    cy.get('[style=""] > .v-stepper__wrapper > .layouts').within(() => {
       cy.get("[data-cy=next]")
         .eq(1)
         .click();
@@ -93,7 +93,7 @@ describe("Tests the add-person form to ensure proper functionality", () => {
       cy.get("[data-cy=next]").click();
     });
     //cy.scrollTo(0, 50);
-    cy.get('[style=""] > .v-stepper__wrapper > .layout').within(() => {
+    cy.get('[style=""] > .v-stepper__wrapper > .layouts').within(() => {
       cy.get("[data-cy=next]")
         .eq(1)
         .click();
@@ -121,7 +121,7 @@ describe("Tests the add-person form to ensure proper functionality", () => {
       cy.get("[data-cy=next]").click();
     });
     //cy.scrollTo(0, 50);
-    cy.get('[style=""] > .v-stepper__wrapper > .layout').within(() => {
+    cy.get('[style=""] > .v-stepper__wrapper > .layouts').within(() => {
       cy.get("[data-cy=next]")
         .eq(1)
         .click();

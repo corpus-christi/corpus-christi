@@ -30,7 +30,7 @@
       </form>
     </v-card-text>
     <v-card-actions>
-      <v-btn color="secondary" flat :disabled="saving" v-on:click="cancel">
+      <v-btn color="secondary" text :disabled="saving" v-on:click="cancel">
         {{ $t("actions.cancel") }}
       </v-btn>
       <v-spacer></v-spacer>
@@ -51,11 +51,11 @@ import { isEmpty, cloneDeep } from "lodash";
 
 export default {
   name: "CourseOfferingForm",
-  data: function() {
+  data: function () {
     return {
       saving: false,
 
-      courseOffering: {}
+      courseOffering: {},
     };
   },
   computed: {
@@ -63,7 +63,7 @@ export default {
       return this.editMode
         ? this.$t("actions.edit")
         : this.$t("courses.new-offering");
-    }
+    },
   },
 
   watch: {
@@ -74,22 +74,22 @@ export default {
       } else {
         this.courseOffering = courseProp;
       }
-    }
+    },
   },
 
   props: {
     editMode: {
       type: Boolean,
-      required: true
+      required: true,
     },
     initialData: {
       type: Object,
-      required: true
+      required: true,
     },
     course: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
 
   methods: {
@@ -130,12 +130,12 @@ export default {
             `/api/v1/courses/course_offerings/${courseOfferingId}`,
             courseOffering
           )
-          .then(resp => {
+          .then((resp) => {
             console.log("EDITED", resp);
             courseOffering = resp.data;
             this.$emit("save", courseOffering);
           })
-          .catch(err => {
+          .catch((err) => {
             console.error("FALURE", err.response);
             this.$emit("save", err);
           })
@@ -146,12 +146,12 @@ export default {
         courseOffering.active = true;
         this.$http
           .post("/api/v1/courses/course_offerings", courseOffering)
-          .then(resp => {
+          .then((resp) => {
             console.log("ADDED", resp);
             courseOffering = resp.data;
             this.$emit("save", courseOffering);
           })
-          .catch(err => {
+          .catch((err) => {
             console.error("FAILURE", err.response);
             this.$emit("save", err);
           })
@@ -159,7 +159,7 @@ export default {
             this.saving = false;
           });
       }
-    }
-  }
+    },
+  },
 };
 </script>

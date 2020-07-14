@@ -8,7 +8,7 @@
           </v-flex>
           <v-layout xs3 sm3 align-end justify-end>
             <v-btn
-              flat
+              text
               color="primary"
               data-cy="add-person-dialog"
               v-on:click="addPersonDialog.show = true"
@@ -36,7 +36,7 @@
                           <v-btn
                             icon
                             outline
-                            flat
+                            text
                             color="primary"
                             v-on:click="openEditDialog(person)"
                             :data-cy="'editPerson-' + person.id"
@@ -47,7 +47,7 @@
                           <v-btn
                             icon
                             outline
-                            flat
+                            text
                             color="primary"
                             v-on:click="showDeletePersonDialog(person.id)"
                             :data-cy="'deletePerson-' + person.id"
@@ -109,7 +109,7 @@
           <v-btn
             v-on:click="closeAddPersonDialog()"
             color="secondary"
-            flat
+            text
             :disabled="addPersonDialog.loading"
             data-cy="cancel-add"
             >{{ $t("actions.cancel") }}</v-btn
@@ -162,17 +162,17 @@ import EntitySearch from "../EntitySearch";
 export default {
   name: "EventPersonDetails",
   components: {
-    "entity-search": EntitySearch
+    "entity-search": EntitySearch,
   },
 
   props: {
     persons: {
-      required: true
+      required: true,
     },
     loaded: {
       type: Boolean,
-      required: true
-    }
+      required: true,
+    },
   },
 
   data() {
@@ -182,14 +182,14 @@ export default {
         show: false,
         loading: false,
         person: null,
-        description: ""
+        description: "",
       },
 
       deletePersonDialog: {
         show: false,
         loading: false,
-        personId: -1
-      }
+        personId: -1,
+      },
     };
   },
   computed: {
@@ -197,7 +197,7 @@ export default {
       return this.addPersonDialog.editMode
         ? this.$t("events.persons.edit")
         : this.$t("events.persons.new");
-    }
+    },
   },
 
   methods: {
@@ -221,7 +221,7 @@ export default {
       let personId = this.addPersonDialog.person.id;
       this.addPersonDialog.loading = true;
       if (!this.addPersonDialog.editMode) {
-        const idx = this.persons.findIndex(p => p.id === personId);
+        const idx = this.persons.findIndex((p) => p.id === personId);
         if (idx > -1) {
           this.closeAddPersonDialog();
           this.showSnackbar(this.$t("events.persons.person-on-event"));
@@ -251,7 +251,7 @@ export default {
           this.$emit("person-added");
           this.closeAddPersonDialog();
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
           this.addPersonDialog.loading = false;
           if (err.response.status == 422) {
@@ -264,12 +264,12 @@ export default {
 
     deletePerson() {
       let id = this.deletePersonDialog.personId;
-      const idx = this.persons.findIndex(p => p.id === id);
+      const idx = this.persons.findIndex((p) => p.id === id);
       this.deletePersonDialog.loading = true;
       const eventId = this.$route.params.event;
       this.$http
         .delete(`/api/v1/events/${eventId}/individuals/${id}`)
-        .then(resp => {
+        .then((resp) => {
           console.log("REMOVED", resp);
           this.deletePersonDialog.show = false;
           this.deletePersonDialog.loading = false;
@@ -277,7 +277,7 @@ export default {
           this.persons.splice(idx, 1); //TODO maybe fix me?
           this.showSnackbar(this.$t("events.persons.person-removed"));
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
           this.deletePersonDialog.loading = false;
           this.showSnackbar(this.$t("events.persons.error-removing-person"));
@@ -295,7 +295,7 @@ export default {
 
     getFullName(person) {
       return `${person.firstName} ${person.lastName}`;
-    }
-  }
+    },
+  },
 };
 </script>

@@ -196,7 +196,7 @@ export default {
     "event-asset-details": EventAssetDetails,
     "event-person-details": EventPersonDetails,
     "event-group-details": EventGroupDetails,
-    "event-attendance-form": EventAttendanceForm
+    "event-attendance-form": EventAttendanceForm,
   },
 
   data() {
@@ -205,25 +205,25 @@ export default {
       eventDialog: {
         show: false,
         saveLoading: false,
-        event: {}
+        event: {},
       },
 
       attendanceDialog: {
         show: false,
         saving: false,
-        number: null
+        number: null,
       },
 
       snackbar: {
         show: false,
-        text: ""
+        text: "",
       },
       eventLoaded: false,
       teamsLoaded: false,
       groupsLoaded: false,
       assetsLoaded: false,
       personsLoaded: false,
-      arcoPlaceholder
+      arcoPlaceholder,
     };
   },
 
@@ -261,7 +261,7 @@ export default {
       return `/api/v1/images/${this.event.images[0].image.id}?${Math.random()}`;
     },
 
-    ...mapGetters(["currentLanguageCode"])
+    ...mapGetters(["currentLanguageCode"]),
   },
 
   methods: {
@@ -271,18 +271,18 @@ export default {
         .get(
           `/api/v1/events/${id}?include_teams=1&include_assets=1&include_persons=1&include_images=1&include_groups=1`
         )
-        .then(resp => {
+        .then((resp) => {
           this.event = resp.data;
           this.event.teams = !this.event.teams
             ? []
-            : this.event.teams.map(t => t.team);
+            : this.event.teams.map((t) => t.team);
           this.event.assets = !this.event.assets
             ? []
-            : this.event.assets.map(a => a.asset);
+            : this.event.assets.map((a) => a.asset);
           this.event.groups = !this.event.groups
             ? []
             : this.event.groups
-                .filter(function(g) {
+                .filter(function (g) {
                   // make sure the group is active
                   // and the group has an active relationship to the event
                   if (g.group) {
@@ -290,11 +290,11 @@ export default {
                   }
                   return false;
                 })
-                .map(g => g.group);
+                .map((g) => g.group);
           // conserve description on EventPersons
           this.event.persons = !this.event.persons
             ? []
-            : this.event.persons.map(p =>
+            : this.event.persons.map((p) =>
                 Object.assign(p, { id: p.person_id })
               );
         });
@@ -303,11 +303,11 @@ export default {
     reloadTeams() {
       this.teamsLoaded = false;
       const id = this.$route.params.event;
-      this.$http.get(`/api/v1/events/${id}?include_teams=1`).then(resp => {
+      this.$http.get(`/api/v1/events/${id}?include_teams=1`).then((resp) => {
         let eventData = resp.data;
         this.event.teams = !eventData.teams
           ? []
-          : eventData.teams.map(t => t.team);
+          : eventData.teams.map((t) => t.team);
         this.teamsLoaded = true;
       });
     },
@@ -315,11 +315,11 @@ export default {
     reloadAssets() {
       this.assetsLoaded = false;
       const id = this.$route.params.event;
-      this.$http.get(`/api/v1/events/${id}?include_assets=1`).then(resp => {
+      this.$http.get(`/api/v1/events/${id}?include_assets=1`).then((resp) => {
         let eventData = resp.data;
         this.event.assets = !eventData.assets
           ? []
-          : eventData.assets.map(a => a.asset);
+          : eventData.assets.map((a) => a.asset);
         this.assetsLoaded = true;
       });
     },
@@ -327,11 +327,11 @@ export default {
     reloadPersons() {
       this.personsLoaded = false;
       const id = this.$route.params.event;
-      this.$http.get(`/api/v1/events/${id}?include_persons=1`).then(resp => {
+      this.$http.get(`/api/v1/events/${id}?include_persons=1`).then((resp) => {
         let eventData = resp.data;
         this.event.persons = !eventData.persons
           ? []
-          : eventData.persons.map(p => Object.assign(p, { id: p.person_id }));
+          : eventData.persons.map((p) => Object.assign(p, { id: p.person_id }));
         this.personsLoaded = true;
       });
     },
@@ -339,12 +339,12 @@ export default {
     reloadGroups() {
       this.groupsLoaded = false;
       const id = this.$route.params.event;
-      this.$http.get(`/api/v1/events/${id}?include_groups=1`).then(resp => {
+      this.$http.get(`/api/v1/events/${id}?include_groups=1`).then((resp) => {
         let eventData = resp.data;
         this.event.groups = !eventData.groups
           ? []
           : eventData.groups
-              .filter(function(g) {
+              .filter(function (g) {
                 // make sure the group is active
                 // and the group has an active relationship to the event
                 if (g.group) {
@@ -352,7 +352,7 @@ export default {
                 }
                 return false;
               })
-              .map(g => g.group);
+              .map((g) => g.group);
         this.groupsLoaded = true;
       });
     },
@@ -393,11 +393,11 @@ export default {
             .put(
               `/api/v1/events/${eventId}/images/${newImageId}?old=${oldImageId}`
             )
-            .then(resp => {
+            .then((resp) => {
               console.log("PUTTED", resp.data);
               this.$http
                 .put(`/api/v1/events/${eventId}`, newEvent)
-                .then(resp => {
+                .then((resp) => {
                   console.log("EDITED", resp);
                   this.eventDialog.show = false;
                   this.eventDialog.saveLoading = false;
@@ -405,13 +405,13 @@ export default {
                   this.getEvent().then(() => (this.eventLoaded = true));
                   this.showSnackbar(this.$t("events.event-edited"));
                 })
-                .catch(err => {
+                .catch((err) => {
                   console.error("PUT FALURE", err.response);
                   this.eventDialog.saveLoading = false;
                   this.showSnackbar(this.$t("events.error-editing-event"));
                 });
             })
-            .catch(err => {
+            .catch((err) => {
               console.error("ERROR PUTTING IMAGEEVENT", err.response);
               this.eventDialog.saveLoading = false;
               this.showSnackbar(this.$t("events.error-editing-event"));
@@ -420,11 +420,11 @@ export default {
           // an image should be added (POST)
           this.$http
             .post(`/api/v1/events/${eventId}/images/${newImageId}`)
-            .then(resp => {
+            .then((resp) => {
               console.log("POSTED", resp.data);
               this.$http
                 .put(`/api/v1/events/${eventId}`, newEvent)
-                .then(resp => {
+                .then((resp) => {
                   console.log("EDITED", resp);
                   this.eventDialog.show = false;
                   this.eventDialog.saveLoading = false;
@@ -432,13 +432,13 @@ export default {
                   this.getEvent().then(() => (this.eventLoaded = true));
                   this.showSnackbar(this.$t("events.event-edited"));
                 })
-                .catch(err => {
+                .catch((err) => {
                   console.error("PUT FALURE", err.response);
                   this.eventDialog.saveLoading = false;
                   this.showSnackbar(this.$t("events.error-editing-event"));
                 });
             })
-            .catch(err => {
+            .catch((err) => {
               console.error("ERROR POSTING IMAGEEVENT", err.response);
               this.eventDialog.saveLoading = false;
               this.showSnackbar(this.$t("events.error-editing-event"));
@@ -450,11 +450,11 @@ export default {
           // an image should be removed (DELETE)
           this.$http
             .delete(`/api/v1/events/${eventId}/images/${oldImageId}`)
-            .then(resp => {
+            .then((resp) => {
               console.log("DELETED", resp.data);
               this.$http
                 .put(`/api/v1/events/${eventId}`, newEvent)
-                .then(resp => {
+                .then((resp) => {
                   console.log("EDITED", resp);
                   this.eventDialog.show = false;
                   this.eventDialog.saveLoading = false;
@@ -462,13 +462,13 @@ export default {
                   this.getEvent().then(() => (this.eventLoaded = true));
                   this.showSnackbar(this.$t("events.event-edited"));
                 })
-                .catch(err => {
+                .catch((err) => {
                   console.error("PUT FALURE", err.response);
                   this.eventDialog.saveLoading = false;
                   this.showSnackbar(this.$t("events.error-editing-event"));
                 });
             })
-            .catch(err => {
+            .catch((err) => {
               console.error("ERROR DELETING IMAGEEVENT", err.response);
               this.eventDialog.saveLoading = false;
               this.showSnackbar(this.$t("events.error-editing-event"));
@@ -477,7 +477,7 @@ export default {
           // nothing should happen
           this.$http
             .put(`/api/v1/events/${eventId}`, newEvent)
-            .then(resp => {
+            .then((resp) => {
               console.log("EDITED", resp);
               this.eventDialog.show = false;
               this.eventDialog.saveLoading = false;
@@ -485,7 +485,7 @@ export default {
               this.getEvent().then(() => (this.eventLoaded = true));
               this.showSnackbar(this.$t("events.event-edited"));
             })
-            .catch(err => {
+            .catch((err) => {
               console.error("PUT FALURE", err.response);
               this.eventDialog.saveLoading = false;
               this.showSnackbar(this.$t("events.error-editing-event"));
@@ -500,14 +500,14 @@ export default {
       }
       return await this.$http
         .get(`/api/v1/events/${id}?include_images=1`)
-        .then(resp => {
+        .then((resp) => {
           if (resp.data.images && resp.data.images.length > 0) {
             return resp.data.images[0].image_id;
           } else {
             return null;
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.error("ERROR FETCHING EVENT", err);
           return null;
         });
@@ -529,12 +529,12 @@ export default {
       const id = this.$route.params.event;
       this.$http
         .patch(`/api/v1/events/${id}`, { attendance: number })
-        .then(resp => {
+        .then((resp) => {
           console.log(resp);
           this.event.attendance = resp.data.attendance;
           this.closeAttendanceDialog();
         })
-        .catch(err => {
+        .catch((err) => {
           console.error("ATTENDANCE PATCH FAILURE", err.response);
           this.attendanceDialog.saving = false;
         });
@@ -547,15 +547,15 @@ export default {
         month: "numeric",
         day: "numeric",
         hour: "2-digit",
-        minute: "2-digit"
+        minute: "2-digit",
       });
     },
 
     showSnackbar(message) {
       this.snackbar.text = message;
       this.snackbar.show = true;
-    }
-  }
+    },
+  },
 };
 </script>
 

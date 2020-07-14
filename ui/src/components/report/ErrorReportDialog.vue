@@ -27,7 +27,7 @@ export default {
   data() {
     return {
       show: false,
-      errorReportProps: []
+      errorReportProps: [],
     };
   },
   mounted() {
@@ -44,13 +44,13 @@ export default {
     handleSuccess() {
       this.show = false;
       this.bus.$emit("message", {
-        content: "error-report.display.feedback-successful"
+        content: "error-report.display.feedback-successful",
       });
     },
     handleFail(err) {
       console.log("error in ErrorReportDialog");
       console.log(err);
-    }
-  }
+    },
+  },
 };
 </script>

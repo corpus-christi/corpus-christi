@@ -46,7 +46,7 @@
           ref="map"
           v-bind:center="center"
           v-bind:zoom="10"
-          style="width:400px;  height: 250px;"
+          style="width: 400px; height: 250px;"
           data-cy="gmap"
           @click="markLocation"
           :disabled="formDisabled"
@@ -93,7 +93,7 @@
 <script>
 export default {
   name: "AddressForm",
-  data: function() {
+  data: function () {
     return {
       address: {
         address_name: "",
@@ -103,7 +103,7 @@ export default {
         latitude: "",
         longitude: "",
         country_code: "",
-        area_name: ""
+        area_name: "",
       },
       center: { lat: -2.90548355117024, lng: -79.02949294174876 },
       marker: { lat: 0, lng: 0 },
@@ -111,7 +111,7 @@ export default {
       addressErr: false,
       showPlacePicker: false,
       formDisabled: false,
-      title: this.$t("places.create-address")
+      title: this.$t("places.create-address"),
     };
   },
   methods: {
@@ -138,14 +138,14 @@ export default {
     sendData() {
       this.$http
         .post("/api/v1/places/locations", this.address)
-        .then(resp => {
+        .then((resp) => {
           this.$emit("saved", resp.data);
         })
         .then(() => {
           this.formDisabled = false;
           this.cancelAddressForm();
         })
-        .catch(err => {
+        .catch((err) => {
           console.log("FAILED", err);
           this.formDisabled = false;
         });
@@ -163,19 +163,19 @@ export default {
           if (type === "address") {
             addressObj = {
               address_line_1: this.address.address,
-              city: this.address.city
+              city: this.address.city,
             };
           } else if (type === "lat-lng") {
             addressObj = {
               lat: this.address.latitude,
-              lng: this.address.longitude
+              lng: this.address.longitude,
             };
           } else {
             return;
           }
 
           try {
-            this.$geocoder.send(addressObj, response => {
+            this.$geocoder.send(addressObj, (response) => {
               if (response.status === "ZERO_RESULTS") {
                 this.addressErr = true;
                 return;
@@ -203,7 +203,7 @@ export default {
                 }
                 this.marker = {
                   lat: this.address.latitude,
-                  lng: this.address.longitude
+                  lng: this.address.longitude,
                 };
                 this.centerMapOnMarker();
                 resolve();
@@ -230,13 +230,13 @@ export default {
 
     centerMapOnMarker() {
       this.map.panTo(this.marker);
-    }
+    },
   },
 
-  mounted: function() {
-    this.$refs.map.$mapPromise.then(m => {
+  mounted: function () {
+    this.$refs.map.$mapPromise.then((m) => {
       this.map = m;
     });
-  }
+  },
 };
 </script>

@@ -8,7 +8,7 @@
           </v-flex>
           <v-layout xs3 sm3 align-end justify-end>
             <v-btn
-              flat
+              text
               color="primary"
               data-cy="add-asset-dialog"
               v-on:click="addAssetDialog.show = true"
@@ -29,7 +29,7 @@
                       <v-btn
                         icon
                         outline
-                        flat
+                        text
                         color="primary"
                         v-on:click="showDeleteAssetDialog(asset.id)"
                         :data-cy="'deleteAsset-' + asset.id"
@@ -74,7 +74,7 @@
           <v-btn
             v-on:click="closeAddAssetDialog()"
             color="secondary"
-            flat
+            text
             :disabled="addAssetDialog.loading"
             data-cy="cancel-add"
             >{{ $t("actions.cancel") }}</v-btn
@@ -102,7 +102,7 @@
           <v-btn
             v-on:click="deleteAssetDialog.show = false"
             color="secondary"
-            flat
+            text
             :disabled="deleteAssetDialog.loading"
             data-cy="cancel-delete"
             >{{ $t("actions.cancel") }}</v-btn
@@ -127,17 +127,17 @@ import EntitySearch from "../EntitySearch";
 export default {
   name: "EventAssetDetails",
   components: {
-    "entity-search": EntitySearch
+    "entity-search": EntitySearch,
   },
 
   props: {
     assets: {
-      required: true
+      required: true,
     },
     loaded: {
       type: Boolean,
-      required: true
-    }
+      required: true,
+    },
   },
 
   data() {
@@ -145,14 +145,14 @@ export default {
       addAssetDialog: {
         show: false,
         loading: false,
-        asset: null
+        asset: null,
       },
 
       deleteAssetDialog: {
         show: false,
         loading: false,
-        assetId: -1
-      }
+        assetId: -1,
+      },
     };
   },
 
@@ -166,7 +166,7 @@ export default {
     addAsset() {
       const eventId = this.$route.params.event;
       let assetId = this.addAssetDialog.asset.id;
-      const idx = this.assets.findIndex(a => a.id === assetId);
+      const idx = this.assets.findIndex((a) => a.id === assetId);
       this.addAssetDialog.loading = true;
       if (idx > -1) {
         this.closeAddAssetDialog();
@@ -181,7 +181,7 @@ export default {
           this.closeAddAssetDialog();
           this.$emit("asset-added");
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
           this.addAssetDialog.loading = false;
           if (err.response.status == 422) {
@@ -194,12 +194,12 @@ export default {
 
     deleteAsset() {
       let id = this.deleteAssetDialog.assetId;
-      const idx = this.assets.findIndex(a => a.id === id);
+      const idx = this.assets.findIndex((a) => a.id === id);
       this.deleteAssetDialog.loading = true;
       const eventId = this.$route.params.event;
       this.$http
         .delete(`/api/v1/events/${eventId}/assets/${id}`)
-        .then(resp => {
+        .then((resp) => {
           console.log("REMOVED", resp);
           this.deleteAssetDialog.show = false;
           this.deleteAssetDialog.loading = false;
@@ -207,7 +207,7 @@ export default {
           this.assets.splice(idx, 1); //TODO maybe fix me?
           this.showSnackbar(this.$t("assets.asset-removed"));
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
           this.deleteAssetDialog.loading = false;
           this.showSnackbar(this.$t("assets.error-removing-asset"));
@@ -221,7 +221,7 @@ export default {
 
     showSnackbar(message) {
       this.$emit("snackbar", message);
-    }
-  }
+    },
+  },
 };
 </script>

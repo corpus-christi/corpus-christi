@@ -167,7 +167,7 @@ export default {
   name: "ClassMeetingForm",
 
   components: {
-    EntitySearch
+    EntitySearch,
   },
 
   data() {
@@ -182,7 +182,7 @@ export default {
       location: {},
 
       showDatePicker: false,
-      showTimePicker: false
+      showTimePicker: false,
     };
   },
 
@@ -200,7 +200,7 @@ export default {
     today() {
       return this.getDateFromTimestamp(Date.now());
     },
-    ...mapGetters(["currentLanguageCode"])
+    ...mapGetters(["currentLanguageCode"]),
   },
 
   watch: {
@@ -217,22 +217,22 @@ export default {
           this.location = this.classMeeting.location;
         }
       }
-    }
+    },
   },
 
   props: {
     editMode: {
       type: Boolean,
-      required: true
+      required: true,
     },
     initialData: {
       type: Object,
-      required: true
+      required: true,
     },
     offeringId: {
       type: [String, Number],
-      required: true
-    }
+      required: true,
+    },
   },
 
   methods: {
@@ -271,18 +271,16 @@ export default {
 
         this.$http
           .patch(
-            `/api/v1/courses/course_offerings/${this.offeringId}/${
-              this.classMeeting.id
-            }`,
+            `/api/v1/courses/course_offerings/${this.offeringId}/${this.classMeeting.id}`,
             meeting
           )
-          .then(resp => {
+          .then((resp) => {
             let newMeeting = resp.data;
             newMeeting.location = this.location;
             newMeeting.teacher = this.teacher;
             this.$emit("save", [newMeeting]); // Parent expects array of updated records
           })
-          .catch(err => {
+          .catch((err) => {
             this.$emit("save", err);
           })
           .finally(() => {
@@ -296,7 +294,7 @@ export default {
 
         let meetings = [];
 
-        this.dates.forEach(date => {
+        this.dates.forEach((date) => {
           let meeting = clone(meetingTemplate);
           meeting.when = this.getTimestamp(date, this.time);
           meetings.push(meeting);
@@ -305,15 +303,13 @@ export default {
         let savingCount = 0;
         this.savingProgress = 0;
 
-        let promises = meetings.map(meeting => {
+        let promises = meetings.map((meeting) => {
           return this.$http
             .post(
-              `/api/v1/courses/course_offerings/${
-                this.offeringId
-              }/class_meetings`,
+              `/api/v1/courses/course_offerings/${this.offeringId}/class_meetings`,
               meeting
             )
-            .then(resp => {
+            .then((resp) => {
               savingCount += 1;
               this.savingProgress = (100 * savingCount) / promises.length;
 
@@ -326,10 +322,10 @@ export default {
         });
 
         Promise.all(promises)
-          .then(newMeetings => {
+          .then((newMeetings) => {
             this.$emit("save", newMeetings);
           })
-          .catch(err => {
+          .catch((err) => {
             this.$emit("save", err);
           })
           .finally(() => {
@@ -354,13 +350,13 @@ export default {
         return "";
       }
       let yr = date.toLocaleDateString(this.currentLanguageCode, {
-        year: "numeric"
+        year: "numeric",
       });
       let mo = date.toLocaleDateString(this.currentLanguageCode, {
-        month: "2-digit"
+        month: "2-digit",
       });
       let da = date.toLocaleDateString(this.currentLanguageCode, {
-        day: "2-digit"
+        day: "2-digit",
       });
       return `${yr}-${mo}-${da}`;
     },
@@ -370,8 +366,8 @@ export default {
       let hr = String(date.getHours()).padStart(2, "0");
       let min = String(date.getMinutes()).padStart(2, "0");
       return `${hr}:${min}`;
-    }
-  }
+    },
+  },
 };
 </script>
 

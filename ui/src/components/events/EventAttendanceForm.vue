@@ -15,7 +15,7 @@
     <v-card-actions>
       <v-btn
         color="secondary"
-        flat
+        text
         v-on:click="$emit('cancel')"
         :disabled="saving"
         data-cy="attendance-cancel"
@@ -37,24 +37,24 @@ export default {
   name: "EventAttendanceForm",
   props: {
     attendance: {
-      required: true
+      required: true,
     },
     saving: {
       required: true,
-      type: Boolean
-    }
+      type: Boolean,
+    },
   },
 
   data() {
     return {
-      number: null
+      number: null,
     };
   },
 
   watch: {
     attendance(val) {
       this.number = val;
-    }
+    },
   },
 
   methods: {
@@ -64,7 +64,7 @@ export default {
           this.$emit("save-attendance", this.number);
         }
       });
-    }
-  }
+    },
+  },
 };
 </script>

@@ -15,7 +15,7 @@ describe("Get to Courses Page", () => {
 describe("Edit courses", () => {
   it("Open edit course", () => {
     cy.get(
-      ":nth-child(1) > :nth-child(3) > .layout > :nth-child(1) > span > .v-btn"
+      ":nth-child(1) > :nth-child(3) > .layouts > :nth-child(1) > span > .v-btn"
     ).click();
   });
   it("change course title", () => {

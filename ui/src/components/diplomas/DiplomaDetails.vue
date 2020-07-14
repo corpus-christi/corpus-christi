@@ -60,21 +60,21 @@ export default {
   props: {
     diplomaId: {
       type: [String, Number],
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
       diploma: {},
       loading: true,
-      loadingFailed: false
+      loadingFailed: false,
     };
   },
   mounted() {
     this.loadDiploma();
   },
   watch: {
-    $route: "loadDiploma"
+    $route: "loadDiploma",
   },
   methods: {
     loadDiploma() {
@@ -82,7 +82,7 @@ export default {
       this.loadingFailed = false;
       this.$http
         .get(`/api/v1/courses/diplomas/${this.diplomaId}`)
-        .then(resp => {
+        .then((resp) => {
           this.diploma = resp.data;
         })
         .catch(() => {
@@ -91,8 +91,8 @@ export default {
         .finally(() => {
           this.loading = false;
         });
-    }
-  }
+    },
+  },
 };
 </script>
 

@@ -58,17 +58,17 @@ export default {
       loading: false,
       selectedOffering: null,
       newStudent: {},
-      showExpansion: [false]
+      showExpansion: [false],
     };
   },
 
   props: {
-    activeOfferings: null
+    activeOfferings: null,
   },
 
   computed: {
     ...mapState(["currentAccount"]),
-    ...mapGetters(["isLoggedIn"])
+    ...mapGetters(["isLoggedIn"]),
   },
 
   methods: {
@@ -100,7 +100,7 @@ export default {
           let my_username = this.currentAccount.username;
           this.$http
             .get(`/api/v1/people/accounts/username/${my_username}`)
-            .then(resp => {
+            .then((resp) => {
               let id = resp.data.personId;
               let newStudent = {};
               newStudent.confirmed = false;
@@ -109,26 +109,26 @@ export default {
               newStudent.active = true;
               return newStudent;
             })
-            .then(student => {
+            .then((student) => {
               return this.$http.post(
                 `/api/v1/courses/course_offerings/${student.studentId}`,
                 student
               );
             })
-            .then(resp => {
+            .then((resp) => {
               this.loading = false;
               console.log("ADDED", resp);
               this.$emit("snackbar", this.$t("courses.register-success"));
               this.cancel();
             })
-            .catch(err => {
+            .catch((err) => {
               this.loading = false;
               console.log(err);
             });
         }
       });
-    }
-  }
+    },
+  },
 };
 </script>
 

@@ -130,11 +130,11 @@ export default {
   name: "GroupTreeView",
   components: { EmailForm },
   mounted() {
-    this.$http.get("/api/v1/groups/groups").then(resp => {
-      this.groups = resp.data.filter(group => group.active);
-      this.groups.forEach(group => {
-        group.members = group.members.filter(member => member.active);
-        group.managers = group.managers.filter(manager => manager.active);
+    this.$http.get("/api/v1/groups/groups").then((resp) => {
+      this.groups = resp.data.filter((group) => group.active);
+      this.groups.forEach((group) => {
+        group.members = group.members.filter((member) => member.active);
+        group.managers = group.managers.filter((manager) => manager.active);
       });
     });
   },
@@ -144,9 +144,9 @@ export default {
         { text: this.$t("groups.treeview.show-all"), value: "showAll" },
         {
           text: this.$t("groups.treeview.show-managers"),
-          value: "showManagers"
+          value: "showManagers",
         },
-        { text: this.$t("groups.treeview.show-members"), value: "showMembers" }
+        { text: this.$t("groups.treeview.show-members"), value: "showMembers" },
       ];
     },
     toolbarColor() {
@@ -154,38 +154,38 @@ export default {
     },
     allPeople() {
       // a duplicate-free list of persons in all groups
-      let groupParticipants = this.groups.map(g =>
-        unionBy(g.members, g.managers, m => m.person.id)
+      let groupParticipants = this.groups.map((g) =>
+        unionBy(g.members, g.managers, (m) => m.person.id)
       );
-      let all = unionBy(...groupParticipants, m => m.person.id).map(
-        m => m.person
+      let all = unionBy(...groupParticipants, (m) => m.person.id).map(
+        (m) => m.person
       );
       return all;
     },
     selection() {
       // a duplicate-free list of persons selected in the tree
       let selection = this.groupTypeTreeviewSelection.filter(
-        item => !item.children
+        (item) => !item.children
       ); // get rid of intermediate nodes
-      selection = uniqBy(selection, item => item.obj.id); // remove duplicate
+      selection = uniqBy(selection, (item) => item.obj.id); // remove duplicate
       return selection;
     },
     emailInitialData() {
       let selected = this.selection
-        .filter(item => item.obj.email)
-        .map(item => ({
+        .filter((item) => item.obj.email)
+        .map((item) => ({
           ...item.obj,
-          name: `${item.obj.firstName} ${item.obj.lastName}`
+          name: `${item.obj.firstName} ${item.obj.lastName}`,
         }));
       let all = this.allPeople
-        .filter(p => p.email)
-        .map(p => ({
+        .filter((p) => p.email)
+        .map((p) => ({
           ...p,
-          name: `${p.firstName} ${p.lastName}`
+          name: `${p.firstName} ${p.lastName}`,
         }));
       return {
         recipientList: all,
-        recipients: selected
+        recipients: selected,
       };
     },
     groupTypeTreeviewItems() {
@@ -194,7 +194,7 @@ export default {
       const root = {
         id: "_label_root",
         name: this.$t("groups.treeview.categories.all-group-types"),
-        children: groupTypes
+        children: groupTypes,
       };
       let groupTypesMap = {};
       for (let group of this.groups) {
@@ -202,7 +202,7 @@ export default {
           groupTypesMap[group.groupTypeId] = {
             id: `_group_type_${group.groupTypeId}`,
             name: group.groupType.name,
-            children: []
+            children: [],
           };
         }
         // in each group, categorize their people by manager/member
@@ -210,7 +210,7 @@ export default {
         groupTypesMap[group.groupTypeId].children.push({
           id: `_group_${group.id}`,
           name: group.name,
-          children: managerMember
+          children: managerMember,
         });
         if (
           this.viewStatus === "showAll" ||
@@ -220,13 +220,13 @@ export default {
           managerMember.push({
             id: `_label_group_${group.id}_members`,
             name: this.$t("groups.treeview.categories.members"),
-            children: members
+            children: members,
           });
           for (let member of group.members) {
             members.push({
               id: `group_member_${group.id}_${member.person.id}`,
               name: this.getPersonFullName(member.person),
-              obj: member.person
+              obj: member.person,
             });
           }
         }
@@ -238,13 +238,13 @@ export default {
           managerMember.push({
             id: `_label_group_${group.id}_managers`,
             name: this.$t("groups.treeview.categories.managers"),
-            children: managers
+            children: managers,
           });
           for (let manager of group.managers) {
             managers.push({
               id: `group_manager_${group.id}_${manager.person.id}`,
               name: this.getPersonFullName(manager.person),
-              obj: manager.person
+              obj: manager.person,
             });
           }
         }
@@ -253,7 +253,7 @@ export default {
         groupTypes.push(groupTypesMap[groupType]);
       }
       return [root];
-    }
+    },
   },
   methods: {
     getPersonFullName(person) {
@@ -270,7 +270,7 @@ export default {
     },
     hideEmailDialog() {
       this.emailDialog.show = false;
-    }
+    },
   },
   data() {
     return {
@@ -279,14 +279,14 @@ export default {
       showMembers: true,
       emailDialog: {
         show: false,
-        loading: false
+        loading: false,
       },
       groups: [],
       search: "",
       groupTypeTreeviewSelection: [],
       selectManagers: true,
-      selectMembers: true
+      selectMembers: true,
     };
-  }
+  },
 };
 </script>
