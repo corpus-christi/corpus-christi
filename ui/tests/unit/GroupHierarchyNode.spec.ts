@@ -67,14 +67,14 @@ describe("Test case 1, a valid hierarchy structure", () => {
   });
 
   test("hierarchy node subNodes and superNodes functionality", () => {
-    let p1: HierarchyNode = new Participant({ person: personMap[1] }, groupMap);
+    let p1: HierarchyNode = new Participant({ person: personMap[1], active: true }, groupMap);
     expect(p1.getSubNodes().length).toBe(3);
     expect(p1.getSuperNodes().length).toBe(1);
   });
 
   test("getAllSubNodes depth filtering", () => {
     let subNodes;
-    let p1: HierarchyNode = new Participant({ person: personMap[1] }, groupMap);
+    let p1: HierarchyNode = new Participant({ person: personMap[1], active: true }, groupMap);
     // get those only with depth 1
     subNodes = getAllSubNodes(p1, 1, 1);
     expect(subNodes.length).toBe(3);
@@ -99,7 +99,7 @@ describe("Test case 1, a valid hierarchy structure", () => {
     // get a tree branching down from Group 3
     rootNode = getTree(new Group(groupMap[3], groupMap));
     expect(rootNode.children.length).toBe(2);
-    let p6: HierarchyNode = new Participant({ person: personMap[6] }, groupMap);
+    let p6: HierarchyNode = new Participant({ person: personMap[6], active: true }, groupMap);
     let gnp6: GraphNode | undefined = rootNode.children.find(graphNode =>
       graphNode.hierarchyNode.equal(p6)
     ); // short for: graph node with person 6
@@ -114,7 +114,7 @@ describe("Test case 1, a valid hierarchy structure", () => {
   test("getTree cycle handling", () => {
     let rootNode: GraphNode;
     // get a tree branching down from Person 1
-    rootNode = getTree(new Participant({ person: personMap[1] }, groupMap));
+    rootNode = getTree(new Participant({ person: personMap[1], active: true }, groupMap));
     expect(rootNode.children.length).toBe(3);
     let gng1: GraphNode | undefined = rootNode.children.find(graphNode =>
       graphNode.hierarchyNode.equal(new Group(groupMap[1], groupMap))
@@ -123,7 +123,7 @@ describe("Test case 1, a valid hierarchy structure", () => {
     expect(gng1).not.toBeUndefined();
     let gnp1: GraphNode | undefined = gng1!.children.find(graphNode =>
       graphNode.hierarchyNode.equal(
-        new Participant({ person: personMap[1] }, groupMap)
+        new Participant({ person: personMap[1], active: true }, groupMap)
       )
     );
     // expect Person 1 to be in Group1's children
@@ -183,7 +183,7 @@ describe("Test case 1, a valid hierarchy structure", () => {
   });
 
   test("checkConnection functionality", () => {
-    let p2: Participant = new Participant({ person: personMap[2] }, groupMap);
+    let p2: Participant = new Participant({ person: personMap[2], active: true }, groupMap);
     let g2: Group = new Group(groupMap[2], groupMap);
 
     // making p2 a manager of g2 should be okay
@@ -191,7 +191,7 @@ describe("Test case 1, a valid hierarchy structure", () => {
       checkConnection(p2, g2);
     }).not.toThrow();
 
-    let p1: Participant = new Participant({ person: personMap[1] }, groupMap);
+    let p1: Participant = new Participant({ person: personMap[1], active: true }, groupMap);
     let g4: Group = new Group(groupMap[4], groupMap);
 
     // making p1 a member of g4 should create cycle, because p1 is above g4
@@ -208,11 +208,11 @@ describe("Test case 1, a valid hierarchy structure", () => {
 
   test("isRootNode functionality", () => {
     // p1 is a rootNode, because it does not have any super node except itself
-    let p1: Participant = new Participant({ person: personMap[1] }, groupMap);
+    let p1: Participant = new Participant({ person: personMap[1], active: true }, groupMap);
     expect(isRootNode(p1)).toBe(true);
 
     // p8 is a rootNode, because it does not have any super node above it
-    let p8: Participant = new Participant({ person: personMap[8] }, groupMap);
+    let p8: Participant = new Participant({ person: personMap[8], active: true }, groupMap);
     expect(isRootNode(p8)).toBe(true);
 
     // g2 is not a rootNode, because p1 is above g2,
@@ -243,9 +243,9 @@ function getMap(groupMembers: number[][], groupManagers: number[][]) {
   const groupMap: GroupMap = {};
   const personMap: PersonMap = {};
   groupMembers.concat(groupManagers).forEach(([groupId, personId]) => {
-    // create groups
+    // create active groups
     if (!Object.prototype.hasOwnProperty.call(groupMap, groupId)) {
-      groupMap[groupId] = { id: groupId, members: [], managers: [] };
+      groupMap[groupId] = { id: groupId, members: [], managers: [], active: true };
     }
     // create persons
     if (!Object.prototype.hasOwnProperty.call(personMap, personId)) {
@@ -255,16 +255,18 @@ function getMap(groupMembers: number[][], groupManagers: number[][]) {
 
   groupMembers.forEach(([groupId, personId]) => {
     groupMap[groupId].members.push({
-      person: personMap[personId]
+      person: personMap[personId],
+      active: true
     });
-    personMap[personId].members.push({ groupId });
+    personMap[personId].members.push({ groupId, active: true });
   });
 
   groupManagers.forEach(([groupId, personId]) => {
     groupMap[groupId].managers.push({
-      person: personMap[personId]
+      person: personMap[personId],
+      active: true
     });
-    personMap[personId].managers.push({ groupId });
+    personMap[personId].managers.push({ groupId, active: true });
   });
 
   return { groupMap, personMap };
