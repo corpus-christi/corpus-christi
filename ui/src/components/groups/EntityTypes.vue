@@ -2,7 +2,7 @@
   <div>
     <v-btn
       class="mb-3"
-      outline
+      outlined
       color="primary"
       v-on:click="$router.push({ path: '/groups/all' })"
       ><v-icon>arrow_back</v-icon>{{ $t("actions.back") }}</v-btn
@@ -74,7 +74,7 @@
                   <template v-slot:activator="{ on }">
                     <v-btn
                       icon
-                      outline
+                      outlined
                       small
                       color="primary"
                       v-on:click.stop="showEntityTypeDialog(props.item)"
@@ -95,7 +95,7 @@
                   <template v-slot:activator="{ on }">
                     <v-btn
                       icon
-                      outline
+                      outlined
                       small
                       color="primary"
                       v-on:click.stop="
@@ -112,7 +112,7 @@
                   <template v-slot:activator="{ on }">
                     <v-btn
                       icon
-                      outline
+                      outlined
                       small
                       color="primary"
                       v-on:click.stop="props.expanded = !props.expanded"
@@ -176,12 +176,12 @@
             ></entity-type-form>
           </v-card-text>
           <v-card-actions>
-            <v-btn flat @click="hideChangeEntityTypeDialog">{{
+            <v-btn text @click="hideChangeEntityTypeDialog">{{
               $t("actions.cancel")
             }}</v-btn>
             <v-btn
               color="primary"
-              flat
+              text
               :loading="changeEntityTypeDialog.loading"
               :disabled="isEmpty(changeEntityTypeDialog.entityType)"
               @click="
@@ -215,11 +215,11 @@
             ></v-text-field>
           </v-card-text>
           <v-card-actions>
-            <v-btn flat @click="hideEntityTypeDialog">{{
+            <v-btn text @click="hideEntityTypeDialog">{{
               $t("actions.close")
             }}</v-btn>
             <v-btn
-              flat
+              text
               :disabled="entityTypeDialog.entityType.name === ''"
               :loading="entityTypeDialog.loading"
               color="primary"
@@ -235,11 +235,11 @@
         <v-card>
           <v-card-text>{{ getTranslation("confirm-remove") }}</v-card-text>
           <v-card-actions>
-            <v-btn flat color="secondary" @click="hideDeleteEntityTypeDialog">{{
+            <v-btn text color="secondary" @click="hideDeleteEntityTypeDialog">{{
               $t("actions.cancel")
             }}</v-btn>
             <v-btn
-              flat
+              text
               color="primary"
               :loading="deleteEntityTypeDialog.loading"
               @click="deleteEntityType"

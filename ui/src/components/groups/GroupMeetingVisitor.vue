@@ -47,7 +47,7 @@
             <v-tooltip bottom>
               <v-btn
                 icon
-                outline
+                outlined
                 small
                 color="primary"
                 slot="activator"
@@ -85,7 +85,7 @@
           <v-btn
             v-on:click="cancelNewVisitorDialog"
             color="secondary"
-            flat
+            text
             data-cy=""
             >{{ $t("actions.cancel") }}</v-btn
           >

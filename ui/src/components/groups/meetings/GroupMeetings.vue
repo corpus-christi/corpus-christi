@@ -59,7 +59,7 @@
             <v-tooltip bottom>
               <v-btn
                 icon
-                outline
+                outlined
                 small
                 color="primary"
                 slot="activator"
@@ -76,7 +76,7 @@
             <v-tooltip bottom>
               <v-btn
                 icon
-                outline
+                outlined
                 small
                 color="primary"
                 slot="activator"
@@ -96,7 +96,7 @@
             <v-tooltip bottom v-if="!props.item.active">
               <v-btn
                 icon
-                outline
+                outlined
                 small
                 color="primary"
                 slot="activator"
@@ -196,7 +196,7 @@
             <td>
               <v-btn
                 icon
-                outline
+                outlined
                 small
                 color="primary"
                 slot="activator"

@@ -9,7 +9,7 @@
         <v-flex v-if="select" shrink>
           <v-tooltip bottom
             ><template v-slot:activator="{ on }"
-              ><v-btn v-on:click="resetSelection" v-on="on" fab flat>
+              ><v-btn v-on:click="resetSelection" v-on="on" fab text>
                 <v-icon dark>close</v-icon>
               </v-btn></template
             >
@@ -166,7 +166,7 @@
                   :disabled="select"
                   v-if="isManagerMode"
                   icon
-                  outline
+                  outlined
                   small
                   color="primary"
                   slot="activator"
@@ -181,7 +181,7 @@
                 <v-btn
                   :disabled="select"
                   icon
-                  outline
+                  outlined
                   small
                   color="primary"
                   slot="activator"
@@ -196,7 +196,7 @@
                 <v-btn
                   :disabled="select"
                   icon
-                  outline
+                  outlined
                   small
                   color="primary"
                   slot="activator"
@@ -211,7 +211,7 @@
                 <v-btn
                   :disabled="select"
                   icon
-                  outline
+                  outlined
                   small
                   color="primary"
                   slot="activator"
@@ -228,7 +228,7 @@
                 <v-btn
                   :disabled="select"
                   icon
-                  outline
+                  outlined
                   small
                   color="primary"
                   slot="activator"
@@ -258,7 +258,7 @@
           <v-btn
             v-on:click="hideArchiveDialog"
             color="secondary"
-            flat
+            text
             data-cy="cancel-archive"
             >{{ $t("actions.cancel") }}</v-btn
           >
@@ -311,7 +311,7 @@
           />
         </v-card-text>
         <v-card-actions>
-          <v-btn v-on:click="hideParticipantDialog" color="secondary" flat>{{
+          <v-btn v-on:click="hideParticipantDialog" color="secondary" text>{{
             $t("actions.cancel")
           }}</v-btn>
           <v-spacer />
@@ -359,7 +359,7 @@
           />
         </v-card-text>
         <v-card-actions>
-          <v-btn v-on:click="hideMoveDialog" color="secondary" flat>{{
+          <v-btn v-on:click="hideMoveDialog" color="secondary" text>{{
             $t("actions.cancel")
           }}</v-btn>
           <v-spacer />

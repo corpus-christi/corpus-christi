@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-btn
-      outline
+      outlined
       color="primary"
       v-on:click="$router.push({ path: '/groups/all' })"
       ><v-icon>arrow_back</v-icon>{{ $t("actions.back") }}</v-btn
