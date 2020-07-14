@@ -687,8 +687,6 @@ export default {
     confirmParticipantDialog() {
       let editMode = this.participantDialog.editMode;
       this.participantDialog.loading = true;
-      let method = this.$http.post;
-      let endpoint = this.endpoint;
       let updatePayload = null;
       if (editMode) {
         if (!this.isManagerMode) {
@@ -830,13 +828,14 @@ export default {
         );
       }
       return Promise.all(promises)
-        .then((resp) => {
+        .then(() => {
           this.fetchParticipants();
           eventBus.$emit("message", {
             content: "groups.messages.member-archived",
           });
         })
         .catch((err) => {
+          console.error("PATCH ERROR", err);
           eventBus.$emit("error", {
             content: "groups.messages.error-archiving-member",
           });

@@ -113,7 +113,6 @@ export default {
       const meetingId = this.$route.params.meeting;
       let currentStore = [];
       let newAttendance = [];
-      let missAttendance = [];
       let selectedId = [];
       let missingId = [];
       for (let person of this.recordAttendance) {
@@ -130,7 +129,7 @@ export default {
           .patch(
             `/api/v1/groups/meetings/${meetingId}/attendances/${newAttendance[i]}`
           )
-          .then((resp) => {
+          .then(() => {
             eventBus.$emit("message", {
               content: this.$t("groups.messages.participant-added"),
             });
@@ -158,7 +157,7 @@ export default {
               .delete(
                 `/api/v1/groups/meetings/${meetingId}/attendances/${missingId[i]}`
               )
-              .then((resp) => {
+              .then(() => {
                 eventBus.$emit("message", {
                   content: this.$t("groups.messages.participant-added"),
                 });

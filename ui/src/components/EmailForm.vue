@@ -170,7 +170,6 @@
 import { mapState } from "vuex";
 import { eventBus } from "../plugins/event-bus.js";
 import EntitySearch from "./EntitySearch";
-import PersonDialog from "./PersonDialog";
 
 export default {
   components: { EntitySearch },
@@ -232,6 +231,7 @@ export default {
           eventBus.$emit("message", { content: "groups.messages.email-sent" });
         })
         .catch((err) => {
+          console.error("EMAIL ERROR", err);
           this.sendLoading = false;
           this.$emit("error");
           eventBus.$emit("error", {
@@ -266,7 +266,6 @@ export default {
     },
     getAllManagers() {},
     AllGroupManagers() {
-      let groupId = this.$route.params.group;
       this.$http
         .get(`/api/v1/people/persons`)
         .then((resp) => {
@@ -275,7 +274,6 @@ export default {
         .then(() => this.peronWithEmail());
     },
     peronWithEmail() {
-      let i = 0;
       for (let i = 0; i < this.people.length; i++) {
         if (this.people[i].email === null) {
           this.searchPeople.push(this.people[i]);

@@ -175,7 +175,6 @@ export default {
     },
     getAllGroupMember() {
       let allMember = [];
-      let allVisitorMember = [];
       this.$http
         .get(`/api/v1/groups/groups/${this.currentGroupId}/members`)
         .then((resp) => {
@@ -199,7 +198,6 @@ export default {
       this.allAttendance = [];
       this.visitors = [];
       let allMember = [];
-      let len = this.visitors.length;
       this.$http
         .get(`/api/v1/groups/groups/${this.currentGroupId}/members`)
         .then((resp) => {
@@ -279,7 +277,7 @@ export default {
           let personId = person.id;
           this.$http
             .put(`/api/v1/groups/meetings/${meetingId}/attendances/${personId}`)
-            .then((resp) => {
+            .then(() => {
               eventBus.$emit("message", {
                 content: this.$t("groups.messages.participant-added"),
               });
@@ -304,7 +302,7 @@ export default {
       let meetingId = this.$route.params.meeting;
       this.$http
         .delete(`/api/v1/groups/meetings/${meetingId}/attendances/${person.id}`)
-        .then((resp) => {
+        .then(() => {
           eventBus.$emit("message", {
             content: this.$t("groups.messages.participant-deleted"),
           });

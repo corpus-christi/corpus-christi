@@ -495,7 +495,7 @@ export default {
           this.addAttendanceDialog.loading = false;
           this.addAttendanceDialog.show = false;
           this.addAttendanceDialog.newParticipants = [];
-          this.refreshAttendance(this.ViewingMeetingId);
+          this.refreshAttendance();
         })
         .catch((err) => {
           console.log(err);
@@ -507,7 +507,6 @@ export default {
     },
 
     addMeetingParticipant(id) {
-      const groupId = this.$route.params.group;
       for (const person of this.attendance_people_list) {
         if (id == person.personId) {
           return true;
@@ -622,13 +621,12 @@ export default {
     archiveMeetingAttendance() {
       this.archiveAttendanceDialog.loading = true;
       const attendanceID = this.archiveAttendanceDialog.personId;
-      const groupId = this.$route.params.group;
       this.$http
         .delete(
           `/api/v1/groups/meetings/${this.ViewingMeetingId}/attendances/${attendanceID}`
         )
         .then((resp) => {
-          this.refreshAttendance(this.ViewingMeetingId);
+          this.refreshAttendance();
           console.log("ARCHIVE", resp);
           this.archiveAttendanceDialog.loading = false;
           this.archiveAttendanceDialog.show = false;
@@ -702,7 +700,7 @@ export default {
       ).attendances;
     },
 
-    refreshAttendance(id) {
+    refreshAttendance() {
       this.attendanceDialog.attendances = [];
       this.tableLoading = true;
       const groupId = this.$route.params.group;
@@ -723,7 +721,7 @@ export default {
           this.meetings = resp.data;
           this.tableLoading = false;
         })
-        .then((value) => {
+        .then(() => {
           this.updateData();
         });
     },

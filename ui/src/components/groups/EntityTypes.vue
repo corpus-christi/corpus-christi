@@ -437,6 +437,7 @@ export default {
           });
         })
         .catch((err) => {
+          console.error("DELETE ERROR", err);
           this.deleteEntityTypeDialog.loading = false;
           this.hideDeleteEntityTypeDialog();
           eventBus.$emit("error", {
@@ -466,6 +467,7 @@ export default {
           });
         })
         .catch((err) => {
+          console.error("POST ERROR", err);
           eventBus.$emit("error", {
             content: this.getTranslation("fail-add"),
           });
@@ -491,6 +493,7 @@ export default {
           });
         })
         .catch((err) => {
+          console.error("PATCH ERROR", err);
           eventBus.$emit("error", {
             content: this.getTranslation("fail-update"),
           });

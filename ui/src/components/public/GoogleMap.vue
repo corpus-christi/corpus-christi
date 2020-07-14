@@ -3,7 +3,7 @@
     ref="gmap"
     v-bind:center="center"
     v-bind:zoom="zoom"
-    style="width:100%;  height: 400px;"
+    style="width: 100%; height: 400px;"
     data-cy="gmap"
   >
     <gmap-marker
@@ -32,7 +32,7 @@ export default {
   data() {
     return {
       center: { lat: -2.90548355117024, lng: -79.02949294174876 },
-      zoom: 13
+      zoom: 13,
     };
   },
   methods: {
@@ -40,20 +40,20 @@ export default {
       for (let marker of this.$props.markers) {
         marker.opened = true;
       }
-      this.$refs.gmap.$mapPromise.then(map => {
+      this.$refs.gmap.$mapPromise.then((map) => {
         map.panTo(m.position);
       });
       m.opened = true;
     },
     close(m) {
       m.opened = false;
-    }
+    },
   },
   props: {
     markers: {
       type: Array,
-      required: true
-    }
-  }
+      required: true,
+    },
+  },
 };
 </script>
