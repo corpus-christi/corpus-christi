@@ -84,6 +84,7 @@
 
     <v-data-table
       :headers="headers"
+      :items-per-page-options="itemsPerPageOptions"
       :items="visibleGroups"
       :search="search"
       :loading="tableLoading"

@@ -61,39 +61,39 @@
                 </v-btn>
               </template>
               <v-list>
-                <v-list-tile @click.stop="selectionMode = 'archive'">
+                <v-list-item @click.stop="selectionMode = 'archive'">
                   <v-icon color="primary">archive</v-icon>
-                  <v-list-tile-content>
+                  <v-list-item-content>
                     {{ $t("groups.batch-actions.archive") }}
-                  </v-list-tile-content>
-                </v-list-tile>
-                <v-list-tile @click.stop="selectionMode = 'unarchive'">
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item @click.stop="selectionMode = 'unarchive'">
                   <v-icon color="primary">redo</v-icon>
-                  <v-list-tile-content>
+                  <v-list-item-content>
                     {{ $t("groups.batch-actions.unarchive") }}
-                  </v-list-tile-content>
-                </v-list-tile>
-                <v-list-tile @click.stop="selectionMode = 'email'">
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item @click.stop="selectionMode = 'email'">
                   <v-icon color="primary">email</v-icon>
-                  <v-list-tile-content>
+                  <v-list-item-content>
                     {{ $t("groups.batch-actions.email") }}
-                  </v-list-tile-content>
-                </v-list-tile>
-                <v-list-tile @click.stop="showMoveDialog()">
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item @click.stop="showMoveDialog()">
                   <v-icon color="primary">low_priority</v-icon>
-                  <v-list-tile-content>
+                  <v-list-item-content>
                     {{ $t("groups.batch-actions.move") }}
-                  </v-list-tile-content>
-                </v-list-tile>
-                <v-list-tile
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item
                   v-if="isManagerMode"
                   @click.stop="selectionMode = 'edit'"
                 >
                   <v-icon color="primary">edit</v-icon>
-                  <v-list-tile-content>
+                  <v-list-item-content>
                     {{ $t("groups.batch-actions.edit") }}
-                  </v-list-tile-content>
-                </v-list-tile>
+                  </v-list-item-content>
+                </v-list-item>
               </v-list>
             </v-menu>
           </v-flex>
@@ -118,7 +118,7 @@
     </v-toolbar>
     <v-data-table
       v-model="selected"
-      :rows-per-page-items="rowsPerPageItem"
+      :items-per-page-options="itemsPerPageOptions"
       :headers="headers"
       :items="visibleParticipants"
       item-key="person.id"
@@ -137,7 +137,7 @@
         ></v-checkbox>
         <span v-else> {{ header.text }} </span>
       </template>
-      <template v-slot:items="props">
+      <template v-slot:item="props">
         <tr @click="toggleSelect(props)">
           <td v-if="select">
             <v-tooltip :disabled="!props.item.disabled" right>
@@ -162,82 +162,92 @@
           <td class="text-no-wrap">
             <template v-if="props.item.active">
               <v-tooltip bottom>
-                <v-btn
-                  :disabled="select"
-                  v-if="isManagerMode"
-                  icon
-                  outlined
-                  small
-                  color="primary"
-                  slot="activator"
-                  v-on:click="showParticipantDialog([props.item])"
-                  data-cy="edit"
+                <template v-slot:activator="{ on }"
+                  ><v-btn
+                    v-on="on"
+                    :disabled="select"
+                    v-if="isManagerMode"
+                    icon
+                    outlined
+                    small
+                    color="primary"
+                    v-on:click="showParticipantDialog([props.item])"
+                    data-cy="edit"
+                  >
+                    <v-icon small>edit</v-icon>
+                  </v-btn></template
                 >
-                  <v-icon small>edit</v-icon>
-                </v-btn>
                 <span>{{ $t("actions.edit") }}</span>
               </v-tooltip>
               <v-tooltip bottom>
-                <v-btn
-                  :disabled="select"
-                  icon
-                  outlined
-                  small
-                  color="primary"
-                  slot="activator"
-                  v-on:click="showArchiveDialog([props.item])"
-                  data-cy="archive"
+                <template v-slot:activator="{ on }"
+                  ><v-btn
+                    v-on="on"
+                    :disabled="select"
+                    icon
+                    outlined
+                    small
+                    color="primary"
+                    v-on:click="showArchiveDialog([props.item])"
+                    data-cy="archive"
+                  >
+                    <v-icon small>archive</v-icon>
+                  </v-btn></template
                 >
-                  <v-icon small>archive</v-icon>
-                </v-btn>
                 <span>{{ $t("actions.tooltips.archive") }}</span>
               </v-tooltip>
               <v-tooltip bottom>
-                <v-btn
-                  :disabled="select"
-                  icon
-                  outlined
-                  small
-                  color="primary"
-                  slot="activator"
-                  v-on:click="showMoveDialog(props.item)"
-                  data-cy="move"
+                <template v-slot:activator="{ on }"
+                  ><v-btn
+                    v-on="on"
+                    :disabled="select"
+                    icon
+                    outlined
+                    small
+                    color="primary"
+                    v-on:click="showMoveDialog(props.item)"
+                    data-cy="move"
+                  >
+                    <v-icon small>low_priority</v-icon>
+                  </v-btn></template
                 >
-                  <v-icon small>low_priority</v-icon>
-                </v-btn>
                 <span>{{ $t("groups.tooltips.move") }}</span>
               </v-tooltip>
               <v-tooltip v-if="props.item.person.email" bottom>
-                <v-btn
-                  :disabled="select"
-                  icon
-                  outlined
-                  small
-                  color="primary"
-                  slot="activator"
-                  v-on:click="showEmailDialog([props.item])"
-                  data-cy="email"
+                <template v-slot:activator="{ on }"
+                  ><v-btn
+                    v-on="on"
+                    :disabled="select"
+                    icon
+                    outlined
+                    small
+                    color="primary"
+                    v-on:click="showEmailDialog([props.item])"
+                    data-cy="email"
+                  >
+                    <v-icon small>email</v-icon>
+                  </v-btn></template
                 >
-                  <v-icon small>email</v-icon>
-                </v-btn>
                 <span>{{ $t("actions.tooltips.email") }}</span>
               </v-tooltip>
             </template>
             <template v-else>
               <v-tooltip bottom>
-                <v-btn
-                  :disabled="select"
-                  icon
-                  outlined
-                  small
-                  color="primary"
-                  slot="activator"
-                  v-on:click="unarchiveParticipant(props.item)"
-                  :loading="props.item.id < 0"
-                  data-cy="unarchive"
+                <template v-slot:activator="{ on }"
+                  ><v-btn
+                    v-on="on"
+                    :disabled="select"
+                    icon
+                    outlined
+                    small
+                    color="primary"
+                    v-on:click="unarchiveParticipant(props.item)"
+                    :loading="props.item.id < 0"
+                    data-cy="unarchive"
+                  >
+                    <v-icon small>undo</v-icon>
+                  </v-btn></template
                 >
-                  <v-icon small>undo</v-icon>
-                </v-btn>
                 <span>{{ $t("actions.tooltips.activate") }}</span>
               </v-tooltip>
             </template>
@@ -395,7 +405,7 @@ export default {
 
   data() {
     return {
-      rowsPerPageItem: [
+      itemsPerPageOptions: [
         10,
         15,
         25,
