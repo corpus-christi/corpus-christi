@@ -340,8 +340,15 @@ export default {
       ];
     },
 
+    processedGroups() {
+      return this.groups.map((g) => ({
+        ...g,
+        activeMembers: g.members.filter((m) => m.active),
+      }));
+    },
+
     visibleGroups() {
-      let list = this.groups;
+      let list = this.processedGroups;
 
       if (this.viewStatus === "viewActive") {
         return list.filter((ev) => ev.active);
@@ -371,9 +378,6 @@ export default {
       this.tableLoading = true;
       this.$http.get("/api/v1/groups/groups").then((resp) => {
         this.groups = resp.data;
-        this.groups.forEach((group) => {
-          group.activeMembers = group.members.filter((member) => member.active);
-        });
         this.tableLoading = false;
       });
     },
