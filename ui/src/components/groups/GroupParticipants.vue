@@ -949,9 +949,9 @@ export default {
     saveParticipants(persons, method, payload = {}) {
       let promises = [];
       let http = this.$http[method];
-      let endpoint =
-        method === "post" ? this.endpoint : `${this.endpoint}/${person.id}`;
       for (let person of persons) {
+        let endpoint =
+          method === "post" ? this.endpoint : `${this.endpoint}/${person.id}`;
         let body = { ...payload };
         if (method === "post") {
           // if adding participants

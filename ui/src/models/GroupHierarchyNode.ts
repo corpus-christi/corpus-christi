@@ -73,37 +73,29 @@ export class Participant extends HierarchyNode {
   }
   getLeadingGroups(): Group[] {
     return this.participant.person.managers
-      .filter(manager => manager.active) // only get the groups where the user is an active manager
+      .filter((manager) => manager.active) // only get the groups where the user is an active manager
       .map((m: PersonParticipantObject) => {
         if (!Object.prototype.hasOwnProperty.call(this.groupMap, m.groupId)) {
           throw new Error(
-            `Cannot get leading group with id ${
-              m.groupId
-            } on participant with id ${
-              this.id
-            }: group does not exist in group map`
+            `Cannot get leading group with id ${m.groupId} on participant with id ${this.id}: group does not exist in group map`
           );
         }
         return new Group(this.groupMap[m.groupId], this.groupMap);
       })
-      .filter(group => group.getObject().active); // only get the active groups
+      .filter((group) => group.getObject().active); // only get the active groups
   }
   getParticipatingGroups(): Group[] {
     return this.participant.person.members
-      .filter(member => member.active) // only get the groups where the user is an active member
+      .filter((member) => member.active) // only get the groups where the user is an active member
       .map((m: PersonParticipantObject) => {
         if (!Object.prototype.hasOwnProperty.call(this.groupMap, m.groupId)) {
           throw new Error(
-            `Cannot get participating group with id ${
-              m.groupId
-            } on participant with id ${
-              this.id
-            }: group does not exist in group map`
+            `Cannot get participating group with id ${m.groupId} on participant with id ${this.id}: group does not exist in group map`
           );
         }
         return new Group(this.groupMap[m.groupId], this.groupMap);
       })
-      .filter(group => group.getObject().active); // only get the active groups
+      .filter((group) => group.getObject().active); // only get the active groups
   }
   getSubNodes(): HierarchyNode[] {
     return this.getLeadingGroups();
@@ -139,7 +131,7 @@ export class Group extends HierarchyNode {
   }
   getMembers(): Participant[] {
     return this.group.members
-      .filter(member => member.active) // only get the active members
+      .filter((member) => member.active) // only get the active members
       .map(
         (participant: GroupParticipantObject) =>
           new Participant(participant, this.groupMap)
@@ -147,7 +139,7 @@ export class Group extends HierarchyNode {
   }
   getManagers(): Participant[] {
     return this.group.managers
-      .filter(manager => manager.active) // only get the active managers
+      .filter((manager) => manager.active) // only get the active managers
       .map(
         (participant: GroupParticipantObject) =>
           new Participant(participant, this.groupMap)
@@ -191,7 +183,7 @@ export function mapTree<
   }
 ): TOut {
   let mappedNode: TOut = mapFunc(node);
-  node.children.forEach(child => {
+  node.children.forEach((child) => {
     // 'child as TIn' assumes children are of the same subtype as the parent
     let childNode: TOut = mapTree(child as TIn, mapFunc, addChild);
     addChild(mappedNode, childNode);
@@ -268,7 +260,7 @@ export function dfs(
     currentNode = stack.pop()!;
     let pendingNodes: HierarchyNode[] = getAdjacentNodes(
       currentNode.hierarchyNode,
-      currentNode.parentPath.map(graphNode => graphNode.hierarchyNode)
+      currentNode.parentPath.map((graphNode) => graphNode.hierarchyNode)
     );
     for (let pendingNode of pendingNodes) {
       stack.push(new GraphNode(pendingNode, currentNode));
@@ -293,7 +285,7 @@ export function getAllSubNodes(
   const adj = (node: HierarchyNode) =>
     node[superNodes ? "getSuperNodes" : "getSubNodes"]();
   dfs(node, (currentNode, parentPath) => {
-    if (allSubNodes.some(node => currentNode.equal(node))) {
+    if (allSubNodes.some((node) => currentNode.equal(node))) {
       // if current node is already in collection, stop searching
       return [];
     }
@@ -348,7 +340,7 @@ export function getTree(
         parentPath.length > 2 &&
         parentPath
           .slice(2) // ignore the immediate parent to allow someone to be both manager/member of a group
-          .some(parentNode => parentNode.equal(node))
+          .some((parentNode) => parentNode.equal(node))
       ) {
         throw new HierarchyCycleError("Unexpected cycle in tree", node);
       }
@@ -376,7 +368,7 @@ export function getInfoTree(
   // map the tree to get rid of cross references, add id and name to each node
   let infoRootNode = mapTree<GraphNode, InfoTreeNode>(
     getTree(node, superNodes),
-    graphNode => {
+    (graphNode) => {
       let next = counter.next();
       if (next.done) {
         throw new Error("counter running out of elements");
@@ -400,7 +392,7 @@ export function getInfoTree(
         name,
         info,
         nodeType,
-        children: []
+        children: [],
       };
     },
     (parentNode, childNode) => {
@@ -441,7 +433,7 @@ export function checkConnection(
   let allDescendents: HierarchyNode[] = []; // all sub-nodes
 
   dfs(parentNode, (currentNode, parentPath) => {
-    if (distantAncestors.some(node => node.equal(currentNode))) return [];
+    if (distantAncestors.some((node) => node.equal(currentNode))) return [];
     allAncestors.push(currentNode);
     if (parentPath.length >= 2) {
       distantAncestors.push(currentNode);
@@ -450,7 +442,7 @@ export function checkConnection(
   });
 
   dfs(childNode, (currentNode, parentPath) => {
-    if (distantDescendents.some(node => node.equal(currentNode))) return [];
+    if (distantDescendents.some((node) => node.equal(currentNode))) return [];
     allDescendents.push(currentNode);
     if (parentPath.length >= 2) {
       distantDescendents.push(currentNode);
@@ -468,7 +460,7 @@ export function checkConnection(
   let cycleNodes: HierarchyNode[];
   cycleNodes = [
     ...intersectionWith(distantAncestors, allDescendents, equal),
-    ...intersectionWith(distantDescendents, allAncestors, equal)
+    ...intersectionWith(distantDescendents, allAncestors, equal),
   ];
   if (cycleNodes.length !== 0) {
     throw new HierarchyCycleError(

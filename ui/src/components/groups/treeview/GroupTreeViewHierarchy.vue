@@ -83,24 +83,24 @@ import {
   convertToGroupMap,
   getInfoTree,
   isRootNode,
-  getAllSubNodes
-} from "../../../models/GroupHierarchyNode";
+  getAllSubNodes,
+} from "../../../models/GroupHierarchyNode.ts";
 export default {
   data() {
     return {
       search: "",
       groups: null /* mark initial state */,
-      persons: null
+      persons: null,
     };
   },
   methods: {
     fetchGroups() {
-      return this.$http.get("api/v1/groups/groups").then(resp => {
+      return this.$http.get("api/v1/groups/groups").then((resp) => {
         this.groups = resp.data;
       });
     },
     fetchPersons() {
-      return this.$http.get("api/v1/people/persons").then(resp => {
+      return this.$http.get("api/v1/people/persons").then((resp) => {
         this.persons = resp.data;
       });
     },
@@ -109,7 +109,7 @@ export default {
     },
     closeAll() {
       this.$refs["treeview"].updateAll(false);
-    }
+    },
   },
   computed: {
     groupMap() {
@@ -135,24 +135,24 @@ export default {
       // get all root groups and root participants
       let rootNodes = [
         ...this.groups.map(
-          groupObject => new Group(groupObject, this.groupMap)
+          (groupObject) => new Group(groupObject, this.groupMap)
         ),
         ...this.persons.map(
-          person => new Participant({ person }, this.groupMap)
-        )
-      ].filter(node => isRootNode(node));
-      rootNodes.forEach(rootNode => {
+          (person) => new Participant({ person }, this.groupMap)
+        ),
+      ].filter((node) => isRootNode(node));
+      rootNodes.forEach((rootNode) => {
         adminNode.children.push(getInfoTree(rootNode, false, counter));
       });
       console.log("adminNode", adminNode);
       return [adminNode];
-    }
+    },
   },
   mounted() {
     this.fetchGroups();
     if (this.adminMode) {
       this.fetchPersons();
     }
-  }
+  },
 };
 </script>
