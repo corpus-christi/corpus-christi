@@ -581,7 +581,7 @@ export default {
             "groups.batch-actions.messages.person-in-destination-group"
           );
         } else {
-          // check whether moving moving participant will create cycle
+          // check whether moving participant will create cycle
           try {
             let participantInstance = new Participant(
               { person: p.person },
@@ -919,9 +919,13 @@ export default {
       }
     },
     batchMoveParticipants(participants) {
-      return this.saveParticipants(participants.map((p) => p.person), "patch", {
-        groupId: this.moveDialog.destinationGroup.id,
-      })
+      return this.saveParticipants(
+        participants.map((p) => p.person),
+        "patch",
+        {
+          groupId: this.moveDialog.destinationGroup.id,
+        }
+      )
         .then(() => {
           this.fetchParticipants();
           this.fetchAllPersons();
