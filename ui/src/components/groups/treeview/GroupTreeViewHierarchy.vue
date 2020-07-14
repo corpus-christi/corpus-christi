@@ -83,7 +83,6 @@ import {
   convertToGroupMap,
   getInfoTree,
   isRootNode,
-  getAllSubNodes,
 } from "../../../models/GroupHierarchyNode.ts";
 export default {
   data() {

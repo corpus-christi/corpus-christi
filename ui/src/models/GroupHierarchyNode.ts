@@ -406,7 +406,7 @@ export function getInfoTree(
  * a root node <r> is a node that either:
  * 1. does not have any super-node, or
  * 2. each of its immediate super-nodes <s> satisfies the constraint that <r> is the only super-node of <s>,
- * in other words, <r> and only <r> appears again at depth 2 from the original <r>, 
+ * in other words, <r> and only <r> appears again at depth 2 from the original <r>,
  * caused by the manager/member double identity */
 export function isRootNode(node: HierarchyNode): boolean {
   let immediateSuperNodes = node.getSuperNodes();
