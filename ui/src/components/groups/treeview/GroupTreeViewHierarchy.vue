@@ -1,6 +1,34 @@
 <template>
   <div>
-    <v-card flat>
+    <v-card v-if="cycleError.show" flat>
+      <v-card-title class="justify-center">
+        <v-alert color="warning">
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on }">
+              <v-icon v-on="on">error</v-icon>
+            </template>
+            Please remove the cycle in the node listed in order to view group
+            hierarchy tree
+          </v-tooltip>
+          Unexpected cycle in hierarchy: {{ cycleError.node.toHumanReadable() }}
+        </v-alert>
+      </v-card-title>
+      <v-card-text>
+        <v-timeline v-if="cycleError.path.length !== 0">
+          <v-timeline-item
+            v-for="(node, i) in cycleError.path"
+            :key="i"
+            :color="node.equal(cycleError.node) ? 'error' : 'primary'"
+            :class="i % 2 ? 'text-right' : ''"
+          >
+            <v-icon v-if="node.nodeType === 'Group'">people</v-icon>
+            <v-icon v-else>person</v-icon>
+            {{ node.toHumanReadable() }}
+          </v-timeline-item>
+        </v-timeline>
+      </v-card-text>
+    </v-card>
+    <v-card v-else flat>
       <v-toolbar card class="pa-1">
         <v-layout align-center justify-space-between>
           <v-flex md6 xs3>
@@ -82,14 +110,21 @@ import {
   count,
   convertToGroupMap,
   getInfoTree,
+  HierarchyCycleError,
   isRootNode,
 } from "../../../models/GroupHierarchyNode.ts";
+import { eventBus } from "../../../plugins/event-bus.js";
 export default {
   data() {
     return {
       search: "",
       groups: null /* mark initial state */,
       persons: null,
+      cycleError: {
+        show: false,
+        path: [],
+        node: null,
+      },
     };
   },
   methods: {
@@ -141,7 +176,20 @@ export default {
         ),
       ].filter((node) => isRootNode(node));
       rootNodes.forEach((rootNode) => {
-        adminNode.children.push(getInfoTree(rootNode, false, counter));
+        try {
+          adminNode.children.push(getInfoTree(rootNode, false, counter));
+        } catch (err) {
+          if (err instanceof HierarchyCycleError) {
+            this.cycleError.show = true;
+            this.cycleError.node = err.node;
+            this.cycleError.path = err.path.reverse();
+            eventBus.$emit("error", {
+              content: err.message,
+            });
+          } else {
+            throw err;
+          }
+        }
       });
       console.log("adminNode", adminNode);
       return [adminNode];
