@@ -177,7 +177,7 @@ export default {
   components: { "team-form": TeamForm },
   mounted() {
     this.tableLoading = true;
-    this.$http.get(`/api/v1/teams/?return_group=all`).then(resp => {
+    this.$http.get(`/api/v1/teams/?return_group=all`).then((resp) => {
       this.teams = resp.data;
       console.log(resp.data);
       this.tableLoading = false;
@@ -190,7 +190,7 @@ export default {
         10,
         15,
         25,
-        { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 }
+        { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 },
       ],
       tableLoading: true,
       teams: [],
@@ -199,19 +199,19 @@ export default {
         editMode: false,
         saveLoading: false,
         addMoreLoading: false,
-        team: {}
+        team: {},
       },
 
       archiveDialog: {
         show: false,
         teamId: -1,
-        loading: false
+        loading: false,
       },
       search: "",
 
       snackbar: {
         show: false,
-        text: ""
+        text: "",
       },
       addMore: false,
       viewStatus: "viewActive",
@@ -219,8 +219,8 @@ export default {
       windowSize: {
         x: 0,
         y: 0,
-        screen
-      }
+        screen,
+      },
     };
   },
   computed: {
@@ -229,9 +229,9 @@ export default {
         {
           text: this.$t("teams.description"),
           value: "description",
-          width: "40%"
+          width: "40%",
         },
-        { text: this.$t("actions.header"), sortable: false, width: "20%" }
+        { text: this.$t("actions.header"), sortable: false, width: "20%" },
       ];
     },
 
@@ -239,21 +239,21 @@ export default {
       return [
         { text: this.$t("actions.view-active"), value: "viewActive" },
         { text: this.$t("actions.view-archived"), value: "viewArchived" },
-        { text: this.$t("actions.view-all"), value: "viewAll" }
+        { text: this.$t("actions.view-all"), value: "viewAll" },
       ];
     },
 
     visibleTeams() {
       if (this.viewStatus == "viewActive") {
-        return this.teams.filter(te => te.active);
+        return this.teams.filter((te) => te.active);
       } else if (this.viewStatus == "viewArchived") {
-        return this.teams.filter(te => !te.active);
+        return this.teams.filter((te) => !te.active);
       } else {
         return this.teams;
       }
     },
 
-    ...mapGetters(["currentLanguageCode"])
+    ...mapGetters(["currentLanguageCode"]),
   },
   methods: {
     activateTeamDialog(team = {}, editMode = false) {
@@ -284,17 +284,17 @@ export default {
     archiveTeam() {
       this.archiveDialog.loading = true;
       const teamId = this.archiveDialog.teamId;
-      const idx = this.teams.findIndex(te => te.id === teamId);
+      const idx = this.teams.findIndex((te) => te.id === teamId);
       this.$http
         .delete(`/api/v1/teams/${teamId}`)
-        .then(resp => {
+        .then((resp) => {
           console.log("ARCHIVE", resp);
           this.teams[idx].active = false;
           this.archiveDialog.loading = false;
           this.archiveDialog.show = false;
           this.showSnackbar(this.$t("teams.team-archived"));
         })
-        .catch(err => {
+        .catch((err) => {
           console.error("ARCHIVE FALURE", err.response);
           this.archiveDialog.loading = false;
           this.archiveDialog.show = false;
@@ -303,7 +303,7 @@ export default {
     },
 
     unarchive(team) {
-      const idx = this.teams.findIndex(te => te.id === team.id);
+      const idx = this.teams.findIndex((te) => te.id === team.id);
       const copyTeam = JSON.parse(JSON.stringify(team));
       team.unarchiving = true;
       copyTeam.active = true;
@@ -311,13 +311,13 @@ export default {
       delete copyTeam.id;
       this.$http
         .patch(`/api/v1/teams/${patchId}`, { active: true })
-        .then(resp => {
+        .then((resp) => {
           console.log("UNARCHIVED", resp);
           delete team.unarchiving;
           Object.assign(this.teams[idx], resp.data);
           this.showSnackbar(this.$t("teams.team-unarchived"));
         })
-        .catch(err => {
+        .catch((err) => {
           delete team.unarchiving;
           console.error("UNARCHIVE FALURE", err.response);
           this.showSnackbar(this.$t("teams.error-unarchiving-team"));
@@ -362,19 +362,19 @@ export default {
     saveTeam(team) {
       if (this.teamDialog.editMode) {
         const teamId = team.id;
-        const idx = this.teams.findIndex(te => te.id === team.id);
+        const idx = this.teams.findIndex((te) => te.id === team.id);
         delete team.id;
         this.$http
           .patch(`/api/v1/teams/${teamId}`, {
-            description: team.description
+            description: team.description,
           })
-          .then(resp => {
+          .then((resp) => {
             console.log("EDITED", resp);
             Object.assign(this.teams[idx], resp.data);
             this.cancelTeam();
             this.showSnackbar(this.$t("teams.team-edited"));
           })
-          .catch(err => {
+          .catch((err) => {
             console.error("PUT FALURE", err.response);
             this.teamDialog.saveLoading = false;
             this.showSnackbar(this.$t("teams.error-editing-team"));
@@ -392,14 +392,14 @@ export default {
         // }
         this.$http
           .post("/api/v1/teams/", newTeam)
-          .then(resp => {
+          .then((resp) => {
             console.log("ADDED", resp);
             this.teams.push(resp.data);
             if (this.addMore) this.clearTeam();
             else this.cancelTeam();
             this.showSnackbar(this.$t("teams.team-added"));
           })
-          .catch(err => {
+          .catch((err) => {
             console.error("POST FAILURE", err.response);
             this.teamDialog.saveLoading = false;
             this.teamDialog.addMoreLoading = false;
@@ -420,8 +420,8 @@ export default {
       } else {
         this.windowSize.small = false;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

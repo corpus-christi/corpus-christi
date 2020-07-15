@@ -45,13 +45,13 @@ export default {
       );
 
       // TODO: Regenerate locale info for sankey
-    }
+    },
   },
   computed: {
     ...mapState(["locales"]),
-    ...mapGetters(["currentLocaleModel"])
+    ...mapGetters(["currentLocaleModel"]),
   },
-  data: function() {
+  data: function () {
     var totalCourseEnrollment = 0; // eslint-disable-line
     var totalStudentsAttended = 0; // eslint-disable-line
     var totalStudentsGraduated = 0; // eslint-disable-line
@@ -64,7 +64,7 @@ export default {
     var graduationSubdataCount = 0; // TODO: Graduation rate API endpoints aren't done; finish later
 
     function enrollmentAndGraduationDataComplete(self) {
-      Object.keys(enrollmentData).forEach(courseName => {
+      Object.keys(enrollmentData).forEach((courseName) => {
         totalCourseEnrollment += enrollmentData[courseName]; // eslint-disable-next-line
         var graduationValue = 0; // eslint-disable-next-line
         if (graduationData[courseName]) {
@@ -73,7 +73,7 @@ export default {
         self.courseData.rows.push({
           course: courseName,
           enrolled: enrollmentData[courseName],
-          graduated: graduationValue === 0 ? graduationValue : 20 // FIXME: graduationValue
+          graduated: graduationValue === 0 ? graduationValue : 20, // FIXME: graduationValue
         });
       });
     }
@@ -93,8 +93,8 @@ export default {
     // Get course data
     this.$http
       .get(`/api/v1/courses/course_offerings`)
-      .then(resp => {
-        resp.data.forEach(offering => {
+      .then((resp) => {
+        resp.data.forEach((offering) => {
           var courseName = offering.course.name;
           if (!enrollmentData[courseName]) {
             enrollmentData[courseName] = 0;
@@ -106,7 +106,7 @@ export default {
           // Get enrollment data
           this.$http
             .get(`/api/v1/courses/course_offerings/${offering.id}/students`)
-            .then(studentResp => {
+            .then((studentResp) => {
               enrollmentData[courseName] += studentResp.data.length;
 
               if (
@@ -120,7 +120,7 @@ export default {
                 }
               }
             })
-            .catch(err => {
+            .catch((err) => {
               console.error("GET FALURE", err.response);
             });
 
@@ -139,9 +139,9 @@ export default {
             .get(
               `/api/v1/courses/course_offerings/${offering.id}/class_attendance`
             )
-            .then(attendanceResp => {
-              attendanceResp.data.forEach(attendance => {
-                attendance.attendance.forEach(student => {
+            .then((attendanceResp) => {
+              attendanceResp.data.forEach((attendance) => {
+                attendance.attendance.forEach((student) => {
                   if (!attendanceData[student.studentId]) {
                     attendanceData[student.studentId] = 1;
                   }
@@ -155,12 +155,12 @@ export default {
                 }
               });
             })
-            .catch(err => {
+            .catch((err) => {
               console.error("GET FALURE", err.response);
             });
         });
       })
-      .catch(err => {
+      .catch((err) => {
         console.error("GET FALURE", err.response);
       });
 
@@ -176,18 +176,18 @@ export default {
           { status: this.$t("courses.dashboard.charts.attended"), count: 80 },
           {
             status: this.$t("courses.dashboard.charts.did-not-attend"),
-            count: 20
+            count: 20,
           },
           { status: this.$t("courses.dashboard.charts.graduated"), count: 75 },
           {
             status: this.$t("courses.dashboard.charts.did-not-graduate"),
-            count: 25
-          }
-        ]
+            count: 25,
+          },
+        ],
       },
       courseData: {
         columns: ["course", "enrolled", "graduated"],
-        rows: []
+        rows: [],
       },
       attendanceSankeySettings: {
         links: [
@@ -195,79 +195,79 @@ export default {
           {
             source: "Course A",
             target: this.$t("courses.dashboard.charts.attended"),
-            value: 24
+            value: 24,
           },
           {
             source: "Course A",
             target: this.$t("courses.dashboard.charts.did-not-attend"),
-            value: 8
+            value: 8,
           },
           {
             source: "Course B",
             target: this.$t("courses.dashboard.charts.attended"),
-            value: 22
+            value: 22,
           },
           {
             source: "Course B",
             target: this.$t("courses.dashboard.charts.did-not-attend"),
-            value: 5
+            value: 5,
           },
           {
             source: "Course C",
             target: this.$t("courses.dashboard.charts.attended"),
-            value: 26
+            value: 26,
           },
           {
             source: "Course C",
             target: this.$t("courses.dashboard.charts.did-not-attend"),
-            value: 3
+            value: 3,
           },
           {
             source: "Course D",
             target: this.$t("courses.dashboard.charts.attended"),
-            value: 5
+            value: 5,
           },
           {
             source: "Course D",
             target: this.$t("courses.dashboard.charts.did-not-attend"),
-            value: 3
+            value: 3,
           },
           {
             source: "Course E",
             target: this.$t("courses.dashboard.charts.attended"),
-            value: 3
+            value: 3,
           },
           {
             source: "Course E",
             target: this.$t("courses.dashboard.charts.did-not-attend"),
-            value: 1
+            value: 1,
           },
           {
             source: this.$t("courses.dashboard.charts.attended"),
             target: this.$t("courses.dashboard.charts.graduated"),
-            value: 75
+            value: 75,
           },
           {
             source: this.$t("courses.dashboard.charts.attended"),
             target: this.$t("courses.dashboard.charts.did-not-graduate"),
-            value: 5
+            value: 5,
           },
           {
             source: this.$t("courses.dashboard.charts.did-not-attend"),
             target: this.$t("courses.dashboard.charts.did-not-graduate"),
-            value: 20
-          }
+            value: 20,
+          },
         ],
-        dataType: ["normal", "normal"]
+        dataType: ["normal", "normal"],
       },
       enrollmentBarSettings: {
         labelMap: {
           course: this.$t("courses.dashboard.charts.course"),
           enrolled: this.$t("courses.dashboard.charts.enrolled"),
-          graduated: this.$t("courses.dashboard.charts.graduated")
-        }
-      }
+          graduated: this.$t("courses.dashboard.charts.graduated"),
+        },
+      },
     };
-  }
+  },
 };
 </script>

@@ -61,21 +61,21 @@ export default {
     searchEndpoint: String,
     errorMessages: String,
     label: String,
-    disabled: Boolean
+    disabled: Boolean,
   },
   data() {
     return {
       descriptionLimit: 50,
       entities: [],
       searchInput: "",
-      isLoading: false
+      isLoading: false,
     };
   },
 
   watch: {
     value(val) {
       this.setSelected(val);
-    }
+    },
   },
 
   computed: {
@@ -98,7 +98,7 @@ export default {
     },
     searchableEntities() {
       if (this.existingEntities) {
-        return this.entities.filter(ent => {
+        return this.entities.filter((ent) => {
           for (let otherEnt of this.existingEntities) {
             // using double equal to convert string to numbers
             if (ent[this.idField] === otherEnt[this.idField]) {
@@ -109,14 +109,14 @@ export default {
         });
       }
       return this.entities;
-    }
+    },
   },
 
   methods: {
     selectionContains(entity) {
       if (!this.value || !this.value.length) return;
       var idx = this.value.findIndex(
-        en => en[this.idField] === entity[this.idField]
+        (en) => en[this.idField] === entity[this.idField]
       );
       return idx > -1;
     },
@@ -166,7 +166,7 @@ export default {
     remove(entity) {
       if (!this.multiple) return;
       var idx = this.value.findIndex(
-        en => en[this.idField] === entity[this.idField]
+        (en) => en[this.idField] === entity[this.idField]
       );
       if (idx > -1) {
         this.value.splice(idx, 1);
@@ -175,7 +175,7 @@ export default {
     compare(a, b) {
       if (!a || !b) return false;
       return a[this.idField] === b[this.idField];
-    }
+    },
   },
   mounted() {
     //TODO use search-input.sync to avoid making a huge request here
@@ -194,14 +194,14 @@ export default {
     else if (this.managerType) endpoint = "/api/v1/groups/manager-types";
     this.$http
       .get(endpoint)
-      .then(resp => {
+      .then((resp) => {
         this.entities = resp.data;
         this.isLoading = false;
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
         this.isLoading = false;
       });
-  }
+  },
 };
 </script>

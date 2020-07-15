@@ -21,7 +21,7 @@ describe("Get to details of a course page", () => {
 describe("Edit course section", () => {
   it("edit existing course section", () => {
     cy.get(
-      ":nth-child(1) > :nth-child(3) > .layout > :nth-child(1) > span > .v-btn"
+      ":nth-child(1) > :nth-child(3) > .layouts > :nth-child(1) > span > .v-btn"
     ).click();
   });
   it("Edit description", () => {

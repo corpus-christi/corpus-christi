@@ -1,5 +1,5 @@
 <template>
-  <v-toolbar app color="rgb(241, 145, 37)">
+  <v-app-bar app color="rgb(241, 145, 37)">
     <router-link v-bind:to="{ name: 'public' }" data-cy="home-logo">
       <img v-bind:src="arcoLogo" height="40px" alt="Arco Logo" />
     </router-link>
@@ -7,7 +7,7 @@
     <v-spacer />
 
     <v-btn
-      flat
+      text
       icon
       color="white"
       v-bind:to="destination"
@@ -16,23 +16,25 @@
       <v-icon>account_circle</v-icon>
     </v-btn>
 
-    <LocaleMenu />
-  </v-toolbar>
+    <locale-menu />
+  </v-app-bar>
 </template>
 
 <script>
 import arcoLogo from "../../../assets/arco-logo.png";
-import LocaleMenu from "../LocaleMenu";
+import LocaleMenu from "../menus/LocaleMenu";
 import { mapGetters } from "vuex";
 
 export default {
-  name: "ArcoToolbar",
+  name: "ArcoAppBar",
   components: { LocaleMenu },
+
   data() {
     return {
-      arcoLogo
+      arcoLogo,
     };
   },
+
   computed: {
     ...mapGetters(["isLoggedIn"]),
     destination() {
@@ -41,7 +43,7 @@ export default {
       } else {
         return { name: "login" };
       }
-    }
-  }
+    },
+  },
 };
 </script>

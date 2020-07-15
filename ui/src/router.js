@@ -13,44 +13,44 @@ const router = new VueRouter({
       name: "public",
       path: "/",
       meta: { layout: "arco" },
-      component: () => import("@/pages/Public")
+      component: () => import("@/pages/Public"),
     },
     {
       name: "public-events",
       path: "/public/events",
       meta: { authRequired: false },
-      component: () => import("@/pages/public/Events")
+      component: () => import("@/pages/public/Events"),
     },
     {
       name: "public-courses",
       path: "/public/courses",
       meta: { authRequired: false },
-      component: () => import("@/pages/public/Courses")
+      component: () => import("@/pages/public/Courses"),
     },
     {
       name: "login",
       path: "/login",
       meta: { layout: "arco" },
-      component: () => import("@/pages/Login")
+      component: () => import("@/pages/Login"),
     },
     {
       name: "signup",
       path: "/signup",
       meta: { layout: "arco" },
-      component: () => import("@/pages/Signup")
+      component: () => import("@/pages/Signup"),
     },
     {
       name: "admin",
       path: "/admin",
       meta: { authRequired: true },
       // component: () => import("@/pages/Admin")
-      component: () => import("@/components/events/Dashboard")
+      component: () => import("@/components/events/Dashboard"),
     },
     {
       name: "people",
       path: "/people",
       meta: { authRequired: true },
-      component: () => import("@/pages/People")
+      component: () => import("@/pages/People"),
     },
     {
       name: "groups",
@@ -63,49 +63,49 @@ const router = new VueRouter({
           name: "all-groups",
           path: "all",
           meta: { authRequired: true },
-          component: () => import("@/components/groups/GroupTable")
+          component: () => import("@/components/groups/GroupTable"),
         },
         {
           name: "group-treeview",
           path: "treeview",
           meta: { authRequired: true },
-          component: () => import("@/components/groups/GroupTreeView")
+          component: () => import("@/components/groups/GroupTreeView"),
         },
         {
           name: "group-types",
           path: "group-types",
           meta: { authRequired: true },
           component: () => import("@/components/groups/EntityTypes"),
-          props: { entityTypeName: "groupType" }
+          props: { entityTypeName: "groupType" },
         },
         {
           name: "manager-types",
           path: "manager-types",
           meta: { authRequired: true },
           component: () => import("@/components/groups/EntityTypes"),
-          props: { entityTypeName: "managerType" }
+          props: { entityTypeName: "managerType" },
         },
         {
-          name:"meeting-details",
-          path:"meetings/:meeting",
+          name: "meeting-details",
+          path: "meetings/:meeting",
           meta: { authRequired: true },
           redirect: { name: "meeting-members" },
-          component: () =>
-            import("@/components/groups/MeetingDetails"),
+          component: () => import("@/components/groups/MeetingDetails"),
           children: [
             {
               name: "meeting-members",
               path: "members",
               meta: { authRequired: true },
-              component: () => import("@/components/groups/GroupMeetingMember")
+              component: () => import("@/components/groups/GroupMeetingMember"),
             },
             {
               name: "meeting-visitors",
               path: "visitors",
               meta: { authRequired: true },
-              component: () => import("@/components/groups/GroupMeetingVisitor")
-            }
-          ]
+              component: () =>
+                import("@/components/groups/GroupMeetingVisitor"),
+            },
+          ],
         },
         {
           name: "group",
@@ -118,32 +118,32 @@ const router = new VueRouter({
               name: "group-details",
               path: "details",
               meta: { authRequired: true },
-              component: () => import("@/components/groups/GroupDetails")
+              component: () => import("@/components/groups/GroupDetails"),
             },
             {
               name: "group-members",
               path: "members",
               meta: { authRequired: true },
               component: () => import("@/components/groups/GroupParticipants"),
-              props: { participantType: "member" }
+              props: { participantType: "member" },
             },
             {
               name: "group-meetings",
               path: "meetings",
               meta: { authRequired: true },
               component: () =>
-                import("@/components/groups/meetings/GroupMeetings")
+                import("@/components/groups/meetings/GroupMeetings"),
             },
             {
               name: "group-managers",
               path: "managers",
               meta: { authRequired: true },
               component: () => import("@/components/groups/GroupParticipants"),
-              props: { participantType: "manager" }
-            }
-          ]
-        }
-      ]
+              props: { participantType: "manager" },
+            },
+          ],
+        },
+      ],
     },
     {
       name: "events",
@@ -156,21 +156,21 @@ const router = new VueRouter({
           name: "all-events",
           path: "all",
           meta: { authRequired: true },
-          component: () => import("@/components/events/EventTable")
+          component: () => import("@/components/events/EventTable"),
         },
         {
           name: "events-dashboard",
           path: "dashboard",
           meta: { authRequired: true },
-          component: () => import("@/components/events/Dashboard")
+          component: () => import("@/components/events/Dashboard"),
         },
         {
           name: "events-calendar",
           path: "calendar",
           meta: { authRequired: true },
-          component: () => import("@/components/events/Calendar")
-        }
-      ]
+          component: () => import("@/components/events/Calendar"),
+        },
+      ],
     },
     {
       name: "event",
@@ -183,15 +183,15 @@ const router = new VueRouter({
           name: "event-details",
           path: "details",
           meta: { authRequired: true },
-          component: () => import("@/components/events/EventDetails")
+          component: () => import("@/components/events/EventDetails"),
         },
         {
           name: "event-participants",
           path: "participants",
           meta: { authRequired: true },
-          component: () => import("@/components/events/EventParticipants")
-        }
-      ]
+          component: () => import("@/components/events/EventParticipants"),
+        },
+      ],
     },
     {
       name: "teams",
@@ -204,27 +204,27 @@ const router = new VueRouter({
           name: "all-teams",
           path: "all",
           meta: { authRequired: true },
-          component: () => import("@/components/teams/TeamTable")
+          component: () => import("@/components/teams/TeamTable"),
         },
         {
           name: "team",
           path: ":team",
           meta: { authRequired: true },
-          component: () => import("@/components/teams/Team")
-        }
-      ]
+          component: () => import("@/components/teams/Team"),
+        },
+      ],
     },
     {
       name: "assets",
       path: "/assets",
       meta: { authRequired: true },
-      component: () => import("@/pages/Assets")
+      component: () => import("@/pages/Assets"),
     },
     {
       name: "places",
       path: "/places",
       meta: { authRequired: true },
-      component: () => import("@/pages/Places")
+      component: () => import("@/pages/Places"),
     },
     {
       name: "diplomas-admin",
@@ -237,16 +237,16 @@ const router = new VueRouter({
           name: "all-diplomas",
           path: "all",
           meta: { authRequired: true },
-          component: () => import("@/components/diplomas/DiplomasTable")
+          component: () => import("@/components/diplomas/DiplomasTable"),
         },
         {
           name: "diploma-details",
           path: ":diplomaId",
           meta: { authRequired: true },
           props: true,
-          component: () => import("@/components/diplomas/DiplomaDetails")
-        }
-      ]
+          component: () => import("@/components/diplomas/DiplomaDetails"),
+        },
+      ],
     },
     {
       name: "transcripts",
@@ -259,16 +259,16 @@ const router = new VueRouter({
           name: "all-transcripts",
           path: "all",
           meta: { authRequired: true },
-          component: () => import("@/components/transcripts/TranscriptsTable")
+          component: () => import("@/components/transcripts/TranscriptsTable"),
         },
         {
           name: "transcript-details",
           path: ":studentId",
           meta: { authRequired: true },
           props: true,
-          component: () => import("@/components/transcripts/TranscriptDetails")
-        }
-      ]
+          component: () => import("@/components/transcripts/TranscriptDetails"),
+        },
+      ],
     },
     {
       name: "courses",
@@ -281,20 +281,20 @@ const router = new VueRouter({
           name: "courses-dashboard",
           path: "dashboard",
           meta: { authRequired: true },
-          component: () => import("@/components/courses/Dashboard")
+          component: () => import("@/components/courses/Dashboard"),
         },
         {
           name: "all-courses",
           path: "all",
           meta: { authRequired: true },
-          component: () => import("@/components/courses/CoursesTable")
+          component: () => import("@/components/courses/CoursesTable"),
         },
         {
           name: "course-details",
           path: ":courseId",
           meta: { authRequired: true },
           props: true,
-          component: () => import("@/components/courses/CourseDetails")
+          component: () => import("@/components/courses/CourseDetails"),
         },
         {
           name: "course-offering",
@@ -310,7 +310,7 @@ const router = new VueRouter({
               meta: { authRequired: true },
               props: true,
               component: () =>
-                import("@/components/courses/CourseOfferingDetails")
+                import("@/components/courses/CourseOfferingDetails"),
             },
             {
               name: "course-offering-students",
@@ -318,7 +318,7 @@ const router = new VueRouter({
               meta: { authRequired: true },
               props: true,
               component: () =>
-                import("@/components/courses/CourseOfferingStudents")
+                import("@/components/courses/CourseOfferingStudents"),
             },
             {
               name: "course-offering-meetings",
@@ -326,17 +326,17 @@ const router = new VueRouter({
               meta: { authRequired: true },
               props: true,
               component: () =>
-                import("@/components/courses/CourseOfferingMeetings")
-            }
-          ]
-        }
-      ]
-    }
-  ]
+                import("@/components/courses/CourseOfferingMeetings"),
+            },
+          ],
+        },
+      ],
+    },
+  ],
 });
 
 router.beforeEach((to, from, next) => {
-  if (to.matched.some(record => record.meta.authRequired)) {
+  if (to.matched.some((record) => record.meta.authRequired)) {
     // The destination requires authentication.
     if (store.getters.isLoggedIn) {
       // But we're already logged in.
@@ -346,7 +346,7 @@ router.beforeEach((to, from, next) => {
       // the desired page for a later redirect.
       next({
         name: "login",
-        query: { redirect: to.name }
+        query: { redirect: to.name },
       });
     }
   } else {

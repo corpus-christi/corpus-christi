@@ -44,22 +44,24 @@ export default {
 
     this.$http
       .get(`/api/v1/courses/course_offerings/${id}/students`)
-      .then(resp => {
+      .then((resp) => {
         //TODO make call in parent or Promise.all
-        this.studentsAmt = resp.data.filter(student => student.active).length;
-        this.$http.get(`/api/v1/courses/course_offerings/${id}`).then(resp => {
-          this.courseOffering = resp.data;
-        });
+        this.studentsAmt = resp.data.filter((student) => student.active).length;
+        this.$http
+          .get(`/api/v1/courses/course_offerings/${id}`)
+          .then((resp) => {
+            this.courseOffering = resp.data;
+          });
       });
 
-    this.$http.get(`/api/v1/courses/course_offerings/${id}`).then(resp => {
+    this.$http.get(`/api/v1/courses/course_offerings/${id}`).then((resp) => {
       this.courseOffering = resp.data;
       this.pageLoaded = true;
     });
   },
 
   computed: {
-    ...mapGetters(["currentLanguageCode"])
+    ...mapGetters(["currentLanguageCode"]),
   },
 
   data() {
@@ -69,18 +71,18 @@ export default {
         show: false,
         editMode: false,
         saving: false,
-        courseOffering: {}
+        courseOffering: {},
       },
       studentsAmt: 0,
       snackbar: {
         show: false,
-        text: ""
+        text: "",
       },
-      pageLoaded: false
+      pageLoaded: false,
     };
   },
   props: {
-    offeringId: null
+    offeringId: null,
   },
   methods: {
     getDisplayDate(ts) {
@@ -90,15 +92,15 @@ export default {
         month: "numeric",
         day: "numeric",
         hour: "2-digit",
-        minute: "2-digit"
+        minute: "2-digit",
       });
     },
 
     showSnackbar(message) {
       this.snackbar.text = message;
       this.snackbar.show = true;
-    }
-  }
+    },
+  },
 };
 </script>
 

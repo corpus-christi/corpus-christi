@@ -37,13 +37,13 @@ export default {
   name: "People",
   components: {
     PersonTable,
-    RolesTable
+    RolesTable,
   },
   data() {
     return {
       peopleList: [],
       rolesList: [],
-      tableLoaded: false
+      tableLoaded: false,
     };
   },
 
@@ -52,34 +52,34 @@ export default {
       this.tableLoaded = false;
       this.$http
         .get("/api/v1/people/persons?include_images=1")
-        .then(resp => {
+        .then((resp) => {
           this.peopleList = resp.data;
           this.tableLoaded = true;
         })
-        .catch(err => console.error("FAILURE", err.response));
+        .catch((err) => console.error("FAILURE", err.response));
     },
 
     fetchRolesList() {
       this.$http
         .get("/api/v1/people/role")
-        .then(resp => {
+        .then((resp) => {
           let roles = [];
           for (var role of resp.data) {
             roles.push({
               text: role.nameI18n,
-              value: role.id
+              value: role.id,
             });
           }
           this.rolesList = roles;
         })
-        .catch(err => console.error("FAILURE", err.response));
-    }
+        .catch((err) => console.error("FAILURE", err.response));
+    },
   },
 
-  mounted: function() {
+  mounted: function () {
     this.fetchRolesList();
     this.fetchPeopleList();
-  }
+  },
 };
 </script>
 

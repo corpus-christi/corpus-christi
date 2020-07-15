@@ -2,19 +2,19 @@ import Vue from "vue";
 import axios from "axios";
 import store from "../store.js";
 import router from "../router.js";
-import { eventBus } from "../plugins/event-bus.js";
-import { getResponseErrorKey } from "../plugins/vue-i18n.js";
+import { eventBus } from "@/plugins/event-bus";
+import { getResponseErrorKey } from "@/plugins/vue-i18n";
 
 const authAxios = axios.create({
-  baseURL: "/"
+  baseURL: "/",
   // headers: { "Authorization": "Bearer NOT SET" }
 });
 
 authAxios.interceptors.response.use(
-  resp => {
+  (resp) => {
     return Promise.resolve(resp);
   },
-  error => {
+  (error) => {
     if (error.response.status >= 400) {
       /* display a snack bar with error, while enabling the user to submit a error report */
       /* to disable, include a 'noErrorSnackBar' in the request config. e.g.
@@ -28,15 +28,15 @@ authAxios.interceptors.response.use(
           content: getResponseErrorKey(error.response.status),
           action: {
             title: "error-report.actions.report-error",
-            func: (vm: Vue) =>
+            func: (vm) =>
               eventBus.$emit("show-error-report-dialog", {
                 props: {
                   time_stamp: new Date().toISOString(),
                   status_code: error.response.status,
-                  endpoint: error.response.config.url
-                }
-              })
-          }
+                  endpoint: error.response.config.url,
+                },
+              }),
+          },
         });
       }
       console.log(error.response);
@@ -55,12 +55,12 @@ authAxios.interceptors.response.use(
 
 Vue.prototype.$http = authAxios;
 
-export function setJWT(jwt: string) {
+export function setJWT(jwt) {
   authAxios.defaults.headers.common["Authorization"] = `Bearer ${jwt}`;
 }
 
 const plainAxios = axios.create({
-  baseURL: "/"
+  baseURL: "/",
 });
 
 Vue.prototype.$httpNoAuth = plainAxios;

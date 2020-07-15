@@ -14,7 +14,7 @@
     <v-card-actions>
       <v-btn
         color="secondary"
-        flat
+        text
         :disabled="saving"
         v-on:click="cancel"
         data-cy="studentform-cancel"
@@ -42,11 +42,11 @@ import { isEmpty } from "lodash";
 export default {
   name: "StudentsForm",
   components: {
-    EntitySearch
+    EntitySearch,
   },
-  data: function() {
+  data: function () {
     return {
-      newStudent: {}
+      newStudent: {},
     };
   },
 
@@ -55,7 +55,7 @@ export default {
       return this.$t("courses.new-offering");
     },
 
-    ...mapGetters(["currentLanguageCode"])
+    ...mapGetters(["currentLanguageCode"]),
   },
 
   watch: {
@@ -66,18 +66,18 @@ export default {
       } else {
         this.newStudent = studentProp;
       }
-    }
+    },
   },
 
   props: {
     initialData: {
       type: Object,
-      required: true
+      required: true,
     },
     saving: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
 
   methods: {
@@ -100,7 +100,7 @@ export default {
           this.$emit("save", this.newStudent);
         }
       });
-    }
-  }
+    },
+  },
 };
 </script>

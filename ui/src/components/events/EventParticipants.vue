@@ -76,7 +76,7 @@
           <v-btn
             v-on:click="cancelNewParticipantDialog"
             color="secondary"
-            flat
+            text
             data-cy=""
             >{{ $t("actions.cancel") }}</v-btn
           >
@@ -104,7 +104,7 @@
           <v-btn
             v-on:click="cancelDelete"
             color="secondary"
-            flat
+            text
             data-cy="cancel-delete"
             >{{ $t("actions.cancel") }}</v-btn
           >
@@ -123,7 +123,7 @@
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false">
+      <v-btn text @click="snackbar.show = false">
         {{ $t("actions.close") }}
       </v-btn>
     </v-snackbar>
@@ -141,7 +141,7 @@ export default {
         10,
         15,
         25,
-        { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 }
+        { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 },
       ],
       tableLoading: false,
       search: "",
@@ -149,18 +149,18 @@ export default {
       addParticipantDialog: {
         show: false,
         newParticipants: [],
-        loading: false
+        loading: false,
       },
       deleteDialog: {
         show: false,
         participantId: -1,
-        loading: false
+        loading: false,
       },
 
       snackbar: {
         show: false,
-        text: ""
-      }
+        text: "",
+      },
     };
   },
 
@@ -170,26 +170,26 @@ export default {
         {
           text: this.$t("person.name.first"),
           value: "person.firstName",
-          width: "20%"
+          width: "20%",
         },
         {
           text: this.$t("person.name.last"),
           value: "person.lastName",
-          width: "20%"
+          width: "20%",
         },
         {
           text: this.$t("person.email"),
           value: "person.email",
-          width: "22.5%"
+          width: "22.5%",
         },
         {
           text: this.$t("person.phone"),
           value: "person.phone",
-          width: "22.5%"
+          width: "22.5%",
         },
-        { text: this.$t("actions.header"), sortable: false }
+        { text: this.$t("actions.header"), sortable: false },
       ];
-    }
+    },
   },
 
   methods: {
@@ -209,7 +209,7 @@ export default {
 
       for (let person of this.addParticipantDialog.newParticipants) {
         const idx = this.people.findIndex(
-          ev_pe => ev_pe.person_id === person.id
+          (ev_pe) => ev_pe.person_id === person.id
         );
         if (idx === -1) {
           promises.push(this.addParticipant(person.id));
@@ -224,7 +224,7 @@ export default {
           this.addParticipantDialog.newParticipants = [];
           this.getParticipants();
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
           this.addParticipantDialog.loading = false;
           this.showSnackbar(this.$t("events.participants.error-adding"));
@@ -234,7 +234,7 @@ export default {
     addParticipant(id) {
       const eventId = this.$route.params.event;
       return this.$http.post(`/api/v1/events/${eventId}/participants/${id}`, {
-        confirmed: true
+        confirmed: true,
       });
     },
 
@@ -245,7 +245,7 @@ export default {
     deleteParticipant() {
       this.deleteDialog.loading = true;
       const participantId = this.deleteDialog.participantId;
-      const idx = this.people.findIndex(ev => ev.person.id === participantId);
+      const idx = this.people.findIndex((ev) => ev.person.id === participantId);
       const id = this.$route.params.event;
       this.$http
         .delete(`/api/v1/events/${id}/participants/${participantId}`)
@@ -255,7 +255,7 @@ export default {
           this.people.splice(idx, 1);
           this.showSnackbar(this.$t("events.participants.removed"));
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
           this.deleteDialog.loading = false;
           this.deleteDialog.show = false;
@@ -279,16 +279,16 @@ export default {
       const id = this.$route.params.event;
       this.$http
         .get(`/api/v1/events/${id}?include_participants=1`)
-        .then(resp => {
+        .then((resp) => {
           let event = resp.data;
           this.people = event.participants;
           this.tableLoading = false;
         });
-    }
+    },
   },
 
-  mounted: function() {
+  mounted: function () {
     this.getParticipants();
-  }
+  },
 };
 </script>

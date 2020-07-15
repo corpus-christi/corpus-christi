@@ -172,7 +172,7 @@ export default {
   components: { "asset-form": AssetForm },
   mounted() {
     this.tableLoading = true;
-    this.$http.get("/api/v1/assets/?include_location=1").then(resp => {
+    this.$http.get("/api/v1/assets/?include_location=1").then((resp) => {
       this.assets = resp.data;
       this.tableLoading = false;
       console.log(this.assets);
@@ -186,7 +186,7 @@ export default {
         10,
         15,
         25,
-        { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 }
+        { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 },
       ],
       tableLoading: true,
       assets: [],
@@ -195,27 +195,27 @@ export default {
         editMode: false,
         saveLoading: false,
         addMoreLoading: false,
-        asset: {}
+        asset: {},
       },
       archiveDialog: {
         show: false,
         assetId: -1,
-        loading: false
+        loading: false,
       },
       search: "",
 
       snackbar: {
         show: false,
-        text: ""
+        text: "",
       },
       viewStatus: "viewAll",
 
       windowSize: {
         x: 0,
         y: 0,
-        screen
+        screen,
       },
-      addMore: false
+      addMore: false,
     };
   },
   computed: {
@@ -224,14 +224,14 @@ export default {
         {
           text: this.$t("assets.description"),
           value: "description",
-          width: "45%"
+          width: "45%",
         },
         {
           text: this.$t("assets.location"),
           value: "location_name",
-          width: "30%"
+          width: "30%",
         },
-        { text: this.$t("actions.header"), sortable: false, width: "25%" }
+        { text: this.$t("actions.header"), sortable: false, width: "25%" },
       ];
     },
 
@@ -239,21 +239,21 @@ export default {
       return [
         { text: this.$t("actions.view-active"), value: "viewActive" },
         { text: this.$t("actions.view-archived"), value: "viewArchived" },
-        { text: this.$t("actions.view-all"), value: "viewAll" }
+        { text: this.$t("actions.view-all"), value: "viewAll" },
       ];
     },
 
     visibleAssets() {
       if (this.viewStatus == "viewActive") {
-        return this.assets.filter(as => as.active);
+        return this.assets.filter((as) => as.active);
       } else if (this.viewStatus == "viewArchived") {
-        return this.assets.filter(as => !as.active);
+        return this.assets.filter((as) => !as.active);
       } else {
         return this.assets;
       }
     },
 
-    ...mapGetters(["currentLanguageCode"])
+    ...mapGetters(["currentLanguageCode"]),
   },
   methods: {
     activateAssetDialog(asset = {}, editMode = false) {
@@ -284,17 +284,17 @@ export default {
     archiveAsset() {
       this.archiveDialog.loading = true;
       const assetId = this.archiveDialog.assetId;
-      const idx = this.assets.findIndex(as => as.id === assetId);
+      const idx = this.assets.findIndex((as) => as.id === assetId);
       this.$http
         .delete(`/api/v1/assets/${assetId}`)
-        .then(resp => {
+        .then((resp) => {
           console.log("ARCHIVE", resp);
           this.assets[idx].active = false;
           this.archiveDialog.loading = false;
           this.archiveDialog.show = false;
           this.showSnackbar(this.$t("assets.asset-archived"));
         })
-        .catch(err => {
+        .catch((err) => {
           console.error("ARCHIVE FALURE", err.response);
           this.archiveDialog.loading = false;
           this.archiveDialog.show = false;
@@ -305,7 +305,7 @@ export default {
     },
 
     unarchive(asset) {
-      const idx = this.assets.findIndex(as => as.id === asset.id);
+      const idx = this.assets.findIndex((as) => as.id === asset.id);
       const copyAsset = JSON.parse(JSON.stringify(asset));
       asset.unarchiving = true;
       copyAsset.active = true;
@@ -314,13 +314,13 @@ export default {
       delete copyAsset.location; //Temporary delete
       this.$http
         .patch(`/api/v1/assets/${patchId}`, { active: true })
-        .then(resp => {
+        .then((resp) => {
           console.log("UNARCHIVED", resp);
           delete asset.unarchiving;
           Object.assign(this.assets[idx], resp.data);
           this.showSnackbar(this.$t("assets.asset-unarchived"));
         })
-        .catch(err => {
+        .catch((err) => {
           delete asset.unarchiving;
           console.error("UNARCHIVE FALURE", err.response);
           this.showSnackbar(this.$t("assets.error-unarchiving-asset"));
@@ -353,18 +353,18 @@ export default {
       delete newAsset.id;
       if (this.assetDialog.editMode) {
         const assetId = asset.id;
-        const idx = this.assets.findIndex(as => as.id === asset.id);
+        const idx = this.assets.findIndex((as) => as.id === asset.id);
         delete newAsset.id;
         delete newAsset.event_count;
         this.$http
           .patch(`/api/v1/assets/${assetId}?include_location=1`, newAsset)
-          .then(resp => {
+          .then((resp) => {
             console.log("EDITED", resp);
             Object.assign(this.assets[idx], resp.data);
             this.cancelAsset();
             this.showSnackbar(this.$t("assets.asset-edited"));
           })
-          .catch(err => {
+          .catch((err) => {
             console.error("PUT FALURE", err.response);
             this.assetDialog.saveLoading = false;
             this.showSnackbar(this.$t("assets.error-editing-asset"));
@@ -374,14 +374,14 @@ export default {
         delete newAsset.event_count;
         this.$http
           .post("/api/v1/assets/?include_location=1", newAsset)
-          .then(resp => {
+          .then((resp) => {
             console.log("ADDED", resp);
             this.assets.push(resp.data);
             if (this.addMore) this.clearAsset();
             else this.cancelAsset();
             this.showSnackbar(this.$t("assets.asset-added"));
           })
-          .catch(err => {
+          .catch((err) => {
             console.error("POST FAILURE", err.response);
             this.assetDialog.saveLoading = false;
             this.assetDialog.addMoreLoading = false;
@@ -411,14 +411,14 @@ export default {
       delete newAsset.location;
       this.$http
         .post("/api/v1/assets/?include_location=1", newAsset)
-        .then(resp => {
+        .then((resp) => {
           console.log("ADDED", resp);
           this.assets.push(resp.data);
           this.assetDialog.show = false;
           this.assetDialog.saveLoading = false;
           this.showSnackbar(this.$t("assets.asset-added"));
         })
-        .catch(err => {
+        .catch((err) => {
           console.error("FAILURE", err.response);
           this.assetDialog.saveLoading = false;
           this.showSnackbar(this.$t("assets.error-adding-asset"));
@@ -450,8 +450,8 @@ export default {
       } else {
         this.windowSize.small = false;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

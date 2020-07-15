@@ -60,13 +60,13 @@ export default {
       this.attendanceLineSettings.labelMap.attendance = this.$t(
         "events.dashboard.charts.attendance"
       );
-    }
+    },
   },
   computed: {
     ...mapState(["locales"]),
-    ...mapGetters(["currentLocaleModel"])
+    ...mapGetters(["currentLocaleModel"]),
   },
-  data: function() {
+  data: function () {
     // Get attendance data
     var today = new Date();
     var todayFormatted =
@@ -87,10 +87,10 @@ export default {
       .get(
         `/api/v1/events/?include_participants=1&start=${lastWeekFormatted}&end=${todayFormatted}`
       )
-      .then(resp => {
+      .then((resp) => {
         console.log("GOT DATA", resp);
         var data = Object();
-        resp.data.forEach(event => {
+        resp.data.forEach((event) => {
           var campus = "Unknown";
           var attendance = 0;
           if (event.location && event.location.description) {
@@ -107,22 +107,22 @@ export default {
           data[campus] += attendance;
         });
         var arr = Array();
-        Object.keys(data).forEach(key => {
+        Object.keys(data).forEach((key) => {
           arr.push({
             campus: key,
-            attendance: data[key]
+            attendance: data[key],
           });
         });
         this.locationAttendanceData.rows = arr;
       })
-      .catch(err => {
+      .catch((err) => {
         console.error("GET FALURE", err.response);
       });
 
     // Get historic attendance data
     this.$http
       .get(`/api/v1/events/?include_participants=1&sort=start`)
-      .then(resp => {
+      .then((resp) => {
         console.log("GOT DATA", resp);
         var data = Object();
         var i;
@@ -141,10 +141,10 @@ export default {
           data[date] += attendance;
         }
         var arr = Array();
-        Object.keys(data).forEach(date => {
+        Object.keys(data).forEach((date) => {
           arr.push({
             date: date,
-            attendance: data[date]
+            attendance: data[date],
           });
         });
         this.yearlyAttendanceData.rows = arr;
@@ -152,17 +152,17 @@ export default {
         // Get home group membership data
         this.$http
           .get(`/api/v1/groups/members`)
-          .then(resp => {
+          .then((resp) => {
             console.log("GOT DATA", resp);
             this.homeGroupPercentageData.rows[0].percent = 0.5;
             // resp.data.length / arr[arr.length - 1].attendance;
             this.loading = false;
           })
-          .catch(err => {
+          .catch((err) => {
             console.error("GET FALURE", err.response);
           });
       })
-      .catch(err => {
+      .catch((err) => {
         console.error("GET FALURE", err.response);
       });
 
@@ -170,28 +170,28 @@ export default {
     return {
       locationAttendanceData: {
         columns: ["campus", "attendance"],
-        rows: []
+        rows: [],
       },
       yearlyAttendanceData: {
         columns: ["date", "attendance"],
-        rows: []
+        rows: [],
       },
       homeGroupPercentageData: {
         columns: ["homeGroups", "percent"],
         rows: [
           {
             homeGroups: this.$t("events.dashboard.charts.home-groups"),
-            percent: 0
-          }
-        ]
+            percent: 0,
+          },
+        ],
       },
       attendanceLineSettings: {
         labelMap: {
           campus: this.$t("events.dashboard.charts.campus"),
-          attendance: this.$t("events.dashboard.charts.attendance")
-        }
-      }
+          attendance: this.$t("events.dashboard.charts.attendance"),
+        },
+      },
     };
-  }
+  },
 };
 </script>

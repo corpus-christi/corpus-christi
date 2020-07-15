@@ -262,8 +262,8 @@ export default {
     entityTypeName: {
       /* either groupType or managerType */
       type: String,
-      default: "groupType"
-    }
+      default: "groupType",
+    },
   },
 
   computed: {
@@ -280,27 +280,27 @@ export default {
         return [
           {
             text: this.$t("groups.entity-types.group-types.name"),
-            value: "name"
+            value: "name",
           },
           {
             text: this.$t("actions.header"),
             value: "actions",
             sortable: false,
-            width: "150px"
-          }
+            width: "150px",
+          },
         ];
       } else {
         return [
           {
             text: this.$t("groups.entity-types.manager-types.name"),
-            value: "name"
+            value: "name",
           },
           {
             text: this.$t("actions.header"),
             value: "actions",
             sortable: false,
-            width: "150px"
-          }
+            width: "150px",
+          },
         ];
       }
     },
@@ -312,7 +312,7 @@ export default {
     },
     toolbarColor() {
       return this.select ? "blue-grey" : undefined;
-    }
+    },
   },
 
   data() {
@@ -325,12 +325,12 @@ export default {
       changeEntityTypeDialog: {
         loading: false,
         show: false,
-        entityType: {}
+        entityType: {},
       },
       deleteEntityTypeDialog: {
         loading: false,
         show: false,
-        entityTypeId: null
+        entityTypeId: null,
       },
       entityTypeDialog: {
         loading: false,
@@ -338,9 +338,9 @@ export default {
         editMode: false,
         editingEntityTypeId: null,
         entityType: {
-          name: ""
-        }
-      }
+          name: "",
+        },
+      },
     };
   },
 
@@ -349,25 +349,23 @@ export default {
     isEmpty,
     fetchEntityTypes() {
       this.tableLoading = true;
-      this.$http.get(this.endpoint).then(resp => {
+      this.$http.get(this.endpoint).then((resp) => {
         this.tableLoading = false;
         this.entityTypes = resp.data;
-        this.entityTypes.forEach(entityType => {
+        this.entityTypes.forEach((entityType) => {
           let entityName = this.isGroupTypeMode ? "groups" : "managers";
           this.$set(
             entityType,
             entityName,
-            entityType[entityName].filter(entity => entity.active)
+            entityType[entityName].filter((entity) => entity.active)
           );
         });
         if (!this.isGroupTypeMode) {
           for (let managerType of this.entityTypes) {
             // for each manager, create a unique pseudo-id and a human-readable name
-            managerType.managers.forEach(manager => {
+            managerType.managers.forEach((manager) => {
               manager.id = `g_${manager.group.id}_p_${manager.person.id}`;
-              manager.name = `${manager.person.firstName} ${
-                manager.person.lastName
-              } (${manager.group.name})`;
+              manager.name = `${manager.person.firstName} ${manager.person.lastName} (${manager.group.name})`;
             });
           }
         }
@@ -432,17 +430,17 @@ export default {
           this.deleteEntityTypeDialog.loading = false;
           this.hideDeleteEntityTypeDialog();
           this.entityTypes = this.entityTypes.filter(
-            entityType => entityType.id != id
+            (entityType) => entityType.id != id
           );
           eventBus.$emit("message", {
-            content: this.getTranslation("success-remove")
+            content: this.getTranslation("success-remove"),
           });
         })
-        .catch(err => {
+        .catch((err) => {
           this.deleteEntityTypeDialog.loading = false;
           this.hideDeleteEntityTypeDialog();
           eventBus.$emit("error", {
-            content: this.getTranslation("fail-remove")
+            content: this.getTranslation("fail-remove"),
           });
         });
     },
@@ -460,16 +458,16 @@ export default {
       this.entityTypeDialog.loading = true;
       this.$http
         .post(this.endpoint, { name: newName }, { noErrorSnackBar: true })
-        .then(resp => {
+        .then((resp) => {
           this.entityTypeFormKey = `add_${resp.data.id}`; // refresh entity-type-form
           this.fetchEntityTypes();
           eventBus.$emit("message", {
-            content: this.getTranslation("success-add")
+            content: this.getTranslation("success-add"),
           });
         })
-        .catch(err => {
+        .catch((err) => {
           eventBus.$emit("error", {
-            content: this.getTranslation("fail-add")
+            content: this.getTranslation("fail-add"),
           });
         })
         .finally(() => {
@@ -489,12 +487,12 @@ export default {
           this.entityTypeFormKey = `update_${id}_${newName}`; // refresh entity-type-form
           this.fetchEntityTypes();
           eventBus.$emit("message", {
-            content: this.getTranslation("success-update")
+            content: this.getTranslation("success-update"),
           });
         })
-        .catch(err => {
+        .catch((err) => {
           eventBus.$emit("error", {
-            content: this.getTranslation("fail-update")
+            content: this.getTranslation("fail-update"),
           });
         })
         .finally(() => {
@@ -510,9 +508,7 @@ export default {
         if (this.isGroupTypeMode) {
           endpoint = `/api/v1/groups/groups/${entity.id}`;
         } else {
-          endpoint = `/api/v1/groups/groups/${entity.group.id}/managers/${
-            entity.person.id
-          }`;
+          endpoint = `/api/v1/groups/groups/${entity.group.id}/managers/${entity.person.id}`;
         }
         let payload = {};
         payload[
@@ -526,23 +522,23 @@ export default {
         .then(() => {
           this.fetchEntityTypes();
           eventBus.$emit("message", {
-            content: this.getTranslation("success-change")
+            content: this.getTranslation("success-change"),
           });
         })
         .catch(() => {
           eventBus.$emit("error", {
-            content: this.getTranslation("fail-change")
+            content: this.getTranslation("fail-change"),
           });
         })
         .finally(() => {
           this.changeEntityTypeDialog.loading = false;
           this.hideChangeEntityTypeDialog();
         });
-    }
+    },
   },
 
   mounted() {
     this.fetchEntityTypes();
-  }
+  },
 };
 </script>

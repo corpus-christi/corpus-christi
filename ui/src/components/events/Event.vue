@@ -26,7 +26,7 @@ export default {
   computed: {
     eventId() {
       return this.$route.params.event;
-    }
+    },
   },
 
   data() {
@@ -37,10 +37,10 @@ export default {
       tabs: {
         details: 0,
         participants: 1,
-        assets: 2
-      }
+        assets: 2,
+      },
     };
-  }
+  },
 };
 </script>
 

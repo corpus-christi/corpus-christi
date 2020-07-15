@@ -13,7 +13,7 @@ describe("Get to Diplomas Page", () => {
 describe("Edit Diploma Page", () => {
   it("Get to Edit Diploma Page", () => {
     cy.get(
-      ":nth-child(1) > :nth-child(3) > .layout > :nth-child(1) > span > .v-btn"
+      ":nth-child(1) > :nth-child(3) > .layouts > :nth-child(1) > span > .v-btn"
     ).click();
   });
   it("Edit Title", () => {
@@ -39,7 +39,7 @@ describe("Edit Diploma Page", () => {
   });
   it("Save Diploma Page", () => {
     cy.get(
-      ":nth-child(1) > :nth-child(3) > .layout > :nth-child(1) > span > .v-btn"
+      ":nth-child(1) > :nth-child(3) > .layouts > :nth-child(1) > span > .v-btn"
     ).click();
     cy.get(
       ".v-form > :nth-child(1) > .v-input__control > .v-input__slot > .v-text-field__slot > input"

@@ -14,7 +14,7 @@
             hide-details
             clearable
             single-line
-            box
+            filled
             data-cy="search"
           />
         </v-flex>
@@ -129,7 +129,7 @@
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false" data-cy>
+      <v-btn text @click="snackbar.show = false" data-cy>
         {{ $t("actions.close") }}
       </v-btn>
     </v-snackbar>
@@ -175,7 +175,7 @@
           <v-btn
             v-on:click="cancelAction"
             color="secondary"
-            flat
+            text
             :disabled="confirmDialog.loading"
             >{{ $t("actions.cancel") }}</v-btn
           >
@@ -206,13 +206,13 @@ export default {
   props: {
     peopleList: {
       type: Array,
-      required: true
+      required: true,
     },
     rolesList: {
       type: Array,
-      required: true
+      required: true,
     },
-    tableLoaded: Boolean
+    tableLoaded: Boolean,
   },
   data() {
     return {
@@ -220,7 +220,7 @@ export default {
       adminDialog: {
         show: false,
         person: {},
-        rolesEnabled: false
+        rolesEnabled: false,
       },
 
       confirmDialog: {
@@ -228,12 +228,12 @@ export default {
         action: "",
         person: {},
         title: "",
-        loading: false
+        loading: false,
       },
 
       snackbar: {
         show: false,
-        text: ""
+        text: "",
       },
 
       showingArchived: false,
@@ -245,7 +245,7 @@ export default {
       archivedPeople: [],
       search: "",
       data: {},
-      translations: {}
+      translations: {},
     };
   },
   computed: {
@@ -255,17 +255,17 @@ export default {
         {
           text: this.$t("person.name.first"),
           value: "firstName",
-          width: "20%"
+          width: "20%",
         },
         { text: this.$t("person.name.last"), value: "lastName", width: "20%" },
         {
           text: this.$t("person.email"),
           value: "email",
           width: "20%",
-          class: "hidden-sm-and-down"
+          class: "hidden-sm-and-down",
         },
         { text: this.$t("person.phone"), value: "phone", width: "20%" },
-        { text: this.$t("actions.header"), width: "20%", sortable: false }
+        { text: this.$t("actions.header"), width: "20%", sortable: false },
       ];
     },
     viewOptions() {
@@ -273,14 +273,14 @@ export default {
         {
           text: this.$t("actions.view-active"),
           value: "viewActive",
-          class: "view-active"
+          class: "view-active",
         },
         {
           text: this.$t("actions.view-archived"),
           value: "viewArchived",
-          class: "view-archived"
+          class: "view-archived",
         },
-        { text: this.$t("actions.view-all"), value: "viewAll" }
+        { text: this.$t("actions.view-all"), value: "viewAll" },
       ];
     },
     peopleToDisplay() {
@@ -294,21 +294,21 @@ export default {
         default:
           return this.activePeople;
       }
-    }
+    },
   },
 
   watch: {
     peopleList(all_people) {
       this.allPeople = all_people;
-      this.activePeople = this.allPeople.filter(person => person.active);
-      this.archivedPeople = this.allPeople.filter(person => !person.active);
+      this.activePeople = this.allPeople.filter((person) => person.active);
+      this.archivedPeople = this.allPeople.filter((person) => !person.active);
     },
     rolesList(all_roles) {
       this.rolesList = all_roles;
     },
     tableLoaded(loading) {
       this.tableLoaded = loading;
-    }
+    },
   },
 
   methods: {
@@ -360,12 +360,12 @@ export default {
       // Fetch the person's account information (if any) before activating the dialog.
       this.$http
         .get(`/api/v1/people/persons/${person.id}`)
-        .then(resp => {
+        .then((resp) => {
           console.log("FETCHED ACCOUNT", resp);
           this.adminDialog.account = resp.data;
           this.adminDialog.show = true;
         })
-        .catch(err => console.error("FAILURE", err.response));
+        .catch((err) => console.error("FAILURE", err.response));
     },
     closeAdmin() {
       this.adminDialog.show = false;
@@ -374,56 +374,56 @@ export default {
     addAccount(account) {
       this.$http
         .post("/api/v1/people/accounts", account)
-        .then(resp => {
+        .then((resp) => {
           console.log("ADDED ACCOUNT", resp);
           this.refreshPeopleList();
           this.showSnackbar(this.$t("account.messages.added-ok"));
         })
-        .catch(err => console.error("FAILURE", err.response));
+        .catch((err) => console.error("FAILURE", err.response));
     },
 
     updateAccount(accountId, account) {
       this.$http
         .patch(`/api/v1/people/accounts/${accountId}`, account)
-        .then(resp => {
+        .then((resp) => {
           console.log("PATCHED ACCOUNT", resp);
           this.refreshPeopleList();
           this.showSnackbar(this.$t("account.messages.updated-ok"));
         })
-        .catch(err => console.error("FAILURE", err.response));
+        .catch((err) => console.error("FAILURE", err.response));
     },
 
     deactivateAccount(accountId) {
       this.$http
         .put(`/api/v1/people/accounts/deactivate/${accountId}`)
-        .then(resp => {
+        .then((resp) => {
           console.log("DEACTIVATED ACCOUNT", resp);
           this.showSnackbar(this.$t("person.messages.account-deactivate"));
         })
         .then(() => this.refreshPeopleList())
-        .catch(err => console.error("FAILURE", err.response));
+        .catch((err) => console.error("FAILURE", err.response));
     },
 
     reactivateAccount(accountId) {
       this.$http
         .put(`/api/v1/people/accounts/activate/${accountId}`)
-        .then(resp => {
+        .then((resp) => {
           console.log("REACTIVATED ACCOUNT", resp);
           this.refreshPeopleList();
           this.showSnackbar(this.$t("person.messages.account-activate"));
         })
-        .catch(err => console.error("FAILURE", err.response));
+        .catch((err) => console.error("FAILURE", err.response));
     },
 
     activatePerson(person) {
       this.$http
         .put(`/api/v1/people/persons/activate/${person.id}`)
-        .then(resp => {
+        .then((resp) => {
           console.log("ACTIVATED PERSON", resp);
           this.showSnackbar(this.$t("person.messages.person-activate"));
         })
         .then(() => this.refreshPeopleList())
-        .catch(err => console.error("FAILURE", err.response))
+        .catch((err) => console.error("FAILURE", err.response))
         .finally(() => {
           this.confirmDialog.loading = false;
           this.confirmDialog.show = false;
@@ -433,7 +433,7 @@ export default {
     deactivatePerson(person) {
       this.$http
         .put(`/api/v1/people/persons/deactivate/${person.id}`)
-        .then(resp => {
+        .then((resp) => {
           console.log("DEACTIVATED PERSON", resp);
           this.showSnackbar(this.$t("person.messages.person-deactivate"));
         })
@@ -443,7 +443,7 @@ export default {
             this.deactivateAccount(person.accountInfo.id);
           }
         })
-        .catch(err => console.error("FAILURE", err.response))
+        .catch((err) => console.error("FAILURE", err.response))
         .finally(() => {
           this.confirmDialog.loading = false;
           this.confirmDialog.show = false;
@@ -452,7 +452,7 @@ export default {
 
     refreshPeopleList() {
       this.$emit("fetchPeopleList");
-    }
-  }
+    },
+  },
 };
 </script>

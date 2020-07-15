@@ -198,7 +198,7 @@ export default {
         10,
         15,
         25,
-        { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 }
+        { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 },
       ],
       pageLoaded: false,
       tableLoading: false,
@@ -211,24 +211,24 @@ export default {
         editMode: false,
         saveLoading: false,
         addMoreLoading: false,
-        team: {}
+        team: {},
       },
 
       archiveDialog: {
         show: false,
         memberId: -1,
-        loading: false
+        loading: false,
       },
 
       addMemberDialog: {
         show: false,
         newMembers: [],
-        loading: false
+        loading: false,
       },
       snackbar: {
         show: false,
-        text: ""
-      }
+        text: "",
+      },
     };
   },
 
@@ -243,20 +243,20 @@ export default {
         {
           text: this.$t("person.name.first"),
           value: "firstName",
-          width: "20%"
+          width: "20%",
         },
         { text: this.$t("person.name.last"), value: "lastName", width: "20%" },
         { text: this.$t("person.email"), value: "email", width: "22.5%" },
         { text: this.$t("person.phone"), value: "phone", width: "22.5%" },
-        { text: this.$t("actions.header"), sortable: false }
+        { text: this.$t("actions.header"), sortable: false },
       ];
-    }
+    },
   },
 
   methods: {
     reloadTeam() {
       const id = this.$route.params.team;
-      this.$http.get(`/api/v1/teams/${id}?include_members=1`).then(resp => {
+      this.$http.get(`/api/v1/teams/${id}?include_members=1`).then((resp) => {
         this.team = resp.data;
         this.members = resp.data.members;
         for (let m of this.members) console.log(m);
@@ -280,17 +280,17 @@ export default {
       this.archiveDialog.loading = true;
       const memberId = this.archiveDialog.memberId;
       const teamId = this.$route.params.team;
-      const idx = this.members.findIndex(as => as.member_id === memberId);
+      const idx = this.members.findIndex((as) => as.member_id === memberId);
       this.$http
         .delete(`/api/v1/teams/${teamId}/members/${memberId}`)
-        .then(resp => {
+        .then((resp) => {
           console.log("ARCHIVE", resp);
           this.members[idx].active = false;
           this.archiveDialog.loading = false;
           this.archiveDialog.show = false;
           this.showSnackbar(this.$t("assets.asset-archived"));
         })
-        .catch(err => {
+        .catch((err) => {
           console.error("ARCHIVE FALURE", err.response);
           this.archiveDialog.loading = false;
           this.archiveDialog.show = false;
@@ -300,7 +300,7 @@ export default {
 
     unarchive(member) {
       const idx = this.members.findIndex(
-        as => as.member_id === member.member_id
+        (as) => as.member_id === member.member_id
       );
       const copyMember = JSON.parse(JSON.stringify(member));
       member.unarchiving = true;
@@ -309,13 +309,13 @@ export default {
       const teamId = this.$route.params.team;
       this.$http
         .patch(`/api/v1/teams/${teamId}/members/${patchId}`, { active: true })
-        .then(resp => {
+        .then((resp) => {
           console.log("UNARCHIVED", resp);
           delete member.unarchiving;
           Object.assign(this.members[idx], resp.data);
           this.showSnackbar(this.$t("assets.asset-unarchived"));
         })
-        .catch(err => {
+        .catch((err) => {
           delete member.unarchiving;
           console.error("UNARCHIVE FALURE", err.response);
           this.showSnackbar(this.$t("assets.error-unarchiving-asset"));
@@ -337,7 +337,7 @@ export default {
 
       for (let person of this.addMemberDialog.newMembers) {
         const idx = this.members.findIndex(
-          ev_pe => ev_pe.member_id === person.id
+          (ev_pe) => ev_pe.member_id === person.id
         );
         if (idx === -1) {
           promises.push(this.addParticipant(person.id));
@@ -352,7 +352,7 @@ export default {
           this.addMemberDialog.newMembers = [];
           this.reloadTeam();
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
           this.addMemberDialog.loading = false;
           this.showSnackbar(this.$t("events.participants.error-adding"));
@@ -362,7 +362,7 @@ export default {
     addParticipant(id) {
       const teamId = this.$route.params.team;
       return this.$http.post(`/api/v1/teams/${teamId}/members/${id}`, {
-        active: true
+        active: true,
       });
     },
 
@@ -386,16 +386,16 @@ export default {
       delete team.id;
       this.$http
         .patch(`/api/v1/events/teams/${teamId}`, {
-          description: team.description
+          description: team.description,
         })
-        .then(resp => {
+        .then((resp) => {
           console.log("EDITED", resp);
           this.team = resp.data;
           this.teamDialog.show = false;
           this.teamDialog.saveLoading = false;
           this.showSnackbar(this.$t("teams.team-edited"));
         })
-        .catch(err => {
+        .catch((err) => {
           console.error("PUT FALURE", err.response);
           console.log(err);
           this.teamDialog.saveLoading = false;
@@ -406,8 +406,8 @@ export default {
     showSnackbar(message) {
       this.snackbar.text = message;
       this.snackbar.show = true;
-    }
-  }
+    },
+  },
 };
 </script>
 

@@ -33,10 +33,10 @@ export default {
       tabs: {
         members: 0,
         meetings: 1,
-        details: 2
-      }
+        details: 2,
+      },
     };
-  }
+  },
 };
 </script>
 

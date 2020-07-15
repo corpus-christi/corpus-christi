@@ -1,47 +1,48 @@
 <template>
-  <v-menu>
-    <v-btn id="cur-locale" data-cy="cur-locale" flat slot="activator">
-      {{ currentFlagAndDescription }}
-      <v-icon left>arrow_drop_down</v-icon>
-    </v-btn>
+  <v-menu offset-y>
+    <template v-slot:activator="{ on }">
+      <v-btn id="cur-locale" data-cy="cur-locale" text v-on="on">
+        {{ currentFlagAndDescription }}
+        <v-icon>arrow_drop_down</v-icon>
+      </v-btn>
+    </template>
+
     <v-list data-cy="language-dropdown">
-      <v-list-tile
+      <v-list-item
         v-for="(localeModel, idx) in localeModels"
         v-bind:key="idx"
         v-bind:data-cy="localeModel.code"
         v-on:click="changeLocale(localeModel)"
       >
-        <v-list-tile-title>
+        <v-list-item-title>
           {{ localeModel.flagAndDescription }}
-        </v-list-tile-title>
-      </v-list-tile>
+        </v-list-item-title>
+      </v-list-item>
     </v-list>
   </v-menu>
 </template>
 
-<script lang="ts">
+<script lang="js">
 import Vue from "vue";
 import set from "lodash/set";
-import { I18NValueSchema, Locale, LocaleModel } from "@/models/Locale";
-import { AxiosError, AxiosResponse } from "axios";
 
 export default Vue.extend({
   name: "LocaleMenu",
 
   computed: {
-    currentLocale(): Locale {
+    currentLocale() {
       return this.$store.state.currentLocale;
     },
 
-    localeModels(): LocaleModel[] {
+    localeModels() {
       return this.$store.state.localeModels;
     },
 
-    currentLocaleModel(): LocaleModel {
+    currentLocaleModel() {
       return this.$store.getters.currentLocaleModel;
     },
 
-    currentFlagAndDescription(): string {
+    currentFlagAndDescription() {
       const localeModel = this.currentLocaleModel;
 
       if (localeModel) {
@@ -49,7 +50,7 @@ export default Vue.extend({
       } else {
         return "NO LOCALE";
       }
-    }
+    },
   },
 
   mounted() {
@@ -57,11 +58,11 @@ export default Vue.extend({
   },
 
   methods: {
-    setCurrentLocale(locale: Locale) {
+    setCurrentLocale(locale) {
       this.$store.commit("setCurrentLocale", locale);
     },
 
-    changeLocale(localeModel: LocaleModel) {
+    changeLocale(localeModel) {
       const locale = localeModel.locale;
       this.setCurrentLocale(locale);
       this.getTranslationsForLanguage(locale).then(() => {
@@ -69,10 +70,10 @@ export default Vue.extend({
       });
     },
 
-    getTranslationsForLanguage(locale: Locale): Promise<void> {
+    getTranslationsForLanguage(locale) {
       return this.$http
         .get(`/api/v1/i18n/values/${locale}`)
-        .then((response: AxiosResponse<I18NValueSchema[]>) => {
+        .then((response) => {
           let translations = {};
           for (let item of response.data) {
             set(translations, item.key_id, item.gloss);
@@ -80,8 +81,8 @@ export default Vue.extend({
           this.$i18n.mergeLocaleMessage(locale.languageCode, translations);
           console.log("GTFL XLATES", this.$i18n);
         })
-        .catch((err: AxiosError) => console.error("FAILURE", err));
-    }
-  }
+        .catch((err) => console.error("FAILURE", err));
+    },
+  },
 });
 </script>

@@ -79,7 +79,7 @@
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false" data-cy>
+      <v-btn text @click="snackbar.show = false" data-cy>
         {{ $t("actions.close") }}
       </v-btn>
     </v-snackbar>
@@ -115,13 +115,13 @@ export default {
   props: {
     peopleList: {
       type: Array,
-      required: true
+      required: true,
     },
     rolesList: {
       type: Array,
-      required: true
+      required: true,
     },
-    tableLoaded: Boolean
+    tableLoaded: Boolean,
   },
 
   data() {
@@ -134,26 +134,26 @@ export default {
         saveLoading: false,
         addMoreLoading: false,
         attributes: [],
-        person: {}
+        person: {},
       },
 
       adminDialog: {
         show: false,
         person: {},
         account: {},
-        rolesEnabled: false
+        rolesEnabled: false,
       },
 
       snackbar: {
         show: false,
-        text: ""
+        text: "",
       },
 
       showingArchived: false,
       selected: [],
       allPeople: [],
       search: "",
-      data: {}
+      data: {},
     };
   },
   computed: {
@@ -163,20 +163,20 @@ export default {
         {
           text: this.$t("person.name.first"),
           value: "firstName",
-          width: "15%"
+          width: "15%",
         },
         { text: this.$t("person.name.last"), value: "lastName", width: "15%" },
         {
           text: this.$t("person.username"),
           value: "person.username",
-          width: "15%"
+          width: "15%",
         },
         {
           text: this.$t("people.title-roles"),
           value: "person.roles",
-          width: "35%"
+          width: "35%",
         },
-        { text: this.$t("actions.header"), width: "17%", sortable: false }
+        { text: this.$t("actions.header"), width: "17%", sortable: false },
       ];
     },
     peopleToDisplay() {
@@ -211,10 +211,10 @@ export default {
     },
 
     translatedRoles() {
-      return this.rolesList.map(element => {
+      return this.rolesList.map((element) => {
         return {
           text: this.$t(element.text),
-          value: element.value
+          value: element.value,
         };
       });
     },
@@ -223,53 +223,53 @@ export default {
       return [
         {
           text: this.$t("people.dropdown-roles"),
-          value: "allRoles"
-        }
+          value: "allRoles",
+        },
       ];
-    }
+    },
   },
 
   watch: {
     //This needs cleaned up in the future
     peopleList(all_people) {
       this.allPeople = all_people;
-      this.rolePublic = this.allPeople.filter(person =>
-        person.roles.some(role => role.id === 1)
+      this.rolePublic = this.allPeople.filter((person) =>
+        person.roles.some((role) => role.id === 1)
       );
-      this.roleInfrastructure = this.allPeople.filter(person =>
-        person.roles.some(role => role.id === 2)
+      this.roleInfrastructure = this.allPeople.filter((person) =>
+        person.roles.some((role) => role.id === 2)
       );
-      this.roleSuperuser = this.allPeople.filter(person =>
-        person.roles.some(role => role.id === 3)
+      this.roleSuperuser = this.allPeople.filter((person) =>
+        person.roles.some((role) => role.id === 3)
       );
-      this.roleTranslator = this.allPeople.filter(person =>
-        person.roles.some(role => role.id === 4)
+      this.roleTranslator = this.allPeople.filter((person) =>
+        person.roles.some((role) => role.id === 4)
       );
-      this.roleGroupAdmin = this.allPeople.filter(person =>
-        person.roles.some(role => role.id === 5)
+      this.roleGroupAdmin = this.allPeople.filter((person) =>
+        person.roles.some((role) => role.id === 5)
       );
-      this.roleGroupLeader = this.allPeople.filter(person =>
-        person.roles.some(role => role.id === 6)
+      this.roleGroupLeader = this.allPeople.filter((person) =>
+        person.roles.some((role) => role.id === 6)
       );
-      this.roleGroupOverseer = this.allPeople.filter(person =>
-        person.roles.some(role => role.id === 7)
+      this.roleGroupOverseer = this.allPeople.filter((person) =>
+        person.roles.some((role) => role.id === 7)
       );
-      this.roleRegistrar = this.allPeople.filter(person =>
-        person.roles.some(role => role.id === 8)
+      this.roleRegistrar = this.allPeople.filter((person) =>
+        person.roles.some((role) => role.id === 8)
       );
-      this.roleTeachingAssistant = this.allPeople.filter(person =>
-        person.roles.some(role => role.id === 9)
+      this.roleTeachingAssistant = this.allPeople.filter((person) =>
+        person.roles.some((role) => role.id === 9)
       );
-      this.roleEventPlanner = this.allPeople.filter(person =>
-        person.roles.some(role => role.id === 10)
+      this.roleEventPlanner = this.allPeople.filter((person) =>
+        person.roles.some((role) => role.id === 10)
       );
-      this.roleVisitor = this.allPeople.filter(person =>
-        person.roles.some(role => role.id === 11)
+      this.roleVisitor = this.allPeople.filter((person) =>
+        person.roles.some((role) => role.id === 11)
       );
     },
     tableLoaded(loading) {
       this.tableLoaded = loading;
-    }
+    },
   },
 
   methods: {
@@ -308,12 +308,12 @@ export default {
       // Fetch the person's account information (if any) before activating the dialog.
       this.$http
         .get(`/api/v1/people/persons/${person.id}`)
-        .then(resp => {
+        .then((resp) => {
           console.log("FETCHED ACCOUNT", resp);
           this.adminDialog.account = resp.data;
           this.adminDialog.show = true;
         })
-        .catch(err => console.error("FAILURE", err.response));
+        .catch((err) => console.error("FAILURE", err.response));
     },
     closeAdmin() {
       this.adminDialog.show = false;
@@ -322,62 +322,62 @@ export default {
     addAccount(person) {
       this.$http
         .post("/api/v1/people/persons", person)
-        .then(resp => {
+        .then((resp) => {
           console.log("Person ADDED", resp);
           this.refreshPeopleList();
           this.showSnackbar(this.$t("account.messages.added-ok"));
         })
-        .catch(err => console.error("FAILURE", err.response));
+        .catch((err) => console.error("FAILURE", err.response));
     },
 
     updateAccount(personId, person) {
       this.$http
         .patch(`/api/v1/people/accounts/${personId}`, person)
-        .then(resp => {
+        .then((resp) => {
           console.log("PATCHED ACCOUNT", resp);
           this.refreshPeopleList();
           this.showSnackbar(this.$t("account.messages.updated-ok"));
         })
-        .catch(err => console.error("FAILURE", err.response));
+        .catch((err) => console.error("FAILURE", err.response));
     },
 
     deactivateAccount(personId) {
       this.$http
         .put(`/api/v1/people/accounts/deactivate/${personId}`)
-        .then(resp => {
+        .then((resp) => {
           console.log("DEACTIVATED ACCOUNT", resp);
           this.showSnackbar(this.$t("person.messages.account-deactivate"));
         })
         .then(() => this.refreshPeopleList())
-        .catch(err => console.error("FAILURE", err.response));
+        .catch((err) => console.error("FAILURE", err.response));
     },
 
     reactivateAccount(personId) {
       this.$http
         .put(`/api/v1/people/accounts/activate/${personId}`)
-        .then(resp => {
+        .then((resp) => {
           console.log("REACTIVATED ACCOUNT", resp);
           this.refreshPeopleList();
           this.showSnackbar(this.$t("person.messages.account-activate"));
         })
-        .catch(err => console.error("FAILURE", err.response));
+        .catch((err) => console.error("FAILURE", err.response));
     },
 
     getAttributesInfo() {
       this.$http
         .get("/api/v1/people/persons/fields")
-        .then(resp => {
+        .then((resp) => {
           console.log("FETCHED ATTRIBUTES", resp);
           if (resp.data.person_attributes) {
             this.personDialog.attributes = resp.data.person_attributes;
           }
         })
-        .catch(err => console.error("FAILURE", err.response));
+        .catch((err) => console.error("FAILURE", err.response));
     },
 
     refreshPeopleList() {
       this.$emit("fetchPeopleList");
-    }
-  }
+    },
+  },
 };
 </script>
