@@ -677,46 +677,49 @@ export default {
 
     /************* hierarchy cycle helpers ****************/
     /* update the local copy of participant with groupId and personId in allGroups and allPersons with 'payload'
-     the main use case is to mark participant as active/inactive after performing a change to reflect the updated hierarchy 
+     the main use case is to mark participant as active/inactive after performing a change to reflect the updated hierarchy
      as an alternative to calling fetchAllGroups and fetchAllPersons again */
-    updateLocalParticipant(groupId, personId, payload) {
+    saveLocalParticipant(groupId, personId, payload) {
       // TODO: test and use this method to replace most of fetch after api methods succeed
-      if (groupId === this.id) {
-        let participant = this.participants.find(
-          (participant) => participant.person.id === personId
-        );
-        if (participant) {
-          console.log("participant before", participant);
-          Object.assign(participant, payload);
-          console.log("participant after", participant);
+      let person = this.allPersons.find((person) => person.id === personId);
+      let group = this.allGroups.find((group) => group.id === groupId);
+      let localParticipants = [
+        groupId === this.id ? this.participants : undefined,
+        person
+          ? person[this.isManagerMode ? "managers" : "members"]
+          : undefined,
+        group ? group[this.isManagerMode ? "managers" : "members"] : undefined,
+      ];
+      let localParticipantsFilter = [
+        (participant) => participant.person.id === personId,
+        (participant) => participant.groupId === groupId,
+        (participant) => participant.person.id === personId,
+      ];
+      for (let i in localParticipants) {
+        let participants = localParticipants[i];
+        if (participants == undefined) {
+          continue;
+        }
+        let filter = localParticipantsFilter[i];
+        let participantIndex = participants.findIndex(filter);
+        if (participantIndex !== -1) {
+          // console.log("participant before", participants[participantIndex]);
+          this.$set(participants, participantIndex, {
+            ...participants[participantIndex],
+            ...payload,
+          });
+          // console.log("participant after", participants[participantIndex]);
+        } else {
+          // console.log("old participants", participants);
+          participants.push({ ...payload });
+          // console.log("participant added", payload);
+          // console.log("new participants", participants);
         }
       }
-      let person = this.allPersons.find((person) => person.id === personId);
-      if (person) {
-        let participants = person[this.isManagerMode ? "managers" : "members"];
-        participants.forEach((participant) => {
-          if (participant.groupId === groupId) {
-            console.log("participant before", participant);
-            Object.assign(participant, payload);
-            console.log("participant after", participant);
-          }
-        });
-      }
-      let group = this.allGroups.find((group) => group.id === groupId);
-      if (group) {
-        let participants = group[this.isManagerMode ? "managers" : "members"];
-        participants.forEach((participant) => {
-          if (participant.person.id === personId) {
-            console.log("participant before", participant);
-            Object.assign(participant, payload);
-            console.log("participant after", participant);
-          }
-        });
-      }
     },
-    updateLocalParticipants(persons, payload) {
+    saveLocalParticipants(groupId, persons, payload) {
       persons.forEach((person) => {
-        this.updateLocalParticipant(this.id, person.id, payload);
+        this.saveLocalParticipant(groupId, person.id, payload);
       });
     },
 
@@ -846,8 +849,14 @@ export default {
         editMode ? "patch" : "post",
         payload
       )
-        .then(() => {
-          this.fetchParticipants();
+        .then((resps) => {
+          for (let i in resps) {
+            this.saveLocalParticipant(
+              this.id,
+              this.participantDialog.persons[i],
+              resps[i].data
+            );
+          }
           eventBus.$emit("message", {
             content: editMode
               ? this.isManagerMode
@@ -918,6 +927,26 @@ export default {
         this.selectionMode = "move";
       }
     },
+
+    /************* api methods ****************/
+    /* add or update the participants associated with current group and each person in 'persons',
+    'method' is a string either being 'patch' or 'post', specifying whether to add or update the participants
+    'payload' is a dictionary specifying additional attributes (e.g. managerTypeId) to be used in the request payload */
+    saveParticipants(persons, method, payload = {}) {
+      let promises = [];
+      let http = this.$http[method];
+      for (let person of persons) {
+        let endpoint =
+          method === "post" ? this.endpoint : `${this.endpoint}/${person.id}`;
+        let body = { ...payload };
+        if (method === "post") {
+          // if adding participants
+          body.personId = person.id;
+        }
+        promises.push(http(endpoint, body, { noErrorSnackBar: true }));
+      }
+      return Promise.all(promises);
+    },
     batchMoveParticipants(participants) {
       return this.saveParticipants(
         participants.map((p) => p.person),
@@ -945,43 +974,14 @@ export default {
           });
         });
     },
-
-    /************* api methods ****************/
-    /* add or update the participants associated with current group and each person in 'persons',
-    'method' is a string either being 'patch' or 'post', specifying whether to add or update the participants
-    'payload' is a dictionary specifying additional attributes (e.g. managerTypeId) to be used in the request payload */
-    saveParticipants(persons, method, payload = {}) {
-      let promises = [];
-      let http = this.$http[method];
-      for (let person of persons) {
-        let endpoint =
-          method === "post" ? this.endpoint : `${this.endpoint}/${person.id}`;
-        let body = { ...payload };
-        if (method === "post") {
-          // if adding participants
-          body.personId = person.id;
-        }
-        promises.push(http(endpoint, body, { noErrorSnackBar: true }));
-      }
-      return Promise.all(promises);
-    },
     /* archive or unarchive the participants */
     archiveParticipants(participants, unarchive = false) {
-      // TODO: use saveParticipants to implement this method
-      let promises = [];
       this.archiveDialog.loading = true;
-      for (let participant of participants) {
-        promises.push(
-          this.$http.patch(
-            `${this.endpoint}/${participant.person.id}`,
-            { active: unarchive ? true : false },
-            { noErrorSnackBar: true }
-          )
-        );
-      }
-      return Promise.all(promises)
+      let persons = participants.map((p) => p.person);
+      let payload = { active: unarchive ? true : false };
+      return this.saveParticipants(persons, "patch", payload)
         .then(() => {
-          this.fetchParticipants();
+          this.saveLocalParticipants(this.id, persons, payload);
           eventBus.$emit("message", {
             content: this.isManagerMode
               ? unarchive
@@ -1015,25 +1015,25 @@ export default {
     unarchiveParticipant(participant) {
       const participantId = participant.id;
       participant.id = -1; // show loading state
-      this.archiveParticipants([participant], true).finally(() => {
+      return this.archiveParticipants([participant], true).finally(() => {
         participant.id = participantId;
       });
     },
     fetchParticipants() {
       this.tableLoading = true;
-      this.$http.get(this.endpoint).then((resp) => {
+      return this.$http.get(this.endpoint).then((resp) => {
         this.participants = resp.data;
         console.log(resp.data);
         this.tableLoading = false;
       });
     },
     fetchAllPersons() {
-      this.$http.get("api/v1/people/persons").then((resp) => {
+      return this.$http.get("api/v1/people/persons").then((resp) => {
         this.allPersons = resp.data;
       });
     },
     fetchAllGroups() {
-      this.$http.get("api/v1/groups/groups").then((resp) => {
+      return this.$http.get("api/v1/groups/groups").then((resp) => {
         this.allGroups = resp.data;
       });
     },
