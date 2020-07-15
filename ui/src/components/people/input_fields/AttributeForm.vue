@@ -26,7 +26,7 @@ export default {
   data() {
     return {
       formData: this.value || {},
-      attributes: []
+      attributes: [],
     };
   },
   watch: {
@@ -40,7 +40,7 @@ export default {
           );
         }
       }
-    }
+    },
   },
   mounted() {
     this.getAttributesInfo().then(() => {
@@ -54,14 +54,14 @@ export default {
     getAttributesInfo() {
       return this.$http
         .get("/api/v1/people/persons/fields")
-        .then(resp => {
+        .then((resp) => {
           this.attributes = resp.data.person_attributes;
         })
-        .catch(err => console.error("FAILURE", err));
+        .catch((err) => console.error("FAILURE", err));
     },
 
     getExistingAttribute(attributeId) {
-      let idx = this.existingAttributes.findIndex(item => {
+      let idx = this.existingAttributes.findIndex((item) => {
         return item.attributeId == attributeId;
       });
       let existingAttribute = this.existingAttributes[idx];
@@ -89,7 +89,7 @@ export default {
           personId: this.personId ? this.personId : 0,
           attributeId: attr.id,
           enumValueId: 0,
-          stringValue: ""
+          stringValue: "",
         });
       }
     },
@@ -99,7 +99,7 @@ export default {
         personId: this.personId ? this.personId : 0,
         attributeId: Number(attributeId),
         enumValueId: value.enumValueId,
-        stringValue: value.stringValue
+        stringValue: value.stringValue,
       });
       this.attributes[attributeIdx].value = this.getStringOrEnumValue(value);
       this.$emit("input", this.formData);
@@ -129,10 +129,10 @@ export default {
         this.$set(this.attributes[idx], "value", null);
         this.updateForm(this.attributes[idx].id.toString(), idx, {
           enumValueId: 0,
-          stringValue: ""
+          stringValue: "",
         });
       }
-    }
-  }
+    },
+  },
 };
 </script>

@@ -5,7 +5,7 @@
         <form method="POST" ref="imageForm">
           <v-flex class="text-xs-center">
             <v-btn
-              flat
+              text
               color="primary"
               small
               @click="openFileChooser"
@@ -55,7 +55,7 @@
           >
             <v-layout justify-end fill-height align-start>
               <v-btn
-                flat
+                text
                 icon
                 class="d-flex grey darken-4 display-3 white--text"
                 @click="deleteSelectedImage"
@@ -69,7 +69,7 @@
     </v-card-text>
     <v-card-actions v-if="!saved">
       <v-spacer />
-      <v-btn flat @click="cancelDialog"> {{ $t("actions.cancel") }} </v-btn>
+      <v-btn text @click="cancelDialog"> {{ $t("actions.cancel") }} </v-btn>
       <v-btn color="primary" @click="uploadSelectedImage">
         {{ $t("actions.save") }}
       </v-btn>
@@ -83,7 +83,7 @@ export default {
   computed: {
     fetchImage() {
       return `/api/v1/images/${this.id}?${Math.random()}`;
-    }
+    },
   },
   watch: {
     imageId(id) {
@@ -92,7 +92,7 @@ export default {
         this.id = id;
         this.saved = true;
       }
-    }
+    },
   },
   methods: {
     clear() {
@@ -125,11 +125,11 @@ export default {
         const formData = new FormData(this.$refs.imageForm);
         this.$http
           .post("/api/v1/images/", formData)
-          .then(resp => {
+          .then((resp) => {
             console.log(resp);
             this.saveSelectedImage(resp.data.id);
           })
-          .catch(err => {
+          .catch((err) => {
             const response = err.response;
             if (response) {
               if (response.status == 303) {
@@ -167,13 +167,13 @@ export default {
     },
     cancelDialog() {
       this.$emit("cancel");
-    }
+    },
   },
   props: {
     imageId: {
       type: Number,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
@@ -181,7 +181,7 @@ export default {
       filename: "",
       saved: false,
       preview: false,
-      missing: false
+      missing: false,
     };
   },
   mounted() {
@@ -190,6 +190,6 @@ export default {
       this.id = this.$props.imageId;
       this.saved = true;
     }
-  }
+  },
 };
 </script>

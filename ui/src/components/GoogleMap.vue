@@ -3,7 +3,7 @@
     ref="map"
     v-bind:center="center"
     v-bind:zoom="zoom"
-    style="width:100%;  height: 400px;"
+    style="width: 100%; height: 400px;"
     data-cy="gmap"
     ><gmap-marker
       :key="index"
@@ -30,8 +30,8 @@ export default {
   props: {
     markers: {
       type: Array,
-      required: false
-    }
+      required: false,
+    },
   },
   methods: {
     centerMapOnMarker(position) {
@@ -44,7 +44,7 @@ export default {
       this.infoWindow.name = item.data.name;
       this.infoWindow.description = item.data.description;
       this.infoWindow.address = item.data.address;
-    }
+    },
   },
   data() {
     return {
@@ -56,14 +56,14 @@ export default {
         open: false,
         address: "",
         name: "",
-        description: ""
-      }
+        description: "",
+      },
     };
   },
-  mounted: function() {
-    this.$refs.map.$mapPromise.then(m => {
+  mounted: function () {
+    this.$refs.map.$mapPromise.then((m) => {
       this.map = m;
     });
-  }
+  },
 };
 </script>

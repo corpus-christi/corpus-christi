@@ -175,7 +175,7 @@
                     editLocation({
                       address_id: props.item.id,
                       allLocations: props.item.locations,
-                      editMode: true
+                      editMode: true,
                     })
                   "
                   data-cy="edit-locations"
@@ -196,7 +196,7 @@
                     newLocation({
                       address_id: props.item.id,
                       allLocations: [],
-                      editMode: false
+                      editMode: false,
                     })
                   "
                   data-cy="add-location"
@@ -501,7 +501,7 @@ export default {
     addresses: Array,
     areas: Array,
     locations: Array,
-    countries: Array
+    countries: Array,
   },
   data() {
     return {
@@ -512,7 +512,7 @@ export default {
         editMode: false,
         saveLoading: false,
         addMoreLoading: false,
-        places: {}
+        places: {},
       },
       locationDialog: {
         title: "",
@@ -520,7 +520,7 @@ export default {
         editMode: false,
         saveLoading: false,
         addMoreLoading: false,
-        locationsInfo: {}
+        locationsInfo: {},
       },
       filters: {
         startLatitude: "",
@@ -531,23 +531,23 @@ export default {
         specificLongitude: "",
         distance: "",
         addressDistance: "",
-        address: {}
+        address: {},
       },
       confirmDialog: {
         show: false,
         action: "",
         place: {},
         title: "",
-        loading: false
+        loading: false,
       },
       confirmLocationDialog: {
         show: false,
         action: "",
         locationInfo: {
           address_id: 0,
-          allLocations: []
+          allLocations: [],
         },
-        selectedLocation: 0
+        selectedLocation: 0,
       },
       search: "",
       groupLocations: [],
@@ -556,7 +556,7 @@ export default {
       viewStatus: "viewActive",
       allAddresses: [],
       activeAddresses: [],
-      archivedAddresses: []
+      archivedAddresses: [],
     };
   },
   computed: {
@@ -565,30 +565,30 @@ export default {
         {
           text: this.$t("places.address.name"),
           value: "name",
-          width: "20%"
+          width: "20%",
         },
         {
           text: this.$t("places.address.address"),
           value: "address",
-          width: "25%"
+          width: "25%",
         },
         {
           text: this.$t("places.address.city"),
           value: "city",
-          width: "20%"
+          width: "20%",
         },
         {
           text: this.$t("places.address.latitude"),
           width: "6%",
-          value: "latitude"
+          value: "latitude",
         },
         {
           text: this.$t("places.address.longitude"),
           width: "6%",
-          value: "longitude"
+          value: "longitude",
         },
         { text: this.$t("actions.header"), width: "5%", sortable: false },
-        { text: "", width: "5%", sortable: false }
+        { text: "", width: "5%", sortable: false },
       ];
     },
     visiblePlaces() {
@@ -599,14 +599,14 @@ export default {
         {
           text: this.$t("actions.view-active"),
           value: "viewActive",
-          class: "view-active"
+          class: "view-active",
         },
         {
           text: this.$t("actions.view-archived"),
           value: "viewArchived",
-          class: "view-archived"
+          class: "view-archived",
         },
-        { text: this.$t("actions.view-all"), value: "viewAll" }
+        { text: this.$t("actions.view-all"), value: "viewAll" },
       ];
     },
     addressesToDisplay() {
@@ -622,28 +622,28 @@ export default {
       }
     },
     markers() {
-      return this.addressesToDisplay.map(element => {
+      return this.addressesToDisplay.map((element) => {
         return {
           position: {
             lat: element.latitude,
-            lng: element.longitude
+            lng: element.longitude,
           },
           data: {
             name: element.name,
-            address: element.address
+            address: element.address,
           },
-          opened: false
+          opened: false,
         };
       });
     },
     dropdownList() {
-      return this.addresses.map(element => {
+      return this.addresses.map((element) => {
         return {
           text: element.address,
-          value: element
+          value: element,
         };
       });
-    }
+    },
   },
   watch: {
     addresses(all_addresses) {
@@ -651,7 +651,7 @@ export default {
     },
     locations() {
       this.makeAddressLists(this.addresses);
-    }
+    },
   },
   methods: {
     activatePlaceDialog(places = {}, editMode = false) {
@@ -736,10 +736,10 @@ export default {
     makeAddressLists(all_addresses) {
       this.allAddresses = this.AddressesLocationsData(all_addresses);
       this.activeAddresses = this.AddressesLocationsData(
-        this.allAddresses.filter(person => person.active)
+        this.allAddresses.filter((person) => person.active)
       );
       this.archivedAddresses = this.AddressesLocationsData(
-        this.allAddresses.filter(person => !person.active)
+        this.allAddresses.filter((person) => !person.active)
       );
     },
     AddressesLocationsData(addArr) {
@@ -752,7 +752,7 @@ export default {
             c[i].locations.push({
               id: this.locations[j].id,
               description: this.locations[j].description,
-              active: this.locations[j].active
+              active: this.locations[j].active,
             });
           }
       }
@@ -761,20 +761,20 @@ export default {
     locationsToDisplay(action, locationsList) {
       if (action === "deactivate") {
         return locationsList
-          .filter(location => location.active)
-          .map(element => {
+          .filter((location) => location.active)
+          .map((element) => {
             return {
               text: this.$t(element.description),
-              value: element.id
+              value: element.id,
             };
           });
       } else {
         return locationsList
-          .filter(location => !location.active)
-          .map(element => {
+          .filter((location) => !location.active)
+          .map((element) => {
             return {
               text: this.$t(element.description),
-              value: element.id
+              value: element.id,
             };
           });
       }
@@ -791,7 +791,7 @@ export default {
       this.confirmLocationDialog.selectedLocation = 0;
       this.confirmLocationDialog.locationInfo = {
         address_id: place.id,
-        allLocations: place.locations
+        allLocations: place.locations,
       };
       this.confirmLocationDialog.show = true;
     },
@@ -816,7 +816,7 @@ export default {
     deactivateAddress(place) {
       this.$http
         .patch(`/api/v1/places/addresses/${place.id}`, { active: false })
-        .then(resp => {
+        .then((resp) => {
           console.log("DEACTIVATED ADDRESS", resp);
         })
         .then(() => {
@@ -829,7 +829,7 @@ export default {
             }
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log("FAILED", err);
         })
         .finally(() => {
@@ -840,13 +840,13 @@ export default {
     activateAddress(place) {
       this.$http
         .patch(`/api/v1/places/addresses/${place.id}`, { active: true })
-        .then(resp => {
+        .then((resp) => {
           console.log("ACTIVATED ADDRESS", resp);
         })
         .then(() => {
           this.refreshPlacesList();
         })
-        .catch(err => {
+        .catch((err) => {
           console.log("FAILED", err);
         })
         .finally(() => {
@@ -857,13 +857,13 @@ export default {
     deactivateLocation(location) {
       this.$http
         .patch(`/api/v1/places/locations/${location}`, { active: false })
-        .then(resp => {
+        .then((resp) => {
           console.log("DEACTIVATED LOCATION", resp);
         })
         .then(() => {
           this.refreshPlacesList();
         })
-        .catch(err => {
+        .catch((err) => {
           console.log("FAILED", err);
         })
         .finally(() => {
@@ -874,20 +874,20 @@ export default {
     activateLocation(location) {
       this.$http
         .patch(`/api/v1/places/locations/${location}`, { active: true })
-        .then(resp => {
+        .then((resp) => {
           console.log("ACTIVATED LOCATION", resp);
         })
         .then(() => {
           this.refreshPlacesList();
         })
-        .catch(err => {
+        .catch((err) => {
           console.log("FAILED", err);
         })
         .finally(() => {
           this.confirmLocationDialog.loading = false;
           this.confirmLocationDialog.show = false;
         });
-    }
-  }
+    },
+  },
 };
 </script>

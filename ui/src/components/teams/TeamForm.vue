@@ -19,7 +19,7 @@
     <v-card-actions>
       <v-btn
         color="secondary"
-        flat
+        text
         v-on:click="cancel"
         :disabled="formDisabled"
         data-cy="form-cancel"
@@ -57,23 +57,23 @@ export default {
   props: {
     editMode: {
       type: Boolean,
-      required: true
+      required: true,
     },
     initialData: {
       type: Object,
-      required: true
+      required: true,
     },
     saveLoading: {
-      type: Boolean
+      type: Boolean,
     },
     addMoreLoading: {
-      type: Boolean
-    }
+      type: Boolean,
+    },
   },
-  data: function() {
+  data: function () {
     return {
       team: {},
-      addMore: false
+      addMore: false,
     };
   },
 
@@ -85,7 +85,7 @@ export default {
       } else {
         this.team = teamProp;
       }
-    }
+    },
   },
   computed: {
     // List the keys in an Team record.
@@ -100,7 +100,7 @@ export default {
 
     formDisabled() {
       return this.saveLoading || this.addMoreLoading;
-    }
+    },
 
     // ...mapGetters(["currentLanguageCode"])
   },
@@ -133,7 +133,7 @@ export default {
         }
         this.addMore = false;
       });
-    }
-  }
+    },
+  },
 };
 </script>

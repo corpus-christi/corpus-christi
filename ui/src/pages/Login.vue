@@ -39,7 +39,7 @@
             <v-card-actions>
               <v-layout fill-height justify-end align-end column xs12>
                 <v-flex>
-                  <v-btn flat v-on:click="cancel" data-cy="cancel">
+                  <v-btn text v-on:click="cancel" data-cy="cancel">
                     {{ $t("actions.cancel") }}
                   </v-btn>
                   <v-btn color="primary" v-on:click="login" data-cy="login">
@@ -55,7 +55,7 @@
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false" data-cy>
+      <v-btn text @click="snackbar.show = false" data-cy>
         {{ $t("actions.close") }}
       </v-btn>
     </v-snackbar>
@@ -76,8 +76,8 @@ export default {
 
       snackbar: {
         show: false,
-        text: ""
-      }
+        text: "",
+      },
     };
   },
 
@@ -92,7 +92,7 @@ export default {
       try {
         const resp = await this.$httpNoAuth.post("/api/v1/auth/login", {
           username: this.username,
-          password: this.password
+          password: this.password,
         });
         if (resp.status !== 200) {
           console.error(`JWT STATUS ${resp.status}`);
@@ -107,7 +107,7 @@ export default {
               decodedJwt.user_claims.roles,
               resp.data.email
             ),
-            jwt: resp.data.jwt
+            jwt: resp.data.jwt,
           });
 
           // Normally want to use `push`, but unlikely that
@@ -120,7 +120,7 @@ export default {
         this.snackbar.text = this.$t("login.messages.incorrect-login");
         this.snackbar.show = true;
       }
-    }
-  }
+    },
+  },
 };
 </script>

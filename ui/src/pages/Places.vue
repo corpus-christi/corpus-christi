@@ -42,7 +42,7 @@ export default {
       addressList: [],
       areaList: [],
       locationList: [],
-      countryList: []
+      countryList: [],
     };
   },
 
@@ -55,7 +55,7 @@ export default {
       console.log(filters);
       if (isEmpty(filters)) {
         console.log("no filters applied");
-        this.$http.get("/api/v1/places/addresses").then(resp => {
+        this.$http.get("/api/v1/places/addresses").then((resp) => {
           this.addressList = resp.data;
         });
       } else {
@@ -96,22 +96,22 @@ export default {
           )}`;
           requestString += `&dist_addr=${parseFloat(filters.addressDistance)}`;
         }
-        this.$http.get(requestString).then(resp => {
+        this.$http.get(requestString).then((resp) => {
           this.addressList = resp.data;
         });
       }
-      this.$http.get("/api/v1/places/areas").then(resp => {
+      this.$http.get("/api/v1/places/areas").then((resp) => {
         this.areaList = resp.data;
       });
-      this.$http.get("/api/v1/places/locations").then(resp => {
+      this.$http.get("/api/v1/places/locations").then((resp) => {
         this.locationList = resp.data;
         console.log(this.locationList);
       });
-      this.$http.get("/api/v1/places/countries").then(resp => {
+      this.$http.get("/api/v1/places/countries").then((resp) => {
         this.countryList = resp.data;
       });
-    }
-  }
+    },
+  },
 };
 </script>
 

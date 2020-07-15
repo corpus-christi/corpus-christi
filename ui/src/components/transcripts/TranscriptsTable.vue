@@ -66,7 +66,7 @@ export default {
       selected: [],
       students: [],
       search: "",
-      viewStatus: "active"
+      viewStatus: "active",
     };
   },
   computed: {
@@ -74,7 +74,11 @@ export default {
     headers() {
       return [
         { text: this.$t("person.name.last"), value: "lastName", width: "40%" },
-        { text: this.$t("person.name.first"), value: "firstName", width: "60%" } //,
+        {
+          text: this.$t("person.name.first"),
+          value: "firstName",
+          width: "60%",
+        }, //,
         //{ text: this.$t("actions.header"), sortable: false }
       ];
     },
@@ -102,25 +106,25 @@ export default {
           return this.students;
       }
       */
-    }
+    },
   },
   methods: {
     clickThrough(transcript) {
       console.log(transcript);
       this.$router.push({
         name: "transcript-details",
-        params: { studentId: transcript.id }
+        params: { studentId: transcript.id },
       });
-    }
+    },
   },
-  mounted: function() {
+  mounted: function () {
     console.log("about to fetch students....");
-    this.$http.get("/api/v1/courses/students").then(resp => {
+    this.$http.get("/api/v1/courses/students").then((resp) => {
       this.students = resp.data;
       console.log("student list received: ", this.students);
       this.tableLoaded = true;
     });
-  }
+  },
 };
 </script>
 

@@ -42,24 +42,24 @@
               </v-btn>
             </template>
             <v-list>
-              <v-list-tile @click.stop="activateGroupDialog()">
+              <v-list-item @click.stop="activateGroupDialog()">
                 <v-icon color="primary">group_add</v-icon>
-                <v-list-tile-content>
+                <v-list-item-content>
                   {{ $t("actions.add-group") }}
-                </v-list-tile-content>
-              </v-list-tile>
-              <v-list-tile :to="{ name: 'group-types' }">
+                </v-list-item-content>
+              </v-list-item>
+              <v-list-item :to="{ name: 'group-types' }">
                 <v-icon color="primary">view_list</v-icon>
-                <v-list-tile-content>
+                <v-list-item-content>
                   {{ $t("groups.entity-types.group-types.manage") }}
-                </v-list-tile-content>
-              </v-list-tile>
-              <v-list-tile :to="{ name: 'manager-types' }">
+                </v-list-item-content>
+              </v-list-item>
+              <v-list-item :to="{ name: 'manager-types' }">
                 <v-icon color="primary">view_list</v-icon>
-                <v-list-tile-content>
+                <v-list-item-content>
                   {{ $t("groups.entity-types.manager-types.manage") }}
-                </v-list-tile-content>
-              </v-list-tile>
+                </v-list-item-content>
+              </v-list-item>
             </v-list>
           </v-menu>
         </v-flex>
@@ -97,136 +97,148 @@
 
     <v-data-table
       :headers="headers"
-      :rows-per-page-items="rowsPerPageItem"
+      :items-per-page-options="itemsPerPageOptions"
       :items="visibleGroups"
       :search="search"
       :loading="tableLoading"
-      :pagination.sync="paginationInfo"
+      :options.sync="options"
       must-sort
       class="elevation-1"
     >
-      <template slot="items" slot-scope="props">
-        <td
-          class="hover-hand"
-          v-on:click="
-            $router.push({
-              name: 'group-details',
-              params: { group: props.item.id }
-            })
-          "
-        >
-          {{ props.item.name }}
-        </td>
-        <td
-          class="hover-hand"
-          v-on:click="
-            $router.push({
-              name: 'group-details',
-              params: { group: props.item.id }
-            })
-          "
-        >
-          {{ props.item.description }}
-        </td>
-        <td
-          class="hover-hand"
-          v-on:click="
-            $router.push({
-              name: 'group-details',
-              params: { group: props.item.id }
-            })
-          "
-        >
-          {{ props.item.activeMembers.length }}
-        </td>
-        <td
-          class="hover-hand"
-          v-on:click="
-            $router.push({
-              name: 'group-details',
-              params: { group: props.item.id }
-            })
-          "
-        >
-          {{ props.item.groupType.name }}
-        </td>
-        <td class="text-no-wrap">
-          <template v-if="props.item.active">
-            <v-tooltip bottom>
-              <v-btn
-                icon
-                outline
-                small
-                color="primary"
-                slot="activator"
-                v-on:click="editGroup(props.item)"
-                data-cy="edit"
-              >
-                <v-icon small>edit</v-icon>
-              </v-btn>
-              <span>{{ $t("actions.edit") }}</span>
-            </v-tooltip>
-            <v-tooltip bottom>
-              <v-btn
-                icon
-                outline
-                small
-                color="primary"
-                slot="activator"
-                v-on:click="duplicate(props.item)"
-                data-cy="duplicate"
-              >
-                <v-icon small>filter_none</v-icon>
-              </v-btn>
-              <span>{{ $t("actions.duplicate") }}</span>
-            </v-tooltip>
-            <v-tooltip bottom>
-              <v-btn
-                icon
-                outline
-                small
-                color="primary"
-                slot="activator"
-                v-on:click="showSplitGroupDialog(props.item)"
-                data-cy="split"
-              >
-                <v-icon small>call_split</v-icon>
-              </v-btn>
-              <span>{{ $t("groups.split.tooltip") }}</span>
-            </v-tooltip>
-            <v-tooltip bottom>
-              <v-btn
-                icon
-                outline
-                small
-                color="primary"
-                slot="activator"
-                v-on:click="confirmArchive(props.item)"
-                data-cy="archive"
-              >
-                <v-icon small>archive</v-icon>
-              </v-btn>
-              <span>{{ $t("actions.tooltips.archive") }}</span>
-            </v-tooltip>
-          </template>
-          <template v-else>
-            <v-tooltip bottom v-if="!props.item.active">
-              <v-btn
-                icon
-                outline
-                small
-                color="primary"
-                slot="activator"
-                v-on:click="unarchive(props.item)"
-                :loading="props.item.id < 0"
-                data-cy="unarchive"
-              >
-                <v-icon small>undo</v-icon>
-              </v-btn>
-              <span>{{ $t("actions.tooltips.activate") }}</span>
-            </v-tooltip>
-          </template>
-        </td>
+      <template v-slot:item="props">
+        <tr>
+          <td
+            class="hover-hand"
+            v-on:click="
+              $router.push({
+                name: 'group-details',
+                params: { group: props.item.id },
+              })
+            "
+          >
+            {{ props.item.name }}
+          </td>
+          <td
+            class="hover-hand"
+            v-on:click="
+              $router.push({
+                name: 'group-details',
+                params: { group: props.item.id },
+              })
+            "
+          >
+            {{ props.item.description }}
+          </td>
+          <td
+            class="hover-hand"
+            v-on:click="
+              $router.push({
+                name: 'group-details',
+                params: { group: props.item.id },
+              })
+            "
+          >
+            {{ props.item.activeMembers.length }}
+          </td>
+          <td
+            class="hover-hand"
+            v-on:click="
+              $router.push({
+                name: 'group-details',
+                params: { group: props.item.id },
+              })
+            "
+          >
+            {{ props.item.groupType.name }}
+          </td>
+          <td class="text-no-wrap">
+            <template v-if="props.item.active">
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }"
+                  ><v-btn
+                    v-on="on"
+                    icon
+                    outlined
+                    small
+                    color="primary"
+                    v-on:click="editGroup(props.item)"
+                    data-cy="edit"
+                  >
+                    <v-icon small>edit</v-icon>
+                  </v-btn></template
+                >
+                <span>{{ $t("actions.edit") }}</span>
+              </v-tooltip>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }"
+                  ><v-btn
+                    v-on="on"
+                    icon
+                    outlined
+                    small
+                    color="primary"
+                    v-on:click="duplicate(props.item)"
+                    data-cy="duplicate"
+                  >
+                    <v-icon small>filter_none</v-icon>
+                  </v-btn></template
+                >
+                <span>{{ $t("actions.duplicate") }}</span>
+              </v-tooltip>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }"
+                  ><v-btn
+                    v-on="on"
+                    icon
+                    outlined
+                    small
+                    color="primary"
+                    v-on:click="showSplitGroupDialog(props.item)"
+                    data-cy="split"
+                  >
+                    <v-icon small>call_split</v-icon>
+                  </v-btn></template
+                >
+                <span>{{ $t("groups.split.tooltip") }}</span>
+              </v-tooltip>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }"
+                  ><v-btn
+                    v-on="on"
+                    icon
+                    outlined
+                    small
+                    color="primary"
+                    v-on:click="confirmArchive(props.item)"
+                    data-cy="archive"
+                  >
+                    <v-icon small>archive</v-icon>
+                  </v-btn></template
+                >
+                <span>{{ $t("actions.tooltips.archive") }}</span>
+              </v-tooltip>
+            </template>
+            <template v-else>
+              <v-tooltip bottom v-if="!props.item.active">
+                <template v-slot:activator="{ on }"
+                  ><v-btn
+                    v-on="on"
+                    icon
+                    outlined
+                    small
+                    color="primary"
+                    v-on:click="unarchive(props.item)"
+                    :loading="props.item.id < 0"
+                    data-cy="unarchive"
+                  >
+                    <v-icon small>undo</v-icon>
+                  </v-btn></template
+                >
+                <span>{{ $t("actions.tooltips.activate") }}</span>
+              </v-tooltip>
+            </template>
+          </td>
+        </tr>
       </template>
     </v-data-table>
 
@@ -251,7 +263,7 @@
           <v-btn
             v-on:click="cancelArchive"
             color="secondary"
-            flat
+            text
             data-cy="cancel-archive"
             >{{ $t("actions.cancel") }}</v-btn
           >
@@ -285,6 +297,7 @@ import GroupForm from "./GroupForm";
 import SplitGroupForm from "./SplitGroupForm";
 import { eventBus } from "../../plugins/event-bus.js";
 import { pick } from "lodash";
+
 export default {
   components: { GroupForm, SplitGroupForm },
   name: "GroupTable",
@@ -293,21 +306,20 @@ export default {
   },
   data() {
     return {
-      rowsPerPageItem: [
+      itemsPerPageOptions: [
         10,
         15,
         25,
-        { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 }
+        { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 },
       ],
-      paginationInfo: {
-        sortBy: "activeMembers.length", //default sorted column
-        descending: true,
-        rowsPerPage: 10,
-        page: 1
+      options: {
+        sortBy: ["activeMembers.length"], //default sorted column
+        sortDesc: [true],
+        itemsPerPage: 10,
+        page: 1,
       },
       tableLoading: true,
       groups: [],
-
       search: "",
       viewStatus: "viewActive",
       groupDialog: {
@@ -316,17 +328,17 @@ export default {
         saveLoading: false,
         addMoreLoading: false,
         editingGroupId: null,
-        group: {}
+        group: {},
       },
       archiveDialog: {
         show: false,
         groupId: -1,
-        loading: false
+        loading: false,
       },
       splitGroupDialog: {
         show: false,
-        parentGroup: {}
-      }
+        parentGroup: {},
+      },
     };
   },
 
@@ -334,18 +346,28 @@ export default {
     viewOptions() {
       return [
         { text: this.$t("actions.view-active"), value: "viewActive" },
-        { text: this.$t("actions.view-archived"), value: "viewArchived" },
-        { text: this.$t("actions.view-all"), value: "viewAll" }
+        {
+          text: this.$t("actions.view-archived"),
+          value: "viewArchived",
+        },
+        { text: this.$t("actions.view-all"), value: "viewAll" },
       ];
     },
 
+    processedGroups() {
+      return this.groups.map((g) => ({
+        ...g,
+        activeMembers: g.members.filter((m) => m.active),
+      }));
+    },
+
     visibleGroups() {
-      let list = this.groups;
+      let list = this.processedGroups;
 
       if (this.viewStatus === "viewActive") {
-        return list.filter(ev => ev.active);
+        return list.filter((ev) => ev.active);
       } else if (this.viewStatus === "viewArchived") {
-        return list.filter(ev => !ev.active);
+        return list.filter((ev) => !ev.active);
       } else {
         return list;
       }
@@ -355,21 +377,21 @@ export default {
       return [
         { text: this.$t("groups.name"), value: "name" },
         { text: this.$t("groups.description"), value: "description" },
-        { text: this.$t("groups.member-count"), value: "activeMembers.length" },
+        {
+          text: this.$t("groups.member-count"),
+          value: "activeMembers.length",
+        },
         { text: this.$t("groups.group-type"), value: "groupType.name" },
-        { text: this.$t("actions.header"), sortable: false }
+        { text: this.$t("actions.header"), sortable: false },
       ];
-    }
+    },
   },
 
   methods: {
     fetchGroups() {
       this.tableLoading = true;
-      this.$http.get("/api/v1/groups/groups").then(resp => {
+      this.$http.get("/api/v1/groups/groups").then((resp) => {
         this.groups = resp.data;
-        this.groups.forEach(group => {
-          group.activeMembers = group.members.filter(member => member.active);
-        });
         this.tableLoading = false;
       });
     },
@@ -389,7 +411,7 @@ export default {
       if (this.groupDialog.editMode) {
         this.patchGroup(payload, this.groupDialog.editingGroupId).then(() => {
           let oldGroup = this.groups.find(
-            g => g.id === this.groupDialog.editingGroupId
+            (g) => g.id === this.groupDialog.editingGroupId
           );
           Object.assign(oldGroup, group);
         });
@@ -404,17 +426,17 @@ export default {
     patchGroup(group, groupId) {
       return this.$http
         .patch(`/api/v1/groups/groups/${groupId}`, group)
-        .then(resp => {
+        .then(() => {
           this.groupDialog.saveLoading = false;
           eventBus.$emit("message", {
-            content: this.$t("groups.messages.group-edited")
+            content: this.$t("groups.messages.group-edited"),
           });
         })
-        .catch(err => {
+        .catch((err) => {
           console.error("PUT FALURE", err.response);
           this.groupDialog.saveLoading = false;
           eventBus.$emit("message", {
-            content: this.$t("groups.messages.error-editing-group")
+            content: this.$t("groups.messages.error-editing-group"),
           });
         });
     },
@@ -422,20 +444,20 @@ export default {
     postGroup(newGroup) {
       return this.$http
         .post("/api/v1/groups/groups", newGroup, {
-          noErrorSnackBar: true
+          noErrorSnackBar: true,
         })
-        .then(resp => {
+        .then((resp) => {
           this.groups.push(resp.data);
           this.groupDialog.saveLoading = false;
           eventBus.$emit("message", {
-            content: this.$t("groups.messages.group-added")
+            content: this.$t("groups.messages.group-added"),
           });
         })
-        .catch(err => {
+        .catch((err) => {
           console.error("POST FAILURE", err.response);
           this.groupDialog.saveLoading = false;
           eventBus.$emit("error", {
-            content: this.$t("groups.messages.error-adding-group")
+            content: this.$t("groups.messages.error-adding-group"),
           });
         });
     },
@@ -465,40 +487,42 @@ export default {
     archiveGroup() {
       this.archiveDialog.loading = true;
       const groupId = this.archiveDialog.groupId;
-      const idx = this.groups.findIndex(ev => ev.id === groupId);
+      const idx = this.groups.findIndex((ev) => ev.id === groupId);
       this.$http
         .patch(`/api/v1/groups/groups/${groupId}`, { active: false })
-        .then(resp => {
+        .then(() => {
           this.groups[idx].active = false;
           this.archiveDialog.loading = false;
           this.archiveDialog.show = false;
           eventBus.$emit("message", {
-            content: this.$t("groups.messages.group-archived")
+            content: this.$t("groups.messages.group-archived"),
           });
         })
-        .catch(err => {
+        .catch((err) => {
+          console.error("PATCH FAILURE", err.response);
           this.archiveDialog.loading = false;
           this.archiveDialog.show = false;
           eventBus.$emit("message", {
-            content: this.$t("groups.messages.error-archiving-group")
+            content: this.$t("groups.messages.error-archiving-group"),
           });
         });
     },
     unarchive(group) {
-      const idx = this.groups.findIndex(ev => ev.id === group.id);
+      const idx = this.groups.findIndex((ev) => ev.id === group.id);
       const groupId = group.id;
       group.id = -1; // to show loading spinner
       this.$http
         .patch(`/api/v1/groups/groups/${groupId}`, { active: true })
-        .then(resp => {
+        .then((resp) => {
           Object.assign(this.groups[idx], resp.data);
           eventBus.$emit("message", {
-            content: this.$t("groups.messages.group-unarchived")
+            content: this.$t("groups.messages.group-unarchived"),
           });
         })
-        .catch(err => {
+        .catch((err) => {
+          console.error("PATCH FAILURE", err.response);
           eventBus.$emit("error", {
-            content: this.$t("groups.messages.error-unarchiving-gropu")
+            content: this.$t("groups.messages.error-unarchiving-gropu"),
           });
         });
     },
@@ -521,8 +545,8 @@ export default {
     handleSplitGroupSuccess() {
       this.hideSplitGroupDialog();
       this.fetchGroups();
-    }
-  }
+    },
+  },
 };
 </script>
 

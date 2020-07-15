@@ -29,7 +29,7 @@
       </template>
     </v-card-text>
     <v-card-actions>
-      <v-btn color="secondary" flat :disabled="saving" v-on:click="cancel">{{
+      <v-btn color="secondary" text :disabled="saving" v-on:click="cancel">{{
         $t("actions.cancel")
       }}</v-btn>
       <v-spacer></v-spacer>
@@ -52,8 +52,8 @@ export default {
   props: {
     classMeeting: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
@@ -61,11 +61,11 @@ export default {
       loadingFailed: false,
       saving: false,
 
-      students: []
+      students: [],
     };
   },
   watch: {
-    classMeeting: "load"
+    classMeeting: "load",
   },
   methods: {
     load() {
@@ -76,33 +76,29 @@ export default {
       promises.push(
         this.$http
           .get(
-            `/api/v1/courses/course_offerings/${this.classMeeting.offeringId}/${
-              this.classMeeting.id
-            }/class_attendance`
+            `/api/v1/courses/course_offerings/${this.classMeeting.offeringId}/${this.classMeeting.id}/class_attendance`
           )
-          .then(resp => resp.data.attendance)
+          .then((resp) => resp.data.attendance)
       );
 
       promises.push(
         this.$http
           .get(
-            `/api/v1/courses/course_offerings/${
-              this.classMeeting.offeringId
-            }/students`
+            `/api/v1/courses/course_offerings/${this.classMeeting.offeringId}/students`
           )
-          .then(resp => {
+          .then((resp) => {
             this.students = resp.data.filter(
-              student => student.active && student.confirmed
+              (student) => student.active && student.confirmed
             );
           })
       );
 
       Promise.all(promises)
-        .then(values => {
+        .then((values) => {
           let attendance = values[0];
           this.applyAttendance(attendance);
         })
-        .catch(err => {
+        .catch((err) => {
           console.log("LOAD ERR", err);
           this.loadingFailed = true;
         })
@@ -112,9 +108,9 @@ export default {
     },
 
     applyAttendance(attendance) {
-      this.students.forEach(student => {
+      this.students.forEach((student) => {
         student.present = !!attendance.find(
-          record => record.studentId == student.id
+          (record) => record.studentId == student.id
         );
       });
     },
@@ -131,21 +127,19 @@ export default {
     save() {
       this.saving = true;
       let attendance = this.students
-        .filter(student => student.present)
-        .map(student => student.id);
+        .filter((student) => student.present)
+        .map((student) => student.id);
 
       this.$http
         .patch(
-          `/api/v1/courses/course_offerings/${this.classMeeting.offeringId}/${
-            this.classMeeting.id
-          }/class_attendance`,
+          `/api/v1/courses/course_offerings/${this.classMeeting.offeringId}/${this.classMeeting.id}/class_attendance`,
           { attendance }
         )
-        .then(resp => {
+        .then((resp) => {
           console.log("ATTENDANCE", resp);
           this.$emit("save", resp.data);
         })
-        .catch(err => {
+        .catch((err) => {
           console.log("ATTENDANCE ERR", err);
           this.$emit("save", err);
         })
@@ -161,10 +155,10 @@ export default {
         month: "numeric",
         day: "numeric",
         hour: "2-digit",
-        minute: "2-digit"
+        minute: "2-digit",
       });
-    }
-  }
+    },
+  },
 };
 </script>
 

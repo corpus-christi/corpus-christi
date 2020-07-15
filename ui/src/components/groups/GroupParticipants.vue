@@ -9,7 +9,7 @@
         <v-flex v-if="select" shrink>
           <v-tooltip bottom
             ><template v-slot:activator="{ on }"
-              ><v-btn v-on:click="resetSelection" v-on="on" fab flat>
+              ><v-btn v-on:click="resetSelection" v-on="on" fab text>
                 <v-icon dark>close</v-icon>
               </v-btn></template
             >
@@ -61,39 +61,39 @@
                 </v-btn>
               </template>
               <v-list>
-                <v-list-tile @click.stop="selectionMode = 'archive'">
+                <v-list-item @click.stop="selectionMode = 'archive'">
                   <v-icon color="primary">archive</v-icon>
-                  <v-list-tile-content>
+                  <v-list-item-content>
                     {{ $t("groups.batch-actions.archive") }}
-                  </v-list-tile-content>
-                </v-list-tile>
-                <v-list-tile @click.stop="selectionMode = 'unarchive'">
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item @click.stop="selectionMode = 'unarchive'">
                   <v-icon color="primary">redo</v-icon>
-                  <v-list-tile-content>
+                  <v-list-item-content>
                     {{ $t("groups.batch-actions.unarchive") }}
-                  </v-list-tile-content>
-                </v-list-tile>
-                <v-list-tile @click.stop="selectionMode = 'email'">
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item @click.stop="selectionMode = 'email'">
                   <v-icon color="primary">email</v-icon>
-                  <v-list-tile-content>
+                  <v-list-item-content>
                     {{ $t("groups.batch-actions.email") }}
-                  </v-list-tile-content>
-                </v-list-tile>
-                <v-list-tile @click.stop="showMoveDialog()">
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item @click.stop="showMoveDialog()">
                   <v-icon color="primary">low_priority</v-icon>
-                  <v-list-tile-content>
+                  <v-list-item-content>
                     {{ $t("groups.batch-actions.move") }}
-                  </v-list-tile-content>
-                </v-list-tile>
-                <v-list-tile
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item
                   v-if="isManagerMode"
                   @click.stop="selectionMode = 'edit'"
                 >
                   <v-icon color="primary">edit</v-icon>
-                  <v-list-tile-content>
+                  <v-list-item-content>
                     {{ $t("groups.batch-actions.edit") }}
-                  </v-list-tile-content>
-                </v-list-tile>
+                  </v-list-item-content>
+                </v-list-item>
               </v-list>
             </v-menu>
           </v-flex>
@@ -118,131 +118,61 @@
     </v-toolbar>
     <v-data-table
       v-model="selected"
-      :rows-per-page-items="rowsPerPageItem"
+      :items-per-page-options="itemsPerPageOptions"
       :headers="headers"
       :items="visibleParticipants"
+      :show-select="select"
       item-key="person.id"
       :search="search"
       :loading="tableLoading"
       class="elevation-1"
     >
-      <template v-slot:headerCell="{ header }">
-        <v-checkbox
-          v-if="header.text === 'select'"
-          :input-value="selectedAll"
+      <template v-slot:header.data-table-select>
+        <v-simple-checkbox
+          color="primary"
+          :value="selectedAll"
           :indeterminate="selectedIndeterminate"
-          primary
           hide-details
           @click.stop="toggleAll"
-        ></v-checkbox>
-        <span v-else> {{ header.text }} </span>
+        />
       </template>
-      <template v-slot:items="props">
-        <tr @click="toggleSelect(props)">
-          <td v-if="select">
-            <v-tooltip :disabled="!props.item.disabled" right>
-              <!-- show tooltip when the item is disabled -->
-              <template v-slot:activator="{ on }">
-                <span class="d-inline-block" v-on="on">
-                  <v-checkbox
-                    :input-value="props.selected"
-                    primary
-                    hide-details
-                    :disabled="props.item.disabled"
-                  />
-                </span>
-              </template>
-              {{ props.item.disabledText }}
-            </v-tooltip>
-          </td>
-          <td>{{ props.item.person.firstName }}</td>
-          <td>{{ props.item.person.lastName }}</td>
-          <td>{{ props.item.person.email }}</td>
-          <td v-if="isManagerMode">{{ props.item.managerType.name }}</td>
-          <td class="text-no-wrap">
-            <template v-if="props.item.active">
-              <v-tooltip bottom>
-                <v-btn
-                  :disabled="select"
-                  v-if="isManagerMode"
-                  icon
-                  outline
-                  small
-                  color="primary"
-                  slot="activator"
-                  v-on:click="showParticipantDialog([props.item])"
-                  data-cy="edit"
-                >
-                  <v-icon small>edit</v-icon>
-                </v-btn>
-                <span>{{ $t("actions.edit") }}</span>
-              </v-tooltip>
-              <v-tooltip bottom>
-                <v-btn
-                  :disabled="select"
-                  icon
-                  outline
-                  small
-                  color="primary"
-                  slot="activator"
-                  v-on:click="showArchiveDialog([props.item])"
-                  data-cy="archive"
-                >
-                  <v-icon small>archive</v-icon>
-                </v-btn>
-                <span>{{ $t("actions.tooltips.archive") }}</span>
-              </v-tooltip>
-              <v-tooltip bottom>
-                <v-btn
-                  :disabled="select"
-                  icon
-                  outline
-                  small
-                  color="primary"
-                  slot="activator"
-                  v-on:click="showMoveDialog(props.item)"
-                  data-cy="move"
-                >
-                  <v-icon small>low_priority</v-icon>
-                </v-btn>
-                <span>{{ $t("groups.tooltips.move") }}</span>
-              </v-tooltip>
-              <v-tooltip v-if="props.item.person.email" bottom>
-                <v-btn
-                  :disabled="select"
-                  icon
-                  outline
-                  small
-                  color="primary"
-                  slot="activator"
-                  v-on:click="showEmailDialog([props.item])"
-                  data-cy="email"
-                >
-                  <v-icon small>email</v-icon>
-                </v-btn>
-                <span>{{ $t("actions.tooltips.email") }}</span>
-              </v-tooltip>
-            </template>
-            <template v-else>
-              <v-tooltip bottom>
-                <v-btn
-                  :disabled="select"
-                  icon
-                  outline
-                  small
-                  color="primary"
-                  slot="activator"
-                  v-on:click="unarchiveParticipant(props.item)"
-                  :loading="props.item.id < 0"
-                  data-cy="unarchive"
-                >
-                  <v-icon small>undo</v-icon>
-                </v-btn>
-                <span>{{ $t("actions.tooltips.activate") }}</span>
-              </v-tooltip>
-            </template>
-          </td>
-        </tr>
+      <template v-slot:item.data-table-select="props">
+        <v-tooltip :disabled="!props.item.disabled" right>
+          <!-- show tooltip when the item is disabled -->
+          <template v-slot:activator="{ on }">
+            <span class="d-inline-block" v-on="on">
+              <v-simple-checkbox
+                @click.stop="toggleSelect(props)"
+                color="primary"
+                :value="props.isSelected"
+                :disabled="props.item.disabled"
+              />
+            </span>
+          </template>
+          {{ props.item.disabledText }}
+        </v-tooltip>
+      </template>
+      <template v-slot:item.actions="{ item }">
+        <v-tooltip v-for="action in actions" :key="action.key" bottom>
+          <template v-slot:activator="{ on }"
+            ><v-btn
+              v-on="on"
+              icon
+              outlined
+              small
+              color="primary"
+              :disabled="select"
+              v-if="!action.show || action.show(item)"
+              :loading="action.loading && action.loading(item)"
+              v-on:click="action.clickHandler && action.clickHandler(item)"
+              data-cy="action.key"
+              v-bind="action.attrs"
+            >
+              <v-icon small>{{ action.icon }}</v-icon>
+            </v-btn></template
+          >
+          <span>{{ action.tooltipText }}</span>
+        </v-tooltip>
       </template>
     </v-data-table>
 
@@ -258,7 +188,7 @@
           <v-btn
             v-on:click="hideArchiveDialog"
             color="secondary"
-            flat
+            text
             data-cy="cancel-archive"
             >{{ $t("actions.cancel") }}</v-btn
           >
@@ -311,7 +241,7 @@
           />
         </v-card-text>
         <v-card-actions>
-          <v-btn v-on:click="hideParticipantDialog" color="secondary" flat>{{
+          <v-btn v-on:click="hideParticipantDialog" color="secondary" text>{{
             $t("actions.cancel")
           }}</v-btn>
           <v-spacer />
@@ -359,7 +289,7 @@
           />
         </v-card-text>
         <v-card-actions>
-          <v-btn v-on:click="hideMoveDialog" color="secondary" flat>{{
+          <v-btn v-on:click="hideMoveDialog" color="secondary" text>{{
             $t("actions.cancel")
           }}</v-btn>
           <v-spacer />
@@ -389,17 +319,17 @@ export default {
     participantType: {
       /* either 'manager' or 'member' */
       type: String,
-      default: "manager"
-    }
+      default: "manager",
+    },
   },
 
   data() {
     return {
-      rowsPerPageItem: [
+      itemsPerPageOptions: [
         10,
         15,
         25,
-        { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 }
+        { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 },
       ],
       tableLoading: false,
       search: "",
@@ -410,20 +340,20 @@ export default {
         loading: false,
         initialData: {
           recipients: [],
-          recipientList: []
-        }
+          recipientList: [],
+        },
       },
       participantDialog: {
         show: false,
         persons: [],
         participantType: {},
         editMode: false,
-        loading: false
+        loading: false,
       },
       archiveDialog: {
         show: false,
         participants: [],
-        loading: false
+        loading: false,
       },
       moveDialog: {
         /* if not empty, confirm on moveDialog will move this participant directly
@@ -431,11 +361,11 @@ export default {
         participant: null,
         loading: false,
         show: false,
-        destinationGroup: {}
+        destinationGroup: {},
       },
       viewStatus: "viewActive",
       selectionMode: "noSelect",
-      selectionLoading: false
+      selectionLoading: false,
     };
   },
 
@@ -445,7 +375,7 @@ export default {
       return [
         { text: this.$t("actions.view-active"), value: "viewActive" },
         { text: this.$t("actions.view-archived"), value: "viewArchived" },
-        { text: this.$t("actions.view-all"), value: "viewAll" }
+        { text: this.$t("actions.view-all"), value: "viewAll" },
       ];
     },
     title() {
@@ -457,34 +387,70 @@ export default {
       let headers = [
         {
           text: this.$t("person.name.first"),
-          value: "person.firstName"
+          value: "person.firstName",
         },
         {
           text: this.$t("person.name.last"),
-          value: "person.lastName"
+          value: "person.lastName",
         },
         {
           text: this.$t("person.email"),
-          value: "person.email"
+          value: "person.email",
         },
         {
           text: this.$t("actions.header"),
-          sortable: false
-        }
+          value: "actions", // does not exist, used to identify the actions column
+          sortable: false,
+        },
       ];
-      if (this.select) {
-        headers.splice(0, 0, {
-          text: "select", // used to customize the select header
-          sortable: false
-        });
-      }
       if (this.isManagerMode) {
         headers.splice(3, 0, {
           text: this.$t("groups.managers.manager-type"),
-          value: "managerType.name"
+          value: "managerType.name",
         });
       }
       return headers;
+    },
+    actions() {
+      return [
+        {
+          key: "edit",
+          icon: "edit",
+          tooltipText: this.$t("actions.edit"),
+          show: (item) => item.active && this.isManagerMode,
+          clickHandler: (item) => this.showParticipantDialog([item]),
+          attrs: {}, // additional attributes here
+        },
+        {
+          key: "archive",
+          icon: "archive",
+          tooltipText: this.$t("actions.tooltips.archive"),
+          show: (item) => item.active,
+          clickHandler: (item) => this.showArchiveDialog([item]),
+        },
+        {
+          key: "move",
+          icon: "low_priority",
+          tooltipText: this.$t("actions.tooltips.move"),
+          show: (item) => item.active,
+          clickHandler: (item) => this.showMoveDialog(item),
+        },
+        {
+          key: "email",
+          icon: "email",
+          tooltipText: this.$t("actions.tooltips.email"),
+          show: (item) => item.active && item.person.email,
+          clickHandler: (item) => this.showEmailDialog([item]),
+        },
+        {
+          key: "unarchive",
+          icon: "undo",
+          tooltipText: this.$t("actions.tooltips.activate"),
+          show: (item) => !item.active,
+          clickHandler: (item) => this.unarchiveParticipant(item),
+          loading: (item) => item.id < 0,
+        },
+      ];
     },
     id() {
       return parseInt(this.$route.params.group);
@@ -503,7 +469,7 @@ export default {
       return this.selectionMode !== "noSelect";
     },
     selectable() {
-      return this.visibleParticipants.filter(p => !p.disabled);
+      return this.visibleParticipants.filter((p) => !p.disabled);
     },
     selectedSome() {
       return this.selected.length !== 0;
@@ -521,24 +487,24 @@ export default {
         /* options to be defined for each selectionMode */
         archive: {
           title: this.$t("groups.batch-actions.archive"), // the title to be displayed in selection mode
-          callback: this.showArchiveDialog // a callback function that takes the selected items as parameter
+          callback: this.showArchiveDialog, // a callback function that takes the selected items as parameter
         },
         unarchive: {
           title: this.$t("groups.batch-actions.unarchive"),
-          callback: this.unarchiveParticipants
+          callback: this.unarchiveParticipants,
         },
         email: {
           title: this.$t("groups.batch-actions.email"),
-          callback: this.showEmailDialog
+          callback: this.showEmailDialog,
         },
         move: {
           title: this.$t("groups.batch-actions.move"),
-          callback: this.batchMoveParticipants
+          callback: this.batchMoveParticipants,
         },
         edit: {
           title: this.$t("groups.batch-actions.edit"),
-          callback: this.showParticipantDialog
-        }
+          callback: this.showParticipantDialog,
+        },
       };
     },
     selectionOption() {
@@ -548,13 +514,13 @@ export default {
 
     /************* filters ****************/
     activeParticipants() {
-      return this.participants.filter(p => p.active);
+      return this.participants.filter((p) => p.active);
     },
     inactiveParticipants() {
-      return this.participants.filter(p => !p.active);
+      return this.participants.filter((p) => !p.active);
     },
     persons() {
-      return this.participants.map(m => m.person);
+      return this.participants.map((m) => m.person);
     },
     selectionArchiveParticipants() {
       return this.activeParticipants;
@@ -563,10 +529,10 @@ export default {
       return this.inactiveParticipants;
     },
     selectionEmailParticipants() {
-      return this.activeParticipants.map(p => ({
+      return this.activeParticipants.map((p) => ({
         disabled: !p.person.email,
         disabledText: this.$t("groups.batch-actions.messages.no-email"),
-        ...p
+        ...p,
       }));
     },
     selectionMoveParticipants() {
@@ -574,8 +540,8 @@ export default {
       create a cycle in the leadership hierarchy <2020-07-01, David Deng> */
       let destinationGroupPersonIds = this.moveDialog.destinationGroup[
         this.isManagerMode ? "managers" : "members"
-      ].map(p => p.person.id);
-      let movableParticipants = this.activeParticipants.map(p => {
+      ].map((p) => p.person.id);
+      let movableParticipants = this.activeParticipants.map((p) => {
         let participant = { ...p };
         if (destinationGroupPersonIds.includes(p.person.id)) {
           participant.disabled = true;
@@ -621,10 +587,10 @@ export default {
     /* all possible recipient */
     emailRecipientList() {
       return this.participants
-        .filter(m => m.person.email && m.active)
-        .map(m => ({
+        .filter((m) => m.person.email && m.active)
+        .map((m) => ({
           email: m.person.email,
-          name: `${m.person.firstName} ${m.person.lastName}`
+          name: `${m.person.firstName} ${m.person.lastName}`,
         }));
     },
     invalidDestinationGroups() {
@@ -634,11 +600,11 @@ export default {
         groups = groups.concat(
           this.moveDialog.participant.person[
             this.isManagerMode ? "managers" : "members"
-          ].map(m => ({ id: m.groupId }))
+          ].map((m) => ({ id: m.groupId }))
         );
       }
       return groups;
-    }
+    },
   },
 
   methods: {
@@ -659,7 +625,7 @@ export default {
     },
     toggleSelect(props) {
       if (this.select && !props.item.disabled) {
-        props.selected = !props.selected;
+        props.select(!props.isSelected);
       }
     },
     toggleAll() {
@@ -674,7 +640,7 @@ export default {
     showParticipantDialog(participants) {
       if (participants) {
         this.participantDialog.editMode = true;
-        this.participantDialog.persons = participants.map(m => m.person);
+        this.participantDialog.persons = participants.map((m) => m.person);
       } else {
         this.participantDialog.editMode = false;
         this.participantDialog.persons = [];
@@ -696,6 +662,16 @@ export default {
       let payload = {};
       if (this.isManagerMode) {
         payload.managerTypeId = this.participantDialog.participantType.id;
+      let updatePayload = null;
+      if (editMode) {
+        if (!this.isManagerMode) {
+          // ui should hide buttons as appropriate to prevent this case
+          console.error("There is nothing to edit for members");
+          return;
+        }
+        updatePayload = {
+          managerTypeId: this.participantDialog.participantType.id,
+        };
       }
       this.saveParticipants(
         this.participantDialog.persons,
@@ -711,10 +687,10 @@ export default {
                 : "groups.messages.members-updated"
               : this.isManagerMode
               ? "groups.messages.managers-added"
-              : "groups.messages.members-added"
+              : "groups.messages.members-added",
           });
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
           eventBus.$emit("error", {
             content: editMode
@@ -723,18 +699,19 @@ export default {
                 : "groups.messages.error-updating-members"
               : this.isManagerMode
               ? "groups.messages.error-adding-managers"
-              : "groups.messages.error-adding-members"
+              : "groups.messages.error-adding-members",
           });
         })
         .finally(() => {
           this.participantDialog.loading = false;
           this.hideParticipantDialog();
         });
-    },
+      }
+      },
     showEmailDialog(participants) {
-      let recipients = participants.map(participant => ({
+      let recipients = participants.map((participant) => ({
         email: participant.person.email,
-        name: `${participant.person.firstName} ${participant.person.lastName}`
+        name: `${participant.person.firstName} ${participant.person.lastName}`,
       }));
       this.emailDialog.initialData.recipients = recipients;
       this.emailDialog.initialData.recipientList = this.emailRecipientList;
@@ -775,23 +752,26 @@ export default {
       }
     },
     batchMoveParticipants(participants) {
-      return this.saveParticipants(participants.map(p => p.person), "patch", {
-        groupId: this.moveDialog.destinationGroup.id
-      })
+      return this.saveParticipants(
+        participants.map((p) => p.person),
+        {
+          groupId: this.moveDialog.destinationGroup.id,
+        }
+      )
         .then(() => {
           this.fetchParticipants();
           eventBus.$emit("message", {
             content: this.isManagerMode
               ? "groups.messages.managers-moved"
-              : "groups.messages.members-moved"
+              : "groups.messages.members-moved",
           });
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
           eventBus.$emit("error", {
             content: this.isManagerMode
               ? "groups.messages.error-moving-managers"
-              : "groups.messages.error-moving-members"
+              : "groups.messages.error-moving-members",
           });
         });
     },
@@ -830,15 +810,16 @@ export default {
         );
       }
       return Promise.all(promises)
-        .then(resp => {
+        .then(() => {
           this.fetchParticipants();
           eventBus.$emit("message", {
-            content: "groups.messages.member-archived"
+            content: "groups.messages.member-archived",
           });
         })
-        .catch(err => {
+        .catch((err) => {
+          console.error("PATCH ERROR", err);
           eventBus.$emit("error", {
-            content: "groups.messages.error-archiving-member"
+            content: "groups.messages.error-archiving-member",
           });
         })
         .finally(() => {
@@ -858,16 +839,16 @@ export default {
     },
     fetchParticipants() {
       this.tableLoading = true;
-      this.$http.get(this.endpoint).then(resp => {
+      this.$http.get(this.endpoint).then((resp) => {
         this.participants = resp.data;
         console.log(resp.data);
         this.tableLoading = false;
       });
-    }
+    },
   },
   mounted() {
     this.fetchParticipants();
-  }
+  },
 };
 </script>
 

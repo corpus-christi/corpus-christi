@@ -32,33 +32,33 @@ import { isEmpty } from "lodash";
 export default {
   name: "Courses",
   components: {
-    CourseCard
+    CourseCard,
   },
   data() {
     return {
       courses: [],
       course: {},
-      pageLoaded: false
+      pageLoaded: false,
     };
   },
   mounted() {
     this.pageLoaded = false;
-    this.$http.get("/api/v1/courses/courses").then(resp => {
-      this.courses = resp.data.filter(course => course.active);
+    this.$http.get("/api/v1/courses/courses").then((resp) => {
+      this.courses = resp.data.filter((course) => course.active);
       this.pageLoaded = true;
     });
   },
 
   computed: {
-    offeredCourses: function() {
-      return this.courses.filter(course => {
+    offeredCourses: function () {
+      return this.courses.filter((course) => {
         return !isEmpty(course.course_offerings);
       });
     },
 
-    ...mapGetters(["currentLanguageCode"])
+    ...mapGetters(["currentLanguageCode"]),
   },
 
-  methods: {}
+  methods: {},
 };
 </script>

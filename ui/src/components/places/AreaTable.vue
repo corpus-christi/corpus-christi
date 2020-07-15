@@ -156,7 +156,7 @@
           <v-btn
             v-on:click="cancelAction"
             color="secondary"
-            flat
+            text
             :disabled="confirmDialog.loading"
             >{{ $t("actions.cancel") }}</v-btn
           >
@@ -185,7 +185,7 @@ export default {
     addresses: Array,
     areas: Array,
     locations: Array,
-    countries: Array
+    countries: Array,
   },
 
   data() {
@@ -196,14 +196,14 @@ export default {
         editMode: false,
         saveLoading: false,
         addMoreLoading: false,
-        area: {}
+        area: {},
       },
       confirmDialog: {
         show: false,
         action: "",
         area: {},
         title: "",
-        loading: false
+        loading: false,
       },
       search: "",
       homegroups: [],
@@ -211,7 +211,7 @@ export default {
       viewStatus: "viewActive",
       allAreas: [],
       activeAreas: [],
-      archivedAreas: []
+      archivedAreas: [],
     };
   },
   computed: {
@@ -220,15 +220,15 @@ export default {
         {
           text: this.$t("places.address.name"),
           value: "name",
-          width: "20%"
+          width: "20%",
         },
         {
           text: this.$t("places.address.country"),
           value: "country",
-          width: "20%"
+          width: "20%",
         },
 
-        { text: this.$t("actions.header"), width: "17%", sortable: false }
+        { text: this.$t("actions.header"), width: "17%", sortable: false },
       ];
     },
     visiblePlaces() {
@@ -239,14 +239,14 @@ export default {
         {
           text: this.$t("actions.view-active"),
           value: "viewActive",
-          class: "view-active"
+          class: "view-active",
         },
         {
           text: this.$t("actions.view-archived"),
           value: "viewArchived",
-          class: "view-archived"
+          class: "view-archived",
         },
-        { text: this.$t("actions.view-all"), value: "viewAll" }
+        { text: this.$t("actions.view-all"), value: "viewAll" },
       ];
     },
     areasToDisplay() {
@@ -260,14 +260,14 @@ export default {
         default:
           return this.activeAreas;
       }
-    }
+    },
   },
   watch: {
     areas(all_areas) {
       this.allAreas = all_areas;
-      this.activeAreas = this.allAreas.filter(area => area.active);
-      this.archivedAreas = this.allAreas.filter(area => !area.active);
-    }
+      this.activeAreas = this.allAreas.filter((area) => area.active);
+      this.archivedAreas = this.allAreas.filter((area) => !area.active);
+    },
   },
   methods: {
     activateAreaDialog(area = {}, editMode = false) {
@@ -277,7 +277,7 @@ export default {
       this.areaDialog.area = {
         id: area.id,
         name: area.name,
-        country_code: area.country_code
+        country_code: area.country_code,
       };
       this.areaDialog.show = true;
     },
@@ -317,13 +317,13 @@ export default {
       console.log(area);
       this.$http
         .patch(`/api/v1/places/areas/${area.id}`, { active: false })
-        .then(resp => {
+        .then((resp) => {
           console.log("DEACTIVATED AREA", resp);
         })
         .then(() => {
           this.refreshPlacesList();
         })
-        .catch(err => {
+        .catch((err) => {
           console.log("FAILED", err);
         })
         .finally(() => {
@@ -335,21 +335,21 @@ export default {
       console.log(area);
       this.$http
         .patch(`/api/v1/places/areas/${area.id}`, { active: true })
-        .then(resp => {
+        .then((resp) => {
           console.log("ACTIVATED AREA", resp);
         })
         .then(() => {
           this.refreshPlacesList();
         })
-        .catch(err => {
+        .catch((err) => {
           console.log("FAILED", err);
         })
         .finally(() => {
           this.confirmDialog.loading = false;
           this.confirmDialog.show = false;
         });
-    }
-  }
+    },
+  },
 };
 </script>
 

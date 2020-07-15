@@ -35,7 +35,7 @@ export default {
   data() {
     return {
       group: {},
-      pageLoaded: false
+      pageLoaded: false,
     };
   },
 
@@ -49,14 +49,14 @@ export default {
   methods: {
     getGroup() {
       const id = this.$route.params.group;
-      return this.$http.get(`/api/v1/groups/groups/${id}`).then(resp => {
+      return this.$http.get(`/api/v1/groups/groups/${id}`).then((resp) => {
         this.group = resp.data;
       });
     },
 
     navigateTo(path) {
       this.$router.push({
-        path: "/groups/" + this.$route.params.group + path
+        path: "/groups/" + this.$route.params.group + path,
       });
     },
 
@@ -72,7 +72,7 @@ export default {
         );
       }
       return true;
-    }
-  }
+    },
+  },
 };
 </script>

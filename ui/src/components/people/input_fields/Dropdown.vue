@@ -16,8 +16,8 @@ export default {
   props: {
     attribute: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
   computed: {
     getItems() {
@@ -25,11 +25,11 @@ export default {
       for (let enumeratedValue of this.attribute.enumerated_values) {
         items.push({
           text: this.$t(enumeratedValue.value),
-          value: enumeratedValue.id
+          value: enumeratedValue.id,
         });
       }
       return items;
-    }
-  }
+    },
+  },
 };
 </script>

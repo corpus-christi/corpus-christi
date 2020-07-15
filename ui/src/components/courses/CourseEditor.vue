@@ -5,7 +5,7 @@
     </v-card-title>
     <v-card-text> <CourseForm ref="form" :course="course" /> </v-card-text>
     <v-card-actions data-cy="course-editor-actions">
-      <v-btn color="secondary" flat :disabled="saving" v-on:click="cancel">
+      <v-btn color="secondary" text :disabled="saving" v-on:click="cancel">
         {{ $t("actions.cancel") }}
       </v-btn>
       <v-spacer></v-spacer>
@@ -29,28 +29,28 @@ import CourseForm from "./CourseForm";
 export default {
   name: "CourseEditor",
   components: {
-    CourseForm
+    CourseForm,
   },
   props: {
     editMode: {
       type: Boolean,
-      required: true
+      required: true,
     },
     initialData: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
-  data: function() {
+  data: function () {
     return {
       course: {},
-      saving: false
+      saving: false,
     };
   },
   computed: {
     title() {
       return this.editMode ? this.$t("actions.edit") : this.$t("courses.new");
-    }
+    },
   },
 
   watch: {
@@ -61,7 +61,7 @@ export default {
       } else {
         this.course = courseProp;
       }
-    }
+    },
   },
 
   methods: {
@@ -91,7 +91,7 @@ export default {
     saveCourse(course) {
       let courseAttrs = {
         description: course.description,
-        name: course.name
+        name: course.name,
       };
 
       if (this.editMode) {
@@ -99,7 +99,7 @@ export default {
         promises.push(
           this.$http
             .patch(`/api/v1/courses/courses/${course.id}`, courseAttrs)
-            .then(resp => {
+            .then((resp) => {
               console.log("EDITED", resp);
               return resp;
             })
@@ -107,17 +107,17 @@ export default {
         promises.push(
           this.$http.patch(
             `/api/v1/courses/courses/${course.id}/prerequisites`,
-            { prerequisites: course.prerequisites.map(prereq => prereq.id) } // API expects array of IDs
+            { prerequisites: course.prerequisites.map((prereq) => prereq.id) } // API expects array of IDs
           )
         );
 
         Promise.all(promises)
-          .then(resps => {
+          .then((resps) => {
             let newCourse = resps[0].data;
             newCourse.prerequisites = course.prerequisites; // Re-attach prereqs so they show up in UI
             this.$emit("save", newCourse);
           })
-          .catch(err => {
+          .catch((err) => {
             console.error("FALURE", err.response);
             this.$emit("save", err);
           })
@@ -130,7 +130,7 @@ export default {
         let newCourse;
         this.$http
           .post("/api/v1/courses/courses", courseAttrs)
-          .then(resp => {
+          .then((resp) => {
             console.log("ADDED", resp);
             newCourse = resp.data;
             newCourse.prerequisites = course.prerequisites; // Re-attach prereqs so they show up in UI
@@ -138,14 +138,14 @@ export default {
             // Now that course created, add prerequisites to it
             return this.$http.patch(
               `/api/v1/courses/courses/${newCourse.id}/prerequisites`,
-              { prerequisites: course.prerequisites.map(prereq => prereq.id) } // API expects array of IDs
+              { prerequisites: course.prerequisites.map((prereq) => prereq.id) } // API expects array of IDs
             );
           })
-          .then(resp => {
+          .then((resp) => {
             console.log("PREREQS", resp);
             this.$emit("save", newCourse);
           })
-          .catch(err => {
+          .catch((err) => {
             console.error("FAILURE", err);
             this.$emit("save", err);
           })
@@ -153,7 +153,7 @@ export default {
             this.saving = false;
           });
       }
-    }
-  }
+    },
+  },
 };
 </script>

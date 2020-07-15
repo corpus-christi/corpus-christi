@@ -2,7 +2,7 @@
   <v-layout align-center justify-end>
     <v-tooltip bottom>
       <v-btn
-        flat
+        text
         icon
         outline
         color="primary"
@@ -16,7 +16,7 @@
     </v-tooltip>
     <v-tooltip bottom>
       <v-btn
-        flat
+        text
         icon
         outline
         color="primary"
@@ -43,13 +43,13 @@
 export default {
   props: {
     courseOffering: Object,
-    displayContext: String
+    displayContext: String,
   },
   methods: {
     emitAction(actionName) {
       this.$emit("action", actionName);
-    }
-  }
+    },
+  },
 };
 </script>
 

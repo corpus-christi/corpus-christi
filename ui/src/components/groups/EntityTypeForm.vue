@@ -15,7 +15,7 @@
     <v-flex class="text-xs-center">
       <v-btn
         color="primary"
-        flat
+        text
         small
         @click="showEntityTypePanel"
         :disabled="entityTypePanel.show"
@@ -33,11 +33,11 @@
             ></v-text-field>
           </v-card-text>
           <v-card-actions>
-            <v-btn small flat @click="hideEntityTypePanel">{{
+            <v-btn small text @click="hideEntityTypePanel">{{
               $t("actions.close")
             }}</v-btn>
             <v-spacer />
-            <v-btn small flat color="primary" @click="createEntityType">{{
+            <v-btn small text color="primary" @click="createEntityType">{{
               $t("actions.save")
             }}</v-btn>
           </v-card-actions>
@@ -56,17 +56,17 @@ export default {
     entityTypeName: {
       /* either groupType or managerType */
       type: String,
-      default: "groupType"
+      default: "groupType",
     },
     value: {
       /* { id: ..., name: ... } */
-      type: Object
-    }
+      type: Object,
+    },
   },
   watch: {
     value(newValue) {
       this.entityType = newValue;
-    }
+    },
   },
   methods: {
     getTranslation(key) {
@@ -85,14 +85,14 @@ export default {
     createEntityType() {
       this.$http
         .post(this.endpoint, { name: this.newEntityTypeName })
-        .then(resp => {
+        .then((resp) => {
           this.hideEntityTypePanel();
           this.newEntityTypeName = "";
           this.entitySearchKey = resp.data.id; // reload entity-search
           this.entityType = pick(resp.data, ["id", "name"]); // notify child
           this.$emit("input", this.entityType); // notify parent
         });
-    }
+    },
   },
   computed: {
     isGroupTypeMode() {
@@ -102,17 +102,17 @@ export default {
       return `/api/v1/groups/${
         this.isGroupTypeMode ? "group-types" : "manager-types"
       }`;
-    }
+    },
   },
   data() {
     return {
       newEntityTypeName: "",
       entityType: {},
       entityTypePanel: {
-        show: false
+        show: false,
       },
-      entitySearchKey: 0 // used to re-render the component
+      entitySearchKey: 0, // used to re-render the component
     };
-  }
+  },
 };
 </script>

@@ -61,11 +61,11 @@ import arcoPlaceholder from "../../../assets/arco-placeholder.jpg";
 export default {
   name: "EventCard",
   props: {
-    event: {}
+    event: {},
   },
   data() {
     return {
-      arcoPlaceholder
+      arcoPlaceholder,
     };
   },
 
@@ -77,10 +77,10 @@ export default {
         month: "numeric",
         day: "numeric",
         hour: "2-digit",
-        minute: "2-digit"
+        minute: "2-digit",
       });
-    }
-  }
+    },
+  },
 };
 </script>
 

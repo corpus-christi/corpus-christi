@@ -36,13 +36,13 @@ export default {
   props: {
     attribute: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
-      showDatePicker: false
+      showDatePicker: false,
     };
-  }
+  },
 };
 </script>

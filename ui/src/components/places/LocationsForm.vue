@@ -36,7 +36,7 @@
     <v-card-actions>
       <v-spacer />
       <v-btn
-        flat
+        text
         color="secondary"
         @click="cancelLocationForm"
         :disabled="formDisabled"
@@ -61,37 +61,37 @@ export default {
   props: {
     initialData: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
-  data: function() {
+  data: function () {
     return {
       selectedLocation: 0,
       locationInfo: {
         address_id: 0,
         allLocations: [],
-        editMode: Boolean
+        editMode: Boolean,
       },
       location: {
         id: 0,
         description: "",
-        address_id: 0
+        address_id: 0,
       },
       formDisabled: false,
       saveIsLoading: false,
       subDisabled: false,
-      dropList: {}
+      dropList: {},
     };
   },
   computed: {
     dropDownList() {
-      return this.locationInfo.allLocations.map(element => {
+      return this.locationInfo.allLocations.map((element) => {
         return {
           text: this.$t(element.description),
-          value: element.id
+          value: element.id,
         };
       });
-    }
+    },
   },
   watch: {
     initialData(locationProp) {
@@ -100,7 +100,7 @@ export default {
       this.selectedLocation = 0;
       this.subDisabled =
         this.formDisabled || !(!this.editMode || this.selectedLocation);
-    }
+    },
   },
   methods: {
     isDisabled() {
@@ -128,7 +128,7 @@ export default {
       let locationId = this.selectedLocation;
       let locationData = {
         description: this.location.description,
-        address_id: this.locationInfo.address_id
+        address_id: this.locationInfo.address_id,
       };
       if (locationId) {
         this.updateLocation(locationData, locationId, emitMessage);
@@ -140,14 +140,14 @@ export default {
     addLocation(locationData, emitMessage) {
       this.$http
         .post("/api/v1/places/locations", locationData)
-        .then(resp => {
+        .then((resp) => {
           this.$emit(emitMessage, resp.data);
         })
         .then(() => {
           this.formDisabled = false;
           this.cancelLocationForm();
         })
-        .catch(err => {
+        .catch((err) => {
           console.log("FAILED", err);
           this.formDisabled = false;
         });
@@ -155,18 +155,18 @@ export default {
     updateLocation(locationData, locationId, emitMessage) {
       this.$http
         .put(`api/v1/places/locations/${locationId}`, locationData)
-        .then(resp => {
+        .then((resp) => {
           this.$emit(emitMessage, resp.data);
         })
         .then(() => {
           this.formDisabled = false;
           this.cancelLocationForm();
         })
-        .catch(err => {
+        .catch((err) => {
           console.log("FAILED", err);
           this.formDisabled = false;
         });
-    }
-  }
+    },
+  },
 };
 </script>

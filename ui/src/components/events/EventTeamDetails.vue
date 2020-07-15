@@ -8,7 +8,7 @@
           </v-flex>
           <v-layout xs3 sm3 align-end justify-end>
             <v-btn
-              flat
+              text
               color="primary"
               data-cy="add-team-dialog"
               v-on:click="addTeamDialog.show = true"
@@ -32,7 +32,7 @@
                           <v-btn
                             icon
                             outline
-                            flat
+                            text
                             color="primary"
                             :to="{ path: '/teams/' + team.id }"
                             :data-cy="'view-team-' + team.id"
@@ -43,7 +43,7 @@
                           <v-btn
                             icon
                             outline
-                            flat
+                            text
                             color="primary"
                             v-on:click="showDeleteTeamDialog(team.id)"
                             :data-cy="'deleteTeam-' + team.id"
@@ -89,7 +89,7 @@
           <v-btn
             v-on:click="closeAddTeamDialog()"
             color="secondary"
-            flat
+            text
             :disabled="addTeamDialog.loading"
             data-cy="cancel-add"
             >{{ $t("actions.cancel") }}</v-btn
@@ -117,7 +117,7 @@
           <v-btn
             v-on:click="deleteTeamDialog.show = false"
             color="secondary"
-            flat
+            text
             :disabled="deleteTeamDialog.loading"
             data-cy="cancel-delete"
             >{{ $t("actions.cancel") }}</v-btn
@@ -142,17 +142,17 @@ import EntitySearch from "../EntitySearch";
 export default {
   name: "EventTeamDetails",
   components: {
-    "entity-search": EntitySearch
+    "entity-search": EntitySearch,
   },
 
   props: {
     teams: {
-      required: true
+      required: true,
     },
     loaded: {
       type: Boolean,
-      required: true
-    }
+      required: true,
+    },
   },
 
   data() {
@@ -160,14 +160,14 @@ export default {
       addTeamDialog: {
         show: false,
         loading: false,
-        team: null
+        team: null,
       },
 
       deleteTeamDialog: {
         show: false,
         loading: false,
-        teamId: -1
-      }
+        teamId: -1,
+      },
     };
   },
 
@@ -181,7 +181,7 @@ export default {
     addTeam() {
       const eventId = this.$route.params.event;
       let teamId = this.addTeamDialog.team.id;
-      const idx = this.teams.findIndex(t => t.id === teamId);
+      const idx = this.teams.findIndex((t) => t.id === teamId);
       this.addTeamDialog.loading = true;
       if (idx > -1) {
         this.closeAddTeamDialog();
@@ -196,7 +196,7 @@ export default {
           this.closeAddTeamDialog();
           this.$emit("team-added");
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
           this.addTeamDialog.loading = false;
           if (err.response.status == 422) {
@@ -209,12 +209,12 @@ export default {
 
     deleteTeam() {
       let id = this.deleteTeamDialog.teamId;
-      const idx = this.teams.findIndex(t => t.id === id);
+      const idx = this.teams.findIndex((t) => t.id === id);
       this.deleteTeamDialog.loading = true;
       const eventId = this.$route.params.event;
       this.$http
         .delete(`/api/v1/events/${eventId}/teams/${id}`)
-        .then(resp => {
+        .then((resp) => {
           console.log("REMOVED", resp);
           this.deleteTeamDialog.show = false;
           this.deleteTeamDialog.loading = false;
@@ -222,7 +222,7 @@ export default {
           this.teams.splice(idx, 1); //TODO maybe fix me?
           this.showSnackbar(this.$t("teams.team-removed"));
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
           this.deleteTeamDialog.loading = false;
           this.showSnackbar(this.$t("teams.error-removing-team"));
@@ -236,7 +236,7 @@ export default {
 
     showSnackbar(message) {
       this.$emit("snackbar", message);
-    }
-  }
+    },
+  },
 };
 </script>

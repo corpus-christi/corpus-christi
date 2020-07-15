@@ -37,16 +37,16 @@ export default {
   props: {
     dialogState: {
       type: String,
-      required: true
+      required: true,
     },
     person: {
       type: Object,
-      required: true
+      required: true,
     },
     allPeople: {
       type: Array,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
@@ -54,8 +54,8 @@ export default {
         show: false,
         title: "",
         person: {},
-        addAnotherEnabled: false
-      }
+        addAnotherEnabled: false,
+      },
     };
   },
 
@@ -63,7 +63,7 @@ export default {
     dialogState(val) {
       if (val === "edit") this.editPerson(this.person);
       if (val === "new") this.newPerson();
-    }
+    },
   },
 
   methods: {
@@ -91,7 +91,7 @@ export default {
     },
 
     savePerson() {
-      let idx = this.allPeople.findIndex(p => p.id === this.person.id);
+      let idx = this.allPeople.findIndex((p) => p.id === this.person.id);
       if (idx === -1) {
         this.$emit("snack", this.$t("person.messages.person-add"));
       } else {
@@ -105,7 +105,7 @@ export default {
       this.$emit("refreshPeople");
       this.activatePersonDialog();
       this.$emit("snack", this.$t("person.messages.person-add"));
-    }
-  }
+    },
+  },
 };
 </script>

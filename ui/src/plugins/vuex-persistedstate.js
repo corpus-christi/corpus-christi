@@ -1,10 +1,10 @@
 import Account from "../models/Account";
-import { Locale } from "../models/Locale.ts";
+import { Locale } from "@/models/Locale";
 import { cloneDeep } from "lodash";
 
 export const objectMap = {
   Account: Account,
-  Locale: Locale
+  Locale: Locale,
 };
 
 export const persistedStateOptions = {
@@ -23,13 +23,10 @@ export const persistedStateOptions = {
         let c = objectMap[stateValue.__class__]; // the class constructor
         if (!Object.hasOwnProperty.call(c, "fromObject"))
           throw new Error(
-            `Class with mapped key ${
-              stateValue.__class__
-            } does not have 'fromObject' static method`
+            `Class with mapped key ${stateValue.__class__} does not have 'fromObject' static method`
           );
         delete stateValue.__class__;
-        let classState = c.fromObject(stateValue);
-        states[state] = classState;
+        states[state] = c.fromObject(stateValue);
       }
     }
     return states;
@@ -41,7 +38,7 @@ export const persistedStateOptions = {
       let c;
       if (
         (c = Object.values(objectMap).find(
-          element => states[state] instanceof element
+          (element) => states[state] instanceof element
         ))
       ) {
         encodedState.__class__ = c.name; // store the class's name
@@ -49,5 +46,5 @@ export const persistedStateOptions = {
       encodedStates[state] = encodedState;
     }
     return storage.setItem(key, JSON.stringify(encodedStates));
-  }
+  },
 };

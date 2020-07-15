@@ -18,12 +18,12 @@ export default {
   components: { "vue-cal": Vuecal },
   data() {
     return {
-      events: []
+      events: [],
     };
   },
   mounted() {
     this.tableLoading = true;
-    this.$http.get("/api/v1/events/").then(resp => {
+    this.$http.get("/api/v1/events/").then((resp) => {
       var currentDate = new Date();
       for (let event of resp.data) {
         this.events.push({
@@ -32,7 +32,7 @@ export default {
           end: this.getDatetime(event.end),
           description: event.description,
           class: new Date(event.end) < currentDate ? "leisure" : "sport",
-          content: this.getTemplate(event)
+          content: this.getTemplate(event),
         });
       }
     });
@@ -43,7 +43,7 @@ export default {
       return this.events;
     },
     ...mapState(["locales"]),
-    ...mapGetters(["currentLocaleModel"])
+    ...mapGetters(["currentLocaleModel"]),
   },
 
   methods: {
@@ -68,13 +68,13 @@ export default {
         return "";
       }
       let yr = date.toLocaleDateString(this.currentLanguageCode, {
-        year: "numeric"
+        year: "numeric",
       });
       let mo = date.toLocaleDateString(this.currentLanguageCode, {
-        month: "2-digit"
+        month: "2-digit",
       });
       let da = date.toLocaleDateString(this.currentLanguageCode, {
-        day: "2-digit"
+        day: "2-digit",
       });
       return `${yr}-${mo}-${da}`;
     },
@@ -84,8 +84,8 @@ export default {
       let hr = String(date.getHours()).padStart(2, "0");
       let min = String(date.getMinutes()).padStart(2, "0");
       return `${hr}:${min}`;
-    }
-  }
+    },
+  },
 };
 </script>
 
