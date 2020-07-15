@@ -29,7 +29,7 @@
       </v-card-text>
     </v-card>
     <v-card v-else flat>
-      <v-toolbar card class="pa-1">
+      <v-toolbar flat class="pa-1">
         <v-layout align-center justify-space-between>
           <v-flex md6 xs3>
             <v-text-field

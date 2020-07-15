@@ -8,7 +8,7 @@
         {{ $t("groups.treeview.show-list") }}
       </v-btn>
       <template v-slot:extension>
-        <v-tabs color="transparent" centered>
+        <v-tabs centered>
           <v-tab :to="{ name: 'group-treeview-category' }">
             Category View</v-tab
           >

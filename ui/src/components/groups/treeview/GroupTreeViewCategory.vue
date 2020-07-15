@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-card flat>
-      <v-toolbar card class="pa-1" :color="toolbarColor">
+      <v-toolbar flat class="pa-1" :color="toolbarColor">
         <v-layout align-center justify-space-between>
           <v-flex md6 xs3>
             <v-text-field
