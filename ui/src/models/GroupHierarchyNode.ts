@@ -49,6 +49,9 @@ export abstract class HierarchyNode {
   constructor(public nodeType: string) {}
   abstract get id(): number | string;
   abstract toString(): string;
+  toHumanReadable(): string {
+    return this.toString();
+  }
   abstract equal(other: HierarchyNode): boolean;
   abstract getObject(): NodeObject;
   abstract getSubNodes(): HierarchyNode[];
@@ -67,6 +70,10 @@ export class Participant extends HierarchyNode {
   }
   toString(): string {
     return `Participant(personId=${this.participant.person.id})`;
+  }
+  toHumanReadable(): string {
+    let { firstName, lastName } = this.participant.person;
+    return `${firstName} ${lastName}`;
   }
   getObject(): NodeObject {
     return this.participant;
@@ -125,6 +132,9 @@ export class Group extends HierarchyNode {
   }
   toString(): string {
     return `Group(id=${this.group.id})`;
+  }
+  toHumanReadable(): string {
+    return this.group.name || this.toString();
   }
   getObject(): NodeObject {
     return this.group;
@@ -318,7 +328,11 @@ export function* count(
 
 /* error object containing information about a (unexpected) cycle in the tree */
 export class HierarchyCycleError extends Error {
-  constructor(message: string, public node: HierarchyNode) {
+  constructor(
+    message: string,
+    public node: HierarchyNode,
+    public path: HierarchyNode[] = []
+  ) {
     super(message);
     this.name = "HierarchyCycleError";
   }
@@ -333,7 +347,7 @@ export function getTree(
   const rootNode = dfs(
     node,
     (node: HierarchyNode, parentPath: HierarchyNode[]) => {
-      if (parentPath.length === 2 && parentPath[1].equal(node)) {
+      if (parentPath.length >= 2 && parentPath[1].equal(node)) {
         return []; // prevent infinite loop from immediate cycle caused by manager-member double identity
       }
       if (
@@ -342,7 +356,11 @@ export function getTree(
           .slice(2) // ignore the immediate parent to allow someone to be both manager/member of a group
           .some((parentNode) => parentNode.equal(node))
       ) {
-        throw new HierarchyCycleError("Unexpected cycle in tree", node);
+        throw new HierarchyCycleError(
+          "Unexpected cycle in tree",
+          node,
+          parentPath
+        );
       }
       return node[superNodes ? "getSuperNodes" : "getSubNodes"]();
     }
@@ -377,16 +395,7 @@ export function getInfoTree(
       let { hierarchyNode } = graphNode;
       let { nodeType } = hierarchyNode;
       let info = hierarchyNode.getObject();
-      let name: string;
-      // set node's name
-      if (nodeType === "Group") {
-        name = (info as GroupObject).name!;
-      } else if (nodeType === "Participant") {
-        let { firstName, lastName } = (info as GroupParticipantObject).person;
-        name = `${firstName} ${lastName}`;
-      } else {
-        name = hierarchyNode.toString();
-      }
+      let name: string = hierarchyNode.toHumanReadable();
       return {
         id,
         name,
