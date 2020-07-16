@@ -91,6 +91,45 @@
       <v-expand-transition>
         <v-card v-if="entityTypePanel.show" color="teal lighten-3">
           <v-radio-group v-model="radioGroup">
+            <v-card-title>{{ $t('groups.members.email-reply-to') }} :   {{ replyToOtherEmail || 'null' }}</v-card-title>
+            <v-card-title text color="green"></v-card-title>
+            <v-radio
+              :label= "$t('groups.title')"
+              @click="setToChurch"
+              :key='1'
+              :value=homeChurchEmail
+            ></v-radio>
+              <v-radio
+                :label= "$t('groups.details.manager')"
+                @click="showManagerPanel"
+                :key='2'
+                :value = 'notSelected'
+              ></v-radio>
+              <!--  Managers dialog     -->
+              <v-expand-transition>
+                <v-card
+                  v-if="managerPanel.show"
+                >
+                  <v-card-text>
+                    <entity-search
+                      person
+                      v-model="selectedPerson"
+                      :existing-entities="searchPeople"
+                    />
+                  </v-card-text>
+                  <v-btn v-on:click="hideManagerPanel" color="light-blue" flat>{{
+                    $t("actions.cancel")
+                    }}</v-btn>
+                  <v-btn v-on:click="setReplyTo" color="primary" flat>{{
+                    $t("actions.confirm")
+                    }}</v-btn>
+                </v-card>
+              </v-expand-transition>
+            <v-radio
+              :label= "$t('groups.members.default')"
+              @click="setToDefault"
+              :key='4'
+              :value= "myEmail"></v-radio>
             <v-card-title
               >{{ $t("groups.members.email-reply-to") }} :
               {{ radioGroup || "null" }}</v-card-title
@@ -140,6 +179,9 @@
               {{ $t("groups.members.email-dialog-footnote") }}
             </v-footer>
             <v-spacer></v-spacer>
+            <v-btn small flat color="primary"
+                   @click="saveEntityTypePanel"
+            >{{
             <v-btn small text color="primary" @click="hideEntityTypePanel">{{
               $t("actions.save")
             }}</v-btn>
@@ -170,7 +212,6 @@
 import { mapState } from "vuex";
 import { eventBus } from "../plugins/event-bus.js";
 import EntitySearch from "./EntitySearch";
-import PersonDialog from "./PersonDialog";
 
 export default {
   components: { EntitySearch },
@@ -216,6 +257,11 @@ export default {
     },
     sendEmail() {
       this.sendLoading = true;
+      if(this.replyToOtherEmail === null){
+        eventBus.$emit("error", {
+          content: "groups.messages.error-sending-email"
+        });
+      }
       let email = {
         ...this.email,
         recipients: this.email.recipients.map((p) => p.email),
@@ -232,6 +278,7 @@ export default {
           eventBus.$emit("message", { content: "groups.messages.email-sent" });
         })
         .catch((err) => {
+          console.error("EMAIL ERROR", err);
           this.sendLoading = false;
           this.$emit("error");
           eventBus.$emit("error", {
@@ -247,10 +294,13 @@ export default {
       this.entityTypePanel.show = false;
       this.replyToOtherEmail = this.radioGroup;
     },
-    showManagerPanel() {
+    saveEntityTypePanel(){
+      this.entityTypePanel.show = false;
+    },
+    showManagerPanel(){
       this.managerPanel.show = true;
     },
-    setReplyTo() {
+    setReplyTo(){
       if (this.selectedPerson != null && this.selectedPerson[1] === undefined) {
         this.replyToOtherEmail = this.selectedPerson[0].email;
         this.managerPanel.show = false;
@@ -266,7 +316,6 @@ export default {
     },
     getAllManagers() {},
     AllGroupManagers() {
-      let groupId = this.$route.params.group;
       this.$http
         .get(`/api/v1/people/persons`)
         .then((resp) => {
@@ -275,13 +324,20 @@ export default {
         .then(() => this.peronWithEmail());
     },
     peronWithEmail() {
-      let i = 0;
       for (let i = 0; i < this.people.length; i++) {
         if (this.people[i].email === null) {
           this.searchPeople.push(this.people[i]);
         }
       }
     },
+    setToChurch(){
+      this.replyToOtherEmail = this.radioGroup;
+      this.radioGroup = this.homeChurchEmail;
+    },
+    setToDefault(){
+      this.replyToOtherEmail = this.radioGroup;
+      this.radioGroup = this.myEmail;
+    }
   },
   data() {
     return {
@@ -306,6 +362,7 @@ export default {
       memberPanel: {
         show: false,
       },
+      notSelected: ' ',
       radioGroup: "default@email.com",
       replyToOtherEmail: null,
       homeChurchEmail: "homeChurh@email.com",

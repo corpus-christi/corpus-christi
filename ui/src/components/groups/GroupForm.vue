@@ -46,7 +46,7 @@
       <v-spacer />
       <v-btn
         color="primary"
-        outline
+        outlined
         v-on:click="addAnother"
         v-if="!editMode"
         :loading="addAnotherLoading"
@@ -70,7 +70,6 @@
 
 <script>
 import { isEmpty } from "lodash";
-import { mapGetters } from "vuex";
 import EntityTypeForm from "./EntityTypeForm";
 export default {
   components: { EntityTypeForm },
@@ -97,7 +96,7 @@ export default {
   },
 
   methods: {
-    validateGroup(group) {
+    validateGroup() {
       return this.$validator.validateAll();
     },
 
@@ -113,7 +112,7 @@ export default {
 
     save() {
       //save add group
-      this.validateGroup(this.group).then((valid) => {
+      this.validateGroup().then((valid) => {
         if (valid) {
           this.group.active = true;
           this.$emit("save", this.group); // send to parent component
@@ -122,7 +121,7 @@ export default {
     },
 
     addAnother() {
-      this.validateGroup(this.group).then((valid) => {
+      this.validateGroup().then((valid) => {
         if (valid) {
           this.group.active = true;
           this.$emit("add-another", this.group);

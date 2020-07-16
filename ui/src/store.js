@@ -31,7 +31,7 @@ export default new Vuex.Store({
 
   getters: {
     // Is there a currently logged-in user?
-    isLoggedIn(state, getters) {
+    isLoggedIn(state) {
       return state.currentJWT && state.currentAccount;
     },
 
