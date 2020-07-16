@@ -704,19 +704,15 @@ export default {
         let filter = localParticipantsFilter[i];
         let participantIndex = participants.findIndex(filter);
         if (participantIndex !== -1) {
-          // console.log("participant before", participants[participantIndex]);
           this.$set(participants, participantIndex, {
             ...participants[participantIndex],
             ...payload,
           });
-          // console.log("participant after", participants[participantIndex]);
         } else {
-          // console.log("old participants", participants);
           participants.push({ ...payload });
-          // console.log("participant added", payload);
-          // console.log("new participants", participants);
         }
       }
+      this.$forceUpdate("cyclingPersons");
     },
     saveLocalParticipants(groupId, persons, payload) {
       persons.forEach((person) => {
@@ -1055,4 +1051,3 @@ export default {
   display: inline-flex !important;
 }
 </style>
-}
