@@ -459,7 +459,7 @@ export default {
           tooltipText: this.$t("actions.tooltips.activate"),
           show: (item) => !item.active && !this.isCyclingPerson(item.person),
           clickHandler: (item) => this.unarchiveParticipant(item),
-          loading: (item) => item.id < 0,
+          loading: (item) => item.unarchiving,
         },
       ];
     },
@@ -1013,10 +1013,11 @@ export default {
       return this.archiveParticipants(participants, true);
     },
     unarchiveParticipant(participant) {
-      const participantId = participant.id;
-      participant.id = -1; // show loading state
+      participant.unarchiving = true; // show loading state
       return this.archiveParticipants([participant], true).finally(() => {
-        participant.id = participantId;
+        this.saveLocalParticipant(this.id, participant.person.id, {
+          unarchiving: undefined,
+        });
       });
     },
     fetchParticipants() {
