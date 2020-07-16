@@ -78,9 +78,11 @@ export class Participant extends HierarchyNode {
   getObject(): NodeObject {
     return this.participant;
   }
-  getLeadingGroups(): Group[] {
+  getLeadingGroups(
+    filter: (m: PersonParticipantObject) => boolean = (m) => true
+  ): Group[] {
     return this.participant.person.managers
-      .filter((manager) => manager.active) // only get the groups where the user is an active manager
+      .filter(filter)
       .map((m: PersonParticipantObject) => {
         if (!Object.prototype.hasOwnProperty.call(this.groupMap, m.groupId)) {
           throw new Error(
@@ -88,12 +90,13 @@ export class Participant extends HierarchyNode {
           );
         }
         return new Group(this.groupMap[m.groupId], this.groupMap);
-      })
-      .filter((group) => group.getObject().active); // only get the active groups
+      });
   }
-  getParticipatingGroups(): Group[] {
+  getParticipatingGroups(
+    filter: (m: PersonParticipantObject) => boolean = (m) => true
+  ): Group[] {
     return this.participant.person.members
-      .filter((member) => member.active) // only get the groups where the user is an active member
+      .filter(filter)
       .map((m: PersonParticipantObject) => {
         if (!Object.prototype.hasOwnProperty.call(this.groupMap, m.groupId)) {
           throw new Error(
@@ -101,14 +104,27 @@ export class Participant extends HierarchyNode {
           );
         }
         return new Group(this.groupMap[m.groupId], this.groupMap);
-      })
-      .filter((group) => group.getObject().active); // only get the active groups
+      });
   }
   getSubNodes(): HierarchyNode[] {
-    return this.getLeadingGroups();
+    return this.getLeadingGroups(
+      (m) =>
+        !!(
+          m.active && // get groups where the user is an active manager
+          Object.prototype.hasOwnProperty.call(this.groupMap, m.groupId) &&
+          this.groupMap[m.groupId].active
+        ) // only get the active groups
+    );
   }
   getSuperNodes(): HierarchyNode[] {
-    return this.getParticipatingGroups();
+    return this.getParticipatingGroups(
+      (m) =>
+        !!(
+          m.active && // get groups where the user is an active member
+          Object.prototype.hasOwnProperty.call(this.groupMap, m.groupId) &&
+          this.groupMap[m.groupId].active
+        ) // only get the active groups
+    );
   }
   equal(other: HierarchyNode): boolean {
     if (other instanceof Participant) {
@@ -139,27 +155,31 @@ export class Group extends HierarchyNode {
   getObject(): NodeObject {
     return this.group;
   }
-  getMembers(): Participant[] {
+  getMembers(
+    filter: (m: GroupParticipantObject) => boolean = (m) => true
+  ): Participant[] {
     return this.group.members
-      .filter((member) => member.active) // only get the active members
+      .filter(filter) // only get the active members
       .map(
         (participant: GroupParticipantObject) =>
           new Participant(participant, this.groupMap)
       );
   }
-  getManagers(): Participant[] {
+  getManagers(
+    filter: (m: GroupParticipantObject) => boolean = (m) => true
+  ): Participant[] {
     return this.group.managers
-      .filter((manager) => manager.active) // only get the active managers
+      .filter(filter) // only get the active managers
       .map(
         (participant: GroupParticipantObject) =>
           new Participant(participant, this.groupMap)
       );
   }
   getSubNodes(): HierarchyNode[] {
-    return this.getMembers();
+    return this.getMembers((m) => !!m.active);
   }
   getSuperNodes(): HierarchyNode[] {
-    return this.getManagers();
+    return this.getManagers((m) => !!m.active);
   }
   equal(other: HierarchyNode): boolean {
     if (other instanceof Group) {
