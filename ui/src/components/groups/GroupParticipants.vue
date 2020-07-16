@@ -686,15 +686,20 @@ export default {
       let group = this.allGroups.find((group) => group.id === groupId);
       let localParticipants = [
         groupId === this.id ? this.participants : undefined,
-        person
-          ? person[this.isManagerMode ? "managers" : "members"]
-          : undefined,
-        group ? group[this.isManagerMode ? "managers" : "members"] : undefined,
+        person ? person.managers : undefined,
+        person ? person.members : undefined,
+        group ? group.managers : undefined,
+        group ? group.members : undefined,
       ];
+      const personIdFilter = (participant) =>
+        participant.person.id === personId;
+      const groupIdFilter = (participant) => participant.groupId === groupId;
       let localParticipantsFilter = [
-        (participant) => participant.person.id === personId,
-        (participant) => participant.groupId === groupId,
-        (participant) => participant.person.id === personId,
+        personIdFilter,
+        groupIdFilter,
+        groupIdFilter,
+        personIdFilter,
+        personIdFilter,
       ];
       for (let i in localParticipants) {
         let participants = localParticipants[i];
