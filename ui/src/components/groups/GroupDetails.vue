@@ -6,40 +6,41 @@
           <v-card class="ma-1">
             <v-container fill-height fluid>
               <v-flex xs9 sm9 align-end flexbox>
-                <span class="headline"><b>{{ $t("groups.name") }}: </b>{{ group.name }}</span>
+                <span class="headline">
+                  <b>{{ $t("groups.name") }}: </b>{{ group.name }}</span
+                >
               </v-flex>
               <v-layout xs3 sm3 align-end justify-end>
-                <v-btn
-                  flat
-                  color="primary"
-                >
+                <v-btn flat color="primary">
                   <v-icon>edit</v-icon>&nbsp;{{ $t("actions.edit") }}
                 </v-btn>
               </v-layout>
             </v-container>
           </v-card>
-         </v-flex>
-       </v-layout>
+        </v-flex>
       </v-layout>
+    </v-layout>
 
-      <!--
+    <v-layout column>
       <v-layout row wrap>
-      <v-flex xs12 lg6>
-        <v-layout column>
-          <v-flex>
-          <div>
-            <b>{{ $t("groups.group-type")}}: </b>
-                {{group.groupType.name}}
-          </div>
-           <div>
-                <b>{{$t("groups.description")}}: </b>
-                {{group.description}}
-           </div>
-          </v-flex>
-        </v-layout>
-       </v-flex>
+        <v-flex xs12>
+          <v-card class="ma-1">
+            <v-container fill-height fluid>
+              <v-flex xs9 sm9 align-end flexbox>
+                <span>
+                  <b>{{ $t("groups.group-type") }}: </b>
+                  {{ group.groupType.name }}
+                </span>
+                <span>
+                  <b>{{ $t("groups.description") }}: </b>
+                  {{ group.description }}
+                </span>
+              </v-flex>
+            </v-container>
+          </v-card>
+        </v-flex>
       </v-layout>
--->
+    </v-layout>
 
     <!-- New/Edit dialog
     <v-dialog v-model="groupDialog.show" max-width="500px" persistent>
@@ -55,12 +56,19 @@
     </v-dialog>
     -->
     <!--
+    <v-toolbar>
+      <v-btn fab x-small @click="prev">
+              <v-icon small>mdi-chevron-left</v-icon>
+            </v-btn>
+            <v-btn fab small @click="next">
+              <v-icon small>mdi-chevron-right</v-icon>
+            </v-btn>
+     </v-toolbar>
     <v-row>
       <v-col>
         <v-sheet height="400">
           <v-calendar
             ref="calendar"
-            :now="today"
             :value="today"
             :events="events"
             color="primary"
@@ -69,28 +77,28 @@
         </v-sheet>
       </v-col>
     </v-row>
--->
+ -->
   </div>
 </template>
 
 <script>
 export default {
   name: "GroupDetails",
-  today: "2019-01-08",
+
   events: [
     {
       name: "Weekly Meeting",
-      start: "2019-01-07 09:00",
-      end: "2019-01-07 10:00",
+      start: "2020-07-07 09:00",
+      end: "2020-07-07 10:00",
     },
     {
       name: "Thomas' Birthday",
-      start: "2019-01-10",
+      start: "2020-07-10",
     },
     {
       name: "Mash Potatoes",
-      start: "2019-01-09 12:30",
-      end: "2019-01-09 15:30",
+      start: "2020-07-09 12:30",
+      end: "2020-07-09 15:30",
     },
   ],
   data() {
@@ -143,6 +151,12 @@ export default {
         );
       }
       return true;
+    },
+    prev() {
+      this.$refs.calendar.prev();
+    },
+    next() {
+      this.$refs.calendar.next();
     },
   },
 };
