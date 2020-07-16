@@ -125,6 +125,7 @@
       item-key="person.id"
       :search="search"
       :loading="tableLoading"
+      @click:row="handleRowClick"
       class="elevation-1"
     >
       <template v-slot:header.data-table-select>
@@ -804,6 +805,9 @@ export default {
     resetSelection() {
       this.selectionMode = "noSelect";
       this.selected = [];
+    },
+    handleRowClick(item, props) {
+      this.toggleSelect(props);
     },
     toggleSelect(props) {
       if (this.select && !props.item.disabled) {
