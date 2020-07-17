@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-btn
-      outline
+      outlined
       color="primary"
       v-on:click="$router.push({ path: '/groups/all' })"
     ><v-icon>arrow_back</v-icon>Back</v-btn
@@ -32,16 +32,16 @@
             :small-chips="true"
           >
             <template v-slot:prepend-item>
-              <v-list-tile
+              <v-list-item
                 ripple
                 @click="toggle"
               >
-                <v-list-tile-content>
-                  <v-list-tile-title
+                <v-list-item-content>
+                  <v-list-item-title
                     class="d-flex justify-center"
-                  >Select All</v-list-tile-title>
-                </v-list-tile-content>
-              </v-list-tile>
+                  >Select All</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
               <v-divider class="mt-2"></v-divider>
             </template>
             <template v-slot:selection="{ item , index }">
@@ -61,19 +61,6 @@
       <canvas id="myChart2" width="500" height="180"></canvas>
     </body>
     <v-toolbar>
-      <v-btn class="mx-2" fab small @click="decrease" :disabled="yearSwitch">
-        <v-icon dark>navigate_before</v-icon>
-      </v-btn>
-      <v-chip
-        class="ma-2"
-        large
-        color="blue accent-1"
-      >
-        {{ currentYear }}
-      </v-chip>
-      <v-btn class="mx-2" fab small @click="increase" :disabled="yearSwitch">
-        <v-icon dark>navigate_next</v-icon>
-      </v-btn>
       <v-spacer />
       <template
       v-if="selectedTimeScale === 'Weekly'"
@@ -202,6 +189,7 @@
   import Chart from 'chart.js';
   import moment from 'moment'
   import { mapState } from "vuex";
+  import 'chartjs-plugin-crosshair';
 
   export default {
     components: {},
@@ -230,6 +218,31 @@
         currentViewingWeeklyGraphData: null,
         window:{
           graph: null
+        },
+        graphOption: {
+          tooltips: {
+            cornerRadius: 0,
+            caretSize: 0,
+            xPadding: 16,
+            yPadding: 10,
+            backgroundColor: 'rgba(0, 150, 100, 0.9)',
+            titleFontStyle: 'normal',
+            titleMarginBottom: 15,
+            mode: 'label',
+            intersect: false,
+
+          },
+          plugins: {
+            crosshair: {
+              line: {
+                color: '#253495',
+                width: 6
+              },
+              sync: {
+                enabled: false
+              }
+            }
+          }
         }
       }
     },
@@ -237,9 +250,6 @@
     computed:{
       likesAllFruit () {
         return this.selectedGroups.length === this.groups.length
-      },
-      getTimeScale(){
-        return 1;
       },
       fistSelectedGroup() {
         this.reloadGraph();
@@ -274,7 +284,7 @@
                   },
                 ]
               },
-              options: {}
+              options: this.graphOption
             });
             myChart2.update();
           }
@@ -301,7 +311,7 @@
                     },
                   ]
                 },
-                options: {}
+                options: this.graphOption
               });
               myChart2.update();
             }
@@ -386,8 +396,7 @@
             labels: this.labels.slice(start-1, end),
             datasets: filteredData
           },
-          options: {
-          }
+          options: this.graphOption
         });
         myChart2.update();
       },
@@ -402,7 +411,6 @@
           let numWeeksFirstYear = moment(newDate).isoWeeksInYear() - start + 1;
           let numberOfLines = this.selectedGroups.length;
 
-
           let weekLabels = [];
           for(let i =0; i < numWeeksFirstYear; i++){
             if (i === numWeeksFirstYear -1){
@@ -413,23 +421,22 @@
           for(let i = 0; i < end; i++){
             weekLabels.push("week" + (i + 1));
           }
+          this.graphOption['scales'] ={
+            xAxes:[{
+              ticks:{
+                display: true,
+                autoSkip: true,
+                maxTicksLimit: 30
+              }
+            }]
+          };
           let myChart2 = new Chart(ctx2, {
             type: "line",
             data: {
               labels: weekLabels,
               datasets: []
             },
-            options: {
-              scales:{
-                xAxes:[{
-                  ticks:{
-                    display: true,
-                    autoSkip: true,
-                    maxTicksLimit: 30
-                  }
-                }]
-              },
-            }
+            options: this.graphOption
           });
           // load data into the graph
           if (numberOfLines > 0) {
@@ -492,23 +499,22 @@
           }
           // Add the number of the previous year into the labels
           //add the weeks in the last year
+          this.graphOption['scales'] ={
+            xAxes:[{
+              ticks:{
+                display: true,
+                autoSkip: true,
+                maxTicksLimit: 30
+              }
+            }]
+          };
           let myChart2 = new Chart(ctx2, {
             type: "line",
             data: {
               labels: weekLabels,
               datasets: []
             },
-            options: {
-              scales:{
-                xAxes:[{
-                  ticks:{
-                    display: true,
-                    autoSkip: true,
-                    maxTicksLimit: 30
-                  }
-                }]
-              },
-            }
+            options: this.graphOption
           });
 
           if (numberOfLines > 0) {
@@ -554,23 +560,22 @@
           for(let i = 0; i < end; i++){
             weekLabels.push("week" + (i + 1));
           }
+          this.graphOption['scales'] ={
+            xAxes:[{
+              ticks:{
+                display: true,
+                autoSkip: true,
+                maxTicksLimit: 30
+              }
+            }]
+          };
           let myChart2 = new Chart(ctx2, {
             type: "line",
             data: {
               labels: weekLabels,
               datasets: []
             },
-            options: {
-              scales:{
-                xAxes:[{
-                  ticks:{
-                    display: true,
-                    autoSkip: true,
-                    maxTicksLimit: 30
-                  }
-                }]
-              },
-            }
+            options: this.graphOption
           });
           // load data into the graph
           if (numberOfLines > 0) {
@@ -633,23 +638,22 @@
           }
           // Add the number of the previous year into the labels
           //add the weeks in the last year
+          this.graphOption['scales'] ={
+            xAxes:[{
+              ticks:{
+                display: true,
+                autoSkip: true,
+                maxTicksLimit: 30
+              }
+            }]
+          };
           let myChart2 = new Chart(ctx2, {
             type: "line",
             data: {
               labels: weekLabels,
               datasets: []
             },
-            options: {
-              scales:{
-                xAxes:[{
-                  ticks:{
-                    display: true,
-                    autoSkip: true,
-                    maxTicksLimit: 30
-                  }
-                }]
-              },
-            }
+            options: this.graphOption
           });
 
           if (numberOfLines > 0) {
@@ -689,8 +693,7 @@
             labels: this.labels.slice(start-1, end),
             datasets: filteredData
           },
-          options: {
-          }
+          options: this.graphOption
         });
         myChart2.update();
       },
@@ -709,7 +712,7 @@
             labels: this.labels.slice(Number(newMonth.substr(5,))-1, Number(this.endMonth.substr(5,))),
             datasets: filteredData
           },
-          options: {}
+          options: this.graphOption
         });
         myChart2.update();
       },
@@ -728,8 +731,7 @@
             labels: this.labels.slice(Number(this.startMonth.substr(5,))-1, Number(newMonth.substr(5,))),
             datasets: filteredData
           },
-          options: {
-          }
+          options: this.graphOption
         });
         myChart2.update();
       },
@@ -912,17 +914,6 @@
         return time;
       },
 
-      decrease() {
-        if(this.startMonth === this.endMonth){
-          this.currentYear = this.currentYear - 1;
-          this.changePageLoadGraph();
-        }
-      },
-      increase (){
-        this.currentYear = Number(this.currentYear) + 1;
-      },
-
-
       toggle () {
         this.$nextTick(() => {
           if (this.likesAllFruit) {
@@ -990,8 +981,7 @@
                 },
               ]
             },
-            options: {
-            }
+            options: this.graphOption
           });
           myChart2.update();
         }
@@ -1018,8 +1008,7 @@
               },
             ]
           },
-          options: {
-          }
+          options: this.graphOption
         });
         myChart2.update();
       },
@@ -1047,17 +1036,7 @@
                 },
               ]
             },
-            options: {
-              tooltips: {
-                cornerRadius: 0,
-                caretSize: 0,
-                xPadding: 16,
-                yPadding: 10,
-                backgroundColor: 'rgba(0, 150, 100, 0.9)',
-                titleFontStyle: 'normal',
-                titleMarginBottom: 15
-              }
-            }
+            options: this.graphOption,
           });
         }
         else if(this.selectedTimeScale === "Monthly" && this.selectedGroups.length > 0){
@@ -1081,8 +1060,7 @@
                 },
               ]
             },
-            options: {
-            }
+            options: this.graphOption
           });
           myChart2.update();
         }
@@ -1107,7 +1085,7 @@
               //this.labels.slice(Number(this.startMonth.substr(5,))-1, Number(this.endMonth.substr(5,)))
               datasets: []
             },
-            options: {}
+            options: this.graphOption
           });
           if (numberOfLines > 0) {
             for (let i = 0; i < numberOfLines; i++) {
@@ -1140,7 +1118,7 @@
               labels: this.labels,
               datasets: []
             },
-            options: {}
+            options: this.graphOption
           });
           if (numberOfLines > 0) {
             for (let i = 0; i < numberOfLines; i++) {
@@ -1188,7 +1166,7 @@
                 labels: this.labelStartGenerator(this.startMonth, this.endMonth),
                 datasets: [],
               },
-              options: {}
+              options: this.graphOption
             });
             if (numberOfLines > 0) {
               for (let i = 0; i < numberOfLines; i++) {
@@ -1225,7 +1203,7 @@
               labels:this.labelStartGenerator(this.startMonth, this.endMonth),
               datasets: []
             },
-            options: {}
+            options: this.graphOption
           });
           // The labels needed to update to the version of crossing years
           if (numberOfLines > 0) {
@@ -1452,7 +1430,7 @@
             labels: this.labels,
             datasets: []
           },
-          options: {}
+          options: this.graphOption
         });
         if (numberOfLines > 0) {
           for(let group of this.selectedGroups){
