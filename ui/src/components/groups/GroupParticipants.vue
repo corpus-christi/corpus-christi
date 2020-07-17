@@ -658,20 +658,15 @@ export default {
       }
       let editMode = this.participantDialog.editMode;
       this.participantDialog.loading = true;
-      let endpoint = this.endpoint;
       let payload = {};
       if (this.isManagerMode) {
         payload.managerTypeId = this.participantDialog.participantType.id;
-      let updatePayload = null;
       if (editMode) {
         if (!this.isManagerMode) {
           // ui should hide buttons as appropriate to prevent this case
           console.error("There is nothing to edit for members");
           return;
         }
-        updatePayload = {
-          managerTypeId: this.participantDialog.participantType.id,
-        };
       }
       this.saveParticipants(
         this.participantDialog.persons,

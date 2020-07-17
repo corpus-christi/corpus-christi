@@ -251,7 +251,7 @@
       ...mapState(["currentAccount"]),
     },
     watch:{
-      selectedGroups(newValue,oldValue){
+      selectedGroups(newValue){
         if (newValue.length === 0) {
           if (this.selectedTimeScale === 'Monthly') {
             let ctx2 = document.getElementById("myChart2");
@@ -303,12 +303,13 @@
                 },
                 options: {}
               });
+              myChart2.update();
             }
           }
         }
       },
 
-      startMonth(newValue, oldValue){
+      startMonth(newValue){
         if (newValue.substr(0, 4) === this.endMonth.substr(0, 4)) {
           if (newValue.substr(5,) - this.endMonth.substr(5,) < 0) { //same year
             this.yearSwitch = true;
@@ -322,7 +323,7 @@
         }
       },
 
-      endMonth(newValue, oldValue){
+      endMonth(newValue){
         if(newValue.substr(0, 4) === this.startMonth.substr(0, 4)){
           if (newValue.substr(5,) - this.startMonth.substr(5,) < 0){
             this.yearSwitch = true;
@@ -342,7 +343,7 @@
         }
       },
 
-      startDate(newValue, oldValue){
+      startDate(newValue){
         if(Number(newValue.substr(0, 4)) === Number(this.endDate.substr(0, 4))){ // same Year --Done
           if (newValue.substr(5,7) <= this.endDate.substr(5,7 )){
             this.updateStartWeeklyGraph(newValue);
@@ -353,7 +354,7 @@
         }
       },
 
-      endDate(newValue, oldValue){
+      endDate(newValue){
         if(newValue.substr(0, 4) === this.startDate.substr(0, 4)){
           if (this.startDate.substr(5,7) <= newValue.substr(5,7 )){
             this.updateEndWeeklyGraph(newValue);
@@ -388,6 +389,7 @@
           options: {
           }
         });
+        myChart2.update();
       },
 
       reloadPreComingYear(newDate){
@@ -395,7 +397,6 @@
         if (Number(newDate.substr(0, 4)) === Number(this.endDate.substr(0, 4) - 1)){
           this.resetCanvas();
           let ctx2 = document.getElementById("myChart2");
-          let filteredData = this.currentViewingWeeklyGraphData.map(a => Object.assign({}, a));
           let start = moment(newDate).isoWeek();
           let end = moment(this.endDate).isoWeek();
           let numWeeksFirstYear = moment(newDate).isoWeeksInYear() - start + 1;
@@ -538,7 +539,6 @@
         if (Number(newDate.substr(0, 4)) -1 === Number(this.startDate.substr(0, 4))){
           this.resetCanvas();
           let ctx2 = document.getElementById("myChart2");
-          let filteredData = this.currentViewingWeeklyGraphData.map(a => Object.assign({}, a));
           let start = moment(this.startDate).isoWeek();
           let end = moment(newDate).isoWeek();
           let numWeeksFirstYear = moment(this.startDate).isoWeeksInYear() - start + 1;
@@ -692,6 +692,7 @@
           options: {
           }
         });
+        myChart2.update();
       },
 
       updateStartGraph(newMonth){
@@ -710,6 +711,7 @@
           },
           options: {}
         });
+        myChart2.update();
       },
 
       updateEndGraph(newMonth){
@@ -729,6 +731,7 @@
           options: {
           }
         });
+        myChart2.update();
       },
 
       calculateGraph(inputGroup){
@@ -865,12 +868,10 @@
           let template = [];
           let start = moment(this.startDate).isoWeek();
           let end = moment(this.endDate).isoWeek();
-          let numWeeksFirstYear = moment(this.startDate).isoWeeksInYear() - start + 1;
           let numYears = Number(this.endDate.substr(0,4)) -Number(this.startDate.substr(0,4)) -1;
           let curYear = Number(this.startDate.substr(0,4)) + 1;
           for (let i=0; i< inputGroup.meetings.length; i++){
             let meetingYear = this.parseYear(inputGroup.meetings[i].startTime)[0];
-            let meetingMonth = this.parseYear(inputGroup.meetings[i].startTime)[1];
             let index = moment(inputGroup.meetings[i].startTime).isoWeek();
             //make initial empty data
             if (!(meetingYear in template)){
@@ -992,6 +993,7 @@
             options: {
             }
           });
+          myChart2.update();
         }
       },
 
@@ -1019,6 +1021,7 @@
           options: {
           }
         });
+        myChart2.update();
       },
 
       loadGraph (){
@@ -1081,6 +1084,7 @@
             options: {
             }
           });
+          myChart2.update();
         }
       },
 
@@ -1129,7 +1133,6 @@
         else if(this.selectedTimeScale === 'Weekly'){
           this.resetCanvas();
           let numberOfLines = this.selectedGroups.length;
-          let graphsNum = this.selectedGroups;
           let ctx2 = document.getElementById("myChart2");
           let myChart2 = new Chart(ctx2, {
             type: "line",
@@ -1179,7 +1182,6 @@
           // The labels needed to update to the version of crossing years
           if (Number(this.startMonth.substr(0,4)) < Number(this.endMonth.substr(0,4))){
             //calcualte the lables
-            let yearGap = this.endMonth.substr(0,4) - this.startMonth.substr(0,4);
             let myChart2 = new Chart(ctx2, {
               type: "line",
               data: {
@@ -1316,28 +1318,20 @@
         else if (Number(endTime.substr(0,4)) - Number(startTime.substr(0,4)) > 1){  //>2 years gap
           let numMonth = 12 * (Number(endTime.substr(0,4) - Number(startTime.substr(0,4))) - 1)
           + Number(endTime.substr(5,)) + (13 - Number(startTime.substr(5,)))
-          let previousLoopYear = null;
           let loopYear = Number(startTime.substr(0, 4));
-          let pastMonth = 0;
           for (let i =0; i < numMonth; i++){
-            let index = 0
             if (year[Number(startTime.substr(5,)) + i - 1] === "December"){
               monthLabels.push(year[Number(startTime.substr(5,)) + i -1] + loopYear + "End");
-              pastMonth++;
-              previousLoopYear = loopYear;
               loopYear++;
             }
             else{
               if (loopYear != Number(startTime.substr(0, 4)) && loopYear != Number(endTime.substr(0, 4))){
                 if (year[i - (12 -Number(startTime.substr(5,)) + (loopYear - Number(startTime.substr(0,4)) -1 ) * 12) - 1] === "December"){
                   monthLabels.push(year[i - (12 -Number(startTime.substr(5,)) + (loopYear - Number(startTime.substr(0,4)) -1 ) * 12) - 1] + loopYear + "End ");
-                  pastMonth++;
-                  previousLoopYear = loopYear;
                   loopYear++;
                 }
                 else{
                   monthLabels.push(year[i - (12 -Number(startTime.substr(5,)) + (loopYear - Number(startTime.substr(0,4)) -1 ) * 12) - 1]);
-                  pastMonth++;
                 }
               }
               else if(loopYear === Number(endTime.substr(0, 4))){
@@ -1345,7 +1339,6 @@
               }
               else{
                 monthLabels.push(year[Number(startTime.substr(5,)) + i - 1]);
-                pastMonth++;
               }
             }
           }
@@ -1414,28 +1407,20 @@
         else if (Number(endTime.substr(0,4)) - Number(startTime.substr(0,4)) > 1){
           let numMonth = 12 * (Number(endTime.substr(0,4) - Number(startTime.substr(0,4))) - 1)
             + Number(endTime.substr(5,)) + (13 - Number(startTime.substr(5,)))
-          let previousLoopYear = null;
           let loopYear = Number(startTime.substr(0, 4));
-          let pastMonth = 0;
           for (let i =0; i < numMonth; i++){
-            let index = 0
             if (year[Number(startTime.substr(5,)) + i - 1] === "December"){
               monthLabels.push(year[Number(startTime.substr(5,)) + i -1] + loopYear + "End");
-              pastMonth++;
-              previousLoopYear = loopYear;
               loopYear++;
             }
             else{
               if (loopYear != Number(startTime.substr(0, 4)) && loopYear != Number(endTime.substr(0, 4))){
                 if (year[i - (12 -Number(startTime.substr(5,)) + (loopYear - Number(startTime.substr(0,4)) -1 ) * 12) - 1] === "December"){
                   monthLabels.push(year[i - (12 -Number(startTime.substr(5,)) + (loopYear - Number(startTime.substr(0,4)) -1 ) * 12) - 1] + loopYear + "End ");
-                  pastMonth++;
-                  previousLoopYear = loopYear;
                   loopYear++;
                 }
                 else{
                   monthLabels.push(year[i - (12 -Number(startTime.substr(5,)) + (loopYear - Number(startTime.substr(0,4)) -1 ) * 12) - 1]);
-                  pastMonth++;
                 }
               }
               else if(loopYear === Number(endTime.substr(0, 4))){ //last section
@@ -1443,7 +1428,6 @@
               }
               else{
                 monthLabels.push(year[Number(startTime.substr(5,)) + i - 1]);
-                pastMonth++;
               }
             }
           }

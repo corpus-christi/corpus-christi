@@ -179,9 +179,6 @@
               {{ $t("groups.members.email-dialog-footnote") }}
             </v-footer>
             <v-spacer></v-spacer>
-            <v-btn small flat color="primary"
-                   @click="saveEntityTypePanel"
-            >{{
             <v-btn small text color="primary" @click="hideEntityTypePanel">{{
               $t("actions.save")
             }}</v-btn>
@@ -281,6 +278,7 @@ export default {
           console.error("EMAIL ERROR", err);
           this.sendLoading = false;
           this.$emit("error");
+          console.log(err);
           eventBus.$emit("error", {
             content: "groups.messages.error-sending-email",
           });
