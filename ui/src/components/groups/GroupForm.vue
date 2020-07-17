@@ -6,7 +6,7 @@
     </v-card-title>
     <v-card-text>
       <form>
-        <v-layout column justify-center>
+        <v-row column justify-center>
           <v-text-field
             v-model="group.name"
             v-bind:label="$t('groups.name')"
@@ -31,7 +31,7 @@
             v-validate="'required'"
             v-bind:error-messages="errors.first('grouptype')"
           ></entity-type-form>
-        </v-layout>
+        </v-row>
       </form>
     </v-card-text>
     <v-card-actions>

@@ -1,11 +1,11 @@
 <template>
   <div>
     <v-toolbar>
-      <v-flex md3>
+      <v-col md3>
         <v-toolbar-title>{{ $t("groups.meetings.title") }}</v-toolbar-title>
-      </v-flex>
+      </v-col>
       <v-spacer></v-spacer>
-      <v-flex md2>
+      <v-col md2>
         <v-text-field
           v-model="search"
           append-icon="search"
@@ -13,9 +13,9 @@
           single-line
           hide-details
         ></v-text-field>
-      </v-flex>
+      </v-col>
       <v-spacer></v-spacer>
-      <v-flex md1>
+      <v-col md1>
         <v-select
           hide-details
           solo
@@ -25,10 +25,10 @@
           data-cy="view-status-select"
         >
         </v-select>
-      </v-flex>
+      </v-col>
 
       <v-spacer></v-spacer>
-      <v-flex>
+      <v-col>
         <v-btn
           color="primary"
           raised
@@ -38,7 +38,7 @@
           <v-icon dark left>add</v-icon>
           {{ $t("groups.meetings.add-meeting") }}
         </v-btn>
-      </v-flex>
+      </v-col>
     </v-toolbar>
     <v-data-table
       :rows-per-page-items="rowsPerPageItem"

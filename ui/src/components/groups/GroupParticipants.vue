@@ -1,12 +1,12 @@
 <template>
   <div>
     <v-toolbar>
-      <v-layout align-center justify-space-between fill-height>
-        <v-flex md3 class="text-no-wrap">
+      <v-row align-center justify-space-between fill-height>
+        <v-col md3 class="text-no-wrap">
           <v-toolbar-title v-if="!select">{{ title }}</v-toolbar-title>
           <v-toolbar-title v-else>{{ selectionOption.title }}</v-toolbar-title>
-        </v-flex>
-        <v-flex v-if="select" shrink>
+        </v-col>
+        <v-col v-if="select" shrink>
           <v-tooltip bottom
             ><template v-slot:activator="{ on }"
               ><v-btn v-on:click="resetSelection" v-on="on" fab text>
@@ -31,9 +31,9 @@
             >
             {{ $t("actions.confirm") }}
           </v-tooltip>
-        </v-flex>
+        </v-col>
         <template v-if="!select">
-          <v-flex md2>
+          <v-col md2>
             <v-text-field
               v-model="search"
               append-icon="search"
@@ -41,8 +41,8 @@
               single-line
               hide-details
             />
-          </v-flex>
-          <v-flex md1>
+          </v-col>
+          <v-col md1>
             <v-select
               hide-details
               solo
@@ -51,8 +51,8 @@
               v-model="viewStatus"
               data-cy="view-status-select"
             />
-          </v-flex>
-          <v-flex md2>
+          </v-col>
+          <v-col md2>
             <v-menu open-on-hover offset-y bottom>
               <template v-slot:activator="{ on }">
                 <v-btn color="primary" v-on="on">
@@ -96,8 +96,8 @@
                 </v-list-item>
               </v-list>
             </v-menu>
-          </v-flex>
-          <v-flex shrink justify-self-end>
+          </v-col>
+          <v-col shrink justify-self-end>
             <v-btn
               color="primary"
               raised
@@ -112,9 +112,9 @@
                   : $t("groups.members.add-member")
               }}
             </v-btn>
-          </v-flex>
+          </v-col>
         </template>
-      </v-layout>
+      </v-row>
     </v-toolbar>
     <v-data-table
       v-model="selected"

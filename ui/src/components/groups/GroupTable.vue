@@ -1,11 +1,11 @@
 <template>
   <div>
     <v-toolbar class="pa-1">
-      <v-layout align-center justify-space-between fill-height>
-        <v-flex md2>
+      <v-row align-center justify-space-between fill-height>
+        <v-col md2>
           <v-toolbar-title>{{ $t("groups.header") }}</v-toolbar-title>
-        </v-flex>
-        <v-flex md2>
+        </v-col>
+        <v-col md2>
           <v-text-field
             v-model="search"
             append-icon="search"
@@ -14,8 +14,8 @@
             hide-details
             data-cy="form-search"
           />
-        </v-flex>
-        <v-flex md3>
+        </v-col>
+        <v-col md3>
           <v-select
             hide-details
             solo
@@ -25,8 +25,8 @@
             data-cy="view-status-select"
           >
           </v-select>
-        </v-flex>
-        <v-flex shrink>
+        </v-col>
+        <v-col shrink>
           <v-menu open-on-hover offset-y bottom>
             <template v-slot:activator="{ on }">
               <v-btn
@@ -62,8 +62,8 @@
               </v-list-item>
             </v-list>
           </v-menu>
-        </v-flex>
-        <v-flex shrink>
+        </v-col>
+        <v-col shrink>
           <v-btn
             color="success"
             :fab="$vuetify.breakpoint.mdAndDown"
@@ -78,8 +78,8 @@
                 : $t("groups.treeview.show-treeview")
             }}
           </v-btn>
-        </v-flex>
-        <v-flex shrink>
+        </v-col>
+        <v-col shrink>
           <v-btn
             color="success"
             :to="{ name: 'group-lineGraph' }"
@@ -91,8 +91,8 @@
             }}
           </v-btn>
 <!--          //need to be change to En and Spanish-->
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-toolbar>
 
     <v-data-table

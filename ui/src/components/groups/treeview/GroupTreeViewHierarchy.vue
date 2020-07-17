@@ -30,8 +30,8 @@
     </v-card>
     <v-card v-else flat>
       <v-toolbar flat class="pa-1">
-        <v-layout align-center justify-space-between>
-          <v-flex md6 xs3>
+        <v-row align-center justify-space-between>
+          <v-col md6 xs3>
             <v-text-field
               :append-icon="search ? 'clear' : 'search'"
               @click:append="search = ''"
@@ -39,21 +39,21 @@
               v-model="search"
             >
             </v-text-field>
-          </v-flex>
+          </v-col>
           <v-spacer></v-spacer>
-          <v-flex shrink>
+          <v-col shrink>
             <v-tooltip bottom
               ><template v-slot:activator="{ on }">
-                <v-flex shrink>
+                <v-col shrink>
                   <v-btn color="primary" fab small @click="expandAll" v-on="on"
                     ><v-icon>unfold_more</v-icon></v-btn
                   >
-                </v-flex>
+                </v-col>
               </template>
               {{ $t("groups.treeview.expand") }}
             </v-tooltip>
-          </v-flex>
-          <v-flex shrink>
+          </v-col>
+          <v-col shrink>
             <v-tooltip bottom
               ><template v-slot:activator="{ on }">
                 <v-btn
@@ -67,8 +67,8 @@
               </template>
               {{ $t("groups.treeview.collapse") }}
             </v-tooltip>
-          </v-flex>
-        </v-layout>
+          </v-col>
+        </v-row>
       </v-toolbar>
       <v-card-text>
         <v-treeview

@@ -1,13 +1,13 @@
 <template>
   <div>
     <v-toolbar class="pa-1">
-      <v-layout align-center justify-space-between fill-height>
-        <v-flex md3>
+      <v-row align-center justify-space-between fill-height>
+        <v-col md3>
           <v-toolbar-title>{{
             $t("actions.tooltips.take-attendance")
           }}</v-toolbar-title>
-        </v-flex>
-        <v-flex md2>
+        </v-col>
+        <v-col md2>
           <v-text-field
             v-model="search"
             append-icon="search"
@@ -15,8 +15,8 @@
             single-line
             hide-details
           />
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-toolbar>
     <v-data-table
       select-all
@@ -33,7 +33,7 @@
         <td>{{ props.item.lastName }}</td>
       </template>
     </v-data-table>
-    <v-flex md3>
+    <v-col md3>
       <v-btn
         class="ma-2"
         outlined
@@ -41,7 +41,7 @@
         v-on:click="submitSelectedPeople"
         >{{ $t("error-report.actions.submit") }}</v-btn
       >
-    </v-flex>
+    </v-col>
   </div>
 </template>
 

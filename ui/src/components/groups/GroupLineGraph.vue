@@ -10,7 +10,7 @@
       height="70"
       >
         <!-- Select time scale -->
-        <v-flex md3>
+        <v-col md3>
         <v-container fluid>
               <v-select
                 @change="changeTimeScale"
@@ -19,9 +19,9 @@
                 label="Time Scale"
               ></v-select>
         </v-container>
-        </v-flex>
+        </v-col>
         <!--   Select groups     -->
-        <v-flex md2>
+        <v-col md2>
           <v-select
             v-model="selectedGroups"
             :items="groups"
@@ -54,7 +54,7 @@
               >(+{{ selectedGroups.length - 1 }} others)</span>
             </template>
           </v-select>
-        </v-flex>
+        </v-col>
         <v-spacer />
       </v-toolbar>
     <body id="graph-container">
@@ -78,7 +78,7 @@
       <template
       v-if="selectedTimeScale === 'Weekly'"
       >
-        <v-flex md3>
+        <v-col md3>
           <v-menu
             ref="menu"
             v-model="menu"
@@ -105,8 +105,8 @@
               <v-btn text color="primary" @click="$refs.menu.save(startDate)">OK</v-btn>
             </v-date-picker>
           </v-menu>
-        </v-flex>
-        <v-flex md3>
+        </v-col>
+        <v-col md3>
           <v-menu
             ref="menu1"
             v-model="menu1"
@@ -132,12 +132,12 @@
               <v-btn text color="primary" @click="$refs.menu1.save(endDate)">OK</v-btn>
             </v-date-picker>
           </v-menu>
-        </v-flex>
+        </v-col>
       </template>
       <template
         v-if="selectedTimeScale === 'Monthly'"
       >
-        <v-flex md3>
+        <v-col md3>
           <v-menu
             ref="menu"
             v-model="menu"
@@ -164,8 +164,8 @@
               <v-btn text color="primary" @click="$refs.menu.save(startMonth)">OK</v-btn>
             </v-date-picker>
           </v-menu>
-        </v-flex>
-        <v-flex md3>
+        </v-col>
+        <v-col md3>
           <v-menu
             ref="menu1"
             v-model="menu1"
@@ -192,7 +192,7 @@
               <v-btn text color="primary" @click="$refs.menu1.save(endMonth)">OK</v-btn>
             </v-date-picker>
           </v-menu>
-        </v-flex>
+        </v-col>
       </template>
     </v-toolbar>
   </div>
