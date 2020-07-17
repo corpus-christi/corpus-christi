@@ -79,6 +79,19 @@
             }}
           </v-btn>
         </v-flex>
+        <v-flex shrink>
+          <v-btn
+            color="success"
+            :to="{ name: 'group-lineGraph' }"
+            data-cy="show-linegraph"
+          >
+            <v-icon>multiline_chart</v-icon>
+            {{
+            $t("groups.treeview.show-linegraph")
+            }}
+          </v-btn>
+<!--          //need to be change to En and Spanish-->
+        </v-flex>
       </v-layout>
     </v-toolbar>
 
