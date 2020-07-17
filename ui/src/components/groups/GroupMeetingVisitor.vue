@@ -30,7 +30,6 @@
       </v-flex>
     </v-toolbar>
     <v-data-table
-      select-all
       v-model="selected"
       class="elevation-1"
       :headers="headers"
@@ -38,28 +37,30 @@
       item-key="id"
       :search="search"
     >
-      <template slot="items" slot-scope="props">
-        <td><v-checkbox v-model="props.selected" primary hide-details /></td>
-        <td>{{ props.item.firstName }}</td>
-        <td>{{ props.item.lastName }}</td>
-        <td>
-          <template>
-            <v-tooltip bottom>
-              <v-btn
-                icon
-                outlined
-                small
-                color="primary"
-                slot="activator"
-                data-cy="archive"
-                v-on:click="removeVisitor(props.item)"
-              >
-                <v-icon small>delete_outline</v-icon>
-              </v-btn>
-              <span>{{ $t("actions.tooltips.delete") }}</span>
-            </v-tooltip>
-          </template>
-        </td>
+      <template v-slot:item="props">
+        <tr>
+          <td>{{ props.item.firstName }}</td>
+          <td>{{ props.item.lastName }}</td>
+          <td>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                <v-btn
+                  icon
+                  outlined
+                  small
+                  color="primary"
+                  slot="activator"
+                  data-cy="archive"
+                  v-on:click="removeVisitor(props.item)"
+                  v-on="on"
+                >
+                  <v-icon small>delete_outline</v-icon>
+                </v-btn>
+                </template>
+                <span>{{ $t("actions.tooltips.remove") }}</span>
+              </v-tooltip>
+          </td>
+        </tr>
       </template>
     </v-data-table>
 
@@ -256,7 +257,7 @@ export default {
         this.people = resp.data;
       });
     },
-    refreshFetchMeeting() {
+    refreshFetchMeeting() { //working
       const meetingId = this.$route.params.meeting;
       this.$http
         .get(`/api/v1/groups/meetings/${meetingId}`)
@@ -304,7 +305,7 @@ export default {
         .delete(`/api/v1/groups/meetings/${meetingId}/attendances/${person.id}`)
         .then(() => {
           eventBus.$emit("message", {
-            content: this.$t("groups.messages.participant-deleted"),
+            content: this.$t("groups.messages.visitor-remove"),
           });
         })
         .then(() => this.refreshFetchMeeting());

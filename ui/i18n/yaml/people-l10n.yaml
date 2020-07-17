@@ -125,6 +125,10 @@ person:
       en-US: Add Account
       es-EC: Añadir cuenta
       zh-CN: 新增帐户
+    add-visitor:
+      en-US: Add Visitor
+      es-EC: Añadir visitante
+      zh-CN: 添加访客
     reset-password:
       en-US: Reset Password
       es-EC: Restablecer la contraseña
