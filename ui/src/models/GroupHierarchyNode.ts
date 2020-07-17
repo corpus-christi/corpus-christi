@@ -268,17 +268,21 @@ export class GraphNode implements TreeNode {
  * parameters:
  * 1. node: the initial node to perform the search
  * 2. getAdjacentNodes: a callback that is called on each node encountered
- * should return a list of HierarchyNode that is adjacent to 'currentNode'
- * the callback also receives an optional second parameter 'parentPath'
- * which is an array representing the path all the way to the root node
- * the last element in the array is the root node.
+ *   should return a list of HierarchyNode that is adjacent to 'currentNode'
+ *   callback parameters:
+ *     'currentNode': the node whose adjacent node should be returned by the callback
+ *     'parentPath': an array representing the path all the way to the root node
+ *       the last element in the array is the root node.
+ *     'currentGraphNode': a GraphNode representing the current node. Note that its
+ *       'children' property is empty when the callback is invoked
  * returns:
  * a tree structure represented by a single root GraphNode */
 export function dfs(
   node: HierarchyNode,
   getAdjacentNodes: (
     currentNode: HierarchyNode,
-    parentPath: HierarchyNode[]
+    parentPath: HierarchyNode[],
+    currentGraphNode: GraphNode
   ) => HierarchyNode[]
 ): GraphNode {
   const stack: GraphNode[] = [];
@@ -290,7 +294,8 @@ export function dfs(
     currentNode = stack.pop()!;
     let pendingNodes: HierarchyNode[] = getAdjacentNodes(
       currentNode.hierarchyNode,
-      currentNode.parentPath.map((graphNode) => graphNode.hierarchyNode)
+      currentNode.parentPath.map((graphNode) => graphNode.hierarchyNode),
+      currentNode
     );
     for (let pendingNode of pendingNodes) {
       stack.push(new GraphNode(pendingNode, currentNode));
@@ -449,55 +454,88 @@ export function isRootNode(node: HierarchyNode): boolean {
 }
 
 /* checks whether connecting parentNode and childNode will not result in a cycle in existing tree
- * the logic is to check whether there is any ancestor node of parentNode
- * that is also a descendent node of childNode.
+ * the logic is to check whether there is any ancestor node of parentNode that is also a
+ * descendent node of childNode.
+ * Throws an exception, including the cycling node and path when the connection will cause cycle.
  * The fact that some person can be both a manager/member of a group
  * cause the algorithm to ignore some of the closely connected nodes */
 export function checkConnection(
   parentNode: HierarchyNode,
   childNode: HierarchyNode
 ): void {
-  let distantAncestors: HierarchyNode[] = []; // super-nodes with depth 2 and more
-  let allAncestors: HierarchyNode[] = []; // all super-nodes
-  let distantDescendents: HierarchyNode[] = []; // sub-nodes with depth 2 and more
-  let allDescendents: HierarchyNode[] = []; // all sub-nodes
-
-  dfs(parentNode, (currentNode, parentPath) => {
-    if (distantAncestors.some((node) => node.equal(currentNode))) return [];
-    allAncestors.push(currentNode);
-    if (parentPath.length >= 2) {
-      distantAncestors.push(currentNode);
+  let allSuperNodes: GraphNode[] = [];
+  // get all super nodes of parentNode
+  // if along the way, there is a node that:
+  // 1. is equal to its grandparent, or
+  // 2. is equal to childNode, and whose grandparent will be childNode when connection is made (have a parentPath length of 1)
+  // stop expanding at that node, and don't collect the node itself.
+  // collect all other nodes into allSubNodes
+  dfs(
+    parentNode,
+    (
+      hierarchyNode: HierarchyNode,
+      parentPath: HierarchyNode[],
+      graphNode: GraphNode
+    ) => {
+      // 1. is equal to its grandparent, or
+      if (parentPath.length >= 2 && parentPath[1].equal(hierarchyNode)) {
+        return [];
+      }
+      // 2. is equal to childNode, and whose grandparent will be childNode when connection is made (have a parentPath length of 1)
+      if (parentPath.length === 1 && hierarchyNode.equal(childNode)) {
+        return [];
+      }
+      // collect the node
+      allSuperNodes.push(graphNode);
+      return hierarchyNode.getSuperNodes();
     }
-    return currentNode.getSuperNodes();
-  });
-
-  dfs(childNode, (currentNode, parentPath) => {
-    if (distantDescendents.some((node) => node.equal(currentNode))) return [];
-    allDescendents.push(currentNode);
-    if (parentPath.length >= 2) {
-      distantDescendents.push(currentNode);
+  );
+  // traverse through all sub nodes of childNode, and for each <node-child> encountered,
+  // if <node-child>:
+  // 1. is equal to its grandparent, or
+  // 2. is equal to parentNode, and whose grandparent will be parentNode when connection is made (have a parentPath length of 1)
+  // stop expanding at that node, and go to the next node.
+  // other wise, if there is a <node-parent> in allSuperNodes that is equal to <node-child>,
+  // raise an error with that path, which represents the cycling path
+  dfs(
+    childNode,
+    (
+      hierarchyNode: HierarchyNode,
+      parentPath: HierarchyNode[],
+      graphNode: GraphNode
+    ) => {
+      // 1. is equal to its grandparent, or
+      if (parentPath.length >= 2 && parentPath[1].equal(hierarchyNode)) {
+        return [];
+      }
+      // 2. is equal to parentNode, and whose grandparent will be parentNode when connection is made (have a parentPath length of 1)
+      if (parentPath.length === 1 && hierarchyNode.equal(parentNode)) {
+        return [];
+      }
+      // other wise, if there is a <node-parent> in allSuperNodes that is equal to <node-child>
+      let cycleNode: GraphNode | undefined;
+      if (
+        (cycleNode = allSuperNodes.find((superNode) =>
+          superNode.hierarchyNode.equal(hierarchyNode)
+        ))
+      ) {
+        let cyclePath: HierarchyNode[] = [
+          cycleNode.hierarchyNode,
+          ...cycleNode.parentPath.map((g) => g.hierarchyNode),
+          ...parentPath.reverse(),
+          hierarchyNode,
+        ];
+        throw new HierarchyCycleError(
+          `Connection of parent ${parentNode.toString()} with child ${childNode.toString()} will cause cycle on node ${cycleNode.hierarchyNode.toString()} with path ${cyclePath.map(
+            (h) => h.toString()
+          )}`,
+          cycleNode.hierarchyNode,
+          cyclePath
+        );
+      }
+      return hierarchyNode.getSubNodes();
     }
-    return currentNode.getSubNodes();
-  });
-
-  /* above equivalent to following, only requires less search */
-  // distantAncestors = getAllSubNodes(parentNode, 2, 0, true);
-  // allAncestors = getAllSubNodes(parentNode, 0, 0, true);
-  // distantDescendents = getAllSubNodes(childNode, 2, 0, false);
-  // allDescendents = getAllSubNodes(childNode, 0, 0, false);
-
-  let equal = (a: HierarchyNode, b: HierarchyNode) => a.equal(b);
-  let cycleNodes: HierarchyNode[];
-  cycleNodes = [
-    ...intersectionWith(distantAncestors, allDescendents, equal),
-    ...intersectionWith(distantDescendents, allAncestors, equal),
-  ];
-  if (cycleNodes.length !== 0) {
-    throw new HierarchyCycleError(
-      `Connection of parent ${parentNode.toString()} with child ${childNode.toString()} will cause cycle on node ${cycleNodes[0].toString()}`,
-      cycleNodes[0]
-    );
-  }
+  );
 }
 
 /* a wrapper for checkConnection that does not throw errors */
