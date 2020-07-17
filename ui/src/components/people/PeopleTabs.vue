@@ -13,7 +13,7 @@
         ripple
         v-on:click="
           $router.push({
-            path: '/events/' + $route.params.event + '/participants'
+            path: '/events/' + $route.params.event + '/participants',
           })
         "
       >
@@ -53,8 +53,8 @@ export default {
         details: 0,
         participants: 1,
         teams: 2,
-        assets: 3
-      }
+        assets: 3,
+      },
     };
   },
 
@@ -67,12 +67,12 @@ export default {
   },
 
   watch: {
-    $route: function(to) {
+    $route: function (to) {
       var splitPath = to.fullPath.split("/");
       this.currentComponent = to.fullPath.split("/")[splitPath.length - 1];
       this.activeTab = this.tabs[this.currentComponent];
-    }
-  }
+    },
+  },
 };
 </script>
 

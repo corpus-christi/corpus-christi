@@ -10,9 +10,9 @@ import CourseOfferingsTable from "../components/courses/CourseOfferingsTable";
 export default {
   name: "course-offerings-admin",
   components: {
-    CourseOfferingsTable
+    CourseOfferingsTable,
   },
-  props: ["courseOffering"]
+  props: ["courseOffering"],
 };
 </script>
 

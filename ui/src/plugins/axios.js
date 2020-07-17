@@ -1,6 +1,7 @@
 import Vue from "vue";
 import axios from "axios";
 import store from "../store.js";
+import router from "../router.js";
 import { eventBus } from "@/plugins/event-bus";
 import { getResponseErrorKey } from "@/plugins/vue-i18n";
 
@@ -27,7 +28,7 @@ authAxios.interceptors.response.use(
           content: getResponseErrorKey(error.response.status),
           action: {
             title: "error-report.actions.report-error",
-            func: (vm) =>
+            func: () =>
               eventBus.$emit("show-error-report-dialog", {
                 props: {
                   time_stamp: new Date().toISOString(),
@@ -42,10 +43,11 @@ authAxios.interceptors.response.use(
     }
     if (error.response.status === 401) {
       console.log(error.config);
+      router.replace({
+        name: "login",
+        query: { redirect: router.currentRoute.name }
+      });
       store.commit("logOut");
-      window.location.replace(
-        "login?redirect=" + window.location.toString().replace(/^\/*$/, "")
-      );
     }
     return Promise.reject(error);
   }
