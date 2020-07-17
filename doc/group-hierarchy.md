@@ -122,7 +122,6 @@ Thus, the following situations are allowed.
 
 
 #### Allowed Case: logically equivalent to the previous case
-jf{%akV%:€kukJJ0
 ![double-identity-case-2](https://g.gravizo.com/svg?digraph%20G%20%7B%0A%20%20%20%20P1a%20%5Blabel%3DPerson1%3B%20color%3Dred%3B%20shape%3Drectangle%5D%3B%0A%20%20%20%20G1%20%5Blabel%3DGroup1%5D%3B%0A%20%20%20%20P1b%20%5Blabel%3DPerson1%3B%20color%3Dred%3B%20shape%3Drectangle%5D%3B%0A%20%20%20%20P1a%20-%3E%20G1%3B%0A%20%20%20%20G1%20-%3E%20P1b%3B%0A%7D)
 
 #### Allowed Case: multiple people with double identity
