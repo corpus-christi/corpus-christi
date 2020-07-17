@@ -65,7 +65,8 @@ export default {
 
     function enrollmentAndGraduationDataComplete(self) {
       Object.keys(enrollmentData).forEach((courseName) => {
-        totalCourseEnrollment += enrollmentData[courseName]; // eslint-disable-next-line
+        // eslint-disable-next-line
+        totalCourseEnrollment += enrollmentData[courseName];
         var graduationValue = 0; // eslint-disable-next-line
         if (graduationData[courseName]) {
           graduationValue = graduationData[courseName]; // eslint-disable-next-line
