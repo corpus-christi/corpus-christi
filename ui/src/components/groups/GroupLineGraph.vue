@@ -190,6 +190,7 @@
   import moment from 'moment'
   import { mapState } from "vuex";
   import 'chartjs-plugin-crosshair';
+  import $ from 'jquery';
 
   export default {
     components: {},
@@ -1082,7 +1083,6 @@
             type: "line",
             data: {
               labels: this.labelStartGenerator(this.startMonth, this.endMonth),
-              //this.labels.slice(Number(this.startMonth.substr(5,))-1, Number(this.endMonth.substr(5,)))
               datasets: []
             },
             options: this.graphOption
@@ -1142,14 +1142,9 @@
         }
       },
 
-      resetCanvas(){
-        let graph = document.getElementById("graph-container");
-        graph.removeChild(graph.childNodes[0]);
-        let canv = document.createElement('canvas');
-        canv.id = "myChart2";
-        canv.width = 500;
-        canv.high = 180
-        document.getElementById("graph-container").appendChild(canv);
+      resetCanvas(){ //working
+        $('#myChart2').remove();
+        $('#graph-container').append('<canvas id="myChart2" width="500" height="180"></canvas>');
       },
 
       reloadMultipleStartYearGraph(){

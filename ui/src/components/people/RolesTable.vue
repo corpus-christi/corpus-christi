@@ -14,7 +14,7 @@
             hide-details
             clearable
             single-line
-            box
+            filled
             data-cy="roles-search"
           />
         </v-flex>
