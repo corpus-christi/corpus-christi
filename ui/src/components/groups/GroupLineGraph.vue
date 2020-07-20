@@ -75,6 +75,7 @@
             offset-y
             min-width="290px"
             open-on-hover
+            :disabled=diabelPicker
           >
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
@@ -102,6 +103,7 @@
             transition="scale-transition"
             offset-y
             min-width="290px"
+            :disabled=diabelPicker
           >
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
@@ -134,6 +136,7 @@
             offset-y
             min-width="290px"
             open-on-hover
+            :disabled=diabelPicker
           >
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
@@ -162,6 +165,7 @@
             offset-y
             min-width="290px"
             open-on-hover
+            :disabled=diabelPicker
           >
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
@@ -249,7 +253,7 @@
     },
 
     computed:{
-      likesAllFruit () {
+      selectAll () {
         return this.selectedGroups.length === this.groups.length
       },
       fistSelectedGroup() {
@@ -260,11 +264,18 @@
         return this.selectedGroups[0];
       },
       ...mapState(["currentAccount"]),
+      diabelPicker(){
+        if (this.selectedGroups.length === 0){
+          return false;
+        }
+        else return true;
+      }
     },
     watch:{
       selectedGroups(newValue){
         if (newValue.length === 0) {
           if (this.selectedTimeScale === 'Monthly') {
+            this.resetCanvas();
             let ctx2 = document.getElementById("myChart2");
             let myChart2 = new Chart(ctx2, {
               type: "line",
@@ -355,7 +366,7 @@
       },
 
       startDate(newValue){
-        if(Number(newValue.substr(0, 4)) === Number(this.endDate.substr(0, 4))){ // same Year --Done
+        if(Number(newValue.substr(0, 4)) === Number(this.endDate.substr(0, 4))){ // same Year
           if (newValue.substr(5,7) <= this.endDate.substr(5,7 )){
             this.updateStartWeeklyGraph(newValue);
           }
@@ -706,6 +717,7 @@
         for(let line of filteredData){
           line.data = line.data.slice(start-1, end);
         }
+        this.resetCanvas();
         let ctx2 = document.getElementById("myChart2");
         let myChart2 = new Chart(ctx2, {
           type: "line",
@@ -719,6 +731,7 @@
       },
 
       updateEndGraph(newMonth){
+        this.resetCanvas();
         let ctx2 = document.getElementById("myChart2");
         let filteredData = this.currentViewingGraphData.map(a => Object.assign({}, a));
         let start = Number(this.startMonth.substr(5,));
@@ -917,7 +930,7 @@
 
       toggle () {
         this.$nextTick(() => {
-          if (this.likesAllFruit) {
+          if (this.selectAll) {
             this.selectedGroups = [];
             this.loadGraph();
           } else {
@@ -952,6 +965,8 @@
         }
         else if(this.selectedTimeScale === 'Monthly'){
           this.labels = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+          //need to load a new graph
+          this.loadMonthGraph();
         }
       },
       weekGenerator(){
@@ -962,6 +977,40 @@
       },
       loadWeekGraph(){
       if (this.selectedTimeScale === "Weekly" && this.selectedGroups.length == 0){
+        this.resetCanvas();
+        this.selectedGroups = [];
+        console.log("Selected groups", this.selectedGroups);
+        let ctx2 = document.getElementById("myChart2");
+        let myChart2 = new Chart(ctx2, {
+          type: "line",
+          data: {
+            labels: this.labels,
+            datasets: [
+              {
+                label: ["No week group selected"],
+                backgroundColor: "rgba(225,10,10,0.3)",
+                borderColor: "rgba(225,103,110,1)",
+                borderWidth: 1,
+                pointStrokeColor: "#fff",
+                pointStyle: "crossRot",
+                data: [],
+                cubicInterpolationMode: "monotone",
+                spanGaps: "false",
+                fill: "false"
+              },
+            ]
+          },
+          options: this.graphOption
+        });
+        myChart2.update();
+        }
+      },
+
+      loadMonthGraph(){
+        if (this.selectedTimeScale === "Monthly" && this.selectedGroups.length == 0){
+          this.resetCanvas();
+          this.selectedGroups = [];
+          this.selectedGroupsStore = [];
           let ctx2 = document.getElementById("myChart2");
           let myChart2 = new Chart(ctx2, {
             type: "line",
@@ -988,35 +1037,11 @@
         }
       },
 
-      changePageLoadGraph(){
-        let ctx2 = document.getElementById("myChart2");
-        let myChart2 = new Chart(ctx2, {
-          type: "line",
-          data: {
-            labels: this.labels,
-            datasets: [
-              {
-                label: ["test1"],
-                backgroundColor: "rgba(225,10,10,0.3)",
-                borderColor: "rgba(225,103,110,1)",
-                borderWidth: 1,
-                pointStrokeColor: "#fff",
-                pointStyle: "crossRot",
-                data: this.data,
-                cubicInterpolationMode: "monotone",
-                spanGaps: "false",
-                fill: "false"
-              },
-            ]
-          },
-          options: this.graphOption
-        });
-        myChart2.update();
-      },
 
       loadGraph (){
         this.currentYear = moment().format('YYYY');
         if (this.selectedTimeScale === "Monthly" && this.selectedGroups.length == 0){
+          this.resetCanvas();
           let ctx2 = document.getElementById("myChart2");
           this.window.chart = new Chart(ctx2, {
             type: "line",
@@ -1041,6 +1066,7 @@
           });
         }
         else if(this.selectedTimeScale === "Monthly" && this.selectedGroups.length > 0){
+          this.resetCanvas();
           let ctx2 = document.getElementById("myChart2");
           let myChart2 = new Chart(ctx2, {
             type: "line",
@@ -1417,6 +1443,7 @@
       },
 
       calculateWeekGroupData(){
+        this.resetCanvas();
         let numberOfLines = this.selectedGroups.length;
         let ctx2 = document.getElementById("myChart2");
         let myChart2 = new Chart(ctx2, {
