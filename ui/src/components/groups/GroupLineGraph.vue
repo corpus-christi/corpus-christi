@@ -248,7 +248,7 @@
               }
             }
           }
-        }
+        },
       }
     },
 
@@ -1334,95 +1334,6 @@
                 }
               }
               else if(loopYear === Number(endTime.substr(0, 4))){
-                monthLabels.push(year[i - (12 -Number(startTime.substr(5,)) + (loopYear - Number(startTime.substr(0,4)) -1 ) * 12) -1]);
-              }
-              else{
-                monthLabels.push(year[Number(startTime.substr(5,)) + i - 1]);
-              }
-            }
-          }
-          return monthLabels;
-        }
-      },
-
-      labelEndGenerator(startTime, endTime){
-        let monthLabels = [];
-        let year = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-        if (Number(endTime.substr(0,4)) - Number(startTime.substr(0,4)) === 1){  //Month number should be <=24
-          if (Number(endTime.substr(5,)) === Number(startTime.substr(5,)) - 1){ //one roll year
-            for(let i = 0; i < 12; i++ ){
-              let index = 0
-              if(i + Number(endTime.substr(5,)) >= 12){
-                index = i + Number(endTime.substr(5,)) - 12;
-                monthLabels.push(year[index]);
-              }
-              else{
-                if (year[Number(endTime.substr(5,)) + i] === "December"){
-                  monthLabels.push((year[Number(endTime.substr(5,)) + i] + " " + startTime.substr(0, 4) +"End").toString());
-                }
-                else{
-                  monthLabels.push(year[Number(endTime.substr(5,)) + i])
-                }
-              }
-            }
-          }
-          else if(endTime.substr(5,) > startTime.substr(5,) - 1){ //12+
-            let index = 0
-            for(let i = 0; i < 13 + Number(endTime.substr(5,) - startTime.substr(5,)); i++){
-              if(i + Number(startTime.substr(5,)) > 12){ //second half year
-                index = i + Number(startTime.substr(5,)) - 13;
-                monthLabels.push(year[index]);
-              }
-              else{   // first half year
-                if (year[Number(startTime.substr(5,)) + i -1] === "December"){
-                  monthLabels.push((year[Number(startTime.substr(5,)) + i - 1] + " " + startTime.substr(5,) +"End").toString());
-                }
-                else{
-                  monthLabels.push(year[Number(startTime.substr(5,)) + i - 1])
-                }
-              }
-            }
-          }
-          else if(endTime.substr(5,) < startTime.substr(5,) - 1){ //12-
-            let index = 0
-            for(let i = 0; i < 13 - Number(startTime.substr(5,)) + Number(endTime.substr(5,)); i++){
-              if(i + Number(startTime.substr(5,)) > 12){ //second half year
-                index = i + Number(startTime.substr(5,)) - 13;
-                monthLabels.push(year[index]);
-              }
-              else{   // first half year
-                if (year[Number(startTime.substr(5,)) + i -1] === "December"){
-                  monthLabels.push((year[Number(startTime.substr(5,)) + i - 1] + " " + startTime.substr(0, 4) +"End").toString());
-                }
-                else{
-                  monthLabels.push(year[Number(startTime.substr(5,)) + i - 1])
-                }
-              }
-            }
-          }
-          return monthLabels;
-        }
-        //more than one year gap
-        else if (Number(endTime.substr(0,4)) - Number(startTime.substr(0,4)) > 1){
-          let numMonth = 12 * (Number(endTime.substr(0,4) - Number(startTime.substr(0,4))) - 1)
-            + Number(endTime.substr(5,)) + (13 - Number(startTime.substr(5,)))
-          let loopYear = Number(startTime.substr(0, 4));
-          for (let i =0; i < numMonth; i++){
-            if (year[Number(startTime.substr(5,)) + i - 1] === "December"){
-              monthLabels.push(year[Number(startTime.substr(5,)) + i -1] + loopYear + "End");
-              loopYear++;
-            }
-            else{
-              if (loopYear != Number(startTime.substr(0, 4)) && loopYear != Number(endTime.substr(0, 4))){
-                if (year[i - (12 -Number(startTime.substr(5,)) + (loopYear - Number(startTime.substr(0,4)) -1 ) * 12) - 1] === "December"){
-                  monthLabels.push(year[i - (12 -Number(startTime.substr(5,)) + (loopYear - Number(startTime.substr(0,4)) -1 ) * 12) - 1] + loopYear + "End ");
-                  loopYear++;
-                }
-                else{
-                  monthLabels.push(year[i - (12 -Number(startTime.substr(5,)) + (loopYear - Number(startTime.substr(0,4)) -1 ) * 12) - 1]);
-                }
-              }
-              else if(loopYear === Number(endTime.substr(0, 4))){ //last section
                 monthLabels.push(year[i - (12 -Number(startTime.substr(5,)) + (loopYear - Number(startTime.substr(0,4)) -1 ) * 12) -1]);
               }
               else{
