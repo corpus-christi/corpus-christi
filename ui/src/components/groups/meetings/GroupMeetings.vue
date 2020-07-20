@@ -41,60 +41,112 @@
       </v-col>
     </v-toolbar>
     <v-data-table
-      :rows-per-page-items="rowsPerPageItem"
+      :items-per-page-options="rowsPerPageItem"
       :headers="headers"
       :items="visibleMeetings"
       :search="search"
       :loading="tableLoading"
       class="elevation-1"
+      must-sort
+      :options.sync="options"
     >
-      <template slot="items" slot-scope="props">
-        <td>{{ props.item.description }}</td>
-        <td>{{ props.item.startTime | formatDate }}</td>
-        <td>{{ props.item.stopTime | formatDate }}</td>
-        <td>{{ props.item.attendances.length }}</td>
-        <td>{{ props.item.address.address }}</td>
+      <template v-slot:item="props">
+        <tr>
+        <td
+          class="hover-hand"
+          v-on:click="
+              $router.push({
+                name: 'meeting-members',
+                params: { meeting: props.item.attendances[0].meetingId },
+              })
+            "
+        >{{ props.item.description }}
+        </td>
+        <td
+          class="hover-hand"
+          v-on:click="
+              $router.push({
+                name: 'meeting-members',
+                params: { meeting: props.item.attendances[0].meetingId },
+              })
+            "
+        >{{ props.item.startTime | formatDate }}
+        </td>
+        <td
+          class="hover-hand"
+          v-on:click="
+              $router.push({
+                name: 'meeting-members',
+                params: { meeting: props.item.attendances[0].meetingId },
+              })
+            "
+        >{{ props.item.stopTime | formatDate }}
+        </td>
+        <td
+          class="hover-hand"
+          v-on:click="
+              $router.push({
+                name: 'meeting-members',
+                params: { meeting: props.item.attendances[0].meetingId },
+              })
+            "
+        >{{ props.item.attendances.length }}
+        </td>
+        <td
+          class="hover-hand"
+          v-on:click="
+              $router.push({
+                name: 'meeting-members',
+                params: { meeting: props.item.attendances[0].meetingId },
+              })
+            "
+        >{{ props.item.address.address }}
+        </td>
         <td>
           <template v-if="props.item.active">
             <v-tooltip bottom>
-              <v-btn
-                icon
-                outlined
-                small
-                color="primary"
-                slot="activator"
-                v-on:click="confirmArchive(props.item)"
-                data-cy="archive"
-              >
-                <v-icon small>archive</v-icon>
-              </v-btn>
+              <template  v-slot:activator="{ on }">
+                <v-btn
+                  v-on="on"
+                  icon
+                  outlined
+                  small
+                  color="primary"
+                  slot="activator"
+                  v-on:click="confirmArchive(props.item)"
+                  data-cy="archive"
+                >
+                  <v-icon small>archive</v-icon>
+                </v-btn>
+              </template>
               <span>{{ $t("actions.tooltips.archive") }}</span>
             </v-tooltip>
-          </template>
-
-          <template v-if="props.item.active">
             <v-tooltip bottom>
-              <v-btn
-                icon
-                outlined
-                small
-                color="primary"
-                slot="activator"
-                :to="{
-                  name: 'meeting-details',
-                  params: { meeting: props.item.id },
-                }"
-                data-cy="viewAttendance"
-              >
-                <v-icon small>people</v-icon>
-              </v-btn>
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  v-on="on"
+                  icon
+                  outlined
+                  small
+                  color="primary"
+                  slot="activator"
+                  :to="{
+                    name: 'meeting-details',
+                    params: { meeting: props.item.id },
+                  }"
+                  data-cy="viewAttendance"
+                >
+                  <v-icon small>people</v-icon>
+                </v-btn>
+              </template>
               <span>{{ $t("actions.tooltips.take-attendance") }} </span>
             </v-tooltip>
           </template>
-
           <template v-else>
             <v-tooltip bottom v-if="!props.item.active">
+              <template v-slot:activator="{ on }">
               <v-btn
+                v-on="on"
                 icon
                 outlined
                 small
@@ -106,10 +158,12 @@
               >
                 <v-icon small>undo</v-icon>
               </v-btn>
+              </template>
               <span>{{ $t("actions.tooltips.activate") }}</span>
             </v-tooltip>
           </template>
-        </td>
+      </td>
+        </tr>
       </template>
     </v-data-table>
 
@@ -281,6 +335,12 @@ export default {
   name: "GroupMeetings",
   data() {
     return {
+      options: {
+        sortBy: ["activeMembers.length"], //default sorted column
+        sortDesc: [true],
+        itemsPerPage: 10,
+        page: 1,
+      },
       rowsPerPageItem: [
         10,
         15,
@@ -398,19 +458,6 @@ export default {
   },
 
   methods: {
-    PeopleFromMeetingDialog() {
-      this.addPeronToMeeting.show = true;
-    },
-
-    cancelNewAttendanceDialog() {
-      this.addPeronToMeeting.show = false;
-    },
-
-    activateEditMeetingDialog() {
-      this.meetingDialog.editMode = true;
-      this.activateMeetingDialog();
-    },
-
     activateCreateMeetingDialog() {
       this.meetingDialog.editMode = false;
       this.activateMeetingDialog();
@@ -685,7 +732,6 @@ export default {
                 });
             }
             this.meetings = resp.data;
-            console.log("Meeting attendances", this.meetings);
           }
           this.tableLoading = false;
         });

@@ -838,12 +838,12 @@ export default {
       this.participantDialog.show = false;
     },
     confirmParticipantDialog() {
+      let editMode = this.participantDialog.editMode;
       if (editMode && !this.isManagerMode) {
         // ui should hide buttons as appropriate to prevent this case
         console.error("There is nothing to edit for members");
         return;
       }
-      let editMode = this.participantDialog.editMode;
       this.participantDialog.loading = true;
       let payload = {};
       if (this.isManagerMode) {

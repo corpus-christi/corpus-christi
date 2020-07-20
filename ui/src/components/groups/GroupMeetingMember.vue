@@ -19,18 +19,21 @@
       </v-row>
     </v-toolbar>
     <v-data-table
-      select-all
       v-model="selected"
       :headers="headers"
       class="elevation-1"
       :items="listMember"
       item-key="personId"
       :search="search"
+      show-select
     >
-      <template slot="items" slot-scope="props">
+
+      <template v-slot:item="props">
+        <tr>
         <td><v-checkbox v-model="props.selected" primary hide-details /></td>
         <td>{{ props.item.firstName }}</td>
         <td>{{ props.item.lastName }}</td>
+        </tr>
       </template>
     </v-data-table>
     <v-col md3>

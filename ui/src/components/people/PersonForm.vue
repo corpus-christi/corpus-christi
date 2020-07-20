@@ -87,26 +87,27 @@
             :close-on-content-click="false"
             v-model="showBirthdayPicker"
             :nudge-right="40"
-            lazy
             transition="scale-transition"
             offset-y
-            full-width
             min-width="290px"
             :disabled="formDisabled"
             data-cy="show-birthday-picker"
           >
-            <v-text-field
-              slot="activator"
-              v-model="person.birthday"
-              name="birthday"
-              v-bind:label="$t('person.date.birthday')"
-              prepend-icon="event"
-              readonly
-              data-cy="birthday"
-              data-vv-validate-on="input"
-              v-validate="'date_format:YYYY-MM-DD'"
-              v-bind:error-messages="errors.collect('birthday')"
-            />
+            <template v-slot:activator="{ on }">
+              <v-text-field
+                slot="activator"
+                v-model="person.birthday"
+                name="birthday"
+                v-bind:label="$t('person.date.birthday')"
+                prepend-icon="event"
+                readonly
+                data-cy="birthday"
+                data-vv-validate-on="input"
+                v-validate="'date_format:YYYY-MM-DD'"
+                v-bind:error-messages="errors.collect('birthday')"
+                v-on="on"
+              />
+            </template>
             <v-date-picker
               v-bind:locale="currentLanguageCode"
               :max="getTodayString"
@@ -290,7 +291,7 @@
           <v-spacer />
           <v-btn
             color="primary"
-            outline
+            outlined
             v-on:click="addMore"
             v-if="addAnotherEnabled"
             :loading="addMoreIsLoading"

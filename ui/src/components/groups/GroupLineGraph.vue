@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-btn
-      outline
+      outlined
       color="primary"
       v-on:click="$router.push({ path: '/groups/all' })"
     ><v-icon>arrow_back</v-icon>Back</v-btn
@@ -32,16 +32,16 @@
             :small-chips="true"
           >
             <template v-slot:prepend-item>
-              <v-list-tile
+              <v-list-item
                 ripple
                 @click="toggle"
               >
-                <v-list-tile-content>
-                  <v-list-tile-title
+                <v-list-item-content>
+                  <v-list-item-title
                     class="d-flex justify-center"
-                  >Select All</v-list-tile-title>
-                </v-list-tile-content>
-              </v-list-tile>
+                  >Select All</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
               <v-divider class="mt-2"></v-divider>
             </template>
             <template v-slot:selection="{ item , index }">
@@ -61,19 +61,6 @@
       <canvas id="myChart2" width="500" height="180"></canvas>
     </body>
     <v-toolbar>
-      <v-btn class="mx-2" fab small @click="decrease" :disabled="yearSwitch">
-        <v-icon dark>navigate_before</v-icon>
-      </v-btn>
-      <v-chip
-        class="ma-2"
-        large
-        color="blue accent-1"
-      >
-        {{ currentYear }}
-      </v-chip>
-      <v-btn class="mx-2" fab small @click="increase" :disabled="yearSwitch">
-        <v-icon dark>navigate_next</v-icon>
-      </v-btn>
       <v-spacer />
       <template
       v-if="selectedTimeScale === 'Weekly'"
@@ -88,6 +75,7 @@
             offset-y
             min-width="290px"
             open-on-hover
+            :disabled=diabelPicker
           >
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
@@ -115,6 +103,7 @@
             transition="scale-transition"
             offset-y
             min-width="290px"
+            :disabled=diabelPicker
           >
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
@@ -147,6 +136,7 @@
             offset-y
             min-width="290px"
             open-on-hover
+            :disabled=diabelPicker
           >
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
@@ -175,6 +165,7 @@
             offset-y
             min-width="290px"
             open-on-hover
+            :disabled=diabelPicker
           >
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
@@ -202,6 +193,8 @@
   import Chart from 'chart.js';
   import moment from 'moment'
   import { mapState } from "vuex";
+  import 'chartjs-plugin-crosshair';
+  import $ from 'jquery';
 
   export default {
     components: {},
@@ -230,16 +223,38 @@
         currentViewingWeeklyGraphData: null,
         window:{
           graph: null
-        }
+        },
+        graphOption: {
+          tooltips: {
+            cornerRadius: 0,
+            caretSize: 0,
+            xPadding: 16,
+            yPadding: 10,
+            backgroundColor: 'rgba(0, 150, 100, 0.9)',
+            titleFontStyle: 'normal',
+            titleMarginBottom: 15,
+            mode: 'label',
+            intersect: false,
+
+          },
+          plugins: {
+            crosshair: {
+              line: {
+                color: '#253495',
+                width: 6
+              },
+              sync: {
+                enabled: false
+              }
+            }
+          }
+        },
       }
     },
 
     computed:{
-      likesAllFruit () {
+      selectAll () {
         return this.selectedGroups.length === this.groups.length
-      },
-      getTimeScale(){
-        return 1;
       },
       fistSelectedGroup() {
         this.reloadGraph();
@@ -249,11 +264,18 @@
         return this.selectedGroups[0];
       },
       ...mapState(["currentAccount"]),
+      diabelPicker(){
+        if (this.selectedGroups.length === 0){
+          return false;
+        }
+        else return true;
+      }
     },
     watch:{
-      selectedGroups(newValue,oldValue){
+      selectedGroups(newValue){
         if (newValue.length === 0) {
           if (this.selectedTimeScale === 'Monthly') {
+            this.resetCanvas();
             let ctx2 = document.getElementById("myChart2");
             let myChart2 = new Chart(ctx2, {
               type: "line",
@@ -274,7 +296,7 @@
                   },
                 ]
               },
-              options: {}
+              options: this.graphOption
             });
             myChart2.update();
           }
@@ -301,14 +323,15 @@
                     },
                   ]
                 },
-                options: {}
+                options: this.graphOption
               });
+              myChart2.update();
             }
           }
         }
       },
 
-      startMonth(newValue, oldValue){
+      startMonth(newValue){
         if (newValue.substr(0, 4) === this.endMonth.substr(0, 4)) {
           if (newValue.substr(5,) - this.endMonth.substr(5,) < 0) { //same year
             this.yearSwitch = true;
@@ -322,7 +345,7 @@
         }
       },
 
-      endMonth(newValue, oldValue){
+      endMonth(newValue){
         if(newValue.substr(0, 4) === this.startMonth.substr(0, 4)){
           if (newValue.substr(5,) - this.startMonth.substr(5,) < 0){
             this.yearSwitch = true;
@@ -342,8 +365,8 @@
         }
       },
 
-      startDate(newValue, oldValue){
-        if(Number(newValue.substr(0, 4)) === Number(this.endDate.substr(0, 4))){ // same Year --Done
+      startDate(newValue){
+        if(Number(newValue.substr(0, 4)) === Number(this.endDate.substr(0, 4))){ // same Year
           if (newValue.substr(5,7) <= this.endDate.substr(5,7 )){
             this.updateStartWeeklyGraph(newValue);
           }
@@ -353,7 +376,7 @@
         }
       },
 
-      endDate(newValue, oldValue){
+      endDate(newValue){
         if(newValue.substr(0, 4) === this.startDate.substr(0, 4)){
           if (this.startDate.substr(5,7) <= newValue.substr(5,7 )){
             this.updateEndWeeklyGraph(newValue);
@@ -385,9 +408,9 @@
             labels: this.labels.slice(start-1, end),
             datasets: filteredData
           },
-          options: {
-          }
+          options: this.graphOption
         });
+        myChart2.update();
       },
 
       reloadPreComingYear(newDate){
@@ -395,12 +418,10 @@
         if (Number(newDate.substr(0, 4)) === Number(this.endDate.substr(0, 4) - 1)){
           this.resetCanvas();
           let ctx2 = document.getElementById("myChart2");
-          let filteredData = this.currentViewingWeeklyGraphData.map(a => Object.assign({}, a));
           let start = moment(newDate).isoWeek();
           let end = moment(this.endDate).isoWeek();
           let numWeeksFirstYear = moment(newDate).isoWeeksInYear() - start + 1;
           let numberOfLines = this.selectedGroups.length;
-
 
           let weekLabels = [];
           for(let i =0; i < numWeeksFirstYear; i++){
@@ -412,23 +433,22 @@
           for(let i = 0; i < end; i++){
             weekLabels.push("week" + (i + 1));
           }
+          this.graphOption['scales'] ={
+            xAxes:[{
+              ticks:{
+                display: true,
+                autoSkip: true,
+                maxTicksLimit: 30
+              }
+            }]
+          };
           let myChart2 = new Chart(ctx2, {
             type: "line",
             data: {
               labels: weekLabels,
               datasets: []
             },
-            options: {
-              scales:{
-                xAxes:[{
-                  ticks:{
-                    display: true,
-                    autoSkip: true,
-                    maxTicksLimit: 30
-                  }
-                }]
-              },
-            }
+            options: this.graphOption
           });
           // load data into the graph
           if (numberOfLines > 0) {
@@ -491,23 +511,22 @@
           }
           // Add the number of the previous year into the labels
           //add the weeks in the last year
+          this.graphOption['scales'] ={
+            xAxes:[{
+              ticks:{
+                display: true,
+                autoSkip: true,
+                maxTicksLimit: 30
+              }
+            }]
+          };
           let myChart2 = new Chart(ctx2, {
             type: "line",
             data: {
               labels: weekLabels,
               datasets: []
             },
-            options: {
-              scales:{
-                xAxes:[{
-                  ticks:{
-                    display: true,
-                    autoSkip: true,
-                    maxTicksLimit: 30
-                  }
-                }]
-              },
-            }
+            options: this.graphOption
           });
 
           if (numberOfLines > 0) {
@@ -538,7 +557,6 @@
         if (Number(newDate.substr(0, 4)) -1 === Number(this.startDate.substr(0, 4))){
           this.resetCanvas();
           let ctx2 = document.getElementById("myChart2");
-          let filteredData = this.currentViewingWeeklyGraphData.map(a => Object.assign({}, a));
           let start = moment(this.startDate).isoWeek();
           let end = moment(newDate).isoWeek();
           let numWeeksFirstYear = moment(this.startDate).isoWeeksInYear() - start + 1;
@@ -554,23 +572,22 @@
           for(let i = 0; i < end; i++){
             weekLabels.push("week" + (i + 1));
           }
+          this.graphOption['scales'] ={
+            xAxes:[{
+              ticks:{
+                display: true,
+                autoSkip: true,
+                maxTicksLimit: 30
+              }
+            }]
+          };
           let myChart2 = new Chart(ctx2, {
             type: "line",
             data: {
               labels: weekLabels,
               datasets: []
             },
-            options: {
-              scales:{
-                xAxes:[{
-                  ticks:{
-                    display: true,
-                    autoSkip: true,
-                    maxTicksLimit: 30
-                  }
-                }]
-              },
-            }
+            options: this.graphOption
           });
           // load data into the graph
           if (numberOfLines > 0) {
@@ -633,23 +650,22 @@
           }
           // Add the number of the previous year into the labels
           //add the weeks in the last year
+          this.graphOption['scales'] ={
+            xAxes:[{
+              ticks:{
+                display: true,
+                autoSkip: true,
+                maxTicksLimit: 30
+              }
+            }]
+          };
           let myChart2 = new Chart(ctx2, {
             type: "line",
             data: {
               labels: weekLabels,
               datasets: []
             },
-            options: {
-              scales:{
-                xAxes:[{
-                  ticks:{
-                    display: true,
-                    autoSkip: true,
-                    maxTicksLimit: 30
-                  }
-                }]
-              },
-            }
+            options: this.graphOption
           });
 
           if (numberOfLines > 0) {
@@ -689,9 +705,9 @@
             labels: this.labels.slice(start-1, end),
             datasets: filteredData
           },
-          options: {
-          }
+          options: this.graphOption
         });
+        myChart2.update();
       },
 
       updateStartGraph(newMonth){
@@ -701,6 +717,7 @@
         for(let line of filteredData){
           line.data = line.data.slice(start-1, end);
         }
+        this.resetCanvas();
         let ctx2 = document.getElementById("myChart2");
         let myChart2 = new Chart(ctx2, {
           type: "line",
@@ -708,11 +725,13 @@
             labels: this.labels.slice(Number(newMonth.substr(5,))-1, Number(this.endMonth.substr(5,))),
             datasets: filteredData
           },
-          options: {}
+          options: this.graphOption
         });
+        myChart2.update();
       },
 
       updateEndGraph(newMonth){
+        this.resetCanvas();
         let ctx2 = document.getElementById("myChart2");
         let filteredData = this.currentViewingGraphData.map(a => Object.assign({}, a));
         let start = Number(this.startMonth.substr(5,));
@@ -726,9 +745,9 @@
             labels: this.labels.slice(Number(this.startMonth.substr(5,))-1, Number(newMonth.substr(5,))),
             datasets: filteredData
           },
-          options: {
-          }
+          options: this.graphOption
         });
+        myChart2.update();
       },
 
       calculateGraph(inputGroup){
@@ -865,12 +884,10 @@
           let template = [];
           let start = moment(this.startDate).isoWeek();
           let end = moment(this.endDate).isoWeek();
-          let numWeeksFirstYear = moment(this.startDate).isoWeeksInYear() - start + 1;
           let numYears = Number(this.endDate.substr(0,4)) -Number(this.startDate.substr(0,4)) -1;
           let curYear = Number(this.startDate.substr(0,4)) + 1;
           for (let i=0; i< inputGroup.meetings.length; i++){
             let meetingYear = this.parseYear(inputGroup.meetings[i].startTime)[0];
-            let meetingMonth = this.parseYear(inputGroup.meetings[i].startTime)[1];
             let index = moment(inputGroup.meetings[i].startTime).isoWeek();
             //make initial empty data
             if (!(meetingYear in template)){
@@ -911,20 +928,9 @@
         return time;
       },
 
-      decrease() {
-        if(this.startMonth === this.endMonth){
-          this.currentYear = this.currentYear - 1;
-          this.changePageLoadGraph();
-        }
-      },
-      increase (){
-        this.currentYear = Number(this.currentYear) + 1;
-      },
-
-
       toggle () {
         this.$nextTick(() => {
-          if (this.likesAllFruit) {
+          if (this.selectAll) {
             this.selectedGroups = [];
             this.loadGraph();
           } else {
@@ -959,6 +965,8 @@
         }
         else if(this.selectedTimeScale === 'Monthly'){
           this.labels = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+          //need to load a new graph
+          this.loadMonthGraph();
         }
       },
       weekGenerator(){
@@ -969,6 +977,40 @@
       },
       loadWeekGraph(){
       if (this.selectedTimeScale === "Weekly" && this.selectedGroups.length == 0){
+        this.resetCanvas();
+        this.selectedGroups = [];
+        console.log("Selected groups", this.selectedGroups);
+        let ctx2 = document.getElementById("myChart2");
+        let myChart2 = new Chart(ctx2, {
+          type: "line",
+          data: {
+            labels: this.labels,
+            datasets: [
+              {
+                label: ["No week group selected"],
+                backgroundColor: "rgba(225,10,10,0.3)",
+                borderColor: "rgba(225,103,110,1)",
+                borderWidth: 1,
+                pointStrokeColor: "#fff",
+                pointStyle: "crossRot",
+                data: [],
+                cubicInterpolationMode: "monotone",
+                spanGaps: "false",
+                fill: "false"
+              },
+            ]
+          },
+          options: this.graphOption
+        });
+        myChart2.update();
+        }
+      },
+
+      loadMonthGraph(){
+        if (this.selectedTimeScale === "Monthly" && this.selectedGroups.length == 0){
+          this.resetCanvas();
+          this.selectedGroups = [];
+          this.selectedGroupsStore = [];
           let ctx2 = document.getElementById("myChart2");
           let myChart2 = new Chart(ctx2, {
             type: "line",
@@ -989,41 +1031,17 @@
                 },
               ]
             },
-            options: {
-            }
+            options: this.graphOption
           });
+          myChart2.update();
         }
       },
 
-      changePageLoadGraph(){
-        let ctx2 = document.getElementById("myChart2");
-        let myChart2 = new Chart(ctx2, {
-          type: "line",
-          data: {
-            labels: this.labels,
-            datasets: [
-              {
-                label: ["test1"],
-                backgroundColor: "rgba(225,10,10,0.3)",
-                borderColor: "rgba(225,103,110,1)",
-                borderWidth: 1,
-                pointStrokeColor: "#fff",
-                pointStyle: "crossRot",
-                data: this.data,
-                cubicInterpolationMode: "monotone",
-                spanGaps: "false",
-                fill: "false"
-              },
-            ]
-          },
-          options: {
-          }
-        });
-      },
 
       loadGraph (){
         this.currentYear = moment().format('YYYY');
         if (this.selectedTimeScale === "Monthly" && this.selectedGroups.length == 0){
+          this.resetCanvas();
           let ctx2 = document.getElementById("myChart2");
           this.window.chart = new Chart(ctx2, {
             type: "line",
@@ -1044,20 +1062,11 @@
                 },
               ]
             },
-            options: {
-              tooltips: {
-                cornerRadius: 0,
-                caretSize: 0,
-                xPadding: 16,
-                yPadding: 10,
-                backgroundColor: 'rgba(0, 150, 100, 0.9)',
-                titleFontStyle: 'normal',
-                titleMarginBottom: 15
-              }
-            }
+            options: this.graphOption,
           });
         }
         else if(this.selectedTimeScale === "Monthly" && this.selectedGroups.length > 0){
+          this.resetCanvas();
           let ctx2 = document.getElementById("myChart2");
           let myChart2 = new Chart(ctx2, {
             type: "line",
@@ -1078,9 +1087,9 @@
                 },
               ]
             },
-            options: {
-            }
+            options: this.graphOption
           });
+          myChart2.update();
         }
       },
 
@@ -1100,10 +1109,9 @@
             type: "line",
             data: {
               labels: this.labelStartGenerator(this.startMonth, this.endMonth),
-              //this.labels.slice(Number(this.startMonth.substr(5,))-1, Number(this.endMonth.substr(5,)))
               datasets: []
             },
-            options: {}
+            options: this.graphOption
           });
           if (numberOfLines > 0) {
             for (let i = 0; i < numberOfLines; i++) {
@@ -1129,7 +1137,6 @@
         else if(this.selectedTimeScale === 'Weekly'){
           this.resetCanvas();
           let numberOfLines = this.selectedGroups.length;
-          let graphsNum = this.selectedGroups;
           let ctx2 = document.getElementById("myChart2");
           let myChart2 = new Chart(ctx2, {
             type: "line",
@@ -1137,7 +1144,7 @@
               labels: this.labels,
               datasets: []
             },
-            options: {}
+            options: this.graphOption
           });
           if (numberOfLines > 0) {
             for (let i = 0; i < numberOfLines; i++) {
@@ -1161,14 +1168,9 @@
         }
       },
 
-      resetCanvas(){
-        let graph = document.getElementById("graph-container");
-        graph.removeChild(graph.childNodes[0]);
-        let canv = document.createElement('canvas');
-        canv.id = "myChart2";
-        canv.width = 500;
-        canv.high = 180
-        document.getElementById("graph-container").appendChild(canv);
+      resetCanvas(){ //working
+        $('#myChart2').remove();
+        $('#graph-container').append('<canvas id="myChart2" width="500" height="180"></canvas>');
       },
 
       reloadMultipleStartYearGraph(){
@@ -1179,14 +1181,13 @@
           // The labels needed to update to the version of crossing years
           if (Number(this.startMonth.substr(0,4)) < Number(this.endMonth.substr(0,4))){
             //calcualte the lables
-            let yearGap = this.endMonth.substr(0,4) - this.startMonth.substr(0,4);
             let myChart2 = new Chart(ctx2, {
               type: "line",
               data: {
                 labels: this.labelStartGenerator(this.startMonth, this.endMonth),
                 datasets: [],
               },
-              options: {}
+              options: this.graphOption
             });
             if (numberOfLines > 0) {
               for (let i = 0; i < numberOfLines; i++) {
@@ -1223,7 +1224,7 @@
               labels:this.labelStartGenerator(this.startMonth, this.endMonth),
               datasets: []
             },
-            options: {}
+            options: this.graphOption
           });
           // The labels needed to update to the version of crossing years
           if (numberOfLines > 0) {
@@ -1316,28 +1317,20 @@
         else if (Number(endTime.substr(0,4)) - Number(startTime.substr(0,4)) > 1){  //>2 years gap
           let numMonth = 12 * (Number(endTime.substr(0,4) - Number(startTime.substr(0,4))) - 1)
           + Number(endTime.substr(5,)) + (13 - Number(startTime.substr(5,)))
-          let previousLoopYear = null;
           let loopYear = Number(startTime.substr(0, 4));
-          let pastMonth = 0;
           for (let i =0; i < numMonth; i++){
-            let index = 0
             if (year[Number(startTime.substr(5,)) + i - 1] === "December"){
               monthLabels.push(year[Number(startTime.substr(5,)) + i -1] + loopYear + "End");
-              pastMonth++;
-              previousLoopYear = loopYear;
               loopYear++;
             }
             else{
               if (loopYear != Number(startTime.substr(0, 4)) && loopYear != Number(endTime.substr(0, 4))){
                 if (year[i - (12 -Number(startTime.substr(5,)) + (loopYear - Number(startTime.substr(0,4)) -1 ) * 12) - 1] === "December"){
                   monthLabels.push(year[i - (12 -Number(startTime.substr(5,)) + (loopYear - Number(startTime.substr(0,4)) -1 ) * 12) - 1] + loopYear + "End ");
-                  pastMonth++;
-                  previousLoopYear = loopYear;
                   loopYear++;
                 }
                 else{
                   monthLabels.push(year[i - (12 -Number(startTime.substr(5,)) + (loopYear - Number(startTime.substr(0,4)) -1 ) * 12) - 1]);
-                  pastMonth++;
                 }
               }
               else if(loopYear === Number(endTime.substr(0, 4))){
@@ -1345,105 +1338,6 @@
               }
               else{
                 monthLabels.push(year[Number(startTime.substr(5,)) + i - 1]);
-                pastMonth++;
-              }
-            }
-          }
-          return monthLabels;
-        }
-      },
-
-      labelEndGenerator(startTime, endTime){
-        let monthLabels = [];
-        let year = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-        if (Number(endTime.substr(0,4)) - Number(startTime.substr(0,4)) === 1){  //Month number should be <=24
-          if (Number(endTime.substr(5,)) === Number(startTime.substr(5,)) - 1){ //one roll year
-            for(let i = 0; i < 12; i++ ){
-              let index = 0
-              if(i + Number(endTime.substr(5,)) >= 12){
-                index = i + Number(endTime.substr(5,)) - 12;
-                monthLabels.push(year[index]);
-              }
-              else{
-                if (year[Number(endTime.substr(5,)) + i] === "December"){
-                  monthLabels.push((year[Number(endTime.substr(5,)) + i] + " " + startTime.substr(0, 4) +"End").toString());
-                }
-                else{
-                  monthLabels.push(year[Number(endTime.substr(5,)) + i])
-                }
-              }
-            }
-          }
-          else if(endTime.substr(5,) > startTime.substr(5,) - 1){ //12+
-            let index = 0
-            for(let i = 0; i < 13 + Number(endTime.substr(5,) - startTime.substr(5,)); i++){
-              if(i + Number(startTime.substr(5,)) > 12){ //second half year
-                index = i + Number(startTime.substr(5,)) - 13;
-                monthLabels.push(year[index]);
-              }
-              else{   // first half year
-                if (year[Number(startTime.substr(5,)) + i -1] === "December"){
-                  monthLabels.push((year[Number(startTime.substr(5,)) + i - 1] + " " + startTime.substr(5,) +"End").toString());
-                }
-                else{
-                  monthLabels.push(year[Number(startTime.substr(5,)) + i - 1])
-                }
-              }
-            }
-          }
-          else if(endTime.substr(5,) < startTime.substr(5,) - 1){ //12-
-            let index = 0
-            for(let i = 0; i < 13 - Number(startTime.substr(5,)) + Number(endTime.substr(5,)); i++){
-              if(i + Number(startTime.substr(5,)) > 12){ //second half year
-                index = i + Number(startTime.substr(5,)) - 13;
-                monthLabels.push(year[index]);
-              }
-              else{   // first half year
-                if (year[Number(startTime.substr(5,)) + i -1] === "December"){
-                  monthLabels.push((year[Number(startTime.substr(5,)) + i - 1] + " " + startTime.substr(0, 4) +"End").toString());
-                }
-                else{
-                  monthLabels.push(year[Number(startTime.substr(5,)) + i - 1])
-                }
-              }
-            }
-          }
-          return monthLabels;
-        }
-        //more than one year gap
-        else if (Number(endTime.substr(0,4)) - Number(startTime.substr(0,4)) > 1){
-          let numMonth = 12 * (Number(endTime.substr(0,4) - Number(startTime.substr(0,4))) - 1)
-            + Number(endTime.substr(5,)) + (13 - Number(startTime.substr(5,)))
-          let previousLoopYear = null;
-          let loopYear = Number(startTime.substr(0, 4));
-          let pastMonth = 0;
-          for (let i =0; i < numMonth; i++){
-            let index = 0
-            if (year[Number(startTime.substr(5,)) + i - 1] === "December"){
-              monthLabels.push(year[Number(startTime.substr(5,)) + i -1] + loopYear + "End");
-              pastMonth++;
-              previousLoopYear = loopYear;
-              loopYear++;
-            }
-            else{
-              if (loopYear != Number(startTime.substr(0, 4)) && loopYear != Number(endTime.substr(0, 4))){
-                if (year[i - (12 -Number(startTime.substr(5,)) + (loopYear - Number(startTime.substr(0,4)) -1 ) * 12) - 1] === "December"){
-                  monthLabels.push(year[i - (12 -Number(startTime.substr(5,)) + (loopYear - Number(startTime.substr(0,4)) -1 ) * 12) - 1] + loopYear + "End ");
-                  pastMonth++;
-                  previousLoopYear = loopYear;
-                  loopYear++;
-                }
-                else{
-                  monthLabels.push(year[i - (12 -Number(startTime.substr(5,)) + (loopYear - Number(startTime.substr(0,4)) -1 ) * 12) - 1]);
-                  pastMonth++;
-                }
-              }
-              else if(loopYear === Number(endTime.substr(0, 4))){ //last section
-                monthLabels.push(year[i - (12 -Number(startTime.substr(5,)) + (loopYear - Number(startTime.substr(0,4)) -1 ) * 12) -1]);
-              }
-              else{
-                monthLabels.push(year[Number(startTime.substr(5,)) + i - 1]);
-                pastMonth++;
               }
             }
           }
@@ -1460,6 +1354,7 @@
       },
 
       calculateWeekGroupData(){
+        this.resetCanvas();
         let numberOfLines = this.selectedGroups.length;
         let ctx2 = document.getElementById("myChart2");
         let myChart2 = new Chart(ctx2, {
@@ -1468,7 +1363,7 @@
             labels: this.labels,
             datasets: []
           },
-          options: {}
+          options: this.graphOption
         });
         if (numberOfLines > 0) {
           for(let group of this.selectedGroups){

@@ -411,6 +411,10 @@ groups:
       en-US: Members
       es-EC: Miembros
       zh-CN: 会员
+    title-visitor:
+      en-US: Visitors
+      es-EC: visitantes
+      zh-CN: 访客
     email-reply-to:
       en-US: Reply to
       es-EC: Responder a
@@ -678,3 +682,11 @@ groups:
       en-US: Error while updating manager(s)
       es-EC: Error al actualizar administrador (es)
       zh-CN: 更新管理员时出错
+    participant-added:
+      en-US: Participatn(s) Added
+      es-EC: Participación (es) añadida (s)
+      zh-CN: 已添加用户
+    visitor-remove:
+      en-US: Visitor Removed
+      es-EC: Visitante eliminada
+      zh-CN: 访客已移除
