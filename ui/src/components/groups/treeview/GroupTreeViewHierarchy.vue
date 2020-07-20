@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- show the cycle in hierarchy if there is one -->
     <v-card v-if="cycleError.show" flat>
       <v-card-title class="justify-center">
         <v-alert color="warning">
@@ -7,10 +8,10 @@
             <template v-slot:activator="{ on }">
               <v-icon v-on="on">error</v-icon>
             </template>
-            Please remove the cycle in the node listed in order to view group
-            hierarchy tree
+            {{ $t("groups.treeview.remove-cycle") }}
           </v-tooltip>
-          Unexpected cycle in hierarchy: {{ cycleError.node.toHumanReadable() }}
+          {{ $t("groups.treeview.unexpected-cycle") }}:
+          {{ cycleError.node.toHumanReadable() }}
         </v-alert>
       </v-card-title>
       <v-card-text>
@@ -30,8 +31,8 @@
     </v-card>
     <v-card v-else flat>
       <v-toolbar flat class="pa-1">
-        <v-row align-center justify-space-between>
-          <v-col md6 xs3>
+        <v-row align="center" justify="space-between">
+          <v-col cols="8">
             <v-text-field
               :append-icon="search ? 'clear' : 'search'"
               @click:append="search = ''"
@@ -40,20 +41,18 @@
             >
             </v-text-field>
           </v-col>
-          <v-spacer></v-spacer>
-          <v-col shrink>
+          <v-spacer />
+          <v-col class="shrink">
             <v-tooltip bottom
               ><template v-slot:activator="{ on }">
-                <v-col shrink>
-                  <v-btn color="primary" fab small @click="expandAll" v-on="on"
-                    ><v-icon>unfold_more</v-icon></v-btn
-                  >
-                </v-col>
+                <v-btn color="primary" fab small @click="expandAll" v-on="on"
+                  ><v-icon>unfold_more</v-icon></v-btn
+                >
               </template>
               {{ $t("groups.treeview.expand") }}
             </v-tooltip>
           </v-col>
-          <v-col shrink>
+          <v-col class="shrink">
             <v-tooltip bottom
               ><template v-slot:activator="{ on }">
                 <v-btn
@@ -161,7 +160,11 @@ export default {
       return [];
     },
     adminTree() {
-      const adminNode = { name: "Admin", children: [], nodeType: "Admin" };
+      const adminNode = {
+        name: this.$t("groups.treeview.admin-node"),
+        children: [],
+        nodeType: "Admin",
+      };
       if (this.groups === null || this.persons === null) {
         return [adminNode];
       }

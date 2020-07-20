@@ -10,10 +10,10 @@
       <template v-slot:extension>
         <v-tabs centered>
           <v-tab :to="{ name: 'group-treeview-category' }">
-            Category View</v-tab
-          >
+            {{ $t("groups.treeview.category-view") }}
+          </v-tab>
           <v-tab :to="{ name: 'group-treeview-hierarchy' }">
-            Hierarchy View</v-tab
+            {{ $t("groups.treeview.hierarchy-view") }}</v-tab
           >
         </v-tabs>
       </template>

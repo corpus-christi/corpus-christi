@@ -270,6 +270,31 @@ groups:
       en-US: Select groups to perform actions...
       es-EC: Seleccionar grupos para realizar acciones ...
       zh-CN: 选择要执行操作的组...
+    remove-cycle:
+      en-US:
+        Please remove the cycle in the node listed in order to view group hierarchy
+        tree.
+      es-EC:
+        Elimine el ciclo en el nodo listado para ver el árbol de jerarquía de
+        grupo.
+      zh-CN: 请在列出的节点中删除循环，以查看组层次结构树。
+    unexpected-cycle:
+      en-US: Unexpected cycle in hierarchy
+      es-EC: Ciclo inesperado en la jerarquía
+      zh-CN: 层次结构中的意外周期
+    category-view:
+      en-US: Category View
+      es-EC: Vista de categoría
+      zh-CN: 分类视图
+    hierarchy-view:
+      en-US: Hierarchy View
+      es-EC: Vista de jerarquía
+      zh-CN: 层次结构视图
+    admin-node:
+      _desc: the word designated to the top-level node in the hierarchy tree
+      en-US: Administrator
+      es-EC: Administrador
+      zh-CN: 管理员
     show-all:
       en-US: Show All Groups
       es-EC: Mostrar todos los grupos

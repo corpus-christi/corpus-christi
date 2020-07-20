@@ -2,8 +2,8 @@
   <div>
     <v-card flat>
       <v-toolbar flat class="pa-1" :color="toolbarColor">
-        <v-row align-center justify-space-between>
-          <v-col md6 xs3>
+        <v-row align="center" justify="space-between">
+          <v-col cols="4" md="6">
             <v-text-field
               :append-icon="search ? 'clear' : 'search'"
               @click:append="search = ''"
@@ -12,29 +12,23 @@
             >
             </v-text-field>
           </v-col>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <template v-if="selection.length === 0">
-            <v-col md3 xs4>
+            <v-col cols="4">
               <v-select :items="viewOptions" v-model="viewStatus"> </v-select>
             </v-col>
-            <v-col shrink>
+            <v-spacer />
+            <v-col class="shrink">
               <v-tooltip bottom
                 ><template v-slot:activator="{ on }">
-                  <v-col shrink>
-                    <v-btn
-                      color="primary"
-                      fab
-                      small
-                      @click="expandAll"
-                      v-on="on"
-                      ><v-icon>unfold_more</v-icon></v-btn
-                    >
-                  </v-col>
+                  <v-btn color="primary" fab small @click="expandAll" v-on="on"
+                    ><v-icon>unfold_more</v-icon></v-btn
+                  >
                 </template>
                 {{ $t("groups.treeview.expand") }}
               </v-tooltip>
             </v-col>
-            <v-col shrink>
+            <v-col class="shrink">
               <v-tooltip bottom
                 ><template v-slot:activator="{ on }">
                   <v-btn
@@ -51,12 +45,12 @@
             </v-col>
           </template>
           <template v-if="selection.length != 0">
-            <v-col shrink>
+            <v-col>
               <v-btn fab small @click="showEmailDialog"
                 ><v-icon> email </v-icon></v-btn
               >
             </v-col>
-            <v-col shrink>
+            <v-col>
               <v-btn fab small @click="groupTypeTreeviewSelection = []">
                 <v-icon> close</v-icon>
               </v-btn>
@@ -94,7 +88,7 @@
           </v-card-text>
         </v-col>
         <v-divider class="hidden-sm-and-down" vertical></v-divider>
-        <v-col md6 sm12>
+        <v-col cols="12" md="6">
           <v-card-text>
             <div
               v-if="selection.length == 0"
