@@ -27,12 +27,11 @@
       :search="search"
       show-select
     >
-
       <template v-slot:item="props">
         <tr>
-        <td><v-checkbox v-model="props.selected" primary hide-details /></td>
-        <td>{{ props.item.firstName }}</td>
-        <td>{{ props.item.lastName }}</td>
+          <td><v-checkbox v-model="props.selected" primary hide-details /></td>
+          <td>{{ props.item.firstName }}</td>
+          <td>{{ props.item.lastName }}</td>
         </tr>
       </template>
     </v-data-table>

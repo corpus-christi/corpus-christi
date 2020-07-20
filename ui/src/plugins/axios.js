@@ -45,7 +45,7 @@ authAxios.interceptors.response.use(
       console.log(error.config);
       router.replace({
         name: "login",
-        query: { redirect: router.currentRoute.name }
+        query: { redirect: router.currentRoute.name },
       });
       store.commit("logOut");
     }

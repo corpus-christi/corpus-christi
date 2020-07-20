@@ -86,11 +86,9 @@
             data-cy="show-linegraph"
           >
             <v-icon>multiline_chart</v-icon>
-            {{
-            $t("groups.treeview.show-linegraph")
-            }}
+            {{ $t("groups.treeview.show-linegraph") }}
           </v-btn>
-<!--          //need to be change to En and Spanish-->
+          <!--          //need to be change to En and Spanish-->
         </v-col>
       </v-row>
     </v-toolbar>

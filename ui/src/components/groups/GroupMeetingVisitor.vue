@@ -42,8 +42,8 @@
           <td>{{ props.item.firstName }}</td>
           <td>{{ props.item.lastName }}</td>
           <td>
-              <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
                 <v-btn
                   icon
                   outlined
@@ -56,9 +56,9 @@
                 >
                   <v-icon small>delete_outline</v-icon>
                 </v-btn>
-                </template>
-                <span>{{ $t("actions.tooltips.remove") }}</span>
-              </v-tooltip>
+              </template>
+              <span>{{ $t("actions.tooltips.remove") }}</span>
+            </v-tooltip>
           </td>
         </tr>
       </template>
@@ -257,7 +257,8 @@ export default {
         this.people = resp.data;
       });
     },
-    refreshFetchMeeting() { //working
+    refreshFetchMeeting() {
+      //working
       const meetingId = this.$route.params.meeting;
       this.$http
         .get(`/api/v1/groups/meetings/${meetingId}`)
