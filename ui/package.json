@@ -6,7 +6,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "lint:fix": "eslint --fix src",
+    "lint:fix": "eslint --fix \"src/**/*.vue\" \"src/**/*.ts\" \"src/**/*.js\"",
     "localize": "cd ./i18n && ./localize.sh",
     "test:e2e": "vue-cli-service test:e2e",
     "test:unit": "vue-cli-service test:unit",
