@@ -1,4 +1,11 @@
 {
+  "en-EC": {
+    "groups": {
+      "treeview": {
+        "show-linegraph": "Mostrar gr\u00e1fico de l\u00edneas"
+      }
+    }
+  },
   "en-US": {
     "$vuetify": {
       "dataIterator": {
@@ -58,6 +65,7 @@
         "email": "Send Email",
         "remove": "Remove",
         "settings": "Settings",
+        "take-attendance": "Take attendance",
         "unarchive": "Unarchive"
       },
       "view-active": "View Active",
@@ -619,7 +627,8 @@
         },
         "email-dialog-footnote": "Click the circle to select the reply-to option",
         "email-reply-to": "Reply to",
-        "title": "Members"
+        "title": "Members",
+        "title-visitor": "Visitors"
       },
       "messages": {
         "already-exists": "Group already exists",
@@ -662,8 +671,10 @@
         "members-moved": "Successfully moved member(s)",
         "members-updated": "Successfully updated member(s)",
         "no-remaining-members": "No remaining members",
+        "participant-added": "Participatn(s) Added",
         "required-fields": "Please fill out all required fields",
-        "select-destination-group": "Select a destination group"
+        "select-destination-group": "Select a destination group",
+        "visitor-remove": "Visitor Removed"
       },
       "name": "Name",
       "none-assigned": "No groups assigned.",
@@ -738,6 +749,7 @@
       "actions": {
         "add-account": "Add Account",
         "add-participant": "Add a Participant",
+        "add-visitor": "Add Visitor",
         "assign-roles": "Assign Roles",
         "edit": "Edit Person",
         "new": "New Person",
@@ -1538,7 +1550,8 @@
         },
         "email-dialog-footnote": "Haga clic en el c\u00edrculo para seleccionar la opci\u00f3n de respuesta",
         "email-reply-to": "Responder a",
-        "title": "Miembros"
+        "title": "Miembros",
+        "title-visitor": "visitantes"
       },
       "messages": {
         "already-exists": "El grupo ya existe",
@@ -1581,8 +1594,10 @@
         "members-moved": "Miembros movidos exitosamente",
         "members-updated": "Miembros actualizados con \u00e9xito",
         "no-remaining-members": "Ning\u00fan miembro restante",
+        "participant-added": "Participaci\u00f3n (es) a\u00f1adida (s)",
         "required-fields": "Por favor llene todos los campos requeridos",
-        "select-destination-group": "Seleccione un grupo de destino"
+        "select-destination-group": "Seleccione un grupo de destino",
+        "visitor-remove": "Visitante eliminada"
       },
       "name": "Nombre",
       "none-assigned": "No hay grupos asignados.",
@@ -1614,7 +1629,6 @@
         "select-placeholder": "Seleccionar grupos para realizar acciones ...",
         "show-all": "Mostrar todos los grupos",
         "show-list": "Mostrar lista de grupos",
-        "show-linegraph": "Mostrar gráfico de líneas",
         "show-managers": "Mostrar solo gerentes",
         "show-members": "Mostrar solo miembros",
         "show-treeview": "Mostrar vista de \u00e1rbol de grupo",
@@ -1657,6 +1671,7 @@
       "actions": {
         "add-account": "A\u00f1adir cuenta",
         "add-participant": "A\u00f1adir Part\u00edcipe",
+        "add-visitor": "A\u00f1adir visitante",
         "assign-roles": "Asigne Papeles",
         "edit": "Editar persona",
         "new": "Persona Nueva",
@@ -1835,6 +1850,13 @@
         "required": "Necesario"
       },
       "required": "Necesario"
+    }
+  },
+  "es_EC": {
+    "actions": {
+      "tooltips": {
+        "take-attendance": "Tomar la asistencia"
+      }
     }
   },
   "zh-CN": {
@@ -2457,7 +2479,8 @@
         },
         "email-dialog-footnote": "\u70b9\u51fb\u5708\u5b50\u4ee5\u9009\u62e9\u56de\u590d\u9009\u9879",
         "email-reply-to": "\u56de\u590d\u5230",
-        "title": "\u4f1a\u5458"
+        "title": "\u4f1a\u5458",
+        "title-visitor": "\u8bbf\u5ba2"
       },
       "messages": {
         "already-exists": "\u7fa4\u7ec4\u5df2\u7ecf\u5b58\u5728",
@@ -2500,8 +2523,10 @@
         "members-moved": "\u6210\u529f\u79fb\u52a8\u6210\u5458",
         "members-updated": "\u6210\u529f\u66f4\u65b0\u6210\u5458",
         "no-remaining-members": "\u6ca1\u6709\u5269\u4f59\u6210\u5458",
+        "participant-added": "\u5df2\u6dfb\u52a0\u7528\u6237",
         "required-fields": "\u8bf7\u586b\u5199\u6240\u6709\u5fc5\u586b\u5b57\u6bb5",
-        "select-destination-group": "\u9009\u62e9\u76ee\u7684\u5730\u7fa4\u7ec4"
+        "select-destination-group": "\u9009\u62e9\u76ee\u7684\u5730\u7fa4\u7ec4",
+        "visitor-remove": "\u8bbf\u5ba2\u5df2\u79fb\u9664"
       },
       "name": "\u540d\u79f0",
       "none-assigned": "\u672a\u5206\u914d\u7ec4\u3002",
@@ -2532,6 +2557,7 @@
         "expand": "\u5c55\u5f00",
         "select-placeholder": "\u9009\u62e9\u8981\u6267\u884c\u64cd\u4f5c\u7684\u7ec4...",
         "show-all": "\u663e\u793a\u6240\u6709\u7fa4\u7ec4",
+        "show-linegraph": "\u663e\u793a\u6298\u7ebf\u56fe",
         "show-list": "\u663e\u793a\u7fa4\u7ec4\u6e05\u5355",
         "show-managers": "\u4ec5\u663e\u793a\u7ba1\u7406\u5458",
         "show-members": "\u4ec5\u663e\u793a\u6210\u5458",
@@ -2575,6 +2601,7 @@
       "actions": {
         "add-account": "\u65b0\u589e\u5e10\u6237",
         "add-participant": "\u6dfb\u52a0\u53c2\u4e0e\u8005",
+        "add-visitor": "\u6dfb\u52a0\u8bbf\u5ba2",
         "assign-roles": "\u5206\u914d\u89d2\u8272",
         "edit": "\u7f16\u8f91\u4eba",
         "new": "\u65b0\u4eba",
@@ -2753,6 +2780,13 @@
         "required": "\u9700\u8981"
       },
       "required": "\u9700\u8981"
+    }
+  },
+  "zh_CN": {
+    "actions": {
+      "tooltips": {
+        "take-attendance": "\u8bb0\u5f55\u51fa\u5e2d"
+      }
     }
   }
 }
