@@ -26,7 +26,7 @@
           >
           </v-select>
         </v-col>
-        <v-col cols="1" class="shrink">
+        <v-col cols="4" class="shrink">
           <v-menu open-on-hover offset-y bottom>
             <template v-slot:activator="{ on }">
               <v-btn
@@ -60,35 +60,26 @@
                   {{ $t("groups.entity-types.manager-types.manage") }}
                 </v-list-item-content>
               </v-list-item>
+              <v-list-item
+                :to="{ name: 'group-treeview' }"
+                data-cy="show-treeview"
+              >
+                <v-icon color="primary">account_tree</v-icon>
+                <v-list-item-content>
+                  {{ $t("groups.treeview.show-treeview") }}
+                </v-list-item-content>
+              </v-list-item>
+              <v-list-item
+                :to="{ name: 'group-lineGraph' }"
+                data-cy="show-linegraph"
+              >
+                <v-icon color="primary">multiline_chart</v-icon>
+                <v-list-item-content>
+                  {{ $t("groups.treeview.show-linegraph") }}
+                </v-list-item-content>
+              </v-list-item>
             </v-list>
           </v-menu>
-        </v-col>
-        <v-col cols="1" class="shrink">
-          <v-btn
-            color="success"
-            :fab="$vuetify.breakpoint.mdAndDown"
-            :small="$vuetify.breakpoint.mdAndDown"
-            :to="{ name: 'group-treeview' }"
-            data-cy="show-treeview"
-          >
-            <v-icon>account_tree</v-icon>
-            {{
-              $vuetify.breakpoint.mdAndDown
-                ? ""
-                : $t("groups.treeview.show-treeview")
-            }}
-          </v-btn>
-        </v-col>
-        <v-col class="shrink">
-          <v-btn
-            color="success"
-            :to="{ name: 'group-lineGraph' }"
-            data-cy="show-linegraph"
-          >
-            <v-icon>multiline_chart</v-icon>
-            {{ $t("groups.treeview.show-linegraph") }}
-          </v-btn>
-          <!--          //need to be change to En and Spanish-->
         </v-col>
       </v-row>
     </v-toolbar>
