@@ -6,7 +6,7 @@
     </v-card-title>
     <v-card-text>
       <form>
-        <v-row column justify-center>
+        <v-row no-gutters class="flex-column" justify="center">
           <v-text-field
             v-model="group.name"
             v-bind:label="$t('groups.name')"

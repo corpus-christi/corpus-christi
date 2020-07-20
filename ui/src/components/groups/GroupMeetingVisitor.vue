@@ -1,14 +1,14 @@
 <template>
   <div>
     <v-toolbar class="pa-1">
-      <v-row align-center justify-space-between fill-height>
-        <v-col md3>
+      <v-row no-gutters align="center" justify="space-between" fill-height>
+        <v-col md="3">
           <v-toolbar-title>{{
             $t("groups.members.title-visitor")
           }}</v-toolbar-title>
         </v-col>
       </v-row>
-      <v-col md2> </v-col>
+      <v-col md="2"> </v-col>
       <v-spacer></v-spacer>
       <v-col>
         <v-btn color="primary" raised v-on:click.stop="newVisitor">

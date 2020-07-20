@@ -1,13 +1,13 @@
 <template>
   <div>
     <v-toolbar class="pa-1">
-      <v-row align-center justify-space-between fill-height>
-        <v-col md3>
+      <v-row no-gutters align="center" justify="space-between" fill-height>
+        <v-col md="3">
           <v-toolbar-title>{{
             $t("actions.tooltips.take-attendance")
           }}</v-toolbar-title>
         </v-col>
-        <v-col md2>
+        <v-col md="2">
           <v-text-field
             v-model="search"
             append-icon="search"
@@ -35,7 +35,7 @@
         </tr>
       </template>
     </v-data-table>
-    <v-col md3>
+    <v-col md="3">
       <v-btn
         class="ma-2"
         outlined

@@ -1,8 +1,8 @@
 <template>
   <div>
     <v-toolbar>
-      <v-row align-center justify-space-between fill-height>
-        <v-col md3 class="text-no-wrap">
+      <v-row no-gutters align="center" justify="space-between" fill-height>
+        <v-col md="3" class="text-no-wrap">
           <v-toolbar-title v-if="!select">{{ title }}</v-toolbar-title>
           <v-toolbar-title v-else>{{ selectionOption.title }}</v-toolbar-title>
         </v-col>
@@ -33,7 +33,7 @@
           </v-tooltip>
         </v-col>
         <template v-if="!select">
-          <v-col md2>
+          <v-col md="2">
             <v-text-field
               v-model="search"
               append-icon="search"
@@ -42,7 +42,7 @@
               hide-details
             />
           </v-col>
-          <v-col md1>
+          <v-col md="1">
             <v-select
               hide-details
               solo
@@ -52,7 +52,7 @@
               data-cy="view-status-select"
             />
           </v-col>
-          <v-col md2>
+          <v-col md="2">
             <v-menu open-on-hover offset-y bottom>
               <template v-slot:activator="{ on }">
                 <v-btn color="primary" v-on="on">
@@ -97,7 +97,7 @@
               </v-list>
             </v-menu>
           </v-col>
-          <v-col shrink justify-self-end>
+          <v-col shrink justify="self-end">
             <v-btn
               color="primary"
               raised

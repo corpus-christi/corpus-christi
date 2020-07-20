@@ -9,7 +9,7 @@
     >
     <v-card>
       <v-toolbar :color="toolbarColor" class="pa-1">
-        <v-row align-center justify-space-between>
+        <v-row no-gutters align="center" justify="space-between">
           <v-col v-if="select">
             <v-tooltip bottom>
               <template v-slot:activator="{ on }">
@@ -37,14 +37,14 @@
           <v-col v-else>
             <v-toolbar-title>{{ getTranslation("title") }}</v-toolbar-title>
           </v-col>
-          <v-col md4>
+          <v-col md="4">
             <v-text-field
               v-model="search"
               append-icon="search"
               v-bind:label="$t('actions.search')"
             ></v-text-field>
           </v-col>
-          <v-col md4 class="text-xs-right">
+          <v-col md="4" class="text-xs-right">
             <v-btn
               :disabled="select"
               raised

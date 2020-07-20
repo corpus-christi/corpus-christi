@@ -8,7 +8,7 @@
     >
     <v-toolbar dense height="70">
       <!-- Select time scale -->
-      <v-col md3>
+      <v-col md="3">
         <v-container fluid>
           <v-select
             @change="changeTimeScale"
@@ -19,7 +19,7 @@
         </v-container>
       </v-col>
       <!--   Select groups     -->
-      <v-col md2>
+      <v-col md="2">
         <v-select
           v-model="selectedGroups"
           :items="groups"
@@ -57,7 +57,7 @@
     <v-toolbar>
       <v-spacer />
       <template v-if="selectedTimeScale === 'Weekly'">
-        <v-col md3>
+        <v-col md="3">
           <v-menu
             ref="menu"
             v-model="menu"
@@ -88,7 +88,7 @@
             </v-date-picker>
           </v-menu>
         </v-col>
-        <v-col md3>
+        <v-col md="3">
           <v-menu
             ref="menu1"
             v-model="menu1"
@@ -120,7 +120,7 @@
         </v-col>
       </template>
       <template v-if="selectedTimeScale === 'Monthly'">
-        <v-col md3>
+        <v-col md="3">
           <v-menu
             ref="menu"
             v-model="menu"
@@ -156,7 +156,7 @@
             </v-date-picker>
           </v-menu>
         </v-col>
-        <v-col md3>
+        <v-col md="3">
           <v-menu
             ref="menu1"
             v-model="menu1"

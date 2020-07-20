@@ -1,11 +1,11 @@
 <template>
   <div>
     <v-toolbar class="pa-1">
-      <v-row align-center justify-space-between fill-height>
-        <v-col md2>
+      <v-row no-gutters align="center" justify="space-between" fill-height>
+        <v-col class="shrink" cols="2">
           <v-toolbar-title>{{ $t("groups.header") }}</v-toolbar-title>
         </v-col>
-        <v-col md2>
+        <v-col cols="2">
           <v-text-field
             v-model="search"
             append-icon="search"
@@ -15,7 +15,7 @@
             data-cy="form-search"
           />
         </v-col>
-        <v-col md3>
+        <v-col cols="3">
           <v-select
             hide-details
             solo
@@ -26,7 +26,7 @@
           >
           </v-select>
         </v-col>
-        <v-col shrink>
+        <v-col cols="1" class="shrink">
           <v-menu open-on-hover offset-y bottom>
             <template v-slot:activator="{ on }">
               <v-btn
@@ -63,7 +63,7 @@
             </v-list>
           </v-menu>
         </v-col>
-        <v-col shrink>
+        <v-col cols="1" class="shrink">
           <v-btn
             color="success"
             :fab="$vuetify.breakpoint.mdAndDown"
@@ -79,7 +79,7 @@
             }}
           </v-btn>
         </v-col>
-        <v-col shrink>
+        <v-col class="shrink">
           <v-btn
             color="success"
             :to="{ name: 'group-lineGraph' }"

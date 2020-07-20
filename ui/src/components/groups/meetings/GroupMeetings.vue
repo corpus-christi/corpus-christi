@@ -1,11 +1,11 @@
 <template>
   <div>
     <v-toolbar>
-      <v-col md3>
+      <v-col md="3">
         <v-toolbar-title>{{ $t("groups.meetings.title") }}</v-toolbar-title>
       </v-col>
       <v-spacer></v-spacer>
-      <v-col md2>
+      <v-col md="2">
         <v-text-field
           v-model="search"
           append-icon="search"
@@ -15,7 +15,7 @@
         ></v-text-field>
       </v-col>
       <v-spacer></v-spacer>
-      <v-col md1>
+      <v-col md="1">
         <v-select
           hide-details
           solo

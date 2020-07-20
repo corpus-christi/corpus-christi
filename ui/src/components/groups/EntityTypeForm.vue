@@ -1,6 +1,6 @@
 <template>
   <!-- reusable form to select or/and create group type or manager type in place -->
-  <v-row column justify-center align-space-around>
+  <v-row no-gutters class="flex-column" justify="center" align="space-around">
     <v-col>
       <entity-search
         :disabled="entityTypePanel.show"

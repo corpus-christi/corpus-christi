@@ -2,7 +2,7 @@
   <div>
     <v-card flat>
       <v-toolbar flat class="pa-1" :color="toolbarColor">
-        <v-row align="center" justify="space-between">
+        <v-row no-gutters align="center" justify="space-between">
           <v-col cols="4" md="6">
             <v-text-field
               :append-icon="search ? 'clear' : 'search'"
@@ -58,7 +58,7 @@
           </template>
         </v-row>
       </v-toolbar>
-      <v-row wrap>
+      <v-row no-gutters wrap>
         <v-col>
           <v-card-text>
             <v-treeview

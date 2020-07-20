@@ -31,7 +31,7 @@
     </v-card>
     <v-card v-else flat>
       <v-toolbar flat class="pa-1">
-        <v-row align="center" justify="space-between">
+        <v-row no-gutters align="center" justify="space-between">
           <v-col cols="8">
             <v-text-field
               :append-icon="search ? 'clear' : 'search'"
