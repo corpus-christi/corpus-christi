@@ -684,8 +684,9 @@ export default {
     /************* hierarchy cycle helpers ****************/
     /* update the local copy of participant with groupId and personId in allGroups and allPersons with 'payload'
      the main use case is to mark participant as active/inactive after performing a change to reflect the updated hierarchy
-     as an alternative to calling fetchAllGroups and fetchAllPersons again */
-    saveLocalParticipant(groupId, personId, payload) {
+     as an alternative to calling fetchAllGroups and fetchAllPersons again.
+     'action' can be 'patch', 'post', or 'delete' */
+    modifyLocalParticipant(groupId, personId, payload, action = "patch") {
       let person = this.allPersons.find((person) => person.id === personId);
       let group = this.allGroups.find((group) => group.id === groupId);
       let localParticipants = [
@@ -710,23 +711,25 @@ export default {
         if (participants == undefined) {
           continue;
         }
-        let filter = localParticipantsFilter[i];
-        let participantIndex = participants.findIndex(filter);
-        if (participantIndex !== -1) {
-          this.$set(participants, participantIndex, {
-            ...participants[participantIndex],
-            ...payload,
-          });
-        } else {
+        if (action === "post") {
           participants.push({ ...payload });
+        } else {
+          // if modifying or deleting existing entities, search for it.
+          let filter = localParticipantsFilter[i];
+          let participantIndex = participants.findIndex(filter);
+          if (participantIndex !== -1) {
+            if (action === "patch") {
+              this.$set(participants, participantIndex, {
+                ...participants[participantIndex],
+                ...payload,
+              });
+            } /* if (action === 'delete')*/ else {
+              participants.splice(participantIndex, 1);
+            }
+          }
         }
       }
       this.$forceUpdate("cyclingPersons");
-    },
-    saveLocalParticipants(groupId, persons, payload) {
-      persons.forEach((person) => {
-        this.saveLocalParticipant(groupId, person.id, payload);
-      });
     },
 
     isCyclingPerson(person) {
@@ -860,10 +863,11 @@ export default {
       )
         .then((resps) => {
           for (let i in resps) {
-            this.saveLocalParticipant(
+            this.modifyLocalParticipant(
               this.id,
-              this.participantDialog.persons[i],
-              resps[i].data
+              this.participantDialog.persons[i].id,
+              resps[i].data,
+              editMode ? "patch" : "post"
             );
           }
           eventBus.$emit("message", {
@@ -990,7 +994,9 @@ export default {
       let payload = { active: unarchive ? true : false };
       return this.saveParticipants(persons, "patch", payload)
         .then(() => {
-          this.saveLocalParticipants(this.id, persons, payload);
+          persons.forEach((person) => {
+            this.modifyLocalParticipant(this.id, person.id, payload, "patch");
+          });
           eventBus.$emit("message", {
             content: this.isManagerMode
               ? unarchive
@@ -1024,9 +1030,14 @@ export default {
     unarchiveParticipant(participant) {
       participant.unarchiving = true; // show loading state
       return this.archiveParticipants([participant], true).finally(() => {
-        this.saveLocalParticipant(this.id, participant.person.id, {
-          unarchiving: undefined,
-        });
+        this.modifyLocalParticipant(
+          this.id,
+          participant.person.id,
+          {
+            unarchiving: undefined,
+          },
+          "patch"
+        );
       });
     },
     fetchParticipants() {
