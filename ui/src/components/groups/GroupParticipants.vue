@@ -681,7 +681,6 @@ export default {
      the main use case is to mark participant as active/inactive after performing a change to reflect the updated hierarchy
      as an alternative to calling fetchAllGroups and fetchAllPersons again */
     saveLocalParticipant(groupId, personId, payload) {
-      // TODO: test and use this method to replace most of fetch after api methods succeed
       let person = this.allPersons.find((person) => person.id === personId);
       let group = this.allGroups.find((group) => group.id === groupId);
       let localParticipants = [
