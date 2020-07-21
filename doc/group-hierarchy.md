@@ -53,7 +53,9 @@ The diagram below illustrates some of the key terminologies.
 
 <summary> A note on the diagram </summary>
 
-Digrams in this document are drawn using the `dot` notation with the aid of an
+## Diagrams
+
+Digrams in this document are drawn using the `dot` language with the aid of an
 online service `Gravizo` that renders graphs dynamically. 
 
 Each graph url looks like `https://g.gravizo.com/svg?digraph%20...`.
@@ -94,7 +96,7 @@ digraph G {
 See [here](https://renenyffenegger.ch/notes/tools/Graphviz/examples/index) for
 some sample graphs and their corresponding code.  
 
-After editing, perform the reverse process (you can use python's `urllib.parse.unquote` to do this) and append the graph after the `?` in the url. The graph should be rendered properly.
+After editing, perform the reverse process (you can use python's `urllib.parse.quote` to do this) and append the graph after the `?` in the url. The graph should be rendered properly.
 
 </details>
 
