@@ -104,6 +104,7 @@
       :options.sync="options"
       must-sort
       class="elevation-1"
+      :footer-props='{itemsPerPageText: $t("$vuetify.dataTable.rowsPerPageText")}'
     >
       <template v-slot:item="props">
         <tr>
@@ -240,6 +241,7 @@
           </td>
         </tr>
       </template>
+      <template v-slot:footer.page-text="items"> {{ items.pageStart }} - {{ items.pageStop }} of {{ items.itemsLength }} </template>
     </v-data-table>
 
     <!-- New/Edit dialog -->

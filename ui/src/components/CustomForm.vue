@@ -24,6 +24,7 @@
             name="description"
             data-cy="description"
           />
+          <template v-slot:activator="{ on }">
           <v-btn
             v-if="addImageField"
             class="text-xs-center"
@@ -32,9 +33,11 @@
             small
             @click="showImageChooser = true"
             :disabled="showImageChooser"
+            v-on="on"
           >
             {{ $t("images.actions.add-image") }}
           </v-btn>
+          </template>
           <v-expand-transition>
             <image-chooser
               v-if="showImageChooser"
@@ -84,13 +87,12 @@
               :close-on-content-click="false"
               v-model="showStartDatePicker"
               :nudge-right="40"
-              lazy
               transition="scale-transition"
               offset-y
-              full-width
               min-width="290px"
               data-cy="start-date-menu"
             >
+              <template v-slot:activator="{ on }">
               <v-text-field
                 slot="activator"
                 v-model="startDate"
@@ -101,7 +103,9 @@
                 ref="startDate"
                 v-validate="'required'"
                 v-bind:error-messages="errors.first('startDate')"
+                v-on="on"
               />
+              </template>
               <v-date-picker
                 v-bind:locale="currentLanguageCode"
                 v-model="startDate"
@@ -117,12 +121,11 @@
               ref="dialog1"
               v-model="startTimeModal"
               :return-value.sync="startTime"
-              lazy
-              full-width
               width="290px"
               persistent
               data-cy="start-time-dialog"
             >
+              <template v-slot:activator="{ on }">
               <v-text-field
                 slot="activator"
                 v-model="startTime"
@@ -132,7 +135,9 @@
                 v-bind:label="$t('events.start-time')"
                 prepend-icon="schedule"
                 readonly
+                v-on="on"
               ></v-text-field>
+              </template>
               <v-time-picker
                 v-if="startTimeModal"
                 :format="timeFormat"
@@ -166,14 +171,13 @@
               :close-on-content-click="false"
               v-model="showEndDatePicker"
               :nudge-right="40"
-              lazy
               transition="scale-transition"
               offset-y
-              full-width
               min-width="290px"
               data-cy="end-date-menu"
               :disabled="!startDateTimeSelected"
             >
+              <template v-slot:activator="{ on }">
               <v-text-field
                 slot="activator"
                 v-model="endDate"
@@ -185,8 +189,9 @@
                 v-bind:error-messages="errors.first('endDate')"
                 readonly
                 :disabled="!startDateTimeSelected"
+                v-on="on"
               />
-
+              </template>
               <v-date-picker
                 v-bind:locale="currentLanguageCode"
                 v-model="endDate"
@@ -203,12 +208,11 @@
               v-model="endTimeModal"
               :disabled="!startDateTimeSelected"
               :return-value.sync="endTime"
-              lazy
-              full-width
               width="290px"
               persistent
               data-cy="end-time-dialog"
             >
+              <template v-slot:activator="{ on }">
               <v-text-field
                 slot="activator"
                 v-model="endTime"
@@ -219,7 +223,9 @@
                 prepend-icon="update"
                 :disabled="!startDateTimeSelected"
                 readonly
+                v-on="on"
               />
+              </template>
               <v-time-picker
                 v-if="endTimeModal"
                 :format="timeFormat"
@@ -269,7 +275,7 @@
       <v-spacer></v-spacer>
       <v-btn
         color="primary"
-        outline
+        outlined
         v-on:click="addAnother"
         v-if="!editMode"
         :loading="addMoreLoading"

@@ -20,15 +20,15 @@
         <v-list v-if="assets.length">
           <template v-for="asset in assets">
             <v-divider v-bind:key="'assetDivider' + asset.id"></v-divider>
-            <v-list-tile v-bind:key="asset.id">
-              <v-list-tile-content>
+            <v-list-item v-bind:key="asset.id">
+              <v-list-item-content>
                 <v-container fluid class="pa-0">
                   <v-layout row justify-space-between align-center>
                     <v-flex>{{ asset.description }}</v-flex>
                     <v-flex shrink>
                       <v-btn
                         icon
-                        outline
+                        outlined
                         text
                         color="primary"
                         v-on:click="showDeleteAssetDialog(asset.id)"
@@ -38,8 +38,8 @@
                     </v-flex>
                   </v-layout>
                 </v-container>
-              </v-list-tile-content>
-            </v-list-tile>
+              </v-list-item-content>
+            </v-list-item>
           </template>
         </v-list>
         <div v-else class="text-xs-center pa-4">

@@ -23,7 +23,7 @@
       </v-btn>
     </v-toolbar>
     <v-data-table
-      :rows-per-page-items="rowsPerPageItem"
+      :items-per-page-options="rowsPerPageItem"
       :headers="headers"
       :items="people"
       :search="search"

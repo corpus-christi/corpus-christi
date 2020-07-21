@@ -20,8 +20,8 @@
         <v-list v-if="groups.length">
           <template v-for="group in groups">
             <v-divider v-bind:key="'groupDivider' + group.id"></v-divider>
-            <v-list-tile v-bind:key="group.id">
-              <v-list-tile-content class="pr-0">
+            <v-list-item v-bind:key="group.id">
+              <v-list-item-content class="pr-0">
                 <v-container fluid class="pa-0">
                   <v-layout justify-space-between align-center>
                     <v-flex>{{ group.description }}</v-flex>
@@ -31,7 +31,7 @@
                           <!-- TODO: popup with members instead of rerouting -->
                           <v-btn
                             icon
-                            outline
+                            outlined
                             text
                             color="primary"
                             :to="{ path: '/groups/' + group.id }"
@@ -42,7 +42,7 @@
                         <v-flex xs6>
                           <v-btn
                             icon
-                            outline
+                            outlined
                             text
                             color="primary"
                             v-on:click="showDeleteGroupDialog(group.id)"
@@ -54,8 +54,8 @@
                     </v-flex>
                   </v-layout>
                 </v-container>
-              </v-list-tile-content>
-            </v-list-tile>
+              </v-list-item-content>
+            </v-list-item>
           </template>
         </v-list>
         <div v-else class="text-xs-center pa-4">
