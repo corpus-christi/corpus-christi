@@ -30,9 +30,7 @@ describe("Testing Editing User Information", () => {
     });
   });
   it("And: When searching for something that does not exist, it should let the user know", () => {
-    cy.get("[data-cy=search]")
-      .clear()
-      .type("foobar");
+    cy.get("[data-cy=search]").clear().type("foobar");
     cy.get("[data-cy=person-table").within(() => {
       cy.get("tbody > :nth-child(1) > :nth-child(2)").should("not.exist");
     });

@@ -9,8 +9,8 @@
     >
     <v-card>
       <v-toolbar :color="toolbarColor" class="pa-1">
-        <v-layout align-center justify-space-between>
-          <v-flex v-if="select">
+        <v-row no-gutters align="center" justify="space-between">
+          <v-col v-if="select">
             <v-tooltip bottom>
               <template v-slot:activator="{ on }">
                 <v-btn v-on:click="selected = {}" v-on="on" small fab>
@@ -33,18 +33,18 @@
               </template>
               {{ getTranslation("change-to-different") }}
             </v-tooltip>
-          </v-flex>
-          <v-flex v-else>
+          </v-col>
+          <v-col v-else>
             <v-toolbar-title>{{ getTranslation("title") }}</v-toolbar-title>
-          </v-flex>
-          <v-flex md4>
+          </v-col>
+          <v-col md="4">
             <v-text-field
               v-model="search"
               append-icon="search"
               v-bind:label="$t('actions.search')"
             ></v-text-field>
-          </v-flex>
-          <v-flex md4 class="text-xs-right">
+          </v-col>
+          <v-col md="4" class="text-xs-right">
             <v-btn
               :disabled="select"
               raised
@@ -55,8 +55,8 @@
               ><v-icon>add</v-icon>
               {{ $vuetify.breakpoint.smAndDown ? "" : getTranslation("new") }}
             </v-btn>
-          </v-flex>
-        </v-layout>
+          </v-col>
+        </v-row>
       </v-toolbar>
       <v-card-text>
         <v-data-table

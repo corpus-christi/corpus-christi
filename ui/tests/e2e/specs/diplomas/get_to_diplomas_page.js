@@ -91,9 +91,7 @@ describe("Search Diplomas", () => {
     cy.get("tbody > :nth-child(1) > :nth-child(1)").contains(diploma);
   });
   it("search for non existing diplomas", () => {
-    cy.get("[data-cy=diplomas-table-search]")
-      .clear()
-      .type(non_diploma);
+    cy.get("[data-cy=diplomas-table-search]").clear().type(non_diploma);
     cy.get("tbody").contains("No se");
     cy.get("[data-cy=diplomas-table-search]").clear();
   });

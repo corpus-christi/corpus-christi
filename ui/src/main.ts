@@ -18,6 +18,13 @@ const app = new Vue({
   render: (h) => h(App),
 }).$mount("#app");
 
+declare global {
+  interface Window {
+    Cypress: any;
+    app: Vue;
+  }
+}
+
 if (window.Cypress) {
   // let cypress have access to the vue instance
   console.log("cypress detected");

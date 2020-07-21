@@ -25,7 +25,7 @@ class Group(Base):
 
 
     def __repr__(self):
-        return f"<Group(id={self.id})>"
+        return f"<Group(id={self.id}, name={self.name})>"
 
 
 class GroupSchema(Schema):

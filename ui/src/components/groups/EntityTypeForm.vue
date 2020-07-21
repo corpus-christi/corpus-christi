@@ -1,7 +1,7 @@
 <template>
   <!-- reusable form to select or/and create group type or manager type in place -->
-  <v-layout column justify-center align-space-around>
-    <v-flex>
+  <v-row no-gutters class="flex-column" justify="center" align="space-around">
+    <v-col>
       <entity-search
         :disabled="entityTypePanel.show"
         :group-type="isGroupTypeMode"
@@ -11,8 +11,8 @@
         v-bind="$attrs"
         :key="entitySearchKey"
       />
-    </v-flex>
-    <v-flex class="text-xs-center">
+    </v-col>
+    <v-col class="text-xs-center">
       <v-btn
         color="primary"
         text
@@ -22,8 +22,8 @@
       >
         {{ getTranslation("create-new") }}
       </v-btn>
-    </v-flex>
-    <v-flex>
+    </v-col>
+    <v-col>
       <v-expand-transition>
         <v-card elevation="1" v-if="entityTypePanel.show">
           <v-card-text>
@@ -43,8 +43,8 @@
           </v-card-actions>
         </v-card>
       </v-expand-transition>
-    </v-flex>
-  </v-layout>
+    </v-col>
+  </v-row>
 </template>
 <script>
 import EntitySearch from "../EntitySearch";

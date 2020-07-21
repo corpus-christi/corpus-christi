@@ -11,9 +11,7 @@ describe("Get to details of a course page", () => {
     cy.url().should("include", "/courses");
   });
   it("Click into details of course", () => {
-    cy.get("tbody")
-      .contains(course)
-      .click();
+    cy.get("tbody").contains(course).click();
     cy.url().should("include", "/courses/1");
   });
 });
