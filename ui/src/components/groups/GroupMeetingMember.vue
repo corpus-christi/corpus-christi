@@ -1,13 +1,13 @@
 <template>
   <div>
     <v-toolbar class="pa-1">
-      <v-layout align-center justify-space-between fill-height>
-        <v-flex md3>
+      <v-row no-gutters align="center" justify="space-between" fill-height>
+        <v-col md="3">
           <v-toolbar-title>{{
             $t("actions.tooltips.take-attendance")
           }}</v-toolbar-title>
-        </v-flex>
-        <v-flex md2>
+        </v-col>
+        <v-col md="2">
           <v-text-field
             v-model="search"
             append-icon="search"
@@ -15,8 +15,8 @@
             single-line
             hide-details
           />
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-toolbar>
     <v-data-table
       v-model="selected"
@@ -27,16 +27,15 @@
       :search="search"
       show-select
     >
-
       <template v-slot:item="props">
         <tr>
-        <td><v-checkbox v-model="props.selected" primary hide-details /></td>
-        <td>{{ props.item.firstName }}</td>
-        <td>{{ props.item.lastName }}</td>
+          <td><v-checkbox v-model="props.selected" primary hide-details /></td>
+          <td>{{ props.item.firstName }}</td>
+          <td>{{ props.item.lastName }}</td>
         </tr>
       </template>
     </v-data-table>
-    <v-flex md3>
+    <v-col md="3">
       <v-btn
         class="ma-2"
         outlined
@@ -44,7 +43,7 @@
         v-on:click="submitSelectedPeople"
         >{{ $t("error-report.actions.submit") }}</v-btn
       >
-    </v-flex>
+    </v-col>
   </div>
 </template>
 

@@ -23,9 +23,7 @@ describe("search for courses that exist", () => {
 
 describe("search for courses that does not exist", () => {
   it("When: course name is typed", () => {
-    cy.get("[data-cy=courses-table-search]")
-      .clear()
-      .type("Not Here");
+    cy.get("[data-cy=courses-table-search]").clear().type("Not Here");
   });
   it("Then: should find nothing", () => {
     cy.get("tbody > :nth-child(1) > :nth-child(1)").contains(

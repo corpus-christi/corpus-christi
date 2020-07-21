@@ -198,5 +198,5 @@ actions:
       zh-CN: 发电子邮件
     take-attendance:
       en-US: Take attendance
-      es_EC: Tomar la asistencia
-      zh_CN: 记录出席
+      es-EC: Tomar la asistencia
+      zh-CN: 记录出席

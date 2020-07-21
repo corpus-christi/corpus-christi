@@ -1,14 +1,9 @@
 <template>
   <div>
-    <v-card>
-      <v-toolbar extended class="pa-1" :color="toolbarColor">
-        <v-layout align-center justify-space-between>
-          <v-flex md4 xs7
-            ><v-toolbar-title>{{
-              $t("groups.treeview.title")
-            }}</v-toolbar-title></v-flex
-          >
-          <v-flex md6 xs5 shrink>
+    <v-card flat>
+      <v-toolbar flat class="pa-1" :color="toolbarColor">
+        <v-row no-gutters align="center" justify="space-between">
+          <v-col cols="4" md="6">
             <v-text-field
               :append-icon="search ? 'clear' : 'search'"
               @click:append="search = ''"
@@ -16,26 +11,24 @@
               v-model="search"
             >
             </v-text-field>
-          </v-flex>
-        </v-layout>
-
-        <template v-slot:extension>
-          <v-layout v-if="selection.length == 0" align-center justify-end>
-            <v-flex md4 sm6>
+          </v-col>
+          <v-spacer />
+          <template v-if="selection.length === 0">
+            <v-col cols="4">
               <v-select :items="viewOptions" v-model="viewStatus"> </v-select>
-            </v-flex>
-            <v-spacer></v-spacer>
-            <v-tooltip bottom
-              ><template v-slot:activator="{ on }">
-                <v-flex shrink>
+            </v-col>
+            <v-spacer />
+            <v-col class="shrink">
+              <v-tooltip bottom
+                ><template v-slot:activator="{ on }">
                   <v-btn color="primary" fab small @click="expandAll" v-on="on"
                     ><v-icon>unfold_more</v-icon></v-btn
                   >
-                </v-flex>
-              </template>
-              {{ $t("groups.treeview.expand") }}
-            </v-tooltip>
-            <v-flex shrink>
+                </template>
+                {{ $t("groups.treeview.expand") }}
+              </v-tooltip>
+            </v-col>
+            <v-col class="shrink">
               <v-tooltip bottom
                 ><template v-slot:activator="{ on }">
                   <v-btn
@@ -49,39 +42,24 @@
                 </template>
                 {{ $t("groups.treeview.collapse") }}
               </v-tooltip>
-            </v-flex>
-            <v-flex shrink>
-              <v-btn
-                color="primary"
-                :fab="$vuetify.breakpoint.mdAndDown"
-                :small="$vuetify.breakpoint.mdAndDown"
-                :to="{ name: 'all-groups' }"
-              >
-                <v-icon>list</v-icon>
-                {{
-                  $vuetify.breakpoint.mdAndDown
-                    ? ""
-                    : $t("groups.treeview.show-list")
-                }}
-              </v-btn>
-            </v-flex>
-          </v-layout>
-          <v-layout v-else align-center justify-end>
-            <v-flex shrink>
+            </v-col>
+          </template>
+          <template v-if="selection.length != 0">
+            <v-col>
               <v-btn fab small @click="showEmailDialog"
                 ><v-icon> email </v-icon></v-btn
               >
-            </v-flex>
-            <v-flex shrink>
+            </v-col>
+            <v-col>
               <v-btn fab small @click="groupTypeTreeviewSelection = []">
                 <v-icon> close</v-icon>
               </v-btn>
-            </v-flex>
-          </v-layout>
-        </template>
+            </v-col>
+          </template>
+        </v-row>
       </v-toolbar>
-      <v-layout wrap>
-        <v-flex>
+      <v-row no-gutters wrap>
+        <v-col>
           <v-card-text>
             <v-treeview
               v-model="groupTypeTreeviewSelection"
@@ -108,9 +86,9 @@
               </template>
             </v-treeview>
           </v-card-text>
-        </v-flex>
+        </v-col>
         <v-divider class="hidden-sm-and-down" vertical></v-divider>
-        <v-flex md6 sm12>
+        <v-col cols="12" md="6">
           <v-card-text>
             <div
               v-if="selection.length == 0"
@@ -124,8 +102,8 @@
               }}</v-chip>
             </v-scroll-x-transition>
           </v-card-text>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-card>
     <!-- Email dialog -->
     <v-dialog v-model="emailDialog.show" max-width="700px">
@@ -141,7 +119,7 @@
 
 <script>
 import { unionBy, uniqBy } from "lodash";
-import EmailForm from "../EmailForm";
+import EmailForm from "../../EmailForm";
 export default {
   name: "GroupTreeView",
   components: { EmailForm },
@@ -228,7 +206,10 @@ export default {
           name: group.name,
           children: managerMember,
         });
-        if (this.viewStatus == "showAll" || this.viewStatus == "showMembers") {
+        if (
+          this.viewStatus === "showAll" ||
+          this.viewStatus === "showMembers"
+        ) {
           const members = [];
           managerMember.push({
             id: `_label_group_${group.id}_members`,
@@ -243,7 +224,10 @@ export default {
             });
           }
         }
-        if (this.viewStatus == "showAll" || this.viewStatus == "showManagers") {
+        if (
+          this.viewStatus === "showAll" ||
+          this.viewStatus === "showManagers"
+        ) {
           const managers = [];
           managerMember.push({
             id: `_label_group_${group.id}_managers`,
@@ -269,46 +253,6 @@ export default {
     getPersonFullName(person) {
       return `${person.firstName} ${person.lastName}`;
     },
-    getImmSubGroups(group) {
-      /* get immediate subgroups.
-      Immediate subgroups are defined as a unique collection of groups led by any of the members/managers of the current group.
-      group: {
-        id: 1,
-        members: [ { person: { managers: [ { groupId: 4, active: true }, ... ], ... }, ...}, ... ],
-        managers: [ { person: { managers: [ { groupId: 5, ... }, ... ], ... }, ...}, ... ],
-        ...
-      }
-       */
-      let people = group.members.concat(group.managers);
-      people = people.map((p) => p.person.managers);
-      let uniqueGroups = unionBy(...people, (g) => g.groupId);
-      uniqueGroups = uniqueGroups.filter((g) => g.active);
-      return uniqueGroups;
-    },
-    // getSubGroups(groups, group, subGroups = []) {
-    //   /* returns all groups in 'groups' subordinate to 'group', according to the leadership hierarchy
-    //   pseudocode:
-    //     for all `members` and `managers` in `group`, get their leading groups;
-    //     if all of their leading groups are in `subGroups`, then return `subGroups`.
-    //     Otherwise, build a new list of groups, `extraGroups`, consisting of unique leading groups that are not in `subGroups`;
-    //     return a list of unique groups consisting of groups in `subGroups` and getSubGroups(g) for g in extraGroups.
-    //   groups is an array of all groups, each group is an object of the following form:
-    //   group: {
-    //     id: 1,
-    //     members: [ { person: { managers: [ { groupId: 4, active: true }, ... ], ... }, ...}, ... ],
-    //     managers: [ { person: { managers: [ { groupId: 5, ... }, ... ], ... }, ...}, ... ],
-    //     ...
-    //   }
-    //    */
-    //   const groupsMap = {}; // build a dictionary so we can index with id
-    //   for (let g of groups) {
-    //     groupsMap[g.id] = g;
-    //   }
-    //   subGroupIds = subGroups.map(g => g.id);
-    // },
-    // _getSubGroupsIds(groups, groupId, subGroupIds) {
-    //   /* a helper function for getSubGroups, returns a list of ids */
-    // },
     expandAll() {
       this.$refs["treeview"].updateAll(true);
     },
@@ -319,7 +263,6 @@ export default {
       this.emailDialog.show = true;
     },
     hideEmailDialog() {
-      this.groupTypeTreeviewSelection = [];
       this.emailDialog.show = false;
     },
   },
