@@ -47,7 +47,56 @@ of some `pn`, where `pn` is an immediate super-node of `n`.
 
 The diagram below illustrates some of the key terminologies.
 
-![Terminology-illustration](https://g.gravizo.com/svg?digraph%20G%20%7B%0A%20%20%20%20edge%20%5Bfontcolor%3Dsienna%5D%3B%0A%20%20%20%20subgraph%20cluster_1%20%7B%0A%20%20%20%20%20%20%20%20G1%3B%0A%20%20%20%20%20%20%20%20fontcolor%3Dgrey%3B%0A%20%20%20%20%20%20%20%20color%3Dgrey%3B%0A%20%20%20%20%20%20%20%20label%3D%22Parent-node%20of%20Person%201%2C%5CnGrandparent-node%20of%20Group%202%20and%20Group%203.%22%3B%0A%20%20%20%20%7D%0A%20%20%20%20subgraph%20cluster_0%20%7B%0A%20%20%20%20%20%20%20%20G2%3B%20G3%3B%0A%20%20%20%20%20%20%20%20fontcolor%3Dgrey%3B%0A%20%20%20%20%20%20%20%20color%3Dgrey%3B%0A%20%20%20%20%20%20%20%20label%3D%22Child-node%20of%20Person%201%2C%5Cn%20Grandchild-node%20of%20Group%201%22%3B%0A%20%20%20%20%20%20%20%20labelloc%3Db%3B%0A%20%20%20%20%7D%0A%20%20%20%20G1%20-%3E%20P1%20%5Blabel%3D%22has%20member%22%5D%3B%0A%20%20%20%20P1%20-%3E%20G2%20%5Blabel%3D%22is%20manager%20of%22%5D%3B%0A%20%20%20%20P1%20-%3E%20G3%3B%0A%20%20%20%20G1%20%5Blabel%3D%22Group%201%22%3B%20xlabel%3D%22Group%20Node%22%5D%3B%0A%20%20%20%20G2%20%5Blabel%3D%22Group%202%22%3B%20xlabel%3D%22Group%20Node%22%5D%3B%0A%20%20%20%20G3%20%5Blabel%3D%22Group%203%22%5D%3B%20P1%20%5Bshape%3Drectangle%3B%20label%3D%22Person%201%22%3B%0A%20%20%20%20xlabel%3D%22Participant%20Node%22%5D%3B%20%7D)
+![Terminology-illustration](https://g.gravizo.com/svg?digraph%20G%20%0A%7B%20%0A%20%20%20%20edge%20%5Bfontcolor%3Dsienna%5D%3B%0A%20%20%20%20subgraph%20cluster_1%20%7B%20%0A%20%20%20%20%20%20%20%20G1%3B%0A%20%20%20%20%20%20%20%20fontcolor%3Dgrey%3B%0A%20%20%20%20%20%20%20%20color%3Dgrey%3B%0A%20%20%20%20%20%20%20%20label%3D%22Parent-node%20of%20Person%201%2C%5CnGrandparent-node%20of%20Group%202%20and%20Group%203.%22%3B%0A%20%20%20%20%7D%0A%20%20%20%20subgraph%20cluster_0%20%7B%20%0A%20%20%20%20%20%20%20%20G2%3B%0A%20%20%20%20%20%20%20%20G3%3B%0A%20%20%20%20%20%20%20%20fontcolor%3Dgrey%3B%0A%20%20%20%20%20%20%20%20color%3Dgrey%3B%0A%20%20%20%20%20%20%20%20label%3D%22Child-node%20of%20Person%201%2C%5CnGrandchild-node%20of%20Group%201%22%3B%0A%20%20%20%20%20%20%20%20labelloc%3Db%3B%0A%20%20%20%20%7D%20%0A%20%20%20%20G1%20-%3E%20P1%20%5Blabel%3D%22has%20member%22%5D%3B%0A%20%20%20%20P1%20-%3E%20G2%20%5Blabel%3D%22is%20manager%20of%22%5D%3B%0A%20%20%20%20P1%20-%3E%20G3%3B%0A%20%20%20%20G1%20%5Blabel%3D%22Group%201%22%3B%20xlabel%3D%22Group%20Node%22%5D%3B%0A%20%20%20%20G2%20%5Blabel%3D%22Group%202%22%3B%20xlabel%3D%22Group%20Node%22%5D%3B%0A%20%20%20%20G3%20%5Blabel%3D%22Group%203%22%5D%3B%0A%20%20%20%20P1%20%5Bshape%3Drectangle%3B%0A%20%20%20%20label%3D%22Person%201%22%3B%0A%20%20%20%20xlabel%3D%22Participant%20Node%22%5D%3B%0A%7D%0A)
+
+<details>
+
+<summary> A note on the diagram </summary>
+
+Digrams in this document are drawn using the `dot` notation with the aid of an
+online service `Gravizo` that renders graphs dynamically. 
+
+Each graph url looks like `https://g.gravizo.com/svg?digraph%20...`.
+
+To edit the graph, copy the characters after the `?`, and urldecode it. To do
+this, you can use python's `urllib.parse.unquote` function. Then you should
+have a readable `dot` graph, like the following:
+
+```dot
+digraph G { 
+    edge [fontcolor=sienna];
+    subgraph cluster_1 { 
+        G1;
+        fontcolor=grey;
+        color=grey;
+        label="Parent-node of Person 1,\nGrandparent-node of Group 2 and Group 3.";
+    }
+    subgraph cluster_0 { 
+        G2;
+        G3;
+        fontcolor=grey;
+        color=grey;
+        label="Child-node of Person 1,\nGrandchild-node of Group 1";
+        labelloc=b;
+    } 
+    G1 -> P1 [label="has member"];
+    P1 -> G2 [label="is manager of"];
+    P1 -> G3;
+    G1 [label="Group 1"; xlabel="Group Node"];
+    G2 [label="Group 2"; xlabel="Group Node"];
+    G3 [label="Group 3"];
+    P1 [shape=rectangle;
+    label="Person 1";
+    xlabel="Participant Node"];
+}
+``` 
+
+See [here](https://renenyffenegger.ch/notes/tools/Graphviz/examples/index) for
+some sample graphs and their corresponding code.  
+
+After editing, perform the reverse process (you can use python's `urllib.parse.unquote` to do this) and append the graph after the `?` in the url. The graph should be rendered properly.
+
+</details>
 
 # Features
 
@@ -117,25 +166,32 @@ is both a manager and a member of "Group 1."
 
 Thus, the following situations are allowed.
 
-#### Allowed Case: double identity
-![double-identity-case-1](https://g.gravizo.com/svg?digraph%20G%20%7B%0A%20%20%20%20G1a%20%5Blabel%3DGroup1%3B%20color%3Dred%5D%3B%0A%20%20%20%20P1%20%5Blabel%3DPerson1%3B%20shape%3Drectangle%5D%3B%0A%20%20%20%20G1b%20%5Blabel%3DGroup1%3B%20color%3Dred%5D%3B%0A%20%20%20%20G1a%20-%3E%20P1%3B%0A%20%20%20%20P1%20-%3E%20G1b%3B%0A%7D) 
+### Allowed Case: double identity
+![double-identity-case-1](https://g.gravizo.com/svg?digraph%20G%20%7B%0A%20%20%20%20G1a%20%5Blabel%3DGroup1%5D%3B%0A%20%20%20%20P1%20%5Blabel%3DPerson1%3B%20color%3Dred%3B%20shape%3Drectangle%5D%3B%0A%20%20%20%20G1b%20%5Blabel%3DGroup1%5D%3B%0A%20%20%20%20G1a%20-%3E%20P1%3B%0A%20%20%20%20P1%20-%3E%20G1b%3B%0A%7D%0A) 
 
+##### logical equivalences
 
-#### Allowed Case: logically equivalent to the previous case
-![double-identity-case-2](https://g.gravizo.com/svg?digraph%20G%20%7B%0A%20%20%20%20P1a%20%5Blabel%3DPerson1%3B%20color%3Dred%3B%20shape%3Drectangle%5D%3B%0A%20%20%20%20G1%20%5Blabel%3DGroup1%5D%3B%0A%20%20%20%20P1b%20%5Blabel%3DPerson1%3B%20color%3Dred%3B%20shape%3Drectangle%5D%3B%0A%20%20%20%20P1a%20-%3E%20G1%3B%0A%20%20%20%20G1%20-%3E%20P1b%3B%0A%7D)
+![double-identity-case-1-a](https://g.gravizo.com/svg?digraph%20G%20%7B%0A%20%20%20%20P1%20%5Blabel%3DPerson1%3B%20color%3Dred%3B%20shape%3Drectangle%5D%3B%0A%20%20%20%20G1%20%5Blabel%3DGroup1%5D%3B%0A%20%20%20%20P1%20-%3E%20G1%3B%0A%20%20%20%20G1%20-%3E%20P1%3B%0A%7D%0A)
+![double-identity-case-1-b](https://g.gravizo.com/svg?digraph%20G%20%7B%0A%20%20%20%20P1a%20%5Blabel%3DPerson1%3B%20color%3Dred%3B%20shape%3Drectangle%5D%3B%0A%20%20%20%20G1%20%5Blabel%3DGroup1%5D%3B%0A%20%20%20%20P1b%20%5Blabel%3DPerson1%3B%20color%3Dred%3B%20shape%3Drectangle%5D%3B%0A%20%20%20%20P1a%20-%3E%20G1%3B%0A%20%20%20%20G1%20-%3E%20P1b%3B%0A%7D%0A)
 
-#### Allowed Case: multiple people with double identity
-![double-identity-case-3](https://g.gravizo.com/svg?digraph%20G%20%7B%0A%20%20%20%20P1a%20-%3E%20G2%20-%3E%20P1b%3B%0A%20%20%20%20P2a%20-%3E%20G2%20-%3E%20P2b%3B%0A%20%20%20%20P1a%20%5Blabel%3DPerson1%2C%20shape%3Drectangle%2C%20color%3Dred%5D%3B%0A%20%20%20%20P1b%20%5Blabel%3DPerson1%2C%20shape%3Drectangle%2C%20color%3Dred%5D%3B%0A%20%20%20%20P2a%20%5Blabel%3DPerson2%2C%20shape%3Drectangle%2C%20color%3Dblue%5D%3B%0A%20%20%20%20P2b%20%5Blabel%3DPerson2%2C%20shape%3Drectangle%2C%20color%3Dblue%5D%3B%0A%20%20%20%20G2%20%5Blabel%3DGroup2%5D%3B%0A%7D)
+### Allowed Case: multiple people with double identity
+![double-identity-case-4](https://g.gravizo.com/svg?digraph%20G%20%7B%0A%20%20%20%20P1a%20-%3E%20G2%20-%3E%20P1b%3B%0A%20%20%20%20P2a%20-%3E%20G2%20-%3E%20P2b%3B%0A%20%20%20%20P1a%20%5Blabel%3DPerson1%2C%20shape%3Drectangle%2C%20color%3Dred%5D%3B%0A%20%20%20%20P1b%20%5Blabel%3DPerson1%2C%20shape%3Drectangle%2C%20color%3Dred%5D%3B%0A%20%20%20%20P2a%20%5Blabel%3DPerson2%2C%20shape%3Drectangle%2C%20color%3Dblue%5D%3B%0A%20%20%20%20P2b%20%5Blabel%3DPerson2%2C%20shape%3Drectangle%2C%20color%3Dblue%5D%3B%0A%20%20%20%20G2%20%5Blabel%3DGroup2%5D%3B%0A%7D%0A)
+
+##### logical equivalence
+![double-identity-case-4-a](https://g.gravizo.com/svg?digraph%20G%20%7B%0A%20%20%20%20P1%20-%3E%20G2%20-%3E%20P1%3B%0A%20%20%20%20P2%20-%3E%20G2%20-%3E%20P2%3B%0A%20%20%20%20P1%20%5Blabel%3DPerson1%2C%20shape%3Drectangle%2C%20color%3Dred%5D%3B%0A%20%20%20%20P2%20%5Blabel%3DPerson2%2C%20shape%3Drectangle%2C%20color%3Dblue%5D%3B%0A%20%20%20%20G2%20%5Blabel%3DGroup2%5D%3B%0A%7D%0A)
 
 > For this case, the rendered tree will be similar to the illustration below,
 > Note that "Group 2" is a _root node_ being appended under the "Admin" node,
 > and the lower-level "Group 2" are no longer expanded
 
-> ![double-identity-case-3-tree](https://g.gravizo.com/svg?digraph%20G%20%7B%0A%20%20%20%20Admin%20-%3E%20G2%3B%0A%20%20%20%20G2%20-%3E%20P1%20-%3E%20G2P1%3B%0A%20%20%20%20G2%20-%3E%20P2%20-%3E%20G2P2%3B%0A%20%20%20%20Admin%20%5Bshape%3Ddiamond%5D%3B%0A%20%20%20%20P1%20%5Blabel%3DPerson1%2C%20shape%3Drectangle%2C%20color%3Dred%5D%3B%0A%20%20%20%20P2%20%5Blabel%3DPerson2%2C%20shape%3Drectangle%2C%20color%3Dblue%5D%3B%0A%20%20%20%20G2%20%5Blabel%3DGroup2%5D%3B%0A%20%20%20%20G2P1%20%5Blabel%3DGroup2%5D%3B%0A%20%20%20%20G2P2%20%5Blabel%3DGroup2%5D%3B%0A%7D)
+> ![double-identity-case-4-tree](https://g.gravizo.com/svg?digraph%20G%20%7B%0A%20%20%20%20Admin%20-%3E%20G2%3B%0A%20%20%20%20G2%20-%3E%20P1%20-%3E%20G2P1%3B%0A%20%20%20%20G2%20-%3E%20P2%20-%3E%20G2P2%3B%0A%20%20%20%20Admin%20%5Bshape%3Ddiamond%5D%3B%0A%20%20%20%20P1%20%5Blabel%3DPerson1%2C%20shape%3Drectangle%2C%20color%3Dred%5D%3B%0A%20%20%20%20P2%20%5Blabel%3DPerson2%2C%20shape%3Drectangle%2C%20color%3Dblue%5D%3B%0A%20%20%20%20G2%20%5Blabel%3DGroup2%5D%3B%0A%20%20%20%20G2P1%20%5Blabel%3DGroup2%5D%3B%0A%20%20%20%20G2P2%20%5Blabel%3DGroup2%5D%3B%0A%7D%0A)
 
-#### Disallowed Case: Repeated node through different nodes
+### Disallowed Case: Repeated node through different nodes
 
-![double-identity-case-4](https://g.gravizo.com/svg?digraph%20G%20%7B%0A%20%20%20%20G2a%20-%3E%20P1%20-%3E%20G1%20-%3E%20P2%20-%3E%20G2b%0A%20%20%20%20P1%20%5Blabel%3DPerson1%2C%20shape%3Drectangle%2C%20color%3Dyellow%5D%3B%0A%20%20%20%20P2%20%5Blabel%3DPerson2%2C%20shape%3Drectangle%2C%20color%3Dblue%5D%3B%0A%20%20%20%20G1%20%5Blabel%3DGroup1%2C%20color%3Dgreen%5D%3B%0A%20%20%20%20G2a%20%5Blabel%3DGroup2%2C%20color%3Dred%5D%3B%0A%20%20%20%20G2b%20%5Blabel%3DGroup2%2C%20color%3Dred%5D%3B%0A%7D)
+![double-identity-case-5](https://g.gravizo.com/svg?digraph%20G%20%7B%0A%20%20%20%20G2a%20-%3E%20P1%20-%3E%20G1%20-%3E%20P2%20-%3E%20G2b%0A%20%20%20%20P1%20%5Blabel%3DPerson1%2C%20shape%3Drectangle%2C%20color%3Dyellow%5D%3B%0A%20%20%20%20P2%20%5Blabel%3DPerson2%2C%20shape%3Drectangle%2C%20color%3Dblue%5D%3B%0A%20%20%20%20G1%20%5Blabel%3DGroup1%2C%20color%3Dgreen%5D%3B%0A%20%20%20%20G2a%20%5Blabel%3DGroup2%2C%20color%3Dred%5D%3B%0A%20%20%20%20G2b%20%5Blabel%3DGroup2%2C%20color%3Dred%5D%3B%0A%7D%0A)
 
-Note there is no _root node_ in this diagram, there is no way for the treeview
+##### logical equivalence
+![double-identity-case-5-a](https://g.gravizo.com/svg?digraph%20G%20%7B%0A%20%20%20%20G2%20-%3E%20P1%20-%3E%20G1%20-%3E%20P2%20-%3E%20G2%0A%20%20%20%20P1%20%5Blabel%3DPerson1%2C%20shape%3Drectangle%2C%20color%3Dyellow%5D%3B%0A%20%20%20%20P2%20%5Blabel%3DPerson2%2C%20shape%3Drectangle%2C%20color%3Dblue%5D%3B%0A%20%20%20%20G1%20%5Blabel%3DGroup1%2C%20color%3Dgreen%5D%3B%0A%20%20%20%20G2%20%5Blabel%3DGroup2%2C%20color%3Dred%5D%3B%0A%20%20%20%20%7B%20rank%3Dsame%20P2%20P1%20%7D%0A%7D%0A)
+
+Note there is no _root node_ in this diagram, so there is no way for the treeview
 component to pick up any of the nodes and start building the tree.
