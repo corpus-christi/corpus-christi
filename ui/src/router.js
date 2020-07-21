@@ -369,7 +369,7 @@ router.beforeEach((to, from, next) => {
       // the desired page for a later redirect.
       next({
         name: "login",
-        query: { redirect: to.name },
+        query: { redirect: to.fullPath },
       });
     }
   } else {
