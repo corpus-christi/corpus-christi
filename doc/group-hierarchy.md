@@ -130,7 +130,7 @@ leadership hierarchy:
 -   adding a participant
 -   moving a participant to another group
 -   reactivating an archived participant
--   reactivating an archived group (not implemented)
+-   reactivating an archived group
 
 ## Hierarchy Treeview
 

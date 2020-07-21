@@ -6,7 +6,7 @@
           <v-toolbar-title v-if="!select">{{ title }}</v-toolbar-title>
           <v-toolbar-title v-else>{{ selectionOption.title }}</v-toolbar-title>
         </v-col>
-        <v-col v-if="select" shrink>
+        <v-col v-if="select" class="shrink">
           <v-tooltip bottom
             ><template v-slot:activator="{ on }"
               ><v-btn v-on:click="resetSelection" v-on="on" fab text>
@@ -97,7 +97,7 @@
               </v-list>
             </v-menu>
           </v-col>
-          <v-col shrink justify="self-end">
+          <v-col class="shrink" justify="self-end">
             <v-btn
               color="primary"
               raised
@@ -442,7 +442,7 @@ export default {
         {
           key: "move",
           icon: "low_priority",
-          tooltipText: this.$t("actions.tooltips.move"),
+          tooltipText: this.$t("groups.tooltips.move"),
           show: (item) => item.active,
           clickHandler: (item) => this.showMoveDialog(item),
         },

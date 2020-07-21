@@ -58,6 +58,7 @@
         "email": "Send Email",
         "remove": "Remove",
         "settings": "Settings",
+        "take-attendance": "Take attendance",
         "unarchive": "Unarchive"
       },
       "view-active": "View Active",
@@ -529,7 +530,8 @@
         "messages": {
           "move-person-will-cause-cycle": "Moving this person will cause a cycle in leadership hierarchy",
           "no-email": "The person does not have an email address",
-          "person-in-destination-group": "The person is already in the destination group"
+          "person-in-destination-group": "The person is already in the destination group",
+          "unarchive-group-will-cause-cycle": "Unarchiving this group will cause a cycle in leadership hierarchy"
         },
         "move": "Move",
         "title": "Batch Actions",
@@ -620,7 +622,8 @@
         },
         "email-dialog-footnote": "Click the circle to select the reply-to option",
         "email-reply-to": "Reply to",
-        "title": "Members"
+        "title": "Members",
+        "title-visitor": "Visitors"
       },
       "messages": {
         "already-exists": "Group already exists",
@@ -668,8 +671,10 @@
         "members-moved": "Successfully moved member(s)",
         "members-updated": "Successfully updated member(s)",
         "no-remaining-members": "No remaining members",
+        "participant-added": "Participatn(s) Added",
         "required-fields": "Please fill out all required fields",
-        "select-destination-group": "Select a destination group"
+        "select-destination-group": "Select a destination group",
+        "visitor-remove": "Visitor Removed"
       },
       "name": "Name",
       "none-assigned": "No groups assigned.",
@@ -749,6 +754,7 @@
       "actions": {
         "add-account": "Add Account",
         "add-participant": "Add a Participant",
+        "add-visitor": "Add Visitor",
         "assign-roles": "Assign Roles",
         "edit": "Edit Person",
         "new": "New Person",
@@ -988,6 +994,7 @@
         "email": "Enviar correo electr\u00f3nico",
         "remove": "Retirar",
         "settings": "Ajustes",
+        "take-attendance": "Tomar la asistencia",
         "unarchive": "Desarchivar"
       },
       "view-active": "Ver Activo",
@@ -1459,7 +1466,8 @@
         "messages": {
           "move-person-will-cause-cycle": "Mover a esta persona provocar\u00e1 un ciclo en la jerarqu\u00eda de liderazgo",
           "no-email": "La persona no tiene una direcci\u00f3n de correo electr\u00f3nico.",
-          "person-in-destination-group": "La persona ya est\u00e1 en el grupo de destino."
+          "person-in-destination-group": "La persona ya est\u00e1 en el grupo de destino.",
+          "unarchive-group-will-cause-cycle": "Desarchivar este grupo provocar\u00e1 un ciclo en la jerarqu\u00eda de liderazgo"
         },
         "move": "Moverse",
         "title": "Acciones por lotes",
@@ -1550,7 +1558,8 @@
         },
         "email-dialog-footnote": "Haga clic en el c\u00edrculo para seleccionar la opci\u00f3n de respuesta",
         "email-reply-to": "Responder a",
-        "title": "Miembros"
+        "title": "Miembros",
+        "title-visitor": "visitantes"
       },
       "messages": {
         "already-exists": "El grupo ya existe",
@@ -1598,8 +1607,10 @@
         "members-moved": "Miembros movidos exitosamente",
         "members-updated": "Miembros actualizados con \u00e9xito",
         "no-remaining-members": "Ning\u00fan miembro restante",
+        "participant-added": "Participaci\u00f3n (es) a\u00f1adida (s)",
         "required-fields": "Por favor llene todos los campos requeridos",
-        "select-destination-group": "Seleccione un grupo de destino"
+        "select-destination-group": "Seleccione un grupo de destino",
+        "visitor-remove": "Visitante eliminada"
       },
       "name": "Nombre",
       "none-assigned": "No hay grupos asignados.",
@@ -1679,6 +1690,7 @@
       "actions": {
         "add-account": "A\u00f1adir cuenta",
         "add-participant": "A\u00f1adir Part\u00edcipe",
+        "add-visitor": "A\u00f1adir visitante",
         "assign-roles": "Asigne Papeles",
         "edit": "Editar persona",
         "new": "Persona Nueva",
@@ -1918,6 +1930,7 @@
         "email": "\u53d1\u7535\u5b50\u90ae\u4ef6",
         "remove": "\u53bb\u6389",
         "settings": "\u8bbe\u5b9a\u503c",
+        "take-attendance": "\u8bb0\u5f55\u51fa\u5e2d",
         "unarchive": "\u53d6\u6d88\u5b58\u6863"
       },
       "view-active": "\u67e5\u770b\u6d3b\u52a8",
@@ -2389,7 +2402,8 @@
         "messages": {
           "move-person-will-cause-cycle": "\u79fb\u52a8\u6b64\u4eba\u5c06\u5bfc\u81f4\u9886\u5bfc\u5c42\u7684\u5faa\u73af",
           "no-email": "\u8be5\u4eba\u6ca1\u6709\u7535\u5b50\u90ae\u4ef6\u5730\u5740",
-          "person-in-destination-group": "\u8be5\u4eba\u5df2\u7ecf\u5728\u76ee\u7684\u5730\u7ec4\u4e2d"
+          "person-in-destination-group": "\u8be5\u4eba\u5df2\u7ecf\u5728\u76ee\u7684\u5730\u7ec4\u4e2d",
+          "unarchive-group-will-cause-cycle": "\u53d6\u6d88\u5f52\u6863\u6b64\u56e2\u961f\u5c06\u5bfc\u81f4\u9886\u5bfc\u5c42\u7684\u5faa\u73af"
         },
         "move": "\u79fb\u52a8",
         "title": "\u6279\u5904\u7406\u52a8\u4f5c",
@@ -2480,7 +2494,8 @@
         },
         "email-dialog-footnote": "\u70b9\u51fb\u5708\u5b50\u4ee5\u9009\u62e9\u56de\u590d\u9009\u9879",
         "email-reply-to": "\u56de\u590d\u5230",
-        "title": "\u4f1a\u5458"
+        "title": "\u4f1a\u5458",
+        "title-visitor": "\u8bbf\u5ba2"
       },
       "messages": {
         "already-exists": "\u7fa4\u7ec4\u5df2\u7ecf\u5b58\u5728",
@@ -2528,8 +2543,10 @@
         "members-moved": "\u6210\u529f\u79fb\u52a8\u6210\u5458",
         "members-updated": "\u6210\u529f\u66f4\u65b0\u6210\u5458",
         "no-remaining-members": "\u6ca1\u6709\u5269\u4f59\u6210\u5458",
+        "participant-added": "\u5df2\u6dfb\u52a0\u7528\u6237",
         "required-fields": "\u8bf7\u586b\u5199\u6240\u6709\u5fc5\u586b\u5b57\u6bb5",
-        "select-destination-group": "\u9009\u62e9\u76ee\u7684\u5730\u7fa4\u7ec4"
+        "select-destination-group": "\u9009\u62e9\u76ee\u7684\u5730\u7fa4\u7ec4",
+        "visitor-remove": "\u8bbf\u5ba2\u5df2\u79fb\u9664"
       },
       "name": "\u540d\u79f0",
       "none-assigned": "\u672a\u5206\u914d\u7ec4\u3002",
@@ -2609,6 +2626,7 @@
       "actions": {
         "add-account": "\u65b0\u589e\u5e10\u6237",
         "add-participant": "\u6dfb\u52a0\u53c2\u4e0e\u8005",
+        "add-visitor": "\u6dfb\u52a0\u8bbf\u5ba2",
         "assign-roles": "\u5206\u914d\u89d2\u8272",
         "edit": "\u7f16\u8f91\u4eba",
         "new": "\u65b0\u4eba",

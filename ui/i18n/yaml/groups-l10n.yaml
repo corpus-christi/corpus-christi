@@ -371,6 +371,10 @@ groups:
         en-US: Moving this person will cause a cycle in leadership hierarchy
         es-EC: Mover a esta persona provocará un ciclo en la jerarquía de liderazgo
         zh-CN: 移动此人将导致领导层的循环
+      unarchive-group-will-cause-cycle:
+        en-US: Unarchiving this group will cause a cycle in leadership hierarchy
+        es-EC: Desarchivar este grupo provocará un ciclo en la jerarquía de liderazgo
+        zh-CN: 取消归档此团队将导致领导层的循环
   tooltips:
     move:
       en-US: Move to Another Group
