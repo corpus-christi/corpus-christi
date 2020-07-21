@@ -43,7 +43,13 @@ A user `u` is a _Group Overseer_ of group `g` if and only if `g` is among `u`'s
 _all sub-nodes_.  
 
 A node `gp` is a _grandparent-node_ of `n`, if `gp` is the immediate super-node
-of some `pn`, where `pn` is an immediate super-node of `n`.
+of some `pn`, where `pn` is an immediate super-node of `n`.  
+
+The _relative nodes_ of a node is the union of its _all sub-nodes_ and _all
+super-nodes_.
+
+Two nodes are _detached_ if and only if they don't have any common _relative
+nodes_, including themselves.
 
 The diagram below illustrates some of the key terminologies.
 
@@ -96,7 +102,9 @@ digraph G {
 See [here](https://renenyffenegger.ch/notes/tools/Graphviz/examples/index) for
 some sample graphs and their corresponding code.  
 
-After editing, perform the reverse process (you can use python's `urllib.parse.quote` to do this) and append the graph after the `?` in the url. The graph should be rendered properly.
+After editing, perform the reverse process (you can use python's
+`urllib.parse.quote` to do this) and append the graph after the `?` in the url.
+The graph should be rendered properly.
 
 </details>
 
