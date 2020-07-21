@@ -1,4 +1,11 @@
 {
+  "en-EC": {
+    "groups": {
+      "treeview": {
+        "show-linegraph": "Mostrar gr\u00e1fico de l\u00edneas"
+      }
+    }
+  },
   "en-US": {
     "$vuetify": {
       "dataIterator": {
@@ -1871,6 +1878,13 @@
       "required": "Necesario"
     }
   },
+  "es_EC": {
+    "actions": {
+      "tooltips": {
+        "take-attendance": "Tomar la asistencia"
+      }
+    }
+  },
   "zh-CN": {
     "$vuetify": {
       "dataIterator": {
@@ -2805,6 +2819,13 @@
         "required": "\u9700\u8981"
       },
       "required": "\u9700\u8981"
+    }
+  },
+  "zh_CN": {
+    "actions": {
+      "tooltips": {
+        "take-attendance": "\u8bb0\u5f55\u51fa\u5e2d"
+      }
     }
   }
 }

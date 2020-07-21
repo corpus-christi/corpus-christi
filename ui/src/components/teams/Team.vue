@@ -33,23 +33,27 @@
     <v-toolbar>
       <v-toolbar-title>{{ $t("teams.members.title") }}</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-text-field
-        v-model="search"
-        append-icon="search"
-        v-bind:label="$t('actions.search')"
-        single-line
-        hide-details
-      ></v-text-field>
-      <v-spacer></v-spacer>
-      <v-btn
-        color="primary"
-        raised
-        v-on:click="activateNewParticipantDialog"
-        data-cy="add-team-member"
-      >
-        <v-icon dark left>add</v-icon>
-        {{ $t("teams.members.add") }}
-      </v-btn>
+      <template v-slot:activator="{ on }">
+        <v-text-field
+          v-model="search"
+          append-icon="search"
+          v-bind:label="$t('actions.search')"
+          single-line
+          hide-details
+          v-on="on"
+        ></v-text-field>
+        <v-spacer></v-spacer>
+        <v-btn
+          color="primary"
+          raised
+          v-on:click="activateNewParticipantDialog"
+          data-cy="add-team-member"
+          v-on="on"
+        >
+          <v-icon dark left>add</v-icon>
+          {{ $t("teams.members.add") }}
+        </v-btn>
+      </template>
     </v-toolbar>
     <v-data-table
       :rows-per-page-items="rowsPerPageItem"
@@ -70,7 +74,7 @@
             <v-tooltip bottom>
               <v-btn
                 icon
-                outline
+                outlined
                 small
                 color="primary"
                 slot="activator"
@@ -86,7 +90,7 @@
             <v-tooltip bottom v-if="!props.item.active">
               <v-btn
                 icon
-                outline
+                outlined
                 small
                 color="primary"
                 slot="activator"

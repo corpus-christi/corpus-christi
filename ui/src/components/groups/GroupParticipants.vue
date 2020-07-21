@@ -132,6 +132,7 @@
       :loading="tableLoading"
       @click:row="handleRowClick"
       class="elevation-1"
+      :footer-props='{itemsPerPageText: $t("$vuetify.dataTable.rowsPerPageText")}'
     >
       <template v-slot:header.data-table-select>
         <v-simple-checkbox
@@ -180,6 +181,7 @@
           <span>{{ action.tooltipText }}</span>
         </v-tooltip>
       </template>
+      <template v-slot:footer.page-text="items"> {{ items.pageStart }} - {{ items.pageStop }} of {{ items.itemsLength }} </template>
     </v-data-table>
 
     <!-- Archive dialog -->

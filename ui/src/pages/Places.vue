@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-tabs color="transparent" slider-color="accent">
+    <v-tabs color="primary" slider-color="accent">
       <v-tab ripple data-cy="places-table-tab">
         {{ $t("places.address.address") }}
       </v-tab>

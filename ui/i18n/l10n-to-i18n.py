@@ -23,7 +23,6 @@ def read_yaml(file_name):
 
 def convert_to_vue_i18n_map(i10n_map, vue_i18n_map={}):
     """Convert l10n map to vue-i18n map.
-
     If vue_i18n is not None, combine new entries with existing map.
     """
     intermediate = []
