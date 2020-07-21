@@ -59,6 +59,7 @@
           </v-select>
         </v-flex>
         <v-flex shrink>
+        <!-- TODO: What is suppsoed to show? Get error message after click the switch-->
           <v-switch
             hide-details
             v-model="viewPast"

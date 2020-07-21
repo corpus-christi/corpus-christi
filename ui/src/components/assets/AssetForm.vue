@@ -36,7 +36,7 @@
       <v-spacer></v-spacer>
       <v-btn
         color="primary"
-        outline
+        outlined
         v-on:click="addAnother"
         v-if="editMode === false"
         :loading="addMoreLoading"
