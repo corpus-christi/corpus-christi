@@ -2,36 +2,41 @@
   <div>
     <v-toolbar>
       <v-row no-gutters align="center" justify="space-between" fill-height>
-        <v-col md="3" class="text-no-wrap">
+        <v-col cols="3" class="text-no-wrap">
           <v-toolbar-title v-if="!select">{{ title }}</v-toolbar-title>
           <v-toolbar-title v-else>{{ selectionOption.title }}</v-toolbar-title>
         </v-col>
-        <v-col v-if="select" class="shrink">
-          <v-tooltip bottom
-            ><template v-slot:activator="{ on }"
-              ><v-btn v-on:click="resetSelection" v-on="on" fab text>
-                <v-icon dark>close</v-icon>
-              </v-btn></template
-            >
-            {{ $t("actions.cancel") }}
-          </v-tooltip>
-          <v-tooltip bottom
-            ><template v-slot:activator="{ on }"
-              ><v-btn
-                :disabled="!selectedSome"
-                :loading="selectionLoading"
-                color="primary"
-                raised
-                v-on:click="proceedSelection(selectionOption.callback)"
-                v-on="on"
-                fab
+        <template v-if="select">
+          <v-spacer />
+          <v-col class="shrink">
+            <v-tooltip bottom
+              ><template v-slot:activator="{ on }"
+                ><v-btn v-on:click="resetSelection" v-on="on" fab text>
+                  <v-icon dark>close</v-icon>
+                </v-btn></template
               >
-                <v-icon dark>forward</v-icon>
-              </v-btn></template
-            >
-            {{ $t("actions.confirm") }}
-          </v-tooltip>
-        </v-col>
+              {{ $t("actions.cancel") }}
+            </v-tooltip>
+          </v-col>
+          <v-col class="shrink">
+            <v-tooltip bottom
+              ><template v-slot:activator="{ on }"
+                ><v-btn
+                  :disabled="!selectedSome"
+                  :loading="selectionLoading"
+                  color="primary"
+                  raised
+                  v-on:click="proceedSelection(selectionOption.callback)"
+                  v-on="on"
+                  fab
+                >
+                  <v-icon dark>forward</v-icon>
+                </v-btn></template
+              >
+              {{ $t("actions.confirm") }}
+            </v-tooltip>
+          </v-col>
+        </template>
         <template v-if="!select">
           <v-col md="2">
             <v-text-field
