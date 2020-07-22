@@ -132,10 +132,13 @@
       :loading="tableLoading"
       @click:row="handleRowClick"
       class="elevation-1"
-      :footer-props='{itemsPerPageText: $t("$vuetify.dataTable.rowsPerPageText")}'
+      :footer-props="{
+        itemsPerPageText: $t('$vuetify.dataTable.rowsPerPageText'),
+      }"
     >
       <template v-slot:header.data-table-select>
         <v-simple-checkbox
+          :ripple="false"
           color="primary"
           :value="selectedAll"
           :indeterminate="selectedIndeterminate"
@@ -149,6 +152,7 @@
           <template v-slot:activator="{ on }">
             <span class="d-inline-block" v-on="on">
               <v-simple-checkbox
+                :ripple="false"
                 @click.stop="toggleSelect(props)"
                 color="primary"
                 :value="props.isSelected"
@@ -181,7 +185,9 @@
           <span>{{ action.tooltipText }}</span>
         </v-tooltip>
       </template>
-      <template v-slot:footer.page-text="items"> {{ items.pageStart }} - {{ items.pageStop }} of {{ items.itemsLength }} </template>
+      <template v-slot:footer.page-text="items">
+        {{ items.pageStart }} - {{ items.pageStop }} of {{ items.itemsLength }}
+      </template>
     </v-data-table>
 
     <!-- Archive dialog -->
@@ -266,7 +272,7 @@
     </v-dialog>
 
     <!-- Email dialog -->
-    <v-dialog v-model="emailDialog.show" max-width="700px">
+    <v-dialog eager v-model="emailDialog.show" max-width="700px">
       <email-form
         :initialData="emailDialog.initialData"
         @sent="hideEmailDialog"

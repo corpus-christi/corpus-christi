@@ -147,6 +147,7 @@
                 >
                   <v-list-item-action>
                     <v-simple-checkbox
+                      :ripple="false"
                       :value="entitySelected(entity)"
                       @click.stop="toggleEntitySelection(entity)"
                     ></v-simple-checkbox>
