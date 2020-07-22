@@ -127,27 +127,26 @@ describe("Test case 1, a valid hierarchy structure", () => {
   });
 
   test("getTree cycle handling", () => {
+    let p1: HierarchyNode = new Participant(
+      { person: personMap[1], active: true },
+      groupMap
+    );
+    let g1: HierarchyNode = new Group(groupMap[1], groupMap);
     let rootNode: GraphNode;
     // get a tree branching down from Person 1
-    rootNode = getTree(
-      new Participant({ person: personMap[1], active: true }, groupMap)
-    );
+    rootNode = getTree(p1);
     expect(rootNode.children.length).toBe(3);
     let gng1: GraphNode | undefined = rootNode.children.find((graphNode) =>
-      graphNode.hierarchyNode.equal(new Group(groupMap[1], groupMap))
+      graphNode.hierarchyNode.equal(g1)
     );
     // expect Group 1 to be in Person1's children
     expect(gng1).not.toBeUndefined();
     let gnp1: GraphNode | undefined = gng1!.children.find((graphNode) =>
-      graphNode.hierarchyNode.equal(
-        new Participant({ person: personMap[1], active: true }, groupMap)
-      )
+      graphNode.hierarchyNode.equal(p1)
     );
-    // expect Person 1 to be in Group1's children
-    // (because Person 1 is both a manager and member of Group 1)
-    expect(gnp1).not.toBeUndefined();
-    // expect no more children in gnp1 to prevent infinite recursion
-    expect(gnp1!.children.length).toBe(0);
+    // expect Person 1 is not rendered again under Group 1
+    // (even though Person 1 is both a manager and member of Group 1)
+    expect(gnp1).toBeUndefined();
   });
 
   test("map function on GraphNode", () => {

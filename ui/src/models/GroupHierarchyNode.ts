@@ -372,9 +372,6 @@ export function getTree(
   const rootNode = dfs(
     node,
     (node: HierarchyNode, parentPath: HierarchyNode[]) => {
-      if (parentPath.length >= 2 && parentPath[1].equal(node)) {
-        return []; // prevent infinite loop from immediate cycle caused by manager-member double identity
-      }
       if (
         parentPath.length > 2 &&
         parentPath
@@ -387,7 +384,10 @@ export function getTree(
           parentPath
         );
       }
-      return node[superNodes ? "getSuperNodes" : "getSubNodes"]();
+      let parentNode: HierarchyNode | undefined = parentPath[0];
+      return node[superNodes ? "getSuperNodes" : "getSubNodes"]().filter(
+        (hn) => !(parentNode && parentNode.equal(hn))
+      );
     }
   );
   return rootNode;
