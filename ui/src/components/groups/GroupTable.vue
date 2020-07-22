@@ -196,7 +196,7 @@
     </v-data-table>
 
     <!-- New/Edit dialog -->
-    <v-dialog v-model="groupDialog.show" max-width="500px" persistent>
+    <v-dialog eager v-model="groupDialog.show" max-width="500px" persistent>
       <group-form
         v-bind:editMode="groupDialog.editMode"
         v-bind:initialData="groupDialog.group"
@@ -234,7 +234,12 @@
     </v-dialog>
 
     <!-- Split Group Dialog -->
-    <v-dialog v-model="splitGroupDialog.show" max-width="1300px" persistent>
+    <v-dialog
+      eager
+      v-model="splitGroupDialog.show"
+      max-width="1300px"
+      persistent
+    >
       <split-group-form
         @cancel="hideSplitGroupDialog"
         @success="handleSplitGroupSuccess"
