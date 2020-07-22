@@ -249,10 +249,16 @@ describe("Test case 1, a valid hierarchy structure", () => {
     );
     expect(isRootNode(p8)).toBe(true);
 
-    // g2 is not a rootNode, because p1 is above g2,
-    // and among p1's supernodes, g2 is not the only one
+    // g2 is not a rootNode, because p1 is its parent but not its child
     let g2: Group = new Group(groupMap[2], groupMap);
     expect(isRootNode(g2)).toBe(false);
+
+    // p5 is not a rootNode, because g2 is its parent but not its child
+    let p5: Participant = new Participant(
+      { person: personMap[5], active: true },
+      groupMap
+    );
+    expect(isRootNode(p5)).toBe(false);
   });
 });
 

@@ -438,15 +438,14 @@ export function getInfoTree(
 
 /* checks whether a node is a root node
  * a root node <r> is a node that either:
- * 1. does not have any super-node, or
- * 2. each of its immediate super-nodes <s> satisfies the constraint that <r> is the only super-node of <s>,
- * in other words, <r> and only <r> appears again at depth 2 from the original <r>,
- * caused by the manager/member double identity */
+ *   does not have any super-node, or
+ *   its every 'immediate super-node' is also its 'immediate sub-node'.
+ */
 export function isRootNode(node: HierarchyNode): boolean {
   let immediateSuperNodes = node.getSuperNodes();
-  for (let immediateSuperNode of immediateSuperNodes) {
-    let grandSuperNodes = immediateSuperNode.getSuperNodes();
-    if (!(grandSuperNodes.length === 1 && grandSuperNodes[0].equal(node))) {
+  let immediateSubNodes = node.getSubNodes();
+  for (let supernode of immediateSuperNodes) {
+    if (!immediateSubNodes.some((subnode) => subnode.equal(supernode))) {
       return false;
     }
   }
