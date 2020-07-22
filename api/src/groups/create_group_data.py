@@ -253,9 +253,13 @@ def create_multiple_manager_types(sqla, n):
     sqla.add_all(new_manager_types)
     sqla.commit()
 
-def create_hierarchical_groups_and_participants(sqla):
-    """Create hardcoded groups and members and managers that represents
-    a valid leadership hierarchy. Assumes existing group types and manager types"""
+def create_hierarchical_groups_and_participants(sqla, group_members, group_managers):
+    """Create hardcoded groups and members and managers that represents a valid
+    leadership hierarchy. Assumes existing group types and manager types both
+    group_members and group_managers are lists of two-element tuples in the
+    form of [group_id, person_id].
+    """
+
     group_type_id = sqla.query(GroupType).first().id
     manager_type_id = sqla.query(ManagerType).first().id
     person_schema = PersonSchema()
@@ -263,9 +267,11 @@ def create_hierarchical_groups_and_participants(sqla):
     member_schema = MemberSchema()
     manager_schema = ManagerSchema()
 
+    max_person_id = max([ pair[1] for pair in group_members + group_managers ])
+    max_group_id = max([ pair[0] for pair in group_members + group_managers ])
     # create people
     people = []
-    for i in range(1, 10):
+    for i in range(1, max_person_id + 1):
         person_name = f"Person{i}"
         person = Person(**person_schema.load(person_object_factory(person_name)))
         sqla.add(person)
@@ -274,7 +280,7 @@ def create_hierarchical_groups_and_participants(sqla):
 
     # create groups
     groups = []
-    for i in range(1, 10):
+    for i in range(1, max_group_id + 1):
         group_name = f"Group{i}"
         group = Group(**group_schema.load(
             group_object_factory(group_type_id, name=group_name, active=True)))
@@ -282,9 +288,31 @@ def create_hierarchical_groups_and_participants(sqla):
         groups.append(group)
         print(group)
     sqla.commit()
+    print(people)
+    print(groups)
 
     # create members: (groupIdx, personIdx)
-    for groupIdx, personIdx in [
+    for group_id, person_id in group_members:
+        member = Member(**member_schema.load(member_object_factory(
+            person_id,
+            group_id)))
+        sqla.add(member)
+        print(member)
+
+    # create managers: (groupIdx, personIdx)
+    for group_id, person_id in group_managers:
+        manager = Manager(**manager_schema.load(manager_object_factory(
+            person_id,
+            group_id,
+            manager_type_id)))
+        sqla.add(manager)
+        print(manager)
+
+    sqla.commit()
+
+# Create test data that is used in front-end testing 
+def create_hierarchy_test_case_1(sqla):
+    group_members = [
             [1, 1],
             [1, 3],
             [1, 4],
@@ -294,40 +322,47 @@ def create_hierarchical_groups_and_participants(sqla):
             [3, 2],
             [4, 2],
             [9, 9]
-            ]:
-        member = Member(**member_schema.load(
-            member_object_factory(people[personIdx-1].id, groups[groupIdx-1].id)))
-        sqla.add(member)
-        print(member)
-
-    # create managers: (groupIdx, personIdx)
-    for groupIdx, personIdx in [ 
-            [1, 1], 
-            [2, 1], 
-            [3, 1], 
-            [4, 6], 
+            ]
+    group_managers = [
+            [1, 1],
+            [2, 1],
+            [3, 1],
+            [4, 6],
             [9, 8]
-            ]:
-        manager = Manager(**manager_schema.load(manager_object_factory(
-            people[personIdx-1].id, 
-            groups[groupIdx-1].id, 
-            manager_type_id)))
-        sqla.add(manager)
-        print(manager)
+            ]
+    create_hierarchical_groups_and_participants(
+            sqla,
+            group_members,
+            group_managers)
 
-    sqla.commit()
-
+def create_hierarchy_test_case_2(sqla):
+    group_members = [
+            [1, 1],
+            [2, 3],
+            ];
+    group_managers = [
+            [2, 1],
+            [1, 2],
+            [1, 3],
+            ];
+    create_hierarchical_groups_and_participants(
+            sqla,
+            group_members,
+            group_managers
+            )
 
 def create_group_test_data(sqla):
     """The function that creates test data in the correct order """
     create_multiple_group_types(sqla, 5)
     create_multiple_manager_types(sqla, 5)
 
-    # testing leadership hierarchy functionality
-    create_hierarchical_groups_and_participants(sqla)
-    # create_multiple_groups(sqla, 10)
-    # create_multiple_managers(sqla, 0.75)
-    # create_multiple_members(sqla, 0.75)
+    # # create leadership hierarchy data
+    # create_hierarchy_test_case_2(sqla)
+
+    # create faker data
+    create_multiple_groups(sqla, 10)
+    create_multiple_managers(sqla, 0.75)
+    create_multiple_members(sqla, 0.75)
 
     create_multiple_meetings(sqla, 12)
     create_multiple_attendance(sqla, 0.75)

@@ -266,11 +266,11 @@ describe("Test case 2, a tree that contains cycle", () => {
   beforeAll(() => {
     let groupMembers = [
       [1, 1],
-      [1, 2],
       [2, 3],
     ];
     let groupManagers = [
       [2, 1],
+      [1, 2],
       [1, 3],
     ];
     ({ groupMap, personMap } = getMap(groupMembers, groupManagers));
