@@ -276,7 +276,6 @@ def create_hierarchical_groups_and_participants(sqla, group_members, group_manag
         person = Person(**person_schema.load(person_object_factory(person_name)))
         sqla.add(person)
         people.append(person)
-        print(person)
 
     # create groups
     groups = []
@@ -286,10 +285,7 @@ def create_hierarchical_groups_and_participants(sqla, group_members, group_manag
             group_object_factory(group_type_id, name=group_name, active=True)))
         sqla.add(group)
         groups.append(group)
-        print(group)
     sqla.commit()
-    print(people)
-    print(groups)
 
     # create members: (groupIdx, personIdx)
     for group_id, person_id in group_members:
