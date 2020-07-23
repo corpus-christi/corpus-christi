@@ -199,7 +199,7 @@ export default {
             this.cycleError.node = err.node;
             this.cycleError.path = err.path;
             eventBus.$emit("error", {
-              content: this.$t("groups.treeview.unexpected-cycle"),
+              content: "groups.treeview.unexpected-cycle",
             });
           } else {
             throw err;

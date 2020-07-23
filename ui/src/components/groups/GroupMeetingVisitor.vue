@@ -281,19 +281,19 @@ export default {
             .put(`/api/v1/groups/meetings/${meetingId}/attendances/${personId}`)
             .then(() => {
               eventBus.$emit("message", {
-                content: this.$t("groups.messages.participant-added"),
+                content: "groups.messages.participant-added",
               });
             })
             .catch((err) => {
               console.log(err);
               eventBus.$emit("error", {
-                content: this.$t("events.participants.error-adding"),
+                content: "events.participants.error-adding",
               });
             })
             .then(() => this.refreshFetchMeeting());
         } else {
           eventBus.$emit("error", {
-            content: this.$t("events.participants.error-adding"),
+            content: "events.participants.error-adding",
           });
         }
       }
@@ -306,7 +306,7 @@ export default {
         .delete(`/api/v1/groups/meetings/${meetingId}/attendances/${person.id}`)
         .then(() => {
           eventBus.$emit("message", {
-            content: this.$t("groups.messages.visitor-remove"),
+            content: "groups.messages.visitor-remove",
           });
         })
         .then(() => this.refreshFetchMeeting());

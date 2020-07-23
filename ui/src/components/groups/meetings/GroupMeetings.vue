@@ -503,7 +503,7 @@ export default {
         .post(`/api/v1/groups/meetings`, meeting)
         .then(() => {
           eventBus.$emit("message", {
-            content: this.$t("groups.messages.meeting-added"),
+            content: "groups.messages.meeting-added",
           });
           this.meetingDialog.saveLoading = false;
           this.meetingDialog.show = false;
@@ -513,7 +513,7 @@ export default {
           console.log(err);
           this.meetingDialog.saveLoading = false;
           eventBus.$emit("error", {
-            content: this.$t("groups.messages.error-adding-meeting"),
+            content: "groups.messages.error-adding-meeting",
           });
         });
     },
@@ -545,7 +545,7 @@ export default {
       Promise.all(promises)
         .then(() => {
           eventBus.$emit("message", {
-            content: this.$t("groups.messages.members-added"),
+            content: "groups.messages.members-added",
           });
           this.addAttendanceDialog.loading = false;
           this.addAttendanceDialog.show = false;
@@ -556,7 +556,7 @@ export default {
           console.log(err);
           this.addAttendanceDialog.loading = false;
           eventBus.$emit("error", {
-            content: this.$t("groups.messages.error-adding-members"),
+            content: "groups.messages.error-adding-members",
           });
         });
     },
@@ -602,7 +602,7 @@ export default {
           this.deleteDialog.show = false;
           this.people.splice(idx, 1);
           eventBus.$emit("message", {
-            content: this.$t("events.participants.removed"),
+            content: "events.participants.removed",
           });
         })
         .catch((err) => {
@@ -610,7 +610,7 @@ export default {
           this.deleteDialog.loading = false;
           this.deleteDialog.show = false;
           eventBus.$emit("error", {
-            content: this.$t("events.participants.error-removing"),
+            content: "events.participants.error-removing",
           });
         });
     },
@@ -660,7 +660,7 @@ export default {
           this.archiveDialog.loading = false;
           this.archiveDialog.show = false;
           eventBus.$emit("message", {
-            content: this.$t("groups.messages.meeting-archived"),
+            content: "groups.messages.meeting-archived",
           });
         })
         .catch((err) => {
@@ -668,7 +668,7 @@ export default {
           this.archiveDialog.loading = false;
           this.archiveDialog.show = false;
           eventBus.$emit("error", {
-            content: this.$t("groups.messages.error-archiving-meeting"),
+            content: "groups.messages.error-archiving-meeting",
           });
         });
     },
@@ -686,7 +686,7 @@ export default {
           this.archiveAttendanceDialog.loading = false;
           this.archiveAttendanceDialog.show = false;
           eventBus.$emit("message", {
-            content: this.$t("groups.messages.attendance-archived"),
+            content: "groups.messages.attendance-archived",
           });
         })
         .catch((err) => {
@@ -694,7 +694,7 @@ export default {
           this.archiveAttendanceDialog.loading = false;
           this.archiveAttendanceDialog.show = false;
           eventBus.$emit("error", {
-            content: this.$t("groups.messages.error-archiving-attendance"),
+            content: "groups.messages.error-archiving-attendance",
           });
         });
     },
@@ -710,13 +710,13 @@ export default {
           console.log("UNARCHIVED", resp);
           Object.assign(this.meetings[idx], resp.data);
           eventBus.$emit("message", {
-            content: this.$t("groups.messages.meeting-unarchived"),
+            content: "groups.messages.meeting-unarchived",
           });
         })
         .catch((err) => {
           console.error("UNARCHIVE FALURE", err.response);
           eventBus.$emit("error", {
-            content: this.$t("groups.messages.error-unarchiving-meeting"),
+            content: "groups.messages.error-unarchiving-meeting",
           });
         });
     },

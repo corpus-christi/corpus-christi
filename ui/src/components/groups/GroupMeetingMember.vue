@@ -133,14 +133,14 @@ export default {
           )
           .then(() => {
             eventBus.$emit("message", {
-              content: this.$t("groups.messages.participant-added"),
+              content: "groups.messages.participant-added",
             });
             this.allMeetingAttendance();
           })
           .catch((err) => {
             console.log(err);
             eventBus.$emit("error", {
-              content: this.$t("events.participants.error-adding"),
+              content: "events.participants.error-adding",
             });
           });
       }
@@ -161,14 +161,14 @@ export default {
               )
               .then(() => {
                 eventBus.$emit("message", {
-                  content: this.$t("groups.messages.participant-added"),
+                  content: "groups.messages.participant-added",
                 });
                 this.allMeetingAttendance();
               })
               .catch((err) => {
                 console.log(err);
                 eventBus.$emit("error", {
-                  content: this.$t("events.participants.error-adding"),
+                  content: "events.participants.error-adding",
                 });
               });
           }
