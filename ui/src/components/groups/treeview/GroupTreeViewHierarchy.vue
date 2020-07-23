@@ -22,9 +22,21 @@
             :color="node.equal(cycleError.node) ? 'error' : 'primary'"
             :class="i % 2 ? 'text-right' : ''"
           >
-            <v-icon v-if="node.nodeType === 'Group'">people</v-icon>
-            <v-icon v-else>person</v-icon>
-            {{ node.toHumanReadable() }}
+            <span v-if="node.nodeType === 'Group'">
+              <v-icon>people</v-icon>
+              <router-link
+                :to="{
+                  name: 'group-details',
+                  params: { group: node.getObject().id },
+                }"
+              >
+                {{ node.toHumanReadable() }}
+              </router-link>
+            </span>
+            <span v-else>
+              <v-icon>person</v-icon>
+              {{ node.toHumanReadable() }}
+            </span>
           </v-timeline-item>
         </v-timeline>
       </v-card-text>
@@ -185,9 +197,9 @@ export default {
           if (err instanceof HierarchyCycleError) {
             this.cycleError.show = true;
             this.cycleError.node = err.node;
-            this.cycleError.path = err.path.reverse();
+            this.cycleError.path = err.path;
             eventBus.$emit("error", {
-              content: err.message,
+              content: this.$t("groups.treeview.unexpected-cycle"),
             });
           } else {
             throw err;
