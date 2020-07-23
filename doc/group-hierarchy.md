@@ -51,6 +51,15 @@ super-nodes_.
 Two nodes are _detached_ if and only if they don't have any common _relative
 nodes_, including themselves.
 
+A _path_ is a sequence of nodes, where each preceding node is an _immediate
+super-node_ of the node following it. The _length_ of a path is the number of
+nodes contained in the path.
+
+A _cycle_ in the leadership hierarchy occurs when a node becomes a _sub-node_
+or a _super-node_ of itself __through a _path_ (excluding itself on both ends)
+of non-repeated nodes with a _length_ of 3 or above__. For more clarification
+on the bolded part, see the [edge case section](#edge-cases).
+
 The diagram below illustrates some of the key terminologies.
 
 ![Terminology-illustration](https://g.gravizo.com/svg?digraph%20G%20%0A%7B%20%0A%20%20%20%20edge%20%5Bfontcolor%3Dsienna%5D%3B%0A%20%20%20%20subgraph%20cluster_1%20%7B%20%0A%20%20%20%20%20%20%20%20G1%3B%0A%20%20%20%20%20%20%20%20fontcolor%3Dgrey%3B%0A%20%20%20%20%20%20%20%20color%3Dgrey%3B%0A%20%20%20%20%20%20%20%20label%3D%22Parent-node%20of%20Person%201%2C%5CnGrandparent-node%20of%20Group%202%20and%20Group%203.%22%3B%0A%20%20%20%20%7D%0A%20%20%20%20subgraph%20cluster_0%20%7B%20%0A%20%20%20%20%20%20%20%20G2%3B%0A%20%20%20%20%20%20%20%20G3%3B%0A%20%20%20%20%20%20%20%20fontcolor%3Dgrey%3B%0A%20%20%20%20%20%20%20%20color%3Dgrey%3B%0A%20%20%20%20%20%20%20%20label%3D%22Child-node%20of%20Person%201%2C%5CnGrandchild-node%20of%20Group%201%22%3B%0A%20%20%20%20%20%20%20%20labelloc%3Db%3B%0A%20%20%20%20%7D%20%0A%20%20%20%20G1%20-%3E%20P1%20%5Blabel%3D%22has%20member%22%5D%3B%0A%20%20%20%20P1%20-%3E%20G2%20%5Blabel%3D%22is%20manager%20of%22%5D%3B%0A%20%20%20%20P1%20-%3E%20G3%3B%0A%20%20%20%20G1%20%5Blabel%3D%22Group%201%22%3B%20xlabel%3D%22Group%20Node%22%5D%3B%0A%20%20%20%20G2%20%5Blabel%3D%22Group%202%22%3B%20xlabel%3D%22Group%20Node%22%5D%3B%0A%20%20%20%20G3%20%5Blabel%3D%22Group%203%22%5D%3B%0A%20%20%20%20P1%20%5Bshape%3Drectangle%3B%0A%20%20%20%20label%3D%22Person%201%22%3B%0A%20%20%20%20xlabel%3D%22Participant%20Node%22%5D%3B%0A%7D%0A)
@@ -131,13 +140,17 @@ attendance, etc.) are granted based on the _Group Overseer_ role of the user.
 
 ## Cycle Prevention
 
-Currently, the `GroupParticipants` component checks and prevents the user from
-performing the following actions if the action introduces a cycle in the
-leadership hierarchy:
+Currently, the following components check and prevent the user from performing
+certain actions if the action introduces a cycle in the leadership hierarchy:
+
+### `GroupParticipants`
 
 -   adding a participant
 -   moving a participant to another group
 -   reactivating an archived participant
+
+### `GroupTable`
+
 -   reactivating an archived group
 
 ## Hierarchy Treeview
@@ -163,6 +176,41 @@ shown but not expanded.
 
 Not implemented
 
+## Cycle Handling
+
+Although the system tries to prevent the user from creating cycles, there is
+nevertheless a possibility for cycles to exist in hierarchy structure, either
+through direct insertions into the database, or through some unhandled edge
+cases. The system implements the following mechanisms to handle unexpected
+cycles.
+
+### Error Notification 
+
+Unexpected cycles will trigger an error message to the user upon detection.
+
+### Cycle Display
+
+When the user navigates to the `GroupTreeViewHierarchy` page, a path containing
+the cycle will be displayed instead of the normal hierarchy treeview, giving
+the user more information about the cycle that is present in the current
+hierarchy, and prompting the user to resolve the cycle.
+
+![cycle-display](images/group-hierarchy-cycle-display.png)
+
+In the above example, there is a cycle involving user "Jason Richardson,"
+because it becomes its own _super-node_ through the _path_ containing 3
+non-repeated nodes "Illness Support," "Dalia Moya," and "Grief Share."
+
+The administrator can, for example, remove "Jason Richardson" from the members
+of group "Grief Share," to resolve the cycle.
+
+Note, however, that the Cycle Display will only be rendered when the cycle is
+linked to at least one _root node_. Due to implementation, when non of the
+nodes in the cycle is, or is connected to a _root node_ (see [this
+case](#disallowed-case-1:-repeated-node-through-different-nodes), for example),
+the rendered hierarchy tree will render a tree normally, silently ignoring
+those nodes, without displaying the cycling path.
+
 # Edge Cases
 
 ## Manager-member double identity
@@ -172,7 +220,7 @@ the hierarchy system permits the following linkage to be made, where "Person 1"
 is both a manager and a member of "Group 1." The following examples illustrate
 this idea.
 
-### Allowed Case: double identity
+### Allowed Case 1: double identity
 ![double-identity-case-1](https://g.gravizo.com/svg?digraph%20G%20%7B%0A%20%20%20%20G1a%20%5Blabel%3DGroup1%5D%3B%0A%20%20%20%20P1%20%5Blabel%3DPerson1%3B%20color%3Dred%3B%20shape%3Drectangle%5D%3B%0A%20%20%20%20G1b%20%5Blabel%3DGroup1%5D%3B%0A%20%20%20%20G1a%20-%3E%20P1%3B%0A%20%20%20%20P1%20-%3E%20G1b%3B%0A%7D%0A)
 
 #### Logical Equivalences
@@ -185,7 +233,7 @@ this idea.
 ![double-identity-case-1-tree](https://g.gravizo.com/svg?digraph%20G%20%7B%0A%20%20%20%20Admin%20-%3E%20G1%20-%3E%20P1a%3B%0A%20%20%20%20Admin%20-%3E%20P1%20-%3E%20G1a%3B%0A%20%20%20%20Admin%20%5Bshape%3Ddiamond%5D%3B%0A%20%20%20%20P1%20%5Blabel%3DPerson1%2C%20shape%3Drectangle%2C%20color%3Dred%5D%3B%0A%20%20%20%20P1a%20%5Blabel%3DPerson1%2C%20shape%3Drectangle%2C%20color%3Dred%5D%3B%0A%20%20%20%20G1%20%5Blabel%3DGroup1%5D%3B%0A%20%20%20%20G1a%20%5Blabel%3DGroup1%5D%3B%0A%7D%0A)
 
 
-### Allowed Case: multiple people with double identity
+### Allowed Case 2: multiple people with double identity
 ![double-identity-case-4](https://g.gravizo.com/svg?digraph%20G%20%7B%0A%20%20%20%20P1%20-%3E%20G2%20-%3E%20P2%20-%3E%20G1%3B%0A%20%20%20%20G1%20-%3E%20P2%20-%3E%20G2%20-%3E%20P1%3B%0A%20%20%20%20P1%20%5Blabel%3DPerson1%2C%20shape%3Drectangle%2C%20color%3Dred%5D%3B%0A%20%20%20%20P2%20%5Blabel%3DPerson2%2C%20shape%3Drectangle%2C%20color%3Dblue%5D%3B%0A%20%20%20%20G1%20%5Blabel%3DGroup1%5D%3B%0A%20%20%20%20G2%20%5Blabel%3DGroup2%2C%20color%3Dgreen%5D%3B%0A%7D%0A)
 
 #### Rendered tree
@@ -195,7 +243,7 @@ this idea.
 Note that all of the nodes are considered _root node_ s in this case, being
 appended under the "Admin" node.
 
-### Disallowed Case: Repeated node through different nodes
+### Disallowed Case 1: Repeated node through different nodes
 
 ![double-identity-case-5](https://g.gravizo.com/svg?digraph%20G%20%7B%0A%20%20%20%20G2a%20-%3E%20P1%20-%3E%20G1%20-%3E%20P2%20-%3E%20G2b%0A%20%20%20%20P1%20%5Blabel%3DPerson1%2C%20shape%3Drectangle%2C%20color%3Dred%5D%3B%0A%20%20%20%20P2%20%5Blabel%3DPerson2%2C%20shape%3Drectangle%2C%20color%3Dblue%5D%3B%0A%20%20%20%20G1%20%5Blabel%3DGroup1%5D%3B%0A%20%20%20%20G2a%2C%20G2b%20%5Blabel%3DGroup2%2C%20color%3Dgreen%5D%3B%0A%7D%0A)
 
