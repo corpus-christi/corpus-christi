@@ -673,9 +673,9 @@ export default {
     },
   },
   methods: {
-    duplicate(item){
+    duplicate(item) {
       console.log(item);
-    //ToDo--  This functionality is missing
+      //ToDo--  This functionality is missing
     },
     activatePlaceDialog(places = {}, editMode = false) {
       this.placeDialog.title = editMode
