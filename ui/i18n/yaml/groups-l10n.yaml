@@ -276,7 +276,7 @@ groups:
       zh-CN: 显示所有群组
     show-linegraph:
       en-US: Show Line Graph
-      en-EC: Mostrar gráfico de líneas
+      es-EC: Mostrar gráfico de líneas
       zh-CN: 显示折线图
     show-list:
       en-US: Show Group List

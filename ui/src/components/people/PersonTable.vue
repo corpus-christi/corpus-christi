@@ -52,7 +52,6 @@
       :loading="!tableLoaded"
       class="elevation-1"
       data-cy="person-table"
-      :footer-props='{itemsPerPageText: $t("$vuetify.dataTable.rowsPerPageText")}'
     >
       <template slot="items" slot-scope="props">
         <tr>
@@ -140,7 +139,6 @@
         </td>
         </tr>
       </template>
-      <template v-slot:footer.page-text="items"> {{ items.pageStart }} - {{ items.pageStop }} of {{ items.itemsLength }} </template>
     </v-data-table>
 
     <v-snackbar v-model="snackbar.show">

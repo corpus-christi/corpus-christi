@@ -1,14 +1,11 @@
 {
-  "en-EC": {
-    "groups": {
-      "treeview": {
-        "show-linegraph": "Mostrar gr\u00e1fico de l\u00edneas"
-      }
-    }
-  },
   "en-US": {
     "$vuetify": {
+      "dataFooter": {
+        "pageText": "{0}-{1} of {2}"
+      },
       "dataIterator": {
+        "loadingText": "Loading items...",
         "nextPage": "Next page",
         "noResultsText": "No matching records found",
         "pageText": "{0}-{1} of {2}",
@@ -17,7 +14,7 @@
         "rowsPerPageText": "Items per page:"
       },
       "dataTable": {
-        "rowsPerPageText": "Rows per page:"
+        "itemsPerPageText": "Rows per page:"
       },
       "noDataText": "No data available"
     },
@@ -932,7 +929,11 @@
   },
   "es-EC": {
     "$vuetify": {
+      "dataFooter": {
+        "pageText": "{0}-{1} de {2}"
+      },
       "dataIterator": {
+        "locadingText": "Cargando art\u00edculos ...",
         "nextPage": "Siguiente p\u00e1gina",
         "noResultsText": "No se encontraron registros coincidentes",
         "pageText": "{0}-{1} de {2}",
@@ -941,7 +942,7 @@
         "rowsPerPageText": "Art\u00edculos por p\u00e1gina:"
       },
       "dataTable": {
-        "rowsPerPageText": "Filas por p\u00e1gina:"
+        "itemsPerPageText": "Filas por p\u00e1gina:"
       },
       "noDataText": "Datos no disponibles"
     },
@@ -989,6 +990,7 @@
         "email": "Enviar correo electr\u00f3nico",
         "remove": "Retirar",
         "settings": "Ajustes",
+        "take-attendance": "Tomar la asistencia",
         "unarchive": "Desarchivar"
       },
       "view-active": "Ver Activo",
@@ -1628,6 +1630,7 @@
         "expand": "Expandir",
         "select-placeholder": "Seleccionar grupos para realizar acciones ...",
         "show-all": "Mostrar todos los grupos",
+        "show-linegraph": "Mostrar gr\u00e1fico de l\u00edneas",
         "show-list": "Mostrar lista de grupos",
         "show-managers": "Mostrar solo gerentes",
         "show-members": "Mostrar solo miembros",
@@ -1852,16 +1855,13 @@
       "required": "Necesario"
     }
   },
-  "es_EC": {
-    "actions": {
-      "tooltips": {
-        "take-attendance": "Tomar la asistencia"
-      }
-    }
-  },
   "zh-CN": {
     "$vuetify": {
+      "dataFooter": {
+        "pageText": "{0}-{1} \u7684 {2}"
+      },
       "dataIterator": {
+        "locadingText": "\u52a0\u8f7d\u6570\u636e",
         "nextPage": "\u4e0b\u4e00\u9875",
         "noResultsText": "\u672a\u80fd\u627e\u5230\u5339\u914d\u7684\u8bb0\u5f55",
         "pageText": "{2}\u4e2d\u7684{0}-{1}",
@@ -1870,7 +1870,7 @@
         "rowsPerPageText": "\u6bcf\u9875\u9879\u76ee\uff1a"
       },
       "dataTable": {
-        "rowsPerPageText": "\u6bcf\u9875\u884c\u6570\uff1a"
+        "itemsPerPageText": "\u6bcf\u9875\u884c\u6570\uff1a"
       },
       "noDataText": "\u65e0\u53ef\u7528\u6570\u636e"
     },
@@ -1918,6 +1918,7 @@
         "email": "\u53d1\u7535\u5b50\u90ae\u4ef6",
         "remove": "\u53bb\u6389",
         "settings": "\u8bbe\u5b9a\u503c",
+        "take-attendance": "\u8bb0\u5f55\u51fa\u5e2d",
         "unarchive": "\u53d6\u6d88\u5b58\u6863"
       },
       "view-active": "\u67e5\u770b\u6d3b\u52a8",
@@ -2780,13 +2781,6 @@
         "required": "\u9700\u8981"
       },
       "required": "\u9700\u8981"
-    }
-  },
-  "zh_CN": {
-    "actions": {
-      "tooltips": {
-        "take-attendance": "\u8bb0\u5f55\u51fa\u5e2d"
-      }
     }
   }
 }
