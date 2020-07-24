@@ -1,22 +1,22 @@
 <template>
   <div>
     <v-toolbar class="pa-1">
-      <v-layout align-center justify-space-between fill-height>
-        <v-flex md3>
+      <v-row no-gutters align="center" justify="space-between" fill-height>
+        <v-col md="3">
           <v-toolbar-title>{{
             $t("groups.members.title-visitor")
           }}</v-toolbar-title>
-        </v-flex>
-      </v-layout>
-      <v-flex md2> </v-flex>
+        </v-col>
+      </v-row>
+      <v-col md="2"> </v-col>
       <v-spacer></v-spacer>
-      <v-flex>
+      <v-col>
         <v-btn color="primary" raised v-on:click.stop="newVisitor">
           <v-icon dark left>person_add</v-icon>
           {{ $t("person.actions.add-visitor") }}
         </v-btn>
-      </v-flex>
-      <v-flex>
+      </v-col>
+      <v-col>
         <v-btn
           class="ma-2"
           outlined
@@ -27,7 +27,7 @@
         >
           <v-icon>search</v-icon>
         </v-btn>
-      </v-flex>
+      </v-col>
     </v-toolbar>
     <v-data-table
       v-model="selected"
@@ -42,8 +42,8 @@
           <td>{{ props.item.firstName }}</td>
           <td>{{ props.item.lastName }}</td>
           <td>
-              <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
                 <v-btn
                   icon
                   outlined
@@ -56,9 +56,9 @@
                 >
                   <v-icon small>delete_outline</v-icon>
                 </v-btn>
-                </template>
-                <span>{{ $t("actions.tooltips.remove") }}</span>
-              </v-tooltip>
+              </template>
+              <span>{{ $t("actions.tooltips.remove") }}</span>
+            </v-tooltip>
           </td>
         </tr>
       </template>
@@ -257,7 +257,8 @@ export default {
         this.people = resp.data;
       });
     },
-    refreshFetchMeeting() { //working
+    refreshFetchMeeting() {
+      //working
       const meetingId = this.$route.params.meeting;
       this.$http
         .get(`/api/v1/groups/meetings/${meetingId}`)

@@ -14,9 +14,7 @@ let course = "course: Energy.";
 
 describe("Get more details on a course", () => {
   it("Click into details of course", () => {
-    cy.get("tbody")
-      .contains(course)
-      .click();
+    cy.get("tbody").contains(course).click();
     cy.url().should("include", "/courses/9");
   });
 });
@@ -25,9 +23,7 @@ let section = "Testing";
 
 describe("Get more section details on a course", () => {
   it("Click into details of a section", () => {
-    cy.get("tbody")
-      .contains(section)
-      .click();
+    cy.get("tbody").contains(section).click();
     cy.url().should("include", "/courses/9/offering/30/details");
   });
 });

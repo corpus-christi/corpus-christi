@@ -19,9 +19,7 @@ describe("Edit courses", () => {
     ).click();
   });
   it("change course title", () => {
-    cy.get("[data-cy=course-form-name]")
-      .clear()
-      .type("Alone low investment");
+    cy.get("[data-cy=course-form-name]").clear().type("Alone low investment");
   });
   it("save changes", () => {
     cy.get("[data-cy=course-editor-actions] > .primary").click();

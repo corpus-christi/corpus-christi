@@ -3,8 +3,8 @@
 
 //Tests adding people to the people page
 
-describe("Ensures the Add-person works", function() {
-  it("Given: logs in, navigates to people page", function() {
+describe("Ensures the Add-person works", function () {
+  it("Given: logs in, navigates to people page", function () {
     cy.login();
     cy.get("[data-cy=toggle-nav-drawer]").click();
     cy.get("[data-cy=people]").click();
@@ -17,12 +17,8 @@ describe("Ensures the Add-person works", function() {
     cy.get("[data-cy=last-name]").type("Cola"); //last name
     cy.get("[data-cy=radio-gender]").within(() => {
       //Enters the gender radio button field
-      cy.get(".v-label")
-        .last()
-        .click(); //Female
-      cy.get(".v-label")
-        .first()
-        .click(); //Male
+      cy.get(".v-label").last().click(); //Female
+      cy.get(".v-label").first().click(); //Male
     });
     cy.get("[data-cy=show-birthday-picker]").click(); //open birthday picker
     cy.get(":nth-child(3) > :nth-child(5) > .v-btn > .v-btn__content").click(); //select birthday
@@ -34,9 +30,7 @@ describe("Ensures the Add-person works", function() {
     });
     //cy.scrollTo(0, 50);
     cy.get('[style=""] > .v-stepper__wrapper > .layouts').within(() => {
-      cy.get("[data-cy=next]")
-        .eq(1)
-        .click();
+      cy.get("[data-cy=next]").eq(1).click();
     });
     cy.get('form > :nth-child(2) > [style=""]').within(() => {
       cy.get("[data-cy=save]").click();
@@ -80,9 +74,7 @@ describe("Tests the add-person form to ensure proper functionality", () => {
     cy.get(
       ":nth-child(6) > .v-input__control > .v-text-field__details"
     ).contains("válido");
-    cy.get("[data-cy=email]")
-      .clear()
-      .type("testEmail@gmail.com");
+    cy.get("[data-cy=email]").clear().type("testEmail@gmail.com");
     cy.get("[data-cy=first-name]").click();
     cy.get(":nth-child(6) > .v-input__control > .v-text-field__details").should(
       "not.contain",
@@ -94,9 +86,7 @@ describe("Tests the add-person form to ensure proper functionality", () => {
     });
     //cy.scrollTo(0, 50);
     cy.get('[style=""] > .v-stepper__wrapper > .layouts').within(() => {
-      cy.get("[data-cy=next]")
-        .eq(1)
-        .click();
+      cy.get("[data-cy=next]").eq(1).click();
     });
     cy.get('form > :nth-child(2) > [style=""]').within(() => {
       cy.get("[data-cy=save]").click();
@@ -116,15 +106,13 @@ describe("Tests the add-person form to ensure proper functionality", () => {
       '[style=""] > .v-stepper__wrapper > :nth-child(2) > .v-input__control > .v-text-field__details > .v-messages'
     ).should("not.contain", "obligatorio");
   });
-  it("Finally: Fields should be valid before add another is allowed to work & after pressed, fields should be cleared", function() {
+  it("Finally: Fields should be valid before add another is allowed to work & after pressed, fields should be cleared", function () {
     cy.get('form > :nth-child(2) > [style=""]').within(() => {
       cy.get("[data-cy=next]").click();
     });
     //cy.scrollTo(0, 50);
     cy.get('[style=""] > .v-stepper__wrapper > .layouts').within(() => {
-      cy.get("[data-cy=next]")
-        .eq(1)
-        .click();
+      cy.get("[data-cy=next]").eq(1).click();
     });
     cy.get('form > :nth-child(2) > [style=""]').within(() => {
       cy.get("[data-cy=add-another]").click();
@@ -134,9 +122,7 @@ describe("Tests the add-person form to ensure proper functionality", () => {
     cy.get("[data-cy=phone]").should("be.empty");
     cy.get("[data-cy=email]").should("be.empty");
 
-    cy.get("[data-cy=cancel")
-      .first()
-      .click();
+    cy.get("[data-cy=cancel").first().click();
     cy.get(".v-dialog__content--active > .v-dialog").should("not.exist");
   });
 });

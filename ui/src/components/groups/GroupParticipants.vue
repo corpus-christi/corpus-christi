@@ -1,39 +1,44 @@
 <template>
   <div>
     <v-toolbar>
-      <v-layout align-center justify-space-between fill-height>
-        <v-flex md3 class="text-no-wrap">
+      <v-row no-gutters align="center" justify="space-between" fill-height>
+        <v-col cols="3" class="text-no-wrap">
           <v-toolbar-title v-if="!select">{{ title }}</v-toolbar-title>
           <v-toolbar-title v-else>{{ selectionOption.title }}</v-toolbar-title>
-        </v-flex>
-        <v-flex v-if="select" shrink>
-          <v-tooltip bottom
-            ><template v-slot:activator="{ on }"
-              ><v-btn v-on:click="resetSelection" v-on="on" fab text>
-                <v-icon dark>close</v-icon>
-              </v-btn></template
-            >
-            {{ $t("actions.cancel") }}
-          </v-tooltip>
-          <v-tooltip bottom
-            ><template v-slot:activator="{ on }"
-              ><v-btn
-                :disabled="!selectedSome"
-                :loading="selectionLoading"
-                color="primary"
-                raised
-                v-on:click="proceedSelection(selectionOption.callback)"
-                v-on="on"
-                fab
+        </v-col>
+        <template v-if="select">
+          <v-spacer />
+          <v-col class="shrink">
+            <v-tooltip bottom
+              ><template v-slot:activator="{ on }"
+                ><v-btn v-on:click="resetSelection" v-on="on" fab text>
+                  <v-icon dark>close</v-icon>
+                </v-btn></template
               >
-                <v-icon dark>forward</v-icon>
-              </v-btn></template
-            >
-            {{ $t("actions.confirm") }}
-          </v-tooltip>
-        </v-flex>
+              {{ $t("actions.cancel") }}
+            </v-tooltip>
+          </v-col>
+          <v-col class="shrink">
+            <v-tooltip bottom
+              ><template v-slot:activator="{ on }"
+                ><v-btn
+                  :disabled="!selectedSome"
+                  :loading="selectionLoading"
+                  color="primary"
+                  raised
+                  v-on:click="proceedSelection(selectionOption.callback)"
+                  v-on="on"
+                  fab
+                >
+                  <v-icon dark>forward</v-icon>
+                </v-btn></template
+              >
+              {{ $t("actions.confirm") }}
+            </v-tooltip>
+          </v-col>
+        </template>
         <template v-if="!select">
-          <v-flex md2>
+          <v-col md="2">
             <v-text-field
               v-model="search"
               append-icon="search"
@@ -41,8 +46,8 @@
               single-line
               hide-details
             />
-          </v-flex>
-          <v-flex md1>
+          </v-col>
+          <v-col md="1">
             <v-select
               hide-details
               solo
@@ -51,8 +56,8 @@
               v-model="viewStatus"
               data-cy="view-status-select"
             />
-          </v-flex>
-          <v-flex md2>
+          </v-col>
+          <v-col md="2">
             <v-menu open-on-hover offset-y bottom>
               <template v-slot:activator="{ on }">
                 <v-btn color="primary" v-on="on">
@@ -96,8 +101,8 @@
                 </v-list-item>
               </v-list>
             </v-menu>
-          </v-flex>
-          <v-flex shrink justify-self-end>
+          </v-col>
+          <v-col class="shrink" justify="self-end">
             <v-btn
               color="primary"
               raised
@@ -112,9 +117,9 @@
                   : $t("groups.members.add-member")
               }}
             </v-btn>
-          </v-flex>
+          </v-col>
         </template>
-      </v-layout>
+      </v-row>
     </v-toolbar>
     <v-data-table
       v-model="selected"
@@ -125,10 +130,12 @@
       item-key="person.id"
       :search="search"
       :loading="tableLoading"
+      @click:row="handleRowClick"
       class="elevation-1"
     >
       <template v-slot:header.data-table-select>
         <v-simple-checkbox
+          :ripple="false"
           color="primary"
           :value="selectedAll"
           :indeterminate="selectedIndeterminate"
@@ -142,6 +149,7 @@
           <template v-slot:activator="{ on }">
             <span class="d-inline-block" v-on="on">
               <v-simple-checkbox
+                :ripple="false"
                 @click.stop="toggleSelect(props)"
                 color="primary"
                 :value="props.isSelected"
@@ -231,7 +239,7 @@
             multiple
             person
             v-model="participantDialog.persons"
-            :existing-entities="persons"
+            :existing-entities="persons.concat(cyclingPersons)"
             :disabled="participantDialog.editMode"
           />
           <entity-type-form
@@ -258,7 +266,7 @@
     </v-dialog>
 
     <!-- Email dialog -->
-    <v-dialog v-model="emailDialog.show" max-width="700px">
+    <v-dialog eager v-model="emailDialog.show" max-width="700px">
       <email-form
         :initialData="emailDialog.initialData"
         @sent="hideEmailDialog"
@@ -312,6 +320,13 @@ import EmailForm from "../EmailForm";
 import EntityTypeForm from "./EntityTypeForm";
 import { eventBus } from "../../plugins/event-bus.js";
 import { isEmpty } from "lodash";
+import {
+  Group,
+  Participant,
+  checkConnection,
+  HierarchyCycleError,
+  convertToGroupMap,
+} from "../../models/GroupHierarchyNode.ts";
 export default {
   components: { EntitySearch, EmailForm, EntityTypeForm },
   name: "GroupParticipants",
@@ -334,6 +349,9 @@ export default {
       tableLoading: false,
       search: "",
       participants: [],
+      // can we lazy-load the following 2 attributes upon access?
+      allPersons: [],
+      allGroups: [],
       selected: [],
       emailDialog: {
         show: false,
@@ -431,7 +449,7 @@ export default {
         {
           key: "move",
           icon: "low_priority",
-          tooltipText: this.$t("actions.tooltips.move"),
+          tooltipText: this.$t("groups.tooltips.move"),
           show: (item) => item.active,
           clickHandler: (item) => this.showMoveDialog(item),
         },
@@ -446,9 +464,9 @@ export default {
           key: "unarchive",
           icon: "undo",
           tooltipText: this.$t("actions.tooltips.activate"),
-          show: (item) => !item.active,
+          show: (item) => !item.active && !this.isCyclingPerson(item.person),
           clickHandler: (item) => this.unarchiveParticipant(item),
-          loading: (item) => item.id < 0,
+          loading: (item) => item.unarchiving,
         },
       ];
     },
@@ -522,11 +540,35 @@ export default {
     persons() {
       return this.participants.map((m) => m.person);
     },
+    groupMap() {
+      return convertToGroupMap(this.allGroups);
+    },
+    cyclingPersons() {
+      // persons whom, when added as a participant (either manager or member) of the current group,
+      // will create a cycle in the leadership hierarchy
+      if (!Object.prototype.hasOwnProperty.call(this.groupMap, this.id)) {
+        return [];
+      }
+      return this.getCyclingEntities(
+        this.groupMap[this.id],
+        true,
+        this.isManagerMode
+      );
+    },
     selectionArchiveParticipants() {
       return this.activeParticipants;
     },
     selectionUnarchiveParticipants() {
-      return this.inactiveParticipants;
+      return this.inactiveParticipants.map((p) => {
+        let participant = { ...p };
+        if (this.isCyclingPerson(p.person)) {
+          participant.disabled = true;
+          participant.disabledText = this.$t(
+            "groups.batch-actions.messages.activate-person-will-cause-cycle"
+          );
+        }
+        return participant;
+      });
     },
     selectionEmailParticipants() {
       return this.activeParticipants.map((p) => ({
@@ -536,8 +578,6 @@ export default {
       }));
     },
     selectionMoveParticipants() {
-      /* TODO: also filter out movements that will
-      create a cycle in the leadership hierarchy <2020-07-01, David Deng> */
       let destinationGroupPersonIds = this.moveDialog.destinationGroup[
         this.isManagerMode ? "managers" : "members"
       ].map((p) => p.person.id);
@@ -548,7 +588,31 @@ export default {
           participant.disabledText = this.$t(
             "groups.batch-actions.messages.person-in-destination-group"
           );
-        } // else if (moving participant will create cycle) {...}
+        } else {
+          // check whether moving participant will create cycle
+          try {
+            let participantInstance = new Participant(
+              { person: p.person },
+              this.groupMap
+            );
+            let groupInstance = new Group(
+              this.moveDialog.destinationGroup,
+              this.groupMap
+            );
+            this.isManagerMode
+              ? checkConnection(participantInstance, groupInstance)
+              : checkConnection(groupInstance, participantInstance);
+          } catch (err) {
+            if (err instanceof HierarchyCycleError) {
+              participant.disabled = true;
+              participant.disabledText = this.$t(
+                "groups.batch-actions.messages.move-person-will-cause-cycle"
+              );
+            } else {
+              throw err;
+            }
+          }
+        }
         return participant;
       });
       return movableParticipants;
@@ -602,6 +666,14 @@ export default {
             this.isManagerMode ? "managers" : "members"
           ].map((m) => ({ id: m.groupId }))
         );
+        // also exclude groups that will cause a cycle
+        groups = groups.concat(
+          this.getCyclingEntities(
+            this.moveDialog.participant.person,
+            false,
+            this.isManagerMode
+          )
+        );
       }
       return groups;
     },
@@ -610,6 +682,127 @@ export default {
   methods: {
     /************* general ****************/
     isEmpty,
+
+    /************* hierarchy cycle helpers ****************/
+    /* update the local copy of participant with groupId and personId in allGroups and allPersons with 'payload'
+     the main use case is to mark participant as active/inactive after performing a change to reflect the updated hierarchy
+     as an alternative to calling fetchAllGroups and fetchAllPersons again.
+     'action' can be 'patch', 'post', or 'delete' */
+    modifyLocalParticipant(groupId, personId, payload, action = "patch") {
+      let person = this.allPersons.find((person) => person.id === personId);
+      let group = this.allGroups.find((group) => group.id === groupId);
+      let localParticipants = [
+        groupId === this.id ? this.participants : undefined,
+        person ? person.managers : undefined,
+        person ? person.members : undefined,
+        group ? group.managers : undefined,
+        group ? group.members : undefined,
+      ];
+      const personIdFilter = (participant) =>
+        participant.person.id === personId;
+      const groupIdFilter = (participant) => participant.groupId === groupId;
+      let localParticipantsFilter = [
+        personIdFilter,
+        groupIdFilter,
+        groupIdFilter,
+        personIdFilter,
+        personIdFilter,
+      ];
+      for (let i in localParticipants) {
+        let participants = localParticipants[i];
+        if (participants == undefined) {
+          continue;
+        }
+        if (action === "post") {
+          participants.push({ ...payload });
+        } else {
+          // if modifying or deleting existing entities, search for it.
+          let filter = localParticipantsFilter[i];
+          let participantIndex = participants.findIndex(filter);
+          if (participantIndex !== -1) {
+            if (action === "patch") {
+              this.$set(participants, participantIndex, {
+                ...participants[participantIndex],
+                ...payload,
+              });
+            } /* if (action === 'delete')*/ else {
+              participants.splice(participantIndex, 1);
+            }
+          }
+        }
+      }
+      this.$forceUpdate("cyclingPersons");
+    },
+
+    isCyclingPerson(person) {
+      return this.cyclingPersons.map((p) => p.id).includes(person.id);
+    },
+    /* get entities that will cause a cycle when connected to 'subject'
+    'subject' can be a GroupObject or a PersonObject, indicated by 'subjectIsGroup'
+    if 'subject' is a Group, then comparison is made against this.allPersons,
+    if 'subject' is a Person, then comparison is made against this.allGroups.
+    if 'isManagerMode' is true, then each person will be connected to each group as a manager, vise versa.
+    returns a subset of this.allPersons or this.allGroups, depending on the 'subjectIsGroup' option.
+    each returned entry will also contain a 'cyclingNode' and 'cyclingMessage' attribute,
+    describing on which node cycle will occur. */
+    getCyclingEntities(
+      subject,
+      subjectIsGroup = true,
+      isManagerMode = this.isManagerMode
+    ) {
+      let cyclingEntities = [];
+      let comparisonObjects = subjectIsGroup ? this.allPersons : this.allGroups;
+      if (!comparisonObjects || !this.allGroups) {
+        return cyclingEntities; // return when there is no object to compare against, or when groups are not loaded
+      }
+      let subjectInstance = subjectIsGroup
+        ? new Group(subject, this.groupMap)
+        : new Participant({ person: subject }, this.groupMap);
+
+      comparisonObjects
+        .map((obj) =>
+          subjectIsGroup
+            ? new Participant({ person: obj }, this.groupMap)
+            : new Group(obj, this.groupMap)
+        )
+        .forEach((objectInstance) => {
+          try {
+            if (subjectIsGroup) {
+              // subjectInstance is a group, objectInstance is a participant
+              if (isManagerMode) {
+                // make objectInstance a manager of subjectInstance
+                checkConnection(objectInstance, subjectInstance);
+              } else {
+                // make objectInstance a member of subjectInstance
+                checkConnection(subjectInstance, objectInstance);
+              }
+            } else {
+              // subjectInstance is a participant, objectInstance is a group
+              if (isManagerMode) {
+                // make subjectInstance a manager of objectInstance
+                checkConnection(subjectInstance, objectInstance);
+              } else {
+                // make subjectInstance a member of objectInstance
+                checkConnection(objectInstance, subjectInstance);
+              }
+            }
+          } catch (err) {
+            if (err instanceof HierarchyCycleError) {
+              let obj = subjectIsGroup
+                ? objectInstance.getObject().person
+                : objectInstance.getObject();
+              cyclingEntities.push({
+                ...obj,
+                cyclingNode: err.node,
+                cyclingMessage: err.message,
+              });
+            } else {
+              throw err;
+            }
+          }
+        });
+      return cyclingEntities;
+    },
 
     /************* selection helper methods ****************/
     proceedSelection(callback) {
@@ -622,6 +815,9 @@ export default {
     resetSelection() {
       this.selectionMode = "noSelect";
       this.selected = [];
+    },
+    handleRowClick(item, props) {
+      this.toggleSelect(props);
     },
     toggleSelect(props) {
       if (this.select && !props.item.disabled) {
@@ -651,30 +847,31 @@ export default {
       this.participantDialog.show = false;
     },
     confirmParticipantDialog() {
+      let editMode = this.participantDialog.editMode;
       if (editMode && !this.isManagerMode) {
         // ui should hide buttons as appropriate to prevent this case
         console.error("There is nothing to edit for members");
         return;
       }
-      let editMode = this.participantDialog.editMode;
       this.participantDialog.loading = true;
       let payload = {};
       if (this.isManagerMode) {
         payload.managerTypeId = this.participantDialog.participantType.id;
-      if (editMode) {
-        if (!this.isManagerMode) {
-          // ui should hide buttons as appropriate to prevent this case
-          console.error("There is nothing to edit for members");
-          return;
-        }
       }
       this.saveParticipants(
         this.participantDialog.persons,
         editMode ? "patch" : "post",
         payload
       )
-        .then(() => {
-          this.fetchParticipants();
+        .then((resps) => {
+          for (let i in resps) {
+            this.modifyLocalParticipant(
+              this.id,
+              this.participantDialog.persons[i].id,
+              resps[i].data,
+              editMode ? "patch" : "post"
+            );
+          }
           eventBus.$emit("message", {
             content: editMode
               ? this.isManagerMode
@@ -701,8 +898,7 @@ export default {
           this.participantDialog.loading = false;
           this.hideParticipantDialog();
         });
-      }
-      },
+    },
     showEmailDialog(participants) {
       let recipients = participants.map((participant) => ({
         email: participant.person.email,
@@ -746,15 +942,38 @@ export default {
         this.selectionMode = "move";
       }
     },
+
+    /************* api methods ****************/
+    /* add or update the participants associated with current group and each person in 'persons',
+    'method' is a string either being 'patch' or 'post', specifying whether to add or update the participants
+    'payload' is a dictionary specifying additional attributes (e.g. managerTypeId) to be used in the request payload */
+    saveParticipants(persons, method, payload = {}) {
+      let promises = [];
+      let http = this.$http[method];
+      for (let person of persons) {
+        let endpoint =
+          method === "post" ? this.endpoint : `${this.endpoint}/${person.id}`;
+        let body = { ...payload };
+        if (method === "post") {
+          // if adding participants
+          body.personId = person.id;
+        }
+        promises.push(http(endpoint, body, { noErrorSnackBar: true }));
+      }
+      return Promise.all(promises);
+    },
     batchMoveParticipants(participants) {
       return this.saveParticipants(
         participants.map((p) => p.person),
+        "patch",
         {
           groupId: this.moveDialog.destinationGroup.id,
         }
       )
         .then(() => {
           this.fetchParticipants();
+          this.fetchAllPersons();
+          this.fetchAllGroups();
           eventBus.$emit("message", {
             content: this.isManagerMode
               ? "groups.messages.managers-moved"
@@ -770,51 +989,36 @@ export default {
           });
         });
     },
-
-    /************* api methods ****************/
-    /* add or update the participants associated with current group and each person in 'persons',
-    'method' is a string either being 'patch' or 'post', specifying whether to add or update the participants
-    'payload' is a dictionary specifying additional attributes (e.g. managerTypeId) to be used in the request payload */
-    saveParticipants(persons, method, payload = {}) {
-      let promises = [];
-      let http = this.$http[method];
-      let endpoint = this.endpoint;
-      for (let person of persons) {
-        if (method === "post") {
-          // if adding participants
-          payload.personId = person.id;
-        } else if (method === "patch") {
-          // if updating participants
-          endpoint = `${endpoint}/${person.id}`;
-        }
-        promises.push(http(endpoint, payload, { noErrorSnackBar: true }));
-      }
-      return Promise.all(promises);
-    },
     /* archive or unarchive the participants */
     archiveParticipants(participants, unarchive = false) {
-      let promises = [];
       this.archiveDialog.loading = true;
-      for (let participant of participants) {
-        promises.push(
-          this.$http.patch(
-            `${this.endpoint}/${participant.person.id}`,
-            { active: unarchive ? true : false },
-            { noErrorSnackBar: true }
-          )
-        );
-      }
-      return Promise.all(promises)
+      let persons = participants.map((p) => p.person);
+      let payload = { active: unarchive ? true : false };
+      return this.saveParticipants(persons, "patch", payload)
         .then(() => {
-          this.fetchParticipants();
+          persons.forEach((person) => {
+            this.modifyLocalParticipant(this.id, person.id, payload, "patch");
+          });
           eventBus.$emit("message", {
-            content: "groups.messages.member-archived",
+            content: this.isManagerMode
+              ? unarchive
+                ? "groups.messages.manager-unarchived"
+                : "groups.messages.manager-archived"
+              : unarchive
+              ? "groups.messages.member-unarchived"
+              : "groups.messages.member-archived",
           });
         })
         .catch((err) => {
           console.error("PATCH ERROR", err);
           eventBus.$emit("error", {
-            content: "groups.messages.error-archiving-member",
+            content: this.isManagerMode
+              ? unarchive
+                ? "groups.messages.error-unarchiving-manager"
+                : "groups.messages.error-archiving-manager"
+              : unarchive
+              ? "groups.messages.error-unarchiving-member"
+              : "groups.messages.error-archiving-member",
           });
         })
         .finally(() => {
@@ -826,23 +1030,41 @@ export default {
       return this.archiveParticipants(participants, true);
     },
     unarchiveParticipant(participant) {
-      const participantId = participant.id;
-      participant.id = -1; // show loading state
-      this.archiveParticipants([participant], true).finally(() => {
-        participant.id = participantId;
+      participant.unarchiving = true; // show loading state
+      return this.archiveParticipants([participant], true).finally(() => {
+        this.modifyLocalParticipant(
+          this.id,
+          participant.person.id,
+          {
+            unarchiving: undefined,
+          },
+          "patch"
+        );
       });
     },
     fetchParticipants() {
       this.tableLoading = true;
-      this.$http.get(this.endpoint).then((resp) => {
+      return this.$http.get(this.endpoint).then((resp) => {
         this.participants = resp.data;
         console.log(resp.data);
         this.tableLoading = false;
       });
     },
+    fetchAllPersons() {
+      return this.$http.get("api/v1/people/persons").then((resp) => {
+        this.allPersons = resp.data;
+      });
+    },
+    fetchAllGroups() {
+      return this.$http.get("api/v1/groups/groups").then((resp) => {
+        this.allGroups = resp.data;
+      });
+    },
   },
   mounted() {
     this.fetchParticipants();
+    this.fetchAllPersons();
+    this.fetchAllGroups();
   },
 };
 </script>

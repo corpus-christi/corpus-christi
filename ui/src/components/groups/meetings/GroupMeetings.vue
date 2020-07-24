@@ -1,11 +1,11 @@
 <template>
   <div>
     <v-toolbar>
-      <v-flex md3>
+      <v-col md="3">
         <v-toolbar-title>{{ $t("groups.meetings.title") }}</v-toolbar-title>
-      </v-flex>
+      </v-col>
       <v-spacer></v-spacer>
-      <v-flex md2>
+      <v-col md="2">
         <v-text-field
           v-model="search"
           append-icon="search"
@@ -13,9 +13,9 @@
           single-line
           hide-details
         ></v-text-field>
-      </v-flex>
+      </v-col>
       <v-spacer></v-spacer>
-      <v-flex md1>
+      <v-col md="1">
         <v-select
           hide-details
           solo
@@ -25,10 +25,10 @@
           data-cy="view-status-select"
         >
         </v-select>
-      </v-flex>
+      </v-col>
 
       <v-spacer></v-spacer>
-      <v-flex>
+      <v-col>
         <v-btn
           color="primary"
           raised
@@ -38,7 +38,7 @@
           <v-icon dark left>add</v-icon>
           {{ $t("groups.meetings.add-meeting") }}
         </v-btn>
-      </v-flex>
+      </v-col>
     </v-toolbar>
     <v-data-table
       :items-per-page-options="rowsPerPageItem"
@@ -55,57 +55,62 @@
           <td
             class="hover-hand"
             v-on:click="
-                $router.push({
-                  name: 'meeting-members',
-                  params: { meeting: props.item.attendances[0].meetingId },
-                })
-              "
-          >{{ props.item.description }}
+              $router.push({
+                name: 'meeting-members',
+                params: { meeting: props.item.attendances[0].meetingId },
+              })
+            "
+          >
+            {{ props.item.description }}
           </td>
           <td
             class="hover-hand"
             v-on:click="
-                $router.push({
-                  name: 'meeting-members',
-                  params: { meeting: props.item.attendances[0].meetingId },
-                })
-              "
-          >{{ props.item.startTime | formatDate }}
+              $router.push({
+                name: 'meeting-members',
+                params: { meeting: props.item.attendances[0].meetingId },
+              })
+            "
+          >
+            {{ props.item.startTime | formatDate }}
           </td>
           <td
             class="hover-hand"
             v-on:click="
-                $router.push({
-                  name: 'meeting-members',
-                  params: { meeting: props.item.attendances[0].meetingId },
-                })
-              "
-          >{{ props.item.stopTime | formatDate }}
+              $router.push({
+                name: 'meeting-members',
+                params: { meeting: props.item.attendances[0].meetingId },
+              })
+            "
+          >
+            {{ props.item.stopTime | formatDate }}
           </td>
           <td
             class="hover-hand"
             v-on:click="
-                $router.push({
-                  name: 'meeting-members',
-                  params: { meeting: props.item.attendances[0].meetingId },
-                })
-              "
-          >{{ props.item.attendances.length }}
+              $router.push({
+                name: 'meeting-members',
+                params: { meeting: props.item.attendances[0].meetingId },
+              })
+            "
+          >
+            {{ props.item.attendances.length }}
           </td>
           <td
             class="hover-hand"
             v-on:click="
-                $router.push({
-                  name: 'meeting-members',
-                  params: { meeting: props.item.attendances[0].meetingId },
-                })
-              "
-          >{{ props.item.address.address }}
+              $router.push({
+                name: 'meeting-members',
+                params: { meeting: props.item.attendances[0].meetingId },
+              })
+            "
+          >
+            {{ props.item.address.address }}
           </td>
           <td>
             <template v-if="props.item.active">
               <v-tooltip bottom>
-                <template  v-slot:activator="{ on }">
+                <template v-slot:activator="{ on }">
                   <v-btn
                     v-on="on"
                     icon
@@ -145,24 +150,24 @@
             <template v-else>
               <v-tooltip bottom v-if="!props.item.active">
                 <template v-slot:activator="{ on }">
-                <v-btn
-                  v-on="on"
-                  icon
-                  outlined
-                  small
-                  color="primary"
-                  slot="activator"
-                  v-on:click="unarchive(props.item)"
-                  :loading="props.item.id < 0"
-                  data-cy="unarchive"
-                >
-                  <v-icon small>undo</v-icon>
-                </v-btn>
+                  <v-btn
+                    v-on="on"
+                    icon
+                    outlined
+                    small
+                    color="primary"
+                    slot="activator"
+                    v-on:click="unarchive(props.item)"
+                    :loading="props.item.id < 0"
+                    data-cy="unarchive"
+                  >
+                    <v-icon small>undo</v-icon>
+                  </v-btn>
                 </template>
                 <span>{{ $t("actions.tooltips.activate") }}</span>
               </v-tooltip>
             </template>
-        </td>
+          </td>
         </tr>
       </template>
     </v-data-table>
