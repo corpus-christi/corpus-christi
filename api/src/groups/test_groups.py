@@ -8,7 +8,9 @@ from flask import url_for
 from .create_group_data import flip, group_object_factory, \
     create_multiple_groups, member_object_factory, create_multiple_members, meeting_object_factory, \
     create_multiple_meetings, create_multiple_attendance, create_multiple_group_types, create_multiple_manager_types, \
-    group_type_object_factory, manager_type_object_factory, create_multiple_managers
+    group_type_object_factory, manager_type_object_factory, create_multiple_managers, \
+    create_hierarchy_test_case_1
+from .group_hierarchy_helpers import get_all_subgroups
 from .models import Group, GroupType, Member, Meeting, MeetingSchema, Attendance, Manager, ManagerType, ManagerSchema
 from ..images.create_image_data import create_images_groups
 from ..images.create_image_data import create_test_images
@@ -17,7 +19,6 @@ from ..people.test_people import create_multiple_people
 from ..people.models import Person
 from ..places.models import Address, Country
 from ..places.test_places import create_multiple_addresses, create_multiple_areas
-
 
 fake = Faker()
 
@@ -89,7 +90,6 @@ def test_update_group_type(auth_client):
     # THEN we assume the correct content in the database
     assert auth_client.sqla.query(GroupType).filter_by(id=group_type.id).first().name == 'new_name'
 
-
 @pytest.mark.smoke
 def test_delete_group_type(auth_client):
     # GIVEN a database with a number of group_types
@@ -142,7 +142,6 @@ def test_create_invalid_group(auth_client):
     # WHEN expect Not Found response
     assert resp.status_code == 404
 
-
 @pytest.mark.smoke
 def test_read_all_groups(auth_client):
     # GIVEN existing (active and inactive) group
@@ -172,7 +171,6 @@ def test_read_one_group(auth_client):
         assert resp.json['active'] == group.active
         assert resp.json['groupTypeId'] == group.group_type_id
 
-
 @pytest.mark.smoke
 def test_update_group(auth_client):
     # TEST with valid group
@@ -193,7 +191,6 @@ def test_update_group(auth_client):
         assert resp.json['name'] == 'asd'
         assert resp.json['description'] == 'test_descr'
         assert resp.json['active'] == False
-
 
 def test_invalid_update_group(auth_client):
     # Test with invalid group
@@ -294,8 +291,6 @@ def test_subset_groups_descending_ascending(auth_client):
     # Test if the id(s) are in descending order
         assert right == True
 
-
-
 def test_activate_group(auth_client):
     # TEST with activate group
     # GIVEN empty database
@@ -312,7 +307,6 @@ def test_activate_group(auth_client):
                                  json={'active': True})
         # THEN expect active is assigned with True
         assert resp.json['active'] == True
-
 
 def test_deactivate_group(auth_client):
     # TEST with deactivate group
@@ -347,7 +341,6 @@ def test_create_meeting(auth_client):
     # THEN expect the create to run OK
     assert resp.status_code == 201
 
-
 def test_create_invalid_meeting(auth_client):
     # GIVEN an empty database
     # WHEN we create a invalid meeting
@@ -360,8 +353,6 @@ def test_create_invalid_meeting(auth_client):
     json = {'active': True, 'start_time':'-20' })
     # THEN expect error message
     assert resp.status_code == 422
-
-
 
 @pytest.mark.smoke
 def test_read_all_meetings(auth_client):
@@ -376,9 +367,6 @@ def test_read_all_meetings(auth_client):
     meeting = auth_client.sqla.query(Meeting).all()
     # THEN expect the same number of meetings
     assert len(resp.json) == len(meeting)
-
-
-
 
 @pytest.mark.smoke
 def test_read_one_meeting(auth_client):
@@ -396,7 +384,6 @@ def test_read_one_meeting(auth_client):
     #WHEN the meeting doesn't exist
     resp = auth_client.get(url_for('groups.read_one_meeting', meeting_id=111))
     assert resp.status_code == 404
-
 
 @pytest.mark.smoke
 def test_update_meeting(auth_client):
@@ -417,7 +404,6 @@ def test_update_meeting(auth_client):
     #WHEN test deactivate meeting
     resp = auth_client.patch(url_for('groups.read_one_meeting', meeting_id=first_meeting.id), json= {'active': False})
     assert resp.json['active'] == False
-
 
 def test_invalid_update_meeting(auth_client):
     # GIVEN an empty database
@@ -605,7 +591,6 @@ def test_create_attendance(auth_client):
     # THEN expect error 409 message
     assert resp.status_code == 409
 
-
 @pytest.mark.smoke
 def test_read_all_attendances(auth_client):
     # GIVEN an empty database
@@ -656,7 +641,6 @@ def test_delete_attendance(auth_client):
     # THEN expect error message
     assert resp.status_code == 404
 
-
 @pytest.mark.skip
 def test_repr_group(auth_client):
     pass
@@ -694,7 +678,6 @@ def test_add_group_images(auth_client):
         # THEN expect the group to have a single image
         assert len(auth_client.sqla.query(Group).filter_by(id=groups[i].id).first().images) == 1
 
-
 def test_add_group_images_no_exist(auth_client):
     # GIVEN a set of groups and images
     count = random.randint(3, 6)
@@ -715,7 +698,6 @@ def test_add_group_images_no_exist(auth_client):
 
     # THEN expect the group not to be found
     assert resp.status_code == 404
-
 
 def test_add_group_images_already_exist(auth_client):
     # GIVEN a set of groups, images, and group_image relationships
@@ -760,8 +742,6 @@ def test_delete_group_image_no_exist(auth_client):
 
     # THEN expect the requested row to not be found
     assert resp.status_code == 404
-
-
 
 # ---- Manager Type
 
@@ -828,7 +808,6 @@ def test_update_manager_type(auth_client):
     # THEN we assume the correct content in the database
     assert auth_client.sqla.query(ManagerType).filter_by(id=manager_type.id).first().name == 'new_name'
 
-
 @pytest.mark.smoke
 def test_delete_manager_type(auth_client):
     # GIVEN a database with a number of manager_types
@@ -846,8 +825,6 @@ def test_delete_manager_type(auth_client):
     # THEN we assume the number of manager_types in the database to be the correct number
     manager_types = auth_client.sqla.query(ManagerType).all()
     assert len(manager_types) == count - 1
-
-
 
 # ---- Manager: Moved from people module
 
@@ -876,7 +853,6 @@ def test_create_manager(auth_client):
     resp = auth_client.post(url_for('groups.create_manager', group_id = 1), json = {'personId':-1, 'managerTypeId':1, 'active':True})
     # THEN we expect the request to be unprocessable
     assert resp.status_code == 404
-
 
 @pytest.mark.smoke
 def test_create_exist_manager(auth_client):
@@ -908,7 +884,6 @@ def test_read_all_managers(auth_client):
     # THEN we expect the database has the same number of manager_types as we created
     assert number_of_manager == len(resp.json)
 
-
 @pytest.mark.smoke
 def test_read_one_manager(auth_client):
     # GIVEN an empty database
@@ -922,7 +897,6 @@ def test_read_one_manager(auth_client):
     assert resp.status_code == 200
     assert resp.json['personId'] == manager.person_id
 
-
 def test_read_one_manager_invalid(auth_client):
     # GIVEN an empty database
     # WHEN we add in managers
@@ -934,7 +908,6 @@ def test_read_one_manager_invalid(auth_client):
     resp = auth_client.get(url_for('groups.read_one_manager', group_id =manager.group_id, person_id = 2020))
     # THEN we expect the request to be unprocessable
     assert resp.status_code == 404
-
 
 @pytest.mark.smoke
 def test_update_manager(auth_client):
@@ -952,7 +925,6 @@ def test_update_manager(auth_client):
     # THEN we assume the correct status code
     assert resp.status_code == 200
 
-
 def test_update_manager_invalid(auth_client):
     # GIVEN an empty database
     # WHEN we add in managers
@@ -967,9 +939,6 @@ def test_update_manager_invalid(auth_client):
             , json={'active': False})
     assert resp.status_code == 404
 
-
-
-
 @pytest.mark.smoke
 def test_delete_manager(auth_client):
     # GIVEN an empty database
@@ -983,7 +952,6 @@ def test_delete_manager(auth_client):
     resp = auth_client.delete(url_for('groups.delete_manager', group_id =first_manager.group_id, person_id =first_manager.person_id))
     # THEN we assume the correct status code
     assert resp.status_code == 204
-
 
 @pytest.mark.skip
 def test_delete_manager_no_exist(auth_client):
@@ -1000,4 +968,30 @@ def test_create_manager_with_superior(auth_client):
 @pytest.mark.skip
 def test_repr_manager(auth_client):
     pass
+
+def test_get_all_subgroups(auth_client):
+    # GIVEN test case 1 for group hierarchy
+    create_multiple_group_types(auth_client.sqla, 1)
+    create_multiple_manager_types(auth_client.sqla, 1)
+    create_hierarchy_test_case_1(auth_client.sqla)
+
+    # WHEN we get the subgroups of person 1
+    subgroups = get_all_subgroups(1)
+
+    # THEN we assume the correct collection of subgroups
+    assert len(subgroups) == 4
+    assert 9 not in subgroups
+    assert 4 in subgroups
+
+    # WHEN we get the subgroups of person 2
+    subgroups = get_all_subgroups(2)
+
+    # THEN we assume the correct collection of subgroups
+    assert len(subgroups) == 0
+
+    # WHEN we get the subgroups of person 8
+    subgroups = get_all_subgroups(8)
+    # THEN we assume the correct collection of subgroups
+    assert len(subgroups) == 1
+    assert 9 in subgroups
 
