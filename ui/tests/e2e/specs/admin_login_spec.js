@@ -1,17 +1,17 @@
-describe("Admin Login Test", function() {
-  it("GIVEN: Click on Account bubble", function() {
+describe("Admin Login Test", function () {
+  it("GIVEN: Click on Account bubble", function () {
     cy.visit("/");
     cy.get("[data-cy=account-button]").click();
     cy.url().should("include", "/login");
   });
 
-  it("WHEN: Providing correct login credentials", function() {
+  it("WHEN: Providing correct login credentials", function () {
     cy.get("[data-cy=username]").type("Cytest");
     cy.get("[data-cy=password]").type("password");
     cy.get("[data-cy=login]").click();
   });
 
-  it("THEN: URL should have /admin", function() {
+  it("THEN: URL should have /admin", function () {
     cy.url().should("include", "/admin");
   });
 

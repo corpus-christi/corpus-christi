@@ -54,12 +54,8 @@ describe("Testing Editing User Information", () => {
         cy.get(
           ":nth-child(2) > .v-input__control > .v-text-field__details "
         ).should("not.be.empty");
-        cy.get("[data-cy=new-update-password]")
-          .clear()
-          .type("password");
-        cy.get("[data-cy=confirm-password]")
-          .clear()
-          .type("password");
+        cy.get("[data-cy=new-update-password]").clear().type("password");
+        cy.get("[data-cy=confirm-password]").clear().type("password");
         cy.get("[data-cy=confirm-button]").click();
       });
     }

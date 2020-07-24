@@ -41,10 +41,10 @@ def username_factory():
     return f"{fake.pystr(min_chars=5, max_chars=15)}{fake.pyint()}"
 
 
-def person_object_factory():
+def person_object_factory(firstName=None, lastName=None):
     """Cook up a fake person."""
     person = {
-        'lastName': rl_fake().last_name(),
+        'lastName': lastName or rl_fake().last_name(),
         'secondLastName': rl_fake().last_name(),
         'gender': random.choice(('M', 'F')),
         'username': username_factory(), #added these 2 from account, removing personId
@@ -53,8 +53,8 @@ def person_object_factory():
     }
 
     # Make the person's name match their gender.
-    person['firstName'] = rl_fake().first_name_male(
-    ) if person['gender'] == 'M' else rl_fake().first_name_female()
+    person['firstName'] = firstName or (rl_fake().first_name_male(
+    ) if person['gender'] == 'M' else rl_fake().first_name_female())
     person['active'] = True
 
     # These are all optional in the DB. Over time, we'll try all possibilities.

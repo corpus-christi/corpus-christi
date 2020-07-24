@@ -1,6 +1,6 @@
 <template>
-  <v-layout>
-    <v-flex xs12 sm4>
+  <v-row no-gutters>
+    <v-col xs="12" sm="4">
       <v-card>
         <v-card-title primary-title>
           <div>
@@ -25,8 +25,8 @@
           </div>
         </v-card-title>
       </v-card>
-    </v-flex>
-  </v-layout>
+    </v-col>
+  </v-row>
 </template>
 
 <script>

@@ -65,78 +65,78 @@
             {{ props.item.email }}
           </td>
           <td :data-cy="'phone-' + props.item.id">{{ props.item.phone }}</td>
-        <td class="text-no-wrap">
-          <v-tooltip bottom>
-            <template  v-slot:activator="{ on }">
-            <v-btn
-              icon
-              outline
-              small
-              color="primary"
-              slot="activator"
-              v-on:click="editPerson(props.item)"
-              data-cy="edit-person"
-              v-on="on"
-            >
-              <v-icon small>edit</v-icon>
-            </v-btn>
-            <span>{{ $t("actions.edit") }}</span>
-            </template>
-          </v-tooltip>
-          <v-tooltip bottom>
-            <template  v-slot:activator="{ on }">
-            <v-btn
-              icon
-              outline
-              small
-              color="primary"
-              slot="activator"
-              v-on:click="adminPerson(props.item)"
-              data-cy="account-settings"
-              v-on="on"
-            >
-              <v-icon small>settings</v-icon>
-            </v-btn>
-            <span>{{ $t("actions.tooltips.settings") }}</span>
-            </template>
-          </v-tooltip>
-          <v-tooltip bottom>
-            <template  v-slot:activator="{ on }">
-              <v-btn
-                v-if="props.item.active === true"
-                icon
-                outline
-                small
-                color="primary"
-                slot="activator"
-                v-on:click="showConfirmDialog('deactivate', props.item)"
-                data-cy="deactivate-person"
-                v-on="on"
-              >
-                <v-icon small>archive</v-icon>
-              </v-btn>
-              <span>{{ $t("actions.tooltips.archive") }}</span>
-            </template>
-          </v-tooltip>
-          <v-tooltip bottom>
-            <template  v-slot:activator="{ on }">
-            <v-btn
-              v-if="props.item.active === false"
-              icon
-              outline
-              small
-              color="primary"
-              slot="activator"
-              v-on:click="showConfirmDialog('activate', props.item)"
-              data-cy="reactivate-person"
-              v-on="on"
-            >
-              <v-icon small>undo</v-icon>
-            </v-btn>
-            <span>{{ $t("actions.tooltips.activate") }}</span>
-            </template>
-          </v-tooltip>
-        </td>
+          <td class="text-no-wrap">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  icon
+                  outline
+                  small
+                  color="primary"
+                  slot="activator"
+                  v-on:click="editPerson(props.item)"
+                  data-cy="edit-person"
+                  v-on="on"
+                >
+                  <v-icon small>edit</v-icon>
+                </v-btn>
+                <span>{{ $t("actions.edit") }}</span>
+              </template>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  icon
+                  outline
+                  small
+                  color="primary"
+                  slot="activator"
+                  v-on:click="adminPerson(props.item)"
+                  data-cy="account-settings"
+                  v-on="on"
+                >
+                  <v-icon small>settings</v-icon>
+                </v-btn>
+                <span>{{ $t("actions.tooltips.settings") }}</span>
+              </template>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  v-if="props.item.active === true"
+                  icon
+                  outline
+                  small
+                  color="primary"
+                  slot="activator"
+                  v-on:click="showConfirmDialog('deactivate', props.item)"
+                  data-cy="deactivate-person"
+                  v-on="on"
+                >
+                  <v-icon small>archive</v-icon>
+                </v-btn>
+                <span>{{ $t("actions.tooltips.archive") }}</span>
+              </template>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  v-if="props.item.active === false"
+                  icon
+                  outline
+                  small
+                  color="primary"
+                  slot="activator"
+                  v-on:click="showConfirmDialog('activate', props.item)"
+                  data-cy="reactivate-person"
+                  v-on="on"
+                >
+                  <v-icon small>undo</v-icon>
+                </v-btn>
+                <span>{{ $t("actions.tooltips.activate") }}</span>
+              </template>
+            </v-tooltip>
+          </td>
         </tr>
       </template>
     </v-data-table>

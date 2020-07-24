@@ -6,8 +6,8 @@ from faker import Faker
 
 from ..events.models import EventGroup, EventGroupSchema, Event
 from ..groups.models import Manager, ManagerType, Group, GroupType, Meeting, Attendance, Member, ManagerSchema, GroupSchema, MeetingSchema, AttendanceSchema, MemberSchema, GroupTypeSchema, ManagerTypeSchema
-from ..people.models import Person, Role, RoleSchema
-from ..people.test_people import create_multiple_people
+from ..people.models import Person, Role, RoleSchema, PersonSchema
+from ..people.test_people import create_multiple_people, person_object_factory
 from ..places.models import Address
 from ..places.test_places import create_multiple_addresses
 
@@ -33,13 +33,14 @@ def flip():
     return random.choice((True, False))
 
 
-def group_object_factory(group_type_id, name=None):
+def group_object_factory(group_type_id, **attributes):
     """Cook up a fake group."""
     group = {
-        'name': name or rl_fake().word(),
+        'name': rl_fake().word(),
         'description': rl_fake().sentences(nb=1)[0],
         'active': flip(),
-        'groupTypeId': group_type_id
+        'groupTypeId': group_type_id,
+        **attributes
     }
     return group
 
@@ -56,7 +57,7 @@ def meeting_object_factory(group_id, address_id):
             }
     return meeting
 
-def member_object_factory(person_id, group_id, active=True, joined=datetime.date.today()):
+def member_object_factory(person_id, group_id, active=True, joined=fake.date()):
     """Cook up a fake member."""
     member = {
             'personId': person_id,
@@ -129,7 +130,7 @@ def create_multiple_groups(sqla, n):
             "Discovering Your Gifts"
             ]
     group_names = group_name_samples[:n]
-    new_groups = [ Group(**group_schema.load(group_object_factory(random.choice(group_types).id, name))) for name in group_names ]
+    new_groups = [ Group(**group_schema.load(group_object_factory(random.choice(group_types).id, name=name))) for name in group_names ]
     for _ in range(n-len(group_name_samples)):
         new_groups.append(Group(**group_schema.load(group_object_factory(random.choice(group_types).id))))
 
@@ -252,14 +253,82 @@ def create_multiple_manager_types(sqla, n):
     sqla.add_all(new_manager_types)
     sqla.commit()
 
+def create_hierarchical_groups_and_participants(sqla):
+    """Create hardcoded groups and members and managers that represents
+    a valid leadership hierarchy. Assumes existing group types and manager types"""
+    group_type_id = sqla.query(GroupType).first().id
+    manager_type_id = sqla.query(ManagerType).first().id
+    person_schema = PersonSchema()
+    group_schema = GroupSchema()
+    member_schema = MemberSchema()
+    manager_schema = ManagerSchema()
+
+    # create people
+    people = []
+    for i in range(1, 10):
+        person_name = f"Person{i}"
+        person = Person(**person_schema.load(person_object_factory(person_name)))
+        sqla.add(person)
+        people.append(person)
+        print(person)
+
+    # create groups
+    groups = []
+    for i in range(1, 10):
+        group_name = f"Group{i}"
+        group = Group(**group_schema.load(
+            group_object_factory(group_type_id, name=group_name, active=True)))
+        sqla.add(group)
+        groups.append(group)
+        print(group)
+    sqla.commit()
+
+    # create members: (groupIdx, personIdx)
+    for groupIdx, personIdx in [
+            [1, 1],
+            [1, 3],
+            [1, 4],
+            [2, 2],
+            [2, 5],
+            [3, 6],
+            [3, 2],
+            [4, 2],
+            [9, 9]
+            ]:
+        member = Member(**member_schema.load(
+            member_object_factory(people[personIdx-1].id, groups[groupIdx-1].id)))
+        sqla.add(member)
+        print(member)
+
+    # create managers: (groupIdx, personIdx)
+    for groupIdx, personIdx in [ 
+            [1, 1], 
+            [2, 1], 
+            [3, 1], 
+            [4, 6], 
+            [9, 8]
+            ]:
+        manager = Manager(**manager_schema.load(manager_object_factory(
+            people[personIdx-1].id, 
+            groups[groupIdx-1].id, 
+            manager_type_id)))
+        sqla.add(manager)
+        print(manager)
+
+    sqla.commit()
+
 
 def create_group_test_data(sqla):
     """The function that creates test data in the correct order """
     create_multiple_group_types(sqla, 5)
     create_multiple_manager_types(sqla, 5)
-    create_multiple_groups(sqla, 10)
-    create_multiple_managers(sqla, 0.75)
-    create_multiple_members(sqla, 0.75)
+
+    # testing leadership hierarchy functionality
+    create_hierarchical_groups_and_participants(sqla)
+    # create_multiple_groups(sqla, 10)
+    # create_multiple_managers(sqla, 0.75)
+    # create_multiple_members(sqla, 0.75)
+
     create_multiple_meetings(sqla, 12)
     create_multiple_attendance(sqla, 0.75)
 
