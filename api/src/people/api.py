@@ -55,20 +55,18 @@ def create_person():
             request.json['person'][key] = None
 
     try:
-        valid_person = person_schema.load(request.json['person'], partial=True)
+        valid_person = person_schema.load(request.json['person'])
         valid_person_attributes = person_attribute_schema.load(
             request.json['attributesInfo'], many=True)
     except ValidationError as err:
         print(err)
-        #print(valid_person)
         return jsonify(err.messages), 422
 
     new_person = Person(**valid_person)
-  #  db.session.commit()
-    print(new_person)
 
-    public_user_role = db.session.query(Role).filter_by(id=1).first() ##FIXME don't filter by id = 1
-    new_person.roles.append(public_user_role)
+    public_user_role = db.session.query(Role).filter_by(name_i18n='role.public', active=True).first()
+    if public_user_role:
+        new_person.roles.append(public_user_role)
     db.session.add(new_person)
 
     for person_attribute in valid_person_attributes:

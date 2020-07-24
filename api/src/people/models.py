@@ -109,9 +109,6 @@ class PersonSchema(Schema):
             data['password'] = generate_password_hash(data['password'])
         return data
 
-    class Meta:
-        unknown = INCLUDE
-
 
 # ---- Role
 
