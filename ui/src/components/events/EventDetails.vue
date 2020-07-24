@@ -10,7 +10,6 @@
               </v-flex>
               <v-layout xs3 sm3 align-end justify-end>
                 <v-btn
-                  flat
                   color="primary"
                   data-cy="edit-event"
                   v-on:click="editEvent(event)"
@@ -30,7 +29,7 @@
                     <span v-else>{{ $t("events.attendance-none") }}</span>
                     <v-btn
                       icon
-                      outline
+                      outlined
                       small
                       color="primary"
                       data-cy="edit-attendance"
@@ -74,7 +73,6 @@
             <v-card-actions>
               <v-layout justify-space-between wrap>
                 <v-btn
-                  flat
                   ripple
                   color="primary"
                   data-cy="navigate-to-participants"
@@ -144,7 +142,7 @@
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false" data-cy="close-snackbar">
+      <v-btn @click="snackbar.show = false" data-cy="close-snackbar">
         {{ $t("actions.close") }}
       </v-btn>
     </v-snackbar>

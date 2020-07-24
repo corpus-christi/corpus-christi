@@ -2,11 +2,11 @@
   <v-container>
     <v-layout column>
       <v-flex shrink>
-        <v-btn outline color="primary" :to="{ path: '/events/all' }"
+        <v-btn outlined color="primary" :to="{ path: '/events/all' }"
           ><v-icon>arrow_back</v-icon>{{ $t("events.all-events") }}</v-btn
         >
       </v-flex>
-      <v-tabs color="transparent" slider-color="accent">
+      <v-tabs color="primary" slider-color="accent">
         <v-tab ripple :to="{ path: '/event/' + eventId + '/details' }">
           <v-icon>list</v-icon>&nbsp;{{ $t("events.details.title") }}
         </v-tab>

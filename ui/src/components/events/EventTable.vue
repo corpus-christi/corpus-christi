@@ -59,6 +59,7 @@
           </v-select>
         </v-flex>
         <v-flex shrink>
+        <!-- TODO: What is suppsoed to show? Get error message after click the switch-->
           <v-switch
             hide-details
             v-model="viewPast"
@@ -71,104 +72,118 @@
     </v-toolbar>
     <v-data-table
       :headers="headers"
-      :rows-per-page-items="rowsPerPageItem"
+      :items-per-page-options="rowsPerPageItem"
       :items="visibleEvents"
       :search="search"
       :loading="tableLoading"
-      :pagination.sync="paginationInfo"
       must-sort
       class="elevation-1"
+      :options.sync="paginationInfo"
     >
-      <template slot="items" slot-scope="props">
+      <template v-slot:item="props">
         <!-- TODO: Add icons for past, upcoming, etc. -->
-        <td>
-          <v-icon
-            v-if="eventOngoing(props.item)"
-            slot="badge"
-            small
-            justify-space-around
-            color="secondary"
-            >autorenew</v-icon
-          >
-        </td>
-        <td class="hover-hand" v-on:click="navigateToEvent(props.item.id)">
-          <span> {{ props.item.title }}</span>
-        </td>
-        <td class="hover-hand" v-on:click="navigateToEvent(props.item.id)">
-          {{ getDisplayDate(props.item.start) }}
-        </td>
-        <td class="hover-hand" v-on:click="navigateToEvent(props.item.id)">
-          {{ getDisplayLocation(props.item.location) }}
-        </td>
-        <td>
-          <template v-if="props.item.active">
-            <v-tooltip bottom>
-              <v-btn
-                icon
-                outline
-                small
-                color="primary"
-                slot="activator"
-                v-on:click="editEvent(props.item)"
-                data-cy="edit"
-              >
-                <v-icon small>edit</v-icon>
-              </v-btn>
-              <span>{{ $t("actions.edit") }}</span>
-            </v-tooltip>
-            <v-tooltip bottom>
-              <v-btn
-                icon
-                outline
-                small
-                color="primary"
-                slot="activator"
-                v-on:click="duplicate(props.item)"
-                data-cy="duplicate"
-              >
-                <v-icon small>filter_none</v-icon>
-              </v-btn>
-              <span>{{ $t("actions.duplicate") }}</span>
-            </v-tooltip>
-            <v-tooltip bottom>
-              <v-btn
-                icon
-                outline
-                small
-                color="primary"
-                slot="activator"
-                v-on:click="confirmArchive(props.item)"
-                data-cy="archive"
-              >
-                <v-icon small>archive</v-icon>
-              </v-btn>
-              <span>{{ $t("actions.tooltips.archive") }}</span>
-            </v-tooltip>
-          </template>
-          <template v-else>
-            <v-tooltip bottom v-if="!props.item.active">
-              <v-btn
-                icon
-                outline
-                small
-                color="primary"
-                slot="activator"
-                v-on:click="unarchive(props.item)"
-                :loading="props.item.id < 0"
-                data-cy="unarchive"
-              >
-                <v-icon small>undo</v-icon>
-              </v-btn>
-              <span>{{ $t("actions.tooltips.activate") }}</span>
-            </v-tooltip>
-          </template>
-        </td>
+        <tr>
+          <td>
+            <v-icon
+              v-if="eventOngoing(props.item)"
+              slot="badge"
+              small
+              justify-space-around
+              color="secondary"
+              >autorenew</v-icon
+            >
+          </td>
+          <td class="hover-hand" v-on:click="navigateToEvent(props.item.id)">
+            <span> {{ props.item.title }}</span>
+          </td>
+          <td class="hover-hand" v-on:click="navigateToEvent(props.item.id)">
+            {{ getDisplayDate(props.item.start) }}
+          </td>
+          <td class="hover-hand" v-on:click="navigateToEvent(props.item.id)">
+            {{ getDisplayLocation(props.item.location) }}
+          </td>
+          <td>
+            <template v-if="props.item.active">
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    icon
+                    outlined
+                    small
+                    color="primary"
+                    slot="activator"
+                    v-on:click="editEvent(props.item)"
+                    data-cy="edit"
+                    v-on="on"
+                  >
+                    <v-icon small>edit</v-icon>
+                  </v-btn>
+                </template>
+                <span>{{ $t("actions.edit") }}</span>
+              </v-tooltip>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    icon
+                    outlined
+                    small
+                    color="primary"
+                    slot="activator"
+                    v-on:click="duplicate(props.item)"
+                    data-cy="duplicate"
+                    v-on="on"
+                  >
+                    <v-icon small>filter_none</v-icon>
+                  </v-btn>
+                </template>
+                <span>{{ $t("actions.duplicate") }}</span>
+              </v-tooltip>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    icon
+                    outlined
+                    small
+                    color="primary"
+                    slot="activator"
+                    v-on:click="confirmArchive(props.item)"
+                    data-cy="archive"
+                    v-on="on"
+                  >
+                    <v-icon small>archive</v-icon>
+                  </v-btn>
+                </template>
+                <span>{{ $t("actions.tooltips.archive") }}</span>
+              </v-tooltip>
+            </template>
+            <template v-else>
+              <v-tooltip bottom v-if="!props.item.active">
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    icon
+                    outlined
+                    small
+                    color="primary"
+                    slot="activator"
+                    v-on:click="unarchive(props.item)"
+                    :loading="props.item.id < 0"
+                    data-cy="unarchive"
+                    v-on="on"
+                  >
+                    <v-icon small>undo</v-icon>
+                  </v-btn>
+                </template>
+                <span>{{ $t("actions.tooltips.activate") }}</span>
+              </v-tooltip>
+            </template>
+          </td>
+        </tr>
       </template>
     </v-data-table>
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false">
+      <v-btn text @click="snackbar.show = false">
         {{ $t("actions.close") }}
       </v-btn>
     </v-snackbar>
@@ -200,7 +215,7 @@
           <v-btn
             v-on:click="cancelArchive"
             color="secondary"
-            flat
+            text
             data-cy="cancel-archive"
             >{{ $t("actions.cancel") }}</v-btn
           >
@@ -235,9 +250,10 @@ export default {
         { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 },
       ],
       paginationInfo: {
-        sortBy: "start", //default sorted column
+        sortBy: ["start"], //default sorted column
         rowsPerPage: 10,
         page: 1,
+        sortDesc: [true],
       },
       tableLoading: true,
       events: [],
@@ -700,7 +716,7 @@ export default {
           return name;
         }
       }
-      return name;
+      return location.address.address;
     },
 
     navigateToEvent(id) {

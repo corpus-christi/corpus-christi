@@ -41,84 +41,98 @@
     </v-toolbar>
 
     <v-data-table
-      :rows-per-page-items="rowsPerPageItem"
+      :items-per-page-options="rowsPerPageItem"
       :headers="headers"
       :items="visibleAssets"
       :search="search"
       :loading="tableLoading"
       class="elevation-1"
     >
-      <template slot="items" slot-scope="props">
-        <td>{{ props.item.description }}</td>
-        <td>{{ getDisplayLocation(props.item.location) }}</td>
-        <td>
-          <template v-if="props.item.active">
-            <v-tooltip bottom v-if="props.item.active">
-              <v-btn
-                icon
-                outline
-                small
-                color="primary"
-                slot="activator"
-                v-on:click="editAsset(props.item)"
-                data-cy="edit-asset"
-              >
-                <v-icon small>edit</v-icon>
-              </v-btn>
-              <span>{{ $t("actions.edit") }}</span>
-            </v-tooltip>
-            <v-tooltip bottom>
-              <v-btn
-                icon
-                outline
-                small
-                color="primary"
-                slot="activator"
-                v-on:click="duplicate(props.item)"
-              >
-                <v-icon small>filter_none</v-icon>
-              </v-btn>
-              <span>{{ $t("actions.duplicate") }}</span>
-            </v-tooltip>
-            <v-tooltip bottom>
-              <v-btn
-                icon
-                outline
-                small
-                color="primary"
-                slot="activator"
-                v-on:click="confirmArchive(props.item)"
-                data-cy="archive"
-              >
-                <v-icon small>archive</v-icon>
-              </v-btn>
-              <span>{{ $t("actions.tooltips.archive") }}</span>
-            </v-tooltip>
-          </template>
-          <template v-else>
-            <v-tooltip bottom v-if="!props.item.active">
-              <v-btn
-                icon
-                outline
-                small
-                color="primary"
-                slot="activator"
-                v-on:click="unarchive(props.item)"
-                :loading="props.item.unarchiving"
-                data-cy="unarchive"
-              >
-                <v-icon small>undo</v-icon>
-              </v-btn>
-              <span>{{ $t("actions.tooltips.activate") }}</span>
-            </v-tooltip>
-          </template>
-        </td>
+      <template v-slot:item="props">
+        <tr>
+          <td>{{ props.item.description }}</td>
+          <td>{{ getDisplayLocation(props.item.location) }}</td>
+          <td>
+            <template v-if="props.item.active">
+              <v-tooltip bottom v-if="props.item.active">
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    icon
+                    outlined
+                    small
+                    color="primary"
+                    slot="activator"
+                    v-on:click="editAsset(props.item)"
+                    data-cy="edit-asset"
+                    v-on="on"
+                  >
+                    <v-icon small>edit</v-icon>
+                  </v-btn>
+                  <span>{{ $t("actions.edit") }}</span>
+                </template>
+              </v-tooltip>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    icon
+                    outlined
+                    small
+                    color="primary"
+                    slot="activator"
+                    v-on:click="duplicate(props.item)"
+                    v-on="on"
+                  >
+                    <v-icon small>filter_none</v-icon>
+                  </v-btn>
+                  <span>{{ $t("actions.duplicate") }}</span>
+                </template>
+              </v-tooltip>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    icon
+                    outlined
+                    small
+                    color="primary"
+                    slot="activator"
+                    v-on:click="confirmArchive(props.item)"
+                    data-cy="archive"
+                    v-on="on"
+                  >
+                    <v-icon small>archive</v-icon>
+                  </v-btn>
+                  <span>{{ $t("actions.tooltips.archive") }}</span>
+                </template>
+              </v-tooltip>
+            </template>
+            <template v-else>
+              <v-tooltip bottom v-if="!props.item.active">
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    icon
+                    outlined
+                    small
+                    color="primary"
+                    slot="activator"
+                    v-on:click="unarchive(props.item)"
+                    :loading="props.item.unarchiving"
+                    data-cy="unarchive"
+                    v-on="on"
+                  >
+                    <v-icon small>undo</v-icon>
+                  </v-btn>
+                  <span>{{ $t("actions.tooltips.activate") }}</span>
+                </template>
+              </v-tooltip>
+            </template>
+          </td>
+        </tr>
       </template>
     </v-data-table>
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false">
+      <v-btn text @click="snackbar.show = false">
         {{ $t("actions.close") }}
       </v-btn>
     </v-snackbar>

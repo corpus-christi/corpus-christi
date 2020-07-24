@@ -56,7 +56,7 @@
       item-key="id"
       class="elevation-1"
     >
-      <template slot="items" slot-scope="props">
+      <template v-slot:item="props">
         <tr>
           <td>{{ props.item.name }}</td>
           <td>{{ props.item.address }}</td>
@@ -64,84 +64,103 @@
           <td>{{ props.item.latitude }}</td>
           <td>{{ props.item.longitude }}</td>
           <v-tooltip bottom>
-            <v-btn
-              icon
-              outline
-              small
-              color="primary"
-              slot="activator"
-              v-on:click="editPlace(props.item)"
-              data-cy="edit-place"
-            >
-              <v-icon small>edit</v-icon>
-            </v-btn>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                icon
+                outlined
+                small
+                color="primary"
+                slot="activator"
+                v-on:click="editPlace(props.item)"
+                data-cy="edit-place"
+                v-on="on"
+              >
+                <v-icon small>edit</v-icon>
+              </v-btn>
+            </template>
             <span>{{ $t("actions.edit") }}</span>
           </v-tooltip>
           <v-tooltip bottom>
-            <v-btn
-              icon
-              outline
-              small
-              color="primary"
-              slot="activator"
-              v-on:click="duplicate(props.item)"
-              data-cy="duplicate-place"
-            >
-              <v-icon small>filter_none</v-icon>
-            </v-btn>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                icon
+                outlined
+                small
+                color="primary"
+                slot="activator"
+                v-on:click="duplicate(props.item)"
+                data-cy="duplicate-place"
+                v-on="on"
+              >
+                <v-icon small>filter_none</v-icon>
+              </v-btn>
+            </template>
             <span>{{ $t("actions.duplicate") }}</span>
           </v-tooltip>
           <v-tooltip bottom>
-            <v-btn
-              v-if="props.item.active === true"
-              icon
-              outline
-              small
-              color="primary"
-              slot="activator"
-              v-on:click="showConfirmDialog('deactivate', props.item)"
-              data-cy="deactivate-person"
-            >
-              <v-icon small>archive</v-icon>
-            </v-btn>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                v-if="props.item.active === true"
+                icon
+                outlined
+                small
+                color="primary"
+                slot="activator"
+                v-on:click="showConfirmDialog('deactivate', props.item)"
+                data-cy="deactivate-person"
+                v-on="on"
+              >
+                <v-icon small>archive</v-icon>
+              </v-btn>
+            </template>
             <span>{{ $t("actions.tooltips.archive") }}</span>
           </v-tooltip>
           <v-tooltip bottom>
-            <v-btn
-              v-if="props.item.active === false"
-              icon
-              outline
-              small
-              color="primary"
-              slot="activator"
-              v-on:click="showConfirmDialog('activate', props.item)"
-              data-cy="reactivate-person"
-            >
-              <v-icon small>undo</v-icon>
-            </v-btn>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                v-if="props.item.active === false"
+                icon
+                outlined
+                small
+                color="primary"
+                slot="activator"
+                v-on:click="showConfirmDialog('activate', props.item)"
+                data-cy="reactivate-person"
+                v-on="on"
+              >
+                <v-icon small>undo</v-icon>
+              </v-btn>
+            </template>
             <span>{{ $t("actions.tooltips.activate") }}</span>
           </v-tooltip>
+          <!-- TODO what is suppsoed in the expand filed?  Functionality is missing       -->
           <td v-if="!props.expanded">
             <v-tooltip bottom>
-              <v-btn
-                icon
-                slot="activator"
-                @click="props.expanded = !props.expanded"
-              >
-                <v-icon medium>expand_more</v-icon>
-              </v-btn>
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  icon
+                  slot="activator"
+                  @click="props.expanded = !props.expanded"
+                  v-on="on"
+                >
+                  <v-icon medium>expand_more</v-icon>
+                </v-btn>
+              </template>
               <span>{{ $t("places.expand") }}</span>
             </v-tooltip>
           </td>
           <td v-else>
             <v-tooltip bottom>
-              <v-btn
-                icon
-                slot="activator"
-                @click="props.expanded = !props.expanded"
-              >
-                <v-icon medium>expand_less</v-icon>
-              </v-btn>
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  icon
+                  slot="activator"
+                  @click="props.expanded = !props.expanded"
+                  v-on="on"
+                >
+                  <v-icon medium>expand_less</v-icon>
+                </v-btn>
+              </template>
               <span>{{ $t("places.close") }}</span>
             </v-tooltip>
           </td>
@@ -167,7 +186,7 @@
               <v-tooltip bottom>
                 <v-btn
                   icon
-                  outline
+                  outlined
                   small
                   color="primary"
                   slot="activator"
@@ -188,7 +207,7 @@
               <v-tooltip bottom>
                 <v-btn
                   icon
-                  outline
+                  outlined
                   small
                   color="primary"
                   slot="activator"
@@ -208,7 +227,7 @@
               <v-tooltip bottom>
                 <v-btn
                   icon
-                  outline
+                  outlined
                   small
                   color="primary"
                   slot="activator"
@@ -224,7 +243,7 @@
               <v-tooltip bottom>
                 <v-btn
                   icon
-                  outline
+                  outlined
                   small
                   color="primary"
                   slot="activator"
@@ -388,13 +407,13 @@
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn flat color="primary" @click="resetFilters">
+              <v-btn text color="primary" @click="resetFilters">
                 {{ $t("places.address.filters.reset-filters") }}</v-btn
               >
-              <v-btn flat color="secondary" @click="cancelFilterDialog">{{
+              <v-btn text color="secondary" @click="cancelFilterDialog">{{
                 $t("actions.cancel")
               }}</v-btn>
-              <v-btn flat color="primary" @click="applyFilters">
+              <v-btn text color="primary" @click="applyFilters">
                 {{ $t("places.address.filters.apply") }}</v-btn
               >
             </v-card-actions>
@@ -654,6 +673,10 @@ export default {
     },
   },
   methods: {
+    duplicate(item){
+      console.log(item);
+    //ToDo--  This functionality is missing
+    },
     activatePlaceDialog(places = {}, editMode = false) {
       this.placeDialog.title = editMode
         ? this.$t("places.edit")

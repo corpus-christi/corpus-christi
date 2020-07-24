@@ -1,11 +1,11 @@
 <template>
   <div>
     <v-toolbar>
-      <v-flex md3>
+      <v-col md="3">
         <v-toolbar-title>{{ $t("groups.meetings.title") }}</v-toolbar-title>
-      </v-flex>
+      </v-col>
       <v-spacer></v-spacer>
-      <v-flex md2>
+      <v-col md="2">
         <v-text-field
           v-model="search"
           append-icon="search"
@@ -13,9 +13,9 @@
           single-line
           hide-details
         ></v-text-field>
-      </v-flex>
+      </v-col>
       <v-spacer></v-spacer>
-      <v-flex md1>
+      <v-col md="1">
         <v-select
           hide-details
           solo
@@ -25,10 +25,10 @@
           data-cy="view-status-select"
         >
         </v-select>
-      </v-flex>
+      </v-col>
 
       <v-spacer></v-spacer>
-      <v-flex>
+      <v-col>
         <v-btn
           color="primary"
           raised
@@ -38,79 +38,141 @@
           <v-icon dark left>add</v-icon>
           {{ $t("groups.meetings.add-meeting") }}
         </v-btn>
-      </v-flex>
+      </v-col>
     </v-toolbar>
     <v-data-table
-      :rows-per-page-items="rowsPerPageItem"
+      :items-per-page-options="rowsPerPageItem"
       :headers="headers"
       :items="visibleMeetings"
       :search="search"
       :loading="tableLoading"
       class="elevation-1"
+      must-sort
+      :options.sync="options"
+      :footer-props='{itemsPerPageText: $t("$vuetify.dataTable.rowsPerPageText")}'
     >
-      <template slot="items" slot-scope="props">
-        <td>{{ props.item.description }}</td>
-        <td>{{ props.item.startTime | formatDate }}</td>
-        <td>{{ props.item.stopTime | formatDate }}</td>
-        <td>{{ props.item.attendances.length }}</td>
-        <td>{{ props.item.address.address }}</td>
-        <td>
-          <template v-if="props.item.active">
-            <v-tooltip bottom>
-              <v-btn
-                icon
-                outlined
-                small
-                color="primary"
-                slot="activator"
-                v-on:click="confirmArchive(props.item)"
-                data-cy="archive"
-              >
-                <v-icon small>archive</v-icon>
-              </v-btn>
-              <span>{{ $t("actions.tooltips.archive") }}</span>
-            </v-tooltip>
-          </template>
-
-          <template v-if="props.item.active">
-            <v-tooltip bottom>
-              <v-btn
-                icon
-                outlined
-                small
-                color="primary"
-                slot="activator"
-                :to="{
-                  name: 'meeting-details',
-                  params: { meeting: props.item.id },
-                }"
-                data-cy="viewAttendance"
-              >
-                <v-icon small>people</v-icon>
-              </v-btn>
-              <span>{{ $t("actions.tooltips.take-attendance") }} </span>
-            </v-tooltip>
-          </template>
-
-          <template v-else>
-            <v-tooltip bottom v-if="!props.item.active">
-              <v-btn
-                icon
-                outlined
-                small
-                color="primary"
-                slot="activator"
-                v-on:click="unarchive(props.item)"
-                :loading="props.item.id < 0"
-                data-cy="unarchive"
-              >
-                <v-icon small>undo</v-icon>
-              </v-btn>
-              <span>{{ $t("actions.tooltips.activate") }}</span>
-            </v-tooltip>
-          </template>
-        </td>
+      <template v-slot:item="props">
+        <tr>
+          <td
+            class="hover-hand"
+            v-on:click="
+              $router.push({
+                name: 'meeting-members',
+                params: { meeting: props.item.attendances[0].meetingId },
+              })
+            "
+          >
+            {{ props.item.description }}
+          </td>
+          <td
+            class="hover-hand"
+            v-on:click="
+              $router.push({
+                name: 'meeting-members',
+                params: { meeting: props.item.attendances[0].meetingId },
+              })
+            "
+          >
+            {{ props.item.startTime | formatDate }}
+          </td>
+          <td
+            class="hover-hand"
+            v-on:click="
+              $router.push({
+                name: 'meeting-members',
+                params: { meeting: props.item.attendances[0].meetingId },
+              })
+            "
+          >
+            {{ props.item.stopTime | formatDate }}
+          </td>
+          <td
+            class="hover-hand"
+            v-on:click="
+              $router.push({
+                name: 'meeting-members',
+                params: { meeting: props.item.attendances[0].meetingId },
+              })
+            "
+          >
+            {{ props.item.attendances.length }}
+          </td>
+          <td
+            class="hover-hand"
+            v-on:click="
+              $router.push({
+                name: 'meeting-members',
+                params: { meeting: props.item.attendances[0].meetingId },
+              })
+            "
+          >
+            {{ props.item.address.address }}
+          </td>
+          <td>
+            <template v-if="props.item.active">
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    v-on="on"
+                    icon
+                    outlined
+                    small
+                    color="primary"
+                    slot="activator"
+                    v-on:click="confirmArchive(props.item)"
+                    data-cy="archive"
+                  >
+                    <v-icon small>archive</v-icon>
+                  </v-btn>
+                </template>
+                <span>{{ $t("actions.tooltips.archive") }}</span>
+              </v-tooltip>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    v-on="on"
+                    icon
+                    outlined
+                    small
+                    color="primary"
+                    slot="activator"
+                    :to="{
+                      name: 'meeting-details',
+                      params: { meeting: props.item.id },
+                    }"
+                    data-cy="viewAttendance"
+                  >
+                    <v-icon small>people</v-icon>
+                  </v-btn>
+                </template>
+                <span>{{ $t("actions.tooltips.take-attendance") }} </span>
+              </v-tooltip>
+            </template>
+            <template v-else>
+              <v-tooltip bottom v-if="!props.item.active">
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    v-on="on"
+                    icon
+                    outlined
+                    small
+                    color="primary"
+                    slot="activator"
+                    v-on:click="unarchive(props.item)"
+                    :loading="props.item.id < 0"
+                    data-cy="unarchive"
+                  >
+                    <v-icon small>undo</v-icon>
+                  </v-btn>
+                </template>
+                <span>{{ $t("actions.tooltips.activate") }}</span>
+              </v-tooltip>
+            </template>
+          </td>
+        </tr>
       </template>
+      :footer-props='{itemsPerPageText: $t("$vuetify.dataTable.rowsPerPageText")}'
+      <template v-slot:footer.page-text="items"> {{ items.pageStart }} - {{ items.pageStop }} of {{ items.itemsLength }} </template>
     </v-data-table>
 
     <!-- Archive dialog -->
@@ -281,6 +343,12 @@ export default {
   name: "GroupMeetings",
   data() {
     return {
+      options: {
+        sortBy: ["activeMembers.length"], //default sorted column
+        sortDesc: [true],
+        itemsPerPage: 10,
+        page: 1,
+      },
       rowsPerPageItem: [
         10,
         15,
@@ -398,19 +466,6 @@ export default {
   },
 
   methods: {
-    PeopleFromMeetingDialog() {
-      this.addPeronToMeeting.show = true;
-    },
-
-    cancelNewAttendanceDialog() {
-      this.addPeronToMeeting.show = false;
-    },
-
-    activateEditMeetingDialog() {
-      this.meetingDialog.editMode = true;
-      this.activateMeetingDialog();
-    },
-
     activateCreateMeetingDialog() {
       this.meetingDialog.editMode = false;
       this.activateMeetingDialog();
@@ -685,7 +740,6 @@ export default {
                 });
             }
             this.meetings = resp.data;
-            console.log("Meeting attendances", this.meetings);
           }
           this.tableLoading = false;
         });

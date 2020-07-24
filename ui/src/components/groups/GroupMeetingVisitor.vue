@@ -1,22 +1,22 @@
 <template>
   <div>
     <v-toolbar class="pa-1">
-      <v-layout align-center justify-space-between fill-height>
-        <v-flex md3>
+      <v-row no-gutters align="center" justify="space-between" fill-height>
+        <v-col md="3">
           <v-toolbar-title>{{
             $t("groups.members.title-visitor")
           }}</v-toolbar-title>
-        </v-flex>
-      </v-layout>
-      <v-flex md2> </v-flex>
+        </v-col>
+      </v-row>
+      <v-col md="2"> </v-col>
       <v-spacer></v-spacer>
-      <v-flex>
+      <v-col>
         <v-btn color="primary" raised v-on:click.stop="newVisitor">
           <v-icon dark left>person_add</v-icon>
           {{ $t("person.actions.add-visitor") }}
         </v-btn>
-      </v-flex>
-      <v-flex>
+      </v-col>
+      <v-col>
         <v-btn
           class="ma-2"
           outlined
@@ -27,10 +27,9 @@
         >
           <v-icon>search</v-icon>
         </v-btn>
-      </v-flex>
+      </v-col>
     </v-toolbar>
     <v-data-table
-      select-all
       v-model="selected"
       class="elevation-1"
       :headers="headers"
@@ -38,28 +37,30 @@
       item-key="id"
       :search="search"
     >
-      <template slot="items" slot-scope="props">
-        <td><v-checkbox v-model="props.selected" primary hide-details /></td>
-        <td>{{ props.item.firstName }}</td>
-        <td>{{ props.item.lastName }}</td>
-        <td>
-          <template>
+      <template v-slot:item="props">
+        <tr>
+          <td>{{ props.item.firstName }}</td>
+          <td>{{ props.item.lastName }}</td>
+          <td>
             <v-tooltip bottom>
-              <v-btn
-                icon
-                outlined
-                small
-                color="primary"
-                slot="activator"
-                data-cy="archive"
-                v-on:click="removeVisitor(props.item)"
-              >
-                <v-icon small>delete_outline</v-icon>
-              </v-btn>
-              <span>{{ $t("actions.tooltips.delete") }}</span>
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  icon
+                  outlined
+                  small
+                  color="primary"
+                  slot="activator"
+                  data-cy="archive"
+                  v-on:click="removeVisitor(props.item)"
+                  v-on="on"
+                >
+                  <v-icon small>delete_outline</v-icon>
+                </v-btn>
+              </template>
+              <span>{{ $t("actions.tooltips.remove") }}</span>
             </v-tooltip>
-          </template>
-        </td>
+          </td>
+        </tr>
       </template>
     </v-data-table>
 
@@ -257,6 +258,7 @@ export default {
       });
     },
     refreshFetchMeeting() {
+      //working
       const meetingId = this.$route.params.meeting;
       this.$http
         .get(`/api/v1/groups/meetings/${meetingId}`)
@@ -304,7 +306,7 @@ export default {
         .delete(`/api/v1/groups/meetings/${meetingId}/attendances/${person.id}`)
         .then(() => {
           eventBus.$emit("message", {
-            content: this.$t("groups.messages.participant-deleted"),
+            content: this.$t("groups.messages.visitor-remove"),
           });
         })
         .then(() => this.refreshFetchMeeting());

@@ -159,7 +159,7 @@ to the _Event_, _Course Offering_, etc.
    or add a _Person_ to an existing group,
    or split a large group into two new, smaller groups.
 
-1. A **group leader** is in charge of a single group.
+1. A **group manager** is in charge of a single group.
 
    _Example_: send a message to group members,
    or indicate that a member has attended a group meeting.
@@ -336,18 +336,6 @@ one or more instances of the _Person_ entity.
 1. Rename a person attribute.
 1. Rename an _Enumerated Value_.
 
-### Managers
-
-1. Add a _Person_ as a _Manager_ with the appropriate `description`;
-   Valid `description`'s are determined by the module for which a manager is being defined
-   (e.g., "Group Leader" or "Group Overseer" for the Groups module.)
-   Allow an existing _Manager_ to be associated with the new _Manager_ as it is being added.
-1. Add a new _Manager_ for a _Manager_.
-1. Update the _Manager_ of an existing _Manager_.
-1. Show the hierarchy of _Manager_'s as a tree structure. Clicking on any node in the tree
-   should allow the selected _Manager_ to be updated.
-1. Replace the _Person_ associated with a _Manager_ (e.g., when a different _Person_ is taking
-   over as the leader of a group).
    
 ### Places
 
@@ -465,32 +453,30 @@ _Only_ a superuser can modify such data.
 1. Manage _Meeting_ address, time(stop and start) and both active and deactive.
 1. Add or delete a _Group_ from a _Meeting_.
 1. Show attendece of a _Meeting_
-
----
-Enhancement
-
-1. Split a large group into two new, smaller groups.
-   Create the two new _Group_'s (as detailed above)
-   and choose the destination _Group_ for each of the members
-   of the existing group.
-   Deactivate the old group.
-1. Move a _Member_ from one _Group_ to another existing _Group_.
+1. Split a large group into two new, smaller groups.  Create the two new
+   _Group_'s (as detailed above) and choose the destination _Group_ for each of
+   the members of the existing group.  Deactivate the old group.
+1. Move a _Member_ or _Manager_ from one _Group_ to another existing _Group_.
 1. View report of group attendance (group name vs meeting date)
 1. View line graph of group attendance (attendees vs date).
    One line per group, allow groups to be filtered by name
    (e.g., check box per group).
    Allow time scale to be changed (e.g., weekly, monthly, annually).
    Allow time range to be changed (e.g., year-to-date, past 12 months, specific dates, all time)
-1. View meeting locations on map (e.g., make visual information).
+1. View the hierarchy of _Manager_'s as a tree structure. When applicable,
+   clicking on nodes in the tree should redirect the application to the
+   corresponding page.
    
-## Group Manager
+## Group Manager & Group Overseer
 
-Any _Person_ associated with a _Group_ via the _Manager_ table is a _Group Manager_ of that group.
+Any _Person_ associated with a _Group_ via the _Manager_ table is a _Group
+Manager_ of that group.
 
-1. List all groups, including the _Group Type_ and number of members.
-   Optionally, include inactive groups.
-   
-For the particular _Group_ s that they are a _Manager_ of, they can:
+Each _Manager_ of a group is also an _Overseer_ of the same group. For a more
+detailed definition of a _Group Overseer_, see an [explanation of the
+leadership hierarchy](group-hierarchy.md#terminology)
+
+For the particular _Group_ s that they are an _Overseer_ of, they can:
 
 1. Update the name, description, and _Group Type_ of an existing _Group_.
 1. Deactivate and reactivate a _Group_.
@@ -517,15 +503,6 @@ For the particular _Group_ s that they are a _Manager_ of, they can:
 1. View report of member attendance (member name vs. meeting dates)
 1. View line graph of number of attendees by meeting date.
 1. Send an email message to one, more than one, or all group members.
-
-## Group Member
-
-1. List all groups, including the _Group Type_ and number of members.
-   Optionally, include inactive groups.
-1. List members by group.
-   Optionally include inactive groups. 
-   Optionally include inactive members.
-1. List group meetings (past and scheduled).
 
 ## Registrar
 

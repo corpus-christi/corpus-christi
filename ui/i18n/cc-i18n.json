@@ -1,4 +1,11 @@
 {
+  "en-EC": {
+    "groups": {
+      "treeview": {
+        "show-linegraph": "Mostrar gr\u00e1fico de l\u00edneas"
+      }
+    }
+  },
   "en-US": {
     "$vuetify": {
       "dataIterator": {
@@ -58,6 +65,7 @@
         "email": "Send Email",
         "remove": "Remove",
         "settings": "Settings",
+        "take-attendance": "Take attendance",
         "unarchive": "Unarchive"
       },
       "view-active": "View Active",
@@ -527,8 +535,10 @@
         "edit": "Edit",
         "email": "Send Email",
         "messages": {
+          "move-person-will-cause-cycle": "Moving this person will cause a cycle in leadership hierarchy",
           "no-email": "The person does not have an email address",
-          "person-in-destination-group": "The person is already in the destination group"
+          "person-in-destination-group": "The person is already in the destination group",
+          "unarchive-group-will-cause-cycle": "Unarchiving this group will cause a cycle in leadership hierarchy"
         },
         "move": "Move",
         "title": "Batch Actions",
@@ -619,7 +629,8 @@
         },
         "email-dialog-footnote": "Click the circle to select the reply-to option",
         "email-reply-to": "Reply to",
-        "title": "Members"
+        "title": "Members",
+        "title-visitor": "Visitors"
       },
       "messages": {
         "already-exists": "Group already exists",
@@ -636,6 +647,7 @@
         "error-adding-members": "Error while adding member(s)",
         "error-archived-not-selected": "No archived members are selected",
         "error-archiving-group": "Error while archiving group",
+        "error-archiving-manager": "Error while archiving manager",
         "error-archiving-meeting": "Error while archiving meeting",
         "error-archiving-member": "Error while archiving member",
         "error-editing-group": "Error while editing group",
@@ -643,7 +655,9 @@
         "error-moving-members": "Error while moving member(s)",
         "error-no-manager-email": "Your email address is not defined",
         "error-sending-email": "Error while sending email",
+        "error-unarchiving-manager": "Error while unarchiving manager",
         "error-unarchiving-meeting": "Error unarchiiving meeting",
+        "error-unarchiving-member": "Error while unarchiving member",
         "error-updating-managers": "Error while updating manager(s)",
         "error-updating-members": "Error while updating member(s)",
         "group-added": "Group added",
@@ -651,6 +665,8 @@
         "group-edited": "Group edited",
         "group-unarchived": "Group unarchived",
         "group-unarchiving-group": "Error while unarchiving group",
+        "manager-archived": "Manager archived",
+        "manager-unarchived": "Manager unarchived",
         "managers-added": "Successfully added manager(s)",
         "managers-moved": "Successfully moved manager(s)",
         "managers-updated": "Successfully updated manager(s)",
@@ -662,8 +678,10 @@
         "members-moved": "Successfully moved member(s)",
         "members-updated": "Successfully updated member(s)",
         "no-remaining-members": "No remaining members",
+        "participant-added": "Participatn(s) Added",
         "required-fields": "Please fill out all required fields",
-        "select-destination-group": "Select a destination group"
+        "select-destination-group": "Select a destination group",
+        "visitor-remove": "Visitor Removed"
       },
       "name": "Name",
       "none-assigned": "No groups assigned.",
@@ -685,21 +703,26 @@
         "move": "Move to Another Group"
       },
       "treeview": {
+        "admin-node": "Administrator",
         "categories": {
           "all-group-types": "All Group Types",
           "managers": "Managers",
           "members": "Members"
         },
+        "category-view": "Category View",
         "collapse": "Collapse",
         "expand": "Expand",
+        "hierarchy-view": "Hierarchy View",
+        "remove-cycle": "Please remove the cycle in the node listed in order to view group hierarchy tree.",
         "select-placeholder": "Select groups to perform actions...",
         "show-all": "Show All Groups",
-        "show-linegraph": "Show Line Graph",
+        "show-linegraph": "Mostrar gr\u00e1fico de l\u00edneas,",
         "show-list": "Show Group List",
         "show-managers": "Show Managers Only",
         "show-members": "Show Members Only",
         "show-treeview": "Show Group Treeview",
-        "title": "Group Treeview"
+        "title": "Group Treeview",
+        "unexpected-cycle": "Unexpected cycle in hierarchy"
       }
     },
     "images": {
@@ -738,6 +761,7 @@
       "actions": {
         "add-account": "Add Account",
         "add-participant": "Add a Participant",
+        "add-visitor": "Add Visitor",
         "assign-roles": "Assign Roles",
         "edit": "Edit Person",
         "new": "New Person",
@@ -977,6 +1001,7 @@
         "email": "Enviar correo electr\u00f3nico",
         "remove": "Retirar",
         "settings": "Ajustes",
+        "take-attendance": "Tomar la asistencia",
         "unarchive": "Desarchivar"
       },
       "view-active": "Ver Activo",
@@ -1446,8 +1471,10 @@
         "edit": "Editar",
         "email": "Enviar correo electr\u00f3nico",
         "messages": {
+          "move-person-will-cause-cycle": "Mover a esta persona provocar\u00e1 un ciclo en la jerarqu\u00eda de liderazgo",
           "no-email": "La persona no tiene una direcci\u00f3n de correo electr\u00f3nico.",
-          "person-in-destination-group": "La persona ya est\u00e1 en el grupo de destino."
+          "person-in-destination-group": "La persona ya est\u00e1 en el grupo de destino.",
+          "unarchive-group-will-cause-cycle": "Desarchivar este grupo provocar\u00e1 un ciclo en la jerarqu\u00eda de liderazgo"
         },
         "move": "Moverse",
         "title": "Acciones por lotes",
@@ -1538,7 +1565,8 @@
         },
         "email-dialog-footnote": "Haga clic en el c\u00edrculo para seleccionar la opci\u00f3n de respuesta",
         "email-reply-to": "Responder a",
-        "title": "Miembros"
+        "title": "Miembros",
+        "title-visitor": "visitantes"
       },
       "messages": {
         "already-exists": "El grupo ya existe",
@@ -1555,6 +1583,7 @@
         "error-adding-members": "Error al agregar miembro (s)",
         "error-archived-not-selected": "No hay miembros archivados seleccionados",
         "error-archiving-group": "Error al archivar el grupo",
+        "error-archiving-manager": "Error al archivar administrador",
         "error-archiving-meeting": "Error al archivar reuni\u00f3n",
         "error-archiving-member": "Error al archivar miembro",
         "error-editing-group": "Error al editar grupo",
@@ -1562,7 +1591,9 @@
         "error-moving-members": "Error al mover miembro (s)",
         "error-no-manager-email": "Su direcci\u00f3n de correo electr\u00f3nico no est\u00e1 definida",
         "error-sending-email": "Error al enviar correo electr\u00f3nico",
+        "error-unarchiving-manager": "Error al desarchivar administrador",
         "error-unarchiving-meeting": "Error al desarchivar la reuni\u00f3n",
+        "error-unarchiving-member": "Error al desarchivar miembro",
         "error-updating-managers": "Error al actualizar administrador (es)",
         "error-updating-members": "Error al actualizar miembro (s)",
         "group-added": "Grupo agregado",
@@ -1570,6 +1601,8 @@
         "group-edited": "Grupo editado",
         "group-unarchived": "Grupo desarchivado",
         "group-unarchiving-group": "Error al desarchivar el grupo",
+        "manager-archived": "Gerente archivado",
+        "manager-unarchived": "Gerente sin archivar",
         "managers-added": "Gerentes agregados con \u00e9xito",
         "managers-moved": "Gerentes movidos exitosamente",
         "managers-updated": "Gerentes actualizados con \u00e9xito",
@@ -1581,8 +1614,10 @@
         "members-moved": "Miembros movidos exitosamente",
         "members-updated": "Miembros actualizados con \u00e9xito",
         "no-remaining-members": "Ning\u00fan miembro restante",
+        "participant-added": "Participaci\u00f3n (es) a\u00f1adida (s)",
         "required-fields": "Por favor llene todos los campos requeridos",
-        "select-destination-group": "Seleccione un grupo de destino"
+        "select-destination-group": "Seleccione un grupo de destino",
+        "visitor-remove": "Visitante eliminada"
       },
       "name": "Nombre",
       "none-assigned": "No hay grupos asignados.",
@@ -1604,21 +1639,26 @@
         "move": "Moverse a otro grupo"
       },
       "treeview": {
+        "admin-node": "Administrador",
         "categories": {
           "all-group-types": "Todos los tipos de grupo",
           "managers": "Gerentes",
           "members": "Miembros"
         },
+        "category-view": "Vista de categor\u00eda",
         "collapse": "Colapso",
         "expand": "Expandir",
+        "hierarchy-view": "Vista de jerarqu\u00eda",
+        "remove-cycle": "Elimine el ciclo en el nodo listado para ver el \u00e1rbol de jerarqu\u00eda de grupo.",
         "select-placeholder": "Seleccionar grupos para realizar acciones ...",
         "show-all": "Mostrar todos los grupos",
+        "show-linegraph": "Show Line Graph",
         "show-list": "Mostrar lista de grupos",
-        "show-linegraph": "Mostrar gráfico de líneas",
         "show-managers": "Mostrar solo gerentes",
         "show-members": "Mostrar solo miembros",
         "show-treeview": "Mostrar vista de \u00e1rbol de grupo",
-        "title": "Vista de \u00e1rbol grupal"
+        "title": "Vista de \u00e1rbol grupal",
+        "unexpected-cycle": "Ciclo inesperado en la jerarqu\u00eda"
       }
     },
     "images": {
@@ -1657,6 +1697,7 @@
       "actions": {
         "add-account": "A\u00f1adir cuenta",
         "add-participant": "A\u00f1adir Part\u00edcipe",
+        "add-visitor": "A\u00f1adir visitante",
         "assign-roles": "Asigne Papeles",
         "edit": "Editar persona",
         "new": "Persona Nueva",
@@ -1837,6 +1878,13 @@
       "required": "Necesario"
     }
   },
+  "es_EC": {
+    "actions": {
+      "tooltips": {
+        "take-attendance": "Tomar la asistencia"
+      }
+    }
+  },
   "zh-CN": {
     "$vuetify": {
       "dataIterator": {
@@ -1896,6 +1944,7 @@
         "email": "\u53d1\u7535\u5b50\u90ae\u4ef6",
         "remove": "\u53bb\u6389",
         "settings": "\u8bbe\u5b9a\u503c",
+        "take-attendance": "\u8bb0\u5f55\u51fa\u5e2d",
         "unarchive": "\u53d6\u6d88\u5b58\u6863"
       },
       "view-active": "\u67e5\u770b\u6d3b\u52a8",
@@ -2365,8 +2414,10 @@
         "edit": "\u7f16\u8f91",
         "email": "\u53d1\u7535\u5b50\u90ae\u4ef6",
         "messages": {
+          "move-person-will-cause-cycle": "\u79fb\u52a8\u6b64\u4eba\u5c06\u5bfc\u81f4\u9886\u5bfc\u5c42\u7684\u5faa\u73af",
           "no-email": "\u8be5\u4eba\u6ca1\u6709\u7535\u5b50\u90ae\u4ef6\u5730\u5740",
-          "person-in-destination-group": "\u8be5\u4eba\u5df2\u7ecf\u5728\u76ee\u7684\u5730\u7ec4\u4e2d"
+          "person-in-destination-group": "\u8be5\u4eba\u5df2\u7ecf\u5728\u76ee\u7684\u5730\u7ec4\u4e2d",
+          "unarchive-group-will-cause-cycle": "\u53d6\u6d88\u5f52\u6863\u6b64\u56e2\u961f\u5c06\u5bfc\u81f4\u9886\u5bfc\u5c42\u7684\u5faa\u73af"
         },
         "move": "\u79fb\u52a8",
         "title": "\u6279\u5904\u7406\u52a8\u4f5c",
@@ -2457,7 +2508,8 @@
         },
         "email-dialog-footnote": "\u70b9\u51fb\u5708\u5b50\u4ee5\u9009\u62e9\u56de\u590d\u9009\u9879",
         "email-reply-to": "\u56de\u590d\u5230",
-        "title": "\u4f1a\u5458"
+        "title": "\u4f1a\u5458",
+        "title-visitor": "\u8bbf\u5ba2"
       },
       "messages": {
         "already-exists": "\u7fa4\u7ec4\u5df2\u7ecf\u5b58\u5728",
@@ -2474,6 +2526,7 @@
         "error-adding-members": "\u6dfb\u52a0\u6210\u5458\u65f6\u51fa\u9519",
         "error-archived-not-selected": "\u672a\u9009\u62e9\u4efb\u4f55\u5df2\u5b58\u6863\u7684\u6210\u5458",
         "error-archiving-group": "\u5f52\u6863\u7ec4\u65f6\u51fa\u9519",
+        "error-archiving-manager": "\u5f52\u6863\u7ba1\u7406\u5668\u65f6\u51fa\u9519",
         "error-archiving-meeting": "\u5b58\u6863\u4f1a\u8bae\u65f6\u51fa\u9519",
         "error-archiving-member": "\u5f52\u6863\u6210\u5458\u65f6\u51fa\u9519",
         "error-editing-group": "\u7f16\u8f91\u7fa4\u7ec4\u65f6\u53d1\u751f\u9519\u8bef",
@@ -2481,7 +2534,9 @@
         "error-moving-members": "\u79fb\u52a8\u6210\u5458\u65f6\u51fa\u9519",
         "error-no-manager-email": "\u60a8\u7684\u7535\u5b50\u90ae\u4ef6\u5730\u5740\u672a\u5b9a\u4e49",
         "error-sending-email": "\u53d1\u9001\u7535\u5b50\u90ae\u4ef6\u65f6\u51fa\u9519",
+        "error-unarchiving-manager": "\u53d6\u6d88\u5b58\u6863\u7ba1\u7406\u5668\u65f6\u51fa\u9519",
         "error-unarchiving-meeting": "\u53d6\u6d88\u5b58\u6863\u4f1a\u8bae\u9519\u8bef",
+        "error-unarchiving-member": "\u53d6\u6d88\u5b58\u6863\u6210\u5458\u65f6\u51fa\u9519",
         "error-updating-managers": "\u66f4\u65b0\u7ba1\u7406\u5458\u65f6\u51fa\u9519",
         "error-updating-members": "\u66f4\u65b0\u4f1a\u5458\u65f6\u51fa\u9519",
         "group-added": "\u7ec4\u5df2\u6dfb\u52a0",
@@ -2489,6 +2544,8 @@
         "group-edited": "\u5c0f\u7ec4\u7f16\u8f91",
         "group-unarchived": "\u5c0f\u7ec4\u5df2\u6062\u590d",
         "group-unarchiving-group": "\u53d6\u6d88\u5f52\u6863\u7ec4\u65f6\u51fa\u9519",
+        "manager-archived": "\u7ecf\u7406\u5df2\u5b58\u6863",
+        "manager-unarchived": "\u7ecf\u7406\u672a\u5b58\u6863",
         "managers-added": "\u6210\u529f\u6dfb\u52a0\u7ecf\u7406",
         "managers-moved": "\u6210\u529f\u8c03\u52a8\u7ecf\u7406",
         "managers-updated": "\u6210\u529f\u66f4\u65b0\u7ecf\u7406",
@@ -2500,8 +2557,10 @@
         "members-moved": "\u6210\u529f\u79fb\u52a8\u6210\u5458",
         "members-updated": "\u6210\u529f\u66f4\u65b0\u6210\u5458",
         "no-remaining-members": "\u6ca1\u6709\u5269\u4f59\u6210\u5458",
+        "participant-added": "\u5df2\u6dfb\u52a0\u7528\u6237",
         "required-fields": "\u8bf7\u586b\u5199\u6240\u6709\u5fc5\u586b\u5b57\u6bb5",
-        "select-destination-group": "\u9009\u62e9\u76ee\u7684\u5730\u7fa4\u7ec4"
+        "select-destination-group": "\u9009\u62e9\u76ee\u7684\u5730\u7fa4\u7ec4",
+        "visitor-remove": "\u8bbf\u5ba2\u5df2\u79fb\u9664"
       },
       "name": "\u540d\u79f0",
       "none-assigned": "\u672a\u5206\u914d\u7ec4\u3002",
@@ -2523,20 +2582,26 @@
         "move": "\u79fb\u81f3\u53e6\u4e00\u4e2a\u5c0f\u7ec4"
       },
       "treeview": {
+        "admin-node": "\u7ba1\u7406\u5458",
         "categories": {
           "all-group-types": "\u6240\u6709\u7ec4\u7c7b\u578b",
           "managers": "\u7ba1\u7406\u4eba\u5458",
           "members": "\u4f1a\u5458"
         },
+        "category-view": "\u5206\u7c7b\u89c6\u56fe",
         "collapse": "\u5408\u5e76",
         "expand": "\u5c55\u5f00",
+        "hierarchy-view": "\u5c42\u6b21\u7ed3\u6784\u89c6\u56fe",
+        "remove-cycle": "\u8bf7\u5728\u5217\u51fa\u7684\u8282\u70b9\u4e2d\u5220\u9664\u5faa\u73af\uff0c\u4ee5\u67e5\u770b\u7ec4\u5c42\u6b21\u7ed3\u6784\u6811\u3002",
         "select-placeholder": "\u9009\u62e9\u8981\u6267\u884c\u64cd\u4f5c\u7684\u7ec4...",
         "show-all": "\u663e\u793a\u6240\u6709\u7fa4\u7ec4",
+        "show-linegraph": "\u663e\u793a\u6298\u7ebf\u56fe",
         "show-list": "\u663e\u793a\u7fa4\u7ec4\u6e05\u5355",
         "show-managers": "\u4ec5\u663e\u793a\u7ba1\u7406\u5458",
         "show-members": "\u4ec5\u663e\u793a\u6210\u5458",
         "show-treeview": "\u663e\u793a\u7ec4\u6811\u89c6\u56fe",
-        "title": "\u7ec4\u6811\u89c6\u56fe"
+        "title": "\u7ec4\u6811\u89c6\u56fe",
+        "unexpected-cycle": "\u5c42\u6b21\u7ed3\u6784\u4e2d\u7684\u610f\u5916\u5468\u671f"
       }
     },
     "images": {
@@ -2575,6 +2640,7 @@
       "actions": {
         "add-account": "\u65b0\u589e\u5e10\u6237",
         "add-participant": "\u6dfb\u52a0\u53c2\u4e0e\u8005",
+        "add-visitor": "\u6dfb\u52a0\u8bbf\u5ba2",
         "assign-roles": "\u5206\u914d\u89d2\u8272",
         "edit": "\u7f16\u8f91\u4eba",
         "new": "\u65b0\u4eba",
@@ -2753,6 +2819,13 @@
         "required": "\u9700\u8981"
       },
       "required": "\u9700\u8981"
+    }
+  },
+  "zh_CN": {
+    "actions": {
+      "tooltips": {
+        "take-attendance": "\u8bb0\u5f55\u51fa\u5e2d"
+      }
     }
   }
 }

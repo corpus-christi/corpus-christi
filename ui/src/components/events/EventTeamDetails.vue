@@ -20,8 +20,8 @@
         <v-list v-if="teams.length">
           <template v-for="team in teams">
             <v-divider v-bind:key="'teamDivider' + team.id"></v-divider>
-            <v-list-tile v-bind:key="team.id">
-              <v-list-tile-content class="pr-0">
+            <v-list-item v-bind:key="team.id">
+              <v-list-item-content class="pr-0">
                 <v-container fluid class="pa-0">
                   <v-layout justify-space-between align-center>
                     <v-flex>{{ team.description }}</v-flex>
@@ -31,7 +31,7 @@
                           <!-- TODO: popup with members instead of rerouting -->
                           <v-btn
                             icon
-                            outline
+                            outlined
                             text
                             color="primary"
                             :to="{ path: '/teams/' + team.id }"
@@ -42,7 +42,7 @@
                         <v-flex xs6>
                           <v-btn
                             icon
-                            outline
+                            outlined
                             text
                             color="primary"
                             v-on:click="showDeleteTeamDialog(team.id)"
@@ -54,8 +54,8 @@
                     </v-flex>
                   </v-layout>
                 </v-container>
-              </v-list-tile-content>
-            </v-list-tile>
+              </v-list-item-content>
+            </v-list-item>
           </template>
         </v-list>
         <div v-else class="text-xs-center pa-4">
