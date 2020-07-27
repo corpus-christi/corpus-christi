@@ -31,6 +31,10 @@ groups:
     en-US: Admin Panel
     es-EC: Panel de administrador
     zh-CN: 管理面板
+  user-panel:
+    en-US: User Panel
+    es-EC: Panel de usuario
+    zh-CN: 用户面板
   group-description:
     en-US: Group Description
     es-EC: Descripción del Grupo

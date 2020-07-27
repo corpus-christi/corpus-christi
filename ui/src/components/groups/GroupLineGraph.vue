@@ -181,7 +181,9 @@
             <v-date-picker v-model="endMonth" no-title scrollable type="month">
               <v-spacer></v-spacer>
               <v-btn text color="primary" @click="menu1 = false">Cancel</v-btn>
-              <v-btn text color="primary" @click="$refs.menu1.save(endMonth)">OK</v-btn>
+              <v-btn text color="primary" @click="$refs.menu1.save(endMonth)"
+                >OK</v-btn
+              >
             </v-date-picker>
           </v-menu>
         </v-col>

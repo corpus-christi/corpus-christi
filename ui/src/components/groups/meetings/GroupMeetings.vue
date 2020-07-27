@@ -15,30 +15,31 @@
         ></v-text-field>
       </v-col>
       <v-spacer></v-spacer>
-      <v-col md="1">
-        <v-select
-          hide-details
-          solo
-          single-line
-          :items="viewOptions"
-          v-model="viewStatus"
-          data-cy="view-status-select"
-        >
-        </v-select>
-      </v-col>
-
-      <v-spacer></v-spacer>
-      <v-col>
-        <v-btn
-          color="primary"
-          raised
-          v-on:click="activateCreateMeetingDialog"
-          data-cy="add-meeting"
-        >
-          <v-icon dark left>add</v-icon>
-          {{ $t("groups.meetings.add-meeting") }}
-        </v-btn>
-      </v-col>
+      <template v-if="ifAdmin === true">
+        <v-col md="1">
+          <v-select
+            hide-details
+            solo
+            single-line
+            :items="viewOptions"
+            v-model="viewStatus"
+            data-cy="view-status-select"
+          >
+          </v-select>
+        </v-col>
+        <v-spacer></v-spacer>
+        <v-col>
+          <v-btn
+            color="primary"
+            raised
+            v-on:click="activateCreateMeetingDialog"
+            data-cy="add-meeting"
+          >
+            <v-icon dark left>add</v-icon>
+            {{ $t("groups.meetings.add-meeting") }}
+          </v-btn>
+        </v-col>
+      </template>
     </v-toolbar>
     <v-data-table
       :items-per-page-options="rowsPerPageItem"
@@ -49,7 +50,9 @@
       class="elevation-1"
       must-sort
       :options.sync="options"
-      :footer-props='{itemsPerPageText: $t("$vuetify.dataTable.rowsPerPageText")}'
+      :footer-props="{
+        itemsPerPageText: $t('$vuetify.dataTable.rowsPerPageText'),
+      }"
     >
       <template v-slot:item="props">
         <tr>
@@ -109,7 +112,7 @@
             {{ props.item.address.address }}
           </td>
           <td>
-            <template v-if="props.item.active">
+            <template v-if="props.item.active && ifAdmin === true">
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
                   <v-btn
@@ -149,7 +152,7 @@
               </v-tooltip>
             </template>
             <template v-else>
-              <v-tooltip bottom v-if="!props.item.active">
+              <v-tooltip bottom v-if="!props.item.active && ifAdmin === true">
                 <template v-slot:activator="{ on }">
                   <v-btn
                     v-on="on"
@@ -171,8 +174,6 @@
           </td>
         </tr>
       </template>
-      :footer-props='{itemsPerPageText: $t("$vuetify.dataTable.rowsPerPageText")}'
-      <template v-slot:footer.page-text="items"> {{ items.pageStart }} - {{ items.pageStop }} of {{ items.itemsLength }} </template>
     </v-data-table>
 
     <!-- Archive dialog -->
@@ -430,26 +431,48 @@ export default {
       }
     },
     headers() {
-      return [
-        {
-          text: this.$t("groups.description"),
-          value: "description",
-          width: "20%",
-        },
-        {
-          text: this.$t("events.start-time"),
-          value: "startTime",
-          width: "20%",
-        },
-        {
-          text: this.$t("events.stop-time"),
-          value: "stopTime",
-          width: "22.5%",
-        },
-        { text: this.$t("events.attendance"), value: "attendance" },
-        { text: this.$t("events.event-location"), value: "location_name" },
-        { text: this.$t("actions.header"), sortable: false },
-      ];
+      if (this.ifAdmin) {
+        return [
+          {
+            text: this.$t("groups.description"),
+            value: "description",
+            width: "20%",
+          },
+          {
+            text: this.$t("events.start-time"),
+            value: "startTime",
+            width: "20%",
+          },
+          {
+            text: this.$t("events.stop-time"),
+            value: "stopTime",
+            width: "22.5%",
+          },
+          { text: this.$t("events.attendance"), value: "attendance" },
+          { text: this.$t("events.event-location"), value: "location_name" },
+          { text: this.$t("actions.header"), sortable: false },
+        ];
+      } else {
+        return [
+          {
+            text: this.$t("groups.description"),
+            value: "description",
+            width: "20%",
+          },
+          {
+            text: this.$t("events.start-time"),
+            value: "startTime",
+            width: "20%",
+          },
+          {
+            text: this.$t("events.stop-time"),
+            value: "stopTime",
+            width: "22.5%",
+          },
+          { text: this.$t("events.attendance"), value: "attendance" },
+          { text: this.$t("events.event-location"), value: "location_name" },
+        ];
+      }
     },
     attendance_headers() {
       return [
@@ -466,6 +489,15 @@ export default {
       ];
     },
     ...mapState(["currentAccount"]),
+    ifAdmin() {
+      if (
+        this.currentAccount.roles.includes("role.group-admin") ||
+        this.currentAccount.roles.includes("role.group-overseer") ||
+        this.currentAccount.roles.includes("role.group-leader")
+      ) {
+        return true;
+      } else return false;
+    },
   },
 
   methods: {
@@ -799,7 +831,6 @@ export default {
 
   mounted: function () {
     this.getMeetings();
-    console.log("Account: ", this.currentAccount);
   },
 };
 </script>
