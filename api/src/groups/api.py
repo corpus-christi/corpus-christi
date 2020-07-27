@@ -13,6 +13,8 @@ from src.shared.helpers import modify_entity, get_all_queried_entities, logged_r
 
 from src.shared.models import QueryArgumentError
 
+from src.auth.utils import authorize
+
 from sqlalchemy.exc import IntegrityError, DBAPIError
 
 # ---- Group Type
@@ -20,6 +22,7 @@ from sqlalchemy.exc import IntegrityError, DBAPIError
 group_type_schema = GroupTypeSchema()
 
 @groups.route('/group-types', methods=['POST'])
+@authorize(['role.group-admin'])
 def create_group_type():
     try:
         valid_group_type = group_type_schema.load(request.json)

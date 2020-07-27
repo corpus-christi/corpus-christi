@@ -15,7 +15,8 @@ class AuthClient(FlaskClient):
 
     def open(self, *args, **kwargs):
         access_token = create_access_token(identity='test-user')
-        kwargs['headers'] = {"AUTHORIZATION": f"Bearer {access_token}"}
+        if 'headers' not in kwargs:
+            kwargs['headers'] = {"AUTHORIZATION": f"Bearer {access_token}"}
         return super().open(*args, **kwargs)
 
 

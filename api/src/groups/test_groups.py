@@ -15,10 +15,11 @@ from .models import Group, GroupType, Member, Meeting, MeetingSchema, Attendance
 from ..images.create_image_data import create_images_groups
 from ..images.create_image_data import create_test_images
 from ..images.models import Image, ImageGroup
-from ..people.test_people import create_multiple_people
-from ..people.models import Person
+from ..people.test_people import create_multiple_people, role_object_factory, person_object_factory
+from ..people.models import Person, PersonSchema, Role, RoleSchema
 from ..places.models import Address, Country
 from ..places.test_places import create_multiple_addresses, create_multiple_areas
+from flask_jwt_extended import create_access_token
 
 fake = Faker()
 
@@ -995,3 +996,29 @@ def test_get_all_subgroups(auth_client):
     assert len(subgroups) == 1
     assert 9 in subgroups
 
+# ---- Authorization
+def test_authorize_group_admin(auth_client):
+    # GIVEN a user with group-admin role, and a user with no role
+    admin_role = Role(**RoleSchema().load(role_object_factory('role.group-admin')))
+    auth_client.sqla.add(admin_role)
+    auth_client.sqla.commit()
+
+    admin_user = Person(**PersonSchema().load(person_object_factory()))
+    admin_user.roles.append(admin_role)
+    normal_user = Person(**PersonSchema().load(person_object_factory()))
+    auth_client.sqla.add_all([admin_user, normal_user])
+    auth_client.sqla.commit()
+
+    # WHEN we make a request with the admin token
+    admin_token = create_access_token(identity=admin_user.username)
+    resp = auth_client.post(url_for('groups.create_group_type'),
+            json={'name':'group_type_1'},
+            headers={'AUTHORIZATION': f'Bearer {admin_token}'})
+    # THEN we expect the right status code
+    assert resp.status_code == 201
+
+    # WHEN we make a request with the normal token
+    resp = auth_client.post(url_for('groups.create_group_type'),
+            json={'name':'group_type_1'})
+    # THEN we expect an error
+    assert resp.status_code == 403
