@@ -75,7 +75,7 @@ def add_claims_to_access_token(person):
 
 @jwt.user_identity_loader
 def load_user_identity(person):
-    return person.username
+    return { 'username': person.username, 'id': person.id }
 
 @auth.route('/test/jwt')
 @jwt_not_required
@@ -107,7 +107,7 @@ def login_test():
             'iat': datetime.fromtimestamp(token['iat'])
         }
     }
-    username = response['username'] = get_jwt_identity()
+    username = response['username'] = get_jwt_identity()['username']
 
     success = True
     person = db.session.query(Person).filter_by(username=username).first()
@@ -127,7 +127,7 @@ def login_test():
 @auth.route('/auth/token', methods=['GET'])
 @jwt_required
 def get_tokens():
-    user_identity = get_jwt_identity()
+    user_identity = get_jwt_identity()['username']
     all_tokens = get_user_tokens(user_identity)
     ret = [token.to_dict() for token in all_tokens]
     return jsonify(ret), 200
@@ -148,7 +148,7 @@ def modify_token(token_id):
         return jsonify(msg="'revoke' must be a boolean"), 400
 
     # Revoke or unrevoke the token based on what was passed to this function
-    user_identity = get_jwt_identity()
+    user_identity = get_jwt_identity()['username']
     try:
         if revoke:
             revoke_token(token_id, user_identity)

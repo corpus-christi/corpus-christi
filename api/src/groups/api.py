@@ -1,21 +1,34 @@
 import datetime
 
 from flask import request, jsonify, current_app
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_claims, get_jwt_identity
 from marshmallow import ValidationError
 
 from . import groups
 from .models import Group, GroupSchema, Attendance, Member, MemberSchema, Meeting, MeetingSchema, AttendanceSchema, Manager, ManagerSchema, GroupType, GroupTypeSchema, ManagerType, ManagerTypeSchema
+from .group_hierarchy_helpers import is_overseer
+
 from .. import db
 from ..images.models import Image, ImageGroup
 from ..people.models import Role, Person
+
 from src.shared.helpers import modify_entity, get_all_queried_entities, logged_response
-
 from src.shared.models import QueryArgumentError
-
 from src.auth.utils import authorize
 
 from sqlalchemy.exc import IntegrityError, DBAPIError
+
+# ---- Helpers
+
+def is_overseer_or_admin(group_id):
+    """ checks whether the user accessing the current endpoint 
+    is a group-admin or an overseer of group with 'group_id'
+    returns: a Boolean
+    """
+    person_id = get_jwt_identity()['id']
+    roles = get_jwt_claims()['roles']
+    return ('role.group-admin' in roles or 
+            is_overseer(person_id, group_id))
 
 # ---- Group Type
 
@@ -35,6 +48,7 @@ def create_group_type():
     return logged_response(group_type_schema.dump(new_group_type), 201)
 
 @groups.route('/group-types/<int:group_type_id>', methods=['GET'])
+@jwt_required
 def read_one_group_type(group_type_id):
     group_type = db.session.query(GroupType).filter_by(id=group_type_id).first()
     if not group_type:
@@ -43,6 +57,7 @@ def read_one_group_type(group_type_id):
     return logged_response(group_type_schema.dump(group_type))
 
 @groups.route('/group-types', methods=['GET'])
+@jwt_required
 def read_all_group_types():
     query = db.session.query(GroupType)
     try:
@@ -129,7 +144,6 @@ def read_all_groups():
 
 
 @groups.route('/groups/<int:group_id>', methods=['GET'])
-@jwt_required
 def read_one_group(group_id):
     group = db.session.query(Group).filter_by(id=group_id).first()
     if group is None:
@@ -137,8 +151,10 @@ def read_one_group(group_id):
     return logged_response(group_schema.dump(group), 200)
 
 @groups.route('/groups/<int:group_id>', methods=['PATCH'])
-@authorize(['role.group-admin'])
 def update_group(group_id):
+    if not is_overseer_or_admin(group_id):
+        return logged_response('You must be either an admin or an overseer of the group to make this request', 403)
+
     group_schema = GroupSchema()
 
     try:
@@ -370,6 +386,9 @@ def create_meeting():
 
     new_meeting = Meeting(**valid_meeting)
 
+    if not is_overseer_or_admin(new_meeting.group_id):
+        return logged_response('You must be either an admin or an overseer of the group to make this request', 403)
+
     db.session.add(new_meeting)
 
     try:
@@ -413,6 +432,9 @@ def update_meeting(meeting_id):
     if not meeting:
         return logged_response(f"Meeting with id #{meeting_id} does not exist.", 404)
 
+    if not is_overseer_or_admin(meeting.group_id):
+        return logged_response('You must be either an admin or an overseer of the group to make this request', 403)
+
     for key, val in valid_attributes.items():
         setattr(meeting, key, val)
 
@@ -429,6 +451,9 @@ def delete_meeting(meeting_id):
     if meeting is None:
         return logged_response(f"Meeting with id #{meeting_id} does not exist", 404)
 
+    if not is_overseer_or_admin(meeting.group_id):
+        return logged_response('You must be either an admin or an overseer of the group to make this request', 403)
+
     db.session.delete(meeting)
     db.session.commit()
 
@@ -443,6 +468,9 @@ member_schema = MemberSchema()
 @groups.route('/groups/<int:group_id>/members', methods=['POST'])
 @jwt_required
 def create_member(group_id):
+    if not is_overseer_or_admin(group_id):
+        return logged_response('You must be either an admin or an overseer of the group to make this request', 403)
+
     member_schema = MemberSchema(exclude=['group_id'])
     try:
         valid_member = member_schema.load(request.json, partial=['joined', 'active']) # make joined and active optional fields
@@ -491,6 +519,9 @@ def read_one_member(group_id, person_id):
 @groups.route('/groups/<int:group_id>/members/<int:person_id>', methods=['PATCH'])
 @jwt_required
 def update_member(group_id, person_id):
+    if not is_overseer_or_admin(group_id):
+        return logged_response('You must be either an admin or an overseer of the group to make this request', 403)
+
     member_schema = MemberSchema()
     try:
         valid_attributes = member_schema.load(request.json, partial=True)
@@ -529,6 +560,9 @@ def update_member(group_id, person_id):
 @groups.route('/groups/<int:group_id>/members/<int:person_id>', methods=['DELETE'])
 @jwt_required
 def delete_member(group_id, person_id):
+    if not is_overseer_or_admin(group_id):
+        return logged_response('You must be either an admin or an overseer of the group to make this request', 403)
+
     member = db.session.query(Member).filter_by(group_id=group_id, person_id=person_id).first()
 
     if member is None:
@@ -549,8 +583,12 @@ def create_attendance(meeting_id, person_id):
     if not db.session.query(Person).filter_by(id=person_id).first():
         return logged_response(f"Person with person_id #{person_id} does not exist", 404)
 
-    if not db.session.query(Meeting).filter_by(id=meeting_id).first():
+    meeting = db.session.query(Meeting).filter_by(id=meeting_id).first()
+    if not meeting:
         return logged_response(f"Meeting with meeting_id #{meeting_id} does not exist", 404)
+
+    if not is_overseer_or_admin(meeting.group_id):
+        return logged_response('You must be either an admin or an overseer of the group to make this request', 403)
 
     if db.session.query(Attendance).filter_by(person_id=person_id, meeting_id=meeting_id).first():
         # if the same attendance already exists
@@ -580,6 +618,9 @@ def delete_attendance(meeting_id, person_id):
     if attendance is None:
         return logged_response(f"Attendance with meeting_id #{meeting_id} and person_id #{person_id} does not exist", 404)
 
+    if not is_overseer_or_admin(attendance.meeting.group_id):
+        return logged_response('You must be either an admin or an overseer of the group to make this request', 403)
+
     db.session.delete(attendance)
     db.session.commit()
 
@@ -590,6 +631,9 @@ def delete_attendance(meeting_id, person_id):
 @groups.route('/groups/<int:group_id>/images/<int:image_id>', methods=['POST'])
 @jwt_required
 def add_group_images(group_id, image_id):
+    if not is_overseer_or_admin(group_id):
+        return logged_response('You must be either an admin or an overseer of the group to make this request', 403)
+
     group = db.session.query(Group).filter_by(id=group_id).first()
     image = db.session.query(Image).filter_by(id=image_id).first()
 
@@ -615,6 +659,9 @@ def add_group_images(group_id, image_id):
 @groups.route('/groups/<int:group_id>/images/<int:image_id>', methods=['PUT'])
 @jwt_required
 def put_group_images(group_id, image_id):
+    if not is_overseer_or_admin(group_id):
+        return logged_response('You must be either an admin or an overseer of the group to make this request', 403)
+
     # check for old image id in parameter list (?old=<id>)
     old_image_id = request.args['old']
     new_image_id = image_id
@@ -632,6 +679,9 @@ def put_group_images(group_id, image_id):
 @groups.route('/groups/<int:group_id>/images/<int:image_id>', methods=['DELETE'])
 @jwt_required
 def delete_group_image(group_id, image_id):
+    if not is_overseer_or_admin(group_id):
+        return logged_response('You must be either an admin or an overseer of the group to make this request', 403)
+
     group_image = db.session.query(ImageGroup).filter_by(group_id=group_id, image_id=image_id).first()
 
     if not group_image:
