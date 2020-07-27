@@ -338,6 +338,8 @@
 import CustomForm from "../../CustomForm";
 import EntitySearch from "../../EntitySearch";
 import { eventBus } from "../../../plugins/event-bus.js";
+import { mapState } from "vuex";
+
 export default {
   components: { "meeting-form": CustomForm, EntitySearch },
   name: "GroupMeetings",
@@ -463,6 +465,7 @@ export default {
         },
       ];
     },
+    ...mapState(["currentAccount"]),
   },
 
   methods: {
@@ -796,6 +799,7 @@ export default {
 
   mounted: function () {
     this.getMeetings();
+    console.log("Account: ", this.currentAccount);
   },
 };
 </script>
