@@ -30,7 +30,7 @@
         </template>
         <v-col cols="4" class="shrink">
           <v-menu open-on-hover offset-y bottom>
-            <template v-slot:activator="{ on }" v-if="ifAdmin === true">
+            <template v-slot:activator="{ on }" v-if="ifTreeAdmin === true">
               <v-btn
                 color="primary"
                 :fab="$vuetify.breakpoint.mdAndDown"
@@ -43,7 +43,7 @@
                 }}
               </v-btn>
             </template>
-            <template v-slot:activator="{ on }" v-if="ifAdmin === false">
+            <template v-slot:activator="{ on }" v-else-if="ifTreeAdmin === false">
               <v-btn
                 color="primary"
                 :fab="$vuetify.breakpoint.mdAndDown"
@@ -57,7 +57,7 @@
               </v-btn>
             </template>
             <v-list>
-              <template v-if="ifAdmin === true">
+              <template v-if="ifTreeAdmin === true">
                 <v-list-item @click.stop="activateGroupDialog()">
                   <v-icon color="primary">group_add</v-icon>
                   <v-list-item-content>
@@ -290,7 +290,6 @@ export default {
   name: "GroupTable",
   mounted() {
     this.fetchGroups();
-    console.log(this.currentAccount);
   },
   data() {
     return {
