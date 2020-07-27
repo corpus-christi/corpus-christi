@@ -33,3 +33,12 @@ $vuetify:
     en-US: No data available
     es-EC: Datos no disponibles
     zh-CN: 无可用数据
+  timePicker:
+    am:
+      en-US: am
+      es-EC: am
+      zh-CN: am
+    pm:
+      en-US: pm
+      es-EC: pm
+      zh-CN: pm

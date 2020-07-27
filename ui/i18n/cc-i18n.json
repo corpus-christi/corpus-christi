@@ -12,7 +12,11 @@
       "dataTable": {
         "rowsPerPageText": "Rows per page:"
       },
-      "noDataText": "No data available"
+      "noDataText": "No data available",
+      "timePicker": {
+        "am": "am",
+        "pm": "pm"
+      }
     },
     "account": {
       "messages": {
@@ -949,7 +953,11 @@
       "dataTable": {
         "rowsPerPageText": "Filas por p\u00e1gina:"
       },
-      "noDataText": "Datos no disponibles"
+      "noDataText": "Datos no disponibles",
+      "timePicker": {
+        "am": "am",
+        "pm": "pm"
+      }
     },
     "account": {
       "messages": {
@@ -1886,7 +1894,11 @@
       "dataTable": {
         "rowsPerPageText": "\u6bcf\u9875\u884c\u6570\uff1a"
       },
-      "noDataText": "\u65e0\u53ef\u7528\u6570\u636e"
+      "noDataText": "\u65e0\u53ef\u7528\u6570\u636e",
+      "timePicker": {
+        "am": "am",
+        "pm": "pm"
+      }
     },
     "account": {
       "messages": {

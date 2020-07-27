@@ -105,11 +105,13 @@ export default {
               resp.data.firstName,
               resp.data.lastName,
               decodedJwt.user_claims.roles,
-              resp.data.email
+              resp.data.email,
+              resp.data.id
             ),
             jwt: resp.data.jwt,
           });
 
+          console.log("RESP", resp.data);
           // Normally want to use `push`, but unlikely that
           // the user wants to return to the login page.
           const route = this.$route.query.redirect || { name: "people" };
