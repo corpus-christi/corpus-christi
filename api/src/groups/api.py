@@ -52,7 +52,7 @@ def read_all_group_types():
     return logged_response(group_type_schema.dump(group_types, many=True))
 
 @groups.route('/group-types/<int:group_type_id>', methods=['PATCH'])
-@jwt_required
+@authorize(['role.group-admin'])
 def update_group_type(group_type_id):
     group_type_schema = GroupTypeSchema()
 
@@ -76,7 +76,7 @@ def update_group_type(group_type_id):
 
 
 @groups.route('/group-types/<int:group_type_id>', methods=['DELETE'])
-@jwt_required
+@authorize(['role.group-admin'])
 def delete_group_type(group_type_id):
     group_type = db.session.query(GroupType).filter_by(id=group_type_id).first()
 
@@ -94,7 +94,7 @@ def delete_group_type(group_type_id):
 group_schema = GroupSchema()
 
 @groups.route('/groups', methods=['POST'])
-@jwt_required
+@authorize(['role.group-admin'])
 def create_group():
     try:
         valid_group = group_schema.load(request.json, partial=['active'])
@@ -137,7 +137,7 @@ def read_one_group(group_id):
     return logged_response(group_schema.dump(group), 200)
 
 @groups.route('/groups/<int:group_id>', methods=['PATCH'])
-@jwt_required
+@authorize(['role.group-admin'])
 def update_group(group_id):
     group_schema = GroupSchema()
 
@@ -160,7 +160,7 @@ def update_group(group_id):
     return logged_response(group_schema.dump(group), 200)
 
 @groups.route('/groups/<int:group_id>', methods=['DELETE'])
-@jwt_required
+@authorize(['role.group-admin'])
 def delete_group(group_id):
     group = db.session.query(Group).filter_by(id=group_id).first()
 
@@ -178,6 +178,7 @@ def delete_group(group_id):
 manager_type_schema = ManagerTypeSchema()
 
 @groups.route('/manager-types', methods=['POST'])
+@authorize(['role.group-admin'])
 def create_manager_type():
     try:
         valid_manager_type = manager_type_schema.load(request.json)
@@ -207,7 +208,7 @@ def read_all_manager_types():
     return logged_response(manager_type_schema.dump(manager_types, many=True))
 
 @groups.route('/manager-types/<int:manager_type_id>', methods=['PATCH'])
-@jwt_required
+@authorize(['role.group-admin'])
 def update_manager_type(manager_type_id):
     manager_type_schema = ManagerTypeSchema()
 
@@ -231,7 +232,7 @@ def update_manager_type(manager_type_id):
 
 
 @groups.route('/manager-types/<int:manager_type_id>', methods=['DELETE'])
-@jwt_required
+@authorize(['role.group-admin'])
 def delete_manager_type(manager_type_id):
     manager_type = db.session.query(ManagerType).filter_by(id=manager_type_id).first()
 
@@ -251,7 +252,7 @@ manager_schema = ManagerSchema()
 
 
 @groups.route('/groups/<int:group_id>/managers', methods=['POST'])
-@jwt_required
+@authorize(['role.group-admin'])
 def create_manager(group_id):
     # make group_id an invalid field in payload
     manager_schema = ManagerSchema(exclude=['group_id'])
@@ -299,7 +300,7 @@ def read_one_manager(group_id, person_id):
 
 
 @groups.route('/groups/<int:group_id>/managers/<int:person_id>', methods=['PATCH'])
-@jwt_required
+@authorize(['role.group-admin'])
 def update_manager(group_id, person_id):
     manager_schema = ManagerSchema()
     try:
@@ -338,7 +339,7 @@ def update_manager(group_id, person_id):
 
 
 @groups.route('/groups/<int:group_id>/managers/<int:person_id>', methods=['DELETE'])
-@jwt_required
+@authorize(['role.group-admin'])
 def delete_manager(group_id, person_id):
     manager = db.session.query(Manager).filter_by(group_id=group_id, person_id=person_id).first()
 
