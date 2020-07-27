@@ -14,6 +14,8 @@ import {
   checkConnection,
   HierarchyCycleError,
   isRootNode,
+  isOverseer,
+  getAllSubGroups,
 } from "../../src/models/GroupHierarchyNode";
 
 interface PersonMap {
@@ -258,6 +260,30 @@ describe("Test case 1, a valid hierarchy structure", () => {
       groupMap
     );
     expect(isRootNode(p5)).toBe(false);
+  });
+
+  test("getAllSubGroups/isOverseer functionality", () => {
+    let p1: Participant = new Participant(
+      { person: personMap[1], active: true },
+      groupMap
+    );
+
+    // expect person 1 is overseer of group 4
+    expect(isOverseer(p1, 4)).toBe(true);
+
+    // expect person 1 is not overseer of group 9
+    expect(isOverseer(p1, 9)).toBe(false);
+
+    let p2: Participant = new Participant(
+      { person: personMap[2], active: true },
+      groupMap
+    );
+
+    // expect person 2 is not overseer of group 3
+    expect(isOverseer(p2, 3)).toBe(false);
+
+    // expect person 2 has no subgroups
+    expect(getAllSubGroups(p2).length).toBe(0);
   });
 });
 

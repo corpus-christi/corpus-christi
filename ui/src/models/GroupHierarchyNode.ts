@@ -339,6 +339,14 @@ export function getAllSubNodes(
   return allSubNodes;
 }
 
+export function isOverseer(person: Participant, groupId: number) {
+  return getAllSubGroups(person).some((group) => group.id === groupId);
+}
+
+export function getAllSubGroups(person: Participant) {
+  return getAllSubNodes(person).filter((node) => node.nodeType === "Group");
+}
+
 /* a generator to generate unique positive integers */
 export function* count(
   start = 0,
