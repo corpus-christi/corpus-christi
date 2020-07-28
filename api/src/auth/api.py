@@ -13,6 +13,7 @@ from ..auth.exceptions import TokenNotFound
 from ..people.models import Person, PersonSchema, Role, RoleSchema
 
 blacklist = set()
+person_schema = PersonSchema()
 
 
 @auth.route('/login', methods=['POST'])
@@ -44,7 +45,7 @@ def login():
     if person is None or not person.verify_password(password):
         return jsonify(badCred), 404
 
-    access_token = create_access_token(identity=username)
+    access_token = create_access_token(identity=person)
 
     # Add token to database for revokability
     add_token_to_database(access_token, current_app.config['JWT_IDENTITY_CLAIM'])
@@ -63,9 +64,8 @@ def check_if_token_revoked(decoded_token):
 
 
 @jwt.user_claims_loader
-def add_claims_to_access_token(identity):
-    roles = db.session.query(Role).join(Person, Role.person).filter_by(
-        username=identity).filter_by(active=True).all()
+def add_claims_to_access_token(person):
+    roles = person.roles
     role_schema = RoleSchema()
     user_roles = []
     for role in roles:
@@ -73,12 +73,20 @@ def add_claims_to_access_token(identity):
 
     return {'roles': user_roles}
 
+@jwt.user_identity_loader
+def load_user_identity(person):
+    return { 'username': person.username, 'id': person.id }
 
 @auth.route('/test/jwt')
 @jwt_not_required
 def get_test_jwt():
     if current_app.config['TESTING']:
-        access_token = create_access_token(identity='test-user')
+        # TODO: parameterize the endpoint to return token with specified roles
+        test_roles = [ Role(**role_schema.load(role_object_factory())) ]
+        test_person = Person(**person_schema.load(person_object_factory()))
+        test_person.username = 'test-user'
+        test_person.roles += test_roles
+        access_token = create_access_token(identity=test_person)
         add_token_to_database(access_token, current_app.config['JWT_IDENTITY_CLAIM'])
         print("ACCESS TOKEN", access_token)
         return jsonify(jwt=access_token)
@@ -99,7 +107,7 @@ def login_test():
             'iat': datetime.fromtimestamp(token['iat'])
         }
     }
-    username = response['username'] = get_jwt_identity()
+    username = response['username'] = get_jwt_identity()['username']
 
     success = True
     person = db.session.query(Person).filter_by(username=username).first()
@@ -119,7 +127,7 @@ def login_test():
 @auth.route('/auth/token', methods=['GET'])
 @jwt_required
 def get_tokens():
-    user_identity = get_jwt_identity()
+    user_identity = get_jwt_identity()['username']
     all_tokens = get_user_tokens(user_identity)
     ret = [token.to_dict() for token in all_tokens]
     return jsonify(ret), 200
@@ -140,7 +148,7 @@ def modify_token(token_id):
         return jsonify(msg="'revoke' must be a boolean"), 400
 
     # Revoke or unrevoke the token based on what was passed to this function
-    user_identity = get_jwt_identity()
+    user_identity = get_jwt_identity()['username']
     try:
         if revoke:
             revoke_token(token_id, user_identity)

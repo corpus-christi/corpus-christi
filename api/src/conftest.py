@@ -6,6 +6,8 @@ from flask_jwt_extended import create_access_token
 import logging
 
 from . import db, create_app
+from src.people.models import Person, PersonSchema
+from src.people.test_people import person_object_factory
 
 
 class AuthClient(FlaskClient):
@@ -14,8 +16,11 @@ class AuthClient(FlaskClient):
         super().__init__(*args, **kwargs)
 
     def open(self, *args, **kwargs):
-        access_token = create_access_token(identity='test-user')
-        kwargs['headers'] = {"AUTHORIZATION": f"Bearer {access_token}"}
+        if 'headers' not in kwargs:
+            test_person = Person(**PersonSchema().load(person_object_factory()))
+            test_person.username = 'test-user'
+            access_token = create_access_token(identity=test_person)
+            kwargs['headers'] = {"AUTHORIZATION": f"Bearer {access_token}"}
         return super().open(*args, **kwargs)
 
 
