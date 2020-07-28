@@ -40,16 +40,25 @@ _super/sub-node_ s of the current _Node_ 's _super/sub-node_ s, and the
 _super/sub-node_ s of those, etc.
 
 A user `u` is a _Group Overseer_ of group `g` if and only if `g` is among `u`'s
-_all sub-nodes_.  
+_all sub-nodes_.
 
 A node `gp` is a _grandparent-node_ of `n`, if `gp` is the immediate super-node
-of some `pn`, where `pn` is an immediate super-node of `n`.  
+of some `pn`, where `pn` is an immediate super-node of `n`.
 
 The _relative nodes_ of a node is the union of its _all sub-nodes_ and _all
 super-nodes_.
 
 Two nodes are _detached_ if and only if they don't have any common _relative
 nodes_, including themselves.
+
+A _path_ is a sequence of nodes, where each preceding node is an _immediate
+super-node_ of the node following it. The _length_ of a path is the number of
+nodes contained in the path.
+
+A _cycle_ in the leadership hierarchy occurs when a node becomes a _sub-node_
+or a _super-node_ of itself __through a _path_ (excluding itself on both ends)
+of non-repeated nodes with a _length_ of 3 or above__. For more clarification
+on the bolded part, see the [edge case section](#edge-cases).
 
 The diagram below illustrates some of the key terminologies.
 
@@ -62,7 +71,7 @@ The diagram below illustrates some of the key terminologies.
 ## Diagrams
 
 Digrams in this document are drawn using the `dot` language with the aid of an
-online service `Gravizo` that renders graphs dynamically. 
+online service `Gravizo` that renders graphs dynamically.
 
 Each graph url looks like `https://g.gravizo.com/svg?digraph%20...`.
 
@@ -71,22 +80,22 @@ this, you can use python's `urllib.parse.unquote` function. Then you should
 have a readable `dot` graph, like the following:
 
 ```dot
-digraph G { 
+digraph G {
     edge [fontcolor=sienna];
-    subgraph cluster_1 { 
+    subgraph cluster_1 {
         G1;
         fontcolor=grey;
         color=grey;
         label="Parent-node of Person 1,\nGrandparent-node of Group 2 and Group 3.";
     }
-    subgraph cluster_0 { 
+    subgraph cluster_0 {
         G2;
         G3;
         fontcolor=grey;
         color=grey;
         label="Child-node of Person 1,\nGrandchild-node of Group 1";
         labelloc=b;
-    } 
+    }
     G1 -> P1 [label="has member"];
     P1 -> G2 [label="is manager of"];
     P1 -> G3;
@@ -97,10 +106,10 @@ digraph G {
     label="Person 1";
     xlabel="Participant Node"];
 }
-``` 
+```
 
 See [here](https://renenyffenegger.ch/notes/tools/Graphviz/examples/index) for
-some sample graphs and their corresponding code.  
+some sample graphs and their corresponding code.
 
 After editing, perform the reverse process (you can use python's
 `urllib.parse.quote` to do this) and append the graph after the `?` in the url.
@@ -131,32 +140,33 @@ attendance, etc.) are granted based on the _Group Overseer_ role of the user.
 
 ## Cycle Prevention
 
-Currently, the `GroupParticipants` component checks and prevents the user from
-performing the following actions if the action introduces a cycle in the
-leadership hierarchy:
+Currently, the following components check and prevent the user from performing
+certain actions if the action introduces a cycle in the leadership hierarchy:
+
+### `GroupParticipants`
 
 -   adding a participant
 -   moving a participant to another group
 -   reactivating an archived participant
+
+### `GroupTable`
+
 -   reactivating an archived group
 
 ## Hierarchy Treeview
 
 The hierarchy treeview is implemented in `GroupTreeViewHierarchy` component.
 
-### Admin User 
+### Admin User
 
 When the admin user navigates to that page, a tree will be rendered.  Since it
 is possible for two groups to be _detached_, several _root node_ s are
 identified before the tree is drawn.
 
-A _root node_ `r` is a node that either:
+A _root node_ is a node that either:
 
 1.  does not have any super-node, or
-1.  each of its immediate super-nodes `s` satisfies the constraint that `r` is
-    the only super-node of `s`.
-
-    In other words, all of `r`'s grandparent-node (if any) is itself.
+1.  its every `immediate super-node` is also its `immediate sub-node`.
 
 After the _root node_ s are identified, the component starts building a tree
 from each of those _root node_ s, based on their sub-nodes. Repeated nodes are
@@ -166,42 +176,79 @@ shown but not expanded.
 
 Not implemented
 
+## Cycle Handling
+
+Although the system tries to prevent the user from creating cycles, there is
+nevertheless a possibility for cycles to exist in hierarchy structure, either
+through direct insertions into the database, or through some unhandled edge
+cases. The system implements the following mechanisms to handle unexpected
+cycles.
+
+### Error Notification 
+
+Unexpected cycles will trigger an error message to the user upon detection.
+
+### Cycle Display
+
+When the user navigates to the `GroupTreeViewHierarchy` page, a path containing
+the cycle will be displayed instead of the normal hierarchy treeview, giving
+the user more information about the cycle that is present in the current
+hierarchy, and prompting the user to resolve the cycle.
+
+![cycle-display](images/group-hierarchy-cycle-display.png)
+
+In the above example, there is a cycle involving user "Jason Richardson,"
+because it becomes its own _super-node_ through the _path_ containing 3
+non-repeated nodes "Illness Support," "Dalia Moya," and "Grief Share."
+
+The administrator can, for example, remove "Jason Richardson" from the members
+of group "Grief Share," to resolve the cycle.
+
+Note, however, that the Cycle Display will only be rendered when the cycle is
+linked to at least one _root node_. Due to implementation, when non of the
+nodes in the cycle is, or is connected to a _root node_ (see [this
+case](#disallowed-case-1:-repeated-node-through-different-nodes), for example),
+the rendered hierarchy tree will render a tree normally, silently ignoring
+those nodes, without displaying the cycling path.
+
 # Edge Cases
 
 ## Manager-member double identity
 
 Since it is common for a group manager to also be a member of the same group,
 the hierarchy system permits the following linkage to be made, where "Person 1"
-is both a manager and a member of "Group 1." 
+is both a manager and a member of "Group 1." The following examples illustrate
+this idea.
 
-Thus, the following situations are allowed.
+### Allowed Case 1: double identity
+![double-identity-case-1](https://g.gravizo.com/svg?digraph%20G%20%7B%0A%20%20%20%20G1a%20%5Blabel%3DGroup1%5D%3B%0A%20%20%20%20P1%20%5Blabel%3DPerson1%3B%20color%3Dred%3B%20shape%3Drectangle%5D%3B%0A%20%20%20%20G1b%20%5Blabel%3DGroup1%5D%3B%0A%20%20%20%20G1a%20-%3E%20P1%3B%0A%20%20%20%20P1%20-%3E%20G1b%3B%0A%7D%0A)
 
-### Allowed Case: double identity
-![double-identity-case-1](https://g.gravizo.com/svg?digraph%20G%20%7B%0A%20%20%20%20G1a%20%5Blabel%3DGroup1%5D%3B%0A%20%20%20%20P1%20%5Blabel%3DPerson1%3B%20color%3Dred%3B%20shape%3Drectangle%5D%3B%0A%20%20%20%20G1b%20%5Blabel%3DGroup1%5D%3B%0A%20%20%20%20G1a%20-%3E%20P1%3B%0A%20%20%20%20P1%20-%3E%20G1b%3B%0A%7D%0A) 
-
-##### logical equivalences
+#### Logical Equivalences
 
 ![double-identity-case-1-a](https://g.gravizo.com/svg?digraph%20G%20%7B%0A%20%20%20%20P1%20%5Blabel%3DPerson1%3B%20color%3Dred%3B%20shape%3Drectangle%5D%3B%0A%20%20%20%20G1%20%5Blabel%3DGroup1%5D%3B%0A%20%20%20%20P1%20-%3E%20G1%3B%0A%20%20%20%20G1%20-%3E%20P1%3B%0A%7D%0A)
 ![double-identity-case-1-b](https://g.gravizo.com/svg?digraph%20G%20%7B%0A%20%20%20%20P1a%20%5Blabel%3DPerson1%3B%20color%3Dred%3B%20shape%3Drectangle%5D%3B%0A%20%20%20%20G1%20%5Blabel%3DGroup1%5D%3B%0A%20%20%20%20P1b%20%5Blabel%3DPerson1%3B%20color%3Dred%3B%20shape%3Drectangle%5D%3B%0A%20%20%20%20P1a%20-%3E%20G1%3B%0A%20%20%20%20G1%20-%3E%20P1b%3B%0A%7D%0A)
 
-### Allowed Case: multiple people with double identity
-![double-identity-case-4](https://g.gravizo.com/svg?digraph%20G%20%7B%0A%20%20%20%20P1a%20-%3E%20G2%20-%3E%20P1b%3B%0A%20%20%20%20P2a%20-%3E%20G2%20-%3E%20P2b%3B%0A%20%20%20%20P1a%20%5Blabel%3DPerson1%2C%20shape%3Drectangle%2C%20color%3Dred%5D%3B%0A%20%20%20%20P1b%20%5Blabel%3DPerson1%2C%20shape%3Drectangle%2C%20color%3Dred%5D%3B%0A%20%20%20%20P2a%20%5Blabel%3DPerson2%2C%20shape%3Drectangle%2C%20color%3Dblue%5D%3B%0A%20%20%20%20P2b%20%5Blabel%3DPerson2%2C%20shape%3Drectangle%2C%20color%3Dblue%5D%3B%0A%20%20%20%20G2%20%5Blabel%3DGroup2%5D%3B%0A%7D%0A)
+#### Rendered tree
 
-##### logical equivalence
-![double-identity-case-4-a](https://g.gravizo.com/svg?digraph%20G%20%7B%0A%20%20%20%20P1%20-%3E%20G2%20-%3E%20P1%3B%0A%20%20%20%20P2%20-%3E%20G2%20-%3E%20P2%3B%0A%20%20%20%20P1%20%5Blabel%3DPerson1%2C%20shape%3Drectangle%2C%20color%3Dred%5D%3B%0A%20%20%20%20P2%20%5Blabel%3DPerson2%2C%20shape%3Drectangle%2C%20color%3Dblue%5D%3B%0A%20%20%20%20G2%20%5Blabel%3DGroup2%5D%3B%0A%7D%0A)
+![double-identity-case-1-tree](https://g.gravizo.com/svg?digraph%20G%20%7B%0A%20%20%20%20Admin%20-%3E%20G1%20-%3E%20P1a%3B%0A%20%20%20%20Admin%20-%3E%20P1%20-%3E%20G1a%3B%0A%20%20%20%20Admin%20%5Bshape%3Ddiamond%5D%3B%0A%20%20%20%20P1%20%5Blabel%3DPerson1%2C%20shape%3Drectangle%2C%20color%3Dred%5D%3B%0A%20%20%20%20P1a%20%5Blabel%3DPerson1%2C%20shape%3Drectangle%2C%20color%3Dred%5D%3B%0A%20%20%20%20G1%20%5Blabel%3DGroup1%5D%3B%0A%20%20%20%20G1a%20%5Blabel%3DGroup1%5D%3B%0A%7D%0A)
 
-> For this case, the rendered tree will be similar to the illustration below,
-> Note that "Group 2" is a _root node_ being appended under the "Admin" node,
-> and the lower-level "Group 2" are no longer expanded
 
-> ![double-identity-case-4-tree](https://g.gravizo.com/svg?digraph%20G%20%7B%0A%20%20%20%20Admin%20-%3E%20G2%3B%0A%20%20%20%20G2%20-%3E%20P1%20-%3E%20G2P1%3B%0A%20%20%20%20G2%20-%3E%20P2%20-%3E%20G2P2%3B%0A%20%20%20%20Admin%20%5Bshape%3Ddiamond%5D%3B%0A%20%20%20%20P1%20%5Blabel%3DPerson1%2C%20shape%3Drectangle%2C%20color%3Dred%5D%3B%0A%20%20%20%20P2%20%5Blabel%3DPerson2%2C%20shape%3Drectangle%2C%20color%3Dblue%5D%3B%0A%20%20%20%20G2%20%5Blabel%3DGroup2%5D%3B%0A%20%20%20%20G2P1%20%5Blabel%3DGroup2%5D%3B%0A%20%20%20%20G2P2%20%5Blabel%3DGroup2%5D%3B%0A%7D%0A)
+### Allowed Case 2: multiple people with double identity
+![double-identity-case-4](https://g.gravizo.com/svg?digraph%20G%20%7B%0A%20%20%20%20P1%20-%3E%20G2%20-%3E%20P2%20-%3E%20G1%3B%0A%20%20%20%20G1%20-%3E%20P2%20-%3E%20G2%20-%3E%20P1%3B%0A%20%20%20%20P1%20%5Blabel%3DPerson1%2C%20shape%3Drectangle%2C%20color%3Dred%5D%3B%0A%20%20%20%20P2%20%5Blabel%3DPerson2%2C%20shape%3Drectangle%2C%20color%3Dblue%5D%3B%0A%20%20%20%20G1%20%5Blabel%3DGroup1%5D%3B%0A%20%20%20%20G2%20%5Blabel%3DGroup2%2C%20color%3Dgreen%5D%3B%0A%7D%0A)
 
-### Disallowed Case: Repeated node through different nodes
+#### Rendered tree
 
-![double-identity-case-5](https://g.gravizo.com/svg?digraph%20G%20%7B%0A%20%20%20%20G2a%20-%3E%20P1%20-%3E%20G1%20-%3E%20P2%20-%3E%20G2b%0A%20%20%20%20P1%20%5Blabel%3DPerson1%2C%20shape%3Drectangle%2C%20color%3Dyellow%5D%3B%0A%20%20%20%20P2%20%5Blabel%3DPerson2%2C%20shape%3Drectangle%2C%20color%3Dblue%5D%3B%0A%20%20%20%20G1%20%5Blabel%3DGroup1%2C%20color%3Dgreen%5D%3B%0A%20%20%20%20G2a%20%5Blabel%3DGroup2%2C%20color%3Dred%5D%3B%0A%20%20%20%20G2b%20%5Blabel%3DGroup2%2C%20color%3Dred%5D%3B%0A%7D%0A)
+![double-identity-case-4-tree](https://g.gravizo.com/svg?digraph%20G%20%7B%0A%20%20%20%20node%20%5Bcolor%3Dblack%2C%20label%3D%22Group%201%22%5D%0A%20%20%20%20G1a%20G1b%20G1c%20G1d%0A%20%20%20%20node%20%5Bcolor%3Dgreen%2C%20label%3D%22Group%202%22%5D%0A%20%20%20%20G2a%20G2b%20G2c%20G2d%0A%20%20%20%20node%20%5Bshape%3Drectangle%5D%0A%20%20%20%20node%20%5Bcolor%3Dred%2C%20label%3D%22Person%201%22%5D%0A%20%20%20%20P1a%20P1b%20P1c%20P1d%0A%20%20%20%20node%20%5Bcolor%3Dblue%2C%20label%3D%22Person%202%22%5D%0A%20%20%20%20P2a%20P2b%20P2c%20P2d%0A%20%20%20%20Admin%20-%3E%20P1a%20-%3E%20G2a%20-%3E%20P2a%20-%3E%20G1a%3B%0A%20%20%20%20Admin%20-%3E%20G2b%20-%3E%20P2b%20-%3E%20G1b%3B%20%0A%20%20%20%20G2b%20-%3E%20P1b%3B%0A%20%20%20%20Admin%20-%3E%20P2c%20-%3E%20G2c%20-%3E%20P1c%3B%0A%20%20%20%20P2c%20-%3E%20G1c%3B%0A%20%20%20%20Admin%20-%3E%20G1d%20-%3E%20P2d%20-%3E%20G2d%20-%3E%20P1d%3B%0A%20%20%20%20Admin%20%5Bshape%3Ddiamond%2C%20label%3D%22Admin%22%2C%20color%3D%22black%22%5D%3B%0A%7D%0A)
 
-##### logical equivalence
-![double-identity-case-5-a](https://g.gravizo.com/svg?digraph%20G%20%7B%0A%20%20%20%20G2%20-%3E%20P1%20-%3E%20G1%20-%3E%20P2%20-%3E%20G2%0A%20%20%20%20P1%20%5Blabel%3DPerson1%2C%20shape%3Drectangle%2C%20color%3Dyellow%5D%3B%0A%20%20%20%20P2%20%5Blabel%3DPerson2%2C%20shape%3Drectangle%2C%20color%3Dblue%5D%3B%0A%20%20%20%20G1%20%5Blabel%3DGroup1%2C%20color%3Dgreen%5D%3B%0A%20%20%20%20G2%20%5Blabel%3DGroup2%2C%20color%3Dred%5D%3B%0A%20%20%20%20%7B%20rank%3Dsame%20P2%20P1%20%7D%0A%7D%0A)
+Note that all of the nodes are considered _root node_ s in this case, being
+appended under the "Admin" node.
+
+### Disallowed Case 1: Repeated node through different nodes
+
+![double-identity-case-5](https://g.gravizo.com/svg?digraph%20G%20%7B%0A%20%20%20%20G2a%20-%3E%20P1%20-%3E%20G1%20-%3E%20P2%20-%3E%20G2b%0A%20%20%20%20P1%20%5Blabel%3DPerson1%2C%20shape%3Drectangle%2C%20color%3Dred%5D%3B%0A%20%20%20%20P2%20%5Blabel%3DPerson2%2C%20shape%3Drectangle%2C%20color%3Dblue%5D%3B%0A%20%20%20%20G1%20%5Blabel%3DGroup1%5D%3B%0A%20%20%20%20G2a%2C%20G2b%20%5Blabel%3DGroup2%2C%20color%3Dgreen%5D%3B%0A%7D%0A)
+
+#### Logical Equivalence
+![double-identity-case-5-a](https://g.gravizo.com/svg?digraph%20G%20%7B%0A%20%20%20%20G2%20-%3E%20P1%20-%3E%20G1%20-%3E%20P2%20-%3E%20G2%0A%20%20%20%20P1%20%5Blabel%3DPerson1%2C%20shape%3Drectangle%2C%20color%3Dred%5D%3B%0A%20%20%20%20P2%20%5Blabel%3DPerson2%2C%20shape%3Drectangle%2C%20color%3Dblue%5D%3B%0A%20%20%20%20G1%20%5Blabel%3DGroup1%5D%3B%0A%20%20%20%20G2%20%5Blabel%3DGroup2%2C%20color%3Dgreen%5D%3B%0A%20%20%20%20%7B%20rank%3Dsame%20P2%20P1%20%7D%0A%7D%0A)
 
 Note there is no _root node_ in this diagram, so there is no way for the treeview
 component to pick up any of the nodes and start building the tree.

@@ -301,7 +301,7 @@ groups:
       zh-CN: 显示所有群组
     show-linegraph:
       en-US: Show Line Graph
-      en-EC: Mostrar gráfico de líneas
+      es-EC: Mostrar gráfico de líneas
       zh-CN: 显示折线图
     show-list:
       en-US: Show Group List
@@ -542,7 +542,7 @@ groups:
       en-US: Group unarchived
       es-EC: Grupo desarchivado # probably not right
       zh-CN: 小组已恢复
-    group-unarchiving-group:
+    error-unarchiving-group:
       en-US: Error while unarchiving group
       es-EC: Error al desarchivar el grupo
       zh-CN: 取消归档组时出错

@@ -127,27 +127,26 @@ describe("Test case 1, a valid hierarchy structure", () => {
   });
 
   test("getTree cycle handling", () => {
+    let p1: HierarchyNode = new Participant(
+      { person: personMap[1], active: true },
+      groupMap
+    );
+    let g1: HierarchyNode = new Group(groupMap[1], groupMap);
     let rootNode: GraphNode;
     // get a tree branching down from Person 1
-    rootNode = getTree(
-      new Participant({ person: personMap[1], active: true }, groupMap)
-    );
+    rootNode = getTree(p1);
     expect(rootNode.children.length).toBe(3);
     let gng1: GraphNode | undefined = rootNode.children.find((graphNode) =>
-      graphNode.hierarchyNode.equal(new Group(groupMap[1], groupMap))
+      graphNode.hierarchyNode.equal(g1)
     );
     // expect Group 1 to be in Person1's children
     expect(gng1).not.toBeUndefined();
     let gnp1: GraphNode | undefined = gng1!.children.find((graphNode) =>
-      graphNode.hierarchyNode.equal(
-        new Participant({ person: personMap[1], active: true }, groupMap)
-      )
+      graphNode.hierarchyNode.equal(p1)
     );
-    // expect Person 1 to be in Group1's children
-    // (because Person 1 is both a manager and member of Group 1)
-    expect(gnp1).not.toBeUndefined();
-    // expect no more children in gnp1 to prevent infinite recursion
-    expect(gnp1!.children.length).toBe(0);
+    // expect Person 1 is not rendered again under Group 1
+    // (even though Person 1 is both a manager and member of Group 1)
+    expect(gnp1).toBeUndefined();
   });
 
   test("map function on GraphNode", () => {
@@ -249,10 +248,16 @@ describe("Test case 1, a valid hierarchy structure", () => {
     );
     expect(isRootNode(p8)).toBe(true);
 
-    // g2 is not a rootNode, because p1 is above g2,
-    // and among p1's supernodes, g2 is not the only one
+    // g2 is not a rootNode, because p1 is its parent but not its child
     let g2: Group = new Group(groupMap[2], groupMap);
     expect(isRootNode(g2)).toBe(false);
+
+    // p5 is not a rootNode, because g2 is its parent but not its child
+    let p5: Participant = new Participant(
+      { person: personMap[5], active: true },
+      groupMap
+    );
+    expect(isRootNode(p5)).toBe(false);
   });
 });
 
@@ -261,11 +266,11 @@ describe("Test case 2, a tree that contains cycle", () => {
   beforeAll(() => {
     let groupMembers = [
       [1, 1],
-      [1, 2],
       [2, 3],
     ];
     let groupManagers = [
       [2, 1],
+      [1, 2],
       [1, 3],
     ];
     ({ groupMap, personMap } = getMap(groupMembers, groupManagers));

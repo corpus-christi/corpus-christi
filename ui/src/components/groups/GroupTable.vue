@@ -95,7 +95,6 @@
       must-sort
       :item-class="itemClass"
       class="elevation-1"
-      :footer-props='{itemsPerPageText: $t("$vuetify.dataTable.rowsPerPageText")}'
     >
       <template v-slot:item.actions="props">
         <template v-if="props.item.active">
@@ -192,7 +191,6 @@
           </v-tooltip>
         </template>
       </template>
-      <template v-slot:footer.page-text="items"> {{ items.pageStart }} - {{ items.pageStop }} of {{ items.itemsLength }} </template>
     </v-data-table>
 
     <!-- New/Edit dialog -->
@@ -433,14 +431,14 @@ export default {
         .then(() => {
           this.groupDialog.saveLoading = false;
           eventBus.$emit("message", {
-            content: this.$t("groups.messages.group-edited"),
+            content: "groups.messages.group-edited",
           });
         })
         .catch((err) => {
           console.error("PUT FALURE", err.response);
           this.groupDialog.saveLoading = false;
-          eventBus.$emit("message", {
-            content: this.$t("groups.messages.error-editing-group"),
+          eventBus.$emit("error", {
+            content: "groups.messages.error-editing-group",
           });
         });
     },
@@ -454,14 +452,14 @@ export default {
           this.groups.push(resp.data);
           this.groupDialog.saveLoading = false;
           eventBus.$emit("message", {
-            content: this.$t("groups.messages.group-added"),
+            content: "groups.messages.group-added",
           });
         })
         .catch((err) => {
           console.error("POST FAILURE", err.response);
           this.groupDialog.saveLoading = false;
           eventBus.$emit("error", {
-            content: this.$t("groups.messages.error-adding-group"),
+            content: "groups.messages.error-adding-group",
           });
         });
     },
@@ -499,15 +497,15 @@ export default {
           this.archiveDialog.loading = false;
           this.archiveDialog.show = false;
           eventBus.$emit("message", {
-            content: this.$t("groups.messages.group-archived"),
+            content: "groups.messages.group-archived",
           });
         })
         .catch((err) => {
           console.error("PATCH FAILURE", err.response);
           this.archiveDialog.loading = false;
           this.archiveDialog.show = false;
-          eventBus.$emit("message", {
-            content: this.$t("groups.messages.error-archiving-group"),
+          eventBus.$emit("error", {
+            content: "groups.messages.error-archiving-group",
           });
         });
     },
@@ -520,13 +518,13 @@ export default {
         .then((resp) => {
           Object.assign(this.groups[idx], resp.data);
           eventBus.$emit("message", {
-            content: this.$t("groups.messages.group-unarchived"),
+            content: "groups.messages.group-unarchived",
           });
         })
         .catch((err) => {
           console.error("PATCH FAILURE", err.response);
           eventBus.$emit("error", {
-            content: this.$t("groups.messages.error-unarchiving-gropu"),
+            content: "groups.messages.error-unarchiving-group",
           });
         });
     },

@@ -132,9 +132,6 @@
       :loading="tableLoading"
       @click:row="handleRowClick"
       class="elevation-1"
-      :footer-props="{
-        itemsPerPageText: $t('$vuetify.dataTable.rowsPerPageText'),
-      }"
     >
       <template v-slot:header.data-table-select>
         <v-simple-checkbox
@@ -184,9 +181,6 @@
           >
           <span>{{ action.tooltipText }}</span>
         </v-tooltip>
-      </template>
-      <template v-slot:footer.page-text="items">
-        {{ items.pageStart }} - {{ items.pageStop }} of {{ items.itemsLength }}
       </template>
     </v-data-table>
 
@@ -610,6 +604,9 @@ export default {
               : checkConnection(groupInstance, participantInstance);
           } catch (err) {
             if (err instanceof HierarchyCycleError) {
+              if (err.flag === "unexpected") {
+                this.handleUnexpectedCycle(err);
+              }
               participant.disabled = true;
               participant.disabledText = this.$t(
                 "groups.batch-actions.messages.move-person-will-cause-cycle"
@@ -794,6 +791,10 @@ export default {
             }
           } catch (err) {
             if (err instanceof HierarchyCycleError) {
+              if (err.flag === "unexpected") {
+                this.handleUnexpectedCycle(err);
+                return [];
+              }
               let obj = subjectIsGroup
                 ? objectInstance.getObject().person
                 : objectInstance.getObject();
@@ -808,6 +809,19 @@ export default {
           }
         });
       return cyclingEntities;
+    },
+
+    handleUnexpectedCycle(err) {
+      eventBus.$emit("error", {
+        content: "groups.treeview.unexpected-cycle",
+      });
+      let { message, node, path, flag } = err;
+      console.error("Unexpected cycle in current tree", {
+        message,
+        node,
+        path,
+        flag,
+      });
     },
 
     /************* selection helper methods ****************/

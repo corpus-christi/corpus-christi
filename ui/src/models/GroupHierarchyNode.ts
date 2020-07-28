@@ -356,10 +356,38 @@ export class HierarchyCycleError extends Error {
   constructor(
     message: string,
     public node: HierarchyNode,
-    public path: HierarchyNode[] = []
+    public path: HierarchyNode[] = [],
+    public flag: string = ""
   ) {
     super(message);
     this.name = "HierarchyCycleError";
+  }
+}
+
+/* checks whether the given parentPath contains a cycle with respect to currentNode.
+ * this function is intended to be called in dfs's callback function, to make sure
+ * no cycle exists. Throws an exception with 'unexpected' flag when a cycle is found.
+ */
+export function checkCycle(
+  currentNode: HierarchyNode,
+  parentPath: HierarchyNode[]
+) {
+  let cyclingNodeIndex: number;
+  if (
+    parentPath.length > 2 &&
+    (cyclingNodeIndex = parentPath
+      .slice(2) // ignore the immediate parent to allow someone to be both manager/member of a group
+      .findIndex((parentNode) => parentNode.equal(currentNode))) !== -1
+  ) {
+    throw new HierarchyCycleError(
+      "Unexpected cycle in tree",
+      currentNode,
+      parentPath
+        .slice(0, cyclingNodeIndex + 2 + 1)
+        .reverse()
+        .concat(currentNode),
+      "unexpected"
+    );
   }
 }
 
@@ -372,22 +400,11 @@ export function getTree(
   const rootNode = dfs(
     node,
     (node: HierarchyNode, parentPath: HierarchyNode[]) => {
-      if (parentPath.length >= 2 && parentPath[1].equal(node)) {
-        return []; // prevent infinite loop from immediate cycle caused by manager-member double identity
-      }
-      if (
-        parentPath.length > 2 &&
-        parentPath
-          .slice(2) // ignore the immediate parent to allow someone to be both manager/member of a group
-          .some((parentNode) => parentNode.equal(node))
-      ) {
-        throw new HierarchyCycleError(
-          "Unexpected cycle in tree",
-          node,
-          parentPath
-        );
-      }
-      return node[superNodes ? "getSuperNodes" : "getSubNodes"]();
+      checkCycle(node, parentPath);
+      let parentNode: HierarchyNode | undefined = parentPath[0];
+      return node[superNodes ? "getSuperNodes" : "getSubNodes"]().filter(
+        (hn) => !(parentNode && parentNode.equal(hn))
+      );
     }
   );
   return rootNode;
@@ -438,15 +455,14 @@ export function getInfoTree(
 
 /* checks whether a node is a root node
  * a root node <r> is a node that either:
- * 1. does not have any super-node, or
- * 2. each of its immediate super-nodes <s> satisfies the constraint that <r> is the only super-node of <s>,
- * in other words, <r> and only <r> appears again at depth 2 from the original <r>,
- * caused by the manager/member double identity */
+ *   does not have any super-node, or
+ *   its every 'immediate super-node' is also its 'immediate sub-node'.
+ */
 export function isRootNode(node: HierarchyNode): boolean {
   let immediateSuperNodes = node.getSuperNodes();
-  for (let immediateSuperNode of immediateSuperNodes) {
-    let grandSuperNodes = immediateSuperNode.getSuperNodes();
-    if (!(grandSuperNodes.length === 1 && grandSuperNodes[0].equal(node))) {
+  let immediateSubNodes = node.getSubNodes();
+  for (let supernode of immediateSuperNodes) {
+    if (!immediateSubNodes.some((subnode) => subnode.equal(supernode))) {
       return false;
     }
   }
@@ -457,6 +473,10 @@ export function isRootNode(node: HierarchyNode): boolean {
  * the logic is to check whether there is any ancestor node of parentNode that is also a
  * descendent node of childNode.
  * Throws an exception, including the cycling node and path when the connection will cause cycle.
+ * If the cycle will be created by connecting parentNode and childNode, the exception thrown will
+ * contain a 'preventive' flag, indicating it is an expected cycle to be prevented;
+ * on the other hand, if a cycle is found when traversing the existing tree, the exception thrown
+ * will contain an 'unexpected' flag, signaling it is an unexpected behavior.
  * The fact that some person can be both a manager/member of a group
  * cause the algorithm to ignore some of the closely connected nodes */
 export function checkConnection(
@@ -469,7 +489,7 @@ export function checkConnection(
   // 1. is equal to its grandparent, or
   // 2. is equal to childNode, and whose grandparent will be childNode when connection is made (have a parentPath length of 1)
   // stop expanding at that node, and don't collect the node itself.
-  // collect all other nodes into allSubNodes
+  // collect all other nodes into allSuperNodes
   dfs(
     parentNode,
     (
@@ -477,6 +497,7 @@ export function checkConnection(
       parentPath: HierarchyNode[],
       graphNode: GraphNode
     ) => {
+      checkCycle(hierarchyNode, parentPath);
       // 1. is equal to its grandparent, or
       if (parentPath.length >= 2 && parentPath[1].equal(hierarchyNode)) {
         return [];
@@ -504,6 +525,7 @@ export function checkConnection(
       parentPath: HierarchyNode[],
       graphNode: GraphNode
     ) => {
+      checkCycle(hierarchyNode, parentPath);
       // 1. is equal to its grandparent, or
       if (parentPath.length >= 2 && parentPath[1].equal(hierarchyNode)) {
         return [];
@@ -512,7 +534,7 @@ export function checkConnection(
       if (parentPath.length === 1 && hierarchyNode.equal(parentNode)) {
         return [];
       }
-      // other wise, if there is a <node-parent> in allSuperNodes that is equal to <node-child>
+      // otherwise, if there is a <node-parent> in allSuperNodes that is equal to <node-child>
       let cycleNode: GraphNode | undefined;
       if (
         (cycleNode = allSuperNodes.find((superNode) =>
@@ -530,7 +552,8 @@ export function checkConnection(
             (h) => h.toString()
           )}`,
           cycleNode.hierarchyNode,
-          cyclePath
+          cyclePath,
+          "preventive"
         );
       }
       return hierarchyNode.getSubNodes();
