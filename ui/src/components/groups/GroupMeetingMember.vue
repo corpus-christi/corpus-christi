@@ -35,6 +35,7 @@
         </tr>
       </template>
     </v-data-table>
+    <template  v-if="isOverseer === true || ifAdmin">
     <v-col md="3">
       <v-btn
         class="ma-2"
@@ -44,12 +45,18 @@
         >{{ $t("error-report.actions.submit") }}</v-btn
       >
     </v-col>
+    </template>
   </div>
 </template>
 
 <script>
 import { eventBus } from "../../plugins/event-bus";
-
+import { mapState } from "vuex";
+import {
+  convertToGroupMap,
+  isOverseer,
+  getParticipantById,
+} from "../../models/GroupHierarchyNode.ts";
 export default {
   name: "GroupMeetingMember",
   data() {
@@ -63,6 +70,7 @@ export default {
       listMember: [],
       recordAttendance: [],
       markList: [],
+      allGroups: null,
     };
   },
   methods: {
@@ -85,6 +93,8 @@ export default {
         .then((resp) => {
           this.currentGroupId = resp.data.groupId;
         })
+        .then(() => this.fetchAllGroups())
+        .then(() => this.isOverseer())
         .then(() => this.getAllGroupMember());
     },
     getAllGroupMember() {
@@ -175,6 +185,20 @@ export default {
         }
       }
     },
+    fetchAllGroups() {
+      return this.$http.get("api/v1/groups/groups").then((resp) => {
+        this.allGroups = resp.data;
+      });
+    },
+    isOverseer() {
+      let currentParticipant = getParticipantById(
+        this.currentAccount.id,
+        this.groupMap
+      );
+      return currentParticipant
+        ? isOverseer(currentParticipant, this.currentGroupId)
+        : false;
+    },
   },
   computed: {
     headers() {
@@ -190,6 +214,21 @@ export default {
           width: "20%",
         },
       ];
+    },
+    ...mapState(["currentAccount"]),
+    groupMap() {
+      return convertToGroupMap(this.allGroups);
+    },
+    id() {
+      return this.currentGroupId;
+    },
+    ifAdmin() {
+      if (
+        this.currentAccount.roles.includes("role.group-admin") ||
+        this.currentAccount.roles.includes("role.group-leader")
+      ) {
+        return true;
+      } else return false;
     },
   },
   mounted: function () {

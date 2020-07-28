@@ -198,6 +198,15 @@ import moment from "moment";
 import { mapState } from "vuex";
 import "chartjs-plugin-crosshair";
 import $ from "jquery";
+import {
+  // Group,
+  // Participant,
+  // checkConnection,
+  // HierarchyCycleError,
+  convertToGroupMap,
+  isOverseer,
+  getParticipantById,
+} from "../../models/GroupHierarchyNode.ts";
 
 export default {
   components: {},
@@ -265,6 +274,7 @@ export default {
         },
       },
       managerData: {},
+      allGroups: null,
     };
   },
 
@@ -284,6 +294,9 @@ export default {
       if (this.selectedGroups.length === 0) {
         return false;
       } else return true;
+    },
+    groupMap() {
+      return convertToGroupMap(this.allGroups);
     },
   },
   watch: {
@@ -408,7 +421,6 @@ export default {
 
   mounted() {
     this.getAllGroups();
-    console.log(this.currentAccount);
   },
 
   methods: {
@@ -1157,20 +1169,20 @@ export default {
     },
     getAllGroups() {
       this.selectedTimeScale = "Monthly";
-      //after we get all the groups, we need to find the groups we have control over
       this.$http
         .get(`/api/v1/groups/groups`)
         .then((resp) => {
-          //need to filter the data before push in groups
-          this.filter(resp.data);
+          this.allGroups = resp.data
           for (let group of resp.data) {
-            this.groups.push(
-              (group.id = {
-                name: group.name,
-                id: group.id,
-                meetings: group.meetings,
-              })
-            );
+            if(this.isOverseer(group.id) || this.ifAdmin()){
+              this.groups.push(
+                (group.id = {
+                  name: group.name,
+                  id: group.id,
+                  meetings: group.meetings,
+                })
+              );
+            }
           }
         })
         .then(() => this.loadGraph());
@@ -1214,7 +1226,6 @@ export default {
       ) {
         this.resetCanvas();
         this.selectedGroups = [];
-        console.log("Selected groups", this.selectedGroups);
         let ctx2 = document.getElementById("myChart2");
         let myChart2 = new Chart(ctx2, {
           type: "line",
@@ -1768,25 +1779,21 @@ export default {
       let Alpha = Math.floor(Math.random() * 256);
       return `rgba(${red}, ${green}, ${Blue}, ${Alpha})`;
     },
-    filter(data) {
-      //get user identities
-      if (this.currentAccount.roles.includes("role.group-admin")) {
-        return data;
-      } else if (this.currentAccount.roles.includes("role.group-overseer")) {
-        console.log("overSeer");
-      } else if (this.currentAccount.roles.includes("role.group-leader")) {
-        //find the groups he is charging
-        console.log("leader");
-        for (let group in data) {
-          if (this.managerData[group.id] == undefined) {
-            this.managerData[group.id] = [];
-          }
-          for (let manager in group.managers) {
-            this.managerData[group.id].push(manager.person.id);
-          }
-        }
-        console.log(this.managerData);
-      }
+
+    isOverseer(groupId) {
+      let currentParticipant = getParticipantById(
+        this.currentAccount.id,
+        this.groupMap
+      );
+      return currentParticipant
+        ? isOverseer(currentParticipant, groupId)
+        : false;
+    },
+    ifAdmin() {
+      if (this.currentAccount.roles.includes("role.group-admin")
+      ) {
+        return true;
+      } else return false;
     },
   },
 };

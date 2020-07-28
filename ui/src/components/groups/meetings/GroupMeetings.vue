@@ -15,7 +15,7 @@
         ></v-text-field>
       </v-col>
       <v-spacer></v-spacer>
-      <template v-if="ifAdmin === true">
+      <template v-if="isOverseer && ifAdmin">
         <v-col md="1">
           <v-select
             hide-details
@@ -61,7 +61,7 @@
             v-on:click="
               $router.push({
                 name: 'meeting-members',
-                params: { meeting: props.item.attendances[0].meetingId },
+                params: { meeting: props.item.id },
               })
             "
           >
@@ -72,7 +72,7 @@
             v-on:click="
               $router.push({
                 name: 'meeting-members',
-                params: { meeting: props.item.attendances[0].meetingId },
+                params: { meeting: props.item.id },
               })
             "
           >
@@ -83,7 +83,7 @@
             v-on:click="
               $router.push({
                 name: 'meeting-members',
-                params: { meeting: props.item.attendances[0].meetingId },
+                params: { meeting: props.item.id },
               })
             "
           >
@@ -94,7 +94,7 @@
             v-on:click="
               $router.push({
                 name: 'meeting-members',
-                params: { meeting: props.item.attendances[0].meetingId },
+                params: { meeting: props.item.id },
               })
             "
           >
@@ -105,14 +105,14 @@
             v-on:click="
               $router.push({
                 name: 'meeting-members',
-                params: { meeting: props.item.attendances[0].meetingId },
+                params: { meeting: props.item.id },
               })
             "
           >
             {{ props.item.address.address }}
           </td>
           <td>
-            <template v-if="props.item.active && ifAdmin === true">
+            <template v-if="props.item.active && isOverseer && ifAdmin">
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
                   <v-btn
@@ -152,7 +152,7 @@
               </v-tooltip>
             </template>
             <template v-else>
-              <v-tooltip bottom v-if="!props.item.active && ifAdmin === true">
+              <v-tooltip bottom v-if="!props.item.active">
                 <template v-slot:activator="{ on }">
                   <v-btn
                     v-on="on"
@@ -340,12 +340,18 @@ import CustomForm from "../../CustomForm";
 import EntitySearch from "../../EntitySearch";
 import { eventBus } from "../../../plugins/event-bus.js";
 import { mapState } from "vuex";
+import {
+  convertToGroupMap,
+  isOverseer,
+  getParticipantById,
+} from "../../../models/GroupHierarchyNode.ts";
 
 export default {
   components: { "meeting-form": CustomForm, EntitySearch },
   name: "GroupMeetings",
   data() {
     return {
+      allGroups:null,
       options: {
         sortBy: ["activeMembers.length"], //default sorted column
         sortDesc: [true],
@@ -409,9 +415,6 @@ export default {
   },
 
   computed: {
-    meetingDescriptions() {
-      return this.meetings.map((m) => m.description);
-    },
     viewOptions() {
       return [
         { text: this.$t("actions.view-active"), value: "viewActive" },
@@ -498,6 +501,12 @@ export default {
         return true;
       } else return false;
     },
+    groupMap() {
+      return convertToGroupMap(this.allGroups);
+    },
+    id() {
+      return parseInt(this.$route.params.group);
+    }
   },
 
   methods: {
@@ -827,10 +836,26 @@ export default {
       this.attendanceDialog.show = false;
       this.getMeetings();
     },
+
+    isOverseer() {
+      let currentParticipant = getParticipantById(
+        this.currentAccount.id,
+        this.groupMap
+      );
+      return currentParticipant
+        ? isOverseer(currentParticipant, this.id)
+        : false;
+    },
+    fetchAllGroups() {
+      return this.$http.get("api/v1/groups/groups").then((resp) => {
+        this.allGroups = resp.data;
+      });
+    },
   },
 
   mounted: function () {
     this.getMeetings();
+    this.fetchAllGroups().then(() => this.isOverseer());
   },
 };
 </script>
