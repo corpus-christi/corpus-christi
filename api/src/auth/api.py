@@ -53,7 +53,8 @@ def login():
                    username=person.username,
                    firstName=person.first_name,
                    lastName=person.last_name,
-                   email=person.email)
+                   email=person.email,
+                   id=person.id)
 
 
 # Define our callback function to check if a token has been revoked or not

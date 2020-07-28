@@ -67,7 +67,7 @@
             offset-y
             min-width="290px"
             open-on-hover
-            :disabled="diabelPicker"
+            :disabled="disablePicker"
           >
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
@@ -97,7 +97,7 @@
             transition="scale-transition"
             offset-y
             min-width="290px"
-            :disabled="diabelPicker"
+            :disabled="disablePicker"
           >
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
@@ -130,7 +130,7 @@
             offset-y
             min-width="290px"
             open-on-hover
-            :disabled="diabelPicker"
+            :disabled="disablePicker"
           >
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
@@ -166,7 +166,7 @@
             offset-y
             min-width="290px"
             open-on-hover
-            :disabled="diabelPicker"
+            :disabled="disablePicker"
           >
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
@@ -181,7 +181,9 @@
             <v-date-picker v-model="endMonth" no-title scrollable type="month">
               <v-spacer></v-spacer>
               <v-btn text color="primary" @click="menu1 = false">Cancel</v-btn>
-              <v-btn text color="primary" @click="$refs.menu1.save(endMonth)">OK</v-btn>
+              <v-btn text color="primary" @click="$refs.menu1.save(endMonth)"
+                >OK</v-btn
+              >
             </v-date-picker>
           </v-menu>
         </v-col>
@@ -262,6 +264,7 @@ export default {
           },
         },
       },
+      managerData:{}
     };
   },
 
@@ -277,7 +280,7 @@ export default {
       return this.selectedGroups[0];
     },
     ...mapState(["currentAccount"]),
-    diabelPicker() {
+    disablePicker() {
       if (this.selectedGroups.length === 0) {
         return false;
       } else return true;
@@ -1154,9 +1157,12 @@ export default {
     },
     getAllGroups() {
       this.selectedTimeScale = "Monthly";
+      //after we get all the groups, we need to find the groups we have control over
       this.$http
         .get(`/api/v1/groups/groups`)
         .then((resp) => {
+          //need to filter the data before push in groups
+          this.filter(resp.data);
           for (let group of resp.data) {
             this.groups.push(
               (group.id = {
@@ -1310,7 +1316,7 @@ export default {
             labels: this.labels,
             datasets: [
               {
-                label: ["test1"],
+                label: [],
                 backgroundColor: "rgba(225,10,10,0.3)",
                 borderColor: "rgba(225,103,110,1)",
                 borderWidth: 1,
@@ -1762,6 +1768,27 @@ export default {
       let Alpha = Math.floor(Math.random() * 256);
       return `rgba(${red}, ${green}, ${Blue}, ${Alpha})`;
     },
+    filter(data){
+      //get user identities
+      if (this.currentAccount.roles.includes("role.group-admin")){
+        return data;
+      }
+      else if (this.currentAccount.roles.includes("role.group-overseer")){
+        console.log("overSeer")
+      }
+      else if (this.currentAccount.roles.includes("role.group-leader")){ //find the groups he is charging
+        console.log("leader");
+        for (let group in data){
+          if (this.managerData[group.id] == undefined){
+            this.managerData[group.id] = [];
+          }
+          for (let manager in group.managers){
+            this.managerData[group.id].push(manager.person.id);
+          }
+        }
+        console.log(this.managerData);
+      }
+    }
   },
 };
 </script>

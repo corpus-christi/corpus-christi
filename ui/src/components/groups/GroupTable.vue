@@ -15,20 +15,22 @@
             data-cy="form-search"
           />
         </v-col>
-        <v-col cols="3">
-          <v-select
-            hide-details
-            solo
-            single-line
-            :items="viewOptions"
-            v-model="viewStatus"
-            data-cy="view-status-select"
-          >
-          </v-select>
-        </v-col>
+        <template v-if="ifTreeAdmin === true">
+          <v-col cols="3">
+            <v-select
+              hide-details
+              solo
+              single-line
+              :items="viewOptions"
+              v-model="viewStatus"
+              data-cy="view-status-select"
+            >
+            </v-select>
+          </v-col>
+        </template>
         <v-col cols="4" class="shrink">
           <v-menu open-on-hover offset-y bottom>
-            <template v-slot:activator="{ on }">
+            <template v-slot:activator="{ on }" v-if="ifTreeAdmin === true">
               <v-btn
                 color="primary"
                 :fab="$vuetify.breakpoint.mdAndDown"
@@ -41,34 +43,51 @@
                 }}
               </v-btn>
             </template>
-            <v-list>
-              <v-list-item @click.stop="activateGroupDialog()">
-                <v-icon color="primary">group_add</v-icon>
-                <v-list-item-content>
-                  {{ $t("actions.add-group") }}
-                </v-list-item-content>
-              </v-list-item>
-              <v-list-item :to="{ name: 'group-types' }">
-                <v-icon color="primary">view_list</v-icon>
-                <v-list-item-content>
-                  {{ $t("groups.entity-types.group-types.manage") }}
-                </v-list-item-content>
-              </v-list-item>
-              <v-list-item :to="{ name: 'manager-types' }">
-                <v-icon color="primary">view_list</v-icon>
-                <v-list-item-content>
-                  {{ $t("groups.entity-types.manager-types.manage") }}
-                </v-list-item-content>
-              </v-list-item>
-              <v-list-item
-                :to="{ name: 'group-treeview' }"
-                data-cy="show-treeview"
+            <template v-slot:activator="{ on }" v-else-if="ifTreeAdmin === false">
+              <v-btn
+                color="primary"
+                :fab="$vuetify.breakpoint.mdAndDown"
+                :small="$vuetify.breakpoint.mdAndDown"
+                v-on="on"
               >
-                <v-icon color="primary">account_tree</v-icon>
-                <v-list-item-content>
-                  {{ $t("groups.treeview.show-treeview") }}
-                </v-list-item-content>
-              </v-list-item>
+                <v-icon>supervised_user_circle</v-icon>
+                {{
+                  $vuetify.breakpoint.mdAndDown ? "" : $t("groups.user-panel")
+                }}
+              </v-btn>
+            </template>
+            <v-list>
+              <template v-if="ifTreeAdmin === true">
+                <v-list-item @click.stop="activateGroupDialog()">
+                  <v-icon color="primary">group_add</v-icon>
+                  <v-list-item-content>
+                    {{ $t("actions.add-group") }}
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item :to="{ name: 'group-types' }">
+                  <v-icon color="primary">view_list</v-icon>
+                  <v-list-item-content>
+                    {{ $t("groups.entity-types.group-types.manage") }}
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item :to="{ name: 'manager-types' }">
+                  <v-icon color="primary">view_list</v-icon>
+                  <v-list-item-content>
+                    {{ $t("groups.entity-types.manager-types.manage") }}
+                  </v-list-item-content>
+                </v-list-item>
+              </template>
+              <template v-if="ifTreeAdmin === true">
+                <v-list-item
+                  :to="{ name: 'group-treeview' }"
+                  data-cy="show-treeview"
+                >
+                  <v-icon color="primary">account_tree</v-icon>
+                  <v-list-item-content>
+                    {{ $t("groups.treeview.show-treeview") }}
+                  </v-list-item-content>
+                </v-list-item>
+              </template>
               <v-list-item
                 :to="{ name: 'group-lineGraph' }"
                 data-cy="show-linegraph"
@@ -83,7 +102,6 @@
         </v-col>
       </v-row>
     </v-toolbar>
-
     <v-data-table
       :headers="headers"
       :items-per-page-options="itemsPerPageOptions"
@@ -265,6 +283,7 @@ import {
   getTree,
   HierarchyCycleError,
 } from "../../models/GroupHierarchyNode.ts";
+import { mapState } from "vuex";
 
 export default {
   components: { GroupForm, SplitGroupForm },
@@ -375,16 +394,50 @@ export default {
     },
 
     headers() {
-      return [
-        { text: this.$t("groups.name"), value: "name" },
-        { text: this.$t("groups.description"), value: "description" },
-        {
-          text: this.$t("groups.member-count"),
-          value: "activeMembers.length",
-        },
-        { text: this.$t("groups.group-type"), value: "groupType.name" },
-        { text: this.$t("actions.header"), value: "actions", sortable: false },
-      ];
+      if (
+        this.currentAccount.roles.includes("role.group-admin") ||
+        this.currentAccount.roles.includes("role.group-overseer")
+      ) {
+        return [
+          { text: this.$t("groups.name"), value: "name" },
+          { text: this.$t("groups.description"), value: "description" },
+          {
+            text: this.$t("groups.member-count"),
+            value: "activeMembers.length",
+          },
+          { text: this.$t("groups.group-type"), value: "groupType.name" },
+          {
+            text: this.$t("actions.header"),
+            value: "actions",
+            sortable: false,
+          },
+        ];
+      } else {
+        return [
+          { text: this.$t("groups.name"), value: "name" },
+          { text: this.$t("groups.description"), value: "description" },
+          {
+            text: this.$t("groups.member-count"),
+            value: "activeMembers.length",
+          },
+          { text: this.$t("groups.group-type"), value: "groupType.name" },
+        ];
+      }
+    },
+    ...mapState(["currentAccount"]),
+    ifAdmin() {
+      if (this.currentAccount.roles.includes("role.group-admin")) {
+        return true;
+      } else return false;
+    },
+    ifTreeAdmin() {
+      if (
+        this.currentAccount.roles.includes("role.group-admin") ||
+        this.currentAccount.roles.includes("role.group-overseer") ||
+        this.currentAccount.roles.includes("role.group-leader")
+      ) {
+        return true;
+      } else return false;
     },
   },
 

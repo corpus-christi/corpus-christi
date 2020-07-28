@@ -29,7 +29,7 @@
 
           <v-flex shrink>
             <v-btn
-              flat
+              text
               icon
               @click="queryAddress('address')"
               :disabled="formDisabled"
@@ -72,7 +72,7 @@
     <v-card-actions>
       <v-spacer></v-spacer>
       <v-btn
-        flat
+        text
         color="secondary"
         @click="cancelAddressForm"
         :disabled="formDisabled"
