@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-card flat>
-      <v-toolbar flat class="pa-1" :color="toolbarColor">
+      <v-toolbar flat class="pa-1">
         <v-row no-gutters align="center" justify="space-between">
           <v-col cols="4" md="6">
             <v-text-field
@@ -45,14 +45,14 @@
             </v-col>
           </template>
           <template v-if="selection.length != 0">
-            <v-col>
+            <v-col class="shrink">
               <v-btn fab small @click="showEmailDialog"
-                ><v-icon> email </v-icon></v-btn
+                ><v-icon>email</v-icon></v-btn
               >
             </v-col>
-            <v-col>
+            <v-col class="shrink">
               <v-btn fab small @click="groupTypeTreeviewSelection = []">
-                <v-icon> close</v-icon>
+                <v-icon>close</v-icon>
               </v-btn>
             </v-col>
           </template>
@@ -106,7 +106,7 @@
       </v-row>
     </v-card>
     <!-- Email dialog -->
-    <v-dialog v-model="emailDialog.show" max-width="700px">
+    <v-dialog eager v-model="emailDialog.show" max-width="700px">
       <email-form
         :initialData="emailInitialData"
         @sent="hideEmailDialog"
@@ -118,19 +118,14 @@
 </template>
 
 <script>
-import { unionBy, uniqBy } from "lodash";
+import { uniqBy } from "lodash";
 import EmailForm from "../../EmailForm";
 export default {
-  name: "GroupTreeView",
+  name: "TreeviewCategory",
   components: { EmailForm },
-  mounted() {
-    this.$http.get("/api/v1/groups/groups").then((resp) => {
-      this.groups = resp.data.filter((group) => group.active);
-      this.groups.forEach((group) => {
-        group.members = group.members.filter((member) => member.active);
-        group.managers = group.managers.filter((manager) => manager.active);
-      });
-    });
+  props: {
+    groups: Array,
+    persons: Array,
   },
   computed: {
     viewOptions() {
@@ -143,18 +138,16 @@ export default {
         { text: this.$t("groups.treeview.show-members"), value: "showMembers" },
       ];
     },
-    toolbarColor() {
-      return this.selection.length == 0 ? undefined : "blue-grey";
-    },
-    allPeople() {
-      // a duplicate-free list of persons in all groups
-      let groupParticipants = this.groups.map((g) =>
-        unionBy(g.members, g.managers, (m) => m.person.id)
-      );
-      let all = unionBy(...groupParticipants, (m) => m.person.id).map(
-        (m) => m.person
-      );
-      return all;
+    processedGroups() {
+      return this.groups
+        ? this.groups
+            .filter((group) => group.active)
+            .map((group) => ({
+              ...group,
+              members: group.members.filter((m) => m.active),
+              managers: group.managers.filter((m) => m.active),
+            }))
+        : [];
     },
     selection() {
       // a duplicate-free list of persons selected in the tree
@@ -171,7 +164,7 @@ export default {
           ...item.obj,
           name: `${item.obj.firstName} ${item.obj.lastName}`,
         }));
-      let all = this.allPeople
+      let all = this.persons
         .filter((p) => p.email)
         .map((p) => ({
           ...p,
@@ -191,7 +184,7 @@ export default {
         children: groupTypes,
       };
       let groupTypesMap = {};
-      for (let group of this.groups) {
+      for (let group of this.processedGroups) {
         if (!Object.hasOwnProperty.call(groupTypesMap, group.groupTypeId)) {
           groupTypesMap[group.groupTypeId] = {
             id: `_group_type_${group.groupTypeId}`,
@@ -275,7 +268,6 @@ export default {
         show: false,
         loading: false,
       },
-      groups: [],
       search: "",
       groupTypeTreeviewSelection: [],
       selectManagers: true,

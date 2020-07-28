@@ -15,7 +15,7 @@
             data-cy="form-search"
           />
         </v-col>
-        <template v-if="ifTreeAdmin === true">
+        <template v-if="isAdmin">
           <v-col cols="3">
             <v-select
               hide-details
@@ -30,7 +30,7 @@
         </template>
         <v-col cols="4" class="shrink">
           <v-menu open-on-hover offset-y bottom>
-            <template v-slot:activator="{ on }" v-if="ifTreeAdmin === true">
+            <template v-slot:activator="{ on }">
               <v-btn
                 color="primary"
                 :fab="$vuetify.breakpoint.mdAndDown"
@@ -39,28 +39,16 @@
               >
                 <v-icon>supervised_user_circle</v-icon>
                 {{
-                  $vuetify.breakpoint.mdAndDown ? "" : $t("groups.admin-panel")
-                }}
-              </v-btn>
-            </template>
-            <template
-              v-slot:activator="{ on }"
-              v-else-if="ifTreeAdmin === false"
-            >
-              <v-btn
-                color="primary"
-                :fab="$vuetify.breakpoint.mdAndDown"
-                :small="$vuetify.breakpoint.mdAndDown"
-                v-on="on"
-              >
-                <v-icon>supervised_user_circle</v-icon>
-                {{
-                  $vuetify.breakpoint.mdAndDown ? "" : $t("groups.user-panel")
+                  $vuetify.breakpoint.mdAndDown
+                    ? ""
+                    : isAdmin
+                    ? $t("groups.admin-panel")
+                    : $t("groups.user-panel")
                 }}
               </v-btn>
             </template>
             <v-list>
-              <template v-if="ifTreeAdmin === true">
+              <template v-if="isAdmin">
                 <v-list-item @click.stop="activateGroupDialog()">
                   <v-icon color="primary">group_add</v-icon>
                   <v-list-item-content>
@@ -80,7 +68,7 @@
                   </v-list-item-content>
                 </v-list-item>
               </template>
-              <template v-if="ifTreeAdmin === true">
+              <template>
                 <v-list-item
                   :to="{ name: 'group-treeview' }"
                   data-cy="show-treeview"
@@ -427,21 +415,10 @@ export default {
         ];
       }
     },
+    isAdmin() {
+      return this.currentAccount.roles.includes("role.group-admin");
+    },
     ...mapState(["currentAccount"]),
-    ifAdmin() {
-      if (this.currentAccount.roles.includes("role.group-admin")) {
-        return true;
-      } else return false;
-    },
-    ifTreeAdmin() {
-      if (
-        this.currentAccount.roles.includes("role.group-admin") ||
-        this.currentAccount.roles.includes("role.group-overseer") ||
-        this.currentAccount.roles.includes("role.group-leader")
-      ) {
-        return true;
-      } else return false;
-    },
   },
 
   methods: {

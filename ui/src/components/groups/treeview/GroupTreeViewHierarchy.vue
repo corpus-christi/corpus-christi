@@ -3,10 +3,10 @@
     <!-- show the cycle in hierarchy if there is one -->
     <v-card v-if="cycleError.show" flat>
       <v-card-title class="justify-center">
-        <v-alert color="warning">
+        <v-alert type="warning" :icon="false">
           <v-tooltip bottom>
             <template v-slot:activator="{ on }">
-              <v-icon v-on="on">error</v-icon>
+              <v-icon v-on="on" x-large>error</v-icon>
             </template>
             {{ $t("groups.treeview.remove-cycle") }}
           </v-tooltip>
@@ -83,7 +83,7 @@
       </v-toolbar>
       <v-card-text>
         <v-treeview
-          :items="adminTree"
+          :items="treeItems"
           :search="search"
           ref="treeview"
           activatable
@@ -123,14 +123,23 @@ import {
   getInfoTree,
   HierarchyCycleError,
   isRootNode,
+  getParticipantById,
 } from "../../../models/GroupHierarchyNode.ts";
 import { eventBus } from "../../../plugins/event-bus.js";
+import { mapState } from "vuex";
 export default {
+  name: "TreeviewHierarchy",
+  props: {
+    groups: Array,
+    persons: Array,
+    isAdminMode: {
+      type: Boolean,
+      default: true,
+    },
+  },
   data() {
     return {
       search: "",
-      groups: null /* mark initial state */,
-      persons: null,
       cycleError: {
         show: false,
         path: [],
@@ -139,16 +148,6 @@ export default {
     };
   },
   methods: {
-    fetchGroups() {
-      return this.$http.get("api/v1/groups/groups").then((resp) => {
-        this.groups = resp.data;
-      });
-    },
-    fetchPersons() {
-      return this.$http.get("api/v1/people/persons").then((resp) => {
-        this.persons = resp.data;
-      });
-    },
     expandAll() {
       this.$refs["treeview"].updateAll(true);
     },
@@ -158,18 +157,17 @@ export default {
   },
   computed: {
     groupMap() {
-      return this.groups === null ? {} : convertToGroupMap(this.groups);
-    },
-    adminMode() {
-      // TODO: check whether the current user is an admin */
-      return true;
+      return convertToGroupMap(this.groups);
     },
     treeItems() {
-      return this.adminMode ? this.adminTree : this.managerTree;
+      return this.isAdminMode ? this.adminTree : this.managerTree;
     },
     managerTree() {
-      // TODO: returns a tree according to the current user's subgroups
-      return [];
+      let currentParticipant = getParticipantById(
+        this.currentAccount.id,
+        this.groupMap
+      );
+      return currentParticipant ? [getInfoTree(currentParticipant)] : [];
     },
     adminTree() {
       const adminNode = {
@@ -177,9 +175,6 @@ export default {
         children: [],
         nodeType: "Admin",
       };
-      if (this.groups === null || this.persons === null) {
-        return [adminNode];
-      }
       let counter = count();
       // get all root groups and root participants
       let rootNodes = [
@@ -209,12 +204,7 @@ export default {
       console.log("adminNode", adminNode);
       return [adminNode];
     },
-  },
-  mounted() {
-    this.fetchGroups();
-    if (this.adminMode) {
-      this.fetchPersons();
-    }
+    ...mapState(["currentAccount"]),
   },
 };
 </script>
