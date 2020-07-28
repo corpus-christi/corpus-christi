@@ -105,8 +105,8 @@ export default {
               resp.data.firstName,
               resp.data.lastName,
               decodedJwt.user_claims.roles,
-              resp.data.email,
-              resp.data.id
+              resp.data.id,
+              resp.data.email
             ),
             jwt: resp.data.jwt,
           });
