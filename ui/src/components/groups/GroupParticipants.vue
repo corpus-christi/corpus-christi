@@ -47,7 +47,7 @@
               hide-details
             />
           </v-col>
-          <template v-if="ifAdmin || isOverseer">
+          <template v-if="isAuthorized">
             <v-col md="1">
               <v-select
                 hide-details
@@ -412,43 +412,28 @@ export default {
         ? this.$t("groups.header-manager")
         : this.$t("events.participants.title");
     },
+    /* whether the current user is authorized to edit under the current page */
     headers() {
-      let headers = null;
-      if (this.ifAdmin === true) {
-        headers = [
-          {
-            text: this.$t("person.name.first"),
-            value: "person.firstName",
-          },
-          {
-            text: this.$t("person.name.last"),
-            value: "person.lastName",
-          },
-          {
-            text: this.$t("person.email"),
-            value: "person.email",
-          },
-          {
-            text: this.$t("actions.header"),
-            value: "actions", // does not exist, used to identify the actions column
-            sortable: false,
-          },
-        ];
-      } else {
-        headers = [
-          {
-            text: this.$t("person.name.first"),
-            value: "person.firstName",
-          },
-          {
-            text: this.$t("person.name.last"),
-            value: "person.lastName",
-          },
-          {
-            text: this.$t("person.email"),
-            value: "person.email",
-          },
-        ];
+      let headers = [
+        {
+          text: this.$t("person.name.first"),
+          value: "person.firstName",
+        },
+        {
+          text: this.$t("person.name.last"),
+          value: "person.lastName",
+        },
+        {
+          text: this.$t("person.email"),
+          value: "person.email",
+        },
+      ];
+      if (this.isAuthorized) {
+        headers.push({
+          text: this.$t("actions.header"),
+          value: "actions", // does not exist, used to identify the actions column
+          sortable: false,
+        });
       }
       if (this.isManagerMode) {
         headers.splice(3, 0, {
@@ -502,6 +487,11 @@ export default {
     id() {
       return parseInt(this.$route.params.group);
     },
+    endpoint() {
+      return `/api/v1/groups/groups/${this.id}/${
+        this.isManagerMode ? "managers" : "members"
+      }`;
+    },
     isManagerMode() {
       return this.participantType === "manager";
     },
@@ -515,10 +505,11 @@ export default {
         ? isOverseer(currentParticipant, this.id)
         : false;
     },
-    endpoint() {
-      return `/api/v1/groups/groups/${this.id}/${
-        this.isManagerMode ? "managers" : "members"
-      }`;
+    isAdmin() {
+      return this.currentAccount.roles.includes("role.group-admin");
+    },
+    isAuthorized() {
+      return this.isAdmin || (!this.isManagerMode && this.isOverseer);
     },
 
     /************* selection helper properties ****************/
@@ -720,15 +711,6 @@ export default {
       return groups;
     },
     ...mapState(["currentAccount"]),
-    ifAdmin() {
-      if (
-        this.currentAccount.roles.includes("role.group-admin") ||
-        this.currentAccount.roles.includes("role.group-overseer") ||
-        this.currentAccount.roles.includes("role.group-leader")
-      ) {
-        return true;
-      } else return false;
-    },
   },
 
   methods: {
@@ -743,12 +725,15 @@ export default {
     modifyLocalParticipant(groupId, personId, payload, action = "patch") {
       let person = this.allPersons.find((person) => person.id === personId);
       let group = this.allGroups.find((group) => group.id === groupId);
+      let majorParticipantType = this.isManagerMode ? "managers" : "members"; // processed for all actions
+      let minorParticipantType = this.isManagerMode ? "members" : "managers"; // processed for all except 'post'
+
       let localParticipants = [
         groupId === this.id ? this.participants : undefined,
-        person ? person.managers : undefined,
-        person ? person.members : undefined,
-        group ? group.managers : undefined,
-        group ? group.members : undefined,
+        person ? person[majorParticipantType] : undefined,
+        person && action !== "post" ? person[minorParticipantType] : undefined,
+        group ? group[majorParticipantType] : undefined,
+        group && action !== "post" ? group[minorParticipantType] : undefined,
       ];
       const personIdFilter = (participant) =>
         participant.person.id === personId;
