@@ -73,14 +73,14 @@
               ref="treeview"
             >
               <template v-slot:prepend="{ item }">
-                <v-icon v-if="item.id.match(/^group_member/)"> person </v-icon>
-                <v-icon v-else-if="item.id.match(/^group_manager/)">
+                <v-icon v-if="item.type === 'member'">person</v-icon>
+                <v-icon v-else-if="item.type === 'manager'">
                   account_circle
                 </v-icon>
-                <v-icon v-else-if="item.id.match(/^_group_type/)">
+                <v-icon v-else-if="item.type === 'group_type'">
                   category</v-icon
                 >
-                <v-icon v-else-if="item.id.match(/^_group_[0-9]/)">
+                <v-icon v-else-if="item.type === 'group'">
                   group
                 </v-icon>
               </template>
@@ -177,43 +177,39 @@ export default {
     },
     groupTypeTreeviewItems() {
       // categorize groups by group type
+      let counter = 0;
       const groupTypes = [];
-      const root = {
-        id: "_label_root",
-        name: this.$t("groups.treeview.categories.all-group-types"),
-        children: groupTypes,
-      };
-      let groupTypesMap = {};
+      let groupTypesMap = {}; // a map from groupTypeId => { name: ..., children: [...] }
       for (let group of this.processedGroups) {
         if (!Object.hasOwnProperty.call(groupTypesMap, group.groupTypeId)) {
           groupTypesMap[group.groupTypeId] = {
-            id: `_group_type_${group.groupTypeId}`,
+            id: counter++,
             name: group.groupType.name,
             children: [],
+            type: "group_type",
           };
         }
         // in each group, categorize their people by manager/member
         const managerMember = [];
-        groupTypesMap[group.groupTypeId].children.push({
-          id: `_group_${group.id}`,
-          name: group.name,
-          children: managerMember,
-        });
         if (
           this.viewStatus === "showAll" ||
           this.viewStatus === "showMembers"
         ) {
           const members = [];
-          managerMember.push({
-            id: `_label_group_${group.id}_members`,
-            name: this.$t("groups.treeview.categories.members"),
-            children: members,
-          });
           for (let member of group.members) {
             members.push({
-              id: `group_member_${group.id}_${member.person.id}`,
+              id: counter++,
               name: this.getPersonFullName(member.person),
               obj: member.person,
+              type: "member",
+            });
+          }
+          if (members.length > 0) {
+            managerMember.push({
+              id: counter++,
+              name: this.$t("groups.treeview.categories.members"),
+              children: members,
+              type: "members",
             });
           }
         }
@@ -222,27 +218,55 @@ export default {
           this.viewStatus === "showManagers"
         ) {
           const managers = [];
-          managerMember.push({
-            id: `_label_group_${group.id}_managers`,
-            name: this.$t("groups.treeview.categories.managers"),
-            children: managers,
-          });
           for (let manager of group.managers) {
             managers.push({
-              id: `group_manager_${group.id}_${manager.person.id}`,
+              id: counter++,
               name: this.getPersonFullName(manager.person),
               obj: manager.person,
+              type: "manager",
+            });
+          }
+          if (managers.length > 0) {
+            managerMember.push({
+              id: counter++,
+              name: this.$t("groups.treeview.categories.managers"),
+              children: managers,
+              type: "managers",
             });
           }
         }
+        if (managerMember.length > 0) {
+          groupTypesMap[group.groupTypeId].children.push({
+            id: counter++,
+            name: group.name,
+            children: managerMember,
+            type: "group",
+          });
+        }
       }
-      for (let groupType in groupTypesMap) {
-        groupTypes.push(groupTypesMap[groupType]);
+      for (let groupTypeId in groupTypesMap) {
+        if (groupTypesMap[groupTypeId].children.length > 0) {
+          groupTypes.push(groupTypesMap[groupTypeId]);
+        }
       }
-      return [root];
+      return groupTypes;
     },
   },
   methods: {
+    /* returns a map in the form of { key1: [item1, item2], key2: [...] } 
+    that categorizes each item in list by its key indicated by keyFunc(item)
+     each item is added to the list after being transformed by mapFunc */
+    categorizeBy(list, keyFunc, mapFunc) {
+      const map = {};
+      list.forEach((item) => {
+        let key = keyFunc(item);
+        if (!Object.hasOwnProperty.call(map, key)) {
+          map[key] = [];
+        }
+        map[key].push(mapFunc(item));
+      });
+      return map;
+    },
     getPersonFullName(person) {
       return `${person.firstName} ${person.lastName}`;
     },
@@ -276,3 +300,8 @@ export default {
   },
 };
 </script>
+<style>
+.v-treeview-node__prepend {
+  min-width: 0px;
+}
+</style>

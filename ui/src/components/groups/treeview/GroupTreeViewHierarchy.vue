@@ -170,11 +170,6 @@ export default {
       return currentParticipant ? [getInfoTree(currentParticipant)] : [];
     },
     adminTree() {
-      const adminNode = {
-        name: this.$t("groups.treeview.admin-node"),
-        children: [],
-        nodeType: "Admin",
-      };
       let counter = count();
       // get all root groups and root participants
       let rootNodes = [
@@ -185,9 +180,9 @@ export default {
           (person) => new Participant({ person }, this.groupMap)
         ),
       ].filter((node) => isRootNode(node));
-      rootNodes.forEach((rootNode) => {
+      const treeNodes = rootNodes.map((rootNode) => {
         try {
-          adminNode.children.push(getInfoTree(rootNode, false, counter));
+          return getInfoTree(rootNode, false, counter);
         } catch (err) {
           if (err instanceof HierarchyCycleError) {
             this.cycleError.show = true;
@@ -201,8 +196,7 @@ export default {
           }
         }
       });
-      console.log("adminNode", adminNode);
-      return [adminNode];
+      return treeNodes;
     },
     ...mapState(["currentAccount"]),
   },
