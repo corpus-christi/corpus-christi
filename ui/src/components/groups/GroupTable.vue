@@ -43,7 +43,10 @@
                 }}
               </v-btn>
             </template>
-            <template v-slot:activator="{ on }" v-else-if="ifTreeAdmin === false">
+            <template
+              v-slot:activator="{ on }"
+              v-else-if="ifTreeAdmin === false"
+            >
               <v-btn
                 color="primary"
                 :fab="$vuetify.breakpoint.mdAndDown"

@@ -52,19 +52,19 @@ export function getParticipantById(
 ): Participant {
   let fullParticipantObject: GroupParticipantObject | undefined;
   for (let id in groupMap) {
-    let group = groupMap[id]
+    let group = groupMap[id];
     let participant: GroupParticipantObject | undefined;
     if (
-      (participant = group.members.concat(group.managers).find(
-        (p: GroupParticipantObject) => p.person.id === personId
-      ))
+      (participant = group.members
+        .concat(group.managers)
+        .find((p: GroupParticipantObject) => p.person.id === personId))
     ) {
-      fullParticipantObject = participant
+      fullParticipantObject = participant;
       break;
     }
   }
   if (!fullParticipantObject) {
-    throw new Error(`Participant with id ${personId} not in groupMap`)
+    throw new Error(`Participant with id ${personId} not in groupMap`);
   }
   return new Participant(fullParticipantObject, groupMap);
 }

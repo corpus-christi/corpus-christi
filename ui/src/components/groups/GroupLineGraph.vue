@@ -264,7 +264,7 @@ export default {
           },
         },
       },
-      managerData:{}
+      managerData: {},
     };
   },
 
@@ -1768,27 +1768,26 @@ export default {
       let Alpha = Math.floor(Math.random() * 256);
       return `rgba(${red}, ${green}, ${Blue}, ${Alpha})`;
     },
-    filter(data){
+    filter(data) {
       //get user identities
-      if (this.currentAccount.roles.includes("role.group-admin")){
+      if (this.currentAccount.roles.includes("role.group-admin")) {
         return data;
-      }
-      else if (this.currentAccount.roles.includes("role.group-overseer")){
-        console.log("overSeer")
-      }
-      else if (this.currentAccount.roles.includes("role.group-leader")){ //find the groups he is charging
+      } else if (this.currentAccount.roles.includes("role.group-overseer")) {
+        console.log("overSeer");
+      } else if (this.currentAccount.roles.includes("role.group-leader")) {
+        //find the groups he is charging
         console.log("leader");
-        for (let group in data){
-          if (this.managerData[group.id] == undefined){
+        for (let group in data) {
+          if (this.managerData[group.id] == undefined) {
             this.managerData[group.id] = [];
           }
-          for (let manager in group.managers){
+          for (let manager in group.managers) {
             this.managerData[group.id].push(manager.person.id);
           }
         }
         console.log(this.managerData);
       }
-    }
+    },
   },
 };
 </script>
