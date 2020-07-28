@@ -45,6 +45,30 @@ export function convertToGroupMap(groupList: GroupObject[]) {
   return groupList.reduce((acc, cur) => ({ ...acc, [cur.id]: cur }), {});
 }
 
+/* construct a valid Participant class object with associated managers and members */
+export function getParticipantById(
+  personId: number,
+  groupMap: GroupMap
+): Participant {
+  let fullParticipantObject: GroupParticipantObject | undefined;
+  for (let id in groupMap) {
+    let group = groupMap[id]
+    let participant: GroupParticipantObject | undefined;
+    if (
+      (participant = group.members.concat(group.managers).find(
+        (p: GroupParticipantObject) => p.person.id === personId
+      ))
+    ) {
+      fullParticipantObject = participant
+      break;
+    }
+  }
+  if (!fullParticipantObject) {
+    throw new Error(`Participant with id ${personId} not in groupMap`)
+  }
+  return new Participant(fullParticipantObject, groupMap);
+}
+
 export abstract class HierarchyNode {
   constructor(public nodeType: string) {}
   abstract get id(): number | string;
@@ -75,7 +99,7 @@ export class Participant extends HierarchyNode {
     let { firstName, lastName } = this.participant.person;
     return `${firstName} ${lastName}`;
   }
-  getObject(): NodeObject {
+  getObject(): GroupParticipantObject {
     return this.participant;
   }
   getLeadingGroups(
@@ -152,7 +176,7 @@ export class Group extends HierarchyNode {
   toHumanReadable(): string {
     return this.group.name || this.toString();
   }
-  getObject(): NodeObject {
+  getObject(): GroupObject {
     return this.group;
   }
   getMembers(

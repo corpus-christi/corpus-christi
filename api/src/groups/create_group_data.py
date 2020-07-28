@@ -274,6 +274,8 @@ def create_hierarchical_groups_and_participants(sqla, group_members, group_manag
     for i in range(1, max_person_id + 1):
         person_name = f"Person{i}"
         person = Person(**person_schema.load(person_object_factory(person_name)))
+        person.username = person_name # for testing purpose
+        person.password = person_name # for testing purpose
         sqla.add(person)
         people.append(person)
 
@@ -352,13 +354,13 @@ def create_group_test_data(sqla):
     create_multiple_group_types(sqla, 5)
     create_multiple_manager_types(sqla, 5)
 
-    # # create leadership hierarchy data
-    # create_hierarchy_test_case_2(sqla)
+    # create leadership hierarchy data
+    create_hierarchy_test_case_1(sqla)
 
-    # create faker data
-    create_multiple_groups(sqla, 10)
-    create_multiple_managers(sqla, 0.75)
-    create_multiple_members(sqla, 0.75)
+    # # create faker data
+    # create_multiple_groups(sqla, 10)
+    # create_multiple_managers(sqla, 0.75)
+    # create_multiple_members(sqla, 0.75)
 
     create_multiple_meetings(sqla, 12)
     create_multiple_attendance(sqla, 0.75)

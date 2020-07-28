@@ -16,6 +16,7 @@ import {
   isRootNode,
   isOverseer,
   getAllSubGroups,
+  getParticipantById,
 } from "../../src/models/GroupHierarchyNode";
 
 interface PersonMap {
@@ -284,6 +285,21 @@ describe("Test case 1, a valid hierarchy structure", () => {
 
     // expect person 2 has no subgroups
     expect(getAllSubGroups(p2).length).toBe(0);
+  });
+
+  test("getParticipantById functionality", () => {
+    let p1: Participant = getParticipantById(1, groupMap);
+
+    // all groups p1 is a member of
+    let members = p1.getObject().person.members
+    expect(members.length).toBe(1);
+    expect(members).toContainEqual({ groupId: 1, active: true })
+
+    // all groups p1 is a manager of
+    let managers = p1.getObject().person.managers
+    expect(managers.length).toBe(3);
+    expect(managers).toContainEqual({ groupId: 3, active: true })
+    expect(managers).not.toContainEqual({ groupId: 6, active: true })
   });
 });
 
