@@ -49,7 +49,7 @@ export function convertToGroupMap(groupList: GroupObject[]) {
 export function getParticipantById(
   personId: number,
   groupMap: GroupMap
-): Participant {
+): Participant | undefined {
   let fullParticipantObject: GroupParticipantObject | undefined;
   for (let id in groupMap) {
     let group = groupMap[id];
@@ -64,7 +64,7 @@ export function getParticipantById(
     }
   }
   if (!fullParticipantObject) {
-    throw new Error(`Participant with id ${personId} not in groupMap`);
+    return undefined;
   }
   return new Participant(fullParticipantObject, groupMap);
 }

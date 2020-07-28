@@ -47,7 +47,7 @@
               hide-details
             />
           </v-col>
-          <template v-if="ifAdmin === true">
+          <template v-if="ifAdmin || isOverseer">
             <v-col md="1">
               <v-select
                 hide-details
@@ -334,6 +334,8 @@ import {
   checkConnection,
   HierarchyCycleError,
   convertToGroupMap,
+  isOverseer,
+  getParticipantById,
 } from "../../models/GroupHierarchyNode.ts";
 import { mapState } from "vuex";
 export default {
@@ -502,6 +504,16 @@ export default {
     },
     isManagerMode() {
       return this.participantType === "manager";
+    },
+    /* whether the current user is an overseer of the group */
+    isOverseer() {
+      let currentParticipant = getParticipantById(
+        this.currentAccount.id,
+        this.groupMap
+      );
+      return currentParticipant
+        ? isOverseer(currentParticipant, this.id)
+        : false;
     },
     endpoint() {
       return `/api/v1/groups/groups/${this.id}/${
