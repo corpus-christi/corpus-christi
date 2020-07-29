@@ -10,7 +10,7 @@ from .create_group_data import flip, group_object_factory, \
     create_multiple_groups, member_object_factory, create_multiple_members, meeting_object_factory, \
     create_multiple_meetings, create_multiple_attendance, create_multiple_group_types, create_multiple_manager_types, \
     group_type_object_factory, manager_type_object_factory, create_multiple_managers, \
-    create_hierarchy_test_case_1
+    create_hierarchy_test_case_1, create_multiple_member_histories
 from .group_hierarchy_helpers import get_all_subgroups
 from .models import Group, GroupType, Member, MemberSchema, Meeting, MeetingSchema, Attendance, Manager, ManagerType, ManagerSchema,\
         MemberHistory, MemberHistorySchema
@@ -1306,3 +1306,28 @@ def test_member_history_generation_on_move(auth_client):
     assert member_histories[0].joined == member.joined
     assert member_histories[0].left == datetime.date.today()
 
+def test_read_all_member_histories(auth_client):
+    # GIVEN a database with some member histories
+    create_multiple_member_histories(auth_client.sqla, 10)
+    # WHEN we read all of them
+    resp = auth_client.get(url_for('groups.read_all_member_histories'))
+    # THEN we expect the correct status code
+    assert resp.status_code == 200
+    assert len(resp.json) == 10
+
+def test_delete_member_histories(auth_client):
+    # GIVEN a database with some member histories
+    create_multiple_member_histories(auth_client.sqla, 10)
+    member_history = auth_client.sqla.query(MemberHistory).first()
+
+    # WHEN we delete one of them
+    resp = auth_client.delete(
+            url_for('groups.delete_member_history', member_history_id=member_history.id),
+            headers={'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
+    # THEN we expect the correct status code
+    assert resp.status_code == 204
+    # THEN we expect the correct number of items in the database
+    all_member_histories = auth_client.sqla.query(MemberHistory).all()
+    assert len(all_member_histories) == 9
+    for some_member_history in all_member_histories:
+        assert some_member_history.id != member_history.id
