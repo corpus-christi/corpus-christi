@@ -22,7 +22,7 @@ class Group(Base):
     meetings = relationship('Meeting', back_populates='group', lazy=True)
     events = relationship('EventGroup', back_populates='group', lazy=True)
     images = relationship('ImageGroup', back_populates='group', lazy=True)
-
+    member_histories = relationship('MemberHistory', back_populates='group', lazy=True)
 
     def __repr__(self):
         return f"<Group(id={self.id}, name={self.name})>"
@@ -37,9 +37,12 @@ class GroupSchema(Schema):
 
     members = fields.Nested('MemberSchema', dump_only=True, many=True, only=['person', 'joined', 'active'])
     managers = fields.Nested('ManagerSchema', dump_only=True, many=True, only=['person', 'active'])
-    meetings = fields.Nested('MeetingSchema', dump_only=True, many=True, only=['group_id', 'address_id', 'start_time', 'stop_time', 'description', 'active', 'attendances'])
+    meetings = fields.Nested('MeetingSchema', dump_only=True, many=True, 
+            only=['group_id', 'address_id', 'start_time', 'stop_time', 'description', 'active', 'attendances'])
     images = fields.Pluck('ImageGroupSchema', 'image', many=True)
     group_type = fields.Nested('GroupTypeSchema', dump_only=True, data_key='groupType', only=['id', 'name'])
+    member_histories = fields.Nested('MemberHistorySchema', many=True, dump_only=True, data_key='memberHistories', 
+            only=('id', 'joined', 'left', 'person_id'))
 
 # ---- Group Type
 
@@ -116,6 +119,29 @@ class MemberSchema(Schema):
     active = fields.Boolean(required=True)
     person = fields.Nested('PersonSchema', dump_only=True)
 
+class MemberHistory(Base):
+    __tablename__ = 'groups_member_history'
+    id = Column(Integer, primary_key=True, nullable=False)
+    group_id = Column(Integer, ForeignKey('groups_group.id'), nullable=False)
+    person_id = Column(Integer, ForeignKey('people_person.id'), nullable=False)
+    joined = Column(Date, nullable=False)
+    left = Column(Date, nullable=False)
+    person = relationship('Person', back_populates='member_histories', lazy=True)
+    group = relationship('Group', back_populates='member_histories', lazy=True)
+
+    def __repr__(self):
+        return f"<MemberHistory(id={self.id}, "\
+                f"person_id={self.person_id}, group_id={self.group_id}, "\
+                f"joined={self.joined}, left={self.left})>"
+
+class MemberHistorySchema(Schema):
+    id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
+    group_id = fields.Integer(data_key='groupId', required=True)
+    person_id = fields.Integer(data_key='personId', required=True)
+    joined = fields.Date(required=True)
+    left = fields.Date(required=True)
+    person = fields.Nested('PersonSchema', dump_only=True)
+    group = fields.Nested('GroupSchema', dump_only=True)
 
 # ---- Manager
 
