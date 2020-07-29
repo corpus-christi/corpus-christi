@@ -1,5 +1,6 @@
 <template>
   <div>
+    {{ selection }}
     <v-card flat>
       <v-toolbar flat class="pa-1">
         <v-row no-gutters align="center" justify="space-between">
@@ -77,7 +78,11 @@
                 <v-icon v-else-if="item.type === 'manager'">
                   account_circle
                 </v-icon>
-                <v-icon v-else-if="item.type === 'group_type'">
+                <v-icon
+                  v-else-if="
+                    item.type === 'groupType' || item.type === 'managerType'
+                  "
+                >
                   category</v-icon
                 >
                 <v-icon v-else-if="item.type === 'group'">
@@ -128,6 +133,7 @@ export default {
     persons: Array,
   },
   computed: {
+    /*** view/selection related ***/
     viewOptions() {
       return [
         { text: this.$t("groups.treeview.show-all"), value: "showAll" },
@@ -157,6 +163,90 @@ export default {
       selection = uniqBy(selection, (item) => item.obj.id); // remove duplicate
       return selection;
     },
+    groupTypeMap() {
+      return this.categorizeBy(
+        this.processedGroups,
+        (group) => group.groupTypeId
+      );
+    },
+    groupTypeTreeviewItems() {
+      let counter = 0;
+      let groupTypesChildrenMap = this.categorizeBy(
+        this.processedGroups,
+        (group) => group.groupType.name, // collapse group types that have the same name
+        (group) => {
+          let managersChildrenMap = this.categorizeBy(
+            group.managers,
+            (manager) => manager.managerType.name, // collapse manager types that have the same name
+            (manager) => ({
+              id: counter++,
+              name: this.getPersonFullName(manager.person),
+              obj: manager.person,
+              type: "manager",
+            })
+          );
+          let managersChildren = this.mapToNodes(
+            managersChildrenMap,
+            (managerTypeName, managerNodes) => ({
+              id: counter++,
+              name: managerTypeName,
+              type: "managerType",
+              children: managerNodes,
+            })
+          );
+          let managersNode = managersChildren.length
+            ? {
+                id: counter++,
+                name: this.$t("groups.treeview.categories.managers"),
+                type: "managers",
+                children: managersChildren,
+              }
+            : null;
+          let membersChildren = group.members.map((member) => ({
+            id: counter++,
+            name: this.getPersonFullName(member.person),
+            obj: member.person,
+            type: "member",
+          }));
+          let membersNode = membersChildren.length
+            ? {
+                id: counter++,
+                name: this.$t("groups.treeview.categories.members"),
+                type: "members",
+                children: membersChildren,
+              }
+            : null;
+          let groupChildren = [
+            ...(membersNode ? [membersNode] : []),
+            ...(managersNode ? [managersNode] : []),
+          ];
+          return {
+            id: counter++,
+            name: group.name,
+            type: "group",
+            children: groupChildren,
+          };
+        }
+      );
+      let groupTypesChildren = this.mapToNodes(
+        groupTypesChildrenMap,
+        (groupTypeName, groupNodes) => ({
+          id: counter++,
+          name: groupTypeName,
+          type: "groupType",
+          children: groupNodes.filter((groupNode) => groupNode.children.length),
+        })
+      );
+      let groupTypesNode = {
+        id: counter++,
+        name: this.$t("groups.treeview.categories.all-group-types"),
+        type: "groupTypes",
+        children: groupTypesChildren,
+      };
+      return [groupTypesNode];
+    },
+
+    /*** email related ***/
     emailInitialData() {
       let selected = this.selection
         .filter((item) => item.obj.email)
@@ -175,88 +265,12 @@ export default {
         recipients: selected,
       };
     },
-    groupTypeTreeviewItems() {
-      // categorize groups by group type
-      let counter = 0;
-      const groupTypes = [];
-      let groupTypesMap = {}; // a map from groupTypeId => { name: ..., children: [...] }
-      for (let group of this.processedGroups) {
-        if (!Object.hasOwnProperty.call(groupTypesMap, group.groupTypeId)) {
-          groupTypesMap[group.groupTypeId] = {
-            id: counter++,
-            name: group.groupType.name,
-            children: [],
-            type: "group_type",
-          };
-        }
-        // in each group, categorize their people by manager/member
-        const managerMember = [];
-        if (
-          this.viewStatus === "showAll" ||
-          this.viewStatus === "showMembers"
-        ) {
-          const members = [];
-          for (let member of group.members) {
-            members.push({
-              id: counter++,
-              name: this.getPersonFullName(member.person),
-              obj: member.person,
-              type: "member",
-            });
-          }
-          if (members.length > 0) {
-            managerMember.push({
-              id: counter++,
-              name: this.$t("groups.treeview.categories.members"),
-              children: members,
-              type: "members",
-            });
-          }
-        }
-        if (
-          this.viewStatus === "showAll" ||
-          this.viewStatus === "showManagers"
-        ) {
-          const managers = [];
-          for (let manager of group.managers) {
-            managers.push({
-              id: counter++,
-              name: this.getPersonFullName(manager.person),
-              obj: manager.person,
-              type: "manager",
-            });
-          }
-          if (managers.length > 0) {
-            managerMember.push({
-              id: counter++,
-              name: this.$t("groups.treeview.categories.managers"),
-              children: managers,
-              type: "managers",
-            });
-          }
-        }
-        if (managerMember.length > 0) {
-          groupTypesMap[group.groupTypeId].children.push({
-            id: counter++,
-            name: group.name,
-            children: managerMember,
-            type: "group",
-          });
-        }
-      }
-      for (let groupTypeId in groupTypesMap) {
-        if (groupTypesMap[groupTypeId].children.length > 0) {
-          groupTypes.push(groupTypesMap[groupTypeId]);
-        }
-      }
-      return groupTypes;
-    },
   },
   methods: {
-    /* returns a map in the form of { key1: [item1, item2], key2: [...] } 
+    /* returns a map in the form of { key1: [item1, item2], key2: [...] }
     that categorizes each item in list by its key indicated by keyFunc(item)
      each item is added to the list after being transformed by mapFunc */
-    categorizeBy(list, keyFunc, mapFunc) {
+    categorizeBy(list, keyFunc, mapFunc = (item) => item) {
       const map = {};
       list.forEach((item) => {
         let key = keyFunc(item);
@@ -266,6 +280,14 @@ export default {
         map[key].push(mapFunc(item));
       });
       return map;
+    },
+    /* convert a map to a list of nodes */
+    mapToNodes(map, makeNode) {
+      let nodes = [];
+      Object.entries(map).forEach(([key, value]) => {
+        nodes.push(makeNode(key, value));
+      });
+      return nodes;
     },
     getPersonFullName(person) {
       return `${person.firstName} ${person.lastName}`;
