@@ -337,6 +337,82 @@ groups:
       en-US: Group Treeview
       es-EC: Vista de árbol grupal
       zh-CN: 组树视图
+  linegraph:
+    Month:
+      January:
+        en-US: January
+        es-EC: Enero
+        zh-CN: 一月
+      February:
+        en-US: February
+        es-EC: Febrero
+        zh-CN: 二月
+      March:
+        en-US: March
+        es-EC: Marzo
+        zh-CN: 三月
+      April:
+        en-US: April
+        es-EC: Abril
+        zh-CN: 四月
+      May:
+        en-US: May
+        es-EC: Mayo
+        zh-CN: 五月
+      June:
+        en-US: June
+        es-EC: Junio
+        zh-CN: 六月
+      July:
+        en-US: July
+        es-EC: Julio
+        zh-CN: 七月
+      August:
+        en-US: August
+        es-EC: Agosto
+        zh-CN: 八月
+      September:
+        en-US: September
+        es-EC: Setiembre
+        zh-CN: 九月
+      October:
+        en-US: October
+        es-EC: Octubre
+        zh-CN: 十月
+      November:
+        en-US: November
+        es-EC: Noviembre
+        zh-CN: 十一月
+      December:
+        en-US: December
+        es-EC: Diciembre
+        zh-CN: 十二月
+
+    time-scale:
+      en-US: Time Scale
+      es-EC: Escala de tiempo
+      zh-CN:  时间尺度
+    time-scale-unite:
+      monthly:
+        en-US: Monthly
+        es-EC: Mensual
+        zh-CN: 月
+      Weekly:
+        en-US: Weekly
+        es-EC: Semanal
+        zh-CN: 周
+    selected-group:
+      en-US: Selected Group(s)
+      es-EC: Grupo seleccionado
+      zh-CN: 选定的组
+    time-picker-start:
+      en-US: Start
+      es-EC: Comienzo
+      zh-CN: 开始
+    time-picker-end:
+      en-US: End
+      es-EC: Final
+      zh-CN: 结束
   batch-actions:
     title:
       en-US: Batch Actions

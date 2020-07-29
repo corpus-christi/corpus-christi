@@ -14,7 +14,7 @@
             @change="changeTimeScale"
             v-model="selectedTimeScale"
             :items="timeScale"
-            label="Time Scale"
+            :label= "$t('groups.linegraph.time-scale')"
           ></v-select>
         </v-container>
       </v-col>
@@ -24,7 +24,7 @@
           v-model="selectedGroups"
           :items="groups"
           item-text="name"
-          label="Selected group(s)"
+          :label="$t('groups.linegraph.selected-group')"
           multiple
           return-object
           :small-chips="true"
@@ -72,7 +72,7 @@
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
                 v-model="startDate"
-                label="Start"
+                :label="$t('groups.linegraph.time-picker-start')"
                 prepend-icon="event"
                 readonly
                 v-bind="attrs"
@@ -102,7 +102,7 @@
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
                 v-model="endDate"
-                label="end"
+                :label="$t('groups.linegraph.time-picker-end')"
                 prepend-icon="event"
                 readonly
                 v-bind="attrs"
@@ -135,7 +135,7 @@
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
                 v-model="startMonth"
-                label="Start"
+                :label="$t('groups.linegraph.time-picker-start')"
                 prepend-icon="event"
                 readonly
                 v-bind="attrs"
@@ -171,7 +171,7 @@
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
                 v-model="endMonth"
-                label="End"
+                :label="$t('groups.linegraph.time-picker-end')"
                 prepend-icon="event"
                 readonly
                 v-bind="attrs"
@@ -311,7 +311,7 @@ export default {
               labels: this.week,
               datasets: [
                 {
-                  label: ["No group selected"],
+                  label: [],
                   backgroundColor: "rgba(225,10,10,0.3)",
                   borderColor: "rgba(225,103,110,1)",
                   borderWidth: 1,
@@ -338,7 +338,7 @@ export default {
                 labels: this.weekLabels,
                 datasets: [
                   {
-                    label: ["No group selected"],
+                    label: [],
                     backgroundColor: "rgba(225,10,10,0.3)",
                     borderColor: "rgb(225,103,110)",
                     borderWidth: 1,
@@ -1300,7 +1300,7 @@ export default {
             labels: this.labels,
             datasets: [
               {
-                label: ["No group selected"],
+                label: [],
                 backgroundColor: "rgba(225,10,10,0.3)",
                 borderColor: "rgba(225,103,110,1)",
                 borderWidth: 1,

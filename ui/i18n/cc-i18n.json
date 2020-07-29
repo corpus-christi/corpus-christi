@@ -599,6 +599,30 @@
       "group-type": "Group Type",
       "header": "Groups",
       "header-manager": "Managers",
+      "linegraph": {
+        "Month": {
+          "April": "April",
+          "August": "August",
+          "December": "December",
+          "February": "February",
+          "January": "January",
+          "July": "July",
+          "June": "June",
+          "March": "March",
+          "May": "May",
+          "November": "November",
+          "October": "October",
+          "September": "September"
+        },
+        "selected-group": "Selected Group(s)",
+        "time-picker-end": "End",
+        "time-picker-start": "Start",
+        "time-scale": "Time Scale",
+        "time-scale-unite": {
+          "Weekly": "Weekly",
+          "monthly": "Monthly"
+        }
+      },
       "manager": "Manager",
       "managers": {
         "add-manager": "Add Manager",
@@ -1540,6 +1564,30 @@
       "group-type": "Tipo de grupo",
       "header": "Grupos",
       "header-manager": "Gerentes",
+      "linegraph": {
+        "Month": {
+          "April": "Abril",
+          "August": "Agosto",
+          "December": "Diciembre",
+          "February": "Febrero",
+          "January": "Enero",
+          "July": "Julio",
+          "June": "Junio",
+          "March": "Marzo",
+          "May": "Mayo",
+          "November": "Noviembre",
+          "October": "Octubre",
+          "September": "Setiembre"
+        },
+        "selected-group": "Grupo seleccionado",
+        "time-picker-end": "Final",
+        "time-picker-start": "Comienzo",
+        "time-scale": "Escala de tiempo",
+        "time-scale-unite": {
+          "Weekly": "Semanal",
+          "monthly": "Mensual"
+        }
+      },
       "manager": "Gerente",
       "managers": {
         "add-manager": "Agregar administrador",
@@ -2481,6 +2529,30 @@
       "group-type": "\u56e2\u4f53\u7c7b\u578b",
       "header": "\u56e2\u4f53",
       "header-manager": "\u7ba1\u7406\u4eba\u5458",
+      "linegraph": {
+        "Month": {
+          "April": "\u56db\u6708",
+          "August": "\u516b\u6708",
+          "December": "\u5341\u4e8c\u6708",
+          "February": "\u4e8c\u6708",
+          "January": "\u4e00\u6708",
+          "July": "\u4e03\u6708",
+          "June": "\u516d\u6708",
+          "March": "\u4e09\u6708",
+          "May": "\u4e94\u6708",
+          "November": "\u5341\u4e00\u6708",
+          "October": "\u5341\u6708",
+          "September": "\u4e5d\u6708"
+        },
+        "selected-group": "\u9009\u5b9a\u7684\u7ec4",
+        "time-picker-end": "\u7ed3\u675f",
+        "time-picker-start": "\u5f00\u59cb",
+        "time-scale": "\u65f6\u95f4\u5c3a\u5ea6",
+        "time-scale-unite": {
+          "Weekly": "\u5468",
+          "monthly": "\u6708"
+        }
+      },
       "manager": "\u7ecf\u7406",
       "managers": {
         "add-manager": "\u65b0\u589e\u7ba1\u7406\u5458",
