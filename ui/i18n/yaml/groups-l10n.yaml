@@ -391,7 +391,6 @@ groups:
         en-US: December
         es-EC: Diciembre
         zh-CN: 十二月
-
     time-scale:
       en-US: Time Scale
       es-EC: Escala de tiempo

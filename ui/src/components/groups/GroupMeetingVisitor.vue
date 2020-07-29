@@ -43,7 +43,7 @@
         <tr>
           <td>{{ props.item.firstName }}</td>
           <td>{{ props.item.lastName }}</td>
-          <template  v-if="isOverseer === true || ifAdmin">
+          <template v-if="isOverseer === true || ifAdmin">
             <td>
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">

@@ -348,7 +348,7 @@ export default {
   name: "GroupMeetings",
   data() {
     return {
-      allGroups:null,
+      allGroups: null,
       options: {
         sortBy: ["activeMembers.length"], //default sorted column
         sortDesc: [true],
@@ -503,7 +503,7 @@ export default {
     },
     id() {
       return parseInt(this.$route.params.group);
-    }
+    },
   },
 
   methods: {
