@@ -406,7 +406,6 @@ export default {
         ? this.$t("groups.header-manager")
         : this.$t("events.participants.title");
     },
-    /* whether the current user is authorized to edit under the current page */
     headers() {
       let headers = [
         {
@@ -502,6 +501,7 @@ export default {
     isAdmin() {
       return this.currentAccount.roles.includes("role.group-admin");
     },
+    /* whether the current user is authorized to edit under the current page */
     isAuthorized() {
       return this.isAdmin || (!this.isManagerMode && this.isOverseer);
     },
