@@ -377,37 +377,24 @@ export default {
         return list;
       }
     },
-
     headers() {
-      if (
-        this.currentAccount.roles.includes("role.group-admin") ||
-        this.currentAccount.roles.includes("role.group-overseer")
-      ) {
-        return [
-          { text: this.$t("groups.name"), value: "name" },
-          { text: this.$t("groups.description"), value: "description" },
-          {
-            text: this.$t("groups.member-count"),
-            value: "activeMembers.length",
-          },
-          { text: this.$t("groups.group-type"), value: "groupType.name" },
-          {
-            text: this.$t("actions.header"),
-            value: "actions",
-            sortable: false,
-          },
-        ];
-      } else {
-        return [
-          { text: this.$t("groups.name"), value: "name" },
-          { text: this.$t("groups.description"), value: "description" },
-          {
-            text: this.$t("groups.member-count"),
-            value: "activeMembers.length",
-          },
-          { text: this.$t("groups.group-type"), value: "groupType.name" },
-        ];
+      let headers = [
+        { text: this.$t("groups.name"), value: "name" },
+        { text: this.$t("groups.description"), value: "description" },
+        {
+          text: this.$t("groups.member-count"),
+          value: "activeMembers.length",
+        },
+        { text: this.$t("groups.group-type"), value: "groupType.name" },
+      ];
+      if (this.isAdmin) {
+        headers.push({
+          text: this.$t("actions.header"),
+          value: "actions",
+          sortable: false,
+        });
       }
+      return headers;
     },
     isAdmin() {
       return this.currentAccount.roles.includes("role.group-admin");
