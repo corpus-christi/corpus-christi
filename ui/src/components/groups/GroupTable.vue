@@ -104,9 +104,6 @@
       must-sort
       :item-class="itemClass"
       class="elevation-1"
-      :footer-props="{
-        itemsPerPageText: $t('$vuetify.dataTable.rowsPerPageText'),
-      }"
     >
       <template v-slot:item.actions="props">
         <template v-if="props.item.active">
@@ -202,9 +199,6 @@
             }}</span>
           </v-tooltip>
         </template>
-      </template>
-      <template v-slot:footer.page-text="items">
-        {{ items.pageStart }} - {{ items.pageStop }} of {{ items.itemsLength }}
       </template>
     </v-data-table>
 

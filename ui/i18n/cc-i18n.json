@@ -1,7 +1,11 @@
 {
   "en-US": {
     "$vuetify": {
+      "dataFooter": {
+        "pageText": "{0}-{1} of {2}"
+      },
       "dataIterator": {
+        "loadingText": "Loading items...",
         "nextPage": "Next page",
         "noResultsText": "No matching records found",
         "pageText": "{0}-{1} of {2}",
@@ -10,7 +14,7 @@
         "rowsPerPageText": "Items per page:"
       },
       "dataTable": {
-        "rowsPerPageText": "Rows per page:"
+        "itemsPerPageText": "Rows per page:"
       },
       "noDataText": "No data available",
       "timePicker": {
@@ -943,7 +947,11 @@
   },
   "es-EC": {
     "$vuetify": {
+      "dataFooter": {
+        "pageText": "{0}-{1} de {2}"
+      },
       "dataIterator": {
+        "locadingText": "Cargando art\u00edculos ...",
         "nextPage": "Siguiente p\u00e1gina",
         "noResultsText": "No se encontraron registros coincidentes",
         "pageText": "{0}-{1} de {2}",
@@ -952,7 +960,7 @@
         "rowsPerPageText": "Art\u00edculos por p\u00e1gina:"
       },
       "dataTable": {
-        "rowsPerPageText": "Filas por p\u00e1gina:"
+        "itemsPerPageText": "Filas por p\u00e1gina:"
       },
       "noDataText": "Datos no disponibles",
       "timePicker": {
@@ -1885,7 +1893,11 @@
   },
   "zh-CN": {
     "$vuetify": {
+      "dataFooter": {
+        "pageText": "{0}-{1} \u7684 {2}"
+      },
       "dataIterator": {
+        "locadingText": "\u52a0\u8f7d\u6570\u636e",
         "nextPage": "\u4e0b\u4e00\u9875",
         "noResultsText": "\u672a\u80fd\u627e\u5230\u5339\u914d\u7684\u8bb0\u5f55",
         "pageText": "{2}\u4e2d\u7684{0}-{1}",
@@ -1894,7 +1906,7 @@
         "rowsPerPageText": "\u6bcf\u9875\u9879\u76ee\uff1a"
       },
       "dataTable": {
-        "rowsPerPageText": "\u6bcf\u9875\u884c\u6570\uff1a"
+        "itemsPerPageText": "\u6bcf\u9875\u884c\u6570\uff1a"
       },
       "noDataText": "\u65e0\u53ef\u7528\u6570\u636e",
       "timePicker": {
