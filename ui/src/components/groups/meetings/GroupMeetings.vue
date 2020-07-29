@@ -50,9 +50,6 @@
       class="elevation-1"
       must-sort
       :options.sync="options"
-      :footer-props="{
-        itemsPerPageText: $t('$vuetify.dataTable.rowsPerPageText'),
-      }"
     >
       <template v-slot:item="props">
         <tr>

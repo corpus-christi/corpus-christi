@@ -1,7 +1,11 @@
 {
   "en-US": {
     "$vuetify": {
+      "dataFooter": {
+        "pageText": "{0}-{1} of {2}"
+      },
       "dataIterator": {
+        "loadingText": "Loading items...",
         "nextPage": "Next page",
         "noResultsText": "No matching records found",
         "pageText": "{0}-{1} of {2}",
@@ -10,7 +14,7 @@
         "rowsPerPageText": "Items per page:"
       },
       "dataTable": {
-        "rowsPerPageText": "Rows per page:"
+        "itemsPerPageText": "Rows per page:"
       },
       "noDataText": "No data available",
       "timePicker": {
@@ -734,6 +738,7 @@
         "collapse": "Collapse",
         "expand": "Expand",
         "hierarchy-view": "Hierarchy View",
+        "no-groups-available": "No groups available, because you are not an overseer of any groups",
         "remove-cycle": "Please remove the cycle in the node listed in order to view group hierarchy tree.",
         "select-placeholder": "Select groups to perform actions...",
         "show-all": "Show All Groups",
@@ -966,7 +971,11 @@
   },
   "es-EC": {
     "$vuetify": {
+      "dataFooter": {
+        "pageText": "{0}-{1} de {2}"
+      },
       "dataIterator": {
+        "locadingText": "Cargando art\u00edculos ...",
         "nextPage": "Siguiente p\u00e1gina",
         "noResultsText": "No se encontraron registros coincidentes",
         "pageText": "{0}-{1} de {2}",
@@ -975,7 +984,7 @@
         "rowsPerPageText": "Art\u00edculos por p\u00e1gina:"
       },
       "dataTable": {
-        "rowsPerPageText": "Filas por p\u00e1gina:"
+        "itemsPerPageText": "Filas por p\u00e1gina:"
       },
       "noDataText": "Datos no disponibles",
       "timePicker": {
@@ -1699,6 +1708,7 @@
         "collapse": "Colapso",
         "expand": "Expandir",
         "hierarchy-view": "Vista de jerarqu\u00eda",
+        "no-groups-available": "No hay grupos disponibles, porque no eres supervisor de ning\u00fan grupo",
         "remove-cycle": "Elimine el ciclo en el nodo listado para ver el \u00e1rbol de jerarqu\u00eda de grupo.",
         "select-placeholder": "Seleccionar grupos para realizar acciones ...",
         "show-all": "Mostrar todos los grupos",
@@ -1931,7 +1941,11 @@
   },
   "zh-CN": {
     "$vuetify": {
+      "dataFooter": {
+        "pageText": "{0}-{1} \u7684 {2}"
+      },
       "dataIterator": {
+        "locadingText": "\u52a0\u8f7d\u6570\u636e",
         "nextPage": "\u4e0b\u4e00\u9875",
         "noResultsText": "\u672a\u80fd\u627e\u5230\u5339\u914d\u7684\u8bb0\u5f55",
         "pageText": "{2}\u4e2d\u7684{0}-{1}",
@@ -1940,7 +1954,7 @@
         "rowsPerPageText": "\u6bcf\u9875\u9879\u76ee\uff1a"
       },
       "dataTable": {
-        "rowsPerPageText": "\u6bcf\u9875\u884c\u6570\uff1a"
+        "itemsPerPageText": "\u6bcf\u9875\u884c\u6570\uff1a"
       },
       "noDataText": "\u65e0\u53ef\u7528\u6570\u636e",
       "timePicker": {
@@ -2664,6 +2678,7 @@
         "collapse": "\u5408\u5e76",
         "expand": "\u5c55\u5f00",
         "hierarchy-view": "\u5c42\u6b21\u7ed3\u6784\u89c6\u56fe",
+        "no-groups-available": "\u6ca1\u6709\u53ef\u7528\u7684\u7fa4\u7ec4\uff0c\u56e0\u4e3a\u60a8\u4e0d\u662f\u4efb\u4f55\u7fa4\u7ec4\u7684\u76d1\u7763\u8005",
         "remove-cycle": "\u8bf7\u5728\u5217\u51fa\u7684\u8282\u70b9\u4e2d\u5220\u9664\u5faa\u73af\uff0c\u4ee5\u67e5\u770b\u7ec4\u5c42\u6b21\u7ed3\u6784\u6811\u3002",
         "select-placeholder": "\u9009\u62e9\u8981\u6267\u884c\u64cd\u4f5c\u7684\u7ec4...",
         "show-all": "\u663e\u793a\u6240\u6709\u7fa4\u7ec4",

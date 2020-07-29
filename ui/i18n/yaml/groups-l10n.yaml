@@ -282,6 +282,10 @@ groups:
         Elimine el ciclo en el nodo listado para ver el árbol de jerarquía de
         grupo.
       zh-CN: 请在列出的节点中删除循环，以查看组层次结构树。
+    no-groups-available:
+      en-US: No groups available, because you are not an overseer of any groups
+      es-EC: No hay grupos disponibles, porque no eres supervisor de ningún grupo
+      zh-CN: 没有可用的群组，因为您不是任何群组的监督者
     unexpected-cycle:
       en-US: Unexpected cycle in hierarchy
       es-EC: Ciclo inesperado en la jerarquía
