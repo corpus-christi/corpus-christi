@@ -14,6 +14,9 @@ import {
   checkConnection,
   HierarchyCycleError,
   isRootNode,
+  isOverseer,
+  getAllSubGroups,
+  getParticipantById,
 } from "../../src/models/GroupHierarchyNode";
 
 interface PersonMap {
@@ -258,6 +261,46 @@ describe("Test case 1, a valid hierarchy structure", () => {
       groupMap
     );
     expect(isRootNode(p5)).toBe(false);
+  });
+
+  test("getAllSubGroups/isOverseer functionality", () => {
+    let p1: Participant = new Participant(
+      { person: personMap[1], active: true },
+      groupMap
+    );
+
+    // expect person 1 is overseer of group 4
+    expect(isOverseer(p1, 4)).toBe(true);
+
+    // expect person 1 is not overseer of group 9
+    expect(isOverseer(p1, 9)).toBe(false);
+
+    let p2: Participant = new Participant(
+      { person: personMap[2], active: true },
+      groupMap
+    );
+
+    // expect person 2 is not overseer of group 3
+    expect(isOverseer(p2, 3)).toBe(false);
+
+    // expect person 2 has no subgroups
+    expect(getAllSubGroups(p2).length).toBe(0);
+  });
+
+  test("getParticipantById functionality", () => {
+    let p1: Participant | undefined = getParticipantById(1, groupMap);
+    expect(p1).not.toBeUndefined();
+
+    // all groups p1 is a member of
+    let members = p1!.getObject().person.members;
+    expect(members.length).toBe(1);
+    expect(members).toContainEqual({ groupId: 1, active: true });
+
+    // all groups p1 is a manager of
+    let managers = p1!.getObject().person.managers;
+    expect(managers.length).toBe(3);
+    expect(managers).toContainEqual({ groupId: 3, active: true });
+    expect(managers).not.toContainEqual({ groupId: 6, active: true });
   });
 });
 

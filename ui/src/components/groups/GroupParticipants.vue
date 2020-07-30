@@ -47,77 +47,79 @@
               hide-details
             />
           </v-col>
-          <v-col md="1">
-            <v-select
-              hide-details
-              solo
-              single-line
-              :items="viewOptions"
-              v-model="viewStatus"
-              data-cy="view-status-select"
-            />
-          </v-col>
-          <v-col md="2">
-            <v-menu open-on-hover offset-y bottom>
-              <template v-slot:activator="{ on }">
-                <v-btn color="primary" v-on="on">
-                  <v-icon>done_all</v-icon>
-                  {{ $t("groups.batch-actions.title") }}
-                </v-btn>
-              </template>
-              <v-list>
-                <v-list-item @click.stop="selectionMode = 'archive'">
-                  <v-icon color="primary">archive</v-icon>
-                  <v-list-item-content>
-                    {{ $t("groups.batch-actions.archive") }}
-                  </v-list-item-content>
-                </v-list-item>
-                <v-list-item @click.stop="selectionMode = 'unarchive'">
-                  <v-icon color="primary">redo</v-icon>
-                  <v-list-item-content>
-                    {{ $t("groups.batch-actions.unarchive") }}
-                  </v-list-item-content>
-                </v-list-item>
-                <v-list-item @click.stop="selectionMode = 'email'">
-                  <v-icon color="primary">email</v-icon>
-                  <v-list-item-content>
-                    {{ $t("groups.batch-actions.email") }}
-                  </v-list-item-content>
-                </v-list-item>
-                <v-list-item @click.stop="showMoveDialog()">
-                  <v-icon color="primary">low_priority</v-icon>
-                  <v-list-item-content>
-                    {{ $t("groups.batch-actions.move") }}
-                  </v-list-item-content>
-                </v-list-item>
-                <v-list-item
-                  v-if="isManagerMode"
-                  @click.stop="selectionMode = 'edit'"
-                >
-                  <v-icon color="primary">edit</v-icon>
-                  <v-list-item-content>
-                    {{ $t("groups.batch-actions.edit") }}
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list>
-            </v-menu>
-          </v-col>
-          <v-col class="shrink" justify="self-end">
-            <v-btn
-              color="primary"
-              raised
-              :disabled="select"
-              v-on:click="showParticipantDialog()"
-              data-cy="add-participant"
-            >
-              <v-icon dark left>add</v-icon>
-              {{
-                isManagerMode
-                  ? $t("groups.managers.add-manager")
-                  : $t("groups.members.add-member")
-              }}
-            </v-btn>
-          </v-col>
+          <template v-if="isAuthorized">
+            <v-col md="1">
+              <v-select
+                hide-details
+                solo
+                single-line
+                :items="viewOptions"
+                v-model="viewStatus"
+                data-cy="view-status-select"
+              />
+            </v-col>
+            <v-col md="2">
+              <v-menu open-on-hover offset-y bottom>
+                <template v-slot:activator="{ on }">
+                  <v-btn color="primary" v-on="on">
+                    <v-icon>done_all</v-icon>
+                    {{ $t("groups.batch-actions.title") }}
+                  </v-btn>
+                </template>
+                <v-list>
+                  <v-list-item @click.stop="selectionMode = 'archive'">
+                    <v-icon color="primary">archive</v-icon>
+                    <v-list-item-content>
+                      {{ $t("groups.batch-actions.archive") }}
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-list-item @click.stop="selectionMode = 'unarchive'">
+                    <v-icon color="primary">redo</v-icon>
+                    <v-list-item-content>
+                      {{ $t("groups.batch-actions.unarchive") }}
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-list-item @click.stop="selectionMode = 'email'">
+                    <v-icon color="primary">email</v-icon>
+                    <v-list-item-content>
+                      {{ $t("groups.batch-actions.email") }}
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-list-item @click.stop="showMoveDialog()">
+                    <v-icon color="primary">low_priority</v-icon>
+                    <v-list-item-content>
+                      {{ $t("groups.batch-actions.move") }}
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-list-item
+                    v-if="isManagerMode"
+                    @click.stop="selectionMode = 'edit'"
+                  >
+                    <v-icon color="primary">edit</v-icon>
+                    <v-list-item-content>
+                      {{ $t("groups.batch-actions.edit") }}
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </v-col>
+            <v-col class="shrink" justify="self-end">
+              <v-btn
+                color="primary"
+                raised
+                :disabled="select"
+                v-on:click="showParticipantDialog()"
+                data-cy="add-participant"
+              >
+                <v-icon dark left>add</v-icon>
+                {{
+                  isManagerMode
+                    ? $t("groups.managers.add-manager")
+                    : $t("groups.members.add-member")
+                }}
+              </v-btn>
+            </v-col>
+          </template>
         </template>
       </v-row>
     </v-toolbar>
@@ -326,7 +328,10 @@ import {
   checkConnection,
   HierarchyCycleError,
   convertToGroupMap,
+  isOverseer,
+  getParticipantById,
 } from "../../models/GroupHierarchyNode.ts";
+import { mapState } from "vuex";
 export default {
   components: { EntitySearch, EmailForm, EntityTypeForm },
   name: "GroupParticipants",
@@ -415,12 +420,14 @@ export default {
           text: this.$t("person.email"),
           value: "person.email",
         },
-        {
+      ];
+      if (this.isAuthorized) {
+        headers.push({
           text: this.$t("actions.header"),
           value: "actions", // does not exist, used to identify the actions column
           sortable: false,
-        },
-      ];
+        });
+      }
       if (this.isManagerMode) {
         headers.splice(3, 0, {
           text: this.$t("groups.managers.manager-type"),
@@ -473,13 +480,30 @@ export default {
     id() {
       return parseInt(this.$route.params.group);
     },
-    isManagerMode() {
-      return this.participantType === "manager";
-    },
     endpoint() {
       return `/api/v1/groups/groups/${this.id}/${
         this.isManagerMode ? "managers" : "members"
       }`;
+    },
+    isManagerMode() {
+      return this.participantType === "manager";
+    },
+    /* whether the current user is an overseer of the group */
+    isOverseer() {
+      let currentParticipant = getParticipantById(
+        this.currentAccount.id,
+        this.groupMap
+      );
+      return currentParticipant
+        ? isOverseer(currentParticipant, this.id)
+        : false;
+    },
+    isAdmin() {
+      return this.currentAccount.roles.includes("role.group-admin");
+    },
+    /* whether the current user is authorized to edit under the current page */
+    isAuthorized() {
+      return this.isAdmin || (!this.isManagerMode && this.isOverseer);
     },
 
     /************* selection helper properties ****************/
@@ -680,6 +704,7 @@ export default {
       }
       return groups;
     },
+    ...mapState(["currentAccount"]),
   },
 
   methods: {
@@ -694,12 +719,15 @@ export default {
     modifyLocalParticipant(groupId, personId, payload, action = "patch") {
       let person = this.allPersons.find((person) => person.id === personId);
       let group = this.allGroups.find((group) => group.id === groupId);
+      let majorParticipantType = this.isManagerMode ? "managers" : "members"; // processed for all actions
+      let minorParticipantType = this.isManagerMode ? "members" : "managers"; // processed for all except 'post'
+
       let localParticipants = [
         groupId === this.id ? this.participants : undefined,
-        person ? person.managers : undefined,
-        person ? person.members : undefined,
-        group ? group.managers : undefined,
-        group ? group.members : undefined,
+        person ? person[majorParticipantType] : undefined,
+        person && action !== "post" ? person[minorParticipantType] : undefined,
+        group ? group[majorParticipantType] : undefined,
+        group && action !== "post" ? group[minorParticipantType] : undefined,
       ];
       const personIdFilter = (participant) =>
         participant.person.id === personId;

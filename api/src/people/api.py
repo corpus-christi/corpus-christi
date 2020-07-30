@@ -13,6 +13,7 @@ from ..courses.models import Student
 from ..events.models import EventPerson, EventParticipant
 from ..images.models import Image, ImagePerson
 from ..teams.models import TeamMember
+from src.shared.helpers import logged_response
 
 # removed  Account, AccountSchema, from line seven after person and before role
 # ---- Person
@@ -55,20 +56,18 @@ def create_person():
             request.json['person'][key] = None
 
     try:
-        valid_person = person_schema.load(request.json['person'], partial=True)
+        valid_person = person_schema.load(request.json['person'])
         valid_person_attributes = person_attribute_schema.load(
             request.json['attributesInfo'], many=True)
     except ValidationError as err:
         print(err)
-        #print(valid_person)
         return jsonify(err.messages), 422
 
     new_person = Person(**valid_person)
-  #  db.session.commit()
-    print(new_person)
 
-    public_user_role = db.session.query(Role).filter_by(id=1).first() ##FIXME don't filter by id = 1
-    new_person.roles.append(public_user_role)
+    public_user_role = db.session.query(Role).filter_by(name_i18n='role.public', active=True).first()
+    if public_user_role:
+        new_person.roles.append(public_user_role)
     db.session.add(new_person)
 
     for person_attribute in valid_person_attributes:
@@ -392,7 +391,7 @@ def read_all_roles():
     return jsonify(role_schema.dump(result, many=True))
 
 #maybe will replace with a person call or path, not sure yet
-@people.route('/role/account/<account_id>')
+@people.route('/role/account/<person_id>')
 @jwt_required
 def get_roles_for_account(person_id):
     person = db.session.query(Person).filter_by(id=person_id).first()
@@ -457,9 +456,9 @@ def deactivate_role(role_id):
     return jsonify(role_schema.dump(role))
 
 #link role to person instead of account
-@people.route('/role/<account_id>&<role_id>', methods=['POST'])
+@people.route('/role/<person_id>&<role_id>', methods=['POST'])
 @jwt_required
-def add_role_to_account(person_id, role_id):
+def add_role_to_person(person_id, role_id):
     person = db.session.query(Person).filter_by(id=person_id).first()
 
     if person is None:
@@ -473,13 +472,16 @@ def add_role_to_account(person_id, role_id):
 
     revoke_tokens_of_account(person.id)
 
-    user_roles = []
-    roles = db.session.query(Role).join(Person, Role.persons).filter_by(
-        id=person_id).filter_by(active=True).all()
-    for r in roles:
-        user_roles.append(role_schema.dump(r)['nameI18n'])
 
-    return jsonify(user_roles)
+
+#     user_roles = []
+#     roles = db.session.query(Role).join(Person, Role.persons).filter_by(
+#         id=person_id).filter_by(active=True).all()
+#     for r in roles:
+#         user_roles.append(role_schema.dump(r)['nameI18n'])
+
+    return logged_response(person_schema.dump(person), 201)
+    #jsonify(person)
 
 #remove role from person instead of account
 @people.route('/role/<account_id>&<role_id>', methods=['DELETE'])

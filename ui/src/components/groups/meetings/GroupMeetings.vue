@@ -15,30 +15,31 @@
         ></v-text-field>
       </v-col>
       <v-spacer></v-spacer>
-      <v-col md="1">
-        <v-select
-          hide-details
-          solo
-          single-line
-          :items="viewOptions"
-          v-model="viewStatus"
-          data-cy="view-status-select"
-        >
-        </v-select>
-      </v-col>
-
-      <v-spacer></v-spacer>
-      <v-col>
-        <v-btn
-          color="primary"
-          raised
-          v-on:click="activateCreateMeetingDialog"
-          data-cy="add-meeting"
-        >
-          <v-icon dark left>add</v-icon>
-          {{ $t("groups.meetings.add-meeting") }}
-        </v-btn>
-      </v-col>
+      <template v-if="isOverseer && ifAdmin">
+        <v-col md="1">
+          <v-select
+            hide-details
+            solo
+            single-line
+            :items="viewOptions"
+            v-model="viewStatus"
+            data-cy="view-status-select"
+          >
+          </v-select>
+        </v-col>
+        <v-spacer></v-spacer>
+        <v-col>
+          <v-btn
+            color="primary"
+            raised
+            v-on:click="activateCreateMeetingDialog"
+            data-cy="add-meeting"
+          >
+            <v-icon dark left>add</v-icon>
+            {{ $t("groups.meetings.add-meeting") }}
+          </v-btn>
+        </v-col>
+      </template>
     </v-toolbar>
     <v-data-table
       :items-per-page-options="rowsPerPageItem"
@@ -57,7 +58,7 @@
             v-on:click="
               $router.push({
                 name: 'meeting-members',
-                params: { meeting: props.item.attendances[0].meetingId },
+                params: { meeting: props.item.id },
               })
             "
           >
@@ -68,7 +69,7 @@
             v-on:click="
               $router.push({
                 name: 'meeting-members',
-                params: { meeting: props.item.attendances[0].meetingId },
+                params: { meeting: props.item.id },
               })
             "
           >
@@ -79,7 +80,7 @@
             v-on:click="
               $router.push({
                 name: 'meeting-members',
-                params: { meeting: props.item.attendances[0].meetingId },
+                params: { meeting: props.item.id },
               })
             "
           >
@@ -90,7 +91,7 @@
             v-on:click="
               $router.push({
                 name: 'meeting-members',
-                params: { meeting: props.item.attendances[0].meetingId },
+                params: { meeting: props.item.id },
               })
             "
           >
@@ -101,14 +102,14 @@
             v-on:click="
               $router.push({
                 name: 'meeting-members',
-                params: { meeting: props.item.attendances[0].meetingId },
+                params: { meeting: props.item.id },
               })
             "
           >
             {{ props.item.address.address }}
           </td>
           <td>
-            <template v-if="props.item.active">
+            <template v-if="props.item.active && isOverseer && ifAdmin">
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
                   <v-btn
@@ -335,11 +336,19 @@
 import CustomForm from "../../CustomForm";
 import EntitySearch from "../../EntitySearch";
 import { eventBus } from "../../../plugins/event-bus.js";
+import { mapState } from "vuex";
+import {
+  convertToGroupMap,
+  isOverseer,
+  getParticipantById,
+} from "../../../models/GroupHierarchyNode.ts";
+
 export default {
   components: { "meeting-form": CustomForm, EntitySearch },
   name: "GroupMeetings",
   data() {
     return {
+      allGroups: null,
       options: {
         sortBy: ["activeMembers.length"], //default sorted column
         sortDesc: [true],
@@ -403,9 +412,6 @@ export default {
   },
 
   computed: {
-    meetingDescriptions() {
-      return this.meetings.map((m) => m.description);
-    },
     viewOptions() {
       return [
         { text: this.$t("actions.view-active"), value: "viewActive" },
@@ -425,26 +431,48 @@ export default {
       }
     },
     headers() {
-      return [
-        {
-          text: this.$t("groups.description"),
-          value: "description",
-          width: "20%",
-        },
-        {
-          text: this.$t("events.start-time"),
-          value: "startTime",
-          width: "20%",
-        },
-        {
-          text: this.$t("events.stop-time"),
-          value: "stopTime",
-          width: "22.5%",
-        },
-        { text: this.$t("events.attendance"), value: "attendance" },
-        { text: this.$t("events.event-location"), value: "location_name" },
-        { text: this.$t("actions.header"), sortable: false },
-      ];
+      if (this.ifAdmin) {
+        return [
+          {
+            text: this.$t("groups.description"),
+            value: "description",
+            width: "20%",
+          },
+          {
+            text: this.$t("events.start-time"),
+            value: "startTime",
+            width: "20%",
+          },
+          {
+            text: this.$t("events.stop-time"),
+            value: "stopTime",
+            width: "22.5%",
+          },
+          { text: this.$t("events.attendance"), value: "attendance" },
+          { text: this.$t("events.event-location"), value: "location_name" },
+          { text: this.$t("actions.header"), sortable: false },
+        ];
+      } else {
+        return [
+          {
+            text: this.$t("groups.description"),
+            value: "description",
+            width: "20%",
+          },
+          {
+            text: this.$t("events.start-time"),
+            value: "startTime",
+            width: "20%",
+          },
+          {
+            text: this.$t("events.stop-time"),
+            value: "stopTime",
+            width: "22.5%",
+          },
+          { text: this.$t("events.attendance"), value: "attendance" },
+          { text: this.$t("events.event-location"), value: "location_name" },
+        ];
+      }
     },
     attendance_headers() {
       return [
@@ -459,6 +487,22 @@ export default {
           width: "20%",
         },
       ];
+    },
+    ...mapState(["currentAccount"]),
+    ifAdmin() {
+      if (
+        this.currentAccount.roles.includes("role.group-admin") ||
+        this.currentAccount.roles.includes("role.group-overseer") ||
+        this.currentAccount.roles.includes("role.group-leader")
+      ) {
+        return true;
+      } else return false;
+    },
+    groupMap() {
+      return convertToGroupMap(this.allGroups);
+    },
+    id() {
+      return parseInt(this.$route.params.group);
     },
   },
 
@@ -789,10 +833,26 @@ export default {
       this.attendanceDialog.show = false;
       this.getMeetings();
     },
+
+    isOverseer() {
+      let currentParticipant = getParticipantById(
+        this.currentAccount.id,
+        this.groupMap
+      );
+      return currentParticipant
+        ? isOverseer(currentParticipant, this.id)
+        : false;
+    },
+    fetchAllGroups() {
+      return this.$http.get("api/v1/groups/groups").then((resp) => {
+        this.allGroups = resp.data;
+      });
+    },
   },
 
   mounted: function () {
     this.getMeetings();
+    this.fetchAllGroups().then(() => this.isOverseer());
   },
 };
 </script>

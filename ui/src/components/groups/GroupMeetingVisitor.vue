@@ -10,24 +10,26 @@
       </v-row>
       <v-col md="2"> </v-col>
       <v-spacer></v-spacer>
-      <v-col>
-        <v-btn color="primary" raised v-on:click.stop="newVisitor">
-          <v-icon dark left>person_add</v-icon>
-          {{ $t("person.actions.add-visitor") }}
-        </v-btn>
-      </v-col>
-      <v-col>
-        <v-btn
-          class="ma-2"
-          outlined
-          small
-          fab
-          color="primary"
-          v-on:click="activateNewVisitorDialog"
-        >
-          <v-icon>search</v-icon>
-        </v-btn>
-      </v-col>
+      <template v-if="isOverseer === true || ifAdmin">
+        <v-col>
+          <v-btn color="primary" raised v-on:click.stop="newVisitor">
+            <v-icon dark left>person_add</v-icon>
+            {{ $t("person.actions.add-visitor") }}
+          </v-btn>
+        </v-col>
+        <v-col>
+          <v-btn
+            class="ma-2"
+            outlined
+            small
+            fab
+            color="primary"
+            v-on:click="activateNewVisitorDialog"
+          >
+            <v-icon>search</v-icon>
+          </v-btn>
+        </v-col>
+      </template>
     </v-toolbar>
     <v-data-table
       v-model="selected"
@@ -41,25 +43,27 @@
         <tr>
           <td>{{ props.item.firstName }}</td>
           <td>{{ props.item.lastName }}</td>
-          <td>
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on }">
-                <v-btn
-                  icon
-                  outlined
-                  small
-                  color="primary"
-                  slot="activator"
-                  data-cy="archive"
-                  v-on:click="removeVisitor(props.item)"
-                  v-on="on"
-                >
-                  <v-icon small>delete_outline</v-icon>
-                </v-btn>
-              </template>
-              <span>{{ $t("actions.tooltips.remove") }}</span>
-            </v-tooltip>
-          </td>
+          <template v-if="isOverseer === true || ifAdmin">
+            <td>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    icon
+                    outlined
+                    small
+                    color="primary"
+                    slot="activator"
+                    data-cy="archive"
+                    v-on:click="removeVisitor(props.item)"
+                    v-on="on"
+                  >
+                    <v-icon small>delete_outline</v-icon>
+                  </v-btn>
+                </template>
+                <span>{{ $t("actions.tooltips.remove") }}</span>
+              </v-tooltip>
+            </td>
+          </template>
         </tr>
       </template>
     </v-data-table>
@@ -117,7 +121,12 @@
 import { eventBus } from "../../plugins/event-bus";
 import PersonDialog from "../PersonDialog";
 import EntitySearch from "../EntitySearch";
-
+import { mapState } from "vuex";
+import {
+  convertToGroupMap,
+  isOverseer,
+  getParticipantById,
+} from "../../models/GroupHierarchyNode.ts";
 export default {
   name: "GroupMeetingVisitor",
   components: { PersonDialog, EntitySearch },
@@ -206,7 +215,6 @@ export default {
           for (let person of this.attendance) {
             allMember.push(person.id);
           }
-          console.log("All attendance", this.allAttendance);
           for (let person of this.allAttendance) {
             if (allMember.includes(person.personId) === false) {
               this.visitors.push({
@@ -250,7 +258,6 @@ export default {
             });
           }
         });
-      console.log("refresh All Meeting Attendance: ", this.allAttendance);
     },
     readAllPeople() {
       this.$http.get(`/api/v1/people/persons`).then((resp) => {
@@ -298,9 +305,7 @@ export default {
         }
       }
     },
-
     removeVisitor(person) {
-      console.log(person);
       let meetingId = this.$route.params.meeting;
       this.$http
         .delete(`/api/v1/groups/meetings/${meetingId}/attendances/${person.id}`)
@@ -310,6 +315,15 @@ export default {
           });
         })
         .then(() => this.refreshFetchMeeting());
+    },
+    isOverseer() {
+      let currentParticipant = getParticipantById(
+        this.currentAccount.id,
+        this.groupMap
+      );
+      return currentParticipant
+        ? isOverseer(currentParticipant, this.currentGroupId)
+        : false;
     },
   },
 
@@ -331,6 +345,21 @@ export default {
           sortable: false,
         },
       ];
+    },
+    ...mapState(["currentAccount"]),
+    groupMap() {
+      return convertToGroupMap(this.allGroups);
+    },
+    id() {
+      return this.currentGroupId;
+    },
+    ifAdmin() {
+      if (
+        this.currentAccount.roles.includes("role.group-admin") ||
+        this.currentAccount.roles.includes("role.group-leader")
+      ) {
+        return true;
+      } else return false;
     },
   },
   mounted: function () {

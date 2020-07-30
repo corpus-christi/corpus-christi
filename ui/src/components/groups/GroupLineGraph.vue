@@ -14,7 +14,7 @@
             @change="changeTimeScale"
             v-model="selectedTimeScale"
             :items="timeScale"
-            label="Time Scale"
+            :label="$t('groups.linegraph.time-scale')"
           ></v-select>
         </v-container>
       </v-col>
@@ -24,7 +24,7 @@
           v-model="selectedGroups"
           :items="groups"
           item-text="name"
-          label="Selected group(s)"
+          :label="$t('groups.linegraph.selected-group')"
           multiple
           return-object
           :small-chips="true"
@@ -67,12 +67,12 @@
             offset-y
             min-width="290px"
             open-on-hover
-            :disabled="diabelPicker"
+            :disabled="disablePicker"
           >
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
                 v-model="startDate"
-                label="Start"
+                :label="$t('groups.linegraph.time-picker-start')"
                 prepend-icon="event"
                 readonly
                 v-bind="attrs"
@@ -97,12 +97,12 @@
             transition="scale-transition"
             offset-y
             min-width="290px"
-            :disabled="diabelPicker"
+            :disabled="disablePicker"
           >
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
                 v-model="endDate"
-                label="end"
+                :label="$t('groups.linegraph.time-picker-end')"
                 prepend-icon="event"
                 readonly
                 v-bind="attrs"
@@ -130,12 +130,12 @@
             offset-y
             min-width="290px"
             open-on-hover
-            :disabled="diabelPicker"
+            :disabled="disablePicker"
           >
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
                 v-model="startMonth"
-                label="Start"
+                :label="$t('groups.linegraph.time-picker-start')"
                 prepend-icon="event"
                 readonly
                 v-bind="attrs"
@@ -166,12 +166,12 @@
             offset-y
             min-width="290px"
             open-on-hover
-            :disabled="diabelPicker"
+            :disabled="disablePicker"
           >
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
                 v-model="endMonth"
-                label="end"
+                :label="$t('groups.linegraph.time-picker-end')"
                 prepend-icon="event"
                 readonly
                 v-bind="attrs"
@@ -198,6 +198,15 @@ import moment from "moment";
 import { mapState } from "vuex";
 import "chartjs-plugin-crosshair";
 import $ from "jquery";
+import {
+  // Group,
+  // Participant,
+  // checkConnection,
+  // HierarchyCycleError,
+  convertToGroupMap,
+  isOverseer,
+  getParticipantById,
+} from "../../models/GroupHierarchyNode.ts";
 
 export default {
   components: {},
@@ -264,6 +273,8 @@ export default {
           },
         },
       },
+      managerData: {},
+      allGroups: null,
     };
   },
 
@@ -279,10 +290,13 @@ export default {
       return this.selectedGroups[0];
     },
     ...mapState(["currentAccount"]),
-    diabelPicker() {
+    disablePicker() {
       if (this.selectedGroups.length === 0) {
         return false;
       } else return true;
+    },
+    groupMap() {
+      return convertToGroupMap(this.allGroups);
     },
   },
   watch: {
@@ -297,7 +311,7 @@ export default {
               labels: this.week,
               datasets: [
                 {
-                  label: ["No group selected"],
+                  label: [],
                   backgroundColor: "rgba(225,10,10,0.3)",
                   borderColor: "rgba(225,103,110,1)",
                   borderWidth: 1,
@@ -324,7 +338,7 @@ export default {
                 labels: this.weekLabels,
                 datasets: [
                   {
-                    label: ["No group selected"],
+                    label: [],
                     backgroundColor: "rgba(225,10,10,0.3)",
                     borderColor: "rgb(225,103,110)",
                     borderWidth: 1,
@@ -1158,14 +1172,17 @@ export default {
       this.$http
         .get(`/api/v1/groups/groups`)
         .then((resp) => {
+          this.allGroups = resp.data;
           for (let group of resp.data) {
-            this.groups.push(
-              (group.id = {
-                name: group.name,
-                id: group.id,
-                meetings: group.meetings,
-              })
-            );
+            if (this.isOverseer(group.id) || this.ifAdmin()) {
+              this.groups.push(
+                (group.id = {
+                  name: group.name,
+                  id: group.id,
+                  meetings: group.meetings,
+                })
+              );
+            }
           }
         })
         .then(() => this.loadGraph());
@@ -1209,7 +1226,6 @@ export default {
       ) {
         this.resetCanvas();
         this.selectedGroups = [];
-        console.log("Selected groups", this.selectedGroups);
         let ctx2 = document.getElementById("myChart2");
         let myChart2 = new Chart(ctx2, {
           type: "line",
@@ -1284,7 +1300,7 @@ export default {
             labels: this.labels,
             datasets: [
               {
-                label: ["No group selected"],
+                label: [],
                 backgroundColor: "rgba(225,10,10,0.3)",
                 borderColor: "rgba(225,103,110,1)",
                 borderWidth: 1,
@@ -1311,7 +1327,7 @@ export default {
             labels: this.labels,
             datasets: [
               {
-                label: ["test1"],
+                label: [],
                 backgroundColor: "rgba(225,10,10,0.3)",
                 borderColor: "rgba(225,103,110,1)",
                 borderWidth: 1,
@@ -1762,6 +1778,21 @@ export default {
       let Blue = Math.floor(Math.random() * 256);
       let Alpha = Math.floor(Math.random() * 256);
       return `rgba(${red}, ${green}, ${Blue}, ${Alpha})`;
+    },
+
+    isOverseer(groupId) {
+      let currentParticipant = getParticipantById(
+        this.currentAccount.id,
+        this.groupMap
+      );
+      return currentParticipant
+        ? isOverseer(currentParticipant, groupId)
+        : false;
+    },
+    ifAdmin() {
+      if (this.currentAccount.roles.includes("role.group-admin")) {
+        return true;
+      } else return false;
     },
   },
 };
