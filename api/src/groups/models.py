@@ -126,6 +126,7 @@ class MemberHistory(Base):
     person_id = Column(Integer, ForeignKey('people_person.id'), nullable=False)
     joined = Column(Date, nullable=False)
     left = Column(Date, nullable=False)
+    note = Column(StringTypes.LONG_STRING, nullable=True)
     person = relationship('Person', back_populates='member_histories', lazy=True)
     group = relationship('Group', back_populates='member_histories', lazy=True)
 
@@ -140,6 +141,7 @@ class MemberHistorySchema(Schema):
     person_id = fields.Integer(data_key='personId', required=True)
     joined = fields.Date(required=True)
     left = fields.Date(required=True)
+    note = fields.String(required=False)
     person = fields.Nested('PersonSchema', dump_only=True)
     group = fields.Nested('GroupSchema', dump_only=True)
 

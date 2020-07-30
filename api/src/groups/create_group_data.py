@@ -103,14 +103,18 @@ def member_history_object_factory(
         person_id, 
         group_id,
         joined=None, 
-        left=None):
+        left=None,
+        note=None):
     """Cook up a fake member history """
     member_history = {
             'personId': person_id,
             'groupId': group_id,
             'joined': joined or str(fake.date_between(start_date='-3y', end_date='today')),
-            'left': left or str(datetime.date.today())
+            'left': left or str(datetime.date.today()),
             }
+    note = note or (fake.sentences(nb=1)[0] if flip() else None)
+    if note:
+        member_history['note'] = note
     return member_history
 
 
@@ -388,10 +392,10 @@ def create_group_test_data(sqla):
     # # create leadership hierarchy data
     # create_hierarchy_test_case_1(sqla)
 
-    # # create faker data
-    # create_multiple_groups(sqla, 10)
-    # create_multiple_managers(sqla, 0.75)
-    # create_multiple_members(sqla, 0.75)
+    # create faker data
+    create_multiple_groups(sqla, 10)
+    create_multiple_managers(sqla, 0.75)
+    create_multiple_members(sqla, 0.75)
 
     # create member histories
     create_multiple_member_histories(sqla, 30)

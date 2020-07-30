@@ -728,6 +728,29 @@ def read_all_member_histories():
         return logged_response(e.message, e.code)
     return logged_response(member_history_schema.dump(member_histories, many=True))
 
+@groups.route('/member-histories/<int:member_history_id>', methods=['PATCH'])
+@authorize(['role.group-admin'])
+def update_member_history(member_history_id):
+    member_history_schema = MemberHistorySchema()
+
+    try:
+        valid_attributes = member_history_schema.load(request.json, partial=True)
+    except ValidationError as err:
+        return logged_response(err.messages, 422)
+
+    member_history = db.session.query(MemberHistory).filter_by(id=member_history_id).first()
+
+    if not member_history:
+        return logged_response(f"MemberHistory with id #{member_history_id} does not exist.", 404)
+
+    for key, val in valid_attributes.items():
+        setattr(member_history, key, val)
+
+    db.session.add(member_history)
+    db.session.commit()
+
+    return logged_response(member_history_schema.dump(member_history), 200)
+
 @groups.route('/member-histories/<int:member_history_id>', methods=['DELETE'])
 @authorize(['role.group-admin'])
 def delete_member_history(member_history_id):
@@ -741,3 +764,4 @@ def delete_member_history(member_history_id):
 
     # 204 codes don't respond with any content
     return logged_response("Deleted successfully", 204)
+

@@ -1315,6 +1315,26 @@ def test_read_all_member_histories(auth_client):
     assert resp.status_code == 200
     assert len(resp.json) == 10
 
+def test_update_member_history(auth_client):
+    # GIVEN a database with a number of member_historys
+    count = random.randint(3, 11)
+    create_multiple_member_histories(auth_client.sqla, count)
+
+    # WHEN we update one member_history
+    member_history = auth_client.sqla.query(MemberHistory).first()
+
+    payload = { 'note': 'Here is some note about the history' }
+
+    resp = auth_client.patch(url_for('groups.update_member_history',
+        member_history_id=member_history.id),
+        json=payload,
+        headers={'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
+
+    # THEN we assume the correct status code
+    assert resp.status_code == 200
+    # THEN we assume the correct content in the database
+    assert auth_client.sqla.query(MemberHistory).filter_by(id=member_history.id).first().note == 'Here is some note about the history'
+
 def test_delete_member_histories(auth_client):
     # GIVEN a database with some member histories
     create_multiple_member_histories(auth_client.sqla, 10)
