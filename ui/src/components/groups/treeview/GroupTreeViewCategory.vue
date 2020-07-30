@@ -1,6 +1,5 @@
 <template>
   <div>
-    {{ selection }}
     <v-card flat>
       <v-toolbar flat class="pa-1">
         <v-row no-gutters align="center" justify="space-between">
@@ -14,11 +13,55 @@
             </v-text-field>
           </v-col>
           <v-spacer />
+          <v-col cols="4">
+            <v-menu
+              open-on-hover
+              :close-on-content-click="false"
+              bottom
+              offset-y
+            >
+              <template v-slot:activator="{ attrs, on }">
+                <v-btn color="primary" v-on="on" v-bind="attrs">{{
+                  $t("groups.treeview.filters")
+                }}</v-btn>
+              </template>
+              <v-list>
+                <stateful-list-item
+                  v-for="category in participantCategories"
+                  :key="category.name"
+                  :state="category.state"
+                  :attrs="category.attrs"
+                  :icon="category.icon"
+                  :text="category.name"
+                  @changed="modifySelection($event, category.nodes)"
+                />
+              </v-list>
+              <v-divider />
+              <v-list v-if="managerCategories.length">
+                <v-subheader>{{
+                  $t("groups.entity-types.manager-types.title")
+                }}</v-subheader>
+                <v-virtual-scroll
+                  item-height="50"
+                  height="200"
+                  width="300"
+                  :items="managerCategories"
+                >
+                  <template v-slot="{ item }">
+                    <stateful-list-item
+                      :state="item.state"
+                      :attrs="item.attrs"
+                      :icon="item.icon"
+                      :text="item.name"
+                      @changed="modifySelection($event, item.nodes)"
+                    />
+                  </template>
+                </v-virtual-scroll>
+              </v-list>
+            </v-menu>
+          </v-col>
+          <v-spacer />
           <template v-if="selection.length === 0">
-            <v-col cols="4">
-              <v-select :items="viewOptions" v-model="viewStatus"> </v-select>
-            </v-col>
-            <v-spacer />
             <v-col class="shrink">
               <v-tooltip bottom
                 ><template v-slot:activator="{ on }">
@@ -52,7 +95,7 @@
               >
             </v-col>
             <v-col class="shrink">
-              <v-btn fab small @click="groupTypeTreeviewSelection = []">
+              <v-btn fab small @click="treeviewSelection = []">
                 <v-icon>close</v-icon>
               </v-btn>
             </v-col>
@@ -63,9 +106,9 @@
         <v-col>
           <v-card-text>
             <v-treeview
-              v-model="groupTypeTreeviewSelection"
+              v-model="treeviewSelection"
               :search="search"
-              :items="groupTypeTreeviewItems"
+              :items="treeviewItems"
               selectable
               transition
               hoverable
@@ -123,27 +166,18 @@
 </template>
 
 <script>
-import { uniqBy } from "lodash";
+import { uniqBy, unionBy, differenceBy } from "lodash";
 import EmailForm from "../../EmailForm";
+import StatefulListItem from "./StatefulListItem";
 export default {
   name: "TreeviewCategory",
-  components: { EmailForm },
+  components: { EmailForm, StatefulListItem },
   props: {
     groups: Array,
     persons: Array,
   },
   computed: {
     /*** view/selection related ***/
-    viewOptions() {
-      return [
-        { text: this.$t("groups.treeview.show-all"), value: "showAll" },
-        {
-          text: this.$t("groups.treeview.show-managers"),
-          value: "showManagers",
-        },
-        { text: this.$t("groups.treeview.show-members"), value: "showMembers" },
-      ];
-    },
     processedGroups() {
       return this.groups
         ? this.groups
@@ -157,9 +191,7 @@ export default {
     },
     selection() {
       // a duplicate-free list of persons selected in the tree
-      let selection = this.groupTypeTreeviewSelection.filter(
-        (item) => !item.children
-      ); // get rid of intermediate nodes
+      let selection = this.treeviewSelection.filter((item) => !item.children); // get rid of intermediate nodes
       selection = uniqBy(selection, (item) => item.obj.id); // remove duplicate
       return selection;
     },
@@ -169,7 +201,59 @@ export default {
         (group) => group.groupTypeId
       );
     },
-    groupTypeTreeviewItems() {
+    /* a collection of all leaf nodes in the tree */
+    allLeafNodes() {
+      return this.getAllLeafNodes(this.treeviewItems[0]);
+    },
+    memberNodes() {
+      return this.allLeafNodes.filter((node) => node.type === "member");
+    },
+    managerNodes() {
+      return this.allLeafNodes.filter((node) => node.type === "manager");
+    },
+    managerCategories() {
+      let managerCategoryMap = this.categorizeBy(
+        this.managerNodes,
+        (managerNode) => managerNode.managerType.name
+      );
+      let managerCategories = this.mapToNodes(
+        managerCategoryMap,
+        (managerTypeName, nodes) => ({
+          name: managerTypeName,
+          nodes: nodes,
+          state: this.calculateCategoryState(nodes),
+          icon: "category",
+          attrs: { dense: true },
+        })
+      );
+      console.log("managerCategories", managerCategories);
+      return managerCategories;
+    },
+    /* an array of objects, each object contains information about a certain category of participants */
+    participantCategories() {
+      let participantCategories = [
+        {
+          name: this.$t("groups.treeview.categories.all"),
+          nodes: this.allLeafNodes,
+          state: this.calculateCategoryState(this.allLeafNodes),
+          icon: "done_all",
+        },
+        {
+          name: this.$t("groups.treeview.categories.members"),
+          nodes: this.memberNodes,
+          state: this.calculateCategoryState(this.memberNodes),
+          icon: "person",
+        },
+        {
+          name: this.$t("groups.treeview.categories.managers"),
+          nodes: this.managerNodes,
+          state: this.calculateCategoryState(this.managerNodes),
+          icon: "account_circle",
+        },
+      ];
+      return participantCategories;
+    },
+    treeviewItems() {
       let counter = 0;
       let groupTypesChildrenMap = this.categorizeBy(
         this.processedGroups,
@@ -183,6 +267,7 @@ export default {
               name: this.getPersonFullName(manager.person),
               obj: manager.person,
               type: "manager",
+              managerType: manager.managerType,
             })
           );
           let managersChildren = this.mapToNodes(
@@ -267,6 +352,47 @@ export default {
     },
   },
   methods: {
+    /*indicates the state of the checkbox.
+          true: selected
+          false: not selected
+          null: indeterminate */
+    calculateCategoryState(nodes) {
+      // if current category has nothing more than the selected, it is all selected
+      let union = unionBy(this.treeviewSelection, nodes, "id");
+      if (union.length === this.treeviewSelection.length) {
+        return true;
+      }
+      // if nothing in current category can be subtracted from the selected, none is selected
+      let difference = differenceBy(this.treeviewSelection, nodes, "id");
+      if (difference.length === this.treeviewSelection.length) {
+        return false;
+      }
+      return null;
+    },
+    /* add or remove the given nodes to selections, collapsing by the node's id */
+    modifySelection(isAdding, nodes) {
+      if (isAdding) {
+        console.log("Adding", nodes);
+        this.treeviewSelection = unionBy(this.treeviewSelection, nodes, "id");
+      } else {
+        console.log("Removing", nodes);
+        this.treeviewSelection = differenceBy(
+          this.treeviewSelection,
+          nodes,
+          "id"
+        );
+      }
+      console.log("this.treeviewSelection", this.treeviewSelection);
+    },
+    /* returns all leaf nodes from a certain node */
+    getAllLeafNodes(node) {
+      if (!node.children || !node.children.length) {
+        return [node];
+      }
+      return [].concat(
+        ...node.children.map((childNode) => this.getAllLeafNodes(childNode))
+      );
+    },
     /* returns a map in the form of { key1: [item1, item2], key2: [...] }
     that categorizes each item in list by its key indicated by keyFunc(item)
      each item is added to the list after being transformed by mapFunc */
@@ -307,7 +433,6 @@ export default {
   },
   data() {
     return {
-      viewStatus: "showAll",
       showManagers: true,
       showMembers: true,
       emailDialog: {
@@ -315,10 +440,13 @@ export default {
         loading: false,
       },
       search: "",
-      groupTypeTreeviewSelection: [],
+      treeviewSelection: [],
       selectManagers: true,
       selectMembers: true,
     };
+  },
+  mounted() {
+    console.log("all leaf nodes", this.allLeafNodes);
   },
 };
 </script>
