@@ -1,33 +1,41 @@
 <template>
-  <v-container style="max-width: 600px;">
-    <v-timeline dense clipped id="time-line-container">
-      <v-timeline-item fill-dot class="white--text mb-12" color="orange" large>
-        <template v-slot:icon>
-          <span>{{
-            currentAccount.firstName[0] + currentAccount.lastName[0]
-          }}</span>
-        </template>
-      </v-timeline-item>
-      <v-timeline-item
-        v-for="event in timeline"
-        :key="event.id"
-        class="mb-4"
-        color="green lighten-1"
-        small
-      >
-        <v-row justify="space-between">
-          <v-col cols="7" v-text="event.text"></v-col>
-          <v-col class="text-right" cols="5" v-text="event.time"></v-col>
-        </v-row>
-      </v-timeline-item>
-    </v-timeline>
-  </v-container>
+  <div>
+    <vue-editor v-model="content" :editor-toolbar="customToolbar"></vue-editor>
+    <v-container style="max-width: 600px;">
+      <v-timeline dense clipped id="time-line-container">
+        <v-timeline-item fill-dot class="white--text mb-12" color="orange" large>
+          <template v-slot:icon>
+            <span>{{
+              currentAccount.firstName[0] + currentAccount.lastName[0]
+            }}</span>
+          </template>
+        </v-timeline-item>
+        <v-timeline-item
+          v-for="event in timeline"
+          :key="event.id"
+          class="mb-4"
+
+          :color="defineColor(event) ? 'green lighten-1' : 'red'"
+          small
+        >
+          <v-row justify="space-between">
+            <v-col cols="7" v-text="event.text"></v-col>
+            <v-col class="text-right" cols="5" v-text="event.time"></v-col>
+          </v-row>
+        </v-timeline-item>
+      </v-timeline>
+    </v-container>
+  </div>
 </template>
 
 <script>
 import { mapState } from "vuex";
+import { VueEditor } from "vue2-editor";
 export default {
   name: "GroupMembershipHistory",
+  components: {
+    VueEditor
+  },
   data() {
     return {
       events: [],
@@ -50,6 +58,12 @@ export default {
     },
   },
   methods: {
+    defineColor(event){
+      if (event.text.slice(-2,) === "ft"){
+        return false
+      }
+      else return true
+    },
     comment() {
       const time = new Date().toTimeString();
       this.events.push({
