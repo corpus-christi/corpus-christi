@@ -195,12 +195,6 @@ export default {
       selection = uniqBy(selection, (item) => item.obj.id); // remove duplicate
       return selection;
     },
-    groupTypeMap() {
-      return this.categorizeBy(
-        this.processedGroups,
-        (group) => group.groupTypeId
-      );
-    },
     /* a collection of all leaf nodes in the tree */
     allLeafNodes() {
       return this.getAllLeafNodes(this.treeviewItems[0]);
@@ -226,7 +220,6 @@ export default {
           attrs: { dense: true },
         })
       );
-      console.log("managerCategories", managerCategories);
       return managerCategories;
     },
     /* an array of objects, each object contains information about a certain category of participants */
@@ -372,17 +365,14 @@ export default {
     /* add or remove the given nodes to selections, collapsing by the node's id */
     modifySelection(isAdding, nodes) {
       if (isAdding) {
-        console.log("Adding", nodes);
         this.treeviewSelection = unionBy(this.treeviewSelection, nodes, "id");
       } else {
-        console.log("Removing", nodes);
         this.treeviewSelection = differenceBy(
           this.treeviewSelection,
           nodes,
           "id"
         );
       }
-      console.log("this.treeviewSelection", this.treeviewSelection);
     },
     /* returns all leaf nodes from a certain node */
     getAllLeafNodes(node) {
@@ -444,9 +434,6 @@ export default {
       selectManagers: true,
       selectMembers: true,
     };
-  },
-  mounted() {
-    console.log("all leaf nodes", this.allLeafNodes);
   },
 };
 </script>
