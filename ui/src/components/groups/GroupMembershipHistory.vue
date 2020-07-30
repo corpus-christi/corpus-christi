@@ -1,9 +1,14 @@
 <template>
   <div>
-    <vue-editor v-model="content" :editor-toolbar="customToolbar"></vue-editor>
+    <vue-editor v-model="content"></vue-editor>
     <v-container style="max-width: 600px;">
       <v-timeline dense clipped id="time-line-container">
-        <v-timeline-item fill-dot class="white--text mb-12" color="orange" large>
+        <v-timeline-item
+          fill-dot
+          class="white--text mb-12"
+          color="orange"
+          large
+        >
           <template v-slot:icon>
             <span>{{
               currentAccount.firstName[0] + currentAccount.lastName[0]
@@ -14,7 +19,6 @@
           v-for="event in timeline"
           :key="event.id"
           class="mb-4"
-
           :color="defineColor(event) ? 'green lighten-1' : 'red'"
           small
         >
@@ -34,7 +38,7 @@ import { VueEditor } from "vue2-editor";
 export default {
   name: "GroupMembershipHistory",
   components: {
-    VueEditor
+    VueEditor,
   },
   data() {
     return {
@@ -58,11 +62,10 @@ export default {
     },
   },
   methods: {
-    defineColor(event){
-      if (event.text.slice(-2,) === "ft"){
-        return false
-      }
-      else return true
+    defineColor(event) {
+      if (event.text.slice(-2) === "ft") {
+        return false;
+      } else return true;
     },
     comment() {
       const time = new Date().toTimeString();
