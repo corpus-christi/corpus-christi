@@ -657,6 +657,9 @@
         "title": "Members",
         "title-visitor": "Visitors"
       },
+      "membership-hisotry": {
+        "title": "History"
+      },
       "messages": {
         "already-exists": "Group already exists",
         "confirm-archive": "Are you sure you want to archive this group?",
@@ -975,7 +978,7 @@
         "pageText": "{0}-{1} de {2}"
       },
       "dataIterator": {
-        "locadingText": "Cargando art\u00edculos ...",
+        "loadingText": "Cargando art\u00edculos ...",
         "nextPage": "Siguiente p\u00e1gina",
         "noResultsText": "No se encontraron registros coincidentes",
         "pageText": "{0}-{1} de {2}",
@@ -1627,6 +1630,9 @@
         "title": "Miembros",
         "title-visitor": "visitantes"
       },
+      "membership-hisotry": {
+        "title": "Historia"
+      },
       "messages": {
         "already-exists": "El grupo ya existe",
         "confirm-archive": "\u00bfSeguro que quieres archivar este groupos?",
@@ -1945,7 +1951,7 @@
         "pageText": "{0}-{1} \u7684 {2}"
       },
       "dataIterator": {
-        "locadingText": "\u52a0\u8f7d\u6570\u636e",
+        "loadingText": "\u52a0\u8f7d\u6570\u636e",
         "nextPage": "\u4e0b\u4e00\u9875",
         "noResultsText": "\u672a\u80fd\u627e\u5230\u5339\u914d\u7684\u8bb0\u5f55",
         "pageText": "{2}\u4e2d\u7684{0}-{1}",
@@ -2596,6 +2602,9 @@
         "email-reply-to": "\u56de\u590d\u5230",
         "title": "\u4f1a\u5458",
         "title-visitor": "\u8bbf\u5ba2"
+      },
+      "membership-hisotry": {
+        "title": "\u5386\u53f2\u8bb0\u5f55"
       },
       "messages": {
         "already-exists": "\u7fa4\u7ec4\u5df2\u7ecf\u5b58\u5728",

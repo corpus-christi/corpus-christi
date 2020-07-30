@@ -341,6 +341,11 @@ groups:
       en-US: Group Treeview
       es-EC: Vista de árbol grupal
       zh-CN: 组树视图
+  membership-hisotry:
+    title:
+      en-US: History
+      es-EC: Historia
+      zh-CN: 历史记录
   linegraph:
     Month:
       January:

@@ -14,7 +14,7 @@
             @change="changeTimeScale"
             v-model="selectedTimeScale"
             :items="timeScale"
-            :label= "$t('groups.linegraph.time-scale')"
+            :label="$t('groups.linegraph.time-scale')"
           ></v-select>
         </v-container>
       </v-col>
@@ -1172,9 +1172,9 @@ export default {
       this.$http
         .get(`/api/v1/groups/groups`)
         .then((resp) => {
-          this.allGroups = resp.data
+          this.allGroups = resp.data;
           for (let group of resp.data) {
-            if(this.isOverseer(group.id) || this.ifAdmin()){
+            if (this.isOverseer(group.id) || this.ifAdmin()) {
               this.groups.push(
                 (group.id = {
                   name: group.name,
@@ -1432,7 +1432,6 @@ export default {
     },
 
     resetCanvas() {
-      //working
       $("#myChart2").remove();
       $("#graph-container").append(
         '<canvas id="myChart2" width="500" height="180"></canvas>'
@@ -1790,8 +1789,7 @@ export default {
         : false;
     },
     ifAdmin() {
-      if (this.currentAccount.roles.includes("role.group-admin")
-      ) {
+      if (this.currentAccount.roles.includes("role.group-admin")) {
         return true;
       } else return false;
     },

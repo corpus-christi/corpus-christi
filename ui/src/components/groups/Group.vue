@@ -19,6 +19,10 @@
       <v-tab :to="{ name: 'group-managers' }">
         <v-icon left>account_circle</v-icon>{{ $t("groups.details.manager") }}
       </v-tab>
+      <v-tab :to="{ name: 'group-membership-history' }">
+        <v-icon left>history_edu</v-icon
+        >{{ $t("groups.membership-hisotry.title") }}
+      </v-tab>
     </v-tabs>
     <hr class="vertical-spacer" />
     <router-view></router-view>

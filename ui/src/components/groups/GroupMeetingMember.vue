@@ -35,16 +35,16 @@
         </tr>
       </template>
     </v-data-table>
-    <template  v-if="isOverseer === true || ifAdmin">
-    <v-col md="3">
-      <v-btn
-        class="ma-2"
-        outlined
-        color="green"
-        v-on:click="submitSelectedPeople"
-        >{{ $t("error-report.actions.submit") }}</v-btn
-      >
-    </v-col>
+    <template v-if="isOverseer === true || ifAdmin">
+      <v-col md="3">
+        <v-btn
+          class="ma-2"
+          outlined
+          color="green"
+          v-on:click="submitSelectedPeople"
+          >{{ $t("error-report.actions.submit") }}</v-btn
+        >
+      </v-col>
     </template>
   </div>
 </template>
