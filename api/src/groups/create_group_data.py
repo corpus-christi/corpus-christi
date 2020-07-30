@@ -5,7 +5,7 @@ import random
 from faker import Faker
 
 from ..events.models import EventGroup, EventGroupSchema, Event
-from ..groups.models import Manager, ManagerType, Group, GroupType, Meeting, Attendance, Member, ManagerSchema, GroupSchema, MeetingSchema, AttendanceSchema, MemberSchema, GroupTypeSchema, ManagerTypeSchema
+from ..groups.models import Manager, ManagerType, Group, GroupType, Meeting, Attendance, Member, ManagerSchema, GroupSchema, MeetingSchema, AttendanceSchema, MemberSchema, GroupTypeSchema, ManagerTypeSchema, MemberHistory, MemberHistorySchema
 from ..people.models import Person, Role, RoleSchema, PersonSchema
 from ..people.test_people import create_multiple_people, person_object_factory
 from ..places.models import Address
@@ -99,6 +99,20 @@ def manager_type_object_factory(manager_type_name):
     }
     return manager_type
 
+def member_history_object_factory(
+        person_id, 
+        group_id,
+        joined=None, 
+        left=None):
+    """Cook up a fake member history """
+    member_history = {
+            'personId': person_id,
+            'groupId': group_id,
+            'joined': joined or str(fake.date_between(start_date='-3y', end_date='today')),
+            'left': left or str(datetime.date.today())
+            }
+    return member_history
+
 
 # ---------End of Factories
 
@@ -176,8 +190,7 @@ def create_multiple_members(sqla, fraction=0.75):
 
     new_members = []
     for person, group in sample_members:
-        valid_member = member_schema.load(member_object_factory(
-            person.id, group.id, active=flip(), joined=fake.date()))
+        valid_member = member_schema.load(member_object_factory(person.id, group.id))
         new_members.append(Member(**valid_member))
     sqla.add_all(new_members)
     sqla.commit()
@@ -251,6 +264,24 @@ def create_multiple_manager_types(sqla, n):
         valid_manager_type = manager_type_schema.load(manager_type_object_factory(" ".join(fake.words(2))))
         new_manager_types.append(ManagerType(**valid_manager_type))
     sqla.add_all(new_manager_types)
+    sqla.commit()
+
+def create_multiple_member_histories(sqla, n):
+    member_history_schema = MemberHistorySchema()
+    if sqla.query(Group).count() == 0:
+        create_multiple_groups(sqla, random.randint(3, 6))
+    all_groups = sqla.query(Group).all()
+    if sqla.query(Person).count() == 0:
+        create_multiple_people(sqla, random.randint(3, 6))
+    all_persons = sqla.query(Person).all()
+
+    new_member_histories = []
+    for i in range(n):
+        group_id = random.choice(all_groups).id
+        person_id = random.choice(all_persons).id
+        valid_member_history = member_history_schema.load(member_history_object_factory(person_id, group_id))
+        new_member_histories.append(MemberHistory(**valid_member_history))
+    sqla.add_all(new_member_histories)
     sqla.commit()
 
 def create_hierarchical_groups_and_participants(sqla, group_members, group_managers):
@@ -354,13 +385,16 @@ def create_group_test_data(sqla):
     create_multiple_group_types(sqla, 5)
     create_multiple_manager_types(sqla, 5)
 
-    # create leadership hierarchy data
-    create_hierarchy_test_case_1(sqla)
+    # # create leadership hierarchy data
+    # create_hierarchy_test_case_1(sqla)
 
     # # create faker data
     # create_multiple_groups(sqla, 10)
     # create_multiple_managers(sqla, 0.75)
     # create_multiple_members(sqla, 0.75)
+
+    # create member histories
+    create_multiple_member_histories(sqla, 30)
 
     create_multiple_meetings(sqla, 12)
     create_multiple_attendance(sqla, 0.75)

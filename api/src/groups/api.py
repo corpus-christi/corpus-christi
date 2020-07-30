@@ -5,7 +5,7 @@ from flask_jwt_extended import jwt_required, get_jwt_claims, get_jwt_identity
 from marshmallow import ValidationError
 
 from . import groups
-from .models import Group, GroupSchema, Attendance, Member, MemberSchema, Meeting, MeetingSchema, AttendanceSchema, Manager, ManagerSchema, GroupType, GroupTypeSchema, ManagerType, ManagerTypeSchema
+from .models import Group, GroupSchema, Attendance, Member, MemberSchema, Meeting, MeetingSchema, AttendanceSchema, Manager, ManagerSchema, GroupType, GroupTypeSchema, ManagerType, ManagerTypeSchema, MemberHistory, MemberHistorySchema
 from .group_hierarchy_helpers import is_overseer
 
 from .. import db
@@ -25,10 +25,23 @@ def is_overseer_or_admin(group_id):
     is a group-admin or an overseer of group with 'group_id'
     returns: a Boolean
     """
-    person_id = get_jwt_identity()['id']
-    roles = get_jwt_claims()['roles']
+    person_id = get_jwt_identity().get('id')
+    roles = get_jwt_claims().get('roles', [])
     return ('role.group-admin' in roles or 
-            is_overseer(person_id, group_id))
+            (person_id and is_overseer(person_id, group_id)))
+
+def create_member_history(member):
+    """create a record in the member_history table
+    :member: a Member instance
+    :returns: None
+    """
+    member_history = MemberHistory(
+            group_id = member.group_id,
+            person_id = member.person_id,
+            joined = member.joined,
+            left = datetime.date.today())
+    db.session.add(member_history)
+    db.session.commit()
 
 # ---- Group Type
 
@@ -151,6 +164,7 @@ def read_one_group(group_id):
     return logged_response(group_schema.dump(group), 200)
 
 @groups.route('/groups/<int:group_id>', methods=['PATCH'])
+@jwt_required
 def update_group(group_id):
     if not is_overseer_or_admin(group_id):
         return logged_response('You must be either an admin or an overseer of the group to make this request', 403)
@@ -548,6 +562,12 @@ def update_member(group_id, person_id):
         if new_person_id and not db.session.query(Person).filter_by(id=new_person_id).first():
             return logged_response(f"Person with person_id #{new_person_id} does not exist", 404)
 
+    if ((valid_attributes.get('active') is False and member.active is True) # if will deactivate person
+            or (new_group_id and new_group_id != member.group_id) # if will move person to another group
+            # or (new_person_id and new_person_id != member.person_id) # if will replace the current member with another person
+            ):
+        create_member_history(member)
+
     for key, val in valid_attributes.items():
         setattr(member, key, val)
 
@@ -692,3 +712,32 @@ def delete_group_image(group_id, image_id):
 
     # 204 codes don't respond with any content
     return logged_response('Successfully removed image', 204)
+
+# ---- Member History
+
+member_history_schema = MemberHistorySchema()
+
+@groups.route('/member-histories', methods=['GET'])
+@jwt_required
+# @authorize(['role.group-admin'])
+def read_all_member_histories():
+    query = db.session.query(MemberHistory)
+    try:
+        member_histories = get_all_queried_entities(query, request.args)
+    except QueryArgumentError as e:
+        return logged_response(e.message, e.code)
+    return logged_response(member_history_schema.dump(member_histories, many=True))
+
+@groups.route('/member-histories/<int:member_history_id>', methods=['DELETE'])
+@authorize(['role.group-admin'])
+def delete_member_history(member_history_id):
+    member_history = db.session.query(MemberHistory).filter_by(id=member_history_id).first()
+
+    if not member_history:
+        return logged_response(f"MemberHistory with id #{member_history_id} does not exist.", 404)
+
+    db.session.delete(member_history)
+    db.session.commit()
+
+    # 204 codes don't respond with any content
+    return logged_response("Deleted successfully", 204)

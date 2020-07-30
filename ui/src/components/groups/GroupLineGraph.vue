@@ -1432,7 +1432,6 @@ export default {
     },
 
     resetCanvas() {
-      //working
       $("#myChart2").remove();
       $("#graph-container").append(
         '<canvas id="myChart2" width="500" height="180"></canvas>'

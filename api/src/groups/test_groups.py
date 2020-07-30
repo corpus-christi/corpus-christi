@@ -1,4 +1,5 @@
 import random
+import datetime
 
 import pytest
 from dateutil import parser
@@ -9,9 +10,10 @@ from .create_group_data import flip, group_object_factory, \
     create_multiple_groups, member_object_factory, create_multiple_members, meeting_object_factory, \
     create_multiple_meetings, create_multiple_attendance, create_multiple_group_types, create_multiple_manager_types, \
     group_type_object_factory, manager_type_object_factory, create_multiple_managers, \
-    create_hierarchy_test_case_1
+    create_hierarchy_test_case_1, create_multiple_member_histories
 from .group_hierarchy_helpers import get_all_subgroups
-from .models import Group, GroupType, Member, Meeting, MeetingSchema, Attendance, Manager, ManagerType, ManagerSchema
+from .models import Group, GroupType, Member, MemberSchema, Meeting, MeetingSchema, Attendance, Manager, ManagerType, ManagerSchema,\
+        MemberHistory, MemberHistorySchema
 from ..images.create_image_data import create_images_groups
 from ..images.create_image_data import create_test_images
 from ..images.models import Image, ImageGroup
@@ -1231,3 +1233,101 @@ def test_authorize_group_overseer(auth_client):
     # THEN we expect the right status code, because group admin has access to everything
     assert resp.status_code == 201
 
+# ---- Member History
+
+def test_member_history_generation_on_deactivate(auth_client):
+    # GIVEN a database with some active member
+    create_multiple_members(auth_client.sqla, fraction=0.75)
+    # WHEN we deactivate one of them
+    member = auth_client.sqla.query(Member).filter_by(active=True).first()
+    resp = auth_client.patch(
+            url_for('groups.update_member',
+                group_id=member.group_id,
+                person_id=member.person_id),
+            json = {'active': False},
+            headers={'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
+    # THEN we expect the correct status code
+    assert resp.status_code == 200
+    # THEN we expect a history record to be created
+    member_histories = auth_client.sqla.query(MemberHistory).all()
+    assert len(member_histories) == 1
+    assert member_histories[0].group_id == member.group_id
+    assert member_histories[0].person_id == member.person_id
+    assert member_histories[0].joined == member.joined
+    assert member_histories[0].left == datetime.date.today()
+
+    # WHEN we deactivate the already deactivated member
+    resp = auth_client.patch(
+            url_for('groups.update_member',
+                group_id=member.group_id,
+                person_id=member.person_id),
+            json = {'active': False},
+            headers={'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
+    
+    # THEN we expect no more member history to be created
+    member_histories = auth_client.sqla.query(MemberHistory).all()
+    assert len(member_histories) == 1
+
+    # WHEN we activate the member
+    resp = auth_client.patch(
+            url_for('groups.update_member',
+                group_id=member.group_id,
+                person_id=member.person_id),
+            json={'active': True},
+            headers={'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
+
+    # THEN we expect no more member history to be created
+    member_histories = auth_client.sqla.query(MemberHistory).all()
+    assert len(member_histories) == 1
+
+def test_member_history_generation_on_move(auth_client):
+    # GIVEN a database with an active member
+    create_multiple_groups(auth_client.sqla, 2)
+    create_multiple_people(auth_client.sqla, 1)
+    person = auth_client.sqla.query(Person).first()
+    group1, group2 = auth_client.sqla.query(Group).all()
+    member = Member(**MemberSchema().load(member_object_factory(person.id, group1.id)))
+    auth_client.sqla.add(member)
+    auth_client.sqla.commit()
+    # WHEN we move the member to another group
+    resp = auth_client.patch(
+            url_for('groups.update_member',
+                group_id=member.group_id,
+                person_id=member.person_id),
+            json={'groupId': group2.id},
+            headers={'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
+    # THEN we expect the correct status code
+    assert resp.status_code == 200
+    # THEN we expect a history record to be created
+    member_histories = auth_client.sqla.query(MemberHistory).all()
+    assert len(member_histories) == 1
+    assert member_histories[0].group_id == member.group_id
+    assert member_histories[0].person_id == member.person_id
+    assert member_histories[0].joined == member.joined
+    assert member_histories[0].left == datetime.date.today()
+
+def test_read_all_member_histories(auth_client):
+    # GIVEN a database with some member histories
+    create_multiple_member_histories(auth_client.sqla, 10)
+    # WHEN we read all of them
+    resp = auth_client.get(url_for('groups.read_all_member_histories'))
+    # THEN we expect the correct status code
+    assert resp.status_code == 200
+    assert len(resp.json) == 10
+
+def test_delete_member_histories(auth_client):
+    # GIVEN a database with some member histories
+    create_multiple_member_histories(auth_client.sqla, 10)
+    member_history = auth_client.sqla.query(MemberHistory).first()
+
+    # WHEN we delete one of them
+    resp = auth_client.delete(
+            url_for('groups.delete_member_history', member_history_id=member_history.id),
+            headers={'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
+    # THEN we expect the correct status code
+    assert resp.status_code == 204
+    # THEN we expect the correct number of items in the database
+    all_member_histories = auth_client.sqla.query(MemberHistory).all()
+    assert len(all_member_histories) == 9
+    for some_member_history in all_member_histories:
+        assert some_member_history.id != member_history.id

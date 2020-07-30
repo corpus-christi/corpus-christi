@@ -147,6 +147,14 @@ const router = new VueRouter({
               component: () => import("@/components/groups/GroupParticipants"),
               props: { participantType: "manager" },
             },
+            {
+              name: "group-membership-history",
+              path: "membership-history",
+              meta: { authRequired: true },
+              component: () =>
+                import("@/components/groups/GroupMembershipHistory"),
+              props: { participantType: "manager" },
+            },
           ],
         },
       ],
