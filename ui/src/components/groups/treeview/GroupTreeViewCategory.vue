@@ -43,7 +43,11 @@
                 }}</v-subheader>
                 <v-virtual-scroll
                   item-height="50"
-                  height="200"
+                  :height="
+                    managerCategories.length < 4
+                      ? managerCategories.length * 50
+                      : 200
+                  "
                   width="300"
                   :items="managerCategories"
                 >
