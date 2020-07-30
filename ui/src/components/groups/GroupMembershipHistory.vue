@@ -7,38 +7,19 @@
             currentAccount.firstName[0] + currentAccount.lastName[0]
           }}</span>
         </template>
-        <v-card>
-          <v-text-field
-            v-model="input"
-            hide-details
-            flat
-            label="Leave a comment..."
-            solo
-            @keydown.enter="comment"
-          >
-            <template v-slot:append>
-              <v-btn class="mx-0" depressed @click="comment">
-                Post
-              </v-btn>
-            </template>
-          </v-text-field>
-        </v-card>
       </v-timeline-item>
-
-      <v-slide-x-transition group>
-        <v-timeline-item
-          v-for="event in timeline"
-          :key="event.id"
-          class="mb-4"
-          color="green lighten-1"
-          small
-        >
-          <v-row justify="space-between">
-            <v-col cols="7" v-text="event.text"></v-col>
-            <v-col class="text-right" cols="5" v-text="event.time"></v-col>
-          </v-row>
-        </v-timeline-item>
-      </v-slide-x-transition>
+      <v-timeline-item
+        v-for="event in timeline"
+        :key="event.id"
+        class="mb-4"
+        color="green lighten-1"
+        small
+      >
+        <v-row justify="space-between">
+          <v-col cols="7" v-text="event.text"></v-col>
+          <v-col class="text-right" cols="5" v-text="event.time"></v-col>
+        </v-row>
+      </v-timeline-item>
     </v-timeline>
   </v-container>
 </template>
@@ -93,81 +74,62 @@ export default {
           this.singleTime.push(this.history[i]);
           this.singleTime.push(this.history[i]);
         }
+
         for (let i = 0; i < this.singleTime.length; i++) {
           if (i % 2 === 0) {
-            let year = this.parser(this.singleTime[i].joined)[0];
-            let month = this.parser(this.singleTime[i].joined)[1];
-            let day = this.parser(this.singleTime[i].joined)[2];
-            let dateId =
-              year * 365 +
-              month * 30 +
-              day * day +
-              this.singleTime[i].personId * 0.1;
-            this.timeMap[dateId] = this.singleTime[i];
+            if (!(this.singleTime[i].joined in this.timeMap)) {
+              this.timeMap[this.singleTime[i].joined] = {
+                join: [],
+                left: [],
+              };
+            }
+            if (this.singleTime[i].joined in this.timeMap) {
+              this.timeMap[this.singleTime[i].joined].join.push(
+                this.singleTime[i]
+              );
+            }
           } else {
-            let year = this.parser(this.singleTime[i].left)[0];
-            let month = this.parser(this.singleTime[i].left)[1];
-            let day = this.parser(this.singleTime[i].left)[2];
-            let dateId =
-              year * 366 +
-              month * 30 +
-              day * day +
-              this.singleTime[i].personId * 0.2;
-            this.timeMap[dateId] = this.singleTime[i];
-          }
-        }
-        let tem = [];
-        let arr = Object.keys(this.timeMap);
-        for (let i = 0; i < arr.length; i++) {
-          tem.push(Number(arr[i]));
-        }
-
-        for (let i = 0; i < tem.length; i++) {
-          for (let j = 0; j < this.history.length; j++) {
-            if (
-              tem[i] ===
-              this.calJoined(this.history[j].joined, this.history[j].personId)
-            ) {
-              this.events.push({
-                id: this.nonce++,
-                text:
-                  this.history[j].person.firstName +
-                  " " +
-                  this.history[j].person.lastName +
-                  " Joined",
-                time: this.history[j].joined,
-              });
-            } else if (
-              tem[i] ===
-              this.calLeft(this.history[j].left, this.history[j].personId)
-            ) {
-              this.events.push({
-                id: this.nonce++,
-                text:
-                  this.history[j].person.firstName +
-                  " " +
-                  this.history[j].person.lastName +
-                  " Left",
-                time: this.history[j].left,
-              });
+            if (!(this.singleTime[i].left in this.timeMap)) {
+              this.timeMap[this.singleTime[i].left] = {
+                join: [],
+                left: [],
+              };
+            }
+            if (this.singleTime[i].left in this.timeMap) {
+              this.timeMap[this.singleTime[i].left].left.push(
+                this.singleTime[i]
+              );
             }
           }
         }
+        let order = Object.keys(this.timeMap).sort();
+        for (let i = 0; i < order.length; i++) {
+          let key = order[i];
+          console.log(key);
+          for (let j = 0; j < this.timeMap[key].join.length; j++) {
+            this.events.push({
+              id: this.nonce++,
+              text:
+                this.timeMap[key].join[j].person.firstName +
+                " " +
+                this.timeMap[key].join[j].person.lastName +
+                " Joined",
+              time: this.timeMap[key].join[j].joined,
+            });
+          }
+          for (let j = 0; j < this.timeMap[key].left.length; j++) {
+            this.events.push({
+              id: this.nonce++,
+              text:
+                this.timeMap[key].left[j].person.firstName +
+                " " +
+                this.timeMap[key].left[j].person.lastName +
+                " Left",
+              time: this.timeMap[key].left[j].left,
+            });
+          }
+        }
       });
-    },
-    calJoined(time, personId) {
-      let year = this.parser(time)[0];
-      let month = this.parser(time)[1];
-      let day = this.parser(time)[2];
-      let dateId = year * 365 + month * 30 + day * day + personId * 0.1;
-      return dateId;
-    },
-    calLeft(time, personId) {
-      let year = this.parser(time)[0];
-      let month = this.parser(time)[1];
-      let day = this.parser(time)[2];
-      let dateId = year * 366 + month * 30 + day * day + personId * 0.2;
-      return dateId;
     },
     parser(time) {
       let year = parseInt(time.slice(0, 4), 10);
