@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-container style="max-width: 600px;">
-      <v-timeline dense clipped id="time-line-container">
+      <v-timeline clipped align-top id="time-line-container">
         <v-timeline-item
           fill-dot
           class="white--text mb-12"
@@ -9,35 +9,8 @@
           large
         >
           <template v-slot:icon>
-            <span>{{
-              currentAccount.firstName[0] + currentAccount.lastName[0]
-            }}</span>
+            <span v-text="currentAccount.firstName[0] + currentAccount.lastName[0]"> </span>
           </template>
-          <v-card>
-            <v-card-title class="orange lighten-2">
-              <v-icon
-                dark
-                size="42"
-                class="mr-4"
-              >
-                mdi-magnify
-              </v-icon>
-              <h2 class="display-1 white--text font-weight-light">{{ $t("groups.membership-history.note") }}</h2>
-            </v-card-title>
-            <v-container>
-              <v-row>
-                <v-col cols="12" md="10">
-                  {{ notes }}
-                </v-col>
-                <v-col
-                  class="hidden-sm-and-down text-right"
-                  md="2"
-                >
-                  <v-icon size="64">mdi-calendar-text</v-icon>
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-card>
         </v-timeline-item>
         <v-timeline-item
           v-for="event in timeline"
@@ -45,15 +18,81 @@
           class="mb-4"
           :color="defineColor(event) ? 'green lighten-1' : 'red'"
           small
+          :left=true
         >
-          <v-row justify="space-between">
-            <v-col v-if="event.text.slice(-1) === '-'" cols="7" v-text='event.text + $t("groups.membership-history.left")'></v-col>
-            <v-col v-else cols="7" v-text='event.text + $t("groups.membership-history.joined")'></v-col>
-            <v-col class="text-right" cols="5" v-text="event.time"></v-col>
-          </v-row>
+            <v-card>
+              <v-card-title class="orange lighten-2" v-model="admin"> {{ $t("groups.membership-history.note") }}
+                <v-spacer />
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on }" v-if="ifAdmin">
+                    <v-btn
+                      color="orange lighten-2"
+                      small
+                      v-on="on"
+                      v-on:click="clearNote(event, event.id)"
+                    ><v-icon>clear</v-icon></v-btn>
+                  </template>
+                  <span>Clear</span>
+                </v-tooltip>
+                <v-tooltip bottom v-if="ifAdmin">
+                  <template v-slot:activator="{ on }">
+                    <v-btn
+                      color="orange lighten-2"
+                      small
+                      v-on="on"
+                      v-on:click="showDialog(event)"
+                    ><v-icon>note_add</v-icon></v-btn>
+                  </template>
+                  <span>Change Note</span>
+                </v-tooltip>
+              </v-card-title>
+              <v-card-text v-text="event.note"></v-card-text>
+            </v-card>
+            <v-row justify="space-between" slot="opposite">
+              <v-col v-if="event.text.slice(-1) === '-'" cols="7" v-text='event.text + $t("groups.membership-history.left")'></v-col>
+              <v-col v-else cols="7" v-text='event.text + $t("groups.membership-history.joined")'></v-col>
+              <v-col class="text-right" cols="5" v-text="event.time.slice(0,-6)"></v-col>
+            </v-row>
         </v-timeline-item>
       </v-timeline>
+      <!-- Note dialog-->
+      <v-dialog v-model="addNoteDialog" max-width="344">
+      <v-card
+      >
+        <v-card-text>
+          <v-text-field
+            label="Note"
+            v-model="addedNote"
+          ></v-text-field>
+        </v-card-text>
+        <v-card-actions>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                color="orange lighten-2"
+                small
+                v-on="on"
+                v-on:click="hideDialog"
+              ><v-icon>cancel</v-icon></v-btn>
+            </template>
+            <span>Change Note</span>
+          </v-tooltip>
+          <v-spacer />
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                color="orange lighten-2"
+                small
+                v-on="on"
+                v-on:click="changeNote()"
+              >Submit</v-btn>
+            </template>
+          </v-tooltip>
+        </v-card-actions>
+      </v-card>
+      </v-dialog>
     </v-container>
+
   </div>
 </template>
 
@@ -72,12 +111,25 @@ export default {
       singleTime: [],
       timeMap: {},
       content: null,
-      notes: ""
+      notes: "",
+      right: false,
+      left: false,
+      historyId: null,
+      newNote: null,
+      addNoteDialog: false,
+      addedNote: null,
+      editingNoteId: null,
+      admin: null
     };
   },
   computed: {
+    ifAdmin() {
+      if (this.currentAccount.roles.includes("role.group-admin")) {
+        return false;
+      } else return false;
+    },
     timeline() {
-      return this.events.slice().reverse();
+      return this.events
     },
     ...mapState(["currentAccount"]),
     ...mapState(["currentLocale"]),
@@ -89,6 +141,29 @@ export default {
     }
   },
   methods: {
+    hideDialog(){
+      this.addNoteDialog = false
+    },
+    showDialog(event){
+      this.editingNoteId = event.recordId;
+      this.addNoteDialog = true
+    },
+    clearNote(event){
+      let payload = { 'note': '' }
+      return this.$http.patch(`api/v1/groups/member-histories/${event.recordId}`, payload).then((resp) => {
+        console.log(resp.status);
+        window.location.reload();
+      })
+    },
+    changeNote(){
+      console.log(this.addedNote);
+      let payload = { 'note': this.addedNote }
+      this.addNoteDialog = false;
+      return this.$http.patch(`api/v1/groups/member-histories/${this.editingNoteId}`, payload).then((resp) => {
+        console.log(resp.status);
+        window.location.reload();
+      })
+    },
     defineColor(event) {
       if (event.text.slice(-1) === "-") {
         return false;
@@ -114,7 +189,6 @@ export default {
         this.history = resp.data.filter(
           (person_history) => person_history.groupId === this.id
         );
-        
         if (this.notes.length === 0){
           for (let record of this.history){
             if (record.note != null){
@@ -131,26 +205,26 @@ export default {
         }
         for (let i = 0; i < this.singleTime.length; i++) {
           if (i % 2 === 0) {
-            if (!(this.singleTime[i].joined in this.timeMap)) {
-              this.timeMap[this.singleTime[i].joined] = {
+            if (!(this.singleTime[i].time in this.timeMap)) {
+              this.timeMap[this.singleTime[i].time] = {
                 join: [],
                 left: [],
               };
             }
-            if (this.singleTime[i].joined in this.timeMap) {
-              this.timeMap[this.singleTime[i].joined].join.push(
+            if (this.singleTime[i].time in this.timeMap) {
+              this.timeMap[this.singleTime[i].time].join.push(
                 this.singleTime[i]
               );
             }
           } else {
-            if (!(this.singleTime[i].left in this.timeMap)) {
-              this.timeMap[this.singleTime[i].left] = {
+            if (!(this.singleTime[i].time in this.timeMap)) {
+              this.timeMap[this.singleTime[i].time] = {
                 join: [],
                 left: [],
               };
             }
-            if (this.singleTime[i].left in this.timeMap) {
-              this.timeMap[this.singleTime[i].left].left.push(
+            if (this.singleTime[i].time in this.timeMap) {
+              this.timeMap[this.singleTime[i].time].left.push(
                 this.singleTime[i]
               );
             }
@@ -166,7 +240,9 @@ export default {
                 this.timeMap[key].join[j].person.firstName +
                 " " +
                 this.timeMap[key].join[j].person.lastName + " +",
-              time: this.timeMap[key].join[j].joined,
+              time: this.timeMap[key].join[j].time,
+              note: this.timeMap[key].join[j].note,
+              recordId: this.timeMap[key].join[j].id,
             });
           }
           for (let j = 0; j < this.timeMap[key].left.length; j++) {
@@ -176,7 +252,9 @@ export default {
                 this.timeMap[key].left[j].person.firstName +
                 " " +
                 this.timeMap[key].left[j].person.lastName + " -",
-              time: this.timeMap[key].left[j].left,
+              time: this.timeMap[key].left[j].time,
+              note: this.timeMap[key].left[j].note,
+              recordId: this.timeMap[key].join[j].id,
             });
           }
         }
