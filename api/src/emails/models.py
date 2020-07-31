@@ -11,4 +11,4 @@ class EmailSchema(Schema):
     bcc = fields.List(fields.String())
     managerName = fields.String()
     managerEmail = fields.String()
-    reply_to = fields.String()
+    reply_to = fields.String() # TODO: change the field to camelCase. Make sure UI gets updated as well <2020-07-31, David Deng> #
