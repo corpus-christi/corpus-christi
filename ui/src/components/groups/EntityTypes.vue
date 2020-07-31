@@ -75,6 +75,7 @@
           @click:row="toggleExpand"
           :loading="tableLoading"
           :search="search"
+          :custom-filter="customFilter"
           :items="entityTypes"
           :headers="headers"
         >
@@ -349,6 +350,24 @@ export default {
   methods: {
     /* utility */
     isEmpty,
+    customFilter(value, search, item) {
+      if (search == null) {
+        return true;
+      }
+      let testValues = [
+        value ? value.toLowerCase() : "",
+        ...item[this.isGroupTypeMode ? "groups" : "managers"].map((entity) =>
+          entity.name.toLowerCase()
+        ),
+      ];
+      let searchValue = search.toLowerCase();
+      for (let testValue of testValues) {
+        if (testValue.includes(searchValue)) {
+          return true;
+        }
+      }
+      return false;
+    },
     fetchEntityTypes() {
       this.tableLoading = true;
       this.$http.get(this.endpoint).then((resp) => {

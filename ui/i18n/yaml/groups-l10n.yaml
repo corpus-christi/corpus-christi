@@ -270,6 +270,10 @@ groups:
         en-US: Members
         es-EC: Miembros
         zh-CN: 会员
+      all:
+        en-US: All
+        es-EC: Todas
+        zh-CN: 所有
     select-placeholder:
       en-US: Select groups to perform actions...
       es-EC: Seleccionar grupos para realizar acciones ...
@@ -303,10 +307,6 @@ groups:
       en-US: Administrator
       es-EC: Administrador
       zh-CN: 管理员
-    show-all:
-      en-US: Show All Groups
-      es-EC: Mostrar todos los grupos
-      zh-CN: 显示所有群组
     show-linegraph:
       en-US: Show Line Graph
       es-EC: Mostrar gráfico de líneas
@@ -315,14 +315,6 @@ groups:
       en-US: Show Group List
       es-EC: Mostrar lista de grupos
       zh-CN: 显示群组清单
-    show-managers:
-      en-US: Show Managers Only
-      es-EC: Mostrar solo gerentes
-      zh-CN: 仅显示管理员
-    show-members:
-      en-US: Show Members Only
-      es-EC: Mostrar solo miembros
-      zh-CN: 仅显示成员
     show-treeview:
       en-US: Show Group Treeview
       es-EC: Mostrar vista de árbol de grupo
@@ -424,11 +416,10 @@ groups:
         en-US: December
         es-EC: Diciembre
         zh-CN: 十二月
-
     time-scale:
       en-US: Time Scale
       es-EC: Escala de tiempo
-      zh-CN:  时间尺度
+      zh-CN: 时间尺度
     time-scale-unite:
       monthly:
         en-US: Monthly

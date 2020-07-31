@@ -52,7 +52,7 @@ def create_person():
     request.json['person']['active'] = True
 
     for key, value in request.json['person'].items(): #don't know why value needs to be here, but without it we get an internal server error when this function is called
-        if request.json['person'][key] is "" or request.json['person'][key] is 0:
+        if request.json['person'][key] == "" or request.json['person'][key] == 0:
             request.json['person'][key] = None
 
     try:
@@ -71,7 +71,7 @@ def create_person():
     db.session.add(new_person)
 
     for person_attribute in valid_person_attributes:
-        if (person_attribute['enum_value_id'] is 0):
+        if (person_attribute['enum_value_id'] == 0):
             person_attribute['enum_value_id'] = None
         person_attribute = PersonAttribute(**person_attribute)
         person_attribute.person_id = new_person.id
