@@ -657,7 +657,10 @@
         "title": "Members",
         "title-visitor": "Visitors"
       },
-      "membership-hisotry": {
+      "membership-history": {
+        "joined": "Joined",
+        "left": "Left",
+        "note": "Notes",
         "title": "History"
       },
       "messages": {
@@ -1630,7 +1633,10 @@
         "title": "Miembros",
         "title-visitor": "visitantes"
       },
-      "membership-hisotry": {
+      "membership-history": {
+        "joined": "Unida",
+        "left": "Izquierda",
+        "note": "Notas",
         "title": "Historia"
       },
       "messages": {
@@ -2603,7 +2609,10 @@
         "title": "\u4f1a\u5458",
         "title-visitor": "\u8bbf\u5ba2"
       },
-      "membership-hisotry": {
+      "membership-history": {
+        "joined": "\u52a0\u5165",
+        "left": "\u79bb\u5f00",
+        "note": "\u7b14\u8bb0",
         "title": "\u5386\u53f2\u8bb0\u5f55"
       },
       "messages": {

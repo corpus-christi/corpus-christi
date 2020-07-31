@@ -1,6 +1,5 @@
 <template>
   <div>
-    <vue-editor v-model="content"></vue-editor>
     <v-container style="max-width: 600px;">
       <v-timeline dense clipped id="time-line-container">
         <v-timeline-item
@@ -14,6 +13,31 @@
               currentAccount.firstName[0] + currentAccount.lastName[0]
             }}</span>
           </template>
+          <v-card>
+            <v-card-title class="orange lighten-2">
+              <v-icon
+                dark
+                size="42"
+                class="mr-4"
+              >
+                mdi-magnify
+              </v-icon>
+              <h2 class="display-1 white--text font-weight-light">{{ $t("groups.membership-history.note") }}</h2>
+            </v-card-title>
+            <v-container>
+              <v-row>
+                <v-col cols="12" md="10">
+                  {{ notes }}
+                </v-col>
+                <v-col
+                  class="hidden-sm-and-down text-right"
+                  md="2"
+                >
+                  <v-icon size="64">mdi-calendar-text</v-icon>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card>
         </v-timeline-item>
         <v-timeline-item
           v-for="event in timeline"
@@ -23,7 +47,8 @@
           small
         >
           <v-row justify="space-between">
-            <v-col cols="7" v-text="event.text"></v-col>
+            <v-col v-if="event.text.slice(-1) === '-'" cols="7" v-text='event.text + $t("groups.membership-history.left")'></v-col>
+            <v-col v-else cols="7" v-text='event.text + $t("groups.membership-history.joined")'></v-col>
             <v-col class="text-right" cols="5" v-text="event.time"></v-col>
           </v-row>
         </v-timeline-item>
@@ -34,12 +59,9 @@
 
 <script>
 import { mapState } from "vuex";
-import { VueEditor } from "vue2-editor";
 export default {
   name: "GroupMembershipHistory",
-  components: {
-    VueEditor,
-  },
+  components: {},
   data() {
     return {
       events: [],
@@ -50,6 +72,7 @@ export default {
       singleTime: [],
       timeMap: {},
       content: null,
+      notes: ""
     };
   },
   computed: {
@@ -57,13 +80,17 @@ export default {
       return this.events.slice().reverse();
     },
     ...mapState(["currentAccount"]),
+    ...mapState(["currentLocale"]),
     id() {
       return parseInt(this.$route.params.group);
     },
+    locale(text){
+      return text.text;
+    }
   },
   methods: {
     defineColor(event) {
-      if (event.text.slice(-2) === "ft") {
+      if (event.text.slice(-1) === "-") {
         return false;
       } else return true;
     },
@@ -87,11 +114,20 @@ export default {
         this.history = resp.data.filter(
           (person_history) => person_history.groupId === this.id
         );
+        if (this.notes.length === 0){
+          for (let record of this.history){
+            if (record.note != null){
+              this.notes = this.notes.concat("( ", record.person.firstName, " ", record.person.lastName, ": ", record.note,
+              ")  "
+              );
+            }
+          }
+        }
+
         for (let i = 0; i < this.history.length; i++) {
           this.singleTime.push(this.history[i]);
           this.singleTime.push(this.history[i]);
         }
-
         for (let i = 0; i < this.singleTime.length; i++) {
           if (i % 2 === 0) {
             if (!(this.singleTime[i].joined in this.timeMap)) {
@@ -122,15 +158,13 @@ export default {
         let order = Object.keys(this.timeMap).sort();
         for (let i = 0; i < order.length; i++) {
           let key = order[i];
-          console.log(key);
           for (let j = 0; j < this.timeMap[key].join.length; j++) {
             this.events.push({
               id: this.nonce++,
               text:
                 this.timeMap[key].join[j].person.firstName +
                 " " +
-                this.timeMap[key].join[j].person.lastName +
-                " Joined",
+                this.timeMap[key].join[j].person.lastName + " +",
               time: this.timeMap[key].join[j].joined,
             });
           }
@@ -140,8 +174,7 @@ export default {
               text:
                 this.timeMap[key].left[j].person.firstName +
                 " " +
-                this.timeMap[key].left[j].person.lastName +
-                " Left",
+                this.timeMap[key].left[j].person.lastName + " -",
               time: this.timeMap[key].left[j].left,
             });
           }

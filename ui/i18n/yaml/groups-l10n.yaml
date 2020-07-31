@@ -341,11 +341,23 @@ groups:
       en-US: Group Treeview
       es-EC: Vista de árbol grupal
       zh-CN: 组树视图
-  membership-hisotry:
+  membership-history:
     title:
       en-US: History
       es-EC: Historia
       zh-CN: 历史记录
+    left:
+      en-US: Left
+      es-EC: Izquierda
+      zh-CN: 离开
+    joined:
+      en-US: Joined
+      es-EC: Unida
+      zh-CN: 加入
+    note:
+      en-US: Notes
+      es-EC: Notas
+      zh-CN: 笔记
   linegraph:
     Month:
       January:
