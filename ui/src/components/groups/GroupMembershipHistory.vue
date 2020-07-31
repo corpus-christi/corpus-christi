@@ -32,7 +32,7 @@
                       v-on:click="clearNote(event, event.id)"
                     ><v-icon>clear</v-icon></v-btn>
                   </template>
-                  <span>Clear</span>
+                  <span>{{ $t("groups.membership-history.clear-note") }}</span>
                 </v-tooltip>
                 <v-tooltip bottom v-if="ifAdmin">
                   <template v-slot:activator="{ on }">
@@ -43,7 +43,7 @@
                       v-on:click="showDialog(event)"
                     ><v-icon>note_add</v-icon></v-btn>
                   </template>
-                  <span>Change Note</span>
+                  <span>{{ $t("groups.membership-history.change-note") }}</span>
                 </v-tooltip>
               </v-card-title>
               <v-card-text v-text="event.note"></v-card-text>
@@ -75,7 +75,7 @@
                 v-on:click="hideDialog"
               ><v-icon>cancel</v-icon></v-btn>
             </template>
-            <span>Change Note</span>
+            <span>{{ $t("groups.membership-history.cancel") }}</span>
           </v-tooltip>
           <v-spacer />
           <v-tooltip bottom>
@@ -85,7 +85,7 @@
                 small
                 v-on="on"
                 v-on:click="changeNote()"
-              >Submit</v-btn>
+              >{{ $t("groups.membership-history.submit") }}</v-btn>
             </template>
           </v-tooltip>
         </v-card-actions>
@@ -125,7 +125,7 @@ export default {
   computed: {
     ifAdmin() {
       if (this.currentAccount.roles.includes("role.group-admin")) {
-        return false;
+        return true;
       } else return false;
     },
     timeline() {

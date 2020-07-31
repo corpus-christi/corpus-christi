@@ -658,9 +658,13 @@
         "title-visitor": "Visitors"
       },
       "membership-history": {
+        "cancel": "Cancel",
+        "change-note": "Change Note",
+        "clear-note": "Clear Note",
         "joined": "Joined",
         "left": "Left",
         "note": "Notes",
+        "submit": "Submit",
         "title": "History"
       },
       "messages": {
@@ -1634,9 +1638,13 @@
         "title-visitor": "visitantes"
       },
       "membership-history": {
+        "cancel": "Cancelar",
+        "change-note": "Cambiar nota",
+        "clear-note": "Nota clara",
         "joined": "Unida",
         "left": "Izquierda",
         "note": "Notas",
+        "submit": "Enviar",
         "title": "Historia"
       },
       "messages": {
@@ -2610,9 +2618,13 @@
         "title-visitor": "\u8bbf\u5ba2"
       },
       "membership-history": {
+        "cancel": "\u53d6\u6d88",
+        "change-note": "\u4fee\u6539\u7b14\u8bb0",
+        "clear-note": "\u6e05\u9664\u7b14\u8bb0",
         "joined": "\u52a0\u5165",
         "left": "\u79bb\u5f00",
         "note": "\u7b14\u8bb0",
+        "submit": "\u63d0\u4ea4",
         "title": "\u5386\u53f2\u8bb0\u5f55"
       },
       "messages": {

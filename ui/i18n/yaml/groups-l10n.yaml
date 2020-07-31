@@ -342,6 +342,22 @@ groups:
       es-EC: Vista de árbol grupal
       zh-CN: 组树视图
   membership-history:
+    clear-note:
+      en-US: Clear Note
+      es-EC: Nota clara
+      zh-CN: 清除笔记
+    change-note:
+      en-US: Change Note
+      es-EC: Cambiar nota
+      zh-CN: 修改笔记
+    cancel:
+      en-US: Cancel
+      es-EC: Cancelar
+      zh-CN: 取消
+    submit:
+      en-US: Submit
+      es-EC: Enviar
+      zh-CN: 提交
     title:
       en-US: History
       es-EC: Historia
