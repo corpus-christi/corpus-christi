@@ -42,7 +42,7 @@ class GroupSchema(Schema):
     images = fields.Pluck('ImageGroupSchema', 'image', many=True)
     group_type = fields.Nested('GroupTypeSchema', dump_only=True, data_key='groupType', only=['id', 'name'])
     member_histories = fields.Nested('MemberHistorySchema', many=True, dump_only=True, data_key='memberHistories', 
-            only=('id', 'joined', 'left', 'person_id'))
+            only=('id', 'date', 'is_join', 'person_id'))
 
 # ---- Group Type
 
@@ -124,8 +124,8 @@ class MemberHistory(Base):
     id = Column(Integer, primary_key=True, nullable=False)
     group_id = Column(Integer, ForeignKey('groups_group.id'), nullable=False)
     person_id = Column(Integer, ForeignKey('people_person.id'), nullable=False)
-    joined = Column(Date, nullable=False)
-    left = Column(Date, nullable=False)
+    date = Column(Date, nullable=False)
+    is_join = Column(Boolean, nullable=False, default=True)
     note = Column(StringTypes.LONG_STRING, nullable=True)
     person = relationship('Person', back_populates='member_histories', lazy=True)
     group = relationship('Group', back_populates='member_histories', lazy=True)
@@ -133,14 +133,14 @@ class MemberHistory(Base):
     def __repr__(self):
         return f"<MemberHistory(id={self.id}, "\
                 f"person_id={self.person_id}, group_id={self.group_id}, "\
-                f"joined={self.joined}, left={self.left})>"
+                f"date={self.date}, is_join={self.is_join})>"
 
 class MemberHistorySchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     group_id = fields.Integer(data_key='groupId', required=True)
     person_id = fields.Integer(data_key='personId', required=True)
-    joined = fields.Date(required=True)
-    left = fields.Date(required=True)
+    date = fields.Date(required=True)
+    is_join = fields.Boolean(required=True)
     note = fields.String(required=False)
     person = fields.Nested('PersonSchema', dump_only=True)
     group = fields.Nested('GroupSchema', dump_only=True)

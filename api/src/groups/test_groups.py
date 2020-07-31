@@ -1235,7 +1235,7 @@ def test_authorize_group_overseer(auth_client):
 
 # ---- Member History
 
-def test_member_history_generation_on_deactivate(auth_client):
+def test_member_history_generation_on_activate_deactivate(auth_client):
     # GIVEN a database with some active member
     create_multiple_members(auth_client.sqla, fraction=0.75)
     # WHEN we deactivate one of them
@@ -1253,8 +1253,6 @@ def test_member_history_generation_on_deactivate(auth_client):
     assert len(member_histories) == 1
     assert member_histories[0].group_id == member.group_id
     assert member_histories[0].person_id == member.person_id
-    assert member_histories[0].joined == member.joined
-    assert member_histories[0].left == datetime.date.today()
 
     # WHEN we deactivate the already deactivated member
     resp = auth_client.patch(
@@ -1276,12 +1274,12 @@ def test_member_history_generation_on_deactivate(auth_client):
             json={'active': True},
             headers={'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
 
-    # THEN we expect no more member history to be created
+    # THEN we expect one more member history to be created
     member_histories = auth_client.sqla.query(MemberHistory).all()
-    assert len(member_histories) == 1
+    assert len(member_histories) == 2
 
 def test_member_history_generation_on_move(auth_client):
-    # GIVEN a database with an active member
+    # GIVEN a database with an active member in group 1
     create_multiple_groups(auth_client.sqla, 2)
     create_multiple_people(auth_client.sqla, 1)
     person = auth_client.sqla.query(Person).first()
@@ -1298,13 +1296,81 @@ def test_member_history_generation_on_move(auth_client):
             headers={'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
     # THEN we expect the correct status code
     assert resp.status_code == 200
-    # THEN we expect a history record to be created
+    # THEN we expect two history records to be created
+    assert auth_client.sqla.query(MemberHistory).count() == 2
+    assert auth_client.sqla.query(MemberHistory).filter_by(group_id=member.group_id, is_join=False).count() == 1
+    assert auth_client.sqla.query(MemberHistory).filter_by(group_id=group2.id, is_join=True).count() == 1
+
+    # WHEN we move the member to the same group (no effect)
+    resp = auth_client.patch(
+            url_for('groups.update_member',
+                group_id=member.group_id,
+                person_id=member.person_id),
+            json={'groupId': group2.id},
+            headers={'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
+    # THEN we expect no more member history to be created
+    assert auth_client.sqla.query(MemberHistory).count() == 2
+    
+def test_member_history_generation_on_move_activate(auth_client):
+    # GIVEN a database with an active member in group 1
+    create_multiple_groups(auth_client.sqla, 2)
+    create_multiple_people(auth_client.sqla, 1)
+    person = auth_client.sqla.query(Person).first()
+    group1, group2 = auth_client.sqla.query(Group).all()
+    member = Member(**MemberSchema().load(member_object_factory(person.id, group1.id)))
+    auth_client.sqla.add(member)
+    auth_client.sqla.commit()
+    # WHEN we deactivate the member while moving it to another group
+    resp = auth_client.patch(
+            url_for('groups.update_member',
+                group_id=group1.id,
+                person_id=member.person_id),
+            json={'groupId': group2.id, 'active': False},
+            headers={'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
+    # THEN we expect the correct status code
+    assert resp.status_code == 200
+    # THEN we expect a new entry to be created
+    assert auth_client.sqla.query(MemberHistory).count() == 1
+    assert auth_client.sqla.query(MemberHistory).filter_by(group_id=group1.id, is_join=False).count() == 1
+    
+    # WHEN we move the inactive member to a different group
+    resp = auth_client.patch(
+            url_for('groups.update_member',
+                group_id=group2.id,
+                person_id=member.person_id),
+            json={'groupId': group1.id},
+            headers={'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
+    # THEN we expect no more member history to be created
+    assert auth_client.sqla.query(MemberHistory).count() == 1
+
+    # WHEN we move and activate the member
+    resp = auth_client.patch(
+            url_for('groups.update_member',
+                group_id=group1.id,
+                person_id=member.person_id),
+            json={'groupId': group2.id, 'active': True},
+            headers={'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
+    # THEN we expect a new entry to be created
+    assert auth_client.sqla.query(MemberHistory).count() == 2
+    assert auth_client.sqla.query(MemberHistory).filter_by(group_id=group2.id, is_join=True).count() == 1
+
+def test_member_history_generation_on_create_member(auth_client):
+    # GIVEN a database with some groups and people 
+    create_multiple_groups(auth_client.sqla, 4)
+    create_multiple_people(auth_client.sqla, 4)
+    group = auth_client.sqla.query(Group).first()
+    person = auth_client.sqla.query(Person).first()
+    # WHEN we create a member
+    resp = auth_client.post(url_for('groups.create_member', group_id=group.id),
+        json={'personId': person.id},
+        headers={'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
+
+    # THEN we expect a corresponding joining history to be created in the database
     member_histories = auth_client.sqla.query(MemberHistory).all()
     assert len(member_histories) == 1
-    assert member_histories[0].group_id == member.group_id
-    assert member_histories[0].person_id == member.person_id
-    assert member_histories[0].joined == member.joined
-    assert member_histories[0].left == datetime.date.today()
+    assert member_histories[0].group_id == group.id
+    assert member_histories[0].person_id == person.id
+    assert member_histories[0].is_join == True
 
 def test_read_all_member_histories(auth_client):
     # GIVEN a database with some member histories
