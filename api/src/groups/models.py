@@ -35,7 +35,7 @@ class GroupSchema(Schema):
     group_type_id = fields.Integer(data_key='groupTypeId', required=True)
     active = fields.Boolean(required=True)
 
-    members = fields.Nested('MemberSchema', dump_only=True, many=True, only=['person', 'joined', 'active'])
+    members = fields.Nested('MemberSchema', dump_only=True, many=True, only=['person', 'active'])
     managers = fields.Nested('ManagerSchema', dump_only=True, many=True, only=['person', 'active'])
     meetings = fields.Nested('MeetingSchema', dump_only=True, many=True, 
             only=['group_id', 'address_id', 'start_time', 'stop_time', 'description', 'active', 'attendances'])
@@ -104,7 +104,6 @@ class Member(Base):
     __tablename__ = 'groups_member'
     group_id = Column(Integer, ForeignKey('groups_group.id'), primary_key=True, nullable=False)
     person_id = Column(Integer, ForeignKey('people_person.id'), primary_key=True, nullable=False)
-    joined = Column(Date, nullable=False)
     active = Column(Boolean, nullable=False, default=True)
     person = relationship('Person', back_populates='members', lazy=True)
 
@@ -115,7 +114,6 @@ class Member(Base):
 class MemberSchema(Schema):
     group_id = fields.Integer(data_key='groupId', required=True)
     person_id = fields.Integer(data_key='personId', required=True)
-    joined = fields.Date(required=True)
     active = fields.Boolean(required=True)
     person = fields.Nested('PersonSchema', dump_only=True)
 

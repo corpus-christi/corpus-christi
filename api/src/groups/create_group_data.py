@@ -57,13 +57,12 @@ def meeting_object_factory(group_id, address_id):
             }
     return meeting
 
-def member_object_factory(person_id, group_id, active=True, joined=fake.date()):
+def member_object_factory(person_id, group_id, active=True):
     """Cook up a fake member."""
     member = {
             'personId': person_id,
             'groupId': group_id,
             'active': active,
-            'joined': joined
             }
     return member
 

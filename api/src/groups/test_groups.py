@@ -555,8 +555,7 @@ def test_create_member(auth_client):
 #     create_multiple_members(auth_client.sqla, 0.75)
     resp = auth_client.post(url_for('groups.create_member', group_id = '1'),
         json = {'personId':personid,
-            'active':'True',
-            'joined':'2020-01-01'},
+            'active':'True' },
         headers={'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
     # THEN expect the create to run OK
     assert resp.status_code == 201
@@ -614,8 +613,8 @@ def test_update_member_identity(auth_client):
     create_multiple_people(auth_client.sqla, 2)
     person1_id, person2_id = [ person.id for person in auth_client.sqla.query(Person).all() ]
     group1.members += [
-            Member(person_id=person1_id, group_id=group1.id, joined=fake.date()),
-            Member(person_id=person2_id, group_id=group1.id, joined=fake.date())
+            Member(person_id=person1_id, group_id=group1.id),
+            Member(person_id=person2_id, group_id=group1.id)
             ]
     auth_client.sqla.add(group1)
     auth_client.sqla.commit()
