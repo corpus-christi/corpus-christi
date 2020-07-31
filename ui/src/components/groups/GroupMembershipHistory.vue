@@ -114,6 +114,7 @@ export default {
         this.history = resp.data.filter(
           (person_history) => person_history.groupId === this.id
         );
+        
         if (this.notes.length === 0){
           for (let record of this.history){
             if (record.note != null){
