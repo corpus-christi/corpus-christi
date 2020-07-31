@@ -21,13 +21,13 @@ from sqlalchemy.exc import IntegrityError, DBAPIError
 # ---- Helpers
 
 def is_overseer_or_admin(group_id):
-    """ checks whether the user accessing the current endpoint 
+    """ checks whether the user accessing the current endpoint
     is a group-admin or an overseer of group with 'group_id'
     returns: a Boolean
     """
     person_id = get_jwt_identity().get('id')
     roles = get_jwt_claims().get('roles', [])
-    return ('role.group-admin' in roles or 
+    return ('role.group-admin' in roles or
             (person_id and is_overseer(person_id, group_id)))
 
 def create_member_history(member, **kwargs):
@@ -36,10 +36,10 @@ def create_member_history(member, **kwargs):
     :is_join: whether the member is joining or leaving the group
     :returns: None
     """
-    member_history = MemberHistory(**{ 
+    member_history = MemberHistory(**{
                 "group_id" : member.group_id,
                 "person_id" : member.person_id,
-                "date" : datetime.date.today(),
+                "time" : datetime.datetime.now(),
                 "is_join" : member.active,
                 **kwargs
                 })
@@ -351,7 +351,7 @@ def update_manager(group_id, person_id):
     if new_group_id or new_person_id:
         # check if entry already exists
         if db.session.query(Manager).filter_by(
-                person_id=new_person_id or person_id, 
+                person_id=new_person_id or person_id,
                 group_id=new_group_id or group_id).first():
             return logged_response(f"Manager with group_id #{new_group_id or group_id} and person_id #{new_person_id or person_id} already exists", 409)
         # check if the new group exists
@@ -553,7 +553,7 @@ def update_member(group_id, person_id):
     if new_group_id or new_person_id:
         # check if entry already exists
         if db.session.query(Member).filter_by(
-                person_id=new_person_id or person_id, 
+                person_id=new_person_id or person_id,
                 group_id=new_group_id or group_id).first():
             return logged_response(f"Member with group_id #{new_group_id or group_id} and person_id #{new_person_id or person_id} already exists", 409)
         # check if the new group exists

@@ -99,16 +99,16 @@ def manager_type_object_factory(manager_type_name):
     return manager_type
 
 def member_history_object_factory(
-        person_id, 
+        person_id,
         group_id,
-        date=None, 
+        time=None,
         is_join=None,
         note=None):
     """Cook up a fake member history """
     member_history = {
             'personId': person_id,
             'groupId': group_id,
-            'date': date or str(fake.date_between(start_date='-3y', end_date='today')),
+            'time': time or str(fake.date_time_between(start_date='-5y', end_date='now')),
             'is_join': is_join or flip()
             }
     note = note or (fake.sentences(nb=1)[0] if flip() else None)
@@ -342,7 +342,7 @@ def create_hierarchical_groups_and_participants(sqla, group_members, group_manag
 
     sqla.commit()
 
-# Create test data that is used in front-end testing 
+# Create test data that is used in front-end testing
 def create_hierarchy_test_case_1(sqla):
     group_members = [
             [1, 1],

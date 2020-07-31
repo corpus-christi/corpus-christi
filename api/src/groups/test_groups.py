@@ -77,11 +77,11 @@ def test_read_one_group_type(auth_client):
     # WHEN we ask for the group_types one by one
     for group_type in group_types:
         # THEN we expect each of them to correspond to the group_type in the database
-        resp = auth_client.get(url_for('groups.read_one_group_type', 
+        resp = auth_client.get(url_for('groups.read_one_group_type',
             group_type_id=group_type.id))
         assert resp.status_code == 200
         assert resp.json['name'] == group_type.name
-    
+
 @pytest.mark.smoke
 def test_read_all_group_types(auth_client):
     # GIVEN a database with some group_types
@@ -1260,7 +1260,7 @@ def test_member_history_generation_on_activate_deactivate(auth_client):
                 person_id=member.person_id),
             json = {'active': False},
             headers={'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
-    
+
     # THEN we expect no more member history to be created
     member_histories = auth_client.sqla.query(MemberHistory).all()
     assert len(member_histories) == 1
@@ -1309,7 +1309,7 @@ def test_member_history_generation_on_move(auth_client):
             headers={'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
     # THEN we expect no more member history to be created
     assert auth_client.sqla.query(MemberHistory).count() == 2
-    
+
 def test_member_history_generation_on_move_activate(auth_client):
     # GIVEN a database with an active member in group 1
     create_multiple_groups(auth_client.sqla, 2)
@@ -1331,7 +1331,7 @@ def test_member_history_generation_on_move_activate(auth_client):
     # THEN we expect a new entry to be created
     assert auth_client.sqla.query(MemberHistory).count() == 1
     assert auth_client.sqla.query(MemberHistory).filter_by(group_id=group1.id, is_join=False).count() == 1
-    
+
     # WHEN we move the inactive member to a different group
     resp = auth_client.patch(
             url_for('groups.update_member',
@@ -1354,7 +1354,7 @@ def test_member_history_generation_on_move_activate(auth_client):
     assert auth_client.sqla.query(MemberHistory).filter_by(group_id=group2.id, is_join=True).count() == 1
 
 def test_member_history_generation_on_create_member(auth_client):
-    # GIVEN a database with some groups and people 
+    # GIVEN a database with some groups and people
     create_multiple_groups(auth_client.sqla, 4)
     create_multiple_people(auth_client.sqla, 4)
     group = auth_client.sqla.query(Group).first()

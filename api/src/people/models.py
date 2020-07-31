@@ -102,8 +102,8 @@ class PersonSchema(Schema):
     roles = fields.Nested('RoleSchema', many=True, dump_only=True)
     members = fields.Nested('MemberSchema', only=['group_id', 'active'], many=True, dump_only=True)
     managers = fields.Nested('ManagerSchema', only=['group_id', 'active'], many=True, dump_only=True)
-    member_histories = fields.Nested('MemberHistorySchema', many=True, dump_only=True, data_key='memberHistories', 
-            only=('id', 'date', 'is_join', 'group_id'))
+    member_histories = fields.Nested('MemberHistorySchema', many=True, dump_only=True, data_key='memberHistories',
+            only=('id', 'time', 'is_join', 'group_id'))
 
 
     @pre_load
