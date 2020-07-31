@@ -701,7 +701,7 @@ def test_update_person_attributes_enumerated(auth_client):
             }
         attribute_list.append(update_json)
 
-    valid_person = PersonSchema().load({'firstName': 'Rita', 'lastName': 'Smith', 'gender': 'F', 'active': True})
+    valid_person = PersonSchema().load({'firstName': 'Rita', 'lastName': 'Smith', 'username': 'username', 'password': 'password', 'gender': 'F', 'active': True})
     valid_person_attributes = PersonAttributeSchema().load(update_json)
 
     resp = auth_client.put(url_for('people.update_person', person_id=update_person.id), json={
@@ -737,8 +737,11 @@ def test_read_person_fields(auth_client):
     assert resp.json['person'][5]['birthday'] == 'DATE'
     assert resp.json['person'][6]['phone'] == 'VARCHAR(64)'
     assert resp.json['person'][7]['email'] == 'VARCHAR(64)'
-    assert resp.json['person'][8]['active'] == 'BOOLEAN'
-    assert resp.json['person'][9]['location_id'] == 'INTEGER'
+    assert resp.json['person'][8]['username'] == 'VARCHAR(64)'
+    assert resp.json['person'][9]['password_hash'] == 'VARCHAR(128)'
+    assert resp.json['person'][10]['confirmed'] == 'BOOLEAN'
+    assert resp.json['person'][11]['active'] == 'BOOLEAN'
+    assert resp.json['person'][12]['address_id'] == 'INTEGER'
     assert resp.json['person_attributes'] == []
 
     # GIVEN a DB with actual attributes

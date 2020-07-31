@@ -69,9 +69,10 @@ def create_person():
     if public_user_role:
         new_person.roles.append(public_user_role)
     db.session.add(new_person)
+    db.session.commit()
 
     for person_attribute in valid_person_attributes:
-        if (person_attribute['enum_value_id'] == 0):
+        if (person_attribute.get('enum_value_id') == 0):
             person_attribute['enum_value_id'] = None
         person_attribute = PersonAttribute(**person_attribute)
         person_attribute.person_id = new_person.id
