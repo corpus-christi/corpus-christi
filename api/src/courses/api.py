@@ -878,12 +878,12 @@ def delete_class_meeting(course_offering_id, class_meeting_id):
 def add_attendance_to_meetings(json_meeting):
     """ Helper function applies attendance with student name to a class meeting.
         **NOTE**: The meeting must be a ClassMeetingSchema dumped object. """
+    class_meeting_id = json_meeting['id']
+    class_meeting = db.session.query(ClassMeeting).filter_by(id=class_meeting_id).first()
     json_meeting['attendance'] = []
-    attendance = db.session.query(ClassAttendance, Student, Person).filter_by(
-        class_id=json_meeting['id']).join(Student).join(Person).all()
-    for i in attendance:
+    for student in class_meeting.students:
         json_meeting['attendance'].append(
-            {"classId": i.class_id, "studentId": i.student_id, "name": i.Person.full_name()})
+            {"classId": class_meeting_id, "studentId": student.id, "name": student.person.full_name()})
     return json_meeting
 
 
@@ -896,16 +896,15 @@ def add_class_attendance(course_offering_id, class_meeting_id):
         ClassMeeting).filter_by(id=class_meeting_id).first()
     if class_meeting is None:
         return 'Class Meeting not found', 404
-    new_attendance = []
-    for i in request.json['attendance']:
+    new_attendances = []
+    for student_id in request.json['attendance']:
         student = db.session.query(Student).filter_by(
-            id=i, offering_id=course_offering_id).first()
-        print(student)
+            id=student_id, offering_id=course_offering_id).first()
         if student is None:
             continue  # Student isn't enrolled in course offering or doesn't exist
         student.attendance.append(class_meeting)
-        new_attendance.append(student)
-    db.session.add_all(new_attendance)
+        new_attendances.append(student)
+    db.session.add_all(new_attendances)
     db.session.commit()
     return jsonify(add_attendance_to_meetings(class_meeting_schema.dump(class_meeting)))
 
