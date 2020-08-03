@@ -701,10 +701,7 @@ def test_update_person_attributes_enumerated(auth_client):
             }
         attribute_list.append(update_json)
 
-    valid_person = PersonSchema().load({'firstName': 'Rita', 'lastName': 'Smith', 'username': 'username', 'password': 'password', 'gender': 'F', 'active': True})
-    valid_person_attributes = PersonAttributeSchema().load(update_json)
-
-    resp = auth_client.put(url_for('people.update_person', person_id=update_person.id), json={
+    resp = auth_client.patch(url_for('people.update_person', person_id=update_person.id), json={
         'person': {'firstName': 'Rita', 'lastName': 'Smith', 'gender': 'F', 'active': True},
         'attributesInfo': attribute_list})
 
@@ -787,7 +784,7 @@ def test_update_person_add_attribute(auth_client):
             mod['email'] = new_person['email']
 
         # WHEN a people are updated with data and an attribute
-        resp = auth_client.put(url_for('people.update_person', person_id=person.id), json={'person': mod,
+        resp = auth_client.patch(url_for('people.update_person', person_id=person.id), json={'person': mod,
                                                                                            'attributesInfo': [
                                                                                                person_attribute_string_factory(
                                                                                                    auth_client.sqla)]})

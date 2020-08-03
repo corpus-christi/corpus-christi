@@ -252,8 +252,6 @@ def test_update_person(auth_client):
     assert the_man.last_name == new_last_name
     assert the_man.second_last_name == new_second_last_name
 
-# TODO: add tests for attributesInfo in update_person's payload <2020-08-03, David Deng> #
-
 @pytest.mark.smoke
 def test_update_person_invalid(auth_client):
     # GIVEN a set of people
