@@ -181,7 +181,7 @@
             <v-spacer></v-spacer>
             <v-btn small flat color="primary"
                    @click="saveEntityTypePanel"
-            >{{
+            ></v-btn>
             <v-btn small text color="primary" @click="hideEntityTypePanel">{{
               $t("actions.save")
             }}</v-btn>
