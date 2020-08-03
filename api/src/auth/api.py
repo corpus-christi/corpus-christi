@@ -11,6 +11,7 @@ from .blacklist_helpers import (is_token_revoked, add_token_to_database, get_use
 from .. import jwt, db
 from ..auth.exceptions import TokenNotFound
 from ..people.models import Person, PersonSchema, Role, RoleSchema
+from ..people.test_people import role_object_factory, person_object_factory
 
 blacklist = set()
 person_schema = PersonSchema()
@@ -83,7 +84,7 @@ def load_user_identity(person):
 def get_test_jwt():
     if current_app.config['TESTING']:
         # TODO: parameterize the endpoint to return token with specified roles
-        test_roles = [ Role(**role_schema.load(role_object_factory())) ]
+        test_roles = [ Role(**RoleSchema().load(role_object_factory())) ]
         test_person = Person(**person_schema.load(person_object_factory()))
         test_person.username = 'test-user'
         test_person.roles += test_roles

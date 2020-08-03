@@ -56,7 +56,7 @@ class Person(Base):
     managers = relationship('Manager', back_populates='person', lazy=True)
     images = relationship('ImagePerson', back_populates='person')
 
-    roles = relationship("Role", secondary=people_person_role, backref="person")
+    roles = relationship("Role", secondary=people_person_role, backref="persons")
 
     def __repr__(self):
         return f"<Person(id={self.id},name='{self.first_name} {self.last_name}')>"
