@@ -155,7 +155,8 @@ def read_languages(language_code=None):
     if language_code is None:
         result = db.session \
             .query(Language.code, I18NValue.gloss) \
-            .join(I18NKey, I18NValue) \
+            .join(Language.key) \
+            .join(I18NKey.values) \
             .filter_by(locale_code=locale_code) \
             .all()
         return jsonify(language_schema.dump(result, many=True))
@@ -163,7 +164,8 @@ def read_languages(language_code=None):
         result = db.session \
             .query(Language.code, I18NValue.gloss) \
             .filter_by(code=language_code) \
-            .join(I18NKey, I18NValue) \
+            .join(Language.key) \
+            .join(I18NKey.values) \
             .filter_by(locale_code=locale_code) \
             .first()
         return jsonify(language_schema.dump(result))
