@@ -53,7 +53,9 @@ class GroupSchema(Schema):
         many=True,
         only=[
             'person',
-            'active'])
+            'active',
+            'manager_type'
+        ])
     meetings = fields.Nested(
         'MeetingSchema',
         dump_only=True,
