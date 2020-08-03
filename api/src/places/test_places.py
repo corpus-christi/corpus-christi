@@ -38,9 +38,6 @@ def test_read_all_countries(auth_client):
 
 @pytest.mark.smoke
 def test_missing_locale(auth_client):
-    resp = auth_client.get(url_for('places.read_countries'))
-    assert resp.status_code == 400
-
     resp = auth_client.get(url_for('places.read_countries', country_code='US'))
     assert resp.status_code == 400
 

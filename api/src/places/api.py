@@ -37,11 +37,6 @@ country_schema = CountrySchema()
 
 
 @places.route('/countries')
-# @jwt_required
-def read_all_countries():
-    result = db.session.query(Country).all()
-    return jsonify(country_schema.dump(result, many=True))
-
 @places.route('/countries/<country_code>')
 def read_countries(country_code=None):
     locale_code = request.args.get('locale')
@@ -51,7 +46,8 @@ def read_countries(country_code=None):
     if country_code is None:
         result = db.session \
             .query(Country.code, I18NValue.gloss) \
-            .join(I18NKey, I18NValue) \
+            .join(Country.key) \
+            .join(I18NKey.values) \
             .filter_by(locale_code=locale_code) \
             .all()
         return jsonify(country_list_schema.dump(result, many=True))
@@ -59,7 +55,8 @@ def read_countries(country_code=None):
         result = db.session \
             .query(Country.code, I18NValue.gloss) \
             .filter_by(code=country_code) \
-            .join(I18NKey, I18NValue) \
+            .join(Country.key) \
+            .join(I18NKey.values) \
             .filter_by(locale_code=locale_code) \
             .first()
     return jsonify(country_list_schema.dump(result))
