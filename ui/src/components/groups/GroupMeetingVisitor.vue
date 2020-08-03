@@ -1,36 +1,37 @@
 <template>
   <div>
     <v-toolbar class="pa-1">
-      <v-layout align-center justify-space-between fill-height>
-        <v-flex md3>
+      <v-row no-gutters align="center" justify="space-between" fill-height>
+        <v-col md="3">
           <v-toolbar-title>{{
             $t("groups.members.title-visitor")
           }}</v-toolbar-title>
-        </v-flex>
-      </v-layout>
-      <v-flex md2> </v-flex>
+        </v-col>
+      </v-row>
+      <v-col md="2"> </v-col>
       <v-spacer></v-spacer>
-      <v-flex>
-        <v-btn color="primary" raised v-on:click.stop="newVisitor">
-          <v-icon dark left>person_add</v-icon>
-          {{ $t("person.actions.add-visitor") }}
-        </v-btn>
-      </v-flex>
-      <v-flex>
-        <v-btn
-          class="ma-2"
-          outlined
-          small
-          fab
-          color="primary"
-          v-on:click="activateNewVisitorDialog"
-        >
-          <v-icon>search</v-icon>
-        </v-btn>
-      </v-flex>
+      <template v-if="isOverseer === true || ifAdmin">
+        <v-col>
+          <v-btn color="primary" raised v-on:click.stop="newVisitor">
+            <v-icon dark left>person_add</v-icon>
+            {{ $t("person.actions.add-visitor") }}
+          </v-btn>
+        </v-col>
+        <v-col>
+          <v-btn
+            class="ma-2"
+            outlined
+            small
+            fab
+            color="primary"
+            v-on:click="activateNewVisitorDialog"
+          >
+            <v-icon>search</v-icon>
+          </v-btn>
+        </v-col>
+      </template>
     </v-toolbar>
     <v-data-table
-      select-all
       v-model="selected"
       class="elevation-1"
       :headers="headers"
@@ -38,28 +39,32 @@
       item-key="id"
       :search="search"
     >
-      <template slot="items" slot-scope="props">
-        <td><v-checkbox v-model="props.selected" primary hide-details /></td>
-        <td>{{ props.item.firstName }}</td>
-        <td>{{ props.item.lastName }}</td>
-        <td>
-          <template>
-            <v-tooltip bottom>
-              <v-btn
-                icon
-                outlined
-                small
-                color="primary"
-                slot="activator"
-                data-cy="archive"
-                v-on:click="removeVisitor(props.item)"
-              >
-                <v-icon small>delete_outline</v-icon>
-              </v-btn>
-              <span>{{ $t("actions.tooltips.delete") }}</span>
-            </v-tooltip>
+      <template v-slot:item="props">
+        <tr>
+          <td>{{ props.item.firstName }}</td>
+          <td>{{ props.item.lastName }}</td>
+          <template v-if="isOverseer === true || ifAdmin">
+            <td>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    icon
+                    outlined
+                    small
+                    color="primary"
+                    slot="activator"
+                    data-cy="archive"
+                    v-on:click="removeVisitor(props.item)"
+                    v-on="on"
+                  >
+                    <v-icon small>delete_outline</v-icon>
+                  </v-btn>
+                </template>
+                <span>{{ $t("actions.tooltips.remove") }}</span>
+              </v-tooltip>
+            </td>
           </template>
-        </td>
+        </tr>
       </template>
     </v-data-table>
 
@@ -116,7 +121,12 @@
 import { eventBus } from "../../plugins/event-bus";
 import PersonDialog from "../PersonDialog";
 import EntitySearch from "../EntitySearch";
-
+import { mapState } from "vuex";
+import {
+  convertToGroupMap,
+  isOverseer,
+  getParticipantById,
+} from "../../models/GroupHierarchyNode.ts";
 export default {
   name: "GroupMeetingVisitor",
   components: { PersonDialog, EntitySearch },
@@ -205,7 +215,6 @@ export default {
           for (let person of this.attendance) {
             allMember.push(person.id);
           }
-          console.log("All attendance", this.allAttendance);
           for (let person of this.allAttendance) {
             if (allMember.includes(person.personId) === false) {
               this.visitors.push({
@@ -249,7 +258,6 @@ export default {
             });
           }
         });
-      console.log("refresh All Meeting Attendance: ", this.allAttendance);
     },
     readAllPeople() {
       this.$http.get(`/api/v1/people/persons`).then((resp) => {
@@ -257,6 +265,7 @@ export default {
       });
     },
     refreshFetchMeeting() {
+      //working
       const meetingId = this.$route.params.meeting;
       this.$http
         .get(`/api/v1/groups/meetings/${meetingId}`)
@@ -279,35 +288,42 @@ export default {
             .put(`/api/v1/groups/meetings/${meetingId}/attendances/${personId}`)
             .then(() => {
               eventBus.$emit("message", {
-                content: this.$t("groups.messages.participant-added"),
+                content: "groups.messages.participant-added",
               });
             })
             .catch((err) => {
               console.log(err);
               eventBus.$emit("error", {
-                content: this.$t("events.participants.error-adding"),
+                content: "events.participants.error-adding",
               });
             })
             .then(() => this.refreshFetchMeeting());
         } else {
           eventBus.$emit("error", {
-            content: this.$t("events.participants.error-adding"),
+            content: "events.participants.error-adding",
           });
         }
       }
     },
-
     removeVisitor(person) {
-      console.log(person);
       let meetingId = this.$route.params.meeting;
       this.$http
         .delete(`/api/v1/groups/meetings/${meetingId}/attendances/${person.id}`)
         .then(() => {
           eventBus.$emit("message", {
-            content: this.$t("groups.messages.participant-deleted"),
+            content: "groups.messages.visitor-remove",
           });
         })
         .then(() => this.refreshFetchMeeting());
+    },
+    isOverseer() {
+      let currentParticipant = getParticipantById(
+        this.currentAccount.id,
+        this.groupMap
+      );
+      return currentParticipant
+        ? isOverseer(currentParticipant, this.currentGroupId)
+        : false;
     },
   },
 
@@ -329,6 +345,21 @@ export default {
           sortable: false,
         },
       ];
+    },
+    ...mapState(["currentAccount"]),
+    groupMap() {
+      return convertToGroupMap(this.allGroups);
+    },
+    id() {
+      return this.currentGroupId;
+    },
+    ifAdmin() {
+      if (
+        this.currentAccount.roles.includes("role.group-admin") ||
+        this.currentAccount.roles.includes("role.group-leader")
+      ) {
+        return true;
+      } else return false;
     },
   },
   mounted: function () {

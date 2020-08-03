@@ -9,11 +9,18 @@
     >
     <v-card>
       <v-toolbar :color="toolbarColor" class="pa-1">
-        <v-layout align-center justify-space-between>
-          <v-flex v-if="select">
+        <v-row no-gutters align="center" justify="space-between" fill-height>
+          <v-col cols="4" v-if="select">
             <v-tooltip bottom>
               <template v-slot:activator="{ on }">
-                <v-btn v-on:click="selected = {}" v-on="on" small fab>
+                <v-btn
+                  class="mx-1"
+                  v-on:click="selected = {}"
+                  v-on="on"
+                  small
+                  fab
+                  depressed
+                >
                   <v-icon>close</v-icon>
                 </v-btn>
               </template>
@@ -22,10 +29,12 @@
             <v-tooltip bottom>
               <template v-slot:activator="{ on }">
                 <v-btn
+                  class="mx-1"
                   color="primary"
                   v-on:click="showChangeEntityTypeDialog"
                   v-on="on"
                   small
+                  depressed
                   fab
                 >
                   <v-icon>low_priority</v-icon>
@@ -33,18 +42,20 @@
               </template>
               {{ getTranslation("change-to-different") }}
             </v-tooltip>
-          </v-flex>
-          <v-flex v-else>
+          </v-col>
+          <v-col cols="4" v-else>
             <v-toolbar-title>{{ getTranslation("title") }}</v-toolbar-title>
-          </v-flex>
-          <v-flex md4>
+          </v-col>
+          <v-spacer />
+          <v-col cols="4">
             <v-text-field
               v-model="search"
               append-icon="search"
               v-bind:label="$t('actions.search')"
-            ></v-text-field>
-          </v-flex>
-          <v-flex md4 class="text-xs-right">
+              hide-details
+            />
+          </v-col>
+          <v-col class="text-right" cols="4">
             <v-btn
               :disabled="select"
               raised
@@ -55,103 +66,104 @@
               ><v-icon>add</v-icon>
               {{ $vuetify.breakpoint.smAndDown ? "" : getTranslation("new") }}
             </v-btn>
-          </v-flex>
-        </v-layout>
+          </v-col>
+        </v-row>
       </v-toolbar>
       <v-card-text>
         <v-data-table
-          expand
+          show-expand
+          @click:row="toggleExpand"
           :loading="tableLoading"
           :search="search"
+          :custom-filter="customFilter"
           :items="entityTypes"
           :headers="headers"
         >
-          <template v-slot:items="props">
-            <tr @click="props.expanded = !props.expanded">
-              <td><v-icon>category</v-icon> {{ props.item.name }}</td>
-              <td>
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
-                    <v-btn
-                      icon
-                      outlined
-                      small
-                      color="primary"
-                      v-on:click.stop="showEntityTypeDialog(props.item)"
-                      v-on="on"
-                    >
-                      <v-icon small>edit</v-icon>
-                    </v-btn>
-                  </template>
-                  {{ $t("actions.edit") }}
-                </v-tooltip>
-                <v-tooltip
-                  bottom
-                  v-if="
-                    (isGroupTypeMode ? props.item.groups : props.item.managers)
-                      .length === 0
-                  "
-                >
-                  <template v-slot:activator="{ on }">
-                    <v-btn
-                      icon
-                      outlined
-                      small
-                      color="primary"
-                      v-on:click.stop="
-                        showDeleteEntityTypeDialog(props.item.id)
-                      "
-                      v-on="on"
-                    >
-                      <v-icon small>delete</v-icon>
-                    </v-btn>
-                  </template>
-                  {{ $t("actions.tooltips.remove") }}
-                </v-tooltip>
-                <v-tooltip bottom v-else>
-                  <template v-slot:activator="{ on }">
-                    <v-btn
-                      icon
-                      outlined
-                      small
-                      color="primary"
-                      v-on:click.stop="props.expanded = !props.expanded"
-                      v-on="on"
-                    >
-                      <v-icon v-if="!props.expanded" small>expand_more</v-icon>
-                      <v-icon v-else small>expand_less</v-icon>
-                    </v-btn>
-                  </template>
-                  {{
-                    props.expanded
-                      ? getTranslation("hide-expand")
-                      : getTranslation("show-expand")
-                  }}
-                </v-tooltip>
-              </td>
-            </tr>
+          <template v-slot:item.name="props">
+            <v-icon>category</v-icon> {{ props.item.name }}
           </template>
-          <template v-slot:expand="{ item }">
-            <v-list
-              v-if="(isGroupTypeMode ? item.groups : item.managers).length != 0"
-              dense
-            >
-              <v-list-tile
-                @click="toggleEntitySelection(entity)"
-                v-for="entity in isGroupTypeMode ? item.groups : item.managers"
-                :key="entity.id"
-              >
-                <v-list-tile-action>
-                  <v-checkbox :value="entitySelected(entity)"></v-checkbox>
-                </v-list-tile-action>
-                <v-list-tile-avatar
-                  ><v-icon>{{
-                    isGroupTypeMode ? "people" : "account_circle"
-                  }}</v-icon></v-list-tile-avatar
+          <template v-slot:item.data-table-expand="props">
+            <v-tooltip bottom v-if="hasEntities(props.item)">
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  icon
+                  outlined
+                  small
+                  color="primary"
+                  @click.stop="toggleExpand(props.item, props)"
+                  :class="props.isExpanded ? 'flip' : ''"
+                  v-on="on"
                 >
-                <v-list-tile-content> {{ entity.name }} </v-list-tile-content>
-              </v-list-tile>
-            </v-list>
+                  <v-icon small>$expand</v-icon>
+                </v-btn>
+              </template>
+              {{
+                props.isExpanded
+                  ? getTranslation("hide-expand")
+                  : getTranslation("show-expand")
+              }}
+            </v-tooltip>
+            <v-tooltip bottom v-else>
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  icon
+                  outlined
+                  small
+                  color="primary"
+                  @click.stop="showDeleteEntityTypeDialog(props.item.id)"
+                  v-on="on"
+                >
+                  <v-icon small>delete</v-icon>
+                </v-btn>
+              </template>
+              {{ $t("actions.tooltips.remove") }}
+            </v-tooltip>
+          </template>
+
+          <template v-slot:item.actions="props">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  icon
+                  outlined
+                  small
+                  color="primary"
+                  v-on:click.stop="showEntityTypeDialog(props.item)"
+                  v-on="on"
+                >
+                  <v-icon small>edit</v-icon>
+                </v-btn>
+              </template>
+              {{ $t("actions.edit") }}
+            </v-tooltip>
+          </template>
+          <template v-slot:expanded-item="{ item, headers }">
+            <td :colspan="headers.length" class="pa-0">
+              <v-list class="pa-0" dense v-if="hasEntities(item)">
+                <v-list-item
+                  :ripple="false"
+                  @click="toggleEntitySelection(entity)"
+                  v-for="entity in getEntities(item)"
+                  :key="entity.id"
+                >
+                  <v-list-item-action>
+                    <v-simple-checkbox
+                      :ripple="false"
+                      :value="entitySelected(entity)"
+                      @click.stop="toggleEntitySelection(entity)"
+                    ></v-simple-checkbox>
+                  </v-list-item-action>
+                  <v-list-item-icon
+                    ><v-icon>{{
+                      isGroupTypeMode ? "people" : "account_circle"
+                    }}</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    {{ entity.name }}
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
+            </td>
           </template>
         </v-data-table>
       </v-card-text>
@@ -276,33 +288,24 @@ export default {
       }`;
     },
     headers() {
-      if (this.isGroupTypeMode) {
-        return [
-          {
-            text: this.$t("groups.entity-types.group-types.name"),
-            value: "name",
-          },
-          {
-            text: this.$t("actions.header"),
-            value: "actions",
-            sortable: false,
-            width: "150px",
-          },
-        ];
-      } else {
-        return [
-          {
-            text: this.$t("groups.entity-types.manager-types.name"),
-            value: "name",
-          },
-          {
-            text: this.$t("actions.header"),
-            value: "actions",
-            sortable: false,
-            width: "150px",
-          },
-        ];
-      }
+      return [
+        {
+          text: this.isGroupTypeMode
+            ? this.$t("groups.entity-types.group-types.name")
+            : this.$t("groups.entity-types.manager-types.name"),
+          value: "name",
+        },
+        {
+          text: this.$t("actions.header"),
+          value: "actions",
+          sortable: false,
+          width: "5%",
+          align: "right",
+        },
+        {
+          value: "data-table-expand",
+        },
+      ];
     },
     selectedIds() {
       return Object.keys(this.selected);
@@ -347,6 +350,24 @@ export default {
   methods: {
     /* utility */
     isEmpty,
+    customFilter(value, search, item) {
+      if (search == null) {
+        return true;
+      }
+      let testValues = [
+        value ? value.toLowerCase() : "",
+        ...item[this.isGroupTypeMode ? "groups" : "managers"].map((entity) =>
+          entity.name.toLowerCase()
+        ),
+      ];
+      let searchValue = search.toLowerCase();
+      for (let testValue of testValues) {
+        if (testValue.includes(searchValue)) {
+          return true;
+        }
+      }
+      return false;
+    },
     fetchEntityTypes() {
       this.tableLoading = true;
       this.$http.get(this.endpoint).then((resp) => {
@@ -377,6 +398,17 @@ export default {
           this.isGroupTypeMode ? "group-types" : "manager-types"
         }.${key}`
       );
+    },
+    getEntities(item) {
+      return this.isGroupTypeMode ? item.groups : item.managers;
+    },
+    hasEntities(item) {
+      return this.getEntities(item).length > 0;
+    },
+    toggleExpand(item, props) {
+      if (this.hasEntities(item)) {
+        props.expand(!props.isExpanded);
+      }
     },
 
     /* dialog related */
@@ -545,3 +577,8 @@ export default {
   },
 };
 </script>
+<style>
+.flip {
+  transform: rotate(-180deg);
+}
+</style>

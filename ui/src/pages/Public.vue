@@ -40,7 +40,7 @@
                 v-on:click="$router.push({ path: '/public/courses' })"
                 text
                 block
-                outline
+                outlined
                 color="primary"
                 >{{ $t("public.courses.view-all") }}
               </v-btn>
@@ -101,7 +101,7 @@
                 v-on:click="$router.push({ path: '/public/events' })"
                 text
                 block
-                outline
+                outlined
                 color="primary"
                 >{{ $t("public.events.view-all") }}
               </v-btn>

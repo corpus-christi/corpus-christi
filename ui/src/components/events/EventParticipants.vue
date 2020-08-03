@@ -23,34 +23,39 @@
       </v-btn>
     </v-toolbar>
     <v-data-table
-      :rows-per-page-items="rowsPerPageItem"
+      :items-per-page-options="rowsPerPageItem"
       :headers="headers"
       :items="people"
       :search="search"
       :loading="tableLoading"
       class="elevation-1"
     >
-      <template slot="items" slot-scope="props">
-        <td>{{ props.item.person.firstName }}</td>
-        <td>{{ props.item.person.lastName }}</td>
-        <td>{{ props.item.person.email }}</td>
-        <td>{{ props.item.person.phone }}</td>
-        <td>
-          <v-tooltip bottom>
-            <v-btn
-              icon
-              outline
-              small
-              color="primary"
-              slot="activator"
-              v-on:click="confirmDelete(props.item)"
-              data-cy="archive"
-            >
-              <v-icon small>delete</v-icon>
-            </v-btn>
-            <span>{{ $t("actions.tooltips.remove") }}</span>
-          </v-tooltip>
-        </td>
+      <template v-slot:item="props">
+        <tr>
+          <td>{{ props.item.person.firstName }}</td>
+          <td>{{ props.item.person.lastName }}</td>
+          <td>{{ props.item.person.email }}</td>
+          <td>{{ props.item.person.phone }}</td>
+          <td>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  icon
+                  outlined
+                  small
+                  color="primary"
+                  slot="activator"
+                  v-on:click="confirmDelete(props.item)"
+                  data-cy="archive"
+                  v-on="on"
+                >
+                  <v-icon small>delete</v-icon>
+                </v-btn>
+              </template>
+              <span>{{ $t("actions.tooltips.remove") }}</span>
+            </v-tooltip>
+          </td>
+        </tr>
       </template>
     </v-data-table>
 

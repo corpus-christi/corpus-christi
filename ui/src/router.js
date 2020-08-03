@@ -69,13 +69,13 @@ const router = new VueRouter({
           name: "group-treeview",
           path: "treeview",
           meta: { authRequired: true },
-          component: () => import("@/components/groups/GroupTreeView"),
+          component: () => import("@/components/groups/treeview/GroupTreeView"),
         },
         {
           name: "group-lineGraph",
           path: "lineGraph",
           meta: { authRequired: true },
-          component: () => import("@/components/groups/GroupLineGraph")
+          component: () => import("@/components/groups/GroupLineGraph"),
         },
         {
           name: "group-types",
@@ -145,6 +145,14 @@ const router = new VueRouter({
               path: "managers",
               meta: { authRequired: true },
               component: () => import("@/components/groups/GroupParticipants"),
+              props: { participantType: "manager" },
+            },
+            {
+              name: "group-membership-history",
+              path: "membership-history",
+              meta: { authRequired: true },
+              component: () =>
+                import("@/components/groups/GroupMembershipHistory"),
               props: { participantType: "manager" },
             },
           ],
@@ -352,7 +360,7 @@ router.beforeEach((to, from, next) => {
       // the desired page for a later redirect.
       next({
         name: "login",
-        query: { redirect: to.name },
+        query: { redirect: to.fullPath },
       });
     }
   } else {

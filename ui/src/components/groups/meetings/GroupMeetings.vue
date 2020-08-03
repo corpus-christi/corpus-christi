@@ -1,11 +1,11 @@
 <template>
   <div>
     <v-toolbar>
-      <v-flex md3>
+      <v-col md="3">
         <v-toolbar-title>{{ $t("groups.meetings.title") }}</v-toolbar-title>
-      </v-flex>
+      </v-col>
       <v-spacer></v-spacer>
-      <v-flex md2>
+      <v-col md="2">
         <v-text-field
           v-model="search"
           append-icon="search"
@@ -13,103 +13,163 @@
           single-line
           hide-details
         ></v-text-field>
-      </v-flex>
+      </v-col>
       <v-spacer></v-spacer>
-      <v-flex md1>
-        <v-select
-          hide-details
-          solo
-          single-line
-          :items="viewOptions"
-          v-model="viewStatus"
-          data-cy="view-status-select"
-        >
-        </v-select>
-      </v-flex>
-
-      <v-spacer></v-spacer>
-      <v-flex>
-        <v-btn
-          color="primary"
-          raised
-          v-on:click="activateCreateMeetingDialog"
-          data-cy="add-meeting"
-        >
-          <v-icon dark left>add</v-icon>
-          {{ $t("groups.meetings.add-meeting") }}
-        </v-btn>
-      </v-flex>
+      <template v-if="isOverseer && ifAdmin">
+        <v-col md="1">
+          <v-select
+            hide-details
+            solo
+            single-line
+            :items="viewOptions"
+            v-model="viewStatus"
+            data-cy="view-status-select"
+          >
+          </v-select>
+        </v-col>
+        <v-spacer></v-spacer>
+        <v-col>
+          <v-btn
+            color="primary"
+            raised
+            v-on:click="activateCreateMeetingDialog"
+            data-cy="add-meeting"
+          >
+            <v-icon dark left>add</v-icon>
+            {{ $t("groups.meetings.add-meeting") }}
+          </v-btn>
+        </v-col>
+      </template>
     </v-toolbar>
     <v-data-table
-      :rows-per-page-items="rowsPerPageItem"
+      :items-per-page-options="rowsPerPageItem"
       :headers="headers"
       :items="visibleMeetings"
       :search="search"
       :loading="tableLoading"
       class="elevation-1"
+      must-sort
+      :options.sync="options"
     >
-      <template slot="items" slot-scope="props">
-        <td>{{ props.item.description }}</td>
-        <td>{{ props.item.startTime | formatDate }}</td>
-        <td>{{ props.item.stopTime | formatDate }}</td>
-        <td>{{ props.item.attendances.length }}</td>
-        <td>{{ props.item.address.address }}</td>
-        <td>
-          <template v-if="props.item.active">
-            <v-tooltip bottom>
-              <v-btn
-                icon
-                outlined
-                small
-                color="primary"
-                slot="activator"
-                v-on:click="confirmArchive(props.item)"
-                data-cy="archive"
-              >
-                <v-icon small>archive</v-icon>
-              </v-btn>
-              <span>{{ $t("actions.tooltips.archive") }}</span>
-            </v-tooltip>
-          </template>
-
-          <template v-if="props.item.active">
-            <v-tooltip bottom>
-              <v-btn
-                icon
-                outlined
-                small
-                color="primary"
-                slot="activator"
-                :to="{
-                  name: 'meeting-details',
-                  params: { meeting: props.item.id },
-                }"
-                data-cy="viewAttendance"
-              >
-                <v-icon small>people</v-icon>
-              </v-btn>
-              <span>{{ $t("actions.tooltips.take-attendance") }} </span>
-            </v-tooltip>
-          </template>
-
-          <template v-else>
-            <v-tooltip bottom v-if="!props.item.active">
-              <v-btn
-                icon
-                outlined
-                small
-                color="primary"
-                slot="activator"
-                v-on:click="unarchive(props.item)"
-                :loading="props.item.id < 0"
-                data-cy="unarchive"
-              >
-                <v-icon small>undo</v-icon>
-              </v-btn>
-              <span>{{ $t("actions.tooltips.activate") }}</span>
-            </v-tooltip>
-          </template>
-        </td>
+      <template v-slot:item="props">
+        <tr>
+          <td
+            class="hover-hand"
+            v-on:click="
+              $router.push({
+                name: 'meeting-members',
+                params: { meeting: props.item.id },
+              })
+            "
+          >
+            {{ props.item.description }}
+          </td>
+          <td
+            class="hover-hand"
+            v-on:click="
+              $router.push({
+                name: 'meeting-members',
+                params: { meeting: props.item.id },
+              })
+            "
+          >
+            {{ props.item.startTime | formatDate }}
+          </td>
+          <td
+            class="hover-hand"
+            v-on:click="
+              $router.push({
+                name: 'meeting-members',
+                params: { meeting: props.item.id },
+              })
+            "
+          >
+            {{ props.item.stopTime | formatDate }}
+          </td>
+          <td
+            class="hover-hand"
+            v-on:click="
+              $router.push({
+                name: 'meeting-members',
+                params: { meeting: props.item.id },
+              })
+            "
+          >
+            {{ props.item.attendances.length }}
+          </td>
+          <td
+            class="hover-hand"
+            v-on:click="
+              $router.push({
+                name: 'meeting-members',
+                params: { meeting: props.item.id },
+              })
+            "
+          >
+            {{ props.item.address.address }}
+          </td>
+          <td>
+            <template v-if="props.item.active && isOverseer && ifAdmin">
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    v-on="on"
+                    icon
+                    outlined
+                    small
+                    color="primary"
+                    slot="activator"
+                    v-on:click="confirmArchive(props.item)"
+                    data-cy="archive"
+                  >
+                    <v-icon small>archive</v-icon>
+                  </v-btn>
+                </template>
+                <span>{{ $t("actions.tooltips.archive") }}</span>
+              </v-tooltip>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    v-on="on"
+                    icon
+                    outlined
+                    small
+                    color="primary"
+                    slot="activator"
+                    :to="{
+                      name: 'meeting-details',
+                      params: { meeting: props.item.id },
+                    }"
+                    data-cy="viewAttendance"
+                  >
+                    <v-icon small>people</v-icon>
+                  </v-btn>
+                </template>
+                <span>{{ $t("actions.tooltips.take-attendance") }} </span>
+              </v-tooltip>
+            </template>
+            <template v-else>
+              <v-tooltip bottom v-if="!props.item.active">
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    v-on="on"
+                    icon
+                    outlined
+                    small
+                    color="primary"
+                    slot="activator"
+                    v-on:click="unarchive(props.item)"
+                    :loading="props.item.id < 0"
+                    data-cy="unarchive"
+                  >
+                    <v-icon small>undo</v-icon>
+                  </v-btn>
+                </template>
+                <span>{{ $t("actions.tooltips.activate") }}</span>
+              </v-tooltip>
+            </template>
+          </td>
+        </tr>
       </template>
     </v-data-table>
 
@@ -276,11 +336,25 @@
 import CustomForm from "../../CustomForm";
 import EntitySearch from "../../EntitySearch";
 import { eventBus } from "../../../plugins/event-bus.js";
+import { mapState } from "vuex";
+import {
+  convertToGroupMap,
+  isOverseer,
+  getParticipantById,
+} from "../../../models/GroupHierarchyNode.ts";
+
 export default {
   components: { "meeting-form": CustomForm, EntitySearch },
   name: "GroupMeetings",
   data() {
     return {
+      allGroups: null,
+      options: {
+        sortBy: ["activeMembers.length"], //default sorted column
+        sortDesc: [true],
+        itemsPerPage: 10,
+        page: 1,
+      },
       rowsPerPageItem: [
         10,
         15,
@@ -338,9 +412,6 @@ export default {
   },
 
   computed: {
-    meetingDescriptions() {
-      return this.meetings.map((m) => m.description);
-    },
     viewOptions() {
       return [
         { text: this.$t("actions.view-active"), value: "viewActive" },
@@ -360,26 +431,48 @@ export default {
       }
     },
     headers() {
-      return [
-        {
-          text: this.$t("groups.description"),
-          value: "description",
-          width: "20%",
-        },
-        {
-          text: this.$t("events.start-time"),
-          value: "startTime",
-          width: "20%",
-        },
-        {
-          text: this.$t("events.stop-time"),
-          value: "stopTime",
-          width: "22.5%",
-        },
-        { text: this.$t("events.attendance"), value: "attendance" },
-        { text: this.$t("events.event-location"), value: "location_name" },
-        { text: this.$t("actions.header"), sortable: false },
-      ];
+      if (this.ifAdmin) {
+        return [
+          {
+            text: this.$t("groups.description"),
+            value: "description",
+            width: "20%",
+          },
+          {
+            text: this.$t("events.start-time"),
+            value: "startTime",
+            width: "20%",
+          },
+          {
+            text: this.$t("events.stop-time"),
+            value: "stopTime",
+            width: "22.5%",
+          },
+          { text: this.$t("events.attendance"), value: "attendance" },
+          { text: this.$t("events.event-location"), value: "location_name" },
+          { text: this.$t("actions.header"), sortable: false },
+        ];
+      } else {
+        return [
+          {
+            text: this.$t("groups.description"),
+            value: "description",
+            width: "20%",
+          },
+          {
+            text: this.$t("events.start-time"),
+            value: "startTime",
+            width: "20%",
+          },
+          {
+            text: this.$t("events.stop-time"),
+            value: "stopTime",
+            width: "22.5%",
+          },
+          { text: this.$t("events.attendance"), value: "attendance" },
+          { text: this.$t("events.event-location"), value: "location_name" },
+        ];
+      }
     },
     attendance_headers() {
       return [
@@ -395,22 +488,25 @@ export default {
         },
       ];
     },
+    ...mapState(["currentAccount"]),
+    ifAdmin() {
+      if (
+        this.currentAccount.roles.includes("role.group-admin") ||
+        this.currentAccount.roles.includes("role.group-overseer") ||
+        this.currentAccount.roles.includes("role.group-leader")
+      ) {
+        return true;
+      } else return false;
+    },
+    groupMap() {
+      return convertToGroupMap(this.allGroups);
+    },
+    id() {
+      return parseInt(this.$route.params.group);
+    },
   },
 
   methods: {
-    PeopleFromMeetingDialog() {
-      this.addPeronToMeeting.show = true;
-    },
-
-    cancelNewAttendanceDialog() {
-      this.addPeronToMeeting.show = false;
-    },
-
-    activateEditMeetingDialog() {
-      this.meetingDialog.editMode = true;
-      this.activateMeetingDialog();
-    },
-
     activateCreateMeetingDialog() {
       this.meetingDialog.editMode = false;
       this.activateMeetingDialog();
@@ -448,7 +544,7 @@ export default {
         .post(`/api/v1/groups/meetings`, meeting)
         .then(() => {
           eventBus.$emit("message", {
-            content: this.$t("groups.messages.meeting-added"),
+            content: "groups.messages.meeting-added",
           });
           this.meetingDialog.saveLoading = false;
           this.meetingDialog.show = false;
@@ -458,7 +554,7 @@ export default {
           console.log(err);
           this.meetingDialog.saveLoading = false;
           eventBus.$emit("error", {
-            content: this.$t("groups.messages.error-adding-meeting"),
+            content: "groups.messages.error-adding-meeting",
           });
         });
     },
@@ -490,7 +586,7 @@ export default {
       Promise.all(promises)
         .then(() => {
           eventBus.$emit("message", {
-            content: this.$t("groups.messages.members-added"),
+            content: "groups.messages.members-added",
           });
           this.addAttendanceDialog.loading = false;
           this.addAttendanceDialog.show = false;
@@ -501,7 +597,7 @@ export default {
           console.log(err);
           this.addAttendanceDialog.loading = false;
           eventBus.$emit("error", {
-            content: this.$t("groups.messages.error-adding-members"),
+            content: "groups.messages.error-adding-members",
           });
         });
     },
@@ -547,7 +643,7 @@ export default {
           this.deleteDialog.show = false;
           this.people.splice(idx, 1);
           eventBus.$emit("message", {
-            content: this.$t("events.participants.removed"),
+            content: "events.participants.removed",
           });
         })
         .catch((err) => {
@@ -555,7 +651,7 @@ export default {
           this.deleteDialog.loading = false;
           this.deleteDialog.show = false;
           eventBus.$emit("error", {
-            content: this.$t("events.participants.error-removing"),
+            content: "events.participants.error-removing",
           });
         });
     },
@@ -605,7 +701,7 @@ export default {
           this.archiveDialog.loading = false;
           this.archiveDialog.show = false;
           eventBus.$emit("message", {
-            content: this.$t("groups.messages.meeting-archived"),
+            content: "groups.messages.meeting-archived",
           });
         })
         .catch((err) => {
@@ -613,7 +709,7 @@ export default {
           this.archiveDialog.loading = false;
           this.archiveDialog.show = false;
           eventBus.$emit("error", {
-            content: this.$t("groups.messages.error-archiving-meeting"),
+            content: "groups.messages.error-archiving-meeting",
           });
         });
     },
@@ -631,7 +727,7 @@ export default {
           this.archiveAttendanceDialog.loading = false;
           this.archiveAttendanceDialog.show = false;
           eventBus.$emit("message", {
-            content: this.$t("groups.messages.attendance-archived"),
+            content: "groups.messages.attendance-archived",
           });
         })
         .catch((err) => {
@@ -639,7 +735,7 @@ export default {
           this.archiveAttendanceDialog.loading = false;
           this.archiveAttendanceDialog.show = false;
           eventBus.$emit("error", {
-            content: this.$t("groups.messages.error-archiving-attendance"),
+            content: "groups.messages.error-archiving-attendance",
           });
         });
     },
@@ -655,13 +751,13 @@ export default {
           console.log("UNARCHIVED", resp);
           Object.assign(this.meetings[idx], resp.data);
           eventBus.$emit("message", {
-            content: this.$t("groups.messages.meeting-unarchived"),
+            content: "groups.messages.meeting-unarchived",
           });
         })
         .catch((err) => {
           console.error("UNARCHIVE FALURE", err.response);
           eventBus.$emit("error", {
-            content: this.$t("groups.messages.error-unarchiving-meeting"),
+            content: "groups.messages.error-unarchiving-meeting",
           });
         });
     },
@@ -685,7 +781,6 @@ export default {
                 });
             }
             this.meetings = resp.data;
-            console.log("Meeting attendances", this.meetings);
           }
           this.tableLoading = false;
         });
@@ -738,10 +833,26 @@ export default {
       this.attendanceDialog.show = false;
       this.getMeetings();
     },
+
+    isOverseer() {
+      let currentParticipant = getParticipantById(
+        this.currentAccount.id,
+        this.groupMap
+      );
+      return currentParticipant
+        ? isOverseer(currentParticipant, this.id)
+        : false;
+    },
+    fetchAllGroups() {
+      return this.$http.get("api/v1/groups/groups").then((resp) => {
+        this.allGroups = resp.data;
+      });
+    },
   },
 
   mounted: function () {
     this.getMeetings();
+    this.fetchAllGroups().then(() => this.isOverseer());
   },
 };
 </script>

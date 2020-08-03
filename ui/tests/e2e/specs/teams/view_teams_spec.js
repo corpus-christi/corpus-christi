@@ -25,7 +25,7 @@ describe("Check Team Members Test", () => {
 
   it("THEN: The member information and team description are listed when each team is accessed", () => {
     var i = 1;
-    cy.get(".container").then(container => {
+    cy.get(".container").then((container) => {
       while (container.find(":nth-child(" + i + ") > .hover-hand").length) {
         cy.log(container.find(":nth-child(" + i + ") > .hover-hand").length);
         cy.get(":nth-child(" + i + ") > .hover-hand").click();

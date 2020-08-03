@@ -31,6 +31,10 @@ groups:
     en-US: Admin Panel
     es-EC: Panel de administrador
     zh-CN: 管理面板
+  user-panel:
+    en-US: User Panel
+    es-EC: Panel de usuario
+    zh-CN: 用户面板
   group-description:
     en-US: Group Description
     es-EC: Descripción del Grupo
@@ -266,30 +270,51 @@ groups:
         en-US: Members
         es-EC: Miembros
         zh-CN: 会员
+      all:
+        en-US: All
+        es-EC: Todas
+        zh-CN: 所有
     select-placeholder:
       en-US: Select groups to perform actions...
       es-EC: Seleccionar grupos para realizar acciones ...
       zh-CN: 选择要执行操作的组...
-    show-all:
-      en-US: Show All Groups
-      es-EC: Mostrar todos los grupos
-      zh-CN: 显示所有群组
+    remove-cycle:
+      en-US:
+        Please remove the cycle in the node listed in order to view group hierarchy
+        tree.
+      es-EC:
+        Elimine el ciclo en el nodo listado para ver el árbol de jerarquía de
+        grupo.
+      zh-CN: 请在列出的节点中删除循环，以查看组层次结构树。
+    no-groups-available:
+      en-US: No groups available, because you are not an overseer of any groups
+      es-EC: No hay grupos disponibles, porque no eres supervisor de ningún grupo
+      zh-CN: 没有可用的群组，因为您不是任何群组的监督者
+    unexpected-cycle:
+      en-US: Unexpected cycle in hierarchy
+      es-EC: Ciclo inesperado en la jerarquía
+      zh-CN: 层次结构中的意外周期
+    category-view:
+      en-US: Category View
+      es-EC: Vista de categoría
+      zh-CN: 分类视图
+    hierarchy-view:
+      en-US: Hierarchy View
+      es-EC: Vista de jerarquía
+      zh-CN: 层次结构视图
+    admin-node:
+      _desc: the word designated to the top-level node in the hierarchy tree
+      en-US: Administrator
+      es-EC: Administrador
+      zh-CN: 管理员
     show-linegraph:
-      en-US: Mostrar gráfico de líneas,
-      es-EC: Show Line Graph
+      en-US: Show Line Graph
+      es-EC: Mostrar gráfico de líneas
       zh-CN: 显示折线图
     show-list:
       en-US: Show Group List
       es-EC: Mostrar lista de grupos
       zh-CN: 显示群组清单
-    show-managers:
-      en-US: Show Managers Only
-      es-EC: Mostrar solo gerentes
-      zh-CN: 仅显示管理员
-    show-members:
-      en-US: Show Members Only
-      es-EC: Mostrar solo miembros
-      zh-CN: 仅显示成员
     show-treeview:
       en-US: Show Group Treeview
       es-EC: Mostrar vista de árbol de grupo
@@ -308,6 +333,91 @@ groups:
       en-US: Group Treeview
       es-EC: Vista de árbol grupal
       zh-CN: 组树视图
+    filters:
+      _desc: filter on category treeview
+      en-US: Filters
+      es-EC: Filtros
+      zh-CN: 筛选器
+  membership-hisotry:
+    title:
+      en-US: History
+      es-EC: Historia
+      zh-CN: 历史记录
+  linegraph:
+    Month:
+      January:
+        en-US: January
+        es-EC: Enero
+        zh-CN: 一月
+      February:
+        en-US: February
+        es-EC: Febrero
+        zh-CN: 二月
+      March:
+        en-US: March
+        es-EC: Marzo
+        zh-CN: 三月
+      April:
+        en-US: April
+        es-EC: Abril
+        zh-CN: 四月
+      May:
+        en-US: May
+        es-EC: Mayo
+        zh-CN: 五月
+      June:
+        en-US: June
+        es-EC: Junio
+        zh-CN: 六月
+      July:
+        en-US: July
+        es-EC: Julio
+        zh-CN: 七月
+      August:
+        en-US: August
+        es-EC: Agosto
+        zh-CN: 八月
+      September:
+        en-US: September
+        es-EC: Setiembre
+        zh-CN: 九月
+      October:
+        en-US: October
+        es-EC: Octubre
+        zh-CN: 十月
+      November:
+        en-US: November
+        es-EC: Noviembre
+        zh-CN: 十一月
+      December:
+        en-US: December
+        es-EC: Diciembre
+        zh-CN: 十二月
+    time-scale:
+      en-US: Time Scale
+      es-EC: Escala de tiempo
+      zh-CN: 时间尺度
+    time-scale-unite:
+      monthly:
+        en-US: Monthly
+        es-EC: Mensual
+        zh-CN: 月
+      Weekly:
+        en-US: Weekly
+        es-EC: Semanal
+        zh-CN: 周
+    selected-group:
+      en-US: Selected Group(s)
+      es-EC: Grupo seleccionado
+      zh-CN: 选定的组
+    time-picker-start:
+      en-US: Start
+      es-EC: Comienzo
+      zh-CN: 开始
+    time-picker-end:
+      en-US: End
+      es-EC: Final
+      zh-CN: 结束
   batch-actions:
     title:
       en-US: Batch Actions
@@ -342,6 +452,14 @@ groups:
         en-US: The person is already in the destination group
         es-EC: La persona ya está en el grupo de destino.
         zh-CN: 该人已经在目的地组中
+      move-person-will-cause-cycle:
+        en-US: Moving this person will cause a cycle in leadership hierarchy
+        es-EC: Mover a esta persona provocará un ciclo en la jerarquía de liderazgo
+        zh-CN: 移动此人将导致领导层的循环
+      unarchive-group-will-cause-cycle:
+        en-US: Unarchiving this group will cause a cycle in leadership hierarchy
+        es-EC: Desarchivar este grupo provocará un ciclo en la jerarquía de liderazgo
+        zh-CN: 取消归档此团队将导致领导层的循环
   tooltips:
     move:
       en-US: Move to Another Group
@@ -382,6 +500,10 @@ groups:
       en-US: Members
       es-EC: Miembros
       zh-CN: 会员
+    title-visitor:
+      en-US: Visitors
+      es-EC: visitantes
+      zh-CN: 访客
     email-reply-to:
       en-US: Reply to
       es-EC: Responder a
@@ -505,7 +627,7 @@ groups:
       en-US: Group unarchived
       es-EC: Grupo desarchivado # probably not right
       zh-CN: 小组已恢复
-    group-unarchiving-group:
+    error-unarchiving-group:
       en-US: Error while unarchiving group
       es-EC: Error al desarchivar el grupo
       zh-CN: 取消归档组时出错
@@ -537,6 +659,26 @@ groups:
       en-US: Member unarchived
       es-EC: Miembro desarchivado # probably not right
       zh-CN: 成员未存档
+    error-unarchiving-member:
+      en-US: Error while unarchiving member
+      es-EC: Error al desarchivar miembro
+      zh-CN: 取消存档成员时出错
+    manager-archived:
+      en-US: Manager archived
+      es-EC: Gerente archivado
+      zh-CN: 经理已存档
+    error-archiving-manager:
+      en-US: Error while archiving manager
+      es-EC: Error al archivar administrador
+      zh-CN: 归档管理器时出错
+    manager-unarchived:
+      en-US: Manager unarchived
+      es-EC: Gerente sin archivar
+      zh-CN: 经理未存档
+    error-unarchiving-manager:
+      en-US: Error while unarchiving manager
+      es-EC: Error al desarchivar administrador
+      zh-CN: 取消存档管理器时出错
     meeting-added:
       en-US: Meeting added
       es-EC: Reunión agregada
@@ -629,3 +771,11 @@ groups:
       en-US: Error while updating manager(s)
       es-EC: Error al actualizar administrador (es)
       zh-CN: 更新管理员时出错
+    participant-added:
+      en-US: Participatn(s) Added
+      es-EC: Participación (es) añadida (s)
+      zh-CN: 已添加用户
+    visitor-remove:
+      en-US: Visitor Removed
+      es-EC: Visitante eliminada
+      zh-CN: 访客已移除

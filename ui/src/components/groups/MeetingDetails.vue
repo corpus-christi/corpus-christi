@@ -8,7 +8,7 @@
       "
       ><v-icon>arrow_back</v-icon>Back</v-btn
     >
-    <v-tabs color="transparent" slider-color="accent">
+    <v-tabs>
       <v-tab ripple :to="{ name: 'meeting-members' }">
         <v-icon>people_alt</v-icon>&nbsp;{{ $t("groups.members.title") }}
       </v-tab>

@@ -1,13 +1,13 @@
 <template>
   <div>
     <v-toolbar class="pa-1">
-      <v-layout align-center justify-space-between fill-height>
-        <v-flex md3>
+      <v-row no-gutters align="center" justify="space-between" fill-height>
+        <v-col md="3">
           <v-toolbar-title>{{
             $t("actions.tooltips.take-attendance")
           }}</v-toolbar-title>
-        </v-flex>
-        <v-flex md2>
+        </v-col>
+        <v-col md="2">
           <v-text-field
             v-model="search"
             append-icon="search"
@@ -15,39 +15,48 @@
             single-line
             hide-details
           />
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-toolbar>
     <v-data-table
-      select-all
       v-model="selected"
       :headers="headers"
       class="elevation-1"
       :items="listMember"
       item-key="personId"
       :search="search"
+      show-select
     >
-      <template slot="items" slot-scope="props">
-        <td><v-checkbox v-model="props.selected" primary hide-details /></td>
-        <td>{{ props.item.firstName }}</td>
-        <td>{{ props.item.lastName }}</td>
+      <template v-slot:item="props">
+        <tr>
+          <td><v-checkbox v-model="props.selected" primary hide-details /></td>
+          <td>{{ props.item.firstName }}</td>
+          <td>{{ props.item.lastName }}</td>
+        </tr>
       </template>
     </v-data-table>
-    <v-flex md3>
-      <v-btn
-        class="ma-2"
-        outlined
-        color="green"
-        v-on:click="submitSelectedPeople"
-        >{{ $t("error-report.actions.submit") }}</v-btn
-      >
-    </v-flex>
+    <template v-if="isOverseer === true || ifAdmin">
+      <v-col md="3">
+        <v-btn
+          class="ma-2"
+          outlined
+          color="green"
+          v-on:click="submitSelectedPeople"
+          >{{ $t("error-report.actions.submit") }}</v-btn
+        >
+      </v-col>
+    </template>
   </div>
 </template>
 
 <script>
 import { eventBus } from "../../plugins/event-bus";
-
+import { mapState } from "vuex";
+import {
+  convertToGroupMap,
+  isOverseer,
+  getParticipantById,
+} from "../../models/GroupHierarchyNode.ts";
 export default {
   name: "GroupMeetingMember",
   data() {
@@ -61,6 +70,7 @@ export default {
       listMember: [],
       recordAttendance: [],
       markList: [],
+      allGroups: null,
     };
   },
   methods: {
@@ -83,6 +93,8 @@ export default {
         .then((resp) => {
           this.currentGroupId = resp.data.groupId;
         })
+        .then(() => this.fetchAllGroups())
+        .then(() => this.isOverseer())
         .then(() => this.getAllGroupMember());
     },
     getAllGroupMember() {
@@ -131,14 +143,14 @@ export default {
           )
           .then(() => {
             eventBus.$emit("message", {
-              content: this.$t("groups.messages.participant-added"),
+              content: "groups.messages.participant-added",
             });
             this.allMeetingAttendance();
           })
           .catch((err) => {
             console.log(err);
             eventBus.$emit("error", {
-              content: this.$t("events.participants.error-adding"),
+              content: "events.participants.error-adding",
             });
           });
       }
@@ -159,19 +171,33 @@ export default {
               )
               .then(() => {
                 eventBus.$emit("message", {
-                  content: this.$t("groups.messages.participant-added"),
+                  content: "groups.messages.participant-added",
                 });
                 this.allMeetingAttendance();
               })
               .catch((err) => {
                 console.log(err);
                 eventBus.$emit("error", {
-                  content: this.$t("events.participants.error-adding"),
+                  content: "events.participants.error-adding",
                 });
               });
           }
         }
       }
+    },
+    fetchAllGroups() {
+      return this.$http.get("api/v1/groups/groups").then((resp) => {
+        this.allGroups = resp.data;
+      });
+    },
+    isOverseer() {
+      let currentParticipant = getParticipantById(
+        this.currentAccount.id,
+        this.groupMap
+      );
+      return currentParticipant
+        ? isOverseer(currentParticipant, this.currentGroupId)
+        : false;
     },
   },
   computed: {
@@ -188,6 +214,21 @@ export default {
           width: "20%",
         },
       ];
+    },
+    ...mapState(["currentAccount"]),
+    groupMap() {
+      return convertToGroupMap(this.allGroups);
+    },
+    id() {
+      return this.currentGroupId;
+    },
+    ifAdmin() {
+      if (
+        this.currentAccount.roles.includes("role.group-admin") ||
+        this.currentAccount.roles.includes("role.group-leader")
+      ) {
+        return true;
+      } else return false;
     },
   },
   mounted: function () {

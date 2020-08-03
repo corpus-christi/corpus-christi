@@ -1,5 +1,5 @@
-describe("PersonTable Test", function() {
-  it("GIVEN: Admin loads PersonTable", function() {
+describe("PersonTable Test", function () {
+  it("GIVEN: Admin loads PersonTable", function () {
     cy.login();
     cy.url().should("include", "/admin");
     //open nav drawer
@@ -7,7 +7,7 @@ describe("PersonTable Test", function() {
     //goes to the people page
     cy.get("[data-cy=people]").click();
   });
-  it("WHEN: Admin changes table view", function() {
+  it("WHEN: Admin changes table view", function () {
     cy.get("[data-cy=person-table]").within(() => {
       cy.get(".v-datatable__actions > :nth-child(1) > :nth-child(1)").click(); //opens up the persons/page dropdown
     });
@@ -20,11 +20,9 @@ describe("PersonTable Test", function() {
     //cy.contains("10").click();
   });
 
-  it("THEN: Table shows more rows", function() {
+  it("THEN: Table shows more rows", function () {
     cy.get("[data-cy=person-table]").within(() => {
-      cy.get("tbody")
-        .find("tr")
-        .should("have.length", 10);
+      cy.get("tbody").find("tr").should("have.length", 10);
     });
   });
   it("And: Can navigate to the next/previous page of users", () => {

@@ -42,7 +42,34 @@
         </v-col>
       </v-row>
     </v-row>
+  <v-row no-gutters>
+    <v-col xs="12" sm="4">
+      <v-card>
+        <v-card-title primary-title>
+          <div>
+            <h3 class="headline mb-0">
+              {{ $t("groups.details.class-title") }}: {{ group.name }}
+            </h3>
+            <div>{{ group.description }}</div>
+          </div>
+          Group
+        </v-card-title>
+      </v-card>
 
+      <v-card class="mt-2" v-if="pageLoaded">
+        <v-card-title primary-title>
+          <div>
+            <h3 class="headline mb-0">{{ $t("groups.details.title") }}</h3>
+            <div>{{ $t("groups.manager") }}: {{ getManagerName() }}</div>
+            <div>
+              {{ $t("groups.details.member-count") }}:
+              {{ group.members.length }}
+            </div>
+          </div>
+        </v-card-title>
+      </v-card>
+    </v-col>
+  </v-row>
 
 
     <!-- Calander -->
@@ -90,11 +117,7 @@ export default {
       },
     };
   },
-  watch: {
-    locations() {
-      this.eventsList();
-    },
-  },
+
   mounted() {
     this.getGroup().then(() => {
       console.log("Group loaded");
@@ -102,7 +125,6 @@ export default {
     this.$refs.calendar.scrollToTime("08:00");
     this.eventsToDisplay();
   },
-  computed: {},
   methods: {
     getGroup() {
       const id = this.$route.params.group;

@@ -20,8 +20,8 @@
         <v-list v-if="persons.length">
           <template v-for="person in persons">
             <v-divider v-bind:key="'personDivider' + person.id"></v-divider>
-            <v-list-tile v-bind:key="person.id">
-              <v-list-tile-content>
+            <v-list-item v-bind:key="person.id">
+              <v-list-item-content>
                 <v-container fluid class="pa-0">
                   <v-layout align-center row justify-space-between>
                     <v-flex>
@@ -35,7 +35,7 @@
                         <v-flex xs6>
                           <v-btn
                             icon
-                            outline
+                            outlined
                             text
                             color="primary"
                             v-on:click="openEditDialog(person)"
@@ -46,7 +46,7 @@
                         <v-flex xs6>
                           <v-btn
                             icon
-                            outline
+                            outlined
                             text
                             color="primary"
                             v-on:click="showDeletePersonDialog(person.id)"
@@ -58,8 +58,8 @@
                     </v-flex>
                   </v-layout>
                 </v-container>
-              </v-list-tile-content>
-            </v-list-tile>
+              </v-list-item-content>
+            </v-list-item>
           </template>
         </v-list>
         <div v-else class="text-xs-center pa-4">

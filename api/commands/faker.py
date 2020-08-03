@@ -1,10 +1,9 @@
-from datetime import datetime, date
-
 from flask.cli import AppGroup
 from src import db
 from src.courses.test_courses import create_multiple_courses, create_multiple_course_offerings, \
     create_multiple_diplomas, create_multiple_students, create_class_meetings, \
-    create_diploma_awards, create_class_attendance, create_multiple_prerequisites, create_course_completion
+    create_diploma_awards, create_class_attendance, create_multiple_prerequisites, \
+    create_course_completion
 from src.events.create_event_data import create_events_test_data
 from src.groups.create_group_data import create_group_test_data
 from src.images.create_image_data import create_images_test_data

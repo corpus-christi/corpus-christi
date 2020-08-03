@@ -42,15 +42,15 @@ Cypress.Commands.add("login", (username = "Cytest", password = "password") => {
     url: "/api/v1/auth/login",
     body: {
       username,
-      password
-    }
+      password,
+    },
   })
     .its("body")
     .as("user");
   cy.visit("/");
   // this currently will produce a few errors in the browser console
-  getStore().then(store => {
-    cy.get("@user").then(user => {
+  getStore().then((store) => {
+    cy.get("@user").then((user) => {
       console.log(store);
       let credential = {
         // FIXME: for some reason the Account used by Cypress is not the very same
@@ -63,25 +63,25 @@ Cypress.Commands.add("login", (username = "Cytest", password = "password") => {
           ["public"], // can add more roles later, or parameterize this
           user.email
         ),
-        jwt: user.jwt
+        jwt: user.jwt,
       };
       store.commit("logIn", credential);
     });
   });
 });
 
-Cypress.Commands.add("course_page", function() {
+Cypress.Commands.add("course_page", function () {
   cy.get("[data-cy=toggle-nav-drawer]").click();
   cy.get("[data-cy=courses]").click();
 });
 
-Cypress.Commands.add("deploma_page", function() {
+Cypress.Commands.add("deploma_page", function () {
   cy.get("[data-cy=toggle-nav-drawer]").click();
   cy.get(".v-list__group__header__append-icon").click();
   cy.get("[data-cy=diplomas-admin]").click();
 });
 
-Cypress.Commands.add("transcript_page", function() {
+Cypress.Commands.add("transcript_page", function () {
   cy.get("[data-cy=toggle-nav-drawer]").click();
   cy.get(".v-list__group__header__append-icon").click();
   cy.get("[data-cy=transcripts]").click();

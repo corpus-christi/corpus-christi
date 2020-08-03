@@ -105,15 +105,17 @@ export default {
               resp.data.firstName,
               resp.data.lastName,
               decodedJwt.user_claims.roles,
+              resp.data.id,
               resp.data.email
             ),
             jwt: resp.data.jwt,
           });
 
+          console.log("RESP", resp.data);
           // Normally want to use `push`, but unlikely that
           // the user wants to return to the login page.
-          const routeName = this.$route.query.redirect || "people";
-          this.$router.replace({ name: routeName });
+          const route = this.$route.query.redirect || { name: "people" };
+          this.$router.replace(route);
         }
       } catch (err) {
         console.log(err);

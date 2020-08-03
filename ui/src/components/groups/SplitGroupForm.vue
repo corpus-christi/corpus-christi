@@ -2,11 +2,11 @@
   <!-- component to split a group. emits 'success', 'cancel', 'error' event. -->
   <div>
     <v-card>
-      <v-layout align-center justify-center row fill-height>
+      <v-row no-gutters align="center" justify="center" row fill-height>
         <v-card-title class="headline">
           {{ $t("groups.split.title") }}
         </v-card-title>
-      </v-layout>
+      </v-row>
     </v-card>
     <v-stepper non-linear v-model="currentStep">
       <v-stepper-header>
@@ -22,8 +22,8 @@
       </v-stepper-header>
       <v-stepper-items>
         <v-stepper-content step="1">
-          <v-layout row justify-space-around>
-            <v-flex md5>
+          <v-row no-gutters row justify="space-around">
+            <v-col md="5">
               <span class="headline">{{
                 $t("groups.split.parent-group")
               }}</span>
@@ -52,9 +52,9 @@
                 v-bind:error-messages="errors.first('parent-grouptype')"
                 v-model="parentGroup.groupType"
               />
-            </v-flex>
+            </v-col>
             <v-divider vertical></v-divider>
-            <v-flex md5>
+            <v-col md="5">
               <span class="headline">{{ $t("groups.split.child-group") }}</span>
               <v-text-field
                 v-bind:label="$t('groups.name')"
@@ -81,30 +81,31 @@
                 v-bind:error-messages="errors.first('child-grouptype')"
                 v-model="childGroup.groupType"
               />
-            </v-flex>
-          </v-layout>
-          <v-layout>
+            </v-col>
+          </v-row>
+          <v-row no-gutters>
             <v-btn text @click="cancel">{{ $t("actions.cancel") }}</v-btn>
             <v-spacer></v-spacer>
             <v-btn color="primary" @click="currentStep = 2">{{
               $t("actions.next")
             }}</v-btn>
-          </v-layout>
+          </v-row>
         </v-stepper-content>
         <v-stepper-content step="2">
           <v-container v-if="hasMembers">
-            <v-layout
-              align-center
+            <v-row
+              no-gutters
+              align="center"
               v-for="member in members"
               :key="member.person.id"
             >
-              <v-flex md5>
+              <v-col md="5">
                 <span class="text-center-xs"
                   ><v-icon>person</v-icon
                   >{{ getPersonFullName(member.person) }}</span
                 >
-              </v-flex>
-              <v-flex md7>
+              </v-col>
+              <v-col md="7">
                 <v-radio-group row v-model="member.destination">
                   <v-radio
                     :label="$t('groups.split.parent-group')"
@@ -115,15 +116,15 @@
                     value="child"
                   ></v-radio>
                 </v-radio-group>
-              </v-flex>
-            </v-layout>
+              </v-col>
+            </v-row>
           </v-container>
-          <v-layout justify-center v-else>
+          <v-row no-gutters justify="center" v-else>
             <span class="headline my-5"
               >{{ $t("groups.split.no-members") }}
             </span>
-          </v-layout>
-          <v-layout>
+          </v-row>
+          <v-row no-gutters>
             <v-btn text @click="currentStep = 1">{{
               $t("actions.previous")
             }}</v-btn>
@@ -131,22 +132,23 @@
             <v-btn color="primary" @click="currentStep = 3">{{
               $t("actions.next")
             }}</v-btn>
-          </v-layout>
+          </v-row>
         </v-stepper-content>
         <v-stepper-content step="3">
           <v-container v-if="hasManagers">
-            <v-layout
-              align-center
+            <v-row
+              no-gutters
+              align="center"
               v-for="manager in managers"
               :key="manager.person.id"
             >
-              <v-flex md5>
+              <v-col md="5">
                 <span class="text-center-xs"
                   ><v-icon>account_circle</v-icon
                   >{{ getPersonFullName(manager.person) }}</span
                 >
-              </v-flex>
-              <v-flex md7>
+              </v-col>
+              <v-col md="7">
                 <v-radio-group row v-model="manager.destination">
                   <v-radio
                     :label="$t('groups.split.parent-group')"
@@ -157,15 +159,15 @@
                     value="child"
                   ></v-radio>
                 </v-radio-group>
-              </v-flex>
-            </v-layout>
+              </v-col>
+            </v-row>
           </v-container>
-          <v-layout justify-center v-else>
+          <v-row no-gutters justify="center" v-else>
             <span class="headline my-5"
               >{{ $t("groups.split.no-managers") }}
             </span>
-          </v-layout>
-          <v-layout>
+          </v-row>
+          <v-row no-gutters>
             <v-btn text @click="currentStep = 2">{{
               $t("actions.previous")
             }}</v-btn>
@@ -173,7 +175,7 @@
             <v-btn color="primary" :loading="loading" @click="split">{{
               $t("actions.confirm")
             }}</v-btn>
-          </v-layout>
+          </v-row>
         </v-stepper-content>
       </v-stepper-items>
     </v-stepper>
