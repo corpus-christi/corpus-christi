@@ -1123,6 +1123,7 @@ def test_update_location(auth_client):
     create_multiple_locations(auth_client.sqla, count)
 
     locations = auth_client.sqla.query(Location).all()
+    addresses = auth_client.sqla.query(Address).all()
 
     # GIVEN modification data
     for location in locations:
@@ -1131,7 +1132,7 @@ def test_update_location(auth_client):
         if flips[0]:
             mod['description'] = fake.sentences(nb=1)[0]
         if flips[1]:
-            mod['address_id'] = random.randint(1, count + 1)
+            mod['address_id'] = random.choice(addresses).id
 
         # WHEN locations are updated with modification data
         resp = auth_client.patch(url_for('places.update_location', location_id=location.id), json=mod)
