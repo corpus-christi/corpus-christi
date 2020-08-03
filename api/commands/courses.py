@@ -23,8 +23,11 @@ def create_course_cli(app):
             course.prerequisites.append(prereq_course)
 
         if offering is not None:
-            course_offering = Course_Offering(course_id=course.id,
-                                              description=offering, max_size=2, active=True)
+            course_offering = Course_Offering(
+                course_id=course.id,
+                description=offering,
+                max_size=2,
+                active=True)
             course.courses_offered.append(course_offering)
         db.session.add(course)
         db.session.commit()

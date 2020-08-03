@@ -52,7 +52,7 @@ def add_i18n_code(name, sqla, locale_code, name_i18n):
     try:
         i18n_create(name_i18n, locale_code,
                     name, description=f"Type {name}")
-    except:
+    except BaseException:
         # entry is already in value table
         pass
 
@@ -208,23 +208,64 @@ def create_multiple_people_attributes(sqla, n):
         valid_person = person_schema.load(person_object_factory())
         new_people.append(Person(**valid_person))
     sqla.add_all(new_people)
-    new_attributes = [{'nameI18n': add_i18n_code('Marital Status', sqla, 'en-US', f'attribute.married'),
-                       'typeI18n': add_i18n_code('attribute.radio', sqla, 'en-US', f'attribute.radio'), 'seq': 2,
-                       'active': 1},
-                      {'nameI18n': add_i18n_code('Home Group Name', sqla, 'en-US', f'attribute.HomeGroupName'),
-                       'typeI18n': add_i18n_code('attribute.string', sqla, 'en-US', f'attribute.string'), 'seq': 1,
-                       'active': 1},
-                      {'nameI18n': add_i18n_code('Baptism Date', sqla, 'en-US', f'attribute.BaptismDate'),
-                       'typeI18n': add_i18n_code('attribute.date', sqla, 'en-US', f'attribute.date'), 'seq': 3,
-                       'active': 1}]
-    new_enumerated_values = [
-        {'id': 1, 'attributeId': 1, 'valueI18n': add_i18n_code('married', sqla, 'en-US', f'personAttribute.married'),
-         'active': 1},
-        {'id': 2, 'attributeId': 1, 'valueI18n': add_i18n_code('single', sqla, 'en-US', f'personAttribute.single'),
-         'active': 1}]
+    new_attributes = [
+        {
+            'nameI18n': add_i18n_code(
+                'Marital Status',
+                sqla,
+                'en-US',
+                f'attribute.married'),
+            'typeI18n': add_i18n_code(
+                'attribute.radio',
+                sqla,
+                'en-US',
+                f'attribute.radio'),
+            'seq': 2,
+            'active': 1},
+        {
+            'nameI18n': add_i18n_code(
+                'Home Group Name',
+                sqla,
+                'en-US',
+                f'attribute.HomeGroupName'),
+            'typeI18n': add_i18n_code(
+                'attribute.string',
+                sqla,
+                'en-US',
+                f'attribute.string'),
+            'seq': 1,
+            'active': 1},
+        {
+            'nameI18n': add_i18n_code(
+                'Baptism Date',
+                sqla,
+                'en-US',
+                f'attribute.BaptismDate'),
+            'typeI18n': add_i18n_code(
+                'attribute.date',
+                sqla,
+                'en-US',
+                f'attribute.date'),
+            'seq': 3,
+            'active': 1}]
+    new_enumerated_values = [{'id': 1,
+                              'attributeId': 1,
+                              'valueI18n': add_i18n_code('married',
+                                                         sqla,
+                                                         'en-US',
+                                                         f'personAttribute.married'),
+                              'active': 1},
+                             {'id': 2,
+                              'attributeId': 1,
+                              'valueI18n': add_i18n_code('single',
+                                                         sqla,
+                                                         'en-US',
+                                                         f'personAttribute.single'),
+                              'active': 1}]
 
     add_i18n_code('Estado Civil', sqla, 'es-EC', f'attribute.married')
-    add_i18n_code('Nombre del grupo de origen', sqla, 'es-EC', f'attribute.HomeGroupName')
+    add_i18n_code('Nombre del grupo de origen', sqla,
+                  'es-EC', f'attribute.HomeGroupName')
     add_i18n_code('Fecha de bautismo', sqla, 'es-EC', f'attribute.BaptismDate')
     add_i18n_code('casado', sqla, 'es-EC', f'personAttribute.married')
     add_i18n_code('soltero', sqla, 'es-EC', f'personAttribute.single')
@@ -239,7 +280,8 @@ def create_multiple_people_attributes(sqla, n):
     valid_enumerated_values = []
     for enumerated_value in new_enumerated_values:
         valid_enumerated_value = enumerated_value_schema.load(enumerated_value)
-        valid_enumerated_values.append(EnumeratedValue(**valid_enumerated_value))
+        valid_enumerated_values.append(
+            EnumeratedValue(**valid_enumerated_value))
     sqla.add_all(valid_enumerated_values)
     sqla.commit()
 
@@ -252,15 +294,23 @@ def create_multiple_people_attributes(sqla, n):
     for i in range(n):
         # current_person = random.choice(all_people)
         # person_id = current_person.id
-        new_person_attributes = [{'personId': count, 'attributeId': 1, 'enumValueId': 1},
-                                 {'personId': count, 'attributeId': 2, 'stringValue': "Home Group 1"},
-                                 {'personId': count, 'attributeId': 3, 'stringValue': '1-15-2019'}]
+        new_person_attributes = [{'personId': count,
+                                  'attributeId': 1,
+                                  'enumValueId': 1},
+                                 {'personId': count,
+                                  'attributeId': 2,
+                                  'stringValue': "Home Group 1"},
+                                 {'personId': count,
+                                  'attributeId': 3,
+                                  'stringValue': '1-15-2019'}]
 
         valid_person_attributes = []
         count = count + 1
         for person_attribute in new_person_attributes:
-            valid_person_attribute = person_attribute_schema.load(person_attribute)
-            valid_person_attributes.append(PersonAttribute(**valid_person_attribute))
+            valid_person_attribute = person_attribute_schema.load(
+                person_attribute)
+            valid_person_attributes.append(
+                PersonAttribute(**valid_person_attribute))
         sqla.add_all(valid_person_attributes)
         sqla.commit()
 
@@ -285,9 +335,14 @@ def test_create_attribute(auth_client):
     count = random.randint(5, 15)
     # WHEN we create a random number of new attributes
     for i in range(count):
-        resp = auth_client.post(url_for('attributes.create_attribute'),
-                                json={"attribute": attribute_factory(auth_client.sqla, 'name', 'en-US'),
-                                      "enumeratedValues": []})
+        resp = auth_client.post(
+            url_for('attributes.create_attribute'),
+            json={
+                "attribute": attribute_factory(
+                    auth_client.sqla,
+                    'name',
+                    'en-US'),
+                "enumeratedValues": []})
         assert resp.status_code == 201
     # THEN we end up with the proper number of attributes in the database
     assert auth_client.sqla.query(Attribute).count() == count
@@ -298,9 +353,13 @@ def test_create_attribute_no_exist(auth_client):
     # GIVEN an empty database
     create_multiple_attributes(auth_client.sqla, 5)
 
-    # WHEN a attribute is requested to be created but is sent in an incorrect format
-    resp = auth_client.post(url_for('attributes.create_attribute'),
-                            json={"attribute": ['bad attribute'], "enumeratedValues": []})
+    # WHEN a attribute is requested to be created but is sent in an incorrect
+    # format
+    resp = auth_client.post(
+        url_for('attributes.create_attribute'),
+        json={
+            "attribute": ['bad attribute'],
+            "enumeratedValues": []})
 
     # THEN expect the request to be not found
     assert resp.status_code == 422
@@ -313,13 +372,22 @@ def test_create_enumerated_attribute(auth_client):
     count = random.randint(5, 15)
     # WHEN we create a random number of new attributes
     for i in range(count):
-        resp = auth_client.post(url_for('attributes.create_attribute'),
-                                json={"attribute": attribute_factory(auth_client.sqla, 'name', 'en-US'),
-                                      "enumeratedValues": [enumerated_value_factory(auth_client.sqla)]})
+        resp = auth_client.post(
+            url_for('attributes.create_attribute'),
+            json={
+                "attribute": attribute_factory(
+                    auth_client.sqla,
+                    'name',
+                    'en-US'),
+                "enumeratedValues": [
+                    enumerated_value_factory(
+                        auth_client.sqla)]})
         assert resp.status_code == 201
-    # THEN we end up with the proper number of enumerated attributes in the database
+    # THEN we end up with the proper number of enumerated attributes in the
+    # database
 
-    # One attribute must be created initially before creating Enumerated Values, hence the plus one below
+    # One attribute must be created initially before creating Enumerated
+    # Values, hence the plus one below
     assert auth_client.sqla.query(Attribute).count() == count + 1
     assert auth_client.sqla.query(EnumeratedValue).count() == count
 
@@ -337,7 +405,9 @@ def test_read_one_attributes(auth_client):
     # WHEN we request each of them from the server
     for attribute in attributes:
         resp = auth_client.get(
-            url_for('attributes.read_one_attribute', attribute_id=attribute.id))
+            url_for(
+                'attributes.read_one_attribute',
+                attribute_id=attribute.id))
         # THEN we find a matching attribute
         assert resp.status_code == 200
         assert resp.json['nameI18n'] == attribute.name_i18n
@@ -354,7 +424,10 @@ def test_read_all_attributes(auth_client):
     attributes = auth_client.sqla.query(Attribute).all()
 
     # WHEN we request all attributes from the server
-    resp = auth_client.get(url_for('attributes.read_all_attributes', locale='en-US'))
+    resp = auth_client.get(
+        url_for(
+            'attributes.read_all_attributes',
+            locale='en-US'))
     # THEN the count matches the number of entries in the database
     assert resp.status_code == 200
     assert len(resp.json) == count
@@ -384,17 +457,28 @@ def test_update_attribute(auth_client):
     payload['seq'] = 0
     payload['active'] = False
 
-    # WHEN we update attributes with both a new enumerated value and an updated enumerated value
+    # WHEN we update attributes with both a new enumerated value and an
+    # updated enumerated value
     for i in range(2):
         if i == 0:
-            resp = auth_client.patch(url_for(
-                'attributes.update_attribute', attribute_id=attribute_id),
-                json={'attribute': payload, 'enumeratedValues': [enumerated_value_factory(auth_client.sqla)]})
+            resp = auth_client.patch(
+                url_for(
+                    'attributes.update_attribute',
+                    attribute_id=attribute_id),
+                json={
+                    'attribute': payload,
+                    'enumeratedValues': [
+                        enumerated_value_factory(
+                            auth_client.sqla)]})
             assert resp.status_code == 200
         if i == 1:
-            resp = auth_client.patch(url_for(
-                'attributes.update_attribute', attribute_id=current_enumerated_value_id),
-                json={'attribute': payload, 'enumeratedValues': [update_enumerated_value]})
+            resp = auth_client.patch(
+                url_for(
+                    'attributes.update_attribute',
+                    attribute_id=current_enumerated_value_id),
+                json={
+                    'attribute': payload,
+                    'enumeratedValues': [update_enumerated_value]})
 
             assert resp.status_code == 200
 
@@ -414,10 +498,17 @@ def test_update_attribute_no_exist(auth_client):
     # GIVEN an empty database
     create_multiple_attributes(auth_client.sqla, 5)
 
-    # WHEN a attribute is requested to be updated and is in the incorrect format
-    resp = auth_client.patch(url_for('attributes.update_attribute', attribute_id=3),
-                             json={'attribute': ['bad attribute'],
-                                   'enumeratedValues': [enumerated_value_factory(auth_client.sqla)]})
+    # WHEN a attribute is requested to be updated and is in the incorrect
+    # format
+    resp = auth_client.patch(
+        url_for(
+            'attributes.update_attribute',
+            attribute_id=3),
+        json={
+            'attribute': ['bad attribute'],
+            'enumeratedValues': [
+                enumerated_value_factory(
+                    auth_client.sqla)]})
 
     # THEN expect the request to be not found
     assert resp.status_code == 422
@@ -456,7 +547,7 @@ def test_activate_attribute(auth_client):
 
     # THEN we have an active attribute
     assert updated_attribute is not None
-    assert updated_attribute.active == True
+    assert updated_attribute.active
 
 
 # ---- EnumeratedValue
@@ -483,9 +574,12 @@ def test_create_enumerated_value(auth_client):
     # WHEN we create a random number of new enumerated values
     for i in range(count):
         resp = auth_client.post(
-            url_for('attributes.create_enumerated_value'), json=enumerated_value_factory(auth_client.sqla))
+            url_for('attributes.create_enumerated_value'),
+            json=enumerated_value_factory(
+                auth_client.sqla))
         assert resp.status_code == 201
-    # THEN we end up with the proper number of enumerated values in the database
+    # THEN we end up with the proper number of enumerated values in the
+    # database
     assert auth_client.sqla.query(EnumeratedValue).count() == count
 
 
@@ -494,8 +588,11 @@ def test_create_enumerated_value_no_exist(auth_client):
     # GIVEN an empty database
     create_multiple_attributes(auth_client.sqla, 5)
 
-    # WHEN an enumerated value is requested to be added and is sent in an incorrect format
-    resp = auth_client.post(url_for('attributes.create_enumerated_value'), json=['bad value'])
+    # WHEN an enumerated value is requested to be added and is sent in an
+    # incorrect format
+    resp = auth_client.post(
+        url_for('attributes.create_enumerated_value'),
+        json=['bad value'])
 
     # THEN expect the request to be not found
     assert resp.status_code == 422
@@ -515,7 +612,9 @@ def test_read_one_enumerated_values(auth_client):
     # WHEN we request each of them from the server
     for enumerated_value in enumerated_values:
         resp = auth_client.get(
-            url_for('attributes.read_one_enumerated_value', enumerated_value_id=enumerated_value.id))
+            url_for(
+                'attributes.read_one_enumerated_value',
+                enumerated_value_id=enumerated_value.id))
         # THEN we find a matching enumerated_value
         assert resp.status_code == 200
         assert resp.json['valueI18n'] == enumerated_value.value_i18n
@@ -531,7 +630,10 @@ def test_read_all_enumerated_values(auth_client):
     assert count > 0
 
     # WHEN we request all enumerated values from the server
-    resp = auth_client.get(url_for('attributes.read_all_enumerated_values', locale='en-US'))
+    resp = auth_client.get(
+        url_for(
+            'attributes.read_all_enumerated_values',
+            locale='en-US'))
     # THEN the count matches the number of entries in the database
     assert resp.status_code == 200
     assert len(resp.json) == count
@@ -550,8 +652,11 @@ def test_update_enumerated_value(auth_client):
 
     payload['valueI18n'] = 'updated_name'
     payload['active'] = False
-    resp = auth_client.patch(url_for(
-        'attributes.update_enumerated_value', enumerated_value_id=enumerated_value_id), json=payload)
+    resp = auth_client.patch(
+        url_for(
+            'attributes.update_enumerated_value',
+            enumerated_value_id=enumerated_value_id),
+        json=payload)
     assert resp.status_code == 200
 
     updated_enumerated_value = auth_client.sqla.query(
@@ -571,9 +676,13 @@ def test_update_enumerated_value_no_exist(auth_client):
     enumerated_value_id = auth_client.sqla.query(
         EnumeratedValue.id).first().id
 
-    # WHEN a enumerated value is requested to be updated and the value is in an incorrect format
-    resp = auth_client.patch(url_for('attributes.update_enumerated_value', enumerated_value_id=enumerated_value_id),
-                             json=['bad attribute'])
+    # WHEN a enumerated value is requested to be updated and the value is in
+    # an incorrect format
+    resp = auth_client.patch(
+        url_for(
+            'attributes.update_enumerated_value',
+            enumerated_value_id=enumerated_value_id),
+        json=['bad attribute'])
 
     # THEN expect the request to be not found
     assert resp.status_code == 422
@@ -587,8 +696,10 @@ def test_deactivate_enumerated_value(auth_client):
         EnumeratedValue.id).first().id
 
     # WHEN we call deactivate
-    resp = auth_client.patch(url_for(
-        'attributes.deactivate_enumerated_value', enumerated_value_id=enumerated_value_id))
+    resp = auth_client.patch(
+        url_for(
+            'attributes.deactivate_enumerated_value',
+            enumerated_value_id=enumerated_value_id))
     assert resp.status_code == 200
 
     updated_enumerated_value = auth_client.sqla.query(
@@ -607,8 +718,10 @@ def test_activate_enumerated_value(auth_client):
         EnumeratedValue.id).first().id
 
     # WHEN we call activate
-    resp = auth_client.patch(url_for(
-        'attributes.activate_enumerated_value', enumerated_value_id=enumerated_value_id))
+    resp = auth_client.patch(
+        url_for(
+            'attributes.activate_enumerated_value',
+            enumerated_value_id=enumerated_value_id))
     assert resp.status_code == 200
 
     updated_enumerated_value = auth_client.sqla.query(
@@ -616,7 +729,7 @@ def test_activate_enumerated_value(auth_client):
 
     # THEN we have an activated enumerated value
     assert updated_enumerated_value is not None
-    assert updated_enumerated_value.active == True
+    assert updated_enumerated_value.active
 
 
 @pytest.mark.smoke
@@ -646,11 +759,14 @@ def test_create_person_with_attributes_enumerated(auth_client):
     count = random.randint(5, 15)
     # WHEN we create a random number of new people
     for i in range(count):
-        resp = auth_client.post(url_for('people.create_person'), json={
-            'person': person_object_factory(),
-            'attributesInfo': [person_attribute_enumerated_factory(auth_client.sqla)]})
+        resp = auth_client.post(
+            url_for('people.create_person'), json={
+                'person': person_object_factory(), 'attributesInfo': [
+                    person_attribute_enumerated_factory(
+                        auth_client.sqla)]})
         assert resp.status_code == 201
-    # THEN we end up with the proper number of people attributes that are enumerated in the database
+    # THEN we end up with the proper number of people attributes that are
+    # enumerated in the database
     assert auth_client.sqla.query(PersonAttribute).count() == count
 
 
@@ -661,10 +777,14 @@ def test_create_person_with_attributes_string(auth_client):
     count = random.randint(5, 15)
     # WHEN we create a random number of new people attributes
     for i in range(count):
-        resp = auth_client.post(url_for('people.create_person'), json={
-            'person': person_object_factory(), 'attributesInfo': [person_attribute_string_factory(auth_client.sqla)]})
+        resp = auth_client.post(
+            url_for('people.create_person'), json={
+                'person': person_object_factory(), 'attributesInfo': [
+                    person_attribute_string_factory(
+                        auth_client.sqla)]})
         assert resp.status_code == 201
-    # THEN we end up with the proper number of people attributes of the string type in the database
+    # THEN we end up with the proper number of people attributes of the string
+    # type in the database
     assert auth_client.sqla.query(PersonAttribute).count() == count
 
 
@@ -682,7 +802,7 @@ def test_update_person_attributes_enumerated(auth_client):
     # WHEN we update person attributes
     attribute_list = []
     for current_person_attribute in person_attributes:
-        if current_person_attribute.enum_value_id == None:
+        if current_person_attribute.enum_value_id is None:
             update_json = {
                 'personId': update_person.id,
                 'attributeId': current_person_attribute.attribute_id,
@@ -701,9 +821,17 @@ def test_update_person_attributes_enumerated(auth_client):
             }
         attribute_list.append(update_json)
 
-    resp = auth_client.patch(url_for('people.update_person', person_id=update_person.id), json={
-        'person': {'firstName': 'Rita', 'lastName': 'Smith', 'gender': 'F', 'active': True},
-        'attributesInfo': attribute_list})
+    resp = auth_client.patch(
+        url_for(
+            'people.update_person',
+            person_id=update_person.id),
+        json={
+            'person': {
+                'firstName': 'Rita',
+                'lastName': 'Smith',
+                'gender': 'F',
+                'active': True},
+            'attributesInfo': attribute_list})
 
     # THEN people attributes will be updated for each individual person
     assert resp.status_code == 200
@@ -765,7 +893,15 @@ def test_update_person_add_attribute(auth_client):
     for person in people:
         new_person = person_object_factory()
         mod = {}
-        flips = (flip(), flip(), flip(), flip(), flip(), flip(), flip(), flip())
+        flips = (
+            flip(),
+            flip(),
+            flip(),
+            flip(),
+            flip(),
+            flip(),
+            flip(),
+            flip())
         if flips[0]:
             mod['firstName'] = new_person['firstName']
         if flips[1]:
@@ -784,10 +920,15 @@ def test_update_person_add_attribute(auth_client):
             mod['email'] = new_person['email']
 
         # WHEN a people are updated with data and an attribute
-        resp = auth_client.patch(url_for('people.update_person', person_id=person.id), json={'person': mod,
-                                                                                           'attributesInfo': [
-                                                                                               person_attribute_string_factory(
-                                                                                                   auth_client.sqla)]})
+        resp = auth_client.patch(
+            url_for(
+                'people.update_person',
+                person_id=person.id),
+            json={
+                'person': mod,
+                'attributesInfo': [
+                    person_attribute_string_factory(
+                        auth_client.sqla)]})
 
         # THEN expect the update to run OK
         assert resp.status_code == 200
@@ -802,7 +943,8 @@ def test_update_person_add_attribute(auth_client):
             resp.json['lastName'] != person.last_name
         else:
             resp.json['lastName'] == person.last_name
-        if 'secondLastName' in mod.keys() and mod['secondLastName'] != person.second_last_name:
+        if 'secondLastName' in mod.keys(
+        ) and mod['secondLastName'] != person.second_last_name:
             resp.json['secondLastName'] != person.second_last_name
         else:
             resp.json['secondLastName'] == person.second_last_name

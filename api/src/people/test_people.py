@@ -12,6 +12,7 @@ from ..images.create_image_data import create_test_images, create_images_people
 from ..images.models import Image, ImagePerson
 from ..groups.models import ManagerSchema
 
+
 class RandomLocaleFaker:
     """Generate multiple fakers for different locales."""
 
@@ -34,7 +35,7 @@ def flip():
     return random.choice((True, False))
 
 
-#moved to above the person_object_factory
+# moved to above the person_object_factory
 def username_factory():
     return f"{fake.pystr(min_chars=5, max_chars=15)}{fake.pyint()}"
 
@@ -65,6 +66,7 @@ def person_object_factory(firstName=None, lastName=None):
         person['email'] = rl_fake().email()
     return person
 
+
 def create_multiple_people(sqla, n, inactive=False):
     """Commit `n` new people to the database. Returns the people."""
     person_schema = PersonSchema()
@@ -77,6 +79,7 @@ def create_multiple_people(sqla, n, inactive=False):
     sqla.add_all(new_people)
     sqla.commit()
     return new_people
+
 
 def role_object_factory(role_name='role.test_role'):
     """Cook up a fake role."""
@@ -91,7 +94,9 @@ def create_role(sqla):
     """Commit new role to the database. Return ID."""
     role_schema = RoleSchema()
 
-    valid_role_object = role_schema.load(role_object_factory(fake.job()))  # fake role is fake job
+    valid_role_object = role_schema.load(
+        role_object_factory(
+            fake.job()))  # fake role is fake job
     valid_role_row = Role(**valid_role_object)
     sqla.add(valid_role_row)
     sqla.commit()
@@ -108,6 +113,7 @@ def create_roles(sqla, n):
 
     return role_ids
 
+
 def create_person_roles(sqla, fraction=0.75):
     new_person_roles = []
     if not sqla.query(Person).all():
@@ -115,7 +121,9 @@ def create_person_roles(sqla, fraction=0.75):
     if not sqla.query(Role).all():
         create_roles(sqla, random.randint(3, 6))
     all_persons_roles = sqla.query(Person, Role).all()
-    sample_persons_roles = random.sample(all_persons_roles, math.floor(len(all_persons_roles) * fraction))
+    sample_persons_roles = random.sample(
+        all_persons_roles, math.floor(
+            len(all_persons_roles) * fraction))
     for persons_roles in sample_persons_roles:
         persons_roles[0].roles.append(persons_roles[1])
         new_person_roles.append(persons_roles[0])
@@ -154,7 +162,9 @@ def test_create_person_optional(auth_client):
             new_person['email'] = ""
 
         # WHEN the new person is requested to be created
-        resp = auth_client.post(url_for('people.create_person'), json={'person': new_person, 'attributesInfo': []})
+        resp = auth_client.post(
+            url_for('people.create_person'), json={
+                'person': new_person, 'attributesInfo': []})
 
         # THEN expect the creation to run OK
         assert resp.status_code == 201
@@ -180,7 +190,9 @@ def test_create_person_invalid(auth_client):
             new_person[fake.word()] = fake.word()
 
         # WHEN the bad person is requested to be created
-        resp = auth_client.post(url_for('people.create_person'), json={'person': new_person, 'attributesInfo': []})
+        resp = auth_client.post(
+            url_for('people.create_person'), json={
+                'person': new_person, 'attributesInfo': []})
 
         # THEN expect the creation to be unprocessable
         assert resp.status_code == 422
@@ -189,10 +201,12 @@ def test_create_person_invalid(auth_client):
     assert auth_client.sqla.query(Person).count() == 0
 
 
-@pytest.mark.smoke #not sure on this one
+@pytest.mark.smoke  # not sure on this one
 def test_read_all_persons(auth_client):
     # GIVEN a DB with a collection people.
-    create_multiple_people(auth_client.sqla, random.randint(6, 55))  # create random people
+    create_multiple_people(
+        auth_client.sqla, random.randint(
+            6, 55))  # create random people
 
     # WHEN the api call is made for read all persons
     resp = auth_client.get(url_for('people.read_all_persons'))
@@ -243,7 +257,11 @@ def test_update_person(auth_client):
         },
         "attributesInfo": []
     }
-    resp = auth_client.patch(url_for('people.update_person', person_id=randomId), json=update_person_json)
+    resp = auth_client.patch(
+        url_for(
+            'people.update_person',
+            person_id=randomId),
+        json=update_person_json)
     assert resp.status_code == 200
 
     # THEN those updates are matched with the database
@@ -251,6 +269,7 @@ def test_update_person(auth_client):
     assert the_man.first_name == new_first_name
     assert the_man.last_name == new_last_name
     assert the_man.second_last_name == new_second_last_name
+
 
 @pytest.mark.smoke
 def test_update_person_invalid(auth_client):
@@ -272,11 +291,17 @@ def test_update_person_invalid(auth_client):
             mod[fake.word()] = fake.word()
 
         # WHEN a people are updated with bad data
-        resp = auth_client.patch(url_for('people.update_person', person_id=person.id),
-                               json={'person': mod, 'attributesInfo': []})
+        resp = auth_client.patch(
+            url_for(
+                'people.update_person',
+                person_id=person.id),
+            json={
+                'person': mod,
+                'attributesInfo': []})
 
         # THEN expect the request to be unprocessable
         assert resp.status_code == 422
+
 
 @pytest.mark.smoke
 def test_update_person_no_exist(auth_client):
@@ -304,8 +329,15 @@ def test_update_person_no_exist(auth_client):
         mod['email'] = new_person['email']
 
     # WHEN a person is updated with data
-    resp = auth_client.patch(url_for('people.update_person', person_id=random.randint(1, 8)),
-                           json={'person': mod, 'attributesInfo': []})
+    resp = auth_client.patch(
+        url_for(
+            'people.update_person',
+            person_id=random.randint(
+                1,
+                8)),
+        json={
+            'person': mod,
+            'attributesInfo': []})
 
     # THEN expect the requested person not to be found
     assert resp.status_code == 404
@@ -344,13 +376,17 @@ def test_activate_person(auth_client):
 
     # WHEN each person is requested to be activated
     for person in people:
-        resp = auth_client.put(url_for('people.activate_person', person_id=person.id))
+        resp = auth_client.put(
+            url_for(
+                'people.activate_person',
+                person_id=person.id))
 
         # THEN expect the request to run OK
         resp.status_code == 200
 
     # THEN expect all inactive people to be active
-    assert auth_client.sqla.query(Person).filter(Person.active == True).count() == count
+    assert auth_client.sqla.query(Person).filter(
+        Person.active).count() == count
 
 
 @pytest.mark.smoke
@@ -358,9 +394,15 @@ def test_activate_person_no_exist(auth_client):
     # GIVEN an empty database
 
     # WHEN a person is requested to be activated
-    resp = auth_client.put(url_for('people.activate_person', person_id=random.randint(1, 8)))
+    resp = auth_client.put(
+        url_for(
+            'people.activate_person',
+            person_id=random.randint(
+                1,
+                8)))
     # THEN expect requested person to not exist
     assert resp.status_code == 404
+
 
 @pytest.mark.smoke
 def test_read_one_person_by_username(auth_client):
@@ -369,7 +411,10 @@ def test_read_one_person_by_username(auth_client):
     persons = auth_client.sqla.query(Person).all()
     # WHEN searched for by username
     person = random.choice(persons)
-    resp = auth_client.get(url_for('people.read_one_person_by_username', username=person.username))
+    resp = auth_client.get(
+        url_for(
+            'people.read_one_person_by_username',
+            username=person.username))
     assert resp.status_code == 200  # check response
     # THEN the api response matches the database person
     assert person.id == resp.json['id']  # check db id vs api id
@@ -377,7 +422,10 @@ def test_read_one_person_by_username(auth_client):
     # GIVEN an person name that doesn't exist in the database
     impossible_person_name = "BigChungus&UgandianKnuckles4Lyfe"
     # WHEN the api call is made for the non-existent username
-    resp = auth_client.get(url_for('people.read_one_person_by_username', username=impossible_person_name))
+    resp = auth_client.get(
+        url_for(
+            'people.read_one_person_by_username',
+            username=impossible_person_name))
     assert resp.status_code == 404  # check response
 
 
@@ -389,13 +437,17 @@ def test_get_persons_by_role(auth_client):
     persons = auth_client.sqla.query(Person).all()
 
     for person in persons:
-        person.roles.append(roles[random.randint(0, len(roles) - 1)])  # assign roles to persons
+        # assign roles to persons
+        person.roles.append(roles[random.randint(0, len(roles) - 1)])
         auth_client.sqla.add(person)
     auth_client.sqla.commit()
 
     for role in roles:  # Iterate through roles and use api to compare to db
         # WHEN the api call for getting persons by role is called
-        resp = auth_client.get(url_for('people.get_persons_by_role', role_id=role.id))
+        resp = auth_client.get(
+            url_for(
+                'people.get_persons_by_role',
+                role_id=role.id))
         assert resp.status_code == 200  # check response
 
         person_count = 0
@@ -403,7 +455,8 @@ def test_get_persons_by_role(auth_client):
             if role in person.roles:
                 person_count += 1
         # THEN the number of persons returned by role matches the DB
-        assert person_count == len(resp.json)  # person_count is equal to number of entries in get_person_by_role
+        # person_count is equal to number of entries in get_person_by_role
+        assert person_count == len(resp.json)
 
 
 @pytest.mark.smoke
@@ -418,9 +471,9 @@ def test_update_person(auth_client):
         mod = person_object_factory()
 
         # WHEN the person is requested to be updated
-        resp = auth_client.patch(url_for('people.update_person', 
-            person_id=person.id), 
-            json={'person': mod, 'attributesInfo': []})
+        resp = auth_client.patch(url_for('people.update_person',
+                                         person_id=person.id),
+                                 json={'person': mod, 'attributesInfo': []})
 
         # THEN expect the update to run OK
         assert resp.status_code == 200
@@ -447,11 +500,10 @@ def test_update_person_invalid(auth_client):
         if flips[1] or not flips[0]:
             mod[fake.word()] = fake.word()
 
-
         # WHEN person is requested to be updated with bad data
         resp = auth_client.patch(
-                url_for('people.update_person', person_id=person.id), 
-                json={'person': mod, 'attributesInfo': []})
+            url_for('people.update_person', person_id=person.id),
+            json={'person': mod, 'attributesInfo': []})
 
         # THEN expect the request to be unprocessable
         assert resp.status_code == 422
@@ -472,8 +524,8 @@ def test_update_person_no_exist(auth_client):
 
     # WHEN a row is requested to be updated with the data
     resp = auth_client.patch(
-            url_for('people.update_person', person_id=random.randint(1, 8)), 
-            json={'person': mod, 'attributesInfo': []})
+        url_for('people.update_person', person_id=random.randint(1, 8)),
+        json={'person': mod, 'attributesInfo': []})
 
     # THEN expect the requested person to not be found
     assert resp.status_code == 404
@@ -516,7 +568,7 @@ def test_activate_person(auth_client):
     updated_person = auth_client.sqla.query(
         Person).filter_by(id=current_person_id).first()
     assert updated_person is not None
-    assert updated_person.active == True
+    assert updated_person.active
 
 
 #   -----   Roles
@@ -528,7 +580,10 @@ def test_create_role(auth_client):
     count = random.randint(3, 8)
     # WHEN we create a random number of new roles
     for i in range(count):
-        resp = auth_client.post(url_for('people.create_role'), json=role_object_factory(fake.job()))
+        resp = auth_client.post(
+            url_for('people.create_role'),
+            json=role_object_factory(
+                fake.job()))
         assert resp.status_code == 201
     # THEN we end up with the proper number of roles in the database
     assert auth_client.sqla.query(Role).count() == count
@@ -578,7 +633,10 @@ def test_get_roles_for_person(auth_client):
 
     # WHEN the roles for each person are requested
     for person in persons:
-        resp = auth_client.get(url_for('people.get_roles_for_person', person_id=person.id))
+        resp = auth_client.get(
+            url_for(
+                'people.get_roles_for_person',
+                person_id=person.id))
 
         # THEN expect the request to run OK
         assert resp.status_code == 200
@@ -593,7 +651,12 @@ def test_get_roles_for_person_no_exist(auth_client):
     # GIVEN an empty database
 
     # WHEN the roles for an person that does not exist are requested
-    resp = auth_client.get(url_for('people.get_roles_for_person', person_id=random.randint(1, 8)))
+    resp = auth_client.get(
+        url_for(
+            'people.get_roles_for_person',
+            person_id=random.randint(
+                1,
+                8)))
 
     # THEN expect the requested person to not be found
     assert resp.status_code == 404
@@ -609,7 +672,10 @@ def test_read_one_role(auth_client):
 
     # WHEN each role is read
     for role in roles:
-        resp = auth_client.get(url_for('people.read_one_role', role_id=role.id))
+        resp = auth_client.get(
+            url_for(
+                'people.read_one_role',
+                role_id=role.id))
 
         # THEN expect the request to run OK
         assert resp.status_code == 200
@@ -625,7 +691,12 @@ def test_read_one_role_no_exist(auth_client):
     # GIVEN an empty database
 
     # WHEN a role is requested to be read
-    resp = auth_client.get(url_for('people.read_one_role', role_id=random.randint(1, 8)))
+    resp = auth_client.get(
+        url_for(
+            'people.read_one_role',
+            role_id=random.randint(
+                1,
+                8)))
 
     # THEN expect the requested role not to be found
     assert resp.status_code == 404
@@ -650,7 +721,11 @@ def test_update_role(auth_client):
             mod['active'] = new_role['active']
 
         # WHEN roles are updated with modification data
-        resp = auth_client.patch(url_for('people.update_role', role_id=role.id), json=mod)
+        resp = auth_client.patch(
+            url_for(
+                'people.update_role',
+                role_id=role.id),
+            json=mod)
 
         # THEN expect request to run OK
         assert resp.status_code == 200
@@ -677,7 +752,12 @@ def test_update_role_invalid(auth_client):
 
     for role in roles:
         # WHEN roles are updated with invalid modification data
-        resp = auth_client.patch(url_for('people.update_role', role_id=role.id), json={fake.word(): fake.word()})
+        resp = auth_client.patch(
+            url_for(
+                'people.update_role',
+                role_id=role.id),
+            json={
+                fake.word(): fake.word()})
 
         # THEN expect request to be unprocessable
         assert resp.status_code == 422
@@ -688,7 +768,14 @@ def test_update_role_no_exist(auth_client):
     # GIVEN an empty database
 
     # WHEN a role is requested to be updated
-    resp = auth_client.patch(url_for('people.update_role', role_id=random.randint(1, 8)), json={'active': False})
+    resp = auth_client.patch(
+        url_for(
+            'people.update_role',
+            role_id=random.randint(
+                1,
+                8)),
+        json={
+            'active': False})
 
     # THEN expect requested role to not be found
     assert resp.status_code == 404
@@ -715,7 +802,7 @@ def test_activate_role(auth_client):
     updated_role = auth_client.sqla.query(
         Role).filter_by(id=current_role.id).first()
     assert updated_role is not None
-    assert updated_role.active == True
+    assert updated_role.active
 
 
 @pytest.mark.smoke
@@ -748,11 +835,14 @@ def test_add_role_to_person(auth_client):
     current_role = random.choice(all_roles)
 
     # WHEN person and a role are specified
-    resp = auth_client.post(url_for(
-        'people.add_role_to_person', person_id=current_person.id, role_id=current_role.id))
+    resp = auth_client.post(
+        url_for(
+            'people.add_role_to_person',
+            person_id=current_person.id,
+            role_id=current_role.id))
     assert resp.status_code == 201
-    role_namei18n = auth_client.sqla.query(Person).filter(Person.id == current_person.id).first().roles[0].name_i18n
-
+    role_namei18n = auth_client.sqla.query(Person).filter(
+        Person.id == current_person.id).first().roles[0].name_i18n
 
 
 @pytest.mark.smoke
@@ -761,7 +851,10 @@ def test_add_role_to_person_no_exist(auth_client):
 
     # WHEN a role is requested to be added to an person that does not exist
     resp = auth_client.post(
-        url_for('people.add_role_to_person', person_id=random.randint(1, 8), role_id=random.randint(1, 8)))
+        url_for(
+            'people.add_role_to_person', person_id=random.randint(
+                1, 8), role_id=random.randint(
+                1, 8)))
 
     # THEN expect the request to be not found
     assert resp.status_code == 404
@@ -782,13 +875,17 @@ def test_remove_role_from_person(auth_client):
     auth_client.sqla.commit()
 
     # WHEN role is removed from person
-    resp = auth_client.delete(url_for(
-        'people.remove_role_from_person', person_id=current_person.id, role_id=current_role.id))
+    resp = auth_client.delete(
+        url_for(
+            'people.remove_role_from_person',
+            person_id=current_person.id,
+            role_id=current_role.id))
 
     # THEN expect the correct status code
     assert resp.status_code == 200
     # THEN person no longer is associated with the given role
-    updated_role = auth_client.sqla.query(Person).filter(Person.id == current_person.id).first().roles
+    updated_role = auth_client.sqla.query(Person).filter(
+        Person.id == current_person.id).first().roles
     assert updated_role == []
     assert resp.json != updated_role
 
@@ -796,20 +893,25 @@ def test_remove_role_from_person(auth_client):
     non_existant_id = -23  # person that doesn't exist
 
     # WHEN we try to remove a role from an person that doesnt exist
-    resp = auth_client.delete(url_for(
-        'people.remove_role_from_person', person_id=non_existant_id, role_id=current_role.id))
+    resp = auth_client.delete(
+        url_for(
+            'people.remove_role_from_person',
+            person_id=non_existant_id,
+            role_id=current_role.id))
 
     # THEN we get a "person not found" 404 error
     assert resp.status_code == 404
 
     # GIVEN the acocunt we are trying to remove the role does not have that role
     # WHEN we try to remove that role
-    resp = auth_client.delete(url_for(
-        'people.remove_role_from_person', person_id=current_person.id, role_id=current_role.id))
+    resp = auth_client.delete(
+        url_for(
+            'people.remove_role_from_person',
+            person_id=current_person.id,
+            role_id=current_role.id))
 
     # THEN we get a 'That person does not have that role' 404 error
     assert resp.status_code == 404
-
 
 
 @pytest.mark.smoke
@@ -822,7 +924,10 @@ def test_delete_person(auth_client):
 
     # WHEN the people are requested to be deleted
     for person in people:
-        resp = auth_client.delete(url_for('people.delete_person', person_id=person.id))
+        resp = auth_client.delete(
+            url_for(
+                'people.delete_person',
+                person_id=person.id))
 
         # THEN expect the delete to run OK
         assert resp.status_code == 204
@@ -836,7 +941,12 @@ def test_delete_person_no_exist(auth_client):
     # GIVEN an empty database
 
     # WHEN a person that does not exist is requested to be deleted
-    resp = auth_client.delete(url_for('people.delete_person', person_id=random.randint(1, 8)))
+    resp = auth_client.delete(
+        url_for(
+            'people.delete_person',
+            person_id=random.randint(
+                1,
+                8)))
 
     # THEN expect the requested person to not be found
     assert resp.status_code == 404
@@ -870,7 +980,7 @@ def test_password_person(auth_client):
     try:
         person.password()
         assert False
-    except:
+    except BaseException:
         assert True
 
 
@@ -881,7 +991,17 @@ def test_verify_password_person(auth_client):
     person[0].password = "test"
     person[0].verify_password("test")
 
-def create_person(sqla, first_name, last_name, gender, birthday, phone, email, active=True, address_id=None):
+
+def create_person(
+        sqla,
+        first_name,
+        last_name,
+        gender,
+        birthday,
+        phone,
+        email,
+        active=True,
+        address_id=None):
     person_schema = PersonSchema()
     person_payload = {
         'firstName': first_name,
@@ -916,13 +1036,19 @@ def test_add_people_images(auth_client):
     # WHEN an image is requested to be tied to each person
     for i in range(count):
         print(i)
-        resp = auth_client.post(url_for('people.add_people_images', person_id=people[i].id, image_id=images[i].id))
+        resp = auth_client.post(
+            url_for(
+                'people.add_people_images',
+                person_id=people[i].id,
+                image_id=images[i].id))
 
         # THEN expect the request to run OK
         assert resp.status_code == 201
 
         # THEN expect the person to have a single image
-        assert len(auth_client.sqla.query(Person).filter_by(id=people[i].id).first().images) == 1
+        assert len(
+            auth_client.sqla.query(Person).filter_by(
+                id=people[i].id).first().images) == 1
 
 
 @pytest.mark.smoke
@@ -936,13 +1062,21 @@ def test_add_people_images_no_exist(auth_client):
     images = auth_client.sqla.query(Image).all()
 
     # WHEN a no existant image is requested to be tied to an person
-    resp = auth_client.post(url_for('people.add_people_images', person_id=1, image_id=len(images) + 1))
+    resp = auth_client.post(
+        url_for(
+            'people.add_people_images',
+            person_id=1,
+            image_id=len(images) + 1))
 
     # THEN expect the image not to be found
     assert resp.status_code == 404
 
     # WHEN an image is requested to be tied to a no existant person
-    resp = auth_client.post(url_for('people.add_people_images', person_id=count + 1, image_id=1))
+    resp = auth_client.post(
+        url_for(
+            'people.add_people_images',
+            person_id=count + 1,
+            image_id=1))
 
     # THEN expect the person not to be found
     assert resp.status_code == 404
@@ -961,7 +1095,10 @@ def test_add_people_images_already_exist(auth_client):
     # WHEN existing person_image relationships are requested to be created
     for person_image in person_images:
         resp = auth_client.post(
-            url_for('people.add_people_images', person_id=person_image.person_id, image_id=person_image.image_id))
+            url_for(
+                'people.add_people_images',
+                person_id=person_image.person_id,
+                image_id=person_image.image_id))
 
         # THEN expect the request to be unprocessable
         assert resp.status_code == 422
@@ -980,8 +1117,11 @@ def test_delete_person_image(auth_client):
     print(valid_image_person.person_id)
 
     # WHEN the person_image relationships are requested to be deleted
-    resp = auth_client.delete(url_for('people.delete_person_image', person_id=valid_image_person.person_id,
-                                      image_id=valid_image_person.image_id))
+    resp = auth_client.delete(
+        url_for(
+            'people.delete_person_image',
+            person_id=valid_image_person.person_id,
+            image_id=valid_image_person.image_id))
 
     # THEN expect the delete to run OK
     assert resp.status_code == 204
@@ -993,7 +1133,10 @@ def test_delete_person_image_no_exist(auth_client):
 
     # WHEN a person_image relationship is requested to be deleted
     resp = auth_client.delete(
-        url_for('people.delete_person_image', person_id=random.randint(1, 8), image_id=random.randint(1, 8)))
+        url_for(
+            'people.delete_person_image', person_id=random.randint(
+                1, 8), image_id=random.randint(
+                1, 8)))
 
     # THEN expect the requested row to not be found
     assert resp.status_code == 404

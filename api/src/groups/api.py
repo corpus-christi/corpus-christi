@@ -184,7 +184,8 @@ def read_one_group(group_id):
 def update_group(group_id):
     if not is_overseer_or_admin(group_id):
         return logged_response(
-            'You must be either an admin or an overseer of the group to make this request', 403)
+            'You must be either an admin or an overseer of the group to make this request',
+            403)
 
     group_schema = GroupSchema()
 
@@ -328,7 +329,8 @@ def create_manager(group_id):
             person_id=person_id, group_id=group_id).first():
         # if the same manager already exists
         return logged_response(
-            f"Manager with group_id #{group_id} and person_id #{person_id} already exists", 409)
+            f"Manager with group_id #{group_id} and person_id #{person_id} already exists",
+            409)
 
     if 'active' not in valid_manager:
         valid_manager['active'] = True
@@ -362,7 +364,8 @@ def read_one_manager(group_id, person_id):
         group_id=group_id, person_id=person_id).first()
     if manager is None:
         return logged_response(
-            f"Manager with group_id #{group_id} and person_id #{person_id} does not exist", 404)
+            f"Manager with group_id #{group_id} and person_id #{person_id} does not exist",
+            404)
     return logged_response(manager_schema.dump(manager))
 
 
@@ -380,7 +383,8 @@ def update_manager(group_id, person_id):
         group_id=group_id, person_id=person_id).first()
     if manager is None:
         return logged_response(
-            f"Manager with group_id #{group_id} and person_id #{person_id} does not exist", 404)
+            f"Manager with group_id #{group_id} and person_id #{person_id} does not exist",
+            404)
 
     new_group_id = valid_attributes.get('group_id')
     new_person_id = valid_attributes.get('person_id')
@@ -391,7 +395,8 @@ def update_manager(group_id, person_id):
                 person_id=new_person_id or person_id,
                 group_id=new_group_id or group_id).first():
             return logged_response(
-                f"Manager with group_id #{new_group_id or group_id} and person_id #{new_person_id or person_id} already exists", 409)
+                f"Manager with group_id #{new_group_id or group_id} and person_id #{new_person_id or person_id} already exists",
+                409)
         # check if the new group exists
         if new_group_id and not db.session.query(
                 Group).filter_by(id=new_group_id).first():
@@ -421,7 +426,8 @@ def delete_manager(group_id, person_id):
 
     if manager is None:
         return logged_response(
-            f"Manager with group_id #{group_id} and person_id #{person_id} does not exist", 404)
+            f"Manager with group_id #{group_id} and person_id #{person_id} does not exist",
+            404)
 
     db.session.delete(manager)
     db.session.commit()
@@ -450,7 +456,8 @@ def create_meeting():
 
     if not is_overseer_or_admin(new_meeting.group_id):
         return logged_response(
-            'You must be either an admin or an overseer of the group to make this request', 403)
+            'You must be either an admin or an overseer of the group to make this request',
+            403)
 
     db.session.add(new_meeting)
 
@@ -503,7 +510,8 @@ def update_meeting(meeting_id):
 
     if not is_overseer_or_admin(meeting.group_id):
         return logged_response(
-            'You must be either an admin or an overseer of the group to make this request', 403)
+            'You must be either an admin or an overseer of the group to make this request',
+            403)
 
     for key, val in valid_attributes.items():
         setattr(meeting, key, val)
@@ -525,7 +533,8 @@ def delete_meeting(meeting_id):
 
     if not is_overseer_or_admin(meeting.group_id):
         return logged_response(
-            'You must be either an admin or an overseer of the group to make this request', 403)
+            'You must be either an admin or an overseer of the group to make this request',
+            403)
 
     db.session.delete(meeting)
     db.session.commit()
@@ -544,7 +553,8 @@ member_schema = MemberSchema()
 def create_member(group_id):
     if not is_overseer_or_admin(group_id):
         return logged_response(
-            'You must be either an admin or an overseer of the group to make this request', 403)
+            'You must be either an admin or an overseer of the group to make this request',
+            403)
 
     member_schema = MemberSchema(exclude=['group_id'])
     try:
@@ -558,7 +568,8 @@ def create_member(group_id):
             person_id=person_id, group_id=group_id).first():
         # if the same member already exists
         return logged_response(
-            f"Member with group_id #{group_id} and person_id #{person_id} already exists", 409)
+            f"Member with group_id #{group_id} and person_id #{person_id} already exists",
+            409)
 
     if 'joined' not in valid_member:
         valid_member['joined'] = datetime.date.today()
@@ -595,7 +606,8 @@ def read_one_member(group_id, person_id):
         group_id=group_id, person_id=person_id).first()
     if member is None:
         return logged_response(
-            f"Member with group_id #{group_id} and person_id #{person_id} does not exist", 404)
+            f"Member with group_id #{group_id} and person_id #{person_id} does not exist",
+            404)
     return logged_response(member_schema.dump(member))
 
 
@@ -605,7 +617,8 @@ def read_one_member(group_id, person_id):
 def update_member(group_id, person_id):
     if not is_overseer_or_admin(group_id):
         return logged_response(
-            'You must be either an admin or an overseer of the group to make this request', 403)
+            'You must be either an admin or an overseer of the group to make this request',
+            403)
 
     member_schema = MemberSchema()
     try:
@@ -617,7 +630,8 @@ def update_member(group_id, person_id):
         group_id=group_id, person_id=person_id).first()
     if member is None:
         return logged_response(
-            f"Member with group_id #{group_id} and person_id #{person_id} does not exist", 404)
+            f"Member with group_id #{group_id} and person_id #{person_id} does not exist",
+            404)
 
     new_group_id = valid_attributes.get('group_id')
     new_person_id = valid_attributes.get('person_id')
@@ -628,7 +642,8 @@ def update_member(group_id, person_id):
                 person_id=new_person_id or person_id,
                 group_id=new_group_id or group_id).first():
             return logged_response(
-                f"Member with group_id #{new_group_id or group_id} and person_id #{new_person_id or person_id} already exists", 409)
+                f"Member with group_id #{new_group_id or group_id} and person_id #{new_person_id or person_id} already exists",
+                409)
         # check if the new group exists
         if new_group_id and not db.session.query(
                 Group).filter_by(id=new_group_id).first():
@@ -641,10 +656,10 @@ def update_member(group_id, person_id):
                 f"Person with person_id #{new_person_id} does not exist", 404)
 
     if ((valid_attributes.get('active') is False and member.active is True)  # if will deactivate person
-            # if will move person to another group
-            or (new_group_id and new_group_id != member.group_id)
-            # or (new_person_id and new_person_id != member.person_id) # if
-        # will replace the current member with another person
+        # if will move person to another group
+                or (new_group_id and new_group_id != member.group_id)
+                # or (new_person_id and new_person_id != member.person_id) # if
+            # will replace the current member with another person
         ):
         create_member_history(member)
 
@@ -663,14 +678,16 @@ def update_member(group_id, person_id):
 def delete_member(group_id, person_id):
     if not is_overseer_or_admin(group_id):
         return logged_response(
-            'You must be either an admin or an overseer of the group to make this request', 403)
+            'You must be either an admin or an overseer of the group to make this request',
+            403)
 
     member = db.session.query(Member).filter_by(
         group_id=group_id, person_id=person_id).first()
 
     if member is None:
         return logged_response(
-            f"Member with group_id #{group_id} and person_id #{person_id} does not exist", 404)
+            f"Member with group_id #{group_id} and person_id #{person_id} does not exist",
+            404)
 
     db.session.delete(member)
     db.session.commit()
@@ -698,13 +715,15 @@ def create_attendance(meeting_id, person_id):
 
     if not is_overseer_or_admin(meeting.group_id):
         return logged_response(
-            'You must be either an admin or an overseer of the group to make this request', 403)
+            'You must be either an admin or an overseer of the group to make this request',
+            403)
 
     if db.session.query(Attendance).filter_by(
             person_id=person_id, meeting_id=meeting_id).first():
         # if the same attendance already exists
         return logged_response(
-            f"Attendance with meeting_id #{meeting_id} and person_id #{person_id} already exists", 409)
+            f"Attendance with meeting_id #{meeting_id} and person_id #{person_id} already exists",
+            409)
 
     new_attendance = Attendance(meeting_id=meeting_id, person_id=person_id)
     db.session.add(new_attendance)
@@ -725,7 +744,8 @@ def read_all_attendances(meeting_id):
 
 
 @groups.route(
-    '/meetings/<int:meeting_id>/attendances/<int:person_id>', methods=['DELETE'])
+    '/meetings/<int:meeting_id>/attendances/<int:person_id>',
+    methods=['DELETE'])
 @jwt_required
 def delete_attendance(meeting_id, person_id):
     attendance = db.session.query(Attendance).filter_by(
@@ -733,11 +753,13 @@ def delete_attendance(meeting_id, person_id):
 
     if attendance is None:
         return logged_response(
-            f"Attendance with meeting_id #{meeting_id} and person_id #{person_id} does not exist", 404)
+            f"Attendance with meeting_id #{meeting_id} and person_id #{person_id} does not exist",
+            404)
 
     if not is_overseer_or_admin(attendance.meeting.group_id):
         return logged_response(
-            'You must be either an admin or an overseer of the group to make this request', 403)
+            'You must be either an admin or an overseer of the group to make this request',
+            403)
 
     db.session.delete(attendance)
     db.session.commit()
@@ -752,7 +774,8 @@ def delete_attendance(meeting_id, person_id):
 def add_group_images(group_id, image_id):
     if not is_overseer_or_admin(group_id):
         return logged_response(
-            'You must be either an admin or an overseer of the group to make this request', 403)
+            'You must be either an admin or an overseer of the group to make this request',
+            403)
 
     group = db.session.query(Group).filter_by(id=group_id).first()
     image = db.session.query(Image).filter_by(id=image_id).first()
@@ -771,14 +794,16 @@ def add_group_images(group_id, image_id):
     # If image is already attached to the group
     if group_image:
         return logged_response(
-            f"Image with id#{image_id} is already attached to group with id#{group_id}.", 422)
+            f"Image with id#{image_id} is already attached to group with id#{group_id}.",
+            422)
     else:
         new_entry = ImageGroup(**{'group_id': group_id, 'image_id': image_id})
         db.session.add(new_entry)
         db.session.commit()
 
     return logged_response(
-        f"Image with id #{image_id} successfully added to Group with id #{group_id}.", 201)
+        f"Image with id #{image_id} successfully added to Group with id #{group_id}.",
+        201)
 
 
 @groups.route('/groups/<int:group_id>/images/<int:image_id>', methods=['PUT'])
@@ -786,7 +811,8 @@ def add_group_images(group_id, image_id):
 def put_group_images(group_id, image_id):
     if not is_overseer_or_admin(group_id):
         return logged_response(
-            'You must be either an admin or an overseer of the group to make this request', 403)
+            'You must be either an admin or an overseer of the group to make this request',
+            403)
 
     # check for old image id in parameter list (?old=<id>)
     old_image_id = request.args['old']
@@ -810,7 +836,8 @@ def put_group_images(group_id, image_id):
 def delete_group_image(group_id, image_id):
     if not is_overseer_or_admin(group_id):
         return logged_response(
-            'You must be either an admin or an overseer of the group to make this request', 403)
+            'You must be either an admin or an overseer of the group to make this request',
+            403)
 
     group_image = db.session.query(ImageGroup).filter_by(
         group_id=group_id, image_id=image_id).first()

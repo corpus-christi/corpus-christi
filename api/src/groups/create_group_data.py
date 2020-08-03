@@ -114,9 +114,12 @@ def member_history_object_factory(
     member_history = {
         'personId': person_id,
         'groupId': group_id,
-        'joined': joined or str(fake.date_between(start_date='-3y', end_date='today')),
-        'left': left or str(datetime.date.today())
-    }
+        'joined': joined or str(
+            fake.date_between(
+                start_date='-3y',
+                end_date='today')),
+        'left': left or str(
+            datetime.date.today())}
     return member_history
 
 

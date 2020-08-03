@@ -483,14 +483,18 @@ def test_read_active_state_of_courses(auth_client):
     # Test listing all inactive courses
     # WHEN call to database
     resp = auth_client.get(
-        url_for('courses.read_active_state_of_courses', active_state='inactive'))
+        url_for(
+            'courses.read_active_state_of_courses',
+            active_state='inactive'))
     # THEN assert all active courses are listed
     assert resp.status_code == 200
     assert len(resp.json) == count_inactive
     # Test listing courses with invalid state
     # WHEN call to database
     resp = auth_client.get(
-        url_for('courses.read_active_state_of_courses', active_state='garbage'))
+        url_for(
+            'courses.read_active_state_of_courses',
+            active_state='garbage'))
     # THEN assert error code
     assert resp.status_code == 404
 
@@ -538,9 +542,14 @@ def test_update_course(auth_client):
     courses = auth_client.sqla.query(Course).all()
     # WHEN course information updated
     for course in courses:
-        resp = auth_client.patch(url_for('courses.update_course', course_id=course.id),
-                                 json={'name': 'test_name',
-                                       'description': 'test_descr', 'active': False})
+        resp = auth_client.patch(
+            url_for(
+                'courses.update_course',
+                course_id=course.id),
+            json={
+                'name': 'test_name',
+                'description': 'test_descr',
+                'active': False})
         # THEN assert course reflects new detail(s)
         assert resp.status_code == 200
         assert resp.json['name'] == 'test_name'
@@ -571,8 +580,12 @@ def test_create_prerequisite(auth_client):
     for prereq in courses:
         prereq_ids.append(prereq.id)
     # WHEN course requires previous attendance to another course
-    resp = auth_client.post(url_for('courses.create_prerequisite', course_id=course.id),
-                            json={'prerequisites': prereq_ids})
+    resp = auth_client.post(
+        url_for(
+            'courses.create_prerequisite',
+            course_id=course.id),
+        json={
+            'prerequisites': prereq_ids})
     assert resp.status_code == 201
     # THEN asssert course is prerequisite
     course = auth_client.sqla.query(Course).all()[0]
@@ -624,7 +637,9 @@ def test_read_one_course_prerequisites(auth_client):
     # THEN list all prerequisites of given course
     for course in courses:
         resp = auth_client.get(
-            url_for('courses.read_one_course_prerequisites', course_id=course.id))
+            url_for(
+                'courses.read_one_course_prerequisites',
+                course_id=course.id))
         assert resp.status_code == 200
         for i in range(len(resp.json)):
             assert resp.json[i]['id'] == course.prerequisites[i].id
@@ -637,8 +652,12 @@ def test_update_prerequisite(auth_client):
     # Test with invalid course
     # GIVEN empty database
     # WHEN databse queried
-    resp = auth_client.patch(url_for('courses.update_prerequisite', course_id=1),
-                             json={'prerequisites': [1]})
+    resp = auth_client.patch(
+        url_for(
+            'courses.update_prerequisite',
+            course_id=1),
+        json={
+            'prerequisites': [1]})
     # THEN assert error code
     assert resp.status_code == 404
     # Test with populated database
@@ -649,8 +668,12 @@ def test_update_prerequisite(auth_client):
     courses = auth_client.sqla.query(Course).all()
     # WHEN new prereq for existing course is required
     for course in courses:
-        resp = auth_client.patch(url_for('courses.update_prerequisite', course_id=course.id),
-                                 json={'prerequisites': [1]})
+        resp = auth_client.patch(
+            url_for(
+                'courses.update_prerequisite',
+                course_id=course.id),
+            json={
+                'prerequisites': [1]})
         assert resp.status_code == 200
     # THEN existing course has new prereq in place of existing prereq
     courses = auth_client.sqla.query(Course).all()
@@ -679,8 +702,10 @@ def test_create_course_offering(auth_client):
     course = auth_client.sqla.query(Course).first()
     # WHEN one or more courses need a section to offer
     for i in range(count):
-        resp = auth_client.post(url_for(
-            'courses.create_course_offering'), json=course_offerings_object_factory(course.id))
+        resp = auth_client.post(
+            url_for('courses.create_course_offering'),
+            json=course_offerings_object_factory(
+                course.id))
         assert resp.status_code == 201
     # THEN create new course section
     assert auth_client.sqla.query(Course_Offering).count() == count
@@ -706,21 +731,27 @@ def test_read_active_state_course_offerings(auth_client):
     create_multiple_course_offerings_inactive(auth_client.sqla, count_inactive)
     # WHEN call to database
     resp = auth_client.get(
-        url_for('courses.read_active_state_course_offerings', active_state='active'))
+        url_for(
+            'courses.read_active_state_course_offerings',
+            active_state='active'))
     # THEN assert all active courses are listed
     assert resp.status_code == 200
     assert len(resp.json) == count_active
     # Test listing all inactive courses
     # WHEN call to database
     resp = auth_client.get(
-        url_for('courses.read_active_state_course_offerings', active_state='inactive'))
+        url_for(
+            'courses.read_active_state_course_offerings',
+            active_state='inactive'))
     # THEN assert all active courses are listed
     assert resp.status_code == 200
     assert len(resp.json) == count_inactive
     # Test listing courses with invalid state
     # WHEN call to database
     resp = auth_client.get(
-        url_for('courses.read_active_state_course_offerings', active_state='garbage'))
+        url_for(
+            'courses.read_active_state_course_offerings',
+            active_state='garbage'))
     # THEN assert error code
     assert resp.status_code == 404
 
@@ -734,8 +765,10 @@ def test_read_one_course_offering(auth_client):
     course_offerings = auth_client.sqla.query(Course_Offering).all()
     # THEN list one course section of course
     for course_offering in course_offerings:
-        resp = auth_client.get(url_for(
-            'courses.read_one_course_offering', course_offering_id=course_offering.id))
+        resp = auth_client.get(
+            url_for(
+                'courses.read_one_course_offering',
+                course_offering_id=course_offering.id))
         assert resp.status_code == 200
         assert resp.json['maxSize'] == course_offering.max_size
         assert resp.json['description'] == course_offering.description
@@ -759,8 +792,14 @@ def test_update_course_offering(auth_client):
     course_offerings = auth_client.sqla.query(Course_Offering).all()
     # WHEN course offering needs to update existing information
     for course_offering in course_offerings:
-        resp = auth_client.patch(url_for('courses.update_course_offering', course_offering_id=course_offering.id),
-                                 json={'maxSize': 1, 'description': 'test_descr', 'active': False})
+        resp = auth_client.patch(
+            url_for(
+                'courses.update_course_offering',
+                course_offering_id=course_offering.id),
+            json={
+                'maxSize': 1,
+                'description': 'test_descr',
+                'active': False})
         # THEN assert changes to course offering reflect update
         assert resp.status_code == 200
         assert resp.json['maxSize'] == 1
@@ -856,9 +895,18 @@ def test_update_diploma(auth_client):
     diplomas = auth_client.sqla.query(Course).all()
     # WHEN diploma information updated
     for diploma in diplomas:
-        resp = auth_client.patch(url_for('courses.update_diploma', diploma_id=diploma.id),
-                                 json={'name': 'test_name', 'description': 'test_descr', 'active': False,
-                                       'courseList': [1, 2, 3]})
+        resp = auth_client.patch(
+            url_for(
+                'courses.update_diploma',
+                diploma_id=diploma.id),
+            json={
+                'name': 'test_name',
+                'description': 'test_descr',
+                'active': False,
+                'courseList': [
+                    1,
+                    2,
+                    3]})
         # THEN assert diploma reflects new detail(s)
         assert resp.status_code == 200
         assert resp.json['name'] == 'test_name'
@@ -869,8 +917,12 @@ def test_update_diploma(auth_client):
     # Test without fake attribute
     # GIVEN diploma in database
     # WHEN some fake attribute is to be updated
-    resp = auth_client.patch(url_for('courses.update_diploma', diploma_id=diploma.id),
-                             json={'fake_attr': 'fake_attr'})
+    resp = auth_client.patch(
+        url_for(
+            'courses.update_diploma',
+            diploma_id=diploma.id),
+        json={
+            'fake_attr': 'fake_attr'})
     # THEN assert error code
     assert resp.status_code == 422
 
@@ -887,8 +939,11 @@ def test_add_course_to_diploma(auth_client):
     create_multiple_courses(auth_client.sqla, 1)
     new_course = auth_client.sqla.query(Course).all()[count]
     # WHEN query database
-    resp = auth_client.put(url_for(
-        'courses.add_course_to_diploma', diploma_id=diploma.id, course_id=new_course.id))
+    resp = auth_client.put(
+        url_for(
+            'courses.add_course_to_diploma',
+            diploma_id=diploma.id,
+            course_id=new_course.id))
     # THEN assert course is now added
     diploma_courses.append(new_course.id)
     assert resp.status_code == 200
@@ -896,8 +951,11 @@ def test_add_course_to_diploma(auth_client):
     # Add course already in diploma
     # GIVEN course already in diploma's courses
     # WHEN asked to add it again
-    resp = auth_client.put(url_for(
-        'courses.add_course_to_diploma', diploma_id=diploma.id, course_id=new_course.id))
+    resp = auth_client.put(
+        url_for(
+            'courses.add_course_to_diploma',
+            diploma_id=diploma.id,
+            course_id=new_course.id))
     # THEN assert error code
     assert resp.status_code == 409
 
@@ -913,8 +971,11 @@ def test_remove_course_from_diploma(auth_client):
     diploma_courses.append(diploma.courses)
     course_to_remove = diploma.courses[0]
     # WHEN query database
-    resp = auth_client.delete(url_for(
-        'courses.remove_course_from_diploma', diploma_id=diploma.id, course_id=course_to_remove.id))
+    resp = auth_client.delete(
+        url_for(
+            'courses.remove_course_from_diploma',
+            diploma_id=diploma.id,
+            course_id=course_to_remove.id))
     # THEN assert course is now removed
     assert resp.status_code == 200
     diploma = auth_client.sqla.query(Diploma).first()
@@ -923,8 +984,11 @@ def test_remove_course_from_diploma(auth_client):
     # Remove course not in diploma
     # GIVEN course not in diploma's courses
     # WHEN asked to reomve it again
-    resp = auth_client.delete(url_for(
-        'courses.remove_course_from_diploma', diploma_id=diploma.id, course_id=course_to_remove.id))
+    resp = auth_client.delete(
+        url_for(
+            'courses.remove_course_from_diploma',
+            diploma_id=diploma.id,
+            course_id=course_to_remove.id))
     # THEN assert error code
     assert resp.status_code == 404
 
@@ -932,10 +996,16 @@ def test_remove_course_from_diploma(auth_client):
     # GIVEN diploma that has been awarded
     create_multiple_people(auth_client.sqla, 1)
     create_diploma_awards(auth_client.sqla, 1)
-    auth_client.put(url_for('courses.add_course_to_diploma',
-                            diploma_id=diploma.id, course_id=course_to_remove.id))
-    resp = auth_client.delete(url_for(
-        'courses.remove_course_from_diploma', diploma_id=diploma.id, course_id=course_to_remove.id))
+    auth_client.put(
+        url_for(
+            'courses.add_course_to_diploma',
+            diploma_id=diploma.id,
+            course_id=course_to_remove.id))
+    resp = auth_client.delete(
+        url_for(
+            'courses.remove_course_from_diploma',
+            diploma_id=diploma.id,
+            course_id=course_to_remove.id))
     assert resp.status_code == 403
 
 
@@ -960,7 +1030,7 @@ def test_activate_diploma(auth_client):
         url_for('courses.activate_diploma', diploma_id=diploma.id))
     # THEN assert it worked
     assert resp.status_code == 200
-    assert auth_client.sqla.query(Diploma).first().active == True
+    assert auth_client.sqla.query(Diploma).first().active
 
 
 def test_deactivate_diploma(auth_client):
@@ -1007,15 +1077,21 @@ def test_create_diploma_awarded(auth_client):
     create_multiple_diplomas(auth_client.sqla, count)
     # WHEN database does not contain entry
     for i in range(count):
-        resp = auth_client.post(url_for(
-            'courses.create_diploma_awarded'), json=diploma_award_object_factory(i + 1, 1))
+        resp = auth_client.post(
+            url_for('courses.create_diploma_awarded'),
+            json=diploma_award_object_factory(
+                i + 1,
+                1))
         assert resp.status_code == 201
     # THEN assert that entry is now in database
     assert auth_client.sqla.query(DiplomaAwarded).count() == count
 
     # Test creating an already existing diploma awarded
-    resp = auth_client.post(url_for(
-        'courses.create_diploma_awarded'), json=diploma_award_object_factory(1, 1))
+    resp = auth_client.post(
+        url_for('courses.create_diploma_awarded'),
+        json=diploma_award_object_factory(
+            1,
+            1))
     assert resp.status_code == 409
 
 
@@ -1060,8 +1136,11 @@ def test_read_one_diploma_awarded(auth_client):
     diplomas_awarded = auth_client.sqla.query(DiplomaAwarded).all()
     # THEN assert entry called is only entry returned
     for diploma_awarded in diplomas_awarded:
-        resp = auth_client.get(url_for(
-            'courses.read_one_diploma_awarded', diploma_id=diploma_awarded.diploma_id, person_id=1))
+        resp = auth_client.get(
+            url_for(
+                'courses.read_one_diploma_awarded',
+                diploma_id=diploma_awarded.diploma_id,
+                person_id=1))
         # THEN we find a matching class
         assert resp.status_code == 200
         assert resp.json['personId'] == diploma_awarded.person_id
@@ -1090,9 +1169,13 @@ def test_update_diploma_awarded(auth_client):
     time = str(fake.past_date(start_date="-30d"))
     # WHEN course information updated
     for diploma_awarded in diplomas_awarded:
-        resp = auth_client.patch(url_for('courses.update_diploma_awarded', diploma_id=diploma_awarded.diploma_id,
-                                         person_id=diploma_awarded.person_id),
-                                 json={'when': time})
+        resp = auth_client.patch(
+            url_for(
+                'courses.update_diploma_awarded',
+                diploma_id=diploma_awarded.diploma_id,
+                person_id=diploma_awarded.person_id),
+            json={
+                'when': time})
         # THEN assert meeting reflectts new detail(s)
         assert resp.status_code == 200
         assert datetime.strptime(
@@ -1100,9 +1183,13 @@ def test_update_diploma_awarded(auth_client):
     # Test with fake attribute
     # GIVEN diploma awarded in database
     # WHEN some fake attribute is to be updated
-    resp = auth_client.patch(url_for('courses.update_diploma_awarded', diploma_id=diploma_awarded.diploma_id,
-                                     person_id=diploma_awarded.person_id),
-                             json={'fake_attr': 'fake_attr'})
+    resp = auth_client.patch(
+        url_for(
+            'courses.update_diploma_awarded',
+            diploma_id=diploma_awarded.diploma_id,
+            person_id=diploma_awarded.person_id),
+        json={
+            'fake_attr': 'fake_attr'})
     # THEN assert error code
     assert resp.status_code == 422
 
@@ -1123,8 +1210,11 @@ def test_delete_diploma_awarded(auth_client):
     create_diploma_awards(auth_client.sqla, 1)
     diploma_awarded = auth_client.sqla.query(DiplomaAwarded).first()
     # WHEN deleted
-    resp = auth_client.delete(url_for('courses.delete_diploma_awarded',
-                                      diploma_id=diploma_awarded.diploma_id, person_id=diploma_awarded.person_id))
+    resp = auth_client.delete(
+        url_for(
+            'courses.delete_diploma_awarded',
+            diploma_id=diploma_awarded.diploma_id,
+            person_id=diploma_awarded.person_id))
     # THEN assert it is gone
     assert resp.status_code == 200
     assert auth_client.sqla.query(DiplomaAwarded).all() == []
@@ -1186,7 +1276,9 @@ def test_read_all_course_offering_students(auth_client):
     create_multiple_students(auth_client.sqla, count, 1)
     # WHEN call to database
     resp = auth_client.get(
-        url_for('courses.read_all_course_offering_students', course_offering_id=1))
+        url_for(
+            'courses.read_all_course_offering_students',
+            course_offering_id=1))
     # THEN assert all entries from database are called
     assert resp.status_code == 200
     assert len(resp.json) == count
@@ -1253,16 +1345,30 @@ def test_update_student(auth_client):
     student = auth_client.sqla.query(Student).one()
     attr = not student.confirmed
     # THEN assert these updates to the student
-    resp = auth_client.patch(url_for('courses.update_student', student_id=student.id),
-                             json={"offering_id": 1, "student_id": student.id, "confirmed": attr, "active": False})
+    resp = auth_client.patch(
+        url_for(
+            'courses.update_student',
+            student_id=student.id),
+        json={
+            "offering_id": 1,
+            "student_id": student.id,
+            "confirmed": attr,
+            "active": False})
     assert resp.status_code == 200
     assert resp.json['confirmed'] == attr
     # Test with invalid student
     # GIVEN an invalid student_id
     student_id = 42
     # WHEN the id is updated to student
-    resp = auth_client.patch(url_for('courses.update_student', student_id=student_id),
-                             json={"offering_id": 1, "student_id": student_id, "confirmed": True, "active": False})
+    resp = auth_client.patch(
+        url_for(
+            'courses.update_student',
+            student_id=student_id),
+        json={
+            "offering_id": 1,
+            "student_id": student_id,
+            "confirmed": True,
+            "active": False})
     # THEN there should be a 404 error
     assert resp.status_code == 404
 
@@ -1284,8 +1390,14 @@ def test_add_class_attendance(auth_client):
     students = auth_client.sqla.query(Student).all()
     # WHEN database does not contain entry
     for i in range(len(students) + 1):
-        resp = auth_client.post(url_for('courses.add_class_attendance',
-                                        course_offering_id=1, class_meeting_id=1), json={'attendance': [i + 1]})
+        resp = auth_client.post(
+            url_for(
+                'courses.add_class_attendance',
+                course_offering_id=1,
+                class_meeting_id=1),
+            json={
+                'attendance': [
+                    i + 1]})
         assert resp.status_code == 200
     # THEN assert that entry is now in database
     assert auth_client.sqla.query(ClassAttendance).count() == len(students)
@@ -1308,8 +1420,10 @@ def test_read_one_class_attendance(auth_client):
     class_attendance = auth_client.sqla.query(ClassAttendance).first()
     students = auth_client.sqla.query(Student).all()
     # THEN list all prerequisites of given course
-    resp = auth_client.get(url_for(
-        'courses.read_one_class_attendance', course_offering_id=class_attendance.class_id))
+    resp = auth_client.get(
+        url_for(
+            'courses.read_one_class_attendance',
+            course_offering_id=class_attendance.class_id))
     assert resp.status_code == 200
     for i in range(count):
         assert resp.json[0]['attendance'][i]['studentId'] == students[i].id
@@ -1321,8 +1435,11 @@ def test_read_one_meeting_attendance(auth_client):
     count = random.randint(3, 15)
     setup_dependencies_of_class_meeting(auth_client, 1)
     # WHEN databse queried
-    resp = auth_client.get(url_for(
-        'courses.read_one_meeting_attendance', course_offering_id=1, class_meeting_id=1))
+    resp = auth_client.get(
+        url_for(
+            'courses.read_one_meeting_attendance',
+            course_offering_id=1,
+            class_meeting_id=1))
     # THEN assert error code
     assert resp.status_code == 404
     # Test with populated database
@@ -1334,8 +1451,11 @@ def test_read_one_meeting_attendance(auth_client):
     class_attendance = auth_client.sqla.query(ClassAttendance).first()
     students = auth_client.sqla.query(Student).all()
     # THEN list all prerequisites of given course
-    resp = auth_client.get(url_for('courses.read_one_meeting_attendance',
-                                   course_offering_id=class_attendance.class_id, class_meeting_id=1))
+    resp = auth_client.get(
+        url_for(
+            'courses.read_one_meeting_attendance',
+            course_offering_id=class_attendance.class_id,
+            class_meeting_id=1))
     assert resp.status_code == 200
     for i in range(count):
         assert resp.json['attendance'][i]['studentId'] == students[i].id
@@ -1359,8 +1479,11 @@ def test_create_class_meeting(auth_client):
     # GIVEN invalid class meeting to put in database
     broken_class_meeting = {}
     # WHEN database queried
-    resp = auth_client.post(url_for(
-        'courses.create_class_meeting', course_offering_id=1), json=broken_class_meeting)
+    resp = auth_client.post(
+        url_for(
+            'courses.create_class_meeting',
+            course_offering_id=1),
+        json=broken_class_meeting)
     # THEN assert exception thrown
     assert resp.status_code == 422
     # Test creating valid class meeting
@@ -1371,17 +1494,28 @@ def test_create_class_meeting(auth_client):
     count = random.randint(8, 19)
     # WHEN database does not contain entry
     for i in range(count):
-        resp = auth_client.post(url_for('courses.create_class_meeting', course_offering_id=offering_id),
-                                json=class_meeting_object_factory(teacher_id, offering_id))
+        resp = auth_client.post(
+            url_for(
+                'courses.create_class_meeting',
+                course_offering_id=offering_id),
+            json=class_meeting_object_factory(
+                teacher_id,
+                offering_id))
         assert resp.status_code == 201
     # THEN assert that entry is now in database
     assert auth_client.sqla.query(ClassMeeting).count() == count
     # Test creating class meeting that already exists
     duplicate_meeting = class_meeting_object_factory(teacher_id, offering_id)
-    resp = auth_client.post(url_for('courses.create_class_meeting',
-                                    course_offering_id=offering_id), json=duplicate_meeting)
-    resp = auth_client.post(url_for('courses.create_class_meeting',
-                                    course_offering_id=offering_id), json=duplicate_meeting)
+    resp = auth_client.post(
+        url_for(
+            'courses.create_class_meeting',
+            course_offering_id=offering_id),
+        json=duplicate_meeting)
+    resp = auth_client.post(
+        url_for(
+            'courses.create_class_meeting',
+            course_offering_id=offering_id),
+        json=duplicate_meeting)
     assert resp.status_code == 208
 
 
@@ -1402,8 +1536,11 @@ def test_read_one_class_meeting(auth_client):
     # Test with invalid class meeting
     # GIVEN empty database
     # WHEN database queried
-    resp = auth_client.get(url_for(
-        'courses.read_one_class_meeting', course_offering_id=1, class_meeting_id=1))
+    resp = auth_client.get(
+        url_for(
+            'courses.read_one_class_meeting',
+            course_offering_id=1,
+            class_meeting_id=1))
     # THEN assert error code
     assert resp.status_code == 404
     # Test with populated database
@@ -1431,8 +1568,11 @@ def test_update_class_meeting(auth_client):
     # Test with invalid meeting
     # GIVEN empty database
     # WHEN databse queried
-    resp = auth_client.patch(url_for(
-        'courses.update_class_meeting', course_offering_id=1, class_meeting_id=1))
+    resp = auth_client.patch(
+        url_for(
+            'courses.update_class_meeting',
+            course_offering_id=1,
+            class_meeting_id=1))
     # THEN assert error code
     assert resp.status_code == 404
     # Test with populated database
@@ -1445,22 +1585,34 @@ def test_update_class_meeting(auth_client):
     time = str(fake.future_datetime(end_date="+30d"))
     # WHEN course information updated
     for meeting in meetings:
-        resp = auth_client.patch(url_for('courses.update_class_meeting',
-                                         course_offering_id=meeting.offering_id,
-                                         class_meeting_id=meeting.id),
-                                 json={'teacherId': 1, 'when': time, 'locationId': 1})
+        resp = auth_client.patch(
+            url_for(
+                'courses.update_class_meeting',
+                course_offering_id=meeting.offering_id,
+                class_meeting_id=meeting.id),
+            json={
+                'teacherId': 1,
+                'when': time,
+                'locationId': 1})
         # THEN assert meeting reflectts new detail(s)
         assert resp.status_code == 200
         assert resp.json['teacherId'] == 1
         assert datetime.strptime(
-            resp.json['when'], '%Y-%m-%dT%H:%M:%S+00:00') == datetime.strptime(time, '%Y-%m-%d %H:%M:%S')
+            resp.json['when'],
+            '%Y-%m-%dT%H:%M:%S+00:00') == datetime.strptime(
+            time,
+            '%Y-%m-%d %H:%M:%S')
         assert resp.json['locationId'] == 1
     # Test without fake attribute
     # GIVEN class meeting in database
     # WHEN some fake attribute is to be updated
     resp = auth_client.patch(
-        url_for('courses.update_class_meeting', course_offering_id=meeting.offering_id, class_meeting_id=meeting.id),
-        json={'fake_attr': 'fake_attr'})
+        url_for(
+            'courses.update_class_meeting',
+            course_offering_id=meeting.offering_id,
+            class_meeting_id=meeting.id),
+        json={
+            'fake_attr': 'fake_attr'})
     # THEN assert error code
     assert resp.status_code == 422
 
@@ -1469,8 +1621,11 @@ def test_delete_class_meeting(auth_client):
     # Test with invalid meeting
     # GIVEN empty database
     # WHEN databse queried
-    resp = auth_client.delete(url_for(
-        'courses.delete_class_meeting', course_offering_id=1, class_meeting_id=1))
+    resp = auth_client.delete(
+        url_for(
+            'courses.delete_class_meeting',
+            course_offering_id=1,
+            class_meeting_id=1))
     # THEN assert error code
     assert resp.status_code == 404
     # Test with populated database
@@ -1481,8 +1636,11 @@ def test_delete_class_meeting(auth_client):
     meetings = auth_client.sqla.query(ClassMeeting).all()
     # WHEN deleted
     for meeting in meetings:
-        resp = auth_client.delete(url_for('courses.delete_class_meeting',
-                                          course_offering_id=meeting.offering_id, class_meeting_id=meeting.id))
+        resp = auth_client.delete(
+            url_for(
+                'courses.delete_class_meeting',
+                course_offering_id=meeting.offering_id,
+                class_meeting_id=meeting.id))
         count -= 1
         # THEN assert meeting is no longer in database
         assert resp.status_code == 200
@@ -1494,8 +1652,11 @@ def test_delete_class_meeting(auth_client):
     create_class_attendance(auth_client.sqla, 1)
     meeting = auth_client.sqla.query(ClassMeeting).first()
     # WHEN database queried
-    resp = auth_client.delete(url_for('courses.delete_class_meeting',
-                                      course_offering_id=meeting.offering_id, class_meeting_id=meeting.id))
+    resp = auth_client.delete(
+        url_for(
+            'courses.delete_class_meeting',
+            course_offering_id=meeting.offering_id,
+            class_meeting_id=meeting.id))
     # THEN assert error code
     assert resp.status_code == 403
 
@@ -1514,7 +1675,11 @@ def test_delete_course_completion(auth_client):
     # GIVEN empty database
     # WHEN databse queried
     resp = auth_client.delete(
-        url_for('courses.delete_course_completion', courses_id=1), json={'personId': 1})
+        url_for(
+            'courses.delete_course_completion',
+            courses_id=1),
+        json={
+            'personId': 1})
     # THEN assert error code
     assert resp.status_code == 404
     # Test with populated database
@@ -1524,8 +1689,12 @@ def test_delete_course_completion(auth_client):
     course = auth_client.sqla.query(Course).first()
     create_course_completion(auth_client.sqla, 1)
     # WHEN deleted
-    resp = auth_client.delete(url_for(
-        'courses.delete_course_completion', courses_id=course.id), json={'personId': 1})
+    resp = auth_client.delete(
+        url_for(
+            'courses.delete_course_completion',
+            courses_id=course.id),
+        json={
+            'personId': 1})
     # THEN assert it is gone
     assert resp.status_code == 200
     assert auth_client.sqla.query(CourseCompletion).all() == []
@@ -1544,8 +1713,11 @@ def test_add_course_images(auth_client):
     # WHEN an image is requested to be tied to each course
     for i in range(count):
         print(i)
-        resp = auth_client.post(url_for(
-            'courses.add_course_images', course_id=courses[i].id, image_id=images[i].id))
+        resp = auth_client.post(
+            url_for(
+                'courses.add_course_images',
+                course_id=courses[i].id,
+                image_id=images[i].id))
 
         # THEN expect the request to run OK
         assert resp.status_code == 201
@@ -1567,7 +1739,10 @@ def test_add_course_images_no_exist(auth_client):
 
     # WHEN a no existant image is requested to be tied to an course
     resp = auth_client.post(
-        url_for('courses.add_course_images', course_id=1, image_id=len(images) + 1))
+        url_for(
+            'courses.add_course_images',
+            course_id=1,
+            image_id=len(images) + 1))
 
     # THEN expect the image not to be found
     assert resp.status_code == 404

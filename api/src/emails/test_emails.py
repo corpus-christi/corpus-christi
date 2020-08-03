@@ -27,8 +27,8 @@ def email_object_factory():
         'body': 'This is a test email',
         'managerEmail': 'qiang_wang@taylor.edu',
         'reply_to': 'qiang_wang@taylor.edu'
-#         'cc': '',
-#         'bcc':''
+        #         'cc': '',
+        #         'bcc':''
     }
 
     return email

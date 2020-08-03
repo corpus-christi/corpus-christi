@@ -96,9 +96,17 @@ class Language(Base):
         return f"<Language(code='{self.code}',name='{self.name_i18n}')>"
 
     @classmethod
-    def load_from_file(cls, file_name='language-codes.json', locale_code='en-US'):
+    def load_from_file(
+            cls,
+            file_name='language-codes.json',
+            locale_code='en-US'):
         count = 0
-        file_path = os.path.abspath(os.path.join(__file__, os.path.pardir, 'data', file_name))
+        file_path = os.path.abspath(
+            os.path.join(
+                __file__,
+                os.path.pardir,
+                'data',
+                file_name))
 
         if not db.session.query(I18NLocale).get(locale_code):
             db.session.add(I18NLocale(code=locale_code, desc='English US'))
@@ -112,11 +120,16 @@ class Language(Base):
 
                 name_i18n = f'language.name.{language_code}'[:32]
                 if not i18n_check(name_i18n, locale_code):
-                    i18n_create(name_i18n, locale_code,
-                                language_name, description=f"Language {language_name}")
+                    i18n_create(
+                        name_i18n,
+                        locale_code,
+                        language_name,
+                        description=f"Language {language_name}")
 
-                if not db.session.query(cls).filter_by(code=language_code).count():
-                    db.session.add(cls(code=language_code, name_i18n=name_i18n))
+                if not db.session.query(cls).filter_by(
+                        code=language_code).count():
+                    db.session.add(
+                        cls(code=language_code, name_i18n=name_i18n))
                     count += 1
             db.session.commit()
         fp.close()
@@ -190,4 +203,5 @@ def i18n_delete(key_id, locale_code):
 
 def i18n_check(key_id, locale_code):
     """Check whether there's a value with the given key and locale."""
-    return db.session.query(I18NValue).filter_by(key_id=key_id, locale_code=locale_code).first()
+    return db.session.query(I18NValue).filter_by(
+        key_id=key_id, locale_code=locale_code).first()

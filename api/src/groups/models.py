@@ -54,8 +54,18 @@ class GroupSchema(Schema):
         only=[
             'person',
             'active'])
-    meetings = fields.Nested('MeetingSchema', dump_only=True, many=True,
-                             only=['group_id', 'address_id', 'start_time', 'stop_time', 'description', 'active', 'attendances'])
+    meetings = fields.Nested(
+        'MeetingSchema',
+        dump_only=True,
+        many=True,
+        only=[
+            'group_id',
+            'address_id',
+            'start_time',
+            'stop_time',
+            'description',
+            'active',
+            'attendances'])
     images = fields.Pluck('ImageGroupSchema', 'image', many=True)
     group_type = fields.Nested(
         'GroupTypeSchema',
@@ -64,8 +74,16 @@ class GroupSchema(Schema):
         only=[
             'id',
             'name'])
-    member_histories = fields.Nested('MemberHistorySchema', many=True, dump_only=True, data_key='memberHistories',
-                                     only=('id', 'joined', 'left', 'person_id'))
+    member_histories = fields.Nested(
+        'MemberHistorySchema',
+        many=True,
+        dump_only=True,
+        data_key='memberHistories',
+        only=(
+            'id',
+            'joined',
+            'left',
+            'person_id'))
 
 # ---- Group Type
 

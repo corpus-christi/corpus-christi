@@ -48,7 +48,8 @@ def create_faker_cli(app):
 
     @faker_cli.command("images", help="Fake images")
     def fake_images():
-        # Always put this close to last (since it has dependencies in all of the major modules)
+        # Always put this close to last (since it has dependencies in all of
+        # the major modules)
         create_images_test_data(db.session)
 
     app.cli.add_command(faker_cli)

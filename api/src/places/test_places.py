@@ -21,7 +21,11 @@ address_schema = AddressSchema()
 def test_read_country(auth_client, code, name):
     count = Country.load_from_file()
     assert count > 0
-    resp = auth_client.get(url_for('places.read_countries', country_code=code, locale='en-US'))
+    resp = auth_client.get(
+        url_for(
+            'places.read_countries',
+            country_code=code,
+            locale='en-US'))
     assert resp.status_code == 200
     print("RESP", resp.json)
     assert resp.json['name'] == name
@@ -150,8 +154,14 @@ def create_multiple_locations(sqla, n):
 
 
 # the addresses won't have latitude and longitude
-def create_location_nested(sqla, address, address_name, description, country_code='EC', area_name='Azuay',
-                           city='Cuenca'):
+def create_location_nested(
+        sqla,
+        address,
+        address_name,
+        description,
+        country_code='EC',
+        area_name='Azuay',
+        city='Cuenca'):
     # {
     # ------- Country related
     #        'country_code': 'US',                  # required for nesting
@@ -165,11 +175,18 @@ def create_location_nested(sqla, address, address_name, description, country_cod
     #        'description': 'Euler 217'             # optional
     # }
     # This method tries to link existing entries in Country, Area, Address table if possible, otherwise create
-    # When there is at least a certain table related field in the payload, the foreign key specified in the payload for that table will be overridden by the fields given
+    # When there is at least a certain table related field in the payload, the
+    # foreign key specified in the payload for that table will be overridden
+    # by the fields given
     def debugPrint(msg):
         print(msg)
 
-    resolving_keys = ('country_code', 'area_name', 'city', 'address', 'address_name')
+    resolving_keys = (
+        'country_code',
+        'area_name',
+        'city',
+        'address',
+        'address_name')
     payload_data = locals()
     # process country information
     resolve_needed = True
@@ -182,9 +199,11 @@ def create_location_nested(sqla, address, address_name, description, country_cod
         if 'country_code' not in payload_data:
             print("'country_code not specified in request body', 422")
             return
-        country = sqla.query(Country).filter_by(code=payload_data['country_code']).first()
+        country = sqla.query(Country).filter_by(
+            code=payload_data['country_code']).first()
         if not country:
-            print(f"no country code found in database matching {payload_data['country_code']}")
+            print(
+                f"no country code found in database matching {payload_data['country_code']}")
             return
         country_code = country.code
         debugPrint(f"Country code resolved: {country_code}")
@@ -192,7 +211,9 @@ def create_location_nested(sqla, address, address_name, description, country_cod
         if 'area_name' not in payload_data:
             print("'area_name not specified in request body', 422")
             return
-        area = sqla.query(Area).filter_by(country_code=country_code, name=payload_data['area_name']).first()
+        area = sqla.query(Area).filter_by(
+            country_code=country_code,
+            name=payload_data['area_name']).first()
         area_id = None
         if area:
             area_id = area.id
@@ -212,8 +233,9 @@ def create_location_nested(sqla, address, address_name, description, country_cod
         # resolve address
         address_name_transform = {'address_name': 'name'}
         address_keys = ('city', 'address', 'address_name')
-        address_payload = {k if k not in address_name_transform else address_name_transform[k]: v
-                           for k, v in payload_data.items() if k in address_keys}
+        address_payload = {
+            k if k not in address_name_transform else address_name_transform[k]: v for k,
+            v in payload_data.items() if k in address_keys}
         address_payload['area_id'] = area_id
         address_payload['country_code'] = country_code
         address = sqla.query(Address).filter_by(**address_payload).first()
@@ -317,7 +339,10 @@ def test_read_area(auth_client):
 
     # WHEN we request each of them from the server
     for area in areas:
-        resp = auth_client.get(url_for('places.read_one_area', area_id=area.id))
+        resp = auth_client.get(
+            url_for(
+                'places.read_one_area',
+                area_id=area.id))
         # THEN we find a matching person
         assert resp.status_code == 200
         assert resp.json['name'] == area.name
@@ -354,7 +379,11 @@ def test_replace_area(auth_client):
         new_area = area_factory(auth_client.sqla)
 
         # WHEN areas are requested to be replaced with new areas
-        resp = auth_client.put(url_for('places.replace_area', area_id=area.id), json=new_area)
+        resp = auth_client.put(
+            url_for(
+                'places.replace_area',
+                area_id=area.id),
+            json=new_area)
 
         # THEN expect request to run OK
         assert resp.status_code == 200
@@ -391,7 +420,11 @@ def test_replace_area_invalid(auth_client):
             new_area[fake.word()] = fake.word()
 
         # WHEN areas are requested to be replaced with bad areas
-        resp = auth_client.put(url_for('places.replace_area', area_id=area.id), json=new_area)
+        resp = auth_client.put(
+            url_for(
+                'places.replace_area',
+                area_id=area.id),
+            json=new_area)
 
         # THEN expect request to be unprocessable
         assert resp.status_code == 422
@@ -417,7 +450,11 @@ def test_update_area(auth_client):
             mod['country_code'] = new_area['country_code']
 
         # WHEN areas are requested to be updated
-        resp = auth_client.patch(url_for('places.update_area', area_id=area.id), json=mod)
+        resp = auth_client.patch(
+            url_for(
+                'places.update_area',
+                area_id=area.id),
+            json=mod)
 
         # THEN expect request run OK
         assert resp.status_code == 200
@@ -455,7 +492,11 @@ def test_update_area_invalid(auth_client):
             mod[fake.word()] = fake.word()
 
         # WHEN areas are requested to be updated with bad data
-        resp = auth_client.patch(url_for('places.update_area', area_id=area.id), json=mod)
+        resp = auth_client.patch(
+            url_for(
+                'places.update_area',
+                area_id=area.id),
+            json=mod)
 
         # THEN expect request to be unprocessable
         assert resp.status_code == 422
@@ -473,7 +514,10 @@ def test_delete_area(auth_client):
     # WHEN areas are deleted
     deleted = 0
     for area in areas:
-        resp = auth_client.delete(url_for('places.delete_area', area_id=area.id))
+        resp = auth_client.delete(
+            url_for(
+                'places.delete_area',
+                area_id=area.id))
         deleted += 1
 
         # THEN for each delete expect delete to run OK
@@ -488,7 +532,12 @@ def test_delete_area_no_exist(auth_client):
     # GIVEN an empty database
 
     # WHEN an area is requested to be deleted
-    resp = auth_client.delete(url_for('places.delete_area', area_id=random.randint(1, 8)))
+    resp = auth_client.delete(
+        url_for(
+            'places.delete_area',
+            area_id=random.randint(
+                1,
+                8)))
 
     # THEN expect row not to be found
     assert resp.status_code == 404
@@ -505,7 +554,10 @@ def test_create_address(auth_client):
 
     # WHEN we create a random number of new addresses
     for i in range(count):
-        resp = auth_client.post(url_for('places.create_address'), json=address_factory(db.session))
+        resp = auth_client.post(
+            url_for('places.create_address'),
+            json=address_factory(
+                db.session))
         assert resp.status_code == 201
     # THEN we end up with the proper number of addresses in the database
     assert auth_client.sqla.query(Address).count() == count
@@ -518,11 +570,14 @@ def test_create_address_invalid(auth_client):
     count = random.randint(3, 6)
     create_multiple_areas(auth_client.sqla, count)
 
-    # WHEN a random number of addresses with bad data are requested to be created
+    # WHEN a random number of addresses with bad data are requested to be
+    # created
     for i in range(count):
         new_address = address_factory(auth_client.sqla)
         new_address[fake.word()] = fake.word()
-        resp = auth_client.post(url_for('places.create_address'), json=new_address)
+        resp = auth_client.post(
+            url_for('places.create_address'),
+            json=new_address)
 
         # THEN expect the requests to be unprocessable
         assert resp.status_code == 422
@@ -546,7 +601,10 @@ def test_read_address(auth_client):
 
     # WHEN we request each of them from the server
     for address in addresses:
-        resp = auth_client.get(url_for('places.read_one_address', address_id=address.id))
+        resp = auth_client.get(
+            url_for(
+                'places.read_one_address',
+                address_id=address.id))
         # THEN we find a matching address
         assert resp.status_code == 200
         assert resp.json['name'] == address.name
@@ -567,7 +625,10 @@ def test_read_all_addresses(auth_client):
     create_multiple_addresses(auth_client.sqla, count)
 
     # WHEN we request all addresses from the server
-    resp = auth_client.get(url_for('places.read_all_addresses', locale='en-US'))
+    resp = auth_client.get(
+        url_for(
+            'places.read_all_addresses',
+            locale='en-US'))
     # THEN the count matches the number of entries in the database
     assert resp.status_code == 200
     assert len(resp.json) == count
@@ -652,7 +713,9 @@ def test_read_all_addresses_with_query(auth_client):
         filtered_results = query_address_with_params(auth_client, query_string)
 
         # WHEN we request all addresses from the server
-        resp = auth_client.get(url_for('places.read_all_addresses'), query_string=query_string)
+        resp = auth_client.get(
+            url_for('places.read_all_addresses'),
+            query_string=query_string)
         # THEN the count matches the number of entries in the database
         assert resp.status_code == 200
         assert len(filtered_results) == len(resp.json)
@@ -693,7 +756,11 @@ def test_replace_address(auth_client):
         new_address = address_factory(auth_client.sqla)
 
         # WHEN replace requests is made with new addresses
-        resp = auth_client.put(url_for('places.replace_address', address_id=address.id), json=new_address)
+        resp = auth_client.put(
+            url_for(
+                'places.replace_address',
+                address_id=address.id),
+            json=new_address)
 
         # THEN expect the requests to run OK
         assert resp.status_code == 200
@@ -745,7 +812,11 @@ def test_replace_address_invalid(auth_client):
         new_address[fake.word()] = fake.word()
 
         # WHEN replace requests is made with bad data
-        resp = auth_client.put(url_for('places.replace_address', address_id=address.id), json=new_address)
+        resp = auth_client.put(
+            url_for(
+                'places.replace_address',
+                address_id=address.id),
+            json=new_address)
 
         # THEN expect the requests to be unprocessable
         assert resp.status_code == 422
@@ -782,7 +853,11 @@ def test_update_address(auth_client):
             mod['longitude'] = new_address['longitude']
 
         # WHEN an update request is made with the modification data
-        resp = auth_client.patch(url_for('places.update_address', address_id=address.id), json=mod)
+        resp = auth_client.patch(
+            url_for(
+                'places.update_address',
+                address_id=address.id),
+            json=mod)
 
         # THEN expect the request to run OK
         assert resp.status_code == 200
@@ -846,7 +921,13 @@ def test_update_address_invalid(auth_client):
     mod[fake.word()] = fake.word()
 
     # WHEN a request to update an address is made
-    resp = auth_client.patch(url_for('places.update_address', address_id=random.randint(1, 8)), json=mod)
+    resp = auth_client.patch(
+        url_for(
+            'places.update_address',
+            address_id=random.randint(
+                1,
+                8)),
+        json=mod)
 
     # THEN expect request to not be processable
     assert resp.status_code == 422
@@ -866,7 +947,10 @@ def test_delete_address(auth_client):
     deleted = 0
     for address in addresses:
         if flip():
-            resp = auth_client.delete(url_for('places.delete_address', address_id=address.id))
+            resp = auth_client.delete(
+                url_for(
+                    'places.delete_address',
+                    address_id=address.id))
             deleted += 1
 
             # THEN expect each delete to run OK
@@ -882,7 +966,12 @@ def test_delete_address_no_exist(auth_client):
     # GIVEN an empty database
 
     # WHEN an address is requested to be deleted
-    resp = auth_client.delete(url_for('places.delete_address', address_id=random.randint(1, 8)))
+    resp = auth_client.delete(
+        url_for(
+            'places.delete_address',
+            address_id=random.randint(
+                1,
+                8)))
 
     # THEN expect row not to be found
     assert resp.status_code == 404
@@ -900,7 +989,10 @@ def test_create_location(auth_client):
 
     # WHEN we create a random number of new locations
     for i in range(count):
-        resp = auth_client.post(url_for('places.create_location'), json=location_factory(db.session))
+        resp = auth_client.post(
+            url_for('places.create_location'),
+            json=location_factory(
+                db.session))
         assert resp.status_code == 201
     # THEN we end up with the proper number of locations in the database
     assert auth_client.sqla.query(Location).count() == count
@@ -920,7 +1012,9 @@ def test_create_location_invalid(auth_client):
         new_location[fake.word()] = fake.word()
 
         # WHEN locations with bad data are requested to be created
-        resp = auth_client.post(url_for('places.create_location'), json=new_location)
+        resp = auth_client.post(
+            url_for('places.create_location'),
+            json=new_location)
 
         # THEN expect requests to be unprocessable
         assert resp.status_code == 422
@@ -975,7 +1069,9 @@ def test_create_location_nested(auth_client):
         'address_name': 'Taylor University',
         'description': 'Euler 217'
     }
-    resp = auth_client.post(url_for('places.create_location'), json=incomplete_payload)
+    resp = auth_client.post(
+        url_for('places.create_location'),
+        json=incomplete_payload)
     # THEN we expect an error
     assert resp.status_code == 422
 
@@ -991,7 +1087,10 @@ def test_read_all_locations(auth_client):
     assert count > 0
 
     # WHEN we request all addresses from the server
-    resp = auth_client.get(url_for('places.read_all_locations', locale='en-US'))
+    resp = auth_client.get(
+        url_for(
+            'places.read_all_locations',
+            locale='en-US'))
     # THEN the count matches the number of entries in the database
     assert resp.status_code == 200
     assert len(resp.json) == count
@@ -1013,7 +1112,10 @@ def test_read_one_location(auth_client):
 
     # WHEN we request each of them from the server
     for location in locations:
-        resp = auth_client.get(url_for('places.read_one_location', location_id=location.id))
+        resp = auth_client.get(
+            url_for(
+                'places.read_one_location',
+                location_id=location.id))
         # THEN we find a matching location
         assert resp.status_code == 200
         assert resp.json['description'] == location.description
@@ -1036,7 +1138,11 @@ def test_replace_location(auth_client):
         new_location = location_factory(auth_client.sqla)
 
         # WHEN locations are requested to be replaced
-        resp = auth_client.put(url_for('places.replace_location', location_id=location.id), json=new_location)
+        resp = auth_client.put(
+            url_for(
+                'places.replace_location',
+                location_id=location.id),
+            json=new_location)
 
         # THEN expect an OK response
         assert resp.status_code == 200
@@ -1072,7 +1178,11 @@ def test_replace_location_invalid(auth_client):
         new_location[fake.word()] = fake.word()
 
         # WHEN locations are requested to be replaced
-        resp = auth_client.put(url_for('places.replace_location', location_id=location.id), json=new_location)
+        resp = auth_client.put(
+            url_for(
+                'places.replace_location',
+                location_id=location.id),
+            json=new_location)
 
         # THEN expect request to be unprocessable
         assert resp.status_code == 422
@@ -1092,7 +1202,10 @@ def test_delete_location(auth_client):
     # WHEN locations are deleted
     deleted = 0
     for location in locations:
-        resp = auth_client.delete(url_for('places.delete_location', location_id=location.id))
+        resp = auth_client.delete(
+            url_for(
+                'places.delete_location',
+                location_id=location.id))
         deleted += 1
 
         # THEN for each delete expect delete to run OK
@@ -1107,7 +1220,12 @@ def test_delete_location_no_exist(auth_client):
     # GIVEN an empty database
 
     # WHEN a location is requested to be deleted
-    resp = auth_client.delete(url_for('places.delete_location', location_id=random.randint(1, 8)))
+    resp = auth_client.delete(
+        url_for(
+            'places.delete_location',
+            location_id=random.randint(
+                1,
+                8)))
 
     # THEN expect row not to be found
     assert resp.status_code == 404
@@ -1135,7 +1253,11 @@ def test_update_location(auth_client):
             mod['address_id'] = random.choice(addresses).id
 
         # WHEN locations are updated with modification data
-        resp = auth_client.patch(url_for('places.update_location', location_id=location.id), json=mod)
+        resp = auth_client.patch(
+            url_for(
+                'places.update_location',
+                location_id=location.id),
+            json=mod)
 
         # THEN expect an OK response
         assert resp.status_code == 200
@@ -1165,8 +1287,12 @@ def test_update_location_invalid(auth_client):
 
     # WHEN locations are updated with bad data
     for location in locations:
-        resp = auth_client.patch(url_for('places.update_location', location_id=location.id),
-                                 json={fake.word(): fake.word()})
+        resp = auth_client.patch(
+            url_for(
+                'places.update_location',
+                location_id=location.id),
+            json={
+                fake.word(): fake.word()})
 
         # THEN expect the request to be unprocessable
         assert resp.status_code == 422
@@ -1183,7 +1309,13 @@ def test_update_location_no_exist(auth_client):
         mod['address_id'] = random.randint(1, 8)
 
     # WHEN update_location is called with mod data on a location
-    resp = auth_client.patch(url_for('places.update_location', location_id=random.randint(1, 8)), json=mod)
+    resp = auth_client.patch(
+        url_for(
+            'places.update_location',
+            location_id=random.randint(
+                1,
+                8)),
+        json=mod)
 
     # THEN expect the location not to be found
     assert resp.status_code == 404
@@ -1230,13 +1362,18 @@ def test_add_location_images(auth_client):
     for i in range(count):
         print(i)
         resp = auth_client.post(
-            url_for('places.add_location_images', location_id=locations[i].id, image_id=images[i].id))
+            url_for(
+                'places.add_location_images',
+                location_id=locations[i].id,
+                image_id=images[i].id))
 
         # THEN expect the request to run OK
         assert resp.status_code == 201
 
         # THEN expect the location to have a single image
-        assert len(auth_client.sqla.query(Location).filter_by(id=locations[i].id).first().images) == 1
+        assert len(
+            auth_client.sqla.query(Location).filter_by(
+                id=locations[i].id).first().images) == 1
 
 
 @pytest.mark.smoke
@@ -1250,13 +1387,21 @@ def test_add_location_images_no_exist(auth_client):
     images = auth_client.sqla.query(Image).all()
 
     # WHEN a no existant image is requested to be tied to an location
-    resp = auth_client.post(url_for('places.add_location_images', location_id=1, image_id=len(images) + 1))
+    resp = auth_client.post(
+        url_for(
+            'places.add_location_images',
+            location_id=1,
+            image_id=len(images) + 1))
 
     # THEN expect the image not to be found
     assert resp.status_code == 404
 
     # WHEN an image is requested to be tied to a no existant location
-    resp = auth_client.post(url_for('places.add_location_images', location_id=count + 1, image_id=1))
+    resp = auth_client.post(
+        url_for(
+            'places.add_location_images',
+            location_id=count + 1,
+            image_id=1))
 
     # THEN expect the location not to be found
     assert resp.status_code == 404
@@ -1274,8 +1419,11 @@ def test_add_location_images_already_exist(auth_client):
 
     # WHEN existing location_image relationships are requested to be created
     for location_image in location_images:
-        resp = auth_client.post(url_for('places.add_location_images', location_id=location_image.location_id,
-                                        image_id=location_image.image_id))
+        resp = auth_client.post(
+            url_for(
+                'places.add_location_images',
+                location_id=location_image.location_id,
+                image_id=location_image.image_id))
 
         # THEN expect the request to be unprocessable
         assert resp.status_code == 422
@@ -1292,8 +1440,11 @@ def test_delete_location_image(auth_client):
     valid_location_image = auth_client.sqla.query(ImageLocation).first()
 
     # WHEN the location_image relationships are requested to be deleted
-    resp = auth_client.delete(url_for('places.delete_location_image', location_id=valid_location_image.location_id,
-                                      image_id=valid_location_image.image_id))
+    resp = auth_client.delete(
+        url_for(
+            'places.delete_location_image',
+            location_id=valid_location_image.location_id,
+            image_id=valid_location_image.image_id))
 
     # THEN expect the delete to run OK
     assert resp.status_code == 204
@@ -1305,7 +1456,10 @@ def test_delete_location_image_no_exist(auth_client):
 
     # WHEN an location_image relationship is requested to be deleted
     resp = auth_client.delete(
-        url_for('places.delete_location_image', location_id=random.randint(1, 8), image_id=random.randint(1, 8)))
+        url_for(
+            'places.delete_location_image', location_id=random.randint(
+                1, 8), image_id=random.randint(
+                1, 8)))
 
     # THEN expect the requested row to not be found
     assert resp.status_code == 404

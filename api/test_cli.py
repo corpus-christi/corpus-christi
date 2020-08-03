@@ -65,7 +65,14 @@ def test_course_cli(runner):
     name = 'course2'
     prereq = 'course1'
     # WHEN call is invoked
-    runner.invoke(args=['courses', 'create-course', name, desc, '--prereq', prereq])
+    runner.invoke(
+        args=[
+            'courses',
+            'create-course',
+            name,
+            desc,
+            '--prereq',
+            prereq])
     # THEN a course with two prereqs is created
     course = db.session.query(Course).filter_by(name=name).first()
     assert course.name == name
@@ -75,7 +82,14 @@ def test_course_cli(runner):
     name = 'course4'
     offering_name = 'course1'
     # WHEN call is invoked
-    runner.invoke(args=['courses', 'create-course', name, desc, '--offering', offering_name])
+    runner.invoke(
+        args=[
+            'courses',
+            'create-course',
+            name,
+            desc,
+            '--offering',
+            offering_name])
     # THEN help message is printed
     course = db.session.query(Course).filter_by(name=name).first()
     assert course.name == name

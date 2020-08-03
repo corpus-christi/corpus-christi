@@ -6,8 +6,12 @@ from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identi
 from src.auth.utils import jwt_not_required
 
 from . import auth
-from .blacklist_helpers import (is_token_revoked, add_token_to_database, get_user_tokens,
-                                revoke_token, unrevoke_token)
+from .blacklist_helpers import (
+    is_token_revoked,
+    add_token_to_database,
+    get_user_tokens,
+    revoke_token,
+    unrevoke_token)
 from .. import jwt, db
 from ..auth.exceptions import TokenNotFound
 from ..people.models import Person, PersonSchema, Role, RoleSchema
@@ -49,7 +53,9 @@ def login():
     access_token = create_access_token(identity=person)
 
     # Add token to database for revokability
-    add_token_to_database(access_token, current_app.config['JWT_IDENTITY_CLAIM'])
+    add_token_to_database(
+        access_token,
+        current_app.config['JWT_IDENTITY_CLAIM'])
 
     return jsonify(jwt=access_token,
                    username=person.username,
@@ -75,21 +81,24 @@ def add_claims_to_access_token(person):
 
     return {'roles': user_roles}
 
+
 @jwt.user_identity_loader
 def load_user_identity(person):
-    return { 'username': person.username, 'id': person.id }
+    return {'username': person.username, 'id': person.id}
+
 
 @auth.route('/test/jwt')
 @jwt_not_required
 def get_test_jwt():
     if current_app.config['TESTING']:
         # TODO: parameterize the endpoint to return token with specified roles
-        test_roles = [ Role(**RoleSchema().load(role_object_factory())) ]
+        test_roles = [Role(**RoleSchema().load(role_object_factory()))]
         test_person = Person(**person_schema.load(person_object_factory()))
         test_person.username = 'test-user'
         test_person.roles += test_roles
         access_token = create_access_token(identity=test_person)
-        add_token_to_database(access_token, current_app.config['JWT_IDENTITY_CLAIM'])
+        add_token_to_database(access_token,
+                              current_app.config['JWT_IDENTITY_CLAIM'])
         print("ACCESS TOKEN", access_token)
         return jsonify(jwt=access_token)
     else:

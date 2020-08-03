@@ -139,7 +139,11 @@ def read_xlation(locale_code):
 
 class LanguageSchema(Schema):
     code = fields.String(required=True, validate=Length(equal=2))
-    name = fields.String(attribute="gloss", required=True, validate=Length(min=1))
+    name = fields.String(
+        attribute="gloss",
+        required=True,
+        validate=Length(
+            min=1))
 
 
 language_schema = LanguageSchema()

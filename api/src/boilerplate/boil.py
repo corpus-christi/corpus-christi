@@ -65,7 +65,8 @@ def model_string(attr):
 
     length = attr.get('length')
     if length is None:
-        raise RuntimeError(f"String type for {json.dumps(attr, indent=4)} must have a 'length' value")
+        raise RuntimeError(
+            f"String type for {json.dumps(attr, indent=4)} must have a 'length' value")
     if length in type_map:
         return f"StringTypes.{type_map[length]}"
     return f"String({length})"
@@ -84,7 +85,7 @@ def generate_model(entity):
         elif attr['type'] == 'string':
             details.append(model_string(attr))
         elif attr['type'] == 'datetime':
-            details.append('DateTime');
+            details.append('DateTime')
         else:
             raise ValidationError(f"Unknown type: {attr['type']}")
 
@@ -144,7 +145,8 @@ def generate_schema(entity):
             required = True
 
         if attr.get('model-attribute'):
-            details.append(f"attribute='{snake_case(attr['model-attribute'])}'")
+            details.append(
+                f"attribute='{snake_case(attr['model-attribute'])}'")
 
         if attr.get('private'):
             details.append("load_only=True")
@@ -391,7 +393,7 @@ schema = {
                                 "foreign-key": {
                                     "description": "The `table.column` referenced by this foreign key field",
                                     "type": "string",
-                                    "pattern": "^\w+\.\w+"
+                                    "pattern": r"^\w+\.\w+"
                                 }
                             },
                             "required": ["name", "type"],

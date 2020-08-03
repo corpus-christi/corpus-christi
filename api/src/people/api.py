@@ -4,7 +4,7 @@ from flask_jwt_extended import jwt_required
 from marshmallow import ValidationError
 
 from . import people
-from .models import Person, Role, PersonSchema, RoleSchema # , Manager, ManagerSchema
+from .models import Person, Role, PersonSchema, RoleSchema  # , Manager, ManagerSchema
 from .. import db
 from ..attributes.models import Attribute, AttributeSchema, EnumeratedValue, \
     EnumeratedValueSchema, PersonAttribute, PersonAttributeSchema
@@ -25,7 +25,7 @@ enumerated_value_schema = EnumeratedValueSchema(exclude=['active'])
 
 @people.route('/persons/fields', methods=['GET'])
 def read_person_fields():
-    response = {'person': [], 'person_attributes': []} 
+    response = {'person': [], 'person_attributes': []}
 
     person_columns = Person.__table__.columns
     attributes = db.session.query(Attribute).filter_by(active=True).all()
@@ -50,7 +50,8 @@ def read_person_fields():
 def create_person():
     request.json['person']['active'] = True
 
-    for key, value in request.json['person'].items(): #don't know why value needs to be here, but without it we get an internal server error when this function is called
+    for key, value in request.json['person'].items(
+    ):  # don't know why value needs to be here, but without it we get an internal server error when this function is called
         if request.json['person'][key] == "" or request.json['person'][key] == 0:
             request.json['person'][key] = None
 
@@ -64,7 +65,8 @@ def create_person():
 
     new_person = Person(**valid_person)
 
-    public_user_role = db.session.query(Role).filter_by(name_i18n='role.public', active=True).first()
+    public_user_role = db.session.query(Role).filter_by(
+        name_i18n='role.public', active=True).first()
     if public_user_role:
         new_person.roles.append(public_user_role)
     db.session.add(new_person)
@@ -83,7 +85,9 @@ def create_person():
 
     return jsonify(person_schema.dump(result)), 201
 
-#account info needs to be looked into more, is currently commented out because it isn't needed since the merge, not sure about this function now
+# account info needs to be looked into more, is currently commented out
+# because it isn't needed since the merge, not sure about this function
+# now
 @people.route('/persons')
 @jwt_required
 def read_all_persons():
@@ -104,7 +108,8 @@ def read_one_person(person_id):
     if result is None:
         return 'Person specified was NOT found', 404
     result.attributesInfo = result.person_attributes
-#not needed hopefully?    result.accountInfo = result.person #? I think that is a reference to the account table, now swapped to result.person
+# not needed hopefully?    result.accountInfo = result.person #? I think
+# that is a reference to the account table, now swapped to result.person
     return jsonify(person_schema.dump(result))
 
 
@@ -201,20 +206,24 @@ def delete_person(person_id):
     return jsonify(msg=f"Person {person_id} was deleted."), 204
 
 
-#-----------------------------------------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------------------------------------------------
 person_schema2 = PersonSchema()
-#-----------------------------------------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------------------------------------------------
+
 
 @people.route('/persons/username/<username>')
 @jwt_required
-def read_one_person_by_username(username): #account was seperate before it got merged with the person table account -> person
+# account was seperate before it got merged with the person table account
+# -> person
+def read_one_person_by_username(username):
     """Read one person by its (unique) user name."""
     result = db.session.query(Person).filter_by(username=username).first()
     if result is None:
         return 'Person specified was NOT found', 404
     return jsonify(person_schema2.dump(result))
 
-@people.route('/role/<role_id>/persons') 
+
+@people.route('/role/<role_id>/persons')
 @jwt_required
 def get_persons_by_role(role_id):
     role = db.session.query(Role).filter_by(id=role_id).first()
@@ -222,8 +231,8 @@ def get_persons_by_role(role_id):
         return 'Role specified was NOT found', 404
     return jsonify(person_schema2.dump(role.persons, many=True))
 
-##COME BACK TO THIS/ATTEMPTING A BANDAID SOLUTION ON ALL PARTS AFTER THIS TO ONLY CHANGE THE BACKEND WHILE BREAKING AS LITTLE UI AND API CALLS AS POSSIBLE
-#----------------------------------------------------------------------------------------------------------------------------------------------------------------
+# COME BACK TO THIS/ATTEMPTING A BANDAID SOLUTION ON ALL PARTS AFTER THIS TO ONLY CHANGE THE BACKEND WHILE BREAKING AS LITTLE UI AND API CALLS AS POSSIBLE
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 @people.route('/accounts/<person_id>', methods=['PATCH'])
 @jwt_required
 def update_account(person_id):
@@ -258,7 +267,8 @@ def update_account(person_id):
 
     db.session.commit()
     return jsonify(person_schema2.dump(person))
-#----------------------------------------------------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 
 @people.route('/accounts/deactivate/<account_id>', methods=['PUT'])
 @jwt_required
@@ -303,8 +313,8 @@ def confirm_user_account(person_id):
 
     return jsonify(person_schema2.dump(person))
 
-#end of first major bandaid area
-#------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# end of first major bandaid area
+# ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # ---- Roles
 
 
@@ -331,7 +341,7 @@ def read_all_roles():
     result = db.session.query(Role).all()
     return jsonify(role_schema.dump(result, many=True))
 
-#maybe will replace with a person call or path, not sure yet
+# maybe will replace with a person call or path, not sure yet
 @people.route('/role/person/<person_id>')
 @jwt_required
 def get_roles_for_person(person_id):
@@ -396,7 +406,7 @@ def deactivate_role(role_id):
 
     return jsonify(role_schema.dump(role))
 
-#link role to person instead of account
+# link role to person instead of account
 @people.route('/role/<person_id>&<role_id>', methods=['POST'])
 @jwt_required
 def add_role_to_person(person_id, role_id):
@@ -415,7 +425,7 @@ def add_role_to_person(person_id, role_id):
 
     return logged_response(person_schema.dump(person), 201)
 
-#remove role from person instead of account
+# remove role from person instead of account
 @people.route('/role/<person_id>&<role_id>', methods=['DELETE'])
 @jwt_required
 def remove_role_from_person(person_id, role_id):
@@ -440,13 +450,15 @@ def remove_role_from_person(person_id, role_id):
 
 # ---- Image
 
+
 @people.route('/<person_id>/images/<image_id>', methods=['POST'])
 @jwt_required
 def add_people_images(person_id, image_id):
     person = db.session.query(Person).filter_by(id=person_id).first()
     image = db.session.query(Image).filter_by(id=image_id).first()
 
-    person_image = db.session.query(ImagePerson).filter_by(person_id=person_id, image_id=image_id).first()
+    person_image = db.session.query(ImagePerson).filter_by(
+        person_id=person_id, image_id=image_id).first()
 
     if not person:
         return jsonify(f"Person with id #{person_id} does not exist."), 404
@@ -456,14 +468,16 @@ def add_people_images(person_id, image_id):
 
     # If image is already attached to the person
     if person_image:
-        return jsonify(f"Image with id#{image_id} is already attached to person with id#{person_id}."), 422
+        return jsonify(
+            f"Image with id#{image_id} is already attached to person with id#{person_id}."), 422
     else:
         new_entry = ImagePerson(
             **{'person_id': person_id, 'image_id': image_id})
         db.session.add(new_entry)
         db.session.commit()
 
-    return jsonify(f"Image with id #{image_id} successfully added to Person with id #{person_id}."), 201
+    return jsonify(
+        f"Image with id #{image_id} successfully added to Person with id #{person_id}."), 201
 
 
 @people.route('/<person_id>/images/<image_id>', methods=['PUT'])
@@ -475,12 +489,14 @@ def put_people_images(person_id, image_id):
 
     if old_image_id == 'false':
         post_resp = add_people_images(person_id, new_image_id)
-        return jsonify({'deleted': 'No image to delete', 'posted': str(post_resp[0].data, "utf-8")})
+        return jsonify({'deleted': 'No image to delete',
+                        'posted': str(post_resp[0].data, "utf-8")})
     else:
         del_resp = delete_person_image(person_id, old_image_id)
         post_resp = add_people_images(person_id, new_image_id)
 
-        return jsonify({'deleted': del_resp[0], 'posted': str(post_resp[0].data, "utf-8")})
+        return jsonify(
+            {'deleted': del_resp[0], 'posted': str(post_resp[0].data, "utf-8")})
 
 
 @people.route('/<person_id>/images/<image_id>', methods=['DELETE'])
@@ -490,7 +506,8 @@ def delete_person_image(person_id, image_id):
         person_id=person_id, image_id=image_id).first()
 
     if not person_image:
-        return jsonify(f"Image with id #{image_id} is not assigned to Person with id #{person_id}."), 404
+        return jsonify(
+            f"Image with id #{image_id} is not assigned to Person with id #{person_id}."), 404
 
     db.session.delete(person_image)
     db.session.commit()
