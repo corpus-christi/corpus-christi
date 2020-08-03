@@ -1,5 +1,6 @@
 import math
 import random
+import os
 
 from faker import Faker
 
@@ -12,6 +13,7 @@ from ..events.models import Event
 from ..groups.models import Group
 from ..people.models import Person
 from ..places.models import Location
+from .. import BASE_DIR
 
 
 class RandomLocaleFaker:
@@ -96,7 +98,8 @@ def image_object_factory(sqla):
         'path': valid_paths[i]
     }
 
-    file = open(valid_paths[i], 'w')
+    # TODO: write some actual data instead of using an empty image file
+    file = open(os.path.join(BASE_DIR, valid_paths[i]), 'w')
     file.close()
 
     # These are all optional in the DB. Over time, we'll try all possibilities.
