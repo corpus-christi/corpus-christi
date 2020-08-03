@@ -5,7 +5,7 @@
         <v-col xs12>
           <v-card class="ma-1">
             <v-container fill-height fluid>
-              <v-col xs9 sm9 align-end flexbox>
+              <v-col xs9 sm9 align-end flexbox v-if="group">
                 <span class="headline">
                   <b>{{ $t("groups.name") }}: </b>{{ group.name }}</span
                 >
@@ -26,7 +26,7 @@
         <v-col xs12>
           <v-card class="ma-1">
             <v-container fill-height fluid>
-              <v-col xs9 sm9 align-end flexbox>
+              <v-col xs9 sm9 align-end flexbox v-if="group">
                 <span>
                   <b>{{ $t("groups.group-type") }}: </b>
                   {{ group.groupType.name }}
@@ -79,7 +79,7 @@ export default {
     return {
       events: [],
       anchorDate: new Date(),
-      group: {},
+      group: null,
       groupDialog: {
         show: false,
         editMode: false,
@@ -99,7 +99,7 @@ export default {
     this.getGroup().then(() => {
       console.log("Group loaded");
     });
-    this.$refs.calendar.scrollToTime("08:00");
+    // this.$refs.calendar.scrollToTime("08:00");
     this.eventsToDisplay();
   },
   computed: {},
