@@ -200,6 +200,9 @@
               </div>
             </editor-menu-bar>
             <editor-content :editor="dialogData" />
+            <div class="export">
+              <p>{{ json }}</p>
+            </div>
           </template>
           <v-card-text> </v-card-text>
           <v-card-actions>
@@ -255,6 +258,7 @@ import {
   Underline,
   History,
 } from "tiptap-extensions";
+import {eventBus} from "../../plugins/event-bus";
 
 export default {
   name: "GroupMembershipHistory",
@@ -395,8 +399,17 @@ export default {
       return this.$http
         .patch(`api/v1/groups/member-histories/${this.editingNoteId}`, payload)
         .then((resp) => {
+          eventBus.$emit("message", {
+            content: "groups.membership-history.message.post-success",
+          });
           console.log(resp.status);
           window.location.reload();
+        })
+        .catch((err) => {
+          console.log(err);
+          eventBus.$emit("error", {
+            content: "groups.membership-history.message.post-fail.too-long",
+          });
         });
     },
     defineColor(event) {

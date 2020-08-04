@@ -663,6 +663,12 @@
         "clear-note": "Clear Note",
         "joined": "Joined",
         "left": "Left",
+        "message": {
+          "post-fail": {
+            "too-long": "Note is too long, Please make it shoter!"
+          },
+          "post-success": "Note Added"
+        },
         "note": "Notes",
         "submit": "Submit",
         "title": "History"
@@ -748,7 +754,6 @@
         "category-view": "Category View",
         "collapse": "Collapse",
         "expand": "Expand",
-        "filters": "Filters",
         "hierarchy-view": "Hierarchy View",
         "no-groups-available": "No groups available, because you are not an overseer of any groups",
         "remove-cycle": "Please remove the cycle in the node listed in order to view group hierarchy tree.",
@@ -1642,6 +1647,12 @@
         "clear-note": "Nota clara",
         "joined": "Unida",
         "left": "Izquierda",
+        "message": {
+          "post-fail": {
+            "too-long": "La nota es demasiado larga, \u00a1hazla m\u00e1s corta!"
+          },
+          "post-success": "Nota agregada"
+        },
         "note": "Notas",
         "submit": "Enviar",
         "title": "Historia"
@@ -1727,7 +1738,6 @@
         "category-view": "Vista de categor\u00eda",
         "collapse": "Colapso",
         "expand": "Expandir",
-        "filters": "Filtros",
         "hierarchy-view": "Vista de jerarqu\u00eda",
         "no-groups-available": "No hay grupos disponibles, porque no eres supervisor de ning\u00fan grupo",
         "remove-cycle": "Elimine el ciclo en el nodo listado para ver el \u00e1rbol de jerarqu\u00eda de grupo.",
@@ -2621,6 +2631,12 @@
         "clear-note": "\u6e05\u9664\u7b14\u8bb0",
         "joined": "\u52a0\u5165",
         "left": "\u79bb\u5f00",
+        "message": {
+          "post-fail": {
+            "too-long": "\u7b14\u8bb0\u592a\u957f\uff0c\u8bf7\u4fee\u6539\u7b14\u8bb0"
+          },
+          "post-success": "\u7b14\u8bb0\u5df2\u6dfb\u52a0"
+        },
         "note": "\u7b14\u8bb0",
         "submit": "\u63d0\u4ea4",
         "title": "\u5386\u53f2\u8bb0\u5f55"
@@ -2706,7 +2722,6 @@
         "category-view": "\u5206\u7c7b\u89c6\u56fe",
         "collapse": "\u5408\u5e76",
         "expand": "\u5c55\u5f00",
-        "filters": "\u7b5b\u9009\u5668",
         "hierarchy-view": "\u5c42\u6b21\u7ed3\u6784\u89c6\u56fe",
         "no-groups-available": "\u6ca1\u6709\u53ef\u7528\u7684\u7fa4\u7ec4\uff0c\u56e0\u4e3a\u60a8\u4e0d\u662f\u4efb\u4f55\u7fa4\u7ec4\u7684\u76d1\u7763\u8005",
         "remove-cycle": "\u8bf7\u5728\u5217\u51fa\u7684\u8282\u70b9\u4e2d\u5220\u9664\u5faa\u73af\uff0c\u4ee5\u67e5\u770b\u7ec4\u5c42\u6b21\u7ed3\u6784\u6811\u3002",

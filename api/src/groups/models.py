@@ -126,7 +126,7 @@ class MemberHistory(Base):
     person_id = Column(Integer, ForeignKey('people_person.id'), nullable=False)
     time = Column(DateTime, nullable=False)
     is_join = Column(Boolean, nullable=False, default=True)
-    note = Column(StringTypes.LONG_STRING, nullable=True)
+    note = Column(StringTypes.LONG_LONG_STRING, nullable=True)
     person = relationship('Person', back_populates='member_histories', lazy=True)
     group = relationship('Group', back_populates='member_histories', lazy=True)
 

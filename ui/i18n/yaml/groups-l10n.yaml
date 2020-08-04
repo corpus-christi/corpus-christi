@@ -334,6 +334,16 @@ groups:
       es-EC: Vista de árbol grupal
       zh-CN: 组树视图
   membership-history:
+    message:
+      post-success:
+        en-US: Note Added
+        es-EC: Nota agregada
+        zh-CN: 笔记已添加
+      post-fail:
+        too-long:
+          en-US: Note is too long, Please make it shoter!
+          es-EC: La nota es demasiado larga, ¡hazla más corta!
+          zh-CN: 笔记太长，请修改笔记
     clear-note:
       en-US: Clear Note
       es-EC: Nota clara
