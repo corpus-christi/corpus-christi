@@ -200,9 +200,6 @@
               </div>
             </editor-menu-bar>
             <editor-content :editor="dialogData" />
-            <div class="export">
-              <p>{{ json }}</p>
-            </div>
           </template>
           <v-card-text> </v-card-text>
           <v-card-actions>
