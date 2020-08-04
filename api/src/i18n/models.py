@@ -5,7 +5,7 @@ from flask import json
 from marshmallow import Schema
 from marshmallow import fields, ValidationError, validates
 from marshmallow.validate import Length
-from sqlalchemy import Column, String, ForeignKey, Text
+from sqlalchemy import Column, String, ForeignKey, Text, Boolean
 from sqlalchemy.orm import relationship
 
 from .. import db
@@ -68,6 +68,7 @@ class I18NValue(Base):
     locale_code = Column(StringTypes.LOCALE_CODE, ForeignKey(
         'i18n_locale.code'), primary_key=True)
     gloss = Column(Text(), nullable=False)
+    verified = Column(Boolean, default=False)
 
     key = relationship('I18NKey', backref='values', lazy=True)
     locale = relationship('I18NLocale', backref='values', lazy=True)
