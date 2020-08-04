@@ -24,35 +24,39 @@
           :left="true"
         >
           <v-card>
-            <v-card-title class="orange lighten-2" v-model="admin">
-              {{ $t("groups.membership-history.note") }}
-              <v-spacer />
-              <v-tooltip bottom>
-                <template v-slot:activator="{ on }" v-if="ifAdmin">
-                  <v-btn
-                    color="orange lighten-2"
-                    small
-                    v-on="on"
-                    v-on:click="clearNote(event, event.id)"
-                    ><v-icon>clear</v-icon></v-btn
-                  >
-                </template>
-                <span>{{ $t("groups.membership-history.clear-note") }}</span>
-              </v-tooltip>
-              <v-tooltip bottom v-if="ifAdmin">
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    color="orange lighten-2"
-                    small
-                    v-on="on"
-                    v-on:click="showDialog(event)"
-                    ><v-icon>note_add</v-icon></v-btn
-                  >
-                </template>
-                <span>{{ $t("groups.membership-history.change-note") }}</span>
-              </v-tooltip>
-            </v-card-title>
-            <v-card-text v-text="event.note"></v-card-text>
+            <template>
+              <v-card-title class="orange lighten-2" v-model="admin">
+                {{ $t("groups.membership-history.note") }}
+                <v-spacer />
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on }" v-if="ifAdmin">
+                    <v-btn
+                      color="orange lighten-2"
+                      small
+                      v-on="on"
+                      v-on:click="clearNote(event, event.id)"
+                      ><v-icon>clear</v-icon></v-btn
+                    >
+                  </template>
+                  <span>{{ $t("groups.membership-history.clear-note") }}</span>
+                </v-tooltip>
+                <v-tooltip bottom v-if="ifAdmin">
+                  <template v-slot:activator="{ on }">
+                    <v-btn
+                      color="orange lighten-2"
+                      small
+                      v-on="on"
+                      v-on:click="showDialog(event)"
+                      ><v-icon>note_add</v-icon></v-btn
+                    >
+                  </template>
+                  <span>{{ $t("groups.membership-history.change-note") }}</span>
+                </v-tooltip>
+              </v-card-title>
+              <editor-content
+                :editor="timeLineItems['timeLineItem' + event.id]"
+              />
+            </template>
           </v-card>
           <v-row justify="space-between" slot="opposite">
             <v-col
@@ -73,12 +77,131 @@
           </v-row>
         </v-timeline-item>
       </v-timeline>
+
       <!-- Note dialog-->
-      <v-dialog v-model="addNoteDialog" max-width="344">
+      <v-dialog v-model="addNoteDialog" persistent max-width="400">
         <v-card>
-          <v-card-text>
-            <v-text-field label="Note" v-model="addedNote"></v-text-field>
-          </v-card-text>
+          <template>
+            <editor-menu-bar
+              :editor="dialogData"
+              v-slot="{ commands, isActive }"
+            >
+              <div class="menubar">
+                <button
+                  style="margin: 5px;"
+                  class="menubar__button"
+                  :class="{ 'is-active': isActive.bold() }"
+                  @click="commands.bold"
+                >
+                  <v-icon>format_bold</v-icon>
+                </button>
+                <button
+                  style="margin: 5px;"
+                  class="menubar__button"
+                  :class="{ 'is-active': isActive.italic() }"
+                  @click="commands.italic"
+                >
+                  <v-icon>format_italic</v-icon>
+                </button>
+                <button
+                  style="margin: 5px;"
+                  class="menubar__button"
+                  :class="{ 'is-active': isActive.strike() }"
+                  @click="commands.strike"
+                >
+                  <v-icon>format_strikethrough</v-icon>
+                </button>
+                <button
+                  style="margin: 5px;"
+                  class="menubar__button"
+                  :class="{ 'is-active': isActive.underline() }"
+                  @click="commands.underline"
+                >
+                  <v-icon>format_underlined</v-icon>
+                </button>
+                <button
+                  style="margin: 5px;"
+                  class="menubar__button"
+                  :class="{ 'is-active': isActive.code() }"
+                  @click="commands.code"
+                >
+                  <v-icon>code</v-icon>
+                </button>
+                <button
+                  style="margin: 5px;"
+                  class="menubar__button"
+                  :class="{ 'is-active': isActive.heading({ level: 1 }) }"
+                  @click="commands.heading({ level: 1 })"
+                >
+                  H1
+                </button>
+                <button
+                  style="margin: 5px;"
+                  class="menubar__button"
+                  :class="{ 'is-active': isActive.heading({ level: 2 }) }"
+                  @click="commands.heading({ level: 2 })"
+                >
+                  H2
+                </button>
+                <button
+                  style="margin: 5px;"
+                  class="menubar__button"
+                  :class="{ 'is-active': isActive.heading({ level: 3 }) }"
+                  @click="commands.heading({ level: 3 })"
+                >
+                  H3
+                </button>
+                <button
+                  style="margin: 5px;"
+                  class="menubar__button"
+                  :class="{ 'is-active': isActive.ordered_list() }"
+                  @click="commands.ordered_list"
+                >
+                  <v-icon>format_list_numbered</v-icon>
+                </button>
+                <button
+                  style="margin: 5px;"
+                  class="menubar__button"
+                  :class="{ 'is-active': isActive.bullet_list() }"
+                  @click="commands.bullet_list"
+                >
+                  <v-icon>format_list_bulleted</v-icon>
+                </button>
+                <button
+                  style="margin: 5px;"
+                  class="menubar__button"
+                  :class="{ 'is-active': isActive.code_block() }"
+                  @click="commands.code_block"
+                >
+                  <v-icon>integration_instructions</v-icon>
+                </button>
+                <button
+                  style="margin: 5px;"
+                  class="menubar__button"
+                  :class="{ 'is-active': isActive.blockquote() }"
+                  @click="commands.blockquote"
+                >
+                  <v-icon>format_quote</v-icon>
+                </button>
+                <button
+                  style="margin: 5px;"
+                  class="menubar__button"
+                  @click="commands.undo"
+                >
+                  <v-icon>undo</v-icon>
+                </button>
+                <button
+                  style="margin: 5px;"
+                  class="menubar__button"
+                  @click="commands.redo"
+                >
+                  <v-icon>redo</v-icon>
+                </button>
+              </div>
+            </editor-menu-bar>
+            <editor-content :editor="dialogData" />
+          </template>
+          <v-card-text> </v-card-text>
           <v-card-actions>
             <v-tooltip bottom>
               <template v-slot:activator="{ on }">
@@ -113,9 +236,29 @@
 
 <script>
 import { mapState } from "vuex";
+import { Editor, EditorContent, EditorMenuBar } from "tiptap";
+import {
+  Blockquote,
+  CodeBlock,
+  HardBreak,
+  Heading,
+  OrderedList,
+  BulletList,
+  ListItem,
+  TodoItem,
+  TodoList,
+  Bold,
+  Code,
+  Italic,
+  Link,
+  Strike,
+  Underline,
+  History,
+} from "tiptap-extensions";
+
 export default {
   name: "GroupMembershipHistory",
-  components: {},
+  components: { EditorContent, EditorMenuBar },
   data() {
     return {
       events: [],
@@ -135,6 +278,37 @@ export default {
       addedNote: null,
       editingNoteId: null,
       admin: null,
+      currentEvent: null,
+      storedEditor: null,
+      currentNote: null,
+      timeLineItems: {},
+      editor: new Editor({
+        extensions: [
+          new Blockquote(),
+          new CodeBlock(),
+          new HardBreak(),
+          new Heading({ levels: [1, 2, 3] }),
+          new BulletList(),
+          new OrderedList(),
+          new ListItem(),
+          new TodoItem(),
+          new TodoList(),
+          new Bold(),
+          new Code(),
+          new Italic(),
+          new Link(),
+          new Strike(),
+          new Underline(),
+          new History(),
+        ],
+        content: "Ediator Test",
+        onUpdate: ({ getJSON, getHTML }) => {
+          this.json = getJSON();
+          this.html = getHTML();
+        },
+      }),
+      json: "Update content to see json",
+      html: "Update content to see HTML",
     };
   },
   computed: {
@@ -154,13 +328,55 @@ export default {
     locale(text) {
       return text.text;
     },
+    dialogData() {
+      let data = new Editor({
+        extensions: [
+          new Blockquote(),
+          new CodeBlock(),
+          new HardBreak(),
+          new Heading({ levels: [1, 2, 3] }),
+          new BulletList(),
+          new OrderedList(),
+          new ListItem(),
+          new TodoItem(),
+          new TodoList(),
+          new Bold(),
+          new Code(),
+          new Italic(),
+          new Link(),
+          new Strike(),
+          new Underline(),
+          new History(),
+        ],
+        content: this.currentNote,
+        onUpdate: ({ getJSON, getHTML }) => {
+          this.json = getJSON();
+          this.html = getHTML();
+        },
+      });
+      return data;
+    },
   },
   methods: {
+    timeLineItem(event) {
+      console.log(event.note);
+      if (event.note === undefined) return "";
+      else {
+        console.log("Note", JSON.parse(event.note));
+        return JSON.parse(event.note);
+      }
+    },
     hideDialog() {
       this.addNoteDialog = false;
     },
     showDialog(event) {
       this.editingNoteId = event.recordId;
+      this.currentEvent = event;
+      if (event.note === "") {
+        this.currentNote = "";
+      } else {
+        this.currentNote = JSON.parse(event.note);
+      }
       this.addNoteDialog = true;
     },
     clearNote(event) {
@@ -173,8 +389,8 @@ export default {
         });
     },
     changeNote() {
-      console.log(this.addedNote);
-      let payload = { note: this.addedNote };
+      let myJSON = JSON.stringify(this.json);
+      let payload = { note: myJSON };
       this.addNoteDialog = false;
       return this.$http
         .patch(`api/v1/groups/member-histories/${this.editingNoteId}`, payload)
@@ -184,9 +400,7 @@ export default {
         });
     },
     defineColor(event) {
-      if (event.text.slice(-1) === "-") {
-        return false;
-      } else return true;
+      return event.text.slice(-1) !== "-";
     },
     comment() {
       const time = new Date().toTimeString();
@@ -285,7 +499,40 @@ export default {
             });
           }
         }
+        for (let i = 0; i < order.length * 2; i++) {
+          this.timeLineItems["timeLineItem" + i] = new Editor({
+            editable: false,
+            extensions: [
+              new Blockquote(),
+              new CodeBlock(),
+              new HardBreak(),
+              new Heading({ levels: [1, 2, 3] }),
+              new BulletList(),
+              new OrderedList(),
+              new ListItem(),
+              new TodoItem(),
+              new TodoList(),
+              new Bold(),
+              new Code(),
+              new Italic(),
+              new Link(),
+              new Strike(),
+              new Underline(),
+              new History(),
+            ],
+            content: this.getNote(this.events[i].note),
+            onUpdate: ({ getJSON, getHTML }) => {
+              this.json = getJSON();
+              this.html = getHTML();
+            },
+          });
+        }
       });
+    },
+    getNote(eventNote) {
+      if (eventNote === "") {
+        return "";
+      } else return JSON.parse(eventNote);
     },
     parser(time) {
       let year = parseInt(time.slice(0, 4), 10);
@@ -296,6 +543,9 @@ export default {
   },
   mounted() {
     this.fetchHistory();
+  },
+  beforeDestroy() {
+    this.editor.destroy();
   },
 };
 </script>
