@@ -1,9 +1,10 @@
 import os
 
 import pytest
+import json
 from src import db, create_app
 from src.courses.models import Course, Diploma
-from src.i18n.models import Language, I18NValue
+from src.i18n.models import Language, I18NValue, I18NLocale, I18NKey
 from src.people.models import Role
 from src.places.models import Country
 
@@ -12,6 +13,7 @@ from commands.app import create_app_cli
 from commands.courses import create_course_cli
 from commands.events import create_event_cli
 from commands.faker import create_faker_cli
+from commands.i18n import create_i18n_cli
 
 
 @pytest.fixture
@@ -27,6 +29,7 @@ def runner():
     create_course_cli(app)
     create_event_cli(app)
     create_faker_cli(app)
+    create_i18n_cli(app)
 
     yield app.test_cli_runner()
 
@@ -119,3 +122,75 @@ def test_load_attribute_types(runner):
     runner.invoke(args=['app', 'load-attribute-types'])
     assert db.session.query(I18NValue).filter(
         I18NValue.key_id == 'attribute.date').count() > 0
+
+# ---- i18n CLI
+
+
+def test_i18n_load(runner):
+    with runner.isolated_filesystem():
+        filename = 'en-US.json'
+        # GIVEN a file with some translation entries
+        with open(filename, "w") as f:
+            json.dump({
+                "account": {
+                    "messages": {
+                        "added-ok": {
+                            "gloss": "Account added successfully",
+                            "verified": False
+                        },
+                        "updated-ok": {
+                            "gloss": "Account updated successfully",
+                            "verified": False
+                        }
+                    }
+                }
+            }, f)
+            # WHEN we load the entries into the database
+        result = runner.invoke(
+            args=[
+                'i18n',
+                'load',
+                'en-US',
+                '--target',
+                filename])
+        # THEN we expect the correct number of entries to be loaded
+        assert db.session.query(I18NValue).count() == 2
+
+
+def test_i18n_dump(runner):
+    # GIVEN a database with some entries
+    locale_data = [{'code': 'en-US', 'desc': 'English US'}]
+    key_data = [
+        {'id': 'alt.logo', 'desc': 'Alt text for logo'},
+        {'id': 'app.name', 'desc': 'Application name'},
+        {'id': 'app.desc', 'desc': 'This is a test application'}
+    ]
+    db.session.add_all([I18NLocale(**d) for d in locale_data])
+    db.session.add_all([I18NKey(**k) for k in key_data])
+    db.session.add_all([
+        I18NValue(
+            locale_code=locale['code'],
+            key_id=key['id'],
+            gloss=f"{key['desc']} in {locale['desc']}")
+        for locale in locale_data for key in key_data
+    ])
+    db.session.commit()
+    assert db.session.query(I18NValue).count() == 3
+    with runner.isolated_filesystem():
+        # WHEN we dump the entries into a file
+        filename = 'en-US.json'
+        result = runner.invoke(
+            args=[
+                'i18n',
+                'dump',
+                'en-US',
+                '--target',
+                filename])
+        # THEN we expect the file to be created
+        assert os.path.exists(filename)
+        # THEN we expect the json structure to match what we created
+        with open(filename, "r") as f:
+            tree = json.load(f)
+            assert 'alt' in tree
+            assert 'app' in tree
+            assert tree['app']['desc']['gloss'] == "This is a test application in English US"
