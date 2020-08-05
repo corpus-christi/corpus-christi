@@ -411,7 +411,7 @@ created person with the `--roles` flag:
 $ flask people new --roles role.group-admin username password
 ```
 
-Use multiple `--roles` flags to attach more than one roles:
+Use multiple `--roles` flags to attach more than one role:
 
 ```bash
 $ flask people new --roles role.group-admin \
