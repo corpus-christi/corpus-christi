@@ -6,6 +6,7 @@ from marshmallow.validate import Length
 from . import i18n
 from .models import I18NLocale, I18NLocaleSchema, I18NKeySchema, I18NKey, I18NValue, I18NValueSchema, Language
 from .. import db
+from ..shared.helpers import list_to_tree
 
 # ---- I18N Locale
 
@@ -113,22 +114,15 @@ def read_xlation(locale_code):
     elif format == 'tree':
         # Interpret keys as a hierarchical structure.
         # Tree-building idea from  https://stackoverflow.com/questions/16547643
-        tree = {}
-        for value in values:
-            t = tree
-            keys = value.key_id.split('.')
-            for idx, key in enumerate(keys):
-                if idx < len(keys) - 1:
-                    # Intermediate "node"; add another dictionary
-                    t = t.setdefault(key, {})
-                else:
-                    # Last node
-                    if isinstance(t, dict):
-                        # Set key-value in leaf node of tree
-                        t[key] = value.gloss
-                    else:
-                        # Already a string value for this key
-                        return f'Invalid key ({value.key_id})', 400
+        entries = map(
+            lambda value: {
+                'path': value.key_id,
+                'value': value.gloss},
+            values)
+        try:
+            tree = list_to_tree(entries)
+        except RuntimeError as e:
+            return str(e), 400
         return jsonify(tree)
     else:
         return 'Invalid format', 400

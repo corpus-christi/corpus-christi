@@ -155,3 +155,46 @@ def get_file_extension(filename):
 
 def get_hash(filename):
     return hashlib.sha1(str(filename).encode('utf-8')).hexdigest()
+
+
+def tree_to_list(tree, is_leaf=lambda node: isinstance(node, str)):
+    """ convert a tree into a list of { 'path': 'abc.xyz', 'value': leaf_node }
+    where is_leaf(leaf_node) == True
+    """
+    result = []
+
+    def tree_to_list_helper(word_map, path=[]):
+        for key, val in word_map.items():
+            if (is_leaf(val)):
+                result.append({'path': path + [key], 'value': val})
+            else:
+                tree_to_list_helper(val, path + [key])
+    tree_to_list_helper(tree)
+    return result
+
+
+def list_to_tree(entries):
+    """ convert a list of { 'path': 'abc.xyz', 'value': node } into a tree
+    {
+      'abc': {
+        'xyz': node
+      }
+    }
+    """
+    tree = {}
+    for entry in entries:
+        keys = entry['path'].split('.')
+        t = tree
+        but_last, last = keys[:-1], keys[-1]
+        for i, key in enumerate(but_last):
+            t = t.setdefault(key, {})
+            if not isinstance(t, dict):
+                raise RuntimeError(
+                        f"failed to add child [{key}] in path [{entry['path']}], "
+                        f"non-dict value [{t}] at [{'.'.join(but_last[:i+1])}]")
+        if last not in t:
+            t[last] = entry['value']
+        else:
+            raise RuntimeError(
+                f"{entry['path']} already exists: '{t[last]}', won't set to '{entry['value']}'")
+    return tree

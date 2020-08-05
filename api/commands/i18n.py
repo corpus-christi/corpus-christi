@@ -6,6 +6,7 @@ import os
 from flask.cli import AppGroup
 from src import BASE_DIR, db
 from src.i18n.models import I18NLocale, I18NKey, I18NValue
+from src.shared.helpers import tree_to_list, list_to_tree
 
 
 def validate_locale(ctx, param, value):
@@ -32,44 +33,6 @@ def default_target():
     return os.path.join(BASE_DIR, 'i18n', f"{locale}.json")
 
 
-def tree_to_list(tree, is_leaf=lambda node: isinstance(node, str)):
-    """ convert a tree into a list of { 'path': 'abc.xyz', 'value': leaf_node }
-    where is_leaf(leaf_node) == True
-    """
-    result = []
-
-    def tree_to_list_helper(word_map, path=[]):
-        for key, val in word_map.items():
-            if (is_leaf(val)):
-                result.append({'path': path + [key], 'value': val})
-            else:
-                tree_to_list_helper(val, path + [key])
-    tree_to_list_helper(tree)
-    return result
-
-
-def list_to_tree(entries):
-    """ convert a list of { 'path': 'abc.xyz', 'value': node } into a tree
-    {
-      'abc': {
-        'xyz': node
-      }
-    }
-    """
-    tree = {}
-    for entry in entries:
-        keys = entry['path'].split('.')
-        t = tree
-        but_last, last = keys[:-1], keys[-1]
-        for key in but_last:
-            t = t.setdefault(key, {})
-        if last in t:
-            raise RuntimeError(
-                f"{entry['path']} already exists: '{t[last]}', won't set to '{entry['value']}'")
-        t[last] = entry['value']
-    return tree
-
-
 def create_i18n_cli(app):
     i18n_cli = AppGroup('i18n', help="Maintain translation entries.")
 
@@ -93,9 +56,9 @@ def create_i18n_cli(app):
         tree = json.load(target)
 
         def is_leaf(node):
-            return isinstance(
-                node, dict) and 'gloss' in node and isinstance(
-                node['gloss'], str)
+            return isinstance(node, dict) \
+                    and 'gloss' in node \
+                    and isinstance(node['gloss'], str)
 
         entries = tree_to_list(tree, is_leaf=is_leaf)
         locale = db.session.query(I18NLocale).filter_by(code=locale).first()
