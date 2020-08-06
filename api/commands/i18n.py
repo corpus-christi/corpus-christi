@@ -219,7 +219,7 @@ def create_i18n_cli(app):
                   show_default=os.path.join(BASE_DIR, 'i18n', "<locale>.json"),
                   type=click.File("r"),
                   help="The source file to load values from")
-    def import_values(locale, target, override):
+    def load_values(locale, target, override):
         """ Load values from a json file into the database.
 
         <locale>: the locale code of the processed values. E.g. en-US """
@@ -272,7 +272,7 @@ def create_i18n_cli(app):
                   callback=create_dir,
                   type=click.File("w"),
                   help="The destination file to dump values to")
-    def export_values(locale, target):
+    def dump_values(locale, target):
         """ Dump values from the database into a json file.
 
         <locale>: the locale code of the processed values. E.g. en-US """
@@ -306,7 +306,7 @@ def create_i18n_cli(app):
                   help="The source file to load descriptions from")
     @click.option('--verbose/--no-verbose', default=False,
                   help="Print output as modifying the database")
-    def import_descriptions(target, override, verbose):
+    def load_descriptions(target, override, verbose):
         """ Load descriptions from a json file into the database. """
         entry_count = 0
         skip_count = 0
@@ -365,7 +365,7 @@ def create_i18n_cli(app):
                   callback=create_dir,
                   type=click.File("w"),
                   help="The destination file to dump descriptions to")
-    def export_descriptions(target, dump_empty, empty_placeholder):
+    def dump_descriptions(target, dump_empty, empty_placeholder):
         """ Dump descriptions into a json file from the database. """
         query = db.session.query(I18NKey)
         if not dump_empty:
