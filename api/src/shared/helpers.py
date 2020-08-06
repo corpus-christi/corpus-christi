@@ -164,6 +164,9 @@ def tree_to_list(tree, is_leaf=lambda node: isinstance(node, str)):
     result = []
 
     def tree_to_list_helper(word_map, path=[]):
+        if not isinstance(word_map, dict):
+            raise RuntimeError(f"node [{word_map}] at path [{'.'.join(path)}]"
+                    " is neither a valid dictionary nor a valid leaf node")
         for key, val in word_map.items():
             if (is_leaf(val)):
                 result.append({'path': path + [key], 'value': val})
