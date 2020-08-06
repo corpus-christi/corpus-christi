@@ -138,13 +138,7 @@ def write_locale_tail_tree(tree, parent_path="", override=True, verbose=False):
     :returns: a result object:
     { entry_count: int, skip_count: int }
     """
-    # make sure parent_path is not an entry
     parent_path = parent_path.strip('.')  # can't start or end with a dot
-    if parent_path and db.session.query(
-            I18NKey).filter_by(id=parent_path).count():
-        raise RuntimeError(
-            f"[{parent_path}] is already an entry, cannot write sub-entries onto that")
-
     entry_count, skip_count = 0, 0
 
     def is_leaf(node):
@@ -154,11 +148,23 @@ def write_locale_tail_tree(tree, parent_path="", override=True, verbose=False):
     if is_leaf(tree):
         # override the item specified by parent_path
         if not parent_path:
-            raise RuntimeError(
+            raise click.BadParameter(
                 f"Must specify a path when overriding with a leaf node {tree}")
+        # make sure parent_path is not an intermediate path
+        child = db.session.query(I18NKey).filter(I18NKey.id.like(f'{parent_path}.%')).first()
+        if child:
+            raise RuntimeError(
+                f"[{parent_path}] is an intermediate path with child [{child.id}], "
+                "cannot update with a leaf node")
         lst = [{'path': [], 'value': tree}]
     # otherwise, flatten the given tree
     else:
+        # make sure parent_path is not an entry
+        if parent_path and db.session.query(
+                I18NKey).filter_by(id=parent_path).count():
+            raise RuntimeError(
+                f"[{parent_path}] is already an entry, cannot write sub-entries onto that")
+
         lst = tree_to_list(tree, is_leaf)
     for item in lst:
         key_id = '.'.join([parent_path] + item['path'])
@@ -205,6 +211,7 @@ def write_locale_tail_tree(tree, parent_path="", override=True, verbose=False):
     db.session.commit()
     return {'entry_count': entry_count, 'skip_count': skip_count}
 
+# --- commands
 
 def create_i18n_cli(app):
     i18n_cli = AppGroup('i18n', help="Maintain translation entries.")
@@ -226,7 +233,7 @@ def create_i18n_cli(app):
         entry_count = 0
         skip_count = 0
         locale_name = locale
-        click.echo(f"loading values from [{target.name}]")
+        click.echo(f"loading values from [{getattr(target, 'name', '(unknown stream)')}]")
         tree = json.load(target)
 
         def is_leaf(node):
@@ -259,7 +266,7 @@ def create_i18n_cli(app):
             entry_count += 1
         db.session.commit()
         click.echo("Successfully loaded data into the database")
-        click.echo(f"Source file: {target.name}")
+        click.echo(f"Source file: {getattr(target, 'name', '(unknown stream)')}")
         click.echo(f"Locale:      {locale_name}")
         click.echo(f"Entry count: {entry_count}")
         click.echo(f"Skip count:  {skip_count}")
@@ -276,7 +283,7 @@ def create_i18n_cli(app):
         """ Dump values from the database into a json file.
 
         <locale>: the locale code of the processed values. E.g. en-US """
-        click.echo(f"dumping values into {target.name}")
+        click.echo(f"dumping values into {getattr(target, 'name', '(unknown stream)')}")
         values = db.session.query(I18NValue).filter_by(
             locale_code=locale).all()
         entries = map(
@@ -290,7 +297,7 @@ def create_i18n_cli(app):
         tree = list_to_tree(entries)
         json.dump(tree, target, indent=2, sort_keys=True)
         click.echo("Successfully dumped data from the database")
-        click.echo(f"Target file: {target.name}")
+        click.echo(f"Target file: {getattr(target, 'name', '(unknown stream)')}")
         click.echo(f"Locale:      {locale}")
         click.echo(f"Entry count: {len(values)}")
 
@@ -312,7 +319,7 @@ def create_i18n_cli(app):
         skip_count = 0
         tree = json.load(target)
         entries = tree_to_list(tree)
-        click.echo(f"loading descriptions from [{target.name}]")
+        click.echo(f"loading descriptions from [{getattr(target, 'name', '(unknown stream)')}]")
         for entry in entries:
             key_id = '.'.join(entry['path'])
             key = db.session.query(I18NKey).filter_by(id=key_id).first()
@@ -339,7 +346,7 @@ def create_i18n_cli(app):
             entry_count += 1
         db.session.commit()
         click.echo("Successfully loaded descriptions into the database")
-        click.echo(f"Source file: {target.name}")
+        click.echo(f"Source file: {getattr(target, 'name', '(unknown stream)')}")
         click.echo(f"Entry count: {entry_count}")
         click.echo(f"Skip count:  {skip_count}")
         if skip_count:
@@ -382,7 +389,7 @@ def create_i18n_cli(app):
         tree = list_to_tree(entries)
         json.dump(tree, target, indent=2, sort_keys=True)
         click.echo("Successfully dumped data from the database")
-        click.echo(f"Target file: {target.name}")
+        click.echo(f"Target file: {getattr(target, 'name', '(unknown stream)')}")
         click.echo(f"Entry count: {len(keys)}")
 
     @i18n_cli.command('export')
@@ -418,7 +425,7 @@ def create_i18n_cli(app):
         tree = yaml.safe_load(target)
         result = write_locale_tail_tree(tree, path, override, verbose)
         click.echo("Successfully loaded data into the database")
-        click.echo(f"Source file: {target.name}")
+        click.echo(f"Source file: {getattr(target, 'name', '(unknown stream)')}")
         click.echo(f"Entry count: {result['entry_count']}")
         click.echo(f"Skip count:  {result['skip_count']}")
 

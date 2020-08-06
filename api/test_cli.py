@@ -2,6 +2,7 @@ import os
 
 import pytest
 import json
+import yaml
 from src import db, create_app
 from src.courses.models import Course, Diploma
 from src.i18n.models import Language, I18NValue, I18NLocale, I18NKey
@@ -194,3 +195,130 @@ def test_i18n_dump(runner):
             assert 'alt' in tree
             assert 'app' in tree
             assert tree['app']['desc']['gloss'] == "This is a test application in English US"
+
+
+def test_i18n_import(runner):
+    with runner.isolated_filesystem():
+        filename = 'entries.yaml'
+        # GIVEN a file with "locale-tail" structured tree
+        with open(filename, "w") as f:
+            f.write("""added-ok:
+  _desc: messages for successful adding account
+  en-US: Account added successfully
+  es-EC: Cuenta agregada exitosamente
+updated-ok:
+  _desc: messages for successful updating account
+  en-US: Account updated successfully
+  es-EC: "Cuenta actualizada con \xE9xito" """)
+        # WHEN we load the entries into the database
+        result = runner.invoke(
+            args=['i18n',
+                  'import',
+                  '--target',
+                  filename,
+                  'account.messages'])
+        # THEN we expect the correct number of entries to be loaded
+        assert db.session.query(I18NValue).count() == 4
+        # THEN we expect the value to be correct
+        assert db.session.query(I18NValue).filter_by(
+            key_id="account.messages.added-ok",
+            locale_code='en-US').first().gloss == "Account added successfully"
+        # THEN we expect the descriptions to be loaded correctly
+        assert db.session.query(I18NKey).filter_by(
+            id="account.messages.added-ok").first().desc == "messages for successful adding account"
+
+        # WHEN we update a single leaf record with standard input
+        result = runner.invoke(
+            args=[
+                'i18n',
+                'import',
+                '--target',
+                '-',
+                'account.messages.added-ok'],
+            input="_desc: Messages for successful adding account\nen-US: Success!")
+        # THEN we expect the record to be updated
+        assert db.session.query(I18NValue).filter_by(
+            key_id="account.messages.added-ok",
+            locale_code='en-US').first().gloss == "Success!"
+        # THEN we expect the descriptions to be loaded correctly
+        assert db.session.query(I18NKey).filter_by(
+            id="account.messages.added-ok").first().desc == "Messages for successful adding account"
+        # WHEN we try to write a leaf record onto an intermediate path
+        result = runner.invoke(
+            args=[
+                'i18n',
+                'import',
+                '--target',
+                '-',
+                'account.messages'],
+            input="_desc: Messages for successful adding account\nen-US: Success!")
+
+        # THEN we expect a RuntimeError to be raised
+        assert result.exception and isinstance(result.exception, RuntimeError)
+
+        # WHEN we try to write a leaf node without a path
+        result = runner.invoke(
+            args=[
+                'i18n',
+                'import',
+                '--target',
+                '-'],
+            input="_desc: Messages for successful adding account\nen-US: Success!")
+
+        # THEN we expect a BadParameter error to be raised
+        assert result.exception
+
+
+def test_i18n_export(runner):
+    # GIVEN a database with some entries
+    locale_data = [{'code': 'en-US', 'desc': 'English US'},
+                   {'code': 'es-EC', 'desc': 'Spanish Ecuador'}]
+    key_data = [
+        {'id': 'alt.logo', 'desc': 'Alt text for logo'},
+        {'id': 'app.name', 'desc': 'Application name'},
+        {'id': 'app.desc', 'desc': 'This is a test application'}
+    ]
+    db.session.add_all([I18NLocale(**d) for d in locale_data])
+    db.session.add_all([I18NKey(**k) for k in key_data])
+    db.session.add_all([
+        I18NValue(
+            locale_code=locale['code'],
+            key_id=key['id'],
+            gloss=f"{key['desc']} in {locale['desc']}")
+        for locale in locale_data for key in key_data
+    ])
+    db.session.commit()
+    assert db.session.query(I18NValue).count() == 6
+    with runner.isolated_filesystem():
+        # WHEN we export all the entries into a file
+        filename = 'entries.yaml'
+        result = runner.invoke(
+            args=[
+                'i18n',
+                'export',
+                '--target',
+                filename])
+        # THEN we expect the file to be created
+        assert os.path.exists(filename)
+        # THEN we expect the json structure to match what we created
+        with open(filename, "r") as f:
+            tree = yaml.safe_load(f)
+            assert 'alt' in tree
+            assert 'app' in tree
+            assert tree['app']['desc']['en-US'] == "This is a test application in English US"
+
+        # WHEN we export part of the entries into a file
+        filename = 'entries.yaml'
+        result = runner.invoke(
+            args=[
+                'i18n',
+                'export',
+                '--target',
+                filename,
+                'app'])
+        # THEN we expect the json structure to match what we created
+        with open(filename, "r") as f:
+            tree = yaml.safe_load(f)
+            assert 'name' in tree
+            assert 'desc' in tree
+            assert tree['desc']['en-US'] == "This is a test application in English US"
