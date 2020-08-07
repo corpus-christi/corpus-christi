@@ -4,7 +4,7 @@
       dense
       dark>
     <v-toolbar-title>
-      {{  }} {{ titleLocale }}
+      {{ $t('translation.toolbar-title') }} {{ titleLocale }}
     </v-toolbar-title>
       <v-spacer />
       <v-text-field
@@ -18,6 +18,19 @@
         clear-icon="mdi-close-circle-outline"
       ></v-text-field>
     </v-app-bar>
+    <v-btn
+      v-scroll="onScroll"
+      v-show="fab"
+      fab
+      dark
+      fixed
+      bottom
+      left
+      color="dense"
+      @click="toTop"
+    >
+      <v-icon>keyboard_arrow_up</v-icon>
+    </v-btn>
     <v-row>
       <v-col>
         <v-card-text>
@@ -117,7 +130,8 @@
           dialogInitialText: null,
           updateTR: null,
           selected_key_id: null,
-          search: null
+          search: null,
+          fab:false
         };
       },
       computed:{
@@ -136,6 +150,14 @@
         }
       },
       methods:{
+        onScroll (e) {
+          if (typeof window === 'undefined') return
+          const top = window.pageYOffset ||   e.target.scrollTop || 0
+          this.fab = top > 20
+        },
+        toTop () {
+          this.$vuetify.goTo(0)
+        },
         change(selection){
           this.dialogInitialText = selection.name
           this.changeTranslationDialog = true;

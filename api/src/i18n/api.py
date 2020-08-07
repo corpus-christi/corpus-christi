@@ -10,7 +10,7 @@ from ..shared.helpers import list_to_tree
 
 from src.shared.helpers import modify_entity, get_all_queried_entities, logged_response
 
-# from src.auth.utils import authorize
+from src.auth.utils import authorize
 
 # ---- I18N Locale
 
@@ -101,7 +101,7 @@ def read_all_values():
 
 @i18n.route('/values/update', methods=['PATCH'])
 @jwt_required
-# @authorize(['role.group-admin'])
+@authorize(['role.translator'])
 def update_a_value():
 #     update the values with the info in payload
     i18n_value_schema = I18NValueSchema()
