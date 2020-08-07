@@ -26,7 +26,6 @@ export default {
     // Computed property so it's reactive.
     ...mapState(["currentAccount"]),
     menuItems: function () {
-      console.log(this.currentAccount.roles)
       if (this.currentAccount.roles.includes("role.translator") === true){
       return [
           {
