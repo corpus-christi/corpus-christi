@@ -4,6 +4,7 @@ import click
 import re
 import os
 import sys
+import tempfile
 
 import sqlalchemy
 from flask.cli import AppGroup
@@ -79,7 +80,7 @@ def default_target():
     if 'locale' not in params:
         click.echo(
             "Can't get default target from the specified <locale> parameter")
-        raise click.Abort
+        raise click.Abort()
     locale = params['locale']
     return os.path.join(BASE_DIR, 'i18n', f"{locale}.json")
 
@@ -155,17 +156,22 @@ def write_locale_tail_tree(tree, parent_path="", override=True, verbose=False):
 
     :returns: a result object:
     { entry_count: int, skip_count: int }
+
+    a RuntimeError will be raised if the given input will
+    produce an invalid tree structure
+
     """
     entry_count, skip_count = 0, 0
 
     def is_leaf(node):
-        return all([(key == '_desc' or is_valid_locale_code(key))
-                    and isinstance(val, str) for key, val in node.items()])
+        return isinstance(node, dict) \
+            and all([(key == '_desc' or is_valid_locale_code(key))
+                     and isinstance(val, str) for key, val in node.items()])
     # if the given tree is a leaf
     if is_leaf(tree):
         # override the item specified by parent_path
         if not parent_path:
-            raise click.BadParameter(
+            raise RuntimeError(
                 f"Must specify a path when overriding with a leaf node {tree}")
         # make sure parent_path is not an intermediate path
         child = db.session.query(I18NKey).filter(
@@ -185,7 +191,10 @@ def write_locale_tail_tree(tree, parent_path="", override=True, verbose=False):
 
         lst = tree_to_list(tree, is_leaf)
     for item in lst:
-        key_id = '.'.join([parent_path] + item['path'])
+        key_list = item['path']
+        if parent_path:
+            key_list.insert(0, parent_path)
+        key_id = '.'.join(key_list)
         key = get_or_create(db.session, I18NKey, id=key_id)
         existing_values = {value.locale_code: value for value in key.values}
         for locale_code, gloss in item['value'].items():
@@ -340,7 +349,11 @@ def create_i18n_cli(app):
                   show_default=True,
                   type=click.File("r"),
                   help="The source file to load descriptions from")
-    @click.option('-v', '--verbose', is_flag=True, default=False,
+    @click.option('-v/-s',
+                  '--verbose/--silent',
+                  is_flag=True,
+                  default=True,
+                  show_default=True,
                   help="Print output as modifying the database")
     def load_descriptions(target, override, verbose):
         """ Load descriptions from a json file into the database. """
@@ -470,7 +483,11 @@ def create_i18n_cli(app):
                   help="Override if value already exists. "
                   "If true, then for values that are overridden, "
                   "the corresponding 'verified' flag will be set to False.")
-    @click.option('-v', '--verbose', is_flag=True, default=False,
+    @click.option('-v/-s',
+                  '--verbose/--silent',
+                  is_flag=True,
+                  default=True,
+                  show_default=True,
                   help="Print output as modifying the database")
     def import_entries(path, target, override, verbose):
         """ load all entries expressed in a 'locale-tail' structured tree into the database,
@@ -485,7 +502,7 @@ def create_i18n_cli(app):
 
     app.cli.add_command(i18n_cli)
 
-# --- flask i18n import
+# --- flask i18n delete
 
     @i18n_cli.command('delete')
     @click.option('-r', '--recursive', is_flag=True,
@@ -494,7 +511,11 @@ def create_i18n_cli(app):
                   help="specify a given locale to delete, "
                   "leave empty to delete entry with all existing locales "
                   "along with its belong key and description")
-    @click.option('-v', '--verbose', is_flag=True, default=False,
+    @click.option('-v/-s',
+                  '--verbose/--silent',
+                  is_flag=True,
+                  default=True,
+                  show_default=True,
                   help="Print output as modifying the database")
     @click.argument('path', callback=sanitize_path)
     def delete_entries(recursive, locale, verbose, path):
@@ -539,3 +560,50 @@ def create_i18n_cli(app):
         count += key_query.delete(synchronize_session=False)
         db.session.commit()
         click.echo(f"Delete entry count: {count}")
+
+# --- flask i18n edit
+
+    @i18n_cli.command('edit')
+    @click.argument('path', callback=sanitize_path, default="")
+    def edit_entries(path):
+        """ edit entries that starts with PATH in an interactive editor,
+        with a 'locale-tail' structured tree """
+        tree = read_locale_tail_tree(path)
+        if tree:
+            data = yaml.dump(tree, default_flow_style=False, sort_keys=True)
+            comments = (
+                "#####################################################################\n"
+                "#             You are in the interactive editing mode \n"
+                "# Start making some changes to the content and then save this file.\n"
+                "#     Changes will be updated to the database. \n"
+                "# Keys removed from the file will NOT be deleted from the database. \n"
+                "#     To delete keys, see 'flask i18n delete --help'. \n"
+                "# Close the editor without saving to abort the action.\n"
+                "# \n"
+                f"# Current path: {path or '(root)'}\n"
+                "################## content above this line is ignored ###############\n\n")
+            data = click.edit(comments + data, extension=".yaml")
+            if data is None:
+                click.echo("Content not saved, operation aborted.")
+                raise click.Abort()
+            try:
+                tree = yaml.safe_load(data)
+                result = write_locale_tail_tree(tree, path, verbose=True)
+            except (yaml.YAMLError, RuntimeError) as e:
+                click.echo(
+                    "An error occurred writing the given yaml file to database")
+                click.echo(f"Error message: {e}")
+                click.echo("Saving content to a temporary file...")
+                with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".yaml") as f:
+                    filename = f.name
+                    f.write(data)
+                click.echo(f"Content saved to {filename}")
+                click.echo("To save changes to the database, "
+                           "remove any invalid blocks from the file and run:")
+                click.echo(
+                    f"\n    flask i18n import --target {filename} {path}\n")
+            else:
+                click.echo("Successfully edited entries")
+                click.echo(f"Entry count: {result['entry_count']}")
+        else:
+            click.echo(f"No entries found")
