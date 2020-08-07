@@ -357,7 +357,7 @@ router.beforeEach((to, from, next) => {
       // Block the no-admin users to have access to specific pages
       if ((to.path === "/groups/group-types" || to.path === "/groups/manager-types") && store.state.currentAccount.roles.includes("role.group-admin") === false){
         next({
-          name: "admin"
+          name: "people"
         })
       }
       else next();
