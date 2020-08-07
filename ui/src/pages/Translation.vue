@@ -90,6 +90,7 @@
 
 <script>
   import { mapState } from "vuex";
+  import { eventBus } from "../plugins/event-bus.js";
     export default {
       name: "Translation",
       data() {
@@ -132,12 +133,19 @@
           this.changeTranslationDialog = false;
         },
         update(){
-          console.log(this.updateTR);
           this.changeTranslationDialog = false;
           let payload = {key_id: this.selected_key_id, locale_code: this.storedLocale, gloss: this.updateTR}
-          //send the request here
           return this.$http.patch(`api/v1/i18n/values/update`, payload).then((resp) => {
+            eventBus.$emit("message", {
+              content: "translation.updated",
+            });
             console.log(resp.data)
+          })
+          .catch((err) => {
+            console.log(err);
+            eventBus.$emit("error", {
+              content: "translation.error",
+            });
           });
         },
         getTreeLeaves(){
@@ -163,7 +171,7 @@
                 children:[]
               })
               this.counter+=1;
-              this.getExtensions(leaf, subtree[leaf], container[container.length-1].children, key_id+leaf)
+              this.getExtensions(leaf, subtree[leaf], container[container.length-1].children, key_id+leaf+'.')
             }
             else if ((typeof subtree[leaf]) === "string"){
               container.push({
@@ -175,7 +183,7 @@
               container[container.length-1].children.push({
                 id: this.counter,
                 name: subtree[leaf],
-                key_id: key_id+'.'+leaf
+                key_id: key_id+leaf
               })
               this.counter+=1;
             }

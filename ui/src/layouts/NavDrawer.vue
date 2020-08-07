@@ -77,7 +77,7 @@ export default {
           icon: "places",
         },
         {
-          title: "Translation(Need)",
+          title: this.$t("translation.menu-title"),
           route: "translation",
           icon: "library_books",
         },

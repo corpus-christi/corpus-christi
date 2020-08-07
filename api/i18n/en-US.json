@@ -58,6 +58,10 @@
     }
   },
   "translation": {
+    "menu-title": {
+      "gloss": "Translation",
+      "verified": false
+    },
     "dialog": {
       "cancel": {
         "gloss": "Cancel",
@@ -70,6 +74,14 @@
     },
     "toolbar-title": {
       "gloss": "Current locale: ",
+      "verified": false
+    },
+    "updated": {
+      "gloss": "Translations updated",
+      "verified": false
+    },
+    "error": {
+      "gloss": "Please modify your translations again",
       "verified": false
     }
   },
