@@ -10,10 +10,37 @@ import sqlalchemy
 from flask.cli import AppGroup
 from src import BASE_DIR, db
 from src.i18n.models import I18NLocale, I18NKey, I18NValue
-from src.shared.helpers import tree_to_list, list_to_tree
+from src.shared.helpers import tree_to_list, list_to_tree, BadTreeStructure, BadListKeyPath
 
+
+# --- exceptions
+
+class ExceptionHandlingCommand(click.Command):
+    """ A custom subclass to handle common exceptions raised in i18n commands """
+
+    def invoke(self, ctx):
+        try:
+            return super().invoke(ctx)
+        except yaml.YAMLError as e:
+            click.echo("\nError: An error occurred when processing yaml file")
+            click.echo(f"Error message: {e}")
+            exit(1)
+        except json.JSONDecodeError as e:
+            click.echo("\nError: An error occurred when decoding json file")
+            click.echo(f"Error message: {e}")
+            exit(1)
+        except BadListKeyPath as e:
+            click.echo("\nError: A bad i18n key path is encountered")
+            click.echo(f"Error message: {e}")
+            exit(1)
+        except BadTreeStructure as e:
+            click.echo(
+                "\nError: An invalid locale-tail structured tree is encountered")
+            click.echo(f"Error message: {e}")
+            exit(1)
 
 # --- helpers
+
 
 def is_valid_locale_code(locale_code):
     return re.fullmatch('[a-z]{2}-[A-Z]{2}', locale_code)
@@ -94,7 +121,7 @@ def read_locale_tail_tree(parent_path=""):
     a "locale-head" tree, where entry gloss themselves are
     categorized according to the locales.
 
-    If it is impossible to create a valid tree, raise a RuntimeError
+    If it is impossible to create a valid tree, raise a BadListKeyPath error
 
     :parent_path: the base dotted path, entries not starting with
     this path will be ignored. parent_path must be a complete path segment
@@ -119,7 +146,7 @@ def read_locale_tail_tree(parent_path=""):
                 list_item['path'] = list_item['path'][len(
                     strip_key):].lstrip('.')
             else:
-                raise RuntimeError(
+                raise BadListKeyPath(
                     f"Unexpected strip_key: [{list_item['path']}] does not start with [{strip_key}]")
         if key.desc:
             list_item['value']['_desc'] = key.desc
@@ -157,7 +184,7 @@ def write_locale_tail_tree(tree, parent_path="", override=True, verbose=False):
     :returns: a result object:
     { entry_count: int, skip_count: int }
 
-    a RuntimeError will be raised if the given input will
+    an BadTreeStructure will be raised if the given input will
     produce an invalid tree structure
 
     """
@@ -171,13 +198,13 @@ def write_locale_tail_tree(tree, parent_path="", override=True, verbose=False):
     if is_leaf(tree):
         # override the item specified by parent_path
         if not parent_path:
-            raise RuntimeError(
+            raise BadTreeStructure(
                 f"Must specify a path when overriding with a leaf node {tree}")
         # make sure parent_path is not an intermediate path
         child = db.session.query(I18NKey).filter(
             I18NKey.id.like(f'{parent_path}.%')).first()
         if child:
-            raise RuntimeError(
+            raise BadTreeStructure(
                 f"[{parent_path}] is an intermediate path with child [{child.id}], "
                 "cannot update with a leaf node")
         lst = [{'path': [], 'value': tree}]
@@ -186,7 +213,7 @@ def write_locale_tail_tree(tree, parent_path="", override=True, verbose=False):
         # make sure parent_path is not an entry
         if parent_path and db.session.query(
                 I18NKey).filter_by(id=parent_path).count():
-            raise RuntimeError(
+            raise BadTreeStructure(
                 f"[{parent_path}] is already an entry, cannot write sub-entries onto that")
 
         lst = tree_to_list(tree, is_leaf)
@@ -243,10 +270,11 @@ def write_locale_tail_tree(tree, parent_path="", override=True, verbose=False):
 
 def create_i18n_cli(app):
     i18n_cli = AppGroup('i18n', help="Maintain translation entries.")
+    app.cli.add_command(i18n_cli)
 
 # --- flask i18n load
 
-    @i18n_cli.command('load')
+    @i18n_cli.command('load', cls=ExceptionHandlingCommand)
     @click.argument('locale', callback=validate_locale, metavar="<locale>")
     @click.option('--override/--no-override', default=True,
                   show_default=True,
@@ -305,7 +333,7 @@ def create_i18n_cli(app):
 
 # --- flask i18n dump
 
-    @i18n_cli.command('dump')
+    @i18n_cli.command('dump', cls=ExceptionHandlingCommand)
     @click.argument('locale', callback=validate_locale, metavar="<locale>")
     @click.option('--target',
                   default=default_target,
@@ -339,7 +367,7 @@ def create_i18n_cli(app):
 
 # --- flask i18n load-descriptions
 
-    @i18n_cli.command('load-descriptions')
+    @i18n_cli.command('load-descriptions', cls=ExceptionHandlingCommand)
     @click.option('--override/--no-override',
                   default=False,
                   show_default=True,
@@ -399,7 +427,7 @@ def create_i18n_cli(app):
 
 # --- flask i18n dump-descriptions
 
-    @i18n_cli.command('dump-descriptions')
+    @i18n_cli.command('dump-descriptions', cls=ExceptionHandlingCommand)
     @click.option(
         '--dump-empty/--no-dump-empty',
         default=False,
@@ -441,7 +469,7 @@ def create_i18n_cli(app):
 
 # --- flask i18n export
 
-    @i18n_cli.command('export')
+    @i18n_cli.command('export', cls=ExceptionHandlingCommand)
     @click.argument('path', callback=sanitize_path, default="")
     @click.option('--target',
                   default='-',
@@ -459,7 +487,7 @@ def create_i18n_cli(app):
 
 # --- flask i18n list
 
-    @i18n_cli.command('list')
+    @i18n_cli.command('list', cls=ExceptionHandlingCommand)
     @click.argument('path', callback=sanitize_path, default="")
     @click.pass_context
     def list_entries(ctx, path):
@@ -471,7 +499,7 @@ def create_i18n_cli(app):
 
 # --- flask i18n import
 
-    @i18n_cli.command('import')
+    @i18n_cli.command('import', cls=ExceptionHandlingCommand)
     @click.argument('path', callback=sanitize_path, default="")
     @click.option('--target',
                   default='-',
@@ -500,7 +528,6 @@ def create_i18n_cli(app):
         click.echo(f"Entry count: {result['entry_count']}")
         click.echo(f"Skip count:  {result['skip_count']}")
 
-    app.cli.add_command(i18n_cli)
 
 # --- flask i18n delete
 
@@ -563,7 +590,7 @@ def create_i18n_cli(app):
 
 # --- flask i18n edit
 
-    @i18n_cli.command('edit')
+    @i18n_cli.command('edit', cls=ExceptionHandlingCommand)
     @click.argument('path', callback=sanitize_path, default="")
     def edit_entries(path):
         """ edit entries that starts with PATH in an interactive editor,
@@ -589,7 +616,7 @@ def create_i18n_cli(app):
             try:
                 tree = yaml.safe_load(data)
                 result = write_locale_tail_tree(tree, path, verbose=True)
-            except (yaml.YAMLError, RuntimeError) as e:
+            except (yaml.YAMLError, BadTreeStructure) as e:
                 click.echo(
                     "An error occurred writing the given yaml file to database")
                 click.echo(f"Error message: {e}")

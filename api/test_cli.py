@@ -258,8 +258,10 @@ updated-ok:
                 'account.messages'],
             input="_desc: Messages for successful adding account\nen-US: Success!")
 
-        # THEN we expect a RuntimeError to be raised
-        assert result.exception and isinstance(result.exception, RuntimeError)
+        # THEN we expect the program to be aborted
+        assert result.exit_code == 1 
+        # THEN we expect the correct output is printed
+        assert b'invalid locale-tail structured tree' in result.stdout_bytes
 
         # WHEN we try to write a leaf node without a path
         result = runner.invoke(
@@ -270,8 +272,10 @@ updated-ok:
                 '-'],
             input="_desc: Messages for successful adding account\nen-US: Success!")
 
-        # THEN we expect a BadParameter error to be raised
-        assert result.exception
+        # THEN we expect the program to be aborted 
+        assert result.exit_code == 1
+        # THEN we expect the correct output is printed
+        assert b'invalid locale-tail structured tree' in result.stdout_bytes
 
 
 def test_i18n_export(runner):
@@ -367,7 +371,6 @@ def test_i18n_delete(runner):
             'en-US',
             'alt.logo'])
     # THEN we expect the correct entry count in database
-    print("result.__dict__: {}".format(result.__dict__))
     assert db.session.query(I18NValue).count() == 5
     # THEN we expect the deleted entry not to be in database
     assert not db.session.query(I18NValue).filter_by(
