@@ -205,7 +205,7 @@ executables that create users and databases.
 
 Create a user:
 ```bash
-$ createuser arco --password
+$ createuser arco --pwprompt
 ```
 The command prompts you for a password.
 Enter your desired password.
