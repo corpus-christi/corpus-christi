@@ -57,6 +57,22 @@
       }
     }
   },
+  "translation": {
+    "dialog": {
+      "cancel": {
+        "gloss": "Cancelar",
+        "verified": false
+      },
+      "submit": {
+        "gloss": "Enviar",
+        "verified": false
+      }
+    },
+    "toolbar-title": {
+      "gloss": "Locale actual:",
+      "verified": false
+    }
+  },
   "account": {
     "messages": {
       "added-ok": {

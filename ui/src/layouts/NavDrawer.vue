@@ -76,6 +76,11 @@ export default {
           route: "places",
           icon: "places",
         },
+        {
+          title: "Translation(Need)",
+          route: "translation",
+          icon: "library_books",
+        },
       ];
     },
   },

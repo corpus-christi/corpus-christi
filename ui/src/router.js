@@ -241,6 +241,12 @@ const router = new VueRouter({
       component: () => import("@/pages/Places"),
     },
     {
+      name: "translation",
+      path: "/translation",
+      meta: { authRequired: true },
+      component: () => import("@/pages/Translation"),
+    },
+    {
       name: "diplomas-admin",
       path: "/diplomas",
       meta: { authRequired: true },
