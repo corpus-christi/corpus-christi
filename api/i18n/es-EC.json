@@ -62,6 +62,10 @@
       "gloss": "Traducción",
       "verified": false
     },
+    "search-title": {
+      "gloss": "Encuentre una sucursal de traducción",
+      "verified": false
+    },
     "dialog": {
       "cancel": {
         "gloss": "Cancelar",

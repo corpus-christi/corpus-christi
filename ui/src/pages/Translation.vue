@@ -4,8 +4,19 @@
       dense
       dark>
     <v-toolbar-title>
-      {{ $t("translation.toolbar-title") }} {{ titleLocale }}
+      {{  }} {{ titleLocale }}
     </v-toolbar-title>
+      <v-spacer />
+      <v-text-field
+        v-model="search"
+        v-bind:label="$t('translation.search-title')"
+        dark
+        flat
+        solo-inverted
+        hide-details
+        clearable
+        clear-icon="mdi-close-circle-outline"
+      ></v-text-field>
     </v-app-bar>
     <v-row>
       <v-col>
@@ -14,6 +25,7 @@
             activatable
             :items="items"
             v-model="tree"
+            :search="search"
             selected-color="indigo"
             :open-on-click="open"
             selectable
@@ -104,7 +116,8 @@
           changeTranslationDialog: false,
           dialogInitialText: null,
           updateTR: null,
-          selected_key_id: null
+          selected_key_id: null,
+          search: null
         };
       },
       computed:{
