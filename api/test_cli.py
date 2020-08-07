@@ -361,7 +361,6 @@ def test_i18n_delete(runner):
         {'id': 'app.desc', 'desc': 'This is a test application'}
     ]
     populate_database_i18n(locale_data, key_data)
-    assert db.session.query(I18NValue).count() == 6
     # WHEN we delete some entries with a certain locale
     result = runner.invoke(
         args=[
@@ -388,3 +387,39 @@ def test_i18n_delete(runner):
     keys = db.session.query(I18NKey).all()
     assert len(keys) == 1
     assert keys[0].id == 'alt.logo'
+
+def test_i18n_translate(runner):
+    # GIVEN a database with some entries
+    locale_data = [{'code': 'en-US', 'desc': 'English US'}]
+    key_data = [
+        {'id': 'alt.logo', 'desc': 'Alt text for logo'},
+        {'id': 'app.name', 'desc': 'Application name'},
+        {'id': 'app.desc', 'desc': 'This is a test application'}
+    ]
+    populate_database_i18n(locale_data, key_data)
+    # WHEN we translate the entries into Spanish
+    result = runner.invoke(
+        args=[
+            'i18n',
+            'translate',
+            'en-US',
+            'es-EC'])
+    # THEN we expect the translated entries to appear in the database
+    assert db.session.query(I18NValue).filter_by(locale_code="es-EC").count() == 3
+
+def test_i18n_translate_params(runner):
+    # GIVEN nothing
+    # WHEN we invoke the command with an undeducible locale 
+    result = runner.invoke(
+        args=[
+            'i18n',
+            'translate',
+            'en-US',
+            'ab-CD'])
+    # THEN we expect the command to exit with status code 1
+    print("result.__dict__: {}".format(result.__dict__))
+    assert result.exit_code == 1
+    # THEN we expect the output to contain language code information
+    assert b"indonesian" in result.stdout_bytes
+    assert b"english" in result.stdout_bytes
+    assert b"zh-cn" in result.stdout_bytes

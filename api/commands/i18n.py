@@ -5,8 +5,10 @@ import re
 import os
 import sys
 import tempfile
-
+import googletrans
 import sqlalchemy
+import time
+
 from flask.cli import AppGroup
 from src import BASE_DIR, db
 from src.i18n.models import I18NLocale, I18NKey, I18NValue
@@ -60,6 +62,47 @@ def validate_locale_allow_none(ctx, param, value):
     """
     if value is not None:
         return validate_locale(ctx, param, value)
+    else:
+        return value
+
+
+def get_formatted_language_map():
+    formatter = "{:10}| {:10}"
+    divider = "-" * 25
+    title = "All available language codes:\n"
+
+    return "\n".join(
+        [
+            title,
+            formatter.format("code", "description"),
+            divider
+        ] +
+        [
+            formatter.format(code, desc)
+            for code, desc in googletrans.LANGUAGES.items()
+        ])
+
+
+def is_valid_language_code(language_code):
+    return language_code in googletrans.LANGUAGES
+
+
+def validate_language(ctx, param, value):
+    """ validate whether the given language is valid,
+    list all possible languages if an invalid one is given
+    """
+    if not is_valid_language_code(value):
+        raise click.BadParameter(
+            f"{value} is not a valid language code.\n\n" +
+            get_formatted_language_map()
+        )
+    return value
+
+
+def validate_language_allow_none(ctx, param, value):
+    """ validate whether the given language is valid or None """
+    if value is not None:
+        return validate_language(ctx, param, value)
     else:
         return value
 
@@ -634,3 +677,147 @@ def create_i18n_cli(app):
                 click.echo(f"Entry count: {result['entry_count']}")
         else:
             click.echo(f"No entries found")
+
+
+# --- flask i18n translate
+
+    @i18n_cli.command('translate', cls=ExceptionHandlingCommand)
+    @click.argument(
+        'source-locale', callback=validate_locale, metavar="<src-locale>")
+    @click.argument(
+        'destination-locale',
+        callback=validate_locale,
+        metavar="<dest-locale>")
+    @click.option(
+        '-i',
+        '--interactive',
+        is_flag=True,
+        default=False,
+        help="interactively prompt for confirmation as the translation proceeds")
+    @click.option(
+        '--src-lang',
+        callback=validate_language_allow_none,
+        help="Manually provide a source language code to translate from")
+    @click.option(
+        '--dest-lang',
+        help="Manually provide a destination language code to translate to")
+    @click.option(
+        '--delay-timer',
+        type=click.FLOAT,
+        default=0.3,
+        help="A delay timer to prevent too frequent requests")
+    def translate_entries(
+            source_locale,
+            destination_locale,
+            src_lang,
+            dest_lang,
+            interactive,
+            delay_timer
+    ):
+        """ Complete entries in the database with <dest-locale> by
+        translating from <src-locale>.
+
+        Example usage: flask i18n translate en-US es-EC
+        """
+        lang_map = googletrans.LANGUAGES
+
+        # try to deduce source and destination language if not given
+        src_lang = src_lang or next(
+            (lang for lang in lang_map.keys()
+             if lang[:2].lower() == source_locale[:2].lower()), None)
+        if not src_lang:
+            click.echo(get_formatted_language_map())
+            click.echo(
+                f"Cannot deduce source language from the given locale {source_locale}")
+            click.echo(
+                "Try to specify the source language with --src-lang explicitly")
+            exit(1)
+
+        # try to deduce source and destination language if not given
+        dest_lang = dest_lang or next(
+            (lang for lang in lang_map.keys()
+             if lang[:2].lower() == destination_locale[:2].lower()), None)
+        if not dest_lang:
+            click.echo(get_formatted_language_map())
+            click.echo(
+                f"Cannot deduce destination language from the given locale {destination_locale}")
+            click.echo(
+                "Try to specify the destination language with --dest-lang explicitly")
+            exit(1)
+
+        t = googletrans.Translator()
+
+        # start translation
+        entry_count = 0
+        all_keys = db.session.query(I18NKey).all()
+        for key in all_keys:
+            source_value, destination_value = None, None
+            for value in key.values:
+                if value.locale_code == source_locale:
+                    source_value = value
+                if value.locale_code == destination_locale:
+                    destination_value = value
+            if not source_value or destination_value:
+                # skip if source doesn't exist or
+                # there is already a destination value
+                continue
+            gloss = t.translate(
+                source_value.gloss,
+                src=src_lang,
+                dest=dest_lang).text
+            if interactive:
+                click.echo(
+                    f"[{key.id}] has no value in [{destination_locale}]")
+                click.echo(
+                    f"add translation [{source_value.gloss}] => [{gloss}]?")
+                click.echo()
+                options = {
+                    'y': 'Yes, use the current translation',
+                    'n': 'No, skip this entry',
+                    'e': 'Edit the current entry',
+                    'a': 'Use given translation for All following entries',
+                    'q': 'Quit the program'
+                }
+                for k, v in options.items():
+                    click.echo("{:3}: {}".format(k, v))
+                choice = click.prompt(
+                    "=> ",
+                    type=click.Choice(
+                        options.keys(),
+                        case_sensitive=False),
+                    default='y')
+            else:
+                choice = 'y'
+
+            if choice == 'e':
+                gloss = click.prompt(
+                    "Enter a new translation to override the default one",
+                    default=gloss)
+                choice = 'y'
+            elif choice == 'a':
+                interactive = False
+                choice = 'y'
+
+            if choice == 'y':
+                # make sure locale exists
+                get_or_create(db.session, I18NLocale, code=destination_locale)
+                destination_value = I18NValue(
+                    key_id=key.id,
+                    locale_code=destination_locale,
+                    gloss=gloss,
+                    verified=False
+                )
+                db.session.add(destination_value)
+                entry_count += 1
+                click.echo(f"Entry [{gloss}] added")
+                if not interactive:
+                    time.sleep(delay_timer)
+            elif choice == 'n':
+                click.echo(f"Entry [{gloss}] not added.")
+                continue
+            elif choice == 'q':
+                click.echo("Nothing changed.")
+                exit(0)
+        db.session.commit()
+
+        click.echo(f"Entry count: {entry_count}")
