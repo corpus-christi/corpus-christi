@@ -127,6 +127,21 @@ def test_load_attribute_types(runner):
 # ---- i18n CLI
 
 
+def populate_database_i18n(locale_data, key_data):
+    db.session.add_all([I18NLocale(**d) for d in locale_data])
+    db.session.add_all([I18NKey(**k) for k in key_data])
+    db.session.add_all([
+        I18NValue(
+            locale_code=locale['code'],
+            key_id=key['id'],
+            gloss=f"{key['desc']} in {locale['desc']}")
+        for locale in locale_data for key in key_data
+    ])
+    db.session.commit()
+    assert db.session.query(I18NValue).count() == len(
+        locale_data) * len(key_data)
+
+
 def test_i18n_load(runner):
     with runner.isolated_filesystem():
         filename = 'en-US.json'
@@ -166,17 +181,7 @@ def test_i18n_dump(runner):
         {'id': 'app.name', 'desc': 'Application name'},
         {'id': 'app.desc', 'desc': 'This is a test application'}
     ]
-    db.session.add_all([I18NLocale(**d) for d in locale_data])
-    db.session.add_all([I18NKey(**k) for k in key_data])
-    db.session.add_all([
-        I18NValue(
-            locale_code=locale['code'],
-            key_id=key['id'],
-            gloss=f"{key['desc']} in {locale['desc']}")
-        for locale in locale_data for key in key_data
-    ])
-    db.session.commit()
-    assert db.session.query(I18NValue).count() == 3
+    populate_database_i18n(locale_data, key_data)
     with runner.isolated_filesystem():
         # WHEN we dump the entries into a file
         filename = 'en-US.json'
@@ -278,17 +283,7 @@ def test_i18n_export(runner):
         {'id': 'app.name', 'desc': 'Application name'},
         {'id': 'app.desc', 'desc': 'This is a test application'}
     ]
-    db.session.add_all([I18NLocale(**d) for d in locale_data])
-    db.session.add_all([I18NKey(**k) for k in key_data])
-    db.session.add_all([
-        I18NValue(
-            locale_code=locale['code'],
-            key_id=key['id'],
-            gloss=f"{key['desc']} in {locale['desc']}")
-        for locale in locale_data for key in key_data
-    ])
-    db.session.commit()
-    assert db.session.query(I18NValue).count() == 6
+    populate_database_i18n(locale_data, key_data)
     with runner.isolated_filesystem():
         # WHEN we export all the entries into a file
         filename = 'entries.yaml'
@@ -322,3 +317,71 @@ def test_i18n_export(runner):
             assert 'name' in tree
             assert 'desc' in tree
             assert tree['desc']['en-US'] == "This is a test application in English US"
+
+
+def test_i18n_list(runner):
+    # GIVEN a database with some entries
+    locale_data = [{'code': 'en-US', 'desc': 'English US'},
+                   {'code': 'es-EC', 'desc': 'Spanish Ecuador'}]
+    key_data = [
+        {'id': 'alt.logo', 'desc': 'Alt text for logo'},
+        {'id': 'app.name', 'desc': 'Application name'},
+        {'id': 'app.desc', 'desc': 'This is a test application'}
+    ]
+    populate_database_i18n(locale_data, key_data)
+    # WHEN we list some entries
+    result = runner.invoke(
+        args=[
+            'i18n',
+            'list',
+            'app'])
+    list_result = result
+    # THEN we expect the same output as export
+    result = runner.invoke(
+        args=[
+            'i18n',
+            'export',
+            '--target',
+            '-',
+            'app'])
+    assert result.stdout_bytes == list_result.stdout_bytes
+
+
+def test_i18n_delete(runner):
+    # GIVEN a database with some entries
+    locale_data = [{'code': 'en-US', 'desc': 'English US'},
+                   {'code': 'es-EC', 'desc': 'Spanish Ecuador'}]
+    key_data = [
+        {'id': 'alt.logo', 'desc': 'Alt text for logo'},
+        {'id': 'app.name', 'desc': 'Application name'},
+        {'id': 'app.desc', 'desc': 'This is a test application'}
+    ]
+    populate_database_i18n(locale_data, key_data)
+    assert db.session.query(I18NValue).count() == 6
+    # WHEN we delete some entries with a certain locale
+    result = runner.invoke(
+        args=[
+            'i18n',
+            'delete',
+            '--locale',
+            'en-US',
+            'alt.logo'])
+    # THEN we expect the correct entry count in database
+    print("result.__dict__: {}".format(result.__dict__))
+    assert db.session.query(I18NValue).count() == 5
+    # THEN we expect the deleted entry not to be in database
+    assert not db.session.query(I18NValue).filter_by(
+        key_id='alt.logo', locale_code='en-US').first()
+    # WHEN we delete entries recursively with all locales
+    result = runner.invoke(
+        args=[
+            'i18n',
+            'delete',
+            '-r',
+            'app'])
+    # THEN we expect the correct entry count in database
+    assert db.session.query(I18NValue).count() == 1
+    # THEN we expect the corresponding key to be deleted
+    keys = db.session.query(I18NKey).all()
+    assert len(keys) == 1
+    assert keys[0].id == 'alt.logo'

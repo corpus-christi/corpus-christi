@@ -3,7 +3,9 @@ import yaml
 import click
 import re
 import os
+import sys
 
+import sqlalchemy
 from flask.cli import AppGroup
 from src import BASE_DIR, db
 from src.i18n.models import I18NLocale, I18NKey, I18NValue
@@ -24,9 +26,26 @@ def validate_locale(ctx, param, value):
     return value
 
 
+def validate_locale_allow_none(ctx, param, value):
+    """ a command option callback to make sure that
+    the given string is either None or a valid locale
+    """
+    if value is not None:
+        return validate_locale(ctx, param, value)
+    else:
+        return value
+
+
+def sanitize_path(ctx, param, value):
+    """ remove leading/trailing dots on a path if there are any
+    can be modified to do additional sanitizations
+    """
+    return value.strip('.')
+
+
 def create_dir(ctx, param, value):
     """ a command option callback to create parent directories if does not exist """
-    pardir = os.path.dirname(value.name)
+    pardir = os.path.dirname(value.name) if hasattr(value, 'name') else None
     if pardir:
         os.makedirs(pardir, exist_ok=True)
     return value
@@ -105,7 +124,6 @@ def read_locale_tail_tree(parent_path=""):
             list_item['value']['_desc'] = key.desc
         return list_item
 
-    parent_path = parent_path.strip('.')  # can't start or end with a dot
     # if found an exact match, return that entry
     key = db.session.query(I18NKey).filter_by(id=parent_path).first()
     if key:
@@ -138,7 +156,6 @@ def write_locale_tail_tree(tree, parent_path="", override=True, verbose=False):
     :returns: a result object:
     { entry_count: int, skip_count: int }
     """
-    parent_path = parent_path.strip('.')  # can't start or end with a dot
     entry_count, skip_count = 0, 0
 
     def is_leaf(node):
@@ -151,7 +168,8 @@ def write_locale_tail_tree(tree, parent_path="", override=True, verbose=False):
             raise click.BadParameter(
                 f"Must specify a path when overriding with a leaf node {tree}")
         # make sure parent_path is not an intermediate path
-        child = db.session.query(I18NKey).filter(I18NKey.id.like(f'{parent_path}.%')).first()
+        child = db.session.query(I18NKey).filter(
+            I18NKey.id.like(f'{parent_path}.%')).first()
         if child:
             raise RuntimeError(
                 f"[{parent_path}] is an intermediate path with child [{child.id}], "
@@ -213,8 +231,11 @@ def write_locale_tail_tree(tree, parent_path="", override=True, verbose=False):
 
 # --- commands
 
+
 def create_i18n_cli(app):
     i18n_cli = AppGroup('i18n', help="Maintain translation entries.")
+
+# --- flask i18n load
 
     @i18n_cli.command('load')
     @click.argument('locale', callback=validate_locale, metavar="<locale>")
@@ -233,7 +254,8 @@ def create_i18n_cli(app):
         entry_count = 0
         skip_count = 0
         locale_name = locale
-        click.echo(f"loading values from [{getattr(target, 'name', '(unknown stream)')}]")
+        click.echo(
+            f"loading values from [{getattr(target, 'name', '(unknown stream)')}]")
         tree = json.load(target)
 
         def is_leaf(node):
@@ -266,10 +288,13 @@ def create_i18n_cli(app):
             entry_count += 1
         db.session.commit()
         click.echo("Successfully loaded data into the database")
-        click.echo(f"Source file: {getattr(target, 'name', '(unknown stream)')}")
+        click.echo(
+            f"Source file: {getattr(target, 'name', '(unknown stream)')}")
         click.echo(f"Locale:      {locale_name}")
         click.echo(f"Entry count: {entry_count}")
         click.echo(f"Skip count:  {skip_count}")
+
+# --- flask i18n dump
 
     @i18n_cli.command('dump')
     @click.argument('locale', callback=validate_locale, metavar="<locale>")
@@ -283,7 +308,8 @@ def create_i18n_cli(app):
         """ Dump values from the database into a json file.
 
         <locale>: the locale code of the processed values. E.g. en-US """
-        click.echo(f"dumping values into {getattr(target, 'name', '(unknown stream)')}")
+        click.echo(
+            f"dumping values into {getattr(target, 'name', '(unknown stream)')}")
         values = db.session.query(I18NValue).filter_by(
             locale_code=locale).all()
         entries = map(
@@ -297,9 +323,12 @@ def create_i18n_cli(app):
         tree = list_to_tree(entries)
         json.dump(tree, target, indent=2, sort_keys=True)
         click.echo("Successfully dumped data from the database")
-        click.echo(f"Target file: {getattr(target, 'name', '(unknown stream)')}")
+        click.echo(
+            f"Target file: {getattr(target, 'name', '(unknown stream)')}")
         click.echo(f"Locale:      {locale}")
         click.echo(f"Entry count: {len(values)}")
+
+# --- flask i18n load-descriptions
 
     @i18n_cli.command('load-descriptions')
     @click.option('--override/--no-override',
@@ -311,7 +340,7 @@ def create_i18n_cli(app):
                   show_default=True,
                   type=click.File("r"),
                   help="The source file to load descriptions from")
-    @click.option('--verbose/--no-verbose', default=False,
+    @click.option('-v', '--verbose', is_flag=True, default=False,
                   help="Print output as modifying the database")
     def load_descriptions(target, override, verbose):
         """ Load descriptions from a json file into the database. """
@@ -319,7 +348,8 @@ def create_i18n_cli(app):
         skip_count = 0
         tree = json.load(target)
         entries = tree_to_list(tree)
-        click.echo(f"loading descriptions from [{getattr(target, 'name', '(unknown stream)')}]")
+        click.echo(
+            f"loading descriptions from [{getattr(target, 'name', '(unknown stream)')}]")
         for entry in entries:
             key_id = '.'.join(entry['path'])
             key = db.session.query(I18NKey).filter_by(id=key_id).first()
@@ -346,12 +376,15 @@ def create_i18n_cli(app):
             entry_count += 1
         db.session.commit()
         click.echo("Successfully loaded descriptions into the database")
-        click.echo(f"Source file: {getattr(target, 'name', '(unknown stream)')}")
+        click.echo(
+            f"Source file: {getattr(target, 'name', '(unknown stream)')}")
         click.echo(f"Entry count: {entry_count}")
         click.echo(f"Skip count:  {skip_count}")
         if skip_count:
             click.echo(
                 "Hint: use --override to load descriptions even if they exist")
+
+# --- flask i18n dump-descriptions
 
     @i18n_cli.command('dump-descriptions')
     @click.option(
@@ -389,11 +422,14 @@ def create_i18n_cli(app):
         tree = list_to_tree(entries)
         json.dump(tree, target, indent=2, sort_keys=True)
         click.echo("Successfully dumped data from the database")
-        click.echo(f"Target file: {getattr(target, 'name', '(unknown stream)')}")
+        click.echo(
+            f"Target file: {getattr(target, 'name', '(unknown stream)')}")
         click.echo(f"Entry count: {len(keys)}")
 
+# --- flask i18n export
+
     @i18n_cli.command('export')
-    @click.argument('path', default="")
+    @click.argument('path', callback=sanitize_path, default="")
     @click.option('--target',
                   default='-',
                   show_default=True,
@@ -403,10 +439,27 @@ def create_i18n_cli(app):
     def export_entries(path, target):
         """ list all entries that starts with PATH in a 'locale-tail' structured tree """
         tree = read_locale_tail_tree(path)
-        yaml.dump(tree, target, default_flow_style=False, sort_keys=True)
+        if tree:
+            yaml.dump(tree, target, default_flow_style=False, sort_keys=True)
+        else:
+            click.echo(f"No entries found")
+
+# --- flask i18n list
+
+    @i18n_cli.command('list')
+    @click.argument('path', callback=sanitize_path, default="")
+    @click.pass_context
+    def list_entries(ctx, path):
+        """ list all entries that starts with PATH in a 'locale-tail' structure
+
+        this command does the same thing as 'flask i18n export', except --target is always sys.stdout """
+        ctx.invoke(export_entries, path=path, target=sys.stdout)
+
+
+# --- flask i18n import
 
     @i18n_cli.command('import')
-    @click.argument('path', default="")
+    @click.argument('path', callback=sanitize_path, default="")
     @click.option('--target',
                   default='-',
                   show_default=True,
@@ -417,7 +470,7 @@ def create_i18n_cli(app):
                   help="Override if value already exists. "
                   "If true, then for values that are overridden, "
                   "the corresponding 'verified' flag will be set to False.")
-    @click.option('--verbose/--no-verbose', default=False,
+    @click.option('-v', '--verbose', is_flag=True, default=False,
                   help="Print output as modifying the database")
     def import_entries(path, target, override, verbose):
         """ load all entries expressed in a 'locale-tail' structured tree into the database,
@@ -425,8 +478,64 @@ def create_i18n_cli(app):
         tree = yaml.safe_load(target)
         result = write_locale_tail_tree(tree, path, override, verbose)
         click.echo("Successfully loaded data into the database")
-        click.echo(f"Source file: {getattr(target, 'name', '(unknown stream)')}")
+        click.echo(
+            f"Source file: {getattr(target, 'name', '(unknown stream)')}")
         click.echo(f"Entry count: {result['entry_count']}")
         click.echo(f"Skip count:  {result['skip_count']}")
 
     app.cli.add_command(i18n_cli)
+
+# --- flask i18n import
+
+    @i18n_cli.command('delete')
+    @click.option('-r', '--recursive', is_flag=True,
+                  help="delete all entries starting with the given path")
+    @click.option('--locale', callback=validate_locale_allow_none,
+                  help="specify a given locale to delete, "
+                  "leave empty to delete entry with all existing locales "
+                  "along with its belong key and description")
+    @click.option('-v', '--verbose', is_flag=True, default=False,
+                  help="Print output as modifying the database")
+    @click.argument('path', callback=sanitize_path)
+    def delete_entries(recursive, locale, verbose, path):
+        """ Delete I18NValue entries that match or start with PATH in the database """
+        value_query = db.session.query(I18NValue)
+        key_query = db.session.query(I18NKey)
+
+        if recursive:
+            value_query = value_query.filter(
+                I18NValue.key_id.like(f"{path}.%"))
+            key_query = key_query.filter(I18NKey.id.like(f"{path}.%"))
+        else:
+            value_query = value_query.filter_by(key_id=path)
+            key_query = key_query.filter_by(id=path)
+
+        if locale:
+            value_query = value_query.filter_by(locale_code=locale)
+            # if only deleting a locale, don't delete the corresponding key
+            key_query = key_query.filter(sqlalchemy.false())
+
+        values = value_query.all()
+        keys = key_query.all()
+        if len(keys + values) == 0:
+            click.echo("No entries found")
+            if not recursive:
+                click.echo(
+                    "Hint: use the -r flag to delete recursively from an intermediate node")
+            return
+
+        if verbose:
+            for value in values:
+                click.echo(
+                    f"Deleting value at [{value.key_id}] in [{value.locale_code}]: [{value.gloss}]")
+            for key in keys:
+                click.echo(
+                    f"Deleting key [{key.id}] with description [{key.desc}]")
+
+        count = 0
+        # do not update the session for efficiency
+        count += value_query.delete(synchronize_session=False)
+        # do not update the session for efficiency
+        count += key_query.delete(synchronize_session=False)
+        db.session.commit()
+        click.echo(f"Delete entry count: {count}")
