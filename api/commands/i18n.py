@@ -344,7 +344,16 @@ def create_i18n_cli(app):
     def load_values(locale, target, override, verbose):
         """ Load entries from a json file into the database.
 
-        <locale>: the locale code of the processed values. E.g. en-US """
+        <locale>: the locale code of the processed values. E.g. en-US
+
+        Example usage:
+
+        \b
+            flask i18n load en-US
+
+        \b
+            flask i18n load --target en-US.json en-US
+        """
         entry_count = 0
         skip_count = 0
         locale_name = locale
@@ -403,7 +412,17 @@ def create_i18n_cli(app):
     def dump_values(locale, target):
         """ Dump entries from the database into a json file.
 
-        <locale>: the locale code of the processed values. E.g. en-US """
+        <locale>: the locale code of the processed values. E.g. en-US 
+
+        Example usage: 
+        
+        \b
+            flask i18n dump en-US
+
+        \b
+            flask i18n dump --target en-US.json en-US
+        """
+
         click.echo(
             f"dumping values into {getattr(target, 'name', '(unknown stream)')}")
         values = db.session.query(I18NValue).filter_by(
@@ -443,7 +462,16 @@ def create_i18n_cli(app):
                   show_default=True,
                   help="Print output as modifying the database")
     def load_descriptions(target, override, verbose):
-        """ Load descriptions from a json file into the database. """
+        """ Load descriptions from a json file into the database.
+
+        Example usage:
+
+        \b
+            flask i18n load-descriptions
+
+        \b
+            flask i18n load-descriptions --override --target desc.json
+        """
         entry_count = 0
         skip_count = 0
         tree = json.load(target)
@@ -506,7 +534,17 @@ def create_i18n_cli(app):
                   type=click.File("w"),
                   help="The destination file to dump descriptions to")
     def dump_descriptions(target, dump_empty, empty_placeholder):
-        """ Dump descriptions into a json file from the database. """
+        """ Dump descriptions into a json file from the database. 
+        
+        Example usage:
+
+        \b
+            flask i18n dump-descriptions
+
+        \b
+            flask i18n dump-descriptions --target desc.json \\
+                --dump-empty --empty-placeholder "No description"
+        """
         query = db.session.query(I18NKey)
         if not dump_empty:
             query = query.filter(
@@ -540,7 +578,13 @@ def create_i18n_cli(app):
         """ Export entries into a yaml file.
 
         List all entries that start with PATH in a 'locale-tail' structured tree
+
         Specify the destination file with --target
+
+        Example usage:
+
+        \b
+            flask i18n export --target country-names.yaml country.name
         """
         tree = read_locale_tail_tree(path)
         if tree:
@@ -556,7 +600,16 @@ def create_i18n_cli(app):
     def list_entries(ctx, path):
         """ Print entries in the yaml format.
 
-        this command does the same thing as 'flask i18n export', except --target is set to sys.stdout """
+        this command does the same thing as 'flask i18n export', except --target is set to sys.stdout 
+
+        Example usage:
+
+        \b
+            flask i18n list
+
+        \b
+            flask i18n list country.name
+        """
         ctx.invoke(export_entries, path=path, target=sys.stdout)
 
 
@@ -587,6 +640,17 @@ def create_i18n_cli(app):
         prepend each entry's path with PATH
 
         PATH is optional when the yaml file is not a single entry,
+
+        Example usage:
+
+        \b
+            flask i18n import --target country-names.yaml country.name
+
+        \b
+            flask i18n import --target - country.name.US << HEREDOC
+            en-US: United States
+            es-EC: Estados Unidos
+            HEREDOC
         """
         tree = yaml.safe_load(target)
         result = write_locale_tail_tree(tree, path, override, verbose)
@@ -606,9 +670,13 @@ def create_i18n_cli(app):
     def add_entry(locale, path, gloss):
         """ Add an entry into the database.
 
-        Example usage: flask i18n add en-US actions.activate-account "Activate Account"
+        Example usage: 
+        
+        \b
+            flask i18n add en-US actions.activate-account "Activate Account"
 
         No override will occur if the given entry already exists
+
         To update entry, use the 'update' command
         """
         value = db.session.query(I18NValue).filter_by(
@@ -640,12 +708,16 @@ def create_i18n_cli(app):
     def update_entry(locale, path, gloss):
         """ Update an entry in the database.
 
-        Example usage: flask i18n update en-US actions.activate-account "Activate Account"
+        No change will be made if the entry is not already in the database.
 
-        No change will be made if the entry is not already in the database
-        To add entry, use the 'add' command
+        To add entry, use the 'add' command.
 
-        If change is made, the 'verified' flag will be set to False
+        If change is made, the 'verified' flag will be set to False.
+
+        Example usage: 
+        
+        \b
+            flask i18n update en-US actions.activate-account "Activate Account"
         """
         value = db.session.query(I18NValue).filter_by(
             locale_code=locale, key_id=path).first()
@@ -678,7 +750,16 @@ def create_i18n_cli(app):
                   help="Print output as modifying the database")
     @click.argument('path', callback=sanitize_path)
     def delete_entries(recursive, locale, verbose, path):
-        """ Delete I18NValue entries that match or start with PATH in the database """
+        """ Delete I18NValue entries that match or start with PATH in the database.
+
+        Example usage: 
+        
+        \b
+            flask i18n delete --locale en-US actions.activate-account
+
+        \b
+            flask i18n delete -r actions
+        """
         value_query = db.session.query(I18NValue)
         key_query = db.session.query(I18NKey)
 
@@ -727,7 +808,15 @@ def create_i18n_cli(app):
     @click.argument('path', callback=sanitize_path, default="")
     def edit_entries(path):
         """ Interactively edit entries that starts with PATH in an interactive editor,
-        with a 'locale-tail' structured tree """
+        with a 'locale-tail' structured tree 
+        
+        Example usage: 
+
+        \b
+            flask i18n edit
+
+            EDITOR=gedit flask i18n edit country.name
+        """
         tree = read_locale_tail_tree(path)
         if tree:
             data = yaml.dump(tree, default_flow_style=False, sort_keys=True)
@@ -810,7 +899,10 @@ def create_i18n_cli(app):
         """ Complete entries in the database with <dest-locale> by
         translating from <src-locale>.
 
-        Example usage: flask i18n translate en-US es-EC
+        Example usage: 
+
+        \b
+            flask i18n translate en-US es-EC
         """
         lang_map = googletrans.LANGUAGES
 
