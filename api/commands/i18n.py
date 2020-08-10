@@ -850,7 +850,7 @@ def create_i18n_cli(app):
                 click.echo("To save changes to the database, "
                            "remove any invalid blocks from the file and run:")
                 click.echo(
-                    f"\n    flask i18n import --target {filename} {path}\n")
+                    f"\n    flask i18n import --target {filename} --override {path}\n")
             else:
                 click.echo("Successfully edited entries")
                 click.echo(f"Entry count: {result['entry_count']}")

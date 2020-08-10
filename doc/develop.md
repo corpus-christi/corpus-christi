@@ -655,9 +655,9 @@ original dotted string.
 
 We would also like the translation entries to be
 kept in the revision control, so that corrections
-of translations can be tracked and one would be
-able to quickly populate an empty database with
-existing translations.
+of translations can be tracked, and a developer
+would be able to quickly populate an empty
+database with existing translations.
 
 Currently, translation entries are kept in JSON
 format under the `corpus-christi/api/i18n`
@@ -683,6 +683,9 @@ database into a json file.
 ```bash
 (venv) $ flask i18n dump en-US
 ```
+
+For a detailed overview on the i18n commands, see
+[i18n Commands Suites](i18n-commands.md)
 
 For more usage info, see
 
