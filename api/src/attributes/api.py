@@ -150,7 +150,9 @@ def read_one_enumerated_value(enumerated_value_id):
     return jsonify(enumerated_value_schema.dump(result))
 
 
-@attributes.route('/enumerated_values/<enumerated_value_id>', methods=['PATCH'])
+@attributes.route(
+    '/enumerated_values/<enumerated_value_id>',
+    methods=['PATCH'])
 @jwt_required
 def update_enumerated_value(enumerated_value_id):
     try:
@@ -168,7 +170,9 @@ def update_enumerated_value(enumerated_value_id):
     return jsonify(enumerated_value_schema.dump(enumerated_value))
 
 
-@attributes.route('/enumerated_values/deactivate/<enumerated_value_id>', methods=['PATCH'])
+@attributes.route(
+    '/enumerated_values/deactivate/<enumerated_value_id>',
+    methods=['PATCH'])
 @jwt_required
 def deactivate_enumerated_value(enumerated_value_id):
     enumerated_value = db.session.query(
@@ -181,7 +185,9 @@ def deactivate_enumerated_value(enumerated_value_id):
     return jsonify(enumerated_value_schema.dump(enumerated_value))
 
 
-@attributes.route('/enumerated_values/activate/<enumerated_value_id>', methods=['PATCH'])
+@attributes.route(
+    '/enumerated_values/activate/<enumerated_value_id>',
+    methods=['PATCH'])
 @jwt_required
 def activate_enumerated_value(enumerated_value_id):
     enumerated_value = db.session.query(

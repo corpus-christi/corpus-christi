@@ -11,10 +11,14 @@ from src.shared.helpers import modify_entity, get_exclusion_list
 
 # ---- Team
 
+
 @teams.route('/', methods=['POST'])
 @jwt_required
 def create_team():
-    team_schema = TeamSchema(exclude=get_exclusion_list(request.args, ['members', 'events']))
+    team_schema = TeamSchema(
+        exclude=get_exclusion_list(
+            request.args, [
+                'members', 'events']))
     try:
         valid_team = team_schema.load(request.json)
     except ValidationError as err:
@@ -24,12 +28,15 @@ def create_team():
     db.session.add(new_team)
     db.session.commit()
     return jsonify(team_schema.dump(new_team)), 201
-    
+
 
 @teams.route('/')
 @jwt_required
 def read_all_teams():
-    team_schema = TeamSchema(exclude=get_exclusion_list(request.args, ['members', 'events']))
+    team_schema = TeamSchema(
+        exclude=get_exclusion_list(
+            request.args, [
+                'members', 'events']))
     query = db.session.query(Team)
 
     # -- return_inactives --
@@ -38,7 +45,7 @@ def read_all_teams():
     if return_group == 'inactive':
         query = query.filter_by(active=False)
     elif return_group in ('all', 'both'):
-        pass # Don't filter
+        pass  # Don't filter
     else:
         query = query.filter_by(active=True)
 
@@ -57,17 +64,20 @@ def read_all_teams():
 
         if sort_filter[-4:] == 'desc' and sort_column:
             sort_column = sort_column.desc()
-        
+
         query = query.order_by(sort_column)
 
     result = query.all()
     return jsonify(team_schema.dump(result, many=True))
-    
+
 
 @teams.route('/<team_id>')
 @jwt_required
 def read_one_team(team_id):
-    team_schema = TeamSchema(exclude=get_exclusion_list(request.args, ['members', 'events']))
+    team_schema = TeamSchema(
+        exclude=get_exclusion_list(
+            request.args, [
+                'members', 'events']))
     team = db.session.query(Team).filter_by(id=team_id).first()
 
     if not team:
@@ -99,26 +109,32 @@ def read_all_team_members():
 @teams.route('/<team_id>', methods=['PUT'])
 @jwt_required
 def replace_team(team_id):
-    team_schema = TeamSchema(exclude=get_exclusion_list(request.args, ['members', 'events']))
+    team_schema = TeamSchema(
+        exclude=get_exclusion_list(
+            request.args, [
+                'members', 'events']))
     try:
         valid_team = team_schema.load(request.json)
     except ValidationError as err:
         return jsonify(err.messages), 422
 
     return modify_entity(Team, team_schema, team_id, valid_team)
-    
+
 
 @teams.route('/<team_id>', methods=['PATCH'])
 @jwt_required
 def update_team(team_id):
-    team_schema = TeamSchema(exclude=get_exclusion_list(request.args, ['members', 'events']))
-    try: 
+    team_schema = TeamSchema(
+        exclude=get_exclusion_list(
+            request.args, [
+                'members', 'events']))
+    try:
         valid_attributes = team_schema.load(request.json, partial=True)
     except ValidationError as err:
         return jsonify(err.messages), 422
-                
+
     return modify_entity(Team, team_schema, team_id, valid_attributes)
-    
+
 
 @teams.route('/<team_id>', methods=['DELETE'])
 @jwt_required
@@ -127,49 +143,65 @@ def delete_team(team_id):
 
     if not team:
         return jsonify(f"Team with id #{team_id} does not exist."), 404
-        
+
     setattr(team, 'active', False)
     db.session.commit()
-    
+
     # 204 codes don't respond with any content
     return 'Successfully deleted team', 204
+
 
 @teams.route('/<team_id>/members')
 @jwt_required
 def get_team_members(team_id):
-    team_member_schema = TeamMemberSchema(exclude=get_exclusion_list(request.args, ['team']))
-    team_members = db.session.query(TeamMember).filter_by(team_id=team_id).all()
+    team_member_schema = TeamMemberSchema(
+        exclude=get_exclusion_list(
+            request.args, ['team']))
+    team_members = db.session.query(
+        TeamMember).filter_by(team_id=team_id).all()
 
     if not team_members:
-        return jsonify(f"Team with id #{team_id} does not have any members."), 404
+        return jsonify(
+            f"Team with id #{team_id} does not have any members."), 404
 
     return jsonify(team_member_schema.dump(team_members, many=True))
+
 
 @teams.route('/<team_id>/members/<member_id>', methods=['PATCH'])
 @jwt_required
 def modify_team_member(team_id, member_id):
-    team_member_schema = TeamMemberSchema(exclude=get_exclusion_list(request.args, ['team']))
+    team_member_schema = TeamMemberSchema(
+        exclude=get_exclusion_list(
+            request.args, ['team']))
     try:
-        valid_attributes = team_member_schema.load(request.json, partial=('team_id', 'member_id'))
+        valid_attributes = team_member_schema.load(
+            request.json, partial=('team_id', 'member_id'))
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    team_member = db.session.query(TeamMember).filter_by(member_id=member_id).filter_by(team_id=team_id).first()
+    team_member = db.session.query(TeamMember).filter_by(
+        member_id=member_id).filter_by(
+        team_id=team_id).first()
 
     if not team_member:
-        return jsonify(f"Member with id #{member_id} is not associated with Team with id #{team_id}."), 404
+        return jsonify(
+            f"Member with id #{member_id} is not associated with Team with id #{team_id}."), 404
 
     setattr(team_member, 'active', valid_attributes['active'])
     db.session.commit()
 
     return jsonify(team_member_schema.dump(team_member))
 
-@teams.route('/<team_id>/members/<member_id>', methods=['POST','PUT'])
+
+@teams.route('/<team_id>/members/<member_id>', methods=['POST', 'PUT'])
 @jwt_required
 def add_team_member(team_id, member_id):
-    team_member_schema = TeamMemberSchema(exclude=get_exclusion_list(request.args, ['team']))
+    team_member_schema = TeamMemberSchema(
+        exclude=get_exclusion_list(
+            request.args, ['team']))
     try:
-        valid_attributes = team_member_schema.load(request.json, partial=('team_id', 'member_id'))
+        valid_attributes = team_member_schema.load(
+            request.json, partial=('team_id', 'member_id'))
     except ValidationError as err:
         return jsonify(err.messages), 422
 
@@ -181,26 +213,35 @@ def add_team_member(team_id, member_id):
     if not person:
         return jsonify(f"Person with id #{member_id} does not exist."), 404
 
-    team_member = db.session.query(TeamMember).filter_by(team_id=team_id,member_id=member_id).first()
+    team_member = db.session.query(TeamMember).filter_by(
+        team_id=team_id, member_id=member_id).first()
 
     if not team_member:
-        new_entry = TeamMember(**{'team_id': team_id, 'member_id': member_id, 'active': valid_attributes['active']})
+        new_entry = TeamMember(**{'team_id': team_id,
+                                  'member_id': member_id,
+                                  'active': valid_attributes['active']})
         db.session.add(new_entry)
         db.session.commit()
         return 'Team member successfully added.'
     else:
-        return jsonify(f"Person with id #{member_id} is already on Team with id #{team_id}."), 422
+        return jsonify(
+            f"Person with id #{member_id} is already on Team with id #{team_id}."), 422
+
 
 @teams.route('/<team_id>/members/<member_id>', methods=['DELETE'])
 @jwt_required
 def delete_team_member(team_id, member_id):
-    team_member = db.session.query(TeamMember).filter_by(team_id=team_id).filter_by(member_id=member_id).first()
+    team_member = db.session.query(TeamMember).filter_by(
+        team_id=team_id).filter_by(
+        member_id=member_id).first()
 
     if not team_member:
-        return jsonify(f"Member with id #{member_id} is not on Team with id #{team_id}."), 404
+        return jsonify(
+            f"Member with id #{member_id} is not on Team with id #{team_id}."), 404
 
     if not team_member.active:
-        return jsonify(f"Member with id #{member_id} is already set as INACTIVE on Team with id #{team_id}."), 422
+        return jsonify(
+            f"Member with id #{member_id} is already set as INACTIVE on Team with id #{team_id}."), 422
 
     setattr(team_member, 'active', False)
     db.session.commit()

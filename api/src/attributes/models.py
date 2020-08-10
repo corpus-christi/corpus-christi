@@ -24,7 +24,10 @@ class Attribute(Base):
     enumerated_types_list = ['attribute.radio',
                              'attribute.check', 'attribute.dropdown']
     nonenumerated_types_list = [
-        'attribute.float', 'attribute.integer', 'attribute.string', 'attribute.date']
+        'attribute.float',
+        'attribute.integer',
+        'attribute.string',
+        'attribute.date']
 
     enumerated_values = relationship(
         'EnumeratedValue', backref='attribute', lazy=True)
@@ -55,8 +58,11 @@ class Attribute(Base):
                     if not db.session.query(I18NLocale).get(locale_code):
                         db.session.add(I18NLocale(code=locale_code, desc=''))
                     if not i18n_check(name_i18n, locale_code):
-                        i18n_create(name_i18n, locale_code,
-                                    locale['name'], description=f"Attribute type {attribute_name}")
+                        i18n_create(
+                            name_i18n,
+                            locale_code,
+                            locale['name'],
+                            description=f"Attribute type {attribute_name}")
                 count += 1
             db.session.commit()
             return count
@@ -102,7 +108,8 @@ class PersonAttribute(Base):
         'people_person.id'), primary_key=True)
     attribute_id = Column(Integer, ForeignKey(
         'people_attributes.id'), primary_key=True)
-    enum_value_id = Column(Integer, ForeignKey('people_enumerated_value.id'), nullable=True)
+    enum_value_id = Column(Integer, ForeignKey(
+        'people_enumerated_value.id'), nullable=True)
     string_value = Column(StringTypes.LONG_STRING)
     person = relationship('Person', backref='person_attributes', lazy=True)
     attribute = relationship(

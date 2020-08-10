@@ -34,12 +34,11 @@ def convert_to_vue_i18n_map(i10n_map, vue_i18n_map={}):
             if isinstance(val, dict):
                 convert_to_list_helper(val, dot_path + [key])
             else:
-                if not key.startswith('_'):
-                    intermediate.append({
-                        'path': [key] + dot_path,
-                        'gloss': val
-                    })
-                    global_entry_count += 1
+                intermediate.append({
+                    'path': [key] + dot_path,
+                    'gloss': val
+                })
+                global_entry_count += 1
 
     convert_to_list_helper(i10n_map)
 
@@ -48,12 +47,10 @@ def convert_to_vue_i18n_map(i10n_map, vue_i18n_map={}):
         d = vue_i18n_map
         but_last, last = entry['path'][:-1], entry['path'][-1]
         for key in but_last:
-            if key not in d:
-                d[key] = {}
-            d = d[key]
+            d = d.setdefault(key, {})
         if last in d:
             raise RuntimeError(f"{entry['path']} already '{d[last]}', won't set to '{entry['gloss']}'")
-        d[last] = entry['gloss']
+        d[last] = { 'verified': False, 'gloss': entry['gloss'] }
 
     return vue_i18n_map
 

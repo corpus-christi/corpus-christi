@@ -26,7 +26,8 @@ def test_download_image(auth_client):
             imgStringIO = BytesIO(img.read())
         resp = auth_client.get(
             url_for('images.download_image', image_id=image.id))
-        # THEN we expect each of them to correspond grab an image in the file system
+        # THEN we expect each of them to correspond grab an image in the file
+        # system
         assert resp.status_code == 200
         assert resp.data == imgStringIO.read()
 
@@ -79,7 +80,8 @@ def test_update_image(auth_client):
 
         resp = auth_client.patch(
             url_for('images.update_image', image_id=image.id), json=payload)
-        # THEN we expect each of them to correspond grab an image in the file system
+        # THEN we expect each of them to correspond grab an image in the file
+        # system
         assert resp.status_code == expected_status_code
         if expected_status_code == 200:
             assert resp.json['description'] == payload['description']
@@ -96,7 +98,8 @@ def test_delete_image(auth_client):
     for image in images:
         resp = auth_client.delete(
             url_for('images.delete_image', image_id=image.id))
-        # THEN we expect a 204 and for the image to not be in the db or file system
+        # THEN we expect a 204 and for the image to not be in the db or file
+        # system
         assert resp.status_code == 204
         assert len(auth_client.sqla.query(
             Image).filter_by(id=image.id).all()) == 0

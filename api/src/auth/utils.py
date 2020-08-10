@@ -3,6 +3,7 @@ from functools import wraps
 from flask_jwt_extended import get_jwt_claims, verify_jwt_in_request
 from flask_jwt_extended.exceptions import JWTExtendedException
 
+
 def jwt_not_required(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
@@ -19,6 +20,7 @@ def jwt_not_required(fn):
             return fn(*args, **kwargs)
 
     return wrapper
+
 
 def authorize(roles):
     def authorize_wrapper(fn):

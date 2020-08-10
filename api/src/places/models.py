@@ -18,7 +18,10 @@ class Country(Base):
     """Country; uses ISO 3166-1 country codes"""
     __tablename__ = 'places_country'
     code = Column(String(2), primary_key=True)
-    name_i18n = Column(StringTypes.I18N_KEY, ForeignKey('i18n_key.id'), nullable=False)
+    name_i18n = Column(
+        StringTypes.I18N_KEY,
+        ForeignKey('i18n_key.id'),
+        nullable=False)
     key = relationship('I18NKey', backref='countries', lazy=True)
 
     def __repr__(self):
@@ -27,7 +30,12 @@ class Country(Base):
     @classmethod
     def load_from_file(cls, file_name='country-codes.json'):
         count = 0
-        file_path = os.path.abspath(os.path.join(__file__, os.path.pardir, 'data', file_name))
+        file_path = os.path.abspath(
+            os.path.join(
+                __file__,
+                os.path.pardir,
+                'data',
+                file_name))
 
         with open(file_path, 'r') as fp:
             countries = json.load(fp)
@@ -39,18 +47,22 @@ class Country(Base):
                 name_i18n = f'country.name.{country_code}'
 
                 for locale in country['locales']:
-                    locale_code = locale['locale_code'] # e.g., en-US
+                    locale_code = locale['locale_code']  # e.g., en-US
                     if not db.session.query(I18NLocale).get(locale_code):
                         # Don't have this locale code
                         db.session.add(I18NLocale(code=locale_code, desc=''))
 
                     if not i18n_check(name_i18n, locale_code):
                         # Don't have this country
-                        i18n_create(name_i18n, locale_code,
-                                    locale['name'], description=f"Country {country_name}")
+                        i18n_create(
+                            name_i18n,
+                            locale_code,
+                            locale['name'],
+                            description=f"Country {country_name}")
 
                 # Add to the Country table.
-                if not db.session.query(cls).filter_by(code=country_code).count():
+                if not db.session.query(cls).filter_by(
+                        code=country_code).count():
                     db.session.add(cls(code=country_code, name_i18n=name_i18n))
                     count += 1
             db.session.commit()
@@ -145,7 +157,14 @@ class Address(Base):
 
     def __repr__(self):
         attributes = [f"id='{self.id}'"]
-        for attr in ['name', 'address', 'city', 'area_id', 'country_code', 'latitude', 'longitude']:
+        for attr in [
+            'name',
+            'address',
+            'city',
+            'area_id',
+            'country_code',
+            'latitude',
+                'longitude']:
             if hasattr(self, attr):
                 value = getattr(self, attr)
                 attributes.append(f"{attr}={value}")

@@ -16,7 +16,9 @@ from ..events.models import EventAsset
 @assets.route('/', methods=['POST'])
 @jwt_required
 def create_asset():
-    asset_schema = AssetSchema(exclude=get_exclusion_list(request.args, ['location']))
+    asset_schema = AssetSchema(
+        exclude=get_exclusion_list(
+            request.args, ['location']))
     try:
         valid_asset = asset_schema.load(request.json)
     except ValidationError as err:
@@ -31,8 +33,11 @@ def create_asset():
 @assets.route('/')
 @jwt_required
 def read_all_assets():
-    asset_schema = AssetSchema(exclude=get_exclusion_list(request.args, ['location']))
-    query = db.session.query(Asset).add_columns(func.count(EventAsset.event_id).label('event_count'))
+    asset_schema = AssetSchema(
+        exclude=get_exclusion_list(
+            request.args, ['location']))
+    query = db.session.query(Asset).add_columns(
+        func.count(EventAsset.event_id).label('event_count'))
 
     # -- return_inactives --
     # Filter assets based on active status
@@ -81,9 +86,16 @@ def read_all_assets():
 @assets.route('/<asset_id>')
 @jwt_required
 def read_one_asset(asset_id):
-    asset_schema = AssetSchema(exclude=get_exclusion_list(request.args, ['location']))
-    asset = db.session.query(Asset).filter_by(id=asset_id).add_columns(
-        func.count(EventAsset.event_id).label('event_count')).join(EventAsset, isouter=True).group_by(Asset.id).first()
+    asset_schema = AssetSchema(
+        exclude=get_exclusion_list(
+            request.args, ['location']))
+    asset = db.session.query(Asset).filter_by(
+        id=asset_id).add_columns(
+        func.count(
+            EventAsset.event_id).label('event_count')).join(
+                EventAsset,
+                isouter=True).group_by(
+                    Asset.id).first()
 
     if not asset:
         return jsonify(f"Asset with id #{asset_id} does not exist."), 404
@@ -97,7 +109,9 @@ def read_one_asset(asset_id):
 @assets.route('/<asset_id>', methods=['PUT'])
 @jwt_required
 def replace_asset(asset_id):
-    asset_schema = AssetSchema(exclude=get_exclusion_list(request.args, ['location']))
+    asset_schema = AssetSchema(
+        exclude=get_exclusion_list(
+            request.args, ['location']))
     try:
         valid_asset = asset_schema.load(request.json)
     except ValidationError as err:
@@ -109,7 +123,9 @@ def replace_asset(asset_id):
 @assets.route('/<asset_id>', methods=['PATCH'])
 @jwt_required
 def update_asset(asset_id):
-    asset_schema = AssetSchema(exclude=get_exclusion_list(request.args, ['location']))
+    asset_schema = AssetSchema(
+        exclude=get_exclusion_list(
+            request.args, ['location']))
     try:
         valid_attributes = asset_schema.load(request.json, partial=True)
     except ValidationError as err:

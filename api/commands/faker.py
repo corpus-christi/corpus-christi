@@ -7,7 +7,7 @@ from src.courses.test_courses import create_multiple_courses, create_multiple_co
 from src.events.create_event_data import create_events_test_data
 from src.groups.create_group_data import create_group_test_data
 from src.images.create_image_data import create_images_test_data
-from src.people.test_people import create_multiple_people, create_accounts_roles
+from src.people.test_people import create_multiple_people, create_person_roles
 from src.places.test_places import create_multiple_areas, create_multiple_addresses, create_multiple_locations
 
 
@@ -17,7 +17,7 @@ def create_faker_cli(app):
     @faker_cli.command('people', help='Fake people')
     def fake_people():
         create_multiple_people(db.session, 17)
-        create_accounts_roles(db.session, 0.75)
+        create_person_roles(db.session, 0.75)
 
     @faker_cli.command("places", help="Fake places")
     def fake_places():
@@ -48,7 +48,8 @@ def create_faker_cli(app):
 
     @faker_cli.command("images", help="Fake images")
     def fake_images():
-        # Always put this close to last (since it has dependencies in all of the major modules)
+        # Always put this close to last (since it has dependencies in all of
+        # the major modules)
         create_images_test_data(db.session)
 
     app.cli.add_command(faker_cli)
