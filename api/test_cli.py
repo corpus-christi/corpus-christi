@@ -350,6 +350,77 @@ def test_i18n_list(runner):
             'app'])
     assert result.stdout_bytes == list_result.stdout_bytes
 
+def test_i18n_add(runner):
+    # GIVEN an empty database
+    # WHEN we add an entry
+    result = runner.invoke(
+        args=[
+            'i18n',
+            'add',
+            'en-US',
+            'some.path',
+            'gloss'
+            ])
+    # THEN we expect the entry to be added in the database
+    values = db.session.query(I18NValue).all()
+    assert len(values) == 1
+    value = values[0]
+    assert value.key_id == 'some.path'
+    assert value.gloss == 'gloss'
+    assert value.locale_code == 'en-US'
+
+    # WHEN we add the entry again
+    result = runner.invoke(
+        args=[
+            'i18n',
+            'add',
+            'en-US',
+            'some.path',
+            'new gloss'
+            ])
+    # THEN we expect the output to contain a warning
+    assert b"already exists" in result.stdout_bytes
+    # THEN we expect nothing to be changed
+    values = db.session.query(I18NValue).all()
+    assert len(values) == 1
+    value = values[0]
+    assert value.gloss == 'gloss'
+
+def test_i18n_update(runner):
+    # GIVEN a database with some entries
+    locale_data = [{'code': 'en-US', 'desc': 'English US'}]
+    key_data = [
+        {'id': 'alt.logo', 'desc': 'Alt text for logo'},
+        {'id': 'app.name', 'desc': 'Application name'},
+        {'id': 'app.desc', 'desc': 'This is a test application'}
+    ]
+    populate_database_i18n(locale_data, key_data)
+    # WHEN we update an entry
+    result = runner.invoke(
+        args=[
+            'i18n',
+            'update',
+            'en-US',
+            'app.name',
+            'new gloss'
+            ])
+    # THEN we expect the entry to be updated in the database
+    value = db.session.query(I18NValue).filter_by(key_id='app.name', locale_code='en-US').first()
+    print("result.__dict__: {}".format(result.__dict__))
+    assert value is not None
+    assert value.gloss == 'new gloss'
+
+    # WHEN we update a non-existent entry
+    result = runner.invoke(
+        args=[
+            'i18n',
+            'update',
+            'en-US',
+            'some.random.path.that.does.not.exist',
+            'new gloss'
+            ])
+    # THEN we expect the output to contain a warning
+    assert b"does not exist" in result.stdout_bytes
 
 def test_i18n_delete(runner):
     # GIVEN a database with some entries
