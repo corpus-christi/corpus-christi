@@ -1,0 +1,4138 @@
+{
+  "$vuetify": {
+    "dataFooter": {
+      "pageText": {
+        "gloss": "{0}-{1} of {2}",
+        "verified": false
+      }
+    },
+    "dataIterator": {
+      "loadingText": {
+        "gloss": "Loading items...",
+        "verified": false
+      },
+      "nextPage": {
+        "gloss": "Next page",
+        "verified": false
+      },
+      "noResultsText": {
+        "gloss": "No matching records found",
+        "verified": false
+      },
+      "pageText": {
+        "gloss": "{0}-{1} of {2}",
+        "verified": false
+      },
+      "prevPage": {
+        "gloss": "Previous page",
+        "verified": false
+      },
+      "rowsPerPageAll": {
+        "gloss": "All",
+        "verified": false
+      },
+      "rowsPerPageText": {
+        "gloss": "Items per page:",
+        "verified": false
+      }
+    },
+    "dataTable": {
+      "itemsPerPageText": {
+        "gloss": "Rows per page:",
+        "verified": false
+      }
+    },
+    "noDataText": {
+      "gloss": "No data available",
+      "verified": false
+    },
+    "timePicker": {
+      "am": {
+        "gloss": "am",
+        "verified": false
+      },
+      "pm": {
+        "gloss": "pm",
+        "verified": false
+      }
+    }
+  },
+  "account": {
+    "messages": {
+      "added-ok": {
+        "gloss": "Account added successfully",
+        "verified": false
+      },
+      "updated-ok": {
+        "gloss": "Account updated successfully",
+        "verified": false
+      }
+    }
+  },
+  "actions": {
+    "activate-account": {
+      "gloss": "Activate",
+      "verified": false
+    },
+    "add-address": {
+      "gloss": "Add Address",
+      "verified": false
+    },
+    "add-another": {
+      "gloss": "Add Another",
+      "verified": false
+    },
+    "add-event": {
+      "gloss": "Add Event",
+      "verified": false
+    },
+    "add-group": {
+      "gloss": "Add Group",
+      "verified": false
+    },
+    "add-manager": {
+      "gloss": "Add Manager",
+      "verified": false
+    },
+    "add-participant": {
+      "gloss": "Add a Participant",
+      "verified": false
+    },
+    "add-person": {
+      "gloss": "Add Person",
+      "verified": false
+    },
+    "back": {
+      "gloss": "Back",
+      "verified": false
+    },
+    "cancel": {
+      "gloss": "Cancel",
+      "verified": false
+    },
+    "choose-image": {
+      "gloss": "Choose Image",
+      "verified": false
+    },
+    "clear": {
+      "gloss": "Clear",
+      "verified": false
+    },
+    "close": {
+      "gloss": "Close",
+      "verified": false
+    },
+    "confirm": {
+      "gloss": "Confirm",
+      "verified": false
+    },
+    "continue": {
+      "gloss": "Continue",
+      "verified": false
+    },
+    "deactivate-account": {
+      "gloss": "Deactivate",
+      "verified": false
+    },
+    "duplicate": {
+      "gloss": "Duplicate",
+      "verified": false
+    },
+    "edit": {
+      "gloss": "Edit",
+      "verified": false
+    },
+    "header": {
+      "gloss": "Actions",
+      "verified": false
+    },
+    "login": {
+      "gloss": "Log In",
+      "verified": false
+    },
+    "logout": {
+      "gloss": "Log Out",
+      "verified": false
+    },
+    "next": {
+      "gloss": "Next",
+      "verified": false
+    },
+    "open-map": {
+      "gloss": "Open Map",
+      "verified": false
+    },
+    "previous": {
+      "gloss": "Previous",
+      "verified": false
+    },
+    "save": {
+      "gloss": "Save",
+      "verified": false
+    },
+    "search": {
+      "gloss": "Search",
+      "verified": false
+    },
+    "search-addresses": {
+      "gloss": "Search Addresses",
+      "verified": false
+    },
+    "search-group-types": {
+      "gloss": "Search Group Types",
+      "verified": false
+    },
+    "search-manager-types": {
+      "gloss": "Search Manager Types",
+      "verified": false
+    },
+    "search-people": {
+      "gloss": "Search People",
+      "verified": false
+    },
+    "signup": {
+      "gloss": "Signup",
+      "verified": false
+    },
+    "tooltips": {
+      "activate": {
+        "gloss": "Activate",
+        "verified": false
+      },
+      "archive": {
+        "gloss": "Archive",
+        "verified": false
+      },
+      "email": {
+        "gloss": "Send Email",
+        "verified": false
+      },
+      "remove": {
+        "gloss": "Remove",
+        "verified": false
+      },
+      "settings": {
+        "gloss": "Settings",
+        "verified": false
+      },
+      "take-attendance": {
+        "gloss": "Take attendance",
+        "verified": false
+      },
+      "unarchive": {
+        "gloss": "Unarchive",
+        "verified": false
+      }
+    },
+    "view-active": {
+      "gloss": "View Active",
+      "verified": false
+    },
+    "view-all": {
+      "gloss": "View All",
+      "verified": false
+    },
+    "view-archived": {
+      "gloss": "View Archived",
+      "verified": false
+    },
+    "view-inactive": {
+      "gloss": "View Inactive",
+      "verified": false
+    },
+    "view-past": {
+      "gloss": "View Past",
+      "verified": false
+    }
+  },
+  "assets": {
+    "asset-added": {
+      "gloss": "Asset added",
+      "verified": false
+    },
+    "asset-archived": {
+      "gloss": "Asset archived",
+      "verified": false
+    },
+    "asset-edited": {
+      "gloss": "Asset edited",
+      "verified": false
+    },
+    "asset-on-event": {
+      "gloss": "That asset is already assigned to this event.",
+      "verified": false
+    },
+    "asset-removed": {
+      "gloss": "Asset removed",
+      "verified": false
+    },
+    "asset-unarchived": {
+      "gloss": "Asset unarchived",
+      "verified": false
+    },
+    "confirm-archive": {
+      "gloss": "Are you sure you want to archive this asset?",
+      "verified": false
+    },
+    "confirm-remove-from-event": {
+      "gloss": "Are you sure you want to remove this asset from this event?",
+      "verified": false
+    },
+    "create-asset": {
+      "gloss": "Create Asset",
+      "verified": false
+    },
+    "description": {
+      "gloss": "Description",
+      "verified": false
+    },
+    "edit-asset": {
+      "gloss": "Edit Asset",
+      "verified": false
+    },
+    "error-adding-asset": {
+      "gloss": "Error while adding asset",
+      "verified": false
+    },
+    "error-archiving-asset": {
+      "gloss": "Error while archiving asset",
+      "verified": false
+    },
+    "error-asset-assigned": {
+      "gloss": "That asset is assigned to a conflicting event.",
+      "verified": false
+    },
+    "error-editing-asset": {
+      "gloss": "Error while editing asset",
+      "verified": false
+    },
+    "error-removing-asset": {
+      "gloss": "Error while removing asset",
+      "verified": false
+    },
+    "error-unarchiving-asset": {
+      "gloss": "Error while unarchiving asset",
+      "verified": false
+    },
+    "location": {
+      "gloss": "Location",
+      "verified": false
+    },
+    "new": {
+      "gloss": "Add Asset",
+      "verified": false
+    },
+    "none-assigned": {
+      "gloss": "No assets assigned.",
+      "verified": false
+    },
+    "title": {
+      "gloss": "Assets",
+      "verified": false
+    }
+  },
+  "attribute": {
+    "check": {
+      "gloss": "checkbox",
+      "verified": false
+    },
+    "date": {
+      "gloss": "date",
+      "verified": false
+    },
+    "dropdown": {
+      "gloss": "dropdown",
+      "verified": false
+    },
+    "float": {
+      "gloss": "floating point",
+      "verified": false
+    },
+    "integer": {
+      "gloss": "integer",
+      "verified": false
+    },
+    "radio": {
+      "gloss": "radio button",
+      "verified": false
+    },
+    "string": {
+      "gloss": "string",
+      "verified": false
+    }
+  },
+  "country": {
+    "name": {
+      "AD": {
+        "gloss": "Andorra",
+        "verified": false
+      },
+      "AE": {
+        "gloss": "United Arab Emirates",
+        "verified": false
+      },
+      "AF": {
+        "gloss": "Afghanistan",
+        "verified": false
+      },
+      "AG": {
+        "gloss": "Antigua and Barbuda",
+        "verified": false
+      },
+      "AI": {
+        "gloss": "Anguilla",
+        "verified": false
+      },
+      "AL": {
+        "gloss": "Albania",
+        "verified": false
+      },
+      "AM": {
+        "gloss": "Armenia",
+        "verified": false
+      },
+      "AO": {
+        "gloss": "Angola",
+        "verified": false
+      },
+      "AQ": {
+        "gloss": "Antarctica",
+        "verified": false
+      },
+      "AR": {
+        "gloss": "Argentina",
+        "verified": false
+      },
+      "AS": {
+        "gloss": "American Samoa",
+        "verified": false
+      },
+      "AT": {
+        "gloss": "Austria",
+        "verified": false
+      },
+      "AU": {
+        "gloss": "Australia",
+        "verified": false
+      },
+      "AW": {
+        "gloss": "Aruba",
+        "verified": false
+      },
+      "AX": {
+        "gloss": "\u00c5land Islands",
+        "verified": false
+      },
+      "AZ": {
+        "gloss": "Azerbaijan",
+        "verified": false
+      },
+      "BA": {
+        "gloss": "Bosnia and Herzegovina",
+        "verified": false
+      },
+      "BB": {
+        "gloss": "Barbados",
+        "verified": false
+      },
+      "BD": {
+        "gloss": "Bangladesh",
+        "verified": false
+      },
+      "BE": {
+        "gloss": "Belgium",
+        "verified": false
+      },
+      "BF": {
+        "gloss": "Burkina Faso",
+        "verified": false
+      },
+      "BG": {
+        "gloss": "Bulgaria",
+        "verified": false
+      },
+      "BH": {
+        "gloss": "Bahrain",
+        "verified": false
+      },
+      "BI": {
+        "gloss": "Burundi",
+        "verified": false
+      },
+      "BJ": {
+        "gloss": "Benin",
+        "verified": false
+      },
+      "BL": {
+        "gloss": "Saint Barth\u00e9lemy",
+        "verified": false
+      },
+      "BM": {
+        "gloss": "Bermuda",
+        "verified": false
+      },
+      "BN": {
+        "gloss": "Brunei Darussalam",
+        "verified": false
+      },
+      "BO": {
+        "gloss": "Bolivia, Plurinational State of",
+        "verified": false
+      },
+      "BQ": {
+        "gloss": "Bonaire, Sint Eustatius and Saba",
+        "verified": false
+      },
+      "BR": {
+        "gloss": "Brazil",
+        "verified": false
+      },
+      "BS": {
+        "gloss": "Bahamas",
+        "verified": false
+      },
+      "BT": {
+        "gloss": "Bhutan",
+        "verified": false
+      },
+      "BV": {
+        "gloss": "Bouvet Island",
+        "verified": false
+      },
+      "BW": {
+        "gloss": "Botswana",
+        "verified": false
+      },
+      "BY": {
+        "gloss": "Belarus",
+        "verified": false
+      },
+      "BZ": {
+        "gloss": "Belize",
+        "verified": false
+      },
+      "CA": {
+        "gloss": "Canada",
+        "verified": false
+      },
+      "CC": {
+        "gloss": "Cocos (Keeling) Islands",
+        "verified": false
+      },
+      "CD": {
+        "gloss": "Congo, the Democratic Republic of the",
+        "verified": false
+      },
+      "CF": {
+        "gloss": "Central African Republic",
+        "verified": false
+      },
+      "CG": {
+        "gloss": "Congo",
+        "verified": false
+      },
+      "CH": {
+        "gloss": "Switzerland",
+        "verified": false
+      },
+      "CI": {
+        "gloss": "C\u00f4te d'Ivoire",
+        "verified": false
+      },
+      "CK": {
+        "gloss": "Cook Islands",
+        "verified": false
+      },
+      "CL": {
+        "gloss": "Chile",
+        "verified": false
+      },
+      "CM": {
+        "gloss": "Cameroon",
+        "verified": false
+      },
+      "CN": {
+        "gloss": "China",
+        "verified": false
+      },
+      "CO": {
+        "gloss": "Colombia",
+        "verified": false
+      },
+      "CR": {
+        "gloss": "Costa Rica",
+        "verified": false
+      },
+      "CU": {
+        "gloss": "Cuba",
+        "verified": false
+      },
+      "CV": {
+        "gloss": "Cape Verde",
+        "verified": false
+      },
+      "CW": {
+        "gloss": "Cura\u00e7ao",
+        "verified": false
+      },
+      "CX": {
+        "gloss": "Christmas Island",
+        "verified": false
+      },
+      "CY": {
+        "gloss": "Cyprus",
+        "verified": false
+      },
+      "CZ": {
+        "gloss": "Czech Republic",
+        "verified": false
+      },
+      "DE": {
+        "gloss": "Germany",
+        "verified": false
+      },
+      "DJ": {
+        "gloss": "Djibouti",
+        "verified": false
+      },
+      "DK": {
+        "gloss": "Denmark",
+        "verified": false
+      },
+      "DM": {
+        "gloss": "Dominica",
+        "verified": false
+      },
+      "DO": {
+        "gloss": "Dominican Republic",
+        "verified": false
+      },
+      "DZ": {
+        "gloss": "Algeria",
+        "verified": false
+      },
+      "EC": {
+        "gloss": "Ecuador",
+        "verified": false
+      },
+      "EE": {
+        "gloss": "Estonia",
+        "verified": false
+      },
+      "EG": {
+        "gloss": "Egypt",
+        "verified": false
+      },
+      "EH": {
+        "gloss": "Western Sahara",
+        "verified": false
+      },
+      "ER": {
+        "gloss": "Eritrea",
+        "verified": false
+      },
+      "ES": {
+        "gloss": "Spain",
+        "verified": false
+      },
+      "ET": {
+        "gloss": "Ethiopia",
+        "verified": false
+      },
+      "FI": {
+        "gloss": "Finland",
+        "verified": false
+      },
+      "FJ": {
+        "gloss": "Fiji",
+        "verified": false
+      },
+      "FK": {
+        "gloss": "Falkland Islands (Malvinas)",
+        "verified": false
+      },
+      "FM": {
+        "gloss": "Micronesia, Federated States of",
+        "verified": false
+      },
+      "FO": {
+        "gloss": "Faroe Islands",
+        "verified": false
+      },
+      "FR": {
+        "gloss": "France",
+        "verified": false
+      },
+      "GA": {
+        "gloss": "Gabon",
+        "verified": false
+      },
+      "GB": {
+        "gloss": "United Kingdom",
+        "verified": false
+      },
+      "GD": {
+        "gloss": "Grenada",
+        "verified": false
+      },
+      "GE": {
+        "gloss": "Georgia",
+        "verified": false
+      },
+      "GF": {
+        "gloss": "French Guiana",
+        "verified": false
+      },
+      "GG": {
+        "gloss": "Guernsey",
+        "verified": false
+      },
+      "GH": {
+        "gloss": "Ghana",
+        "verified": false
+      },
+      "GI": {
+        "gloss": "Gibraltar",
+        "verified": false
+      },
+      "GL": {
+        "gloss": "Greenland",
+        "verified": false
+      },
+      "GM": {
+        "gloss": "Gambia",
+        "verified": false
+      },
+      "GN": {
+        "gloss": "Guinea",
+        "verified": false
+      },
+      "GP": {
+        "gloss": "Guadeloupe",
+        "verified": false
+      },
+      "GQ": {
+        "gloss": "Equatorial Guinea",
+        "verified": false
+      },
+      "GR": {
+        "gloss": "Greece",
+        "verified": false
+      },
+      "GS": {
+        "gloss": "South Georgia and the South Sandwich Islands",
+        "verified": false
+      },
+      "GT": {
+        "gloss": "Guatemala",
+        "verified": false
+      },
+      "GU": {
+        "gloss": "Guam",
+        "verified": false
+      },
+      "GW": {
+        "gloss": "Guinea-Bissau",
+        "verified": false
+      },
+      "GY": {
+        "gloss": "Guyana",
+        "verified": false
+      },
+      "HK": {
+        "gloss": "Hong Kong",
+        "verified": false
+      },
+      "HM": {
+        "gloss": "Heard Island and McDonald Islands",
+        "verified": false
+      },
+      "HN": {
+        "gloss": "Honduras",
+        "verified": false
+      },
+      "HR": {
+        "gloss": "Croatia",
+        "verified": false
+      },
+      "HT": {
+        "gloss": "Haiti",
+        "verified": false
+      },
+      "HU": {
+        "gloss": "Hungary",
+        "verified": false
+      },
+      "ID": {
+        "gloss": "Indonesia",
+        "verified": false
+      },
+      "IE": {
+        "gloss": "Ireland",
+        "verified": false
+      },
+      "IL": {
+        "gloss": "Israel",
+        "verified": false
+      },
+      "IM": {
+        "gloss": "Isle of Man",
+        "verified": false
+      },
+      "IN": {
+        "gloss": "India",
+        "verified": false
+      },
+      "IO": {
+        "gloss": "British Indian Ocean Territory",
+        "verified": false
+      },
+      "IQ": {
+        "gloss": "Iraq",
+        "verified": false
+      },
+      "IR": {
+        "gloss": "Iran, Islamic Republic of",
+        "verified": false
+      },
+      "IS": {
+        "gloss": "Iceland",
+        "verified": false
+      },
+      "IT": {
+        "gloss": "Italy",
+        "verified": false
+      },
+      "JE": {
+        "gloss": "Jersey",
+        "verified": false
+      },
+      "JM": {
+        "gloss": "Jamaica",
+        "verified": false
+      },
+      "JO": {
+        "gloss": "Jordan",
+        "verified": false
+      },
+      "JP": {
+        "gloss": "Japan",
+        "verified": false
+      },
+      "KE": {
+        "gloss": "Kenya",
+        "verified": false
+      },
+      "KG": {
+        "gloss": "Kyrgyzstan",
+        "verified": false
+      },
+      "KH": {
+        "gloss": "Cambodia",
+        "verified": false
+      },
+      "KI": {
+        "gloss": "Kiribati",
+        "verified": false
+      },
+      "KM": {
+        "gloss": "Comoros",
+        "verified": false
+      },
+      "KN": {
+        "gloss": "Saint Kitts and Nevis",
+        "verified": false
+      },
+      "KP": {
+        "gloss": "Korea, Democratic People's Republic of",
+        "verified": false
+      },
+      "KR": {
+        "gloss": "Korea, Republic of",
+        "verified": false
+      },
+      "KW": {
+        "gloss": "Kuwait",
+        "verified": false
+      },
+      "KY": {
+        "gloss": "Cayman Islands",
+        "verified": false
+      },
+      "KZ": {
+        "gloss": "Kazakhstan",
+        "verified": false
+      },
+      "LA": {
+        "gloss": "Lao People's Democratic Republic",
+        "verified": false
+      },
+      "LB": {
+        "gloss": "Lebanon",
+        "verified": false
+      },
+      "LC": {
+        "gloss": "Saint Lucia",
+        "verified": false
+      },
+      "LI": {
+        "gloss": "Liechtenstein",
+        "verified": false
+      },
+      "LK": {
+        "gloss": "Sri Lanka",
+        "verified": false
+      },
+      "LR": {
+        "gloss": "Liberia",
+        "verified": false
+      },
+      "LS": {
+        "gloss": "Lesotho",
+        "verified": false
+      },
+      "LT": {
+        "gloss": "Lithuania",
+        "verified": false
+      },
+      "LU": {
+        "gloss": "Luxembourg",
+        "verified": false
+      },
+      "LV": {
+        "gloss": "Latvia",
+        "verified": false
+      },
+      "LY": {
+        "gloss": "Libya",
+        "verified": false
+      },
+      "MA": {
+        "gloss": "Morocco",
+        "verified": false
+      },
+      "MC": {
+        "gloss": "Monaco",
+        "verified": false
+      },
+      "MD": {
+        "gloss": "Moldova, Republic of",
+        "verified": false
+      },
+      "ME": {
+        "gloss": "Montenegro",
+        "verified": false
+      },
+      "MF": {
+        "gloss": "Saint Martin (French part)",
+        "verified": false
+      },
+      "MG": {
+        "gloss": "Madagascar",
+        "verified": false
+      },
+      "MH": {
+        "gloss": "Marshall Islands",
+        "verified": false
+      },
+      "MK": {
+        "gloss": "Macedonia, the Former Yugoslav Republic of",
+        "verified": false
+      },
+      "ML": {
+        "gloss": "Mali",
+        "verified": false
+      },
+      "MM": {
+        "gloss": "Myanmar",
+        "verified": false
+      },
+      "MN": {
+        "gloss": "Mongolia",
+        "verified": false
+      },
+      "MO": {
+        "gloss": "Macao",
+        "verified": false
+      },
+      "MP": {
+        "gloss": "Northern Mariana Islands",
+        "verified": false
+      },
+      "MQ": {
+        "gloss": "Martinique",
+        "verified": false
+      },
+      "MR": {
+        "gloss": "Mauritania",
+        "verified": false
+      },
+      "MS": {
+        "gloss": "Montserrat",
+        "verified": false
+      },
+      "MT": {
+        "gloss": "Malta",
+        "verified": false
+      },
+      "MU": {
+        "gloss": "Mauritius",
+        "verified": false
+      },
+      "MV": {
+        "gloss": "Maldives",
+        "verified": false
+      },
+      "MW": {
+        "gloss": "Malawi",
+        "verified": false
+      },
+      "MX": {
+        "gloss": "Mexico",
+        "verified": false
+      },
+      "MY": {
+        "gloss": "Malaysia",
+        "verified": false
+      },
+      "MZ": {
+        "gloss": "Mozambique",
+        "verified": false
+      },
+      "NA": {
+        "gloss": "Namibia",
+        "verified": false
+      },
+      "NC": {
+        "gloss": "New Caledonia",
+        "verified": false
+      },
+      "NE": {
+        "gloss": "Niger",
+        "verified": false
+      },
+      "NF": {
+        "gloss": "Norfolk Island",
+        "verified": false
+      },
+      "NG": {
+        "gloss": "Nigeria",
+        "verified": false
+      },
+      "NI": {
+        "gloss": "Nicaragua",
+        "verified": false
+      },
+      "NL": {
+        "gloss": "Netherlands",
+        "verified": false
+      },
+      "NO": {
+        "gloss": "Norway",
+        "verified": false
+      },
+      "NP": {
+        "gloss": "Nepal",
+        "verified": false
+      },
+      "NR": {
+        "gloss": "Nauru",
+        "verified": false
+      },
+      "NU": {
+        "gloss": "Niue",
+        "verified": false
+      },
+      "NZ": {
+        "gloss": "New Zealand",
+        "verified": false
+      },
+      "OM": {
+        "gloss": "Oman",
+        "verified": false
+      },
+      "PA": {
+        "gloss": "Panama",
+        "verified": false
+      },
+      "PE": {
+        "gloss": "Peru",
+        "verified": false
+      },
+      "PF": {
+        "gloss": "French Polynesia",
+        "verified": false
+      },
+      "PG": {
+        "gloss": "Papua New Guinea",
+        "verified": false
+      },
+      "PH": {
+        "gloss": "Philippines",
+        "verified": false
+      },
+      "PK": {
+        "gloss": "Pakistan",
+        "verified": false
+      },
+      "PL": {
+        "gloss": "Poland",
+        "verified": false
+      },
+      "PM": {
+        "gloss": "Saint Pierre and Miquelon",
+        "verified": false
+      },
+      "PN": {
+        "gloss": "Pitcairn",
+        "verified": false
+      },
+      "PR": {
+        "gloss": "Puerto Rico",
+        "verified": false
+      },
+      "PS": {
+        "gloss": "Palestine, State of",
+        "verified": false
+      },
+      "PT": {
+        "gloss": "Portugal",
+        "verified": false
+      },
+      "PW": {
+        "gloss": "Palau",
+        "verified": false
+      },
+      "PY": {
+        "gloss": "Paraguay",
+        "verified": false
+      },
+      "QA": {
+        "gloss": "Qatar",
+        "verified": false
+      },
+      "RE": {
+        "gloss": "R\u00e9union",
+        "verified": false
+      },
+      "RO": {
+        "gloss": "Romania",
+        "verified": false
+      },
+      "RS": {
+        "gloss": "Serbia",
+        "verified": false
+      },
+      "RU": {
+        "gloss": "Russian Federation",
+        "verified": false
+      },
+      "RW": {
+        "gloss": "Rwanda",
+        "verified": false
+      },
+      "SA": {
+        "gloss": "Saudi Arabia",
+        "verified": false
+      },
+      "SB": {
+        "gloss": "Solomon Islands",
+        "verified": false
+      },
+      "SC": {
+        "gloss": "Seychelles",
+        "verified": false
+      },
+      "SD": {
+        "gloss": "Sudan",
+        "verified": false
+      },
+      "SE": {
+        "gloss": "Sweden",
+        "verified": false
+      },
+      "SG": {
+        "gloss": "Singapore",
+        "verified": false
+      },
+      "SH": {
+        "gloss": "Saint Helena, Ascension and Tristan da Cunha",
+        "verified": false
+      },
+      "SI": {
+        "gloss": "Slovenia",
+        "verified": false
+      },
+      "SJ": {
+        "gloss": "Svalbard and Jan Mayen",
+        "verified": false
+      },
+      "SK": {
+        "gloss": "Slovakia",
+        "verified": false
+      },
+      "SL": {
+        "gloss": "Sierra Leone",
+        "verified": false
+      },
+      "SM": {
+        "gloss": "San Marino",
+        "verified": false
+      },
+      "SN": {
+        "gloss": "Senegal",
+        "verified": false
+      },
+      "SO": {
+        "gloss": "Somalia",
+        "verified": false
+      },
+      "SR": {
+        "gloss": "Suriname",
+        "verified": false
+      },
+      "SS": {
+        "gloss": "South Sudan",
+        "verified": false
+      },
+      "ST": {
+        "gloss": "Sao Tome and Principe",
+        "verified": false
+      },
+      "SV": {
+        "gloss": "El Salvador",
+        "verified": false
+      },
+      "SX": {
+        "gloss": "Sint Maarten (Dutch part)",
+        "verified": false
+      },
+      "SY": {
+        "gloss": "Syrian Arab Republic",
+        "verified": false
+      },
+      "SZ": {
+        "gloss": "Swaziland",
+        "verified": false
+      },
+      "TC": {
+        "gloss": "Turks and Caicos Islands",
+        "verified": false
+      },
+      "TD": {
+        "gloss": "Chad",
+        "verified": false
+      },
+      "TF": {
+        "gloss": "French Southern Territories",
+        "verified": false
+      },
+      "TG": {
+        "gloss": "Togo",
+        "verified": false
+      },
+      "TH": {
+        "gloss": "Thailand",
+        "verified": false
+      },
+      "TJ": {
+        "gloss": "Tajikistan",
+        "verified": false
+      },
+      "TK": {
+        "gloss": "Tokelau",
+        "verified": false
+      },
+      "TL": {
+        "gloss": "Timor-Leste",
+        "verified": false
+      },
+      "TM": {
+        "gloss": "Turkmenistan",
+        "verified": false
+      },
+      "TN": {
+        "gloss": "Tunisia",
+        "verified": false
+      },
+      "TO": {
+        "gloss": "Tonga",
+        "verified": false
+      },
+      "TR": {
+        "gloss": "Turkey",
+        "verified": false
+      },
+      "TT": {
+        "gloss": "Trinidad and Tobago",
+        "verified": false
+      },
+      "TV": {
+        "gloss": "Tuvalu",
+        "verified": false
+      },
+      "TW": {
+        "gloss": "Taiwan, Province of China",
+        "verified": false
+      },
+      "TZ": {
+        "gloss": "Tanzania, United Republic of",
+        "verified": false
+      },
+      "UA": {
+        "gloss": "Ukraine",
+        "verified": false
+      },
+      "UG": {
+        "gloss": "Uganda",
+        "verified": false
+      },
+      "UM": {
+        "gloss": "United States Minor Outlying Islands",
+        "verified": false
+      },
+      "US": {
+        "gloss": "United States",
+        "verified": false
+      },
+      "UY": {
+        "gloss": "Uruguay",
+        "verified": false
+      },
+      "UZ": {
+        "gloss": "Uzbekistan",
+        "verified": false
+      },
+      "VA": {
+        "gloss": "Holy See (Vatican City State)",
+        "verified": false
+      },
+      "VC": {
+        "gloss": "Saint Vincent and the Grenadines",
+        "verified": false
+      },
+      "VE": {
+        "gloss": "Venezuela, Bolivarian Republic of",
+        "verified": false
+      },
+      "VG": {
+        "gloss": "Virgin Islands, British",
+        "verified": false
+      },
+      "VI": {
+        "gloss": "Virgin Islands, U.S.",
+        "verified": false
+      },
+      "VN": {
+        "gloss": "Viet Nam",
+        "verified": false
+      },
+      "VU": {
+        "gloss": "Vanuatu",
+        "verified": false
+      },
+      "WF": {
+        "gloss": "Wallis and Futuna",
+        "verified": false
+      },
+      "WS": {
+        "gloss": "Samoa",
+        "verified": false
+      },
+      "YE": {
+        "gloss": "Yemen",
+        "verified": false
+      },
+      "YT": {
+        "gloss": "Mayotte",
+        "verified": false
+      },
+      "ZA": {
+        "gloss": "South Africa",
+        "verified": false
+      },
+      "ZM": {
+        "gloss": "Zambia",
+        "verified": false
+      },
+      "ZW": {
+        "gloss": "Zimbabwe",
+        "verified": false
+      }
+    }
+  },
+  "courses": {
+    "add-failed": {
+      "gloss": "Failed to add course",
+      "verified": false
+    },
+    "add-meeting": {
+      "gloss": "Add Meeting",
+      "verified": false
+    },
+    "add-meeting-failed": {
+      "gloss": "Failed to add meeting(s)",
+      "verified": false
+    },
+    "added": {
+      "gloss": "Course added",
+      "verified": false
+    },
+    "archived": {
+      "gloss": "Course archived",
+      "verified": false
+    },
+    "choose-offering": {
+      "gloss": "Choose Offering",
+      "verified": false
+    },
+    "choose-time": {
+      "gloss": "Time",
+      "verified": false
+    },
+    "class-attendance": {
+      "gloss": "Attendance",
+      "verified": false
+    },
+    "class-attendance-for": {
+      "gloss": "Attendance for",
+      "verified": false
+    },
+    "class-attendance-load-failed": {
+      "gloss": "Failed to load class attendance",
+      "verified": false
+    },
+    "class-attendance-update-failed": {
+      "gloss": "Failed to update attendance",
+      "verified": false
+    },
+    "class-attendance-updated": {
+      "gloss": "Class attendance updated",
+      "verified": false
+    },
+    "confirm-archive": {
+      "gloss": "Are you sure you want to archive this course?",
+      "verified": false
+    },
+    "confirm-student": {
+      "gloss": "Would you like to confirm or reject this student?",
+      "verified": false
+    },
+    "course": {
+      "gloss": "Courses",
+      "verified": false
+    },
+    "course-offering": {
+      "gloss": "Course Offerings",
+      "verified": false
+    },
+    "create-new-person": {
+      "gloss": "Create a new person",
+      "verified": false
+    },
+    "dashboard": {
+      "charts": {
+        "attended": {
+          "gloss": "Attended",
+          "verified": false
+        },
+        "course": {
+          "gloss": "Course",
+          "verified": false
+        },
+        "did-not-attend": {
+          "gloss": "Did Not Attend",
+          "verified": false
+        },
+        "did-not-graduate": {
+          "gloss": "Did Not Graduate",
+          "verified": false
+        },
+        "enrolled": {
+          "gloss": "Enrolled",
+          "verified": false
+        },
+        "graduated": {
+          "gloss": "Graduated",
+          "verified": false
+        }
+      },
+      "headers": {
+        "course-retention": {
+          "gloss": "Course Retention",
+          "verified": false
+        },
+        "course-success": {
+          "gloss": "Course Success",
+          "verified": false
+        }
+      },
+      "title": {
+        "gloss": "Dashboard",
+        "verified": false
+      }
+    },
+    "date": {
+      "gloss": "Date",
+      "verified": false
+    },
+    "dates": {
+      "gloss": "Dates",
+      "verified": false
+    },
+    "description": {
+      "gloss": "Description",
+      "verified": false
+    },
+    "enrolled": {
+      "gloss": "Number Enrolled",
+      "verified": false
+    },
+    "info-meeting-dates": {
+      "gloss": "You can choose multiple dates to create many meetings.",
+      "verified": false
+    },
+    "is-archived": {
+      "gloss": "This course is archived",
+      "verified": false
+    },
+    "location": {
+      "gloss": "Location",
+      "verified": false
+    },
+    "max-size": {
+      "gloss": "Max Number of Students",
+      "verified": false
+    },
+    "meeting-added": {
+      "gloss": "Meeting(s) added",
+      "verified": false
+    },
+    "meeting-updated": {
+      "gloss": "Meeting updated",
+      "verified": false
+    },
+    "new": {
+      "gloss": "New Course",
+      "verified": false
+    },
+    "new-meeting": {
+      "gloss": "New Meeting",
+      "verified": false
+    },
+    "new-offering": {
+      "gloss": "New Offering",
+      "verified": false
+    },
+    "new-offering-short": {
+      "gloss": "New Offering",
+      "verified": false
+    },
+    "no-prerequisites": {
+      "gloss": "This course has no prerequisites.",
+      "verified": false
+    },
+    "prerequisites": {
+      "gloss": "Prerequisites",
+      "verified": false
+    },
+    "reactivated": {
+      "gloss": "Course unarchived",
+      "verified": false
+    },
+    "register": {
+      "gloss": "Register",
+      "verified": false
+    },
+    "register-for-course": {
+      "gloss": "Register for this course",
+      "verified": false
+    },
+    "register-success": {
+      "gloss": "Successfully Registered",
+      "verified": false
+    },
+    "reject": {
+      "gloss": "Reject",
+      "verified": false
+    },
+    "schedule": {
+      "gloss": "Schedule",
+      "verified": false
+    },
+    "students": {
+      "gloss": "Students",
+      "verified": false
+    },
+    "teacher": {
+      "gloss": "Teacher",
+      "verified": false
+    },
+    "title": {
+      "gloss": "Title",
+      "verified": false
+    },
+    "update-failed": {
+      "gloss": "Failed to update course",
+      "verified": false
+    },
+    "update-meeting-failed": {
+      "gloss": "Failed to update meeting",
+      "verified": false
+    },
+    "updated": {
+      "gloss": "Course updated",
+      "verified": false
+    },
+    "when": {
+      "gloss": "When",
+      "verified": false
+    }
+  },
+  "diplomas": {
+    "add-failed": {
+      "gloss": "Failed to add diploma",
+      "verified": false
+    },
+    "added": {
+      "gloss": "Diploma added",
+      "verified": false
+    },
+    "archived": {
+      "gloss": "Diploma archived",
+      "verified": false
+    },
+    "confirm-archive": {
+      "gloss": "Are you sure you want to archive this diploma?",
+      "verified": false
+    },
+    "courses": {
+      "gloss": "Courses",
+      "verified": false
+    },
+    "courses-this-diploma": {
+      "gloss": "Courses for this Diploma",
+      "verified": false
+    },
+    "description": {
+      "gloss": "Description",
+      "verified": false
+    },
+    "diploma": {
+      "gloss": "Diploma",
+      "verified": false
+    },
+    "diplomas": {
+      "gloss": "Diplomas",
+      "verified": false
+    },
+    "new": {
+      "gloss": "New Diploma",
+      "verified": false
+    },
+    "reactivated": {
+      "gloss": "Diploma unarchived",
+      "verified": false
+    },
+    "title": {
+      "gloss": "Title",
+      "verified": false
+    },
+    "update-failed": {
+      "gloss": "Failed to update diploma",
+      "verified": false
+    },
+    "updated": {
+      "gloss": "Diploma updated",
+      "verified": false
+    }
+  },
+  "error-report": {
+    "actions": {
+      "cancel": {
+        "gloss": "Cancel",
+        "verified": false
+      },
+      "dismiss": {
+        "gloss": "Dismiss",
+        "verified": false
+      },
+      "report-error": {
+        "gloss": "Report Error",
+        "verified": false
+      },
+      "submit": {
+        "gloss": "Sumbit",
+        "verified": false
+      }
+    },
+    "display": {
+      "add-description": {
+        "gloss": "Add Description",
+        "verified": false
+      },
+      "feedback-successful": {
+        "gloss": "Thank you, we have received your feedback!",
+        "verified": false
+      },
+      "make-description": {
+        "gloss": "Please make a description of how the error occurred",
+        "verified": false
+      }
+    },
+    "error-types": {
+      "error-400": {
+        "gloss": "The server received an invalid request",
+        "verified": false
+      },
+      "error-401": {
+        "gloss": "The server received a conflicting request",
+        "verified": false
+      },
+      "error-404": {
+        "gloss": "The server could not identify the resource requested",
+        "verified": false
+      },
+      "error-4xx": {
+        "gloss": "A client error occurred",
+        "verified": false
+      },
+      "error-5xx": {
+        "gloss": "A server error occurred",
+        "verified": false
+      }
+    }
+  },
+  "events": {
+    "all-events": {
+      "gloss": "All Events",
+      "verified": false
+    },
+    "attendance": {
+      "gloss": "Attendance",
+      "verified": false
+    },
+    "attendance-label": {
+      "gloss": "Enter a number",
+      "verified": false
+    },
+    "attendance-none": {
+      "gloss": "None",
+      "verified": false
+    },
+    "calendar": {
+      "title": {
+        "gloss": "Calendar",
+        "verified": false
+      }
+    },
+    "confirm-archive": {
+      "gloss": "Are you sure you want to archive this event?",
+      "verified": false
+    },
+    "create-event": {
+      "gloss": "Create Event",
+      "verified": false
+    },
+    "dashboard": {
+      "charts": {
+        "attendance": {
+          "gloss": "Attendance",
+          "verified": false
+        },
+        "campus": {
+          "gloss": "Campus",
+          "verified": false
+        },
+        "home-groups": {
+          "gloss": "Home Groups",
+          "verified": false
+        }
+      },
+      "headers": {
+        "home-group-percentage": {
+          "gloss": "Percentage of Churchgoers in a Home Group",
+          "verified": false
+        },
+        "location-attendance": {
+          "gloss": "Attendance by Location",
+          "verified": false
+        },
+        "yearly-attendance": {
+          "gloss": "Yearly Attendance",
+          "verified": false
+        }
+      },
+      "title": {
+        "gloss": "Dashboard",
+        "verified": false
+      }
+    },
+    "details": {
+      "title": {
+        "gloss": "Event Details",
+        "verified": false
+      }
+    },
+    "edit-event": {
+      "gloss": "Edit Event",
+      "verified": false
+    },
+    "end-date": {
+      "gloss": "End Date",
+      "verified": false
+    },
+    "end-time": {
+      "gloss": "End Time",
+      "verified": false
+    },
+    "error-adding-event": {
+      "gloss": "Error while adding event",
+      "verified": false
+    },
+    "error-archiving-event": {
+      "gloss": "Error while archiving event",
+      "verified": false
+    },
+    "error-editing-event": {
+      "gloss": "Error while editing event",
+      "verified": false
+    },
+    "error-unarchiving-event": {
+      "gloss": "Error while unarchiving event",
+      "verified": false
+    },
+    "event-added": {
+      "gloss": "Event added",
+      "verified": false
+    },
+    "event-archived": {
+      "gloss": "Event archived",
+      "verified": false
+    },
+    "event-description": {
+      "gloss": "Event Description",
+      "verified": false
+    },
+    "event-edited": {
+      "gloss": "Event edited",
+      "verified": false
+    },
+    "event-location": {
+      "gloss": "Event Location",
+      "verified": false
+    },
+    "event-unarchived": {
+      "gloss": "Event unarchived",
+      "verified": false
+    },
+    "header": {
+      "gloss": "Events",
+      "verified": false
+    },
+    "image-description": {
+      "gloss": "Image Description",
+      "verified": false
+    },
+    "location": {
+      "gloss": "Location",
+      "verified": false
+    },
+    "participants": {
+      "add": {
+        "gloss": "Add Participants",
+        "verified": false
+      },
+      "added": {
+        "gloss": "Participants added",
+        "verified": false
+      },
+      "confirm-remove": {
+        "gloss": "Are you sure you want to remove this participant?",
+        "verified": false
+      },
+      "error-adding": {
+        "gloss": "Error adding participant",
+        "verified": false
+      },
+      "error-removing": {
+        "gloss": "Error removing participant",
+        "verified": false
+      },
+      "removed": {
+        "gloss": "Removed participant",
+        "verified": false
+      },
+      "title": {
+        "gloss": "Participants",
+        "verified": false
+      }
+    },
+    "persons": {
+      "confirm-remove-from-event": {
+        "gloss": "Are you sure you want to remove this person from this event?",
+        "verified": false
+      },
+      "description": {
+        "gloss": "Role Description",
+        "verified": false
+      },
+      "edit": {
+        "gloss": "Edit Person",
+        "verified": false
+      },
+      "error-adding-person": {
+        "gloss": "Error while adding person",
+        "verified": false
+      },
+      "error-person-assigned": {
+        "gloss": "That person is assigned to a conflicting event.",
+        "verified": false
+      },
+      "error-removing-person": {
+        "gloss": "Error while removing person",
+        "verified": false
+      },
+      "new": {
+        "gloss": "Add Person",
+        "verified": false
+      },
+      "none-assigned": {
+        "gloss": "No people assigned.",
+        "verified": false
+      },
+      "person-added": {
+        "gloss": "Person added",
+        "verified": false
+      },
+      "person-edited": {
+        "gloss": "Person edited",
+        "verified": false
+      },
+      "person-on-event": {
+        "gloss": "That person is already assigned to this event.",
+        "verified": false
+      },
+      "person-removed": {
+        "gloss": "Person removed",
+        "verified": false
+      },
+      "title": {
+        "gloss": "Event People",
+        "verified": false
+      }
+    },
+    "start-date": {
+      "gloss": "Start Date",
+      "verified": false
+    },
+    "start-time": {
+      "gloss": "Start Time",
+      "verified": false
+    },
+    "stop-time": {
+      "gloss": "Stop Time",
+      "verified": false
+    },
+    "title": {
+      "gloss": "Event Title",
+      "verified": false
+    },
+    "upload-image": {
+      "gloss": "Upload Image",
+      "verified": false
+    }
+  },
+  "groups": {
+    "admin-panel": {
+      "gloss": "Admin Panel",
+      "verified": false
+    },
+    "batch-actions": {
+      "archive": {
+        "gloss": "Archive",
+        "verified": false
+      },
+      "edit": {
+        "gloss": "Edit",
+        "verified": false
+      },
+      "email": {
+        "gloss": "Send Email",
+        "verified": false
+      },
+      "messages": {
+        "move-person-will-cause-cycle": {
+          "gloss": "Moving this person will cause a cycle in leadership hierarchy",
+          "verified": false
+        },
+        "no-email": {
+          "gloss": "The person does not have an email address",
+          "verified": false
+        },
+        "person-in-destination-group": {
+          "gloss": "The person is already in the destination group",
+          "verified": false
+        },
+        "unarchive-group-will-cause-cycle": {
+          "gloss": "Unarchiving this group will cause a cycle in leadership hierarchy",
+          "verified": false
+        }
+      },
+      "move": {
+        "gloss": "Move",
+        "verified": false
+      },
+      "title": {
+        "gloss": "Batch Actions",
+        "verified": false
+      },
+      "unarchive": {
+        "gloss": "Unarchive",
+        "verified": false
+      }
+    },
+    "confirm-remove-from-event": {
+      "gloss": "Are you sure you want to remove this group from this event?",
+      "verified": false
+    },
+    "create-group": {
+      "gloss": "Create Group",
+      "verified": false
+    },
+    "description": {
+      "gloss": "Description",
+      "verified": false
+    },
+    "details": {
+      "class-title": {
+        "gloss": "Title",
+        "verified": false
+      },
+      "manager": {
+        "gloss": "Managers",
+        "verified": false
+      },
+      "member-count": {
+        "gloss": "Member count",
+        "verified": false
+      },
+      "title": {
+        "gloss": "Details",
+        "verified": false
+      }
+    },
+    "edit-group": {
+      "gloss": "Edit Group",
+      "verified": false
+    },
+    "entity-types": {
+      "group-types": {
+        "change-to-different": {
+          "gloss": "Change to a different Group Type",
+          "verified": false
+        },
+        "confirm-remove": {
+          "gloss": "Are you sure you want to delete this group type?",
+          "verified": false
+        },
+        "create-new": {
+          "gloss": "Create a new Group Type",
+          "verified": false
+        },
+        "edit": {
+          "gloss": "Edit Group Type",
+          "verified": false
+        },
+        "fail-add": {
+          "gloss": "Failed adding group type",
+          "verified": false
+        },
+        "fail-change": {
+          "gloss": "Failed changing group type",
+          "verified": false
+        },
+        "fail-remove": {
+          "gloss": "Failed removing group type",
+          "verified": false
+        },
+        "fail-update": {
+          "gloss": "Failed updating group type",
+          "verified": false
+        },
+        "hide-expand": {
+          "gloss": "Hide Groups",
+          "verified": false
+        },
+        "manage": {
+          "gloss": "Manage Group Types",
+          "verified": false
+        },
+        "name": {
+          "gloss": "Group Type Name",
+          "verified": false
+        },
+        "new": {
+          "gloss": "New Group Type",
+          "verified": false
+        },
+        "show-expand": {
+          "gloss": "Show Groups",
+          "verified": false
+        },
+        "success-add": {
+          "gloss": "Successfully added group type",
+          "verified": false
+        },
+        "success-change": {
+          "gloss": "Successfully changed group type",
+          "verified": false
+        },
+        "success-remove": {
+          "gloss": "Successfully removed group type",
+          "verified": false
+        },
+        "success-update": {
+          "gloss": "Successfully updated group type",
+          "verified": false
+        },
+        "title": {
+          "gloss": "Group Types",
+          "verified": false
+        }
+      },
+      "manager-types": {
+        "change-to-different": {
+          "gloss": "Change to a different Manager Type",
+          "verified": false
+        },
+        "confirm-remove": {
+          "gloss": "Are you sure you want to remove this manager type?",
+          "verified": false
+        },
+        "create-new": {
+          "gloss": "Create a new Manager Type",
+          "verified": false
+        },
+        "edit": {
+          "gloss": "Edit Manager Type",
+          "verified": false
+        },
+        "fail-add": {
+          "gloss": "Failed adding manager type",
+          "verified": false
+        },
+        "fail-change": {
+          "gloss": "Failed changing manager type",
+          "verified": false
+        },
+        "fail-remove": {
+          "gloss": "Failed removing manager type",
+          "verified": false
+        },
+        "fail-update": {
+          "gloss": "Failed updating manager type",
+          "verified": false
+        },
+        "hide-expand": {
+          "gloss": "Hide Managers",
+          "verified": false
+        },
+        "manage": {
+          "gloss": "Manage Manager Types",
+          "verified": false
+        },
+        "name": {
+          "gloss": "Manager Type Name",
+          "verified": false
+        },
+        "new": {
+          "gloss": "New Manager Type",
+          "verified": false
+        },
+        "show-expand": {
+          "gloss": "Show Managers",
+          "verified": false
+        },
+        "success-add": {
+          "gloss": "Successfully added manager type",
+          "verified": false
+        },
+        "success-change": {
+          "gloss": "Successfully changed manager type",
+          "verified": false
+        },
+        "success-remove": {
+          "gloss": "Successfully removed manager type",
+          "verified": false
+        },
+        "success-update": {
+          "gloss": "Successfully updated manager type",
+          "verified": false
+        },
+        "title": {
+          "gloss": "Manager Types",
+          "verified": false
+        }
+      }
+    },
+    "error-removing-group": {
+      "gloss": "Error while removing group",
+      "verified": false
+    },
+    "group-description": {
+      "gloss": "Group Description",
+      "verified": false
+    },
+    "group-removed": {
+      "gloss": "Group removed",
+      "verified": false
+    },
+    "group-type": {
+      "gloss": "Group Type",
+      "verified": false
+    },
+    "header": {
+      "gloss": "Groups",
+      "verified": false
+    },
+    "header-manager": {
+      "gloss": "Managers",
+      "verified": false
+    },
+    "linegraph": {
+      "Month": {
+        "April": {
+          "gloss": "April",
+          "verified": false
+        },
+        "August": {
+          "gloss": "August",
+          "verified": false
+        },
+        "December": {
+          "gloss": "December",
+          "verified": false
+        },
+        "February": {
+          "gloss": "February",
+          "verified": false
+        },
+        "January": {
+          "gloss": "January",
+          "verified": false
+        },
+        "July": {
+          "gloss": "July",
+          "verified": false
+        },
+        "June": {
+          "gloss": "June",
+          "verified": false
+        },
+        "March": {
+          "gloss": "March",
+          "verified": false
+        },
+        "May": {
+          "gloss": "May",
+          "verified": false
+        },
+        "November": {
+          "gloss": "November",
+          "verified": false
+        },
+        "October": {
+          "gloss": "October",
+          "verified": false
+        },
+        "September": {
+          "gloss": "September",
+          "verified": false
+        }
+      },
+      "selected-group": {
+        "gloss": "Selected Group(s)",
+        "verified": false
+      },
+      "time-picker-end": {
+        "gloss": "End",
+        "verified": false
+      },
+      "time-picker-start": {
+        "gloss": "Start",
+        "verified": false
+      },
+      "time-scale": {
+        "gloss": "Time Scale",
+        "verified": false
+      },
+      "time-scale-unite": {
+        "Weekly": {
+          "gloss": "Weekly",
+          "verified": false
+        },
+        "monthly": {
+          "gloss": "Monthly",
+          "verified": false
+        }
+      }
+    },
+    "manager": {
+      "gloss": "Manager",
+      "verified": false
+    },
+    "managers": {
+      "add-manager": {
+        "gloss": "Add Manager",
+        "verified": false
+      },
+      "edit-manager": {
+        "gloss": "Edit Manager",
+        "verified": false
+      },
+      "manager-type": {
+        "gloss": "Manager Type",
+        "verified": false
+      }
+    },
+    "meetings": {
+      "add-meeting": {
+        "gloss": "Add Meeting",
+        "verified": false
+      },
+      "title": {
+        "gloss": "Meetings",
+        "verified": false
+      }
+    },
+    "member-count": {
+      "gloss": "Member Count",
+      "verified": false
+    },
+    "members": {
+      "add-member": {
+        "gloss": "Add Member",
+        "verified": false
+      },
+      "default": {
+        "gloss": "Default",
+        "verified": false
+      },
+      "edit-member": {
+        "gloss": "Edit Member",
+        "verified": false
+      },
+      "email": {
+        "bcc": {
+          "gloss": "Bcc",
+          "verified": false
+        },
+        "body": {
+          "gloss": "Body",
+          "verified": false
+        },
+        "cc": {
+          "gloss": "Cc",
+          "verified": false
+        },
+        "compose": {
+          "gloss": "Compose Email",
+          "verified": false
+        },
+        "reply-to": {
+          "gloss": "Reply to",
+          "verified": false
+        },
+        "send": {
+          "gloss": "Send",
+          "verified": false
+        },
+        "subject": {
+          "gloss": "Subject",
+          "verified": false
+        },
+        "to": {
+          "gloss": "To",
+          "verified": false
+        }
+      },
+      "email-dialog-footnote": {
+        "gloss": "Click the circle to select the reply-to option",
+        "verified": false
+      },
+      "email-reply-to": {
+        "gloss": "Reply to",
+        "verified": false
+      },
+      "title": {
+        "gloss": "Members",
+        "verified": false
+      },
+      "title-visitor": {
+        "gloss": "Visitors",
+        "verified": false
+      }
+    },
+    "membership-hisotry": {
+      "title": {
+        "gloss": "History",
+        "verified": false
+      }
+    },
+    "messages": {
+      "already-exists": {
+        "gloss": "Group already exists",
+        "verified": false
+      },
+      "confirm-archive": {
+        "gloss": "Are you sure you want to archive this group?",
+        "verified": false
+      },
+      "confirm-attendance-archive": {
+        "gloss": "Are you sure this person has an absence?",
+        "verified": false
+      },
+      "confirm-manager-archive": {
+        "gloss": "Are you sure you want to archive this group manager?",
+        "verified": false
+      },
+      "confirm-meeting-archive": {
+        "gloss": "Are you sure you want to archive this group meeting?",
+        "verified": false
+      },
+      "confirm-member-archive": {
+        "gloss": "Are you sure you want to archive this group member?",
+        "verified": false
+      },
+      "email-sent": {
+        "gloss": "Email sent",
+        "verified": false
+      },
+      "error-active-not-selected": {
+        "gloss": "No active members are selected",
+        "verified": false
+      },
+      "error-adding-group": {
+        "gloss": "Error while adding group",
+        "verified": false
+      },
+      "error-adding-managers": {
+        "gloss": "Error while adding manager(s)",
+        "verified": false
+      },
+      "error-adding-meeting": {
+        "gloss": "Error adding meeting",
+        "verified": false
+      },
+      "error-adding-members": {
+        "gloss": "Error while adding member(s)",
+        "verified": false
+      },
+      "error-archived-not-selected": {
+        "gloss": "No archived members are selected",
+        "verified": false
+      },
+      "error-archiving-group": {
+        "gloss": "Error while archiving group",
+        "verified": false
+      },
+      "error-archiving-manager": {
+        "gloss": "Error while archiving manager",
+        "verified": false
+      },
+      "error-archiving-meeting": {
+        "gloss": "Error while archiving meeting",
+        "verified": false
+      },
+      "error-archiving-member": {
+        "gloss": "Error while archiving member",
+        "verified": false
+      },
+      "error-editing-group": {
+        "gloss": "Error while editing group",
+        "verified": false
+      },
+      "error-moving-managers": {
+        "gloss": "Error while moving manager(s)",
+        "verified": false
+      },
+      "error-moving-members": {
+        "gloss": "Error while moving member(s)",
+        "verified": false
+      },
+      "error-no-manager-email": {
+        "gloss": "Your email address is not defined",
+        "verified": false
+      },
+      "error-sending-email": {
+        "gloss": "Error while sending email",
+        "verified": false
+      },
+      "error-unarchiving-group": {
+        "gloss": "Error while unarchiving group",
+        "verified": false
+      },
+      "error-unarchiving-manager": {
+        "gloss": "Error while unarchiving manager",
+        "verified": false
+      },
+      "error-unarchiving-meeting": {
+        "gloss": "Error unarchiiving meeting",
+        "verified": false
+      },
+      "error-unarchiving-member": {
+        "gloss": "Error while unarchiving member",
+        "verified": false
+      },
+      "error-updating-managers": {
+        "gloss": "Error while updating manager(s)",
+        "verified": false
+      },
+      "error-updating-members": {
+        "gloss": "Error while updating member(s)",
+        "verified": false
+      },
+      "group-added": {
+        "gloss": "Group added",
+        "verified": false
+      },
+      "group-archived": {
+        "gloss": "Group archived",
+        "verified": false
+      },
+      "group-edited": {
+        "gloss": "Group edited",
+        "verified": false
+      },
+      "group-unarchived": {
+        "gloss": "Group unarchived",
+        "verified": false
+      },
+      "manager-archived": {
+        "gloss": "Manager archived",
+        "verified": false
+      },
+      "manager-unarchived": {
+        "gloss": "Manager unarchived",
+        "verified": false
+      },
+      "managers-added": {
+        "gloss": "Successfully added manager(s)",
+        "verified": false
+      },
+      "managers-moved": {
+        "gloss": "Successfully moved manager(s)",
+        "verified": false
+      },
+      "managers-updated": {
+        "gloss": "Successfully updated manager(s)",
+        "verified": false
+      },
+      "meeting-added": {
+        "gloss": "Meeting added",
+        "verified": false
+      },
+      "meeting-archived": {
+        "gloss": "Meeting archived",
+        "verified": false
+      },
+      "member-archived": {
+        "gloss": "Member archived",
+        "verified": false
+      },
+      "member-unarchived": {
+        "gloss": "Member unarchived",
+        "verified": false
+      },
+      "members-added": {
+        "gloss": "Successfully added member(s)",
+        "verified": false
+      },
+      "members-moved": {
+        "gloss": "Successfully moved member(s)",
+        "verified": false
+      },
+      "members-updated": {
+        "gloss": "Successfully updated member(s)",
+        "verified": false
+      },
+      "no-remaining-members": {
+        "gloss": "No remaining members",
+        "verified": false
+      },
+      "participant-added": {
+        "gloss": "Participatn(s) Added",
+        "verified": false
+      },
+      "required-fields": {
+        "gloss": "Please fill out all required fields",
+        "verified": false
+      },
+      "select-destination-group": {
+        "gloss": "Select a destination group",
+        "verified": false
+      },
+      "visitor-remove": {
+        "gloss": "Visitor Removed",
+        "verified": false
+      }
+    },
+    "name": {
+      "gloss": "Name",
+      "verified": false
+    },
+    "none-assigned": {
+      "gloss": "No groups assigned.",
+      "verified": false
+    },
+    "split": {
+      "child-group": {
+        "gloss": "Child Group",
+        "verified": false
+      },
+      "choose-managers": {
+        "gloss": "Choose Managers",
+        "verified": false
+      },
+      "choose-members": {
+        "gloss": "Choose Members",
+        "verified": false
+      },
+      "error": {
+        "gloss": "Error occurred while splitting the group",
+        "verified": false
+      },
+      "group-information": {
+        "gloss": "Group Information",
+        "verified": false
+      },
+      "no-managers": {
+        "gloss": "No managers in parent group",
+        "verified": false
+      },
+      "no-members": {
+        "gloss": "No members in parent group",
+        "verified": false
+      },
+      "parent-group": {
+        "gloss": "Parent Group",
+        "verified": false
+      },
+      "success": {
+        "gloss": "Successfully splitted group",
+        "verified": false
+      },
+      "title": {
+        "gloss": "Split Group",
+        "verified": false
+      },
+      "tooltip": {
+        "gloss": "Split",
+        "verified": false
+      }
+    },
+    "title": {
+      "gloss": "Home Churches",
+      "verified": false
+    },
+    "tooltips": {
+      "move": {
+        "gloss": "Move to Another Group",
+        "verified": false
+      }
+    },
+    "treeview": {
+      "admin-node": {
+        "gloss": "Administrator",
+        "verified": false
+      },
+      "categories": {
+        "all": {
+          "gloss": "All",
+          "verified": false
+        },
+        "all-group-types": {
+          "gloss": "All Group Types",
+          "verified": false
+        },
+        "managers": {
+          "gloss": "Managers",
+          "verified": false
+        },
+        "members": {
+          "gloss": "Members",
+          "verified": false
+        }
+      },
+      "category-view": {
+        "gloss": "Category View",
+        "verified": false
+      },
+      "collapse": {
+        "gloss": "Collapse",
+        "verified": false
+      },
+      "expand": {
+        "gloss": "Expand",
+        "verified": false
+      },
+      "filters": {
+        "gloss": "Filters",
+        "verified": false
+      },
+      "hierarchy-view": {
+        "gloss": "Hierarchy View",
+        "verified": false
+      },
+      "no-groups-available": {
+        "gloss": "No groups available, because you are not an overseer of any groups",
+        "verified": false
+      },
+      "remove-cycle": {
+        "gloss": "Please remove the cycle in the node listed in order to view group hierarchy tree.",
+        "verified": false
+      },
+      "select-placeholder": {
+        "gloss": "Select groups to perform actions...",
+        "verified": false
+      },
+      "show-linegraph": {
+        "gloss": "Show Line Graph",
+        "verified": false
+      },
+      "show-list": {
+        "gloss": "Show Group List",
+        "verified": false
+      },
+      "show-treeview": {
+        "gloss": "Show Group Treeview",
+        "verified": false
+      },
+      "title": {
+        "gloss": "Group Treeview",
+        "verified": false
+      },
+      "unexpected-cycle": {
+        "gloss": "Unexpected cycle in hierarchy",
+        "verified": false
+      }
+    },
+    "user-panel": {
+      "gloss": "User Panel",
+      "verified": false
+    }
+  },
+  "images": {
+    "actions": {
+      "add-image": {
+        "gloss": "Add Image",
+        "verified": false
+      }
+    },
+    "image-description": {
+      "gloss": "Image description",
+      "verified": false
+    },
+    "messages": {
+      "no-image": {
+        "gloss": "No image selected.",
+        "verified": false
+      },
+      "not-found": {
+        "gloss": "Image not found.",
+        "verified": false
+      }
+    }
+  },
+  "language": {
+    "name": {
+      "aa": {
+        "gloss": "Afar",
+        "verified": false
+      },
+      "ab": {
+        "gloss": "Abkhazian",
+        "verified": false
+      },
+      "ae": {
+        "gloss": "Avestan",
+        "verified": false
+      },
+      "af": {
+        "gloss": "Afrikaans",
+        "verified": false
+      },
+      "ak": {
+        "gloss": "Akan",
+        "verified": false
+      },
+      "am": {
+        "gloss": "Amharic",
+        "verified": false
+      },
+      "an": {
+        "gloss": "Aragonese",
+        "verified": false
+      },
+      "ar": {
+        "gloss": "Arabic",
+        "verified": false
+      },
+      "as": {
+        "gloss": "Assamese",
+        "verified": false
+      },
+      "av": {
+        "gloss": "Avaric",
+        "verified": false
+      },
+      "ay": {
+        "gloss": "Aymara",
+        "verified": false
+      },
+      "az": {
+        "gloss": "Azerbaijani",
+        "verified": false
+      },
+      "ba": {
+        "gloss": "Bashkir",
+        "verified": false
+      },
+      "be": {
+        "gloss": "Belarusian",
+        "verified": false
+      },
+      "bg": {
+        "gloss": "Bulgarian",
+        "verified": false
+      },
+      "bh": {
+        "gloss": "Bihari languages",
+        "verified": false
+      },
+      "bi": {
+        "gloss": "Bislama",
+        "verified": false
+      },
+      "bm": {
+        "gloss": "Bambara",
+        "verified": false
+      },
+      "bn": {
+        "gloss": "Bengali",
+        "verified": false
+      },
+      "bo": {
+        "gloss": "Tibetan",
+        "verified": false
+      },
+      "br": {
+        "gloss": "Breton",
+        "verified": false
+      },
+      "bs": {
+        "gloss": "Bosnian",
+        "verified": false
+      },
+      "ca": {
+        "gloss": "Catalan; Valencian",
+        "verified": false
+      },
+      "ce": {
+        "gloss": "Chechen",
+        "verified": false
+      },
+      "ch": {
+        "gloss": "Chamorro",
+        "verified": false
+      },
+      "co": {
+        "gloss": "Corsican",
+        "verified": false
+      },
+      "cr": {
+        "gloss": "Cree",
+        "verified": false
+      },
+      "cs": {
+        "gloss": "Czech",
+        "verified": false
+      },
+      "cu": {
+        "gloss": "Church Slavic; Old Slavonic; Church Slavonic; Old Bulgarian; Old Church Slavonic",
+        "verified": false
+      },
+      "cv": {
+        "gloss": "Chuvash",
+        "verified": false
+      },
+      "cy": {
+        "gloss": "Welsh",
+        "verified": false
+      },
+      "da": {
+        "gloss": "Danish",
+        "verified": false
+      },
+      "de": {
+        "gloss": "German",
+        "verified": false
+      },
+      "dv": {
+        "gloss": "Divehi; Dhivehi; Maldivian",
+        "verified": false
+      },
+      "dz": {
+        "gloss": "Dzongkha",
+        "verified": false
+      },
+      "ee": {
+        "gloss": "Ewe",
+        "verified": false
+      },
+      "el": {
+        "gloss": "Greek, Modern (1453-)",
+        "verified": false
+      },
+      "en": {
+        "gloss": "English",
+        "verified": false
+      },
+      "eo": {
+        "gloss": "Esperanto",
+        "verified": false
+      },
+      "es": {
+        "gloss": "Spanish; Castilian",
+        "verified": false
+      },
+      "et": {
+        "gloss": "Estonian",
+        "verified": false
+      },
+      "eu": {
+        "gloss": "Basque",
+        "verified": false
+      },
+      "fa": {
+        "gloss": "Persian",
+        "verified": false
+      },
+      "ff": {
+        "gloss": "Fulah",
+        "verified": false
+      },
+      "fi": {
+        "gloss": "Finnish",
+        "verified": false
+      },
+      "fj": {
+        "gloss": "Fijian",
+        "verified": false
+      },
+      "fo": {
+        "gloss": "Faroese",
+        "verified": false
+      },
+      "fr": {
+        "gloss": "French",
+        "verified": false
+      },
+      "fy": {
+        "gloss": "Western Frisian",
+        "verified": false
+      },
+      "ga": {
+        "gloss": "Irish",
+        "verified": false
+      },
+      "gd": {
+        "gloss": "Gaelic; Scottish Gaelic",
+        "verified": false
+      },
+      "gl": {
+        "gloss": "Galician",
+        "verified": false
+      },
+      "gn": {
+        "gloss": "Guarani",
+        "verified": false
+      },
+      "gu": {
+        "gloss": "Gujarati",
+        "verified": false
+      },
+      "gv": {
+        "gloss": "Manx",
+        "verified": false
+      },
+      "ha": {
+        "gloss": "Hausa",
+        "verified": false
+      },
+      "he": {
+        "gloss": "Hebrew",
+        "verified": false
+      },
+      "hi": {
+        "gloss": "Hindi",
+        "verified": false
+      },
+      "ho": {
+        "gloss": "Hiri Motu",
+        "verified": false
+      },
+      "hr": {
+        "gloss": "Croatian",
+        "verified": false
+      },
+      "ht": {
+        "gloss": "Haitian; Haitian Creole",
+        "verified": false
+      },
+      "hu": {
+        "gloss": "Hungarian",
+        "verified": false
+      },
+      "hy": {
+        "gloss": "Armenian",
+        "verified": false
+      },
+      "hz": {
+        "gloss": "Herero",
+        "verified": false
+      },
+      "ia": {
+        "gloss": "Interlingua (International Auxiliary Language Association)",
+        "verified": false
+      },
+      "id": {
+        "gloss": "Indonesian",
+        "verified": false
+      },
+      "ie": {
+        "gloss": "Interlingue; Occidental",
+        "verified": false
+      },
+      "ig": {
+        "gloss": "Igbo",
+        "verified": false
+      },
+      "ii": {
+        "gloss": "Sichuan Yi; Nuosu",
+        "verified": false
+      },
+      "ik": {
+        "gloss": "Inupiaq",
+        "verified": false
+      },
+      "io": {
+        "gloss": "Ido",
+        "verified": false
+      },
+      "is": {
+        "gloss": "Icelandic",
+        "verified": false
+      },
+      "it": {
+        "gloss": "Italian",
+        "verified": false
+      },
+      "iu": {
+        "gloss": "Inuktitut",
+        "verified": false
+      },
+      "ja": {
+        "gloss": "Japanese",
+        "verified": false
+      },
+      "jv": {
+        "gloss": "Javanese",
+        "verified": false
+      },
+      "ka": {
+        "gloss": "Georgian",
+        "verified": false
+      },
+      "kg": {
+        "gloss": "Kongo",
+        "verified": false
+      },
+      "ki": {
+        "gloss": "Kikuyu; Gikuyu",
+        "verified": false
+      },
+      "kj": {
+        "gloss": "Kuanyama; Kwanyama",
+        "verified": false
+      },
+      "kk": {
+        "gloss": "Kazakh",
+        "verified": false
+      },
+      "kl": {
+        "gloss": "Kalaallisut; Greenlandic",
+        "verified": false
+      },
+      "km": {
+        "gloss": "Central Khmer",
+        "verified": false
+      },
+      "kn": {
+        "gloss": "Kannada",
+        "verified": false
+      },
+      "ko": {
+        "gloss": "Korean",
+        "verified": false
+      },
+      "kr": {
+        "gloss": "Kanuri",
+        "verified": false
+      },
+      "ks": {
+        "gloss": "Kashmiri",
+        "verified": false
+      },
+      "ku": {
+        "gloss": "Kurdish",
+        "verified": false
+      },
+      "kv": {
+        "gloss": "Komi",
+        "verified": false
+      },
+      "kw": {
+        "gloss": "Cornish",
+        "verified": false
+      },
+      "ky": {
+        "gloss": "Kirghiz; Kyrgyz",
+        "verified": false
+      },
+      "la": {
+        "gloss": "Latin",
+        "verified": false
+      },
+      "lb": {
+        "gloss": "Luxembourgish; Letzeburgesch",
+        "verified": false
+      },
+      "lg": {
+        "gloss": "Ganda",
+        "verified": false
+      },
+      "li": {
+        "gloss": "Limburgan; Limburger; Limburgish",
+        "verified": false
+      },
+      "ln": {
+        "gloss": "Lingala",
+        "verified": false
+      },
+      "lo": {
+        "gloss": "Lao",
+        "verified": false
+      },
+      "lt": {
+        "gloss": "Lithuanian",
+        "verified": false
+      },
+      "lu": {
+        "gloss": "Luba-Katanga",
+        "verified": false
+      },
+      "lv": {
+        "gloss": "Latvian",
+        "verified": false
+      },
+      "mg": {
+        "gloss": "Malagasy",
+        "verified": false
+      },
+      "mh": {
+        "gloss": "Marshallese",
+        "verified": false
+      },
+      "mi": {
+        "gloss": "Maori",
+        "verified": false
+      },
+      "mk": {
+        "gloss": "Macedonian",
+        "verified": false
+      },
+      "ml": {
+        "gloss": "Malayalam",
+        "verified": false
+      },
+      "mn": {
+        "gloss": "Mongolian",
+        "verified": false
+      },
+      "mr": {
+        "gloss": "Marathi",
+        "verified": false
+      },
+      "ms": {
+        "gloss": "Malay",
+        "verified": false
+      },
+      "mt": {
+        "gloss": "Maltese",
+        "verified": false
+      },
+      "my": {
+        "gloss": "Burmese",
+        "verified": false
+      },
+      "na": {
+        "gloss": "Nauru",
+        "verified": false
+      },
+      "nb": {
+        "gloss": "Bokm\u00e5l, Norwegian; Norwegian Bokm\u00e5l",
+        "verified": false
+      },
+      "nd": {
+        "gloss": "Ndebele, North; North Ndebele",
+        "verified": false
+      },
+      "ne": {
+        "gloss": "Nepali",
+        "verified": false
+      },
+      "ng": {
+        "gloss": "Ndonga",
+        "verified": false
+      },
+      "nl": {
+        "gloss": "Dutch; Flemish",
+        "verified": false
+      },
+      "nn": {
+        "gloss": "Norwegian Nynorsk; Nynorsk, Norwegian",
+        "verified": false
+      },
+      "no": {
+        "gloss": "Norwegian",
+        "verified": false
+      },
+      "nr": {
+        "gloss": "Ndebele, South; South Ndebele",
+        "verified": false
+      },
+      "nv": {
+        "gloss": "Navajo; Navaho",
+        "verified": false
+      },
+      "ny": {
+        "gloss": "Chichewa; Chewa; Nyanja",
+        "verified": false
+      },
+      "oc": {
+        "gloss": "Occitan (post 1500); Proven\u00e7al",
+        "verified": false
+      },
+      "oj": {
+        "gloss": "Ojibwa",
+        "verified": false
+      },
+      "om": {
+        "gloss": "Oromo",
+        "verified": false
+      },
+      "or": {
+        "gloss": "Oriya",
+        "verified": false
+      },
+      "os": {
+        "gloss": "Ossetian; Ossetic",
+        "verified": false
+      },
+      "pa": {
+        "gloss": "Panjabi; Punjabi",
+        "verified": false
+      },
+      "pi": {
+        "gloss": "Pali",
+        "verified": false
+      },
+      "pl": {
+        "gloss": "Polish",
+        "verified": false
+      },
+      "ps": {
+        "gloss": "Pushto; Pashto",
+        "verified": false
+      },
+      "pt": {
+        "gloss": "Portuguese",
+        "verified": false
+      },
+      "qu": {
+        "gloss": "Quechua",
+        "verified": false
+      },
+      "rm": {
+        "gloss": "Romansh",
+        "verified": false
+      },
+      "rn": {
+        "gloss": "Rundi",
+        "verified": false
+      },
+      "ro": {
+        "gloss": "Romanian; Moldavian; Moldovan",
+        "verified": false
+      },
+      "ru": {
+        "gloss": "Russian",
+        "verified": false
+      },
+      "rw": {
+        "gloss": "Kinyarwanda",
+        "verified": false
+      },
+      "sa": {
+        "gloss": "Sanskrit",
+        "verified": false
+      },
+      "sc": {
+        "gloss": "Sardinian",
+        "verified": false
+      },
+      "sd": {
+        "gloss": "Sindhi",
+        "verified": false
+      },
+      "se": {
+        "gloss": "Northern Sami",
+        "verified": false
+      },
+      "sg": {
+        "gloss": "Sango",
+        "verified": false
+      },
+      "si": {
+        "gloss": "Sinhala; Sinhalese",
+        "verified": false
+      },
+      "sk": {
+        "gloss": "Slovak",
+        "verified": false
+      },
+      "sl": {
+        "gloss": "Slovenian",
+        "verified": false
+      },
+      "sm": {
+        "gloss": "Samoan",
+        "verified": false
+      },
+      "sn": {
+        "gloss": "Shona",
+        "verified": false
+      },
+      "so": {
+        "gloss": "Somali",
+        "verified": false
+      },
+      "sq": {
+        "gloss": "Albanian",
+        "verified": false
+      },
+      "sr": {
+        "gloss": "Serbian",
+        "verified": false
+      },
+      "ss": {
+        "gloss": "Swati",
+        "verified": false
+      },
+      "st": {
+        "gloss": "Sotho, Southern",
+        "verified": false
+      },
+      "su": {
+        "gloss": "Sundanese",
+        "verified": false
+      },
+      "sv": {
+        "gloss": "Swedish",
+        "verified": false
+      },
+      "sw": {
+        "gloss": "Swahili",
+        "verified": false
+      },
+      "ta": {
+        "gloss": "Tamil",
+        "verified": false
+      },
+      "te": {
+        "gloss": "Telugu",
+        "verified": false
+      },
+      "tg": {
+        "gloss": "Tajik",
+        "verified": false
+      },
+      "th": {
+        "gloss": "Thai",
+        "verified": false
+      },
+      "ti": {
+        "gloss": "Tigrinya",
+        "verified": false
+      },
+      "tk": {
+        "gloss": "Turkmen",
+        "verified": false
+      },
+      "tl": {
+        "gloss": "Tagalog",
+        "verified": false
+      },
+      "tn": {
+        "gloss": "Tswana",
+        "verified": false
+      },
+      "to": {
+        "gloss": "Tonga (Tonga Islands)",
+        "verified": false
+      },
+      "tr": {
+        "gloss": "Turkish",
+        "verified": false
+      },
+      "ts": {
+        "gloss": "Tsonga",
+        "verified": false
+      },
+      "tt": {
+        "gloss": "Tatar",
+        "verified": false
+      },
+      "tw": {
+        "gloss": "Twi",
+        "verified": false
+      },
+      "ty": {
+        "gloss": "Tahitian",
+        "verified": false
+      },
+      "ug": {
+        "gloss": "Uighur; Uyghur",
+        "verified": false
+      },
+      "uk": {
+        "gloss": "Ukrainian",
+        "verified": false
+      },
+      "ur": {
+        "gloss": "Urdu",
+        "verified": false
+      },
+      "uz": {
+        "gloss": "Uzbek",
+        "verified": false
+      },
+      "ve": {
+        "gloss": "Venda",
+        "verified": false
+      },
+      "vi": {
+        "gloss": "Vietnamese",
+        "verified": false
+      },
+      "vo": {
+        "gloss": "Volap\u00fck",
+        "verified": false
+      },
+      "wa": {
+        "gloss": "Walloon",
+        "verified": false
+      },
+      "wo": {
+        "gloss": "Wolof",
+        "verified": false
+      },
+      "xh": {
+        "gloss": "Xhosa",
+        "verified": false
+      },
+      "yi": {
+        "gloss": "Yiddish",
+        "verified": false
+      },
+      "yo": {
+        "gloss": "Yoruba",
+        "verified": false
+      },
+      "za": {
+        "gloss": "Zhuang; Chuang",
+        "verified": false
+      },
+      "zh": {
+        "gloss": "Chinese",
+        "verified": false
+      },
+      "zu": {
+        "gloss": "Zulu",
+        "verified": false
+      }
+    }
+  },
+  "login": {
+    "header": {
+      "gloss": "Log In",
+      "verified": false
+    },
+    "messages": {
+      "incorrect-login": {
+        "gloss": "Username or password is incorrect",
+        "verified": false
+      }
+    }
+  },
+  "people": {
+    "account-information": {
+      "gloss": "Account Information",
+      "verified": false
+    },
+    "additional-information": {
+      "gloss": "Additional Information",
+      "verified": false
+    },
+    "attributes": {
+      "gloss": "Attributes",
+      "verified": false
+    },
+    "dropdown-roles": {
+      "gloss": "All Roles",
+      "verified": false
+    },
+    "next": {
+      "gloss": "Next",
+      "verified": false
+    },
+    "optional": {
+      "gloss": "Optional",
+      "verified": false
+    },
+    "personal-information": {
+      "gloss": "Personal Information",
+      "verified": false
+    },
+    "previous": {
+      "gloss": "Previous",
+      "verified": false
+    },
+    "title": {
+      "gloss": "People",
+      "verified": false
+    },
+    "title-roles": {
+      "gloss": "Roles",
+      "verified": false
+    }
+  },
+  "person": {
+    "account": {
+      "gloss": "Account",
+      "verified": false
+    },
+    "account-info": {
+      "roles": {
+        "gloss": "Roles",
+        "verified": false
+      }
+    },
+    "actions": {
+      "add-account": {
+        "gloss": "Add Account",
+        "verified": false
+      },
+      "add-participant": {
+        "gloss": "Add a Participant",
+        "verified": false
+      },
+      "add-visitor": {
+        "gloss": "Add Visitor",
+        "verified": false
+      },
+      "assign-roles": {
+        "gloss": "Assign Roles",
+        "verified": false
+      },
+      "edit": {
+        "gloss": "Edit Person",
+        "verified": false
+      },
+      "new": {
+        "gloss": "New Person",
+        "verified": false
+      },
+      "reset-password": {
+        "gloss": "Reset Password",
+        "verified": false
+      }
+    },
+    "date": {
+      "birthday": {
+        "gloss": "Birthday",
+        "verified": false
+      }
+    },
+    "email": {
+      "gloss": "Email",
+      "verified": false
+    },
+    "female": {
+      "gloss": "Female",
+      "verified": false
+    },
+    "gender": {
+      "gloss": "Gender",
+      "verified": false
+    },
+    "male": {
+      "gloss": "Male",
+      "verified": false
+    },
+    "messages": {
+      "account-activate": {
+        "gloss": "Account activated",
+        "verified": false
+      },
+      "account-deactivate": {
+        "gloss": "Account deactivated",
+        "verified": false
+      },
+      "canceled": {
+        "gloss": "Canceled add new person",
+        "verified": false
+      },
+      "confirm": {
+        "activate": {
+          "gloss": "Are you sure you want to restore this person?",
+          "verified": false
+        },
+        "deactivate": {
+          "gloss": "Are you sure you want to archive this person?",
+          "verified": false
+        }
+      },
+      "person-activate": {
+        "gloss": "Person activated",
+        "verified": false
+      },
+      "person-add": {
+        "gloss": "New person added",
+        "verified": false
+      },
+      "person-deactivate": {
+        "gloss": "Person deactivated",
+        "verified": false
+      },
+      "person-edit": {
+        "gloss": "Person edited",
+        "verified": false
+      },
+      "person-save-error": {
+        "gloss": "Person was not saved",
+        "verified": false
+      }
+    },
+    "name": {
+      "first": {
+        "gloss": "First Name",
+        "verified": false
+      },
+      "last": {
+        "gloss": "Last Name",
+        "verified": false
+      },
+      "second-last": {
+        "gloss": "Second Last Name",
+        "verified": false
+      }
+    },
+    "no-account": {
+      "gloss": "Don't have an account?",
+      "verified": false
+    },
+    "password": {
+      "gloss": "Password",
+      "verified": false
+    },
+    "phone": {
+      "gloss": "Phone",
+      "verified": false
+    },
+    "repeat-password": {
+      "gloss": "Repeat Password",
+      "verified": false
+    },
+    "settings": {
+      "gloss": "Settings for {person}",
+      "verified": false
+    },
+    "username": {
+      "gloss": "Username",
+      "verified": false
+    }
+  },
+  "places": {
+    "address": {
+      "address": {
+        "gloss": "Address",
+        "verified": false
+      },
+      "city": {
+        "gloss": "City",
+        "verified": false
+      },
+      "country": {
+        "gloss": "Country",
+        "verified": false
+      },
+      "filters": {
+        "address_filters": {
+          "gloss": "Address Filters",
+          "verified": false
+        },
+        "apply": {
+          "gloss": "Apply Filters",
+          "verified": false
+        },
+        "distance-addr": {
+          "gloss": "Filter by distance from a specific address",
+          "verified": false
+        },
+        "distance-ll": {
+          "gloss": "Filter by distance from a specific Latitude and Longitude",
+          "verified": false
+        },
+        "distanceFromAddress": {
+          "gloss": "Distance from specified Address",
+          "verified": false
+        },
+        "distanceFromLatLng": {
+          "gloss": "Distance from specified Latitude and Longitude",
+          "verified": false
+        },
+        "endLat": {
+          "gloss": "End Latitude",
+          "verified": false
+        },
+        "endLng": {
+          "gloss": "End Longitude",
+          "verified": false
+        },
+        "range": {
+          "gloss": "Filter between a range of Latitudes and Longitudes",
+          "verified": false
+        },
+        "reset-filters": {
+          "gloss": "Reset Filters",
+          "verified": false
+        },
+        "startLat": {
+          "gloss": "Start Latitude",
+          "verified": false
+        },
+        "startLng": {
+          "gloss": "Start Longitude",
+          "verified": false
+        }
+      },
+      "find-address": {
+        "gloss": "Find Address",
+        "verified": false
+      },
+      "find-address-lat-lng": {
+        "gloss": "Find Address using Latitude and Longitude",
+        "verified": false
+      },
+      "latitude": {
+        "gloss": "Latitude",
+        "verified": false
+      },
+      "longitude": {
+        "gloss": "Longitude",
+        "verified": false
+      },
+      "name": {
+        "gloss": "Name",
+        "verified": false
+      },
+      "new": {
+        "gloss": "Add Address",
+        "verified": false
+      },
+      "valid-address": {
+        "gloss": "Use Valid Street Address",
+        "verified": false
+      }
+    },
+    "area": {
+      "area": {
+        "gloss": "Area",
+        "verified": false
+      },
+      "confirm": {
+        "activate": {
+          "gloss": "Are you sure you want to restore this area?",
+          "verified": false
+        },
+        "deactivate": {
+          "gloss": "Are you sure you want to archive this area?",
+          "verified": false
+        }
+      },
+      "create-area": {
+        "gloss": "Create New Area",
+        "verified": false
+      },
+      "edit": {
+        "gloss": "Edit Area",
+        "verified": false
+      },
+      "name": {
+        "gloss": "Area Name",
+        "verified": false
+      },
+      "new": {
+        "gloss": "Add Area",
+        "verified": false
+      }
+    },
+    "close": {
+      "gloss": "close",
+      "verified": false
+    },
+    "create-address": {
+      "gloss": "Create an Address",
+      "verified": false
+    },
+    "edit": {
+      "gloss": "Edit Location",
+      "verified": false
+    },
+    "expand": {
+      "gloss": "expand",
+      "verified": false
+    },
+    "location": {
+      "description": {
+        "gloss": "Description",
+        "verified": false
+      },
+      "location": {
+        "gloss": "Location",
+        "verified": false
+      },
+      "new": {
+        "gloss": "Add Location",
+        "verified": false
+      }
+    },
+    "messages": {
+      "confirm": {
+        "activate": {
+          "gloss": "Are you sure you want to restore this address?",
+          "verified": false
+        },
+        "deactivate": {
+          "gloss": "Are you sure you want to archive this address?",
+          "verified": false
+        }
+      },
+      "find-address-err": {
+        "gloss": "Latitude and Longitude are required to find an address",
+        "verified": false
+      },
+      "no-results": {
+        "gloss": "Your address returned no results.",
+        "verified": false
+      },
+      "saved": {
+        "gloss": "Your address has been saved.",
+        "verified": false
+      }
+    },
+    "new": {
+      "gloss": "Add Place",
+      "verified": false
+    },
+    "title": {
+      "gloss": "Places",
+      "verified": false
+    }
+  },
+  "public": {
+    "courses": {
+      "view-all": {
+        "gloss": "View All Courses",
+        "verified": false
+      }
+    },
+    "events": {
+      "join": {
+        "gloss": "Join Event",
+        "verified": false
+      },
+      "view-all": {
+        "gloss": "View All Events",
+        "verified": false
+      }
+    },
+    "headers": {
+      "home-church": {
+        "gloss": "Find a Home Church",
+        "verified": false
+      },
+      "upcoming-classes": {
+        "gloss": "Upcoming Courses",
+        "verified": false
+      },
+      "upcoming-events": {
+        "gloss": "Upcoming Events",
+        "verified": false
+      }
+    },
+    "title": {
+      "gloss": "Public",
+      "verified": false
+    }
+  },
+  "role": {
+    "event-planner": {
+      "gloss": "Event Planner",
+      "verified": false
+    },
+    "group-admin": {
+      "gloss": "Group Administrator",
+      "verified": false
+    },
+    "group-leader": {
+      "gloss": "Group Leader",
+      "verified": false
+    },
+    "group-overseer": {
+      "gloss": "Group Overseer",
+      "verified": false
+    },
+    "infrastructure": {
+      "gloss": "Infrastructure",
+      "verified": false
+    },
+    "public": {
+      "gloss": "Public",
+      "verified": false
+    },
+    "registrar": {
+      "gloss": "Registrar",
+      "verified": false
+    },
+    "superuser": {
+      "gloss": "Superuser",
+      "verified": false
+    },
+    "teaching-assistant": {
+      "gloss": "Teaching Assistant",
+      "verified": false
+    },
+    "translator": {
+      "gloss": "Translator",
+      "verified": false
+    },
+    "visitor": {
+      "gloss": "Visitor",
+      "verified": false
+    }
+  },
+  "teams": {
+    "all-teams": {
+      "gloss": "All Teams",
+      "verified": false
+    },
+    "confirm-archive": {
+      "gloss": "Are you sure you want to archive this team?",
+      "verified": false
+    },
+    "confirm-remove-from-event": {
+      "gloss": "Are you sure you want to remove this team from this event?",
+      "verified": false
+    },
+    "create-team": {
+      "gloss": "Create Team",
+      "verified": false
+    },
+    "description": {
+      "gloss": "Description",
+      "verified": false
+    },
+    "edit-team": {
+      "gloss": "Edit Team",
+      "verified": false
+    },
+    "error-adding-team": {
+      "gloss": "Error while adding team",
+      "verified": false
+    },
+    "error-editing-team": {
+      "gloss": "Error while editing team",
+      "verified": false
+    },
+    "error-removing-team": {
+      "gloss": "Error while removing team",
+      "verified": false
+    },
+    "error-team-assigned": {
+      "gloss": "That team is assigned to a conflicting event.",
+      "verified": false
+    },
+    "error-unarchiving-team": {
+      "gloss": "Error while unarchiving team",
+      "verified": false
+    },
+    "members": {
+      "add": {
+        "gloss": "Add Team Members",
+        "verified": false
+      },
+      "confirm-remove": {
+        "gloss": "Are you sure you want to remove this member?",
+        "verified": false
+      },
+      "title": {
+        "gloss": "Team Members",
+        "verified": false
+      }
+    },
+    "new": {
+      "gloss": "Add Team",
+      "verified": false
+    },
+    "none-assigned": {
+      "gloss": "No teams assigned.",
+      "verified": false
+    },
+    "team-added": {
+      "gloss": "Team added",
+      "verified": false
+    },
+    "team-edited": {
+      "gloss": "Team edited",
+      "verified": false
+    },
+    "team-on-event": {
+      "gloss": "That team is already assigned to this event.",
+      "verified": false
+    },
+    "team-removed": {
+      "gloss": "Team removed",
+      "verified": false
+    },
+    "title": {
+      "gloss": "Teams",
+      "verified": false
+    }
+  },
+  "transcripts": {
+    "add-diploma-this-student": {
+      "gloss": "Add Diploma",
+      "verified": false
+    },
+    "course-completed": {
+      "gloss": "Completed",
+      "verified": false
+    },
+    "courses": {
+      "gloss": "Courses",
+      "verified": false
+    },
+    "courses-in-progress-or-completed": {
+      "gloss": "Courses (in Progress or Completed)",
+      "verified": false
+    },
+    "courses-this-diploma": {
+      "gloss": "Courses for this Diploma",
+      "verified": false
+    },
+    "description": {
+      "gloss": "Description",
+      "verified": false
+    },
+    "page-title": {
+      "gloss": "Student Transcript -",
+      "verified": false
+    },
+    "student-information": {
+      "gloss": "Information",
+      "verified": false
+    },
+    "transcript": {
+      "gloss": "Transcripts",
+      "verified": false
+    }
+  },
+  "validation": {
+    "attributes": {
+      "attendance": {
+        "gloss": "attendance",
+        "verified": false
+      },
+      "email": {
+        "gloss": "email",
+        "verified": false
+      },
+      "endDate": {
+        "gloss": "end date",
+        "verified": false
+      },
+      "firstName": {
+        "gloss": "first name",
+        "verified": false
+      },
+      "lastName": {
+        "gloss": "last name",
+        "verified": false
+      },
+      "location": {
+        "gloss": "location",
+        "verified": false
+      },
+      "startDate": {
+        "gloss": "start date",
+        "verified": false
+      },
+      "team-description": {
+        "gloss": "team description",
+        "verified": false
+      },
+      "title": {
+        "gloss": "title",
+        "verified": false
+      }
+    },
+    "messages": {
+      "_default": {
+        "gloss": "Error",
+        "verified": false
+      },
+      "required": {
+        "gloss": "Required",
+        "verified": false
+      }
+    },
+    "required": {
+      "gloss": "Required",
+      "verified": false
+    }
+  }
+}
