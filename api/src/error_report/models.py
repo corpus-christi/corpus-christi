@@ -8,6 +8,7 @@ from src.shared.models import StringTypes
 
 # ---- Error-report
 
+
 class ErrorReport(Base):
     __tablename__ = 'error_report'
     id = Column(Integer, primary_key=True)

@@ -7,10 +7,19 @@ from src.shared.models import StringTypes
 
 # ---- Prerequisite
 
-Prerequisite = Table('courses_prerequisite', Base.metadata,
-                     Column('course_id', Integer, ForeignKey(
-                         'courses_course.id'), primary_key=True),
-                     Column('prereq_id', Integer, ForeignKey('courses_course.id'), primary_key=True))
+Prerequisite = Table(
+    'courses_prerequisite',
+    Base.metadata,
+    Column(
+        'course_id',
+        Integer,
+        ForeignKey('courses_course.id'),
+        primary_key=True),
+    Column(
+        'prereq_id',
+        Integer,
+        ForeignKey('courses_course.id'),
+        primary_key=True))
 
 
 class PrerequisiteSchema(Schema):
@@ -23,10 +32,19 @@ class PrerequisiteSchema(Schema):
 # ---- DiplomaCourse
 
 
-DiplomaCourse = Table('courses_diploma_course', Base.metadata,
-                      Column('course_id', Integer, ForeignKey(
-                          'courses_course.id'), primary_key=True),
-                      Column('diploma_id', Integer, ForeignKey('courses_diploma.id'), primary_key=True))
+DiplomaCourse = Table(
+    'courses_diploma_course',
+    Base.metadata,
+    Column(
+        'course_id',
+        Integer,
+        ForeignKey('courses_course.id'),
+        primary_key=True),
+    Column(
+        'diploma_id',
+        Integer,
+        ForeignKey('courses_diploma.id'),
+        primary_key=True))
 
 
 class DiplomaCourseSchema(Schema):
@@ -67,10 +85,19 @@ class DiplomaAwardedSchema(Schema):
 # ---- Class_Attendance
 
 
-ClassAttendance = Table('courses_class_attendance', Base.metadata,
-                        Column('class_id', Integer, ForeignKey(
-                            'courses_class_meeting.id'), primary_key=True),
-                        Column('student_id', Integer, ForeignKey('courses_students.id'), primary_key=True))
+ClassAttendance = Table(
+    'courses_class_attendance',
+    Base.metadata,
+    Column(
+        'class_id',
+        Integer,
+        ForeignKey('courses_class_meeting.id'),
+        primary_key=True),
+    Column(
+        'student_id',
+        Integer,
+        ForeignKey('courses_students.id'),
+        primary_key=True))
 
 
 class ClassAttendanceSchema(Schema):
@@ -117,14 +144,21 @@ class Course(Base):
                            primaryjoin=Prerequisite.c.prereq_id == id,
                            secondaryjoin=Prerequisite.c.course_id == id,
                            back_populates='prerequisites', lazy=True)
-    prerequisites = relationship('Course', secondary=Prerequisite,
-                                 primaryjoin=Prerequisite.c.course_id == id,
-                                 secondaryjoin=Prerequisite.c.prereq_id == id,
-                                 foreign_keys=[
-                                     Prerequisite.c.course_id, Prerequisite.c.prereq_id],
-                                 back_populates='depends', lazy=True)
+    prerequisites = relationship(
+        'Course',
+        secondary=Prerequisite,
+        primaryjoin=Prerequisite.c.course_id == id,
+        secondaryjoin=Prerequisite.c.prereq_id == id,
+        foreign_keys=[
+            Prerequisite.c.course_id,
+            Prerequisite.c.prereq_id],
+        back_populates='depends',
+        lazy=True)
     diplomas = relationship(
-        'Diploma', secondary=DiplomaCourse, back_populates='courses', lazy=True)
+        'Diploma',
+        secondary=DiplomaCourse,
+        back_populates='courses',
+        lazy=True)
     images = relationship("ImageCourse", back_populates="course")
 
     def __repr__(self):

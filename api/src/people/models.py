@@ -15,13 +15,14 @@ from ..shared.models import StringTypes
 
 # Defines join table for people_person and people_role
 people_person_role = Table('person_role', Base.metadata,
-        Column('people_person_id', Integer, ForeignKey(
-            'people_person.id'), primary_key=True),
-        Column('id', Integer, ForeignKey(
-            'people_role.id'), primary_key=True)
-        )
+                           Column('people_person_id', Integer, ForeignKey(
+                               'people_person.id'), primary_key=True),
+                           Column('id', Integer, ForeignKey(
+                               'people_role.id'), primary_key=True)
+                           )
 
 # ---- Person
+
 
 class Person(Base):
     __tablename__ = 'people_person'
@@ -42,21 +43,37 @@ class Person(Base):
     confirmed = Column(Boolean, nullable=True, default=0)
 
     active = Column(Boolean, nullable=False, default=True)
-    address_id = Column(Integer, ForeignKey('places_address.id'), nullable=True, default=None)
+    address_id = Column(
+        Integer,
+        ForeignKey('places_address.id'),
+        nullable=True,
+        default=None)
 
     address = relationship(Address, backref='people', lazy=True)
-    # events_per refers to the events led by the person (linked via events_eventperson table)
+    # events_per refers to the events led by the person (linked via
+    # events_eventperson table)
     events_per = relationship("EventPerson", back_populates="person")
-    # events_par refers to the participated events (linked via events_eventparticipant table)
+    # events_par refers to the participated events (linked via
+    # events_eventparticipant table)
     events_par = relationship("EventParticipant", back_populates="person")
     teams = relationship("TeamMember", back_populates="member")
-    diplomas_awarded = relationship('DiplomaAwarded', back_populates='students', lazy=True, uselist=True)
+    diplomas_awarded = relationship(
+        'DiplomaAwarded',
+        back_populates='students',
+        lazy=True,
+        uselist=True)
     members = relationship('Member', back_populates='person', lazy=True)
-    member_histories = relationship('MemberHistory', back_populates='person', lazy=True)
+    member_histories = relationship(
+        'MemberHistory',
+        back_populates='person',
+        lazy=True)
     managers = relationship('Manager', back_populates='person', lazy=True)
     images = relationship('ImagePerson', back_populates='person')
 
-    roles = relationship("Role", secondary=people_person_role, backref="person")
+    roles = relationship(
+        "Role",
+        secondary=people_person_role,
+        backref="persons")
 
     def __repr__(self):
         return f"<Person(id={self.id},name='{self.first_name} {self.last_name}')>"
@@ -82,29 +99,66 @@ class Person(Base):
 class PersonSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
 
-    first_name = fields.String(data_key='firstName', required=True, validate=Length(min=1))
-    last_name = fields.String(data_key='lastName', required=True, validate=Length(min=1))
-    second_last_name = fields.String(data_key='secondLastName', allow_none=True)
+    first_name = fields.String(
+        data_key='firstName',
+        required=True,
+        validate=Length(
+            min=1))
+    last_name = fields.String(
+        data_key='lastName',
+        required=True,
+        validate=Length(
+            min=1))
+    second_last_name = fields.String(
+        data_key='secondLastName', allow_none=True)
     gender = fields.String(validate=OneOf(['M', 'F']), allow_none=True)
     birthday = fields.Date(allow_none=True)
     phone = fields.String(allow_none=True)
     email = fields.String(allow_none=True)
 
     username = fields.String(required=True, validate=Length(min=1))
-    password = fields.String(attribute='password_hash', load_only=True, required=True, validate=Length(min=6))
+    password = fields.String(
+        attribute='password_hash',
+        load_only=True,
+        required=True,
+        validate=Length(
+            min=6))
     confirmed = fields.Boolean(dump_only=True)
 
     active = fields.Boolean(required=True)
     address_id = fields.Integer(data_key='addressId', allow_none=True)
 
     attributesInfo = fields.Nested('PersonAttributeSchema', many=True)
-    images = fields.Nested('ImagePersonSchema', many=True, exclude=['person'], dump_only=True)
+    images = fields.Nested(
+        'ImagePersonSchema',
+        many=True,
+        exclude=['person'],
+        dump_only=True)
     roles = fields.Nested('RoleSchema', many=True, dump_only=True)
-    members = fields.Nested('MemberSchema', only=['group_id', 'active'], many=True, dump_only=True)
-    managers = fields.Nested('ManagerSchema', only=['group_id', 'active'], many=True, dump_only=True)
-    member_histories = fields.Nested('MemberHistorySchema', many=True, dump_only=True, data_key='memberHistories', 
-            only=('id', 'joined', 'left', 'group_id'))
-
+    members = fields.Nested(
+        'MemberSchema',
+        only=[
+            'group_id',
+            'active'],
+        many=True,
+        dump_only=True)
+    managers = fields.Nested(
+        'ManagerSchema',
+        only=[
+            'group_id',
+            'active'],
+        many=True,
+        dump_only=True)
+    member_histories = fields.Nested(
+        'MemberHistorySchema',
+        many=True,
+        dump_only=True,
+        data_key='memberHistories',
+        only=(
+            'id',
+            'joined',
+            'left',
+            'group_id'))
 
     @pre_load
     def hash_password(self, data):
@@ -128,7 +182,12 @@ class Role(Base):
     @classmethod
     def load_from_file(cls, file_name='roles.json'):
         count = 0
-        file_path = os.path.abspath(os.path.join(__file__, os.path.pardir, 'data', file_name))
+        file_path = os.path.abspath(
+            os.path.join(
+                __file__,
+                os.path.pardir,
+                'data',
+                file_name))
 
         with open(file_path, 'r') as fp:
             if db.session.query(Role).count() == 0:
@@ -144,8 +203,11 @@ class Role(Base):
                         if not db.session.query(I18NLocale).get(locale_code):
                             db.session.add(I18NLocale(
                                 code=locale_code, desc=''))
-                        i18n_create(name_i18n, locale['locale_code'],
-                                    locale['name'], description=f"Role {role_name}")
+                        i18n_create(
+                            name_i18n,
+                            locale['locale_code'],
+                            locale['name'],
+                            description=f"Role {role_name}")
                     db.session.add(
                         cls(name_i18n=name_i18n, active=True))
                     count += 1
@@ -154,8 +216,8 @@ class Role(Base):
             return count
         return 0
 
+
 class RoleSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     name_i18n = fields.String(data_key='nameI18n')
     active = fields.Boolean()
-
