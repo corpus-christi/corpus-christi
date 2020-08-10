@@ -327,7 +327,13 @@ def create_i18n_cli(app):
                   show_default=os.path.join(BASE_DIR, 'i18n', "<locale>.json"),
                   type=click.File("r"),
                   help="The source file to load values from")
-    def load_values(locale, target, override):
+    @click.option('-v/-s',
+                  '--verbose/--silent',
+                  is_flag=True,
+                  default=True,
+                  show_default=True,
+                  help="Print output as modifying the database")
+    def load_values(locale, target, override, verbose):
         """ Load values from a json file into the database.
 
         <locale>: the locale code of the processed values. E.g. en-US """
@@ -366,6 +372,8 @@ def create_i18n_cli(app):
                 )
             db.session.add(value)
             entry_count += 1
+            if verbose:
+                click.echo(f"adding I18NValue [{key_id}: {entry['value']}]")
         db.session.commit()
         click.echo("Successfully loaded data into the database")
         click.echo(
@@ -481,8 +489,8 @@ def create_i18n_cli(app):
         '--empty-placeholder',
         default="",
         show_default=True,
-        help="The description to use when the description in database is not given or empty,"
-        " must be used with --dump-empty to take effect")
+        help="The description to use when the description in database is not given or empty, "
+        "must be used with --dump-empty to take effect")
     @click.option('--target',
                   default=os.path.join(BASE_DIR, 'i18n', "_desc.json"),
                   show_default=True,
@@ -515,7 +523,7 @@ def create_i18n_cli(app):
     @i18n_cli.command('export', cls=ExceptionHandlingCommand)
     @click.argument('path', callback=sanitize_path, default="")
     @click.option('--target',
-                  default='-',
+                  required=True,
                   show_default=True,
                   callback=create_dir,
                   type=click.File("w"),
