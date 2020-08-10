@@ -255,7 +255,7 @@ import {
   Underline,
   History,
 } from "tiptap-extensions";
-import {eventBus} from "../../plugins/event-bus";
+import { eventBus } from "../../plugins/event-bus";
 
 export default {
   name: "GroupMembershipHistory",
