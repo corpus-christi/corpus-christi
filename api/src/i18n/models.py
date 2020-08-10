@@ -74,7 +74,7 @@ class I18NValue(Base):
     locale = relationship('I18NLocale', backref='values', lazy=True)
 
     def __repr__(self):
-        return f"<I18NValue(gloss='{self.gloss}')>"
+        return f"<I18NValue(gloss='{self.gloss}, key_id={self.key_id}')>"
 
 
 class I18NValueSchema(Schema):

@@ -221,6 +221,19 @@ def test_one_locale_as_list(auth_client, format, code):
     # AND there should be as many rows as there are keys.
     assert len(resp.json) == len(key_data)
 
+def test_update_a_value(auth_client):
+    # GIVEN i18n test data
+    seed_database(auth_client.sqla)
+    # WHEN asking for translations for a given Value
+    test = auth_client.sqla.query(I18NValue).filter_by(locale_code='en-US').first()
+    #THEN patch the given value with a new value
+    resp = auth_client.patch(
+        url_for('i18n.update_a_value'),
+        json={'key_id':test.key_id, 'locale_code': test.locale_code, 'gloss':'OPEN'}
+    )
+    result = auth_client.sqla.query(I18NValue).filter_by(locale_code='en-US', key_id='alt.logo').first()
+    # THEN response should be "Ok"
+    assert resp.status_code == 200
 
 @pytest.mark.smoke
 def test_bogus_xlation_locale(auth_client):
@@ -282,6 +295,9 @@ def test_one_locale_as_tree(auth_client, code):
     assert count_leaf_nodes(resp.json) == len(key_data)
     # AND should have values in nested dictionaries.
     assert resp.json['label']['name']['first'].startswith('Label for a first')
+
+
+
 
 
 # # ---- Languages

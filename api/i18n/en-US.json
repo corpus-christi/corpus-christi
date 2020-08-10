@@ -57,6 +57,38 @@
       }
     }
   },
+  "translation": {
+    "menu-title": {
+      "gloss": "Translation",
+      "verified": false
+    },
+    "search-title": {
+      "gloss": "Find Translation Branch",
+      "verified": false
+    },
+    "dialog": {
+      "cancel": {
+        "gloss": "Cancel",
+        "verified": false
+      },
+      "submit": {
+        "gloss": "Submit",
+        "verified": false
+      }
+    },
+    "toolbar-title": {
+      "gloss": "Current locale: ",
+      "verified": false
+    },
+    "updated": {
+      "gloss": "Translations updated",
+      "verified": false
+    },
+    "error": {
+      "gloss": "Please modify your translations again",
+      "verified": false
+    }
+  },
   "account": {
     "messages": {
       "added-ok": {

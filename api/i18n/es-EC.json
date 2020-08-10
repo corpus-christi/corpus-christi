@@ -57,6 +57,38 @@
       }
     }
   },
+  "translation": {
+    "menu-title": {
+      "gloss": "Traducción",
+      "verified": false
+    },
+    "search-title": {
+      "gloss": "Encuentre una sucursal de traducción",
+      "verified": false
+    },
+    "dialog": {
+      "cancel": {
+        "gloss": "Cancelar",
+        "verified": false
+      },
+      "submit": {
+        "gloss": "Enviar",
+        "verified": false
+      }
+    },
+    "updated": {
+      "gloss": "Traducciones actualizadas",
+      "verified": false
+    },
+    "error": {
+      "gloss": "Por favor modifique sus traducciones nuevamente",
+      "verified": false
+    },
+    "toolbar-title": {
+      "gloss": "Locale actual:",
+      "verified": false
+    }
+  },
   "account": {
     "messages": {
       "added-ok": {
