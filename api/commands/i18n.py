@@ -217,7 +217,7 @@ def write_locale_tail_tree(tree, parent_path="", override=True, verbose=False):
     """Reverse the process of read_locale_tail_tree,
     write the given tree into the database.
 
-    :tree: the tree to be written into the database. 
+    :tree: the tree to be written into the database.
     A leaf is a tree that resenbles the following structure:
     { 'ab-XY': string, '_desc': string }
     If the 'tree' is a leaf, then the given locale-specific values
@@ -539,7 +539,7 @@ def create_i18n_cli(app):
     def export_entries(path, target):
         """ Export entries into a yaml file.
 
-        List all entries that start with PATH in a 'locale-tail' structured tree 
+        List all entries that start with PATH in a 'locale-tail' structured tree
         Specify the destination file with --target
         """
         tree = read_locale_tail_tree(path)
@@ -584,8 +584,8 @@ def create_i18n_cli(app):
         """ Import entries from a yaml file.
 
         Load all entries expressed in a 'locale-tail' structured tree into the database,
-        prepend each entry's path with PATH 
-        
+        prepend each entry's path with PATH
+
         PATH is optional when the yaml file is not a single entry,
         """
         tree = yaml.safe_load(target)
@@ -611,22 +611,25 @@ def create_i18n_cli(app):
         No override will occur if the given entry already exists
         To update entry, use the 'update' command
         """
-        value = db.session.query(I18NValue).filter_by(locale_code=locale, key_id=path).first()
+        value = db.session.query(I18NValue).filter_by(
+            locale_code=locale, key_id=path).first()
         if value:
-            click.echo(f"Value in [{locale}] with path [{path}] already exists: [{value.gloss}]")
+            click.echo(
+                f"Value in [{locale}] with path [{path}] already exists: [{value.gloss}]")
             click.echo("Nothing changed.")
         else:
             get_or_create(db.session, I18NKey, id=path)
             get_or_create(db.session, I18NLocale, code=locale)
             value = I18NValue(
-                    gloss=gloss,
-                    verified=False,
-                    key_id=path,
-                    locale_code=locale
-                    )
+                gloss=gloss,
+                verified=False,
+                key_id=path,
+                locale_code=locale
+            )
             db.session.add(value)
             db.session.commit()
-            click.echo(f"Successfully added entry [{path}] in [{locale}] with [{gloss}]")
+            click.echo(
+                f"Successfully added entry [{path}] in [{locale}] with [{gloss}]")
 
 # --- flask i18n update
 
@@ -644,16 +647,19 @@ def create_i18n_cli(app):
 
         If change is made, the 'verified' flag will be set to False
         """
-        value = db.session.query(I18NValue).filter_by(locale_code=locale, key_id=path).first()
+        value = db.session.query(I18NValue).filter_by(
+            locale_code=locale, key_id=path).first()
         if not value:
-            click.echo(f"Value in [{locale}] with path [{path}] does not exist")
+            click.echo(
+                f"Value in [{locale}] with path [{path}] does not exist")
             click.echo("Nothing changed.")
         else:
             value.gloss = gloss
             value.verified = False
             db.session.add(value)
             db.session.commit()
-            click.echo(f"Successfully updated entry [{path}] in [{locale}] with [{gloss}]")
+            click.echo(
+                f"Successfully updated entry [{path}] in [{locale}] with [{gloss}]")
 
 # --- flask i18n delete
 
@@ -716,7 +722,8 @@ def create_i18n_cli(app):
 
 # --- flask i18n edit
 
-    @i18n_cli.command('edit', cls=ExceptionHandlingCommand, short_help="Interactively edit entries.")
+    @i18n_cli.command('edit', cls=ExceptionHandlingCommand,
+                      short_help="Interactively edit entries.")
     @click.argument('path', callback=sanitize_path, default="")
     def edit_entries(path):
         """ Interactively edit entries that starts with PATH in an interactive editor,
@@ -764,7 +771,10 @@ def create_i18n_cli(app):
 
 # --- flask i18n translate
 
-    @i18n_cli.command('translate', cls=ExceptionHandlingCommand, short_help="Translate entries in the database.")
+    @i18n_cli.command(
+        'translate',
+        cls=ExceptionHandlingCommand,
+        short_help="Translate entries in the database.")
     @click.argument(
         'source-locale', callback=validate_locale, metavar="<src-locale>")
     @click.argument(
