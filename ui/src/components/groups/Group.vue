@@ -21,7 +21,7 @@
       </v-tab>
       <v-tab :to="{ name: 'group-membership-history' }">
         <v-icon left>history_edu</v-icon
-        >{{ $t("groups.membership-hisotry.title") }}
+        >{{ $t("groups.membership-history.title") }}
       </v-tab>
     </v-tabs>
     <hr class="vertical-spacer" />

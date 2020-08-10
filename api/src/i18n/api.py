@@ -6,6 +6,11 @@ from marshmallow.validate import Length
 from . import i18n
 from .models import I18NLocale, I18NLocaleSchema, I18NKeySchema, I18NKey, I18NValue, I18NValueSchema, Language
 from .. import db
+from ..shared.helpers import list_to_tree
+
+from src.shared.helpers import modify_entity, get_all_queried_entities, logged_response
+
+# from src.auth.utils import authorize
 
 # ---- I18N Locale
 
@@ -94,6 +99,32 @@ def read_all_values():
     values = db.session.query(I18NValue).all()
     return jsonify(i18n_value_schema.dump(values, many=True))
 
+@i18n.route('/values/update', methods=['PATCH'])
+@jwt_required
+# @authorize(['role.translator'])
+def update_a_value():
+#     update the values with the info in payload
+    i18n_value_schema = I18NValueSchema()
+
+    try:
+        valid_attributes = i18n_value_schema.load(request.json, partial=True)
+    except ValidationError as err:
+        return logged_response(err.messages, 422)
+
+    i18n_value = db.session.query(I18NValue).filter_by(locale_code=valid_attributes.get('locale_code'), key_id=valid_attributes.get('key_id')).first()
+
+    if not i18n_value:
+        return logged_response(
+            f"Group with key_id #{valid_attributes['key_id']} does not exist.", 404)
+
+    for key, val in valid_attributes.items():
+            setattr(i18n_value, key, val)
+
+    db.session.add(i18n_value)
+    db.session.commit()
+
+    return logged_response(i18n_value_schema.dump(i18n_value), 200)
+
 
 @i18n.route('/values/<locale_code>')
 def read_xlation(locale_code):
@@ -113,22 +144,15 @@ def read_xlation(locale_code):
     elif format == 'tree':
         # Interpret keys as a hierarchical structure.
         # Tree-building idea from  https://stackoverflow.com/questions/16547643
-        tree = {}
-        for value in values:
-            t = tree
-            keys = value.key_id.split('.')
-            for idx, key in enumerate(keys):
-                if idx < len(keys) - 1:
-                    # Intermediate "node"; add another dictionary
-                    t = t.setdefault(key, {})
-                else:
-                    # Last node
-                    if isinstance(t, dict):
-                        # Set key-value in leaf node of tree
-                        t[key] = value.gloss
-                    else:
-                        # Already a string value for this key
-                        return f'Invalid key ({value.key_id})', 400
+        entries = map(
+            lambda value: {
+                'path': value.key_id,
+                'value': value.gloss},
+            values)
+        try:
+            tree = list_to_tree(entries)
+        except RuntimeError as e:
+            return str(e), 400
         return jsonify(tree)
     else:
         return 'Invalid format', 400
@@ -139,7 +163,11 @@ def read_xlation(locale_code):
 
 class LanguageSchema(Schema):
     code = fields.String(required=True, validate=Length(equal=2))
-    name = fields.String(attribute="gloss", required=True, validate=Length(min=1))
+    name = fields.String(
+        attribute="gloss",
+        required=True,
+        validate=Length(
+            min=1))
 
 
 language_schema = LanguageSchema()
@@ -155,7 +183,8 @@ def read_languages(language_code=None):
     if language_code is None:
         result = db.session \
             .query(Language.code, I18NValue.gloss) \
-            .join(I18NKey, I18NValue) \
+            .join(Language.key) \
+            .join(I18NKey.values) \
             .filter_by(locale_code=locale_code) \
             .all()
         return jsonify(language_schema.dump(result, many=True))
@@ -163,7 +192,8 @@ def read_languages(language_code=None):
         result = db.session \
             .query(Language.code, I18NValue.gloss) \
             .filter_by(code=language_code) \
-            .join(I18NKey, I18NValue) \
+            .join(Language.key) \
+            .join(I18NKey.values) \
             .filter_by(locale_code=locale_code) \
             .first()
         return jsonify(language_schema.dump(result))

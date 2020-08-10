@@ -1,5 +1,6 @@
 import math
 import random
+import os
 
 from faker import Faker
 
@@ -12,6 +13,7 @@ from ..events.models import Event
 from ..groups.models import Group
 from ..people.models import Person
 from ..places.models import Location
+from .. import BASE_DIR
 
 
 class RandomLocaleFaker:
@@ -29,11 +31,19 @@ rl_fake = RandomLocaleFaker('en_US', 'es_MX')
 fake = Faker()  # Generic faker; random-locale ones don't implement everything.
 
 # Sample images
-valid_paths = ['images/a1/casa.jpg', 'images/a1/coffee_house.jpg', 'images/a1/park.jpg', 'images/a1/verbo.jpg',
-               'images/m5/downtown.jpg', 'images/m5/park.jpg', 'images/m5/broken_bridge.jpg', 'images/m5/tree.jpg']
+valid_paths = [
+    'images/a1/casa.jpg',
+    'images/a1/coffee_house.jpg',
+    'images/a1/park.jpg',
+    'images/a1/verbo.jpg',
+    'images/m5/downtown.jpg',
+    'images/m5/park.jpg',
+    'images/m5/broken_bridge.jpg',
+    'images/m5/tree.jpg']
 paths_taken = [False, False, False, False, False, False, False, False]
 
-# Used in create_multiple_images to guarentee that the program won't die due to an IndexOutOfRange with uneven array lengths
+# Used in create_multiple_images to guarentee that the program won't die
+# due to an IndexOutOfRange with uneven array lengths
 num_valid_images = len(valid_paths) if len(
     valid_paths) < len(paths_taken) else len(paths_taken)
 
@@ -65,7 +75,9 @@ def create_test_images(sqla):
     valid_image = image_schema.load({'path': 'image/m5/downtown.jpg'})
     new_images.append(Image(**valid_image))
     valid_image = image_schema.load(
-        {'path': 'image/m5/park.jpg', 'description': 'Explicabo doloremque voluptatibus quaerat repellat libero.'})
+        {
+            'path': 'image/m5/park.jpg',
+            'description': 'Explicabo doloremque voluptatibus quaerat repellat libero.'})
     new_images.append(Image(**valid_image))
     valid_image = image_schema.load({'path': 'image/m5/broken_bridge.jpg'})
     new_images.append(Image(**valid_image))
@@ -96,7 +108,8 @@ def image_object_factory(sqla):
         'path': valid_paths[i]
     }
 
-    file = open(valid_paths[i], 'w')
+    # TODO: write some actual data instead of using an empty image file
+    file = open(os.path.join(BASE_DIR, valid_paths[i]), 'w')
     file.close()
 
     # These are all optional in the DB. Over time, we'll try all possibilities.
@@ -194,7 +207,8 @@ def create_images_people(sqla, fraction=0.75):
         all_images_people, math.floor(len(all_images_people) * fraction))
     for image_person in sample_images_people:
         valid_image_person = image_person_schema.load(
-            image_person_object_factory(image_person[0].id, image_person[1].id))
+            image_person_object_factory(
+                image_person[0].id, image_person[1].id))
         new_images_people.append(ImagePerson(**valid_image_person))
     sqla.add_all(new_images_people)
     sqla.commit()
@@ -213,7 +227,8 @@ def create_images_courses(sqla, fraction=0.75):
         all_images_courses, math.floor(len(all_images_courses) * fraction))
     for image_course in sample_images_courses:
         valid_image_course = image_course_schema.load(
-            image_course_object_factory(image_course[0].id, image_course[1].id))
+            image_course_object_factory(
+                image_course[0].id, image_course[1].id))
         new_images_courses.append(ImageCourse(**valid_image_course))
     sqla.add_all(new_images_courses)
     sqla.commit()
@@ -251,7 +266,8 @@ def create_images_locations(sqla, fraction=0.75):
         all_images_locations, math.floor(len(all_images_locations) * fraction))
     for image_location in sample_images_locations:
         valid_image_location = image_location_schema.load(
-            image_location_object_factory(image_location[0].id, image_location[1].id))
+            image_location_object_factory(
+                image_location[0].id, image_location[1].id))
         new_images_locations.append(ImageLocation(**valid_image_location))
     sqla.add_all(new_images_locations)
     sqla.commit()

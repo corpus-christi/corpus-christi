@@ -241,6 +241,12 @@ const router = new VueRouter({
       component: () => import("@/pages/Places"),
     },
     {
+      name: "translation",
+      path: "/translation",
+      meta: { authRequired: true },
+      component: () => import("@/pages/Translation"),
+    },
+    {
       name: "diplomas-admin",
       path: "/diplomas",
       meta: { authRequired: true },
@@ -354,7 +360,13 @@ router.beforeEach((to, from, next) => {
     // The destination requires authentication.
     if (store.getters.isLoggedIn) {
       // But we're already logged in.
-      next();
+      // Block the no-admin users to have access to specific pages
+      if ((to.path === "/groups/group-types" || to.path === "/groups/manager-types") && store.state.currentAccount.roles.includes("role.group-admin") === false){
+        next({
+          name: "people"
+        })
+      }
+      else next();
     } else {
       // So redirect to the login page; retain
       // the desired page for a later redirect.

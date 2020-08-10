@@ -25,8 +25,10 @@ def email_object_factory():
         'subject': 'Test Email',
         'recipients': ['qiang_wang@taylor.edu'],
         'body': 'This is a test email',
-#         'cc': '',
-#         'bcc':''
+        'managerEmail': 'qiang_wang@taylor.edu',
+        'reply_to': 'qiang_wang@taylor.edu'
+        #         'cc': '',
+        #         'bcc':''
     }
 
     return email

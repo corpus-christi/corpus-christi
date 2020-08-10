@@ -333,16 +333,49 @@ groups:
       en-US: Group Treeview
       es-EC: Vista de árbol grupal
       zh-CN: 组树视图
-    filters:
-      _desc: filter on category treeview
-      en-US: Filters
-      es-EC: Filtros
-      zh-CN: 筛选器
-  membership-hisotry:
+  membership-history:
+    message:
+      post-success:
+        en-US: Note Added
+        es-EC: Nota agregada
+        zh-CN: 笔记已添加
+      post-fail:
+        too-long:
+          en-US: Note is too long, Please make it shoter!
+          es-EC: La nota es demasiado larga, ¡hazla más corta!
+          zh-CN: 笔记太长，请修改笔记
+    clear-note:
+      en-US: Clear Note
+      es-EC: Nota clara
+      zh-CN: 清除笔记
+    change-note:
+      en-US: Change Note
+      es-EC: Cambiar nota
+      zh-CN: 修改笔记
+    cancel:
+      en-US: Cancel
+      es-EC: Cancelar
+      zh-CN: 取消
+    submit:
+      en-US: Submit
+      es-EC: Enviar
+      zh-CN: 提交
     title:
       en-US: History
       es-EC: Historia
       zh-CN: 历史记录
+    left:
+      en-US: Left
+      es-EC: Izquierda
+      zh-CN: 离开
+    joined:
+      en-US: Joined
+      es-EC: Unida
+      zh-CN: 加入
+    note:
+      en-US: Notes
+      es-EC: Notas
+      zh-CN: 笔记
   linegraph:
     Month:
       January:

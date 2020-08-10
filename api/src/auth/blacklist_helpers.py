@@ -68,7 +68,8 @@ def revoke_token(token_id, user):
     not exist in the database
     """
     try:
-        token = db.session.query(TokenBlacklist).filter_by(id=token_id, user_identity=user).one()
+        token = db.session.query(TokenBlacklist).filter_by(
+            id=token_id, user_identity=user).one()
         token.revoked = True
         db.session.commit()
     except NoResultFound:
@@ -84,7 +85,8 @@ def revoke_tokens_of_account(person_id):
         from src.people.models import Person
 
         account = db.session.query(Person).filter_by(id=person_id).first()
-        account_tokens = db.session.query(TokenBlacklist).filter_by(user_identity=account.username).all()
+        account_tokens = db.session.query(TokenBlacklist).filter_by(
+            user_identity=account.username).all()
         for token in account_tokens:
             token.revoked = True
         db.session.commit()
@@ -99,7 +101,8 @@ def unrevoke_token(token_id, user):
     not exist in the database
     """
     try:
-        token = db.session.query(TokenBlacklist).filter_by(id=token_id, user_identity=user).one()
+        token = db.session.query(TokenBlacklist).filter_by(
+            id=token_id, user_identity=user).one()
         token.revoked = False
         db.session.commit()
     except NoResultFound:
@@ -114,7 +117,8 @@ def prune_database():
     set it up with flask cli, etc.
     """
     now = datetime.now()
-    expired = db.session.query(TokenBlacklist).filter(TokenBlacklist.expires < now).all()
+    expired = db.session.query(TokenBlacklist).filter(
+        TokenBlacklist.expires < now).all()
     for token in expired:
         db.session.delete(token)
     db.session.commit()

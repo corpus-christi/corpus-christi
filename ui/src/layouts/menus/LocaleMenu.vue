@@ -1,5 +1,5 @@
 <template>
-  <v-menu offset-y>
+  <v-menu offset-y :disabled="ableMenu">
     <template v-slot:activator="{ on }">
       <v-btn id="cur-locale" data-cy="cur-locale" text v-on="on">
         {{ currentFlagAndDescription }}
@@ -25,11 +25,21 @@
 <script lang="js">
 import Vue from "vue";
 import set from "lodash/set";
+import { mapState } from "vuex";
 
 export default Vue.extend({
   name: "LocaleMenu",
 
   computed: {
+    ...mapState(["currentAccount"]),
+
+    ableMenu(){
+      if(this.currentAccount.roles.includes("role.translator") && this.$route.name === "translation"){
+        return true
+      }
+      else return false;
+    },
+
     currentLocale() {
       return this.$store.state.currentLocale;
     },

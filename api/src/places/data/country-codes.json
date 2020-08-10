@@ -24,6 +24,16 @@
     ]
   },
   {
+    "Code": "TH",
+    "Name": "Thailand",
+    "locales": [
+      {
+        "locale_code": "en-US",
+        "name": "Thailand"
+      }
+    ]
+  },
+  {
     "Code": "US",
     "Name": "United States",
     "locales": [

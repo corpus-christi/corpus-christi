@@ -17,7 +17,8 @@ class AuthClient(FlaskClient):
 
     def open(self, *args, **kwargs):
         if 'headers' not in kwargs:
-            test_person = Person(**PersonSchema().load(person_object_factory()))
+            test_person = Person(
+                **PersonSchema().load(person_object_factory()))
             test_person.username = 'test-user'
             access_token = create_access_token(identity=test_person)
             kwargs['headers'] = {"AUTHORIZATION": f"Bearer {access_token}"}
@@ -28,7 +29,7 @@ def client_factory(client_class):
     app = create_app(os.getenv('CC_CONFIG') or 'test')
     app.testing = True  # Make sure exceptions percolate out
     app.test_client_class = client_class
-    logging.disable(logging.CRITICAL) # disable logging
+    logging.disable(logging.CRITICAL)  # disable logging
 
     db.drop_all()
     db.create_all()

@@ -37,11 +37,6 @@ country_schema = CountrySchema()
 
 
 @places.route('/countries')
-# @jwt_required
-def read_all_countries():
-    result = db.session.query(Country).all()
-    return jsonify(country_schema.dump(result, many=True))
-
 @places.route('/countries/<country_code>')
 def read_countries(country_code=None):
     locale_code = request.args.get('locale')
@@ -51,7 +46,8 @@ def read_countries(country_code=None):
     if country_code is None:
         result = db.session \
             .query(Country.code, I18NValue.gloss) \
-            .join(I18NKey, I18NValue) \
+            .join(Country.key) \
+            .join(I18NKey.values) \
             .filter_by(locale_code=locale_code) \
             .all()
         return jsonify(country_list_schema.dump(result, many=True))
@@ -59,7 +55,8 @@ def read_countries(country_code=None):
         result = db.session \
             .query(Country.code, I18NValue.gloss) \
             .filter_by(code=country_code) \
-            .join(I18NKey, I18NValue) \
+            .join(Country.key) \
+            .join(I18NKey.values) \
             .filter_by(locale_code=locale_code) \
             .first()
     return jsonify(country_list_schema.dump(result))
@@ -212,18 +209,23 @@ def read_all_addresses():
         query = query.filter(Address.longitude <= lon_end_filter)
 
     # -- distance from filters --
-    # Filter addresses by their distance from a specified latitude and longitude
+    # Filter addresses by their distance from a specified latitude and
+    # longitude
     dist_lat_filter = request.args.get('dist_lat')
     dist_lng_filter = request.args.get('dist_lng')
     dist_filter = request.args.get('dist')
     if dist_lat_filter and dist_lng_filter and dist_filter:
         query = query.filter(
             func.ST_Distance(
-                func.ST_GeogFromWKB(func.ST_Point(Address.longitude, Address.latitude)),
-                func.ST_GeogFromWKB(func.ST_Point(dist_lng_filter, dist_lat_filter)))
-            < dist_filter
-        )
-        
+                func.ST_GeogFromWKB(
+                    func.ST_Point(
+                        Address.longitude,
+                        Address.latitude)),
+                func.ST_GeogFromWKB(
+                    func.ST_Point(
+                        dist_lng_filter,
+                        dist_lat_filter))) < dist_filter)
+
     # Filter addresses by their distance from a specified address
     dist_addr_lat_filter = request.args.get('dist_addr_lat')
     dist_addr_lng_filter = request.args.get('dist_addr_lng')
@@ -231,10 +233,14 @@ def read_all_addresses():
     if dist_addr_lat_filter and dist_addr_lng_filter and dist_addr_filter:
         query = query.filter(
             func.ST_Distance(
-                func.ST_GeogFromWKB(func.ST_Point(Address.longitude, Address.latitude)),
-                func.ST_GeogFromWKB(func.ST_Point(dist_addr_lng_filter, dist_addr_lat_filter)))
-            < dist_addr_filter
-        )
+                func.ST_GeogFromWKB(
+                    func.ST_Point(
+                        Address.longitude,
+                        Address.latitude)),
+                func.ST_GeogFromWKB(
+                    func.ST_Point(
+                        dist_addr_lng_filter,
+                        dist_addr_lat_filter))) < dist_addr_filter)
 
     result = query.all()
 
@@ -313,7 +319,9 @@ def create_location():
     #        'description': 'Euler 217'             # optional
     # }
     # This method tries to link existing entries in Country, Area, Address table if possible, otherwise create
-    # When there is at least a certain table related field in the payload, the foreign key specified in the payload for that table will be overridden by the fields given
+    # When there is at least a certain table related field in the payload, the
+    # foreign key specified in the payload for that table will be overridden
+    # by the fields given
     def debugPrint(msg):
         pass
         print(msg)
@@ -369,8 +377,9 @@ def create_location():
         address_name_transform = {'address_name': 'name'}
         address_keys = ('latitude', 'longitude', 'city',
                         'address', 'address_name')
-        address_payload = {k if k not in address_name_transform else address_name_transform[k]: v
-                           for k, v in payload_data.items() if k in address_keys}
+        address_payload = {
+            k if k not in address_name_transform else address_name_transform[k]: v for k,
+            v in payload_data.items() if k in address_keys}
         address_payload['area_id'] = area_id
         address_payload['country_code'] = country_code
         address = db.session.query(Address).filter_by(
@@ -462,7 +471,11 @@ def delete_location(location_id):
 
 
 def modify_location(location_id, location_object):
-    return modify_entity(Location, location_schema, location_id, location_object)
+    return modify_entity(
+        Location,
+        location_schema,
+        location_id,
+        location_object)
 
 
 # ---- Image
@@ -473,7 +486,8 @@ def add_location_images(location_id, image_id):
     location = db.session.query(Location).filter_by(id=location_id).first()
     image = db.session.query(Image).filter_by(id=image_id).first()
 
-    location_image = db.session.query(ImageLocation).filter_by(location_id=location_id, image_id=image_id).first()
+    location_image = db.session.query(ImageLocation).filter_by(
+        location_id=location_id, image_id=image_id).first()
 
     if not location:
         return jsonify(f"Location with id #{location_id} does not exist."), 404
@@ -483,13 +497,16 @@ def add_location_images(location_id, image_id):
 
     # If image is already attached to the location
     if location_image:
-        return jsonify(f"Image with id#{image_id} is already attached to location with id#{location_id}."), 422
+        return jsonify(
+            f"Image with id#{image_id} is already attached to location with id#{location_id}."), 422
     else:
-        new_entry = ImageLocation(**{'location_id': location_id, 'image_id': image_id})
+        new_entry = ImageLocation(
+            **{'location_id': location_id, 'image_id': image_id})
         db.session.add(new_entry)
         db.session.commit()
 
-    return jsonify(f"Image with id #{image_id} successfully added to Location with id #{location_id}."), 201
+    return jsonify(
+        f"Image with id #{image_id} successfully added to Location with id #{location_id}."), 201
 
 
 @places.route('/<location_id>/images/<image_id>', methods=['PUT'])
@@ -501,21 +518,25 @@ def put_location_images(location_id, image_id):
 
     if old_image_id == 'false':
         post_resp = add_location_images(location_id, new_image_id)
-        return jsonify({'deleted': 'No image to delete', 'posted': str(post_resp[0].data, "utf-8")})
+        return jsonify({'deleted': 'No image to delete',
+                        'posted': str(post_resp[0].data, "utf-8")})
     else:
         del_resp = delete_location_image(location_id, old_image_id)
         post_resp = add_location_images(location_id, new_image_id)
 
-        return jsonify({'deleted': del_resp[0], 'posted': str(post_resp[0].data, "utf-8")})
+        return jsonify(
+            {'deleted': del_resp[0], 'posted': str(post_resp[0].data, "utf-8")})
 
 
 @places.route('/<location_id>/images/<image_id>', methods=['DELETE'])
 @jwt_required
 def delete_location_image(location_id, image_id):
-    location_image = db.session.query(ImageLocation).filter_by(location_id=location_id, image_id=image_id).first()
+    location_image = db.session.query(ImageLocation).filter_by(
+        location_id=location_id, image_id=image_id).first()
 
     if not location_image:
-        return jsonify(f"Image with id #{image_id} is not assigned to Location with id #{location_id}."), 404
+        return jsonify(
+            f"Image with id #{image_id} is not assigned to Location with id #{location_id}."), 404
 
     db.session.delete(location_image)
     db.session.commit()
