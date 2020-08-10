@@ -114,23 +114,6 @@
               <v-card v-if="managerPanel.show">
                 <v-card-text>
                   <entity-search
-                    person
-                    v-model="selectedPerson"
-                    :existing-entities="searchPeople"
-                  />
-                </v-card-text>
-                <v-btn v-on:click="hideManagerPanel" color="light-blue" text>{{
-                  $t("actions.cancel")
-                }}</v-btn>
-                <v-btn v-on:click="setReplyTo" color="primary" text>{{
-                  $t("actions.confirm")
-                }}</v-btn>
-              </v-card>
-            </v-expand-transition>
-            <v-expand-transition>
-              <v-card v-if="managerPanel.show">
-                <v-card-text>
-                  <entity-search
                     multiple
                     person
                     v-model="selectedPerson"
@@ -290,7 +273,6 @@ export default {
     hideManagerPanel() {
       this.managerPanel.show = false;
     },
-    getAllManagers() {},
     AllGroupManagers() {
       this.$http
         .get(`/api/v1/people/persons`)
