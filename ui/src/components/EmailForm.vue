@@ -88,6 +88,7 @@
       </v-btn>
     </v-flex>
     <v-flex>
+      <!-- Expansion -->
       <v-expand-transition>
         <v-card v-if="entityTypePanel.show" color="teal lighten-3">
           <v-radio-group v-model="radioGroup">
@@ -126,28 +127,28 @@
                 }}</v-btn>
               </v-card>
             </v-expand-transition>
-            <v-radio
-              :label="$t('groups.members.default')"
-              @click="setToDefault"
-              :key="4"
-              :value="myEmail"
-            ></v-radio>
-            <v-card-title
-              >{{ $t("groups.members.email-reply-to") }} :
-              {{ radioGroup || "null" }}</v-card-title
-            >
-            <v-card-title text color="green"></v-card-title>
-            <v-radio
-              :label="$t('groups.title')"
-              :key="1"
-              :value="homeChurchEmail"
-            ></v-radio>
-            <v-radio
-              :label="$t('groups.details.manager')"
-              @click="showManagerPanel"
-              :key="2"
-              :value="replyToOtherEmail"
-            ></v-radio>
+<!--            <v-radio-->
+<!--              :label="$t('groups.members.default')"-->
+<!--              @click="setToDefault"-->
+<!--              :key="4"-->
+<!--              :value="myEmail"-->
+<!--            ></v-radio>-->
+<!--            <v-card-title-->
+<!--              >{{ $t("groups.members.email-reply-to") }} :-->
+<!--              {{ radioGroup || "null" }}</v-card-title-->
+<!--            >-->
+<!--            <v-card-title text color="green"></v-card-title>-->
+<!--            <v-radio-->
+<!--              :label="$t('groups.title')"-->
+<!--              :key="1"-->
+<!--              :value="homeChurchEmail"-->
+<!--            ></v-radio>-->
+<!--            <v-radio-->
+<!--              :label="$t('groups.details.manager')"-->
+<!--              @click="showManagerPanel"-->
+<!--              :key="2"-->
+<!--              :value="replyToOtherEmail"-->
+<!--            ></v-radio>-->
             <v-expand-transition>
               <v-card v-if="managerPanel.show">
                 <v-card-text>
@@ -261,13 +262,15 @@ export default {
           content: "groups.messages.error-sending-email",
         });
       }
+      console.log("This email", this.email)
       let email = {
         ...this.email,
         recipients: this.email.recipients.map((p) => p.email),
         cc: this.email.cc.map((p) => p.email),
         bcc: this.email.bcc.map((p) => p.email),
-        reply_to: this.replyToOtherEmail,
+        reply_to: "to@thisperson.com"//this.replyToOtherEmail,
       };
+      console.log("this is the email", email)
       this.$http
         .post(`/api/v1/emails/`, email, { noErrorSnackBar: true })
         .then(() => {
@@ -366,7 +369,7 @@ export default {
       radioGroup: "default@email.com",
       replyToOtherEmail: null,
       homeChurchEmail: "homeChurh@email.com",
-      myEmail: "default@email.com",
+      myEmail: "qiang_wang@taylor.edu",
       managers: null,
       managerWithEmail: {},
       selectedPerson: null,
