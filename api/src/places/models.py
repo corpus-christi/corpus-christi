@@ -110,10 +110,10 @@ class Location(Base):
     description = Column(StringTypes.MEDIUM_STRING)
     address_id = Column(Integer, ForeignKey(
         'places_address.id'), nullable=False)
-    address = relationship('Address', back_populates='locations', lazy=True)
-    events = relationship('Event', back_populates="location")
-    assets = relationship('Asset', back_populates="location")
-    images = relationship('ImageLocation', back_populates="location")
+    address = relationship('Address', backref='locations', lazy=True)
+    events = relationship('Event', backref="location")
+    assets = relationship('Asset', backref="location")
+    images = relationship('ImageLocation', backref="location")
     active = Column(Boolean, nullable=False, default=True)
 
     def __repr__(self):
@@ -151,8 +151,8 @@ class Address(Base):
     longitude = Column(Float)
     # area = relationship('Area', backref='addresses', lazy=True)
     country = relationship('Country', backref='addresses', lazy=True)
-    meetings = relationship('Meeting', back_populates='address', lazy=True)
-    locations = relationship('Location', back_populates='address', lazy=True)
+    meetings = relationship('Meeting', backref='address', lazy=True)
+    locations = relationship('Location', backref='address', lazy=True)
     active = Column(Boolean, nullable=False, default=True)
 
     def __repr__(self):

@@ -22,13 +22,13 @@ class Event(Base):
     attendance = Column(Integer)
     aggregate = Column(Boolean, default=True)
 
-    assets = relationship("EventAsset", back_populates="event")
-    teams = relationship("EventTeam", back_populates="event")
-    persons = relationship("EventPerson", back_populates="event")
-    participants = relationship("EventParticipant", back_populates="event")
-    location = relationship("Location", back_populates="events")
-    images = relationship("ImageEvent", back_populates="event")
-    groups = relationship("EventGroup", back_populates="event")
+    assets = relationship("EventAsset", backref="event")
+    teams = relationship("EventTeam", backref="event")
+    persons = relationship("EventPerson", backref="event")
+    participants = relationship("EventParticipant", backref="event")
+    location = relationship("Location", backref="events")
+    images = relationship("ImageEvent", backref="event")
+    groups = relationship("EventGroup", backref="event")
 
     def __repr__(self):
         return f"<Event(id={self.id})>"
@@ -85,8 +85,8 @@ class EventAsset(Base):
     event_id = Column(Integer, ForeignKey('events_event.id'), primary_key=True)
     asset_id = Column(Integer, ForeignKey('events_asset.id'), primary_key=True)
 
-    event = relationship("Event", back_populates="assets")
-    asset = relationship("Asset", back_populates="events")
+    event = relationship("Event", backref="assets")
+    asset = relationship("Asset", backref="events")
 
 
 class EventAssetSchema(Schema):
@@ -104,8 +104,8 @@ class EventTeam(Base):
     event_id = Column(Integer, ForeignKey('events_event.id'), primary_key=True)
     team_id = Column(Integer, ForeignKey('events_team.id'), primary_key=True)
 
-    event = relationship("Event", back_populates="teams")
-    team = relationship("Team", back_populates="events")
+    event = relationship("Event", backref="teams")
+    team = relationship("Team", backref="events")
 
 
 class EventTeamSchema(Schema):
@@ -127,8 +127,8 @@ class EventPerson(Base):
         primary_key=True)
     description = Column(StringTypes.LONG_STRING, nullable=False)
 
-    event = relationship("Event", back_populates="persons")
-    person = relationship("Person", back_populates="events_per")
+    event = relationship("Event", backref="persons")
+    person = relationship("Person", backref="events_per")
 
 
 class EventPersonSchema(Schema):
@@ -151,8 +151,8 @@ class EventParticipant(Base):
         primary_key=True)
     confirmed = Column(Boolean, default=True)
 
-    event = relationship("Event", back_populates="participants")
-    person = relationship("Person", back_populates="events_par")
+    event = relationship("Event", backref="participants")
+    person = relationship("Person", backref="events_par")
 
 
 class EventParticipantSchema(Schema):
@@ -172,8 +172,8 @@ class EventGroup(Base):
     group_id = Column(Integer, ForeignKey('groups_group.id'), primary_key=True)
     active = Column(Boolean, default=True)
 
-    event = relationship("Event", back_populates="groups")
-    group = relationship("Group", back_populates="events")
+    event = relationship("Event", backref="groups")
+    group = relationship("Group", backref="events")
 
 
 class EventGroupSchema(Schema):

@@ -16,8 +16,8 @@ class Asset(Base):
     location_id = Column(Integer, ForeignKey('places_location.id'))
     active = Column(Boolean, default=True)
 
-    events = relationship("EventAsset", back_populates="asset")
-    location = relationship("Location", back_populates="assets")
+    events = relationship("EventAsset", backref="asset")
+    location = relationship("Location", backref="assets")
 
     def __repr__(self):
         return f"<Asset(id={self.id})>"

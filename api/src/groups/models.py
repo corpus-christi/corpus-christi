@@ -18,14 +18,14 @@ class Group(Base):
         'groups_group_type.id'), nullable=False)
     active = Column(Boolean, nullable=False, default=True)
     members = relationship('Member', backref='group', lazy=True)
-    group_type = relationship('GroupType', back_populates='groups', lazy=True)
-    managers = relationship('Manager', back_populates='group', lazy=True)
-    meetings = relationship('Meeting', back_populates='group', lazy=True)
-    events = relationship('EventGroup', back_populates='group', lazy=True)
-    images = relationship('ImageGroup', back_populates='group', lazy=True)
+    group_type = relationship('GroupType', backref='groups', lazy=True)
+    managers = relationship('Manager', backref='group', lazy=True)
+    meetings = relationship('Meeting', backref='group', lazy=True)
+    events = relationship('EventGroup', backref='group', lazy=True)
+    images = relationship('ImageGroup', backref='group', lazy=True)
     member_histories = relationship(
         'MemberHistory',
-        back_populates='group',
+        backref='group',
         lazy=True)
 
     def __repr__(self):
@@ -58,7 +58,7 @@ class GroupType(Base):
     id = Column(Integer, primary_key=True)
     name = Column(StringTypes.MEDIUM_STRING, nullable=False)
 
-    groups = relationship('Group', back_populates='group_type', lazy=True)
+    groups = relationship('Group', backref='group_type', lazy=True)
 
     def __repr__(self):
         return f"<GroupType(id={self.id})>"
@@ -82,11 +82,11 @@ class Meeting(Base):
     description = Column(StringTypes.LONG_STRING, nullable=False)
     active = Column(Boolean, nullable=False, default=True)
 
-    address = relationship('Address', back_populates='meetings', lazy=True)
-    group = relationship('Group', back_populates='meetings', lazy=True)
+    address = relationship('Address', backref='meetings', lazy=True)
+    group = relationship('Group', backref='meetings', lazy=True)
     attendances = relationship(
         'Attendance',
-        back_populates='meeting',
+        backref='meeting',
         lazy=True)
 
     def __repr__(self):
@@ -118,7 +118,7 @@ class Member(Base):
     group_id = Column(Integer, ForeignKey('groups_group.id'), primary_key=True, nullable=False)
     person_id = Column(Integer, ForeignKey('people_person.id'), primary_key=True, nullable=False)
     active = Column(Boolean, nullable=False, default=True)
-    person = relationship('Person', back_populates='members', lazy=True)
+    person = relationship('Person', backref='members', lazy=True)
 
     def __repr__(self):
         return f"<Member(person_id={self.person_id}, group_id={self.group_id})>"
@@ -139,8 +139,8 @@ class MemberHistory(Base):
     time = Column(DateTime, nullable=False)
     is_join = Column(Boolean, nullable=False, default=True)
     note = Column(StringTypes.LONG_LONG_STRING, nullable=True)
-    person = relationship('Person', back_populates='member_histories', lazy=True)
-    group = relationship('Group', back_populates='member_histories', lazy=True)
+    person = relationship('Person', backref='member_histories', lazy=True)
+    group = relationship('Group', backref='member_histories', lazy=True)
 
     def __repr__(self):
         return f"<MemberHistory(id={self.id}, "\
@@ -175,11 +175,11 @@ class Manager(Base):
     manager_type_id = Column(Integer, ForeignKey(
         'groups_manager_type.id'), nullable=False)
     active = Column(Boolean, nullable=False, default=True)
-    person = relationship('Person', back_populates='managers', lazy=True)
-    group = relationship('Group', back_populates='managers', lazy=True)
+    person = relationship('Person', backref='managers', lazy=True)
+    group = relationship('Group', backref='managers', lazy=True)
     manager_type = relationship(
         'ManagerType',
-        back_populates='managers',
+        backref='managers',
         lazy=True)
 
     def __repr__(self):
@@ -211,7 +211,7 @@ class ManagerType(Base):
 
     managers = relationship(
         'Manager',
-        back_populates='manager_type',
+        backref='manager_type',
         lazy=True)
 
     def __repr__(self):
@@ -239,7 +239,7 @@ class Attendance(Base):
         'groups_meeting.id'), primary_key=True)
     person_id = Column(Integer, ForeignKey(
         'people_person.id'), primary_key=True)
-    meeting = relationship('Meeting', back_populates='attendances', lazy=True)
+    meeting = relationship('Meeting', backref='attendances', lazy=True)
     person = relationship('Person', backref='attendances', lazy=True)
 
     def __repr__(self):

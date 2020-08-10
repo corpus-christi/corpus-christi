@@ -15,11 +15,11 @@ class Image(Base):
     path = Column(StringTypes.LONG_STRING, unique=False, nullable=False)
     description = Column(StringTypes.LONG_STRING, default=None)
 
-    events = relationship("ImageEvent", back_populates="image")
-    people = relationship("ImagePerson", back_populates="image")
-    courses = relationship("ImageCourse", back_populates="image")
-    groups = relationship("ImageGroup", back_populates="image")
-    locations = relationship("ImageLocation", back_populates="image")
+    events = relationship("ImageEvent", backref="image")
+    people = relationship("ImagePerson", backref="image")
+    courses = relationship("ImageCourse", backref="image")
+    groups = relationship("ImageGroup", backref="image")
+    locations = relationship("ImageLocation", backref="image")
 
 
 class ImageSchema(Schema):
@@ -35,8 +35,8 @@ class ImageEvent(Base):
     image_id = Column(Integer, ForeignKey("images_image.id"), primary_key=True)
     event_id = Column(Integer, ForeignKey("events_event.id"), primary_key=True)
 
-    image = relationship("Image", back_populates="events")
-    event = relationship("Event", back_populates="images")
+    image = relationship("Image", backref="events")
+    event = relationship("Event", backref="images")
 
 
 class ImageEventSchema(Schema):
@@ -53,8 +53,8 @@ class ImagePerson(Base):
     person_id = Column(Integer, ForeignKey(
         "people_person.id"), primary_key=True)
 
-    image = relationship("Image", back_populates="people")
-    person = relationship("Person", back_populates="images")
+    image = relationship("Image", backref="people")
+    person = relationship("Person", backref="images")
 
 
 class ImagePersonSchema(Schema):
@@ -71,8 +71,8 @@ class ImageCourse(Base):
     course_id = Column(Integer, ForeignKey(
         "courses_course.id"), primary_key=True)
 
-    image = relationship("Image", back_populates="courses")
-    course = relationship("Course", back_populates="images")
+    image = relationship("Image", backref="courses")
+    course = relationship("Course", backref="images")
 
 
 class ImageCourseSchema(Schema):
@@ -88,8 +88,8 @@ class ImageGroup(Base):
     image_id = Column(Integer, ForeignKey("images_image.id"), primary_key=True)
     group_id = Column(Integer, ForeignKey("groups_group.id"), primary_key=True)
 
-    image = relationship("Image", back_populates="groups")
-    group = relationship("Group", back_populates="images")
+    image = relationship("Image", backref="groups")
+    group = relationship("Group", backref="images")
 
 
 class ImageGroupSchema(Schema):
@@ -106,8 +106,8 @@ class ImageLocation(Base):
     location_id = Column(Integer, ForeignKey(
         "places_location.id"), primary_key=True)
 
-    image = relationship("Image", back_populates="locations")
-    location = relationship("Location", back_populates="images")
+    image = relationship("Image", backref="locations")
+    location = relationship("Location", backref="images")
 
 
 class ImageLocationSchema(Schema):

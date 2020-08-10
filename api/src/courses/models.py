@@ -66,9 +66,9 @@ class DiplomaAwarded(Base):
     when = Column(Date, nullable=True)
 
     students = relationship(
-        'Person', back_populates='diplomas_awarded', lazy=True)
+        'Person', backref='diplomas_awarded', lazy=True)
     diplomas = relationship(
-        'Diploma', back_populates='diplomas_awarded', lazy=True)
+        'Diploma', backref='diplomas_awarded', lazy=True)
 
     def __repr__(self):
         return f"<DiplomaAwarded(student_id={self.person_id},diploma_id={self.diploma_id})>"
@@ -143,7 +143,7 @@ class Course(Base):
                                          Prerequisite.c.prereq_id],
                            primaryjoin=Prerequisite.c.prereq_id == id,
                            secondaryjoin=Prerequisite.c.course_id == id,
-                           back_populates='prerequisites', lazy=True)
+                           backref='prerequisites', lazy=True)
     prerequisites = relationship(
         'Course',
         secondary=Prerequisite,
@@ -152,14 +152,14 @@ class Course(Base):
         foreign_keys=[
             Prerequisite.c.course_id,
             Prerequisite.c.prereq_id],
-        back_populates='depends',
+        backref='depends',
         lazy=True)
     diplomas = relationship(
         'Diploma',
         secondary=DiplomaCourse,
-        back_populates='courses',
+        backref='courses',
         lazy=True)
-    images = relationship("ImageCourse", back_populates="course")
+    images = relationship("ImageCourse", backref="course")
 
     def __repr__(self):
         return f"<Course(id={self.id})>"
@@ -185,9 +185,9 @@ class Diploma(Base):
     description = Column(StringTypes.LONG_STRING, nullable=True)
     active = Column(Boolean, nullable=False, default=True)
     courses = relationship('Course', secondary=DiplomaCourse,
-                           back_populates='diplomas', lazy=True)
+                           backref='diplomas', lazy=True)
     diplomas_awarded = relationship('DiplomaAwarded',
-                                    back_populates='diplomas', lazy=True)
+                                    backref='diplomas', lazy=True)
 
     def __repr__(self):
         return f"<Diploma(id={self.id})>"
@@ -215,10 +215,10 @@ class Student(Base):
     confirmed = Column(Boolean, nullable=False)
     active = Column(Boolean, default=True, nullable=False)
     courses_offered = relationship(
-        'Course_Offering', back_populates='students', lazy=True)
+        'Course_Offering', backref='students', lazy=True)
     person = relationship('Person', backref='students', lazy=True)
     attendance = relationship('ClassMeeting', secondary=ClassAttendance,
-                              back_populates='students', lazy=True)
+                              backref='students', lazy=True)
 
     def __repr__(self):
         return f"<Student(id={self.id})>"
@@ -245,7 +245,7 @@ class Course_Offering(Base):
     max_size = Column(Integer, nullable=False)
     active = Column(Boolean, nullable=False, default=True)
     students = relationship(
-        'Student', back_populates='courses_offered', lazy=True)
+        'Student', backref='courses_offered', lazy=True)
     course = relationship('Course', backref='courses_offered', lazy=True)
 
     def __repr__(self):
@@ -279,7 +279,7 @@ class ClassMeeting(Base):
     locations = relationship('Location', backref='meeting_location', lazy=True)
     person = relationship('Person', backref='teacher', lazy=True)
     students = relationship('Student', secondary=ClassAttendance,
-                            back_populates='attendance', lazy=True)
+                            backref='attendance', lazy=True)
 
     def __repr__(self):
         return f"<ClassMeeting(id={self.id})>"
