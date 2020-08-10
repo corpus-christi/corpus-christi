@@ -296,6 +296,20 @@ of private data,
 `private.py` is listed in the CC `.gitignore` file.
 Still, use caution!
 
+When you need to set up the email services for the server, if we choose the Gmail services, 
+replace the `EMAIL_USERNAME` and `EMAIL_PASSWORD` with your personal email user-name and password.
+```bash
+Gmail Set Up
+    1. Update the Gmail account setting. 
+       Allow less security setting [URL](https://myaccount.google.com/lesssecureapps?pli=1)
+       By the default, Google doesn't allow insecure apps have connections with its server.
+       For security reasons, if you account already has the 2FA (Two-Factor Authentication),
+       It is safer to [create a seperate Google account](https://accounts.google.com/signup/v2/webcreateaccount?flowName=GlifWebSignIn&flowEntry=SignUp)
+       or create [application-specific password](https://support.google.com/accounts/answer/185833)
+    2. [Display Unlock Captcha](https://accounts.google.com/DisplayUnlockCaptcha)
+    3. [Enable IMAP](https://mail.google.com/mail/#settings/fwdandpop)   
+```
+
 **During development and testing**,
 you can override the database connection 
 by defining environment variables in `bash`.
