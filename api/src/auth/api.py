@@ -92,7 +92,7 @@ def load_user_identity(person):
 def get_test_jwt():
     if current_app.config['TESTING']:
         # TODO: parameterize the endpoint to return token with specified roles
-        test_roles = [Role(**RoleSchema().load(role_object_factory()))]
+        test_roles = [ Role(**RoleSchema().load(role_object_factory())) ]
         test_person = Person(**person_schema.load(person_object_factory()))
         test_person.username = 'test-user'
         test_person.roles += test_roles

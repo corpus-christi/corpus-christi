@@ -32,16 +32,19 @@ def is_overseer_or_admin(group_id):
             (person_id and is_overseer(person_id, group_id)))
 
 
-def create_member_history(member):
+def create_member_history(member, **kwargs):
     """create a record in the member_history table
     :member: a Member instance
+    :is_join: whether the member is joining or leaving the group
     :returns: None
     """
-    member_history = MemberHistory(
-        group_id=member.group_id,
-        person_id=member.person_id,
-        joined=member.joined,
-        left=datetime.date.today())
+    member_history = MemberHistory(**{
+                "group_id" : member.group_id,
+                "person_id" : member.person_id,
+                "time" : datetime.datetime.now(),
+                "is_join" : member.active,
+                **kwargs
+                })
     db.session.add(member_history)
     db.session.commit()
 
@@ -558,9 +561,7 @@ def create_member(group_id):
 
     member_schema = MemberSchema(exclude=['group_id'])
     try:
-        valid_member = member_schema.load(
-            request.json, partial=[
-                'joined', 'active'])  # make joined and active optional fields
+        valid_member = member_schema.load(request.json, partial=['active']) # make active optional fields
     except ValidationError as err:
         return logged_response(err.messages, 422)
     person_id = valid_member['person_id']
@@ -571,13 +572,11 @@ def create_member(group_id):
             f"Member with group_id #{group_id} and person_id #{person_id} already exists",
             409)
 
-    if 'joined' not in valid_member:
-        valid_member['joined'] = datetime.date.today()
-
     if 'active' not in valid_member:
         valid_member['active'] = True
 
     new_member = Member(group_id=group_id, **valid_member)
+    create_member_history(new_member, is_join=True)
     db.session.add(new_member)
     try:
         db.session.commit()
@@ -650,21 +649,23 @@ def update_member(group_id, person_id):
             return logged_response(
                 f"Group with group_id #{new_group_id} does not exist", 404)
         # check if the new person exists
-        if new_person_id and not db.session.query(
-                Person).filter_by(id=new_person_id).first():
-            return logged_response(
-                f"Person with person_id #{new_person_id} does not exist", 404)
+        if new_person_id and not db.session.query(Person).filter_by(id=new_person_id).first():
+            return logged_response(f"Person with person_id #{new_person_id} does not exist", 404)
+    new_active = valid_attributes.get('active')
 
-    if ((valid_attributes.get('active') is False and member.active is True)  # if will deactivate person
-        # if will move person to another group
-                or (new_group_id and new_group_id != member.group_id)
-                # or (new_person_id and new_person_id != member.person_id) # if
-            # will replace the current member with another person
-        ):
-        create_member_history(member)
+    if new_active == False and member.active: # if will deactivate person
+        create_member_history(member, is_join=False) # create a leave entry on the original group
+
+    if member.active and new_active != False and new_group_id and new_group_id != member.group_id: # if will move the active member
+        create_member_history(member, is_join=False) # create a leave entry on the original group
+        create_member_history(member, is_join=True, group_id=new_group_id) # create a join entry on the new group
+
+    if new_active and member.active != False: # if will activate person
+        create_member_history(member, is_join=True, group_id=new_group_id or member.group_id) # create a join entry on the new group
 
     for key, val in valid_attributes.items():
         setattr(member, key, val)
+
 
     db.session.add(member)
     db.session.commit()
@@ -871,6 +872,29 @@ def read_all_member_histories():
         member_history_schema.dump(member_histories, many=True))
 
 
+@groups.route('/member-histories/<int:member_history_id>', methods=['PATCH'])
+@authorize(['role.group-admin'])
+def update_member_history(member_history_id):
+    member_history_schema = MemberHistorySchema()
+
+    try:
+        valid_attributes = member_history_schema.load(request.json, partial=True)
+    except ValidationError as err:
+        return logged_response(err.messages, 422)
+
+    member_history = db.session.query(MemberHistory).filter_by(id=member_history_id).first()
+
+    if not member_history:
+        return logged_response(f"MemberHistory with id #{member_history_id} does not exist.", 404)
+
+    for key, val in valid_attributes.items():
+        setattr(member_history, key, val)
+
+    db.session.add(member_history)
+    db.session.commit()
+
+    return logged_response(member_history_schema.dump(member_history), 200)
+
 @groups.route('/member-histories/<int:member_history_id>', methods=['DELETE'])
 @authorize(['role.group-admin'])
 def delete_member_history(member_history_id):
@@ -886,3 +910,4 @@ def delete_member_history(member_history_id):
 
     # 204 codes don't respond with any content
     return logged_response("Deleted successfully", 204)
+

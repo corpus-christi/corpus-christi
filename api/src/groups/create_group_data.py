@@ -56,16 +56,14 @@ def meeting_object_factory(group_id, address_id):
     }
     return meeting
 
-
-def member_object_factory(
-        person_id, group_id, active=True, joined=fake.date()):
+  
+def member_object_factory(person_id, group_id, active=True):
     """Cook up a fake member."""
     member = {
-        'personId': person_id,
-        'groupId': group_id,
-        'active': active,
-        'joined': joined
-    }
+            'personId': person_id,
+            'groupId': group_id,
+            'active': active,
+            }
     return member
 
 
@@ -108,18 +106,19 @@ def manager_type_object_factory(manager_type_name):
 def member_history_object_factory(
         person_id,
         group_id,
-        joined=None,
-        left=None):
+        time=None,
+        is_join=None,
+        note=None):
     """Cook up a fake member history """
     member_history = {
-        'personId': person_id,
-        'groupId': group_id,
-        'joined': joined or str(
-            fake.date_between(
-                start_date='-3y',
-                end_date='today')),
-        'left': left or str(
-            datetime.date.today())}
+            'personId': person_id,
+            'groupId': group_id,
+            'time': time or str(fake.date_time_between(start_date='-5y', end_date='now')),
+            'is_join': is_join or flip()
+            }
+    note = note or (fake.sentences(nb=1)[0] if flip() else None)
+    if note:
+        member_history['note'] = note
     return member_history
 
 
@@ -373,8 +372,6 @@ def create_hierarchical_groups_and_participants(
     sqla.commit()
 
 # Create test data that is used in front-end testing
-
-
 def create_hierarchy_test_case_1(sqla):
     group_members = [
         [1, 1],
@@ -425,10 +422,11 @@ def create_group_test_data(sqla):
     # # create leadership hierarchy data
     # create_hierarchy_test_case_1(sqla)
 
-    # # create faker data
-    # create_multiple_groups(sqla, 10)
-    # create_multiple_managers(sqla, 0.75)
-    # create_multiple_members(sqla, 0.75)
+    # create faker data for members and managers
+    create_multiple_groups(sqla, 10)
+    create_multiple_people(sqla, 10)
+    create_multiple_managers(sqla, 0.75)
+    create_multiple_members(sqla, 0.75)
 
     # create member histories
     create_multiple_member_histories(sqla, 30)
