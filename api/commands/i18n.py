@@ -217,7 +217,14 @@ def write_locale_tail_tree(tree, parent_path="", override=True, verbose=False):
     """Reverse the process of read_locale_tail_tree,
     write the given tree into the database.
 
-    :tree: the tree to be written into the database
+    :tree: the tree to be written into the database. 
+    A leaf is a tree that resenbles the following structure:
+    { 'ab-XY': string, '_desc': string }
+    If the 'tree' is a leaf, then the given locale-specific values
+    gloss are directly written into the entry with key_id equal to 'parent_path'
+    If the 'tree' is not a leaf, each of its branches must terminate with
+    a leaf. And each leaf is written into the entry with key_id
+    equal to a dot-separated string with all labels along its branch.
 
     :parent_path: the path to which to append the tree
 
@@ -227,8 +234,8 @@ def write_locale_tail_tree(tree, parent_path="", override=True, verbose=False):
     :returns: a result object:
     { entry_count: int, skip_count: int }
 
-    an BadTreeStructure will be raised if the given input will
-    produce an invalid tree structure
+    an BadTreeStructure will be raised if the given input contains
+    an invalid tree structure
 
     """
     entry_count, skip_count = 0, 0
@@ -241,7 +248,7 @@ def write_locale_tail_tree(tree, parent_path="", override=True, verbose=False):
     if is_leaf(tree):
         # override the item specified by parent_path
         if not parent_path:
-            raise BadTreeStructure(
+            raise click.BadParameter(
                 f"Must specify a path when overriding with a leaf node {tree}")
         # make sure parent_path is not an intermediate path
         child = db.session.query(I18NKey).filter(
@@ -250,6 +257,7 @@ def write_locale_tail_tree(tree, parent_path="", override=True, verbose=False):
             raise BadTreeStructure(
                 f"[{parent_path}] is an intermediate path with child [{child.id}], "
                 "cannot update with a leaf node")
+        # construct a single item to be written
         lst = [{'path': [], 'value': tree}]
     # otherwise, flatten the given tree
     else:
@@ -317,7 +325,7 @@ def create_i18n_cli(app):
 
 # --- flask i18n load
 
-    @i18n_cli.command('load', cls=ExceptionHandlingCommand)
+    @i18n_cli.command('load', cls=ExceptionHandlingCommand, short_help="Load entries from a json file into the database")
     @click.argument('locale', callback=validate_locale, metavar="<locale>")
     @click.option('--override/--no-override', default=True,
                   show_default=True,
@@ -334,7 +342,7 @@ def create_i18n_cli(app):
                   show_default=True,
                   help="Print output as modifying the database")
     def load_values(locale, target, override, verbose):
-        """ Load values from a json file into the database.
+        """ Load entries from a json file into the database
 
         <locale>: the locale code of the processed values. E.g. en-US """
         entry_count = 0
@@ -384,7 +392,7 @@ def create_i18n_cli(app):
 
 # --- flask i18n dump
 
-    @i18n_cli.command('dump', cls=ExceptionHandlingCommand)
+    @i18n_cli.command('dump', cls=ExceptionHandlingCommand, short_help="Dump entries from the database into a json file")
     @click.argument('locale', callback=validate_locale, metavar="<locale>")
     @click.option('--target',
                   default=default_target,
@@ -393,7 +401,7 @@ def create_i18n_cli(app):
                   type=click.File("w"),
                   help="The destination file to dump values to")
     def dump_values(locale, target):
-        """ Dump values from the database into a json file.
+        """ Dump entries from the database into a json file
 
         <locale>: the locale code of the processed values. E.g. en-US """
         click.echo(
@@ -435,7 +443,7 @@ def create_i18n_cli(app):
                   show_default=True,
                   help="Print output as modifying the database")
     def load_descriptions(target, override, verbose):
-        """ Load descriptions from a json file into the database. """
+        """ Load descriptions from a json file into the database """
         entry_count = 0
         skip_count = 0
         tree = json.load(target)
@@ -498,7 +506,7 @@ def create_i18n_cli(app):
                   type=click.File("w"),
                   help="The destination file to dump descriptions to")
     def dump_descriptions(target, dump_empty, empty_placeholder):
-        """ Dump descriptions into a json file from the database. """
+        """ Dump descriptions into a json file from the database """
         query = db.session.query(I18NKey)
         if not dump_empty:
             query = query.filter(
@@ -520,7 +528,7 @@ def create_i18n_cli(app):
 
 # --- flask i18n export
 
-    @i18n_cli.command('export', cls=ExceptionHandlingCommand)
+    @i18n_cli.command('export', cls=ExceptionHandlingCommand, short_help="Export entries into a yaml file")
     @click.argument('path', callback=sanitize_path, default="")
     @click.option('--target',
                   required=True,
@@ -529,7 +537,11 @@ def create_i18n_cli(app):
                   type=click.File("w"),
                   help="The destination file to export the tree to")
     def export_entries(path, target):
-        """ list all entries that starts with PATH in a 'locale-tail' structured tree """
+        """ Export entries into a yaml file
+
+        List all entries that start with PATH in a 'locale-tail' structured tree 
+        Specify the destination file with --target
+        """
         tree = read_locale_tail_tree(path)
         if tree:
             yaml.dump(tree, target, default_flow_style=False, sort_keys=True)
@@ -538,19 +550,19 @@ def create_i18n_cli(app):
 
 # --- flask i18n list
 
-    @i18n_cli.command('list', cls=ExceptionHandlingCommand)
+    @i18n_cli.command('list', cls=ExceptionHandlingCommand, short_help="Print entries in the yaml format")
     @click.argument('path', callback=sanitize_path, default="")
     @click.pass_context
     def list_entries(ctx, path):
-        """ list all entries that starts with PATH in a 'locale-tail' structure
+        """ Print entries in the yaml format
 
-        this command does the same thing as 'flask i18n export', except --target is always sys.stdout """
+        this command does the same thing as 'flask i18n export', except --target is set to sys.stdout """
         ctx.invoke(export_entries, path=path, target=sys.stdout)
 
 
 # --- flask i18n import
 
-    @i18n_cli.command('import', cls=ExceptionHandlingCommand)
+    @i18n_cli.command('import', cls=ExceptionHandlingCommand, short_help="Export entries into a yaml file")
     @click.argument('path', callback=sanitize_path, default="")
     @click.option('--target',
                   default='-',
@@ -569,8 +581,13 @@ def create_i18n_cli(app):
                   show_default=True,
                   help="Print output as modifying the database")
     def import_entries(path, target, override, verbose):
-        """ load all entries expressed in a 'locale-tail' structured tree into the database,
-        prepend each entry's path with PATH """
+        """ Import entries from a yaml file
+
+        Load all entries expressed in a 'locale-tail' structured tree into the database,
+        prepend each entry's path with PATH 
+        
+        PATH is optional when the yaml file is not a single entry,
+        """
         tree = yaml.safe_load(target)
         result = write_locale_tail_tree(tree, path, override, verbose)
         click.echo("Successfully loaded data into the database")
@@ -582,7 +599,7 @@ def create_i18n_cli(app):
 
 # --- flask i18n delete
 
-    @i18n_cli.command('delete')
+    @i18n_cli.command('delete', short_help="Delete entries from the database")
     @click.option('-r', '--recursive', is_flag=True,
                   help="delete all entries starting with the given path")
     @click.option('--locale', callback=validate_locale_allow_none,
@@ -641,10 +658,10 @@ def create_i18n_cli(app):
 
 # --- flask i18n edit
 
-    @i18n_cli.command('edit', cls=ExceptionHandlingCommand)
+    @i18n_cli.command('edit', cls=ExceptionHandlingCommand, short_help="Interactively edit entries")
     @click.argument('path', callback=sanitize_path, default="")
     def edit_entries(path):
-        """ edit entries that starts with PATH in an interactive editor,
+        """ Edit entries that starts with PATH in an interactive editor,
         with a 'locale-tail' structured tree """
         tree = read_locale_tail_tree(path)
         if tree:
@@ -689,7 +706,7 @@ def create_i18n_cli(app):
 
 # --- flask i18n translate
 
-    @i18n_cli.command('translate', cls=ExceptionHandlingCommand)
+    @i18n_cli.command('translate', cls=ExceptionHandlingCommand, short_help="Translate entries in the database")
     @click.argument(
         'source-locale', callback=validate_locale, metavar="<src-locale>")
     @click.argument(
