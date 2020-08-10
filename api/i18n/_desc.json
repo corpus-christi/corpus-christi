@@ -1,0 +1,64 @@
+{
+  "actions": {
+    "activate-account": "Activate account",
+    "add-address": "Add a new address",
+    "add-another": "Save a newly created item; clear data (e.g., on a form)",
+    "add-event": "Add an event to the database",
+    "add-manager": "Add a manager to the database",
+    "add-participant": "Add a person into a meeting/group",
+    "add-person": "Add a person to the database",
+    "back": "Back to a previous view",
+    "cancel": "Cancel a pending action",
+    "choose-image": "Choose an image to upload",
+    "clear": "Clear data (e.g., on a form)",
+    "close": "Close something (e.g., a dialog box)",
+    "confirm": "Confirm some action (e.g., updating a password)",
+    "continue": "Proceed to the next intermediate step",
+    "deactivate-account": "Deactivate account",
+    "duplicate": "Duplicate some action (e.g., duplicating an event)",
+    "header": "Header for a table, etc.",
+    "next": "Go to the next page or step",
+    "previous": "Go to the previous page or step",
+    "save": "Save a newly created item",
+    "search": "Search for something",
+    "search-people": "Search for people",
+    "tooltips": {
+      "settings": "Change settings"
+    },
+    "view-active": "View all active",
+    "view-all": "View all",
+    "view-archived": "View all inactive",
+    "view-inactive": "View all inactive people",
+    "view-past": "View past events"
+  },
+  "courses": {
+    "info-meeting-dates": "Inform the user they can select multiple dates for a class meeting",
+    "is-archived": "For indicating that a course is currently archived",
+    "new-offering-short": "Action for creating a new course offering, short version for buttons",
+    "no-prerequisites": "For indicating that a course has no prerequisites"
+  },
+  "diplomas": {
+    "courses-this-diploma": "List of courses for a given diploma"
+  },
+  "groups": {
+    "treeview": {
+      "admin-node": "the word designated to the top-level node in the hierarchy tree",
+      "collapse": "collapse the nodes in treeview",
+      "expand": "expand the nodes in treeview",
+      "filters": "filter on category treeview"
+    }
+  },
+  "images": {
+    "actions": {
+      "add-image": "Use in parent component to open the image chooser card"
+    },
+    "image-description": "placeholder text for a textfield",
+    "messages": {
+      "no-image": "Display when no image is selected",
+      "not-found": "Display when an image is not found"
+    }
+  },
+  "transcripts": {
+    "courses-this-diploma": "List of courses for a given diploma"
+  }
+}

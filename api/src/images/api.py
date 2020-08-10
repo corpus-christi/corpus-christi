@@ -10,7 +10,7 @@ from . import images
 from .models import Image, ImageSchema
 from .. import db, BASE_DIR
 from src.shared.helpers import modify_entity, is_allowed_file, get_file_extension, \
-        get_hash, get_all_queried_entities
+    get_hash, get_all_queried_entities
 
 # ---- Image
 
@@ -35,7 +35,8 @@ def download_image(image_id):
 @jwt_required
 def upload_image():
     # -- POST request should be sent with image in request.files['file'] &
-    # description in request.form['data'] as a json object (e.g. {'description': 'this is a picture.'})
+    # description in request.form['data'] as a json object (e.g.
+    # {'description': 'this is a picture.'})
     base_dir = BASE_DIR + '/'
     if request.files:
         if request.files['file']:
@@ -67,7 +68,8 @@ def upload_image():
             os.makedirs(os.path.join(base_dir, folder_path))
 
         path_to_image = os.path.join(folder_path, new_filename)
-        image_already_in_db = db.session.query(Image).filter_by(path=path_to_image).first()
+        image_already_in_db = db.session.query(
+            Image).filter_by(path=path_to_image).first()
 
         # return a directive to look up the existing image
         if image_already_in_db:
@@ -96,6 +98,7 @@ def upload_image():
 
     return jsonify(image_schema.dump(new_image)), 201
 
+
 @images.route('/', methods=['GET'])
 @jwt_required
 def read_all_images():
@@ -116,7 +119,11 @@ def update_image(image_id):
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    return modify_entity(Image, image_schema_partial, image_id, valid_attributes)
+    return modify_entity(
+        Image,
+        image_schema_partial,
+        image_id,
+        valid_attributes)
 
 
 @images.route('/<image_id>', methods=['DELETE'])

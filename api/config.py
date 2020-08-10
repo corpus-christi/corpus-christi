@@ -16,7 +16,7 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 def psql_url(db_config):
     url_prefix = f'postgresql://{private.PSQL_USER}:{private.PSQL_PASS}@{private.PSQL_HOST}/'
 
-    if  hasattr(private, "PSQL_DB"):
+    if hasattr(private, "PSQL_DB"):
         return url_prefix + private.PSQL_DB
     elif db_config == 'test':
         return url_prefix + 'cc-test'
@@ -27,11 +27,13 @@ def psql_url(db_config):
     elif db_config == 'prod':
         return url_prefix + 'cc-prod'
     else:
-        raise RuntimeError(f"Can't determine Postgres URL with dbconfig '{db_config}'")
+        raise RuntimeError(
+            f"Can't determine Postgres URL with dbconfig '{db_config}'")
 
 
 class Config:
-    SECRET_KEY = os.environ.get(private.FLASK_SECRET_KEY) or private.FLASK_SECRET_KEY
+    SECRET_KEY = os.environ.get(
+        private.FLASK_SECRET_KEY) or private.FLASK_SECRET_KEY
 
     JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY') or private.JWT_SECRET_KEY
     JWT_ACCESS_TOKEN_EXPIRES = datetime.timedelta(hours=8)
@@ -74,7 +76,8 @@ class DevelopmentConfig(Config):
 class StagingConfig(Config):
     TESTING = False
     DEBUG = False
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DB_URL') or psql_url('staging')
+    SQLALCHEMY_DATABASE_URI = os.environ.get(
+        'DEV_DB_URL') or psql_url('staging')
 
 
 class ProductionConfig(Config):
