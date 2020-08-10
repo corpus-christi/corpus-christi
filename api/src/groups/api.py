@@ -564,14 +564,14 @@ def update_member(group_id, person_id):
             return logged_response(f"Person with person_id #{new_person_id} does not exist", 404)
     new_active = valid_attributes.get('active')
 
-    if new_active is False and member.active is True: # if will deactivate person
+    if new_active == False and member.active == True: # if will deactivate person
         create_member_history(member, is_join=False) # create a leave entry on the original group
 
-    if member.active and new_active is not False and new_group_id and new_group_id != member.group_id: # if will move the active member
+    if member.active and new_active != False and new_group_id and new_group_id != member.group_id: # if will move the active member
         create_member_history(member, is_join=False) # create a leave entry on the original group
         create_member_history(member, is_join=True, group_id=new_group_id) # create a join entry on the new group
 
-    if new_active is True and member.active is False: # if will activate person
+    if new_active == True and member.active != False: # if will activate person
         create_member_history(member, is_join=True, group_id=new_group_id or member.group_id) # create a join entry on the new group
 
     for key, val in valid_attributes.items():
