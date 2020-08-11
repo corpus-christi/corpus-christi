@@ -6,7 +6,7 @@ from marshmallow.validate import Length
 from . import i18n
 from .models import I18NLocale, I18NLocaleSchema, I18NKeySchema, I18NKey, I18NValue, I18NValueSchema, Language
 from .. import db
-from ..shared.helpers import list_to_tree
+from ..shared.helpers import list_to_tree, BadListKeyPath
 
 from src.shared.helpers import modify_entity, get_all_queried_entities, logged_response
 
@@ -151,7 +151,7 @@ def read_xlation(locale_code):
             values)
         try:
             tree = list_to_tree(entries)
-        except RuntimeError as e:
+        except BadListKeyPath as e:
             return str(e), 400
         return jsonify(tree)
     else:

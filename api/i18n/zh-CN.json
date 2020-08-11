@@ -2,13 +2,13 @@
   "$vuetify": {
     "dataFooter": {
       "pageText": {
-        "gloss": "{0}-{1} \u7684 {2}",
+        "gloss": "{2}\u4e2d\u7684{0}-{1}",
         "verified": false
       }
     },
     "dataIterator": {
       "loadingText": {
-        "gloss": "\u52a0\u8f7d\u6570\u636e",
+        "gloss": "\u6b63\u5728\u8f7d\u5165\u9879\u76ee...",
         "verified": false
       },
       "nextPage": {
@@ -48,11 +48,11 @@
     },
     "timePicker": {
       "am": {
-        "gloss": "am",
+        "gloss": "\u4e0a\u5348",
         "verified": false
       },
       "pm": {
-        "gloss": "pm",
+        "gloss": "\u4e0b\u5348",
         "verified": false
       }
     }
@@ -95,7 +95,7 @@
       "verified": false
     },
     "add-participant": {
-      "gloss": "\u65b0\u589e\u6d3b\u52a8",
+      "gloss": "\u6dfb\u52a0\u53c2\u4e0e\u8005",
       "verified": false
     },
     "add-person": {
@@ -103,7 +103,7 @@
       "verified": false
     },
     "back": {
-      "gloss": "\u8fd4\u56de",
+      "gloss": "\u80cc\u90e8",
       "verified": false
     },
     "cancel": {
@@ -216,7 +216,7 @@
         "verified": false
       },
       "take-attendance": {
-        "gloss": "\u8bb0\u5f55\u51fa\u5e2d",
+        "gloss": "\u53c2\u52a0",
         "verified": false
       },
       "unarchive": {
@@ -275,7 +275,7 @@
       "verified": false
     },
     "confirm-remove-from-event": {
-      "gloss": "\u60a8\u786e\u5b9a\u8981\u4ece\u6b64\u4e8b\u4ef6\u4e2d\u5220\u9664\u6b64\u8d44\u4ea7\u5417\uff1f",
+      "gloss": "\u60a8\u786e\u5b9a\u8981\u4ece\u6b64\u4e8b\u4ef6\u4e2d\u5220\u9664\u8be5\u8d44\u4ea7\u5417\uff1f",
       "verified": false
     },
     "create-asset": {
@@ -359,6 +359,1006 @@
     "string": {
       "gloss": "\u4e32",
       "verified": false
+    }
+  },
+  "country": {
+    "name": {
+      "AD": {
+        "gloss": "\u5b89\u9053\u5c14",
+        "verified": false
+      },
+      "AE": {
+        "gloss": "\u963f\u62c9\u4f2f\u8054\u5408\u914b\u957f\u56fd",
+        "verified": false
+      },
+      "AF": {
+        "gloss": "\u963f\u5bcc\u6c57",
+        "verified": false
+      },
+      "AG": {
+        "gloss": "\u5b89\u63d0\u74dc\u548c\u5df4\u5e03\u8fbe",
+        "verified": false
+      },
+      "AI": {
+        "gloss": "\u5b89\u572d\u62c9\u5c9b",
+        "verified": false
+      },
+      "AL": {
+        "gloss": "\u963f\u5c14\u5df4\u5c3c\u4e9a",
+        "verified": false
+      },
+      "AM": {
+        "gloss": "\u4e9a\u7f8e\u5c3c\u4e9a",
+        "verified": false
+      },
+      "AO": {
+        "gloss": "\u5b89\u54e5\u62c9",
+        "verified": false
+      },
+      "AQ": {
+        "gloss": "\u5357\u6781\u6d32",
+        "verified": false
+      },
+      "AR": {
+        "gloss": "\u963f\u6839\u5ef7",
+        "verified": false
+      },
+      "AS": {
+        "gloss": "\u7f8e\u5c5e\u8428\u6469\u4e9a",
+        "verified": false
+      },
+      "AT": {
+        "gloss": "\u5965\u5730\u5229",
+        "verified": false
+      },
+      "AU": {
+        "gloss": "\u6fb3\u5927\u5229\u4e9a",
+        "verified": false
+      },
+      "AW": {
+        "gloss": "\u963f\u9c81\u5df4\u5c9b",
+        "verified": false
+      },
+      "AX": {
+        "gloss": "\u5965\u5170\u7fa4\u5c9b",
+        "verified": false
+      },
+      "AZ": {
+        "gloss": "\u963f\u585e\u62dc\u7586",
+        "verified": false
+      },
+      "BA": {
+        "gloss": "\u6ce2\u65af\u5c3c\u4e9a\u548c\u9ed1\u585e\u54e5\u7ef4\u90a3\uff08\u7b80\u79f0\uff1a\u6ce2\u9ed1",
+        "verified": false
+      },
+      "BB": {
+        "gloss": "\u5df4\u5df4\u591a\u65af",
+        "verified": false
+      },
+      "BD": {
+        "gloss": "\u5b5f\u52a0\u62c9\u56fd",
+        "verified": false
+      },
+      "BE": {
+        "gloss": "\u6bd4\u5229\u65f6",
+        "verified": false
+      },
+      "BF": {
+        "gloss": "\u5e03\u57fa\u7eb3\u6cd5\u7d22",
+        "verified": false
+      },
+      "BG": {
+        "gloss": "\u4fdd\u52a0\u5229\u4e9a",
+        "verified": false
+      },
+      "BH": {
+        "gloss": "\u5df4\u6797",
+        "verified": false
+      },
+      "BI": {
+        "gloss": "\u5e03\u9686\u8fea",
+        "verified": false
+      },
+      "BJ": {
+        "gloss": "\u8d1d\u5b81",
+        "verified": false
+      },
+      "BL": {
+        "gloss": "\u5723\u5df4\u6258\u6d1b\u7f2a\u5c9b",
+        "verified": false
+      },
+      "BM": {
+        "gloss": "\u767e\u6155\u5927",
+        "verified": false
+      },
+      "BN": {
+        "gloss": "\u6587\u83b1\u8fbe\u9c81\u8428\u5170\u56fd",
+        "verified": false
+      },
+      "BO": {
+        "gloss": "\u73bb\u5229\u7ef4\u4e9a\u591a\u6c11\u65cf\u56fd",
+        "verified": false
+      },
+      "BQ": {
+        "gloss": "\u535a\u5185\u5c14\uff0c\u5723\u5c24\u65af\u7279\u6b47\u65af\u548c\u8428\u5df4",
+        "verified": false
+      },
+      "BR": {
+        "gloss": "\u5df4\u897f",
+        "verified": false
+      },
+      "BS": {
+        "gloss": "\u5df4\u54c8\u9a6c",
+        "verified": false
+      },
+      "BT": {
+        "gloss": "\u4e0d\u4e39",
+        "verified": false
+      },
+      "BV": {
+        "gloss": "\u5e03\u7ef4\u5c9b",
+        "verified": false
+      },
+      "BW": {
+        "gloss": "\u535a\u8328\u74e6\u7eb3",
+        "verified": false
+      },
+      "BY": {
+        "gloss": "\u767d\u4fc4\u7f57\u65af",
+        "verified": false
+      },
+      "BZ": {
+        "gloss": "\u4f2f\u5229\u5179",
+        "verified": false
+      },
+      "CA": {
+        "gloss": "\u52a0\u62ff\u5927",
+        "verified": false
+      },
+      "CC": {
+        "gloss": "\u79d1\u79d1\u65af\uff08\u57fa\u6797\uff09\u7fa4\u5c9b",
+        "verified": false
+      },
+      "CD": {
+        "gloss": "\u521a\u679c\u6c11\u4e3b\u5171\u548c\u56fd",
+        "verified": false
+      },
+      "CF": {
+        "gloss": "\u4e2d\u975e\u5171\u548c\u56fd",
+        "verified": false
+      },
+      "CG": {
+        "gloss": "\u521a\u679c",
+        "verified": false
+      },
+      "CH": {
+        "gloss": "\u745e\u58eb",
+        "verified": false
+      },
+      "CI": {
+        "gloss": "\u79d1\u7279\u8fea\u74e6",
+        "verified": false
+      },
+      "CK": {
+        "gloss": "\u5e93\u514b\u7fa4\u5c9b",
+        "verified": false
+      },
+      "CL": {
+        "gloss": "\u667a\u5229",
+        "verified": false
+      },
+      "CM": {
+        "gloss": "\u5580\u9ea6\u9686",
+        "verified": false
+      },
+      "CN": {
+        "gloss": "\u4e2d\u56fd",
+        "verified": false
+      },
+      "CO": {
+        "gloss": "\u54e5\u4f26\u6bd4\u4e9a",
+        "verified": false
+      },
+      "CR": {
+        "gloss": "\u54e5\u65af\u8fbe\u9ece\u52a0",
+        "verified": false
+      },
+      "CU": {
+        "gloss": "\u53e4\u5df4",
+        "verified": false
+      },
+      "CV": {
+        "gloss": "\u4f5b\u5f97\u89d2",
+        "verified": false
+      },
+      "CW": {
+        "gloss": "\u5e93\u62c9\u7d22",
+        "verified": false
+      },
+      "CX": {
+        "gloss": "\u5723\u8bde\u5c9b",
+        "verified": false
+      },
+      "CY": {
+        "gloss": "\u585e\u6d66\u8def\u65af",
+        "verified": false
+      },
+      "CZ": {
+        "gloss": "\u6377\u514b\u5171\u548c\u56fd",
+        "verified": false
+      },
+      "DE": {
+        "gloss": "\u5fb7\u56fd",
+        "verified": false
+      },
+      "DJ": {
+        "gloss": "\u5409\u5e03\u5730",
+        "verified": false
+      },
+      "DK": {
+        "gloss": "\u4e39\u9ea6",
+        "verified": false
+      },
+      "DM": {
+        "gloss": "\u591a\u7c73\u5c3c\u52a0",
+        "verified": false
+      },
+      "DO": {
+        "gloss": "\u591a\u660e\u5c3c\u52a0\u5171\u548c\u56fd",
+        "verified": false
+      },
+      "DZ": {
+        "gloss": "\u963f\u5c14\u53ca\u5229\u4e9a",
+        "verified": false
+      },
+      "EC": {
+        "gloss": "\u5384\u74dc\u591a\u5c14",
+        "verified": false
+      },
+      "EE": {
+        "gloss": "\u7231\u6c99\u5c3c\u4e9a",
+        "verified": false
+      },
+      "EG": {
+        "gloss": "\u57c3\u53ca",
+        "verified": false
+      },
+      "EH": {
+        "gloss": "\u897f\u6492\u54c8\u62c9",
+        "verified": false
+      },
+      "ER": {
+        "gloss": "\u5384\u7acb\u7279\u91cc\u4e9a",
+        "verified": false
+      },
+      "ES": {
+        "gloss": "\u897f\u73ed\u7259",
+        "verified": false
+      },
+      "ET": {
+        "gloss": "\u57c3\u585e\u4fc4\u6bd4\u4e9a",
+        "verified": false
+      },
+      "FI": {
+        "gloss": "\u82ac\u5170",
+        "verified": false
+      },
+      "FJ": {
+        "gloss": "\u6590\u6d4e",
+        "verified": false
+      },
+      "FK": {
+        "gloss": "\u798f\u514b\u5170\u7fa4\u5c9b\uff08\u9a6c\u5c14\u7ef4\u7eb3\u65af\uff09",
+        "verified": false
+      },
+      "FM": {
+        "gloss": "\u5bc6\u514b\u7f57\u5c3c\u897f\u4e9a\u8054\u90a6",
+        "verified": false
+      },
+      "FO": {
+        "gloss": "\u6cd5\u7f57\u7fa4\u5c9b",
+        "verified": false
+      },
+      "FR": {
+        "gloss": "\u6cd5\u56fd",
+        "verified": false
+      },
+      "GA": {
+        "gloss": "\u52a0\u84ec",
+        "verified": false
+      },
+      "GB": {
+        "gloss": "\u82f1\u56fd",
+        "verified": false
+      },
+      "GD": {
+        "gloss": "\u683c\u6797\u7eb3\u8fbe",
+        "verified": false
+      },
+      "GE": {
+        "gloss": "\u4f50\u6cbb\u4e9a\u5dde",
+        "verified": false
+      },
+      "GF": {
+        "gloss": "\u6cd5\u5c5e\u572d\u4e9a\u90a3",
+        "verified": false
+      },
+      "GG": {
+        "gloss": "\u6839\u897f\u5c9b",
+        "verified": false
+      },
+      "GH": {
+        "gloss": "\u52a0\u7eb3",
+        "verified": false
+      },
+      "GI": {
+        "gloss": "\u76f4\u5e03\u7f57\u9640",
+        "verified": false
+      },
+      "GL": {
+        "gloss": "\u683c\u9675\u5170",
+        "verified": false
+      },
+      "GM": {
+        "gloss": "\u5188\u6bd4\u4e9a",
+        "verified": false
+      },
+      "GN": {
+        "gloss": "\u51e0\u5185\u4e9a",
+        "verified": false
+      },
+      "GP": {
+        "gloss": "\u74dc\u5fb7\u7f57\u666e\u5c9b",
+        "verified": false
+      },
+      "GQ": {
+        "gloss": "\u8d64\u9053\u51e0\u5185\u4e9a",
+        "verified": false
+      },
+      "GR": {
+        "gloss": "\u5e0c\u814a",
+        "verified": false
+      },
+      "GS": {
+        "gloss": "\u5357\u4e54\u6cbb\u4e9a\u5c9b\u548c\u5357\u6851\u5a01\u5947\u7fa4\u5c9b",
+        "verified": false
+      },
+      "GT": {
+        "gloss": "\u5371\u5730\u9a6c\u62c9",
+        "verified": false
+      },
+      "GU": {
+        "gloss": "\u5173\u5c9b",
+        "verified": false
+      },
+      "GW": {
+        "gloss": "\u51e0\u5185\u4e9a\u6bd4\u7ecd",
+        "verified": false
+      },
+      "GY": {
+        "gloss": "\u572d\u4e9a\u90a3",
+        "verified": false
+      },
+      "HK": {
+        "gloss": "\u9999\u6e2f",
+        "verified": false
+      },
+      "HM": {
+        "gloss": "\u5e0c\u5c14\u5fb7\u5c9b\u548c\u9ea6\u5f53\u52b3\u7fa4\u5c9b",
+        "verified": false
+      },
+      "HN": {
+        "gloss": "\u6d2a\u90fd\u62c9\u65af",
+        "verified": false
+      },
+      "HR": {
+        "gloss": "\u514b\u7f57\u5730\u4e9a",
+        "verified": false
+      },
+      "HT": {
+        "gloss": "\u6d77\u5730",
+        "verified": false
+      },
+      "HU": {
+        "gloss": "\u5308\u7259\u5229",
+        "verified": false
+      },
+      "ID": {
+        "gloss": "\u5370\u5ea6\u5c3c\u897f\u4e9a",
+        "verified": false
+      },
+      "IE": {
+        "gloss": "\u7231\u5c14\u5170",
+        "verified": false
+      },
+      "IL": {
+        "gloss": "\u4ee5\u8272\u5217",
+        "verified": false
+      },
+      "IM": {
+        "gloss": "\u9a6c\u6069\u5c9b",
+        "verified": false
+      },
+      "IN": {
+        "gloss": "\u5370\u5ea6",
+        "verified": false
+      },
+      "IO": {
+        "gloss": "\u82f1\u5c5e\u5370\u5ea6\u6d0b\u9886\u5730",
+        "verified": false
+      },
+      "IQ": {
+        "gloss": "\u4f0a\u62c9\u514b",
+        "verified": false
+      },
+      "IR": {
+        "gloss": "\u4f0a\u6717\u4f0a\u65af\u5170\u5171\u548c\u56fd",
+        "verified": false
+      },
+      "IS": {
+        "gloss": "\u51b0\u5c9b",
+        "verified": false
+      },
+      "IT": {
+        "gloss": "\u610f\u5927\u5229",
+        "verified": false
+      },
+      "JE": {
+        "gloss": "\u6cfd\u897f\u5c9b",
+        "verified": false
+      },
+      "JM": {
+        "gloss": "\u7259\u4e70\u52a0",
+        "verified": false
+      },
+      "JO": {
+        "gloss": "\u7ea6\u65e6",
+        "verified": false
+      },
+      "JP": {
+        "gloss": "\u65e5\u672c",
+        "verified": false
+      },
+      "KE": {
+        "gloss": "\u80af\u5c3c\u4e9a",
+        "verified": false
+      },
+      "KG": {
+        "gloss": "\u5409\u5c14\u5409\u65af\u65af\u5766",
+        "verified": false
+      },
+      "KH": {
+        "gloss": "\u67ec\u57d4\u5be8",
+        "verified": false
+      },
+      "KI": {
+        "gloss": "\u57fa\u91cc\u5df4\u65af",
+        "verified": false
+      },
+      "KM": {
+        "gloss": "\u79d1\u6469\u7f57",
+        "verified": false
+      },
+      "KN": {
+        "gloss": "\u5723\u57fa\u8328\u548c\u5c3c\u7ef4\u65af",
+        "verified": false
+      },
+      "KP": {
+        "gloss": "\u97e9\u56fd\uff0c\u671d\u9c9c\u6c11\u4e3b\u4e3b\u4e49\u4eba\u6c11\u5171\u548c\u56fd",
+        "verified": false
+      },
+      "KR": {
+        "gloss": "\u97e9\u56fd",
+        "verified": false
+      },
+      "KW": {
+        "gloss": "\u79d1\u5a01\u7279",
+        "verified": false
+      },
+      "KY": {
+        "gloss": "\u5f00\u66fc\u7fa4\u5c9b",
+        "verified": false
+      },
+      "KZ": {
+        "gloss": "\u54c8\u8428\u514b\u65af\u5766",
+        "verified": false
+      },
+      "LA": {
+        "gloss": "\u8001\u631d\u4eba\u6c11\u6c11\u4e3b\u5171\u548c\u56fd",
+        "verified": false
+      },
+      "LB": {
+        "gloss": "\u9ece\u5df4\u5ae9",
+        "verified": false
+      },
+      "LC": {
+        "gloss": "\u5723\u5362\u897f\u4e9a",
+        "verified": false
+      },
+      "LI": {
+        "gloss": "\u5217\u652f\u6566\u58eb\u767b",
+        "verified": false
+      },
+      "LK": {
+        "gloss": "\u65af\u91cc\u5170\u5361",
+        "verified": false
+      },
+      "LR": {
+        "gloss": "\u5229\u6bd4\u91cc\u4e9a",
+        "verified": false
+      },
+      "LS": {
+        "gloss": "\u83b1\u7d22\u6258",
+        "verified": false
+      },
+      "LT": {
+        "gloss": "\u7acb\u9676\u5b9b",
+        "verified": false
+      },
+      "LU": {
+        "gloss": "\u5362\u68ee\u5821",
+        "verified": false
+      },
+      "LV": {
+        "gloss": "\u62c9\u8131\u7ef4\u4e9a",
+        "verified": false
+      },
+      "LY": {
+        "gloss": "\u5229\u6bd4\u4e9a",
+        "verified": false
+      },
+      "MA": {
+        "gloss": "\u6469\u6d1b\u54e5",
+        "verified": false
+      },
+      "MC": {
+        "gloss": "\u6469\u7eb3\u54e5",
+        "verified": false
+      },
+      "MD": {
+        "gloss": "\u6469\u5c14\u591a\u74e6\u5171\u548c\u56fd",
+        "verified": false
+      },
+      "ME": {
+        "gloss": "\u9ed1\u5c71\u5171\u548c\u56fd",
+        "verified": false
+      },
+      "MF": {
+        "gloss": "\u5723\u9a6c\u4e01\uff08\u6cd5\u8bed\u90e8\u5206\uff09",
+        "verified": false
+      },
+      "MG": {
+        "gloss": "\u9a6c\u8fbe\u52a0\u65af\u52a0",
+        "verified": false
+      },
+      "MH": {
+        "gloss": "\u9a6c\u7ecd\u5c14\u7fa4\u5c9b",
+        "verified": false
+      },
+      "MK": {
+        "gloss": "\u524d\u5357\u65af\u62c9\u592b\u5171\u548c\u56fd\u9a6c\u5176\u987f",
+        "verified": false
+      },
+      "ML": {
+        "gloss": "\u9a6c\u91cc",
+        "verified": false
+      },
+      "MM": {
+        "gloss": "\u7f05\u7538",
+        "verified": false
+      },
+      "MN": {
+        "gloss": "\u8499\u53e4",
+        "verified": false
+      },
+      "MO": {
+        "gloss": "\u6fb3\u95e8",
+        "verified": false
+      },
+      "MP": {
+        "gloss": "\u5317\u9a6c\u91cc\u4e9a\u7eb3\u7fa4\u5c9b",
+        "verified": false
+      },
+      "MQ": {
+        "gloss": "\u9a6c\u63d0\u5c3c\u514b\u5c9b",
+        "verified": false
+      },
+      "MR": {
+        "gloss": "\u6bdb\u91cc\u5854\u5c3c\u4e9a",
+        "verified": false
+      },
+      "MS": {
+        "gloss": "\u8499\u7279\u585e\u62c9\u7279",
+        "verified": false
+      },
+      "MT": {
+        "gloss": "\u9a6c\u8033\u4ed6",
+        "verified": false
+      },
+      "MU": {
+        "gloss": "\u6bdb\u91cc\u6c42\u65af",
+        "verified": false
+      },
+      "MV": {
+        "gloss": "\u9a6c\u5c14\u4ee3\u592b",
+        "verified": false
+      },
+      "MW": {
+        "gloss": "\u9a6c\u62c9\u7ef4",
+        "verified": false
+      },
+      "MX": {
+        "gloss": "\u58a8\u897f\u54e5",
+        "verified": false
+      },
+      "MY": {
+        "gloss": "\u9a6c\u6765\u897f\u4e9a",
+        "verified": false
+      },
+      "MZ": {
+        "gloss": "\u83ab\u6851\u6bd4\u514b",
+        "verified": false
+      },
+      "NA": {
+        "gloss": "\u7eb3\u7c73\u6bd4\u4e9a",
+        "verified": false
+      },
+      "NC": {
+        "gloss": "\u65b0\u5580\u91cc\u591a\u5c3c\u4e9a",
+        "verified": false
+      },
+      "NE": {
+        "gloss": "\u5c3c\u65e5\u5c14",
+        "verified": false
+      },
+      "NF": {
+        "gloss": "\u8bfa\u798f\u514b\u5c9b",
+        "verified": false
+      },
+      "NG": {
+        "gloss": "\u5948\u53ca\u5229\u4e9a",
+        "verified": false
+      },
+      "NI": {
+        "gloss": "\u5c3c\u52a0\u62c9\u74dc",
+        "verified": false
+      },
+      "NL": {
+        "gloss": "\u8377\u5170",
+        "verified": false
+      },
+      "NO": {
+        "gloss": "\u632a\u5a01",
+        "verified": false
+      },
+      "NP": {
+        "gloss": "\u5c3c\u6cca\u5c14",
+        "verified": false
+      },
+      "NR": {
+        "gloss": "\u7459\u9c81",
+        "verified": false
+      },
+      "NU": {
+        "gloss": "\u7ebd\u57c3",
+        "verified": false
+      },
+      "NZ": {
+        "gloss": "\u65b0\u897f\u5170",
+        "verified": false
+      },
+      "OM": {
+        "gloss": "\u963f\u66fc",
+        "verified": false
+      },
+      "PA": {
+        "gloss": "\u5df4\u62ff\u9a6c",
+        "verified": false
+      },
+      "PE": {
+        "gloss": "\u79d8\u9c81",
+        "verified": false
+      },
+      "PF": {
+        "gloss": "\u6cd5\u5c5e\u6ce2\u5229\u5c3c\u897f\u4e9a",
+        "verified": false
+      },
+      "PG": {
+        "gloss": "\u5df4\u5e03\u4e9a\u65b0\u51e0\u5185\u4e9a",
+        "verified": false
+      },
+      "PH": {
+        "gloss": "\u83f2\u5f8b\u5bbe",
+        "verified": false
+      },
+      "PK": {
+        "gloss": "\u5df4\u57fa\u65af\u5766",
+        "verified": false
+      },
+      "PL": {
+        "gloss": "\u6ce2\u5170",
+        "verified": false
+      },
+      "PM": {
+        "gloss": "\u5723\u76ae\u57c3\u5c14\u548c\u5bc6\u514b\u9686\u7fa4\u5c9b",
+        "verified": false
+      },
+      "PN": {
+        "gloss": "\u76ae\u7279\u51ef\u6069",
+        "verified": false
+      },
+      "PR": {
+        "gloss": "\u6ce2\u591a\u9ece\u5404",
+        "verified": false
+      },
+      "PS": {
+        "gloss": "\u5df4\u52d2\u65af\u5766\u56fd",
+        "verified": false
+      },
+      "PT": {
+        "gloss": "\u8461\u8404\u7259",
+        "verified": false
+      },
+      "PW": {
+        "gloss": "u\u7409",
+        "verified": false
+      },
+      "PY": {
+        "gloss": "\u5df4\u62c9\u572d",
+        "verified": false
+      },
+      "QA": {
+        "gloss": "\u5361\u5854\u5c14",
+        "verified": false
+      },
+      "RE": {
+        "gloss": "\u56e2\u5706",
+        "verified": false
+      },
+      "RO": {
+        "gloss": "\u7f57\u9a6c\u5c3c\u4e9a",
+        "verified": false
+      },
+      "RS": {
+        "gloss": "\u585e\u5c14\u7ef4\u4e9a",
+        "verified": false
+      },
+      "RU": {
+        "gloss": "\u4fc4\u7f57\u65af\u8054\u90a6",
+        "verified": false
+      },
+      "RW": {
+        "gloss": "\u5362\u65fa\u8fbe",
+        "verified": false
+      },
+      "SA": {
+        "gloss": "\u6c99\u7279\u963f\u62c9\u4f2f",
+        "verified": false
+      },
+      "SB": {
+        "gloss": "\u6240\u7f57\u95e8\u7fa4\u5c9b",
+        "verified": false
+      },
+      "SC": {
+        "gloss": "\u585e\u820c\u5c14",
+        "verified": false
+      },
+      "SD": {
+        "gloss": "\u82cf\u4e39",
+        "verified": false
+      },
+      "SE": {
+        "gloss": "\u745e\u5178",
+        "verified": false
+      },
+      "SG": {
+        "gloss": "\u65b0\u52a0\u5761",
+        "verified": false
+      },
+      "SH": {
+        "gloss": "\u5723\u6d77\u4f26\u5a1c\uff0c\u63d0\u5347\u548c\u7279\u91cc\u65af\u5766\u8fbe\u5e93\u5c3c\u4e9a",
+        "verified": false
+      },
+      "SI": {
+        "gloss": "\u65af\u6d1b\u6587\u5c3c\u4e9a",
+        "verified": false
+      },
+      "SJ": {
+        "gloss": "\u65af\u74e6\u5c14\u5df4\u548c\u626c\u00b7\u9a6c\u5ef6",
+        "verified": false
+      },
+      "SK": {
+        "gloss": "\u65af\u6d1b\u4f10\u514b",
+        "verified": false
+      },
+      "SL": {
+        "gloss": "\u585e\u62c9\u5229\u6602",
+        "verified": false
+      },
+      "SM": {
+        "gloss": "\u5723\u9a6c\u529b\u8bfa",
+        "verified": false
+      },
+      "SN": {
+        "gloss": "\u585e\u5185\u52a0\u5c14",
+        "verified": false
+      },
+      "SO": {
+        "gloss": "\u7d22\u9a6c\u91cc",
+        "verified": false
+      },
+      "SR": {
+        "gloss": "\u82cf\u91cc\u5357",
+        "verified": false
+      },
+      "SS": {
+        "gloss": "\u5357\u82cf\u4e39",
+        "verified": false
+      },
+      "ST": {
+        "gloss": "\u5723\u591a\u7f8e\u548c\u666e\u6797\u897f\u6bd4",
+        "verified": false
+      },
+      "SV": {
+        "gloss": "\u8428\u5c14\u74e6\u591a",
+        "verified": false
+      },
+      "SX": {
+        "gloss": "\u5723\u9a6c\u4e01\uff08\u8377\u5170\u8bed\u90e8\u5206\uff09",
+        "verified": false
+      },
+      "SY": {
+        "gloss": "\u963f\u62c9\u4f2f\u53d9\u5229\u4e9a\u5171\u548c\u56fd",
+        "verified": false
+      },
+      "SZ": {
+        "gloss": "\u65af\u5a01\u58eb\u5170",
+        "verified": false
+      },
+      "TC": {
+        "gloss": "\u7279\u514b\u65af\u548c\u51ef\u79d1\u65af\u7fa4\u5c9b",
+        "verified": false
+      },
+      "TD": {
+        "gloss": "\u4e4d\u5f97",
+        "verified": false
+      },
+      "TF": {
+        "gloss": "\u6cd5\u5c5e\u5357\u90e8\u9886\u5730",
+        "verified": false
+      },
+      "TG": {
+        "gloss": "\u591a\u54e5",
+        "verified": false
+      },
+      "TH": {
+        "gloss": "\u6cf0\u56fd",
+        "verified": false
+      },
+      "TJ": {
+        "gloss": "\u5854\u5409\u514b\u65af\u5766",
+        "verified": false
+      },
+      "TK": {
+        "gloss": "\u6258\u514b\u52b3",
+        "verified": false
+      },
+      "TL": {
+        "gloss": "\u4e1c\u5e1d\u6c76",
+        "verified": false
+      },
+      "TM": {
+        "gloss": "\u571f\u5e93\u66fc\u65af\u5766",
+        "verified": false
+      },
+      "TN": {
+        "gloss": "\u7a81\u5c3c\u65af",
+        "verified": false
+      },
+      "TO": {
+        "gloss": "\u6c64\u52a0",
+        "verified": false
+      },
+      "TR": {
+        "gloss": "\u706b\u9e21",
+        "verified": false
+      },
+      "TT": {
+        "gloss": "\u7279\u7acb\u5c3c\u8fbe\u548c\u591a\u5df4\u54e5",
+        "verified": false
+      },
+      "TV": {
+        "gloss": "\u56fe\u74e6\u5362",
+        "verified": false
+      },
+      "TW": {
+        "gloss": "\u4e2d\u56fd\u53f0\u6e7e\u7701",
+        "verified": false
+      },
+      "TZ": {
+        "gloss": "\u5766\u6851\u5c3c\u4e9a\u8054\u5408\u5171\u548c\u56fd",
+        "verified": false
+      },
+      "UA": {
+        "gloss": "\u4e4c\u514b\u5170",
+        "verified": false
+      },
+      "UG": {
+        "gloss": "\u4e4c\u5e72\u8fbe",
+        "verified": false
+      },
+      "UM": {
+        "gloss": "\u7f8e\u56fd\u672c\u571f\u5916\u5c0f\u5c9b\u5c7f",
+        "verified": false
+      },
+      "US": {
+        "gloss": "\u7f8e\u56fd",
+        "verified": false
+      },
+      "UY": {
+        "gloss": "\u4e4c\u62c9\u572d",
+        "verified": false
+      },
+      "UZ": {
+        "gloss": "\u4e4c\u5179\u522b\u514b\u65af\u5766",
+        "verified": false
+      },
+      "VA": {
+        "gloss": "\u7f57\u9a6c\u6559\u5ef7\uff08\u68b5\u8482\u5188\u57ce\u56fd\uff09",
+        "verified": false
+      },
+      "VC": {
+        "gloss": "\u5723\u6587\u68ee\u7279\u548c\u683c\u6797\u7eb3\u4e01\u65af",
+        "verified": false
+      },
+      "VE": {
+        "gloss": "\u59d4\u5185\u745e\u62c9\u73bb\u5229\u74e6\u5c14\u5171\u548c\u56fd",
+        "verified": false
+      },
+      "VG": {
+        "gloss": "\u82f1\u5c5e\u7ef4\u5c14\u4eac\u7fa4\u5c9b",
+        "verified": false
+      },
+      "VI": {
+        "gloss": "\u7f8e\u56fd\u7ef4\u5c14\u4eac\u7fa4\u5c9b",
+        "verified": false
+      },
+      "VN": {
+        "gloss": "\u8d8a\u5357",
+        "verified": false
+      },
+      "VU": {
+        "gloss": "\u74e6\u52aa\u963f\u56fe",
+        "verified": false
+      },
+      "WF": {
+        "gloss": "\u74e6\u5229\u65af\u548c\u5bcc\u56fe\u7eb3\u7fa4\u5c9b",
+        "verified": false
+      },
+      "WS": {
+        "gloss": "\u8428\u6469\u4e9a",
+        "verified": false
+      },
+      "YE": {
+        "gloss": "\u4e5f\u95e8",
+        "verified": false
+      },
+      "YT": {
+        "gloss": "\u9a6c\u7ea6\u7279\u5c9b",
+        "verified": false
+      },
+      "ZA": {
+        "gloss": "\u5357\u975e",
+        "verified": false
+      },
+      "ZM": {
+        "gloss": "\u8d5e\u6bd4\u4e9a",
+        "verified": false
+      },
+      "ZW": {
+        "gloss": "\u6d25\u5df4\u5e03\u97e6",
+        "verified": false
+      }
     }
   },
   "courses": {
@@ -489,7 +1489,7 @@
       "verified": false
     },
     "info-meeting-dates": {
-      "gloss": "\u60a8\u53ef\u4ee5\u9009\u62e9\u591a\u4e2a\u65e5\u671f\u6765\u521b\u5efa\u591a\u4e2a\u4f1a\u8bae\u3002",
+      "gloss": "\u60a8\u53ef\u4ee5\u9009\u62e9\u591a\u4e2a\u65e5\u671f\u6765\u521b\u5efa\u8bb8\u591a\u4f1a\u8bae\u3002",
       "verified": false
     },
     "is-archived": {
@@ -1231,11 +2231,11 @@
           "verified": false
         },
         "March": {
-          "gloss": "\u4e09\u6708",
+          "gloss": "\u6e38\u884c",
           "verified": false
         },
         "May": {
-          "gloss": "\u4e94\u6708",
+          "gloss": "\u53ef\u80fd",
           "verified": false
         },
         "November": {
@@ -1269,11 +2269,11 @@
       },
       "time-scale-unite": {
         "Weekly": {
-          "gloss": "\u5468",
+          "gloss": "\u6bcf\u5468",
           "verified": false
         },
         "monthly": {
-          "gloss": "\u6708",
+          "gloss": "\u6bcf\u6708\u4e00\u6b21",
           "verified": false
         }
       }
@@ -1302,12 +2302,12 @@
         "verified": false
       },
       "title": {
-        "gloss": "\u4f1a\u8bae",
+        "gloss": "\u4f1a\u8bae\u4f1a\u8bae",
         "verified": false
       }
     },
     "member-count": {
-      "gloss": "\u4f1a\u5458\u4eba\u6570",
+      "gloss": "\u4f1a\u5458\u6570",
       "verified": false
     },
     "members": {
@@ -1362,7 +2362,7 @@
         "verified": false
       },
       "email-reply-to": {
-        "gloss": "\u56de\u590d\u5230",
+        "gloss": "\u56de\u590d",
         "verified": false
       },
       "title": {
@@ -1370,13 +2370,13 @@
         "verified": false
       },
       "title-visitor": {
-        "gloss": "\u8bbf\u5ba2",
+        "gloss": "\u53c2\u89c2\u8005",
         "verified": false
       }
     },
     "membership-hisotry": {
       "title": {
-        "gloss": "\u5386\u53f2\u8bb0\u5f55",
+        "gloss": "\u5386\u53f2",
         "verified": false
       }
     },
@@ -1386,7 +2386,7 @@
         "verified": false
       },
       "confirm-archive": {
-        "gloss": "\u60a8\u786e\u5b9a\u8981\u5b58\u6863\u8be5\u7ec4\u5417\uff1f",
+        "gloss": "\u60a8\u786e\u5b9a\u8981\u5b58\u6863\u6b64\u7ec4\u5417\uff1f",
         "verified": false
       },
       "confirm-attendance-archive": {
@@ -1430,7 +2430,7 @@
         "verified": false
       },
       "error-archived-not-selected": {
-        "gloss": "\u672a\u9009\u62e9\u4efb\u4f55\u5df2\u5b58\u6863\u7684\u6210\u5458",
+        "gloss": "\u672a\u9009\u62e9\u4efb\u4f55\u5b58\u6863\u6210\u5458",
         "verified": false
       },
       "error-archiving-group": {
@@ -1478,7 +2478,7 @@
         "verified": false
       },
       "error-unarchiving-meeting": {
-        "gloss": "\u53d6\u6d88\u5b58\u6863\u4f1a\u8bae\u9519\u8bef",
+        "gloss": "\u9519\u8bef\u53d6\u6d88\u5b58\u6863\u4f1a\u8bae",
         "verified": false
       },
       "error-unarchiving-member": {
@@ -1498,7 +2498,7 @@
         "verified": false
       },
       "group-archived": {
-        "gloss": "\u5c0f\u7ec4\u5df2\u5f52\u6863",
+        "gloss": "\u7fa4\u7ec4\u5df2\u5f52\u6863",
         "verified": false
       },
       "group-edited": {
@@ -1506,7 +2506,7 @@
         "verified": false
       },
       "group-unarchived": {
-        "gloss": "\u5c0f\u7ec4\u5df2\u6062\u590d",
+        "gloss": "\u5c0f\u7ec4\u672a\u5b58\u6863",
         "verified": false
       },
       "manager-archived": {
@@ -1562,7 +2562,7 @@
         "verified": false
       },
       "participant-added": {
-        "gloss": "\u5df2\u6dfb\u52a0\u7528\u6237",
+        "gloss": "\u53c2\u52a0\u8005\uff09\u5df2\u6dfb\u52a0",
         "verified": false
       },
       "required-fields": {
@@ -1574,7 +2574,7 @@
         "verified": false
       },
       "visitor-remove": {
-        "gloss": "\u8bbf\u5ba2\u5df2\u79fb\u9664",
+        "gloss": "\u8bbf\u5ba2\u5df2\u5220\u9664",
         "verified": false
       }
     },
@@ -1670,11 +2670,11 @@
         "verified": false
       },
       "collapse": {
-        "gloss": "\u5408\u5e76",
+        "gloss": "\u574d\u65b9",
         "verified": false
       },
       "expand": {
-        "gloss": "\u5c55\u5f00",
+        "gloss": "\u6269\u5927",
         "verified": false
       },
       "filters": {
@@ -1710,7 +2710,7 @@
         "verified": false
       },
       "title": {
-        "gloss": "\u7ec4\u6811\u89c6\u56fe",
+        "gloss": "\u7ec4\u6811\u72b6\u89c6\u56fe",
         "verified": false
       },
       "unexpected-cycle": {
@@ -1741,6 +2741,746 @@
       },
       "not-found": {
         "gloss": "\u627e\u4e0d\u5230\u56fe\u7247\u3002",
+        "verified": false
+      }
+    }
+  },
+  "language": {
+    "name": {
+      "aa": {
+        "gloss": "\u8fdc\u65b9",
+        "verified": false
+      },
+      "ab": {
+        "gloss": "\u963f\u5e03\u54c8\u5179\u4eba",
+        "verified": false
+      },
+      "ae": {
+        "gloss": "Avestan",
+        "verified": false
+      },
+      "af": {
+        "gloss": "\u5357\u975e\u8bed",
+        "verified": false
+      },
+      "ak": {
+        "gloss": "\u963f\u5bd2",
+        "verified": false
+      },
+      "am": {
+        "gloss": "\u963f\u59c6\u54c8\u62c9\u8bed",
+        "verified": false
+      },
+      "an": {
+        "gloss": "\u963f\u62c9\u8d21\u4eba",
+        "verified": false
+      },
+      "ar": {
+        "gloss": "\u963f\u62c9\u4f2f",
+        "verified": false
+      },
+      "as": {
+        "gloss": "\u963f\u8428\u59c6\u8bed",
+        "verified": false
+      },
+      "av": {
+        "gloss": "\u963f\u74e6\u91cc\u5947",
+        "verified": false
+      },
+      "ay": {
+        "gloss": "\u827e\u9a6c\u62c9",
+        "verified": false
+      },
+      "az": {
+        "gloss": "\u963f\u585e\u62dc\u7586\u4eba",
+        "verified": false
+      },
+      "ba": {
+        "gloss": "\u5df4\u4ec0\u57fa\u5c14",
+        "verified": false
+      },
+      "be": {
+        "gloss": "\u767d\u4fc4\u7f57\u65af\u8bed",
+        "verified": false
+      },
+      "bg": {
+        "gloss": "\u4fdd\u52a0\u5229\u4e9a\u8bed",
+        "verified": false
+      },
+      "bh": {
+        "gloss": "\u6bd4\u54c8\u91cc\u8bed",
+        "verified": false
+      },
+      "bi": {
+        "gloss": "\u6bd4\u65af\u62c9\u9a6c",
+        "verified": false
+      },
+      "bm": {
+        "gloss": "\u73ed\u5df4\u62c9",
+        "verified": false
+      },
+      "bn": {
+        "gloss": "\u5b5f\u52a0\u62c9",
+        "verified": false
+      },
+      "bo": {
+        "gloss": "\u85cf",
+        "verified": false
+      },
+      "br": {
+        "gloss": "\u5e03\u5217\u5854\u5c3c",
+        "verified": false
+      },
+      "bs": {
+        "gloss": "\u6ce2\u65af\u5c3c\u4e9a\u4eba",
+        "verified": false
+      },
+      "ca": {
+        "gloss": "\u52a0\u6cf0\u7f57\u5c3c\u4e9a\u8bed\u5df4\u4f26\u897f\u4e9a\u4eba",
+        "verified": false
+      },
+      "ce": {
+        "gloss": "\u8f66\u81e3",
+        "verified": false
+      },
+      "ch": {
+        "gloss": "\u67e5\u83ab\u7f57",
+        "verified": false
+      },
+      "co": {
+        "gloss": "\u79d1\u897f\u5609\u4eba",
+        "verified": false
+      },
+      "cr": {
+        "gloss": "\u514b\u91cc",
+        "verified": false
+      },
+      "cs": {
+        "gloss": "\u6377\u514b\u6587",
+        "verified": false
+      },
+      "cu": {
+        "gloss": "\u65af\u62c9\u592b\u6559\u5802\u65e7\u65af\u62c9\u592b\u8bed\uff1b\u65af\u62c9\u592b\u5c3c\u514b\u6559\u5802;\u65e7\u4fdd\u52a0\u5229\u4e9a\u8bed\uff1b\u65af\u62c9\u592b\u8001\u6559\u5802",
+        "verified": false
+      },
+      "cv": {
+        "gloss": "\u695a\u74e6\u4ec0",
+        "verified": false
+      },
+      "cy": {
+        "gloss": "\u5a01\u5c14\u58eb\u8bed",
+        "verified": false
+      },
+      "da": {
+        "gloss": "\u4e39\u9ea6\u6587",
+        "verified": false
+      },
+      "de": {
+        "gloss": "\u5fb7\u8bed",
+        "verified": false
+      },
+      "dv": {
+        "gloss": "\u8fea\u83f2\u8fea\u7ef4\u5e0c\u9a6c\u5c14\u4ee3\u592b",
+        "verified": false
+      },
+      "dz": {
+        "gloss": "\u5b97\u5361",
+        "verified": false
+      },
+      "ee": {
+        "gloss": "\u6bcd\u7f8a",
+        "verified": false
+      },
+      "el": {
+        "gloss": "\u5e0c\u814a\u8bed\uff0c\u73b0\u4ee3\uff081453-\uff09",
+        "verified": false
+      },
+      "en": {
+        "gloss": "\u82f1\u8bed",
+        "verified": false
+      },
+      "eo": {
+        "gloss": "\u4e16\u754c\u8bed",
+        "verified": false
+      },
+      "es": {
+        "gloss": "\u897f\u73ed\u7259\u6587\uff1b\u5361\u65af\u8482\u5229\u4e9a\u4eba",
+        "verified": false
+      },
+      "et": {
+        "gloss": "\u7231\u6c99\u5c3c\u4e9a\u8bed",
+        "verified": false
+      },
+      "eu": {
+        "gloss": "\u5df4\u65af\u514b",
+        "verified": false
+      },
+      "fa": {
+        "gloss": "\u6ce2\u65af\u8bed",
+        "verified": false
+      },
+      "ff": {
+        "gloss": "\u5bcc\u62c9",
+        "verified": false
+      },
+      "fi": {
+        "gloss": "\u82ac\u5170",
+        "verified": false
+      },
+      "fj": {
+        "gloss": "\u6590\u6d4e",
+        "verified": false
+      },
+      "fo": {
+        "gloss": "\u6cd5\u7f57\u8bed",
+        "verified": false
+      },
+      "fr": {
+        "gloss": "\u6cd5\u6587",
+        "verified": false
+      },
+      "fy": {
+        "gloss": "\u897f\u5f17\u91cc\u65af\u5170\u8bed",
+        "verified": false
+      },
+      "ga": {
+        "gloss": "\u7231\u5c14\u5170\u4eba",
+        "verified": false
+      },
+      "gd": {
+        "gloss": "\u76d6\u5c14\u8bed\u82cf\u683c\u5170\u76d6\u5c14\u8bed",
+        "verified": false
+      },
+      "gl": {
+        "gloss": "\u52a0\u5229\u897f\u4e9a\u4eba",
+        "verified": false
+      },
+      "gn": {
+        "gloss": "\u74dc\u62c9\u5c3c",
+        "verified": false
+      },
+      "gu": {
+        "gloss": "\u53e4\u5409\u62c9\u7279\u8bed",
+        "verified": false
+      },
+      "gv": {
+        "gloss": "\u66fc\u514b\u65af",
+        "verified": false
+      },
+      "ha": {
+        "gloss": "\u8c6a\u8428",
+        "verified": false
+      },
+      "he": {
+        "gloss": "\u5e0c\u4f2f\u6765\u8bed",
+        "verified": false
+      },
+      "hi": {
+        "gloss": "\u5370\u5730\u8bed",
+        "verified": false
+      },
+      "ho": {
+        "gloss": "\u5e0c\u91cc\u00b7\u83ab\u56fe\uff08Hiri Motu\uff09",
+        "verified": false
+      },
+      "hr": {
+        "gloss": "\u514b\u7f57\u5730\u4e9a\u8bed",
+        "verified": false
+      },
+      "ht": {
+        "gloss": "\u6d77\u5730;\u6d77\u5730\u514b\u91cc\u5965\u5c14\u8bed",
+        "verified": false
+      },
+      "hu": {
+        "gloss": "\u5308\u7259\u5229",
+        "verified": false
+      },
+      "hy": {
+        "gloss": "\u4e9a\u7f8e\u5c3c\u4e9a\u4eba",
+        "verified": false
+      },
+      "hz": {
+        "gloss": "\u8d6b\u96f7\u7f57",
+        "verified": false
+      },
+      "ia": {
+        "gloss": "Interlingua\uff08\u56fd\u9645\u8f85\u52a9\u8bed\u8a00\u534f\u4f1a\uff09",
+        "verified": false
+      },
+      "id": {
+        "gloss": "\u5370\u5ea6\u5c3c\u897f\u4e9a",
+        "verified": false
+      },
+      "ie": {
+        "gloss": "\u4e2d\u4ecb\u8bed\u897f\u65b9\u7684",
+        "verified": false
+      },
+      "ig": {
+        "gloss": "\u4f0a\u535a",
+        "verified": false
+      },
+      "ii": {
+        "gloss": "\u56db\u5ddd\u5f5d\u65cfos",
+        "verified": false
+      },
+      "ik": {
+        "gloss": "\u56e0\u7ebd\u76ae\u514b",
+        "verified": false
+      },
+      "io": {
+        "gloss": "\u6211\u505a",
+        "verified": false
+      },
+      "is": {
+        "gloss": "\u51b0\u5c9b\u7684",
+        "verified": false
+      },
+      "it": {
+        "gloss": "\u4e49\u5927\u5229\u6587",
+        "verified": false
+      },
+      "iu": {
+        "gloss": "\u56e0\u7ebd\u7279\u4eba",
+        "verified": false
+      },
+      "ja": {
+        "gloss": "\u65e5\u672c",
+        "verified": false
+      },
+      "jv": {
+        "gloss": "\u722a\u54c7\u8bed",
+        "verified": false
+      },
+      "ka": {
+        "gloss": "\u683c\u9c81\u5409\u4e9a\u4eba",
+        "verified": false
+      },
+      "kg": {
+        "gloss": "\u91d1\u521a",
+        "verified": false
+      },
+      "ki": {
+        "gloss": "\u83ca\u4e45;\u83ca\u4e45",
+        "verified": false
+      },
+      "kj": {
+        "gloss": "\u5bbd\u5c71\u5173\u5c71",
+        "verified": false
+      },
+      "kk": {
+        "gloss": "\u54c8\u8428\u514b\u8bed",
+        "verified": false
+      },
+      "kl": {
+        "gloss": "Kalaallisut;\u683c\u9675\u5170",
+        "verified": false
+      },
+      "km": {
+        "gloss": "\u9ad8\u68c9\u4e2d\u592e",
+        "verified": false
+      },
+      "kn": {
+        "gloss": "\u5361\u7eb3\u8fbe\u8bed",
+        "verified": false
+      },
+      "ko": {
+        "gloss": "\u97e9\u8bed",
+        "verified": false
+      },
+      "kr": {
+        "gloss": "\u5361\u52aa\u91cc",
+        "verified": false
+      },
+      "ks": {
+        "gloss": "\u514b\u4ec0\u7c73\u5c14\u4eba",
+        "verified": false
+      },
+      "ku": {
+        "gloss": "\u5e93\u5c14\u5fb7",
+        "verified": false
+      },
+      "kv": {
+        "gloss": "\u79d1\u7f8e",
+        "verified": false
+      },
+      "kw": {
+        "gloss": "\u5eb7\u6c83\u5c14\u8bed",
+        "verified": false
+      },
+      "ky": {
+        "gloss": "\u67ef\u5409\u5179\u5409\u5c14\u5409\u65af",
+        "verified": false
+      },
+      "la": {
+        "gloss": "\u62c9\u4e01",
+        "verified": false
+      },
+      "lb": {
+        "gloss": "\u5362\u68ee\u5821\u8bed\uff1b\u83b1\u5c91\u5821",
+        "verified": false
+      },
+      "lg": {
+        "gloss": "\u7518\u8fbe",
+        "verified": false
+      },
+      "li": {
+        "gloss": "\u6797\u5821\u6797\u5821\u6797\u5821\u8bed",
+        "verified": false
+      },
+      "ln": {
+        "gloss": "\u6797\u52a0\u62c9",
+        "verified": false
+      },
+      "lo": {
+        "gloss": "\u8001\u631d",
+        "verified": false
+      },
+      "lt": {
+        "gloss": "\u7acb\u9676\u5b9b\u8bed",
+        "verified": false
+      },
+      "lu": {
+        "gloss": "\u5362\u5df4\u52a0\u4e39\u52a0",
+        "verified": false
+      },
+      "lv": {
+        "gloss": "\u62c9\u8131\u7ef4\u4e9a\u8bed",
+        "verified": false
+      },
+      "mg": {
+        "gloss": "\u9a6c\u5c14\u52a0\u4ec0",
+        "verified": false
+      },
+      "mh": {
+        "gloss": "\u9a6c\u6b47\u5c14\u4eba",
+        "verified": false
+      },
+      "mi": {
+        "gloss": "\u6bdb\u5229\u4eba",
+        "verified": false
+      },
+      "mk": {
+        "gloss": "\u9a6c\u5176\u987f\u8bed",
+        "verified": false
+      },
+      "ml": {
+        "gloss": "\u9a6c\u62c9\u96c5\u62c9\u59c6\u8bed",
+        "verified": false
+      },
+      "mn": {
+        "gloss": "\u8499",
+        "verified": false
+      },
+      "mr": {
+        "gloss": "\u9a6c\u62c9\u5730\u8bed",
+        "verified": false
+      },
+      "ms": {
+        "gloss": "\u9a6c\u6765\u8bed",
+        "verified": false
+      },
+      "mt": {
+        "gloss": "\u9a6c\u8033\u4ed6\u8bed",
+        "verified": false
+      },
+      "my": {
+        "gloss": "\u7f05\u7538\u4eba",
+        "verified": false
+      },
+      "na": {
+        "gloss": "\u7459\u9c81",
+        "verified": false
+      },
+      "nb": {
+        "gloss": "\u632a\u5a01\u535a\u514b\u9a6c\u5c14\uff1b\u632a\u5a01\u8bedBokm\u00e5l",
+        "verified": false
+      },
+      "nd": {
+        "gloss": "\u5317\u90e8\u6069\u5fb7\u8d1d\u52d2\uff1b\u5317\u6069\u5fb7\u8d1d\u52d2",
+        "verified": false
+      },
+      "ne": {
+        "gloss": "\u5c3c\u6cca\u5c14\u6587",
+        "verified": false
+      },
+      "ng": {
+        "gloss": "\u6069\u4e1c\u52a0",
+        "verified": false
+      },
+      "nl": {
+        "gloss": "\u8377\u5170\u4eba\u4f5b\u5170\u8292\u8bed",
+        "verified": false
+      },
+      "nn": {
+        "gloss": "\u632a\u5a01\u5c3c\u8bfa\u65af\u514b\u632a\u5a01\u5c3c\u8bfa\u65af\u514b",
+        "verified": false
+      },
+      "no": {
+        "gloss": "\u632a\u5a01",
+        "verified": false
+      },
+      "nr": {
+        "gloss": "\u5357\u90e8\u6069\u5fb7\u8d1d\u52d2\uff1b\u5357\u6069\u5fb7\u8d1d\u52d2",
+        "verified": false
+      },
+      "nv": {
+        "gloss": "\u7eb3\u74e6\u970d\u4eba\u7eb3\u74e6\u970d\u4eba",
+        "verified": false
+      },
+      "ny": {
+        "gloss": "Chichewa; Chewa; Nyanja",
+        "verified": false
+      },
+      "oc": {
+        "gloss": "\u5965\u514b\u897f\u5510\uff081500\u540e\uff09\uff1b\u666e\u7f57\u65fa\u65af",
+        "verified": false
+      },
+      "oj": {
+        "gloss": "\u5965\u5409\u5e03\u74e6",
+        "verified": false
+      },
+      "om": {
+        "gloss": "\u5965\u7f57\u83ab",
+        "verified": false
+      },
+      "or": {
+        "gloss": "\u5965\u91cc\u4e9a",
+        "verified": false
+      },
+      "os": {
+        "gloss": "\u5965\u8d5b\u68af;\u542c\u89c9\u7684",
+        "verified": false
+      },
+      "pa": {
+        "gloss": "\u65c1\u906e\u666e\u8bed\u65c1\u906e\u666e\u8bed",
+        "verified": false
+      },
+      "pi": {
+        "gloss": "\u5e15\u91cc",
+        "verified": false
+      },
+      "pl": {
+        "gloss": "\u629b\u5149",
+        "verified": false
+      },
+      "ps": {
+        "gloss": "Pushto;\u666e\u4ec0\u56fe\u8bed",
+        "verified": false
+      },
+      "pt": {
+        "gloss": "\u8461\u8404\u7259\u8bed",
+        "verified": false
+      },
+      "qu": {
+        "gloss": "\u76d6\u4e18\u4e9a\u65cf",
+        "verified": false
+      },
+      "rm": {
+        "gloss": "\u7f57\u66fc\u4ec0",
+        "verified": false
+      },
+      "rn": {
+        "gloss": "\u6da6\u8fea",
+        "verified": false
+      },
+      "ro": {
+        "gloss": "\u7f57\u9a6c\u5c3c\u4e9a\u6587\uff1b\u6469\u5c14\u8fbe\u7ef4\u4e9a;\u6469\u5c14\u591a\u74e6",
+        "verified": false
+      },
+      "ru": {
+        "gloss": "\u4fc4\u8bed",
+        "verified": false
+      },
+      "rw": {
+        "gloss": "Kinyarwanda",
+        "verified": false
+      },
+      "sa": {
+        "gloss": "\u68b5\u6587",
+        "verified": false
+      },
+      "sc": {
+        "gloss": "\u6492\u4e01\u5c9b",
+        "verified": false
+      },
+      "sd": {
+        "gloss": "\u4fe1\u5730",
+        "verified": false
+      },
+      "se": {
+        "gloss": "\u5317\u8428\u7c73",
+        "verified": false
+      },
+      "sg": {
+        "gloss": "\u4e09\u4e61",
+        "verified": false
+      },
+      "si": {
+        "gloss": "\u50e7\u4f3d\u7f57\u8bed\u50e7\u4f3d\u7f57\u8bed",
+        "verified": false
+      },
+      "sk": {
+        "gloss": "\u65af\u6d1b\u4f10\u514b\u6587",
+        "verified": false
+      },
+      "sl": {
+        "gloss": "\u65af\u6d1b\u6587\u5c3c\u4e9a\u6587",
+        "verified": false
+      },
+      "sm": {
+        "gloss": "\u8428\u6469\u4e9a\u4eba",
+        "verified": false
+      },
+      "sn": {
+        "gloss": "\u5e84\u540d",
+        "verified": false
+      },
+      "so": {
+        "gloss": "\u7d22\u9a6c\u91cc",
+        "verified": false
+      },
+      "sq": {
+        "gloss": "\u963f\u5c14\u5df4\u5c3c\u4e9a\u8bed",
+        "verified": false
+      },
+      "sr": {
+        "gloss": "\u585e\u5c14\u7ef4\u4e9a",
+        "verified": false
+      },
+      "ss": {
+        "gloss": "\u65af\u74e6\u8482",
+        "verified": false
+      },
+      "st": {
+        "gloss": "\u5357\u7d22\u6258",
+        "verified": false
+      },
+      "su": {
+        "gloss": "dan\u4ed6",
+        "verified": false
+      },
+      "sv": {
+        "gloss": "\u745e\u5178",
+        "verified": false
+      },
+      "sw": {
+        "gloss": "\u65af\u74e6\u5e0c\u91cc\u8bed",
+        "verified": false
+      },
+      "ta": {
+        "gloss": "\u6cf0\u7c73\u5c14\u8bed",
+        "verified": false
+      },
+      "te": {
+        "gloss": "\u6cf0\u5362\u56fa\u8bed",
+        "verified": false
+      },
+      "tg": {
+        "gloss": "\u5854\u5409\u514b",
+        "verified": false
+      },
+      "th": {
+        "gloss": "\u6cf0\u56fd",
+        "verified": false
+      },
+      "ti": {
+        "gloss": "\u63d0\u683c\u91cc\u5c3c\u4e9a",
+        "verified": false
+      },
+      "tk": {
+        "gloss": "\u571f\u5e93\u66fc\u4eba",
+        "verified": false
+      },
+      "tl": {
+        "gloss": "\u4ed6\u52a0\u7984\u8bed",
+        "verified": false
+      },
+      "tn": {
+        "gloss": "\u8328\u74e6\u7eb3",
+        "verified": false
+      },
+      "to": {
+        "gloss": "\u6c64\u52a0\uff08\u6c64\u52a0\u7fa4\u5c9b\uff09",
+        "verified": false
+      },
+      "tr": {
+        "gloss": "\u571f\u8033\u5176",
+        "verified": false
+      },
+      "ts": {
+        "gloss": "\u7279\u677e\u52a0",
+        "verified": false
+      },
+      "tt": {
+        "gloss": "\u5854\u5854\u5c14\u65cf",
+        "verified": false
+      },
+      "tw": {
+        "gloss": "\u7279\u5a01",
+        "verified": false
+      },
+      "ty": {
+        "gloss": "\u5927\u6eaa\u5730",
+        "verified": false
+      },
+      "ug": {
+        "gloss": "\u7ef4\u543e\u5c14;\u7ef4\u543e\u5c14\u65cf",
+        "verified": false
+      },
+      "uk": {
+        "gloss": "\u4e4c\u514b\u5170",
+        "verified": false
+      },
+      "ur": {
+        "gloss": "\u4e4c\u5c14\u90fd\u8bed",
+        "verified": false
+      },
+      "uz": {
+        "gloss": "\u4e4c\u5179\u522b\u514b\u8bed",
+        "verified": false
+      },
+      "ve": {
+        "gloss": "\u6587\u8fbe",
+        "verified": false
+      },
+      "vi": {
+        "gloss": "\u8d8a\u5357\u6587",
+        "verified": false
+      },
+      "vo": {
+        "gloss": "\u6c83\u62c9\u666e\u514b",
+        "verified": false
+      },
+      "wa": {
+        "gloss": "\u74e6\u9686",
+        "verified": false
+      },
+      "wo": {
+        "gloss": "\u6c83\u6d1b\u592b",
+        "verified": false
+      },
+      "xh": {
+        "gloss": "\u79d1\u8428",
+        "verified": false
+      },
+      "yi": {
+        "gloss": "\u610f\u7b2c\u7eea\u8bed",
+        "verified": false
+      },
+      "yo": {
+        "gloss": "\u7ea6\u9c81\u5df4\u8bed",
+        "verified": false
+      },
+      "za": {
+        "gloss": "\u58eehuang",
+        "verified": false
+      },
+      "zh": {
+        "gloss": "\u4e2d\u6587",
+        "verified": false
+      },
+      "zu": {
+        "gloss": "\u7956\u9c81\u65cf",
         "verified": false
       }
     }
@@ -2079,7 +3819,7 @@
       "verified": false
     },
     "edit": {
-      "gloss": "\u7f16\u8f91\u4f4d\u7f6e",
+      "gloss": "\u4fee\u6539\u4f4d\u7f6e",
       "verified": false
     },
     "expand": {
@@ -2156,7 +3896,7 @@
         "verified": false
       },
       "upcoming-classes": {
-        "gloss": "\u5373\u5c06\u5f00\u8bbe\u7684\u8bfe\u7a0b",
+        "gloss": "\u5373\u5c06\u4e3e\u884c\u7684\u8bfe\u7a0b",
         "verified": false
       },
       "upcoming-events": {

@@ -395,12 +395,40 @@
   },
   "country": {
     "name": {
+      "AD": {
+        "gloss": "Andorra",
+        "verified": false
+      },
+      "AE": {
+        "gloss": "Emiratos \u00c1rabes Unidos",
+        "verified": false
+      },
       "AF": {
         "gloss": "Afganist\u00c3\u00a1n",
         "verified": false
       },
+      "AG": {
+        "gloss": "Antigua y Barbuda",
+        "verified": false
+      },
+      "AI": {
+        "gloss": "Anguila",
+        "verified": false
+      },
       "AL": {
         "gloss": "Albania",
+        "verified": false
+      },
+      "AM": {
+        "gloss": "Armenia",
+        "verified": false
+      },
+      "AO": {
+        "gloss": "Angola",
+        "verified": false
+      },
+      "AQ": {
+        "gloss": "Ant\u00e1rtida",
         "verified": false
       },
       "AR": {
@@ -411,12 +439,80 @@
         "gloss": "Samoa Americana",
         "verified": false
       },
+      "AT": {
+        "gloss": "Austria",
+        "verified": false
+      },
+      "AU": {
+        "gloss": "Australia",
+        "verified": false
+      },
+      "AW": {
+        "gloss": "Aruba",
+        "verified": false
+      },
+      "AX": {
+        "gloss": "Islas Aland",
+        "verified": false
+      },
+      "AZ": {
+        "gloss": "Azerbaiy\u00e1n",
+        "verified": false
+      },
+      "BA": {
+        "gloss": "Bosnia y Herzegovina",
+        "verified": false
+      },
       "BB": {
         "gloss": "Barbados",
         "verified": false
       },
+      "BD": {
+        "gloss": "Bangladesh",
+        "verified": false
+      },
+      "BE": {
+        "gloss": "B\u00e9lgica",
+        "verified": false
+      },
+      "BF": {
+        "gloss": "Burkina Faso",
+        "verified": false
+      },
+      "BG": {
+        "gloss": "Bulgaria",
+        "verified": false
+      },
+      "BH": {
+        "gloss": "Bahrein",
+        "verified": false
+      },
+      "BI": {
+        "gloss": "Burundi",
+        "verified": false
+      },
+      "BJ": {
+        "gloss": "Benin",
+        "verified": false
+      },
+      "BL": {
+        "gloss": "San Bartolom\u00e9",
+        "verified": false
+      },
+      "BM": {
+        "gloss": "islas Bermudas",
+        "verified": false
+      },
+      "BN": {
+        "gloss": "Brunei Darussalam",
+        "verified": false
+      },
       "BO": {
         "gloss": "Bolivia, Estado Plurinacional de",
+        "verified": false
+      },
+      "BQ": {
+        "gloss": "Bonaire, Sint Eustatius y Saba",
         "verified": false
       },
       "BR": {
@@ -427,6 +523,22 @@
         "gloss": "Bahamas",
         "verified": false
       },
+      "BT": {
+        "gloss": "But\u00e1n",
+        "verified": false
+      },
+      "BV": {
+        "gloss": "Isla Bouvet",
+        "verified": false
+      },
+      "BW": {
+        "gloss": "Botsuana",
+        "verified": false
+      },
+      "BY": {
+        "gloss": "Bielorrusia",
+        "verified": false
+      },
       "BZ": {
         "gloss": "Belice",
         "verified": false
@@ -435,8 +547,44 @@
         "gloss": "Canad\u00c3\u00a1",
         "verified": false
       },
+      "CC": {
+        "gloss": "Islas Cocos (Keeling)",
+        "verified": false
+      },
+      "CD": {
+        "gloss": "Congo, Rep\u00fablica Democr\u00e1tica del",
+        "verified": false
+      },
+      "CF": {
+        "gloss": "Rep\u00fablica Centroafricana",
+        "verified": false
+      },
+      "CG": {
+        "gloss": "Congo",
+        "verified": false
+      },
+      "CH": {
+        "gloss": "Suiza",
+        "verified": false
+      },
+      "CI": {
+        "gloss": "Costa de Marfil",
+        "verified": false
+      },
+      "CK": {
+        "gloss": "Islas Cook",
+        "verified": false
+      },
       "CL": {
         "gloss": "Chile",
+        "verified": false
+      },
+      "CM": {
+        "gloss": "Camer\u00fan",
+        "verified": false
+      },
+      "CN": {
+        "gloss": "China",
         "verified": false
       },
       "CO": {
@@ -449,6 +597,38 @@
       },
       "CU": {
         "gloss": "Cuba",
+        "verified": false
+      },
+      "CV": {
+        "gloss": "Cabo Verde",
+        "verified": false
+      },
+      "CW": {
+        "gloss": "Curazao",
+        "verified": false
+      },
+      "CX": {
+        "gloss": "Isla de Navidad",
+        "verified": false
+      },
+      "CY": {
+        "gloss": "Chipre",
+        "verified": false
+      },
+      "CZ": {
+        "gloss": "Republica checa",
+        "verified": false
+      },
+      "DE": {
+        "gloss": "Alemania",
+        "verified": false
+      },
+      "DJ": {
+        "gloss": "Djibouti",
+        "verified": false
+      },
+      "DK": {
+        "gloss": "Dinamarca",
         "verified": false
       },
       "DM": {
@@ -467,48 +647,440 @@
         "gloss": "Ecuador",
         "verified": false
       },
+      "EE": {
+        "gloss": "Estonia",
+        "verified": false
+      },
+      "EG": {
+        "gloss": "Egipto",
+        "verified": false
+      },
+      "EH": {
+        "gloss": "Sahara Occidental",
+        "verified": false
+      },
+      "ER": {
+        "gloss": "Eritrea",
+        "verified": false
+      },
+      "ES": {
+        "gloss": "Espa\u00f1a",
+        "verified": false
+      },
+      "ET": {
+        "gloss": "Etiop\u00eda",
+        "verified": false
+      },
+      "FI": {
+        "gloss": "Finlandia",
+        "verified": false
+      },
+      "FJ": {
+        "gloss": "Fiyi",
+        "verified": false
+      },
       "FK": {
         "gloss": "Islas Malvinas",
+        "verified": false
+      },
+      "FM": {
+        "gloss": "Micronesia, Estados Federados de",
+        "verified": false
+      },
+      "FO": {
+        "gloss": "Islas Faroe",
+        "verified": false
+      },
+      "FR": {
+        "gloss": "Francia",
+        "verified": false
+      },
+      "GA": {
+        "gloss": "Gab\u00f3n",
+        "verified": false
+      },
+      "GB": {
+        "gloss": "Reino Unido",
         "verified": false
       },
       "GD": {
         "gloss": "Grenada",
         "verified": false
       },
+      "GE": {
+        "gloss": "Georgia",
+        "verified": false
+      },
       "GF": {
         "gloss": "Guayana Francesa",
+        "verified": false
+      },
+      "GG": {
+        "gloss": "Guernsey",
+        "verified": false
+      },
+      "GH": {
+        "gloss": "Ghana",
+        "verified": false
+      },
+      "GI": {
+        "gloss": "Gibraltar",
+        "verified": false
+      },
+      "GL": {
+        "gloss": "Groenlandia",
+        "verified": false
+      },
+      "GM": {
+        "gloss": "Gambia",
+        "verified": false
+      },
+      "GN": {
+        "gloss": "Guinea",
+        "verified": false
+      },
+      "GP": {
+        "gloss": "Guadalupe",
+        "verified": false
+      },
+      "GQ": {
+        "gloss": "Guinea Ecuatorial",
+        "verified": false
+      },
+      "GR": {
+        "gloss": "Grecia",
+        "verified": false
+      },
+      "GS": {
+        "gloss": "Georgia del sur y las islas Sandwich del sur",
         "verified": false
       },
       "GT": {
         "gloss": "Guatemala",
         "verified": false
       },
+      "GU": {
+        "gloss": "Guam",
+        "verified": false
+      },
+      "GW": {
+        "gloss": "Guinea-Bissau",
+        "verified": false
+      },
       "GY": {
         "gloss": "Guayana",
+        "verified": false
+      },
+      "HK": {
+        "gloss": "Hong Kong",
+        "verified": false
+      },
+      "HM": {
+        "gloss": "Islas Heard y McDonald",
         "verified": false
       },
       "HN": {
         "gloss": "Honduras",
         "verified": false
       },
+      "HR": {
+        "gloss": "Croacia",
+        "verified": false
+      },
       "HT": {
         "gloss": "Hait\u00c3\u00ad",
+        "verified": false
+      },
+      "HU": {
+        "gloss": "Hungr\u00eda",
+        "verified": false
+      },
+      "ID": {
+        "gloss": "Indonesia",
+        "verified": false
+      },
+      "IE": {
+        "gloss": "Irlanda",
+        "verified": false
+      },
+      "IL": {
+        "gloss": "Israel",
+        "verified": false
+      },
+      "IM": {
+        "gloss": "Isla del hombre",
+        "verified": false
+      },
+      "IN": {
+        "gloss": "India",
+        "verified": false
+      },
+      "IO": {
+        "gloss": "Territorio Brit\u00e1nico del Oc\u00e9ano \u00cdndico",
+        "verified": false
+      },
+      "IQ": {
+        "gloss": "Irak",
+        "verified": false
+      },
+      "IR": {
+        "gloss": "Ir\u00e1n (Rep\u00fablica Isl\u00e1mica de",
+        "verified": false
+      },
+      "IS": {
+        "gloss": "Islandia",
+        "verified": false
+      },
+      "IT": {
+        "gloss": "Italia",
+        "verified": false
+      },
+      "JE": {
+        "gloss": "Jersey",
+        "verified": false
+      },
+      "JM": {
+        "gloss": "Jamaica",
+        "verified": false
+      },
+      "JO": {
+        "gloss": "Jord\u00e1n",
+        "verified": false
+      },
+      "JP": {
+        "gloss": "Jap\u00f3n",
+        "verified": false
+      },
+      "KE": {
+        "gloss": "Kenia",
+        "verified": false
+      },
+      "KG": {
+        "gloss": "Kirguist\u00e1n",
+        "verified": false
+      },
+      "KH": {
+        "gloss": "Camboya",
+        "verified": false
+      },
+      "KI": {
+        "gloss": "Kiribati",
+        "verified": false
+      },
+      "KM": {
+        "gloss": "Comoras",
+        "verified": false
+      },
+      "KN": {
+        "gloss": "Saint Kitts y Nevis",
+        "verified": false
+      },
+      "KP": {
+        "gloss": "Rep\u00fablica de Corea, Popular Democr\u00e1tica de",
+        "verified": false
+      },
+      "KR": {
+        "gloss": "Corea, rep\u00fablica de",
+        "verified": false
+      },
+      "KW": {
+        "gloss": "Kuwait",
+        "verified": false
+      },
+      "KY": {
+        "gloss": "Islas Caim\u00e1n",
+        "verified": false
+      },
+      "KZ": {
+        "gloss": "Kazajst\u00e1n",
+        "verified": false
+      },
+      "LA": {
+        "gloss": "Rep\u00fablica Democr\u00e1tica Popular Lao",
+        "verified": false
+      },
+      "LB": {
+        "gloss": "L\u00edbano",
         "verified": false
       },
       "LC": {
         "gloss": "Santa Luc\u00c3\u00ada",
         "verified": false
       },
+      "LI": {
+        "gloss": "Liechtenstein",
+        "verified": false
+      },
+      "LK": {
+        "gloss": "Sri Lanka",
+        "verified": false
+      },
+      "LR": {
+        "gloss": "Liberia",
+        "verified": false
+      },
+      "LS": {
+        "gloss": "Lesoto",
+        "verified": false
+      },
+      "LT": {
+        "gloss": "Lituania",
+        "verified": false
+      },
+      "LU": {
+        "gloss": "Luxemburgo",
+        "verified": false
+      },
+      "LV": {
+        "gloss": "Letonia",
+        "verified": false
+      },
+      "LY": {
+        "gloss": "Libia",
+        "verified": false
+      },
+      "MA": {
+        "gloss": "Marruecos",
+        "verified": false
+      },
+      "MC": {
+        "gloss": "M\u00f3naco",
+        "verified": false
+      },
+      "MD": {
+        "gloss": "Moldavia, Rep\u00fablica de",
+        "verified": false
+      },
+      "ME": {
+        "gloss": "Montenegro",
+        "verified": false
+      },
+      "MF": {
+        "gloss": "San Mart\u00edn (parte francesa)",
+        "verified": false
+      },
+      "MG": {
+        "gloss": "Madagascar",
+        "verified": false
+      },
+      "MH": {
+        "gloss": "Islas Marshall",
+        "verified": false
+      },
+      "MK": {
+        "gloss": "Macedonia, la ex Rep\u00fablica Yugoslava de",
+        "verified": false
+      },
+      "ML": {
+        "gloss": "Mali",
+        "verified": false
+      },
+      "MM": {
+        "gloss": "Myanmar",
+        "verified": false
+      },
+      "MN": {
+        "gloss": "Mongolia",
+        "verified": false
+      },
+      "MO": {
+        "gloss": "Macao",
+        "verified": false
+      },
+      "MP": {
+        "gloss": "Islas Marianas del Norte",
+        "verified": false
+      },
+      "MQ": {
+        "gloss": "Martinica",
+        "verified": false
+      },
+      "MR": {
+        "gloss": "Mauritania",
+        "verified": false
+      },
       "MS": {
         "gloss": "Montserrat",
+        "verified": false
+      },
+      "MT": {
+        "gloss": "Malta",
+        "verified": false
+      },
+      "MU": {
+        "gloss": "Mauricio",
+        "verified": false
+      },
+      "MV": {
+        "gloss": "Maldivas",
+        "verified": false
+      },
+      "MW": {
+        "gloss": "Malawi",
         "verified": false
       },
       "MX": {
         "gloss": "Mexico",
         "verified": false
       },
+      "MY": {
+        "gloss": "Malasia",
+        "verified": false
+      },
+      "MZ": {
+        "gloss": "Mozambique",
+        "verified": false
+      },
+      "NA": {
+        "gloss": "Namibia",
+        "verified": false
+      },
+      "NC": {
+        "gloss": "Nueva Caledonia",
+        "verified": false
+      },
+      "NE": {
+        "gloss": "N\u00edger",
+        "verified": false
+      },
+      "NF": {
+        "gloss": "Isla Norfolk",
+        "verified": false
+      },
+      "NG": {
+        "gloss": "Nigeria",
+        "verified": false
+      },
       "NI": {
         "gloss": "Nicaragua",
+        "verified": false
+      },
+      "NL": {
+        "gloss": "Pa\u00edses Bajos",
+        "verified": false
+      },
+      "NO": {
+        "gloss": "Noruega",
+        "verified": false
+      },
+      "NP": {
+        "gloss": "Nepal",
+        "verified": false
+      },
+      "NR": {
+        "gloss": "Nauru",
+        "verified": false
+      },
+      "NU": {
+        "gloss": "Niue",
+        "verified": false
+      },
+      "NZ": {
+        "gloss": "Nueva Zelanda",
+        "verified": false
+      },
+      "OM": {
+        "gloss": "Om\u00e1n",
         "verified": false
       },
       "PA": {
@@ -519,24 +1091,236 @@
         "gloss": "Per\u00c3\u00ba",
         "verified": false
       },
+      "PF": {
+        "gloss": "Polinesia franc\u00e9s",
+        "verified": false
+      },
+      "PG": {
+        "gloss": "Pap\u00faa Nueva Guinea",
+        "verified": false
+      },
+      "PH": {
+        "gloss": "Filipinas",
+        "verified": false
+      },
+      "PK": {
+        "gloss": "Pakist\u00e1n",
+        "verified": false
+      },
+      "PL": {
+        "gloss": "Polonia",
+        "verified": false
+      },
+      "PM": {
+        "gloss": "San Pedro y Miquel\u00f3n",
+        "verified": false
+      },
+      "PN": {
+        "gloss": "Pitcairn",
+        "verified": false
+      },
       "PR": {
         "gloss": "Puerto Rico",
+        "verified": false
+      },
+      "PS": {
+        "gloss": "Palestina, Estado de",
+        "verified": false
+      },
+      "PT": {
+        "gloss": "Portugal",
+        "verified": false
+      },
+      "PW": {
+        "gloss": "Palau",
         "verified": false
       },
       "PY": {
         "gloss": "Paraguay",
         "verified": false
       },
+      "QA": {
+        "gloss": "Katar",
+        "verified": false
+      },
+      "RE": {
+        "gloss": "Reuni\u00f3n",
+        "verified": false
+      },
+      "RO": {
+        "gloss": "Rumania",
+        "verified": false
+      },
+      "RS": {
+        "gloss": "Serbia",
+        "verified": false
+      },
+      "RU": {
+        "gloss": "Federaci\u00f3n Rusa",
+        "verified": false
+      },
+      "RW": {
+        "gloss": "Ruanda",
+        "verified": false
+      },
+      "SA": {
+        "gloss": "Arabia Saudita",
+        "verified": false
+      },
+      "SB": {
+        "gloss": "Islas Salom\u00f3n",
+        "verified": false
+      },
+      "SC": {
+        "gloss": "Seychelles",
+        "verified": false
+      },
+      "SD": {
+        "gloss": "Sud\u00e1n",
+        "verified": false
+      },
+      "SE": {
+        "gloss": "Suecia",
+        "verified": false
+      },
+      "SG": {
+        "gloss": "Singapur",
+        "verified": false
+      },
+      "SH": {
+        "gloss": "Santa Elena, Ascensi\u00f3n y Trist\u00e1n de Cunha",
+        "verified": false
+      },
+      "SI": {
+        "gloss": "Eslovenia",
+        "verified": false
+      },
+      "SJ": {
+        "gloss": "Svalbard y Jan Mayen",
+        "verified": false
+      },
+      "SK": {
+        "gloss": "Eslovaquia",
+        "verified": false
+      },
+      "SL": {
+        "gloss": "Sierra Leona",
+        "verified": false
+      },
+      "SM": {
+        "gloss": "San Marino",
+        "verified": false
+      },
+      "SN": {
+        "gloss": "Senegal",
+        "verified": false
+      },
+      "SO": {
+        "gloss": "Somalia",
+        "verified": false
+      },
       "SR": {
         "gloss": "Surinam",
+        "verified": false
+      },
+      "SS": {
+        "gloss": "Sud\u00e1n del Sur",
+        "verified": false
+      },
+      "ST": {
+        "gloss": "Santo Tom\u00e9 y Pr\u00edncipe",
         "verified": false
       },
       "SV": {
         "gloss": "El Salvador",
         "verified": false
       },
+      "SX": {
+        "gloss": "Sint Maarten (parte holandesa)",
+        "verified": false
+      },
+      "SY": {
+        "gloss": "Rep\u00fablica \u00c1rabe Siria",
+        "verified": false
+      },
+      "SZ": {
+        "gloss": "Swazilandia",
+        "verified": false
+      },
+      "TC": {
+        "gloss": "Islas Turcas y Caicos",
+        "verified": false
+      },
+      "TD": {
+        "gloss": "Chad",
+        "verified": false
+      },
+      "TF": {
+        "gloss": "Territorios Franceses del Sur",
+        "verified": false
+      },
+      "TG": {
+        "gloss": "Ir",
+        "verified": false
+      },
+      "TH": {
+        "gloss": "Tailandia",
+        "verified": false
+      },
+      "TJ": {
+        "gloss": "Tayikist\u00e1n",
+        "verified": false
+      },
+      "TK": {
+        "gloss": "Tokelau",
+        "verified": false
+      },
+      "TL": {
+        "gloss": "Timor-Leste",
+        "verified": false
+      },
+      "TM": {
+        "gloss": "Turkmenist\u00e1n",
+        "verified": false
+      },
+      "TN": {
+        "gloss": "T\u00fanez",
+        "verified": false
+      },
+      "TO": {
+        "gloss": "Tonga",
+        "verified": false
+      },
+      "TR": {
+        "gloss": "pavo",
+        "verified": false
+      },
       "TT": {
         "gloss": "Trinidad y Tobago",
+        "verified": false
+      },
+      "TV": {
+        "gloss": "Tuvalu",
+        "verified": false
+      },
+      "TW": {
+        "gloss": "Taiwan, provincia de China",
+        "verified": false
+      },
+      "TZ": {
+        "gloss": "Tanzania, Rep\u00fablica Unida de",
+        "verified": false
+      },
+      "UA": {
+        "gloss": "Ucrania",
+        "verified": false
+      },
+      "UG": {
+        "gloss": "Uganda",
+        "verified": false
+      },
+      "UM": {
+        "gloss": "Islas menores alejadas de los Estados Unidos",
         "verified": false
       },
       "US": {
@@ -547,12 +1331,64 @@
         "gloss": "Uruguay",
         "verified": false
       },
+      "UZ": {
+        "gloss": "Uzbekist\u00e1n",
+        "verified": false
+      },
+      "VA": {
+        "gloss": "Santa Sede (Estado de la Ciudad del Vaticano)",
+        "verified": false
+      },
+      "VC": {
+        "gloss": "San Vicente y las Granadinas",
+        "verified": false
+      },
       "VE": {
         "gloss": "Venezuela, Rep\u00c3\u00bablica Bolivariana de",
         "verified": false
       },
       "VG": {
         "gloss": "Islas V\u00c3\u00adrgenes Brit\u00c3\u00a1nicas",
+        "verified": false
+      },
+      "VI": {
+        "gloss": "Islas V\u00edrgenes, EE. UU.",
+        "verified": false
+      },
+      "VN": {
+        "gloss": "Vietnam",
+        "verified": false
+      },
+      "VU": {
+        "gloss": "Vanuatu",
+        "verified": false
+      },
+      "WF": {
+        "gloss": "Wallis y Futuna",
+        "verified": false
+      },
+      "WS": {
+        "gloss": "Samoa",
+        "verified": false
+      },
+      "YE": {
+        "gloss": "Yemen",
+        "verified": false
+      },
+      "YT": {
+        "gloss": "Mayotte",
+        "verified": false
+      },
+      "ZA": {
+        "gloss": "Sud\u00e1frica",
+        "verified": false
+      },
+      "ZM": {
+        "gloss": "Zambia",
+        "verified": false
+      },
+      "ZW": {
+        "gloss": "Zimbabue",
         "verified": false
       }
     }
@@ -1937,6 +2773,746 @@
       },
       "not-found": {
         "gloss": "Imagen no encontrada.",
+        "verified": false
+      }
+    }
+  },
+  "language": {
+    "name": {
+      "aa": {
+        "gloss": "Lejos",
+        "verified": false
+      },
+      "ab": {
+        "gloss": "Abjasio",
+        "verified": false
+      },
+      "ae": {
+        "gloss": "Avestan",
+        "verified": false
+      },
+      "af": {
+        "gloss": "africaans",
+        "verified": false
+      },
+      "ak": {
+        "gloss": "Akan",
+        "verified": false
+      },
+      "am": {
+        "gloss": "Am\u00e1rico",
+        "verified": false
+      },
+      "an": {
+        "gloss": "aragon\u00e9s",
+        "verified": false
+      },
+      "ar": {
+        "gloss": "Ar\u00e1bica",
+        "verified": false
+      },
+      "as": {
+        "gloss": "Asam\u00e9s",
+        "verified": false
+      },
+      "av": {
+        "gloss": "Avarico",
+        "verified": false
+      },
+      "ay": {
+        "gloss": "aimara",
+        "verified": false
+      },
+      "az": {
+        "gloss": "Azerbaiyano",
+        "verified": false
+      },
+      "ba": {
+        "gloss": "Bashkir",
+        "verified": false
+      },
+      "be": {
+        "gloss": "Bielorruso",
+        "verified": false
+      },
+      "bg": {
+        "gloss": "b\u00falgaro",
+        "verified": false
+      },
+      "bh": {
+        "gloss": "Idiomas bihari",
+        "verified": false
+      },
+      "bi": {
+        "gloss": "Bislama",
+        "verified": false
+      },
+      "bm": {
+        "gloss": "Bambara",
+        "verified": false
+      },
+      "bn": {
+        "gloss": "bengal\u00ed",
+        "verified": false
+      },
+      "bo": {
+        "gloss": "Tibetano",
+        "verified": false
+      },
+      "br": {
+        "gloss": "Bret\u00f3n",
+        "verified": false
+      },
+      "bs": {
+        "gloss": "bosnio",
+        "verified": false
+      },
+      "ca": {
+        "gloss": "Catal\u00e1n; valenciano",
+        "verified": false
+      },
+      "ce": {
+        "gloss": "Checheno",
+        "verified": false
+      },
+      "ch": {
+        "gloss": "Chamorro",
+        "verified": false
+      },
+      "co": {
+        "gloss": "corso",
+        "verified": false
+      },
+      "cr": {
+        "gloss": "Cree",
+        "verified": false
+      },
+      "cs": {
+        "gloss": "checo",
+        "verified": false
+      },
+      "cu": {
+        "gloss": "Eslavo eclesi\u00e1stico; Antiguo eslavo; Eslavo eclesi\u00e1stico; Viejo b\u00falgaro; Antiguo eslavo eclesi\u00e1stico",
+        "verified": false
+      },
+      "cv": {
+        "gloss": "Chuvash",
+        "verified": false
+      },
+      "cy": {
+        "gloss": "gal\u00e9s",
+        "verified": false
+      },
+      "da": {
+        "gloss": "dan\u00e9s",
+        "verified": false
+      },
+      "de": {
+        "gloss": "alem\u00e1n",
+        "verified": false
+      },
+      "dv": {
+        "gloss": "Divehi; Dhivehi; Maldivas",
+        "verified": false
+      },
+      "dz": {
+        "gloss": "Dzongkha",
+        "verified": false
+      },
+      "ee": {
+        "gloss": "Oveja",
+        "verified": false
+      },
+      "el": {
+        "gloss": "Griego, moderno (1453-)",
+        "verified": false
+      },
+      "en": {
+        "gloss": "Ingl\u00e9s",
+        "verified": false
+      },
+      "eo": {
+        "gloss": "esperanto",
+        "verified": false
+      },
+      "es": {
+        "gloss": "Espa\u00f1ol; Castellano",
+        "verified": false
+      },
+      "et": {
+        "gloss": "Estonio",
+        "verified": false
+      },
+      "eu": {
+        "gloss": "vasco",
+        "verified": false
+      },
+      "fa": {
+        "gloss": "persa",
+        "verified": false
+      },
+      "ff": {
+        "gloss": "Fulah",
+        "verified": false
+      },
+      "fi": {
+        "gloss": "finland\u00e9s",
+        "verified": false
+      },
+      "fj": {
+        "gloss": "Fiyiano",
+        "verified": false
+      },
+      "fo": {
+        "gloss": "Fero\u00e9s",
+        "verified": false
+      },
+      "fr": {
+        "gloss": "franc\u00e9s",
+        "verified": false
+      },
+      "fy": {
+        "gloss": "Fris\u00f3n occidental",
+        "verified": false
+      },
+      "ga": {
+        "gloss": "irlandesa",
+        "verified": false
+      },
+      "gd": {
+        "gloss": "Ga\u00e9lico; ga\u00e9lico escoc\u00e9s",
+        "verified": false
+      },
+      "gl": {
+        "gloss": "gallego",
+        "verified": false
+      },
+      "gn": {
+        "gloss": "Guaran\u00ed",
+        "verified": false
+      },
+      "gu": {
+        "gloss": "Gujarati",
+        "verified": false
+      },
+      "gv": {
+        "gloss": "lengua de la isla de Man",
+        "verified": false
+      },
+      "ha": {
+        "gloss": "Hausa",
+        "verified": false
+      },
+      "he": {
+        "gloss": "hebreo",
+        "verified": false
+      },
+      "hi": {
+        "gloss": "hindi",
+        "verified": false
+      },
+      "ho": {
+        "gloss": "Hiri Motu",
+        "verified": false
+      },
+      "hr": {
+        "gloss": "croata",
+        "verified": false
+      },
+      "ht": {
+        "gloss": "Haitiano; Criollo haitiano",
+        "verified": false
+      },
+      "hu": {
+        "gloss": "h\u00fangaro",
+        "verified": false
+      },
+      "hy": {
+        "gloss": "armenio",
+        "verified": false
+      },
+      "hz": {
+        "gloss": "Herero",
+        "verified": false
+      },
+      "ia": {
+        "gloss": "Interlingua (Asociaci\u00f3n Internacional de Idiomas Auxiliares)",
+        "verified": false
+      },
+      "id": {
+        "gloss": "indonesio",
+        "verified": false
+      },
+      "ie": {
+        "gloss": "Interlingue; Occidental",
+        "verified": false
+      },
+      "ig": {
+        "gloss": "Igbo",
+        "verified": false
+      },
+      "ii": {
+        "gloss": "Sichuan Yi; Nuosu",
+        "verified": false
+      },
+      "ik": {
+        "gloss": "Inupiaq",
+        "verified": false
+      },
+      "io": {
+        "gloss": "Hago",
+        "verified": false
+      },
+      "is": {
+        "gloss": "island\u00e9s",
+        "verified": false
+      },
+      "it": {
+        "gloss": "italiano",
+        "verified": false
+      },
+      "iu": {
+        "gloss": "Inuktitut",
+        "verified": false
+      },
+      "ja": {
+        "gloss": "japon\u00e9s",
+        "verified": false
+      },
+      "jv": {
+        "gloss": "javan\u00e9s",
+        "verified": false
+      },
+      "ka": {
+        "gloss": "georgiano",
+        "verified": false
+      },
+      "kg": {
+        "gloss": "Kongo",
+        "verified": false
+      },
+      "ki": {
+        "gloss": "Kikuyu; Gikuyu",
+        "verified": false
+      },
+      "kj": {
+        "gloss": "Kuanyama; Kwanyama",
+        "verified": false
+      },
+      "kk": {
+        "gloss": "Kazajo",
+        "verified": false
+      },
+      "kl": {
+        "gloss": "Kalaallisut; Groenland\u00e9s",
+        "verified": false
+      },
+      "km": {
+        "gloss": "Khmer central",
+        "verified": false
+      },
+      "kn": {
+        "gloss": "Kannada",
+        "verified": false
+      },
+      "ko": {
+        "gloss": "coreano",
+        "verified": false
+      },
+      "kr": {
+        "gloss": "Kanuri",
+        "verified": false
+      },
+      "ks": {
+        "gloss": "Cachemira",
+        "verified": false
+      },
+      "ku": {
+        "gloss": "kurdo",
+        "verified": false
+      },
+      "kv": {
+        "gloss": "Komi",
+        "verified": false
+      },
+      "kw": {
+        "gloss": "de Cornualles",
+        "verified": false
+      },
+      "ky": {
+        "gloss": "Kirguiz; Kirgu\u00eds",
+        "verified": false
+      },
+      "la": {
+        "gloss": "lat\u00edn",
+        "verified": false
+      },
+      "lb": {
+        "gloss": "Luxemburgu\u00e9s; Letzeburgesch",
+        "verified": false
+      },
+      "lg": {
+        "gloss": "Ganda",
+        "verified": false
+      },
+      "li": {
+        "gloss": "Limburgan; Limburger; Limburgu\u00e9s",
+        "verified": false
+      },
+      "ln": {
+        "gloss": "Lingala",
+        "verified": false
+      },
+      "lo": {
+        "gloss": "Laos",
+        "verified": false
+      },
+      "lt": {
+        "gloss": "lituano",
+        "verified": false
+      },
+      "lu": {
+        "gloss": "Luba-Katanga",
+        "verified": false
+      },
+      "lv": {
+        "gloss": "let\u00f3n",
+        "verified": false
+      },
+      "mg": {
+        "gloss": "madagascar\u00ed",
+        "verified": false
+      },
+      "mh": {
+        "gloss": "Marshal\u00e9s",
+        "verified": false
+      },
+      "mi": {
+        "gloss": "maor\u00ed",
+        "verified": false
+      },
+      "mk": {
+        "gloss": "maced\u00f3nio",
+        "verified": false
+      },
+      "ml": {
+        "gloss": "Malayalam",
+        "verified": false
+      },
+      "mn": {
+        "gloss": "mongol",
+        "verified": false
+      },
+      "mr": {
+        "gloss": "Marathi",
+        "verified": false
+      },
+      "ms": {
+        "gloss": "malayo",
+        "verified": false
+      },
+      "mt": {
+        "gloss": "malt\u00e9s",
+        "verified": false
+      },
+      "my": {
+        "gloss": "birmano",
+        "verified": false
+      },
+      "na": {
+        "gloss": "Nauru",
+        "verified": false
+      },
+      "nb": {
+        "gloss": "Bokm\u00e5l, noruego; Noruego bokm\u00e5l",
+        "verified": false
+      },
+      "nd": {
+        "gloss": "Ndebele, Norte; North Ndebele",
+        "verified": false
+      },
+      "ne": {
+        "gloss": "Nepal\u00ed",
+        "verified": false
+      },
+      "ng": {
+        "gloss": "Ndonga",
+        "verified": false
+      },
+      "nl": {
+        "gloss": "Holand\u00e9s; flamenco",
+        "verified": false
+      },
+      "nn": {
+        "gloss": "Noruego Nynorsk; Nynorsk, noruego",
+        "verified": false
+      },
+      "no": {
+        "gloss": "noruego",
+        "verified": false
+      },
+      "nr": {
+        "gloss": "Ndebele, Sur; Ndebele del sur",
+        "verified": false
+      },
+      "nv": {
+        "gloss": "Navajo; Navajo",
+        "verified": false
+      },
+      "ny": {
+        "gloss": "Chichewa; Chewa; Nyanja",
+        "verified": false
+      },
+      "oc": {
+        "gloss": "Occitano (despu\u00e9s de 1500); Provenzal",
+        "verified": false
+      },
+      "oj": {
+        "gloss": "Ojibwa",
+        "verified": false
+      },
+      "om": {
+        "gloss": "Oromo",
+        "verified": false
+      },
+      "or": {
+        "gloss": "Oriya",
+        "verified": false
+      },
+      "os": {
+        "gloss": "Osetio; Os\u00e9tico",
+        "verified": false
+      },
+      "pa": {
+        "gloss": "Panjabi; punjabi",
+        "verified": false
+      },
+      "pi": {
+        "gloss": "Pali",
+        "verified": false
+      },
+      "pl": {
+        "gloss": "polaco",
+        "verified": false
+      },
+      "ps": {
+        "gloss": "Pushto; Pashto",
+        "verified": false
+      },
+      "pt": {
+        "gloss": "portugu\u00e9s",
+        "verified": false
+      },
+      "qu": {
+        "gloss": "quechua",
+        "verified": false
+      },
+      "rm": {
+        "gloss": "Romanche",
+        "verified": false
+      },
+      "rn": {
+        "gloss": "Rundi",
+        "verified": false
+      },
+      "ro": {
+        "gloss": "Rumano; Moldavo; Moldavo",
+        "verified": false
+      },
+      "ru": {
+        "gloss": "ruso",
+        "verified": false
+      },
+      "rw": {
+        "gloss": "Kinyarwanda",
+        "verified": false
+      },
+      "sa": {
+        "gloss": "s\u00e1nscrito",
+        "verified": false
+      },
+      "sc": {
+        "gloss": "sardo",
+        "verified": false
+      },
+      "sd": {
+        "gloss": "Sindhi",
+        "verified": false
+      },
+      "se": {
+        "gloss": "Sami del Norte",
+        "verified": false
+      },
+      "sg": {
+        "gloss": "Sango",
+        "verified": false
+      },
+      "si": {
+        "gloss": "Sinhala; Cingaleses",
+        "verified": false
+      },
+      "sk": {
+        "gloss": "eslovaco",
+        "verified": false
+      },
+      "sl": {
+        "gloss": "Slovenian",
+        "verified": false
+      },
+      "sm": {
+        "gloss": "Samoan",
+        "verified": false
+      },
+      "sn": {
+        "gloss": "Shona",
+        "verified": false
+      },
+      "so": {
+        "gloss": "Somali",
+        "verified": false
+      },
+      "sq": {
+        "gloss": "Albanian",
+        "verified": false
+      },
+      "sr": {
+        "gloss": "serbio",
+        "verified": false
+      },
+      "ss": {
+        "gloss": "Swati",
+        "verified": false
+      },
+      "st": {
+        "gloss": "Sotho, Sur",
+        "verified": false
+      },
+      "su": {
+        "gloss": "Sundanese",
+        "verified": false
+      },
+      "sv": {
+        "gloss": "sueco",
+        "verified": false
+      },
+      "sw": {
+        "gloss": "Swahili",
+        "verified": false
+      },
+      "ta": {
+        "gloss": "Tamil",
+        "verified": false
+      },
+      "te": {
+        "gloss": "Telugu",
+        "verified": false
+      },
+      "tg": {
+        "gloss": "Tayiko",
+        "verified": false
+      },
+      "th": {
+        "gloss": "tailand\u00e9s",
+        "verified": false
+      },
+      "ti": {
+        "gloss": "Tigrinya",
+        "verified": false
+      },
+      "tk": {
+        "gloss": "Turkmen",
+        "verified": false
+      },
+      "tl": {
+        "gloss": "Tagalo",
+        "verified": false
+      },
+      "tn": {
+        "gloss": "Tswana",
+        "verified": false
+      },
+      "to": {
+        "gloss": "Tonga (Islas Tonga)",
+        "verified": false
+      },
+      "tr": {
+        "gloss": "Turkish",
+        "verified": false
+      },
+      "ts": {
+        "gloss": "Tsonga",
+        "verified": false
+      },
+      "tt": {
+        "gloss": "T\u00e1rtaro",
+        "verified": false
+      },
+      "tw": {
+        "gloss": "Twi",
+        "verified": false
+      },
+      "ty": {
+        "gloss": "Tahitian",
+        "verified": false
+      },
+      "ug": {
+        "gloss": "Uigur; Uigur",
+        "verified": false
+      },
+      "uk": {
+        "gloss": "ucranio",
+        "verified": false
+      },
+      "ur": {
+        "gloss": "Urdu",
+        "verified": false
+      },
+      "uz": {
+        "gloss": "Uzbek",
+        "verified": false
+      },
+      "ve": {
+        "gloss": "Venda",
+        "verified": false
+      },
+      "vi": {
+        "gloss": "Vietnamese",
+        "verified": false
+      },
+      "vo": {
+        "gloss": "Volap\u00fck",
+        "verified": false
+      },
+      "wa": {
+        "gloss": "Walloon",
+        "verified": false
+      },
+      "wo": {
+        "gloss": "Wolof",
+        "verified": false
+      },
+      "xh": {
+        "gloss": "Xhosa",
+        "verified": false
+      },
+      "yi": {
+        "gloss": "y\u00eddish",
+        "verified": false
+      },
+      "yo": {
+        "gloss": "Yoruba",
+        "verified": false
+      },
+      "za": {
+        "gloss": "Zhuang; Chuang",
+        "verified": false
+      },
+      "zh": {
+        "gloss": "chino",
+        "verified": false
+      },
+      "zu": {
+        "gloss": "Zulu",
         "verified": false
       }
     }
