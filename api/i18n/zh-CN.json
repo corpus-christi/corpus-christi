@@ -1,6 +1,10 @@
 {
   "$vuetify": {
     "dataFooter": {
+      "itemsPerPageAll": {
+        "gloss": "\u663e\u793a\u6240\u6709\u884c",
+        "verified": false
+      },
       "pageText": {
         "gloss": "{2}\u4e2d\u7684{0}-{1}",
         "verified": false

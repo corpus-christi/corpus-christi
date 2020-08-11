@@ -1,6 +1,10 @@
 {
   "$vuetify": {
     "dataFooter": {
+      "itemsPerPageAll": {
+        "gloss": "Show all rows",
+        "verified": false
+      },
       "pageText": {
         "gloss": "{0}-{1} of {2}",
         "verified": false
