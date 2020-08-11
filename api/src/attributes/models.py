@@ -29,8 +29,8 @@ class Attribute(Base):
         'attribute.string',
         'attribute.date']
 
-    enumerated_values = relationship(
-        'EnumeratedValue', backref='attribute', lazy=True)
+    enumerated_values = relationship('EnumeratedValue', back_populates='attribute', lazy=True)
+    person_attributes = relationship('PersonAttribute', back_populates='attribute', lazy=True)
 
     def __repr__(self):
         return f"<Attribute(id={self.id})>"
@@ -87,6 +87,8 @@ class EnumeratedValue(Base):
     attribute_id = Column(Integer, ForeignKey('people_attributes.id'))
     value_i18n = Column(StringTypes.I18N_KEY)
     active = Column(Boolean, nullable=False)
+    attribute = relationship('Attribute', back_populates='enumerated_values', lazy=True)
+    person_attributes = relationship('PersonAttribute', back_populates='enumerated_values', lazy=True)
 
     def __repr__(self):
         return f"<EnumeratedValue(id={self.id})>"
@@ -111,11 +113,9 @@ class PersonAttribute(Base):
     enum_value_id = Column(Integer, ForeignKey(
         'people_enumerated_value.id'), nullable=True)
     string_value = Column(StringTypes.LONG_STRING)
-    person = relationship('Person', backref='person_attributes', lazy=True)
-    attribute = relationship(
-        'Attribute', backref='person_attributes', lazy=True)
-    enumerated_values = relationship(
-        'EnumeratedValue', backref='person_attributes', lazy=True)
+    person = relationship('Person', back_populates='person_attributes', lazy=True)
+    attribute = relationship('Attribute', back_populates='person_attributes', lazy=True)
+    enumerated_values = relationship('EnumeratedValue', back_populates='person_attributes', lazy=True)
 
     def __repr__(self):
         return f"<Person-Attribute(person_id={self.person_id},attribute_id={self.attribute_id})>"
