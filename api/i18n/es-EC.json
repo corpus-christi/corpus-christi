@@ -40,6 +40,10 @@
       "itemsPerPageText": {
         "gloss": "Filas por p\u00e1gina:",
         "verified": false
+      },
+      "sortBy": {
+        "gloss": "Ordenar por",
+        "verified": false
       }
     },
     "noDataText": {
@@ -55,38 +59,6 @@
         "gloss": "pm",
         "verified": false
       }
-    }
-  },
-  "translation": {
-    "menu-title": {
-      "gloss": "Traducción",
-      "verified": false
-    },
-    "search-title": {
-      "gloss": "Encuentre una sucursal de traducción",
-      "verified": false
-    },
-    "dialog": {
-      "cancel": {
-        "gloss": "Cancelar",
-        "verified": false
-      },
-      "submit": {
-        "gloss": "Enviar",
-        "verified": false
-      }
-    },
-    "updated": {
-      "gloss": "Traducciones actualizadas",
-      "verified": false
-    },
-    "error": {
-      "gloss": "Por favor modifique sus traducciones nuevamente",
-      "verified": false
-    },
-    "toolbar-title": {
-      "gloss": "Locale actual:",
-      "verified": false
     }
   },
   "account": {
@@ -4110,6 +4082,38 @@
     },
     "transcript": {
       "gloss": "Transcripci\u00f3nes",
+      "verified": false
+    }
+  },
+  "translation": {
+    "dialog": {
+      "cancel": {
+        "gloss": "Cancelar",
+        "verified": false
+      },
+      "submit": {
+        "gloss": "Enviar",
+        "verified": false
+      }
+    },
+    "error": {
+      "gloss": "Por favor modifique sus traducciones nuevamente",
+      "verified": false
+    },
+    "menu-title": {
+      "gloss": "Traducci\u00f3n",
+      "verified": false
+    },
+    "search-title": {
+      "gloss": "Encuentre una sucursal de traducci\u00f3n",
+      "verified": false
+    },
+    "toolbar-title": {
+      "gloss": "Locale actual:",
+      "verified": false
+    },
+    "updated": {
+      "gloss": "Traducciones actualizadas",
       "verified": false
     }
   },
