@@ -15,8 +15,8 @@ class Team(Base):
     id = Column(Integer, primary_key=True)
     description = Column(StringTypes.LONG_STRING, nullable=False)
     active = Column(Boolean, default=True)
-    events = relationship("EventTeam", backref="team")
-    members = relationship("TeamMember", backref="team")
+    events = relationship("EventTeam", back_populates="team")
+    members = relationship("TeamMember", back_populates="team")
 
     def __repr__(self):
         return f"<Team(id={self.id})>"
@@ -48,8 +48,8 @@ class TeamMember(Base):
         ForeignKey('people_person.id'),
         primary_key=True)
     active = Column(Boolean, default=True)
-    team = relationship("Team", backref="members")
-    member = relationship("Person", backref="teams")
+    team = relationship("Team", back_populates="members")
+    member = relationship("Person", back_populates="teams")
 
 
 class TeamMemberSchema(Schema):

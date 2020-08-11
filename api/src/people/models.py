@@ -52,23 +52,23 @@ class Person(Base):
     address = relationship(Address, backref='people', lazy=True)
     # events_per refers to the events led by the person (linked via
     # events_eventperson table)
-    events_per = relationship("EventPerson", backref="person")
+    events_per = relationship("EventPerson", back_populates="person")
     # events_par refers to the participated events (linked via
     # events_eventparticipant table)
-    events_par = relationship("EventParticipant", backref="person")
-    teams = relationship("TeamMember", backref="member")
+    events_par = relationship("EventParticipant", back_populates="person")
+    teams = relationship("TeamMember", back_populates="member")
     diplomas_awarded = relationship(
         'DiplomaAwarded',
-        backref='students',
+        back_populates='students',
         lazy=True,
         uselist=True)
-    members = relationship('Member', backref='person', lazy=True)
+    members = relationship('Member', back_populates='person', lazy=True)
     member_histories = relationship(
         'MemberHistory',
-        backref='person',
+        back_populates='person',
         lazy=True)
-    managers = relationship('Manager', backref='person', lazy=True)
-    images = relationship('ImagePerson', backref='person')
+    managers = relationship('Manager', back_populates='person', lazy=True)
+    images = relationship('ImagePerson', back_populates='person')
 
     roles = relationship(
         "Role",
