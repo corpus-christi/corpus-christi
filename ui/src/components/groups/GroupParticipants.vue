@@ -1,8 +1,13 @@
 <template>
   <div>
     <v-toolbar>
-      <v-row no-gutters align="center" justify="space-between" fill-height>
-        <v-col cols="3" class="text-no-wrap">
+      <v-row
+        align="center"
+        justify="space-between"
+        class="flex-nowrap"
+        fill-height
+      >
+        <v-col class="text-no-wrap">
           <v-toolbar-title v-if="!select">{{ title }}</v-toolbar-title>
           <v-toolbar-title v-else>{{ selectionOption.title }}</v-toolbar-title>
         </v-col>
@@ -48,7 +53,7 @@
             />
           </v-col>
           <template v-if="isAuthorized">
-            <v-col md="1">
+            <v-col md="2">
               <v-select
                 hide-details
                 solo
@@ -58,12 +63,21 @@
                 data-cy="view-status-select"
               />
             </v-col>
-            <v-col md="2">
+            <v-col class="shrink">
               <v-menu open-on-hover offset-y bottom>
                 <template v-slot:activator="{ on }">
-                  <v-btn color="primary" v-on="on">
+                  <v-btn
+                    :fab="$vuetify.breakpoint.smAndDown"
+                    :small="$vuetify.breakpoint.smAndDown"
+                    color="primary"
+                    v-on="on"
+                  >
                     <v-icon>done_all</v-icon>
-                    {{ $t("groups.batch-actions.title") }}
+                    {{
+                      $vuetify.breakpoint.smAndDown
+                        ? ""
+                        : $t("groups.batch-actions.title")
+                    }}
                   </v-btn>
                 </template>
                 <v-list>
@@ -103,17 +117,20 @@
                 </v-list>
               </v-menu>
             </v-col>
-            <v-col class="shrink" justify="self-end">
+            <v-col class="shrink">
               <v-btn
                 color="primary"
-                raised
+                :fab="$vuetify.breakpoint.smAndDown"
+                :small="$vuetify.breakpoint.smAndDown"
                 :disabled="select"
                 v-on:click="showParticipantDialog()"
                 data-cy="add-participant"
               >
-                <v-icon dark left>add</v-icon>
+                <v-icon dark>add</v-icon>
                 {{
-                  isManagerMode
+                  $vuetify.breakpoint.smAndDown
+                    ? ""
+                    : isManagerMode
                     ? $t("groups.managers.add-manager")
                     : $t("groups.members.add-member")
                 }}
