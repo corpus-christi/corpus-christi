@@ -111,7 +111,7 @@ export default {
             jwt: resp.data.jwt,
           });
 
-          console.log("RESP", resp.data);
+          console.log("RESP", resp.status);
           // Normally want to use `push`, but unlikely that
           // the user wants to return to the login page.
           const route = this.$route.query.redirect || { name: "people" };

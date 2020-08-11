@@ -34,10 +34,15 @@ export default Vue.extend({
     ...mapState(["currentAccount"]),
 
     ableMenu(){
-      if(this.currentAccount.roles.includes("role.translator") && this.$route.name === "translation"){
-        return true
+      if (this.currentAccount == null){
+        return false
       }
-      else return false;
+      else{
+        if (this.currentAccount.roles.includes("role.translator") && this.$route.name === "translation"){
+          return true
+        }
+        else return false;
+      }
     },
 
     currentLocale() {
