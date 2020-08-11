@@ -22,9 +22,7 @@ class Country(Base):
         StringTypes.I18N_KEY,
         ForeignKey('i18n_key.id'),
         nullable=False)
-    key = relationship('I18NKey', back_populates='countries', lazy=True)
-    areas = relationship('Area', back_populates='country', lazy=True)
-    addresses = relationship('Address', back_populates='country', lazy=True)
+    key = relationship('I18NKey', backref='countries', lazy=True)
 
     def __repr__(self):
         return f"<Country(code={self.code},i18n_key='{self.name_i18n}')>"
@@ -88,8 +86,8 @@ class Area(Base):
     country_code = Column(String(2), ForeignKey(
         'places_country.code'), nullable=False)
 
-    addresses = relationship('Address', back_populates='areas', passive_deletes=True)
-    country = relationship('Country', back_populates='areas', lazy=True)
+    addresses = relationship('Address', backref='areas', passive_deletes=True)
+    country = relationship('Country', backref='areas', lazy=True)
     active = Column(Boolean, nullable=False, default=True)
 
     def __repr__(self):
@@ -117,7 +115,6 @@ class Location(Base):
     assets = relationship('Asset', back_populates="location")
     images = relationship('ImageLocation', back_populates="location")
     active = Column(Boolean, nullable=False, default=True)
-    meeting_location = relationship('ClassMeeting', back_populates='locations', lazy=True)
 
     def __repr__(self):
         attributes = [f"id='{self.id}'"]
@@ -153,12 +150,10 @@ class Address(Base):
     latitude = Column(Float)
     longitude = Column(Float)
     # area = relationship('Area', backref='addresses', lazy=True)
-    country = relationship('Country', back_populates='addresses', lazy=True)
+    country = relationship('Country', backref='addresses', lazy=True)
     meetings = relationship('Meeting', back_populates='address', lazy=True)
     locations = relationship('Location', back_populates='address', lazy=True)
     active = Column(Boolean, nullable=False, default=True)
-    areas = relationship('Area', back_populates='addresses', passive_deletes=True)
-    people = relationship(Person, back_populates='address', lazy=True)
 
     def __repr__(self):
         attributes = [f"id='{self.id}'"]
