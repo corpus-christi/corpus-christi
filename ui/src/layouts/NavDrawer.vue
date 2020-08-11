@@ -26,8 +26,8 @@ export default {
     // Computed property so it's reactive.
     ...mapState(["currentAccount"]),
     menuItems: function () {
-      if (this.currentAccount.roles.includes("role.translator") === true){
-      return [
+      if (this.currentAccount.roles.includes("role.translator") === true) {
+        return [
           {
             title: this.$t("public.title"),
             route: "public",
@@ -85,8 +85,7 @@ export default {
             icon: "library_books",
           },
         ];
-      }
-      else {
+      } else {
         return [
           {
             title: this.$t("public.title"),

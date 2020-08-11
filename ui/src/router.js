@@ -361,12 +361,15 @@ router.beforeEach((to, from, next) => {
     if (store.getters.isLoggedIn) {
       // But we're already logged in.
       // Block the no-admin users to have access to specific pages
-      if ((to.path === "/groups/group-types" || to.path === "/groups/manager-types") && store.state.currentAccount.roles.includes("role.group-admin") === false){
+      if (
+        (to.path === "/groups/group-types" ||
+          to.path === "/groups/manager-types") &&
+        store.state.currentAccount.roles.includes("role.group-admin") === false
+      ) {
         next({
-          name: "people"
-        })
-      }
-      else next();
+          name: "people",
+        });
+      } else next();
     } else {
       // So redirect to the login page; retain
       // the desired page for a later redirect.
