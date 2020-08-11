@@ -1,4 +1,4 @@
-# i18n Command Suites
+# I18n Command Suites
 
 This document contains some detailed explanation
 about the `flask i18n` commands.
@@ -7,7 +7,13 @@ The main purpose of the `flask i18n` commands is
 to allow developers to maintain translation
 entries effectively.
 
-## Convention and Definition
+## Conventions and Concepts
+
+This section describes word usage conventions
+throughout this document and some core concepts
+related to the `flask i18n` commands.
+
+### Conventions 
 
 For brevity purpose, when referring to command
 names in this document, a prefix `flask i18n` is
@@ -15,7 +21,86 @@ assumed. For example, `add` refers to the command
 `flask i18n add`.
 
 In this document, an _entry_ is used as a synonym
-for a record in the `I18NValue` table.
+for a record in the `I18NValue` table.  
+
+A _path_ is used as a synonym for an `I18NKey` id
+expressed by a dot-separated string.
+
+A _tree_ is a
+[dictionary](https://docs.python.org/3/tutorial/datastructures.html#dictionaries)
+(which is also named "associative array", "map",
+"object" in other programming languages) where its
+value can be either a string or another
+dictionary.
+
+### Concepts
+
+
+#### Equivalence of the dotted notation and a tree
+
+The `I18NKey` table in the database uses the
+_dotted notation_ to store the key data, while the
+`flask i18n` usually converts the dotted notation
+into a _tree_ structure to allow a more intuitive
+display of information.
+
+Below are two example paths written in the _dotted
+notation_:
+
+    actions.tooltips.activate
+    actions.tooltips.archive
+
+The same paths can also be expressed in their
+equivalent tree structure (in
+[JSON](https://www.json.org) format):
+
+    {
+        "actions": {
+            "tooltips": {
+                "activate": {},
+                "archive": {}
+            }
+        }
+    }
+
+#### Locale-Tail and Locale-Head structure
+
+To describe the specific tree structures used by
+the I18n commands in a concise manner, we define a
+_locale-tail-structured_ tree as a tree where each
+leaf node contains its corresponding gloss value
+in different locales, as opposed to a
+locale-head-structured tree, where entry gloss
+themselves are first categorized according to
+their locales.
+
+Below is a sample locale-tail-structured tree
+expressed in
+[YAML](https://yaml.org/spec/1.2/spec.html)
+format:
+
+    actions:
+      tooltips:
+        activate:
+          en-US: Activate
+          es-EC: Activar
+        archive:
+          en-US: Archive
+          es-EC: Archivar
+
+The same information can also be expressed with
+the locale-head structure:
+
+    en-US:
+      actions:
+        tooltips:
+          activate: Activate
+          archive: Archive
+    es-EC:
+      actions:
+        tooltips:
+          activate: Activar
+          archive: Archivar
 
 ## Available Commands
 
@@ -28,7 +113,7 @@ options, or example usage, see:
 `flask i18n <command> --help`
 
 Below is a list of available `<command>`s for
-reference. 
+reference.  
 
 - `add` Add an entry into the database.
 - `delete` Delete entries from the database.
@@ -82,16 +167,16 @@ output format. The `dump` command exports entries
 on a one-file-per-locale basis with the JSON
 format, while the `export` command arranges
 entries in a [locale-tail structured
-tree](#locale-tail-structure) with the YAML
+tree](#locale-tail-and-locale-head-structure) with the YAML
 format.
 
 Their parameters are also slightly different.
 While `dump` requires a `<locale>` to be provided,
 `export` always outputs all locales. On the other
-hand, `export` accepts an optional "PATH"
+hand, `export` accepts an optional _path_
 parameter to allow an arbitrary "zoom-in" on
-certain groups of entries, the `dump` command
-always outputs the whole structure.
+certain groups of entries, while the `dump` command
+always extracts the whole structure.
 
 A counterpart of `dump` is `load`, which does the
 opposite of `dump` by loading entries listed in a
@@ -243,10 +328,11 @@ UI, it can be tedious for developers to copy-paste
 translations from a browser window (likely with
 google translate open).
 
-The `translate` command aims at simplfiying this
-process by utilizing the [googletrans](https://pypi.org/project/googletrans/) library and
-automatically completing entries from one language
-to another.
+The `translate` command aims at simplifying this
+process by utilizing the
+[googletrans](https://pypi.org/project/googletrans/)
+library and automatically completing entries from
+one language to another.
 
 General usage information is described in
 `flask i18n translate --help`.
@@ -261,7 +347,7 @@ this from happening, the command has a
 `--delay-timer` option which accepts a (floating
 point) number of seconds to be delayed in between
 each request. The default is set to 0.3, and under
-most circumstances, this should be provide a good
+most circumstances, this should provide a good
 balance between speed and stability.
 
 `googletrans` uses a similar, but different set of
@@ -279,7 +365,8 @@ displayed if
 
 1. the specified language code is invalid, or
 1. the command cannot deduce the language code
-   from the given locale code.
+   from the given locale code while no language
+   code is specified explicitly.
     
 ## Common options
 
@@ -299,38 +386,4 @@ entries being modified as it processes the
 entries. To disable verbose output, use the
 `--silent` or `-s` flag.
 
-## Locale-Tail structure
 
-A locale-tail-structured tree is a tree where
-each end entry contains its corresponding gloss
-value in different locales, as opposed to a
-"locale-head" tree, where entry gloss themselves
-are first categorized according to their locales.
-
-Below is a sample locale-tail-structured tree
-expressed in the YAML format, which is similar to
-the structure used by the `export` command:
-
-    actions:
-      tooltips:
-        activate:
-          en-US: Activate
-          es-EC: Activar
-        archive:
-          en-US: Archive
-          es-EC: Archivar
-
-The same information can also be expressed in the
-"locale-head" structure, which is similar to that
-used by the `dump` command:
-
-    en-US:
-      actions:
-        tooltips:
-          activate: Activate
-          archive: Archive
-    es-EC:
-      actions:
-        tooltips:
-          activate: Activar
-          archive: Archivar

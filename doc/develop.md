@@ -29,8 +29,8 @@ refer to `doc/sdm.md`.
   - [Boilerplate](#boilerplate)
   - [User Interface Internationalization](#user-interface-internationalization)
     - [Code](#code)
-    - [Data](#data)
-    - [Tooling](#tooling)
+    - [Database Records](#database-records)
+    - [Revision Control](#revision-control)
   - [Authentication with JSON Web Tokens](#authentication-with-json-web-tokens)
   - [Visual Studio Code](#visual-studio-code)
 
@@ -621,7 +621,7 @@ localization data by the top-level modules
 (e.g., `groups`, `calendar`, etc.)
 
 
-### Database
+### Database Records
 
 During runtime, those dotted entries will be
 fetched from the database according to the
