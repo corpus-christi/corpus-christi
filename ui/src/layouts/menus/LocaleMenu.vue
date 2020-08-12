@@ -25,7 +25,7 @@
             v-on:click="changeLocale(localeModel)"
           >
             <v-list-item-title>
-              {{ localeModel.flagAndDescription }}
+              {{ getFlagAndDescription(localeModel) }}
             </v-list-item-title>
           </v-list-item>
         </v-list>
@@ -70,7 +70,7 @@ export default {
       const localeModel = this.currentLocaleModel;
 
       if (localeModel) {
-        return localeModel.flagAndDescription;
+        return this.getFlagAndDescription(localeModel);
       } else {
         return "NO LOCALE";
       }
@@ -94,6 +94,18 @@ export default {
       console.log("this.$i18n.fallbackLocale", this.$i18n.fallbackLocale);
     },
 
+    getFlagAndDescription(localeModel) {
+      let { languageCode, countryCode } = localeModel.locale;
+      let languageKey = `language.name.${languageCode}`;
+      let countryKey = `country.name.${countryCode}`;
+      if (this.$te(languageKey) && this.$te(countryKey)) {
+        let description = `${this.$t(languageKey)} ${this.$t(countryKey)}`;
+        return `${localeModel.locale.flag} ${description}`; // use internationalized descriptions
+      } else {
+        return localeModel.flagAndDescription; // plain description in database
+      }
+    },
+
     setCurrentLocale(locale) {
       this.$store.commit("setCurrentLocale", locale);
     },
@@ -114,7 +126,7 @@ export default {
           for (let item of response.data) {
             set(translations, item.key_id, item.gloss);
           }
-          this.$i18n.mergeLocaleMessage(locale.languageCode, translations);
+          this.$i18n.mergeLocaleMessage(locale.toString(), translations);
           console.log("GTFL XLATES", this.$i18n);
         })
         .catch((err) => console.error("FAILURE", err));
