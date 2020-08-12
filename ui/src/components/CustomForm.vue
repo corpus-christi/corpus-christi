@@ -15,6 +15,7 @@
             v-validate="'required'"
             v-bind:error-messages="errors.first('title')"
             data-cy="title"
+            required
           />
           <v-textarea
             rows="3"
@@ -104,6 +105,7 @@
                   v-validate="'required'"
                   v-bind:error-messages="errors.first('startDate')"
                   v-on="on"
+                  required
                 />
               </template>
               <v-date-picker
@@ -136,6 +138,7 @@
                   prepend-icon="schedule"
                   readonly
                   v-on="on"
+                  required
                 ></v-text-field>
               </template>
               <v-time-picker
@@ -190,6 +193,7 @@
                   readonly
                   :disabled="!startDateTimeSelected"
                   v-on="on"
+                  required
                 />
               </template>
               <v-date-picker
@@ -224,6 +228,7 @@
                   :disabled="!startDateTimeSelected"
                   readonly
                   v-on="on"
+                  required
                 />
               </template>
               <v-time-picker
@@ -565,7 +570,6 @@ export default {
     },
 
     updateEntitySearch(address) {
-      console.log(address);
       this.object.location = address;
       this.currentAddress = address.address_id;
     },

@@ -29,8 +29,8 @@ refer to `doc/sdm.md`.
   - [Boilerplate](#boilerplate)
   - [User Interface Internationalization](#user-interface-internationalization)
     - [Code](#code)
-    - [Data](#data)
-    - [Tooling](#tooling)
+    - [Database Records](#database-records)
+    - [Revision Control](#revision-control)
   - [Authentication with JSON Web Tokens](#authentication-with-json-web-tokens)
   - [Visual Studio Code](#visual-studio-code)
 
@@ -205,7 +205,7 @@ executables that create users and databases.
 
 Create a user:
 ```bash
-$ createuser arco --password
+$ createuser arco --pwprompt
 ```
 The command prompts you for a password.
 Enter your desired password.
@@ -295,6 +295,20 @@ In an attempt to avoid accidental commits
 of private data,
 `private.py` is listed in the CC `.gitignore` file.
 Still, use caution!
+
+When you need to set up the email services for the server, if we choose the Gmail services, 
+replace the `EMAIL_USERNAME` and `EMAIL_PASSWORD` with your personal email user-name and password.
+
+> Gmail Set Up
+>  1. Update the Gmail account setting. 
+       Allow less security setting [URL](https://myaccount.google.com/lesssecureapps?pli=1)
+       By the default, Google doesn't allow insecure apps have connections with its server.
+       For security reasons, if you account already has the 2FA (Two-Factor Authentication),
+       It is safer to [create a seperate Google account](https://accounts.google.com/signup/v2/webcreateaccount?flowName=GlifWebSignIn&flowEntry=SignUp)
+       or create [application-specific password](https://support.google.com/accounts/answer/185833)
+>   2. [Display Unlock Captcha](https://accounts.google.com/DisplayUnlockCaptcha)
+>   3. [Enable IMAP](https://mail.google.com/mail/#settings/fwdandpop)   
+
 
 **During development and testing**,
 you can override the database connection 
@@ -401,6 +415,22 @@ characters special to the shell,
 enclose it in quotes. For example:
 ```bash
 $ flask people new --first="Billy Bob" --last="Smith" bbob bbob-pass
+```
+
+If you need to test operations that require a
+specific `role`, you can attach a role to the
+created person with the `--roles` flag:
+
+```bash
+$ flask people new --roles role.group-admin username password
+```
+
+Use multiple `--roles` flags to attach more than one role:
+
+```bash
+$ flask people new --roles role.group-admin \
+                   --roles role.translator \
+                    username password
 ```
 
 ## Run CC
@@ -575,10 +605,6 @@ should ever be hardcoded in a particular language._
 Instead, we use the [Vue I18n](https://kazupon.github.io/vue-i18n/)
 module to provide localization.
 
-Find all of the files referenced here
-in the directory
-`corpus-christi/ui/i18n`
-
 ### Code
 
 The Vue I18n library exposes several functions
@@ -608,73 +634,78 @@ In CC, one way we use this is to separate
 localization data by the top-level modules
 (e.g., `groups`, `calendar`, etc.)
 
-### Data
 
-The data used by Vue I18n
-is formatted as nested JavaScript objects.
-The keys of the top-level object
-are language identifiers (e.g., `en` for English
-and `es` for Spanish).
-Within the top level,
-the data are hierarchical according to the
-"dotted" syntax of the identifiers.
-See the [Vue I18n documentation]
-for an example.
+### Database Records
 
-This format works great at run time
-but isn't ideal for developers.
-Instead,
-we'd like to have the data structured
-with the "dotted" values in the outermost objects,
-then store the translated strings
-at the leaf nodes.
-This approach puts all the localizations
-for a given "dotted" value
-at the same node of the hierarchy.
+During runtime, those dotted entries will be
+fetched from the database according to the
+currently selected locale. 
 
-Here's an example:
+For example, if the current locale is set
+to `en-US`, a dotted value `person.name.first`
+might correspond to a database entry in the
+`I18NValue` table that looks like the following: 
 
-    person:
-      name:
-        first:
-          en: First Name
-          es: Nombre de pila
-        last:
-          en: Last Name
-          es: Apellido
+    key_id: person.name.first
+    locale_code: en-US
+    gloss: First Name
 
-This snippet shows the localizations
-for `person.name.first` and `person.name.last`.
-Note that the `en` and `es` nodes appear together
-for each of the dotted values,
-making it simple to see how this particular
-string is being localized in all supported languages.
+In this case, the user would see "First Name"
+rendered in place of the original dotted string
+`person.name.first`.
 
-Data files for localization should be stored
-at `...i18n/yaml`
-in [YAML](https://yaml.org/) files.
-These files _should_ be in revision control.
+Likewise, if the user changes the current locale
+to `es-EC`, then the application will try to
+locate a database entry that looks like
 
-### Tooling
+    key_id: person.name.first
+    locale_code: es-EC
+    gloss: Nombre de pila
 
-The `i10n-to-i18n.py` program
-converts the developer-friendly
-format of the YAML files
-into a JSON file suitable for Vue I18n.
+and render "Nombre de pila" in place of the
+original dotted string.
 
-There is a `package.json` script
-that runs this program.
-After updating/adding your localization
-data in a YAML file:
+### Revision Control
+
+We would also like the translation entries to be
+kept in the revision control, so that corrections
+of translations can be tracked, and a developer
+would be able to quickly populate an empty
+database with existing translations.
+
+Currently, translation entries are kept in JSON
+format under the `corpus-christi/api/i18n`
+directory.
+
+To load translation entries of a particular locale
+(e.g. en-US), execute the following commands:
+
 ```bash
-$ cd corpus-christi/ui
-$ yarn localize
+$ cd corpus-christi/api
+$ source bin/set-up-bash.sh
+(venv) $ flask i18n load en-US
 ```
-This command reads all the YAML files
-and generates the One True L10N file
-`corpus-christi/i18n/cc-i18n.json`.
-The Vue I18N configuration
-reads this file at run-time.
+
+This will load all entries from a file
+`corpus-christi/api/i18n/en-US.json` into the
+database.
+
+There is a corresponding "dump" command that does
+the reverse, that is, exports entries from the
+database into a json file.
+
+```bash
+(venv) $ flask i18n dump en-US
+```
+
+For a detailed overview on the i18n commands, see
+[i18n Commands Suites](i18n-commands.md)
+
+For more usage info, see
+
+```bash
+(venv) $ flask i18n --help
+```
 
 ## Authentication with JSON Web Tokens
 

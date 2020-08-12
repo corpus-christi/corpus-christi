@@ -88,6 +88,7 @@
       </v-btn>
     </v-flex>
     <v-flex>
+      <!-- Expansion -->
       <v-expand-transition>
         <v-card v-if="entityTypePanel.show" color="teal lighten-3">
           <v-radio-group v-model="radioGroup">
@@ -109,45 +110,6 @@
               :value="notSelected"
             ></v-radio>
             <!--  Managers dialog     -->
-            <v-expand-transition>
-              <v-card v-if="managerPanel.show">
-                <v-card-text>
-                  <entity-search
-                    person
-                    v-model="selectedPerson"
-                    :existing-entities="searchPeople"
-                  />
-                </v-card-text>
-                <v-btn v-on:click="hideManagerPanel" color="light-blue" flat>{{
-                  $t("actions.cancel")
-                }}</v-btn>
-                <v-btn v-on:click="setReplyTo" color="primary" flat>{{
-                  $t("actions.confirm")
-                }}</v-btn>
-              </v-card>
-            </v-expand-transition>
-            <v-radio
-              :label="$t('groups.members.default')"
-              @click="setToDefault"
-              :key="4"
-              :value="myEmail"
-            ></v-radio>
-            <v-card-title
-              >{{ $t("groups.members.email-reply-to") }} :
-              {{ radioGroup || "null" }}</v-card-title
-            >
-            <v-card-title text color="green"></v-card-title>
-            <v-radio
-              :label="$t('groups.title')"
-              :key="1"
-              :value="homeChurchEmail"
-            ></v-radio>
-            <v-radio
-              :label="$t('groups.details.manager')"
-              @click="showManagerPanel"
-              :key="2"
-              :value="replyToOtherEmail"
-            ></v-radio>
             <v-expand-transition>
               <v-card v-if="managerPanel.show">
                 <v-card-text>
@@ -294,9 +256,6 @@ export default {
       this.entityTypePanel.show = false;
       this.replyToOtherEmail = this.radioGroup;
     },
-    saveEntityTypePanel() {
-      this.entityTypePanel.show = false;
-    },
     showManagerPanel() {
       this.managerPanel.show = true;
     },
@@ -314,7 +273,6 @@ export default {
     hideManagerPanel() {
       this.managerPanel.show = false;
     },
-    getAllManagers() {},
     AllGroupManagers() {
       this.$http
         .get(`/api/v1/people/persons`)
@@ -364,9 +322,9 @@ export default {
       },
       notSelected: " ",
       radioGroup: "default@email.com",
-      replyToOtherEmail: null,
+      replyToOtherEmail: "reply@thisPerson.com",
       homeChurchEmail: "homeChurh@email.com",
-      myEmail: "default@email.com",
+      myEmail: "qiang_wang@taylor.edu",
       managers: null,
       managerWithEmail: {},
       selectedPerson: null,

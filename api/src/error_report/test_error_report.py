@@ -3,13 +3,14 @@ import random
 import pytest
 from flask import url_for
 
+
 def test_create_error_report(auth_client):
     # GIVEN an empty database
     # WHEN we create a number of error reports
     count = random.randint(5, 15)
     resp = auth_client.post(
         url_for('error_report.create_error_report'),
-        json = {
+        json={
             'description': '404 eror found',
             'status_code': '404',
             'endpoint': 'groups/group/1',

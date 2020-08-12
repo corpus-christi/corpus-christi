@@ -13,7 +13,6 @@ from ..places.test_places import create_multiple_locations
 from ..teams.models import Team, TeamMember, TeamSchema, TeamMemberSchema
 
 
-
 class RandomLocaleFaker:
     """Generate multiple fakers for different locales."""
 
@@ -38,11 +37,16 @@ def event_object_factory(sqla):
     """Cook up a fake event."""
     event = {
         'title': rl_fake().word(),
-        'start': str(rl_fake().future_datetime(end_date="+3d")),
-        'end': str(rl_fake().date_time_between(start_date="+3d", end_date="+4d", tzinfo=None)),
+        'start': str(
+            rl_fake().future_datetime(
+                end_date="+3d")),
+        'end': str(
+            rl_fake().date_time_between(
+                start_date="+3d",
+                end_date="+4d",
+                tzinfo=None)),
         'active': flip(),
-        'aggregate': flip()
-    }
+        'aggregate': flip()}
 
     # These are all optional in the DB. Over time, we'll try all possibilities.
     if flip():
@@ -50,7 +54,8 @@ def event_object_factory(sqla):
     if flip():
         all_locations = sqla.query(Location).all()
         if len(all_locations) > 0:
-            event['location_id'] = all_locations[random.randint(0, len(all_locations) - 1)].id
+            event['location_id'] = all_locations[random.randint(
+                0, len(all_locations) - 1)].id
     if flip():
         event['attendance'] = random.randint(0, 1500)
     return event
@@ -60,11 +65,18 @@ def event_object_factory_approx_one_week_ago(sqla):
     """Cook up a fake event."""
     event = {
         'title': rl_fake().word(),
-        'start': str(rl_fake().date_time_between(start_date="-1w", end_date="-3d", tzinfo=None)),
-        'end': str(rl_fake().date_time_between(start_date="-3d", end_date="+0d", tzinfo=None)),
+        'start': str(
+            rl_fake().date_time_between(
+                start_date="-1w",
+                end_date="-3d",
+                tzinfo=None)),
+        'end': str(
+            rl_fake().date_time_between(
+                start_date="-3d",
+                end_date="+0d",
+                tzinfo=None)),
         'active': flip(),
-        'aggregate': flip()
-    }
+        'aggregate': flip()}
 
     # These are all optional in the DB. Over time, we'll try all possibilities.
     if flip():
@@ -72,7 +84,8 @@ def event_object_factory_approx_one_week_ago(sqla):
     if flip():
         all_locations = sqla.query(Location).all()
         if len(all_locations) > 0:
-            event['location_id'] = all_locations[random.randint(0, len(all_locations) - 1)].id
+            event['location_id'] = all_locations[random.randint(
+                0, len(all_locations) - 1)].id
     if flip():
         event['attendance'] = random.randint(0, 1500)
     return event
@@ -82,11 +95,18 @@ def event_object_factory_long_ago(sqla):
     """Cook up a fake event."""
     event = {
         'title': rl_fake().word(),
-        'start': str(rl_fake().date_time_between(start_date="-11y", end_date="-1m", tzinfo=None)),
-        'end': str(rl_fake().date_time_between(start_date="-1m", end_date="+0d", tzinfo=None)),
+        'start': str(
+            rl_fake().date_time_between(
+                start_date="-11y",
+                end_date="-1m",
+                tzinfo=None)),
+        'end': str(
+            rl_fake().date_time_between(
+                start_date="-1m",
+                end_date="+0d",
+                tzinfo=None)),
         'active': flip(),
-        'aggregate': flip()
-    }
+        'aggregate': flip()}
 
     # These are all optional in the DB. Over time, we'll try all possibilities.
     if flip():
@@ -94,7 +114,8 @@ def event_object_factory_long_ago(sqla):
     if flip():
         all_locations = sqla.query(Location).all()
         if len(all_locations) > 0:
-            event['location_id'] = all_locations[random.randint(0, len(all_locations) - 1)].id
+            event['location_id'] = all_locations[random.randint(
+                0, len(all_locations) - 1)].id
     if flip():
         event['attendance'] = random.randint(0, 1500)
     return event
@@ -244,10 +265,13 @@ def create_events_assets(sqla, fraction=0.75):
         create_multiple_assets(sqla, random.randint(3, 6))
         all_assets = sqla.query(Asset).all()
     all_events_assets = sqla.query(Event, Asset).all()
-    sample_events_assets = random.sample(all_events_assets, math.floor(len(all_events_assets) * fraction))
+    sample_events_assets = random.sample(
+        all_events_assets, math.floor(
+            len(all_events_assets) * fraction))
     for events_assets in sample_events_assets:
         valid_events_assets = event_asset_schema.load(
-            event_asset_object_factory(events_assets[0].id, events_assets[1].id))
+            event_asset_object_factory(
+                events_assets[0].id, events_assets[1].id))
         new_events_assets.append(EventAsset(**valid_events_assets))
     sqla.add_all(new_events_assets)
     sqla.commit()
@@ -266,9 +290,13 @@ def create_events_teams(sqla, fraction=0.75):
         create_multiple_teams(sqla, random.randint(3, 6))
         all_assets = sqla.query(Team).all()
     all_events_teams = sqla.query(Event, Team).all()
-    sample_events_teams = random.sample(all_events_teams, math.floor(len(all_events_teams) * fraction))
+    sample_events_teams = random.sample(
+        all_events_teams, math.floor(
+            len(all_events_teams) * fraction))
     for events_teams in sample_events_teams:
-        valid_events_teams = event_team_schema.load(event_team_object_factory(events_teams[0].id, events_teams[1].id))
+        valid_events_teams = event_team_schema.load(
+            event_team_object_factory(
+                events_teams[0].id, events_teams[1].id))
         new_events_teams.append(EventTeam(**valid_events_teams))
     sqla.add_all(new_events_teams)
     sqla.commit()
@@ -287,12 +315,16 @@ def create_events_participants(sqla, fraction=0.75):
         create_multiple_people(sqla, random.randint(3, 6))
         all_participants = sqla.query(Person).all()
     all_events_participants = sqla.query(Event, Person).all()
-    sample_events_participants = random.sample(all_events_participants,
-                                               math.floor(len(all_events_participants) * fraction))
+    sample_events_participants = random.sample(
+        all_events_participants, math.floor(
+            len(all_events_participants) * fraction))
     for events_participants in sample_events_participants:
         valid_events_participants = event_participant_schema.load(
-            event_participant_object_factory(events_participants[0].id, events_participants[1].id))
-        new_events_participants.append(EventParticipant(**valid_events_participants))
+            event_participant_object_factory(
+                events_participants[0].id, events_participants[1].id))
+        new_events_participants.append(
+            EventParticipant(
+                **valid_events_participants))
     sqla.add_all(new_events_participants)
     sqla.commit()
 
@@ -310,10 +342,13 @@ def create_events_persons(sqla, fraction=0.75):
         create_multiple_people(sqla, random.randint(3, 6))
         all_people = sqla.query(Person).all()
     all_events_persons = sqla.query(Event, Person).all()
-    sample_events_persons = random.sample(all_events_persons, math.floor(len(all_events_persons) * fraction))
+    sample_events_persons = random.sample(
+        all_events_persons, math.floor(
+            len(all_events_persons) * fraction))
     for events_persons in sample_events_persons:
         valid_events_persons = event_person_schema.load(
-            event_person_object_factory(events_persons[0].id, events_persons[1].id))
+            event_person_object_factory(
+                events_persons[0].id, events_persons[1].id))
         new_events_persons.append(EventPerson(**valid_events_persons))
     sqla.add_all(new_events_persons)
     sqla.commit()
@@ -324,10 +359,13 @@ def create_teams_members(sqla, fraction=0.75):
     team_member_schema = TeamMemberSchema()
     new_teams_members = []
     all_teams_members = sqla.query(Team, Person).all()
-    sample_teams_members = random.sample(all_teams_members, math.floor(len(all_teams_members) * fraction))
+    sample_teams_members = random.sample(
+        all_teams_members, math.floor(
+            len(all_teams_members) * fraction))
     for teams_members in sample_teams_members:
         valid_teams_members = team_member_schema.load(
-            team_member_object_factory(teams_members[0].id, teams_members[1].id))
+            team_member_object_factory(
+                teams_members[0].id, teams_members[1].id))
         new_teams_members.append(TeamMember(**valid_teams_members))
     sqla.add_all(new_teams_members)
     sqla.commit()
@@ -367,7 +405,14 @@ def create_team(sqla, description, active=True):
     return team.id
 
 
-def create_event(sqla, title, description, start, end, location_id=None, active=True):
+def create_event(
+        sqla,
+        title,
+        description,
+        start,
+        end,
+        location_id=None,
+        active=True):
     event_schema = EventSchema()
     event_payload = {
         'title': title,
@@ -406,7 +451,8 @@ def create_event_participant(sqla, event_id, person_id, confirmed=True):
         'person_id': person_id,
         'confirmed': confirmed
     }
-    valid_event_participant = event_participant_schema.load(event_participant_payload)
+    valid_event_participant = event_participant_schema.load(
+        event_participant_payload)
     event_participant = EventParticipant(**valid_event_participant)
     sqla.add(event_participant)
     sqla.commit()
@@ -431,11 +477,13 @@ def create_event_images(sqla):
     new_event_images = []
 
     for i in range(count):
-        valid_event_image = image_event_schema.load({'event_id': events[i].id, 'image_id': images[i].id})
+        valid_event_image = image_event_schema.load(
+            {'event_id': events[i].id, 'image_id': images[i].id})
         new_event_images.append(ImageEvent(**valid_event_image))
 
     sqla.add_all(new_event_images)
     sqla.commit()
+
 
 def create_events_groups(sqla, fraction=0.75):
     """Create data in the link table between events and groups"""
@@ -446,7 +494,8 @@ def create_events_groups(sqla, fraction=0.75):
         all_events_groups, math.floor(len(all_events_groups) * fraction))
     for events_groups in sample_events_groups:
         valid_events_groups = event_groups_schema.load(
-            event_groups_object_factory(events_groups[0].id, events_groups[1].id))
+            event_groups_object_factory(
+                events_groups[0].id, events_groups[1].id))
         new_events_groups.append(EventGroup(**valid_events_groups))
     sqla.add_all(new_events_groups)
     sqla.commit()

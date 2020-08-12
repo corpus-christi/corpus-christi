@@ -7,7 +7,6 @@ from ..db import Base
 from ..shared.models import StringTypes
 
 
-
 # ---- Event
 
 class Event(Base):
@@ -17,7 +16,8 @@ class Event(Base):
     description = Column(StringTypes.LONG_STRING, nullable=True)
     start = Column(DateTime, nullable=False)
     end = Column(DateTime, nullable=False)
-    location_id = Column(Integer, ForeignKey('places_location.id'), nullable=True)
+    location_id = Column(Integer, ForeignKey(
+        'places_location.id'), nullable=True)
     active = Column(Boolean, default=True)
     attendance = Column(Integer)
     aggregate = Column(Boolean, default=True)
@@ -46,12 +46,36 @@ class EventSchema(Schema):
     aggregate = fields.Boolean(allow_none=True)
 
     location = fields.Nested('LocationSchema', allow_none=True, dump_only=True)
-    participants = fields.Nested('EventParticipantSchema', many=True, exclude=['event'], dump_only=True)
-    persons = fields.Nested('EventPersonSchema', many=True, exclude=['event'], dump_only=True)
-    teams = fields.Nested('EventTeamSchema', many=True, exclude=['event'], dump_only=True)
-    assets = fields.Nested('EventAssetSchema', many=True, exclude=['event'], dump_only=True)
-    images = fields.Nested('ImageEventSchema', many=True, exclude=['event'], dump_only=True)
-    groups = fields.Nested('EventGroupSchema', many=True, exclude=['event'], dump_only=True)
+    participants = fields.Nested(
+        'EventParticipantSchema',
+        many=True,
+        exclude=['event'],
+        dump_only=True)
+    persons = fields.Nested(
+        'EventPersonSchema',
+        many=True,
+        exclude=['event'],
+        dump_only=True)
+    teams = fields.Nested(
+        'EventTeamSchema',
+        many=True,
+        exclude=['event'],
+        dump_only=True)
+    assets = fields.Nested(
+        'EventAssetSchema',
+        many=True,
+        exclude=['event'],
+        dump_only=True)
+    images = fields.Nested(
+        'ImageEventSchema',
+        many=True,
+        exclude=['event'],
+        dump_only=True)
+    groups = fields.Nested(
+        'EventGroupSchema',
+        many=True,
+        exclude=['event'],
+        dump_only=True)
 
 
 # ---- EventAsset
@@ -97,7 +121,10 @@ class EventTeamSchema(Schema):
 class EventPerson(Base):
     __tablename__ = 'events_eventperson'
     event_id = Column(Integer, ForeignKey('events_event.id'), primary_key=True)
-    person_id = Column(Integer, ForeignKey('people_person.id'), primary_key=True)
+    person_id = Column(
+        Integer,
+        ForeignKey('people_person.id'),
+        primary_key=True)
     description = Column(StringTypes.LONG_STRING, nullable=False)
 
     event = relationship("Event", back_populates="persons")
@@ -118,7 +145,10 @@ class EventPersonSchema(Schema):
 class EventParticipant(Base):
     __tablename__ = 'events_eventparticipant'
     event_id = Column(Integer, ForeignKey('events_event.id'), primary_key=True)
-    person_id = Column(Integer, ForeignKey('people_person.id'), primary_key=True)
+    person_id = Column(
+        Integer,
+        ForeignKey('people_person.id'),
+        primary_key=True)
     confirmed = Column(Boolean, default=True)
 
     event = relationship("Event", back_populates="participants")

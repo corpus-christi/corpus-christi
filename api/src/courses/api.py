@@ -387,7 +387,9 @@ def add_course_to_diploma(diploma_id, course_id):
     return jsonify(diploma_schema.dump(diploma))
 
 
-@courses.route('/diplomas/<int:diploma_id>/<int:course_id>', methods=['DELETE'])
+@courses.route(
+    '/diplomas/<int:diploma_id>/<int:course_id>',
+    methods=['DELETE'])
 @jwt_required
 def remove_course_from_diploma(diploma_id, course_id):
     """ Remove course from diploma """
@@ -403,7 +405,8 @@ def remove_course_from_diploma(diploma_id, course_id):
         else:
             return jsonify(f'Student was awarded diploma #{diploma.id}'), 403
     else:
-        return jsonify(f'Course #{course.id} not associated with diploma #{diploma.id}'), 404
+        return jsonify(
+            f'Course #{course.id} not associated with diploma #{diploma.id}'), 404
     db.session.commit()
     diploma.courseList = diploma.courses
     return 'Successfully deleted course association with diploma', 200
@@ -448,8 +451,9 @@ def create_diploma_awarded():
         return jsonify(err.messages), 422
 
     new_diploma_awarded = DiplomaAwarded(**valid_diploma_awarded)
-    check = db.session.query(DiplomaAwarded).filter_by(person_id=new_diploma_awarded.person_id,
-                                                       diploma_id=new_diploma_awarded.diploma_id).first()
+    check = db.session.query(DiplomaAwarded).filter_by(
+        person_id=new_diploma_awarded.person_id,
+        diploma_id=new_diploma_awarded.diploma_id).first()
     if check:
         return jsonify(
             msg=f'Diploma #{new_diploma_awarded.diploma_id} already awarded to person #{new_diploma_awarded.person_id}'), 409
@@ -465,11 +469,13 @@ def read_all_diplomas_awarded():
     result = db.session.query(DiplomaAwarded).all()
     if result == []:
         return 'No Diplomas Awarded found', 404
-    # Currently does not show student objects for each student.. may want to show
+    # Currently does not show student objects for each student.. may want to
+    # show
     return jsonify(diploma_awarded_schema.dump(result, many=True))
 
 
-# MIGHT NOT NEED? // Needs diploma_id and Person.person_id to get a desirable query result
+# MIGHT NOT NEED? // Needs diploma_id and Person.person_id to get a
+# desirable query result
 @courses.route('/diplomas_awarded/<int:person_id>/<int:diploma_id>')
 @jwt_required
 def read_one_diploma_awarded(person_id, diploma_id):
@@ -477,7 +483,8 @@ def read_one_diploma_awarded(person_id, diploma_id):
     result = db.session.query(DiplomaAwarded).filter_by(
         person_id=person_id, diploma_id=diploma_id).first()
     if result is None:
-        return jsonify(f'Diploma for person #{person_id} and diploma #{diploma_id} not found'), 404
+        return jsonify(
+            f'Diploma for person #{person_id} and diploma #{diploma_id} not found'), 404
     return jsonify(diploma_awarded_schema.dump(result))
 
 
@@ -488,7 +495,8 @@ def read_all_students_diploma_awarded(diploma_id):
     result = db.session.query(Diploma, DiplomaAwarded, Person).filter_by(
         id=diploma_id).join(DiplomaAwarded, Person).all()
     if result == []:
-        return jsonify(f'No results for diploma with id #{diploma_id} found'), 404
+        return jsonify(
+            f'No results for diploma with id #{diploma_id} found'), 404
     diploma = diploma_schema.dump(result[0].Diploma)
     diploma['students'] = []
     for i in result:
@@ -499,7 +507,9 @@ def read_all_students_diploma_awarded(diploma_id):
     return jsonify(diploma)
 
 
-@courses.route('/diplomas_awarded/<int:diploma_id>/<int:person_id>', methods=['PATCH'])
+@courses.route(
+    '/diplomas_awarded/<int:diploma_id>/<int:person_id>',
+    methods=['PATCH'])
 @jwt_required
 def update_diploma_awarded(diploma_id, person_id):
     """ Update `when` attribute of diploma """
@@ -521,14 +531,17 @@ def update_diploma_awarded(diploma_id, person_id):
     return jsonify(diploma_awarded_schema.dump(diploma_awarded))
 
 
-@courses.route('/diplomas_awarded/<int:diploma_id>/<int:person_id>', methods=['DELETE'])
+@courses.route(
+    '/diplomas_awarded/<int:diploma_id>/<int:person_id>',
+    methods=['DELETE'])
 @jwt_required
 def delete_diploma_awarded(diploma_id, person_id):
     """ Remove a student's diploma """
     diploma_awarded = db.session.query(DiplomaAwarded) \
         .filter_by(diploma_id=diploma_id, person_id=person_id).first()
     if diploma_awarded is None:
-        return jsonify(msg=f"That diploma #{diploma_id} for student #{person_id} does not exist"), 404
+        return jsonify(
+            msg=f"That diploma #{diploma_id} for student #{person_id} does not exist"), 404
     db.session.delete(diploma_awarded)
     db.session.commit()
     return jsonify(diploma_awarded_schema.dump(diploma_awarded))
@@ -550,7 +563,8 @@ def add_student_to_course_offering(person_id):
 
     course_offering = request.json['offeringId']
     studentInCO = db.session.query(Student).filter_by(
-        student_id=person_id, offering_id=course_offering).first()  # Should only be one result in db
+        student_id=person_id,
+        offering_id=course_offering).first()  # Should only be one result in db
     if studentInCO is None:
         new_student = Student(**valid_student)
 
@@ -614,9 +628,15 @@ def read_one_student(student_id):
             - list of courses taken and in progress
             - list of course offerings enrolled in for each course
     """
-    result = db.session.query(Student, Person, Course_Offering, Course) \
-        .filter_by(student_id=student_id).join(Person, Course_Offering, Course) \
-        .all()
+    result = db.session.query(
+        Student,
+        Person,
+        Course_Offering,
+        Course) .filter_by(
+        student_id=student_id).join(
+            Person,
+            Course_Offering,
+        Course) .all()
     if result == []:
         return 'Student not found', 404
     diplomas = []
@@ -645,7 +665,8 @@ def read_one_student(student_id):
         # Add all attributes to diplomaList
         r['diplomaList'].append(d)
 
-    # The following adds all the courses associated with each diploma into a list
+    # The following adds all the courses associated with each diploma into a
+    # list
     for diploma in r['diplomaList']:
         # Get all courses associated with diploma
         diploma_query = db.session.query(DiplomaCourse).filter_by(
@@ -732,11 +753,17 @@ def create_course_completion(courses_id):
 
     person_id = request.json['personId']
 
-    # Query into DB to ensure person is enrolled in a course offering with course_id
-    personEnrolled = db.session.query(Person, Student, Course_Offering, Course) \
-        .filter_by(id=person_id).join(Student, Course_Offering) \
-        .filter_by(course_id=courses_id).join(Course) \
-        .first()
+    # Query into DB to ensure person is enrolled in a course offering with
+    # course_id
+    personEnrolled = db.session.query(
+        Person,
+        Student,
+        Course_Offering,
+        Course) .filter_by(
+        id=person_id).join(
+            Student,
+            Course_Offering) .filter_by(
+                course_id=courses_id).join(Course) .first()
 
     # Query into DB to ensure person has not already completed the course
     personCompleted = db.session.query(CourseCompletion) \
@@ -744,19 +771,24 @@ def create_course_completion(courses_id):
         .first()
 
     if personEnrolled is None:
-        return jsonify(f'Person #{person_id} is not enrolled in any course offerings with course #{courses_id}.'), 404
+        return jsonify(
+            f'Person #{person_id} is not enrolled in any course offerings with course #{courses_id}.'), 404
     elif personCompleted:
-        return jsonify(f'Entry for Person #{person_id} with completed course #{courses_id} already exists.'), 403
+        return jsonify(
+            f'Entry for Person #{person_id} with completed course #{courses_id} already exists.'), 403
     else:
         # Create and add course completion entry for person
         new_course_completion = CourseCompletion(
             **{'person_id': person_id, 'course_id': courses_id})
         db.session.add(new_course_completion)
         db.session.commit()
-        return jsonify(f'Person #{person_id} has successfully completed course #{courses_id}.'), 201
+        return jsonify(
+            f'Person #{person_id} has successfully completed course #{courses_id}.'), 201
 
 
-@courses.route('/courses/<int:courses_id>/course_completion', methods=['DELETE'])
+@courses.route(
+    '/courses/<int:courses_id>/course_completion',
+    methods=['DELETE'])
 @jwt_required
 def delete_course_completion(courses_id):
     person_id = request.json['personId']
@@ -775,7 +807,9 @@ def delete_course_completion(courses_id):
 
 # ---- ClassMeeting
 
-@courses.route('/course_offerings/<int:course_offering_id>/class_meetings', methods=['POST'])
+@courses.route(
+    '/course_offerings/<int:course_offering_id>/class_meetings',
+    methods=['POST'])
 @jwt_required
 def create_class_meeting(course_offering_id):
     """ Create and add class meeting into course offering.
@@ -816,7 +850,8 @@ def read_all_class_meetings(course_offering_id):
     return jsonify(result)
 
 
-@courses.route('/course_offerings/<int:course_offering_id>/<int:class_meeting_id>')
+@courses.route(
+    '/course_offerings/<int:course_offering_id>/<int:class_meeting_id>')
 @jwt_required
 def read_one_class_meeting(course_offering_id, class_meeting_id):
     """ Read data from a specific class_meeting entry """
@@ -829,7 +864,9 @@ def read_one_class_meeting(course_offering_id, class_meeting_id):
     return jsonify(result)
 
 
-@courses.route('/course_offerings/<int:course_offering_id>/<int:class_meeting_id>', methods=['PATCH'])
+@courses.route(
+    '/course_offerings/<int:course_offering_id>/<int:class_meeting_id>',
+    methods=['PATCH'])
 @jwt_required
 def update_class_meeting(course_offering_id, class_meeting_id):
     """ Update attributes for a class meeting """
@@ -852,7 +889,9 @@ def update_class_meeting(course_offering_id, class_meeting_id):
     return jsonify(class_meeting_schema.dump(class_meeting))
 
 
-@courses.route('/course_offerings/<int:course_offering_id>/<int:class_meeting_id>', methods=['DELETE'])
+@courses.route(
+    '/course_offerings/<int:course_offering_id>/<int:class_meeting_id>',
+    methods=['DELETE'])
 @jwt_required
 def delete_class_meeting(course_offering_id, class_meeting_id):
     class_meeting = db.session.query(ClassMeeting).filter_by(
@@ -878,16 +917,19 @@ def delete_class_meeting(course_offering_id, class_meeting_id):
 def add_attendance_to_meetings(json_meeting):
     """ Helper function applies attendance with student name to a class meeting.
         **NOTE**: The meeting must be a ClassMeetingSchema dumped object. """
+    class_meeting_id = json_meeting['id']
+    class_meeting = db.session.query(
+        ClassMeeting).filter_by(id=class_meeting_id).first()
     json_meeting['attendance'] = []
-    attendance = db.session.query(ClassAttendance, Student, Person).filter_by(
-        class_id=json_meeting['id']).join(Student).join(Person).all()
-    for i in attendance:
+    for student in class_meeting.students:
         json_meeting['attendance'].append(
-            {"classId": i.class_id, "studentId": i.student_id, "name": i.Person.full_name()})
+            {"classId": class_meeting_id, "studentId": student.id, "name": student.person.full_name()})
     return json_meeting
 
 
-@courses.route('/course_offerings/<int:course_offering_id>/<int:class_meeting_id>/class_attendance', methods=['POST'])
+@courses.route(
+    '/course_offerings/<int:course_offering_id>/<int:class_meeting_id>/class_attendance',
+    methods=['POST'])
 @jwt_required
 def add_class_attendance(course_offering_id, class_meeting_id):
     """ Create new entries of attendance """
@@ -896,26 +938,27 @@ def add_class_attendance(course_offering_id, class_meeting_id):
         ClassMeeting).filter_by(id=class_meeting_id).first()
     if class_meeting is None:
         return 'Class Meeting not found', 404
-    new_attendance = []
-    for i in request.json['attendance']:
+    new_attendances = []
+    for student_id in request.json['attendance']:
         student = db.session.query(Student).filter_by(
-            id=i, offering_id=course_offering_id).first()
-        print(student)
+            id=student_id, offering_id=course_offering_id).first()
         if student is None:
             continue  # Student isn't enrolled in course offering or doesn't exist
         student.attendance.append(class_meeting)
-        new_attendance.append(student)
-    db.session.add_all(new_attendance)
+        new_attendances.append(student)
+    db.session.add_all(new_attendances)
     db.session.commit()
-    return jsonify(add_attendance_to_meetings(class_meeting_schema.dump(class_meeting)))
+    return jsonify(add_attendance_to_meetings(
+        class_meeting_schema.dump(class_meeting)))
 
 
 @courses.route('/course_offerings/<course_offering_id>/class_attendance')
 @jwt_required
 def read_one_class_attendance(course_offering_id):
     """ Get all attendance from a single course """
-    meetings = class_meeting_schema.dump(db.session.query(
-        ClassMeeting).filter_by(offering_id=course_offering_id).all(), many=True)
+    meetings = class_meeting_schema.dump(
+        db.session.query(ClassMeeting).filter_by(
+            offering_id=course_offering_id).all(), many=True)
     if meetings == []:
         return 'Class Meetings NOT found for this course offering', 404
     for i in meetings:
@@ -923,19 +966,24 @@ def read_one_class_attendance(course_offering_id):
     return jsonify(meetings)
 
 
-@courses.route('/course_offerings/<course_offering_id>/<class_meeting_id>/class_attendance')
+@courses.route(
+    '/course_offerings/<course_offering_id>/<class_meeting_id>/class_attendance')
 @jwt_required
 def read_one_meeting_attendance(course_offering_id, class_meeting_id):
     """ Get attendance for a single class """
-    meeting = class_meeting_schema.dump(db.session.query(ClassMeeting).filter_by(
-        offering_id=course_offering_id, id=class_meeting_id).first())
+    meeting = class_meeting_schema.dump(
+        db.session.query(ClassMeeting).filter_by(
+            offering_id=course_offering_id,
+            id=class_meeting_id).first())
     if meeting == {}:
         return 'Class Meeting NOT found', 404
     add_attendance_to_meetings(meeting)
     return jsonify(meeting)
 
 
-@courses.route('/course_offerings/<int:course_offering_id>/<int:class_meeting_id>/class_attendance', methods=['PATCH'])
+@courses.route(
+    '/course_offerings/<int:course_offering_id>/<int:class_meeting_id>/class_attendance',
+    methods=['PATCH'])
 @jwt_required
 def update_class_attendance(course_offering_id, class_meeting_id):
     # assume a list of valid student id's // EX: [1, 2, 4]
@@ -970,7 +1018,8 @@ def update_class_attendance(course_offering_id, class_meeting_id):
 
     db.session.add_all(updates)
     db.session.commit()  # Commit all new changes
-    return jsonify(add_attendance_to_meetings(class_meeting_schema.dump(class_meeting)))
+    return jsonify(add_attendance_to_meetings(
+        class_meeting_schema.dump(class_meeting)))
 
 
 # ---- Image
@@ -993,14 +1042,16 @@ def add_course_images(course_id, image_id):
 
     # If image is already attached to the course
     if course_image:
-        return jsonify(f"Image with id#{image_id} is already attached to course with id#{course_id}."), 422
+        return jsonify(
+            f"Image with id#{image_id} is already attached to course with id#{course_id}."), 422
     else:
         new_entry = ImageCourse(
             **{'course_id': course_id, 'image_id': image_id})
         db.session.add(new_entry)
         db.session.commit()
 
-    return jsonify(f"Image with id #{image_id} successfully added to Course with id #{course_id}."), 201
+    return jsonify(
+        f"Image with id #{image_id} successfully added to Course with id #{course_id}."), 201
 
 
 @courses.route('/<course_id>/images/<image_id>', methods=['PUT'])
@@ -1012,12 +1063,14 @@ def put_course_images(course_id, image_id):
 
     if old_image_id == 'false':
         post_resp = add_course_images(course_id, new_image_id)
-        return jsonify({'deleted': 'No image to delete', 'posted': str(post_resp[0].data, "utf-8")})
+        return jsonify({'deleted': 'No image to delete',
+                        'posted': str(post_resp[0].data, "utf-8")})
     else:
         del_resp = delete_course_image(course_id, old_image_id)
         post_resp = add_course_images(course_id, new_image_id)
 
-        return jsonify({'deleted': del_resp[0], 'posted': str(post_resp[0].data, "utf-8")})
+        return jsonify(
+            {'deleted': del_resp[0], 'posted': str(post_resp[0].data, "utf-8")})
 
 
 @courses.route('/<course_id>/images/<image_id>', methods=['DELETE'])
@@ -1027,7 +1080,8 @@ def delete_course_image(course_id, image_id):
         course_id=course_id, image_id=image_id).first()
 
     if not course_image:
-        return jsonify(f"Image with id #{image_id} is not assigned to Course with id #{course_id}."), 404
+        return jsonify(
+            f"Image with id #{image_id} is not assigned to Course with id #{course_id}."), 404
 
     db.session.delete(course_image)
     db.session.commit()

@@ -22,10 +22,11 @@ def send_email():
         return jsonify(err.messages), 422
 
     msg = Message(valid_email_request['subject'], recipients=valid_email_request['recipients'],
-                                                   sender=valid_email_request['managerEmail'],
-                                                   reply_to=valid_email_request['reply_to'])
-#                                                   cc=valid_email_request['cc'],
-#                                                   bcc=valid_email_request['bcc'])
+                                                  sender=valid_email_request['managerEmail'],
+                                                  reply_to=valid_email_request['reply_to'],
+                                                  cc=valid_email_request['cc'],
+                                                  bcc=valid_email_request['bcc'])
+
     msg.body = valid_email_request['body']
     mail.send(msg)
 
