@@ -35,19 +35,19 @@ def runner():
     yield app.test_cli_runner()
 
 
-def test_load_counties(runner):
-    runner.invoke(args=['app', 'load-countries'])
+def test_load_countries(runner):
+    result = runner.invoke(args=['app', 'load-countries'])
     assert db.session.query(Country).count() > 0
 
 
 def test_load_languages(runner):
-    runner.invoke(args=['app', 'load-languages'])
+    result = runner.invoke(args=['app', 'load-languages'])
     assert db.session.query(Language).count() > 0
 
 
 def test_load_roles(runner):
     assert db.session.query(Role).count() == 0
-    runner.invoke(args=['app', 'load-roles'])
+    result = runner.invoke(args=['app', 'load-roles'])
     assert db.session.query(Role).count() > 0
 
 

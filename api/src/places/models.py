@@ -6,7 +6,8 @@ from marshmallow.validate import Length, Range
 from sqlalchemy import Column, String, ForeignKey, Integer, Float, Boolean
 from sqlalchemy.orm import relationship
 from src.db import Base
-from src.i18n.models import i18n_create, I18NLocale, i18n_check
+from src.i18n.models import i18n_create, I18NLocale, i18n_check, I18NKey
+from src.shared.helpers import get_or_create
 
 from .. import db
 from ..shared.models import StringTypes
@@ -48,19 +49,13 @@ class Country(Base):
 
                 name_i18n = f'country.name.{country_code}'
 
-                for locale in country['locales']:
-                    locale_code = locale['locale_code']  # e.g., en-US
-                    if not db.session.query(I18NLocale).get(locale_code):
-                        # Don't have this locale code
-                        db.session.add(I18NLocale(code=locale_code, desc=''))
+                # Create the key if it does not exist
 
-                    if not i18n_check(name_i18n, locale_code):
-                        # Don't have this country
-                        i18n_create(
-                            name_i18n,
-                            locale_code,
-                            locale['name'],
-                            description=f"Country {country_name}")
+                get_or_create(db.session, I18NKey, filters={
+                    'id': name_i18n}, attributes={
+                    'desc': f"Country {country_name}"})
+
+                # Note: Create I18NValue s with flask i18n load <locale>
 
                 # Add to the Country table.
                 if not db.session.query(cls).filter_by(
