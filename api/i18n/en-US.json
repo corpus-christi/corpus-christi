@@ -1,5 +1,11 @@
 {
   "$vuetify": {
+    "calendar": {
+      "moreEvents": {
+        "gloss": "{0} more",
+        "verified": false
+      }
+    },
     "dataFooter": {
       "pageText": {
         "gloss": "{0}-{1} of {2}",

@@ -55,9 +55,9 @@
             ref="calendar"
             v-model="anchorDate"
             :events="events"
-            :event-overlap-mode="stack"
+            :event-overlap-mode="mode"
             :event-overlap-threshold="30"
-            :color="primary"
+            color="blue darken-3"
             :event-color="getEventColor"
             type="month"
           ></v-calendar>
@@ -72,6 +72,7 @@ export default {
   name: "GroupDetails",
   data() {
     return {
+      mode: 'stack',
       events: [],
       anchorDate: new Date(),
       group: null,
