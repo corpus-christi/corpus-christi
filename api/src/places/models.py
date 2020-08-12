@@ -83,7 +83,7 @@ class Area(Base):
     country_code = Column(String(2), ForeignKey(
         'places_country.code'), nullable=False)
 
-    addresses = relationship('Address', back_populates='areas', passive_deletes=True)
+    addresses = relationship('Address', back_populates='areas')
     country = relationship('Country', back_populates='areas', lazy=True)
     active = Column(Boolean, nullable=False, default=True)
 
@@ -152,7 +152,7 @@ class Address(Base):
     locations = relationship('Location', back_populates='address', lazy=True)
     active = Column(Boolean, nullable=False, default=True)
     people = relationship('Person', back_populates='address', lazy=True)
-    areas = relationship('Area', back_populates='addresses', passive_deletes=True)
+    areas = relationship('Area', back_populates='addresses')
 
     def __repr__(self):
         attributes = [f"id='{self.id}'"]
