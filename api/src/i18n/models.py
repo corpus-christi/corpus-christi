@@ -20,6 +20,7 @@ class I18NLocale(Base):
     __tablename__ = 'i18n_locale'
     code = Column(StringTypes.LOCALE_CODE, primary_key=True)
     desc = Column(StringTypes.MEDIUM_STRING, nullable=False, default="")
+    values = relationship('I18NValue', back_populates='locale', lazy=True)
 
     def __repr__(self):
         return f"<I18NLocale(id='{self.code}',desc='{self.desc}')>"
@@ -42,6 +43,9 @@ class I18NKey(Base):
     __tablename__ = 'i18n_key'
     id = Column(StringTypes.I18N_KEY, primary_key=True)
     desc = Column(StringTypes.LONG_STRING, nullable=False, default="")
+    values = relationship('I18NValue', back_populates='key', lazy=True)
+    languages = relationship('Language', back_populates='key', lazy=True)
+    countries = relationship('Country', back_populates='key', lazy=True)
 
     def __repr__(self):
         return f"<I18NKey(key='{self.id}')>"
@@ -70,8 +74,8 @@ class I18NValue(Base):
     gloss = Column(Text(), nullable=False)
     verified = Column(Boolean, default=False)
 
-    key = relationship('I18NKey', backref='values', lazy=True)
-    locale = relationship('I18NLocale', backref='values', lazy=True)
+    key = relationship('I18NKey', back_populates='values', lazy=True)
+    locale = relationship('I18NLocale', back_populates='values', lazy=True)
 
     def __repr__(self):
         return f"<I18NValue(gloss='{self.gloss}, key_id={self.key_id}')>"
@@ -91,7 +95,7 @@ class Language(Base):
     code = Column(String(2), primary_key=True)
     name_i18n = Column(StringTypes.I18N_KEY, ForeignKey(
         'i18n_key.id'), nullable=False)
-    key = relationship('I18NKey', backref='languages', lazy=True)
+    key = relationship('I18NKey', back_populates='languages', lazy=True)
 
     def __repr__(self):
         return f"<Language(code='{self.code}',name='{self.name_i18n}')>"
