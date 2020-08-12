@@ -17,7 +17,7 @@ class Group(Base):
     group_type_id = Column(Integer, ForeignKey(
         'groups_group_type.id'), nullable=False)
     active = Column(Boolean, nullable=False, default=True)
-    members = relationship('Member', backref='group', lazy=True)
+    members = relationship('Member', back_populates='group', lazy=True)
     group_type = relationship('GroupType', back_populates='groups', lazy=True)
     managers = relationship('Manager', back_populates='group', lazy=True)
     meetings = relationship('Meeting', back_populates='group', lazy=True)
@@ -119,6 +119,7 @@ class Member(Base):
     person_id = Column(Integer, ForeignKey('people_person.id'), primary_key=True, nullable=False)
     active = Column(Boolean, nullable=False, default=True)
     person = relationship('Person', back_populates='members', lazy=True)
+    group = relationship('Group', back_populates='members', lazy=True)
 
     def __repr__(self):
         return f"<Member(person_id={self.person_id}, group_id={self.group_id})>"
@@ -240,7 +241,7 @@ class Attendance(Base):
     person_id = Column(Integer, ForeignKey(
         'people_person.id'), primary_key=True)
     meeting = relationship('Meeting', back_populates='attendances', lazy=True)
-    person = relationship('Person', backref='attendances', lazy=True)
+    person = relationship('Person', back_populates='attendances', lazy=True)
 
     def __repr__(self):
         return f"<Attendance(meeting_id={self.meeting_id},person_id={self.person_id})>"
