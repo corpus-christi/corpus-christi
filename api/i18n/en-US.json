@@ -2388,6 +2388,32 @@
         "verified": false
       }
     },
+    "membership-history": {
+      "cancel": {
+        "gloss": "Cancel",
+        "verified": false
+      },
+      "change-note": {
+        "gloss": "Change Note",
+        "verified": false
+      },
+      "clear-note": {
+        "gloss": "Clear Note",
+        "verified": false
+      },
+      "note": {
+        "gloss": "Notes",
+        "verified": false
+      },
+      "submit": {
+        "gloss": "Submit",
+        "verified": false
+      },
+      "title": {
+        "gloss": "History",
+        "verified": false
+      }
+    },
     "messages": {
       "already-exists": {
         "gloss": "Group already exists",
