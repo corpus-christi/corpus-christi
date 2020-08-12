@@ -748,9 +748,11 @@ def create_i18n_cli(app):
                   default=True,
                   show_default=True,
                   help="Print output as modifying the database")
-    @click.argument('path', callback=sanitize_path)
+    @click.argument('path', callback=sanitize_path, default="")
     def delete_entries(recursive, locale, verbose, path):
         """ Delete I18NValue entries that match or start with PATH in the database.
+
+        When PATH is not specified, all keys are deleted
 
         Example usage: 
         
@@ -764,10 +766,14 @@ def create_i18n_cli(app):
         key_query = db.session.query(I18NKey)
 
         if recursive:
+            pattern = f"{path}.%" if path else "%"
             value_query = value_query.filter(
-                I18NValue.key_id.like(f"{path}.%"))
-            key_query = key_query.filter(I18NKey.id.like(f"{path}.%"))
+                I18NValue.key_id.like(pattern))
+            key_query = key_query.filter(I18NKey.id.like(pattern))
         else:
+            if not path:
+                raise click.BadParameter(
+                        f"Must specify a PATH when not using the --recursive flag")
             value_query = value_query.filter_by(key_id=path)
             key_query = key_query.filter_by(id=path)
 

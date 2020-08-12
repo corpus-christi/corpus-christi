@@ -587,6 +587,33 @@ def test_i18n_delete(runner):
     assert len(keys) == 1
     assert keys[0].id == 'alt.logo'
 
+    # WHEN we delete non-recursively without specifying a path
+    result = runner.invoke(
+        args=[
+            'i18n',
+            'delete',
+            '--locale',
+            'es-EC'
+            ])
+    # THEN we expect a warning message
+    assert b'specify a PATH' in result.stdout_bytes
+
+    # GIVEN one remaining entry with the 'es-EC' locale
+    assert db.session.query(I18NValue).filter_by(locale_code="es-EC").count() == 1
+    # WHEN we delete recursively without specifying a path
+    result = runner.invoke(
+        args=[
+            'i18n',
+            'delete',
+            '-r',
+            '--locale',
+            'es-EC'
+            ])
+    # THEN we expect no values of the corresponding locale to exist
+    assert db.session.query(I18NValue).filter_by(locale_code="es-EC").count() == 0
+    # THEN we expect the key not to be deleted, because we specified a locale
+    assert db.session.query(I18NKey).count() == 1
+
 
 def test_i18n_translate(runner):
     # GIVEN a database with some entries
