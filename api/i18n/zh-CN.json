@@ -40,6 +40,10 @@
       "itemsPerPageText": {
         "gloss": "\u6bcf\u9875\u884c\u6570\uff1a",
         "verified": false
+      },
+      "sortBy": {
+        "gloss": "\u6392\u5e8f\u65b9\u5f0f",
+        "verified": false
       }
     },
     "noDataText": {
@@ -4078,6 +4082,38 @@
     },
     "transcript": {
       "gloss": "\u6210\u7ee9\u5355",
+      "verified": false
+    }
+  },
+  "translation": {
+    "dialog": {
+      "cancel": {
+        "gloss": "\u53d6\u6d88",
+        "verified": false
+      },
+      "submit": {
+        "gloss": "\u63d0\u4ea4",
+        "verified": false
+      }
+    },
+    "error": {
+      "gloss": "\u8bf7\u518d\u6b21\u4fee\u6539\u60a8\u7684\u7ffb\u8bd1",
+      "verified": false
+    },
+    "menu-title": {
+      "gloss": "\u7ffb\u8bd1",
+      "verified": false
+    },
+    "search-title": {
+      "gloss": "\u67e5\u627e\u7ffb\u8bd1\u5904",
+      "verified": false
+    },
+    "toolbar-title": {
+      "gloss": "\u5f53\u524d\u8bed\u8a00\u73af\u5883\uff1a",
+      "verified": false
+    },
+    "updated": {
+      "gloss": "\u7ffb\u8bd1\u5df2\u66f4\u65b0",
       "verified": false
     }
   },
