@@ -10,11 +10,6 @@
                   <b>{{ $t("groups.name") }}: </b>{{ group.name }}</span
                 >
               </v-col>
-              <v-row xs3 sm3 align-end justify-end>
-                <v-btn text color="primary">
-                  <v-icon>edit</v-icon>&nbsp;{{ $t("actions.edit") }}
-                </v-btn>
-              </v-row>
             </v-container>
           </v-card>
         </v-col>
@@ -43,8 +38,6 @@
       </v-row>
     </v-row>
 
-
-
     <!-- Calander -->
     <v-row>
       <v-col>
@@ -62,13 +55,15 @@
             ref="calendar"
             v-model="anchorDate"
             :events="events"
-            color="primary"
+            :event-overlap-mode="stack"
+            :event-overlap-threshold="30"
+            :color="primary"
+            :event-color="getEventColor"
             type="month"
           ></v-calendar>
         </v-sheet>
       </v-col>
     </v-row>
-    <p>{{ eventsToDisplay() }}</p>
   </div>
 </template>
 
@@ -88,6 +83,15 @@ export default {
         editingGroupId: null,
         group: {},
       },
+      colors: [
+        "blue",
+        "indigo",
+        "deep-purple",
+        "cyan",
+        "green",
+        "orange",
+        "grey darken-1",
+      ],
     };
   },
   watch: {
@@ -102,7 +106,6 @@ export default {
     // this.$refs.calendar.scrollToTime("08:00");
     this.eventsToDisplay();
   },
-  computed: {},
   methods: {
     getGroup() {
       const id = this.$route.params.group;
@@ -141,21 +144,30 @@ export default {
     eventsToDisplay() {
       console.log("called");
       const groupId = this.$route.params.group;
-
-      this.$http.get(`/api/v1/groups/groups/${groupId}`).then((resp) => {
-        console.log(resp.data.meetings.length);
-        for (let i = 0; i < resp.data.meetings.length; i++) {
-          if (resp.data.meetings[i].active) {
-            this.events.push({
-              name: resp.data.meetings[i].description,
-              start: resp.data.meetings[i].startTime.slice(0,19),
-              end: resp.data.meetings[i].stopTime.slice(0,19),
-            });
+      this.$http
+        .get(`/api/v1/groups/groups/${groupId}`)
+        .then((resp) => {
+          for (let i = 0; i < resp.data.meetings.length; i++) {
+            if (resp.data.meetings[i].active) {
+              this.events.push({
+                name: resp.data.meetings[i].description,
+                start: resp.data.meetings[i].startTime.slice(0, 19),
+                end: resp.data.meetings[i].stopTime.slice(0, 19),
+                color: this.colors[
+                  Math.floor(Math.random() * this.colors.length)
+                ],
+              });
+            }
           }
-        }
-        console.log(this.events);
-      }).catch(() => {this.events = []});
+          console.log(this.events);
+        })
+        .catch(() => {
+          this.events = [];
+        });
       return 0;
+    },
+    getEventColor(event) {
+      return event.color;
     },
   },
 };
