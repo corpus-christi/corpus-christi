@@ -1,4 +1,4 @@
-from .helpers import list_to_tree
+from .helpers import list_to_tree, BadListKeyPath
 
 
 def test_list_to_tree():
@@ -19,7 +19,7 @@ def test_list_to_tree():
     try:
         list_to_tree(normal_list)
     # THEN we expect no error to occur
-    except RuntimeError:
+    except BadListKeyPath:
         assert False
 
     # WHEN we add a bogus entry in the list
@@ -28,5 +28,5 @@ def test_list_to_tree():
     try:
         list_to_tree(normal_list)
         assert False
-    except RuntimeError as e:
+    except BadListKeyPath as e:
         assert True

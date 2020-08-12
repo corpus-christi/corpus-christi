@@ -119,7 +119,7 @@ The graph should be rendered properly.
 
 # Features
 
-## Permission Control (not implemented)
+## Permission Control
 
 The leadership hierarchy is used to grant more granular permission to different
 users based on their belonging groups.
@@ -130,13 +130,14 @@ hierarchy system identifies the _Group Overseer_ s for _every group_.
 Permissions to perform various operations (e.g. remove a group member, take
 attendance, etc.) are granted based on the _Group Overseer_ role of the user.
 
-> Security note: For now, the group hierarchy algorithm is implemented using
-> Typescript/Javascript, and the backend would not have access to the leadership
-> hierarchy information. As a result, someone could theoretically make direct
-> request to the API to bypass this privilege checking.
+Some of the permission differences are highlighted in the table below:
 
-> It would be best to find a way to use the algorithm on both the front-end and
-> the back-end, without implementing it twice
+| Page\Role             | Group Admin                       | Group Overseer                        | Normal User          |
+| --------------------- | --------------------------------- | ------------------------------------- | -------------------- |
+| Category Treeview     | Send email to all existing groups | Send email to overseeing groups       | Unavailable          |
+| Manager Tab           | CRUD operations on managers       | View active managers                  | View active managers |
+| Member Tab            | CRUD operations on members        | CRUD operations on members            | View active members  |
+| Attendance Line Graph | View attendance of all groups     | View attendance of overseeing groups  | Unavailable          |
 
 ## Cycle Prevention
 
@@ -156,12 +157,15 @@ certain actions if the action introduces a cycle in the leadership hierarchy:
 ## Hierarchy Treeview
 
 The hierarchy treeview is implemented in `GroupTreeViewHierarchy` component.
+This component seeks to provide a visualization of the current leadership
+hierarchy.
 
 ### Admin User
 
-When the admin user navigates to that page, a tree will be rendered.  Since it
-is possible for two groups to be _detached_, several _root node_ s are
-identified before the tree is drawn.
+When the admin user navigates to the page, a tree containing information of all
+existing active `Group`s will be rendered. Since it is possible for two groups
+to be _detached_, several _root node_ s are identified before the tree is
+drawn.
 
 A _root node_ is a node that either:
 
@@ -169,12 +173,19 @@ A _root node_ is a node that either:
 1.  its every `immediate super-node` is also its `immediate sub-node`.
 
 After the _root node_ s are identified, the component starts building a tree
-from each of those _root node_ s, based on their sub-nodes. Repeated nodes are
-shown but not expanded.
+from each of those _root node_ s, based on their sub-nodes. Repeated nodes due
+to [double identity](#manager-member-double-identity) are ommitted. 
 
-### Group Leader
+### Group Overseer
 
-Not implemented
+If a user without the _Group Admin_ role navigates to the treeview page, a tree
+will be drawn from the current user by searching its _all sub-nodes_.
+
+### Normal User
+
+For a normal user who is not an overseer of any group, a note will be displayed
+upon navigating to the treeview page, indicating that the user is not an
+overseer of any existing groups.
 
 ## Cycle Handling
 
@@ -250,5 +261,76 @@ appended under the "Admin" node.
 #### Logical Equivalence
 ![double-identity-case-5-a](https://g.gravizo.com/svg?digraph%20G%20%7B%0A%20%20%20%20G2%20-%3E%20P1%20-%3E%20G1%20-%3E%20P2%20-%3E%20G2%0A%20%20%20%20P1%20%5Blabel%3DPerson1%2C%20shape%3Drectangle%2C%20color%3Dred%5D%3B%0A%20%20%20%20P2%20%5Blabel%3DPerson2%2C%20shape%3Drectangle%2C%20color%3Dblue%5D%3B%0A%20%20%20%20G1%20%5Blabel%3DGroup1%5D%3B%0A%20%20%20%20G2%20%5Blabel%3DGroup2%2C%20color%3Dgreen%5D%3B%0A%20%20%20%20%7B%20rank%3Dsame%20P2%20P1%20%7D%0A%7D%0A)
 
-Note there is no _root node_ in this diagram, so there is no way for the treeview
-component to pick up any of the nodes and start building the tree.
+Note there is no _root node_ in this diagram, so there is no way for the
+treeview component to pick up any of the nodes and start building the tree.
+
+# Simulation and Test Data Generation
+
+One may wish to have some test data generated on the server side to experiment
+with the UI behavior.
+
+Some pre-defined test data can be generated with the `flask groups` command.
+
+Below are all available test data sets with an illustration of their
+corresponding hierarchy treeview.
+
+## Test Cases
+
+### Test Case 1
+
+#### Command
+
+```bash
+flask groups hierarchy-test-1
+```
+
+#### Hierarchy structure illustration
+
+![hierarchy-test-case-1](https://g.gravizo.com/svg?digraph%20G%20%7B%0A%20%20%20%20G1%20%5Blabel%3D%22Group%201%22%5D%0A%20%20%20%20G2%20%5Blabel%3D%22Group%202%22%5D%0A%20%20%20%20G3%20%5Blabel%3D%22Group%203%22%5D%0A%20%20%20%20G4%20%5Blabel%3D%22Group%204%22%5D%0A%20%20%20%20G9%20%5Blabel%3D%22Group%209%22%5D%0A%20%20%20%20node%20%5Bshape%3Drectangle%5D%0A%20%20%20%20P3%20%5Blabel%3D%22Person%203%22%5D%0A%20%20%20%20P4%20%5Blabel%3D%22Person%204%22%5D%0A%20%20%20%20P5%20%5Blabel%3D%22Person%205%22%5D%0A%20%20%20%20P6%20%5Blabel%3D%22Person%206%22%5D%0A%20%20%20%20P8%20%5Blabel%3D%22Person%208%22%5D%0A%20%20%20%20P9%20%5Blabel%3D%22Person%209%22%5D%0A%20%20%20%20Admin%20%5Bshape%3Ddiamond%2C%20label%3DAdmin%5D%3B%0A%20%20%20%20node%20%5Bcolor%3Dred%2C%20label%3D%22Person%201%22%5D%0A%20%20%20%20P1a%20P1b%0A%20%20%20%20node%20%5Bcolor%3Dblue%2C%20label%3D%22Person%202%22%5D%0A%20%20%20%20P2a%20P2b%20P2c%0A%20%20%20%20Admin%20-%3E%20P1a%20%0A%20%20%20%20P1a%20-%3E%20G1%0A%20%20%20%20G1%20-%3E%20P1b%0A%20%20%20%20G1%20-%3E%20P3%0A%20%20%20%20G1%20-%3E%20P4%0A%20%20%20%20P1a%20-%3E%20G2%0A%20%20%20%20G2%20-%3E%20P2a%0A%20%20%20%20G2%20-%3E%20P5%0A%20%20%20%20P1a%20-%3E%20G3%0A%20%20%20%20G3%20-%3E%20P6%20-%3E%20G4%20-%3E%20P2b%0A%20%20%20%20G3%20-%3E%20P2c%0A%20%20%20%20Admin%20-%3E%20P8%20-%3E%20G9%20-%3E%20P9%3B%0A%7D%0A)
+
+> The above diagram is slightly modified from what would be rendered at the
+> treeview page for simplicity purpose. 
+
+> For example, groups without any members or managers are ommitted from the
+> diagram, although in the actual treeview, they will be considered _root node_
+> s and thus being rendered. 
+
+> Another example is that: "Group 1" would technically be considered a _root
+> node_. So in the actual treeview, "Group 1" would also be attached directly
+> under the "Admin" node, with all its _sub-nodes_ attached under itself. And
+> the current "Person 1" under "Group 1" would be ommitted in the actual
+> treeview.
+
+> These are modified so that the hierarchy information is conveyed more
+> concisely in a single diagram.
+
+### Test Case 2
+
+#### Command
+
+```bash
+flask groups hierarchy-test-2
+```
+
+#### Hierarchy structure illustration
+
+![hierarchy-test-case-2](https://g.gravizo.com/svg?digraph%20G%20%7B%0A%20%20%20%20G1%20%5Blabel%3D%22Group%201%22%5D%0A%20%20%20%20G2%20%5Bcolor%3Dgreen%2C%20label%3D%22Group%202%22%5D%0A%20%20%20%20node%20%5Bshape%3Drectangle%5D%0A%20%20%20%20P1%20%5Bcolor%3Dred%2C%20label%3D%22Person%201%22%5D%0A%20%20%20%20P2%20%5Bcolor%3Dblue%2C%20label%3D%22Person%202%22%5D%0A%20%20%20%20P3%20%5Bcolor%3Dyellow%2C%20label%3D%22Person%203%22%5D%0A%20%20%20%20Admin%20%5Bshape%3Ddiamond%2C%20label%3DAdmin%5D%3B%0A%20%20%20%20Admin%20-%3E%20P2%20-%3E%20G1%20-%3E%20P1%20-%3E%20G2%20-%3E%20P3%20-%3E%20G1%0A%7D%0A)
+
+> This example contains an invalid leadership hierarchy, because there is a
+> _cycle_. Navigating to the treeview page should result in a warning
+> message showing the cycle instead of the actual treeview.
+
+## Notes
+
+For testing purposes, all of the `Person`s generated using the above commands
+have a first name consistent with their `id`. For example, a `Person` with `id`
+1 will have a first name "Person1." The same thing applies to `Group`s. A
+`Group` named "Group8" will have an `id` of 8.
+
+Furthermore, each `Person` will have username and a password that is the same
+as their first name. For example, to login as the `Person` with `id` 1, use
+"Person1" as both the `username` and the `password`. This can be helpful in
+testing permission enforcement feature for group-overseers.
+
+More test cases can be added by defining more test-case-generation functions in
+`corpus-christi/api/src/groups/create_group_data.py`.

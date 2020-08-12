@@ -1,11 +1,11 @@
 <template>
   <div>
     <v-toolbar class="pa-1">
-      <v-row no-gutters align="center" justify="space-between" fill-height>
+      <v-row align="center" justify="space-between" fill-height>
         <v-col class="shrink" cols="2">
           <v-toolbar-title>{{ $t("groups.header") }}</v-toolbar-title>
         </v-col>
-        <v-col cols="2">
+        <v-col>
           <v-text-field
             v-model="search"
             append-icon="search"
@@ -16,7 +16,7 @@
           />
         </v-col>
         <template v-if="isAdmin">
-          <v-col cols="3">
+          <v-col>
             <v-select
               hide-details
               solo
@@ -28,7 +28,7 @@
             </v-select>
           </v-col>
         </template>
-        <v-col cols="4" class="shrink">
+        <v-col class="shrink">
           <v-menu open-on-hover offset-y bottom>
             <template v-slot:activator="{ on }">
               <v-btn

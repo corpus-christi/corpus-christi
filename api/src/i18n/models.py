@@ -19,7 +19,7 @@ class I18NLocale(Base):
     """Translation locale (e.g., 'en-us', 'es')"""
     __tablename__ = 'i18n_locale'
     code = Column(StringTypes.LOCALE_CODE, primary_key=True)
-    desc = Column(StringTypes.MEDIUM_STRING, nullable=False)
+    desc = Column(StringTypes.MEDIUM_STRING, nullable=False, default="")
     values = relationship('I18NValue', back_populates='locale', lazy=True)
 
     def __repr__(self):
@@ -42,7 +42,7 @@ class I18NKey(Base):
     """Key for a translatable string (e.g., 'groups.home_group')"""
     __tablename__ = 'i18n_key'
     id = Column(StringTypes.I18N_KEY, primary_key=True)
-    desc = Column(StringTypes.LONG_STRING, nullable=False)
+    desc = Column(StringTypes.LONG_STRING, nullable=False, default="")
     values = relationship('I18NValue', back_populates='key', lazy=True)
     languages = relationship('Language', back_populates='key', lazy=True)
     countries = relationship('Country', back_populates='key', lazy=True)
