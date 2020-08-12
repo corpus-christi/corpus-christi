@@ -4116,6 +4116,10 @@
       "gloss": "Current locale: ",
       "verified": false
     },
+    "transparent-mode": {
+      "gloss": "Transparent Mode",
+      "verified": false
+    },
     "updated": {
       "gloss": "Translations updated",
       "verified": false

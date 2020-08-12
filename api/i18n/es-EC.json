@@ -4116,6 +4116,10 @@
       "gloss": "Locale actual:",
       "verified": false
     },
+    "transparent-mode": {
+      "gloss": "Modo transparente",
+      "verified": false
+    },
     "updated": {
       "gloss": "Traducciones actualizadas",
       "verified": false
