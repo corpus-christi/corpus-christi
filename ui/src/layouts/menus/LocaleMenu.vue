@@ -1,6 +1,6 @@
 <template>
   <v-row class="shrink" align="center">
-    <v-col v-if="currentAccount.roles.includes('role.translator')">
+    <v-col v-if="isTranslator">
       <v-switch
         hide-details
         :label="$t('translation.transparent-mode')"
@@ -48,6 +48,13 @@ export default {
   },
   computed: {
     ...mapState(["currentAccount"]),
+
+    isTranslator() {
+      return (
+        this.currentAccount &&
+        this.currentAccount.roles.includes("role.translator")
+      );
+    },
 
     disableMenu() {
       // disable menu if in the translation page or in transparent mode
