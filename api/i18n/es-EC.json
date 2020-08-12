@@ -1570,9 +1570,29 @@
         "verified": false
       }
     },
-    "membership-hisotry": {
+    "membership-history": {
       "title": {
         "gloss": "Historia",
+        "verified": false
+      },
+      "note": {
+        "gloss": "Notas",
+        "verified": false
+      },
+      "change-note": {
+        "gloss": "Cambiar nota",
+        "verified": false
+      },
+      "clear-note": {
+        "gloss": "Nota clara",
+        "verified": false
+      },
+      "submit": {
+        "gloss": "Enviar",
+        "verified": false
+      },
+      "cancel": {
+        "gloss": "Cancelar",
         "verified": false
       }
     },

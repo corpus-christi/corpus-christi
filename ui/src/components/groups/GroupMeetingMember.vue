@@ -21,19 +21,12 @@
     <v-data-table
       v-model="selected"
       :headers="headers"
-      class="elevation-1"
       :items="listMember"
       item-key="personId"
+      class="elevation-1"
       :search="search"
       show-select
     >
-      <template v-slot:item="props">
-        <tr>
-          <td><v-checkbox v-model="props.selected" primary hide-details /></td>
-          <td>{{ props.item.firstName }}</td>
-          <td>{{ props.item.lastName }}</td>
-        </tr>
-      </template>
     </v-data-table>
     <template v-if="isOverseer === true || ifAdmin">
       <v-col md="3">
@@ -141,7 +134,8 @@ export default {
           .patch(
             `/api/v1/groups/meetings/${meetingId}/attendances/${newAttendance[i]}`
           )
-          .then(() => {
+          .then((resp) => {
+            console.log(resp)
             eventBus.$emit("message", {
               content: "groups.messages.participant-added",
             });
@@ -206,12 +200,12 @@ export default {
         {
           text: this.$t("person.name.first"),
           value: "firstName",
-          width: "20%",
+          align: 'start',
         },
         {
           text: this.$t("person.name.last"),
           value: "lastName",
-          width: "20%",
+          align: 'start',
         },
       ];
     },
