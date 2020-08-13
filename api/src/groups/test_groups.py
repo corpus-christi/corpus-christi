@@ -17,11 +17,13 @@ from .models import Group, GroupType, Member, MemberSchema, Meeting, MeetingSche
 from ..images.create_image_data import create_images_groups
 from ..images.create_image_data import create_test_images
 from ..images.models import Image, ImageGroup
-from ..people.test_people import create_multiple_people, role_object_factory, person_object_factory
+from ..people.test_people import create_multiple_people
 from ..people.models import Person, PersonSchema, Role, RoleSchema
 from ..places.models import Address, Country
 from ..places.test_places import create_multiple_addresses, create_multiple_areas
+from ..shared.helpers import get_token_with_roles, get_token_with_person_id
 from flask_jwt_extended import create_access_token
+
 
 fake = Faker()
 
@@ -32,20 +34,7 @@ def get_group_admin_token():
     """ generates a token with group-admin role in it
     :returns: the token with group-admin role in it
     """
-    admin_role = Role(
-        **RoleSchema().load(role_object_factory('role.group-admin')))
-    admin_user = Person(**PersonSchema().load(person_object_factory()))
-    admin_user.roles.append(admin_role)
-    admin_token = create_access_token(identity=admin_user)
-    return admin_token
-
-
-def get_token_with_person_id(person_id):
-    """ generates a token with identity corresponding to person_id """
-    person = Person(**PersonSchema().load(person_object_factory()))
-    person.id = person_id
-    token = create_access_token(identity=person)
-    return token
+    return get_token_with_roles(['role.group-admin'])
 
 # ---- Group Type
 

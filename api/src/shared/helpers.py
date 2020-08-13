@@ -10,6 +10,7 @@ from sqlalchemy.exc import DBAPIError
 
 from .models import QueryArgumentError
 
+from flask_jwt_extended import create_access_token
 
 def modify_entity(entity_type, schema, id, new_value_dict):
     item = db.session.query(entity_type).filter_by(id=id).first()
@@ -236,4 +237,29 @@ def get_or_create(session, model, filters, attributes={}):
         session.commit()
         return instance
 
+
+def get_token_with_roles(role_names):
+    """ generates a token with specified roles in it
+
+    :role_names: an array of strings specifying roles to be included in the token
+    :returns: the token with the specified roles in it
+    """
+    from ..people.models import Person, PersonSchema, Role, RoleSchema
+    from ..people.test_people import role_object_factory, person_object_factory
+    user = Person(**PersonSchema().load(person_object_factory()))
+    for role_name in role_names:
+        role = Role(**RoleSchema().load(role_object_factory(role_name)))
+        user.roles.append(role)
+    token = create_access_token(identity=user)
+    return token
+
+
+def get_token_with_person_id(person_id):
+    """ generates a token with identity corresponding to person_id """
+    from ..people.models import Person, PersonSchema
+    from ..people.test_people import person_object_factory
+    person = Person(**PersonSchema().load(person_object_factory()))
+    person.id = person_id
+    token = create_access_token(identity=person)
+    return token
 
