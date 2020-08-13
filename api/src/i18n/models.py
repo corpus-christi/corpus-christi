@@ -11,6 +11,7 @@ from sqlalchemy.orm import relationship
 from .. import db
 from ..db import Base
 from ..shared.models import StringTypes
+from ..shared.helpers import get_or_create
 
 
 # ---- Locale
@@ -113,9 +114,6 @@ class Language(Base):
                 'data',
                 file_name))
 
-        if not db.session.query(I18NLocale).get(locale_code):
-            db.session.add(I18NLocale(code=locale_code, desc='English US'))
-
         with open(file_path, 'r') as fp:
             languages = json.load(fp)
 
@@ -124,12 +122,14 @@ class Language(Base):
                 language_name = language['English']
 
                 name_i18n = f'language.name.{language_code}'[:32]
-                if not i18n_check(name_i18n, locale_code):
-                    i18n_create(
-                        name_i18n,
-                        locale_code,
-                        language_name,
-                        description=f"Language {language_name}")
+
+                # Create the key if it does not exist
+
+                get_or_create(db.session, I18NKey, filters={
+                    'id': name_i18n}, attributes={
+                    'desc': f"Language {language_name}"})
+
+                # Note: Create I18NValue s with flask i18n load <locale>
 
                 if not db.session.query(cls).filter_by(
                         code=language_code).count():

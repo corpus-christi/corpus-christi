@@ -405,14 +405,16 @@ create a CC test account for yourself.
 $ flask people new --first="Fred" --last="Ziffle" username password
 ```
 where
-- `--first` is the user's first name
-- `--last` is the user's last name
+- `"Fred"` is the user's first name
+- `"Ziffle"` is the user's last name
 - `username` is the user name of the account
 - `password` is the password to be associated with the account
+
 The `--first` and `--last` flags are _optional_.
 To include a first or last name with blanks or other
 characters special to the shell,
 enclose it in quotes. For example:
+
 ```bash
 $ flask people new --first="Billy Bob" --last="Smith" bbob bbob-pass
 ```

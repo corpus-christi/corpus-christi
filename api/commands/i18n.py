@@ -12,7 +12,12 @@ import time
 from flask.cli import AppGroup
 from src import BASE_DIR, db
 from src.i18n.models import I18NLocale, I18NKey, I18NValue
-from src.shared.helpers import tree_to_list, list_to_tree, BadTreeStructure, BadListKeyPath
+from src.shared.helpers import (
+    tree_to_list,
+    list_to_tree,
+    BadTreeStructure,
+    BadListKeyPath,
+    get_or_create)
 
 
 # --- exceptions
@@ -120,26 +125,6 @@ def create_dir(ctx, param, value):
     if pardir:
         os.makedirs(pardir, exist_ok=True)
     return value
-
-
-def get_or_create(session, model, **kwargs):
-    """get an item from the database, or create one if not exists
-    credit: https://stackoverflow.com/a/6078058/6263602
-
-    :session: the session object
-    :model: the model for the table
-    :**kwargs: filter criteria
-    :returns: the object requested
-
-    """
-    instance = session.query(model).filter_by(**kwargs).first()
-    if instance:
-        return instance
-    else:
-        instance = model(**kwargs)
-        session.add(instance)
-        session.commit()
-        return instance
 
 
 def default_target():
@@ -273,7 +258,7 @@ def write_locale_tail_tree(tree, parent_path="", override=True, verbose=False):
         if parent_path:
             key_list.insert(0, parent_path)
         key_id = '.'.join(key_list)
-        key = get_or_create(db.session, I18NKey, id=key_id)
+        key = get_or_create(db.session, I18NKey, {'id': key_id})
         existing_values = {value.locale_code: value for value in key.values}
         for locale_code, gloss in item['value'].items():
             if locale_code == '_desc':
@@ -300,7 +285,7 @@ def write_locale_tail_tree(tree, parent_path="", override=True, verbose=False):
                                 f"overriding [{key_id}] in [{locale_code}] with [{gloss}]")
                 else:
                     locale = get_or_create(
-                        db.session, I18NLocale, code=locale_code)
+                        db.session, I18NLocale, {'code': locale_code})
                     value = I18NValue(
                         gloss=gloss,
                         verified=False,
@@ -367,10 +352,10 @@ def create_i18n_cli(app):
                 and isinstance(node['gloss'], str)
 
         entries = tree_to_list(tree, is_leaf=is_leaf)
-        locale = get_or_create(db.session, I18NLocale, code=locale_name)
+        locale = get_or_create(db.session, I18NLocale, {'code': locale_name})
         for entry in entries:
             key_id = '.'.join(entry['path'])
-            key = get_or_create(db.session, I18NKey, id=key_id)
+            key = get_or_create(db.session, I18NKey, {'id': key_id})
             value = db.session.query(I18NValue).filter_by(
                 key_id=key.id, locale_code=locale.code).first()
             if value:
@@ -412,10 +397,10 @@ def create_i18n_cli(app):
     def dump_values(locale, target):
         """ Dump entries from the database into a json file.
 
-        <locale>: the locale code of the processed values. E.g. en-US 
+        <locale>: the locale code of the processed values. E.g. en-US
 
-        Example usage: 
-        
+        Example usage:
+
         \b
             flask i18n dump en-US
 
@@ -534,8 +519,8 @@ def create_i18n_cli(app):
                   type=click.File("w"),
                   help="The destination file to dump descriptions to")
     def dump_descriptions(target, dump_empty, empty_placeholder):
-        """ Dump descriptions into a json file from the database. 
-        
+        """ Dump descriptions into a json file from the database.
+
         Example usage:
 
         \b
@@ -600,7 +585,7 @@ def create_i18n_cli(app):
     def list_entries(ctx, path):
         """ Print entries in the yaml format.
 
-        this command does the same thing as 'flask i18n export', except --target is set to sys.stdout 
+        this command does the same thing as 'flask i18n export', except --target is set to sys.stdout
 
         Example usage:
 
@@ -670,8 +655,8 @@ def create_i18n_cli(app):
     def add_entry(locale, path, gloss):
         """ Add an entry into the database.
 
-        Example usage: 
-        
+        Example usage:
+
         \b
             flask i18n add en-US actions.activate-account "Activate Account"
 
@@ -686,8 +671,8 @@ def create_i18n_cli(app):
                 f"Value in [{locale}] with path [{path}] already exists: [{value.gloss}]")
             click.echo("Nothing changed.")
         else:
-            get_or_create(db.session, I18NKey, id=path)
-            get_or_create(db.session, I18NLocale, code=locale)
+            get_or_create(db.session, I18NKey, {'id': path})
+            get_or_create(db.session, I18NLocale, {'code': locale})
             value = I18NValue(
                 gloss=gloss,
                 verified=False,
@@ -714,8 +699,8 @@ def create_i18n_cli(app):
 
         If change is made, the 'verified' flag will be set to False.
 
-        Example usage: 
-        
+        Example usage:
+
         \b
             flask i18n update en-US actions.activate-account "Activate Account"
         """
@@ -754,8 +739,8 @@ def create_i18n_cli(app):
 
         When PATH is not specified, all keys are deleted
 
-        Example usage: 
-        
+        Example usage:
+
         \b
             flask i18n delete --locale en-US actions.activate-account
 
@@ -773,7 +758,7 @@ def create_i18n_cli(app):
         else:
             if not path:
                 raise click.BadParameter(
-                        f"Must specify a PATH when not using the --recursive flag")
+                    f"Must specify a PATH when not using the --recursive flag")
             value_query = value_query.filter_by(key_id=path)
             key_query = key_query.filter_by(id=path)
 
@@ -814,9 +799,9 @@ def create_i18n_cli(app):
     @click.argument('path', callback=sanitize_path, default="")
     def edit_entries(path):
         """ Interactively edit entries that starts with PATH in an interactive editor,
-        with a 'locale-tail' structured tree 
-        
-        Example usage: 
+        with a 'locale-tail' structured tree
+
+        Example usage:
 
         \b
             flask i18n edit
@@ -866,6 +851,7 @@ def create_i18n_cli(app):
 
 # --- flask i18n translate
 
+
     @i18n_cli.command(
         'translate',
         cls=ExceptionHandlingCommand,
@@ -905,7 +891,7 @@ def create_i18n_cli(app):
         """ Complete entries in the database with <dest-locale> by
         translating from <src-locale>.
 
-        Example usage: 
+        Example usage:
 
         \b
             flask i18n translate en-US es-EC
@@ -991,7 +977,9 @@ def create_i18n_cli(app):
 
             if choice == 'y':
                 # make sure locale exists
-                get_or_create(db.session, I18NLocale, code=destination_locale)
+                get_or_create(
+                    db.session, I18NLocale, {
+                        'code': destination_locale})
                 destination_value = I18NValue(
                     key_id=key.id,
                     locale_code=destination_locale,
