@@ -71,10 +71,22 @@ class Person(Base):
     images = relationship('ImagePerson', back_populates='person')
     teacher = relationship('ClassMeeting', back_populates='person', lazy=True)
     students = relationship('Student', back_populates='person', lazy=True)
-    roles = relationship("Role", secondary=people_person_role, back_populates="persons")
-    completions = relationship('CourseCompletion', back_populates='people', lazy=True)
-    person_attributes = relationship('PersonAttribute', back_populates='person', lazy=True)
-    attendances = relationship('Attendance', back_populates='person', lazy=True)
+    roles = relationship(
+        "Role",
+        secondary=people_person_role,
+        back_populates="persons")
+    completions = relationship(
+        'CourseCompletion',
+        back_populates='people',
+        lazy=True)
+    person_attributes = relationship(
+        'PersonAttribute',
+        back_populates='person',
+        lazy=True)
+    attendances = relationship(
+        'Attendance',
+        back_populates='person',
+        lazy=True)
 
     def __repr__(self):
         return f"<Person(id={self.id},name='{self.first_name} {self.last_name}')>"
@@ -136,10 +148,30 @@ class PersonSchema(Schema):
         exclude=['person'],
         dump_only=True)
     roles = fields.Nested('RoleSchema', many=True, dump_only=True)
-    members = fields.Nested('MemberSchema', only=['group_id', 'active'], many=True, dump_only=True)
-    managers = fields.Nested('ManagerSchema', only=['group_id', 'active'], many=True, dump_only=True)
-    member_histories = fields.Nested('MemberHistorySchema', many=True, dump_only=True, data_key='memberHistories',
-            only=('id', 'time', 'is_join', 'group_id'))
+    members = fields.Nested(
+        'MemberSchema',
+        only=[
+            'group_id',
+            'active'],
+        many=True,
+        dump_only=True)
+    managers = fields.Nested(
+        'ManagerSchema',
+        only=[
+            'group_id',
+            'active'],
+        many=True,
+        dump_only=True)
+    member_histories = fields.Nested(
+        'MemberHistorySchema',
+        many=True,
+        dump_only=True,
+        data_key='memberHistories',
+        only=(
+            'id',
+            'time',
+            'is_join',
+            'group_id'))
 
     @pre_load
     def hash_password(self, data):
@@ -156,7 +188,10 @@ class Role(Base):
     id = Column(Integer, primary_key=True)
     name_i18n = Column(StringTypes.I18N_KEY)
     active = Column(Boolean)
-    persons = relationship("Person", secondary=people_person_role, back_populates="roles")
+    persons = relationship(
+        "Person",
+        secondary=people_person_role,
+        back_populates="roles")
 
     def __repr__(self):
         return f"<Role(id={self.id})>"

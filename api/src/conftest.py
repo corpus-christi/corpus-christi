@@ -14,6 +14,7 @@ from commands.events import create_event_cli
 from commands.faker import create_faker_cli
 from commands.i18n import create_i18n_cli
 
+
 class AuthClient(FlaskClient):
     def __init__(self, *args, **kwargs):
         self.sqla = db.session
@@ -54,6 +55,7 @@ def auth_client():
 def plain_client():
     yield from client_factory(FlaskClient)
 
+
 @pytest.fixture
 def runner():
     app = create_app(os.getenv('CC_CONFIG') or 'test')
@@ -70,4 +72,3 @@ def runner():
     create_i18n_cli(app)
 
     yield app.test_cli_runner()
-

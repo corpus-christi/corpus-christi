@@ -236,7 +236,7 @@ def test_update_a_value(auth_client):
             'locale_code': test.locale_code,
             'gloss': 'OPEN',
             'verified': True
-            },
+        },
         headers={
             'AUTHORIZATION': f'Bearer {get_token_with_roles(["role.translator"])}'})
     result = auth_client.sqla.query(I18NValue).filter_by(
@@ -245,7 +245,7 @@ def test_update_a_value(auth_client):
     assert resp.status_code == 200
     # THEN we expect the correct result
     assert result.gloss == "OPEN"
-    assert result.verified == True
+    assert result.verified
 
     # WHEN we ask for translations without the translator role
     resp = auth_client.patch(
@@ -341,6 +341,7 @@ def test_read_language(runner, auth_client):
         assert resp.status_code == 200
         # THEN we expect correct name being returned
         assert resp.json['name'] == name
+
 
 @pytest.mark.slow
 def test_read_all_languages(runner, auth_client):

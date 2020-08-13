@@ -72,11 +72,14 @@ def test_read_one_group_type(auth_client):
     group_types = auth_client.sqla.query(GroupType).all()
     # WHEN we ask for the group_types one by one
     for group_type in group_types:
-        # THEN we expect each of them to correspond to the group_type in the database
+        # THEN we expect each of them to correspond to the group_type in the
+        # database
         resp = auth_client.get(url_for('groups.read_one_group_type',
-            group_type_id=group_type.id))
+                                       group_type_id=group_type.id))
         assert resp.status_code == 200
         assert resp.json['name'] == group_type.name
+
+
 @pytest.mark.smoke
 def test_read_all_group_types(auth_client):
     # GIVEN a database with some group_types
@@ -358,8 +361,8 @@ def test_subset_groups_descending_ascending(auth_client):
     # same
     right = True
     for i in range(1, len(list_id)):
-        if sorted_group_type_id[i] == sorted_group_type_id[i -
-                                                           1] and list_id[i] <= list_id[i - 1]:
+        if sorted_group_type_id[i] == sorted_group_type_id[i - \
+            1] and list_id[i] <= list_id[i - 1]:
             right = True
         else:
             right = False
@@ -643,10 +646,11 @@ def test_create_member(auth_client):
     create_multiple_groups(auth_client.sqla, 1)
     create_multiple_people(auth_client.sqla, random.randint(3, 6))
     personid = auth_client.sqla.query(Person).first().id
-    resp = auth_client.post(url_for('groups.create_member', group_id = '1'),
-        json = {'personId':personid,
-            'active':'True' },
-        headers={'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
+    resp = auth_client.post(
+        url_for(
+            'groups.create_member', group_id='1'), json={
+            'personId': personid, 'active': 'True'}, headers={
+                'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
     # THEN expect the create to run OK
     assert resp.status_code == 201
 
@@ -713,9 +717,9 @@ def test_update_member_identity(auth_client):
     person1_id, person2_id = [
         person.id for person in auth_client.sqla.query(Person).all()]
     group1.members += [
-            Member(person_id=person1_id, group_id=group1.id),
-            Member(person_id=person2_id, group_id=group1.id)
-            ]
+        Member(person_id=person1_id, group_id=group1.id),
+        Member(person_id=person2_id, group_id=group1.id)
+    ]
     auth_client.sqla.add(group1)
     auth_client.sqla.commit()
     # WHEN we move person1 to group2
@@ -1465,8 +1469,8 @@ def test_member_history_generation_on_activate_deactivate(auth_client):
         url_for('groups.update_member',
                 group_id=member.group_id,
                 person_id=member.person_id),
-                json = {'active': False},
-                headers={'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
+        json={'active': False},
+        headers={'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
 
     # THEN we expect no more member history to be created
     member_histories = auth_client.sqla.query(MemberHistory).all()
@@ -1506,18 +1510,21 @@ def test_member_history_generation_on_move(auth_client):
     assert resp.status_code == 200
     # THEN we expect two history records to be created
     assert auth_client.sqla.query(MemberHistory).count() == 2
-    assert auth_client.sqla.query(MemberHistory).filter_by(group_id=member.group_id, is_join=False).count() == 1
-    assert auth_client.sqla.query(MemberHistory).filter_by(group_id=group2.id, is_join=True).count() == 1
+    assert auth_client.sqla.query(MemberHistory).filter_by(
+        group_id=member.group_id, is_join=False).count() == 1
+    assert auth_client.sqla.query(MemberHistory).filter_by(
+        group_id=group2.id, is_join=True).count() == 1
 
     # WHEN we move the member to the same group (no effect)
     resp = auth_client.patch(
-            url_for('groups.update_member',
+        url_for('groups.update_member',
                 group_id=member.group_id,
                 person_id=member.person_id),
-            json={'groupId': group2.id},
-            headers={'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
+        json={'groupId': group2.id},
+        headers={'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
     # THEN we expect no more member history to be created
     assert auth_client.sqla.query(MemberHistory).count() == 2
+
 
 def test_member_history_generation_on_move_activate(auth_client):
     # GIVEN a database with an active member in group 1
@@ -1525,42 +1532,46 @@ def test_member_history_generation_on_move_activate(auth_client):
     create_multiple_people(auth_client.sqla, 1)
     person = auth_client.sqla.query(Person).first()
     group1, group2 = auth_client.sqla.query(Group).all()
-    member = Member(**MemberSchema().load(member_object_factory(person.id, group1.id)))
+    member = Member(
+        **MemberSchema().load(member_object_factory(person.id, group1.id)))
     auth_client.sqla.add(member)
     auth_client.sqla.commit()
     # WHEN we deactivate the member while moving it to another group
     resp = auth_client.patch(
-            url_for('groups.update_member',
+        url_for('groups.update_member',
                 group_id=group1.id,
                 person_id=member.person_id),
-            json={'groupId': group2.id, 'active': False},
-            headers={'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
+        json={'groupId': group2.id, 'active': False},
+        headers={'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
     # THEN we expect the correct status code
     assert resp.status_code == 200
     # THEN we expect a new entry to be created
     assert auth_client.sqla.query(MemberHistory).count() == 1
-    assert auth_client.sqla.query(MemberHistory).filter_by(group_id=group1.id, is_join=False).count() == 1
+    assert auth_client.sqla.query(MemberHistory).filter_by(
+        group_id=group1.id, is_join=False).count() == 1
 
     # WHEN we move the inactive member to a different group
     resp = auth_client.patch(
-            url_for('groups.update_member',
+        url_for('groups.update_member',
                 group_id=group2.id,
                 person_id=member.person_id),
-            json={'groupId': group1.id},
-            headers={'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
+        json={'groupId': group1.id},
+        headers={'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
     # THEN we expect no more member history to be created
     assert auth_client.sqla.query(MemberHistory).count() == 1
 
     # WHEN we move and activate the member
     resp = auth_client.patch(
-            url_for('groups.update_member',
+        url_for('groups.update_member',
                 group_id=group1.id,
                 person_id=member.person_id),
-            json={'groupId': group2.id, 'active': True},
-            headers={'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
+        json={'groupId': group2.id, 'active': True},
+        headers={'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
     # THEN we expect a new entry to be created
     assert auth_client.sqla.query(MemberHistory).count() == 2
-    assert auth_client.sqla.query(MemberHistory).filter_by(group_id=group2.id, is_join=True).count() == 1
+    assert auth_client.sqla.query(MemberHistory).filter_by(
+        group_id=group2.id, is_join=True).count() == 1
+
 
 def test_member_history_generation_on_create_member(auth_client):
     # GIVEN a database with some groups and people
@@ -1569,16 +1580,19 @@ def test_member_history_generation_on_create_member(auth_client):
     group = auth_client.sqla.query(Group).first()
     person = auth_client.sqla.query(Person).first()
     # WHEN we create a member
-    resp = auth_client.post(url_for('groups.create_member', group_id=group.id),
-        json={'personId': person.id},
-        headers={'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
+    resp = auth_client.post(
+        url_for(
+            'groups.create_member', group_id=group.id), json={
+            'personId': person.id}, headers={
+                'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
 
-    # THEN we expect a corresponding joining history to be created in the database
+    # THEN we expect a corresponding joining history to be created in the
+    # database
     member_histories = auth_client.sqla.query(MemberHistory).all()
     assert len(member_histories) == 1
     assert member_histories[0].group_id == group.id
     assert member_histories[0].person_id == person.id
-    assert member_histories[0].is_join == True
+    assert member_histories[0].is_join
 
 
 def test_read_all_member_histories(auth_client):
@@ -1590,6 +1604,7 @@ def test_read_all_member_histories(auth_client):
     assert resp.status_code == 200
     assert len(resp.json) == 10
 
+
 def test_update_member_history(auth_client):
     # GIVEN a database with a number of member_historys
     count = random.randint(3, 11)
@@ -1598,17 +1613,22 @@ def test_update_member_history(auth_client):
     # WHEN we update one member_history
     member_history = auth_client.sqla.query(MemberHistory).first()
 
-    payload = { 'note': 'Here is some note about the history' }
+    payload = {'note': 'Here is some note about the history'}
 
-    resp = auth_client.patch(url_for('groups.update_member_history',
-        member_history_id=member_history.id),
+    resp = auth_client.patch(
+        url_for(
+            'groups.update_member_history',
+            member_history_id=member_history.id),
         json=payload,
-        headers={'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
+        headers={
+            'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
 
     # THEN we assume the correct status code
     assert resp.status_code == 200
     # THEN we assume the correct content in the database
-    assert auth_client.sqla.query(MemberHistory).filter_by(id=member_history.id).first().note == 'Here is some note about the history'
+    assert auth_client.sqla.query(MemberHistory).filter_by(
+        id=member_history.id).first().note == 'Here is some note about the history'
+
 
 def test_delete_member_histories(auth_client):
     # GIVEN a database with some member histories

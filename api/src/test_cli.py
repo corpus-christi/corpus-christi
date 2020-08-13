@@ -9,6 +9,7 @@ from .i18n.models import Language, I18NValue, I18NLocale, I18NKey
 from .people.models import Role
 from .places.models import Country
 
+
 def test_load_countries(runner):
     result = runner.invoke(args=['app', 'load-countries'])
     assert db.session.query(Country).count() > 0
@@ -568,12 +569,13 @@ def test_i18n_delete(runner):
             'delete',
             '--locale',
             'es-EC'
-            ])
+        ])
     # THEN we expect a warning message
     assert b'specify a PATH' in result.stdout_bytes
 
     # GIVEN one remaining entry with the 'es-EC' locale
-    assert db.session.query(I18NValue).filter_by(locale_code="es-EC").count() == 1
+    assert db.session.query(I18NValue).filter_by(
+        locale_code="es-EC").count() == 1
     # WHEN we delete recursively without specifying a path
     result = runner.invoke(
         args=[
@@ -582,9 +584,10 @@ def test_i18n_delete(runner):
             '-r',
             '--locale',
             'es-EC'
-            ])
+        ])
     # THEN we expect no values of the corresponding locale to exist
-    assert db.session.query(I18NValue).filter_by(locale_code="es-EC").count() == 0
+    assert db.session.query(I18NValue).filter_by(
+        locale_code="es-EC").count() == 0
     # THEN we expect the key not to be deleted, because we specified a locale
     assert db.session.query(I18NKey).count() == 1
 
