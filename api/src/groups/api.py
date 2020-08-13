@@ -12,9 +12,8 @@ from .. import db
 from ..images.models import Image, ImageGroup
 from ..people.models import Role, Person
 
-from src.shared.helpers import modify_entity, get_all_queried_entities, logged_response
+from src.shared.helpers import modify_entity, get_all_queried_entities, logged_response, authorize
 from src.shared.models import QueryArgumentError
-from src.auth.utils import authorize
 
 from sqlalchemy.exc import IntegrityError, DBAPIError
 

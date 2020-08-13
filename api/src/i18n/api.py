@@ -8,8 +8,7 @@ from .models import I18NLocale, I18NLocaleSchema, I18NKeySchema, I18NKey, I18NVa
 from .. import db
 from ..shared.helpers import list_to_tree, BadListKeyPath
 
-from src.shared.helpers import modify_entity, get_all_queried_entities, logged_response
-from src.auth.utils import authorize
+from src.shared.helpers import modify_entity, get_all_queried_entities, logged_response, authorize
 
 
 # ---- I18N Locale
