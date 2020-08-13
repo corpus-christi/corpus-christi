@@ -35,19 +35,19 @@ def runner():
     yield app.test_cli_runner()
 
 
-def test_load_counties(runner):
-    runner.invoke(args=['app', 'load-countries'])
+def test_load_countries(runner):
+    result = runner.invoke(args=['app', 'load-countries'])
     assert db.session.query(Country).count() > 0
 
 
 def test_load_languages(runner):
-    runner.invoke(args=['app', 'load-languages'])
+    result = runner.invoke(args=['app', 'load-languages'])
     assert db.session.query(Language).count() > 0
 
 
 def test_load_roles(runner):
     assert db.session.query(Role).count() == 0
-    runner.invoke(args=['app', 'load-roles'])
+    result = runner.invoke(args=['app', 'load-roles'])
     assert db.session.query(Role).count() > 0
 
 
@@ -586,6 +586,33 @@ def test_i18n_delete(runner):
     keys = db.session.query(I18NKey).all()
     assert len(keys) == 1
     assert keys[0].id == 'alt.logo'
+
+    # WHEN we delete non-recursively without specifying a path
+    result = runner.invoke(
+        args=[
+            'i18n',
+            'delete',
+            '--locale',
+            'es-EC'
+            ])
+    # THEN we expect a warning message
+    assert b'specify a PATH' in result.stdout_bytes
+
+    # GIVEN one remaining entry with the 'es-EC' locale
+    assert db.session.query(I18NValue).filter_by(locale_code="es-EC").count() == 1
+    # WHEN we delete recursively without specifying a path
+    result = runner.invoke(
+        args=[
+            'i18n',
+            'delete',
+            '-r',
+            '--locale',
+            'es-EC'
+            ])
+    # THEN we expect no values of the corresponding locale to exist
+    assert db.session.query(I18NValue).filter_by(locale_code="es-EC").count() == 0
+    # THEN we expect the key not to be deleted, because we specified a locale
+    assert db.session.query(I18NKey).count() == 1
 
 
 def test_i18n_translate(runner):

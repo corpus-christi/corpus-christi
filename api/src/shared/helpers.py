@@ -214,3 +214,26 @@ def list_to_tree(entries):
             raise BadListKeyPath(
                 f"{entry['path']} already exists: '{t[last]}', won't set to '{entry['value']}'")
     return tree
+
+
+def get_or_create(session, model, filters, attributes={}):
+    """get an item from the database, or create one if not exists
+    credit: https://stackoverflow.com/a/6078058/6263602
+
+    :session: the session object
+    :model: the model for the table
+    :filters: the filters to be applied
+    :attributes: the attributes to be added to the created instance
+    :returns: the object requested
+
+    """
+    instance = session.query(model).filter_by(**filters).first()
+    if instance:
+        return instance
+    else:
+        instance = model(**{**filters, **attributes})
+        session.add(instance)
+        session.commit()
+        return instance
+
+

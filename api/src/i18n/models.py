@@ -11,6 +11,7 @@ from sqlalchemy.orm import relationship
 from .. import db
 from ..db import Base
 from ..shared.models import StringTypes
+from ..shared.helpers import get_or_create
 
 
 # ---- Locale
@@ -20,6 +21,7 @@ class I18NLocale(Base):
     __tablename__ = 'i18n_locale'
     code = Column(StringTypes.LOCALE_CODE, primary_key=True)
     desc = Column(StringTypes.MEDIUM_STRING, nullable=False, default="")
+    values = relationship('I18NValue', back_populates='locale', lazy=True)
 
     def __repr__(self):
         return f"<I18NLocale(id='{self.code}',desc='{self.desc}')>"
@@ -42,6 +44,9 @@ class I18NKey(Base):
     __tablename__ = 'i18n_key'
     id = Column(StringTypes.I18N_KEY, primary_key=True)
     desc = Column(StringTypes.LONG_STRING, nullable=False, default="")
+    values = relationship('I18NValue', back_populates='key', lazy=True)
+    languages = relationship('Language', back_populates='key', lazy=True)
+    countries = relationship('Country', back_populates='key', lazy=True)
 
     def __repr__(self):
         return f"<I18NKey(key='{self.id}')>"
@@ -70,8 +75,8 @@ class I18NValue(Base):
     gloss = Column(Text(), nullable=False)
     verified = Column(Boolean, default=False)
 
-    key = relationship('I18NKey', backref='values', lazy=True)
-    locale = relationship('I18NLocale', backref='values', lazy=True)
+    key = relationship('I18NKey', back_populates='values', lazy=True)
+    locale = relationship('I18NLocale', back_populates='values', lazy=True)
 
     def __repr__(self):
         return f"<I18NValue(gloss='{self.gloss}, key_id={self.key_id}')>"
@@ -91,7 +96,7 @@ class Language(Base):
     code = Column(String(2), primary_key=True)
     name_i18n = Column(StringTypes.I18N_KEY, ForeignKey(
         'i18n_key.id'), nullable=False)
-    key = relationship('I18NKey', backref='languages', lazy=True)
+    key = relationship('I18NKey', back_populates='languages', lazy=True)
 
     def __repr__(self):
         return f"<Language(code='{self.code}',name='{self.name_i18n}')>"
@@ -109,9 +114,6 @@ class Language(Base):
                 'data',
                 file_name))
 
-        if not db.session.query(I18NLocale).get(locale_code):
-            db.session.add(I18NLocale(code=locale_code, desc='English US'))
-
         with open(file_path, 'r') as fp:
             languages = json.load(fp)
 
@@ -120,12 +122,14 @@ class Language(Base):
                 language_name = language['English']
 
                 name_i18n = f'language.name.{language_code}'[:32]
-                if not i18n_check(name_i18n, locale_code):
-                    i18n_create(
-                        name_i18n,
-                        locale_code,
-                        language_name,
-                        description=f"Language {language_name}")
+
+                # Create the key if it does not exist
+
+                get_or_create(db.session, I18NKey, filters={
+                    'id': name_i18n}, attributes={
+                    'desc': f"Language {language_name}"})
+
+                # Note: Create I18NValue s with flask i18n load <locale>
 
                 if not db.session.query(cls).filter_by(
                         code=language_code).count():

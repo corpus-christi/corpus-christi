@@ -4,7 +4,7 @@ from flask import json
 from marshmallow import fields, Schema, pre_load, INCLUDE
 from marshmallow.validate import Length, Range, OneOf
 from sqlalchemy import Column, Integer, String, Date, ForeignKey, Boolean, Table
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm import relationship
 from src.i18n.models import i18n_create, I18NLocale
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -49,7 +49,7 @@ class Person(Base):
         nullable=True,
         default=None)
 
-    address = relationship(Address, backref='people', lazy=True)
+    address = relationship('Address', back_populates='people', lazy=True)
     # events_per refers to the events led by the person (linked via
     # events_eventperson table)
     events_per = relationship("EventPerson", back_populates="person")
@@ -69,11 +69,12 @@ class Person(Base):
         lazy=True)
     managers = relationship('Manager', back_populates='person', lazy=True)
     images = relationship('ImagePerson', back_populates='person')
-
-    roles = relationship(
-        "Role",
-        secondary=people_person_role,
-        backref="persons")
+    teacher = relationship('ClassMeeting', back_populates='person', lazy=True)
+    students = relationship('Student', back_populates='person', lazy=True)
+    roles = relationship("Role", secondary=people_person_role, back_populates="persons")
+    completions = relationship('CourseCompletion', back_populates='people', lazy=True)
+    person_attributes = relationship('PersonAttribute', back_populates='person', lazy=True)
+    attendances = relationship('Attendance', back_populates='person', lazy=True)
 
     def __repr__(self):
         return f"<Person(id={self.id},name='{self.first_name} {self.last_name}')>"
@@ -155,6 +156,7 @@ class Role(Base):
     id = Column(Integer, primary_key=True)
     name_i18n = Column(StringTypes.I18N_KEY)
     active = Column(Boolean)
+    persons = relationship("Person", secondary=people_person_role, back_populates="roles")
 
     def __repr__(self):
         return f"<Role(id={self.id})>"

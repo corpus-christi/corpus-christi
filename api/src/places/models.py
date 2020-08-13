@@ -6,7 +6,8 @@ from marshmallow.validate import Length, Range
 from sqlalchemy import Column, String, ForeignKey, Integer, Float, Boolean
 from sqlalchemy.orm import relationship
 from src.db import Base
-from src.i18n.models import i18n_create, I18NLocale, i18n_check
+from src.i18n.models import i18n_create, I18NLocale, i18n_check, I18NKey
+from src.shared.helpers import get_or_create
 
 from .. import db
 from ..shared.models import StringTypes
@@ -22,7 +23,9 @@ class Country(Base):
         StringTypes.I18N_KEY,
         ForeignKey('i18n_key.id'),
         nullable=False)
-    key = relationship('I18NKey', backref='countries', lazy=True)
+    key = relationship('I18NKey', back_populates='countries', lazy=True)
+    addresses = relationship('Address', back_populates='country', lazy=True)
+    areas = relationship('Area', back_populates='country', lazy=True)
 
     def __repr__(self):
         return f"<Country(code={self.code},i18n_key='{self.name_i18n}')>"
@@ -46,19 +49,13 @@ class Country(Base):
 
                 name_i18n = f'country.name.{country_code}'
 
-                for locale in country['locales']:
-                    locale_code = locale['locale_code']  # e.g., en-US
-                    if not db.session.query(I18NLocale).get(locale_code):
-                        # Don't have this locale code
-                        db.session.add(I18NLocale(code=locale_code, desc=''))
+                # Create the key if it does not exist
 
-                    if not i18n_check(name_i18n, locale_code):
-                        # Don't have this country
-                        i18n_create(
-                            name_i18n,
-                            locale_code,
-                            locale['name'],
-                            description=f"Country {country_name}")
+                get_or_create(db.session, I18NKey, filters={
+                    'id': name_i18n}, attributes={
+                    'desc': f"Country {country_name}"})
+
+                # Note: Create I18NValue s with flask i18n load <locale>
 
                 # Add to the Country table.
                 if not db.session.query(cls).filter_by(
@@ -86,8 +83,8 @@ class Area(Base):
     country_code = Column(String(2), ForeignKey(
         'places_country.code'), nullable=False)
 
-    addresses = relationship('Address', backref='areas', passive_deletes=True)
-    country = relationship('Country', backref='areas', lazy=True)
+    addresses = relationship('Address', back_populates='areas')
+    country = relationship('Country', back_populates='areas', lazy=True)
     active = Column(Boolean, nullable=False, default=True)
 
     def __repr__(self):
@@ -115,6 +112,7 @@ class Location(Base):
     assets = relationship('Asset', back_populates="location")
     images = relationship('ImageLocation', back_populates="location")
     active = Column(Boolean, nullable=False, default=True)
+    meeting_location = relationship('ClassMeeting', back_populates='locations', lazy=True)
 
     def __repr__(self):
         attributes = [f"id='{self.id}'"]
@@ -149,11 +147,12 @@ class Address(Base):
         'places_country.code'), nullable=False)
     latitude = Column(Float)
     longitude = Column(Float)
-    # area = relationship('Area', backref='addresses', lazy=True)
-    country = relationship('Country', backref='addresses', lazy=True)
+    country = relationship('Country', back_populates='addresses', lazy=True)
     meetings = relationship('Meeting', back_populates='address', lazy=True)
     locations = relationship('Location', back_populates='address', lazy=True)
     active = Column(Boolean, nullable=False, default=True)
+    people = relationship('Person', back_populates='address', lazy=True)
+    areas = relationship('Area', back_populates='addresses')
 
     def __repr__(self):
         attributes = [f"id='{self.id}'"]
