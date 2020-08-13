@@ -660,7 +660,7 @@ def update_member(group_id, person_id):
         create_member_history(member, is_join=False) # create a leave entry on the original group
         create_member_history(member, is_join=True, group_id=new_group_id) # create a join entry on the new group
 
-    if new_active and member.active != False: # if will activate person
+    if new_active and member.active == False: # if will activate person
         create_member_history(member, is_join=True, group_id=new_group_id or member.group_id) # create a join entry on the new group
 
     for key, val in valid_attributes.items():
