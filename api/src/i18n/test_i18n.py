@@ -307,30 +307,39 @@ def test_one_locale_as_tree(auth_client, code):
     assert resp.json['label']['name']['first'].startswith('Label for a first')
 
 
-
-
-
 # # ---- Languages
 
 @pytest.mark.slow
-@pytest.mark.parametrize('code, name', [('en', 'English'),
-                                        ('th', 'Thai'),
-                                        ('es', 'Spanish; Castilian')])
-def test_read_language(auth_client, code, name):
-    count = Language.load_from_file()
-    assert count > 0
-    resp = auth_client.get(
-        url_for('i18n.read_languages', language_code=code, locale='en-US'))
-    assert resp.status_code == 200
-    assert resp.json['name'] == name
+def test_read_language(runner, auth_client):
+    pairs = [('en', 'English'),
+             ('th', 'Thai'),
+             ('es', 'Spanish; Castilian')]
 
+    # GIVEN a database with Language and I18NValue records in English
+    count = Language.load_from_file()
+    result = runner.invoke(args=['i18n', 'load', 'en-US'])
+    assert count > 0
+
+    for code, name in pairs:
+        # WHEN we read a language
+        resp = auth_client.get(
+            url_for('i18n.read_languages', language_code=code, locale='en-US'))
+        # THEN we expect the correct status code
+        assert resp.status_code == 200
+        # THEN we expect correct name being returned
+        assert resp.json['name'] == name
 
 @pytest.mark.slow
-def test_read_all_languages(auth_client):
+def test_read_all_languages(runner, auth_client):
+    # GIVEN a database with Language and I18NValue records in English
     count = Language.load_from_file()
+    result = runner.invoke(args=['i18n', 'load', 'en-US'])
     assert count > 0
+    # WHEN we read all the languages
     resp = auth_client.get(url_for('i18n.read_languages', locale='en-US'))
+    # THEN we expect the correct status code
     assert resp.status_code == 200
+    # THEN we expect correct count of items being returned
     assert len(resp.json) == count
 
 
