@@ -29,8 +29,8 @@ refer to `doc/sdm.md`.
   - [Boilerplate](#boilerplate)
   - [User Interface Internationalization](#user-interface-internationalization)
     - [Code](#code)
-    - [Data](#data)
-    - [Tooling](#tooling)
+    - [Database Records](#database-records)
+    - [Revision Control](#revision-control)
   - [Authentication with JSON Web Tokens](#authentication-with-json-web-tokens)
   - [Visual Studio Code](#visual-studio-code)
 
@@ -405,14 +405,16 @@ create a CC test account for yourself.
 $ flask people new --first="Fred" --last="Ziffle" username password
 ```
 where
-- `--first` is the user's first name
-- `--last` is the user's last name
+- `"Fred"` is the user's first name
+- `"Ziffle"` is the user's last name
 - `username` is the user name of the account
 - `password` is the password to be associated with the account
+
 The `--first` and `--last` flags are _optional_.
 To include a first or last name with blanks or other
 characters special to the shell,
 enclose it in quotes. For example:
+
 ```bash
 $ flask people new --first="Billy Bob" --last="Smith" bbob bbob-pass
 ```
@@ -635,7 +637,7 @@ localization data by the top-level modules
 (e.g., `groups`, `calendar`, etc.)
 
 
-### Database
+### Database Records
 
 During runtime, those dotted entries will be
 fetched from the database according to the
@@ -669,9 +671,9 @@ original dotted string.
 
 We would also like the translation entries to be
 kept in the revision control, so that corrections
-of translations can be tracked and one would be
-able to quickly populate an empty database with
-existing translations.
+of translations can be tracked, and a developer
+would be able to quickly populate an empty
+database with existing translations.
 
 Currently, translation entries are kept in JSON
 format under the `corpus-christi/api/i18n`
@@ -697,6 +699,9 @@ database into a json file.
 ```bash
 (venv) $ flask i18n dump en-US
 ```
+
+For a detailed overview on the i18n commands, see
+[i18n Commands Suites](i18n-commands.md)
 
 For more usage info, see
 

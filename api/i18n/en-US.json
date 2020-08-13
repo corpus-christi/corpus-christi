@@ -1,6 +1,10 @@
 {
   "$vuetify": {
     "dataFooter": {
+      "itemsPerPageAll": {
+        "gloss": "Show all rows",
+        "verified": false
+      },
       "pageText": {
         "gloss": "{0}-{1} of {2}",
         "verified": false
@@ -40,6 +44,10 @@
       "itemsPerPageText": {
         "gloss": "Rows per page:",
         "verified": false
+      },
+      "sortBy": {
+        "gloss": "Sort by",
+        "verified": false
       }
     },
     "noDataText": {
@@ -55,38 +63,6 @@
         "gloss": "pm",
         "verified": false
       }
-    }
-  },
-  "translation": {
-    "menu-title": {
-      "gloss": "Translation",
-      "verified": false
-    },
-    "search-title": {
-      "gloss": "Find Translation Branch",
-      "verified": false
-    },
-    "dialog": {
-      "cancel": {
-        "gloss": "Cancel",
-        "verified": false
-      },
-      "submit": {
-        "gloss": "Submit",
-        "verified": false
-      }
-    },
-    "toolbar-title": {
-      "gloss": "Current locale: ",
-      "verified": false
-    },
-    "updated": {
-      "gloss": "Translations updated",
-      "verified": false
-    },
-    "error": {
-      "gloss": "Please modify your translations again",
-      "verified": false
     }
   },
   "account": {
@@ -2440,6 +2416,32 @@
         "verified": false
       }
     },
+    "membership-history": {
+      "cancel": {
+        "gloss": "Cancel",
+        "verified": false
+      },
+      "change-note": {
+        "gloss": "Change Note",
+        "verified": false
+      },
+      "clear-note": {
+        "gloss": "Clear Note",
+        "verified": false
+      },
+      "note": {
+        "gloss": "Notes",
+        "verified": false
+      },
+      "submit": {
+        "gloss": "Submit",
+        "verified": false
+      },
+      "title": {
+        "gloss": "History",
+        "verified": false
+      }
+    },
     "messages": {
       "already-exists": {
         "gloss": "Group already exists",
@@ -4138,6 +4140,42 @@
     },
     "transcript": {
       "gloss": "Transcripts",
+      "verified": false
+    }
+  },
+  "translation": {
+    "dialog": {
+      "cancel": {
+        "gloss": "Cancel",
+        "verified": false
+      },
+      "submit": {
+        "gloss": "Submit",
+        "verified": false
+      }
+    },
+    "error": {
+      "gloss": "Please modify your translations again",
+      "verified": false
+    },
+    "menu-title": {
+      "gloss": "Translation",
+      "verified": false
+    },
+    "search-title": {
+      "gloss": "Find Translation Branch",
+      "verified": false
+    },
+    "toolbar-title": {
+      "gloss": "Current locale: ",
+      "verified": false
+    },
+    "transparent-mode": {
+      "gloss": "Transparent Mode",
+      "verified": false
+    },
+    "updated": {
+      "gloss": "Translations updated",
       "verified": false
     }
   },

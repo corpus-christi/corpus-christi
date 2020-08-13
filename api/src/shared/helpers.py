@@ -157,13 +157,27 @@ def get_hash(filename):
     return hashlib.sha1(str(filename).encode('utf-8')).hexdigest()
 
 
+class BadTreeStructure(Exception):
+    pass
+
+
+class BadListKeyPath(Exception):
+    pass
+
+
 def tree_to_list(tree, is_leaf=lambda node: isinstance(node, str)):
     """ convert a tree into a list of { 'path': 'abc.xyz', 'value': leaf_node }
     where is_leaf(leaf_node) == True
+
+    raises a BadTreeStructure error if cannot convert the given tree
     """
     result = []
 
     def tree_to_list_helper(word_map, path=[]):
+        if not isinstance(word_map, dict):
+            raise BadTreeStructure(
+                f"node [{word_map}] at path [{'.'.join(path)}]"
+                " is neither a valid dictionary nor a valid leaf node")
         for key, val in word_map.items():
             if (is_leaf(val)):
                 result.append({'path': path + [key], 'value': val})
@@ -180,6 +194,8 @@ def list_to_tree(entries):
         'xyz': node
       }
     }
+
+    raises a BadListKeyPath error if cannot convert the given list to a valid tree
     """
     tree = {}
     for entry in entries:
@@ -189,12 +205,35 @@ def list_to_tree(entries):
         for i, key in enumerate(but_last):
             t = t.setdefault(key, {})
             if not isinstance(t, dict):
-                raise RuntimeError(
-                        f"failed to add child [{key}] in path [{entry['path']}], "
-                        f"non-dict value [{t}] at [{'.'.join(but_last[:i+1])}]")
+                raise BadListKeyPath(
+                    f"failed to add child [{key}] in path [{entry['path']}], "
+                    f"non-dict value [{t}] at [{'.'.join(but_last[:i+1])}]")
         if last not in t:
             t[last] = entry['value']
         else:
-            raise RuntimeError(
+            raise BadListKeyPath(
                 f"{entry['path']} already exists: '{t[last]}', won't set to '{entry['value']}'")
     return tree
+
+
+def get_or_create(session, model, filters, attributes={}):
+    """get an item from the database, or create one if not exists
+    credit: https://stackoverflow.com/a/6078058/6263602
+
+    :session: the session object
+    :model: the model for the table
+    :filters: the filters to be applied
+    :attributes: the attributes to be added to the created instance
+    :returns: the object requested
+
+    """
+    instance = session.query(model).filter_by(**filters).first()
+    if instance:
+        return instance
+    else:
+        instance = model(**{**filters, **attributes})
+        session.add(instance)
+        session.commit()
+        return instance
+
+

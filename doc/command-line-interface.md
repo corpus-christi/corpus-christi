@@ -10,14 +10,14 @@ You can get help at each level of the hierarchy
 with the `--help` flag.
 Here are the available commands, 
 listed hierarchically.
-To run, for example, the `clear-all` command,
-type `flask data clear-all`
+To run, for example, the `clear-all` command, type
+`flask app clear-all`
 
 - `flask`
-    - `account` - manages CC accounts
+    - `people` - manages CC accounts
         - `new` create a new account for CC
         - `password` update the password for an existing account
-    - `data` - manages database content
+    - `app` - manages database content
         - `clear-all` **deletes all data** in the database by dropping and then recreating all database tables.
         - `load-countries` loads country data
         - `load-languages` loads language data
@@ -26,11 +26,24 @@ type `flask data clear-all`
     - `db` - handles database migrations; there are many options within `flask db`; the most relevant are:
         - `migrate` to create a new migration after updating application models
         - `upgrade` to apply a migration to the database.    
-    - `maintain` - contains operations that are used to maintain the database
+    - `events` - contains operations that are used to maintain the database
         - `prune-events` archives all events that have ended more than 30 days before the script is run
     - `routes` - prints a list of all routes configured in the API
     - `run` - starts the Flask server
     - `shell` - opens a Python shell set up with access to Flask objects (e.g., `request`, `session`)
+    - `i18n` - maintain translation entries
+        - `add` Add an entry into the database.
+        - `delete` Delete entries from the database.
+        - `dump` Dump entries from the database into a json file.
+        - `dump-descriptions` Dump descriptions into a json file from the database.
+        - `edit` Interactively edit entries.
+        - `export` Export entries into a yaml file.
+        - `import` Import entries from a yaml file.
+        - `list` Print entries in the yaml format.
+        - `load` Load entries from a json file into the database.
+        - `load-descriptions` Load descriptions from a json file into the database.
+        - `translate` Translate entries in the database.
+        - `update` Update an entry in the database.
 
 # Environment Variables
 

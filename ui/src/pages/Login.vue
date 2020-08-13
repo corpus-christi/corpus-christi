@@ -52,13 +52,6 @@
         </v-flex>
       </v-layout>
     </v-container>
-
-    <v-snackbar v-model="snackbar.show">
-      {{ snackbar.text }}
-      <v-btn text @click="snackbar.show = false" data-cy>
-        {{ $t("actions.close") }}
-      </v-btn>
-    </v-snackbar>
   </div>
 </template>
 
@@ -66,6 +59,7 @@
 import { mapMutations } from "vuex";
 import Account from "../models/Account";
 import jwtDecode from "jwt-decode";
+import { eventBus } from "../plugins/event-bus.js";
 
 export default {
   name: "Login",
@@ -73,11 +67,6 @@ export default {
     return {
       username: "",
       password: "",
-
-      snackbar: {
-        show: false,
-        text: "",
-      },
     };
   },
 
@@ -119,8 +108,9 @@ export default {
         }
       } catch (err) {
         console.log(err);
-        this.snackbar.text = this.$t("login.messages.incorrect-login");
-        this.snackbar.show = true;
+        eventBus.$emit("error", {
+          content: "login.messages.incorrect-login",
+        });
       }
     },
   },
