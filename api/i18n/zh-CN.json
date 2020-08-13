@@ -1,6 +1,10 @@
 {
   "$vuetify": {
     "dataFooter": {
+      "itemsPerPageAll": {
+        "gloss": "\u663e\u793a\u6240\u6709\u884c",
+        "verified": false
+      },
       "pageText": {
         "gloss": "{2}\u4e2d\u7684{0}-{1}",
         "verified": false
@@ -4110,6 +4114,10 @@
     },
     "toolbar-title": {
       "gloss": "\u5f53\u524d\u8bed\u8a00\u73af\u5883\uff1a",
+      "verified": false
+    },
+    "transparent-mode": {
+      "gloss": "\u900f\u660e\u6a21\u5f0f",
       "verified": false
     },
     "updated": {

@@ -1,6 +1,10 @@
 {
   "$vuetify": {
     "dataFooter": {
+      "itemsPerPageAll": {
+        "gloss": "Mostrar todas las filas",
+        "verified": false
+      },
       "pageText": {
         "gloss": "{0}-{1} de {2}",
         "verified": false
@@ -4110,6 +4114,10 @@
     },
     "toolbar-title": {
       "gloss": "Locale actual:",
+      "verified": false
+    },
+    "transparent-mode": {
+      "gloss": "Modo transparente",
       "verified": false
     },
     "updated": {

@@ -1,48 +1,64 @@
 <template>
-  <v-menu offset-y :disabled="ableMenu">
-    <template v-slot:activator="{ on }">
-      <v-btn id="cur-locale" data-cy="cur-locale" text v-on="on">
-        {{ currentFlagAndDescription }}
-        <v-icon>arrow_drop_down</v-icon>
-      </v-btn>
-    </template>
+  <v-row class="shrink" align="center">
+    <v-col v-if="isTranslator">
+      <v-switch
+        hide-details
+        :label="$t('translation.transparent-mode')"
+        @change="switchTransparentMode"
+        v-model="transparentMode"
+      />
+    </v-col>
+    <v-col>
+      <v-menu offset-y :disabled="disableMenu">
+        <template v-slot:activator="{ on }">
+          <v-btn id="cur-locale" data-cy="cur-locale" text v-on="on">
+            {{ currentFlagAndDescription }}
+            <v-icon>arrow_drop_down</v-icon>
+          </v-btn>
+        </template>
 
-    <v-list data-cy="language-dropdown">
-      <v-list-item
-        v-for="(localeModel, idx) in localeModels"
-        v-bind:key="idx"
-        v-bind:data-cy="localeModel.code"
-        v-on:click="changeLocale(localeModel)"
-      >
-        <v-list-item-title>
-          {{ localeModel.flagAndDescription }}
-        </v-list-item-title>
-      </v-list-item>
-    </v-list>
-  </v-menu>
+        <v-list data-cy="language-dropdown">
+          <v-list-item
+            v-for="(localeModel, idx) in localeModels"
+            v-bind:key="idx"
+            v-bind:data-cy="localeModel.code"
+            v-on:click="changeLocale(localeModel)"
+          >
+            <v-list-item-title>
+              {{ getFlagAndDescription(localeModel) }}
+            </v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+    </v-col>
+  </v-row>
 </template>
 
-<script lang="js">
-import Vue from "vue";
+<script>
 import set from "lodash/set";
 import { mapState } from "vuex";
 
-export default Vue.extend({
+export default {
   name: "LocaleMenu",
-
+  data() {
+    return {
+      transparentMode: false,
+      defaultFallbackLocale: null,
+    };
+  },
   computed: {
     ...mapState(["currentAccount"]),
 
-    ableMenu(){
-      if (this.currentAccount == null){
-        return false
-      }
-      else{
-        if (this.currentAccount.roles.includes("role.translator") && this.$route.name === "translation"){
-          return true
-        }
-        else return false;
-      }
+    isTranslator() {
+      return (
+        this.currentAccount &&
+        this.currentAccount.roles.includes("role.translator")
+      );
+    },
+
+    disableMenu() {
+      // disable menu if in the translation page or in transparent mode
+      return this.$route.name === "translation" || this.transparentMode;
     },
 
     currentLocale() {
@@ -61,7 +77,7 @@ export default Vue.extend({
       const localeModel = this.currentLocaleModel;
 
       if (localeModel) {
-        return localeModel.flagAndDescription;
+        return this.getFlagAndDescription(localeModel);
       } else {
         return "NO LOCALE";
       }
@@ -73,6 +89,30 @@ export default Vue.extend({
   },
 
   methods: {
+    switchTransparentMode(enable) {
+      if (enable) {
+        this.defaultFallbackLocale = this.$i18n.fallbackLocale;
+        this.$i18n.fallbackLocale = null; // disable fallback
+        this.$i18n.locale = "transparent"; // set non-existent locale
+      } else {
+        this.$i18n.fallbackLocale = this.defaultFallbackLocale; // enable fallback
+        this.$i18n.locale = this.currentLocale; // switch back to actual locale
+      }
+      console.log("this.$i18n.fallbackLocale", this.$i18n.fallbackLocale);
+    },
+
+    getFlagAndDescription(localeModel) {
+      let { languageCode, countryCode } = localeModel.locale;
+      let languageKey = `language.name.${languageCode}`;
+      let countryKey = `country.name.${countryCode}`;
+      if (this.$te(languageKey) && this.$te(countryKey)) {
+        let description = `${this.$t(languageKey)} ${this.$t(countryKey)}`;
+        return `${localeModel.locale.flag} ${description}`; // use internationalized descriptions
+      } else {
+        return localeModel.flagAndDescription; // plain description in database
+      }
+    },
+
     setCurrentLocale(locale) {
       this.$store.commit("setCurrentLocale", locale);
     },
@@ -93,11 +133,11 @@ export default Vue.extend({
           for (let item of response.data) {
             set(translations, item.key_id, item.gloss);
           }
-          this.$i18n.mergeLocaleMessage(locale.languageCode, translations);
+          this.$i18n.mergeLocaleMessage(locale.toString(), translations);
           console.log("GTFL XLATES", this.$i18n);
         })
         .catch((err) => console.error("FAILURE", err));
     },
   },
-});
+};
 </script>
