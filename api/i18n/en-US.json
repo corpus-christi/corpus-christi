@@ -2430,6 +2430,14 @@
       "cancel": {
         "gloss": "Cancel",
         "verified": false
+      },
+      "joined": {
+        "gloss": "Joined",
+        "verified": false
+      },
+      "left": {
+        "gloss": "Left",
+        "verified": false
       }
     },
     "messages": {

@@ -360,10 +360,8 @@ export default {
   },
   methods: {
     timeLineItem(event) {
-      console.log(event.note);
       if (event.note === undefined) return "";
       else {
-        console.log("Note", JSON.parse(event.note));
         return JSON.parse(event.note);
       }
     },
@@ -447,13 +445,11 @@ export default {
             }
           }
         }
-
         for (let i = 0; i < this.history.length; i++) {
-          this.singleTime.push(this.history[i]);
           this.singleTime.push(this.history[i]);
         }
         for (let i = 0; i < this.singleTime.length; i++) {
-          if (i % 2 === 0) {
+          if (this.singleTime[i].is_join === false) {
             if (!(this.singleTime[i].time in this.timeMap)) {
               this.timeMap[this.singleTime[i].time] = {
                 join: [],
@@ -461,7 +457,7 @@ export default {
               };
             }
             if (this.singleTime[i].time in this.timeMap) {
-              this.timeMap[this.singleTime[i].time].join.push(
+              this.timeMap[this.singleTime[i].time].left.push(
                 this.singleTime[i]
               );
             }
@@ -473,7 +469,7 @@ export default {
               };
             }
             if (this.singleTime[i].time in this.timeMap) {
-              this.timeMap[this.singleTime[i].time].left.push(
+              this.timeMap[this.singleTime[i].time].join.push(
                 this.singleTime[i]
               );
             }
@@ -505,11 +501,11 @@ export default {
                 " -",
               time: this.timeMap[key].left[j].time,
               note: this.timeMap[key].left[j].note,
-              recordId: this.timeMap[key].join[j].id,
+              recordId: this.timeMap[key].left[j].id,
             });
           }
         }
-        for (let i = 0; i < order.length * 2; i++) {
+        for (let i = 0; i < order.length; i++) {
           this.timeLineItems["timeLineItem" + i] = new Editor({
             editable: false,
             extensions: [

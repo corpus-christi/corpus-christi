@@ -26,10 +26,9 @@ export default {
     // Computed property so it's reactive.
     ...mapState(["currentAccount"]),
     menuItems: function () {
-      if (this.currentAccount == null){
-        return []
-      }
-      else{
+      if (this.currentAccount == null) {
+        return [];
+      } else {
         if (this.currentAccount.roles.includes("role.translator") === true) {
           return [
             {

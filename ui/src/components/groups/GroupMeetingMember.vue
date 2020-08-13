@@ -135,7 +135,7 @@ export default {
             `/api/v1/groups/meetings/${meetingId}/attendances/${newAttendance[i]}`
           )
           .then((resp) => {
-            console.log(resp)
+            console.log(resp);
             eventBus.$emit("message", {
               content: "groups.messages.participant-added",
             });
@@ -200,12 +200,12 @@ export default {
         {
           text: this.$t("person.name.first"),
           value: "firstName",
-          align: 'start',
+          align: "start",
         },
         {
           text: this.$t("person.name.last"),
           value: "lastName",
-          align: 'start',
+          align: "start",
         },
       ];
     },
