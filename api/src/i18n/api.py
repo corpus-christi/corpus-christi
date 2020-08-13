@@ -106,7 +106,7 @@ def update_a_value():
 
 #     verify_jwt_in_request()
     claims = get_jwt_claims()
-    if 'role.translator' not in claims.roles:
+    if 'role.translator' not in claims['roles']:
         return 'Permission denied', 403
     else:
         try:
