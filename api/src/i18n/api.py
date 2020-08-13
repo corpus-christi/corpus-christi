@@ -9,6 +9,7 @@ from .. import db
 from ..shared.helpers import list_to_tree, BadListKeyPath
 
 from src.shared.helpers import modify_entity, get_all_queried_entities, logged_response
+from src.auth.utils import authorize
 
 
 # ---- I18N Locale
@@ -99,34 +100,30 @@ def read_all_values():
     return jsonify(i18n_value_schema.dump(values, many=True))
 
 @i18n.route('/values/update', methods=['PATCH'])
+@authorize(['role.translator'])
 @jwt_required
 def update_a_value():
 #     update the values with the info in payload
     i18n_value_schema = I18NValueSchema()
 
-#     verify_jwt_in_request()
-    claims = get_jwt_claims()
-    if 'role.translator' not in claims['roles']:
-        return 'Permission denied', 403
-    else:
-        try:
-            valid_attributes = i18n_value_schema.load(request.json, partial=True)
-        except ValidationError as err:
-            return logged_response(err.messages, 422)
+    try:
+        valid_attributes = i18n_value_schema.load(request.json, partial=True)
+    except ValidationError as err:
+        return logged_response(err.messages, 422)
 
-        i18n_value = db.session.query(I18NValue).filter_by(locale_code=valid_attributes.get('locale_code'), key_id=valid_attributes.get('key_id')).first()
+    i18n_value = db.session.query(I18NValue).filter_by(locale_code=valid_attributes.get('locale_code'), key_id=valid_attributes.get('key_id')).first()
 
-        if not i18n_value:
-            return logged_response(
-                f"Group with key_id #{valid_attributes['key_id']} does not exist.", 404)
+    if not i18n_value:
+        return logged_response(
+            f"Group with key_id #{valid_attributes['key_id']} does not exist.", 404)
 
-        for key, val in valid_attributes.items():
-                setattr(i18n_value, key, val)
+    for key, val in valid_attributes.items():
+            setattr(i18n_value, key, val)
 
-        db.session.add(i18n_value)
-        db.session.commit()
+    db.session.add(i18n_value)
+    db.session.commit()
 
-        return logged_response(i18n_value_schema.dump(i18n_value), 200)
+    return logged_response(i18n_value_schema.dump(i18n_value), 200)
 
 
 

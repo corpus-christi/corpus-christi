@@ -237,6 +237,14 @@ def test_update_a_value(auth_client):
     # THEN response should be "Ok"
     assert resp.status_code == 200
 
+    # WHEN we ask for translations without the translator role
+    resp = auth_client.patch(
+        url_for('i18n.update_a_value'),
+        json={'key_id':test.key_id, 'locale_code': test.locale_code, 'gloss':'OPEN'}
+    )
+    # THEN we expect an error
+    assert resp.status_code == 403
+
 @pytest.mark.smoke
 def test_bogus_xlation_locale(auth_client):
     resp = auth_client.get(
