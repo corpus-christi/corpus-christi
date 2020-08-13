@@ -41,13 +41,15 @@
     <!-- Calander -->
     <v-row>
       <v-col>
-        <v-toolbar>
+        <v-toolbar v-if="$refs.calendar">
           <v-btn fab x-small @click="prev">
-            <v-icon small>mdi-chevron-left</v-icon>
+            <v-icon small>navigate_before</v-icon>
           </v-btn>
           <v-spacer></v-spacer>
+          <v-toolbar-title>{{ $refs.calendar.title }}</v-toolbar-title>
+          <v-spacer></v-spacer>
           <v-btn fab small @click="next">
-            <v-icon small>mdi-chevron-right</v-icon>
+            <v-icon small>navigate_next</v-icon>
           </v-btn>
         </v-toolbar>
         <v-sheet height="400">
@@ -72,7 +74,7 @@ export default {
   name: "GroupDetails",
   data() {
     return {
-      mode: 'stack',
+      mode: "stack",
       events: [],
       anchorDate: new Date(),
       group: null,
@@ -85,13 +87,16 @@ export default {
         group: {},
       },
       colors: [
-        "blue",
-        "indigo",
-        "deep-purple",
-        "cyan",
-        "green",
-        "orange",
-        "grey darken-1",
+        "#1f77b4",
+        "#ff7f0e",
+        "#2ca02c",
+        "#d62728",
+        "#9467bd",
+        "#8c564b",
+        "#e377c2",
+        "#7f7f7f",
+        "#bcbd22",
+        "#17becf",
       ],
     };
   },
