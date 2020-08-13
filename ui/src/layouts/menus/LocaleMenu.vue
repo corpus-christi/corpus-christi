@@ -96,7 +96,7 @@ export default {
         this.$i18n.locale = "transparent"; // set non-existent locale
       } else {
         this.$i18n.fallbackLocale = this.defaultFallbackLocale; // enable fallback
-        this.$i18n.locale = this.currentLocale; // switch back to actual locale
+        this.$i18n.locale = this.currentLocale.toString(); // switch back to actual locale
       }
       console.log("this.$i18n.fallbackLocale", this.$i18n.fallbackLocale);
     },
