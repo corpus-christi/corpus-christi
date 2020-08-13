@@ -421,7 +421,8 @@ def create_i18n_cli(app):
                 }
             }, values)
         tree = list_to_tree(entries)
-        json.dump(tree, target, indent=2, sort_keys=True)
+        # use ensure_ascii=False to allow unescaped unicode characters
+        json.dump(tree, target, indent=2, sort_keys=True, ensure_ascii=False)
         click.echo("Successfully dumped data from the database")
         click.echo(
             f"Target file: {getattr(target, 'name', '(unknown stream)')}")
@@ -573,7 +574,7 @@ def create_i18n_cli(app):
         """
         tree = read_locale_tail_tree(path)
         if tree:
-            yaml.dump(tree, target, default_flow_style=False, sort_keys=True)
+            yaml.dump(tree, target, default_flow_style=False, sort_keys=True, allow_unicode=True)
         else:
             click.echo(f"No entries found")
 
@@ -802,7 +803,7 @@ def create_i18n_cli(app):
         """
         tree = read_locale_tail_tree(path)
         if tree:
-            data = yaml.dump(tree, default_flow_style=False, sort_keys=True)
+            data = yaml.dump(tree, default_flow_style=False, sort_keys=True, allow_unicode=True)
             comments = (
                 "#####################################################################\n"
                 "#             You are in the interactive editing mode \n"
