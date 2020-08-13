@@ -222,28 +222,41 @@ def test_one_locale_as_list(auth_client, format, code):
     # AND there should be as many rows as there are keys.
     assert len(resp.json) == len(key_data)
 
+
 def test_update_a_value(auth_client):
     # GIVEN i18n test data
     seed_database(auth_client.sqla)
+    test = auth_client.sqla.query(I18NValue).first()
     # WHEN asking for translations for a given Value
-    test = auth_client.sqla.query(I18NValue).filter_by(locale_code='en-US').first()
-    #THEN patch the given value with a new value
+    # THEN patch the given value with a new value
     resp = auth_client.patch(
         url_for('i18n.update_a_value'),
-        json={'key_id':test.key_id, 'locale_code': test.locale_code, 'gloss':'OPEN'},
-        headers={'AUTHORIZATION': f'Bearer {get_token_with_roles(["role.translator"])}'}
-    )
-    result = auth_client.sqla.query(I18NValue).filter_by(locale_code='en-US', key_id='alt.logo').first()
+        json={
+            'key_id': test.key_id,
+            'locale_code': test.locale_code,
+            'gloss': 'OPEN',
+            'verified': True
+            },
+        headers={
+            'AUTHORIZATION': f'Bearer {get_token_with_roles(["role.translator"])}'})
+    result = auth_client.sqla.query(I18NValue).filter_by(
+        locale_code=test.locale_code, key_id=test.key_id).first()
     # THEN response should be "Ok"
     assert resp.status_code == 200
+    # THEN we expect the correct result
+    assert result.gloss == "OPEN"
+    assert result.verified == True
 
     # WHEN we ask for translations without the translator role
     resp = auth_client.patch(
         url_for('i18n.update_a_value'),
-        json={'key_id':test.key_id, 'locale_code': test.locale_code, 'gloss':'OPEN'}
-    )
+        json={
+            'key_id': test.key_id,
+            'locale_code': test.locale_code,
+            'gloss': 'OPEN'})
     # THEN we expect an error
     assert resp.status_code == 403
+
 
 @pytest.mark.smoke
 def test_bogus_xlation_locale(auth_client):
