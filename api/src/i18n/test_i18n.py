@@ -5,6 +5,7 @@ import pytest
 from flask import url_for
 
 from .models import I18NLocale, I18NKey, I18NValue, Language, i18n_read, i18n_update, i18n_delete, i18n_check
+from ..shared.helpers import get_token_with_roles
 
 locale_data = [
     {'code': 'en-US', 'desc': 'English US'},
@@ -229,7 +230,8 @@ def test_update_a_value(auth_client):
     #THEN patch the given value with a new value
     resp = auth_client.patch(
         url_for('i18n.update_a_value'),
-        json={'key_id':test.key_id, 'locale_code': test.locale_code, 'gloss':'OPEN'}
+        json={'key_id':test.key_id, 'locale_code': test.locale_code, 'gloss':'OPEN'},
+        headers={'AUTHORIZATION': f'Bearer {get_token_with_roles(["role.translator"])}'}
     )
     result = auth_client.sqla.query(I18NValue).filter_by(locale_code='en-US', key_id='alt.logo').first()
     # THEN response should be "Ok"
