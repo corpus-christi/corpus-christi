@@ -95,11 +95,11 @@
       "verified": false
     },
     "add-group": {
-      "gloss": "新增群组",
+      "gloss": "新增小组",
       "verified": false
     },
     "add-manager": {
-      "gloss": "新增管理员",
+      "gloss": "新增经理",
       "verified": false
     },
     "add-participant": {
@@ -107,11 +107,11 @@
       "verified": false
     },
     "add-person": {
-      "gloss": "加人",
+      "gloss": "添加人员",
       "verified": false
     },
     "back": {
-      "gloss": "背部",
+      "gloss": "返回",
       "verified": false
     },
     "cancel": {
@@ -123,11 +123,11 @@
       "verified": false
     },
     "clear": {
-      "gloss": "明确",
+      "gloss": "清除",
       "verified": false
     },
     "close": {
-      "gloss": "关",
+      "gloss": "关闭",
       "verified": false
     },
     "confirm": {
@@ -187,15 +187,15 @@
       "verified": false
     },
     "search-group-types": {
-      "gloss": "搜索组类型",
+      "gloss": "搜索小组类型",
       "verified": false
     },
     "search-manager-types": {
-      "gloss": "搜索管理器类型",
+      "gloss": "搜索经理类型",
       "verified": false
     },
     "search-people": {
-      "gloss": "搜索人",
+      "gloss": "搜索人员",
       "verified": false
     },
     "signup": {
@@ -208,7 +208,7 @@
         "verified": false
       },
       "archive": {
-        "gloss": "封存",
+        "gloss": "归档",
         "verified": false
       },
       "email": {
@@ -216,19 +216,19 @@
         "verified": false
       },
       "remove": {
-        "gloss": "去掉",
+        "gloss": "移除",
         "verified": false
       },
       "settings": {
-        "gloss": "设定值",
+        "gloss": "设置",
         "verified": false
       },
       "take-attendance": {
-        "gloss": "参加",
+        "gloss": "签到",
         "verified": false
       },
       "unarchive": {
-        "gloss": "取消存档",
+        "gloss": "取消归档",
         "verified": false
       }
     },
@@ -241,7 +241,7 @@
       "verified": false
     },
     "view-archived": {
-      "gloss": "查看已存档",
+      "gloss": "查看已归档",
       "verified": false
     },
     "view-inactive": {
@@ -255,11 +255,11 @@
   },
   "assets": {
     "asset-added": {
-      "gloss": "资产增加",
+      "gloss": "资产已添加",
       "verified": false
     },
     "asset-archived": {
-      "gloss": "资产已存档",
+      "gloss": "资产已归档",
       "verified": false
     },
     "asset-edited": {
@@ -267,7 +267,7 @@
       "verified": false
     },
     "asset-on-event": {
-      "gloss": "该资产已分配给该事件。",
+      "gloss": "该资产已分配给该活动。",
       "verified": false
     },
     "asset-removed": {
@@ -275,15 +275,15 @@
       "verified": false
     },
     "asset-unarchived": {
-      "gloss": "资产未存档",
+      "gloss": "资产已取消归档",
       "verified": false
     },
     "confirm-archive": {
-      "gloss": "您确定要存档此资产吗？",
+      "gloss": "您确定要归档此资产吗？",
       "verified": false
     },
     "confirm-remove-from-event": {
-      "gloss": "您确定要从此事件中删除该资产吗？",
+      "gloss": "您确定要从此活动中删除该资产吗？",
       "verified": false
     },
     "create-asset": {
@@ -303,11 +303,11 @@
       "verified": false
     },
     "error-archiving-asset": {
-      "gloss": "存档资产时出错",
+      "gloss": "归档资产时出错",
       "verified": false
     },
     "error-asset-assigned": {
-      "gloss": "该资产已分配给冲突事件。",
+      "gloss": "该资产已分配给冲突活动。",
       "verified": false
     },
     "error-editing-asset": {
@@ -349,11 +349,11 @@
       "verified": false
     },
     "dropdown": {
-      "gloss": "落下",
+      "gloss": "下拉列表",
       "verified": false
     },
     "float": {
-      "gloss": "浮点",
+      "gloss": "浮点数",
       "verified": false
     },
     "integer": {
@@ -365,7 +365,7 @@
       "verified": false
     },
     "string": {
-      "gloss": "串",
+      "gloss": "字符串",
       "verified": false
     }
   },
@@ -1108,7 +1108,7 @@
         "verified": false
       },
       "PW": {
-        "gloss": "u琉",
+        "gloss": "帕劳群岛",
         "verified": false
       },
       "PY": {
@@ -1120,7 +1120,7 @@
         "verified": false
       },
       "RE": {
-        "gloss": "团圆",
+        "gloss": "留尼汪岛",
         "verified": false
       },
       "RO": {
@@ -1268,7 +1268,7 @@
         "verified": false
       },
       "TR": {
-        "gloss": "火鸡",
+        "gloss": "土耳其",
         "verified": false
       },
       "TT": {
@@ -1387,7 +1387,7 @@
       "verified": false
     },
     "archived": {
-      "gloss": "课程已存档",
+      "gloss": "课程已归档",
       "verified": false
     },
     "choose-offering": {
@@ -1407,11 +1407,11 @@
       "verified": false
     },
     "class-attendance-load-failed": {
-      "gloss": "无法上课",
+      "gloss": "无法加载出席列表",
       "verified": false
     },
     "class-attendance-update-failed": {
-      "gloss": "无法更新出勤",
+      "gloss": "无法更新出席列表",
       "verified": false
     },
     "class-attendance-updated": {
@@ -1419,7 +1419,7 @@
       "verified": false
     },
     "confirm-archive": {
-      "gloss": "您确定要存档此课程吗？",
+      "gloss": "您确定要归档此课程吗？",
       "verified": false
     },
     "confirm-student": {
@@ -1435,7 +1435,7 @@
       "verified": false
     },
     "create-new-person": {
-      "gloss": "创建一个新人",
+      "gloss": "创建一个新人员",
       "verified": false
     },
     "dashboard": {
@@ -1449,11 +1449,11 @@
           "verified": false
         },
         "did-not-attend": {
-          "gloss": "没有参加",
+          "gloss": "未参加",
           "verified": false
         },
         "did-not-graduate": {
-          "gloss": "没有毕业",
+          "gloss": "未毕业",
           "verified": false
         },
         "enrolled": {
@@ -1501,7 +1501,7 @@
       "verified": false
     },
     "is-archived": {
-      "gloss": "该课程已存档",
+      "gloss": "该课程已归档",
       "verified": false
     },
     "location": {
@@ -1545,11 +1545,11 @@
       "verified": false
     },
     "reactivated": {
-      "gloss": "课程未归档",
+      "gloss": "课程已取消归档",
       "verified": false
     },
     "register": {
-      "gloss": "寄存器",
+      "gloss": "注册",
       "verified": false
     },
     "register-for-course": {
@@ -1569,7 +1569,7 @@
       "verified": false
     },
     "students": {
-      "gloss": "学生们",
+      "gloss": "学生",
       "verified": false
     },
     "teacher": {
@@ -1593,7 +1593,7 @@
       "verified": false
     },
     "when": {
-      "gloss": "什么时候",
+      "gloss": "时间",
       "verified": false
     }
   },
@@ -1607,11 +1607,11 @@
       "verified": false
     },
     "archived": {
-      "gloss": "文凭已存档",
+      "gloss": "文凭已归档",
       "verified": false
     },
     "confirm-archive": {
-      "gloss": "您确定要存档此文凭吗？",
+      "gloss": "您确定要归档此文凭吗？",
       "verified": false
     },
     "courses": {
@@ -1639,7 +1639,7 @@
       "verified": false
     },
     "reactivated": {
-      "gloss": "未存档的文凭",
+      "gloss": "文凭已取消归档",
       "verified": false
     },
     "title": {
@@ -1662,7 +1662,7 @@
         "verified": false
       },
       "dismiss": {
-        "gloss": "解雇",
+        "gloss": "隐藏",
         "verified": false
       },
       "report-error": {
@@ -1725,7 +1725,7 @@
       "verified": false
     },
     "attendance-none": {
-      "gloss": "没有",
+      "gloss": "空",
       "verified": false
     },
     "calendar": {
@@ -1735,7 +1735,7 @@
       }
     },
     "confirm-archive": {
-      "gloss": "您确定要存档此事件吗？",
+      "gloss": "您确定要归档此活动吗？",
       "verified": false
     },
     "create-event": {
@@ -1753,13 +1753,13 @@
           "verified": false
         },
         "home-groups": {
-          "gloss": "家庭组",
+          "gloss": "家庭小组",
           "verified": false
         }
       },
       "headers": {
         "home-group-percentage": {
-          "gloss": "家庭组中信徒的百分比",
+          "gloss": "家庭小组中信徒的百分比",
           "verified": false
         },
         "location-attendance": {
@@ -1795,19 +1795,19 @@
       "verified": false
     },
     "error-adding-event": {
-      "gloss": "添加事件时出错",
+      "gloss": "添加活动时出错",
       "verified": false
     },
     "error-archiving-event": {
-      "gloss": "归档事件时出错",
+      "gloss": "归档活动时出错",
       "verified": false
     },
     "error-editing-event": {
-      "gloss": "编辑事件时出错",
+      "gloss": "编辑活动时出错",
       "verified": false
     },
     "error-unarchiving-event": {
-      "gloss": "取消存档事件时出错",
+      "gloss": "取消归档活动时出错",
       "verified": false
     },
     "event-added": {
@@ -1815,7 +1815,7 @@
       "verified": false
     },
     "event-archived": {
-      "gloss": "活动已存档",
+      "gloss": "活动已归档",
       "verified": false
     },
     "event-description": {
@@ -1831,11 +1831,11 @@
       "verified": false
     },
     "event-unarchived": {
-      "gloss": "活动未存档",
+      "gloss": "活动已取消归档",
       "verified": false
     },
     "header": {
-      "gloss": "大事记",
+      "gloss": "活动",
       "verified": false
     },
     "image-description": {
@@ -1852,7 +1852,7 @@
         "verified": false
       },
       "added": {
-        "gloss": "参加者已添加",
+        "gloss": "参与者已添加",
         "verified": false
       },
       "confirm-remove": {
@@ -1872,37 +1872,37 @@
         "verified": false
       },
       "title": {
-        "gloss": "参加者",
+        "gloss": "参与者",
         "verified": false
       }
     },
     "persons": {
       "confirm-remove-from-event": {
-        "gloss": "您确定要将此人从此活动中删除吗？",
+        "gloss": "您确定要将此人员从此活动中删除吗？",
         "verified": false
       },
       "description": {
-        "gloss": "角色描述",
+        "gloss": "职位描述",
         "verified": false
       },
       "edit": {
-        "gloss": "编辑人",
+        "gloss": "编辑人员",
         "verified": false
       },
       "error-adding-person": {
-        "gloss": "添加人时出错",
+        "gloss": "添加人员时出错",
         "verified": false
       },
       "error-person-assigned": {
-        "gloss": "该人被分配了一个冲突事件。",
+        "gloss": "该人员被分配了一个冲突活动。",
         "verified": false
       },
       "error-removing-person": {
-        "gloss": "移除人时出错",
+        "gloss": "移除人员时出错",
         "verified": false
       },
       "new": {
-        "gloss": "加人",
+        "gloss": "添加人员",
         "verified": false
       },
       "none-assigned": {
@@ -1910,7 +1910,7 @@
         "verified": false
       },
       "person-added": {
-        "gloss": "添加的人",
+        "gloss": "人员已添加",
         "verified": false
       },
       "person-edited": {
@@ -1918,15 +1918,15 @@
         "verified": false
       },
       "person-on-event": {
-        "gloss": "该人已被分配参加此活动。",
+        "gloss": "该人员已被分配参加此活动。",
         "verified": false
       },
       "person-removed": {
-        "gloss": "删除人",
+        "gloss": "删除人员",
         "verified": false
       },
       "title": {
-        "gloss": "活动人物",
+        "gloss": "活动成员",
         "verified": false
       }
     },
@@ -1958,7 +1958,7 @@
     },
     "batch-actions": {
       "archive": {
-        "gloss": "封存",
+        "gloss": "归档",
         "verified": false
       },
       "edit": {
@@ -1971,15 +1971,15 @@
       },
       "messages": {
         "move-person-will-cause-cycle": {
-          "gloss": "移动此人将导致领导层的循环",
+          "gloss": "移动此人员将导致领导层的循环",
           "verified": false
         },
         "no-email": {
-          "gloss": "该人没有电子邮件地址",
+          "gloss": "该人员没有电子邮件地址",
           "verified": false
         },
         "person-in-destination-group": {
-          "gloss": "该人已经在目的地组中",
+          "gloss": "该人员已经在目的地小组中",
           "verified": false
         },
         "unarchive-group-will-cause-cycle": {
@@ -1996,16 +1996,16 @@
         "verified": false
       },
       "unarchive": {
-        "gloss": "取消存档",
+        "gloss": "取消归档",
         "verified": false
       }
     },
     "confirm-remove-from-event": {
-      "gloss": "您确定要从此事件中删除该组吗？",
+      "gloss": "您确定要从此活动中删除该小组吗？",
       "verified": false
     },
     "create-group": {
-      "gloss": "创建组",
+      "gloss": "创建小组",
       "verified": false
     },
     "description": {
@@ -2018,11 +2018,11 @@
         "verified": false
       },
       "manager": {
-        "gloss": "管理人员",
+        "gloss": "经理",
         "verified": false
       },
       "member-count": {
-        "gloss": "会员人数",
+        "gloss": "成员人数",
         "verified": false
       },
       "title": {
@@ -2031,81 +2031,81 @@
       }
     },
     "edit-group": {
-      "gloss": "编辑组",
+      "gloss": "编辑小组",
       "verified": false
     },
     "entity-types": {
       "group-types": {
         "change-to-different": {
-          "gloss": "更改为其他组类型",
+          "gloss": "更改为其他小组类型",
           "verified": false
         },
         "confirm-remove": {
-          "gloss": "您确定要删除此组类型吗？",
+          "gloss": "您确定要删除此小组类型吗？",
           "verified": false
         },
         "create-new": {
-          "gloss": "创建一个新的组类型",
+          "gloss": "创建一个新的小组类型",
           "verified": false
         },
         "edit": {
-          "gloss": "编辑群组类型",
+          "gloss": "编辑小组类型",
           "verified": false
         },
         "fail-add": {
-          "gloss": "添加组类型失败",
+          "gloss": "添加小组类型失败",
           "verified": false
         },
         "fail-change": {
-          "gloss": "更改组类型失败",
+          "gloss": "更改小组类型失败",
           "verified": false
         },
         "fail-remove": {
-          "gloss": "删除组类型失败",
+          "gloss": "删除小组类型失败",
           "verified": false
         },
         "fail-update": {
-          "gloss": "更新群组类型失败",
+          "gloss": "更新小组类型失败",
           "verified": false
         },
         "hide-expand": {
-          "gloss": "隐藏群组",
+          "gloss": "隐藏小组",
           "verified": false
         },
         "manage": {
-          "gloss": "管理组类型",
+          "gloss": "管理小组类型",
           "verified": false
         },
         "name": {
-          "gloss": "组类型名称",
+          "gloss": "小组类型名称",
           "verified": false
         },
         "new": {
-          "gloss": "新群组类型",
+          "gloss": "新小组类型",
           "verified": false
         },
         "show-expand": {
-          "gloss": "显示组",
+          "gloss": "显示小组",
           "verified": false
         },
         "success-add": {
-          "gloss": "成功添加组类型",
+          "gloss": "成功添加小组类型",
           "verified": false
         },
         "success-change": {
-          "gloss": "成功更改组类型",
+          "gloss": "成功更改小组类型",
           "verified": false
         },
         "success-remove": {
-          "gloss": "成功删除组类型",
+          "gloss": "成功删除小组类型",
           "verified": false
         },
         "success-update": {
-          "gloss": "成功更新群组类型",
+          "gloss": "成功更新小组类型",
           "verified": false
         },
         "title": {
-          "gloss": "组类型",
+          "gloss": "小组类型",
           "verified": false
         }
       },
@@ -2123,11 +2123,11 @@
           "verified": false
         },
         "edit": {
-          "gloss": "编辑管理员类型",
+          "gloss": "编辑经理类型",
           "verified": false
         },
         "fail-add": {
-          "gloss": "添加管理员类型失败",
+          "gloss": "添加经理类型失败",
           "verified": false
         },
         "fail-change": {
@@ -2135,11 +2135,11 @@
           "verified": false
         },
         "fail-remove": {
-          "gloss": "删除管理员类型失败",
+          "gloss": "删除经理类型失败",
           "verified": false
         },
         "fail-update": {
-          "gloss": "更新管理器类型失败",
+          "gloss": "更新经理类型失败",
           "verified": false
         },
         "hide-expand": {
@@ -2185,7 +2185,7 @@
       }
     },
     "error-removing-group": {
-      "gloss": "删除群组时出错",
+      "gloss": "删除小组时出错",
       "verified": false
     },
     "group-description": {
@@ -2193,7 +2193,7 @@
       "verified": false
     },
     "group-removed": {
-      "gloss": "组已删除",
+      "gloss": "小组已删除",
       "verified": false
     },
     "group-type": {
@@ -2205,7 +2205,7 @@
       "verified": false
     },
     "header-manager": {
-      "gloss": "管理人员",
+      "gloss": "经理",
       "verified": false
     },
     "linegraph": {
@@ -2239,11 +2239,11 @@
           "verified": false
         },
         "March": {
-          "gloss": "游行",
+          "gloss": "三月",
           "verified": false
         },
         "May": {
-          "gloss": "可能",
+          "gloss": "五月",
           "verified": false
         },
         "November": {
@@ -2260,7 +2260,7 @@
         }
       },
       "selected-group": {
-        "gloss": "选定的组",
+        "gloss": "选定的小组",
         "verified": false
       },
       "time-picker-end": {
@@ -2272,12 +2272,12 @@
         "verified": false
       },
       "time-scale": {
-        "gloss": "时间尺度",
+        "gloss": "时间比例",
         "verified": false
       },
       "time-scale-unite": {
         "Weekly": {
-          "gloss": "每周",
+          "gloss": "每周一次",
           "verified": false
         },
         "monthly": {
@@ -2292,11 +2292,11 @@
     },
     "managers": {
       "add-manager": {
-        "gloss": "新增管理员",
+        "gloss": "新增经理",
         "verified": false
       },
       "edit-manager": {
-        "gloss": "编辑管理员",
+        "gloss": "编辑经理",
         "verified": false
       },
       "manager-type": {
@@ -2315,12 +2315,12 @@
       }
     },
     "member-count": {
-      "gloss": "会员数",
+      "gloss": "成员数",
       "verified": false
     },
     "members": {
       "add-member": {
-        "gloss": "新增会员",
+        "gloss": "新增成员",
         "verified": false
       },
       "default": {
@@ -2328,7 +2328,7 @@
         "verified": false
       },
       "edit-member": {
-        "gloss": "编辑会员",
+        "gloss": "编辑成员",
         "verified": false
       },
       "email": {
@@ -2357,7 +2357,7 @@
           "verified": false
         },
         "subject": {
-          "gloss": "学科",
+          "gloss": "主题",
           "verified": false
         },
         "to": {
@@ -2366,7 +2366,7 @@
         }
       },
       "email-dialog-footnote": {
-        "gloss": "点击圈子以选择回复选项",
+        "gloss": "点击圆圈以选择回复选项",
         "verified": false
       },
       "email-reply-to": {
@@ -2374,11 +2374,11 @@
         "verified": false
       },
       "title": {
-        "gloss": "会员",
+        "gloss": "成员",
         "verified": false
       },
       "title-visitor": {
-        "gloss": "参观者",
+        "gloss": "访客",
         "verified": false
       }
     },
@@ -2394,7 +2394,7 @@
         "verified": false
       },
       "change-note": {
-        "gloss": "变更说明",
+        "gloss": "更改笔记",
         "verified": false
       },
       "clear-note": {
@@ -2416,27 +2416,27 @@
     },
     "messages": {
       "already-exists": {
-        "gloss": "群组已经存在",
+        "gloss": "小组已经存在",
         "verified": false
       },
       "confirm-archive": {
-        "gloss": "您确定要存档此组吗？",
+        "gloss": "您确定要归档此小组吗？",
         "verified": false
       },
       "confirm-attendance-archive": {
-        "gloss": "您确定此人缺席吗？",
+        "gloss": "您确定此人员缺席吗？",
         "verified": false
       },
       "confirm-manager-archive": {
-        "gloss": "您确定要存档此组管理员吗？",
+        "gloss": "您确定要归档此小组经理吗？",
         "verified": false
       },
       "confirm-meeting-archive": {
-        "gloss": "您确定要存档此小组会议吗？",
+        "gloss": "您确定要归档此小组会议吗？",
         "verified": false
       },
       "confirm-member-archive": {
-        "gloss": "您确定要存档此组成员吗？",
+        "gloss": "您确定要归档此小组成员吗？",
         "verified": false
       },
       "email-sent": {
@@ -2448,11 +2448,11 @@
         "verified": false
       },
       "error-adding-group": {
-        "gloss": "添加群组时出错",
+        "gloss": "添加小组时出错",
         "verified": false
       },
       "error-adding-managers": {
-        "gloss": "添加管理员时出错",
+        "gloss": "添加经理时出错",
         "verified": false
       },
       "error-adding-meeting": {
@@ -2464,19 +2464,19 @@
         "verified": false
       },
       "error-archived-not-selected": {
-        "gloss": "未选择任何存档成员",
+        "gloss": "未选择任何归档成员",
         "verified": false
       },
       "error-archiving-group": {
-        "gloss": "归档组时出错",
+        "gloss": "归档小组时出错",
         "verified": false
       },
       "error-archiving-manager": {
-        "gloss": "归档管理器时出错",
+        "gloss": "归档经理时出错",
         "verified": false
       },
       "error-archiving-meeting": {
-        "gloss": "存档会议时出错",
+        "gloss": "归档会议时出错",
         "verified": false
       },
       "error-archiving-member": {
@@ -2484,7 +2484,7 @@
         "verified": false
       },
       "error-editing-group": {
-        "gloss": "编辑群组时发生错误",
+        "gloss": "编辑小组时发生错误",
         "verified": false
       },
       "error-moving-managers": {
@@ -2504,35 +2504,35 @@
         "verified": false
       },
       "error-unarchiving-group": {
-        "gloss": "取消归档组时出错",
+        "gloss": "取消归档小组时出错",
         "verified": false
       },
       "error-unarchiving-manager": {
-        "gloss": "取消存档管理器时出错",
+        "gloss": "取消归档经理时出错",
         "verified": false
       },
       "error-unarchiving-meeting": {
-        "gloss": "错误取消存档会议",
+        "gloss": "错误取消归档会议",
         "verified": false
       },
       "error-unarchiving-member": {
-        "gloss": "取消存档成员时出错",
+        "gloss": "取消归档成员时出错",
         "verified": false
       },
       "error-updating-managers": {
-        "gloss": "更新管理员时出错",
+        "gloss": "更新经理时出错",
         "verified": false
       },
       "error-updating-members": {
-        "gloss": "更新会员时出错",
+        "gloss": "更新成员时出错",
         "verified": false
       },
       "group-added": {
-        "gloss": "组已添加",
+        "gloss": "小组已添加",
         "verified": false
       },
       "group-archived": {
-        "gloss": "群组已归档",
+        "gloss": "小组已归档",
         "verified": false
       },
       "group-edited": {
@@ -2540,15 +2540,15 @@
         "verified": false
       },
       "group-unarchived": {
-        "gloss": "小组未存档",
+        "gloss": "小组已取消归档",
         "verified": false
       },
       "manager-archived": {
-        "gloss": "经理已存档",
+        "gloss": "经理已归档",
         "verified": false
       },
       "manager-unarchived": {
-        "gloss": "经理未存档",
+        "gloss": "经理已取消归档",
         "verified": false
       },
       "managers-added": {
@@ -2568,15 +2568,15 @@
         "verified": false
       },
       "meeting-archived": {
-        "gloss": "会议已存档",
+        "gloss": "会议已归档",
         "verified": false
       },
       "member-archived": {
-        "gloss": "成员已存档",
+        "gloss": "成员已归档",
         "verified": false
       },
       "member-unarchived": {
-        "gloss": "成员未存档",
+        "gloss": "成员已取消归档",
         "verified": false
       },
       "members-added": {
@@ -2596,7 +2596,7 @@
         "verified": false
       },
       "participant-added": {
-        "gloss": "参加者）已添加",
+        "gloss": "参与者已添加",
         "verified": false
       },
       "required-fields": {
@@ -2604,7 +2604,7 @@
         "verified": false
       },
       "select-destination-group": {
-        "gloss": "选择目的地群组",
+        "gloss": "选择目的地小组",
         "verified": false
       },
       "visitor-remove": {
@@ -2617,12 +2617,12 @@
       "verified": false
     },
     "none-assigned": {
-      "gloss": "未分配组。",
+      "gloss": "未分配小组。",
       "verified": false
     },
     "split": {
       "child-group": {
-        "gloss": "儿童组",
+        "gloss": "儿童小组",
         "verified": false
       },
       "choose-managers": {
@@ -2630,11 +2630,11 @@
         "verified": false
       },
       "choose-members": {
-        "gloss": "选择会员",
+        "gloss": "选择成员",
         "verified": false
       },
       "error": {
-        "gloss": "分割群组时发生错误",
+        "gloss": "拆分小组时发生错误",
         "verified": false
       },
       "group-information": {
@@ -2642,11 +2642,11 @@
         "verified": false
       },
       "no-managers": {
-        "gloss": "父组中没有经理",
+        "gloss": "父小组中没有经理",
         "verified": false
       },
       "no-members": {
-        "gloss": "父组中没有成员",
+        "gloss": "父小组中没有成员",
         "verified": false
       },
       "parent-group": {
@@ -2654,15 +2654,15 @@
         "verified": false
       },
       "success": {
-        "gloss": "小组成功分裂",
+        "gloss": "小组成功拆分",
         "verified": false
       },
       "title": {
-        "gloss": "拆分组",
+        "gloss": "拆分小组",
         "verified": false
       },
       "tooltip": {
-        "gloss": "分裂",
+        "gloss": "拆分",
         "verified": false
       }
     },
@@ -2678,7 +2678,7 @@
     },
     "treeview": {
       "admin-node": {
-        "gloss": "管理员",
+        "gloss": "小组管理员",
         "verified": false
       },
       "categories": {
@@ -2687,15 +2687,15 @@
           "verified": false
         },
         "all-group-types": {
-          "gloss": "所有组类型",
+          "gloss": "所有小组类型",
           "verified": false
         },
         "managers": {
-          "gloss": "管理人员",
+          "gloss": "经理",
           "verified": false
         },
         "members": {
-          "gloss": "会员",
+          "gloss": "成员",
           "verified": false
         }
       },
@@ -2704,11 +2704,11 @@
         "verified": false
       },
       "collapse": {
-        "gloss": "坍方",
+        "gloss": "合并",
         "verified": false
       },
       "expand": {
-        "gloss": "扩大",
+        "gloss": "展开",
         "verified": false
       },
       "filters": {
@@ -2720,15 +2720,15 @@
         "verified": false
       },
       "no-groups-available": {
-        "gloss": "没有可用的群组，因为您不是任何群组的监督者",
+        "gloss": "没有可用的小组，因为您不是任何小组的监督者",
         "verified": false
       },
       "remove-cycle": {
-        "gloss": "请在列出的节点中删除循环，以查看组层次结构树。",
+        "gloss": "请在列出的节点中删除循环，以查看小组层次结构树。",
         "verified": false
       },
       "select-placeholder": {
-        "gloss": "选择要执行操作的组...",
+        "gloss": "选择要执行操作的小组...",
         "verified": false
       },
       "show-linegraph": {
@@ -2736,15 +2736,15 @@
         "verified": false
       },
       "show-list": {
-        "gloss": "显示群组清单",
+        "gloss": "显示小组清单",
         "verified": false
       },
       "show-treeview": {
-        "gloss": "显示组树视图",
+        "gloss": "显示小组树视图",
         "verified": false
       },
       "title": {
-        "gloss": "组树状视图",
+        "gloss": "小组树状视图",
         "verified": false
       },
       "unexpected-cycle": {
@@ -2782,15 +2782,15 @@
   "language": {
     "name": {
       "aa": {
-        "gloss": "远方",
+        "gloss": "阿法尔语",
         "verified": false
       },
       "ab": {
-        "gloss": "阿布哈兹人",
+        "gloss": "阿布哈兹语",
         "verified": false
       },
       "ae": {
-        "gloss": "Avestan",
+        "gloss": "阿维斯陀语",
         "verified": false
       },
       "af": {
@@ -2798,7 +2798,7 @@
         "verified": false
       },
       "ak": {
-        "gloss": "阿寒",
+        "gloss": "阿坎语",
         "verified": false
       },
       "am": {
@@ -2806,11 +2806,11 @@
         "verified": false
       },
       "an": {
-        "gloss": "阿拉贡人",
+        "gloss": "阿拉贡语",
         "verified": false
       },
       "ar": {
-        "gloss": "阿拉伯",
+        "gloss": "阿拉伯语",
         "verified": false
       },
       "as": {
@@ -2818,19 +2818,19 @@
         "verified": false
       },
       "av": {
-        "gloss": "阿瓦里奇",
+        "gloss": "阿瓦尔语",
         "verified": false
       },
       "ay": {
-        "gloss": "艾马拉",
+        "gloss": "艾马拉语",
         "verified": false
       },
       "az": {
-        "gloss": "阿塞拜疆人",
+        "gloss": "阿塞拜疆语",
         "verified": false
       },
       "ba": {
-        "gloss": "巴什基尔",
+        "gloss": "巴什基尔语",
         "verified": false
       },
       "be": {
@@ -2846,47 +2846,47 @@
         "verified": false
       },
       "bi": {
-        "gloss": "比斯拉马",
+        "gloss": "比斯拉马语",
         "verified": false
       },
       "bm": {
-        "gloss": "班巴拉",
+        "gloss": "班巴拉语",
         "verified": false
       },
       "bn": {
-        "gloss": "孟加拉",
+        "gloss": "孟加拉语",
         "verified": false
       },
       "bo": {
-        "gloss": "藏",
+        "gloss": "藏语",
         "verified": false
       },
       "br": {
-        "gloss": "布列塔尼",
+        "gloss": "布列塔尼语",
         "verified": false
       },
       "bs": {
-        "gloss": "波斯尼亚人",
+        "gloss": "波斯尼亚语",
         "verified": false
       },
       "ca": {
-        "gloss": "加泰罗尼亚语巴伦西亚人",
+        "gloss": "加泰罗尼亚语巴伦西亚语",
         "verified": false
       },
       "ce": {
-        "gloss": "车臣",
+        "gloss": "车臣语",
         "verified": false
       },
       "ch": {
-        "gloss": "查莫罗",
+        "gloss": "查莫罗语",
         "verified": false
       },
       "co": {
-        "gloss": "科西嘉人",
+        "gloss": "科西嘉语",
         "verified": false
       },
       "cr": {
-        "gloss": "克里",
+        "gloss": "克里语",
         "verified": false
       },
       "cs": {
@@ -2894,11 +2894,11 @@
         "verified": false
       },
       "cu": {
-        "gloss": "斯拉夫教堂旧斯拉夫语；斯拉夫尼克教堂;旧保加利亚语；斯拉夫老教堂",
+        "gloss": "斯拉夫语系语言",
         "verified": false
       },
       "cv": {
-        "gloss": "楚瓦什",
+        "gloss": "楚瓦什语",
         "verified": false
       },
       "cy": {
@@ -2914,19 +2914,19 @@
         "verified": false
       },
       "dv": {
-        "gloss": "迪菲迪维希马尔代夫",
+        "gloss": "迪菲迪维希马尔代夫语",
         "verified": false
       },
       "dz": {
-        "gloss": "宗卡",
+        "gloss": "宗卡语",
         "verified": false
       },
       "ee": {
-        "gloss": "母羊",
+        "gloss": "埃维语",
         "verified": false
       },
       "el": {
-        "gloss": "希腊语，现代（1453-）",
+        "gloss": "现代希腊语",
         "verified": false
       },
       "en": {
@@ -2938,7 +2938,7 @@
         "verified": false
       },
       "es": {
-        "gloss": "西班牙文；卡斯蒂利亚人",
+        "gloss": "西班牙文；卡斯蒂利亚语",
         "verified": false
       },
       "et": {
@@ -2946,7 +2946,7 @@
         "verified": false
       },
       "eu": {
-        "gloss": "巴斯克",
+        "gloss": "巴斯克语",
         "verified": false
       },
       "fa": {
@@ -2954,15 +2954,15 @@
         "verified": false
       },
       "ff": {
-        "gloss": "富拉",
+        "gloss": "富拉语",
         "verified": false
       },
       "fi": {
-        "gloss": "芬兰",
+        "gloss": "芬兰语",
         "verified": false
       },
       "fj": {
-        "gloss": "斐济",
+        "gloss": "斐济语",
         "verified": false
       },
       "fo": {
@@ -2978,7 +2978,7 @@
         "verified": false
       },
       "ga": {
-        "gloss": "爱尔兰人",
+        "gloss": "爱尔兰语",
         "verified": false
       },
       "gd": {
@@ -2986,11 +2986,11 @@
         "verified": false
       },
       "gl": {
-        "gloss": "加利西亚人",
+        "gloss": "加利西亚语",
         "verified": false
       },
       "gn": {
-        "gloss": "瓜拉尼",
+        "gloss": "瓜拉尼语",
         "verified": false
       },
       "gu": {
@@ -2998,11 +2998,11 @@
         "verified": false
       },
       "gv": {
-        "gloss": "曼克斯",
+        "gloss": "曼克斯语",
         "verified": false
       },
       "ha": {
-        "gloss": "豪萨",
+        "gloss": "豪萨语",
         "verified": false
       },
       "he": {
@@ -3014,7 +3014,7 @@
         "verified": false
       },
       "ho": {
-        "gloss": "希里·莫图（Hiri Motu）",
+        "gloss": "希里莫图语",
         "verified": false
       },
       "hr": {
@@ -3026,59 +3026,59 @@
         "verified": false
       },
       "hu": {
-        "gloss": "匈牙利",
+        "gloss": "匈牙利语",
         "verified": false
       },
       "hy": {
-        "gloss": "亚美尼亚人",
+        "gloss": "亚美尼亚语",
         "verified": false
       },
       "hz": {
-        "gloss": "赫雷罗",
+        "gloss": "赫雷罗语",
         "verified": false
       },
       "ia": {
-        "gloss": "Interlingua（国际辅助语言协会）",
+        "gloss": "因特语",
         "verified": false
       },
       "id": {
-        "gloss": "印度尼西亚",
+        "gloss": "印度尼西亚语",
         "verified": false
       },
       "ie": {
-        "gloss": "中介语西方的",
+        "gloss": "西方国际语",
         "verified": false
       },
       "ig": {
-        "gloss": "伊博",
+        "gloss": "伊博语",
         "verified": false
       },
       "ii": {
-        "gloss": "四川彝族os",
+        "gloss": "四川彝语",
         "verified": false
       },
       "ik": {
-        "gloss": "因纽皮克",
+        "gloss": "因纽皮克语",
         "verified": false
       },
       "io": {
-        "gloss": "我做",
+        "gloss": "伊多语",
         "verified": false
       },
       "is": {
-        "gloss": "冰岛的",
+        "gloss": "冰岛语",
         "verified": false
       },
       "it": {
-        "gloss": "义大利文",
+        "gloss": "意大利语",
         "verified": false
       },
       "iu": {
-        "gloss": "因纽特人",
+        "gloss": "因纽特语",
         "verified": false
       },
       "ja": {
-        "gloss": "日本",
+        "gloss": "日语",
         "verified": false
       },
       "jv": {
@@ -3086,19 +3086,19 @@
         "verified": false
       },
       "ka": {
-        "gloss": "格鲁吉亚人",
+        "gloss": "格鲁吉亚语",
         "verified": false
       },
       "kg": {
-        "gloss": "金刚",
+        "gloss": "刚果语",
         "verified": false
       },
       "ki": {
-        "gloss": "菊久;菊久",
+        "gloss": "基库尤语",
         "verified": false
       },
       "kj": {
-        "gloss": "宽山关山",
+        "gloss": "宽亚玛语",
         "verified": false
       },
       "kk": {
@@ -3106,11 +3106,11 @@
         "verified": false
       },
       "kl": {
-        "gloss": "Kalaallisut;格陵兰",
+        "gloss": "格陵兰语",
         "verified": false
       },
       "km": {
-        "gloss": "高棉中央",
+        "gloss": "高棉语",
         "verified": false
       },
       "kn": {
@@ -3122,19 +3122,19 @@
         "verified": false
       },
       "kr": {
-        "gloss": "卡努里",
+        "gloss": "卡努里语",
         "verified": false
       },
       "ks": {
-        "gloss": "克什米尔人",
+        "gloss": "克什米尔语",
         "verified": false
       },
       "ku": {
-        "gloss": "库尔德",
+        "gloss": "库尔德语",
         "verified": false
       },
       "kv": {
-        "gloss": "科美",
+        "gloss": "科美语",
         "verified": false
       },
       "kw": {
@@ -3142,19 +3142,19 @@
         "verified": false
       },
       "ky": {
-        "gloss": "柯吉兹吉尔吉斯",
+        "gloss": "柯吉兹吉尔吉斯语",
         "verified": false
       },
       "la": {
-        "gloss": "拉丁",
+        "gloss": "拉丁语",
         "verified": false
       },
       "lb": {
-        "gloss": "卢森堡语；莱岑堡",
+        "gloss": "卢森堡语；莱岑堡语",
         "verified": false
       },
       "lg": {
-        "gloss": "甘达",
+        "gloss": "甘达语",
         "verified": false
       },
       "li": {
@@ -3162,11 +3162,11 @@
         "verified": false
       },
       "ln": {
-        "gloss": "林加拉",
+        "gloss": "林加拉语",
         "verified": false
       },
       "lo": {
-        "gloss": "老挝",
+        "gloss": "老挝语",
         "verified": false
       },
       "lt": {
@@ -3174,7 +3174,7 @@
         "verified": false
       },
       "lu": {
-        "gloss": "卢巴加丹加",
+        "gloss": "卢巴加丹加语",
         "verified": false
       },
       "lv": {
@@ -3182,15 +3182,15 @@
         "verified": false
       },
       "mg": {
-        "gloss": "马尔加什",
+        "gloss": "马尔加什语",
         "verified": false
       },
       "mh": {
-        "gloss": "马歇尔人",
+        "gloss": "马歇尔语",
         "verified": false
       },
       "mi": {
-        "gloss": "毛利人",
+        "gloss": "毛利语",
         "verified": false
       },
       "mk": {
@@ -3202,7 +3202,7 @@
         "verified": false
       },
       "mn": {
-        "gloss": "蒙",
+        "gloss": "蒙语",
         "verified": false
       },
       "mr": {
@@ -3218,19 +3218,19 @@
         "verified": false
       },
       "my": {
-        "gloss": "缅甸人",
+        "gloss": "缅甸语",
         "verified": false
       },
       "na": {
-        "gloss": "瑙鲁",
+        "gloss": "瑙鲁语",
         "verified": false
       },
       "nb": {
-        "gloss": "挪威博克马尔；挪威语Bokmål",
+        "gloss": "挪威语",
         "verified": false
       },
       "nd": {
-        "gloss": "北部恩德贝勒；北恩德贝勒",
+        "gloss": "北恩德贝莱语",
         "verified": false
       },
       "ne": {
@@ -3238,67 +3238,67 @@
         "verified": false
       },
       "ng": {
-        "gloss": "恩东加",
+        "gloss": "恩东加语",
         "verified": false
       },
       "nl": {
-        "gloss": "荷兰人佛兰芒语",
+        "gloss": "荷兰语；佛兰芒语",
         "verified": false
       },
       "nn": {
-        "gloss": "挪威尼诺斯克挪威尼诺斯克",
+        "gloss": "新挪威语",
         "verified": false
       },
       "no": {
-        "gloss": "挪威",
+        "gloss": "挪威语",
         "verified": false
       },
       "nr": {
-        "gloss": "南部恩德贝勒；南恩德贝勒",
+        "gloss": "南恩德贝莱语",
         "verified": false
       },
       "nv": {
-        "gloss": "纳瓦霍人纳瓦霍人",
+        "gloss": "纳瓦霍语",
         "verified": false
       },
       "ny": {
-        "gloss": "Chichewa; Chewa; Nyanja",
+        "gloss": "齐切瓦语",
         "verified": false
       },
       "oc": {
-        "gloss": "奥克西唐（1500后）；普罗旺斯",
+        "gloss": "奥克语",
         "verified": false
       },
       "oj": {
-        "gloss": "奥吉布瓦",
+        "gloss": "奥吉布瓦语",
         "verified": false
       },
       "om": {
-        "gloss": "奥罗莫",
+        "gloss": "奥罗莫语",
         "verified": false
       },
       "or": {
-        "gloss": "奥里亚",
+        "gloss": "奥里亚语",
         "verified": false
       },
       "os": {
-        "gloss": "奥赛梯;听觉的",
+        "gloss": "奥塞梯语",
         "verified": false
       },
       "pa": {
-        "gloss": "旁遮普语旁遮普语",
+        "gloss": "旁遮普语",
         "verified": false
       },
       "pi": {
-        "gloss": "帕里",
+        "gloss": "帕里语",
         "verified": false
       },
       "pl": {
-        "gloss": "抛光",
+        "gloss": "波兰语",
         "verified": false
       },
       "ps": {
-        "gloss": "Pushto;普什图语",
+        "gloss": "普什图语",
         "verified": false
       },
       "pt": {
@@ -3306,19 +3306,19 @@
         "verified": false
       },
       "qu": {
-        "gloss": "盖丘亚族",
+        "gloss": "盖丘亚族语",
         "verified": false
       },
       "rm": {
-        "gloss": "罗曼什",
+        "gloss": "罗曼什语",
         "verified": false
       },
       "rn": {
-        "gloss": "润迪",
+        "gloss": "润迪语",
         "verified": false
       },
       "ro": {
-        "gloss": "罗马尼亚文；摩尔达维亚;摩尔多瓦",
+        "gloss": "罗马尼亚文；摩尔达维亚语;摩尔多瓦语",
         "verified": false
       },
       "ru": {
@@ -3326,7 +3326,7 @@
         "verified": false
       },
       "rw": {
-        "gloss": "Kinyarwanda",
+        "gloss": "卢旺达语",
         "verified": false
       },
       "sa": {
@@ -3334,23 +3334,23 @@
         "verified": false
       },
       "sc": {
-        "gloss": "撒丁岛",
+        "gloss": "撒丁岛语",
         "verified": false
       },
       "sd": {
-        "gloss": "信地",
+        "gloss": "信德语",
         "verified": false
       },
       "se": {
-        "gloss": "北萨米",
+        "gloss": "北萨米语",
         "verified": false
       },
       "sg": {
-        "gloss": "三乡",
+        "gloss": "桑戈语",
         "verified": false
       },
       "si": {
-        "gloss": "僧伽罗语僧伽罗语",
+        "gloss": "僧伽罗语",
         "verified": false
       },
       "sk": {
@@ -3362,15 +3362,15 @@
         "verified": false
       },
       "sm": {
-        "gloss": "萨摩亚人",
+        "gloss": "萨摩亚语",
         "verified": false
       },
       "sn": {
-        "gloss": "庄名",
+        "gloss": "绍纳语",
         "verified": false
       },
       "so": {
-        "gloss": "索马里",
+        "gloss": "索马里语",
         "verified": false
       },
       "sq": {
@@ -3378,23 +3378,23 @@
         "verified": false
       },
       "sr": {
-        "gloss": "塞尔维亚",
+        "gloss": "塞尔维亚语",
         "verified": false
       },
       "ss": {
-        "gloss": "斯瓦蒂",
+        "gloss": "斯瓦蒂语",
         "verified": false
       },
       "st": {
-        "gloss": "南索托",
+        "gloss": "南索托语",
         "verified": false
       },
       "su": {
-        "gloss": "dan他",
+        "gloss": "巽他语",
         "verified": false
       },
       "sv": {
-        "gloss": "瑞典",
+        "gloss": "瑞典语",
         "verified": false
       },
       "sw": {
@@ -3410,19 +3410,19 @@
         "verified": false
       },
       "tg": {
-        "gloss": "塔吉克",
+        "gloss": "塔吉克语",
         "verified": false
       },
       "th": {
-        "gloss": "泰国",
+        "gloss": "泰语",
         "verified": false
       },
       "ti": {
-        "gloss": "提格里尼亚",
+        "gloss": "提格里尼亚语",
         "verified": false
       },
       "tk": {
-        "gloss": "土库曼人",
+        "gloss": "土库曼语",
         "verified": false
       },
       "tl": {
@@ -3430,39 +3430,39 @@
         "verified": false
       },
       "tn": {
-        "gloss": "茨瓦纳",
+        "gloss": "茨瓦纳语",
         "verified": false
       },
       "to": {
-        "gloss": "汤加（汤加群岛）",
+        "gloss": "汤加语",
         "verified": false
       },
       "tr": {
-        "gloss": "土耳其",
+        "gloss": "土耳其语",
         "verified": false
       },
       "ts": {
-        "gloss": "特松加",
+        "gloss": "特松加语",
         "verified": false
       },
       "tt": {
-        "gloss": "塔塔尔族",
+        "gloss": "塔塔尔族语",
         "verified": false
       },
       "tw": {
-        "gloss": "特威",
+        "gloss": "特威语",
         "verified": false
       },
       "ty": {
-        "gloss": "大溪地",
+        "gloss": "大溪地语",
         "verified": false
       },
       "ug": {
-        "gloss": "维吾尔;维吾尔族",
+        "gloss": "维吾尔语",
         "verified": false
       },
       "uk": {
-        "gloss": "乌克兰",
+        "gloss": "乌克兰语",
         "verified": false
       },
       "ur": {
@@ -3474,7 +3474,7 @@
         "verified": false
       },
       "ve": {
-        "gloss": "文达",
+        "gloss": "文达语",
         "verified": false
       },
       "vi": {
@@ -3482,19 +3482,19 @@
         "verified": false
       },
       "vo": {
-        "gloss": "沃拉普克",
+        "gloss": "沃拉普克语",
         "verified": false
       },
       "wa": {
-        "gloss": "瓦隆",
+        "gloss": "瓦隆语",
         "verified": false
       },
       "wo": {
-        "gloss": "沃洛夫",
+        "gloss": "沃洛夫语",
         "verified": false
       },
       "xh": {
-        "gloss": "科萨",
+        "gloss": "科萨语",
         "verified": false
       },
       "yi": {
@@ -3506,7 +3506,7 @@
         "verified": false
       },
       "za": {
-        "gloss": "壮huang",
+        "gloss": "壮语",
         "verified": false
       },
       "zh": {
@@ -3514,7 +3514,7 @@
         "verified": false
       },
       "zu": {
-        "gloss": "祖鲁族",
+        "gloss": "祖鲁族语",
         "verified": false
       }
     }
@@ -3545,7 +3545,7 @@
       "verified": false
     },
     "dropdown-roles": {
-      "gloss": "所有角色",
+      "gloss": "所有职位",
       "verified": false
     },
     "next": {
@@ -3561,15 +3561,15 @@
       "verified": false
     },
     "previous": {
-      "gloss": "以前",
+      "gloss": "上一个",
       "verified": false
     },
     "title": {
-      "gloss": "人",
+      "gloss": "人员",
       "verified": false
     },
     "title-roles": {
-      "gloss": "的角色",
+      "gloss": "职位",
       "verified": false
     }
   },
@@ -3580,7 +3580,7 @@
     },
     "account-info": {
       "roles": {
-        "gloss": "的角色",
+        "gloss": "职位",
         "verified": false
       }
     },
@@ -3598,15 +3598,15 @@
         "verified": false
       },
       "assign-roles": {
-        "gloss": "分配角色",
+        "gloss": "分配职位",
         "verified": false
       },
       "edit": {
-        "gloss": "编辑人",
+        "gloss": "编辑人员",
         "verified": false
       },
       "new": {
-        "gloss": "新人",
+        "gloss": "新人员",
         "verified": false
       },
       "reset-password": {
@@ -3646,33 +3646,33 @@
         "verified": false
       },
       "canceled": {
-        "gloss": "取消添加新人",
+        "gloss": "取消添加新人员",
         "verified": false
       },
       "confirm": {
         "activate": {
-          "gloss": "您确定要还原此人吗？",
+          "gloss": "您确定要还原此人员吗？",
           "verified": false
         },
         "deactivate": {
-          "gloss": "您确定要存档此人吗？",
+          "gloss": "您确定要归档此人员吗？",
           "verified": false
         }
       },
       "person-activate": {
-        "gloss": "被激活的人",
+        "gloss": "被激活的人员",
         "verified": false
       },
       "person-add": {
-        "gloss": "添加了新人",
+        "gloss": "添加了新人员",
         "verified": false
       },
       "person-deactivate": {
-        "gloss": "人已停用",
+        "gloss": "人员已停用",
         "verified": false
       },
       "person-edit": {
-        "gloss": "编辑者",
+        "gloss": "人员已编辑",
         "verified": false
       },
       "person-save-error": {
@@ -3735,19 +3735,19 @@
       },
       "filters": {
         "address_filters": {
-          "gloss": "地址过滤器",
+          "gloss": "地址筛选器",
           "verified": false
         },
         "apply": {
-          "gloss": "套用筛选器",
+          "gloss": "应用筛选器",
           "verified": false
         },
         "distance-addr": {
-          "gloss": "按距特定地址的距离进行过滤",
+          "gloss": "按距离特定地址的距离进行筛选",
           "verified": false
         },
         "distance-ll": {
-          "gloss": "按距离特定纬度和经度的距离进行过滤",
+          "gloss": "按距离特定纬度和经度的距离进行筛选",
           "verified": false
         },
         "distanceFromAddress": {
@@ -3767,11 +3767,11 @@
           "verified": false
         },
         "range": {
-          "gloss": "在一系列经度和纬度之间进行过滤",
+          "gloss": "在一系列经度和纬度之间进行筛选",
           "verified": false
         },
         "reset-filters": {
-          "gloss": "重置过滤器",
+          "gloss": "重置筛选器",
           "verified": false
         },
         "startLat": {
@@ -3814,25 +3814,25 @@
     },
     "area": {
       "area": {
-        "gloss": "区",
+        "gloss": "地区",
         "verified": false
       },
       "confirm": {
         "activate": {
-          "gloss": "您确定要恢复该区域吗？",
+          "gloss": "您确定要恢复该地区吗？",
           "verified": false
         },
         "deactivate": {
-          "gloss": "您确定要存档此区域吗？",
+          "gloss": "您确定要归档此地区吗？",
           "verified": false
         }
       },
       "create-area": {
-        "gloss": "建立新区域",
+        "gloss": "建立新地区",
         "verified": false
       },
       "edit": {
-        "gloss": "编辑区",
+        "gloss": "编辑地区",
         "verified": false
       },
       "name": {
@@ -3840,12 +3840,12 @@
         "verified": false
       },
       "new": {
-        "gloss": "新增区域",
+        "gloss": "新增地区",
         "verified": false
       }
     },
     "close": {
-      "gloss": "关",
+      "gloss": "关闭",
       "verified": false
     },
     "create-address": {
@@ -3857,7 +3857,7 @@
       "verified": false
     },
     "expand": {
-      "gloss": "扩大",
+      "gloss": "展开",
       "verified": false
     },
     "location": {
@@ -3881,7 +3881,7 @@
           "verified": false
         },
         "deactivate": {
-          "gloss": "您确定要存档此地址吗？",
+          "gloss": "您确定要归档此地址吗？",
           "verified": false
         }
       },
@@ -3939,7 +3939,7 @@
       }
     },
     "title": {
-      "gloss": "上市",
+      "gloss": "公开",
       "verified": false
     }
   },
@@ -3949,7 +3949,7 @@
       "verified": false
     },
     "group-admin": {
-      "gloss": "组管理员",
+      "gloss": "小组管理员",
       "verified": false
     },
     "group-leader": {
@@ -3965,7 +3965,7 @@
       "verified": false
     },
     "public": {
-      "gloss": "上市",
+      "gloss": "公共用户",
       "verified": false
     },
     "registrar": {
@@ -3981,21 +3981,21 @@
       "verified": false
     },
     "translator": {
-      "gloss": "译者",
+      "gloss": "翻译官",
       "verified": false
     },
     "visitor": {
-      "gloss": "游客",
+      "gloss": "访客",
       "verified": false
     }
   },
   "teams": {
     "all-teams": {
-      "gloss": "所有队伍",
+      "gloss": "所有团队",
       "verified": false
     },
     "confirm-archive": {
-      "gloss": "您确定要存档此团队吗？",
+      "gloss": "您确定要归档此团队吗？",
       "verified": false
     },
     "confirm-remove-from-event": {
@@ -4027,7 +4027,7 @@
       "verified": false
     },
     "error-team-assigned": {
-      "gloss": "该团队被分配了一个冲突事件。",
+      "gloss": "该团队被分配了一个冲突活动。",
       "verified": false
     },
     "error-unarchiving-team": {
@@ -4057,7 +4057,7 @@
       "verified": false
     },
     "team-added": {
-      "gloss": "团队加入",
+      "gloss": "团队已添加",
       "verified": false
     },
     "team-edited": {
@@ -4073,13 +4073,13 @@
       "verified": false
     },
     "title": {
-      "gloss": "队伍",
+      "gloss": "团队",
       "verified": false
     }
   },
   "transcripts": {
     "add-diploma-this-student": {
-      "gloss": "加文凭",
+      "gloss": "添加文凭",
       "verified": false
     },
     "course-completed": {
@@ -4087,7 +4087,7 @@
       "verified": false
     },
     "courses": {
-      "gloss": "培训班",
+      "gloss": "课程",
       "verified": false
     },
     "courses-in-progress-or-completed": {
@@ -4182,7 +4182,7 @@
         "verified": false
       },
       "team-description": {
-        "gloss": "团队描述",
+        "gloss": "团队介绍",
         "verified": false
       },
       "title": {
@@ -4196,12 +4196,12 @@
         "verified": false
       },
       "required": {
-        "gloss": "需要",
+        "gloss": "必填",
         "verified": false
       }
     },
     "required": {
-      "gloss": "需要",
+      "gloss": "必填",
       "verified": false
     }
   }
