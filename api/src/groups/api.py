@@ -659,7 +659,7 @@ def update_member(group_id, person_id):
         # create a leave entry on the original group
         create_member_history(member, is_join=False)
 
-    if member.active and new_active and new_group_id and new_group_id != member.group_id:  # if will move the active member
+    if member.active and new_active != False and new_group_id and new_group_id != member.group_id:  # if will move the active member
         # create a leave entry on the original group
         create_member_history(member, is_join=False)
         # create a join entry on the new group
