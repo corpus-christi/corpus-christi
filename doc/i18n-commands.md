@@ -173,10 +173,10 @@ format.
 Their parameters are also slightly different.
 While `dump` requires a `<locale>` to be provided,
 `export` always outputs all locales. On the other
-hand, `export` accepts an optional _path_
+hand, `export` accepts an optional [_path_](#path)
 parameter to allow an arbitrary "zoom-in" on
-certain groups of entries, while the `dump` command
-always extracts the whole structure.
+certain groups of entries, while the `dump`
+command always extracts the whole structure.
 
 A counterpart of `dump` is `load`, which does the
 opposite of `dump` by loading entries listed in a
@@ -370,6 +370,59 @@ displayed if
     
 ## Common options
 
+### Path
+
+Many commands accept a `path` parameter to allow a
+"zoom-in" on a specific branch of entries. 
+
+For example, given the following translation data
+in the database, expressed in a
+_locale-tail-structured_ tree:
+
+    actions:
+      tooltips:
+        activate:
+          en-US: Activate
+          es-EC: Activar
+        archive:
+          en-US: Archive
+          es-EC: Archivar
+
+Then providing a `path` of `"actions"` will make
+the command operate on a tree like the following:
+
+    tooltips:
+      activate:
+        en-US: Activate
+        es-EC: Activar
+      archive:
+        en-US: Archive
+        es-EC: Archivar
+
+Similarly, a `path` of
+`"actions.tooltips.activate"` will further zoom in
+the view to
+
+    en-US: Activate
+    es-EC: Activar
+
+Some examples:
+
+```bash
+$ flask i18n list
+actions:
+  tooltips:
+    activate:
+      en-US: Activate
+      es-EC: Activar
+    archive:
+      en-US: Archive
+      es-EC: Archivar
+$ flask i18n list actions.tooltips.activate
+en-US: Activate
+es-EC: Activar
+```
+
 ### Target
 
 Many commands takes a `--target` option, which
@@ -380,9 +433,9 @@ the file will be stdin/stdout.
 ### Verbose 
 
 Most commands that alter database information have
-a `--verbose` flag which is set to True by
-default. This will make the command print out the
-entries being modified as it processes the
+a `--verbose/--silent` flag which is set to True
+by default. This will make the command print out
+the entries being modified as it processes the
 entries. To disable verbose output, use the
 `--silent` or `-s` flag.
 
