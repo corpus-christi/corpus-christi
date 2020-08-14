@@ -3,65 +3,65 @@
     "dataFooter": {
       "itemsPerPageAll": {
         "gloss": "显示所有行",
-        "verified": false
+        "verified": true
       },
       "pageText": {
         "gloss": "{2}中的{0}-{1}",
-        "verified": false
+        "verified": true
       }
     },
     "dataIterator": {
       "loadingText": {
         "gloss": "正在载入项目...",
-        "verified": false
+        "verified": true
       },
       "nextPage": {
         "gloss": "下一页",
-        "verified": false
+        "verified": true
       },
       "noResultsText": {
         "gloss": "未能找到匹配的记录",
-        "verified": false
+        "verified": true
       },
       "pageText": {
         "gloss": "{2}中的{0}-{1}",
-        "verified": false
+        "verified": true
       },
       "prevPage": {
         "gloss": "上一页",
-        "verified": false
+        "verified": true
       },
       "rowsPerPageAll": {
         "gloss": "所有",
-        "verified": false
+        "verified": true
       },
       "rowsPerPageText": {
         "gloss": "每页项目：",
-        "verified": false
+        "verified": true
       }
     },
     "dataTable": {
       "itemsPerPageText": {
         "gloss": "每页行数：",
-        "verified": false
+        "verified": true
       },
       "sortBy": {
         "gloss": "排序方式",
-        "verified": false
+        "verified": true
       }
     },
     "noDataText": {
       "gloss": "无可用数据",
-      "verified": false
+      "verified": true
     },
     "timePicker": {
       "am": {
         "gloss": "上午",
-        "verified": false
+        "verified": true
       },
       "pm": {
         "gloss": "下午",
-        "verified": false
+        "verified": true
       }
     }
   },
@@ -69,2713 +69,2713 @@
     "messages": {
       "added-ok": {
         "gloss": "帐户添加成功",
-        "verified": false
+        "verified": true
       },
       "updated-ok": {
         "gloss": "帐户更新成功",
-        "verified": false
+        "verified": true
       }
     }
   },
   "actions": {
     "activate-account": {
       "gloss": "启用",
-      "verified": false
+      "verified": true
     },
     "add-address": {
-      "gloss": "新增地址",
-      "verified": false
+      "gloss": "添加地址",
+      "verified": true
     },
     "add-another": {
       "gloss": "加上另一个",
-      "verified": false
+      "verified": true
     },
     "add-event": {
-      "gloss": "新增活动",
-      "verified": false
+      "gloss": "添加活动",
+      "verified": true
     },
     "add-group": {
-      "gloss": "新增小组",
-      "verified": false
+      "gloss": "添加小组",
+      "verified": true
     },
     "add-manager": {
-      "gloss": "新增经理",
-      "verified": false
+      "gloss": "添加经理",
+      "verified": true
     },
     "add-participant": {
       "gloss": "添加参与者",
-      "verified": false
+      "verified": true
     },
     "add-person": {
       "gloss": "添加人员",
-      "verified": false
+      "verified": true
     },
     "back": {
       "gloss": "返回",
-      "verified": false
+      "verified": true
     },
     "cancel": {
       "gloss": "取消",
-      "verified": false
+      "verified": true
     },
     "choose-image": {
       "gloss": "选择图片",
-      "verified": false
+      "verified": true
     },
     "clear": {
       "gloss": "清除",
-      "verified": false
+      "verified": true
     },
     "close": {
       "gloss": "关闭",
-      "verified": false
+      "verified": true
     },
     "confirm": {
       "gloss": "确认",
-      "verified": false
+      "verified": true
     },
     "continue": {
       "gloss": "继续",
-      "verified": false
+      "verified": true
     },
     "deactivate-account": {
       "gloss": "停用",
-      "verified": false
+      "verified": true
     },
     "duplicate": {
       "gloss": "重复",
-      "verified": false
+      "verified": true
     },
     "edit": {
       "gloss": "编辑",
-      "verified": false
+      "verified": true
     },
     "header": {
       "gloss": "动作",
-      "verified": false
+      "verified": true
     },
     "login": {
       "gloss": "登录",
-      "verified": false
+      "verified": true
     },
     "logout": {
       "gloss": "登出",
-      "verified": false
+      "verified": true
     },
     "next": {
       "gloss": "下一个",
-      "verified": false
+      "verified": true
     },
     "open-map": {
       "gloss": "打开地图",
-      "verified": false
+      "verified": true
     },
     "previous": {
-      "gloss": "以前",
-      "verified": false
+      "gloss": "上一个",
+      "verified": true
     },
     "save": {
       "gloss": "保存",
-      "verified": false
+      "verified": true
     },
     "search": {
       "gloss": "搜索",
-      "verified": false
+      "verified": true
     },
     "search-addresses": {
       "gloss": "搜索地址",
-      "verified": false
+      "verified": true
     },
     "search-group-types": {
       "gloss": "搜索小组类型",
-      "verified": false
+      "verified": true
     },
     "search-manager-types": {
       "gloss": "搜索经理类型",
-      "verified": false
+      "verified": true
     },
     "search-people": {
       "gloss": "搜索人员",
-      "verified": false
+      "verified": true
     },
     "signup": {
       "gloss": "注册",
-      "verified": false
+      "verified": true
     },
     "tooltips": {
       "activate": {
         "gloss": "启用",
-        "verified": false
+        "verified": true
       },
       "archive": {
         "gloss": "归档",
-        "verified": false
+        "verified": true
       },
       "email": {
         "gloss": "发电子邮件",
-        "verified": false
+        "verified": true
       },
       "remove": {
         "gloss": "移除",
-        "verified": false
+        "verified": true
       },
       "settings": {
         "gloss": "设置",
-        "verified": false
+        "verified": true
       },
       "take-attendance": {
         "gloss": "签到",
-        "verified": false
+        "verified": true
       },
       "unarchive": {
         "gloss": "取消归档",
-        "verified": false
+        "verified": true
       }
     },
     "view-active": {
-      "gloss": "查看活动",
-      "verified": false
+      "gloss": "查看活动项目",
+      "verified": true
     },
     "view-all": {
-      "gloss": "查看全部",
-      "verified": false
+      "gloss": "查看全部项目",
+      "verified": true
     },
     "view-archived": {
-      "gloss": "查看已归档",
-      "verified": false
+      "gloss": "查看已归档项目",
+      "verified": true
     },
     "view-inactive": {
-      "gloss": "查看无效",
-      "verified": false
+      "gloss": "查看非活动项目",
+      "verified": true
     },
     "view-past": {
-      "gloss": "查看过去",
-      "verified": false
+      "gloss": "查看过去项目",
+      "verified": true
     }
   },
   "assets": {
     "asset-added": {
       "gloss": "资产已添加",
-      "verified": false
+      "verified": true
     },
     "asset-archived": {
       "gloss": "资产已归档",
-      "verified": false
+      "verified": true
     },
     "asset-edited": {
       "gloss": "资产已编辑",
-      "verified": false
+      "verified": true
     },
     "asset-on-event": {
       "gloss": "该资产已分配给该活动。",
-      "verified": false
+      "verified": true
     },
     "asset-removed": {
       "gloss": "资产已删除",
-      "verified": false
+      "verified": true
     },
     "asset-unarchived": {
       "gloss": "资产已取消归档",
-      "verified": false
+      "verified": true
     },
     "confirm-archive": {
       "gloss": "您确定要归档此资产吗？",
-      "verified": false
+      "verified": true
     },
     "confirm-remove-from-event": {
       "gloss": "您确定要从此活动中删除该资产吗？",
-      "verified": false
+      "verified": true
     },
     "create-asset": {
       "gloss": "创建资产",
-      "verified": false
+      "verified": true
     },
     "description": {
       "gloss": "描述",
-      "verified": false
+      "verified": true
     },
     "edit-asset": {
       "gloss": "编辑资产",
-      "verified": false
+      "verified": true
     },
     "error-adding-asset": {
       "gloss": "添加资产时出错",
-      "verified": false
+      "verified": true
     },
     "error-archiving-asset": {
       "gloss": "归档资产时出错",
-      "verified": false
+      "verified": true
     },
     "error-asset-assigned": {
       "gloss": "该资产已分配给冲突活动。",
-      "verified": false
+      "verified": true
     },
     "error-editing-asset": {
       "gloss": "编辑资产时出错",
-      "verified": false
+      "verified": true
     },
     "error-removing-asset": {
       "gloss": "移除资产时出错",
-      "verified": false
+      "verified": true
     },
     "error-unarchiving-asset": {
       "gloss": "取消归档资产时出错",
-      "verified": false
+      "verified": true
     },
     "location": {
       "gloss": "位置",
-      "verified": false
+      "verified": true
     },
     "new": {
       "gloss": "添加资产",
-      "verified": false
+      "verified": true
     },
     "none-assigned": {
       "gloss": "没有分配资产。",
-      "verified": false
+      "verified": true
     },
     "title": {
       "gloss": "资产",
-      "verified": false
+      "verified": true
     }
   },
   "attribute": {
     "check": {
       "gloss": "复选框",
-      "verified": false
+      "verified": true
     },
     "date": {
       "gloss": "日期",
-      "verified": false
+      "verified": true
     },
     "dropdown": {
       "gloss": "下拉列表",
-      "verified": false
+      "verified": true
     },
     "float": {
       "gloss": "浮点数",
-      "verified": false
+      "verified": true
     },
     "integer": {
       "gloss": "整数",
-      "verified": false
+      "verified": true
     },
     "radio": {
       "gloss": "单选按钮",
-      "verified": false
+      "verified": true
     },
     "string": {
       "gloss": "字符串",
-      "verified": false
+      "verified": true
     }
   },
   "country": {
     "name": {
       "AD": {
         "gloss": "安道尔",
-        "verified": false
+        "verified": true
       },
       "AE": {
         "gloss": "阿拉伯联合酋长国",
-        "verified": false
+        "verified": true
       },
       "AF": {
         "gloss": "阿富汗",
-        "verified": false
+        "verified": true
       },
       "AG": {
         "gloss": "安提瓜和巴布达",
-        "verified": false
+        "verified": true
       },
       "AI": {
         "gloss": "安圭拉岛",
-        "verified": false
+        "verified": true
       },
       "AL": {
         "gloss": "阿尔巴尼亚",
-        "verified": false
+        "verified": true
       },
       "AM": {
         "gloss": "亚美尼亚",
-        "verified": false
+        "verified": true
       },
       "AO": {
         "gloss": "安哥拉",
-        "verified": false
+        "verified": true
       },
       "AQ": {
         "gloss": "南极洲",
-        "verified": false
+        "verified": true
       },
       "AR": {
         "gloss": "阿根廷",
-        "verified": false
+        "verified": true
       },
       "AS": {
         "gloss": "美属萨摩亚",
-        "verified": false
+        "verified": true
       },
       "AT": {
         "gloss": "奥地利",
-        "verified": false
+        "verified": true
       },
       "AU": {
         "gloss": "澳大利亚",
-        "verified": false
+        "verified": true
       },
       "AW": {
         "gloss": "阿鲁巴岛",
-        "verified": false
+        "verified": true
       },
       "AX": {
         "gloss": "奥兰群岛",
-        "verified": false
+        "verified": true
       },
       "AZ": {
         "gloss": "阿塞拜疆",
-        "verified": false
+        "verified": true
       },
       "BA": {
         "gloss": "波斯尼亚和黑塞哥维那（简称：波黑",
-        "verified": false
+        "verified": true
       },
       "BB": {
         "gloss": "巴巴多斯",
-        "verified": false
+        "verified": true
       },
       "BD": {
         "gloss": "孟加拉国",
-        "verified": false
+        "verified": true
       },
       "BE": {
         "gloss": "比利时",
-        "verified": false
+        "verified": true
       },
       "BF": {
         "gloss": "布基纳法索",
-        "verified": false
+        "verified": true
       },
       "BG": {
         "gloss": "保加利亚",
-        "verified": false
+        "verified": true
       },
       "BH": {
         "gloss": "巴林",
-        "verified": false
+        "verified": true
       },
       "BI": {
         "gloss": "布隆迪",
-        "verified": false
+        "verified": true
       },
       "BJ": {
         "gloss": "贝宁",
-        "verified": false
+        "verified": true
       },
       "BL": {
         "gloss": "圣巴托洛缪岛",
-        "verified": false
+        "verified": true
       },
       "BM": {
         "gloss": "百慕大",
-        "verified": false
+        "verified": true
       },
       "BN": {
         "gloss": "文莱达鲁萨兰国",
-        "verified": false
+        "verified": true
       },
       "BO": {
         "gloss": "玻利维亚多民族国",
-        "verified": false
+        "verified": true
       },
       "BQ": {
         "gloss": "博内尔，圣尤斯特歇斯和萨巴",
-        "verified": false
+        "verified": true
       },
       "BR": {
         "gloss": "巴西",
-        "verified": false
+        "verified": true
       },
       "BS": {
         "gloss": "巴哈马",
-        "verified": false
+        "verified": true
       },
       "BT": {
         "gloss": "不丹",
-        "verified": false
+        "verified": true
       },
       "BV": {
         "gloss": "布维岛",
-        "verified": false
+        "verified": true
       },
       "BW": {
         "gloss": "博茨瓦纳",
-        "verified": false
+        "verified": true
       },
       "BY": {
         "gloss": "白俄罗斯",
-        "verified": false
+        "verified": true
       },
       "BZ": {
         "gloss": "伯利兹",
-        "verified": false
+        "verified": true
       },
       "CA": {
         "gloss": "加拿大",
-        "verified": false
+        "verified": true
       },
       "CC": {
         "gloss": "科科斯（基林）群岛",
-        "verified": false
+        "verified": true
       },
       "CD": {
         "gloss": "刚果民主共和国",
-        "verified": false
+        "verified": true
       },
       "CF": {
         "gloss": "中非共和国",
-        "verified": false
+        "verified": true
       },
       "CG": {
         "gloss": "刚果",
-        "verified": false
+        "verified": true
       },
       "CH": {
         "gloss": "瑞士",
-        "verified": false
+        "verified": true
       },
       "CI": {
         "gloss": "科特迪瓦",
-        "verified": false
+        "verified": true
       },
       "CK": {
         "gloss": "库克群岛",
-        "verified": false
+        "verified": true
       },
       "CL": {
         "gloss": "智利",
-        "verified": false
+        "verified": true
       },
       "CM": {
         "gloss": "喀麦隆",
-        "verified": false
+        "verified": true
       },
       "CN": {
         "gloss": "中国",
-        "verified": false
+        "verified": true
       },
       "CO": {
         "gloss": "哥伦比亚",
-        "verified": false
+        "verified": true
       },
       "CR": {
         "gloss": "哥斯达黎加",
-        "verified": false
+        "verified": true
       },
       "CU": {
         "gloss": "古巴",
-        "verified": false
+        "verified": true
       },
       "CV": {
         "gloss": "佛得角",
-        "verified": false
+        "verified": true
       },
       "CW": {
         "gloss": "库拉索",
-        "verified": false
+        "verified": true
       },
       "CX": {
         "gloss": "圣诞岛",
-        "verified": false
+        "verified": true
       },
       "CY": {
         "gloss": "塞浦路斯",
-        "verified": false
+        "verified": true
       },
       "CZ": {
         "gloss": "捷克共和国",
-        "verified": false
+        "verified": true
       },
       "DE": {
         "gloss": "德国",
-        "verified": false
+        "verified": true
       },
       "DJ": {
         "gloss": "吉布地",
-        "verified": false
+        "verified": true
       },
       "DK": {
         "gloss": "丹麦",
-        "verified": false
+        "verified": true
       },
       "DM": {
         "gloss": "多米尼加",
-        "verified": false
+        "verified": true
       },
       "DO": {
         "gloss": "多明尼加共和国",
-        "verified": false
+        "verified": true
       },
       "DZ": {
         "gloss": "阿尔及利亚",
-        "verified": false
+        "verified": true
       },
       "EC": {
         "gloss": "厄瓜多尔",
-        "verified": false
+        "verified": true
       },
       "EE": {
         "gloss": "爱沙尼亚",
-        "verified": false
+        "verified": true
       },
       "EG": {
         "gloss": "埃及",
-        "verified": false
+        "verified": true
       },
       "EH": {
         "gloss": "西撒哈拉",
-        "verified": false
+        "verified": true
       },
       "ER": {
         "gloss": "厄立特里亚",
-        "verified": false
+        "verified": true
       },
       "ES": {
         "gloss": "西班牙",
-        "verified": false
+        "verified": true
       },
       "ET": {
         "gloss": "埃塞俄比亚",
-        "verified": false
+        "verified": true
       },
       "FI": {
         "gloss": "芬兰",
-        "verified": false
+        "verified": true
       },
       "FJ": {
         "gloss": "斐济",
-        "verified": false
+        "verified": true
       },
       "FK": {
         "gloss": "福克兰群岛（马尔维纳斯）",
-        "verified": false
+        "verified": true
       },
       "FM": {
         "gloss": "密克罗尼西亚联邦",
-        "verified": false
+        "verified": true
       },
       "FO": {
         "gloss": "法罗群岛",
-        "verified": false
+        "verified": true
       },
       "FR": {
         "gloss": "法国",
-        "verified": false
+        "verified": true
       },
       "GA": {
         "gloss": "加蓬",
-        "verified": false
+        "verified": true
       },
       "GB": {
         "gloss": "英国",
-        "verified": false
+        "verified": true
       },
       "GD": {
         "gloss": "格林纳达",
-        "verified": false
+        "verified": true
       },
       "GE": {
         "gloss": "佐治亚州",
-        "verified": false
+        "verified": true
       },
       "GF": {
         "gloss": "法属圭亚那",
-        "verified": false
+        "verified": true
       },
       "GG": {
         "gloss": "根西岛",
-        "verified": false
+        "verified": true
       },
       "GH": {
         "gloss": "加纳",
-        "verified": false
+        "verified": true
       },
       "GI": {
         "gloss": "直布罗陀",
-        "verified": false
+        "verified": true
       },
       "GL": {
         "gloss": "格陵兰",
-        "verified": false
+        "verified": true
       },
       "GM": {
         "gloss": "冈比亚",
-        "verified": false
+        "verified": true
       },
       "GN": {
         "gloss": "几内亚",
-        "verified": false
+        "verified": true
       },
       "GP": {
         "gloss": "瓜德罗普岛",
-        "verified": false
+        "verified": true
       },
       "GQ": {
         "gloss": "赤道几内亚",
-        "verified": false
+        "verified": true
       },
       "GR": {
         "gloss": "希腊",
-        "verified": false
+        "verified": true
       },
       "GS": {
         "gloss": "南乔治亚岛和南桑威奇群岛",
-        "verified": false
+        "verified": true
       },
       "GT": {
         "gloss": "危地马拉",
-        "verified": false
+        "verified": true
       },
       "GU": {
         "gloss": "关岛",
-        "verified": false
+        "verified": true
       },
       "GW": {
         "gloss": "几内亚比绍",
-        "verified": false
+        "verified": true
       },
       "GY": {
         "gloss": "圭亚那",
-        "verified": false
+        "verified": true
       },
       "HK": {
         "gloss": "香港",
-        "verified": false
+        "verified": true
       },
       "HM": {
         "gloss": "希尔德岛和麦当劳群岛",
-        "verified": false
+        "verified": true
       },
       "HN": {
         "gloss": "洪都拉斯",
-        "verified": false
+        "verified": true
       },
       "HR": {
         "gloss": "克罗地亚",
-        "verified": false
+        "verified": true
       },
       "HT": {
         "gloss": "海地",
-        "verified": false
+        "verified": true
       },
       "HU": {
         "gloss": "匈牙利",
-        "verified": false
+        "verified": true
       },
       "ID": {
         "gloss": "印度尼西亚",
-        "verified": false
+        "verified": true
       },
       "IE": {
         "gloss": "爱尔兰",
-        "verified": false
+        "verified": true
       },
       "IL": {
         "gloss": "以色列",
-        "verified": false
+        "verified": true
       },
       "IM": {
         "gloss": "马恩岛",
-        "verified": false
+        "verified": true
       },
       "IN": {
         "gloss": "印度",
-        "verified": false
+        "verified": true
       },
       "IO": {
         "gloss": "英属印度洋领地",
-        "verified": false
+        "verified": true
       },
       "IQ": {
         "gloss": "伊拉克",
-        "verified": false
+        "verified": true
       },
       "IR": {
         "gloss": "伊朗伊斯兰共和国",
-        "verified": false
+        "verified": true
       },
       "IS": {
         "gloss": "冰岛",
-        "verified": false
+        "verified": true
       },
       "IT": {
         "gloss": "意大利",
-        "verified": false
+        "verified": true
       },
       "JE": {
         "gloss": "泽西岛",
-        "verified": false
+        "verified": true
       },
       "JM": {
         "gloss": "牙买加",
-        "verified": false
+        "verified": true
       },
       "JO": {
         "gloss": "约旦",
-        "verified": false
+        "verified": true
       },
       "JP": {
         "gloss": "日本",
-        "verified": false
+        "verified": true
       },
       "KE": {
         "gloss": "肯尼亚",
-        "verified": false
+        "verified": true
       },
       "KG": {
         "gloss": "吉尔吉斯斯坦",
-        "verified": false
+        "verified": true
       },
       "KH": {
         "gloss": "柬埔寨",
-        "verified": false
+        "verified": true
       },
       "KI": {
         "gloss": "基里巴斯",
-        "verified": false
+        "verified": true
       },
       "KM": {
         "gloss": "科摩罗",
-        "verified": false
+        "verified": true
       },
       "KN": {
         "gloss": "圣基茨和尼维斯",
-        "verified": false
+        "verified": true
       },
       "KP": {
         "gloss": "韩国，朝鲜民主主义人民共和国",
-        "verified": false
+        "verified": true
       },
       "KR": {
         "gloss": "韩国",
-        "verified": false
+        "verified": true
       },
       "KW": {
         "gloss": "科威特",
-        "verified": false
+        "verified": true
       },
       "KY": {
         "gloss": "开曼群岛",
-        "verified": false
+        "verified": true
       },
       "KZ": {
         "gloss": "哈萨克斯坦",
-        "verified": false
+        "verified": true
       },
       "LA": {
         "gloss": "老挝人民民主共和国",
-        "verified": false
+        "verified": true
       },
       "LB": {
         "gloss": "黎巴嫩",
-        "verified": false
+        "verified": true
       },
       "LC": {
         "gloss": "圣卢西亚",
-        "verified": false
+        "verified": true
       },
       "LI": {
         "gloss": "列支敦士登",
-        "verified": false
+        "verified": true
       },
       "LK": {
         "gloss": "斯里兰卡",
-        "verified": false
+        "verified": true
       },
       "LR": {
         "gloss": "利比里亚",
-        "verified": false
+        "verified": true
       },
       "LS": {
         "gloss": "莱索托",
-        "verified": false
+        "verified": true
       },
       "LT": {
         "gloss": "立陶宛",
-        "verified": false
+        "verified": true
       },
       "LU": {
         "gloss": "卢森堡",
-        "verified": false
+        "verified": true
       },
       "LV": {
         "gloss": "拉脱维亚",
-        "verified": false
+        "verified": true
       },
       "LY": {
         "gloss": "利比亚",
-        "verified": false
+        "verified": true
       },
       "MA": {
         "gloss": "摩洛哥",
-        "verified": false
+        "verified": true
       },
       "MC": {
         "gloss": "摩纳哥",
-        "verified": false
+        "verified": true
       },
       "MD": {
         "gloss": "摩尔多瓦共和国",
-        "verified": false
+        "verified": true
       },
       "ME": {
         "gloss": "黑山共和国",
-        "verified": false
+        "verified": true
       },
       "MF": {
         "gloss": "圣马丁（法语部分）",
-        "verified": false
+        "verified": true
       },
       "MG": {
         "gloss": "马达加斯加",
-        "verified": false
+        "verified": true
       },
       "MH": {
         "gloss": "马绍尔群岛",
-        "verified": false
+        "verified": true
       },
       "MK": {
         "gloss": "前南斯拉夫共和国马其顿",
-        "verified": false
+        "verified": true
       },
       "ML": {
         "gloss": "马里",
-        "verified": false
+        "verified": true
       },
       "MM": {
         "gloss": "缅甸",
-        "verified": false
+        "verified": true
       },
       "MN": {
         "gloss": "蒙古",
-        "verified": false
+        "verified": true
       },
       "MO": {
         "gloss": "澳门",
-        "verified": false
+        "verified": true
       },
       "MP": {
         "gloss": "北马里亚纳群岛",
-        "verified": false
+        "verified": true
       },
       "MQ": {
         "gloss": "马提尼克岛",
-        "verified": false
+        "verified": true
       },
       "MR": {
         "gloss": "毛里塔尼亚",
-        "verified": false
+        "verified": true
       },
       "MS": {
         "gloss": "蒙特塞拉特",
-        "verified": false
+        "verified": true
       },
       "MT": {
         "gloss": "马耳他",
-        "verified": false
+        "verified": true
       },
       "MU": {
         "gloss": "毛里求斯",
-        "verified": false
+        "verified": true
       },
       "MV": {
         "gloss": "马尔代夫",
-        "verified": false
+        "verified": true
       },
       "MW": {
         "gloss": "马拉维",
-        "verified": false
+        "verified": true
       },
       "MX": {
         "gloss": "墨西哥",
-        "verified": false
+        "verified": true
       },
       "MY": {
         "gloss": "马来西亚",
-        "verified": false
+        "verified": true
       },
       "MZ": {
         "gloss": "莫桑比克",
-        "verified": false
+        "verified": true
       },
       "NA": {
         "gloss": "纳米比亚",
-        "verified": false
+        "verified": true
       },
       "NC": {
         "gloss": "新喀里多尼亚",
-        "verified": false
+        "verified": true
       },
       "NE": {
         "gloss": "尼日尔",
-        "verified": false
+        "verified": true
       },
       "NF": {
         "gloss": "诺福克岛",
-        "verified": false
+        "verified": true
       },
       "NG": {
         "gloss": "奈及利亚",
-        "verified": false
+        "verified": true
       },
       "NI": {
         "gloss": "尼加拉瓜",
-        "verified": false
+        "verified": true
       },
       "NL": {
         "gloss": "荷兰",
-        "verified": false
+        "verified": true
       },
       "NO": {
         "gloss": "挪威",
-        "verified": false
+        "verified": true
       },
       "NP": {
         "gloss": "尼泊尔",
-        "verified": false
+        "verified": true
       },
       "NR": {
         "gloss": "瑙鲁",
-        "verified": false
+        "verified": true
       },
       "NU": {
         "gloss": "纽埃",
-        "verified": false
+        "verified": true
       },
       "NZ": {
         "gloss": "新西兰",
-        "verified": false
+        "verified": true
       },
       "OM": {
         "gloss": "阿曼",
-        "verified": false
+        "verified": true
       },
       "PA": {
         "gloss": "巴拿马",
-        "verified": false
+        "verified": true
       },
       "PE": {
         "gloss": "秘鲁",
-        "verified": false
+        "verified": true
       },
       "PF": {
         "gloss": "法属波利尼西亚",
-        "verified": false
+        "verified": true
       },
       "PG": {
         "gloss": "巴布亚新几内亚",
-        "verified": false
+        "verified": true
       },
       "PH": {
         "gloss": "菲律宾",
-        "verified": false
+        "verified": true
       },
       "PK": {
         "gloss": "巴基斯坦",
-        "verified": false
+        "verified": true
       },
       "PL": {
         "gloss": "波兰",
-        "verified": false
+        "verified": true
       },
       "PM": {
         "gloss": "圣皮埃尔和密克隆群岛",
-        "verified": false
+        "verified": true
       },
       "PN": {
         "gloss": "皮特凯恩",
-        "verified": false
+        "verified": true
       },
       "PR": {
         "gloss": "波多黎各",
-        "verified": false
+        "verified": true
       },
       "PS": {
         "gloss": "巴勒斯坦国",
-        "verified": false
+        "verified": true
       },
       "PT": {
         "gloss": "葡萄牙",
-        "verified": false
+        "verified": true
       },
       "PW": {
         "gloss": "帕劳群岛",
-        "verified": false
+        "verified": true
       },
       "PY": {
         "gloss": "巴拉圭",
-        "verified": false
+        "verified": true
       },
       "QA": {
         "gloss": "卡塔尔",
-        "verified": false
+        "verified": true
       },
       "RE": {
         "gloss": "留尼汪岛",
-        "verified": false
+        "verified": true
       },
       "RO": {
         "gloss": "罗马尼亚",
-        "verified": false
+        "verified": true
       },
       "RS": {
         "gloss": "塞尔维亚",
-        "verified": false
+        "verified": true
       },
       "RU": {
         "gloss": "俄罗斯联邦",
-        "verified": false
+        "verified": true
       },
       "RW": {
         "gloss": "卢旺达",
-        "verified": false
+        "verified": true
       },
       "SA": {
         "gloss": "沙特阿拉伯",
-        "verified": false
+        "verified": true
       },
       "SB": {
         "gloss": "所罗门群岛",
-        "verified": false
+        "verified": true
       },
       "SC": {
         "gloss": "塞舌尔",
-        "verified": false
+        "verified": true
       },
       "SD": {
         "gloss": "苏丹",
-        "verified": false
+        "verified": true
       },
       "SE": {
         "gloss": "瑞典",
-        "verified": false
+        "verified": true
       },
       "SG": {
         "gloss": "新加坡",
-        "verified": false
+        "verified": true
       },
       "SH": {
         "gloss": "圣海伦娜，提升和特里斯坦达库尼亚",
-        "verified": false
+        "verified": true
       },
       "SI": {
         "gloss": "斯洛文尼亚",
-        "verified": false
+        "verified": true
       },
       "SJ": {
         "gloss": "斯瓦尔巴和扬·马延",
-        "verified": false
+        "verified": true
       },
       "SK": {
         "gloss": "斯洛伐克",
-        "verified": false
+        "verified": true
       },
       "SL": {
         "gloss": "塞拉利昂",
-        "verified": false
+        "verified": true
       },
       "SM": {
         "gloss": "圣马力诺",
-        "verified": false
+        "verified": true
       },
       "SN": {
         "gloss": "塞内加尔",
-        "verified": false
+        "verified": true
       },
       "SO": {
         "gloss": "索马里",
-        "verified": false
+        "verified": true
       },
       "SR": {
         "gloss": "苏里南",
-        "verified": false
+        "verified": true
       },
       "SS": {
         "gloss": "南苏丹",
-        "verified": false
+        "verified": true
       },
       "ST": {
         "gloss": "圣多美和普林西比",
-        "verified": false
+        "verified": true
       },
       "SV": {
         "gloss": "萨尔瓦多",
-        "verified": false
+        "verified": true
       },
       "SX": {
         "gloss": "圣马丁（荷兰语部分）",
-        "verified": false
+        "verified": true
       },
       "SY": {
         "gloss": "阿拉伯叙利亚共和国",
-        "verified": false
+        "verified": true
       },
       "SZ": {
         "gloss": "斯威士兰",
-        "verified": false
+        "verified": true
       },
       "TC": {
         "gloss": "特克斯和凯科斯群岛",
-        "verified": false
+        "verified": true
       },
       "TD": {
         "gloss": "乍得",
-        "verified": false
+        "verified": true
       },
       "TF": {
         "gloss": "法属南部领地",
-        "verified": false
+        "verified": true
       },
       "TG": {
         "gloss": "多哥",
-        "verified": false
+        "verified": true
       },
       "TH": {
         "gloss": "泰国",
-        "verified": false
+        "verified": true
       },
       "TJ": {
         "gloss": "塔吉克斯坦",
-        "verified": false
+        "verified": true
       },
       "TK": {
         "gloss": "托克劳",
-        "verified": false
+        "verified": true
       },
       "TL": {
         "gloss": "东帝汶",
-        "verified": false
+        "verified": true
       },
       "TM": {
         "gloss": "土库曼斯坦",
-        "verified": false
+        "verified": true
       },
       "TN": {
         "gloss": "突尼斯",
-        "verified": false
+        "verified": true
       },
       "TO": {
         "gloss": "汤加",
-        "verified": false
+        "verified": true
       },
       "TR": {
         "gloss": "土耳其",
-        "verified": false
+        "verified": true
       },
       "TT": {
         "gloss": "特立尼达和多巴哥",
-        "verified": false
+        "verified": true
       },
       "TV": {
         "gloss": "图瓦卢",
-        "verified": false
+        "verified": true
       },
       "TW": {
         "gloss": "中国台湾省",
-        "verified": false
+        "verified": true
       },
       "TZ": {
         "gloss": "坦桑尼亚联合共和国",
-        "verified": false
+        "verified": true
       },
       "UA": {
         "gloss": "乌克兰",
-        "verified": false
+        "verified": true
       },
       "UG": {
         "gloss": "乌干达",
-        "verified": false
+        "verified": true
       },
       "UM": {
         "gloss": "美国本土外小岛屿",
-        "verified": false
+        "verified": true
       },
       "US": {
         "gloss": "美国",
-        "verified": false
+        "verified": true
       },
       "UY": {
         "gloss": "乌拉圭",
-        "verified": false
+        "verified": true
       },
       "UZ": {
         "gloss": "乌兹别克斯坦",
-        "verified": false
+        "verified": true
       },
       "VA": {
         "gloss": "罗马教廷（梵蒂冈城国）",
-        "verified": false
+        "verified": true
       },
       "VC": {
         "gloss": "圣文森特和格林纳丁斯",
-        "verified": false
+        "verified": true
       },
       "VE": {
         "gloss": "委内瑞拉玻利瓦尔共和国",
-        "verified": false
+        "verified": true
       },
       "VG": {
         "gloss": "英属维尔京群岛",
-        "verified": false
+        "verified": true
       },
       "VI": {
         "gloss": "美国维尔京群岛",
-        "verified": false
+        "verified": true
       },
       "VN": {
         "gloss": "越南",
-        "verified": false
+        "verified": true
       },
       "VU": {
         "gloss": "瓦努阿图",
-        "verified": false
+        "verified": true
       },
       "WF": {
         "gloss": "瓦利斯和富图纳群岛",
-        "verified": false
+        "verified": true
       },
       "WS": {
         "gloss": "萨摩亚",
-        "verified": false
+        "verified": true
       },
       "YE": {
         "gloss": "也门",
-        "verified": false
+        "verified": true
       },
       "YT": {
         "gloss": "马约特岛",
-        "verified": false
+        "verified": true
       },
       "ZA": {
         "gloss": "南非",
-        "verified": false
+        "verified": true
       },
       "ZM": {
         "gloss": "赞比亚",
-        "verified": false
+        "verified": true
       },
       "ZW": {
         "gloss": "津巴布韦",
-        "verified": false
+        "verified": true
       }
     }
   },
   "courses": {
     "add-failed": {
       "gloss": "添加课程失败",
-      "verified": false
+      "verified": true
     },
     "add-meeting": {
       "gloss": "添加会议",
-      "verified": false
+      "verified": true
     },
     "add-meeting-failed": {
       "gloss": "无法添加会议",
-      "verified": false
+      "verified": true
     },
     "added": {
       "gloss": "课程已添加",
-      "verified": false
+      "verified": true
     },
     "archived": {
       "gloss": "课程已归档",
-      "verified": false
+      "verified": true
     },
     "choose-offering": {
       "gloss": "选择产品",
-      "verified": false
+      "verified": true
     },
     "choose-time": {
       "gloss": "时间",
-      "verified": false
+      "verified": true
     },
     "class-attendance": {
       "gloss": "出勤率",
-      "verified": false
+      "verified": true
     },
     "class-attendance-for": {
       "gloss": "出席",
-      "verified": false
+      "verified": true
     },
     "class-attendance-load-failed": {
       "gloss": "无法加载出席列表",
-      "verified": false
+      "verified": true
     },
     "class-attendance-update-failed": {
       "gloss": "无法更新出席列表",
-      "verified": false
+      "verified": true
     },
     "class-attendance-updated": {
       "gloss": "上课人数已更新",
-      "verified": false
+      "verified": true
     },
     "confirm-archive": {
       "gloss": "您确定要归档此课程吗？",
-      "verified": false
+      "verified": true
     },
     "confirm-student": {
       "gloss": "您要确认还是拒绝该学生？",
-      "verified": false
+      "verified": true
     },
     "course": {
       "gloss": "培训班",
-      "verified": false
+      "verified": true
     },
     "course-offering": {
       "gloss": "课程内容",
-      "verified": false
+      "verified": true
     },
     "create-new-person": {
       "gloss": "创建一个新人员",
-      "verified": false
+      "verified": true
     },
     "dashboard": {
       "charts": {
         "attended": {
           "gloss": "参加",
-          "verified": false
+          "verified": true
         },
         "course": {
           "gloss": "课程",
-          "verified": false
+          "verified": true
         },
         "did-not-attend": {
           "gloss": "未参加",
-          "verified": false
+          "verified": true
         },
         "did-not-graduate": {
           "gloss": "未毕业",
-          "verified": false
+          "verified": true
         },
         "enrolled": {
           "gloss": "已入学",
-          "verified": false
+          "verified": true
         },
         "graduated": {
           "gloss": "已毕业",
-          "verified": false
+          "verified": true
         }
       },
       "headers": {
         "course-retention": {
           "gloss": "课程保留",
-          "verified": false
+          "verified": true
         },
         "course-success": {
           "gloss": "课程成功",
-          "verified": false
+          "verified": true
         }
       },
       "title": {
         "gloss": "仪表板",
-        "verified": false
+        "verified": true
       }
     },
     "date": {
       "gloss": "日期",
-      "verified": false
+      "verified": true
     },
     "dates": {
       "gloss": "日期",
-      "verified": false
+      "verified": true
     },
     "description": {
       "gloss": "描述",
-      "verified": false
+      "verified": true
     },
     "enrolled": {
       "gloss": "报名人数",
-      "verified": false
+      "verified": true
     },
     "info-meeting-dates": {
       "gloss": "您可以选择多个日期来创建许多会议。",
-      "verified": false
+      "verified": true
     },
     "is-archived": {
       "gloss": "该课程已归档",
-      "verified": false
+      "verified": true
     },
     "location": {
       "gloss": "位置",
-      "verified": false
+      "verified": true
     },
     "max-size": {
       "gloss": "最多学生数",
-      "verified": false
+      "verified": true
     },
     "meeting-added": {
       "gloss": "会议已添加",
-      "verified": false
+      "verified": true
     },
     "meeting-updated": {
       "gloss": "会议已更新",
-      "verified": false
+      "verified": true
     },
     "new": {
-      "gloss": "新课程",
-      "verified": false
+      "gloss": "添加课程",
+      "verified": true
     },
     "new-meeting": {
-      "gloss": "新会议",
-      "verified": false
+      "gloss": "添加会议",
+      "verified": true
     },
     "new-offering": {
-      "gloss": "新产品",
-      "verified": false
+      "gloss": "添加产品",
+      "verified": true
     },
     "new-offering-short": {
-      "gloss": "新产品",
-      "verified": false
+      "gloss": "添加产品",
+      "verified": true
     },
     "no-prerequisites": {
       "gloss": "本课程没有任何先决条件。",
-      "verified": false
+      "verified": true
     },
     "prerequisites": {
       "gloss": "先决条件",
-      "verified": false
+      "verified": true
     },
     "reactivated": {
       "gloss": "课程已取消归档",
-      "verified": false
+      "verified": true
     },
     "register": {
       "gloss": "注册",
-      "verified": false
+      "verified": true
     },
     "register-for-course": {
       "gloss": "注册此课程",
-      "verified": false
+      "verified": true
     },
     "register-success": {
       "gloss": "成功注册",
-      "verified": false
+      "verified": true
     },
     "reject": {
       "gloss": "拒绝",
-      "verified": false
+      "verified": true
     },
     "schedule": {
       "gloss": "时间表",
-      "verified": false
+      "verified": true
     },
     "students": {
       "gloss": "学生",
-      "verified": false
+      "verified": true
     },
     "teacher": {
       "gloss": "老师",
-      "verified": false
+      "verified": true
     },
     "title": {
       "gloss": "标题",
-      "verified": false
+      "verified": true
     },
     "update-failed": {
       "gloss": "更新课程失败",
-      "verified": false
+      "verified": true
     },
     "update-meeting-failed": {
       "gloss": "无法更新会议",
-      "verified": false
+      "verified": true
     },
     "updated": {
       "gloss": "课程已更新",
-      "verified": false
+      "verified": true
     },
     "when": {
       "gloss": "时间",
-      "verified": false
+      "verified": true
     }
   },
   "diplomas": {
     "add-failed": {
       "gloss": "无法添加文凭",
-      "verified": false
+      "verified": true
     },
     "added": {
       "gloss": "文凭已添加",
-      "verified": false
+      "verified": true
     },
     "archived": {
       "gloss": "文凭已归档",
-      "verified": false
+      "verified": true
     },
     "confirm-archive": {
       "gloss": "您确定要归档此文凭吗？",
-      "verified": false
+      "verified": true
     },
     "courses": {
       "gloss": "培训班",
-      "verified": false
+      "verified": true
     },
     "courses-this-diploma": {
       "gloss": "本文凭课程",
-      "verified": false
+      "verified": true
     },
     "description": {
       "gloss": "描述",
-      "verified": false
+      "verified": true
     },
     "diploma": {
       "gloss": "文凭",
-      "verified": false
+      "verified": true
     },
     "diplomas": {
       "gloss": "文凭课程",
-      "verified": false
+      "verified": true
     },
     "new": {
-      "gloss": "新文凭",
-      "verified": false
+      "gloss": "添加文凭",
+      "verified": true
     },
     "reactivated": {
       "gloss": "文凭已取消归档",
-      "verified": false
+      "verified": true
     },
     "title": {
       "gloss": "标题",
-      "verified": false
+      "verified": true
     },
     "update-failed": {
       "gloss": "无法更新文凭",
-      "verified": false
+      "verified": true
     },
     "updated": {
       "gloss": "文凭更新",
-      "verified": false
+      "verified": true
     }
   },
   "error-report": {
     "actions": {
       "cancel": {
         "gloss": "取消",
-        "verified": false
+        "verified": true
       },
       "dismiss": {
         "gloss": "隐藏",
-        "verified": false
+        "verified": true
       },
       "report-error": {
         "gloss": "报告错误",
-        "verified": false
+        "verified": true
       },
       "submit": {
         "gloss": "提交",
-        "verified": false
+        "verified": true
       }
     },
     "display": {
       "add-description": {
         "gloss": "添加说明",
-        "verified": false
+        "verified": true
       },
       "feedback-successful": {
         "gloss": "谢谢，我们已经收到您的反馈！",
-        "verified": false
+        "verified": true
       },
       "make-description": {
         "gloss": "请说明错误的发生方式",
-        "verified": false
+        "verified": true
       }
     },
     "error-types": {
       "error-400": {
         "gloss": "服务器收到无效请求",
-        "verified": false
+        "verified": true
       },
       "error-401": {
         "gloss": "服务器收到了冲突的请求",
-        "verified": false
+        "verified": true
       },
       "error-404": {
         "gloss": "服务器无法识别请求的资源",
-        "verified": false
+        "verified": true
       },
       "error-4xx": {
         "gloss": "发生客户端错误",
-        "verified": false
+        "verified": true
       },
       "error-5xx": {
         "gloss": "发生服务器错误",
-        "verified": false
+        "verified": true
       }
     }
   },
   "events": {
     "all-events": {
       "gloss": "所有活动",
-      "verified": false
+      "verified": true
     },
     "attendance": {
       "gloss": "出勤率",
-      "verified": false
+      "verified": true
     },
     "attendance-label": {
       "gloss": "输入一个数字",
-      "verified": false
+      "verified": true
     },
     "attendance-none": {
       "gloss": "空",
-      "verified": false
+      "verified": true
     },
     "calendar": {
       "title": {
         "gloss": "日历",
-        "verified": false
+        "verified": true
       }
     },
     "confirm-archive": {
       "gloss": "您确定要归档此活动吗？",
-      "verified": false
+      "verified": true
     },
     "create-event": {
       "gloss": "建立活动",
-      "verified": false
+      "verified": true
     },
     "dashboard": {
       "charts": {
         "attendance": {
           "gloss": "出勤率",
-          "verified": false
+          "verified": true
         },
         "campus": {
           "gloss": "校园",
-          "verified": false
+          "verified": true
         },
         "home-groups": {
           "gloss": "家庭小组",
-          "verified": false
+          "verified": true
         }
       },
       "headers": {
         "home-group-percentage": {
           "gloss": "家庭小组中信徒的百分比",
-          "verified": false
+          "verified": true
         },
         "location-attendance": {
           "gloss": "按地区出席",
-          "verified": false
+          "verified": true
         },
         "yearly-attendance": {
           "gloss": "每年出席",
-          "verified": false
+          "verified": true
         }
       },
       "title": {
         "gloss": "仪表板",
-        "verified": false
+        "verified": true
       }
     },
     "details": {
       "title": {
         "gloss": "活动详情",
-        "verified": false
+        "verified": true
       }
     },
     "edit-event": {
       "gloss": "编辑活动",
-      "verified": false
+      "verified": true
     },
     "end-date": {
       "gloss": "结束日期",
-      "verified": false
+      "verified": true
     },
     "end-time": {
       "gloss": "时间结束",
-      "verified": false
+      "verified": true
     },
     "error-adding-event": {
       "gloss": "添加活动时出错",
-      "verified": false
+      "verified": true
     },
     "error-archiving-event": {
       "gloss": "归档活动时出错",
-      "verified": false
+      "verified": true
     },
     "error-editing-event": {
       "gloss": "编辑活动时出错",
-      "verified": false
+      "verified": true
     },
     "error-unarchiving-event": {
       "gloss": "取消归档活动时出错",
-      "verified": false
+      "verified": true
     },
     "event-added": {
       "gloss": "活动已添加",
-      "verified": false
+      "verified": true
     },
     "event-archived": {
       "gloss": "活动已归档",
-      "verified": false
+      "verified": true
     },
     "event-description": {
       "gloss": "活动说明",
-      "verified": false
+      "verified": true
     },
     "event-edited": {
       "gloss": "活动已编辑",
-      "verified": false
+      "verified": true
     },
     "event-location": {
       "gloss": "活动地点",
-      "verified": false
+      "verified": true
     },
     "event-unarchived": {
       "gloss": "活动已取消归档",
-      "verified": false
+      "verified": true
     },
     "header": {
       "gloss": "活动",
-      "verified": false
+      "verified": true
     },
     "image-description": {
       "gloss": "图片说明",
-      "verified": false
+      "verified": true
     },
     "location": {
       "gloss": "位置",
-      "verified": false
+      "verified": true
     },
     "participants": {
       "add": {
         "gloss": "添加参与者",
-        "verified": false
+        "verified": true
       },
       "added": {
         "gloss": "参与者已添加",
-        "verified": false
+        "verified": true
       },
       "confirm-remove": {
         "gloss": "您确定要删除此参与者吗？",
-        "verified": false
+        "verified": true
       },
       "error-adding": {
         "gloss": "添加参与者时出错",
-        "verified": false
+        "verified": true
       },
       "error-removing": {
         "gloss": "删除参与者时出错",
-        "verified": false
+        "verified": true
       },
       "removed": {
         "gloss": "已删除参与者",
-        "verified": false
+        "verified": true
       },
       "title": {
         "gloss": "参与者",
-        "verified": false
+        "verified": true
       }
     },
     "persons": {
       "confirm-remove-from-event": {
         "gloss": "您确定要将此人员从此活动中删除吗？",
-        "verified": false
+        "verified": true
       },
       "description": {
         "gloss": "职位描述",
-        "verified": false
+        "verified": true
       },
       "edit": {
         "gloss": "编辑人员",
-        "verified": false
+        "verified": true
       },
       "error-adding-person": {
         "gloss": "添加人员时出错",
-        "verified": false
+        "verified": true
       },
       "error-person-assigned": {
         "gloss": "该人员被分配了一个冲突活动。",
-        "verified": false
+        "verified": true
       },
       "error-removing-person": {
         "gloss": "移除人员时出错",
-        "verified": false
+        "verified": true
       },
       "new": {
         "gloss": "添加人员",
-        "verified": false
+        "verified": true
       },
       "none-assigned": {
         "gloss": "没有人员分配。",
-        "verified": false
+        "verified": true
       },
       "person-added": {
         "gloss": "人员已添加",
-        "verified": false
+        "verified": true
       },
       "person-edited": {
         "gloss": "编辑者",
-        "verified": false
+        "verified": true
       },
       "person-on-event": {
         "gloss": "该人员已被分配参加此活动。",
-        "verified": false
+        "verified": true
       },
       "person-removed": {
         "gloss": "删除人员",
-        "verified": false
+        "verified": true
       },
       "title": {
         "gloss": "活动成员",
-        "verified": false
+        "verified": true
       }
     },
     "start-date": {
       "gloss": "开始日期",
-      "verified": false
+      "verified": true
     },
     "start-time": {
       "gloss": "开始时间",
-      "verified": false
+      "verified": true
     },
     "stop-time": {
       "gloss": "停止时间",
-      "verified": false
+      "verified": true
     },
     "title": {
       "gloss": "活动标题",
-      "verified": false
+      "verified": true
     },
     "upload-image": {
       "gloss": "上传图片",
-      "verified": false
+      "verified": true
     }
   },
   "groups": {
     "admin-panel": {
       "gloss": "管理面板",
-      "verified": false
+      "verified": true
     },
     "batch-actions": {
       "archive": {
         "gloss": "归档",
-        "verified": false
+        "verified": true
       },
       "edit": {
         "gloss": "编辑",
-        "verified": false
+        "verified": true
       },
       "email": {
         "gloss": "发电子邮件",
-        "verified": false
+        "verified": true
       },
       "messages": {
         "move-person-will-cause-cycle": {
           "gloss": "移动此人员将导致领导层的循环",
-          "verified": false
+          "verified": true
         },
         "no-email": {
           "gloss": "该人员没有电子邮件地址",
-          "verified": false
+          "verified": true
         },
         "person-in-destination-group": {
           "gloss": "该人员已经在目的地小组中",
-          "verified": false
+          "verified": true
         },
         "unarchive-group-will-cause-cycle": {
           "gloss": "取消归档此团队将导致领导层的循环",
-          "verified": false
+          "verified": true
         }
       },
       "move": {
         "gloss": "移动",
-        "verified": false
+        "verified": true
       },
       "title": {
         "gloss": "批处理动作",
-        "verified": false
+        "verified": true
       },
       "unarchive": {
         "gloss": "取消归档",
-        "verified": false
+        "verified": true
       }
     },
     "confirm-remove-from-event": {
       "gloss": "您确定要从此活动中删除该小组吗？",
-      "verified": false
+      "verified": true
     },
     "create-group": {
       "gloss": "创建小组",
-      "verified": false
+      "verified": true
     },
     "description": {
       "gloss": "描述",
-      "verified": false
+      "verified": true
     },
     "details": {
       "class-title": {
         "gloss": "标题",
-        "verified": false
+        "verified": true
       },
       "manager": {
         "gloss": "经理",
-        "verified": false
+        "verified": true
       },
       "member-count": {
         "gloss": "成员人数",
-        "verified": false
+        "verified": true
       },
       "title": {
         "gloss": "细节",
-        "verified": false
+        "verified": true
       }
     },
     "edit-group": {
       "gloss": "编辑小组",
-      "verified": false
+      "verified": true
     },
     "entity-types": {
       "group-types": {
         "change-to-different": {
           "gloss": "更改为其他小组类型",
-          "verified": false
+          "verified": true
         },
         "confirm-remove": {
           "gloss": "您确定要删除此小组类型吗？",
-          "verified": false
+          "verified": true
         },
         "create-new": {
           "gloss": "创建一个新的小组类型",
-          "verified": false
+          "verified": true
         },
         "edit": {
           "gloss": "编辑小组类型",
-          "verified": false
+          "verified": true
         },
         "fail-add": {
           "gloss": "添加小组类型失败",
-          "verified": false
+          "verified": true
         },
         "fail-change": {
           "gloss": "更改小组类型失败",
-          "verified": false
+          "verified": true
         },
         "fail-remove": {
           "gloss": "删除小组类型失败",
-          "verified": false
+          "verified": true
         },
         "fail-update": {
           "gloss": "更新小组类型失败",
-          "verified": false
+          "verified": true
         },
         "hide-expand": {
           "gloss": "隐藏小组",
-          "verified": false
+          "verified": true
         },
         "manage": {
           "gloss": "管理小组类型",
-          "verified": false
+          "verified": true
         },
         "name": {
           "gloss": "小组类型名称",
-          "verified": false
+          "verified": true
         },
         "new": {
-          "gloss": "新小组类型",
-          "verified": false
+          "gloss": "添加小组类型",
+          "verified": true
         },
         "show-expand": {
           "gloss": "显示小组",
-          "verified": false
+          "verified": true
         },
         "success-add": {
           "gloss": "成功添加小组类型",
-          "verified": false
+          "verified": true
         },
         "success-change": {
           "gloss": "成功更改小组类型",
-          "verified": false
+          "verified": true
         },
         "success-remove": {
           "gloss": "成功删除小组类型",
-          "verified": false
+          "verified": true
         },
         "success-update": {
           "gloss": "成功更新小组类型",
-          "verified": false
+          "verified": true
         },
         "title": {
           "gloss": "小组类型",
-          "verified": false
+          "verified": true
         }
       },
       "manager-types": {
         "change-to-different": {
           "gloss": "更改为其他经理类型",
-          "verified": false
+          "verified": true
         },
         "confirm-remove": {
           "gloss": "您确定要删除此经理类型吗？",
-          "verified": false
+          "verified": true
         },
         "create-new": {
           "gloss": "创建一个新的经理类型",
-          "verified": false
+          "verified": true
         },
         "edit": {
           "gloss": "编辑经理类型",
-          "verified": false
+          "verified": true
         },
         "fail-add": {
           "gloss": "添加经理类型失败",
-          "verified": false
+          "verified": true
         },
         "fail-change": {
           "gloss": "更改经理类型失败",
-          "verified": false
+          "verified": true
         },
         "fail-remove": {
           "gloss": "删除经理类型失败",
-          "verified": false
+          "verified": true
         },
         "fail-update": {
           "gloss": "更新经理类型失败",
-          "verified": false
+          "verified": true
         },
         "hide-expand": {
           "gloss": "隐藏经理",
-          "verified": false
+          "verified": true
         },
         "manage": {
           "gloss": "管理经理类型",
-          "verified": false
+          "verified": true
         },
         "name": {
           "gloss": "经理类型名称",
-          "verified": false
+          "verified": true
         },
         "new": {
-          "gloss": "新经理类型",
-          "verified": false
+          "gloss": "添加经理类型",
+          "verified": true
         },
         "show-expand": {
           "gloss": "演出经理",
-          "verified": false
+          "verified": true
         },
         "success-add": {
           "gloss": "成功添加经理类型",
-          "verified": false
+          "verified": true
         },
         "success-change": {
           "gloss": "成功更改经理类型",
-          "verified": false
+          "verified": true
         },
         "success-remove": {
           "gloss": "成功删除经理类型",
-          "verified": false
+          "verified": true
         },
         "success-update": {
           "gloss": "成功更新经理类型",
-          "verified": false
+          "verified": true
         },
         "title": {
           "gloss": "经理类型",
-          "verified": false
+          "verified": true
         }
       }
     },
     "error-removing-group": {
       "gloss": "删除小组时出错",
-      "verified": false
+      "verified": true
     },
     "group-description": {
       "gloss": "小组介绍",
-      "verified": false
+      "verified": true
     },
     "group-removed": {
       "gloss": "小组已删除",
-      "verified": false
+      "verified": true
     },
     "group-type": {
       "gloss": "团体类型",
-      "verified": false
+      "verified": true
     },
     "header": {
       "gloss": "团体",
-      "verified": false
+      "verified": true
     },
     "header-manager": {
       "gloss": "经理",
-      "verified": false
+      "verified": true
     },
     "linegraph": {
       "Month": {
         "April": {
           "gloss": "四月",
-          "verified": false
+          "verified": true
         },
         "August": {
           "gloss": "八月",
-          "verified": false
+          "verified": true
         },
         "December": {
           "gloss": "十二月",
-          "verified": false
+          "verified": true
         },
         "February": {
           "gloss": "二月",
-          "verified": false
+          "verified": true
         },
         "January": {
           "gloss": "一月",
-          "verified": false
+          "verified": true
         },
         "July": {
           "gloss": "七月",
-          "verified": false
+          "verified": true
         },
         "June": {
           "gloss": "六月",
-          "verified": false
+          "verified": true
         },
         "March": {
           "gloss": "三月",
-          "verified": false
+          "verified": true
         },
         "May": {
           "gloss": "五月",
-          "verified": false
+          "verified": true
         },
         "November": {
           "gloss": "十一月",
-          "verified": false
+          "verified": true
         },
         "October": {
           "gloss": "十月",
-          "verified": false
+          "verified": true
         },
         "September": {
           "gloss": "九月",
-          "verified": false
+          "verified": true
         }
       },
       "selected-group": {
         "gloss": "选定的小组",
-        "verified": false
+        "verified": true
       },
       "time-picker-end": {
         "gloss": "结束",
-        "verified": false
+        "verified": true
       },
       "time-picker-start": {
         "gloss": "开始",
-        "verified": false
+        "verified": true
       },
       "time-scale": {
         "gloss": "时间比例",
-        "verified": false
+        "verified": true
       },
       "time-scale-unite": {
         "Weekly": {
           "gloss": "每周一次",
-          "verified": false
+          "verified": true
         },
         "monthly": {
           "gloss": "每月一次",
-          "verified": false
+          "verified": true
         }
       }
     },
     "manager": {
       "gloss": "经理",
-      "verified": false
+      "verified": true
     },
     "managers": {
       "add-manager": {
-        "gloss": "新增经理",
-        "verified": false
+        "gloss": "添加经理",
+        "verified": true
       },
       "edit-manager": {
         "gloss": "编辑经理",
-        "verified": false
+        "verified": true
       },
       "manager-type": {
         "gloss": "经理类型",
-        "verified": false
+        "verified": true
       }
     },
     "meetings": {
       "add-meeting": {
         "gloss": "添加会议",
-        "verified": false
+        "verified": true
       },
       "title": {
         "gloss": "会议会议",
-        "verified": false
+        "verified": true
       }
     },
     "member-count": {
       "gloss": "成员数",
-      "verified": false
+      "verified": true
     },
     "members": {
       "add-member": {
-        "gloss": "新增成员",
-        "verified": false
+        "gloss": "添加成员",
+        "verified": true
       },
       "default": {
         "gloss": "默认",
-        "verified": false
+        "verified": true
       },
       "edit-member": {
         "gloss": "编辑成员",
-        "verified": false
+        "verified": true
       },
       "email": {
         "bcc": {
           "gloss": "密件抄送",
-          "verified": false
+          "verified": true
         },
         "body": {
           "gloss": "身体",
-          "verified": false
+          "verified": true
         },
         "cc": {
           "gloss": "抄送",
-          "verified": false
+          "verified": true
         },
         "compose": {
           "gloss": "写邮件",
-          "verified": false
+          "verified": true
         },
         "reply-to": {
           "gloss": "回复",
-          "verified": false
+          "verified": true
         },
         "send": {
           "gloss": "发送",
-          "verified": false
+          "verified": true
         },
         "subject": {
           "gloss": "主题",
-          "verified": false
+          "verified": true
         },
         "to": {
           "gloss": "至",
-          "verified": false
+          "verified": true
         }
       },
       "email-dialog-footnote": {
         "gloss": "点击圆圈以选择回复选项",
-        "verified": false
+        "verified": true
       },
       "email-reply-to": {
         "gloss": "回复",
-        "verified": false
+        "verified": true
       },
       "title": {
         "gloss": "成员",
-        "verified": false
+        "verified": true
       },
       "title-visitor": {
         "gloss": "访客",
-        "verified": false
+        "verified": true
       }
     },
     "membership-hisotry": {
       "title": {
         "gloss": "历史",
-        "verified": false
+        "verified": true
       }
     },
     "membership-history": {
       "cancel": {
         "gloss": "取消",
-        "verified": false
+        "verified": true
       },
       "change-note": {
         "gloss": "更改笔记",
-        "verified": false
+        "verified": true
       },
       "clear-note": {
         "gloss": "清除笔记",
-        "verified": false
+        "verified": true
       },
       "note": {
         "gloss": "笔记",
-        "verified": false
+        "verified": true
       },
       "submit": {
         "gloss": "提交",
-        "verified": false
+        "verified": true
       },
       "title": {
         "gloss": "历史",
-        "verified": false
+        "verified": true
       }
     },
     "messages": {
       "already-exists": {
         "gloss": "小组已经存在",
-        "verified": false
+        "verified": true
       },
       "confirm-archive": {
         "gloss": "您确定要归档此小组吗？",
-        "verified": false
+        "verified": true
       },
       "confirm-attendance-archive": {
         "gloss": "您确定此人员缺席吗？",
-        "verified": false
+        "verified": true
       },
       "confirm-manager-archive": {
         "gloss": "您确定要归档此小组经理吗？",
-        "verified": false
+        "verified": true
       },
       "confirm-meeting-archive": {
         "gloss": "您确定要归档此小组会议吗？",
-        "verified": false
+        "verified": true
       },
       "confirm-member-archive": {
         "gloss": "您确定要归档此小组成员吗？",
-        "verified": false
+        "verified": true
       },
       "email-sent": {
         "gloss": "邮件已发送",
-        "verified": false
+        "verified": true
       },
       "error-active-not-selected": {
         "gloss": "未选择活动成员",
-        "verified": false
+        "verified": true
       },
       "error-adding-group": {
         "gloss": "添加小组时出错",
-        "verified": false
+        "verified": true
       },
       "error-adding-managers": {
         "gloss": "添加经理时出错",
-        "verified": false
+        "verified": true
       },
       "error-adding-meeting": {
         "gloss": "添加会议时出错",
-        "verified": false
+        "verified": true
       },
       "error-adding-members": {
         "gloss": "添加成员时出错",
-        "verified": false
+        "verified": true
       },
       "error-archived-not-selected": {
         "gloss": "未选择任何归档成员",
-        "verified": false
+        "verified": true
       },
       "error-archiving-group": {
         "gloss": "归档小组时出错",
-        "verified": false
+        "verified": true
       },
       "error-archiving-manager": {
         "gloss": "归档经理时出错",
-        "verified": false
+        "verified": true
       },
       "error-archiving-meeting": {
         "gloss": "归档会议时出错",
-        "verified": false
+        "verified": true
       },
       "error-archiving-member": {
         "gloss": "归档成员时出错",
-        "verified": false
+        "verified": true
       },
       "error-editing-group": {
         "gloss": "编辑小组时发生错误",
-        "verified": false
+        "verified": true
       },
       "error-moving-managers": {
         "gloss": "移动经理时出错",
-        "verified": false
+        "verified": true
       },
       "error-moving-members": {
         "gloss": "移动成员时出错",
-        "verified": false
+        "verified": true
       },
       "error-no-manager-email": {
         "gloss": "您的电子邮件地址未定义",
-        "verified": false
+        "verified": true
       },
       "error-sending-email": {
         "gloss": "发送电子邮件时出错",
-        "verified": false
+        "verified": true
       },
       "error-unarchiving-group": {
         "gloss": "取消归档小组时出错",
-        "verified": false
+        "verified": true
       },
       "error-unarchiving-manager": {
         "gloss": "取消归档经理时出错",
-        "verified": false
+        "verified": true
       },
       "error-unarchiving-meeting": {
         "gloss": "错误取消归档会议",
-        "verified": false
+        "verified": true
       },
       "error-unarchiving-member": {
         "gloss": "取消归档成员时出错",
-        "verified": false
+        "verified": true
       },
       "error-updating-managers": {
         "gloss": "更新经理时出错",
-        "verified": false
+        "verified": true
       },
       "error-updating-members": {
         "gloss": "更新成员时出错",
-        "verified": false
+        "verified": true
       },
       "group-added": {
         "gloss": "小组已添加",
-        "verified": false
+        "verified": true
       },
       "group-archived": {
         "gloss": "小组已归档",
-        "verified": false
+        "verified": true
       },
       "group-edited": {
         "gloss": "小组编辑",
-        "verified": false
+        "verified": true
       },
       "group-unarchived": {
         "gloss": "小组已取消归档",
-        "verified": false
+        "verified": true
       },
       "manager-archived": {
         "gloss": "经理已归档",
-        "verified": false
+        "verified": true
       },
       "manager-unarchived": {
         "gloss": "经理已取消归档",
-        "verified": false
+        "verified": true
       },
       "managers-added": {
         "gloss": "成功添加经理",
-        "verified": false
+        "verified": true
       },
       "managers-moved": {
         "gloss": "成功调动经理",
-        "verified": false
+        "verified": true
       },
       "managers-updated": {
         "gloss": "成功更新经理",
-        "verified": false
+        "verified": true
       },
       "meeting-added": {
         "gloss": "会议已添加",
-        "verified": false
+        "verified": true
       },
       "meeting-archived": {
         "gloss": "会议已归档",
-        "verified": false
+        "verified": true
       },
       "member-archived": {
         "gloss": "成员已归档",
-        "verified": false
+        "verified": true
       },
       "member-unarchived": {
         "gloss": "成员已取消归档",
-        "verified": false
+        "verified": true
       },
       "members-added": {
         "gloss": "成功添加成员",
-        "verified": false
+        "verified": true
       },
       "members-moved": {
         "gloss": "成功移动成员",
-        "verified": false
+        "verified": true
       },
       "members-updated": {
         "gloss": "成功更新成员",
-        "verified": false
+        "verified": true
       },
       "no-remaining-members": {
         "gloss": "没有剩余成员",
-        "verified": false
+        "verified": true
       },
       "participant-added": {
         "gloss": "参与者已添加",
-        "verified": false
+        "verified": true
       },
       "required-fields": {
         "gloss": "请填写所有必填字段",
-        "verified": false
+        "verified": true
       },
       "select-destination-group": {
         "gloss": "选择目的地小组",
-        "verified": false
+        "verified": true
       },
       "visitor-remove": {
         "gloss": "访客已删除",
-        "verified": false
+        "verified": true
       }
     },
     "name": {
       "gloss": "名称",
-      "verified": false
+      "verified": true
     },
     "none-assigned": {
       "gloss": "未分配小组。",
-      "verified": false
+      "verified": true
     },
     "split": {
       "child-group": {
         "gloss": "儿童小组",
-        "verified": false
+        "verified": true
       },
       "choose-managers": {
         "gloss": "选择经理",
-        "verified": false
+        "verified": true
       },
       "choose-members": {
         "gloss": "选择成员",
-        "verified": false
+        "verified": true
       },
       "error": {
         "gloss": "拆分小组时发生错误",
-        "verified": false
+        "verified": true
       },
       "group-information": {
         "gloss": "团体信息",
-        "verified": false
+        "verified": true
       },
       "no-managers": {
         "gloss": "父小组中没有经理",
-        "verified": false
+        "verified": true
       },
       "no-members": {
         "gloss": "父小组中没有成员",
-        "verified": false
+        "verified": true
       },
       "parent-group": {
         "gloss": "家长小组",
-        "verified": false
+        "verified": true
       },
       "success": {
         "gloss": "小组成功拆分",
-        "verified": false
+        "verified": true
       },
       "title": {
         "gloss": "拆分小组",
-        "verified": false
+        "verified": true
       },
       "tooltip": {
         "gloss": "拆分",
-        "verified": false
+        "verified": true
       }
     },
     "title": {
       "gloss": "家庭教会",
-      "verified": false
+      "verified": true
     },
     "tooltips": {
       "move": {
         "gloss": "移至另一个小组",
-        "verified": false
+        "verified": true
       }
     },
     "treeview": {
       "admin-node": {
         "gloss": "小组管理员",
-        "verified": false
+        "verified": true
       },
       "categories": {
         "all": {
           "gloss": "所有",
-          "verified": false
+          "verified": true
         },
         "all-group-types": {
           "gloss": "所有小组类型",
-          "verified": false
+          "verified": true
         },
         "managers": {
           "gloss": "经理",
-          "verified": false
+          "verified": true
         },
         "members": {
           "gloss": "成员",
-          "verified": false
+          "verified": true
         }
       },
       "category-view": {
         "gloss": "分类视图",
-        "verified": false
+        "verified": true
       },
       "collapse": {
         "gloss": "合并",
-        "verified": false
+        "verified": true
       },
       "expand": {
         "gloss": "展开",
-        "verified": false
+        "verified": true
       },
       "filters": {
         "gloss": "筛选器",
-        "verified": false
+        "verified": true
       },
       "hierarchy-view": {
         "gloss": "层次结构视图",
-        "verified": false
+        "verified": true
       },
       "no-groups-available": {
         "gloss": "没有可用的小组，因为您不是任何小组的监督者",
-        "verified": false
+        "verified": true
       },
       "remove-cycle": {
         "gloss": "请在列出的节点中删除循环，以查看小组层次结构树。",
-        "verified": false
+        "verified": true
       },
       "select-placeholder": {
         "gloss": "选择要执行操作的小组...",
-        "verified": false
+        "verified": true
       },
       "show-linegraph": {
         "gloss": "显示折线图",
-        "verified": false
+        "verified": true
       },
       "show-list": {
         "gloss": "显示小组清单",
-        "verified": false
+        "verified": true
       },
       "show-treeview": {
         "gloss": "显示小组树视图",
-        "verified": false
+        "verified": true
       },
       "title": {
         "gloss": "小组树状视图",
-        "verified": false
+        "verified": true
       },
       "unexpected-cycle": {
         "gloss": "层次结构中的意外周期",
-        "verified": false
+        "verified": true
       }
     },
     "user-panel": {
       "gloss": "用户面板",
-      "verified": false
+      "verified": true
     }
   },
   "images": {
     "actions": {
       "add-image": {
         "gloss": "添加图片",
-        "verified": false
+        "verified": true
       }
     },
     "image-description": {
       "gloss": "图片说明",
-      "verified": false
+      "verified": true
     },
     "messages": {
       "no-image": {
         "gloss": "未选择图像。",
-        "verified": false
+        "verified": true
       },
       "not-found": {
         "gloss": "找不到图片。",
-        "verified": false
+        "verified": true
       }
     }
   },
@@ -2783,1426 +2783,1426 @@
     "name": {
       "aa": {
         "gloss": "阿法尔语",
-        "verified": false
+        "verified": true
       },
       "ab": {
         "gloss": "阿布哈兹语",
-        "verified": false
+        "verified": true
       },
       "ae": {
         "gloss": "阿维斯陀语",
-        "verified": false
+        "verified": true
       },
       "af": {
         "gloss": "南非语",
-        "verified": false
+        "verified": true
       },
       "ak": {
         "gloss": "阿坎语",
-        "verified": false
+        "verified": true
       },
       "am": {
         "gloss": "阿姆哈拉语",
-        "verified": false
+        "verified": true
       },
       "an": {
         "gloss": "阿拉贡语",
-        "verified": false
+        "verified": true
       },
       "ar": {
         "gloss": "阿拉伯语",
-        "verified": false
+        "verified": true
       },
       "as": {
         "gloss": "阿萨姆语",
-        "verified": false
+        "verified": true
       },
       "av": {
         "gloss": "阿瓦尔语",
-        "verified": false
+        "verified": true
       },
       "ay": {
         "gloss": "艾马拉语",
-        "verified": false
+        "verified": true
       },
       "az": {
         "gloss": "阿塞拜疆语",
-        "verified": false
+        "verified": true
       },
       "ba": {
         "gloss": "巴什基尔语",
-        "verified": false
+        "verified": true
       },
       "be": {
         "gloss": "白俄罗斯语",
-        "verified": false
+        "verified": true
       },
       "bg": {
         "gloss": "保加利亚语",
-        "verified": false
+        "verified": true
       },
       "bh": {
         "gloss": "比哈里语",
-        "verified": false
+        "verified": true
       },
       "bi": {
         "gloss": "比斯拉马语",
-        "verified": false
+        "verified": true
       },
       "bm": {
         "gloss": "班巴拉语",
-        "verified": false
+        "verified": true
       },
       "bn": {
         "gloss": "孟加拉语",
-        "verified": false
+        "verified": true
       },
       "bo": {
         "gloss": "藏语",
-        "verified": false
+        "verified": true
       },
       "br": {
         "gloss": "布列塔尼语",
-        "verified": false
+        "verified": true
       },
       "bs": {
         "gloss": "波斯尼亚语",
-        "verified": false
+        "verified": true
       },
       "ca": {
         "gloss": "加泰罗尼亚语巴伦西亚语",
-        "verified": false
+        "verified": true
       },
       "ce": {
         "gloss": "车臣语",
-        "verified": false
+        "verified": true
       },
       "ch": {
         "gloss": "查莫罗语",
-        "verified": false
+        "verified": true
       },
       "co": {
         "gloss": "科西嘉语",
-        "verified": false
+        "verified": true
       },
       "cr": {
         "gloss": "克里语",
-        "verified": false
+        "verified": true
       },
       "cs": {
         "gloss": "捷克文",
-        "verified": false
+        "verified": true
       },
       "cu": {
         "gloss": "斯拉夫语系语言",
-        "verified": false
+        "verified": true
       },
       "cv": {
         "gloss": "楚瓦什语",
-        "verified": false
+        "verified": true
       },
       "cy": {
         "gloss": "威尔士语",
-        "verified": false
+        "verified": true
       },
       "da": {
         "gloss": "丹麦文",
-        "verified": false
+        "verified": true
       },
       "de": {
         "gloss": "德语",
-        "verified": false
+        "verified": true
       },
       "dv": {
         "gloss": "迪菲迪维希马尔代夫语",
-        "verified": false
+        "verified": true
       },
       "dz": {
         "gloss": "宗卡语",
-        "verified": false
+        "verified": true
       },
       "ee": {
         "gloss": "埃维语",
-        "verified": false
+        "verified": true
       },
       "el": {
         "gloss": "现代希腊语",
-        "verified": false
+        "verified": true
       },
       "en": {
         "gloss": "英语",
-        "verified": false
+        "verified": true
       },
       "eo": {
         "gloss": "世界语",
-        "verified": false
+        "verified": true
       },
       "es": {
         "gloss": "西班牙文；卡斯蒂利亚语",
-        "verified": false
+        "verified": true
       },
       "et": {
         "gloss": "爱沙尼亚语",
-        "verified": false
+        "verified": true
       },
       "eu": {
         "gloss": "巴斯克语",
-        "verified": false
+        "verified": true
       },
       "fa": {
         "gloss": "波斯语",
-        "verified": false
+        "verified": true
       },
       "ff": {
         "gloss": "富拉语",
-        "verified": false
+        "verified": true
       },
       "fi": {
         "gloss": "芬兰语",
-        "verified": false
+        "verified": true
       },
       "fj": {
         "gloss": "斐济语",
-        "verified": false
+        "verified": true
       },
       "fo": {
         "gloss": "法罗语",
-        "verified": false
+        "verified": true
       },
       "fr": {
         "gloss": "法文",
-        "verified": false
+        "verified": true
       },
       "fy": {
         "gloss": "西弗里斯兰语",
-        "verified": false
+        "verified": true
       },
       "ga": {
         "gloss": "爱尔兰语",
-        "verified": false
+        "verified": true
       },
       "gd": {
         "gloss": "盖尔语苏格兰盖尔语",
-        "verified": false
+        "verified": true
       },
       "gl": {
         "gloss": "加利西亚语",
-        "verified": false
+        "verified": true
       },
       "gn": {
         "gloss": "瓜拉尼语",
-        "verified": false
+        "verified": true
       },
       "gu": {
         "gloss": "古吉拉特语",
-        "verified": false
+        "verified": true
       },
       "gv": {
         "gloss": "曼克斯语",
-        "verified": false
+        "verified": true
       },
       "ha": {
         "gloss": "豪萨语",
-        "verified": false
+        "verified": true
       },
       "he": {
         "gloss": "希伯来语",
-        "verified": false
+        "verified": true
       },
       "hi": {
         "gloss": "印地语",
-        "verified": false
+        "verified": true
       },
       "ho": {
         "gloss": "希里莫图语",
-        "verified": false
+        "verified": true
       },
       "hr": {
         "gloss": "克罗地亚语",
-        "verified": false
+        "verified": true
       },
       "ht": {
         "gloss": "海地;海地克里奥尔语",
-        "verified": false
+        "verified": true
       },
       "hu": {
         "gloss": "匈牙利语",
-        "verified": false
+        "verified": true
       },
       "hy": {
         "gloss": "亚美尼亚语",
-        "verified": false
+        "verified": true
       },
       "hz": {
         "gloss": "赫雷罗语",
-        "verified": false
+        "verified": true
       },
       "ia": {
         "gloss": "因特语",
-        "verified": false
+        "verified": true
       },
       "id": {
         "gloss": "印度尼西亚语",
-        "verified": false
+        "verified": true
       },
       "ie": {
         "gloss": "西方国际语",
-        "verified": false
+        "verified": true
       },
       "ig": {
         "gloss": "伊博语",
-        "verified": false
+        "verified": true
       },
       "ii": {
         "gloss": "四川彝语",
-        "verified": false
+        "verified": true
       },
       "ik": {
         "gloss": "因纽皮克语",
-        "verified": false
+        "verified": true
       },
       "io": {
         "gloss": "伊多语",
-        "verified": false
+        "verified": true
       },
       "is": {
         "gloss": "冰岛语",
-        "verified": false
+        "verified": true
       },
       "it": {
         "gloss": "意大利语",
-        "verified": false
+        "verified": true
       },
       "iu": {
         "gloss": "因纽特语",
-        "verified": false
+        "verified": true
       },
       "ja": {
         "gloss": "日语",
-        "verified": false
+        "verified": true
       },
       "jv": {
         "gloss": "爪哇语",
-        "verified": false
+        "verified": true
       },
       "ka": {
         "gloss": "格鲁吉亚语",
-        "verified": false
+        "verified": true
       },
       "kg": {
         "gloss": "刚果语",
-        "verified": false
+        "verified": true
       },
       "ki": {
         "gloss": "基库尤语",
-        "verified": false
+        "verified": true
       },
       "kj": {
         "gloss": "宽亚玛语",
-        "verified": false
+        "verified": true
       },
       "kk": {
         "gloss": "哈萨克语",
-        "verified": false
+        "verified": true
       },
       "kl": {
         "gloss": "格陵兰语",
-        "verified": false
+        "verified": true
       },
       "km": {
         "gloss": "高棉语",
-        "verified": false
+        "verified": true
       },
       "kn": {
         "gloss": "卡纳达语",
-        "verified": false
+        "verified": true
       },
       "ko": {
         "gloss": "韩语",
-        "verified": false
+        "verified": true
       },
       "kr": {
         "gloss": "卡努里语",
-        "verified": false
+        "verified": true
       },
       "ks": {
         "gloss": "克什米尔语",
-        "verified": false
+        "verified": true
       },
       "ku": {
         "gloss": "库尔德语",
-        "verified": false
+        "verified": true
       },
       "kv": {
         "gloss": "科美语",
-        "verified": false
+        "verified": true
       },
       "kw": {
         "gloss": "康沃尔语",
-        "verified": false
+        "verified": true
       },
       "ky": {
         "gloss": "柯吉兹吉尔吉斯语",
-        "verified": false
+        "verified": true
       },
       "la": {
         "gloss": "拉丁语",
-        "verified": false
+        "verified": true
       },
       "lb": {
         "gloss": "卢森堡语；莱岑堡语",
-        "verified": false
+        "verified": true
       },
       "lg": {
         "gloss": "甘达语",
-        "verified": false
+        "verified": true
       },
       "li": {
         "gloss": "林堡林堡林堡语",
-        "verified": false
+        "verified": true
       },
       "ln": {
         "gloss": "林加拉语",
-        "verified": false
+        "verified": true
       },
       "lo": {
         "gloss": "老挝语",
-        "verified": false
+        "verified": true
       },
       "lt": {
         "gloss": "立陶宛语",
-        "verified": false
+        "verified": true
       },
       "lu": {
         "gloss": "卢巴加丹加语",
-        "verified": false
+        "verified": true
       },
       "lv": {
         "gloss": "拉脱维亚语",
-        "verified": false
+        "verified": true
       },
       "mg": {
         "gloss": "马尔加什语",
-        "verified": false
+        "verified": true
       },
       "mh": {
         "gloss": "马歇尔语",
-        "verified": false
+        "verified": true
       },
       "mi": {
         "gloss": "毛利语",
-        "verified": false
+        "verified": true
       },
       "mk": {
         "gloss": "马其顿语",
-        "verified": false
+        "verified": true
       },
       "ml": {
         "gloss": "马拉雅拉姆语",
-        "verified": false
+        "verified": true
       },
       "mn": {
         "gloss": "蒙语",
-        "verified": false
+        "verified": true
       },
       "mr": {
         "gloss": "马拉地语",
-        "verified": false
+        "verified": true
       },
       "ms": {
         "gloss": "马来语",
-        "verified": false
+        "verified": true
       },
       "mt": {
         "gloss": "马耳他语",
-        "verified": false
+        "verified": true
       },
       "my": {
         "gloss": "缅甸语",
-        "verified": false
+        "verified": true
       },
       "na": {
         "gloss": "瑙鲁语",
-        "verified": false
+        "verified": true
       },
       "nb": {
         "gloss": "挪威语",
-        "verified": false
+        "verified": true
       },
       "nd": {
         "gloss": "北恩德贝莱语",
-        "verified": false
+        "verified": true
       },
       "ne": {
         "gloss": "尼泊尔文",
-        "verified": false
+        "verified": true
       },
       "ng": {
         "gloss": "恩东加语",
-        "verified": false
+        "verified": true
       },
       "nl": {
         "gloss": "荷兰语；佛兰芒语",
-        "verified": false
+        "verified": true
       },
       "nn": {
         "gloss": "新挪威语",
-        "verified": false
+        "verified": true
       },
       "no": {
         "gloss": "挪威语",
-        "verified": false
+        "verified": true
       },
       "nr": {
         "gloss": "南恩德贝莱语",
-        "verified": false
+        "verified": true
       },
       "nv": {
         "gloss": "纳瓦霍语",
-        "verified": false
+        "verified": true
       },
       "ny": {
         "gloss": "齐切瓦语",
-        "verified": false
+        "verified": true
       },
       "oc": {
         "gloss": "奥克语",
-        "verified": false
+        "verified": true
       },
       "oj": {
         "gloss": "奥吉布瓦语",
-        "verified": false
+        "verified": true
       },
       "om": {
         "gloss": "奥罗莫语",
-        "verified": false
+        "verified": true
       },
       "or": {
         "gloss": "奥里亚语",
-        "verified": false
+        "verified": true
       },
       "os": {
         "gloss": "奥塞梯语",
-        "verified": false
+        "verified": true
       },
       "pa": {
         "gloss": "旁遮普语",
-        "verified": false
+        "verified": true
       },
       "pi": {
         "gloss": "帕里语",
-        "verified": false
+        "verified": true
       },
       "pl": {
         "gloss": "波兰语",
-        "verified": false
+        "verified": true
       },
       "ps": {
         "gloss": "普什图语",
-        "verified": false
+        "verified": true
       },
       "pt": {
         "gloss": "葡萄牙语",
-        "verified": false
+        "verified": true
       },
       "qu": {
         "gloss": "盖丘亚族语",
-        "verified": false
+        "verified": true
       },
       "rm": {
         "gloss": "罗曼什语",
-        "verified": false
+        "verified": true
       },
       "rn": {
         "gloss": "润迪语",
-        "verified": false
+        "verified": true
       },
       "ro": {
         "gloss": "罗马尼亚文；摩尔达维亚语;摩尔多瓦语",
-        "verified": false
+        "verified": true
       },
       "ru": {
         "gloss": "俄语",
-        "verified": false
+        "verified": true
       },
       "rw": {
         "gloss": "卢旺达语",
-        "verified": false
+        "verified": true
       },
       "sa": {
         "gloss": "梵文",
-        "verified": false
+        "verified": true
       },
       "sc": {
         "gloss": "撒丁岛语",
-        "verified": false
+        "verified": true
       },
       "sd": {
         "gloss": "信德语",
-        "verified": false
+        "verified": true
       },
       "se": {
         "gloss": "北萨米语",
-        "verified": false
+        "verified": true
       },
       "sg": {
         "gloss": "桑戈语",
-        "verified": false
+        "verified": true
       },
       "si": {
         "gloss": "僧伽罗语",
-        "verified": false
+        "verified": true
       },
       "sk": {
         "gloss": "斯洛伐克文",
-        "verified": false
+        "verified": true
       },
       "sl": {
         "gloss": "斯洛文尼亚文",
-        "verified": false
+        "verified": true
       },
       "sm": {
         "gloss": "萨摩亚语",
-        "verified": false
+        "verified": true
       },
       "sn": {
         "gloss": "绍纳语",
-        "verified": false
+        "verified": true
       },
       "so": {
         "gloss": "索马里语",
-        "verified": false
+        "verified": true
       },
       "sq": {
         "gloss": "阿尔巴尼亚语",
-        "verified": false
+        "verified": true
       },
       "sr": {
         "gloss": "塞尔维亚语",
-        "verified": false
+        "verified": true
       },
       "ss": {
         "gloss": "斯瓦蒂语",
-        "verified": false
+        "verified": true
       },
       "st": {
         "gloss": "南索托语",
-        "verified": false
+        "verified": true
       },
       "su": {
         "gloss": "巽他语",
-        "verified": false
+        "verified": true
       },
       "sv": {
         "gloss": "瑞典语",
-        "verified": false
+        "verified": true
       },
       "sw": {
         "gloss": "斯瓦希里语",
-        "verified": false
+        "verified": true
       },
       "ta": {
         "gloss": "泰米尔语",
-        "verified": false
+        "verified": true
       },
       "te": {
         "gloss": "泰卢固语",
-        "verified": false
+        "verified": true
       },
       "tg": {
         "gloss": "塔吉克语",
-        "verified": false
+        "verified": true
       },
       "th": {
         "gloss": "泰语",
-        "verified": false
+        "verified": true
       },
       "ti": {
         "gloss": "提格里尼亚语",
-        "verified": false
+        "verified": true
       },
       "tk": {
         "gloss": "土库曼语",
-        "verified": false
+        "verified": true
       },
       "tl": {
         "gloss": "他加禄语",
-        "verified": false
+        "verified": true
       },
       "tn": {
         "gloss": "茨瓦纳语",
-        "verified": false
+        "verified": true
       },
       "to": {
         "gloss": "汤加语",
-        "verified": false
+        "verified": true
       },
       "tr": {
         "gloss": "土耳其语",
-        "verified": false
+        "verified": true
       },
       "ts": {
         "gloss": "特松加语",
-        "verified": false
+        "verified": true
       },
       "tt": {
         "gloss": "塔塔尔族语",
-        "verified": false
+        "verified": true
       },
       "tw": {
         "gloss": "特威语",
-        "verified": false
+        "verified": true
       },
       "ty": {
         "gloss": "大溪地语",
-        "verified": false
+        "verified": true
       },
       "ug": {
         "gloss": "维吾尔语",
-        "verified": false
+        "verified": true
       },
       "uk": {
         "gloss": "乌克兰语",
-        "verified": false
+        "verified": true
       },
       "ur": {
         "gloss": "乌尔都语",
-        "verified": false
+        "verified": true
       },
       "uz": {
         "gloss": "乌兹别克语",
-        "verified": false
+        "verified": true
       },
       "ve": {
         "gloss": "文达语",
-        "verified": false
+        "verified": true
       },
       "vi": {
         "gloss": "越南文",
-        "verified": false
+        "verified": true
       },
       "vo": {
         "gloss": "沃拉普克语",
-        "verified": false
+        "verified": true
       },
       "wa": {
         "gloss": "瓦隆语",
-        "verified": false
+        "verified": true
       },
       "wo": {
         "gloss": "沃洛夫语",
-        "verified": false
+        "verified": true
       },
       "xh": {
         "gloss": "科萨语",
-        "verified": false
+        "verified": true
       },
       "yi": {
         "gloss": "意第绪语",
-        "verified": false
+        "verified": true
       },
       "yo": {
         "gloss": "约鲁巴语",
-        "verified": false
+        "verified": true
       },
       "za": {
         "gloss": "壮语",
-        "verified": false
+        "verified": true
       },
       "zh": {
         "gloss": "中文",
-        "verified": false
+        "verified": true
       },
       "zu": {
         "gloss": "祖鲁族语",
-        "verified": false
+        "verified": true
       }
     }
   },
   "login": {
     "header": {
       "gloss": "登录",
-      "verified": false
+      "verified": true
     },
     "messages": {
       "incorrect-login": {
         "gloss": "用户名或密码不正确",
-        "verified": false
+        "verified": true
       }
     }
   },
   "people": {
     "account-information": {
       "gloss": "帐户信息",
-      "verified": false
+      "verified": true
     },
     "additional-information": {
       "gloss": "附加信息",
-      "verified": false
+      "verified": true
     },
     "attributes": {
       "gloss": "属性",
-      "verified": false
+      "verified": true
     },
     "dropdown-roles": {
       "gloss": "所有职位",
-      "verified": false
+      "verified": true
     },
     "next": {
       "gloss": "下一个",
-      "verified": false
+      "verified": true
     },
     "optional": {
       "gloss": "可选的",
-      "verified": false
+      "verified": true
     },
     "personal-information": {
       "gloss": "个人信息",
-      "verified": false
+      "verified": true
     },
     "previous": {
       "gloss": "上一个",
-      "verified": false
+      "verified": true
     },
     "title": {
       "gloss": "人员",
-      "verified": false
+      "verified": true
     },
     "title-roles": {
       "gloss": "职位",
-      "verified": false
+      "verified": true
     }
   },
   "person": {
     "account": {
       "gloss": "帐户",
-      "verified": false
+      "verified": true
     },
     "account-info": {
       "roles": {
         "gloss": "职位",
-        "verified": false
+        "verified": true
       }
     },
     "actions": {
       "add-account": {
-        "gloss": "新增帐户",
-        "verified": false
+        "gloss": "添加帐户",
+        "verified": true
       },
       "add-participant": {
         "gloss": "添加参与者",
-        "verified": false
+        "verified": true
       },
       "add-visitor": {
         "gloss": "添加访客",
-        "verified": false
+        "verified": true
       },
       "assign-roles": {
         "gloss": "分配职位",
-        "verified": false
+        "verified": true
       },
       "edit": {
         "gloss": "编辑人员",
-        "verified": false
+        "verified": true
       },
       "new": {
-        "gloss": "新人员",
-        "verified": false
+        "gloss": "添加人员",
+        "verified": true
       },
       "reset-password": {
         "gloss": "重设密码",
-        "verified": false
+        "verified": true
       }
     },
     "date": {
       "birthday": {
         "gloss": "生日",
-        "verified": false
+        "verified": true
       }
     },
     "email": {
       "gloss": "电子邮件",
-      "verified": false
+      "verified": true
     },
     "female": {
       "gloss": "女",
-      "verified": false
+      "verified": true
     },
     "gender": {
       "gloss": "性别",
-      "verified": false
+      "verified": true
     },
     "male": {
       "gloss": "男",
-      "verified": false
+      "verified": true
     },
     "messages": {
       "account-activate": {
         "gloss": "帐户已激活",
-        "verified": false
+        "verified": true
       },
       "account-deactivate": {
         "gloss": "帐户已停用",
-        "verified": false
+        "verified": true
       },
       "canceled": {
         "gloss": "取消添加新人员",
-        "verified": false
+        "verified": true
       },
       "confirm": {
         "activate": {
           "gloss": "您确定要还原此人员吗？",
-          "verified": false
+          "verified": true
         },
         "deactivate": {
           "gloss": "您确定要归档此人员吗？",
-          "verified": false
+          "verified": true
         }
       },
       "person-activate": {
         "gloss": "被激活的人员",
-        "verified": false
+        "verified": true
       },
       "person-add": {
-        "gloss": "添加了新人员",
-        "verified": false
+        "gloss": "新人员已添加",
+        "verified": true
       },
       "person-deactivate": {
         "gloss": "人员已停用",
-        "verified": false
+        "verified": true
       },
       "person-edit": {
         "gloss": "人员已编辑",
-        "verified": false
+        "verified": true
       },
       "person-save-error": {
         "gloss": "人员未保存",
-        "verified": false
+        "verified": true
       }
     },
     "name": {
       "first": {
         "gloss": "名字",
-        "verified": false
+        "verified": true
       },
       "last": {
         "gloss": "姓",
-        "verified": false
+        "verified": true
       },
       "second-last": {
         "gloss": "姓氏",
-        "verified": false
+        "verified": true
       }
     },
     "no-account": {
       "gloss": "还没有帐号？",
-      "verified": false
+      "verified": true
     },
     "password": {
       "gloss": "密码",
-      "verified": false
+      "verified": true
     },
     "phone": {
       "gloss": "电话",
-      "verified": false
+      "verified": true
     },
     "repeat-password": {
       "gloss": "重复输入密码",
-      "verified": false
+      "verified": true
     },
     "settings": {
       "gloss": "{person}的设置",
-      "verified": false
+      "verified": true
     },
     "username": {
       "gloss": "用户名",
-      "verified": false
+      "verified": true
     }
   },
   "places": {
     "address": {
       "address": {
         "gloss": "地址",
-        "verified": false
+        "verified": true
       },
       "city": {
         "gloss": "市",
-        "verified": false
+        "verified": true
       },
       "country": {
         "gloss": "国家",
-        "verified": false
+        "verified": true
       },
       "filters": {
         "address_filters": {
           "gloss": "地址筛选器",
-          "verified": false
+          "verified": true
         },
         "apply": {
           "gloss": "应用筛选器",
-          "verified": false
+          "verified": true
         },
         "distance-addr": {
           "gloss": "按距离特定地址的距离进行筛选",
-          "verified": false
+          "verified": true
         },
         "distance-ll": {
           "gloss": "按距离特定纬度和经度的距离进行筛选",
-          "verified": false
+          "verified": true
         },
         "distanceFromAddress": {
           "gloss": "距指定地址的距离",
-          "verified": false
+          "verified": true
         },
         "distanceFromLatLng": {
           "gloss": "距指定纬度和经度的距离",
-          "verified": false
+          "verified": true
         },
         "endLat": {
           "gloss": "结束纬度",
-          "verified": false
+          "verified": true
         },
         "endLng": {
           "gloss": "结束经度",
-          "verified": false
+          "verified": true
         },
         "range": {
           "gloss": "在一系列经度和纬度之间进行筛选",
-          "verified": false
+          "verified": true
         },
         "reset-filters": {
           "gloss": "重置筛选器",
-          "verified": false
+          "verified": true
         },
         "startLat": {
           "gloss": "开始纬度",
-          "verified": false
+          "verified": true
         },
         "startLng": {
           "gloss": "开始经度",
-          "verified": false
+          "verified": true
         }
       },
       "find-address": {
         "gloss": "查找地址",
-        "verified": false
+        "verified": true
       },
       "find-address-lat-lng": {
         "gloss": "使用经度和纬度查找地址",
-        "verified": false
+        "verified": true
       },
       "latitude": {
         "gloss": "纬度",
-        "verified": false
+        "verified": true
       },
       "longitude": {
         "gloss": "经度",
-        "verified": false
+        "verified": true
       },
       "name": {
         "gloss": "名称",
-        "verified": false
+        "verified": true
       },
       "new": {
-        "gloss": "新增地址",
-        "verified": false
+        "gloss": "添加地址",
+        "verified": true
       },
       "valid-address": {
         "gloss": "使用有效的街道地址",
-        "verified": false
+        "verified": true
       }
     },
     "area": {
       "area": {
         "gloss": "地区",
-        "verified": false
+        "verified": true
       },
       "confirm": {
         "activate": {
           "gloss": "您确定要恢复该地区吗？",
-          "verified": false
+          "verified": true
         },
         "deactivate": {
           "gloss": "您确定要归档此地区吗？",
-          "verified": false
+          "verified": true
         }
       },
       "create-area": {
         "gloss": "建立新地区",
-        "verified": false
+        "verified": true
       },
       "edit": {
         "gloss": "编辑地区",
-        "verified": false
+        "verified": true
       },
       "name": {
         "gloss": "地区名称",
-        "verified": false
+        "verified": true
       },
       "new": {
-        "gloss": "新增地区",
-        "verified": false
+        "gloss": "添加地区",
+        "verified": true
       }
     },
     "close": {
       "gloss": "关闭",
-      "verified": false
+      "verified": true
     },
     "create-address": {
       "gloss": "创建一个地址",
-      "verified": false
+      "verified": true
     },
     "edit": {
       "gloss": "修改位置",
-      "verified": false
+      "verified": true
     },
     "expand": {
       "gloss": "展开",
-      "verified": false
+      "verified": true
     },
     "location": {
       "description": {
         "gloss": "描述",
-        "verified": false
+        "verified": true
       },
       "location": {
         "gloss": "位置",
-        "verified": false
+        "verified": true
       },
       "new": {
         "gloss": "添加位置",
-        "verified": false
+        "verified": true
       }
     },
     "messages": {
       "confirm": {
         "activate": {
           "gloss": "您确定要还原此地址吗？",
-          "verified": false
+          "verified": true
         },
         "deactivate": {
           "gloss": "您确定要归档此地址吗？",
-          "verified": false
+          "verified": true
         }
       },
       "find-address-err": {
         "gloss": "需要纬度和经度才能找到地址",
-        "verified": false
+        "verified": true
       },
       "no-results": {
         "gloss": "您的地址未返回任何结果。",
-        "verified": false
+        "verified": true
       },
       "saved": {
         "gloss": "您的地址已保存。",
-        "verified": false
+        "verified": true
       }
     },
     "new": {
-      "gloss": "新增地点",
-      "verified": false
+      "gloss": "添加地点",
+      "verified": true
     },
     "title": {
       "gloss": "地方",
-      "verified": false
+      "verified": true
     }
   },
   "public": {
     "courses": {
       "view-all": {
         "gloss": "查看所有课程",
-        "verified": false
+        "verified": true
       }
     },
     "events": {
       "join": {
         "gloss": "参加活动",
-        "verified": false
+        "verified": true
       },
       "view-all": {
         "gloss": "查看所有活动",
-        "verified": false
+        "verified": true
       }
     },
     "headers": {
       "home-church": {
         "gloss": "寻找家庭教会",
-        "verified": false
+        "verified": true
       },
       "upcoming-classes": {
         "gloss": "即将举行的课程",
-        "verified": false
+        "verified": true
       },
       "upcoming-events": {
         "gloss": "即将举行的活动",
-        "verified": false
+        "verified": true
       }
     },
     "title": {
       "gloss": "公开",
-      "verified": false
+      "verified": true
     }
   },
   "role": {
     "event-planner": {
       "gloss": "计划人，策划人",
-      "verified": false
+      "verified": true
     },
     "group-admin": {
       "gloss": "小组管理员",
-      "verified": false
+      "verified": true
     },
     "group-leader": {
       "gloss": "组长",
-      "verified": false
+      "verified": true
     },
     "group-overseer": {
       "gloss": "督军",
-      "verified": false
+      "verified": true
     },
     "infrastructure": {
       "gloss": "基础设施",
-      "verified": false
+      "verified": true
     },
     "public": {
       "gloss": "公共用户",
-      "verified": false
+      "verified": true
     },
     "registrar": {
       "gloss": "登记员",
-      "verified": false
+      "verified": true
     },
     "superuser": {
       "gloss": "超级用户",
-      "verified": false
+      "verified": true
     },
     "teaching-assistant": {
       "gloss": "教学助手",
-      "verified": false
+      "verified": true
     },
     "translator": {
       "gloss": "翻译官",
-      "verified": false
+      "verified": true
     },
     "visitor": {
       "gloss": "访客",
-      "verified": false
+      "verified": true
     }
   },
   "teams": {
     "all-teams": {
       "gloss": "所有团队",
-      "verified": false
+      "verified": true
     },
     "confirm-archive": {
       "gloss": "您确定要归档此团队吗？",
-      "verified": false
+      "verified": true
     },
     "confirm-remove-from-event": {
       "gloss": "您确定要从此活动中删除该团队吗？",
-      "verified": false
+      "verified": true
     },
     "create-team": {
       "gloss": "建立团队",
-      "verified": false
+      "verified": true
     },
     "description": {
       "gloss": "描述",
-      "verified": false
+      "verified": true
     },
     "edit-team": {
       "gloss": "编辑团队",
-      "verified": false
+      "verified": true
     },
     "error-adding-team": {
       "gloss": "添加团队时出错",
-      "verified": false
+      "verified": true
     },
     "error-editing-team": {
       "gloss": "编辑团队时出错",
-      "verified": false
+      "verified": true
     },
     "error-removing-team": {
       "gloss": "删除团队时出错",
-      "verified": false
+      "verified": true
     },
     "error-team-assigned": {
       "gloss": "该团队被分配了一个冲突活动。",
-      "verified": false
+      "verified": true
     },
     "error-unarchiving-team": {
       "gloss": "取消归档团队时出错",
-      "verified": false
+      "verified": true
     },
     "members": {
       "add": {
         "gloss": "添加团队成员",
-        "verified": false
+        "verified": true
       },
       "confirm-remove": {
         "gloss": "您确定要删除此成员吗？",
-        "verified": false
+        "verified": true
       },
       "title": {
         "gloss": "团队成员",
-        "verified": false
+        "verified": true
       }
     },
     "new": {
-      "gloss": "新增团队",
-      "verified": false
+      "gloss": "添加团队",
+      "verified": true
     },
     "none-assigned": {
       "gloss": "没有分配团队。",
-      "verified": false
+      "verified": true
     },
     "team-added": {
       "gloss": "团队已添加",
-      "verified": false
+      "verified": true
     },
     "team-edited": {
       "gloss": "团队已编辑",
-      "verified": false
+      "verified": true
     },
     "team-on-event": {
       "gloss": "该团队已经分配给该活动。",
-      "verified": false
+      "verified": true
     },
     "team-removed": {
       "gloss": "团队已删除",
-      "verified": false
+      "verified": true
     },
     "title": {
       "gloss": "团队",
-      "verified": false
+      "verified": true
     }
   },
   "transcripts": {
     "add-diploma-this-student": {
       "gloss": "添加文凭",
-      "verified": false
+      "verified": true
     },
     "course-completed": {
       "gloss": "已完成",
-      "verified": false
+      "verified": true
     },
     "courses": {
       "gloss": "课程",
-      "verified": false
+      "verified": true
     },
     "courses-in-progress-or-completed": {
       "gloss": "课程（进行中或已完成）",
-      "verified": false
+      "verified": true
     },
     "courses-this-diploma": {
       "gloss": "本文凭课程",
-      "verified": false
+      "verified": true
     },
     "description": {
       "gloss": "描述",
-      "verified": false
+      "verified": true
     },
     "page-title": {
       "gloss": "学生成绩单-",
-      "verified": false
+      "verified": true
     },
     "student-information": {
       "gloss": "信息",
-      "verified": false
+      "verified": true
     },
     "transcript": {
       "gloss": "成绩单",
-      "verified": false
+      "verified": true
     }
   },
   "translation": {
     "dialog": {
       "cancel": {
         "gloss": "取消",
-        "verified": false
+        "verified": true
       },
       "submit": {
         "gloss": "提交",
-        "verified": false
+        "verified": true
       }
     },
     "error": {
       "gloss": "请再次修改您的翻译",
-      "verified": false
+      "verified": true
     },
     "menu-title": {
       "gloss": "翻译",
-      "verified": false
+      "verified": true
     },
     "search-title": {
       "gloss": "查找翻译处",
-      "verified": false
+      "verified": true
     },
     "toolbar-title": {
       "gloss": "当前语言环境：",
-      "verified": false
+      "verified": true
     },
     "transparent-mode": {
       "gloss": "透明模式",
-      "verified": false
+      "verified": true
     },
     "updated": {
       "gloss": "翻译已更新",
-      "verified": false
+      "verified": true
     }
   },
   "validation": {
     "attributes": {
       "attendance": {
         "gloss": "出勤率",
-        "verified": false
+        "verified": true
       },
       "email": {
         "gloss": "电子邮件",
-        "verified": false
+        "verified": true
       },
       "endDate": {
         "gloss": "结束日期",
-        "verified": false
+        "verified": true
       },
       "firstName": {
         "gloss": "名字",
-        "verified": false
+        "verified": true
       },
       "lastName": {
         "gloss": "姓",
-        "verified": false
+        "verified": true
       },
       "location": {
         "gloss": "位置",
-        "verified": false
+        "verified": true
       },
       "startDate": {
         "gloss": "开始日期",
-        "verified": false
+        "verified": true
       },
       "team-description": {
         "gloss": "团队介绍",
-        "verified": false
+        "verified": true
       },
       "title": {
         "gloss": "标题",
-        "verified": false
+        "verified": true
       }
     },
     "messages": {
       "_default": {
         "gloss": "错误",
-        "verified": false
+        "verified": true
       },
       "required": {
         "gloss": "必填",
-        "verified": false
+        "verified": true
       }
     },
     "required": {
       "gloss": "必填",
-      "verified": false
+      "verified": true
     }
   }
 }
