@@ -246,8 +246,7 @@ church hierarchy. The test should be designed base on different roles.
     source ./bin/set-up-bash.sh
     flask people new --roles role.group-admin Cytest password
     ```
-    The second line of command creates an account with **Username:** Cytest and **Pass   
-    --word:** password in the data base.  
+    The second line of command creates an account with **Username:** Cytest and **Password:** password in the data base.  
                                                                                                                                                                                                                                                          
     Note: There are multiple roles can be assigned to an account. **role.group-admin** can   
     be replaced following roles:  
@@ -261,7 +260,7 @@ church hierarchy. The test should be designed base on different roles.
     * role.event-planner
     * role.visitor
   2. Generate random data:  
-  There are 2 ways to generate testing data: **command** and **manually input**  
+  There are 2 ways to generate testing data: **command** and **manually input from front-end**  
   - [`Common commands for faking testing data`](https://github.com/corpus-christi/corpus-christi/blob/development/doc/cli.md)
                                                                                                                             
 

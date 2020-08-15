@@ -30,30 +30,25 @@ describe("Admin Login Test", function () {
     }
   });
   it("WHEN: Test drop down menu", function () {
-    cy.get('*[class^="col col-3"]').click()
+    cy.get('*[class^="v-select__selection"]').contains("View Active").click()
     cy.get(".v-menu__content").contains("View Active").click()
-    cy.get('*[class^="col col-3"]').click()
+    cy.get('*[class^="v-select__selection"]').contains("View Active").click()
     cy.get(".v-menu__content").contains("View Archived").click()
-    cy.get('*[class^="col col-3"]').click()
+    cy.get('*[class^="v-select__selection"]').contains("View Archived").click()
     cy.get(".v-menu__content").contains("View All").click()
   })
   it("WHEN: Add a group", function () {
-    cy.wait(1000).get('*[class^="shrink col col-4"]').click("left");
-    cy.get("[role=menuitem]").first().click();
+    cy.wait(1000).get('*[class^="shrink col"]').eq(1).click();
+    cy.get('*[class^="v-list-item__content"]').contains(" Add Group ").click();
     cy.get("[data-cy=title]").type("Test Group")
     cy.get("[data-cy=description]").type("Test Group Description")
     cy.get('*[class^="v-btn__content"]').contains(" Create a new Group Type ").click()
     cy.get("[type=text]").eq(5).type("Cypress Test Group")
     cy.get('*[class^="v-btn__content"]').contains("Save").click()
     cy.get('*[class^="v-btn__content"]').contains("Save ").click()
-    cy.get("[data-cy=form-search]").type("Test Group").wait(2000).clear();
   })
   it("WHEN: Test search bar", function () {
-    cy.get("[data-cy=form-search]").type("Cel").wait(2000).clear();
-  })
-  it("WHEN: Test search bar", function () {
-    cy.wait(1000).get("[data-cy=duplicate]").first().click();
-    cy.get("[data-cy=form-save]").click();
+    cy.wait(1000).get("[data-cy=form-search]").type("Test Group", {force: true}).wait(2000).clear();
   })
   it("WHEN: Test archive button", function () {
     cy.wait(1000).get("[data-cy=archive]").first().click();
@@ -72,7 +67,7 @@ describe("Admin Login Test", function () {
     cy.get("[data-cy=entity-search-field]").eq(2).click()
     cy.get("[role=option]").last().click()
     cy.get('*[class^="v-btn__content"]').contains("Next").click()
-    cy.wait(1000).get('*[class^="row no-gutters"]').eq(5).click('right')
+    cy.wait(1000).get('*[class^="v-btn v-btn--contained theme--light v-size--default primary"]').eq(2).click();
     cy.wait(1000).get('*[class^="v-btn__content"]').contains("Confirm").click()
   })
 });
