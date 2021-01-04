@@ -1,7 +1,7 @@
 from flask.cli import AppGroup
 
-from api.src import db
-from api.src.groups.create_group_data import (
+from .. import db
+from ..groups.create_group_data import (
     create_hierarchy_test_case_1,
     create_hierarchy_test_case_2,
     create_multiple_group_types,

@@ -283,19 +283,22 @@ Important notes:
 
 ### Database Connection
 
-The values that you supply for Postgres user, password, host, etc.
-should match the values supplied in the `api/private.py` file.
-A default file is included with the CC repository
-that should work with the default configuration.
-Update it as appropriate for your use case.
+The API server needs access to the configuration details
+for things like the database connection, various security keys, and the like.
+CC stores these things in a "dot-env" file, 
+so-called because it lives in a file called `.env`
+in the top-level server directory (`api`).
 
+The repository contains a sample file called `sample.env`.
+You should copy this into a new file, `api/.env`
+and update it to match your configuration.
+
+**IMPORTANT** These details must _never_ be committed to revision control!
 If you are configuring CC for production use,
-*do not* commit the updated `private.py` file
-to a public Git repository!
-In an attempt to avoid accidental commits
-of private data,
-`private.py` is listed in the CC `.gitignore` file.
-Still, use caution!
+*do not* commit your `.env` file to a public repository!
+To help avoid accidental commits,
+`.env` is listed in the CC `.gitignore` file.
+Still, **use caution**!
 
 When you need to set up the email services for the server, if we choose the Gmail services, 
 replace the `EMAIL_USERNAME` and `EMAIL_PASSWORD` with your personal email user-name and password.
@@ -379,7 +382,7 @@ it is ok to run `flask db upgrade` and load data
 ### Database Initialization
 
 *On Windows*: run the rest of the commands in bash and not WSL.
-Make sure `api/private.py` has the correct password (password used in `psql`).
+Make sure `api/.env` file has the correct password (password used in `psql`).
 If errors, check the PostgreSQL WSL installation tutorial
 [Tips/Debugging](./postgres-windows.md) section for help. 
 

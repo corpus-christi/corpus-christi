@@ -1,8 +1,8 @@
 import click
 from flask.cli import AppGroup
 
-from api.src import db
-from api.src.courses.models import Course, CourseOffering, Diploma
+from .. import db
+from ..courses.models import Course, CourseOffering, Diploma
 
 
 def create_course_cli(app):

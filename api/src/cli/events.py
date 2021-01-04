@@ -2,8 +2,8 @@ from datetime import datetime, timedelta, date
 
 from flask.cli import AppGroup
 
-from api.src import db
-from api.src.events.models import Event
+from .. import db
+from ..events.models import Event
 
 
 def create_event_cli(app):

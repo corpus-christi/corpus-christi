@@ -1,4 +1,3 @@
-import os
 from os.path import abspath, join, dirname
 
 from flask import Flask

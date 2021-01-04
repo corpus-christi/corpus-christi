@@ -10,14 +10,9 @@ import googletrans
 import yaml
 from flask.cli import AppGroup
 
-from api.src import API_DIR, db
-from api.src.i18n.models import I18NLocale, I18NKey, I18NValue
-from api.src.shared.helpers import (
-    tree_to_list,
-    list_to_tree,
-    BadTreeStructure,
-    BadListKeyPath,
-    get_or_create)
+from .. import API_DIR, db
+from ..i18n.models import I18NLocale, I18NKey, I18NValue
+from ..shared.helpers import (tree_to_list, list_to_tree, BadTreeStructure, BadListKeyPath, get_or_create)
 
 
 # --- exceptions
