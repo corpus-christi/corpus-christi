@@ -71,6 +71,40 @@
       }
     }
   },
+  "membership-history": {
+    "title": {
+      "gloss": "Historia",
+      "verified": false
+    },
+    "note": {
+      "gloss": "Notas",
+      "verified": false
+    },
+    "change-note": {
+      "gloss": "Cambiar nota",
+      "verified": false
+    },
+    "clear-note": {
+      "gloss": "Nota clara",
+      "verified": false
+    },
+    "submit": {
+      "gloss": "Enviar",
+      "verified": false
+    },
+    "cancel": {
+      "gloss": "Cancelar",
+      "verified": false
+    },
+    "joined": {
+      "gloss": "Unida",
+      "verified": false
+    },
+    "left": {
+      "gloss": "Izquierda",
+      "verified": false
+    }
+  },
   "account": {
     "messages": {
       "added-ok": {
@@ -3182,7 +3216,14 @@
       "lu": {
         "gloss": "Luba-Katanga",
         "verified": false
-      },
+      }
+    },
+    "messages": {
+      "already-exists": {
+        "gloss": "El grupo ya existe",
+        "verified": false
+      }
+    },
       "lv": {
         "gloss": "letón",
         "verified": false
@@ -3523,8 +3564,7 @@
         "gloss": "Zulu",
         "verified": false
       }
-    }
-  },
+    },
   "login": {
     "header": {
       "gloss": "Iniciar Sesión",

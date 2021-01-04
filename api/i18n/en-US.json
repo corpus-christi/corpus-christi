@@ -2388,9 +2388,37 @@
         "verified": false
       }
     },
-    "membership-hisotry": {
+    "membership-history": {
       "title": {
         "gloss": "History",
+        "verified": false
+      },
+      "note": {
+        "gloss": "Notes",
+        "verified": false
+      },
+      "change-note": {
+        "gloss": "Change Note",
+        "verified": false
+      },
+      "clear-note": {
+        "gloss": "Clear Note",
+        "verified": false
+      },
+      "submit": {
+        "gloss": "Submit",
+        "verified": false
+      },
+      "cancel": {
+        "gloss": "Cancel",
+        "verified": false
+      },
+      "joined": {
+        "gloss": "Joined",
+        "verified": false
+      },
+      "left": {
+        "gloss": "Left",
         "verified": false
       }
     },

@@ -223,12 +223,46 @@ describe("Update Event Test", function() {
       "A whole new description."
     );
   });
-});
 ```
 Things to note as patterns for new tests:
 - Name the test "_something-related-to-test_`_spec.js`"
 - Use the [`GIVEN-WHEN-THEN`](https://martinfowler.com/bliki/GivenWhenThen.html)
   framework for documenting tests.
+
+### Setup Testing Data
+```
+Note: The Cypress tests could fail for multiple reasons. Any slight changes
+to the UI side or the server side could cause a test fail.  One of the standard
+solutions is to write/update an inspection as soon as the developer finished one sec
+-tion. 
+
+CC requires login credentials, and the application has the features to represent the
+church hierarchy. The test should be designed base on different roles.
+
+```
+ 1. Creat an account with a role:  
+    Under the **corpus-christi/api**, render the virtual environment & create an account with following command:  
+    ```
+    source ./bin/set-up-bash.sh
+    flask people new --roles role.group-admin Cytest password
+    ```
+    The second line of command creates an account with **Username:** Cytest and **Password:** password in the data base.  
+                                                                                                                                                                                                                                                         
+    Note: There are multiple roles can be assigned to an account. **role.group-admin** can   
+    be replaced following roles:  
+    * role.infrastructure
+    * role.superuser
+    * role.group-admin
+    * role.group-leader
+    * role.group-overseer
+    * role.registrar
+    * role.teaching-assistant
+    * role.event-planner
+    * role.visitor
+  2. Generate random data:  
+  There are 2 ways to generate testing data: **command** and **manually input from front-end**  
+  - [`Common commands for faking testing data`](https://github.com/corpus-christi/corpus-christi/blob/development/doc/cli.md)
+                                                                                                                            
 
 ### Running Tests
 
