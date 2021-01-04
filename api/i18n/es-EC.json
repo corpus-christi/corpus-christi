@@ -1,5 +1,11 @@
 {
   "$vuetify": {
+    "calendar": {
+      "moreEvents": {
+        "gloss": "{0} more",
+        "verified": false
+      }
+    },
     "dataFooter": {
       "itemsPerPageAll": {
         "gloss": "Mostrar todas las filas",
