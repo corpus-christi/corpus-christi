@@ -1,18 +1,18 @@
 import json
-import yaml
-import click
-import re
 import os
+import re
 import sys
 import tempfile
-import googletrans
-import sqlalchemy
 import time
 
+import click
+import googletrans
+import yaml
 from flask.cli import AppGroup
-from src import BASE_DIR, db
-from src.i18n.models import I18NLocale, I18NKey, I18NValue
-from src.shared.helpers import (
+
+from api.src import BASE_DIR, db
+from api.src.i18n.models import I18NLocale, I18NKey, I18NValue
+from api.src.shared.helpers import (
     tree_to_list,
     list_to_tree,
     BadTreeStructure,
@@ -23,7 +23,7 @@ from src.shared.helpers import (
 # --- exceptions
 
 class ExceptionHandlingCommand(click.Command):
-    """ A custom subclass to handle common exceptions raised in i18n commands """
+    """ A custom subclass to handle common exceptions raised in i18n cli """
 
     def invoke(self, ctx):
         try:
@@ -45,6 +45,7 @@ class ExceptionHandlingCommand(click.Command):
                 "\nError: An invalid locale-tail structured tree is encountered")
             click.echo(f"Error message: {e}")
             exit(1)
+
 
 # --- helpers
 
@@ -128,7 +129,7 @@ def create_dir(ctx, param, value):
 
 
 def default_target():
-    """ resolve the default target for dump/load commands based on the
+    """ resolve the default target for dump/load cli based on the
     user-specified <locale> parameter
     """
     params = click.get_current_context().params
@@ -162,6 +163,7 @@ def read_locale_tail_tree(parent_path=""):
     is returned.
     If there is no matching entries, None is returned
     """
+
     def key_to_list_item(key, strip_key=None):
         """ list_item: { 'path': 'a.b.x', 'value': node } """
         list_item = {
@@ -227,8 +229,9 @@ def write_locale_tail_tree(tree, parent_path="", override=True, verbose=False):
 
     def is_leaf(node):
         return isinstance(node, dict) \
-            and all([(key == '_desc' or is_valid_locale_code(key))
-                     and isinstance(val, str) for key, val in node.items()])
+               and all([(key == '_desc' or is_valid_locale_code(key))
+                        and isinstance(val, str) for key, val in node.items()])
+
     # if the given tree is a leaf
     if is_leaf(tree):
         # override the item specified by parent_path
@@ -301,14 +304,15 @@ def write_locale_tail_tree(tree, parent_path="", override=True, verbose=False):
     db.session.commit()
     return {'entry_count': entry_count, 'skip_count': skip_count}
 
-# --- commands
+
+# --- cli
 
 
 def create_i18n_cli(app):
     i18n_cli = AppGroup('i18n', help="Maintain translation entries.")
     app.cli.add_command(i18n_cli)
 
-# --- flask i18n load
+    # --- flask i18n load
 
     @i18n_cli.command('load', cls=ExceptionHandlingCommand)
     @click.argument('locale', callback=validate_locale, metavar="<locale>")
@@ -348,8 +352,8 @@ def create_i18n_cli(app):
 
         def is_leaf(node):
             return isinstance(node, dict) \
-                and 'gloss' in node \
-                and isinstance(node['gloss'], str)
+                   and 'gloss' in node \
+                   and isinstance(node['gloss'], str)
 
         entries = tree_to_list(tree, is_leaf=is_leaf)
         locale = get_or_create(db.session, I18NLocale, {'code': locale_name})
@@ -384,7 +388,7 @@ def create_i18n_cli(app):
         click.echo(f"Entry count: {entry_count}")
         click.echo(f"Skip count:  {skip_count}")
 
-# --- flask i18n dump
+    # --- flask i18n dump
 
     @i18n_cli.command('dump', cls=ExceptionHandlingCommand)
     @click.argument('locale', callback=validate_locale, metavar="<locale>")
@@ -429,7 +433,7 @@ def create_i18n_cli(app):
         click.echo(f"Locale:      {locale}")
         click.echo(f"Entry count: {len(values)}")
 
-# --- flask i18n load-descriptions
+    # --- flask i18n load-descriptions
 
     @i18n_cli.command('load-descriptions', cls=ExceptionHandlingCommand)
     @click.option('--override/--no-override',
@@ -498,7 +502,7 @@ def create_i18n_cli(app):
             click.echo(
                 "Hint: use --override to load descriptions even if they exist")
 
-# --- flask i18n dump-descriptions
+    # --- flask i18n dump-descriptions
 
     @i18n_cli.command('dump-descriptions', cls=ExceptionHandlingCommand)
     @click.option(
@@ -506,13 +510,13 @@ def create_i18n_cli(app):
         default=False,
         show_default=True,
         help="Dump description even if it is empty "
-        "(can be useful when want to retrieve a complete list of keys)")
+             "(can be useful when want to retrieve a complete list of keys)")
     @click.option(
         '--empty-placeholder',
         default="",
         show_default=True,
         help="The description to use when the description in database is not given or empty, "
-        "must be used with --dump-empty to take effect")
+             "must be used with --dump-empty to take effect")
     @click.option('--target',
                   default=os.path.join(BASE_DIR, 'i18n', "_desc.json"),
                   show_default=True,
@@ -550,7 +554,7 @@ def create_i18n_cli(app):
             f"Target file: {getattr(target, 'name', '(unknown stream)')}")
         click.echo(f"Entry count: {len(keys)}")
 
-# --- flask i18n export
+    # --- flask i18n export
 
     @i18n_cli.command('export', cls=ExceptionHandlingCommand)
     @click.argument('path', callback=sanitize_path, default="")
@@ -578,7 +582,7 @@ def create_i18n_cli(app):
         else:
             click.echo(f"No entries found")
 
-# --- flask i18n list
+    # --- flask i18n list
 
     @i18n_cli.command('list', cls=ExceptionHandlingCommand)
     @click.argument('path', callback=sanitize_path, default="")
@@ -598,8 +602,7 @@ def create_i18n_cli(app):
         """
         ctx.invoke(export_entries, path=path, target=sys.stdout)
 
-
-# --- flask i18n import
+    # --- flask i18n import
 
     @i18n_cli.command('import', cls=ExceptionHandlingCommand)
     @click.argument('path', callback=sanitize_path, default="")
@@ -611,8 +614,8 @@ def create_i18n_cli(app):
     @click.option('--override/--no-override', default=True,
                   show_default=True,
                   help="Override if value already exists. "
-                  "If true, then for values that are overridden, "
-                  "the corresponding 'verified' flag will be set to False.")
+                       "If true, then for values that are overridden, "
+                       "the corresponding 'verified' flag will be set to False.")
     @click.option('-v/-s',
                   '--verbose/--silent',
                   is_flag=True,
@@ -646,8 +649,7 @@ def create_i18n_cli(app):
         click.echo(f"Entry count: {result['entry_count']}")
         click.echo(f"Skip count:  {result['skip_count']}")
 
-
-# --- flask i18n add
+    # --- flask i18n add
 
     @i18n_cli.command('add')
     @click.argument('locale', callback=validate_locale)
@@ -685,7 +687,7 @@ def create_i18n_cli(app):
             click.echo(
                 f"Successfully added entry [{path}] in [{locale}] with [{gloss}]")
 
-# --- flask i18n update
+    # --- flask i18n update
 
     @i18n_cli.command('update')
     @click.argument('locale', callback=validate_locale)
@@ -719,15 +721,15 @@ def create_i18n_cli(app):
             click.echo(
                 f"Successfully updated entry [{path}] in [{locale}] with [{gloss}]")
 
-# --- flask i18n delete
+    # --- flask i18n delete
 
     @i18n_cli.command('delete', short_help="Delete entries from the database.")
     @click.option('-r', '--recursive', is_flag=True,
                   help="delete all entries starting with the given path")
     @click.option('--locale', callback=validate_locale_allow_none,
                   help="specify a given locale to delete, "
-                  "leave empty to delete entry with all existing locales "
-                  "along with its belong key and description")
+                       "leave empty to delete entry with all existing locales "
+                       "along with its belong key and description")
     @click.option('-v/-s',
                   '--verbose/--silent',
                   is_flag=True,
@@ -785,7 +787,7 @@ def create_i18n_cli(app):
         db.session.commit()
         click.echo(f"Delete entry count: {count}")
 
-# --- flask i18n edit
+    # --- flask i18n edit
 
     @i18n_cli.command('edit', cls=ExceptionHandlingCommand,
                       short_help="Interactively edit entries.")
@@ -841,9 +843,7 @@ def create_i18n_cli(app):
         else:
             click.echo(f"No entries found")
 
-
-# --- flask i18n translate
-
+    # --- flask i18n translate
 
     @i18n_cli.command(
         'translate',

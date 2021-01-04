@@ -10,14 +10,13 @@ from . import events
 from .models import Event, EventPerson, EventAsset, EventParticipant, EventTeam, EventGroup, EventSchema, \
     EventPersonSchema, EventParticipantSchema
 from .. import db, mail, translate
-from src.shared.helpers import modify_entity, get_exclusion_list
 from ..groups.models import Group, Member
 from ..images.models import Image, ImageEvent
 from ..people.models import Person
+from ..shared.helpers import get_exclusion_list, modify_entity
 
 
 # ---- Event
-
 @events.route('/', methods=['POST'])
 @jwt_required
 def create_event():
@@ -63,19 +62,19 @@ def read_all_events():
     if start_filter:
         query = query.filter(
             Event.start > (
-                datetime.strptime(
-                    start_filter,
-                    '%Y-%m-%d') -
-                timedelta(
-                    days=1)))
+                    datetime.strptime(
+                        start_filter,
+                        '%Y-%m-%d') -
+                    timedelta(
+                        days=1)))
     if end_filter:
         query = query.filter(
             Event.end < (
-                datetime.strptime(
-                    end_filter,
-                    '%Y-%m-%d') +
-                timedelta(
-                    days=1)))
+                    datetime.strptime(
+                        end_filter,
+                        '%Y-%m-%d') +
+                    timedelta(
+                        days=1)))
 
     # -- title --
     # Filter events on a wildcard title string
@@ -484,7 +483,7 @@ def put_event_images(event_id, image_id):
         del_resp = delete_event_image(event_id, old_image_id)
         post_resp = add_event_images(event_id, new_image_id)
 
-        if (del_resp[1] == 404):
+        if del_resp[1] == 404:
             return jsonify({'deleted': str(
                 del_resp[0].data, "utf-8"), 'posted': str(post_resp[0].data, "utf-8")})
         else:
@@ -556,7 +555,7 @@ def add_event_group(event_id, group_id):
                 print("email would be sent")
                 # send_notification_email(person_email, event)
 
-    print(translate.getTranslation('en-US', 'country.name.CX'))
+    print(translate.get_translation('en-US', 'country.name.CX'))
 
     db.session.commit()
     return jsonify(
@@ -566,9 +565,9 @@ def add_event_group(event_id, group_id):
 def send_notification_email(person_email, event):
     # Make Python class/module that has methods like getTranslation(),
     # getLocaleCode()
-    subj = translate.getTranslation(
+    subj = translate.get_translation(
         'en-US', 'email.group-added-to-event.subject').gloss
-    body = translate.getTranslation(
+    body = translate.get_translation(
         'en-US', 'email.group-added-to-event.body').gloss
     msg = Message(
         subj,
@@ -587,7 +586,7 @@ def send_notification_email(person_email, event):
 def delete_event_group(event_id, group_id):
     event_group = db.session.query(EventGroup).filter_by(
         event_id=event_id, group_id=group_id).first()
-    if not event_group or event_group.active == False:
+    if not event_group or not event_group.active:
         return jsonify(
             f"Group with id #{group_id} is not currently attached to event with id #{event_id}."), 404
 

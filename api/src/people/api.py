@@ -12,8 +12,8 @@ from ..auth.blacklist_helpers import revoke_tokens_of_account
 from ..courses.models import Student
 from ..events.models import EventPerson, EventParticipant
 from ..images.models import Image, ImagePerson
+from ..shared.helpers import logged_response
 from ..teams.models import TeamMember
-from src.shared.helpers import logged_response
 
 # ---- Person
 
@@ -73,7 +73,7 @@ def create_person():
     db.session.commit()
 
     for person_attribute in valid_person_attributes:
-        if (person_attribute.get('enum_value_id') == 0):
+        if person_attribute.get('enum_value_id') == 0:
             person_attribute['enum_value_id'] = None
         person_attribute = PersonAttribute(**person_attribute)
         person_attribute.person_id = new_person.id
@@ -85,6 +85,7 @@ def create_person():
 
     return jsonify(person_schema.dump(result)), 201
 
+
 # account info needs to be looked into more, is currently commented out
 # because it isn't needed since the merge, not sure about this function
 # now
@@ -94,9 +95,9 @@ def read_all_persons():
     result = db.session.query(Person).all()
     for r in result:
         r.attributesInfo = r.person_attributes
-#         r.accountInfo = r.person #info is irrelavant since the merge of account and person
-#         if r.person:
-#             r.accountInfo.roles = r.person.roles
+    #         r.accountInfo = r.person #info is irrelavant since the merge of account and person
+    #         if r.person:
+    #             r.accountInfo.roles = r.person.roles
 
     return jsonify(person_schema.dump(result, many=True))
 
@@ -108,8 +109,8 @@ def read_one_person(person_id):
     if result is None:
         return 'Person specified was NOT found', 404
     result.attributesInfo = result.person_attributes
-# not needed hopefully?    result.accountInfo = result.person #? I think
-# that is a reference to the account table, now swapped to result.person
+    # not needed hopefully?    result.accountInfo = result.person #? I think
+    # that is a reference to the account table, now swapped to result.person
     return jsonify(person_schema.dump(result))
 
 
@@ -200,7 +201,7 @@ def delete_person(person_id):
     db.session.query(PersonAttribute).filter_by(person_id=person_id).delete()
     # TODO delete the roles tied to a person
     # TODO delete any instance of Class_Attendance that references deleted class_meeting
-    # db.session.query(ClassMeeting).filter_by(teacher=person_id).delete()
+    # db.session.query(ClassMeeting).filter_by(teacher=account_id).delete()
     db.session.delete(person)
     db.session.commit()
     return jsonify(msg=f"Person {person_id} was deleted."), 204
@@ -208,6 +209,8 @@ def delete_person(person_id):
 
 # -----------------------------------------------------------------------------------------------------------------------
 person_schema2 = PersonSchema()
+
+
 # -----------------------------------------------------------------------------------------------------------------------
 
 
@@ -230,6 +233,7 @@ def get_persons_by_role(role_id):
     if role is None:
         return 'Role specified was NOT found', 404
     return jsonify(person_schema2.dump(role.persons, many=True))
+
 
 # COME BACK TO THIS/ATTEMPTING A BANDAID SOLUTION ON ALL PARTS AFTER THIS TO ONLY CHANGE THE BACKEND WHILE BREAKING AS LITTLE UI AND API CALLS AS POSSIBLE
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -267,13 +271,15 @@ def update_account(person_id):
 
     db.session.commit()
     return jsonify(person_schema2.dump(person))
+
+
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 @people.route('/accounts/deactivate/<account_id>', methods=['PUT'])
 @jwt_required
-def deactivate_account(person_id):
-    person = db.session.query(Person).filter_by(id=person_id).first()
+def deactivate_account(account_id):
+    person = db.session.query(Person).filter_by(id=account_id).first()
     if person is None:
         return 'Person specified was NOT found', 404
 
@@ -286,8 +292,8 @@ def deactivate_account(person_id):
 
 @people.route('/accounts/activate/<account_id>', methods=['PUT'])
 @jwt_required
-def activate_account(person_id):
-    person = db.session.query(Person).filter_by(id=person_id).first()
+def activate_account(account_id):
+    person = db.session.query(Person).filter_by(id=account_id).first()
     if person is None:
         return 'Person specified was NOT found', 404
 
@@ -301,9 +307,9 @@ def activate_account(person_id):
 @people.route('/accounts/<account_id>/confirm')
 @jwt_required
 # @authorize(['role.superuser, role.infrastructure']) # <-- Only these people can confirm an account
-def confirm_user_account(person_id):
+def confirm_user_account(account_id):
     """ Confirm a user's account (ADMIN ACTION ONLY) """
-    person = db.session.query(Person).filter_by(id=person_id).first()
+    person = db.session.query(Person).filter_by(id=account_id).first()
     if person is None:
         return 'Person to confirm was NOT found', 404
 
@@ -312,6 +318,7 @@ def confirm_user_account(person_id):
     db.session.commit()
 
     return jsonify(person_schema2.dump(person))
+
 
 # end of first major bandaid area
 # ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -340,6 +347,7 @@ def create_role():
 def read_all_roles():
     result = db.session.query(Role).all()
     return jsonify(role_schema.dump(result, many=True))
+
 
 # maybe will replace with a person call or path, not sure yet
 @people.route('/role/person/<person_id>')
@@ -406,6 +414,7 @@ def deactivate_role(role_id):
 
     return jsonify(role_schema.dump(role))
 
+
 # link role to person instead of account
 @people.route('/role/<person_id>&<role_id>', methods=['POST'])
 @jwt_required
@@ -424,6 +433,7 @@ def add_role_to_person(person_id, role_id):
     revoke_tokens_of_account(person.id)
 
     return logged_response(person_schema.dump(person), 201)
+
 
 # remove role from person instead of account
 @people.route('/role/<person_id>&<role_id>', methods=['DELETE'])
@@ -445,6 +455,7 @@ def remove_role_from_person(person_id, role_id):
     revoke_tokens_of_account(person_id)
 
     return jsonify(role_schema.dump(role_to_remove))
+
 
 # ---- Manager moved to groups
 
@@ -472,7 +483,7 @@ def add_people_images(person_id, image_id):
             f"Image with id#{image_id} is already attached to person with id#{person_id}."), 422
     else:
         new_entry = ImagePerson(
-            **{'person_id': person_id, 'image_id': image_id})
+            **{'account_id': person_id, 'image_id': image_id})
         db.session.add(new_entry)
         db.session.commit()
 

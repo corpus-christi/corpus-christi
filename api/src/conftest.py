@@ -1,18 +1,17 @@
+import logging
 import os
 
 import pytest
+from api.src.cli import create_app_cli
+from api.src.cli.courses import create_course_cli
+from api.src.cli.events import create_event_cli
+from api.src.cli import create_faker_cli
+from api.src.cli import create_i18n_cli
+from api.src.cli import create_account_cli
 from flask.testing import FlaskClient
 from flask_jwt_extended import create_access_token
-import logging
 
 from . import db, create_app
-
-from commands.people import create_account_cli
-from commands.app import create_app_cli
-from commands.courses import create_course_cli
-from commands.events import create_event_cli
-from commands.faker import create_faker_cli
-from commands.i18n import create_i18n_cli
 
 
 class AuthClient(FlaskClient):
@@ -22,8 +21,8 @@ class AuthClient(FlaskClient):
 
     def open(self, *args, **kwargs):
         if 'headers' not in kwargs:
-            from src.people.models import Person, PersonSchema
-            from src.people.test_people import person_object_factory
+            from .people.models import Person, PersonSchema
+            from .people.test_people import person_object_factory
             test_person = Person(
                 **PersonSchema().load(person_object_factory()))
             test_person.username = 'test-user'

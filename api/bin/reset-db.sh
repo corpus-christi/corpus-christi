@@ -23,7 +23,7 @@ set -e
 #flask account new --first="Fred" --last="Ziffle" fred password
 #flask account new --first="Quality" --last="Assurance" Cytest password
 
-## Creating More readable courses and diplomas (commented out because some of these commands are broken)
+## Creating More readable courses and diplomas (commented out because some of these cli are broken)
 #flask course new --prereq=6 "Alone low investment" "This is a fake course."
 #flask course new --offering="This is the honors section!" "Bible Lit 1" "Survey of the Old Testament"
 #flask course new --prereq="Bible Lit 1" --offering="This section focuses on the teachings of Jesus!" "Bible Lit 2" "Survey of the New Testament"

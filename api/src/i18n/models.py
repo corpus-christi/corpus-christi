@@ -10,8 +10,8 @@ from sqlalchemy.orm import relationship
 
 from .. import db
 from ..db import Base
-from ..shared.models import StringTypes
 from ..shared.helpers import get_or_create
+from ..shared.models import StringTypes
 
 
 # ---- Locale

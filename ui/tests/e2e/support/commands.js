@@ -1,10 +1,10 @@
 // ***********************************************
-// This example commands.js shows you how to
-// create various custom commands and overwrite
-// existing commands.
+// This example cli.js shows you how to
+// create various custom cli and overwrite
+// existing cli.
 //
 // For more comprehensive examples of custom
-// commands please read more here:
+// cli please read more here:
 // https://on.cypress.io/custom-commands
 // ***********************************************
 //

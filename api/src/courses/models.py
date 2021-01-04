@@ -2,8 +2,8 @@ from marshmallow import Schema, fields
 from marshmallow.validate import Range, Length
 from sqlalchemy import Column, Integer, Boolean, ForeignKey, Date, DateTime, Table
 from sqlalchemy.orm import relationship
-from src.db import Base
-from src.shared.models import StringTypes
+from ..db import Base
+from ..shared.models import StringTypes
 
 # ---- Prerequisite
 
@@ -161,7 +161,7 @@ class Course(Base):
         lazy=True)
     images = relationship("ImageCourse", back_populates="course")
     courses_offered = relationship(
-        'Course_Offering',
+        'CourseOffering',
         back_populates='course',
         lazy=True)
     completions = relationship(
@@ -223,7 +223,7 @@ class Student(Base):
     confirmed = Column(Boolean, nullable=False)
     active = Column(Boolean, default=True, nullable=False)
     courses_offered = relationship(
-        'Course_Offering', back_populates='students', lazy=True)
+        'CourseOffering', back_populates='students', lazy=True)
     person = relationship('Person', back_populates='students', lazy=True)
     attendance = relationship('ClassMeeting', secondary=ClassAttendance,
                               back_populates='students', lazy=True)
@@ -241,10 +241,10 @@ class StudentSchema(Schema):
     diplomaList = fields.Nested('DiplomaSchema', many=True)
 
 
-# ---- Course_Offering
+# ---- CourseOffering
 
 
-class Course_Offering(Base):
+class CourseOffering(Base):
     __tablename__ = 'courses_course_offering'
     id = Column(Integer, primary_key=True)
     course_id = Column(Integer, ForeignKey(
@@ -264,7 +264,7 @@ class Course_Offering(Base):
         lazy=True)
 
     def __repr__(self):
-        return f"<Course_Offering(id={self.id})>"
+        return f"<CourseOffering(id={self.id})>"
 
 
 class CourseOfferingSchema(Schema):
@@ -290,7 +290,7 @@ class ClassMeeting(Base):
         'people_person.id'), nullable=False)
     when = Column(DateTime, nullable=False)
     course_offering = relationship(
-        'Course_Offering', back_populates='class_meeting', lazy=True)
+        'CourseOffering', back_populates='class_meeting', lazy=True)
     locations = relationship(
         'Location',
         back_populates='meeting_location',

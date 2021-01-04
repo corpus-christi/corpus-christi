@@ -5,7 +5,7 @@ from marshmallow import fields, Schema
 from marshmallow.validate import Range
 from sqlalchemy import Column, Integer, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
-from src.i18n.models import i18n_create, I18NLocale, i18n_check
+from ..i18n.models import i18n_create, I18NLocale, i18n_check
 
 from .. import db
 from ..db import Base

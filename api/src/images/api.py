@@ -9,8 +9,9 @@ from werkzeug.utils import secure_filename
 from . import images
 from .models import Image, ImageSchema
 from .. import db, BASE_DIR
-from src.shared.helpers import modify_entity, is_allowed_file, get_file_extension, \
+from ..shared.helpers import modify_entity, is_allowed_file, get_file_extension, \
     get_hash, get_all_queried_entities
+from ..shared.models import QueryArgumentError
 
 # ---- Image
 

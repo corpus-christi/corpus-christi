@@ -246,7 +246,8 @@ def create_location_nested(
         address_keys = ('city', 'address', 'address_name')
         address_payload = {
             k if k not in address_name_transform else address_name_transform[k]: v for k,
-            v in payload_data.items() if k in address_keys}
+                                                                                       v in payload_data.items() if
+            k in address_keys}
         address_payload['area_id'] = area_id
         address_payload['country_code'] = country_code
         address = sqla.query(Address).filter_by(**address_payload).first()

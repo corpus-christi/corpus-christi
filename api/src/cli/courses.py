@@ -1,7 +1,8 @@
 import click
 from flask.cli import AppGroup
-from src import db
-from src.courses.models import Course, Course_Offering, Diploma
+
+from api.src import db
+from api.src.courses.models import Course, CourseOffering, Diploma
 
 
 def create_course_cli(app):
@@ -23,7 +24,7 @@ def create_course_cli(app):
             course.prerequisites.append(prereq_course)
 
         if offering is not None:
-            course_offering = Course_Offering(
+            course_offering = CourseOffering(
                 course_id=course.id,
                 description=offering,
                 max_size=2,

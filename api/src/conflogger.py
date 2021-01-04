@@ -1,6 +1,8 @@
 from logging import Formatter
 from logging.config import dictConfig
+
 from flask import has_request_context, request
+
 from . import BASE_DIR
 
 

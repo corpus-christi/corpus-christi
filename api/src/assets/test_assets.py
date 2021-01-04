@@ -1,18 +1,13 @@
+import random
+
 import pytest
-import random
-import datetime
-import random
-from faker import Faker
 from flask import url_for
-from flask_jwt_extended import create_access_token
-from werkzeug.datastructures import Headers
-from werkzeug.security import check_password_hash
 
 from .models import Asset, AssetSchema
+from ..events.create_event_data import flip, fake, create_multiple_assets, asset_object_factory
 from ..places.models import Location, Country
-from ..events.create_event_data import flip, fake, create_multiple_events, event_object_factory, email_object_factory, create_multiple_assets, create_multiple_teams, create_events_assets, create_events_teams, create_events_persons, create_events_participants, create_teams_members, get_team_ids, asset_object_factory, team_object_factory
 from ..places.test_places import create_multiple_locations, create_multiple_addresses, create_multiple_areas
-from ..people.test_people import create_multiple_people
+
 
 # ---- Asset
 
@@ -142,7 +137,7 @@ def test_read_all_assets(auth_client):
             'assets.read_all_assets',
             return_group="inactive")).json
     queried_inactive_assets_count = auth_client.sqla.query(
-        Asset).filter(Asset.active == False).count()
+        Asset).filter(not Asset.active).count()
     # THEN we should have the correct number of inactive assets
     assert len(inactive_assets) == queried_inactive_assets_count
     # WHEN we read all assets matching description
@@ -197,14 +192,14 @@ def test_replace_asset(auth_client):
     create_multiple_assets(auth_client.sqla, count)
     # WHEN we replace one asset
     asset_id = auth_client.sqla.query(Asset.id).first()[0]
-    dscrptn = fake.sentences(nb=1)[0]
+    description = fake.sentences(nb=1)[0]
     location_id = auth_client.sqla.query(Location.id).first()[0]
     resp = auth_client.put(
         url_for(
             'assets.update_asset',
             asset_id=asset_id),
         json={
-            'description': dscrptn,
+            'description': description,
             'active': False,
             'location_id': location_id})
     # THEN we should have the correct status code
@@ -212,8 +207,8 @@ def test_replace_asset(auth_client):
     # THEN the asset should end up with the correct attribute
     new_asset = auth_client.sqla.query(
         Asset).filter(Asset.id == asset_id).first()
-    assert new_asset.description == dscrptn
-    assert new_asset.active == False
+    assert new_asset.description == description
+    assert not new_asset.active
 
 
 @pytest.mark.smoke
@@ -224,10 +219,10 @@ def test_replace_invalid_asset(auth_client):
     create_multiple_assets(auth_client.sqla, count)
     # WHEN we replace one asset
     asset_id = auth_client.sqla.query(Asset.id).first()[0]
-    dscrptn = fake.sentences(nb=1)[0]
+    description = fake.sentences(nb=1)[0]
     location_id = auth_client.sqla.query(Location.id).first()[0]
     json_request = {
-        'description': dscrptn,
+        'description': description,
         'active': False,
         'location_id': location_id
     }
@@ -254,14 +249,14 @@ def test_update_asset(auth_client):
     create_multiple_assets(auth_client.sqla, count)
     # WHEN we update one asset
     asset_id = auth_client.sqla.query(Asset.id).first()[0]
-    dscrptn = fake.sentences(nb=1)[0]
+    description = fake.sentences(nb=1)[0]
     location_id = auth_client.sqla.query(Location.id).first()[0]
     resp = auth_client.patch(
         url_for(
             'assets.update_asset',
             asset_id=asset_id),
         json={
-            'description': dscrptn,
+            'description': description,
             'active': False,
             'location_id': location_id})
     # THEN we should have the correct status code
@@ -269,8 +264,8 @@ def test_update_asset(auth_client):
     # THEN the asset should end up with the correct attribute
     new_asset = auth_client.sqla.query(
         Asset).filter(Asset.id == asset_id).first()
-    assert new_asset.description == dscrptn
-    assert new_asset.active == False
+    assert new_asset.description == description
+    assert not new_asset.active
 
 
 @pytest.mark.smoke
@@ -281,10 +276,10 @@ def test_update_invalid_asset(auth_client):
     create_multiple_assets(auth_client.sqla, count)
     # WHEN we update one asset
     asset_id = auth_client.sqla.query(Asset.id).first()[0]
-    dscrptn = fake.sentences(nb=1)[0]
+    description = fake.sentences(nb=1)[0]
     location_id = auth_client.sqla.query(Location.id).first()[0]
     json_object = {
-        'description': dscrptn,
+        'description': description,
         'active': False,
         'location_id': location_id
     }
@@ -318,10 +313,10 @@ def test_delete_asset(auth_client):
     # THEN we should have the correct status code
     assert resp.status_code == 204
     # THEN we should have the asset as inactive
-    isActive = auth_client.sqla.query(
+    is_active = auth_client.sqla.query(
         Asset.active).filter(
         Asset.id == deleting_id).first()[0]
-    assert isActive == False
+    assert not is_active
     # WHEN we delete an asset that doesn't exist
     resp = auth_client.delete(
         url_for(

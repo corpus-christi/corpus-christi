@@ -1,6 +1,6 @@
 import math
-import random
 import os
+import random
 
 from faker import Faker
 
@@ -8,12 +8,17 @@ from .models import (Image, ImageCourse, ImageCourseSchema, ImageEvent,
                      ImageEventSchema, ImageGroup, ImageGroupSchema,
                      ImageLocation, ImageLocationSchema, ImagePerson,
                      ImagePersonSchema, ImageSchema)
+from .. import BASE_DIR
 from ..courses.models import Course
+from ..courses.test_courses import create_multiple_courses
+from ..events.create_event_data import create_multiple_events
 from ..events.models import Event
+from ..groups.create_group_data import create_multiple_groups
 from ..groups.models import Group
 from ..people.models import Person
+from ..people.test_people import create_multiple_people
 from ..places.models import Location
-from .. import BASE_DIR
+from ..places.test_places import create_multiple_locations
 
 
 class RandomLocaleFaker:
@@ -95,7 +100,7 @@ def image_object_factory(sqla):
     # Getting a valid path name
     i = 0
 
-    while (paths_taken[i]):
+    while paths_taken[i]:
         i += 1
         if i == len(paths_taken):
             i = 0
@@ -168,7 +173,7 @@ def create_multiple_images(sqla, n):
     image_schema = ImageSchema()
     new_images = []
     for i in range(n):
-        if (i < num_valid_images):
+        if i < num_valid_images:
             valid_images = image_schema.load(image_object_factory(sqla))
             new_images.append(Image(**valid_images))
     sqla.add_all(new_images)

@@ -1,8 +1,9 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 
 from flask.cli import AppGroup
-from src import db
-from src.events.models import Event
+
+from api.src import db
+from api.src.events.models import Event
 
 
 def create_event_cli(app):
@@ -10,7 +11,7 @@ def create_event_cli(app):
 
     @event_cli.command('test-factory', help='Test event factory')
     def test_random_data():
-        from src.events.test_events import event_object_factory
+        from ..src.events.test_events import event_object_factory
         print(event_object_factory(db.session))
 
     @event_cli.command('event-demo', help='create seed data for event demo')
@@ -23,10 +24,10 @@ def create_event_cli(app):
         # And the database should be populated with the data desired
 
         # Country.load_from_file() # uncomment this line if database is empty
-        from src.places.test_places import create_location_nested
-        from src.events.create_event_data import create_team, create_event, create_event_person, \
+        from ..src.places.test_places import create_location_nested
+        from ..src.events.create_event_data import create_team, create_event, create_event_person, \
             create_event_participant
-        from src.people.test_people import create_person
+        from ..src.people.test_people import create_person
 
         # CREATE STATIC LOCATION, id is returned
         # def create_location_nested(sqla, country_code='EC',

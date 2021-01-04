@@ -2,10 +2,9 @@ from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_mail import Mail
 
-from config import config, BASE_DIR
-from .db import DbConfig
-
 from . import conflogger
+from .db import DbConfig
+from ..config import config, BASE_DIR
 
 db = DbConfig()
 jwt = JWTManager()

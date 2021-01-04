@@ -1,14 +1,15 @@
-import click
 from flask.cli import AppGroup
-from src import db
-from src.groups.create_group_data import (
-        create_hierarchy_test_case_1,
-        create_hierarchy_test_case_2,
-        create_multiple_group_types,
-        create_multiple_manager_types)
+
+from api.src import db
+from api.src.groups.create_group_data import (
+    create_hierarchy_test_case_1,
+    create_hierarchy_test_case_2,
+    create_multiple_group_types,
+    create_multiple_manager_types)
+
 
 def create_group_cli(app):
-    group_cli = AppGroup('groups', help="Group-related commands.")
+    group_cli = AppGroup('groups', help="Group-related cli.")
     app.cli.add_command(group_cli)
 
     @group_cli.command('hierarchy-test-1', short_help='Generate group hierarchy test data')

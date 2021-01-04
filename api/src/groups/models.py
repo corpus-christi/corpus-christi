@@ -1,10 +1,11 @@
 from marshmallow import Schema, fields
 from marshmallow.validate import Range, Length
-from sqlalchemy import Column, Integer, Boolean, ForeignKey, Date, DateTime
+from sqlalchemy import Column, Integer, Boolean, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 
-from src.db import Base
-from src.shared.models import StringTypes
+from ..db import Base
+from ..shared.models import StringTypes
+
 
 # ---- Group
 
@@ -84,6 +85,7 @@ class GroupSchema(Schema):
             'time',
             'is_join',
             'person_id'))
+
 
 # ---- Group Type
 
@@ -197,9 +199,9 @@ class MemberHistory(Base):
     group = relationship('Group', back_populates='member_histories', lazy=True)
 
     def __repr__(self):
-        return f"<MemberHistory(id={self.id}, "\
-            f"person_id={self.person_id}, group_id={self.group_id}, "\
-            f"time={self.time}, is_join={self.is_join})>"
+        return f"<MemberHistory(id={self.id}, " \
+               f"person_id={self.person_id}, group_id={self.group_id}, " \
+               f"time={self.time}, is_join={self.is_join})>"
 
 
 class MemberHistorySchema(Schema):
@@ -211,6 +213,7 @@ class MemberHistorySchema(Schema):
     note = fields.String(required=False)
     person = fields.Nested('PersonSchema', dump_only=True)
     group = fields.Nested('GroupSchema', dump_only=True)
+
 
 # ---- Manager
 

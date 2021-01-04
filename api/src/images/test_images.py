@@ -23,13 +23,13 @@ def test_download_image(auth_client):
     # WHEN we ask for the events one by one
     for image in images:
         with open(BASE_DIR + '/' + image.path, 'rb') as img:
-            imgStringIO = BytesIO(img.read())
+            img_string_io = BytesIO(img.read())
         resp = auth_client.get(
             url_for('images.download_image', image_id=image.id))
         # THEN we expect each of them to correspond grab an image in the file
         # system
         assert resp.status_code == 200
-        assert resp.data == imgStringIO.read()
+        assert resp.data == img_string_io.read()
 
 
 @pytest.mark.smoke

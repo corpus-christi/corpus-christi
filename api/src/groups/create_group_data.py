@@ -1,12 +1,13 @@
-import datetime
+import math
 import math
 import random
 
 from faker import Faker
 
-from ..events.models import EventGroup, EventGroupSchema, Event
-from ..groups.models import Manager, ManagerType, Group, GroupType, Meeting, Attendance, Member, ManagerSchema, GroupSchema, MeetingSchema, AttendanceSchema, MemberSchema, GroupTypeSchema, ManagerTypeSchema, MemberHistory, MemberHistorySchema
-from ..people.models import Person, Role, RoleSchema, PersonSchema
+from ..groups.models import Manager, ManagerType, Group, GroupType, Meeting, Attendance, Member, ManagerSchema, \
+    GroupSchema, MeetingSchema, AttendanceSchema, MemberSchema, GroupTypeSchema, ManagerTypeSchema, MemberHistory, \
+    MemberHistorySchema
+from ..people.models import Person, PersonSchema
 from ..people.test_people import create_multiple_people, person_object_factory
 from ..places.models import Address
 from ..places.test_places import create_multiple_addresses
@@ -372,6 +373,7 @@ def create_hierarchical_groups_and_participants(
         print(manager)
 
     sqla.commit()
+
 
 # Create test data that is used in front-end testing
 

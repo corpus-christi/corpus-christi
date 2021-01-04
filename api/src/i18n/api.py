@@ -7,9 +7,7 @@ from . import i18n
 from .models import I18NLocale, I18NLocaleSchema, I18NKeySchema, I18NKey, I18NValue, I18NValueSchema, Language
 from .. import db
 from ..shared.helpers import list_to_tree, BadListKeyPath
-
-from src.shared.helpers import modify_entity, get_all_queried_entities, logged_response, authorize
-
+from ..shared.helpers import logged_response, authorize
 
 # ---- I18N Locale
 
@@ -106,7 +104,7 @@ def update_a_value():
     #     update the values with the info in payload
     i18n_value_schema = I18NValueSchema()
 
-#     verify_jwt_in_request()
+    #     verify_jwt_in_request()
     claims = get_jwt_claims()
     if 'role.translator' not in claims['roles']:
         return 'Permission denied', 403
@@ -116,7 +114,8 @@ def update_a_value():
         except ValidationError as err:
             return logged_response(err.messages, 422)
 
-        i18n_value = db.session.query(I18NValue).filter_by(locale_code=valid_attributes.get('locale_code'), key_id=valid_attributes.get('key_id')).first()
+        i18n_value = db.session.query(I18NValue).filter_by(locale_code=valid_attributes.get('locale_code'),
+                                                           key_id=valid_attributes.get('key_id')).first()
 
     i18n_value = db.session.query(I18NValue).filter_by(
         locale_code=valid_attributes.get('locale_code'),

@@ -7,8 +7,8 @@ from sqlalchemy import func
 from . import assets
 from .models import Asset, AssetSchema
 from .. import db
-from src.shared.helpers import modify_entity, get_exclusion_list
 from ..events.models import EventAsset
+from ..shared.helpers import modify_entity, get_exclusion_list
 
 
 # ---- Asset
@@ -93,9 +93,9 @@ def read_one_asset(asset_id):
         id=asset_id).add_columns(
         func.count(
             EventAsset.event_id).label('event_count')).join(
-                EventAsset,
-                isouter=True).group_by(
-                    Asset.id).first()
+        EventAsset,
+        isouter=True).group_by(
+        Asset.id).first()
 
     if not asset:
         return jsonify(f"Asset with id #{asset_id} does not exist."), 404

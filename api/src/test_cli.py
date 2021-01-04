@@ -1,8 +1,8 @@
+import json
 import os
 
-import pytest
-import json
 import yaml
+
 from . import db
 from .courses.models import Course, Diploma
 from .i18n.models import Language, I18NValue, I18NLocale, I18NKey
@@ -98,6 +98,7 @@ def test_load_attribute_types(runner):
     runner.invoke(args=['app', 'load-attribute-types'])
     assert db.session.query(I18NValue).filter(
         I18NValue.key_id == 'attribute.date').count() > 0
+
 
 # ---- i18n CLI
 
@@ -584,6 +585,7 @@ def test_i18n_delete(runner):
     # THEN we expect no values of the corresponding locale to exist
     assert db.session.query(I18NValue).filter_by(
         locale_code="es-EC").count() == 0
+
 
 def test_i18n_translate(runner):
     # GIVEN a database with some entries

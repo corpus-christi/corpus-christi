@@ -3,7 +3,7 @@ from datetime import datetime
 
 from flask import jsonify, request, current_app
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_raw_jwt
-from src.shared.helpers import jwt_not_required
+from ..shared.helpers import jwt_not_required
 
 from . import auth
 from .blacklist_helpers import (

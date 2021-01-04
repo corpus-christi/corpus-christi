@@ -5,7 +5,7 @@ import pytest
 from faker import Faker
 from flask import url_for
 
-from .models import Course, CourseSchema, Course_Offering, CourseOfferingSchema, \
+from .models import Course, CourseSchema, CourseOffering, CourseOfferingSchema, \
     Diploma, DiplomaSchema, Student, StudentSchema, \
     ClassMeeting, ClassMeetingSchema, DiplomaAwarded, DiplomaAwardedSchema, \
     ClassAttendance, CourseCompletion, CourseCompletionSchema
@@ -98,7 +98,7 @@ def create_multiple_courses_inactive(sqla, n=10):
     sqla.commit()
 
 
-# --- Course_Offering
+# --- CourseOffering
 
 
 def course_offerings_object_factory(course_id):
@@ -149,7 +149,7 @@ def create_multiple_course_offerings(sqla, n=3):
         c = random.randint(1, len(courses))
         valid_course_offering = course_offerings_schema.load(
             course_offerings_object_factory(c))
-        new_course_offerings.append(Course_Offering(**valid_course_offering))
+        new_course_offerings.append(CourseOffering(**valid_course_offering))
     sqla.add_all(new_course_offerings)
     sqla.commit()
 
@@ -165,7 +165,7 @@ def create_multiple_course_offerings_active(sqla, n=3):
     for i in range(n):
         valid_course_offering = course_offerings_schema.load(
             course_offerings_object_factory_active(course.id))
-        new_course_offerings.append(Course_Offering(**valid_course_offering))
+        new_course_offerings.append(CourseOffering(**valid_course_offering))
     sqla.add_all(new_course_offerings)
     sqla.commit()
 
@@ -181,7 +181,7 @@ def create_multiple_course_offerings_inactive(sqla, n=3):
     for i in range(n):
         valid_course_offering = course_offerings_schema.load(
             course_offerings_object_factory_inactive(course.id))
-        new_course_offerings.append(Course_Offering(**valid_course_offering))
+        new_course_offerings.append(CourseOffering(**valid_course_offering))
     sqla.add_all(new_course_offerings)
     sqla.commit()
 
@@ -264,10 +264,10 @@ def create_multiple_students(sqla, n=6, course_offering_id=None):
     if not students:
         create_multiple_students(sqla, random.randint(3, 6))
         students = sqla.query(Student).all()
-    course_offering = sqla.query(Course_Offering).all()
+    course_offering = sqla.query(CourseOffering).all()
     if not course_offering:
         create_multiple_course_offerings(sqla, random.randint(3, 6))
-        course_offering = sqla.query(Course_Offering).all()
+        course_offering = sqla.query(CourseOffering).all()
     course_students_schema = StudentSchema()
     new_students = []
     for i in range(n):
@@ -370,10 +370,10 @@ def create_class_meetings(sqla, n=6):
     if not people:
         create_multiple_people(sqla, random.randint(3, 6))
         people = sqla.query(Person).all()
-    course_offerings = sqla.query(Course_Offering).all()
+    course_offerings = sqla.query(CourseOffering).all()
     if not course_offerings:
         create_multiple_course_offerings(sqla, random.randint(3, 6))
-        course_offerings = sqla.query(Course_Offering).all()
+        course_offerings = sqla.query(CourseOffering).all()
     locations = sqla.query(Location).all()
     if not locations:
         create_multiple_locations(sqla, random.randint(3, 6))
@@ -394,7 +394,7 @@ def create_class_meetings(sqla, n=6):
     sqla.commit()
 
 
-def create_class_attendance(sqla, n):
+def create_class_attendance(sqla, n, create_multiple_class_meetings=None):
     # Commits the number of class attendances to the DB.
     students = sqla.query(Student).all()
     if not students:
@@ -683,7 +683,7 @@ def test_update_prerequisite(auth_client):
         assert course.prerequisites[0].id == 1
 
 
-# ---- Course_Offering
+# ---- CourseOffering
 
 
 def test_create_course_offering(auth_client):
@@ -708,7 +708,7 @@ def test_create_course_offering(auth_client):
                 course.id))
         assert resp.status_code == 201
     # THEN create new course section
-    assert auth_client.sqla.query(Course_Offering).count() == count
+    assert auth_client.sqla.query(CourseOffering).count() == count
 
 
 def test_read_all_course_offerings(auth_client):
@@ -762,7 +762,7 @@ def test_read_one_course_offering(auth_client):
     count = random.randint(3, 11)
     create_multiple_course_offerings(auth_client.sqla, count)
     # WHEN one course section needed
-    course_offerings = auth_client.sqla.query(Course_Offering).all()
+    course_offerings = auth_client.sqla.query(CourseOffering).all()
     # THEN list one course section of course
     for course_offering in course_offerings:
         resp = auth_client.get(
@@ -789,7 +789,7 @@ def test_update_course_offering(auth_client):
     create_multiple_courses(auth_client.sqla, 1)
     count = random.randint(3, 11)
     create_multiple_course_offerings(auth_client.sqla, count)
-    course_offerings = auth_client.sqla.query(Course_Offering).all()
+    course_offerings = auth_client.sqla.query(CourseOffering).all()
     # WHEN course offering needs to update existing information
     for course_offering in course_offerings:
         resp = auth_client.patch(
@@ -1240,7 +1240,7 @@ def test_add_student_to_course_offering(auth_client):
     # GIVEN an invalid student
     setup_dependencies_of_student(auth_client, 1)
     person = auth_client.sqla.query(Person).one()
-    course_offering = auth_client.sqla.query(Course_Offering).one()
+    course_offering = auth_client.sqla.query(CourseOffering).one()
     student = student_object_factory(course_offering.id, person.id)
     del student['confirmed']
     # WHEN requested to create student
@@ -1255,7 +1255,7 @@ def test_add_student_to_course_offering(auth_client):
     resp = auth_client.post(url_for('courses.add_student_to_course_offering',
                                     person_id=person.id), json=student)
     # THEN the person should be a student in that course
-    course_offering = auth_client.sqla.query(Course_Offering).one()
+    course_offering = auth_client.sqla.query(CourseOffering).one()
     assert resp.status_code == 201
     assert course_offering.students[0].id == person.id
     # Test adding student already in course
@@ -1490,7 +1490,7 @@ def test_create_class_meeting(auth_client):
     # GIVEN class meeting to put in database
     setup_dependencies_of_class_meeting(auth_client, 1)
     teacher_id = auth_client.sqla.query(Person).first().id
-    offering_id = auth_client.sqla.query(Course_Offering).first().id
+    offering_id = auth_client.sqla.query(CourseOffering).first().id
     count = random.randint(8, 19)
     # WHEN database does not contain entry
     for i in range(count):

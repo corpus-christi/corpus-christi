@@ -5,7 +5,7 @@ from marshmallow import ValidationError
 
 from . import courses
 from .models import Course, CourseSchema, \
-    Course_Offering, Student, StudentSchema, \
+    CourseOffering, Student, StudentSchema, \
     Diploma, DiplomaSchema, CourseOfferingSchema, \
     DiplomaCourse, DiplomaAwarded, DiplomaAwardedSchema, \
     ClassAttendance, ClassAttendanceSchema, \
@@ -55,7 +55,7 @@ def add_prereqs(query_result):
 def include_course_offerings(course):
     """ Helper function applies course offerings to course inputted by the user. """
     course['course_offerings'] = []
-    offerings = db.session.query(Course_Offering).filter_by(
+    offerings = db.session.query(CourseOffering).filter_by(
         course_id=course['id']).all()
     for i in offerings:
         course['course_offerings'].append(course_offering_schema.dump(i))
@@ -209,7 +209,7 @@ def update_prerequisite(course_id):
     return jsonify(course_schema.dump(course))
 
 
-# ---- Course_Offering
+# ---- CourseOffering
 
 @courses.route('/course_offerings', methods=['POST'])
 @jwt_required
@@ -220,7 +220,7 @@ def create_course_offering():
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    new_course_offering = Course_Offering(**valid_course_offering)
+    new_course_offering = CourseOffering(**valid_course_offering)
     db.session.add(new_course_offering)
     db.session.commit()
     return jsonify(course_offering_schema.dump(new_course_offering)), 201
@@ -230,7 +230,7 @@ def create_course_offering():
 @jwt_required
 # @authorize(["role.superuser", "role.registrar", "role.public"])
 def read_all_course_offerings():
-    result = db.session.query(Course_Offering).all()
+    result = db.session.query(CourseOffering).all()
     if result == []:
         return 'No Course Offerings found', 404
     results = course_offering_schema.dump(result, many=True)
@@ -245,7 +245,7 @@ def read_all_course_offerings():
 # @authorize(["role.superuser", "role.public"])
 def read_one_course_offering(course_offering_id):
     result = course_offering_schema.dump(db.session.query(
-        Course_Offering).filter_by(id=course_offering_id).first())
+        CourseOffering).filter_by(id=course_offering_id).first())
     result['course'] = course_schema.dump(db.session.query(
         Course).filter_by(id=result['courseId']).first())
     return jsonify(result)
@@ -254,7 +254,7 @@ def read_one_course_offering(course_offering_id):
 @courses.route('/<string:active_state>/course_offerings')
 @jwt_required
 def read_active_state_course_offerings(active_state):
-    result = db.session.query(Course_Offering)
+    result = db.session.query(CourseOffering)
     if (active_state == 'active'):
         query = result.filter_by(active=True).all()
     elif (active_state == 'inactive'):
@@ -269,7 +269,7 @@ def read_active_state_course_offerings(active_state):
 # @authorize(["role.superuser", "role.registrar"])
 def update_course_offering(course_offering_id):
     course_offering = db.session.query(
-        Course_Offering).filter_by(id=course_offering_id).first()
+        CourseOffering).filter_by(id=course_offering_id).first()
     if course_offering is None:
         return "Course Offering NOT Found", 404
 
@@ -582,7 +582,7 @@ def add_student_to_course_offering(person_id):
 def read_all_course_offering_students(course_offering_id):
     """ This function lists all students by a specific course offering.
         Students are listed regardless of confirmed or active state. """
-    co = db.session.query(Course_Offering).filter_by(
+    co = db.session.query(CourseOffering).filter_by(
         id=course_offering_id).first()
     if co is None:
         return 'Course Offering NOT found', 404
@@ -631,11 +631,11 @@ def read_one_student(student_id):
     result = db.session.query(
         Student,
         Person,
-        Course_Offering,
+        CourseOffering,
         Course) .filter_by(
         student_id=student_id).join(
             Person,
-            Course_Offering,
+            CourseOffering,
         Course) .all()
     if result == []:
         return 'Student not found', 404
@@ -712,8 +712,8 @@ def read_one_student(student_id):
             i['courseCompleted'] = False
 
         for j in result:
-            if (j.Course_Offering.course_id == i['id']):
-                co = course_offering_schema.dump(j.Course_Offering)
+            if (j.CourseOffering.course_id == i['id']):
+                co = course_offering_schema.dump(j.CourseOffering)
                 co['courseIsActive'] = i['active']
                 co['courseOfferingIsActive'] = co.pop('active')
                 co.pop('id')
@@ -758,11 +758,11 @@ def create_course_completion(courses_id):
     personEnrolled = db.session.query(
         Person,
         Student,
-        Course_Offering,
+        CourseOffering,
         Course) .filter_by(
         id=person_id).join(
             Student,
-            Course_Offering) .filter_by(
+            CourseOffering) .filter_by(
                 course_id=courses_id).join(Course) .first()
 
     # Query into DB to ensure person has not already completed the course

@@ -1,21 +1,21 @@
 import datetime
 
-from flask import request, jsonify, current_app
+from flask import request
 from flask_jwt_extended import jwt_required, get_jwt_claims, get_jwt_identity
 from marshmallow import ValidationError
+from sqlalchemy.exc import IntegrityError
 
 from . import groups
-from .models import Group, GroupSchema, Attendance, Member, MemberSchema, Meeting, MeetingSchema, AttendanceSchema, Manager, ManagerSchema, GroupType, GroupTypeSchema, ManagerType, ManagerTypeSchema, MemberHistory, MemberHistorySchema
 from .group_hierarchy_helpers import is_overseer
-
+from .models import Group, GroupSchema, Attendance, Member, MemberSchema, Meeting, MeetingSchema, AttendanceSchema, \
+    Manager, ManagerSchema, GroupType, GroupTypeSchema, ManagerType, ManagerTypeSchema, MemberHistory, \
+    MemberHistorySchema
 from .. import db
 from ..images.models import Image, ImageGroup
-from ..people.models import Role, Person
+from ..people.models import Person
+from ..shared.helpers import get_all_queried_entities, logged_response, authorize
+from ..shared.models import QueryArgumentError
 
-from src.shared.helpers import modify_entity, get_all_queried_entities, logged_response, authorize
-from src.shared.models import QueryArgumentError
-
-from sqlalchemy.exc import IntegrityError, DBAPIError
 
 # ---- Helpers
 
@@ -46,6 +46,7 @@ def create_member_history(member, **kwargs):
     })
     db.session.add(member_history)
     db.session.commit()
+
 
 # ---- Group Type
 
@@ -131,6 +132,7 @@ def delete_group_type(group_type_id):
 
     # 204 codes don't respond with any content
     return logged_response("Deleted successfully", 204)
+
 
 # ---- Group
 
@@ -225,6 +227,7 @@ def delete_group(group_id):
 
     # no content should be in the response with 204 status code
     return logged_response("Deleted successfully", 204)
+
 
 # ---- Manager Type
 
@@ -437,6 +440,7 @@ def delete_manager(group_id, person_id):
     # no content should be in the response with 204 status code
     return logged_response("Deleted successfully", 204)
 
+
 # ---- Meeting
 
 
@@ -543,6 +547,7 @@ def delete_meeting(meeting_id):
 
     # no content should be in the response with 204 status code
     return logged_response("Deleted successfully", 204)
+
 
 # ---- Member
 
@@ -702,6 +707,7 @@ def delete_member(group_id, person_id):
 
     return logged_response("Deleted successfully", 204)
 
+
 # ---- Attendance
 
 
@@ -773,6 +779,7 @@ def delete_attendance(meeting_id, person_id):
     db.session.commit()
 
     return logged_response("Deleted successfully", 204)
+
 
 # ---- Image
 
@@ -859,6 +866,7 @@ def delete_group_image(group_id, image_id):
 
     # 204 codes don't respond with any content
     return logged_response('Successfully removed image', 204)
+
 
 # ---- Member History
 

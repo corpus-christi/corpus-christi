@@ -4,13 +4,10 @@ import random
 import pytest
 from faker import Faker
 from flask import url_for
-from werkzeug.security import check_password_hash
 
 from .models import Person, PersonSchema, RoleSchema, Role
-from ..i18n.models import I18NKey, i18n_create, I18NLocale
 from ..images.create_image_data import create_test_images, create_images_people
 from ..images.models import Image, ImagePerson
-from ..groups.models import ManagerSchema
 
 
 class RandomLocaleFaker:
@@ -74,7 +71,7 @@ def create_multiple_people(sqla, n, inactive=False):
     for i in range(n):
         valid_person = person_schema.load(person_object_factory())
         if inactive:
-            valid_person['active'] == False
+            valid_person['active'] = False
         new_people.append(Person(**valid_person))
     sqla.add_all(new_people)
     sqla.commit()
@@ -362,7 +359,7 @@ def test_deactivate_person(auth_client):
     updated_person = auth_client.sqla.query(
         Person).filter_by(id=current_person.id).first()
     assert updated_person is not None
-    assert updated_person.active == False
+    assert not updated_person.active
     return current_person.id
 
 
@@ -382,7 +379,7 @@ def test_activate_person(auth_client):
                 person_id=person.id))
 
         # THEN expect the request to run OK
-        resp.status_code == 200
+        assert resp.status_code == 200
 
     # THEN expect all inactive people to be active
     assert auth_client.sqla.query(Person).filter(
@@ -551,7 +548,7 @@ def test_deactivate_person(auth_client):
     updated_person = auth_client.sqla.query(
         Person).filter_by(id=current_person.id).first()
     assert updated_person is not None
-    assert updated_person.active == False
+    assert not updated_person.active
     return current_person.id
 
 
@@ -625,7 +622,7 @@ def test_get_roles_for_person(auth_client):
     # GIVEN a set of people, roles and people-role relationships
     count = random.randint(3, 6)
     create_multiple_people(auth_client.sqla, count)
-    #create_multiple_persons(auth_client.sqla, 1)
+    # create_multiple_persons(auth_client.sqla, 1)
     create_roles(auth_client.sqla, count)
     create_person_roles(auth_client.sqla)
 
@@ -791,7 +788,7 @@ def test_activate_role(auth_client):
     resp = auth_client.put(url_for(
         'people.deactivate_role', role_id=current_role.id))
     assert resp.status_code == 200
-    assert current_role.active == False
+    assert not current_role.active
 
     # WHEN we choose a role that has been deactivated
     resp = auth_client.put(url_for(
@@ -819,9 +816,9 @@ def test_deactivate_role(auth_client):
         Role).filter_by(id=current_role.id).first()
     assert resp.status_code == 200
 
-    # THEN the role is marked as unactive
+    # THEN the role is marked as inactive
     assert updated_role is not None
-    assert current_role.active == False
+    assert not current_role.active
 
 
 @pytest.mark.smoke

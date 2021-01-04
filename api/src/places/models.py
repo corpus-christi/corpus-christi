@@ -5,11 +5,11 @@ from marshmallow import Schema, fields
 from marshmallow.validate import Length, Range
 from sqlalchemy import Column, String, ForeignKey, Integer, Float, Boolean
 from sqlalchemy.orm import relationship
-from src.db import Base
-from src.i18n.models import i18n_create, I18NLocale, i18n_check, I18NKey
-from src.shared.helpers import get_or_create
 
 from .. import db
+from ..db import Base
+from ..i18n.models import I18NKey
+from ..shared.helpers import get_or_create
 from ..shared.models import StringTypes
 
 
@@ -159,14 +159,7 @@ class Address(Base):
 
     def __repr__(self):
         attributes = [f"id='{self.id}'"]
-        for attr in [
-            'name',
-            'address',
-            'city',
-            'area_id',
-            'country_code',
-            'latitude',
-                'longitude']:
+        for attr in ['name', 'address', 'city', 'area_id', 'country_code', 'latitude', 'longitude']:
             if hasattr(self, attr):
                 value = getattr(self, attr)
                 attributes.append(f"{attr}={value}")

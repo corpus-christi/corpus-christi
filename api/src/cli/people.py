@@ -1,8 +1,9 @@
 import click
 from click import BadParameter
 from flask.cli import AppGroup
-from src import db
-from src.people.models import Person, Role
+
+from api.src import db
+from api.src.people.models import Person, Role
 
 
 def create_account_cli(app):

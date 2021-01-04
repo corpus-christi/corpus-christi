@@ -1,13 +1,12 @@
 import os
 
-from commands.people import create_account_cli
-from commands.app import create_app_cli
-from commands.courses import create_course_cli
-from commands.events import create_event_cli
-from commands.groups import create_group_cli
-from commands.faker import create_faker_cli
-from commands.i18n import create_i18n_cli
-
+from src.cli.app import create_app_cli
+from src.cli.courses import create_course_cli
+from src.cli.events import create_event_cli
+from src.cli.faker import create_faker_cli
+from src.cli.groups import create_group_cli
+from src.cli.i18n import create_i18n_cli
+from src.cli.people import create_account_cli
 from src import create_app
 
 app = create_app(os.getenv('CC_CONFIG') or 'default')

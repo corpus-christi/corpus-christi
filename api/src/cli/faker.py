@@ -1,14 +1,14 @@
 from flask.cli import AppGroup
-from src import db
-from src.courses.test_courses import create_multiple_courses, create_multiple_course_offerings, \
+from api.src import db
+from api.src.courses.test_courses import create_multiple_courses, create_multiple_course_offerings, \
     create_multiple_diplomas, create_multiple_students, create_class_meetings, \
     create_diploma_awards, create_class_attendance, create_multiple_prerequisites, \
     create_course_completion
-from src.events.create_event_data import create_events_test_data
-from src.groups.create_group_data import create_group_test_data
-from src.images.create_image_data import create_images_test_data
-from src.people.test_people import create_multiple_people, create_person_roles
-from src.places.test_places import create_multiple_areas, create_multiple_addresses, create_multiple_locations
+from api.src.events.create_event_data import create_events_test_data
+from api.src.groups.create_group_data import create_group_test_data
+from api.src.images.create_image_data import create_images_test_data
+from api.src.people.test_people import create_multiple_people, create_person_roles
+from api.src.places.test_places import create_multiple_areas, create_multiple_addresses, create_multiple_locations
 
 
 def create_faker_cli(app):

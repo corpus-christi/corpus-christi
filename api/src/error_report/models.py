@@ -1,10 +1,10 @@
 from marshmallow import Schema, fields
 from marshmallow.validate import Range, Length
-from sqlalchemy import Column, Integer, Boolean, ForeignKey, Date, DateTime
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, Boolean, DateTime
 
-from src.db import Base
-from src.shared.models import StringTypes
+from ..db import Base
+from ..shared.models import StringTypes
+
 
 # ---- Error-report
 

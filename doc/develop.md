@@ -38,7 +38,7 @@ refer to `doc/sdm.md`.
 
 The development tool chain requires the following software.
 
-  - [Python](https://www.python.org/) 3.7 to before 3.8 (greater than version 3.7, less than version 3.8)
+  - [Python](https://www.python.org/) 3.9 (may work on earlier versions)
   - [Node](https://nodejs.org/) 10 LTS or later
   - [Yarn](https://yarnpkg.com/) current version
   - [Bash](https://www.gnu.org/software/bash/) current version
@@ -53,11 +53,11 @@ a `bash` shell. If you are using Windows command line
 or other non-`bash` shell,
 your actual mileage may vary.
 You may want to try one of:
+1. The [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/about)
 1. The [Cygwin](https://www.cygwin.com/) environment,
    which provides a workable implementation
    of many Unix/Linux commands on Windows,
    _including_ `bash`
-1. The [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/about)
 
 ## Install CC
 
@@ -83,8 +83,7 @@ $ yarn
 
 Install the [Vue Development Tools](https://github.com/vuejs/vue-devtools),
 an extension for your browser that helps with Vue debugging.
-Native extensions are available for Chrome (and hence, Brave) 
-and Firefox.
+Native extensions are available for Chrome (hence, Brave) and Firefox.
 There is also a standalone Electron app,
 but you are _strongly_ encouraged to install Chrome, Brave, or Firefox
 and the native extension.
@@ -102,6 +101,7 @@ and the native extension.
     if that is not the desired version, try running `python --version`. 
     If this is your desired version, replace `python3` with `python` 
     in the above bash commands.
+
     If you are still struggling (and using Windows), 
     you will need to adjust the [environmental variables](https://www.architectryan.com/2018/08/31/how-to-change-environment-variables-on-windows-10/) 
     and update PATH by finding the location of where python is downloaded.
@@ -133,6 +133,7 @@ by entering this simple command
 $ deactivate
 ```
 This will remove the virtual environment from your shell.
+You can also just close the shell normally.
 
 ## Bash Setup for Flask
 
@@ -153,7 +154,7 @@ This script will
 1. Allow you to run the `flask` command from the command line.
 
 On Windows, you may need to open the file
-and change line three to source `./venv/Scripts/activate`
+and change line three to source `./venv/Scripts/activate` instead.
 
 Do this whenever you start a new `bash`
 in which you intend to work with the API.
@@ -171,8 +172,8 @@ Be sure you have [set up your shell](#bash-setup-for-flask).
 
 CC uses [PostgreSQL](https://www.postgresql.org/).
 You will need access to a Postgres server,
-which can be a network resource
-or you can install PostgreSQL on your own machine.
+which can be a network resource, or
+you can install PostgreSQL on your own machine.
 
 If you want to install PostgreSQL on your own box,
 find installers
@@ -319,7 +320,7 @@ export DEV_DB_URL="postgresql://PSQL_USER:PSQL_PASS@PSQL_HOST/PSQL_DB"
 ```
 tells CC how to connect to your development database (the `DEV` part of the environment variable)
 where:
-   * `PSQL_USER` is your Postgres user name
+   * `PSQL_USER` is your Postgres username
    * `PSQL_PASS` is your Postgres password
      (if you haven't set a password, omit this field _and_ the colon
      that separates it from `PSQL_USER`)
@@ -367,7 +368,7 @@ make sure that after you run `flask db migrate`
 you check the python migration file
 (found under `api/migrations/versions/<random_numbers>.py`). 
 Make sure the migration doesn't drop the `spatial_ref_sys` table added by PostGIS. 
-Inside of the `upgrade` function (likely near the end), 
+Inside the `upgrade` function (likely near the end), 
 if there is a statement to drop the `spatial_ref_sys` table, 
 delete that statement. 
 Also check the `downgrade` function 

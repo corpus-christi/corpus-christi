@@ -126,12 +126,12 @@ entities:
         default: false
     relationships:
       - name: course_offering
-        related-model: Course_Offering
+        related-model: CourseOffering
         backref: offerings
       - name: person
         related-model: Person
         backref: students
-  - name: Course_Offering
+  - name: CourseOffering
     singular: course_offering
     plural: course_offerings
     uri: /course_offerings
@@ -202,7 +202,7 @@ entities:
         required: true
     relationships:
       - name: course_offering
-        related-model: Course_Offering
+        related-model: CourseOffering
         backref: class_meeting
       - name: location
         related-model: Location

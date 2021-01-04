@@ -3,9 +3,9 @@ import random
 import pytest
 from faker import Faker
 from flask import url_for
-from src.i18n.models import i18n_create, I18NLocale, I18NKey
-from src.people.models import Person, PersonSchema
-from src.people.test_people import create_multiple_people, person_object_factory
+from ..i18n.models import i18n_create, I18NLocale, I18NKey
+from ..people.models import Person, PersonSchema
+from ..people.test_people import create_multiple_people, person_object_factory
 
 from .models import Attribute, AttributeSchema, PersonAttribute, PersonAttributeSchema, EnumeratedValue, \
     EnumeratedValueSchema
@@ -126,6 +126,10 @@ def person_attribute_enumerated_factory(sqla):
         'enumValueId': current_enumerated_value.id
     }
     return person_attribute
+
+
+def create_multiple_nonenumerated_values(sqla, param):
+    pass
 
 
 def person_attribute_string_factory(sqla):
@@ -936,37 +940,37 @@ def test_update_person_add_attribute(auth_client):
         # THEN expect the person to be updated and have an attribute
         assert resp.json['id'] == person.id
         if 'firstName' in mod.keys() and mod['firstName'] != person.first_name:
-            resp.json['firstName'] != person.first_name
+            assert resp.json['firstName'] != person.first_name
         else:
-            resp.json['firstName'] == person.first_name
+            assert resp.json['firstName'] == person.first_name
         if 'lastName' in mod.keys() and mod['lastName'] != person.last_name:
-            resp.json['lastName'] != person.last_name
+            assert resp.json['lastName'] != person.last_name
         else:
-            resp.json['lastName'] == person.last_name
+            assert resp.json['lastName'] == person.last_name
         if 'secondLastName' in mod.keys(
         ) and mod['secondLastName'] != person.second_last_name:
-            resp.json['secondLastName'] != person.second_last_name
+            assert resp.json['secondLastName'] != person.second_last_name
         else:
-            resp.json['secondLastName'] == person.second_last_name
+            assert resp.json['secondLastName'] == person.second_last_name
         if 'gender' in mod.keys() and mod['gender'] != person.gender:
-            resp.json['gender'] != person.gender
+            assert resp.json['gender'] != person.gender
         else:
-            resp.json['gender'] == person.gender
+            assert resp.json['gender'] == person.gender
         if 'active' in mod.keys() and mod['active'] != person.active:
-            resp.json['active'] != person.active
+            assert resp.json['active'] != person.active
         else:
-            resp.json['active'] == person.active
+            assert resp.json['active'] == person.active
         if 'birthday' in mod.keys() and mod['birthday'] != person.birthday:
-            resp.json['birthday'] != person.birthday
+            assert resp.json['birthday'] != person.birthday
         else:
-            resp.json['birthday'] == person.birthday
+            assert resp.json['birthday'] == person.birthday
         if 'phone' in mod.keys() and mod['phone'] != person.phone:
-            resp.json['phone'] != person.phone
+            assert resp.json['phone'] != person.phone
         else:
-            resp.json['phone'] == person.phone
+            assert resp.json['phone'] == person.phone
         if 'email' in mod.keys() and mod['email'] != person.email:
-            resp.json['email'] != person.email
+            assert resp.json['email'] != person.email
         else:
-            resp.json['email'] == person.email
+            assert resp.json['email'] == person.email
 
         assert len(resp.json['attributesInfo']) == 1

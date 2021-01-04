@@ -3,11 +3,14 @@ import random
 
 from faker import Faker
 
-from .models import Event, EventPerson, EventParticipant, EventSchema, EventPersonSchema, EventParticipantSchema, EventGroup, EventGroupSchema, EventAsset, EventAssetSchema, EventTeam, EventTeamSchema
-from ..groups.models import Group, GroupSchema
+from .models import Event, EventPerson, EventParticipant, EventSchema, EventPersonSchema, EventParticipantSchema, \
+    EventGroup, EventGroupSchema, EventAsset, EventAssetSchema, EventTeam, EventTeamSchema
 from ..assets.models import Asset, AssetSchema
+from ..groups.models import Group
+from ..images.create_image_data import create_multiple_images
 from ..images.models import Image, ImageEvent, ImageEventSchema
 from ..people.models import Person
+from ..people.test_people import create_multiple_people
 from ..places.models import Location
 from ..places.test_places import create_multiple_locations
 from ..teams.models import Team, TeamMember, TeamSchema, TeamMemberSchema
@@ -133,7 +136,6 @@ def event_groups_object_factory(event_id, group_id):
 
 def asset_object_factory(sqla):
     """Cook up a fake asset."""
-    fake = Faker()  # Use a generic one; others may not have all methods.
     all_locations = sqla.query(Location).all()
     if not all_locations:
         create_multiple_locations(sqla, random.randint(3, 6))
@@ -148,7 +150,6 @@ def asset_object_factory(sqla):
 
 def team_object_factory():
     """Cook up a fake asset."""
-    fake = Faker()  # Use a generic one; others may not have all methods.
     team = {
         'description': rl_fake().sentences(nb=1)[0],
         'active': flip()

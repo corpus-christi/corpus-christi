@@ -1,9 +1,9 @@
 from flask import request, jsonify
 from flask_jwt_extended import jwt_required
+from geoalchemy2 import functions as func
 from marshmallow import Schema, fields
 from marshmallow import ValidationError
 from marshmallow.validate import Length
-from geoalchemy2 import functions as func
 
 from . import places
 from .models import Country, CountrySchema, Address, AddressSchema, Area, AreaSchema, Location, LocationSchema
@@ -379,7 +379,8 @@ def create_location():
                         'address', 'address_name')
         address_payload = {
             k if k not in address_name_transform else address_name_transform[k]: v for k,
-            v in payload_data.items() if k in address_keys}
+                                                                                       v in payload_data.items() if
+            k in address_keys}
         address_payload['area_id'] = area_id
         address_payload['country_code'] = country_code
         address = db.session.query(Address).filter_by(

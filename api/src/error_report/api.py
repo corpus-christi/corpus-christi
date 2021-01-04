@@ -1,11 +1,14 @@
 from flask import request
 from marshmallow import ValidationError
-from src.shared.helpers import logged_response
-from .. import db
+
 from . import error_report
 from .models import ErrorReport, ErrorReportSchema
+from .. import db
+from ..shared.helpers import logged_response
 
 error_report_schema = ErrorReportSchema()
+
+
 # ---- Error report
 @error_report.route('/', methods=['POST'])
 def create_error_report():

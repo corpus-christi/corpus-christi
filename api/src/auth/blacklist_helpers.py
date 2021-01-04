@@ -19,6 +19,7 @@ def _epoch_utc_to_datetime(epoch_utc):
 def add_token_to_database(encoded_token, identity_claim):
     """
     Adds a new token to the database. It is not revoked when it is added.
+    :param encoded_token
     :param identity_claim:
     """
     decoded_token = decode_token(encoded_token)
@@ -82,7 +83,7 @@ def revoke_tokens_of_account(person_id):
     """
     try:
         # If we do this at the top level, it creates a circular import.
-        from src.people.models import Person
+        from ..people.models import Person
 
         account = db.session.query(Person).filter_by(id=person_id).first()
         account_tokens = db.session.query(TokenBlacklist).filter_by(

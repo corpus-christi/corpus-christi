@@ -1,29 +1,24 @@
 import random
-import datetime
 
 import pytest
-from dateutil import parser
 from faker import Faker
 from flask import url_for
 
-from .create_group_data import flip, group_object_factory, \
+from .create_group_data import group_object_factory, \
     create_multiple_groups, member_object_factory, create_multiple_members, meeting_object_factory, \
     create_multiple_meetings, create_multiple_attendance, create_multiple_group_types, create_multiple_manager_types, \
     group_type_object_factory, manager_type_object_factory, create_multiple_managers, \
     create_hierarchy_test_case_1, create_multiple_member_histories
 from .group_hierarchy_helpers import get_all_subgroups
-from .models import Group, GroupType, Member, MemberSchema, Meeting, MeetingSchema, Attendance, Manager, ManagerType, ManagerSchema,\
-    MemberHistory, MemberHistorySchema
+from .models import Group, GroupType, Member, MemberSchema, Meeting, Attendance, Manager, ManagerType, MemberHistory
 from ..images.create_image_data import create_images_groups
 from ..images.create_image_data import create_test_images
 from ..images.models import Image, ImageGroup
+from ..people.models import Person
 from ..people.test_people import create_multiple_people
-from ..people.models import Person, PersonSchema, Role, RoleSchema
-from ..places.models import Address, Country
-from ..places.test_places import create_multiple_addresses, create_multiple_areas
+from ..places.models import Address
+from ..places.test_places import create_multiple_addresses
 from ..shared.helpers import get_token_with_roles, get_token_with_person_id
-from flask_jwt_extended import create_access_token
-
 
 fake = Faker()
 
@@ -35,6 +30,7 @@ def get_group_admin_token():
     :returns: the token with group-admin role in it
     """
     return get_token_with_roles(['role.group-admin'])
+
 
 # ---- Group Type
 
@@ -156,6 +152,7 @@ def test_delete_group_type(auth_client):
     group_types = auth_client.sqla.query(GroupType).all()
     assert len(group_types) == count - 1
 
+
 # # ---- Group
 
 
@@ -244,7 +241,7 @@ def test_update_group(auth_client):
         assert resp.status_code == 200
         assert resp.json['name'] == 'asd'
         assert resp.json['description'] == 'test_descr'
-        assert resp.json['active'] == False
+        assert not resp.json['active']
 
 
 def test_invalid_update_group(auth_client):
@@ -252,7 +249,7 @@ def test_invalid_update_group(auth_client):
     # GIVEN empty database
     # WHEN databse queried
     resp = auth_client.patch(url_for('groups.update_group', group_id=555), headers={
-                             'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
+        'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
     # THEN assert error code
     assert resp.status_code == 422
 
@@ -323,7 +320,6 @@ def test_subset_group_order(auth_client):
     res_order_attribute = auth_client.get(
         url_for('groups.read_all_groups', order='name:asc'))
     first_letter = []
-    sorted_first_letter = []
     # THEN put first letter into array
     for person in res_order_attribute.json:
         first_letter.append(person['name'][0])
@@ -361,12 +357,11 @@ def test_subset_groups_descending_ascending(auth_client):
     # same
     right = True
     for i in range(1, len(list_id)):
-        if sorted_group_type_id[i] == sorted_group_type_id[i - \
-            1] and list_id[i] <= list_id[i - 1]:
+        if sorted_group_type_id[i] == sorted_group_type_id[i - 1] and list_id[i] <= list_id[i - 1]:
             right = True
         else:
             right = False
-    # Test if the id(s) are in descending order
+        # Test if the id(s) are in descending order
         assert right
 
 
@@ -404,6 +399,7 @@ def test_deactivate_group(auth_client):
         # THEN expect active is assigned with False
         assert resp.json['active'] == False
 
+
 # # ---- Meeting
 
 
@@ -419,8 +415,8 @@ def test_create_meeting(auth_client):
     # WHEN we creat a meeting with group information and address information
     resp = auth_client.post(url_for('groups.create_meeting'),
                             json=meeting_object_factory(
-        group_id=group.id, address_id=address.id),
-        headers={'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
+                                group_id=group.id, address_id=address.id),
+                            headers={'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
     # THEN expect the create to run OK
     assert resp.status_code == 201
 
@@ -496,7 +492,7 @@ def test_update_meeting(auth_client):
         url_for(
             'groups.update_meeting', meeting_id=first_meeting.id), json={
             'description': 'This is a tset'}, headers={
-                'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
+            'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
 
     # THEN expect correct message
     assert resp.json['description'] == 'This is a tset'
@@ -506,7 +502,7 @@ def test_update_meeting(auth_client):
         url_for(
             'groups.update_meeting', meeting_id=first_meeting.id), json={
             'active': True}, headers={
-                'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
+            'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
     assert resp.json['active']
 
     # WHEN test deactivate meeting
@@ -514,9 +510,9 @@ def test_update_meeting(auth_client):
         url_for(
             'groups.update_meeting', meeting_id=first_meeting.id), json={
             'active': False}, headers={
-                'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
+            'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
 
-    assert resp.json['active'] == False
+    assert not resp.json['active']
 
 
 def test_invalid_update_meeting(auth_client):
@@ -530,7 +526,7 @@ def test_invalid_update_meeting(auth_client):
         url_for(
             'groups.update_meeting', meeting_id=first_meeting.id), json={
             'description': 123}, headers={
-                'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
+            'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
     assert resp.status_code == 422
 
     # AND check if the meeting is exist
@@ -538,7 +534,7 @@ def test_invalid_update_meeting(auth_client):
         url_for(
             'groups.update_meeting', meeting_id=333), json={
             'description': 'Hello'}, headers={
-                'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
+            'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
     # THEN expect error code
     assert resp.status_code == 404
 
@@ -594,7 +590,7 @@ def test_activate_meeting(auth_client):
         url_for(
             'groups.read_one_meeting', meeting_id=first_meeting.id), json={
             'active': True}, headers={
-                'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
+            'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
     # THEN we expect the meeting to be activated
     assert resp.json['active']
     # WHEN we activate a non-existant meeting
@@ -621,7 +617,7 @@ def test_deactivate_meeting(auth_client):
         url_for(
             'groups.read_one_meeting', meeting_id=first_meeting.id), json={
             'active': False}, headers={
-                'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
+            'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
     # THEN we expect the meeting to be deactivated
     assert resp.json['active'] == False
     # WHEN we deactivate a non-existant meeting
@@ -635,6 +631,7 @@ def test_deactivate_meeting(auth_client):
             'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
     # THEN we expect an error code
     assert resp.status_code == 404
+
 
 # # ---- Member
 
@@ -650,7 +647,7 @@ def test_create_member(auth_client):
         url_for(
             'groups.create_member', group_id='1'), json={
             'personId': personid, 'active': 'True'}, headers={
-                'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
+            'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
     # THEN expect the create to run OK
     assert resp.status_code == 201
 
@@ -774,6 +771,7 @@ def test_update_member_identity(auth_client):
         headers={'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
     # THEN we expect an error code
     assert resp.status_code == 404
+
 
 # # ---- Attendance
 
@@ -1023,6 +1021,7 @@ def test_delete_group_image_no_exist(auth_client):
     # THEN expect the requested row to not be found
     assert resp.status_code == 404
 
+
 # ---- Manager Type
 
 
@@ -1138,6 +1137,7 @@ def test_delete_manager_type(auth_client):
     manager_types = auth_client.sqla.query(ManagerType).all()
     assert len(manager_types) == count - 1
 
+
 # ---- Manager: Moved from people module
 
 
@@ -1222,7 +1222,7 @@ def test_read_all_managers(auth_client):
     manager = auth_client.sqla.query(Manager).all()
     number_of_manager = len(manager)
     resp = auth_client.get(url_for('groups.create_manager', group_id='1'), headers={
-                           'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
+        'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
     # THEN we expect the right status code
     assert resp.status_code == 200
     # THEN we expect the database has the same number of manager_types as we
@@ -1376,6 +1376,7 @@ def test_get_all_subgroups(auth_client):
     assert len(subgroups) == 1
     assert 9 in subgroups
 
+
 # ---- Authorization
 
 
@@ -1409,7 +1410,7 @@ def test_authorize_group_overseer(auth_client):
     person_id = 1
     payload = meeting_object_factory(group_id, address.id)
     resp = auth_client.post(url_for('groups.create_meeting'), json=payload, headers={
-                            'AUTHORIZATION': f'Bearer {get_token_with_person_id(person_id)}'})
+        'AUTHORIZATION': f'Bearer {get_token_with_person_id(person_id)}'})
     # THEN we expect the right status code, because person 1 is an overseer of
     # group 4
     assert resp.status_code == 201
@@ -1419,7 +1420,7 @@ def test_authorize_group_overseer(auth_client):
     person_id = 8
     payload = meeting_object_factory(group_id, address.id)
     resp = auth_client.post(url_for('groups.create_meeting'), json=payload, headers={
-                            'AUTHORIZATION': f'Bearer {get_token_with_person_id(person_id)}'})
+        'AUTHORIZATION': f'Bearer {get_token_with_person_id(person_id)}'})
     # THEN we expect the right status code, because person 8 is an overseer of
     # group 9
     assert resp.status_code == 201
@@ -1429,7 +1430,7 @@ def test_authorize_group_overseer(auth_client):
     person_id = 5
     payload = meeting_object_factory(group_id, address.id)
     resp = auth_client.post(url_for('groups.create_meeting'), json=payload, headers={
-                            'AUTHORIZATION': f'Bearer {get_token_with_person_id(person_id)}'})
+        'AUTHORIZATION': f'Bearer {get_token_with_person_id(person_id)}'})
     # THEN we expect an error, because person 5 is not an overseer of group 2
     assert resp.status_code == 403
 
@@ -1437,10 +1438,11 @@ def test_authorize_group_overseer(auth_client):
     group_id = 1
     payload = meeting_object_factory(group_id, address.id)
     resp = auth_client.post(url_for('groups.create_meeting'), json=payload, headers={
-                            'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
+        'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
     # THEN we expect the right status code, because group admin has access to
     # everything
     assert resp.status_code == 201
+
 
 # ---- Member History
 
@@ -1584,7 +1586,7 @@ def test_member_history_generation_on_create_member(auth_client):
         url_for(
             'groups.create_member', group_id=group.id), json={
             'personId': person.id}, headers={
-                'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
+            'AUTHORIZATION': f'Bearer {get_group_admin_token()}'})
 
     # THEN we expect a corresponding joining history to be created in the
     # database

@@ -1,19 +1,14 @@
 import hashlib
-
-from flask.json import jsonify
+from functools import wraps
 
 from flask import current_app
-
-from src import db
-
+from flask.json import jsonify
+from flask_jwt_extended import create_access_token, get_jwt_claims, verify_jwt_in_request
+from flask_jwt_extended.exceptions import JWTExtendedException
 from sqlalchemy.exc import DBAPIError
 
 from .models import QueryArgumentError
-
-from flask_jwt_extended import create_access_token, get_jwt_claims, verify_jwt_in_request
-from flask_jwt_extended.exceptions import JWTExtendedException
-
-from functools import wraps
+from .. import db
 
 
 def modify_entity(entity_type, schema, id, new_value_dict):
@@ -65,6 +60,7 @@ def get_all_queried_entities(query_object, request_query_arguments):
     This is intended to be used in most of the read_all_* endpoints
 
     """
+
     def parse_kv_str(kv_str):
         """ return a list [k,v] from string 'k:v' """
         kv_lst = kv_str.split(':', 1)
@@ -188,6 +184,7 @@ def tree_to_list(tree, is_leaf=lambda node: isinstance(node, str)):
                 result.append({'path': path + [key], 'value': val})
             else:
                 tree_to_list_helper(val, path + [key])
+
     tree_to_list_helper(tree)
     return result
 
@@ -212,7 +209,7 @@ def list_to_tree(entries):
             if not isinstance(t, dict):
                 raise BadListKeyPath(
                     f"failed to add child [{key}] in path [{entry['path']}], "
-                    f"non-dict value [{t}] at [{'.'.join(but_last[:i+1])}]")
+                    f"non-dict value [{t}] at [{'.'.join(but_last[:i + 1])}]")
         if last not in t:
             t[last] = entry['value']
         else:

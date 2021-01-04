@@ -2,9 +2,9 @@ import os
 from datetime import datetime
 
 from flask import jsonify
-from src.shared.helpers import jwt_not_required
 
 from . import etc
+from ..shared.helpers import jwt_not_required
 
 
 @etc.route('/ping')

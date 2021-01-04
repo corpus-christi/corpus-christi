@@ -1,16 +1,15 @@
 import os
 
 from flask import json
-from marshmallow import fields, Schema, pre_load, INCLUDE
+from marshmallow import fields, Schema, pre_load
 from marshmallow.validate import Length, Range, OneOf
 from sqlalchemy import Column, Integer, String, Date, ForeignKey, Boolean, Table
 from sqlalchemy.orm import relationship
-from src.i18n.models import i18n_create, I18NLocale
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from .. import db
 from ..db import Base
-from ..places.models import Address
+from ..i18n.models import i18n_create, I18NLocale
 from ..shared.models import StringTypes
 
 # Defines join table for people_person and people_role
@@ -20,6 +19,7 @@ people_person_role = Table('person_role', Base.metadata,
                            Column('id', Integer, ForeignKey(
                                'people_role.id'), primary_key=True)
                            )
+
 
 # ---- Person
 

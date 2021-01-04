@@ -1,5 +1,5 @@
-from .. import db
 from .models import Member, Manager
+from .. import db
 
 
 def is_overseer(person_id, group_id):
