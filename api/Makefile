@@ -13,7 +13,7 @@ coverage-test:
 	pytest --cov=src --cov-report=html
 
 run-api:
-	./run-dev-server.sh	
+	./bin/run-dev-server.sh
 
 .PHONY: clean-all
 
