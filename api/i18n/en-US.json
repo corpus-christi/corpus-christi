@@ -1,5 +1,11 @@
 {
   "$vuetify": {
+    "calendar": {
+      "moreEvents": {
+        "gloss": "{0} more",
+        "verified": false
+      }
+    },
     "dataFooter": {
       "itemsPerPageAll": {
         "gloss": "Show all rows",
@@ -428,7 +434,7 @@
         "verified": false
       },
       "AX": {
-        "gloss": "\u00c5land Islands",
+        "gloss": "Åland Islands",
         "verified": false
       },
       "AZ": {
@@ -472,7 +478,7 @@
         "verified": false
       },
       "BL": {
-        "gloss": "Saint Barth\u00e9lemy",
+        "gloss": "Saint Barthélemy",
         "verified": false
       },
       "BM": {
@@ -544,7 +550,7 @@
         "verified": false
       },
       "CI": {
-        "gloss": "C\u00f4te d'Ivoire",
+        "gloss": "Côte d'Ivoire",
         "verified": false
       },
       "CK": {
@@ -580,7 +586,7 @@
         "verified": false
       },
       "CW": {
-        "gloss": "Cura\u00e7ao",
+        "gloss": "Curaçao",
         "verified": false
       },
       "CX": {
@@ -1120,7 +1126,7 @@
         "verified": false
       },
       "RE": {
-        "gloss": "R\u00e9union",
+        "gloss": "Réunion",
         "verified": false
       },
       "RO": {
@@ -3254,7 +3260,7 @@
         "verified": false
       },
       "nb": {
-        "gloss": "Bokm\u00e5l, Norwegian; Norwegian Bokm\u00e5l",
+        "gloss": "Bokmål, Norwegian; Norwegian Bokmål",
         "verified": false
       },
       "nd": {
@@ -3294,7 +3300,7 @@
         "verified": false
       },
       "oc": {
-        "gloss": "Occitan (post 1500); Proven\u00e7al",
+        "gloss": "Occitan (post 1500); Provençal",
         "verified": false
       },
       "oj": {
@@ -3510,7 +3516,7 @@
         "verified": false
       },
       "vo": {
-        "gloss": "Volap\u00fck",
+        "gloss": "Volapük",
         "verified": false
       },
       "wa": {

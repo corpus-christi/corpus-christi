@@ -2,66 +2,66 @@
   "$vuetify": {
     "dataFooter": {
       "itemsPerPageAll": {
-        "gloss": "\u663e\u793a\u6240\u6709\u884c",
-        "verified": false
+        "gloss": "显示所有行",
+        "verified": true
       },
       "pageText": {
-        "gloss": "{2}\u4e2d\u7684{0}-{1}",
-        "verified": false
+        "gloss": "{2}中的{0}-{1}",
+        "verified": true
       }
     },
     "dataIterator": {
       "loadingText": {
-        "gloss": "\u6b63\u5728\u8f7d\u5165\u9879\u76ee...",
-        "verified": false
+        "gloss": "正在载入项目...",
+        "verified": true
       },
       "nextPage": {
-        "gloss": "\u4e0b\u4e00\u9875",
-        "verified": false
+        "gloss": "下一页",
+        "verified": true
       },
       "noResultsText": {
-        "gloss": "\u672a\u80fd\u627e\u5230\u5339\u914d\u7684\u8bb0\u5f55",
-        "verified": false
+        "gloss": "未能找到匹配的记录",
+        "verified": true
       },
       "pageText": {
-        "gloss": "{2}\u4e2d\u7684{0}-{1}",
-        "verified": false
+        "gloss": "{2}中的{0}-{1}",
+        "verified": true
       },
       "prevPage": {
-        "gloss": "\u4e0a\u4e00\u9875",
-        "verified": false
+        "gloss": "上一页",
+        "verified": true
       },
       "rowsPerPageAll": {
-        "gloss": "\u6240\u6709",
-        "verified": false
+        "gloss": "所有",
+        "verified": true
       },
       "rowsPerPageText": {
-        "gloss": "\u6bcf\u9875\u9879\u76ee\uff1a",
-        "verified": false
+        "gloss": "每页项目：",
+        "verified": true
       }
     },
     "dataTable": {
       "itemsPerPageText": {
-        "gloss": "\u6bcf\u9875\u884c\u6570\uff1a",
-        "verified": false
+        "gloss": "每页行数：",
+        "verified": true
       },
       "sortBy": {
-        "gloss": "\u6392\u5e8f\u65b9\u5f0f",
-        "verified": false
+        "gloss": "排序方式",
+        "verified": true
       }
     },
     "noDataText": {
-      "gloss": "\u65e0\u53ef\u7528\u6570\u636e",
-      "verified": false
+      "gloss": "无可用数据",
+      "verified": true
     },
     "timePicker": {
       "am": {
-        "gloss": "\u4e0a\u5348",
-        "verified": false
+        "gloss": "上午",
+        "verified": true
       },
       "pm": {
-        "gloss": "\u4e0b\u5348",
-        "verified": false
+        "gloss": "下午",
+        "verified": true
       }
     }
   },
@@ -74,4141 +74,4141 @@
   "account": {
     "messages": {
       "added-ok": {
-        "gloss": "\u5e10\u6237\u6dfb\u52a0\u6210\u529f",
-        "verified": false
+        "gloss": "帐户添加成功",
+        "verified": true
       },
       "updated-ok": {
-        "gloss": "\u5e10\u6237\u66f4\u65b0\u6210\u529f",
-        "verified": false
+        "gloss": "帐户更新成功",
+        "verified": true
       }
     }
   },
   "actions": {
     "activate-account": {
-      "gloss": "\u542f\u7528",
-      "verified": false
+      "gloss": "启用",
+      "verified": true
     },
     "add-address": {
-      "gloss": "\u65b0\u589e\u5730\u5740",
-      "verified": false
+      "gloss": "添加地址",
+      "verified": true
     },
     "add-another": {
-      "gloss": "\u52a0\u4e0a\u53e6\u4e00\u4e2a",
-      "verified": false
+      "gloss": "加上另一个",
+      "verified": true
     },
     "add-event": {
-      "gloss": "\u65b0\u589e\u6d3b\u52a8",
-      "verified": false
+      "gloss": "添加活动",
+      "verified": true
     },
     "add-group": {
-      "gloss": "\u65b0\u589e\u7fa4\u7ec4",
-      "verified": false
+      "gloss": "添加小组",
+      "verified": true
     },
     "add-manager": {
-      "gloss": "\u65b0\u589e\u7ba1\u7406\u5458",
-      "verified": false
+      "gloss": "添加经理",
+      "verified": true
     },
     "add-participant": {
-      "gloss": "\u6dfb\u52a0\u53c2\u4e0e\u8005",
-      "verified": false
+      "gloss": "添加参与者",
+      "verified": true
     },
     "add-person": {
-      "gloss": "\u52a0\u4eba",
-      "verified": false
+      "gloss": "添加人员",
+      "verified": true
     },
     "back": {
-      "gloss": "\u80cc\u90e8",
-      "verified": false
+      "gloss": "返回",
+      "verified": true
     },
     "cancel": {
-      "gloss": "\u53d6\u6d88",
-      "verified": false
+      "gloss": "取消",
+      "verified": true
     },
     "choose-image": {
-      "gloss": "\u9009\u62e9\u56fe\u7247",
-      "verified": false
+      "gloss": "选择图片",
+      "verified": true
     },
     "clear": {
-      "gloss": "\u660e\u786e",
-      "verified": false
+      "gloss": "清除",
+      "verified": true
     },
     "close": {
-      "gloss": "\u5173",
-      "verified": false
+      "gloss": "关闭",
+      "verified": true
     },
     "confirm": {
-      "gloss": "\u786e\u8ba4",
-      "verified": false
+      "gloss": "确认",
+      "verified": true
     },
     "continue": {
-      "gloss": "\u7ee7\u7eed",
-      "verified": false
+      "gloss": "继续",
+      "verified": true
     },
     "deactivate-account": {
-      "gloss": "\u505c\u7528",
-      "verified": false
+      "gloss": "停用",
+      "verified": true
     },
     "duplicate": {
-      "gloss": "\u91cd\u590d",
-      "verified": false
+      "gloss": "重复",
+      "verified": true
     },
     "edit": {
-      "gloss": "\u7f16\u8f91",
-      "verified": false
+      "gloss": "编辑",
+      "verified": true
     },
     "header": {
-      "gloss": "\u52a8\u4f5c",
-      "verified": false
+      "gloss": "动作",
+      "verified": true
     },
     "login": {
-      "gloss": "\u767b\u5f55",
-      "verified": false
+      "gloss": "登录",
+      "verified": true
     },
     "logout": {
-      "gloss": "\u767b\u51fa",
-      "verified": false
+      "gloss": "登出",
+      "verified": true
     },
     "next": {
-      "gloss": "\u4e0b\u4e00\u4e2a",
-      "verified": false
+      "gloss": "下一个",
+      "verified": true
     },
     "open-map": {
-      "gloss": "\u6253\u5f00\u5730\u56fe",
-      "verified": false
+      "gloss": "打开地图",
+      "verified": true
     },
     "previous": {
-      "gloss": "\u4ee5\u524d",
-      "verified": false
+      "gloss": "上一个",
+      "verified": true
     },
     "save": {
-      "gloss": "\u4fdd\u5b58",
-      "verified": false
+      "gloss": "保存",
+      "verified": true
     },
     "search": {
-      "gloss": "\u641c\u7d22",
-      "verified": false
+      "gloss": "搜索",
+      "verified": true
     },
     "search-addresses": {
-      "gloss": "\u641c\u7d22\u5730\u5740",
-      "verified": false
+      "gloss": "搜索地址",
+      "verified": true
     },
     "search-group-types": {
-      "gloss": "\u641c\u7d22\u7ec4\u7c7b\u578b",
-      "verified": false
+      "gloss": "搜索小组类型",
+      "verified": true
     },
     "search-manager-types": {
-      "gloss": "\u641c\u7d22\u7ba1\u7406\u5668\u7c7b\u578b",
-      "verified": false
+      "gloss": "搜索经理类型",
+      "verified": true
     },
     "search-people": {
-      "gloss": "\u641c\u7d22\u4eba",
-      "verified": false
+      "gloss": "搜索人员",
+      "verified": true
     },
     "signup": {
-      "gloss": "\u6ce8\u518c",
-      "verified": false
+      "gloss": "注册",
+      "verified": true
     },
     "tooltips": {
       "activate": {
-        "gloss": "\u542f\u7528",
-        "verified": false
+        "gloss": "启用",
+        "verified": true
       },
       "archive": {
-        "gloss": "\u5c01\u5b58",
-        "verified": false
+        "gloss": "归档",
+        "verified": true
       },
       "email": {
-        "gloss": "\u53d1\u7535\u5b50\u90ae\u4ef6",
-        "verified": false
+        "gloss": "发电子邮件",
+        "verified": true
       },
       "remove": {
-        "gloss": "\u53bb\u6389",
-        "verified": false
+        "gloss": "移除",
+        "verified": true
       },
       "settings": {
-        "gloss": "\u8bbe\u5b9a\u503c",
-        "verified": false
+        "gloss": "设置",
+        "verified": true
       },
       "take-attendance": {
-        "gloss": "\u53c2\u52a0",
-        "verified": false
+        "gloss": "签到",
+        "verified": true
       },
       "unarchive": {
-        "gloss": "\u53d6\u6d88\u5b58\u6863",
-        "verified": false
+        "gloss": "取消归档",
+        "verified": true
       }
     },
     "view-active": {
-      "gloss": "\u67e5\u770b\u6d3b\u52a8",
-      "verified": false
+      "gloss": "查看活动项目",
+      "verified": true
     },
     "view-all": {
-      "gloss": "\u67e5\u770b\u5168\u90e8",
-      "verified": false
+      "gloss": "查看全部项目",
+      "verified": true
     },
     "view-archived": {
-      "gloss": "\u67e5\u770b\u5df2\u5b58\u6863",
-      "verified": false
+      "gloss": "查看已归档项目",
+      "verified": true
     },
     "view-inactive": {
-      "gloss": "\u67e5\u770b\u65e0\u6548",
-      "verified": false
+      "gloss": "查看非活动项目",
+      "verified": true
     },
     "view-past": {
-      "gloss": "\u67e5\u770b\u8fc7\u53bb",
-      "verified": false
+      "gloss": "查看过去项目",
+      "verified": true
     }
   },
   "assets": {
     "asset-added": {
-      "gloss": "\u8d44\u4ea7\u589e\u52a0",
-      "verified": false
+      "gloss": "资产已添加",
+      "verified": true
     },
     "asset-archived": {
-      "gloss": "\u8d44\u4ea7\u5df2\u5b58\u6863",
-      "verified": false
+      "gloss": "资产已归档",
+      "verified": true
     },
     "asset-edited": {
-      "gloss": "\u8d44\u4ea7\u5df2\u7f16\u8f91",
-      "verified": false
+      "gloss": "资产已编辑",
+      "verified": true
     },
     "asset-on-event": {
-      "gloss": "\u8be5\u8d44\u4ea7\u5df2\u5206\u914d\u7ed9\u8be5\u4e8b\u4ef6\u3002",
-      "verified": false
+      "gloss": "该资产已分配给该活动。",
+      "verified": true
     },
     "asset-removed": {
-      "gloss": "\u8d44\u4ea7\u5df2\u5220\u9664",
-      "verified": false
+      "gloss": "资产已删除",
+      "verified": true
     },
     "asset-unarchived": {
-      "gloss": "\u8d44\u4ea7\u672a\u5b58\u6863",
-      "verified": false
+      "gloss": "资产已取消归档",
+      "verified": true
     },
     "confirm-archive": {
-      "gloss": "\u60a8\u786e\u5b9a\u8981\u5b58\u6863\u6b64\u8d44\u4ea7\u5417\uff1f",
-      "verified": false
+      "gloss": "您确定要归档此资产吗？",
+      "verified": true
     },
     "confirm-remove-from-event": {
-      "gloss": "\u60a8\u786e\u5b9a\u8981\u4ece\u6b64\u4e8b\u4ef6\u4e2d\u5220\u9664\u8be5\u8d44\u4ea7\u5417\uff1f",
-      "verified": false
+      "gloss": "您确定要从此活动中删除该资产吗？",
+      "verified": true
     },
     "create-asset": {
-      "gloss": "\u521b\u5efa\u8d44\u4ea7",
-      "verified": false
+      "gloss": "创建资产",
+      "verified": true
     },
     "description": {
-      "gloss": "\u63cf\u8ff0",
-      "verified": false
+      "gloss": "描述",
+      "verified": true
     },
     "edit-asset": {
-      "gloss": "\u7f16\u8f91\u8d44\u4ea7",
-      "verified": false
+      "gloss": "编辑资产",
+      "verified": true
     },
     "error-adding-asset": {
-      "gloss": "\u6dfb\u52a0\u8d44\u4ea7\u65f6\u51fa\u9519",
-      "verified": false
+      "gloss": "添加资产时出错",
+      "verified": true
     },
     "error-archiving-asset": {
-      "gloss": "\u5b58\u6863\u8d44\u4ea7\u65f6\u51fa\u9519",
-      "verified": false
+      "gloss": "归档资产时出错",
+      "verified": true
     },
     "error-asset-assigned": {
-      "gloss": "\u8be5\u8d44\u4ea7\u5df2\u5206\u914d\u7ed9\u51b2\u7a81\u4e8b\u4ef6\u3002",
-      "verified": false
+      "gloss": "该资产已分配给冲突活动。",
+      "verified": true
     },
     "error-editing-asset": {
-      "gloss": "\u7f16\u8f91\u8d44\u4ea7\u65f6\u51fa\u9519",
-      "verified": false
+      "gloss": "编辑资产时出错",
+      "verified": true
     },
     "error-removing-asset": {
-      "gloss": "\u79fb\u9664\u8d44\u4ea7\u65f6\u51fa\u9519",
-      "verified": false
+      "gloss": "移除资产时出错",
+      "verified": true
     },
     "error-unarchiving-asset": {
-      "gloss": "\u53d6\u6d88\u5f52\u6863\u8d44\u4ea7\u65f6\u51fa\u9519",
-      "verified": false
+      "gloss": "取消归档资产时出错",
+      "verified": true
     },
     "location": {
-      "gloss": "\u4f4d\u7f6e",
-      "verified": false
+      "gloss": "位置",
+      "verified": true
     },
     "new": {
-      "gloss": "\u6dfb\u52a0\u8d44\u4ea7",
-      "verified": false
+      "gloss": "添加资产",
+      "verified": true
     },
     "none-assigned": {
-      "gloss": "\u6ca1\u6709\u5206\u914d\u8d44\u4ea7\u3002",
-      "verified": false
+      "gloss": "没有分配资产。",
+      "verified": true
     },
     "title": {
-      "gloss": "\u8d44\u4ea7",
-      "verified": false
+      "gloss": "资产",
+      "verified": true
     }
   },
   "attribute": {
     "check": {
-      "gloss": "\u590d\u9009\u6846",
-      "verified": false
+      "gloss": "复选框",
+      "verified": true
     },
     "date": {
-      "gloss": "\u65e5\u671f",
-      "verified": false
+      "gloss": "日期",
+      "verified": true
     },
     "dropdown": {
-      "gloss": "\u843d\u4e0b",
-      "verified": false
+      "gloss": "下拉列表",
+      "verified": true
     },
     "float": {
-      "gloss": "\u6d6e\u70b9",
-      "verified": false
+      "gloss": "浮点数",
+      "verified": true
     },
     "integer": {
-      "gloss": "\u6574\u6570",
-      "verified": false
+      "gloss": "整数",
+      "verified": true
     },
     "radio": {
-      "gloss": "\u5355\u9009\u6309\u94ae",
-      "verified": false
+      "gloss": "单选按钮",
+      "verified": true
     },
     "string": {
-      "gloss": "\u4e32",
-      "verified": false
+      "gloss": "字符串",
+      "verified": true
     }
   },
   "country": {
     "name": {
       "AD": {
-        "gloss": "\u5b89\u9053\u5c14",
-        "verified": false
+        "gloss": "安道尔",
+        "verified": true
       },
       "AE": {
-        "gloss": "\u963f\u62c9\u4f2f\u8054\u5408\u914b\u957f\u56fd",
-        "verified": false
+        "gloss": "阿拉伯联合酋长国",
+        "verified": true
       },
       "AF": {
-        "gloss": "\u963f\u5bcc\u6c57",
-        "verified": false
+        "gloss": "阿富汗",
+        "verified": true
       },
       "AG": {
-        "gloss": "\u5b89\u63d0\u74dc\u548c\u5df4\u5e03\u8fbe",
-        "verified": false
+        "gloss": "安提瓜和巴布达",
+        "verified": true
       },
       "AI": {
-        "gloss": "\u5b89\u572d\u62c9\u5c9b",
-        "verified": false
+        "gloss": "安圭拉岛",
+        "verified": true
       },
       "AL": {
-        "gloss": "\u963f\u5c14\u5df4\u5c3c\u4e9a",
-        "verified": false
+        "gloss": "阿尔巴尼亚",
+        "verified": true
       },
       "AM": {
-        "gloss": "\u4e9a\u7f8e\u5c3c\u4e9a",
-        "verified": false
+        "gloss": "亚美尼亚",
+        "verified": true
       },
       "AO": {
-        "gloss": "\u5b89\u54e5\u62c9",
-        "verified": false
+        "gloss": "安哥拉",
+        "verified": true
       },
       "AQ": {
-        "gloss": "\u5357\u6781\u6d32",
-        "verified": false
+        "gloss": "南极洲",
+        "verified": true
       },
       "AR": {
-        "gloss": "\u963f\u6839\u5ef7",
-        "verified": false
+        "gloss": "阿根廷",
+        "verified": true
       },
       "AS": {
-        "gloss": "\u7f8e\u5c5e\u8428\u6469\u4e9a",
-        "verified": false
+        "gloss": "美属萨摩亚",
+        "verified": true
       },
       "AT": {
-        "gloss": "\u5965\u5730\u5229",
-        "verified": false
+        "gloss": "奥地利",
+        "verified": true
       },
       "AU": {
-        "gloss": "\u6fb3\u5927\u5229\u4e9a",
-        "verified": false
+        "gloss": "澳大利亚",
+        "verified": true
       },
       "AW": {
-        "gloss": "\u963f\u9c81\u5df4\u5c9b",
-        "verified": false
+        "gloss": "阿鲁巴岛",
+        "verified": true
       },
       "AX": {
-        "gloss": "\u5965\u5170\u7fa4\u5c9b",
-        "verified": false
+        "gloss": "奥兰群岛",
+        "verified": true
       },
       "AZ": {
-        "gloss": "\u963f\u585e\u62dc\u7586",
-        "verified": false
+        "gloss": "阿塞拜疆",
+        "verified": true
       },
       "BA": {
-        "gloss": "\u6ce2\u65af\u5c3c\u4e9a\u548c\u9ed1\u585e\u54e5\u7ef4\u90a3\uff08\u7b80\u79f0\uff1a\u6ce2\u9ed1",
-        "verified": false
+        "gloss": "波斯尼亚和黑塞哥维那（简称：波黑",
+        "verified": true
       },
       "BB": {
-        "gloss": "\u5df4\u5df4\u591a\u65af",
-        "verified": false
+        "gloss": "巴巴多斯",
+        "verified": true
       },
       "BD": {
-        "gloss": "\u5b5f\u52a0\u62c9\u56fd",
-        "verified": false
+        "gloss": "孟加拉国",
+        "verified": true
       },
       "BE": {
-        "gloss": "\u6bd4\u5229\u65f6",
-        "verified": false
+        "gloss": "比利时",
+        "verified": true
       },
       "BF": {
-        "gloss": "\u5e03\u57fa\u7eb3\u6cd5\u7d22",
-        "verified": false
+        "gloss": "布基纳法索",
+        "verified": true
       },
       "BG": {
-        "gloss": "\u4fdd\u52a0\u5229\u4e9a",
-        "verified": false
+        "gloss": "保加利亚",
+        "verified": true
       },
       "BH": {
-        "gloss": "\u5df4\u6797",
-        "verified": false
+        "gloss": "巴林",
+        "verified": true
       },
       "BI": {
-        "gloss": "\u5e03\u9686\u8fea",
-        "verified": false
+        "gloss": "布隆迪",
+        "verified": true
       },
       "BJ": {
-        "gloss": "\u8d1d\u5b81",
-        "verified": false
+        "gloss": "贝宁",
+        "verified": true
       },
       "BL": {
-        "gloss": "\u5723\u5df4\u6258\u6d1b\u7f2a\u5c9b",
-        "verified": false
+        "gloss": "圣巴托洛缪岛",
+        "verified": true
       },
       "BM": {
-        "gloss": "\u767e\u6155\u5927",
-        "verified": false
+        "gloss": "百慕大",
+        "verified": true
       },
       "BN": {
-        "gloss": "\u6587\u83b1\u8fbe\u9c81\u8428\u5170\u56fd",
-        "verified": false
+        "gloss": "文莱达鲁萨兰国",
+        "verified": true
       },
       "BO": {
-        "gloss": "\u73bb\u5229\u7ef4\u4e9a\u591a\u6c11\u65cf\u56fd",
-        "verified": false
+        "gloss": "玻利维亚多民族国",
+        "verified": true
       },
       "BQ": {
-        "gloss": "\u535a\u5185\u5c14\uff0c\u5723\u5c24\u65af\u7279\u6b47\u65af\u548c\u8428\u5df4",
-        "verified": false
+        "gloss": "博内尔，圣尤斯特歇斯和萨巴",
+        "verified": true
       },
       "BR": {
-        "gloss": "\u5df4\u897f",
-        "verified": false
+        "gloss": "巴西",
+        "verified": true
       },
       "BS": {
-        "gloss": "\u5df4\u54c8\u9a6c",
-        "verified": false
+        "gloss": "巴哈马",
+        "verified": true
       },
       "BT": {
-        "gloss": "\u4e0d\u4e39",
-        "verified": false
+        "gloss": "不丹",
+        "verified": true
       },
       "BV": {
-        "gloss": "\u5e03\u7ef4\u5c9b",
-        "verified": false
+        "gloss": "布维岛",
+        "verified": true
       },
       "BW": {
-        "gloss": "\u535a\u8328\u74e6\u7eb3",
-        "verified": false
+        "gloss": "博茨瓦纳",
+        "verified": true
       },
       "BY": {
-        "gloss": "\u767d\u4fc4\u7f57\u65af",
-        "verified": false
+        "gloss": "白俄罗斯",
+        "verified": true
       },
       "BZ": {
-        "gloss": "\u4f2f\u5229\u5179",
-        "verified": false
+        "gloss": "伯利兹",
+        "verified": true
       },
       "CA": {
-        "gloss": "\u52a0\u62ff\u5927",
-        "verified": false
+        "gloss": "加拿大",
+        "verified": true
       },
       "CC": {
-        "gloss": "\u79d1\u79d1\u65af\uff08\u57fa\u6797\uff09\u7fa4\u5c9b",
-        "verified": false
+        "gloss": "科科斯（基林）群岛",
+        "verified": true
       },
       "CD": {
-        "gloss": "\u521a\u679c\u6c11\u4e3b\u5171\u548c\u56fd",
-        "verified": false
+        "gloss": "刚果民主共和国",
+        "verified": true
       },
       "CF": {
-        "gloss": "\u4e2d\u975e\u5171\u548c\u56fd",
-        "verified": false
+        "gloss": "中非共和国",
+        "verified": true
       },
       "CG": {
-        "gloss": "\u521a\u679c",
-        "verified": false
+        "gloss": "刚果",
+        "verified": true
       },
       "CH": {
-        "gloss": "\u745e\u58eb",
-        "verified": false
+        "gloss": "瑞士",
+        "verified": true
       },
       "CI": {
-        "gloss": "\u79d1\u7279\u8fea\u74e6",
-        "verified": false
+        "gloss": "科特迪瓦",
+        "verified": true
       },
       "CK": {
-        "gloss": "\u5e93\u514b\u7fa4\u5c9b",
-        "verified": false
+        "gloss": "库克群岛",
+        "verified": true
       },
       "CL": {
-        "gloss": "\u667a\u5229",
-        "verified": false
+        "gloss": "智利",
+        "verified": true
       },
       "CM": {
-        "gloss": "\u5580\u9ea6\u9686",
-        "verified": false
+        "gloss": "喀麦隆",
+        "verified": true
       },
       "CN": {
-        "gloss": "\u4e2d\u56fd",
-        "verified": false
+        "gloss": "中国",
+        "verified": true
       },
       "CO": {
-        "gloss": "\u54e5\u4f26\u6bd4\u4e9a",
-        "verified": false
+        "gloss": "哥伦比亚",
+        "verified": true
       },
       "CR": {
-        "gloss": "\u54e5\u65af\u8fbe\u9ece\u52a0",
-        "verified": false
+        "gloss": "哥斯达黎加",
+        "verified": true
       },
       "CU": {
-        "gloss": "\u53e4\u5df4",
-        "verified": false
+        "gloss": "古巴",
+        "verified": true
       },
       "CV": {
-        "gloss": "\u4f5b\u5f97\u89d2",
-        "verified": false
+        "gloss": "佛得角",
+        "verified": true
       },
       "CW": {
-        "gloss": "\u5e93\u62c9\u7d22",
-        "verified": false
+        "gloss": "库拉索",
+        "verified": true
       },
       "CX": {
-        "gloss": "\u5723\u8bde\u5c9b",
-        "verified": false
+        "gloss": "圣诞岛",
+        "verified": true
       },
       "CY": {
-        "gloss": "\u585e\u6d66\u8def\u65af",
-        "verified": false
+        "gloss": "塞浦路斯",
+        "verified": true
       },
       "CZ": {
-        "gloss": "\u6377\u514b\u5171\u548c\u56fd",
-        "verified": false
+        "gloss": "捷克共和国",
+        "verified": true
       },
       "DE": {
-        "gloss": "\u5fb7\u56fd",
-        "verified": false
+        "gloss": "德国",
+        "verified": true
       },
       "DJ": {
-        "gloss": "\u5409\u5e03\u5730",
-        "verified": false
+        "gloss": "吉布地",
+        "verified": true
       },
       "DK": {
-        "gloss": "\u4e39\u9ea6",
-        "verified": false
+        "gloss": "丹麦",
+        "verified": true
       },
       "DM": {
-        "gloss": "\u591a\u7c73\u5c3c\u52a0",
-        "verified": false
+        "gloss": "多米尼加",
+        "verified": true
       },
       "DO": {
-        "gloss": "\u591a\u660e\u5c3c\u52a0\u5171\u548c\u56fd",
-        "verified": false
+        "gloss": "多明尼加共和国",
+        "verified": true
       },
       "DZ": {
-        "gloss": "\u963f\u5c14\u53ca\u5229\u4e9a",
-        "verified": false
+        "gloss": "阿尔及利亚",
+        "verified": true
       },
       "EC": {
-        "gloss": "\u5384\u74dc\u591a\u5c14",
-        "verified": false
+        "gloss": "厄瓜多尔",
+        "verified": true
       },
       "EE": {
-        "gloss": "\u7231\u6c99\u5c3c\u4e9a",
-        "verified": false
+        "gloss": "爱沙尼亚",
+        "verified": true
       },
       "EG": {
-        "gloss": "\u57c3\u53ca",
-        "verified": false
+        "gloss": "埃及",
+        "verified": true
       },
       "EH": {
-        "gloss": "\u897f\u6492\u54c8\u62c9",
-        "verified": false
+        "gloss": "西撒哈拉",
+        "verified": true
       },
       "ER": {
-        "gloss": "\u5384\u7acb\u7279\u91cc\u4e9a",
-        "verified": false
+        "gloss": "厄立特里亚",
+        "verified": true
       },
       "ES": {
-        "gloss": "\u897f\u73ed\u7259",
-        "verified": false
+        "gloss": "西班牙",
+        "verified": true
       },
       "ET": {
-        "gloss": "\u57c3\u585e\u4fc4\u6bd4\u4e9a",
-        "verified": false
+        "gloss": "埃塞俄比亚",
+        "verified": true
       },
       "FI": {
-        "gloss": "\u82ac\u5170",
-        "verified": false
+        "gloss": "芬兰",
+        "verified": true
       },
       "FJ": {
-        "gloss": "\u6590\u6d4e",
-        "verified": false
+        "gloss": "斐济",
+        "verified": true
       },
       "FK": {
-        "gloss": "\u798f\u514b\u5170\u7fa4\u5c9b\uff08\u9a6c\u5c14\u7ef4\u7eb3\u65af\uff09",
-        "verified": false
+        "gloss": "福克兰群岛（马尔维纳斯）",
+        "verified": true
       },
       "FM": {
-        "gloss": "\u5bc6\u514b\u7f57\u5c3c\u897f\u4e9a\u8054\u90a6",
-        "verified": false
+        "gloss": "密克罗尼西亚联邦",
+        "verified": true
       },
       "FO": {
-        "gloss": "\u6cd5\u7f57\u7fa4\u5c9b",
-        "verified": false
+        "gloss": "法罗群岛",
+        "verified": true
       },
       "FR": {
-        "gloss": "\u6cd5\u56fd",
-        "verified": false
+        "gloss": "法国",
+        "verified": true
       },
       "GA": {
-        "gloss": "\u52a0\u84ec",
-        "verified": false
+        "gloss": "加蓬",
+        "verified": true
       },
       "GB": {
-        "gloss": "\u82f1\u56fd",
-        "verified": false
+        "gloss": "英国",
+        "verified": true
       },
       "GD": {
-        "gloss": "\u683c\u6797\u7eb3\u8fbe",
-        "verified": false
+        "gloss": "格林纳达",
+        "verified": true
       },
       "GE": {
-        "gloss": "\u4f50\u6cbb\u4e9a\u5dde",
-        "verified": false
+        "gloss": "佐治亚州",
+        "verified": true
       },
       "GF": {
-        "gloss": "\u6cd5\u5c5e\u572d\u4e9a\u90a3",
-        "verified": false
+        "gloss": "法属圭亚那",
+        "verified": true
       },
       "GG": {
-        "gloss": "\u6839\u897f\u5c9b",
-        "verified": false
+        "gloss": "根西岛",
+        "verified": true
       },
       "GH": {
-        "gloss": "\u52a0\u7eb3",
-        "verified": false
+        "gloss": "加纳",
+        "verified": true
       },
       "GI": {
-        "gloss": "\u76f4\u5e03\u7f57\u9640",
-        "verified": false
+        "gloss": "直布罗陀",
+        "verified": true
       },
       "GL": {
-        "gloss": "\u683c\u9675\u5170",
-        "verified": false
+        "gloss": "格陵兰",
+        "verified": true
       },
       "GM": {
-        "gloss": "\u5188\u6bd4\u4e9a",
-        "verified": false
+        "gloss": "冈比亚",
+        "verified": true
       },
       "GN": {
-        "gloss": "\u51e0\u5185\u4e9a",
-        "verified": false
+        "gloss": "几内亚",
+        "verified": true
       },
       "GP": {
-        "gloss": "\u74dc\u5fb7\u7f57\u666e\u5c9b",
-        "verified": false
+        "gloss": "瓜德罗普岛",
+        "verified": true
       },
       "GQ": {
-        "gloss": "\u8d64\u9053\u51e0\u5185\u4e9a",
-        "verified": false
+        "gloss": "赤道几内亚",
+        "verified": true
       },
       "GR": {
-        "gloss": "\u5e0c\u814a",
-        "verified": false
+        "gloss": "希腊",
+        "verified": true
       },
       "GS": {
-        "gloss": "\u5357\u4e54\u6cbb\u4e9a\u5c9b\u548c\u5357\u6851\u5a01\u5947\u7fa4\u5c9b",
-        "verified": false
+        "gloss": "南乔治亚岛和南桑威奇群岛",
+        "verified": true
       },
       "GT": {
-        "gloss": "\u5371\u5730\u9a6c\u62c9",
-        "verified": false
+        "gloss": "危地马拉",
+        "verified": true
       },
       "GU": {
-        "gloss": "\u5173\u5c9b",
-        "verified": false
+        "gloss": "关岛",
+        "verified": true
       },
       "GW": {
-        "gloss": "\u51e0\u5185\u4e9a\u6bd4\u7ecd",
-        "verified": false
+        "gloss": "几内亚比绍",
+        "verified": true
       },
       "GY": {
-        "gloss": "\u572d\u4e9a\u90a3",
-        "verified": false
+        "gloss": "圭亚那",
+        "verified": true
       },
       "HK": {
-        "gloss": "\u9999\u6e2f",
-        "verified": false
+        "gloss": "香港",
+        "verified": true
       },
       "HM": {
-        "gloss": "\u5e0c\u5c14\u5fb7\u5c9b\u548c\u9ea6\u5f53\u52b3\u7fa4\u5c9b",
-        "verified": false
+        "gloss": "希尔德岛和麦当劳群岛",
+        "verified": true
       },
       "HN": {
-        "gloss": "\u6d2a\u90fd\u62c9\u65af",
-        "verified": false
+        "gloss": "洪都拉斯",
+        "verified": true
       },
       "HR": {
-        "gloss": "\u514b\u7f57\u5730\u4e9a",
-        "verified": false
+        "gloss": "克罗地亚",
+        "verified": true
       },
       "HT": {
-        "gloss": "\u6d77\u5730",
-        "verified": false
+        "gloss": "海地",
+        "verified": true
       },
       "HU": {
-        "gloss": "\u5308\u7259\u5229",
-        "verified": false
+        "gloss": "匈牙利",
+        "verified": true
       },
       "ID": {
-        "gloss": "\u5370\u5ea6\u5c3c\u897f\u4e9a",
-        "verified": false
+        "gloss": "印度尼西亚",
+        "verified": true
       },
       "IE": {
-        "gloss": "\u7231\u5c14\u5170",
-        "verified": false
+        "gloss": "爱尔兰",
+        "verified": true
       },
       "IL": {
-        "gloss": "\u4ee5\u8272\u5217",
-        "verified": false
+        "gloss": "以色列",
+        "verified": true
       },
       "IM": {
-        "gloss": "\u9a6c\u6069\u5c9b",
-        "verified": false
+        "gloss": "马恩岛",
+        "verified": true
       },
       "IN": {
-        "gloss": "\u5370\u5ea6",
-        "verified": false
+        "gloss": "印度",
+        "verified": true
       },
       "IO": {
-        "gloss": "\u82f1\u5c5e\u5370\u5ea6\u6d0b\u9886\u5730",
-        "verified": false
+        "gloss": "英属印度洋领地",
+        "verified": true
       },
       "IQ": {
-        "gloss": "\u4f0a\u62c9\u514b",
-        "verified": false
+        "gloss": "伊拉克",
+        "verified": true
       },
       "IR": {
-        "gloss": "\u4f0a\u6717\u4f0a\u65af\u5170\u5171\u548c\u56fd",
-        "verified": false
+        "gloss": "伊朗伊斯兰共和国",
+        "verified": true
       },
       "IS": {
-        "gloss": "\u51b0\u5c9b",
-        "verified": false
+        "gloss": "冰岛",
+        "verified": true
       },
       "IT": {
-        "gloss": "\u610f\u5927\u5229",
-        "verified": false
+        "gloss": "意大利",
+        "verified": true
       },
       "JE": {
-        "gloss": "\u6cfd\u897f\u5c9b",
-        "verified": false
+        "gloss": "泽西岛",
+        "verified": true
       },
       "JM": {
-        "gloss": "\u7259\u4e70\u52a0",
-        "verified": false
+        "gloss": "牙买加",
+        "verified": true
       },
       "JO": {
-        "gloss": "\u7ea6\u65e6",
-        "verified": false
+        "gloss": "约旦",
+        "verified": true
       },
       "JP": {
-        "gloss": "\u65e5\u672c",
-        "verified": false
+        "gloss": "日本",
+        "verified": true
       },
       "KE": {
-        "gloss": "\u80af\u5c3c\u4e9a",
-        "verified": false
+        "gloss": "肯尼亚",
+        "verified": true
       },
       "KG": {
-        "gloss": "\u5409\u5c14\u5409\u65af\u65af\u5766",
-        "verified": false
+        "gloss": "吉尔吉斯斯坦",
+        "verified": true
       },
       "KH": {
-        "gloss": "\u67ec\u57d4\u5be8",
-        "verified": false
+        "gloss": "柬埔寨",
+        "verified": true
       },
       "KI": {
-        "gloss": "\u57fa\u91cc\u5df4\u65af",
-        "verified": false
+        "gloss": "基里巴斯",
+        "verified": true
       },
       "KM": {
-        "gloss": "\u79d1\u6469\u7f57",
-        "verified": false
+        "gloss": "科摩罗",
+        "verified": true
       },
       "KN": {
-        "gloss": "\u5723\u57fa\u8328\u548c\u5c3c\u7ef4\u65af",
-        "verified": false
+        "gloss": "圣基茨和尼维斯",
+        "verified": true
       },
       "KP": {
-        "gloss": "\u97e9\u56fd\uff0c\u671d\u9c9c\u6c11\u4e3b\u4e3b\u4e49\u4eba\u6c11\u5171\u548c\u56fd",
-        "verified": false
+        "gloss": "韩国，朝鲜民主主义人民共和国",
+        "verified": true
       },
       "KR": {
-        "gloss": "\u97e9\u56fd",
-        "verified": false
+        "gloss": "韩国",
+        "verified": true
       },
       "KW": {
-        "gloss": "\u79d1\u5a01\u7279",
-        "verified": false
+        "gloss": "科威特",
+        "verified": true
       },
       "KY": {
-        "gloss": "\u5f00\u66fc\u7fa4\u5c9b",
-        "verified": false
+        "gloss": "开曼群岛",
+        "verified": true
       },
       "KZ": {
-        "gloss": "\u54c8\u8428\u514b\u65af\u5766",
-        "verified": false
+        "gloss": "哈萨克斯坦",
+        "verified": true
       },
       "LA": {
-        "gloss": "\u8001\u631d\u4eba\u6c11\u6c11\u4e3b\u5171\u548c\u56fd",
-        "verified": false
+        "gloss": "老挝人民民主共和国",
+        "verified": true
       },
       "LB": {
-        "gloss": "\u9ece\u5df4\u5ae9",
-        "verified": false
+        "gloss": "黎巴嫩",
+        "verified": true
       },
       "LC": {
-        "gloss": "\u5723\u5362\u897f\u4e9a",
-        "verified": false
+        "gloss": "圣卢西亚",
+        "verified": true
       },
       "LI": {
-        "gloss": "\u5217\u652f\u6566\u58eb\u767b",
-        "verified": false
+        "gloss": "列支敦士登",
+        "verified": true
       },
       "LK": {
-        "gloss": "\u65af\u91cc\u5170\u5361",
-        "verified": false
+        "gloss": "斯里兰卡",
+        "verified": true
       },
       "LR": {
-        "gloss": "\u5229\u6bd4\u91cc\u4e9a",
-        "verified": false
+        "gloss": "利比里亚",
+        "verified": true
       },
       "LS": {
-        "gloss": "\u83b1\u7d22\u6258",
-        "verified": false
+        "gloss": "莱索托",
+        "verified": true
       },
       "LT": {
-        "gloss": "\u7acb\u9676\u5b9b",
-        "verified": false
+        "gloss": "立陶宛",
+        "verified": true
       },
       "LU": {
-        "gloss": "\u5362\u68ee\u5821",
-        "verified": false
+        "gloss": "卢森堡",
+        "verified": true
       },
       "LV": {
-        "gloss": "\u62c9\u8131\u7ef4\u4e9a",
-        "verified": false
+        "gloss": "拉脱维亚",
+        "verified": true
       },
       "LY": {
-        "gloss": "\u5229\u6bd4\u4e9a",
-        "verified": false
+        "gloss": "利比亚",
+        "verified": true
       },
       "MA": {
-        "gloss": "\u6469\u6d1b\u54e5",
-        "verified": false
+        "gloss": "摩洛哥",
+        "verified": true
       },
       "MC": {
-        "gloss": "\u6469\u7eb3\u54e5",
-        "verified": false
+        "gloss": "摩纳哥",
+        "verified": true
       },
       "MD": {
-        "gloss": "\u6469\u5c14\u591a\u74e6\u5171\u548c\u56fd",
-        "verified": false
+        "gloss": "摩尔多瓦共和国",
+        "verified": true
       },
       "ME": {
-        "gloss": "\u9ed1\u5c71\u5171\u548c\u56fd",
-        "verified": false
+        "gloss": "黑山共和国",
+        "verified": true
       },
       "MF": {
-        "gloss": "\u5723\u9a6c\u4e01\uff08\u6cd5\u8bed\u90e8\u5206\uff09",
-        "verified": false
+        "gloss": "圣马丁（法语部分）",
+        "verified": true
       },
       "MG": {
-        "gloss": "\u9a6c\u8fbe\u52a0\u65af\u52a0",
-        "verified": false
+        "gloss": "马达加斯加",
+        "verified": true
       },
       "MH": {
-        "gloss": "\u9a6c\u7ecd\u5c14\u7fa4\u5c9b",
-        "verified": false
+        "gloss": "马绍尔群岛",
+        "verified": true
       },
       "MK": {
-        "gloss": "\u524d\u5357\u65af\u62c9\u592b\u5171\u548c\u56fd\u9a6c\u5176\u987f",
-        "verified": false
+        "gloss": "前南斯拉夫共和国马其顿",
+        "verified": true
       },
       "ML": {
-        "gloss": "\u9a6c\u91cc",
-        "verified": false
+        "gloss": "马里",
+        "verified": true
       },
       "MM": {
-        "gloss": "\u7f05\u7538",
-        "verified": false
+        "gloss": "缅甸",
+        "verified": true
       },
       "MN": {
-        "gloss": "\u8499\u53e4",
-        "verified": false
+        "gloss": "蒙古",
+        "verified": true
       },
       "MO": {
-        "gloss": "\u6fb3\u95e8",
-        "verified": false
+        "gloss": "澳门",
+        "verified": true
       },
       "MP": {
-        "gloss": "\u5317\u9a6c\u91cc\u4e9a\u7eb3\u7fa4\u5c9b",
-        "verified": false
+        "gloss": "北马里亚纳群岛",
+        "verified": true
       },
       "MQ": {
-        "gloss": "\u9a6c\u63d0\u5c3c\u514b\u5c9b",
-        "verified": false
+        "gloss": "马提尼克岛",
+        "verified": true
       },
       "MR": {
-        "gloss": "\u6bdb\u91cc\u5854\u5c3c\u4e9a",
-        "verified": false
+        "gloss": "毛里塔尼亚",
+        "verified": true
       },
       "MS": {
-        "gloss": "\u8499\u7279\u585e\u62c9\u7279",
-        "verified": false
+        "gloss": "蒙特塞拉特",
+        "verified": true
       },
       "MT": {
-        "gloss": "\u9a6c\u8033\u4ed6",
-        "verified": false
+        "gloss": "马耳他",
+        "verified": true
       },
       "MU": {
-        "gloss": "\u6bdb\u91cc\u6c42\u65af",
-        "verified": false
+        "gloss": "毛里求斯",
+        "verified": true
       },
       "MV": {
-        "gloss": "\u9a6c\u5c14\u4ee3\u592b",
-        "verified": false
+        "gloss": "马尔代夫",
+        "verified": true
       },
       "MW": {
-        "gloss": "\u9a6c\u62c9\u7ef4",
-        "verified": false
+        "gloss": "马拉维",
+        "verified": true
       },
       "MX": {
-        "gloss": "\u58a8\u897f\u54e5",
-        "verified": false
+        "gloss": "墨西哥",
+        "verified": true
       },
       "MY": {
-        "gloss": "\u9a6c\u6765\u897f\u4e9a",
-        "verified": false
+        "gloss": "马来西亚",
+        "verified": true
       },
       "MZ": {
-        "gloss": "\u83ab\u6851\u6bd4\u514b",
-        "verified": false
+        "gloss": "莫桑比克",
+        "verified": true
       },
       "NA": {
-        "gloss": "\u7eb3\u7c73\u6bd4\u4e9a",
-        "verified": false
+        "gloss": "纳米比亚",
+        "verified": true
       },
       "NC": {
-        "gloss": "\u65b0\u5580\u91cc\u591a\u5c3c\u4e9a",
-        "verified": false
+        "gloss": "新喀里多尼亚",
+        "verified": true
       },
       "NE": {
-        "gloss": "\u5c3c\u65e5\u5c14",
-        "verified": false
+        "gloss": "尼日尔",
+        "verified": true
       },
       "NF": {
-        "gloss": "\u8bfa\u798f\u514b\u5c9b",
-        "verified": false
+        "gloss": "诺福克岛",
+        "verified": true
       },
       "NG": {
-        "gloss": "\u5948\u53ca\u5229\u4e9a",
-        "verified": false
+        "gloss": "奈及利亚",
+        "verified": true
       },
       "NI": {
-        "gloss": "\u5c3c\u52a0\u62c9\u74dc",
-        "verified": false
+        "gloss": "尼加拉瓜",
+        "verified": true
       },
       "NL": {
-        "gloss": "\u8377\u5170",
-        "verified": false
+        "gloss": "荷兰",
+        "verified": true
       },
       "NO": {
-        "gloss": "\u632a\u5a01",
-        "verified": false
+        "gloss": "挪威",
+        "verified": true
       },
       "NP": {
-        "gloss": "\u5c3c\u6cca\u5c14",
-        "verified": false
+        "gloss": "尼泊尔",
+        "verified": true
       },
       "NR": {
-        "gloss": "\u7459\u9c81",
-        "verified": false
+        "gloss": "瑙鲁",
+        "verified": true
       },
       "NU": {
-        "gloss": "\u7ebd\u57c3",
-        "verified": false
+        "gloss": "纽埃",
+        "verified": true
       },
       "NZ": {
-        "gloss": "\u65b0\u897f\u5170",
-        "verified": false
+        "gloss": "新西兰",
+        "verified": true
       },
       "OM": {
-        "gloss": "\u963f\u66fc",
-        "verified": false
+        "gloss": "阿曼",
+        "verified": true
       },
       "PA": {
-        "gloss": "\u5df4\u62ff\u9a6c",
-        "verified": false
+        "gloss": "巴拿马",
+        "verified": true
       },
       "PE": {
-        "gloss": "\u79d8\u9c81",
-        "verified": false
+        "gloss": "秘鲁",
+        "verified": true
       },
       "PF": {
-        "gloss": "\u6cd5\u5c5e\u6ce2\u5229\u5c3c\u897f\u4e9a",
-        "verified": false
+        "gloss": "法属波利尼西亚",
+        "verified": true
       },
       "PG": {
-        "gloss": "\u5df4\u5e03\u4e9a\u65b0\u51e0\u5185\u4e9a",
-        "verified": false
+        "gloss": "巴布亚新几内亚",
+        "verified": true
       },
       "PH": {
-        "gloss": "\u83f2\u5f8b\u5bbe",
-        "verified": false
+        "gloss": "菲律宾",
+        "verified": true
       },
       "PK": {
-        "gloss": "\u5df4\u57fa\u65af\u5766",
-        "verified": false
+        "gloss": "巴基斯坦",
+        "verified": true
       },
       "PL": {
-        "gloss": "\u6ce2\u5170",
-        "verified": false
+        "gloss": "波兰",
+        "verified": true
       },
       "PM": {
-        "gloss": "\u5723\u76ae\u57c3\u5c14\u548c\u5bc6\u514b\u9686\u7fa4\u5c9b",
-        "verified": false
+        "gloss": "圣皮埃尔和密克隆群岛",
+        "verified": true
       },
       "PN": {
-        "gloss": "\u76ae\u7279\u51ef\u6069",
-        "verified": false
+        "gloss": "皮特凯恩",
+        "verified": true
       },
       "PR": {
-        "gloss": "\u6ce2\u591a\u9ece\u5404",
-        "verified": false
+        "gloss": "波多黎各",
+        "verified": true
       },
       "PS": {
-        "gloss": "\u5df4\u52d2\u65af\u5766\u56fd",
-        "verified": false
+        "gloss": "巴勒斯坦国",
+        "verified": true
       },
       "PT": {
-        "gloss": "\u8461\u8404\u7259",
-        "verified": false
+        "gloss": "葡萄牙",
+        "verified": true
       },
       "PW": {
-        "gloss": "u\u7409",
-        "verified": false
+        "gloss": "帕劳群岛",
+        "verified": true
       },
       "PY": {
-        "gloss": "\u5df4\u62c9\u572d",
-        "verified": false
+        "gloss": "巴拉圭",
+        "verified": true
       },
       "QA": {
-        "gloss": "\u5361\u5854\u5c14",
-        "verified": false
+        "gloss": "卡塔尔",
+        "verified": true
       },
       "RE": {
-        "gloss": "\u56e2\u5706",
-        "verified": false
+        "gloss": "留尼汪岛",
+        "verified": true
       },
       "RO": {
-        "gloss": "\u7f57\u9a6c\u5c3c\u4e9a",
-        "verified": false
+        "gloss": "罗马尼亚",
+        "verified": true
       },
       "RS": {
-        "gloss": "\u585e\u5c14\u7ef4\u4e9a",
-        "verified": false
+        "gloss": "塞尔维亚",
+        "verified": true
       },
       "RU": {
-        "gloss": "\u4fc4\u7f57\u65af\u8054\u90a6",
-        "verified": false
+        "gloss": "俄罗斯联邦",
+        "verified": true
       },
       "RW": {
-        "gloss": "\u5362\u65fa\u8fbe",
-        "verified": false
+        "gloss": "卢旺达",
+        "verified": true
       },
       "SA": {
-        "gloss": "\u6c99\u7279\u963f\u62c9\u4f2f",
-        "verified": false
+        "gloss": "沙特阿拉伯",
+        "verified": true
       },
       "SB": {
-        "gloss": "\u6240\u7f57\u95e8\u7fa4\u5c9b",
-        "verified": false
+        "gloss": "所罗门群岛",
+        "verified": true
       },
       "SC": {
-        "gloss": "\u585e\u820c\u5c14",
-        "verified": false
+        "gloss": "塞舌尔",
+        "verified": true
       },
       "SD": {
-        "gloss": "\u82cf\u4e39",
-        "verified": false
+        "gloss": "苏丹",
+        "verified": true
       },
       "SE": {
-        "gloss": "\u745e\u5178",
-        "verified": false
+        "gloss": "瑞典",
+        "verified": true
       },
       "SG": {
-        "gloss": "\u65b0\u52a0\u5761",
-        "verified": false
+        "gloss": "新加坡",
+        "verified": true
       },
       "SH": {
-        "gloss": "\u5723\u6d77\u4f26\u5a1c\uff0c\u63d0\u5347\u548c\u7279\u91cc\u65af\u5766\u8fbe\u5e93\u5c3c\u4e9a",
-        "verified": false
+        "gloss": "圣海伦娜，提升和特里斯坦达库尼亚",
+        "verified": true
       },
       "SI": {
-        "gloss": "\u65af\u6d1b\u6587\u5c3c\u4e9a",
-        "verified": false
+        "gloss": "斯洛文尼亚",
+        "verified": true
       },
       "SJ": {
-        "gloss": "\u65af\u74e6\u5c14\u5df4\u548c\u626c\u00b7\u9a6c\u5ef6",
-        "verified": false
+        "gloss": "斯瓦尔巴和扬·马延",
+        "verified": true
       },
       "SK": {
-        "gloss": "\u65af\u6d1b\u4f10\u514b",
-        "verified": false
+        "gloss": "斯洛伐克",
+        "verified": true
       },
       "SL": {
-        "gloss": "\u585e\u62c9\u5229\u6602",
-        "verified": false
+        "gloss": "塞拉利昂",
+        "verified": true
       },
       "SM": {
-        "gloss": "\u5723\u9a6c\u529b\u8bfa",
-        "verified": false
+        "gloss": "圣马力诺",
+        "verified": true
       },
       "SN": {
-        "gloss": "\u585e\u5185\u52a0\u5c14",
-        "verified": false
+        "gloss": "塞内加尔",
+        "verified": true
       },
       "SO": {
-        "gloss": "\u7d22\u9a6c\u91cc",
-        "verified": false
+        "gloss": "索马里",
+        "verified": true
       },
       "SR": {
-        "gloss": "\u82cf\u91cc\u5357",
-        "verified": false
+        "gloss": "苏里南",
+        "verified": true
       },
       "SS": {
-        "gloss": "\u5357\u82cf\u4e39",
-        "verified": false
+        "gloss": "南苏丹",
+        "verified": true
       },
       "ST": {
-        "gloss": "\u5723\u591a\u7f8e\u548c\u666e\u6797\u897f\u6bd4",
-        "verified": false
+        "gloss": "圣多美和普林西比",
+        "verified": true
       },
       "SV": {
-        "gloss": "\u8428\u5c14\u74e6\u591a",
-        "verified": false
+        "gloss": "萨尔瓦多",
+        "verified": true
       },
       "SX": {
-        "gloss": "\u5723\u9a6c\u4e01\uff08\u8377\u5170\u8bed\u90e8\u5206\uff09",
-        "verified": false
+        "gloss": "圣马丁（荷兰语部分）",
+        "verified": true
       },
       "SY": {
-        "gloss": "\u963f\u62c9\u4f2f\u53d9\u5229\u4e9a\u5171\u548c\u56fd",
-        "verified": false
+        "gloss": "阿拉伯叙利亚共和国",
+        "verified": true
       },
       "SZ": {
-        "gloss": "\u65af\u5a01\u58eb\u5170",
-        "verified": false
+        "gloss": "斯威士兰",
+        "verified": true
       },
       "TC": {
-        "gloss": "\u7279\u514b\u65af\u548c\u51ef\u79d1\u65af\u7fa4\u5c9b",
-        "verified": false
+        "gloss": "特克斯和凯科斯群岛",
+        "verified": true
       },
       "TD": {
-        "gloss": "\u4e4d\u5f97",
-        "verified": false
+        "gloss": "乍得",
+        "verified": true
       },
       "TF": {
-        "gloss": "\u6cd5\u5c5e\u5357\u90e8\u9886\u5730",
-        "verified": false
+        "gloss": "法属南部领地",
+        "verified": true
       },
       "TG": {
-        "gloss": "\u591a\u54e5",
-        "verified": false
+        "gloss": "多哥",
+        "verified": true
       },
       "TH": {
-        "gloss": "\u6cf0\u56fd",
-        "verified": false
+        "gloss": "泰国",
+        "verified": true
       },
       "TJ": {
-        "gloss": "\u5854\u5409\u514b\u65af\u5766",
-        "verified": false
+        "gloss": "塔吉克斯坦",
+        "verified": true
       },
       "TK": {
-        "gloss": "\u6258\u514b\u52b3",
-        "verified": false
+        "gloss": "托克劳",
+        "verified": true
       },
       "TL": {
-        "gloss": "\u4e1c\u5e1d\u6c76",
-        "verified": false
+        "gloss": "东帝汶",
+        "verified": true
       },
       "TM": {
-        "gloss": "\u571f\u5e93\u66fc\u65af\u5766",
-        "verified": false
+        "gloss": "土库曼斯坦",
+        "verified": true
       },
       "TN": {
-        "gloss": "\u7a81\u5c3c\u65af",
-        "verified": false
+        "gloss": "突尼斯",
+        "verified": true
       },
       "TO": {
-        "gloss": "\u6c64\u52a0",
-        "verified": false
+        "gloss": "汤加",
+        "verified": true
       },
       "TR": {
-        "gloss": "\u706b\u9e21",
-        "verified": false
+        "gloss": "土耳其",
+        "verified": true
       },
       "TT": {
-        "gloss": "\u7279\u7acb\u5c3c\u8fbe\u548c\u591a\u5df4\u54e5",
-        "verified": false
+        "gloss": "特立尼达和多巴哥",
+        "verified": true
       },
       "TV": {
-        "gloss": "\u56fe\u74e6\u5362",
-        "verified": false
+        "gloss": "图瓦卢",
+        "verified": true
       },
       "TW": {
-        "gloss": "\u4e2d\u56fd\u53f0\u6e7e\u7701",
-        "verified": false
+        "gloss": "中国台湾省",
+        "verified": true
       },
       "TZ": {
-        "gloss": "\u5766\u6851\u5c3c\u4e9a\u8054\u5408\u5171\u548c\u56fd",
-        "verified": false
+        "gloss": "坦桑尼亚联合共和国",
+        "verified": true
       },
       "UA": {
-        "gloss": "\u4e4c\u514b\u5170",
-        "verified": false
+        "gloss": "乌克兰",
+        "verified": true
       },
       "UG": {
-        "gloss": "\u4e4c\u5e72\u8fbe",
-        "verified": false
+        "gloss": "乌干达",
+        "verified": true
       },
       "UM": {
-        "gloss": "\u7f8e\u56fd\u672c\u571f\u5916\u5c0f\u5c9b\u5c7f",
-        "verified": false
+        "gloss": "美国本土外小岛屿",
+        "verified": true
       },
       "US": {
-        "gloss": "\u7f8e\u56fd",
-        "verified": false
+        "gloss": "美国",
+        "verified": true
       },
       "UY": {
-        "gloss": "\u4e4c\u62c9\u572d",
-        "verified": false
+        "gloss": "乌拉圭",
+        "verified": true
       },
       "UZ": {
-        "gloss": "\u4e4c\u5179\u522b\u514b\u65af\u5766",
-        "verified": false
+        "gloss": "乌兹别克斯坦",
+        "verified": true
       },
       "VA": {
-        "gloss": "\u7f57\u9a6c\u6559\u5ef7\uff08\u68b5\u8482\u5188\u57ce\u56fd\uff09",
-        "verified": false
+        "gloss": "罗马教廷（梵蒂冈城国）",
+        "verified": true
       },
       "VC": {
-        "gloss": "\u5723\u6587\u68ee\u7279\u548c\u683c\u6797\u7eb3\u4e01\u65af",
-        "verified": false
+        "gloss": "圣文森特和格林纳丁斯",
+        "verified": true
       },
       "VE": {
-        "gloss": "\u59d4\u5185\u745e\u62c9\u73bb\u5229\u74e6\u5c14\u5171\u548c\u56fd",
-        "verified": false
+        "gloss": "委内瑞拉玻利瓦尔共和国",
+        "verified": true
       },
       "VG": {
-        "gloss": "\u82f1\u5c5e\u7ef4\u5c14\u4eac\u7fa4\u5c9b",
-        "verified": false
+        "gloss": "英属维尔京群岛",
+        "verified": true
       },
       "VI": {
-        "gloss": "\u7f8e\u56fd\u7ef4\u5c14\u4eac\u7fa4\u5c9b",
-        "verified": false
+        "gloss": "美国维尔京群岛",
+        "verified": true
       },
       "VN": {
-        "gloss": "\u8d8a\u5357",
-        "verified": false
+        "gloss": "越南",
+        "verified": true
       },
       "VU": {
-        "gloss": "\u74e6\u52aa\u963f\u56fe",
-        "verified": false
+        "gloss": "瓦努阿图",
+        "verified": true
       },
       "WF": {
-        "gloss": "\u74e6\u5229\u65af\u548c\u5bcc\u56fe\u7eb3\u7fa4\u5c9b",
-        "verified": false
+        "gloss": "瓦利斯和富图纳群岛",
+        "verified": true
       },
       "WS": {
-        "gloss": "\u8428\u6469\u4e9a",
-        "verified": false
+        "gloss": "萨摩亚",
+        "verified": true
       },
       "YE": {
-        "gloss": "\u4e5f\u95e8",
-        "verified": false
+        "gloss": "也门",
+        "verified": true
       },
       "YT": {
-        "gloss": "\u9a6c\u7ea6\u7279\u5c9b",
-        "verified": false
+        "gloss": "马约特岛",
+        "verified": true
       },
       "ZA": {
-        "gloss": "\u5357\u975e",
-        "verified": false
+        "gloss": "南非",
+        "verified": true
       },
       "ZM": {
-        "gloss": "\u8d5e\u6bd4\u4e9a",
-        "verified": false
+        "gloss": "赞比亚",
+        "verified": true
       },
       "ZW": {
-        "gloss": "\u6d25\u5df4\u5e03\u97e6",
-        "verified": false
+        "gloss": "津巴布韦",
+        "verified": true
       }
     }
   },
   "courses": {
     "add-failed": {
-      "gloss": "\u6dfb\u52a0\u8bfe\u7a0b\u5931\u8d25",
-      "verified": false
+      "gloss": "添加课程失败",
+      "verified": true
     },
     "add-meeting": {
-      "gloss": "\u6dfb\u52a0\u4f1a\u8bae",
-      "verified": false
+      "gloss": "添加会议",
+      "verified": true
     },
     "add-meeting-failed": {
-      "gloss": "\u65e0\u6cd5\u6dfb\u52a0\u4f1a\u8bae",
-      "verified": false
+      "gloss": "无法添加会议",
+      "verified": true
     },
     "added": {
-      "gloss": "\u8bfe\u7a0b\u5df2\u6dfb\u52a0",
-      "verified": false
+      "gloss": "课程已添加",
+      "verified": true
     },
     "archived": {
-      "gloss": "\u8bfe\u7a0b\u5df2\u5b58\u6863",
-      "verified": false
+      "gloss": "课程已归档",
+      "verified": true
     },
     "choose-offering": {
-      "gloss": "\u9009\u62e9\u4ea7\u54c1",
-      "verified": false
+      "gloss": "选择产品",
+      "verified": true
     },
     "choose-time": {
-      "gloss": "\u65f6\u95f4",
-      "verified": false
+      "gloss": "时间",
+      "verified": true
     },
     "class-attendance": {
-      "gloss": "\u51fa\u52e4\u7387",
-      "verified": false
+      "gloss": "出勤率",
+      "verified": true
     },
     "class-attendance-for": {
-      "gloss": "\u51fa\u5e2d",
-      "verified": false
+      "gloss": "出席",
+      "verified": true
     },
     "class-attendance-load-failed": {
-      "gloss": "\u65e0\u6cd5\u4e0a\u8bfe",
-      "verified": false
+      "gloss": "无法加载出席列表",
+      "verified": true
     },
     "class-attendance-update-failed": {
-      "gloss": "\u65e0\u6cd5\u66f4\u65b0\u51fa\u52e4",
-      "verified": false
+      "gloss": "无法更新出席列表",
+      "verified": true
     },
     "class-attendance-updated": {
-      "gloss": "\u4e0a\u8bfe\u4eba\u6570\u5df2\u66f4\u65b0",
-      "verified": false
+      "gloss": "上课人数已更新",
+      "verified": true
     },
     "confirm-archive": {
-      "gloss": "\u60a8\u786e\u5b9a\u8981\u5b58\u6863\u6b64\u8bfe\u7a0b\u5417\uff1f",
-      "verified": false
+      "gloss": "您确定要归档此课程吗？",
+      "verified": true
     },
     "confirm-student": {
-      "gloss": "\u60a8\u8981\u786e\u8ba4\u8fd8\u662f\u62d2\u7edd\u8be5\u5b66\u751f\uff1f",
-      "verified": false
+      "gloss": "您要确认还是拒绝该学生？",
+      "verified": true
     },
     "course": {
-      "gloss": "\u57f9\u8bad\u73ed",
-      "verified": false
+      "gloss": "培训班",
+      "verified": true
     },
     "course-offering": {
-      "gloss": "\u8bfe\u7a0b\u5185\u5bb9",
-      "verified": false
+      "gloss": "课程内容",
+      "verified": true
     },
     "create-new-person": {
-      "gloss": "\u521b\u5efa\u4e00\u4e2a\u65b0\u4eba",
-      "verified": false
+      "gloss": "创建一个新人员",
+      "verified": true
     },
     "dashboard": {
       "charts": {
         "attended": {
-          "gloss": "\u53c2\u52a0",
-          "verified": false
+          "gloss": "参加",
+          "verified": true
         },
         "course": {
-          "gloss": "\u8bfe\u7a0b",
-          "verified": false
+          "gloss": "课程",
+          "verified": true
         },
         "did-not-attend": {
-          "gloss": "\u6ca1\u6709\u53c2\u52a0",
-          "verified": false
+          "gloss": "未参加",
+          "verified": true
         },
         "did-not-graduate": {
-          "gloss": "\u6ca1\u6709\u6bd5\u4e1a",
-          "verified": false
+          "gloss": "未毕业",
+          "verified": true
         },
         "enrolled": {
-          "gloss": "\u5df2\u5165\u5b66",
-          "verified": false
+          "gloss": "已入学",
+          "verified": true
         },
         "graduated": {
-          "gloss": "\u5df2\u6bd5\u4e1a",
-          "verified": false
+          "gloss": "已毕业",
+          "verified": true
         }
       },
       "headers": {
         "course-retention": {
-          "gloss": "\u8bfe\u7a0b\u4fdd\u7559",
-          "verified": false
+          "gloss": "课程保留",
+          "verified": true
         },
         "course-success": {
-          "gloss": "\u8bfe\u7a0b\u6210\u529f",
-          "verified": false
+          "gloss": "课程成功",
+          "verified": true
         }
       },
       "title": {
-        "gloss": "\u4eea\u8868\u677f",
-        "verified": false
+        "gloss": "仪表板",
+        "verified": true
       }
     },
     "date": {
-      "gloss": "\u65e5\u671f",
-      "verified": false
+      "gloss": "日期",
+      "verified": true
     },
     "dates": {
-      "gloss": "\u65e5\u671f",
-      "verified": false
+      "gloss": "日期",
+      "verified": true
     },
     "description": {
-      "gloss": "\u63cf\u8ff0",
-      "verified": false
+      "gloss": "描述",
+      "verified": true
     },
     "enrolled": {
-      "gloss": "\u62a5\u540d\u4eba\u6570",
-      "verified": false
+      "gloss": "报名人数",
+      "verified": true
     },
     "info-meeting-dates": {
-      "gloss": "\u60a8\u53ef\u4ee5\u9009\u62e9\u591a\u4e2a\u65e5\u671f\u6765\u521b\u5efa\u8bb8\u591a\u4f1a\u8bae\u3002",
-      "verified": false
+      "gloss": "您可以选择多个日期来创建许多会议。",
+      "verified": true
     },
     "is-archived": {
-      "gloss": "\u8be5\u8bfe\u7a0b\u5df2\u5b58\u6863",
-      "verified": false
+      "gloss": "该课程已归档",
+      "verified": true
     },
     "location": {
-      "gloss": "\u4f4d\u7f6e",
-      "verified": false
+      "gloss": "位置",
+      "verified": true
     },
     "max-size": {
-      "gloss": "\u6700\u591a\u5b66\u751f\u6570",
-      "verified": false
+      "gloss": "最多学生数",
+      "verified": true
     },
     "meeting-added": {
-      "gloss": "\u4f1a\u8bae\u5df2\u6dfb\u52a0",
-      "verified": false
+      "gloss": "会议已添加",
+      "verified": true
     },
     "meeting-updated": {
-      "gloss": "\u4f1a\u8bae\u5df2\u66f4\u65b0",
-      "verified": false
+      "gloss": "会议已更新",
+      "verified": true
     },
     "new": {
-      "gloss": "\u65b0\u8bfe\u7a0b",
-      "verified": false
+      "gloss": "添加课程",
+      "verified": true
     },
     "new-meeting": {
-      "gloss": "\u65b0\u4f1a\u8bae",
-      "verified": false
+      "gloss": "添加会议",
+      "verified": true
     },
     "new-offering": {
-      "gloss": "\u65b0\u4ea7\u54c1",
-      "verified": false
+      "gloss": "添加产品",
+      "verified": true
     },
     "new-offering-short": {
-      "gloss": "\u65b0\u4ea7\u54c1",
-      "verified": false
+      "gloss": "添加产品",
+      "verified": true
     },
     "no-prerequisites": {
-      "gloss": "\u672c\u8bfe\u7a0b\u6ca1\u6709\u4efb\u4f55\u5148\u51b3\u6761\u4ef6\u3002",
-      "verified": false
+      "gloss": "本课程没有任何先决条件。",
+      "verified": true
     },
     "prerequisites": {
-      "gloss": "\u5148\u51b3\u6761\u4ef6",
-      "verified": false
+      "gloss": "先决条件",
+      "verified": true
     },
     "reactivated": {
-      "gloss": "\u8bfe\u7a0b\u672a\u5f52\u6863",
-      "verified": false
+      "gloss": "课程已取消归档",
+      "verified": true
     },
     "register": {
-      "gloss": "\u5bc4\u5b58\u5668",
-      "verified": false
+      "gloss": "注册",
+      "verified": true
     },
     "register-for-course": {
-      "gloss": "\u6ce8\u518c\u6b64\u8bfe\u7a0b",
-      "verified": false
+      "gloss": "注册此课程",
+      "verified": true
     },
     "register-success": {
-      "gloss": "\u6210\u529f\u6ce8\u518c",
-      "verified": false
+      "gloss": "成功注册",
+      "verified": true
     },
     "reject": {
-      "gloss": "\u62d2\u7edd",
-      "verified": false
+      "gloss": "拒绝",
+      "verified": true
     },
     "schedule": {
-      "gloss": "\u65f6\u95f4\u8868",
-      "verified": false
+      "gloss": "时间表",
+      "verified": true
     },
     "students": {
-      "gloss": "\u5b66\u751f\u4eec",
-      "verified": false
+      "gloss": "学生",
+      "verified": true
     },
     "teacher": {
-      "gloss": "\u8001\u5e08",
-      "verified": false
+      "gloss": "老师",
+      "verified": true
     },
     "title": {
-      "gloss": "\u6807\u9898",
-      "verified": false
+      "gloss": "标题",
+      "verified": true
     },
     "update-failed": {
-      "gloss": "\u66f4\u65b0\u8bfe\u7a0b\u5931\u8d25",
-      "verified": false
+      "gloss": "更新课程失败",
+      "verified": true
     },
     "update-meeting-failed": {
-      "gloss": "\u65e0\u6cd5\u66f4\u65b0\u4f1a\u8bae",
-      "verified": false
+      "gloss": "无法更新会议",
+      "verified": true
     },
     "updated": {
-      "gloss": "\u8bfe\u7a0b\u5df2\u66f4\u65b0",
-      "verified": false
+      "gloss": "课程已更新",
+      "verified": true
     },
     "when": {
-      "gloss": "\u4ec0\u4e48\u65f6\u5019",
-      "verified": false
+      "gloss": "时间",
+      "verified": true
     }
   },
   "diplomas": {
     "add-failed": {
-      "gloss": "\u65e0\u6cd5\u6dfb\u52a0\u6587\u51ed",
-      "verified": false
+      "gloss": "无法添加文凭",
+      "verified": true
     },
     "added": {
-      "gloss": "\u6587\u51ed\u5df2\u6dfb\u52a0",
-      "verified": false
+      "gloss": "文凭已添加",
+      "verified": true
     },
     "archived": {
-      "gloss": "\u6587\u51ed\u5df2\u5b58\u6863",
-      "verified": false
+      "gloss": "文凭已归档",
+      "verified": true
     },
     "confirm-archive": {
-      "gloss": "\u60a8\u786e\u5b9a\u8981\u5b58\u6863\u6b64\u6587\u51ed\u5417\uff1f",
-      "verified": false
+      "gloss": "您确定要归档此文凭吗？",
+      "verified": true
     },
     "courses": {
-      "gloss": "\u57f9\u8bad\u73ed",
-      "verified": false
+      "gloss": "培训班",
+      "verified": true
     },
     "courses-this-diploma": {
-      "gloss": "\u672c\u6587\u51ed\u8bfe\u7a0b",
-      "verified": false
+      "gloss": "本文凭课程",
+      "verified": true
     },
     "description": {
-      "gloss": "\u63cf\u8ff0",
-      "verified": false
+      "gloss": "描述",
+      "verified": true
     },
     "diploma": {
-      "gloss": "\u6587\u51ed",
-      "verified": false
+      "gloss": "文凭",
+      "verified": true
     },
     "diplomas": {
-      "gloss": "\u6587\u51ed\u8bfe\u7a0b",
-      "verified": false
+      "gloss": "文凭课程",
+      "verified": true
     },
     "new": {
-      "gloss": "\u65b0\u6587\u51ed",
-      "verified": false
+      "gloss": "添加文凭",
+      "verified": true
     },
     "reactivated": {
-      "gloss": "\u672a\u5b58\u6863\u7684\u6587\u51ed",
-      "verified": false
+      "gloss": "文凭已取消归档",
+      "verified": true
     },
     "title": {
-      "gloss": "\u6807\u9898",
-      "verified": false
+      "gloss": "标题",
+      "verified": true
     },
     "update-failed": {
-      "gloss": "\u65e0\u6cd5\u66f4\u65b0\u6587\u51ed",
-      "verified": false
+      "gloss": "无法更新文凭",
+      "verified": true
     },
     "updated": {
-      "gloss": "\u6587\u51ed\u66f4\u65b0",
-      "verified": false
+      "gloss": "文凭更新",
+      "verified": true
     }
   },
   "error-report": {
     "actions": {
       "cancel": {
-        "gloss": "\u53d6\u6d88",
-        "verified": false
+        "gloss": "取消",
+        "verified": true
       },
       "dismiss": {
-        "gloss": "\u89e3\u96c7",
-        "verified": false
+        "gloss": "隐藏",
+        "verified": true
       },
       "report-error": {
-        "gloss": "\u62a5\u544a\u9519\u8bef",
-        "verified": false
+        "gloss": "报告错误",
+        "verified": true
       },
       "submit": {
-        "gloss": "\u63d0\u4ea4",
-        "verified": false
+        "gloss": "提交",
+        "verified": true
       }
     },
     "display": {
       "add-description": {
-        "gloss": "\u6dfb\u52a0\u8bf4\u660e",
-        "verified": false
+        "gloss": "添加说明",
+        "verified": true
       },
       "feedback-successful": {
-        "gloss": "\u8c22\u8c22\uff0c\u6211\u4eec\u5df2\u7ecf\u6536\u5230\u60a8\u7684\u53cd\u9988\uff01",
-        "verified": false
+        "gloss": "谢谢，我们已经收到您的反馈！",
+        "verified": true
       },
       "make-description": {
-        "gloss": "\u8bf7\u8bf4\u660e\u9519\u8bef\u7684\u53d1\u751f\u65b9\u5f0f",
-        "verified": false
+        "gloss": "请说明错误的发生方式",
+        "verified": true
       }
     },
     "error-types": {
       "error-400": {
-        "gloss": "\u670d\u52a1\u5668\u6536\u5230\u65e0\u6548\u8bf7\u6c42",
-        "verified": false
+        "gloss": "服务器收到无效请求",
+        "verified": true
       },
       "error-401": {
-        "gloss": "\u670d\u52a1\u5668\u6536\u5230\u4e86\u51b2\u7a81\u7684\u8bf7\u6c42",
-        "verified": false
+        "gloss": "服务器收到了冲突的请求",
+        "verified": true
       },
       "error-404": {
-        "gloss": "\u670d\u52a1\u5668\u65e0\u6cd5\u8bc6\u522b\u8bf7\u6c42\u7684\u8d44\u6e90",
-        "verified": false
+        "gloss": "服务器无法识别请求的资源",
+        "verified": true
       },
       "error-4xx": {
-        "gloss": "\u53d1\u751f\u5ba2\u6237\u7aef\u9519\u8bef",
-        "verified": false
+        "gloss": "发生客户端错误",
+        "verified": true
       },
       "error-5xx": {
-        "gloss": "\u53d1\u751f\u670d\u52a1\u5668\u9519\u8bef",
-        "verified": false
+        "gloss": "发生服务器错误",
+        "verified": true
       }
     }
   },
   "events": {
     "all-events": {
-      "gloss": "\u6240\u6709\u6d3b\u52a8",
-      "verified": false
+      "gloss": "所有活动",
+      "verified": true
     },
     "attendance": {
-      "gloss": "\u51fa\u52e4\u7387",
-      "verified": false
+      "gloss": "出勤率",
+      "verified": true
     },
     "attendance-label": {
-      "gloss": "\u8f93\u5165\u4e00\u4e2a\u6570\u5b57",
-      "verified": false
+      "gloss": "输入一个数字",
+      "verified": true
     },
     "attendance-none": {
-      "gloss": "\u6ca1\u6709",
-      "verified": false
+      "gloss": "空",
+      "verified": true
     },
     "calendar": {
       "title": {
-        "gloss": "\u65e5\u5386",
-        "verified": false
+        "gloss": "日历",
+        "verified": true
       }
     },
     "confirm-archive": {
-      "gloss": "\u60a8\u786e\u5b9a\u8981\u5b58\u6863\u6b64\u4e8b\u4ef6\u5417\uff1f",
-      "verified": false
+      "gloss": "您确定要归档此活动吗？",
+      "verified": true
     },
     "create-event": {
-      "gloss": "\u5efa\u7acb\u6d3b\u52a8",
-      "verified": false
+      "gloss": "建立活动",
+      "verified": true
     },
     "dashboard": {
       "charts": {
         "attendance": {
-          "gloss": "\u51fa\u52e4\u7387",
-          "verified": false
+          "gloss": "出勤率",
+          "verified": true
         },
         "campus": {
-          "gloss": "\u6821\u56ed",
-          "verified": false
+          "gloss": "校园",
+          "verified": true
         },
         "home-groups": {
-          "gloss": "\u5bb6\u5ead\u7ec4",
-          "verified": false
+          "gloss": "家庭小组",
+          "verified": true
         }
       },
       "headers": {
         "home-group-percentage": {
-          "gloss": "\u5bb6\u5ead\u7ec4\u4e2d\u4fe1\u5f92\u7684\u767e\u5206\u6bd4",
-          "verified": false
+          "gloss": "家庭小组中信徒的百分比",
+          "verified": true
         },
         "location-attendance": {
-          "gloss": "\u6309\u5730\u533a\u51fa\u5e2d",
-          "verified": false
+          "gloss": "按地区出席",
+          "verified": true
         },
         "yearly-attendance": {
-          "gloss": "\u6bcf\u5e74\u51fa\u5e2d",
-          "verified": false
+          "gloss": "每年出席",
+          "verified": true
         }
       },
       "title": {
-        "gloss": "\u4eea\u8868\u677f",
-        "verified": false
+        "gloss": "仪表板",
+        "verified": true
       }
     },
     "details": {
       "title": {
-        "gloss": "\u6d3b\u52a8\u8be6\u60c5",
-        "verified": false
+        "gloss": "活动详情",
+        "verified": true
       }
     },
     "edit-event": {
-      "gloss": "\u7f16\u8f91\u6d3b\u52a8",
-      "verified": false
+      "gloss": "编辑活动",
+      "verified": true
     },
     "end-date": {
-      "gloss": "\u7ed3\u675f\u65e5\u671f",
-      "verified": false
+      "gloss": "结束日期",
+      "verified": true
     },
     "end-time": {
-      "gloss": "\u65f6\u95f4\u7ed3\u675f",
-      "verified": false
+      "gloss": "时间结束",
+      "verified": true
     },
     "error-adding-event": {
-      "gloss": "\u6dfb\u52a0\u4e8b\u4ef6\u65f6\u51fa\u9519",
-      "verified": false
+      "gloss": "添加活动时出错",
+      "verified": true
     },
     "error-archiving-event": {
-      "gloss": "\u5f52\u6863\u4e8b\u4ef6\u65f6\u51fa\u9519",
-      "verified": false
+      "gloss": "归档活动时出错",
+      "verified": true
     },
     "error-editing-event": {
-      "gloss": "\u7f16\u8f91\u4e8b\u4ef6\u65f6\u51fa\u9519",
-      "verified": false
+      "gloss": "编辑活动时出错",
+      "verified": true
     },
     "error-unarchiving-event": {
-      "gloss": "\u53d6\u6d88\u5b58\u6863\u4e8b\u4ef6\u65f6\u51fa\u9519",
-      "verified": false
+      "gloss": "取消归档活动时出错",
+      "verified": true
     },
     "event-added": {
-      "gloss": "\u6d3b\u52a8\u5df2\u6dfb\u52a0",
-      "verified": false
+      "gloss": "活动已添加",
+      "verified": true
     },
     "event-archived": {
-      "gloss": "\u6d3b\u52a8\u5df2\u5b58\u6863",
-      "verified": false
+      "gloss": "活动已归档",
+      "verified": true
     },
     "event-description": {
-      "gloss": "\u6d3b\u52a8\u8bf4\u660e",
-      "verified": false
+      "gloss": "活动说明",
+      "verified": true
     },
     "event-edited": {
-      "gloss": "\u6d3b\u52a8\u5df2\u7f16\u8f91",
-      "verified": false
+      "gloss": "活动已编辑",
+      "verified": true
     },
     "event-location": {
-      "gloss": "\u6d3b\u52a8\u5730\u70b9",
-      "verified": false
+      "gloss": "活动地点",
+      "verified": true
     },
     "event-unarchived": {
-      "gloss": "\u6d3b\u52a8\u672a\u5b58\u6863",
-      "verified": false
+      "gloss": "活动已取消归档",
+      "verified": true
     },
     "header": {
-      "gloss": "\u5927\u4e8b\u8bb0",
-      "verified": false
+      "gloss": "活动",
+      "verified": true
     },
     "image-description": {
-      "gloss": "\u56fe\u7247\u8bf4\u660e",
-      "verified": false
+      "gloss": "图片说明",
+      "verified": true
     },
     "location": {
-      "gloss": "\u4f4d\u7f6e",
-      "verified": false
+      "gloss": "位置",
+      "verified": true
     },
     "participants": {
       "add": {
-        "gloss": "\u6dfb\u52a0\u53c2\u4e0e\u8005",
-        "verified": false
+        "gloss": "添加参与者",
+        "verified": true
       },
       "added": {
-        "gloss": "\u53c2\u52a0\u8005\u5df2\u6dfb\u52a0",
-        "verified": false
+        "gloss": "参与者已添加",
+        "verified": true
       },
       "confirm-remove": {
-        "gloss": "\u60a8\u786e\u5b9a\u8981\u5220\u9664\u6b64\u53c2\u4e0e\u8005\u5417\uff1f",
-        "verified": false
+        "gloss": "您确定要删除此参与者吗？",
+        "verified": true
       },
       "error-adding": {
-        "gloss": "\u6dfb\u52a0\u53c2\u4e0e\u8005\u65f6\u51fa\u9519",
-        "verified": false
+        "gloss": "添加参与者时出错",
+        "verified": true
       },
       "error-removing": {
-        "gloss": "\u5220\u9664\u53c2\u4e0e\u8005\u65f6\u51fa\u9519",
-        "verified": false
+        "gloss": "删除参与者时出错",
+        "verified": true
       },
       "removed": {
-        "gloss": "\u5df2\u5220\u9664\u53c2\u4e0e\u8005",
-        "verified": false
+        "gloss": "已删除参与者",
+        "verified": true
       },
       "title": {
-        "gloss": "\u53c2\u52a0\u8005",
-        "verified": false
+        "gloss": "参与者",
+        "verified": true
       }
     },
     "persons": {
       "confirm-remove-from-event": {
-        "gloss": "\u60a8\u786e\u5b9a\u8981\u5c06\u6b64\u4eba\u4ece\u6b64\u6d3b\u52a8\u4e2d\u5220\u9664\u5417\uff1f",
-        "verified": false
+        "gloss": "您确定要将此人员从此活动中删除吗？",
+        "verified": true
       },
       "description": {
-        "gloss": "\u89d2\u8272\u63cf\u8ff0",
-        "verified": false
+        "gloss": "职位描述",
+        "verified": true
       },
       "edit": {
-        "gloss": "\u7f16\u8f91\u4eba",
-        "verified": false
+        "gloss": "编辑人员",
+        "verified": true
       },
       "error-adding-person": {
-        "gloss": "\u6dfb\u52a0\u4eba\u65f6\u51fa\u9519",
-        "verified": false
+        "gloss": "添加人员时出错",
+        "verified": true
       },
       "error-person-assigned": {
-        "gloss": "\u8be5\u4eba\u88ab\u5206\u914d\u4e86\u4e00\u4e2a\u51b2\u7a81\u4e8b\u4ef6\u3002",
-        "verified": false
+        "gloss": "该人员被分配了一个冲突活动。",
+        "verified": true
       },
       "error-removing-person": {
-        "gloss": "\u79fb\u9664\u4eba\u65f6\u51fa\u9519",
-        "verified": false
+        "gloss": "移除人员时出错",
+        "verified": true
       },
       "new": {
-        "gloss": "\u52a0\u4eba",
-        "verified": false
+        "gloss": "添加人员",
+        "verified": true
       },
       "none-assigned": {
-        "gloss": "\u6ca1\u6709\u4eba\u5458\u5206\u914d\u3002",
-        "verified": false
+        "gloss": "没有人员分配。",
+        "verified": true
       },
       "person-added": {
-        "gloss": "\u6dfb\u52a0\u7684\u4eba",
-        "verified": false
+        "gloss": "人员已添加",
+        "verified": true
       },
       "person-edited": {
-        "gloss": "\u7f16\u8f91\u8005",
-        "verified": false
+        "gloss": "编辑者",
+        "verified": true
       },
       "person-on-event": {
-        "gloss": "\u8be5\u4eba\u5df2\u88ab\u5206\u914d\u53c2\u52a0\u6b64\u6d3b\u52a8\u3002",
-        "verified": false
+        "gloss": "该人员已被分配参加此活动。",
+        "verified": true
       },
       "person-removed": {
-        "gloss": "\u5220\u9664\u4eba",
-        "verified": false
+        "gloss": "删除人员",
+        "verified": true
       },
       "title": {
-        "gloss": "\u6d3b\u52a8\u4eba\u7269",
-        "verified": false
+        "gloss": "活动成员",
+        "verified": true
       }
     },
     "start-date": {
-      "gloss": "\u5f00\u59cb\u65e5\u671f",
-      "verified": false
+      "gloss": "开始日期",
+      "verified": true
     },
     "start-time": {
-      "gloss": "\u5f00\u59cb\u65f6\u95f4",
-      "verified": false
+      "gloss": "开始时间",
+      "verified": true
     },
     "stop-time": {
-      "gloss": "\u505c\u6b62\u65f6\u95f4",
-      "verified": false
+      "gloss": "停止时间",
+      "verified": true
     },
     "title": {
-      "gloss": "\u6d3b\u52a8\u6807\u9898",
-      "verified": false
+      "gloss": "活动标题",
+      "verified": true
     },
     "upload-image": {
-      "gloss": "\u4e0a\u4f20\u56fe\u7247",
-      "verified": false
+      "gloss": "上传图片",
+      "verified": true
     }
   },
   "groups": {
     "admin-panel": {
-      "gloss": "\u7ba1\u7406\u9762\u677f",
-      "verified": false
+      "gloss": "管理面板",
+      "verified": true
     },
     "batch-actions": {
       "archive": {
-        "gloss": "\u5c01\u5b58",
-        "verified": false
+        "gloss": "归档",
+        "verified": true
       },
       "edit": {
-        "gloss": "\u7f16\u8f91",
-        "verified": false
+        "gloss": "编辑",
+        "verified": true
       },
       "email": {
-        "gloss": "\u53d1\u7535\u5b50\u90ae\u4ef6",
-        "verified": false
+        "gloss": "发电子邮件",
+        "verified": true
       },
       "messages": {
         "move-person-will-cause-cycle": {
-          "gloss": "\u79fb\u52a8\u6b64\u4eba\u5c06\u5bfc\u81f4\u9886\u5bfc\u5c42\u7684\u5faa\u73af",
-          "verified": false
+          "gloss": "移动此人员将导致领导层的循环",
+          "verified": true
         },
         "no-email": {
-          "gloss": "\u8be5\u4eba\u6ca1\u6709\u7535\u5b50\u90ae\u4ef6\u5730\u5740",
-          "verified": false
+          "gloss": "该人员没有电子邮件地址",
+          "verified": true
         },
         "person-in-destination-group": {
-          "gloss": "\u8be5\u4eba\u5df2\u7ecf\u5728\u76ee\u7684\u5730\u7ec4\u4e2d",
-          "verified": false
+          "gloss": "该人员已经在目的地小组中",
+          "verified": true
         },
         "unarchive-group-will-cause-cycle": {
-          "gloss": "\u53d6\u6d88\u5f52\u6863\u6b64\u56e2\u961f\u5c06\u5bfc\u81f4\u9886\u5bfc\u5c42\u7684\u5faa\u73af",
-          "verified": false
+          "gloss": "取消归档此团队将导致领导层的循环",
+          "verified": true
         }
       },
       "move": {
-        "gloss": "\u79fb\u52a8",
-        "verified": false
+        "gloss": "移动",
+        "verified": true
       },
       "title": {
-        "gloss": "\u6279\u5904\u7406\u52a8\u4f5c",
-        "verified": false
+        "gloss": "批处理动作",
+        "verified": true
       },
       "unarchive": {
-        "gloss": "\u53d6\u6d88\u5b58\u6863",
-        "verified": false
+        "gloss": "取消归档",
+        "verified": true
       }
     },
     "confirm-remove-from-event": {
-      "gloss": "\u60a8\u786e\u5b9a\u8981\u4ece\u6b64\u4e8b\u4ef6\u4e2d\u5220\u9664\u8be5\u7ec4\u5417\uff1f",
-      "verified": false
+      "gloss": "您确定要从此活动中删除该小组吗？",
+      "verified": true
     },
     "create-group": {
-      "gloss": "\u521b\u5efa\u7ec4",
-      "verified": false
+      "gloss": "创建小组",
+      "verified": true
     },
     "description": {
-      "gloss": "\u63cf\u8ff0",
-      "verified": false
+      "gloss": "描述",
+      "verified": true
     },
     "details": {
       "class-title": {
-        "gloss": "\u6807\u9898",
-        "verified": false
+        "gloss": "标题",
+        "verified": true
       },
       "manager": {
-        "gloss": "\u7ba1\u7406\u4eba\u5458",
-        "verified": false
+        "gloss": "经理",
+        "verified": true
       },
       "member-count": {
-        "gloss": "\u4f1a\u5458\u4eba\u6570",
-        "verified": false
+        "gloss": "成员人数",
+        "verified": true
       },
       "title": {
-        "gloss": "\u7ec6\u8282",
-        "verified": false
+        "gloss": "细节",
+        "verified": true
       }
     },
     "edit-group": {
-      "gloss": "\u7f16\u8f91\u7ec4",
-      "verified": false
+      "gloss": "编辑小组",
+      "verified": true
     },
     "entity-types": {
       "group-types": {
         "change-to-different": {
-          "gloss": "\u66f4\u6539\u4e3a\u5176\u4ed6\u7ec4\u7c7b\u578b",
-          "verified": false
+          "gloss": "更改为其他小组类型",
+          "verified": true
         },
         "confirm-remove": {
-          "gloss": "\u60a8\u786e\u5b9a\u8981\u5220\u9664\u6b64\u7ec4\u7c7b\u578b\u5417\uff1f",
-          "verified": false
+          "gloss": "您确定要删除此小组类型吗？",
+          "verified": true
         },
         "create-new": {
-          "gloss": "\u521b\u5efa\u4e00\u4e2a\u65b0\u7684\u7ec4\u7c7b\u578b",
-          "verified": false
+          "gloss": "创建一个新的小组类型",
+          "verified": true
         },
         "edit": {
-          "gloss": "\u7f16\u8f91\u7fa4\u7ec4\u7c7b\u578b",
-          "verified": false
+          "gloss": "编辑小组类型",
+          "verified": true
         },
         "fail-add": {
-          "gloss": "\u6dfb\u52a0\u7ec4\u7c7b\u578b\u5931\u8d25",
-          "verified": false
+          "gloss": "添加小组类型失败",
+          "verified": true
         },
         "fail-change": {
-          "gloss": "\u66f4\u6539\u7ec4\u7c7b\u578b\u5931\u8d25",
-          "verified": false
+          "gloss": "更改小组类型失败",
+          "verified": true
         },
         "fail-remove": {
-          "gloss": "\u5220\u9664\u7ec4\u7c7b\u578b\u5931\u8d25",
-          "verified": false
+          "gloss": "删除小组类型失败",
+          "verified": true
         },
         "fail-update": {
-          "gloss": "\u66f4\u65b0\u7fa4\u7ec4\u7c7b\u578b\u5931\u8d25",
-          "verified": false
+          "gloss": "更新小组类型失败",
+          "verified": true
         },
         "hide-expand": {
-          "gloss": "\u9690\u85cf\u7fa4\u7ec4",
-          "verified": false
+          "gloss": "隐藏小组",
+          "verified": true
         },
         "manage": {
-          "gloss": "\u7ba1\u7406\u7ec4\u7c7b\u578b",
-          "verified": false
+          "gloss": "管理小组类型",
+          "verified": true
         },
         "name": {
-          "gloss": "\u7ec4\u7c7b\u578b\u540d\u79f0",
-          "verified": false
+          "gloss": "小组类型名称",
+          "verified": true
         },
         "new": {
-          "gloss": "\u65b0\u7fa4\u7ec4\u7c7b\u578b",
-          "verified": false
+          "gloss": "添加小组类型",
+          "verified": true
         },
         "show-expand": {
-          "gloss": "\u663e\u793a\u7ec4",
-          "verified": false
+          "gloss": "显示小组",
+          "verified": true
         },
         "success-add": {
-          "gloss": "\u6210\u529f\u6dfb\u52a0\u7ec4\u7c7b\u578b",
-          "verified": false
+          "gloss": "成功添加小组类型",
+          "verified": true
         },
         "success-change": {
-          "gloss": "\u6210\u529f\u66f4\u6539\u7ec4\u7c7b\u578b",
-          "verified": false
+          "gloss": "成功更改小组类型",
+          "verified": true
         },
         "success-remove": {
-          "gloss": "\u6210\u529f\u5220\u9664\u7ec4\u7c7b\u578b",
-          "verified": false
+          "gloss": "成功删除小组类型",
+          "verified": true
         },
         "success-update": {
-          "gloss": "\u6210\u529f\u66f4\u65b0\u7fa4\u7ec4\u7c7b\u578b",
-          "verified": false
+          "gloss": "成功更新小组类型",
+          "verified": true
         },
         "title": {
-          "gloss": "\u7ec4\u7c7b\u578b",
-          "verified": false
+          "gloss": "小组类型",
+          "verified": true
         }
       },
       "manager-types": {
         "change-to-different": {
-          "gloss": "\u66f4\u6539\u4e3a\u5176\u4ed6\u7ecf\u7406\u7c7b\u578b",
-          "verified": false
+          "gloss": "更改为其他经理类型",
+          "verified": true
         },
         "confirm-remove": {
-          "gloss": "\u60a8\u786e\u5b9a\u8981\u5220\u9664\u6b64\u7ecf\u7406\u7c7b\u578b\u5417\uff1f",
-          "verified": false
+          "gloss": "您确定要删除此经理类型吗？",
+          "verified": true
         },
         "create-new": {
-          "gloss": "\u521b\u5efa\u4e00\u4e2a\u65b0\u7684\u7ecf\u7406\u7c7b\u578b",
-          "verified": false
+          "gloss": "创建一个新的经理类型",
+          "verified": true
         },
         "edit": {
-          "gloss": "\u7f16\u8f91\u7ba1\u7406\u5458\u7c7b\u578b",
-          "verified": false
+          "gloss": "编辑经理类型",
+          "verified": true
         },
         "fail-add": {
-          "gloss": "\u6dfb\u52a0\u7ba1\u7406\u5458\u7c7b\u578b\u5931\u8d25",
-          "verified": false
+          "gloss": "添加经理类型失败",
+          "verified": true
         },
         "fail-change": {
-          "gloss": "\u66f4\u6539\u7ecf\u7406\u7c7b\u578b\u5931\u8d25",
-          "verified": false
+          "gloss": "更改经理类型失败",
+          "verified": true
         },
         "fail-remove": {
-          "gloss": "\u5220\u9664\u7ba1\u7406\u5458\u7c7b\u578b\u5931\u8d25",
-          "verified": false
+          "gloss": "删除经理类型失败",
+          "verified": true
         },
         "fail-update": {
-          "gloss": "\u66f4\u65b0\u7ba1\u7406\u5668\u7c7b\u578b\u5931\u8d25",
-          "verified": false
+          "gloss": "更新经理类型失败",
+          "verified": true
         },
         "hide-expand": {
-          "gloss": "\u9690\u85cf\u7ecf\u7406",
-          "verified": false
+          "gloss": "隐藏经理",
+          "verified": true
         },
         "manage": {
-          "gloss": "\u7ba1\u7406\u7ecf\u7406\u7c7b\u578b",
-          "verified": false
+          "gloss": "管理经理类型",
+          "verified": true
         },
         "name": {
-          "gloss": "\u7ecf\u7406\u7c7b\u578b\u540d\u79f0",
-          "verified": false
+          "gloss": "经理类型名称",
+          "verified": true
         },
         "new": {
-          "gloss": "\u65b0\u7ecf\u7406\u7c7b\u578b",
-          "verified": false
+          "gloss": "添加经理类型",
+          "verified": true
         },
         "show-expand": {
-          "gloss": "\u6f14\u51fa\u7ecf\u7406",
-          "verified": false
+          "gloss": "演出经理",
+          "verified": true
         },
         "success-add": {
-          "gloss": "\u6210\u529f\u6dfb\u52a0\u7ecf\u7406\u7c7b\u578b",
-          "verified": false
+          "gloss": "成功添加经理类型",
+          "verified": true
         },
         "success-change": {
-          "gloss": "\u6210\u529f\u66f4\u6539\u7ecf\u7406\u7c7b\u578b",
-          "verified": false
+          "gloss": "成功更改经理类型",
+          "verified": true
         },
         "success-remove": {
-          "gloss": "\u6210\u529f\u5220\u9664\u7ecf\u7406\u7c7b\u578b",
-          "verified": false
+          "gloss": "成功删除经理类型",
+          "verified": true
         },
         "success-update": {
-          "gloss": "\u6210\u529f\u66f4\u65b0\u7ecf\u7406\u7c7b\u578b",
-          "verified": false
+          "gloss": "成功更新经理类型",
+          "verified": true
         },
         "title": {
-          "gloss": "\u7ecf\u7406\u7c7b\u578b",
-          "verified": false
+          "gloss": "经理类型",
+          "verified": true
         }
       }
     },
     "error-removing-group": {
-      "gloss": "\u5220\u9664\u7fa4\u7ec4\u65f6\u51fa\u9519",
-      "verified": false
+      "gloss": "删除小组时出错",
+      "verified": true
     },
     "group-description": {
-      "gloss": "\u5c0f\u7ec4\u4ecb\u7ecd",
-      "verified": false
+      "gloss": "小组介绍",
+      "verified": true
     },
     "group-removed": {
-      "gloss": "\u7ec4\u5df2\u5220\u9664",
-      "verified": false
+      "gloss": "小组已删除",
+      "verified": true
     },
     "group-type": {
-      "gloss": "\u56e2\u4f53\u7c7b\u578b",
-      "verified": false
+      "gloss": "团体类型",
+      "verified": true
     },
     "header": {
-      "gloss": "\u56e2\u4f53",
-      "verified": false
+      "gloss": "团体",
+      "verified": true
     },
     "header-manager": {
-      "gloss": "\u7ba1\u7406\u4eba\u5458",
-      "verified": false
+      "gloss": "经理",
+      "verified": true
     },
     "linegraph": {
       "Month": {
         "April": {
-          "gloss": "\u56db\u6708",
-          "verified": false
+          "gloss": "四月",
+          "verified": true
         },
         "August": {
-          "gloss": "\u516b\u6708",
-          "verified": false
+          "gloss": "八月",
+          "verified": true
         },
         "December": {
-          "gloss": "\u5341\u4e8c\u6708",
-          "verified": false
+          "gloss": "十二月",
+          "verified": true
         },
         "February": {
-          "gloss": "\u4e8c\u6708",
-          "verified": false
+          "gloss": "二月",
+          "verified": true
         },
         "January": {
-          "gloss": "\u4e00\u6708",
-          "verified": false
+          "gloss": "一月",
+          "verified": true
         },
         "July": {
-          "gloss": "\u4e03\u6708",
-          "verified": false
+          "gloss": "七月",
+          "verified": true
         },
         "June": {
-          "gloss": "\u516d\u6708",
-          "verified": false
+          "gloss": "六月",
+          "verified": true
         },
         "March": {
-          "gloss": "\u6e38\u884c",
-          "verified": false
+          "gloss": "三月",
+          "verified": true
         },
         "May": {
-          "gloss": "\u53ef\u80fd",
-          "verified": false
+          "gloss": "五月",
+          "verified": true
         },
         "November": {
-          "gloss": "\u5341\u4e00\u6708",
-          "verified": false
+          "gloss": "十一月",
+          "verified": true
         },
         "October": {
-          "gloss": "\u5341\u6708",
-          "verified": false
+          "gloss": "十月",
+          "verified": true
         },
         "September": {
-          "gloss": "\u4e5d\u6708",
-          "verified": false
+          "gloss": "九月",
+          "verified": true
         }
       },
       "selected-group": {
-        "gloss": "\u9009\u5b9a\u7684\u7ec4",
-        "verified": false
+        "gloss": "选定的小组",
+        "verified": true
       },
       "time-picker-end": {
-        "gloss": "\u7ed3\u675f",
-        "verified": false
+        "gloss": "结束",
+        "verified": true
       },
       "time-picker-start": {
-        "gloss": "\u5f00\u59cb",
-        "verified": false
+        "gloss": "开始",
+        "verified": true
       },
       "time-scale": {
-        "gloss": "\u65f6\u95f4\u5c3a\u5ea6",
-        "verified": false
+        "gloss": "时间比例",
+        "verified": true
       },
       "time-scale-unite": {
         "Weekly": {
-          "gloss": "\u6bcf\u5468",
-          "verified": false
+          "gloss": "每周一次",
+          "verified": true
         },
         "monthly": {
-          "gloss": "\u6bcf\u6708\u4e00\u6b21",
-          "verified": false
+          "gloss": "每月一次",
+          "verified": true
         }
       }
     },
     "manager": {
-      "gloss": "\u7ecf\u7406",
-      "verified": false
+      "gloss": "经理",
+      "verified": true
     },
     "managers": {
       "add-manager": {
-        "gloss": "\u65b0\u589e\u7ba1\u7406\u5458",
-        "verified": false
+        "gloss": "添加经理",
+        "verified": true
       },
       "edit-manager": {
-        "gloss": "\u7f16\u8f91\u7ba1\u7406\u5458",
-        "verified": false
+        "gloss": "编辑经理",
+        "verified": true
       },
       "manager-type": {
-        "gloss": "\u7ecf\u7406\u7c7b\u578b",
-        "verified": false
+        "gloss": "经理类型",
+        "verified": true
       }
     },
     "meetings": {
       "add-meeting": {
-        "gloss": "\u6dfb\u52a0\u4f1a\u8bae",
-        "verified": false
+        "gloss": "添加会议",
+        "verified": true
       },
       "title": {
-        "gloss": "\u4f1a\u8bae\u4f1a\u8bae",
-        "verified": false
+        "gloss": "会议会议",
+        "verified": true
       }
     },
     "member-count": {
-      "gloss": "\u4f1a\u5458\u6570",
-      "verified": false
+      "gloss": "成员数",
+      "verified": true
     },
     "members": {
       "add-member": {
-        "gloss": "\u65b0\u589e\u4f1a\u5458",
-        "verified": false
+        "gloss": "添加成员",
+        "verified": true
       },
       "default": {
-        "gloss": "\u9ed8\u8ba4",
-        "verified": false
+        "gloss": "默认",
+        "verified": true
       },
       "edit-member": {
-        "gloss": "\u7f16\u8f91\u4f1a\u5458",
-        "verified": false
+        "gloss": "编辑成员",
+        "verified": true
       },
       "email": {
         "bcc": {
-          "gloss": "\u5bc6\u4ef6\u6284\u9001",
-          "verified": false
+          "gloss": "密件抄送",
+          "verified": true
         },
         "body": {
-          "gloss": "\u8eab\u4f53",
-          "verified": false
+          "gloss": "身体",
+          "verified": true
         },
         "cc": {
-          "gloss": "\u6284\u9001",
-          "verified": false
+          "gloss": "抄送",
+          "verified": true
         },
         "compose": {
-          "gloss": "\u5199\u90ae\u4ef6",
-          "verified": false
+          "gloss": "写邮件",
+          "verified": true
         },
         "reply-to": {
-          "gloss": "\u56de\u590d",
-          "verified": false
+          "gloss": "回复",
+          "verified": true
         },
         "send": {
-          "gloss": "\u53d1\u9001",
-          "verified": false
+          "gloss": "发送",
+          "verified": true
         },
         "subject": {
-          "gloss": "\u5b66\u79d1",
-          "verified": false
+          "gloss": "主题",
+          "verified": true
         },
         "to": {
-          "gloss": "\u81f3",
-          "verified": false
+          "gloss": "至",
+          "verified": true
         }
       },
       "email-dialog-footnote": {
-        "gloss": "\u70b9\u51fb\u5708\u5b50\u4ee5\u9009\u62e9\u56de\u590d\u9009\u9879",
-        "verified": false
+        "gloss": "点击圆圈以选择回复选项",
+        "verified": true
       },
       "email-reply-to": {
-        "gloss": "\u56de\u590d",
-        "verified": false
+        "gloss": "回复",
+        "verified": true
       },
       "title": {
-        "gloss": "\u4f1a\u5458",
-        "verified": false
+        "gloss": "成员",
+        "verified": true
       },
       "title-visitor": {
-        "gloss": "\u53c2\u89c2\u8005",
-        "verified": false
+        "gloss": "访客",
+        "verified": true
       }
     },
     "membership-hisotry": {
       "title": {
-        "gloss": "\u5386\u53f2",
-        "verified": false
+        "gloss": "历史",
+        "verified": true
       }
     },
     "membership-history": {
       "cancel": {
-        "gloss": "\u53d6\u6d88",
-        "verified": false
+        "gloss": "取消",
+        "verified": true
       },
       "change-note": {
-        "gloss": "\u53d8\u66f4\u8bf4\u660e",
-        "verified": false
+        "gloss": "更改笔记",
+        "verified": true
       },
       "clear-note": {
-        "gloss": "\u6e05\u9664\u7b14\u8bb0",
-        "verified": false
+        "gloss": "清除笔记",
+        "verified": true
       },
       "note": {
-        "gloss": "\u7b14\u8bb0",
-        "verified": false
+        "gloss": "笔记",
+        "verified": true
       },
       "submit": {
-        "gloss": "\u63d0\u4ea4",
-        "verified": false
+        "gloss": "提交",
+        "verified": true
       },
       "title": {
-        "gloss": "\u5386\u53f2",
-        "verified": false
+        "gloss": "历史",
+        "verified": true
       }
     },
     "messages": {
       "already-exists": {
-        "gloss": "\u7fa4\u7ec4\u5df2\u7ecf\u5b58\u5728",
-        "verified": false
+        "gloss": "小组已经存在",
+        "verified": true
       },
       "confirm-archive": {
-        "gloss": "\u60a8\u786e\u5b9a\u8981\u5b58\u6863\u6b64\u7ec4\u5417\uff1f",
-        "verified": false
+        "gloss": "您确定要归档此小组吗？",
+        "verified": true
       },
       "confirm-attendance-archive": {
-        "gloss": "\u60a8\u786e\u5b9a\u6b64\u4eba\u7f3a\u5e2d\u5417\uff1f",
-        "verified": false
+        "gloss": "您确定此人员缺席吗？",
+        "verified": true
       },
       "confirm-manager-archive": {
-        "gloss": "\u60a8\u786e\u5b9a\u8981\u5b58\u6863\u6b64\u7ec4\u7ba1\u7406\u5458\u5417\uff1f",
-        "verified": false
+        "gloss": "您确定要归档此小组经理吗？",
+        "verified": true
       },
       "confirm-meeting-archive": {
-        "gloss": "\u60a8\u786e\u5b9a\u8981\u5b58\u6863\u6b64\u5c0f\u7ec4\u4f1a\u8bae\u5417\uff1f",
-        "verified": false
+        "gloss": "您确定要归档此小组会议吗？",
+        "verified": true
       },
       "confirm-member-archive": {
-        "gloss": "\u60a8\u786e\u5b9a\u8981\u5b58\u6863\u6b64\u7ec4\u6210\u5458\u5417\uff1f",
-        "verified": false
+        "gloss": "您确定要归档此小组成员吗？",
+        "verified": true
       },
       "email-sent": {
-        "gloss": "\u90ae\u4ef6\u5df2\u53d1\u9001",
-        "verified": false
+        "gloss": "邮件已发送",
+        "verified": true
       },
       "error-active-not-selected": {
-        "gloss": "\u672a\u9009\u62e9\u6d3b\u52a8\u6210\u5458",
-        "verified": false
+        "gloss": "未选择活动成员",
+        "verified": true
       },
       "error-adding-group": {
-        "gloss": "\u6dfb\u52a0\u7fa4\u7ec4\u65f6\u51fa\u9519",
-        "verified": false
+        "gloss": "添加小组时出错",
+        "verified": true
       },
       "error-adding-managers": {
-        "gloss": "\u6dfb\u52a0\u7ba1\u7406\u5458\u65f6\u51fa\u9519",
-        "verified": false
+        "gloss": "添加经理时出错",
+        "verified": true
       },
       "error-adding-meeting": {
-        "gloss": "\u6dfb\u52a0\u4f1a\u8bae\u65f6\u51fa\u9519",
-        "verified": false
+        "gloss": "添加会议时出错",
+        "verified": true
       },
       "error-adding-members": {
-        "gloss": "\u6dfb\u52a0\u6210\u5458\u65f6\u51fa\u9519",
-        "verified": false
+        "gloss": "添加成员时出错",
+        "verified": true
       },
       "error-archived-not-selected": {
-        "gloss": "\u672a\u9009\u62e9\u4efb\u4f55\u5b58\u6863\u6210\u5458",
-        "verified": false
+        "gloss": "未选择任何归档成员",
+        "verified": true
       },
       "error-archiving-group": {
-        "gloss": "\u5f52\u6863\u7ec4\u65f6\u51fa\u9519",
-        "verified": false
+        "gloss": "归档小组时出错",
+        "verified": true
       },
       "error-archiving-manager": {
-        "gloss": "\u5f52\u6863\u7ba1\u7406\u5668\u65f6\u51fa\u9519",
-        "verified": false
+        "gloss": "归档经理时出错",
+        "verified": true
       },
       "error-archiving-meeting": {
-        "gloss": "\u5b58\u6863\u4f1a\u8bae\u65f6\u51fa\u9519",
-        "verified": false
+        "gloss": "归档会议时出错",
+        "verified": true
       },
       "error-archiving-member": {
-        "gloss": "\u5f52\u6863\u6210\u5458\u65f6\u51fa\u9519",
-        "verified": false
+        "gloss": "归档成员时出错",
+        "verified": true
       },
       "error-editing-group": {
-        "gloss": "\u7f16\u8f91\u7fa4\u7ec4\u65f6\u53d1\u751f\u9519\u8bef",
-        "verified": false
+        "gloss": "编辑小组时发生错误",
+        "verified": true
       },
       "error-moving-managers": {
-        "gloss": "\u79fb\u52a8\u7ecf\u7406\u65f6\u51fa\u9519",
-        "verified": false
+        "gloss": "移动经理时出错",
+        "verified": true
       },
       "error-moving-members": {
-        "gloss": "\u79fb\u52a8\u6210\u5458\u65f6\u51fa\u9519",
-        "verified": false
+        "gloss": "移动成员时出错",
+        "verified": true
       },
       "error-no-manager-email": {
-        "gloss": "\u60a8\u7684\u7535\u5b50\u90ae\u4ef6\u5730\u5740\u672a\u5b9a\u4e49",
-        "verified": false
+        "gloss": "您的电子邮件地址未定义",
+        "verified": true
       },
       "error-sending-email": {
-        "gloss": "\u53d1\u9001\u7535\u5b50\u90ae\u4ef6\u65f6\u51fa\u9519",
-        "verified": false
+        "gloss": "发送电子邮件时出错",
+        "verified": true
       },
       "error-unarchiving-group": {
-        "gloss": "\u53d6\u6d88\u5f52\u6863\u7ec4\u65f6\u51fa\u9519",
-        "verified": false
+        "gloss": "取消归档小组时出错",
+        "verified": true
       },
       "error-unarchiving-manager": {
-        "gloss": "\u53d6\u6d88\u5b58\u6863\u7ba1\u7406\u5668\u65f6\u51fa\u9519",
-        "verified": false
+        "gloss": "取消归档经理时出错",
+        "verified": true
       },
       "error-unarchiving-meeting": {
-        "gloss": "\u9519\u8bef\u53d6\u6d88\u5b58\u6863\u4f1a\u8bae",
-        "verified": false
+        "gloss": "错误取消归档会议",
+        "verified": true
       },
       "error-unarchiving-member": {
-        "gloss": "\u53d6\u6d88\u5b58\u6863\u6210\u5458\u65f6\u51fa\u9519",
-        "verified": false
+        "gloss": "取消归档成员时出错",
+        "verified": true
       },
       "error-updating-managers": {
-        "gloss": "\u66f4\u65b0\u7ba1\u7406\u5458\u65f6\u51fa\u9519",
-        "verified": false
+        "gloss": "更新经理时出错",
+        "verified": true
       },
       "error-updating-members": {
-        "gloss": "\u66f4\u65b0\u4f1a\u5458\u65f6\u51fa\u9519",
-        "verified": false
+        "gloss": "更新成员时出错",
+        "verified": true
       },
       "group-added": {
-        "gloss": "\u7ec4\u5df2\u6dfb\u52a0",
-        "verified": false
+        "gloss": "小组已添加",
+        "verified": true
       },
       "group-archived": {
-        "gloss": "\u7fa4\u7ec4\u5df2\u5f52\u6863",
-        "verified": false
+        "gloss": "小组已归档",
+        "verified": true
       },
       "group-edited": {
-        "gloss": "\u5c0f\u7ec4\u7f16\u8f91",
-        "verified": false
+        "gloss": "小组编辑",
+        "verified": true
       },
       "group-unarchived": {
-        "gloss": "\u5c0f\u7ec4\u672a\u5b58\u6863",
-        "verified": false
+        "gloss": "小组已取消归档",
+        "verified": true
       },
       "manager-archived": {
-        "gloss": "\u7ecf\u7406\u5df2\u5b58\u6863",
-        "verified": false
+        "gloss": "经理已归档",
+        "verified": true
       },
       "manager-unarchived": {
-        "gloss": "\u7ecf\u7406\u672a\u5b58\u6863",
-        "verified": false
+        "gloss": "经理已取消归档",
+        "verified": true
       },
       "managers-added": {
-        "gloss": "\u6210\u529f\u6dfb\u52a0\u7ecf\u7406",
-        "verified": false
+        "gloss": "成功添加经理",
+        "verified": true
       },
       "managers-moved": {
-        "gloss": "\u6210\u529f\u8c03\u52a8\u7ecf\u7406",
-        "verified": false
+        "gloss": "成功调动经理",
+        "verified": true
       },
       "managers-updated": {
-        "gloss": "\u6210\u529f\u66f4\u65b0\u7ecf\u7406",
-        "verified": false
+        "gloss": "成功更新经理",
+        "verified": true
       },
       "meeting-added": {
-        "gloss": "\u4f1a\u8bae\u5df2\u6dfb\u52a0",
-        "verified": false
+        "gloss": "会议已添加",
+        "verified": true
       },
       "meeting-archived": {
-        "gloss": "\u4f1a\u8bae\u5df2\u5b58\u6863",
-        "verified": false
+        "gloss": "会议已归档",
+        "verified": true
       },
       "member-archived": {
-        "gloss": "\u6210\u5458\u5df2\u5b58\u6863",
-        "verified": false
+        "gloss": "成员已归档",
+        "verified": true
       },
       "member-unarchived": {
-        "gloss": "\u6210\u5458\u672a\u5b58\u6863",
-        "verified": false
+        "gloss": "成员已取消归档",
+        "verified": true
       },
       "members-added": {
-        "gloss": "\u6210\u529f\u6dfb\u52a0\u6210\u5458",
-        "verified": false
+        "gloss": "成功添加成员",
+        "verified": true
       },
       "members-moved": {
-        "gloss": "\u6210\u529f\u79fb\u52a8\u6210\u5458",
-        "verified": false
+        "gloss": "成功移动成员",
+        "verified": true
       },
       "members-updated": {
-        "gloss": "\u6210\u529f\u66f4\u65b0\u6210\u5458",
-        "verified": false
+        "gloss": "成功更新成员",
+        "verified": true
       },
       "no-remaining-members": {
-        "gloss": "\u6ca1\u6709\u5269\u4f59\u6210\u5458",
-        "verified": false
+        "gloss": "没有剩余成员",
+        "verified": true
       },
       "participant-added": {
-        "gloss": "\u53c2\u52a0\u8005\uff09\u5df2\u6dfb\u52a0",
-        "verified": false
+        "gloss": "参与者已添加",
+        "verified": true
       },
       "required-fields": {
-        "gloss": "\u8bf7\u586b\u5199\u6240\u6709\u5fc5\u586b\u5b57\u6bb5",
-        "verified": false
+        "gloss": "请填写所有必填字段",
+        "verified": true
       },
       "select-destination-group": {
-        "gloss": "\u9009\u62e9\u76ee\u7684\u5730\u7fa4\u7ec4",
-        "verified": false
+        "gloss": "选择目的地小组",
+        "verified": true
       },
       "visitor-remove": {
-        "gloss": "\u8bbf\u5ba2\u5df2\u5220\u9664",
-        "verified": false
+        "gloss": "访客已删除",
+        "verified": true
       }
     },
     "name": {
-      "gloss": "\u540d\u79f0",
-      "verified": false
+      "gloss": "名称",
+      "verified": true
     },
     "none-assigned": {
-      "gloss": "\u672a\u5206\u914d\u7ec4\u3002",
-      "verified": false
+      "gloss": "未分配小组。",
+      "verified": true
     },
     "split": {
       "child-group": {
-        "gloss": "\u513f\u7ae5\u7ec4",
-        "verified": false
+        "gloss": "儿童小组",
+        "verified": true
       },
       "choose-managers": {
-        "gloss": "\u9009\u62e9\u7ecf\u7406",
-        "verified": false
+        "gloss": "选择经理",
+        "verified": true
       },
       "choose-members": {
-        "gloss": "\u9009\u62e9\u4f1a\u5458",
-        "verified": false
+        "gloss": "选择成员",
+        "verified": true
       },
       "error": {
-        "gloss": "\u5206\u5272\u7fa4\u7ec4\u65f6\u53d1\u751f\u9519\u8bef",
-        "verified": false
+        "gloss": "拆分小组时发生错误",
+        "verified": true
       },
       "group-information": {
-        "gloss": "\u56e2\u4f53\u4fe1\u606f",
-        "verified": false
+        "gloss": "团体信息",
+        "verified": true
       },
       "no-managers": {
-        "gloss": "\u7236\u7ec4\u4e2d\u6ca1\u6709\u7ecf\u7406",
-        "verified": false
+        "gloss": "父小组中没有经理",
+        "verified": true
       },
       "no-members": {
-        "gloss": "\u7236\u7ec4\u4e2d\u6ca1\u6709\u6210\u5458",
-        "verified": false
+        "gloss": "父小组中没有成员",
+        "verified": true
       },
       "parent-group": {
-        "gloss": "\u5bb6\u957f\u5c0f\u7ec4",
-        "verified": false
+        "gloss": "家长小组",
+        "verified": true
       },
       "success": {
-        "gloss": "\u5c0f\u7ec4\u6210\u529f\u5206\u88c2",
-        "verified": false
+        "gloss": "小组成功拆分",
+        "verified": true
       },
       "title": {
-        "gloss": "\u62c6\u5206\u7ec4",
-        "verified": false
+        "gloss": "拆分小组",
+        "verified": true
       },
       "tooltip": {
-        "gloss": "\u5206\u88c2",
-        "verified": false
+        "gloss": "拆分",
+        "verified": true
       }
     },
     "title": {
-      "gloss": "\u5bb6\u5ead\u6559\u4f1a",
-      "verified": false
+      "gloss": "家庭教会",
+      "verified": true
     },
     "tooltips": {
       "move": {
-        "gloss": "\u79fb\u81f3\u53e6\u4e00\u4e2a\u5c0f\u7ec4",
-        "verified": false
+        "gloss": "移至另一个小组",
+        "verified": true
       }
     },
     "treeview": {
       "admin-node": {
-        "gloss": "\u7ba1\u7406\u5458",
-        "verified": false
+        "gloss": "小组管理员",
+        "verified": true
       },
       "categories": {
         "all": {
-          "gloss": "\u6240\u6709",
-          "verified": false
+          "gloss": "所有",
+          "verified": true
         },
         "all-group-types": {
-          "gloss": "\u6240\u6709\u7ec4\u7c7b\u578b",
-          "verified": false
+          "gloss": "所有小组类型",
+          "verified": true
         },
         "managers": {
-          "gloss": "\u7ba1\u7406\u4eba\u5458",
-          "verified": false
+          "gloss": "经理",
+          "verified": true
         },
         "members": {
-          "gloss": "\u4f1a\u5458",
-          "verified": false
+          "gloss": "成员",
+          "verified": true
         }
       },
       "category-view": {
-        "gloss": "\u5206\u7c7b\u89c6\u56fe",
-        "verified": false
+        "gloss": "分类视图",
+        "verified": true
       },
       "collapse": {
-        "gloss": "\u574d\u65b9",
-        "verified": false
+        "gloss": "合并",
+        "verified": true
       },
       "expand": {
-        "gloss": "\u6269\u5927",
-        "verified": false
+        "gloss": "展开",
+        "verified": true
       },
       "filters": {
-        "gloss": "\u7b5b\u9009\u5668",
-        "verified": false
+        "gloss": "筛选器",
+        "verified": true
       },
       "hierarchy-view": {
-        "gloss": "\u5c42\u6b21\u7ed3\u6784\u89c6\u56fe",
-        "verified": false
+        "gloss": "层次结构视图",
+        "verified": true
       },
       "no-groups-available": {
-        "gloss": "\u6ca1\u6709\u53ef\u7528\u7684\u7fa4\u7ec4\uff0c\u56e0\u4e3a\u60a8\u4e0d\u662f\u4efb\u4f55\u7fa4\u7ec4\u7684\u76d1\u7763\u8005",
-        "verified": false
+        "gloss": "没有可用的小组，因为您不是任何小组的监督者",
+        "verified": true
       },
       "remove-cycle": {
-        "gloss": "\u8bf7\u5728\u5217\u51fa\u7684\u8282\u70b9\u4e2d\u5220\u9664\u5faa\u73af\uff0c\u4ee5\u67e5\u770b\u7ec4\u5c42\u6b21\u7ed3\u6784\u6811\u3002",
-        "verified": false
+        "gloss": "请在列出的节点中删除循环，以查看小组层次结构树。",
+        "verified": true
       },
       "select-placeholder": {
-        "gloss": "\u9009\u62e9\u8981\u6267\u884c\u64cd\u4f5c\u7684\u7ec4...",
-        "verified": false
+        "gloss": "选择要执行操作的小组...",
+        "verified": true
       },
       "show-linegraph": {
-        "gloss": "\u663e\u793a\u6298\u7ebf\u56fe",
-        "verified": false
+        "gloss": "显示折线图",
+        "verified": true
       },
       "show-list": {
-        "gloss": "\u663e\u793a\u7fa4\u7ec4\u6e05\u5355",
-        "verified": false
+        "gloss": "显示小组清单",
+        "verified": true
       },
       "show-treeview": {
-        "gloss": "\u663e\u793a\u7ec4\u6811\u89c6\u56fe",
-        "verified": false
+        "gloss": "显示小组树视图",
+        "verified": true
       },
       "title": {
-        "gloss": "\u7ec4\u6811\u72b6\u89c6\u56fe",
-        "verified": false
+        "gloss": "小组树状视图",
+        "verified": true
       },
       "unexpected-cycle": {
-        "gloss": "\u5c42\u6b21\u7ed3\u6784\u4e2d\u7684\u610f\u5916\u5468\u671f",
-        "verified": false
+        "gloss": "层次结构中的意外周期",
+        "verified": true
       }
     },
     "user-panel": {
-      "gloss": "\u7528\u6237\u9762\u677f",
-      "verified": false
+      "gloss": "用户面板",
+      "verified": true
     }
   },
   "images": {
     "actions": {
       "add-image": {
-        "gloss": "\u6dfb\u52a0\u56fe\u7247",
-        "verified": false
+        "gloss": "添加图片",
+        "verified": true
       }
     },
     "image-description": {
-      "gloss": "\u56fe\u7247\u8bf4\u660e",
-      "verified": false
+      "gloss": "图片说明",
+      "verified": true
     },
     "messages": {
       "no-image": {
-        "gloss": "\u672a\u9009\u62e9\u56fe\u50cf\u3002",
-        "verified": false
+        "gloss": "未选择图像。",
+        "verified": true
       },
       "not-found": {
-        "gloss": "\u627e\u4e0d\u5230\u56fe\u7247\u3002",
-        "verified": false
+        "gloss": "找不到图片。",
+        "verified": true
       }
     }
   },
   "language": {
     "name": {
       "aa": {
-        "gloss": "\u8fdc\u65b9",
-        "verified": false
+        "gloss": "阿法尔语",
+        "verified": true
       },
       "ab": {
-        "gloss": "\u963f\u5e03\u54c8\u5179\u4eba",
-        "verified": false
+        "gloss": "阿布哈兹语",
+        "verified": true
       },
       "ae": {
-        "gloss": "Avestan",
-        "verified": false
+        "gloss": "阿维斯陀语",
+        "verified": true
       },
       "af": {
-        "gloss": "\u5357\u975e\u8bed",
-        "verified": false
+        "gloss": "南非语",
+        "verified": true
       },
       "ak": {
-        "gloss": "\u963f\u5bd2",
-        "verified": false
+        "gloss": "阿坎语",
+        "verified": true
       },
       "am": {
-        "gloss": "\u963f\u59c6\u54c8\u62c9\u8bed",
-        "verified": false
+        "gloss": "阿姆哈拉语",
+        "verified": true
       },
       "an": {
-        "gloss": "\u963f\u62c9\u8d21\u4eba",
-        "verified": false
+        "gloss": "阿拉贡语",
+        "verified": true
       },
       "ar": {
-        "gloss": "\u963f\u62c9\u4f2f",
-        "verified": false
+        "gloss": "阿拉伯语",
+        "verified": true
       },
       "as": {
-        "gloss": "\u963f\u8428\u59c6\u8bed",
-        "verified": false
+        "gloss": "阿萨姆语",
+        "verified": true
       },
       "av": {
-        "gloss": "\u963f\u74e6\u91cc\u5947",
-        "verified": false
+        "gloss": "阿瓦尔语",
+        "verified": true
       },
       "ay": {
-        "gloss": "\u827e\u9a6c\u62c9",
-        "verified": false
+        "gloss": "艾马拉语",
+        "verified": true
       },
       "az": {
-        "gloss": "\u963f\u585e\u62dc\u7586\u4eba",
-        "verified": false
+        "gloss": "阿塞拜疆语",
+        "verified": true
       },
       "ba": {
-        "gloss": "\u5df4\u4ec0\u57fa\u5c14",
-        "verified": false
+        "gloss": "巴什基尔语",
+        "verified": true
       },
       "be": {
-        "gloss": "\u767d\u4fc4\u7f57\u65af\u8bed",
-        "verified": false
+        "gloss": "白俄罗斯语",
+        "verified": true
       },
       "bg": {
-        "gloss": "\u4fdd\u52a0\u5229\u4e9a\u8bed",
-        "verified": false
+        "gloss": "保加利亚语",
+        "verified": true
       },
       "bh": {
-        "gloss": "\u6bd4\u54c8\u91cc\u8bed",
-        "verified": false
+        "gloss": "比哈里语",
+        "verified": true
       },
       "bi": {
-        "gloss": "\u6bd4\u65af\u62c9\u9a6c",
-        "verified": false
+        "gloss": "比斯拉马语",
+        "verified": true
       },
       "bm": {
-        "gloss": "\u73ed\u5df4\u62c9",
-        "verified": false
+        "gloss": "班巴拉语",
+        "verified": true
       },
       "bn": {
-        "gloss": "\u5b5f\u52a0\u62c9",
-        "verified": false
+        "gloss": "孟加拉语",
+        "verified": true
       },
       "bo": {
-        "gloss": "\u85cf",
-        "verified": false
+        "gloss": "藏语",
+        "verified": true
       },
       "br": {
-        "gloss": "\u5e03\u5217\u5854\u5c3c",
-        "verified": false
+        "gloss": "布列塔尼语",
+        "verified": true
       },
       "bs": {
-        "gloss": "\u6ce2\u65af\u5c3c\u4e9a\u4eba",
-        "verified": false
+        "gloss": "波斯尼亚语",
+        "verified": true
       },
       "ca": {
-        "gloss": "\u52a0\u6cf0\u7f57\u5c3c\u4e9a\u8bed\u5df4\u4f26\u897f\u4e9a\u4eba",
-        "verified": false
+        "gloss": "加泰罗尼亚语巴伦西亚语",
+        "verified": true
       },
       "ce": {
-        "gloss": "\u8f66\u81e3",
-        "verified": false
+        "gloss": "车臣语",
+        "verified": true
       },
       "ch": {
-        "gloss": "\u67e5\u83ab\u7f57",
-        "verified": false
+        "gloss": "查莫罗语",
+        "verified": true
       },
       "co": {
-        "gloss": "\u79d1\u897f\u5609\u4eba",
-        "verified": false
+        "gloss": "科西嘉语",
+        "verified": true
       },
       "cr": {
-        "gloss": "\u514b\u91cc",
-        "verified": false
+        "gloss": "克里语",
+        "verified": true
       },
       "cs": {
-        "gloss": "\u6377\u514b\u6587",
-        "verified": false
+        "gloss": "捷克文",
+        "verified": true
       },
       "cu": {
-        "gloss": "\u65af\u62c9\u592b\u6559\u5802\u65e7\u65af\u62c9\u592b\u8bed\uff1b\u65af\u62c9\u592b\u5c3c\u514b\u6559\u5802;\u65e7\u4fdd\u52a0\u5229\u4e9a\u8bed\uff1b\u65af\u62c9\u592b\u8001\u6559\u5802",
-        "verified": false
+        "gloss": "斯拉夫语系语言",
+        "verified": true
       },
       "cv": {
-        "gloss": "\u695a\u74e6\u4ec0",
-        "verified": false
+        "gloss": "楚瓦什语",
+        "verified": true
       },
       "cy": {
-        "gloss": "\u5a01\u5c14\u58eb\u8bed",
-        "verified": false
+        "gloss": "威尔士语",
+        "verified": true
       },
       "da": {
-        "gloss": "\u4e39\u9ea6\u6587",
-        "verified": false
+        "gloss": "丹麦文",
+        "verified": true
       },
       "de": {
-        "gloss": "\u5fb7\u8bed",
-        "verified": false
+        "gloss": "德语",
+        "verified": true
       },
       "dv": {
-        "gloss": "\u8fea\u83f2\u8fea\u7ef4\u5e0c\u9a6c\u5c14\u4ee3\u592b",
-        "verified": false
+        "gloss": "迪菲迪维希马尔代夫语",
+        "verified": true
       },
       "dz": {
-        "gloss": "\u5b97\u5361",
-        "verified": false
+        "gloss": "宗卡语",
+        "verified": true
       },
       "ee": {
-        "gloss": "\u6bcd\u7f8a",
-        "verified": false
+        "gloss": "埃维语",
+        "verified": true
       },
       "el": {
-        "gloss": "\u5e0c\u814a\u8bed\uff0c\u73b0\u4ee3\uff081453-\uff09",
-        "verified": false
+        "gloss": "现代希腊语",
+        "verified": true
       },
       "en": {
-        "gloss": "\u82f1\u8bed",
-        "verified": false
+        "gloss": "英语",
+        "verified": true
       },
       "eo": {
-        "gloss": "\u4e16\u754c\u8bed",
-        "verified": false
+        "gloss": "世界语",
+        "verified": true
       },
       "es": {
-        "gloss": "\u897f\u73ed\u7259\u6587\uff1b\u5361\u65af\u8482\u5229\u4e9a\u4eba",
-        "verified": false
+        "gloss": "西班牙文；卡斯蒂利亚语",
+        "verified": true
       },
       "et": {
-        "gloss": "\u7231\u6c99\u5c3c\u4e9a\u8bed",
-        "verified": false
+        "gloss": "爱沙尼亚语",
+        "verified": true
       },
       "eu": {
-        "gloss": "\u5df4\u65af\u514b",
-        "verified": false
+        "gloss": "巴斯克语",
+        "verified": true
       },
       "fa": {
-        "gloss": "\u6ce2\u65af\u8bed",
-        "verified": false
+        "gloss": "波斯语",
+        "verified": true
       },
       "ff": {
-        "gloss": "\u5bcc\u62c9",
-        "verified": false
+        "gloss": "富拉语",
+        "verified": true
       },
       "fi": {
-        "gloss": "\u82ac\u5170",
-        "verified": false
+        "gloss": "芬兰语",
+        "verified": true
       },
       "fj": {
-        "gloss": "\u6590\u6d4e",
-        "verified": false
+        "gloss": "斐济语",
+        "verified": true
       },
       "fo": {
-        "gloss": "\u6cd5\u7f57\u8bed",
-        "verified": false
+        "gloss": "法罗语",
+        "verified": true
       },
       "fr": {
-        "gloss": "\u6cd5\u6587",
-        "verified": false
+        "gloss": "法文",
+        "verified": true
       },
       "fy": {
-        "gloss": "\u897f\u5f17\u91cc\u65af\u5170\u8bed",
-        "verified": false
+        "gloss": "西弗里斯兰语",
+        "verified": true
       },
       "ga": {
-        "gloss": "\u7231\u5c14\u5170\u4eba",
-        "verified": false
+        "gloss": "爱尔兰语",
+        "verified": true
       },
       "gd": {
-        "gloss": "\u76d6\u5c14\u8bed\u82cf\u683c\u5170\u76d6\u5c14\u8bed",
-        "verified": false
+        "gloss": "盖尔语苏格兰盖尔语",
+        "verified": true
       },
       "gl": {
-        "gloss": "\u52a0\u5229\u897f\u4e9a\u4eba",
-        "verified": false
+        "gloss": "加利西亚语",
+        "verified": true
       },
       "gn": {
-        "gloss": "\u74dc\u62c9\u5c3c",
-        "verified": false
+        "gloss": "瓜拉尼语",
+        "verified": true
       },
       "gu": {
-        "gloss": "\u53e4\u5409\u62c9\u7279\u8bed",
-        "verified": false
+        "gloss": "古吉拉特语",
+        "verified": true
       },
       "gv": {
-        "gloss": "\u66fc\u514b\u65af",
-        "verified": false
+        "gloss": "曼克斯语",
+        "verified": true
       },
       "ha": {
-        "gloss": "\u8c6a\u8428",
-        "verified": false
+        "gloss": "豪萨语",
+        "verified": true
       },
       "he": {
-        "gloss": "\u5e0c\u4f2f\u6765\u8bed",
-        "verified": false
+        "gloss": "希伯来语",
+        "verified": true
       },
       "hi": {
-        "gloss": "\u5370\u5730\u8bed",
-        "verified": false
+        "gloss": "印地语",
+        "verified": true
       },
       "ho": {
-        "gloss": "\u5e0c\u91cc\u00b7\u83ab\u56fe\uff08Hiri Motu\uff09",
-        "verified": false
+        "gloss": "希里莫图语",
+        "verified": true
       },
       "hr": {
-        "gloss": "\u514b\u7f57\u5730\u4e9a\u8bed",
-        "verified": false
+        "gloss": "克罗地亚语",
+        "verified": true
       },
       "ht": {
-        "gloss": "\u6d77\u5730;\u6d77\u5730\u514b\u91cc\u5965\u5c14\u8bed",
-        "verified": false
+        "gloss": "海地;海地克里奥尔语",
+        "verified": true
       },
       "hu": {
-        "gloss": "\u5308\u7259\u5229",
-        "verified": false
+        "gloss": "匈牙利语",
+        "verified": true
       },
       "hy": {
-        "gloss": "\u4e9a\u7f8e\u5c3c\u4e9a\u4eba",
-        "verified": false
+        "gloss": "亚美尼亚语",
+        "verified": true
       },
       "hz": {
-        "gloss": "\u8d6b\u96f7\u7f57",
-        "verified": false
+        "gloss": "赫雷罗语",
+        "verified": true
       },
       "ia": {
-        "gloss": "Interlingua\uff08\u56fd\u9645\u8f85\u52a9\u8bed\u8a00\u534f\u4f1a\uff09",
-        "verified": false
+        "gloss": "因特语",
+        "verified": true
       },
       "id": {
-        "gloss": "\u5370\u5ea6\u5c3c\u897f\u4e9a",
-        "verified": false
+        "gloss": "印度尼西亚语",
+        "verified": true
       },
       "ie": {
-        "gloss": "\u4e2d\u4ecb\u8bed\u897f\u65b9\u7684",
-        "verified": false
+        "gloss": "西方国际语",
+        "verified": true
       },
       "ig": {
-        "gloss": "\u4f0a\u535a",
-        "verified": false
+        "gloss": "伊博语",
+        "verified": true
       },
       "ii": {
-        "gloss": "\u56db\u5ddd\u5f5d\u65cfos",
-        "verified": false
+        "gloss": "四川彝语",
+        "verified": true
       },
       "ik": {
-        "gloss": "\u56e0\u7ebd\u76ae\u514b",
-        "verified": false
+        "gloss": "因纽皮克语",
+        "verified": true
       },
       "io": {
-        "gloss": "\u6211\u505a",
-        "verified": false
+        "gloss": "伊多语",
+        "verified": true
       },
       "is": {
-        "gloss": "\u51b0\u5c9b\u7684",
-        "verified": false
+        "gloss": "冰岛语",
+        "verified": true
       },
       "it": {
-        "gloss": "\u4e49\u5927\u5229\u6587",
-        "verified": false
+        "gloss": "意大利语",
+        "verified": true
       },
       "iu": {
-        "gloss": "\u56e0\u7ebd\u7279\u4eba",
-        "verified": false
+        "gloss": "因纽特语",
+        "verified": true
       },
       "ja": {
-        "gloss": "\u65e5\u672c",
-        "verified": false
+        "gloss": "日语",
+        "verified": true
       },
       "jv": {
-        "gloss": "\u722a\u54c7\u8bed",
-        "verified": false
+        "gloss": "爪哇语",
+        "verified": true
       },
       "ka": {
-        "gloss": "\u683c\u9c81\u5409\u4e9a\u4eba",
-        "verified": false
+        "gloss": "格鲁吉亚语",
+        "verified": true
       },
       "kg": {
-        "gloss": "\u91d1\u521a",
-        "verified": false
+        "gloss": "刚果语",
+        "verified": true
       },
       "ki": {
-        "gloss": "\u83ca\u4e45;\u83ca\u4e45",
-        "verified": false
+        "gloss": "基库尤语",
+        "verified": true
       },
       "kj": {
-        "gloss": "\u5bbd\u5c71\u5173\u5c71",
-        "verified": false
+        "gloss": "宽亚玛语",
+        "verified": true
       },
       "kk": {
-        "gloss": "\u54c8\u8428\u514b\u8bed",
-        "verified": false
+        "gloss": "哈萨克语",
+        "verified": true
       },
       "kl": {
-        "gloss": "Kalaallisut;\u683c\u9675\u5170",
-        "verified": false
+        "gloss": "格陵兰语",
+        "verified": true
       },
       "km": {
-        "gloss": "\u9ad8\u68c9\u4e2d\u592e",
-        "verified": false
+        "gloss": "高棉语",
+        "verified": true
       },
       "kn": {
-        "gloss": "\u5361\u7eb3\u8fbe\u8bed",
-        "verified": false
+        "gloss": "卡纳达语",
+        "verified": true
       },
       "ko": {
-        "gloss": "\u97e9\u8bed",
-        "verified": false
+        "gloss": "韩语",
+        "verified": true
       },
       "kr": {
-        "gloss": "\u5361\u52aa\u91cc",
-        "verified": false
+        "gloss": "卡努里语",
+        "verified": true
       },
       "ks": {
-        "gloss": "\u514b\u4ec0\u7c73\u5c14\u4eba",
-        "verified": false
+        "gloss": "克什米尔语",
+        "verified": true
       },
       "ku": {
-        "gloss": "\u5e93\u5c14\u5fb7",
-        "verified": false
+        "gloss": "库尔德语",
+        "verified": true
       },
       "kv": {
-        "gloss": "\u79d1\u7f8e",
-        "verified": false
+        "gloss": "科美语",
+        "verified": true
       },
       "kw": {
-        "gloss": "\u5eb7\u6c83\u5c14\u8bed",
-        "verified": false
+        "gloss": "康沃尔语",
+        "verified": true
       },
       "ky": {
-        "gloss": "\u67ef\u5409\u5179\u5409\u5c14\u5409\u65af",
-        "verified": false
+        "gloss": "柯吉兹吉尔吉斯语",
+        "verified": true
       },
       "la": {
-        "gloss": "\u62c9\u4e01",
-        "verified": false
+        "gloss": "拉丁语",
+        "verified": true
       },
       "lb": {
-        "gloss": "\u5362\u68ee\u5821\u8bed\uff1b\u83b1\u5c91\u5821",
-        "verified": false
+        "gloss": "卢森堡语；莱岑堡语",
+        "verified": true
       },
       "lg": {
-        "gloss": "\u7518\u8fbe",
-        "verified": false
+        "gloss": "甘达语",
+        "verified": true
       },
       "li": {
-        "gloss": "\u6797\u5821\u6797\u5821\u6797\u5821\u8bed",
-        "verified": false
+        "gloss": "林堡林堡林堡语",
+        "verified": true
       },
       "ln": {
-        "gloss": "\u6797\u52a0\u62c9",
-        "verified": false
+        "gloss": "林加拉语",
+        "verified": true
       },
       "lo": {
-        "gloss": "\u8001\u631d",
-        "verified": false
+        "gloss": "老挝语",
+        "verified": true
       },
       "lt": {
-        "gloss": "\u7acb\u9676\u5b9b\u8bed",
-        "verified": false
+        "gloss": "立陶宛语",
+        "verified": true
       },
       "lu": {
-        "gloss": "\u5362\u5df4\u52a0\u4e39\u52a0",
-        "verified": false
+        "gloss": "卢巴加丹加语",
+        "verified": true
       },
       "lv": {
-        "gloss": "\u62c9\u8131\u7ef4\u4e9a\u8bed",
-        "verified": false
+        "gloss": "拉脱维亚语",
+        "verified": true
       },
       "mg": {
-        "gloss": "\u9a6c\u5c14\u52a0\u4ec0",
-        "verified": false
+        "gloss": "马尔加什语",
+        "verified": true
       },
       "mh": {
-        "gloss": "\u9a6c\u6b47\u5c14\u4eba",
-        "verified": false
+        "gloss": "马歇尔语",
+        "verified": true
       },
       "mi": {
-        "gloss": "\u6bdb\u5229\u4eba",
-        "verified": false
+        "gloss": "毛利语",
+        "verified": true
       },
       "mk": {
-        "gloss": "\u9a6c\u5176\u987f\u8bed",
-        "verified": false
+        "gloss": "马其顿语",
+        "verified": true
       },
       "ml": {
-        "gloss": "\u9a6c\u62c9\u96c5\u62c9\u59c6\u8bed",
-        "verified": false
+        "gloss": "马拉雅拉姆语",
+        "verified": true
       },
       "mn": {
-        "gloss": "\u8499",
-        "verified": false
+        "gloss": "蒙语",
+        "verified": true
       },
       "mr": {
-        "gloss": "\u9a6c\u62c9\u5730\u8bed",
-        "verified": false
+        "gloss": "马拉地语",
+        "verified": true
       },
       "ms": {
-        "gloss": "\u9a6c\u6765\u8bed",
-        "verified": false
+        "gloss": "马来语",
+        "verified": true
       },
       "mt": {
-        "gloss": "\u9a6c\u8033\u4ed6\u8bed",
-        "verified": false
+        "gloss": "马耳他语",
+        "verified": true
       },
       "my": {
-        "gloss": "\u7f05\u7538\u4eba",
-        "verified": false
+        "gloss": "缅甸语",
+        "verified": true
       },
       "na": {
-        "gloss": "\u7459\u9c81",
-        "verified": false
+        "gloss": "瑙鲁语",
+        "verified": true
       },
       "nb": {
-        "gloss": "\u632a\u5a01\u535a\u514b\u9a6c\u5c14\uff1b\u632a\u5a01\u8bedBokm\u00e5l",
-        "verified": false
+        "gloss": "挪威语",
+        "verified": true
       },
       "nd": {
-        "gloss": "\u5317\u90e8\u6069\u5fb7\u8d1d\u52d2\uff1b\u5317\u6069\u5fb7\u8d1d\u52d2",
-        "verified": false
+        "gloss": "北恩德贝莱语",
+        "verified": true
       },
       "ne": {
-        "gloss": "\u5c3c\u6cca\u5c14\u6587",
-        "verified": false
+        "gloss": "尼泊尔文",
+        "verified": true
       },
       "ng": {
-        "gloss": "\u6069\u4e1c\u52a0",
-        "verified": false
+        "gloss": "恩东加语",
+        "verified": true
       },
       "nl": {
-        "gloss": "\u8377\u5170\u4eba\u4f5b\u5170\u8292\u8bed",
-        "verified": false
+        "gloss": "荷兰语；佛兰芒语",
+        "verified": true
       },
       "nn": {
-        "gloss": "\u632a\u5a01\u5c3c\u8bfa\u65af\u514b\u632a\u5a01\u5c3c\u8bfa\u65af\u514b",
-        "verified": false
+        "gloss": "新挪威语",
+        "verified": true
       },
       "no": {
-        "gloss": "\u632a\u5a01",
-        "verified": false
+        "gloss": "挪威语",
+        "verified": true
       },
       "nr": {
-        "gloss": "\u5357\u90e8\u6069\u5fb7\u8d1d\u52d2\uff1b\u5357\u6069\u5fb7\u8d1d\u52d2",
-        "verified": false
+        "gloss": "南恩德贝莱语",
+        "verified": true
       },
       "nv": {
-        "gloss": "\u7eb3\u74e6\u970d\u4eba\u7eb3\u74e6\u970d\u4eba",
-        "verified": false
+        "gloss": "纳瓦霍语",
+        "verified": true
       },
       "ny": {
-        "gloss": "Chichewa; Chewa; Nyanja",
-        "verified": false
+        "gloss": "齐切瓦语",
+        "verified": true
       },
       "oc": {
-        "gloss": "\u5965\u514b\u897f\u5510\uff081500\u540e\uff09\uff1b\u666e\u7f57\u65fa\u65af",
-        "verified": false
+        "gloss": "奥克语",
+        "verified": true
       },
       "oj": {
-        "gloss": "\u5965\u5409\u5e03\u74e6",
-        "verified": false
+        "gloss": "奥吉布瓦语",
+        "verified": true
       },
       "om": {
-        "gloss": "\u5965\u7f57\u83ab",
-        "verified": false
+        "gloss": "奥罗莫语",
+        "verified": true
       },
       "or": {
-        "gloss": "\u5965\u91cc\u4e9a",
-        "verified": false
+        "gloss": "奥里亚语",
+        "verified": true
       },
       "os": {
-        "gloss": "\u5965\u8d5b\u68af;\u542c\u89c9\u7684",
-        "verified": false
+        "gloss": "奥塞梯语",
+        "verified": true
       },
       "pa": {
-        "gloss": "\u65c1\u906e\u666e\u8bed\u65c1\u906e\u666e\u8bed",
-        "verified": false
+        "gloss": "旁遮普语",
+        "verified": true
       },
       "pi": {
-        "gloss": "\u5e15\u91cc",
-        "verified": false
+        "gloss": "帕里语",
+        "verified": true
       },
       "pl": {
-        "gloss": "\u629b\u5149",
-        "verified": false
+        "gloss": "波兰语",
+        "verified": true
       },
       "ps": {
-        "gloss": "Pushto;\u666e\u4ec0\u56fe\u8bed",
-        "verified": false
+        "gloss": "普什图语",
+        "verified": true
       },
       "pt": {
-        "gloss": "\u8461\u8404\u7259\u8bed",
-        "verified": false
+        "gloss": "葡萄牙语",
+        "verified": true
       },
       "qu": {
-        "gloss": "\u76d6\u4e18\u4e9a\u65cf",
-        "verified": false
+        "gloss": "盖丘亚族语",
+        "verified": true
       },
       "rm": {
-        "gloss": "\u7f57\u66fc\u4ec0",
-        "verified": false
+        "gloss": "罗曼什语",
+        "verified": true
       },
       "rn": {
-        "gloss": "\u6da6\u8fea",
-        "verified": false
+        "gloss": "润迪语",
+        "verified": true
       },
       "ro": {
-        "gloss": "\u7f57\u9a6c\u5c3c\u4e9a\u6587\uff1b\u6469\u5c14\u8fbe\u7ef4\u4e9a;\u6469\u5c14\u591a\u74e6",
-        "verified": false
+        "gloss": "罗马尼亚文；摩尔达维亚语;摩尔多瓦语",
+        "verified": true
       },
       "ru": {
-        "gloss": "\u4fc4\u8bed",
-        "verified": false
+        "gloss": "俄语",
+        "verified": true
       },
       "rw": {
-        "gloss": "Kinyarwanda",
-        "verified": false
+        "gloss": "卢旺达语",
+        "verified": true
       },
       "sa": {
-        "gloss": "\u68b5\u6587",
-        "verified": false
+        "gloss": "梵文",
+        "verified": true
       },
       "sc": {
-        "gloss": "\u6492\u4e01\u5c9b",
-        "verified": false
+        "gloss": "撒丁岛语",
+        "verified": true
       },
       "sd": {
-        "gloss": "\u4fe1\u5730",
-        "verified": false
+        "gloss": "信德语",
+        "verified": true
       },
       "se": {
-        "gloss": "\u5317\u8428\u7c73",
-        "verified": false
+        "gloss": "北萨米语",
+        "verified": true
       },
       "sg": {
-        "gloss": "\u4e09\u4e61",
-        "verified": false
+        "gloss": "桑戈语",
+        "verified": true
       },
       "si": {
-        "gloss": "\u50e7\u4f3d\u7f57\u8bed\u50e7\u4f3d\u7f57\u8bed",
-        "verified": false
+        "gloss": "僧伽罗语",
+        "verified": true
       },
       "sk": {
-        "gloss": "\u65af\u6d1b\u4f10\u514b\u6587",
-        "verified": false
+        "gloss": "斯洛伐克文",
+        "verified": true
       },
       "sl": {
-        "gloss": "\u65af\u6d1b\u6587\u5c3c\u4e9a\u6587",
-        "verified": false
+        "gloss": "斯洛文尼亚文",
+        "verified": true
       },
       "sm": {
-        "gloss": "\u8428\u6469\u4e9a\u4eba",
-        "verified": false
+        "gloss": "萨摩亚语",
+        "verified": true
       },
       "sn": {
-        "gloss": "\u5e84\u540d",
-        "verified": false
+        "gloss": "绍纳语",
+        "verified": true
       },
       "so": {
-        "gloss": "\u7d22\u9a6c\u91cc",
-        "verified": false
+        "gloss": "索马里语",
+        "verified": true
       },
       "sq": {
-        "gloss": "\u963f\u5c14\u5df4\u5c3c\u4e9a\u8bed",
-        "verified": false
+        "gloss": "阿尔巴尼亚语",
+        "verified": true
       },
       "sr": {
-        "gloss": "\u585e\u5c14\u7ef4\u4e9a",
-        "verified": false
+        "gloss": "塞尔维亚语",
+        "verified": true
       },
       "ss": {
-        "gloss": "\u65af\u74e6\u8482",
-        "verified": false
+        "gloss": "斯瓦蒂语",
+        "verified": true
       },
       "st": {
-        "gloss": "\u5357\u7d22\u6258",
-        "verified": false
+        "gloss": "南索托语",
+        "verified": true
       },
       "su": {
-        "gloss": "dan\u4ed6",
-        "verified": false
+        "gloss": "巽他语",
+        "verified": true
       },
       "sv": {
-        "gloss": "\u745e\u5178",
-        "verified": false
+        "gloss": "瑞典语",
+        "verified": true
       },
       "sw": {
-        "gloss": "\u65af\u74e6\u5e0c\u91cc\u8bed",
-        "verified": false
+        "gloss": "斯瓦希里语",
+        "verified": true
       },
       "ta": {
-        "gloss": "\u6cf0\u7c73\u5c14\u8bed",
-        "verified": false
+        "gloss": "泰米尔语",
+        "verified": true
       },
       "te": {
-        "gloss": "\u6cf0\u5362\u56fa\u8bed",
-        "verified": false
+        "gloss": "泰卢固语",
+        "verified": true
       },
       "tg": {
-        "gloss": "\u5854\u5409\u514b",
-        "verified": false
+        "gloss": "塔吉克语",
+        "verified": true
       },
       "th": {
-        "gloss": "\u6cf0\u56fd",
-        "verified": false
+        "gloss": "泰语",
+        "verified": true
       },
       "ti": {
-        "gloss": "\u63d0\u683c\u91cc\u5c3c\u4e9a",
-        "verified": false
+        "gloss": "提格里尼亚语",
+        "verified": true
       },
       "tk": {
-        "gloss": "\u571f\u5e93\u66fc\u4eba",
-        "verified": false
+        "gloss": "土库曼语",
+        "verified": true
       },
       "tl": {
-        "gloss": "\u4ed6\u52a0\u7984\u8bed",
-        "verified": false
+        "gloss": "他加禄语",
+        "verified": true
       },
       "tn": {
-        "gloss": "\u8328\u74e6\u7eb3",
-        "verified": false
+        "gloss": "茨瓦纳语",
+        "verified": true
       },
       "to": {
-        "gloss": "\u6c64\u52a0\uff08\u6c64\u52a0\u7fa4\u5c9b\uff09",
-        "verified": false
+        "gloss": "汤加语",
+        "verified": true
       },
       "tr": {
-        "gloss": "\u571f\u8033\u5176",
-        "verified": false
+        "gloss": "土耳其语",
+        "verified": true
       },
       "ts": {
-        "gloss": "\u7279\u677e\u52a0",
-        "verified": false
+        "gloss": "特松加语",
+        "verified": true
       },
       "tt": {
-        "gloss": "\u5854\u5854\u5c14\u65cf",
-        "verified": false
+        "gloss": "塔塔尔族语",
+        "verified": true
       },
       "tw": {
-        "gloss": "\u7279\u5a01",
-        "verified": false
+        "gloss": "特威语",
+        "verified": true
       },
       "ty": {
-        "gloss": "\u5927\u6eaa\u5730",
-        "verified": false
+        "gloss": "大溪地语",
+        "verified": true
       },
       "ug": {
-        "gloss": "\u7ef4\u543e\u5c14;\u7ef4\u543e\u5c14\u65cf",
-        "verified": false
+        "gloss": "维吾尔语",
+        "verified": true
       },
       "uk": {
-        "gloss": "\u4e4c\u514b\u5170",
-        "verified": false
+        "gloss": "乌克兰语",
+        "verified": true
       },
       "ur": {
-        "gloss": "\u4e4c\u5c14\u90fd\u8bed",
-        "verified": false
+        "gloss": "乌尔都语",
+        "verified": true
       },
       "uz": {
-        "gloss": "\u4e4c\u5179\u522b\u514b\u8bed",
-        "verified": false
+        "gloss": "乌兹别克语",
+        "verified": true
       },
       "ve": {
-        "gloss": "\u6587\u8fbe",
-        "verified": false
+        "gloss": "文达语",
+        "verified": true
       },
       "vi": {
-        "gloss": "\u8d8a\u5357\u6587",
-        "verified": false
+        "gloss": "越南文",
+        "verified": true
       },
       "vo": {
-        "gloss": "\u6c83\u62c9\u666e\u514b",
-        "verified": false
+        "gloss": "沃拉普克语",
+        "verified": true
       },
       "wa": {
-        "gloss": "\u74e6\u9686",
-        "verified": false
+        "gloss": "瓦隆语",
+        "verified": true
       },
       "wo": {
-        "gloss": "\u6c83\u6d1b\u592b",
-        "verified": false
+        "gloss": "沃洛夫语",
+        "verified": true
       },
       "xh": {
-        "gloss": "\u79d1\u8428",
-        "verified": false
+        "gloss": "科萨语",
+        "verified": true
       },
       "yi": {
-        "gloss": "\u610f\u7b2c\u7eea\u8bed",
-        "verified": false
+        "gloss": "意第绪语",
+        "verified": true
       },
       "yo": {
-        "gloss": "\u7ea6\u9c81\u5df4\u8bed",
-        "verified": false
+        "gloss": "约鲁巴语",
+        "verified": true
       },
       "za": {
-        "gloss": "\u58eehuang",
-        "verified": false
+        "gloss": "壮语",
+        "verified": true
       },
       "zh": {
-        "gloss": "\u4e2d\u6587",
-        "verified": false
+        "gloss": "中文",
+        "verified": true
       },
       "zu": {
-        "gloss": "\u7956\u9c81\u65cf",
-        "verified": false
+        "gloss": "祖鲁族语",
+        "verified": true
       }
     }
   },
   "login": {
     "header": {
-      "gloss": "\u767b\u5f55",
-      "verified": false
+      "gloss": "登录",
+      "verified": true
     },
     "messages": {
       "incorrect-login": {
-        "gloss": "\u7528\u6237\u540d\u6216\u5bc6\u7801\u4e0d\u6b63\u786e",
-        "verified": false
+        "gloss": "用户名或密码不正确",
+        "verified": true
       }
     }
   },
   "people": {
     "account-information": {
-      "gloss": "\u5e10\u6237\u4fe1\u606f",
-      "verified": false
+      "gloss": "帐户信息",
+      "verified": true
     },
     "additional-information": {
-      "gloss": "\u9644\u52a0\u4fe1\u606f",
-      "verified": false
+      "gloss": "附加信息",
+      "verified": true
     },
     "attributes": {
-      "gloss": "\u5c5e\u6027",
-      "verified": false
+      "gloss": "属性",
+      "verified": true
     },
     "dropdown-roles": {
-      "gloss": "\u6240\u6709\u89d2\u8272",
-      "verified": false
+      "gloss": "所有职位",
+      "verified": true
     },
     "next": {
-      "gloss": "\u4e0b\u4e00\u4e2a",
-      "verified": false
+      "gloss": "下一个",
+      "verified": true
     },
     "optional": {
-      "gloss": "\u53ef\u9009\u7684",
-      "verified": false
+      "gloss": "可选的",
+      "verified": true
     },
     "personal-information": {
-      "gloss": "\u4e2a\u4eba\u4fe1\u606f",
-      "verified": false
+      "gloss": "个人信息",
+      "verified": true
     },
     "previous": {
-      "gloss": "\u4ee5\u524d",
-      "verified": false
+      "gloss": "上一个",
+      "verified": true
     },
     "title": {
-      "gloss": "\u4eba",
-      "verified": false
+      "gloss": "人员",
+      "verified": true
     },
     "title-roles": {
-      "gloss": "\u7684\u89d2\u8272",
-      "verified": false
+      "gloss": "职位",
+      "verified": true
     }
   },
   "person": {
     "account": {
-      "gloss": "\u5e10\u6237",
-      "verified": false
+      "gloss": "帐户",
+      "verified": true
     },
     "account-info": {
       "roles": {
-        "gloss": "\u7684\u89d2\u8272",
-        "verified": false
+        "gloss": "职位",
+        "verified": true
       }
     },
     "actions": {
       "add-account": {
-        "gloss": "\u65b0\u589e\u5e10\u6237",
-        "verified": false
+        "gloss": "添加帐户",
+        "verified": true
       },
       "add-participant": {
-        "gloss": "\u6dfb\u52a0\u53c2\u4e0e\u8005",
-        "verified": false
+        "gloss": "添加参与者",
+        "verified": true
       },
       "add-visitor": {
-        "gloss": "\u6dfb\u52a0\u8bbf\u5ba2",
-        "verified": false
+        "gloss": "添加访客",
+        "verified": true
       },
       "assign-roles": {
-        "gloss": "\u5206\u914d\u89d2\u8272",
-        "verified": false
+        "gloss": "分配职位",
+        "verified": true
       },
       "edit": {
-        "gloss": "\u7f16\u8f91\u4eba",
-        "verified": false
+        "gloss": "编辑人员",
+        "verified": true
       },
       "new": {
-        "gloss": "\u65b0\u4eba",
-        "verified": false
+        "gloss": "添加人员",
+        "verified": true
       },
       "reset-password": {
-        "gloss": "\u91cd\u8bbe\u5bc6\u7801",
-        "verified": false
+        "gloss": "重设密码",
+        "verified": true
       }
     },
     "date": {
       "birthday": {
-        "gloss": "\u751f\u65e5",
-        "verified": false
+        "gloss": "生日",
+        "verified": true
       }
     },
     "email": {
-      "gloss": "\u7535\u5b50\u90ae\u4ef6",
-      "verified": false
+      "gloss": "电子邮件",
+      "verified": true
     },
     "female": {
-      "gloss": "\u5973",
-      "verified": false
+      "gloss": "女",
+      "verified": true
     },
     "gender": {
-      "gloss": "\u6027\u522b",
-      "verified": false
+      "gloss": "性别",
+      "verified": true
     },
     "male": {
-      "gloss": "\u7537",
-      "verified": false
+      "gloss": "男",
+      "verified": true
     },
     "messages": {
       "account-activate": {
-        "gloss": "\u5e10\u6237\u5df2\u6fc0\u6d3b",
-        "verified": false
+        "gloss": "帐户已激活",
+        "verified": true
       },
       "account-deactivate": {
-        "gloss": "\u5e10\u6237\u5df2\u505c\u7528",
-        "verified": false
+        "gloss": "帐户已停用",
+        "verified": true
       },
       "canceled": {
-        "gloss": "\u53d6\u6d88\u6dfb\u52a0\u65b0\u4eba",
-        "verified": false
+        "gloss": "取消添加新人员",
+        "verified": true
       },
       "confirm": {
         "activate": {
-          "gloss": "\u60a8\u786e\u5b9a\u8981\u8fd8\u539f\u6b64\u4eba\u5417\uff1f",
-          "verified": false
+          "gloss": "您确定要还原此人员吗？",
+          "verified": true
         },
         "deactivate": {
-          "gloss": "\u60a8\u786e\u5b9a\u8981\u5b58\u6863\u6b64\u4eba\u5417\uff1f",
-          "verified": false
+          "gloss": "您确定要归档此人员吗？",
+          "verified": true
         }
       },
       "person-activate": {
-        "gloss": "\u88ab\u6fc0\u6d3b\u7684\u4eba",
-        "verified": false
+        "gloss": "被激活的人员",
+        "verified": true
       },
       "person-add": {
-        "gloss": "\u6dfb\u52a0\u4e86\u65b0\u4eba",
-        "verified": false
+        "gloss": "新人员已添加",
+        "verified": true
       },
       "person-deactivate": {
-        "gloss": "\u4eba\u5df2\u505c\u7528",
-        "verified": false
+        "gloss": "人员已停用",
+        "verified": true
       },
       "person-edit": {
-        "gloss": "\u7f16\u8f91\u8005",
-        "verified": false
+        "gloss": "人员已编辑",
+        "verified": true
       },
       "person-save-error": {
-        "gloss": "\u4eba\u5458\u672a\u4fdd\u5b58",
-        "verified": false
+        "gloss": "人员未保存",
+        "verified": true
       }
     },
     "name": {
       "first": {
-        "gloss": "\u540d\u5b57",
-        "verified": false
+        "gloss": "名字",
+        "verified": true
       },
       "last": {
-        "gloss": "\u59d3",
-        "verified": false
+        "gloss": "姓",
+        "verified": true
       },
       "second-last": {
-        "gloss": "\u59d3\u6c0f",
-        "verified": false
+        "gloss": "姓氏",
+        "verified": true
       }
     },
     "no-account": {
-      "gloss": "\u8fd8\u6ca1\u6709\u5e10\u53f7\uff1f",
-      "verified": false
+      "gloss": "还没有帐号？",
+      "verified": true
     },
     "password": {
-      "gloss": "\u5bc6\u7801",
-      "verified": false
+      "gloss": "密码",
+      "verified": true
     },
     "phone": {
-      "gloss": "\u7535\u8bdd",
-      "verified": false
+      "gloss": "电话",
+      "verified": true
     },
     "repeat-password": {
-      "gloss": "\u91cd\u590d\u8f93\u5165\u5bc6\u7801",
-      "verified": false
+      "gloss": "重复输入密码",
+      "verified": true
     },
     "settings": {
-      "gloss": "{person}\u7684\u8bbe\u7f6e",
-      "verified": false
+      "gloss": "{person}的设置",
+      "verified": true
     },
     "username": {
-      "gloss": "\u7528\u6237\u540d",
-      "verified": false
+      "gloss": "用户名",
+      "verified": true
     }
   },
   "places": {
     "address": {
       "address": {
-        "gloss": "\u5730\u5740",
-        "verified": false
+        "gloss": "地址",
+        "verified": true
       },
       "city": {
-        "gloss": "\u5e02",
-        "verified": false
+        "gloss": "市",
+        "verified": true
       },
       "country": {
-        "gloss": "\u56fd\u5bb6",
-        "verified": false
+        "gloss": "国家",
+        "verified": true
       },
       "filters": {
         "address_filters": {
-          "gloss": "\u5730\u5740\u8fc7\u6ee4\u5668",
-          "verified": false
+          "gloss": "地址筛选器",
+          "verified": true
         },
         "apply": {
-          "gloss": "\u5957\u7528\u7b5b\u9009\u5668",
-          "verified": false
+          "gloss": "应用筛选器",
+          "verified": true
         },
         "distance-addr": {
-          "gloss": "\u6309\u8ddd\u7279\u5b9a\u5730\u5740\u7684\u8ddd\u79bb\u8fdb\u884c\u8fc7\u6ee4",
-          "verified": false
+          "gloss": "按距离特定地址的距离进行筛选",
+          "verified": true
         },
         "distance-ll": {
-          "gloss": "\u6309\u8ddd\u79bb\u7279\u5b9a\u7eac\u5ea6\u548c\u7ecf\u5ea6\u7684\u8ddd\u79bb\u8fdb\u884c\u8fc7\u6ee4",
-          "verified": false
+          "gloss": "按距离特定纬度和经度的距离进行筛选",
+          "verified": true
         },
         "distanceFromAddress": {
-          "gloss": "\u8ddd\u6307\u5b9a\u5730\u5740\u7684\u8ddd\u79bb",
-          "verified": false
+          "gloss": "距指定地址的距离",
+          "verified": true
         },
         "distanceFromLatLng": {
-          "gloss": "\u8ddd\u6307\u5b9a\u7eac\u5ea6\u548c\u7ecf\u5ea6\u7684\u8ddd\u79bb",
-          "verified": false
+          "gloss": "距指定纬度和经度的距离",
+          "verified": true
         },
         "endLat": {
-          "gloss": "\u7ed3\u675f\u7eac\u5ea6",
-          "verified": false
+          "gloss": "结束纬度",
+          "verified": true
         },
         "endLng": {
-          "gloss": "\u7ed3\u675f\u7ecf\u5ea6",
-          "verified": false
+          "gloss": "结束经度",
+          "verified": true
         },
         "range": {
-          "gloss": "\u5728\u4e00\u7cfb\u5217\u7ecf\u5ea6\u548c\u7eac\u5ea6\u4e4b\u95f4\u8fdb\u884c\u8fc7\u6ee4",
-          "verified": false
+          "gloss": "在一系列经度和纬度之间进行筛选",
+          "verified": true
         },
         "reset-filters": {
-          "gloss": "\u91cd\u7f6e\u8fc7\u6ee4\u5668",
-          "verified": false
+          "gloss": "重置筛选器",
+          "verified": true
         },
         "startLat": {
-          "gloss": "\u5f00\u59cb\u7eac\u5ea6",
-          "verified": false
+          "gloss": "开始纬度",
+          "verified": true
         },
         "startLng": {
-          "gloss": "\u5f00\u59cb\u7ecf\u5ea6",
-          "verified": false
+          "gloss": "开始经度",
+          "verified": true
         }
       },
       "find-address": {
-        "gloss": "\u67e5\u627e\u5730\u5740",
-        "verified": false
+        "gloss": "查找地址",
+        "verified": true
       },
       "find-address-lat-lng": {
-        "gloss": "\u4f7f\u7528\u7ecf\u5ea6\u548c\u7eac\u5ea6\u67e5\u627e\u5730\u5740",
-        "verified": false
+        "gloss": "使用经度和纬度查找地址",
+        "verified": true
       },
       "latitude": {
-        "gloss": "\u7eac\u5ea6",
-        "verified": false
+        "gloss": "纬度",
+        "verified": true
       },
       "longitude": {
-        "gloss": "\u7ecf\u5ea6",
-        "verified": false
+        "gloss": "经度",
+        "verified": true
       },
       "name": {
-        "gloss": "\u540d\u79f0",
-        "verified": false
+        "gloss": "名称",
+        "verified": true
       },
       "new": {
-        "gloss": "\u65b0\u589e\u5730\u5740",
-        "verified": false
+        "gloss": "添加地址",
+        "verified": true
       },
       "valid-address": {
-        "gloss": "\u4f7f\u7528\u6709\u6548\u7684\u8857\u9053\u5730\u5740",
-        "verified": false
+        "gloss": "使用有效的街道地址",
+        "verified": true
       }
     },
     "area": {
       "area": {
-        "gloss": "\u533a",
-        "verified": false
+        "gloss": "地区",
+        "verified": true
       },
       "confirm": {
         "activate": {
-          "gloss": "\u60a8\u786e\u5b9a\u8981\u6062\u590d\u8be5\u533a\u57df\u5417\uff1f",
-          "verified": false
+          "gloss": "您确定要恢复该地区吗？",
+          "verified": true
         },
         "deactivate": {
-          "gloss": "\u60a8\u786e\u5b9a\u8981\u5b58\u6863\u6b64\u533a\u57df\u5417\uff1f",
-          "verified": false
+          "gloss": "您确定要归档此地区吗？",
+          "verified": true
         }
       },
       "create-area": {
-        "gloss": "\u5efa\u7acb\u65b0\u533a\u57df",
-        "verified": false
+        "gloss": "建立新地区",
+        "verified": true
       },
       "edit": {
-        "gloss": "\u7f16\u8f91\u533a",
-        "verified": false
+        "gloss": "编辑地区",
+        "verified": true
       },
       "name": {
-        "gloss": "\u5730\u533a\u540d\u79f0",
-        "verified": false
+        "gloss": "地区名称",
+        "verified": true
       },
       "new": {
-        "gloss": "\u65b0\u589e\u533a\u57df",
-        "verified": false
+        "gloss": "添加地区",
+        "verified": true
       }
     },
     "close": {
-      "gloss": "\u5173",
-      "verified": false
+      "gloss": "关闭",
+      "verified": true
     },
     "create-address": {
-      "gloss": "\u521b\u5efa\u4e00\u4e2a\u5730\u5740",
-      "verified": false
+      "gloss": "创建一个地址",
+      "verified": true
     },
     "edit": {
-      "gloss": "\u4fee\u6539\u4f4d\u7f6e",
-      "verified": false
+      "gloss": "修改位置",
+      "verified": true
     },
     "expand": {
-      "gloss": "\u6269\u5927",
-      "verified": false
+      "gloss": "展开",
+      "verified": true
     },
     "location": {
       "description": {
-        "gloss": "\u63cf\u8ff0",
-        "verified": false
+        "gloss": "描述",
+        "verified": true
       },
       "location": {
-        "gloss": "\u4f4d\u7f6e",
-        "verified": false
+        "gloss": "位置",
+        "verified": true
       },
       "new": {
-        "gloss": "\u6dfb\u52a0\u4f4d\u7f6e",
-        "verified": false
+        "gloss": "添加位置",
+        "verified": true
       }
     },
     "messages": {
       "confirm": {
         "activate": {
-          "gloss": "\u60a8\u786e\u5b9a\u8981\u8fd8\u539f\u6b64\u5730\u5740\u5417\uff1f",
-          "verified": false
+          "gloss": "您确定要还原此地址吗？",
+          "verified": true
         },
         "deactivate": {
-          "gloss": "\u60a8\u786e\u5b9a\u8981\u5b58\u6863\u6b64\u5730\u5740\u5417\uff1f",
-          "verified": false
+          "gloss": "您确定要归档此地址吗？",
+          "verified": true
         }
       },
       "find-address-err": {
-        "gloss": "\u9700\u8981\u7eac\u5ea6\u548c\u7ecf\u5ea6\u624d\u80fd\u627e\u5230\u5730\u5740",
-        "verified": false
+        "gloss": "需要纬度和经度才能找到地址",
+        "verified": true
       },
       "no-results": {
-        "gloss": "\u60a8\u7684\u5730\u5740\u672a\u8fd4\u56de\u4efb\u4f55\u7ed3\u679c\u3002",
-        "verified": false
+        "gloss": "您的地址未返回任何结果。",
+        "verified": true
       },
       "saved": {
-        "gloss": "\u60a8\u7684\u5730\u5740\u5df2\u4fdd\u5b58\u3002",
-        "verified": false
+        "gloss": "您的地址已保存。",
+        "verified": true
       }
     },
     "new": {
-      "gloss": "\u65b0\u589e\u5730\u70b9",
-      "verified": false
+      "gloss": "添加地点",
+      "verified": true
     },
     "title": {
-      "gloss": "\u5730\u65b9",
-      "verified": false
+      "gloss": "地方",
+      "verified": true
     }
   },
   "public": {
     "courses": {
       "view-all": {
-        "gloss": "\u67e5\u770b\u6240\u6709\u8bfe\u7a0b",
-        "verified": false
+        "gloss": "查看所有课程",
+        "verified": true
       }
     },
     "events": {
       "join": {
-        "gloss": "\u53c2\u52a0\u6d3b\u52a8",
-        "verified": false
+        "gloss": "参加活动",
+        "verified": true
       },
       "view-all": {
-        "gloss": "\u67e5\u770b\u6240\u6709\u6d3b\u52a8",
-        "verified": false
+        "gloss": "查看所有活动",
+        "verified": true
       }
     },
     "headers": {
       "home-church": {
-        "gloss": "\u5bfb\u627e\u5bb6\u5ead\u6559\u4f1a",
-        "verified": false
+        "gloss": "寻找家庭教会",
+        "verified": true
       },
       "upcoming-classes": {
-        "gloss": "\u5373\u5c06\u4e3e\u884c\u7684\u8bfe\u7a0b",
-        "verified": false
+        "gloss": "即将举行的课程",
+        "verified": true
       },
       "upcoming-events": {
-        "gloss": "\u5373\u5c06\u4e3e\u884c\u7684\u6d3b\u52a8",
-        "verified": false
+        "gloss": "即将举行的活动",
+        "verified": true
       }
     },
     "title": {
-      "gloss": "\u4e0a\u5e02",
-      "verified": false
+      "gloss": "公开",
+      "verified": true
     }
   },
   "role": {
     "event-planner": {
-      "gloss": "\u8ba1\u5212\u4eba\uff0c\u7b56\u5212\u4eba",
-      "verified": false
+      "gloss": "计划人，策划人",
+      "verified": true
     },
     "group-admin": {
-      "gloss": "\u7ec4\u7ba1\u7406\u5458",
-      "verified": false
+      "gloss": "小组管理员",
+      "verified": true
     },
     "group-leader": {
-      "gloss": "\u7ec4\u957f",
-      "verified": false
+      "gloss": "组长",
+      "verified": true
     },
     "group-overseer": {
-      "gloss": "\u7763\u519b",
-      "verified": false
+      "gloss": "督军",
+      "verified": true
     },
     "infrastructure": {
-      "gloss": "\u57fa\u7840\u8bbe\u65bd",
-      "verified": false
+      "gloss": "基础设施",
+      "verified": true
     },
     "public": {
-      "gloss": "\u4e0a\u5e02",
-      "verified": false
+      "gloss": "公共用户",
+      "verified": true
     },
     "registrar": {
-      "gloss": "\u767b\u8bb0\u5458",
-      "verified": false
+      "gloss": "登记员",
+      "verified": true
     },
     "superuser": {
-      "gloss": "\u8d85\u7ea7\u7528\u6237",
-      "verified": false
+      "gloss": "超级用户",
+      "verified": true
     },
     "teaching-assistant": {
-      "gloss": "\u6559\u5b66\u52a9\u624b",
-      "verified": false
+      "gloss": "教学助手",
+      "verified": true
     },
     "translator": {
-      "gloss": "\u8bd1\u8005",
-      "verified": false
+      "gloss": "翻译官",
+      "verified": true
     },
     "visitor": {
-      "gloss": "\u6e38\u5ba2",
-      "verified": false
+      "gloss": "访客",
+      "verified": true
     }
   },
   "teams": {
     "all-teams": {
-      "gloss": "\u6240\u6709\u961f\u4f0d",
-      "verified": false
+      "gloss": "所有团队",
+      "verified": true
     },
     "confirm-archive": {
-      "gloss": "\u60a8\u786e\u5b9a\u8981\u5b58\u6863\u6b64\u56e2\u961f\u5417\uff1f",
-      "verified": false
+      "gloss": "您确定要归档此团队吗？",
+      "verified": true
     },
     "confirm-remove-from-event": {
-      "gloss": "\u60a8\u786e\u5b9a\u8981\u4ece\u6b64\u6d3b\u52a8\u4e2d\u5220\u9664\u8be5\u56e2\u961f\u5417\uff1f",
-      "verified": false
+      "gloss": "您确定要从此活动中删除该团队吗？",
+      "verified": true
     },
     "create-team": {
-      "gloss": "\u5efa\u7acb\u56e2\u961f",
-      "verified": false
+      "gloss": "建立团队",
+      "verified": true
     },
     "description": {
-      "gloss": "\u63cf\u8ff0",
-      "verified": false
+      "gloss": "描述",
+      "verified": true
     },
     "edit-team": {
-      "gloss": "\u7f16\u8f91\u56e2\u961f",
-      "verified": false
+      "gloss": "编辑团队",
+      "verified": true
     },
     "error-adding-team": {
-      "gloss": "\u6dfb\u52a0\u56e2\u961f\u65f6\u51fa\u9519",
-      "verified": false
+      "gloss": "添加团队时出错",
+      "verified": true
     },
     "error-editing-team": {
-      "gloss": "\u7f16\u8f91\u56e2\u961f\u65f6\u51fa\u9519",
-      "verified": false
+      "gloss": "编辑团队时出错",
+      "verified": true
     },
     "error-removing-team": {
-      "gloss": "\u5220\u9664\u56e2\u961f\u65f6\u51fa\u9519",
-      "verified": false
+      "gloss": "删除团队时出错",
+      "verified": true
     },
     "error-team-assigned": {
-      "gloss": "\u8be5\u56e2\u961f\u88ab\u5206\u914d\u4e86\u4e00\u4e2a\u51b2\u7a81\u4e8b\u4ef6\u3002",
-      "verified": false
+      "gloss": "该团队被分配了一个冲突活动。",
+      "verified": true
     },
     "error-unarchiving-team": {
-      "gloss": "\u53d6\u6d88\u5f52\u6863\u56e2\u961f\u65f6\u51fa\u9519",
-      "verified": false
+      "gloss": "取消归档团队时出错",
+      "verified": true
     },
     "members": {
       "add": {
-        "gloss": "\u6dfb\u52a0\u56e2\u961f\u6210\u5458",
-        "verified": false
+        "gloss": "添加团队成员",
+        "verified": true
       },
       "confirm-remove": {
-        "gloss": "\u60a8\u786e\u5b9a\u8981\u5220\u9664\u6b64\u6210\u5458\u5417\uff1f",
-        "verified": false
+        "gloss": "您确定要删除此成员吗？",
+        "verified": true
       },
       "title": {
-        "gloss": "\u56e2\u961f\u6210\u5458",
-        "verified": false
+        "gloss": "团队成员",
+        "verified": true
       }
     },
     "new": {
-      "gloss": "\u65b0\u589e\u56e2\u961f",
-      "verified": false
+      "gloss": "添加团队",
+      "verified": true
     },
     "none-assigned": {
-      "gloss": "\u6ca1\u6709\u5206\u914d\u56e2\u961f\u3002",
-      "verified": false
+      "gloss": "没有分配团队。",
+      "verified": true
     },
     "team-added": {
-      "gloss": "\u56e2\u961f\u52a0\u5165",
-      "verified": false
+      "gloss": "团队已添加",
+      "verified": true
     },
     "team-edited": {
-      "gloss": "\u56e2\u961f\u5df2\u7f16\u8f91",
-      "verified": false
+      "gloss": "团队已编辑",
+      "verified": true
     },
     "team-on-event": {
-      "gloss": "\u8be5\u56e2\u961f\u5df2\u7ecf\u5206\u914d\u7ed9\u8be5\u6d3b\u52a8\u3002",
-      "verified": false
+      "gloss": "该团队已经分配给该活动。",
+      "verified": true
     },
     "team-removed": {
-      "gloss": "\u56e2\u961f\u5df2\u5220\u9664",
-      "verified": false
+      "gloss": "团队已删除",
+      "verified": true
     },
     "title": {
-      "gloss": "\u961f\u4f0d",
-      "verified": false
+      "gloss": "团队",
+      "verified": true
     }
   },
   "transcripts": {
     "add-diploma-this-student": {
-      "gloss": "\u52a0\u6587\u51ed",
-      "verified": false
+      "gloss": "添加文凭",
+      "verified": true
     },
     "course-completed": {
-      "gloss": "\u5df2\u5b8c\u6210",
-      "verified": false
+      "gloss": "已完成",
+      "verified": true
     },
     "courses": {
-      "gloss": "\u57f9\u8bad\u73ed",
-      "verified": false
+      "gloss": "课程",
+      "verified": true
     },
     "courses-in-progress-or-completed": {
-      "gloss": "\u8bfe\u7a0b\uff08\u8fdb\u884c\u4e2d\u6216\u5df2\u5b8c\u6210\uff09",
-      "verified": false
+      "gloss": "课程（进行中或已完成）",
+      "verified": true
     },
     "courses-this-diploma": {
-      "gloss": "\u672c\u6587\u51ed\u8bfe\u7a0b",
-      "verified": false
+      "gloss": "本文凭课程",
+      "verified": true
     },
     "description": {
-      "gloss": "\u63cf\u8ff0",
-      "verified": false
+      "gloss": "描述",
+      "verified": true
     },
     "page-title": {
-      "gloss": "\u5b66\u751f\u6210\u7ee9\u5355-",
-      "verified": false
+      "gloss": "学生成绩单-",
+      "verified": true
     },
     "student-information": {
-      "gloss": "\u4fe1\u606f",
-      "verified": false
+      "gloss": "信息",
+      "verified": true
     },
     "transcript": {
-      "gloss": "\u6210\u7ee9\u5355",
-      "verified": false
+      "gloss": "成绩单",
+      "verified": true
     }
   },
   "translation": {
     "dialog": {
       "cancel": {
-        "gloss": "\u53d6\u6d88",
-        "verified": false
+        "gloss": "取消",
+        "verified": true
       },
       "submit": {
-        "gloss": "\u63d0\u4ea4",
-        "verified": false
+        "gloss": "提交",
+        "verified": true
       }
     },
     "error": {
-      "gloss": "\u8bf7\u518d\u6b21\u4fee\u6539\u60a8\u7684\u7ffb\u8bd1",
-      "verified": false
+      "gloss": "请再次修改您的翻译",
+      "verified": true
     },
     "menu-title": {
-      "gloss": "\u7ffb\u8bd1",
-      "verified": false
+      "gloss": "翻译",
+      "verified": true
     },
     "search-title": {
-      "gloss": "\u67e5\u627e\u7ffb\u8bd1\u5904",
-      "verified": false
+      "gloss": "查找翻译处",
+      "verified": true
     },
     "toolbar-title": {
-      "gloss": "\u5f53\u524d\u8bed\u8a00\u73af\u5883\uff1a",
-      "verified": false
+      "gloss": "当前语言环境：",
+      "verified": true
     },
     "transparent-mode": {
-      "gloss": "\u900f\u660e\u6a21\u5f0f",
-      "verified": false
+      "gloss": "透明模式",
+      "verified": true
     },
     "updated": {
-      "gloss": "\u7ffb\u8bd1\u5df2\u66f4\u65b0",
-      "verified": false
+      "gloss": "翻译已更新",
+      "verified": true
     }
   },
   "validation": {
     "attributes": {
       "attendance": {
-        "gloss": "\u51fa\u52e4\u7387",
-        "verified": false
+        "gloss": "出勤率",
+        "verified": true
       },
       "email": {
-        "gloss": "\u7535\u5b50\u90ae\u4ef6",
-        "verified": false
+        "gloss": "电子邮件",
+        "verified": true
       },
       "endDate": {
-        "gloss": "\u7ed3\u675f\u65e5\u671f",
-        "verified": false
+        "gloss": "结束日期",
+        "verified": true
       },
       "firstName": {
-        "gloss": "\u540d\u5b57",
-        "verified": false
+        "gloss": "名字",
+        "verified": true
       },
       "lastName": {
-        "gloss": "\u59d3",
-        "verified": false
+        "gloss": "姓",
+        "verified": true
       },
       "location": {
-        "gloss": "\u4f4d\u7f6e",
-        "verified": false
+        "gloss": "位置",
+        "verified": true
       },
       "startDate": {
-        "gloss": "\u5f00\u59cb\u65e5\u671f",
-        "verified": false
+        "gloss": "开始日期",
+        "verified": true
       },
       "team-description": {
-        "gloss": "\u56e2\u961f\u63cf\u8ff0",
-        "verified": false
+        "gloss": "团队介绍",
+        "verified": true
       },
       "title": {
-        "gloss": "\u6807\u9898",
-        "verified": false
+        "gloss": "标题",
+        "verified": true
       }
     },
     "messages": {
       "_default": {
-        "gloss": "\u9519\u8bef",
-        "verified": false
+        "gloss": "错误",
+        "verified": true
       },
       "required": {
-        "gloss": "\u9700\u8981",
-        "verified": false
+        "gloss": "必填",
+        "verified": true
       }
     },
     "required": {
-      "gloss": "\u9700\u8981",
-      "verified": false
+      "gloss": "必填",
+      "verified": true
     }
   }
 }

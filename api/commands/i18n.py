@@ -421,7 +421,8 @@ def create_i18n_cli(app):
                 }
             }, values)
         tree = list_to_tree(entries)
-        json.dump(tree, target, indent=2, sort_keys=True)
+        # use ensure_ascii=False to allow unescaped unicode characters
+        json.dump(tree, target, indent=2, sort_keys=True, ensure_ascii=False)
         click.echo("Successfully dumped data from the database")
         click.echo(
             f"Target file: {getattr(target, 'name', '(unknown stream)')}")
@@ -573,7 +574,7 @@ def create_i18n_cli(app):
         """
         tree = read_locale_tail_tree(path)
         if tree:
-            yaml.dump(tree, target, default_flow_style=False, sort_keys=True)
+            yaml.dump(tree, target, default_flow_style=False, sort_keys=True, allow_unicode=True)
         else:
             click.echo(f"No entries found")
 
@@ -737,7 +738,9 @@ def create_i18n_cli(app):
     def delete_entries(recursive, locale, verbose, path):
         """ Delete I18NValue entries that match or start with PATH in the database.
 
-        When PATH is not specified, all keys are deleted
+        When PATH is not specified, all values are deleted
+
+        No I18NKey will be deleted, since they might be referenced by entries in other tables.
 
         Example usage:
 
@@ -748,28 +751,22 @@ def create_i18n_cli(app):
             flask i18n delete -r actions
         """
         value_query = db.session.query(I18NValue)
-        key_query = db.session.query(I18NKey)
 
         if recursive:
             pattern = f"{path}.%" if path else "%"
             value_query = value_query.filter(
                 I18NValue.key_id.like(pattern))
-            key_query = key_query.filter(I18NKey.id.like(pattern))
         else:
             if not path:
                 raise click.BadParameter(
                     f"Must specify a PATH when not using the --recursive flag")
             value_query = value_query.filter_by(key_id=path)
-            key_query = key_query.filter_by(id=path)
 
         if locale:
             value_query = value_query.filter_by(locale_code=locale)
-            # if only deleting a locale, don't delete the corresponding key
-            key_query = key_query.filter(sqlalchemy.false())
 
         values = value_query.all()
-        keys = key_query.all()
-        if len(keys + values) == 0:
+        if len(values) == 0:
             click.echo("No entries found")
             if not recursive:
                 click.echo(
@@ -780,15 +777,11 @@ def create_i18n_cli(app):
             for value in values:
                 click.echo(
                     f"Deleting value at [{value.key_id}] in [{value.locale_code}]: [{value.gloss}]")
-            for key in keys:
-                click.echo(
-                    f"Deleting key [{key.id}] with description [{key.desc}]")
 
         count = 0
         # do not update the session for efficiency
         count += value_query.delete(synchronize_session=False)
         # do not update the session for efficiency
-        count += key_query.delete(synchronize_session=False)
         db.session.commit()
         click.echo(f"Delete entry count: {count}")
 
@@ -810,7 +803,7 @@ def create_i18n_cli(app):
         """
         tree = read_locale_tail_tree(path)
         if tree:
-            data = yaml.dump(tree, default_flow_style=False, sort_keys=True)
+            data = yaml.dump(tree, default_flow_style=False, sort_keys=True, allow_unicode=True)
             comments = (
                 "#####################################################################\n"
                 "#             You are in the interactive editing mode \n"

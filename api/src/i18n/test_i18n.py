@@ -5,6 +5,7 @@ import pytest
 from flask import url_for
 
 from .models import I18NLocale, I18NKey, I18NValue, Language, i18n_read, i18n_update, i18n_delete, i18n_check
+from ..shared.helpers import get_token_with_roles
 
 locale_data = [
     {'code': 'en-US', 'desc': 'English US'},
@@ -221,19 +222,41 @@ def test_one_locale_as_list(auth_client, format, code):
     # AND there should be as many rows as there are keys.
     assert len(resp.json) == len(key_data)
 
+
 def test_update_a_value(auth_client):
     # GIVEN i18n test data
     seed_database(auth_client.sqla)
+    test = auth_client.sqla.query(I18NValue).first()
     # WHEN asking for translations for a given Value
-    test = auth_client.sqla.query(I18NValue).filter_by(locale_code='en-US').first()
-    #THEN patch the given value with a new value
+    # THEN patch the given value with a new value
     resp = auth_client.patch(
         url_for('i18n.update_a_value'),
-        json={'key_id':test.key_id, 'locale_code': test.locale_code, 'gloss':'OPEN'}
-    )
-    result = auth_client.sqla.query(I18NValue).filter_by(locale_code='en-US', key_id='alt.logo').first()
+        json={
+            'key_id': test.key_id,
+            'locale_code': test.locale_code,
+            'gloss': 'OPEN',
+            'verified': True
+        },
+        headers={
+            'AUTHORIZATION': f'Bearer {get_token_with_roles(["role.translator"])}'})
+    result = auth_client.sqla.query(I18NValue).filter_by(
+        locale_code=test.locale_code, key_id=test.key_id).first()
     # THEN response should be "Ok"
     assert resp.status_code == 200
+    # THEN we expect the correct result
+    assert result.gloss == "OPEN"
+    assert result.verified
+
+    # WHEN we ask for translations without the translator role
+    resp = auth_client.patch(
+        url_for('i18n.update_a_value'),
+        json={
+            'key_id': test.key_id,
+            'locale_code': test.locale_code,
+            'gloss': 'OPEN'})
+    # THEN we expect an error
+    assert resp.status_code == 403
+
 
 @pytest.mark.smoke
 def test_bogus_xlation_locale(auth_client):
@@ -297,30 +320,40 @@ def test_one_locale_as_tree(auth_client, code):
     assert resp.json['label']['name']['first'].startswith('Label for a first')
 
 
-
-
-
 # # ---- Languages
 
 @pytest.mark.slow
-@pytest.mark.parametrize('code, name', [('en', 'English'),
-                                        ('th', 'Thai'),
-                                        ('es', 'Spanish; Castilian')])
-def test_read_language(auth_client, code, name):
+def test_read_language(runner, auth_client):
+    pairs = [('en', 'English'),
+             ('th', 'Thai'),
+             ('es', 'Spanish; Castilian')]
+
+    # GIVEN a database with Language and I18NValue records in English
     count = Language.load_from_file()
+    result = runner.invoke(args=['i18n', 'load', 'en-US'])
     assert count > 0
-    resp = auth_client.get(
-        url_for('i18n.read_languages', language_code=code, locale='en-US'))
-    assert resp.status_code == 200
-    assert resp.json['name'] == name
+
+    for code, name in pairs:
+        # WHEN we read a language
+        resp = auth_client.get(
+            url_for('i18n.read_languages', language_code=code, locale='en-US'))
+        # THEN we expect the correct status code
+        assert resp.status_code == 200
+        # THEN we expect correct name being returned
+        assert resp.json['name'] == name
 
 
 @pytest.mark.slow
-def test_read_all_languages(auth_client):
+def test_read_all_languages(runner, auth_client):
+    # GIVEN a database with Language and I18NValue records in English
     count = Language.load_from_file()
+    result = runner.invoke(args=['i18n', 'load', 'en-US'])
     assert count > 0
+    # WHEN we read all the languages
     resp = auth_client.get(url_for('i18n.read_languages', locale='en-US'))
+    # THEN we expect the correct status code
     assert resp.status_code == 200
+    # THEN we expect correct count of items being returned
     assert len(resp.json) == count
 
 

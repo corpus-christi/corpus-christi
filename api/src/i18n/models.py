@@ -86,6 +86,7 @@ class I18NValueSchema(Schema):
     key_id = fields.String(required=True)
     locale_code = fields.String(required=True)
     gloss = fields.String(required=True)
+    verified = fields.Boolean(required=True)
 
 
 # ---- Language

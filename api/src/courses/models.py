@@ -160,8 +160,14 @@ class Course(Base):
         back_populates='courses',
         lazy=True)
     images = relationship("ImageCourse", back_populates="course")
-    courses_offered = relationship('Course_Offering', back_populates='course', lazy=True)
-    completions = relationship('CourseCompletion', back_populates='courses', lazy=True)
+    courses_offered = relationship(
+        'Course_Offering',
+        back_populates='course',
+        lazy=True)
+    completions = relationship(
+        'CourseCompletion',
+        back_populates='courses',
+        lazy=True)
 
     def __repr__(self):
         return f"<Course(id={self.id})>"
@@ -248,8 +254,14 @@ class Course_Offering(Base):
     active = Column(Boolean, nullable=False, default=True)
     students = relationship(
         'Student', back_populates='courses_offered', lazy=True)
-    course = relationship('Course', back_populates='courses_offered', lazy=True)
-    class_meeting = relationship('ClassMeeting', back_populates='course_offering', lazy=True)
+    course = relationship(
+        'Course',
+        back_populates='courses_offered',
+        lazy=True)
+    class_meeting = relationship(
+        'ClassMeeting',
+        back_populates='course_offering',
+        lazy=True)
 
     def __repr__(self):
         return f"<Course_Offering(id={self.id})>"
@@ -279,7 +291,10 @@ class ClassMeeting(Base):
     when = Column(DateTime, nullable=False)
     course_offering = relationship(
         'Course_Offering', back_populates='class_meeting', lazy=True)
-    locations = relationship('Location', back_populates='meeting_location', lazy=True)
+    locations = relationship(
+        'Location',
+        back_populates='meeting_location',
+        lazy=True)
     person = relationship('Person', back_populates='teacher', lazy=True)
     students = relationship('Student', secondary=ClassAttendance,
                             back_populates='attendance', lazy=True)
