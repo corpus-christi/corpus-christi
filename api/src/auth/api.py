@@ -3,7 +3,7 @@ from datetime import datetime
 
 from flask import jsonify, request, current_app
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_raw_jwt
-from src.auth.utils import jwt_not_required
+from src.shared.helpers import jwt_not_required
 
 from . import auth
 from .blacklist_helpers import (
@@ -92,7 +92,7 @@ def load_user_identity(person):
 def get_test_jwt():
     if current_app.config['TESTING']:
         # TODO: parameterize the endpoint to return token with specified roles
-        test_roles = [ Role(**RoleSchema().load(role_object_factory())) ]
+        test_roles = [Role(**RoleSchema().load(role_object_factory()))]
         test_person = Person(**person_schema.load(person_object_factory()))
         test_person.username = 'test-user'
         test_person.roles += test_roles

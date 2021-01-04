@@ -3,36 +3,11 @@ import os
 import pytest
 import json
 import yaml
-from src import db, create_app
-from src.courses.models import Course, Diploma
-from src.i18n.models import Language, I18NValue, I18NLocale, I18NKey
-from src.people.models import Role
-from src.places.models import Country
-
-from commands.people import create_account_cli
-from commands.app import create_app_cli
-from commands.courses import create_course_cli
-from commands.events import create_event_cli
-from commands.faker import create_faker_cli
-from commands.i18n import create_i18n_cli
-
-
-@pytest.fixture
-def runner():
-    app = create_app(os.getenv('CC_CONFIG') or 'test')
-    app.testing = True  # Make sure exceptions percolate out
-
-    db.drop_all()
-    db.create_all()
-
-    create_account_cli(app)
-    create_app_cli(app)
-    create_course_cli(app)
-    create_event_cli(app)
-    create_faker_cli(app)
-    create_i18n_cli(app)
-
-    yield app.test_cli_runner()
+from . import db
+from .courses.models import Course, Diploma
+from .i18n.models import Language, I18NValue, I18NLocale, I18NKey
+from .people.models import Role
+from .places.models import Country
 
 
 def test_load_countries(runner):
@@ -582,10 +557,6 @@ def test_i18n_delete(runner):
             'app'])
     # THEN we expect the correct entry count in database
     assert db.session.query(I18NValue).count() == 1
-    # THEN we expect the corresponding key to be deleted
-    keys = db.session.query(I18NKey).all()
-    assert len(keys) == 1
-    assert keys[0].id == 'alt.logo'
 
     # WHEN we delete non-recursively without specifying a path
     result = runner.invoke(
@@ -594,12 +565,13 @@ def test_i18n_delete(runner):
             'delete',
             '--locale',
             'es-EC'
-            ])
+        ])
     # THEN we expect a warning message
     assert b'specify a PATH' in result.stdout_bytes
 
     # GIVEN one remaining entry with the 'es-EC' locale
-    assert db.session.query(I18NValue).filter_by(locale_code="es-EC").count() == 1
+    assert db.session.query(I18NValue).filter_by(
+        locale_code="es-EC").count() == 1
     # WHEN we delete recursively without specifying a path
     result = runner.invoke(
         args=[
@@ -608,12 +580,10 @@ def test_i18n_delete(runner):
             '-r',
             '--locale',
             'es-EC'
-            ])
+        ])
     # THEN we expect no values of the corresponding locale to exist
-    assert db.session.query(I18NValue).filter_by(locale_code="es-EC").count() == 0
-    # THEN we expect the key not to be deleted, because we specified a locale
-    assert db.session.query(I18NKey).count() == 1
-
+    assert db.session.query(I18NValue).filter_by(
+        locale_code="es-EC").count() == 0
 
 def test_i18n_translate(runner):
     # GIVEN a database with some entries

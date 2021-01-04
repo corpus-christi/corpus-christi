@@ -112,7 +112,10 @@ class Location(Base):
     assets = relationship('Asset', back_populates="location")
     images = relationship('ImageLocation', back_populates="location")
     active = Column(Boolean, nullable=False, default=True)
-    meeting_location = relationship('ClassMeeting', back_populates='locations', lazy=True)
+    meeting_location = relationship(
+        'ClassMeeting',
+        back_populates='locations',
+        lazy=True)
 
     def __repr__(self):
         attributes = [f"id='{self.id}'"]

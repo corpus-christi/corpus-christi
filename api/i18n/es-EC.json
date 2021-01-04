@@ -12,11 +12,11 @@
     },
     "dataIterator": {
       "loadingText": {
-        "gloss": "Cargando art\u00edculos ...",
+        "gloss": "Cargando artículos ...",
         "verified": false
       },
       "nextPage": {
-        "gloss": "Siguiente p\u00e1gina",
+        "gloss": "Siguiente página",
         "verified": false
       },
       "noResultsText": {
@@ -36,13 +36,13 @@
         "verified": false
       },
       "rowsPerPageText": {
-        "gloss": "Art\u00edculos por p\u00e1gina:",
+        "gloss": "Artículos por página:",
         "verified": false
       }
     },
     "dataTable": {
       "itemsPerPageText": {
-        "gloss": "Filas por p\u00e1gina:",
+        "gloss": "Filas por página:",
         "verified": false
       },
       "sortBy": {
@@ -72,7 +72,7 @@
         "verified": false
       },
       "updated-ok": {
-        "gloss": "Cuenta actualizada con \u00e9xito",
+        "gloss": "Cuenta actualizada con éxito",
         "verified": false
       }
     }
@@ -83,23 +83,23 @@
       "verified": false
     },
     "add-address": {
-      "gloss": "A\u00f1adir Dirreci\u00f3n",
+      "gloss": "Añadir Dirreción",
       "verified": false
     },
     "add-another": {
-      "gloss": "A\u00f1adir Otro",
+      "gloss": "Añadir Otro",
       "verified": false
     },
     "add-event": {
-      "gloss": "A\u00f1adir Evento",
+      "gloss": "Añadir Evento",
       "verified": false
     },
     "add-group": {
-      "gloss": "A\u00f1adir grupo",
+      "gloss": "Añadir grupo",
       "verified": false
     },
     "add-manager": {
-      "gloss": "A\u00f1adir administrador",
+      "gloss": "Añadir administrador",
       "verified": false
     },
     "add-participant": {
@@ -107,7 +107,7 @@
       "verified": false
     },
     "add-person": {
-      "gloss": "A\u00f1adir Persona",
+      "gloss": "Añadir Persona",
       "verified": false
     },
     "back": {
@@ -159,11 +159,11 @@
       "verified": false
     },
     "logout": {
-      "gloss": "Cerrar sesi\u00f3n",
+      "gloss": "Cerrar sesión",
       "verified": false
     },
     "next": {
-      "gloss": "pr\u00f3ximo",
+      "gloss": "próximo",
       "verified": false
     },
     "open-map": {
@@ -191,7 +191,7 @@
       "verified": false
     },
     "search-manager-types": {
-      "gloss": "Tipos de administrador de b\u00fasqueda",
+      "gloss": "Tipos de administrador de búsqueda",
       "verified": false
     },
     "search-people": {
@@ -199,7 +199,7 @@
       "verified": false
     },
     "signup": {
-      "gloss": "Reg\u00edstrate",
+      "gloss": "Regístrate",
       "verified": false
     },
     "tooltips": {
@@ -212,7 +212,7 @@
         "verified": false
       },
       "email": {
-        "gloss": "Enviar correo electr\u00f3nico",
+        "gloss": "Enviar correo electrónico",
         "verified": false
       },
       "remove": {
@@ -267,7 +267,7 @@
       "verified": false
     },
     "asset-on-event": {
-      "gloss": "Ese insumo ya est\u00e1 asignado a este evento.",
+      "gloss": "Ese insumo ya está asignado a este evento.",
       "verified": false
     },
     "asset-removed": {
@@ -279,11 +279,11 @@
       "verified": false
     },
     "confirm-archive": {
-      "gloss": "\u00bfSeguro que quieres archivar este insumo?",
+      "gloss": "¿Seguro que quieres archivar este insumo?",
       "verified": false
     },
     "confirm-remove-from-event": {
-      "gloss": "\u00bfEst\u00e1 seguro de que desea eliminar este insumo de este evento?",
+      "gloss": "¿Está seguro de que desea eliminar este insumo de este evento?",
       "verified": false
     },
     "create-asset": {
@@ -291,7 +291,7 @@
       "verified": false
     },
     "description": {
-      "gloss": "Descripci\u00f3n",
+      "gloss": "Descripción",
       "verified": false
     },
     "edit-asset": {
@@ -307,7 +307,7 @@
       "verified": false
     },
     "error-asset-assigned": {
-      "gloss": "Ese insumo est\u00e1 asignado a un evento conflictivo.",
+      "gloss": "Ese insumo está asignado a un evento conflictivo.",
       "verified": false
     },
     "error-editing-asset": {
@@ -323,11 +323,11 @@
       "verified": false
     },
     "location": {
-      "gloss": "Ubicaci\u00f3n",
+      "gloss": "Ubicación",
       "verified": false
     },
     "new": {
-      "gloss": "A\u00f1adir Insumo",
+      "gloss": "Añadir Insumo",
       "verified": false
     },
     "none-assigned": {
@@ -341,7 +341,7 @@
   },
   "attribute": {
     "check": {
-      "gloss": "casilla de verificaci\u00f3n",
+      "gloss": "casilla de verificación",
       "verified": false
     },
     "date": {
@@ -376,11 +376,11 @@
         "verified": false
       },
       "AE": {
-        "gloss": "Emiratos \u00c1rabes Unidos",
+        "gloss": "Emiratos Árabes Unidos",
         "verified": false
       },
       "AF": {
-        "gloss": "Afganist\u00c3\u00a1n",
+        "gloss": "AfganistÃ¡n",
         "verified": false
       },
       "AG": {
@@ -404,7 +404,7 @@
         "verified": false
       },
       "AQ": {
-        "gloss": "Ant\u00e1rtida",
+        "gloss": "Antártida",
         "verified": false
       },
       "AR": {
@@ -432,7 +432,7 @@
         "verified": false
       },
       "AZ": {
-        "gloss": "Azerbaiy\u00e1n",
+        "gloss": "Azerbaiyán",
         "verified": false
       },
       "BA": {
@@ -448,7 +448,7 @@
         "verified": false
       },
       "BE": {
-        "gloss": "B\u00e9lgica",
+        "gloss": "Bélgica",
         "verified": false
       },
       "BF": {
@@ -472,7 +472,7 @@
         "verified": false
       },
       "BL": {
-        "gloss": "San Bartolom\u00e9",
+        "gloss": "San Bartolomé",
         "verified": false
       },
       "BM": {
@@ -500,7 +500,7 @@
         "verified": false
       },
       "BT": {
-        "gloss": "But\u00e1n",
+        "gloss": "Bután",
         "verified": false
       },
       "BV": {
@@ -520,7 +520,7 @@
         "verified": false
       },
       "CA": {
-        "gloss": "Canad\u00c3\u00a1",
+        "gloss": "CanadÃ¡",
         "verified": false
       },
       "CC": {
@@ -528,11 +528,11 @@
         "verified": false
       },
       "CD": {
-        "gloss": "Congo, Rep\u00fablica Democr\u00e1tica del",
+        "gloss": "Congo, República Democrática del",
         "verified": false
       },
       "CF": {
-        "gloss": "Rep\u00fablica Centroafricana",
+        "gloss": "República Centroafricana",
         "verified": false
       },
       "CG": {
@@ -556,7 +556,7 @@
         "verified": false
       },
       "CM": {
-        "gloss": "Camer\u00fan",
+        "gloss": "Camerún",
         "verified": false
       },
       "CN": {
@@ -612,7 +612,7 @@
         "verified": false
       },
       "DO": {
-        "gloss": "Rep\u00c3\u00bablica Dominicana",
+        "gloss": "RepÃºblica Dominicana",
         "verified": false
       },
       "DZ": {
@@ -640,11 +640,11 @@
         "verified": false
       },
       "ES": {
-        "gloss": "Espa\u00f1a",
+        "gloss": "España",
         "verified": false
       },
       "ET": {
-        "gloss": "Etiop\u00eda",
+        "gloss": "Etiopía",
         "verified": false
       },
       "FI": {
@@ -672,7 +672,7 @@
         "verified": false
       },
       "GA": {
-        "gloss": "Gab\u00f3n",
+        "gloss": "Gabón",
         "verified": false
       },
       "GB": {
@@ -764,11 +764,11 @@
         "verified": false
       },
       "HT": {
-        "gloss": "Hait\u00c3\u00ad",
+        "gloss": "HaitÃ­",
         "verified": false
       },
       "HU": {
-        "gloss": "Hungr\u00eda",
+        "gloss": "Hungría",
         "verified": false
       },
       "ID": {
@@ -792,7 +792,7 @@
         "verified": false
       },
       "IO": {
-        "gloss": "Territorio Brit\u00e1nico del Oc\u00e9ano \u00cdndico",
+        "gloss": "Territorio Británico del Océano Índico",
         "verified": false
       },
       "IQ": {
@@ -800,7 +800,7 @@
         "verified": false
       },
       "IR": {
-        "gloss": "Ir\u00e1n (Rep\u00fablica Isl\u00e1mica de",
+        "gloss": "Irán (República Islámica de",
         "verified": false
       },
       "IS": {
@@ -820,11 +820,11 @@
         "verified": false
       },
       "JO": {
-        "gloss": "Jord\u00e1n",
+        "gloss": "Jordán",
         "verified": false
       },
       "JP": {
-        "gloss": "Jap\u00f3n",
+        "gloss": "Japón",
         "verified": false
       },
       "KE": {
@@ -832,7 +832,7 @@
         "verified": false
       },
       "KG": {
-        "gloss": "Kirguist\u00e1n",
+        "gloss": "Kirguistán",
         "verified": false
       },
       "KH": {
@@ -852,11 +852,11 @@
         "verified": false
       },
       "KP": {
-        "gloss": "Rep\u00fablica de Corea, Popular Democr\u00e1tica de",
+        "gloss": "República de Corea, Popular Democrática de",
         "verified": false
       },
       "KR": {
-        "gloss": "Corea, rep\u00fablica de",
+        "gloss": "Corea, república de",
         "verified": false
       },
       "KW": {
@@ -864,23 +864,23 @@
         "verified": false
       },
       "KY": {
-        "gloss": "Islas Caim\u00e1n",
+        "gloss": "Islas Caimán",
         "verified": false
       },
       "KZ": {
-        "gloss": "Kazajst\u00e1n",
+        "gloss": "Kazajstán",
         "verified": false
       },
       "LA": {
-        "gloss": "Rep\u00fablica Democr\u00e1tica Popular Lao",
+        "gloss": "República Democrática Popular Lao",
         "verified": false
       },
       "LB": {
-        "gloss": "L\u00edbano",
+        "gloss": "Líbano",
         "verified": false
       },
       "LC": {
-        "gloss": "Santa Luc\u00c3\u00ada",
+        "gloss": "Santa LucÃ­a",
         "verified": false
       },
       "LI": {
@@ -920,11 +920,11 @@
         "verified": false
       },
       "MC": {
-        "gloss": "M\u00f3naco",
+        "gloss": "Mónaco",
         "verified": false
       },
       "MD": {
-        "gloss": "Moldavia, Rep\u00fablica de",
+        "gloss": "Moldavia, República de",
         "verified": false
       },
       "ME": {
@@ -932,7 +932,7 @@
         "verified": false
       },
       "MF": {
-        "gloss": "San Mart\u00edn (parte francesa)",
+        "gloss": "San Martín (parte francesa)",
         "verified": false
       },
       "MG": {
@@ -944,7 +944,7 @@
         "verified": false
       },
       "MK": {
-        "gloss": "Macedonia, la ex Rep\u00fablica Yugoslava de",
+        "gloss": "Macedonia, la ex República Yugoslava de",
         "verified": false
       },
       "ML": {
@@ -1016,7 +1016,7 @@
         "verified": false
       },
       "NE": {
-        "gloss": "N\u00edger",
+        "gloss": "Níger",
         "verified": false
       },
       "NF": {
@@ -1032,7 +1032,7 @@
         "verified": false
       },
       "NL": {
-        "gloss": "Pa\u00edses Bajos",
+        "gloss": "Países Bajos",
         "verified": false
       },
       "NO": {
@@ -1056,23 +1056,23 @@
         "verified": false
       },
       "OM": {
-        "gloss": "Om\u00e1n",
+        "gloss": "Omán",
         "verified": false
       },
       "PA": {
-        "gloss": "Panam\u00c3\u00a1",
+        "gloss": "PanamÃ¡",
         "verified": false
       },
       "PE": {
-        "gloss": "Per\u00c3\u00ba",
+        "gloss": "PerÃº",
         "verified": false
       },
       "PF": {
-        "gloss": "Polinesia franc\u00e9s",
+        "gloss": "Polinesia francés",
         "verified": false
       },
       "PG": {
-        "gloss": "Pap\u00faa Nueva Guinea",
+        "gloss": "Papúa Nueva Guinea",
         "verified": false
       },
       "PH": {
@@ -1080,7 +1080,7 @@
         "verified": false
       },
       "PK": {
-        "gloss": "Pakist\u00e1n",
+        "gloss": "Pakistán",
         "verified": false
       },
       "PL": {
@@ -1088,7 +1088,7 @@
         "verified": false
       },
       "PM": {
-        "gloss": "San Pedro y Miquel\u00f3n",
+        "gloss": "San Pedro y Miquelón",
         "verified": false
       },
       "PN": {
@@ -1120,7 +1120,7 @@
         "verified": false
       },
       "RE": {
-        "gloss": "Reuni\u00f3n",
+        "gloss": "Reunión",
         "verified": false
       },
       "RO": {
@@ -1132,7 +1132,7 @@
         "verified": false
       },
       "RU": {
-        "gloss": "Federaci\u00f3n Rusa",
+        "gloss": "Federación Rusa",
         "verified": false
       },
       "RW": {
@@ -1144,7 +1144,7 @@
         "verified": false
       },
       "SB": {
-        "gloss": "Islas Salom\u00f3n",
+        "gloss": "Islas Salomón",
         "verified": false
       },
       "SC": {
@@ -1152,7 +1152,7 @@
         "verified": false
       },
       "SD": {
-        "gloss": "Sud\u00e1n",
+        "gloss": "Sudán",
         "verified": false
       },
       "SE": {
@@ -1164,7 +1164,7 @@
         "verified": false
       },
       "SH": {
-        "gloss": "Santa Elena, Ascensi\u00f3n y Trist\u00e1n de Cunha",
+        "gloss": "Santa Elena, Ascensión y Tristán de Cunha",
         "verified": false
       },
       "SI": {
@@ -1200,11 +1200,11 @@
         "verified": false
       },
       "SS": {
-        "gloss": "Sud\u00e1n del Sur",
+        "gloss": "Sudán del Sur",
         "verified": false
       },
       "ST": {
-        "gloss": "Santo Tom\u00e9 y Pr\u00edncipe",
+        "gloss": "Santo Tomé y Príncipe",
         "verified": false
       },
       "SV": {
@@ -1216,7 +1216,7 @@
         "verified": false
       },
       "SY": {
-        "gloss": "Rep\u00fablica \u00c1rabe Siria",
+        "gloss": "República Árabe Siria",
         "verified": false
       },
       "SZ": {
@@ -1244,7 +1244,7 @@
         "verified": false
       },
       "TJ": {
-        "gloss": "Tayikist\u00e1n",
+        "gloss": "Tayikistán",
         "verified": false
       },
       "TK": {
@@ -1256,11 +1256,11 @@
         "verified": false
       },
       "TM": {
-        "gloss": "Turkmenist\u00e1n",
+        "gloss": "Turkmenistán",
         "verified": false
       },
       "TN": {
-        "gloss": "T\u00fanez",
+        "gloss": "Túnez",
         "verified": false
       },
       "TO": {
@@ -1284,7 +1284,7 @@
         "verified": false
       },
       "TZ": {
-        "gloss": "Tanzania, Rep\u00fablica Unida de",
+        "gloss": "Tanzania, República Unida de",
         "verified": false
       },
       "UA": {
@@ -1308,7 +1308,7 @@
         "verified": false
       },
       "UZ": {
-        "gloss": "Uzbekist\u00e1n",
+        "gloss": "Uzbekistán",
         "verified": false
       },
       "VA": {
@@ -1320,15 +1320,15 @@
         "verified": false
       },
       "VE": {
-        "gloss": "Venezuela, Rep\u00c3\u00bablica Bolivariana de",
+        "gloss": "Venezuela, RepÃºblica Bolivariana de",
         "verified": false
       },
       "VG": {
-        "gloss": "Islas V\u00c3\u00adrgenes Brit\u00c3\u00a1nicas",
+        "gloss": "Islas VÃ­rgenes BritÃ¡nicas",
         "verified": false
       },
       "VI": {
-        "gloss": "Islas V\u00edrgenes, EE. UU.",
+        "gloss": "Islas Vírgenes, EE. UU.",
         "verified": false
       },
       "VN": {
@@ -1356,7 +1356,7 @@
         "verified": false
       },
       "ZA": {
-        "gloss": "Sud\u00e1frica",
+        "gloss": "Sudáfrica",
         "verified": false
       },
       "ZM": {
@@ -1371,19 +1371,19 @@
   },
   "courses": {
     "add-failed": {
-      "gloss": "Se fall\u00f3 a a\u00f1adir el curso",
+      "gloss": "Se falló a añadir el curso",
       "verified": false
     },
     "add-meeting": {
-      "gloss": "A\u00f1adir Reuni\u00f3n",
+      "gloss": "Añadir Reunión",
       "verified": false
     },
     "add-meeting-failed": {
-      "gloss": "Se fall\u00f3 a a\u00f1adir los reuniones",
+      "gloss": "Se falló a añadir los reuniones",
       "verified": false
     },
     "added": {
-      "gloss": "Curso a\u00f1adido",
+      "gloss": "Curso añadido",
       "verified": false
     },
     "archived": {
@@ -1407,11 +1407,11 @@
       "verified": false
     },
     "class-attendance-load-failed": {
-      "gloss": "Se fall\u00f3 a conseguir la asistencia",
+      "gloss": "Se falló a conseguir la asistencia",
       "verified": false
     },
     "class-attendance-update-failed": {
-      "gloss": "Se fall\u00f3 a actualizar la asistencia",
+      "gloss": "Se falló a actualizar la asistencia",
       "verified": false
     },
     "class-attendance-updated": {
@@ -1419,11 +1419,11 @@
       "verified": false
     },
     "confirm-archive": {
-      "gloss": "\u00bfEst\u00e1s seguro que quieres archivar este curso?",
+      "gloss": "¿Estás seguro que quieres archivar este curso?",
       "verified": false
     },
     "confirm-student": {
-      "gloss": "\u00bfTe gustar\u00edas confirmar o rechazar este estudiante?",
+      "gloss": "¿Te gustarías confirmar o rechazar este estudiante?",
       "verified": false
     },
     "course": {
@@ -1441,7 +1441,7 @@
     "dashboard": {
       "charts": {
         "attended": {
-          "gloss": "Asisti\u00f3",
+          "gloss": "Asistió",
           "verified": false
         },
         "course": {
@@ -1449,11 +1449,11 @@
           "verified": false
         },
         "did-not-attend": {
-          "gloss": "No Asisti\u00f3",
+          "gloss": "No Asistió",
           "verified": false
         },
         "did-not-graduate": {
-          "gloss": "No Se Gradu\u00f3",
+          "gloss": "No Se Graduó",
           "verified": false
         },
         "enrolled": {
@@ -1461,17 +1461,17 @@
           "verified": false
         },
         "graduated": {
-          "gloss": "Se Gradu\u00f3",
+          "gloss": "Se Graduó",
           "verified": false
         }
       },
       "headers": {
         "course-retention": {
-          "gloss": "Retenci\u00f3n del Curso",
+          "gloss": "Retención del Curso",
           "verified": false
         },
         "course-success": {
-          "gloss": "\u00c9xito del Curso",
+          "gloss": "Éxito del Curso",
           "verified": false
         }
       },
@@ -1489,35 +1489,35 @@
       "verified": false
     },
     "description": {
-      "gloss": "Descripci\u00f3n",
+      "gloss": "Descripción",
       "verified": false
     },
     "enrolled": {
-      "gloss": "N\u00famero Registrado",
+      "gloss": "Número Registrado",
       "verified": false
     },
     "info-meeting-dates": {
-      "gloss": "Puede elegir fechas m\u00faltiples para crear muchos reuniones.",
+      "gloss": "Puede elegir fechas múltiples para crear muchos reuniones.",
       "verified": false
     },
     "is-archived": {
-      "gloss": "Este curso est\u00e1 archivado",
+      "gloss": "Este curso está archivado",
       "verified": false
     },
     "location": {
-      "gloss": "Ubicaci\u00f3n",
+      "gloss": "Ubicación",
       "verified": false
     },
     "max-size": {
-      "gloss": "N\u00famero M\u00e1ximo de Estudiantes",
+      "gloss": "Número Máximo de Estudiantes",
       "verified": false
     },
     "meeting-added": {
-      "gloss": "Reuniones a\u00f1adido",
+      "gloss": "Reuniones añadido",
       "verified": false
     },
     "meeting-updated": {
-      "gloss": "Reuni\u00f3n actualizado",
+      "gloss": "Reunión actualizado",
       "verified": false
     },
     "new": {
@@ -1525,7 +1525,7 @@
       "verified": false
     },
     "new-meeting": {
-      "gloss": "Nuevo Reuni\u00f3n",
+      "gloss": "Nuevo Reunión",
       "verified": false
     },
     "new-offering": {
@@ -1557,7 +1557,7 @@
       "verified": false
     },
     "register-success": {
-      "gloss": "Registrado con \u00c9xito",
+      "gloss": "Registrado con Éxito",
       "verified": false
     },
     "reject": {
@@ -1577,15 +1577,15 @@
       "verified": false
     },
     "title": {
-      "gloss": "T\u00edtulo",
+      "gloss": "Título",
       "verified": false
     },
     "update-failed": {
-      "gloss": "Se fall\u00f3 a actualizar el curso",
+      "gloss": "Se falló a actualizar el curso",
       "verified": false
     },
     "update-meeting-failed": {
-      "gloss": "Se fall\u00f3 a actualizar el reuni\u00f3n",
+      "gloss": "Se falló a actualizar el reunión",
       "verified": false
     },
     "updated": {
@@ -1593,17 +1593,17 @@
       "verified": false
     },
     "when": {
-      "gloss": "Cu\u00e1ndo",
+      "gloss": "Cuándo",
       "verified": false
     }
   },
   "diplomas": {
     "add-failed": {
-      "gloss": "Se fall\u00f3 a a\u00f1adir el diploma",
+      "gloss": "Se falló a añadir el diploma",
       "verified": false
     },
     "added": {
-      "gloss": "Diploma a\u00f1adido",
+      "gloss": "Diploma añadido",
       "verified": false
     },
     "archived": {
@@ -1611,7 +1611,7 @@
       "verified": false
     },
     "confirm-archive": {
-      "gloss": "\u00bfEst\u00e1s seguro que quieres archivar esta diploma?",
+      "gloss": "¿Estás seguro que quieres archivar esta diploma?",
       "verified": false
     },
     "courses": {
@@ -1623,7 +1623,7 @@
       "verified": false
     },
     "description": {
-      "gloss": "Descripci\u00f3n",
+      "gloss": "Descripción",
       "verified": false
     },
     "diploma": {
@@ -1643,11 +1643,11 @@
       "verified": false
     },
     "title": {
-      "gloss": "T\u00edtulo",
+      "gloss": "Título",
       "verified": false
     },
     "update-failed": {
-      "gloss": "Se fall\u00f3 a actualizar el diploma",
+      "gloss": "Se falló a actualizar el diploma",
       "verified": false
     },
     "updated": {
@@ -1676,25 +1676,25 @@
     },
     "display": {
       "add-description": {
-        "gloss": "Agregar descripci\u00f3n",
+        "gloss": "Agregar descripción",
         "verified": false
       },
       "feedback-successful": {
-        "gloss": "\u00a1Gracias, hemos recibido sus comentarios!",
+        "gloss": "¡Gracias, hemos recibido sus comentarios!",
         "verified": false
       },
       "make-description": {
-        "gloss": "Describa c\u00f3mo se produjo el error.",
+        "gloss": "Describa cómo se produjo el error.",
         "verified": false
       }
     },
     "error-types": {
       "error-400": {
-        "gloss": "El servidor recibi\u00f3 una solicitud no v\u00e1lida.",
+        "gloss": "El servidor recibió una solicitud no válida.",
         "verified": false
       },
       "error-401": {
-        "gloss": "El servidor recibi\u00f3 una solicitud en conflicto.",
+        "gloss": "El servidor recibió una solicitud en conflicto.",
         "verified": false
       },
       "error-404": {
@@ -1706,7 +1706,7 @@
         "verified": false
       },
       "error-5xx": {
-        "gloss": "Ocurri\u00f3 un error del servidor",
+        "gloss": "Ocurrió un error del servidor",
         "verified": false
       }
     }
@@ -1735,7 +1735,7 @@
       }
     },
     "confirm-archive": {
-      "gloss": "\u00bfSeguro que quieres archivar este evento?",
+      "gloss": "¿Seguro que quieres archivar este evento?",
       "verified": false
     },
     "create-event": {
@@ -1763,7 +1763,7 @@
           "verified": false
         },
         "location-attendance": {
-          "gloss": "Asistencia por Ubicaci\u00f3n",
+          "gloss": "Asistencia por Ubicación",
           "verified": false
         },
         "yearly-attendance": {
@@ -1791,7 +1791,7 @@
       "verified": false
     },
     "end-time": {
-      "gloss": "Hora de Finalizaci\u00f3n",
+      "gloss": "Hora de Finalización",
       "verified": false
     },
     "error-adding-event": {
@@ -1819,7 +1819,7 @@
       "verified": false
     },
     "event-description": {
-      "gloss": "Descripci\u00f3n del Evento",
+      "gloss": "Descripción del Evento",
       "verified": false
     },
     "event-edited": {
@@ -1827,7 +1827,7 @@
       "verified": false
     },
     "event-location": {
-      "gloss": "Ubicaci\u00f3n de Evento",
+      "gloss": "Ubicación de Evento",
       "verified": false
     },
     "event-unarchived": {
@@ -1839,16 +1839,16 @@
       "verified": false
     },
     "image-description": {
-      "gloss": "Descripci\u00f3n de la Imagen",
+      "gloss": "Descripción de la Imagen",
       "verified": false
     },
     "location": {
-      "gloss": "Ubicaci\u00f3n",
+      "gloss": "Ubicación",
       "verified": false
     },
     "participants": {
       "add": {
-        "gloss": "A\u00f1adir participantes",
+        "gloss": "Añadir participantes",
         "verified": false
       },
       "added": {
@@ -1856,7 +1856,7 @@
         "verified": false
       },
       "confirm-remove": {
-        "gloss": "\u00bfEst\u00e1s seguro de que quieres eliminar a este participante?",
+        "gloss": "¿Estás seguro de que quieres eliminar a este participante?",
         "verified": false
       },
       "error-adding": {
@@ -1878,11 +1878,11 @@
     },
     "persons": {
       "confirm-remove-from-event": {
-        "gloss": "\u00bfEst\u00e1 seguro de que desea eliminar este persona de este evento?",
+        "gloss": "¿Está seguro de que desea eliminar este persona de este evento?",
         "verified": false
       },
       "description": {
-        "gloss": "Descripci\u00f3n del Rol",
+        "gloss": "Descripción del Rol",
         "verified": false
       },
       "edit": {
@@ -1894,7 +1894,7 @@
         "verified": false
       },
       "error-person-assigned": {
-        "gloss": "Ese persona est\u00e1 asignado a un evento conflictivo.",
+        "gloss": "Ese persona está asignado a un evento conflictivo.",
         "verified": false
       },
       "error-removing-person": {
@@ -1902,7 +1902,7 @@
         "verified": false
       },
       "new": {
-        "gloss": "A\u00f1adir Persona",
+        "gloss": "Añadir Persona",
         "verified": false
       },
       "none-assigned": {
@@ -1918,7 +1918,7 @@
         "verified": false
       },
       "person-on-event": {
-        "gloss": "Ese persona ya est\u00e1 asignado a este evento.",
+        "gloss": "Ese persona ya está asignado a este evento.",
         "verified": false
       },
       "person-removed": {
@@ -1943,7 +1943,7 @@
       "verified": false
     },
     "title": {
-      "gloss": "T\u00edtulo del Evento",
+      "gloss": "Título del Evento",
       "verified": false
     },
     "upload-image": {
@@ -1966,24 +1966,24 @@
         "verified": false
       },
       "email": {
-        "gloss": "Enviar correo electr\u00f3nico",
+        "gloss": "Enviar correo electrónico",
         "verified": false
       },
       "messages": {
         "move-person-will-cause-cycle": {
-          "gloss": "Mover a esta persona provocar\u00e1 un ciclo en la jerarqu\u00eda de liderazgo",
+          "gloss": "Mover a esta persona provocará un ciclo en la jerarquía de liderazgo",
           "verified": false
         },
         "no-email": {
-          "gloss": "La persona no tiene una direcci\u00f3n de correo electr\u00f3nico.",
+          "gloss": "La persona no tiene una dirección de correo electrónico.",
           "verified": false
         },
         "person-in-destination-group": {
-          "gloss": "La persona ya est\u00e1 en el grupo de destino.",
+          "gloss": "La persona ya está en el grupo de destino.",
           "verified": false
         },
         "unarchive-group-will-cause-cycle": {
-          "gloss": "Desarchivar este grupo provocar\u00e1 un ciclo en la jerarqu\u00eda de liderazgo",
+          "gloss": "Desarchivar este grupo provocará un ciclo en la jerarquía de liderazgo",
           "verified": false
         }
       },
@@ -2001,7 +2001,7 @@
       }
     },
     "confirm-remove-from-event": {
-      "gloss": "\u00bfEst\u00e1s seguro de que quieres eliminar a este grupo de este evento?",
+      "gloss": "¿Estás seguro de que quieres eliminar a este grupo de este evento?",
       "verified": false
     },
     "create-group": {
@@ -2009,12 +2009,12 @@
       "verified": false
     },
     "description": {
-      "gloss": "Descripci\u00f3n",
+      "gloss": "Descripción",
       "verified": false
     },
     "details": {
       "class-title": {
-        "gloss": "T\u00edtulo",
+        "gloss": "Título",
         "verified": false
       },
       "manager": {
@@ -2031,7 +2031,7 @@
       }
     },
     "edit-group": {
-      "gloss": "Grupo de Edici\u00f3n",
+      "gloss": "Grupo de Edición",
       "verified": false
     },
     "entity-types": {
@@ -2041,7 +2041,7 @@
           "verified": false
         },
         "confirm-remove": {
-          "gloss": "\u00bfEst\u00e1s seguro de que deseas eliminar este tipo de grupo?",
+          "gloss": "¿Estás seguro de que deseas eliminar este tipo de grupo?",
           "verified": false
         },
         "create-new": {
@@ -2097,7 +2097,7 @@
           "verified": false
         },
         "success-remove": {
-          "gloss": "Tipo de grupo eliminado con \u00e9xito",
+          "gloss": "Tipo de grupo eliminado con éxito",
           "verified": false
         },
         "success-update": {
@@ -2115,7 +2115,7 @@
           "verified": false
         },
         "confirm-remove": {
-          "gloss": "\u00bfSeguro que quieres eliminar este tipo de administrador?",
+          "gloss": "¿Seguro que quieres eliminar este tipo de administrador?",
           "verified": false
         },
         "create-new": {
@@ -2167,11 +2167,11 @@
           "verified": false
         },
         "success-change": {
-          "gloss": "Se cambi\u00f3 correctamente el tipo de administrador",
+          "gloss": "Se cambió correctamente el tipo de administrador",
           "verified": false
         },
         "success-remove": {
-          "gloss": "Tipo de administrador eliminado con \u00e9xito",
+          "gloss": "Tipo de administrador eliminado con éxito",
           "verified": false
         },
         "success-update": {
@@ -2189,7 +2189,7 @@
       "verified": false
     },
     "group-description": {
-      "gloss": "Descripci\u00f3n del Grupo",
+      "gloss": "Descripción del Grupo",
       "verified": false
     },
     "group-removed": {
@@ -2296,7 +2296,7 @@
         "verified": false
       },
       "edit-manager": {
-        "gloss": "Administrador de edici\u00f3n",
+        "gloss": "Administrador de edición",
         "verified": false
       },
       "manager-type": {
@@ -2306,7 +2306,7 @@
     },
     "meetings": {
       "add-meeting": {
-        "gloss": "Agregar reuni\u00f3n",
+        "gloss": "Agregar reunión",
         "verified": false
       },
       "title": {
@@ -2320,7 +2320,7 @@
     },
     "members": {
       "add-member": {
-        "gloss": "A\u00f1adir miembro",
+        "gloss": "Añadir miembro",
         "verified": false
       },
       "default": {
@@ -2345,7 +2345,7 @@
           "verified": false
         },
         "compose": {
-          "gloss": "Redactar Correo Electr\u00f3nico",
+          "gloss": "Redactar Correo Electrónico",
           "verified": false
         },
         "reply-to": {
@@ -2366,7 +2366,7 @@
         }
       },
       "email-dialog-footnote": {
-        "gloss": "Haga clic en el c\u00edrculo para seleccionar la opci\u00f3n de respuesta",
+        "gloss": "Haga clic en el círculo para seleccionar la opción de respuesta",
         "verified": false
       },
       "email-reply-to": {
@@ -2420,27 +2420,27 @@
         "verified": false
       },
       "confirm-archive": {
-        "gloss": "\u00bfSeguro que quieres archivar este groupos?",
+        "gloss": "¿Seguro que quieres archivar este groupos?",
         "verified": false
       },
       "confirm-attendance-archive": {
-        "gloss": "\u00bfEst\u00e1s seguro de que esta persona tiene una ausencia?",
+        "gloss": "¿Estás seguro de que esta persona tiene una ausencia?",
         "verified": false
       },
       "confirm-manager-archive": {
-        "gloss": "\u00bfEst\u00e1s seguro de que deseas archivar este administrador de grupo?",
+        "gloss": "¿Estás seguro de que deseas archivar este administrador de grupo?",
         "verified": false
       },
       "confirm-meeting-archive": {
-        "gloss": "\u00bfEst\u00e1s seguro de que deseas archivar esta reuni\u00f3n de grupo?",
+        "gloss": "¿Estás seguro de que deseas archivar esta reunión de grupo?",
         "verified": false
       },
       "confirm-member-archive": {
-        "gloss": "\u00bfEst\u00e1s seguro de que deseas archivar a este miembro del grupo?",
+        "gloss": "¿Estás seguro de que deseas archivar a este miembro del grupo?",
         "verified": false
       },
       "email-sent": {
-        "gloss": "Correo electr\u00f3nico enviado",
+        "gloss": "Correo electrónico enviado",
         "verified": false
       },
       "error-active-not-selected": {
@@ -2456,7 +2456,7 @@
         "verified": false
       },
       "error-adding-meeting": {
-        "gloss": "Error al agregar la reuni\u00f3n",
+        "gloss": "Error al agregar la reunión",
         "verified": false
       },
       "error-adding-members": {
@@ -2476,7 +2476,7 @@
         "verified": false
       },
       "error-archiving-meeting": {
-        "gloss": "Error al archivar reuni\u00f3n",
+        "gloss": "Error al archivar reunión",
         "verified": false
       },
       "error-archiving-member": {
@@ -2496,11 +2496,11 @@
         "verified": false
       },
       "error-no-manager-email": {
-        "gloss": "Su direcci\u00f3n de correo electr\u00f3nico no est\u00e1 definida",
+        "gloss": "Su dirección de correo electrónico no está definida",
         "verified": false
       },
       "error-sending-email": {
-        "gloss": "Error al enviar correo electr\u00f3nico",
+        "gloss": "Error al enviar correo electrónico",
         "verified": false
       },
       "error-unarchiving-group": {
@@ -2512,7 +2512,7 @@
         "verified": false
       },
       "error-unarchiving-meeting": {
-        "gloss": "Error al desarchivar la reuni\u00f3n",
+        "gloss": "Error al desarchivar la reunión",
         "verified": false
       },
       "error-unarchiving-member": {
@@ -2552,7 +2552,7 @@
         "verified": false
       },
       "managers-added": {
-        "gloss": "Gerentes agregados con \u00e9xito",
+        "gloss": "Gerentes agregados con éxito",
         "verified": false
       },
       "managers-moved": {
@@ -2560,15 +2560,15 @@
         "verified": false
       },
       "managers-updated": {
-        "gloss": "Gerentes actualizados con \u00e9xito",
+        "gloss": "Gerentes actualizados con éxito",
         "verified": false
       },
       "meeting-added": {
-        "gloss": "Reuni\u00f3n agregada",
+        "gloss": "Reunión agregada",
         "verified": false
       },
       "meeting-archived": {
-        "gloss": "Reuni\u00f3n archivada",
+        "gloss": "Reunión archivada",
         "verified": false
       },
       "member-archived": {
@@ -2588,15 +2588,15 @@
         "verified": false
       },
       "members-updated": {
-        "gloss": "Miembros actualizados con \u00e9xito",
+        "gloss": "Miembros actualizados con éxito",
         "verified": false
       },
       "no-remaining-members": {
-        "gloss": "Ning\u00fan miembro restante",
+        "gloss": "Ningún miembro restante",
         "verified": false
       },
       "participant-added": {
-        "gloss": "Participaci\u00f3n (es) a\u00f1adida (s)",
+        "gloss": "Participación (es) añadida (s)",
         "verified": false
       },
       "required-fields": {
@@ -2622,7 +2622,7 @@
     },
     "split": {
       "child-group": {
-        "gloss": "Grupo de ni\u00f1os",
+        "gloss": "Grupo de niños",
         "verified": false
       },
       "choose-managers": {
@@ -2638,7 +2638,7 @@
         "verified": false
       },
       "group-information": {
-        "gloss": "Informaci\u00f3n grupal",
+        "gloss": "Información grupal",
         "verified": false
       },
       "no-managers": {
@@ -2654,7 +2654,7 @@
         "verified": false
       },
       "success": {
-        "gloss": "Grupo dividido con \u00e9xito",
+        "gloss": "Grupo dividido con éxito",
         "verified": false
       },
       "title": {
@@ -2662,7 +2662,7 @@
         "verified": false
       },
       "tooltip": {
-        "gloss": "Divisi\u00f3n",
+        "gloss": "División",
         "verified": false
       }
     },
@@ -2700,7 +2700,7 @@
         }
       },
       "category-view": {
-        "gloss": "Vista de categor\u00eda",
+        "gloss": "Vista de categoría",
         "verified": false
       },
       "collapse": {
@@ -2716,15 +2716,15 @@
         "verified": false
       },
       "hierarchy-view": {
-        "gloss": "Vista de jerarqu\u00eda",
+        "gloss": "Vista de jerarquía",
         "verified": false
       },
       "no-groups-available": {
-        "gloss": "No hay grupos disponibles, porque no eres supervisor de ning\u00fan grupo",
+        "gloss": "No hay grupos disponibles, porque no eres supervisor de ningún grupo",
         "verified": false
       },
       "remove-cycle": {
-        "gloss": "Elimine el ciclo en el nodo listado para ver el \u00e1rbol de jerarqu\u00eda de grupo.",
+        "gloss": "Elimine el ciclo en el nodo listado para ver el árbol de jerarquía de grupo.",
         "verified": false
       },
       "select-placeholder": {
@@ -2732,7 +2732,7 @@
         "verified": false
       },
       "show-linegraph": {
-        "gloss": "Mostrar gr\u00e1fico de l\u00edneas",
+        "gloss": "Mostrar gráfico de líneas",
         "verified": false
       },
       "show-list": {
@@ -2740,15 +2740,15 @@
         "verified": false
       },
       "show-treeview": {
-        "gloss": "Mostrar vista de \u00e1rbol de grupo",
+        "gloss": "Mostrar vista de árbol de grupo",
         "verified": false
       },
       "title": {
-        "gloss": "Vista de \u00e1rbol grupal",
+        "gloss": "Vista de árbol grupal",
         "verified": false
       },
       "unexpected-cycle": {
-        "gloss": "Ciclo inesperado en la jerarqu\u00eda",
+        "gloss": "Ciclo inesperado en la jerarquía",
         "verified": false
       }
     },
@@ -2760,12 +2760,12 @@
   "images": {
     "actions": {
       "add-image": {
-        "gloss": "A\u00f1adir Imagen",
+        "gloss": "Añadir Imagen",
         "verified": false
       }
     },
     "image-description": {
-      "gloss": "Descripci\u00f3n de la imagen",
+      "gloss": "Descripción de la imagen",
       "verified": false
     },
     "messages": {
@@ -2802,19 +2802,19 @@
         "verified": false
       },
       "am": {
-        "gloss": "Am\u00e1rico",
+        "gloss": "Amárico",
         "verified": false
       },
       "an": {
-        "gloss": "aragon\u00e9s",
+        "gloss": "aragonés",
         "verified": false
       },
       "ar": {
-        "gloss": "Ar\u00e1bica",
+        "gloss": "Arábica",
         "verified": false
       },
       "as": {
-        "gloss": "Asam\u00e9s",
+        "gloss": "Asamés",
         "verified": false
       },
       "av": {
@@ -2838,7 +2838,7 @@
         "verified": false
       },
       "bg": {
-        "gloss": "b\u00falgaro",
+        "gloss": "búlgaro",
         "verified": false
       },
       "bh": {
@@ -2854,7 +2854,7 @@
         "verified": false
       },
       "bn": {
-        "gloss": "bengal\u00ed",
+        "gloss": "bengalí",
         "verified": false
       },
       "bo": {
@@ -2862,7 +2862,7 @@
         "verified": false
       },
       "br": {
-        "gloss": "Bret\u00f3n",
+        "gloss": "Bretón",
         "verified": false
       },
       "bs": {
@@ -2870,7 +2870,7 @@
         "verified": false
       },
       "ca": {
-        "gloss": "Catal\u00e1n; valenciano",
+        "gloss": "Catalán; valenciano",
         "verified": false
       },
       "ce": {
@@ -2894,7 +2894,7 @@
         "verified": false
       },
       "cu": {
-        "gloss": "Eslavo eclesi\u00e1stico; Antiguo eslavo; Eslavo eclesi\u00e1stico; Viejo b\u00falgaro; Antiguo eslavo eclesi\u00e1stico",
+        "gloss": "Eslavo eclesiástico; Antiguo eslavo; Eslavo eclesiástico; Viejo búlgaro; Antiguo eslavo eclesiástico",
         "verified": false
       },
       "cv": {
@@ -2902,15 +2902,15 @@
         "verified": false
       },
       "cy": {
-        "gloss": "gal\u00e9s",
+        "gloss": "galés",
         "verified": false
       },
       "da": {
-        "gloss": "dan\u00e9s",
+        "gloss": "danés",
         "verified": false
       },
       "de": {
-        "gloss": "alem\u00e1n",
+        "gloss": "alemán",
         "verified": false
       },
       "dv": {
@@ -2930,7 +2930,7 @@
         "verified": false
       },
       "en": {
-        "gloss": "Ingl\u00e9s",
+        "gloss": "Inglés",
         "verified": false
       },
       "eo": {
@@ -2938,7 +2938,7 @@
         "verified": false
       },
       "es": {
-        "gloss": "Espa\u00f1ol; Castellano",
+        "gloss": "Español; Castellano",
         "verified": false
       },
       "et": {
@@ -2958,7 +2958,7 @@
         "verified": false
       },
       "fi": {
-        "gloss": "finland\u00e9s",
+        "gloss": "finlandés",
         "verified": false
       },
       "fj": {
@@ -2966,15 +2966,15 @@
         "verified": false
       },
       "fo": {
-        "gloss": "Fero\u00e9s",
+        "gloss": "Feroés",
         "verified": false
       },
       "fr": {
-        "gloss": "franc\u00e9s",
+        "gloss": "francés",
         "verified": false
       },
       "fy": {
-        "gloss": "Fris\u00f3n occidental",
+        "gloss": "Frisón occidental",
         "verified": false
       },
       "ga": {
@@ -2982,7 +2982,7 @@
         "verified": false
       },
       "gd": {
-        "gloss": "Ga\u00e9lico; ga\u00e9lico escoc\u00e9s",
+        "gloss": "Gaélico; gaélico escocés",
         "verified": false
       },
       "gl": {
@@ -2990,7 +2990,7 @@
         "verified": false
       },
       "gn": {
-        "gloss": "Guaran\u00ed",
+        "gloss": "Guaraní",
         "verified": false
       },
       "gu": {
@@ -3026,7 +3026,7 @@
         "verified": false
       },
       "hu": {
-        "gloss": "h\u00fangaro",
+        "gloss": "húngaro",
         "verified": false
       },
       "hy": {
@@ -3038,7 +3038,7 @@
         "verified": false
       },
       "ia": {
-        "gloss": "Interlingua (Asociaci\u00f3n Internacional de Idiomas Auxiliares)",
+        "gloss": "Interlingua (Asociación Internacional de Idiomas Auxiliares)",
         "verified": false
       },
       "id": {
@@ -3066,7 +3066,7 @@
         "verified": false
       },
       "is": {
-        "gloss": "island\u00e9s",
+        "gloss": "islandés",
         "verified": false
       },
       "it": {
@@ -3078,11 +3078,11 @@
         "verified": false
       },
       "ja": {
-        "gloss": "japon\u00e9s",
+        "gloss": "japonés",
         "verified": false
       },
       "jv": {
-        "gloss": "javan\u00e9s",
+        "gloss": "javanés",
         "verified": false
       },
       "ka": {
@@ -3106,7 +3106,7 @@
         "verified": false
       },
       "kl": {
-        "gloss": "Kalaallisut; Groenland\u00e9s",
+        "gloss": "Kalaallisut; Groenlandés",
         "verified": false
       },
       "km": {
@@ -3142,15 +3142,15 @@
         "verified": false
       },
       "ky": {
-        "gloss": "Kirguiz; Kirgu\u00eds",
+        "gloss": "Kirguiz; Kirguís",
         "verified": false
       },
       "la": {
-        "gloss": "lat\u00edn",
+        "gloss": "latín",
         "verified": false
       },
       "lb": {
-        "gloss": "Luxemburgu\u00e9s; Letzeburgesch",
+        "gloss": "Luxemburgués; Letzeburgesch",
         "verified": false
       },
       "lg": {
@@ -3158,7 +3158,7 @@
         "verified": false
       },
       "li": {
-        "gloss": "Limburgan; Limburger; Limburgu\u00e9s",
+        "gloss": "Limburgan; Limburger; Limburgués",
         "verified": false
       },
       "ln": {
@@ -3178,23 +3178,23 @@
         "verified": false
       },
       "lv": {
-        "gloss": "let\u00f3n",
+        "gloss": "letón",
         "verified": false
       },
       "mg": {
-        "gloss": "madagascar\u00ed",
+        "gloss": "madagascarí",
         "verified": false
       },
       "mh": {
-        "gloss": "Marshal\u00e9s",
+        "gloss": "Marshalés",
         "verified": false
       },
       "mi": {
-        "gloss": "maor\u00ed",
+        "gloss": "maorí",
         "verified": false
       },
       "mk": {
-        "gloss": "maced\u00f3nio",
+        "gloss": "macedónio",
         "verified": false
       },
       "ml": {
@@ -3214,7 +3214,7 @@
         "verified": false
       },
       "mt": {
-        "gloss": "malt\u00e9s",
+        "gloss": "maltés",
         "verified": false
       },
       "my": {
@@ -3226,7 +3226,7 @@
         "verified": false
       },
       "nb": {
-        "gloss": "Bokm\u00e5l, noruego; Noruego bokm\u00e5l",
+        "gloss": "Bokmål, noruego; Noruego bokmål",
         "verified": false
       },
       "nd": {
@@ -3234,7 +3234,7 @@
         "verified": false
       },
       "ne": {
-        "gloss": "Nepal\u00ed",
+        "gloss": "Nepalí",
         "verified": false
       },
       "ng": {
@@ -3242,7 +3242,7 @@
         "verified": false
       },
       "nl": {
-        "gloss": "Holand\u00e9s; flamenco",
+        "gloss": "Holandés; flamenco",
         "verified": false
       },
       "nn": {
@@ -3266,7 +3266,7 @@
         "verified": false
       },
       "oc": {
-        "gloss": "Occitano (despu\u00e9s de 1500); Provenzal",
+        "gloss": "Occitano (después de 1500); Provenzal",
         "verified": false
       },
       "oj": {
@@ -3282,7 +3282,7 @@
         "verified": false
       },
       "os": {
-        "gloss": "Osetio; Os\u00e9tico",
+        "gloss": "Osetio; Osético",
         "verified": false
       },
       "pa": {
@@ -3302,7 +3302,7 @@
         "verified": false
       },
       "pt": {
-        "gloss": "portugu\u00e9s",
+        "gloss": "portugués",
         "verified": false
       },
       "qu": {
@@ -3330,7 +3330,7 @@
         "verified": false
       },
       "sa": {
-        "gloss": "s\u00e1nscrito",
+        "gloss": "sánscrito",
         "verified": false
       },
       "sc": {
@@ -3414,7 +3414,7 @@
         "verified": false
       },
       "th": {
-        "gloss": "tailand\u00e9s",
+        "gloss": "tailandés",
         "verified": false
       },
       "ti": {
@@ -3446,7 +3446,7 @@
         "verified": false
       },
       "tt": {
-        "gloss": "T\u00e1rtaro",
+        "gloss": "Tártaro",
         "verified": false
       },
       "tw": {
@@ -3482,7 +3482,7 @@
         "verified": false
       },
       "vo": {
-        "gloss": "Volap\u00fck",
+        "gloss": "Volapük",
         "verified": false
       },
       "wa": {
@@ -3498,7 +3498,7 @@
         "verified": false
       },
       "yi": {
-        "gloss": "y\u00eddish",
+        "gloss": "yídish",
         "verified": false
       },
       "yo": {
@@ -3521,23 +3521,23 @@
   },
   "login": {
     "header": {
-      "gloss": "Iniciar Sesi\u00f3n",
+      "gloss": "Iniciar Sesión",
       "verified": false
     },
     "messages": {
       "incorrect-login": {
-        "gloss": "Nombre de usuario o contrase\u00f1a incorrecta",
+        "gloss": "Nombre de usuario o contraseña incorrecta",
         "verified": false
       }
     }
   },
   "people": {
     "account-information": {
-      "gloss": "Informaci\u00f3n de la cuenta",
+      "gloss": "Información de la cuenta",
       "verified": false
     },
     "additional-information": {
-      "gloss": "Informaci\u00f3n Adicional",
+      "gloss": "Información Adicional",
       "verified": false
     },
     "attributes": {
@@ -3586,15 +3586,15 @@
     },
     "actions": {
       "add-account": {
-        "gloss": "A\u00f1adir cuenta",
+        "gloss": "Añadir cuenta",
         "verified": false
       },
       "add-participant": {
-        "gloss": "A\u00f1adir Part\u00edcipe",
+        "gloss": "Añadir Partícipe",
         "verified": false
       },
       "add-visitor": {
-        "gloss": "A\u00f1adir visitante",
+        "gloss": "Añadir visitante",
         "verified": false
       },
       "assign-roles": {
@@ -3610,18 +3610,18 @@
         "verified": false
       },
       "reset-password": {
-        "gloss": "Restablecer la contrase\u00f1a",
+        "gloss": "Restablecer la contraseña",
         "verified": false
       }
     },
     "date": {
       "birthday": {
-        "gloss": "Cumplea\u00f1os",
+        "gloss": "Cumpleaños",
         "verified": false
       }
     },
     "email": {
-      "gloss": "Correo electr\u00f3nico",
+      "gloss": "Correo electrónico",
       "verified": false
     },
     "female": {
@@ -3629,7 +3629,7 @@
       "verified": false
     },
     "gender": {
-      "gloss": "G\u00e9nero",
+      "gloss": "Género",
       "verified": false
     },
     "male": {
@@ -3646,16 +3646,16 @@
         "verified": false
       },
       "canceled": {
-        "gloss": "Cancelado a\u00f1adir nueva persona",
+        "gloss": "Cancelado añadir nueva persona",
         "verified": false
       },
       "confirm": {
         "activate": {
-          "gloss": "\u00bfEst\u00e1s seguro de que quieres restaurar a esta persona?",
+          "gloss": "¿Estás seguro de que quieres restaurar a esta persona?",
           "verified": false
         },
         "deactivate": {
-          "gloss": "\u00bfEst\u00e1s seguro de que quieres archivar a esta persona?",
+          "gloss": "¿Estás seguro de que quieres archivar a esta persona?",
           "verified": false
         }
       },
@@ -3695,23 +3695,23 @@
       }
     },
     "no-account": {
-      "gloss": "\u00bfNo tienes una cuenta?",
+      "gloss": "¿No tienes una cuenta?",
       "verified": false
     },
     "password": {
-      "gloss": "Contrase\u00f1a",
+      "gloss": "Contraseña",
       "verified": false
     },
     "phone": {
-      "gloss": "Tel\u00e9fono",
+      "gloss": "Teléfono",
       "verified": false
     },
     "repeat-password": {
-      "gloss": "Repite la contrase\u00f1a",
+      "gloss": "Repite la contraseña",
       "verified": false
     },
     "settings": {
-      "gloss": "Configuraci\u00f3n de la {person}",
+      "gloss": "Configuración de la {person}",
       "verified": false
     },
     "username": {
@@ -3722,7 +3722,7 @@
   "places": {
     "address": {
       "address": {
-        "gloss": "Direcci\u00f3n",
+        "gloss": "Dirección",
         "verified": false
       },
       "city": {
@@ -3730,7 +3730,7 @@
         "verified": false
       },
       "country": {
-        "gloss": "Pa\u00eds",
+        "gloss": "País",
         "verified": false
       },
       "filters": {
@@ -3743,15 +3743,15 @@
           "verified": false
         },
         "distance-addr": {
-          "gloss": "Filtrar por distancia desde una direcci\u00f3n espec\u00edfica",
+          "gloss": "Filtrar por distancia desde una dirección específica",
           "verified": false
         },
         "distance-ll": {
-          "gloss": "Filtrar por distancia desde una Latitud y Longitud espec\u00edficas",
+          "gloss": "Filtrar por distancia desde una Latitud y Longitud específicas",
           "verified": false
         },
         "distanceFromAddress": {
-          "gloss": "Distancia desde la Direcci\u00f3n especificada",
+          "gloss": "Distancia desde la Dirección especificada",
           "verified": false
         },
         "distanceFromLatLng": {
@@ -3784,11 +3784,11 @@
         }
       },
       "find-address": {
-        "gloss": "Encuentra la Direcci\u00f3n",
+        "gloss": "Encuentra la Dirección",
         "verified": false
       },
       "find-address-lat-lng": {
-        "gloss": "Buscar Direcci\u00f3n usando Latitud y Longitud",
+        "gloss": "Buscar Dirección usando Latitud y Longitud",
         "verified": false
       },
       "latitude": {
@@ -3804,11 +3804,11 @@
         "verified": false
       },
       "new": {
-        "gloss": "A\u00f1adir direcci\u00f3n",
+        "gloss": "Añadir dirección",
         "verified": false
       },
       "valid-address": {
-        "gloss": "Usar direcci\u00f3n V\u00e1lida",
+        "gloss": "Usar dirección Válida",
         "verified": false
       }
     },
@@ -3819,28 +3819,28 @@
       },
       "confirm": {
         "activate": {
-          "gloss": "\u00bfEst\u00e1s seguro de que deseas restaurar esta zona?",
+          "gloss": "¿Estás seguro de que deseas restaurar esta zona?",
           "verified": false
         },
         "deactivate": {
-          "gloss": "\u00bfEst\u00e1s seguro de que deseas archivar esta zona?",
+          "gloss": "¿Estás seguro de que deseas archivar esta zona?",
           "verified": false
         }
       },
       "create-area": {
-        "gloss": "Crear nueva \u00c1rea",
+        "gloss": "Crear nueva Área",
         "verified": false
       },
       "edit": {
-        "gloss": "\u00c1rea de Edici\u00f3n",
+        "gloss": "Área de Edición",
         "verified": false
       },
       "name": {
-        "gloss": "Nombre del \u00c1rea",
+        "gloss": "Nombre del Área",
         "verified": false
       },
       "new": {
-        "gloss": "A\u00f1adir Zona",
+        "gloss": "Añadir Zona",
         "verified": false
       }
     },
@@ -3849,11 +3849,11 @@
       "verified": false
     },
     "create-address": {
-      "gloss": "Crear una Direcci\u00f3n",
+      "gloss": "Crear una Dirección",
       "verified": false
     },
     "edit": {
-      "gloss": "Editar Ubicaci\u00f3n",
+      "gloss": "Editar Ubicación",
       "verified": false
     },
     "expand": {
@@ -3862,44 +3862,44 @@
     },
     "location": {
       "description": {
-        "gloss": "Descripci\u00f3n",
+        "gloss": "Descripción",
         "verified": false
       },
       "location": {
-        "gloss": "Ubicaci\u00f3n",
+        "gloss": "Ubicación",
         "verified": false
       },
       "new": {
-        "gloss": "A\u00f1adir Ubicaci\u00f3n",
+        "gloss": "Añadir Ubicación",
         "verified": false
       }
     },
     "messages": {
       "confirm": {
         "activate": {
-          "gloss": "\u00bfEst\u00e1s seguro de que deseas restaurar esta direcci\u00f3n?",
+          "gloss": "¿Estás seguro de que deseas restaurar esta dirección?",
           "verified": false
         },
         "deactivate": {
-          "gloss": "\u00bfEst\u00e1s seguro de que deseas archivar esta direcci\u00f3n?",
+          "gloss": "¿Estás seguro de que deseas archivar esta dirección?",
           "verified": false
         }
       },
       "find-address-err": {
-        "gloss": "Se requiere latitud y longitud para encontrar una direcci\u00f3n",
+        "gloss": "Se requiere latitud y longitud para encontrar una dirección",
         "verified": false
       },
       "no-results": {
-        "gloss": "Tu direcci\u00f3n no devolvi\u00f3 resultados.",
+        "gloss": "Tu dirección no devolvió resultados.",
         "verified": false
       },
       "saved": {
-        "gloss": "Su direcci\u00f3n ha sido guardada.",
+        "gloss": "Su dirección ha sido guardada.",
         "verified": false
       }
     },
     "new": {
-      "gloss": "A\u00f1adir Lugares",
+      "gloss": "Añadir Lugares",
       "verified": false
     },
     "title": {
@@ -3930,16 +3930,16 @@
         "verified": false
       },
       "upcoming-classes": {
-        "gloss": "Pr\u00f3ximas Cursos",
+        "gloss": "Próximas Cursos",
         "verified": false
       },
       "upcoming-events": {
-        "gloss": "Pr\u00f3ximos Eventos",
+        "gloss": "Próximos Eventos",
         "verified": false
       }
     },
     "title": {
-      "gloss": "P\u00fablico",
+      "gloss": "Público",
       "verified": false
     }
   },
@@ -3965,7 +3965,7 @@
       "verified": false
     },
     "public": {
-      "gloss": "P\u00fablico",
+      "gloss": "Público",
       "verified": false
     },
     "registrar": {
@@ -3977,7 +3977,7 @@
       "verified": false
     },
     "teaching-assistant": {
-      "gloss": "Asistente de Ense\u00f1anza",
+      "gloss": "Asistente de Enseñanza",
       "verified": false
     },
     "translator": {
@@ -3995,11 +3995,11 @@
       "verified": false
     },
     "confirm-archive": {
-      "gloss": "\u00bfSeguro que quieres archivar este equipo?",
+      "gloss": "¿Seguro que quieres archivar este equipo?",
       "verified": false
     },
     "confirm-remove-from-event": {
-      "gloss": "\u00bfEst\u00e1s seguro de que quieres eliminar a este equipo de este evento?",
+      "gloss": "¿Estás seguro de que quieres eliminar a este equipo de este evento?",
       "verified": false
     },
     "create-team": {
@@ -4007,7 +4007,7 @@
       "verified": false
     },
     "description": {
-      "gloss": "Descripci\u00f3n",
+      "gloss": "Descripción",
       "verified": false
     },
     "edit-team": {
@@ -4027,7 +4027,7 @@
       "verified": false
     },
     "error-team-assigned": {
-      "gloss": "Ese equipo est\u00e1 asignado a un evento conflictivo.",
+      "gloss": "Ese equipo está asignado a un evento conflictivo.",
       "verified": false
     },
     "error-unarchiving-team": {
@@ -4036,11 +4036,11 @@
     },
     "members": {
       "add": {
-        "gloss": "A\u00f1adir Miembros",
+        "gloss": "Añadir Miembros",
         "verified": false
       },
       "confirm-remove": {
-        "gloss": "\u00bfSeguro que quieres eliminar este miembro?",
+        "gloss": "¿Seguro que quieres eliminar este miembro?",
         "verified": false
       },
       "title": {
@@ -4049,7 +4049,7 @@
       }
     },
     "new": {
-      "gloss": "A\u00f1adir Equipo",
+      "gloss": "Añadir Equipo",
       "verified": false
     },
     "none-assigned": {
@@ -4065,7 +4065,7 @@
       "verified": false
     },
     "team-on-event": {
-      "gloss": "Ese equipo ya est\u00e1 asignado a este evento.",
+      "gloss": "Ese equipo ya está asignado a este evento.",
       "verified": false
     },
     "team-removed": {
@@ -4079,7 +4079,7 @@
   },
   "transcripts": {
     "add-diploma-this-student": {
-      "gloss": "A\u00f1adir Diploma",
+      "gloss": "Añadir Diploma",
       "verified": false
     },
     "course-completed": {
@@ -4099,11 +4099,11 @@
       "verified": false
     },
     "description": {
-      "gloss": "Descripci\u00f3n",
+      "gloss": "Descripción",
       "verified": false
     },
     "page-title": {
-      "gloss": "Transcripci\u00f3n para",
+      "gloss": "Transcripción para",
       "verified": false
     },
     "student-information": {
@@ -4111,7 +4111,7 @@
       "verified": false
     },
     "transcript": {
-      "gloss": "Transcripci\u00f3nes",
+      "gloss": "Transcripciónes",
       "verified": false
     }
   },
@@ -4131,11 +4131,11 @@
       "verified": false
     },
     "menu-title": {
-      "gloss": "Traducci\u00f3n",
+      "gloss": "Traducción",
       "verified": false
     },
     "search-title": {
-      "gloss": "Encuentre una sucursal de traducci\u00f3n",
+      "gloss": "Encuentre una sucursal de traducción",
       "verified": false
     },
     "toolbar-title": {
@@ -4158,7 +4158,7 @@
         "verified": false
       },
       "email": {
-        "gloss": "correo electr\u00f3nico",
+        "gloss": "correo electrónico",
         "verified": false
       },
       "endDate": {
@@ -4174,7 +4174,7 @@
         "verified": false
       },
       "location": {
-        "gloss": "ubicaci\u00f3n",
+        "gloss": "ubicación",
         "verified": false
       },
       "startDate": {
@@ -4182,11 +4182,11 @@
         "verified": false
       },
       "team-description": {
-        "gloss": "descripci\u00f3n del equipo",
+        "gloss": "descripción del equipo",
         "verified": false
       },
       "title": {
-        "gloss": "t\u00edtulo",
+        "gloss": "título",
         "verified": false
       }
     },

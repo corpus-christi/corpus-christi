@@ -56,14 +56,14 @@ def meeting_object_factory(group_id, address_id):
     }
     return meeting
 
-  
+
 def member_object_factory(person_id, group_id, active=True):
     """Cook up a fake member."""
     member = {
-            'personId': person_id,
-            'groupId': group_id,
-            'active': active,
-            }
+        'personId': person_id,
+        'groupId': group_id,
+        'active': active,
+    }
     return member
 
 
@@ -111,11 +111,13 @@ def member_history_object_factory(
         note=None):
     """Cook up a fake member history """
     member_history = {
-            'personId': person_id,
-            'groupId': group_id,
-            'time': time or str(fake.date_time_between(start_date='-5y', end_date='now')),
-            'is_join': is_join or flip()
-            }
+        'personId': person_id,
+        'groupId': group_id,
+        'time': time or str(
+            fake.date_time_between(
+                start_date='-5y',
+                end_date='now')),
+        'is_join': is_join or flip()}
     note = note or (fake.sentences(nb=1)[0] if flip() else None)
     if note:
         member_history['note'] = note
@@ -372,6 +374,8 @@ def create_hierarchical_groups_and_participants(
     sqla.commit()
 
 # Create test data that is used in front-end testing
+
+
 def create_hierarchy_test_case_1(sqla):
     group_members = [
         [1, 1],

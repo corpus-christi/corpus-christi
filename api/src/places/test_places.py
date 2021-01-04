@@ -14,29 +14,40 @@ location_schema = LocationSchema()
 address_schema = AddressSchema()
 
 
-@pytest.mark.smoke
-@pytest.mark.parametrize('code, name', [('US', 'United States'),
-                                        ('EC', 'Ecuador'),
-                                        ('TH', 'Thailand')])
-def test_read_country(auth_client, code, name):
+@pytest.mark.slow
+def test_read_country(runner, auth_client):
+    pairs = [('US', 'United States'),
+             ('EC', 'Ecuador'),
+             ('TH', 'Thailand')]
+    # GIVEN a database with Country and I18NValue records in English
     count = Country.load_from_file()
+    result = runner.invoke(args=['i18n', 'load', 'en-US'])
     assert count > 0
-    resp = auth_client.get(
-        url_for(
-            'places.read_countries',
-            country_code=code,
-            locale='en-US'))
-    assert resp.status_code == 200
-    print("RESP", resp.json)
-    assert resp.json['name'] == name
+    for code, name in pairs:
+        # WHEN we read a country
+        resp = auth_client.get(
+            url_for(
+                'places.read_countries',
+                country_code=code,
+                locale='en-US'))
+        # THEN we expect the correct status code
+        assert resp.status_code == 200
+        # THEN we expect correct name being returned
+        print("RESP", resp.json)
+        assert resp.json['name'] == name
 
 
 @pytest.mark.slow
-def test_read_all_countries(auth_client):
+def test_read_all_countries(runner, auth_client):
+    # GIVEN a database with Country and I18NValue records in English
     count = Country.load_from_file()
+    result = runner.invoke(args=['i18n', 'load', 'en-US'])
     assert count > 0
+    # WHEN we read all the countries
     resp = auth_client.get(url_for('places.read_countries', locale='en-US'))
+    # THEN we expect the correct status code
     assert resp.status_code == 200
+    # THEN we expect correct count of items being returned
     assert len(resp.json) == count
 
 

@@ -2,7 +2,7 @@ import os
 from datetime import datetime
 
 from flask import jsonify
-from src.auth.utils import jwt_not_required
+from src.shared.helpers import jwt_not_required
 
 from . import etc
 
