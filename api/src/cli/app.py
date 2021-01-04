@@ -1,11 +1,11 @@
 import click
 from flask.cli import AppGroup
 
-from api.src import db
-from api.src.attributes.models import Attribute
-from api.src.i18n.models import Language, I18NLocale
-from api.src.people.models import Role
-from api.src.places.models import Country
+from .. import db
+from ..attributes.models import Attribute
+from ..i18n.models import Language, I18NLocale
+from ..people.models import Role
+from ..places.models import Country
 
 
 def no_rows(model):

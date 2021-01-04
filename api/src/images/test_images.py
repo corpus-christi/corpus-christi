@@ -7,7 +7,7 @@ from flask import url_for
 
 from .create_image_data import fake, flip, create_multiple_images
 from .models import Image
-from .. import BASE_DIR
+from .. import API_DIR
 
 
 # ---- Group
@@ -22,7 +22,7 @@ def test_download_image(auth_client):
     images = auth_client.sqla.query(Image).all()
     # WHEN we ask for the events one by one
     for image in images:
-        with open(BASE_DIR + '/' + image.path, 'rb') as img:
+        with open(API_DIR + '/' + image.path, 'rb') as img:
             img_string_io = BytesIO(img.read())
         resp = auth_client.get(
             url_for('images.download_image', image_id=image.id))
@@ -103,7 +103,7 @@ def test_delete_image(auth_client):
         assert resp.status_code == 204
         assert len(auth_client.sqla.query(
             Image).filter_by(id=image.id).all()) == 0
-        assert not os.path.exists(BASE_DIR + '/' + image.path)
+        assert not os.path.exists(API_DIR + '/' + image.path)
 
 
 @pytest.mark.smoke

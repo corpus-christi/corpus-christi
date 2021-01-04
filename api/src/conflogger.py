@@ -3,7 +3,7 @@ from logging.config import dictConfig
 
 from flask import has_request_context, request
 
-from . import BASE_DIR
+from . import API_DIR
 
 
 class RequestFormatter(Formatter):
@@ -47,7 +47,7 @@ dictConfig({
         # log to file
         'file': {
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': f'{BASE_DIR}/logs/conflogger.log',
+            'filename': f'{API_DIR}/logs/conflogger.log',
             'maxBytes': 8192,
             'backupCount': 5,
             'mode': 'a+',

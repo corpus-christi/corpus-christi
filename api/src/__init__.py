@@ -1,16 +1,20 @@
+import os
+from os.path import abspath, join, dirname
+
 from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_mail import Mail
 
+# The `src` directory (in which this file is located).
+API_DIR = abspath(join(dirname(__file__), '..'))
+
+from .confcc import config
 from . import conflogger
 from .db import DbConfig
-from ..config import config, BASE_DIR
 
 db = DbConfig()
 jwt = JWTManager()
 mail = Mail()
-
-BASE_DIR = BASE_DIR
 
 
 def create_app(config_name):

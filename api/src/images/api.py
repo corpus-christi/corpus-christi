@@ -8,7 +8,7 @@ from werkzeug.utils import secure_filename
 
 from . import images
 from .models import Image, ImageSchema
-from .. import db, BASE_DIR
+from .. import db, API_DIR
 from ..shared.helpers import modify_entity, is_allowed_file, get_file_extension, \
     get_hash, get_all_queried_entities
 from ..shared.models import QueryArgumentError
@@ -21,7 +21,7 @@ image_schema_partial = ImageSchema(partial=('id', 'path', 'events'))
 
 @images.route('/<image_id>')
 def download_image(image_id):
-    base_dir = BASE_DIR + '/'
+    base_dir = API_DIR + '/'
     image = db.session.query(Image).filter_by(id=image_id).first()
 
     if not image:
@@ -38,7 +38,7 @@ def upload_image():
     # -- POST request should be sent with image in request.files['file'] &
     # description in request.form['data'] as a json object (e.g.
     # {'description': 'this is a picture.'})
-    base_dir = BASE_DIR + '/'
+    base_dir = API_DIR + '/'
     if request.files:
         if request.files['file']:
             image = request.files['file']
@@ -135,7 +135,7 @@ def delete_image(image_id):
     if not image:
         return jsonify(f"Image with id #{image_id} does not exist."), 404
 
-    os.remove(os.path.join(BASE_DIR, image.path))
+    os.remove(os.path.join(API_DIR, image.path))
 
     db.session.delete(image)
     db.session.commit()

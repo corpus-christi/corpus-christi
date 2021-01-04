@@ -8,17 +8,12 @@ from .models import (Image, ImageCourse, ImageCourseSchema, ImageEvent,
                      ImageEventSchema, ImageGroup, ImageGroupSchema,
                      ImageLocation, ImageLocationSchema, ImagePerson,
                      ImagePersonSchema, ImageSchema)
-from .. import BASE_DIR
+from .. import API_DIR
 from ..courses.models import Course
-from ..courses.test_courses import create_multiple_courses
-from ..events.create_event_data import create_multiple_events
 from ..events.models import Event
-from ..groups.create_group_data import create_multiple_groups
 from ..groups.models import Group
 from ..people.models import Person
-from ..people.test_people import create_multiple_people
 from ..places.models import Location
-from ..places.test_places import create_multiple_locations
 
 
 class RandomLocaleFaker:
@@ -47,7 +42,7 @@ valid_paths = [
     'images/m5/tree.jpg']
 paths_taken = [False, False, False, False, False, False, False, False]
 
-# Used in create_multiple_images to guarentee that the program won't die
+# Used in create_multiple_images to guarantee that the program won't die
 # due to an IndexOutOfRange with uneven array lengths
 num_valid_images = len(valid_paths) if len(
     valid_paths) < len(paths_taken) else len(paths_taken)
@@ -69,7 +64,8 @@ def create_test_images(sqla):
     new_images = []
 
     valid_image = image_schema.load(
-        {'path': 'image/a1/casa.jpg', 'description': 'Civil authority rich coach answer total general.'})
+        {'path': 'image/a1/casa.jpg',
+         'description': 'Civil authority rich coach answer total general.'})
     new_images.append(Image(**valid_image))
     valid_image = image_schema.load({'path': 'image/a1/coffee_house.jpg'})
     new_images.append(Image(**valid_image))
@@ -79,15 +75,16 @@ def create_test_images(sqla):
     new_images.append(Image(**valid_image))
     valid_image = image_schema.load({'path': 'image/m5/downtown.jpg'})
     new_images.append(Image(**valid_image))
-    valid_image = image_schema.load(
-        {
-            'path': 'image/m5/park.jpg',
-            'description': 'Explicabo doloremque voluptatibus quaerat repellat libero.'})
+    valid_image = image_schema.load({
+        'path': 'image/m5/park.jpg',
+        'description': 'Explicabo doloremque voluptatibus quaerat repellat libero.'
+    })
     new_images.append(Image(**valid_image))
     valid_image = image_schema.load({'path': 'image/m5/broken_bridge.jpg'})
     new_images.append(Image(**valid_image))
-    valid_image = image_schema.load(
-        {'path': 'image/m5/tree.jpg', 'description': 'Factor rate forget research today hand.'})
+    valid_image = image_schema.load({
+        'path': 'image/m5/tree.jpg',
+        'description': 'Factor rate forget research today hand.'})
     new_images.append(Image(**valid_image))
 
     sqla.add_all(new_images)
@@ -114,7 +111,7 @@ def image_object_factory(sqla):
     }
 
     # TODO: write some actual data instead of using an empty image file
-    file = open(os.path.join(BASE_DIR, valid_paths[i]), 'w')
+    file = open(os.path.join(API_DIR, valid_paths[i]), 'w')
     file.close()
 
     # These are all optional in the DB. Over time, we'll try all possibilities.
@@ -186,8 +183,8 @@ def create_images_events(sqla, fraction=0.75):
     new_images_events = []
     if not sqla.query(Image).all():
         create_multiple_images(sqla, random.randint(3, 6))
-    if not sqla.query(Event).all():
-        create_multiple_events(sqla, random.randint(3, 6))
+    # if not sqla.query(Event).all():
+    #     create_multiple_events(sqla, random.randint(3, 6))
     all_images_events = sqla.query(Image, Event).all()
     sample_images_events = random.sample(
         all_images_events, math.floor(len(all_images_events) * fraction))
@@ -205,8 +202,8 @@ def create_images_people(sqla, fraction=0.75):
     new_images_people = []
     if not sqla.query(Image).all():
         create_multiple_images(sqla, random.randint(3, 6))
-    if not sqla.query(Person).all():
-        create_multiple_people(sqla, random.randint(3, 6))
+    # if not sqla.query(Person).all():
+    #     create_multiple_people(sqla, random.randint(3, 6))
     all_images_people = sqla.query(Image, Person).all()
     sample_images_people = random.sample(
         all_images_people, math.floor(len(all_images_people) * fraction))
@@ -225,8 +222,8 @@ def create_images_courses(sqla, fraction=0.75):
     new_images_courses = []
     if not sqla.query(Image).all():
         create_multiple_images(sqla, random.randint(3, 6))
-    if not sqla.query(Course).all():
-        create_multiple_courses(sqla, random.randint(3, 6))
+    # if not sqla.query(Course).all():
+    #     create_multiple_courses(sqla, random.randint(3, 6))
     all_images_courses = sqla.query(Image, Course).all()
     sample_images_courses = random.sample(
         all_images_courses, math.floor(len(all_images_courses) * fraction))
@@ -245,8 +242,8 @@ def create_images_groups(sqla, fraction=0.75):
     new_images_groups = []
     if not sqla.query(Image).all():
         create_multiple_images(sqla, random.randint(3, 6))
-    if not sqla.query(Group).all():
-        create_multiple_groups(sqla, random.randint(3, 6))
+    # if not sqla.query(Group).all():
+    #     create_multiple_groups(sqla, random.randint(3, 6))
     all_images_groups = sqla.query(Image, Group).all()
     sample_images_groups = random.sample(
         all_images_groups, math.floor(len(all_images_groups) * fraction))
@@ -264,8 +261,8 @@ def create_images_locations(sqla, fraction=0.75):
     new_images_locations = []
     if not sqla.query(Image).all():
         create_multiple_images(sqla, random.randint(3, 6))
-    if not sqla.query(Location).all():
-        create_multiple_locations(sqla, random.randint(3, 6))
+    # if not sqla.query(Location).all():
+    #     create_multiple_locations(sqla, random.randint(3, 6))
     all_images_locations = sqla.query(Image, Location).all()
     sample_images_locations = random.sample(
         all_images_locations, math.floor(len(all_images_locations) * fraction))

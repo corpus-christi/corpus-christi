@@ -8,7 +8,7 @@ from ..groups.models import Manager, ManagerType, Group, GroupType, Meeting, Att
     GroupSchema, MeetingSchema, AttendanceSchema, MemberSchema, GroupTypeSchema, ManagerTypeSchema, MemberHistory, \
     MemberHistorySchema
 from ..people.models import Person, PersonSchema
-from ..people.test_people import create_multiple_people, person_object_factory
+from ..people.test_people import person_object_factory
 from ..places.models import Address
 from ..places.test_places import create_multiple_addresses
 
@@ -197,8 +197,8 @@ def create_multiple_members(sqla, fraction=0.75):
     if sqla.query(Group).count() == 0:
         create_multiple_groups(sqla, random.randint(3, 6))
     all_groups = sqla.query(Group).all()
-    if sqla.query(Person).count() == 0:
-        create_multiple_people(sqla, random.randint(3, 6))
+    # if sqla.query(Person).count() == 0:
+    #     create_multiple_people(sqla, random.randint(3, 6))
 
     # TODO: query from non-existing members, so that multiple calls won't fail
     # <2020-06-02, David Deng> #
@@ -225,8 +225,8 @@ def create_multiple_managers(sqla, fraction=0.75):
     if sqla.query(Group).count() == 0:
         create_multiple_groups(sqla, random.randint(3, 6))
     all_groups = sqla.query(Group).all()
-    if sqla.query(Person).count() == 0:
-        create_multiple_people(sqla, random.randint(3, 6))
+    # if sqla.query(Person).count() == 0:
+    #     create_multiple_people(sqla, random.randint(3, 6))
 
     all_managers = sqla.query(Person, Group).all()
     sample_managers = random.sample(
@@ -247,8 +247,8 @@ def create_multiple_attendance(sqla, fraction=0.75):
     """Create data for attendance with member/meeting"""
     attendance_schema = AttendanceSchema()
     new_attendances = []
-    if not sqla.query(Member).all():
-        create_multiple_people(sqla, random.randint(3, 6))
+    # if not sqla.query(Member).all():
+    #     create_multiple_people(sqla, random.randint(3, 6))
     if not sqla.query(Meeting).all():
         create_multiple_meetings(sqla, random.randint(3, 6))
     all_attendances = sqla.query(Person, Meeting).all()
@@ -302,8 +302,8 @@ def create_multiple_member_histories(sqla, n):
     if sqla.query(Group).count() == 0:
         create_multiple_groups(sqla, random.randint(3, 6))
     all_groups = sqla.query(Group).all()
-    if sqla.query(Person).count() == 0:
-        create_multiple_people(sqla, random.randint(3, 6))
+    # if sqla.query(Person).count() == 0:
+    #     create_multiple_people(sqla, random.randint(3, 6))
     all_persons = sqla.query(Person).all()
 
     new_member_histories = []
@@ -430,7 +430,7 @@ def create_group_test_data(sqla):
 
     # create faker data for members and managers
     create_multiple_groups(sqla, 10)
-    create_multiple_people(sqla, 10)
+    # create_multiple_people(sqla, 10)
     create_multiple_managers(sqla, 0.75)
     create_multiple_members(sqla, 0.75)
 

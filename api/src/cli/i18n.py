@@ -10,7 +10,7 @@ import googletrans
 import yaml
 from flask.cli import AppGroup
 
-from api.src import BASE_DIR, db
+from api.src import API_DIR, db
 from api.src.i18n.models import I18NLocale, I18NKey, I18NValue
 from api.src.shared.helpers import (
     tree_to_list,
@@ -138,7 +138,7 @@ def default_target():
             "Can't get default target from the specified <locale> parameter")
         raise click.Abort()
     locale = params['locale']
-    return os.path.join(BASE_DIR, 'i18n', f"{locale}.json")
+    return os.path.join(API_DIR, 'i18n', f"{locale}.json")
 
 
 def read_locale_tail_tree(parent_path=""):
@@ -321,7 +321,7 @@ def create_i18n_cli(app):
                   help="Override if value already exists")
     @click.option('--target',
                   default=default_target,
-                  show_default=os.path.join(BASE_DIR, 'i18n', "<locale>.json"),
+                  show_default=os.path.join(API_DIR, 'i18n', "<locale>.json"),
                   type=click.File("r"),
                   help="The source file to load values from")
     @click.option('-v/-s',
@@ -394,7 +394,7 @@ def create_i18n_cli(app):
     @click.argument('locale', callback=validate_locale, metavar="<locale>")
     @click.option('--target',
                   default=default_target,
-                  show_default=os.path.join(BASE_DIR, 'i18n', "<locale>.json"),
+                  show_default=os.path.join(API_DIR, 'i18n', "<locale>.json"),
                   callback=create_dir,
                   type=click.File("w"),
                   help="The destination file to dump values to")
@@ -441,7 +441,7 @@ def create_i18n_cli(app):
                   show_default=True,
                   help="Override if descriptions is non-empty")
     @click.option('--target',
-                  default=os.path.join(BASE_DIR, 'i18n', "_desc.json"),
+                  default=os.path.join(API_DIR, 'i18n', "_desc.json"),
                   show_default=True,
                   type=click.File("r"),
                   help="The source file to load descriptions from")
@@ -518,7 +518,7 @@ def create_i18n_cli(app):
         help="The description to use when the description in database is not given or empty, "
              "must be used with --dump-empty to take effect")
     @click.option('--target',
-                  default=os.path.join(BASE_DIR, 'i18n', "_desc.json"),
+                  default=os.path.join(API_DIR, 'i18n', "_desc.json"),
                   show_default=True,
                   callback=create_dir,
                   type=click.File("w"),

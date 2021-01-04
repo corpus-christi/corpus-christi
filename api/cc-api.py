@@ -1,5 +1,9 @@
 import os
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from src.cli.app import create_app_cli
 from src.cli.courses import create_course_cli
 from src.cli.events import create_event_cli

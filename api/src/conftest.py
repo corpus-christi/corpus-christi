@@ -1,13 +1,17 @@
 import logging
 import os
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 import pytest
-from api.src.cli import create_app_cli
-from api.src.cli.courses import create_course_cli
-from api.src.cli.events import create_event_cli
-from api.src.cli import create_faker_cli
-from api.src.cli import create_i18n_cli
-from api.src.cli import create_account_cli
+from .cli.app import create_app_cli
+from .cli.courses import create_course_cli
+from .cli.events import create_event_cli
+from .cli.faker import create_faker_cli
+from .cli.i18n import create_i18n_cli
+from .cli.people import create_account_cli
 from flask.testing import FlaskClient
 from flask_jwt_extended import create_access_token
 
