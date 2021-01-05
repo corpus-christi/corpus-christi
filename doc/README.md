@@ -8,7 +8,7 @@ Understand how CC is put together.
 
 1. [User Stories](stories.md)
 1. [Data Model](data-model.md)
-1. [Entity-Relationship Diagram](https://www.lucidchart.com/invitations/accept/72a6a6ac-3f31-42f9-9021-6b6cf27168f6)
+1. [Entity-Relationship Diagram](https://lucid.app/lucidchart/invitations/accept/d688508d-5b94-4370-bbf6-6ef6306e8ac7)
 1. [Tech Stack](tech-stack.md)
 
 ## Tooling
