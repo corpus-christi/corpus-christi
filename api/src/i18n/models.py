@@ -68,10 +68,8 @@ class I18NKeySchema(Schema):
 class I18NValue(Base):
     """Language-specific value for a given I18NKey."""
     __tablename__ = 'i18n_value'
-    key_id = Column(StringTypes.I18N_KEY, ForeignKey(
-        'i18n_key.id'), primary_key=True)
-    locale_code = Column(StringTypes.LOCALE_CODE, ForeignKey(
-        'i18n_locale.code'), primary_key=True)
+    key_id = Column(StringTypes.I18N_KEY, ForeignKey('i18n_key.id'), primary_key=True)
+    locale_code = Column(StringTypes.LOCALE_CODE, ForeignKey('i18n_locale.code'), primary_key=True)
     gloss = Column(Text(), nullable=False)
     verified = Column(Boolean, default=False)
 
@@ -95,8 +93,7 @@ class Language(Base):
     """Language by ISO 639-1 language code"""
     __tablename__ = 'i18n_language'
     code = Column(String(2), primary_key=True)
-    name_i18n = Column(StringTypes.I18N_KEY, ForeignKey(
-        'i18n_key.id'), nullable=False)
+    name_i18n = Column(StringTypes.I18N_KEY, ForeignKey('i18n_key.id'), nullable=False)
     key = relationship('I18NKey', back_populates='languages', lazy=True)
 
     def __repr__(self):

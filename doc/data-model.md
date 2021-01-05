@@ -1,6 +1,6 @@
 # Data Model
 
-Find the [CC ERD on Lucidchart](https://www.lucidchart.com/invitations/accept/72a6a6ac-3f31-42f9-9021-6b6cf27168f6).
+Find the [CC ERD on Lucidchart](https://lucid.app/lucidchart/invitations/accept/d688508d-5b94-4370-bbf6-6ef6306e8ac7).
 
 # Data Dictionary
 
