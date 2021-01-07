@@ -1,11 +1,39 @@
 <template>
   <v-container>
-    <v-app-bar dense dark>
-      <v-toolbar-title>
-        {{ $t("translation.toolbar-title") }} {{ titleLocale }}
-      </v-toolbar-title>
-      <v-spacer />
-      <v-text-field
+    <v-app-bar dense dark height="50">
+      
+      <!--{{ titleLocale }}-->
+      <v-row align="center">
+        <v-col cols="2">
+          <v-toolbar-title>
+            Tags
+          </v-toolbar-title>
+        </v-col>
+        <v-col cols="3">
+          <v-select
+            v-model="select"
+            label="English"
+          ></v-select>
+        </v-col>
+        <v-icon>keyboard_arrow_right</v-icon>
+        <v-col cols="3">
+          <v-select
+            v-model="select"
+            label="Spanish"
+          ></v-select>
+        </v-col>
+        <v-col cols="3">
+          <v-toolbar-title>
+            New Translation
+          </v-toolbar-title>
+        </v-col>
+        <v-col cols="0">
+          <v-toolbar-title>
+            <v-icon>done</v-icon>
+          </v-toolbar-title>
+        </v-col>
+      </v-row>
+      <!--<v-text-field
         v-model="search"
         v-bind:label="$t('translation.search-title')"
         dark
@@ -14,7 +42,7 @@
         hide-details
         clearable
         clear-icon="mdi-close-circle-outline"
-      ></v-text-field>
+      ></v-text-field>-->
     </v-app-bar>
     <v-btn
       v-scroll="onScroll"
@@ -30,7 +58,7 @@
       <v-icon>keyboard_arrow_up</v-icon>
     </v-btn>
     <v-row>
-      <v-col>
+      <v-col cols="2">
         <v-card-text>
           <v-treeview
             activatable
@@ -45,7 +73,7 @@
         </v-card-text>
       </v-col>
       <v-divider vertical></v-divider>
-      <v-col cols="12" md="6">
+      <v-col cols="6">
         <v-card-text>
           <v-scroll-x-transition group hide-on-leave>
             <v-chip
@@ -62,6 +90,22 @@
             </v-chip>
           </v-scroll-x-transition>
         </v-card-text>
+      </v-col>
+      <v-divider vertical></v-divider>
+      <v-col cols="3">
+        <div>
+          <v-card>
+            <v-card-text>
+              Jo Mama
+            </v-card-text>
+          </v-card>
+        </div>
+      </v-col>
+      <v-divider vertical></v-divider>
+      <v-col cols="0">
+        <div>
+          Hello
+        </div>
       </v-col>
     </v-row>
 
