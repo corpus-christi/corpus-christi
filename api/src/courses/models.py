@@ -2,56 +2,47 @@ from marshmallow import Schema, fields
 from marshmallow.validate import Range, Length
 from sqlalchemy import Column, Integer, Boolean, ForeignKey, Date, DateTime, Table
 from sqlalchemy.orm import relationship
+
 from ..db import Base
 from ..shared.models import StringTypes
 
 # ---- Prerequisite
 
-Prerequisite = Table(
-    'courses_prerequisite',
-    Base.metadata,
-    Column(
-        'course_id',
-        Integer,
-        ForeignKey('courses_course.id'),
-        primary_key=True),
-    Column(
-        'prereq_id',
-        Integer,
-        ForeignKey('courses_course.id'),
-        primary_key=True))
+Prerequisite = Table('courses_prerequisite',
+                     Base.metadata,
+                     Column('course_id',
+                            Integer,
+                            ForeignKey('courses_course.id'),
+                            primary_key=True),
+                     Column('prereq_id',
+                            Integer,
+                            ForeignKey('courses_course.id'),
+                            primary_key=True))
 
 
 class PrerequisiteSchema(Schema):
-    course_id = fields.Integer(
-        dump_only=True, data_key='courseId', required=True)
-    prereq_id = fields.Integer(
-        dump_only=True, data_key='prereqId', required=True)
+    course_id = fields.Integer(dump_only=True, data_key='courseId', required=True)
+    prereq_id = fields.Integer(dump_only=True, data_key='prereqId', required=True)
 
 
 # ---- DiplomaCourse
 
-
 DiplomaCourse = Table(
     'courses_diploma_course',
     Base.metadata,
-    Column(
-        'course_id',
-        Integer,
-        ForeignKey('courses_course.id'),
-        primary_key=True),
-    Column(
-        'diploma_id',
-        Integer,
-        ForeignKey('courses_diploma.id'),
-        primary_key=True))
+    Column('course_id',
+           Integer,
+           ForeignKey('courses_course.id'),
+           primary_key=True),
+    Column('diploma_id',
+           Integer,
+           ForeignKey('courses_diploma.id'),
+           primary_key=True))
 
 
 class DiplomaCourseSchema(Schema):
-    course_id = fields.Integer(
-        dump_only=True, data_key='courseId', required=True)
-    diploma_id = fields.Integer(
-        dump_only=True, data_key='diplomaId', required=True)
+    course_id = fields.Integer(dump_only=True, data_key='courseId', required=True)
+    diploma_id = fields.Integer(dump_only=True, data_key='diplomaId', required=True)
 
 
 # ---- DiplomaAwarded
@@ -59,26 +50,20 @@ class DiplomaCourseSchema(Schema):
 
 class DiplomaAwarded(Base):
     __tablename__ = 'courses_diploma_awarded'
-    person_id = Column(Integer, ForeignKey(
-        'people_person.id'), primary_key=True)
-    diploma_id = Column(Integer, ForeignKey(
-        'courses_diploma.id'), primary_key=True)
+    person_id = Column(Integer, ForeignKey('people_person.id'), primary_key=True)
+    diploma_id = Column(Integer, ForeignKey('courses_diploma.id'), primary_key=True)
     when = Column(Date, nullable=True)
 
-    students = relationship(
-        'Person', back_populates='diplomas_awarded', lazy=True)
-    diplomas = relationship(
-        'Diploma', back_populates='diplomas_awarded', lazy=True)
+    students = relationship('Person', back_populates='diplomas_awarded', lazy=True)
+    diplomas = relationship('Diploma', back_populates='diplomas_awarded', lazy=True)
 
     def __repr__(self):
         return f"<DiplomaAwarded(student_id={self.person_id},diploma_id={self.diploma_id})>"
 
 
 class DiplomaAwardedSchema(Schema):
-    person_id = fields.Integer(
-        data_key='personId', required=True, validate=Range(min=1))
-    diploma_id = fields.Integer(
-        data_key='diplomaId', required=True, validate=Range(min=1))
+    person_id = fields.Integer(data_key='personId', required=True, validate=Range(min=1))
+    diploma_id = fields.Integer(data_key='diplomaId', required=True, validate=Range(min=1))
     when = fields.Date(required=True, allow_none=True)
 
 
@@ -88,23 +73,19 @@ class DiplomaAwardedSchema(Schema):
 ClassAttendance = Table(
     'courses_class_attendance',
     Base.metadata,
-    Column(
-        'class_id',
-        Integer,
-        ForeignKey('courses_class_meeting.id'),
-        primary_key=True),
-    Column(
-        'student_id',
-        Integer,
-        ForeignKey('courses_students.id'),
-        primary_key=True))
+    Column('class_id',
+           Integer,
+           ForeignKey('courses_class_meeting.id'),
+           primary_key=True),
+    Column('student_id',
+           Integer,
+           ForeignKey('courses_students.id'),
+           primary_key=True))
 
 
 class ClassAttendanceSchema(Schema):
-    class_id = fields.Integer(
-        dump_only=True, data_key='classId', required=True)
-    student_id = fields.Integer(
-        dump_only=True, data_key='studentId', required=True)
+    class_id = fields.Integer(dump_only=True, data_key='classId', required=True)
+    student_id = fields.Integer(dump_only=True, data_key='studentId', required=True)
 
 
 # --- Course_Completion
@@ -112,10 +93,8 @@ class ClassAttendanceSchema(Schema):
 
 class CourseCompletion(Base):
     __tablename__ = 'courses_course_completion'
-    course_id = Column(Integer, ForeignKey(
-        'courses_course.id'), primary_key=True)
-    person_id = Column(Integer, ForeignKey(
-        'people_person.id'), primary_key=True)
+    course_id = Column(Integer, ForeignKey('courses_course.id'), primary_key=True)
+    person_id = Column(Integer, ForeignKey('people_person.id'), primary_key=True)
 
     people = relationship('Person', back_populates='completions', lazy=True)
     courses = relationship('Course', back_populates='completions', lazy=True)
@@ -138,36 +117,30 @@ class Course(Base):
     name = Column(StringTypes.MEDIUM_STRING, nullable=False)
     description = Column(StringTypes.LONG_STRING, nullable=False)
     active = Column(Boolean, nullable=False, default=True)
-    depends = relationship('Course', secondary=Prerequisite,
-                           foreign_keys=[Prerequisite.c.course_id,
-                                         Prerequisite.c.prereq_id],
+    depends = relationship('Course',
+                           secondary=Prerequisite,
+                           foreign_keys=[Prerequisite.c.course_id, Prerequisite.c.prereq_id],
                            primaryjoin=Prerequisite.c.prereq_id == id,
                            secondaryjoin=Prerequisite.c.course_id == id,
                            back_populates='prerequisites', lazy=True)
-    prerequisites = relationship(
-        'Course',
-        secondary=Prerequisite,
-        primaryjoin=Prerequisite.c.course_id == id,
-        secondaryjoin=Prerequisite.c.prereq_id == id,
-        foreign_keys=[
-            Prerequisite.c.course_id,
-            Prerequisite.c.prereq_id],
-        back_populates='depends',
-        lazy=True)
-    diplomas = relationship(
-        'Diploma',
-        secondary=DiplomaCourse,
-        back_populates='courses',
-        lazy=True)
+    prerequisites = relationship('Course',
+                                 secondary=Prerequisite,
+                                 primaryjoin=Prerequisite.c.course_id == id,
+                                 secondaryjoin=Prerequisite.c.prereq_id == id,
+                                 foreign_keys=[Prerequisite.c.course_id, Prerequisite.c.prereq_id],
+                                 back_populates='depends',
+                                 lazy=True)
+    diplomas = relationship('Diploma',
+                            secondary=DiplomaCourse,
+                            back_populates='courses',
+                            lazy=True)
     images = relationship("ImageCourse", back_populates="course")
-    courses_offered = relationship(
-        'CourseOffering',
-        back_populates='course',
-        lazy=True)
-    completions = relationship(
-        'CourseCompletion',
-        back_populates='courses',
-        lazy=True)
+    courses_offered = relationship('CourseOffering',
+                                   back_populates='course',
+                                   lazy=True)
+    completions = relationship('CourseCompletion',
+                               back_populates='courses',
+                               lazy=True)
 
     def __repr__(self):
         return f"<Course(id={self.id})>"
@@ -179,8 +152,7 @@ class CourseSchema(Schema):
     description = fields.String(required=True, validate=Length(min=1))
     active = fields.Boolean(required=True, default=True)
     diplomaList = fields.Nested('DiplomaSchema', many=True)
-    images = fields.Nested('ImageCourseSchema', many=True,
-                           exclude=['course'], dump_only=True)
+    images = fields.Nested('ImageCourseSchema', many=True, exclude=['course'], dump_only=True)
 
 
 # ---- Diploma

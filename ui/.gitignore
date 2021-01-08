@@ -5,3 +5,5 @@ dist/
 yarn-error.log
 proxy-config.js
 .prettierrc.json
+.env
+

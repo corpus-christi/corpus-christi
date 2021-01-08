@@ -336,6 +336,9 @@ or `PROD_DB_URL` for your production database.
 
 ### Setting up PostGIS
 
+**Note**: Unless you're working on the `places` module in CC,
+you probably don't need to install this extension.
+
 Make sure you have PostGIS installed. 
 See http://postgis.net/install/ for installer packages for most operating systems.
 
