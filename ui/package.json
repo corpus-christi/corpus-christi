@@ -23,7 +23,7 @@
     "jquery": "^3.5.1",
     "jwt-decode": "^2.2.0",
     "lodash": "^4.17.20",
-    "moment": "^2.27.0",
+    "moment": "^2.29.1",
     "save": "^2.4.0",
     "tiptap": "^1.29.6",
     "tiptap-extensions": "^1.31.3",
@@ -31,16 +31,16 @@
     "v-viewer": "^1.5.1",
     "vee-validate": "^2.2.15",
     "vue": "^2.6.12",
-    "vue-axios": "^2.1.5",
+    "vue-axios": "^3.2.2",
     "vue-cal": "^1.21.0",
     "vue-chartjs": "^3.5.1",
-    "vue-i18n": "^8.18.2",
+    "vue-i18n": "^8.22.3",
     "vue-property-decorator": "^8.4.2",
-    "vue-router": "^3.3.4",
+    "vue-router": "^3.4.9",
     "vue2-google-maps": "^0.10.7",
-    "vuetify": "^2.3.23",
-    "vuex": "^3.5.1",
-    "vuex-persistedstate": "^3.0.1",
+    "vuetify": "^2.4.2",
+    "vuex": "^3.6.0",
+    "vuex-persistedstate": "^3.2.0",
     "webpack": "^4.43.0",
     "zrender": "^4.0.7"
   },
@@ -76,6 +76,6 @@
     "typescript": "^3.9.7",
     "vue-cli-plugin-vuetify": "~2.0.9",
     "vue-template-compiler": "^2.6.12",
-    "vuetify-loader": "^1.5.0"
+    "vuetify-loader": "^1.6.0"
   }
 }
