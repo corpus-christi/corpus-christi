@@ -442,6 +442,26 @@ $ flask people new --roles role.group-admin \
                     username password
 ```
 
+## Google Maps
+
+The CC web application uses the Google Maps API.
+You will need an API key from Google to make it work properly.
+
+Once you have your key,
+create a file `ui/.env` and populate it as follows: 
+```
+VUE_APP_GOOGLE_MAPS_API_KEY="<YOUR-API-KEY>"
+```
+This keeps keys out of the code.
+The Vue CLI is set up to read `.env` files as it either
+serves or builds your application.
+
+**Important**
+  1. This is a different `.env` file than the one you set up for the server!
+  2. Do not check a `.env` file into revision control. 
+     The `.gitignore` file is set up to help prevent this,
+     but it never hurts to be vigilant.
+
 ## Run CC
 
 For development, you need to run *two* servers
