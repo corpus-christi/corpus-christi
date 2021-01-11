@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-app-bar dense dark height="50">
-      <!--{{ titleLocale }}-->
+      <!-- {{ titleLocale }} -->
       <v-row align="center">
         <v-col cols="2">
           <v-toolbar-title>
@@ -35,8 +35,17 @@
           </v-toolbar-title>
         </v-col>
       </v-row>
+      <!--<v-text-field
+        v-model="search"
+        v-bind:label="$t('translation.search-title')"
+        dark
+        flat
+        solo-inverted
+        hide-details
+        clearable
+        clear-icon="mdi-close-circle-outline"
+      ></v-text-field>-->
     </v-app-bar>
-
     <v-btn
       v-scroll="onScroll"
       v-show="fab"
@@ -52,73 +61,50 @@
     </v-btn>
 
     <v-row>
-      <!-- Top Level Tag -->
+      <!-- Top-level tag -->
       <v-col cols="2">
         <v-card-text>
-          <v-list rounded>
-            <v-list-item-group
-              color="primary"
-            >
-              <v-list-item
-                v-for="(tag, index) in wip.topLevelTags"
-                :key="index"
-                v-text="tag"
+            <v-list rounded>
+              <v-list-item-group
+                v-model="topLevelKeys"
+                color="primary"
+                multiple
               >
-              </v-list-item>
-            </v-list-item-group>
-          </v-list>
+                <v-list-item
+                  v-for="(item, i) in items"
+                  :key="i"
+                  :open-on-click="open"
+                >
+                  <v-list-item-content>
+                    <v-list-item-title v-text="item.name"></v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
+          <!-- </v-card> -->
         </v-card-text>
       </v-col>
 
       <v-divider vertical></v-divider>
-      
-      <!-- Rest of tag and other stuff -->
+
+      <!-- Other stuff -->
       <v-col>
         <v-card
           outlined
           class="mt-5 mr-3"
-          elevation="2"
+          v-for="(selection, i) in items"
+          :key="i"
+          v-on:click="change(selection)"
         >
-          <v-row>
-            <v-col cols="2">
-              <v-card-text>
-                Joe Mama
-              </v-card-text>
-            </v-col>
-            <v-col cols="2">
-              <v-card-text>
-                Joe Mama
-              </v-card-text>
-            </v-col>
-            <v-icon>keyboard_arrow_right</v-icon>
-            <v-col cols="2"> 
-              <v-card-text>
-                Joe Mama
-              </v-card-text>
-            </v-col>
-            <v-col cols="3">
-              <v-text-field
-                clearable
-              >
-              </v-text-field>
-            </v-col>
-            <v-col cols="0"> 
-              <v-card-text>
-                <v-checkbox
-                  hide-details
-                  class="shrink mr-2 mt-0"
-                >
-                </v-checkbox>
-              </v-card-text>
-            </v-col>
-          </v-row>
+          <v-card-text>
+            {{ selection }}
+          </v-card-text>
         </v-card>
       </v-col>
-      
     </v-row>
 
     <!-- Edit translation Dialog-->
-    <!-- <v-dialog v-model="changeTranslationDialog" persistent max-width="400">
+    <v-dialog v-model="changeTranslationDialog" persistent max-width="400">
       <v-card>
         <v-col cols="12">
           <v-text-field
@@ -147,18 +133,18 @@
           </v-tooltip>
         </v-card-actions>
       </v-card>
-    </v-dialog> -->
+    </v-dialog>
   </v-container>
 </template>
 
 <script>
 import { mapState } from "vuex";
 import { eventBus } from "../plugins/event-bus.js";
-const _ = require("lodash");
 export default {
   name: "Translation",
   data() {
     return {
+      everything: null,
       translation: null,
       counter: 1,
       items: [],
@@ -171,11 +157,7 @@ export default {
       selected_key_id: null,
       search: null,
       fab: false,
-      wip: {
-        // tags: [],
-        topLevelTags: [],
-
-      },
+      topLevelKeys: ["alice","bob","carl","dashanda","earl"],
     };
   },
   computed: {
@@ -298,27 +280,15 @@ export default {
       this.storedLocale =
         this.currentLocale.languageCode + "-" + this.currentLocale.countryCode;
       return this.$http
-        .get(`api/v1/i18n/values/${locale}?format=tree`)
+        .get(`api/v1/i18n/values/${locale}?format=list`)
         .then((resp) => {
           this.translation = resp.data;
         })
         .then(() => this.getTreeLeaves());
     },
-    loadTopLevelTags() {
-      return this.$http
-        .get(`api/v1/i18n/keys`)
-        .then((resp) => {
-          resp.data.forEach((obj) => {
-            // this.wip.tags.push(obj.id);
-            this.wip.topLevelTags.push(obj.id.split('.')[0]);
-          });
-          this.wip.topLevelTags = _.uniq(this.wip.topLevelTags).sort();
-        });
-    },
   },
   mounted: function () {
-    // this.loadAllTranslation();
-    this.loadTopLevelTags();
+    this.loadAllTranslation();
   },
 };
 </script>
