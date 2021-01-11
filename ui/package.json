@@ -15,7 +15,7 @@
   "dependencies": {
     "@babel/core": "^7.10.4",
     "@pderas/vue2-geocoder": "^1.1.0",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "chart.js": "^2.9.3",
     "chartjs-plugin-crosshair": "^1.1.6",
     "core-js": "^3.6.5",
