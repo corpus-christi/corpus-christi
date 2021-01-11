@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-btn outline color="primary" :to="{ path: '/teams/all' }"
+    <v-btn outlined color="primary" :to="{ path: '/teams/all' }"
       ><v-icon>arrow_back</v-icon>{{ $t("teams.all-teams") }}</v-btn
     >
     <v-layout class="vertical-spacer">
@@ -12,7 +12,7 @@
                 <span class="headline">{{ team.description }}</span>
               </v-flex>
               <v-layout xs3 sm3 align-end justify-end>
-                <v-btn flat color="primary" v-on:click="editTeam(team)">
+                <v-btn text color="primary" v-on:click="editTeam(team)">
                   <v-icon>edit</v-icon>&nbsp;{{ $t("actions.edit") }}
                 </v-btn>
               </v-layout>
@@ -56,7 +56,7 @@
       </template>
     </v-toolbar>
     <v-data-table
-      :rows-per-page-items="rowsPerPageItem"
+      :footer-props="footerProps"
       :headers="headers"
       :items="members"
       :search="search"
@@ -110,7 +110,7 @@
     <!-- Snackbar -->
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false">
+      <v-btn text @click="snackbar.show = false">
         {{ $t("actions.close") }}
       </v-btn>
     </v-snackbar>
@@ -120,7 +120,7 @@
       <v-card>
         <v-card-text>{{ $t("team.members.confirm-remove") }}</v-card-text>
         <v-card-actions>
-          <v-btn v-on:click="cancelArchive" color="secondary" flat data-cy="">{{
+          <v-btn v-on:click="cancelArchive" color="secondary" text data-cy="">{{
             $t("actions.cancel")
           }}</v-btn>
           <v-spacer></v-spacer>
@@ -170,7 +170,7 @@
           <v-btn
             v-on:click="cancelNewParticipantDialog"
             color="secondary"
-            flat
+            text
             data-cy="cancel-participant"
             >{{ $t("actions.cancel") }}</v-btn
           >
@@ -198,12 +198,12 @@ export default {
   components: { "team-form": TeamForm, "entity-search": EntitySearch },
   data() {
     return {
-      rowsPerPageItem: [
+      footerProps: {rowsPerPageItem: [
         10,
         15,
         25,
         { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 },
-      ],
+      ]},
       pageLoaded: false,
       tableLoading: false,
       search: "",

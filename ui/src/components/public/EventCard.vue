@@ -45,7 +45,7 @@
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn raised round color="primary">{{
+        <v-btn raised rounded color="primary">{{
           $t("public.events.join")
         }}</v-btn>
         <v-spacer></v-spacer>
