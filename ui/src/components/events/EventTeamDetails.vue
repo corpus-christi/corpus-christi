@@ -17,8 +17,8 @@
             </v-btn>
           </v-layout>
         </v-container>
-        <v-list v-if="teams.length">
-          <template v-for="team in teams">
+        <v-list v-if="teamList.length">
+          <template v-for="team in teamList">
             <v-divider v-bind:key="'teamDivider' + team.id"></v-divider>
             <v-list-item v-bind:key="team.id">
               <v-list-item-content class="pr-0">
@@ -81,7 +81,7 @@
           <entity-search
             data-cy="team-entity-search"
             v-model="addTeamDialog.team"
-            :existing-entities="teams"
+            :existing-entities="teamList"
             team
           ></entity-search>
         </v-card-text>
@@ -157,6 +157,8 @@ export default {
 
   data() {
     return {
+      teamList: [...this.teams],
+
       addTeamDialog: {
         show: false,
         loading: false,
@@ -181,7 +183,7 @@ export default {
     addTeam() {
       const eventId = this.$route.params.event;
       let teamId = this.addTeamDialog.team.id;
-      const idx = this.teams.findIndex((t) => t.id === teamId);
+      const idx = this.teamList.findIndex((t) => t.id === teamId);
       this.addTeamDialog.loading = true;
       if (idx > -1) {
         this.closeAddTeamDialog();
@@ -199,7 +201,7 @@ export default {
         .catch((err) => {
           console.log(err);
           this.addTeamDialog.loading = false;
-          if (err.response.status == 422) {
+          if (err.response.status === 422) {
             this.showSnackbar(this.$t("teams.error-team-assigned"));
           } else {
             this.showSnackbar(this.$t("teams.error-adding-team"));
@@ -209,7 +211,7 @@ export default {
 
     deleteTeam() {
       let id = this.deleteTeamDialog.teamId;
-      const idx = this.teams.findIndex((t) => t.id === id);
+      const idx = this.teamList.findIndex((t) => t.id === id);
       this.deleteTeamDialog.loading = true;
       const eventId = this.$route.params.event;
       this.$http
@@ -219,7 +221,7 @@ export default {
           this.deleteTeamDialog.show = false;
           this.deleteTeamDialog.loading = false;
           this.deleteTeamDialog.teamId = -1;
-          this.teams.splice(idx, 1); //TODO maybe fix me?
+          this.teamList.splice(idx, 1); //TODO maybe fix me?
           this.showSnackbar(this.$t("teams.team-removed"));
         })
         .catch((err) => {

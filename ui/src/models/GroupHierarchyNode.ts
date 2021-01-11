@@ -1,5 +1,6 @@
-/* This file contains algorithms needed to resolve group hierarchy permissions */
-import { intersectionWith } from "lodash";
+/**
+ *  This file contains algorithms needed to resolve group hierarchy permissions
+ */
 
 /* API response objects mappers */
 // The object nested in a person object, that indicates which group the participant belongs
@@ -51,8 +52,8 @@ export function getParticipantById(
   groupMap: GroupMap
 ): Participant | undefined {
   let fullParticipantObject: GroupParticipantObject | undefined;
-  for (let id in groupMap) {
-    let group = groupMap[id];
+  for (const id in groupMap) {
+    const group = groupMap[id];
     let participant: GroupParticipantObject | undefined;
     if (
       (participant = group.members
@@ -70,7 +71,7 @@ export function getParticipantById(
 }
 
 export abstract class HierarchyNode {
-  constructor(public nodeType: string) {}
+  protected constructor(public nodeType: string) {}
   abstract get id(): number | string;
   abstract toString(): string;
   toHumanReadable(): string {
@@ -96,7 +97,7 @@ export class Participant extends HierarchyNode {
     return `Participant(personId=${this.participant.person.id})`;
   }
   toHumanReadable(): string {
-    let { firstName, lastName } = this.participant.person;
+    const { firstName, lastName } = this.participant.person;
     return `${firstName} ${lastName}`;
   }
   getObject(): GroupParticipantObject {
@@ -236,10 +237,10 @@ export function mapTree<
     parentNode.children.push(childNode);
   }
 ): TOut {
-  let mappedNode: TOut = mapFunc(node);
+  const mappedNode: TOut = mapFunc(node);
   node.children.forEach((child) => {
     // 'child as TIn' assumes children are of the same subtype as the parent
-    let childNode: TOut = mapTree(child as TIn, mapFunc, addChild);
+    const childNode: TOut = mapTree(child as TIn, mapFunc, addChild);
     addChild(mappedNode, childNode);
   });
   return mappedNode;
@@ -316,12 +317,12 @@ export function dfs(
   stack.push(rootNode);
   while (stack.length > 0) {
     currentNode = stack.pop()!;
-    let pendingNodes: HierarchyNode[] = getAdjacentNodes(
+    const pendingNodes: HierarchyNode[] = getAdjacentNodes(
       currentNode.hierarchyNode,
       currentNode.parentPath.map((graphNode) => graphNode.hierarchyNode),
       currentNode
     );
-    for (let pendingNode of pendingNodes) {
+    for (const pendingNode of pendingNodes) {
       stack.push(new GraphNode(pendingNode, currentNode));
     }
   }
@@ -429,17 +430,13 @@ export function getTree(
   superNodes: boolean = false
 ): GraphNode {
   // build the tree, detecting cycle as needed
-  const rootNode = dfs(
-    node,
-    (node: HierarchyNode, parentPath: HierarchyNode[]) => {
-      checkCycle(node, parentPath);
-      let parentNode: HierarchyNode | undefined = parentPath[0];
-      return node[superNodes ? "getSuperNodes" : "getSubNodes"]().filter(
-        (hn) => !(parentNode && parentNode.equal(hn))
-      );
-    }
-  );
-  return rootNode;
+  return dfs(node, (node: HierarchyNode, parentPath: HierarchyNode[]) => {
+    checkCycle(node, parentPath);
+    const parentNode: HierarchyNode | undefined = parentPath[0];
+    return node[superNodes ? "getSuperNodes" : "getSubNodes"]().filter(
+      (hn) => !(parentNode && parentNode.equal(hn))
+    );
+  });
 }
 
 // a tree node that also contains the underlying object and its type
@@ -458,18 +455,18 @@ export function getInfoTree(
   counter: Generator<number | string, undefined, undefined> = count()
 ): InfoTreeNode {
   // map the tree to get rid of cross references, add id and name to each node
-  let infoRootNode = mapTree<GraphNode, InfoTreeNode>(
+  return mapTree<GraphNode, InfoTreeNode>(
     getTree(node, superNodes),
     (graphNode) => {
-      let next = counter.next();
+      const next = counter.next();
       if (next.done) {
         throw new Error("counter running out of elements");
       }
-      let id: string = next.value.toString();
-      let { hierarchyNode } = graphNode;
-      let { nodeType } = hierarchyNode;
-      let info = hierarchyNode.getObject();
-      let name: string = hierarchyNode.toHumanReadable();
+      const id: string = next.value.toString();
+      const { hierarchyNode } = graphNode;
+      const { nodeType } = hierarchyNode;
+      const info = hierarchyNode.getObject();
+      const name: string = hierarchyNode.toHumanReadable();
       return {
         id,
         name,
@@ -482,7 +479,6 @@ export function getInfoTree(
       parentNode.children.push(childNode);
     }
   );
-  return infoRootNode;
 }
 
 /* checks whether a node is a root node
@@ -491,9 +487,9 @@ export function getInfoTree(
  *   its every 'immediate super-node' is also its 'immediate sub-node'.
  */
 export function isRootNode(node: HierarchyNode): boolean {
-  let immediateSuperNodes = node.getSuperNodes();
-  let immediateSubNodes = node.getSubNodes();
-  for (let supernode of immediateSuperNodes) {
+  const immediateSuperNodes = node.getSuperNodes();
+  const immediateSubNodes = node.getSubNodes();
+  for (const supernode of immediateSuperNodes) {
     if (!immediateSubNodes.some((subnode) => subnode.equal(supernode))) {
       return false;
     }
@@ -515,7 +511,7 @@ export function checkConnection(
   parentNode: HierarchyNode,
   childNode: HierarchyNode
 ): void {
-  let allSuperNodes: GraphNode[] = [];
+  const allSuperNodes: GraphNode[] = [];
   // get all super nodes of parentNode
   // if along the way, there is a node that:
   // 1. is equal to its grandparent, or
@@ -573,7 +569,7 @@ export function checkConnection(
           superNode.hierarchyNode.equal(hierarchyNode)
         ))
       ) {
-        let cyclePath: HierarchyNode[] = [
+        const cyclePath: HierarchyNode[] = [
           cycleNode.hierarchyNode,
           ...cycleNode.parentPath.map((g) => g.hierarchyNode),
           ...parentPath.reverse(),

@@ -262,6 +262,7 @@ export default {
       translations: {},
     };
   },
+
   computed: {
     // Put here so that the headers are reactive.
     headers() {
@@ -282,6 +283,7 @@ export default {
         { text: this.$t("actions.header"), width: "20%", sortable: false },
       ];
     },
+
     viewOptions() {
       return [
         {
@@ -297,6 +299,7 @@ export default {
         { text: this.$t("actions.view-all"), value: "viewAll" },
       ];
     },
+
     peopleToDisplay() {
       switch (this.viewStatus) {
         case "viewActive":
@@ -317,9 +320,11 @@ export default {
       this.activePeople = this.allPeople.filter((person) => person.active);
       this.archivedPeople = this.allPeople.filter((person) => !person.active);
     },
+
     rolesList(all_roles) {
       this.rolesList = all_roles;
     },
+
     tableLoaded(loading) {
       this.tableLoaded = loading;
     },

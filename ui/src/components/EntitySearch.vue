@@ -115,14 +115,16 @@ export default {
   methods: {
     selectionContains(entity) {
       if (!this.value || !this.value.length) return;
-      var idx = this.value.findIndex(
+      const idx = this.value.findIndex(
         (en) => en[this.idField] === entity[this.idField]
       );
       return idx > -1;
     },
+
     setSelected(entity) {
       this.$emit("input", entity);
     },
+
     getEntityDescription(entity, letterLimit = this.descriptionLimit) {
       if (!entity) return;
       let entityDescriptor = "";
@@ -158,40 +160,57 @@ export default {
       }
       return entityDescriptor;
     },
+
     customFilter(item, queryText) {
       const itemDesc = this.getEntityDescription(item).toLowerCase();
       const searchText = queryText.toLowerCase();
       return itemDesc.indexOf(searchText) > -1;
     },
+
     remove(entity) {
-      if (!this.multiple) return;
-      var idx = this.value.findIndex(
+      if (!this.multiple) {
+        return;
+      }
+      const idx = this.value.findIndex(
         (en) => en[this.idField] === entity[this.idField]
       );
       if (idx > -1) {
         this.value.splice(idx, 1);
       }
     },
+
     compare(a, b) {
       if (!a || !b) return false;
       return a[this.idField] === b[this.idField];
     },
   },
+
   mounted() {
     //TODO use search-input.sync to avoid making a huge request here
     this.isLoading = true;
-    var endpoint = "";
-    if (this.location) endpoint = "/api/v1/places/locations";
-    else if (this.person) endpoint = "/api/v1/people/persons";
-    else if (this.course) endpoint = "/api/v1/courses/courses";
-    else if (this.team) endpoint = "/api/v1/teams/";
-    else if (this.asset) endpoint = "/api/v1/assets/";
-    else if (this.address) endpoint = "/api/v1/places/addresses";
-    else if (this.group) endpoint = "/api/v1/groups/groups?where=active:true";
-    else if (this.meeting)
+    let endpoint = "";
+    if (this.location) {
+      endpoint = "/api/v1/places/locations";
+    } else if (this.person) {
+      endpoint = "/api/v1/people/persons";
+    } else if (this.course) {
+      endpoint = "/api/v1/courses/courses";
+    } else if (this.team) {
+      endpoint = "/api/v1/teams/";
+    } else if (this.asset) {
+      endpoint = "/api/v1/assets/";
+    } else if (this.address) {
+      endpoint = "/api/v1/places/addresses";
+    } else if (this.group) {
+      endpoint = "/api/v1/groups/groups?where=active:true";
+    } else if (this.meeting) {
       endpoint = "/api/v1/groups/meetings?where=active:true";
-    else if (this.groupType) endpoint = "/api/v1/groups/group-types";
-    else if (this.managerType) endpoint = "/api/v1/groups/manager-types";
+    } else if (this.groupType) {
+      endpoint = "/api/v1/groups/group-types";
+    } else if (this.managerType) {
+      endpoint = "/api/v1/groups/manager-types";
+    }
+
     this.$http
       .get(endpoint)
       .then((resp) => {

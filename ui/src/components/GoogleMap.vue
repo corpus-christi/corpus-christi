@@ -3,7 +3,7 @@
     ref="map"
     v-bind:center="center"
     v-bind:zoom="zoom"
-    style="width: 100%; height: 400px;"
+    style="width: 100%; height: 400px"
     data-cy="gmap"
     ><gmap-marker
       :key="index"

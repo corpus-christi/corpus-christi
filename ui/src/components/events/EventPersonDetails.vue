@@ -17,8 +17,8 @@
             </v-btn>
           </v-layout>
         </v-container>
-        <v-list v-if="persons.length">
-          <template v-for="person in persons">
+        <v-list v-if="personList.length">
+          <template v-for="person in personList">
             <v-divider v-bind:key="'personDivider' + person.id"></v-divider>
             <v-list-item v-bind:key="person.id">
               <v-list-item-content>
@@ -94,7 +94,7 @@
               person
               data-cy="person-entity-search"
               v-model="addPersonDialog.person"
-              :existing-entities="persons"
+              :existing-entities="personList"
             ></entity-search>
           </div>
           <v-textarea
@@ -177,6 +177,8 @@ export default {
 
   data() {
     return {
+      personList: [...this.persons],
+
       addPersonDialog: {
         editMode: false,
         show: false,
@@ -221,7 +223,7 @@ export default {
       let personId = this.addPersonDialog.person.id;
       this.addPersonDialog.loading = true;
       if (!this.addPersonDialog.editMode) {
-        const idx = this.persons.findIndex((p) => p.id === personId);
+        const idx = this.personList.findIndex((p) => p.id === personId);
         if (idx > -1) {
           this.closeAddPersonDialog();
           this.showSnackbar(this.$t("events.persons.person-on-event"));
@@ -254,7 +256,7 @@ export default {
         .catch((err) => {
           console.log(err);
           this.addPersonDialog.loading = false;
-          if (err.response.status == 422) {
+          if (err.response.status === 422) {
             this.showSnackbar(this.$t("events.persons.error-person-assigned"));
           } else {
             this.showSnackbar(this.$t("events.persons.error-adding-person"));
@@ -264,7 +266,7 @@ export default {
 
     deletePerson() {
       let id = this.deletePersonDialog.personId;
-      const idx = this.persons.findIndex((p) => p.id === id);
+      const idx = this.personList.findIndex((p) => p.id === id);
       this.deletePersonDialog.loading = true;
       const eventId = this.$route.params.event;
       this.$http
@@ -274,7 +276,7 @@ export default {
           this.deletePersonDialog.show = false;
           this.deletePersonDialog.loading = false;
           this.deletePersonDialog.personId = -1;
-          this.persons.splice(idx, 1); //TODO maybe fix me?
+          this.personList.splice(idx, 1); //TODO maybe fix me?
           this.showSnackbar(this.$t("events.persons.person-removed"));
         })
         .catch((err) => {
