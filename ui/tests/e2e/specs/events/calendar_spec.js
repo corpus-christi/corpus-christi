@@ -1,4 +1,6 @@
 // NOTE: Requires specific data
+// NOTE: Vue-cal has been removed, tests need implemented for v-calendar
+/*
 describe("Calendar Test", function () {
   before(() => {
     cy.login();
@@ -19,3 +21,4 @@ describe("Calendar Test", function () {
     cy.url().should("include", "/details");
   });
 });
+*/
