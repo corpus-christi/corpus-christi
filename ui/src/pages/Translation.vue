@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-app-bar dense dark height="50">
+    <v-app-bar dense dark height="60">
       <!--{{ titleLocale }}-->
       <v-row align="center">
         <v-col cols="2">
@@ -15,15 +15,17 @@
         </v-col>
         <v-col cols="2">
           <v-select
-            label="English"
-            class="mt-3"
+            :items="wip.localesConcat"
+            v-bind:label="wip.preview.desc"
+            class="mt-5"
           ></v-select>
         </v-col>
         <v-icon>keyboard_arrow_right</v-icon>
         <v-col cols="2">
           <v-select
-            label="Spanish"
-            class="mt-3"
+            :items="wip.localesConcat"
+            v-bind:label="wip.current.desc"
+            class="mt-5"
           ></v-select>
         </v-col>
         <v-col cols="3" align="center">
@@ -58,15 +60,18 @@
       <v-col cols="2">
         <v-card-text>
           <v-list 
-          elevation="2"
-          rounded>
+            elevation="2"
+            rounded
+          >
             <v-list-item-group
               color="primary"
+              multiple
             >
               <v-list-item
                 v-for="(tag, index) in wip.topLevelTags"
                 :key="index"
                 v-text="tag"
+                :class="{ 'active': index === 0 }"
               >
               </v-list-item>
             </v-list-item-group>
@@ -78,13 +83,17 @@
       
       <!-- Rest of tag and other stuff -->
       <v-col>
-        <v-card
+        <!--  v-for="(obj,index) in wip.tags"
+          :key="index"
+          v-text="obj" -->
+        <v-card 
           outlined
-          class="d-flex align-center mt-5 mr-3"
+          class="d-flex align-center mt-4 mr-3"
           elevation="2"
         >
           <v-card
             min-width=19.7%
+            max-width=19.7%
             elevation="0"
           >
             <v-card-text>
@@ -92,15 +101,13 @@
             </v-card-text>
           </v-card>
           
-          
           <v-card
             min-width=20.5%
+            max-width=2-.5%
             elevation="0"
             outlined
           >
-            <v-card-text
-              class=""
-            >
+            <v-card-text>
               Joe Mama
             </v-card-text>
           </v-card>
@@ -116,12 +123,11 @@
 
           <v-card
             min-width=20.5%
+            max-width=20.5%
             elevation="0"
             outlined
           >
-            <v-card-text
-              class=""
-            >
+            <v-card-text>
               Joe Mama
             </v-card-text>
           </v-card>
@@ -133,15 +139,15 @@
 
           <v-card
             min-width=20%
+            max-width=20%
             elevation="0"
           >
             <v-card
+              min-width=80%
               max-width=80%
               elevation="0"
             >
-              <v-text-field
-                clearable
-              >
+              <v-text-field>
               </v-text-field>
             </v-card>
           </v-card>
@@ -153,6 +159,7 @@
 
           <v-card
             min-width=1%
+            max-width=1%
             elevation="0"
           >
             <v-checkbox
@@ -160,10 +167,8 @@
             >
             </v-checkbox>
           </v-card>
-
         </v-card>
       </v-col>
-      
     </v-row>
 
     <!-- Edit translation Dialog-->
@@ -222,9 +227,12 @@ export default {
       search: null,
       fab: false,
       wip: {
-        // tags: [],
+        tags: [],
         topLevelTags: [],
-
+        localeObjs: [],
+        localesConcat: [],
+        preview: {"code": "n/a", "desc": "Translate From"},
+        current: {"code": "n/a", "desc": "Translate To"},
       },
     };
   },
@@ -359,16 +367,43 @@ export default {
         .get(`api/v1/i18n/keys`)
         .then((resp) => {
           resp.data.forEach((obj) => {
-            // this.wip.tags.push(obj.id);
+            // this.wip.tags.map(obj);
             this.wip.topLevelTags.push(obj.id.split('.')[0]);
           });
           this.wip.topLevelTags = _.uniq(this.wip.topLevelTags).sort();
+        })
+        .then(()=>{
+          this.getAllLowLevelKeyObjects();
+        });
+    },
+    getAllLowLevelKeyObjects(){
+      return this.$http
+        .get(`api/v1/i18n/values`)
+        .then((response)=>{
+          this.wip.tags = response.data.map((obj) => {
+            return {
+              top_level_id:   obj.key_id.split('.')[0],
+              full_id:        obj.key_id,
+              locale_code:    obj.locale_code,
+              gloss:          obj.gloss,
+              verified:       obj.verified,
+            }
+          });
+        });
+    },
+    getAllLocales() {
+      return this.$http
+        .get(`api/v1/i18n/locales`)
+        .then((resp) => {
+          this.wip.localeObjs = resp.data;
+          this.wip.localesConcat = resp.data.map((obj) => obj.code + " " + obj.desc);
         });
     },
   },
   mounted: function () {
     // this.loadAllTranslation();
     this.loadTopLevelTags();
+    this.getAllLocales();
   },
 };
 </script>
