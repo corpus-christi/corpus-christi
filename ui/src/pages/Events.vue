@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-tabs color="primary" slider-color="accent">
+    <v-tabs color="primary" slider-color="accent" fixed-tabs>
       <v-tab ripple :to="{ path: '/events/all' }">
         <v-icon>event</v-icon>&nbsp;{{ $t("events.header") }}
       </v-tab>

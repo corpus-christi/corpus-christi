@@ -1,33 +1,77 @@
 <template>
   <div>
-    <vue-cal
-      :locale="currentLocaleModel.code.split('-')[0]"
-      default-view="week"
-      events-on-month-view
-      :events="calendarEvents"
-      v-on:event-focus="goToEvent"
-    >
-    </vue-cal>
+    <v-card>
+      <v-card-title>Calendar</v-card-title>
+      <v-tabs centered fixed-tabs color="#e69635" v-model="type">
+        <v-tab @click="type = 0">Month</v-tab>
+        <v-tab @click="type = 1">Week</v-tab>
+        <v-tab @click="type = 2">Day</v-tab>
+      </v-tabs>
+
+      <v-container>
+        <v-row>
+          <v-spacer></v-spacer>
+          <v-btn
+            fab
+            left
+            icon
+            @click="prev"
+          >
+            <v-icon>chevron_left</v-icon>
+          </v-btn>
+
+          <v-card-subtitle>{{ getDateString(this.types[this.type]) }}</v-card-subtitle>
+
+          <v-btn
+            fab
+            right
+            icon
+            @click="next"
+          >
+            <v-icon>chevron_right</v-icon>
+          </v-btn>
+          <v-spacer></v-spacer>
+        </v-row>
+      </v-container>
+
+      <v-calendar
+        ref="calendar"
+        :locale="currentLocaleModel.languageCode"
+        :type="types[type]"
+        :events="calendarEvents"
+        v-model="calendarDate"
+        @click:event="goToEvent"
+        @click:date="type = 2"
+        event-color="orange"
+        color="#e69635"
+      >
+      </v-calendar>
+    </v-card>
   </div>
 </template>
 <script>
-import Vuecal from "vue-cal";
-import "vue-cal/dist/vuecal.css";
 import { mapGetters, mapState } from "vuex";
 export default {
-  components: { "vue-cal": Vuecal },
+  components: {  },
   data() {
     return {
+      calendarDate: '',
       events: [],
+      type: 0,
+      types: ['month', 'week', 'day'],
     };
   },
   mounted() {
     this.tableLoading = true;
     this.$http.get("/api/v1/events/").then((resp) => {
       var currentDate = new Date();
+      this.calendarDate = currentDate;
+      this.selectedDate = currentDate;
       for (let event of resp.data) {
         this.events.push({
           event: event,
+          id: event.id,
+          name: event.title,
           start: this.getDatetime(event.start),
           end: this.getDatetime(event.end),
           description: event.description,
@@ -85,44 +129,43 @@ export default {
       let min = String(date.getMinutes()).padStart(2, "0");
       return `${hr}:${min}`;
     },
+
+    getDateString(type) {
+      let dStr = '';
+      let tempDate = this.parseDate(this.calendarDate);
+      switch(type) {
+        case 'day':
+          dStr = `${tempDate.toLocaleString(this.currentLocaleModel.languageCode, {dateStyle: "full"})}`;
+          break;
+        case 'week':
+          dStr = `Week of ${tempDate.toLocaleString(this.currentLocaleModel.languageCode, {dateStyle: "long"})}`;
+          break;
+        case 'month':
+          dStr = `${tempDate.toLocaleString(this.currentLocaleModel.languageCode, {month: "long", year: "numeric"})}`;
+      }
+      return dStr;
+    },
+
+    parseDate(dateInput) {
+      let tempDate = null;
+      if (typeof dateInput === typeof "a") {
+        let parts = dateInput.split('-');
+        tempDate = new Date(parts[0], parts[1] - 1, parts[2]);
+      } else {
+        tempDate = dateInput;
+      }
+      return tempDate;
+    },
+
+    prev() {
+      this.$refs.calendar.prev();
+    },
+
+    next() {
+      this.$refs.calendar.next();
+    }
+
+
   },
 };
 </script>
-
-<style>
-.vuecal__event.sport {
-  background-color: rgba(253, 150, 53, 0.9);
-  border: 1px solid rgb(230, 150, 53);
-  color: #fff;
-}
-.vuecal__event.leisure {
-  background-color: rgba(158, 158, 158, 0.8);
-  border: 1px solid rgb(158, 158, 158);
-  color: #fff;
-}
-
-.vuecal__menu,
-.vuecal__cell-events-count {
-  background-color: #e69635;
-}
-.vuecal__menu li {
-  border-bottom-color: #fff;
-  color: #fff;
-}
-.vuecal__menu li.active {
-  background-color: rgba(255, 255, 255, 0.15);
-}
-.vuecal__title {
-  background-color: rgba(230, 150, 53, 0.5);
-}
-.vuecal__cell.today,
-.vuecal__cell.current {
-  background-color: rgba(240, 240, 255, 0.4);
-}
-.vuecal:not(.vuecal--day-view) .vuecal__cell.selected {
-  background-color: rgba(230, 150, 53, 0.1);
-}
-.vuecal__cell.selected:before {
-  border-color: rgba(230, 150, 53, 0.5);
-}
-</style>
