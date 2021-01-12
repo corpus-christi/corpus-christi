@@ -23,6 +23,7 @@
         v-on:cancel="cancelPerson"
         v-on:saved="savePerson"
         v-on:added-another="addAnother"
+        v-on:attachPerson="sendToEvent"
       />
     </v-layout>
   </v-dialog>
@@ -67,6 +68,11 @@ export default {
   },
 
   methods: {
+
+    sendToEvent(newPersonData){
+      this.$emit("attachPerson", newPersonData);
+    },
+
     activatePersonDialog(person = {}, isEditTitle = false) {
       this.personDialog.title = isEditTitle
         ? this.$t("person.actions.edit")

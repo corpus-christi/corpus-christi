@@ -78,7 +78,7 @@
     <person-dialog
       @snack="showSnackbar"
       @cancel="cancelPerson"
-      @refreshPeople="refreshPeopleList"
+      @attachPerson="attachNewPerson"
       :dialog-state="dialogState"
       :all-people="allPeople"
       :person="person"
@@ -246,8 +246,9 @@ export default {
       this.dialogState = "";
     },
 
-    refreshPeopleList() {
-      this.$emit("fetchPeopleList");
+    attachNewPerson(newPersonData) {
+      this.addPersonDialog.person = newPersonData;
+      this.addPerson();
     },
 
     closeAddPersonDialog() {
@@ -268,6 +269,7 @@ export default {
     addPerson() {
       const eventId = this.$route.params.event;
       let personId = this.addPersonDialog.person.id;
+      //console.log(this.addPersonDialog.person);
       this.addPersonDialog.loading = true;
       if (!this.addPersonDialog.editMode) {
         const idx = this.persons.findIndex((p) => p.id === personId);

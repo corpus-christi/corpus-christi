@@ -150,12 +150,12 @@
 
     <!-- New/Edit dialog -->
     <person-dialog
-      @snack="showSnackbar"
-      @cancel="cancelPerson"
-      @refreshPeople="refreshPeopleList"
-      :dialog-state="dialogState"
-      :all-people="allPeople"
-      :person="person"
+      v-on:snack="showSnackbar"
+      v-on:cancel="cancelPerson"
+      v-on:refreshPeople="refreshPeopleList"
+      v-bind:dialog-state="dialogState"
+      v-bind:all-people="allPeople"
+      v-bind:person="person"
     />
 
     <!-- Person admin dialog -->
