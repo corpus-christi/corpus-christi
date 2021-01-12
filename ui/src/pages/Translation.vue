@@ -10,21 +10,23 @@
         </v-col>
         <v-col cols="2">
           <v-toolbar-title>
-            Rest of Tag
+            Subtags
           </v-toolbar-title>
         </v-col>
         <v-col cols="2">
           <v-select
             label="English"
+            class="mt-3"
           ></v-select>
         </v-col>
         <v-icon>keyboard_arrow_right</v-icon>
         <v-col cols="2">
           <v-select
             label="Spanish"
+            class="mt-3"
           ></v-select>
         </v-col>
-        <v-col cols="3">
+        <v-col cols="3" align="center">
           <v-toolbar-title>
             New Translation
           </v-toolbar-title>
@@ -55,7 +57,9 @@
       <!-- Top Level Tag -->
       <v-col cols="2">
         <v-card-text>
-          <v-list rounded>
+          <v-list 
+          elevation="2"
+          rounded>
             <v-list-item-group
               color="primary"
             >
@@ -76,42 +80,87 @@
       <v-col>
         <v-card
           outlined
-          class="mt-5 mr-3"
+          class="d-flex align-center mt-5 mr-3"
           elevation="2"
         >
-          <v-row>
-            <v-col cols="2">
-              <v-card-text>
-                Joe Mama
-              </v-card-text>
-            </v-col>
-            <v-col cols="2">
-              <v-card-text>
-                Joe Mama
-              </v-card-text>
-            </v-col>
-            <v-icon>keyboard_arrow_right</v-icon>
-            <v-col cols="2"> 
-              <v-card-text>
-                Joe Mama
-              </v-card-text>
-            </v-col>
-            <v-col cols="3">
+          <v-card
+            min-width=19.7%
+            elevation="0"
+          >
+            <v-card-text>
+              Joe Mama
+            </v-card-text>
+          </v-card>
+          
+          
+          <v-card
+            min-width=20.5%
+            elevation="0"
+            outlined
+          >
+            <v-card-text
+              class=""
+            >
+              Joe Mama
+            </v-card-text>
+          </v-card>
+
+          <v-card
+            min-width=1%
+            elevation="0"
+          >
+            <v-icon>
+              keyboard_arrow_right
+            </v-icon>
+          </v-card>
+
+          <v-card
+            min-width=20.5%
+            elevation="0"
+            outlined
+          >
+            <v-card-text
+              class=""
+            >
+              Joe Mama
+            </v-card-text>
+          </v-card>
+
+          <!-- SPACER -->
+          <v-card
+            min-width=7%
+          ></v-card>
+
+          <v-card
+            min-width=20%
+            elevation="0"
+          >
+            <v-card
+              max-width=80%
+              elevation="0"
+            >
               <v-text-field
                 clearable
               >
               </v-text-field>
-            </v-col>
-            <v-col cols="0"> 
-              <v-card-text>
-                <v-checkbox
-                  hide-details
-                  class="shrink mr-2 mt-0"
-                >
-                </v-checkbox>
-              </v-card-text>
-            </v-col>
-          </v-row>
+            </v-card>
+          </v-card>
+
+          <!-- SPACER -->
+          <v-card
+            min-width=3.7%
+          ></v-card>
+
+          <v-card
+            min-width=1%
+            elevation="0"
+          >
+            <v-checkbox
+              class=" align-self-center"
+            >
+            </v-checkbox>
+          </v-card>
+
         </v-card>
       </v-col>
       
@@ -150,6 +199,7 @@
     </v-dialog> -->
   </v-container>
 </template>
+
 
 <script>
 import { mapState } from "vuex";
