@@ -1,33 +1,25 @@
 <template>
   <div>
     <v-card>
-      <v-card-title>Calendar</v-card-title>
+      <v-card-title>{{ $t("events.calendar.title") }}</v-card-title>
       <v-tabs centered fixed-tabs color="#e69635" v-model="type">
-        <v-tab @click="type = 0">Month</v-tab>
-        <v-tab @click="type = 1">Week</v-tab>
-        <v-tab @click="type = 2">Day</v-tab>
+        <v-tab @click="type = 0">{{ $t("events.calendar.month") }}</v-tab>
+        <v-tab @click="type = 1">{{ $t("events.calendar.week") }}</v-tab>
+        <v-tab @click="type = 2">{{ $t("events.calendar.day") }}</v-tab>
       </v-tabs>
 
       <v-container>
         <v-row>
           <v-spacer></v-spacer>
-          <v-btn
-            fab
-            left
-            icon
-            @click="prev"
-          >
+          <v-btn fab left icon @click="prev">
             <v-icon>chevron_left</v-icon>
           </v-btn>
 
-          <v-card-subtitle>{{ getDateString(this.types[this.type]) }}</v-card-subtitle>
+          <v-card-subtitle>{{
+            getDateString(this.types[this.type])
+          }}</v-card-subtitle>
 
-          <v-btn
-            fab
-            right
-            icon
-            @click="next"
-          >
+          <v-btn fab right icon @click="next">
             <v-icon>chevron_right</v-icon>
           </v-btn>
           <v-spacer></v-spacer>
@@ -52,13 +44,13 @@
 <script>
 import { mapGetters, mapState } from "vuex";
 export default {
-  components: {  },
+  components: {},
   data() {
     return {
-      calendarDate: '',
+      calendarDate: "",
       events: [],
       type: 0,
-      types: ['month', 'week', 'day'],
+      types: ["month", "week", "day"],
     };
   },
   mounted() {
@@ -71,7 +63,7 @@ export default {
         this.events.push({
           event: event,
           id: event.id,
-          name: event.title,
+          name: event.title,      // Attribute is named "name" to correspond with Vuetify's v-calendar :events input syntax
           start: this.getDatetime(event.start),
           end: this.getDatetime(event.end),
           description: event.description,
@@ -131,17 +123,27 @@ export default {
     },
 
     getDateString(type) {
-      let dStr = '';
+      let dStr = "";
       let tempDate = this.parseDate(this.calendarDate);
-      switch(type) {
-        case 'day':
-          dStr = `${tempDate.toLocaleString(this.currentLocaleModel.languageCode, {dateStyle: "full"})}`;
+      switch (type) {
+        case "day":
+          dStr = `${tempDate.toLocaleString(
+            this.currentLocaleModel.languageCode,
+            { dateStyle: "full" }
+          )}`;
           break;
-        case 'week':
-          dStr = `Week of ${tempDate.toLocaleString(this.currentLocaleModel.languageCode, {dateStyle: "long"})}`;
+        case "week":
+          dStr = `${this.$t(
+            "events.calendar.week-label"
+          )} ${tempDate.toLocaleString(this.currentLocaleModel.languageCode, {
+            dateStyle: "long",
+          })}`;
           break;
-        case 'month':
-          dStr = `${tempDate.toLocaleString(this.currentLocaleModel.languageCode, {month: "long", year: "numeric"})}`;
+        case "month":
+          dStr = `${tempDate.toLocaleString(
+            this.currentLocaleModel.languageCode,
+            { month: "long", year: "numeric" }
+          )}`;
       }
       return dStr;
     },
@@ -149,7 +151,7 @@ export default {
     parseDate(dateInput) {
       let tempDate = null;
       if (typeof dateInput === typeof "a") {
-        let parts = dateInput.split('-');
+        let parts = dateInput.split("-");
         tempDate = new Date(parts[0], parts[1] - 1, parts[2]);
       } else {
         tempDate = dateInput;
@@ -163,9 +165,7 @@ export default {
 
     next() {
       this.$refs.calendar.next();
-    }
-
-
+    },
   },
 };
 </script>

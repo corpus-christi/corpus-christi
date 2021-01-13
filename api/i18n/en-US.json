@@ -1735,8 +1735,24 @@
       "verified": false
     },
     "calendar": {
+      "day": {
+        "gloss": "Day",
+        "verified": false
+      },
+      "month": {
+        "gloss": "Month",
+        "verified": false
+      },
       "title": {
         "gloss": "Calendar",
+        "verified": false
+      },
+      "week": {
+        "gloss": "Week",
+        "verified": false
+      },
+      "week-label": {
+        "gloss": "Week of",
         "verified": false
       }
     },
@@ -2385,40 +2401,6 @@
       },
       "title-visitor": {
         "gloss": "Visitors",
-        "verified": false
-      }
-    },
-    "membership-history": {
-      "title": {
-        "gloss": "History",
-        "verified": false
-      },
-      "note": {
-        "gloss": "Notes",
-        "verified": false
-      },
-      "change-note": {
-        "gloss": "Change Note",
-        "verified": false
-      },
-      "clear-note": {
-        "gloss": "Clear Note",
-        "verified": false
-      },
-      "submit": {
-        "gloss": "Submit",
-        "verified": false
-      },
-      "cancel": {
-        "gloss": "Cancel",
-        "verified": false
-      },
-      "joined": {
-        "gloss": "Joined",
-        "verified": false
-      },
-      "left": {
-        "gloss": "Left",
         "verified": false
       }
     },
