@@ -409,17 +409,17 @@ export default {
         });
     },
     getTranslationDetails() {
-      let previewLocale = 'en-US';
-      let currentLocale = 'es-EC';
+      let previewLocale = 'en-US'; //Probably set to this.wip.preview.code
+      let currentLocale = 'es-EC'; //Probably set to this.wip.current.code
 
       return this.$http
         .get(`api/v1/i18n/values/translations/${previewLocale}/${currentLocale}`)
         .then((resp) => {
-          console.log(resp.data);
           this.wip.translationDetails = resp.data;
+          console.log(resp.data[0]);
         })
         .catch((err) => console.log(err));
-    }
+    },
   },
   mounted: function () {
     // this.loadAllTranslation();
