@@ -2,7 +2,7 @@
   <v-container>
     <v-app-bar dense dark height="60">
       <!--{{ titleLocale }}-->
-      <v-row align="center">
+      <v-row align="center" class="ml-3">
         <v-col cols="2">
           <v-toolbar-title>
             Tags
@@ -64,7 +64,7 @@
             rounded
           >
             <v-list-item-group
-              color="primary"
+              color="grey darken-4"
               multiple
             >
               <v-list-item
@@ -86,15 +86,17 @@
         <!--  v-for="(obj,index) in wip.tags"
           :key="index"
           v-text="obj" -->
+          
         <v-card 
           outlined
-          class="d-flex align-center mt-4 mr-3"
+          class="d-flex align-center ml-3 mt-4 mr-3"
           elevation="2"
         >
           <v-card
             min-width=19.7%
             max-width=19.7%
             elevation="0"
+            class="ml-1"
           >
             <v-card-text>
               Joe Mama

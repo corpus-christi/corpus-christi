@@ -58,7 +58,8 @@ export default {
 
     disableMenu() {
       // disable menu if in the translation page or in transparent mode
-      return this.$route.name === "translation" || this.transparentMode;
+      //return this.$route.name === "translation" || this.transparentMode;
+      return false;
     },
 
     currentLocale() {
