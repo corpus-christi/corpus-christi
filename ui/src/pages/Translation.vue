@@ -173,11 +173,35 @@
       </v-col>
     </v-row>
 
-    <v-footer
-          
+    <v-row
+      fixed
+      bottom
     >
-      This is a footer wow!UwU
-    </v-footer>
+      <v-app-bar
+        color="white"
+        elevation="2"
+        
+      >
+        <v-card
+          min-width="80%"
+        > 
+        </v-card>
+        <v-btn
+          min-width="8%"
+        >
+          Submit
+        </v-btn>
+        <v-card
+          min-width="4%"
+        > 
+        </v-card>
+        <v-btn
+          min-width="8%"
+        >
+          Activate
+        </v-btn>
+      </v-app-bar>
+    </v-row>
 
     <!-- Edit translation Dialog-->
     <!-- <v-dialog v-model="changeTranslationDialog" persistent max-width="400">
