@@ -166,6 +166,7 @@ export default {
     addAsset() {
       const eventId = this.$route.params.event;
       let assetId = this.addAssetDialog.asset.id;
+      console.log("Asset");
       const idx = this.assets.findIndex((a) => a.id === assetId);
       this.addAssetDialog.loading = true;
       if (idx > -1) {
@@ -178,8 +179,9 @@ export default {
         .post(`/api/v1/events/${eventId}/assets/${assetId}`)
         .then(() => {
           this.showSnackbar(this.$t("assets.asset-added"));
+          console.log(this.addAssetDialog.asset);
+          this.$emit("asset-added", this.addAssetDialog.asset);
           this.closeAddAssetDialog();
-          this.$emit("asset-added");
         })
         .catch((err) => {
           console.log(err);

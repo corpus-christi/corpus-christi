@@ -155,7 +155,7 @@
           <v-btn
             v-on:click="deletePersonDialog.show = false"
             color="secondary"
-            flat
+            text
             :disabled="deletePersonDialog.loading"
             data-cy="cancel-delete"
             >{{ $t("actions.cancel") }}</v-btn
@@ -267,6 +267,7 @@ export default {
     },
 
     addPerson() {
+      console.log("this.persons: "+this.persons);
       const eventId = this.$route.params.event;
       let personId = this.addPersonDialog.person.id;
       //console.log(this.addPersonDialog.person);
@@ -294,12 +295,13 @@ export default {
       }
       promise
         .then(() => {
+          //console.log(this.addPersonDialog.person);
           if (this.addPersonDialog.editMode) {
             this.showSnackbar(this.$t("events.persons.person-edited"));
           } else {
             this.showSnackbar(this.$t("events.persons.person-added"));
           }
-          this.$emit("person-added");
+          this.$emit("person-added", this.addPersonDialog.person, this.addPersonDialog.description);
           this.closeAddPersonDialog();
         })
         .catch((err) => {
@@ -345,6 +347,7 @@ export default {
     },
 
     getFullName(person) {
+      //console.log("fullname call: "+person.firstName);
       return `${person.firstName} ${person.lastName}`;
     },
   },
