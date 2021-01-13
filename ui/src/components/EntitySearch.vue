@@ -6,7 +6,7 @@
       prepend-icon="search"
       :items="searchableEntities"
       :loading="isLoading"
-      :value="value"
+      :value="valueData"
       v-on:input="setSelected"
       :search-input.sync="searchInput"
       v-bind:error-messages="errorMessages"
@@ -28,7 +28,7 @@
       </template>
     </v-autocomplete>
     <template v-if="multiple">
-      <div v-for="entity in value" v-bind:key="entity[idField]">
+      <div v-for="entity in valueData" v-bind:key="entity[idField]">
         <v-chip
           :close="!disabled"
           @input="remove(entity)"
@@ -44,6 +44,7 @@
 <script>
 export default {
   name: "EntitySearch",
+
   props: {
     location: Boolean,
     person: Boolean,
@@ -63,8 +64,10 @@ export default {
     label: String,
     disabled: Boolean,
   },
+
   data() {
     return {
+      valueData: this.value, // Mutable version of prop.
       descriptionLimit: 50,
       entities: [],
       searchInput: "",
@@ -80,28 +83,43 @@ export default {
 
   computed: {
     getLabel() {
-      if (this.label) return this.label;
-      else if (this.location) return this.$t("events.event-location");
-      else if (this.person) return this.$t("actions.search-people");
-      else if (this.course) return this.$t("actions.search-courses");
-      else if (this.team) return this.$t("teams.title");
-      else if (this.address) return this.$t("actions.search-addresses");
-      else if (this.asset) return this.$t("assets.title");
-      else if (this.group) return this.$t("groups.title");
-      else if (this.meeting) return this.$t("groups.meetings.title");
-      else if (this.groupType) return this.$t("actions.search-group-types");
-      else if (this.managerType) return this.$t("actions.search-manager-types");
-      else return "";
+      if (this.label) {
+        return this.label;
+      } else if (this.location) {
+        return this.$t("events.event-location");
+      } else if (this.person) {
+        return this.$t("actions.search-people");
+      } else if (this.course) {
+        return this.$t("actions.search-courses");
+      } else if (this.team) {
+        return this.$t("teams.title");
+      } else if (this.address) {
+        return this.$t("actions.search-addresses");
+      } else if (this.asset) {
+        return this.$t("assets.title");
+      } else if (this.group) {
+        return this.$t("groups.title");
+      } else if (this.meeting) {
+        return this.$t("groups.meetings.title");
+      } else if (this.groupType) {
+        return this.$t("actions.search-group-types");
+      } else if (this.managerType) {
+        return this.$t("actions.search-manager-types");
+      } else {
+        return "";
+      }
     },
+
     idField() {
       return "id";
     },
+
     searchableEntities() {
       if (this.existingEntities) {
         return this.entities.filter((ent) => {
           for (let otherEnt of this.existingEntities) {
             // using double equal to convert string to numbers
-            if (ent[this.idField] === otherEnt[this.idField]) {
+            if (ent[this.idField] == otherEnt[this.idField]) {
               return false;
             }
           }
@@ -114,8 +132,8 @@ export default {
 
   methods: {
     selectionContains(entity) {
-      if (!this.value || !this.value.length) return;
-      const idx = this.value.findIndex(
+      if (!this.valueData || !this.valueData.length) return;
+      const idx = this.valueData.findIndex(
         (en) => en[this.idField] === entity[this.idField]
       );
       return idx > -1;
@@ -129,24 +147,19 @@ export default {
       if (!entity) return;
       let entityDescriptor = "";
       if (this.location) {
-        entityDescriptor =
-          entity.description +
-          ", " +
-          entity.address.address +
-          ", " +
-          entity.address.city;
+        entityDescriptor = `${entity.description}, ${entity.address.address}, ${entity.address.city}`;
       } else if (this.person) {
-        entityDescriptor = entity.firstName + " " + entity.lastName;
+        entityDescriptor = `${entity.firstName} ${entity.lastName}`;
       } else if (this.course) {
         entityDescriptor = entity.name;
       } else if (this.team) {
         entityDescriptor = entity.description;
       } else if (this.address) {
-        entityDescriptor = entity.name + ", " + entity.address;
+        entityDescriptor = `${entity.name}, ${entity.address}`;
       } else if (this.asset) {
         entityDescriptor = entity.description;
       } else if (this.group) {
-        entityDescriptor = entity.name + ": " + entity.description;
+        entityDescriptor = `${entity.name}: ${entity.description}`;
       } else if (this.meeting) {
         entityDescriptor = entity.description;
       } else if (this.groupType) {
@@ -171,11 +184,11 @@ export default {
       if (!this.multiple) {
         return;
       }
-      const idx = this.value.findIndex(
+      const idx = this.valueData.findIndex(
         (en) => en[this.idField] === entity[this.idField]
       );
       if (idx > -1) {
-        this.value.splice(idx, 1);
+        this.valueData.splice(idx, 1);
       }
     },
 

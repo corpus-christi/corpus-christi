@@ -59,7 +59,7 @@
 import { mapMutations } from "vuex";
 import Account from "../models/Account";
 import jwtDecode from "jwt-decode";
-import { eventBus } from "../plugins/event-bus.js";
+import { eventBus } from "@/plugins/event-bus";
 
 export default {
   name: "Login",
@@ -104,7 +104,7 @@ export default {
           // Normally want to use `push`, but unlikely that
           // the user wants to return to the login page.
           const route = this.$route.query.redirect || { name: "people" };
-          this.$router.replace(route);
+          await this.$router.replace(route);
         }
       } catch (err) {
         console.log(err);

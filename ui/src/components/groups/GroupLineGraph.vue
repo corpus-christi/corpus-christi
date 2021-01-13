@@ -39,7 +39,7 @@
             </v-list-item>
             <v-divider class="mt-2"></v-divider>
           </template>
-          <template v-slot:selection="{ item }">
+          <template>
             <v-chip v-if="index === 0">
               {{ fistSelectedGroup.name }}
             </v-chip>

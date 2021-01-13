@@ -79,10 +79,10 @@
           :items="entityTypes"
           :headers="headers"
         >
-          <template v-slot:item.name="props">
+          <template v-slot:[`item.name`]="props">
             <v-icon>category</v-icon> {{ props.item.name }}
           </template>
-          <template v-slot:item.data-table-expand="props">
+          <template v-slot:[`item.data-table-expand`]="props">
             <v-tooltip bottom v-if="hasEntities(props.item)">
               <template v-slot:activator="{ on }">
                 <v-btn
@@ -120,7 +120,7 @@
             </v-tooltip>
           </template>
 
-          <template v-slot:item.actions="props">
+          <template v-slot:[`item.actions`]="props">
             <v-tooltip bottom>
               <template v-slot:activator="{ on }">
                 <v-btn
@@ -264,7 +264,7 @@
   </div>
 </template>
 <script>
-import { eventBus } from "../../plugins/event-bus.js";
+import { eventBus } from "@/plugins/event-bus";
 import { isEmpty } from "lodash";
 import EntityTypeForm from "./EntityTypeForm";
 export default {
@@ -280,7 +280,7 @@ export default {
 
   computed: {
     isGroupTypeMode() {
-      return this.entityTypeName == "groupType";
+      return this.entityTypeName === "groupType";
     },
     endpoint() {
       return `/api/v1/groups/${
@@ -311,7 +311,7 @@ export default {
       return Object.keys(this.selected);
     },
     select() {
-      return this.selectedIds.length != 0;
+      return this.selectedIds.length !== 0;
     },
     toolbarColor() {
       return this.select ? "blue-grey" : undefined;
@@ -462,7 +462,7 @@ export default {
           this.deleteEntityTypeDialog.loading = false;
           this.hideDeleteEntityTypeDialog();
           this.entityTypes = this.entityTypes.filter(
-            (entityType) => entityType.id != id
+            (entityType) => entityType.id !== id
           );
           eventBus.$emit("message", {
             content: this.getTranslation("success-remove"),
@@ -577,8 +577,3 @@ export default {
   },
 };
 </script>
-<style>
-.flip {
-  transform: rotate(-180deg);
-}
-</style>

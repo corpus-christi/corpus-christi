@@ -4,7 +4,7 @@
       <v-app-bar-nav-icon
         v-on:click="toggleNavDrawer"
         data-cy="toggle-nav-drawer"
-      ></v-app-bar-nav-icon>
+      />
 
       <v-toolbar-title class="headline text-uppercase">
         <span>Corpus</span>

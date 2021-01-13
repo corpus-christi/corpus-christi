@@ -1,12 +1,12 @@
 <template>
   <div>
     <!-- Header -->
-    <v-toolbar class="pa-1" data-cy="person-toolbar">
-      <v-layout align-center justify-space-between fill-height>
-        <v-flex md2>
+    <v-toolbar data-cy="person-toolbar">
+      <v-row align="center" justify="space-between">
+        <v-col cols="2">
           <v-toolbar-title>{{ $t("people.title") }}</v-toolbar-title>
-        </v-flex>
-        <v-flex md3>
+        </v-col>
+        <v-col cols="4">
           <v-text-field
             v-model="search"
             append-icon="search"
@@ -17,8 +17,8 @@
             filled
             data-cy="search"
           />
-        </v-flex>
-        <v-flex md3>
+        </v-col>
+        <v-col cols="2">
           <div data-cy="view-dropdown">
             <v-select
               hide-details
@@ -28,20 +28,14 @@
               v-model="viewStatus"
             />
           </div>
-        </v-flex>
-        <v-flex shrink justify-self-end>
-          <v-btn
-            class="mr-0 ml-0"
-            color="primary"
-            raised
-            v-on:click.stop="newPerson"
-            data-cy="new-person"
-          >
+        </v-col>
+        <v-col cols="2">
+          <v-btn color="primary" v-on:click="newPerson" data-cy="new-person">
             <v-icon left>person_add</v-icon>
             {{ $t("actions.add-person") }}
           </v-btn>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-toolbar>
 
     <!-- Table of existing people -->
@@ -321,13 +315,15 @@ export default {
       this.archivedPeople = this.allPeople.filter((person) => !person.active);
     },
 
-    rolesList(all_roles) {
-      this.rolesList = all_roles;
-    },
-
-    tableLoaded(loading) {
-      this.tableLoaded = loading;
-    },
+    // It seems like these watches are updating themselves when they update themselves.
+    // Not necessary?
+    // rolesList(all_roles) {
+    //   this.rolesList = all_roles;
+    // },
+    //
+    // tableLoaded(loading) {
+    //   this.tableLoaded = loading;
+    // },
   },
 
   methods: {
