@@ -1,6 +1,6 @@
 <template>
   <v-row class="shrink" align="center">
-    <v-col v-if="isTranslator">
+    <v-col v-if="isTranslator" cols="5">
       <v-switch
         hide-details
         :label="$t('translation.transparent-mode')"
@@ -103,15 +103,16 @@ export default {
     },
 
     getFlagAndDescription(localeModel) {
-      let { languageCode, countryCode } = localeModel.locale;
-      let languageKey = `language.name.${languageCode}`;
-      let countryKey = `country.name.${countryCode}`;
-      if (this.$te(languageKey) && this.$te(countryKey)) {
-        let description = `${this.$t(languageKey)} ${this.$t(countryKey)}`;
-        return `${localeModel.locale.flag} ${description}`; // use internationalized descriptions
-      } else {
-        return localeModel.flagAndDescription; // plain description in database
-      }
+      // let { languageCode, countryCode } = localeModel.locale;
+      // let languageKey = `language.name.${languageCode}`;
+      // let countryKey = `country.name.${countryCode}`;
+      // if (this.$te(languageKey) && this.$te(countryKey)) {
+      //   let description = `${this.$t(languageKey)} ${this.$t(countryKey)}`;
+      //   return `${localeModel.locale.flag} ${description}`; // use internationalized descriptions
+      // } else {
+        
+      // }
+      return localeModel.flagAndDescription; // plain description in database
     },
 
     setCurrentLocale(locale) {

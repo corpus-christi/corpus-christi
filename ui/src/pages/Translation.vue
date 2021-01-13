@@ -173,6 +173,12 @@
       </v-col>
     </v-row>
 
+    <v-footer
+          
+    >
+      This is a footer wow!UwU
+    </v-footer>
+
     <!-- Edit translation Dialog-->
     <!-- <v-dialog v-model="changeTranslationDialog" persistent max-width="400">
       <v-card>

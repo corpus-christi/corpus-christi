@@ -21,15 +21,30 @@ export default {
     // Initialize early application stuff
 
     // Locales
-    this.$http.get("/api/v1/i18n/locales").then((response) => {
+    this.$http.get("/api/v1/i18n/locales")
+    .then((response) => {
       const localeData = response.data;
 
       if (localeData && localeData.length > 0) {
         this.setLocaleModels(localeData);
 
-        const firstLocaleString = localeData[0].code;
-        this.setCurrentLocale(new Locale(firstLocaleString));
-        this.$i18n.locale = firstLocaleString;
+        let langs=navigator.languages;
+        
+        localeData.forEach((loc)=>{
+          langs.forEach((lang)=>{
+            if(lang.includes(loc.code)){
+              this.setCurrentLocale(new Locale(lang));
+              this.$i18n.locale = lang;
+              return;
+            }
+          })
+        })
+        
+        // If the double forEach fails, that means that none 
+        // of the user's languages are a current locale. 
+        // Default to English-US.
+        this.setCurrentLocale(new Locale("en-US"));
+        this.$i18n.locale = "en-US";
       }
     });
 
