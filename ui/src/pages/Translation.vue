@@ -42,6 +42,21 @@
     </v-app-bar>
 
     <v-btn
+      class="mt-13"
+      v-scroll="onScroll"
+      v-show="baf"
+      fab
+      dark
+      fixed
+      top
+      left
+      color="dense"
+      @click="toBottom"
+    >
+      <v-icon>keyboard_arrow_down</v-icon>
+    </v-btn>
+
+    <v-btn
       v-scroll="onScroll"
       v-show="fab"
       fab
@@ -187,16 +202,16 @@
         > 
         </v-card>
         <v-btn
-          min-width="8%"
+          min-width="9%"
         >
           Submit
         </v-btn>
         <v-card
-          min-width="4%"
+          min-width="2%"
         > 
         </v-card>
         <v-btn
-          min-width="8%"
+          min-width="9%"
         >
           Activate
         </v-btn>
@@ -258,6 +273,7 @@ export default {
       selected_key_id: null,
       search: null,
       fab: false,
+      baf: true,
       wip: {
         translationDetails: [],
         tags: [],
@@ -290,7 +306,7 @@ export default {
           "New Locale",
           this.currentLocale.languageCode + "-" + this.currentLocale.countryCode
         );
-        this.loadAllTranslation();
+        this.loadAllTranslations();
       }
     },
   },
@@ -298,10 +314,24 @@ export default {
     onScroll(e) {
       if (typeof window === "undefined") return;
       const top = window.pageYOffset || e.target.scrollTop || 0;
-      this.fab = top > 20;
+      if (top > 20) {
+        this.fab = true;
+      }
+      else {
+        this.fab = false;
+      }
+      if (top < document.body.scrollHeight - window.innerHeight - 20) {
+        this.baf = true;
+      }
+      else {
+        this.baf = false;
+      }
     },
     toTop() {
       this.$vuetify.goTo(0);
+    },
+    toBottom() {
+      this.$vuetify.goTo(document.body.scrollHeight)
     },
     change(selection) {
       this.dialogInitialText = selection.name;
@@ -383,7 +413,7 @@ export default {
         }
       }
     },
-    loadAllTranslation() {
+    loadAllTranslations() {
       let locale =
         this.currentLocale.languageCode + "-" + this.currentLocale.countryCode;
       this.storedLocale =
@@ -446,7 +476,7 @@ export default {
     },
   },
   mounted: function () {
-    // this.loadAllTranslation();
+    // this.loadAllTranslations();
     this.loadTopLevelTags();
     this.getAllLocales();
     this.getTranslationDetails();
