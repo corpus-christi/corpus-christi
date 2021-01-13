@@ -4,10 +4,11 @@ from marshmallow import ValidationError, Schema, fields
 from marshmallow.validate import Length
 
 from . import i18n
-from .models import I18NLocale, I18NLocaleSchema, I18NKeySchema, I18NKey, I18NValue, I18NValueSchema, Language
+from .models import I18NLocale, I18NLocaleSchema, I18NKeySchema, I18NKey, I18NValue, I18NMultipleLocales, I18NValueSchema, Language
 from .. import db
 from ..shared.helpers import list_to_tree, BadListKeyPath
 from ..shared.helpers import logged_response, authorize
+from sqlalchemy.orm import aliased
 
 # ---- I18N Locale
 
@@ -89,7 +90,7 @@ def create_key():
 # ---- I18N Value
 
 i18n_value_schema = I18NValueSchema()
-
+i18n_multiple_locales = I18NMultipleLocales()
 
 @i18n.route('/values')
 def read_all_values():
@@ -165,6 +166,35 @@ def read_xlation(locale_code):
     else:
         return 'Invalid format', 400
 
+@i18n.route('/values/translations/<preview_locale_str>/<current_locale_str>')
+# Trying to replicate
+# select a.key_id, a.gloss, b.gloss, b.verified
+# from i18n_value a, i18n_value b
+# where a.locale_code = 'en-US'
+#     and b.locale_code = 'es-EC'
+#     and a.key_id = b.key_id;
+def foo(preview_locale_str, current_locale_str):
+    preview_locale = db.session.query(I18NLocale).filter_by(code=preview_locale_str).first()
+    current_locale = db.session.query(I18NLocale).filter_by(code=current_locale_str).first()
+    if preview_locale_str == current_locale_str:
+        return 'Locales may not be identical', 400
+    if preview_locale is None or current_locale is None:
+        return 'At least one locale not found', 404
+
+    i18nval_preview = aliased(I18NValue)
+    i18nval_current = aliased(I18NValue)
+    values = db.session.query(i18nval_preview, i18nval_current).with_entities(
+        i18nval_preview.key_id.label('key_id'),
+        i18nval_preview.gloss.label('preview_gloss'),
+        i18nval_current.gloss.label('current_gloss'),
+        i18nval_current.verified.label('current_verified')
+    ).filter(
+        i18nval_preview.locale_code == preview_locale_str,
+        i18nval_current.locale_code == current_locale_str,
+        i18nval_preview.key_id == i18nval_current.key_id
+    ).order_by(i18nval_preview.key_id).all()
+
+    return jsonify(i18n_multiple_locales.dump(values, many=True))
 
 # ---- Language
 

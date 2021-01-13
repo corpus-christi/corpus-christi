@@ -54,6 +54,7 @@ export default {
         .get("/api/v1/people/persons?include_images=1")
         .then((resp) => {
           this.peopleList = resp.data;
+          console.log(resp.data);
           this.tableLoaded = true;
         })
         .catch((err) => console.error("FAILURE", err.response));

@@ -229,6 +229,7 @@ export default {
       search: null,
       fab: false,
       wip: {
+        translationDetails: [],
         tags: [],
         topLevelTags: [],
         localeObjs: [],
@@ -401,11 +402,24 @@ export default {
           this.wip.localesConcat = resp.data.map((obj) => obj.code + " " + obj.desc);
         });
     },
+    getTranslationDetails() {
+      let previewLocale = 'en-US';
+      let currentLocale = 'es-EC';
+
+      return this.$http
+        .get(`api/v1/i18n/values/translations/${previewLocale}/${currentLocale}`)
+        .then((resp) => {
+          console.log(resp.data);
+          this.wip.translationDetails = resp.data;
+        })
+        .catch((err) => console.log(err));
+    }
   },
   mounted: function () {
     // this.loadAllTranslation();
     this.loadTopLevelTags();
     this.getAllLocales();
+    this.getTranslationDetails();
   },
 };
 </script>

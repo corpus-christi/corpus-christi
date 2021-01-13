@@ -86,6 +86,11 @@ class I18NValueSchema(Schema):
     gloss = fields.String(required=True)
     verified = fields.Boolean(required=True)
 
+class I18NMultipleLocales(Schema):
+    key_id = fields.String(required=True)
+    preview_gloss = fields.String(required=True)
+    current_gloss = fields.String(required=True)
+    current_verified = fields.String(required=True)
 
 # ---- Language
 
