@@ -314,18 +314,8 @@ export default {
     onScroll(e) {
       if (typeof window === "undefined") return;
       const top = window.pageYOffset || e.target.scrollTop || 0;
-      if (top > 20) {
-        this.fab = true;
-      }
-      else {
-        this.fab = false;
-      }
-      if (top < document.body.scrollHeight - window.innerHeight - 20) {
-        this.baf = true;
-      }
-      else {
-        this.baf = false;
-      }
+      this.fab = top > 20;
+      this.baf = top < document.body.scrollHeight - window.innerHeight - 20;
     },
     toTop() {
       this.$vuetify.goTo(0);
