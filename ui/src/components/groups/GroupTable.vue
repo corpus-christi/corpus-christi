@@ -105,7 +105,7 @@
       :item-class="itemClass"
       class="elevation-1"
     >
-      <template v-slot:item.actions="props">
+      <template v-slot:[`item.actions`]="props">
         <template v-if="props.item.active">
           <v-tooltip bottom>
             <template v-slot:activator="{ on }"
@@ -260,14 +260,14 @@
 <script>
 import GroupForm from "./GroupForm";
 import SplitGroupForm from "./SplitGroupForm";
-import { eventBus } from "../../plugins/event-bus.js";
+import { eventBus } from "@/plugins/event-bus";
 import { pick } from "lodash";
 import {
   convertToGroupMap,
   Group,
   getTree,
   HierarchyCycleError,
-} from "../../models/GroupHierarchyNode.ts";
+} from "@/models/GroupHierarchyNode";
 import { mapState } from "vuex";
 
 export default {

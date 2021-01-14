@@ -9,7 +9,7 @@
         <v-form>
           <ValidationProvider name="select" rules="required">
             <v-select
-              slot-scope="{ errors, valid }"
+              slot-scope="{ valid }"
               v-model="diploma.id"
               :items="items"
               v-bind:label="$t('diplomas.diploma')"
