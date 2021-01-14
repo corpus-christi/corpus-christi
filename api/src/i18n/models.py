@@ -21,7 +21,7 @@ class I18NLocale(Base):
     __tablename__ = 'i18n_locale'
     code = Column(StringTypes.LOCALE_CODE, primary_key=True)
     desc = Column(StringTypes.MEDIUM_STRING, nullable=False, default="")
-    flag = Column(Unicode(14), nullable=False)
+    flag = Column(Unicode(14), nullable=False, default="n/a")
     values = relationship('I18NValue', back_populates='locale', lazy=True)
 
     def __repr__(self):
