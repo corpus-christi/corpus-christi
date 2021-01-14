@@ -57,7 +57,7 @@
               chips
               deletable-chips
               clearable
-              outline
+              outlined
               multiple
               hide-selected
               return-object
@@ -83,7 +83,7 @@
       <v-spacer></v-spacer>
       <v-btn
         color="primary"
-        outline
+        outlined
         v-on:click="addAnother"
         v-if="!editMode"
         :loading="addMoreLoading"
