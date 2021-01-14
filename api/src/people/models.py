@@ -136,7 +136,7 @@ class PersonSchema(Schema):
                                      only=('id', 'time', 'is_join', 'group_id'))
 
     @pre_load
-    def hash_password(self, data):
+    def hash_password(self, data, **kwargs):
         """Make sure the password is properly hashed when creating a new account."""
         if 'password' in data.keys():
             data['password'] = generate_password_hash(data['password'])

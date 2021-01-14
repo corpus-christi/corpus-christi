@@ -726,6 +726,7 @@ export default {
             this.$emit(emitMessage, response.data);
             this.resetForm();
           }
+          this.$emit("attachPerson", response.data);
         })
         .catch((err) => {
           this.resetForm();
