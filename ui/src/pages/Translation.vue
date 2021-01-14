@@ -425,24 +425,7 @@ export default {
           });
           this.wip.topLevelTags = _.uniq(this.wip.topLevelTags).sort();
         })
-        .then(()=>{
-          this.getAllLowLevelKeyObjects();
-        });
-    },
-    getAllLowLevelKeyObjects(){
-      return this.$http
-        .get(`api/v1/i18n/values`)
-        .then((response)=>{
-          this.wip.tags = response.data.map((obj) => {
-            return {
-              top_level_id:   obj.key_id.split('.')[0],
-              full_id:        obj.key_id,
-              locale_code:    obj.locale_code,
-              gloss:          obj.gloss,
-              verified:       obj.verified,
-            }
-          });
-        });
+        .catch((err) => console.log(err));
     },
     getAllLocales() {
       return this.$http
