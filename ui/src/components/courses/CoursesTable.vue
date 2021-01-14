@@ -53,7 +53,7 @@
       </v-layout>
     </v-toolbar>
 
-    <!-- Table of existing people -->
+    <!-- Table of existing courses -->
     <v-data-table
       :headers="headers"
       :search="search"
@@ -63,6 +63,7 @@
       :pagination.sync="paginationInfo"
       class="elevation-1"
       data-cy="courses-table"
+      v-on:click:row="goToCourse"
     >
       <v-progress-linear
         slot="progress"
@@ -234,6 +235,13 @@ export default {
   },
 
   methods: {
+    goToCourse(course) {
+      this.$router.push({
+        name: "course-details",
+        params: { courseId: course.id },
+      });
+    },
+
     clickThrough(course) {
       this.$router.push({
         name: "course-details",
