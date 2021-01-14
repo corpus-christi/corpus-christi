@@ -112,6 +112,10 @@ export default {
               icon: "school",
               children: [
                 {
+                  title: this.$t("courses.course"),
+                  route: "courses",
+                },
+                {
                   title: this.$t("diplomas.diploma"),
                   route: "diplomas-admin",
                 },

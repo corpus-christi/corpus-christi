@@ -42,7 +42,7 @@
       </v-layout>
     </v-toolbar>
 
-    <!-- Table of existing people -->
+    <!-- Table of existing diplomas -->
     <v-data-table
       :headers="headers"
       :items="showDiplomas"
@@ -50,6 +50,7 @@
       :search="search"
       class="elevation-1"
       data-cy="diplomas-table"
+      v-on:click:row="goToDiploma"
     >
       <template slot="items" slot-scope="props">
         <tr>
@@ -193,6 +194,13 @@ export default {
   },
 
   methods: {
+    goToDiploma(diploma) {
+      this.$router.push({
+        name: "diploma-details",
+        params: { diplomaId: diploma.id },
+      });
+    },
+
     dispatchAction(actionName, diploma) {
       switch (actionName) {
         case "edit":
