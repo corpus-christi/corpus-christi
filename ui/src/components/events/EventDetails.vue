@@ -298,46 +298,41 @@ export default {
         });
     },
 
-    
-
     reloadTeams(data) {
       this.teamsLoaded = false;
       let active = data.active;
       let description = data.description;
       let id = data.id;
-      let t = {active, description, id};
+      let t = { active, description, id };
       this.event.teams.push(t);
       this.teamsLoaded = true;
     },
 
     reloadAssets(data) {
       this.assetsLoaded = false;
-      
+
       let active = data.active;
       let description = data.description;
       let id = data.id;
       let location_id = data.location_id;
-      let a = {active, description, id, location_id} 
+      let a = { active, description, id, location_id };
       this.event.assets.push(a);
       this.assetsLoaded = true;
-      
     },
     //add data back here maybe if you want to try again
     reloadPersons(personData, desData) {
-      this.personsLoaded=false;
-      
+      this.personsLoaded = false;
+
       let event_id = parseInt(this.$route.params.event);
       let person = personData;
       let description = desData;
       let id = person.id;
       let person_id = person.id;
-      let p = {person, description, id, person_id, event_id};
+      let p = { person, description, id, person_id, event_id };
       this.event.persons.push(p);
       this.event.persons = !this.event.persons
-            ? []
-            : this.event.persons.map((p) =>
-                Object.assign(p, { id: p.person_id })
-              );
+        ? []
+        : this.event.persons.map((p) => Object.assign(p, { id: p.person_id }));
       this.personsLoaded = true;
     },
 
@@ -345,7 +340,6 @@ export default {
       this.groupsLoaded = false;
       this.event.groups.push(data);
       this.groupsLoaded = true;
-
     },
 
     editEvent(event) {

@@ -105,15 +105,15 @@
               :existing-entities="personList"
             ></entity-search>
             <v-btn
-            class="mr-0 ml-0"
-            color="primary"
-            raised
-            v-on:click.stop="newPerson"
-            data-cy="new-person"
-          >
-            <v-icon left>person_add</v-icon>
-            {{ $t("actions.add-person") }}
-          </v-btn>
+              class="mr-0 ml-0"
+              color="primary"
+              raised
+              v-on:click.stop="newPerson"
+              data-cy="new-person"
+            >
+              <v-icon left>person_add</v-icon>
+              {{ $t("actions.add-person") }}
+            </v-btn>
           </div>
           <v-textarea
             rows="1"
@@ -182,7 +182,7 @@ export default {
   name: "EventPersonDetails",
   components: {
     "entity-search": EntitySearch,
-    PersonDialog
+    PersonDialog,
   },
 
   props: {
@@ -239,7 +239,6 @@ export default {
   },
 
   methods: {
-
     newPerson() {
       this.dialogState = "new";
     },
@@ -269,7 +268,7 @@ export default {
     },
 
     addPerson() {
-      console.log("this.persons: "+this.persons);
+      console.log("this.persons: " + this.persons);
       const eventId = this.$route.params.event;
       let personId = this.addPersonDialog.person.id;
       //console.log(this.addPersonDialog.person);
@@ -303,7 +302,11 @@ export default {
           } else {
             this.showSnackbar(this.$t("events.persons.person-added"));
           }
-          this.$emit("person-added", this.addPersonDialog.person, this.addPersonDialog.description);
+          this.$emit(
+            "person-added",
+            this.addPersonDialog.person,
+            this.addPersonDialog.description
+          );
           this.closeAddPersonDialog();
         })
         .catch((err) => {

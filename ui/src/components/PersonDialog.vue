@@ -61,8 +61,7 @@ export default {
   },
 
   methods: {
-
-    sendToEvent(newPersonData){
+    sendToEvent(newPersonData) {
       this.$emit("attachPerson", newPersonData);
     },
 

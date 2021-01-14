@@ -198,12 +198,14 @@ export default {
   components: { "team-form": TeamForm, "entity-search": EntitySearch },
   data() {
     return {
-      footerProps: {rowsPerPageItem: [
-        10,
-        15,
-        25,
-        { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 },
-      ]},
+      footerProps: {
+        rowsPerPageItem: [
+          10,
+          15,
+          25,
+          { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 },
+        ],
+      },
       pageLoaded: false,
       tableLoading: false,
       search: "",

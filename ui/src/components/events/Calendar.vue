@@ -63,7 +63,7 @@ export default {
         this.events.push({
           event: event,
           id: event.id,
-          name: event.title,      // Attribute is named "name" to correspond with Vuetify's v-calendar :events input syntax
+          name: event.title, // Attribute is named "name" to correspond with Vuetify's v-calendar :events input syntax
           start: this.getDatetime(event.start),
           end: this.getDatetime(event.end),
           description: event.description,
