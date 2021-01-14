@@ -5,7 +5,7 @@ from flask import json
 from marshmallow import Schema
 from marshmallow import fields, ValidationError, validates
 from marshmallow.validate import Length
-from sqlalchemy import Column, String, ForeignKey, Text, Boolean
+from sqlalchemy import Column, String, ForeignKey, Text, Boolean, Unicode
 from sqlalchemy.orm import relationship
 
 from .. import db
@@ -21,15 +21,17 @@ class I18NLocale(Base):
     __tablename__ = 'i18n_locale'
     code = Column(StringTypes.LOCALE_CODE, primary_key=True)
     desc = Column(StringTypes.MEDIUM_STRING, nullable=False, default="")
+    flag = Column(Unicode(14), nullable=False)
     values = relationship('I18NValue', back_populates='locale', lazy=True)
 
     def __repr__(self):
-        return f"<I18NLocale(id='{self.code}',desc='{self.desc}')>"
+        return f"<I18NLocale(id='{self.code}',desc='{self.desc}',flag='{self.flag}')>"
 
 
 class I18NLocaleSchema(Schema):
     code = fields.String(required=True, validate=[Length(min=2, max=5)])
     desc = fields.String(required=True, validate=[Length(min=2)])
+    flag = fields.String(required=True, validate=[Length(min=2)])
 
     @validates('code')
     def validate_id(self, code):
