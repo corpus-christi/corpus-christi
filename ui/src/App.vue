@@ -29,22 +29,27 @@ export default {
         this.setLocaleModels(localeData);
 
         let langs=navigator.languages;
-        
-        localeData.forEach((loc)=>{
-          langs.forEach((lang)=>{
-            if(lang.includes(loc.code)){
-              this.setCurrentLocale(new Locale(lang));
-              this.$i18n.locale = lang;
-              return;
-            }
-          })
+
+        let needLang=true;
+
+        langs.forEach((lang)=>{
+            localeData.forEach((loc)=>{
+                if(needLang && lang==loc.code){
+                    this.setCurrentLocale(new Locale(lang));
+                    this.$i18n.locale = lang;
+                    needLang=false;
+                }
+            })
         })
-        
-        // If the double forEach fails, that means that none 
-        // of the user's languages are a current locale. 
+
+
+        // If the double forEach fails, that means that none
+        // of the user's languages are a current locale.
         // Default to English-US.
-        this.setCurrentLocale(new Locale("en-US"));
-        this.$i18n.locale = "en-US";
+        if(needLang){
+            this.setCurrentLocale(new Locale("en-US"));
+            this.$i18n.locale = "en-US";
+        }
       }
     });
 
