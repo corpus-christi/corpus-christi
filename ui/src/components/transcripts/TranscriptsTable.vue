@@ -33,7 +33,7 @@
       </v-layout>
     </v-toolbar>
 
-    <!-- Table of existing students -->
+    <!-- Table of existing transcripts -->
     <v-data-table
       :headers="headers"
       :items="showStudents"
@@ -41,6 +41,7 @@
       :search="search"
       class="elevation-1"
       data-cy="transcripts-table"
+      v-on:click:row="goToTranscript"
     >
       <template slot="items" slot-scope="props">
         <tr>
@@ -109,6 +110,13 @@ export default {
     },
   },
   methods: {
+    goToTranscript(transcript) {
+      this.$router.push({
+        name: "transcript-details",
+        params: { studentId: transcript.id },
+      });
+    },
+
     clickThrough(transcript) {
       console.log(transcript);
       this.$router.push({
