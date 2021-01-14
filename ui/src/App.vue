@@ -28,11 +28,11 @@ export default {
       if (localeData && localeData.length > 0) {
         this.setLocaleModels(localeData);
 
-        let langs=navigator.languages;
-
+        let langData=navigator.languages;
         let needLang=true;
 
-        langs.forEach((lang)=>{
+        // find an exact match for the locale
+        langData.forEach((lang)=>{
             localeData.forEach((loc)=>{
                 if(needLang && lang==loc.code){
                     this.setCurrentLocale(new Locale(lang));
@@ -41,7 +41,16 @@ export default {
                 }
             })
         })
-
+        // find an approximate match for the locale
+        langData.forEach((lang)=>{
+            localeData.forEach((loc)=>{
+                if(needLang && loc.code.includes(lang.substr(0,2))){
+                    this.setCurrentLocale(new Locale(lang));
+                    this.$i18n.locale = lang;
+                    needLang=false;
+                }
+            });
+        });
 
         // If the double forEach fails, that means that none
         // of the user's languages are a current locale.
@@ -52,7 +61,7 @@ export default {
         }
       }
     });
-    
+
     // Authentication information in local storage.
     setJWT(this.currentJWT);
   },
