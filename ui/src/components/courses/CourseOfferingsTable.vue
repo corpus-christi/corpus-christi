@@ -42,7 +42,7 @@
       :search="search"
       :items="showCourseOfferings"
       class="elevation-1"
-      :rows-per-page-items="rowsPerPageItem"
+      :items-per-page-options="rowsPerPageItem"
       :pagination.sync="paginationInfo"
     >
       <v-progress-linear

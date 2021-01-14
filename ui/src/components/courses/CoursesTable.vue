@@ -59,7 +59,7 @@
       :search="search"
       :items="showCourses"
       :loading="!tableLoaded"
-      :rows-per-page-items="rowsPerPageItem"
+      :items-per-page-options="rowsPerPageItem"
       :pagination.sync="paginationInfo"
       class="elevation-1"
       data-cy="courses-table"
