@@ -2,7 +2,7 @@
   <v-layout row wrap>
     <v-flex xs12>
       <v-btn
-        outline
+        outlined
         color="primary"
         v-on:click="$router.push({ name: 'all-transcripts' })"
         ><v-icon>arrow_back</v-icon>{{ $t("actions.back") }}</v-btn

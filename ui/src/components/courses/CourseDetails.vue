@@ -3,7 +3,7 @@
     <v-layout row wrap>
       <v-flex xs12>
         <v-btn
-          outline
+          outlined
           color="primary"
           v-on:click="$router.push({ name: 'all-courses' })"
           ><v-icon>arrow_back</v-icon>{{ $t("actions.back") }}</v-btn
@@ -48,7 +48,7 @@
             </v-card-title>
             <v-card-text>
               <v-list dense>
-                <v-list-tile
+                <v-list-item
                   v-for="prereq of course.prerequisites"
                   :key="prereq.id"
                   :to="{
@@ -57,7 +57,7 @@
                   }"
                 >
                   {{ prereq.name }}
-                </v-list-tile>
+                </v-list-item>
               </v-list>
             </v-card-text>
           </template>
@@ -88,7 +88,7 @@
 
     <v-snackbar v-model="snackbar.show" data-cy="courses-table-snackbar">
       {{ snackbar.text }}
-      <v-btn flat @click="snackbar.show = false">{{
+      <v-btn text @click="snackbar.show = false">{{
         $t("actions.close")
       }}</v-btn>
     </v-snackbar>

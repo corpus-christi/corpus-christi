@@ -54,16 +54,17 @@
     </v-toolbar>
 
     <!-- Table of existing courses -->
+    <!-- :pagination.sync="paginationInfo" -->
     <v-data-table
       :headers="headers"
       :search="search"
       :items="showCourses"
       :loading="!tableLoaded"
-      :rows-per-page-items="rowsPerPageItem"
-      :pagination.sync="paginationInfo"
+      :items-per-page-options="rowsPerPageItem"
       class="elevation-1"
       data-cy="courses-table"
       v-on:click:row="goToCourse"
+      option.sync="paginationInfo"
     >
       <v-progress-linear
         slot="progress"
@@ -187,7 +188,7 @@ export default {
 
       paginationInfo: {
         sortBy: "start",
-        rowsPerPage: 10,
+        itemsPerPage: 10,
         page: 1,
       },
 

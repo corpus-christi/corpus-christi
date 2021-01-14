@@ -2,7 +2,7 @@
   <v-layout row wrap>
     <v-flex xs12>
       <v-btn
-        outline
+        outlined
         color="primary"
         v-on:click="$router.push({ name: 'all-diplomas' })"
         ><v-icon>arrow_back</v-icon>{{ $t("actions.back") }}</v-btn
@@ -32,16 +32,16 @@
                     >{{ $t("diplomas.courses-this-diploma") }}:</v-subheader
                   >
                   <template v-for="(course, index) in diploma.courseList">
-                    <v-list-tile :key="index">
-                      <v-list-tile-content>
-                        <v-list-tile-title
+                    <v-list-item :key="index">
+                      <v-list-item-content>
+                        <v-list-item-title
                           v-html="course.name"
-                        ></v-list-tile-title>
-                        <v-list-tile-sub-title
+                        ></v-list-item-title>
+                        <v-list-item-subtitle
                           v-html="course.description"
-                        ></v-list-tile-sub-title>
-                      </v-list-tile-content>
-                    </v-list-tile>
+                        ></v-list-item-subtitle>
+                      </v-list-item-content>
+                    </v-list-item>
                   </template>
                 </v-list>
               </v-card>
