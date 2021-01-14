@@ -17,8 +17,8 @@
             </v-btn>
           </v-layout>
         </v-container>
-        <v-list v-if="groups.length">
-          <template v-for="group in groups">
+        <v-list v-if="groupList.length">
+          <template v-for="group in groupList">
             <v-divider v-bind:key="'groupDivider' + group.id"></v-divider>
             <v-list-item v-bind:key="group.id">
               <v-list-item-content class="pr-0">
@@ -81,7 +81,7 @@
           <entity-search
             data-cy="group-entity-search"
             v-model="addGroupDialog.group"
-            :existing-entities="groups"
+            :existing-entities="groupList"
             group
           ></entity-search>
         </v-card-text>
@@ -157,6 +157,8 @@ export default {
 
   data() {
     return {
+      groupList: [...this.groups],
+
       addGroupDialog: {
         show: false,
         loading: false,
@@ -181,7 +183,7 @@ export default {
     addGroup() {
       const eventId = this.$route.params.event;
       let groupId = this.addGroupDialog.group.id;
-      const idx = this.groups.findIndex((t) => t.id === groupId);
+      const idx = this.groupList.findIndex((t) => t.id === groupId);
       this.addGroupDialog.loading = true;
       if (idx > -1) {
         this.closeAddGroupDialog();
@@ -199,7 +201,7 @@ export default {
         .catch((err) => {
           console.log(err);
           this.addGroupDialog.loading = false;
-          if (err.response.status == 422) {
+          if (err.response.status === 422) {
             this.showSnackbar(this.$t("groups.error-group-assigned"));
           } else {
             this.showSnackbar(this.$t("groups.error-adding-group"));
@@ -209,7 +211,7 @@ export default {
 
     deleteGroup() {
       let id = this.deleteGroupDialog.groupId;
-      const idx = this.groups.findIndex((t) => t.id === id);
+      const idx = this.groupList.findIndex((t) => t.id === id);
       this.deleteGroupDialog.loading = true;
       const eventId = this.$route.params.event;
       this.$http
@@ -219,7 +221,7 @@ export default {
           this.deleteGroupDialog.show = false;
           this.deleteGroupDialog.loading = false;
           this.deleteGroupDialog.groupId = -1;
-          this.groups.splice(idx, 1); //TODO maybe fix me?
+          this.groupList.splice(idx, 1); //TODO maybe fix me?
           this.showSnackbar(this.$t("groups.group-removed"));
         })
         .catch((err) => {

@@ -17,8 +17,8 @@
             </v-btn>
           </v-layout>
         </v-container>
-        <v-list v-if="assets.length">
-          <template v-for="asset in assets">
+        <v-list v-if="assetList.length">
+          <template v-for="asset in assetList">
             <v-divider v-bind:key="'assetDivider' + asset.id"></v-divider>
             <v-list-item v-bind:key="asset.id">
               <v-list-item-content>
@@ -66,7 +66,7 @@
           <entity-search
             data-cy="asset-entity-search"
             v-model="addAssetDialog.asset"
-            :existing-entities="assets"
+            :existing-entities="assetList"
             asset
           ></entity-search>
         </v-card-text>
@@ -142,6 +142,8 @@ export default {
 
   data() {
     return {
+      assetList: [...this.assets],
+
       addAssetDialog: {
         show: false,
         loading: false,
@@ -166,8 +168,7 @@ export default {
     addAsset() {
       const eventId = this.$route.params.event;
       let assetId = this.addAssetDialog.asset.id;
-      console.log("Asset");
-      const idx = this.assets.findIndex((a) => a.id === assetId);
+      const idx = this.assetList.findIndex((a) => a.id === assetId);
       this.addAssetDialog.loading = true;
       if (idx > -1) {
         this.closeAddAssetDialog();
@@ -186,7 +187,7 @@ export default {
         .catch((err) => {
           console.log(err);
           this.addAssetDialog.loading = false;
-          if (err.response.status == 422) {
+          if (err.response.status === 422) {
             this.showSnackbar(this.$t("assets.error-asset-assigned"));
           } else {
             this.showSnackbar(this.$t("assets.error-adding-asset"));
@@ -196,7 +197,7 @@ export default {
 
     deleteAsset() {
       let id = this.deleteAssetDialog.assetId;
-      const idx = this.assets.findIndex((a) => a.id === id);
+      const idx = this.assetList.findIndex((a) => a.id === id);
       this.deleteAssetDialog.loading = true;
       const eventId = this.$route.params.event;
       this.$http
@@ -206,7 +207,7 @@ export default {
           this.deleteAssetDialog.show = false;
           this.deleteAssetDialog.loading = false;
           this.deleteAssetDialog.assetId = -1;
-          this.assets.splice(idx, 1); //TODO maybe fix me?
+          this.assetList.splice(idx, 1); //TODO maybe fix me?
           this.showSnackbar(this.$t("assets.asset-removed"));
         })
         .catch((err) => {

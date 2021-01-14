@@ -1,12 +1,12 @@
 <template>
   <div>
     <!-- Header -->
-    <v-toolbar class="pa-1" data-cy="person-toolbar">
-      <v-layout align-center justify-space-between fill-height>
-        <v-flex md2>
+    <v-toolbar data-cy="person-toolbar">
+      <v-row align="center" justify="space-between">
+        <v-col cols="2">
           <v-toolbar-title>{{ $t("people.title") }}</v-toolbar-title>
-        </v-flex>
-        <v-flex md3>
+        </v-col>
+        <v-col cols="4">
           <v-text-field
             v-model="search"
             append-icon="search"
@@ -17,8 +17,8 @@
             filled
             data-cy="search"
           />
-        </v-flex>
-        <v-flex md3>
+        </v-col>
+        <v-col cols="2">
           <div data-cy="view-dropdown">
             <v-select
               hide-details
@@ -28,20 +28,14 @@
               v-model="viewStatus"
             />
           </div>
-        </v-flex>
-        <v-flex shrink justify-self-end>
-          <v-btn
-            class="mr-0 ml-0"
-            color="primary"
-            raised
-            v-on:click.stop="newPerson"
-            data-cy="new-person"
-          >
+        </v-col>
+        <v-col cols="2">
+          <v-btn color="primary" v-on:click="newPerson" data-cy="new-person">
             <v-icon left>person_add</v-icon>
             {{ $t("actions.add-person") }}
           </v-btn>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-toolbar>
 
     <!-- Table of existing people -->
@@ -53,89 +47,44 @@
       class="elevation-1"
       data-cy="person-table"
     >
-      <template slot="items" slot-scope="props">
+      <template v-slot:item="{ item }">
         <tr>
-          <td :data-cy="'first-name-' + props.item.id">
-            {{ props.item.firstName }}
+          <td :data-cy="'first-name-' + item.id">
+            {{ item.firstName }}
           </td>
-          <td :data-cy="'last-name-' + props.item.id">
-            {{ props.item.lastName }}
+          <td :data-cy="'last-name-' + item.id">
+            {{ item.lastName }}
           </td>
-          <td class="hidden-sm-and-down" :data-cy="'email-' + props.item.id">
-            {{ props.item.email }}
+          <td class="hidden-sm-and-down" :data-cy="'email-' + item.id">
+            {{ item.email }}
           </td>
-          <td :data-cy="'phone-' + props.item.id">{{ props.item.phone }}</td>
+          <td :data-cy="'phone-' + item.id">{{ item.phone }}</td>
           <td class="text-no-wrap">
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on }">
-                <v-btn
-                  icon
-                  outline
-                  small
-                  color="primary"
-                  slot="activator"
-                  v-on:click="editPerson(props.item)"
-                  data-cy="edit-person"
-                  v-on="on"
-                >
-                  <v-icon small>edit</v-icon>
-                </v-btn>
-                <span>{{ $t("actions.edit") }}</span>
-              </template>
-            </v-tooltip>
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on }">
-                <v-btn
-                  icon
-                  outline
-                  small
-                  color="primary"
-                  slot="activator"
-                  v-on:click="adminPerson(props.item)"
-                  data-cy="account-settings"
-                  v-on="on"
-                >
-                  <v-icon small>settings</v-icon>
-                </v-btn>
-                <span>{{ $t("actions.tooltips.settings") }}</span>
-              </template>
-            </v-tooltip>
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on }">
-                <v-btn
-                  v-if="props.item.active === true"
-                  icon
-                  outline
-                  small
-                  color="primary"
-                  slot="activator"
-                  v-on:click="showConfirmDialog('deactivate', props.item)"
-                  data-cy="deactivate-person"
-                  v-on="on"
-                >
-                  <v-icon small>archive</v-icon>
-                </v-btn>
-                <span>{{ $t("actions.tooltips.archive") }}</span>
-              </template>
-            </v-tooltip>
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on }">
-                <v-btn
-                  v-if="props.item.active === false"
-                  icon
-                  outline
-                  small
-                  color="primary"
-                  slot="activator"
-                  v-on:click="showConfirmDialog('activate', props.item)"
-                  data-cy="reactivate-person"
-                  v-on="on"
-                >
-                  <v-icon small>undo</v-icon>
-                </v-btn>
-                <span>{{ $t("actions.tooltips.activate") }}</span>
-              </template>
-            </v-tooltip>
+            <ActionIconButton
+              icon-name="edit"
+              v-bind:tooltipText="$t('actions.edit')"
+              v-on:click="editPerson(item)"
+            />
+
+            <ActionIconButton
+              icon-name="settings"
+              v-bind:tooltipText="$t('actions.tooltips.settings')"
+              v-on:click="adminPerson(item)"
+            />
+
+            <ActionIconButton
+              v-if="item.active === true"
+              iconName="archive"
+              v-bind:tooltipText="$t('actions.tooltips.archive')"
+              v-on:click="showConfirmDialog('deactivate', item)"
+            />
+
+            <ActionIconButton
+              v-if="item.active === false"
+              iconName="undo"
+              v-bind:tooltip-text="$t('actions.tooltips.activate')"
+              v-on:click="showConfirmDialog('activate', item)"
+            />
           </td>
         </tr>
       </template>
@@ -213,10 +162,11 @@
 <script>
 import PersonDialog from "../PersonDialog";
 import PersonAdminForm from "./AccountForm";
+import ActionIconButton from "@/components/people/ActionIconButton";
 
 export default {
   name: "PersonTable",
-  components: { PersonDialog, PersonAdminForm },
+  components: { ActionIconButton, PersonDialog, PersonAdminForm },
   props: {
     peopleList: {
       type: Array,
@@ -262,6 +212,7 @@ export default {
       translations: {},
     };
   },
+
   computed: {
     // Put here so that the headers are reactive.
     headers() {
@@ -282,6 +233,7 @@ export default {
         { text: this.$t("actions.header"), width: "20%", sortable: false },
       ];
     },
+
     viewOptions() {
       return [
         {
@@ -297,6 +249,7 @@ export default {
         { text: this.$t("actions.view-all"), value: "viewAll" },
       ];
     },
+
     peopleToDisplay() {
       switch (this.viewStatus) {
         case "viewActive":
@@ -317,12 +270,16 @@ export default {
       this.activePeople = this.allPeople.filter((person) => person.active);
       this.archivedPeople = this.allPeople.filter((person) => !person.active);
     },
-    rolesList(all_roles) {
-      this.rolesList = all_roles;
-    },
-    tableLoaded(loading) {
-      this.tableLoaded = loading;
-    },
+
+    // It seems like these watches are updating themselves when they update themselves.
+    // Not necessary?
+    // rolesList(all_roles) {
+    //   this.rolesList = all_roles;
+    // },
+    //
+    // tableLoaded(loading) {
+    //   this.tableLoaded = loading;
+    // },
   },
 
   methods: {

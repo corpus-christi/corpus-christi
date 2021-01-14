@@ -1,4 +1,5 @@
-locale<template>
+locale
+<template>
   <v-container> <AssetTable /> </v-container>
 </template>
 

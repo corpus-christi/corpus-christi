@@ -1,12 +1,12 @@
 <template>
   <div>
     <!-- Header -->
-    <v-toolbar class="pa-1" data-cy="roles-toolbar">
-      <v-layout align-center justify-space-between fill-height>
-        <v-flex md2>
+    <v-toolbar data-cy="roles-toolbar">
+      <v-row align="center" justify="space-between">
+        <v-col cols="2">
           <v-toolbar-title>{{ $t("people.title-roles") }}</v-toolbar-title>
-        </v-flex>
-        <v-flex md3>
+        </v-col>
+        <v-col cols="6">
           <v-text-field
             v-model="search"
             append-icon="search"
@@ -17,8 +17,8 @@
             filled
             data-cy="roles-search"
           />
-        </v-flex>
-        <v-flex md3>
+        </v-col>
+        <v-col cols="2">
           <div data-cy="roles-dropdown">
             <v-select
               hide-details
@@ -29,11 +29,11 @@
               v-model="viewStatus"
             />
           </div>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-toolbar>
 
-    <!-- Table of existing people -->
+    <!-- Table -->
     <v-data-table
       :headers="headers"
       :items="peopleToDisplay"
@@ -267,9 +267,9 @@ export default {
         person.roles.some((role) => role.id === 11)
       );
     },
-    tableLoaded(loading) {
-      this.tableLoaded = loading;
-    },
+    // tableLoaded(loading) {
+    //   this.tableLoaded = loading;
+    // },
   },
 
   methods: {

@@ -1,10 +1,16 @@
 <template>
   <v-container>
-    <v-tabs color="primary" slider-color="accent">
+    <v-tabs v-model="tab" color="primary" slider-color="accent">
       <v-tab ripple data-cy="person-table-tab">
         <v-icon>person</v-icon>
         &nbsp;{{ $t("people.title") }}
       </v-tab>
+      <v-tab ripple data-cy="roles-table-tab">
+        <v-icon>supervisor_account</v-icon>
+        &nbsp;{{ $t("people.title-roles") }}
+      </v-tab>
+    </v-tabs>
+    <v-tabs-items v-model="tab">
       <v-tab-item>
         <PersonTable
           v-bind:peopleList="peopleList"
@@ -13,10 +19,6 @@
           v-on:fetchPeopleList="fetchPeopleList"
         />
       </v-tab-item>
-      <v-tab ripple data-cy="roles-table-tab">
-        <v-icon>supervisor_account</v-icon>
-        &nbsp;{{ $t("people.title-roles") }}
-      </v-tab>
       <v-tab-item>
         <RolesTable
           v-bind:peopleList="peopleList"
@@ -25,7 +27,7 @@
           v-on:fetchPeopleList="fetchPeopleList"
         />
       </v-tab-item>
-    </v-tabs>
+    </v-tabs-items>
   </v-container>
 </template>
 
@@ -41,6 +43,7 @@ export default {
   },
   data() {
     return {
+      tab: null,
       peopleList: [],
       rolesList: [],
       tableLoaded: false,
@@ -64,7 +67,7 @@ export default {
         .get("/api/v1/people/role")
         .then((resp) => {
           let roles = [];
-          for (var role of resp.data) {
+          for (const role of resp.data) {
             roles.push({
               text: role.nameI18n,
               value: role.id,
@@ -82,9 +85,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.vertical-spacer {
-  margin-bottom: 16px;
-}
-</style>

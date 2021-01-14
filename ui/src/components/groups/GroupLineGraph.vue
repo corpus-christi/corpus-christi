@@ -39,7 +39,7 @@
             </v-list-item>
             <v-divider class="mt-2"></v-divider>
           </template>
-          <template v-slot:selection="{ item, index }">
+          <template>
             <v-chip v-if="index === 0">
               {{ fistSelectedGroup.name }}
             </v-chip>
@@ -51,9 +51,9 @@
       </v-col>
       <v-spacer />
     </v-toolbar>
-    <body id="graph-container">
+    <div id="graph-container">
       <canvas id="myChart2" width="500" height="180"></canvas>
-    </body>
+    </div>
     <v-toolbar>
       <v-spacer />
       <template v-if="selectedTimeScale === 'Weekly'">
@@ -199,14 +199,10 @@ import { mapState } from "vuex";
 import "chartjs-plugin-crosshair";
 import $ from "jquery";
 import {
-  // Group,
-  // Participant,
-  // checkConnection,
-  // HierarchyCycleError,
   convertToGroupMap,
-  isOverseer,
   getParticipantById,
-} from "../../models/GroupHierarchyNode.ts";
+  isOverseer,
+} from "@/models/GroupHierarchyNode";
 
 export default {
   components: {},
@@ -291,9 +287,7 @@ export default {
     },
     ...mapState(["currentAccount"]),
     disablePicker() {
-      if (this.selectedGroups.length === 0) {
-        return false;
-      } else return true;
+      return this.selectedGroups.length !== 0;
     },
     groupMap() {
       return convertToGroupMap(this.allGroups);
@@ -1110,9 +1104,9 @@ export default {
               j < Number(this.endDate.substr(0, 4)) + 1;
               j++
             ) {
-              if (template[j] == undefined) {
+              if (template[j] === undefined) {
                 for (let i = 0; i < moment(meetingYear).isoWeeksInYear(); i++) {
-                  if (i == 0) {
+                  if (i === 0) {
                     template[j] = [];
                   }
                   template[j].push(0);
@@ -1153,8 +1147,7 @@ export default {
     },
 
     parseYear(startTime) {
-      let time = startTime.split("-");
-      return time;
+      return startTime.split("-");
     },
 
     toggle() {
@@ -1222,7 +1215,7 @@ export default {
     loadWeekGraph() {
       if (
         this.selectedTimeScale === "Weekly" &&
-        this.selectedGroups.length == 0
+        this.selectedGroups.length === 0
       ) {
         this.resetCanvas();
         this.selectedGroups = [];
@@ -1255,7 +1248,7 @@ export default {
     loadMonthGraph() {
       if (
         this.selectedTimeScale === "Monthly" &&
-        this.selectedGroups.length == 0
+        this.selectedGroups.length === 0
       ) {
         this.resetCanvas();
         this.selectedGroups = [];
@@ -1290,7 +1283,7 @@ export default {
       this.currentYear = moment().format("YYYY");
       if (
         this.selectedTimeScale === "Monthly" &&
-        this.selectedGroups.length == 0
+        this.selectedGroups.length === 0
       ) {
         this.resetCanvas();
         let ctx2 = document.getElementById("myChart2");
@@ -1649,8 +1642,8 @@ export default {
             loopYear++;
           } else {
             if (
-              loopYear != Number(startTime.substr(0, 4)) &&
-              loopYear != Number(endTime.substr(0, 4))
+              loopYear !== Number(startTime.substr(0, 4)) &&
+              loopYear !== Number(endTime.substr(0, 4))
             ) {
               if (
                 year[
@@ -1789,16 +1782,8 @@ export default {
         : false;
     },
     ifAdmin() {
-      if (this.currentAccount.roles.includes("role.group-admin")) {
-        return true;
-      } else return false;
+      return this.currentAccount.roles.includes("role.group-admin");
     },
   },
 };
 </script>
-<style>
-.small {
-  width: 500px;
-  height: 500px;
-}
-</style>
