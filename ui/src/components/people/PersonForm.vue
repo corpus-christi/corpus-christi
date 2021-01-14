@@ -103,7 +103,7 @@
                 readonly
                 data-cy="birthday"
                 data-vv-validate-on="input"
-                v-validate="'date_format:YYYY-MM-DD'"
+                v-validate="'date_format:yyyy-MM-dd'"
                 v-bind:error-messages="errors.collect('birthday')"
                 v-on="on"
               />
@@ -726,6 +726,7 @@ export default {
             this.$emit(emitMessage, response.data);
             this.resetForm();
           }
+          this.$emit("attachPerson", response.data);
         })
         .catch((err) => {
           this.resetForm();

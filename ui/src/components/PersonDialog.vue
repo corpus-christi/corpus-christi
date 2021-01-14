@@ -1,19 +1,12 @@
 <template>
   <!-- New/Edit dialog -->
-  <v-dialog
-    scrollable
-    persistent
-    v-model="personDialog.show"
-    max-width="1000px"
-  >
-    <v-layout column>
-      <v-card>
-        <v-layout align-center justify-center row fill-height>
-          <v-card-title class="headline">
-            {{ $t(personDialog.title) }}
-          </v-card-title>
-        </v-layout>
-      </v-card>
+  <v-dialog v-model="personDialog.show" persistent max-width="768px">
+    <v-card>
+      <v-layout align-center justify-center row fill-height>
+        <v-card-title class="headline">
+          {{ $t(personDialog.title) }}
+        </v-card-title>
+      </v-layout>
       <PersonForm
         v-bind:initialData="personDialog.person"
         v-bind:addAnotherEnabled="personDialog.addAnotherEnabled"
@@ -23,8 +16,9 @@
         v-on:cancel="cancelPerson"
         v-on:saved="savePerson"
         v-on:added-another="addAnother"
+        v-on:attachPerson="sendToEvent"
       />
-    </v-layout>
+    </v-card>
   </v-dialog>
 </template>
 
@@ -67,6 +61,11 @@ export default {
   },
 
   methods: {
+
+    sendToEvent(newPersonData){
+      this.$emit("attachPerson", newPersonData);
+    },
+
     activatePersonDialog(person = {}, isEditTitle = false) {
       this.personDialog.title = isEditTitle
         ? this.$t("person.actions.edit")

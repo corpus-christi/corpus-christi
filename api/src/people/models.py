@@ -112,69 +112,31 @@ class Person(Base):
 class PersonSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
 
-    first_name = fields.String(
-        data_key='firstName',
-        required=True,
-        validate=Length(
-            min=1))
-    last_name = fields.String(
-        data_key='lastName',
-        required=True,
-        validate=Length(
-            min=1))
-    second_last_name = fields.String(
-        data_key='secondLastName', allow_none=True)
+    first_name = fields.String(data_key='firstName', required=True, validate=Length(min=1))
+    last_name = fields.String(data_key='lastName', required=True, validate=Length(min=1))
+    second_last_name = fields.String(data_key='secondLastName', allow_none=True)
     gender = fields.String(validate=OneOf(['M', 'F']), allow_none=True)
     birthday = fields.Date(allow_none=True)
     phone = fields.String(allow_none=True)
     email = fields.String(allow_none=True)
 
     username = fields.String(required=True, validate=Length(min=1))
-    password = fields.String(
-        attribute='password_hash',
-        load_only=True,
-        required=True,
-        validate=Length(
-            min=6))
+    password = fields.String(attribute='password_hash', load_only=True, required=True, validate=Length(min=6))
     confirmed = fields.Boolean(dump_only=True)
 
     active = fields.Boolean(required=True)
     address_id = fields.Integer(data_key='addressId', allow_none=True)
 
     attributesInfo = fields.Nested('PersonAttributeSchema', many=True)
-    images = fields.Nested(
-        'ImagePersonSchema',
-        many=True,
-        exclude=['person'],
-        dump_only=True)
+    images = fields.Nested('ImagePersonSchema', many=True, exclude=['person'], dump_only=True)
     roles = fields.Nested('RoleSchema', many=True, dump_only=True)
-    members = fields.Nested(
-        'MemberSchema',
-        only=[
-            'group_id',
-            'active'],
-        many=True,
-        dump_only=True)
-    managers = fields.Nested(
-        'ManagerSchema',
-        only=[
-            'group_id',
-            'active'],
-        many=True,
-        dump_only=True)
-    member_histories = fields.Nested(
-        'MemberHistorySchema',
-        many=True,
-        dump_only=True,
-        data_key='memberHistories',
-        only=(
-            'id',
-            'time',
-            'is_join',
-            'group_id'))
+    members = fields.Nested('MemberSchema', only=['group_id', 'active'], many=True, dump_only=True)
+    managers = fields.Nested('ManagerSchema', only=['group_id', 'active'], many=True, dump_only=True)
+    member_histories = fields.Nested('MemberHistorySchema', many=True, dump_only=True, data_key='memberHistories',
+                                     only=('id', 'time', 'is_join', 'group_id'))
 
     @pre_load
-    def hash_password(self, data):
+    def hash_password(self, data, **kwargs):
         """Make sure the password is properly hashed when creating a new account."""
         if 'password' in data.keys():
             data['password'] = generate_password_hash(data['password'])

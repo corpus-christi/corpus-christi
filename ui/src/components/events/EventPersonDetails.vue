@@ -17,8 +17,8 @@
             </v-btn>
           </v-layout>
         </v-container>
-        <v-list v-if="persons.length">
-          <template v-for="person in persons">
+        <v-list v-if="personList.length">
+          <template v-for="person in personList">
             <v-divider v-bind:key="'personDivider' + person.id"></v-divider>
             <v-list-item v-bind:key="person.id">
               <v-list-item-content>
@@ -75,6 +75,14 @@
         </div>
       </v-layout>
     </v-card>
+    <person-dialog
+      @snack="showSnackbar"
+      @cancel="cancelPerson"
+      @attachPerson="attachNewPerson"
+      :dialog-state="dialogState"
+      :all-people="allPeople"
+      :person="person"
+    />
     <!-- Add Person dialog -->
     <v-dialog v-model="addPersonDialog.show" persistent max-width="500px">
       <v-card>
@@ -94,8 +102,18 @@
               person
               data-cy="person-entity-search"
               v-model="addPersonDialog.person"
-              :existing-entities="persons"
+              :existing-entities="personList"
             ></entity-search>
+            <v-btn
+            class="mr-0 ml-0"
+            color="primary"
+            raised
+            v-on:click.stop="newPerson"
+            data-cy="new-person"
+          >
+            <v-icon left>person_add</v-icon>
+            {{ $t("actions.add-person") }}
+          </v-btn>
           </div>
           <v-textarea
             rows="1"
@@ -158,11 +176,13 @@
 </template>
 <script>
 import EntitySearch from "../EntitySearch";
+import PersonDialog from "../PersonDialog";
 
 export default {
   name: "EventPersonDetails",
   components: {
     "entity-search": EntitySearch,
+    PersonDialog
   },
 
   props: {
@@ -177,6 +197,8 @@ export default {
 
   data() {
     return {
+      personList: [...this.persons],
+
       addPersonDialog: {
         editMode: false,
         show: false,
@@ -190,6 +212,22 @@ export default {
         loading: false,
         personId: -1,
       },
+      personDialog: {
+        show: false,
+        title: "",
+        person: {},
+        addAnotherEnabled: false,
+      },
+      showingArchived: false,
+      selected: [],
+      dialogState: "",
+      person: {},
+      allPeople: [],
+      activePeople: [],
+      archivedPeople: [],
+      search: "",
+      data: {},
+      translations: {},
     };
   },
   computed: {
@@ -201,6 +239,20 @@ export default {
   },
 
   methods: {
+
+    newPerson() {
+      this.dialogState = "new";
+    },
+
+    cancelPerson() {
+      this.dialogState = "";
+    },
+
+    attachNewPerson(newPersonData) {
+      this.addPersonDialog.person = newPersonData;
+      this.addPerson();
+    },
+
     closeAddPersonDialog() {
       this.addPersonDialog.loading = false;
       this.addPersonDialog.show = false;
@@ -219,9 +271,10 @@ export default {
     addPerson() {
       const eventId = this.$route.params.event;
       let personId = this.addPersonDialog.person.id;
+      //console.log(this.addPersonDialog.person);
       this.addPersonDialog.loading = true;
       if (!this.addPersonDialog.editMode) {
-        const idx = this.persons.findIndex((p) => p.id === personId);
+        const idx = this.personList.findIndex((p) => p.id === personId);
         if (idx > -1) {
           this.closeAddPersonDialog();
           this.showSnackbar(this.$t("events.persons.person-on-event"));
@@ -254,7 +307,7 @@ export default {
         .catch((err) => {
           console.log(err);
           this.addPersonDialog.loading = false;
-          if (err.response.status == 422) {
+          if (err.response.status === 422) {
             this.showSnackbar(this.$t("events.persons.error-person-assigned"));
           } else {
             this.showSnackbar(this.$t("events.persons.error-adding-person"));
@@ -264,7 +317,7 @@ export default {
 
     deletePerson() {
       let id = this.deletePersonDialog.personId;
-      const idx = this.persons.findIndex((p) => p.id === id);
+      const idx = this.personList.findIndex((p) => p.id === id);
       this.deletePersonDialog.loading = true;
       const eventId = this.$route.params.event;
       this.$http
@@ -274,7 +327,7 @@ export default {
           this.deletePersonDialog.show = false;
           this.deletePersonDialog.loading = false;
           this.deletePersonDialog.personId = -1;
-          this.persons.splice(idx, 1); //TODO maybe fix me?
+          this.personList.splice(idx, 1); //TODO maybe fix me?
           this.showSnackbar(this.$t("events.persons.person-removed"));
         })
         .catch((err) => {
