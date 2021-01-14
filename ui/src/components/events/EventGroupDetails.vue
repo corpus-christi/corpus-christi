@@ -195,8 +195,8 @@ export default {
         .post(`/api/v1/events/${eventId}/groups/${groupId}`)
         .then(() => {
           this.showSnackbar(this.$t("groups.group-added"));
+          this.$emit("group-added", this.addGroupDialog.group);
           this.closeAddGroupDialog();
-          this.$emit("group-added");
         })
         .catch((err) => {
           console.log(err);

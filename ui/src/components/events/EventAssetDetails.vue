@@ -180,8 +180,9 @@ export default {
         .post(`/api/v1/events/${eventId}/assets/${assetId}`)
         .then(() => {
           this.showSnackbar(this.$t("assets.asset-added"));
+          console.log(this.addAssetDialog.asset);
+          this.$emit("asset-added", this.addAssetDialog.asset);
           this.closeAddAssetDialog();
-          this.$emit("asset-added");
         })
         .catch((err) => {
           console.log(err);

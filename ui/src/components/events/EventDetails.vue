@@ -105,7 +105,7 @@
               :teams="event.teams"
               :loaded="teamsLoaded"
               v-on:snackbar="showSnackbar($event)"
-              v-on:team-added="reloadTeams()"
+              v-on:team-added="reloadTeams"
             ></event-team-details>
           </v-flex>
           <v-flex>
@@ -113,7 +113,7 @@
               :persons="event.persons"
               :loaded="personsLoaded"
               v-on:snackbar="showSnackbar($event)"
-              v-on:person-added="reloadPersons()"
+              v-on:person-added="reloadPersons"
             ></event-person-details>
           </v-flex>
         </v-layout>
@@ -125,7 +125,7 @@
               :assets="event.assets"
               :loaded="assetsLoaded"
               v-on:snackbar="showSnackbar($event)"
-              v-on:asset-added="reloadAssets()"
+              v-on:asset-added="reloadAssets"
             ></event-asset-details>
           </v-flex>
           <v-flex>
@@ -133,7 +133,7 @@
               :groups="event.groups"
               :loaded="groupsLoaded"
               v-on:snackbar="showSnackbar($event)"
-              v-on:group-added="reloadGroups()"
+              v-on:group-added="reloadGroups"
             ></event-group-details>
           </v-flex>
         </v-layout>
@@ -298,61 +298,54 @@ export default {
         });
     },
 
-    reloadTeams() {
+    
+
+    reloadTeams(data) {
       this.teamsLoaded = false;
-      const id = this.$route.params.event;
-      this.$http.get(`/api/v1/events/${id}?include_teams=1`).then((resp) => {
-        let eventData = resp.data;
-        this.event.teams = !eventData.teams
-          ? []
-          : eventData.teams.map((t) => t.team);
-        this.teamsLoaded = true;
-      });
+      let active = data.active;
+      let description = data.description;
+      let id = data.id;
+      let t = {active, description, id};
+      this.event.teams.push(t);
+      this.teamsLoaded = true;
     },
 
-    reloadAssets() {
+    reloadAssets(data) {
       this.assetsLoaded = false;
-      const id = this.$route.params.event;
-      this.$http.get(`/api/v1/events/${id}?include_assets=1`).then((resp) => {
-        let eventData = resp.data;
-        this.event.assets = !eventData.assets
-          ? []
-          : eventData.assets.map((a) => a.asset);
-        this.assetsLoaded = true;
-      });
+      
+      let active = data.active;
+      let description = data.description;
+      let id = data.id;
+      let location_id = data.location_id;
+      let a = {active, description, id, location_id} 
+      this.event.assets.push(a);
+      this.assetsLoaded = true;
+      
+    },
+    //add data back here maybe if you want to try again
+    reloadPersons(personData, desData) {
+      this.personsLoaded=false;
+      
+      let event_id = parseInt(this.$route.params.event);
+      let person = personData;
+      let description = desData;
+      let id = person.id;
+      let person_id = person.id;
+      let p = {person, description, id, person_id, event_id};
+      this.event.persons.push(p);
+      this.event.persons = !this.event.persons
+            ? []
+            : this.event.persons.map((p) =>
+                Object.assign(p, { id: p.person_id })
+              );
+      this.personsLoaded = true;
     },
 
-    reloadPersons() {
-      this.personsLoaded = false;
-      const id = this.$route.params.event;
-      this.$http.get(`/api/v1/events/${id}?include_persons=1`).then((resp) => {
-        let eventData = resp.data;
-        this.event.persons = !eventData.persons
-          ? []
-          : eventData.persons.map((p) => Object.assign(p, { id: p.person_id }));
-        this.personsLoaded = true;
-      });
-    },
-
-    reloadGroups() {
+    reloadGroups(data) {
       this.groupsLoaded = false;
-      const id = this.$route.params.event;
-      this.$http.get(`/api/v1/events/${id}?include_groups=1`).then((resp) => {
-        let eventData = resp.data;
-        this.event.groups = !eventData.groups
-          ? []
-          : eventData.groups
-              .filter(function (g) {
-                // make sure the group is active
-                // and the group has an active relationship to the event
-                if (g.group) {
-                  return g.active && g.group.active;
-                }
-                return false;
-              })
-              .map((g) => g.group);
-        this.groupsLoaded = true;
-      });
+      this.event.groups.push(data);
+      this.groupsLoaded = true;
+
     },
 
     editEvent(event) {

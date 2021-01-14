@@ -195,8 +195,8 @@ export default {
         .post(`/api/v1/events/${eventId}/teams/${teamId}`)
         .then(() => {
           this.showSnackbar(this.$t("teams.team-added"));
+          this.$emit("team-added", this.addTeamDialog.team);
           this.closeAddTeamDialog();
-          this.$emit("team-added");
         })
         .catch((err) => {
           console.log(err);
