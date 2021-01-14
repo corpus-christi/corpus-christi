@@ -354,67 +354,6 @@ export default {
           });
         });
     },
-    getTreeLeaves() {
-      for (let L1 of Object.keys(this.translation)) {
-        this.items.push({
-          id: this.counter,
-          name: L1,
-          children: [],
-        });
-        this.counter += 1;
-        this.getExtensions(
-          L1,
-          this.translation[L1],
-          this.items[this.items.length - 1].children,
-          L1 + "."
-        );
-      }
-    },
-    getExtensions(name, subtree, container, key_id) {
-      for (let leaf of Object.keys(subtree)) {
-        if (container === undefined) {
-          console.log("reach end");
-        } else if (typeof subtree[leaf] === "object") {
-          container.push({
-            id: this.counter,
-            name: leaf,
-            children: [],
-          });
-          this.counter += 1;
-          this.getExtensions(
-            leaf,
-            subtree[leaf],
-            container[container.length - 1].children,
-            key_id + leaf + "."
-          );
-        } else if (typeof subtree[leaf] === "string") {
-          container.push({
-            id: this.counter,
-            name: leaf,
-            children: [],
-          });
-          this.counter += 1;
-          container[container.length - 1].children.push({
-            id: this.counter,
-            name: subtree[leaf],
-            key_id: key_id + leaf,
-          });
-          this.counter += 1;
-        }
-      }
-    },
-    loadAllTranslations() {
-      let locale =
-        this.currentLocale.languageCode + "-" + this.currentLocale.countryCode;
-      this.storedLocale =
-        this.currentLocale.languageCode + "-" + this.currentLocale.countryCode;
-      return this.$http
-        .get(`api/v1/i18n/values/${locale}?format=tree`)
-        .then((resp) => {
-          this.translation = resp.data;
-        })
-        .then(() => this.getTreeLeaves());
-    },
     loadTopLevelTags() {
       return this.$http
         .get(`api/v1/i18n/keys`)
@@ -436,8 +375,8 @@ export default {
         });
     },
     getTranslationDetails() {
-      let previewLocale = 'en-US'; //Probably set to this.wip.preview.code
-      let currentLocale = 'es-EC'; //Probably set to this.wip.current.code
+      let previewLocale = 'en-US'; //Eventually come from this.wip.preview.code
+      let currentLocale = 'es-EC'; //Eventually come from this.wip.current.code
 
       return this.$http
         .get(`api/v1/i18n/values/translations/${previewLocale}/${currentLocale}`)
@@ -449,7 +388,6 @@ export default {
     },
   },
   mounted: function () {
-    // this.loadAllTranslations();
     this.loadTopLevelTags();
     this.getAllLocales();
     this.getTranslationDetails();
