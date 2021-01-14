@@ -32,7 +32,6 @@
     "vee-validate": "^2.2.15",
     "vue": "^2.6.12",
     "vue-axios": "^3.2.2",
-    "vue-cal": "^1.63.0",
     "vue-chartjs": "^3.5.1",
     "vue-i18n": "^8.22.3",
     "vue-property-decorator": "^8.5.1",
