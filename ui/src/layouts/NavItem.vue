@@ -23,12 +23,15 @@
       :to="{ name: item.route }"
       :data-cy="item.route"
     >
-      <v-list-item-action v-if="item.icon">
+      <v-list-item-action v-if="item.icon && !item.isDropdown">
         <v-icon>{{ item.icon }}</v-icon>
       </v-list-item-action>
       <v-list-item-title>
         {{ item.title }}
       </v-list-item-title>
+      <v-list-item-action v-if="item.icon && item.isDropdown">
+        <v-icon>{{ item.icon }}</v-icon>
+      </v-list-item-action>
     </v-list-item>
   </div>
 </template>
@@ -47,13 +50,13 @@ export default {
     },
   },
   computed: {
+    isInterior() {
+      return !this.isLeaf;
+    },
     isLeaf() {
       return (
         this.item.children === undefined || this.item.children.length === 0
       );
-    },
-    isInterior() {
-      return !this.isLeaf;
     },
   },
 };
