@@ -52,7 +52,7 @@ export default {
         }
       }
     });
-
+    
     // Authentication information in local storage.
     setJWT(this.currentJWT);
   },

@@ -49,7 +49,7 @@
       dark
       fixed
       top
-      left
+      right
       color="dense"
       @click="toBottom"
     >
@@ -57,13 +57,14 @@
     </v-btn>
 
     <v-btn
+      class="mb-7"
       v-scroll="onScroll"
       v-show="fab"
       fab
       dark
       fixed
       bottom
-      left
+      right
       color="dense"
       @click="toTop"
     >
