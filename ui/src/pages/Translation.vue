@@ -88,6 +88,7 @@
                 :key="index"
                 v-text="tag"
                 :class="{ 'active': index === 0 }"
+                @click="addSelectedTag(tag)"
               >
               </v-list-item>
             </v-list-item-group>
@@ -99,93 +100,93 @@
       
       <!-- Rest of tag and other stuff -->
       <v-col>
-        <!--  v-for="(obj,index) in wip.tags"
-          :key="index"
-          v-text="obj" -->
-          
-        <v-card 
-          outlined
-          class="d-flex align-center ml-3 mt-4 mr-3"
-          elevation="2"
-        >
-          <v-card
-            min-width=19.7%
-            max-width=19.7%
-            elevation="0"
-            class="ml-1"
-          >
-            <v-card-text>
-              Joe Mama
-            </v-card-text>
-          </v-card>
-          
-          <v-card
-            min-width=20.5%
-            max-width=2-.5%
-            elevation="0"
+        <template>
+        <!-- v-for="tag in wip.translationDetails"
+            v-if="tag.top_level_key in wip.selectedTags" -->
+          <v-card 
             outlined
-          >
-            <v-card-text>
-              Joe Mama
-            </v-card-text>
-          </v-card>
-
-          <v-card
-            min-width=1%
-            elevation="0"
-          >
-            <v-icon>
-              keyboard_arrow_right
-            </v-icon>
-          </v-card>
-
-          <v-card
-            min-width=20.5%
-            max-width=20.5%
-            elevation="0"
-            outlined
-          >
-            <v-card-text>
-              Joe Mama
-            </v-card-text>
-          </v-card>
-
-          <!-- SPACER -->
-          <v-card
-            min-width=7%
-          ></v-card>
-
-          <v-card
-            min-width=20%
-            max-width=20%
-            elevation="0"
+            class="d-flex align-center ml-3 mt-4 mr-3"
+            elevation="2"
           >
             <v-card
-              min-width=80%
-              max-width=80%
+              min-width=19.7%
+              max-width=19.7%
+              elevation="0"
+              class="ml-1"
+            >
+              <v-card-text>
+                Joe Mama
+              </v-card-text>
+            </v-card>
+            
+            <v-card
+              min-width=20.5%
+              max-width=2-.5%
+              elevation="0"
+              outlined
+            >
+              <v-card-text>
+                Joe Mama
+              </v-card-text>
+            </v-card>
+
+            <v-card
+              min-width=1%
               elevation="0"
             >
-              <v-text-field>
-              </v-text-field>
+              <v-icon>
+                keyboard_arrow_right
+              </v-icon>
+            </v-card>
+
+            <v-card
+              min-width=20.5%
+              max-width=20.5%
+              elevation="0"
+              outlined
+            >
+              <v-card-text>
+                Joe Mama
+              </v-card-text>
+            </v-card>
+
+            <!-- SPACER -->
+            <v-card
+              min-width=7%
+            ></v-card>
+
+            <v-card
+              min-width=20%
+              max-width=20%
+              elevation="0"
+            >
+              <v-card
+                min-width=80%
+                max-width=80%
+                elevation="0"
+              >
+                <v-text-field>
+                </v-text-field>
+              </v-card>
+            </v-card>
+
+            <!-- SPACER -->
+            <v-card
+              min-width=3.7%
+            ></v-card>
+
+            <v-card
+              min-width=1%
+              max-width=1%
+              elevation="0"
+            >
+              <v-checkbox
+                class=" align-self-center"
+              >
+              </v-checkbox>
             </v-card>
           </v-card>
-
-          <!-- SPACER -->
-          <v-card
-            min-width=3.7%
-          ></v-card>
-
-          <v-card
-            min-width=1%
-            max-width=1%
-            elevation="0"
-          >
-            <v-checkbox
-              class=" align-self-center"
-            >
-            </v-checkbox>
-          </v-card>
-        </v-card>
+        </template>
       </v-col>
     </v-row>
 
@@ -193,10 +194,9 @@
       fixed
       bottom
     >
-      <v-app-bar
+      <v-app-bar   
         color="white"
-        elevation="2"
-        
+        elevation="2"     
       >
         <v-card
           min-width="80%"
@@ -275,8 +275,10 @@ export default {
       search: null,
       fab: false,
       baf: true,
+      isActive: false,
       wip: {
         translationDetails: [],
+        selectedTags: [],
         tags: [],
         topLevelTags: [],
         localeObjs: [],
@@ -307,9 +309,15 @@ export default {
           "New Locale",
           this.currentLocale.languageCode + "-" + this.currentLocale.countryCode
         );
-        this.loadAllTranslations();
       }
     },
+    // https://vuejs.org/v2/guide/list.html
+    'wip.selectedTags': {
+      handler: function(someValue) {
+        console.log(`Here is some value: ${someValue}`);
+      },
+      deep: true
+    }
   },
   methods: {
     onScroll(e) {
@@ -383,15 +391,24 @@ export default {
         .get(`api/v1/i18n/values/translations/${previewLocale}/${currentLocale}`)
         .then((resp) => {
           this.wip.translationDetails = resp.data;
-          console.log(resp.data[0]);
         })
         .catch((err) => console.log(err));
+    },
+    addSelectedTag(tag) {
+      this.wip.selectedTags.push(tag);
+    },
+    fillAllCards(){
+      //this.visibleTranslations.forEach((obj)=>{
+      //  createElement('v-card', obj.top_level_key);
+      //})
+      console.log("Joe mama");
     },
   },
   mounted: function () {
     this.loadTopLevelTags();
     this.getAllLocales();
     this.getTranslationDetails();
+    this.fillAllCards();
   },
 };
 </script>
