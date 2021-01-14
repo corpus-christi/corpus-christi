@@ -55,10 +55,12 @@ export default {
                 {
                   title: this.$t("diplomas.diploma"),
                   route: "diplomas-admin",
+                  isDropdown: true,
                 },
                 {
                   title: this.$t("transcripts.transcript"),
                   route: "transcripts",
+                  isDropdown: true,
                 },
               ],
             },
@@ -66,6 +68,20 @@ export default {
               title: this.$t("events.header"),
               route: "events",
               icon: "event",
+              children: [
+                {
+                  title: this.$t("events.header"),
+                  route: "all-events",
+                  icon: "list",
+                  isDropdown: true,
+                },
+                {
+                  title: this.$t("events.calendar.title"),
+                  route: "events-calendar",
+                  icon: "date_range",
+                  isDropdown: true,
+                },
+              ],
             },
             {
               title: this.$t("teams.title"),
@@ -118,10 +134,12 @@ export default {
                 {
                   title: this.$t("diplomas.diploma"),
                   route: "diplomas-admin",
+                  isDropdown: true,
                 },
                 {
                   title: this.$t("transcripts.transcript"),
                   route: "transcripts",
+                  isDropdown: true,
                 },
               ],
             },
@@ -129,16 +147,32 @@ export default {
               title: this.$t("events.header"),
               route: "events",
               icon: "event",
-            },
-            {
-              title: this.$t("teams.title"),
-              route: "teams",
-              icon: "group",
-            },
-            {
-              title: this.$t("assets.title"),
-              route: "assets",
-              icon: "devices_other",
+              children: [
+                {
+                  title: this.$t("events.header"),
+                  route: "all-events",
+                  icon: "list",
+                  isDropdown: true,
+                },
+                {
+                  title: this.$t("events.calendar.title"),
+                  route: "events-calendar",
+                  icon: "date_range",
+                  isDropdown: true,
+                },
+                {
+                  title: this.$t("teams.title"),
+                  route: "teams",
+                  icon: "group",
+                  isDropdown: true,
+                },
+                {
+                  title: this.$t("assets.title"),
+                  route: "assets",
+                  icon: "devices_other",
+                  isDropdown: true,
+                },
+              ],
             },
             {
               title: this.$t("places.title"),
