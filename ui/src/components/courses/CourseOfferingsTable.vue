@@ -36,14 +36,15 @@
       </v-layout>
     </v-toolbar>
 
-    <!-- Table of existing people -->
+    <!-- Table of existing course offerings -->
+    <!-- :pagination.sync="paginationInfo" -->
     <v-data-table
       :headers="headers"
       :search="search"
       :items="showCourseOfferings"
       class="elevation-1"
       :items-per-page-options="rowsPerPageItem"
-      :pagination.sync="paginationInfo"
+      option.sync="paginationInfo"
     >
       <v-progress-linear
         slot="progress"
@@ -163,7 +164,7 @@ export default {
 
       paginationInfo: {
         sortBy: "start",
-        rowsPerPage: 10,
+        itemsPerPage: 10,
         page: 1,
       },
 
