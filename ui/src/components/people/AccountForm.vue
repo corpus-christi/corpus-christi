@@ -19,7 +19,7 @@
           v-bind:error-messages="errors.collect('username')"
           prepend-icon="person"
           data-cy="new-account-username"
-        ></v-text-field>
+        />
 
         <!-- Password (new or update) -->
         <v-text-field
@@ -33,7 +33,8 @@
           v-bind:error-messages="errors.collect('password')"
           prepend-icon="lock"
           data-cy="new-update-password"
-        ></v-text-field>
+        />
+
         <!-- Password confirmation (new or update) -->
         <v-text-field
           v-model="repeat_password"
@@ -44,9 +45,10 @@
           v-bind:error-messages="errors.collect('repeat-password')"
           prepend-icon="lock"
           data-cy="confirm-password"
-        ></v-text-field>
+        />
       </v-card-text>
     </div>
+
     <div v-if="rolesEnabled">
       <v-card-title>{{ $t("person.actions.assign-roles") }}</v-card-title>
       <v-card-text>

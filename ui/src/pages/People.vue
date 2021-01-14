@@ -67,7 +67,7 @@ export default {
         .get("/api/v1/people/role")
         .then((resp) => {
           let roles = [];
-          for (var role of resp.data) {
+          for (const role of resp.data) {
             roles.push({
               text: role.nameI18n,
               value: role.id,
@@ -85,9 +85,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.vertical-spacer {
-  margin-bottom: 16px;
-}
-</style>
