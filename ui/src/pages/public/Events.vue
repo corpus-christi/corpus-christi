@@ -21,13 +21,16 @@
           min-width="290px"
           data-cy="start-date-picker"
         >
-          <v-text-field
-            slot="activator"
-            v-model="filterStart"
-            v-bind:label="$t('events.start-date')"
-            prepend-icon="event"
-            readonly
-          />
+          <template v-slot:activator="{ on }">
+            <v-btn v-on="on">
+              <v-text-field
+                v-model="filterStart"
+                v-bind:label="$t('events.start-date')"
+                prepend-icon="event"
+                readonly
+              />
+            </v-btn>
+          </template>
           <v-date-picker
             v-model="filterStart"
             @input="showStartDatePicker = false"
@@ -49,13 +52,16 @@
           min-width="290px"
           data-cy="end-date-picker"
         >
-          <v-text-field
-            slot="activator"
-            v-model="filterEnd"
-            v-bind:label="$t('events.end-date')"
-            prepend-icon="event"
-            readonly
-          />
+          <template v-slot:activator="{ on }">
+            <v-btn v-on="on">
+              <v-text-field
+                v-model="filterEnd"
+                v-bind:label="$t('events.end-date')"
+                prepend-icon="event"
+                readonly
+              />
+            </v-btn>
+          </template>
           <v-date-picker
             v-model="filterEnd"
             @input="showEndDatePicker = false"
