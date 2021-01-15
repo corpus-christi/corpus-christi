@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-btn
-      outline
+      outlined
       color="primary"
       v-on:click="
         $router.push({ name: 'course-details', params: { courseId } })
