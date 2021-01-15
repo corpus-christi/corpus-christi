@@ -42,17 +42,6 @@
       </v-row>
     </v-app-bar>
 
-    <!-- For testing 'changes must be saved' feature -->
-    <v-btn
-      color="primary"
-      fixed
-      right
-      @click="canUserLeaveFreely = !canUserLeaveFreely"
-      :style="{top: '50%'}"
-    >
-      {{freelyLeaveButtonText}}
-    </v-btn>
-
     <v-btn
       class="mt-13"
       v-scroll="onScroll"
@@ -219,8 +208,7 @@
         <!-- For testing 'changes must be saved' feature -->
         <v-btn
           min-width="15%"
-          @click="canUserLeaveFreely = !canUserLeaveFreely"
-          
+          @click="canUserLeaveFreely = !canUserLeaveFreely" 
         >
           {{freelyLeaveButtonText}}
         </v-btn>
