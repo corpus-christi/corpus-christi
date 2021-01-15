@@ -2,11 +2,13 @@
   <div>
     <!-- Interior node -->
     <v-list-group v-if="isInterior">
-      <template v-slot:activator>
-        <v-list-item-icon>
-          <v-icon>{{ item.icon }}</v-icon>
-        </v-list-item-icon>
-        <v-list-item-title>{{ item.title }}</v-list-item-title>
+      <template v-slot:activator="{ on }">
+        <v-btn v-on="on">
+          <v-list-item-icon>
+            <v-icon>{{ item.icon }}</v-icon>
+          </v-list-item-icon>
+          <v-list-item-title>{{ item.title }}</v-list-item-title>
+        </v-btn>
       </template>
 
       <nav-item
