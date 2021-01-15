@@ -17,6 +17,7 @@
           <v-select
             :items="wip.localesConcat"
             v-bind:label="wip.preview.desc"
+            v-model="wip.defaultPreview"
             class="mt-5"
           ></v-select>
         </v-col>
@@ -98,8 +99,7 @@
                 v-for="(tag, index) in wip.topLevelTags"
                 :key="index"
                 v-text="tag"
-                :class="{ 'active': index === 0 }"
-                @click="addSelectedTag(tag)"
+                @change="addSelectedTag(tag)"
               >
               </v-list-item>
             </v-list-item-group>
@@ -118,6 +118,8 @@
             outlined
             class="d-flex align-center ml-3 mt-4 mr-3"
             elevation="2"
+            v-for="(detail, i) in wip.cardDetails"
+            :key="i"
           >
             <v-card
               min-width=19.7%
@@ -126,18 +128,18 @@
               class="ml-1"
             >
               <v-card-text>
-                Joe Mama
+                {{ detail.rest_of_key }}
               </v-card-text>
             </v-card>
             
             <v-card
               min-width=20.5%
-              max-width=2-.5%
+              max-width=20.5%
               elevation="0"
               outlined
             >
               <v-card-text>
-                Joe Mama
+                {{ detail.preview_gloss }}
               </v-card-text>
             </v-card>
 
@@ -157,7 +159,7 @@
               outlined
             >
               <v-card-text>
-                Joe Mama
+                {{ detail.current_gloss }}
               </v-card-text>
             </v-card>
 
@@ -193,6 +195,7 @@
             >
               <v-checkbox
                 class=" align-self-center"
+                v-model="detail.current_verified"
               >
               </v-checkbox>
             </v-card>
@@ -210,7 +213,19 @@
         elevation="2"     
       >
         <v-card
-          min-width="80%"
+          min-width="60%"
+        > 
+        </v-card>
+        <!-- For testing 'changes must be saved' feature -->
+        <v-btn
+          min-width="15%"
+          @click="canUserLeaveFreely = !canUserLeaveFreely"
+          
+        >
+          {{freelyLeaveButtonText}}
+        </v-btn>
+        <v-card
+          min-width="2%"
         > 
         </v-card>
         <v-btn
@@ -287,17 +302,19 @@ export default {
       fab: false,
       baf: true,
       isActive: false,
+      canUserLeaveFreely: false,
       wip: {
         translationDetails: [],
         selectedTags: [],
+        cardDetails: [],
         tags: [],
         topLevelTags: [],
         localeObjs: [],
         localesConcat: [],
+        defaultPreview: null,
         preview: {"code": "n/a", "desc": "Translate From"},
         current: {"code": "n/a", "desc": "Translate To"},
       },
-      canUserLeaveFreely: true,
     };
   },
   computed: {
@@ -328,12 +345,13 @@ export default {
       }
     },
     // https://vuejs.org/v2/guide/list.html
-    'wip.selectedTags': {
-      handler: function(someValue) {
-        console.log(`Here is some value: ${someValue}`);
-      },
-      deep: true
-    }
+    // 'wip.selectedTags': {
+    //   handler: function(someValue) {
+    //     // console.log(`Value: ${someValue}`);
+    //     // console.log(this.wip.selectedTags);
+    //   },
+    //   deep: true
+    // }
   },
   methods: {
     onScroll(e) {
@@ -385,6 +403,7 @@ export default {
         .then((resp) => {
           resp.data.forEach((obj) => {
             // this.wip.tags.map(obj);
+            obj.active = false;
             this.wip.topLevelTags.push(obj.id.split('.')[0]);
           });
           this.wip.topLevelTags = _.uniq(this.wip.topLevelTags).sort();
@@ -397,6 +416,7 @@ export default {
         .then((resp) => {
           this.wip.localeObjs = resp.data;
           this.wip.localesConcat = resp.data.map((obj) => obj.flag + " " + obj.desc);
+          this.wip.defaultPreview = this.wip.localesConcat[0];
         });
     },
     getTranslationDetails() {
@@ -407,18 +427,44 @@ export default {
         .get(`api/v1/i18n/values/translations/${previewLocale}/${currentLocale}`)
         .then((resp) => {
           this.wip.translationDetails = resp.data;
+          console.log(resp.data[0]);
         })
         .catch((err) => console.log(err));
     },
     addSelectedTag(tag) {
-      this.wip.selectedTags.push(tag);
+      if (this.wip.selectedTags.indexOf(tag) == -1) {
+        this.wip.selectedTags.push(tag);
+        this.fillAllCards();
+      }
+      else {
+        this.wip.selectedTags.splice(
+          this.wip.selectedTags.indexOf(tag), 1
+        );
+        this.deleteCards(tag);
+      }
     },
     fillAllCards(){
-      //this.visibleTranslations.forEach((obj)=>{
-      //  createElement('v-card', obj.top_level_key);
-      //})
-      console.log("Joe mama");
+      this.wip.cardDetails = [];
+      this.wip.translationDetails.forEach((details) => {
+        if (this.wip.selectedTags.includes(details.top_level_key)) {
+          this.wip.cardDetails.push(details);
+        }
+      });
+      //Sorting
+      //console.log(this.wip.cardDetails);
+      //console.log(this.wip.selectedTags);
     },
+    deleteCards(tag){
+      console.log(this.wip.cardDetails)
+      for(let i = 0 ; i < this.wip.cardDetails.length;i++){
+        if (this.wip.cardDetails[i].top_level_key == tag) {
+          this.wip.cardDetails.splice(i, 1);
+          i--;
+        }
+      }
+      console.log(this.wip.cardDetails);
+      console.log(this.wip.selectedTags);
+    }
   },
   mounted: function () {
     this.loadTopLevelTags();
