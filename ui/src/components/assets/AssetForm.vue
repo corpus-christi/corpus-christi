@@ -15,6 +15,23 @@
           data-cy="description"
         ></v-textarea>
 
+        <v-btn
+          small
+          color="primary"
+          text
+          :disabled="addressWasSaved"
+          @click="changeAddressView(true)"
+        >
+        {{ $t("actions.add-address") }}
+        </v-btn>
+
+        <address-form
+          v-if="showAddressForm"
+          @cancel="changeAddressView"
+          @saved="saveAddress"
+        >
+        </address-form>
+
         <entity-search
           location
           name="location"
@@ -60,8 +77,10 @@
 <script>
 import { isEmpty } from "lodash";
 import EntitySearch from "../EntitySearch";
+import AddressForm from "../AddressForm.vue";
+
 export default {
-  components: { "entity-search": EntitySearch },
+  components: { "entity-search": EntitySearch, "address-form": AddressForm },
   name: "AssetForm",
   props: {
     editMode: {
@@ -81,6 +100,8 @@ export default {
   },
   data: function () {
     return {
+      showAddressForm: false,
+      addressWasSaved: false,
       asset: {},
       save_loading: false,
       add_more_loading: false,
@@ -112,6 +133,11 @@ export default {
     formDisabled() {
       return this.saveLoading || this.addMoreLoading;
     },
+
+    addressSaved() {
+      return this.addressWasSaved;
+    },
+
   },
 
   methods: {
@@ -121,6 +147,7 @@ export default {
 
     // Clear the form and the validators.
     clear() {
+      this.addressWasSaved = false;
       delete this.asset.location;
       for (let key of this.assetKeys) {
         this.asset[key] = "";
@@ -138,6 +165,17 @@ export default {
         }
         this.addMore = false;
       });
+    },
+
+    saveAddress(resp) {
+      this.asset.location = resp;
+      this.addressWasSaved = true;
+      this.showAddressForm = false;
+      this.save();
+    },
+
+    changeAddressView(show) {
+      this.showAddressForm = show;
     },
 
     addAnother() {

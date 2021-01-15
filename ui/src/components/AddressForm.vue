@@ -182,6 +182,8 @@ export default {
               } else {
                 this.addressErr = false;
                 let addr = response.results[0];
+                console.log("addr");
+                console.log(response);
                 this.address.address = addr.formatted_address;
                 this.address.latitude = addr.geometry.location.lat;
                 this.address.longitude = addr.geometry.location.lng;
