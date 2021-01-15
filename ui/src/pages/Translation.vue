@@ -46,7 +46,7 @@
       color="primary"
       fixed
       right
-      @click="toggleLeavingPrompt"
+      @click="canUserLeaveFreely = !canUserLeaveFreely"
       :style="{top: '50%'}"
     >
       {{freelyLeaveButtonText}}
@@ -419,10 +419,6 @@ export default {
       //})
       console.log("Joe mama");
     },
-    // For testing 'changes must be saved' feature
-    toggleLeavingPrompt() {
-      this.canUserLeaveFreely = !this.canUserLeaveFreely;
-    }
   },
   mounted: function () {
     this.loadTopLevelTags();
@@ -434,7 +430,7 @@ export default {
     // If there are unsaved changes,
     //  Do not let the user leave without prompting
     if (!this.canUserLeaveFreely) {
-      const userAnswer = window.confirm("Unsaved changes will be lost! Are you sure?");
+      const userAnswer = window.confirm(this.$t("actions.unsaved-changes-lost"));
       next(userAnswer);
     }
     else {
