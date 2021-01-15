@@ -42,6 +42,9 @@
       class="elevation-1"
       data-cy="transcripts-table"
       v-on:click:row="goToTranscript"
+      hide-default-footer
+      @page-count="pageCount = $event"
+      :page.sync="page"
     >
       <template slot="items" slot-scope="props">
         <tr>
@@ -54,6 +57,9 @@
         </tr>
       </template>
     </v-data-table>
+    <div>
+      <v-pagination v-model="page" :length="pageCount"></v-pagination>
+    </div>
   </div>
 </template>
 
@@ -63,6 +69,9 @@ export default {
   components: {},
   data() {
     return {
+      page: 1,
+      pageCount: 0,
+
       tableLoaded: false,
       selected: [],
       students: [],

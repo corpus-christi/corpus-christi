@@ -54,7 +54,6 @@
     </v-toolbar>
 
     <!-- Table of existing courses -->
-    <!-- :pagination.sync="paginationInfo" -->
     <v-data-table
       :headers="headers"
       :search="search"
@@ -64,7 +63,9 @@
       class="elevation-1"
       data-cy="courses-table"
       v-on:click:row="goToCourse"
-      option.sync="paginationInfo"
+      hide-default-footer
+      @page-count="pageCount = $event"
+      :page.sync="page"
     >
       <v-progress-linear
         slot="progress"
@@ -87,6 +88,9 @@
         </td>
       </template>
     </v-data-table>
+    <div class="text-center pt-2">
+      <v-pagination v-model="page" :length="pageCount"></v-pagination>
+    </div>
 
     <v-snackbar v-model="snackbar.show" data-cy="courses-table-snackbar">
       {{ snackbar.text }}
@@ -186,11 +190,8 @@ export default {
         { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 },
       ],
 
-      paginationInfo: {
-        sortBy: "start",
-        itemsPerPage: 10,
-        page: 1,
-      },
+      page: 1,
+      pageCount: 0,
 
       courses: [],
 

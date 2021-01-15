@@ -51,6 +51,9 @@
       class="elevation-1"
       data-cy="diplomas-table"
       v-on:click:row="goToDiploma"
+      hide-default-footer
+      @page-count="pageCount = $event"
+      :page.sync="page"
     >
       <template slot="items" slot-scope="props">
         <tr>
@@ -70,6 +73,9 @@
         </tr>
       </template>
     </v-data-table>
+    <div class="text-center pt-2">
+      <v-pagination v-model="page" :length="pageCount"></v-pagination>
+    </div>
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
@@ -152,6 +158,10 @@ export default {
         course: {},
         loading: false,
       },
+
+      page: 1,
+      pageCount: 0,
+
       addMore: false,
       tableLoaded: false,
       selected: [],
