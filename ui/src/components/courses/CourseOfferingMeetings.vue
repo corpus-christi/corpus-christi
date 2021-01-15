@@ -33,7 +33,7 @@
               <v-btn
                 flat
                 icon
-                outline
+                outlined
                 small
                 color="primary"
                 slot="activator"
@@ -47,7 +47,7 @@
               <v-btn
                 flat
                 icon
-                outline
+                outlined
                 small
                 color="primary"
                 slot="activator"

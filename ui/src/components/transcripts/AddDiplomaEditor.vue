@@ -13,7 +13,7 @@
               v-model="diploma.id"
               :items="items"
               v-bind:label="$t('diplomas.diploma')"
-              outline
+              outlined
               item-value="id"
               item-text="name"
               :success="valid"

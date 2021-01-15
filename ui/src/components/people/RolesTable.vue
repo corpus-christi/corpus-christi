@@ -62,7 +62,7 @@
           <v-tooltip bottom>
             <v-btn
               icon
-              outline
+              outlined
               small
               color="primary"
               slot="activator"

@@ -79,7 +79,7 @@
       <v-btn
         v-if="person.active && person.accountInfo && account.active"
         color="primary"
-        outline
+        outlined
         v-on:click="deactivateAccount"
         data-cy="deactivate-account"
       >
@@ -88,7 +88,7 @@
       <v-btn
         v-if="person.active && person.accountInfo && !account.active"
         color="primary"
-        outline
+        outlined
         v-on:click="reactivateAccount"
         data-cy="reactivate-account"
       >
