@@ -41,6 +41,17 @@
       </v-row>
     </v-app-bar>
 
+    <!-- For testing 'changes must be saved' feature -->
+    <v-btn
+      color="primary"
+      fixed
+      right
+      @click="toggleLeavingPrompt"
+      :style="{top: '50%'}"
+    >
+      {{freelyLeaveButtonText}}
+    </v-btn>
+
     <v-btn
       class="mt-13"
       v-scroll="onScroll"
@@ -286,6 +297,7 @@ export default {
         preview: {"code": "n/a", "desc": "Translate From"},
         current: {"code": "n/a", "desc": "Translate To"},
       },
+      canUserLeaveFreely: true,
     };
   },
   computed: {
@@ -296,6 +308,10 @@ export default {
         this.currentLocale.languageCode + "-" + this.currentLocale.countryCode
       );
     },
+    // For testing 'changes must be saved' feature
+    freelyLeaveButtonText() {
+      return this.canUserLeaveFreely ? "Leave without issue" : "Prompt b/f leaving";
+    }
   },
   watch: {
     titleLocale() {
@@ -380,7 +396,7 @@ export default {
         .get(`api/v1/i18n/locales`)
         .then((resp) => {
           this.wip.localeObjs = resp.data;
-          this.wip.localesConcat = resp.data.map((obj) => obj.code + " " + obj.desc);
+          this.wip.localesConcat = resp.data.map((obj) => obj.flag + " " + obj.desc);
         });
     },
     getTranslationDetails() {
@@ -403,6 +419,10 @@ export default {
       //})
       console.log("Joe mama");
     },
+    // For testing 'changes must be saved' feature
+    toggleLeavingPrompt() {
+      this.canUserLeaveFreely = !this.canUserLeaveFreely;
+    }
   },
   mounted: function () {
     this.loadTopLevelTags();
@@ -410,6 +430,17 @@ export default {
     this.getTranslationDetails();
     this.fillAllCards();
   },
+  beforeRouteLeave(to, from, next) {
+    // If there are unsaved changes,
+    //  Do not let the user leave without prompting
+    if (!this.canUserLeaveFreely) {
+      const userAnswer = window.confirm("Unsaved changes will be lost! Are you sure?");
+      next(userAnswer);
+    }
+    else {
+      next();
+    }
+  }
 };
 </script>
 
