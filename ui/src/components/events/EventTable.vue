@@ -8,9 +8,9 @@
     <v-toolbar class="pa-1" extension-height="64px">
       <v-layout justify-space-between>
         <v-flex shrink align-self-center>
-          <v-toolbar-title class="hidden-xs-only">{{
-            $t("events.header")
-          }}</v-toolbar-title>
+          <v-toolbar-title class="hidden-xs-only">
+            {{ $t("events.header") }}
+          </v-toolbar-title>
         </v-flex>
         <v-spacer></v-spacer>
         <v-text-field
@@ -21,7 +21,7 @@
           single-line
           hide-details
           data-cy="form-search"
-        ></v-text-field>
+        />
         <v-flex shrink justify-self-end>
           <v-btn
             class="hidden-xs-only mr-2"
@@ -59,7 +59,7 @@
           </v-select>
         </v-flex>
         <v-flex shrink>
-          <!-- TODO: What is suppsoed to show? Get error message after click the switch-->
+          <!-- TODO: What is supposed to show? Get error message after click the switch -->
           <v-switch
             hide-details
             v-model="viewPast"
@@ -70,6 +70,7 @@
         </v-flex>
       </v-layout>
     </v-toolbar>
+
     <v-data-table
       :headers="headers"
       :items-per-page-options="rowsPerPageItem"
@@ -90,8 +91,8 @@
               small
               justify-space-around
               color="secondary"
-              >autorenew</v-icon
-            >
+              >autorenew
+            </v-icon>
           </td>
           <td class="hover-hand" v-on:click="navigateToEvent(props.item.id)">
             <span> {{ props.item.title }}</span>
@@ -217,8 +218,8 @@
             color="secondary"
             text
             data-cy="cancel-archive"
-            >{{ $t("actions.cancel") }}</v-btn
-          >
+            >{{ $t("actions.cancel") }}
+          </v-btn>
           <v-spacer></v-spacer>
           <v-btn
             v-on:click="archiveEvent"
@@ -226,8 +227,8 @@
             raised
             :loading="archiveDialog.loading"
             data-cy="confirm-archive"
-            >{{ $t("actions.confirm") }}</v-btn
-          >
+            >{{ $t("actions.confirm") }}
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -237,6 +238,7 @@
 <script>
 import CustomForm from "../CustomForm";
 import { mapGetters } from "vuex";
+
 export default {
   name: "EventTable",
   components: { "event-form": CustomForm },
@@ -716,7 +718,7 @@ export default {
           return name;
         }
       }
-      return location.address.address;
+      return location?.address?.address || this.$t("location.missing");
     },
 
     navigateToEvent(id) {

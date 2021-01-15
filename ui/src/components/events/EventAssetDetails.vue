@@ -142,7 +142,7 @@ export default {
 
   data() {
     return {
-      assetList: [...this.assets],
+      assetList: [],
 
       addAssetDialog: {
         show: false,
@@ -156,6 +156,12 @@ export default {
         assetId: -1,
       },
     };
+  },
+
+  watch: {
+    assets(val) {
+      this.assetList = val;
+    },
   },
 
   methods: {

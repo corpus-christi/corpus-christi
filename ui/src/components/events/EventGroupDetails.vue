@@ -157,7 +157,7 @@ export default {
 
   data() {
     return {
-      groupList: [...this.groups],
+      groupList: [],
 
       addGroupDialog: {
         show: false,
@@ -171,6 +171,12 @@ export default {
         groupId: -1,
       },
     };
+  },
+
+  watch: {
+    groups(val) {
+      this.groupList = val;
+    }
   },
 
   methods: {

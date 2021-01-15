@@ -157,7 +157,7 @@ export default {
 
   data() {
     return {
-      teamList: [...this.teams],
+      teamList: [],
 
       addTeamDialog: {
         show: false,
@@ -171,6 +171,12 @@ export default {
         teamId: -1,
       },
     };
+  },
+
+  watch: {
+    teams(val) {
+      this.teamList = val;
+    },
   },
 
   methods: {

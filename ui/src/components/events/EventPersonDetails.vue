@@ -197,7 +197,7 @@ export default {
 
   data() {
     return {
-      personList: [...this.persons],
+      personList: [],
 
       addPersonDialog: {
         editMode: false,
@@ -230,6 +230,13 @@ export default {
       translations: {},
     };
   },
+
+  watch: {
+    persons(val) {
+      this.personList = val;
+    },
+  },
+
   computed: {
     addPersonDialogTitle() {
       return this.addPersonDialog.editMode
