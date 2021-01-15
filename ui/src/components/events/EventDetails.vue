@@ -133,7 +133,7 @@
               :groups="event.groups"
               :loaded="groupsLoaded"
               v-on:snackbar="showSnackbar($event)"
-              v-on:group-added="reloadGroups"
+              v-on:group-added="addGroup"
             ></event-group-details>
           </v-flex>
         </v-layout>
@@ -263,6 +263,7 @@ export default {
   },
 
   methods: {
+
     getEvent() {
       const id = this.$route.params.event;
       return this.$http
@@ -340,6 +341,37 @@ export default {
       this.groupsLoaded = false;
       this.event.groups.push(data);
       this.groupsLoaded = true;
+    },
+
+    addGroup(data) {
+      console.log("check");
+      console.log(data.group);
+      const eventId = this.$route.params.event;
+      let groupId = data.group.id;
+      const idx = this.event.groups.findIndex((t) => t.id === groupId);
+      if (idx > -1) {
+        this.showSnackbar(this.$t("groups-group-on-event"));
+        return;
+      }
+
+      this.$http
+        .post(`/api/v1/events/${eventId}/groups/${groupId}`)
+        .then(() => {
+          this.showSnackbar(this.$t("groups.group-added"));
+          console.log("A----------------------------------------------------");
+          console.log(data.group);
+          this.event.groups.push(data.group);
+        })
+        .catch((err) => {
+          console.log(err);
+          if (err.response.status === 422) {
+            this.showSnackbar(this.$t("groups.error-group-assigned"));
+          } else {
+            this.showSnackbar(this.$t("groups.error-adding-group"));
+          }
+        });
+      console.log("just checking:");
+      console.log(data.group);
     },
 
     editEvent(event) {

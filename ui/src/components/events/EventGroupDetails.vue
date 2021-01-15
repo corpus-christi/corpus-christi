@@ -187,6 +187,7 @@ export default {
     },
 
     addGroup() {
+      /*
       const eventId = this.$route.params.event;
       let groupId = this.addGroupDialog.group.id;
       const idx = this.groupList.findIndex((t) => t.id === groupId);
@@ -213,6 +214,13 @@ export default {
             this.showSnackbar(this.$t("groups.error-adding-group"));
           }
         });
+        */
+      // Emit group-added event
+      this.addGroupDialog.loading = true;
+      //const newData = this.addGroupDialog;
+      this.$emit("group-added", { group: this.addGroupDialog.group });
+      this.addGroupDialog.loading = false;
+      this.closeAddGroupDialog();
     },
 
     deleteGroup() {
