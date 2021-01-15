@@ -384,7 +384,7 @@ export default {
             this.showSnackbar(this.$t("assets.error-editing-asset"));
           });
       } else {
-        console.log(newAsset);
+        //console.log(newAsset);
         delete newAsset.event_count;
         this.$http
           .post("/api/v1/assets/?include_location=1", newAsset)

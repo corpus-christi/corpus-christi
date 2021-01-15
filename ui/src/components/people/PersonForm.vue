@@ -726,6 +726,8 @@ export default {
             this.$emit(emitMessage, response.data);
             this.resetForm();
           }
+          console.log("response");
+          console.log(response.data);
           this.$emit("attachPerson", response.data);
         })
         .catch((err) => {

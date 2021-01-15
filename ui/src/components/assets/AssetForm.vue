@@ -158,6 +158,7 @@ export default {
 
     save() {
       this.$validator.validateAll().then(() => {
+        console.log("validating", this.asset);
         if (!this.errors.any()) {
           this.asset.active = true;
           if (this.addMore) this.$emit("addAnother", this.asset);
@@ -168,6 +169,7 @@ export default {
     },
 
     saveAddress(resp) {
+      console.log("saving", this.asset);
       this.asset.location = resp;
       this.addressWasSaved = true;
       this.showAddressForm = false;
