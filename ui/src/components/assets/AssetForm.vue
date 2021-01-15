@@ -36,7 +36,7 @@
           location
           name="location"
           v-model="asset.location"
-          v-validate="'required'"
+          v-validate="checkLocation"
           v-bind:error-messages="errors.first('location')"
         />
       </form>
@@ -141,6 +141,11 @@ export default {
   },
 
   methods: {
+
+    checkLocation(){
+      return this.asset.location;
+    },
+
     cancel() {
       this.$emit("cancel");
     },
@@ -163,6 +168,7 @@ export default {
           this.asset.active = true;
           if (this.addMore) this.$emit("addAnother", this.asset);
           else this.$emit("save", this.asset);
+          this.addressWasSaved = false;
         }
         this.addMore = false;
       });
