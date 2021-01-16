@@ -1,46 +1,10 @@
 <template>
   <v-container>
-    <v-app-bar dense dark height="60">
-      <!--{{ titleLocale }}-->
-      <v-row align="center" class="ml-3">
-        <v-col cols="2">
-          <v-toolbar-title>
-            Tags
-          </v-toolbar-title>
-        </v-col>
-        <v-col cols="2">
-          <v-toolbar-title>
-            Subtags
-          </v-toolbar-title>
-        </v-col>
-        <v-col cols="2">
-          <v-select
-            :items="wip.localesConcat"
-            v-bind:label="wip.preview.desc"
-            v-model="wip.defaultPreview"
-            class="mt-5"
-          ></v-select>
-        </v-col>
-        <v-icon>keyboard_arrow_right</v-icon>
-        <v-col cols="2">
-          <v-select
-            :items="wip.localesConcat"
-            v-bind:label="wip.current.desc"
-            class="mt-5"
-          ></v-select>
-        </v-col>
-        <v-col cols="3" align="center">
-          <v-toolbar-title>
-            New Translation
-          </v-toolbar-title>
-        </v-col>
-        <v-col cols="0">
-          <v-toolbar-title>
-            <v-icon>done</v-icon>
-          </v-toolbar-title>
-        </v-col>
-      </v-row>
-    </v-app-bar>
+    <WorkbenchHeader
+      :allLocales="wip.formattedLocales"
+      @previewUpdated="onPreviewLocaleChanged"
+      @currentUpdated="onCurrentLocaleChanged"
+    />
 
     <v-btn
       class="mt-13"
@@ -65,7 +29,6 @@
     </v-btn>
 
     <v-row>
-      <!-- Top Level Tag -->
       <v-col cols="2">
         <TopLevelTagChooser 
           :topLevelTags="wip.topLevelTags"
@@ -75,7 +38,6 @@
 
       <v-divider vertical></v-divider>
       
-      <!-- Rest of tag and other stuff -->
       <v-col>
         <TranslationCard
           v-for="(card, index) in wip.translationDetails"
@@ -138,12 +100,14 @@ import { mapState } from "vuex";
 import { eventBus } from "../plugins/event-bus.js";
 import TranslationCard from "../components/i18n/TranslationCard.vue";
 import TopLevelTagChooser from "../components/i18n/TopLevelTagChooser.vue";
+import WorkbenchHeader from "../components/i18n/WorkbenchHeader.vue";
 const _ = require("lodash");
 export default {
   name: "Translation",
   components: {
     TranslationCard,
     TopLevelTagChooser,
+    WorkbenchHeader,
   },
   data() {
     return {
@@ -163,6 +127,7 @@ export default {
       isActive: false,
       canUserLeaveFreely: false,
       wip: {
+        formattedLocales: [],
         translationDetails: [],
         selectedTags: [],
         cardDetails: [],
@@ -173,6 +138,8 @@ export default {
         defaultPreview: null,
         preview: {"code": "n/a", "desc": "Translate From"},
         current: {"code": "n/a", "desc": "Translate To"},
+        previewCode: "",
+        currentCode: "",
       },
     };
   },
@@ -265,9 +232,16 @@ export default {
       return this.$http
         .get(`api/v1/i18n/locales`)
         .then((resp) => {
+          this.wip.formattedLocales = resp.data.map((obj) => {
+            return {
+              displayString: obj.flag + " " + obj.desc,
+              code: obj.code,
+            };
+          });
+
           this.wip.localeObjs = resp.data;
           this.wip.localesConcat = resp.data.map((obj) => obj.flag + " " + obj.desc);
-          this.wip.defaultPreview = this.wip.localesConcat[0];
+          this.wip.defaultPreview = this.wip.formattedLocales[0];
         });
     },
     fetchAllTranslations() {
@@ -278,7 +252,7 @@ export default {
         .get(`api/v1/i18n/values/translations/${previewLocale}/${currentLocale}`)
         .then((resp) => {
           this.wip.translationDetails = resp.data;
-          console.log(resp.data[0]);
+          // console.log(resp.data[0]);
         })
         .catch((err) => console.log(err));
     },
@@ -313,10 +287,20 @@ export default {
     onTopLevelTagsUpdated(tagList) {
       this.wip.selectedTags = tagList;
     },
+    onPreviewLocaleChanged(code) {
+      this.wip.previewCode = code;
+    },
+    onCurrentLocaleChanged(code) {
+      this.wip.currentCode = code;
+    },
+    onButtonCheck() {
+      console.log(`${this.wip.previewCode}`);
+      console.log(`${this.wip.currentCode}`);
+    }
   },
   mounted: function () {
     this.loadTopLevelTags();
-    // this.getAllLocales();
+    this.getAllLocales();
     this.fetchAllTranslations();
     // this.fillAllCards();
   },
