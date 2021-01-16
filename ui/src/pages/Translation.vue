@@ -46,11 +46,7 @@
       class="mt-13"
       v-scroll="onScroll"
       v-show="baf"
-      fab
-      dark
-      fixed
-      top
-      right
+      fab dark fixed top right
       color="dense"
       @click="toBottom"
     >
@@ -61,11 +57,7 @@
       class="mb-7"
       v-scroll="onScroll"
       v-show="fab"
-      fab
-      dark
-      fixed
-      bottom
-      right
+      fab dark fixed bottom right
       color="dense"
       @click="toTop"
     >
@@ -75,121 +67,26 @@
     <v-row>
       <!-- Top Level Tag -->
       <v-col cols="2">
-        <v-card-text>
-          <v-list 
-            elevation="2"
-            rounded
-          >
-            <v-list-item-group
-              color="grey darken-4"
-              multiple
-            >
-              <v-list-item
-                v-for="(tag, index) in wip.topLevelTags"
-                :key="index"
-                v-text="tag"
-                @change="addSelectedTag(tag)"
-              >
-              </v-list-item>
-            </v-list-item-group>
-          </v-list>
-        </v-card-text>
+        <TopLevelTagChooser 
+          :topLevelTags="wip.topLevelTags"
+          @tagsUpdated="onTopLevelTagsUpdated"
+        />
       </v-col>
 
       <v-divider vertical></v-divider>
       
       <!-- Rest of tag and other stuff -->
       <v-col>
-        <template>
-        <!-- v-for="tag in wip.translationDetails"
-            v-if="tag.top_level_key in wip.selectedTags" -->
-          <v-card 
-            outlined
-            class="d-flex align-center ml-3 mt-4 mr-3"
-            elevation="2"
-            v-for="(detail, i) in wip.cardDetails"
-            :key="i"
-          >
-            <v-card
-              min-width=19.7%
-              max-width=19.7%
-              elevation="0"
-              class="ml-1"
-            >
-              <v-card-text>
-                {{ detail.rest_of_key }}
-              </v-card-text>
-            </v-card>
-            
-            <v-card
-              min-width=20.5%
-              max-width=20.5%
-              elevation="0"
-              outlined
-            >
-              <v-card-text>
-                {{ detail.preview_gloss }}
-              </v-card-text>
-            </v-card>
-
-            <v-card
-              min-width=1%
-              elevation="0"
-            >
-              <v-icon>
-                keyboard_arrow_right
-              </v-icon>
-            </v-card>
-
-            <v-card
-              min-width=20.5%
-              max-width=20.5%
-              elevation="0"
-              outlined
-            >
-              <v-card-text>
-                {{ detail.current_gloss }}
-              </v-card-text>
-            </v-card>
-
-            <!-- SPACER -->
-            <v-card
-              min-width=7%
-            ></v-card>
-
-            <v-card
-              min-width=20%
-              max-width=20%
-              elevation="0"
-            >
-              <v-card
-                min-width=80%
-                max-width=80%
-                elevation="0"
-              >
-                <v-text-field>
-                </v-text-field>
-              </v-card>
-            </v-card>
-
-            <!-- SPACER -->
-            <v-card
-              min-width=3.7%
-            ></v-card>
-
-            <v-card
-              min-width=1%
-              max-width=1%
-              elevation="0"
-            >
-              <v-checkbox
-                class=" align-self-center"
-                v-model="detail.current_verified"
-              >
-              </v-checkbox>
-            </v-card>
-          </v-card>
-        </template>
+        <TranslationCard
+          v-for="(card, index) in wip.translationDetails"
+          :key="index"
+          :topLevelTag="card.top_level_key"
+          :restOfTag="card.rest_of_key"
+          :previewGloss="card.preview_gloss"
+          :currentGloss="card.current_gloss"
+          :currentVerified="card.current_verified"
+          :selectedTags="wip.selectedTags"
+        />
       </v-col>
     </v-row>
 
@@ -232,38 +129,6 @@
         </v-btn>
       </v-app-bar>
     </v-row>
-
-    <!-- Edit translation Dialog-->
-    <!-- <v-dialog v-model="changeTranslationDialog" persistent max-width="400">
-      <v-card>
-        <v-col cols="12">
-          <v-text-field
-            v-model="updateTR"
-            :label="dialogInitialText"
-            single-line
-            outlined
-          ></v-text-field>
-        </v-col>
-        <v-card-actions>
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on }">
-              <v-btn small v-on="on" v-on:click="hideDialog"
-                ><v-icon>cancel</v-icon></v-btn
-              >
-            </template>
-            <span>{{ $t("translation.dialog.cancel") }}</span>
-          </v-tooltip>
-          <v-spacer />
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on }">
-              <v-btn small v-on="on" v-on:click="update()">{{
-                $t("translation.dialog.submit")
-              }}</v-btn>
-            </template>
-          </v-tooltip>
-        </v-card-actions>
-      </v-card>
-    </v-dialog> -->
   </v-container>
 </template>
 
@@ -271,9 +136,15 @@
 <script>
 import { mapState } from "vuex";
 import { eventBus } from "../plugins/event-bus.js";
+import TranslationCard from "../components/i18n/TranslationCard.vue";
+import TopLevelTagChooser from "../components/i18n/TopLevelTagChooser.vue";
 const _ = require("lodash");
 export default {
   name: "Translation",
+  components: {
+    TranslationCard,
+    TopLevelTagChooser,
+  },
   data() {
     return {
       translation: null,
@@ -332,14 +203,6 @@ export default {
         );
       }
     },
-    // https://vuejs.org/v2/guide/list.html
-    // 'wip.selectedTags': {
-    //   handler: function(someValue) {
-    //     // console.log(`Value: ${someValue}`);
-    //     // console.log(this.wip.selectedTags);
-    //   },
-    //   deep: true
-    // }
   },
   methods: {
     onScroll(e) {
@@ -358,7 +221,7 @@ export default {
       this.dialogInitialText = selection.name;
       this.changeTranslationDialog = true;
       this.selected_key_id = selection.key_id;
-      console.log(selection);
+      // console.log(selection);
     },
     hideDialog() {
       this.changeTranslationDialog = false;
@@ -407,7 +270,7 @@ export default {
           this.wip.defaultPreview = this.wip.localesConcat[0];
         });
     },
-    getTranslationDetails() {
+    fetchAllTranslations() {
       let previewLocale = 'en-US'; //Eventually come from this.wip.preview.code
       let currentLocale = 'es-EC'; //Eventually come from this.wip.current.code
 
@@ -438,31 +301,27 @@ export default {
           this.wip.cardDetails.push(details);
         }
       });
-      //Sorting
-      //console.log(this.wip.cardDetails);
-      //console.log(this.wip.selectedTags);
     },
     deleteCards(tag){
-      console.log(this.wip.cardDetails)
       for(let i = 0 ; i < this.wip.cardDetails.length;i++){
         if (this.wip.cardDetails[i].top_level_key == tag) {
           this.wip.cardDetails.splice(i, 1);
           i--;
         }
       }
-      console.log(this.wip.cardDetails);
-      console.log(this.wip.selectedTags);
-    }
+    },
+    onTopLevelTagsUpdated(tagList) {
+      this.wip.selectedTags = tagList;
+    },
   },
   mounted: function () {
     this.loadTopLevelTags();
-    this.getAllLocales();
-    this.getTranslationDetails();
-    this.fillAllCards();
+    // this.getAllLocales();
+    this.fetchAllTranslations();
+    // this.fillAllCards();
   },
   beforeRouteLeave(to, from, next) {
-    // If there are unsaved changes,
-    //  Do not let the user leave without prompting
+    // If there are unsaved changes, do not let the user leave without prompting
     if (!this.canUserLeaveFreely) {
       const userAnswer = window.confirm(this.$t("actions.unsaved-changes-lost"));
       next(userAnswer);

@@ -92,14 +92,14 @@ class I18NMultipleLocalesPreSplit(Schema):
     key_id = fields.String(required=True)
     preview_gloss = fields.String(required=True)
     current_gloss = fields.String(required=True)
-    current_verified = fields.String(required=True)
+    current_verified = fields.Boolean(required=True)
 
 class I18NMultipleLocalesSplitKey(Schema):
     top_level_key = fields.String(required=True)
     rest_of_key = fields.String(required=True)
     preview_gloss = fields.String(required=True)
     current_gloss = fields.String(required=True)
-    current_verified = fields.String(required=True)
+    current_verified = fields.Boolean(required=True)
 
 # ---- Language
 
