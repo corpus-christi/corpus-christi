@@ -27,19 +27,11 @@ export default {
   props: {
     topLevelTags: { type: Array, required: true, },
   },
-
   data() {
     return {
       selectedTags: [],
     };
   },
-
-  computed: {
-    isSelected() {
-      return this.selectedTags.includes(this.topLevelTag);
-    },
-  },
-
   methods: {
     onTagsChanged() {
       this.$emit("tagsUpdated", this.selectedTags);

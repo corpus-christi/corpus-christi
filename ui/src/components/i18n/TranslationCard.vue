@@ -48,9 +48,7 @@
     </v-card>
 
     <!-- SPACER -->
-    <v-card
-      min-width=7%
-    ></v-card>
+    <v-card min-width=7% />
 
     <v-card
       min-width=20%
@@ -68,9 +66,7 @@
     </v-card>
 
     <!-- SPACER -->
-    <v-card
-      min-width=3.7%
-    ></v-card>
+    <v-card min-width=3.7% />
 
     <v-card
       min-width=1%
@@ -80,8 +76,7 @@
       <v-checkbox
         class=" align-self-center"
         v-model="currentVerified"
-      >
-      </v-checkbox>
+      />
     </v-card>
   </v-card>
 </template>
@@ -95,10 +90,8 @@ export default {
     previewGloss: { type: String, required: true },
     currentGloss: { type: String, required: true },
     currentVerified: { type: Boolean, required: true},
-
     selectedTags: { type: Array, required: true },
   },
-
   computed: {
     isSelected() {
       return this.selectedTags.includes(this.topLevelTag);

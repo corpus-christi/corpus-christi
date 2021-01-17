@@ -19,7 +19,7 @@
           item-text="displayString"
           item-value="code"
           v-model="previewLocale"
-          @change="onPreviewLocaleChanged"
+          @change="$emit('previewUpdated', previewLocale)"
           class="mt-5"
         />
       </v-col>
@@ -31,7 +31,7 @@
           item-text="displayString"
           item-value="code"
           v-model="currentLocale"
-          @change="onCurrentLocaleChanged"
+          @change="$emit('currentUpdated', currentLocale)"
           class="mt-5"
         />
       </v-col>
@@ -52,29 +52,14 @@
 <script>
 export default {
   name: "WorkbenchHeader",
-
   props: {
     allLocales: { type: Array, required: true },
   },
-
   data() {
     return {
       previewLocale: "",
       currentLocale: "",
     };
-  },
-
-  watch: {
-
-  },
-
-  methods: {
-    onPreviewLocaleChanged() {
-      this.$emit("previewUpdated", this.previewLocale);
-    },
-    onCurrentLocaleChanged() {
-      this.$emit("currentUpdated", this.currentLocale);
-    },
   },
 };
 </script>
