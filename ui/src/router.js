@@ -205,6 +205,12 @@ const router = new VueRouter({
           meta: { authRequired: true },
           component: () => import("@/components/events/EventParticipants"),
         },
+        {
+          name: "event-assets",
+          path: "assets",
+          meta: {authRequired: true },
+          component: () => import("@/components/events/EventAssets"),
+        },
       ],
     },
     {
