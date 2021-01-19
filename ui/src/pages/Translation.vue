@@ -4,6 +4,7 @@
       :allLocales="allLocaleObjs"
       @previewUpdated="onPreviewLocaleChanged"
       @currentUpdated="onCurrentLocaleChanged"
+      @updateTransToFrom="fetchNewTranslations"
     />
 
     <v-btn
@@ -97,7 +98,6 @@ export default {
       fabToTop: false,
       fabToBot: true,
       canUserLeaveFreely: true,
-
       topLevelTags: [],
       selectedTags: [],
       allLocaleObjs: [],
@@ -151,9 +151,17 @@ export default {
     fetchAllTranslations() {
       let previewLocale = "en-US"; //Eventually come from this.previewCode
       let currentLocale = "es-EC"; //Eventually come from this.currentCode
-
       return this.$http
         .get(`api/v1/i18n/values/translations/${previewLocale}/${currentLocale}`)
+        .then((resp) => {
+          this.translationObjs = resp.data;
+        })
+        .catch((err) => console.log(err));
+    },
+    fetchNewTranslations() {
+      console.log("hi");
+      return this.$http
+        .get(`api/v1/i18n/values/translations/${this.previewCode}/${this.currentCode}`)
         .then((resp) => {
           this.translationObjs = resp.data;
         })
