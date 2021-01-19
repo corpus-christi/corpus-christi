@@ -609,6 +609,7 @@ export default {
     },
 
     async updatePerson(data, personId, emitMessage) {
+      console.log("What I'm Saying", emitMessage);
       let newImageId = null;
       if (this.person.newImageId) {
         newImageId = this.person.newImageId;
@@ -689,10 +690,13 @@ export default {
               console.error("ERROR DELETING IMAGE", err.response);
             });
         } else {
+          console.log("editing", data);
+
           // an image didn't happen (NOTHING)
           this.$http
             .put(`/api/v1/people/persons/${personId}`, data)
             .then((response) => {
+              
               this.$emit(emitMessage, response.data);
               this.resetForm();
               this.saveIsLoading = false;
@@ -711,6 +715,7 @@ export default {
         imageId = this.person.newImageId;
       }
       delete this.person.newImageId;
+      console.log("Adding", data);
       this.$http
         .post("/api/v1/people/persons", data)
         .then(async (response) => {
