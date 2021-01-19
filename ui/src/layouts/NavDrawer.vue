@@ -50,6 +50,7 @@ export default {
             {
               title: this.$t("courses.course"),
               route: "courses",
+              icon: "school",
               children: [
                 {
                   title: this.$t("courses.course"),
@@ -130,7 +131,6 @@ export default {
               title: this.$t("courses.course"),
               route: "courses",
               icon: "school",
-              //*
               children: [
                 {
                   title: this.$t("courses.course"),
@@ -147,7 +147,7 @@ export default {
                   route: "transcripts",
                   isDropdown: true,
                 },
-              ], //*/
+              ],
             },
             {
               title: this.$t("events.header"),
