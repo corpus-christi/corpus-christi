@@ -191,6 +191,10 @@
             ref="attributeForm"
           />
           <v-layout row justify-center align-space-around>
+            <v-card v-if='person.address'>
+              <v-card-text> {{ $t(person.address.name) }}</v-card-text>
+              <v-card-text> {{ $t(person.address.address) }}</v-card-text>
+            </v-card>
             <v-flex shrink>
               <v-btn
                 small
@@ -524,6 +528,7 @@ export default {
       this.saveIsLoading = false;
       this.addMoreIsLoading = false;
       this.currentStep = 1;
+      this.addressWasSaved = false;
     },
 
     addMore() {
@@ -691,10 +696,25 @@ export default {
             });
         } else {
           console.log("editing", data);
-
+          let id = data.person.id;
+          let active = data.person.active;
+          let firstName = data.person.firstName;
+          let lastName = data.person.lastName;
+          let secondLastName = data.person.secondLastName;
+          let gender = data.person.gender;
+          let birthday = data.person.birthday;
+          let email = data.person.email;
+          let username = data.person.username;
+          let password = data.person.password;
+          let phone = data.person.phone;
+          let addressId = data.person.addressId;
+          let attributesInfo = data.attributesInfo;
+          let person = { id, active, firstName, lastName, secondLastName, 
+          gender, birthday, email, username, password, phone, addressId };
+          let box = {attributesInfo, person};
           // an image didn't happen (NOTHING)
           this.$http
-            .put(`/api/v1/people/persons/${personId}`, data)
+            .put(`/api/v1/people/persons/${personId}`, box)
             .then((response) => {
               
               this.$emit(emitMessage, response.data);
@@ -715,9 +735,24 @@ export default {
         imageId = this.person.newImageId;
       }
       delete this.person.newImageId;
-      console.log("Adding", data);
+      let id = data.person.id;
+      let active = data.person.active;
+      let firstName = data.person.firstName;
+      let lastName = data.person.lastName;
+      let secondLastName = data.person.secondLastName;
+      let gender = data.person.gender;
+      let birthday = data.person.birthday;
+      let email = data.person.email;
+      let username = data.person.username;
+      let password = data.person.password;
+      let phone = data.person.phone;
+      let addressId = data.person.addressId;
+      let attributesInfo = data.attributesInfo;
+      let person = { id, active, firstName, lastName, secondLastName, 
+      gender, birthday, email, username, password, phone, addressId };
+      let box = {attributesInfo, person};
       this.$http
-        .post("/api/v1/people/persons", data)
+        .post("/api/v1/people/persons", box)
         .then(async (response) => {
           if (imageId > -1) {
             await this.addImage(response.data.id, imageId);
