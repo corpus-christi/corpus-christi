@@ -10,6 +10,7 @@ from ..shared.helpers import list_to_tree, BadListKeyPath
 from ..shared.helpers import logged_response, authorize
 
 from sqlalchemy.orm import aliased
+from sqlalchemy import and_
 import re
 
 # ---- I18N Locale
@@ -179,18 +180,18 @@ def fetch_and_format_target_locales(preview_locale_str, current_locale_str):
     if preview_locale is None or current_locale is None:
         return 'At least one locale not found', 404
 
-    i18n_preview = aliased(I18NValue)
-    i18n_current = aliased(I18NValue)
-    pre_split_values = db.session.query(i18n_preview, i18n_current).with_entities(
-        i18n_preview.key_id.label('key_id'),
-        i18n_preview.gloss.label('preview_gloss'),
-        i18n_current.gloss.label('current_gloss'),
-        i18n_current.verified.label('current_verified')
-    ).filter(
-        i18n_preview.locale_code == preview_locale_str,
-        i18n_current.locale_code == current_locale_str,
-        i18n_preview.key_id == i18n_current.key_id
-    ).order_by(i18n_preview.key_id).all()
+    I18NPreview = aliased(I18NValue)
+    I18NCurrent = aliased(I18NValue)
+    pre_split_values = db.session.query(I18NKey).with_entities(
+        I18NKey.id.label('key_id'),
+        I18NPreview.gloss.label('preview_gloss'),
+        I18NCurrent.gloss.label('current_gloss'),
+        I18NCurrent.verified.label('current_verified')
+    ).outerjoin(I18NPreview,
+        and_(I18NPreview.locale_code == preview_locale_str, I18NKey.id == I18NPreview.key_id)
+    ).outerjoin(I18NCurrent,
+        and_(I18NCurrent.locale_code == current_locale_str, I18NKey.id == I18NCurrent.key_id)
+    ).order_by(I18NKey.id).all()
 
     split_values = i18n_multiple_locales_pre_split.dump(pre_split_values, many=True)    
     for item in split_values:
@@ -198,6 +199,12 @@ def fetch_and_format_target_locales(preview_locale_str, current_locale_str):
         item.pop('key_id', None)
         item['top_level_key'] = matches.groups()[0]
         item['rest_of_key'] = matches.groups()[1]
+        if item['preview_gloss'] == None:
+            item['preview_gloss'] = ''
+        if item['current_gloss'] == None:
+            item['current_gloss'] = ''
+        if item['current_verified'] == None:
+            item['current_verified'] = False
 
     return jsonify(i18n_multiple_locales_split_key.dump(split_values, many=True))
 
