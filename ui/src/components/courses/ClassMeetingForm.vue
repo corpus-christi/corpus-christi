@@ -121,6 +121,23 @@
           data-cy="course-offering-teacher"
         />
 
+        <address-form
+          v-if="showAddressForm"
+          @cancel="changeAddressView"
+          @saved="saveAddress"
+        >
+        </address-form>
+
+        <v-btn
+          small
+          color="primary"
+          text
+          :disabled="addressWasSaved"
+          @click="changeAddressView(true)"
+        >
+        {{ $t("actions.add-address") }}
+        </v-btn>
+
         <!-- location -->
         <EntitySearch
           location
@@ -160,6 +177,7 @@
 
 <script>
 import { isEmpty, clone, cloneDeep } from "lodash";
+import AddressForm from "../AddressForm.vue";
 import EntitySearch from "../EntitySearch";
 import { mapGetters } from "vuex";
 
@@ -168,12 +186,16 @@ export default {
 
   components: {
     EntitySearch,
+    "address-form": AddressForm
   },
 
   data() {
     return {
       saving: false,
       savingProgress: 0,
+
+      showAddressForm: false,
+      addressWasSaved: false,
 
       classMeeting: {},
       dates: "",
@@ -201,6 +223,11 @@ export default {
       return this.getDateFromTimestamp(Date.now());
     },
     ...mapGetters(["currentLanguageCode"]),
+
+    addressSaved() {
+      return this.addressWasSaved;
+    },
+
   },
 
   watch: {
@@ -244,11 +271,28 @@ export default {
 
     // Clear the forms.
     clear() {
+      this.addressWasSaved = false;
       this.dates = this.editMode ? "" : [];
       this.time = "";
       this.teacher = {};
       this.location = {};
       this.$validator.reset();
+    },
+
+    checkLocation(){
+      return this.location;
+    },
+
+    saveAddress(resp) {
+      console.log("saving", this.asset);
+      this.asset.location = resp;
+      this.addressWasSaved = true;
+      this.showAddressForm = false;
+      this.save();
+    },
+
+    changeAddressView(show) {
+      this.showAddressForm = show;
     },
 
     save() {

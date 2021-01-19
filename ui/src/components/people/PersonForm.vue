@@ -596,8 +596,22 @@ export default {
           delete this.person["attributesInfo"];
           delete this.person["accountInfo"];
           delete this.person["id"];
+          let id = this.person.id;
+          let active = this.person.active;
+          let firstName = this.person.firstName;
+          let lastName = this.person.lastName;
+          let secondLastName = this.person.secondLastName;
+          let gender = this.person.gender;
+          let birthday = this.person.birthday;
+          let email = this.person.email;
+          let username = this.person.username;
+          let password = this.person.password;
+          let phone = this.person.phone;
+          let addressId = this.person.addressId;
+          let personObject = { id, active, firstName, lastName, secondLastName, 
+          gender, birthday, email, username, password, phone, addressId };
           let data = {
-            person: this.person,
+            person: personObject,
             attributesInfo: attributes,
           };
           if (personId) {
@@ -696,25 +710,9 @@ export default {
             });
         } else {
           console.log("editing", data);
-          let id = data.person.id;
-          let active = data.person.active;
-          let firstName = data.person.firstName;
-          let lastName = data.person.lastName;
-          let secondLastName = data.person.secondLastName;
-          let gender = data.person.gender;
-          let birthday = data.person.birthday;
-          let email = data.person.email;
-          let username = data.person.username;
-          let password = data.person.password;
-          let phone = data.person.phone;
-          let addressId = data.person.addressId;
-          let attributesInfo = data.attributesInfo;
-          let person = { id, active, firstName, lastName, secondLastName, 
-          gender, birthday, email, username, password, phone, addressId };
-          let box = {attributesInfo, person};
           // an image didn't happen (NOTHING)
           this.$http
-            .put(`/api/v1/people/persons/${personId}`, box)
+            .put(`/api/v1/people/persons/${personId}`, data)
             .then((response) => {
               
               this.$emit(emitMessage, response.data);
@@ -735,24 +733,8 @@ export default {
         imageId = this.person.newImageId;
       }
       delete this.person.newImageId;
-      let id = data.person.id;
-      let active = data.person.active;
-      let firstName = data.person.firstName;
-      let lastName = data.person.lastName;
-      let secondLastName = data.person.secondLastName;
-      let gender = data.person.gender;
-      let birthday = data.person.birthday;
-      let email = data.person.email;
-      let username = data.person.username;
-      let password = data.person.password;
-      let phone = data.person.phone;
-      let addressId = data.person.addressId;
-      let attributesInfo = data.attributesInfo;
-      let person = { id, active, firstName, lastName, secondLastName, 
-      gender, birthday, email, username, password, phone, addressId };
-      let box = {attributesInfo, person};
       this.$http
-        .post("/api/v1/people/persons", box)
+        .post("/api/v1/people/persons", data)
         .then(async (response) => {
           if (imageId > -1) {
             await this.addImage(response.data.id, imageId);
