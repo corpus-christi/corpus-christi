@@ -63,8 +63,8 @@
       :loading="tableLoading"
       class="elevation-1"
     >
-      <template slot="items" slot-scope="props">
-        <td>{{ props.item.member.firstName }}</td>
+      <template slot="item" slot-scope="props">
+        <td>{{ props.item.member.firstName}}</td>
         <td>{{ props.item.member.lastName }}</td>
         <td>{{ props.item.member.email }}</td>
         <td>{{ props.item.member.phone }}</td>
