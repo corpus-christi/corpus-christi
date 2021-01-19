@@ -50,8 +50,12 @@ export default {
             {
               title: this.$t("courses.course"),
               route: "courses",
-              icon: "school",
               children: [
+                {
+                  title: this.$t("courses.course"),
+                  route: "courses",
+                  isDropdown: true,
+                },
                 {
                   title: this.$t("diplomas.diploma"),
                   route: "diplomas-admin",
@@ -126,10 +130,12 @@ export default {
               title: this.$t("courses.course"),
               route: "courses",
               icon: "school",
+              //*
               children: [
                 {
                   title: this.$t("courses.course"),
                   route: "courses",
+                  isDropdown: true,
                 },
                 {
                   title: this.$t("diplomas.diploma"),
@@ -141,7 +147,7 @@ export default {
                   route: "transcripts",
                   isDropdown: true,
                 },
-              ],
+              ], //*/
             },
             {
               title: this.$t("events.header"),
