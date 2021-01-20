@@ -66,6 +66,8 @@
     >
       <v-btn
         @click="$emit('updateTransToFrom')"
+        outlined
+        :loading="loadingTranslations"
       >
         Go
       </v-btn>
@@ -98,6 +100,7 @@ export default {
   name: "WorkbenchHeader",
   props: {
     allLocales: { type: Array, required: true },
+    loadingTranslations: { type: Boolean, required: true },
   },
   data() {
     return {

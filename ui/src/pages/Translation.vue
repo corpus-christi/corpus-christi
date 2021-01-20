@@ -2,6 +2,7 @@
   <v-container>
     <WorkbenchHeader
       :allLocales="allLocaleObjs"
+      :loadingTranslations="loadingTranslations"
       @previewUpdated="onPreviewLocaleChanged"
       @currentUpdated="onCurrentLocaleChanged"
       @updateTransToFrom="fetchNewTranslations"
@@ -104,6 +105,7 @@ export default {
       translationObjs: [],
       previewCode: "",
       currentCode: "",
+      loadingTranslations: false,
     };
   },
   computed: {
@@ -159,13 +161,14 @@ export default {
         .catch((err) => console.log(err));
     },
     fetchNewTranslations() {
-      console.log("hi");
+      this.loadingTranslations = true;
       return this.$http
         .get(`api/v1/i18n/values/translations/${this.previewCode}/${this.currentCode}`)
         .then((resp) => {
           this.translationObjs = resp.data;
         })
-        .catch((err) => console.log(err));
+        .catch((err) => console.log(err))
+        .finally(() => this.loadingTranslations = false);
     },
     onPreviewLocaleChanged(code) {
       this.previewCode = code;
@@ -180,7 +183,6 @@ export default {
   mounted: function () {
     this.loadTopLevelTags();
     this.getAllLocales();
-    this.fetchAllTranslations();
   },
   beforeRouteLeave(to, from, next) {
     if (!this.canUserLeaveFreely) {
