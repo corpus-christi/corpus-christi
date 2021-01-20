@@ -83,6 +83,7 @@
 <script>
 import { mapState } from "vuex";
 // import { eventBus } from "../plugins/event-bus.js";
+import { Locale, LocaleModel } from "../models/Locale.js"
 import TranslationCard from "../components/i18n/TranslationCard.vue";
 import TopLevelTagChooser from "../components/i18n/TopLevelTagChooser.vue";
 import WorkbenchHeader from "../components/i18n/WorkbenchHeader.vue";
@@ -142,9 +143,10 @@ export default {
         .get(`api/v1/i18n/locales`)
         .then((resp) => {
           this.allLocaleObjs = resp.data.map((obj) => {
+            let tempLocaleModel = new LocaleModel(obj);
             return {
-              displayString: obj.flag + " " + obj.desc,
-              code: obj.code,
+              displayString: tempLocaleModel.flagAndDescription,
+              code: tempLocaleModel.languageAndCountry,
             };
           });
         })
