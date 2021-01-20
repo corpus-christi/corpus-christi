@@ -7,22 +7,22 @@
     >
         <v-row
             class="subrow"
-            
+            align="center"
         >
-            <v-col cols="3">
-                <v-btn
-                    dark
+            <v-col 
+                cols="8"
+            >
+                <v-select
+                    prepend-icon="filter_alt"
+                    multiple
+                    chips
+                    :items="filters"
                 >
-                    <v-icon>filter_alt</v-icon>
-                </v-btn>
+                </v-select>
             </v-col>
-            <v-col>
-                <v-card
-                >
-                    Filter here
-                </v-card>
-            </v-col>
-            <v-col>
+            <v-col
+                cols="4"
+            >
                 <v-btn
                     dark
                 >
@@ -101,7 +101,12 @@ export default {
     },
     data() {
         return {
-
+            filters: [
+                'Yes',
+                'No',
+                'Maybe',
+                'So',
+            ],
         };
     },
     methods: {
