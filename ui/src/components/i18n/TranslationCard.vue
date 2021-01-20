@@ -63,7 +63,6 @@
         <v-text-field
         v-model="newTranslation"
         @input="emitEventChanged"
-          clearable
         >
           {{ newTranslation }}
         </v-text-field>

@@ -1,5 +1,9 @@
 <template>
   <v-container>
+    
+    <ToolBox class="ToolBox"
+      
+    />
     <WorkbenchHeader
       :allLocales="allLocaleObjs"
       :loadingTranslations="loadingTranslations"
@@ -8,7 +12,7 @@
       @updateTransToFrom="fetchNewTranslations"
     />
 
-    <v-btn
+    <!-- <v-btn
       class="mt-13"
       v-scroll="onScroll"
       v-show="fabToBot"
@@ -28,7 +32,7 @@
       @click="$vuetify.goTo(0)"
     >
       <v-icon>keyboard_arrow_up</v-icon>
-    </v-btn>
+    </v-btn> -->
 
     <v-row>
       <v-col cols="2">
@@ -138,6 +142,7 @@ import { LocaleModel } from "../models/Locale.js";
 import TranslationCard from "../components/i18n/TranslationCard.vue";
 import TopLevelTagChooser from "../components/i18n/TopLevelTagChooser.vue";
 import WorkbenchHeader from "../components/i18n/WorkbenchHeader.vue";
+import ToolBox from "../components/i18n/ToolBox.vue";
 const _ = require("lodash");
 export default {
   name: "Translation",
@@ -145,6 +150,7 @@ export default {
     WorkbenchHeader,
     TopLevelTagChooser,
     TranslationCard,
+    ToolBox,
   },
   data() {
     return {
@@ -265,4 +271,12 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+  .ToolBox {
+    position: fixed;
+    width:300px;
+    height: 20%;
+    right: 0;
+    z-index: 2
+  }
+</style>
