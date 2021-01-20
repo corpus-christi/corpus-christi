@@ -3,6 +3,7 @@
     <v-btn outlined color="primary" :to="{ path: '/teams/all' }"
       ><v-icon>arrow_back</v-icon>{{ $t("teams.all-teams") }}</v-btn
     >
+
     <v-layout class="vertical-spacer">
       <v-flex xs12 sm12>
         <v-card>
@@ -55,6 +56,7 @@
         </v-btn>
       </template>
     </v-toolbar>
+
     <v-data-table
       :footer-props="footerProps"
       :headers="headers"
@@ -63,44 +65,54 @@
       :loading="tableLoading"
       class="elevation-1"
     >
-      <template slot="item" slot-scope="props">
-        <td>{{ props.item.member.firstName}}</td>
-        <td>{{ props.item.member.lastName }}</td>
-        <td>{{ props.item.member.email }}</td>
-        <td>{{ props.item.member.phone }}</td>
+      <!--<template v-slot:cell(item)="props">
+        {{props.item.member.firstName}}
+        
+      </template>-->
+      <template v-slot:item="{ item }">
+        <td>{{ item.member.firstName }}</td>
+        <td>{{ item.member.lastName }}</td>
+        <td>{{ item.member.email }}</td>
+        <td>{{ item.member.phone }}</td>
         <td>
-          <template v-if="props.item.active">
-            <!-- TODO change archive to remove -->
+          <template v-if="item.active">
+            <!--TODO change archive to remove-->
             <v-tooltip bottom>
-              <v-btn
-                icon
-                outlined
-                small
-                color="primary"
-                slot="activator"
-                v-on:click="confirmArchive(props.item)"
-                data-cy="archive"
-              >
-                <v-icon small>archive</v-icon>
-              </v-btn>
-              <span>{{ $t("actions.tooltips.archive") }}</span>
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  icon
+                  outlined
+                  small
+                  color="primary"
+                  slot="activator"
+                  v-on:click="confirmArchive(item)"
+                  data-cy="archive"
+                  v-on="on"
+                >
+                  <v-icon small>archive</v-icon>
+                </v-btn>
+                <span>{{ $t("actions.tooltips.archive") }}</span>
+              </template>
             </v-tooltip>
           </template>
           <template v-else>
-            <v-tooltip bottom v-if="!props.item.active">
-              <v-btn
-                icon
-                outlined
-                small
-                color="primary"
-                slot="activator"
-                v-on:click="unarchive(props.item)"
-                :loading="props.item.unarchiving"
-                data-cy="unarchive"
-              >
-                <v-icon small>undo</v-icon>
-              </v-btn>
-              <span>{{ $t("actions.tooltips.activate") }}</span>
+            <v-tooltip bottom v-if="!item.active">
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  icon
+                  outlined
+                  small
+                  color="primary"
+                  slot="activator"
+                  v-on:click="unarchive(item)"
+                  :loading="item.unarchiving"
+                  data-cy="unarchive"
+                  v-on="on"
+                >
+                  <v-icon small>undo</v-icon>
+                </v-btn>
+                <span>{{ $t("actions.tooltips.activate") }}</span>
+              </template>
             </v-tooltip>
           </template>
         </td>
@@ -148,7 +160,14 @@
         v-on:cancel="cancelTeam"
       />
     </v-dialog>
-
+    <person-dialog
+      @snack="showSnackbar"
+      @cancel="cancelPerson"
+      @attachPerson="createNewMember"
+      :dialog-state="dialogState"
+      :all-people="allPeople"
+      :person="person"
+    />
     <!-- Add Member Dialog -->
     <v-dialog v-model="addMemberDialog.show" max-width="350px" persistent>
       <v-card>
@@ -165,6 +184,16 @@
             :value-comparator="members.member_id"
             v-model="addMemberDialog.newMembers"
           />
+          <v-btn
+            class="mr-0 ml-0"
+            color="primary"
+            raised
+            v-on:click.stop="newPerson"
+            data-cy="new-person"
+          >
+            <v-icon left>person_add</v-icon>
+            {{ $t("actions.add-person") }}
+          </v-btn>
         </v-card-text>
         <v-card-actions>
           <v-btn
@@ -193,9 +222,14 @@
 <script>
 import TeamForm from "./TeamForm";
 import EntitySearch from "../EntitySearch";
+import PersonDialog from "../PersonDialog";
 export default {
   name: "Team",
-  components: { "team-form": TeamForm, "entity-search": EntitySearch },
+  components: {
+    "team-form": TeamForm,
+    "entity-search": EntitySearch,
+    PersonDialog,
+  },
   data() {
     return {
       footerProps: {
@@ -211,6 +245,9 @@ export default {
       search: "",
       team: {},
       members: [],
+      dialogState: "",
+      allPeople: [],
+      person: {},
 
       teamDialog: {
         show: false,
@@ -260,6 +297,19 @@ export default {
   },
 
   methods: {
+    newPerson() {
+      this.dialogState = "new";
+    },
+
+    cancelPerson() {
+      this.dialogState = "";
+    },
+
+    createNewMember(person) {
+      this.addMemberDialog.newMembers.push(person);
+      this.addParticipants();
+    },
+
     reloadTeam() {
       const id = this.$route.params.team;
       this.$http.get(`/api/v1/teams/${id}?include_members=1`).then((resp) => {
@@ -374,11 +424,14 @@ export default {
 
     activateTeamDialog(team = {}, editMode = false) {
       this.teamDialog.editMode = editMode;
+      console.log("editmode", this.teamDialog.editMode);
       this.teamDialog.team = team;
+      //console.log(this.teamDialog.team);
       this.teamDialog.show = true;
     },
 
     editTeam(team) {
+      console.log("editing", team);
       this.activateTeamDialog({ ...team }, true);
     },
 
@@ -388,7 +441,8 @@ export default {
 
     saveTeam(team) {
       this.teamDialog.saveLoading = true;
-      const teamId = team.id;
+      let teamId = team.id;
+      //console.log(team.description);
       delete team.id;
       this.$http
         .patch(`/api/v1/events/teams/${teamId}`, {
