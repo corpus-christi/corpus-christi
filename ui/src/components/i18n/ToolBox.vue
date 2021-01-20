@@ -3,15 +3,13 @@
         class="mr-2"
         outlined
         elevation="2"
+        v-if="true"
     >
-    
         <v-row
             class="subrow"
-            justify="end"
+            
         >
-            <v-col>
-            </v-col>
-            <v-col>
+            <v-col cols="3">
                 <v-btn
                     dark
                 >
@@ -20,7 +18,6 @@
             </v-col>
             <v-col>
                 <v-card
-                    
                 >
                     Filter here
                 </v-card>
@@ -36,30 +33,37 @@
         <v-row
             class="subrow"
         >
-            <v-btn
-                dark
-                width="70%"
-            >
-                Add New Locale
-            </v-btn>
+            <v-col>
+                <v-btn
+                    class="ml-4"
+                    dark
+                    width="70%"
+                >
+                    Add New Locale
+                </v-btn>
+            </v-col>
         </v-row>
         <v-row
             class="subrow"
         >
-            <v-card
-                width="70%"
-            >
-                0/0
-            </v-card>
+            <v-col>
+                <v-card
+                    width="50%"
+                >
+                    0/0
+                </v-card>
+            </v-col>
         </v-row>
         <v-row
             class="subrow"
         >
-            <v-card
-                width="70%"
-            >
-                0/0
-            </v-card>
+            <v-col>
+                <v-card
+                    width="50%"
+                >
+                    0/0
+                </v-card>
+            </v-col>
         </v-row>
         <v-row
             class="subrow"
@@ -110,5 +114,6 @@ export default {
     
     .subrow {
         height:24%;
+        align-content:center;
     }
 </style>

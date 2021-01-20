@@ -12,28 +12,6 @@
       @updateTransToFrom="fetchNewTranslations"
     />
 
-    <!-- <v-btn
-      class="mt-13"
-      v-scroll="onScroll"
-      v-show="fabToBot"
-      fab dark fixed top right
-      color="dense"
-      @click="$vuetify.goTo(bodyScrollHeight)"
-    >
-      <v-icon>keyboard_arrow_down</v-icon>
-    </v-btn>
-
-    <v-btn
-      class="mb-7"
-      v-scroll="onScroll"
-      v-show="fabToTop"
-      fab dark fixed bottom right
-      color="dense"
-      @click="$vuetify.goTo(0)"
-    >
-      <v-icon>keyboard_arrow_up</v-icon>
-    </v-btn> -->
-
     <v-row>
       <v-col cols="2">
         <TopLevelTagChooser
@@ -275,7 +253,7 @@ export default {
   .ToolBox {
     position: fixed;
     width:300px;
-    height: 20%;
+    height: 300px;
     right: 0;
     z-index: 2
   }
