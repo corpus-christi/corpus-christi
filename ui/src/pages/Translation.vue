@@ -1,9 +1,14 @@
 <template>
   <v-container>
-    
     <ToolBox class="ToolBox"
-      
+      :numTranslated="numEntriesTranslated"
+      :numValidated="numEntriesValidated"
+      :totalEntries="numEntriesTotal"
+      @goToTop="$vuetify.goTo(0)"
+      @goToBot="$vuetify.goTo(bodyScrollHeight)"
+      @onSubmit="dialog='true'"
     />
+
     <WorkbenchHeader
       :allLocales="allLocaleObjs"
       :loadingTranslations="loadingTranslations"
@@ -55,18 +60,6 @@
           scrollable
           width="500"
         >
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              min-width="9%"
-              color="red lighten-2"
-              dark
-              v-bind="attrs"
-              v-on="on"
-            >
-              Submit
-            </v-btn>
-          </template>
-
           <v-card>
             <v-card-title class="headline black lighten-2 white--text">
               You are about to submit {{Object.keys(newTranslationList).length}} changes!
@@ -77,16 +70,13 @@
                 :key="index"
                 v-text="index + ' ' + items.oldTrans + '   >   ' + items.newTrans"
                 column
-              >
-              </v-radio-group>
-                
+              />                
             </v-card-text>
 
-            <v-divider></v-divider>
+            <v-divider />
 
-            <v-spacer></v-spacer>
+            <v-spacer />
             <v-card-actions>
-              
               <v-btn
                 color="red lighten-2"
                 text
@@ -98,8 +88,6 @@
           </v-card>
         </v-dialog>
 
-        
-
         <v-card min-width="2%" />
 
         <v-btn min-width="9%">
@@ -107,10 +95,7 @@
         </v-btn>
       </v-app-bar>
     </v-row>
-
   </v-container>
-
-
 </template>
 
 <script>
@@ -158,6 +143,15 @@ export default {
     },
     bodyScrollHeight() {
       return document.body.scrollHeight;
+    },
+    numEntriesTranslated() {
+      return this.translationObjs.filter(obj => obj.current_gloss != '').length;
+    },
+    numEntriesValidated() {
+      return this.translationObjs.filter(obj => obj.current_verified).length;
+    },
+    numEntriesTotal() {
+      return this.translationObjs.length;
     },
   },
   methods: {

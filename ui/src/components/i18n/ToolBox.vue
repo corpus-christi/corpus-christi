@@ -25,6 +25,7 @@
             >
                 <v-btn
                     dark
+                    @click="$emit('goToBot')"
                 >
                     <v-icon>keyboard_arrow_down</v-icon>
                 </v-btn>
@@ -50,7 +51,7 @@
                 <v-card
                     width="50%"
                 >
-                    0/0
+                    {{numTranslated}} / {{totalEntries}} Translated
                 </v-card>
             </v-col>
         </v-row>
@@ -61,7 +62,7 @@
                 <v-card
                     width="50%"
                 >
-                    0/0
+                    {{numValidated}} / {{totalEntries}} Validated
                 </v-card>
             </v-col>
         </v-row>
@@ -78,6 +79,7 @@
             <v-col>
                 <v-btn
                     dark
+                    @click="$emit('onSubmit')"
                 >
                     Sumbit
                 </v-btn>
@@ -85,6 +87,7 @@
             <v-col>
                 <v-btn
                     dark
+                    @click="$emit('goToTop')"
                 >
                     <v-icon>keyboard_arrow_up</v-icon>
                 </v-btn>
@@ -97,7 +100,9 @@
 export default {
     name: "ToolBox",
     props: {
-
+        numTranslated: { type: Number, required: true },
+        numValidated: { type: Number, required: true },
+        totalEntries: { type: Number, required: true },
     },
     data() {
         return {
