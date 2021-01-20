@@ -23,7 +23,7 @@
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn
-                round
+                rounded
                 raised
                 color="primary"
                 @click="registerClicked(course)"
