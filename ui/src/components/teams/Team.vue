@@ -34,14 +34,14 @@
     <v-toolbar>
       <v-toolbar-title>{{ $t("teams.members.title") }}</v-toolbar-title>
       <v-spacer></v-spacer>
-      <template v-slot:activator="{ on }">
+      <template>
         <v-text-field
           v-model="search"
           append-icon="search"
           v-bind:label="$t('actions.search')"
           single-line
           hide-details
-          v-on="on"
+          
         ></v-text-field>
         <v-spacer></v-spacer>
         <v-btn
@@ -49,7 +49,7 @@
           raised
           v-on:click="activateNewParticipantDialog"
           data-cy="add-team-member"
-          v-on="on"
+          
         >
           <v-icon dark left>add</v-icon>
           {{ $t("teams.members.add") }}
@@ -70,52 +70,54 @@
         
       </template>-->
       <template v-slot:item="{ item }">
-        <td>{{ item.member.firstName }}</td>
-        <td>{{ item.member.lastName }}</td>
-        <td>{{ item.member.email }}</td>
-        <td>{{ item.member.phone }}</td>
-        <td>
-          <template v-if="item.active">
-            <!--TODO change archive to remove-->
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on }">
-                <v-btn
-                  icon
-                  outlined
-                  small
-                  color="primary"
-                  slot="activator"
-                  v-on:click="confirmArchive(item)"
-                  data-cy="archive"
-                  v-on="on"
-                >
-                  <v-icon small>archive</v-icon>
-                </v-btn>
-                <span>{{ $t("actions.tooltips.archive") }}</span>
-              </template>
-            </v-tooltip>
-          </template>
-          <template v-else>
-            <v-tooltip bottom v-if="!item.active">
-              <template v-slot:activator="{ on }">
-                <v-btn
-                  icon
-                  outlined
-                  small
-                  color="primary"
-                  slot="activator"
-                  v-on:click="unarchive(item)"
-                  :loading="item.unarchiving"
-                  data-cy="unarchive"
-                  v-on="on"
-                >
-                  <v-icon small>undo</v-icon>
-                </v-btn>
-                <span>{{ $t("actions.tooltips.activate") }}</span>
-              </template>
-            </v-tooltip>
-          </template>
-        </td>
+        <tr>
+          <td>{{ item.member.firstName }}</td>
+          <td>{{ item.member.lastName }}</td>
+          <td>{{ item.member.email }}</td>
+          <td>{{ item.member.phone }}</td>
+          <td>
+            <template v-if="item.active">
+              <!--TODO change archive to remove-->
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    icon
+                    outlined
+                    small
+                    color="primary"
+                    slot="activator"
+                    v-on:click="confirmArchive(item)"
+                    data-cy="archive"
+                    v-on="on"
+                  >
+                    <v-icon small>archive</v-icon>
+                  </v-btn>
+                  <span>{{ $t("actions.tooltips.archive") }}</span>
+                </template>
+              </v-tooltip>
+            </template>
+            <template v-else>
+              <v-tooltip bottom v-if="!item.active">
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    icon
+                    outlined
+                    small
+                    color="primary"
+                    slot="activator"
+                    v-on:click="unarchive(item)"
+                    :loading="item.unarchiving"
+                    data-cy="unarchive"
+                    v-on="on"
+                  >
+                    <v-icon small>undo</v-icon>
+                  </v-btn>
+                  <span>{{ $t("actions.tooltips.activate") }}</span>
+                </template>
+              </v-tooltip>
+            </template>
+          </td>
+        </tr>
       </template>
     </v-data-table>
 
