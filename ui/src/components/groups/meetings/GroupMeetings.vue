@@ -335,13 +335,13 @@
 <script>
 import CustomForm from "../../CustomForm";
 import EntitySearch from "../../EntitySearch";
-import { eventBus } from "../../../plugins/event-bus.js";
+import { eventBus } from "@/plugins/event-bus";
 import { mapState } from "vuex";
 import {
   convertToGroupMap,
   isOverseer,
   getParticipantById,
-} from "../../../models/GroupHierarchyNode.ts";
+} from "@/models/GroupHierarchyNode";
 
 export default {
   components: { "meeting-form": CustomForm, EntitySearch },

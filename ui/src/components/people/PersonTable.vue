@@ -2,7 +2,7 @@
   <div>
     <!-- Header -->
     <v-toolbar data-cy="person-toolbar">
-      <v-row align="center" justify="space-between">
+      <v-row align="center" justify="space-around">
         <v-col cols="2">
           <v-toolbar-title>{{ $t("people.title") }}</v-toolbar-title>
         </v-col>

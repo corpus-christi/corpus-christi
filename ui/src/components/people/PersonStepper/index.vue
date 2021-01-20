@@ -1,244 +1,36 @@
 <template>
-  <form ref="form">
-    <v-stepper v-model="currentStep" non-linear>
-      <v-stepper-header>
-        <v-stepper-step editable step="1">
-          <span v-bind:class="{ 'red--text': stepOneErrors }">
-            {{ $t("people.personal-information") }}
-          </span>
-        </v-stepper-step>
+  <v-stepper v-model="currentStep" non-linear>
+    <v-stepper-header>
+      <v-stepper-step editable step="1">
+        <span v-bind:class="{ 'red--text': stepOneErrors }">
+          {{ $t("people.personal-information") }}
+        </span>
+      </v-stepper-step>
 
-        <v-divider />
+      <v-divider />
 
-        <v-stepper-step editable step="2" v-if="showAccountInfo">
-          <span v-bind:class="{ 'red--text': stepTwoErrors }">
-            {{ $t("people.account-information") }}
-          </span>
-          <small
-            v-if="!isAccountRequired"
-            v-bind:class="{ 'red--text': stepTwoErrors }"
-            >{{ $t("people.optional") }}</small
-          >
-        </v-stepper-step>
+      <v-stepper-step editable step="2">
+        <span v-bind:class="{ 'red--text': stepTwoErrors }">
+          {{ $t("people.account-information") }}
+        </span>
+      </v-stepper-step>
 
-        <v-divider />
+      <v-divider />
 
-        <v-stepper-step editable v-bind:step="showAccountInfo ? 3 : 2">
-          <span v-bind:class="{ 'red--text': stepThreeErrors }">
-            {{ $t("people.additional-information") }}
-          </span>
-          <small v-bind:class="{ 'red--text': stepThreeErrors }">
-            {{ $t("people.optional") }}
-          </small>
-        </v-stepper-step>
-      </v-stepper-header>
-      <v-stepper-items>
-        <v-stepper-content step="1">
-          <v-text-field
-            v-model="person.firstName"
-            v-bind:label="$t('person.name.first') + ' *'"
-            name="firstName"
-            v-validate="'required: true, regex:/[A-Za-zs\'-]$, max:64'"
-            :rules="[rules.required, rules.counter]"
-            counter
-            maxlength="64"
-            v-bind:error-messages="errors.collect('firstName')"
-            :readonly="formDisabled"
-            data-cy="first-name"
-          />
+      <v-stepper-step editable step="3">
+        <span v-bind:class="{ 'red--text': stepThreeErrors }">
+          {{ $t("people.additional-information") }}
+        </span>
+        <small v-bind:class="{ 'red--text': stepThreeErrors }">
+          {{ $t("people.optional") }}
+        </small>
+      </v-stepper-step>
+    </v-stepper-header>
 
-          <v-text-field
-            v-model="person.lastName"
-            v-bind:label="$t('person.name.last') + ' *'"
-            name="lastName"
-            v-validate="'required: true, regex:/[A-Za-z\s\'-]$/'"
-            :rules="[rules.required, rules.counter]"
-            counter
-            maxlength="64"
-            v-bind:error-messages="errors.collect('lastName')"
-            :readonly="formDisabled"
-            data-cy="last-name"
-          />
-
-          <v-text-field
-            v-model="person.secondLastName"
-            v-bind:label="$t('person.name.second-last')"
-            name="secondLastName"
-            v-validate="'alpha_dash'"
-            v-bind:error-messages="errors.collect('secondLastName')"
-            :rules="[rules.counter]"
-            counter
-            maxlength="64"
-            :readonly="formDisabled"
-            data-cy="second-last-name"
-          />
-
-          <v-radio-group
-            v-model="person.gender"
-            :readonly="formDisabled"
-            row
-            data-cy="radio-gender"
-          >
-            <v-radio v-bind:label="$t('person.male')" value="M" />
-            <v-radio v-bind:label="$t('person.female')" value="F" />
-          </v-radio-group>
-
-          <v-menu
-            :close-on-content-click="false"
-            v-model="showBirthdayPicker"
-            :nudge-right="40"
-            transition="scale-transition"
-            offset-y
-            min-width="290px"
-            :disabled="formDisabled"
-            data-cy="show-birthday-picker"
-          >
-            <template v-slot:activator="{ on }">
-              <v-text-field
-                slot="activator"
-                v-model="person.birthday"
-                name="birthday"
-                v-bind:label="$t('person.date.birthday')"
-                prepend-icon="event"
-                readonly
-                data-cy="birthday"
-                data-vv-validate-on="input"
-                v-validate="'date_format:yyyy-MM-dd'"
-                v-bind:error-messages="errors.collect('birthday')"
-                v-on="on"
-              />
-            </template>
-            <v-date-picker
-              v-bind:locale="currentLanguageCode"
-              :max="getTodayString"
-              v-model="person.birthday"
-              @input="showBirthdayPicker = false"
-              data-cy="birthday-picker"
-            />
-          </v-menu>
-
-          <v-text-field
-            v-model="person.email"
-            v-bind:label="$t('person.email')"
-            name="email"
-            v-validate="'email'"
-            data-vv-validate-on="change"
-            v-bind:error-messages="errors.collect('email')"
-            prepend-icon="email"
-            data-cy="email"
-            :readonly="formDisabled"
-          />
-          <v-text-field
-            v-model="person.phone"
-            v-bind:label="$t('person.phone')"
-            prepend-icon="phone"
-            data-cy="phone"
-            :readonly="formDisabled"
-          />
-        </v-stepper-content>
-        <v-stepper-content step="2" v-if="showAccountInfo">
-          <!-- User name (for creating new account) -->
-          <v-text-field
-            v-if="showAccountInfo"
-            v-model="person.username"
-            v-bind:label="
-              $t('person.username') + (isAccountRequired ? ' *' : '')
-            "
-            name="username"
-            v-validate="{
-              required: isAccountRequired,
-              alpha_dash: true,
-              min: 6,
-            }"
-            v-bind:error-messages="errors.collect('username')"
-            prepend-icon="person"
-            data-cy="username"
-          />
-
-          <!-- Password (new or update) -->
-          <v-text-field
-            v-if="showAccountInfo"
-            v-model="person.password"
-            type="password"
-            ref="pwdField"
-            v-bind:label="
-              $t('person.password') + (isAccountRequired ? ' *' : '')
-            "
-            name="password"
-            v-validate="`${hasUsername}|min:8`"
-            v-bind:error-messages="errors.collect('password')"
-            prepend-icon="lock"
-            data-cy="password"
-          />
-          <!-- Password confirmation (new or update) -->
-          <v-text-field
-            v-if="showAccountInfo"
-            v-model="repeatPassword"
-            type="password"
-            v-bind:label="$t('person.repeat-password')"
-            name="repeat-password"
-            v-validate="`confirmed:pwdField|${hasUsername}`"
-            v-bind:error-messages="errors.collect('repeat-password')"
-            prepend-icon="lock"
-            data-cy="confirm-password"
-          />
-        </v-stepper-content>
-        <v-stepper-content v-bind:step="showAccountInfo ? 3 : 2">
-          <attribute-form
-            :personId="person.id"
-            :existingAttributes="person.attributesInfo"
-            v-model="attributeFormData"
-            ref="attributeForm"
-          />
-          <v-layout row justify-center align-space-around>
-            <v-flex shrink>
-              <v-btn
-                small
-                color="primary"
-                text
-                :disabled="addressWasSaved"
-                @click="changeAddressView(true)"
-              >
-                {{ $t("actions.add-address") }}
-              </v-btn>
-              <v-btn
-                class="text-xs-center"
-                color="primary"
-                text
-                small
-                @click="showImageChooser = true"
-                :disabled="showImageChooser"
-              >
-                {{ $t("images.actions.add-image") }}
-              </v-btn>
-            </v-flex>
-          </v-layout>
-          <v-flex v-show="addressSaved">
-            <span>{{ $t("places.messages.saved") }}</span>
-          </v-flex>
-          <v-expand-transition>
-            <address-form
-              v-if="showAddressForm"
-              @cancel="changeAddressView"
-              @saved="saveAddress"
-            >
-            </address-form>
-          </v-expand-transition>
-          <v-expand-transition>
-            <image-chooser
-              v-if="showImageChooser"
-              :imageId="getImageId"
-              v-on:saved="chooseImage"
-              v-on:deleted="deleteImage"
-              v-on:cancel="cancelImageChooser"
-              v-on:missing="missingImage"
-            />
-          </v-expand-transition>
-        </v-stepper-content>
-      </v-stepper-items>
-    </v-stepper>
-    <v-stepper v-model="currentStep">
+    <v-stepper-items>
       <v-stepper-content step="1">
+        <PersonalInfoForm />
+
         <v-layout row>
           <v-btn
             color="secondary"
@@ -249,36 +41,68 @@
             >{{ $t("actions.cancel") }}</v-btn
           >
           <v-spacer />
-          <v-btn color="primary" raised v-on:click="next" data-cy="next">
-            {{ $t("people.next") }}
-          </v-btn>
-        </v-layout>
-      </v-stepper-content>
-      <v-stepper-content step="2" v-if="showAccountInfo">
-        <v-layout row>
-          <v-btn
-            color="secondary"
-            text
-            v-on:click="cancel"
-            :disabled="formDisabled"
-            data-cy="cancel"
-            >{{ $t("actions.cancel") }}</v-btn
-          >
-          <v-spacer />
-          <v-btn
-            color="primary"
-            raised
-            v-on:click="previous"
-            data-cy="previous"
-            >{{ $t("people.previous") }}</v-btn
-          >
           <v-btn color="primary" raised v-on:click="next" data-cy="next">
             {{ $t("people.next") }}
           </v-btn>
         </v-layout>
       </v-stepper-content>
 
-      <v-stepper-content v-bind:step="showAccountInfo ? 3 : 2">
+      <v-stepper-content step="2">
+        <AccountInfoForm />
+        <NavButtons />
+      </v-stepper-content>
+
+      <v-stepper-content step="3">
+        <attribute-form
+          :personId="person.id"
+          :existingAttributes="person.attributesInfo"
+          v-model="attributeFormData"
+          ref="attributeForm"
+        />
+        <v-layout row justify-center align-space-around>
+          <v-flex shrink>
+            <v-btn
+              small
+              color="primary"
+              text
+              :disabled="addressWasSaved"
+              @click="changeAddressView(true)"
+            >
+              {{ $t("actions.add-address") }}
+            </v-btn>
+            <v-btn
+              class="text-xs-center"
+              color="primary"
+              text
+              small
+              @click="showImageChooser = true"
+              :disabled="showImageChooser"
+            >
+              {{ $t("images.actions.add-image") }}
+            </v-btn>
+          </v-flex>
+        </v-layout>
+        <v-flex v-show="addressSaved">
+          <span>{{ $t("places.messages.saved") }}</span>
+        </v-flex>
+        <v-expand-transition>
+          <address-form
+            v-if="showAddressForm"
+            @cancel="changeAddressView"
+            @saved="saveAddress"
+          >
+          </address-form>
+        </v-expand-transition>
+        <v-expand-transition>
+          <image-chooser
+            v-if="showImageChooser"
+            :imageId="getImageId"
+            v-on:saved="chooseImage"
+            v-on:deleted="deleteImage"
+            v-on:cancel="cancelImageChooser"
+            v-on:missing="missingImage"
+          />
+        </v-expand-transition>
         <v-layout row>
           <v-btn
             color="secondary"
@@ -318,20 +142,26 @@
           >
         </v-layout>
       </v-stepper-content>
-    </v-stepper>
-  </form>
+    </v-stepper-items>
+  </v-stepper>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
-import AttributeForm from "./input_fields/AttributeForm.vue";
+import AttributeForm from "../input_fields/AttributeForm.vue";
 import { isEmpty } from "lodash";
-import AddressForm from "../AddressForm.vue";
-import ImageChooser from "../images/ImageChooser";
+import AddressForm from "../../AddressForm.vue";
+import ImageChooser from "../../images/ImageChooser";
+import PersonalInfoForm from "./PersonalInfoForm";
+import AccountInfoForm from "./AccountInfoForm";
+import NavButtons from "./NavButtons";
 
 export default {
-  name: "PersonForm",
+  name: "PersonStepper",
   components: {
+    NavButtons,
+    PersonalInfoForm,
+    AccountInfoForm,
     "attribute-form": AttributeForm,
     "address-form": AddressForm,
     "image-chooser": ImageChooser,
@@ -351,20 +181,9 @@ export default {
       required: false,
       default: "actions.save",
     },
-    showAccountInfo: {
-      type: Boolean,
-      required: false,
-      default: true,
-    },
-    isAccountRequired: {
-      type: Boolean,
-      required: false,
-      default: true,
-    },
   },
   data: function () {
     return {
-      showBirthdayPicker: false,
       showAddressForm: false,
       showImageChooser: false,
       imageSaved: false,
@@ -409,10 +228,6 @@ export default {
       return Object.keys(this.person);
     },
 
-    // accountKeys() {
-    //   return Object.keys(this.account);
-    // },
-
     ...mapGetters(["currentLanguageCode"]),
 
     formDisabled() {
@@ -422,22 +237,6 @@ export default {
         this.showAddressForm ||
         (this.showImageChooser && !this.imageSaved)
       );
-    },
-    hasUsername() {
-      return this.person.username.length ? "required" : "";
-    },
-    getTodayString() {
-      let today = new Date();
-      return `${today.getFullYear()}-${(today.getMonth() + 1).toLocaleString(
-        "en-US",
-        {
-          minimumIntegerDigits: 2,
-          useGrouping: false,
-        }
-      )}-${today.getDate().toLocaleString("en-US", {
-        minimumIntegerDigits: 2,
-        useGrouping: false,
-      })}`;
     },
 
     addressSaved() {

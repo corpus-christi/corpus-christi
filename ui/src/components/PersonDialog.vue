@@ -12,7 +12,6 @@
         v-bind:addAnotherEnabled="personDialog.addAnotherEnabled"
         v-bind:saveButtonText="personDialog.saveButtonText"
         v-bind:showAccountInfo="personDialog.showAccountInfo"
-        v-bind:isAccountRequired="false"
         v-on:cancel="cancelPerson"
         v-on:saved="savePerson"
         v-on:added-another="addAnother"
@@ -23,7 +22,7 @@
 </template>
 
 <script>
-import PersonForm from "./people/PersonForm";
+import PersonForm from "./people/PersonStepper";
 
 export default {
   name: "PersonDialog",

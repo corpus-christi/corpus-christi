@@ -2,7 +2,7 @@
   <v-container grid-list-md>
     <v-layout row wrap>
       <v-flex xs12 sm12 md4>
-        <h1 style="margin-left: 25px;">
+        <h1 style="margin-left: 25px">
           {{ $t("public.headers.upcoming-events") }}
         </h1>
       </v-flex>
