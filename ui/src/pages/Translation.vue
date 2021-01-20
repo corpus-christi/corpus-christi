@@ -50,6 +50,8 @@
           :currentGloss="card.current_gloss"
           :currentVerified="card.current_verified"
           :selectedTags="selectedTags"
+          @TranslationChanged="getNewTranslation"
+          @AppendToList="appendTranslation"
         />
       </v-col>
     </v-row>
@@ -66,9 +68,55 @@
 
         <v-card min-width="2%" />
 
-        <v-btn min-width="9%">
-          Submit
-        </v-btn>
+        <v-dialog
+          v-model="dialog"
+          scrollable
+          width="500"
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              min-width="9%"
+              color="red lighten-2"
+              dark
+              v-bind="attrs"
+              v-on="on"
+            >
+              Submit
+            </v-btn>
+          </template>
+
+          <v-card>
+            <v-card-title class="headline black lighten-2 white--text">
+              You are about to submit {{Object.keys(newTranslationList).length}} changes!
+            </v-card-title>
+            <v-card-text>
+              <v-radio-group
+                v-for="(items, index) in newTranslationList"
+                :key="index"
+                v-text="index + ' ' + items.oldTrans + '   >   ' + items.newTrans"
+                column
+              >
+              </v-radio-group>
+                
+            </v-card-text>
+
+            <v-divider></v-divider>
+
+            <v-spacer></v-spacer>
+            <v-card-actions>
+              
+              <v-btn
+                color="red lighten-2"
+                text
+                @click="dialog=false"
+              >
+                Submit
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+
+        
 
         <v-card min-width="2%" />
 
@@ -77,13 +125,16 @@
         </v-btn>
       </v-app-bar>
     </v-row>
+
   </v-container>
+
+
 </template>
 
 <script>
 import { mapState } from "vuex";
 // import { eventBus } from "../plugins/event-bus.js";
-import { Locale, LocaleModel } from "../models/Locale.js"
+import { LocaleModel } from "../models/Locale.js";
 import TranslationCard from "../components/i18n/TranslationCard.vue";
 import TopLevelTagChooser from "../components/i18n/TopLevelTagChooser.vue";
 import WorkbenchHeader from "../components/i18n/WorkbenchHeader.vue";
@@ -97,16 +148,21 @@ export default {
   },
   data() {
     return {
+      dialog: false,
       fabToTop: false,
       fabToBot: true,
       canUserLeaveFreely: true,
+
       topLevelTags: [],
       selectedTags: [],
       allLocaleObjs: [],
       translationObjs: [],
       previewCode: "",
       currentCode: "",
+      newTranslation: "",
+      changedKey: "",
       loadingTranslations: false,
+      newTranslationList: {},
     };
   },
   computed: {
@@ -118,7 +174,7 @@ export default {
     },
     bodyScrollHeight() {
       return document.body.scrollHeight;
-    }
+    },
   },
   methods: {
     onScroll(e) {
@@ -152,16 +208,6 @@ export default {
         })
         .catch((err) => console.log(err));
     },
-    fetchAllTranslations() {
-      let previewLocale = "en-US"; //Eventually come from this.previewCode
-      let currentLocale = "es-EC"; //Eventually come from this.currentCode
-      return this.$http
-        .get(`api/v1/i18n/values/translations/${previewLocale}/${currentLocale}`)
-        .then((resp) => {
-          this.translationObjs = resp.data;
-        })
-        .catch((err) => console.log(err));
-    },
     fetchNewTranslations() {
       this.loadingTranslations = true;
       return this.$http
@@ -180,6 +226,27 @@ export default {
     },
     onTopLevelTagsUpdated(tagList) {
       this.selectedTags = tagList;
+    },
+    submitChanges() {
+      console.log(this.newTranslationList);
+    },
+    getNewTranslation(key, newTrans, oldTrans) {
+      this.changedKey = key;
+      this.newTranslation = newTrans;
+      this.oldTranslation = oldTrans;
+    },
+    appendTranslation() {
+      let tempKey = this.changedKey;
+      if (tempKey in this.newTranslationList) {
+        this.newTranslationList[tempKey].newTrans = this.newTranslation;
+      }
+      else {
+        let tempDict = {};
+        tempDict.key = tempKey;
+        tempDict.newTrans = this.newTranslation;
+        tempDict.oldTrans = this.oldTranslation;
+        this.newTranslationList[tempKey] = tempDict;
+      }
     },
   },
   mounted: function () {

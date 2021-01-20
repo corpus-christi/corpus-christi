@@ -12,7 +12,7 @@
       class="ml-1"
     >
       <v-card-text>
-        {{restOfTag}}
+        {{ restOfTag }}
       </v-card-text>
     </v-card>
 
@@ -23,7 +23,7 @@
       outlined
     >
       <v-card-text>
-        {{previewGloss}}
+        {{ previewGloss }}
       </v-card-text>
     </v-card>
 
@@ -43,7 +43,7 @@
       outlined
     >
       <v-card-text>
-        {{currentGloss}}
+        {{ currentGloss }}
       </v-card-text>
     </v-card>
 
@@ -60,7 +60,12 @@
         max-width=80%
         elevation="0"
       >
-        <v-text-field>
+        <v-text-field
+        v-model="newTranslation"
+        @input="emitEventChanged"
+          clearable
+        >
+          {{ newTranslation }}
         </v-text-field>
       </v-card>
     </v-card>
@@ -85,17 +90,30 @@
 export default {
   name: "TranslationCard",
   props: {
-    topLevelTag: { type: String, required: true },
-    restOfTag: { type: String, required: true },
-    previewGloss: { type: String, required: true },
-    currentGloss: { type: String, required: true },
-    currentVerified: { type: Boolean, required: true},
-    selectedTags: { type: Array, required: true },
+    topLevelTag:        { type: String,   required: true  },
+    restOfTag:          { type: String,   required: true  },
+    previewGloss:       { type: String,   required: true  },
+    currentGloss:       { type: String,   required: true  },
+    currentVerified:    { type: Boolean,  required: true  },
+    selectedTags:       { type: Array,    required: true  },
+  },
+  data() {
+    return{
+      newTranslation: "",
+      changedKey: this.topLevelTag+"."+this.restOfTag,
+      oldTranslation: this.currentGloss,
+    };
   },
   computed: {
     isSelected() {
       return this.selectedTags.includes(this.topLevelTag);
     },
   },
+  methods: {
+    emitEventChanged () {
+      this.$emit('TranslationChanged', this.changedKey, this.newTranslation, this.oldTranslation);
+      this.$emit('AppendToList')
+    }
+  }
 };
 </script>
