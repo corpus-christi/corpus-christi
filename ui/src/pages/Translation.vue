@@ -43,43 +43,31 @@
       </v-col>
     </v-row>
 
+    <v-dialog
+      v-model="dialog"
+      width="67%"
+    >
+      <v-card>
+        <v-card-title class="headline black lighten-2 white--text">
+          You are about to submit {{Object.keys(newTranslationList).length}} changes!
+        </v-card-title>
+        <v-list-item
+          v-for="(item, index) in newTranslationList"
+          :key="index"
+          outlined
+        >
+          <v-list-item-title class="text-right AutoWidth">{{index}}</v-list-item-title>
+          <v-divider vertical class="mx-3" />
+          <v-list-item-subtitle class="text-right AutoWidth">{{item.oldTrans}}</v-list-item-subtitle>
+          <v-list-item-icon><v-icon>keyboard_arrow_right</v-icon></v-list-item-icon>
+          <v-list-item-subtitle class="text-left AutoWidth">{{item.newTrans}}</v-list-item-subtitle>
+        </v-list-item>
+      </v-card>
+    </v-dialog>
+
     <v-row fixed bottom>
       <v-app-bar color="white" elevation="2">
         <v-card min-width="60%" />
-
-        <v-dialog
-          v-model="dialog"
-          scrollable
-          width="500"
-        >
-          <v-card>
-            <v-card-title class="headline black lighten-2 white--text">
-              You are about to submit {{Object.keys(newTranslationList).length}} changes!
-            </v-card-title>
-            <v-card-text>
-              <v-radio-group
-                v-for="(items, index) in newTranslationList"
-                :key="index"
-                v-text="index + ' ' + items.oldTrans + '   >   ' + items.newTrans"
-                column
-              />                
-            </v-card-text>
-
-            <v-divider />
-
-            <v-spacer />
-            <v-card-actions>
-              <v-btn
-                color="red lighten-2"
-                text
-                @click="dialog=false"
-              >
-                Submit
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-
         <v-card min-width="2%" />
 
         <v-btn min-width="9%">
