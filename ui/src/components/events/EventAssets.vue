@@ -23,6 +23,7 @@
               ></v-text-field>
               <v-spacer></v-spacer>
               <v-btn
+                @click="showNewAssetDialog"
                 color="primary"
                 raised
               >
@@ -34,6 +35,7 @@
               :items="assets"
               :headers="assetHeaders"
               :search="assetSearch"
+              :loading="assetTableLoading"
             >
               <template v-slot:item="props">
                 <tr>
@@ -72,19 +74,66 @@
         </v-tab-item>
       </v-tabs>
     </v-card>
+
+    <!-- Add Asset Dialog -->
+    <v-dialog v-model="addAssetDialog.show" max-width="350px">
+      <v-card>
+        <v-card-title primary-title>
+          Add Participant
+        </v-card-title>
+        <v-card-text>
+          <entity-search
+            multiple
+            asset
+            :existingEntities="assets"
+            v-model="addAssetDialog.newAssets"
+          />
+        </v-card-text>
+        <v-card-actions>
+          <v-btn
+            @click="closeNewAssetDialog"
+            color="secondary"
+            text
+            data-cy=""
+          >
+            Cancel
+          </v-btn>
+          <v-spacer/>
+          <v-btn
+            color="primary"
+            raised
+            data-cy="confirm-asset"
+          >
+            Confirm
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script>
+  import EntitySearch from '../EntitySearch.vue';
   export default {
     name: "EventAssets",
+    components: { "entity-search": EntitySearch },
 
     data() {
       return {
         assetSearch: "",
         collectionSearch: "",
-        tableLoading: false,
+        assetTableLoading: false,
         assets: [],
+        addAssetDialog: {
+          show: false,
+          newAssets: [],
+          loading: false,
+        },
+        deleteAssetDialog: {
+          show: false,
+          assetId: -1,
+          loading: false,
+        },
       }
     },
 
@@ -99,7 +148,7 @@
           {
             text: this.$t("assets.location"),
             value: "asset.location",
-            width: "50%",
+            width: "55%",
           },
           { text: this.$t("actions.header"), sortable: false },
         ];
@@ -107,20 +156,31 @@
     },
 
     methods: {
-        getAssets() {
-          this.tableLoading = true;
-          const id = this.$route.params.event;
-          this.$http
-            .get(`/api/v1/events/${id}?include_assets=1`)
-            .then((resp) => {
-              console.log("fetching...");
-              console.log("resp: " + resp);
-              let event = resp.data;
-              this.assets = event.assets;
-              this.tableLoading = false;
-              console.log(this.assets);
-            })
-        }
+      showNewAssetDialog() {
+        console.log("assets: " + this.assets);
+        console.log(this.assets);
+        this.addAssetDialog.show = true;
+      },
+
+      closeNewAssetDialog() {
+        this.addAssetDialog.show = false;
+      },
+
+      addAssets() {
+
+      },
+
+      getAssets() {
+        this.assetTableLoading = true;
+        const id = this.$route.params.event;
+        this.$http
+          .get(`/api/v1/events/${id}?include_assets=1`)
+          .then((resp) => {
+            let event = resp.data;
+            this.assets = event.assets;
+            this.assetTableLoading = false;
+          })
+      }
     },
 
     mounted: function () {
