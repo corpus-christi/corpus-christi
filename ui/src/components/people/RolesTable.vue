@@ -33,7 +33,7 @@
       </v-row>
     </v-toolbar>
 
-    <!-- Table -->
+    <!-- Table of existing roles -->
     <v-data-table
       :headers="headers"
       :items="peopleToDisplay"
@@ -41,6 +41,9 @@
       :loading="!tableLoaded"
       class="elevation-1"
       data-cy="roles-table"
+      hide-default-footer
+      @page-count="pageCount = $event"
+      :page.sync="page"
     >
       <template slot="items" slot-scope="props">
         <td :data-cy="'first-name-' + props.item.id">
@@ -76,6 +79,9 @@
         </td>
       </template>
     </v-data-table>
+    <div class="text-center pt-2">
+      <v-pagination v-model="page" :length="pageCount"></v-pagination>
+    </div>
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
@@ -128,6 +134,10 @@ export default {
     return {
       viewStatus: this.allPeople,
       personRoles: [],
+
+      page: 1,
+      pageCount: 0,
+
       personDialog: {
         show: false,
         editMode: false,

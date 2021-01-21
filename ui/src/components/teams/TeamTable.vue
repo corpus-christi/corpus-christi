@@ -40,6 +40,7 @@
       </v-layout>
     </v-toolbar>
 
+    <!-- Table of existing teams -->
     <v-data-table
       :items-per-page-options="rowsPerPageItem"
       :headers="headers"
@@ -47,6 +48,9 @@
       :search="search"
       :loading="tableLoading"
       class="elevation-1"
+      hide-default-footer
+      @page-count="pageCount = $event"
+      :page.sync="page"
     >
       <template v-slot:item="props">
         <tr>
@@ -134,6 +138,9 @@
         </tr>
       </template>
     </v-data-table>
+    <div class="text-center pt-2">
+      <v-pagination v-model="page" :length="pageCount"></v-pagination>
+    </div>
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
@@ -200,6 +207,9 @@ export default {
 
   data() {
     return {
+      page: 1,
+      pageCount: 0,
+
       rowsPerPageItem: [
         10,
         15,
