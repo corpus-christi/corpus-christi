@@ -301,6 +301,7 @@ export default {
           this.saving = true;
           let classMeeting = cloneDeep(this.classMeeting);
           this.saveClassMeeting(classMeeting);
+          
         }
       });
     },
@@ -323,6 +324,7 @@ export default {
             newMeeting.location = this.location;
             newMeeting.teacher = this.teacher;
             this.$emit("save", [newMeeting]); // Parent expects array of updated records
+            this.addressWasSaved = false;
           })
           .catch((err) => {
             this.$emit("save", err);
@@ -368,6 +370,7 @@ export default {
         Promise.all(promises)
           .then((newMeetings) => {
             this.$emit("save", newMeetings);
+            this.addressWasSaved = false;
           })
           .catch((err) => {
             this.$emit("save", err);
