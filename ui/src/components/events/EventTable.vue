@@ -570,6 +570,7 @@ export default {
         delete newEvent.persons;
         let newAssets = newEvent.assets;
         delete newEvent.assets;
+        console.log(newEvent);
         this.$http
           .post("/api/v1/events/", newEvent)
           .then((resp) => {
