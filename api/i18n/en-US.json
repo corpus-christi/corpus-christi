@@ -238,6 +238,10 @@
         "verified": false
       }
     },
+    "unsaved-changes-lost": {
+      "gloss": "Unsaved changes will be lost. Are you sure?",
+      "verified": false
+    },
     "view-active": {
       "gloss": "View Active",
       "verified": false
@@ -1676,7 +1680,7 @@
         "verified": false
       },
       "submit": {
-        "gloss": "Sumbit",
+        "gloss": "Submit",
         "verified": false
       }
     },
@@ -2385,40 +2389,6 @@
       },
       "title-visitor": {
         "gloss": "Visitors",
-        "verified": false
-      }
-    },
-    "membership-history": {
-      "title": {
-        "gloss": "History",
-        "verified": false
-      },
-      "note": {
-        "gloss": "Notes",
-        "verified": false
-      },
-      "change-note": {
-        "gloss": "Change Note",
-        "verified": false
-      },
-      "clear-note": {
-        "gloss": "Clear Note",
-        "verified": false
-      },
-      "submit": {
-        "gloss": "Submit",
-        "verified": false
-      },
-      "cancel": {
-        "gloss": "Cancel",
-        "verified": false
-      },
-      "joined": {
-        "gloss": "Joined",
-        "verified": false
-      },
-      "left": {
-        "gloss": "Left",
         "verified": false
       }
     },
@@ -3563,6 +3533,40 @@
         "gloss": "Username or password is incorrect",
         "verified": false
       }
+    }
+  },
+  "membership-history": {
+    "cancel": {
+      "gloss": "Cancel",
+      "verified": null
+    },
+    "change-note": {
+      "gloss": "Change note",
+      "verified": null
+    },
+    "clear-note": {
+      "gloss": "Clear note",
+      "verified": null
+    },
+    "joined": {
+      "gloss": "Joined",
+      "verified": null
+    },
+    "left": {
+      "gloss": "Left",
+      "verified": null
+    },
+    "note": {
+      "gloss": "Notes",
+      "verified": null
+    },
+    "submit": {
+      "gloss": "Submit",
+      "verified": null
+    },
+    "title": {
+      "gloss": "History",
+      "verified": null
     }
   },
   "people": {

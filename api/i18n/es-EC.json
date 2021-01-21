@@ -2,7 +2,7 @@
   "$vuetify": {
     "calendar": {
       "moreEvents": {
-        "gloss": "{0} more",
+        "gloss": "{0} más",
         "verified": false
       }
     },
@@ -22,7 +22,7 @@
         "verified": false
       },
       "nextPage": {
-        "gloss": "Siguiente página",
+        "gloss": "Próxima página",
         "verified": false
       },
       "noResultsText": {
@@ -69,40 +69,6 @@
         "gloss": "pm",
         "verified": false
       }
-    }
-  },
-  "membership-history": {
-    "title": {
-      "gloss": "Historia",
-      "verified": false
-    },
-    "note": {
-      "gloss": "Notas",
-      "verified": false
-    },
-    "change-note": {
-      "gloss": "Cambiar nota",
-      "verified": false
-    },
-    "clear-note": {
-      "gloss": "Nota clara",
-      "verified": false
-    },
-    "submit": {
-      "gloss": "Enviar",
-      "verified": false
-    },
-    "cancel": {
-      "gloss": "Cancelar",
-      "verified": false
-    },
-    "joined": {
-      "gloss": "Unida",
-      "verified": false
-    },
-    "left": {
-      "gloss": "Izquierda",
-      "verified": false
     }
   },
   "account": {
@@ -272,6 +238,10 @@
         "verified": false
       }
     },
+    "unsaved-changes-lost": {
+      "gloss": "Los cambios no guardados se perderán. ¿Desea continuar?",
+      "verified": false
+    },
     "view-active": {
       "gloss": "Ver Activo",
       "verified": false
@@ -420,7 +390,7 @@
         "verified": false
       },
       "AF": {
-        "gloss": "AfganistÃ¡n",
+        "gloss": "Afganistán",
         "verified": false
       },
       "AG": {
@@ -2422,12 +2392,6 @@
         "verified": false
       }
     },
-    "membership-hisotry": {
-      "title": {
-        "gloss": "Historia",
-        "verified": false
-      }
-    },
     "membership-history": {
       "cancel": {
         "gloss": "Cancelar",
@@ -2820,6 +2784,60 @@
     }
   },
   "language": {
+    "lv": {
+      "gloss": "letón",
+      "verified": false
+    },
+    "messages": {
+      "already-exists": {
+        "gloss": "El grupo ya existe",
+        "verified": false
+      }
+    },
+    "mg": {
+      "gloss": "madagascarí",
+      "verified": false
+    },
+    "mh": {
+      "gloss": "Marshalés",
+      "verified": false
+    },
+    "mi": {
+      "gloss": "maorí",
+      "verified": false
+    },
+    "mk": {
+      "gloss": "macedónio",
+      "verified": false
+    },
+    "ml": {
+      "gloss": "Malayalam",
+      "verified": false
+    },
+    "mn": {
+      "gloss": "mongol",
+      "verified": false
+    },
+    "mr": {
+      "gloss": "Marathi",
+      "verified": false
+    },
+    "ms": {
+      "gloss": "malayo",
+      "verified": false
+    },
+    "mt": {
+      "gloss": "maltés",
+      "verified": false
+    },
+    "my": {
+      "gloss": "birmano",
+      "verified": false
+    },
+    "na": {
+      "gloss": "Nauru",
+      "verified": false
+    },
     "name": {
       "aa": {
         "gloss": "Lejos",
@@ -3218,353 +3236,299 @@
         "verified": false
       }
     },
-    "messages": {
-      "already-exists": {
-        "gloss": "El grupo ya existe",
-        "verified": false
-      }
+    "nb": {
+      "gloss": "Bokmål, noruego; Noruego bokmål",
+      "verified": false
     },
-      "lv": {
-        "gloss": "letón",
-        "verified": false
-      },
-      "mg": {
-        "gloss": "madagascarí",
-        "verified": false
-      },
-      "mh": {
-        "gloss": "Marshalés",
-        "verified": false
-      },
-      "mi": {
-        "gloss": "maorí",
-        "verified": false
-      },
-      "mk": {
-        "gloss": "macedónio",
-        "verified": false
-      },
-      "ml": {
-        "gloss": "Malayalam",
-        "verified": false
-      },
-      "mn": {
-        "gloss": "mongol",
-        "verified": false
-      },
-      "mr": {
-        "gloss": "Marathi",
-        "verified": false
-      },
-      "ms": {
-        "gloss": "malayo",
-        "verified": false
-      },
-      "mt": {
-        "gloss": "maltés",
-        "verified": false
-      },
-      "my": {
-        "gloss": "birmano",
-        "verified": false
-      },
-      "na": {
-        "gloss": "Nauru",
-        "verified": false
-      },
-      "nb": {
-        "gloss": "Bokmål, noruego; Noruego bokmål",
-        "verified": false
-      },
-      "nd": {
-        "gloss": "Ndebele, Norte; North Ndebele",
-        "verified": false
-      },
-      "ne": {
-        "gloss": "Nepalí",
-        "verified": false
-      },
-      "ng": {
-        "gloss": "Ndonga",
-        "verified": false
-      },
-      "nl": {
-        "gloss": "Holandés; flamenco",
-        "verified": false
-      },
-      "nn": {
-        "gloss": "Noruego Nynorsk; Nynorsk, noruego",
-        "verified": false
-      },
-      "no": {
-        "gloss": "noruego",
-        "verified": false
-      },
-      "nr": {
-        "gloss": "Ndebele, Sur; Ndebele del sur",
-        "verified": false
-      },
-      "nv": {
-        "gloss": "Navajo; Navajo",
-        "verified": false
-      },
-      "ny": {
-        "gloss": "Chichewa; Chewa; Nyanja",
-        "verified": false
-      },
-      "oc": {
-        "gloss": "Occitano (después de 1500); Provenzal",
-        "verified": false
-      },
-      "oj": {
-        "gloss": "Ojibwa",
-        "verified": false
-      },
-      "om": {
-        "gloss": "Oromo",
-        "verified": false
-      },
-      "or": {
-        "gloss": "Oriya",
-        "verified": false
-      },
-      "os": {
-        "gloss": "Osetio; Osético",
-        "verified": false
-      },
-      "pa": {
-        "gloss": "Panjabi; punjabi",
-        "verified": false
-      },
-      "pi": {
-        "gloss": "Pali",
-        "verified": false
-      },
-      "pl": {
-        "gloss": "polaco",
-        "verified": false
-      },
-      "ps": {
-        "gloss": "Pushto; Pashto",
-        "verified": false
-      },
-      "pt": {
-        "gloss": "portugués",
-        "verified": false
-      },
-      "qu": {
-        "gloss": "quechua",
-        "verified": false
-      },
-      "rm": {
-        "gloss": "Romanche",
-        "verified": false
-      },
-      "rn": {
-        "gloss": "Rundi",
-        "verified": false
-      },
-      "ro": {
-        "gloss": "Rumano; Moldavo; Moldavo",
-        "verified": false
-      },
-      "ru": {
-        "gloss": "ruso",
-        "verified": false
-      },
-      "rw": {
-        "gloss": "Kinyarwanda",
-        "verified": false
-      },
-      "sa": {
-        "gloss": "sánscrito",
-        "verified": false
-      },
-      "sc": {
-        "gloss": "sardo",
-        "verified": false
-      },
-      "sd": {
-        "gloss": "Sindhi",
-        "verified": false
-      },
-      "se": {
-        "gloss": "Sami del Norte",
-        "verified": false
-      },
-      "sg": {
-        "gloss": "Sango",
-        "verified": false
-      },
-      "si": {
-        "gloss": "Sinhala; Cingaleses",
-        "verified": false
-      },
-      "sk": {
-        "gloss": "eslovaco",
-        "verified": false
-      },
-      "sl": {
-        "gloss": "Slovenian",
-        "verified": false
-      },
-      "sm": {
-        "gloss": "Samoan",
-        "verified": false
-      },
-      "sn": {
-        "gloss": "Shona",
-        "verified": false
-      },
-      "so": {
-        "gloss": "Somali",
-        "verified": false
-      },
-      "sq": {
-        "gloss": "Albanian",
-        "verified": false
-      },
-      "sr": {
-        "gloss": "serbio",
-        "verified": false
-      },
-      "ss": {
-        "gloss": "Swati",
-        "verified": false
-      },
-      "st": {
-        "gloss": "Sotho, Sur",
-        "verified": false
-      },
-      "su": {
-        "gloss": "Sundanese",
-        "verified": false
-      },
-      "sv": {
-        "gloss": "sueco",
-        "verified": false
-      },
-      "sw": {
-        "gloss": "Swahili",
-        "verified": false
-      },
-      "ta": {
-        "gloss": "Tamil",
-        "verified": false
-      },
-      "te": {
-        "gloss": "Telugu",
-        "verified": false
-      },
-      "tg": {
-        "gloss": "Tayiko",
-        "verified": false
-      },
-      "th": {
-        "gloss": "tailandés",
-        "verified": false
-      },
-      "ti": {
-        "gloss": "Tigrinya",
-        "verified": false
-      },
-      "tk": {
-        "gloss": "Turkmen",
-        "verified": false
-      },
-      "tl": {
-        "gloss": "Tagalo",
-        "verified": false
-      },
-      "tn": {
-        "gloss": "Tswana",
-        "verified": false
-      },
-      "to": {
-        "gloss": "Tonga (Islas Tonga)",
-        "verified": false
-      },
-      "tr": {
-        "gloss": "Turkish",
-        "verified": false
-      },
-      "ts": {
-        "gloss": "Tsonga",
-        "verified": false
-      },
-      "tt": {
-        "gloss": "Tártaro",
-        "verified": false
-      },
-      "tw": {
-        "gloss": "Twi",
-        "verified": false
-      },
-      "ty": {
-        "gloss": "Tahitian",
-        "verified": false
-      },
-      "ug": {
-        "gloss": "Uigur; Uigur",
-        "verified": false
-      },
-      "uk": {
-        "gloss": "ucranio",
-        "verified": false
-      },
-      "ur": {
-        "gloss": "Urdu",
-        "verified": false
-      },
-      "uz": {
-        "gloss": "Uzbek",
-        "verified": false
-      },
-      "ve": {
-        "gloss": "Venda",
-        "verified": false
-      },
-      "vi": {
-        "gloss": "Vietnamese",
-        "verified": false
-      },
-      "vo": {
-        "gloss": "Volapük",
-        "verified": false
-      },
-      "wa": {
-        "gloss": "Walloon",
-        "verified": false
-      },
-      "wo": {
-        "gloss": "Wolof",
-        "verified": false
-      },
-      "xh": {
-        "gloss": "Xhosa",
-        "verified": false
-      },
-      "yi": {
-        "gloss": "yídish",
-        "verified": false
-      },
-      "yo": {
-        "gloss": "Yoruba",
-        "verified": false
-      },
-      "za": {
-        "gloss": "Zhuang; Chuang",
-        "verified": false
-      },
-      "zh": {
-        "gloss": "chino",
-        "verified": false
-      },
-      "zu": {
-        "gloss": "Zulu",
-        "verified": false
-      }
+    "nd": {
+      "gloss": "Ndebele, Norte; North Ndebele",
+      "verified": false
     },
+    "ne": {
+      "gloss": "Nepalí",
+      "verified": false
+    },
+    "ng": {
+      "gloss": "Ndonga",
+      "verified": false
+    },
+    "nl": {
+      "gloss": "Holandés; flamenco",
+      "verified": false
+    },
+    "nn": {
+      "gloss": "Noruego Nynorsk; Nynorsk, noruego",
+      "verified": false
+    },
+    "no": {
+      "gloss": "noruego",
+      "verified": false
+    },
+    "nr": {
+      "gloss": "Ndebele, Sur; Ndebele del sur",
+      "verified": false
+    },
+    "nv": {
+      "gloss": "Navajo; Navajo",
+      "verified": false
+    },
+    "ny": {
+      "gloss": "Chichewa; Chewa; Nyanja",
+      "verified": false
+    },
+    "oc": {
+      "gloss": "Occitano (después de 1500); Provenzal",
+      "verified": false
+    },
+    "oj": {
+      "gloss": "Ojibwa",
+      "verified": false
+    },
+    "om": {
+      "gloss": "Oromo",
+      "verified": false
+    },
+    "or": {
+      "gloss": "Oriya",
+      "verified": false
+    },
+    "os": {
+      "gloss": "Osetio; Osético",
+      "verified": false
+    },
+    "pa": {
+      "gloss": "Panjabi; punjabi",
+      "verified": false
+    },
+    "pi": {
+      "gloss": "Pali",
+      "verified": false
+    },
+    "pl": {
+      "gloss": "polaco",
+      "verified": false
+    },
+    "ps": {
+      "gloss": "Pushto; Pashto",
+      "verified": false
+    },
+    "pt": {
+      "gloss": "portugués",
+      "verified": false
+    },
+    "qu": {
+      "gloss": "quechua",
+      "verified": false
+    },
+    "rm": {
+      "gloss": "Romanche",
+      "verified": false
+    },
+    "rn": {
+      "gloss": "Rundi",
+      "verified": false
+    },
+    "ro": {
+      "gloss": "Rumano; Moldavo; Moldavo",
+      "verified": false
+    },
+    "ru": {
+      "gloss": "ruso",
+      "verified": false
+    },
+    "rw": {
+      "gloss": "Kinyarwanda",
+      "verified": false
+    },
+    "sa": {
+      "gloss": "sánscrito",
+      "verified": false
+    },
+    "sc": {
+      "gloss": "sardo",
+      "verified": false
+    },
+    "sd": {
+      "gloss": "Sindhi",
+      "verified": false
+    },
+    "se": {
+      "gloss": "Sami del Norte",
+      "verified": false
+    },
+    "sg": {
+      "gloss": "Sango",
+      "verified": false
+    },
+    "si": {
+      "gloss": "Sinhala; Cingaleses",
+      "verified": false
+    },
+    "sk": {
+      "gloss": "eslovaco",
+      "verified": false
+    },
+    "sl": {
+      "gloss": "Slovenian",
+      "verified": false
+    },
+    "sm": {
+      "gloss": "Samoan",
+      "verified": false
+    },
+    "sn": {
+      "gloss": "Shona",
+      "verified": false
+    },
+    "so": {
+      "gloss": "Somali",
+      "verified": false
+    },
+    "sq": {
+      "gloss": "Albanian",
+      "verified": false
+    },
+    "sr": {
+      "gloss": "serbio",
+      "verified": false
+    },
+    "ss": {
+      "gloss": "Swati",
+      "verified": false
+    },
+    "st": {
+      "gloss": "Sotho, Sur",
+      "verified": false
+    },
+    "su": {
+      "gloss": "Sundanese",
+      "verified": false
+    },
+    "sv": {
+      "gloss": "sueco",
+      "verified": false
+    },
+    "sw": {
+      "gloss": "Swahili",
+      "verified": false
+    },
+    "ta": {
+      "gloss": "Tamil",
+      "verified": false
+    },
+    "te": {
+      "gloss": "Telugu",
+      "verified": false
+    },
+    "tg": {
+      "gloss": "Tayiko",
+      "verified": false
+    },
+    "th": {
+      "gloss": "tailandés",
+      "verified": false
+    },
+    "ti": {
+      "gloss": "Tigrinya",
+      "verified": false
+    },
+    "tk": {
+      "gloss": "Turkmen",
+      "verified": false
+    },
+    "tl": {
+      "gloss": "Tagalo",
+      "verified": false
+    },
+    "tn": {
+      "gloss": "Tswana",
+      "verified": false
+    },
+    "to": {
+      "gloss": "Tonga (Islas Tonga)",
+      "verified": false
+    },
+    "tr": {
+      "gloss": "Turkish",
+      "verified": false
+    },
+    "ts": {
+      "gloss": "Tsonga",
+      "verified": false
+    },
+    "tt": {
+      "gloss": "Tártaro",
+      "verified": false
+    },
+    "tw": {
+      "gloss": "Twi",
+      "verified": false
+    },
+    "ty": {
+      "gloss": "Tahitian",
+      "verified": false
+    },
+    "ug": {
+      "gloss": "Uigur; Uigur",
+      "verified": false
+    },
+    "uk": {
+      "gloss": "ucranio",
+      "verified": false
+    },
+    "ur": {
+      "gloss": "Urdu",
+      "verified": false
+    },
+    "uz": {
+      "gloss": "Uzbek",
+      "verified": false
+    },
+    "ve": {
+      "gloss": "Venda",
+      "verified": false
+    },
+    "vi": {
+      "gloss": "Vietnamese",
+      "verified": false
+    },
+    "vo": {
+      "gloss": "Volapük",
+      "verified": false
+    },
+    "wa": {
+      "gloss": "Walloon",
+      "verified": false
+    },
+    "wo": {
+      "gloss": "Wolof",
+      "verified": false
+    },
+    "xh": {
+      "gloss": "Xhosa",
+      "verified": false
+    },
+    "yi": {
+      "gloss": "yídish",
+      "verified": false
+    },
+    "yo": {
+      "gloss": "Yoruba",
+      "verified": false
+    },
+    "za": {
+      "gloss": "Zhuang; Chuang",
+      "verified": false
+    },
+    "zh": {
+      "gloss": "chino",
+      "verified": false
+    },
+    "zu": {
+      "gloss": "Zulu",
+      "verified": false
+    }
+  },
   "login": {
     "header": {
       "gloss": "Iniciar Sesión",
@@ -3575,6 +3539,40 @@
         "gloss": "Nombre de usuario o contraseña incorrecta",
         "verified": false
       }
+    }
+  },
+  "membership-history": {
+    "cancel": {
+      "gloss": "Cancelar",
+      "verified": false
+    },
+    "change-note": {
+      "gloss": "Cambiar apunte",
+      "verified": false
+    },
+    "clear-note": {
+      "gloss": "Quitar apunte",
+      "verified": false
+    },
+    "joined": {
+      "gloss": "Unida",
+      "verified": false
+    },
+    "left": {
+      "gloss": "Izquierda",
+      "verified": false
+    },
+    "note": {
+      "gloss": "Apuntes",
+      "verified": false
+    },
+    "submit": {
+      "gloss": "Enviar",
+      "verified": false
+    },
+    "title": {
+      "gloss": "Historia",
+      "verified": false
     }
   },
   "people": {
