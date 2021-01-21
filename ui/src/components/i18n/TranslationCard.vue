@@ -79,7 +79,8 @@
     >
       <v-checkbox
         class=" align-self-center"
-        v-model="currentVerified"
+        v-model="newValidation"
+        @click="onValidationClick"
       />
     </v-card>
   </v-card>
@@ -89,30 +90,37 @@
 export default {
   name: "TranslationCard",
   props: {
-    topLevelTag:        { type: String,   required: true  },
-    restOfTag:          { type: String,   required: true  },
-    previewGloss:       { type: String,   required: true  },
-    currentGloss:       { type: String,   required: true  },
-    currentVerified:    { type: Boolean,  required: true  },
-    selectedTags:       { type: Array,    required: true  },
+    topLevelTag:     { type: String,  required: true },
+    restOfTag:       { type: String,  required: true },
+    previewGloss:    { type: String,  required: true },
+    currentGloss:    { type: String,  required: true },
+    currentVerified: { type: Boolean, required: true },
+    selectedTags:    { type: Array,   required: true },
   },
   data() {
     return{
-      newTranslation: "",
-      changedKey: this.topLevelTag+"."+this.restOfTag,
       oldTranslation: this.currentGloss,
+      newTranslation: "",
+
+      oldValidation: this.currentVerified,
+      newValidation: this.currentVerified, //copy
     };
   },
   computed: {
     isSelected() {
       return this.selectedTags.includes(this.topLevelTag);
     },
+    changedKey() {
+      return `${this.topLevelTag}.${this.restOfTag}`;
+    }
   },
   methods: {
-    emitEventChanged () {
-      this.$emit('TranslationChanged', this.changedKey, this.newTranslation, this.oldTranslation);
-      this.$emit('AppendToList')
-    }
+    emitEventChanged() {
+      this.$emit('AppendToList', this.changedKey, this.newTranslation, this.oldTranslation);
+    },
+    onValidationClick() {
+      this.$emit('ValidationChanged', this.changedKey, this.newValidation, this.oldValidation);
+    },
   }
 };
 </script>

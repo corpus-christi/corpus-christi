@@ -37,8 +37,8 @@
           :currentGloss="card.current_gloss"
           :currentVerified="card.current_verified"
           :selectedTags="selectedTags"
-          @TranslationChanged="getNewTranslation"
           @AppendToList="appendTranslation"
+          @ValidationChanged="logValidation"
         />
       </v-col>
     </v-row>
@@ -128,8 +128,6 @@ export default {
       translationObjs: [],
       previewCode: "",
       currentCode: "",
-      newTranslation: "",
-      changedKey: "",
       loadingTranslations: false,
       newTranslationList: {},
     };
@@ -159,7 +157,7 @@ export default {
       if (typeof window === "undefined") return;
       const top = window.pageYOffset || e.target.scrollTop || 0;
       this.fabToTop = top > 20;
-      this.fabToBot = top < this.bodyScrollHeight - window.innerHeight - 20;
+      this.fabToBot = top < this.scrollHeight - 20;
     },
     loadTopLevelTags() {
       return this.$http
@@ -208,23 +206,37 @@ export default {
     submitChanges() {
       console.log(this.newTranslationList);
     },
-    getNewTranslation(key, newTrans, oldTrans) {
-      this.changedKey = key;
-      this.newTranslation = newTrans;
-      this.oldTranslation = oldTrans;
-    },
-    appendTranslation() {
-      let tempKey = this.changedKey;
-      if (tempKey in this.newTranslationList) {
-        this.newTranslationList[tempKey].newTrans = this.newTranslation;
+    appendTranslation(key, newTrans, oldTrans) {
+      if (key in this.newTranslationList) {
+        this.newTranslationList[key].newTrans = newTrans;
+        this.newTranslationList[key].oldTrans = oldTrans;
       }
       else {
-        let tempDict = {};
-        tempDict.key = tempKey;
-        tempDict.newTrans = this.newTranslation;
-        tempDict.oldTrans = this.oldTranslation;
-        this.newTranslationList[tempKey] = tempDict;
+        this.newTranslationList[key] = {
+          key: key,
+          newTrans: newTrans,
+          oldTrans: oldTrans,
+          newValid: null,
+          oldValid: null
+        };
       }
+      console.log(this.newTranslationList);
+    },
+    logValidation(key, newValid, oldValid) {
+      if (key in this.newTranslationList) {
+        this.newTranslationList[key].newValid = newValid;
+        this.newTranslationList[key].oldValid = oldValid;
+      }
+      else {
+        this.newTranslationList[key] = {
+          key: key,
+          newTrans: null,
+          oldTrans: null,
+          newValid: newValid,
+          oldValid: oldValid
+        };
+      }
+      console.log(this.newTranslationList);
     },
   },
   mounted: function () {
