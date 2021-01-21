@@ -95,6 +95,7 @@ export default {
     previewGloss:    { type: String,  required: true },
     currentGloss:    { type: String,  required: true },
     currentVerified: { type: Boolean, required: true },
+    filters:         { type: Array,   required: true },
     selectedTags:    { type: Array,   required: true },
   },
   data() {

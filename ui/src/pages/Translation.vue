@@ -7,6 +7,7 @@
       @goToTop="$vuetify.goTo(0)"
       @goToBot="$vuetify.goTo(bodyScrollHeight())"
       @onSubmit="dialog='true'"
+      @sendFilters="useFilter"
     />
 
     <WorkbenchHeader
@@ -36,6 +37,7 @@
           :previewGloss="card.preview_gloss"
           :currentGloss="card.current_gloss"
           :currentVerified="card.current_verified"
+          :filters="filters"
           :selectedTags="selectedTags"
           @AppendToList="appendTranslation"
           @ClearFromList="clearGivenTranslation"
@@ -116,6 +118,7 @@ export default {
       currentCode: "",
       loadingTranslations: false,
       newTranslationList: {},
+      filters: [],
     };
   },
   computed: {
@@ -223,6 +226,9 @@ export default {
     },
     bodyScrollHeight() {
       return document.body.scrollHeight;
+    },
+    useFilter(filters) {
+      this.filters = filters;
     },
   },
   mounted: function () {

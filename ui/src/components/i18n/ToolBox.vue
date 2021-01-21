@@ -18,11 +18,11 @@
           dark
           
         >
+          <v-icon>add_circle_outline</v-icon>
           Add New Locale
         </v-btn>
       </v-col>
       <v-col
-        class="ml-5"
         align="center"
       >
         <v-btn
@@ -43,6 +43,8 @@
           multiple
           chips
           :items="filters"
+          item-value="id"
+          @change="onChange"
         >
         </v-select>
       </v-col>
@@ -62,7 +64,7 @@
           width="100%"
           class="text-center pa-2 my-2"
         >
-          {{numValidated}} / {{totalEntries}} Validated
+          {{numValidated}} / {{totalEntries}} Verified
         </v-card>
       </v-col>
     </v-row>
@@ -105,15 +107,15 @@ export default {
   data() {
     return {
       filters: [
-        'Yes',
-        'No',
-        'Maybe',
-        'So',
+        { text: 'Unvalidated', id: 0 },
+        { text: 'Untranslated', id: 1 },
       ],
     };
   },
   methods: {
-
+    onChange(key) {
+      this.$emit('sendFilters', key);
+    }
   },
 };
 </script>
