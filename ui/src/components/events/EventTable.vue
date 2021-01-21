@@ -72,7 +72,6 @@
     </v-toolbar>
 
     <!-- Table of existing events -->
-    <!-- :options.sync="paginationInfo" -->
     <v-data-table
       :headers="headers"
       :items-per-page-options="rowsPerPageItem"
@@ -262,13 +261,6 @@ export default {
         25,
         { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 },
       ],
-      /*
-      paginationInfo: {
-        sortBy: ["start"], //default sorted column
-        rowsPerPage: 10,
-        page: 1,
-        sortDesc: [true],
-      }, //*/
       tableLoading: true,
       events: [],
       eventDialog: {
