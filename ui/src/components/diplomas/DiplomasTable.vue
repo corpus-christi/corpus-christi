@@ -6,7 +6,7 @@
         <v-flex md2>
           <v-toolbar-title>{{ $t("diplomas.diplomas") }}</v-toolbar-title>
         </v-flex>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-flex md3>
           <v-text-field
             v-model="search"
@@ -17,7 +17,7 @@
             data-cy="diplomas-table-search"
           ></v-text-field>
         </v-flex>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-flex md3>
           <v-select
             v-model="viewStatus"
@@ -114,7 +114,7 @@
             :disabled="deactivateDialog.loading"
             >{{ $t("actions.cancel") }}</v-btn
           >
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="deactivate(deactivateDialog.diploma)"
             color="primary"

@@ -21,7 +21,7 @@
                     <v-card-text>{{ course.description }}</v-card-text>
                   </span>
                   <v-card-actions>
-                    <v-spacer></v-spacer>
+                    <v-spacer />
                     <v-btn
                       raised
                       color="primary"
@@ -29,7 +29,7 @@
                     >
                       {{ $t("courses.register") }}
                     </v-btn>
-                    <v-spacer></v-spacer>
+                    <v-spacer />
                   </v-card-actions>
                 </v-card>
               </v-expansion-panel-content>
@@ -88,11 +88,11 @@
                 <v-card>
                   <v-card-text>{{ event.description }}</v-card-text>
                   <v-card-actions>
-                    <v-spacer></v-spacer>
+                    <v-spacer />
                     <v-btn raised color="primary">{{
                       $t("public.events.join")
                     }}</v-btn>
-                    <v-spacer></v-spacer>
+                    <v-spacer />
                   </v-card-actions>
                 </v-card>
               </v-expansion-panel-content>

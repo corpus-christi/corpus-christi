@@ -162,7 +162,7 @@
             data-cy="cancel-archive"
             >{{ $t("actions.cancel") }}</v-btn
           >
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="archiveAsset"
             color="primary"

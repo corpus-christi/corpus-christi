@@ -2,7 +2,7 @@
   <div>
     <v-toolbar>
       <v-toolbar-title>{{ $t("events.participants.title") }}</v-toolbar-title>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-text-field
         v-model="search"
         append-icon="search"
@@ -10,8 +10,8 @@
         single-line
         hide-details
       ></v-text-field>
-      <v-spacer></v-spacer>
-      <v-spacer></v-spacer>
+      <v-spacer />
+      <v-spacer />
       <v-btn
         color="primary"
         raised
@@ -85,7 +85,7 @@
             data-cy=""
             >{{ $t("actions.cancel") }}</v-btn
           >
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="addParticipants"
             :disabled="addParticipantDialog.newParticipants.length == 0"
@@ -113,7 +113,7 @@
             data-cy="cancel-delete"
             >{{ $t("actions.cancel") }}</v-btn
           >
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="deleteParticipant"
             color="primary"

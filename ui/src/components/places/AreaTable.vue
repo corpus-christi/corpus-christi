@@ -160,7 +160,7 @@
             :disabled="confirmDialog.loading"
             >{{ $t("actions.cancel") }}</v-btn
           >
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="confirmAction(confirmDialog.action, confirmDialog.area)"
             color="primary"

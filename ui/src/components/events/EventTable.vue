@@ -12,7 +12,7 @@
             {{ $t("events.header") }}
           </v-toolbar-title>
         </v-flex>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-text-field
           class="max-width-250 mr-2"
           v-model="search"
@@ -220,7 +220,7 @@
             data-cy="cancel-archive"
             >{{ $t("actions.cancel") }}
           </v-btn>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="archiveEvent"
             color="primary"

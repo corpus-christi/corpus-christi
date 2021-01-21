@@ -32,7 +32,7 @@
 
     <v-toolbar>
       <v-toolbar-title>{{ $t("teams.members.title") }}</v-toolbar-title>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <template v-slot:activator="{ on }">
         <v-text-field
           v-model="search"
@@ -42,7 +42,7 @@
           hide-details
           v-on="on"
         ></v-text-field>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-btn
           color="primary"
           raised
@@ -123,7 +123,7 @@
           <v-btn v-on:click="cancelArchive" color="secondary" text data-cy="">{{
             $t("actions.cancel")
           }}</v-btn>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="archiveMember"
             color="primary"
@@ -174,7 +174,7 @@
             data-cy="cancel-participant"
             >{{ $t("actions.cancel") }}</v-btn
           >
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="addParticipants"
             :disabled="addMemberDialog.newMembers.length == 0"

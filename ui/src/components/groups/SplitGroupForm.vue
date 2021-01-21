@@ -85,7 +85,7 @@
           </v-row>
           <v-row no-gutters>
             <v-btn text @click="cancel">{{ $t("actions.cancel") }}</v-btn>
-            <v-spacer></v-spacer>
+            <v-spacer />
             <v-btn color="primary" @click="currentStep = 2">{{
               $t("actions.next")
             }}</v-btn>
@@ -128,7 +128,7 @@
             <v-btn text @click="currentStep = 1">{{
               $t("actions.previous")
             }}</v-btn>
-            <v-spacer></v-spacer>
+            <v-spacer />
             <v-btn color="primary" @click="currentStep = 3">{{
               $t("actions.next")
             }}</v-btn>
@@ -171,7 +171,7 @@
             <v-btn text @click="currentStep = 2">{{
               $t("actions.previous")
             }}</v-btn>
-            <v-spacer></v-spacer>
+            <v-spacer />
             <v-btn color="primary" :loading="loading" @click="split">{{
               $t("actions.confirm")
             }}</v-btn>

@@ -406,7 +406,7 @@
               </v-layout>
             </v-card-text>
             <v-card-actions>
-              <v-spacer></v-spacer>
+              <v-spacer />
               <v-btn text color="primary" @click="resetFilters">
                 {{ $t("places.address.filters.reset-filters") }}</v-btn
               >
@@ -446,7 +446,7 @@
             :disabled="confirmDialog.loading"
             >{{ $t("actions.cancel") }}</v-btn
           >
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="
               confirmAction(confirmDialog.action, confirmDialog.place)
@@ -487,7 +487,7 @@
             :disabled="confirmLocationDialog.loading"
             >{{ $t("actions.cancel") }}</v-btn
           >
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="
               confirmActionLocation(
