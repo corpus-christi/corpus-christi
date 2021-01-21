@@ -5,7 +5,7 @@
       :numValidated="numEntriesValidated"
       :totalEntries="numEntriesTotal"
       @goToTop="$vuetify.goTo(0)"
-      @goToBot="$vuetify.goTo(bodyScrollHeight)"
+      @goToBot="$vuetify.goTo(bodyScrollHeight())"
       @onSubmit="dialog='true'"
     />
 
@@ -62,6 +62,11 @@
           <v-list-item-icon><v-icon>keyboard_arrow_right</v-icon></v-list-item-icon>
           <v-list-item-subtitle class="text-left AutoWidth">{{item.newTrans}}</v-list-item-subtitle>
         </v-list-item>
+        <v-card-actions class="headline black lighten-2 white--text">
+          <v-btn color="red lighten-2" @click="dialog=false" outlined class="white">
+            Sumbit
+          </v-btn>
+        </v-card-actions>
       </v-card>
     </v-dialog>
 
@@ -115,9 +120,6 @@ export default {
   computed: {
     ...mapState(["currentAccount"]),
     ...mapState(["currentLocale"]),
-    bodyScrollHeight() {
-      return document.body.scrollHeight;
-    },
     numEntriesTranslated() {
       return this.translationObjs.filter(obj => obj.current_gloss != '').length;
     },
@@ -214,6 +216,9 @@ export default {
     },
     thereIsUnsavedWork() {
       return Object.keys(this.newTranslationList).length > 0;
+    },
+    bodyScrollHeight() {
+      return document.body.scrollHeight;
     },
   },
   mounted: function () {
