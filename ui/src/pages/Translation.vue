@@ -46,14 +46,6 @@
     <v-row fixed bottom>
       <v-app-bar color="white" elevation="2">
         <v-card min-width="60%" />
-        <!-- For testing "changes must be saved" feature -->
-        <v-btn min-width="15%"
-          @click="canUserLeaveFreely = !canUserLeaveFreely"
-        >
-          {{freelyLeaveButtonText}}
-        </v-btn>
-
-        <v-card min-width="2%" />
 
         <v-dialog
           v-model="dialog"
@@ -135,10 +127,6 @@ export default {
   computed: {
     ...mapState(["currentAccount"]),
     ...mapState(["currentLocale"]),
-    // "Changes must be saved before leaving" feature-to-be
-    freelyLeaveButtonText() {
-      return this.canUserLeaveFreely ? "Leave without issue" : "Prompt b/f leaving";
-    },
     bodyScrollHeight() {
       return document.body.scrollHeight;
     },
@@ -217,10 +205,9 @@ export default {
           newTrans: newTrans,
           oldTrans: oldTrans,
           newValid: null,
-          oldValid: null
+          oldValid: null,
         };
       }
-      console.log(this.newTranslationList);
     },
     logValidation(key, newValid, oldValid) {
       if (key in this.newTranslationList) {
@@ -233,10 +220,12 @@ export default {
           newTrans: null,
           oldTrans: null,
           newValid: newValid,
-          oldValid: oldValid
+          oldValid: oldValid,
         };
       }
-      console.log(this.newTranslationList);
+    },
+    thereIsUnsavedWork() {
+      return Object.keys(this.newTranslationList).length > 0;
     },
   },
   mounted: function () {
@@ -244,7 +233,7 @@ export default {
     this.getAllLocales();
   },
   beforeRouteLeave(to, from, next) {
-    if (!this.canUserLeaveFreely) {
+    if (this.thereIsUnsavedWork()) {
       const userAnswer = window.confirm(this.$t("actions.unsaved-changes-lost"));
       next(userAnswer);
     }
@@ -256,11 +245,11 @@ export default {
 </script>
 
 <style scoped>
-  .ToolBox {
-    position: fixed;
-    width:300px;
-    height: 300px;
-    right: 0;
-    z-index: 2
-  }
+.ToolBox {
+  position: fixed;
+  width: 300px;
+  height: 300px;
+  right: 0;
+  z-index: 2;
+}
 </style>

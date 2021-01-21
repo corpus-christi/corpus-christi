@@ -70,13 +70,6 @@
       class="subrow ml-3"
       no-gutters
     >
-      <v-col >
-        <v-btn
-          dark
-        >
-          Clear
-        </v-btn>
-      </v-col>
       <v-col 
         align="center"
       >

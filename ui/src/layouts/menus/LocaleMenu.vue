@@ -9,7 +9,7 @@
       />
     </v-col>
     <v-col>
-      <v-menu offset-y :disabled="disableMenu">
+      <v-menu offset-y>
         <template v-slot:activator="{ on }">
           <v-btn id="cur-locale" data-cy="cur-locale" text v-on="on">
             {{ currentFlagAndDescription }}
@@ -56,12 +56,6 @@ export default {
       );
     },
 
-    disableMenu() {
-      // disable menu if in the translation page or in transparent mode
-      //return this.$route.name === "translation" || this.transparentMode;
-      return false;
-    },
-
     currentLocale() {
       return this.$store.state.currentLocale;
     },
@@ -103,15 +97,6 @@ export default {
     },
 
     getFlagAndDescription(localeModel) {
-      // let { languageCode, countryCode } = localeModel.locale;
-      // let languageKey = `language.name.${languageCode}`;
-      // let countryKey = `country.name.${countryCode}`;
-      // if (this.$te(languageKey) && this.$te(countryKey)) {
-      //   let description = `${this.$t(languageKey)} ${this.$t(countryKey)}`;
-      //   return `${localeModel.locale.flag} ${description}`; // use internationalized descriptions
-      // } else {
-        
-      // }
       return localeModel.flagAndDescription; // plain description in database
     },
 
