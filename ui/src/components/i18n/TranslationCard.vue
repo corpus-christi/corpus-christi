@@ -116,7 +116,13 @@ export default {
   },
   methods: {
     emitEventChanged() {
-      this.$emit('AppendToList', this.changedKey, this.newTranslation, this.oldTranslation);
+      if (this.newTranslation === '') {
+        this.$emit('ClearFromList', this.changedKey);
+      }
+      else {
+        this.$emit('AppendToList', this.changedKey, this.newTranslation, this.oldTranslation);
+      }
+      this.newValidation = false;
     },
     onValidationClick() {
       this.$emit('ValidationChanged', this.changedKey, this.newValidation, this.oldValidation);

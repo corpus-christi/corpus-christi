@@ -38,6 +38,7 @@
           :currentVerified="card.current_verified"
           :selectedTags="selectedTags"
           @AppendToList="appendTranslation"
+          @ClearFromList="clearGivenTranslation"
           @ValidationChanged="logValidation"
         />
       </v-col>
@@ -198,6 +199,9 @@ export default {
           oldValid: null,
         };
       }
+    },
+    clearGivenTranslation(key) {
+      delete this.newTranslationList[key];
     },
     logValidation(key, newValid, oldValid) {
       if (key in this.newTranslationList) {
