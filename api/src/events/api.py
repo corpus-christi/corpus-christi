@@ -15,6 +15,16 @@ from ..images.models import Image, ImageEvent
 from ..people.models import Person
 from ..shared.helpers import get_exclusion_list, modify_entity
 
+class ChurchError(Exception):
+    def __init__(self, response = "Church is happening at this time"):
+        self.response = response
+        super().__init__(self.response)
+
+class DoubleBooked(Exception):
+    def __init__(self, response = "There is already an event happening in this location at this time"):
+        self.response = response
+        super().__init__(self.response)
+
 
 # ---- Event
 @events.route('/', methods=['POST'])
@@ -27,11 +37,11 @@ def create_event():
     try:
         valid_event = event_schema.load(request.json)
     except ValidationError as err:
+        print(ValidationError)
         return jsonify(err.messages), 422
 
     new_event = Event(**valid_event)
     others = db.session.query(Event).filter_by(location_id=new_event.location_id)
-    
     
     start_filter = str(new_event.start)
     end_filter = str(new_event.end)
@@ -50,7 +60,8 @@ def create_event():
         c=newStartTime > churchTime and newEndTime < churchEndTime
         print(a, b, c)
         if(a or b or c):
-            return jsonify("Church is going on")
+            raise ChurchError
+            #return jsonify("Church is going on")
     if(others):
         for event in others:
             otherEventStart = datetime.strptime(str(event.start), '%Y-%m-%d %H:%M:%S') + timedelta(hours=5)
@@ -64,7 +75,8 @@ def create_event():
             g=otherEventStart.day == newStartDateTime.day and otherEventEnd.day == newEndDateTime.day 
             print(d, e, f, g)
             if((d or e or f) and g):
-                return jsonify("There is already another event happening here")
+                raise DoubleBooked  
+                #return jsonify("There is already another event happening here")
     
     db.session.add(new_event)
     db.session.commit()
