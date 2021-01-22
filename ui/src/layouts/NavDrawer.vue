@@ -53,6 +53,11 @@ export default {
               icon: "school",
               children: [
                 {
+                  title: this.$t("courses.course"),
+                  route: "courses",
+                  isDropdown: true,
+                },
+                {
                   title: this.$t("diplomas.diploma"),
                   route: "diplomas-admin",
                   isDropdown: true,
@@ -130,6 +135,7 @@ export default {
                 {
                   title: this.$t("courses.course"),
                   route: "courses",
+                  isDropdown: true,
                 },
                 {
                   title: this.$t("diplomas.diploma"),
