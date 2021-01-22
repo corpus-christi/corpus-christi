@@ -48,7 +48,7 @@
     <v-data-table
       :headers="headers"
       :search="search"
-      :items="showCourseOfferings"
+      :items="showStudents"
       class="elevation-1"
       :items-per-page-options="rowsPerPageItem"
       hide-default-footer
@@ -153,7 +153,7 @@ export default {
     //CourseOfferingAdminActions,
   },
   props: {
-    course: {
+    diploma: {
       type: Object,
       required: true,
     },
@@ -187,7 +187,7 @@ export default {
       page: 1,
       pageCount: 0,
 
-      courseOfferings: [],
+      students: [],
 
       selected: [],
       search: "",
@@ -236,7 +236,11 @@ export default {
         { text: this.$t("actions.view-all"), value: "all" },
       ];
     },
-    showCourseOfferings() {
+    showStudents() {
+      console.log("Diagnostic 2");
+      console.log(this.students);
+      return this.students;
+      /*
       switch (this.viewStatus) {
         case "active":
           return this.courseOfferings.filter(
@@ -249,12 +253,14 @@ export default {
         case "all":
         default:
           return this.courseOfferings;
-      }
+      } //*/
     },
   },
 
   mounted() {
-    this.courseOfferings = this.course.course_offerings;
+    console.log("Diagnostic 1");
+    console.log(this.diploma);
+    this.students = this.diploma.studentList;
   },
 
   methods: {
@@ -314,11 +320,11 @@ export default {
       this.deactivateDialog.show = true;
       this.deactivateDialog.courseOffering = courseOffering;
     },
-
+    //*/
     cancelDeactivate() {
       this.deactivateDialog.show = false;
     },
-
+    /*
     deactivate(courseOffering) {
       this.deactivateDialog.loading = true;
       this.$http

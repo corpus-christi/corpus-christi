@@ -74,9 +74,9 @@
               </v-layout>
               <!- -->
               <v-flex md12 v-if="!loading">
-                <DiplomaCoursesTable :course="course" />
+                <DiplomaCoursesTable v-bind:diploma="diploma" />
                 <!--
-                <template slot="items" slot-scope="props">
+                <template slot="items" slot-scope="props"> :course="course"
                   <td class="hover-hand" @click="clickThrough(props.item)">
                     {{ props.item.name }}
                   </td>
@@ -97,9 +97,9 @@
             <v-tab-item>
               <v-flex md12 v-if="!loading">
               <!--
-              <v-flex sm12 md9 class="pl-2" v-if="!loading">
+              <v-flex sm12 md9 class="pl-2" v-if="!loading"> :course="course"
               -->
-                <DiplomaPeopleTable :course="course" />
+                <DiplomaPeopleTable v-bind:diploma="diploma" />
               </v-flex>
             </v-tab-item>
           </v-tabs-items>
@@ -145,6 +145,28 @@ export default {
       this.loadingFailed = false;
       this.$http
         .get(`/api/v1/courses/diplomas/${this.diplomaId}`)
+        .then((resp) => {
+          this.diploma = resp.data;
+          /*
+          console.log("Welcome!");
+          console.log(this.diploma);
+          console.log(this.diploma.courseList);
+          console.log("World.");
+          //*/
+        })
+        .catch(() => {
+          this.loadingFailed = true;
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    },
+
+    loadCourses() {
+      this.loading = true;
+      this.loadingFailed = false;
+      this.$http
+        .get(`/api/v1/courses/diplomas/${this.diplomaID}`)
         .then((resp) => {
           this.diploma = resp.data;
         })

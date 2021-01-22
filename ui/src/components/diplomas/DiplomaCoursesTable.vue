@@ -48,7 +48,7 @@
     <v-data-table
       :headers="headers"
       :search="search"
-      :items="showCourseOfferings"
+      :items="showCourses"
       class="elevation-1"
       :items-per-page-options="rowsPerPageItem"
       hide-default-footer
@@ -153,7 +153,7 @@ export default {
     //CourseOfferingAdminActions,
   },
   props: {
-    course: {
+    diploma: {
       type: Object,
       required: true,
     },
@@ -187,7 +187,7 @@ export default {
       page: 1,
       pageCount: 0,
 
-      courseOfferings: [],
+      courses: [],
 
       selected: [],
       search: "",
@@ -215,25 +215,14 @@ export default {
         { text: this.$t("actions.view-all"), value: "all" },
       ];
     },
-    showCourseOfferings() {
-      switch (this.viewStatus) {
-        case "active":
-          return this.courseOfferings.filter(
-            (courseOffering) => courseOffering.active
-          );
-        case "archived":
-          return this.courseOfferings.filter(
-            (courseOffering) => !courseOffering.active
-          );
-        case "all":
-        default:
-          return this.courseOfferings;
-      }
+
+    showCourses() {
+        return this.courses;
     },
   },
 
   mounted() {
-    this.courseOfferings = this.course.course_offerings;
+    this.courses = this.diploma.courseList;
   },
 
   methods: {
@@ -247,6 +236,7 @@ export default {
         })
         .catch((err) => console.error("FAILURE", err.response));
     },
+
     /*
     clickThrough(courseOffering) {
       this.$router.push({
@@ -293,11 +283,11 @@ export default {
       this.deactivateDialog.show = true;
       this.deactivateDialog.courseOffering = courseOffering;
     },
-
+    //*/
     cancelDeactivate() {
       this.deactivateDialog.show = false;
     },
-
+    /*
     deactivate(courseOffering) {
       this.deactivateDialog.loading = true;
       this.$http
