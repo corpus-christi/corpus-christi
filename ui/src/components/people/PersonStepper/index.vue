@@ -1,149 +1,140 @@
 <template>
-  <v-stepper v-model="currentStep" non-linear>
-    <v-stepper-header>
-      <v-stepper-step editable step="1">
-        <span v-bind:class="{ 'red--text': stepOneErrors }">
-          {{ $t("people.personal-information") }}
-        </span>
-      </v-stepper-step>
+  <v-sheet rounded>
+    <v-container>
+      <v-row>
+        <v-col>
+          <p class="headline">{{ title }}</p>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <v-stepper v-model="currentStep" non-linear>
+            <v-stepper-header>
+              <v-stepper-step editable step="1">
+                <span v-bind:class="{ 'red--text': stepOneErrors }">
+                  {{ $t("people.personal-information") }}
+                </span>
+              </v-stepper-step>
 
-      <v-divider />
+              <v-divider />
 
-      <v-stepper-step editable step="2">
-        <span v-bind:class="{ 'red--text': stepTwoErrors }">
-          {{ $t("people.account-information") }}
-        </span>
-      </v-stepper-step>
+              <v-stepper-step editable step="2">
+                <span v-bind:class="{ 'red--text': stepTwoErrors }">
+                  {{ $t("people.account-information") }}
+                </span>
+              </v-stepper-step>
 
-      <v-divider />
+              <v-divider />
 
-      <v-stepper-step editable step="3">
-        <span v-bind:class="{ 'red--text': stepThreeErrors }">
-          {{ $t("people.additional-information") }}
-        </span>
-        <small v-bind:class="{ 'red--text': stepThreeErrors }">
-          {{ $t("people.optional") }}
-        </small>
-      </v-stepper-step>
-    </v-stepper-header>
+              <v-stepper-step editable step="3">
+                <span v-bind:class="{ 'red--text': stepThreeErrors }">
+                  {{ $t("people.additional-information") }}
+                </span>
+                <small v-bind:class="{ 'red--text': stepThreeErrors }">
+                  {{ $t("people.optional") }}
+                </small>
+              </v-stepper-step>
+            </v-stepper-header>
 
-    <v-stepper-items>
-      <v-stepper-content step="1">
-        <PersonalInfoForm />
+            <v-stepper-items>
+              <v-stepper-content step="1">
+                <PersonalInfoForm />
+                <PersonStepperNavButtons
+                  :is-disabled="formDisabled"
+                  @cancel="cancel"
+                  :show-previous-button="false"
+                  @next="next"
+                />
+              </v-stepper-content>
 
-        <v-layout row>
-          <v-btn
-            color="secondary"
-            text
-            v-on:click="cancel"
-            :disabled="formDisabled"
-            data-cy="cancel"
-            >{{ $t("actions.cancel") }}</v-btn
-          >
-          <v-spacer />
-          <v-btn color="primary" raised v-on:click="next" data-cy="next">
-            {{ $t("people.next") }}
-          </v-btn>
-        </v-layout>
-      </v-stepper-content>
+              <v-stepper-content step="2">
+                <AccountInfoForm />
+                <PersonStepperNavButtons
+                  :is-disabled="formDisabled"
+                  @cancel="cancel"
+                  @previous="previous"
+                  @next="next"
+                />
+              </v-stepper-content>
 
-      <v-stepper-content step="2">
-        <AccountInfoForm />
-        <NavButtons />
-      </v-stepper-content>
+              <v-stepper-content step="3">
+                <attribute-form
+                  :personId="person.id"
+                  :existingAttributes="person.attributesInfo"
+                  v-model="attributeFormData"
+                  ref="attributeForm"
+                />
+                <v-row>
+                  <v-col>
+                    <v-btn
+                      color="primary"
+                      text
+                      :disabled="addressWasSaved"
+                      @click="changeAddressView(true)"
+                    >
+                      {{ $t("actions.add-address") }}
+                    </v-btn>
+                    <v-btn
+                      color="primary"
+                      text
+                      @click="showImageChooser = true"
+                      :disabled="showImageChooser"
+                    >
+                      {{ $t("images.actions.add-image") }}
+                    </v-btn>
+                  </v-col>
+                </v-row>
+                <v-col v-show="addressSaved">
+                  <span>{{ $t("places.messages.saved") }}</span>
+                </v-col>
 
-      <v-stepper-content step="3">
-        <attribute-form
-          :personId="person.id"
-          :existingAttributes="person.attributesInfo"
-          v-model="attributeFormData"
-          ref="attributeForm"
-        />
-        <v-layout row justify-center align-space-around>
-          <v-flex shrink>
-            <v-btn
-              small
-              color="primary"
-              text
-              :disabled="addressWasSaved"
-              @click="changeAddressView(true)"
-            >
-              {{ $t("actions.add-address") }}
-            </v-btn>
-            <v-btn
-              class="text-xs-center"
-              color="primary"
-              text
-              small
-              @click="showImageChooser = true"
-              :disabled="showImageChooser"
-            >
-              {{ $t("images.actions.add-image") }}
-            </v-btn>
-          </v-flex>
-        </v-layout>
-        <v-flex v-show="addressSaved">
-          <span>{{ $t("places.messages.saved") }}</span>
-        </v-flex>
-        <v-expand-transition>
-          <address-form
-            v-if="showAddressForm"
-            @cancel="changeAddressView"
-            @saved="saveAddress"
-          >
-          </address-form>
-        </v-expand-transition>
-        <v-expand-transition>
-          <image-chooser
-            v-if="showImageChooser"
-            :imageId="getImageId"
-            v-on:saved="chooseImage"
-            v-on:deleted="deleteImage"
-            v-on:cancel="cancelImageChooser"
-            v-on:missing="missingImage"
-          />
-        </v-expand-transition>
-        <v-layout row>
-          <v-btn
-            color="secondary"
-            text
-            v-on:click="cancel"
-            :disabled="formDisabled"
-            data-cy="cancel"
-            >{{ $t("actions.cancel") }}</v-btn
-          >
-          <v-spacer />
-          <v-btn
-            color="primary"
-            outlined
-            v-on:click="addMore"
-            v-if="addAnotherEnabled"
-            :loading="addMoreIsLoading"
-            :disabled="formDisabled"
-            data-cy="add-another"
-            >{{ $t("actions.add-another") }}</v-btn
-          >
-          <v-btn
-            color="primary"
-            raised
-            v-on:click="previous"
-            :disabled="showAddressForm"
-            data-cy="previous"
-            >{{ $t("people.previous") }}</v-btn
-          >
-          <v-btn
-            color="primary"
-            raised
-            v-on:click="save"
-            :loading="saveIsLoading"
-            :disabled="formDisabled"
-            data-cy="save"
-            >{{ $t(saveButtonText) }}</v-btn
-          >
-        </v-layout>
-      </v-stepper-content>
-    </v-stepper-items>
-  </v-stepper>
+                <v-expand-transition>
+                  <address-form
+                    v-if="showAddressForm"
+                    @cancel="changeAddressView"
+                    @saved="saveAddress"
+                  >
+                  </address-form>
+                </v-expand-transition>
+
+                <v-expand-transition>
+                  <image-chooser
+                    v-if="showImageChooser"
+                    :imageId="getImageId"
+                    v-on:saved="chooseImage"
+                    v-on:deleted="deleteImage"
+                    v-on:cancel="cancelImageChooser"
+                    v-on:missing="missingImage"
+                  />
+                </v-expand-transition>
+
+                <v-row>
+                  <v-btn
+                    color="primary"
+                    outlined
+                    v-on:click="addMore"
+                    v-if="addAnotherEnabled"
+                    :loading="addMoreIsLoading"
+                    :disabled="formDisabled"
+                    data-cy="add-another"
+                    >{{ $t("actions.add-another") }}</v-btn
+                  >
+                </v-row>
+                <PersonStepperNavButtons
+                  :is-disabled="formDisabled"
+                  @cancel="cancel"
+                  @previous="previous"
+                  :show-next-button="false"
+                  :show-save-button="true"
+                  :is-saving-active="saveIsLoading"
+                />
+              </v-stepper-content>
+            </v-stepper-items>
+          </v-stepper>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-sheet>
 </template>
 
 <script>
@@ -154,12 +145,12 @@ import AddressForm from "../../AddressForm.vue";
 import ImageChooser from "../../images/ImageChooser";
 import PersonalInfoForm from "./PersonalInfoForm";
 import AccountInfoForm from "./AccountInfoForm";
-import NavButtons from "./NavButtons";
+import PersonStepperNavButtons from "./PersonStepperNavButtons";
 
 export default {
   name: "PersonStepper",
   components: {
-    NavButtons,
+    PersonStepperNavButtons,
     PersonalInfoForm,
     AccountInfoForm,
     "attribute-form": AttributeForm,
@@ -167,6 +158,10 @@ export default {
     "image-chooser": ImageChooser,
   },
   props: {
+    title: {
+      type: String,
+      required: true,
+    },
     initialData: {
       type: Object,
       required: true,
@@ -175,11 +170,6 @@ export default {
       type: Boolean,
       required: false,
       default: false,
-    },
-    saveButtonText: {
-      type: String,
-      required: false,
-      default: "actions.save",
     },
   },
   data: function () {
@@ -222,6 +212,7 @@ export default {
       stepThreeErrors: false,
     };
   },
+
   computed: {
     // List the keys in a Person record.
     personKeys() {
@@ -289,9 +280,7 @@ export default {
       for (let key of this.personKeys) {
         this.person[key] = "";
       }
-      // for (let key of this.accountKeys) {
-      //   this.account[key] = "";
-      // }
+
       this.$refs.attributeForm.clear();
       this.showAddressForm = false;
       this.showImageChooser = false;

@@ -255,7 +255,7 @@ import {
   Underline,
   History,
 } from "tiptap-extensions";
-import { eventBus } from "../../plugins/event-bus";
+import { eventBus } from "@/plugins/event-bus";
 
 export default {
   name: "GroupMembershipHistory",
@@ -302,7 +302,7 @@ export default {
           new Underline(),
           new History(),
         ],
-        content: "Ediator Test",
+        content: "Editor Test",
         onUpdate: ({ getJSON, getHTML }) => {
           this.json = getJSON();
           this.html = getHTML();

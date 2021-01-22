@@ -114,9 +114,6 @@ def update_a_value():
         except ValidationError as err:
             return logged_response(err.messages, 422)
 
-        i18n_value = db.session.query(I18NValue).filter_by(locale_code=valid_attributes.get('locale_code'),
-                                                           key_id=valid_attributes.get('key_id')).first()
-
     i18n_value = db.session.query(I18NValue).filter_by(
         locale_code=valid_attributes.get('locale_code'),
         key_id=valid_attributes.get('key_id')).first()
