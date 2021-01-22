@@ -4,11 +4,11 @@
       <v-tabs vertical>
         <v-tab>
           <v-icon left>smartphone</v-icon>
-          Assets
+          {{ $t("assets.title") }}
         </v-tab>
         <v-tab>
           <v-icon left>devices_other</v-icon>
-          Collections
+          {{ $t("collections.title") }}
         </v-tab>
 
         <v-tab-item>
@@ -28,7 +28,7 @@
                 raised
               >
                 <v-icon dark left>add</v-icon>
-                Add Asset
+                {{ $t("assets.new") }}
               </v-btn>
             </v-toolbar>
             <v-data-table
@@ -83,7 +83,7 @@
     <v-dialog v-model="addAssetDialog.show" max-width="350px">
       <v-card>
         <v-card-title primary-title>
-          Add Asset
+          {{ $t("assets.new") }}
         </v-card-title>
         <v-card-text>
           <entity-search
@@ -100,7 +100,7 @@
             text
             data-cy=""
           >
-            Cancel
+            {{ $t("actions.cancel") }}
           </v-btn>
           <v-spacer/>
           <v-btn
@@ -109,7 +109,7 @@
             raised
             data-cy="confirm-asset"
           >
-            Confirm
+            {{ $t("actions.confirm") }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -118,27 +118,27 @@
     <!-- Delete Asset Dialog -->
     <v-dialog v-model="deleteAssetDialog.show" max-width="350px">
       <v-card>
-          <v-card-text>
-            {{ $t("events.participants.confirm-remove") }}
-          </v-card-text>
-          <v-card-actions>
-            <v-btn
-              @click="closeDeleteAssetDialog"
-              color="secondary"
-              text
-            >
-              {{ $t("actions.cancel") }}
-            </v-btn>
-            <v-spacer />
-            <v-btn
-              @click="deleteAsset"
-              color="primary"
-              raised
-              :loading="deleteAssetDialog.loading"
-            >
-              {{ $t("actions.confirm") }}
-            </v-btn>
-          </v-card-actions>
+        <v-card-text>
+          {{ $t("events.assets.confirm-remove") }}
+        </v-card-text>
+        <v-card-actions>
+          <v-btn
+            @click="closeDeleteAssetDialog"
+            color="secondary"
+            text
+          >
+            {{ $t("actions.cancel") }}
+          </v-btn>
+          <v-spacer />
+          <v-btn
+            @click="deleteAsset"
+            color="primary"
+            raised
+            :loading="deleteAssetDialog.loading"
+          >
+            {{ $t("actions.confirm") }}
+          </v-btn>
+        </v-card-actions>
       </v-card>
     </v-dialog>
 
