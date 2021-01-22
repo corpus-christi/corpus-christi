@@ -8,31 +8,33 @@
           </v-toolbar-title>
         </v-toolbar>
         <v-list style="padding-top: 0px; z-index: 0">
-          <v-expansion-panel>
-            <!-- TODO: filter events that have course offerings -->
-            <!-- TODO: add register button function -->
-            <v-expansion-panel-content
-              v-for="(course, idx) in offeredCourses"
-              v-bind:key="idx"
-              ><div slot="header">{{ course.name }}</div>
-              <v-card>
-                <span>
-                  <v-card-text>{{ course.description }}</v-card-text>
-                </span>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn
-                    raised
-                    color="primary"
-                    v-on:click="registerClicked(course)"
-                  >
-                    {{ $t("courses.register") }}
-                  </v-btn>
-                  <v-spacer></v-spacer>
-                </v-card-actions>
-              </v-card>
-            </v-expansion-panel-content>
-          </v-expansion-panel>
+          <v-expansion-panels>
+            <v-expansion-panel>
+              <!-- TODO: filter events that have course offerings -->
+              <!-- TODO: add register button function -->
+              <v-expansion-panel-content
+                v-for="(course, idx) in offeredCourses"
+                v-bind:key="idx"
+                ><div slot="header">{{ course.name }}</div>
+                <v-card>
+                  <span>
+                    <v-card-text>{{ course.description }}</v-card-text>
+                  </span>
+                  <v-card-actions>
+                    <v-spacer />
+                    <v-btn
+                      raised
+                      color="primary"
+                      v-on:click="registerClicked(course)"
+                    >
+                      {{ $t("courses.register") }}
+                    </v-btn>
+                    <v-spacer />
+                  </v-card-actions>
+                </v-card>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+          </v-expansion-panels>
 
           <v-card>
             <v-card-actions>
@@ -71,29 +73,31 @@
           </v-toolbar-title>
         </v-toolbar>
         <v-list style="padding-top: 0px; z-index: 0">
-          <v-expansion-panel>
-            <v-expansion-panel-content
-              v-for="(event, idx) in filteredEvents"
-              v-bind:key="idx"
-            >
-              <div slot="header">
-                {{ event.title }} <br />
-                <span class="grey--text">
-                  <div>{{ getDisplayDate(event.start) }}</div>
-                </span>
-              </div>
-              <v-card>
-                <v-card-text>{{ event.description }}</v-card-text>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn raised color="primary">{{
-                    $t("public.events.join")
-                  }}</v-btn>
-                  <v-spacer></v-spacer>
-                </v-card-actions>
-              </v-card>
-            </v-expansion-panel-content>
-          </v-expansion-panel>
+          <v-expansion-panels>
+            <v-expansion-panel>
+              <v-expansion-panel-content
+                v-for="(event, idx) in filteredEvents"
+                v-bind:key="idx"
+              >
+                <div slot="header">
+                  {{ event.title }} <br />
+                  <span class="grey--text">
+                    <div>{{ getDisplayDate(event.start) }}</div>
+                  </span>
+                </div>
+                <v-card>
+                  <v-card-text>{{ event.description }}</v-card-text>
+                  <v-card-actions>
+                    <v-spacer />
+                    <v-btn raised color="primary">{{
+                      $t("public.events.join")
+                    }}</v-btn>
+                    <v-spacer />
+                  </v-card-actions>
+                </v-card>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+          </v-expansion-panels>
           <!-- <v-divider light></v-divider> -->
           <v-card>
             <v-card-actions>

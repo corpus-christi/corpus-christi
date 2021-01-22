@@ -64,22 +64,23 @@
                   v-model="attributeFormData"
                   ref="attributeForm"
                 />
+
                 <v-row>
                   <v-col>
                     <v-btn
-                      color="primary"
-                      text
+                      class="mx-1"
                       :disabled="addressWasSaved"
                       @click="changeAddressView(true)"
                     >
+                      <v-icon left>add_location</v-icon>
                       {{ $t("actions.add-address") }}
                     </v-btn>
                     <v-btn
-                      color="primary"
-                      text
+                      class="mx-1"
                       @click="showImageChooser = true"
                       :disabled="showImageChooser"
                     >
+                      <v-icon left>add_a_photo</v-icon>
                       {{ $t("images.actions.add-image") }}
                     </v-btn>
                   </v-col>
@@ -93,8 +94,7 @@
                     v-if="showAddressForm"
                     @cancel="changeAddressView"
                     @saved="saveAddress"
-                  >
-                  </address-form>
+                  />
                 </v-expand-transition>
 
                 <v-expand-transition>
@@ -108,24 +108,13 @@
                   />
                 </v-expand-transition>
 
-                <v-row>
-                  <v-btn
-                    color="primary"
-                    outlined
-                    v-on:click="addMore"
-                    v-if="addAnotherEnabled"
-                    :loading="addMoreIsLoading"
-                    :disabled="formDisabled"
-                    data-cy="add-another"
-                    >{{ $t("actions.add-another") }}</v-btn
-                  >
-                </v-row>
                 <PersonStepperNavButtons
                   :is-disabled="formDisabled"
                   @cancel="cancel"
                   @previous="previous"
                   :show-next-button="false"
                   :show-save-button="true"
+                  @save="save"
                   :is-saving-active="saveIsLoading"
                 />
               </v-stepper-content>
@@ -165,11 +154,6 @@ export default {
     initialData: {
       type: Object,
       required: true,
-    },
-    addAnotherEnabled: {
-      type: Boolean,
-      required: false,
-      default: false,
     },
   },
   data: function () {
@@ -312,6 +296,7 @@ export default {
       this.saveIsLoading = false;
       this.addMoreIsLoading = false;
       this.currentStep = 1;
+      this.addressWasSaved = false;
     },
 
     addMore() {
@@ -379,8 +364,34 @@ export default {
           delete this.person["attributesInfo"];
           delete this.person["accountInfo"];
           delete this.person["id"];
+          let id = this.person.id;
+          let active = this.person.active;
+          let firstName = this.person.firstName;
+          let lastName = this.person.lastName;
+          let secondLastName = this.person.secondLastName;
+          let gender = this.person.gender;
+          let birthday = this.person.birthday;
+          let email = this.person.email;
+          let username = this.person.username;
+          let password = this.person.password;
+          let phone = this.person.phone;
+          let addressId = this.person.addressId;
+          let personObject = {
+            id,
+            active,
+            firstName,
+            lastName,
+            secondLastName,
+            gender,
+            birthday,
+            email,
+            username,
+            password,
+            phone,
+            addressId,
+          };
           let data = {
-            person: this.person,
+            person: personObject,
             attributesInfo: attributes,
           };
           if (personId) {
@@ -397,6 +408,7 @@ export default {
     },
 
     async updatePerson(data, personId, emitMessage) {
+      console.log("What I'm Saying", emitMessage);
       let newImageId = null;
       if (this.person.newImageId) {
         newImageId = this.person.newImageId;
@@ -477,6 +489,7 @@ export default {
               console.error("ERROR DELETING IMAGE", err.response);
             });
         } else {
+          console.log("editing", data);
           // an image didn't happen (NOTHING)
           this.$http
             .put(`/api/v1/people/persons/${personId}`, data)
@@ -514,6 +527,8 @@ export default {
             this.$emit(emitMessage, response.data);
             this.resetForm();
           }
+          console.log("response");
+          console.log(response.data);
           this.$emit("attachPerson", response.data);
         })
         .catch((err) => {

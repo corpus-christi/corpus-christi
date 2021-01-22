@@ -6,7 +6,7 @@
         <v-flex md2>
           <v-toolbar-title>{{ $t("transcripts.transcript") }}</v-toolbar-title>
         </v-flex>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-flex md3>
           <v-text-field
             v-model="search"
@@ -19,7 +19,7 @@
         </v-flex>
         <!--
               possibly filter by active/inactive flag on students...but not for now
-            <v-spacer></v-spacer>
+            <v-spacer />
             <v-flex md3>
               <v-select
                 v-model="viewStatus"

@@ -9,7 +9,7 @@
         </v-col>
       </v-row>
       <v-col md="2"> </v-col>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <template v-if="isOverseer === true || ifAdmin">
         <v-col>
           <v-btn color="primary" raised v-on:click.stop="newVisitor">
@@ -94,7 +94,7 @@
             data-cy=""
             >{{ $t("actions.cancel") }}</v-btn
           >
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="addNewVisitor"
             color="primary"

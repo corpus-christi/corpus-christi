@@ -40,11 +40,15 @@
       </v-layout>
     </v-toolbar>
 
+    <!-- Table of existing areas -->
     <v-data-table
       :headers="headers"
       :items="areasToDisplay"
       :search="search"
       class="elevation-1"
+      hide-default-footer
+      @page-count="pageCount = $event"
+      :page.sync="page"
     >
       <template slot="items" slot-scope="props">
         <td>{{ props.item.name }}</td>
@@ -112,6 +116,9 @@
         </v-tooltip>
       </template>
     </v-data-table>
+    <div class="text-center pt-2">
+      <v-pagination v-model="page" :length="pageCount"></v-pagination>
+    </div>
 
     <v-dialog
       scrollable
@@ -160,7 +167,7 @@
             :disabled="confirmDialog.loading"
             >{{ $t("actions.cancel") }}</v-btn
           >
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="confirmAction(confirmDialog.action, confirmDialog.area)"
             color="primary"
@@ -190,6 +197,9 @@ export default {
 
   data() {
     return {
+      page: 1,
+      pageCount: 0,
+
       areaDialog: {
         title: "",
         show: false,

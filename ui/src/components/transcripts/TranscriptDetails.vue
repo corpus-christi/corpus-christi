@@ -72,7 +72,7 @@
                 </v-layout>
                 <v-subheader>
                   <h2>{{ $t("diplomas.diplomas") }}:</h2>
-                  <v-spacer></v-spacer>
+                  <v-spacer />
                   <v-btn
                     color="primary"
                     raised

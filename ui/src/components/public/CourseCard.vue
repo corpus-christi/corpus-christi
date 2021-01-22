@@ -21,16 +21,16 @@
         <v-layout>
           <v-flex align-self-baseline>
             <v-card-actions>
-              <v-spacer></v-spacer>
+              <v-spacer />
               <v-btn
-                round
+                rounded
                 raised
                 color="primary"
                 @click="registerClicked(course)"
               >
                 {{ $t("courses.register") }}
               </v-btn>
-              <v-spacer></v-spacer>
+              <v-spacer />
             </v-card-actions>
           </v-flex>
         </v-layout>

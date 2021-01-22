@@ -2,13 +2,17 @@
   <div>
     <!-- Interior node -->
     <v-list-group v-if="isInterior">
-      <template v-slot:activator="{ on }">
-        <v-btn v-on="on">
-          <v-list-item-icon>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-item-icon>
-          <v-list-item-title>{{ item.title }}</v-list-item-title>
-        </v-btn>
+      <!--
+        Slot syntax in vue is a little confusing. In this instance,
+        the <v-list-group> component from Vuetify has a built-in activator
+        slot that enables an expansion list. Read more here:
+        https://vuetifyjs.com/en/components/lists/#slots
+      -->
+      <template v-slot:activator>
+        <v-list-item-icon>
+          <v-icon>{{ item.icon }}</v-icon>
+        </v-list-item-icon>
+        <v-list-item-title>{{ item.title }}</v-list-item-title>
       </template>
 
       <nav-item

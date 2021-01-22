@@ -1,7 +1,10 @@
 <template>
   <v-container>
     <v-row>
+      <v-spacer />
+
       <v-btn
+        class="mr-2"
         v-if="showCancelButton"
         color="secondary"
         text
@@ -9,8 +12,6 @@
         data-cy="cancel"
         >{{ $t("actions.cancel") }}
       </v-btn>
-
-      <v-spacer />
 
       <v-btn
         class="mr-2"

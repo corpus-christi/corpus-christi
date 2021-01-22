@@ -44,11 +44,11 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-btn raised rounded color="primary">{{
           $t("public.events.join")
         }}</v-btn>
-        <v-spacer></v-spacer>
+        <v-spacer />
       </v-card-actions>
     </div>
   </v-card>
