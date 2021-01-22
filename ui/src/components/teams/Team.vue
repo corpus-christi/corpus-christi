@@ -43,7 +43,7 @@
           hide-details
           
         ></v-text-field>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-btn
           color="primary"
           raised
@@ -137,7 +137,7 @@
           <v-btn v-on:click="cancelArchive" color="secondary" text data-cy="">{{
             $t("actions.cancel")
           }}</v-btn>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="archiveMember"
             color="primary"
@@ -205,7 +205,7 @@
             data-cy="cancel-participant"
             >{{ $t("actions.cancel") }}</v-btn
           >
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="addParticipants"
             :disabled="addMemberDialog.newMembers.length == 0"

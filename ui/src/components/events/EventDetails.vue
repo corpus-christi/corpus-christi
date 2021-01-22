@@ -2,7 +2,7 @@
   <v-layout column>
     <v-layout row wrap>
       <v-flex xs12>
-        <v-card class="ma-1">
+        <v-card>
           <template v-if="eventLoaded">
             <v-container fill-height fluid>
               <v-flex xs9 sm9 align-end flexbox>
@@ -105,7 +105,8 @@
               :teams="event.teams"
               :loaded="teamsLoaded"
               v-on:snackbar="showSnackbar($event)"
-              v-on:team-added="reloadTeams"
+              v-on:team-added="addTeam"
+              v-on:team-deleted="deleteTeam"
             ></event-team-details>
           </v-flex>
           <v-flex>
@@ -113,7 +114,8 @@
               :persons="event.persons"
               :loaded="personsLoaded"
               v-on:snackbar="showSnackbar($event)"
-              v-on:person-added="reloadPersons"
+              v-on:person-added="addPerson"
+              v-on:person-deleted="deletePerson"
             ></event-person-details>
           </v-flex>
         </v-layout>
@@ -125,7 +127,8 @@
               :assets="event.assets"
               :loaded="assetsLoaded"
               v-on:snackbar="showSnackbar($event)"
-              v-on:asset-added="reloadAssets"
+              v-on:asset-added="addAsset"
+              v-on:asset-deleted="deleteAsset"
             ></event-asset-details>
           </v-flex>
           <v-flex>
@@ -133,7 +136,8 @@
               :groups="event.groups"
               :loaded="groupsLoaded"
               v-on:snackbar="showSnackbar($event)"
-              v-on:group-added="reloadGroups"
+              v-on:group-added="addGroup"
+              v-on:group-deleted="deleteGroup"
             ></event-group-details>
           </v-flex>
         </v-layout>
@@ -263,6 +267,7 @@ export default {
   },
 
   methods: {
+
     getEvent() {
       const id = this.$route.params.event;
       return this.$http
@@ -282,7 +287,7 @@ export default {
             : this.event.groups
                 .filter(function (g) {
                   // make sure the group is active
-                  // and the group has an active relationship to the event
+                  // ateamListnd the group has an active relationship to the event
                   if (g.group) {
                     return g.active && g.group.active;
                   }
@@ -298,48 +303,192 @@ export default {
         });
     },
 
-    reloadTeams(data) {
-      this.teamsLoaded = false;
-      let active = data.active;
-      let description = data.description;
-      let id = data.id;
-      let t = { active, description, id };
-      this.event.teams.push(t);
-      this.teamsLoaded = true;
+    addTeam(data) {
+      const eventId = this.$route.params.event;
+      let teamId = data.team.id;
+      const idx = this.event.teams.findIndex((t) => t.id === teamId);
+      if (idx > -1) {
+        this.showSnackbar(this.$t("teams.team-on-event"));
+        return;
+      }
+
+      this.$http
+        .post(`/api/v1/events/${eventId}/teams/${teamId}`)
+        .then(() => {
+          this.showSnackbar(this.$t("teams.team-added"));
+          this.event.teams.push(data.team);
+        })
+        .catch((err) => {
+          console.log(err);
+          if (err.response.status === 422) {
+            this.showSnackbar(this.$t("teams.error-team-assigned"));
+          } else {
+            this.showSnackbar(this.$t("teams.error-adding-team"));
+          }
+        });
     },
 
-    reloadAssets(data) {
-      this.assetsLoaded = false;
-
-      let active = data.active;
-      let description = data.description;
-      let id = data.id;
-      let location_id = data.location_id;
-      let a = { active, description, id, location_id };
-      this.event.assets.push(a);
-      this.assetsLoaded = true;
-    },
-    //add data back here maybe if you want to try again
-    reloadPersons(personData, desData) {
-      this.personsLoaded = false;
-
-      let event_id = parseInt(this.$route.params.event);
-      let person = personData;
-      let description = desData;
-      let id = person.id;
-      let person_id = person.id;
-      let p = { person, description, id, person_id, event_id };
-      this.event.persons.push(p);
-      this.event.persons = !this.event.persons
-        ? []
-        : this.event.persons.map((p) => Object.assign(p, { id: p.person_id }));
-      this.personsLoaded = true;
+    deleteTeam(data) {
+      const eventId = this.$route.params.event;
+      let id = data.teamId;
+      const idx = this.event.teams.findIndex((t) => t.id === id);
+      this.$http
+        .delete(`/api/v1/events/${eventId}/teams/${id}`)
+        .then((resp) => {
+          console.log("REMOVED", resp);
+          this.event.teams.splice(idx, 1); //TODO maybe fix me?
+          this.showSnackbar(this.$t("teams.team-removed"));
+        })
+        .catch((err) => {
+          console.log(err);
+          this.showSnackbar(this.$t("teams.error-removing-team"));
+        });
     },
 
-    reloadGroups(data) {
-      this.groupsLoaded = false;
-      this.event.groups.push(data);
-      this.groupsLoaded = true;
+    addPerson(data) {
+      const eventId = this.$route.params.event;
+      let personData = data.person;
+      let personId = personData.id;
+      if (!data.editMode) {
+        const idx = this.event.persons.findIndex((p) => p.id === personId);
+        if (idx > -1) {
+          this.showSnackbar(this.$t("events.persons.person-on-event"));
+        }
+      }
+      let body = { description: data.description };
+      let promise;
+      if (data.editMode) {
+        promise = this.$http.patch(
+          `/api/v1/events/${eventId}/individuals/${personId}`,
+          body
+        );
+      } else {
+        promise = this.$http.post(
+          `/api/v1/events/${eventId}/individuals/${personId}`,
+          body
+        );
+      }
+      promise
+        .then(() => {
+          if (data.editMode) {
+            this.showSnackbar(this.$t("events.persons.person-edited"));
+          } else {
+            this.showSnackbar(this.$t("events.persons.person-added"));
+          }
+          if (!data.editMode) {
+            let eventPerson = {id: personId, person_id: personId, event_id: eventId, person: personData, description: data.description };
+            this.event.persons.push(eventPerson);
+          }
+      })
+      .catch((err) => {
+        console.log(err);
+        if (err.response.status === 422) {
+          this.showSnackbar(this.$t("events.persons.error-person-assigned"));
+        } else {
+          this.showSnackbar(this.$t("events.persons.error-adding-person"));
+        }
+      });
+    },
+
+    deletePerson(data) {
+        const eventId = this.$route.params.event;
+        let id = data.personId;
+        const idx = this.event.persons.findIndex((p) => p.id === id)
+        this.$http
+        .delete(`/api/v1/events/${eventId}/individuals/${id}`)
+        .then((resp) => {
+          console.log("REMOVED", resp);
+          this.event.persons.splice(idx, 1); //TODO maybe fix me?
+          this.showSnackbar(this.$t("events.persons.person-removed"));
+        })
+        .catch((err) => {
+          console.log(err);
+          this.showSnackbar(this.$t("events.persons.error-removing-person"));
+        });
+    },
+
+    addAsset(data) {
+      const eventId = this.$route.params.event;
+      let assetId = data.asset.id;
+      const idx = this.event.assets.findIndex((t) => t.id === assetId);
+      if (idx > -1) {
+        this.showSnackbar(this.$t("assets.asset-on-event"));
+        return;
+      }
+
+      this.$http
+        .post(`/api/v1/events/${eventId}/assets/${assetId}`)
+        .then(() => {
+          this.showSnackbar(this.$t("assets.asset-added"));
+          this.event.assets.push(data.asset);
+        })
+        .catch((err) => {
+          console.log(err);
+          if (err.response.status === 422) {
+            this.showSnackbar(this.$t("assets.error-asset-assigned"));
+          } else {
+            this.showSnackbar(this.$t("assets.error-adding-asset"));
+          }
+        });
+    },
+
+    deleteAsset(data) {
+      const eventId = this.$route.params.event;
+      let id = data.assetId;
+      const idx = this.event.teams.findIndex((a) => a.id === id);
+      this.$http
+        .delete(`/api/v1/events/${eventId}/assets/${id}`)
+        .then((resp) => {
+          console.log("REMOVED", resp);
+          this.event.assets.splice(idx, 1); //TODO maybe fix me?
+          this.showSnackbar(this.$t("assets.asset-removed"));
+        })
+        .catch((err) => {
+          console.log(err);
+          this.showSnackbar(this.$t("assets.error-removing-asset"));
+        });
+    },
+
+    addGroup(data) {
+      const eventId = this.$route.params.event;
+      let groupId = data.group.id;
+      const idx = this.event.groups.findIndex((t) => t.id === groupId);
+      if (idx > -1) {
+        this.showSnackbar(this.$t("groups-group-on-event"));
+        return;
+      }
+
+      this.$http
+        .post(`/api/v1/events/${eventId}/groups/${groupId}`)
+        .then(() => {
+          this.showSnackbar(this.$t("groups.group-added"));
+          this.event.groups.push(data.group);
+        })
+        .catch((err) => {
+          console.log(err);
+          if (err.response.status === 422) {
+            this.showSnackbar(this.$t("groups.error-group-assigned"));
+          } else {
+            this.showSnackbar(this.$t("groups.error-adding-group"));
+          }
+        });
+    },
+
+    deleteGroup(data) {
+      const eventId = this.$route.params.event;
+      let id = data.groupId;
+      const idx = this.event.groups.findIndex((t) => t.id === id);
+      this.$http
+        .delete(`/api/v1/events/${eventId}/groups/${id}`)
+        .then((resp) => {
+          console.log("REMOVED", resp);
+          this.event.groups.splice(idx, 1); //TODO maybe fix me?
+          this.showSnackbar(this.$t("groups.group-removed"));
+        })
+        .catch((err) => {
+          console.log(err);
+          this.showSnackbar(this.$t("groups.error-removing-group"));
+        });
     },
 
     editEvent(event) {

@@ -72,7 +72,7 @@
                 </v-layout>
                 <v-subheader>
                   <h2>{{ $t("diplomas.diplomas") }}:</h2>
-                  <v-spacer></v-spacer>
+                  <v-spacer />
                   <v-btn
                     color="primary"
                     raised
@@ -93,9 +93,8 @@
                       <h3>{{ diploma.name }}:</h3>
                       <ul class="mb-2">
                         <li
-                          v-for="(
-                            diplomaCourse, diplomaCourseIndex
-                          ) in diploma.courses"
+                          v-for="(diplomaCourse,
+                          diplomaCourseIndex) in diploma.courses"
                           :key="`diplomaCourse-` + `${diplomaCourseIndex}`"
                         >
                           {{ diplomaCourse.name }}
@@ -131,9 +130,8 @@
                       </h3>
                       <ul class="mb-2">
                         <li
-                          v-for="(
-                            courseOffering, index
-                          ) in course.courseOfferings"
+                          v-for="(courseOffering,
+                          index) in course.courseOfferings"
                           :key="`courseOffering-` + `${index}`"
                         >
                           {{ courseOffering.description }}
