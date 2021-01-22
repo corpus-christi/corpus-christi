@@ -56,6 +56,8 @@ export default {
       this.$http
         .get("/api/v1/people/persons?include_images=1")
         .then((resp) => {
+          console.log("GET");
+          console.log(resp.data);
           this.peopleList = resp.data;
           this.tableLoaded = true;
         })

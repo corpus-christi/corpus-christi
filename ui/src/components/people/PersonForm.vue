@@ -191,6 +191,10 @@
             ref="attributeForm"
           />
           <v-layout row justify-center align-space-around>
+            <v-card v-if='person.address'>
+              <v-card-text> {{ $t(person.address.name) }}</v-card-text>
+              <v-card-text> {{ $t(person.address.address) }}</v-card-text>
+            </v-card>
             <v-flex shrink>
               <v-btn
                 small
@@ -524,6 +528,7 @@ export default {
       this.saveIsLoading = false;
       this.addMoreIsLoading = false;
       this.currentStep = 1;
+      this.addressWasSaved = false;
     },
 
     addMore() {
@@ -591,8 +596,22 @@ export default {
           delete this.person["attributesInfo"];
           delete this.person["accountInfo"];
           delete this.person["id"];
+          let id = this.person.id;
+          let active = this.person.active;
+          let firstName = this.person.firstName;
+          let lastName = this.person.lastName;
+          let secondLastName = this.person.secondLastName;
+          let gender = this.person.gender;
+          let birthday = this.person.birthday;
+          let email = this.person.email;
+          let username = this.person.username;
+          let password = this.person.password;
+          let phone = this.person.phone;
+          let addressId = this.person.addressId;
+          let personObject = { id, active, firstName, lastName, secondLastName, 
+          gender, birthday, email, username, password, phone, addressId };
           let data = {
-            person: this.person,
+            person: personObject,
             attributesInfo: attributes,
           };
           if (personId) {
@@ -609,6 +628,7 @@ export default {
     },
 
     async updatePerson(data, personId, emitMessage) {
+      console.log("What I'm Saying", emitMessage);
       let newImageId = null;
       if (this.person.newImageId) {
         newImageId = this.person.newImageId;
@@ -689,10 +709,12 @@ export default {
               console.error("ERROR DELETING IMAGE", err.response);
             });
         } else {
+          console.log("editing", data);
           // an image didn't happen (NOTHING)
           this.$http
             .put(`/api/v1/people/persons/${personId}`, data)
             .then((response) => {
+              
               this.$emit(emitMessage, response.data);
               this.resetForm();
               this.saveIsLoading = false;
@@ -726,6 +748,8 @@ export default {
             this.$emit(emitMessage, response.data);
             this.resetForm();
           }
+          console.log("response");
+          console.log(response.data);
           this.$emit("attachPerson", response.data);
         })
         .catch((err) => {

@@ -126,6 +126,7 @@ class PersonSchema(Schema):
 
     active = fields.Boolean(required=True)
     address_id = fields.Integer(data_key='addressId', allow_none=True)
+    address = fields.Nested('AddressSchema', dump_only=True)
 
     attributesInfo = fields.Nested('PersonAttributeSchema', many=True)
     images = fields.Nested('ImagePersonSchema', many=True, exclude=['person'], dump_only=True)
