@@ -199,6 +199,7 @@ export default {
     },
     onTopLevelTagsUpdated(tagList) {
       this.selectedTags = tagList;
+      this.findFirstTag();
     },
     submitChanges() {
       console.log(this.newTranslationList);
@@ -235,6 +236,23 @@ export default {
           oldValid: oldValid,
         };
       }
+    },
+    findFirstTag() {
+      //find the first tag
+      dance:
+      for(let objNum = 0; objNum < this.translationObjs.length; objNum++){
+        for(let tagNum = 0; tagNum < this.selectedTags.length; tagNum++){
+          if(this.selectedTags[tagNum] == this.translationObjs[objNum].top_level_key){
+            //focus on the v-text-field element
+            this.focusOnFirstTag(this.translationObjs[objNum]);
+            break dance;
+          }
+        }
+      }
+    },
+    // eslint-disable-next-line
+    focusOnFirstTag(cardObj) {
+      
     },
     thereIsUnsavedWork() {
       return Object.keys(this.newTranslationList).length > 0;
