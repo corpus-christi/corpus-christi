@@ -2,7 +2,7 @@
   <div>
     <v-toolbar>
       <v-toolbar-title>{{ $t("courses.schedule") }}</v-toolbar-title>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-text-field
         v-model="search"
         append-icon="search"
@@ -10,7 +10,7 @@
         single-line
         hide-details
       ></v-text-field>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn color="primary" @click.stop="newClassMeeting">
         <v-icon dark left>event</v-icon>
         {{ $t("courses.add-meeting") }}

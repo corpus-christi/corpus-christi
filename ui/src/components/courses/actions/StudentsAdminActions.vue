@@ -4,7 +4,7 @@
       <v-btn
         text
         icon
-        outline
+        outlined
         color="primary"
         slot="activator"
         v-bind:small="displayContext === 'compact'"
@@ -18,7 +18,7 @@
       <v-btn
         text
         icon
-        outline
+        outlined
         color="primary"
         slot="activator"
         v-bind:small="displayContext === 'compact'"

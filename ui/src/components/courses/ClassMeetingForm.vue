@@ -39,7 +39,7 @@
                 v-bind:locale="currentLanguageCode"
                 data-cy="course-offering-date-picker"
               >
-                <v-spacer></v-spacer>
+                <v-spacer />
                 <v-btn
                   flat
                   color="primary"
@@ -86,7 +86,7 @@
                 v-model="time"
                 data-cy="course-offering-time-picker"
               >
-                <v-spacer></v-spacer>
+                <v-spacer />
                 <v-btn
                   flat
                   color="primary"
@@ -137,7 +137,7 @@
       <v-btn color="secondary" flat :disabled="saving" v-on:click="cancel">{{
         $t("actions.cancel")
       }}</v-btn>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn
         color="primary"
         raised
