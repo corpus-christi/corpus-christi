@@ -260,6 +260,8 @@ export default {
           this.addParticipantDialog.loading = false;
           this.addParticipantDialog.show = false;
           this.addParticipantDialog.newParticipants = [];
+          this.person = {};
+          this.allpeople = [];
           this.getParticipants();
         })
         .catch((err) => {
