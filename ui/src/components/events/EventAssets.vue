@@ -52,6 +52,7 @@
                     <v-tooltip bottom>
                       <template v-slot:activator="{ on }">
                         <v-btn
+                          @click="showDeleteAssetDialog(props.item.asset.id)"
                           icon
                           outlined
                           small
@@ -70,7 +71,10 @@
           </v-card>
         </v-tab-item>
         <v-tab-item>
-          hi
+          <!-- TODO
+            Once collections are implemented, 
+            add a data table for them under this tab here
+          -->
         </v-tab-item>
       </v-tabs>
     </v-card>
@@ -79,7 +83,7 @@
     <v-dialog v-model="addAssetDialog.show" max-width="350px">
       <v-card>
         <v-card-title primary-title>
-          Add Participant
+          Add Asset
         </v-card-title>
         <v-card-text>
           <entity-search
@@ -100,6 +104,7 @@
           </v-btn>
           <v-spacer/>
           <v-btn
+            @click="addAssets"
             color="primary"
             raised
             data-cy="confirm-asset"
@@ -109,6 +114,40 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- Delete Asset Dialog -->
+    <v-dialog v-model="deleteAssetDialog.show" max-width="350px">
+      <v-card>
+          <v-card-text>
+            {{ $t("events.participants.confirm-remove") }}
+          </v-card-text>
+          <v-card-actions>
+            <v-btn
+              @click="closeDeleteAssetDialog"
+              color="secondary"
+              text
+            >
+              {{ $t("actions.cancel") }}
+            </v-btn>
+            <v-spacer />
+            <v-btn
+              @click="deleteAsset"
+              color="primary"
+              raised
+              :loading="deleteAssetDialog.loading"
+            >
+              {{ $t("actions.confirm") }}
+            </v-btn>
+          </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-snackbar v-model="snackbar.show">
+      {{ snackbar.text }}
+      <v-btn text @click="snackbar.show = false">
+        {{ $t("actions.close") }}
+      </v-btn>
+    </v-snackbar>
   </div>
 </template>
 
@@ -134,7 +173,12 @@
           assetId: -1,
           loading: false,
         },
-      }
+
+        snackbar: {
+          show: false,
+          text: "",
+        },
+      };
     },
 
     computed: {
@@ -157,8 +201,6 @@
 
     methods: {
       showNewAssetDialog() {
-        console.log("assets: " + this.assets);
-        console.log(this.assets);
         this.addAssetDialog.show = true;
       },
 
@@ -166,8 +208,63 @@
         this.addAssetDialog.show = false;
       },
 
-      addAssets() {
+      showDeleteAssetDialog(assetId) {
+        this.deleteAssetDialog.show = true;
+        this.deleteAssetDialog.assetId = assetId;
+      },
 
+      closeDeleteAssetDialog() {
+        this.deleteAssetDialog.show = false;
+        this.deleteAssetDialog.loading = false;
+        this.deleteAssetDialog.assetId = -1;
+      },
+
+      addAssets() {
+        this.addAssetDialog.loading = true;
+        let promises = [];
+
+        for (let asset of this.addAssetDialog.newAssets) {
+          const idx = this.assets.findIndex(
+            (ev_as) => ev_as.assetId === asset.id
+          );
+          if (idx === -1) {
+            promises.push(this.addAsset(asset.id));
+          }
+        }
+
+        Promise.all(promises)
+          .then(() => {
+            this.getAssets();
+          })
+          .catch((err) => {
+            console.log(err);
+            this.addAssetDialog.loading = false;
+
+          });
+      },
+
+      addAsset(id) {
+        const eventId = this.$route.params.event;
+        return this.$http.post(`/api/v1/events/${eventId}/assets/${id}`, {
+          confirmed: true,
+        });
+      },
+
+      deleteAsset() {
+        this.deleteAssetDialog.loading = true;
+        const eventId = this.$route.params.event;
+        const assetId = this.deleteAssetDialog.assetId;
+        const idx = this.assets.findIndex((ev) => ev.asset.id === assetId);
+        this.$http
+          .delete(`/api/v1/events/${eventId}/assets/${assetId}`)
+          .then(() => {
+            this.closeDeleteAssetDialog();
+            this.assets.splice(idx, 1);
+          })
+          .catch((err) => {
+            console.log(err);
+            this.closeDeleteAssetDialog();
+          })
       },
 
       getAssets() {
@@ -179,8 +276,9 @@
             let event = resp.data;
             this.assets = event.assets;
             this.assetTableLoading = false;
-          })
-      }
+            console.log(this.assets);
+          });
+      },
     },
 
     mounted: function () {
