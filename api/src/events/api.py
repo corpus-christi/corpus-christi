@@ -53,15 +53,14 @@ def create_event():
             return jsonify("Church is going on")
     if(others):
         for event in others:
-            #needs fixed
-            otherEventStart = datetime.strptime(str(event.start), '%Y-%m-%d %H:%M:%S')
-            otherEventEnd = datetime.strptime(str(event.end), '%Y-%m-%d %H:%M:%S')
-            otherEventStartTime = time(otherEventStart.hour, otherEventStart.minute, otherEventStart.second)
-            otherEventEndTime = time(otherEventEnd.hour, otherEventEnd.minute, otherEventEnd.second)
+            otherEventStart = datetime.strptime(str(event.start), '%Y-%m-%d %H:%M:%S') + timedelta(hours=5)
+            otherEventEnd = datetime.strptime(str(event.end), '%Y-%m-%d %H:%M:%S') + timedelta(hours=5) #Only works if location is in EST
+            otherEventStartTime = time(otherEventStart.hour, otherEventStart.minute, otherEventStart.second) 
+            otherEventEndTime = time(otherEventEnd.hour, otherEventEnd.minute, otherEventEnd.second) 
             print("others ", otherEventStartTime, otherEventEndTime, newStartTime, newEndTime)
             d=newStartTime < otherEventStartTime and newEndTime > otherEventStartTime
-            e=newStartTime < otherEventEndTime and otherEventEndTime > churchEndTime
-            f=newStartTime > otherEventStartTime and newEndTime < otherEventEndTime
+            e=newStartTime < otherEventEndTime and newEndTime >= otherEventEndTime
+            f=newStartTime >= otherEventStartTime and newEndTime <= otherEventEndTime
             g=otherEventStart.day == newStartDateTime.day and otherEventEnd.day == newEndDateTime.day 
             print(d, e, f, g)
             if((d or e or f) and g):
