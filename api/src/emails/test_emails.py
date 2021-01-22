@@ -1,4 +1,5 @@
 import random
+import smtplib
 
 import pytest
 from faker import Faker
@@ -60,3 +61,15 @@ def test_send_email_invalid(auth_client):
 
     # THEN we expect an error code
     assert resp.status_code == 422
+
+def test_new_email_code(auth_client):
+    resp = auth_client.post(
+        url_for('emails.send_email'),
+        json={
+            'managerName': 'Peter Parker',
+            'managerEmail': 'cc-manager@example.com',
+            'subject': 'Email test',
+            'body': 'This is some email for testing.',
+            'recipients': ['test1@example.com', 'test2@example.com']
+        })
+    assert resp.status_code == 200
