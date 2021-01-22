@@ -107,16 +107,40 @@ export default {
   data() {
     return {
       filters: [
-        { text: 'Unvalidated', id: 0 },
+        { text: 'Unverified', id: 0 },
         { text: 'Untranslated', id: 1 },
       ],
+      filtersObj: {
+        Unverified: false,
+        Untranslated: false,
+      },
     };
   },
   methods: {
     onChange(key) {
-      this.$emit('sendFilters', key);
+      this.resetFiltersObj();
+      this.createFiltersObj(key);
+      console.log(this.filtersObj);
+      this.$emit('sendFilters', this.filtersObj);
+    },
+    createFiltersObj(key) {
+      for (var i = 0; i < key.length; i++) {
+        if(key[i] == 0) {
+          this.filtersObj.Unverified = true;
+        }
+        else {
+          this.filtersObj.Untranslated = true;
+        }
+      }
+    },
+    resetFiltersObj() {
+      this.filtersObj.Untranslated = false;
+      this.filtersObj.Unverified = false;
     }
   },
+  mounted: function() {
+    this.$emit('sendFilters', this.filtersObj);
+  }
 };
 </script>
 

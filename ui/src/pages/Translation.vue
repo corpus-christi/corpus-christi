@@ -74,7 +74,7 @@
       </v-card>
     </v-dialog>
 
-    <v-row fixed bottom>
+    <!-- <v-row fixed bottom>
       <v-app-bar color="white" elevation="2">
         <v-card min-width="60%" />
         <v-card min-width="2%" />
@@ -83,7 +83,7 @@
           Activate
         </v-btn>
       </v-app-bar>
-    </v-row>
+    </v-row> -->
   </v-container>
 </template>
 
@@ -119,7 +119,7 @@ export default {
       currentCode: "",
       loadingTranslations: false,
       newTranslationList: {},
-      filters: [],
+      filters: {},
     };
   },
   computed: {
