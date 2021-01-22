@@ -112,6 +112,12 @@ export default {
       submissionInProgress: false,
     };
   },
+  watch: {
+    currentGloss: function() {
+      this.newTranslation = "";
+      this.newValidation = this.currentVerified;
+    },
+  },
   computed: {
     isSelected() {
       return this.selectedTags.includes(this.topLevelTag);
