@@ -62,7 +62,9 @@
       >
         <v-text-field
         v-model="newTranslation"
+        :append-icon="newTranslation ? 'send':''"
         @input="emitEventChanged"
+        @click:append="submitChange"
         >
           {{ newTranslation }}
         </v-text-field>
@@ -128,6 +130,9 @@ export default {
     onValidationClick() {
       this.$emit('ValidationChanged', this.changedKey, this.newValidation, this.oldValidation);
     },
+    submitChange() {
+      this.$emit('submitChanges', this.changedKey, this.newTranslation, this.newValidation);
+    }
   }
 };
 </script>

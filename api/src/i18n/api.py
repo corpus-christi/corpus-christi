@@ -108,7 +108,6 @@ def read_all_values():
 def update_a_value():
     #     update the values with the info in payload
     i18n_value_schema = I18NValueSchema()
-
     #     verify_jwt_in_request()
     claims = get_jwt_claims()
     if 'role.translator' not in claims['roles']:
@@ -119,23 +118,28 @@ def update_a_value():
         except ValidationError as err:
             return logged_response(err.messages, 422)
 
-        i18n_value = db.session.query(I18NValue).filter_by(locale_code=valid_attributes.get('locale_code'),
-                                                           key_id=valid_attributes.get('key_id')).first()
+    i18n_key = db.session.query(I18NKey).filter_by(
+        id = valid_attributes.get('key_id')
+    ).first()
 
-    i18n_value = db.session.query(I18NValue).filter_by(
-        locale_code=valid_attributes.get('locale_code'),
-        key_id=valid_attributes.get('key_id')).first()
-
-    if not i18n_value:
+    if not i18n_key:
         return logged_response(
-            f"Group with key_id #{valid_attributes['key_id']} does not exist.", 404)
+            f"Key with id #{valid_attributes['key_id']} does not exist.", 404)
 
-    for key, val in valid_attributes.items():
-        setattr(i18n_value, key, val)
+    i18n_value = I18NValue(**request.json)
 
-    db.session.add(i18n_value)
+    i18n_value_in_db = db.session.query(I18NValue).filter_by(
+        key_id = valid_attributes.get('key_id'),
+        locale_code = valid_attributes.get('locale_code')
+    ).first()
+
+    if i18n_value_in_db is not None:
+        i18n_value_in_db.gloss = valid_attributes.get('gloss')
+        i18n_value_in_db.verified = valid_attributes.get('verified')
+    else:
+        db.session.add(i18n_value)
+
     db.session.commit()
-
     return logged_response(i18n_value_schema.dump(i18n_value), 200)
 
 
@@ -172,6 +176,7 @@ def read_xlation(locale_code):
 
 
 @i18n.route('/values/translations/<preview_locale_str>/<current_locale_str>')
+@authorize(['role.translator'])
 def fetch_and_format_target_locales(preview_locale_str, current_locale_str):
     preview_locale = db.session.query(I18NLocale).filter_by(code=preview_locale_str).first()
     current_locale = db.session.query(I18NLocale).filter_by(code=current_locale_str).first()

@@ -42,6 +42,7 @@
           @AppendToList="appendTranslation"
           @ClearFromList="clearGivenTranslation"
           @ValidationChanged="logValidation"
+          @submitChanges="sendUpdatedWords"
         />
       </v-col>
     </v-row>
@@ -230,6 +231,19 @@ export default {
     useFilter(filters) {
       this.filters = filters;
     },
+    sendUpdatedWords(key, newTrans, newValid) {
+      console.log(`Key: ${key} | Trans: ${newTrans} | Valid: ${newValid}`);
+      this.$http
+        .patch(`api/v1/i18n/values/update`,
+          {locale_code : this.currentCode, key_id : key, gloss: newTrans, verified: newValid}
+        )
+        .then(()=>{
+          console.log("patched sucessfully");
+        })
+        .catch(err=>{
+          console.exception(err);
+        })
+    }
   },
   mounted: function () {
     this.loadTopLevelTags();
