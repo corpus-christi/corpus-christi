@@ -123,15 +123,6 @@
       <v-flex xs12 lg6>
         <v-layout column>
           <v-flex>
-            <event-asset-details
-              :assets="event.assets"
-              :loaded="assetsLoaded"
-              v-on:snackbar="showSnackbar($event)"
-              v-on:asset-added="addAsset"
-              v-on:asset-deleted="deleteAsset"
-            ></event-asset-details>
-          </v-flex>
-          <v-flex>
             <event-group-details
               :groups="event.groups"
               :loaded="groupsLoaded"
@@ -184,7 +175,6 @@
 import CustomForm from "../CustomForm";
 import { mapGetters } from "vuex";
 import EventTeamDetails from "./EventTeamDetails";
-import EventAssetDetails from "./EventAssetDetails";
 import EventPersonDetails from "./EventPersonDetails";
 import EventGroupDetails from "./EventGroupDetails";
 import EventAttendanceForm from "./EventAttendanceForm";
@@ -195,7 +185,6 @@ export default {
   components: {
     "event-form": CustomForm,
     "event-team-details": EventTeamDetails,
-    "event-asset-details": EventAssetDetails,
     "event-person-details": EventPersonDetails,
     "event-group-details": EventGroupDetails,
     "event-attendance-form": EventAttendanceForm,
@@ -407,6 +396,7 @@ export default {
         });
     },
 
+    /*
     addAsset(data) {
       const eventId = this.$route.params.event;
       let assetId = data.asset.id;
@@ -448,6 +438,7 @@ export default {
           this.showSnackbar(this.$t("assets.error-removing-asset"));
         });
     },
+    */
 
     addGroup(data) {
       const eventId = this.$route.params.event;
