@@ -19,6 +19,7 @@
       @goToBot="$vuetify.goTo(bodyScrollHeight())"
       @hideToolBox="showToolBox = false"
       @sendFilters="useFilter"
+      @addNewLocale="dialog=true"
     />
 
     <WorkbenchHeader
@@ -62,26 +63,61 @@
 
     <v-dialog
       v-model="dialog"
-      width="67%"
+      width="30%"
     >
       <v-card>
-        <v-card-title class="headline black lighten-2 white--text">
-          You are about to submit {{Object.keys(newTranslationList).length}} changes!
+        <v-card-title class="headline mb-5">
+          Enter Locale Code and Description (Ex: en-US English US)
         </v-card-title>
-        <v-list-item
-          v-for="(item, index) in newTranslationList"
-          :key="index"
-          outlined
+        <v-row
         >
-          <v-list-item-title class="text-right AutoWidth">{{index}}</v-list-item-title>
-          <v-divider vertical class="mx-3" />
-          <v-list-item-subtitle class="text-right AutoWidth">{{item.oldTrans}}</v-list-item-subtitle>
-          <v-list-item-icon><v-icon>keyboard_arrow_right</v-icon></v-list-item-icon>
-          <v-list-item-subtitle class="text-left AutoWidth">{{item.newTrans}}</v-list-item-subtitle>
-        </v-list-item>
-        <v-card-actions class="headline black lighten-2 white--text">
-          <v-btn color="red lighten-2" @click="dialog=false" outlined class="white">
-            Sumbit
+          <v-col>
+            <v-card
+              elevation="0"
+              class="mt-2 ml-10"
+            >
+              <v-text-field
+                outlined
+                label="Language Code"
+                hint="(Ex: en)"
+              >
+          
+              </v-text-field>
+            </v-card>
+          </v-col>
+          <v-icon class="mb-7">horizontal_rule</v-icon>
+          <v-col>
+            <v-card
+              elevation="0"
+              class="mt-2 mr-10"
+            >
+              <v-text-field
+                outlined
+                label="Country Code"
+                hint="(Ex: US)"
+              >
+
+              </v-text-field>
+            </v-card>
+          </v-col>
+          <v-col>
+            <v-card
+              elevation="0"
+              class="mt-2 mr-10"
+            >
+              <v-text-field
+                outlined
+                label="Description"
+                hint="(Ex: English US)"
+              >
+                
+              </v-text-field>
+            </v-card>
+          </v-col>
+        </v-row>
+        <v-card-actions class="headline">
+          <v-btn color="red lighten-2" @click="dialog=false" outlined>
+            Submit
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -291,5 +327,8 @@ export default {
   height: 300px;
   right: 0;
   z-index: 2;
+}
+.dialog {
+  overflow: hidden;
 }
 </style>

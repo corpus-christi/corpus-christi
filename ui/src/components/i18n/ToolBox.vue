@@ -16,9 +16,9 @@
         <v-btn
           class="ml-3"
           dark
-          
+          @click="$emit('addNewLocale')"
         >
-          <v-icon>add_circle_outline</v-icon>
+          <v-icon left>add_circle_outline</v-icon>
           Add New Locale
         </v-btn>
       </v-col>
@@ -72,7 +72,11 @@
       class="subrow ml-3"
       no-gutters
     >
+      <v-col cols="4">
+      </v-col>
       <v-col 
+        cols="4"
+        right
         align="center"
       >
         <v-btn
@@ -83,6 +87,7 @@
         </v-btn>
       </v-col>
       <v-col 
+        cols="4"
         align="center"
       >
         <v-btn

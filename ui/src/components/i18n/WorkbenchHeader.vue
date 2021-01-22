@@ -72,7 +72,7 @@
         Go
       </v-btn>
     </v-card>
-    <v-card min-width="5%" max-width="5%"></v-card>
+    <v-card min-width="5.5%" max-width="5.5%"></v-card>
     <v-card 
       elevation="0"
       color="transparent"
@@ -83,7 +83,7 @@
         New Translation
       </v-toolbar-title>
     </v-card>
-    <v-card min-width="7.8%" max-width="7.8"></v-card>
+    <v-card min-width="7.5%" max-width="7.5"></v-card>
     <v-card
       elevation="0"
       color="transparent"
