@@ -53,7 +53,7 @@
           <!-- The Tabs Themselves -->
           <v-tabs-items v-model="tab">
             <v-tab-item>
-              <!-- Serially written Course List (TODO: Replace with Table) -->
+              <!-- Serially written Course List (TODO: Replace with Table)
               <v-layout row>
                 <v-flex xs12>
                   <v-list three-line>
@@ -72,13 +72,34 @@
                   </v-list>
                 </v-flex>
               </v-layout>
+              <!- -->
+              <v-flex md12 v-if="!loading">
+                <DiplomaCoursesTable :course="course" />
+                <!--
+                <template slot="items" slot-scope="props">
+                  <td class="hover-hand" @click="clickThrough(props.item)">
+                    {{ props.item.name }}
+                  </td>
+                  <td class="hover-hand" @click="clickThrough(props.item)">
+                    {{ props.item.description }}
+                  </td>
+                  <td>
+                    <CourseAdminActions
+                      v-bind:course="props.item"
+                      display-context="compact"
+                      v-on:action="dispatchAction($event, props.item)"
+                    />
+                  </td>
+                </template>
+                -->
+              </v-flex>
             </v-tab-item>
             <v-tab-item>
-              <v-flex md11 class="pl-2" v-if="!loading">
+              <v-flex md12 v-if="!loading">
               <!--
               <v-flex sm12 md9 class="pl-2" v-if="!loading">
               -->
-                <DiplomaCoursesTable :course="course" />
+                <DiplomaPeopleTable :course="course" />
               </v-flex>
             </v-tab-item>
           </v-tabs-items>
@@ -90,11 +111,13 @@
 
 <script>
 import DiplomaCoursesTable from "./DiplomaCoursesTable";
+import DiplomaPeopleTable from "./DiplomaPeopleTable";
 
 export default {
   name: "DiplomaDetails",
   components: {
     DiplomaCoursesTable,
+    DiplomaPeopleTable,
   },
   props: {
     diplomaId: {
