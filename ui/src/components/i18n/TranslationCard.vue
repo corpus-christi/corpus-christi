@@ -62,7 +62,8 @@
       >
         <v-text-field
         v-model="newTranslation"
-        :append-icon="newTranslation ? 'send':''"
+        :append-icon="newTranslation ? 'send' : ''"
+        :loading="submissionInProgress ? 'success' : false"
         @input="emitEventChanged"
         @click:append="submitChange"
         >
@@ -92,6 +93,7 @@
 export default {
   name: "TranslationCard",
   props: {
+    myIndex:         { type: Number,  required: true },
     topLevelTag:     { type: String,  required: true },
     restOfTag:       { type: String,  required: true },
     previewGloss:    { type: String,  required: true },
@@ -99,14 +101,15 @@ export default {
     currentVerified: { type: Boolean, required: true },
     filters:         { type: Object,  required: true },
     selectedTags:    { type: Array,   required: true },
+    currentCode:     { type: String,  required: true },
   },
   data() {
     return{
       oldTranslation: this.currentGloss,
       newTranslation: "",
-
       oldValidation: this.currentVerified,
-      newValidation: this.currentVerified, //copy
+      newValidation: this.currentVerified,
+      submissionInProgress: false,
     };
   },
   computed: {
@@ -123,19 +126,38 @@ export default {
   methods: {
     emitEventChanged() {
       if (this.newTranslation === '') {
-        this.$emit('ClearFromList', this.changedKey);
+        this.$emit('clearFromList', this.changedKey);
       }
       else {
-        this.$emit('AppendToList', this.changedKey, this.newTranslation, this.oldTranslation);
+        this.$emit('appendToList', this.changedKey, this.newTranslation, this.oldTranslation);
       }
       this.newValidation = false;
     },
     onValidationClick() {
-      this.$emit('ValidationChanged', this.changedKey, this.newValidation, this.oldValidation);
+      this.$emit('validationChanged', this.changedKey, this.newValidation, this.oldValidation);
     },
     submitChange() {
-      this.$emit('submitChanges', this.changedKey, this.newTranslation, this.newValidation);
-    }
+      this.submissionInProgress = true;
+      this.$http
+        .patch(`api/v1/i18n/values/update`, {
+          key_id: `${this.topLevelTag}.${this.restOfTag}`,
+          locale_code: this.currentCode,
+          gloss: this.newTranslation,
+          verified: this.newValidation,
+        })
+        .then(() => {
+          this.$emit('submitAChange', this.myIndex, this.newTranslation, this.newValidation);
+          this.oldTranslation = this.newTranslation;
+          this.newTranslation = "";
+          this.oldValidation = this.newValidation;
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          this.submissionInProgress = false;
+        });
+    },
   }
 };
 </script>

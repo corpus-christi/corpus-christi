@@ -1,12 +1,23 @@
 <template>
   <v-container>
+    <v-card elevation="0" class="d-flex justify-end">
+      <v-btn
+        @click="showToolBox = true"
+        class="col-md-1"
+        outlined
+      >
+        Reveal ToolBox
+      </v-btn>
+    </v-card>
+
     <ToolBox class="ToolBox"
       :numTranslated="numEntriesTranslated"
       :numValidated="numEntriesValidated"
       :totalEntries="numEntriesTotal"
+      :shouldBeShown="showToolBox"
       @goToTop="$vuetify.goTo(0)"
       @goToBot="$vuetify.goTo(bodyScrollHeight())"
-      @onSubmit="dialog='true'"
+      @hideToolBox="showToolBox = false"
       @sendFilters="useFilter"
     />
 
@@ -32,6 +43,7 @@
         <TranslationCard
           v-for="(card, index) in translationObjs"
           :key="index"
+          :myIndex="index"
           :topLevelTag="card.top_level_key"
           :restOfTag="card.rest_of_key"
           :previewGloss="card.preview_gloss"
@@ -39,10 +51,11 @@
           :currentVerified="card.current_verified"
           :filters="filters"
           :selectedTags="selectedTags"
-          @AppendToList="appendTranslation"
-          @ClearFromList="clearGivenTranslation"
-          @ValidationChanged="logValidation"
-          @submitChanges="sendUpdatedWords"
+          :currentCode="currentCode"
+          @appendToList="appendTranslation"
+          @clearFromList="clearGivenTranslation"
+          @validationChanged="logValidation"
+          @submitAChange="sendUpdatedTranslation"
         />
       </v-col>
     </v-row>
@@ -110,6 +123,7 @@ export default {
       fabToTop: false,
       fabToBot: true,
       canUserLeaveFreely: true,
+      showToolBox: true,
 
       topLevelTags: [],
       selectedTags: [],
@@ -231,18 +245,9 @@ export default {
     useFilter(filters) {
       this.filters = filters;
     },
-    sendUpdatedWords(key, newTrans, newValid) {
-      console.log(`Key: ${key} | Trans: ${newTrans} | Valid: ${newValid}`);
-      this.$http
-        .patch(`api/v1/i18n/values/update`,
-          {locale_code : this.currentCode, key_id : key, gloss: newTrans, verified: newValid}
-        )
-        .then(()=>{
-          console.log("patched sucessfully");
-        })
-        .catch(err=>{
-          console.exception(err);
-        })
+    sendUpdatedTranslation(index, newTrans, newValid) {
+      this.translationObjs[index].current_gloss = newTrans;
+      this.translationObjs[index].current_verified = newValid;
     }
   },
   mounted: function () {

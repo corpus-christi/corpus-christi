@@ -3,7 +3,7 @@
     class="mr-2"
     outlined
     elevation="2"
-    v-if="true"
+    v-if="shouldBeShown"
   >
     <v-row
       class="subrow"
@@ -77,9 +77,9 @@
       >
         <v-btn
           dark
-          @click="$emit('onSubmit')"
+          @click="$emit('hideToolBox')"
         >
-          Sumbit
+          Hide
         </v-btn>
       </v-col>
       <v-col 
@@ -103,6 +103,7 @@ export default {
     numTranslated: { type: Number, required: true },
     numValidated: { type: Number, required: true },
     totalEntries: { type: Number, required: true },
+    shouldBeShown: { type: Boolean, required: true },
   },
   data() {
     return {
