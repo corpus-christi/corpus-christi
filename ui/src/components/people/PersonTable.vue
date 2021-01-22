@@ -46,6 +46,9 @@
       :loading="!tableLoaded"
       class="elevation-1"
       data-cy="person-table"
+      hide-default-footer
+      @page-count="pageCount = $event"
+      :page.sync="page"
     >
       <template v-slot:item="{ item }">
         <tr>
@@ -89,6 +92,9 @@
         </tr>
       </template>
     </v-data-table>
+    <div class="text-center pt-2">
+      <v-pagination v-model="page" :length="pageCount"></v-pagination>
+    </div>
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
@@ -181,6 +187,10 @@ export default {
   data() {
     return {
       viewStatus: "viewActive",
+
+      page: 1,
+      pageCount: 0,
+
       adminDialog: {
         show: false,
         person: {},

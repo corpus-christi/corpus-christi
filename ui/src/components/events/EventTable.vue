@@ -71,6 +71,7 @@
       </v-layout>
     </v-toolbar>
 
+    <!-- Table of existing events -->
     <v-data-table
       :headers="headers"
       :items-per-page-options="rowsPerPageItem"
@@ -79,7 +80,9 @@
       :loading="tableLoading"
       must-sort
       class="elevation-1"
-      :options.sync="paginationInfo"
+      hide-default-footer
+      @page-count="pageCount = $event"
+      :page.sync="page"
     >
       <template v-slot:item="props">
         <!-- TODO: Add icons for past, upcoming, etc. -->
@@ -181,6 +184,9 @@
         </tr>
       </template>
     </v-data-table>
+    <div class="text-center pt-2">
+      <v-pagination v-model="page" :length="pageCount"></v-pagination>
+    </div>
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
@@ -245,18 +251,16 @@ export default {
   data() {
     return {
       active: 0,
+
+      page: 1,
+      pageCount: 0,
+
       rowsPerPageItem: [
         10,
         15,
         25,
         { text: "$vuetify.dataIterator.rowsPerPageAll", value: -1 },
       ],
-      paginationInfo: {
-        sortBy: ["start"], //default sorted column
-        rowsPerPage: 10,
-        page: 1,
-        sortDesc: [true],
-      },
       tableLoading: true,
       events: [],
       eventDialog: {
