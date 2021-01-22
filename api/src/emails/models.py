@@ -7,8 +7,6 @@ class EmailSchema(Schema):
     subject = fields.String()
     body = fields.String()
     recipients = fields.List(fields.String(), required=True)
-    cc = fields.List(fields.String())
-    bcc = fields.List(fields.String())
     managerName = fields.String()
     managerEmail = fields.String()
     # TODO: change the field to camelCase. Make sure UI gets updated as well
