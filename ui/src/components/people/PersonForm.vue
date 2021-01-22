@@ -191,7 +191,7 @@
             ref="attributeForm"
           />
           <v-layout row justify-center align-space-around>
-            <v-card v-if='person.address'>
+            <v-card v-if="person.address">
               <v-card-text> {{ $t(person.address.name) }}</v-card-text>
               <v-card-text> {{ $t(person.address.address) }}</v-card-text>
             </v-card>
@@ -608,8 +608,20 @@ export default {
           let password = this.person.password;
           let phone = this.person.phone;
           let addressId = this.person.addressId;
-          let personObject = { id, active, firstName, lastName, secondLastName, 
-          gender, birthday, email, username, password, phone, addressId };
+          let personObject = {
+            id,
+            active,
+            firstName,
+            lastName,
+            secondLastName,
+            gender,
+            birthday,
+            email,
+            username,
+            password,
+            phone,
+            addressId,
+          };
           let data = {
             person: personObject,
             attributesInfo: attributes,
@@ -702,7 +714,7 @@ export default {
                 })
                 .catch((err) => {
                   this.saveIsLoading = false;
-                  console.error("FALURE", err.response);
+                  console.error("FAILURE", err.response);
                 });
             })
             .catch((err) => {
@@ -714,7 +726,6 @@ export default {
           this.$http
             .put(`/api/v1/people/persons/${personId}`, data)
             .then((response) => {
-              
               this.$emit(emitMessage, response.data);
               this.resetForm();
               this.saveIsLoading = false;

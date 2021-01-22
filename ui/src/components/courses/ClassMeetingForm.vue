@@ -135,7 +135,7 @@
           :disabled="addressWasSaved"
           @click="changeAddressView(true)"
         >
-        {{ $t("actions.add-address") }}
+          {{ $t("actions.add-address") }}
         </v-btn>
 
         <!-- location -->
@@ -186,7 +186,7 @@ export default {
 
   components: {
     EntitySearch,
-    "address-form": AddressForm
+    "address-form": AddressForm,
   },
 
   data() {
@@ -227,7 +227,6 @@ export default {
     addressSaved() {
       return this.addressWasSaved;
     },
-
   },
 
   watch: {
@@ -279,7 +278,7 @@ export default {
       this.$validator.reset();
     },
 
-    checkLocation(){
+    checkLocation() {
       return this.location;
     },
 
@@ -301,7 +300,6 @@ export default {
           this.saving = true;
           let classMeeting = cloneDeep(this.classMeeting);
           this.saveClassMeeting(classMeeting);
-          
         }
       });
     },

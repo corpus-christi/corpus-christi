@@ -267,7 +267,6 @@ export default {
   },
 
   methods: {
-
     getEvent() {
       const id = this.$route.params.event;
       return this.$http
@@ -376,25 +375,31 @@ export default {
             this.showSnackbar(this.$t("events.persons.person-added"));
           }
           if (!data.editMode) {
-            let eventPerson = {id: personId, person_id: personId, event_id: eventId, person: personData, description: data.description };
+            let eventPerson = {
+              id: personId,
+              person_id: personId,
+              event_id: eventId,
+              person: personData,
+              description: data.description,
+            };
             this.event.persons.push(eventPerson);
           }
-      })
-      .catch((err) => {
-        console.log(err);
-        if (err.response.status === 422) {
-          this.showSnackbar(this.$t("events.persons.error-person-assigned"));
-        } else {
-          this.showSnackbar(this.$t("events.persons.error-adding-person"));
-        }
-      });
+        })
+        .catch((err) => {
+          console.log(err);
+          if (err.response.status === 422) {
+            this.showSnackbar(this.$t("events.persons.error-person-assigned"));
+          } else {
+            this.showSnackbar(this.$t("events.persons.error-adding-person"));
+          }
+        });
     },
 
     deletePerson(data) {
-        const eventId = this.$route.params.event;
-        let id = data.personId;
-        const idx = this.event.persons.findIndex((p) => p.id === id)
-        this.$http
+      const eventId = this.$route.params.event;
+      let id = data.personId;
+      const idx = this.event.persons.findIndex((p) => p.id === id);
+      this.$http
         .delete(`/api/v1/events/${eventId}/individuals/${id}`)
         .then((resp) => {
           console.log("REMOVED", resp);
