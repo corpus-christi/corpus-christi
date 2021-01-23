@@ -11,24 +11,36 @@
 </template>
 
 <script>
-import Date from "./Date.vue";
-import Float from "./Float.vue";
-import Integer from "./Integer.vue";
-import String from "./String.vue";
-import Dropdown from "./Dropdown.vue";
-import Check from "./Check.vue";
-import Radio from "./Radio.vue";
+import Date from "./fields/Date.vue";
+import Float from "./fields/Float.vue";
+import Integer from "./fields/Integer.vue";
+import String from "./fields/String.vue";
+import Dropdown from "./fields/Dropdown.vue";
+import Check from "./fields/Check.vue";
+import Radio from "./fields/Radio.vue";
 
 export default {
   name: "AttributeForm",
-  components: { Date, Float, Integer, String, Dropdown, Check, Radio },
+
+  components: {
+    Date,
+    Float,
+    Integer,
+    String,
+    Dropdown,
+    Check,
+    Radio,
+  },
+
   props: ["value", "existingAttributes", "personId"],
+
   data() {
     return {
       formData: this.value || {},
       attributes: [],
     };
   },
+
   watch: {
     existingAttributes() {
       if (this.existingAttributes && this.existingAttributes.length > 0) {
@@ -42,6 +54,7 @@ export default {
       }
     },
   },
+
   mounted() {
     this.getAttributesInfo().then(() => {
       this.attributes.sort((a, b) => {
@@ -50,6 +63,7 @@ export default {
       this.setupAttributes(this.attributes);
     });
   },
+
   methods: {
     getAttributesInfo() {
       return this.$http

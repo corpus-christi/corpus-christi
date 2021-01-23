@@ -33,12 +33,14 @@
 <script>
 export default {
   name: "Date",
+
   props: {
     attribute: {
       type: Object,
       required: true,
     },
   },
+
   data() {
     return {
       showDatePicker: false,

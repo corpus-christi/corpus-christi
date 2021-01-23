@@ -12,6 +12,7 @@
 <script>
 export default {
   name: "String",
+
   props: {
     attribute: {
       type: Object,

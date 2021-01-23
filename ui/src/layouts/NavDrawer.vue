@@ -17,14 +17,17 @@ import { mapState } from "vuex";
 
 export default {
   name: "NavDrawer",
+
   components: {
     NavItem,
   },
+
   props: ["value"],
 
   computed: {
     // Computed property so it's reactive.
     ...mapState(["currentAccount"]),
+
     menuItems: function () {
       if (this.currentAccount == null) {
         return [];
@@ -41,6 +44,14 @@ export default {
               title: this.$t("people.title"),
               route: "people",
               icon: "account_circle",
+              children: [
+                {
+                  title: this.$t("people.attributes"),
+                  route: "people-attributes",
+                  icon: "list",
+                  isDropdown: true,
+                },
+              ],
             },
             {
               title: this.$t("groups.title"),
@@ -65,6 +76,7 @@ export default {
                 {
                   title: this.$t("transcripts.transcript"),
                   route: "transcripts",
+                  icon: "grading",
                   isDropdown: true,
                 },
               ],

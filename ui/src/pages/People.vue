@@ -7,7 +7,11 @@
       </v-tab>
       <v-tab ripple data-cy="roles-table-tab">
         <v-icon>supervisor_account</v-icon>
-        &nbsp;{{ $t("people.title-roles") }}
+        {{ $t("people.title-roles") }}
+      </v-tab>
+      <v-tab>
+        <v-icon>list</v-icon>
+        {{ $t("people.attributes") }}
       </v-tab>
     </v-tabs>
     <v-tabs-items v-model="tab">
@@ -27,6 +31,9 @@
           v-on:fetchPeopleList="fetchPeopleList"
         />
       </v-tab-item>
+      <v-tab-item>
+        <attributes />
+      </v-tab-item>
     </v-tabs-items>
   </v-container>
 </template>
@@ -34,12 +41,14 @@
 <script>
 import PersonTable from "../components/people/PersonTable";
 import RolesTable from "../components/people/RolesTable";
+import Attributes from "@/components/people/AttributeManager";
 
 export default {
   name: "People",
   components: {
     PersonTable,
     RolesTable,
+    Attributes,
   },
   data() {
     return {

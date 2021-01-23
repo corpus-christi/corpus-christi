@@ -38,8 +38,8 @@
 
             <v-stepper-items>
               <v-stepper-content step="1">
-                <PersonalInfoForm />
-                <PersonStepperNavButtons
+                <personal-info-form />
+                <person-stepper-nav-buttons
                   :is-disabled="formDisabled"
                   @cancel="cancel"
                   :show-previous-button="false"
@@ -48,8 +48,8 @@
               </v-stepper-content>
 
               <v-stepper-content step="2">
-                <AccountInfoForm />
-                <PersonStepperNavButtons
+                <account-info-form />
+                <person-stepper-nav-buttons
                   :is-disabled="formDisabled"
                   @cancel="cancel"
                   @previous="previous"
@@ -108,7 +108,7 @@
                   />
                 </v-expand-transition>
 
-                <PersonStepperNavButtons
+                <person-stepper-nav-buttons
                   :is-disabled="formDisabled"
                   @cancel="cancel"
                   @previous="previous"
@@ -128,7 +128,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-import AttributeForm from "../input_fields/AttributeForm.vue";
+import AttributeForm from "../AttributeForm";
 import { isEmpty } from "lodash";
 import AddressForm from "../../AddressForm.vue";
 import ImageChooser from "../../images/ImageChooser";
@@ -138,14 +138,16 @@ import PersonStepperNavButtons from "./PersonStepperNavButtons";
 
 export default {
   name: "PersonStepper",
+
   components: {
     PersonStepperNavButtons,
     PersonalInfoForm,
     AccountInfoForm,
-    "attribute-form": AttributeForm,
-    "address-form": AddressForm,
-    "image-chooser": ImageChooser,
+    AttributeForm,
+    AddressForm,
+    ImageChooser,
   },
+
   props: {
     title: {
       type: String,
@@ -156,6 +158,7 @@ export default {
       required: true,
     },
   },
+
   data: function () {
     return {
       showAddressForm: false,

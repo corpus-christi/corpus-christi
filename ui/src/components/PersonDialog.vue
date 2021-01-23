@@ -1,7 +1,7 @@
 <template>
   <!-- New/Edit dialog -->
   <v-dialog v-model="personDialog.show" persistent max-width="768px">
-    <PersonStepper
+    <person-stepper
       v-bind:title="personDialog.title"
       v-bind:initialData="personDialog.person"
       v-bind:addAnotherEnabled="personDialog.addAnotherEnabled"

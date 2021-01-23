@@ -20,6 +20,7 @@
 <script>
 export default {
   name: "Radio",
+
   props: {
     attribute: {
       type: Object,

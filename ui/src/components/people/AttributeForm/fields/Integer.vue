@@ -14,6 +14,7 @@
 <script>
 export default {
   name: "Integer",
+
   props: {
     attribute: {
       type: Object,

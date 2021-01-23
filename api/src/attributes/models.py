@@ -5,10 +5,10 @@ from marshmallow import fields, Schema
 from marshmallow.validate import Range
 from sqlalchemy import Column, Integer, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
-from ..i18n.models import i18n_create, I18NLocale, i18n_check
 
 from .. import db
 from ..db import Base
+from ..i18n.models import i18n_create, I18NLocale, i18n_check
 from ..shared.models import StringTypes
 
 
@@ -16,27 +16,26 @@ from ..shared.models import StringTypes
 
 class Attribute(Base):
     __tablename__ = 'people_attributes'
+
     id = Column(Integer, primary_key=True)
     name_i18n = Column(StringTypes.I18N_KEY)
     type_i18n = Column(StringTypes.I18N_KEY)
     seq = Column(Integer, nullable=False)
     active = Column(Boolean, nullable=False)
-    enumerated_types_list = ['attribute.radio',
-                             'attribute.check', 'attribute.dropdown']
+    enumerated_types_list = [
+        'attribute.radio',
+        'attribute.check',
+        'attribute.dropdown'
+    ]
     nonenumerated_types_list = [
         'attribute.float',
         'attribute.integer',
         'attribute.string',
-        'attribute.date']
+        'attribute.date'
+    ]
 
-    enumerated_values = relationship(
-        'EnumeratedValue',
-        back_populates='attribute',
-        lazy=True)
-    person_attributes = relationship(
-        'PersonAttribute',
-        back_populates='attribute',
-        lazy=True)
+    enumerated_values = relationship('EnumeratedValue', back_populates='attribute', lazy=True)
+    person_attributes = relationship('PersonAttribute', back_populates='attribute', lazy=True)
 
     def __repr__(self):
         return f"<Attribute(id={self.id})>"
