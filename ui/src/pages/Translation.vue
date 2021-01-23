@@ -1,26 +1,29 @@
 <template>
   <v-container>
-    <v-card elevation="0" class="d-flex justify-end">
-      <v-btn
-        @click="showToolBox = true"
-        class="col-md-1"
-        outlined
-      >
-        Reveal ToolBox
-      </v-btn>
-    </v-card>
+    <v-btn
+      outlined right fixed depressed
+      style="top: 140px; writing-mode: vertical-rl; z-index: 2;"
+      width="1%" height="10%" min-height="150px"
+      @click="showToolBox = !showToolBox"
+    >
+      Toggle ToolBox
+    </v-btn>
 
-    <ToolBox class="ToolBox"
-      :numTranslated="numEntriesTranslated"
-      :numValidated="numEntriesValidated"
-      :totalEntries="numEntriesTotal"
-      :shouldBeShown="showToolBox"
-      @goToTop="$vuetify.goTo(0)"
-      @goToBot="$vuetify.goTo(bodyScrollHeight())"
-      @hideToolBox="showToolBox = false"
-      @sendFilters="useFilter"
-      @addNewLocale="dialog=true"
-    />
+    <transition name="fade">
+      <ToolBox class="ToolBox"
+        v-show="showToolBox"
+        :numTranslated="numEntriesTranslated"
+        :numValidated="numEntriesValidated"
+        :totalEntries="numEntriesTotal"
+        :shouldBeShown="showToolBox"
+        :filterOptions="['Unverified', 'Untranslated']"
+        @goToTop="$vuetify.goTo(0)"
+        @goToBot="$vuetify.goTo(bodyScrollHeight())"
+        @hideToolBox="showToolBox = false"
+        @sendFilters="useFilter"
+        @addNewLocale="newLocaleDialog=true"
+      />
+    </transition>
 
     <WorkbenchHeader
       :allLocales="allLocaleObjs"
@@ -62,7 +65,7 @@
     </v-row>
 
     <v-dialog
-      v-model="dialog"
+      v-model="newLocaleDialog"
       width="30%"
     >
       <v-card>
@@ -116,23 +119,12 @@
           </v-col>
         </v-row>
         <v-card-actions class="headline">
-          <v-btn color="red lighten-2" @click="dialog=false" outlined>
+          <v-btn color="red lighten-2" @click="newLocaleDialog=false" outlined>
             Submit
           </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
-
-    <!-- <v-row fixed bottom>
-      <v-app-bar color="white" elevation="2">
-        <v-card min-width="60%" />
-        <v-card min-width="2%" />
-
-        <v-btn min-width="9%">
-          Activate
-        </v-btn>
-      </v-app-bar>
-    </v-row> -->
   </v-container>
 </template>
 
@@ -155,7 +147,7 @@ export default {
   },
   data() {
     return {
-      dialog: false,
+      newLocaleDialog: false,
       fabToTop: false,
       fabToBot: true,
       canUserLeaveFreely: true,
@@ -169,7 +161,7 @@ export default {
       currentCode: "",
       loadingTranslations: false,
       newTranslationList: {},
-      filters: {},
+      filters: [],
     };
   },
   computed: {
@@ -330,5 +322,12 @@ export default {
 }
 .dialog {
   overflow: hidden;
+}
+/* From https://vuejs.org/v2/guide/transitions.html */
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
 }
 </style>

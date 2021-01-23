@@ -1,6 +1,6 @@
 <template>
   <v-card
-    v-if="isSelected && isFiltered"
+    v-if="isSelected && !isHiddenByFilters"
     outlined
     class="d-flex align-center ml-3 mt-4 mr-3"
     elevation="2"
@@ -99,7 +99,7 @@ export default {
     previewGloss:    { type: String,  required: true },
     currentGloss:    { type: String,  required: true },
     currentVerified: { type: Boolean, required: true },
-    filters:         { type: Object,  required: true },
+    filters:         { type: Array,   required: true },
     selectedTags:    { type: Array,   required: true },
     currentCode:     { type: String,  required: true },
   },
@@ -125,8 +125,14 @@ export default {
     changedKey() {
       return `${this.topLevelTag}.${this.restOfTag}`;
     },
-    isFiltered() {
-      return !(this.currentVerified && this.filters.Unverified) && ((this.currentGloss == "") || !this.filters.Untranslated);
+    isHiddenByFilters() {
+      if (this.currentVerified && this.filters.includes('Unverified')) {
+        return true;
+      }
+      if (this.currentGloss.length != 0 && this.filters.includes('Untranslated')) {
+        return true;
+      }
+      return false;
     },
   },
   methods: {

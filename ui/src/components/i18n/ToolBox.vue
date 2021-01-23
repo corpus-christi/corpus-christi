@@ -3,7 +3,6 @@
     class="mr-2"
     outlined
     elevation="2"
-    v-if="shouldBeShown"
   >
     <v-row
       class="subrow"
@@ -39,14 +38,13 @@
     >
       <v-col>
         <v-select
+          outlined multiple chips
           prepend-icon="filter_alt"
-          multiple
-          chips
-          :items="filters"
-          item-value="id"
-          @change="onChange"
-        >
-        </v-select>
+          label="Filters"
+          :items="filterOptions"
+          v-model="activeFilters"
+          @change="filtersUpdated"
+        />
       </v-col>
     </v-row>
     <v-row
@@ -108,51 +106,27 @@ export default {
     numTranslated: { type: Number, required: true },
     numValidated: { type: Number, required: true },
     totalEntries: { type: Number, required: true },
-    shouldBeShown: { type: Boolean, required: true },
+    filterOptions: { type: Array, required: true },
   },
   data() {
     return {
-      filters: [
-        { text: 'Unverified', id: 0 },
-        { text: 'Untranslated', id: 1 },
-      ],
-      filtersObj: {
-        Unverified: false,
-        Untranslated: false,
-      },
+      activeFilters: [],
     };
   },
   methods: {
-    onChange(key) {
-      this.resetFiltersObj();
-      this.createFiltersObj(key);
-      console.log(this.filtersObj);
-      this.$emit('sendFilters', this.filtersObj);
+    filtersUpdated() {
+      this.$emit('sendFilters', this.activeFilters);
     },
-    createFiltersObj(key) {
-      for (var i = 0; i < key.length; i++) {
-        if(key[i] == 0) {
-          this.filtersObj.Unverified = true;
-        }
-        else {
-          this.filtersObj.Untranslated = true;
-        }
-      }
-    },
-    resetFiltersObj() {
-      this.filtersObj.Untranslated = false;
-      this.filtersObj.Unverified = false;
-    }
   },
   mounted: function() {
-    this.$emit('sendFilters', this.filtersObj);
-  }
+    this.filtersUpdated();
+  },
 };
 </script>
 
 <style scoped>
-  .subrow {
-    height: 25%;
-    align-content: center;
-  }
+.subrow {
+  height: 25%;
+  align-content: center;
+}
 </style>
