@@ -1,9 +1,5 @@
 <template>
-  <v-card
-    class="mr-2"
-    outlined
-    elevation="2"
-  >
+  <v-card>
     <v-row
       class="subrow"
       align="center"

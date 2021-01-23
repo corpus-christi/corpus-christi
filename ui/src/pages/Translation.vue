@@ -10,7 +10,8 @@
     </v-btn>
 
     <transition name="fade">
-      <ToolBox class="ToolBox"
+      <ToolBox class="ToolBox mr-2 mt-1"
+        elevation="2"
         v-show="showToolBox"
         :numTranslated="numEntriesTranslated"
         :numValidated="numEntriesValidated"
@@ -66,61 +67,32 @@
 
     <v-dialog
       v-model="newLocaleDialog"
-      width="30%"
+      max-width="550px"
     >
       <v-card>
-        <v-card-title class="headline mb-5">
-          Enter Locale Code and Description (Ex: en-US English US)
+        <v-card-title>
+          Enter locale code and description
         </v-card-title>
-        <v-row
-        >
-          <v-col>
-            <v-card
-              elevation="0"
-              class="mt-2 ml-10"
-            >
-              <v-text-field
-                outlined
-                label="Language Code"
-                hint="(Ex: en)"
-              >
-          
-              </v-text-field>
-            </v-card>
-          </v-col>
-          <v-icon class="mb-7">horizontal_rule</v-icon>
-          <v-col>
-            <v-card
-              elevation="0"
-              class="mt-2 mr-10"
-            >
-              <v-text-field
-                outlined
-                label="Country Code"
-                hint="(Ex: US)"
-              >
-
-              </v-text-field>
-            </v-card>
-          </v-col>
-          <v-col>
-            <v-card
-              elevation="0"
-              class="mt-2 mr-10"
-            >
-              <v-text-field
-                outlined
-                label="Description"
-                hint="(Ex: English US)"
-              >
-                
-              </v-text-field>
-            </v-card>
-          </v-col>
-        </v-row>
-        <v-card-actions class="headline">
-          <v-btn color="red lighten-2" @click="newLocaleDialog=false" outlined>
-            Submit
+        <v-card-subtitle>
+          (Ex: en-US English US)
+        </v-card-subtitle>
+        <v-col class="d-flex justify-space-between">
+          <v-text-field
+            outlined label="Language Code" hint="(Ex: en)"
+          />
+          <v-icon class="mb-7">
+            horizontal_rule
+          </v-icon>
+          <v-text-field
+            outlined label="Country Code" hint="(Ex: US)"
+          />
+          <v-text-field
+            class="ml-5" outlined label="Description" hint="(Ex: English US)"
+          />
+        </v-col>
+        <v-card-actions>
+          <v-btn color="primary" @click="newLocaleDialog = false" outlined>
+            Sumbit
           </v-btn>
         </v-card-actions>
       </v-card>
