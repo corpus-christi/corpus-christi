@@ -57,46 +57,16 @@
           :filters="filters"
           :selectedTags="selectedTags"
           :currentCode="currentCode"
-          @appendToList="appendTranslation"
-          @clearFromList="clearGivenTranslation"
-          @validationChanged="logValidation"
           @submitAChange="sendUpdatedTranslation"
         />
       </v-col>
     </v-row>
 
-    <v-dialog
-      v-model="newLocaleDialog"
-      max-width="550px"
-    >
-      <v-card>
-        <v-card-title>
-          Enter locale code and description
-        </v-card-title>
-        <v-card-subtitle>
-          (Ex: en-US English US)
-        </v-card-subtitle>
-        <v-col class="d-flex justify-space-between">
-          <v-text-field
-            outlined label="Language Code" hint="(Ex: en)"
-          />
-          <v-icon class="mb-7">
-            horizontal_rule
-          </v-icon>
-          <v-text-field
-            outlined label="Country Code" hint="(Ex: US)"
-          />
-          <v-text-field
-            class="ml-5" outlined label="Description" hint="(Ex: English US)"
-          />
-        </v-col>
-        <v-card-actions>
-          <v-btn color="primary" @click="newLocaleDialog = false" outlined>
-            Sumbit
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <NewLocaleDialog
+      :showDialog="newLocaleDialog"
+      @submitComplete="newLocaleSuccessfullyAdded"
+      @closeDialog="newLocaleDialog = false"
+    />
   </v-container>
 </template>
 
@@ -108,7 +78,9 @@ import TranslationCard from "../components/i18n/TranslationCard.vue";
 import TopLevelTagChooser from "../components/i18n/TopLevelTagChooser.vue";
 import WorkbenchHeader from "../components/i18n/WorkbenchHeader.vue";
 import ToolBox from "../components/i18n/ToolBox.vue";
+import NewLocaleDialog from "../components/i18n/NewLocaleDialog.vue";
 const _ = require("lodash");
+
 export default {
   name: "Translation",
   components: {
@@ -116,6 +88,7 @@ export default {
     TopLevelTagChooser,
     TranslationCard,
     ToolBox,
+    NewLocaleDialog,
   },
   data() {
     return {
@@ -150,12 +123,6 @@ export default {
     },
   },
   methods: {
-    onScroll(e) {
-      if (typeof window === "undefined") return;
-      const top = window.pageYOffset || e.target.scrollTop || 0;
-      this.fabToTop = top > 20;
-      this.fabToBot = top < this.scrollHeight - 20;
-    },
     loadTopLevelTags() {
       return this.$http
         .get(`api/v1/i18n/keys`)
@@ -201,42 +168,6 @@ export default {
       this.selectedTags = tagList;
       this.findFirstTag();
     },
-    submitChanges() {
-      console.log(this.newTranslationList);
-    },
-    appendTranslation(key, newTrans, oldTrans) {
-      if (key in this.newTranslationList) {
-        this.newTranslationList[key].newTrans = newTrans;
-        this.newTranslationList[key].oldTrans = oldTrans;
-      }
-      else {
-        this.newTranslationList[key] = {
-          key: key,
-          newTrans: newTrans,
-          oldTrans: oldTrans,
-          newValid: null,
-          oldValid: null,
-        };
-      }
-    },
-    clearGivenTranslation(key) {
-      delete this.newTranslationList[key];
-    },
-    logValidation(key, newValid, oldValid) {
-      if (key in this.newTranslationList) {
-        this.newTranslationList[key].newValid = newValid;
-        this.newTranslationList[key].oldValid = oldValid;
-      }
-      else {
-        this.newTranslationList[key] = {
-          key: key,
-          newTrans: null,
-          oldTrans: null,
-          newValid: newValid,
-          oldValid: oldValid,
-        };
-      }
-    },
     findFirstTag() {
       //find the first tag
       dance:
@@ -254,9 +185,6 @@ export default {
     focusOnFirstTag(cardObj) {
       
     },
-    thereIsUnsavedWork() {
-      return Object.keys(this.newTranslationList).length > 0;
-    },
     bodyScrollHeight() {
       return document.body.scrollHeight;
     },
@@ -266,20 +194,19 @@ export default {
     sendUpdatedTranslation(index, newTrans, newValid) {
       this.translationObjs[index].current_gloss = newTrans;
       this.translationObjs[index].current_verified = newValid;
-    }
+    },
+    newLocaleSuccessfullyAdded(newLocaleObj) {
+      let newLocale = new LocaleModel(newLocaleObj);
+      this.allLocaleObjs.push({
+        code: newLocale.languageAndCountry,
+        displayString: newLocale.flagAndDescription,
+      });
+      this.newLocaleDialog = false;
+    },
   },
   mounted: function () {
     this.loadTopLevelTags();
     this.getAllLocales();
-  },
-  beforeRouteLeave(to, from, next) {
-    if (this.thereIsUnsavedWork()) {
-      const userAnswer = window.confirm(this.$t("actions.unsaved-changes-lost"));
-      next(userAnswer);
-    }
-    else {
-      next();
-    }
   },
 };
 </script>

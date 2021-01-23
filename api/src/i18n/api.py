@@ -176,7 +176,6 @@ def read_xlation(locale_code):
 
 
 @i18n.route('/values/translations/<preview_locale_str>/<current_locale_str>')
-@authorize(['role.translator'])
 def fetch_and_format_target_locales(preview_locale_str, current_locale_str):
     preview_locale = db.session.query(I18NLocale).filter_by(code=preview_locale_str).first()
     current_locale = db.session.query(I18NLocale).filter_by(code=current_locale_str).first()

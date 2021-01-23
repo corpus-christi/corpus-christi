@@ -64,7 +64,6 @@
         v-model="newTranslation"
         :append-icon="newTranslation ? 'send' : ''"
         :loading="submissionInProgress ? 'success' : false"
-        @input="emitEventChanged"
         @click:append="submitChange"
         >
           {{ newTranslation }}
@@ -83,7 +82,6 @@
       <v-checkbox
         class=" align-self-center"
         v-model="newValidation"
-        @click="onValidationClick"
       />
     </v-card>
   </v-card>
@@ -136,18 +134,6 @@ export default {
     },
   },
   methods: {
-    emitEventChanged() {
-      if (this.newTranslation === '') {
-        this.$emit('clearFromList', this.changedKey);
-      }
-      else {
-        this.$emit('appendToList', this.changedKey, this.newTranslation, this.oldTranslation);
-      }
-      this.newValidation = false;
-    },
-    onValidationClick() {
-      this.$emit('validationChanged', this.changedKey, this.newValidation, this.oldValidation);
-    },
     submitChange() {
       this.submissionInProgress = true;
       this.$http
