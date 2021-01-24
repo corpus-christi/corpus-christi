@@ -160,6 +160,10 @@
       "gloss": "Actions",
       "verified": false
     },
+    "hide": {
+      "gloss": "Hide",
+      "verified": false
+    },
     "login": {
       "gloss": "Log In",
       "verified": false
@@ -204,8 +208,16 @@
       "gloss": "Search People",
       "verified": false
     },
+    "show": {
+      "gloss": "Show",
+      "verified": false
+    },
     "signup": {
       "gloss": "Signup",
+      "verified": false
+    },
+    "submit": {
+      "gloss": "Submit",
       "verified": false
     },
     "tooltips": {
@@ -237,10 +249,6 @@
         "gloss": "Unarchive",
         "verified": false
       }
-    },
-    "unsaved-changes-lost": {
-      "gloss": "Unsaved changes will be lost. Are you sure?",
-      "verified": false
     },
     "view-active": {
       "gloss": "View Active",
@@ -2784,6 +2792,12 @@
     }
   },
   "language": {
+    "messages": {
+      "already-exists": {
+        "gloss": "The group already exists",
+        "verified": false
+      }
+    },
     "name": {
       "aa": {
         "gloss": "Afar",
@@ -4154,30 +4168,118 @@
     }
   },
   "translation": {
-    "dialog": {
-      "cancel": {
-        "gloss": "Cancel",
-        "verified": false
-      },
-      "submit": {
-        "gloss": "Submit",
-        "verified": false
-      }
-    },
     "error": {
       "gloss": "Please modify your translations again",
       "verified": false
     },
+    "fetch": {
+      "gloss": "Fetch",
+      "verified": false
+    },
+    "filters": {
+      "label": {
+        "gloss": "Filters",
+        "verified": false
+      },
+      "portion-translated": {
+        "gloss": "{0} / {1} Translated",
+        "verified": false
+      },
+      "portion-verified": {
+        "gloss": "{0} / {1} Verified",
+        "verified": false
+      },
+      "untranslated": {
+        "gloss": "Untranslated",
+        "verified": false
+      },
+      "unverified": {
+        "gloss": "Unverified",
+        "verified": false
+      }
+    },
+    "locale": {
+      "add": {
+        "gloss": "Add new locale",
+        "verified": false
+      },
+      "country-code": {
+        "hint": {
+          "gloss": "(Ex: 'US')",
+          "verified": false
+        },
+        "prompt": {
+          "gloss": "Country Code",
+          "verified": false
+        }
+      },
+      "description": {
+        "hint": {
+          "gloss": "(Ex: 'English US')",
+          "verified": false
+        },
+        "prompt": {
+          "gloss": "Description",
+          "verified": false
+        }
+      },
+      "hint": {
+        "gloss": "(Ex: 'en-US English US')",
+        "verified": false
+      },
+      "language-code": {
+        "hint": {
+          "gloss": "(Ex: 'en')",
+          "verified": false
+        },
+        "prompt": {
+          "gloss": "Language Code",
+          "verified": false
+        }
+      },
+      "title": {
+        "gloss": "Enter locale code and description",
+        "verified": false
+      }
+    },
     "menu-title": {
       "gloss": "Translation",
+      "verified": false
+    },
+    "new-translation": {
+      "gloss": "New Translation",
       "verified": false
     },
     "search-title": {
       "gloss": "Find Translation Branch",
       "verified": false
     },
+    "tags": {
+      "sub": {
+        "gloss": "Subtags",
+        "verified": false
+      },
+      "top": {
+        "gloss": "Tags",
+        "verified": false
+      }
+    },
     "toolbar-title": {
       "gloss": "Current locale: ",
+      "verified": false
+    },
+    "toolbox": {
+      "show": {
+        "gloss": "Show Toolbox",
+        "verified": false
+      }
+    },
+    "translate-from": {
+      "gloss": "Translate From",
+      "verified": false
+    },
+    "translate-to": {
+      "gloss": "Translate To",
       "verified": false
     },
     "transparent-mode": {
@@ -4186,6 +4288,10 @@
     },
     "updated": {
       "gloss": "Translations updated",
+      "verified": false
+    },
+    "verify-translation": {
+      "gloss": "Verified",
       "verified": false
     }
   },
