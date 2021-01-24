@@ -5,34 +5,35 @@
   >
     <v-card>
       <v-card-title class="justify-center">
-        Enter locale code and description
+        {{ $t("translation.locale.title") }}
       </v-card-title>
-      <v-card-subtitle> <!-- Try to make this centered -->
-        (Ex: en-US English US)
+      <v-card-subtitle>
+        {{ $t("translation.locale.hint") }}
       </v-card-subtitle>
       <v-col class="d-flex justify-space-between">
-        <v-text-field v-model="languageCode"
-          outlined label="Language Code" hint="(Ex: en)"
+        <v-text-field v-model="languageCode" outlined
+          :label="$t('translation.locale.language-code.prompt')"
+          :hint="$t('translation.locale.language-code.hint')"
         />
-        <v-icon class="mb-7">
-          horizontal_rule
-        </v-icon>
-        <v-text-field v-model="countryCode"
-          outlined label="Country ISO Code" hint="(Ex: US)"
+        <v-icon class="mb-7">horizontal_rule</v-icon>
+        <v-text-field v-model="countryCode" outlined
+          :label="$t('translation.locale.country-code.prompt')"
+          :hint="$t('translation.locale.country-code.hint')"
         />
-        <v-text-field v-model="description"
-          class="ml-5" outlined label="Description" hint="(Ex: English US)"
+        <v-text-field v-model="description" class="ml-4" outlined
+          :label="$t('translation.locale.description.prompt')"
+          :hint="$t('translation.locale.description.hint')"
         />
       </v-col>
       <v-card-actions class="d-flex justify-space-between">
         <v-btn color="error lighten-2" @click="$emit('closeDialog')" outlined>
-          Cancel
+          {{ $t("actions.cancel") }}
         </v-btn>
         <v-btn
           :loading="submissionInProgress"
           color="primary" @click="submitButtonClicked" outlined
         >
-          Sumbit
+          {{ $t("actions.submit") }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -61,7 +62,7 @@ export default {
       this.showSelf = this.showDialog;
     },
     showSelf: function() {
-      if (!this.showSelf) {
+      if (!this.showSelf) { //Ensure parent page syncs
         this.$emit('closeDialog');
       }
     },

@@ -6,7 +6,7 @@
       width="1%" height="10%" min-height="150px"
       @click="showToolBox = !showToolBox"
     >
-      Toggle ToolBox
+      {{ $t("translation.toolbox.show") }}
     </v-btn>
 
     <transition name="fade">
@@ -17,7 +17,9 @@
         :numValidated="numEntriesValidated"
         :totalEntries="numEntriesTotal"
         :shouldBeShown="showToolBox"
-        :filterOptions="['Unverified', 'Untranslated']"
+        :filterOptions="[
+          'translation.filters.untranslated',
+          'translation.filters.unverified']"
         @goToTop="$vuetify.goTo(0)"
         @goToBot="$vuetify.goTo(bodyScrollHeight())"
         @hideToolBox="showToolBox = false"
@@ -92,21 +94,18 @@ export default {
   },
   data() {
     return {
-      newLocaleDialog: false,
-      fabToTop: false,
-      fabToBot: true,
-      canUserLeaveFreely: true,
-      showToolBox: true,
-
       topLevelTags: [],
       selectedTags: [],
       allLocaleObjs: [],
       translationObjs: [],
+
       previewCode: "",
       currentCode: "",
-      loadingTranslations: false,
-      newTranslationList: {},
+      
+      newLocaleDialog: false,
       filters: [],
+      showToolBox: true,
+      loadingTranslations: false,
     };
   },
   computed: {

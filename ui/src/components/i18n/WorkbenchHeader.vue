@@ -1,28 +1,27 @@
 <template>
   <v-app-bar dense dark height="60">
-    <v-card min-width="1%" max-width="1%"></v-card>
     <v-card
       elevation="0"
       color="transparent"
-      min-width="4%"
-      max-width="4%"
+      min-width="15%"
+      max-width="15%"
     >
       <v-toolbar-title>
-        Tags
+        {{ $t("translation.tags.top") }}
       </v-toolbar-title>
     </v-card>
-    <v-card min-width="15%" max-width="15%"></v-card>
+    <v-card min-width="3%" max-width="3%" />
     <v-card
       elevation="0"
       color="transparent"
-      min-width="7%"
-      max-width="7%"
+      min-width="15%"
+      max-width="15%"
     >
       <v-toolbar-title>
-        Subtags
+        {{ $t("translation.tags.sub") }}
       </v-toolbar-title>
     </v-card>
-    <v-card min-width="9%" max-width="9%"></v-card>
+    <v-card min-width="3%" max-width="3%" />
     <v-card
       elevation="0"
       color="transparent"
@@ -30,9 +29,8 @@
       min-width="13%"
       max-width="13%"
     >
-      <!-- Cannot set default without losing functionality -->
       <v-select
-        :label="'Translate From'"
+        :label="$t('translation.translate-from')"
         :items="allLocales"
         item-text="displayString"
         item-value="code"
@@ -40,9 +38,9 @@
         @change="$emit('previewUpdated', previewLocale)"
       />
     </v-card>
-    <v-card min-width="1.7%" max-width="1.8%"></v-card>
+    <v-card min-width="1.8%" max-width="1.8%" />
     <v-icon>keyboard_arrow_right</v-icon>
-    <v-card min-width="1.7%" max-width="1.8%"></v-card>
+    <v-card min-width="1.7%" max-width="1.8%" />
     <v-card
       elevation="0"
       color="transparent"
@@ -51,7 +49,7 @@
       max-width="13%"
     >
       <v-select
-        :label="'Translate To'"
+        :label="$t('translation.translate-to')"
         :items="allLocales"
         item-text="displayString"
         item-value="code"
@@ -59,31 +57,31 @@
         @change="$emit('currentUpdated', currentLocale)"
       />
     </v-card>
-    <v-card min-width="1%" max-width="1%"></v-card>
+    <v-card min-width="1%" max-width="1%" />
     <v-card
-      min-width="4%"
-      max-width="4%"
+      min-width="75px"
+      max-width="75px"
     >
       <v-btn
         @click="$emit('updateTransToFrom')"
-        outlined
+        small color="primary" height="50px" width="75px"
         :loading="loadingTranslations"
       >
-        Go
+        {{ $t("translation.fetch") }}
       </v-btn>
     </v-card>
-    <v-card min-width="5.5%" max-width="5.5%"></v-card>
+    <v-card min-width="0.5%" max-width="0.5%" />
     <v-card 
       elevation="0"
       color="transparent"
-      min-width="10%"
-      max-width="10%"
+      min-width="18%"
+      max-width="18%"
     >
       <v-toolbar-title>
-        New Translation
+        {{ $t("translation.new-translation") }}
       </v-toolbar-title>
     </v-card>
-    <v-card min-width="7.5%" max-width="7.5"></v-card>
+    <v-card min-width="2%" max-width="2%" />
     <v-card
       elevation="0"
       color="transparent"

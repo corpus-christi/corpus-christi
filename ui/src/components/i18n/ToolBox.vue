@@ -14,7 +14,7 @@
           @click="$emit('addNewLocale')"
         >
           <v-icon left>add_circle_outline</v-icon>
-          Add New Locale
+          {{ $t("translation.locale.add") }}
         </v-btn>
       </v-col>
       <v-col
@@ -36,8 +36,8 @@
         <v-select
           outlined multiple chips
           prepend-icon="filter_alt"
-          label="Filters"
-          :items="filterOptions"
+          :label="$t('translation.filters.label')"
+          :items="translatedFilters()"
           v-model="activeFilters"
           @change="filtersUpdated"
         />
@@ -52,13 +52,15 @@
           width="100%"
           class="text-center pa-2 my-2"
         >
-          {{numTranslated}} / {{totalEntries}} Translated
+          {{ $t("translation.filters.portion-translated",
+            [numTranslated, totalEntries]) }}
         </v-card>
         <v-card
           width="100%"
           class="text-center pa-2 my-2"
         >
-          {{numValidated}} / {{totalEntries}} Verified
+          {{ $t("translation.filters.portion-verified",
+            [numValidated, totalEntries]) }}
         </v-card>
       </v-col>
     </v-row>
@@ -77,7 +79,7 @@
           dark
           @click="$emit('hideToolBox')"
         >
-          Hide
+          {{ $t("actions.hide") }}
         </v-btn>
       </v-col>
       <v-col 
@@ -112,6 +114,9 @@ export default {
   methods: {
     filtersUpdated() {
       this.$emit('sendFilters', this.activeFilters);
+    },
+    translatedFilters() {
+      return this.filterOptions.map((item) => this.$t(item));
     },
   },
   mounted: function() {
