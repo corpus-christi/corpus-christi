@@ -2,7 +2,7 @@
   <div>
     <!-- Header -->
     <v-toolbar class="pa-1" extension-height="64px">
-      <!-- 
+      <!-- These buttons/select controls will help manually edit data.
       <v-layout justify-space-between>
         <v-flex shrink align-self-center>
           <v-toolbar-title>{{ $t("courses.course-offering") }}</v-toolbar-title>
@@ -15,9 +15,6 @@
           </v-btn>
         </v-flex>
       </v-layout>
-      -->
-      <!--
-      <v-layout row slot="extension" justify-space-between align-center>
       -->
         <v-flex>
           <v-text-field
@@ -60,6 +57,7 @@
         color="primary"
         indeterminate
       ></v-progress-linear>
+      <!-- No idea what this does. Copied over from ui/src/components/courses/CoursesTable.vue.
       <template slot="items" slot-scope="props">
         <td :data-cy="'first-name-' + item.id">
           {{ item.firstName }}
@@ -73,16 +71,8 @@
         <td class="hover-hand" @click="clickThrough(props.item)">
           {{ props.item.maxSize }}
         </td>
-        <!--
-        <td>
-          <CourseOfferingAdminActions
-            v-bind:courseOffering="props.item"
-            display-context="compact"
-            v-on:action="dispatchAction($event, props.item)"
-          />
-        </td> 
-        -->
       </template>
+      -->
     </v-data-table>
     <div class="text-center pt-2">
       <v-pagination v-model="page" :length="pageCount"></v-pagination>
@@ -96,7 +86,7 @@
     </v-snackbar>
 
     <!-- New/Edit dialog -->
-    <!--
+    <!-- Edit functionality copied from ui/src/components/courses/CourseOfferingsTable.vue.
     <v-dialog
       persistent
       scrollable
@@ -143,15 +133,10 @@
 </template>
 
 <script>
-//import CourseOfferingForm from "./CourseOfferingForm";
-//import CourseOfferingAdminActions from "./actions/CourseOfferingAdminActions";
 
 export default {
   name: "DiplomaCoursesTable",
-  components: {
-    //CourseOfferingForm,
-    //CourseOfferingAdminActions,
-  },
+  components: {},
   props: {
     diploma: {
       type: Object,
@@ -222,6 +207,8 @@ export default {
   },
 
   mounted() {
+    console.log("Diagnostic 1: Course List");
+    console.log(this.diploma.courseList);
     this.courses = this.diploma.courseList;
   },
 
@@ -237,7 +224,7 @@ export default {
         .catch((err) => console.error("FAILURE", err.response));
     },
 
-    /*
+    /* These Functions are copied over from the ui/src/components/courses/CourseOfferingsTable.vue. They may be useful.
     clickThrough(courseOffering) {
       this.$router.push({
         name: "course-offering-details",

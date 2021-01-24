@@ -2,7 +2,7 @@
   <div>
     <!-- Header -->
     <v-toolbar class="pa-1" extension-height="64px">
-      <!-- 
+      <!-- These buttons/select controls will help manually edit data.
       <v-layout justify-space-between>
         <v-flex shrink align-self-center>
           <v-toolbar-title>{{ $t("courses.course-offering") }}</v-toolbar-title>
@@ -15,9 +15,6 @@
           </v-btn>
         </v-flex>
       </v-layout>
-      -->
-      <!--
-      <v-layout row slot="extension" justify-space-between align-center>
       -->
         <v-flex>
           <v-text-field
@@ -60,6 +57,7 @@
         color="primary"
         indeterminate
       ></v-progress-linear>
+      <!-- No idea what this does. Copied over from ui/src/components/courses/CoursesTable.vue.
       <template slot="items" slot-scope="props">
         <td :data-cy="'first-name-' + item.id">
           {{ item.firstName }}
@@ -72,17 +70,9 @@
         </td>
         <td class="hover-hand" @click="clickThrough(props.item)">
           {{ props.item.maxSize }}
-        </td>
-        <!--
-        <td>
-          <CourseOfferingAdminActions
-            v-bind:courseOffering="props.item"
-            display-context="compact"
-            v-on:action="dispatchAction($event, props.item)"
-          />
         </td> 
-        -->
       </template>
+      -->
     </v-data-table>
     <div class="text-center pt-2">
       <v-pagination v-model="page" :length="pageCount"></v-pagination>
@@ -96,7 +86,7 @@
     </v-snackbar>
 
     <!-- New/Edit dialog -->
-    <!--
+    <!-- Edit functionality copied from ui/src/components/courses/CourseOfferingsTable.vue.
     <v-dialog
       persistent
       scrollable
@@ -143,15 +133,10 @@
 </template>
 
 <script>
-//import CourseOfferingForm from "./CourseOfferingForm";
-//import CourseOfferingAdminActions from "./actions/CourseOfferingAdminActions";
 
 export default {
   name: "DiplomaPeopleTable",
-  components: {
-    //CourseOfferingForm,
-    //CourseOfferingAdminActions,
-  },
+  components: {},
   props: {
     diploma: {
       type: Object,
@@ -198,35 +183,27 @@ export default {
     // Put here so that the headers are reactive.
     headers() {
       return [
+        /* TODO:
+          The data is called in from the file DiplomaDetails.vue in the function loadCourses().
+          The data eventually gets stored in this.diploma.studentList.
+          However, this data doesn't ask for the variables "firstName," "lastName," "email" or "phone."
+          This is an api problem that I don't know how to fix. For now, I've used variables that it DOES call for ("active" & "id").
+        */
         {
           text: this.$t("person.name.first"),
-          value: "firstName",
+          value: "active", //replace "active" with "firstName"
           width: "20%",
         },
-        { text: this.$t("person.name.last"), value: "lastName", width: "20%" },
+        { text: this.$t("person.name.last"), value: "id", width: "20%" }, //replace "id" with "lastName"
         {
           text: this.$t("person.email"),
           value: "email",
           width: "20%",
-          class: "hidden-sm-and-down",
+          //class: "hidden-sm-and-down",
         },
         { text: this.$t("person.phone"), value: "phone", width: "20%" },
         { text: this.$t("actions.header"), width: "20%", sortable: false },
       ];
-      /*
-      return [
-        {
-          text: this.$t("courses.description"),
-          value: "description",
-          width: "80%",
-        },
-        {
-          text: this.$t("courses.max-size"),
-          value: "maxSize",
-          width: "20%",
-        },
-        { text: this.$t("actions.header"), sortable: false },
-      ]; //*/
     },
 
     options() {
@@ -237,29 +214,12 @@ export default {
       ];
     },
     showStudents() {
-      console.log("Diagnostic 2");
-      console.log(this.students);
       return this.students;
-      /*
-      switch (this.viewStatus) {
-        case "active":
-          return this.courseOfferings.filter(
-            (courseOffering) => courseOffering.active
-          );
-        case "archived":
-          return this.courseOfferings.filter(
-            (courseOffering) => !courseOffering.active
-          );
-        case "all":
-        default:
-          return this.courseOfferings;
-      } //*/
     },
   },
 
   mounted() {
-    console.log("Diagnostic 1");
-    console.log(this.diploma);
+    console.log("The Persons table here displays incorrect data. For details, see ui/src/components/diplomas/DiplomaPeopleTable.vue");
     this.students = this.diploma.studentList;
   },
 
@@ -274,7 +234,7 @@ export default {
         })
         .catch((err) => console.error("FAILURE", err.response));
     },
-    /*
+    /* These Functions are copied over from the ui/src/components/courses/CourseOfferingsTable.vue. They may be useful.
     clickThrough(courseOffering) {
       this.$router.push({
         name: "course-offering-details",
