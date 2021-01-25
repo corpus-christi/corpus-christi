@@ -6,14 +6,16 @@
       <v-spacer />
       <v-switch :disabled="!inEditMode" v-model="currentState.active" />
     </v-card-title>
-    <v-card-subtitle>{{ $t(currentState.type) }}</v-card-subtitle>
+
+    <v-card-subtitle>{{ currentState.type }}</v-card-subtitle>
+
     <v-card-text v-if="currentState.values.length > 0">
       <draggable v-model="currentState.values">
         <v-list-item v-for="(value, idx) in currentState.values" :key="idx">
           <v-list-item-content>
             <v-list-item-title>
               <editable-text
-                v-model="value.label"
+                v-model="value.valueI18n"
                 :edit-mode="inEditMode"
                 draggable
               />
@@ -25,6 +27,7 @@
         </v-list-item>
       </draggable>
     </v-card-text>
+
     <v-card-actions>
       <v-spacer />
       <v-btn text :disabled="inEditMode || dragEnabled" @click="startEditing">

@@ -18,17 +18,22 @@
           </v-btn>
         </template>
         <v-list>
-          <v-list-item v-for="(type, idx) in attributeTypes" :key="idx">
+          <v-list-item
+            v-for="(type, idx) in attributeTypes"
+            :key="idx"
+            @click="addAttribute(type.i18nKey)"
+          >
             <v-list-item-title>{{ $t(type.i18nKey) }}</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
     </v-toolbar>
     <draggable v-model="allAttributes" class="row" :disabled="!dragEnabled">
-      <v-col cols="6" v-for="attr in allAttributes" :key="attr.name">
+      <v-col cols="6" v-for="attr in allAttributes" :key="attr.id">
+        {{ attr }}
         <attribute-card
           :name="$t(attr.nameI18n)"
-          :type="attr.typeI18n"
+          :type="$t(attr.typeI18n)"
           :active="attr.active"
           :values="attr.enumerated_values || []"
           :dragEnabled="dragEnabled"
@@ -66,6 +71,25 @@ export default {
     this.$http
       .get("/api/v1/attributes/attributes")
       .then((resp) => (this.allAttributes = resp.data));
+  },
+
+  methods: {
+    lookUpAttributeType(i18nKey) {
+      return this.attributeTypes.find((type) => type.i18nKey === i18nKey);
+    },
+
+    addAttribute(i18nKey) {
+      console.log(`Add ${i18nKey}`);
+      let newAttribute = {
+        active: false,
+        enumerated_values: [],
+        nameI18n: "",
+        seq: -1,
+        typeI18n: i18nKey,
+      };
+      console.dir(newAttribute);
+      this.allAttributes.unshift(newAttribute);
+    },
   },
 };
 </script>
