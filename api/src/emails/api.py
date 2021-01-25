@@ -48,7 +48,7 @@ def send_email():
     print(BODY)
     print(recipients)
 
-    return 
+    
 
     #grabbing the emails from the csv file and putting them into a list
     #recipients = []

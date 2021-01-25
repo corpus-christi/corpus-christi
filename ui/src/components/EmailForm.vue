@@ -12,8 +12,8 @@
         v-model="email.recipients"
         :label="$t('groups.members.email.to')"
         :items="initialData.recipientList"
-        item-text="name"
-        item-value="email"
+        item-text="person.firstName"
+        item-value="person.email"
         multiple
         chips
         deletable-chips
@@ -22,7 +22,7 @@
         :no-data-text="$t('groups.messages.no-remaining-members')"
       >
         <template v-slot:item="{ item }">
-          {{ `${item.name} (${item.email})` }}
+          {{ `${item.person.firstName + " " + item.person.lastName} (${item.person.email})` }}
         </template>
       </v-select>
     </v-card-text>
@@ -138,11 +138,15 @@ export default {
       */
       type: Object,
       required: true,
+      default: function() {
+        return {}
+      },
+      
     },
   },
   computed: {
     hasValidRecipients() {
-      return this.email.recipients.some((recipient) => recipient.email);
+      return this.email.recipients.some((recipient) => recipient.person.email);
     },
     ...mapState(["currentAccount"]),
   },
@@ -150,17 +154,20 @@ export default {
     "initialData.recipients": function () {
       this.syncInitialData();
     },
+
   },
   methods: {
+    
     syncInitialData() {
       this.email.recipients = this.initialData.recipients;
+      console.log("SYNCING", this.email);
     },
     resetEmail() {
       this.email.subject = "";
       this.email.body = "";
       this.email.recipients = [];
-      this.email.managerName = "";
-      this.email.managerEmail = "sender@xx.com";
+      //this.email.managerName = ""
+      this.email.managerEmail = "corpus.christi.test@gmail.com";
     },
     cancel() {
       this.resetEmail();
@@ -169,10 +176,12 @@ export default {
     },
     sendEmail() {
       this.sendLoading = true;
+      console.log("pre-EMAIL", this.email);
       let email = {
         ...this.email,
-        recipients: this.email.recipients.map((p) => p.email)
+        recipients: this.email.recipients.map((p) => p.person.email)
       };
+      console.log("SENDING", email);
       this.$http
         .post(`/api/v1/emails/`, email, { noErrorSnackBar: true })
         .then(() => {
@@ -234,7 +243,7 @@ export default {
         body: "",
         recipients: [],
         managerName: "",
-        managerEmail: "manager@xx.com",
+        managerEmail: "corpus.christi.test@gmail.com",
       },
       expand: false,
       entityTypePanel: {
@@ -260,6 +269,7 @@ export default {
   mounted: function () {
     this.AllGroupManagers();
     this.myEmail = this.currentAccount.email;
+    this.email.managerName = this.currentAccount.firstName + " " + this.currentAccount.lastName;
   },
 };
 </script>
