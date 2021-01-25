@@ -50,8 +50,11 @@
     <v-card min-width="1%" max-width="1%" />
     <v-card min-width="5%" max-width="5%">
       <v-btn
+        :disabled="previewLocale == '' || currentLocale == ''"
         @click="$emit('updateTransToFrom')"
         small
+        outlined
+        depressed
         color="primary"
         height="50px"
         width="75px"

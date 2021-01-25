@@ -164,7 +164,6 @@ export default {
     },
     toggleSelection() {
       this.highlightCard = !this.highlightCard;
-      console.log(this.highlightCard);
     },
   },
 };
