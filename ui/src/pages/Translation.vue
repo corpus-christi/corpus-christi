@@ -15,7 +15,7 @@
         elevation="2"
         v-show="showToolBox"
         :numTranslated="numEntriesTranslated"
-        :numValidated="numEntriesValidated"
+        :numVerified="numEntriesVerified"
         :totalEntries="numEntriesTotal"
         :shouldBeShown="showToolBox"
         :filterOptions="[
@@ -115,7 +115,7 @@ export default {
     numEntriesTranslated() {
       return this.translationObjs.filter(obj => obj.current_gloss != '').length;
     },
-    numEntriesValidated() {
+    numEntriesVerified() {
       return this.translationObjs.filter(obj => obj.current_verified).length;
     },
     numEntriesTotal() {
@@ -191,9 +191,9 @@ export default {
     useFilter(filters) {
       this.filters = filters;
     },
-    sendUpdatedTranslation(index, newTrans, newValid) {
+    sendUpdatedTranslation(index, newTrans, newVerify) {
       this.translationObjs[index].current_gloss = newTrans;
-      this.translationObjs[index].current_verified = newValid;
+      this.translationObjs[index].current_verified = newVerify;
     },
     newLocaleSuccessfullyAdded(newLocaleObj) {
       let newLocale = new LocaleModel(newLocaleObj);
@@ -224,7 +224,7 @@ export default {
 }
 /* From https://vuejs.org/v2/guide/transitions.html */
 .fade-enter-active, .fade-leave-active {
-  transition: opacity .5s;
+  transition: opacity 0.5s;
 }
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;

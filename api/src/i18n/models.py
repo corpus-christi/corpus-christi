@@ -70,8 +70,8 @@ class I18NValue(Base):
     __tablename__ = 'i18n_value'
     key_id = Column(StringTypes.I18N_KEY, ForeignKey('i18n_key.id'), primary_key=True)
     locale_code = Column(StringTypes.LOCALE_CODE, ForeignKey('i18n_locale.code'), primary_key=True)
-    gloss = Column(Text(), nullable=False)
-    verified = Column(Boolean, default=False)
+    gloss = Column(Text(), nullable=False, default="")
+    verified = Column(Boolean, nullable=False, default=False)
 
     key = relationship('I18NKey', back_populates='values', lazy=True)
     locale = relationship('I18NLocale', back_populates='values', lazy=True)

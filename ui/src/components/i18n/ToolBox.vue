@@ -50,17 +50,17 @@
       <v-col>
         <v-card
           width="100%"
-          class="text-center pa-2 my-2"
+          class="text-center pa-2 my-2 primary--text"
         >
           {{ $t("translation.filters.portion-translated",
             [numTranslated, totalEntries]) }}
         </v-card>
         <v-card
           width="100%"
-          class="text-center pa-2 my-2"
+          class="text-center pa-2 my-2 primary--text"
         >
           {{ $t("translation.filters.portion-verified",
-            [numValidated, totalEntries]) }}
+            [numVerified, totalEntries]) }}
         </v-card>
       </v-col>
     </v-row>
@@ -102,9 +102,9 @@ export default {
   name: "ToolBox",
   props: {
     numTranslated: { type: Number, required: true },
-    numValidated: { type: Number, required: true },
-    totalEntries: { type: Number, required: true },
-    filterOptions: { type: Array, required: true },
+    numVerified:   { type: Number, required: true },
+    totalEntries:  { type: Number, required: true },
+    filterOptions: { type: Array,  required: true },
   },
   data() {
     return {

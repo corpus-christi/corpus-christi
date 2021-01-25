@@ -82,6 +82,7 @@
       <v-checkbox
         class=" align-self-center"
         v-model="newValidation"
+        :color="oldValidation ? 'primary' : 'warning'"
       />
     </v-card>
   </v-card>
