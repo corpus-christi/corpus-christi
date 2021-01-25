@@ -2,8 +2,9 @@
   <v-container>
     <v-btn
       outlined right fixed depressed
-      style="top: 140px; writing-mode: vertical-rl; z-index: 2;"
-      width="1%" height="10%" min-height="150px"
+      class="showToolBox"
+      style="top: 180px; z-index: 2; transform: rotate(90deg);"
+      min-width="10%" min-height="5%"
       @click="showToolBox = !showToolBox"
     >
       {{ $t("translation.toolbox.show") }}
@@ -214,7 +215,7 @@ export default {
 .ToolBox {
   position: fixed;
   width: 300px;
-  height: 300px;
+  height: 30%;
   right: 0;
   z-index: 2;
 }

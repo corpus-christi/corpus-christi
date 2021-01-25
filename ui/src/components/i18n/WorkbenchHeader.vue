@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar dense dark height="60">
+  <v-app-bar dense dark height="60" >
     <v-card
       elevation="0"
       color="transparent"
@@ -59,8 +59,8 @@
     </v-card>
     <v-card min-width="1%" max-width="1%" />
     <v-card
-      min-width="75px"
-      max-width="75px"
+      min-width="5%"
+      max-width="5%"
     >
       <v-btn
         @click="$emit('updateTransToFrom')"
@@ -70,18 +70,18 @@
         {{ $t("translation.fetch") }}
       </v-btn>
     </v-card>
-    <v-card min-width="0.5%" max-width="0.5%" />
+    <v-card min-width="4.5%" max-width="4.5%" />
     <v-card 
       elevation="0"
       color="transparent"
-      min-width="18%"
-      max-width="18%"
+      min-width="16.3%"
+      max-width="16.3%"
     >
       <v-toolbar-title>
         {{ $t("translation.new-translation") }}
       </v-toolbar-title>
     </v-card>
-    <v-card min-width="2%" max-width="2%" />
+    <v-card min-width="1%" max-width="1%" />
     <v-card
       elevation="0"
       color="transparent"
