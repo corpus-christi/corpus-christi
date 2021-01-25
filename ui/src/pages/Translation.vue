@@ -40,6 +40,7 @@
     <v-row>
       <v-col cols="2">
         <TopLevelTagChooser
+          ref="topLevelTagChooser"
           :topLevelTags="topLevelTags"
           :allTranslations="translationObjs"
           @tagsUpdated="onTopLevelTagsUpdated"
@@ -195,6 +196,7 @@ export default {
     sendUpdatedTranslation(index, newTrans, newVerify) {
       this.translationObjs[index].current_gloss = newTrans;
       this.translationObjs[index].current_verified = newVerify;
+      this.$refs.topLevelTagChooser.populateIncompleteCounts();
     },
     newLocaleSuccessfullyAdded(newLocaleObj) {
       let newLocale = new LocaleModel(newLocaleObj);
