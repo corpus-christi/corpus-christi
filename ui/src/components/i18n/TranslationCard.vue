@@ -41,6 +41,7 @@
       max-width=20.5%
       elevation="0"
       outlined
+      :class="{ selected : highlightCard }"
     >
       <v-card-text>
         {{ currentGloss }}
@@ -65,6 +66,8 @@
         :append-icon="newTranslation ? 'send' : ''"
         :loading="submissionInProgress ? 'success' : false"
         @click:append="submitChange"
+        @focus="toggleSelection"
+        @blur="toggleSelection"
         >
           {{ newTranslation }}
         </v-text-field>
@@ -109,6 +112,7 @@ export default {
       oldValidation: this.currentVerified,
       newValidation: this.currentVerified,
       submissionInProgress: false,
+      highlightCard: false,
     };
   },
   watch: {
@@ -157,6 +161,16 @@ export default {
           this.submissionInProgress = false;
         });
     },
-  }
+    toggleSelection() {
+      this.highlightCard = !this.highlightCard;
+      console.log(this.highlightCard);
+    },
+  },
 };
 </script>
+
+<style scoped>
+  .selected{
+    border-color: #1874d2;
+  }
+</style>
