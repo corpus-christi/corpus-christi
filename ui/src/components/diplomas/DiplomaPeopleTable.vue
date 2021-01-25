@@ -326,7 +326,7 @@ export default {
           this.snackbar.show = true;
         });
     },
-
+    //*/
     saveNewPerson(person) {
       if (person instanceof Error) {
         this.snackbar.text = this.newPersonDialog.editMode
@@ -354,7 +354,7 @@ export default {
       this.snackbar.show = true;
 
       this.newPersonDialog.show = false;
-    }, //*/
+    },
   },
 };
 </script>
