@@ -17,12 +17,12 @@
             </v-btn>
           </v-layout>
         </v-container>
-        <v-list v-if="assetList.length">
-          <template v-for="asset in assetList">
+        <v-list v-if="assets.length">
+          <template v-for="asset in assets">
             <v-divider v-bind:key="'assetDivider' + asset.id"></v-divider>
             <v-list-item v-bind:key="asset.id">
               <v-list-item-content>
-                <v-container fluid class="pa-0">
+                <v-container fluid>
                   <v-layout row justify-space-between align-center>
                     <v-flex>{{ asset.description }}</v-flex>
                     <v-flex shrink>
@@ -66,7 +66,7 @@
           <entity-search
             data-cy="asset-entity-search"
             v-model="addAssetDialog.asset"
-            :existing-entities="assetList"
+            :existing-entities="assets"
             asset
           ></entity-search>
         </v-card-text>
@@ -79,7 +79,7 @@
             data-cy="cancel-add"
             >{{ $t("actions.cancel") }}</v-btn
           >
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="addAsset()"
             color="primary"
@@ -107,7 +107,7 @@
             data-cy="cancel-delete"
             >{{ $t("actions.cancel") }}</v-btn
           >
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="deleteAsset()"
             color="primary"
@@ -142,8 +142,6 @@ export default {
 
   data() {
     return {
-      assetList: [],
-
       addAssetDialog: {
         show: false,
         loading: false,
@@ -158,12 +156,6 @@ export default {
     };
   },
 
-  watch: {
-    assets(val) {
-      this.assetList = val;
-    },
-  },
-
   methods: {
     closeAddAssetDialog() {
       this.addAssetDialog.loading = false;
@@ -172,55 +164,21 @@ export default {
     },
 
     addAsset() {
-      const eventId = this.$route.params.event;
-      let assetId = this.addAssetDialog.asset.id;
-      const idx = this.assetList.findIndex((a) => a.id === assetId);
+      // Emit asset-added event
       this.addAssetDialog.loading = true;
-      if (idx > -1) {
-        this.closeAddAssetDialog();
-        this.showSnackbar(this.$t("assets.asset-on-event"));
-        return;
-      }
-
-      this.$http
-        .post(`/api/v1/events/${eventId}/assets/${assetId}`)
-        .then(() => {
-          this.showSnackbar(this.$t("assets.asset-added"));
-          console.log(this.addAssetDialog.asset);
-          this.$emit("asset-added", this.addAssetDialog.asset);
-          this.closeAddAssetDialog();
-        })
-        .catch((err) => {
-          console.log(err);
-          this.addAssetDialog.loading = false;
-          if (err.response.status === 422) {
-            this.showSnackbar(this.$t("assets.error-asset-assigned"));
-          } else {
-            this.showSnackbar(this.$t("assets.error-adding-asset"));
-          }
-        });
+      this.$emit("asset-added", { asset: this.addAssetDialog.asset });
+      this.closeAddAssetDialog();
+      this.addAssetDialog.loading = false;
     },
 
     deleteAsset() {
-      let id = this.deleteAssetDialog.assetId;
-      const idx = this.assetList.findIndex((a) => a.id === id);
+      let id =  this.deleteAssetDialog.assetId;
       this.deleteAssetDialog.loading = true;
-      const eventId = this.$route.params.event;
-      this.$http
-        .delete(`/api/v1/events/${eventId}/assets/${id}`)
-        .then((resp) => {
-          console.log("REMOVED", resp);
-          this.deleteAssetDialog.show = false;
-          this.deleteAssetDialog.loading = false;
-          this.deleteAssetDialog.assetId = -1;
-          this.assetList.splice(idx, 1); //TODO maybe fix me?
-          this.showSnackbar(this.$t("assets.asset-removed"));
-        })
-        .catch((err) => {
-          console.log(err);
-          this.deleteAssetDialog.loading = false;
-          this.showSnackbar(this.$t("assets.error-removing-asset"));
-        });
+      // Emit asset-deleted event
+      this.$emit("asset-deleted", { assetId: id });
+      this.deleteAssetDialog.show = false;
+      this.deleteAssetDialog.loading = false;
+      this.deleteAssetDialog.assetId = -1;
     },
 
     showDeleteAssetDialog(assetId) {

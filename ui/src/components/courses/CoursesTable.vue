@@ -6,7 +6,7 @@
         <v-flex shrink align-self-center>
           <v-toolbar-title>{{ $t("courses.course") }}</v-toolbar-title>
         </v-flex>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-flex shrink justify-self-end>
           <v-btn
             color="primary"
@@ -136,7 +136,7 @@
           >
             {{ $t("actions.cancel") }}
           </v-btn>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="deactivate(deactivateDialog.course)"
             color="primary"

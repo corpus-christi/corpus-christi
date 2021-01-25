@@ -48,6 +48,7 @@
       </v-layout>
     </v-toolbar>
 
+    <!-- Table of existing places -->
     <v-data-table
       :headers="headers"
       :items="addressesToDisplay"
@@ -55,6 +56,9 @@
       expand
       item-key="id"
       class="elevation-1"
+      hide-default-footer
+      @page-count="pageCount = $event"
+      :page.sync="page"
     >
       <template v-slot:item="props">
         <tr>
@@ -259,6 +263,10 @@
         </v-container>
       </template>
     </v-data-table>
+    <div class="text-center pt-2">
+      <v-pagination v-model="page" :length="pageCount"></v-pagination>
+    </div>
+
     <v-dialog
       scrollable
       persistent
@@ -406,7 +414,7 @@
               </v-layout>
             </v-card-text>
             <v-card-actions>
-              <v-spacer></v-spacer>
+              <v-spacer />
               <v-btn text color="primary" @click="resetFilters">
                 {{ $t("places.address.filters.reset-filters") }}</v-btn
               >
@@ -446,7 +454,7 @@
             :disabled="confirmDialog.loading"
             >{{ $t("actions.cancel") }}</v-btn
           >
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="
               confirmAction(confirmDialog.action, confirmDialog.place)
@@ -487,7 +495,7 @@
             :disabled="confirmLocationDialog.loading"
             >{{ $t("actions.cancel") }}</v-btn
           >
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="
               confirmActionLocation(
@@ -525,6 +533,10 @@ export default {
   data() {
     return {
       expanded: [],
+
+      page: 1,
+      pageCount: 0,
+
       placeDialog: {
         title: "",
         show: false,

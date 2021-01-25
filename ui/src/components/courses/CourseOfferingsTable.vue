@@ -6,7 +6,7 @@
         <v-flex shrink align-self-center>
           <v-toolbar-title>{{ $t("courses.course-offering") }}</v-toolbar-title>
         </v-flex>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-flex shrink justify-self-end>
           <v-btn color="primary" raised v-on:click.stop="newCourseOffering">
             <v-icon left>library_add</v-icon>
@@ -108,7 +108,7 @@
             data-cy
             >{{ $t("actions.cancel") }}</v-btn
           >
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="deactivate(deactivateDialog.courseOffering)"
             color="primary"

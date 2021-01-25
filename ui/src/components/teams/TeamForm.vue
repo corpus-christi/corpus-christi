@@ -25,7 +25,7 @@
         data-cy="form-cancel"
         >{{ $t("actions.cancel") }}</v-btn
       >
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn
         color="primary"
         outlined
@@ -80,6 +80,7 @@ export default {
   watch: {
     // Make sure data stays in sync with any changes to `initialData` from parent.
     initialData(teamProp) {
+      console.log("teamForm",teamProp);
       if (isEmpty(teamProp)) {
         this.clear();
       } else {

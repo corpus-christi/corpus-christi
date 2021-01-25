@@ -138,11 +138,11 @@
             <v-btn small text @click="hideEntityTypePanel">{{
               $t("actions.close")
             }}</v-btn>
-            <v-spacer></v-spacer>
+            <v-spacer />
             <v-footer color="teal lighten-3" x-small>
               {{ $t("groups.members.email-dialog-footnote") }}
             </v-footer>
-            <v-spacer></v-spacer>
+            <v-spacer />
             <v-btn small text color="primary" @click="hideEntityTypePanel">{{
               $t("actions.save")
             }}</v-btn>

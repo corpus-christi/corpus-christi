@@ -10,7 +10,7 @@
 
       <v-container>
         <v-row>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn fab left icon @click="prev">
             <v-icon>chevron_left</v-icon>
           </v-btn>
@@ -22,7 +22,7 @@
           <v-btn fab right icon @click="next">
             <v-icon>chevron_right</v-icon>
           </v-btn>
-          <v-spacer></v-spacer>
+          <v-spacer />
         </v-row>
       </v-container>
 

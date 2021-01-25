@@ -5,7 +5,7 @@
     </v-card-title>
     <v-card-text>
       <v-form>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-radio-group
           v-model="selectedOffering"
           v-validate="'required'"
@@ -27,7 +27,7 @@
 
     <!-- cancel and register buttons -->
     <v-card-actions>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn
         color="primary"
         v-on:click="cancel"

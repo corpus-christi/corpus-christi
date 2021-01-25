@@ -17,12 +17,12 @@
             </v-btn>
           </v-layout>
         </v-container>
-        <v-list v-if="personList.length">
-          <template v-for="person in personList">
+        <v-list v-if="persons.length">
+          <template v-for="person in persons">
             <v-divider v-bind:key="'personDivider' + person.id"></v-divider>
             <v-list-item v-bind:key="person.id">
               <v-list-item-content>
-                <v-container fluid class="pa-0">
+                <v-container fluid>
                   <v-layout align-center row justify-space-between>
                     <v-flex>
                       {{ getFullName(person.person) }}
@@ -102,7 +102,7 @@
               person
               data-cy="person-entity-search"
               v-model="addPersonDialog.person"
-              :existing-entities="personList"
+              :existing-entities="persons"
             ></entity-search>
             <v-btn
               class="mr-0 ml-0"
@@ -132,7 +132,7 @@
             data-cy="cancel-add"
             >{{ $t("actions.cancel") }}</v-btn
           >
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="addPerson()"
             color="primary"
@@ -160,7 +160,7 @@
             data-cy="cancel-delete"
             >{{ $t("actions.cancel") }}</v-btn
           >
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="deletePerson()"
             color="primary"
@@ -197,8 +197,6 @@ export default {
 
   data() {
     return {
-      personList: [],
-
       addPersonDialog: {
         editMode: false,
         show: false,
@@ -229,12 +227,6 @@ export default {
       data: {},
       translations: {},
     };
-  },
-
-  watch: {
-    persons(val) {
-      this.personList = val;
-    },
   },
 
   computed: {
@@ -275,78 +267,25 @@ export default {
     },
 
     addPerson() {
-      console.log("this.persons: " + this.persons);
-      const eventId = this.$route.params.event;
-      let personId = this.addPersonDialog.person.id;
-      //console.log(this.addPersonDialog.person);
       this.addPersonDialog.loading = true;
-      if (!this.addPersonDialog.editMode) {
-        const idx = this.personList.findIndex((p) => p.id === personId);
-        if (idx > -1) {
-          this.closeAddPersonDialog();
-          this.showSnackbar(this.$t("events.persons.person-on-event"));
-          return;
-        }
-      }
-      let body = { description: this.addPersonDialog.description };
-      let promise;
-      if (this.addPersonDialog.editMode) {
-        promise = this.$http.patch(
-          `/api/v1/events/${eventId}/individuals/${personId}`,
-          body
-        );
-      } else {
-        promise = this.$http.post(
-          `/api/v1/events/${eventId}/individuals/${personId}`,
-          body
-        );
-      }
-      promise
-        .then(() => {
-          //console.log(this.addPersonDialog.person);
-          if (this.addPersonDialog.editMode) {
-            this.showSnackbar(this.$t("events.persons.person-edited"));
-          } else {
-            this.showSnackbar(this.$t("events.persons.person-added"));
-          }
-          this.$emit(
-            "person-added",
-            this.addPersonDialog.person,
-            this.addPersonDialog.description
-          );
-          this.closeAddPersonDialog();
-        })
-        .catch((err) => {
-          console.log(err);
-          this.addPersonDialog.loading = false;
-          if (err.response.status === 422) {
-            this.showSnackbar(this.$t("events.persons.error-person-assigned"));
-          } else {
-            this.showSnackbar(this.$t("events.persons.error-adding-person"));
-          }
-        });
+      let newData = {
+        person: this.addPersonDialog.person,
+        editMode: this.addPersonDialog.editMode,
+        description: this.addPersonDialog.description,
+      };
+      // Emit person-added event
+      this.$emit("person-added", newData);
+      this.closeAddPersonDialog();
     },
 
     deletePerson() {
       let id = this.deletePersonDialog.personId;
-      const idx = this.personList.findIndex((p) => p.id === id);
       this.deletePersonDialog.loading = true;
-      const eventId = this.$route.params.event;
-      this.$http
-        .delete(`/api/v1/events/${eventId}/individuals/${id}`)
-        .then((resp) => {
-          console.log("REMOVED", resp);
-          this.deletePersonDialog.show = false;
-          this.deletePersonDialog.loading = false;
-          this.deletePersonDialog.personId = -1;
-          this.personList.splice(idx, 1); //TODO maybe fix me?
-          this.showSnackbar(this.$t("events.persons.person-removed"));
-        })
-        .catch((err) => {
-          console.log(err);
-          this.deletePersonDialog.loading = false;
-          this.showSnackbar(this.$t("events.persons.error-removing-person"));
-        });
+      // Emit person-deleted event
+      this.$emit("person-deleted", { personId: id });
+      this.deletePersonDialog.show = false;
+      this.deletePersonDialog.loading = false;
+      this.deletePersonDialog.personId = -1;
     },
 
     showDeletePersonDialog(personId) {
@@ -359,7 +298,6 @@ export default {
     },
 
     getFullName(person) {
-      //console.log("fullname call: "+person.firstName);
       return `${person.firstName} ${person.lastName}`;
     },
   },

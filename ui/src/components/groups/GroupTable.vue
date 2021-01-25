@@ -93,6 +93,8 @@
         </v-col>
       </v-row>
     </v-toolbar>
+
+    <!-- Table of existing groups -->
     <v-data-table
       :headers="headers"
       :items-per-page-options="itemsPerPageOptions"
@@ -104,6 +106,9 @@
       must-sort
       :item-class="itemClass"
       class="elevation-1"
+      hide-default-footer
+      @page-count="pageCount = $event"
+      :page.sync="page"
     >
       <template v-slot:[`item.actions`]="props">
         <template v-if="props.item.active">
@@ -201,6 +206,9 @@
         </template>
       </template>
     </v-data-table>
+    <div class="text-center pt-2">
+      <v-pagination v-model="page" :length="pageCount"></v-pagination>
+    </div>
 
     <!-- New/Edit dialog -->
     <v-dialog eager v-model="groupDialog.show" max-width="500px" persistent>
@@ -278,6 +286,9 @@ export default {
   },
   data() {
     return {
+      page: 1,
+      pageCount: 0,
+
       itemsPerPageOptions: [
         10,
         15,

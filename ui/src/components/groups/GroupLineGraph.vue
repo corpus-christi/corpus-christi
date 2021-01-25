@@ -80,7 +80,7 @@
               ></v-text-field>
             </template>
             <v-date-picker v-model="startDate" no-title scrollable range>
-              <v-spacer></v-spacer>
+              <v-spacer />
               <v-btn text color="primary" @click="menu = false">Cancel</v-btn>
               <v-btn text color="primary" @click="$refs.menu.save(startDate)"
                 >OK</v-btn
@@ -110,7 +110,7 @@
               ></v-text-field>
             </template>
             <v-date-picker v-model="endDate" no-title scrollable>
-              <v-spacer></v-spacer>
+              <v-spacer />
               <v-btn text color="primary" @click="menu1 = false">Cancel</v-btn>
               <v-btn text color="primary" @click="$refs.menu1.save(endDate)"
                 >OK</v-btn
@@ -148,7 +148,7 @@
               scrollable
               type="month"
             >
-              <v-spacer></v-spacer>
+              <v-spacer />
               <v-btn text color="primary" @click="menu = false">Cancel</v-btn>
               <v-btn text color="primary" @click="$refs.menu.save(startMonth)"
                 >OK</v-btn
@@ -179,7 +179,7 @@
               ></v-text-field>
             </template>
             <v-date-picker v-model="endMonth" no-title scrollable type="month">
-              <v-spacer></v-spacer>
+              <v-spacer />
               <v-btn text color="primary" @click="menu1 = false">Cancel</v-btn>
               <v-btn text color="primary" @click="$refs.menu1.save(endMonth)"
                 >OK</v-btn

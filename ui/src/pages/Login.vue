@@ -6,7 +6,7 @@
           <v-card class="elevation-12">
             <v-toolbar dark color="primary">
               <v-toolbar-title>{{ $t("login.header") }}</v-toolbar-title>
-              <v-spacer></v-spacer>
+              <v-spacer />
             </v-toolbar>
             <v-card-text>
               <v-form>

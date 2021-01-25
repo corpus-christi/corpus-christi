@@ -5,7 +5,7 @@
         <v-flex shrink align-self-center>
           <v-toolbar-title>{{ $t("courses.students") }}</v-toolbar-title>
         </v-flex>
-        <v-spacer></v-spacer>
+        <v-spacer />
 
         <v-flex shrink justify-self-end>
           <v-btn
@@ -101,7 +101,7 @@
             data-cy
             >{{ $t("actions.cancel") }}</v-btn
           >
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="deactivate(deactivateDialog.student)"
             color="primary"
@@ -128,7 +128,7 @@
             data-cy
             >{{ $t("actions.cancel") }}</v-btn
           >
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-on:click="rejectStudent(confirmDialog.student)"
             color="accent"
