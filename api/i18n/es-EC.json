@@ -4259,6 +4259,10 @@
         "gloss": "Equietas menores",
         "verified": false
       },
+      "tooltip": {
+        "gloss": "{0} no traducidos, {1} no verificados",
+        "verified": false
+      },
       "top": {
         "gloss": "Equietas mayores",
         "verified": false

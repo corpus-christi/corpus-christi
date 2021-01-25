@@ -41,6 +41,7 @@
       <v-col cols="2">
         <TopLevelTagChooser
           :topLevelTags="topLevelTags"
+          :allTranslations="translationObjs"
           @tagsUpdated="onTopLevelTagsUpdated"
         />
       </v-col>

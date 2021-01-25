@@ -3552,35 +3552,35 @@
   "membership-history": {
     "cancel": {
       "gloss": "Cancel",
-      "verified": null
+      "verified": false
     },
     "change-note": {
       "gloss": "Change note",
-      "verified": null
+      "verified": false
     },
     "clear-note": {
       "gloss": "Clear note",
-      "verified": null
+      "verified": false
     },
     "joined": {
       "gloss": "Joined",
-      "verified": null
+      "verified": false
     },
     "left": {
       "gloss": "Left",
-      "verified": null
+      "verified": false
     },
     "note": {
       "gloss": "Notes",
-      "verified": null
+      "verified": false
     },
     "submit": {
       "gloss": "Submit",
-      "verified": null
+      "verified": false
     },
     "title": {
       "gloss": "History",
-      "verified": null
+      "verified": false
     }
   },
   "people": {
@@ -4257,6 +4257,10 @@
     "tags": {
       "sub": {
         "gloss": "Subtags",
+        "verified": false
+      },
+      "tooltip": {
+        "gloss": "{0} Untranslated, {1} Unverified",
         "verified": false
       },
       "top": {
