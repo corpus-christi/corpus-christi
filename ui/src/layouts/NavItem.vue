@@ -25,6 +25,7 @@
 
     <!-- Leaf node   -->
     <v-list-item
+      exact
       v-else-if="isLeaf"
       :to="{ name: item.route }"
       :data-cy="item.route"

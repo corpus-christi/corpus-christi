@@ -2,7 +2,7 @@
   <v-container fluid>
     <v-row>
       <v-col cols=12>
-        <v-card>
+        <v-card elevation=8>
           <template v-if="eventLoaded">
             <v-container fill-height fluid>
               <v-row>
@@ -11,6 +11,7 @@
                 </v-col>
                 <v-col cols=2 sm=2>
                   <v-btn
+                    right
                     color="primary"
                     data-cy="edit-event"
                     v-on:click="editEvent(event)"
@@ -29,7 +30,7 @@
                       <span v-if="event.attendance != null">{{
                         event.attendance
                       }}</span>
-                      <span v-else>{{ $t("events.attendance-none") }}</span>
+                      <span v-else>{{ $t("events.attendance-none") }} </span>
                       <v-btn
                         icon
                         outlined
@@ -99,10 +100,18 @@
       </v-col>
     </v-row>
 
-    <v-layout row wrap>
-      <v-flex xs12 lg6>
-        <v-layout column>
-          <v-flex>
+    <v-row>
+      <v-col cols=12 lg=6>
+        <v-row>
+          <v-col cols=12>
+            <event-item-details
+              item="team"
+              :loaded="teamsLoaded"
+              :items="event.teams"
+              v-on:item-added="addTeam"
+            >
+
+            </event-item-details>
             <event-team-details
               :teams="event.teams"
               :loaded="teamsLoaded"
@@ -110,8 +119,8 @@
               v-on:team-added="addTeam"
               v-on:team-deleted="deleteTeam"
             ></event-team-details>
-          </v-flex>
-          <v-flex>
+          </v-col>
+          <v-col cols=12>
             <event-person-details
               :persons="event.persons"
               :loaded="personsLoaded"
@@ -119,12 +128,12 @@
               v-on:person-added="addPerson"
               v-on:person-deleted="deletePerson"
             ></event-person-details>
-          </v-flex>
-        </v-layout>
-      </v-flex>
-      <v-flex xs12 lg6>
-        <v-layout column>
-          <v-flex>
+          </v-col>
+        </v-row>
+      </v-col>
+      <v-col cols=12 lg=6>
+        <v-row>
+          <v-col cols=12>
             <event-asset-details
               :assets="event.assets"
               :loaded="assetsLoaded"
@@ -132,8 +141,8 @@
               v-on:asset-added="addAsset"
               v-on:asset-deleted="deleteAsset"
             ></event-asset-details>
-          </v-flex>
-          <v-flex>
+          </v-col>
+          <v-col cols=12>
             <event-group-details
               :groups="event.groups"
               :loaded="groupsLoaded"
@@ -141,10 +150,10 @@
               v-on:group-added="addGroup"
               v-on:group-deleted="deleteGroup"
             ></event-group-details>
-          </v-flex>
-        </v-layout>
-      </v-flex>
-    </v-layout>
+          </v-col>
+        </v-row>
+      </v-col>
+    </v-row>
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
@@ -185,6 +194,7 @@
 <script>
 import CustomForm from "../CustomForm";
 import { mapGetters } from "vuex";
+import EventItemDetails from "./EventItemDetails";
 import EventTeamDetails from "./EventTeamDetails";
 import EventAssetDetails from "./EventAssetDetails";
 import EventPersonDetails from "./EventPersonDetails";
@@ -196,6 +206,7 @@ export default {
   name: "EventDetails",
   components: {
     "event-form": CustomForm,
+    "event-item-details": EventItemDetails,
     "event-team-details": EventTeamDetails,
     "event-asset-details": EventAssetDetails,
     "event-person-details": EventPersonDetails,
@@ -307,7 +318,7 @@ export default {
 
     addTeam(data) {
       const eventId = this.$route.params.event;
-      let teamId = data.team.id;
+      let teamId = data.item.id;
       const idx = this.event.teams.findIndex((t) => t.id === teamId);
       if (idx > -1) {
         this.showSnackbar(this.$t("teams.team-on-event"));
@@ -318,7 +329,8 @@ export default {
         .post(`/api/v1/events/${eventId}/teams/${teamId}`)
         .then(() => {
           this.showSnackbar(this.$t("teams.team-added"));
-          this.event.teams.push(data.team);
+          this.event.teams.push(data.item);
+          console.log(this.event.teams);
         })
         .catch((err) => {
           console.log(err);
