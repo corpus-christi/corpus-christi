@@ -84,8 +84,8 @@
     >
       <v-checkbox
         class=" align-self-center"
-        v-model="newValidation"
-        :color="oldValidation ? 'primary' : 'warning'"
+        v-model="newVerification"
+        :color="oldVerification ? 'primary' : 'warning'"
       />
     </v-card>
   </v-card>
@@ -109,8 +109,8 @@ export default {
     return{
       oldTranslation: this.currentGloss,
       newTranslation: "",
-      oldValidation: this.currentVerified,
-      newValidation: this.currentVerified,
+      oldVerification: this.currentVerified,
+      newVerification: this.currentVerified,
       submissionInProgress: false,
       highlightCard: false,
     };
@@ -118,7 +118,8 @@ export default {
   watch: {
     currentGloss: function() {
       this.newTranslation = "";
-      this.newValidation = this.currentVerified;
+      this.oldVerification = this.currentVerified;
+      this.newVerification = this.currentVerified;
     },
   },
   computed: {
@@ -146,13 +147,13 @@ export default {
           key_id: `${this.topLevelTag}.${this.restOfTag}`,
           locale_code: this.currentCode,
           gloss: this.newTranslation,
-          verified: this.newValidation,
+          verified: this.newVerification,
         })
         .then(() => {
-          this.$emit('submitAChange', this.myIndex, this.newTranslation, this.newValidation);
+          this.$emit('submitAChange', this.myIndex, this.newTranslation, this.newVerification);
           this.oldTranslation = this.newTranslation;
           this.newTranslation = "";
-          this.oldValidation = this.newValidation;
+          this.oldVerification = this.newVerification;
         })
         .catch((err) => {
           console.log(err);
