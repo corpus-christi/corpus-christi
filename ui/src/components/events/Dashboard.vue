@@ -1,54 +1,56 @@
 <template>
   <v-container>
-    <v-layout row wrap>
-      <v-flex xs12 sm6 md6 lg6 xl6>
+    <v-row>
+      <v-col>
         <v-card>
           <v-toolbar class="pa-1">
             <v-toolbar-title>{{
               $t("events.dashboard.headers.location-attendance")
             }}</v-toolbar-title>
           </v-toolbar>
-          <ve-ring
-            :data="locationAttendanceData"
-            :legend-visible="false"
-            align-center
-          ></ve-ring>
+          <!--          <ve-ring-->
+          <!--            :data="locationAttendanceData"-->
+          <!--            :legend-visible="false"-->
+          <!--            align-center-->
+          <!--          ></ve-ring>-->
         </v-card>
-      </v-flex>
-      <v-flex xs12 sm6 md6 lg6 xl6>
+      </v-col>
+      <v-col>
         <v-card>
           <v-toolbar class="pa-1">
             <v-toolbar-title>{{
               $t("events.dashboard.headers.home-group-percentage")
             }}</v-toolbar-title>
           </v-toolbar>
-          <ve-liquidfill
-            :data="homeGroupPercentageData"
-            align-center
-          ></ve-liquidfill>
+          <!--          <ve-liquidfill-->
+          <!--            :data="homeGroupPercentageData"-->
+          <!--            align-center-->
+          <!--          ></ve-liquidfill>-->
         </v-card>
-      </v-flex>
-      <v-flex xs12 sm12 md12 lg12 xl12>
+      </v-col>
+      <v-col>
         <v-card>
           <v-toolbar class="pa-1">
             <v-toolbar-title>{{
               $t("events.dashboard.headers.yearly-attendance")
             }}</v-toolbar-title>
           </v-toolbar>
-          <ve-line
-            :data="yearlyAttendanceData"
-            :settings="attendanceLineSettings"
-          ></ve-line>
+          <!--          <ve-line-->
+          <!--            :data="yearlyAttendanceData"-->
+          <!--            :settings="attendanceLineSettings"-->
+          <!--          ></ve-line>-->
         </v-card>
-      </v-flex>
-    </v-layout>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
+<!-- COMMENT OUT FOR NOW
 <script>
 import { mapGetters, mapState } from "vuex";
 export default {
   name: "Dashboard",
+
   watch: {
     currentLocaleModel() {
       this.homeGroupPercentageData.rows[0].homeGroups = this.$t(
@@ -195,3 +197,4 @@ export default {
   },
 };
 </script>
+-->

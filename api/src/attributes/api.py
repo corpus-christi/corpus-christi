@@ -53,6 +53,12 @@ def read_one_attribute(attribute_id):
     return jsonify(attribute_schema.dump(result))
 
 
+@attributes.route('/attribute-types')
+@jwt_required
+def read_all_attribute_types():
+    return jsonify(Attribute.all_type_details())
+
+
 @attributes.route('/attributes/<attribute_id>', methods=['PATCH'])
 @jwt_required
 def update_attribute(attribute_id):

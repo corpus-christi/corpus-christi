@@ -27,10 +27,10 @@
     <draggable v-model="allAttributes" class="row" :disabled="!dragEnabled">
       <v-col cols="6" v-for="attr in allAttributes" :key="attr.name">
         <attribute-card
-          :name="attr.name"
-          :type="attr.type"
+          :name="$t(attr.nameI18n)"
+          :type="attr.typeI18n"
           :active="attr.active"
-          :values="attr.values || []"
+          :values="attr.enumerated_values || []"
           :dragEnabled="dragEnabled"
         />
       </v-col>
@@ -52,53 +52,20 @@ export default {
 
   data() {
     return {
-      newType: "",
-
+      attributeTypes: [],
+      allAttributes: [],
+      newType: null,
       dragEnabled: false,
-
-      attributeTypes: [
-        { i18nKey: "attribute.checkbox", enumerated: true },
-        { i18nKey: "attribute.date", enumerated: false },
-        { i18nKey: "attribute.dropdown", enumerated: true },
-        { i18nKey: "attribute.float", enumerated: false },
-        { i18nKey: "attribute.integer", enumerated: false },
-        { i18nKey: "attribute.radio", enumerated: true },
-        { i18nKey: "attribute.string", enumerated: false },
-      ],
-
-      allAttributes: [
-        {
-          name: "Alpha",
-          type: "attribute.date",
-          active: true,
-        },
-        {
-          name: "Service",
-          type: "attribute.radio",
-          active: true,
-          values: [
-            { label: "Sunday 9:00", active: true },
-            { label: "Sunday 11:00", active: true },
-            { label: "Saturday 5:30", active: false },
-          ],
-        },
-        {
-          name: "Baptism",
-          type: "attribute.date",
-          active: true,
-        },
-        {
-          name: "Gamma",
-          type: "attribute.date",
-          active: true,
-        },
-        {
-          name: "Nineteen",
-          type: "attribute.date",
-          active: true,
-        },
-      ],
     };
+  },
+
+  mounted() {
+    this.$http
+      .get("/api/v1/attributes/attribute-types")
+      .then((resp) => (this.attributeTypes = resp.data));
+    this.$http
+      .get("/api/v1/attributes/attributes")
+      .then((resp) => (this.allAttributes = resp.data));
   },
 };
 </script>

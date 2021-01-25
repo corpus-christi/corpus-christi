@@ -1,5 +1,6 @@
 from flask.cli import AppGroup
 from .. import db
+from ..attributes.test_attributes import create_attributes
 from ..courses.test_courses import create_multiple_courses, create_multiple_course_offerings, \
     create_multiple_diplomas, create_multiple_students, create_class_meetings, \
     create_diploma_awards, create_class_attendance, create_multiple_prerequisites, \
@@ -18,6 +19,10 @@ def create_faker_cli(app):
     def fake_people():
         create_multiple_people(db.session, 17)
         create_person_roles(db.session, 0.75)
+
+    @faker_cli.command('attributes', help="Fake user-defined attributes")
+    def fake_user_defined_attributes():
+        create_attributes(db.session)
 
     @faker_cli.command("places", help="Fake places")
     def fake_places():

@@ -4,7 +4,7 @@ entities:
     singular: attribute
     plural: attributes
     uri: /attributes
-    table: people_attributes
+    table: people_attribute
     attributes:
       - name: id
         type: integer
@@ -37,7 +37,7 @@ entities:
         min: 1
       - name: attribute_id
         type: integer
-        foreign-key: people_attributes.id
+        foreign-key: people_attribute.id
       - name: value_i18n
         type: string
         length: locale
@@ -58,7 +58,7 @@ entities:
       - name: attribute_id
         type: integer
         primary-key: true
-        foreign-key: people_attributes.id
+        foreign-key: people_attribute.id
       - name: enum_value_id
         type: integer
         foreign-key: people_enumerated_value.id

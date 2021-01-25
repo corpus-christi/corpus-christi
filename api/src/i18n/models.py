@@ -143,12 +143,13 @@ class Language(Base):
 
 
 def i18n_create(key_id, locale_code, gloss, description=None):
-    """Create a new value in the I18N database.
+    """Create a new entry in the I18N database.
 
     In most cases, `description` can be omitted. It's only required
     if the I18NKey doesn't already exist.
     """
-    key_id = key_id[:32]
+    key_id = key_id[:32]  # FIXME - Magic number.
+
     result = i18n_check(key_id, locale_code)
     if result is not None:
         # Already in the DB, so we can't create it.
@@ -163,14 +164,11 @@ def i18n_create(key_id, locale_code, gloss, description=None):
         key = db.session.query(I18NKey).get(key_id)
         if key is None:
             if description is None:
-                raise RuntimeError(
-                    f"Won't create key {key_id} without description")
+                raise RuntimeError(f"Won't create key {key_id} without description")
             db.session.add(I18NKey(id=key_id, desc=description))
 
         # Add the value
-        db.session.add(
-            I18NValue(key_id=key_id, locale_code=locale_code, gloss=gloss))
-
+        db.session.add(I18NValue(key_id=key_id, locale_code=locale_code, gloss=gloss))
         db.session.commit()
     except Exception:
         db.session.rollback()

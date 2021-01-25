@@ -1,14 +1,16 @@
+import json
 import random
 
 import pytest
 from faker import Faker
 from flask import url_for
-from ..i18n.models import i18n_create, I18NLocale, I18NKey
-from ..people.models import Person, PersonSchema
-from ..people.test_people import create_multiple_people, person_object_factory
+from slugify import slugify
 
 from .models import Attribute, AttributeSchema, PersonAttribute, PersonAttributeSchema, EnumeratedValue, \
     EnumeratedValueSchema
+from ..i18n.models import i18n_create, I18NLocale, I18NKey
+from ..people.models import Person, PersonSchema
+from ..people.test_people import create_multiple_people, person_object_factory
 
 
 class RandomLocaleFaker:
@@ -45,27 +47,27 @@ def add_attribute_type(name, sqla, locale_code):
                     name, description=f"Type {name}")
 
 
-def add_i18n_code(name, sqla, locale_code, name_i18n):
+def add_i18n_code(sqla, key_id, locale_code, gloss):
     if not sqla.query(I18NLocale).get(locale_code):
         sqla.add(I18NLocale(code=locale_code, desc=''))
 
     try:
-        i18n_create(name_i18n, locale_code,
-                    name, description=f"Type {name}")
-    except BaseException:
-        # entry is already in value table
-        pass
+        i18n_create(key_id, locale_code, gloss, description=gloss)
+        print(key_id, locale_code, gloss)
+    except BaseException as err:
+        print(f"Exception: {err}")
+        pass  # Probably because the entry is already in value table; don't care.
 
-    return name_i18n
+    return key_id
 
 
 def attribute_factory(sqla, name, locale_code='en-US', active=1):
     """Create a fake attribute."""
     name_i18n = f'attribute.name'
-    add_i18n_code(name, sqla, locale_code, name_i18n)
+    add_i18n_code(sqla, name_i18n, locale_code, name)
     attributes = sqla.query(Attribute).all()
     add_attribute_type('radio', sqla, 'en-US')
-    add_attribute_type('check', sqla, 'en-US')
+    add_attribute_type('checkbox', sqla, 'en-US')
     add_attribute_type('dropdown', sqla, 'en-US')
     add_attribute_type('float', sqla, 'en-US')
     add_attribute_type('integer', sqla, 'en-US')
@@ -201,6 +203,91 @@ def create_multiple_person_attribute_enumerated(sqla, n):
     sqla.commit()
 
 
+def create_attributes(sqla):
+    attribute_data = [
+        {
+            'gloss': {"en-US": "Preferred Service", "es-EC": "Servicio preferido"},
+            'type': "attribute.radio",
+            'active': True,
+            "values": [
+                {"label": {"en-US": "Sunday 9:00", "es-EC": "Domingo 9:00"}, "active": True},
+                {"label": {"en-US": "Sunday 11:00", "es-EC": "Domingo 11:00"}, "active": True},
+                {"label": {"en-US": "Saturday 5:30", "es-EC": "Sábado 17:30"}, "active": False},
+                {"label": {"en-US": "Wednesday 7:00", "es-EC": "Miércoles 19:00"}, "active": True},
+            ],
+        },
+        {
+            "gloss": {"en-US": "Volunteer Availability", "es-EC": "Trabajar como voluntario"},
+            "type": "attribute.checkbox",
+            "active": True,
+            "values": [
+                {"label": {"en-US": "Nursery", "es-EC": "Guardería"}, "active": True},
+                {"label": {"en-US": "Kitchen", "es-EC": "Cocina"}, "active": True},
+                {"label": {"en-US": "Greeter", "es-EC": "Saludador"}, "active": True},
+            ],
+        },
+        {
+            "gloss": {"en-US": "Date Baptized", "es-EC": "Fecha de bautismo"},
+            "type": "attribute.date",
+            "active": True,
+        },
+        {
+            "gloss": {"en-US": "Marital Status", "es-EC": "Estado civil"},
+            "type": "attribute.dropdown",
+            "active": True,
+            "values": [
+                {"label": {"en-US": "Single", "es-EC": "Soltero"}, "active": True},
+                {"label": {"en-US": "Married", "es-EC": "Casado"}, "active": True},
+                {"label": {"en-US": "Divorced", "es-EC": "Divorciado"}, "active": True},
+            ],
+        },
+        {
+            "gloss": {"en-US": "Commute Distance", "es-EC": "Distancia de viaje"},
+            "type": "attribute.float",
+            "active": True,
+        },
+        {
+            "gloss": {"en-US": "Number of Children", "es-EC": "Numero de niños"},
+            "type": "attribute.integer",
+            "active": True,
+        },
+        {
+            "gloss": {"en-US": "Preferred Name", "es-EC": "Apodo"},
+            "type": "attribute.string",
+            "active": True,
+        },
+    ]
+
+    for attr_idx, datum in enumerate(attribute_data, start=1):
+        # Form the I18N tag by slugifying the value.
+        full_attribute_tag = "attribute." + slugify(datum['gloss']["en-US"])
+
+        # Store the glosses of the attribute names.
+        for locale in ["en-US", "es-EC"]:
+            add_i18n_code(sqla, full_attribute_tag, locale, datum['gloss'][locale])
+
+        attribute = Attribute(name_i18n=full_attribute_tag,
+                              type_i18n=datum['type'],
+                              seq=attr_idx,
+                              active=datum['active'])
+
+        # Create translations for enumerated values, if any.
+        if 'values' in datum:
+            for val_idx, val_data in enumerate(datum['values'], start=1):
+                full_value_tag = "attribute-value." + slugify(val_data['label']['en-US'])
+                for locale in ["en-US", "es-EC"]:
+                    add_i18n_code(sqla, full_value_tag, locale, val_data['label'][locale])
+                value = EnumeratedValue(
+                    attribute_id=attr_idx,
+                    value_i18n=full_value_tag,
+                    seq=val_idx,
+                    active=val_data['active'])
+                attribute.enumerated_values.append(value)
+            sqla.add(attribute)
+
+    sqla.commit()
+
+
 def create_multiple_people_attributes(sqla, n):
     """Commit `n` new people with attributes to the database."""
     person_schema = PersonSchema()
@@ -214,65 +301,34 @@ def create_multiple_people_attributes(sqla, n):
     sqla.add_all(new_people)
     new_attributes = [
         {
-            'nameI18n': add_i18n_code(
-                'Marital Status',
-                sqla,
-                'en-US',
-                f'attribute.married'),
-            'typeI18n': add_i18n_code(
-                'attribute.radio',
-                sqla,
-                'en-US',
-                f'attribute.radio'),
+            'nameI18n': add_i18n_code(sqla, 'attribute.married', 'en-US', 'Marital Status'),
+            'typeI18n': add_i18n_code(sqla, 'attribute.radio', 'en-US', 'attribute.radio'),
             'seq': 2,
             'active': 1},
         {
-            'nameI18n': add_i18n_code(
-                'Home Group Name',
-                sqla,
-                'en-US',
-                f'attribute.HomeGroupName'),
-            'typeI18n': add_i18n_code(
-                'attribute.string',
-                sqla,
-                'en-US',
-                f'attribute.string'),
+            'nameI18n': add_i18n_code(sqla, 'attribute.HomeGroupName', 'en-US', 'Home Group Name'),
+            'typeI18n': add_i18n_code(sqla, 'attribute.string', 'en-US', 'attribute.string'),
             'seq': 1,
             'active': 1},
         {
-            'nameI18n': add_i18n_code(
-                'Baptism Date',
-                sqla,
-                'en-US',
-                f'attribute.BaptismDate'),
-            'typeI18n': add_i18n_code(
-                'attribute.date',
-                sqla,
-                'en-US',
-                f'attribute.date'),
+            'nameI18n': add_i18n_code(sqla, 'attribute.BaptismDate', 'en-US', 'Baptism Date'),
+            'typeI18n': add_i18n_code(sqla, 'attribute.date', 'en-US', 'attribute.date'),
             'seq': 3,
             'active': 1}]
     new_enumerated_values = [{'id': 1,
                               'attributeId': 1,
-                              'valueI18n': add_i18n_code('married',
-                                                         sqla,
-                                                         'en-US',
-                                                         f'personAttribute.married'),
+                              'valueI18n': add_i18n_code(sqla, 'personAttribute.married', 'en-US', 'married'),
                               'active': 1},
                              {'id': 2,
                               'attributeId': 1,
-                              'valueI18n': add_i18n_code('single',
-                                                         sqla,
-                                                         'en-US',
-                                                         f'personAttribute.single'),
+                              'valueI18n': add_i18n_code(sqla, 'personAttribute.single', 'en-US', 'single'),
                               'active': 1}]
 
-    add_i18n_code('Estado Civil', sqla, 'es-EC', f'attribute.married')
-    add_i18n_code('Nombre del grupo de origen', sqla,
-                  'es-EC', f'attribute.HomeGroupName')
-    add_i18n_code('Fecha de bautismo', sqla, 'es-EC', f'attribute.BaptismDate')
-    add_i18n_code('casado', sqla, 'es-EC', f'personAttribute.married')
-    add_i18n_code('soltero', sqla, 'es-EC', f'personAttribute.single')
+    add_i18n_code(sqla, 'attribute.married', 'es-EC', 'Estado Civil')
+    add_i18n_code(sqla, 'attribute.HomeGroupName', 'es-EC', 'Nombre del grupo de origen')
+    add_i18n_code(sqla, 'attribute.BaptismDate', 'es-EC', 'Fecha de bautismo')
+    add_i18n_code(sqla, 'personAttribute.married', 'es-EC', 'casado')
+    add_i18n_code(sqla, 'personAttribute.single', 'es-EC', 'soltero')
 
     valid_attributes = []
     for attribute in new_attributes:

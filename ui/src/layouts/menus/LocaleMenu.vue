@@ -134,7 +134,6 @@ export default {
             set(translations, item.key_id, item.gloss);
           }
           this.$i18n.mergeLocaleMessage(locale.toString(), translations);
-          console.log("GTFL XLATES", this.$i18n);
         })
         .catch((err) => console.error("FAILURE", err));
     },
