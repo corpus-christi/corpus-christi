@@ -40,7 +40,7 @@
             </v-tab>
             <v-tab ripple data-cy="roles-table-tab">
               <v-icon>people</v-icon>
-              &nbsp;{{ $t("people.title") }}
+              &nbsp;{{ $t("courses.students") }}
             </v-tab>
           </v-tabs>
           <!-- The Tabs Themselves -->

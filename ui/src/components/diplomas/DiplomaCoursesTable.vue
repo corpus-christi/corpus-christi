@@ -2,20 +2,20 @@
   <div>
     <!-- Header -->
     <v-toolbar class="pa-1" extension-height="64px">
-      <!-- These buttons/select controls will help manually edit data.
+      <!-- These buttons/select controls will help manually edit data. -->
       <v-layout justify-space-between>
         <v-flex shrink align-self-center>
-          <v-toolbar-title>{{ $t("courses.course-offering") }}</v-toolbar-title>
+          <v-toolbar-title>{{ $t("courses.course") }}</v-toolbar-title>
         </v-flex>
         <v-spacer />
         <v-flex shrink justify-self-end>
-          <v-btn color="primary" raised v-on:click.stop="newCourseOffering">
+          <v-btn color="primary" raised v-on:click.stop="addCourse">
             <v-icon left>library_add</v-icon>
-            {{ $t("courses.new-offering") }}
+            {{ $t("courses.new") }}
           </v-btn>
         </v-flex>
       </v-layout>
-      -->
+      <v-layout row slot="extension" justify-space-between align-center>
         <v-flex>
           <v-text-field
             v-model="search"
@@ -36,9 +36,7 @@
         >
         </v-select>
         -->
-      <!--
       </v-layout>
-      -->
     </v-toolbar>
 
     <!-- Table of existing course offerings -->
@@ -86,22 +84,22 @@
     </v-snackbar>
 
     <!-- New/Edit dialog -->
-    <!-- Edit functionality copied from ui/src/components/courses/CourseOfferingsTable.vue.
+    <!-- Edit functionality copied from ui/src/components/courses/CourseOfferingsTable.vue. -->
     <v-dialog
       persistent
       scrollable
-      v-model="courseOfferingDialog.show"
+      v-model="newCourseDialog.show"
       max-width="500px"
     >
-      <CourseOfferingForm
-        v-bind:editMode="courseOfferingDialog.editMode"
-        v-bind:initialData="courseOfferingDialog.courseOffering"
-        v-bind:course="course"
-        v-on:cancel="cancelCourseOffering"
-        v-on:save="saveCourseOffering"
+    <!---->
+      <DiplomaNewCourseForm
+        v-bind:editMode="newCourseDialog.editMode"
+        v-bind:initialData="newCourseDialog.course"
+        v-on:cancel="cancelNewCourse"
+        v-on:save="saveNewCourse"
       />
+    <!---->
     </v-dialog>
-    -->
 
     <!-- Deactivate/archive confirmation -->
     <v-dialog v-model="deactivateDialog.show" max-width="350px">
@@ -133,10 +131,13 @@
 </template>
 
 <script>
+import DiplomaNewCourseForm from "./DiplomaNewCourseForm.vue";
 
 export default {
   name: "DiplomaCoursesTable",
-  components: {},
+  components: {
+    DiplomaNewCourseForm,
+  },
   props: {
     diploma: {
       type: Object,
@@ -145,10 +146,10 @@ export default {
   },
   data() {
     return {
-      courseOfferingDialog: {
+      newCourseDialog: {
         show: false,
         editMode: false,
-        courseOffering: {},
+        course: {},
       },
 
       deactivateDialog: {
@@ -202,13 +203,11 @@ export default {
     },
 
     showCourses() {
-        return this.courses;
+      return this.courses;
     },
   },
 
   mounted() {
-    console.log("Diagnostic 1: Course List");
-    console.log(this.diploma.courseList);
     this.courses = this.diploma.courseList;
   },
 
@@ -247,25 +246,25 @@ export default {
           break;
       }
     },
-
-    activateCourseOfferingDialog(courseOffering = {}, editMode = false) {
-      this.courseOfferingDialog.editMode = editMode;
-      this.courseOfferingDialog.courseOffering = courseOffering;
-      this.courseOfferingDialog.show = true;
+    */
+    activateNewCourseDialog(course = {}, editMode = false) {
+      this.newCourseDialog.editMode = editMode;
+      this.newCourseDialog.course = course;
+      this.newCourseDialog.show = true;
     },
-
+    /*
     editCourseOffering(courseOffering) {
-      this.activateCourseOfferingDialog({ ...courseOffering }, true);
+      this.activateNewCourseDialog({ ...courseOffering }, true);
     },
-
-    newCourseOffering() {
-      this.activateCourseOfferingDialog();
+    */
+    addCourse() {
+      this.activateNewCourseDialog();
     },
-
-    cancelCourseOffering() {
-      this.courseOfferingDialog.show = false;
+    
+    cancelNewCourse() {
+      this.newCourseDialog.show = false;
     },
-
+    /*
     confirmDeactivate(courseOffering) {
       this.deactivateDialog.show = true;
       this.deactivateDialog.courseOffering = courseOffering;
@@ -313,35 +312,34 @@ export default {
           this.snackbar.show = true;
         });
     },
-
-    saveCourseOffering(courseOffering) {
-      if (courseOffering instanceof Error) {
-        this.snackbar.text = this.courseOfferingDialog.editMode
+    //*/
+    saveNewCourse(course) {
+      if (course instanceof Error) {
+        this.snackbar.text = this.newCourseDialog.editMode
           ? this.$t("courses.update-failed")
           : this.$t("courses.add-failed");
         this.snackbar.show = true;
 
-        this.courseOfferingDialog.show = false;
+        this.newCourseDialog.show = false;
 
         return;
       }
-
-      if (this.courseOfferingDialog.editMode) {
+      if (this.newCourseDialog.editMode) {
         // Locate the record we're updating in the table.
-        const idx = this.courseOfferings.findIndex(
-          (c) => c.id === courseOffering.id
+        const idx = this.course.findIndex(
+          (c) => c.id === course.id
         );
-        Object.assign(this.courseOfferings[idx], courseOffering);
+        Object.assign(this.course[idx], course);
         this.snackbar.text = this.$t("courses.updated");
       } else {
-        this.courseOfferings.push(courseOffering);
+        this.courses.push(course);
         this.snackbar.text = this.$t("courses.added");
       }
-      
+      /*
       this.snackbar.show = true;
-
-      this.courseOfferingDialog.show = false;
-    }, //*/
+      */
+      this.newCourseDialog.show = false;
+    },
   },
 };
 </script>

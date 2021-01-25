@@ -2,20 +2,21 @@
   <div>
     <!-- Header -->
     <v-toolbar class="pa-1" extension-height="64px">
-      <!-- These buttons/select controls will help manually edit data.
+      <!-- These buttons/select controls will help manually edit data. -->
       <v-layout justify-space-between>
         <v-flex shrink align-self-center>
-          <v-toolbar-title>{{ $t("courses.course-offering") }}</v-toolbar-title>
+          <v-toolbar-title>{{ $t("courses.students") }}</v-toolbar-title>
         </v-flex>
         <v-spacer />
         <v-flex shrink justify-self-end>
-          <v-btn color="primary" raised v-on:click.stop="newCourseOffering">
+          <v-btn color="primary" raised v-on:click.stop="newPerson">
             <v-icon left>library_add</v-icon>
-            {{ $t("courses.new-offering") }}
+            <!-- TODO: Create a Localization entry for "ADD A NEW STUDENT" -->
+            {{ $t("courses.create-new-person") }}
           </v-btn>
         </v-flex>
       </v-layout>
-      -->
+      <v-layout row slot="extension" justify-space-between align-center>
         <v-flex>
           <v-text-field
             v-model="search"
@@ -36,9 +37,7 @@
         >
         </v-select>
         -->
-      <!--
       </v-layout>
-      -->
     </v-toolbar>
 
     <!-- Table of existing course offerings -->
@@ -86,22 +85,21 @@
     </v-snackbar>
 
     <!-- New/Edit dialog -->
-    <!-- Edit functionality copied from ui/src/components/courses/CourseOfferingsTable.vue.
+    <!-- Edit functionality copied from ui/src/components/courses/CourseOfferingsTable.vue. -->
     <v-dialog
       persistent
       scrollable
-      v-model="courseOfferingDialog.show"
+      v-model="newPersonDialog.show"
       max-width="500px"
     >
-      <CourseOfferingForm
-        v-bind:editMode="courseOfferingDialog.editMode"
-        v-bind:initialData="courseOfferingDialog.courseOffering"
-        v-bind:course="course"
-        v-on:cancel="cancelCourseOffering"
-        v-on:save="saveCourseOffering"
+      <DiplomaNewPersonForm
+        v-bind:editMode="newPersonDialog.editMode"
+        v-bind:initialData="newPersonDialog.person"
+        v-on:cancel="cancelNewPerson"
+        v-on:save="saveNewPerson"
       />
     </v-dialog>
-    -->
+    <!---->
 
     <!-- Deactivate/archive confirmation -->
     <v-dialog v-model="deactivateDialog.show" max-width="350px">
@@ -118,7 +116,7 @@
           >
           <v-spacer />
           <v-btn
-            v-on:click="deactivate(deactivateDialog.courseOffering)"
+            v-on:click="deactivate(deactivateDialog.person)"
             color="primary"
             raised
             :disabled="deactivateDialog.loading"
@@ -133,10 +131,13 @@
 </template>
 
 <script>
+import DiplomaNewPersonForm from "./DiplomaNewPersonForm.vue";
 
 export default {
-  name: "DiplomaPeopleTable",
-  components: {},
+  name: "DiplomaPersonTable",
+  components: {
+    DiplomaNewPersonForm,
+  },
   props: {
     diploma: {
       type: Object,
@@ -145,15 +146,15 @@ export default {
   },
   data() {
     return {
-      courseOfferingDialog: {
+      newPersonDialog: {
         show: false,
         editMode: false,
-        courseOffering: {},
+        person: {},
       },
 
       deactivateDialog: {
         show: false,
-        courseOffering: {},
+        person: {},
         loading: false,
       },
 
@@ -219,7 +220,9 @@ export default {
   },
 
   mounted() {
-    console.log("The Persons table here displays incorrect data. For details, see ui/src/components/diplomas/DiplomaPeopleTable.vue");
+    console.log(
+      "The Persons table here displays incorrect data. For details, see ui/src/components/diplomas/DiplomaPeopleTable.vue"
+    );
     this.students = this.diploma.studentList;
   },
 
@@ -235,65 +238,65 @@ export default {
         .catch((err) => console.error("FAILURE", err.response));
     },
     /* These Functions are copied over from the ui/src/components/courses/CourseOfferingsTable.vue. They may be useful.
-    clickThrough(courseOffering) {
+    clickThrough(person) {
       this.$router.push({
         name: "course-offering-details",
-        params: { offeringId: courseOffering.id },
+        params: { offeringId: person.id },
       });
     },
 
-    dispatchAction(actionName, courseOffering) {
+    dispatchAction(actionName, person) {
       switch (actionName) {
         case "edit":
-          this.editCourseOffering(courseOffering);
+          this.editPerson(person);
           break;
         case "deactivate":
-          this.confirmDeactivate(courseOffering);
+          this.confirmDeactivate(person);
           break;
         case "activate":
-          this.activate(courseOffering);
+          this.activate(person);
           break;
         default:
           break;
       }
     },
-
-    activateCourseOfferingDialog(courseOffering = {}, editMode = false) {
-      this.courseOfferingDialog.editMode = editMode;
-      this.courseOfferingDialog.courseOffering = courseOffering;
-      this.courseOfferingDialog.show = true;
+    */
+    activateNewPersonDialog(person = {}, editMode = false) {
+      this.newPersonDialog.editMode = editMode;
+      this.newPersonDialog.person = person;
+      this.newPersonDialog.show = true;
     },
-
-    editCourseOffering(courseOffering) {
-      this.activateCourseOfferingDialog({ ...courseOffering }, true);
+    /*
+    editPerson(person) {
+      this.activateNewPersonDialog({ ...person }, true);
     },
-
-    newCourseOffering() {
-      this.activateCourseOfferingDialog();
+    //*/
+    newPerson() {
+      this.activateNewPersonDialog();
     },
-
-    cancelCourseOffering() {
-      this.courseOfferingDialog.show = false;
+    //*/
+    cancelNewPerson() {
+      this.newPersonDialog.show = false;
     },
-
-    confirmDeactivate(courseOffering) {
+    /*
+    confirmDeactivate(person) {
       this.deactivateDialog.show = true;
-      this.deactivateDialog.courseOffering = courseOffering;
+      this.deactivateDialog.person = person;
     },
     //*/
     cancelDeactivate() {
       this.deactivateDialog.show = false;
     },
     /*
-    deactivate(courseOffering) {
+    deactivate(person) {
       this.deactivateDialog.loading = true;
       this.$http
-        .patch(`/api/v1/courses/course_offerings/${courseOffering.id}`, {
+        .patch(`/api/v1/courses/course_offerings/${person.id}`, {
           active: false,
         })
         .then((resp) => {
           console.log("EDITED", resp);
-          Object.assign(courseOffering, resp.data);
+          Object.assign(person, resp.data);
           this.snackbar.text = this.$t("courses.archived");
           this.snackbar.show = true;
         })
@@ -307,14 +310,14 @@ export default {
         });
     },
 
-    activate(courseOffering) {
+    activate(person) {
       this.$http
-        .patch(`/api/v1/courses/course_offerings/${courseOffering.id}`, {
+        .patch(`/api/v1/courses/course_offerings/${person.id}`, {
           active: true,
         })
         .then((resp) => {
           console.log("EDITED", resp);
-          Object.assign(courseOffering, resp.data);
+          Object.assign(person, resp.data);
           this.snackbar.text = this.$t("courses.reactivated");
           this.snackbar.show = true;
         })
@@ -324,33 +327,33 @@ export default {
         });
     },
 
-    saveCourseOffering(courseOffering) {
-      if (courseOffering instanceof Error) {
-        this.snackbar.text = this.courseOfferingDialog.editMode
+    saveNewPerson(person) {
+      if (person instanceof Error) {
+        this.snackbar.text = this.newPersonDialog.editMode
           ? this.$t("courses.update-failed")
           : this.$t("courses.add-failed");
         this.snackbar.show = true;
 
-        this.courseOfferingDialog.show = false;
+        this.newPersonDialog.show = false;
 
         return;
       }
 
-      if (this.courseOfferingDialog.editMode) {
+      if (this.newPersonDialog.editMode) {
         // Locate the record we're updating in the table.
-        const idx = this.courseOfferings.findIndex(
-          (c) => c.id === courseOffering.id
+        const idx = this.students.findIndex(
+          (c) => c.id === person.id
         );
-        Object.assign(this.courseOfferings[idx], courseOffering);
+        Object.assign(this.students[idx], person);
         this.snackbar.text = this.$t("courses.updated");
       } else {
-        this.courseOfferings.push(courseOffering);
+        this.students.push(person);
         this.snackbar.text = this.$t("courses.added");
       }
       
       this.snackbar.show = true;
 
-      this.courseOfferingDialog.show = false;
+      this.newPersonDialog.show = false;
     }, //*/
   },
 };
