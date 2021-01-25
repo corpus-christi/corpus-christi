@@ -48,6 +48,14 @@ def add_attribute_type(name, sqla, locale_code):
 
 
 def add_i18n_code(sqla, key_id, locale_code, gloss):
+    """
+    Create I18N key and value rows for an entry.
+    :param sqla: SQL Alchemy session
+    :param key_id: Full I18N key (e.g., 'person.name.last')
+    :param locale_code: Locale code (e.g., 'en-US', 'es-EC')
+    :param gloss: The "translation" for the given locale
+    :return: `key_id`
+    """
     if not sqla.query(I18NLocale).get(locale_code):
         sqla.add(I18NLocale(code=locale_code, desc=''))
 
@@ -258,23 +266,23 @@ def create_attributes(sqla):
         },
     ]
 
-    for attr_idx, datum in enumerate(attribute_data, start=1):
+    for attr_idx, attr_datum in enumerate(attribute_data, start=1):
         # Form the I18N tag by slugifying the value.
-        full_attribute_tag = "attribute." + slugify(datum['gloss']["en-US"])
+        full_attribute_tag = "attribute." + slugify(attr_datum['gloss']["en-US"])
 
         # Store the glosses of the attribute names.
         for locale in ["en-US", "es-EC"]:
-            add_i18n_code(sqla, full_attribute_tag, locale, datum['gloss'][locale])
+            add_i18n_code(sqla, full_attribute_tag, locale, attr_datum['gloss'][locale])
 
         attribute = Attribute(name_i18n=full_attribute_tag,
-                              type_i18n=datum['type'],
+                              type_i18n=attr_datum['type'],
                               seq=attr_idx,
-                              active=datum['active'])
+                              active=attr_datum['active'])
 
         # Create translations for enumerated values, if any.
-        if 'values' in datum:
-            for val_idx, val_data in enumerate(datum['values'], start=1):
-                full_value_tag = "attribute-value." + slugify(val_data['label']['en-US'])
+        if 'values' in attr_datum:
+            for val_idx, val_data in enumerate(attr_datum['values'], start=1):
+                full_value_tag = "attribute.value." + slugify(val_data['label']['en-US'])
                 for locale in ["en-US", "es-EC"]:
                     add_i18n_code(sqla, full_value_tag, locale, val_data['label'][locale])
                 value = EnumeratedValue(
@@ -283,8 +291,7 @@ def create_attributes(sqla):
                     seq=val_idx,
                     active=val_data['active'])
                 attribute.enumerated_values.append(value)
-            sqla.add(attribute)
-
+        sqla.add(attribute)
     sqla.commit()
 
 

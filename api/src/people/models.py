@@ -14,11 +14,8 @@ from ..shared.models import StringTypes
 
 # Defines join table for people_person and people_role
 people_person_role = Table('person_role', Base.metadata,
-                           Column('people_person_id', Integer, ForeignKey(
-                               'people_person.id'), primary_key=True),
-                           Column('id', Integer, ForeignKey(
-                               'people_role.id'), primary_key=True)
-                           )
+                           Column('people_person_id', Integer, ForeignKey('people_person.id'), primary_key=True),
+                           Column('id', Integer, ForeignKey('people_role.id'), primary_key=True))
 
 
 # ---- Person
