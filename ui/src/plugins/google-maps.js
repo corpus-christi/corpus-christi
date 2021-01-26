@@ -1,3 +1,9 @@
+/**
+ * @file
+ * @name google-maps.js
+ * Operates the Google Maps plugin from the main Public page.
+ * @todo Add comments describing where this file's imported to.
+ */
 import Vue from "vue";
 import * as VueGoogleMaps from "vue2-google-maps";
 import Geocoder from "@pderas/vue2-geocoder";

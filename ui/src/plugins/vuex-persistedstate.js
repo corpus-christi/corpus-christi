@@ -1,3 +1,8 @@
+/**
+ * @file
+ * @name vuex-persistedstate.js
+ * @todo Add comments describing what this file does and where it's imported to.
+ */
 import Account from "../models/Account";
 import { Locale } from "@/models/Locale";
 import { cloneDeep } from "lodash";

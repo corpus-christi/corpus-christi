@@ -1,3 +1,8 @@
+/**
+ * @file
+ * @name axios.js
+ * @todo Add comments describing what this file does and where it's imported to.
+ */
 import Vue from "vue";
 import axios from "axios";
 import store from "../store.js";
