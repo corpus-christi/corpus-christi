@@ -1,93 +1,45 @@
 <template>
-  <v-card
-    v-if="isSelected && !isHiddenByFilters"
-    outlined
-    class="d-flex align-center ml-3 mt-4 mr-3"
-    elevation="2"
-  >
-    <v-card
-      min-width=19.7%
-      max-width=19.7%
-      elevation="0"
-      class="ml-1"
-    >
-      <v-card-text>
-        {{ restOfTag }}
-      </v-card-text>
-    </v-card>
+  <v-card v-if="isSelected && !isHiddenByFilters" class="mb-1" outlined>
+    <v-container>
+      <v-row align="center">
+        <v-col>
+          {{ restOfTag }}
+        </v-col>
 
-    <v-card
-      min-width=20.5%
-      max-width=20.5%
-      elevation="0"
-      outlined
-    >
-      <v-card-text>
-        {{ previewGloss }}
-      </v-card-text>
-    </v-card>
+        <v-col>
+          {{ previewGloss }}
+        </v-col>
 
-    <v-card
-      min-width=1%
-      elevation="0"
-    >
-      <v-icon>
-        keyboard_arrow_right
-      </v-icon>
-    </v-card>
+        <v-col cols="1">
+        <v-icon>keyboard_arrow_right</v-icon>
+        </v-col>
 
-    <v-card
-      min-width=20.5%
-      max-width=20.5%
-      elevation="0"
-      outlined
-      :class="{ selected : highlightCard }"
-    >
-      <v-card-text>
-        {{ currentGloss }}
-      </v-card-text>
-    </v-card>
+        <v-col>
+          {{ currentGloss }}
+        </v-col>
 
-    <!-- SPACER -->
-    <v-card min-width=7% />
+        <v-col cols="3">
+          <v-text-field
+            v-model="newTranslation"
+            :append-icon="newTranslation ? 'send' : ''"
+            :loading="submissionInProgress ? 'success' : false"
+            @click:append="submitChange"
+            @focus="toggleSelection"
+            @blur="toggleSelection"
+          >
+            {{ newTranslation }}
+          </v-text-field>
+        </v-col>
 
-    <v-card
-      min-width=20%
-      max-width=20%
-      elevation="0"
-    >
-      <v-card
-        min-width=80%
-        max-width=80%
-        elevation="0"
-      >
-        <v-text-field
-        v-model="newTranslation"
-        :append-icon="newTranslation ? 'send' : ''"
-        :loading="submissionInProgress ? 'success' : false"
-        @click:append="submitChange"
-        @focus="toggleSelection"
-        @blur="toggleSelection"
-        >
-          {{ newTranslation }}
-        </v-text-field>
-      </v-card>
-    </v-card>
-
-    <!-- SPACER -->
-    <v-card min-width=3.7% />
-
-    <v-card
-      min-width=1%
-      max-width=1%
-      elevation="0"
-    >
-      <v-checkbox
-        class=" align-self-center"
-        v-model="newVerification"
-        :color="oldVerification ? 'primary' : 'warning'"
-      />
-    </v-card>
+        <v-col cols="1">
+          <v-checkbox
+            class="align-self-center"
+            v-model="newVerification"
+            :color="oldVerification ? 'primary' : 'warning'"
+          />
+        </v-col>
+      </v-row>
+    </v-container>
   </v-card>
 </template>
 
@@ -95,18 +47,18 @@
 export default {
   name: "TranslationCard",
   props: {
-    myIndex:         { type: Number,  required: true },
-    topLevelTag:     { type: String,  required: true },
-    restOfTag:       { type: String,  required: true },
-    previewGloss:    { type: String,  required: true },
-    currentGloss:    { type: String,  required: true },
+    myIndex: { type: Number, required: true },
+    topLevelTag: { type: String, required: true },
+    restOfTag: { type: String, required: true },
+    previewGloss: { type: String, required: true },
+    currentGloss: { type: String, required: true },
     currentVerified: { type: Boolean, required: true },
-    filters:         { type: Array,   required: true },
-    selectedTags:    { type: Array,   required: true },
-    currentCode:     { type: String,  required: true },
+    filters: { type: Array, required: true },
+    selectedTags: { type: Array, required: true },
+    currentCode: { type: String, required: true },
   },
   data() {
-    return{
+    return {
       oldTranslation: this.currentGloss,
       newTranslation: "",
       oldVerification: this.currentVerified,
@@ -116,7 +68,7 @@ export default {
     };
   },
   watch: {
-    currentGloss: function() {
+    currentGloss: function () {
       this.newTranslation = "";
       this.oldVerification = this.currentVerified;
       this.newVerification = this.currentVerified;
@@ -130,13 +82,12 @@ export default {
       return `${this.topLevelTag}.${this.restOfTag}`;
     },
     isHiddenByFilters() {
-      if (this.currentVerified && this.filters.includes('Unverified')) {
+      if (this.currentVerified && this.filters.includes("Unverified")) {
         return true;
       }
-      if (this.currentGloss.length != 0 && this.filters.includes('Untranslated')) {
-        return true;
-      }
-      return false;
+      return (
+        this.currentGloss.length !== 0 && this.filters.includes("Untranslated")
+      );
     },
   },
   methods: {
@@ -150,7 +101,12 @@ export default {
           verified: this.newVerification,
         })
         .then(() => {
-          this.$emit('submitAChange', this.myIndex, this.newTranslation, this.newVerification);
+          this.$emit(
+            "submitAChange",
+            this.myIndex,
+            this.newTranslation,
+            this.newVerification
+          );
           this.oldTranslation = this.newTranslation;
           this.newTranslation = "";
           this.oldVerification = this.newVerification;
@@ -168,9 +124,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-  .selected{
-    border-color: #1874d2;
-  }
-</style>
