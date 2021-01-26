@@ -10,22 +10,20 @@
       <v-icon>construction</v-icon>
     </v-btn>
 
-    <transition name="fade">
-      <ToolBox class="ToolBox mr-2 mt-1"
-        elevation="2"
-        v-show="showToolBox"
-        :numTranslated="numEntriesTranslated"
-        :numVerified="numEntriesVerified"
-        :totalEntries="numEntriesTotal"
-        :shouldBeShown="showToolBox"
-        :filterOptions="[
-          'translation.filters.untranslated',
-          'translation.filters.unverified']"
-        @hideToolBox="showToolBox = false"
-        @sendFilters="useFilter"
-        @addNewLocale="newLocaleDialog=true"
-      />
-    </transition>
+    <ToolBox class="ToolBox mr-2 mt-1"
+      elevation="2"
+      v-show="showToolBox"
+      :numTranslated="numEntriesTranslated"
+      :numVerified="numEntriesVerified"
+      :totalEntries="numEntriesTotal"
+      :shouldBeShown="showToolBox"
+      :filterOptions="[
+        'translation.filters.untranslated',
+        'translation.filters.unverified']"
+      @hideToolBox="showToolBox = false"
+      @sendFilters="useFilter"
+      @addNewLocale="newLocaleDialog=true"
+    />
 
     <WorkbenchHeader
       :allLocales="allLocaleObjs"
@@ -228,12 +226,5 @@ export default {
   }
   .dialog {
     overflow: hidden;
-  }
-  /* From https://vuejs.org/v2/guide/transitions.html */
-  .fade-enter-active, .fade-leave-active {
-    transition: opacity 0.5s;
-  }
-  .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
-    opacity: 0;
   }
 </style>

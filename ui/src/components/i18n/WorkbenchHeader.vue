@@ -11,7 +11,7 @@
         {{ $t("translation.tags.sub") }}
       </v-toolbar-title>
     </v-card>
-    <v-card width="3%" />
+    <v-card width="2.8%" />
     <v-card
       elevation="0"
       color="transparent"
@@ -27,9 +27,9 @@
         @change="changeLocaleList('fromLocaleList', previewLocale)"
       />
     </v-card>
-    <v-card width="1.8%" />
+    <v-card width="2%" />
     <v-icon>keyboard_arrow_right</v-icon>
-    <v-card width="1.8%" />
+    <v-card width="2%" />
     <v-card
       elevation="0"
       color="transparent"
@@ -46,7 +46,7 @@
       />
     </v-card>
     <v-card width="1%" />
-    <v-card width="9.5%">
+    <v-card width="3%">
       <v-btn
         :disabled="previewLocale == '' || currentLocale == ''"
         @click="$emit('updateTransToFrom')"
@@ -63,14 +63,14 @@
     <v-card
       elevation="0"
       color="transparent"
-      width="16%"
-      style="text: centered"
+      width="21%"
+      align="center"
     >
       <v-toolbar-title>
         {{ $t("translation.new-translation") }}
       </v-toolbar-title>
     </v-card>
-    <v-card width="1%" />
+    <v-card width="3%" />
     <v-card elevation="0" color="transparent" width="1%">
       <v-icon>done</v-icon>
     </v-card>
