@@ -18,7 +18,7 @@ class Attribute(Base):
     __tablename__ = 'people_attribute'
 
     id = Column(Integer, primary_key=True)
-    name_i18n = Column(StringTypes.I18N_KEY)
+    name = Column(StringTypes.LONG_STRING)
     type_i18n = Column(StringTypes.I18N_KEY)
     seq = Column(Integer, nullable=False)
     active = Column(Boolean, nullable=False)
@@ -82,12 +82,12 @@ def load_types_from_file(cls, file_name='attribute_types.json'):
 
 class AttributeSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
-    name_i18n = fields.String(data_key='nameI18n')
+    name = fields.String(required=True)
     type_i18n = fields.String(data_key='typeI18n')
     seq = fields.Integer(required=True)
     active = fields.Boolean(required=True)
 
-    enumerated_values = fields.Nested('EnumeratedValueSchema', many=True)
+    enumerated_values = fields.Nested('EnumeratedValueSchema', many=True, data_key='enumeratedValues')
 
 
 # ---- EnumeratedValue
@@ -98,9 +98,10 @@ class EnumeratedValue(Base):
 
     id = Column(Integer, primary_key=True)
     attribute_id = Column(Integer, ForeignKey('people_attribute.id'))
-    value_i18n = Column(StringTypes.I18N_KEY)
+    value = Column(StringTypes.LONG_STRING)
     seq = Column(Integer, nullable=False)
     active = Column(Boolean, nullable=False)
+
     person_attributes = relationship('PersonAttribute', back_populates='enumerated_values', lazy=True)
     attribute = relationship('Attribute', back_populates='enumerated_values', lazy=True)
 
@@ -111,7 +112,7 @@ class EnumeratedValue(Base):
 class EnumeratedValueSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
     attribute_id = fields.Integer(data_key='attributeId')
-    value_i18n = fields.String(data_key='valueI18n')
+    value = fields.String(required=True)
     seq = fields.Integer(required=True)
     active = fields.Boolean(required=True)
 
@@ -121,10 +122,12 @@ class EnumeratedValueSchema(Schema):
 
 class PersonAttribute(Base):
     __tablename__ = 'people_person_attributes'
+
     person_id = Column(Integer, ForeignKey('people_person.id'), primary_key=True)
     attribute_id = Column(Integer, ForeignKey('people_attribute.id'), primary_key=True)
     enum_value_id = Column(Integer, ForeignKey('people_enumerated_value.id'), nullable=True)
     string_value = Column(StringTypes.LONG_STRING)
+
     person = relationship('Person', back_populates='person_attributes', lazy=True)
     attribute = relationship('Attribute', back_populates='person_attributes', lazy=True)
     enumerated_values = relationship('EnumeratedValue', back_populates='person_attributes', lazy=True)

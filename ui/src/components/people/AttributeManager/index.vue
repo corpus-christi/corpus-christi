@@ -31,10 +31,10 @@
     <draggable v-model="allAttributes" class="row" :disabled="!dragEnabled">
       <v-col cols="6" v-for="attr in allAttributes" :key="attr.id">
         <attribute-card
-          :name="$t(attr.nameI18n)"
+          :name="attr.name"
           :type="$t(attr.typeI18n)"
           :active="attr.active"
-          :values="attr.enumerated_values || []"
+          :enumeratedValues="attr.enumeratedValues || []"
           :dragEnabled="dragEnabled"
         />
       </v-col>
@@ -81,8 +81,8 @@ export default {
       console.log(`Add ${i18nKey}`);
       let newAttribute = {
         active: false,
-        enumerated_values: [],
-        nameI18n: "",
+        enumeratedValues: [],
+        name: "",
         seq: -1,
         typeI18n: i18nKey,
       };

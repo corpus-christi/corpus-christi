@@ -1,10 +1,8 @@
-import json
 import random
 
 import pytest
 from faker import Faker
 from flask import url_for
-from slugify import slugify
 
 from .models import Attribute, AttributeSchema, PersonAttribute, PersonAttributeSchema, EnumeratedValue, \
     EnumeratedValueSchema
@@ -214,82 +212,70 @@ def create_multiple_person_attribute_enumerated(sqla, n):
 def create_attributes(sqla):
     attribute_data = [
         {
-            'gloss': {"en-US": "Preferred Service", "es-EC": "Servicio preferido"},
+            'name': "Preferred Service",
             'type': "attribute.radio",
             'active': True,
             "values": [
-                {"label": {"en-US": "Sunday 9:00", "es-EC": "Domingo 9:00"}, "active": True},
-                {"label": {"en-US": "Sunday 11:00", "es-EC": "Domingo 11:00"}, "active": True},
-                {"label": {"en-US": "Saturday 5:30", "es-EC": "Sábado 17:30"}, "active": False},
-                {"label": {"en-US": "Wednesday 7:00", "es-EC": "Miércoles 19:00"}, "active": True},
+                {"value": "Sunday 9:00", "active": True},
+                {"value": "Sunday 11:00", "active": True},
+                {"value": "Saturday 5:30", "active": False},
+                {"value": "Wednesday 7:00", "active": True},
             ],
         },
         {
-            "gloss": {"en-US": "Volunteer Availability", "es-EC": "Trabajar como voluntario"},
+            "name": "Volunteer Availability",
             "type": "attribute.checkbox",
             "active": True,
             "values": [
-                {"label": {"en-US": "Nursery", "es-EC": "Guardería"}, "active": True},
-                {"label": {"en-US": "Kitchen", "es-EC": "Cocina"}, "active": True},
-                {"label": {"en-US": "Greeter", "es-EC": "Saludador"}, "active": True},
+                {"value": "Nursery", "active": True},
+                {"value": "Kitchen", "active": True},
+                {"value": "Greeter", "active": True},
             ],
         },
         {
-            "gloss": {"en-US": "Date Baptized", "es-EC": "Fecha de bautismo"},
+            "name": "Date Baptized",
             "type": "attribute.date",
             "active": True,
         },
         {
-            "gloss": {"en-US": "Marital Status", "es-EC": "Estado civil"},
+            "name": "Marital Status",
             "type": "attribute.dropdown",
             "active": True,
             "values": [
-                {"label": {"en-US": "Single", "es-EC": "Soltero"}, "active": True},
-                {"label": {"en-US": "Married", "es-EC": "Casado"}, "active": True},
-                {"label": {"en-US": "Divorced", "es-EC": "Divorciado"}, "active": True},
+                {"value": "Single", "active": True},
+                {"value": "Married", "active": True},
+                {"value": "Divorced", "active": True},
             ],
         },
         {
-            "gloss": {"en-US": "Commute Distance", "es-EC": "Distancia de viaje"},
+            "name": "Commute Distance",
             "type": "attribute.float",
             "active": True,
         },
         {
-            "gloss": {"en-US": "Number of Children", "es-EC": "Numero de niños"},
+            "name": "Number of Children",
             "type": "attribute.integer",
             "active": True,
         },
         {
-            "gloss": {"en-US": "Preferred Name", "es-EC": "Apodo"},
+            "name": "Preferred Name",
             "type": "attribute.string",
             "active": True,
         },
     ]
 
     for attr_idx, attr_datum in enumerate(attribute_data, start=1):
-        # Form the I18N tag by slugifying the value.
-        full_attribute_tag = "attribute." + slugify(attr_datum['gloss']["en-US"])
-
-        # Store the glosses of the attribute names.
-        for locale in ["en-US", "es-EC"]:
-            add_i18n_code(sqla, full_attribute_tag, locale, attr_datum['gloss'][locale])
-
-        attribute = Attribute(name_i18n=full_attribute_tag,
+        attribute = Attribute(name=attr_datum['name'],
                               type_i18n=attr_datum['type'],
                               seq=attr_idx,
                               active=attr_datum['active'])
 
-        # Create translations for enumerated values, if any.
         if 'values' in attr_datum:
             for val_idx, val_data in enumerate(attr_datum['values'], start=1):
-                full_value_tag = "attribute.value." + slugify(val_data['label']['en-US'])
-                for locale in ["en-US", "es-EC"]:
-                    add_i18n_code(sqla, full_value_tag, locale, val_data['label'][locale])
-                value = EnumeratedValue(
-                    attribute_id=attr_idx,
-                    value_i18n=full_value_tag,
-                    seq=val_idx,
-                    active=val_data['active'])
+                value = EnumeratedValue(attribute_id=attr_idx,
+                                        value=val_data['value'],
+                                        seq=val_idx,
+                                        active=val_data['active'])
                 attribute.enumerated_values.append(value)
         sqla.add(attribute)
     sqla.commit()
@@ -298,88 +284,46 @@ def create_attributes(sqla):
 def create_multiple_people_attributes(sqla, n):
     """Commit `n` new people with attributes to the database."""
     person_schema = PersonSchema()
-    attribute_schema = AttributeSchema()
     person_attribute_schema = PersonAttributeSchema()
-    enumerated_value_schema = EnumeratedValueSchema()
+
     new_people = []
     for i in range(n):
         valid_person = person_schema.load(person_object_factory())
         new_people.append(Person(**valid_person))
     sqla.add_all(new_people)
-    new_attributes = [
-        {
-            'nameI18n': add_i18n_code(sqla, 'attribute.married', 'en-US', 'Marital Status'),
-            'typeI18n': add_i18n_code(sqla, 'attribute.radio', 'en-US', 'attribute.radio'),
-            'seq': 2,
-            'active': 1},
-        {
-            'nameI18n': add_i18n_code(sqla, 'attribute.HomeGroupName', 'en-US', 'Home Group Name'),
-            'typeI18n': add_i18n_code(sqla, 'attribute.string', 'en-US', 'attribute.string'),
-            'seq': 1,
-            'active': 1},
-        {
-            'nameI18n': add_i18n_code(sqla, 'attribute.BaptismDate', 'en-US', 'Baptism Date'),
-            'typeI18n': add_i18n_code(sqla, 'attribute.date', 'en-US', 'attribute.date'),
-            'seq': 3,
-            'active': 1}]
-    new_enumerated_values = [{'id': 1,
-                              'attributeId': 1,
-                              'valueI18n': add_i18n_code(sqla, 'personAttribute.married', 'en-US', 'married'),
-                              'active': 1},
-                             {'id': 2,
-                              'attributeId': 1,
-                              'valueI18n': add_i18n_code(sqla, 'personAttribute.single', 'en-US', 'single'),
-                              'active': 1}]
 
-    add_i18n_code(sqla, 'attribute.married', 'es-EC', 'Estado Civil')
-    add_i18n_code(sqla, 'attribute.HomeGroupName', 'es-EC', 'Nombre del grupo de origen')
-    add_i18n_code(sqla, 'attribute.BaptismDate', 'es-EC', 'Fecha de bautismo')
-    add_i18n_code(sqla, 'personAttribute.married', 'es-EC', 'casado')
-    add_i18n_code(sqla, 'personAttribute.single', 'es-EC', 'soltero')
-
-    valid_attributes = []
-    for attribute in new_attributes:
-        valid_attribute = attribute_schema.load(attribute)
-        valid_attributes.append(Attribute(**valid_attribute))
-    sqla.add_all(valid_attributes)
-    sqla.commit()
-
-    valid_enumerated_values = []
-    for enumerated_value in new_enumerated_values:
-        valid_enumerated_value = enumerated_value_schema.load(enumerated_value)
-        valid_enumerated_values.append(
-            EnumeratedValue(**valid_enumerated_value))
-    sqla.add_all(valid_enumerated_values)
-    sqla.commit()
+    create_attributes(sqla)
 
     all_people = sqla.query(Person).all()
     if not all_people:
         create_multiple_people(sqla, random.randint(3, 6))
         all_people = sqla.query(Person).all()
 
-    count = 1
-    for i in range(n):
-        # current_person = random.choice(all_people)
-        # person_id = current_person.id
-        new_person_attributes = [{'personId': count,
-                                  'attributeId': 1,
-                                  'enumValueId': 1},
-                                 {'personId': count,
-                                  'attributeId': 2,
-                                  'stringValue': "Home Group 1"},
-                                 {'personId': count,
-                                  'attributeId': 3,
-                                  'stringValue': '1-15-2019'}]
-
-        valid_person_attributes = []
-        count = count + 1
-        for person_attribute in new_person_attributes:
-            valid_person_attribute = person_attribute_schema.load(
-                person_attribute)
-            valid_person_attributes.append(
-                PersonAttribute(**valid_person_attribute))
-        sqla.add_all(valid_person_attributes)
-        sqla.commit()
+    raise RuntimeError("TODO - Associate attributes with people.")
+    # TODO - Here's the old code.
+    # count = 1
+    # for i in range(n):
+    #     # current_person = random.choice(all_people)
+    #     # person_id = current_person.id
+    #     new_person_attributes = [{'personId': count,
+    #                               'attributeId': 1,
+    #                               'enumValueId': 1},
+    #                              {'personId': count,
+    #                               'attributeId': 2,
+    #                               'stringValue': "Home Group 1"},
+    #                              {'personId': count,
+    #                               'attributeId': 3,
+    #                               'stringValue': '1-15-2019'}]
+    #
+    #     valid_person_attributes = []
+    #     count = count + 1
+    #     for person_attribute in new_person_attributes:
+    #         valid_person_attribute = person_attribute_schema.load(
+    #             person_attribute)
+    #         valid_person_attributes.append(
+    #             PersonAttribute(**valid_person_attribute))
+    #     sqla.add_all(valid_person_attributes)
+    #     sqla.commit()
 
 
 def prep_database(sqla):

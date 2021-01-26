@@ -9,13 +9,16 @@
 
     <v-card-subtitle>{{ currentState.type }}</v-card-subtitle>
 
-    <v-card-text v-if="currentState.values.length > 0">
-      <draggable v-model="currentState.values">
-        <v-list-item v-for="(value, idx) in currentState.values" :key="idx">
+    <v-card-text v-if="currentState.enumeratedValues.length > 0">
+      <draggable v-model="currentState.enumeratedValues">
+        <v-list-item
+          v-for="(enumeratedValue, idx) in currentState.enumeratedValues"
+          :key="idx"
+        >
           <v-list-item-content>
             <v-list-item-title>
               <editable-text
-                v-model="value.valueI18n"
+                v-model="enumeratedValue.value"
                 :edit-mode="inEditMode"
                 draggable
               />
@@ -23,14 +26,18 @@
           </v-list-item-content>
           <v-list-item-action>
             <v-btn
-              v-if="value.valueI18n.length === 0"
+              v-if="enumeratedValue.value.length === 0"
               text
               small
               @click="removeValue(idx)"
             >
               <v-icon>clear</v-icon>
             </v-btn>
-            <v-switch v-else :disabled="!inEditMode" v-model="value.active" />
+            <v-switch
+              v-else
+              :disabled="!inEditMode"
+              v-model="enumeratedValue.active"
+            />
           </v-list-item-action>
         </v-list-item>
       </draggable>
@@ -78,7 +85,7 @@ export default {
     name: { type: String, required: true },
     type: { type: String, required: true },
     active: { type: Boolean, required: true },
-    values: { type: Array },
+    enumeratedValues: { type: Array },
     dragEnabled: { type: Boolean, default: false },
   },
 
@@ -90,7 +97,7 @@ export default {
         name: this.name,
         type: this.type,
         active: this.active,
-        values: cloneDeep(this.values),
+        enumeratedValues: cloneDeep(this.enumeratedValues),
       },
 
       clonedState: null,
@@ -117,20 +124,20 @@ export default {
     saveEdits() {
       this.clonedState = null;
       this.inEditMode = false;
-      this.currentState.values = this.currentState.values.filter(
-        (v) => v.valueI18n.length > 0
+      this.currentState.enumeratedValues = this.currentState.enumeratedValues.filter(
+        (v) => v.value.length > 0
       );
     },
 
     addValue() {
-      this.currentState.values.push({
-        valueI18n: "",
+      this.currentState.enumeratedValues.push({
+        value: "",
         active: false,
       });
     },
 
     removeValue(idx) {
-      this.currentState.values.splice(idx, 1);
+      this.currentState.enumeratedValues.splice(idx, 1);
     },
   },
 };
