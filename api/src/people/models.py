@@ -112,18 +112,9 @@ class Person(Base):
 class PersonSchema(Schema):
     id = fields.Integer(dump_only=True, required=True, validate=Range(min=1))
 
-    first_name = fields.String(
-        data_key='firstName',
-        required=True,
-        validate=Length(
-            min=1))
-    last_name = fields.String(
-        data_key='lastName',
-        required=True,
-        validate=Length(
-            min=1))
-    second_last_name = fields.String(
-        data_key='secondLastName', allow_none=True)
+    first_name = fields.String(data_key='firstName', required=True, validate=Length(min=1))
+    last_name = fields.String(data_key='lastName', required=True, validate=Length(min=1))
+    second_last_name = fields.String(data_key='secondLastName', allow_none=True)
     gender = fields.String(validate=OneOf(['M', 'F']), allow_none=True)
     birthday = fields.Date(allow_none=True)
     phone = fields.String(allow_none=True)
@@ -142,11 +133,7 @@ class PersonSchema(Schema):
     address_id = fields.Integer(data_key='addressId', allow_none=True)
 
     attributesInfo = fields.Nested('PersonAttributeSchema', many=True)
-    images = fields.Nested(
-        'ImagePersonSchema',
-        many=True,
-        exclude=['person'],
-        dump_only=True)
+    images = fields.Nested('ImagePersonSchema', many=True, exclude=['person'], dump_only=True)
     roles = fields.Nested('RoleSchema', many=True, dump_only=True)
     members = fields.Nested(
         'MemberSchema',

@@ -1,6 +1,6 @@
 from marshmallow import fields, Schema
-from marshmallow.validate import Length, Range
-from sqlalchemy import Column, DateTime, Integer, ForeignKey, Boolean
+from marshmallow.validate import Length, Range, OneOf
+from sqlalchemy import Column, DateTime, Integer, ForeignKey, Boolean, String
 from sqlalchemy.orm import relationship
 
 from ..db import Base
@@ -21,7 +21,7 @@ class Event(Base):
     active = Column(Boolean, default=True)
     attendance = Column(Integer)
     aggregate = Column(Boolean, default=True)
-    gender = Column(String)
+    gender = Column(String(1))
 
     assets = relationship("EventAsset", back_populates="event")
     teams = relationship("EventTeam", back_populates="event")
@@ -45,7 +45,7 @@ class EventSchema(Schema):
     active = fields.Boolean()
     attendance = fields.Integer(allow_none=True)
     aggregate = fields.Boolean(allow_none=True)
-    gender = fields.String(validate=OneOf(['male', 'female']), allow_none=True)
+    gender = fields.String(validate=OneOf(['M', 'F']), allow_none=True)
 
     location = fields.Nested('LocationSchema', allow_none=True, dump_only=True)
     participants = fields.Nested(
