@@ -26,7 +26,7 @@ import Footer from "./Footer";
 /**
  * @module
  * @name DefaultLayout
- * @exports ui/src/App.vue
+ * @exports ../App.vue
  * Configures the basic layout of all pages.
  */
 export default {

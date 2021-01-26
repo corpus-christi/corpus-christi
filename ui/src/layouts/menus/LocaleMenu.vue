@@ -1,5 +1,6 @@
 <template>
   <v-row class="shrink" align="center">
+    <!-- The switch Translators can use to enable Language Transparent Mode -->
     <v-col v-if="isTranslator">
       <v-switch
         hide-details
@@ -8,8 +9,11 @@
         v-model="transparentMode"
       />
     </v-col>
+    
+    <!-- The Language Dropdown Menu -->
     <v-col>
       <v-menu offset-y :disabled="disableMenu">
+        <!-- Make the Button appear in the App Bar -->
         <template v-slot:activator="{ on }">
           <v-btn id="cur-locale" data-cy="cur-locale" text v-on="on">
             {{ currentFlagAndDescription }}
@@ -17,6 +21,7 @@
           </v-btn>
         </template>
 
+        <!-- Enable the Dropdown Menu -->
         <v-list data-cy="language-dropdown">
           <v-list-item
             v-for="(localeModel, idx) in localeModels"
@@ -35,9 +40,20 @@
 </template>
 
 <script>
+/**
+ * @file
+ * @name LocaleMenu.vue
+ */
 import set from "lodash/set";
 import { mapState } from "vuex";
 
+/**
+ * @module
+ * @name LocaleMenu
+ * @exports ../app-bars/ArcoAppBar.vue 
+ * @exports ../app-bars/StandardAppBar.vue
+ * The Menu in the App Bar which allows the User to change the Language.
+ */
 export default {
   name: "LocaleMenu",
   data() {
