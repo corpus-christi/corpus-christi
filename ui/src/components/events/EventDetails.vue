@@ -4,23 +4,20 @@
       <v-col cols=12>
         <v-card elevation=8>
           <template v-if="eventLoaded">
-            <v-container fill-height fluid>
-              <v-row>
-                <v-col cols=10 sm=10>
-                  <span class="headline">{{ event.title }}</span>
-                </v-col>
-                <v-col cols=2 sm=2>
-                  <v-btn
-                    right
-                    color="primary"
-                    data-cy="edit-event"
-                    v-on:click="editEvent(event)"
-                  >
-                    <v-icon left>edit</v-icon>{{ $t("actions.edit") }}
-                  </v-btn>
-                </v-col>
-              </v-row>
-            </v-container>
+            <v-toolbar dark color="primary">
+              <v-toolbar-title>
+                <span class="headline">{{ event.title }}</span>
+              </v-toolbar-title>
+              <v-spacer/>
+              <v-btn
+                right
+                outlined
+                data-cy="edit-event"
+                @click="editEvent(event)"
+              >
+                <v-icon left>edit</v-icon>{{ $t("actions.edit") }}
+              </v-btn>
+            </v-toolbar>
             <v-container fluid>
               <v-card-text>
                 <v-row>
@@ -109,9 +106,18 @@
               :loaded="teamsLoaded"
               :items="event.teams"
               v-on:item-added="addTeam"
+              v-on:item-deleted="deleteTeam"
             >
 
             </event-item-details>
+
+            <event-item-details
+              item="person"
+              :loaded="personsLoaded"
+              :items="event.persons"
+              v-on:item-added="addPerson"
+              v-on:item-deleted="deletePerson"
+            />
             <event-team-details
               :teams="event.teams"
               :loaded="teamsLoaded"
@@ -134,6 +140,13 @@
       <v-col cols=12 lg=6>
         <v-row>
           <v-col cols=12>
+            <event-item-details
+              item="group"
+              :loaded="groupsLoaded"
+              :items="event.groups"
+              v-on:item-added="addGroup"
+              v-on:item-deleted="deleteGroup"
+            />
             <event-asset-details
               :assets="event.assets"
               :loaded="assetsLoaded"
@@ -330,7 +343,6 @@ export default {
         .then(() => {
           this.showSnackbar(this.$t("teams.team-added"));
           this.event.teams.push(data.item);
-          console.log(this.event.teams);
         })
         .catch((err) => {
           console.log(err);
@@ -343,8 +355,10 @@ export default {
     },
 
     deleteTeam(data) {
+      console.log("deleting...");
+      console.log(data);
       const eventId = this.$route.params.event;
-      let id = data.teamId;
+      let id = data.itemId;
       const idx = this.event.teams.findIndex((t) => t.id === id);
       this.$http
         .delete(`/api/v1/events/${eventId}/teams/${id}`)
@@ -361,7 +375,7 @@ export default {
 
     addPerson(data) {
       const eventId = this.$route.params.event;
-      let personData = data.person;
+      let personData = data.item;
       let personId = personData.id;
       if (!data.editMode) {
         const idx = this.event.persons.findIndex((p) => p.id === personId);
@@ -406,7 +420,7 @@ export default {
 
     deletePerson(data) {
         const eventId = this.$route.params.event;
-        let id = data.personId;
+        let id = data.itemId;
         const idx = this.event.persons.findIndex((p) => p.id === id)
         this.$http
         .delete(`/api/v1/events/${eventId}/individuals/${id}`)
@@ -465,7 +479,7 @@ export default {
 
     addGroup(data) {
       const eventId = this.$route.params.event;
-      let groupId = data.group.id;
+      let groupId = data.item.id;
       const idx = this.event.groups.findIndex((t) => t.id === groupId);
       if (idx > -1) {
         this.showSnackbar(this.$t("groups-group-on-event"));
@@ -476,7 +490,7 @@ export default {
         .post(`/api/v1/events/${eventId}/groups/${groupId}`)
         .then(() => {
           this.showSnackbar(this.$t("groups.group-added"));
-          this.event.groups.push(data.group);
+          this.event.groups.push(data.item);
         })
         .catch((err) => {
           console.log(err);
@@ -490,7 +504,7 @@ export default {
 
     deleteGroup(data) {
       const eventId = this.$route.params.event;
-      let id = data.groupId;
+      let id = data.itemId;
       const idx = this.event.groups.findIndex((t) => t.id === id);
       this.$http
         .delete(`/api/v1/events/${eventId}/groups/${id}`)

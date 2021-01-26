@@ -144,7 +144,7 @@ export default {
   components: {
     "entity-search": EntitySearch,
   },
-
+  
   props: {
     teams: {
       required: true,
