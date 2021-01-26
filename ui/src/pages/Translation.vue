@@ -238,8 +238,7 @@ export default {
 <style scoped>
 .ToolBox {
   position: fixed;
-  width: 350px;
-  height: 25%;
+  width: 375px;
   right: 0;
   z-index: 2;
 }

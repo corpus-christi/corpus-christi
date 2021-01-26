@@ -4,7 +4,7 @@
       <v-row align="center">
         <v-col class="headline">{{ $t("translation.tags.top") }}</v-col>
 
-        <v-s />
+        <v-spacer />
 
         <v-col>
           <v-select
