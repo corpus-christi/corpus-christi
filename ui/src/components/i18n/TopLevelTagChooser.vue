@@ -5,7 +5,7 @@
     </v-card>
     <v-card
       class="overflow-y-auto"
-      height="1000"
+      :height="calculateScreenHeight"
     >
       <v-list>
         <v-list-item-group class="ml-3" color="grey darken-4" multiple>
@@ -60,6 +60,12 @@ export default {
   watch: {
     allTranslations: function() {
       this.populateIncompleteCounts();
+    },
+  },
+  computed: {
+    calculateScreenHeight() {
+      console.log(this.screenHeight);
+      return .7 * screen.height;
     },
   },
   methods: {
