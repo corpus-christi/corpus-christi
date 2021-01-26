@@ -1,8 +1,8 @@
 /**
  * @file
  * @name vue-i18n.js
+ * @exports ???
  * Operates Internationalization (i18n).
- * @todo Add comments describing where this file's imported to.
  */
 import Vue from "vue";
 import VueI18n from "vue-i18n";
