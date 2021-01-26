@@ -1,43 +1,47 @@
 <template>
-  <v-card
-    elevation="2"
-    class="overflow-y-auto overflow-x-auto mt-3"
-    max-height="50%"
-  >
-    <v-list>
-      <v-list-item-group
-        class="ml-3"
-        color="grey darken-4"
-        multiple
-      >
-
-      <v-tooltip right
-        v-for="(tag, index) in topLevelTags"
-        :key="index"
-      >
-        <template v-slot:activator="{ on }">
-          <!-- Workaround from https://github.com/vuetifyjs/vuetify/issues/11345 -->
-          <span v-on="on">
-            <v-checkbox
-              v-model="selectedTags"
-              :label="`${tag}
-                (${incompleteCounts[tag] ? incompleteCounts[tag].untranslated : 0} | 
-                ${incompleteCounts[tag] ? incompleteCounts[tag].unverified : 0})`"
-              :value="tag"
-              @click="onTagsChanged"
-            />
-          </span>
-        </template>
-        <span>
-          {{ $t("translation.tags.tooltip",
-          [incompleteCounts[tag] ? incompleteCounts[tag].untranslated : 0,
-          incompleteCounts[tag] ? incompleteCounts[tag].unverified : 0]) }}
-        </span>
-      </v-tooltip>
-
-      </v-list-item-group>
-    </v-list>
-  </v-card>
+  <div>
+    <v-card class="mb-1">
+      <v-card-title>Tag</v-card-title>
+    </v-card>
+    <v-card
+      class="overflow-y-auto"
+      height="1000"
+    >
+      <v-list>
+        <v-list-item-group class="ml-3" color="grey darken-4" multiple>
+          <v-tooltip right v-for="(tag, index) in topLevelTags" :key="index">
+            <template v-slot:activator="{ on }">
+              <!-- Workaround from https://github.com/vuetifyjs/vuetify/issues/11345 -->
+              <span v-on="on">
+                <v-checkbox
+                  v-model="selectedTags"
+                  :label="`${tag}
+                (${
+                  incompleteCounts[tag] ? incompleteCounts[tag].untranslated : 0
+                } | 
+                ${
+                  incompleteCounts[tag] ? incompleteCounts[tag].unverified : 0
+                })`"
+                  :value="tag"
+                  @click="onTagsChanged"
+                />
+              </span>
+            </template>
+            <span>
+              {{
+                $t("translation.tags.tooltip", [
+                  incompleteCounts[tag]
+                    ? incompleteCounts[tag].untranslated
+                    : 0,
+                  incompleteCounts[tag] ? incompleteCounts[tag].unverified : 0,
+                ])
+              }}
+            </span>
+          </v-tooltip>
+        </v-list-item-group>
+      </v-list>
+    </v-card>
+  </div>
 </template>
 
 <script>

@@ -1,80 +1,42 @@
 <template>
-  <v-app-bar dense dark height="60">
-    <v-card elevation="0" color="transparent" width="15%">
-      <v-toolbar-title>
-        {{ $t("translation.tags.top") }}
-      </v-toolbar-title>
-    </v-card>
-    <v-card width="3%" />
-    <v-card elevation="0" color="transparent" width="15%">
-      <v-toolbar-title>
-        {{ $t("translation.tags.sub") }}
-      </v-toolbar-title>
-    </v-card>
-    <v-card width="2.8%" />
-    <v-card
-      elevation="0"
-      color="transparent"
-      class="mt-5"
-      width="13%"
-    >
-      <v-select
-        :label="$t('translation.translate-from')"
-        :items="fromLocaleList"
-        item-text="displayString"
-        item-value="code"
-        v-model="previewLocale"
-        @change="changeLocaleList('fromLocaleList', previewLocale)"
-      />
-    </v-card>
-    <v-card width="2%" />
-    <v-icon>keyboard_arrow_right</v-icon>
-    <v-card width="2%" />
-    <v-card
-      elevation="0"
-      color="transparent"
-      class="mt-5"
-      width="13%"
-    >
-      <v-select
-        :label="$t('translation.translate-to')"
-        :items="toLocaleList"
-        item-text="displayString"
-        item-value="code"
-        v-model="currentLocale"
-        @change="changeLocaleList('toLocaleList', currentLocale)"
-      />
-    </v-card>
-    <v-card width="1%" />
-    <v-card width="3%">
-      <v-btn
-        :disabled="previewLocale == '' || currentLocale == ''"
-        @click="$emit('updateTransToFrom')"
-        small
-        outlined
-        depressed
-        color="primary"
-        height="50px"
-        :loading="loadingTranslations"
-      >
-        {{ $t("translation.fetch") }}
-      </v-btn>
-    </v-card>
-    <v-card
-      elevation="0"
-      color="transparent"
-      width="21%"
-      align="center"
-    >
-      <v-toolbar-title>
-        {{ $t("translation.new-translation") }}
-      </v-toolbar-title>
-    </v-card>
-    <v-card width="3%" />
-    <v-card elevation="0" color="transparent" width="1%">
-      <v-icon>done</v-icon>
-    </v-card>
-  </v-app-bar>
+  <v-card class="mb-2">
+    <v-container>
+      <v-row align="center">
+        <v-col class="headline">{{ $t("translation.tags.top") }}</v-col>
+        
+        <v-col>
+          <v-select
+            :label="$t('translation.translate-from')"
+            :items="fromLocaleList"
+            item-text="displayString"
+            item-value="code"
+            v-model="previewLocale"
+            @change="changeLocaleList('fromLocaleList', previewLocale)"
+        /></v-col>
+
+        <v-col>
+          <v-select
+            :label="$t('translation.translate-to')"
+            :items="toLocaleList"
+            item-text="displayString"
+            item-value="code"
+            v-model="currentLocale"
+            @change="changeLocaleList('toLocaleList', currentLocale)"
+          />
+        </v-col>
+        <v-col>
+          <v-btn
+            :disabled="previewLocale === '' || currentLocale === ''"
+            @click="$emit('updateTransToFrom')"
+            color="primary"
+            :loading="loadingTranslations"
+          >
+            {{ $t("translation.fetch") }}
+          </v-btn>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-card>
 </template>
 
 <script>

@@ -1,16 +1,21 @@
 <template>
   <v-container>
     <v-btn
-      v-b-tooltip.hover title="Show Toolbox"
-      fab outlined right fixed depressed
+      title="Show Toolbox"
+      fab
+      outlined
+      right
+      fixed
+      depressed
       class="showToolBox"
-      style="top: 80px; z-index: 2;"
+      style="top: 80px; z-index: 2"
       @click="showToolBox = !showToolBox"
     >
       <v-icon>construction</v-icon>
     </v-btn>
 
-    <ToolBox class="ToolBox mr-2 mt-1"
+    <ToolBox
+      class="ToolBox mr-2 mt-1"
       elevation="2"
       v-show="showToolBox"
       :numTranslated="numEntriesTranslated"
@@ -19,10 +24,11 @@
       :shouldBeShown="showToolBox"
       :filterOptions="[
         'translation.filters.untranslated',
-        'translation.filters.unverified']"
+        'translation.filters.unverified',
+      ]"
       @hideToolBox="showToolBox = false"
       @sendFilters="useFilter"
-      @addNewLocale="newLocaleDialog=true"
+      @addNewLocale="newLocaleDialog = true"
     />
 
     <WorkbenchHeader
@@ -43,13 +49,22 @@
         />
       </v-col>
 
-      <v-divider vertical />
-
       <v-col>
+        <v-card class="mb-1">
+          <v-card-title>
+            <v-row>
+              <v-col>{{ $t("translation.tags.sub") }}</v-col>
+              <v-col>{{ $t("translation.translate-from") }}</v-col>
+              <v-col cols="1"></v-col>
+              <v-col>{{ $t("translation.translate-to") }}</v-col>
+              <v-col cols="3">{{ $t("translation.new-translation") }}</v-col>
+              <v-col cols="1"><v-icon>check</v-icon></v-col>
+            </v-row>
+          </v-card-title>
+        </v-card>
         <v-card
-          elevation="2"
-          max-height="50%"
-          class="overflow-y-auto mt-3"
+          class="overflow-y-auto"
+          :height="calculateScreenHeight"
         >
           <TranslationCard
             v-for="(card, index) in translationObjs"
@@ -79,15 +94,13 @@
 
 <script>
 import { mapState } from "vuex";
-// import { eventBus } from "../plugins/event-bus.js";
-import { LocaleModel } from "../models/Locale.js";
+import { LocaleModel } from "@/models/Locale";
 import TranslationCard from "../components/i18n/TranslationCard.vue";
 import TopLevelTagChooser from "../components/i18n/TopLevelTagChooser.vue";
 import WorkbenchHeader from "../components/i18n/WorkbenchHeader.vue";
 import ToolBox from "../components/i18n/ToolBox.vue";
 import NewLocaleDialog from "../components/i18n/NewLocaleDialog.vue";
 const _ = require("lodash");
-
 export default {
   name: "Translation",
   components: {
@@ -103,13 +116,11 @@ export default {
       selectedTags: [],
       allLocaleObjs: [],
       translationObjs: [],
-
       previewCode: "",
       currentCode: "",
-      
       newLocaleDialog: false,
       filters: [],
-      showToolBox: true,
+      showToolBox: false,
       loadingTranslations: false,
     };
   },
@@ -117,13 +128,18 @@ export default {
     ...mapState(["currentAccount"]),
     ...mapState(["currentLocale"]),
     numEntriesTranslated() {
-      return this.translationObjs.filter(obj => obj.current_gloss != '').length;
+      return this.translationObjs.filter((obj) => obj.current_gloss != "")
+        .length;
     },
     numEntriesVerified() {
-      return this.translationObjs.filter(obj => obj.current_verified).length;
+      return this.translationObjs.filter((obj) => obj.current_verified).length;
     },
     numEntriesTotal() {
       return this.translationObjs.length;
+    },
+    calculateScreenHeight() {
+      console.log(this.screenHeight);
+      return .7 * screen.height;
     },
   },
   methods: {
@@ -155,12 +171,14 @@ export default {
     fetchNewTranslations() {
       this.loadingTranslations = true;
       return this.$http
-        .get(`api/v1/i18n/values/translations/${this.previewCode}/${this.currentCode}`)
+        .get(
+          `api/v1/i18n/values/translations/${this.previewCode}/${this.currentCode}`
+        )
         .then((resp) => {
           this.translationObjs = resp.data;
         })
         .catch((err) => console.log(err))
-        .finally(() => this.loadingTranslations = false);
+        .finally(() => (this.loadingTranslations = false));
     },
     onPreviewLocaleChanged(code) {
       this.previewCode = code;
@@ -174,10 +192,16 @@ export default {
     },
     findFirstTag() {
       //find the first tag
-      dance:
-      for(let objNum = 0; objNum < this.translationObjs.length; objNum++){
-        for(let tagNum = 0; tagNum < this.selectedTags.length; tagNum++){
-          if(this.selectedTags[tagNum] == this.translationObjs[objNum].top_level_key){
+      dance: for (
+        let objNum = 0;
+        objNum < this.translationObjs.length;
+        objNum++
+      ) {
+        for (let tagNum = 0; tagNum < this.selectedTags.length; tagNum++) {
+          if (
+            this.selectedTags[tagNum] ==
+            this.translationObjs[objNum].top_level_key
+          ) {
             //focus on the v-text-field element
             this.focusOnFirstTag(this.translationObjs[objNum]);
             break dance;
@@ -186,9 +210,7 @@ export default {
       }
     },
     // eslint-disable-next-line
-    focusOnFirstTag(cardObj) {
-      
-    },
+    focusOnFirstTag(cardObj) {},
     bodyScrollHeight() {
       return document.body.scrollHeight;
     },
@@ -208,6 +230,7 @@ export default {
       });
       this.newLocaleDialog = false;
     },
+    
   },
   mounted: function () {
     this.loadTopLevelTags();
@@ -217,14 +240,14 @@ export default {
 </script>
 
 <style scoped>
-  .ToolBox {
-    position: fixed;
-    width: 350px;
-    height: 25%;
-    right: 0;
-    z-index: 2;
-  }
-  .dialog {
-    overflow: hidden;
-  }
+.ToolBox {
+  position: fixed;
+  width: 350px;
+  height: 25%;
+  right: 0;
+  z-index: 2;
+}
+.dialog {
+  overflow: hidden;
+}
 </style>

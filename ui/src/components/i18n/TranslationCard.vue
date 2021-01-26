@@ -1,88 +1,45 @@
 <template>
-  <v-card
-    v-if="isSelected && !isHiddenByFilters"
-    outlined
-    class="d-flex align-center ma-3"
-    elevation="2"
-  >
-    <v-card
-      width="19.7%"
-      elevation="0"
-      class="ml-1"
-    >
-      <v-card-text>
-        {{ restOfTag }}
-      </v-card-text>
-    </v-card>
+  <v-card v-if="isSelected && !isHiddenByFilters" class="mb-1" outlined>
+    <v-container>
+      <v-row align="center">
+        <v-col>
+          {{ restOfTag }}
+        </v-col>
 
-    <v-card
-      width="20.5%"
-      elevation="0"
-      outlined
-    >
-      <v-card-text>
-        {{ previewGloss }}
-      </v-card-text>
-    </v-card>
+        <v-col>
+          {{ previewGloss }}
+        </v-col>
 
-    <v-card
-      align="center"
-      width="2%"
-      elevation="0"
-    >
-      <v-icon>
-        keyboard_arrow_right
-      </v-icon>
-    </v-card>
+        <v-col cols="1">
+        <v-icon>keyboard_arrow_right</v-icon>
+        </v-col>
 
-    <v-card
-      width="20.5%"
-      elevation="0"
-      outlined
-      :class="{ selected : highlightCard }"
-    >
-      <v-card-text>
-        {{ currentGloss }}
-      </v-card-text>
-    </v-card>
+        <v-col>
+          {{ currentGloss }}
+        </v-col>
 
-    <!-- SPACER -->
-    <v-card min-width=7% />
+        <v-col cols="3">
+          <v-text-field
+            v-model="newTranslation"
+            :append-icon="newTranslation ? 'send' : ''"
+            :loading="submissionInProgress ? 'success' : false"
+            @click:append="submitChange"
+            @focus="toggleSelection"
+            @blur="toggleSelection"
+          >
+            {{ newTranslation }}
+          </v-text-field>
+        </v-col>
 
-    <v-card
-      width="20%"
-      elevation="0"
-    >
-      <v-card
-        width="80%"
-        elevation="0"
-      >
-        <v-text-field
-        v-model="newTranslation"
-        :append-icon="newTranslation ? 'send' : ''"
-        :loading="submissionInProgress ? 'success' : false"
-        @click:append="submitChange"
-        @focus="toggleSelection"
-        @blur="toggleSelection"
-        >
-          {{ newTranslation }}
-        </v-text-field>
-      </v-card>
-    </v-card>
-
-    <!-- SPACER -->
-    <v-card width="3.7%" />
-
-    <v-card
-      width="1%"
-      elevation="0"
-    >
-      <v-checkbox
-        class=" align-self-center"
-        v-model="newVerification"
-        :color="oldVerification ? 'primary' : 'warning'"
-      />
-    </v-card>
+        <v-col cols="1">
+          <v-checkbox
+            class="align-self-center"
+            v-model="newVerification"
+            :color="oldVerification ? 'primary' : 'warning'"
+          />
+        </v-col>
+      </v-row>
+    </v-container>
   </v-card>
 </template>
 
