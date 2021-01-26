@@ -96,6 +96,7 @@ export default {
       tab: null,
     };
   },
+
   mounted() {
     this.loadDiploma();
   },

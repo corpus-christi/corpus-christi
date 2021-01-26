@@ -1,4 +1,6 @@
-// Vuex store; contains global state information for the entire UI.
+/**
+ * @file Vuex Store; contains global state information for the entire UI.
+ */
 
 import Vue from "vue";
 import Vuex from "vuex";
@@ -9,11 +11,16 @@ import { persistedStateOptions } from "./plugins/vuex-persistedstate.js";
 
 Vue.use(Vuex);
 
+/** 
+ * @global these variables and methods are all global. 
+ * They can be accessed anywhere using this.$store (ex: this.$store.state.currentAccount || this.$store.getters.isLoggedIn)
+ * But Nurk will love you if you use mapState and mapGetters (https://vuex.vuejs.org/guide/getters.html#the-mapgetters-helper)
+*/
 export default new Vuex.Store({
   plugins: [createPersistedState(persistedStateOptions)],
 
   state: {
-    // Current locale code (e.g., `es-EC`, `en-US`)
+    // Current locale code (e.g., `es-EC`, `en-US`) (This line doesn't actually alter the default language, see ui/src/App.vue)
     currentLocale: new Locale("es-EC"),
 
     // All available I18NLocale instances (locale and description).
