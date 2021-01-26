@@ -1,7 +1,6 @@
 <template>
   <!-- COLOR! -->
   <v-app-bar app color="rgb(241, 145, 37)">
-
     <!-- Draw the Arco logo. Make it link to this page for some reason. -->
     <router-link v-bind:to="{ name: 'public' }" data-cy="home-logo">
       <img v-bind:src="arcoLogo" height="40px" alt="Arco Logo" />

@@ -9,7 +9,7 @@
         v-model="transparentMode"
       />
     </v-col>
-    
+
     <!-- The Language Dropdown Menu -->
     <v-col>
       <v-menu offset-y :disabled="disableMenu">
@@ -50,7 +50,7 @@ import { mapState } from "vuex";
 /**
  * @module
  * @name LocaleMenu
- * @exports ../app-bars/ArcoAppBar.vue 
+ * @exports ../app-bars/ArcoAppBar.vue
  * @exports ../app-bars/StandardAppBar.vue
  * The Menu in the App Bar which allows the User to change the Language.
  */

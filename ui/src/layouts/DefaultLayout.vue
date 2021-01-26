@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <!-- Places the App Bar -->
+    <!-- Draw the App Bar -->
     <app-bar />
     <v-main>
       <message-snack-bar v-bind:bus="bus" />
@@ -8,7 +8,7 @@
       <router-view />
     </v-main>
 
-    <!-- Places the Footer -->
+    <!-- Draw the Footer -->
     <Footer />
   </v-app>
 </template>

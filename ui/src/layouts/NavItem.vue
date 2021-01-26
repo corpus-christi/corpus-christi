@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- Functionality if an Item contains an expanding list of links -->
+    <!-- Functionality if the Item contains an expanding list of links -->
     <v-list-group v-if="isInterior">
       <!--
         Slot syntax in vue is a little confusing. In this instance,
@@ -23,7 +23,7 @@
       />
     </v-list-group>
 
-    <!-- Actually places the Item in the NavDrawer -->
+    <!-- Actually place the Item in the NavDrawer -->
     <v-list-item
       v-else-if="isLeaf"
       :to="{ name: item.route }"

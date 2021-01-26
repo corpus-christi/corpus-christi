@@ -1,5 +1,5 @@
 <template>
-  <!-- Creates the Navigation Bar -->
+  <!-- Draw the Navigation Bar -->
   <v-navigation-drawer
     app
     clipped

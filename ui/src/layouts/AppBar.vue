@@ -1,5 +1,5 @@
 <template>
-  <!-- Creates the Bar -->
+  <!-- Draw the App Bar -->
   <nav>
     <arco-app-bar v-if="$route.meta.layout === 'arco'" />
     <standard-app-bar v-else />

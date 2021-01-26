@@ -1,5 +1,5 @@
 <template>
-  <!-- Creates the Footer -->
+  <!-- Draw the Footer -->
   <v-footer app dark color="grey" class="pa-2">
     <v-spacer />
     <div>
