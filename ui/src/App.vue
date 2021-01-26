@@ -8,7 +8,7 @@ import { setJWT } from "./plugins/axios";
 import { Locale } from "./models/Locale";
 import { eventBus } from "./plugins/event-bus.js";
 import DefaultLayout from "./layouts/DefaultLayout";
-import { mapGetters } from 'vuex';
+import { mapGetters } from "vuex";
 
 export default {
   name: "App",
@@ -28,23 +28,28 @@ export default {
     this.$http.get("/api/v1/i18n/locales").then((response) => {
       const localeData = response.data;
 
-      
       if (localeData && localeData.length > 0) {
         this.setLocaleModels(localeData);
         let firstLocaleString;
-                                                        
-        if (this.currentLocaleModel.languageCode) {     //Check if Vuex has a Language Setting stored already
-          firstLocaleString = this.currentLocaleModel.languageCode + '-' + this.currentLocaleModel.countryCode;
-        } else {
-          firstLocaleString = navigator.language;       //Otherwise, pull the Browser's Default Language, and check if it's in the database
+        //Check if Vuex has a Language Setting stored already
+        if (this.currentLocaleModel.languageCode) {
+          firstLocaleString =
+            this.currentLocaleModel.languageCode +
+            "-" +
+            this.currentLocaleModel.countryCode;
+        }
+        //Otherwise, pull the Browser's Default Language, and check if it's in the database
+        else {
+          firstLocaleString = navigator.language;
           let validLanguageBool = false;
-          for(let i = 0; i < localeData.length; i++) {
+          for (let i = 0; i < localeData.length; i++) {
             if (localeData[i].code == firstLocaleString) {
               validLanguageBool = true;
               break;
             }
           }
-          if (!validLanguageBool) {                     //If all else fails, default to US English.
+          //If all else fails, default to US English.
+          if (!validLanguageBool) {
             firstLocaleString = localeData[1].code;
           }
         }
