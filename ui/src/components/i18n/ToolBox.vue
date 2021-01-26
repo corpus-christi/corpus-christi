@@ -72,9 +72,19 @@
             [numTranslated, totalEntries]) }}
         </v-card>
       </v-col>
+      <v-col
+        cols="1"
+      >
+      </v-col>
     </v-row>
     <v-row>
-      <v-col>
+      <v-col
+        cols="1"
+      >
+      </v-col>
+      <v-col
+        cols="10"
+      >
         <v-card
           width="100%"
           class="text-center pa-2 my-2 primary--text"

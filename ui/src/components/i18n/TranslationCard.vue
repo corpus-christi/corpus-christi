@@ -2,12 +2,11 @@
   <v-card
     v-if="isSelected && !isHiddenByFilters"
     outlined
-    class="d-flex align-center ml-3 mt-4 mr-3"
+    class="d-flex align-center ma-3"
     elevation="2"
   >
     <v-card
-      min-width=19.7%
-      max-width=19.7%
+      width="19.7%"
       elevation="0"
       class="ml-1"
     >
@@ -17,8 +16,7 @@
     </v-card>
 
     <v-card
-      min-width=20.5%
-      max-width=20.5%
+      width="20.5%"
       elevation="0"
       outlined
     >
@@ -28,7 +26,7 @@
     </v-card>
 
     <v-card
-      min-width=1%
+      width="2%"
       elevation="0"
     >
       <v-icon>
@@ -37,8 +35,7 @@
     </v-card>
 
     <v-card
-      min-width=20.5%
-      max-width=20.5%
+      width="20.5%"
       elevation="0"
       outlined
       :class="{ selected : highlightCard }"
@@ -52,13 +49,11 @@
     <v-card min-width=7% />
 
     <v-card
-      min-width=20%
-      max-width=20%
+      width="20%"
       elevation="0"
     >
       <v-card
-        min-width=80%
-        max-width=80%
+        width="80%"
         elevation="0"
       >
         <v-text-field
@@ -75,11 +70,10 @@
     </v-card>
 
     <!-- SPACER -->
-    <v-card min-width=3.7% />
+    <v-card width="3.7%" />
 
     <v-card
-      min-width=1%
-      max-width=1%
+      width="1%"
       elevation="0"
     >
       <v-checkbox
