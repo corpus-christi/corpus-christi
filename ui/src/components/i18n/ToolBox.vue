@@ -3,13 +3,13 @@
     <v-row
       class="subrow"
       align="center"
-      no-gutters
     >
       <v-col
+        cols="7"
         align="center"
+        class="text-right"
       >
         <v-btn
-          class="ml-3"
           dark
           @click="$emit('addNewLocale')"
         >
@@ -18,21 +18,28 @@
         </v-btn>
       </v-col>
       <v-col
+        cols="4"
         align="center"
+        class="text-right mr-5"
       >
         <v-btn
           dark
-          @click="$emit('goToBot')"
+          @click="$emit('hideToolBox')"
         >
-          <v-icon>keyboard_arrow_down</v-icon>
+          {{ $t("actions.hide") }}
         </v-btn>
       </v-col>
     </v-row>
     <v-row
       class="subrow"
-      no-gutters
     >
-      <v-col>
+      <v-col
+        cols="1"
+      >
+      </v-col>
+      <v-col
+        cols="10"
+      >
         <v-select
           outlined multiple chips
           prepend-icon="filter_alt"
@@ -42,12 +49,21 @@
           @change="filtersUpdated"
         />
       </v-col>
+      <v-col
+        cols="1"
+      >
+      </v-col>
     </v-row>
     <v-row
       class="subrow"
-      no-gutters
     >
-      <v-col>
+      <v-col
+        cols="1"
+      >
+      </v-col>
+      <v-col
+        cols="10"
+      >
         <v-card
           width="100%"
           class="text-center pa-2 my-2 primary--text"
@@ -55,6 +71,10 @@
           {{ $t("translation.filters.portion-translated",
             [numTranslated, totalEntries]) }}
         </v-card>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
         <v-card
           width="100%"
           class="text-center pa-2 my-2 primary--text"
@@ -63,35 +83,9 @@
             [numVerified, totalEntries]) }}
         </v-card>
       </v-col>
-    </v-row>
-    <v-row
-      class="subrow ml-3"
-      no-gutters
-    >
-      <v-col cols="4">
-      </v-col>
-      <v-col 
-        cols="4"
-        right
-        align="center"
+      <v-col
+        cols="1"
       >
-        <v-btn
-          dark
-          @click="$emit('hideToolBox')"
-        >
-          {{ $t("actions.hide") }}
-        </v-btn>
-      </v-col>
-      <v-col 
-        cols="4"
-        align="center"
-      >
-        <v-btn
-          dark
-          @click="$emit('goToTop')"
-        >
-          <v-icon>keyboard_arrow_up</v-icon>
-        </v-btn>
       </v-col>
     </v-row>
   </v-card>

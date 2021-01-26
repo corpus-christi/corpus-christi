@@ -1,13 +1,13 @@
 <template>
   <v-container>
     <v-btn
-      outlined right fixed depressed
+      v-b-tooltip.hover title="Show Toolbox"
+      fab outlined right fixed depressed
       class="showToolBox"
-      style="top: 180px; z-index: 2; transform: rotate(90deg);"
-      min-width="10%" min-height="5%"
+      style="top: 80px; z-index: 2;"
       @click="showToolBox = !showToolBox"
     >
-      {{ $t("translation.toolbox.show") }}
+      <v-icon>construction</v-icon>
     </v-btn>
 
     <transition name="fade">
@@ -21,8 +21,6 @@
         :filterOptions="[
           'translation.filters.untranslated',
           'translation.filters.unverified']"
-        @goToTop="$vuetify.goTo(0)"
-        @goToBot="$vuetify.goTo(bodyScrollHeight())"
         @hideToolBox="showToolBox = false"
         @sendFilters="useFilter"
         @addNewLocale="newLocaleDialog=true"
@@ -50,20 +48,26 @@
       <v-divider vertical />
 
       <v-col>
-        <TranslationCard
-          v-for="(card, index) in translationObjs"
-          :key="index"
-          :myIndex="index"
-          :topLevelTag="card.top_level_key"
-          :restOfTag="card.rest_of_key"
-          :previewGloss="card.preview_gloss"
-          :currentGloss="card.current_gloss"
-          :currentVerified="card.current_verified"
-          :filters="filters"
-          :selectedTags="selectedTags"
-          :currentCode="currentCode"
-          @submitAChange="sendUpdatedTranslation"
-        />
+        <v-card
+          elevation="2"
+          max-height="50%"
+          class="overflow-y-auto mt-3"
+        >
+          <TranslationCard
+            v-for="(card, index) in translationObjs"
+            :key="index"
+            :myIndex="index"
+            :topLevelTag="card.top_level_key"
+            :restOfTag="card.rest_of_key"
+            :previewGloss="card.preview_gloss"
+            :currentGloss="card.current_gloss"
+            :currentVerified="card.current_verified"
+            :filters="filters"
+            :selectedTags="selectedTags"
+            :currentCode="currentCode"
+            @submitAChange="sendUpdatedTranslation"
+          />
+        </v-card>
       </v-col>
     </v-row>
 
@@ -215,21 +219,21 @@ export default {
 </script>
 
 <style scoped>
-.ToolBox {
-  position: fixed;
-  width: 300px;
-  height: 30%;
-  right: 0;
-  z-index: 2;
-}
-.dialog {
-  overflow: hidden;
-}
-/* From https://vuejs.org/v2/guide/transitions.html */
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 0.5s;
-}
-.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
-  opacity: 0;
-}
+  .ToolBox {
+    position: fixed;
+    width: 350px;
+    height: 25%;
+    right: 0;
+    z-index: 2;
+  }
+  .dialog {
+    overflow: hidden;
+  }
+  /* From https://vuejs.org/v2/guide/transitions.html */
+  .fade-enter-active, .fade-leave-active {
+    transition: opacity 0.5s;
+  }
+  .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+    opacity: 0;
+  }
 </style>

@@ -1,10 +1,12 @@
 <template>
-  <v-card-text>
-    <v-list 
-      elevation="2"
-      rounded
-    >
+  <v-card
+    elevation="2"
+    class="overflow-y-auto overflow-x-auto mt-3"
+    max-height="50%"
+  >
+    <v-list>
       <v-list-item-group
+        class="ml-3"
         color="grey darken-4"
         multiple
       >
@@ -35,7 +37,7 @@
 
       </v-list-item-group>
     </v-list>
-  </v-card-text>
+  </v-card>
 </template>
 
 <script>
