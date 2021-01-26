@@ -95,51 +95,30 @@ export default {
   },
   watch: {
     allLocales: function() {
-      console.log("the watch allLocales function was called.");
-      console.log("allLocales:     ".concat(JSON.stringify(this.allLocales)));
       this.initializeToAndFromLocaleLists();
-      console.log("BEFOREUPDATE() toLocaleList:   ".concat(JSON.stringify(this.toLocaleList)));
-      console.log("BEFOREUPDATE() fromLocaleList: ".concat(JSON.stringify(this.fromLocaleList)));
     },
   },
   methods: {
     changeLocaleList(theListName, thePopObject) {
-      console.log("the fromLocalList was changed.");
-      console.log("The index of thePopObject is: ", this.fromLocaleList.indexOf(thePopObject));
-      console.log(this.fromLocaleList);
-      console.log(thePopObject);
       if (theListName=="toLocaleList") {
-        console.log("if");
         //doSomething to the fromLocaleList
         this.fromLocaleList = [];
         this.fromLocaleList.push(...this.allLocales);
         this.fromLocaleList.splice(this.findIndex(this.fromLocaleList, thePopObject), 1);
         this.$emit("currentUpdated", thePopObject);
       } else if (theListName=="fromLocaleList") {
-        console.log("else if");
         //doSomething to the toLocaleList
         this.toLocaleList = [];
         this.toLocaleList.push(...this.allLocales);
         this.toLocaleList.splice(this.findIndex(this.toLocaleList, thePopObject), 1);
         this.$emit('previewUpdated', thePopObject);
       } else{
-        console.log("\n\n\n\nSOMETHING REALLY WEIRD HAPPENED!\n\n\n\n");
+        console.log("\n\n\n\nSOMETHING REALLY WEIRD HAPPENED\n\n\n\n");
       }
-      console.log("toLocaleList:   ".concat(JSON.stringify(this.toLocaleList)));
-      console.log("fromLocaleList: ".concat(JSON.stringify(this.fromLocaleList)));
     },
     initializeToAndFromLocaleLists() {
-      console.log("The initializeToAndFromLocaleLists function was called.");
-      // console.log("BEFORE:");
-      // console.log("toLocaleList:   ".concat(JSON.stringify(this.toLocaleList)));
-      // console.log("fromLocaleList: ".concat(JSON.stringify(this.fromLocaleList)));
-      // console.log("allLocales:     ".concat(JSON.stringify(this.allLocales)));
       this.fromLocaleList = this.allLocales;
       this.toLocaleList = this.allLocales;
-      // console.log("AFTER:");
-      console.log("toLocaleList:   ".concat(JSON.stringify(this.toLocaleList)));
-      console.log("fromLocaleList: ".concat(JSON.stringify(this.fromLocaleList)));
-      // console.log("allLocales:     ".concat(JSON.stringify(this.allLocales)));
     },
     findIndex(theList, theObject){
       for(let i=0;i<theList.length;i++){
