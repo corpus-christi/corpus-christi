@@ -26,14 +26,14 @@ def create_attribute():
 
     new_attribute = Attribute(**valid_attribute)
     db.session.add(new_attribute)
-    db.session.commit()
+    db.session.commit()   # So we get the ID of the new attribute
 
     for enumerated_value in valid_enumerated_values:
         enumerated_value = EnumeratedValue(**enumerated_value)
         enumerated_value.attribute_id = new_attribute.id
         db.session.add(enumerated_value)
-
     db.session.commit()
+
     result = db.session.query(Attribute).filter_by(id=new_attribute.id).first()
     result.enumerated_values = result.enumerated_values
     return jsonify(attribute_schema.dump(result)), 201
@@ -104,11 +104,8 @@ def update_attribute(attribute_id):
 @jwt_required
 def deactivate_attribute(attribute_id):
     attribute = db.session.query(Attribute).filter_by(id=attribute_id).first()
-
     setattr(attribute, 'active', False)
-
     db.session.commit()
-
     return jsonify(attribute_schema.dump(attribute))
 
 
@@ -116,11 +113,8 @@ def deactivate_attribute(attribute_id):
 @jwt_required
 def activate_attribute(attribute_id):
     attribute = db.session.query(Attribute).filter_by(id=attribute_id).first()
-
     setattr(attribute, 'active', True)
-
     db.session.commit()
-
     return jsonify(attribute_schema.dump(attribute))
 
 
@@ -156,9 +150,7 @@ def read_one_enumerated_value(enumerated_value_id):
     return jsonify(enumerated_value_schema.dump(result))
 
 
-@attributes.route(
-    '/enumerated_values/<enumerated_value_id>',
-    methods=['PATCH'])
+@attributes.route('/enumerated_values/<enumerated_value_id>', methods=['PATCH'])
 @jwt_required
 def update_enumerated_value(enumerated_value_id):
     try:
@@ -166,9 +158,7 @@ def update_enumerated_value(enumerated_value_id):
     except ValidationError as err:
         return jsonify(err.messages), 422
 
-    enumerated_value = db.session.query(
-        EnumeratedValue).filter_by(id=enumerated_value_id).first()
-
+    enumerated_value = db.session.query(EnumeratedValue).filter_by(id=enumerated_value_id).first()
     for key, val in valid_enumerated_value.items():
         setattr(enumerated_value, key, val)
 
@@ -176,31 +166,19 @@ def update_enumerated_value(enumerated_value_id):
     return jsonify(enumerated_value_schema.dump(enumerated_value))
 
 
-@attributes.route(
-    '/enumerated_values/deactivate/<enumerated_value_id>',
-    methods=['PATCH'])
+@attributes.route('/enumerated_values/deactivate/<enumerated_value_id>', methods=['PATCH'])
 @jwt_required
 def deactivate_enumerated_value(enumerated_value_id):
-    enumerated_value = db.session.query(
-        EnumeratedValue).filter_by(id=enumerated_value_id).first()
-
+    enumerated_value = db.session.query(EnumeratedValue).filter_by(id=enumerated_value_id).first()
     setattr(enumerated_value, 'active', False)
-
     db.session.commit()
-
     return jsonify(enumerated_value_schema.dump(enumerated_value))
 
 
-@attributes.route(
-    '/enumerated_values/activate/<enumerated_value_id>',
-    methods=['PATCH'])
+@attributes.route('/enumerated_values/activate/<enumerated_value_id>', methods=['PATCH'])
 @jwt_required
 def activate_enumerated_value(enumerated_value_id):
-    enumerated_value = db.session.query(
-        EnumeratedValue).filter_by(id=enumerated_value_id).first()
-
+    enumerated_value = db.session.query(EnumeratedValue).filter_by(id=enumerated_value_id).first()
     setattr(enumerated_value, 'active', True)
-
     db.session.commit()
-
     return jsonify(enumerated_value_schema.dump(enumerated_value))
