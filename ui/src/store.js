@@ -1,7 +1,8 @@
 /**
- * @file Vuex Store 
- * Contains global state information for the entire UI.
- * Run from 'main.ts'
+ * @file
+ * @name store.js
+ * Vuex Store. Contains global state information for the entire UI.
+ * Runs from 'main.ts'
  */
 
 import Vue from "vue";
@@ -13,16 +14,16 @@ import { persistedStateOptions } from "./plugins/vuex-persistedstate.js";
 
 Vue.use(Vuex);
 
-/** 
- * @global these variables and methods are all global. 
- * They can be accessed anywhere using mapState, mapGetters & mapMutations 
+/**
+ * @global these variables and methods are all global.
+ * They can be accessed anywhere using mapState, mapGetters & mapMutations.
  * @tutorial https://vuex.vuejs.org/guide/getters.html#the-mapgetters-helper
-*/
+ */
 export default new Vuex.Store({
   plugins: [createPersistedState(persistedStateOptions)],
 
   state: {
-    // Current locale code (e.g., `es-EC`, `en-US`) (This line doesn't actually alter the default language, see ui/src/App.vue)
+    // Current locale code (e.g., `es-EC`, `en-US`) (This line doesn't actually alter the default language, see ui/src/App.vue).
     currentLocale: new Locale("en-US"),
 
     // All available I18NLocale instances (locale and description).
@@ -34,7 +35,7 @@ export default new Vuex.Store({
     // Current JSON Web Token if someone logged in.
     currentJWT: null,
 
-    // All translations for the currentLocale
+    // All translations for the currentLocale.
     translations: [],
   },
 
@@ -86,7 +87,7 @@ export default new Vuex.Store({
      * @name logIn
      * @function
      * @param {*} state vuex passes "state" automatically
-     * @param {Object} payload containing login information 
+     * @param {Object} payload containing login information
      */
     logIn(state, payload) {
       state.currentAccount = payload.account;
@@ -97,7 +98,7 @@ export default new Vuex.Store({
     /**
      * @name logOut
      * @function
-     * @param {*} state vuex passes "state" automatically 
+     * @param {*} state vuex passes "state" automatically
      */
     logOut(state) {
       state.currentAccount = null;
@@ -107,8 +108,8 @@ export default new Vuex.Store({
     /**
      * @name setCurrentLocale
      * @function
-     * @param {*} state vuex passes "state" automatically 
-     * @param {Object} locale 
+     * @param {*} state vuex passes "state" automatically
+     * @param {Object} locale
      */
     setCurrentLocale(state, locale) {
       state.currentLocale = locale;
@@ -117,8 +118,8 @@ export default new Vuex.Store({
     /**
      * @name setLocaleModels
      * @function
-     * @param {*} state vuex passes "state" automatically 
-     * @param {Object} inputLocaleModels 
+     * @param {*} state vuex passes "state" automatically
+     * @param {Object} inputLocaleModels
      */
     setLocaleModels(state, inputLocaleModels) {
       state.localeModels = inputLocaleModels.map(

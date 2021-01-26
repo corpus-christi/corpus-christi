@@ -1,6 +1,7 @@
 /**
- * @file The Main File.
- * Pulls everything together and creates the primary Vue Object.
+ * @file
+ * @name main.ts
+ * The Main File. Pulls everything together and creates the primary Vue Object.
  * Auto-injects into 'ui/public/index.html'
  */
 

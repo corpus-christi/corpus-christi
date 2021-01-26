@@ -20,10 +20,12 @@
           </v-container>
         </template>
         <template v-else>
-            <v-card-title class="d-block">
-              <h5 class="headline">{{ $t("diplomas.diploma") }}: {{ diploma.name }}</h5>
-            </v-card-title>
-            <v-subheader> {{ diploma.description }} </v-subheader>
+          <v-card-title class="d-block">
+            <h5 class="headline">
+              {{ $t("diplomas.diploma") }}: {{ diploma.name }}
+            </h5>
+          </v-card-title>
+          <v-subheader> {{ diploma.description }} </v-subheader>
         </template>
       </v-card>
     </v-flex>
@@ -104,7 +106,7 @@ export default {
   mounted() {
     this.loadDiploma();
   },
-  
+
   watch: {
     $route: "loadDiploma",
   },

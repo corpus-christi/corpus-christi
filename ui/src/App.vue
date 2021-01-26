@@ -4,9 +4,10 @@
 
 <script>
 /**
- * @file Main App
- * Runs Initialization.
- * Run from 'main.ts'
+ * @file
+ * @name App.vue
+ * Main App. Does Initialization.
+ * Runs from 'main.ts'
  */
 import { mapMutations, mapState } from "vuex";
 import { setJWT } from "./plugins/axios";

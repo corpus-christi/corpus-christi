@@ -1,6 +1,8 @@
 /**
- * @file Filters. 
- * Run from 'main.ts'
+ * @file
+ * @name filters.js
+ * Filters.
+ * Runs from 'main.ts'
  */
 import Vue from "vue";
 import moment from "moment";
