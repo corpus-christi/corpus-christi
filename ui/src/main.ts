@@ -1,3 +1,9 @@
+/**
+ * @file The Main File.
+ * Pulls everything together and creates the primary Vue Object.
+ * Auto-injects into 'ui/public/index.html'
+ */
+
 import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";

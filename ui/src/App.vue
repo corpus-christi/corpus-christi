@@ -3,6 +3,11 @@
 </template>
 
 <script>
+/**
+ * @file Main App
+ * Runs Initialization.
+ * Run from 'main.ts'
+ */
 import { mapMutations, mapState } from "vuex";
 import { setJWT } from "./plugins/axios";
 import { Locale } from "./models/Locale";
@@ -17,9 +22,11 @@ export default {
   computed: mapState(["currentJWT"]),
   methods: mapMutations(["setLocaleModels", "setCurrentLocale"]),
 
+  /**
+   * @function
+   * Initialize early application stuff
+   */
   created: function () {
-    // Initialize early application stuff
-
     // Locales
     this.$http.get("/api/v1/i18n/locales").then((response) => {
       const localeData = response.data;

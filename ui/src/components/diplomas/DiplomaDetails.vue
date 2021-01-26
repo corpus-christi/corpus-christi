@@ -75,12 +75,16 @@
 <script>
 import DiplomaCoursesTable from "./DiplomaCoursesTable";
 import DiplomaPeopleTable from "./DiplomaPeopleTable";
+import { mapGetters } from "vuex";
 
 export default {
   name: "DiplomaDetails",
   components: {
     DiplomaCoursesTable,
     DiplomaPeopleTable,
+  },
+  computed: {
+    ...mapGetters(["isLoggedIn", "currentLocaleModel"]),
   },
   props: {
     diplomaId: {
@@ -100,6 +104,7 @@ export default {
   mounted() {
     this.loadDiploma();
   },
+  
   watch: {
     $route: "loadDiploma",
   },

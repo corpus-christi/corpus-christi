@@ -1,6 +1,7 @@
 /**
  * @file Vue Router Configuration
  * This file is responsible for telling the webpage which URLs correspond to which files.
+ * Run from 'main.ts'
  */
 
 import Vue from "vue";
