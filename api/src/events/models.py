@@ -21,6 +21,7 @@ class Event(Base):
     active = Column(Boolean, default=True)
     attendance = Column(Integer)
     aggregate = Column(Boolean, default=True)
+    gender = Column(String)
 
     assets = relationship("EventAsset", back_populates="event")
     teams = relationship("EventTeam", back_populates="event")
@@ -44,6 +45,7 @@ class EventSchema(Schema):
     active = fields.Boolean()
     attendance = fields.Integer(allow_none=True)
     aggregate = fields.Boolean(allow_none=True)
+    gender = fields.String(validate=OneOf(['male', 'female']), allow_none=True)
 
     location = fields.Nested('LocationSchema', allow_none=True, dump_only=True)
     participants = fields.Nested(

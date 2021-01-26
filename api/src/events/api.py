@@ -83,10 +83,22 @@ def read_all_events():
         query = query.filter(Event.title.like(f"%{title_filter}%"))
 
     # -- location --
-    # Filter events on a wildcard location string?
+    # Filter events on a wildcard location string
     location_filter = request.args.get('location_id')
     if location_filter:
         query = query.filter_by(location_id=location_filter)
+
+    # -- gender --
+    # Filter events on a wildcard gender string
+    gender_filter = request.args.get('gender')
+    if gender_filter:
+        query = query.filter(gender=gender_filter)
+
+    # -- birthday --
+    # Filter events on a wildcard birthday string
+    birthday_filter = request.args.get('birthday')
+    if birthday_filter:
+        query = query.filter(birthday=birthday_filter)
 
     # Sorting
     sort_filter = request.args.get('sort')

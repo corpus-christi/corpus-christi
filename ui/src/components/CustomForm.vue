@@ -5,267 +5,227 @@
       <span class="headline">{{ title }}</span>
     </v-card-title>
     <v-card-text>
-      <form>
-        <v-layout align-space-around justify-center column fill-height>
-          <v-text-field
-            v-if="titleLabel"
-            v-model="object.title"
-            v-bind:label="titleLabel"
-            name="title"
-            v-validate="'required'"
-            v-bind:error-messages="errors.first('title')"
-            data-cy="title"
-            required
-          />
-          <v-textarea
-            rows="3"
-            v-if="descriptionLabel"
-            v-model="object.description"
-            v-bind:label="descriptionLabel"
-            name="description"
-            data-cy="description"
-          />
-          <template v-slot:activator="{ on }">
-            <v-btn
-              v-if="addImageField"
-              class="text-xs-center"
-              color="primary"
-              text
-              small
-              @click="showImageChooser = true"
-              :disabled="showImageChooser"
-              v-on="on"
-            >
-              {{ $t("images.actions.add-image") }}
-            </v-btn>
-          </template>
-          <v-expand-transition>
-            <image-chooser
-              v-if="showImageChooser"
-              :imageId="getImageId"
-              v-on:saved="chooseImage"
-              v-on:deleted="deleteImage"
-              v-on:cancel="cancelImageChooser"
-              v-on:missing="missingImage"
-            />
-          </v-expand-transition>
-        </v-layout>
-        <v-layout align-center justify-space-around v-if="locationLabel">
-          <v-flex>
-            <entity-search
-              location
-              v-model="object.location"
-              v-bind:label="locationLabel"
-              name="location"
-              v-bind:error-messages="errors.first('location')"
-              :disabled="showAddressCreator"
-              :key="currentAddress"
-            />
-          </v-flex>
-          <v-flex shrink>
-            <v-btn
-              text
-              color="primary"
-              small
-              @click="showAddressCreator = true"
-              >{{ $t("actions.add-address") }}</v-btn
-            >
-          </v-flex>
-        </v-layout>
+        <form>
+            <v-layout align-space-around justify-center column fill-height>
+                <v-text-field v-if="titleLabel"
+                              v-model="object.title"
+                              v-bind:label="titleLabel"
+                              name="title"
+                              v-validate="'required'"
+                              v-bind:error-messages="errors.first('title')"
+                              data-cy="title"
+                              required />
+                <v-textarea rows="3"
+                            v-if="descriptionLabel"
+                            v-model="object.description"
+                            v-bind:label="descriptionLabel"
+                            name="description"
+                            data-cy="description" />
+                <template v-slot:activator="{ on }">
+                    <v-btn v-if="addImageField"
+                           class="text-xs-center"
+                           color="primary"
+                           text
+                           small
+                           @click="showImageChooser = true"
+                           :disabled="showImageChooser"
+                           v-on="on">
+                        {{ $t("images.actions.add-image") }}
+                    </v-btn>
+                </template>
+                <v-expand-transition>
+                    <image-chooser v-if="showImageChooser"
+                                   :imageId="getImageId"
+                                   v-on:saved="chooseImage"
+                                   v-on:deleted="deleteImage"
+                                   v-on:cancel="cancelImageChooser"
+                                   v-on:missing="missingImage" />
+                </v-expand-transition>
+            </v-layout>
+            <v-layout align-center justify-space-around v-if="locationLabel">
+                <v-flex>
+                    <entity-search location
+                                   v-model="object.location"
+                                   v-bind:label="locationLabel"
+                                   name="location"
+                                   v-bind:error-messages="errors.first('location')"
+                                   :disabled="showAddressCreator"
+                                   :key="currentAddress" />
+                </v-flex>
+                <v-flex shrink>
+                    <v-btn text
+                           color="primary"
+                           small
+                           @click="showAddressCreator = true">{{ $t("actions.add-address") }}</v-btn>
+                </v-flex>
+            </v-layout>
 
-        <v-expand-transition>
-          <address-form
-            v-if="showAddressCreator"
-            @cancel="showAddressCreator = false"
-            @saved="updateEntitySearch"
-          />
-        </v-expand-transition>
+            <v-expand-transition>
+                <address-form v-if="showAddressCreator"
+                              @cancel="showAddressCreator = false"
+                              @saved="updateEntitySearch" />
+            </v-expand-transition>
 
-        <v-layout v-if="startDateTimeField">
-          <v-flex xs12 md6>
-            <!-- Start Date -->
-            <v-menu
-              :close-on-content-click="false"
-              v-model="showStartDatePicker"
-              :nudge-right="40"
-              transition="scale-transition"
-              offset-y
-              min-width="290px"
-              data-cy="start-date-menu"
-            >
-              <template v-slot:activator="{ on }">
-                <v-text-field
-                  slot="activator"
-                  v-model="startDate"
-                  v-bind:label="$t('events.start-date')"
-                  prepend-icon="event"
-                  readonly
-                  name="startDate"
-                  ref="startDate"
-                  v-validate="'required'"
-                  v-bind:error-messages="errors.first('startDate')"
-                  v-on="on"
-                  required
-                />
-              </template>
-              <v-date-picker
-                v-bind:locale="currentLanguageCode"
-                v-model="startDate"
-                @input="showStartDatePicker = false"
-                :min="today"
-                data-cy="start-date-picker"
-              />
-            </v-menu>
-          </v-flex>
-          <v-flex xs12 md6 ml-5>
-            <!-- Start Time -->
-            <v-dialog
-              ref="dialog1"
-              v-model="startTimeModal"
-              :return-value.sync="startTime"
-              width="290px"
-              persistent
-              data-cy="start-time-dialog"
-            >
-              <template v-slot:activator="{ on }">
-                <v-text-field
-                  slot="activator"
-                  v-model="startTime"
-                  name="startTime"
-                  v-validate="'required'"
-                  v-bind:error-messages="errors.first('startTime')"
-                  v-bind:label="$t('events.start-time')"
-                  prepend-icon="schedule"
-                  readonly
-                  v-on="on"
-                  required
-                ></v-text-field>
-              </template>
-              <v-time-picker
-                v-if="startTimeModal"
-                :format="timeFormat"
-                v-model="startTime"
-                :max="startDate == endDate ? endTime : null"
-                data-cy="start-time-picker"
-              >
-                <v-spacer></v-spacer>
-                <v-btn
-                  text
-                  color="primary"
-                  @click="startTimeModal = false"
-                  data-cy="start-time-cancel"
-                  >{{ $t("actions.cancel") }}</v-btn
-                >
-                <v-btn
-                  text
-                  color="primary"
-                  @click="$refs.dialog1.save(startTime)"
-                  data-cy="start-time-ok"
-                  >{{ $t("actions.confirm") }}</v-btn
-                >
-              </v-time-picker>
-            </v-dialog>
-          </v-flex>
-        </v-layout>
-        <v-layout v-if="endDateTimeField">
-          <v-flex xs12 md6>
-            <!-- End Date -->
-            <v-menu
-              :close-on-content-click="false"
-              v-model="showEndDatePicker"
-              :nudge-right="40"
-              transition="scale-transition"
-              offset-y
-              min-width="290px"
-              data-cy="end-date-menu"
-              :disabled="!startDateTimeSelected"
-            >
-              <template v-slot:activator="{ on }">
-                <v-text-field
-                  slot="activator"
-                  v-model="endDate"
-                  v-bind:label="$t('events.end-date')"
-                  prepend-icon="event"
-                  name="endDate"
-                  ref="endDate"
-                  v-validate="'required'"
-                  v-bind:error-messages="errors.first('endDate')"
-                  readonly
-                  :disabled="!startDateTimeSelected"
-                  v-on="on"
-                  required
-                />
-              </template>
-              <v-date-picker
-                v-bind:locale="currentLanguageCode"
-                v-model="endDate"
-                @input="showEndDatePicker = false"
-                data-cy="end-date-picker"
-                :min="startDate || today"
-              />
-            </v-menu>
-          </v-flex>
-          <v-flex xs12 md6 ml-5>
-            <!-- End Time -->
-            <v-dialog
-              ref="dialog2"
-              v-model="endTimeModal"
-              :disabled="!startDateTimeSelected"
-              :return-value.sync="endTime"
-              width="290px"
-              persistent
-              data-cy="end-time-dialog"
-            >
-              <template v-slot:activator="{ on }">
-                <v-text-field
-                  slot="activator"
-                  v-model="endTime"
-                  name="endTime"
-                  v-validate="'required'"
-                  v-bind:error-messages="errors.first('endTime')"
-                  v-bind:label="$t('events.end-time')"
-                  prepend-icon="update"
-                  :disabled="!startDateTimeSelected"
-                  readonly
-                  v-on="on"
-                  required
-                />
-              </template>
-              <v-time-picker
-                v-if="endTimeModal"
-                :format="timeFormat"
-                v-model="endTime"
-                :min="startDate == endDate ? startTime : null"
-                data-cy="end-time-picker"
-              >
-                <v-spacer />
-                <v-btn
-                  text
-                  color="primary"
-                  @click="endTimeModal = false"
-                  data-cy="end-time-cancel"
-                  >{{ $t("actions.cancel") }}</v-btn
-                >
-                <v-btn
-                  text
-                  color="primary"
-                  @click="$refs.dialog2.save(endTime)"
-                  data-cy="end-time-ok"
-                  >{{ $t("actions.confirm") }}</v-btn
-                >
-              </v-time-picker>
-            </v-dialog>
-          </v-flex>
-        </v-layout>
-        <input
-          name="today"
-          type="text"
-          ref="today"
-          v-bind:value="today"
-          hidden
-          readonly
-        />
-      </form>
+            <v-layout v-if="startDateTimeField">
+                <v-flex xs12 md6>
+                    <!-- Start Date -->
+                    <v-menu :close-on-content-click="false"
+                            v-model="showStartDatePicker"
+                            :nudge-right="40"
+                            transition="scale-transition"
+                            offset-y
+                            min-width="290px"
+                            data-cy="start-date-menu">
+                        <template v-slot:activator="{ on }">
+                            <v-text-field slot="activator"
+                                          v-model="startDate"
+                                          v-bind:label="$t('events.start-date')"
+                                          prepend-icon="event"
+                                          readonly
+                                          name="startDate"
+                                          ref="startDate"
+                                          v-validate="'required'"
+                                          v-bind:error-messages="errors.first('startDate')"
+                                          v-on="on"
+                                          required />
+                        </template>
+                        <v-date-picker v-bind:locale="currentLanguageCode"
+                                       v-model="startDate"
+                                       @input="showStartDatePicker = false"
+                                       :min="today"
+                                       data-cy="start-date-picker" />
+                    </v-menu>
+                </v-flex>
+                <v-flex xs12 md6 ml-5>
+                    <!-- Start Time -->
+                    <v-dialog ref="dialog1"
+                              v-model="startTimeModal"
+                              :return-value.sync="startTime"
+                              width="290px"
+                              persistent
+                              data-cy="start-time-dialog">
+                        <template v-slot:activator="{ on }">
+                            <v-text-field slot="activator"
+                                          v-model="startTime"
+                                          name="startTime"
+                                          v-validate="'required'"
+                                          v-bind:error-messages="errors.first('startTime')"
+                                          v-bind:label="$t('events.start-time')"
+                                          prepend-icon="schedule"
+                                          readonly
+                                          v-on="on"
+                                          required></v-text-field>
+                        </template>
+                        <v-time-picker v-if="startTimeModal"
+                                       :format="timeFormat"
+                                       v-model="startTime"
+                                       :max="startDate == endDate ? endTime : null"
+                                       data-cy="start-time-picker">
+                            <v-spacer></v-spacer>
+                            <v-btn text
+                                   color="primary"
+                                   @click="startTimeModal = false"
+                                   data-cy="start-time-cancel">{{ $t("actions.cancel") }}</v-btn>
+                            <v-btn text
+                                   color="primary"
+                                   @click="$refs.dialog1.save(startTime)"
+                                   data-cy="start-time-ok">{{ $t("actions.confirm") }}</v-btn>
+                        </v-time-picker>
+                    </v-dialog>
+                </v-flex>
+            </v-layout>
+            <v-layout v-if="endDateTimeField">
+                <v-flex xs12 md6>
+                    <!-- End Date -->
+                    <v-menu :close-on-content-click="false"
+                            v-model="showEndDatePicker"
+                            :nudge-right="40"
+                            transition="scale-transition"
+                            offset-y
+                            min-width="290px"
+                            data-cy="end-date-menu"
+                            :disabled="!startDateTimeSelected">
+                        <template v-slot:activator="{ on }">
+                            <v-text-field slot="activator"
+                                          v-model="endDate"
+                                          v-bind:label="$t('events.end-date')"
+                                          prepend-icon="event"
+                                          name="endDate"
+                                          ref="endDate"
+                                          v-validate="'required'"
+                                          v-bind:error-messages="errors.first('endDate')"
+                                          readonly
+                                          :disabled="!startDateTimeSelected"
+                                          v-on="on"
+                                          required />
+                        </template>
+                        <v-date-picker v-bind:locale="currentLanguageCode"
+                                       v-model="endDate"
+                                       @input="showEndDatePicker = false"
+                                       data-cy="end-date-picker"
+                                       :min="startDate || today" />
+                    </v-menu>
+                </v-flex>
+                <v-flex xs12 md6 ml-5>
+                    <!-- End Time -->
+                    <v-dialog ref="dialog2"
+                              v-model="endTimeModal"
+                              :disabled="!startDateTimeSelected"
+                              :return-value.sync="endTime"
+                              width="290px"
+                              persistent
+                              data-cy="end-time-dialog">
+                        <template v-slot:activator="{ on }">
+                            <v-text-field slot="activator"
+                                          v-model="endTime"
+                                          name="endTime"
+                                          v-validate="'required'"
+                                          v-bind:error-messages="errors.first('endTime')"
+                                          v-bind:label="$t('events.end-time')"
+                                          prepend-icon="update"
+                                          :disabled="!startDateTimeSelected"
+                                          readonly
+                                          v-on="on"
+                                          required />
+                        </template>
+                        <v-time-picker v-if="endTimeModal"
+                                       :format="timeFormat"
+                                       v-model="endTime"
+                                       :min="startDate == endDate ? startTime : null"
+                                       data-cy="end-time-picker">
+                            <v-spacer />
+                            <v-btn text
+                                   color="primary"
+                                   @click="endTimeModal = false"
+                                   data-cy="end-time-cancel">{{ $t("actions.cancel") }}</v-btn>
+                            <v-btn text
+                                   color="primary"
+                                   @click="$refs.dialog2.save(endTime)"
+                                   data-cy="end-time-ok">{{ $t("actions.confirm") }}</v-btn>
+                        </v-time-picker>
+                    </v-dialog>
+                </v-flex>
+            </v-layout>
+            <input name="today"
+                   type="text"
+                   ref="today"
+                   v-bind:value="today"
+                   hidden
+                   readonly />
+            <!-- Filter by gender -->
+            <v-checkbox v-model="checkbox"
+                        label="I want to filter by gender" />
+            if(this.checkbox != "") {
+            <span>Gender:</span>
+            <br />
+            <v-radio-group v-model="object.gender">
+                <v-radio label="Male"
+                         value="male" />
+                <v-radio label="Female"
+                         value="female" />
+            </v-radio-group>
+            }
+        </form>
     </v-card-text>
     <v-divider />
     <v-card-actions>
@@ -365,7 +325,7 @@ export default {
     titleLabel: {
       type: String,
       required: false,
-    },
+      },
   },
   data: function () {
     return {
