@@ -30,7 +30,6 @@
     </v-toolbar>
     <draggable v-model="allAttributes" class="row" :disabled="!dragEnabled">
       <v-col cols="6" v-for="attr in allAttributes" :key="attr.id">
-        {{ attr }}
         <attribute-card
           :name="$t(attr.nameI18n)"
           :type="$t(attr.typeI18n)"

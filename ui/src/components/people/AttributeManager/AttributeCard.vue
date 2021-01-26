@@ -22,10 +22,23 @@
             </v-list-item-title>
           </v-list-item-content>
           <v-list-item-action>
-            <v-switch :disabled="!inEditMode" v-model="value.active" />
+            <v-btn
+              v-if="value.valueI18n.length === 0"
+              text
+              small
+              @click="removeValue(idx)"
+            >
+              <v-icon>clear</v-icon>
+            </v-btn>
+            <v-switch v-else :disabled="!inEditMode" v-model="value.active" />
           </v-list-item-action>
         </v-list-item>
       </draggable>
+      <v-row justify="center">
+        <v-btn v-if="inEditMode" icon @click="addValue">
+          <v-icon>add_circle</v-icon>
+        </v-btn>
+      </v-row>
     </v-card-text>
 
     <v-card-actions>
@@ -104,6 +117,20 @@ export default {
     saveEdits() {
       this.clonedState = null;
       this.inEditMode = false;
+      this.currentState.values = this.currentState.values.filter(
+        (v) => v.valueI18n.length > 0
+      );
+    },
+
+    addValue() {
+      this.currentState.values.push({
+        valueI18n: "",
+        active: false,
+      });
+    },
+
+    removeValue(idx) {
+      this.currentState.values.splice(idx, 1);
     },
   },
 };
