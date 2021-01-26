@@ -26,6 +26,7 @@
     </v-card>
 
     <v-card
+      align="center"
       width="2%"
       elevation="0"
     >
