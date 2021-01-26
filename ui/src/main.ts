@@ -1,8 +1,8 @@
 /**
  * @file
  * @name main.ts
- * The Main File. Pulls everything together and creates the primary Vue Object.
  * Auto-injects into 'ui/public/index.html'
+ * The Main File. Pulls everything together and creates the primary Vue Object.
  */
 
 import Vue from "vue";

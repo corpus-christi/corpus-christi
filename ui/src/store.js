@@ -1,8 +1,8 @@
 /**
  * @file
  * @name store.js
+ * @exports main.ts
  * Vuex Store. Contains global state information for the entire UI.
- * Runs from 'main.ts'
  */
 
 import Vue from "vue";
@@ -41,8 +41,8 @@ export default new Vuex.Store({
 
   getters: {
     /**
-     * @name isLoggedIn
      * @function
+     * @name isLoggedIn
      * @param {*} state vuex passes "state" automatically
      * @yields {Object} describing the current Account
      */
@@ -51,8 +51,8 @@ export default new Vuex.Store({
     },
 
     /**
-     * @name currentLocaleModel
      * @function
+     * @name currentLocaleModel
      * @param {*} state vuex passes "state" automatically
      * @yields {Object} describing the current Language & Locale
      */
@@ -64,8 +64,8 @@ export default new Vuex.Store({
     },
 
     /**
-     * @name currentLanguageCode
      * @function
+     * @name currentLanguageCode
      * @param {*} state vuex passes "state" automatically
      * @yields {Object} describing the current Language
      */
@@ -84,6 +84,7 @@ export default new Vuex.Store({
 
   mutations: {
     /**
+     * @function
      * @name logIn
      * @function
      * @param {*} state vuex passes "state" automatically
@@ -96,8 +97,8 @@ export default new Vuex.Store({
     },
 
     /**
-     * @name logOut
      * @function
+     * @name logOut
      * @param {*} state vuex passes "state" automatically
      */
     logOut(state) {
@@ -106,8 +107,8 @@ export default new Vuex.Store({
     },
 
     /**
-     * @name setCurrentLocale
      * @function
+     * @name setCurrentLocale
      * @param {*} state vuex passes "state" automatically
      * @param {Object} locale
      */
@@ -116,8 +117,8 @@ export default new Vuex.Store({
     },
 
     /**
-     * @name setLocaleModels
      * @function
+     * @name setLocaleModels
      * @param {*} state vuex passes "state" automatically
      * @param {Object} inputLocaleModels
      */

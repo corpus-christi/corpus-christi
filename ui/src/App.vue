@@ -6,8 +6,8 @@
 /**
  * @file
  * @name App.vue
+ * @exports main.ts
  * Main App. Does Initialization.
- * Runs from 'main.ts'
  */
 import { mapMutations, mapState } from "vuex";
 import { setJWT } from "./plugins/axios";
