@@ -1,37 +1,40 @@
 <template>
   <v-container>
     <v-btn
-      title="Show Toolbox"
+      :title="$t('translation.toolbox.show')"
       fab
       outlined
       right
       fixed
       depressed
       class="showToolBox"
-      style="top: 80px; z-index: 2"
+      style="top: 80px; z-index: 2;"
       @click="showToolBox = !showToolBox"
     >
       <v-icon>construction</v-icon>
     </v-btn>
 
-    <ToolBox
-      class="ToolBox mr-2 mt-1"
-      elevation="2"
-      v-show="showToolBox"
-      :numTranslated="numEntriesTranslated"
-      :numVerified="numEntriesVerified"
-      :totalEntries="numEntriesTotal"
-      :shouldBeShown="showToolBox"
-      :filterOptions="[
-        'translation.filters.untranslated',
-        'translation.filters.unverified',
-      ]"
-      @hideToolBox="showToolBox = false"
-      @sendFilters="useFilter"
-      @addNewLocale="newLocaleDialog = true"
-    />
+    <transition name="fade">
+      <ToolBox
+        class="ToolBox mr-2 mt-1"
+        elevation="2"
+        v-show="showToolBox"
+        :numTranslated="numEntriesTranslated"
+        :numVerified="numEntriesVerified"
+        :totalEntries="numEntriesTotal"
+        :shouldBeShown="showToolBox"
+        :filterOptions="[
+          'translation.filters.untranslated',
+          'translation.filters.unverified',
+        ]"
+        @hideToolBox="showToolBox = false"
+        @sendFilters="useFilter"
+        @addNewLocale="newLocaleDialog = true"
+      />
+    </transition>
 
     <WorkbenchHeader
+      ref="workbenchHeader"
       :allLocales="allLocaleObjs"
       :loadingTranslations="loadingTranslations"
       @previewUpdated="onPreviewLocaleChanged"
@@ -62,10 +65,7 @@
             </v-row>
           </v-card-title>
         </v-card>
-        <v-card
-          class="overflow-y-auto"
-          :height="calculateScreenHeight"
-        >
+        <v-card class="overflow-y-auto" :height="calculateScreenHeight">
           <TranslationCard
             v-for="(card, index) in translationObjs"
             :key="index"
@@ -139,7 +139,7 @@ export default {
     },
     calculateScreenHeight() {
       console.log(this.screenHeight);
-      return .7 * screen.height;
+      return 0.7 * screen.height;
     },
   },
   methods: {
@@ -176,6 +176,8 @@ export default {
         )
         .then((resp) => {
           this.translationObjs = resp.data;
+          this.$refs.workbenchHeader.prevLocaleOnLoad = this.previewCode;
+          this.$refs.workbenchHeader.currLocaleOnLoad = this.currentCode;
         })
         .catch((err) => console.log(err))
         .finally(() => (this.loadingTranslations = false));
@@ -230,7 +232,6 @@ export default {
       });
       this.newLocaleDialog = false;
     },
-    
   },
   mounted: function () {
     this.loadTopLevelTags();
@@ -249,5 +250,13 @@ export default {
 }
 .dialog {
   overflow: hidden;
+}
+/* From https://vuejs.org/v2/guide/transitions.html */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
 }
 </style>

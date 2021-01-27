@@ -3,32 +3,40 @@
     <v-container>
       <v-row align="center">
         <v-col class="headline">{{ $t("translation.tags.top") }}</v-col>
-        
+
         <v-col>
           <v-select
             :label="$t('translation.translate-from')"
-            :items="fromLocaleList"
+            :items="allLocales"
             item-text="displayString"
             item-value="code"
             v-model="previewLocale"
-            @change="changeLocaleList('fromLocaleList', previewLocale)"
-        /></v-col>
+          />
+        </v-col>
+
+        <v-icon
+          @mouseover="hoveringOverCenterIcon = true"
+          @mouseleave="hoveringOverCenterIcon = false"
+          @click="swapSelectedLocales"
+        >
+          {{ hoveringOverCenterIcon ? "swap_horiz" : "keyboard_arrow_right" }}
+        </v-icon>
 
         <v-col>
           <v-select
             :label="$t('translation.translate-to')"
-            :items="toLocaleList"
+            :items="allLocales"
             item-text="displayString"
             item-value="code"
             v-model="currentLocale"
-            @change="changeLocaleList('toLocaleList', currentLocale)"
+            :error="previewLocale == currentLocale && currentLocale !== ''"
           />
         </v-col>
         <v-col>
           <v-btn
             :disabled="previewLocale === '' || currentLocale === ''"
             @click="$emit('updateTransToFrom')"
-            color="primary"
+            :color="areLocalesEqual ? 'primary' : 'warning'"
             :loading="loadingTranslations"
           >
             {{ $t("translation.fetch") }}
@@ -51,44 +59,29 @@ export default {
     return {
       previewLocale: "",
       currentLocale: "",
-      fromLocaleList: [],
-      toLocaleList: [],
+      prevLocaleOnLoad: "",
+      currLocaleOnLoad: "",
+      hoveringOverCenterIcon: false,
     };
   },
   watch: {
-    allLocales: function() {
-      this.initializeToAndFromLocaleLists();
+    previewLocale: function() {
+      this.$emit('previewUpdated', this.previewLocale);
+    },
+    currentLocale: function() {
+      this.$emit('currentUpdated', this.currentLocale);
+    },
+  },
+  computed: {
+    areLocalesEqual: function() {
+      return (this.currentLocale == this.currLocaleOnLoad) && (this.previewLocale == this.prevLocaleOnLoad);
     },
   },
   methods: {
-    changeLocaleList(theListName, thePopObject) {
-      if (theListName=="toLocaleList") {
-        //doSomething to the fromLocaleList
-        this.fromLocaleList = [];
-        this.fromLocaleList.push(...this.allLocales);
-        this.fromLocaleList.splice(this.findIndex(this.fromLocaleList, thePopObject), 1);
-        this.$emit("currentUpdated", thePopObject);
-      } else if (theListName=="fromLocaleList") {
-        //doSomething to the toLocaleList
-        this.toLocaleList = [];
-        this.toLocaleList.push(...this.allLocales);
-        this.toLocaleList.splice(this.findIndex(this.toLocaleList, thePopObject), 1);
-        this.$emit('previewUpdated', thePopObject);
-      } else{
-        console.log("\n\n\n\nSOMETHING REALLY WEIRD HAPPENED\n\n\n\n");
-      }
-    },
-    initializeToAndFromLocaleLists() {
-      this.fromLocaleList = this.allLocales;
-      this.toLocaleList = this.allLocales;
-    },
-    findIndex(theList, theObject){
-      for(let i=0;i<theList.length;i++){
-        if(theList[i].code==theObject){
-          return i;
-        }
-      }
-      return -1;
+    swapSelectedLocales() {
+      let temp = this.previewLocale;
+      this.previewLocale = this.currentLocale;
+      this.currentLocale = temp;
     },
   },
 };
