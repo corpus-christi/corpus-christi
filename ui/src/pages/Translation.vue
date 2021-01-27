@@ -1,5 +1,6 @@
 <template>
   <v-container>
+    <!-- The bar at the top of the page -->
     <v-app-bar dense dark>
       <v-toolbar-title>
         {{ $t("translation.toolbar-title") }} {{ titleLocale }}
@@ -100,8 +101,19 @@
 </template>
 
 <script>
+/**
+ * @file
+ * @name Translation.vue
+ */
 import { mapState } from "vuex";
 import { eventBus } from "../plugins/event-bus.js";
+
+/**
+ * @file
+ * @name Translation
+ * @exports ../router.js
+ * Draws the webpage for /translation. Page accessible only to translators.
+ */
 export default {
   name: "Translation",
   data() {
