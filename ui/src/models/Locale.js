@@ -61,4 +61,8 @@ export class LocaleModel {
   get flagAndDescription() {
     return `${this.locale.flag} ${this.description}`;
   }
+
+  get languageAndCountry() {
+    return this.locale.toString();
+  }
 }

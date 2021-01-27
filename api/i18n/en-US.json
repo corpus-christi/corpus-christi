@@ -160,6 +160,10 @@
       "gloss": "Actions",
       "verified": false
     },
+    "hide": {
+      "gloss": "Hide",
+      "verified": false
+    },
     "login": {
       "gloss": "Log In",
       "verified": false
@@ -204,8 +208,16 @@
       "gloss": "Search People",
       "verified": false
     },
+    "show": {
+      "gloss": "Show",
+      "verified": false
+    },
     "signup": {
       "gloss": "Signup",
+      "verified": false
+    },
+    "submit": {
+      "gloss": "Submit",
       "verified": false
     },
     "tooltips": {
@@ -1676,7 +1688,7 @@
         "verified": false
       },
       "submit": {
-        "gloss": "Sumbit",
+        "gloss": "Submit",
         "verified": false
       }
     },
@@ -2389,40 +2401,6 @@
       }
     },
     "membership-history": {
-      "title": {
-        "gloss": "History",
-        "verified": false
-      },
-      "note": {
-        "gloss": "Notes",
-        "verified": false
-      },
-      "change-note": {
-        "gloss": "Change Note",
-        "verified": false
-      },
-      "clear-note": {
-        "gloss": "Clear Note",
-        "verified": false
-      },
-      "submit": {
-        "gloss": "Submit",
-        "verified": false
-      },
-      "cancel": {
-        "gloss": "Cancel",
-        "verified": false
-      },
-      "joined": {
-        "gloss": "Joined",
-        "verified": false
-      },
-      "left": {
-        "gloss": "Left",
-        "verified": false
-      }
-    },
-    "membership-history": {
       "cancel": {
         "gloss": "Cancel",
         "verified": false
@@ -2814,6 +2792,12 @@
     }
   },
   "language": {
+    "messages": {
+      "already-exists": {
+        "gloss": "The group already exists",
+        "verified": false
+      }
+    },
     "name": {
       "aa": {
         "gloss": "Afar",
@@ -3565,6 +3549,40 @@
       }
     }
   },
+  "membership-history": {
+    "cancel": {
+      "gloss": "Cancel",
+      "verified": false
+    },
+    "change-note": {
+      "gloss": "Change note",
+      "verified": false
+    },
+    "clear-note": {
+      "gloss": "Clear note",
+      "verified": false
+    },
+    "joined": {
+      "gloss": "Joined",
+      "verified": false
+    },
+    "left": {
+      "gloss": "Left",
+      "verified": false
+    },
+    "note": {
+      "gloss": "Notes",
+      "verified": false
+    },
+    "submit": {
+      "gloss": "Submit",
+      "verified": false
+    },
+    "title": {
+      "gloss": "History",
+      "verified": false
+    }
+  },
   "people": {
     "account-information": {
       "gloss": "Account Information",
@@ -4150,30 +4168,126 @@
     }
   },
   "translation": {
-    "dialog": {
-      "cancel": {
-        "gloss": "Cancel",
-        "verified": false
-      },
-      "submit": {
-        "gloss": "Submit",
-        "verified": false
-      }
-    },
     "error": {
       "gloss": "Please modify your translations again",
       "verified": false
     },
+    "fetch": {
+      "gloss": "Fetch",
+      "verified": false
+    },
+    "filters": {
+      "label": {
+        "gloss": "Filters",
+        "verified": false
+      },
+      "portion-translated": {
+        "gloss": "{0} / {1} Translated",
+        "verified": false
+      },
+      "portion-verified": {
+        "gloss": "{0} / {1} Verified",
+        "verified": false
+      },
+      "untranslated": {
+        "gloss": "Untranslated",
+        "verified": false
+      },
+      "unverified": {
+        "gloss": "Unverified",
+        "verified": false
+      }
+    },
+    "locale": {
+      "add": {
+        "gloss": "Add new locale",
+        "verified": false
+      },
+      "country-code": {
+        "hint": {
+          "gloss": "(Ex: 'US')",
+          "verified": false
+        },
+        "prompt": {
+          "gloss": "Country Code",
+          "verified": false
+        }
+      },
+      "description": {
+        "hint": {
+          "gloss": "(Ex: 'English US')",
+          "verified": false
+        },
+        "prompt": {
+          "gloss": "Description",
+          "verified": false
+        }
+      },
+      "hint": {
+        "gloss": "(Ex: 'en-US English US')",
+        "verified": false
+      },
+      "language-code": {
+        "hint": {
+          "gloss": "(Ex: 'en')",
+          "verified": false
+        },
+        "prompt": {
+          "gloss": "Language Code",
+          "verified": false
+        }
+      },
+      "title": {
+        "gloss": "Enter locale code and description",
+        "verified": false
+      }
+    },
     "menu-title": {
       "gloss": "Translation",
+      "verified": false
+    },
+    "new-translation": {
+      "gloss": "New Translation",
       "verified": false
     },
     "search-title": {
       "gloss": "Find Translation Branch",
       "verified": false
     },
+    "tags": {
+      "sub": {
+        "gloss": "Subtags",
+        "verified": false
+      },
+      "tooltip": {
+        "gloss": "{0} Untranslated, {1} Unverified",
+        "verified": false
+      },
+      "top": {
+        "gloss": "Tags",
+        "verified": false
+      }
+    },
     "toolbar-title": {
       "gloss": "Current locale: ",
+      "verified": false
+    },
+    "toolbox": {
+      "show": {
+        "gloss": "Show Toolbox",
+        "verified": false
+      },
+      "title": {
+        "gloss": "Toolbox",
+        "verified": false
+      }
+    },
+    "translate-from": {
+      "gloss": "Translate From",
+      "verified": false
+    },
+    "translate-to": {
+      "gloss": "Translate To",
       "verified": false
     },
     "transparent-mode": {
@@ -4182,6 +4296,10 @@
     },
     "updated": {
       "gloss": "Translations updated",
+      "verified": false
+    },
+    "verify-translation": {
+      "gloss": "Verified",
       "verified": false
     }
   },

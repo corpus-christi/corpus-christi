@@ -1,256 +1,279 @@
 <template>
   <v-container>
-    <v-app-bar dense dark>
-      <v-toolbar-title>
-        {{ $t("translation.toolbar-title") }} {{ titleLocale }}
-      </v-toolbar-title>
-      <v-spacer />
-      <v-text-field
-        v-model="search"
-        v-bind:label="$t('translation.search-title')"
-        dark
-        flat
-        solo-inverted
-        hide-details
-        clearable
-        clear-icon="mdi-close-circle-outline"
-      ></v-text-field>
-    </v-app-bar>
     <v-btn
-      v-scroll="onScroll"
-      v-show="fab"
+      :title="$t('translation.toolbox.show')"
       fab
-      dark
+      outlined
+      right
       fixed
-      bottom
-      left
-      color="dense"
-      @click="toTop"
+      depressed
+      class="showToolBox"
+      style="top: 80px; z-index: 2;"
+      @click="showToolBox = !showToolBox"
     >
-      <v-icon>keyboard_arrow_up</v-icon>
+      <v-icon>construction</v-icon>
     </v-btn>
+
+    <transition name="fade">
+      <ToolBox
+        class="ToolBox mr-2"
+        elevation="2"
+        v-show="showToolBox"
+        :numTranslated="numEntriesTranslated"
+        :numVerified="numEntriesVerified"
+        :totalEntries="numEntriesTotal"
+        :shouldBeShown="showToolBox"
+        :filterOptions="[
+          'translation.filters.untranslated',
+          'translation.filters.unverified',
+        ]"
+        @hideToolBox="showToolBox = false"
+        @sendFilters="useFilter"
+        @addNewLocale="newLocaleDialog = true"
+      />
+    </transition>
+
+    <WorkbenchHeader
+      ref="workbenchHeader"
+      :allLocales="allLocaleObjs"
+      :loadingTranslations="loadingTranslations"
+      @previewUpdated="onPreviewLocaleChanged"
+      @currentUpdated="onCurrentLocaleChanged"
+      @updateTransToFrom="fetchNewTranslations"
+    />
+
     <v-row>
-      <v-col>
-        <v-card-text>
-          <v-treeview
-            activatable
-            :items="items"
-            v-model="tree"
-            :search="search"
-            selected-color="indigo"
-            :open-on-click="open"
-            selectable
-            return-object
-          ></v-treeview>
-        </v-card-text>
+      <v-col cols="2">
+        <TopLevelTagChooser
+          ref="topLevelTagChooser"
+          :topLevelTags="topLevelTags"
+          :allTranslations="translationObjs"
+          :portionOfScreenHeight="windowHeightMinus300px"
+          @tagsUpdated="onTopLevelTagsUpdated"
+        />
       </v-col>
-      <v-divider vertical></v-divider>
-      <v-col cols="12" md="6">
-        <v-card-text>
-          <v-scroll-x-transition group hide-on-leave>
-            <v-chip
-              v-for="(selection, i) in tree"
-              :key="i"
-              color="grey"
-              dark
-              small
-              class="ma-1"
-              v-on:click="change(selection)"
-            >
-              <v-icon left small>mdi-beer</v-icon>
-              {{ selection.name }}
-            </v-chip>
-          </v-scroll-x-transition>
-        </v-card-text>
+
+      <v-col>
+        <v-card class="mb-1">
+          <v-card-title>
+            <v-row>
+              <v-col>{{ $t("translation.tags.sub") }}</v-col>
+              <v-col>{{ $t("translation.translate-from") }}</v-col>
+              <v-col cols="1"></v-col>
+              <v-col>{{ $t("translation.translate-to") }}</v-col>
+              <v-col cols="3">{{ $t("translation.new-translation") }}</v-col>
+              <v-col cols="1"><v-icon>check</v-icon></v-col>
+            </v-row>
+          </v-card-title>
+        </v-card>
+        <v-card class="overflow-y-auto" :height="windowHeightMinus300px">
+          <TranslationCard
+            v-for="(card, index) in translationObjs"
+            :key="index"
+            :myIndex="index"
+            :topLevelTag="card.top_level_key"
+            :restOfTag="card.rest_of_key"
+            :previewGloss="card.preview_gloss"
+            :currentGloss="card.current_gloss"
+            :currentVerified="card.current_verified"
+            :filters="filters"
+            :selectedTags="selectedTags"
+            :currentCode="currentCode"
+            @submitAChange="sendUpdatedTranslation"
+          />
+        </v-card>
       </v-col>
     </v-row>
 
-    <!-- Edit translation Dialog-->
-    <v-dialog v-model="changeTranslationDialog" persistent max-width="400">
-      <v-card>
-        <v-col cols="12">
-          <v-text-field
-            v-model="updateTR"
-            :label="dialogInitialText"
-            single-line
-            outlined
-          ></v-text-field>
-        </v-col>
-        <v-card-actions>
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on }">
-              <v-btn small v-on="on" v-on:click="hideDialog"
-                ><v-icon>cancel</v-icon></v-btn
-              >
-            </template>
-            <span>{{ $t("translation.dialog.cancel") }}</span>
-          </v-tooltip>
-          <v-spacer />
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on }">
-              <v-btn small v-on="on" v-on:click="update()">{{
-                $t("translation.dialog.submit")
-              }}</v-btn>
-            </template>
-          </v-tooltip>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <NewLocaleDialog
+      :showDialog="newLocaleDialog"
+      @submitComplete="newLocaleSuccessfullyAdded"
+      @closeDialog="newLocaleDialog = false"
+    />
   </v-container>
 </template>
 
 <script>
 import { mapState } from "vuex";
+import { LocaleModel } from "@/models/Locale";
+import TranslationCard from "../components/i18n/TranslationCard.vue";
+import TopLevelTagChooser from "../components/i18n/TopLevelTagChooser.vue";
+import WorkbenchHeader from "../components/i18n/WorkbenchHeader.vue";
+import ToolBox from "../components/i18n/ToolBox.vue";
+import NewLocaleDialog from "../components/i18n/NewLocaleDialog.vue";
 import { eventBus } from "../plugins/event-bus.js";
+const _ = require("lodash");
 export default {
   name: "Translation",
+  components: {
+    WorkbenchHeader,
+    TopLevelTagChooser,
+    TranslationCard,
+    ToolBox,
+    NewLocaleDialog,
+  },
   data() {
     return {
-      translation: null,
-      counter: 1,
-      items: [],
-      storedLocale: null,
-      open: true,
-      tree: [],
-      changeTranslationDialog: false,
-      dialogInitialText: null,
-      updateTR: null,
-      selected_key_id: null,
-      search: null,
-      fab: false,
+      topLevelTags: [],
+      selectedTags: [],
+      allLocaleObjs: [],
+      translationObjs: [],
+      previewCode: "",
+      currentCode: "",
+      newLocaleDialog: false,
+      filters: [],
+      showToolBox: false,
+      loadingTranslations: false,
+      windowHeightMinus300px: this.newScreenPortion(),
     };
   },
   computed: {
     ...mapState(["currentAccount"]),
     ...mapState(["currentLocale"]),
-    titleLocale() {
-      return (
-        this.currentLocale.languageCode + "-" + this.currentLocale.countryCode
-      );
+    numEntriesTranslated() {
+      return this.translationObjs.filter((obj) => obj.current_gloss != "")
+        .length;
     },
-  },
-  watch: {
-    titleLocale() {
-      if (
-        this.currentLocale.languageCode +
-          "-" +
-          this.currentLocale.countryCode !=
-        this.storedLocale
-      ) {
-        console.log(
-          "New Locale",
-          this.currentLocale.languageCode + "-" + this.currentLocale.countryCode
-        );
-        this.loadAllTranslation();
-      }
+    numEntriesVerified() {
+      return this.translationObjs.filter((obj) => obj.current_verified).length;
+    },
+    numEntriesTotal() {
+      return this.translationObjs.length;
     },
   },
   methods: {
-    onScroll(e) {
-      if (typeof window === "undefined") return;
-      const top = window.pageYOffset || e.target.scrollTop || 0;
-      this.fab = top > 20;
-    },
-    toTop() {
-      this.$vuetify.goTo(0);
-    },
-    change(selection) {
-      this.dialogInitialText = selection.name;
-      this.changeTranslationDialog = true;
-      this.selected_key_id = selection.key_id;
-      console.log(selection);
-    },
-    hideDialog() {
-      this.changeTranslationDialog = false;
-    },
-    update() {
-      this.changeTranslationDialog = false;
-      let payload = {
-        key_id: this.selected_key_id,
-        locale_code: this.storedLocale,
-        gloss: this.updateTR,
-      };
+    loadTopLevelTags() {
       return this.$http
-        .patch(`api/v1/i18n/values/update`, payload)
+        .get(`api/v1/i18n/keys`)
         .then((resp) => {
-          eventBus.$emit("message", {
-            content: "translation.updated",
+          resp.data.forEach((obj) => {
+            this.topLevelTags.push(obj.id.split(".")[0]);
           });
-          console.log(resp.data);
+          this.topLevelTags = _.uniq(this.topLevelTags).sort();
+        })
+        .catch((err) => {
+          eventBus.$emit("error", {
+            content: (err.response.data),
+          });
+        });
+    },
+    getAllLocales() {
+      return this.$http
+        .get(`api/v1/i18n/locales`)
+        .then((resp) => {
+          this.allLocaleObjs = resp.data.map((obj) => {
+            let tempLocaleModel = new LocaleModel(obj);
+            return {
+              displayString: tempLocaleModel.flagAndDescription,
+              code: tempLocaleModel.languageAndCountry,
+            };
+          });
         })
         .catch((err) => {
           console.log(err);
           eventBus.$emit("error", {
-            content: "translation.error",
+            content: (err.response.data),
           });
         });
     },
-    getTreeLeaves() {
-      for (let L1 of Object.keys(this.translation)) {
-        this.items.push({
-          id: this.counter,
-          name: L1,
-          children: [],
-        });
-        this.counter += 1;
-        this.getExtensions(
-          L1,
-          this.translation[L1],
-          this.items[this.items.length - 1].children,
-          L1 + "."
-        );
-      }
+    fetchNewTranslations() {
+      this.loadingTranslations = true;
+      return this.$http
+        .get(
+          `api/v1/i18n/values/translations/${this.previewCode}/${this.currentCode}`
+        )
+        .then((resp) => {
+          this.translationObjs = resp.data;
+          this.$refs.workbenchHeader.prevLocaleOnLoad = this.previewCode;
+          this.$refs.workbenchHeader.currLocaleOnLoad = this.currentCode;
+        })
+        .catch((err) => {
+          eventBus.$emit("error", {
+            content: (err.response.data),
+          });
+        })
+        .finally(() => (this.loadingTranslations = false));
     },
-    getExtensions(name, subtree, container, key_id) {
-      for (let leaf of Object.keys(subtree)) {
-        if (container === undefined) {
-          console.log("reach end");
-        } else if (typeof subtree[leaf] === "object") {
-          container.push({
-            id: this.counter,
-            name: leaf,
-            children: [],
-          });
-          this.counter += 1;
-          this.getExtensions(
-            leaf,
-            subtree[leaf],
-            container[container.length - 1].children,
-            key_id + leaf + "."
-          );
-        } else if (typeof subtree[leaf] === "string") {
-          container.push({
-            id: this.counter,
-            name: leaf,
-            children: [],
-          });
-          this.counter += 1;
-          container[container.length - 1].children.push({
-            id: this.counter,
-            name: subtree[leaf],
-            key_id: key_id + leaf,
-          });
-          this.counter += 1;
+    onPreviewLocaleChanged(code) {
+      this.previewCode = code;
+    },
+    onCurrentLocaleChanged(code) {
+      this.currentCode = code;
+    },
+    onTopLevelTagsUpdated(tagList) {
+      this.selectedTags = tagList;
+      this.findFirstTag();
+    },
+    findFirstTag() {
+      //find the first tag
+      dance: for (
+        let objNum = 0;
+        objNum < this.translationObjs.length;
+        objNum++
+      ) {
+        for (let tagNum = 0; tagNum < this.selectedTags.length; tagNum++) {
+          if (
+            this.selectedTags[tagNum] ==
+            this.translationObjs[objNum].top_level_key
+          ) {
+            //focus on the v-text-field element
+            this.focusOnFirstTag(this.translationObjs[objNum]);
+            break dance;
+          }
         }
       }
     },
-    loadAllTranslation() {
-      let locale =
-        this.currentLocale.languageCode + "-" + this.currentLocale.countryCode;
-      this.storedLocale =
-        this.currentLocale.languageCode + "-" + this.currentLocale.countryCode;
-      return this.$http
-        .get(`api/v1/i18n/values/${locale}?format=tree`)
-        .then((resp) => {
-          this.translation = resp.data;
-        })
-        .then(() => this.getTreeLeaves());
+    // eslint-disable-next-line
+    focusOnFirstTag(cardObj) {},
+    bodyScrollHeight() {
+      return document.body.scrollHeight;
+    },
+    useFilter(filters) {
+      this.filters = filters;
+    },
+    sendUpdatedTranslation(index, newTrans, newVerify) {
+      this.translationObjs[index].current_gloss = newTrans;
+      this.translationObjs[index].current_verified = newVerify;
+      this.$refs.topLevelTagChooser.populateIncompleteCounts();
+    },
+    newLocaleSuccessfullyAdded(newLocaleObj) {
+      let newLocale = new LocaleModel(newLocaleObj);
+      this.allLocaleObjs.push({
+        code: newLocale.languageAndCountry,
+        displayString: newLocale.flagAndDescription,
+      });
+      this.newLocaleDialog = false;
+    },
+    newScreenPortion() {
+      return window.innerHeight - 300;
     },
   },
   mounted: function () {
-    this.loadAllTranslation();
+    window.addEventListener("resize", () => {
+      this.windowHeightMinus300px = this.newScreenPortion();
+    });
+    this.loadTopLevelTags();
+    this.getAllLocales();
   },
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.ToolBox {
+  position: fixed;
+  width: 350px;
+  right: 0;
+  z-index: 2;
+}
+.dialog {
+  overflow: hidden;
+}
+/* From https://vuejs.org/v2/guide/transitions.html */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
+</style>

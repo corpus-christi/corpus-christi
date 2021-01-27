@@ -24,7 +24,7 @@ class I18NLocale(Base):
     values = relationship('I18NValue', back_populates='locale', lazy=True)
 
     def __repr__(self):
-        return f"<I18NLocale(id='{self.code}',desc='{self.desc}')>"
+        return f"<I18NLocale(id='{self.code}',desc='{self.desc}'')>"
 
 
 class I18NLocaleSchema(Schema):
@@ -70,8 +70,8 @@ class I18NValue(Base):
     __tablename__ = 'i18n_value'
     key_id = Column(StringTypes.I18N_KEY, ForeignKey('i18n_key.id'), primary_key=True)
     locale_code = Column(StringTypes.LOCALE_CODE, ForeignKey('i18n_locale.code'), primary_key=True)
-    gloss = Column(Text(), nullable=False)
-    verified = Column(Boolean, default=False)
+    gloss = Column(Text(), nullable=False, default="")
+    verified = Column(Boolean, nullable=False, default=False)
 
     key = relationship('I18NKey', back_populates='values', lazy=True)
     locale = relationship('I18NLocale', back_populates='values', lazy=True)
@@ -86,6 +86,18 @@ class I18NValueSchema(Schema):
     gloss = fields.String(required=True)
     verified = fields.Boolean(required=True)
 
+class I18NMultipleLocalesPreSplit(Schema):
+    key_id = fields.String(required=True)
+    preview_gloss = fields.String(required=True)
+    current_gloss = fields.String(required=True)
+    current_verified = fields.Boolean(required=True)
+
+class I18NMultipleLocalesSplitKey(Schema):
+    top_level_key = fields.String(required=True)
+    rest_of_key = fields.String(required=True)
+    preview_gloss = fields.String(required=True)
+    current_gloss = fields.String(required=True)
+    current_verified = fields.Boolean(required=True)
 
 # ---- Language
 
