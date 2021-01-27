@@ -1,7 +1,7 @@
 /**
  * @file
  * @name vuetify.js
- * @exports ???
+ * @exports ../main.ts
  * Creates the Vuetify object which runs the site's asthetics.
  */
 import Vue from "vue";

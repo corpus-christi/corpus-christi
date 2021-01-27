@@ -1,8 +1,8 @@
 /**
  * @file
  * @name vuex-persistedstate.js
- * @exports ???
- * @todo Add comments describing what this file does and where it's imported to.
+ * @exports ../store.js
+ * @todo Add comments describing what this file does.
  */
 import Account from "../models/Account";
 import { Locale } from "@/models/Locale";
