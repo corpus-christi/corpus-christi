@@ -1,5 +1,16 @@
 /**
- *  This file contains algorithms needed to resolve group hierarchy permissions
+ * @file
+ * @name GroupHierarchyNode.ts
+ * @exports ../../tests/unit/GroupHierarchyNode.spec.ts
+ * @exports ../components/groups/GroupLineGraph.vue
+ * @exports ../components/groups/GroupMeetingMember.vue
+ * @exports ../components/groups/GroupMeetingVisitor.vue
+ * @exports ../components/groups/GroupParticipants.vue
+ * @exports ../components/groups/GroupTable.vue
+ * @exports ../components/groups/meetings/GroupMeetings.vue
+ * @exports ../components/groups/treeview/GroupTreeViewHierarchy.vue
+ * @exports ../components/groups/treeview/GroupTreeView.vue
+ *  This file contains algorithms needed to resolve group hierarchy permissions.
  */
 
 /* API response objects mappers */
