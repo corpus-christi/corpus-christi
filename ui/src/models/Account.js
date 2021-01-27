@@ -4,6 +4,7 @@
  * @exports ../../tests/e2e/support/commands.js
  * @exports ../pages/Login.vue
  * @exports ../plugins/vuex-persistedstate.js
+ * Creates object for preserving the Account state.
  */
 
 /**
