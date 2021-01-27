@@ -48,12 +48,13 @@
           ref="topLevelTagChooser"
           :topLevelTags="topLevelTags"
           :allTranslations="translationObjs"
+          :portionOfScreenHeight="windowHeightMinus300px"
           @tagsUpdated="onTopLevelTagsUpdated"
         />
       </v-col>
 
       <v-col>
-        <v-card class="mb-1">
+        <v-card class="mb-1" dark>
           <v-card-title>
             <v-row>
               <v-col>{{ $t("translation.tags.sub") }}</v-col>
@@ -65,7 +66,7 @@
             </v-row>
           </v-card-title>
         </v-card>
-        <v-card class="overflow-y-auto" :height="calculateScreenHeight">
+        <v-card class="overflow-y-auto" :height="windowHeightMinus300px">
           <TranslationCard
             v-for="(card, index) in translationObjs"
             :key="index"
@@ -122,6 +123,7 @@ export default {
       filters: [],
       showToolBox: false,
       loadingTranslations: false,
+      windowHeightMinus300px: this.newScreenPortion(),
     };
   },
   computed: {
@@ -136,10 +138,6 @@ export default {
     },
     numEntriesTotal() {
       return this.translationObjs.length;
-    },
-    calculateScreenHeight() {
-      console.log(this.screenHeight);
-      return 0.7 * screen.height;
     },
   },
   methods: {
@@ -232,8 +230,14 @@ export default {
       });
       this.newLocaleDialog = false;
     },
+    newScreenPortion() {
+      return window.innerHeight - 300;
+    },
   },
   mounted: function () {
+    window.addEventListener("resize", () => {
+      this.windowHeightMinus300px = this.newScreenPortion();
+    });
     this.loadTopLevelTags();
     this.getAllLocales();
   },

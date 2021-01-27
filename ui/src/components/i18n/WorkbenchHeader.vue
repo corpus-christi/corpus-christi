@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mb-2">
+  <v-card class="mb-2" dark>
     <v-container>
       <v-row align="center">
         <v-col class="headline">{{ $t("translation.tags.top") }}</v-col>

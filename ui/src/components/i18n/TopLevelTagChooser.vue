@@ -1,11 +1,11 @@
 <template>
   <div>
-    <v-card class="mb-1">
-      <v-card-title>Tag</v-card-title>
+    <v-card class="mb-1" dark>
+      <v-card-title>{{ $t('translation.tags.top') }}</v-card-title>
     </v-card>
     <v-card
       class="overflow-y-auto"
-      :height="calculateScreenHeight"
+      :height="portionOfScreenHeight"
     >
       <v-list>
         <v-list-item-group class="ml-3" color="grey darken-4" multiple>
@@ -49,7 +49,8 @@ export default {
   name: "TopLevelTagChooser",
   props: {
     topLevelTags: { type: Array, required: true, },
-    allTranslations: { type: Array, required: false, },
+    allTranslations: { type: Array, required: true, },
+    portionOfScreenHeight: { type: Number, required: true, },
   },
   data() {
     return {
@@ -60,12 +61,6 @@ export default {
   watch: {
     allTranslations: function() {
       this.populateIncompleteCounts();
-    },
-  },
-  computed: {
-    calculateScreenHeight() {
-      console.log(this.screenHeight);
-      return .7 * screen.height;
     },
   },
   methods: {

@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-title>
-      Toolbox
+      {{ $t("translation.toolbox.title") }}
       <v-spacer />
       <v-btn icon @click="$emit('hideToolBox')">
         <v-icon>close</v-icon>

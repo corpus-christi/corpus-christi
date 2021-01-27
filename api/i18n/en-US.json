@@ -4276,6 +4276,10 @@
       "show": {
         "gloss": "Show Toolbox",
         "verified": false
+      },
+      "title": {
+        "gloss": "Toolbox",
+        "verified": false
       }
     },
     "translate-from": {
