@@ -5,10 +5,20 @@
 </template>
 
 <script>
+/**
+ * @file
+ * @name CourseOfferings.vue
+ */
 import CourseOfferingsTable from "../components/courses/CourseOfferingsTable";
 
+/**
+ * @module
+ * @name CourseOfferings
+ * @exports ???
+ * Unused File.
+ */
 export default {
-  name: "course-offerings-admin",
+  name: "CourseOfferings",
   components: {
     CourseOfferingsTable,
   },

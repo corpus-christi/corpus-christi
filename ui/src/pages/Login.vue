@@ -56,11 +56,22 @@
 </template>
 
 <script>
+/**
+ * @file
+ * @name Login.vue
+ * Creates the Login page.
+ */
 import { mapMutations } from "vuex";
 import Account from "../models/Account";
 import jwtDecode from "jwt-decode";
 import { eventBus } from "@/plugins/event-bus";
 
+/**
+ * @module
+ * @name Login
+ * @exports ../router.js
+ * Provides Login Functionality.
+ */
 export default {
   name: "Login",
   data() {
