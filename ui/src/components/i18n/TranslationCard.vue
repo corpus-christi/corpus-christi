@@ -10,7 +10,7 @@
           {{ previewGloss }}
         </v-col>
 
-        <v-col cols="1" align="center">
+        <v-col cols="1">
         <v-icon>keyboard_arrow_right</v-icon>
         </v-col>
 
