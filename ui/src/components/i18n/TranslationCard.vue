@@ -82,11 +82,11 @@ export default {
       return `${this.topLevelTag}.${this.restOfTag}`;
     },
     isHiddenByFilters() {
-      if (this.currentVerified && this.filters.includes("Unverified")) {
+      if (this.currentVerified && this.filters.includes("translation.filters.unverified")) {
         return true;
       }
       return (
-        this.currentGloss.length !== 0 && this.filters.includes("Untranslated")
+        this.currentGloss.length !== 0 && this.filters.includes("translation.filters.untranslated")
       );
     },
   },

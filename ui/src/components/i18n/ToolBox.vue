@@ -48,7 +48,9 @@
               multiple
               chips
               :label="$t('translation.filters.label')"
-              :items="translatedFilters()"
+              :items="filterObjs"
+              item-text="disp"
+              item-value="tag"
               v-model="activeFilters"
               @change="filtersUpdated"
             />
@@ -87,13 +89,20 @@ export default {
     };
   },
 
+  computed: {
+    filterObjs: function() {
+      return this.filterOptions.map((item) => {
+        return {
+          tag: item,
+          disp: this.$t(item),
+        };
+      });
+    },
+  },
+
   methods: {
     filtersUpdated() {
       this.$emit("sendFilters", this.activeFilters);
-    },
-
-    translatedFilters() {
-      return this.filterOptions.map((item) => this.$t(item));
     },
   },
   
