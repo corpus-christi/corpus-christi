@@ -1,5 +1,10 @@
 from marshmallow import fields, Schema
+from sqlalchemy import Column, Integer, String, Date, ForeignKey, Boolean, Table
 
+# ---- Email Model
+
+    
+    
 
 # ---- Email Schema
 

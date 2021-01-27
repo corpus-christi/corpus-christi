@@ -375,7 +375,6 @@ export default {
         this.currentNote = "";
       } else {
         this.currentNote = JSON.parse(event.note);
-        console.log("currentNote", this.currentNote);
       }
       this.addNoteDialog = true;
     },

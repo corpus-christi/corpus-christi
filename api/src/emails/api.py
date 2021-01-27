@@ -45,6 +45,8 @@ def send_email():
     print(BODY)
     print(recipients)
 
+    newBody = BeautifulSoup(body, "html.parser")
+
     
 
     # grabbing the emails from the csv file and putting them into a list
@@ -56,18 +58,19 @@ def send_email():
 
     # this forms and sends the email
     def send(to_addr: str, subject: str, body: str, attachment: str = None):
-        newBody = BeautifulSoup(body, "html.parser")
         print(newBody.get_text())
-        msg = MIMEMultipart()
+        msg = MIMEMultipart('alternative')
         msg['From'] = SENDER_NAME + ' <' + EMAIL_ADDRESS + '>'
         msg['To'] = to_addr
         msg['Subject'] = subject
         msg.add_header('reply-to', SENDER_EMAIL)
         msg.attach(MIMEText(newBody.get_text(), 'plain'))
+        msg.attach(MIMEText(body, 'html'))
         if attachment:
             payload = create_attachement(attachment)
             msg.attach(payload)
         text = msg.as_string()
+        print("text", text)
         smtp.sendmail(EMAIL_ADDRESS, recipients, text)
 
     # if an attachment is given, this function formats it to be sent
@@ -84,5 +87,7 @@ def send_email():
     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
         smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
         send(EMAIL_ADDRESS, SUBJECT, BODY, ATTACHMENT_PATH)
+
+    new_email=Email(newBody, SUBJECT)
 
     return "Sent"

@@ -35,6 +35,7 @@
     </v-card-text>
     <tip-tap-entry
     @sending="updateBody"
+    @clearing="updateBody"
     >
     </tip-tap-entry>
     <!--<v-card-text>
@@ -165,7 +166,6 @@ export default {
   methods: {
 
     updateBody(data){ 
-      console.log("hello");
       this.email.body = data;
     },
     

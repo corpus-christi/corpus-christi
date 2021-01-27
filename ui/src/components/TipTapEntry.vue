@@ -115,10 +115,15 @@
     </div>
   </editor-menu-bar>
   <editor-content 
+  ref="editor"
   :editor="dialogData"/>
   <button
   @click="sendBody"
-  >Save</button>
+  >Save Body</button>
+  <v-spacer></v-spacer>
+  <button
+  @click="clearBody">
+  Clear Body</button>
   </div>
 </template>
 
@@ -212,13 +217,13 @@ export default {
   },
 
   methods: {
-      sayHello(){
-          console.log("Hello");
-      },
       sendBody(){
-          console.log("HERE", this.json);
-          this.$emit("sending", this.html);
+        this.$emit("sending", this.html);
       },
+      clearBody(){
+        this.html = "";
+        this.$emit("clearing", this.html);
+      }
   }
 };
 </script>
