@@ -65,19 +65,23 @@ export default {
     totalEntries: { type: Number, required: true },
     filterOptions: { type: Array, required: true },
   },
+
   data() {
     return {
       activeFilters: [],
     };
   },
+
   methods: {
     filtersUpdated() {
       this.$emit("sendFilters", this.activeFilters);
     },
+
     translatedFilters() {
       return this.filterOptions.map((item) => this.$t(item));
     },
   },
+  
   mounted: function () {
     this.filtersUpdated();
   },

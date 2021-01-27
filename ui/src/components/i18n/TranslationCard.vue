@@ -47,18 +47,18 @@
 export default {
   name: "TranslationCard",
   props: {
-    myIndex:         { type: Number,  required: true },
-    topLevelTag:     { type: String,  required: true },
-    restOfTag:       { type: String,  required: true },
-    previewGloss:    { type: String,  required: true },
-    currentGloss:    { type: String,  required: true },
+    myIndex: { type: Number, required: true },
+    topLevelTag: { type: String, required: true },
+    restOfTag: { type: String, required: true },
+    previewGloss: { type: String, required: true },
+    currentGloss: { type: String, required: true },
     currentVerified: { type: Boolean, required: true },
-    filters:         { type: Array,   required: true },
-    selectedTags:    { type: Array,   required: true },
-    currentCode:     { type: String,  required: true },
+    filters: { type: Array, required: true },
+    selectedTags: { type: Array, required: true },
+    currentCode: { type: String, required: true },
   },
   data() {
-    return{
+    return {
       oldTranslation: this.currentGloss,
       newTranslation: "",
       oldVerification: this.currentVerified,
@@ -68,7 +68,7 @@ export default {
     };
   },
   watch: {
-    currentGloss: function() {
+    currentGloss: function () {
       this.newTranslation = "";
       this.oldVerification = this.currentVerified;
       this.newVerification = this.currentVerified;
@@ -82,13 +82,12 @@ export default {
       return `${this.topLevelTag}.${this.restOfTag}`;
     },
     isHiddenByFilters() {
-      if (this.currentVerified && this.filters.includes('Unverified')) {
+      if (this.currentVerified && this.filters.includes("Unverified")) {
         return true;
       }
-      if (this.currentGloss.length != 0 && this.filters.includes('Untranslated')) {
-        return true;
-      }
-      return false;
+      return (
+        this.currentGloss.length !== 0 && this.filters.includes("Untranslated")
+      );
     },
   },
   methods: {
@@ -102,7 +101,12 @@ export default {
           verified: this.newVerification,
         })
         .then(() => {
-          this.$emit('submitAChange', this.myIndex, this.newTranslation, this.newVerification);
+          this.$emit(
+            "submitAChange",
+            this.myIndex,
+            this.newTranslation,
+            this.newVerification
+          );
           this.oldTranslation = this.newTranslation;
           this.newTranslation = "";
           this.oldVerification = this.newVerification;
@@ -120,9 +124,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-  .selected{
-    border-color: #1874d2;
-  }
-</style>

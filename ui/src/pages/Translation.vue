@@ -8,7 +8,7 @@
       fixed
       depressed
       class="showToolBox"
-      style="top: 80px; z-index: 2;"
+      style="top: 80px; z-index: 2"
       @click="showToolBox = !showToolBox"
     >
       <v-icon>construction</v-icon>

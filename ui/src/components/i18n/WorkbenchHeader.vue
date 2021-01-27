@@ -4,6 +4,7 @@
       <v-row align="center">
         <v-col class="headline">{{ $t("translation.tags.top") }}</v-col>
 
+        <!-- <v-spacer /> -->
         <v-col>
           <v-select
             :label="$t('translation.translate-from')"

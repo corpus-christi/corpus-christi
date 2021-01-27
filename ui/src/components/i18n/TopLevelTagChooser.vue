@@ -59,7 +59,7 @@ export default {
     };
   },
   watch: {
-    allTranslations: function() {
+    allTranslations: function () {
       this.populateIncompleteCounts();
     },
   },
@@ -80,14 +80,12 @@ export default {
     numUntranslated(topLevelTag) {
       return this.allTranslations
         .filter((obj) => obj.top_level_key == topLevelTag)
-        .filter((obj) => obj.current_gloss == '')
-        .length;
+        .filter((obj) => obj.current_gloss == "").length;
     },
     numUnverified(topLevelTag) {
       return this.allTranslations
         .filter((obj) => obj.top_level_key == topLevelTag)
-        .filter((obj) => obj.current_verified == false)
-        .length;
+        .filter((obj) => obj.current_verified == false).length;
     },
   },
 };

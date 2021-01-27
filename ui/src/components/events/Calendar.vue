@@ -1,21 +1,21 @@
 <template>
   <div>
-    <vue-cal
-      :locale="currentLocaleModel.code.split('-')[0]"
-      default-view="week"
-      events-on-month-view
-      :events="calendarEvents"
-      v-on:event-focus="goToEvent"
-    >
-    </vue-cal>
+<!--    <vue-cal-->
+<!--      :locale="currentLocaleModel.code.split('-')[0]"-->
+<!--      default-view="week"-->
+<!--      events-on-month-view-->
+<!--      :events="calendarEvents"-->
+<!--      v-on:event-focus="goToEvent"-->
+<!--    >-->
+<!--    </vue-cal>-->
   </div>
 </template>
 <script>
-import Vuecal from "vue-cal";
-import "vue-cal/dist/vuecal.css";
+// import Vuecal from "vue-cal";
+// import "vue-cal/dist/vuecal.css";
 import { mapGetters, mapState } from "vuex";
 export default {
-  components: { "vue-cal": Vuecal },
+  // components: { "vue-cal": Vuecal },
   data() {
     return {
       events: [],
