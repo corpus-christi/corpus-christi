@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card elevation=8>
+    <v-card>
       <template v-if="loaded"> 
         <v-toolbar dark color="primary">
           <v-toolbar-title v-if="item == 'team'">{{ $t("teams.title") }}</v-toolbar-title>
@@ -63,6 +63,7 @@
                   outlined
                   text
                   color="primary"
+                  @click="openEditDialog(jItem)"
                 >
                   <v-icon>edit</v-icon>
                 </v-btn>
@@ -76,6 +77,7 @@
                   outlined
                   text
                   color="primary"
+                  :to="{ path: `/${item}s/${jItem.id}` }"
                 >
                   <v-icon>info</v-icon>
                 </v-btn>
@@ -126,7 +128,7 @@
               readonly
               disabled
               v-if="item === 'person' && addItemDialog.editMode"
-              v-bind:value="'Editing a Person'"
+              v-bind:value="getFullName(addItemDialog.newItem)"
             />
 
             <div :hidden="addItemDialog.editMode">
@@ -321,7 +323,6 @@ export default {
     },
 
     addItem() {
-      console.log("adding person!");
       this.addItemDialog.loading = true;
       let newData = { item: this.addItemDialog.newItem };
       // If item is a person, add appropriate data
@@ -335,15 +336,13 @@ export default {
     },
 
     showDeleteItemDialog(id) {
-      console.log("showing dialog");
-      console.log(id);
       this.deleteItemDialog.itemId = id;
       this.deleteItemDialog.show = true;
     },
 
     closeDeleteItemDialog() {
       this.deleteItemDialog.show = false;
-      //this.deleteItemDialog.itemId = -1;
+      this.deleteItemDialog.itemId = -1;
       this.deleteItemDialog.loading = false;
     },
 
@@ -353,6 +352,13 @@ export default {
       // Emit item-deleted event"
       this.$emit("item-deleted", { itemId: id });
       this.closeDeleteItemDialog();
+    },
+
+    openEditDialog(itemData) {
+      this.addItemDialog.editMode = true;
+      this.addItemDialog.show = true;
+      this.$set(this.addItemDialog, "newItem", itemData.person);
+      this.addItemDialog.description = itemData.description;
     },
 
     newPerson() {
