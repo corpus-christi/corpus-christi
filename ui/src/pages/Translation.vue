@@ -16,7 +16,7 @@
 
     <transition name="fade">
       <ToolBox
-        class="ToolBox mr-2 mt-1"
+        class="ToolBox mr-2"
         elevation="2"
         v-show="showToolBox"
         :numTranslated="numEntriesTranslated"
@@ -54,7 +54,7 @@
       </v-col>
 
       <v-col>
-        <v-card class="mb-1" dark>
+        <v-card class="mb-1">
           <v-card-title>
             <v-row>
               <v-col>{{ $t("translation.tags.sub") }}</v-col>

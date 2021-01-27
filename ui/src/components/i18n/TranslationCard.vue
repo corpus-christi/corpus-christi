@@ -1,7 +1,7 @@
 <template>
   <v-card v-if="isSelected && !isHiddenByFilters" class="mb-1" outlined>
     <v-container>
-      <v-row align="center">
+      <v-row align="center" justify="center">
         <v-col>
           {{ restOfTag }}
         </v-col>
@@ -10,7 +10,7 @@
           {{ previewGloss }}
         </v-col>
 
-        <v-col cols="1">
+        <v-col cols="1" align="center">
         <v-icon>keyboard_arrow_right</v-icon>
         </v-col>
 

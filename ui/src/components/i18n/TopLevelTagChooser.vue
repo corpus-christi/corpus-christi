@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card class="mb-1" dark>
+    <v-card class="mb-1">
       <v-card-title>{{ $t('translation.tags.top') }}</v-card-title>
     </v-card>
     <v-card
