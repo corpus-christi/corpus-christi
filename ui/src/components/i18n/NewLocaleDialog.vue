@@ -41,6 +41,7 @@
 </template>
 
 <script>
+import { eventBus } from '../../plugins/event-bus';
 export default {
   name: "NewLocaleDialog",
   props: {
@@ -82,7 +83,9 @@ export default {
           this.$emit('submitComplete', newLocaleObject);
         })
         .catch((err) => {
-          console.log(err);
+          eventBus.$emit("error", {
+            content: (err),
+          });
         })
         .finally(() => {
           this.submissionInProgress = false;

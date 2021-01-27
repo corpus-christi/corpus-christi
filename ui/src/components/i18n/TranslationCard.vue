@@ -1,7 +1,7 @@
 <template>
   <v-card v-if="isSelected && !isHiddenByFilters" class="mb-1" outlined>
     <v-container>
-      <v-row align="center" justify="center">
+      <v-row align="center">
         <v-col>
           {{ restOfTag }}
         </v-col>
@@ -44,6 +44,7 @@
 </template>
 
 <script>
+import { eventBus } from '../../plugins/event-bus';
 export default {
   name: "TranslationCard",
   props: {
@@ -112,7 +113,9 @@ export default {
           this.oldVerification = this.newVerification;
         })
         .catch((err) => {
-          console.log(err);
+          eventBus.$emit("message", {
+            content: (err.response.data),
+          })
         })
         .finally(() => {
           this.submissionInProgress = false;

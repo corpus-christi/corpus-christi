@@ -8,7 +8,7 @@
       fixed
       depressed
       class="showToolBox"
-      style="top: 80px; z-index: 2"
+      style="top: 80px; z-index: 2;"
       @click="showToolBox = !showToolBox"
     >
       <v-icon>construction</v-icon>
@@ -101,6 +101,7 @@ import TopLevelTagChooser from "../components/i18n/TopLevelTagChooser.vue";
 import WorkbenchHeader from "../components/i18n/WorkbenchHeader.vue";
 import ToolBox from "../components/i18n/ToolBox.vue";
 import NewLocaleDialog from "../components/i18n/NewLocaleDialog.vue";
+import { eventBus } from "../plugins/event-bus.js";
 const _ = require("lodash");
 export default {
   name: "Translation",
@@ -150,7 +151,11 @@ export default {
           });
           this.topLevelTags = _.uniq(this.topLevelTags).sort();
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          eventBus.$emit("error", {
+            content: (err.response.data),
+          });
+        });
     },
     getAllLocales() {
       return this.$http
@@ -164,7 +169,12 @@ export default {
             };
           });
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          console.log(err);
+          eventBus.$emit("error", {
+            content: (err.response.data),
+          });
+        });
     },
     fetchNewTranslations() {
       this.loadingTranslations = true;
@@ -177,7 +187,11 @@ export default {
           this.$refs.workbenchHeader.prevLocaleOnLoad = this.previewCode;
           this.$refs.workbenchHeader.currLocaleOnLoad = this.currentCode;
         })
-        .catch((err) => console.log(err))
+        .catch((err) => {
+          eventBus.$emit("error", {
+            content: (err.response.data),
+          });
+        })
         .finally(() => (this.loadingTranslations = false));
     },
     onPreviewLocaleChanged(code) {
@@ -248,7 +262,6 @@ export default {
 .ToolBox {
   position: fixed;
   width: 350px;
-  height: 25%;
   right: 0;
   z-index: 2;
 }
