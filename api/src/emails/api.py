@@ -8,6 +8,8 @@ from flask import request
 from flask.json import jsonify
 from flask_jwt_extended import jwt_required
 from marshmallow import ValidationError
+from bs4 import BeautifulSoup
+
 
 from . import emails
 from .models import EmailSchema
@@ -43,11 +45,7 @@ def send_email():
     print(BODY)
     print(recipients)
 
-<<<<<<< HEAD
     
-=======
-    # return
->>>>>>> 14caeb3a741b802fc8890576f05f33b1d1e4f102
 
     # grabbing the emails from the csv file and putting them into a list
     # recipients = []
@@ -58,12 +56,14 @@ def send_email():
 
     # this forms and sends the email
     def send(to_addr: str, subject: str, body: str, attachment: str = None):
+        newBody = BeautifulSoup(body, "html.parser")
+        print(newBody.get_text())
         msg = MIMEMultipart()
         msg['From'] = SENDER_NAME + ' <' + EMAIL_ADDRESS + '>'
         msg['To'] = to_addr
         msg['Subject'] = subject
         msg.add_header('reply-to', SENDER_EMAIL)
-        msg.attach(MIMEText(body, 'plain'))
+        msg.attach(MIMEText(newBody.get_text(), 'plain'))
         if attachment:
             payload = create_attachement(attachment)
             msg.attach(payload)

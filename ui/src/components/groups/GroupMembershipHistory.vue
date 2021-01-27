@@ -375,6 +375,7 @@ export default {
         this.currentNote = "";
       } else {
         this.currentNote = JSON.parse(event.note);
+        console.log("currentNote", this.currentNote);
       }
       this.addNoteDialog = true;
     },
@@ -390,6 +391,7 @@ export default {
     changeNote() {
       let myJSON = JSON.stringify(this.json);
       let payload = { note: myJSON };
+      console.log(payload);
       this.addNoteDialog = false;
       return this.$http
         .patch(`api/v1/groups/member-histories/${this.editingNoteId}`, payload)
@@ -441,7 +443,7 @@ export default {
                 ": ",
                 record.note,
                 ")  "
-              );
+              )
             }
           }
         }

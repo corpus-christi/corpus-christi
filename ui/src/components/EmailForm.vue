@@ -33,10 +33,14 @@
       >
       </v-text-field>
     </v-card-text>
-    <v-card-text>
+    <tip-tap-entry
+    @sending="updateBody"
+    >
+    </tip-tap-entry>
+    <!--<v-card-text>
       <v-textarea :label="$t('groups.members.email.body')" v-model="email.body">
       </v-textarea>
-    </v-card-text>
+    </v-card-text>-->
     <v-flex class="text-xs-center">
       <v-btn
         class="ma-2"
@@ -127,9 +131,11 @@
 import { mapState } from "vuex";
 import { eventBus } from "../plugins/event-bus.js";
 import EntitySearch from "./EntitySearch";
+import TipTapEntry from "./TipTapEntry";
+
 
 export default {
-  components: { EntitySearch },
+  components: { EntitySearch, TipTapEntry },
   props: {
     initialData: {
       /* contains the following
@@ -157,6 +163,11 @@ export default {
 
   },
   methods: {
+
+    updateBody(data){ 
+      console.log("hello");
+      this.email.body = data;
+    },
     
     syncInitialData() {
       this.email.recipients = this.initialData.recipients;
