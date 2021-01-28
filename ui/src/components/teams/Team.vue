@@ -41,7 +41,6 @@
           v-bind:label="$t('actions.search')"
           single-line
           hide-details
-          
         ></v-text-field>
         <v-spacer />
         <v-btn
@@ -49,7 +48,6 @@
           raised
           v-on:click="activateNewParticipantDialog"
           data-cy="add-team-member"
-          
         >
           <v-icon dark left>add</v-icon>
           {{ $t("teams.members.add") }}

@@ -3,7 +3,7 @@
     <v-card class="card elevation-10">
       <div class="body">
         <!-- Display course title, description and register button -->
-        <v-card-title style="text-align: center;" class="title">
+        <v-card-title style="text-align: center" class="title">
           <v-layout row align-center justify-center>
             <v-flex shrink>
               <span class="headline mb-3">{{ course.name }}</span>
@@ -11,7 +11,7 @@
           </v-layout>
         </v-card-title>
         <v-layout>
-          <v-card-text class="text" style="text-align: center;">
+          <v-card-text class="text" style="text-align: center">
             <v-flex>
               <b>{{ $t("courses.description") }}: </b>
               <div class="mb-3">{{ course.description }}</div>
