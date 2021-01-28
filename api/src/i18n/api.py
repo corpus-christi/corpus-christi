@@ -34,12 +34,22 @@ def read_one_locale(locale_code):
 
 
 @i18n.route('/locales', methods=['POST'])
+@authorize(['role.translator'])
 @jwt_required
 def create_locale():
+    if 'role.translator' not in get_jwt_claims()['roles']:
+        return 'Permission denied', 403
     try:
         loaded = i18n_locale_schema.load(request.json)
     except ValidationError as err:
         return jsonify(err.messages), 422
+
+    country_codes_foo = db.session.query(Language).filter_by(
+        code = request.json['code'].split('-')[0]
+    ).first()
+
+    if country_codes_foo is None:
+        return 'Country code not found', 404
 
     new_locale = I18NLocale(**request.json)
     db.session.add(new_locale)
@@ -48,8 +58,11 @@ def create_locale():
 
 
 @i18n.route('/locales/<locale_code>', methods=['DELETE'])
+@authorize(['role.translator'])
 @jwt_required
 def delete_one_locale(locale_code):
+    if 'role.translator' not in get_jwt_claims()['roles']:
+        return 'Permission denied', 403
     locale = db.session.query(I18NLocale).get(locale_code)
     db.session.delete(locale)
     db.session.commit()

@@ -4274,7 +4274,11 @@
     },
     "toolbox": {
       "show": {
-        "gloss": "Mostrar caja",
+        "gloss": "Mostrar la caja de instrumentos",
+        "verified": false
+      },
+      "title": {
+        "gloss": "Caja de instrumentos",
         "verified": false
       }
     },

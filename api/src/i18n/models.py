@@ -24,7 +24,7 @@ class I18NLocale(Base):
     values = relationship('I18NValue', back_populates='locale', lazy=True)
 
     def __repr__(self):
-        return f"<I18NLocale(id='{self.code}',desc='{self.desc}'')>"
+        return f"<I18NLocale(id='{self.code}',desc='{self.desc}')>"
 
 
 class I18NLocaleSchema(Schema):
