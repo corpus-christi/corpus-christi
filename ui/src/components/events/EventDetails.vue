@@ -1,139 +1,133 @@
 <template>
-  <v-layout column>
-    <v-layout row wrap>
-      <v-flex xs12>
-        <v-card>
-          <template v-if="eventLoaded">
-            <v-container fill-height fluid>
-              <v-flex xs9 sm9 align-end flexbox>
-                <span class="headline">{{ event.title }}</span>
-              </v-flex>
-              <v-layout xs3 sm3 align-end justify-end>
+  <div>
+    <v-container fluid>
+      <v-row>
+        <v-col cols=12>
+          <v-card>
+            <template v-if="eventLoaded">
+              <v-toolbar dark color="primary">
+                <v-toolbar-title>
+                  <span class="headline">{{ event.title }}</span>
+                </v-toolbar-title>
+                <v-spacer/>
                 <v-btn
-                  color="primary"
+                  right
+                  outlined
                   data-cy="edit-event"
-                  v-on:click="editEvent(event)"
+                  @click="editEvent(event)"
                 >
-                  <v-icon>edit</v-icon>&nbsp;{{ $t("actions.edit") }}
+                  <v-icon left>edit</v-icon>{{ $t("actions.edit") }}
                 </v-btn>
-              </v-layout>
-            </v-container>
-            <v-card-text class="pa-4">
-              <v-layout row wrap>
-                <v-flex xs12 sm6>
-                  <div>
-                    <b>{{ $t("events.attendance") }}: </b>
-                    <span v-if="event.attendance != null">{{
-                      event.attendance
-                    }}</span>
-                    <span v-else>{{ $t("events.attendance-none") }}</span>
-                    <v-btn
-                      icon
-                      outlined
-                      small
-                      color="primary"
-                      data-cy="edit-attendance"
-                      v-on:click="openAttendanceDialog()"
-                    >
-                      <v-icon small color="primary">edit</v-icon>
-                    </v-btn>
-                  </div>
-                  <div v-if="event.location">
-                    <b>{{ $t("events.location") }}: </b>
-                    <div class="multi-line ml-2">{{ displayLocation }}</div>
-                  </div>
-                  <div>
-                    <b>{{ $t("events.start-time") }}: </b
-                    >{{ getDisplayDate(event.start) }}
-                  </div>
-                  <div>
-                    <b>{{ $t("events.end-time") }}: </b
-                    >{{ getDisplayDate(event.end) }}
-                  </div>
-                  <div class="mt-2 mb-2">{{ event.description }}</div>
-                </v-flex>
-                <v-flex xs12 sm6>
-                  <!-- Image -->
-                  <template v-if="event.images && event.images.length > 0">
-                    <v-img
-                      max-height="400px"
-                      class="image picture"
-                      :src="fetchImage"
-                    >
-                    </v-img>
-                  </template>
+              </v-toolbar>
+              <v-container fluid>
+                <v-card-text>
+                  <v-row>
+                    <v-col cols=12 sm=6>
+                      <div>
+                        <b>{{ $t("events.attendance") }}: </b>
+                        <span v-if="event.attendance != null">{{
+                          event.attendance
+                        }}</span>
+                        <span v-else>{{ $t("events.attendance-none") }} </span>
+                        <v-btn
+                          icon
+                          outlined
+                          small
+                          color="primary"
+                          data-cy="edit-attendance"
+                          v-on:click="openAttendanceDialog()"
+                        >
+                          <v-icon small color="primary">edit</v-icon>
+                        </v-btn>
+                      </div>
+                      <div v-if="event.location">
+                        <b>{{ $t("events.location") }}: </b>
+                        <div class="multi-line ml-2">{{ displayLocation }}</div>
+                      </div>
+                      <div>
+                        <b>{{ $t("events.start-time") }}: </b
+                        >{{ getDisplayDate(event.start) }}
+                      </div>
+                      <div>
+                        <b>{{ $t("events.end-time") }}: </b
+                        >{{ getDisplayDate(event.end) }}
+                      </div>
+                      <div>{{ event.description }}</div>
+                    </v-col>
+                    <v-col cols=12 sm=6>
+                      <!-- Image -->
+                      <template v-if="event.images && event.images.length > 0">
+                        <v-img
+                          max-height="400px"
+                          class="image picture"
+                          :src="fetchImage"
+                        >
+                        </v-img>
+                      </template>
 
-                  <!-- Placeholder if no image uploaded -->
-                  <template v-else>
-                    <v-img class="picture" :src="arcoPlaceholder"> </v-img>
-                  </template>
-                </v-flex>
-              </v-layout>
-            </v-card-text>
-            <v-card-actions>
-              <v-layout justify-space-between wrap>
-                <v-btn
-                  ripple
+                      <!-- Placeholder if no image uploaded -->
+                      <template v-else>
+                        <v-img class="picture" :src="arcoPlaceholder"> </v-img>
+                      </template>
+                    </v-col>
+                  </v-row>
+                </v-card-text>
+              </v-container>
+              <v-card-actions>
+                  <v-btn
+                    ripple
+                    color="primary"
+                    data-cy="navigate-to-participants"
+                    :to="'/event/' + $route.params.event + '/participants'"
+                  >
+                    <v-icon left>person</v-icon>{{
+                      $t("events.participants.title")
+                    }}
+                  </v-btn>
+              </v-card-actions>
+            </template>
+            <v-layout v-else justify-center height="500px">
+              <div>
+                <v-progress-circular
+                  indeterminate
                   color="primary"
-                  data-cy="navigate-to-participants"
-                  :to="'/event/' + $route.params.event + '/participants'"
-                >
-                  <v-icon>person</v-icon>&nbsp;{{
-                    $t("events.participants.title")
-                  }}
-                </v-btn>
-              </v-layout>
-            </v-card-actions>
-          </template>
-          <v-layout v-else justify-center height="500px">
-            <div class="ma-5 pa-5">
-              <v-progress-circular
-                indeterminate
-                color="primary"
-              ></v-progress-circular>
-            </div>
-          </v-layout>
-        </v-card>
-      </v-flex>
-    </v-layout>
+                ></v-progress-circular>
+              </div>
+            </v-layout>
+          </v-card>
+        </v-col>
+      </v-row>
 
-    <v-layout row wrap>
-      <v-flex xs12 lg6>
-        <v-layout column>
-          <v-flex>
-            <event-team-details
-              :teams="event.teams"
-              :loaded="teamsLoaded"
-              v-on:snackbar="showSnackbar($event)"
-              v-on:team-added="addTeam"
-              v-on:team-deleted="deleteTeam"
-            ></event-team-details>
-          </v-flex>
-          <v-flex>
-            <event-person-details
-              :persons="event.persons"
-              :loaded="personsLoaded"
-              v-on:snackbar="showSnackbar($event)"
-              v-on:person-added="addPerson"
-              v-on:person-deleted="deletePerson"
-            ></event-person-details>
-          </v-flex>
-        </v-layout>
-      </v-flex>
-      <v-flex xs12 lg6>
-        <v-layout column>
-          <v-flex>
-            <event-group-details
-              :groups="event.groups"
-              :loaded="groupsLoaded"
-              v-on:snackbar="showSnackbar($event)"
-              v-on:group-added="addGroup"
-              v-on:group-deleted="deleteGroup"
-            ></event-group-details>
-          </v-flex>
-        </v-layout>
-      </v-flex>
-    </v-layout>
+      <v-row>
+        <v-col cols=12 md=6 lg=4>
+          <event-item-details
+            item="team"
+            :loaded="teamsLoaded"
+            :items="event.teams"
+            v-on:item-added="addTeam"
+            v-on:item-deleted="deleteTeam"
+          />
+        </v-col>
+        <v-col cols=12 md=6 lg=4>
+          <event-item-details
+            item="person"
+            :loaded="personsLoaded"
+            :items="event.persons"
+            v-on:item-added="addPerson"
+            v-on:item-deleted="deletePerson"
+          />
+        </v-col>
+        <v-col cols=12 md=6 lg=4>
+          <event-item-details
+            item="group"
+            :loaded="groupsLoaded"
+            :items="event.groups"
+            v-on:item-added="addGroup"
+            v-on:item-deleted="deleteGroup"
+          />
+        </v-col>
+      </v-row>
+    </v-container>
 
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
@@ -168,15 +162,13 @@
         v-on:save-attendance="saveAttendance($event)"
       ></event-attendance-form>
     </v-dialog>
-  </v-layout>
+  </div>
 </template>
 
 <script>
 import CustomForm from "../CustomForm";
 import { mapGetters } from "vuex";
-import EventTeamDetails from "./EventTeamDetails";
-import EventPersonDetails from "./EventPersonDetails";
-import EventGroupDetails from "./EventGroupDetails";
+import EventItemDetails from "./EventItemDetails";
 import EventAttendanceForm from "./EventAttendanceForm";
 import arcoPlaceholder from "../../../assets/arco-placeholder.jpg";
 
@@ -184,9 +176,7 @@ export default {
   name: "EventDetails",
   components: {
     "event-form": CustomForm,
-    "event-team-details": EventTeamDetails,
-    "event-person-details": EventPersonDetails,
-    "event-group-details": EventGroupDetails,
+    "event-item-details": EventItemDetails,
     "event-attendance-form": EventAttendanceForm,
   },
 
@@ -256,6 +246,7 @@ export default {
   },
 
   methods: {
+
     getEvent() {
       const id = this.$route.params.event;
       return this.$http
@@ -292,8 +283,9 @@ export default {
     },
 
     addTeam(data) {
+      console.log(data);
       const eventId = this.$route.params.event;
-      let teamId = data.team.id;
+      let teamId = data.item.id;
       const idx = this.event.teams.findIndex((t) => t.id === teamId);
       if (idx > -1) {
         this.showSnackbar(this.$t("teams.team-on-event"));
@@ -304,7 +296,7 @@ export default {
         .post(`/api/v1/events/${eventId}/teams/${teamId}`)
         .then(() => {
           this.showSnackbar(this.$t("teams.team-added"));
-          this.event.teams.push(data.team);
+          this.event.teams.push(data.item);
         })
         .catch((err) => {
           console.log(err);
@@ -317,8 +309,9 @@ export default {
     },
 
     deleteTeam(data) {
+      console.log(data);
       const eventId = this.$route.params.event;
-      let id = data.teamId;
+      let id = data.itemId;
       const idx = this.event.teams.findIndex((t) => t.id === id);
       this.$http
         .delete(`/api/v1/events/${eventId}/teams/${id}`)
@@ -335,13 +328,11 @@ export default {
 
     addPerson(data) {
       const eventId = this.$route.params.event;
-      let personData = data.person;
+      let personData = data.item;
       let personId = personData.id;
-      if (!data.editMode) {
-        const idx = this.event.persons.findIndex((p) => p.id === personId);
-        if (idx > -1) {
-          this.showSnackbar(this.$t("events.persons.person-on-event"));
-        }
+      const idx = this.event.persons.findIndex((p) => p.id === personId);
+      if (!data.editMode && idx > -1) {
+        this.showSnackbar(this.$t("events.persons.person-on-event"));
       }
       let body = { description: data.description };
       let promise;
@@ -364,31 +355,27 @@ export default {
             this.showSnackbar(this.$t("events.persons.person-added"));
           }
           if (!data.editMode) {
-            let eventPerson = {
-              id: personId,
-              person_id: personId,
-              event_id: eventId,
-              person: personData,
-              description: data.description,
-            };
+            let eventPerson = {id: personId, person_id: personId, event_id: eventId, person: personData, description: data.description };
             this.event.persons.push(eventPerson);
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-          if (err.response.status === 422) {
-            this.showSnackbar(this.$t("events.persons.error-person-assigned"));
           } else {
-            this.showSnackbar(this.$t("events.persons.error-adding-person"));
+            this.event.persons[idx].description = data.description;
           }
-        });
+      })
+      .catch((err) => {
+        console.log(err);
+        if (err.response.status === 422) {
+          this.showSnackbar(this.$t("events.persons.error-person-assigned"));
+        } else {
+          this.showSnackbar(this.$t("events.persons.error-adding-person"));
+        }
+      });
     },
 
     deletePerson(data) {
-      const eventId = this.$route.params.event;
-      let id = data.personId;
-      const idx = this.event.persons.findIndex((p) => p.id === id);
-      this.$http
+        const eventId = this.$route.params.event;
+        let id = data.itemId;
+        const idx = this.event.persons.findIndex((p) => p.id === id)
+        this.$http
         .delete(`/api/v1/events/${eventId}/individuals/${id}`)
         .then((resp) => {
           console.log("REMOVED", resp);
@@ -401,7 +388,6 @@ export default {
         });
     },
 
-    /*
     addAsset(data) {
       const eventId = this.$route.params.event;
       let assetId = data.asset.id;
@@ -443,11 +429,10 @@ export default {
           this.showSnackbar(this.$t("assets.error-removing-asset"));
         });
     },
-    */
 
     addGroup(data) {
       const eventId = this.$route.params.event;
-      let groupId = data.group.id;
+      let groupId = data.item.id;
       const idx = this.event.groups.findIndex((t) => t.id === groupId);
       if (idx > -1) {
         this.showSnackbar(this.$t("groups-group-on-event"));
@@ -458,7 +443,7 @@ export default {
         .post(`/api/v1/events/${eventId}/groups/${groupId}`)
         .then(() => {
           this.showSnackbar(this.$t("groups.group-added"));
-          this.event.groups.push(data.group);
+          this.event.groups.push(data.item);
         })
         .catch((err) => {
           console.log(err);
@@ -472,7 +457,7 @@ export default {
 
     deleteGroup(data) {
       const eventId = this.$route.params.event;
-      let id = data.groupId;
+      let id = data.itemId;
       const idx = this.event.groups.findIndex((t) => t.id === id);
       this.$http
         .delete(`/api/v1/events/${eventId}/groups/${id}`)
