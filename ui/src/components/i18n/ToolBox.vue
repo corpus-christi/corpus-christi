@@ -8,16 +8,12 @@
       </v-btn>
     </v-card-title>
 
-    <v-divider horizontal/>
+    <v-divider horizontal />
 
-    <v-card-text
-      class="pb-0"
-    >
+    <v-card-text class="pb-0">
       <v-container>
         <v-row justify="space-around">
-          <v-col
-            align="center"
-          >
+          <v-col align="center">
             {{
               $t("translation.filters.portion-translated", [
                 numTranslated,
@@ -27,9 +23,7 @@
           </v-col>
         </v-row>
         <v-row>
-          <v-col
-            align="center"
-          >
+          <v-col align="center">
             {{
               $t("translation.filters.portion-verified", [
                 numVerified,
@@ -40,9 +34,7 @@
         </v-row>
 
         <v-row>
-          <v-col
-            class="pb-0"
-          >
+          <v-col class="pb-0">
             <v-select
               outlined
               multiple
@@ -61,11 +53,7 @@
 
     <v-card-actions>
       <v-spacer />
-      <v-btn
-        class="mr-5"
-        @click="$emit('addNewLocale')"
-        color="primary"
-      >
+      <v-btn class="mr-5" @click="$emit('addNewLocale')" color="primary">
         <v-icon left>add_circle_outline</v-icon>
         {{ $t("translation.locale.add") }}
       </v-btn>
@@ -90,7 +78,7 @@ export default {
   },
 
   computed: {
-    filterObjs: function() {
+    filterObjs() {
       return this.filterOptions.map((item) => {
         return {
           tag: item,
@@ -105,7 +93,7 @@ export default {
       this.$emit("sendFilters", this.activeFilters);
     },
   },
-  
+
   mounted: function () {
     this.filtersUpdated();
   },

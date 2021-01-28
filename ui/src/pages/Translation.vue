@@ -153,7 +153,7 @@ export default {
         })
         .catch((err) => {
           eventBus.$emit("error", {
-            content: (err.response.data),
+            content: err.response.data,
           });
         });
     },
@@ -172,7 +172,7 @@ export default {
         .catch((err) => {
           console.log(err);
           eventBus.$emit("error", {
-            content: (err.response.data),
+            content: err.response.data,
           });
         });
     },
@@ -189,7 +189,7 @@ export default {
         })
         .catch((err) => {
           eventBus.$emit("error", {
-            content: (err.response.data),
+            content: err.response.data,
           });
         })
         .finally(() => (this.loadingTranslations = false));
@@ -202,29 +202,7 @@ export default {
     },
     onTopLevelTagsUpdated(tagList) {
       this.selectedTags = tagList;
-      this.findFirstTag();
     },
-    findFirstTag() {
-      //find the first tag
-      dance: for (
-        let objNum = 0;
-        objNum < this.translationObjs.length;
-        objNum++
-      ) {
-        for (let tagNum = 0; tagNum < this.selectedTags.length; tagNum++) {
-          if (
-            this.selectedTags[tagNum] ==
-            this.translationObjs[objNum].top_level_key
-          ) {
-            //focus on the v-text-field element
-            this.focusOnFirstTag(this.translationObjs[objNum]);
-            break dance;
-          }
-        }
-      }
-    },
-    // eslint-disable-next-line
-    focusOnFirstTag(cardObj) {},
     bodyScrollHeight() {
       return document.body.scrollHeight;
     },
@@ -245,7 +223,7 @@ export default {
       this.newLocaleDialog = false;
     },
     newScreenPortion() {
-      return window.innerHeight - 300;
+      return window.innerHeight - 300; // Accounts for headers and footer
     },
   },
   mounted: function () {
