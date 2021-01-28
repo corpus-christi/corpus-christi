@@ -1,4 +1,4 @@
-/**
+ /**
  * Prefix in the I18N database for roles.
  * @type {string}
  */

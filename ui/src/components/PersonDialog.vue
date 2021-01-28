@@ -1,33 +1,26 @@
 <template>
   <!-- New/Edit dialog -->
   <v-dialog v-model="personDialog.show" persistent max-width="768px">
-    <v-card>
-      <v-layout align-center justify-center row fill-height>
-        <v-card-title class="headline">
-          {{ $t(personDialog.title) }}
-        </v-card-title>
-      </v-layout>
-      <PersonForm
-        v-bind:initialData="personDialog.person"
-        v-bind:addAnotherEnabled="personDialog.addAnotherEnabled"
-        v-bind:saveButtonText="personDialog.saveButtonText"
-        v-bind:showAccountInfo="personDialog.showAccountInfo"
-        v-bind:isAccountRequired="false"
-        v-on:cancel="cancelPerson"
-        v-on:saved="savePerson"
-        v-on:added-another="addAnother"
-        v-on:attachPerson="sendToEvent"
-      />
-    </v-card>
+    <PersonStepper
+      v-bind:title="personDialog.title"
+      v-bind:initialData="personDialog.person"
+      v-bind:addAnotherEnabled="personDialog.addAnotherEnabled"
+      v-bind:saveButtonText="personDialog.saveButtonText"
+      v-bind:showAccountInfo="personDialog.showAccountInfo"
+      v-on:cancel="cancelPerson"
+      v-on:saved="savePerson"
+      v-on:added-another="addAnother"
+      v-on:attachPerson="sendToEvent"
+    />
   </v-dialog>
 </template>
 
 <script>
-import PersonForm from "./people/PersonForm";
+import PersonStepper from "@/components/people/PersonStepper";
 
 export default {
   name: "PersonDialog",
-  components: { PersonForm },
+  components: { PersonStepper },
   props: {
     dialogState: {
       type: String,

@@ -5,6 +5,7 @@
         icon
         outlined
         small
+        class="mr-1"
         color="primary"
         v-on="on"
         @click="$emit('click')"

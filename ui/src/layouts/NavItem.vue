@@ -9,10 +9,10 @@
         https://vuetifyjs.com/en/components/lists/#slots
       -->
       <template v-slot:activator>
-          <v-list-item-icon>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-item-icon>
-          <v-list-item-title>{{ item.title }}</v-list-item-title>
+        <v-list-item-icon>
+          <v-icon>{{ item.icon }}</v-icon>
+        </v-list-item-icon>
+        <v-list-item-title>{{ item.title }}</v-list-item-title>
       </template>
 
       <nav-item
