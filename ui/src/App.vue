@@ -33,36 +33,44 @@ export default {
    */
   created: function () {
     // Locales
-    this.$http.get("/api/v1/i18n/locales").then((response) => {
+    this.$http.get("/api/v1/i18n/locales")
+    .then((response) => {
       const localeData = response.data;
 
       if (localeData && localeData.length > 0) {
         this.setLocaleModels(localeData);
-        let firstLocaleString;
-        //Check if Vuex has a Language Setting stored already
-        if (this.currentLocaleModel.languageCode) {
-          firstLocaleString =
-            this.currentLocaleModel.languageCode +
-            "-" +
-            this.currentLocaleModel.countryCode;
+
+        let langData=navigator.languages;
+        let needLang=true;
+
+        // find an exact match for the locale
+        langData.forEach((lang)=>{
+            localeData.forEach((loc)=>{
+                if(needLang && lang==loc.code){
+                    this.setCurrentLocale(new Locale(lang));
+                    this.$i18n.locale = lang;
+                    needLang=false;
+                }
+            })
+        })
+        // find an approximate match for the locale
+        langData.forEach((lang)=>{
+            localeData.forEach((loc)=>{
+                if(needLang && loc.code.includes(lang.substr(0,2))){
+                    this.setCurrentLocale(new Locale(lang));
+                    this.$i18n.locale = lang;
+                    needLang=false;
+                }
+            });
+        });
+
+        // If the double forEach fails, that means that none
+        // of the user's languages are a current locale.
+        // Default to English-US.
+        if(needLang){
+            this.setCurrentLocale(new Locale("en-US"));
+            this.$i18n.locale = "en-US";
         }
-        //Otherwise, pull the Browser's Default Language, and check if it's in the database
-        else {
-          firstLocaleString = navigator.language;
-          let validLanguageBool = false;
-          for (let i = 0; i < localeData.length; i++) {
-            if (localeData[i].code == firstLocaleString) {
-              validLanguageBool = true;
-              break;
-            }
-          }
-          //If all else fails, default to US English.
-          if (!validLanguageBool) {
-            firstLocaleString = localeData[1].code;
-          }
-        }
-        this.setCurrentLocale(new Locale(firstLocaleString));
-        this.$i18n.locale = firstLocaleString;
       }
     });
 

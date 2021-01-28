@@ -4,10 +4,14 @@ from marshmallow import ValidationError, Schema, fields
 from marshmallow.validate import Length
 
 from . import i18n
-from .models import I18NLocale, I18NLocaleSchema, I18NKeySchema, I18NKey, I18NValue, I18NValueSchema, Language
+from .models import I18NLocale, I18NLocaleSchema, I18NKeySchema, I18NKey, I18NValue, I18NMultipleLocalesPreSplit, I18NMultipleLocalesSplitKey, I18NValueSchema, Language
 from .. import db
 from ..shared.helpers import list_to_tree, BadListKeyPath
 from ..shared.helpers import logged_response, authorize
+
+from sqlalchemy.orm import aliased
+from sqlalchemy import and_
+import re
 
 # ---- I18N Locale
 
@@ -89,7 +93,8 @@ def create_key():
 # ---- I18N Value
 
 i18n_value_schema = I18NValueSchema()
-
+i18n_multiple_locales_pre_split = I18NMultipleLocalesPreSplit()
+i18n_multiple_locales_split_key = I18NMultipleLocalesSplitKey()
 
 @i18n.route('/values')
 def read_all_values():
@@ -103,7 +108,6 @@ def read_all_values():
 def update_a_value():
     #     update the values with the info in payload
     i18n_value_schema = I18NValueSchema()
-
     #     verify_jwt_in_request()
     claims = get_jwt_claims()
     if 'role.translator' not in claims['roles']:
@@ -114,20 +118,28 @@ def update_a_value():
         except ValidationError as err:
             return logged_response(err.messages, 422)
 
-    i18n_value = db.session.query(I18NValue).filter_by(
-        locale_code=valid_attributes.get('locale_code'),
-        key_id=valid_attributes.get('key_id')).first()
+    i18n_key = db.session.query(I18NKey).filter_by(
+        id = valid_attributes.get('key_id')
+    ).first()
 
-    if not i18n_value:
+    if not i18n_key:
         return logged_response(
-            f"Group with key_id #{valid_attributes['key_id']} does not exist.", 404)
+            f"Key with id #{valid_attributes['key_id']} does not exist.", 404)
 
-    for key, val in valid_attributes.items():
-        setattr(i18n_value, key, val)
+    i18n_value = I18NValue(**request.json)
 
-    db.session.add(i18n_value)
+    i18n_value_in_db = db.session.query(I18NValue).filter_by(
+        key_id = valid_attributes.get('key_id'),
+        locale_code = valid_attributes.get('locale_code')
+    ).first()
+
+    if i18n_value_in_db is not None:
+        i18n_value_in_db.gloss = valid_attributes.get('gloss')
+        i18n_value_in_db.verified = valid_attributes.get('verified')
+    else:
+        db.session.add(i18n_value)
+
     db.session.commit()
-
     return logged_response(i18n_value_schema.dump(i18n_value), 200)
 
 
@@ -163,8 +175,45 @@ def read_xlation(locale_code):
         return 'Invalid format', 400
 
 
-# ---- Language
+@i18n.route('/values/translations/<preview_locale_str>/<current_locale_str>')
+def fetch_and_format_target_locales(preview_locale_str, current_locale_str):
+    preview_locale = db.session.query(I18NLocale).filter_by(code=preview_locale_str).first()
+    current_locale = db.session.query(I18NLocale).filter_by(code=current_locale_str).first()
+    if preview_locale_str == current_locale_str:
+        return 'Locales may not be identical', 400
+    if preview_locale is None or current_locale is None:
+        return 'At least one locale not found', 404
 
+    I18NPreview = aliased(I18NValue)
+    I18NCurrent = aliased(I18NValue)
+    pre_split_values = db.session.query(I18NKey).with_entities(
+        I18NKey.id.label('key_id'),
+        I18NPreview.gloss.label('preview_gloss'),
+        I18NCurrent.gloss.label('current_gloss'),
+        I18NCurrent.verified.label('current_verified')
+    ).outerjoin(I18NPreview,
+        and_(I18NPreview.locale_code == preview_locale_str, I18NKey.id == I18NPreview.key_id)
+    ).outerjoin(I18NCurrent,
+        and_(I18NCurrent.locale_code == current_locale_str, I18NKey.id == I18NCurrent.key_id)
+    ).order_by(I18NKey.id).all()
+
+    split_values = i18n_multiple_locales_pre_split.dump(pre_split_values, many=True)    
+    for item in split_values:
+        matches = re.match("(.+?)\.(.+)", item['key_id']) # (first).(second.third.fourth.etc)
+        item.pop('key_id', None)
+        item['top_level_key'] = matches.groups()[0]
+        item['rest_of_key'] = matches.groups()[1]
+        if item['preview_gloss'] == None:
+            item['preview_gloss'] = ''
+        if item['current_gloss'] == None:
+            item['current_gloss'] = ''
+        if item['current_verified'] == None:
+            item['current_verified'] = False
+
+    return jsonify(i18n_multiple_locales_split_key.dump(split_values, many=True))
+
+
+# ---- Language
 
 class LanguageSchema(Schema):
     code = fields.String(required=True, validate=Length(equal=2))

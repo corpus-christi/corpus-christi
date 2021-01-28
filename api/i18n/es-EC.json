@@ -2,7 +2,7 @@
   "$vuetify": {
     "calendar": {
       "moreEvents": {
-        "gloss": "{0} more",
+        "gloss": "{0} más",
         "verified": false
       }
     },
@@ -22,7 +22,7 @@
         "verified": false
       },
       "nextPage": {
-        "gloss": "Siguiente página",
+        "gloss": "Próxima página",
         "verified": false
       },
       "noResultsText": {
@@ -160,6 +160,10 @@
       "gloss": "Acciones",
       "verified": false
     },
+    "hide": {
+      "gloss": "Esconder",
+      "verified": false
+    },
     "login": {
       "gloss": "Acceder",
       "verified": false
@@ -204,8 +208,16 @@
       "gloss": "Buscar Personas",
       "verified": false
     },
+    "show": {
+      "gloss": "Mostrar",
+      "verified": false
+    },
     "signup": {
       "gloss": "Regístrate",
+      "verified": false
+    },
+    "submit": {
+      "gloss": "Enviar",
       "verified": false
     },
     "tooltips": {
@@ -375,12 +387,6 @@
       "verified": false
     }
   },
-  "collections": {
-    "title": {
-      "gloss": "Colecciones",
-      "verified": false
-    }
-  },
   "country": {
     "name": {
       "AD": {
@@ -392,7 +398,7 @@
         "verified": false
       },
       "AF": {
-        "gloss": "AfganistÃ¡n",
+        "gloss": "Afganistán",
         "verified": false
       },
       "AG": {
@@ -1728,12 +1734,6 @@
       "gloss": "Todos Eventos",
       "verified": false
     },
-    "assets": {
-      "confirm-remove": {
-        "gloss": "¿Estás seguro de que quieres eliminar a este insumo?",
-        "verified": false
-      }
-    },
     "attendance": {
       "gloss": "Concurrencia",
       "verified": false
@@ -1747,24 +1747,8 @@
       "verified": false
     },
     "calendar": {
-      "day": {
-        "gloss": "Dia",
-        "verified": false
-      },
-      "month": {
-        "gloss": "Mes",
-        "verified": false
-      },
       "title": {
         "gloss": "Calendario",
-        "verified": false
-      },
-      "week": {
-        "gloss": "Semana",
-        "verified": false
-      },
-      "week-label": {
-        "gloss": "semana del",
         "verified": false
       }
     },
@@ -2413,12 +2397,6 @@
       },
       "title-visitor": {
         "gloss": "visitantes",
-        "verified": false
-      }
-    },
-    "membership-hisotry": {
-      "title": {
-        "gloss": "Historia",
         "verified": false
       }
     },
@@ -3577,11 +3555,11 @@
       "verified": false
     },
     "change-note": {
-      "gloss": "Cambiar nota",
+      "gloss": "Cambiar apunte",
       "verified": false
     },
     "clear-note": {
-      "gloss": "Nota clara",
+      "gloss": "Quitar apunte",
       "verified": false
     },
     "joined": {
@@ -3593,7 +3571,7 @@
       "verified": false
     },
     "note": {
-      "gloss": "Notas",
+      "gloss": "Apuntes",
       "verified": false
     },
     "submit": {
@@ -4190,30 +4168,122 @@
     }
   },
   "translation": {
-    "dialog": {
-      "cancel": {
-        "gloss": "Cancelar",
-        "verified": false
-      },
-      "submit": {
-        "gloss": "Enviar",
-        "verified": false
-      }
-    },
     "error": {
       "gloss": "Por favor modifique sus traducciones nuevamente",
       "verified": false
     },
+    "fetch": {
+      "gloss": "Obtener",
+      "verified": false
+    },
+    "filters": {
+      "label": {
+        "gloss": "Filtros",
+        "verified": false
+      },
+      "portion-translated": {
+        "gloss": "{0} / {1} Traducidos",
+        "verified": false
+      },
+      "portion-verified": {
+        "gloss": "{0} / {1} Verificados",
+        "verified": false
+      },
+      "untranslated": {
+        "gloss": "No traducidos",
+        "verified": false
+      },
+      "unverified": {
+        "gloss": "No verificados",
+        "verified": false
+      }
+    },
+    "locale": {
+      "add": {
+        "gloss": "Nuevo locale",
+        "verified": false
+      },
+      "country-code": {
+        "hint": {
+          "gloss": "(E.g. 'EC')",
+          "verified": false
+        },
+        "prompt": {
+          "gloss": "Código de país",
+          "verified": false
+        }
+      },
+      "description": {
+        "hint": {
+          "gloss": "(E.g. 'Español Ecuador')",
+          "verified": false
+        },
+        "prompt": {
+          "gloss": "Descripción",
+          "verified": false
+        }
+      },
+      "hint": {
+        "gloss": "(E.g. 'es-EC Español Ecuador')",
+        "verified": false
+      },
+      "language-code": {
+        "hint": {
+          "gloss": "(E.g. 'es')",
+          "verified": false
+        },
+        "prompt": {
+          "gloss": "Código de idioma",
+          "verified": false
+        }
+      },
+      "title": {
+        "gloss": "Póngase el código regional y descripción",
+        "verified": false
+      }
+    },
     "menu-title": {
       "gloss": "Traducción",
+      "verified": false
+    },
+    "new-translation": {
+      "gloss": "Nueva traducción",
       "verified": false
     },
     "search-title": {
       "gloss": "Encuentre una sucursal de traducción",
       "verified": false
     },
+    "tags": {
+      "sub": {
+        "gloss": "Equietas menores",
+        "verified": false
+      },
+      "tooltip": {
+        "gloss": "{0} no traducidos, {1} no verificados",
+        "verified": false
+      },
+      "top": {
+        "gloss": "Equietas mayores",
+        "verified": false
+      }
+    },
     "toolbar-title": {
       "gloss": "Locale actual:",
+      "verified": false
+    },
+    "toolbox": {
+      "show": {
+        "gloss": "Mostrar caja",
+        "verified": false
+      }
+    },
+    "translate-from": {
+      "gloss": "Traducir del",
+      "verified": false
+    },
+    "translate-to": {
+      "gloss": "Traducir al",
       "verified": false
     },
     "transparent-mode": {
@@ -4222,6 +4292,10 @@
     },
     "updated": {
       "gloss": "Traducciones actualizadas",
+      "verified": false
+    },
+    "verify-translation": {
+      "gloss": "Verificado",
       "verified": false
     }
   },

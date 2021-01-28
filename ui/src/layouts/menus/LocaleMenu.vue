@@ -1,5 +1,6 @@
 <template>
   <v-row class="shrink" align="center">
+    <v-col v-if="isTranslator" cols="5">
     <!-- The switch Translators can use to enable Language Transparent Mode -->
     <v-col v-if="isTranslator">
       <v-switch
@@ -12,8 +13,7 @@
 
     <!-- The Language Dropdown Menu -->
     <v-col>
-      <v-menu offset-y :disabled="disableMenu">
-        <!-- Make the Button appear in the App Bar -->
+      <v-menu offset-y>
         <template v-slot:activator="{ on }">
           <v-btn id="cur-locale" data-cy="cur-locale" text v-on="on">
             {{ currentFlagAndDescription }}
@@ -118,15 +118,7 @@ export default {
     },
 
     getFlagAndDescription(localeModel) {
-      let { languageCode, countryCode } = localeModel.locale;
-      let languageKey = `language.name.${languageCode}`;
-      let countryKey = `country.name.${countryCode}`;
-      if (this.$te(languageKey) && this.$te(countryKey)) {
-        let description = `${this.$t(languageKey)} ${this.$t(countryKey)}`;
-        return `${localeModel.locale.flag} ${description}`; // use internationalized descriptions
-      } else {
-        return localeModel.flagAndDescription; // plain description in database
-      }
+      return localeModel.flagAndDescription; // plain description in database
     },
 
     setCurrentLocale(locale) {
