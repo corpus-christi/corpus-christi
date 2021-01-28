@@ -6,12 +6,15 @@
           ><v-icon>arrow_back</v-icon>{{ $t("events.all-events") }}</v-btn
         >
       </v-flex>
-      <v-tabs color="primary" slider-color="accent">
+      <v-tabs color="primary" slider-color="accent" fixed-tabs>
         <v-tab ripple :to="{ path: '/event/' + eventId + '/details' }">
-          <v-icon>list</v-icon>&nbsp;{{ $t("events.details.title") }}
+          <v-icon left>list</v-icon>{{ $t("events.details.title") }}
         </v-tab>
         <v-tab ripple :to="{ path: '/event/' + eventId + '/participants' }">
-          <v-icon>person</v-icon>&nbsp;{{ $t("events.participants.title") }}
+          <v-icon left>person</v-icon>{{ $t("events.participants.title") }}
+        </v-tab>
+        <v-tab ripple :to="{ path: '/event/' + eventId + '/assets' }">
+          <v-icon left>devices_other</v-icon>{{ $t("assets.title") }}
         </v-tab>
       </v-tabs>
       <hr class="vertical-spacer" />

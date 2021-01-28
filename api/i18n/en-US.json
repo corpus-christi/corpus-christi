@@ -375,6 +375,12 @@
       "verified": false
     }
   },
+  "collections": {
+    "title": {
+      "gloss": "Collection",
+      "verified": false
+    }
+  },
   "country": {
     "name": {
       "AD": {
@@ -1721,6 +1727,12 @@
     "all-events": {
       "gloss": "All Events",
       "verified": false
+    },
+    "assets": {
+      "confirm-remove": {
+        "gloss": "Are you sure you want to remove this asset?",
+        "verified": false
+      }
     },
     "attendance": {
       "gloss": "Attendance",
